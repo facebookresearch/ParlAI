@@ -1,7 +1,14 @@
 -- Copyright 2004-present Facebook. All Rights Reserved.
+--[[
+This connects to local ports over ZMQ, parsing incoming json into a table and
+forwarding that to the memnn_agent_parsed. This agent assumes that incoming data
+is formatted as vectors of indices into a dictionary.
 
--- Arguments:
--- 1) Name of file which contains options.
+Sets up as many threads as needed, starting with the port number and counting
+up from there. Note: actually connects to n+1 ports, since the first port is
+often used by a single-threaded validation thread and the remaining n by the
+training threads.
+--]]
 
 require('torch')
 local zmq = require('lzmq')
@@ -10,12 +17,13 @@ local threads = require('threads')
 threads.Threads.serialization('threads.sharedserialize')
 
 -- make sure dependencies are set up
-libdir = os.getenv('PARLAI_DOWNPATH') .. '/memnnlib'
+local libdir = os.getenv('PARLAI_DOWNPATH') .. '/memnnlib'
 if not os.rename(libdir, libdir) then
     print('could not find memnnlib, trying to clone it now')
-    assert(os.execute('git clone git@github.com:facebook/MemNN.git ' .. libdir), 'error cloning into github.com/facebook/MemNN')
-    print('executing: ' .. 'cd ' .. libdir .. '/KVMemnn/ && ./setup.sh')
-    assert(os.execute('cd ' .. libdir .. '/KVMemnn/ && ./setup.sh'), 'error running ' .. libdir .. '/KVMemnn/setup.sh')
+    assert(os.execute('git clone git@github.com:facebook/MemNN.git ' .. libdir),
+           'error cloning into github.com/facebook/MemNN')
+    assert(os.execute('cd ' .. libdir .. '/KVMemnn/ && ./setup.sh'),
+           'error running ' .. libdir .. '/KVMemnn/setup.sh')
 end
 package.path =  libdir .. '/KVMemnn/?.lua' .. ';' .. package.path
 
@@ -108,8 +116,8 @@ else
                 -- bug in torch threading can cause sometimes deadlock on
                 -- concurrent imports, so take a quick nap before starting...
                 os.execute('sleep ' .. tostring(0.05 * jobid))
-                libdir = os.getenv('PARLAI_DOWNPATH') .. '/memnnlib'
-                package.path =  libdir .. '/KVMemnn/?.lua' .. ';' .. package.path
+                local libdir = os.getenv('PARLAI_DOWNPATH') .. '/memnnlib'
+                package.path = libdir .. '/KVMemnn/?.lua' .. ';' .. package.path
                 require('torch')
                 require('tds')
 

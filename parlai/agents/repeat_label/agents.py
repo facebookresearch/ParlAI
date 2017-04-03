@@ -9,5 +9,5 @@ class RepeatLabelAgent(Agent):
     def act(self, obs):
         reply = {}
         if obs.get('labels', False):
-            reply['text'] = '|'.join(obs['labels'])
+            reply['text'] = ', '.join(obs['labels'])
         return reply

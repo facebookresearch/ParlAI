@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
+"""Contains code for parsing and building a dictionary from text."""
 
 from .agents import Agent
 from .thread_utils import SharedTable
@@ -63,28 +64,30 @@ class DictionaryAgent(Agent):
             help='path to a saved dictionary to load tokens / counts from to ' +
                  'seed the dictionary with initial tokens and/or frequencies')
         argparser.add_arg(
-            '--language', default=DictionaryAgent.default_lang,
+            '--dict-language', default=DictionaryAgent.default_lang,
             help='sets language for the punkt sentence tokenizer')
         argparser.add_arg(
-            '--max-ngram-size', default=DictionaryAgent.default_maxngram,
+            '--dict-max-ngram-size', default=DictionaryAgent.default_maxngram,
             help='looks for ngrams of up to this size. this is ignored when ' +
                  'building the dictionary. note: this takes approximate ' +
                  'runtime of len(sentence)^max_ngram_size')
         argparser.add_arg(
-            '--nulltoken', default=DictionaryAgent.default_null,
+            '--dict-nulltoken', default=DictionaryAgent.default_null,
             help='empty token, can be used for padding or just empty values')
+        # TODO(ahm): minfreq isn't actually being used, add the functionality
         argparser.add_arg(
-            '--minfreq', default=DictionaryAgent.default_minfreq,
+            '--dict-minfreq', default=DictionaryAgent.default_minfreq,
             help='minimum frequency of words to include them in the dictionary')
         argparser.add_arg(
-            '--unktoken', default=DictionaryAgent.default_unk,
+            '--dict-unktoken', default=DictionaryAgent.default_unk,
             help='token to return for unavailable words')
 
     def __init__(self, opt, shared=None):
         # initialize fields
-        self.null_token = opt.get('nulltoken')
-        self.unk_token = opt.get('unktoken')
-        self.max_ngram_size = opt.get('max_ngram_size', self.default_maxngram)
+        self.null_token = opt.get('dict_nulltoken')
+        self.unk_token = opt.get('dict_unktoken')
+        self.max_ngram_size = opt.get('dict_max_ngram_size',
+                                      self.default_maxngram)
 
         if shared:
             self.freq = shared.get('freq', SharedTable({}))
@@ -112,7 +115,7 @@ class DictionaryAgent(Agent):
         # initialize tokenizers
         try:
             self.sent_tok = nltk.data.load(
-                'tokenizers/punkt/{0}.pickle'.format(opt.get('language'))
+                'tokenizers/punkt/{0}.pickle'.format(opt.get('dict_language'))
             )
         except LookupError:
             nltk.download('punkt')
@@ -295,7 +298,6 @@ class DictionaryAgent(Agent):
         return {}
 
     def share(self, opt):
-        # TODO(ahm): Probably need to use SharedTables here.
         self.freq = SharedTable(self.freq)
         self.tok2ind = SharedTable(self.tok2ind)
         self.ind2tok = SharedTable(self.ind2tok)

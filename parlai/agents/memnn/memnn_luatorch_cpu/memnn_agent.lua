@@ -1,4 +1,18 @@
 -- Copyright 2004-present Facebook. All Rights Reserved.
+--[[
+Takes in an observation table using the same format as usual for ParlAI, and
+trains a memory network to produce the correct labels.
+
+Observation table format:
+{
+    'text': 'What is the capital of Assyria?',
+    'label': {
+        1: 'Ninevah',
+        2: 'Assur'
+    },
+    ...
+}
+--]]
 
 require('torch')
 local pl = require('pl.import_into')()

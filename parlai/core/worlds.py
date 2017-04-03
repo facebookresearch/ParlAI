@@ -19,7 +19,6 @@ HogwildWorld(World) creates another world within itself for every thread, in
 from multiprocessing import Process, Value, Condition, Semaphore
 from collections import deque
 
-
 def validate(observation):
     """Make sure the observation table is valid, or raise an error."""
     if observation is not None and type(observation) == dict:
@@ -33,7 +32,7 @@ class World(object):
     All children can override these to provide more detailed functionality."""
 
     def __init__(self, opt):
-        pass
+        self.is_done = False
 
     def __enter__(self):
         """Empty enter provided for use with `with` statement.
@@ -52,6 +51,15 @@ class World(object):
 
     def parley(self):
         pass
+
+    def done(self):
+        """Whether the episode is done or not. """
+        return self.is_done
+
+    def display(self):
+        """Returns a string describing the current state of the world.
+        Useful for monitoring and debugging. """
+        return ''
 
     def shutdown(self):
         pass
@@ -74,6 +82,19 @@ class DialogPartnerWorld(World):
         """Teacher goes first. Alternate between the teacher and the agent."""
         self.query = validate(self.teach.act(self.reply))
         self.reply = validate(self.agent.act(self.query))
+        self.is_done = self.query['done']
+
+    def display(self):
+        if self.query.get('reward', None) is not None:
+            print('   [reward: {r}]'.format(r=self.query['reward']))
+        if self.query.get('text', False):
+            print(self.query['text'])
+        if self.query.get('candidates', False):
+            print('[cands:' + '|'.join(self.query['candidates']) + ']')
+        if self.reply.get('text', False):
+            print("   A: " + self.reply['text'])
+        if self.done():
+            print('- - - - - - - - - - - - - - - - - - - - -')
 
     def shutdown(self):
         """Shutdown each agent."""

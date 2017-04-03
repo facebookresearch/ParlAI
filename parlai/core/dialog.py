@@ -34,6 +34,10 @@ class DialogTeacher(Teacher):
         self.datatype = opt['datatype']
         self.startTime = time.time()
         self.lastY = None
+        self.lastR = None
+        self.lastDone = False
+        self.defaultPosReward = 1
+        self.defaultNegReward = 0
 
         # dynamically allocate which child class to use based on whether you
         # are using hogwild or not by overwriting share, act, and report methods
@@ -78,24 +82,39 @@ class _RegularDialogTeacher(Teacher):
 
     # check received text for correct answer then send new query
     def act(self, observation):
+        reward = None
         # first process observation
+        self.metrics['cnt'] += 1
         if (self.lastY is not None and observation.get('text')):
             if _check_answer(observation['text'], self.lastY):
                 self.metrics['correct'] += 1
+                # update reward
+                if self.lastR is not None:
+                    reward = self.defaultPosReward
+                else:
+                    reward = self.lastR
+            else:
+                reward = self.defaultNegReward
             self.lastY = None
+            self.lastR = None
+        done = self.lastDone
+        self.lastDone = False
 
-        self.metrics['cnt'] += 1
-
-        # then send new reply
-        action = next(self.data)
-        self.lastY = action.get('labels', None)
-        if not self.datatype.startswith('train'):
-            if 'labels' in action:
+        # then build reply
+        if not done:
+            action = next(self.data)
+            self.lastY = action.get('labels', None)
+            self.lastR = action.pop('reward', None)
+            self.lastDone = action.get('done', None)
+            action['done'] = False
+            if not self.datatype.startswith('train'):
                 action.pop('labels', None)
-
-        if 'reward' in action:
-            self.last_r = action.pop('reward')
-
+        else:
+            # Very last action gives final reward, and sends 'done' signal.
+            action = {}
+            action['done'] = True
+        if reward is not None:
+            action['reward'] = reward
         return action
 
     # return transformed metrics showing total examples and accuracy if avail.

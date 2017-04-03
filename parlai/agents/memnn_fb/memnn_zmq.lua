@@ -1,7 +1,14 @@
 -- Copyright 2004-present Facebook. All Rights Reserved.
+--[[
+This connects to local ports over ZMQ, parsing incoming json into a table and
+forwarding that to the memnn_agent. This agent assumes that incoming data
+is formatted as text.
 
--- Arguments:
--- 1) Name of file which contains options.
+Sets up as many threads as needed, starting with the port number and counting
+up from there. Note: actually connects to n+1 ports, since the first port is
+often used by a single-threaded validation thread and the remaining n by the
+training threads.
+--]]
 
 require('fbtorch')
 local zmq = require('lzmq')

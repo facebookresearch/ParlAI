@@ -15,11 +15,10 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = "tasks_1-20_v1-2.tar.gz"
-        url = "http://www.thespermwhale.com/jaseweston/babi/" + fname
+        fname = "babi.tar.gz"
+        url = "https://s3.amazonaws.com/fair-data/parlai/babi/" + fname
         build_data.download(dpath, url)
         build_data.untar(dpath, fname)
 
         # Mark the data as built.
-        # TODO(@jase): should only do this if the above operations succeeded
         build_data.mark_done(dpath)

@@ -24,9 +24,10 @@ def move(path1, path2):
 
 
 def download(path, url):
+    # TODO(jase): need to use normal wget
     os.system(
         ('cd %s' % path) +
-        '; wget ' + url)
+        '; ~/bin/sh/proxy-exec wget ' + url)
 
 
 def untar(path, fname):
@@ -37,3 +38,32 @@ def untar(path, fname):
 
 def mark_done(path):
     os.system('date > %s/.built' % path)
+
+
+def _get_confirm_token(response):
+    for key, value in response.cookies.items():
+        if key.startswith('download_warning'):
+            return value
+
+    return None
+
+
+def download_file_from_google_drive(gd_id, destination):
+    import requests
+
+    URL = "https://docs.google.com/uc?export=download"
+
+    session = requests.Session()
+
+    response = session.get(URL, params={'id': gd_id}, stream=True)
+    token = _get_confirm_token(response)
+
+    if token:
+        params = {'id': gd_id, 'confirm': token}
+        response = session.get(URL, params=params, stream=True)
+
+    CHUNK_SIZE = 32768
+    with open(destination, "wb") as f:
+        for chunk in response.iter_content(CHUNK_SIZE):
+            if chunk:  # filter out keep-alive new chunks
+                f.write(chunk)

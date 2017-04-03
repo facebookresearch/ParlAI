@@ -8,14 +8,6 @@ import argparse
 import os
 
 
-def default_data_path():
-    """This function sets the default file path where ParlAI looks for data.
-    You can replace this with whatever you want.
-    """
-    # By default it points to {parlai_dir}/data
-
-
-
 class ParlaiParser(object):
     """Pseudo-extension of argparse which sets a number of parameters for the
     ParlAI framework. More options can be added specific to other modules by
@@ -36,20 +28,21 @@ class ParlaiParser(object):
         parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
                       os.path.realpath(__file__)))))
         default_data_path = parlai_dir + '/data/'
-        default_downloads_path =  parlai_dir + '/downloads/'
+        default_downloads_path = parlai_dir + '/downloads/'
 
         self.parser.add_argument(
             '-t', '--task',
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
         self.parser.add_argument(
-            '-p', '--datapath', default=default_data_path,
+            '-dp', '--datapath', default=default_data_path,
             help='path to datasets, defaults to path pointed to' +
                  ' in parlai/core/data_path.py')
         self.parser.add_argument(
-            '--downpath', default=default_downloads_path,
+            '--download-path', default=default_downloads_path,
             help='path for non-data dependencies to store any needed files')
         self.parser.add_argument(
             '-dt', '--datatype', default='train',
+            choices=['train', 'train:ordered', 'valid', 'test'],
             help='choose from: train, train:ordered, valid, test. ' +
                  'by default: train is random with replacement, ' +
                  'valid is ordered, test is ordered.')
@@ -66,7 +59,7 @@ class ParlaiParser(object):
         self.opt = {k: v for k, v in vars(self.args).items() if v is not None}
         if print_args:
             self.print_args()
-        os.environ['PARLAI_DOWNPATH'] = self.opt['downpath']
+        os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']
         return self.opt
 
     def print_args(self):

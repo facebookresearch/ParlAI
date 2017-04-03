@@ -39,10 +39,6 @@ class RemoteAgent(Agent):
                 raise RuntimeError('You need to run RemoteAgent.' +
                                    'add_cmdline_args(argparser) before ' +
                                    'calling this class to set up options.')
-            print('{cmd} {port} {numthreads} {args}'.format(
-                cmd=opt['remote_cmd'], port=opt['port'],
-                numthreads=opt['numthreads'],
-                args=opt.get('remote_args', '')))
             self.process = subprocess.Popen(
                 '{cmd} {port} {numthreads} {args}'.format(
                     cmd=opt['remote_cmd'], port=opt['port'],

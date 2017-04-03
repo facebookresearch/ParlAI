@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
+"""Given a specified task, builds a dictionary on the training and validation
+set for that task and then trains a memory network using the default parameters
+on that task.
+This example uses the ParsedRemoteAgent, which does all of the parsing in
+python so that the parsing is done by exactly the same python code both in the
+building of the dictionary and the train/test-time parsing.
+Alternatively, a regular RemoteAgent could be used, which implements its own
+parsing (and could also build its own dictionary).
+"""
 
 from parlai.agents.remote_agent.agents import ParsedRemoteAgent
 from parlai.core.agents import create_task_teacher
@@ -22,10 +31,9 @@ dictionary = DictionaryAgent(opt)
 if not opt.get('dict_loadpath'):
     # build dictionary since we didn't load it
     ordered_opt = copy.deepcopy(opt)
-    for datatype in ['train', 'valid']:
+    for datatype in ['train:ordered', 'valid']:
         # we use train and valid sets to build dictionary
         ordered_opt['datatype'] = datatype
-        ordered_opt['ordered'] = True
         teacher_dict = create_task_teacher(ordered_opt)
         world_dict = DialogPartnerWorld(ordered_opt, [teacher_dict, dictionary])
 

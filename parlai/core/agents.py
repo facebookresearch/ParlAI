@@ -77,9 +77,10 @@ class Teacher(Agent):
 
 
 def create_task_teacher(opt):
-    """Creates a teacher assuming the input "task_dir:teacher_class"
-    e.g. def_string is "babi:Task1"
-    This essentially performs "from parlai.tasks.babi import Task1Teacher"
+    """Creates task agent(s) assuming the input "task_dir:teacher_class"
+    e.g. def_string is "babi:Task:1"
+    This essentially performs "from parlai.tasks.babi import TaskTeacher"
+    with the parameter 1 in opt['task'] to be used by the class TaskTeacher
     """
     if ',' not in opt['task']:
         # Single task

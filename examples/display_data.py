@@ -17,15 +17,10 @@ agent = RepeatLabelAgent(opt)
 world = DialogPartnerWorld(opt, [teacher, agent])
 
 # Show some example dialogs:
-for k in range(len(teacher)):
+for k in range(1000):
         world.parley()
-        if world.query.get('text', False):
-            print(world.query['text'])
-        if world.reply.get('text', False):
-            print('   A: ' + world.reply['text'])
-        if world.query['done']:
-            print('- - - - - - - - - - - - - - - - - - - - -')
-        if k > 100 and world.query['done']:
+        world.display()
+        if k > 100 and world.done():
             break
 
 world.shutdown()

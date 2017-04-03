@@ -1,4 +1,20 @@
 -- Copyright 2004-present Facebook. All Rights Reserved.
+--[[
+This file has the same functionality as memnn_agent, except that it expects
+(and returns) a zero-indexed vector (as a table) of word indices into the
+dictionary instead of strings.
+See memnn_agent for more details.
+
+Parsed zmq message table format:
+{
+    'text': {1: word_idx1, 2: word_idx2, 3: word_idx3},
+    'label': {
+        1: {1: ans1_idx},
+        2: {1: ans2_idx}
+    },
+    ...
+}
+--]]
 
 require('torch')
 local sys = require('sys')
