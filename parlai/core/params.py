@@ -35,11 +35,11 @@ class ParlaiParser(object):
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
         self.parser.add_argument(
             '-dp', '--datapath', default=default_data_path,
-            help='path to datasets, defaults to path pointed to' +
-                 ' in parlai/core/data_path.py')
+            help='path to datasets, defaults to {parlai_dir}/data')
         self.parser.add_argument(
             '--download-path', default=default_downloads_path,
-            help='path for non-data dependencies to store any needed files')
+            help='path for non-data dependencies to store any needed files.' +
+                 'defaults to {parlai_dir}/downloads')
         self.parser.add_argument(
             '-dt', '--datatype', default='train',
             choices=['train', 'train:ordered', 'valid', 'test'],
