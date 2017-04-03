@@ -24,10 +24,9 @@ def move(path1, path2):
 
 
 def download(path, url):
-    # TODO(jase): need to use normal wget
     os.system(
         ('cd %s' % path) +
-        '; ~/bin/sh/proxy-exec wget ' + url)
+        '; wget ' + url)
 
 
 def untar(path, fname):
