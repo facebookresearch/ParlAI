@@ -68,7 +68,6 @@ The core library contains the following files:
         MultiTaskTeacher: creates a set of teachers based on a "task string" passed to the Teacher, creating multiple teachers within it and alternating between them
         create_task_teacher: instantiate a teacher from a given task string (e.g. 'babi:task:1' or 'squad')
     build_data.py: basic utilities for setting up data for tasks. you can override if your filesystem needs different functionality.
-    data_path.py: sets the default path for storing data. you can edit this to move data files to somewhere else.
     data.py: contains some default classes for fixed text datasets
         TextData: sets up observation tables with 'text', 'labels', 'reward', and/or 'candidates' fields
         HogwildTextData: does the same thing as TextData, but stores underlying data in a shared-memory array
