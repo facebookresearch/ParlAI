@@ -1,0 +1,64 @@
+python_binary(
+  name='wikiqa_train',
+  py_version='>3',
+  main_module='parlai.examples.memnn_fb.wikiqa_train',
+  srcs=[
+    'wikiqa_train.py',
+  ],
+  deps=[
+    '@/deeplearning/projects/parlai:parlai',
+    '@/deeplearning/projects/parlai/parlai/agents/memnn_fb:memnn_zmq',
+  ],
+)
+
+python_binary(
+  name='wikiqa_train_hogwild',
+  py_version='>3',
+  main_module='parlai.examples.memnn_fb.wikiqa_train_hogwild',
+  srcs=[
+    'wikiqa_train_hogwild.py',
+  ],
+  deps=[
+    '@/deeplearning/projects/parlai:parlai',
+    '@/deeplearning/projects/parlai/parlai/agents/memnn_fb:memnn_zmq',
+  ],
+)
+
+python_binary(
+  name='babi_train',
+  py_version='>3',
+  main_module='parlai.examples.memnn_fb.babi_train',
+  srcs=[
+    'babi_train.py',
+  ],
+  deps=[
+    '@/deeplearning/projects/parlai:parlai',
+    '@/deeplearning/projects/parlai/parlai/agents/memnn_fb:memnn_zmq',
+  ],
+)
+
+python_binary(
+  name='babi_train_hogwild',
+  py_version='>3',
+  main_module='parlai.examples.memnn_fb.babi_train_hogwild',
+  srcs=[
+    'babi_train_hogwild.py',
+  ],
+  deps=[
+    '@/deeplearning/projects/parlai:parlai',
+    '@/deeplearning/projects/parlai/parlai/agents/memnn_fb:memnn_zmq',
+  ],
+)
+
+python_binary(
+  name='full_task_train',
+  py_version='>3',
+  main_module='parlai.examples.memnn_fb.full_task_train',
+  srcs=[
+    'full_task_train.py',
+  ],
+  deps=[
+    '@/deeplearning/projects/parlai:parlai',
+    '@/deeplearning/projects/parlai/parlai/agents/memnn_fb:memnn_zmq_parsed',
+  ],
+)

@@ -1,0 +1,188 @@
+#!/usr/bin/env python3
+# Copyright 2004-present Facebook. All Rights Reserved.
+
+from multiprocessing import RawArray
+import ctypes
+import random
+import sys
+
+
+class TextData(object):
+    """
+    Provides a data structure for accessing text data.
+    This can be used whenever the dialog data is a fixed log of chats
+    (i.e not a simulator setting). The logs can include dialog text and possibly
+    supervised labels, candidate labels and rewards.
+
+    All these are stored in this internal data format which is used by the
+    DialogTeacher class in dialog.py.
+
+    data_loader is an iterable, with each call returning:
+
+    (x, ...), new_episode?
+
+    Where...
+    x is a query and possibly context
+    ... can contain additional fields, specifically
+        y is an iterable of label(s) for that query
+        r is the str reward for getting that query correct
+        c is an iterable of candidates that the student can choose from
+    new_episode? is a boolean value specifying whether that example is the start
+    of a new episode. If you don't use episodes set this to True every time.
+
+    random tells the data class whether or not to visit episodes sequentially
+    or randomly when returning examples to the caller.
+    """
+    # data_loader should be a generator returning (Entry, new) tuples
+    def __init__(self, data_loader, random=False):
+        self.data = []
+        self._load(data_loader)
+        self.random = random
+        self.entry_generator = self._gen_entries()
+
+    # returns number of entries
+    def __len__(self):
+        length = 0
+        for l in self.data:
+            length += len(l)
+        return length
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return self._get_observation()
+
+    # data is an iterator over ((x,y,...), new_episode) of the data
+    def _load(self, data_loader):
+        episode = []
+        for entry, new in data_loader:
+            if new:
+                if len(episode) > 0:
+                    self.data.append(tuple(episode))
+                    episode = []
+
+            # intern all strings so we don't store them more than once
+            if type(entry) != list:
+                entry = list(entry)
+            for i in range(len(entry)):
+                field = entry[i]
+                if type(field) == str:
+                    entry[i] = sys.intern(field)
+                else:
+                    # if it's not a string, should be an iterable of strings
+                    try:
+                        tpl = tuple((sys.intern(e) if type(e) == str else e
+                                     for e in field))
+                        entry[i] = tpl
+                    except TypeError:
+                        # TODO(ahm): note what sucks about this code is it's
+                        # really hard to even know what file you are accessing
+                        # when reporting this error?
+                        raise TypeError('TextData only accepts strings or ' +
+                                        'iterables of strings.')
+            episode.append(tuple(entry))
+        if len(episode) > 0:
+            self.data.append(tuple(episode))
+
+    def _get_observation(self):
+        entry, done = next(self.entry_generator)
+
+        table = {}
+        table['text'] = entry[0]
+        if len(entry) > 1:
+            table['labels'] = entry[1]
+            if len(entry) > 2:
+                table['reward'] = entry[2]
+                if len(entry) > 3:
+                    table['candidates'] = entry[3]
+
+        # last entry in this episode
+        table['done'] = done
+        return table
+
+    # returns entries, doing episodes in order
+    # randomly switches between episodes if random flag set
+    def _gen_entries(self):
+        NUM_EPISODES = len(self.data)
+        episode_idx = -1
+        while True:
+            if self.random:
+                # select random episode
+                episode_idx = random.randrange(NUM_EPISODES)
+            else:
+                # select next episode
+                episode_idx = (episode_idx + 1) % NUM_EPISODES
+            episode = self.data[episode_idx]
+            for i in range(len(episode)):
+                yield (episode[i],  # current entry
+                       i == len(episode) - 1)  # is this the last entry in ep?
+
+
+class HogwildTextData(TextData):
+
+    def __init__(self, data_loader, random=False):
+        super().__init__(data_loader, random=False)
+        self.arr, self.ep_idxs = self._data2array(self.data)
+        del self.data
+        self.entry_generator = self._gen_entries()
+
+    def __len__(self):
+        return self.len
+
+    def _get_observation(self):
+        return next(self.entry_generator)
+
+    def _gen_entries(self):
+        table = {}
+        episode_idx = -1
+        while True:
+            # iterate randomly if training, ordered in valid/test
+            if self.random:
+                episode_idx = random.randrange(len(self.ep_idxs) - 1)
+            else:
+                episode_idx = (episode_idx + 1) % (len(self.ep_idxs) - 1)
+            # loop over each example in this episode, building that ex
+            for idx in range(self.ep_idxs[episode_idx],
+                             self.ep_idxs[episode_idx + 1],
+                             4):
+                table.clear()
+                table['text'] = self.arr[idx]
+                if self.arr[idx + 1]:
+                    table['labels'] = self.arr[idx + 1].split('|')
+                if self.arr[idx + 2]:
+                    table['reward'] = self.arr[idx + 2]
+                if self.arr[idx + 3]:
+                    table['candidates'] = self.arr[idx + 3].split('|')
+                table['done'] = idx == self.ep_idxs[episode_idx + 1] - 4
+                yield table
+
+    # returns data in array form, and indices to the start of each episode
+    def _data2array(self, data):
+        num_eps = len(data)
+        num_exs = super().__len__()
+        self.len = num_exs
+        ep_idxs = RawArray('i', num_eps + 1)
+        arr = RawArray(ctypes.c_wchar_p, num_exs * 4)
+
+        arr_idx = 0
+        for i, episode in enumerate(data):
+            ep_idxs[i] = arr_idx
+            for entry in episode:
+                text = entry[0]
+                # default to blank (need something in array), replace if avail.
+                labels, reward, candidates = [sys.intern('')] * 3
+                if len(entry) > 1:
+                    labels = sys.intern('|'.join(entry[1]))
+                    if len(entry) > 2:
+                        reward = entry[2]
+                        if len(entry) > 3:
+                            candidates = sys.intern('|'.join(entry[3]))
+
+                arr[arr_idx] = text
+                arr[arr_idx + 1] = labels
+                arr[arr_idx + 2] = reward
+                arr[arr_idx + 3] = candidates
+                arr_idx += 4
+        ep_idxs[-1] = arr_idx
+        return arr, ep_idxs

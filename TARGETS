@@ -1,0 +1,10 @@
+python_library(
+    name='parlai',
+    base_module='',
+    py_version=">3",
+    srcs=glob(['parlai/**/*.py']),
+    external_deps=[
+        ('pyzmq', 'any'),
+        ('nltk', '>3')
+    ]
+)
