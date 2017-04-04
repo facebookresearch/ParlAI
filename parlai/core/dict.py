@@ -112,12 +112,13 @@ class DictionaryAgent(Agent):
                 self.load(opt.get('dict_load_path'))
 
         # initialize tokenizers
+        st_path = 'tokenizers/punkt/{0}.pickle'.format(opt.get('dict_language'))
         try:
-            self.sent_tok = nltk.data.load(
-                'tokenizers/punkt/{0}.pickle'.format(opt.get('dict_language'))
-            )
+            self.sent_tok = nltk.data.load(st_path)
         except LookupError:
             nltk.download('punkt')
+            self.sent_tok = nltk.data.load(st_path)
+
         self.word_tok = nltk.tokenize.treebank.TreebankWordTokenizer()
 
         if not shared:
