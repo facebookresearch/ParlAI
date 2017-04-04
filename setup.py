@@ -16,5 +16,7 @@ setup(
     long_description=readme,
     url='https://github.com/facebook/ParlAI',
     license=license,
-    packages=find_packages(exclude=('data', 'docs', 'tests'))
+    packages=find_packages(exclude=(
+        'data', 'docs', 'downloads', 'examples', 'tests')),
+    install_requires=['pyzmq'],
 )
