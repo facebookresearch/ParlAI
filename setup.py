@@ -12,7 +12,7 @@ with open('LICENSE') as f:
 setup(
     name='parlai',
     version='0.1.0',
-    description='TBD',
+    description='Unified API for accessing dialog datasets.',
     long_description=readme,
     url='https://github.com/facebook/ParlAI',
     license=license,

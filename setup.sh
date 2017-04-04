@@ -1,4 +1,7 @@
 #!/bin/bash
 
-echo 'setting up local python environment'
-python3 setup.py develop
+if [ -e requirements.txt ]; then
+    pip install -r requirements.txt
+fi
+
+python setup.py install
