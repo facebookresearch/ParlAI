@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
 """This module provides access to data in the Facebook Dialog format.
 
