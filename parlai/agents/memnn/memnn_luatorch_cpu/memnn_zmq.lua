@@ -10,12 +10,6 @@ often used by a single-threaded validation thread and the remaining n by the
 training threads.
 --]]
 
-require('torch')
-local zmq = require('lzmq')
-local cjson = require('cjson')
-local threads = require('threads')
-threads.Threads.serialization('threads.sharedserialize')
-
 -- make sure dependencies are set up
 local libdir = os.getenv('PARLAI_DOWNPATH') .. '/memnnlib'
 if not os.rename(libdir, libdir) then
@@ -26,6 +20,12 @@ if not os.rename(libdir, libdir) then
            'error running ' .. libdir .. '/KVMemnn/setup.sh')
 end
 package.path =  libdir .. '/KVMemnn/?.lua' .. ';' .. package.path
+
+require('torch')
+local zmq = require('lzmq')
+local cjson = require('cjson')
+local threads = require('threads')
+threads.Threads.serialization('threads.sharedserialize')
 
 -- read args
 local port = assert(arg[1], 'need port')
