@@ -14,7 +14,7 @@ training threads.
 local libdir = os.getenv('PARLAI_DOWNPATH') .. '/memnnlib'
 if not os.rename(libdir, libdir) then
     print('could not find memnnlib, trying to clone it now')
-    assert(os.execute('git clone git@github.com:facebook/MemNN.git ' .. libdir),
+    assert(os.execute('git clone https://github.com/facebook/MemNN.git ' .. libdir),
            'error cloning into github.com/facebook/MemNN')
     assert(os.execute('cd ' .. libdir .. '/KVMemnn/ && ./setup.sh'),
            'error running ' .. libdir .. '/KVMemnn/setup.sh')
