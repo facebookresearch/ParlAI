@@ -167,7 +167,7 @@ class MultiWorld(World):
             opt_singletask = copy.deepcopy(opt)
             opt_singletask['task'] = k
             self.worlds.append(
-                create_task_world(opt_singletask, user_agents))
+                create_task(opt_singletask, user_agents))
         self.world_idx = -1
         self.new_world = True
         self.parleys = 0
