@@ -49,12 +49,12 @@ class ParlaiParser(object):
             '-n', '--numthreads', default=1, type=int,
             help='number of threads, e.g. for hogwild')
 
-    def parse_args(self, print_args=True):
+    def parse_args(self, args=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the args.
         We specifically remove items with `None` as values in order to support
         the style `opt.get(key, default)`, which would otherwise return None.
         """
-        self.args = self.parser.parse_args()
+        self.args = self.parser.parse_args(args=args)
         self.opt = {k: v for k, v in vars(self.args).items() if v is not None}
         if print_args:
             self.print_args()
@@ -64,6 +64,6 @@ class ParlaiParser(object):
     def print_args(self):
         """Print out all the arguments in this parser."""
         if not self.opt:
-            self.parse_args(False)
+            self.parse_args(print_args=False)
         for key, value in self.opt.items():
             print('[' + str(key) + ':' + str(value) + ']')

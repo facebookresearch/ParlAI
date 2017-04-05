@@ -84,16 +84,19 @@ class DialogPartnerWorld(World):
         self.is_done = self.query['done']
 
     def display(self):
+        lines = []
         if self.query.get('reward', None) is not None:
-            print('   [reward: {r}]'.format(r=self.query['reward']))
+            lines.append('   [reward: {r}]'.format(r=self.query['reward']))
         if self.query.get('text', False):
-            print(self.query['text'])
+            lines.append(self.query['text'])
         if self.query.get('candidates', False):
-            print('[cands:' + '|'.join(self.query['candidates']) + ']')
+            lines.append('[cands: {}]'.format(
+                         '|'.join(self.query['candidates'])))
         if self.reply.get('text', False):
-            print("   A: " + self.reply['text'])
+            lines.append('   A: ' + self.reply['text'])
         if self.done():
-            print('- - - - - - - - - - - - - - - - - - - - -')
+            lines.append('- - - - - - - - - - - - - - - - - - - - -')
+        return '\n'.join(lines)
 
     def shutdown(self):
         """Shutdown each agent."""

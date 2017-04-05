@@ -19,7 +19,7 @@ world = DialogPartnerWorld(opt, [teacher, agent])
 # Show some example dialogs:
 for k in range(1000):
         world.parley()
-        world.display()
+        print(world.display())
         if k > 100 and world.done():
             break
 
