@@ -16,9 +16,9 @@ world = create_task(opt, agent)
 
 # Show some example dialogs:
 for k in range(1000):
-        world.parley()
-        world.display()
-        if k > 100 and world.done():
-            break
+	world.parley()
+	print(world.display())
+	if k > 100 and world.done():
+		break
 
 world.shutdown()

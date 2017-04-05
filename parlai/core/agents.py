@@ -123,9 +123,9 @@ class MultiTaskTeacher(Teacher):
             print("[creating " + k + "]")
             opt_singletask = copy.deepcopy(opt)
             opt_singletask['task'] = k
-            self.tasks = self.tasks + create_task_agents(opt_singletask)
+            self.tasks.extend(create_task_agents(opt_singletask))
         self.task_idx = -1
-        self.new_task = False
+        self.new_task = True
         self.random = opt.get('datatype') == 'train'
 
     def __len__(self):

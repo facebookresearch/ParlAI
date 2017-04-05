@@ -15,7 +15,9 @@ HogwildWorld(World) creates another world within itself for every thread, in
     agents.
 """
 
+import copy
 import importlib
+import random
 
 from multiprocessing import Process, Value, Condition, Semaphore
 from collections import deque
@@ -58,6 +60,9 @@ class World(object):
         """Whether the episode is done or not. """
         return self.is_done
 
+    def __len__(self):
+        return 0
+
     def display(self):
         """Returns a string describing the current state of the world.
         Useful for monitoring and debugging. """
@@ -95,14 +100,14 @@ def create_task(opt, user_agents):
     if type(user_agents) != list:
         user_agents = [user_agents]
 
-    if opt['task'].find(',') == -1:
+    if not ',' in opt['task']:
         # Single task
         world = create_task_world(opt, user_agents)
         return world
     else:
         # Multitask teacher/agent
         worlds = MultiWorld(opt, user_agents)
-        return worlds()
+        return worlds
 
 
 class DialogPartnerWorld(World):
@@ -114,36 +119,44 @@ class DialogPartnerWorld(World):
         if len(agents) != 2:
             raise RuntimeError('There must be exactly two agents for this ' +
                                'world.')
-        self.teach = agents[0]
+        self.teacher = agents[0]
         self.agent = agents[1]
         self.reply = {}
 
     def parley(self):
         """Teacher goes first. Alternate between the teacher and the agent."""
-        self.query = validate(self.teach.act(self.reply))
+        self.query = validate(self.teacher.act(self.reply))
         self.reply = validate(self.agent.act(self.query))
         self.is_done = self.query['done']
 
     def display(self):
+        s = ''
         if self.query.get('reward', None) is not None:
-            print('   [reward: {r}]'.format(r=self.query['reward']))
-        if self.query.get('text', False):
-            print(self.query['text'])
+            s = s + '   [reward: {r}]\n'.format(r=self.query['reward'])
+        if self.query.get('text', '') != '':
+            s = s + self.query['text'] + '\n'
         if self.query.get('candidates', False):
-            print('[cands:' + '|'.join(self.query['candidates']) + ']')
-        if self.reply.get('text', False):
-            print("   A: " + self.reply['text'])
+            s = s + '[cands:' + '|'.join(self.query['candidates']) + ']\n'
+        if self.reply.get('text', '') != '':
+            s = s + "   A: " + self.reply['text'] + '\n'
         if self.done():
-            print('- - - - - - - - - - - - - - - - - - - - -')
+            s = s + '- - - - - - - - - - - - - - - - - - - - -\n'
+        return s.rstrip('\n')
+
+    def __len__(self):
+        return len(self.teacher)
 
     def shutdown(self):
         """Shutdown each agent."""
-        self.teach.shutdown()
+        self.teacher.shutdown()
         self.agent.shutdown()
+
 
 class MultiWorld(World):
     """Container for a set of worlds where each world gets a turn
-    in a round-robin fashion. The same user_agents are placed in each.
+    in a round-robin fashion. The same user_agents are placed in each,
+    though each world may contain additional agents according to the task
+    that world represents.
     """
 
     def __init__(self, opt, user_agents):
@@ -153,26 +166,45 @@ class MultiWorld(World):
             print("[creating world: " + k + "]")
             opt_singletask = copy.deepcopy(opt)
             opt_singletask['task'] = k
-            self.tasks = (self.tasks +
-                          create_task_world(opt_singletask, user_agents))
-        self.task_idx = -1
-        self.new_task = False
+            self.worlds.append(
+                create_task_world(opt_singletask, user_agents))
+        self.world_idx = -1
+        self.new_world = True
+        self.parleys = 0
+        self.random = opt.get('datatype') == 'train'
+        super().__init__(opt)
 
     def __len__(self):
         if not hasattr(self, 'len'):
             self.len = 0
-            # length is sum of all task lengths
+            # length is sum of all world lengths
             for _ind, t in enumerate(self.worlds):
                 self.len += len(t)
         return self.len
 
-        if t['done']:
-            self.new_task = True
-        return t
-
     def parley(self):
-        
+        if self.new_world:
+            self.new_world = False
+            self.parleys = 0
+            if self.random:
+                self.world_idx = random.randrange(len(self.worlds))
+            else:
+                self.world_idx = (self.world_idx + 1) % len(self.worlds)
+        t = self.worlds[self.world_idx]
+        t.parley()
+        self.parleys = self.parleys + 1
+        if t.done():
+            self.new_world = True
 
+    def display(self):
+        if self.world_idx != -1:
+            s = ''
+            if self.parleys == 1:
+                s = '[world ' + str(self.world_idx) + ']\n' 
+            s = s + self.worlds[self.world_idx].display()
+            return s
+        else:
+            return ''
 
 class MultiAgentDialogWorld(World):
     """Basic world where each agent gets a turn in a round-robin fashion,
