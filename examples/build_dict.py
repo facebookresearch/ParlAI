@@ -5,7 +5,7 @@
 from parlai.core.dict import DictionaryAgent
 from parlai.core.worlds import DialogPartnerWorld
 from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_task_teacher
+from parlai.core.worlds import create_task
 
 # Get command line arguments
 argparser = ParlaiParser()
@@ -17,11 +17,10 @@ dictionary = DictionaryAgent(opt)
 for datatype in ['train:ordered', 'valid']:
     # we use train and valid sets to build dictionary
     opt['datatype'] = datatype
-    teacher = create_task_teacher(opt)
-    world = DialogPartnerWorld(opt, [teacher, dictionary])
+    world = create_task(opt, dictionary)
 
     # pass examples to dictionary
-    for _ in range(len(teacher)):
+    for _ in range(len(world)):
         world.parley()
 
 if 'dict_savepath' in opt:

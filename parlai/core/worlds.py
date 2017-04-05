@@ -15,8 +15,11 @@ HogwildWorld(World) creates another world within itself for every thread, in
     agents.
 """
 
+import importlib
+
 from multiprocessing import Process, Value, Condition, Semaphore
 from collections import deque
+from parlai.core.agents import create_task_agents
 
 def validate(observation):
     """Make sure the observation table is valid, or raise an error."""
@@ -64,6 +67,44 @@ class World(object):
         pass
 
 
+def create_task_world(opt, user_agents):
+    sp = opt['task'].strip().split(':')
+    task = sp[0].lower()
+    if len(sp) > 1:
+        sp[1] = sp[1][0].upper() + sp[1][1:]
+        world_name = sp[1] + "World"
+    else:
+        world_name = "DefaultWorld"
+    module_name = "parlai.tasks.%s.worlds" % (task)
+    try:
+        my_module = importlib.import_module(module_name)
+        world_class = getattr(my_module, world_name)
+    except:
+        # Defaults to this if you did not specify a world for your task.
+        world_class = DialogPartnerWorld
+    task_agents = create_task_agents(opt)
+    world = world_class(opt, task_agents + user_agents)
+    return world
+
+
+def create_task(opt, user_agents):
+    """Creates a world + task_agents (aka a task)
+    assuming opt['task']="task_dir:teacher_class:options"
+    e.g. "babi:Task1k:1"
+    """
+    if type(user_agents) != list:
+        user_agents = [user_agents]
+
+    if opt['task'].find(',') == -1:
+        # Single task
+        world = create_task_world(opt, user_agents)
+        return world
+    else:
+        # Multitask teacher/agent
+        worlds = MultiWorld(opt, user_agents)
+        return worlds()
+
+
 class DialogPartnerWorld(World):
     """This basic world switches back and forth between two agents, giving each
     agent one chance to speak per turn and passing that back to the other agent.
@@ -99,6 +140,38 @@ class DialogPartnerWorld(World):
         """Shutdown each agent."""
         self.teach.shutdown()
         self.agent.shutdown()
+
+class MultiWorld(World):
+    """Container for a set of worlds where each world gets a turn
+    in a round-robin fashion. The same user_agents are placed in each.
+    """
+
+    def __init__(self, opt, user_agents):
+        self.worlds = []
+        tasks = opt['task'].split(',')
+        for k in tasks:
+            print("[creating world: " + k + "]")
+            opt_singletask = copy.deepcopy(opt)
+            opt_singletask['task'] = k
+            self.tasks = (self.tasks +
+                          create_task_world(opt_singletask, user_agents))
+        self.task_idx = -1
+        self.new_task = False
+
+    def __len__(self):
+        if not hasattr(self, 'len'):
+            self.len = 0
+            # length is sum of all task lengths
+            for _ind, t in enumerate(self.worlds):
+                self.len += len(t)
+        return self.len
+
+        if t['done']:
+            self.new_task = True
+        return t
+
+    def parley(self):
+        
 
 
 class MultiAgentDialogWorld(World):
