@@ -10,24 +10,24 @@ from .build import build
 def _path(opt, filtered):
     # Build the data if it doesn't exist.
     build(opt)
-    return (opt['datapath'] + '/WikiQA/' +
+    return (opt['datapath'] + '/MCTest/' +
             '{type}.txt'.format(
                 type=opt['datatype'] + filtered))
 
 
-class FilteredTeacher(FbDialogTeacher):
+class Task160Teacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['datafile'] = _path(opt, '-filtered')
+        opt['datafile'] = _path(opt, '160')
         super().__init__(opt, shared)
 
 
-class UnfilteredTeacher(FbDialogTeacher):
+class Task500Teacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['datafile'] = _path(opt, '')
+        opt['datafile'] = _path(opt, '500')
         super().__init__(opt, shared)
 
 
-class DefaultTeacher(FilteredTeacher):
+class DefaultTeacher(Task500Teacher):
     pass

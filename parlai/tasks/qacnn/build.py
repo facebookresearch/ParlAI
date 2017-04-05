@@ -42,12 +42,8 @@ def build(opt):
 
         # Download the data.
         fname = "cnn.tgz"
-        # TODO(jase): Should use this, but doesn't work on devserver:
-        # gd_id = "0BwmD_VLjROrfTTljRDVZMFJnVWM"
-        # build_data.download_file_from_google_drive(gd_id, dpath .. fname)
-        # so use this instead for now:
-        url = "http://www.thespermwhale.com/jaseweston/babi/" + fname
-        build_data.download(dpath, url)
+        gd_id = "0BwmD_VLjROrfTTljRDVZMFJnVWM"
+        build_data.download_file_from_google_drive(gd_id, dpath + fname)
         build_data.untar(dpath, fname)
 
         create_fb_format(dpath, 'train', dpath + 'cnn/questions/training/')

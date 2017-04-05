@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
 
 from .agents import Teacher
@@ -89,9 +90,9 @@ class _RegularDialogTeacher(Teacher):
                 self.metrics['correct'] += 1
                 # update reward
                 if self.lastR is not None:
-                    reward = self.defaultPosReward
-                else:
                     reward = self.lastR
+                else:
+                    reward = self.defaultPosReward
             else:
                 reward = self.defaultNegReward
             self.lastY = None
