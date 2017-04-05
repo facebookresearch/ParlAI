@@ -11,8 +11,8 @@ MultiTaskTeacher(Teacher): creates a set of teachers based on a "task string"
 
 Also provides a utility method (used by MultiTaskTeacher) for instantiating
     teachers from a string, assuming they follow our naming conventions:
-create_task_teacher(str): instantiate a teacher from a given task string
-    (e.g. 'babi:task:1' or 'squad')
+create_task_agents(str): instantiate task-specific agents (e.g. a teacher)
+    from a given task string (e.g. 'babi:task1k:1' or 'squad')
 """
 
 import copy
@@ -75,9 +75,9 @@ class Teacher(Agent):
         return self.metrics
 
 
-def create_task_teacher(opt):
+def create_task_agents(opt):
     """Creates task agent(s) assuming the input "task_dir:teacher_class"
-    e.g. def_string is "babi:Task:1"
+    e.g. def_string is "babi:Task1k:1"
     This essentially performs "from parlai.tasks.babi import TaskTeacher"
     with the parameter 1 in opt['task'] to be used by the class TaskTeacher
     """
@@ -94,18 +94,25 @@ def create_task_teacher(opt):
         my_module = importlib.import_module(module_name)
         class_name = teacher
         teacher_class = getattr(my_module, class_name)
-        return teacher_class(opt)
+        task_agents = teacher_class(opt)
+        if type(task_agents) != list:
+            task_agents = [task_agents]
+        return task_agents
     else:
-        # Multitask
-        teacher_class = MultiTaskTeacher
-        return teacher_class(opt)
+        # Multitask teacher/agent
+        task_agents = MultiTaskTeacher(opt)
+        if type(task_agents) != list:
+            task_agents = [task_agents]
+        return task_agents
 
 
 class MultiTaskTeacher(Teacher):
-    """Generates a set of teachers based on a task string--each of these
-    teachers will get called in turn, either randomly or in order.
+    """Creates a teacher that is actually a set of teachers each based on
+    a task string--each of these teachers will get called in turn,
+    either randomly or in order.
+    They are all in the same world (they are the same agent switching tasks).
 
-    The task string format is described for the `create_task_teacher` function
+    The task string format is described for the `create_task_agents` function
     above.
     """
 
@@ -116,7 +123,7 @@ class MultiTaskTeacher(Teacher):
             print("[creating " + k + "]")
             opt_singletask = copy.deepcopy(opt)
             opt_singletask['task'] = k
-            self.tasks.append(create_task_teacher(opt_singletask))
+            self.tasks = self.tasks + create_task_agents(opt_singletask)
         self.task_idx = -1
         self.new_task = False
         self.random = opt.get('datatype') == 'train'
