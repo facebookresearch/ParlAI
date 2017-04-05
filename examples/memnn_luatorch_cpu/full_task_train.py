@@ -11,7 +11,8 @@ parsing (and could also build its own dictionary).
 """
 
 from parlai.agents.remote_agent.agents import ParsedRemoteAgent
-from parlai.core.agents import create_task_teacher
+from parlai.core.agents import create_task_agents
+from parlai.core.worlds import create_task
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import DialogPartnerWorld, HogwildWorld
@@ -34,11 +35,9 @@ if not opt.get('dict_loadpath'):
     for datatype in ['train:ordered', 'valid']:
         # we use train and valid sets to build dictionary
         ordered_opt['datatype'] = datatype
-        teacher_dict = create_task_teacher(ordered_opt)
-        world_dict = DialogPartnerWorld(ordered_opt, [teacher_dict, dictionary])
-
+        world_dict = create_task(ordered_opt, dictionary)
         # pass examples to dictionary
-        for _ in range(len(teacher_dict)):
+        for _ in range(len(world_dict)):
             world_dict.parley()
 
     # we need to save the dictionary to load it in memnn (sort it by frequency)
@@ -47,15 +46,19 @@ if not opt.get('dict_loadpath'):
 print('Dictionary ready, moving on to training.')
 
 opt['datatype'] = 'train'
-teacher_train = create_task_teacher(opt)
 agent = ParsedRemoteAgent(opt, {'dictionary': dictionary})
+agents_train = create_task_agents(opt)
+agents_train.append(agent)
+teacher_train = agents_train[0]
 opt['datatype'] = 'valid'
-teacher_valid = create_task_teacher(opt)
+agents_valid = create_task_agents(opt)
+agents_valid.append(agent)
+teacher_valid = agents_valid[0]
 
-world_train = (HogwildWorld(opt, [teacher_train, agent])
+world_train = (HogwildWorld(opt, agents_train)
                if opt.get('numthreads', 1) > 1 else
-               DialogPartnerWorld(opt, [teacher_train, agent]))
-world_valid = DialogPartnerWorld(opt, [teacher_valid, agent])
+               DialogPartnerWorld(opt, agents_train))
+world_valid = DialogPartnerWorld(opt, agents_valid)
 
 start = time.time()
 with world_valid, world_train:

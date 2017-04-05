@@ -34,9 +34,21 @@ class Task10kTeacher(FbDialogTeacher):
 
 
 # By default train on all tasks at once.
-class DefaultTeacher(MultiTaskTeacher):
+class All1kTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
-        # opt['task'] = "babi:Task:1,babi:Task:2" etc.
         opt = copy.deepcopy(opt)
         opt['task'] = ','.join('babi:Task1k:%d' % (i + 1) for i in range(20))
         super().__init__(opt, shared)
+
+
+# By default train on all tasks at once.
+class All10kTeacher(MultiTaskTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        opt['task'] = ','.join('babi:Task10k:%d' % (i + 1) for i in range(20))
+        super().__init__(opt, shared)
+
+
+# By default train on all tasks at once.
+class DefaultTeacher(All1kTeacher):
+    pass

@@ -42,7 +42,7 @@ class DefaultTeacher(Teacher):
         question_idx = self.examples[episode_idx][2]
         qa = paragraph['qas'][question_idx]
         question = qa['question']
-        answers = (a['text'] for a in qa['answers'])
+        answers = [a['text'] for a in qa['answers']]
         context = paragraph['context']
         return {
             'text': context + '\n' + question,
