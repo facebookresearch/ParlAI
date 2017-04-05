@@ -59,7 +59,7 @@ world_train = (HogwildWorld(opt, agents_train)
                if opt.get('numthreads', 1) > 1 else
                DialogPartnerWorld(opt, agents_train))
 world_valid = DialogPartnerWorld(opt, agents_valid)
-g.g=5
+
 start = time.time()
 with world_valid, world_train:
     for _ in range(10):
