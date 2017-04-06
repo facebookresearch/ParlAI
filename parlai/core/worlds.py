@@ -130,18 +130,19 @@ class DialogPartnerWorld(World):
         self.is_done = self.query['done']
 
     def display(self):
-        s = ''
+        lines = []
         if self.query.get('reward', None) is not None:
-            s = s + '   [reward: {r}]\n'.format(r=self.query['reward'])
-        if self.query.get('text', '') != '':
-            s = s + self.query['text'] + '\n'
+            lines.append('   [reward: {r}]'.format(r=self.query['reward']))
+        if self.query.get('text', ''):
+            lines.append(self.query['text'])
         if self.query.get('candidates', False):
-            s = s + '[cands:' + '|'.join(self.query['candidates']) + ']\n'
-        if self.reply.get('text', '') != '':
-            s = s + "   A: " + self.reply['text'] + '\n'
+            lines.append('[cands: {}]'.format(
+                         '|'.join(self.query['candidates'])))
+        if self.reply.get('text', ''):
+            lines.append('   A: ' + self.reply['text'])
         if self.done():
-            s = s + '- - - - - - - - - - - - - - - - - - - - -\n'
-        return s.rstrip('\n')
+            lines.append('- - - - - - - - - - - - - - - - - - - - -')
+        return '\n'.join(lines)
 
     def __len__(self):
         return len(self.teacher)
@@ -200,7 +201,7 @@ class MultiWorld(World):
         if self.world_idx != -1:
             s = ''
             if self.parleys == 1:
-                s = '[world ' + str(self.world_idx) + ']\n' 
+                s = '[world ' + str(self.world_idx) + ']\n'
             s = s + self.worlds[self.world_idx].display()
             return s
         else:

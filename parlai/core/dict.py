@@ -4,6 +4,7 @@
 from .agents import Agent
 from .thread_utils import SharedTable
 from collections import defaultdict
+import numpy as np
 import nltk
 
 
@@ -156,6 +157,9 @@ class DictionaryAgent(Agent):
             # return index from token, or unk_token's index, or None
             return self.tok2ind.get(key, self.tok2ind.get(self.unk_token, None))
 
+    def __len__(self):
+        return len(self.tok2ind)
+
     def __setitem__(self, key, value):
         """If the key is not in the dictionary, add it to the dictionary and set
         its frequency to value if value is not None; else, set it to 0. If the
@@ -276,8 +280,8 @@ class DictionaryAgent(Agent):
         """Converts a string to a vector (list of ints).
         First runs a sentence tokenizer, then a word tokenizer.
         """
-        # TODO(ahm): return numpy arrays instead
-        return [self[token] for token in self.tokenize(str(text))]
+        return np.fromiter((self[token] for token in self.tokenize(str(text))),
+                           np.int)
 
     def vec2txt(self, vector, delimiter=' '):
         """Converts a vector (iterable of ints) into a string, with each token
