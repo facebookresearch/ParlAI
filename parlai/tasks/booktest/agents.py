@@ -1,45 +1,38 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
 
+import copy
 import json
 import random
 from parlai.core.agents import Teacher
-from parlai.core.dialog import DialogTeacher
+from parlai.core.fbdialog import FbDialogTeacher
 from .build import build
 
 
-class Teacher(FbDialogTeacher):
+class EvalTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['datafile'] = _path(opt, '-filtered')
-        super().__init__(opt, shared)
+        if opt['datatype'].startswith('valid'):
+            suffix = 'validation_NECN.20k'
+        else:
+            suffix = 'test_CN.10k.txt'
+        opt['datafile'] = (
+            opt['datapath'] + 'BookTest/booktest-gut/' +
+            suffix + '.txt')
+        super().__init__(opt, shared)    
 
 
-class TestNETeacher(FbDialogTeacher):
-    def __init__(self, opt, shared=None):
-        opt = copy.deepcopy(opt)
-        opt['datafile'] = _path(opt, '')
-        super().__init__(opt, shared)
-
-class DefaultTeacher(Teacher):
+class StreamTeacher(Teacher):
     """
     Hand-written streaming teacher,
     as the data is too big to fit in memory.
     """
 
     def __init__(self, opt, shared=None):
-        self.datatype = opt['datatype']
         build(opt)
-        suffix = opt['datatype']
-        if opt['datatype'].startswith('train'):
-            suffix = 'train.14M+'
-        else:
-            if opt['datatype'].startswith('valid'):
-                suffix = 'validation_NECN.20k'
-            else:
-                suffix = 'test_CN.10k.txt'
+        # Only used for the train set.
         self.datafile = (
             opt['datapath'] + 'BookTest/booktest-gut/' +
-            suffix + '.txt')
+            'train.14M+.txt')
         self.fin = open(self.datafile)
 
     def __len__(self):
@@ -86,3 +79,11 @@ class DefaultTeacher(Teacher):
     def act(self, observation):
         obs = self.get_next()
         return obs
+
+
+def create_agents(opt):
+    dt = opt['datatype']
+    if dt == 'train':
+        return StreamTeacher(opt)
+    else:
+        return EvalTeacher(opt)

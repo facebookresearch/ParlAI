@@ -52,7 +52,3 @@ class All10kTeacher(MultiTaskTeacher):
 # By default train on all tasks at once.
 class DefaultTeacher(All1kTeacher):
     pass
-
-
-def create_agents(opt):
-    return DefaultTeacher(opt)

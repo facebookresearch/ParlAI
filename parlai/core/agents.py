@@ -97,7 +97,6 @@ def create_task_agent_from_taskname(opt):
             task_agents = [task_agents]
         return task_agents
     else:
-        print("MT")
         # Multitask teacher/agent
         task_agents = MultiTaskTeacher(opt)
         if type(task_agents) != list:
@@ -142,8 +141,7 @@ class MultiTaskTeacher(Teacher):
         for k in tasks:
             opt_singletask = copy.deepcopy(opt)
             opt_singletask['task'] = k
-            self.tasks.extend(
-                create_task_agent_from_taskname(opt_singletask))
+            self.tasks.extend(create_task_agent_from_taskname(opt_singletask))
         self.task_idx = -1
         self.new_task = True
         self.random = opt.get('datatype') == 'train'
