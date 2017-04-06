@@ -74,8 +74,7 @@ class Teacher(Agent):
     def report(self):
         return self.metrics
 
-
-def create_task_agents(opt):
+def create_task_agent_from_taskname(opt):
     """Creates task agent(s) assuming the input "task_dir:teacher_class"
     e.g. def_string is "babi:Task1k:1"
     This essentially performs "from parlai.tasks.babi import TaskTeacher"
@@ -90,10 +89,9 @@ def create_task_agents(opt):
             teacher = sp[1] + "Teacher"
         else:
             teacher = "DefaultTeacher"
-        module_name = "parlai.tasks.%s.teachers" % (task)
+        module_name = "parlai.tasks.%s.agents" % (task)
         my_module = importlib.import_module(module_name)
-        class_name = teacher
-        teacher_class = getattr(my_module, class_name)
+        teacher_class = getattr(my_module, teacher)
         task_agents = teacher_class(opt)
         if type(task_agents) != list:
             task_agents = [task_agents]
@@ -104,6 +102,31 @@ def create_task_agents(opt):
         if type(task_agents) != list:
             task_agents = [task_agents]
         return task_agents
+
+
+def create_task_agents(opt):
+    """Creates task agent(s) for the given task name.
+    It does this by calling the create_agent function in agents.py of the
+    given task.
+    If create_agents function does not exist, it just looks for
+    the teacher (agent) class defined by the task name directly.
+    (This saves the task creator bothering to define the
+    create_agents function when it is not needed.)
+    """
+    sp = opt['task'].strip().split(':')
+    task = sp[0].lower()
+    module_name = "parlai.tasks.%s.agents" % (task)
+    my_module = importlib.import_module(module_name)
+    try:
+        # Tries to call the create_agent function in agents.py
+        create_agent = getattr(my_module, 'create_agents')
+        task_agents = create_agent(opt)
+    except:
+        # Create_agent not found, so try to create the teacher directly.
+        return create_task_agent_from_taskname(opt)
+    if type(task_agents) != list:
+        task_agents = [task_agents]
+    return task_agents
 
 
 class MultiTaskTeacher(Teacher):
@@ -120,10 +143,9 @@ class MultiTaskTeacher(Teacher):
         self.tasks = []
         tasks = opt['task'].split(',')
         for k in tasks:
-            print("[creating " + k + "]")
             opt_singletask = copy.deepcopy(opt)
             opt_singletask['task'] = k
-            self.tasks.extend(create_task_agents(opt_singletask))
+            self.tasks.extend(create_task_agent_from_taskname(opt_singletask))
         self.task_idx = -1
         self.new_task = True
         self.random = opt.get('datatype') == 'train'

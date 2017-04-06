@@ -11,38 +11,45 @@ def built(path):
 
 
 def remove_dir(path):
-    os.system('rm -rf %s' % (path))
-
+    s = ('rm -rf %s' % (path))
+    if os.system(s) != 0:
+        raise RuntimeError('failed: ' + s)
 
 def make_dir(path):
-    os.system('mkdir -p %s' % (path))
+    s = ('mkdir -p %s' % (path))
+    if os.system(s) != 0:
+        raise RuntimeError('failed: ' + s)
 
 
 def move(path1, path2):
-    os.system('mv %s %s' % (path1, path2))
-
+    s = ('mv %s %s' % (path1, path2))
+    if os.system(s) != 0:
+        raise RuntimeError('failed: ' + s)
 
 def download(path, url):
-    os.system(
-        ('cd %s' % path) +
-        '; wget ' + url)
-
+    s = ('cd %s' % path) + '; wget ' + url
+    if os.system(s) != 0:
+        raise RuntimeError('failed: ' + s)
+    
 
 def untar(path, fname):
-    os.system(
-        ('cd %s' % path) + ';' +
-        'tar xvfz %s' % (path + fname))
-
+    s = ('cd %s' % path) + ';' + 'tar xvfz %s' % (path + fname)
+    if os.system(s) != 0:
+        raise RuntimeError('failed: ' + s)
+    # remove tar file
+    s = ('cd %s' % path) + ';' + 'rm %s' % (path + fname)
+    if os.system(s) != 0:
+        raise RuntimeError('failed: ' + s)
 
 def mark_done(path):
-    os.system('date > %s/.built' % path)
-
+    s = ('date > %s/.built' % path)
+    if os.system(s) != 0:
+        raise RuntimeError('failed: ' + s)
 
 def _get_confirm_token(response):
     for key, value in response.cookies.items():
         if key.startswith('download_warning'):
             return value
-
     return None
 
 

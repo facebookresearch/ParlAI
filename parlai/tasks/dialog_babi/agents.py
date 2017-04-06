@@ -25,7 +25,7 @@ def _path(task, opt):
         suffix = 'tst'
     elif dt == 'valid':
         suffix = 'dev'
-    return (opt['datapath'] + 'dialog-bAbI/dialog-bAbI-tasks/' +
+    return (opt['datapath'] + '/dialog-bAbI/dialog-bAbI-tasks/' +
             '{tsk}-{type}.txt'.format(
             tsk=tasks[int(task)], type=suffix))
 
