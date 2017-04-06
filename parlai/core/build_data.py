@@ -36,6 +36,10 @@ def untar(path, fname):
     s = ('cd %s' % path) + ';' + 'tar xvfz %s' % (path + fname)
     if os.system(s) != 0:
         raise RuntimeError('failed: ' + s)
+    # remove tar file
+    s = ('cd %s' % path) + ';' + 'rm %s' % (path + fname)
+    if os.system(s) != 0:
+        raise RuntimeError('failed: ' + s)
 
 def mark_done(path):
     s = ('date > %s/.built' % path)

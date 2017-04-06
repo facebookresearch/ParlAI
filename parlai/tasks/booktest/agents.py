@@ -58,21 +58,17 @@ class StreamTeacher(Teacher):
             l = l.rstrip('\n')
             l = l[l.find(' ')+1:]  # strip index
             s = l.split('\t')
-            if len(s) > 1:
-                question = s[0]
-                answers = [ s[1] ]
-                if len(s) > 3:
-                    cands = s[3].split('|')
-                break
+            if len(s) == 1:
+                context += s[0] + ' '
             else:
-                context = context + s[0] + ' '
-        obs = {
-            'text': context.rstrip(' ') + ' ' + question,
-            'labels': answers,
-            'candidates': cands,
-            'done': True
-            }
+                return {
+                    'text': context.rstrip(' ') + ' ' + question,
+                    'labels': [s[1]],
+                    'candidates': s[3].split('|') if len(s) > 3 else None,
+                    'done': True
+                    }
         return obs
+
 
     # return state/action dict based upon passed state
     def act(self, observation):
