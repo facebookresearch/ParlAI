@@ -45,7 +45,7 @@ class DefaultTeacher(Teacher):
         answers = [a['text'] for a in qa['answers']]
         context = paragraph['context']
         return {
-            'text': context + '\n' + question,
+            'text': context + ' ' + question,
             'labels': answers,
             'done': True
         }
