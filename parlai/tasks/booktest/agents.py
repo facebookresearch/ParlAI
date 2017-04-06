@@ -40,17 +40,11 @@ class StreamTeacher(Teacher):
 
     def get_next(self):
         context = ''
-        question = ''
-        cands = None
-        answers = ''
         while True:
             l = self.fin.readline()
             if l == '':
                 # reopen file
                 context = ''
-                question = ''
-                cands = None
-                answers = ''
                 self.fin.close()
                 self.fin = open(self.datafile)
                 continue
@@ -59,10 +53,10 @@ class StreamTeacher(Teacher):
             l = l[l.find(' ')+1:]  # strip index
             s = l.split('\t')
             if len(s) == 1:
-                context += s[0] + ' '
+                context += s[0] + '\n'
             else:
                 return {
-                    'text': context.rstrip(' ') + ' ' + question,
+                    'text': context + s[0],
                     'labels': [s[1]],
                     'candidates': s[3].split('|') if len(s) > 3 else None,
                     'done': True
