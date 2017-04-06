@@ -280,7 +280,6 @@ class DictionaryAgent(Agent):
         """Converts a string to a vector (list of ints).
         First runs a sentence tokenizer, then a word tokenizer.
         """
-        # TODO(ahm): return numpy arrays instead
         return np.fromiter((self[token] for token in self.tokenize(str(text))),
                            np.int)
 
