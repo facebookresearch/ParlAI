@@ -74,8 +74,7 @@ class Teacher(Agent):
     def report(self):
         return self.metrics
 
-
-def create_task_agents(opt):
+def create_task_agent_from_classname(opt):
     """Creates task agent(s) assuming the input "task_dir:teacher_class"
     e.g. def_string is "babi:Task1k:1"
     This essentially performs "from parlai.tasks.babi import TaskTeacher"
@@ -90,10 +89,9 @@ def create_task_agents(opt):
             teacher = sp[1] + "Teacher"
         else:
             teacher = "DefaultTeacher"
-        module_name = "parlai.tasks.%s.teachers" % (task)
+        module_name = "parlai.tasks.%s.agents" % (task)
         my_module = importlib.import_module(module_name)
-        class_name = teacher
-        teacher_class = getattr(my_module, class_name)
+        teacher_class = getattr(my_module, teacher)
         task_agents = teacher_class(opt)
         if type(task_agents) != list:
             task_agents = [task_agents]
@@ -101,6 +99,30 @@ def create_task_agents(opt):
     else:
         # Multitask teacher/agent
         task_agents = MultiTaskTeacher(opt)
+        if type(task_agents) != list:
+            task_agents = [task_agents]
+        return task_agents
+
+
+def create_task_agents(opt):
+    if ',' not in opt['task']:
+        # Single task
+        sp = opt['task'].strip().split(':')
+        task = sp[0].lower()
+        if len(sp) > 1:
+            sp[1] = sp[1][0].upper() + sp[1][1:]
+            teacher = sp[1] + "Teacher"
+        else:
+            teacher = "DefaultTeacher"
+        module_name = "parlai.tasks.%s.agents" % (task)
+        my_module = importlib.import_module(module_name)
+        try:
+            # Tries to call the create_agent function in agents.py
+            # of the given task.
+            create_agent = getattr(my_module, 'create_agents')
+            task_agents = create_agent(opt, teacher)
+        except:
+            return create_task_agent_from_classname(opt)
         if type(task_agents) != list:
             task_agents = [task_agents]
         return task_agents
@@ -123,7 +145,7 @@ class MultiTaskTeacher(Teacher):
             print("[creating " + k + "]")
             opt_singletask = copy.deepcopy(opt)
             opt_singletask['task'] = k
-            self.tasks.extend(create_task_agents(opt_singletask))
+            self.tasks.extend(create_task_agents_from_classname(opt_singletask))
         self.task_idx = -1
         self.new_task = True
         self.random = opt.get('datatype') == 'train'

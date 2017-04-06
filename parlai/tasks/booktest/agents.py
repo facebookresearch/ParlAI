@@ -7,6 +7,19 @@ from parlai.core.dialog import DialogTeacher
 from .build import build
 
 
+class Teacher(FbDialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        opt['datafile'] = _path(opt, '-filtered')
+        super().__init__(opt, shared)
+
+
+class TestNETeacher(FbDialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        opt['datafile'] = _path(opt, '')
+        super().__init__(opt, shared)
+
 class DefaultTeacher(Teacher):
     """
     Hand-written streaming teacher,
