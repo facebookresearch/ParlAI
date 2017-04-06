@@ -54,5 +54,5 @@ class DefaultTeacher(All1kTeacher):
     pass
 
 
-def create_agents(opt, name):
+def create_agents(opt):
     return DefaultTeacher(opt)
