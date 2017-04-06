@@ -105,20 +105,24 @@ def create_task_agent_from_taskname(opt):
 
 
 def create_task_agents(opt):
+    """Creates task agent(s) for the given task name.
+    It does this by calling the create_agent function in agents.py of the
+    given task.
+    If create_agents function does not exist, it just looks for
+    the teacher (agent) class defined by the task name directly.
+    (This saves the task creator bothering to define the
+    create_agents function when it is not needed.)
+    """
     sp = opt['task'].strip().split(':')
     task = sp[0].lower()
     module_name = "parlai.tasks.%s.agents" % (task)
     my_module = importlib.import_module(module_name)
     try:
         # Tries to call the create_agent function in agents.py
-        # of the given task.
         create_agent = getattr(my_module, 'create_agents')
         task_agents = create_agent(opt)
     except:
-        # create_agents function does not exist, just look for
-        # the agent class defined by the task name directly.
-        # (This saves the task creator bothering to define the
-        # create_agents function when it is not needed.)
+        # Create_agent not found, so try to create the teacher directly.
         return create_task_agent_from_taskname(opt)
     if type(task_agents) != list:
         task_agents = [task_agents]

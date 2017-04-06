@@ -22,8 +22,7 @@ class EvalTeacher(FbDialogTeacher):
 
 
 class StreamTeacher(Teacher):
-    """
-    Hand-written streaming teacher,
+    """ Hand-written streaming teacher,
     as the data is too big to fit in memory.
     """
 
