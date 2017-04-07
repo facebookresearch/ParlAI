@@ -10,9 +10,8 @@ from .build import build
 def _path(opt, filtered):
     # Build the data if it doesn't exist.
     build(opt)
-    return (opt['datapath'] + '/SimpleQuestions/sq/' +
-            '{type}.txt'.format(
-                type=opt['datatype']))
+    dt = opt['datatype'].split(':')[0]
+    return '{}/SimpleQuestions/sq/{}.txt'.format(opt['datapath'], dt)
 
 
 class DefaultTeacher(FbDialogTeacher):

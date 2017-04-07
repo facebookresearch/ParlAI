@@ -6,15 +6,15 @@ from parlai.core.fbdialog import FbDialogTeacher
 from parlai.core.agents import MultiTaskTeacher
 from .build import build
 
+tasks = {}
+tasks[1] = 'task1_qa/task1_qa_'
+tasks[2] = 'task2_recs/task2_recs_'
+tasks[3] = 'task3_qarecs/task3_qarecs_'
+tasks[4] = 'task4_reddit/task4_reddit/task4_reddit_'
 
 def _path(task, opt):
     # Build the data if it doesn't exist.
     build(opt)
-    tasks = {}
-    tasks[1] = 'task1_qa/task1_qa_'
-    tasks[2] = 'task2_recs/task2_recs_'
-    tasks[3] = 'task3_qarecs/task3_qarecs_'
-    tasks[4] = 'task4_reddit/task4_reddit/task4_reddit_'
     suffix = ''
     dt = opt['datatype'].split(':')[0]
     if dt == 'train':

@@ -22,27 +22,27 @@ def _process(fname, fout):
 
 
 def create_fb_format(outpath, dtype, inpath):
-    print("building fbformat:" + dtype)
+    print('building fbformat:' + dtype)
     import os
     fout = open(outpath + dtype + '.txt', 'w')
     for file in os.listdir(inpath):
-        if file.endswith(".question"):
+        if file.endswith('.question'):
             fname = os.path.join(inpath, file)
             _process(fname, fout)
     fout.close()
 
 
 def build(opt):
-    dpath = opt['datapath'] + "/QACNN/"
+    dpath = opt['datapath'] + '/QACNN/'
 
     if not build_data.built(dpath):
-        print("[building data: " + dpath + "]")
+        print('[building data: ' + dpath + ']')
         build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = "cnn.tgz"
-        gd_id = "0BwmD_VLjROrfTTljRDVZMFJnVWM"
+        fname = 'cnn.tgz'
+        gd_id = '0BwmD_VLjROrfTTljRDVZMFJnVWM'
         build_data.download_file_from_google_drive(gd_id, dpath + fname)
         build_data.untar(dpath, fname)
 

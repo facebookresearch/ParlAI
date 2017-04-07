@@ -12,7 +12,7 @@ def _path(opt, filtered):
     # Build the data if it doesn't exist. It depends on wikimovies.
     wikimovies_build.build(opt)
     build(opt)
-    dt = opt['datatype']
+    dt = opt['datatype'].split(':')[0]
     if dt == 'valid':
         dt = 'dev'
     return (opt['datapath'] + '/MTurkWikiMovies/mturkwikimovies/' +

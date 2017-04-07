@@ -10,9 +10,8 @@ from .build import build
 def _path(opt, filtered):
     # Build the data if it doesn't exist.
     build(opt)
-    return (opt['datapath'] + '/MCTest/' +
-            '{type}.txt'.format(
-                type=opt['datatype'] + filtered))
+    dt = opt['datatype'].split(':')[0]
+    return '{}/MCTest/{}{}.txt'.format(opt['datapath'], dt, filtered)
 
 
 class Task160Teacher(FbDialogTeacher):

@@ -37,14 +37,14 @@ class CNTeacher(FbDialogTeacher):
 
 class VTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
-        opt['datafile'] = _path('cbtest_CN', opt)
+        opt['datafile'] = _path('cbtest_V', opt)
         opt['cloze'] = True
         super().__init__(opt, shared)
 
 
 class PTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
-        opt['datafile'] = _path('cbtest_CN', opt)
+        opt['datafile'] = _path('cbtest_P', opt)
         opt['cloze'] = True
         super().__init__(opt, shared)
 
