@@ -1,5 +1,7 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
 
+import copy
+
 from parlai.core.fbdialog import FbDialogTeacher
 from parlai.core.agents import MultiTaskTeacher
 from .build import build
@@ -52,5 +54,6 @@ class PTeacher(FbDialogTeacher):
 # By default train on all tasks at once.
 class DefaultTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
         opt['task'] = 'cbt:NE,cbt:CN,cbt:V,cbt:P'
         super().__init__(opt, shared)

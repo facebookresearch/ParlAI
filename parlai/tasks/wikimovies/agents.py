@@ -1,5 +1,7 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
 
+import copy
+
 from parlai.core.fbdialog import FbDialogTeacher
 from .build import build
 
@@ -39,5 +41,6 @@ class DefaultTeacher(FbDialogTeacher):
 
     def __init__(self, opt, shared=None):
         build(opt)
+        opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt)
         super().__init__(opt, shared)
