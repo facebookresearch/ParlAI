@@ -24,7 +24,7 @@ class Agent(object):
     """Basic agent which says hello."""
 
     def __init__(self, opt, shared=None):
-        print('agent initializing!')
+        print('[Agent initializing.]')
 
     def act(self, observation):
         """Return state/action table based upon given observation."""
@@ -54,25 +54,22 @@ class Teacher(Agent):
     messages. Teachers provide the `report` method to get back metrics."""
 
     def __init__(self, opt, shared=None):
-        print('teacher initializing!')
-        self.metrics = {
-            'text_received': 0,
-        }
+        print('[teacher initializing]')
+        self.metrics = Metrics()
 
     # return state/action dict based upon passed state
     def act(self, observation):
         if observation is not None and 'text' in observation:
-            self.metrics['text_received'] += 1
-
+            self.metrics.update(observation.text, '')
         t = {
             'text': 'Hello agent. I have heard from you {0} times'.format(
-                self.metrics['text_received']
+                self.metrics.report()['cnt']
             )
         }
         return t
 
     def report(self):
-        return self.metrics
+        return self.metrics.report()
 
 def create_task_agent_from_taskname(opt):
     """Creates task agent(s) assuming the input "task_dir:teacher_class"

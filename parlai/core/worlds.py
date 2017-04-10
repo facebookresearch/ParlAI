@@ -129,6 +129,9 @@ class DialogPartnerWorld(World):
         self.reply = validate(self.agent.act(self.query))
         self.is_done = self.query['done']
 
+    def report(self):
+        return self.teacher.report()
+
     def display(self):
         lines = []
         if self.query.get('reward', None) is not None:

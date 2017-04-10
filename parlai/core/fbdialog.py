@@ -18,14 +18,19 @@ Lines 3 and 6 contain a query, a label, a reward for getting the question
 Since both of these examples are part of the same episode, the information
     provided in the first example is relevant to the query in the second example
     and therefore the agent must remember the first example in order to do well.
+In general dialog in this format can be any speech, not just QA pairs:
+
+1 Hi how's it going?<TAB>It's going great. What's new?
+2 Well I'm working on a new project at work.<TAB>Oh me too!
+3 Oh cool!<TAB>Tell me about yours.
+etc.
 """
 
 from .dialog import DialogTeacher
 
 
 class FbDialogTeacher(DialogTeacher):
-    """
-    Subclasses DialogTeacher for functionality and provides an implementation
+    """Subclasses DialogTeacher for functionality and provides an implementation
     of setup_data which iterates over datasets in the "fbdialog" format.
     """
 
@@ -38,6 +43,10 @@ class FbDialogTeacher(DialogTeacher):
         return self.cands
 
     def load_cands(self, path):
+        """Load global fixed set of candidate labels that the teacher provides
+    every example (the true labels for a specific example are also added to this set,
+    so that it's possible to get the right answer).
+    """
         if path is None:
             return None
         cands = []

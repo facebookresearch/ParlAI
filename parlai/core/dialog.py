@@ -4,13 +4,12 @@
 from .agents import Teacher
 from .data import TextData, HogwildTextData
 from .thread_utils import SharedTable
-import re
+from .metrics import Metrics
 import time
 
 
 class DialogTeacher(Teacher):
-    """
-    This class provides a set a basic functionality:
+    """This class provides a set a basic functionality:
     - metrics tracking count of sent vs correctly answered queries
     - uses data class to store and query text data
     - generates action tables to send to the student agent from the data
@@ -25,7 +24,8 @@ class DialogTeacher(Teacher):
     """
 
     def __init__(self, opt, shared=None):
-        # check for setup_data
+        # Check for setup_data
+        print("[DialogTeacher initializing.]")
         if not hasattr(self, 'setup_data'):
             raise RuntimeError('Must implement setup_data or subclass a class' +
                                ' which implements it (e.g. FbDialogTeacher)' +
@@ -38,8 +38,9 @@ class DialogTeacher(Teacher):
         self.lastDone = False
         self.defaultPosReward = 1
         self.defaultNegReward = 0
+        self.metrics = Metrics(opt)
 
-        # dynamically allocate which child class to use based on whether you
+        # Dynamically allocate which child class to use based on whether you
         # are using hogwild or not by overwriting share, act, and report methods
         # TODO(ahm): find a way to do this more clearly
         child = (_RegularDialogTeacher if opt.get('numthreads', 1) == 1 else
@@ -56,26 +57,9 @@ class DialogTeacher(Teacher):
         return None
 
 
-_re_alphanumeric = re.compile('[^a-zA-Z0-9_]+')
-
-
-def _check_answer(guess, answers):
-    # either validating or testing--check correct answers
-    r_test = _re_alphanumeric.sub('', guess.lower())
-    for answer in answers:
-        if _re_alphanumeric.sub('', answer.lower()) == r_test:
-            return True
-    return False
-
-
 class _RegularDialogTeacher(Teacher):
 
     def __init__(self, opt, shared=None):
-        # TODO(ahm): move metrics to separate metrics class?
-        self.metrics = {}
-        self.metrics['cnt'] = 0
-        self.metrics['correct'] = 0
-
         self.data = TextData(self.setup_data(opt['datafile']),
                              cands=self.candidates(),
                              random=self.datatype == 'train')
@@ -84,14 +68,13 @@ class _RegularDialogTeacher(Teacher):
     def share(self, opt):
         raise RuntimeError('no sharing: use HogwildFbDialogTeacher instead')
 
-    # check received text for correct answer then send new query
+    # Check received text for correct answer then send new query.
     def act(self, observation):
         reward = None
-        # first process observation
-        self.metrics['cnt'] += 1
+        # First process observation for metrics and rewards.
         if (self.lastY is not None and observation.get('text')):
-            if _check_answer(observation['text'], self.lastY):
-                self.metrics['correct'] += 1
+            loss = self.metrics.update(observation['text'], self.lastY)
+            if loss['correct']:
                 # update reward
                 if self.lastR is not None:
                     reward = self.lastR
@@ -104,7 +87,7 @@ class _RegularDialogTeacher(Teacher):
         done = self.lastDone
         self.lastDone = False
 
-        # then build reply
+        # Then build reply.
         if not done:
             action = next(self.data)
             self.lastY = action.get('labels', None)
@@ -121,16 +104,9 @@ class _RegularDialogTeacher(Teacher):
             action['reward'] = reward
         return action
 
-    # return transformed metrics showing total examples and accuracy if avail.
+    # Return transformed metrics showing total examples and accuracy if avail.
     def report(self):
-        m = {}
-        m['total'] = self.metrics['cnt']
-        if self.metrics['correct'] > 0 or not self.datatype.startswith('train'):
-            m['accuracy'] = self.metrics['correct'] / self.metrics['cnt']
-
-        self.metrics['cnt'] = 0
-        self.metrics['correct'] = 0
-        return m
+        return self.metrics.report()
 
 
 class _HogwildDialogTeacher(Teacher):
