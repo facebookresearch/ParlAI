@@ -136,8 +136,20 @@ class DialogPartnerWorld(World):
         if self.query.get('text', ''):
             lines.append(self.query['text'])
         if self.query.get('candidates', False):
-            lines.append('[cands: {}]'.format(
-                         '|'.join(self.query['candidates'])))
+            cand_len = len(self.query['candidates'])
+            if cand_len <= 10:
+                lines.append('[cands: {}{}]'.format(
+                    '|'.join(self.query['candidates'])))
+            else:
+                # select five candidates from the candidate set, can't slice in
+                # because it's a set
+                cand_iter = iter(self.query['candidates'])
+                display_cands = (next(cand_iter) for _ in range(5))
+                # print those cands plus how many cands remain
+                lines.append('[cands: {}{}]'.format(
+                    '|'.join(display_cands),
+                    '| ...and {} more'.format(cand_len - 5)
+                ))
         if self.reply.get('text', ''):
             lines.append('   A: ' + self.reply['text'])
         if self.done():

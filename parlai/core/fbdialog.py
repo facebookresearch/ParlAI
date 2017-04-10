@@ -31,7 +31,24 @@ class FbDialogTeacher(DialogTeacher):
 
     def __init__(self, opt, shared=None):
         self.cloze = opt.get('cloze', False)
+        self.cands = self.load_cands(opt.get('cands_datafile', None))
         super().__init__(opt, shared)
+
+    def candidates(self):
+        return self.cands
+
+    def load_cands(self, path):
+        if path is None:
+            return None
+        cands = []
+        with open(path) as read:
+            for line in read:
+                line = line.strip()
+                if len(line) > 0:
+                    space_idx = line.find(' ')
+                    line = line[space_idx + 1:]
+                    cands.append(line)
+        return cands
 
     def setup_data(self, path):
         """Reads data in the fbdialog format.

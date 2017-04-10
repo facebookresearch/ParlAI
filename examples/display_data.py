@@ -18,7 +18,7 @@ world = create_task(opt, agent)
 for k in range(1000):
     world.parley()
     print(world.display())
-    if k > 100 and world.done():
+    if k > 10 and world.done():
         break
 
 world.shutdown()

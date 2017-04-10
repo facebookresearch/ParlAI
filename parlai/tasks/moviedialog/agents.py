@@ -23,8 +23,12 @@ def _path(task, opt):
         suffix = 'test'
     elif dt == 'valid':
         suffix = 'dev'
-    return (opt['datapath'] + 'MovieDialog/movie_dialog_dataset/' +
-            tasks[int(task)] + suffix + '.txt')
+
+    datafile = (opt['datapath'] + 'MovieDialog/movie_dialog_dataset/' +
+                tasks[int(task)] + suffix + '.txt')
+    candpath = None if dt == 'train' else (
+               datafile.replace(suffix + '.txt', 'cand-' + dt + '.txt'))
+    return datafile, candpath
 
 
 # The knowledge base of facts that can be used to answer questions.
@@ -40,7 +44,8 @@ class KBTeacher(FbDialogTeacher):
 # Single task.
 class TaskTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
-        opt['datafile'] = _path(opt['task'].split(':')[2], opt)
+        opt['datafile'], opt['cands_datafile'] = _path(
+            opt['task'].split(':')[2], opt)
         super().__init__(opt, shared)
 
 
@@ -49,5 +54,5 @@ class DefaultTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['task'] = ','.join('moviedialog:Task:%d' % (i + 1)
-                               for i in range(20))
+                               for i in range(len(tasks)))
         super().__init__(opt, shared)

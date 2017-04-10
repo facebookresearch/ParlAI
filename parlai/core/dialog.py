@@ -52,6 +52,9 @@ class DialogTeacher(Teacher):
     def __len__(self):
         return len(self.data)
 
+    def candidates(self):
+        return None
+
 
 _re_alphanumeric = re.compile('[^a-zA-Z0-9_]+')
 
@@ -74,7 +77,8 @@ class _RegularDialogTeacher(Teacher):
         self.metrics['correct'] = 0
 
         self.data = TextData(self.setup_data(opt['datafile']),
-                             self.datatype == 'train')
+                             cands=self.candidates(),
+                             random=self.datatype == 'train')
 
     # share datatype, data, metrics, and a lock on the metrics
     def share(self, opt):
@@ -137,7 +141,8 @@ class _HogwildDialogTeacher(Teacher):
             self.data = shared['data']
         else:
             self.data = HogwildTextData(self.setup_data(opt['datafile']),
-                                        self.datatype == 'train')
+                                        cands=self.candidates(),
+                                        random=self.datatype == 'train')
 
         if shared and shared.get('metrics'):
             self.metrics = shared['metrics']

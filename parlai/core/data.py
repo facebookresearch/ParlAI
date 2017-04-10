@@ -7,8 +7,7 @@ import sys
 
 
 class TextData(object):
-    """
-    Provides a data structure for accessing text data.
+    """Provides a data structure for accessing text data.
     This can be used whenever the dialog data is a fixed log of chats
     (i.e not a simulator setting). The logs can include dialog text and possibly
     supervised labels, candidate labels and rewards.
@@ -29,13 +28,20 @@ class TextData(object):
     new_episode? is a boolean value specifying whether that example is the start
     of a new episode. If you don't use episodes set this to True every time.
 
+    cands can be set to provide a list of candidate labels for every example
+        in this dataset, which the agent can choose from (the correct answer
+        should be in this set).
+
     random tells the data class whether or not to visit episodes sequentially
     or randomly when returning examples to the caller.
     """
     # data_loader should be a generator returning (Entry, new) tuples
-    def __init__(self, data_loader, random=False):
+    def __init__(self, data_loader, cands=None, random=False):
         self.data = []
         self._load(data_loader)
+        self.cands = set(sys.intern(c) for c in cands) if (
+            cands is not None) else None
+        self.addedCands = []
         self.random = random
         self.entry_generator = self._gen_entries()
 
@@ -55,32 +61,36 @@ class TextData(object):
     # data is an iterator over ((x,y,...), new_episode) of the data
     def _load(self, data_loader):
         episode = []
+        last_cands = None
         for entry, new in data_loader:
             if new:
                 if len(episode) > 0:
                     self.data.append(tuple(episode))
                     episode = []
+                    last_cands = None
 
             # intern all strings so we don't store them more than once
-            if type(entry) != list:
-                entry = list(entry)
-            for i in range(len(entry)):
-                field = entry[i]
-                if type(field) == str:
-                    entry[i] = sys.intern(field)
-                else:
-                    # if it's not a string, should be an iterable of strings
-                    try:
-                        tpl = tuple((sys.intern(e) if type(e) == str else e
-                                     for e in field))
-                        entry[i] = tpl
-                    except TypeError:
-                        # TODO(ahm): note what sucks about this code is it's
-                        # really hard to even know what file you are accessing
-                        # when reporting this error?
-                        raise TypeError('TextData only accepts strings or ' +
-                                        'iterables of strings.')
-            episode.append(tuple(entry))
+            new_entry = []
+            if len(entry) > 0:
+                # process text
+                new_entry.append(sys.intern(entry[0]))
+                if len(entry) > 1:
+                    # process labels
+                    new_entry.append(tuple(sys.intern(e) for e in entry[1]))
+                    if len(entry) > 2:
+                        # process reward
+                        new_entry.append(sys.intern(entry[2]))
+                        if len(entry) > 3:
+                            # process candidates
+                            if last_cands and entry[3] is last_cands:
+                                new_entry.append(
+                                    sys.intern('same as last time'))
+                            else:
+                                last_cands = entry[3]
+                                new_entry.append(tuple(
+                                    sys.intern(e) for e in entry[3]))
+            episode.append(tuple(new_entry))
+
         if len(episode) > 0:
             self.data.append(tuple(episode))
 
@@ -95,6 +105,23 @@ class TextData(object):
                 table['reward'] = entry[2]
                 if len(entry) > 3:
                     table['candidates'] = entry[3]
+
+        if self.cands is not None:
+            if self.addedCands:
+                # remove elements in addedCands
+                self.cands.difference_update(self.addedCands)
+                self.addedCands.clear()
+            for label in table['labels']:
+                if label not in self.cands:
+                    # add labels, queue them for removal next time
+                    self.cands.add(label)
+                    self.addedCands.append(label)
+            table['candidates'] = self.cands
+
+        if 'labels' in table and 'candidates' in table:
+            if table['labels'][0] not in table['candidates']:
+                raise RuntimeError('true label missing from candidate labels')
+
 
         # last entry in this episode
         table['done'] = done
