@@ -170,5 +170,18 @@ class MultiTaskTeacher(Teacher):
     # return transformed metrics showing total examples and accuracy if avail.
     def report(self):
         m = {}
-        # TODO(jase): fix metrics, add them up or?
+        m['tasks'] = {}
+        sum_accuracy = 0
+        num_tasks = 0
+        total = 0
+        for i in range(len(self.tasks)):
+            mt = self.tasks[i].report()
+            m['tasks'][i] = mt
+            total += mt['total']
+            if 'accuracy' in mt:
+                sum_accuracy += mt['accuracy']
+                num_tasks += 1
+        if num_tasks > 0:
+            m['mean_accuracy'] = sum_accuracy / num_tasks
+            m['total'] = total
         return m

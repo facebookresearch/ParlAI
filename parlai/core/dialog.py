@@ -72,8 +72,8 @@ class _RegularDialogTeacher(Teacher):
     def act(self, observation):
         reward = None
         # First process observation for metrics and rewards.
-        if (self.lastY is not None and observation.get('text')):
-            loss = self.metrics.update(observation['text'], self.lastY)
+        if self.lastY is not None:
+            loss = self.metrics.update(observation.get('text', ''), self.lastY)
             if loss['correct']:
                 # update reward
                 if self.lastR is not None:

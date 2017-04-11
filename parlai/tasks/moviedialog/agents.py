@@ -24,10 +24,17 @@ def _path(task, opt):
     elif dt == 'valid':
         suffix = 'dev'
 
-    datafile = (opt['datapath'] + 'MovieDialog/movie_dialog_dataset/' +
+    datafile = (opt['datapath'] + '/MovieDialog/movie_dialog_dataset/' +
                 tasks[int(task)] + suffix + '.txt')
-    candpath = None if dt == 'train' else (
-               datafile.replace(suffix + '.txt', 'cand-' + dt + '.txt'))
+    if int(task) == 4:
+        if dt == 'train':
+            candpath = None
+        else:
+            candpath = datafile.replace(suffix + '.txt',
+                                        'cand-' + dt + '.txt')
+    else:
+        candpath = (opt['datapath'] +
+                    '/MovieDialog/movie_dialog_dataset/entities.txt')
     return datafile, candpath
 
 

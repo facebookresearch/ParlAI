@@ -78,6 +78,7 @@ The core library contains the following files:
     dict.py: contains code for building general NLP-style dictionaries from observations
         DictionaryAgent: agent which tracks the index and frequency of words in a dictionary, and can parse a sentence into indices into its dictionary or back
     fbdialog.py: contains a teacher class which implements a function setup_data which parses data in the FB Dialog data format
+    metrics.py: computes evaluation metrics for dialog, e.g. ranking metrics, etc.
     params.py: uses argparse to interpret command line arguments for ParlAI
     thread_utils: utility classes/functions for use in Hogwild multithreading (multiprocessing)
         SharedTable: provides a lock-protected, shared-memory, dictionary-like interface for keeping track of metrics

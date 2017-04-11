@@ -50,12 +50,19 @@ class FbDialogTeacher(DialogTeacher):
         if path is None:
             return None
         cands = []
+        lines_have_ids = False
+        cnt = 0
         with open(path) as read:
             for line in read:
                 line = line.strip()
                 if len(line) > 0:
-                    space_idx = line.find(' ')
-                    line = line[space_idx + 1:]
+                    cnt = cnt + 1
+                    # If lines are numbered we stip them of numbers.
+                    if cnt == 1 and line[0:2] == '1 ':
+                        lines_have_ids = True
+                    if lines_have_ids:
+                        space_idx = line.find(' ')
+                        line = line[space_idx + 1:]
                     cands.append(line)
         return cands
 

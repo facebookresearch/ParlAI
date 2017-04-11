@@ -22,7 +22,6 @@ class Metrics(object):
     """Class that maintains evaluation metrics over dialog."""
 
     def __init__(self, opt):
-        print("[Metrics initializing.]")
         self.metrics = {}
         self.metrics['cnt'] = 0
         self.metrics['correct'] = 0
@@ -46,7 +45,7 @@ class Metrics(object):
         # Report the metrics over all data seen so far.
         m = {}
         m['total'] = self.metrics['cnt']
-        if self.metrics['correct'] > 0 or not self.datatype.startswith('train'):
+        if self.metrics['cnt'] > 0:
             m['accuracy'] = self.metrics['correct'] / self.metrics['cnt']
         return m
 
