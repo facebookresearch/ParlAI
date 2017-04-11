@@ -15,10 +15,9 @@ agent = RepeatLabelAgent(opt)
 world = create_task(opt, agent)
 
 # Show some example dialogs:
-for k in range(1000):
-    world.parley()
-    print(world.display())
-    if k > 10 and world.done():
-        break
-
-world.shutdown()
+with world:
+    for k in range(100):
+        world.parley()
+        print(world.display())
+        if k > 10 and world.done():
+            break

@@ -33,40 +33,61 @@ class DialogTeacher(Teacher):
 
         self.datatype = opt['datatype']
         self.startTime = time.time()
+        self.lastFinished = False
         self.lastY = None
         self.lastR = None
         self.lastDone = False
         self.defaultPosReward = 1
         self.defaultNegReward = 0
-        self.metrics = Metrics(opt)
 
-        # Dynamically allocate which child class to use based on whether you
-        # are using hogwild or not by overwriting share, act, and report methods
-        # TODO(ahm): find a way to do this more clearly
-        child = (_RegularDialogTeacher if opt.get('numthreads', 1) == 1 else
-                 _HogwildDialogTeacher)
-        child.__init__(self, opt, shared)
-        self.share = lambda x: child.share(self, x)
-        self.act = lambda x: child.act(self, x)
-        self.report = lambda: child.report(self)
+        # first initialize any shared objects
+        if shared and shared.get('data'):
+            self.data = shared['data']
+        else:
+            if True or opt.get('numthreads', 1) == 1:
+                self.data = TextData(self.setup_data(opt['datafile']),
+                                     cands=self.candidates(),
+                                     random=self.datatype == 'train')
+            else:
+                self.data = HogwildTextData(self.setup_data(opt['datafile']),
+                                            cands=self.candidates(),
+                                            random=self.datatype == 'train')
+
+        if shared and shared.get('metrics'):
+            self.metrics = shared['metrics']
+        else:
+            self.metrics = Metrics(opt)
+
+    def __iter__(self):
+        self.finished = False
+        return self
+
+    def __next__(self):
+        if self.finished:
+            raise StopIteration()
+
 
     def __len__(self):
         return len(self.data)
 
-    def candidates(self):
-        return None
-
-
-class _RegularDialogTeacher(Teacher):
-
-    def __init__(self, opt, shared=None):
-        self.data = TextData(self.setup_data(opt['datafile']),
-                             cands=self.candidates(),
-                             random=self.datatype == 'train')
-
     # share datatype, data, metrics, and a lock on the metrics
     def share(self, opt):
-        raise RuntimeError('no sharing: use HogwildFbDialogTeacher instead')
+        if opt.get('numthreads', 1) == 1:
+            return opt, {}
+        else:
+            # share datatype, data, and metrics
+            if not hasattr(self, 'shared'):
+                self.shared = {}
+                self.shared['data'] = self.data
+                self.shared['metrics'] = self.metrics
+            opt['datatype'] = self.datatype
+            return (opt, self.shared)
+
+    def candidates(self):
+        """Returns None by default, but override this in children (such as
+        FbDialogTeacher) to load up candidate labels for every example.
+        """
+        return None
 
     # Check received text for correct answer then send new query.
     def act(self, observation):
@@ -84,12 +105,13 @@ class _RegularDialogTeacher(Teacher):
                 reward = self.defaultNegReward
             self.lastY = None
             self.lastR = None
+
         done = self.lastDone
         self.lastDone = False
 
         # Then build reply.
         if not done:
-            action = next(self.data)
+            action, self.lastFinished = next(self.data)
             self.lastY = action.get('labels', None)
             self.lastR = action.pop('reward', None)
             self.lastDone = action.get('done', None)
@@ -100,72 +122,16 @@ class _RegularDialogTeacher(Teacher):
             # Very last action gives final reward, and sends 'done' signal.
             action = {}
             action['done'] = True
+            if self.lastFinished:
+                self.finished = True
+                self.lastFinished = False
         if reward is not None:
             action['reward'] = reward
         return action
 
     # Return transformed metrics showing total examples and accuracy if avail.
     def report(self):
-        return self.metrics.report()
-
-
-class _HogwildDialogTeacher(Teacher):
-
-    def __init__(self, opt, shared=None):
-        # first initialize any shared objects
-        if shared and shared.get('data'):
-            self.data = shared['data']
-        else:
-            self.data = HogwildTextData(self.setup_data(opt['datafile']),
-                                        cands=self.candidates(),
-                                        random=self.datatype == 'train')
-
-        if shared and shared.get('metrics'):
-            self.metrics = shared['metrics']
-        else:
-            self.metrics = SharedTable({
-                'cnt': 0,
-                'correct': 0,
-            })
-
-    # share datatype, data, metrics, and a lock on the metrics
-    def share(self, opt):
-        if not hasattr(self, 'shared'):
-            self.shared = {}
-            self.shared['data'] = self.data
-            self.shared['metrics'] = self.metrics
-        opt['datatype'] = self.datatype
-        return (opt, self.shared)
-
-    # check received observation for correct answer then send new query
-    def act(self, observation):
-        # first process observation
-        if (self.lastY is not None and observation.get('text')):
-            if _check_answer(observation['text'], self.lastY):
-                with self.metrics.get_lock():
-                    self.metrics['correct'] += 1
-            self.lastY = None
-
-        with self.metrics.get_lock():
-            self.metrics['cnt'] += 1
-
-        # then send new reply
-        action = next(self.data)
-        self.lastY = action.get('labels', None)
+        report = self.metrics.report()
         if not self.datatype.startswith('train'):
-            if 'labels' in action:
-                action.pop('labels', None)
-
-        return action
-
-    # return transformed metrics showing total examples and accuracy if avail.
-    def report(self):
-        m = {}
-        m['total'] = self.metrics['cnt']
-        if self.metrics['correct'] > 0 or not self.datatype.startswith('train'):
-            m['accuracy'] = self.metrics['correct'] / self.metrics['cnt']
-
-        with self.metrics.get_lock():
-            self.metrics['cnt'] = 0
-            self.metrics['correct'] = 0
-        return m
+            self.metrics.clear()
+        return report

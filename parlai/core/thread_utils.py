@@ -130,5 +130,10 @@ class SharedTable(MutableMapping):
             )
         )
 
+    def __repr__(self):
+        """Returns the object type and memory location with the mapping."""
+        representation = super().__repr__()
+        return representation.replace('>', ': {}>'.format(str(self)))
+
     def get_lock(self):
         return self.lock

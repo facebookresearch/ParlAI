@@ -268,20 +268,32 @@ class DictionaryAgent(Agent):
         self.ind2tok = new_ind2tok
         return sorted_pairs
 
-    def parse(self, txt_or_vec):
+    def parse(self, txt_or_vec, vec_type=np.ndarray):
         """Convenience function for parsing either text or vectors of indices.
+
+        vec_type is the type of the returned vector if the input is a string.
         """
         if type(txt_or_vec) == str:
-            return self.txt2vec(txt_or_vec)
+            res = self.txt2vec(txt_or_vec, vec_type)
+            assert type(res) == vec_type
+            return res
         else:
             return self.vec2txt(txt_or_vec)
 
-    def txt2vec(self, text):
+    def txt2vec(self, text, vec_type=np.ndarray):
         """Converts a string to a vector (list of ints).
         First runs a sentence tokenizer, then a word tokenizer.
+        vec_type is the type of the returned vector if the input is a string.
         """
-        return np.fromiter((self[token] for token in self.tokenize(str(text))),
-                           np.int)
+        if vec_type == np.ndarray:
+            res = np.fromiter(
+                (self[token] for token in self.tokenize(str(text))),
+                np.int
+            )
+        else:
+            res = vec_type((self[token] for token in self.tokenize(str(text))))
+        assert type(res) == vec_type
+        return res
 
     def vec2txt(self, vector, delimiter=' '):
         """Converts a vector (iterable of ints) into a string, with each token
@@ -303,6 +315,7 @@ class DictionaryAgent(Agent):
         return {}
 
     def share(self, opt):
+        """Creates shared-memory versions of the internal maps."""
         self.freq = SharedTable(self.freq)
         self.tok2ind = SharedTable(self.tok2ind)
         self.ind2tok = SharedTable(self.ind2tok)

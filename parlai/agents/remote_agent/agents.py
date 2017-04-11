@@ -1,6 +1,7 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
 
 from parlai.core.agents import Agent
+import numpy as np
 import json
 import subprocess
 import zmq
@@ -144,9 +145,10 @@ class ParsedRemoteAgent(RemoteAgent):
         you need to know where those are.
         """
         if split_lines:
-            return [self.dict.parse(line) for line in s.split('\n')]
+            return [self.dict.parse(line, vec_type=list)
+                    for line in s.split('\n')]
         else:
-            return self.dict.parse(s)
+            return self.dict.parse(s, vec_type=list)
 
     def share(self, opt):
         opt, shared = super().share(opt)

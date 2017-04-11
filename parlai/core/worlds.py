@@ -53,22 +53,30 @@ class World(object):
         self.shutdown()
         return silent_exit
 
-    def parley(self):
-        pass
-
-    def done(self):
-        """Whether the episode is done or not. """
-        return self.is_done
+    def __iter__(self):
+        raise NotImplementedError('Subclass did not implement this.')
 
     def __len__(self):
         return 0
+
+    def parley(self):
+        pass
 
     def display(self):
         """Returns a string describing the current state of the world.
         Useful for monitoring and debugging. """
         return ''
 
+    def done(self):
+        """Whether the episode is done or not. """
+        return self.is_done
+
     def shutdown(self):
+        """Performs any cleanup, if appropriate."""
+        pass
+
+    def synchronize(self):
+        """Can be used to synchronize processes."""
         pass
 
 
@@ -88,7 +96,10 @@ def create_task_world(opt, user_agents):
         # Defaults to this if you did not specify a world for your task.
         world_class = DialogPartnerWorld
     task_agents = create_task_agents(opt)
-    world = world_class(opt, task_agents + user_agents)
+    if opt.get('numthreads', 1) == 1:
+        world = world_class(opt, task_agents + user_agents)
+    else:
+        world = HogwildWorld(opt, world_class, task_agents + user_agents)
     return world
 
 
@@ -122,6 +133,9 @@ class DialogPartnerWorld(World):
         self.teacher = agents[0]
         self.agent = agents[1]
         self.reply = {}
+
+    def __iter__(self):
+        return iter(self.teacher)
 
     def parley(self):
         """Teacher goes first. Alternate between the teacher and the agent."""
@@ -322,7 +336,9 @@ class HogwildWorld(World):
         once the processing is complete).
     """
 
-    def __init__(self, opt, agents):
+    def __init__(self, opt, world_class, agents):
+        self.inner_world = world_class(opt, agents)
+
         self.queued_items = Semaphore(0)  # counts num exs to be processed
         self.finished = Condition()  # notifies when exs are done
         self.terminate = Value('b', False)  # tells threads when to shut down
@@ -330,18 +346,29 @@ class HogwildWorld(World):
 
         self.threads = []
         for i in range(opt['numthreads']):
-            self.threads.append(HogwildProcess(i, DialogPartnerWorld, opt,
+            self.threads.append(HogwildProcess(i, world_class, opt,
                                                agents, self.queued_items,
                                                self.finished, self.terminate,
                                                self.cnt))
         for t in self.threads:
             t.start()
 
+    def display(self):
+        self.shutdown()
+        raise NotImplementedError('Hogwild does not support displaying in-run' +
+                                  ' task data. Use `--numthreads 1`.')
+
+    def done(self):
+        return False
+
     def parley(self):
         """Queue one item to be processed."""
         with self.cnt.get_lock():
             self.cnt.value += 1
         self.queued_items.release()
+
+    def report(self):
+        return self.inner_world.report()
 
     def synchronize(self):
         """Sync barrier: will wait until all queued examples are processed."""

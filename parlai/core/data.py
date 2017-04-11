@@ -95,7 +95,7 @@ class TextData(object):
             self.data.append(tuple(episode))
 
     def _get_observation(self):
-        entry, done = next(self.entry_generator)
+        entry, done, end_of_data = next(self.entry_generator)
 
         table = {}
         table['text'] = entry[0]
@@ -122,10 +122,9 @@ class TextData(object):
             if table['labels'][0] not in table['candidates']:
                 raise RuntimeError('true label missing from candidate labels')
 
-
         # last entry in this episode
         table['done'] = done
-        return table
+        return table, end_of_data
 
     # returns entries, doing episodes in order
     # randomly switches between episodes if random flag set
@@ -141,13 +140,16 @@ class TextData(object):
                 episode_idx = (episode_idx + 1) % NUM_EPISODES
             episode = self.data[episode_idx]
             for i in range(len(episode)):
-                yield (episode[i],  # current entry
-                       i == len(episode) - 1)  # is this the last entry in ep?
+                curr_entry = episode[i]
+                end_of_ep = i == len(episode) - 1
+                end_of_data = (end_of_ep and not self.random and
+                               episode_idx == NUM_EPISODES - 1)
+                yield episode[i], end_of_ep, end_of_data
 
 
 class HogwildTextData(TextData):
 
-    def __init__(self, data_loader, random=False):
+    def __init__(self, data_loader, cands=None, random=False):
         super().__init__(data_loader, random=False)
         self.arr, self.ep_idxs = self._data2array(self.data)
         del self.data

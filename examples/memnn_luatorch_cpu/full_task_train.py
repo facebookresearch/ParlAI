@@ -18,12 +18,21 @@ from parlai.core.params import ParlaiParser
 from parlai.core.worlds import DialogPartnerWorld, HogwildWorld
 
 import copy
+import sys
 import time
 
 # Get command line arguments
 argparser = ParlaiParser()
 DictionaryAgent.add_cmdline_args(argparser)
 ParsedRemoteAgent.add_cmdline_args(argparser)
+if '--remote-cmd' not in sys.argv:
+    sys.argv.append('--remote-cmd')
+    sys.argv.append('luajit parlai/agents/memnn/memnn_luatorch_cpu/' +
+                    'memnn_zmq_parsed.lua')
+if '--remote-args' not in sys.argv:
+    sys.argv.append('--remote-args')
+    sys.argv.append('examples/memnn_luatorch_cpu/params/params_default.lua')
+
 opt = argparser.parse_args()
 
 # set up dictionary
@@ -35,6 +44,7 @@ if not opt.get('dict_loadpath'):
     for datatype in ['train:ordered', 'valid']:
         # we use train and valid sets to build dictionary
         ordered_opt['datatype'] = datatype
+        ordered_opt['numthreads'] = 1
         world_dict = create_task(ordered_opt, dictionary)
         # pass examples to dictionary
         for _ in range(len(world_dict)):
@@ -55,37 +65,36 @@ agents_valid = create_task_agents(opt)
 agents_valid.append(agent)
 teacher_valid = agents_valid[0]
 
-world_train = (HogwildWorld(opt, agents_train)
+world_train = (HogwildWorld(opt, DialogPartnerWorld, agents_train)
                if opt.get('numthreads', 1) > 1 else
                DialogPartnerWorld(opt, agents_train))
 world_valid = DialogPartnerWorld(opt, agents_valid)
 
 start = time.time()
 with world_valid, world_train:
-    for _ in range(10):
+    for _ in range(100):
         print('[ training ]')
-        for _ in range(len(teacher_train) * opt.get('numthreads', 1)):
+        for _ in range(5000 * opt.get('numthreads', 1)):
             world_train.parley()
         world_train.synchronize()
 
         print('[ training summary. ]')
-        print(teacher_train.report())
+        print(world_train.report())
 
         print('[ validating ]')
-        for _ in range(len(teacher_valid)):  # check valid accuracy
+        for _ in world_valid:  # check valid accuracy
             world_valid.parley()
 
         print('[ validating summary. ]')
-        report_valid = teacher_valid.report()
+        report_valid = world_valid.report()
         print(report_valid)
         if report_valid['accuracy'] > 0.95:
             break
 
     # show some example dialogs after training:
     for _k in range(3):
-            world_valid.parley()
-            print(world_valid.query['text'])
-            print("A: " + world_valid.reply['text'])
+        world_valid.parley()
+        print(world_valid.display())
 
 
 print('finished in {} s'.format(round(time.time() - start, 2)))

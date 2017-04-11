@@ -46,6 +46,16 @@ class TestDictionary(unittest.TestCase):
         assert vec[0] == num_builtin
         assert vec[1] == num_builtin + 1
 
+        vec = dictionary.parse('hello world', vec_type=list)
+        assert len(vec) == 2
+        assert vec[0] == num_builtin
+        assert vec[1] == num_builtin + 1
+
+        vec = dictionary.parse('hello world', vec_type=tuple)
+        assert len(vec) == 2
+        assert vec[0] == num_builtin
+        assert vec[1] == num_builtin + 1
+
 
 if __name__ == '__main__':
     unittest.main()

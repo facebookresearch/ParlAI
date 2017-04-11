@@ -74,9 +74,14 @@ end
 function memnn_agent:act(reply)
     local metrics = self.metrics
 
+    local query
     local mem = reply.text
-    local query = mem[#mem]
-    mem[#mem] = nil
+    if mem then
+        query = mem[#mem]
+        mem[#mem] = nil
+    else
+        return {}
+    end
     -- if there are multiple answers, pick one of them to train on
     local ans
     if reply.labels then

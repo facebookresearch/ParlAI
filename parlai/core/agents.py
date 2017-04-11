@@ -13,8 +13,18 @@ Also provides a utility method (used by MultiTaskTeacher) for instantiating
     teachers from a string, assuming they follow our naming conventions:
 create_task_agents(str): instantiate task-specific agents (e.g. a teacher)
     from a given task string (e.g. 'babi:task1k:1' or 'squad')
+
+All agents are initialized with the following parameters:
+opt -- contains any options needed to set up the agent. This generally contains
+    all command-line arguments recognized from core.params, as well as other
+    options that might be set through the framework to enable certain modes.
+shared (optional) -- if not None, contains any shared data used to construct
+    this particular instantiation of the agent. This data might have been
+    initialized by another agent, so that different agents can share the same
+    data (possibly in different Processes).
 """
 
+from .metrics import Metrics
 import copy
 import importlib
 import random
@@ -42,7 +52,7 @@ class Agent(object):
         """If applicable, share any parameters needed to create a shared version
         of this agent.
         """
-        pass
+        return opt, None
 
     def shutdown(self):
         """Perform any final cleanup if needed."""
@@ -55,7 +65,7 @@ class Teacher(Agent):
 
     def __init__(self, opt, shared=None):
         print('[teacher initializing]')
-        self.metrics = Metrics()
+        self.metrics = Metrics(opt)
 
     # return state/action dict based upon passed state
     def act(self, observation):

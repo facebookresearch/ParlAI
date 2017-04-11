@@ -9,15 +9,15 @@ class TestImport(unittest.TestCase):
 
     def test_import_agent(self):
         from parlai.core.agents import Agent
-        assert Agent({})
+        assert Agent({}) is not None
 
     def test_import_teacher(self):
         from parlai.core.agents import Teacher
-        assert Teacher({})
+        assert Teacher({}) is not None
 
     def test_import_world(self):
         from parlai.core.worlds import World
-        assert World({})
+        assert World({}) is not None
 
     def test_import_threadutils(self):
         from parlai.core.thread_utils import SharedTable

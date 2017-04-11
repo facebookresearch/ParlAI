@@ -8,7 +8,7 @@ from parlai.core.agents import Agent
 
 class RepeatLabelAgent(Agent):
 
-    def __init__(self, opt):
+    def __init__(self, opt, shared=None):
         self.returnSingleRandomAnswer = True
         self.cantAnswerPercent = 0
         super().__init__(opt)

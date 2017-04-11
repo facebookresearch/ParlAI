@@ -17,7 +17,6 @@ data:add_cmdline_options(cmd)
 cmd:reset_default('allowSaving', false)
 
 cmd:reset_default('logEveryNSecs', 1)
--- cmd:reset_default('useCandidateLabels', true)
 -- cmd:reset_default('numNegSamples', 100)
 cmd:reset_default('useCandidateLabels', false)
 cmd:reset_default('initWeights', 0.01)
