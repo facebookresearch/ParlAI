@@ -34,12 +34,7 @@ class DialogTeacher(Teacher):
         self.datatype = opt['datatype']
         self.startTime = time.time()
         self.fin = False
-        self.lastFinished = False
         self.lastY = None
-        self.lastR = None
-        self.lastDone = False
-        self.defaultPosReward = 1
-        self.defaultNegReward = 0
 
         # first initialize any shared objects
         if shared and shared.get('data'):
@@ -91,42 +86,16 @@ class DialogTeacher(Teacher):
 
     # Check received text for correct answer then send new query.
     def act(self, observation):
-        reward = None
         # First process observation for metrics and rewards.
         if self.lastY is not None:
             loss = self.metrics.update(observation.get('text', None), self.lastY)
-            if loss['correct']:
-                # update reward
-                if self.lastR is not None:
-                    reward = self.lastR
-                else:
-                    reward = self.defaultPosReward
-            else:
-                reward = self.defaultNegReward
             self.lastY = None
-            self.lastR = None
-
-        done = self.lastDone
-        self.lastDone = False
 
         # Then build reply.
-        if not done:
-            action, self.lastFinished = next(self.data)
-            self.lastY = action.get('labels', None)
-            self.lastR = action.pop('reward', None)
-            self.lastDone = action.get('done', None)
-            action['done'] = False
-            if not self.datatype.startswith('train'):
-                action.pop('labels', None)
-        else:
-            # Very last action gives final reward, and sends 'done' signal.
-            action = {}
-            action['done'] = True
-            if self.lastFinished:
-                self.fin = True
-                self.lastFinished = False
-        if reward is not None:
-            action['reward'] = reward
+        action, self.fin = next(self.data)
+        self.lastY = action.get('labels', None)
+        if not self.datatype.startswith('train'):
+            action.pop('labels', None)
         return action
 
     # Return transformed metrics showing total examples and accuracy if avail.

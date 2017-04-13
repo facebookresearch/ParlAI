@@ -4,11 +4,14 @@
 # Download and build the data if it does not exist.
 
 import parlai.core.build_data as build_data
+import parlai.tasks.wikimovies.build as wikimovies_build
 
 
 def build(opt):
-    dpath = opt['datapath'] + "/MTurkWikiMovies/"
+    # Depends upon another dataset, wikimovies, build that first.
+    wikimovies_build.build(opt)
 
+    dpath = opt['datapath'] + "/MTurkWikiMovies/"
     if not build_data.built(dpath):
         print("[building data: " + dpath + "]")
         build_data.remove_dir(dpath)

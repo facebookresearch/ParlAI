@@ -51,6 +51,7 @@ class FbDialogTeacher(DialogTeacher):
             return None
         cands = []
         lines_have_ids = False
+        cands_are_replies = False
         cnt = 0
         with open(path) as read:
             for line in read:
@@ -60,10 +61,21 @@ class FbDialogTeacher(DialogTeacher):
                     # If lines are numbered we stip them of numbers.
                     if cnt == 1 and line[0:2] == '1 ':
                         lines_have_ids = True
+                    # If tabs then the candidates are all the replies.
+                    if '\t' in line and not cands_are_replies:
+                        cands_are_replies = True
+                        cands = []
                     if lines_have_ids:
                         space_idx = line.find(' ')
                         line = line[space_idx + 1:]
-                    cands.append(line)
+                        if cands_are_replies:
+                            sp = line.split('\t')
+                            if len(sp) > 1 and sp[1] != '':
+                                cands.append(sp[1])
+                        else:
+                            cands.append(line)
+                    else:
+                        cands.append(line)
         return cands
 
     def setup_data(self, path):
@@ -87,9 +99,11 @@ class FbDialogTeacher(DialogTeacher):
         c: ['hallway', 'kitchen', 'bathroom']
         new_episode = False (this is the second example in the episode)
         """
+        print("[loading fbdialog data:" + path + "]")
         with open(path) as read:
             start = True
             x = ''
+            reward = None
 
             for line in read:
                 line = line.strip()
@@ -117,7 +131,7 @@ class FbDialogTeacher(DialogTeacher):
                 if conv_id == '1':
                     x = x.strip()
                     if x:
-                        yield [x], start
+                        yield [x, None, reward], start
                     start = True
                     # start a new episode
                     if self.cloze:
@@ -131,6 +145,8 @@ class FbDialogTeacher(DialogTeacher):
                         # otherwise add current x to what we have so far
                         x = '{x}\n{next_x}'.format(x=x, next_x=split[0])
                     else:
+                        if len(split) > 2:
+                            reward = split[2]
                         x = split[0]
 
                 if len(split) > 1 and split[1]:
@@ -148,3 +164,4 @@ class FbDialogTeacher(DialogTeacher):
                         yield split, False
                     # reset x in case there is unlabeled data still left
                     x = ''
+                    reward = None

@@ -16,7 +16,7 @@ class EvalTeacher(FbDialogTeacher):
         else:
             suffix = 'test_CN.10k.txt'
         opt['datafile'] = (
-            opt['datapath'] + 'BookTest/booktest-gut/' +
+            opt['datapath'] + '/BookTest/booktest-gut/' +
             suffix + '.txt')
         super().__init__(opt, shared)    
 
@@ -30,7 +30,7 @@ class StreamTeacher(Teacher):
         build(opt)
         # Only used for the train set.
         self.datafile = (
-            opt['datapath'] + 'BookTest/booktest-gut/' +
+            opt['datapath'] + '/BookTest/booktest-gut/' +
             'train.14M+.txt')
         self.fin = open(self.datafile)
 

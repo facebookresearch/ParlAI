@@ -19,7 +19,7 @@ def _path(task, opt):
     elif dt == 'valid':
         suffix = 'valid_2000ex'
     return (opt['datapath'] +
-            'CBT/CBTest/data/' +
+            '/CBT/CBTest/data/' +
             task + '_' + suffix + '.txt')
 
 

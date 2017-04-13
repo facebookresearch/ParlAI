@@ -24,12 +24,13 @@ _suffixes = {
 }
 
 
-def _path(subdir, task, opt):
+def _path(subdir, task, opt, dt=''): 
     build(opt)
-    dt = opt['datatype'].split(':')[0]
+    if dt == '':
+        dt = opt['datatype'].split(':')[0]
     task_name = "%s_%s" % (task.split('_')[1],
                            tasks[int(task.split('_')[0])])
-    return (opt['datapath'] + 'DBLL/dbll/' +
+    return (opt['datapath'] + '/DBLL/dbll/' +
             '{subdir}_{task}_{suffix}.txt'.format(
                 subdir=subdir, task=task_name,
                 suffix=_suffixes[dt]))
@@ -40,6 +41,7 @@ class TaskTeacher(FbDialogTeacher):
         params = opt['task'].split(':')[2]
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path('babi/babi1', params, opt)
+        opt['cands_datafile'] = _path('babi/babi1', params, opt, 'train')
         super().__init__(opt, shared)
 
 
@@ -49,4 +51,7 @@ class DefaultTeacher(FbDialogTeacher):
         task = "2_p0.5"
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path('babi/babi1', task, opt)
+        opt['cands_datafile'] = _path('babi/babi1', task, opt, 'train')
         super().__init__(opt, shared)
+
+

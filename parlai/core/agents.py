@@ -65,7 +65,6 @@ class Teacher(Agent):
 
     def __init__(self, opt, shared=None):
         print('[teacher initializing]')
-        self.metrics = Metrics(opt)
         self.fin = False
 
     def __iter__(self):
@@ -81,10 +80,8 @@ class Teacher(Agent):
     # return state/action dict based upon passed state
     def act(self, observation):
         if observation is not None and 'text' in observation:
-            self.metrics.update(observation.text, '')
         t = {
-            'text': 'Hello agent. I have heard from you {0} times'.format(
-                self.metrics.report()['cnt']
+            'text': 'Hello agent!'
             )
         }
         return t
@@ -94,7 +91,8 @@ class Teacher(Agent):
 
     def report(self):
         self.fin = False
-        return self.metrics.report()
+        return {}
+
 
 def create_task_agent_from_taskname(opt):
     """Creates task agent(s) assuming the input "task_dir:teacher_class"

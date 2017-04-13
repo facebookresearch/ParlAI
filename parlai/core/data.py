@@ -73,14 +73,23 @@ class TextData(object):
             new_entry = []
             if len(entry) > 0:
                 # process text
-                new_entry.append(sys.intern(entry[0]))
+                if entry[0] is not None:
+                    new_entry.append(sys.intern(entry[0]))
+                else:
+                    new_entry.append(None)
                 if len(entry) > 1:
                     # process labels
-                    new_entry.append(tuple(sys.intern(e) for e in entry[1]))
+                    if entry[1] is not None:
+                        new_entry.append(tuple(sys.intern(e) for e in entry[1]))
+                    else:
+                        new_entry.append(None)
                     if len(entry) > 2:
                         # process reward
-                        new_entry.append(sys.intern(entry[2]))
-                        if len(entry) > 3:
+                        if entry[2] is not None:
+                            new_entry.append(sys.intern(entry[2]))
+                        else:
+                            new_entry.append(None)
+                        if len(entry) > 3 and entry[3] is not None:
                             # process candidates
                             if last_cands and entry[3] is last_cands:
                                 new_entry.append(
@@ -106,7 +115,8 @@ class TextData(object):
                 if len(entry) > 3:
                     table['candidates'] = entry[3]
 
-        if self.cands is not None:
+        if (table.get('labels', None) is not None
+            and self.cands is not None):
             if self.addedCands:
                 # remove elements in addedCands
                 self.cands.difference_update(self.addedCands)

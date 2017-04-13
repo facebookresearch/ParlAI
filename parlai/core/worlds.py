@@ -172,7 +172,7 @@ class DialogPartnerWorld(World):
         if self.query.get('candidates', False):
             cand_len = len(self.query['candidates'])
             if cand_len <= 10:
-                lines.append('[cands: {}{}]'.format(
+                lines.append('[cands: {}]'.format(
                     '|'.join(self.query['candidates'])))
             else:
                 # select five candidates from the candidate set, can't slice in

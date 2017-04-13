@@ -18,7 +18,7 @@ def create_fb_format(outpath, dtype, inpath):
         if lqid != lastqid:
             if lastqid is not None:
                 # save
-                s = '1 ' + lq + '\t' + ans.lstrip('|') + '\t' + cands.lstrip('|')
+                s = '1 ' + lq + '\t' + ans.lstrip('|') + '\t\t' + cands.lstrip('|')
                 if (dtype.find('filtered') == -1) or ans != '':
                     fout.write(s + '\n')
             # reset

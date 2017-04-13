@@ -18,6 +18,6 @@ world = create_task(opt, agent)
 with world:
     for k in range(100):
         world.parley()
-        print(world.display())
+        print(world.display() + "\n~~")
         if k > 10 and world.done():
             break
