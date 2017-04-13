@@ -80,10 +80,7 @@ class Teacher(Agent):
     # return state/action dict based upon passed state
     def act(self, observation):
         if observation is not None and 'text' in observation:
-        t = {
-            'text': 'Hello agent!'
-            )
-        }
+            t = { 'text': 'Hello agent!' }
         return t
 
     def finished(self):
