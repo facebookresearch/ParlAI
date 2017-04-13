@@ -11,7 +11,6 @@ parsing (and could also build its own dictionary).
 """
 
 from parlai.agents.remote_agent.agents import ParsedRemoteAgent
-from parlai.core.agents import create_task_agents
 from parlai.core.worlds import create_task
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
@@ -47,7 +46,7 @@ if not opt.get('dict_loadpath'):
         ordered_opt['numthreads'] = 1
         world_dict = create_task(ordered_opt, dictionary)
         # pass examples to dictionary
-        for _ in range(len(world_dict)):
+        for _ in world_dict:
             world_dict.parley()
 
     # we need to save the dictionary to load it in memnn (sort it by frequency)
@@ -57,24 +56,15 @@ print('Dictionary ready, moving on to training.')
 
 opt['datatype'] = 'train'
 agent = ParsedRemoteAgent(opt, {'dictionary': dictionary})
-agents_train = create_task_agents(opt)
-agents_train.append(agent)
-teacher_train = agents_train[0]
+world_train = create_task(opt, agent)
 opt['datatype'] = 'valid'
-agents_valid = create_task_agents(opt)
-agents_valid.append(agent)
-teacher_valid = agents_valid[0]
-
-world_train = (HogwildWorld(opt, DialogPartnerWorld, agents_train)
-               if opt.get('numthreads', 1) > 1 else
-               DialogPartnerWorld(opt, agents_train))
-world_valid = DialogPartnerWorld(opt, agents_valid)
+world_valid = create_task(opt, agent)
 
 start = time.time()
 with world_valid, world_train:
     for _ in range(100):
         print('[ training ]')
-        for _ in range(5000 * opt.get('numthreads', 1)):
+        for _ in range(1000 * opt.get('numthreads', 1)):
             world_train.parley()
         world_train.synchronize()
 
@@ -85,7 +75,7 @@ with world_valid, world_train:
         for _ in world_valid:  # check valid accuracy
             world_valid.parley()
 
-        print('[ validating summary. ]')
+        print('[ validation summary. ]')
         report_valid = world_valid.report()
         print(report_valid)
         if report_valid['accuracy'] > 0.95:

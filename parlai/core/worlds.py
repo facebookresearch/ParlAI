@@ -21,7 +21,7 @@ import random
 
 from multiprocessing import Process, Value, Condition, Semaphore
 from collections import deque
-from parlai.core.agents import create_task_agents
+from parlai.core.agents import _create_task_agents
 
 def validate(observation):
     """Make sure the observation table is valid, or raise an error."""
@@ -80,7 +80,7 @@ class World(object):
         pass
 
 
-def create_task_world(opt, user_agents):
+def _get_task_world(opt):
     sp = opt['task'].strip().split(':')
     task = sp[0].lower()
     if len(sp) > 1:
@@ -95,12 +95,13 @@ def create_task_world(opt, user_agents):
     except:
         # Defaults to this if you did not specify a world for your task.
         world_class = DialogPartnerWorld
-    task_agents = create_task_agents(opt)
-    if opt.get('numthreads', 1) == 1:
-        world = world_class(opt, task_agents + user_agents)
-    else:
-        world = HogwildWorld(opt, world_class, task_agents + user_agents)
-    return world
+    task_agents = _create_task_agents(opt)
+    return world_class, task_agents
+
+
+def create_task_world(opt, user_agents):
+    world_class, task_agents = _get_task_world(opt)
+    return world_class(opt, task_agents + user_agents)
 
 
 def create_task(opt, user_agents):
@@ -111,14 +112,27 @@ def create_task(opt, user_agents):
     if type(user_agents) != list:
         user_agents = [user_agents]
 
-    if not ',' in opt['task']:
-        # Single task
-        world = create_task_world(opt, user_agents)
-        return world
+    # check datatype as well, because we need to do single-threaded for
+    # valid and test in order to guarantee exactly one epoch of training
+    if opt.get('numthreads', 1) == 1 or opt['datatype'] != 'train':
+        if ',' not in opt['task']:
+            # Single task
+            world = create_task_world(opt, user_agents)
+            return world
+        else:
+            # Multitask teacher/agent
+            worlds = MultiWorld(opt, user_agents)
+            return worlds
     else:
-        # Multitask teacher/agent
-        worlds = MultiWorld(opt, user_agents)
-        return worlds
+        # more than one thread requested: do hogwild training
+        if ',' not in opt['task']:
+            # Single task
+            # TODO(ahm): fix metrics for multiteacher hogwild training
+            world_class, task_agents = _get_task_world(opt)
+            return HogwildWorld(world_class, opt, task_agents + user_agents)
+        else:
+            # TODO(ahm): fix this
+            raise NotImplementedError('hogwild multiworld not supported yet')
 
 
 class DialogPartnerWorld(World):
@@ -136,6 +150,9 @@ class DialogPartnerWorld(World):
 
     def __iter__(self):
         return iter(self.teacher)
+
+    def finished(self):
+        return self.teacher.finished()
 
     def parley(self):
         """Teacher goes first. Alternate between the teacher and the agent."""
@@ -191,18 +208,25 @@ class MultiWorld(World):
 
     def __init__(self, opt, user_agents):
         self.worlds = []
-        tasks = opt['task'].split(',')
-        for k in tasks:
-            print("[creating world: " + k + "]")
-            opt_singletask = copy.deepcopy(opt)
-            opt_singletask['task'] = k
-            self.worlds.append(
-                create_task(opt_singletask, user_agents))
+        for k in opt['task'].split(','):
+            k = k.strip()
+            if k:
+                print("[creating world: " + k + "]")
+                opt_singletask = copy.deepcopy(opt)
+                opt_singletask['task'] = k
+                self.worlds.append(create_task(opt_singletask, user_agents))
         self.world_idx = -1
         self.new_world = True
         self.parleys = 0
         self.random = opt.get('datatype') == 'train'
         super().__init__(opt)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.finished():
+            raise StopIteration()
 
     def __len__(self):
         if not hasattr(self, 'len'):
@@ -212,6 +236,12 @@ class MultiWorld(World):
                 self.len += len(t)
         return self.len
 
+    def finished(self):
+        for t in self.worlds:
+            if not t.finished():
+                return False
+        return True
+
     def parley(self):
         if self.new_world:
             self.new_world = False
@@ -219,7 +249,14 @@ class MultiWorld(World):
             if self.random:
                 self.world_idx = random.randrange(len(self.worlds))
             else:
-                self.world_idx = (self.world_idx + 1) % len(self.worlds)
+                start_idx = self.world_idx
+                keep_looking = True
+                while keep_looking:
+                    self.world_idx = (self.world_idx + 1) % len(self.worlds)
+                    keep_looking = (self.worlds[self.world_idx].finished() and
+                                    start_idx != self.world_idx)
+                if start_idx == self.world_idx:
+                    return {'text': 'There are no more examples remaining.'}
         t = self.worlds[self.world_idx]
         t.parley()
         self.parleys = self.parleys + 1
@@ -235,6 +272,26 @@ class MultiWorld(World):
             return s
         else:
             return ''
+
+    def report(self):
+        # TODO: static method in metrics, "aggregate metrics"
+        m = {}
+        m['tasks'] = {}
+        sum_accuracy = 0
+        num_tasks = 0
+        total = 0
+        for i in range(len(self.worlds)):
+            mt = self.worlds[i].report()
+            # TODO: replace i with self.tasks[i].getTag() or something
+            m['tasks'][i] = mt
+            total += mt['total']
+            if 'accuracy' in mt:
+                sum_accuracy += mt['accuracy']
+                num_tasks += 1
+        if num_tasks > 0:
+            m['accuracy'] = sum_accuracy / num_tasks
+            m['total'] = total
+        return m
 
 class MultiAgentDialogWorld(World):
     """Basic world where each agent gets a turn in a round-robin fashion,
@@ -281,7 +338,7 @@ class MultiAgentDialogWorld(World):
 
 class HogwildProcess(Process):
     """Process child used for HogwildWorld.
-    Each HogwildProcess contain its own unique World
+    Each HogwildProcess contain its own unique World.
     """
 
     def __init__(self, tid, world, opt, agents, sem, fin, term, cnt):
@@ -323,7 +380,8 @@ class HogwildProcess(Process):
 
 
 class HogwildWorld(World):
-    """Creates a separate world for each thread.
+    """Creates a separate world for each thread (process).
+
     Maintains a few shared objects to keep track of state:
     - A Semaphore which represents queued examples to be processed. Every call
         of parley increments this counter; every time a Process claims an
@@ -336,7 +394,7 @@ class HogwildWorld(World):
         once the processing is complete).
     """
 
-    def __init__(self, opt, world_class, agents):
+    def __init__(self, world_class, opt, agents):
         self.inner_world = world_class(opt, agents)
 
         self.queued_items = Semaphore(0)  # counts num exs to be processed
@@ -352,6 +410,9 @@ class HogwildWorld(World):
                                                self.cnt))
         for t in self.threads:
             t.start()
+
+    def __iter__(self):
+        raise NotImplementedError('Iteration not available in hogwild.')
 
     def display(self):
         self.shutdown()

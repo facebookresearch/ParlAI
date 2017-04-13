@@ -40,6 +40,12 @@ class Metrics(object):
     def __exit__(self, exc_type, exc_value, exc_traceback):
         pass
 
+    def __str__(self):
+        return str(self.metrics)
+
+    def __repr__(self):
+        return repr(self.metrics)
+
     def _lock(self):
         if hasattr(self.metrics, 'get_lock'):
             # use the shared_table's lock

@@ -66,6 +66,17 @@ class Teacher(Agent):
     def __init__(self, opt, shared=None):
         print('[teacher initializing]')
         self.metrics = Metrics(opt)
+        self.fin = False
+
+    def __iter__(self):
+        """Teacher can be iterated over. Subclasses can specify a certain length
+        of iteration, such as e.g. one epoch.
+        """
+        return self
+
+    def __next__():
+        """Never raise StopIteration: by default can answer infinite times."""
+        pass
 
     # return state/action dict based upon passed state
     def act(self, observation):
@@ -78,7 +89,11 @@ class Teacher(Agent):
         }
         return t
 
+    def finished(self):
+        return self.fin
+
     def report(self):
+        self.fin = False
         return self.metrics.report()
 
 def create_task_agent_from_taskname(opt):
@@ -111,7 +126,7 @@ def create_task_agent_from_taskname(opt):
         return task_agents
 
 
-def create_task_agents(opt):
+def _create_task_agents(opt):
     """Creates task agent(s) for the given task name.
     It does this by calling the create_agent function in agents.py of the
     given task.
@@ -150,9 +165,12 @@ class MultiTaskTeacher(Teacher):
         self.tasks = []
         tasks = opt['task'].split(',')
         for k in tasks:
-            opt_singletask = copy.deepcopy(opt)
-            opt_singletask['task'] = k
-            self.tasks.extend(create_task_agent_from_taskname(opt_singletask))
+            k = k.strip()
+            if k:
+                opt_singletask = copy.deepcopy(opt)
+                opt_singletask['task'] = k
+                self.tasks.extend(create_task_agent_from_taskname(
+                    opt_singletask))
         self.task_idx = -1
         self.new_task = True
         self.random = opt.get('datatype') == 'train'
@@ -165,17 +183,37 @@ class MultiTaskTeacher(Teacher):
                 self.len += len(t)
         return self.len
 
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.finished():
+            raise StopIteration()
+
     def act(self, observation):
         if self.new_task:
             self.new_task = False
             if self.random:
                 self.task_idx = random.randrange(len(self.tasks))
             else:
-                self.task_idx = (self.task_idx + 1) % len(self.tasks)
+                start_idx = self.task_idx
+                keep_looking = True
+                while keep_looking:
+                    self.task_idx = (self.task_idx + 1) % len(self.tasks)
+                    keep_looking = (self.tasks[self.task_idx].finished() and
+                                    start_idx != self.task_idx)
+                if start_idx == self.task_idx:
+                    return {'text': 'There are no more examples remaining.'}
         t = self.tasks[self.task_idx].act(observation)
         if t['done']:
             self.new_task = True
         return t
+
+    def finished(self):
+        for t in self.tasks:
+            if not t.finished():
+                return False
+        return True
 
     # return transformed metrics showing total examples and accuracy if avail.
     def report(self):
@@ -186,12 +224,13 @@ class MultiTaskTeacher(Teacher):
         total = 0
         for i in range(len(self.tasks)):
             mt = self.tasks[i].report()
+            # TODO: replace i with self.tasks[i].getTag() or something
             m['tasks'][i] = mt
             total += mt['total']
             if 'accuracy' in mt:
                 sum_accuracy += mt['accuracy']
                 num_tasks += 1
         if num_tasks > 0:
-            m['mean_accuracy'] = sum_accuracy / num_tasks
+            m['accuracy'] = sum_accuracy / num_tasks
             m['total'] = total
         return m

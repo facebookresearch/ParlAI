@@ -162,12 +162,10 @@ class DictionaryAgent(Agent):
 
     def __setitem__(self, key, value):
         """If the key is not in the dictionary, add it to the dictionary and set
-        its frequency to value if value is not None; else, set it to 0. If the
-        item is in the dictionary, set its frequency to value if it is not None.
+        its frequency to value.
         """
         key = str(key)
-        count = int(value) if value is not None else self.freq.get(key, 0)
-        self.freq[key] = count
+        self.freq[key] = int(value)
         if key not in self.tok2ind:
             index = len(self.tok2ind)
             self.tok2ind[key] = index
@@ -306,8 +304,7 @@ class DictionaryAgent(Agent):
         dictionary.
         """
         for source in ([observation.get('text')],
-                        observation.get('labels'),
-                        observation.get('candidates')):
+                        observation.get('labels')):
             if source:
                 for text in source:
                     if text:

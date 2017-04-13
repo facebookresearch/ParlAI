@@ -33,6 +33,7 @@ class DialogTeacher(Teacher):
 
         self.datatype = opt['datatype']
         self.startTime = time.time()
+        self.fin = False
         self.lastFinished = False
         self.lastY = None
         self.lastR = None
@@ -58,17 +59,16 @@ class DialogTeacher(Teacher):
         else:
             self.metrics = Metrics(opt)
 
+    def __len__(self):
+        return len(self.data)
+
     def __iter__(self):
-        self.finished = False
+        self.fin = False
         return self
 
     def __next__(self):
-        if self.finished:
+        if self.fin:
             raise StopIteration()
-
-
-    def __len__(self):
-        return len(self.data)
 
     # share datatype, data, metrics, and a lock on the metrics
     def share(self, opt):
@@ -94,7 +94,7 @@ class DialogTeacher(Teacher):
         reward = None
         # First process observation for metrics and rewards.
         if self.lastY is not None:
-            loss = self.metrics.update(observation.get('text', ''), self.lastY)
+            loss = self.metrics.update(observation.get('text', None), self.lastY)
             if loss['correct']:
                 # update reward
                 if self.lastR is not None:
@@ -123,7 +123,7 @@ class DialogTeacher(Teacher):
             action = {}
             action['done'] = True
             if self.lastFinished:
-                self.finished = True
+                self.fin = True
                 self.lastFinished = False
         if reward is not None:
             action['reward'] = reward
@@ -134,4 +134,5 @@ class DialogTeacher(Teacher):
         report = self.metrics.report()
         if not self.datatype.startswith('train'):
             self.metrics.clear()
+            self.fin = False
         return report

@@ -24,26 +24,28 @@ class DefaultTeacher(Teacher):
             opt['datapath'] + 'SQuAD/' +
             suffix + '-v1.1.json')
         self.data = self._setup_data(datapath)
+        self.episode_idx = -1
 
     def __len__(self):
         return self.len
 
     # return state/action dict based upon passed state
     def act(self, observation):
-        episode_idx = -1
         if self.datatype == 'train':
-            episode_idx = random.randrange(len(self.examples))
+            self.episode_idx = random.randrange(len(self.examples))
         else:
-            episode_idx = (episode_idx + 1) % len(self.examples)
-        article_idx = self.examples[episode_idx][0]
-        article = self.squad['data'][article_idx]
-        paragraph_idx = self.examples[episode_idx][1]
+            self.episode_idx = (self.episode_idx + 1) % len(self.examples)
+        article_idx, paragraph_idx, qa_idx = self.examples[self.episode_idx]
+        article = self.squad[article_idx]
         paragraph = article['paragraphs'][paragraph_idx]
-        question_idx = self.examples[episode_idx][2]
-        qa = paragraph['qas'][question_idx]
+        qa = paragraph['qas'][qa_idx]
         question = qa['question']
         answers = [a['text'] for a in qa['answers']]
         context = paragraph['context']
+
+        if self.episode_idx == len(self.examples) and self.datatype != 'train':
+            self.fin = True
+
         return {
             'text': context + '\n' + question,
             'labels': answers,
@@ -53,11 +55,11 @@ class DefaultTeacher(Teacher):
     def _setup_data(self, path):
         print('loading: ' + path)
         with open(path) as data_file:
-            self.squad = json.load(data_file)
+            self.squad = json.load(data_file)['data']
         self.len = 0
         self.examples = []
-        for article_idx in range(len(self.squad['data'])):
-            article = self.squad['data'][article_idx]
+        for article_idx in range(len(self.squad)):
+            article = self.squad[article_idx]
             for paragraph_idx in range(len(article['paragraphs'])):
                 paragraph = article['paragraphs'][paragraph_idx]
                 num_questions = len(paragraph['qas'])
@@ -90,8 +92,8 @@ class InheritedSquadTeacher(DialogTeacher):
     def setup_data(self, path):
         print('loading: ' + path)
         with open(path) as data_file:
-            self.squad = json.load(data_file)
-        for article in self.squad['data']:
+            self.squad = json.load(data_file)['data']
+        for article in self.squad:
             # each paragraph is a context for the attached questions
             for paragraph in article['paragraphs']:
                 # each question is an example

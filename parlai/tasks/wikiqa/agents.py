@@ -12,8 +12,7 @@ def _path(opt, filtered):
     build(opt)
     dt = opt['datatype'].split(':')[0]
     return (opt['datapath'] + '/WikiQA/' +
-            '{type}.txt'.format(
-                type=dt + filtered))
+            '{type}.txt'.format(type=dt + filtered))
 
 
 class FilteredTeacher(FbDialogTeacher):
