@@ -9,12 +9,15 @@ from parlai.core.agents import Agent
 class RepeatLabelAgent(Agent):
 
     def __init__(self, opt, shared=None):
+        super().__init__(opt)
         self.returnSingleRandomAnswer = True
         self.cantAnswerPercent = 0
-        super().__init__(opt)
+        self.id = 'RepeatLabelAgent'
+
 
     def act(self, obs):
         reply = {}
+        reply['id'] = self.getID()
         if 'labels' in obs and len(obs['labels']) > 0:
             labels = obs['labels']
             if random.random() >= self.cantAnswerPercent:

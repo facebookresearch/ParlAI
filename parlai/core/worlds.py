@@ -43,6 +43,7 @@ class World(object):
 
     def __init__(self, opt):
         self.is_done = False
+        self.id = opt['task']
 
     def __enter__(self):
         """Empty enter provided for use with `with` statement.
@@ -67,6 +68,10 @@ class World(object):
 
     def parley(self):
         pass
+
+    def getID(self):
+        """Return the name of the world, typically the task the world encodes."""
+        return self.id
 
     def display(self):
         """Returns a string describing the current state of the world.
@@ -150,6 +155,7 @@ class DialogPartnerWorld(World):
         if len(agents) != 2:
             raise RuntimeError('There must be exactly two agents for this ' +
                                'world.')
+        super().__init__(opt)
         self.teacher = agents[0]
         self.agent = agents[1]
         self.reply = {}
@@ -174,7 +180,8 @@ class DialogPartnerWorld(World):
         if self.query.get('reward', None) is not None:
             lines.append('   [reward: {r}]'.format(r=self.query['reward']))
         if self.query.get('text', ''):
-            lines.append(self.query['text'])
+            id = '[' + self.query['id'] + ']: ' if 'id' in self.query else ''
+            lines.append(id + self.query['text'])
         if self.query.get('label_candidates', False):
             cand_len = len(self.query['label_candidates'])
             if cand_len <= 10:
@@ -191,7 +198,8 @@ class DialogPartnerWorld(World):
                     '| ...and {} more'.format(cand_len - 5)
                 ))
         if self.reply.get('text', ''):
-            lines.append('   A: ' + self.reply['text'])
+            id = '[' + self.reply['id'] + ']: ' if 'id' in self.reply else ''
+            lines.append('   ' + id + self.reply['text'])
         if self.done():
             lines.append('- - - - - - - - - - - - - - - - - - - - -')
         return '\n'.join(lines)
@@ -213,6 +221,7 @@ class MultiWorld(World):
     """
 
     def __init__(self, opt, user_agents):
+        super().__init__(opt)
         self.worlds = []
         for k in opt['task'].split(','):
             k = k.strip()
@@ -225,7 +234,6 @@ class MultiWorld(World):
         self.new_world = True
         self.parleys = 0
         self.random = opt.get('datatype') == 'train'
-        super().__init__(opt)
 
     def __iter__(self):
         return self
@@ -288,8 +296,7 @@ class MultiWorld(World):
         total = 0
         for i in range(len(self.worlds)):
             mt = self.worlds[i].report()
-            # TODO: replace i with self.tasks[i].getTag() or something
-            m['tasks'][i] = mt
+            m['tasks'][self.worlds[i].getID()] = mt
             total += mt['total']
             if 'accuracy' in mt:
                 sum_accuracy += mt['accuracy']
@@ -308,6 +315,7 @@ class MultiAgentDialogWorld(World):
     def __init__(self, opt, agents):
         # list of actions that each other agent previously took
         self.observations = deque()
+        id = self.opt['task']
         for _ in range(len(agents) - 1):
             # pad with empty observations to start
             self.observations.append({})
@@ -318,11 +326,11 @@ class MultiAgentDialogWorld(World):
         other agents took. Then take an action yourself.
         """
         for agent in self.agents:
-            obs = self.observations
+            obs = self._observe()
             act = agent.act(obs)
             self.step(agent, act)
 
-    def observe(self):
+    def _observe(self):
         """Default behavior: concatenate text and rewards from all other agents,
         but use the labels and label_candidates from only the most recent.
         """
@@ -331,6 +339,7 @@ class MultiAgentDialogWorld(World):
         t['labels'] = self.observations[-1]['labels']
         t['reward'] = '\n'.join(obs['reward'] for obs in self.observations)
         t['label_candidates'] = self.observations[-1]['label_candidates']
+        return t
 
     def step(self, agent, action):
         """Pop the oldest observation and append this one."""
@@ -433,6 +442,9 @@ class HogwildWorld(World):
         with self.cnt.get_lock():
             self.cnt.value += 1
         self.queued_items.release()
+
+    def getID(self):
+        return self.inner_world.getID()
 
     def report(self):
         return self.inner_world.report()

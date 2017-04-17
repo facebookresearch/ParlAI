@@ -35,6 +35,8 @@ class Agent(object):
 
     def __init__(self, opt, shared=None):
         print('[Agent initializing.]')
+        if not hasattr(self, 'id'):
+            self.id = 'agent'
 
     def act(self, observation):
         """Return state/action table based upon given observation."""
@@ -47,6 +49,9 @@ class Agent(object):
         print('agent sending message:')
         print(t)
         return t
+
+    def getID(self):
+        return self.id
 
     def share(self, opt):
         """If applicable, share any parameters needed to create a shared version
@@ -65,6 +70,8 @@ class Teacher(Agent):
 
     def __init__(self, opt, shared=None):
         print('[teacher initializing]')
+        if not hasattr(self, 'id'):
+            self.id = opt['task']
         self.fin = False
 
     def __iter__(self):
@@ -158,6 +165,7 @@ class MultiTaskTeacher(Teacher):
 
     def __init__(self, opt, shared=None):
         self.tasks = []
+        self.id = opt['task']
         tasks = opt['task'].split(',')
         for k in tasks:
             k = k.strip()
@@ -219,8 +227,7 @@ class MultiTaskTeacher(Teacher):
         total = 0
         for i in range(len(self.tasks)):
             mt = self.tasks[i].report()
-            # TODO: replace i with self.tasks[i].getTag() or something
-            m['tasks'][i] = mt
+            m['tasks'][self.tasks[i].getID()] = mt
             total += mt['total']
             if 'accuracy' in mt:
                 sum_accuracy += mt['accuracy']

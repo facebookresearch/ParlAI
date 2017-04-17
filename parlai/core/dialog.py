@@ -35,6 +35,7 @@ class DialogTeacher(Teacher):
         self.startTime = time.time()
         self.fin = False
         self.lastY = None
+        self.id = opt['task']
 
         # first initialize any shared objects
         if shared and shared.get('data'):
@@ -95,6 +96,7 @@ class DialogTeacher(Teacher):
 
         # Then build reply.
         action, self.fin = next(self.data)
+        action['id'] = self.getID()
         self.lastY = action.get('labels', None)
         self.lastLabelCandidates = action.get('label_candidates', None)
         if not self.datatype.startswith('train'):
