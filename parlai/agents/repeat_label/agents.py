@@ -15,7 +15,7 @@ class RepeatLabelAgent(Agent):
 
     def act(self, obs):
         reply = {}
-        if obs.get('labels', False):
+        if 'labels' in obs and len(obs['labels']) > 0:
             labels = obs['labels']
             if random.random() >= self.cantAnswerPercent:
                 if self.returnSingleRandomAnswer:
@@ -26,4 +26,14 @@ class RepeatLabelAgent(Agent):
                 # Some 'self.cantAnswerPercent' percentage of the time
                 # the agent does not answer.
                 reply['text'] = "I don't know."
+        if 'label_candidates' in obs and len(obs['label_candidates']) > 0:
+            # Produce text_candidates by randomly ordering all other
+            # candidate labels.
+            cands = [ reply['text'] ]
+            y = list(obs['label_candidates'])
+            random.shuffle(y)
+            for k in y:
+                if k != reply['text']:
+                    cands.append(k)
+            reply['text_candidates'] = cands
         return reply

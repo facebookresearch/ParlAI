@@ -42,11 +42,11 @@ class DialogTeacher(Teacher):
         else:
             if True or opt.get('numthreads', 1) == 1:
                 self.data = TextData(self.setup_data(opt['datafile']),
-                                     cands=self.candidates(),
+                                     cands=self.label_candidates(),
                                      random=self.datatype == 'train')
             else:
                 self.data = HogwildTextData(self.setup_data(opt['datafile']),
-                                            cands=self.candidates(),
+                                            cands=self.label_candidates(),
                                             random=self.datatype == 'train')
 
         if shared and shared.get('metrics'):
@@ -78,7 +78,7 @@ class DialogTeacher(Teacher):
             opt['datatype'] = self.datatype
             return (opt, self.shared)
 
-    def candidates(self):
+    def label_candidates(self):
         """Returns None by default, but override this in children (such as
         FbDialogTeacher) to load up candidate labels for every example.
         """
@@ -86,14 +86,17 @@ class DialogTeacher(Teacher):
 
     # Check received text for correct answer then send new query.
     def act(self, observation):
-        # First process observation for metrics and rewards.
+        # First process observation for metrics.
         if self.lastY is not None:
-            loss = self.metrics.update(observation.get('text', None), self.lastY)
+            loss = self.metrics.update(
+                observation, self.lastY, self.lastLabelCandidates)
             self.lastY = None
+            self.lastLabelCandidates = None
 
         # Then build reply.
         action, self.fin = next(self.data)
         self.lastY = action.get('labels', None)
+        self.lastLabelCandidates = action.get('label_candidates', None)
         if not self.datatype.startswith('train'):
             action.pop('labels', None)
         return action

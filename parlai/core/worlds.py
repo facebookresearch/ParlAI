@@ -26,6 +26,12 @@ from parlai.core.agents import _create_task_agents
 def validate(observation):
     """Make sure the observation table is valid, or raise an error."""
     if observation is not None and type(observation) == dict:
+        if ('text_candidates' in observation and
+            'text' in observation and
+            observation['text'] != observation['text_candidates'][0]):
+            raise RuntimeError('If text and text_candidates fields are both ' +
+                               'filled, top text candidate should be the same' +
+                               ' as text.')
         return observation
     else:
         raise RuntimeError('Must return dictionary from act().')
@@ -169,15 +175,15 @@ class DialogPartnerWorld(World):
             lines.append('   [reward: {r}]'.format(r=self.query['reward']))
         if self.query.get('text', ''):
             lines.append(self.query['text'])
-        if self.query.get('candidates', False):
-            cand_len = len(self.query['candidates'])
+        if self.query.get('label_candidates', False):
+            cand_len = len(self.query['label_candidates'])
             if cand_len <= 10:
                 lines.append('[cands: {}]'.format(
-                    '|'.join(self.query['candidates'])))
+                    '|'.join(self.query['label_candidates'])))
             else:
-                # select five candidates from the candidate set, can't slice in
+                # select five label_candidates from the candidate set, can't slice in
                 # because it's a set
-                cand_iter = iter(self.query['candidates'])
+                cand_iter = iter(self.query['label_candidates'])
                 display_cands = (next(cand_iter) for _ in range(5))
                 # print those cands plus how many cands remain
                 lines.append('[cands: {}{}]'.format(
@@ -318,13 +324,13 @@ class MultiAgentDialogWorld(World):
 
     def observe(self):
         """Default behavior: concatenate text and rewards from all other agents,
-        but use the labels and candidates from only the most recent.
+        but use the labels and label_candidates from only the most recent.
         """
         t = {}
         t['text'] = '\n'.join(obs['text'] for obs in self.observations)
         t['labels'] = self.observations[-1]['labels']
         t['reward'] = '\n'.join(obs['reward'] for obs in self.observations)
-        t['candidates'] = self.observations[-1]['candidates']
+        t['label_candidates'] = self.observations[-1]['label_candidates']
 
     def step(self, agent, action):
         """Pop the oldest observation and append this one."""

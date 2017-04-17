@@ -24,7 +24,7 @@ class TextData(object):
     ... can contain additional fields, specifically
         y is an iterable of label(s) for that query
         r is the str reward for getting that query correct
-        c is an iterable of candidates that the student can choose from
+        c is an iterable of label candidates that the student can choose from
     new_episode? is a boolean value specifying whether that example is the start
     of a new episode. If you don't use episodes set this to True every time.
 
@@ -90,7 +90,7 @@ class TextData(object):
                         else:
                             new_entry.append(None)
                         if len(entry) > 3 and entry[3] is not None:
-                            # process candidates
+                            # process label candidates
                             if last_cands and entry[3] is last_cands:
                                 new_entry.append(
                                     sys.intern('same as last time'))
@@ -113,7 +113,7 @@ class TextData(object):
             if len(entry) > 2:
                 table['reward'] = entry[2]
                 if len(entry) > 3:
-                    table['candidates'] = entry[3]
+                    table['label_candidates'] = entry[3]
 
         if (table.get('labels', None) is not None
             and self.cands is not None):
@@ -126,10 +126,10 @@ class TextData(object):
                     # add labels, queue them for removal next time
                     self.cands.add(label)
                     self.addedCands.append(label)
-            table['candidates'] = self.cands
+            table['label_candidates'] = self.cands
 
-        if 'labels' in table and 'candidates' in table:
-            if table['labels'][0] not in table['candidates']:
+        if 'labels' in table and 'label_candidates' in table:
+            if table['labels'][0] not in table['label_candidates']:
                 raise RuntimeError('true label missing from candidate labels')
 
         # last entry in this episode
@@ -191,7 +191,7 @@ class HogwildTextData(TextData):
                 if self.arr[idx + 2]:
                     table['reward'] = self.arr[idx + 2]
                 if self.arr[idx + 3]:
-                    table['candidates'] = self.arr[idx + 3].split('|')
+                    table['label_candidates'] = self.arr[idx + 3].split('|')
                 table['done'] = idx == self.ep_idxs[episode_idx + 1] - 4
                 yield table
 
@@ -209,18 +209,18 @@ class HogwildTextData(TextData):
             for entry in episode:
                 text = entry[0]
                 # default to blank (need something in array), replace if avail.
-                labels, reward, candidates = [sys.intern('')] * 3
+                labels, reward, label_candidates = [sys.intern('')] * 3
                 if len(entry) > 1:
                     labels = sys.intern('|'.join(entry[1]))
                     if len(entry) > 2:
                         reward = entry[2]
                         if len(entry) > 3:
-                            candidates = sys.intern('|'.join(entry[3]))
+                            label_candidates = sys.intern('|'.join(entry[3]))
 
                 arr[arr_idx] = text
                 arr[arr_idx + 1] = labels
                 arr[arr_idx + 2] = reward
-                arr[arr_idx + 3] = candidates
+                arr[arr_idx + 3] = label_candidates
                 arr_idx += 4
         ep_idxs[-1] = arr_idx
         return arr, ep_idxs

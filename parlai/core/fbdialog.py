@@ -14,7 +14,7 @@ Lines 1-6 represent a single episode, with two different examples: the first
     example is lines 1-3, and the second is lines 4-6.
 Lines 1,2,4, and 5 represent contextual information.
 Lines 3 and 6 contain a query, a label, a reward for getting the question
-    correct, and three candidates.
+    correct, and three label candidates.
 Since both of these examples are part of the same episode, the information
     provided in the first example is relevant to the query in the second example
     and therefore the agent must remember the first example in order to do well.
@@ -39,7 +39,7 @@ class FbDialogTeacher(DialogTeacher):
         self.cands = self.load_cands(opt.get('cands_datafile', None))
         super().__init__(opt, shared)
 
-    def candidates(self):
+    def label_candidates(self):
         return self.cands
 
     def load_cands(self, path):
@@ -61,7 +61,7 @@ class FbDialogTeacher(DialogTeacher):
                     # If lines are numbered we stip them of numbers.
                     if cnt == 1 and line[0:2] == '1 ':
                         lines_have_ids = True
-                    # If tabs then the candidates are all the replies.
+                    # If tabs then the label_candidates are all the replies.
                     if '\t' in line and not cands_are_replies:
                         cands_are_replies = True
                         cands = []
@@ -82,7 +82,7 @@ class FbDialogTeacher(DialogTeacher):
         """Reads data in the fbdialog format.
         Returns ((x,y,r,c), new_episode?) tuples.
         x represents a query, y represents the labels, r represents any reward,
-        and c represents any candidates.
+        and c represents any label_candidates.
 
         The example above will be translated into the following tuples:
 
@@ -115,8 +115,8 @@ class FbDialogTeacher(DialogTeacher):
                 conv_id = line[:space_idx]
 
                 # split line into constituent parts, if available:
-                # x<tab>y<tab>reward<tab>candidates
-                # where y, reward, and candidates are optional
+                # x<tab>y<tab>reward<tab>label_candidates
+                # where y, reward, and label_candidates are optional
                 split = line[space_idx + 1:].split('\t')
 
                 # remove empty items and strip each one
@@ -155,7 +155,7 @@ class FbDialogTeacher(DialogTeacher):
                     # split labels
                     split[1] = split[1].split('|')
                     if len(split) > 3:
-                        # split candidates
+                        # split label_candidates
                         split[3] = split[3].split('|')
                     if start:
                         yield split, True
