@@ -7,8 +7,6 @@ import copy
 import json
 import os 
 
-tasks, tags = _build()
-
 def _preprocess(name):
     name = name.lower().replace('-', '')
     return name
@@ -68,3 +66,7 @@ def ids_to_tasks(tasks):
        tasks[k] = _id_to_task(tasks[k])
     task = ','.join(tasks)
     return task
+
+# Build the task list from the json file.
+tasks, tags = _build()
+
