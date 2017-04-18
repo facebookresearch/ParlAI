@@ -86,11 +86,11 @@ class DialogTeacher(Teacher):
         return None
 
     # Check received text for correct answer then send new query.
-    def act(self, observation):
+    def act(self):
         # First process observation for metrics.
         if self.lastY is not None:
             loss = self.metrics.update(
-                observation, self.lastY, self.lastLabelCandidates)
+                self.observation, self.lastY, self.lastLabelCandidates)
             self.lastY = None
             self.lastLabelCandidates = None
 

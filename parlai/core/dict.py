@@ -299,12 +299,12 @@ class DictionaryAgent(Agent):
         """
         return delimiter.join(self[int(idx)] for idx in vector)
 
-    def act(self, observation):
+    def act(self):
         """Add any words passed in the 'text' field of the observation to this
         dictionary.
         """
-        for source in ([observation.get('text')],
-                        observation.get('labels')):
+        for source in ([self.observation.get('text')],
+                        self.observation.get('labels')):
             if source:
                 for text in source:
                     if text:

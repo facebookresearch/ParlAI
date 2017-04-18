@@ -75,12 +75,17 @@
 		"tags": [ "Cloze" ]
 	},
 	{
-		"id": "DBLLbAbI",
+		"id": "DBLL-bAbI",
 		"task": "dbll_babi",
 		"tags": [ "Goal" ]
 	},
 	{
-		"id": "DBLLMovie",
+		"id": "dialog-bAbI",
+		"task": "dialog_babi",
+		"tags": [ "Goal" ]
+	},
+	{
+		"id": "DBLL-Movie",
 		"task": "dbll_movie",
 		"tags": [ "Goal" ]
 	},

@@ -57,9 +57,9 @@ class RemoteAgent(Agent):
         print('python thread connected to ' +
               'tcp://localhost:{0}'.format(self.port))
 
-    def act(self, observation):
+    def act(self):
         """Send message to paired agent listening over zmq."""
-        text = json.dumps(observation)
+        text = json.dumps(self.observation)
         self.socket.send_unicode(text)
         reply = self.socket.recv_unicode()
         return json.loads(reply)
@@ -115,9 +115,9 @@ class ParsedRemoteAgent(RemoteAgent):
                                '"] = (class, options, shared).')
         super().__init__(opt, shared)
 
-    def act(self, observation):
+    def act(self):
         parsed = {}
-        for k, v in observation.items():
+        for k, v in self.observation.items():
             if type(v) == str:
                 # We split on newlines because we don't treat them as charactes
                 # in the default dictionary but our receiving agent might want
@@ -131,7 +131,8 @@ class ParsedRemoteAgent(RemoteAgent):
                 except TypeError:
                     # oops, it's not. just pass it on.
                     parsed[k] = v
-        reply = super().act(parsed)
+        super().observe(parsed)
+        reply = super().act()
         unparsed = {}
         for k, v in reply.items():
             # TODO(ahm): this fails if remote agent sends anything other than

@@ -10,7 +10,7 @@ from .build import build
 class DefaultTeacher(Teacher):
     """
     Hand-written SQuAD teacher, which loads the json squad data and implements
-    its own `act(observation)` method for interacting with student agent.
+    its own `act()` method for interacting with student agent.
     """
 
     def __init__(self, opt, shared=None):
@@ -31,7 +31,7 @@ class DefaultTeacher(Teacher):
         return self.len
 
     # return state/action dict based upon passed state
-    def act(self, observation):
+    def act(self)
         if self.datatype == 'train':
             self.episode_idx = random.randrange(len(self.examples))
         else:
@@ -73,7 +73,7 @@ class InheritedSquadTeacher(DialogTeacher):
     """
     This version of SQuAD inherits from the core Dialog Teacher, which just
     requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a default `act(observation)` function, and enables
+    inherit basic metrics, a default `act` function, and enables
     Hogwild training with shared memory with no extra work.
     For SQuAD, this does not efficiently store the paragraphs in memory.
     """

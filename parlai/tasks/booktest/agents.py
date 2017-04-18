@@ -65,7 +65,7 @@ class StreamTeacher(Teacher):
 
 
     # return state/action dict based upon passed state
-    def act(self, observation):
+    def act(self)
         obs = self.get_next()
         return obs
 

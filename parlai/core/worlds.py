@@ -177,8 +177,10 @@ class DialogPartnerWorld(World):
 
     def parley(self):
         """Teacher goes first. Alternate between the teacher and the agent."""
-        self.query = validate(self.teacher.act(self.reply))
-        self.reply = validate(self.agent.act(self.query))
+        self.teacher.observe(validate(self.reply))
+        self.query = self.teacher.act()
+        self.agent.observe(validate(self.query))
+        self.reply = self.agent.act()
         self.is_done = self.query['done']
 
     def report(self):
@@ -323,12 +325,7 @@ class MultiAgentDialogWorld(World):
     """
 
     def __init__(self, opt, agents):
-        # list of actions that each other agent previously took
-        self.observations = deque()
         id = self.opt['task']
-        for _ in range(len(agents) - 1):
-            # pad with empty observations to start
-            self.observations.append({})
         self.agents = agents
 
     def parley(self):
@@ -336,25 +333,10 @@ class MultiAgentDialogWorld(World):
         other agents took. Then take an action yourself.
         """
         for agent in self.agents:
-            obs = self._observe()
-            act = agent.act(obs)
-            self.step(agent, act)
-
-    def _observe(self):
-        """Default behavior: concatenate text and rewards from all other agents,
-        but use the labels and label_candidates from only the most recent.
-        """
-        t = {}
-        t['text'] = '\n'.join(obs['text'] for obs in self.observations)
-        t['labels'] = self.observations[-1]['labels']
-        t['reward'] = '\n'.join(obs['reward'] for obs in self.observations)
-        t['label_candidates'] = self.observations[-1]['label_candidates']
-        return t
-
-    def step(self, agent, action):
-        """Pop the oldest observation and append this one."""
-        self.observations.popleft()
-        self.observations.append(action)
+            act = agent.act()
+            for other_agent in self.agents:
+                if other_agent != agent:
+                    other_agent.observe(act)
 
     def shutdown(self):
         for a in self.agents:

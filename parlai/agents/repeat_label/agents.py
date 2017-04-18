@@ -15,7 +15,8 @@ class RepeatLabelAgent(Agent):
         self.id = 'RepeatLabelAgent'
 
 
-    def act(self, obs):
+    def act(self):
+        obs = self.observation
         reply = {}
         reply['id'] = self.getID()
         if 'labels' in obs and len(obs['labels']) > 0:

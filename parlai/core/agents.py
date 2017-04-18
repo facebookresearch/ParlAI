@@ -1,8 +1,9 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
 """Provides a set of basic agents:
 
-Agent(object): base class for all other agents, implements the act() method
-    which receives an observation table and returns a table in response
+Agent(object): base class for all other agents, implements the observe() method
+    method  which receives an observation table and the act method which
+    returns a table in response
 Teacher(Agent): also implements the report method for returning metrics. Tasks
     implement the Teacher class.
 MultiTaskTeacher(Teacher): creates a set of teachers based on a "task string"
@@ -38,11 +39,14 @@ class Agent(object):
         if not hasattr(self, 'id'):
             self.id = 'agent'
 
-    def act(self, observation):
+    def observe(self, observation):
+        self.observation = observation
+
+    def act(self):
         """Return state/action table based upon given observation."""
-        if observation is not None:
+        if self.observation is not None:
             print('agent received observation:')
-            print(observation)
+            print(self.observation)
 
         t = {}
         t['text'] = 'hello, teacher!'
@@ -89,8 +93,8 @@ class Teacher(Agent):
         pass
 
     # return state/action dict based upon passed state
-    def act(self, observation):
-        if observation is not None and 'text' in observation:
+    def act(self):
+        if self.observation is not None and 'text' in self.observation:
             t = { 'text': 'Hello agent!' }
         return t
 
@@ -198,7 +202,7 @@ class MultiTaskTeacher(Teacher):
         if self.finished():
             raise StopIteration()
 
-    def act(self, observation):
+    def observe(self, obs):
         if self.new_task:
             self.new_task = False
             if self.random:
@@ -212,7 +216,10 @@ class MultiTaskTeacher(Teacher):
                                     start_idx != self.task_idx)
                 if start_idx == self.task_idx:
                     return {'text': 'There are no more examples remaining.'}
-        t = self.tasks[self.task_idx].act(observation)
+        self.tasks[self.task_idx].observe(obs)
+
+    def act(self):
+        t = self.tasks[self.task_idx].act()
         if t['done']:
             self.new_task = True
         return t
