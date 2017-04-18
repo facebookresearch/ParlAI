@@ -106,7 +106,4 @@ class DialogTeacher(Teacher):
     # Return transformed metrics showing total examples and accuracy if avail.
     def report(self):
         report = self.metrics.report()
-        if not self.datatype.startswith('train'):
-            self.metrics.clear()
-            self.fin = False
         return report

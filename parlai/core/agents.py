@@ -69,9 +69,13 @@ class Teacher(Agent):
     messages. Teachers provide the `report` method to get back metrics."""
 
     def __init__(self, opt, shared=None):
-        print('[teacher initializing]')
         if not hasattr(self, 'id'):
             self.id = opt['task']
+        if not hasattr(self, 'metrics'):
+            if shared and shared.get('metrics'):
+                self.metrics = shared['metrics']
+            else:
+                self.metrics = Metrics(opt)
         self.fin = False
 
     def __iter__(self):
@@ -93,9 +97,10 @@ class Teacher(Agent):
     def finished(self):
         return self.fin
 
+    # Return transformed metrics showing total examples and accuracy if avail.
     def report(self):
-        self.fin = False
-        return {}
+        report = self.metrics.report()
+        return report
 
 
 def create_task_agent_from_taskname(opt):
@@ -232,7 +237,8 @@ class MultiTaskTeacher(Teacher):
             if 'accuracy' in mt:
                 sum_accuracy += mt['accuracy']
                 num_tasks += 1
+        m['total'] = total
+        m['accuracy'] = 0
         if num_tasks > 0:
             m['accuracy'] = sum_accuracy / num_tasks
-            m['total'] = total
         return m

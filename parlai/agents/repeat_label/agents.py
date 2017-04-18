@@ -29,6 +29,9 @@ class RepeatLabelAgent(Agent):
                 # Some 'self.cantAnswerPercent' percentage of the time
                 # the agent does not answer.
                 reply['text'] = "I don't know."
+        else:
+            reply['text'] = "I don't know."
+
         if 'label_candidates' in obs and len(obs['label_candidates']) > 0:
             # Produce text_candidates by randomly ordering all other
             # candidate labels.

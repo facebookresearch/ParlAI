@@ -118,7 +118,7 @@ class FbDialogTeacher(DialogTeacher):
                 # x<tab>y<tab>reward<tab>label_candidates
                 # where y, reward, and label_candidates are optional
                 split = line[space_idx + 1:].split('\t')
-
+                
                 # remove empty items and strip each one
                 for i in range(len(split)):
                     word = split[i].strip()
@@ -126,6 +126,9 @@ class FbDialogTeacher(DialogTeacher):
                         split[i] = ''
                     else:
                         split[i] = word
+                # Empty reward string same as None
+                if len(split) > 2 and split[2] == '':
+                    split[2] = None
 
                 # now check if we're at a new episode
                 if conv_id == '1':

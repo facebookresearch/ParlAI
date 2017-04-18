@@ -1,0 +1,108 @@
+[
+	{
+		"id": "bAbI-1k",
+		"task": "babi:All1k",
+		"tags": [ "QA" ]
+	},
+	{
+		"id": "bAbI-10k",
+		"task": "babi:All10k",
+		"tags": [ "QA" ]
+	},
+	{
+		"id": "MCTest",
+		"task": "mctest",
+		"tags": [ "QA" ]
+	},
+	{
+		"id": "WebQuestions",
+		"task": "webquestions",
+		"tags": [ "QA" ]
+	},
+	{
+		"id": "WikiQA",
+		"task": "wikiqa",
+		"tags": [ "QA" ]
+	},
+	{
+		"id": "WikiMovies",
+		"task": "wikimovies",
+		"tags": [ "QA" ]
+	},
+	{
+		"id": "MTurkWikiMovies",
+		"task": "mturkwikimovies",
+		"tags": [ "QA" ]
+	},
+	{
+		"id": "SimpleQuestions",
+		"task": "simplequestions",
+		"tags": [ "QA" ]
+	},
+	{
+		"id": "SQuAD",
+		"task": "squad",
+		"tags": [ "QA" ]
+	},
+	{
+		"id": "MovieDD-QA",
+		"task": "moviedialog:Task:1",
+		"tags": [ "QA", "MovieDD" ]
+	},
+	{
+		"id": "MovieDD-Recs",
+		"task": "moviedialog:Task:2",
+		"tags": [ "QA", "MovieDD" ]
+	},
+	{
+		"id": "QACNN",
+		"task": "qacnn",
+		"tags": [ "Cloze" ]
+	},
+	{
+		"id": "QADailyMail",
+		"task": "qadailymail",
+		"tags": [ "Cloze" ]
+	},
+	{
+		"id": "CBT",
+		"task": "cbt",
+		"tags": [ "Cloze" ]
+	},
+	{
+		"id": "BookTest",
+		"task": "booktest",
+		"tags": [ "Cloze" ]
+	},
+	{
+		"id": "DBLLbAbI",
+		"task": "dbll_babi",
+		"tags": [ "Goal" ]
+	},
+	{
+		"id": "DBLLMovie",
+		"task": "dbll_movie",
+		"tags": [ "Goal" ]
+	},
+	{
+		"id": "MovieDD-QARecs",
+		"task": "moviedialog:Task:3",
+		"tags": [ "Goal", "MovieDD" ]
+	},
+	{
+		"id": "CornellMovie",
+		"task": "cornellmovie",
+		"tags": [ "ChitChat" ]
+	},
+	{
+		"id": "OpenSubtitles",
+		"task": "opensubtitles",
+		"tags": [ "ChitChat" ]
+	},
+	{
+		"id": "MovieDD-Reddit",
+		"task": "moviedialog:Task:4",
+		"tags": [ "ChitChat", "MovieDD" ]
+	}
+]
+

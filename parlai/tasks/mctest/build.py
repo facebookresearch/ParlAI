@@ -31,7 +31,7 @@ def create_fb_format(outpath, dtype, inpath, inpath2):
             if ai == 'D':
                 ai = 3
             a = l[off + 1 + ai]
-            s = ('1 ' + l[2] + ' ' + l[off] + '\t' + a + '\t1\t' +
+            s = ('1 ' + l[2] + ' ' + l[off] + '\t' + a + '\t\t' +
                  l[off + 1] + '|' + l[off + 2] + '|' +
                  l[off + 3] + '|' + l[off + 4])
             off = off + 5

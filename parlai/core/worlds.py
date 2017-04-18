@@ -22,6 +22,7 @@ import random
 from multiprocessing import Process, Value, Condition, Semaphore
 from collections import deque
 from parlai.core.agents import _create_task_agents
+from parlai.tasks.tasks import ids_to_tasks
 
 def validate(observation):
     """Make sure the observation table is valid, or raise an error."""
@@ -114,17 +115,25 @@ def create_task_world(opt, user_agents):
     world_class, task_agents = _get_task_world(opt)
     return world_class(opt, task_agents + user_agents)
 
-
 def create_task(opt, user_agents):
     """Creates a world + task_agents (aka a task)
     assuming opt['task']="task_dir:teacher_class:options"
-    e.g. "babi:Task1k:1"
+    e.g. "babi:Task1k:1" or "#babi-1k" or "#QA",
+    see parlai/tasks/tasks.py and see parlai/tasks/tasks.json
+    for list of tasks.
     """
     if type(user_agents) != list:
         user_agents = [user_agents]
 
-    # check datatype as well, because we need to do single-threaded for
-    # valid and test in order to guarantee exactly one epoch of training
+    # Convert any hashtag task labels to task directory path names.
+    # (e.g. "#QA" to the list of tasks that are QA tasks).
+    opt = copy.deepcopy(opt)
+    opt['task'] = ids_to_tasks(opt['task'])
+    print('[creating task(s): ' + opt['task'] + ']')
+
+    # Single threaded or hogwild task creation (the latter creates multiple threads).
+    # Check datatype for train, because we need to do single-threaded for
+    # valid and test in order to guarantee exactly one epoch of training.
     if opt.get('numthreads', 1) == 1 or opt['datatype'] != 'train':
         if ',' not in opt['task']:
             # Single task
@@ -229,7 +238,7 @@ class MultiWorld(World):
                 print("[creating world: " + k + "]")
                 opt_singletask = copy.deepcopy(opt)
                 opt_singletask['task'] = k
-                self.worlds.append(create_task(opt_singletask, user_agents))
+                self.worlds.append(create_task_world(opt_singletask, user_agents))
         self.world_idx = -1
         self.new_world = True
         self.parleys = 0
@@ -280,9 +289,10 @@ class MultiWorld(World):
     def display(self):
         if self.world_idx != -1:
             s = ''
+            w = self.worlds[self.world_idx]
             if self.parleys == 1:
-                s = '[world ' + str(self.world_idx) + ']\n'
-            s = s + self.worlds[self.world_idx].display()
+                s = '[world ' + str(self.world_idx) + ':' + w.getID() + ']\n'
+            s = s + w.display()
             return s
         else:
             return ''

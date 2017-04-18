@@ -25,6 +25,7 @@ class DefaultTeacher(Teacher):
             suffix + '-v1.1.json')
         self.data = self._setup_data(datapath)
         self.episode_idx = -1
+        super().__init__(opt, shared)
 
     def __len__(self):
         return self.len
