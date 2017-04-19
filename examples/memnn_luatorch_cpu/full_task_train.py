@@ -26,7 +26,7 @@ DictionaryAgent.add_cmdline_args(argparser)
 ParsedRemoteAgent.add_cmdline_args(argparser)
 if '--remote-cmd' not in sys.argv:
     sys.argv.append('--remote-cmd')
-    sys.argv.append('luajit parlai/agents/memnn/memnn_luatorch_cpu/' +
+    sys.argv.append('luajit parlai/agents/memnn_luatorch_cpu/' +
                     'memnn_zmq_parsed.lua')
 if '--remote-args' not in sys.argv:
     sys.argv.append('--remote-args')

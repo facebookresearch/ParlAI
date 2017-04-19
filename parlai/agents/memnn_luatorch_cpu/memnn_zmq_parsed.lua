@@ -1,8 +1,8 @@
 -- Copyright 2004-present Facebook. All Rights Reserved.
 --[[
 This connects to local ports over ZMQ, parsing incoming json into a table and
-forwarding that to the memnn_agent. This agent assumes that incoming data
-is formatted as text.
+forwarding that to the memnn_agent_parsed. This agent assumes that incoming data
+is formatted as vectors of indices into a dictionary.
 
 Sets up as many threads as needed, starting with the port number and counting
 up from there. Note: actually connects to n+1 ports, since the first port is
@@ -16,10 +16,10 @@ if not os.rename(libdir, libdir) then
     print('could not find memnnlib, trying to clone it now')
     assert(os.execute('git clone https://github.com/facebook/MemNN.git ' .. libdir),
            'error cloning into github.com/facebook/MemNN')
-    assert(os.execute('cd ' .. libdir .. '/KVMemnn/ && ./setup.sh'),
-           'error running ' .. libdir .. '/KVMemnn/setup.sh')
+    assert(os.execute('cd ' .. libdir .. '/KVmemnn/ && ./setup.sh'),
+           'error running ' .. libdir .. '/KVmemnn/setup.sh')
 end
-package.path =  libdir .. '/KVMemnn/?.lua' .. ';' .. package.path
+package.path =  libdir .. '/KVmemnn/?.lua' .. ';' .. package.path
 
 require('torch')
 local zmq = require('lzmq')
@@ -97,8 +97,8 @@ end
 -- setup main agent
 opt.parserClass = 'library.parse'
 
-local MemnnAgent = require('parlai.agents.memnn.memnn_luatorch_cpu.' ..
-                           'memnn_agent')
+local MemnnAgent = require('parlai.agents.memnn_luatorch_cpu' ..
+                           '.memnn_agent_parsed')
 local agent = MemnnAgent:__init(opt)
 
 if numThreads == 1 then
@@ -117,7 +117,7 @@ else
                 -- concurrent imports, so take a quick nap before starting...
                 os.execute('sleep ' .. tostring(0.05 * jobid))
                 local libdir = os.getenv('PARLAI_DOWNPATH') .. '/memnnlib'
-                package.path = libdir .. '/KVMemnn/?.lua' .. ';' .. package.path
+                package.path = libdir .. '/KVmemnn/?.lua' .. ';' .. package.path
                 require('torch')
                 require('tds')
 
@@ -128,8 +128,8 @@ else
                     jobopt['logEveryNSecs'] = nil
                 end
 
-                local MemnnAgent = require('parlai.agents.memnn.memnn_lua' ..
-                                           'torch_cpu.memnn_agent')
+                local MemnnAgent = require('parlai.agents.memnn_luatorch_cpu' ..
+                                           '.memnn_agent_parsed')
                 local agent = MemnnAgent:__init(jobopt, shared)
                 local job_port = port + jobid
 
