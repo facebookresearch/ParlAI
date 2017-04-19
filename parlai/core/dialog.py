@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
 
+import copy
+import time
+
 from .agents import Teacher
 from .data import TextData, HogwildTextData
 from .thread_utils import SharedTable
 from .metrics import Metrics
-import time
 
 
 class DialogTeacher(Teacher):
@@ -25,6 +27,7 @@ class DialogTeacher(Teacher):
 
     def __init__(self, opt, shared=None):
         # Check for setup_data
+        self.opt = copy.deepcopy(opt)
         print("[DialogTeacher initializing.]")
         if not hasattr(self, 'setup_data'):
             raise RuntimeError('Must implement setup_data or subclass a class' +
@@ -67,17 +70,14 @@ class DialogTeacher(Teacher):
             raise StopIteration()
 
     # share datatype, data, metrics, and a lock on the metrics
-    def share(self, opt):
-        if opt.get('numthreads', 1) == 1:
-            return opt, {}
-        else:
-            # share datatype, data, and metrics
-            if not hasattr(self, 'shared'):
-                self.shared = {}
-                self.shared['data'] = self.data
-                self.shared['metrics'] = self.metrics
-            opt['datatype'] = self.datatype
-            return (opt, self.shared)
+    def share(self):
+        shared = {}
+        shared['class'] = type(self)
+        shared['opt'] = self.opt
+        if self.opt.get('numthreads', 1) > 1:
+            shared['data'] = self.data
+            shared['metrics'] = self.metrics
+        return shared
 
     def label_candidates(self):
         """Returns None by default, but override this in children (such as

@@ -38,6 +38,8 @@ class Agent(object):
         print('[Agent initializing.]')
         if not hasattr(self, 'id'):
             self.id = 'agent'
+        if not hasattr(self, 'opt'):
+            self.opt = copy.deepcopy(opt)
 
     def observe(self, observation):
         self.observation = observation
@@ -57,15 +59,32 @@ class Agent(object):
     def getID(self):
         return self.id
 
-    def share(self, opt):
+    def share(self):
         """If applicable, share any parameters needed to create a shared version
         of this agent.
         """
-        return opt, None
+        shared = {}
+        shared['class'] = type(self)
+        shared['opt'] = self.opt
+        return shared
 
     def shutdown(self):
         """Perform any final cleanup if needed."""
         pass
+
+# Helper functions to create agent/agents given shared parameters
+# returned from agent.share(). Useful for parallelism, sharing params, etc.
+def create_agent_from_shared(shared_agent):
+    a = shared_agent['class'](shared_agent['opt'], shared_agent)
+    return a
+
+def create_agents_from_shared(shared):
+    # create agents based on shared data.
+    shared_agents = []
+    for shared_agent in shared:
+        agent = create_agent_from_shared(shared_agent)
+        shared_agents.append(agent)
+    return shared_agents
 
 
 class Teacher(Agent):

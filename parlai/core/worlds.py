@@ -13,6 +13,15 @@ HogwildWorld(World) creates another world within itself for every thread, in
     order to have separate simulated environments for each one. Each world gets
     its own agents initialized using the "share()" parameters from the original
     agents.
+
+All worlds are initialized with the following parameters:
+opt -- contains any options needed to set up the agent. This generally contains
+    all command-line arguments recognized from core.params, as well as other
+    options that might be set through the framework to enable certain modes.
+shared (optional) -- if not None, contains any shared data used to construct
+    this particular instantiation of the world. This data might have been
+    initialized by another world, so that different agents can share the same
+    data (possibly in different Processes).
 """
 
 import copy
@@ -21,7 +30,7 @@ import random
 
 from multiprocessing import Process, Value, Condition, Semaphore
 from collections import deque
-from parlai.core.agents import _create_task_agents
+from parlai.core.agents import _create_task_agents, create_agents_from_shared
 from parlai.tasks.tasks import ids_to_tasks
 
 def validate(observation):
@@ -42,9 +51,31 @@ class World(object):
     """Empty parent providing null definitions of API functions for Worlds.
     All children can override these to provide more detailed functionality."""
 
-    def __init__(self, opt):
+    def __init__(self, opt, agents=None, shared=None):
         self.is_done = False
         self.id = opt['task']
+        self.opt = copy.deepcopy(opt)
+        if shared:
+            # Create agents based on shared data.
+            self.agents = create_agents_from_shared(shared.agents)
+        else:
+            # Add passed in agents to world directly.
+            self.agents = agents
+
+    def share(self):
+        shared_data = {}
+        shared_data['world_class'] = type(self)
+        shared_data['opt'] = self.opt
+        shared_data['agents'] = self._share_agents()
+        return shared_data
+        
+    def _share_agents(self):
+        if not hasattr(self, 'agents'):
+            return None
+        # create shared data for agents so other classes can create the same
+        # agents without duplicating the data (i.e. sharing parameters).
+        shared_agents = [a.share() for a in self.agents]
+        return shared_agents
 
     def __enter__(self):
         """Empty enter provided for use with `with` statement.
@@ -138,11 +169,14 @@ def create_task(opt, user_agents):
         if ',' not in opt['task']:
             # Single task
             world = create_task_world(opt, user_agents)
-            return world
         else:
             # Multitask teacher/agent
-            worlds = MultiWorld(opt, user_agents)
-            return worlds
+            world = MultiWorld(opt, user_agents)
+
+        if opt.get('batchsize', 1) > 1:
+            return BatchWorld(opt, world)
+        else:
+            return world
     else:
         # more than one thread requested: do hogwild training
         if ',' not in opt['task']:
@@ -160,13 +194,19 @@ class DialogPartnerWorld(World):
     agent one chance to speak per turn and passing that back to the other agent.
     """
 
-    def __init__(self, opt, agents):
-        if len(agents) != 2:
-            raise RuntimeError('There must be exactly two agents for this ' +
-                               'world.')
+    def __init__(self, opt, agents, shared=None):
         super().__init__(opt)
-        self.teacher = agents[0]
-        self.agent = agents[1]
+        if shared:
+            # Create agents based on shared data.
+            self.agents = create_agents_from_shared(shared['agents'])
+        else:
+            # Add passed in agents directly.
+            if len(agents) != 2:
+                raise RuntimeError('There must be exactly two agents for this ' +
+                                   'world.')
+            self.agents = agents
+        self.teacher = self.agents[0]
+        self.agent = self.agents[1]
         self.reply = {}
 
     def __iter__(self):
@@ -231,7 +271,7 @@ class MultiWorld(World):
     that world represents.
     """
 
-    def __init__(self, opt, user_agents):
+    def __init__(self, opt, agents):
         super().__init__(opt)
         self.worlds = []
         for k in opt['task'].split(','):
@@ -240,7 +280,7 @@ class MultiWorld(World):
                 print("[creating world: " + k + "]")
                 opt_singletask = copy.deepcopy(opt)
                 opt_singletask['task'] = k
-                self.worlds.append(create_task_world(opt_singletask, user_agents))
+                self.worlds.append(create_task_world(opt_singletask, agents))
         self.world_idx = -1
         self.new_world = True
         self.parleys = 0
@@ -324,9 +364,8 @@ class MultiAgentDialogWorld(World):
     acted.
     """
 
-    def __init__(self, opt, agents):
-        id = self.opt['task']
-        self.agents = agents
+    def __init__(self, opt, agents=None, shared=None):
+        super().__init__(opt, agents, shared)
 
     def parley(self):
         """For each agent, get an observation of the last action each of the
@@ -343,6 +382,36 @@ class MultiAgentDialogWorld(World):
             a.shutdown()
 
 
+class BatchWorld(World):
+    """Creates a separate world for each item in the batch, sharing
+    the parameters for each."""
+
+    def __init__(self, opt, world):
+        self.worlds = [ world ]
+        shared = world.share()
+        for i in range(opt['batchsize'] - 1):
+            self.worlds.append(shared['world_class'](opt, None, shared))
+
+    def parley(self):
+        for k in self.worlds:
+            k.parley()
+
+    def display(self):
+        s = ("[--batchsize " + str(len(self.worlds)) + "--]\n")
+        for i, w in enumerate(self.worlds):
+            s += ("[batch world " + str(i) + ":]\n")
+            s += (w.display() + '\n')
+        s += ("[--end of batch--]")
+        return s
+    
+    def getID(self):
+        return self.worlds[0].getID()
+
+    def done(self):
+        return False
+
+
+
 class HogwildProcess(Process):
     """Process child used for HogwildWorld.
     Each HogwildProcess contain its own unique World.
@@ -352,8 +421,7 @@ class HogwildProcess(Process):
         self.threadId = tid
         self.world_type = world
         self.opt = opt
-        self.agent_types = [type(a) for a in agents]
-        self.agent_shares = [a.share(self.opt) for a in agents]
+        self.agent_shares = [a.share() for a in agents]
         self.queued_items = sem
         self.finished = fin
         self.terminate = term
@@ -364,12 +432,7 @@ class HogwildProcess(Process):
         """Runs normal parley loop for as many examples as this thread can get
         ahold of via the semaphore queued_items.
         """
-        shared_agents = []
-        # reinitialize world/agents using the shared data within this Process
-        for i, agent_type in enumerate(self.agent_types):
-            opt, shared = self.agent_shares[i]
-            agent = agent_type(opt, shared)
-            shared_agents.append(agent)
+        shared_agents = create_agents_from_shared(self.agent_shares)
         world = self.world_type(self.opt, shared_agents)
 
         with world:

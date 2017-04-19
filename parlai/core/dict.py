@@ -4,6 +4,7 @@
 from .agents import Agent
 from .thread_utils import SharedTable
 from collections import defaultdict
+import copy
 import numpy as np
 import nltk
 
@@ -84,6 +85,7 @@ class DictionaryAgent(Agent):
 
     def __init__(self, opt, shared=None):
         # initialize fields
+        self.opt = copy.deepcopy(opt)
         self.null_token = opt.get('dict_nulltoken')
         self.unk_token = opt.get('dict_unktoken')
         self.max_ngram_size = opt.get('dict_max_ngram_size',
@@ -311,7 +313,7 @@ class DictionaryAgent(Agent):
                         self.add_to_dict(self.tokenize(text))
         return {}
 
-    def share(self, opt):
+    def share(self):
         """Creates shared-memory versions of the internal maps."""
         self.freq = SharedTable(self.freq)
         self.tok2ind = SharedTable(self.tok2ind)
@@ -320,7 +322,9 @@ class DictionaryAgent(Agent):
         shared['freq'] = self.freq
         shared['tok2ind'] = self.tok2ind
         shared['ind2tok'] = self.ind2tok
-        return opt, shared
+        shared['opt'] = self.opt
+        shared['class'] = type(self)
+        return shared
 
     def shutdown(self):
         """Save on shutdown if savepath is set."""

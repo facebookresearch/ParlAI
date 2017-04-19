@@ -1,6 +1,7 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
 
-from parlai.core.agents import Agent
+from parlai.core.agents import Agent, create_agent_from_shared
+import copy
 import numpy as np
 import json
 import subprocess
@@ -32,6 +33,7 @@ class RemoteAgent(Agent):
         """
         if shared and 'port' in shared:
             self.port = shared['port']
+            self.opt = copy.deepcopy(shared['opt'])
         else:
             if 'port' in opt:
                 self.port = opt['port']
@@ -46,6 +48,7 @@ class RemoteAgent(Agent):
                     args=opt.get('remote_args', '')
                 ).split()
             )
+            self.opt = copy.deepcopy(opt)
         self.connect()
 
     def connect(self):
@@ -64,14 +67,16 @@ class RemoteAgent(Agent):
         reply = self.socket.recv_unicode()
         return json.loads(reply)
 
-    def share(self, opt):
+    def share(self):
         """Increments port to use when using remote agents in Hogwild mode."""
         if not hasattr(self, 'lastport'):
             self.lastport = self.port
         shared = {}
         shared['port'] = self.lastport + 1
+        shared['class'] = type(self)
+        shared['opt'] = self.opt
         self.lastport += 1
-        return opt, shared
+        return shared
 
     def shutdown(self):
         """Shut down paired listener with <END> signal."""
@@ -100,10 +105,9 @@ class ParsedRemoteAgent(RemoteAgent):
     """
 
     def __init__(self, opt, shared=None):
-        if 'dictionary_args' in shared:
+        if 'dictionary_agent' in shared:
             # use this first--maybe be overriding an original dictionary
-            dict_class, dict_opt, dict_shared = shared['dictionary_args']
-            self.dict = dict_class(dict_opt, dict_shared)
+            self.dict = create_agent_from_shared(shared['dictionary_agent'])
         elif 'dictionary' in shared:
             # otherwise use this dictionary
             self.dict = shared['dictionary']
@@ -151,8 +155,7 @@ class ParsedRemoteAgent(RemoteAgent):
         else:
             return self.dict.parse(s, vec_type=list)
 
-    def share(self, opt):
-        opt, shared = super().share(opt)
-        dict_opt, dict_shared = self.dict.share(opt)
-        shared['dictionary_args'] = (type(self.dict), dict_opt, dict_shared)
-        return opt, shared
+    def share(self):
+        shared = super().share()
+        shared['dictionary_agent'] = self.dict.share()
+        return shared

@@ -31,9 +31,8 @@ class Metrics(object):
         self.metrics['cnt'] = 0
         self.metrics['correct'] = 0
         self.eval_pr = [1, 5, 10, 50, 100]
-        self.metrics['hits@k'] = {}
         for k in self.eval_pr:
-            self.metrics['hits@k'][k] = 0
+            self.metrics['hits@' + str(k)] = 0
         if opt.get('numthreads', 1) > 1:
             self.metrics = SharedTable(self.metrics)
         self.datatype = opt.get('datatype', 'train')
@@ -84,7 +83,7 @@ class Metrics(object):
         with self._lock():
             for k in self.eval_pr:
                 if cnts[k] > 0:
-                    self.metrics['hits@k'][k] += 1
+                    self.metrics['hits@' + str(k)] += 1
 
 
     def update(self, observation, labels, label_cands):
@@ -117,13 +116,12 @@ class Metrics(object):
             m['accuracy'] = self.metrics['correct'] / self.metrics['cnt']
             m['hits@k'] = {}
             for k in self.eval_pr:
-                m['hits@k'][k] = self.metrics['hits@k'][k] / self.metrics['cnt']
+                m['hits@k'][k] = self.metrics['hits@' + str(k)] / self.metrics['cnt']
         return m
 
     def clear(self):
         with self._lock():
             self.metrics['cnt'] = 0
-            self.metrics['hits@k'] = {}
             for k in self.eval_pr:
-                self.metrics['hits@k'][k] = 0
+                self.metrics['hits@' + str(k)][k] = 0
             self.metrics['correct'] = 0

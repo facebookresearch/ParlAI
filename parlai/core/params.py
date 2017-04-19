@@ -48,6 +48,9 @@ class ParlaiParser(object):
         self.parser.add_argument(
             '-n', '--numthreads', default=1, type=int,
             help='number of threads, e.g. for hogwild')
+        self.parser.add_argument(
+            '-b', '--batchsize', default=1, type=int,
+            help='batch size for minibatch training schemes')
 
     def parse_args(self, args=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the args.
