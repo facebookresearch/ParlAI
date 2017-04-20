@@ -4,11 +4,18 @@ ask @jase, @ahm, or @willfeng if you need help with anything.
 
 ParlAI is a framework for dialog AI research.
 
+Over 20 tasks are supported in the first release, including popular datasets such as 
+SQuAD, bAbI tasks, MCTest, WikiQA, WebQuestions, SimpleQuestions, WikiMovies, QACNN, QADailyMail, CBT, BookTest, bAbI Dialog tasks,
+Ubuntu, OpenSubtitles, Cornell Movie and VQA-COCO2014.
+
+Included are examples of training neural models with PyTorch, Theano and Lua Torch.
+
 ## Goals
 
 Unified framework for evaluation of dialogue models
 - downloads tasks/datasets when requested and provides the same simple interface to them
 - unify dataset input and evaluation frameworks/metrics
+- agents/ directory encourages researchers to commit their training code to the repository to share with others
 - aid reproducibility
 
 End goal is general dialogue, which includes many different skills
@@ -36,18 +43,19 @@ Set of datasets to bootstrap a working dialogue model for human interaction
 - Uses zmq to talk to other toolboxes not in Python, examples of Lua Torch given.
 - Supports hogwild and batch training of models.
 
-## Tasks
-
-Over 20 tasks are supported in the first release, including popular datasets such as 
-SQuAD, bAbI tasks, MCTest, WikiQA, WebQuestions, SimpleQuestions, WikiMovies, QACNN, QADailyMail, CBT, BookTest, bAbI Dialog tasks,
-Ubuntu, OpenSubtitles and Cornell Movie.
-
-See <a href="https://github.com/fairinternal/ParlAI/tree/master/parlai/tasks/tasks.py"></a> for the list.
+## Worlds, agents and teachers
+The main concepts (classes) in ParlAI:
+- world - defines the environment (can be very simple, just two agents talking to each other).
+- agent – an agent in the world, e.g. the learner. (There can be multiple learners.)
+- teacher – a type of agent that talks to the learner, implements one of the tasks listed before.
 
 
-## Observations
+## Actions and Observations
 
-All agents use the same format for passing data, an "observation" table with the following fields:
+All agents (including teachers) speak to each other with a single format -- the action/observation object (a python dict).
+This is used to pass text, labels and rewards between agents.
+It’s the same object type when talking (acting) or listening (observing), but a different view (with different values in the fields). 
+The fields are as follows:
 
     text: a string containing any text provided from this agent (e.g. a question)
     labels: an iterable of strings containing the label for this example
@@ -103,7 +111,7 @@ Each directory is described in more detail below, ordered by dependencies.
 
 The core library contains the following files:
 
-    agents.py: this file contains a few basic agents which can be extended by your own model
+        agents.py: this file contains a few basic agents which can be extended by your own model
         Agent: base class for all other agents, implements the act() method which receives an observation table and returns a table in response
         Teacher: child of Agent, also implements the report method for returning metrics. Tasks implement the Teacher class
         MultiTaskTeacher: creates a set of teachers based on a "task string" passed to the Teacher, creating multiple teachers within it and alternating between them
@@ -146,17 +154,26 @@ This directory contains a few particular examples of basic loops.
 
     build_dict.py: build a dictionary from a particular task provided on the command-line using core.dict.DictionaryAgent
     display_data.py: uses agent.repeat_label to display data from a particular task provided on the command-line
+    eval_data.py: uses agent.repeat_label to compute evaluation metrics data for a particular task provided on the command-line
     memnn_luatorch_cpu: shows a few examples of training a memory network on a few datasets
 
 ### Tasks
 
-See the tasks directory for the current list of available tasks.
-Each task folder contains a teachers.py file which contains default or special teacher classes used by core.create_task_teacher to instantiate these classes from command-line arguments (if desired).
-When applicable, these tasks also contain a build.py file for setting up these classes (downloading data, etc).
+
+Over 20 tasks are supported in the first release, including popular datasets such as 
+SQuAD, bAbI tasks, MCTest, WikiQA, WebQuestions, SimpleQuestions, WikiMovies, QACNN, QADailyMail, CBT, BookTest, bAbI Dialog tasks,
+Ubuntu, OpenSubtitles, Cornell Movie and VQA-COCO2014.
+
+See  [here](https://github.com/fairinternal/ParlAI/tree/master/parlai/tasks/tasks.json) for the complete list.
+ 
+Each task folder contains:
+- build.py file for setting up data for the task (downloading data, etc, only done the first time requested, and not downloaded if the task is not used).
+- agents.py file which contains default or special teacher classes used by core.create_task to instantiate these classes from command-line arguments (if desired).
+- worlds.py file can optionally be added for tasks that need to define new/complex environments.
 
 To add your own task:
 - (optional) implement build.py to download any needed data
-- implement teachers.py, with at least a DefaultTeacher (extending Teacher or one of its children)
+- implement agents.py, with at least a DefaultTeacher (extending Teacher or one of its children)
     - if your data is in FB Dialog format, subclass FbDialogTeacher
     - if not...
         - if your data is text-based, you can use extend DialogTeacher and thus core.data.TextData, in which case you just need to write your own setup_data function which provides an iterable over the data according to the format described in core.data
