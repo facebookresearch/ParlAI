@@ -2,7 +2,48 @@
 
 ask @jase, @ahm, or @willfeng if you need help with anything.
 
-This framework provides the base for a unified format for dialog research.
+ParlAI is a framework for dialog AI research.
+
+## Goals
+
+Unified framework for evaluation of dialogue models
+- downloads tasks/datasets when requested and provides the same simple interface to them
+- unify dataset input and evaluation frameworks/metrics
+- aid reproducibility
+
+End goal is general dialogue, which includes many different skills
+- seamless combination of simulated and real language datasets
+- encourage multi-task model development & evaluation
+- reduce overfitting of models to specific datasets         
+
+End goal is real dialogue with people
+- train and evaluate on live dialogue with humans via MTurk
+- easy setup for connecting turkers with your dialogue agent
+- allow to compare different research groups turk experiments
+
+Set of datasets to bootstrap a working dialogue model for human interaction
+- motivates building new datasets that will go in the repository
+
+## Properties
+
+- All datasets look like natural dialogue: a single format / API.
+- Both fixed datasets (conversation logs) and interactive (online/RL) tasks.
+- Both real and simulated tasks.
+- Supports other media, e.g. visual in VQA.
+- Can use Mechanical Turk to run / collect data / evaluate.
+- Python framework
+- Examples of training with PyTorch.
+- Uses zmq to talk to other toolboxes not in Python, examples of Lua Torch given.
+- Supports hogwild and batch training of models.
+
+## Tasks
+
+Over 20 tasks are supported in the first release, including popular datasets such as 
+SQuAD, bAbI tasks, MCTest, WikiQA, WebQuestions, SimpleQuestions, WikiMovies, QACNN, QADailyMail, CBT, BookTest, bAbI Dialog tasks,
+Ubuntu, OpenSubtitles and Cornell Movie.
+
+See <a href="https://github.com/fairinternal/ParlAI/tree/master/parlai/tasks/tasks.py"></a> for the list.
+
 
 ## Observations
 
