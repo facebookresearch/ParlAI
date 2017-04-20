@@ -11,13 +11,17 @@ The way FB Dialog data is set up is as follows:
 6 Where is the milk?<TAB>hallway<TAB>1<TAB>hallway|kitchen|bathroom
 
 Lines 1-6 represent a single episode, with two different examples: the first
-    example is lines 1-3, and the second is lines 4-6.
+example is lines 1-3, and the second is lines 4-6.
+
 Lines 1,2,4, and 5 represent contextual information.
+
 Lines 3 and 6 contain a query, a label, a reward for getting the question
-    correct, and three label candidates.
+correct, and three label candidates.
+
 Since both of these examples are part of the same episode, the information
-    provided in the first example is relevant to the query in the second example
-    and therefore the agent must remember the first example in order to do well.
+provided in the first example is relevant to the query in the second example
+and therefore the agent must remember the first example in order to do well.
+
 In general dialog in this format can be any speech, not just QA pairs:
 
 1 Hi how's it going?<TAB>It's going great. What's new?
@@ -118,7 +122,7 @@ class FbDialogTeacher(DialogTeacher):
                 # x<tab>y<tab>reward<tab>label_candidates
                 # where y, reward, and label_candidates are optional
                 split = line[space_idx + 1:].split('\t')
-                
+
                 # remove empty items and strip each one
                 for i in range(len(split)):
                     word = split[i].strip()

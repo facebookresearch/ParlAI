@@ -15,7 +15,9 @@ Also provides a utility method (used by MultiTaskTeacher) for instantiating
 create_task_agents(str): instantiate task-specific agents (e.g. a teacher)
     from a given task string (e.g. 'babi:task1k:1' or 'squad')
 
+
 All agents are initialized with the following parameters:
+
 opt -- contains any options needed to set up the agent. This generally contains
     all command-line arguments recognized from core.params, as well as other
     options that might be set through the framework to enable certain modes.
