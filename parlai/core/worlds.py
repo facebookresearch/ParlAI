@@ -9,10 +9,19 @@ World(object) provides a generic parent class, including __enter__ and __exit__
 DialogPartnerWorld(World) provides a two-agent turn-based dialog setting
 MultiAgentDialogWorld(World) provides a two-plus turn-based round-robin dialog
 
+MultiAgentDialogWorld provides a multi-agent setting.
+
 HogwildWorld(World) creates another world within itself for every thread, in
     order to have separate simulated environments for each one. Each world gets
     its own agents initialized using the "share()" parameters from the original
     agents.
+
+BatchWorld(World) is a container for doing minibatch training over a world by
+collecting batches of N copies of the environment (each with different state).
+
+MultiWorld(World) creates a set of environments for the same agent to multitask.
+
+
 
 All worlds are initialized with the following parameters:
 opt -- contains any options needed to set up the agent. This generally contains
@@ -387,14 +396,25 @@ class BatchWorld(World):
     the parameters for each."""
 
     def __init__(self, opt, world):
-        self.worlds = [ world ]
+        self.world = world
         shared = world.share()
-        for i in range(opt['batchsize'] - 1):
+        self.worlds = []
+        for i in range(opt['batchsize']):
             self.worlds.append(shared['world_class'](opt, None, shared))
 
     def parley(self):
         for k in self.worlds:
             k.parley()
+        # Collect batch together for each agent, and do update.
+        for i, a in enumerate(self.world.agents):
+            batch = []
+            for w in self.worlds:
+                if hasattr(w.agents[i], 'observation'):
+                    batch.append(w.agents[i].observation)
+            a.observation = batch
+            # Call update on agent
+            if len(batch) > 0 and hasattr(a, 'update_batch'):
+                a.update_batch(batch)
 
     def display(self):
         s = ("[--batchsize " + str(len(self.worlds)) + "--]\n")

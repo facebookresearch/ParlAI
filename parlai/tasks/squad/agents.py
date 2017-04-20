@@ -7,7 +7,7 @@ from parlai.core.dialog import DialogTeacher
 from .build import build
 
 
-class DefaultTeacher(Teacher):
+class HandwrittenTeacher(Teacher):
     """
     Hand-written SQuAD teacher, which loads the json squad data and implements
     its own `act()` method for interacting with student agent.
@@ -31,7 +31,7 @@ class DefaultTeacher(Teacher):
         return self.len
 
     # return state/action dict based upon passed state
-    def act(self)
+    def act(self):
         if self.datatype == 'train':
             self.episode_idx = random.randrange(len(self.examples))
         else:
@@ -69,7 +69,7 @@ class DefaultTeacher(Teacher):
                     self.examples.append((article_idx, paragraph_idx, qa_idx))
 
 
-class InheritedSquadTeacher(DialogTeacher):
+class DefaultTeacher(DialogTeacher):
     """
     This version of SQuAD inherits from the core Dialog Teacher, which just
     requires it to define an iterator over its data `setup_data` in order to

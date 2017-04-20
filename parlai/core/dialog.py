@@ -74,9 +74,8 @@ class DialogTeacher(Teacher):
         shared = {}
         shared['class'] = type(self)
         shared['opt'] = self.opt
-        if self.opt.get('numthreads', 1) > 1:
-            shared['data'] = self.data
-            shared['metrics'] = self.metrics
+        shared['data'] = self.data
+        shared['metrics'] = self.metrics
         return shared
 
     def label_candidates(self):
