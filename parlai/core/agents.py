@@ -74,6 +74,19 @@ class Agent(object):
         """Perform any final cleanup if needed."""
         pass
 
+def create_agent(opt):
+    """Create an agent from the options model, model_params and model_file"""
+    dir_name = opt['model']
+    words = opt['model'].split('_')
+    class_name = ''
+    for w in words:
+        class_name += ( w[0].upper() + w[1:])
+    print(class_name)
+    module_name = "parlai.agents.%s.agents" % (dir_name)
+    my_module = importlib.import_module(module_name)
+    model_class = getattr(my_module, class_name + 'Agent')
+    return model_class(opt)
+
 # Helper functions to create agent/agents given shared parameters
 # returned from agent.share(). Useful for parallelism, sharing params, etc.
 def create_agent_from_shared(shared_agent):
@@ -94,6 +107,8 @@ class Teacher(Agent):
     messages. Teachers provide the `report` method to get back metrics."""
 
     def __init__(self, opt, shared=None):
+        if not hasattr(self, 'opt'):
+            self.opt = opt
         if not hasattr(self, 'id'):
             self.id = opt.get('task', 'teacher')
         if not hasattr(self, 'metrics'):

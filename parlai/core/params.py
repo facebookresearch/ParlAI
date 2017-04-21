@@ -15,10 +15,12 @@ class ParlaiParser(object):
     For example, see `parlai.core.dict.DictionaryAgent.add_cmdline_args`
     """
 
-    def __init__(self, add_parlai_args=True):
+    def __init__(self, add_parlai_args=True, add_model_args=False):
         self.parser = argparse.ArgumentParser(description='ParlAI parser.')
         if add_parlai_args:
             self.add_parlai_args()
+        if add_model_args:
+            self.add_model_args()
 
         self.add_arg = self.parser.add_argument
         self.add_argument = self.parser.add_argument
@@ -52,6 +54,18 @@ class ParlaiParser(object):
             '-b', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
 
+    def add_model_args(self):
+        self.parser.add_argument(
+            '-m', '--model', default='repeat_label',
+            help='the model class name, should match parlai/agents/<model>')
+        self.parser.add_argument(
+            '-mp', '--model_params', default='',
+            help='the model parameters, a string that is parsed separately '
+            + 'by the model parser after the model class is instantiated')
+        self.parser.add_argument(
+            '-mf', '--model_file', default='',
+            help='model file name for loading and saving models')
+
     def parse_args(self, args=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the args.
         We specifically remove items with `None` as values in order to support
@@ -61,7 +75,8 @@ class ParlaiParser(object):
         self.opt = {k: v for k, v in vars(self.args).items() if v is not None}
         if print_args:
             self.print_args()
-        os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']
+        if 'download_path' in self.opt:
+            os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']
         return self.opt
 
     def print_args(self):

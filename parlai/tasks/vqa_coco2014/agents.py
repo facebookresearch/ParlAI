@@ -54,6 +54,7 @@ class OeTeacher(Teacher):
     agent.
     """
     def __init__(self, opt, shared=None):
+        super().__init__(opt)
         self.datatype = opt['datatype']
         data_path, annotation_path, image_path = _path(opt)
         self._setup_data(data_path, annotation_path, image_path)
@@ -111,6 +112,7 @@ class McTeacher(Teacher):
     agent.
     """
     def __init__(self, opt, shared=None):
+        super().__init__(opt)
         self.datatype = opt['datatype']
         data_path, annotation_path, image_path = _path(opt)
         self._setup_data(data_path, annotation_path, image_path)
