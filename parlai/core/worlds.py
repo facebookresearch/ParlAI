@@ -77,7 +77,7 @@ class World(object):
         shared_data['opt'] = self.opt
         shared_data['agents'] = self._share_agents()
         return shared_data
-        
+
     def _share_agents(self):
         if not hasattr(self, 'agents'):
             return None
@@ -240,8 +240,8 @@ class DialogPartnerWorld(World):
         if self.query.get('reward', None) is not None:
             lines.append('   [reward: {r}]'.format(r=self.query['reward']))
         if self.query.get('text', ''):
-            id = '[' + self.query['id'] + ']: ' if 'id' in self.query else ''
-            lines.append(id + self.query['text'])
+            ID = '[' + self.query['id'] + ']: ' if 'id' in self.query else ''
+            lines.append(ID + self.query['text'])
         if self.query.get('label_candidates', False):
             cand_len = len(self.query['label_candidates'])
             if cand_len <= 10:
@@ -258,8 +258,8 @@ class DialogPartnerWorld(World):
                     '| ...and {} more'.format(cand_len - 5)
                 ))
         if self.reply.get('text', ''):
-            id = '[' + self.reply['id'] + ']: ' if 'id' in self.reply else ''
-            lines.append('   ' + id + self.reply['text'])
+            ID = '[' + self.reply['id'] + ']: ' if 'id' in self.reply else ''
+            lines.append('   ' + ID + self.reply['text'])
         if self.done():
             lines.append('- - - - - - - - - - - - - - - - - - - - -')
         return '\n'.join(lines)
@@ -436,7 +436,7 @@ class BatchWorld(World):
             s += (w.display() + '\n')
         s += ("[--end of batch--]")
         return s
-    
+
     def getID(self):
         return self.worlds[0].getID()
 

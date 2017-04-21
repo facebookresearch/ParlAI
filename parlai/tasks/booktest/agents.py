@@ -14,11 +14,11 @@ class EvalTeacher(FbDialogTeacher):
         if opt['datatype'].startswith('valid'):
             suffix = 'validation_NECN.20k'
         else:
-            suffix = 'test_CN.10k.txt'
+            suffix = 'test_CN.10k'
         opt['datafile'] = (
             opt['datapath'] + '/BookTest/booktest-gut/' +
             suffix + '.txt')
-        super().__init__(opt, shared)    
+        super().__init__(opt, shared)
 
 
 class StreamTeacher(Teacher):
@@ -48,7 +48,7 @@ class StreamTeacher(Teacher):
                 self.fin.close()
                 self.fin = open(self.datafile)
                 continue
-                
+
             l = l.rstrip('\n')
             l = l[l.find(' ')+1:]  # strip index
             s = l.split('\t')
@@ -60,19 +60,19 @@ class StreamTeacher(Teacher):
                     'labels': [s[1]],
                     'candidates': s[3].split('|') if len(s) > 3 else None,
                     'done': True
-                    }
+                }
         return obs
 
 
     # return state/action dict based upon passed state
-    def act(self)
+    def act(self):
         obs = self.get_next()
         return obs
 
 
 def create_agents(opt):
     dt = opt['datatype']
-    if dt == 'train':
+    if dt.startswith('train'):
         return StreamTeacher(opt)
     else:
         return EvalTeacher(opt)

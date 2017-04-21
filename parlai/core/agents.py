@@ -95,7 +95,7 @@ class Teacher(Agent):
 
     def __init__(self, opt, shared=None):
         if not hasattr(self, 'id'):
-            self.id = opt['task']
+            self.id = opt.get('task', 'teacher')
         if not hasattr(self, 'metrics'):
             if shared and shared.get('metrics'):
                 self.metrics = shared['metrics']

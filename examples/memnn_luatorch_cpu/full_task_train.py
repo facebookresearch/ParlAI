@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
 """Given a specified task, builds a dictionary on the training and validation
 set for that task and then trains a memory network using the default parameters
@@ -20,71 +19,75 @@ import copy
 import sys
 import time
 
-# Get command line arguments
-argparser = ParlaiParser()
-DictionaryAgent.add_cmdline_args(argparser)
-ParsedRemoteAgent.add_cmdline_args(argparser)
-if '--remote-cmd' not in sys.argv:
-    sys.argv.append('--remote-cmd')
-    sys.argv.append('luajit parlai/agents/memnn_luatorch_cpu/' +
-                    'memnn_zmq_parsed.lua')
-if '--remote-args' not in sys.argv:
-    sys.argv.append('--remote-args')
-    sys.argv.append('examples/memnn_luatorch_cpu/params/params_default.lua')
 
-opt = argparser.parse_args()
+def main():
+    # Get command line arguments
+    argparser = ParlaiParser()
+    DictionaryAgent.add_cmdline_args(argparser)
+    ParsedRemoteAgent.add_cmdline_args(argparser)
+    if '--remote-cmd' not in sys.argv:
+        sys.argv.append('--remote-cmd')
+        sys.argv.append('luajit parlai/agents/memnn_luatorch_cpu/' +
+                        'memnn_zmq_parsed.lua')
+    if '--remote-args' not in sys.argv:
+        sys.argv.append('--remote-args')
+        sys.argv.append('examples/memnn_luatorch_cpu/params/params_default.lua')
 
-# set up dictionary
-print('Setting up dictionary.')
-dictionary = DictionaryAgent(opt)
-if not opt.get('dict_loadpath'):
-    # build dictionary since we didn't load it
-    ordered_opt = copy.deepcopy(opt)
-    for datatype in ['train:ordered', 'valid']:
-        # we use train and valid sets to build dictionary
-        ordered_opt['datatype'] = datatype
-        ordered_opt['numthreads'] = 1
-        world_dict = create_task(ordered_opt, dictionary)
-        # pass examples to dictionary
-        for _ in world_dict:
-            world_dict.parley()
+    opt = argparser.parse_args()
 
-    # we need to save the dictionary to load it in memnn (sort it by frequency)
-    dictionary.save('/tmp/dict.txt', sort=True)
+    # set up dictionary
+    print('Setting up dictionary.')
+    dictionary = DictionaryAgent(opt)
+    if not opt.get('dict_loadpath'):
+        # build dictionary since we didn't load it
+        ordered_opt = copy.deepcopy(opt)
+        for datatype in ['train:ordered', 'valid']:
+            # we use train and valid sets to build dictionary
+            ordered_opt['datatype'] = datatype
+            ordered_opt['numthreads'] = 1
+            world_dict = create_task(ordered_opt, dictionary)
+            # pass examples to dictionary
+            for _ in world_dict:
+                world_dict.parley()
 
-print('Dictionary ready, moving on to training.')
+        # we need to save the dictionary to load it in memnn (sort it by freq)
+        dictionary.save('/tmp/dict.txt', sort=True)
 
-opt['datatype'] = 'train'
-agent = ParsedRemoteAgent(opt, {'dictionary': dictionary})
-world_train = create_task(opt, agent)
-opt['datatype'] = 'valid'
-world_valid = create_task(opt, agent)
+    print('Dictionary ready, moving on to training.')
 
-start = time.time()
-with world_valid, world_train:
-    for _ in range(100):
-        print('[ training ]')
-        for _ in range(1000 * opt.get('numthreads', 1)):
-            world_train.parley()
-        world_train.synchronize()
+    opt['datatype'] = 'train'
+    agent = ParsedRemoteAgent(opt, {'dictionary': dictionary})
+    world_train = create_task(opt, agent)
+    opt['datatype'] = 'valid'
+    world_valid = create_task(opt, agent)
 
-        print('[ training summary. ]')
-        print(world_train.report())
+    start = time.time()
+    with world_valid, world_train:
+        for _ in range(100):
+            print('[ training ]')
+            for _ in range(1000 * opt.get('numthreads', 1)):
+                world_train.parley()
+            world_train.synchronize()
 
-        print('[ validating ]')
-        for _ in world_valid:  # check valid accuracy
+            print('[ training summary. ]')
+            print(world_train.report())
+
+            print('[ validating ]')
+            for _ in world_valid:  # check valid accuracy
+                world_valid.parley()
+
+            print('[ validation summary. ]')
+            report_valid = world_valid.report()
+            print(report_valid)
+            if report_valid['accuracy'] > 0.95:
+                break
+
+        # show some example dialogs after training:
+        for _k in range(3):
             world_valid.parley()
+            print(world_valid.display())
 
-        print('[ validation summary. ]')
-        report_valid = world_valid.report()
-        print(report_valid)
-        if report_valid['accuracy'] > 0.95:
-            break
+    print('finished in {} s'.format(round(time.time() - start, 2)))
 
-    # show some example dialogs after training:
-    for _k in range(3):
-        world_valid.parley()
-        print(world_valid.display())
-
-
-print('finished in {} s'.format(round(time.time() - start, 2)))
+if __name__ == '__main__':
+    main()

@@ -80,6 +80,7 @@ class DefaultTeacher(DialogTeacher):
 
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
+        build(opt)
         if opt['datatype'].startswith('train'):
             suffix = 'train'
         else:

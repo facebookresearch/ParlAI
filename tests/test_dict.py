@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
 
 from parlai.core.dict import find_ngrams
@@ -38,7 +37,8 @@ class TestDictionary(unittest.TestCase):
         dictionary = DictionaryAgent(opt)
         num_builtin = len(dictionary)
 
-        dictionary.act({'text': 'hello world'})
+        dictionary.observe({'text': 'hello world'})
+        dictionary.act()
         assert len(dictionary) - num_builtin == 2
 
         vec = dictionary.parse('hello world')

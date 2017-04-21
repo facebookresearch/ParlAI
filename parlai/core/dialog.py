@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
 
 import copy
@@ -38,12 +37,14 @@ class DialogTeacher(Teacher):
         self.startTime = time.time()
         self.fin = False
         self.lastY = None
-        self.id = opt['task']
+        if not hasattr(self, 'id'):
+            self.id = opt.get('task', 'teacher')
 
         # first initialize any shared objects
         if shared and shared.get('data'):
             self.data = shared['data']
         else:
+            # TODO(ahm): remove True
             if True or opt.get('numthreads', 1) == 1:
                 self.data = TextData(self.setup_data(opt['datafile']),
                                      cands=self.label_candidates(),

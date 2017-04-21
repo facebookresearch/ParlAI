@@ -1,5 +1,16 @@
-#!/usr/bin/env python3
 # Copyright 2004-present Facebook. All Rights Reserved.
+"""Simple agent which repeats back the labels sent to it.
+By default, replies with a single random label from the list of labels sent to
+it, if any. If the label_candidates field is set, will fill the text_candidates
+field with up to a hundred randomly selected candidates (the first text
+candidate is the selected label).
+
+options:
+returnOneRandomAnswer -- default True, set to false to intead reply with all
+labels joined by commas.
+cantAnswerPercent -- default 0, set value in range[0,1] to set chance of
+replying with "I don't know."
+"""
 
 import random
 
@@ -10,8 +21,8 @@ class RepeatLabelAgent(Agent):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
-        self.returnSingleRandomAnswer = True
-        self.cantAnswerPercent = 0
+        self.returnOneRandomAnswer = opt.get('returnOneRandomAnswer', True)
+        self.cantAnswerPercent = opt.get('cantAnswerPercent', 0)
         self.id = 'RepeatLabelAgent'
 
 
@@ -22,7 +33,7 @@ class RepeatLabelAgent(Agent):
         if 'labels' in obs and len(obs['labels']) > 0:
             labels = obs['labels']
             if random.random() >= self.cantAnswerPercent:
-                if self.returnSingleRandomAnswer:
+                if self.returnOneRandomAnswer:
                     reply['text'] = labels[random.randrange(len(labels))]
                 else:
                     reply['text'] = ', '.join(labels)
@@ -34,13 +45,8 @@ class RepeatLabelAgent(Agent):
             reply['text'] = "I don't know."
 
         if 'label_candidates' in obs and len(obs['label_candidates']) > 0:
-            # Produce text_candidates by randomly ordering all other
-            # candidate labels.
-            cands = [ reply['text'] ]
-            y = list(obs['label_candidates'])
-            random.shuffle(y)
-            for k in y:
-                if k != reply['text']:
-                    cands.append(k)
-            reply['text_candidates'] = cands
+            # Produce text_candidates by selecting random candidate labels.
+            reply['text_candidates'] = [ reply['text'] ]
+            reply['text_candidates'].extend(random.sample(
+                obs['label_candidates'], min(len(obs['label_candidates']), 99)))
         return reply
