@@ -195,6 +195,7 @@ class MultiTaskTeacher(Teacher):
 
     def __init__(self, opt, shared=None):
         self.tasks = []
+        self.opt = opt
         self.id = opt['task']
         tasks = opt['task'].split(',')
         for k in tasks:

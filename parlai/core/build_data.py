@@ -29,15 +29,16 @@ def download(path, url):
     if os.system(s) != 0:
         raise RuntimeError('failed: ' + s)
 
-def untar(path, fname):
+def untar(path, fname, deleteTar=True):
     print('unpacking ' + fname)
     s = ('cd "%s"' % path) + ';' + 'tar xfz "%s"' % (path + fname)
     if os.system(s) != 0:
         raise RuntimeError('failed: ' + s)
     # remove tar file
-    s = ('cd "%s"' % path) + ';' + 'rm "%s"' % (path + fname)
-    if os.system(s) != 0:
-        raise RuntimeError('failed: ' + s)
+    if deleteTar:
+        s = ('cd "%s"' % path) + ';' + 'rm "%s"' % (path + fname)
+        if os.system(s) != 0:
+            raise RuntimeError('failed: ' + s)
 
 def mark_done(path):
     s = ('date > "%s"/.built' % path)

@@ -396,6 +396,7 @@ class BatchWorld(World):
     the parameters for each."""
 
     def __init__(self, opt, world):
+        self.opt = opt
         self.world = world
         shared = world.share()
         self.worlds = []
@@ -403,18 +404,30 @@ class BatchWorld(World):
             self.worlds.append(shared['world_class'](opt, None, shared))
 
     def parley(self):
-        for k in self.worlds:
-            k.parley()
         # Collect batch together for each agent, and do update.
-        for i, a in enumerate(self.world.agents):
-            batch = []
-            for w in self.worlds:
-                if hasattr(w.agents[i], 'observation'):
-                    batch.append(w.agents[i].observation)
+        # Assumes DialogPartnerWorld for now, this allows us make the
+        # teacher act, collect the batch, then allow the agent to
+        # act in each world, so we can do both forwards and backwards
+        # in batch, and still collect metrics in each world.
+        for k in self.worlds:
+            # Half of parley.
+            k.teacher.observe(validate(k.reply))
+            k.query = k.teacher.act()
+            k.agent.observe(validate(k.query))
+        # Collect batch together for each agent, and do update.
+        a = self.world.agent
+        batch = []
+        for w in self.worlds:
+            if hasattr(w.agent, 'observation'):
+                batch.append(w.agent.observation)
             a.observation = batch
             # Call update on agent
-            if len(batch) > 0 and hasattr(a, 'update_batch'):
-                a.update_batch(batch)
+            if len(batch) > 0 and hasattr(a, 'batch_act'):
+                batch_reply = a.batch_act(batch)
+                for index, k in enumerate(self.worlds):
+                    # Other half of parley.
+                    k.reply = batch_reply[index]
+                    k.is_done = k.query['done']
 
     def display(self):
         s = ("[--batchsize " + str(len(self.worlds)) + "--]\n")
