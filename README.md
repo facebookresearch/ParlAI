@@ -63,13 +63,13 @@ The fields are as follows:
 
 Each of these fields are technically optional, depending on your dataset, though the 'text' field will most likely be used in nearly all exchanges.
 
-For a fixed supervised learning dataset like bAbI, a typical exchange might be as follows:
+For a fixed supervised learning dataset like bAbI, a typical exchange from the training set might be as follows (the test set would not include labels):
 
 ```python
 Teacher: {
     'text': 'Sam went to the kitchen\nPat gave Sam the milk\nWhere is the milk?',
     'labels': ['kitchen'],
-    'candidates': ['hallway', 'kitchen', 'bathroom'],
+    'label_candidates': ['hallway', 'kitchen', 'bathroom'],
     'done': False
 }
 Student: {
@@ -78,15 +78,13 @@ Student: {
 Teacher: {
     'text': 'Sam went to the hallway\nPat went to the bathroom\nWhere is the milk?',
     'labels': ['hallway'],
-    'reward': '0',
-    'candidates': ['hallway', 'kitchen', 'bathroom'],
+    'label_candidates': ['hallway', 'kitchen', 'bathroom'],
     'done': True
 }
 Student: {
     'text': 'hallway'
 }
 Teacher: {
-    'reward': '1',
     ... # starts next episode
 }
 ...
