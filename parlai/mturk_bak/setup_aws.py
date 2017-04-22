@@ -33,11 +33,6 @@ rds_security_group_description = 'Security group for ParlAI MTurk DB'
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 files_to_copy = [parent_dir+'/'+'data_management.py', parent_dir+'/'+'mturk_index.html']
 
-# TODO: We should have a separate file that stores the user's access tokens, and ask them to enter it on initial use.
-# or ask them to put it in ~/.aws/config file, following the correct format.
-# ACCESS_KEY = 'AKIAJLD4IBIEDB2NEWEQ'  
-# SECRET_KEY = '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'
-
 
 def setup_aws_credentials():
     try:
