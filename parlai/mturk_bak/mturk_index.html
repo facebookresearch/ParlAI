@@ -1,0 +1,453 @@
+<html>
+<head>
+<title>MTurk Chat</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container-fluid">
+<div class="row">
+<div id="left-pane" class="col-xs-4" style="min-height: 100%; background-color: #dff0d8; padding: 30px; overflow:scroll;">
+    <h1>Live Chat</h1>
+    <hr style="border-top: 1px solid #555" />
+    <span id="task-description" style="font-size: 16px">
+    {{task_description}}
+    </span>
+</div>
+<div id="right-pane" style="min-height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+    <div id="right-top-pane" style="width: 100%; height: 570px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
+        <table id="message_table" style="width: 100%">
+            {% if False %}
+            <tr>
+                <td class="col-sm-5">
+                </td>
+                <td class="col-sm-5">
+                    <div class="alert alert-info" role="alert">
+                        <b>You (Teacher)</b>: This is the initial teacher message.
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-sm-5">
+                    <div class="alert alert-warning" role="alert">
+                        <b>Bot</b>: This is the initial teacher message.
+                    </div>
+                </td>
+                <td class="col-sm-5">
+                </td>
+            </tr>
+            <tr>
+                <td class="col-sm-5">
+                </td>
+                <td class="col-sm-5">
+                    <div class="alert alert-info" role="alert">
+                        <b>You (Teacher)</b>: This is the initial teacher message.
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-sm-5">
+                    <div class="alert alert-warning" role="alert">
+                        <b>Bot</b>: This is the initial teacher message.
+                    </div>
+                </td>
+                <td class="col-sm-5">
+                </td>
+            </tr>
+            <tr>
+                <td class="col-sm-5">
+                </td>
+                <td class="col-sm-5">
+                    <div class="alert alert-info" role="alert">
+                        <b>You (Teacher)</b>: This is the initial teacher message.
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-sm-5">
+                    <div class="alert alert-warning" role="alert">
+                        <b>Bot</b>: This is the initial teacher message.
+                    </div>
+                </td>
+                <td class="col-sm-5">
+                </td>
+            </tr>
+            <tr>
+                <td class="col-sm-5">
+                </td>
+                <td class="col-sm-5">
+                    <div class="alert alert-info" role="alert">
+                        <b>You (Teacher)</b>: This is the initial teacher message.
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-sm-5">
+                    <div class="alert alert-warning" role="alert">
+                        <b>Bot</b>: This is the initial teacher message.
+                    </div>
+                </td>
+                <td class="col-sm-5">
+                </td>
+            </tr>
+            <tr>
+                <td class="col-sm-5">
+                </td>
+                <td class="col-sm-5">
+                    <div class="alert alert-info" role="alert">
+                        <b>You (Teacher)</b>: This is the initial teacher message.
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-sm-5">
+                    <div class="alert alert-warning" role="alert">
+                        <b>Bot</b>: This is the initial teacher message.
+                    </div>
+                </td>
+                <td class="col-sm-5">
+                </td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+
+    <div id="right-bottom-pane" style="width: 100%; background-color: #eee">
+        <div id="response-type-idle" class="response-type-module" style="display:none">
+        </div>
+        <div id="response-type-waiting" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <div style="width: 100%; display: block; float: left">
+                <span id="prompt-text" style="width: 100%; float: left; font-size: 16px">Please wait for the other party's response...</span>
+            </div>
+        </div>
+        <div id="response-type-choices" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <div style="width: 100%; display: block; float: left">
+                <span id="prompt-text" style="width: 100%; float: left; font-size: 16px">Please make a selection:</span>
+            </div>
+            <div style="width: 100%; display: block; float: left; margin-top: 30px;">
+                <div style="margin-bottom: 5px"><input type="radio" name="choice" value="choice_1" style="margin-right: 10px"><span style="font-size: 16px">Choice 1</span><br></div>
+                <div style="margin-bottom: 5px"><input type="radio" name="choice" value="choice_2" style="margin-right: 10px"><span style="font-size: 16px">Choice 2</span><br></div>
+                <div style="margin-bottom: 5px"><input type="radio" name="choice" value="choice_3" style="margin-right: 10px"><span style="font-size: 16px">Choice 3</span><br></div>
+                <div><input type="radio" name="choice" value="choice_4" style="margin-right: 10px"><span style="font-size: 16px">Choice 4</span></div>
+            </div>
+            <div style="height: 50px; width: 100%; display: block; float: left; margin-top: 30px;">
+                <button id="choice-send-button" class="btn btn-primary disabled" style="width: 100px; height: 100%; font-size: 16px; float: left; padding: 0px;" id="id_send_msg_button">Send</button>
+            </div>
+        </div>
+        <div id="response-type-text-input" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <div style="width: 100%; display: block; float: left">
+                <span id="prompt-text" style="width: 100%; float: left; font-size: 16px">Please enter a question regarding the story:</span>
+            </div>
+            <div style="height: 50px; width: 100%; display: block; float: left; margin-top: 30px;">
+                <input id="id_text_input" type="text" style="width: 80%; height: 100%; float: left; font-size: 16px" class="form-control" value="" placeholder="Please enter here...">
+                <button class="btn btn-primary" style="width: 100px; height: 100%; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="id_send_msg_button">Send</button>
+            </div>
+        </div>
+        <div id="response-type-binary-reward" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
+            <div style="width: 100%; display: block; float: left">
+                <span id="prompt-text" style="width: 100%; float: left; font-size: 16px">Is this correct?</span>
+            </div>
+            <div style="width: 100%; display: block; float: left; margin-top: 30px;">
+                <div id="reward-buttons-group" style="width: 100%">
+                    <button id="positive-reward-button" type="button" class="btn btn-primary btn-lg" style="width: 200px">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Correct
+                    </button>
+                    <button id="negative-reward-button" type="button" class="btn btn-danger btn-lg" style="margin-left: 20px; width: 200px">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Incorrect
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <div style="width: 100%; display: block; float: left">
+                <span id="prompt-text" style="width: 100%; float: left; font-size: 16px">
+                    This task is done!
+                </span>
+                <!-- TODO: implement "Go back to MTurk page" link -->
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript">
+    // UI related
+    $(window).resize(function() {
+        $("input#id_text_input").width($("div#right-bottom-pane").width() - 210);
+        $("div#right-top-pane").height($("div#left-pane").height() - $("div#right-bottom-pane").outerHeight() - 35);
+        $("div#reward-buttons-group").css("margin-left")
+    });
+
+    function scroll_conversation_to_bottom() {
+        $('div#right-top-pane').animate({
+            scrollTop: $('div#right-top-pane').get(0).scrollHeight
+        }, 500);
+    }
+
+    // Handling keypress event
+    $(document).keypress(function(e) {
+        if (e.which == 13) {
+            $("button#id_send_msg_button").click();
+        }
+    });
+
+    // Response type: choice
+    $(':radio[name="choice"]').change(function() {
+        $("button#choice-send-button").removeClass("disabled");
+    });
+
+
+    // Response type: reward
+    function send_binary_reward_and_update_UI(is_positive) {
+        var reward = 1;
+        var reward_message_text = state_config[current_state_index]['response_config'][cur_agent_id]['reward_message_texts']['positive'];
+        if (!(is_positive)) {
+            reward = -1;
+            reward_message_text = state_config[current_state_index]['response_config'][cur_agent_id]['reward_message_texts']['negative'];
+        }
+        var post_data_dict = {
+            task_group_id: task_group_id,
+            conversation_id: conversation_id,
+            cur_agent_id: cur_agent_id,
+            reward: reward,
+            msg: reward_message_text
+        };
+        post_data_dict['endpoint'] = 'message';
+        $.ajax({
+            url: '/prod/parlai_relay_server_message',
+            type: "POST",
+            data: JSON.stringify(post_data_dict),
+            contentType: "application/json",
+            success: function(data){
+                // console.log(data);
+                data = JSON.parse(data);
+                // Update last message id for this agent
+                var message_object_id = parseInt(data["message_object_id"]);
+                if (message_object_id > last_message_object_id) {
+                    last_message_object_id = message_object_id;
+                }
+                var new_messages = [];
+                new_messages.push(data);
+                show_new_messages_on_UI(new_messages);
+                check_precondition_and_change_state(new_messages, all_done_callback);
+            }
+        });
+    }
+
+    $("button#positive-reward-button").click(function() {
+        send_binary_reward_and_update_UI(true);
+    });
+
+    $("button#negative-reward-button").click(function() {
+        send_binary_reward_and_update_UI(false);    
+    });
+
+    var task_group_id = `{{task_group_id}}`;
+    var conversation_id = parseInt(`{{conversation_id}}`);
+    var cur_agent_id = `{{cur_agent_id}}`;
+    var agent_display_names = JSON.parse(`{{agent_display_names_string}}`);
+    var state_config = JSON.parse(`{{state_config_string}}`);
+    var last_message_object_id = -1;
+    var current_state_index = null;
+    var worker_timer = null;
+    var messages_shown = {};
+    
+    function show_new_messages_on_UI(new_messages) {
+        for (var i = 0; i < new_messages.length; i++) {
+            var message = new_messages[i];
+            var agent_id = message['agent_id'];
+            var message_object_id = parseInt(message['message_object_id']);
+            
+            if (!(message_object_id in messages_shown)) {
+                if (message['agent_id'] != cur_agent_id) {
+                    $('table#message_table').append(`
+                        <tr>
+                            <td class="col-sm-5">
+                                <div class="alert alert-warning" role="alert">
+                                    <b>`+agent_display_names[message['agent_id']]+`</b>: `+message['text']+`
+                                </div>
+                            </td>
+                            <td class="col-sm-5">
+                            </td>
+                        </tr>
+                    `);
+                } else {
+                    $('table#message_table').append(`
+                        <tr>
+                            <td class="col-sm-5">
+                            </td>
+                            <td class="col-sm-5">
+                                <div class="alert alert-info" role="alert">
+                                    <b>You (`+agent_display_names[message['agent_id']]+`)</b>: `+message['text']+`
+                                </div>
+                            </td>
+                        </tr>
+                    `);
+                }
+                messages_shown[message_object_id] = true;
+            }
+        }
+        if (new_messages.length > 0) {
+           scroll_conversation_to_bottom();
+        }
+    }
+
+    function send_message(msg, is_done=false, callback_function=null) {
+        var post_data_dict = {
+            task_group_id: task_group_id,
+            conversation_id: conversation_id,
+            cur_agent_id: cur_agent_id,
+        };
+        if (msg) post_data_dict['msg'] = msg;
+        if (is_done) post_data_dict['done'] = true;
+        post_data_dict['endpoint'] = 'message';
+        $.ajax({
+            url: '/prod/parlai_relay_server_message',
+            type: "POST",
+            data: JSON.stringify(post_data_dict),
+            contentType: "application/json",
+            success: function(data){
+                if (callback_function) {
+                    callback_function(data);
+                }
+            }
+        });
+    }
+
+    $("button#id_send_msg_button").click(function () {
+        var msg = $("input#id_text_input").val();
+        send_message(msg, false, function(data){
+            $("input#id_text_input").val("");
+            // console.log(data);
+            data = JSON.parse(data);
+            // Update last message id for this agent
+            var message_object_id = parseInt(data["message_object_id"]);
+            if (message_object_id > last_message_object_id) {
+                last_message_object_id = message_object_id;
+            }
+            var new_messages = [];
+            new_messages.push(data);
+            show_new_messages_on_UI(new_messages);
+            check_precondition_and_change_state(new_messages, all_done_callback);
+        });
+    });
+
+    function construct_query_dict() {
+        var last_msg_id_query_key_prefix = 'last_msg_id_for_agent_';
+        var query_dict = {};
+        query_dict['endpoint'] = 'message';
+        query_dict['task_group_id'] = task_group_id;
+        query_dict['conversation_id'] = conversation_id;
+        query_dict['last_message_object_id'] = last_message_object_id;
+        return query_dict
+    }
+
+    // background worker that gets new messages from relay server periodically
+    function worker() {
+      $.ajax({
+        url: '/prod/parlai_relay_server_message', 
+        data: construct_query_dict(),
+        success: function(data) {
+            // console.log(data);
+            data = JSON.parse(data);
+            // New messages are sorted by timestamp in data
+            for (var i = 0; i < data.length; i++) {
+                message = data[i];
+                var agent_id = message['agent_id'];
+                var message_object_id = parseInt(message['message_object_id']);
+                if (message_object_id > last_message_object_id) {
+                    last_message_object_id = message_object_id;
+                }
+            }
+            show_new_messages_on_UI(data);
+            check_precondition_and_change_state(data, all_done_callback);
+            worker_timer = setTimeout(worker, 1000);
+        },
+        // complete: function() {
+        //   // Schedule the next request when the current one's complete
+        //   setTimeout(worker, 3000);
+        // }
+      });
+    }
+
+    function update_for_state() {
+        response_config = state_config[current_state_index]['response_config'][cur_agent_id];
+        response_type = response_config['response_type'];
+        /*
+        idle
+        waiting -> prompt text
+        choices -> prompt text, list of choices
+        text_input -> prompt text
+        binary_reward -> prompt text
+        done -> prompt text
+        */
+        $("div.response-type-module").css("display", "none");
+
+        if (response_type == 'idle') {
+            $("div#response-type-idle").css("display", "");
+        } else if (response_type == 'waiting') {
+            $("div#response-type-waiting").css("display", "");
+        } else if (response_type == 'choices') {
+            $("div#response-type-choices").css("display", "");
+        } else if (response_type == 'text_input') {
+            $("div#response-type-text-input").css("display", "");
+        } else if (response_type == 'binary_reward') {
+            $("div#response-type-binary-reward").css("display", "");
+        } else if (response_type == 'done') {
+            $("div#response-type-done").css("display", "");
+            send_message(null, true, null);
+        } 
+        $(window).resize();
+    }
+
+    function all_done_callback() {
+        if (worker_timer) {
+            clearTimeout(worker_timer);
+        }
+        // TODO: you should redirect to the next HIT, or POST result to AMT page
+    }
+
+    // Return true when all states are finished.
+    function check_precondition_and_change_state(new_messages=null, all_done_callback=null) {
+        function change_state() {
+            // Trigger state change
+            console.log(state_config[current_state_index]['state_name'] + " -> " + state_config[current_state_index+1]['state_name']);
+            current_state_index = current_state_index + 1;
+            update_for_state();
+            if (current_state_index + 1 >= state_config.length) {
+                if (all_done_callback) { // All states are done
+                    all_done_callback();
+                    return;
+                }
+            }
+        }
+
+        if (new_messages) {
+            for (var i = 0; i < new_messages.length; i++) {
+                agent_id = new_messages[i]['agent_id'];
+                if (agent_id == state_config[current_state_index+1]['precondition']) {
+                    change_state();
+                } else {
+                    return; // Error state
+                }
+            }
+        }
+    }
+
+    $(document).ready(function() {
+        $(window).resize();
+        $("input#id_text_input").focus();
+        current_state_index = 0;
+        update_for_state();
+        if (current_state_index + 1 >= state_config.length) {  // All states are done
+            all_done_callback();
+            return;
+        } else {
+            check_precondition_and_change_state(null, all_done_callback);
+            worker();
+        }
+    });
+</script>
+</body>
+</html>
+    
