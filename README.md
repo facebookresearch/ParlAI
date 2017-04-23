@@ -94,9 +94,9 @@ Teacher: {
 
 The code is set up into several main directories:
 
-- **agents**: contains agents which can interact with the different tasks
 - **core**: contains the primary code for the framework
-- **examples**: contains a few basic examples of different loops (building dictionary, train/valid, displaying data)
+- **agents**: contains agents which can interact with the different tasks (e.g. machine learning models)
+- **examples**: contains a few basic examples of different loops (building dictionary, train/eval, displaying data)
 - **tasks**: contains code for the different tasks available from within ParlAI
 
 Each directory is described in more detail below, ordered by dependencies.
@@ -140,6 +140,7 @@ Currently availabe within this directory:
 - **memnn**: code for a memory network agent for the ParlAI tasks
 - **remote_agent**: basic class for any agent connecting over ZMQ (memnn_luatorch_cpu uses this)
 - **repeat_label**: basic class for merely repeating all data sent to it (e.g. for piping to a file, debugging)
+- **ir_baseline**: simple information retrieval baseline that scores candidate responses with TFIDF-weighted matching
 
 ### Examples
 
