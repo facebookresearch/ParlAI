@@ -10,7 +10,7 @@ import string
 import webbrowser
 # from parlai.core.agents import create_agent_from_shared
 from setup_aws import rds_db_name, rds_username, rds_password, setup_aws, submit_to_mturk
-from data_management import Message, init_database, send_new_message, get_new_messages
+from data_model import Message, init_database, send_new_message, get_new_messages
 
 
 def _get_random_alphanumeric_string(N):

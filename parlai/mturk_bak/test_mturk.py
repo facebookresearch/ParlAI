@@ -1,5 +1,5 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
-import eval_bot
+import manage_hit
 
 # Simple demo
 # task_module_path_prefix = 'tasks.demo.'
@@ -13,7 +13,7 @@ MTurkAgent = __import__(task_module_path_prefix+'agents', fromlist=['']).MTurkSq
 task_config = __import__(task_module_path_prefix+'task_config', fromlist=['']).task_config
 DataLoader = __import__(task_module_path_prefix+'data_loader', fromlist=['']).DataLoader
 
-eval_bot.create_hits(
+manage_hit.create_hits(
 	opt=None, 
 	task_config=task_config,
 	data_loader=DataLoader(opt={'datapath': '../data/'}),

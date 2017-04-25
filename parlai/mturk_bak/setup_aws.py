@@ -30,7 +30,7 @@ rds_security_group_name = 'parlai_mturk_db_security_group'
 rds_security_group_description = 'Security group for ParlAI MTurk DB'
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
-files_to_copy = [parent_dir+'/'+'data_management.py', parent_dir+'/'+'mturk_index.html']
+files_to_copy = [parent_dir+'/'+'data_model.py', parent_dir+'/'+'mturk_index.html']
 
 
 def setup_aws_credentials():

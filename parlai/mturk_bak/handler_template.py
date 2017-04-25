@@ -11,7 +11,7 @@ import calendar
 import requests
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
-from data_management import Message, init_database, send_new_message, get_new_messages
+from data_model import Message, init_database, send_new_message, get_new_messages
 
 # Dynamically generated code begin
 # Expects rds_host, rds_db_name, rds_username, rds_password, agent_display_names, task_description, state_config

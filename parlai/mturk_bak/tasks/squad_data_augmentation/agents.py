@@ -20,7 +20,8 @@ class MTurkSquadDataAugmentationAgent(Agent):
         if self.cur_state_id+1 >= len(state_config): # if there is no next state, then return
             return
         if new_message_agent_id == state_config[self.cur_state_id+1]['precondition']:
-            print(state_config[self.cur_state_id]['state_name'] + " -> " + state_config[self.cur_state_id+1]['state_name'])
+            print("[State] " + state_config[self.cur_state_id]['state_name'] + " -> " + state_config[self.cur_state_id+1]['state_name'])
+            print("")
             self.cur_state_id += 1
 
     def observe(self, obs):
