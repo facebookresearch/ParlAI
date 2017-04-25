@@ -210,7 +210,8 @@
             conversation_id: conversation_id,
             cur_agent_id: cur_agent_id,
             reward: reward,
-            msg: reward_message_text
+            msg: reward_message_text,
+            done: false
         };
         post_data_dict['endpoint'] = 'message';
         $.ajax({
@@ -219,12 +220,12 @@
             data: JSON.stringify(post_data_dict),
             contentType: "application/json",
             success: function(data){
-                // console.log(data);
+                if (verbose_log) console.log(data);
                 data = JSON.parse(data);
                 // Update last message id for this agent
-                var message_object_id = parseInt(data["message_object_id"]);
-                if (message_object_id > last_message_object_id) {
-                    last_message_object_id = message_object_id;
+                var message_id = parseInt(data["message_id"]);
+                if (message_id > last_message_id) {
+                    last_message_id = message_id;
                 }
                 var new_messages = [];
                 new_messages.push(data);
@@ -242,24 +243,26 @@
         send_binary_reward_and_update_UI(false);    
     });
 
+    var verbose_log = false;
     var task_group_id = `{{task_group_id}}`;
     var conversation_id = parseInt(`{{conversation_id}}`);
     var cur_agent_id = `{{cur_agent_id}}`;
     var agent_display_names = JSON.parse(`{{agent_display_names_string}}`);
     var state_config = JSON.parse(`{{state_config_string}}`);
-    var last_message_object_id = -1;
+    var last_message_id = -1;
     var current_state_index = null;
     var worker_timer = null;
+    var messages_processed = {};
     var messages_shown = {};
     
     function show_new_messages_on_UI(new_messages) {
         for (var i = 0; i < new_messages.length; i++) {
             var message = new_messages[i];
-            var agent_id = message['agent_id'];
-            var message_object_id = parseInt(message['message_object_id']);
+            var agent_id = message['id'];
+            var message_id = parseInt(message['message_id']);
             
-            if (!(message_object_id in messages_shown)) {
-                if (message['agent_id'] == 'context') {
+            if (!(message_id in messages_shown)) {
+                if (agent_id == 'context') {
                     $('table#message_table').append(`
                         <tr>
                             <td class="col-sm-5">
@@ -271,12 +274,12 @@
                             </td>
                         </tr>
                     `);
-                } else if (message['agent_id'] != cur_agent_id) {
+                } else if (agent_id != cur_agent_id) {
                     $('table#message_table').append(`
                         <tr>
                             <td class="col-sm-5">
                                 <div class="alert alert-warning" role="alert">
-                                    <b>`+agent_display_names[message['agent_id']]+`</b>: `+message['text']+`
+                                    <b>`+agent_display_names[agent_id]+`</b>: `+message['text']+`
                                 </div>
                             </td>
                             <td class="col-sm-5">
@@ -290,13 +293,13 @@
                             </td>
                             <td class="col-sm-5">
                                 <div class="alert alert-info" role="alert">
-                                    <b>You (`+agent_display_names[message['agent_id']]+`)</b>: `+message['text']+`
+                                    <b>You (`+agent_display_names[agent_id]+`)</b>: `+message['text']+`
                                 </div>
                             </td>
                         </tr>
                     `);
                 }
-                messages_shown[message_object_id] = true;
+                messages_shown[message_id] = true;
             }
         }
         if (new_messages.length > 0) {
@@ -311,7 +314,7 @@
             cur_agent_id: cur_agent_id,
         };
         if (msg) post_data_dict['msg'] = msg;
-        if (is_done) post_data_dict['done'] = true;
+        post_data_dict['done'] = is_done;
         post_data_dict['endpoint'] = 'message';
         $.ajax({
             url: '/prod/parlai_relay_server_message',
@@ -319,6 +322,7 @@
             data: JSON.stringify(post_data_dict),
             contentType: "application/json",
             success: function(data){
+                if (verbose_log) console.log(data);
                 if (callback_function) {
                     callback_function(data);
                 }
@@ -330,12 +334,11 @@
         var msg = $("input#id_text_input").val();
         send_message(msg, false, function(data){
             $("input#id_text_input").val("");
-            // console.log(data);
             data = JSON.parse(data);
             // Update last message id for this agent
-            var message_object_id = parseInt(data["message_object_id"]);
-            if (message_object_id > last_message_object_id) {
-                last_message_object_id = message_object_id;
+            var message_id = parseInt(data["message_id"]);
+            if (message_id > last_message_id) {
+                last_message_id = message_id;
             }
             var new_messages = [];
             new_messages.push(data);
@@ -350,7 +353,7 @@
         query_dict['endpoint'] = 'message';
         query_dict['task_group_id'] = task_group_id;
         query_dict['conversation_id'] = conversation_id;
-        query_dict['last_message_object_id'] = last_message_object_id;
+        query_dict['last_message_id'] = last_message_id;
         return query_dict
     }
 
@@ -360,25 +363,21 @@
         url: '/prod/parlai_relay_server_message', 
         data: construct_query_dict(),
         success: function(data) {
-            // console.log(data);
+            if (verbose_log) console.log(data);
             data = JSON.parse(data);
             // New messages are sorted by timestamp in data
             for (var i = 0; i < data.length; i++) {
                 message = data[i];
-                var agent_id = message['agent_id'];
-                var message_object_id = parseInt(message['message_object_id']);
-                if (message_object_id > last_message_object_id) {
-                    last_message_object_id = message_object_id;
+                var agent_id = message['id'];
+                var message_id = parseInt(message['message_id']);
+                if (message_id > last_message_id) {
+                    last_message_id = message_id;
                 }
             }
             show_new_messages_on_UI(data);
             check_precondition_and_change_state(data, all_done_callback);
             worker_timer = setTimeout(worker, 1000);
         },
-        // complete: function() {
-        //   // Schedule the next request when the current one's complete
-        //   setTimeout(worker, 3000);
-        // }
       });
     }
 
@@ -386,11 +385,12 @@
         response_config = state_config[current_state_index]['response_config'][cur_agent_id];
         response_type = response_config['response_type'];
         /*
+        Response types accepted:
         idle
         waiting -> prompt text
         choices -> prompt text, list of choices
         text_input -> prompt text
-        binary_reward -> prompt text
+        binary_reward -> prompt text, reward_message_texts
         done -> prompt text
         */
         $("div.response-type-module").css("display", "none");
@@ -440,11 +440,15 @@
 
         if (new_messages) {
             for (var i = 0; i < new_messages.length; i++) {
-                agent_id = new_messages[i]['agent_id'];
-                if (agent_id == state_config[current_state_index+1]['precondition']) {
-                    change_state();
-                } else {
-                    return; // Error state
+                message_id = new_messages[i]['message_id'];
+                if (!(message_id in messages_processed)) {
+                    agent_id = new_messages[i]['id'];
+                    if (agent_id == state_config[current_state_index+1]['precondition']) {
+                        change_state();
+                    } else {
+                        return; // Error state
+                    }    
+                    messages_processed[message_id] = true;
                 }
             }
         }

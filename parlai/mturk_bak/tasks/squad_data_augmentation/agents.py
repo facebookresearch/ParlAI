@@ -7,9 +7,9 @@ state_config = task_config['state_config']
 
 
 class MTurkSquadDataAugmentationAgent(Agent):
-    '''
+    """
     MTurk agent for recording context as well as question and answer that the MTurk teacher provides.
-    '''
+    """
     def __init__(self, opt, shared=None):
         self.context = None
         self.response = None

@@ -21,6 +21,15 @@ You are going to chat with a bot regarding a particular topic.<br><br>
 The responses you receive may not make much sense, but please give an appropriate evaluation on them or respond to them accordingly. 
 \'\'\''''
 
+"""
+Response type accepted:
+idle
+waiting -> prompt text
+choices -> prompt text, list of choices
+text_input -> prompt text
+binary_reward -> prompt text, reward_message_texts
+done -> prompt text
+"""
 # Only the initial_state can have no precondition
 task_config['state_config'] = [
     {
@@ -85,14 +94,6 @@ task_config['state_config'] = [
     #   ],
     # }
 
-'''
-idle
-waiting -> prompt text
-choices -> prompt text, list of choices
-text_input -> prompt text
-binary_reward -> prompt text
-done -> prompt text
-'''
 
 
 

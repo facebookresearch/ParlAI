@@ -45,6 +45,7 @@ def setup_context(db_session, data_loader, task_group_id, conversation_id):
         conversation_id = conversation_id,
         agent_id = 'context',
         message_text=context, 
+        done=False,
         binary_file_bytes=None, 
         binary_file_type=None
     )
@@ -72,22 +73,22 @@ def create_hits(opt, task_config, data_loader, bot, num_hits):
     for cid in cids:
         setup_context(db_session, data_loader, task_group_id, cid)
     
-    previous_request_last_message_object_id = -1
+    last_message_id = -1
     
     while len(conversations_remaining) > 0:
-        new_messages_dict, current_last_message_object_id = get_new_messages(
+        conversation_dict, new_last_message_id = get_new_messages(
             db_session=db_session, 
             task_group_id=task_group_id, 
-            previous_request_last_message_object_id=previous_request_last_message_object_id, 
+            after_message_id=last_message_id, 
             excluded_agent_id=task_config['bot_agent_id'],
         )
 
-        if current_last_message_object_id:
-            previous_request_last_message_object_id = current_last_message_object_id
+        if new_last_message_id:
+            last_message_id = new_last_message_id
 
         time.sleep(1)
 
-        for conversation_id, new_messages in new_messages_dict.items():
+        for conversation_id, new_messages in conversation_dict.items():
             if conversation_id in conversations_remaining and len(new_messages) > 0:
                 agent = bots[cid_map[conversation_id]]
                 for new_message in new_messages:
@@ -106,6 +107,7 @@ def create_hits(opt, task_config, data_loader, bot, num_hits):
                                 task_group_id=task_group_id, 
                                 conversation_id=conversation_id, 
                                 agent_id=task_config['bot_agent_id'], 
-                                message_text=response
+                                message_text=response,
+                                done=False
                             )
 

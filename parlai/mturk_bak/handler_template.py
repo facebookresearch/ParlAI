@@ -45,10 +45,10 @@ def lambda_handler(event, context):
 
 
 def index(event, context):
-    ''' 
+    """
     Handler for chat page endpoint. 
     Expects <task_group_id>, <conversation_id> and <cur_agent_id> as query parameters.
-    '''
+    """
     template_context = {}
 
     try:
@@ -72,41 +72,40 @@ def index(event, context):
 
 def message(event, context):
     if event['method'] == 'GET':
-        '''
+        """
         return all new message from all other agents as JSON
-        Expects <task_group_id>, <conversation_id> and <last_msg_id_for_agent_xx>:xx as GET body parameters
-        Expect to return: [{agent_id: xxx, timestamp: xxx, text: xxx, binary_file_type: xxx}, {..}], sorted by timestamp
-        '''
+        Expects <task_group_id>, <conversation_id> and <last_message_id> as GET body parameters
+        """
         task_group_id = event['query']['task_group_id']
         conversation_id = int(event['query']['conversation_id'])
-        last_message_object_id = int(event['query']['last_message_object_id'])
+        last_message_id = int(event['query']['last_message_id'])
 
-        new_messages_dict, _ = get_new_messages(
+        conversation_dict, _ = get_new_messages(
             db_session=db_session, 
             task_group_id=task_group_id, 
             conversation_id=conversation_id,
-            previous_request_last_message_object_id=last_message_object_id,
+            after_message_id=last_message_id,
             populate_state_info=True
         )
 
         ret = []
-        if conversation_id in new_messages_dict:
-            ret = new_messages_dict[conversation_id]
+        if conversation_id in conversation_dict:
+            ret = conversation_dict[conversation_id]
             ret.sort(key=lambda x: x['timestamp'])
             
         return json.dumps(ret)
     if event['method'] == 'POST':
-        '''
+        """
         Send new message for this agent.
         Expects <task_group_id>, <conversation_id>, <cur_agent_id> and <msg> as POST body parameters
-        '''
+        """
         params = event['body']
         task_group_id = params['task_group_id']
         conversation_id = int(params['conversation_id'])
         cur_agent_id = params['cur_agent_id']
         message_text = params['msg'] if 'msg' in params else None
         reward = params['reward'] if 'reward' in params else None
-        done = True if 'done' in params else None
+        done = params['done']
 
         new_message_object = send_new_message(
             db_session=db_session, 
@@ -121,22 +120,13 @@ def message(event, context):
         )
 
         new_message = { 
-            "message_object_id": new_message_object.id,
-            "agent_id": cur_agent_id,
+            "message_id": new_message_object.id,
+            "id": cur_agent_id,
             "text": message_text,
             "timestamp": time.mktime(new_message_object.created_time.timetuple()) + new_message_object.created_time.microsecond * 1e-6,
         }
         if reward:
-            new_message['reward'] = reward
-        if done:
-            new_message['done'] = True
+            new_message['reward'] = reward    
+        new_message['done'] = done
         
         return json.dumps(new_message)
-
-'''
-    event.body
-    event.headers
-    event.method
-    event.params
-    event.query
-'''

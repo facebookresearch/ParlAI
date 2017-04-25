@@ -42,8 +42,8 @@ def init_database(host, db_name, username, password):
     return engine, session_maker
 
 
-def send_new_message(db_session, task_group_id, conversation_id, agent_id, message_text=None, reward=None, done=None, binary_file_bytes=None, binary_file_type=None):
-    '''
+def send_new_message(db_session, task_group_id, conversation_id, agent_id, message_text=None, reward=None, done=False, binary_file_bytes=None, binary_file_type=None):
+    """
     Message format:
     {
         # ParlAI observation/action dict fields:
@@ -53,11 +53,10 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
         "done": xxx, # signals end of episode
 
         # Extra fields for MTurk state maintenance
-        "message_object_id": xxx, # populated with record on database
-        "agent_id": xxx,
+        "message_id": xxx, # populated with record on database
         "timestamp": xxx, # populated with record on database
     }
-    '''
+    """
 
     # ParlAI observation/action dict fields:
     new_message = {
@@ -65,9 +64,8 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
         "id": agent_id,
     }
     if reward:
-        new_message['reward'] = reward
-    if done:
-        new_message['done'] = True
+        new_message['reward'] = reward    
+    new_message['done'] = done
 
     message_content = json.dumps(new_message)
     if is_python_2:
@@ -85,10 +83,10 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
     return new_message_object
 
 
-def get_new_messages(db_session, task_group_id, conversation_id=None, previous_request_last_message_object_id=None, excluded_agent_id=None, populate_state_info=False):
-    '''
+def get_new_messages(db_session, task_group_id, conversation_id=None, after_message_id=None, excluded_agent_id=None, populate_state_info=False):
+    """
     Return:
-    new_messages_dict = {
+    conversation_dict = {
         <conversation_id>: [
             {
                 # ParlAI observation/action dict fields:
@@ -98,37 +96,36 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, previous_r
                 "done": xxx, # signals end of episode
 
                 # Extra fields for MTurk state maintenance
-                "message_object_id": xxx, # populated with record on database
-                "agent_id": xxx,
+                "message_id": xxx, # populated with record on database
                 "timestamp": xxx, # populated with record on database
             }
         ], ...
     },
-    current_last_message_object_id
-    '''
+    last_message_id
+    """
 
-    if not previous_request_last_message_object_id:
-        previous_request_last_message_object_id = -1
+    if not after_message_id:
+        after_message_id = -1
 
     excluded_agent_ids = []
     if excluded_agent_id:
         excluded_agent_ids = [excluded_agent_id]
 
-    current_last_message_object_id = None
+    last_message_id = None
 
-    query = db_session.query(Message).filter(Message.task_group_id==task_group_id).filter(~Message.agent_id.in_(excluded_agent_ids)).filter(Message.id > previous_request_last_message_object_id)
+    query = db_session.query(Message).filter(Message.task_group_id==task_group_id).filter(~Message.agent_id.in_(excluded_agent_ids)).filter(Message.id > after_message_id)
     if conversation_id:
         query = query.filter(Message.conversation_id==conversation_id)
     new_message_objects = query.order_by(Message.id)
-    new_messages_dict = {}
+    conversation_dict = {}
 
     for new_message_object in new_message_objects:
         conversation_id = new_message_object.conversation_id
         message_content = json.loads(new_message_object.message_content)
         text = message_content['text']
 
-        if not current_last_message_object_id or new_message_object.id > current_last_message_object_id:
-            current_last_message_object_id = new_message_object.id
+        if not last_message_id or new_message_object.id > last_message_id:
+            last_message_id = new_message_object.id
 
         new_message_dict = {
             "text": text,
@@ -136,16 +133,14 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, previous_r
         }
         if 'reward' in message_content:
             new_message_dict['reward'] = message_content['reward']
-        if 'done' in message_content:
-            new_message_dict['done'] = True
+        new_message_dict['done'] = message_content.get('done', False)
 
         if populate_state_info:
-            new_message_dict['message_object_id'] = new_message_object.id
-            new_message_dict['agent_id'] = new_message_object.agent_id
+            new_message_dict['message_id'] = new_message_object.id
             new_message_dict['timestamp'] = time.mktime(new_message_object.created_time.timetuple()) + new_message_object.created_time.microsecond * 1e-6
         
-        if not conversation_id in new_messages_dict:
-            new_messages_dict[conversation_id] = []
-        new_messages_dict[conversation_id].append(new_message_dict)
+        if conversation_id not in conversation_dict:
+            conversation_dict[conversation_id] = []
+        conversation_dict[conversation_id].append(new_message_dict)
 
-    return new_messages_dict, current_last_message_object_id
+    return conversation_dict, last_message_id
