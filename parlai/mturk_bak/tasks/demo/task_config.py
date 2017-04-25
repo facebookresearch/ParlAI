@@ -1,18 +1,20 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
-# Sample task config for MTurk task
+# Task config for MTurk task
+
+task_config = {}
 
 # Task specific
-teacher_agent_id = 'teacher'
-worker_agent_id = teacher_agent_id
-bot_agent_id = 'student'
+task_config['teacher_agent_id'] = 'teacher'
+task_config['worker_agent_id'] = task_config['teacher_agent_id']
+task_config['bot_agent_id'] = 'student'
 
 # Required for all tasks
-agent_display_names = {
+task_config['agent_display_names'] = {
     # agent_id: display_name
-    teacher_agent_id: 'Teacher',
-    bot_agent_id: 'Bot',
+    task_config['teacher_agent_id']: 'Teacher',
+    task_config['bot_agent_id']: 'Bot',
 }
-task_description = \
+task_config['task_description'] = \
 '''\'\'\'
 (<b>Note</b>: You need to edit this text to suit your task.)<br><br>
 You are going to chat with a bot regarding a particular topic.<br><br>
@@ -20,21 +22,21 @@ The responses you receive may not make much sense, but please give an appropriat
 \'\'\''''
 
 # Only the initial_state can have no precondition
-state_config = [
+task_config['state_config'] = [
     {
         'state_name': 'initial_state',
         'precondition': None,
         'response_config': {
-            worker_agent_id: {
+            task_config['teacher_agent_id']: {
                 'response_type': 'idle'
             }
         }
     },
     {
         'state_name': 'teacher_should_ask_question',
-        'precondition': worker_agent_id,
+        'precondition': 'context',
         'response_config': {
-            worker_agent_id: {
+            task_config['teacher_agent_id']: {
                 'response_type': 'text_input',
                 'prompt_text': '''Please enter your question:''',
             }
@@ -42,9 +44,9 @@ state_config = [
     },
     {
         'state_name': 'student_should_answer_question',
-        'precondition': worker_agent_id,
+        'precondition': task_config['teacher_agent_id'],
         'response_config': {
-            worker_agent_id: {
+            task_config['teacher_agent_id']: {
                 'response_type': 'waiting',
                 'prompt_text': '''Please wait for the other party's response...'''
             }
@@ -52,11 +54,11 @@ state_config = [
     },
     {
         'state_name': 'teacher_should_give_reward',
-        'precondition': bot_agent_id,
+        'precondition': task_config['bot_agent_id'],
         'response_config': {
-            worker_agent_id: {
+            task_config['teacher_agent_id']: {
                 'response_type': 'binary_reward',
-                'prompt_text': '''Please select reward:''',
+                'prompt_text': '''Is this correct?''',
                 'reward_message_texts': {
                     'positive': 'This is correct.',
                     'negative': 'This is incorrect.',
@@ -66,9 +68,9 @@ state_config = [
     },
     {
         'state_name': 'task_done',
-        'precondition': worker_agent_id,
+        'precondition': task_config['teacher_agent_id'],
         'response_config': {
-            worker_agent_id: {
+            task_config['teacher_agent_id']: {
                 'response_type': 'done',
             }
         }

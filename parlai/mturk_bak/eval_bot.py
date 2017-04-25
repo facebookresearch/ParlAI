@@ -11,18 +11,18 @@ import webbrowser
 # from parlai.core.agents import create_agent_from_shared
 from setup_aws import rds_db_name, rds_username, rds_password, setup_aws, submit_to_mturk
 from data_management import Message, init_database, send_new_message, get_new_messages
-from mturk_task_config import teacher_agent_id, bot_agent_id
+
 
 def _get_random_alphanumeric_string(N):
     return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(N))
 
 
-def setup_relay():
+def setup_relay(task_config):
     """Sets up relay server and returns a database session object which can poll
     new messages and send messages
     """
     # set up relay server
-    rds_host, mturk_chat_url_template = setup_aws()
+    rds_host, mturk_chat_url_template = setup_aws(task_config)
 
     db_engine, db_session_maker = init_database(rds_host, rds_db_name, rds_username, rds_password)
     db_session = db_session_maker()
@@ -30,26 +30,27 @@ def setup_relay():
     return db_session, mturk_chat_url_template
 
 
-def setup_mturk(mturk_chat_url_template, task_group_id, conversation_id, teacher_agent_id):
-    mturk_chat_url = mturk_chat_url_template.replace('{{task_group_id}}', str(task_group_id)).replace('{{conversation_id}}', str(conversation_id)).replace('{{cur_agent_id}}', str(teacher_agent_id))
+def setup_mturk(mturk_chat_url_template, task_group_id, conversation_id, worker_agent_id):
+    mturk_chat_url = mturk_chat_url_template.replace('{{task_group_id}}', str(task_group_id)).replace('{{conversation_id}}', str(conversation_id)).replace('{{cur_agent_id}}', str(worker_agent_id))
     webbrowser.open(mturk_chat_url)
     # mturk_page_url = submit_to_mturk(mturk_chat_url)
     # webbrowser.open(mturk_page_url)
 
 
-def setup_opening_message(db_session, task_group_id, conversation_id, agent_id, opening_message):
+def setup_context(db_session, data_loader, task_group_id, conversation_id):
+    context = data_loader.load_context(conversation_id)
     send_new_message(
         db_session = db_session,
         task_group_id = task_group_id, 
         conversation_id = conversation_id,
-        agent_id = agent_id,
-        message_text=opening_message, 
+        agent_id = 'context',
+        message_text=context, 
         binary_file_bytes=None, 
         binary_file_type=None
     )
 
 
-def create_hits(opt, bot, num_hits, message=None):
+def create_hits(opt, task_config, data_loader, bot, num_hits):
     # shared = bot.share(opt=opt)
     # bots = [create_agent_from_shared(shared) for _ in range(num_hits)]
     # TODO: unable to import create_agent_from_shared, need to fix
@@ -57,17 +58,19 @@ def create_hits(opt, bot, num_hits, message=None):
 
     task_group_id = str(int(time.time())) + '_' + _get_random_alphanumeric_string(10) # Random string to further avoid collision
     print('Initializing MTurk...')
-    db_session, mturk_chat_url_template = setup_relay()
+    db_session, mturk_chat_url_template = setup_relay(task_config)
     print('MTurk initialization done. Opening web interface...')
     print('')
-    setup_mturk(mturk_chat_url_template, task_group_id, 1, teacher_agent_id)
+
+    worker_agent_id = task_config['worker_agent_id']
+    setup_mturk(mturk_chat_url_template, task_group_id, 1, worker_agent_id)
     cids = range(1, num_hits+1)
     cid_map = {cid: i for i, cid in enumerate(cids)}
     conversations_remaining = set(cids)
 
     # Set up opening messages
     for cid in cids:
-        setup_opening_message(db_session, task_group_id, cid, teacher_agent_id, message)
+        setup_context(db_session, data_loader, task_group_id, cid)
     
     previous_request_last_message_object_id = -1
     
@@ -76,7 +79,7 @@ def create_hits(opt, bot, num_hits, message=None):
             db_session=db_session, 
             task_group_id=task_group_id, 
             previous_request_last_message_object_id=previous_request_last_message_object_id, 
-            excluded_agent_id=bot_agent_id,
+            excluded_agent_id=task_config['bot_agent_id'],
         )
 
         if current_last_message_object_id:
@@ -102,7 +105,7 @@ def create_hits(opt, bot, num_hits, message=None):
                                 db_session=db_session, 
                                 task_group_id=task_group_id, 
                                 conversation_id=conversation_id, 
-                                agent_id=bot_agent_id, 
+                                agent_id=task_config['bot_agent_id'], 
                                 message_text=response
                             )
 

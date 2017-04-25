@@ -1,16 +1,17 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
 
 from parlai.core.agents import Agent
-from mturk_task_config import teacher_agent_id, worker_agent_id, bot_agent_id, \
-agent_display_names, task_description, state_config
+from .task_config import task_config
 
+state_config = task_config['state_config']
 
-class MTurkAgent(Agent):
+class MTurkDemoAgent(Agent):
 
     def __init__(self, opt, shared=None):
+        self.context = None
         self.response = None
         self.cur_state_id = 0
-        self.id = bot_agent_id
+        self.id = task_config['bot_agent_id']
 
     def _check_precondition_and_change_state(self, new_message_agent_id):
         if self.cur_state_id+1 >= len(state_config): # if there is no next state, then return
@@ -21,11 +22,14 @@ class MTurkAgent(Agent):
 
     def observe(self, obs):
         print('Bot '+str(self.id)+' received: ', obs)
-        # Generate response
+        
         if self.cur_state_id == 0:  # initial_state
+            context = obs['text']
+            self.context = context
             self.response = None
         elif self.cur_state_id == 1:  # teacher_should_ask_question
             teacher_question = obs['text']
+            # Get response from your bot
             self.response = '(This is my answer.)'
         elif self.cur_state_id == 2:  # student_should_answer_question
             self.response = None

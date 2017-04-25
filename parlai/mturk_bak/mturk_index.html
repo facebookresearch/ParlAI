@@ -116,12 +116,12 @@
         </div>
         <div id="response-type-waiting" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
             <div style="width: 100%; display: block; float: left">
-                <span id="prompt-text" style="width: 100%; float: left; font-size: 16px">Please wait for the other party's response...</span>
+                <span class="prompt-text" style="width: 100%; float: left; font-size: 16px"></span>
             </div>
         </div>
         <div id="response-type-choices" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
             <div style="width: 100%; display: block; float: left">
-                <span id="prompt-text" style="width: 100%; float: left; font-size: 16px">Please make a selection:</span>
+                <span class="prompt-text" style="width: 100%; float: left; font-size: 16px"></span>
             </div>
             <div style="width: 100%; display: block; float: left; margin-top: 30px;">
                 <div style="margin-bottom: 5px"><input type="radio" name="choice" value="choice_1" style="margin-right: 10px"><span style="font-size: 16px">Choice 1</span><br></div>
@@ -135,7 +135,7 @@
         </div>
         <div id="response-type-text-input" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
             <div style="width: 100%; display: block; float: left">
-                <span id="prompt-text" style="width: 100%; float: left; font-size: 16px">Please enter a question regarding the story:</span>
+                <span class="prompt-text" style="width: 100%; float: left; font-size: 16px"></span>
             </div>
             <div style="height: 50px; width: 100%; display: block; float: left; margin-top: 30px;">
                 <input id="id_text_input" type="text" style="width: 80%; height: 100%; float: left; font-size: 16px" class="form-control" value="" placeholder="Please enter here...">
@@ -144,7 +144,7 @@
         </div>
         <div id="response-type-binary-reward" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
             <div style="width: 100%; display: block; float: left">
-                <span id="prompt-text" style="width: 100%; float: left; font-size: 16px">Is this correct?</span>
+                <span class="prompt-text" style="width: 100%; float: left; font-size: 16px"></span>
             </div>
             <div style="width: 100%; display: block; float: left; margin-top: 30px;">
                 <div id="reward-buttons-group" style="width: 100%">
@@ -159,7 +159,7 @@
         </div>
         <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
             <div style="width: 100%; display: block; float: left">
-                <span id="prompt-text" style="width: 100%; float: left; font-size: 16px">
+                <span class="prompt-text" style="width: 100%; float: left; font-size: 16px">
                     This task is done!
                 </span>
                 <!-- TODO: implement "Go back to MTurk page" link -->
@@ -259,7 +259,19 @@
             var message_object_id = parseInt(message['message_object_id']);
             
             if (!(message_object_id in messages_shown)) {
-                if (message['agent_id'] != cur_agent_id) {
+                if (message['agent_id'] == 'context') {
+                    $('table#message_table').append(`
+                        <tr>
+                            <td class="col-sm-5">
+                            </td>
+                            <td class="col-sm-5">
+                                <div class="alert alert-success" role="alert">
+                                    `+message['text']+`
+                                </div>
+                            </td>
+                        </tr>
+                    `);
+                } else if (message['agent_id'] != cur_agent_id) {
                     $('table#message_table').append(`
                         <tr>
                             <td class="col-sm-5">
@@ -387,12 +399,16 @@
             $("div#response-type-idle").css("display", "");
         } else if (response_type == 'waiting') {
             $("div#response-type-waiting").css("display", "");
+            $("div#response-type-waiting span.prompt-text").text(response_config['prompt_text']);
         } else if (response_type == 'choices') {
             $("div#response-type-choices").css("display", "");
+            $("div#response-type-choices span.prompt-text").text(response_config['prompt_text']);
         } else if (response_type == 'text_input') {
             $("div#response-type-text-input").css("display", "");
+            $("div#response-type-text-input span.prompt-text").text(response_config['prompt_text']);
         } else if (response_type == 'binary_reward') {
             $("div#response-type-binary-reward").css("display", "");
+            $("div#response-type-binary-reward span.prompt-text").text(response_config['prompt_text']);
         } else if (response_type == 'done') {
             $("div#response-type-done").css("display", "");
             send_message(null, true, null);

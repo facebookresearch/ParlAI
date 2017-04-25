@@ -7,7 +7,6 @@ import time
 import json
 import webbrowser
 import uuid
-from mturk_task_config import *
 import create_zip_file
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
@@ -139,7 +138,7 @@ def setup_rds():
     return host
 
 
-def setup_relay_server_api(rds_host, should_clean_up_after_upload=True):
+def setup_relay_server_api(rds_host, task_config, should_clean_up_after_upload=True):
     # Dynamically generate handler.py file, and then create zip file
     print("Lambda: Preparing relay server code...")
 
@@ -156,9 +155,9 @@ def setup_relay_server_api(rds_host, should_clean_up_after_upload=True):
         "rds_db_name = \'" + rds_db_name + "\'\n" + \
         "rds_username = \'" + rds_username + "\'\n" + \
         "rds_password = \'" + rds_password + "\'\n" + \
-        'agent_display_names = ' + str(agent_display_names) + '\n' + \
-        'task_description = ' + task_description + '\n' + \
-        'state_config = ' + str(state_config))
+        'agent_display_names = ' + str(task_config['agent_display_names']) + '\n' + \
+        'task_description = ' + task_config['task_description'] + '\n' + \
+        'state_config = ' + str(task_config['state_config']))
     with open(lambda_server_directory+'/handler.py', "w") as handler_file:
         handler_file.write(handler_file_string)
     create_zip_file.create_zip_file(files_to_copy=files_to_copy)
@@ -569,10 +568,10 @@ def submit_to_mturk(mturk_chat_url):
     return hit_link
 
 
-def setup_aws():
+def setup_aws(task_config):
     setup_aws_credentials()
     rds_host = setup_rds()
-    index_api_endpoint_url = setup_relay_server_api(rds_host)
+    index_api_endpoint_url = setup_relay_server_api(rds_host, task_config)
 
     chat_interface_url = index_api_endpoint_url + "?endpoint=index&task_group_id={{task_group_id}}&conversation_id={{conversation_id}}&cur_agent_id={{cur_agent_id}}"
     
