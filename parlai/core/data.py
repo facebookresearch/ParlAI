@@ -104,7 +104,7 @@ class TextData(object):
             self.data.append(tuple(episode))
 
     def _get_observation(self):
-        entry, done, end_of_data = next(self.entry_generator)
+        entry, episode_done, end_of_data = next(self.entry_generator)
 
         table = {}
         table['text'] = entry[0]
@@ -133,7 +133,7 @@ class TextData(object):
                 raise RuntimeError('true label missing from candidate labels')
 
         # last entry in this episode
-        table['done'] = done
+        table['episode_done'] = episode_done
         return table, end_of_data
 
     # returns entries, doing episodes in order
@@ -192,7 +192,7 @@ class HogwildTextData(TextData):
                     table['reward'] = self.arr[idx + 2]
                 if self.arr[idx + 3]:
                     table['label_candidates'] = self.arr[idx + 3].split('|')
-                table['done'] = idx == self.ep_idxs[episode_idx + 1] - 4
+                table['episode_done'] = idx == self.ep_idxs[episode_idx + 1] - 4
                 yield table
 
     # returns data in array form, and indices to the start of each episode

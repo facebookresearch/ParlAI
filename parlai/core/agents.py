@@ -134,8 +134,8 @@ class Teacher(Agent):
             t = { 'text': 'Hello agent!' }
         return t
 
-    def finished(self):
-        return self.fin
+    def epoch_done(self):
+        return self.epochDone
 
     # Return transformed metrics showing total examples and accuracy if avail.
     def report(self):
@@ -236,7 +236,7 @@ class MultiTaskTeacher(Teacher):
         return self
 
     def __next__(self):
-        if self.finished():
+        if self.epoch_done():
             raise StopIteration()
 
     def observe(self, obs):
@@ -249,7 +249,7 @@ class MultiTaskTeacher(Teacher):
                 keep_looking = True
                 while keep_looking:
                     self.task_idx = (self.task_idx + 1) % len(self.tasks)
-                    keep_looking = (self.tasks[self.task_idx].finished() and
+                    keep_looking = (self.tasks[self.task_idx].epoch_done() and
                                     start_idx != self.task_idx)
                 if start_idx == self.task_idx:
                     return {'text': 'There are no more examples remaining.'}
@@ -257,13 +257,13 @@ class MultiTaskTeacher(Teacher):
 
     def act(self):
         t = self.tasks[self.task_idx].act()
-        if t['done']:
+        if t['episode_done']:
             self.new_task = True
         return t
 
-    def finished(self):
+    def epoch_done(self):
         for t in self.tasks:
-            if not t.finished():
+            if not t.epoch_done():
                 return False
         return True
 

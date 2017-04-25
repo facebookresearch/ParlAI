@@ -61,7 +61,7 @@ class World(object):
     All children can override these to provide more detailed functionality."""
 
     def __init__(self, opt, agents=None, shared=None):
-        self.is_done = False
+        self.is_episode_done = False
         self.id = opt['task']
         self.opt = copy.deepcopy(opt)
         if shared:
@@ -119,9 +119,9 @@ class World(object):
         Useful for monitoring and debugging. """
         return ''
 
-    def done(self):
+    def episode_done(self):
         """Whether the episode is done or not. """
-        return self.is_done
+        return self.is_episode_done
 
     def shutdown(self):
         """Performs any cleanup, if appropriate."""
@@ -221,8 +221,8 @@ class DialogPartnerWorld(World):
     def __iter__(self):
         return iter(self.teacher)
 
-    def finished(self):
-        return self.teacher.finished()
+    def epoch_done(self):
+        return self.teacher.epoch_done()
 
     def parley(self):
         """Teacher goes first. Alternate between the teacher and the agent."""
@@ -230,7 +230,7 @@ class DialogPartnerWorld(World):
         self.query = self.teacher.act()
         self.agent.observe(validate(self.query))
         self.reply = self.agent.act()
-        self.is_done = self.query['done']
+        self.is_episode_done = self.query['episode_done']
 
     def report(self):
         return self.teacher.report()
@@ -260,7 +260,7 @@ class DialogPartnerWorld(World):
         if self.reply.get('text', ''):
             ID = '[' + self.reply['id'] + ']: ' if 'id' in self.reply else ''
             lines.append('   ' + ID + self.reply['text'])
-        if self.done():
+        if self.episode_done():
             lines.append('- - - - - - - - - - - - - - - - - - - - -')
         return '\n'.join(lines)
 
@@ -293,13 +293,13 @@ class MultiWorld(World):
         self.world_idx = -1
         self.new_world = True
         self.parleys = 0
-        self.random = opt.get('datatype') == 'train'
+        self.random = opt.get('datatype', None) == 'train'
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        if self.finished():
+        if self.epoch_done():
             raise StopIteration()
 
     def __len__(self):
@@ -310,9 +310,9 @@ class MultiWorld(World):
                 self.len += len(t)
         return self.len
 
-    def finished(self):
+    def epoch_done(self):
         for t in self.worlds:
-            if not t.finished():
+            if not t.epoch_done():
                 return False
         return True
 
@@ -327,14 +327,14 @@ class MultiWorld(World):
                 keep_looking = True
                 while keep_looking:
                     self.world_idx = (self.world_idx + 1) % len(self.worlds)
-                    keep_looking = (self.worlds[self.world_idx].finished() and
+                    keep_looking = (self.worlds[self.world_idx].epoch_done() and
                                     start_idx != self.world_idx)
                 if start_idx == self.world_idx:
                     return {'text': 'There are no more examples remaining.'}
         t = self.worlds[self.world_idx]
         t.parley()
         self.parleys = self.parleys + 1
-        if t.done():
+        if t.episode_done():
             self.new_world = True
 
     def display(self):
@@ -397,6 +397,7 @@ class BatchWorld(World):
 
     def __init__(self, opt, world):
         self.opt = opt
+        self.random = opt.get('datatype', None) == 'train'
         self.world = world
         shared = world.share()
         self.worlds = []
@@ -409,38 +410,49 @@ class BatchWorld(World):
         # teacher act, collect the batch, then allow the agent to
         # act in each world, so we can do both forwards and backwards
         # in batch, and still collect metrics in each world.
-        for k in self.worlds:
-            # Half of parley.
-            k.teacher.observe(validate(k.reply))
-            k.query = k.teacher.act()
-            k.agent.observe(validate(k.query))
-        # Collect batch together for each agent, and do update.
         a = self.world.agent
         batch = []
         for w in self.worlds:
+            # Half of parley.
+            w.teacher.observe(validate(w.reply))
+            w.query = w.teacher.act()
+            w.agent.observe(validate(w.query))
             if hasattr(w.agent, 'observation'):
                 batch.append(w.agent.observation)
-            a.observation = batch
-            # Call update on agent
-            if len(batch) > 0 and hasattr(a, 'batch_act'):
-                batch_reply = a.batch_act(batch)
-                for index, k in enumerate(self.worlds):
-                    # Other half of parley.
-                    k.reply = batch_reply[index]
-                    k.is_done = k.query['done']
+            if not self.random and w.epoch_done():
+                break
+        # Collect batch together for each agent, and do update.
+        a.observation = batch
+        # Call update on agent
+        if len(batch) > 0 and hasattr(a, 'batch_act'):
+            batch_reply = a.batch_act(batch)
+            for index, w in enumerate(self.worlds):
+                # Other half of parley.
+                w.reply = batch_reply[index]
+                w.is_episode_done = w.query['episode_done']
+                if not self.random and w.epoch_done():
+                    break
 
     def display(self):
         s = ("[--batchsize " + str(len(self.worlds)) + "--]\n")
         for i, w in enumerate(self.worlds):
             s += ("[batch world " + str(i) + ":]\n")
             s += (w.display() + '\n')
+            if not self.random and w.epoch_done():
+                break
         s += ("[--end of batch--]")
         return s
 
     def getID(self):
         return self.worlds[0].getID()
 
-    def done(self):
+    def episode_done(self):
+        return False
+
+    def epoch_done(self):
+        for index, k in enumerate(self.worlds):
+            if k.epoch_done():
+                return True
         return False
 
 
@@ -456,7 +468,7 @@ class HogwildProcess(Process):
         self.opt = opt
         self.agent_shares = [a.share() for a in agents]
         self.queued_items = sem
-        self.finished = fin
+        self.epochDone = fin
         self.terminate = term
         self.cnt = cnt
         super().__init__()
@@ -477,9 +489,9 @@ class HogwildProcess(Process):
                 with self.cnt.get_lock():
                     self.cnt.value -= 1
                     if self.cnt.value == 0:
-                        # let main thread know that all the examples are done
-                        with self.finished:
-                            self.finished.notify_all()
+                        # let main thread know that all the examples are finished
+                        with self.epochDone:
+                            self.epochDone.notify_all()
 
 
 class HogwildWorld(World):
@@ -501,7 +513,7 @@ class HogwildWorld(World):
         self.inner_world = world_class(opt, agents)
 
         self.queued_items = Semaphore(0)  # counts num exs to be processed
-        self.finished = Condition()  # notifies when exs are done
+        self.epochDone = Condition()  # notifies when exs are finished
         self.terminate = Value('b', False)  # tells threads when to shut down
         self.cnt = Value('i', 0)  # number of exs that remain to be processed
 
@@ -509,7 +521,7 @@ class HogwildWorld(World):
         for i in range(opt['numthreads']):
             self.threads.append(HogwildProcess(i, world_class, opt,
                                                agents, self.queued_items,
-                                               self.finished, self.terminate,
+                                               self.epochDone, self.terminate,
                                                self.cnt))
         for t in self.threads:
             t.start()
@@ -522,7 +534,7 @@ class HogwildWorld(World):
         raise NotImplementedError('Hogwild does not support displaying in-run' +
                                   ' task data. Use `--numthreads 1`.')
 
-    def done(self):
+    def episode_done(self):
         return False
 
     def parley(self):
@@ -539,8 +551,8 @@ class HogwildWorld(World):
 
     def synchronize(self):
         """Sync barrier: will wait until all queued examples are processed."""
-        with self.finished:
-            self.finished.wait_for(lambda: self.cnt.value == 0)
+        with self.epochDone:
+            self.epochDone.wait_for(lambda: self.cnt.value == 0)
 
     def shutdown(self):
         """Set shutdown flag and wake threads up to close themselves"""

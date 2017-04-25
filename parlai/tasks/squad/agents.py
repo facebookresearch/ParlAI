@@ -50,7 +50,7 @@ class HandwrittenTeacher(Teacher):
         return {
             'text': context + '\n' + question,
             'labels': answers,
-            'done': True
+            'episode_done': True
         }
 
     def _setup_data(self, path):

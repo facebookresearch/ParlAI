@@ -35,7 +35,7 @@ class DialogTeacher(Teacher):
 
         self.datatype = opt['datatype']
         self.startTime = time.time()
-        self.fin = False
+        self.epochDone = False
         self.lastY = None
         if not hasattr(self, 'id'):
             self.id = opt.get('task', 'teacher')
@@ -63,11 +63,11 @@ class DialogTeacher(Teacher):
         return len(self.data)
 
     def __iter__(self):
-        self.fin = False
+        self.epochDone = False
         return self
 
     def __next__(self):
-        if self.fin:
+        if self.epochDone:
             raise StopIteration()
 
     # share datatype, data, metrics, and a lock on the metrics
@@ -95,7 +95,7 @@ class DialogTeacher(Teacher):
             self.lastLabelCandidates = None
 
         # Then build reply.
-        action, self.fin = next(self.data)
+        action, self.epochDone = next(self.data)
         action['id'] = self.getID()
         self.lastY = action.get('labels', None)
         self.lastLabelCandidates = action.get('label_candidates', None)

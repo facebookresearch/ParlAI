@@ -23,7 +23,7 @@ def main():
         print("---")
         print(world.report())
 
-        if k > 100 and world.done():
+        if k > 100 and world.episode_done():
             break
 
     world.shutdown()

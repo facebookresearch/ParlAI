@@ -88,7 +88,7 @@ class OeTeacher(Teacher):
             'image': _image_loader(img_path),
             'text': question,
             'labels': answers,
-            'done': True
+            'episode_done': True
         }
 
     def _setup_data(self, data_path, annotation_path, image_path):
@@ -147,7 +147,7 @@ class McTeacher(Teacher):
             'text': question,
             'candidates': multiple_choices,
             'labels': [answers],
-            'done': True
+            'episode_done': True
         }
 
     def _setup_data(self, data_path, annotation_path, image_path):

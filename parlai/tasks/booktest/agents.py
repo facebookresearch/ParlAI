@@ -59,7 +59,7 @@ class StreamTeacher(Teacher):
                     'text': context + s[0],
                     'labels': [s[1]],
                     'candidates': s[3].split('|') if len(s) > 3 else None,
-                    'done': True
+                    'episode_done': True
                 }
         return obs
 

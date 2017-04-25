@@ -28,7 +28,7 @@ def main():
         for k in range(100):
             world.parley()
             print(world.display() + "\n~~")
-            if k > 10 and world.done():
+            if k > 10 and world.episode_done():
                 # break out at the end of an episode if at least 10 exs shown
                 break
 
