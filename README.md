@@ -70,7 +70,7 @@ Teacher: {
     'text': 'Sam went to the kitchen\nPat gave Sam the milk\nWhere is the milk?',
     'labels': ['kitchen'],
     'label_candidates': ['hallway', 'kitchen', 'bathroom'],
-    'done': False
+    'episode_done': False
 }
 Student: {
     'text': 'hallway'
@@ -79,7 +79,7 @@ Teacher: {
     'text': 'Sam went to the hallway\nPat went to the bathroom\nWhere is the milk?',
     'labels': ['hallway'],
     'label_candidates': ['hallway', 'kitchen', 'bathroom'],
-    'done': True
+    'episode_done': True
 }
 Student: {
     'text': 'hallway'
