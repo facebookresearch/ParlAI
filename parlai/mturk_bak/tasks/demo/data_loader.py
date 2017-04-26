@@ -8,4 +8,6 @@ class DataLoader():
         pass
 
     def load_context(self, conversation_id):
-        return 'This is the opening message.'
+        return {
+        	'text': 'This is the opening message.'
+        }

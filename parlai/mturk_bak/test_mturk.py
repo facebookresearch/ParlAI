@@ -5,14 +5,19 @@ import manage_hit
 # task_module_path_prefix = 'tasks.demo.'
 # MTurkAgent = __import__(task_module_path_prefix+'agents', fromlist=['']).MTurkDemoAgent
 
-# SQuAD data augmentation
-task_module_path_prefix = 'tasks.squad_data_augmentation.'
-MTurkAgent = __import__(task_module_path_prefix+'agents', fromlist=['']).MTurkSquadDataAugmentationAgent
+# SQuAD data collection
+# task_module_path_prefix = 'tasks.squad_data_collection.'
+# MTurkAgent = __import__(task_module_path_prefix+'agents', fromlist=['']).MTurkSquadDataCollectionAgent
+
+# SQuAD eval
+task_module_path_prefix = 'tasks.squad_eval'
+MTurkAgent = __import__(task_module_path_prefix+'.agents', fromlist=['']).MTurkSquadEvalAgent
 
 
-task_config = __import__(task_module_path_prefix+'task_config', fromlist=['']).task_config
-DataLoader = __import__(task_module_path_prefix+'data_loader', fromlist=['']).DataLoader
+task_config = __import__(task_module_path_prefix+'.task_config', fromlist=['']).task_config
+DataLoader = __import__(task_module_path_prefix+'.data_loader', fromlist=['']).DataLoader
 
+print("Creating HIT tasks for "+task_module_path_prefix+" ...")
 manage_hit.create_hits(
 	opt=None, 
 	task_config=task_config,

@@ -38,17 +38,38 @@ def setup_mturk(mturk_chat_url_template, task_group_id, conversation_id, worker_
 
 
 def setup_context(db_session, data_loader, task_group_id, conversation_id):
-    context = data_loader.load_context(conversation_id)
-    send_new_message(
-        db_session = db_session,
-        task_group_id = task_group_id, 
-        conversation_id = conversation_id,
-        agent_id = 'context',
-        message_text=context, 
-        done=False,
-        binary_file_bytes=None, 
-        binary_file_type=None
-    )
+    context_dict = data_loader.load_context(conversation_id)
+    # TODO: address the multiple fields case
+    context_text = None
+    context_question = None
+    if '\n' in context_dict['text']:
+        comp_list = context_dict['text'].split('\n')
+        context_text = comp_list[0]
+        context_question = comp_list[1]
+    else:
+        context_text = context_dict['text']
+    if context_text:
+        send_new_message(
+            db_session = db_session,
+            task_group_id = task_group_id, 
+            conversation_id = conversation_id,
+            agent_id = 'context',
+            message_text=context_text, 
+            done=False,
+            binary_file_bytes=None, 
+            binary_file_type=None
+        )
+    if context_question:
+        send_new_message(
+            db_session = db_session,
+            task_group_id = task_group_id, 
+            conversation_id = conversation_id,
+            agent_id = 'teacher',
+            message_text=context_question, 
+            done=False,
+            binary_file_bytes=None, 
+            binary_file_type=None
+        )
 
 
 def create_hits(opt, task_config, data_loader, bot, num_hits):
@@ -100,7 +121,7 @@ def create_hits(opt, task_config, data_loader, bot, num_hits):
                         print('Conversation '+str(conversation_id)+' is DONE!')
                     else:
                         # Agent still needs to reply
-                        response = agent.act()  # Assuming agent returns None if it's still expecting more messages
+                        response, action = agent.act()  # Assuming agent returns None if it's still expecting more messages
                         if response:
                             send_new_message(
                                 db_session=db_session, 
@@ -108,6 +129,7 @@ def create_hits(opt, task_config, data_loader, bot, num_hits):
                                 conversation_id=conversation_id, 
                                 agent_id=task_config['bot_agent_id'], 
                                 message_text=response,
+                                action=action,
                                 done=False
                             )
 

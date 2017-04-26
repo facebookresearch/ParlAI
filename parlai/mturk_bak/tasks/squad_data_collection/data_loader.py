@@ -7,7 +7,7 @@ from parlai.tasks.squad.build import build
 
 class DataLoader():
     """
-    Data loader for squad data augmentation task, which loads the json squad data and randomly
+    Data loader for squad data collection task, which loads the json squad data and randomly
     choose a wikipedia paragraph as the conversation context.
     """
 
@@ -49,4 +49,6 @@ class DataLoader():
         paragraph = article['paragraphs'][paragraph_idx]
         context = paragraph['context']
 
-        return context
+        return {
+            'text': context
+        }

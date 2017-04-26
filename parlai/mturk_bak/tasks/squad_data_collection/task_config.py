@@ -30,47 +30,68 @@ text_input -> prompt text
 binary_reward -> prompt text, reward_message_texts
 done -> prompt text
 """
-# Only the initial_state can have no precondition
-task_config['state_config'] = [
+task_config['state_config'] = {
+    'initial_state':
     {
         'state_name': 'initial_state',
-        'precondition': None,
         'response_config': {
             task_config['teacher_agent_id']: {
                 'response_type': 'idle'
             }
-        }
+        },
+        'next_states': [
+            {
+                'precondition_agent_id': 'context',
+                'precondition_agent_action': 'any',
+                'state_name': 'teacher_should_ask_question'
+            }
+        ]
     },
+    'teacher_should_ask_question':
     {
         'state_name': 'teacher_should_ask_question',
-        'precondition': 'context',
         'response_config': {
             task_config['teacher_agent_id']: {
                 'response_type': 'text_input',
                 'prompt_text': '''Please ask a question regarding this paragraph:''',
             }
-        }
+        },
+        'next_states': [
+            {
+                'precondition_agent_id': task_config['teacher_agent_id'],
+                'precondition_agent_action': 'any',
+                'state_name': 'teacher_should_answer_question'
+            }
+        ]
     },
+    'teacher_should_answer_question':
     {
         'state_name': 'teacher_should_answer_question',
-        'precondition': task_config['teacher_agent_id'],
         'response_config': {
             task_config['teacher_agent_id']: {
                 'response_type': 'text_input',
                 'prompt_text': '''Please provide the answer to your question:'''
             }
-        }
+        },
+        'next_states': [
+            {
+                'precondition_agent_id': task_config['teacher_agent_id'],
+                'precondition_agent_action': 'any',
+                'state_name': 'task_done'
+            }
+        ]
     },
+    'task_done':
     {
         'state_name': 'task_done',
-        'precondition': task_config['teacher_agent_id'],
         'response_config': {
             task_config['teacher_agent_id']: {
                 'response_type': 'done',
             }
-        }
+        },
+        'next_states': []
     }
-]
+}
 
 # 'response_config': {
     #   'response_type': 'choices',

@@ -15,6 +15,12 @@
 </div>
 <div id="right-pane" style="min-height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
     <div id="right-top-pane" style="width: 100%; height: 570px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <span id="context_panel_text" style="font-size: 14px">
+                </span>
+            </div>
+        </div>
         <table id="message_table" style="width: 100%">
             {% if False %}
             <tr>
@@ -200,17 +206,18 @@
     // Response type: reward
     function send_binary_reward_and_update_UI(is_positive) {
         var reward = 1;
-        var reward_message_text = state_config[current_state_index]['response_config'][cur_agent_id]['reward_message_texts']['positive'];
+        var action = 'correct';
         if (!(is_positive)) {
             reward = -1;
-            reward_message_text = state_config[current_state_index]['response_config'][cur_agent_id]['reward_message_texts']['negative'];
+            action = 'incorrect';
         }
         var post_data_dict = {
             task_group_id: task_group_id,
             conversation_id: conversation_id,
             cur_agent_id: cur_agent_id,
             reward: reward,
-            msg: reward_message_text,
+            action: action,
+            msg: null,
             done: false
         };
         post_data_dict['endpoint'] = 'message';
@@ -250,7 +257,7 @@
     var agent_display_names = JSON.parse(`{{agent_display_names_string}}`);
     var state_config = JSON.parse(`{{state_config_string}}`);
     var last_message_id = -1;
-    var current_state_index = null;
+    var current_state_name = null;
     var worker_timer = null;
     var messages_processed = {};
     var messages_shown = {};
@@ -260,20 +267,15 @@
             var message = new_messages[i];
             var agent_id = message['id'];
             var message_id = parseInt(message['message_id']);
+            var done = message['done'];
+            var reward = null;
+            if ('reward' in message) {
+                reward = message['reward']
+            }
             
-            if (!(message_id in messages_shown)) {
+            if (!(message_id in messages_shown) && !done) {
                 if (agent_id == 'context') {
-                    $('table#message_table').append(`
-                        <tr>
-                            <td class="col-sm-5">
-                            </td>
-                            <td class="col-sm-5">
-                                <div class="alert alert-success" role="alert">
-                                    `+message['text']+`
-                                </div>
-                            </td>
-                        </tr>
-                    `);
+                    $('span#context_panel_text').text(message['text']);
                 } else if (agent_id != cur_agent_id) {
                     $('table#message_table').append(`
                         <tr>
@@ -287,7 +289,24 @@
                         </tr>
                     `);
                 } else {
-                    $('table#message_table').append(`
+                    if (reward) {
+                        var reward_text = reward;
+                        if (reward > 0) {
+                            reward_text = '+' + reward_text;
+                        }
+                        $('table#message_table').append(`
+                        <tr>
+                            <td class="col-sm-5">
+                            </td>
+                            <td class="col-sm-5">
+                                <div class="alert alert-info" role="alert">
+                                    <b>You (`+agent_display_names[agent_id]+`)</b>: `+reward_text+`
+                                </div>
+                            </td>
+                        </tr>
+                        `);
+                    } else {
+                        $('table#message_table').append(`
                         <tr>
                             <td class="col-sm-5">
                             </td>
@@ -297,7 +316,8 @@
                                 </div>
                             </td>
                         </tr>
-                    `);
+                        `);
+                    }
                 }
                 messages_shown[message_id] = true;
             }
@@ -382,7 +402,7 @@
     }
 
     function update_for_state() {
-        response_config = state_config[current_state_index]['response_config'][cur_agent_id];
+        response_config = state_config[current_state_name]['response_config'][cur_agent_id];
         response_type = response_config['response_type'];
         /*
         Response types accepted:
@@ -425,12 +445,12 @@
 
     // Return true when all states are finished.
     function check_precondition_and_change_state(new_messages=null, all_done_callback=null) {
-        function change_state() {
+        function change_state(next_state_name) {
             // Trigger state change
-            console.log(state_config[current_state_index]['state_name'] + " -> " + state_config[current_state_index+1]['state_name']);
-            current_state_index = current_state_index + 1;
+            console.log(state_config[current_state_name]['state_name'] + " -> " + state_config[next_state_name]['state_name']);
+            current_state_name = next_state_name;
             update_for_state();
-            if (current_state_index + 1 >= state_config.length) {
+            if (current_state_name == 'task_done') {
                 if (all_done_callback) { // All states are done
                     all_done_callback();
                     return;
@@ -438,16 +458,28 @@
             }
         }
 
-        if (new_messages) {
+        if (new_messages && current_state_name != 'task_done') {
             for (var i = 0; i < new_messages.length; i++) {
                 message_id = new_messages[i]['message_id'];
                 if (!(message_id in messages_processed)) {
                     agent_id = new_messages[i]['id'];
-                    if (agent_id == state_config[current_state_index+1]['precondition']) {
-                        change_state();
-                    } else {
-                        return; // Error state
-                    }    
+                    agent_action = null;
+                    if ('action' in new_messages[i]) {
+                        agent_action = new_messages[i]['action'];
+                    }
+                    next_states = state_config[current_state_name]['next_states'];
+                    for (var j = 0; j < next_states.length; j++) {
+                        next_state = next_states[j];
+                        precondition_agent_id = next_state['precondition_agent_id'];
+                        precondition_agent_action = next_state['precondition_agent_action'];
+                        next_state_name = next_state['state_name'];
+                        if (agent_id == precondition_agent_id) {
+                            if ((precondition_agent_action == 'any') || (agent_action == precondition_agent_action) || (j == next_states.length - 1 && precondition_agent_action == 'else')) {
+                                change_state(next_state_name);
+                                break;
+                            }
+                        }
+                    }
                     messages_processed[message_id] = true;
                 }
             }
@@ -457,9 +489,9 @@
     $(document).ready(function() {
         $(window).resize();
         $("input#id_text_input").focus();
-        current_state_index = 0;
+        current_state_name = 'initial_state';
         update_for_state();
-        if (current_state_index + 1 >= state_config.length) {  // All states are done
+        if (current_state_name == 'task_done') {
             all_done_callback();
             return;
         } else {

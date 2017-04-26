@@ -5,8 +5,11 @@ from .task_config import task_config
 
 state_config = task_config['state_config']
 
-class MTurkDemoAgent(Agent):
 
+class MTurkSquadEvalAgent(Agent):
+    """
+    MTurk agent for recording context as well as question and answer that the MTurk teacher provides.
+    """
     def __init__(self, opt, shared=None):
         self.context = None
         self.response = None
@@ -38,15 +41,23 @@ class MTurkDemoAgent(Agent):
         if self.cur_state_name == 'initial_state':
             context = obs['text']
             self.context = context
+            print("Context: " + self.context)
             self.response = None
         elif self.cur_state_name == 'teacher_should_ask_question':
             teacher_question = obs['text']
-            # Get response from your bot
+            # Run your model to get the response
+            print("Teacher Question: " + teacher_question)
             self.response = '(This is my answer.)'
         elif self.cur_state_name == 'student_should_answer_question':
             self.response = None
+        elif self.cur_state_name == 'teacher_should_give_textual_feedback':
+            teacher_textual_feedback = obs['text']
+            self.response = None
         elif self.cur_state_name == 'teacher_should_give_reward':
             teacher_reward = obs['reward']
+            self.response = None
+        elif self.cur_state_name == 'teacher_should_provide_correct_answer':
+            teacher_answer = obs['text']
             self.response = None
         elif self.cur_state_name == 'task_done':
             self.response = None
