@@ -10,7 +10,9 @@ from .build import build
 class HandwrittenTeacher(Teacher):
     """
     Hand-written SQuAD teacher, which loads the json squad data and implements
-    its own `act()` method for interacting with student agent.
+    its own `act()` method for interacting with student agent, rather than
+    inheriting from the core Dialog Teacher. This code is here as an example of
+    rolling your own without inheritance.
     """
 
     def __init__(self, opt, shared=None):
@@ -44,8 +46,9 @@ class HandwrittenTeacher(Teacher):
         answers = [a['text'] for a in qa['answers']]
         context = paragraph['context']
 
-        if self.episode_idx == len(self.examples) and self.datatype != 'train':
-            self.fin = True
+        if (self.episode_idx == (len(self.examples) - 1) and
+            self.datatype != 'train'):
+            self.epochDone = True
 
         return {
             'text': context + '\n' + question,

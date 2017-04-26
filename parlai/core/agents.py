@@ -116,7 +116,7 @@ class Teacher(Agent):
                 self.metrics = shared['metrics']
             else:
                 self.metrics = Metrics(opt)
-        self.fin = False
+        self.epochDone = False
 
     def __iter__(self):
         """Teacher can be iterated over. Subclasses can specify a certain length

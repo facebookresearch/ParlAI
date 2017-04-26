@@ -48,10 +48,10 @@ class ParlaiParser(object):
                  'by default: train is random with replacement, ' +
                  'valid is ordered, test is ordered.')
         self.parser.add_argument(
-            '-n', '--numthreads', default=1, type=int,
+            '-nt', '--numthreads', default=1, type=int,
             help='number of threads, e.g. for hogwild')
         self.parser.add_argument(
-            '-b', '--batchsize', default=1, type=int,
+            '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
 
     def add_model_args(self):

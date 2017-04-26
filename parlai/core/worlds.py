@@ -402,7 +402,9 @@ class BatchWorld(World):
         shared = world.share()
         self.worlds = []
         for i in range(opt['batchsize']):
-            self.worlds.append(shared['world_class'](opt, None, shared))
+            opti = copy.deepcopy(opt)
+            opti['batchindex'] = i
+            self.worlds.append(shared['world_class'](opti, None, shared))
 
     def parley(self):
         # Collect batch together for each agent, and do update.

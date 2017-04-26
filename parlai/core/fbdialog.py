@@ -39,8 +39,10 @@ class FbDialogTeacher(DialogTeacher):
     """
 
     def __init__(self, opt, shared=None):
+        self.opt = opt
         self.cloze = opt.get('cloze', False)
         self.cands = self.load_cands(opt.get('cands_datafile', None))
+        self.random = opt.get('datatype', None) == 'train'
         super().__init__(opt, shared)
 
     def label_candidates(self):
@@ -82,6 +84,19 @@ class FbDialogTeacher(DialogTeacher):
                         cands.append(line)
         return cands
 
+
+    def keep_dialog(self, index):
+        if (self.random and self.opt.get('batchsize', 0) > 1 and
+            self.opt.get('batchindex', -1) >= 0):
+            # For ordered data in batch mode, we split the
+            # data into equal parts for each member of the batch
+            # so that the data does not repeat.
+            print(str(self.opt['batchindex']) + " " + str(self.opt['batchsize']))
+            return (self.opt['batchindex'] %  self.opt['batchsize']) == 0
+        else:
+            return True
+
+
     def setup_data(self, path):
         """Reads data in the fbdialog format.
         Returns ((x,y,r,c), new_episode?) tuples.
@@ -108,7 +123,7 @@ class FbDialogTeacher(DialogTeacher):
             start = True
             x = ''
             reward = None
-
+            dialog_index = 0
             for line in read:
                 line = line.strip()
                 if len(line) == 0:
@@ -136,9 +151,11 @@ class FbDialogTeacher(DialogTeacher):
 
                 # now check if we're at a new episode
                 if conv_id == '1':
+                    dialog_index += 1
                     x = x.strip()
                     if x:
-                        yield [x, None, reward], start
+                        if self.keep_dialog(dialog_index):
+                            yield [x, None, reward], start
                     start = True
                     # start a new episode
                     if self.cloze:
@@ -165,10 +182,12 @@ class FbDialogTeacher(DialogTeacher):
                         # split label_candidates
                         split[3] = split[3].split('|')
                     if start:
-                        yield split, True
+                        if self.keep_dialog(dialog_index):
+                            yield split, True
                         start = False
                     else:
-                        yield split, False
+                        if self.keep_dialog(dialog_index):
+                            yield split, False
                     # reset x in case there is unlabeled data still left
                     x = ''
                     reward = None

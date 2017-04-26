@@ -17,20 +17,19 @@ def main():
     random.seed(42)
 
     # Get command line arguments
-    opt = ParlaiParser().parse_args()
+    parser = ParlaiParser()
+    parser.add_argument('-n', '--num_examples', default=10)
+    opt = parser.parse_args()
+
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
 
     # Show some example dialogs.
     with world:
-        # show at most 100 exs
-        for k in range(100):
+        for k in range(int(opt['num_examples'])):
             world.parley()
             print(world.display() + "\n~~")
-            if k > 10 and world.episode_done():
-                # break out at the end of an episode if at least 10 exs shown
-                break
             if world.epoch_done():
                 print("EPOCH DONE")
                 break
