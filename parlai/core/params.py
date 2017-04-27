@@ -7,6 +7,10 @@ import argparse
 import os
 
 
+def str2bool(value):
+    return value.lower() in ('yes', 'true', 't', '1', 'y')
+
+
 class ParlaiParser(object):
     """Pseudo-extension of argparse which sets a number of parameters for the
     ParlAI framework. More options can be added specific to other modules by
@@ -17,6 +21,7 @@ class ParlaiParser(object):
 
     def __init__(self, add_parlai_args=True, add_model_args=False):
         self.parser = argparse.ArgumentParser(description='ParlAI parser.')
+        self.parser.register('type', 'bool', str2bool)
         if add_parlai_args:
             self.add_parlai_args()
         if add_model_args:
@@ -24,6 +29,7 @@ class ParlaiParser(object):
 
         self.add_arg = self.parser.add_argument
         self.add_argument = self.parser.add_argument
+        self.register = self.parser.register
 
     def add_parlai_args(self):
         parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(

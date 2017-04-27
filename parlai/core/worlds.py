@@ -406,6 +406,13 @@ class BatchWorld(World):
             opti['batchindex'] = i
             self.worlds.append(shared['world_class'](opti, None, shared))
 
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.epoch_done():
+            raise StopIteration()
+
     def parley(self):
         # Collect batch together for each agent, and do update.
         # Assumes DialogPartnerWorld for now, this allows us make the
@@ -446,17 +453,19 @@ class BatchWorld(World):
         return s
 
     def getID(self):
-        return self.worlds[0].getID()
+        return self.world.getID()
 
     def episode_done(self):
         return False
 
     def epoch_done(self):
-        for index, k in enumerate(self.worlds):
-            if k.epoch_done():
+        for world in self.worlds:
+            if world.epoch_done():
                 return True
         return False
 
+    def report(self):
+        return self.world.report()
 
 
 class HogwildProcess(Process):
