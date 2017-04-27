@@ -14,7 +14,6 @@ class QADataCollectionAgent(Agent):
     def __init__(self, opt, shared=None):
         self.opt = copy.deepcopy(opt)
         self.id = 'qa_collector'
-        self.conversation_id = None
         self.turn_index = -1
         # The task that we will be collecting QA pairs for.
         module_name = 'parlai.tasks.squad.agents'
