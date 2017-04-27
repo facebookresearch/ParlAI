@@ -3,6 +3,12 @@
 
 task_config = {}
 
+# MTurk config related
+task_config['hit_title'] = 'Chat with a fellow Turker regarding a story'
+task_config['hit_description'] = 'Ask and answer questions about a story with a fellow Turker.'
+task_config['hit_keywords'] = 'chat,question,answer'
+task_config['hit_reward'] = 0.10
+
 # Task specific
 task_config['teacher_agent_id'] = 'teacher'
 task_config['worker_agent_id'] = task_config['teacher_agent_id']

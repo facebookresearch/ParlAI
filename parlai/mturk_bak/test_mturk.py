@@ -2,12 +2,12 @@
 import manage_hit
 
 # Simple demo
-# task_module_path_prefix = 'tasks.demo.'
-# MTurkAgent = __import__(task_module_path_prefix+'agents', fromlist=['']).MTurkDemoAgent
+# task_module_path_prefix = 'tasks.demo'
+# MTurkAgent = __import__(task_module_path_prefix+'.agents', fromlist=['']).MTurkDemoAgent
 
 # SQuAD data collection
-# task_module_path_prefix = 'tasks.squad_data_collection.'
-# MTurkAgent = __import__(task_module_path_prefix+'agents', fromlist=['']).MTurkSquadDataCollectionAgent
+# task_module_path_prefix = 'tasks.squad_data_collection'
+# MTurkAgent = __import__(task_module_path_prefix+'.agents', fromlist=['']).MTurkSquadDataCollectionAgent
 
 # SQuAD eval
 task_module_path_prefix = 'tasks.squad_eval'
@@ -23,5 +23,7 @@ manage_hit.create_hits(
 	task_config=task_config,
 	data_loader=DataLoader(opt={'datapath': '../data/'}),
 	bot=MTurkAgent(opt=None), 
-	num_hits=1
+	num_hits=1,
+	is_sandbox=True,
+	chat_page_only=False
 )

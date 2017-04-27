@@ -8,8 +8,8 @@ import time
 import random
 import string
 import webbrowser
-# from parlai.core.agents import create_agent_from_shared
-from setup_aws import rds_db_name, rds_username, rds_password, setup_aws, submit_to_mturk
+from parlai.core.agents import create_agent_from_shared
+from setup_aws import rds_db_name, rds_username, rds_password, setup_aws, create_hit_type, create_hit_with_hit_type
 from data_model import Message, init_database, send_new_message, get_new_messages
 
 
@@ -28,13 +28,6 @@ def setup_relay(task_config):
     db_session = db_session_maker()
 
     return db_session, mturk_chat_url_template
-
-
-def setup_mturk(mturk_chat_url_template, task_group_id, conversation_id, worker_agent_id):
-    mturk_chat_url = mturk_chat_url_template.replace('{{task_group_id}}', str(task_group_id)).replace('{{conversation_id}}', str(conversation_id)).replace('{{cur_agent_id}}', str(worker_agent_id))
-    webbrowser.open(mturk_chat_url)
-    # mturk_page_url = submit_to_mturk(mturk_chat_url)
-    # webbrowser.open(mturk_page_url)
 
 
 def setup_context(db_session, data_loader, task_group_id, conversation_id):
@@ -72,7 +65,7 @@ def setup_context(db_session, data_loader, task_group_id, conversation_id):
         )
 
 
-def create_hits(opt, task_config, data_loader, bot, num_hits):
+def create_hits(opt, task_config, data_loader, bot, num_hits, is_sandbox, chat_page_only):
     # shared = bot.share(opt=opt)
     # bots = [create_agent_from_shared(shared) for _ in range(num_hits)]
     # TODO: unable to import create_agent_from_shared, need to fix
@@ -84,9 +77,29 @@ def create_hits(opt, task_config, data_loader, bot, num_hits):
     print('MTurk initialization done. Opening web interface...')
     print('')
 
-    worker_agent_id = task_config['worker_agent_id']
-    setup_mturk(mturk_chat_url_template, task_group_id, 1, worker_agent_id)
+    worker_agent_id = task_config['worker_agent_id']    
     cids = range(1, num_hits+1)
+    hit_type_id = create_hit_type(
+        hit_title=task_config['hit_title'], 
+        hit_description=task_config['hit_description'] + ' (ID: ' + task_group_id + ')', 
+        hit_keywords=task_config['hit_keywords'], 
+        hit_reward=task_config['hit_reward'], 
+        num_hits=num_hits,
+        is_sandbox=is_sandbox
+    )
+    for cid in cids:
+        mturk_chat_url = mturk_chat_url_template.replace('{{task_group_id}}', str(task_group_id)).replace('{{conversation_id}}', str(cid)).replace('{{cur_agent_id}}', str(worker_agent_id))
+        if chat_page_only:
+            webbrowser.open(mturk_chat_url)
+        else:
+            mturk_page_url = create_hit_with_hit_type(
+                page_url=mturk_chat_url, 
+                hit_type_id=hit_type_id, 
+                is_sandbox=True
+            )
+    if not chat_page_only:
+        webbrowser.open(mturk_page_url)
+
     cid_map = {cid: i for i, cid in enumerate(cids)}
     conversations_remaining = set(cids)
 

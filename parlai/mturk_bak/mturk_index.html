@@ -175,6 +175,12 @@
 </div>
 </div>
 </div>
+<form id="mturk_submit_form" action="" method="post" style="display:none">
+    <input id="assignmentId" name="assignmentId" value="" />
+    <input id="hitId" name="hitId" value="" />
+    <input id="workerId" name="workerId" value="" />
+    <input type="submit" value="Submit" name="submitButton" id="mturk_submit_button" />
+</form>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script type="text/javascript">
     // UI related
@@ -201,6 +207,31 @@
     $(':radio[name="choice"]').change(function() {
         $("button#choice-send-button").removeClass("disabled");
     });
+
+    // Check if in mturk hit page, by checking whether in iframe
+    function in_mturk_hit_page () {
+        try {
+            return window.self !== window.top;
+        } catch (e) {
+            return true;
+        }
+    }
+
+    // Get URL parameter
+    function get_url_parameter(sParam) {
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : sParameterName[1];
+            }
+        }
+    };
 
 
     // Response type: reward
@@ -250,6 +281,7 @@
         send_binary_reward_and_update_UI(false);    
     });
 
+    var mturk_submit_url = `{{mturk_submit_url}}`;
     var verbose_log = false;
     var task_group_id = `{{task_group_id}}`;
     var conversation_id = parseInt(`{{conversation_id}}`);
@@ -440,7 +472,9 @@
         if (worker_timer) {
             clearTimeout(worker_timer);
         }
-        // TODO: you should redirect to the next HIT, or POST result to AMT page
+        if (in_mturk_hit_page()) {
+            $("input#mturk_submit_button").click();
+        }
     }
 
     // Return true when all states are finished.
@@ -488,6 +522,10 @@
 
     $(document).ready(function() {
         $(window).resize();
+        $("form#mturk_submit_form input#assignmentId").val(get_url_parameter('assignmentId'));
+        $("form#mturk_submit_form input#hitId").val(get_url_parameter('hitId'));
+        $("form#mturk_submit_form input#workerId").val(get_url_parameter('workerId'));
+        $("form#mturk_submit_form").attr("action", mturk_submit_url);
         $("input#id_text_input").focus();
         current_state_name = 'initial_state';
         update_for_state();

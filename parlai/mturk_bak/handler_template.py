@@ -14,7 +14,7 @@ from jinja2 import FileSystemLoader
 from data_model import Message, init_database, send_new_message, get_new_messages
 
 # Dynamically generated code begin
-# Expects rds_host, rds_db_name, rds_username, rds_password, agent_display_names, task_description, state_config
+# Expects mturk_submit_url, rds_host, rds_db_name, rds_username, rds_password, agent_display_names, task_description, state_config
 # {{block_task_config}}
 # Dynamically generated code end
 
@@ -63,6 +63,7 @@ def index(event, context):
         template_context['task_description'] = task_description
         template_context['state_config_string'] = json.dumps(state_config)
         template_context['debug_log'] = None
+        template_context['mturk_submit_url'] = mturk_submit_url
 
         return _render_template(template_context, 'mturk_index.html')
 
