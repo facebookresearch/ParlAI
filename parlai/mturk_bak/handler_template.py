@@ -55,15 +55,26 @@ def index(event, context):
         task_group_id = event['query']['task_group_id']
         conversation_id = event['query']['conversation_id']
         cur_agent_id = event['query']['cur_agent_id']
+        assignment_id = event['query']['assignmentId'] # from mturk
 
-        template_context['task_group_id'] = task_group_id
-        template_context['conversation_id'] = conversation_id
-        template_context['cur_agent_id'] = cur_agent_id
-        template_context['agent_display_names_string'] = json.dumps(agent_display_names)
-        template_context['task_description'] = task_description
-        template_context['state_config_string'] = json.dumps(state_config)
-        template_context['debug_log'] = None
-        template_context['mturk_submit_url'] = mturk_submit_url
+        if assignment_id == 'ASSIGNMENT_ID_NOT_AVAILABLE':
+            template_context['task_group_id'] = task_group_id
+            template_context['conversation_id'] = 0
+            template_context['cur_agent_id'] = cur_agent_id
+            template_context['agent_display_names_string'] = json.dumps(agent_display_names)
+            template_context['task_description'] = task_description
+            template_context['state_config_string'] = json.dumps(state_config)
+            template_context['mturk_submit_url'] = ''
+            template_context['is_cover_page'] = True
+        else:
+            template_context['task_group_id'] = task_group_id
+            template_context['conversation_id'] = conversation_id
+            template_context['cur_agent_id'] = cur_agent_id
+            template_context['agent_display_names_string'] = json.dumps(agent_display_names)
+            template_context['task_description'] = task_description
+            template_context['state_config_string'] = json.dumps(state_config)
+            template_context['mturk_submit_url'] = mturk_submit_url
+            template_context['is_cover_page'] = False
 
         return _render_template(template_context, 'mturk_index.html')
 

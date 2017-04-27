@@ -288,6 +288,7 @@
     var cur_agent_id = `{{cur_agent_id}}`;
     var agent_display_names = JSON.parse(`{{agent_display_names_string}}`);
     var state_config = JSON.parse(`{{state_config_string}}`);
+    var is_cover_page = `{{is_cover_page}}`;
     var last_message_id = -1;
     var current_state_name = null;
     var worker_timer = null;
@@ -472,7 +473,7 @@
         if (worker_timer) {
             clearTimeout(worker_timer);
         }
-        if (in_mturk_hit_page()) {
+        if (in_mturk_hit_page() && !is_cover_page) {
             $("input#mturk_submit_button").click();
         }
     }
@@ -528,6 +529,11 @@
         $("form#mturk_submit_form").attr("action", mturk_submit_url);
         $("input#id_text_input").focus();
         current_state_name = 'initial_state';
+        if (is_cover_page == 'True') {
+            is_cover_page = true;
+        } else if (is_cover_page == 'False') {
+            is_cover_page = false;
+        }
         update_for_state();
         if (current_state_name == 'task_done') {
             all_done_callback();

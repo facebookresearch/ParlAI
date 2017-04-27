@@ -209,21 +209,28 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, should_clean
 
         iam = boto3.resource('iam')
         iam_role = iam.Role(iam_role_name)
+        lambda_function_arn = None
 
         # Create the Lambda function and upload latest code
-        response = lambda_client.create_function(
-            FunctionName = lambda_function_name,
-            Runtime = 'python2.7',
-            Role = iam_role.arn,
-            Handler='handler.lambda_handler',
-            Code={
-                'ZipFile': zip_file_content
-            },
-            Timeout = 10, # in seconds
-            MemorySize = 128, # in MB
-            Publish = True,
-        )
-        lambda_function_arn = response['FunctionArn']
+        while True:
+            try:
+                response = lambda_client.create_function(
+                    FunctionName = lambda_function_name,
+                    Runtime = 'python2.7',
+                    Role = iam_role.arn,
+                    Handler='handler.lambda_handler',
+                    Code={
+                        'ZipFile': zip_file_content
+                    },
+                    Timeout = 10, # in seconds
+                    MemorySize = 128, # in MB
+                    Publish = True,
+                )
+                lambda_function_arn = response['FunctionArn']
+                break
+            except ClientError as e:
+                print("Lambda: Waiting for IAM role creation to take effect...")
+                time.sleep(10)
 
         # Add permission to endpoints for calling Lambda function
         response = lambda_client.add_permission(
