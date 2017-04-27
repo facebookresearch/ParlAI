@@ -1,0 +1,112 @@
+[
+	{
+		"id": "bAbI-1k",
+		"task": "babi:All1k",
+		"tags": [ "all",  "QA" ]
+	},
+	{
+		"id": "bAbI-10k",
+		"task": "babi:All10k",
+		"tags": [ "all",  "QA" ]
+	},
+	{
+		"id": "MCTest",
+		"task": "mctest",
+		"tags": [ "all",  "QA" ]
+	},
+	{
+		"id": "WebQuestions",
+		"task": "webquestions",
+		"tags": [ "all",  "QA" ]
+	},
+	{
+		"id": "WikiQA",
+		"task": "wikiqa",
+		"tags": [ "all",  "QA" ]
+	},
+	{
+		"id": "WikiMovies",
+		"task": "wikimovies",
+		"tags": [ "all",  "QA" ]
+	},
+	{
+		"id": "MTurkWikiMovies",
+		"task": "mturkwikimovies",
+		"tags": [ "all",  "QA" ]
+	},
+	{
+		"id": "SimpleQuestions",
+		"task": "simplequestions",
+		"tags": [ "all",  "QA" ]
+	},
+	{
+		"id": "SQuAD",
+		"task": "squad",
+		"tags": [ "all",  "QA" ]
+	},
+	{
+		"id": "MovieDD-QA",
+		"task": "moviedialog:Task:1",
+		"tags": [ "all",  "QA", "MovieDD" ]
+	},
+	{
+		"id": "MovieDD-Recs",
+		"task": "moviedialog:Task:2",
+		"tags": [ "all",  "QA", "MovieDD" ]
+	},
+	{
+		"id": "QACNN",
+		"task": "qacnn",
+		"tags": [ "all",  "Cloze" ]
+	},
+	{
+		"id": "QADailyMail",
+		"task": "qadailymail",
+		"tags": [ "all",  "Cloze" ]
+	},
+	{
+		"id": "CBT",
+		"task": "cbt",
+		"tags": [ "all",  "Cloze" ]
+	},
+	{
+		"id": "BookTest",
+		"task": "booktest",
+		"tags": [ "all",  "Cloze" ]
+	},
+	{
+		"id": "DBLL-bAbI",
+		"task": "dbll_babi",
+		"tags": [ "all",  "Goal" ]
+	},
+	{
+		"id": "dialog-bAbI",
+		"task": "dialog_babi",
+		"tags": [ "all",  "Goal" ]
+	},
+	{
+		"id": "DBLL-Movie",
+		"task": "dbll_movie",
+		"tags": [ "all",  "Goal" ]
+	},
+	{
+		"id": "MovieDD-QARecs",
+		"task": "moviedialog:Task:3",
+		"tags": [ "all",  "Goal", "MovieDD" ]
+	},
+	{
+		"id": "CornellMovie",
+		"task": "cornell_movie",
+		"tags": [ "all",  "ChitChat" ]
+	},
+	{
+		"id": "OpenSubtitles",
+		"task": "opensubtitles",
+		"tags": [ "all",  "ChitChat" ]
+	},
+	{
+		"id": "MovieDD-Reddit",
+		"task": "moviedialog:Task:4",
+		"tags": [ "all",  "ChitChat", "MovieDD" ]
+	}
+]
