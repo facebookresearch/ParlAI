@@ -134,7 +134,7 @@ class IrBaselineAgent(Agent):
                 rank_candidates(rep, obs['label_candidates'],
                                 self.length_penalty))
             reply['text'] = reply['text_candidates'][0]
-            score_match(rep, reply['text'], self.length_penalty, True)
+            # score_match(rep, reply['text'], self.length_penalty, True)
         else:
             reply['text'] = "I don't know."
         return reply
