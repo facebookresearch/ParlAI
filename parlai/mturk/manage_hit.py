@@ -30,42 +30,7 @@ def setup_relay(task_config):
     return db_session, mturk_chat_url_template
 
 
-def setup_context(db_session, data_loader, task_group_id, conversation_id):
-    context_dict = data_loader.load_context(conversation_id)
-    # TODO: address the multiple fields case
-    context_text = None
-    context_question = None
-    if '\n' in context_dict['text']:
-        comp_list = context_dict['text'].split('\n')
-        context_text = comp_list[0]
-        context_question = comp_list[1]
-    else:
-        context_text = context_dict['text']
-    if context_text:
-        send_new_message(
-            db_session = db_session,
-            task_group_id = task_group_id, 
-            conversation_id = conversation_id,
-            agent_id = 'context',
-            message_text=context_text, 
-            episode_done=False,
-            binary_file_bytes=None, 
-            binary_file_type=None
-        )
-    if context_question:
-        send_new_message(
-            db_session = db_session,
-            task_group_id = task_group_id, 
-            conversation_id = conversation_id,
-            agent_id = 'teacher',
-            message_text=context_question, 
-            episode_done=False,
-            binary_file_bytes=None, 
-            binary_file_type=None
-        )
-
-
-def create_hits(task_config, data_loader, bot, num_hits, is_sandbox, chat_page_only):
+def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose):
     task_group_id = str(int(time.time())) + '_' + _get_random_alphanumeric_string(10) # Random string to further avoid collision
     print('Setting up MTurk backend...')
     db_session, mturk_chat_url_template = setup_relay(task_config)
@@ -79,13 +44,22 @@ def create_hits(task_config, data_loader, bot, num_hits, is_sandbox, chat_page_o
         new_bot = create_agent_from_shared(shared)
         new_bot.conversation_id = cid
         bots.append(new_bot)
+        response = agent.act()  # Assuming agent returns None if it's still expecting more messages
+        if response:
+            if verbose:
+                print('Bot ' + str(conversation_id) + 'response: ' + response)
+            send_new_message(
+                db_session=db_session, 
+                task_group_id=task_group_id, 
+                conversation_id=conversation_id, 
+                agent_id=task_config['bot_agent_id'], 
+                message_text=response.get('text', None), 
+                reward=response.get('reward', None), 
+                action=response.get('action', None), 
+                episode_done=response.get('episode_done', False), 
+            )
 
     cid_map = {cid: i for i, cid in enumerate(cids)}
-
-    # Set up context for each conversation
-    print('Setting up conversation context for each HIT...')
-    for cid in cids:
-        setup_context(db_session, data_loader, task_group_id, cid)
 
     hits_created = False
     conversations_remaining = set(cids)
@@ -109,6 +83,8 @@ def create_hits(task_config, data_loader, bot, num_hits, is_sandbox, chat_page_o
                 agent = bots[cid_map[conversation_id]]
                 for new_message in new_messages:
                     # observe could be in the else block?
+                    if verbose:
+                        print('Bot ' + str(conversation_id) + 'received: ' + new_message)
                     agent.observe(new_message)
                     if new_message.get('done', False):
                         # We're done here
@@ -118,6 +94,8 @@ def create_hits(task_config, data_loader, bot, num_hits, is_sandbox, chat_page_o
                         # Agent still needs to reply
                         response = agent.act()  # Assuming agent returns None if it's still expecting more messages
                         if response:
+                            if verbose:
+                                print('Bot ' + str(conversation_id) + 'response: ' + response)
                             send_new_message(
                                 db_session=db_session, 
                                 task_group_id=task_group_id, 
