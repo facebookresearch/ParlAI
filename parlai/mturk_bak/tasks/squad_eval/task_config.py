@@ -4,8 +4,8 @@
 task_config = {}
 
 # MTurk config related
-task_config['hit_title'] = 'Chat with a fellow Turker regarding a story'
-task_config['hit_description'] = 'Ask and answer questions about a story with a fellow Turker.'
+task_config['hit_title'] = 'Chat with a fellow Turker about a Wikipedia paragraph'
+task_config['hit_description'] = 'Ask and answer a question about a Wikipedia paragraph with a fellow Turker.'
 task_config['hit_keywords'] = 'chat,question,answer'
 task_config['hit_reward'] = 0.10
 
@@ -36,6 +36,7 @@ text_input -> prompt text
 binary_reward -> prompt text, reward_message_texts
 done -> prompt text
 """
+# Only the initial_state can have no precondition
 task_config['state_config'] = {
     'initial_state':
     {
@@ -53,14 +54,12 @@ task_config['state_config'] = {
             }
         ]
     },
-
     'teacher_should_ask_question':
     {
         'state_name': 'teacher_should_ask_question',
         'response_config': {
             task_config['teacher_agent_id']: {
-                'response_type': 'text_input',
-                'prompt_text': '''Please enter your question:''',
+                'response_type': 'idle'
             }
         },
         'next_states': [
@@ -71,32 +70,69 @@ task_config['state_config'] = {
             }
         ]
     },
-
-    'student_should_answer_question':    
+    'student_should_answer_question':
     {
         'state_name': 'student_should_answer_question',
         'response_config': {
             task_config['teacher_agent_id']: {
                 'response_type': 'waiting',
-                'prompt_text': '''Please wait for the other party's response...'''
+                'prompt_text': '''Please wait for the student's response...'''
             }
         },
         'next_states': [
             {
                 'precondition_agent_id': task_config['bot_agent_id'],
                 'precondition_agent_action': 'any',
+                'state_name': 'teacher_should_give_textual_feedback'
+            }
+        ]
+    },
+    'teacher_should_give_textual_feedback':
+    {
+        'state_name': 'teacher_should_give_textual_feedback',
+        'response_config': {
+            task_config['teacher_agent_id']: {
+                'response_type': 'text_input',
+                'prompt_text': '''Please provide textual feedback regarding whether the student's answer is correct. Feel free to express this in any form.'''
+            }
+        },
+        'next_states': [
+            {
+                'precondition_agent_id': task_config['teacher_agent_id'],
+                'precondition_agent_action': 'any',
                 'state_name': 'teacher_should_give_reward'
             }
         ]
     },
-
     'teacher_should_give_reward':
     {
         'state_name': 'teacher_should_give_reward',
         'response_config': {
             task_config['teacher_agent_id']: {
                 'response_type': 'binary_reward',
-                'prompt_text': '''Is this correct?''',
+                'prompt_text': '''Now please express this in another form: Do you think the student's answer is correct?''',
+            }
+        },
+        'next_states': [
+            {
+                'precondition_agent_id': task_config['teacher_agent_id'],
+                'precondition_agent_action': 'correct',
+                'state_name': 'task_done'
+            },
+            {
+                'precondition_agent_id': task_config['teacher_agent_id'],
+                'precondition_agent_action': 'incorrect',
+                'state_name': 'teacher_should_provide_correct_answer'
+            }
+        ]
+    },
+    'teacher_should_provide_correct_answer':
+    {
+        'state_name': 'teacher_should_provide_correct_answer',
+        'response_config': {
+            task_config['teacher_agent_id']: {
+                'response_type': 'text_input',
+                'prompt_text': '''Please enter the correct answer to the question:'''
             }
         },
         'next_states': [
@@ -107,7 +143,6 @@ task_config['state_config'] = {
             }
         ]
     },
-
     'task_done':
     {
         'state_name': 'task_done',
@@ -115,8 +150,7 @@ task_config['state_config'] = {
             task_config['teacher_agent_id']: {
                 'response_type': 'done',
             }
-        },
-        'next_states': []
+        }
     }
 }
 
@@ -141,7 +175,6 @@ task_config['state_config'] = {
     #       }
     #   ],
     # }
-
 
 
 

@@ -6,8 +6,11 @@ from .task_config import task_config
 
 state_config = task_config['state_config']
 
-class MTurkDemoAgent(Agent):
 
+class MTurkSquadEvalAgent(Agent):
+    """
+    MTurk agent for recording context as well as question and answer that the MTurk teacher provides.
+    """
     def __init__(self, opt, shared=None):
         self.opt = copy.deepcopy(opt)
         self.verbose = self.opt.get('verbose', False)
@@ -45,17 +48,27 @@ class MTurkDemoAgent(Agent):
             print('Conversation ' +str(self.conversation_id)+' - Bot '+str(self.id)+' received: ', obs)
         
         if self.cur_state_name == 'initial_state':
-            context = obs['text']
+            context = obs['text'] # TODO: should be sent from bot
             self.context = context
+            if self.verbose:
+                print("Context: " + self.context)
             self.response = None
         elif self.cur_state_name == 'teacher_should_ask_question':
             teacher_question = obs['text']
-            # Get response from your bot
+            if self.verbose:
+                print("Teacher Question: " + teacher_question)
+            # Run your model to get the response
             self.response = '(This is my answer.)'
         elif self.cur_state_name == 'student_should_answer_question':
             self.response = None
-        elif self.cur_state_name == 'teacher_should_give_reward':
+        elif self.cur_state_name == 'teacher_should_give_textual_feedback': # TODO: options
+            teacher_textual_feedback = obs['text']
+            self.response = None
+        elif self.cur_state_name == 'teacher_should_give_reward': # TODO: options
             teacher_reward = obs['reward']
+            self.response = None
+        elif self.cur_state_name == 'teacher_should_provide_correct_answer': # TODO: options
+            teacher_answer = obs['text']
             self.response = None
         elif self.cur_state_name == 'task_done':
             self.response = None

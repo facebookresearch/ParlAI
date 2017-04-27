@@ -26,7 +26,7 @@ rds_db_instance_identifier = 'parlai-mturk-db'
 rds_db_name = 'parlai_mturk_db'
 rds_username = 'parlai_user'
 rds_password = 'parlai_user_password'
-rds_security_group_name = 'parlai_mturk_db_security_group'
+rds_security_group_name = 'parlai-mturk-db-security-group'
 rds_security_group_description = 'Security group for ParlAI MTurk DB'
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
@@ -37,7 +37,7 @@ def setup_aws_credentials():
     try:
         session = boto3.Session(profile_name=aws_profile_name)
     except ProfileNotFound as e:
-        print("AWS credentials not found, please enter below:")
+        print("AWS credentials not found. Please create an IAM user with AdministratorAccess permission at https://console.aws.amazon.com/iam/, and then enter the user's security credentials below:")
         aws_access_key_id = input('Access Key ID: ')
         aws_secret_access_key = input('Secret Access Key: ')
         aws_credentials_file_path = '~/.aws/credentials'
@@ -73,7 +73,7 @@ def setup_rds():
                                              VpcId=vpc_id)
         security_group_id = response['GroupId']
         print('RDS: Security group created.')
-
+        
         data = ec2.authorize_security_group_ingress(
             GroupId=security_group_id,
             IpPermissions=[
@@ -85,7 +85,7 @@ def setup_rds():
                  'Ipv6Ranges': [{'CidrIpv6': '::/0'}]
                 },
             ])
-        print('RDS: Ingress Successfully Set ' + data)
+        print('RDS: Security group ingress IP permissions set.')
     except ClientError as e:
         if e.response['Error']['Code'] == 'InvalidGroup.Duplicate':
             print('RDS: Security group already exists.')
@@ -108,7 +108,7 @@ def setup_rds():
                                VpcSecurityGroupIds=[security_group_id],
                                DBInstanceClass='db.t2.micro',
                                Tags=[{'Key': 'Name', 'Value': rds_db_instance_identifier}])
-        print('RDS: Starting RDS instance with ID: ' + rds_db_instance_identifier)
+        print('RDS: Starting RDS instance...')
     except ClientError as e:
         if e.response['Error']['Code'] == 'DBInstanceAlreadyExists':
             print('RDS: DB instance already exists.')
@@ -133,24 +133,28 @@ def setup_rds():
     endpoint = db_instance['Endpoint']
     host = endpoint['Address']
 
-    print('RDS: DB instance ready with host: ' + host)
+    print('RDS: DB instance ready.')
 
     return host
 
 
-def setup_relay_server_api(rds_host, task_config, should_clean_up_after_upload=True):
+def setup_relay_server_api(mturk_submit_url, rds_host, task_config, should_clean_up_after_upload=True):
     # Dynamically generate handler.py file, and then create zip file
     print("Lambda: Preparing relay server code...")
 
-    # Create folder for lambda server code
-    if not os.path.exists(lambda_server_directory):
-        os.makedirs(lambda_server_directory)
+    # Create clean folder for lambda server code
+    if os.path.exists(lambda_server_directory):
+        shutil.rmtree(lambda_server_directory)
+    os.makedirs(lambda_server_directory)
+    if os.path.exists('lambda_server.zip'):
+        os.remove('lambda_server.zip')
 
     # Copying files
     with open('handler_template.py', 'r') as handler_template_file:
         handler_file_string = handler_template_file.read()
     handler_file_string = handler_file_string.replace(
         '# {{block_task_config}}', 
+        "mturk_submit_url = \'" + mturk_submit_url + "\'\n" + \
         "rds_host = \'" + rds_host + "\'\n" + \
         "rds_db_name = \'" + rds_db_name + "\'\n" + \
         "rds_username = \'" + rds_username + "\'\n" + \
@@ -502,16 +506,55 @@ def setup_relay_server_api(rds_host, task_config, should_clean_up_after_upload=T
     return index_api_endpoint_url
 
 
-def submit_to_mturk(mturk_chat_url):
-    page_url = mturk_chat_url
+def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, num_hits, is_sandbox):
+    client = boto3.client(
+        service_name = 'mturk', 
+        region_name = 'us-east-1',
+        endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+    )
+
+    # Region is always us-east-1
+    if not is_sandbox:
+        client = boto3.client(service_name = 'mturk', region_name='us-east-1')
+
+    # Test that you can connect to the API by checking your account balance
+    # In Sandbox this always returns $10,000
+    user_balance = client.get_account_balance()
+
+    # TODO: check balance to see if enough
+
+    # Create a qualification with Locale In('US', 'CA') requirement attached
+    localRequirements = [{
+        'QualificationTypeId': '00000000000000000071',
+        'Comparator': 'In',
+        'LocaleValues': [
+            {'Country': 'US'}, 
+            {'Country': 'CA'},
+            {'Country': 'GB'},
+            {'Country': 'AU'}
+        ],
+        'RequiredToPreview': True
+    }]
+
+    # Create the HIT type
+    response = client.create_hit_type(
+        # AutoApprovalDelayInSeconds=123,
+        AssignmentDurationInSeconds=1800,
+        Reward=str(hit_reward),
+        Title=hit_title,
+        Keywords=hit_keywords,
+        Description=hit_description,
+        # QualificationRequirements=localRequirements
+    )
+    hit_type_id = response['HITTypeId']
+    return hit_type_id
+
+
+def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox=True):
     page_url = page_url.replace('&', '&amp;')
 
-    title = "Test HIT (COMPLETE THIS TASK ONLY ONCE!)"
-    description = "COMPLETE THIS TASK ONLY ONCE! All submissions after the first will be rejected"
-    keywords = "easy"
     frame_height = 650
-    amount = 0.05
-
+    
     question_data_struture = '''<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
       <ExternalURL>{{external_url}}</ExternalURL>
       <FrameHeight>{{frame_height}}</FrameHeight>
@@ -526,40 +569,71 @@ def submit_to_mturk(mturk_chat_url):
         endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
     )
 
-    # Uncomment the below to connect to the live marketplace
     # Region is always us-east-1
-    # client = boto3.client(service_name = 'mturk', region_name='us-east-1')
+    if not is_sandbox:
+        client = boto3.client(service_name = 'mturk', region_name='us-east-1')
 
     # Test that you can connect to the API by checking your account balance
+    # In Sandbox this always returns $10,000
     user_balance = client.get_account_balance()
 
-    # In Sandbox this always returns $10,000
-    # print("Your account balance is " + user_balance['AvailableBalance'])
-
-    # Create a qualification with Locale In('US', 'CA') requirement attached
-    # localRequirements = [{
-    #     'QualificationTypeId': '00000000000000000071',
-    #     'Comparator': 'In',
-    #     'LocaleValues': [{
-    #         'Country': 'US'
-    #     }, {
-    #         'Country': 'CA'
-    #     }],
-    #     'RequiredToPreview': True
-    # }]
-
     # Create the HIT 
-    response = client.create_hit(
-        MaxAssignments = 1,
-        LifetimeInSeconds = 6000,
-        AssignmentDurationInSeconds = 600,
-        Reward ='0.05',
-        Title = title,
-        Keywords = keywords,
-        Description = description,
-        Question = question_data_struture,
-        #QualificationRequirements = localRequirements
+    response = client.create_hit_with_hit_type(
+        HITTypeId=hit_type_id,
+        MaxAssignments=1,
+        LifetimeInSeconds=31536000,
+        Question=question_data_struture,
+        # AssignmentReviewPolicy={
+        #     'PolicyName': 'string',
+        #     'Parameters': [
+        #         {
+        #             'Key': 'string',
+        #             'Values': [
+        #                 'string',
+        #             ],
+        #             'MapEntries': [
+        #                 {
+        #                     'Key': 'string',
+        #                     'Values': [
+        #                         'string',
+        #                     ]
+        #                 },
+        #             ]
+        #         },
+        #     ]
+        # },
+        # HITReviewPolicy={
+        #     'PolicyName': 'string',
+        #     'Parameters': [
+        #         {
+        #             'Key': 'string',
+        #             'Values': [
+        #                 'string',
+        #             ],
+        #             'MapEntries': [
+        #                 {
+        #                     'Key': 'string',
+        #                     'Values': [
+        #                         'string',
+        #                     ]
+        #                 },
+        #             ]
+        #         },
+        #     ]
+        # },
     )
+
+    # response = client.create_hit(
+    #     MaxAssignments = 1,
+    #     LifetimeInSeconds = 31536000,
+    #     AssignmentDurationInSeconds = 1800,
+    #     Reward = str(hit_reward),
+    #     Title = hit_title,
+    #     Keywords = hit_keywords,
+    #     Description = hit_description,
+    #     Question = question_data_struture,
+    #     #QualificationRequirements = localRequirements
+    # )
 
     # The response included several fields that will be helpful later
     hit_type_id = response['HIT']['HITTypeId']
@@ -568,10 +642,13 @@ def submit_to_mturk(mturk_chat_url):
     return hit_link
 
 
-def setup_aws(task_config):
+def setup_aws(task_config, is_sandbox=True):
+    mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
+    if not is_sandbox:
+        mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
     setup_aws_credentials()
     rds_host = setup_rds()
-    index_api_endpoint_url = setup_relay_server_api(rds_host, task_config)
+    index_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_config)
 
     chat_interface_url = index_api_endpoint_url + "?endpoint=index&task_group_id={{task_group_id}}&conversation_id={{conversation_id}}&cur_agent_id={{cur_agent_id}}"
     

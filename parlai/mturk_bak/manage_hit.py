@@ -8,8 +8,8 @@ import time
 import random
 import string
 import webbrowser
-# from parlai.core.agents import create_agent_from_shared
-from setup_aws import rds_db_name, rds_username, rds_password, setup_aws, submit_to_mturk
+from parlai.core.agents import create_agent_from_shared
+from setup_aws import rds_db_name, rds_username, rds_password, setup_aws, create_hit_type, create_hit_with_hit_type
 from data_model import Message, init_database, send_new_message, get_new_messages
 
 
@@ -30,51 +30,67 @@ def setup_relay(task_config):
     return db_session, mturk_chat_url_template
 
 
-def setup_mturk(mturk_chat_url_template, task_group_id, conversation_id, worker_agent_id):
-    mturk_chat_url = mturk_chat_url_template.replace('{{task_group_id}}', str(task_group_id)).replace('{{conversation_id}}', str(conversation_id)).replace('{{cur_agent_id}}', str(worker_agent_id))
-    webbrowser.open(mturk_chat_url)
-    # mturk_page_url = submit_to_mturk(mturk_chat_url)
-    # webbrowser.open(mturk_page_url)
-
-
 def setup_context(db_session, data_loader, task_group_id, conversation_id):
-    context = data_loader.load_context(conversation_id)
-    send_new_message(
-        db_session = db_session,
-        task_group_id = task_group_id, 
-        conversation_id = conversation_id,
-        agent_id = 'context',
-        message_text=context, 
-        done=False,
-        binary_file_bytes=None, 
-        binary_file_type=None
-    )
+    context_dict = data_loader.load_context(conversation_id)
+    # TODO: address the multiple fields case
+    context_text = None
+    context_question = None
+    if '\n' in context_dict['text']:
+        comp_list = context_dict['text'].split('\n')
+        context_text = comp_list[0]
+        context_question = comp_list[1]
+    else:
+        context_text = context_dict['text']
+    if context_text:
+        send_new_message(
+            db_session = db_session,
+            task_group_id = task_group_id, 
+            conversation_id = conversation_id,
+            agent_id = 'context',
+            message_text=context_text, 
+            done=False,
+            binary_file_bytes=None, 
+            binary_file_type=None
+        )
+    if context_question:
+        send_new_message(
+            db_session = db_session,
+            task_group_id = task_group_id, 
+            conversation_id = conversation_id,
+            agent_id = 'teacher',
+            message_text=context_question, 
+            done=False,
+            binary_file_bytes=None, 
+            binary_file_type=None
+        )
 
 
-def create_hits(opt, task_config, data_loader, bot, num_hits):
-    # shared = bot.share(opt=opt)
-    # bots = [create_agent_from_shared(shared) for _ in range(num_hits)]
-    # TODO: unable to import create_agent_from_shared, need to fix
-    bots = [bot]
-
+def create_hits(task_config, data_loader, bot, num_hits, is_sandbox, chat_page_only):
     task_group_id = str(int(time.time())) + '_' + _get_random_alphanumeric_string(10) # Random string to further avoid collision
-    print('Initializing MTurk...')
+    print('Setting up MTurk backend...')
     db_session, mturk_chat_url_template = setup_relay(task_config)
-    print('MTurk initialization done. Opening web interface...')
-    print('')
 
-    worker_agent_id = task_config['worker_agent_id']
-    setup_mturk(mturk_chat_url_template, task_group_id, 1, worker_agent_id)
+    worker_agent_id = task_config['worker_agent_id']    
     cids = range(1, num_hits+1)
-    cid_map = {cid: i for i, cid in enumerate(cids)}
-    conversations_remaining = set(cids)
 
-    # Set up opening messages
+    shared = bot.share()
+    bots = []
+    for cid in cids:
+        new_bot = create_agent_from_shared(shared)
+        new_bot.set_conversation_id(cid)
+        bots.append(new_bot)
+
+    cid_map = {cid: i for i, cid in enumerate(cids)}
+
+    # Set up context for each conversation
+    print('Setting up conversation context for each HIT...')
     for cid in cids:
         setup_context(db_session, data_loader, task_group_id, cid)
-    
+
+    hits_created = False
+    conversations_remaining = set(cids)
     last_message_id = -1
-    
+
     while len(conversations_remaining) > 0:
         conversation_dict, new_last_message_id = get_new_messages(
             db_session=db_session, 
@@ -100,7 +116,7 @@ def create_hits(opt, task_config, data_loader, bot, num_hits):
                         print('Conversation '+str(conversation_id)+' is DONE!')
                     else:
                         # Agent still needs to reply
-                        response = agent.act()  # Assuming agent returns None if it's still expecting more messages
+                        response, action = agent.act()  # Assuming agent returns None if it's still expecting more messages
                         if response:
                             send_new_message(
                                 db_session=db_session, 
@@ -108,6 +124,35 @@ def create_hits(opt, task_config, data_loader, bot, num_hits):
                                 conversation_id=conversation_id, 
                                 agent_id=task_config['bot_agent_id'], 
                                 message_text=response,
+                                action=action,
                                 done=False
                             )
+
+        if not hits_created:
+            print('Creating HITs...')
+            hit_type_id = create_hit_type(
+                hit_title=task_config['hit_title'], 
+                hit_description=task_config['hit_description'] + ' (ID: ' + task_group_id + ')', 
+                hit_keywords=task_config['hit_keywords'], 
+                hit_reward=task_config['hit_reward'], 
+                num_hits=num_hits,
+                is_sandbox=is_sandbox
+            )
+            mturk_chat_url = None
+            mturk_page_url = None
+            for cid in cids:
+                mturk_chat_url = mturk_chat_url_template.replace('{{task_group_id}}', str(task_group_id)).replace('{{conversation_id}}', str(cid)).replace('{{cur_agent_id}}', str(worker_agent_id))
+                if not chat_page_only:
+                    mturk_page_url = create_hit_with_hit_type(
+                        page_url=mturk_chat_url, 
+                        hit_type_id=hit_type_id, 
+                        is_sandbox=True
+                    )
+
+            print('MTurk setup done. Waiting for Turkers to work on the tasks...')
+            if chat_page_only:
+                webbrowser.open(mturk_chat_url)
+            else:
+                webbrowser.open(mturk_page_url)
+            hits_created = True
 
