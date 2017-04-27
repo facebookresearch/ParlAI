@@ -91,7 +91,6 @@ def rank_candidates(query_rep, cands, length_penalty):
         for c in cands:
             score = score_match(query_rep, c, length_penalty)
             mpq.add(c, score)
-        print(sorted(mpq.lst)[99][0])
         return list(reversed(mpq))
     else:
         cands = list(cands)
@@ -115,7 +114,12 @@ class IrBaselineAgent(Agent):
         parser.add_argument(
             '-lp', '--length_penalty', default=0.5,
             help='length penalty for responses')
-        model_opts = parser.parse_args(opt.get('model_params', '').split(' '))
+        p = opt.get('model_params', None)
+        if p:
+            p = p.split(' ')
+        else:
+            p = []
+        model_opts = parser.parse_args(p)
         self.length_penalty = float(model_opts['length_penalty'])
 
     def act(self):
