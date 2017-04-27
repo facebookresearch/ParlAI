@@ -35,7 +35,8 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
     print('Setting up MTurk backend...')
     db_session, mturk_chat_url_template = setup_relay(task_config)
 
-    worker_agent_id = task_config['worker_agent_id']    
+    worker_agent_id = task_config['worker_agent_id']   
+    bot_agent_id = bot.getID() 
     cids = range(1, num_hits+1)
 
     shared = bot.share()
@@ -44,15 +45,15 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
         new_bot = create_agent_from_shared(shared)
         new_bot.conversation_id = cid
         bots.append(new_bot)
-        response = agent.act()  # Assuming agent returns None if it's still expecting more messages
+        response = new_bot.act()
         if response:
             if verbose:
-                print('Bot ' + str(conversation_id) + 'response: ' + response)
+                print('Bot ' + str(cid) + ' says: ' + str(response))
             send_new_message(
                 db_session=db_session, 
                 task_group_id=task_group_id, 
-                conversation_id=conversation_id, 
-                agent_id=task_config['bot_agent_id'], 
+                conversation_id=cid, 
+                agent_id=bot_agent_id, 
                 message_text=response.get('text', None), 
                 reward=response.get('reward', None), 
                 action=response.get('action', None), 
@@ -70,7 +71,7 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
             db_session=db_session, 
             task_group_id=task_group_id, 
             after_message_id=last_message_id, 
-            excluded_agent_id=task_config['bot_agent_id'],
+            excluded_agent_id=bot_agent_id,
         )
 
         if new_last_message_id:
@@ -84,9 +85,9 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
                 for new_message in new_messages:
                     # observe could be in the else block?
                     if verbose:
-                        print('Bot ' + str(conversation_id) + 'received: ' + new_message)
+                        print('Bot ' + str(conversation_id) + ' received: ' + str(new_message))
                     agent.observe(new_message)
-                    if new_message.get('done', False):
+                    if new_message.get('episode_done', False):
                         # We're done here
                         conversations_remaining.remove(conversation_id)
                         print('Conversation '+str(conversation_id)+' is DONE!')
@@ -95,17 +96,21 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
                         response = agent.act()  # Assuming agent returns None if it's still expecting more messages
                         if response:
                             if verbose:
-                                print('Bot ' + str(conversation_id) + 'response: ' + response)
+                                print('Bot ' + str(conversation_id) + ' says: ' + str(response))
                             send_new_message(
                                 db_session=db_session, 
                                 task_group_id=task_group_id, 
                                 conversation_id=conversation_id, 
-                                agent_id=task_config['bot_agent_id'], 
+                                agent_id=bot_agent_id, 
                                 message_text=response.get('text', None), 
                                 reward=response.get('reward', None), 
                                 action=response.get('action', None), 
                                 episode_done=response.get('episode_done', False), 
                             )
+                            if response.get('episode_done', False):
+                                # We're done here
+                                conversations_remaining.remove(conversation_id)
+                                print('Conversation '+str(conversation_id)+' is DONE!')
 
         if not hits_created:
             print('Creating HITs...')

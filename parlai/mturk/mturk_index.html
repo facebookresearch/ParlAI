@@ -15,6 +15,7 @@
 </div>
 <div id="right-pane" style="min-height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
     <div id="right-top-pane" style="width: 100%; height: 570px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
+        {% if not is_cover_page %}
         <table id="message_table" style="width: 100%">
             {% if False %}
             <tr>
@@ -109,8 +110,10 @@
             </tr>
             {% endif %}
         </table>
+        {% endif %}
     </div>
 
+    {% if not is_cover_page %}
     <div id="right-bottom-pane" style="width: 100%; background-color: #eee">
         <div id="response-type-idle" class="response-type-module" style="display:none">
         </div>
@@ -144,6 +147,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 </div>
 </div>
 </div>
@@ -258,7 +262,6 @@
     var task_group_id = `{{task_group_id}}`;
     var conversation_id = parseInt(`{{conversation_id}}`);
     var cur_agent_id = `{{cur_agent_id}}`;
-    var agent_display_names = JSON.parse(`{{agent_display_names_string}}`);
     var is_cover_page = `{{is_cover_page}}`;
     var last_message_id = -1;
     var worker_timer = null;
@@ -271,6 +274,7 @@
             var agent_id = message['id'];
             var message_id = parseInt(message['message_id']);
             var done = message['episode_done'];
+            var message_text = message['text'].replace(/(?:\r\n|\r|\n)/g, '<br />');
             var reward = null;
             if ('reward' in message) {
                 reward = message['reward']
@@ -282,7 +286,7 @@
                         <tr>
                             <td class="col-sm-5">
                                 <div class="alert alert-warning" role="alert">
-                                    <b>`+agent_display_names[agent_id]+`</b>: `+message['text']+`
+                                    <b>`+agent_id+`</b>: `+message_text+`
                                 </div>
                             </td>
                             <td class="col-sm-5">
@@ -301,7 +305,7 @@
                             </td>
                             <td class="col-sm-5">
                                 <div class="alert alert-info" role="alert">
-                                    <b>You (`+agent_display_names[agent_id]+`)</b>: `+reward_text+`
+                                    <b>You</b>: `+reward_text+`
                                 </div>
                             </td>
                         </tr>
@@ -313,7 +317,7 @@
                             </td>
                             <td class="col-sm-5">
                                 <div class="alert alert-info" role="alert">
-                                    <b>You (`+agent_display_names[agent_id]+`)</b>: `+message['text']+`
+                                    <b>You</b>: `+message_text+`
                                 </div>
                             </td>
                         </tr>

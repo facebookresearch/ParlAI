@@ -7,19 +7,13 @@ task_config = {}
 task_config['hit_title'] = 'Ask and answer a question about a Wikipedia paragraph'
 task_config['hit_description'] = 'Ask and answer a question about a Wikipedia paragraph.'
 task_config['hit_keywords'] = 'chat,question,answer'
-task_config['hit_reward'] = 0.10
+task_config['hit_reward'] = 0.05
 
 # Task specific
 task_config['teacher_agent_id'] = 'teacher'
 task_config['worker_agent_id'] = task_config['teacher_agent_id']
-task_config['bot_agent_id'] = 'recorder'
 
 # Required for all tasks
-task_config['agent_display_names'] = {
-    # agent_id: display_name
-    task_config['teacher_agent_id']: 'Teacher',
-    task_config['bot_agent_id']: 'Recorder',
-}
 task_config['task_description'] = \
 '''\'\'\'
 (<b>Note</b>: You need to edit this text to suit your task.)<br><br>

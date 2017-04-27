@@ -14,7 +14,7 @@ class DataEvaluatorAgent(Agent):
     """
     def __init__(self, opt, shared=None):
         self.opt = copy.deepcopy(opt)
-        self.id = 'data_evaluator'
+        self.id = 'Data Evaluator'
         # The bot we will evaluate.
         agent_opt = {}
         agent_opt['model'] = 'ir_baseline'

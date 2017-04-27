@@ -13,7 +13,7 @@ class QADataCollectionAgent(Agent):
     """
     def __init__(self, opt, shared=None):
         self.opt = copy.deepcopy(opt)
-        self.id = 'qa_collector'
+        self.id = 'QA Collector'
         self.turn_index = -1
         
         module_name = 'parlai.tasks.squad.agents'
@@ -34,7 +34,7 @@ class QADataCollectionAgent(Agent):
             qa = self.task.act()
             context = '\n'.join(qa['text'].split('\n')[:-1])
             ad['text'] = (context + 
-                        '\nPlease provide a question given this context.')
+                        '\n\nPlease provide a question given this context.')
         if self.turn_index == 1:
             ad['text'] = 'Thanks. And what is the answer to your question?'
         if self.turn_index == 2:
