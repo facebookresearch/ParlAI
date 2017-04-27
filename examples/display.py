@@ -1,10 +1,11 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
-"""Basic example which iterates through the tasks specified and prints them out.
-Used for verification of data loading and iteration.
+"""Basic example which iterates through the tasks specified and runs the given
+model on them.
 
-For example, to make sure that bAbI task 1 (1k exs) loads one can run and to
-see a few of them:
-`python examples/display_data.py -t babi:task1k:1`
+For example:
+`python examples/display.py -t babi:task1k:1 -m "repeat_label"`
+or:
+`python examples/display.py -t "#MovieDD-Reddit" -m "ir_baseline" -mp "-lp 0.5" -dt test`
 """
 
 from parlai.core.params import ParlaiParser
