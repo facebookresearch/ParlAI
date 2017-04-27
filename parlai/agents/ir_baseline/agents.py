@@ -114,14 +114,12 @@ class IrBaselineAgent(Agent):
         parser.add_argument(
             '-lp', '--length_penalty', default=0.5,
             help='length penalty for responses')
-        print("hi")
         p = opt.get('model_params', None)
         if p:
             p = p.split(' ')
         else:
             p = []
         model_opts = parser.parse_args(p)
-        print("hi2")
         self.length_penalty = float(model_opts['length_penalty'])
 
     def act(self):
