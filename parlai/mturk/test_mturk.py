@@ -6,12 +6,12 @@ import manage_hit
 # MTurkAgent = __import__(task_module_path_prefix+'.agents', fromlist=['']).MTurkDemoAgent
 
 # SQuAD data collection
-# task_module_path_prefix = 'tasks.squad_data_collection'
-# MTurkAgent = __import__(task_module_path_prefix+'.agents', fromlist=['']).MTurkSquadDataCollectionAgent
+task_module_path_prefix = 'tasks.squad_data_collection'
+MTurkAgent = __import__(task_module_path_prefix+'.agents', fromlist=['']).MTurkQADataCollectionAgent
 
 # SQuAD eval
-task_module_path_prefix = 'tasks.squad_eval'
-MTurkAgent = __import__(task_module_path_prefix+'.agents', fromlist=['']).MTurkSquadEvalAgent
+# task_module_path_prefix = 'tasks.squad_eval'
+# MTurkAgent = __import__(task_module_path_prefix+'.agents', fromlist=['']).MTurkSquadEvalAgent
 
 
 task_config = __import__(task_module_path_prefix+'.task_config', fromlist=['']).task_config

@@ -160,8 +160,7 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, should_clean
         "rds_username = \'" + rds_username + "\'\n" + \
         "rds_password = \'" + rds_password + "\'\n" + \
         'agent_display_names = ' + str(task_config['agent_display_names']) + '\n' + \
-        'task_description = ' + task_config['task_description'] + '\n' + \
-        'state_config = ' + str(task_config['state_config']))
+        'task_description = ' + task_config['task_description'])
     with open(lambda_server_directory+'/handler.py', "w") as handler_file:
         handler_file.write(handler_file_string)
     create_zip_file.create_zip_file(files_to_copy=files_to_copy)

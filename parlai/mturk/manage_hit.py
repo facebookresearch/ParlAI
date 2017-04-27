@@ -48,7 +48,7 @@ def setup_context(db_session, data_loader, task_group_id, conversation_id):
             conversation_id = conversation_id,
             agent_id = 'context',
             message_text=context_text, 
-            done=False,
+            episode_done=False,
             binary_file_bytes=None, 
             binary_file_type=None
         )
@@ -59,7 +59,7 @@ def setup_context(db_session, data_loader, task_group_id, conversation_id):
             conversation_id = conversation_id,
             agent_id = 'teacher',
             message_text=context_question, 
-            done=False,
+            episode_done=False,
             binary_file_bytes=None, 
             binary_file_type=None
         )
@@ -77,7 +77,7 @@ def create_hits(task_config, data_loader, bot, num_hits, is_sandbox, chat_page_o
     bots = []
     for cid in cids:
         new_bot = create_agent_from_shared(shared)
-        new_bot.set_conversation_id(cid)
+        new_bot.conversation_id = cid
         bots.append(new_bot)
 
     cid_map = {cid: i for i, cid in enumerate(cids)}
@@ -116,16 +116,17 @@ def create_hits(task_config, data_loader, bot, num_hits, is_sandbox, chat_page_o
                         print('Conversation '+str(conversation_id)+' is DONE!')
                     else:
                         # Agent still needs to reply
-                        response, action = agent.act()  # Assuming agent returns None if it's still expecting more messages
+                        response = agent.act()  # Assuming agent returns None if it's still expecting more messages
                         if response:
                             send_new_message(
                                 db_session=db_session, 
                                 task_group_id=task_group_id, 
                                 conversation_id=conversation_id, 
                                 agent_id=task_config['bot_agent_id'], 
-                                message_text=response,
-                                action=action,
-                                done=False
+                                message_text=response.get('text', None), 
+                                reward=response.get('reward', None), 
+                                action=response.get('action', None), 
+                                episode_done=response.get('episode_done', False), 
                             )
 
         if not hits_created:

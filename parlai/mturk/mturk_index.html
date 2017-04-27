@@ -249,7 +249,7 @@
             reward: reward,
             action: action,
             msg: null,
-            done: false
+            episode_done: false
         };
         post_data_dict['endpoint'] = 'message';
         $.ajax({
@@ -268,7 +268,7 @@
                 var new_messages = [];
                 new_messages.push(data);
                 show_new_messages_on_UI(new_messages);
-                check_precondition_and_change_state(new_messages, all_done_callback);
+                check_done(new_messages);
             }
         });
     }
@@ -287,10 +287,8 @@
     var conversation_id = parseInt(`{{conversation_id}}`);
     var cur_agent_id = `{{cur_agent_id}}`;
     var agent_display_names = JSON.parse(`{{agent_display_names_string}}`);
-    var state_config = JSON.parse(`{{state_config_string}}`);
     var is_cover_page = `{{is_cover_page}}`;
     var last_message_id = -1;
-    var current_state_name = null;
     var worker_timer = null;
     var messages_processed = {};
     var messages_shown = {};
@@ -300,7 +298,7 @@
             var message = new_messages[i];
             var agent_id = message['id'];
             var message_id = parseInt(message['message_id']);
-            var done = message['done'];
+            var done = message['episode_done'];
             var reward = null;
             if ('reward' in message) {
                 reward = message['reward']
@@ -360,6 +358,14 @@
         }
     }
 
+    function check_done(new_messages) {
+        for (var i = 0; i < new_messages.length; i++) {
+            if (new_messages[i]['episode_done']) {
+                all_done_callback();
+            }
+        }
+    }
+
     function send_message(msg, is_done=false, callback_function=null) {
         var post_data_dict = {
             task_group_id: task_group_id,
@@ -367,7 +373,7 @@
             cur_agent_id: cur_agent_id,
         };
         if (msg) post_data_dict['msg'] = msg;
-        post_data_dict['done'] = is_done;
+        post_data_dict['episode_done'] = is_done;
         post_data_dict['endpoint'] = 'message';
         $.ajax({
             url: '/prod/parlai_relay_server_message',
@@ -396,7 +402,7 @@
             var new_messages = [];
             new_messages.push(data);
             show_new_messages_on_UI(new_messages);
-            check_precondition_and_change_state(new_messages, all_done_callback);
+            check_done(new_messages);
         });
     });
 
@@ -428,40 +434,25 @@
                 }
             }
             show_new_messages_on_UI(data);
-            check_precondition_and_change_state(data, all_done_callback);
+            check_done(data);
             worker_timer = setTimeout(worker, 1000);
         },
       });
     }
 
-    function update_for_state() {
-        response_config = state_config[current_state_name]['response_config'][cur_agent_id];
-        response_type = response_config['response_type'];
-        /*
-        Response types accepted:
-        idle
-        waiting -> prompt text
-        choices -> prompt text, list of choices
-        text_input -> prompt text
-        binary_reward -> prompt text, reward_message_texts
-        done -> prompt text
-        */
+    function update_for_response_type(response_type) {
         $("div.response-type-module").css("display", "none");
 
         if (response_type == 'idle') {
             $("div#response-type-idle").css("display", "");
         } else if (response_type == 'waiting') {
             $("div#response-type-waiting").css("display", "");
-            $("div#response-type-waiting span.prompt-text").text(response_config['prompt_text']);
         } else if (response_type == 'choices') {
             $("div#response-type-choices").css("display", "");
-            $("div#response-type-choices span.prompt-text").text(response_config['prompt_text']);
         } else if (response_type == 'text_input') {
             $("div#response-type-text-input").css("display", "");
-            $("div#response-type-text-input span.prompt-text").text(response_config['prompt_text']);
         } else if (response_type == 'binary_reward') {
             $("div#response-type-binary-reward").css("display", "");
-            $("div#response-type-binary-reward span.prompt-text").text(response_config['prompt_text']);
         } else if (response_type == 'done') {
             $("div#response-type-done").css("display", "");
             send_message(null, true, null);
@@ -478,49 +469,6 @@
         }
     }
 
-    // Return true when all states are finished.
-    function check_precondition_and_change_state(new_messages=null, all_done_callback=null) {
-        function change_state(next_state_name) {
-            // Trigger state change
-            console.log(state_config[current_state_name]['state_name'] + " -> " + state_config[next_state_name]['state_name']);
-            current_state_name = next_state_name;
-            update_for_state();
-            if (current_state_name == 'task_done') {
-                if (all_done_callback) { // All states are done
-                    all_done_callback();
-                    return;
-                }
-            }
-        }
-
-        if (new_messages && current_state_name != 'task_done') {
-            for (var i = 0; i < new_messages.length; i++) {
-                message_id = new_messages[i]['message_id'];
-                if (!(message_id in messages_processed)) {
-                    agent_id = new_messages[i]['id'];
-                    agent_action = null;
-                    if ('action' in new_messages[i]) {
-                        agent_action = new_messages[i]['action'];
-                    }
-                    next_states = state_config[current_state_name]['next_states'];
-                    for (var j = 0; j < next_states.length; j++) {
-                        next_state = next_states[j];
-                        precondition_agent_id = next_state['precondition_agent_id'];
-                        precondition_agent_action = next_state['precondition_agent_action'];
-                        next_state_name = next_state['state_name'];
-                        if (agent_id == precondition_agent_id) {
-                            if ((precondition_agent_action == 'any') || (agent_action == precondition_agent_action) || (j == next_states.length - 1 && precondition_agent_action == 'else')) {
-                                change_state(next_state_name);
-                                break;
-                            }
-                        }
-                    }
-                    messages_processed[message_id] = true;
-                }
-            }
-        }
-    }
-
     $(document).ready(function() {
         $(window).resize();
         $("form#mturk_submit_form input#assignmentId").val(get_url_parameter('assignmentId'));
@@ -528,11 +476,16 @@
         $("form#mturk_submit_form input#workerId").val(get_url_parameter('workerId'));
         $("form#mturk_submit_form").attr("action", mturk_submit_url);
         $("input#id_text_input").focus();
+<<<<<<< HEAD
+=======
         current_state_name = 'initial_state';
+>>>>>>> a8ff7b47ee015dd7c6d43bfc830ad791301fe939
         if (is_cover_page == 'True') {
             is_cover_page = true;
         } else if (is_cover_page == 'False') {
             is_cover_page = false;
+<<<<<<< HEAD
+=======
         }
         update_for_state();
         if (current_state_name == 'task_done') {
@@ -541,7 +494,10 @@
         } else {
             check_precondition_and_change_state(null, all_done_callback);
             worker();
+>>>>>>> a8ff7b47ee015dd7c6d43bfc830ad791301fe939
         }
+        update_for_response_type('text_input');
+        worker();
     });
 </script>
 </body>
