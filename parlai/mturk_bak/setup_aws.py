@@ -26,7 +26,7 @@ rds_db_instance_identifier = 'parlai-mturk-db'
 rds_db_name = 'parlai_mturk_db'
 rds_username = 'parlai_user'
 rds_password = 'parlai_user_password'
-rds_security_group_name = 'parlai_mturk_db_security_group'
+rds_security_group_name = 'parlai-mturk-db-security-group'
 rds_security_group_description = 'Security group for ParlAI MTurk DB'
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
@@ -37,7 +37,7 @@ def setup_aws_credentials():
     try:
         session = boto3.Session(profile_name=aws_profile_name)
     except ProfileNotFound as e:
-        print("AWS credentials not found, please enter below:")
+        print("AWS credentials not found. Please create an IAM user with AdministratorAccess permission at https://console.aws.amazon.com/iam/, and then enter the user's security credentials below:")
         aws_access_key_id = input('Access Key ID: ')
         aws_secret_access_key = input('Secret Access Key: ')
         aws_credentials_file_path = '~/.aws/credentials'
@@ -73,7 +73,7 @@ def setup_rds():
                                              VpcId=vpc_id)
         security_group_id = response['GroupId']
         print('RDS: Security group created.')
-
+        
         data = ec2.authorize_security_group_ingress(
             GroupId=security_group_id,
             IpPermissions=[
@@ -85,7 +85,7 @@ def setup_rds():
                  'Ipv6Ranges': [{'CidrIpv6': '::/0'}]
                 },
             ])
-        print('RDS: Ingress Successfully Set ' + data)
+        print('RDS: Security group ingress IP permissions set.')
     except ClientError as e:
         if e.response['Error']['Code'] == 'InvalidGroup.Duplicate':
             print('RDS: Security group already exists.')
@@ -108,7 +108,7 @@ def setup_rds():
                                VpcSecurityGroupIds=[security_group_id],
                                DBInstanceClass='db.t2.micro',
                                Tags=[{'Key': 'Name', 'Value': rds_db_instance_identifier}])
-        print('RDS: Starting RDS instance with ID: ' + rds_db_instance_identifier)
+        print('RDS: Starting RDS instance...')
     except ClientError as e:
         if e.response['Error']['Code'] == 'DBInstanceAlreadyExists':
             print('RDS: DB instance already exists.')
@@ -133,7 +133,7 @@ def setup_rds():
     endpoint = db_instance['Endpoint']
     host = endpoint['Address']
 
-    print('RDS: DB instance ready with host: ' + host)
+    print('RDS: DB instance ready.')
 
     return host
 

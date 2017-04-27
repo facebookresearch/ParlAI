@@ -19,11 +19,10 @@ DataLoader = __import__(task_module_path_prefix+'.data_loader', fromlist=['']).D
 
 print("Creating HIT tasks for "+task_module_path_prefix+" ...")
 manage_hit.create_hits(
-	opt=None, 
 	task_config=task_config,
 	data_loader=DataLoader(opt={'datapath': '../data/'}),
-	bot=MTurkAgent(opt=None), 
-	num_hits=1,
+	bot=MTurkAgent(opt={}), 
+	num_hits=2,
 	is_sandbox=True,
 	chat_page_only=False
 )

@@ -76,7 +76,7 @@ task_config['state_config'] = {
         'response_config': {
             task_config['teacher_agent_id']: {
                 'response_type': 'waiting',
-                'prompt_text': '''Please wait for the bot's response...'''
+                'prompt_text': '''Please wait for the student's response...'''
             }
         },
         'next_states': [

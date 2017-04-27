@@ -1,5 +1,6 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
 
+import copy
 from parlai.core.agents import Agent
 from .task_config import task_config
 
@@ -11,11 +12,17 @@ class MTurkSquadDataCollectionAgent(Agent):
     MTurk agent for recording context as well as question and answer that the MTurk teacher provides.
     """
     def __init__(self, opt, shared=None):
+        self.opt = copy.deepcopy(opt)
+        self.verbose = self.opt.get('verbose', False)
         self.context = None
         self.response = None
         self.action = None
         self.cur_state_name = 'initial_state'
         self.id = task_config['bot_agent_id']
+        self.conversation_id = None
+
+    def set_conversation_id(self, conversation_id):
+        self.conversation_id = conversation_id
 
     def _check_precondition_and_change_state(self, new_message_agent_id, new_message_agent_action):
         if self.cur_state_name == 'task_done':
@@ -30,26 +37,31 @@ class MTurkSquadDataCollectionAgent(Agent):
                 if precondition_agent_action == 'any' or \
                     new_message_agent_action == precondition_agent_action or \
                     (next_state_ind == len(next_states)-1 and precondition_agent_action == 'else'):
-                    print("[State] " + self.cur_state_name + " -> " + next_state_name)
-                    print("")
+                    if self.verbose:
+                        print("Conversation " +str(self.conversation_id)+" - [State] " + self.cur_state_name + " -> " + next_state_name)
+                        print("")
                     self.cur_state_name = next_state_name
                     break
 
     def observe(self, obs):
-        print('Bot '+str(self.id)+' received: ', obs)
+        if self.verbose:
+            print('Conversation ' +str(self.conversation_id)+' - Bot '+str(self.id)+' received: ', obs)
         
         if self.cur_state_name == 'initial_state':
             context = obs['text']
             self.context = context
-            print("Context: " + self.context) # TODO: should log the context in text file, in SQuAD format
+            if self.verbose:
+                print("Context: " + self.context) # TODO: should log the context in text file, in SQuAD format
             self.response = None
         elif self.cur_state_name == 'teacher_should_ask_question':
             teacher_question = obs['text']
-            print("Teacher Question: " + teacher_question) # TODO: should log the question in text file, in SQuAD format
+            if self.verbose:
+                print("Teacher Question: " + teacher_question) # TODO: should log the question in text file, in SQuAD format
             self.response = None
         elif self.cur_state_name == 'teacher_should_answer_question':
             teacher_answer = obs['text']
-            print("Teacher Answer: " + teacher_answer) # TODO: should log the answer in text file, in SQuAD format
+            if self.verbose:
+                print("Teacher Answer: " + teacher_answer) # TODO: should log the answer in text file, in SQuAD format
             self.response = None
         elif self.cur_state_name == 'task_done':
             self.response = None
@@ -61,9 +73,10 @@ class MTurkSquadDataCollectionAgent(Agent):
         self._check_precondition_and_change_state(agent_id, agent_action)
 
     def act(self):
-        if self.response:
-            print('Bot '+str(self.id)+' response: ', self.response)
-        if self.action:
-            print('Bot '+str(self.id)+' action: ', self.action)
+        if self.verbose:
+            if self.response:
+                print('Conversation ' +str(self.conversation_id)+' - Bot '+str(self.id)+' response: ', self.response)
+            if self.action:
+                print('Conversation ' +str(self.conversation_id)+' - Bot '+str(self.id)+' action: ', self.action)
         self._check_precondition_and_change_state(self.id, self.action)
         return self.response, self.action
