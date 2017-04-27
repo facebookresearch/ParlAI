@@ -91,7 +91,7 @@ def create_agent(opt):
         class_name = ''
         for w in words:
             class_name += ( w[0].upper() + w[1:]) + 'Agent'
-    print("**" + class_name)
+    print(class_name)
     my_module = importlib.import_module(module_name)
     model_class = getattr(my_module, class_name)
     return model_class(opt)

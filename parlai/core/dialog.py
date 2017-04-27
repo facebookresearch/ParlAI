@@ -89,8 +89,12 @@ class DialogTeacher(Teacher):
     def act(self):
         # First process observation for metrics.
         if self.lastY is not None:
+            if not hasattr(self, 'observation'):
+                obs = {}
+            else:
+                obs = self.observation
             loss = self.metrics.update(
-                self.observation, self.lastY, self.lastLabelCandidates)
+                obs, self.lastY, self.lastLabelCandidates)
             self.lastY = None
             self.lastLabelCandidates = None
 
