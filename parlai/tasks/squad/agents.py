@@ -92,6 +92,7 @@ class DefaultTeacher(DialogTeacher):
             opt['datapath'] + 'SQuAD/' +
             suffix + '-v1.1.json'
         )
+        self.id = 'squad'
         super().__init__(opt, shared)
 
     def setup_data(self, path):
