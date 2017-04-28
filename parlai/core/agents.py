@@ -80,7 +80,7 @@ class Agent(object):
 
 def create_agent(opt):
     """Create an agent from the options model, model_params and model_file.
-    The input is either of the form "parlai.agents.ir_baseline.agents:IrBaselineAgent"
+    The input is either of the form "parlai.agents.ir_baseline.agents/IrBaselineAgent"
     (i.e. the path followed by the class name) or else just 'IrBaseline' which
     assumes the path above, and a class name suffixed with 'Agent'
     """
@@ -166,13 +166,16 @@ def create_task_agent_from_taskname(opt):
     if ',' not in opt['task']:
         # Single task
         sp = opt['task'].strip().split(':')
-        task = sp[0].lower()
+        if '.' in sp[0]:
+            module_name = sp[0]
+        else:
+            task = sp[0].lower()
+            module_name = "parlai.tasks.%s.agents" % (task)
         if len(sp) > 1:
             sp[1] = sp[1][0].upper() + sp[1][1:]
-            teacher = sp[1] + "Teacher"
+            teacher = sp[1]
         else:
             teacher = "DefaultTeacher"
-        module_name = "parlai.tasks.%s.agents" % (task)
         my_module = importlib.import_module(module_name)
         teacher_class = getattr(my_module, teacher)
         task_agents = teacher_class(opt)
@@ -197,8 +200,13 @@ def _create_task_agents(opt):
     create_agents function when it is not needed.)
     """
     sp = opt['task'].strip().split(':')
-    task = sp[0].lower()
-    module_name = "parlai.tasks.%s.agents" % (task)
+    if '.' in sp[0]:
+        # The case of opt['task'] = 'parlai.tasks.squad.agents/DefaultTeacher'
+        # (i.e. specifying your own path directly)
+        module_name = sp[0]
+    else:
+        task = sp[0].lower()
+        module_name = "parlai.tasks.%s.agents" % (task)
     my_module = importlib.import_module(module_name)
     try:
         # Tries to call the create_agent function in agents.py

@@ -138,19 +138,24 @@ class World(object):
 
 def _get_task_world(opt):
     sp = opt['task'].strip().split(':')
-    task = sp[0].lower()
-    if len(sp) > 1:
-        sp[1] = sp[1][0].upper() + sp[1][1:]
-        world_name = sp[1] + "World"
-    else:
-        world_name = "DefaultWorld"
-    module_name = "parlai.tasks.%s.worlds" % (task)
-    try:
-        my_module = importlib.import_module(module_name)
-        world_class = getattr(my_module, world_name)
-    except:
-        # Defaults to this if you did not specify a world for your task.
+    if '.' in sp[0]:
+        # The case of opt['task'] = 'parlai.tasks.squad.agents/DefaultTeacher'
+        # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
         world_class = DialogPartnerWorld
+    else:
+        task = sp[0].lower()
+        if len(sp) > 1:
+            sp[1] = sp[1][0].upper() + sp[1][1:]
+            world_name = sp[1] + "World"
+        else:
+            world_name = "DefaultWorld"
+        module_name = "parlai.tasks.%s.worlds" % (task)
+        try:
+            my_module = importlib.import_module(module_name)
+            world_class = getattr(my_module, world_name)
+        except:
+            # Defaults to this if you did not specify a world for your task.
+            world_class = DialogPartnerWorld
     task_agents = _create_task_agents(opt)
     return world_class, task_agents
 
@@ -226,7 +231,8 @@ class DialogPartnerWorld(World):
         return iter(self.teacher)
 
     def epoch_done(self):
-        return self.teacher.epoch_done()
+        return (self.teacher.epoch_done()
+                if hasattr(self.teacher, 'epoch_done') else False)
 
     def parley(self):
         """Teacher goes first. Alternate between the teacher and the agent."""
@@ -234,7 +240,7 @@ class DialogPartnerWorld(World):
         self.query = self.teacher.act()
         self.agent.observe(validate(self.query))
         self.reply = self.agent.act()
-        self.is_episode_done = self.query['episode_done']
+        self.is_episode_done = self.query.get('episode_done', False)
 
     def report(self):
         return self.teacher.report()
