@@ -97,8 +97,6 @@ class DialogTeacher(Teacher):
             obs = self.observation if hasattr(self, 'observation') else {}
             loss = self.metrics.update(
                 obs, self.lastY, self.lastLabelCandidates)
-            if loss['correct'] != 1:
-                import pdb; pdb.set_trace()
             self.lastY = None
             self.lastLabelCandidates = None
 
@@ -108,8 +106,6 @@ class DialogTeacher(Teacher):
         action, self.epochDone = next(self.data)
         action['id'] = self.getID()
         self.lastY = copy.deepcopy(action.get('labels', None))
-        self.lastO = copy.deepcopy(action)
-        print("**" + str(self.lastY))
         self.lastLabelCandidates = action.get('label_candidates', None)
         if not self.datatype.startswith('train'):
             action.pop('labels', None)
