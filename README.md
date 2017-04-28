@@ -119,7 +119,7 @@ The core library contains the following files:
 - **data.py**: contains some default classes for fixed text datasets
   - TextData: sets up observation tables with 'text', 'labels', 'reward', and/or 'candidates' fields
   - HogwildTextData: does the same thing as TextData, but stores underlying data in a shared-memory array
-- **dialog_teacher.py**: contains a base teacher class for doing dialog with fixed chat logs3
+- **dialog_teacher.py**: contains a base teacher class for doing dialog with fixed chat logs
   - DialogTeacher: default parent class which automatically select the regular or hogwild dialog teacher based on whether multithreading (multiprocessing) is desired
   - \_RegularDialogTeacher: generic parent teacher which sets up data.TextData and produces observations from that data
   - \_HogwildDialogTeacher: generic multiprocess parent teacher which sets up a shared data.HogwildTextData and produces observations from that data (with shared metrics)
