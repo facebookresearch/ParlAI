@@ -32,6 +32,7 @@ def main():
     for k in range(int(opt['num_examples'])):
         world.parley()
         print("---")
+        print(world.display() + "\n~~")
         print(world.report())
         if world.epoch_done():
             print("EPOCH DONE")

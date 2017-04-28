@@ -236,10 +236,10 @@ class DialogPartnerWorld(World):
 
     def parley(self):
         """Teacher goes first. Alternate between the teacher and the agent."""
-        self.teacher.observe(validate(self.reply))
         self.query = self.teacher.act()
         self.agent.observe(validate(self.query))
         self.reply = self.agent.act()
+        self.teacher.observe(validate(self.reply))
         self.is_episode_done = self.query.get('episode_done', False)
 
     def report(self):
@@ -433,7 +433,6 @@ class BatchWorld(World):
         batch = []
         for w in self.worlds:
             # Half of parley.
-            w.teacher.observe(validate(w.reply))
             w.query = w.teacher.act()
             w.agent.observe(validate(w.query))
             if hasattr(w.agent, 'observation'):
@@ -445,12 +444,19 @@ class BatchWorld(World):
         # Call update on agent
         if len(batch) > 0 and hasattr(a, 'batch_act'):
             batch_reply = a.batch_act(batch)
-            for index, w in enumerate(self.worlds):
-                # Other half of parley.
-                w.reply = batch_reply[index]
-                w.is_episode_done = w.query['episode_done']
-                if not self.random and w.epoch_done():
-                    break
+        else:
+            # Reverts to running on each individually.
+            batch_reply = []
+            for w in self.worlds:
+                batch_reply.append(w.agent.act())
+
+        for index, w in enumerate(self.worlds):
+            # Other half of parley.
+            w.reply = batch_reply[index]
+            w.teacher.observe(validate(w.reply))
+            w.is_episode_done = w.query['episode_done']
+            if not self.random and w.epoch_done():
+                break
 
     def display(self):
         s = ("[--batchsize " + str(len(self.worlds)) + "--]\n")
