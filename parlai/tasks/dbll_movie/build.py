@@ -22,7 +22,7 @@ def build(opt):
 
         # Download the data.
         fname = "dbll.tgz"
-        url = "http://www.thespermwhale.com/jaseweston/babi/" + fname
+        url = "https://s3.amazonaws.com/fair-data/parlai/dbll/" + fname
         build_data.download(dpath, url)
         build_data.untar(dpath, fname)
 

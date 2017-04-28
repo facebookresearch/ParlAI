@@ -17,8 +17,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = "movie_dialog_dataset.tgz"
-        url = "http://www.thespermwhale.com/jaseweston/babi/" + fname
+        fname = "moviedialog.tar.gz"
+        url = "https://s3.amazonaws.com/fair-data/parlai/moviedialog/" + fname
         build_data.download(dpath, url)
         build_data.untar(dpath, fname)
         dpath2 = dpath + "/movie_dialog_dataset/task4_reddit/"

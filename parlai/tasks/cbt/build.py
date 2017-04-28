@@ -17,8 +17,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = "CBTest.tgz"
-        url = "http://www.thespermwhale.com/jaseweston/babi/" + fname
+        fname = "cbt.tar.gz"
+        url = "https://s3.amazonaws.com/fair-data/parlai/cbt/" + fname
         build_data.download(dpath, url)
         build_data.untar(dpath, fname)
 
