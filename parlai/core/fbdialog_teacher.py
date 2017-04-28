@@ -34,7 +34,7 @@ In general dialog in this format can be any speech, not just QA pairs:
 etc.
 """
 
-from .dialog import DialogTeacher
+from .dialog_teacher import DialogTeacher
 
 
 class FbDialogTeacher(DialogTeacher):

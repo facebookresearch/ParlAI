@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 import copy
 
-from parlai.core.fbdialog import FbDialogTeacher
+from parlai.core.fbdialog_teacher import FbDialogTeacher
 from .build import build
 
 tasks = {}
