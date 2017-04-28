@@ -1,12 +1,12 @@
 # ParlAI
 
-ParlAI is a framework for dialog AI research.
+ParlAI is a framework for dialog AI research in Python.
 
 Over 20 tasks are supported in the first release, including popular datasets such as 
 SQuAD, bAbI tasks, MCTest, WikiQA, WebQuestions, SimpleQuestions, WikiMovies, QACNN, QADailyMail, CBT, BookTest, bAbI Dialog tasks,
 Ubuntu, OpenSubtitles, Cornell Movie and VQA-COCO2014.
 
-Included are examples of training neural models with PyTorch, Theano and Lua Torch.
+Included are examples of training neural models with PyTorch and Lua Torch. Building Theano and Tensorflow models is also straightforward.
 
 We are in an early-release Beta. Expect some adventures and rough edges.
 
@@ -137,10 +137,11 @@ The core library contains the following files:
 The agents directory contains agents that have been approved into the ParlAI framework for shared use.
 Currently availabe within this directory:
 
-- **memnn**: code for a memory network agent for the ParlAI tasks
+- **drqa**: an attentive LSTM model DrQA (https://arxiv.org/abs/1704.00051) implemented in PyTorch that has strong results on the SQuAD dataset amongst others.
+- **memnn**: code for an end-to-end memory network in Lua Torch
 - **remote_agent**: basic class for any agent connecting over ZMQ (memnn_luatorch_cpu uses this)
-- **repeat_label**: basic class for merely repeating all data sent to it (e.g. for piping to a file, debugging)
 - **ir_baseline**: simple information retrieval baseline that scores candidate responses with TFIDF-weighted matching
+- **repeat_label**: basic class for merely repeating all data sent to it (e.g. for piping to a file, debugging)
 
 ### Examples
 
