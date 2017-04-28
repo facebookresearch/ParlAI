@@ -39,8 +39,6 @@ class DialogTeacher(Teacher):
 
         self.datatype = opt['datatype']
         self.startTime = time.time()
-        self.epochDone = False
-        self.lastY = None
         if not hasattr(self, 'id'):
             self.id = opt.get('task', 'teacher')
 
@@ -62,6 +60,14 @@ class DialogTeacher(Teacher):
             self.metrics = shared['metrics']
         else:
             self.metrics = Metrics(opt)
+        self.reset()
+
+    def reset():
+        # Reset the dialog so that it is at the start of the epoch,
+        # and all metrics are reset.
+        self.metrics.clear()
+        self.lastY = None
+        self.epochDone = False
 
     def __len__(self):
         return len(self.data)
