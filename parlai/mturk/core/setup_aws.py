@@ -540,7 +540,8 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, num_hi
             {'Country': 'US'}, 
             {'Country': 'CA'},
             {'Country': 'GB'},
-            {'Country': 'AU'}
+            {'Country': 'AU'},
+            {'Country': 'NZ'}
         ],
         'RequiredToPreview': True
     }]
@@ -553,7 +554,7 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, num_hi
         Title=hit_title,
         Keywords=hit_keywords,
         Description=hit_description,
-        # QualificationRequirements=localRequirements
+        QualificationRequirements=localRequirements
     )
     hit_type_id = response['HITTypeId']
     return hit_type_id
