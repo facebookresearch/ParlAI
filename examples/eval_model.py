@@ -23,6 +23,7 @@ def main():
     # Get command line arguments
     parser = ParlaiParser(True, True)
     parser.add_argument('-n', '--num_examples', default=1000)
+    parser.add_argument('-d', '--display_examples', type='bool', default=False)
     opt = parser.parse_args()
     # Create model and assign it to the specified task
     agent = create_agent(opt)
@@ -32,7 +33,8 @@ def main():
     for k in range(int(opt['num_examples'])):
         world.parley()
         print("---")
-        print(world.display() + "\n~~")
+        if opt['display_examples']:
+            print(world.display() + "\n~~")
         print(world.report())
         if world.epoch_done():
             print("EPOCH DONE")

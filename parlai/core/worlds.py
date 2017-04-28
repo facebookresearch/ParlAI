@@ -239,6 +239,7 @@ class DialogPartnerWorld(World):
         self.query = self.teacher.act()
         self.agent.observe(validate(self.query))
         self.reply = self.agent.act()
+        print(self.display() + "**\n~~")
         self.teacher.observe(validate(self.reply))
         self.is_episode_done = self.query.get('episode_done', False)
 
@@ -252,6 +253,9 @@ class DialogPartnerWorld(World):
         if self.query.get('text', ''):
             ID = '[' + self.query['id'] + ']: ' if 'id' in self.query else ''
             lines.append(ID + self.query['text'])
+        if self.query.get('labels', False):
+            lines.append('[labels: {}]'.format(
+                    '|'.join(self.query['labels'])))
         if self.query.get('label_candidates', False):
             cand_len = len(self.query['label_candidates'])
             if cand_len <= 10:

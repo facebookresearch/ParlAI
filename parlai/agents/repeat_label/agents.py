@@ -34,7 +34,7 @@ class RepeatLabelAgent(Agent):
         obs = self.observation
         reply = {}
         reply['id'] = self.getID()
-        if ('labels' in obs and type(obs['labels']) == list
+        if ('labels' in obs and obs['labels'] is not None
             and len(obs['labels']) > 0):
             labels = obs['labels']
             if random.random() >= self.cantAnswerPercent:

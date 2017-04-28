@@ -13,10 +13,11 @@ from .metrics import Metrics
 
 
 class DialogTeacher(Teacher):
-    """This class provides a set a basic functionality:
-    - metrics tracking count of sent vs correctly answered queries
+    """A base teacher class for doing dialog with fixed chat logs.
+    This class provides a set a basic functionality:
     - uses data class to store and query text data
     - generates action tables to send to the student agent from the data
+    - metrics tracking count of sent vs correctly answered queries
 
     If you have opt.numthreads > 1, this also activates a shared memory
     array for the data and lock-protected shared-memory metrics.
@@ -96,6 +97,8 @@ class DialogTeacher(Teacher):
             obs = self.observation if hasattr(self, 'observation') else {}
             loss = self.metrics.update(
                 obs, self.lastY, self.lastLabelCandidates)
+            if loss['correct'] != 1:
+                import pdb; pdb.set_trace()
             self.lastY = None
             self.lastLabelCandidates = None
 
@@ -104,7 +107,9 @@ class DialogTeacher(Teacher):
         """
         action, self.epochDone = next(self.data)
         action['id'] = self.getID()
-        self.lastY = action.get('labels', None)
+        self.lastY = copy.deepcopy(action.get('labels', None))
+        self.lastO = copy.deepcopy(action)
+        print("**" + str(self.lastY))
         self.lastLabelCandidates = action.get('label_candidates', None)
         if not self.datatype.startswith('train'):
             action.pop('labels', None)
