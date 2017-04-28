@@ -31,8 +31,7 @@ def main():
 
     # Show some example dialogs.
     with world:
-        # show at most 100 exs
-        for k in range(100):
+        for k in range(int(opt['num_examples'])):
             world.parley()
             print(world.display() + "\n~~")
             if world.epoch_done():
