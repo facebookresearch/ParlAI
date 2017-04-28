@@ -33,9 +33,12 @@ class ParlaiParser(object):
 
         self.add_arg = self.parser.add_argument
         self.add_argument = self.parser.add_argument
-        self.register = self.parser.register
+        self.register = self.parser.register    
 
-    def add_parlai_datapath(self):
+    def add_parlai_data_path(self):
+        parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
+                      os.path.realpath(__file__)))))
+        default_data_path = parlai_dir + '/data/'
         self.parser.add_argument(
             '-dp', '--datapath', default=default_data_path,
             help='path to datasets, defaults to {parlai_dir}/data')
@@ -43,7 +46,6 @@ class ParlaiParser(object):
     def add_parlai_args(self):
         parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
                       os.path.realpath(__file__)))))
-        default_data_path = parlai_dir + '/data/'
         default_downloads_path = parlai_dir + '/downloads/'
 
         self.parser.add_argument(
@@ -65,7 +67,7 @@ class ParlaiParser(object):
         self.parser.add_argument(
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
-        self.add_parlai_datapath()
+        self.add_parlai_data_path()
 
     def add_model_args(self):
         self.parser.add_argument(

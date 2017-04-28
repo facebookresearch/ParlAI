@@ -9,8 +9,8 @@ import random
 import string
 import webbrowser
 from parlai.core.agents import create_agent_from_shared
-from setup_aws import rds_db_name, rds_username, rds_password, setup_aws, create_hit_type, create_hit_with_hit_type
-from data_model import Message, init_database, send_new_message, get_new_messages
+from .setup_aws import rds_db_name, rds_username, rds_password, setup_aws, create_hit_type, create_hit_with_hit_type
+from .data_model import Message, init_database, send_new_message, get_new_messages
 
 
 def _get_random_alphanumeric_string(N):
@@ -55,8 +55,7 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
                 conversation_id=cid, 
                 agent_id=bot_agent_id, 
                 message_text=response.get('text', None), 
-                reward=response.get('reward', None), 
-                action=response.get('action', None), 
+                reward=response.get('reward', None),
                 episode_done=response.get('episode_done', False), 
             )
 
@@ -103,8 +102,7 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
                                 conversation_id=conversation_id, 
                                 agent_id=bot_agent_id, 
                                 message_text=response.get('text', None), 
-                                reward=response.get('reward', None), 
-                                action=response.get('action', None), 
+                                reward=response.get('reward', None),
                                 episode_done=response.get('episode_done', False), 
                             )
                             if response.get('episode_done', False):

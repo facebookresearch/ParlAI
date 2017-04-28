@@ -1,13 +1,15 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
 import os
+import sys
 import shutil
+from subprocess import call
+import zipfile
 import boto3
 import botocore
 import time
 import json
 import webbrowser
 import uuid
-import create_zip_file
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
 
@@ -20,7 +22,6 @@ lambda_function_name = 'parlai_relay_server'
 api_gateway_name = 'ParlaiRelayServer'
 endpoint_api_name_index = 'parlai_relay_server'
 endpoint_api_name_message = 'parlai_relay_server_message'
-lambda_server_directory = 'lambda_server'
 
 rds_db_instance_identifier = 'parlai-mturk-db'
 rds_db_name = 'parlai_mturk_db'
@@ -31,7 +32,8 @@ rds_security_group_description = 'Security group for ParlAI MTurk DB'
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 files_to_copy = [parent_dir+'/'+'data_model.py', parent_dir+'/'+'mturk_index.html']
-
+lambda_server_directory_name = 'lambda_server'
+lambda_server_zip_file_name = 'lambda_server.zip'
 
 def setup_aws_credentials():
     try:
@@ -137,20 +139,19 @@ def setup_rds():
 
     return host
 
-
 def setup_relay_server_api(mturk_submit_url, rds_host, task_config, should_clean_up_after_upload=True):
     # Dynamically generate handler.py file, and then create zip file
     print("Lambda: Preparing relay server code...")
 
     # Create clean folder for lambda server code
-    if os.path.exists(lambda_server_directory):
-        shutil.rmtree(lambda_server_directory)
-    os.makedirs(lambda_server_directory)
-    if os.path.exists('lambda_server.zip'):
-        os.remove('lambda_server.zip')
+    if os.path.exists(parent_dir + '/' + lambda_server_directory_name):
+        shutil.rmtree(parent_dir + '/' + lambda_server_directory_name)
+    os.makedirs(parent_dir + '/' + lambda_server_directory_name)
+    if os.path.exists(parent_dir + '/' + lambda_server_zip_file_name):
+        os.remove(parent_dir + '/' + lambda_server_zip_file_name)
 
     # Copying files
-    with open('handler_template.py', 'r') as handler_template_file:
+    with open(parent_dir+'/handler_template.py', 'r') as handler_template_file:
         handler_file_string = handler_template_file.read()
     handler_file_string = handler_file_string.replace(
         '# {{block_task_config}}', 
@@ -160,10 +161,14 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, should_clean
         "rds_username = \'" + rds_username + "\'\n" + \
         "rds_password = \'" + rds_password + "\'\n" + \
         'task_description = ' + task_config['task_description'])
-    with open(lambda_server_directory+'/handler.py', "w") as handler_file:
+    with open(parent_dir + '/' + lambda_server_directory_name+'/handler.py', "w") as handler_file:
         handler_file.write(handler_file_string)
-    create_zip_file.create_zip_file(files_to_copy=files_to_copy)
-    with open('lambda_server.zip', mode='rb') as zip_file:
+    create_zip_file(
+        lambda_server_directory_name=lambda_server_directory_name, 
+        lambda_server_zip_file_name=lambda_server_zip_file_name,
+        files_to_copy=files_to_copy
+    )
+    with open(parent_dir + '/' + lambda_server_zip_file_name, mode='rb') as zip_file:
         zip_file_content = zip_file.read()
 
     # Create Lambda function
@@ -240,8 +245,8 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, should_clean
 
     # Clean up if needed
     if should_clean_up_after_upload:
-        shutil.rmtree(lambda_server_directory)
-        os.remove('lambda_server.zip')
+        shutil.rmtree(parent_dir + '/' + lambda_server_directory_name)
+        os.remove(parent_dir + '/' + lambda_server_zip_file_name)
 
     # Check API Gateway existence. 
     # If doesn't exist, create the APIs, point them to Lambda function, and set correct configurations
@@ -510,7 +515,6 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, should_clean
     index_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_index
     return index_api_endpoint_url
 
-
 def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, num_hits, is_sandbox):
     client = boto3.client(
         service_name = 'mturk', 
@@ -553,7 +557,6 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, num_hi
     )
     hit_type_id = response['HITTypeId']
     return hit_type_id
-
 
 def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox=True):
     page_url = page_url.replace('&', '&amp;')
@@ -646,6 +649,47 @@ def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox=True):
     hit_link = "https://workersandbox.mturk.com/mturk/preview?groupId=" + hit_type_id
     return hit_link
 
+def setup_all_dependencies(lambda_server_directory_name):
+    devnull = open(os.devnull, 'w')
+    parent_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Set up all other dependencies
+    command_str = "pip install --target="+parent_dir+'/'+lambda_server_directory_name+" -r "+parent_dir+"/lambda_requirements.txt"
+    command = command_str.split(" ")
+    call(command, stdout=devnull, stderr=devnull)
+
+    # Set up psycopg2
+    command = "git clone https://github.com/yf225/awslambda-psycopg2.git".split(" ")
+    call(command, stdout=devnull, stderr=devnull)
+    shutil.copytree("./awslambda-psycopg2/with_ssl_support/psycopg2", parent_dir+'/'+lambda_server_directory_name+"/psycopg2")
+    shutil.rmtree("./awslambda-psycopg2")
+
+def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, files_to_copy=None, verbose=False):
+    setup_all_dependencies(lambda_server_directory_name)
+    parent_dir = os.path.dirname(os.path.abspath(__file__))
+
+    src = parent_dir + '/' + lambda_server_directory_name
+    dst = parent_dir + '/' + lambda_server_zip_file_name
+
+    if files_to_copy:
+        for file_path in files_to_copy:
+            shutil.copy2(file_path, src)
+
+    zf = zipfile.ZipFile("%s" % (dst), "w", zipfile.ZIP_DEFLATED)
+    abs_src = os.path.abspath(src)
+    for dirname, subdirs, files in os.walk(src):
+        for filename in files:
+            absname = os.path.abspath(os.path.join(dirname, filename))
+            os.chmod(absname, 0o777)
+            arcname = os.path.relpath(absname, abs_src)
+            if verbose:
+                print('zipping %s as %s' % (os.path.join(dirname, filename),
+                                            arcname))
+            zf.write(absname, arcname)
+    zf.close()
+
+    if verbose:
+        print("Done!")
 
 def setup_aws(task_config, is_sandbox=True):
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
@@ -660,7 +704,3 @@ def setup_aws(task_config, is_sandbox=True):
     # webbrowser.open(chat_interface_url)
     
     return rds_host, chat_interface_url
-
-
-if __name__ == '__main__':
-    setup_aws()

@@ -17,98 +17,6 @@
     <div id="right-top-pane" style="width: 100%; height: 570px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
         {% if not is_cover_page %}
         <table id="message_table" style="width: 100%">
-            {% if False %}
-            <tr>
-                <td class="col-sm-5">
-                </td>
-                <td class="col-sm-5">
-                    <div class="alert alert-info" role="alert">
-                        <b>You (Teacher)</b>: This is the initial teacher message.
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                    <div class="alert alert-warning" role="alert">
-                        <b>Bot</b>: This is the initial teacher message.
-                    </div>
-                </td>
-                <td class="col-sm-5">
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                </td>
-                <td class="col-sm-5">
-                    <div class="alert alert-info" role="alert">
-                        <b>You (Teacher)</b>: This is the initial teacher message.
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                    <div class="alert alert-warning" role="alert">
-                        <b>Bot</b>: This is the initial teacher message.
-                    </div>
-                </td>
-                <td class="col-sm-5">
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                </td>
-                <td class="col-sm-5">
-                    <div class="alert alert-info" role="alert">
-                        <b>You (Teacher)</b>: This is the initial teacher message.
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                    <div class="alert alert-warning" role="alert">
-                        <b>Bot</b>: This is the initial teacher message.
-                    </div>
-                </td>
-                <td class="col-sm-5">
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                </td>
-                <td class="col-sm-5">
-                    <div class="alert alert-info" role="alert">
-                        <b>You (Teacher)</b>: This is the initial teacher message.
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                    <div class="alert alert-warning" role="alert">
-                        <b>Bot</b>: This is the initial teacher message.
-                    </div>
-                </td>
-                <td class="col-sm-5">
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                </td>
-                <td class="col-sm-5">
-                    <div class="alert alert-info" role="alert">
-                        <b>You (Teacher)</b>: This is the initial teacher message.
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                    <div class="alert alert-warning" role="alert">
-                        <b>Bot</b>: This is the initial teacher message.
-                    </div>
-                </td>
-                <td class="col-sm-5">
-                </td>
-            </tr>
-            {% endif %}
         </table>
         {% endif %}
     </div>
@@ -213,17 +121,12 @@
     // Response type: reward
     function send_binary_reward_and_update_UI(is_positive) {
         var reward = 1;
-        var action = 'correct';
-        if (!(is_positive)) {
-            reward = -1;
-            action = 'incorrect';
-        }
+        if (!(is_positive)) reward = -1;
         var post_data_dict = {
             task_group_id: task_group_id,
             conversation_id: conversation_id,
             cur_agent_id: cur_agent_id,
             reward: reward,
-            action: action,
             msg: null,
             episode_done: false
         };
@@ -258,7 +161,7 @@
     });
 
     var mturk_submit_url = `{{mturk_submit_url}}`;
-    var verbose_log = true;
+    var verbose_log = false;
     var task_group_id = `{{task_group_id}}`;
     var conversation_id = parseInt(`{{conversation_id}}`);
     var cur_agent_id = `{{cur_agent_id}}`;

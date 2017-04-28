@@ -109,7 +109,6 @@ def message(event, context):
         cur_agent_id = params['cur_agent_id']
         message_text = params['msg'] if 'msg' in params else None
         reward = params['reward'] if 'reward' in params else None
-        action = params['action'] if 'action' in params else None
         episode_done = params['episode_done']
 
         new_message_object = send_new_message(
@@ -119,7 +118,6 @@ def message(event, context):
             agent_id=cur_agent_id, 
             message_text=message_text, 
             reward=reward,
-            action=action,
             episode_done=episode_done,
             binary_file_bytes=None, 
             binary_file_type=None
@@ -132,9 +130,7 @@ def message(event, context):
             "timestamp": time.mktime(new_message_object.created_time.timetuple()) + new_message_object.created_time.microsecond * 1e-6,
         }
         if reward:
-            new_message['reward'] = reward  
-        if action:
-            new_message['action'] = action
+            new_message['reward'] = reward
         new_message['done'] = done
         
         return json.dumps(new_message)
