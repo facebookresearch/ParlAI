@@ -9,8 +9,8 @@ import random
 import string
 import webbrowser
 from parlai.core.agents import create_agent_from_shared
-from setup_aws import rds_db_name, rds_username, rds_password, setup_aws, create_hit_type, create_hit_with_hit_type
-from data_model import Message, init_database, send_new_message, get_new_messages
+from .setup_aws import rds_db_name, rds_username, rds_password, setup_aws, create_hit_type, create_hit_with_hit_type
+from .data_model import Message, init_database, send_new_message, get_new_messages
 
 
 def _get_random_alphanumeric_string(N):
@@ -30,62 +30,36 @@ def setup_relay(task_config):
     return db_session, mturk_chat_url_template
 
 
-def setup_context(db_session, data_loader, task_group_id, conversation_id):
-    context_dict = data_loader.load_context(conversation_id)
-    # TODO: address the multiple fields case
-    context_text = None
-    context_question = None
-    if '\n' in context_dict['text']:
-        comp_list = context_dict['text'].split('\n')
-        context_text = comp_list[0]
-        context_question = comp_list[1]
-    else:
-        context_text = context_dict['text']
-    if context_text:
-        send_new_message(
-            db_session = db_session,
-            task_group_id = task_group_id, 
-            conversation_id = conversation_id,
-            agent_id = 'context',
-            message_text=context_text, 
-            done=False,
-            binary_file_bytes=None, 
-            binary_file_type=None
-        )
-    if context_question:
-        send_new_message(
-            db_session = db_session,
-            task_group_id = task_group_id, 
-            conversation_id = conversation_id,
-            agent_id = 'teacher',
-            message_text=context_question, 
-            done=False,
-            binary_file_bytes=None, 
-            binary_file_type=None
-        )
-
-
-def create_hits(task_config, data_loader, bot, num_hits, is_sandbox, chat_page_only):
+def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose):
     task_group_id = str(int(time.time())) + '_' + _get_random_alphanumeric_string(10) # Random string to further avoid collision
     print('Setting up MTurk backend...')
     db_session, mturk_chat_url_template = setup_relay(task_config)
 
-    worker_agent_id = task_config['worker_agent_id']    
+    worker_agent_id = task_config['worker_agent_id']   
+    bot_agent_id = bot.getID() 
     cids = range(1, num_hits+1)
 
     shared = bot.share()
     bots = []
     for cid in cids:
         new_bot = create_agent_from_shared(shared)
-        new_bot.set_conversation_id(cid)
+        new_bot.conversation_id = cid
         bots.append(new_bot)
+        response = new_bot.act()
+        if response:
+            if verbose:
+                print('Bot ' + str(cid) + ' says: ' + str(response))
+            send_new_message(
+                db_session=db_session, 
+                task_group_id=task_group_id, 
+                conversation_id=cid, 
+                agent_id=bot_agent_id, 
+                message_text=response.get('text', None), 
+                reward=response.get('reward', None),
+                episode_done=response.get('episode_done', False), 
+            )
 
     cid_map = {cid: i for i, cid in enumerate(cids)}
-
-    # Set up context for each conversation
-    print('Setting up conversation context for each HIT...')
-    for cid in cids:
-        setup_context(db_session, data_loader, task_group_id, cid)
 
     hits_created = False
     conversations_remaining = set(cids)
@@ -96,7 +70,7 @@ def create_hits(task_config, data_loader, bot, num_hits, is_sandbox, chat_page_o
             db_session=db_session, 
             task_group_id=task_group_id, 
             after_message_id=last_message_id, 
-            excluded_agent_id=task_config['bot_agent_id'],
+            excluded_agent_id=bot_agent_id,
         )
 
         if new_last_message_id:
@@ -109,24 +83,32 @@ def create_hits(task_config, data_loader, bot, num_hits, is_sandbox, chat_page_o
                 agent = bots[cid_map[conversation_id]]
                 for new_message in new_messages:
                     # observe could be in the else block?
+                    if verbose:
+                        print('Bot ' + str(conversation_id) + ' received: ' + str(new_message))
                     agent.observe(new_message)
-                    if new_message.get('done', False):
+                    if new_message.get('episode_done', False):
                         # We're done here
                         conversations_remaining.remove(conversation_id)
                         print('Conversation '+str(conversation_id)+' is DONE!')
                     else:
                         # Agent still needs to reply
-                        response, action = agent.act()  # Assuming agent returns None if it's still expecting more messages
+                        response = agent.act()  # Assuming agent returns None if it's still expecting more messages
                         if response:
+                            if verbose:
+                                print('Bot ' + str(conversation_id) + ' says: ' + str(response))
                             send_new_message(
                                 db_session=db_session, 
                                 task_group_id=task_group_id, 
                                 conversation_id=conversation_id, 
-                                agent_id=task_config['bot_agent_id'], 
-                                message_text=response,
-                                action=action,
-                                done=False
+                                agent_id=bot_agent_id, 
+                                message_text=response.get('text', None), 
+                                reward=response.get('reward', None),
+                                episode_done=response.get('episode_done', False), 
                             )
+                            if response.get('episode_done', False):
+                                # We're done here
+                                conversations_remaining.remove(conversation_id)
+                                print('Conversation '+str(conversation_id)+' is DONE!')
 
         if not hits_created:
             print('Creating HITs...')

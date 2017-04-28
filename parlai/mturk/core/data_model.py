@@ -42,7 +42,7 @@ def init_database(host, db_name, username, password):
     return engine, session_maker
 
 
-def send_new_message(db_session, task_group_id, conversation_id, agent_id, message_text=None, reward=None, action=None, done=False, binary_file_bytes=None, binary_file_type=None):
+def send_new_message(db_session, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False, binary_file_bytes=None, binary_file_type=None):
     """
     Message format:
     {
@@ -50,8 +50,7 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
         "text": xxx, # text of speaker(s)
         "id": xxx, # id of speaker(s)
         "reward": xxx,
-        "action": xxx,
-        "done": xxx, # signals end of episode
+        "episode_done": xxx, # signals end of episode
 
         # Extra fields for MTurk state maintenance
         "message_id": xxx, # populated with record on database
@@ -65,10 +64,8 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
         "id": agent_id,
     }
     if reward:
-        new_message['reward'] = reward  
-    if action:
-        new_message['action'] = action
-    new_message['done'] = done
+        new_message['reward'] = reward
+    new_message['episode_done'] = episode_done
 
     message_content = json.dumps(new_message)
     if is_python_2:
@@ -96,8 +93,7 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
                 "text": xxx, # text of speaker(s)
                 "id": xxx, # id of speaker(s)
                 "reward": xxx,
-                "action": xxx,
-                "done": xxx, # signals end of episode
+                "episode_done": xxx, # signals end of episode
 
                 # Extra fields for MTurk state maintenance
                 "message_id": xxx, # populated with record on database
@@ -137,9 +133,7 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
         }
         if 'reward' in message_content:
             new_message_dict['reward'] = message_content['reward']
-        if 'action' in message_content:
-            new_message_dict['action'] = message_content['action']
-        new_message_dict['done'] = message_content.get('done', False)
+        new_message_dict['episode_done'] = message_content.get('episode_done', False)
 
         if populate_state_info:
             new_message_dict['message_id'] = new_message_object.id

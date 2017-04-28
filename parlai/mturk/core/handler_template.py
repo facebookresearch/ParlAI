@@ -14,7 +14,7 @@ from jinja2 import FileSystemLoader
 from data_model import Message, init_database, send_new_message, get_new_messages
 
 # Dynamically generated code begin
-# Expects mturk_submit_url, rds_host, rds_db_name, rds_username, rds_password, agent_display_names, task_description, state_config
+# Expects mturk_submit_url, rds_host, rds_db_name, rds_username, rds_password, task_description
 # {{block_task_config}}
 # Dynamically generated code end
 
@@ -58,21 +58,13 @@ def index(event, context):
         assignment_id = event['query']['assignmentId'] # from mturk
 
         if assignment_id == 'ASSIGNMENT_ID_NOT_AVAILABLE':
-            template_context['task_group_id'] = task_group_id
-            template_context['conversation_id'] = 0
-            template_context['cur_agent_id'] = cur_agent_id
-            template_context['agent_display_names_string'] = json.dumps(agent_display_names)
             template_context['task_description'] = task_description
-            template_context['state_config_string'] = json.dumps(state_config)
-            template_context['mturk_submit_url'] = ''
             template_context['is_cover_page'] = True
         else:
             template_context['task_group_id'] = task_group_id
             template_context['conversation_id'] = conversation_id
             template_context['cur_agent_id'] = cur_agent_id
-            template_context['agent_display_names_string'] = json.dumps(agent_display_names)
             template_context['task_description'] = task_description
-            template_context['state_config_string'] = json.dumps(state_config)
             template_context['mturk_submit_url'] = mturk_submit_url
             template_context['is_cover_page'] = False
 
@@ -117,8 +109,7 @@ def message(event, context):
         cur_agent_id = params['cur_agent_id']
         message_text = params['msg'] if 'msg' in params else None
         reward = params['reward'] if 'reward' in params else None
-        action = params['action'] if 'action' in params else None
-        done = params['done']
+        episode_done = params['episode_done']
 
         new_message_object = send_new_message(
             db_session=db_session, 
@@ -127,8 +118,7 @@ def message(event, context):
             agent_id=cur_agent_id, 
             message_text=message_text, 
             reward=reward,
-            action=action,
-            done=done,
+            episode_done=episode_done,
             binary_file_bytes=None, 
             binary_file_type=None
         )
@@ -140,9 +130,7 @@ def message(event, context):
             "timestamp": time.mktime(new_message_object.created_time.timetuple()) + new_message_object.created_time.microsecond * 1e-6,
         }
         if reward:
-            new_message['reward'] = reward  
-        if action:
-            new_message['action'] = action
+            new_message['reward'] = reward
         new_message['done'] = done
         
         return json.dumps(new_message)

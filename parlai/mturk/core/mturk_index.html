@@ -15,144 +15,35 @@
 </div>
 <div id="right-pane" style="min-height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
     <div id="right-top-pane" style="width: 100%; height: 570px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <span id="context_panel_text" style="font-size: 14px">
-                </span>
-            </div>
-        </div>
+        {% if not is_cover_page %}
         <table id="message_table" style="width: 100%">
-            {% if False %}
-            <tr>
-                <td class="col-sm-5">
-                </td>
-                <td class="col-sm-5">
-                    <div class="alert alert-info" role="alert">
-                        <b>You (Teacher)</b>: This is the initial teacher message.
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                    <div class="alert alert-warning" role="alert">
-                        <b>Bot</b>: This is the initial teacher message.
-                    </div>
-                </td>
-                <td class="col-sm-5">
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                </td>
-                <td class="col-sm-5">
-                    <div class="alert alert-info" role="alert">
-                        <b>You (Teacher)</b>: This is the initial teacher message.
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                    <div class="alert alert-warning" role="alert">
-                        <b>Bot</b>: This is the initial teacher message.
-                    </div>
-                </td>
-                <td class="col-sm-5">
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                </td>
-                <td class="col-sm-5">
-                    <div class="alert alert-info" role="alert">
-                        <b>You (Teacher)</b>: This is the initial teacher message.
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                    <div class="alert alert-warning" role="alert">
-                        <b>Bot</b>: This is the initial teacher message.
-                    </div>
-                </td>
-                <td class="col-sm-5">
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                </td>
-                <td class="col-sm-5">
-                    <div class="alert alert-info" role="alert">
-                        <b>You (Teacher)</b>: This is the initial teacher message.
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                    <div class="alert alert-warning" role="alert">
-                        <b>Bot</b>: This is the initial teacher message.
-                    </div>
-                </td>
-                <td class="col-sm-5">
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                </td>
-                <td class="col-sm-5">
-                    <div class="alert alert-info" role="alert">
-                        <b>You (Teacher)</b>: This is the initial teacher message.
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-sm-5">
-                    <div class="alert alert-warning" role="alert">
-                        <b>Bot</b>: This is the initial teacher message.
-                    </div>
-                </td>
-                <td class="col-sm-5">
-                </td>
-            </tr>
-            {% endif %}
         </table>
+        {% endif %}
     </div>
 
+    {% if not is_cover_page %}
     <div id="right-bottom-pane" style="width: 100%; background-color: #eee">
         <div id="response-type-idle" class="response-type-module" style="display:none">
         </div>
-        <div id="response-type-waiting" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
-            <div style="width: 100%; display: block; float: left">
-                <span class="prompt-text" style="width: 100%; float: left; font-size: 16px"></span>
-            </div>
-        </div>
         <div id="response-type-choices" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
-            <div style="width: 100%; display: block; float: left">
-                <span class="prompt-text" style="width: 100%; float: left; font-size: 16px"></span>
-            </div>
-            <div style="width: 100%; display: block; float: left; margin-top: 30px;">
+            <div style="width: 100%; display: block; float: left; ">
                 <div style="margin-bottom: 5px"><input type="radio" name="choice" value="choice_1" style="margin-right: 10px"><span style="font-size: 16px">Choice 1</span><br></div>
                 <div style="margin-bottom: 5px"><input type="radio" name="choice" value="choice_2" style="margin-right: 10px"><span style="font-size: 16px">Choice 2</span><br></div>
                 <div style="margin-bottom: 5px"><input type="radio" name="choice" value="choice_3" style="margin-right: 10px"><span style="font-size: 16px">Choice 3</span><br></div>
                 <div><input type="radio" name="choice" value="choice_4" style="margin-right: 10px"><span style="font-size: 16px">Choice 4</span></div>
             </div>
-            <div style="height: 50px; width: 100%; display: block; float: left; margin-top: 30px;">
+            <div style="height: 50px; width: 100%; display: block; float: left; ">
                 <button id="choice-send-button" class="btn btn-primary disabled" style="width: 100px; height: 100%; font-size: 16px; float: left; padding: 0px;" id="id_send_msg_button">Send</button>
             </div>
         </div>
         <div id="response-type-text-input" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
-            <div style="width: 100%; display: block; float: left">
-                <span class="prompt-text" style="width: 100%; float: left; font-size: 16px"></span>
-            </div>
-            <div style="height: 50px; width: 100%; display: block; float: left; margin-top: 30px;">
+            <div style="height: 50px; width: 100%; display: block; float: left; ">
                 <input id="id_text_input" type="text" style="width: 80%; height: 100%; float: left; font-size: 16px" class="form-control" value="" placeholder="Please enter here...">
                 <button class="btn btn-primary" style="width: 100px; height: 100%; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="id_send_msg_button">Send</button>
             </div>
         </div>
         <div id="response-type-binary-reward" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
-            <div style="width: 100%; display: block; float: left">
-                <span class="prompt-text" style="width: 100%; float: left; font-size: 16px"></span>
-            </div>
-            <div style="width: 100%; display: block; float: left; margin-top: 30px;">
+            <div style="width: 100%; display: block; float: left; ">
                 <div id="reward-buttons-group" style="width: 100%">
                     <button id="positive-reward-button" type="button" class="btn btn-primary btn-lg" style="width: 200px">
                         <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Correct
@@ -163,15 +54,8 @@
                 </div>
             </div>
         </div>
-        <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
-            <div style="width: 100%; display: block; float: left">
-                <span class="prompt-text" style="width: 100%; float: left; font-size: 16px">
-                    This task is done!
-                </span>
-                <!-- TODO: implement "Go back to MTurk page" link -->
-            </div>
-        </div>
     </div>
+    {% endif %}
 </div>
 </div>
 </div>
@@ -237,19 +121,14 @@
     // Response type: reward
     function send_binary_reward_and_update_UI(is_positive) {
         var reward = 1;
-        var action = 'correct';
-        if (!(is_positive)) {
-            reward = -1;
-            action = 'incorrect';
-        }
+        if (!(is_positive)) reward = -1;
         var post_data_dict = {
             task_group_id: task_group_id,
             conversation_id: conversation_id,
             cur_agent_id: cur_agent_id,
             reward: reward,
-            action: action,
             msg: null,
-            done: false
+            episode_done: false
         };
         post_data_dict['endpoint'] = 'message';
         $.ajax({
@@ -268,7 +147,7 @@
                 var new_messages = [];
                 new_messages.push(data);
                 show_new_messages_on_UI(new_messages);
-                check_precondition_and_change_state(new_messages, all_done_callback);
+                check_done(new_messages);
             }
         });
     }
@@ -286,11 +165,8 @@
     var task_group_id = `{{task_group_id}}`;
     var conversation_id = parseInt(`{{conversation_id}}`);
     var cur_agent_id = `{{cur_agent_id}}`;
-    var agent_display_names = JSON.parse(`{{agent_display_names_string}}`);
-    var state_config = JSON.parse(`{{state_config_string}}`);
     var is_cover_page = `{{is_cover_page}}`;
     var last_message_id = -1;
-    var current_state_name = null;
     var worker_timer = null;
     var messages_processed = {};
     var messages_shown = {};
@@ -300,21 +176,20 @@
             var message = new_messages[i];
             var agent_id = message['id'];
             var message_id = parseInt(message['message_id']);
-            var done = message['done'];
+            var done = message['episode_done'];
+            var message_text = message['text'].replace(/(?:\r\n|\r|\n)/g, '<br />');
             var reward = null;
             if ('reward' in message) {
                 reward = message['reward']
             }
             
             if (!(message_id in messages_shown) && !done) {
-                if (agent_id == 'context') {
-                    $('span#context_panel_text').text(message['text']);
-                } else if (agent_id != cur_agent_id) {
+                if (agent_id != cur_agent_id) {
                     $('table#message_table').append(`
                         <tr>
                             <td class="col-sm-5">
                                 <div class="alert alert-warning" role="alert">
-                                    <b>`+agent_display_names[agent_id]+`</b>: `+message['text']+`
+                                    <b>`+agent_id+`</b>: `+message_text+`
                                 </div>
                             </td>
                             <td class="col-sm-5">
@@ -333,7 +208,7 @@
                             </td>
                             <td class="col-sm-5">
                                 <div class="alert alert-info" role="alert">
-                                    <b>You (`+agent_display_names[agent_id]+`)</b>: `+reward_text+`
+                                    <b>You</b>: `+reward_text+`
                                 </div>
                             </td>
                         </tr>
@@ -345,7 +220,7 @@
                             </td>
                             <td class="col-sm-5">
                                 <div class="alert alert-info" role="alert">
-                                    <b>You (`+agent_display_names[agent_id]+`)</b>: `+message['text']+`
+                                    <b>You</b>: `+message_text+`
                                 </div>
                             </td>
                         </tr>
@@ -360,6 +235,14 @@
         }
     }
 
+    function check_done(new_messages) {
+        for (var i = 0; i < new_messages.length; i++) {
+            if (new_messages[i]['episode_done']) {
+                all_done_callback();
+            }
+        }
+    }
+
     function send_message(msg, is_done=false, callback_function=null) {
         var post_data_dict = {
             task_group_id: task_group_id,
@@ -367,7 +250,7 @@
             cur_agent_id: cur_agent_id,
         };
         if (msg) post_data_dict['msg'] = msg;
-        post_data_dict['done'] = is_done;
+        post_data_dict['episode_done'] = is_done;
         post_data_dict['endpoint'] = 'message';
         $.ajax({
             url: '/prod/parlai_relay_server_message',
@@ -396,7 +279,7 @@
             var new_messages = [];
             new_messages.push(data);
             show_new_messages_on_UI(new_messages);
-            check_precondition_and_change_state(new_messages, all_done_callback);
+            check_done(new_messages);
         });
     });
 
@@ -428,42 +311,24 @@
                 }
             }
             show_new_messages_on_UI(data);
-            check_precondition_and_change_state(data, all_done_callback);
+            check_done(data);
             worker_timer = setTimeout(worker, 1000);
         },
       });
     }
 
-    function update_for_state() {
-        response_config = state_config[current_state_name]['response_config'][cur_agent_id];
-        response_type = response_config['response_type'];
-        /*
-        Response types accepted:
-        idle
-        waiting -> prompt text
-        choices -> prompt text, list of choices
-        text_input -> prompt text
-        binary_reward -> prompt text, reward_message_texts
-        done -> prompt text
-        */
+    function update_for_response_type(response_type) {
         $("div.response-type-module").css("display", "none");
 
         if (response_type == 'idle') {
             $("div#response-type-idle").css("display", "");
-        } else if (response_type == 'waiting') {
-            $("div#response-type-waiting").css("display", "");
-            $("div#response-type-waiting span.prompt-text").text(response_config['prompt_text']);
         } else if (response_type == 'choices') {
             $("div#response-type-choices").css("display", "");
-            $("div#response-type-choices span.prompt-text").text(response_config['prompt_text']);
         } else if (response_type == 'text_input') {
             $("div#response-type-text-input").css("display", "");
-            $("div#response-type-text-input span.prompt-text").text(response_config['prompt_text']);
         } else if (response_type == 'binary_reward') {
             $("div#response-type-binary-reward").css("display", "");
-            $("div#response-type-binary-reward span.prompt-text").text(response_config['prompt_text']);
         } else if (response_type == 'done') {
-            $("div#response-type-done").css("display", "");
             send_message(null, true, null);
         } 
         $(window).resize();
@@ -478,49 +343,6 @@
         }
     }
 
-    // Return true when all states are finished.
-    function check_precondition_and_change_state(new_messages=null, all_done_callback=null) {
-        function change_state(next_state_name) {
-            // Trigger state change
-            console.log(state_config[current_state_name]['state_name'] + " -> " + state_config[next_state_name]['state_name']);
-            current_state_name = next_state_name;
-            update_for_state();
-            if (current_state_name == 'task_done') {
-                if (all_done_callback) { // All states are done
-                    all_done_callback();
-                    return;
-                }
-            }
-        }
-
-        if (new_messages && current_state_name != 'task_done') {
-            for (var i = 0; i < new_messages.length; i++) {
-                message_id = new_messages[i]['message_id'];
-                if (!(message_id in messages_processed)) {
-                    agent_id = new_messages[i]['id'];
-                    agent_action = null;
-                    if ('action' in new_messages[i]) {
-                        agent_action = new_messages[i]['action'];
-                    }
-                    next_states = state_config[current_state_name]['next_states'];
-                    for (var j = 0; j < next_states.length; j++) {
-                        next_state = next_states[j];
-                        precondition_agent_id = next_state['precondition_agent_id'];
-                        precondition_agent_action = next_state['precondition_agent_action'];
-                        next_state_name = next_state['state_name'];
-                        if (agent_id == precondition_agent_id) {
-                            if ((precondition_agent_action == 'any') || (agent_action == precondition_agent_action) || (j == next_states.length - 1 && precondition_agent_action == 'else')) {
-                                change_state(next_state_name);
-                                break;
-                            }
-                        }
-                    }
-                    messages_processed[message_id] = true;
-                }
-            }
-        }
-    }
-
     $(document).ready(function() {
         $(window).resize();
         $("form#mturk_submit_form input#assignmentId").val(get_url_parameter('assignmentId'));
@@ -528,20 +350,13 @@
         $("form#mturk_submit_form input#workerId").val(get_url_parameter('workerId'));
         $("form#mturk_submit_form").attr("action", mturk_submit_url);
         $("input#id_text_input").focus();
-        current_state_name = 'initial_state';
         if (is_cover_page == 'True') {
             is_cover_page = true;
         } else if (is_cover_page == 'False') {
             is_cover_page = false;
         }
-        update_for_state();
-        if (current_state_name == 'task_done') {
-            all_done_callback();
-            return;
-        } else {
-            check_precondition_and_change_state(null, all_done_callback);
-            worker();
-        }
+        update_for_response_type('text_input');
+        worker();
     });
 </script>
 </body>
