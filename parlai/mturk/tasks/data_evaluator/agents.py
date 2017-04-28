@@ -33,5 +33,5 @@ class DataEvaluatorAgent(Agent):
             self.world.query['text'] + "\n\n" +
             "How would you rate the following response (from 0 to 10):\n\n" +
             self.world.reply['text'])
-        ad['episode_done'] = self.world.episode_done()
+        ad['episode_done'] = True  # self.world.episode_done()
         return ad
