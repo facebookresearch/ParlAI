@@ -49,6 +49,10 @@ The main concepts (classes) in ParlAI:
 - agent – an agent in the world, e.g. the learner. (There can be multiple learners.)
 - teacher – a type of agent that talks to the learner, implements one of the tasks listed before.
 
+After defining a world, and the agents in it, a main loop can be run for training, testing or displaying which calls the function world.parley(). The skeleton of an example main is given in the left panel, and the actual code for parley() on the right.
+
+<p align=center><img width="100%" src="docs/source/_static/img/main.png" /></p>
+
 
 ## Actions and Observations
 
@@ -57,8 +61,7 @@ This is used to pass text, labels and rewards between agents.
 It’s the same object type when talking (acting) or listening (observing), but a different view (with different values in the fields). 
 The fields are as follows:
 
-
-<p align=center><img width="40%" src="docs/source/_static/img/act-obs-dict.png" /></p>
+<p align=center><img width="33%" src="docs/source/_static/img/act-obs-dict.png" /></p>
 
 
 Each of these fields are technically optional, depending on your dataset, though the 'text' field will most likely be used in nearly all exchanges.
@@ -159,8 +162,13 @@ Over 20 tasks are supported in the first release, including popular datasets suc
 SQuAD, bAbI tasks, MCTest, WikiQA, WebQuestions, SimpleQuestions, WikiMovies, QACNN, QADailyMail, CBT, BookTest, bAbI Dialog tasks,
 Ubuntu, OpenSubtitles, Cornell Movie and VQA-COCO2014.
 
-See  [here](https://github.com/fairinternal/ParlAI/tree/master/parlai/tasks/tasks.json) for the complete list.
- 
+Our first release includes the following datasets (shown in the left panel), and accessing one of them is as simple as specifying the name of the task as a command line option, as shown in the dataset display utility (right panel):
+<p align=center><img width="100%" src="docs/source/_static/img/tasks.png" /></p>
+See <a href="https://github.com/fairinternal/ParlAI/tree/master/parlai/tasks/tasks.json">here</a> for the complete list.
+
+Choosing a task in ParlAI is as easy as specifying it on the command line, as shown in the above image (right). If the dataset has not been used before, ParlAI will automatically download it. As all datasets are treated in the same way in ParlAI (with a single dialog API), a dialog agent can in principle switch training and testing between any of them. Even better, one can specify many tasks at once (multi-tasking) by simply providing a comma-separated list, e.g.  the command line “-t babi,squad”, to use those two datasets, or even all  the QA datasets at once  (-t #qa) or indeed every task in ParlAI at once (-t #all). The aim is to make it easy to build and evaluate very rich dialog models.
+
+
 Each task folder contains:
 - **build.py** file for setting up data for the task (downloading data, etc, only done the first time requested, and not downloaded if the task is not used).
 - **agents.py** file which contains default or special teacher classes used by core.create_task to instantiate these classes from command-line arguments (if desired).
