@@ -13,8 +13,8 @@ import os
 def built(path):
     return os.path.isfile(path + "/.built")
 
-def remove_dir(path):
-    s = ('rm -rf "%s"' % (path))
+def download(path, url):
+    s = ('cd "%s"' % path) + '; wget ' + url
     if os.system(s) != 0:
         raise RuntimeError('failed: ' + s)
 
@@ -23,13 +23,18 @@ def make_dir(path):
     if os.system(s) != 0:
         raise RuntimeError('failed: ' + s)
 
+def mark_done(path):
+    s = ('date > "%s"/.built' % path)
+    if os.system(s) != 0:
+        raise RuntimeError('failed: ' + s)
+
 def move(path1, path2):
     s = ('mv "%s" "%s"' % (path1, path2))
     if os.system(s) != 0:
         raise RuntimeError('failed: ' + s)
 
-def download(path, url):
-    s = ('cd "%s"' % path) + '; wget ' + url
+def remove_dir(path):
+    s = ('rm -rf "%s"' % (path))
     if os.system(s) != 0:
         raise RuntimeError('failed: ' + s)
 
@@ -43,11 +48,6 @@ def untar(path, fname, deleteTar=True):
         s = ('cd "%s"' % path) + ';' + 'rm "%s"' % (path + fname)
         if os.system(s) != 0:
             raise RuntimeError('failed: ' + s)
-
-def mark_done(path):
-    s = ('date > "%s"/.built' % path)
-    if os.system(s) != 0:
-        raise RuntimeError('failed: ' + s)
 
 def _get_confirm_token(response):
     for key, value in response.cookies.items():
