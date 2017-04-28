@@ -267,6 +267,7 @@ class MultiTaskTeacher(Teacher):
             raise StopIteration()
 
     def observe(self, obs):
+        self.tasks[self.task_idx].observe(obs)
         if self.new_task:
             self.new_task = False
             if self.random:
@@ -280,7 +281,6 @@ class MultiTaskTeacher(Teacher):
                                     start_idx != self.task_idx)
                 if start_idx == self.task_idx:
                     return {'text': 'There are no more examples remaining.'}
-        self.tasks[self.task_idx].observe(obs)
 
     def act(self):
         t = self.tasks[self.task_idx].act()

@@ -119,13 +119,10 @@ The core library contains the following files:
 - **data.py**: contains some default classes for fixed text datasets
   - TextData: sets up observation tables with 'text', 'labels', 'reward', and/or 'candidates' fields
   - HogwildTextData: does the same thing as TextData, but stores underlying data in a shared-memory array
-- **dialog.py**: contains default classes for doing dialog with basic data
-  - DialogTeacher: default parent class which automatically select the regular or hogwild dialog teacher based on whether multithreading (multiprocessing) is desired
-  - \_RegularDialogTeacher: generic parent teacher which sets up data.TextData and produces observations from that data
-  - \_HogwildDialogTeacher: generic multiprocess parent teacher which sets up a shared data.HogwildTextData and produces observations from that data (with shared metrics)
+- **dialog_teacher.py**: contains a base teacher class for doing dialog with fixed chat logs
 - **dict.py**: contains code for building general NLP-style dictionaries from observations
   - DictionaryAgent: agent which tracks the index and frequency of words in a dictionary, and can parse a sentence into indices into its dictionary or back
-- **fbdialog.py**: contains a teacher class which implements a function setup_data which parses data in the FB Dialog data format
+- **fbdialog_teacher.py**: contains a teacher class which implements a function setup_data which parses data in the FB Dialog data format
 - **metrics.py**: computes evaluation metrics for dialog, e.g. ranking metrics, etc.
 - **params.py**: uses argparse to interpret command line arguments for ParlAI
 - **thread_utils.py**: utility classes/functions for use in Hogwild multithreading (multiprocessing)

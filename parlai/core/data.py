@@ -16,7 +16,7 @@ class TextData(object):
     supervised labels, candidate labels and rewards.
 
     All these are stored in this internal data format which is used by the
-    DialogTeacher class in dialog.py.
+    DialogTeacher class in dialog_teacher.py.
 
     data_loader is an iterable, with each call returning:
 

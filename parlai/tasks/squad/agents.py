@@ -6,7 +6,7 @@
 import json
 import random
 from parlai.core.agents import Teacher
-from parlai.core.dialog import DialogTeacher
+from parlai.core.dialog_teacher import DialogTeacher
 from .build import build
 
 
