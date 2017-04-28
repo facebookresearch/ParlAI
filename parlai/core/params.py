@@ -33,7 +33,7 @@ class ParlaiParser(object):
 
         self.add_arg = self.parser.add_argument
         self.add_argument = self.parser.add_argument
-        self.register = self.parser.register    
+        self.register = self.parser.register
 
     def add_parlai_data_path(self):
         parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
