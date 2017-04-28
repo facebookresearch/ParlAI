@@ -159,9 +159,10 @@ class Teacher(Agent):
 
 def create_task_agent_from_taskname(opt):
     """Creates task agent(s) assuming the input "task_dir:teacher_class"
-    e.g. def_string is "babi:Task1k:1"
-    This essentially performs "from parlai.tasks.babi import TaskTeacher"
-    with the parameter 1 in opt['task'] to be used by the class TaskTeacher
+    e.g. def_string is a shorthand path like "babi:Task1k:1" or "#babi"
+    or a complete path like "parlai.tasks.babi.agents:Task1kTeacher:1"
+    This essentially performs "from parlai.tasks.babi import Task1kTeacher"
+    with the parameter 1 in opt['task'] to be used by the class Task1kTeacher
     """
     if ',' not in opt['task']:
         # Single task
@@ -174,6 +175,10 @@ def create_task_agent_from_taskname(opt):
         if len(sp) > 1:
             sp[1] = sp[1][0].upper() + sp[1][1:]
             teacher = sp[1]
+            if '.' not in sp[0] and 'Teacher' not in teacher:
+                # Append "Teacher" to class name by default if
+                # a complete path is not given.
+                teacher += "Teacher"
         else:
             teacher = "DefaultTeacher"
         my_module = importlib.import_module(module_name)
@@ -201,7 +206,7 @@ def _create_task_agents(opt):
     """
     sp = opt['task'].strip().split(':')
     if '.' in sp[0]:
-        # The case of opt['task'] = 'parlai.tasks.squad.agents/DefaultTeacher'
+        # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
         # (i.e. specifying your own path directly)
         module_name = sp[0]
     else:

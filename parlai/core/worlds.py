@@ -139,7 +139,7 @@ class World(object):
 def _get_task_world(opt):
     sp = opt['task'].strip().split(':')
     if '.' in sp[0]:
-        # The case of opt['task'] = 'parlai.tasks.squad.agents/DefaultTeacher'
+        # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
         # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
         world_class = DialogPartnerWorld
     else:
