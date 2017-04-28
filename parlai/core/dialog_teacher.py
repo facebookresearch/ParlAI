@@ -90,8 +90,7 @@ class DialogTeacher(Teacher):
         return None
 
     def observe(self, observation):
-        """Store observation and process for metrics.
-        """
+        """Store observation and process for metrics. """
         self.observation = observation
         if self.lastY is not None:
             obs = self.observation if hasattr(self, 'observation') else {}
@@ -101,11 +100,10 @@ class DialogTeacher(Teacher):
             self.lastLabelCandidates = None
 
     def act(self):
-        """Send new dialog message.
-        """
+        """Send new dialog message. """
         action, self.epochDone = next(self.data)
         action['id'] = self.getID()
-        self.lastY = copy.deepcopy(action.get('labels', None))
+        self.lastY = action.get('labels', None)
         self.lastLabelCandidates = action.get('label_candidates', None)
         if not self.datatype.startswith('train'):
             action.pop('labels', None)

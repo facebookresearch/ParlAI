@@ -239,7 +239,6 @@ class DialogPartnerWorld(World):
         self.query = self.teacher.act()
         self.agent.observe(validate(self.query))
         self.reply = self.agent.act()
-        print(self.display() + "**\n~~")
         self.teacher.observe(validate(self.reply))
         self.is_episode_done = self.query.get('episode_done', False)
 
