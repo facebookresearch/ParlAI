@@ -171,7 +171,7 @@ class Metrics(object):
     def clear(self):
         with self._lock():
             self.metrics['cnt'] = 0
-            for k in self.eval_pr:
-                self.metrics['hits@' + str(k)][k] = 0
             self.metrics['correct'] = 0
             self.metrics['f1'] = 0
+            for k in self.eval_pr:
+                self.metrics['hits@' + str(k)] = 0

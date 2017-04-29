@@ -62,7 +62,7 @@ class DialogTeacher(Teacher):
             self.metrics = Metrics(opt)
         self.reset()
 
-    def reset():
+    def reset(self):
         # Reset the dialog so that it is at the start of the epoch,
         # and all metrics are reset.
         self.metrics.clear()
