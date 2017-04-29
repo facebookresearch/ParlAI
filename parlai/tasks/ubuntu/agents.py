@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 import csv
-from parlai.core.dialog import DialogTeacher
+from parlai.core.dialog_teacher import DialogTeacher
 from .build import build
 
 
