@@ -23,6 +23,7 @@
 
     {% if not is_cover_page %}
     <div id="right-bottom-pane" style="width: 100%; background-color: #eee">
+        {% if not is_approval_page %}
         <div id="response-type-idle" class="response-type-module" style="display:none">
         </div>
         <div id="response-type-choices" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
@@ -54,6 +55,21 @@
                 </div>
             </div>
         </div>
+        {% else %}
+        <div id="approval" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
+            <div id="approval-prompt-text" style="width: 100%; display: block; float: left">
+                <span class="prompt-text" style="width: 100%; float: left; font-size: 16px">Do you approve this work?</span>
+            </div>
+            <div id="approval-buttons-group" style="width: 100%; display: block; float: left; margin-top: 30px;">
+                <button id="approve-button" type="button" class="btn btn-primary btn-lg" style="width: 200px">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Approve
+                </button>
+                <button id="reject-button" type="button" class="btn btn-danger btn-lg" style="margin-left: 20px; width: 200px">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reject
+                </button>
+            </div>
+        </div>
+        {% endif %}
     </div>
     {% endif %}
 </div>
@@ -72,6 +88,7 @@
         $("input#id_text_input").width($("div#right-bottom-pane").width() - 210);
         $("div#right-top-pane").height($("div#left-pane").height() - $("div#right-bottom-pane").outerHeight() - 35);
         $("div#reward-buttons-group").css("margin-left")
+        $("div#approval-buttons-group").css("margin-left")
     });
 
     function scroll_conversation_to_bottom() {
@@ -147,7 +164,11 @@
                 var new_messages = [];
                 new_messages.push(data);
                 show_new_messages_on_UI(new_messages);
-                check_done(new_messages);
+                if (done_after_responding) {
+                    all_done_callback();
+                } else {
+                    check_done(new_messages);
+                }
             }
         });
     }
@@ -160,30 +181,65 @@
         send_binary_reward_and_update_UI(false);    
     });
 
+    function send_approval_and_update_UI(action) {
+        var post_data_dict = {
+            requester_key: get_url_parameter('requester_key'),
+            task_group_id: task_group_id,
+            conversation_id: conversation_id,
+            action: action
+        };
+        post_data_dict['endpoint'] = 'approval';
+        $.ajax({
+            url: '/prod/parlai_relay_server_approval',
+            type: "POST",
+            data: JSON.stringify(post_data_dict),
+            contentType: "application/json",
+            success: function(data){
+                if (verbose_log) console.log(data);
+                if (conversation_id < num_hits) {
+                    window.location.href = window.location.href.replace('conversation_id='+conversation_id, 'conversation_id='+(conversation_id+1));
+                } else {
+                    $("div#message_thread").css("display", "none");
+                    $("div#approval-prompt-text span.prompt-text").text("All done! Please feel free to close the window.");
+                    $("div#approval-buttons-group").css("display", "none");
+                }
+            }
+        });
+    }
+
+    $("button#approve-button").click(function() {
+        send_approval_and_update_UI('approve');
+    });
+
+    $("button#reject-button").click(function() {
+        send_approval_and_update_UI('reject');
+    });
+
     var mturk_submit_url = `{{mturk_submit_url}}`;
-    var verbose_log = false;
+    var verbose_log = true;
     var task_group_id = `{{task_group_id}}`;
     var conversation_id = parseInt(`{{conversation_id}}`);
     var cur_agent_id = `{{cur_agent_id}}`;
     var is_cover_page = `{{is_cover_page}}`;
+    var num_hits = parseInt(`{{num_hits}}`);
     var last_message_id = -1;
     var worker_timer = null;
     var messages_processed = {};
     var messages_shown = {};
+    var done_after_responding = false;
     
     function show_new_messages_on_UI(new_messages) {
         for (var i = 0; i < new_messages.length; i++) {
             var message = new_messages[i];
             var agent_id = message['id'];
             var message_id = parseInt(message['message_id']);
-            var done = message['episode_done'];
             var message_text = message['text'].replace(/(?:\r\n|\r|\n)/g, '<br />');
             var reward = null;
             if ('reward' in message) {
                 reward = message['reward']
             }
             
-            if (!(message_id in messages_shown) && !done) {
+            if (!(message_id in messages_shown)) {
                 if (agent_id != cur_agent_id) {
                     $('div#message_thread').append(`
                         <div class="row" style="margin-left: 0; margin-right: 0">
@@ -226,7 +282,7 @@
     function check_done(new_messages) {
         for (var i = 0; i < new_messages.length; i++) {
             if (new_messages[i]['episode_done']) {
-                all_done_callback();
+                done_after_responding = true;
             }
         }
     }
@@ -267,7 +323,11 @@
             var new_messages = [];
             new_messages.push(data);
             show_new_messages_on_UI(new_messages);
-            check_done(new_messages);
+            if (done_after_responding) {
+                all_done_callback();
+            } else {
+                check_done(new_messages);
+            }
         });
     });
 
@@ -323,12 +383,32 @@
     }
 
     function all_done_callback() {
+        // Stop polling
         if (worker_timer) {
             clearTimeout(worker_timer);
         }
-        if (in_mturk_hit_page() && !is_cover_page) {
-            $("input#mturk_submit_button").click();
-        }
+
+        // Post HIT info to server
+        var post_data_dict = {
+            task_group_id: task_group_id,
+            conversation_id: conversation_id,
+            assignmentId: get_url_parameter('assignmentId'),
+            hitId: get_url_parameter('hitId'),
+            workerId: get_url_parameter('workerId')
+        };
+        post_data_dict['endpoint'] = 'index';
+        $.ajax({
+            url: '/prod/parlai_relay_server',
+            type: "POST",
+            data: JSON.stringify(post_data_dict),
+            contentType: "application/json",
+            success: function(data){
+                if (verbose_log) console.log(data);
+                if (in_mturk_hit_page() && !is_cover_page) {
+                    $("input#mturk_submit_button").click();
+                }
+            }
+        });
     }
 
     $(document).ready(function() {

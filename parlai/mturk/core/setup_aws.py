@@ -10,6 +10,7 @@ import time
 import json
 import webbrowser
 import uuid
+import hashlib
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
 
@@ -22,6 +23,7 @@ lambda_function_name = 'parlai_relay_server'
 api_gateway_name = 'ParlaiRelayServer'
 endpoint_api_name_index = 'parlai_relay_server'
 endpoint_api_name_message = 'parlai_relay_server_message'
+endpoint_api_name_approval = 'parlai_relay_server_approval'
 
 rds_db_instance_identifier = 'parlai-mturk-db'
 rds_db_name = 'parlai_mturk_db'
@@ -60,6 +62,14 @@ def setup_aws_credentials():
             aws_credentials_file.write("aws_secret_access_key="+aws_secret_access_key+"\n")
         print("AWS credentials successfully saved in "+aws_credentials_file_path+" file.")
     os.environ["AWS_PROFILE"] = aws_profile_name
+
+    # Compute requester key
+    session = boto3.Session(profile_name=aws_profile_name)
+    hash_gen = hashlib.sha512()
+    hash_gen.update(session.get_credentials().access_key.encode('utf-8')+session.get_credentials().secret_key.encode('utf-8'))
+    requester_key_gt = hash_gen.hexdigest()
+
+    return requester_key_gt
 
 def setup_rds():
     # Set up security group rules first
@@ -139,7 +149,7 @@ def setup_rds():
 
     return host
 
-def setup_relay_server_api(mturk_submit_url, rds_host, task_config, should_clean_up_after_upload=True):
+def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt, should_clean_up_after_upload=False):
     # Dynamically generate handler.py file, and then create zip file
     print("Lambda: Preparing relay server code...")
 
@@ -160,6 +170,9 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, should_clean
         "rds_db_name = \'" + rds_db_name + "\'\n" + \
         "rds_username = \'" + rds_username + "\'\n" + \
         "rds_password = \'" + rds_password + "\'\n" + \
+        "requester_key_gt = \'" + requester_key_gt + "\'\n" + \
+        "num_hits = " + str(num_hits) + "\n" + \
+        "is_sandbox = " + str(is_sandbox) + "\n" + \
         'task_description = ' + task_config['task_description'])
     with open(parent_dir + '/' + lambda_server_directory_name+'/handler.py', "w") as handler_file:
         handler_file.write(handler_file_string)
@@ -272,6 +285,7 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, should_clean
     # Create endpoint resources if doesn't exist
     index_endpoint_exists = False
     message_endpoint_exists = False
+    approval_endpoint_exists = False
     root_endpoint_id = None
     response = api_gateway_client.get_resources(restApiId=rest_api_id)
     resources = response['items']
@@ -282,6 +296,8 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, should_clean
             index_endpoint_exists = True
         elif resource['path'] == '/' + endpoint_api_name_message:
             message_endpoint_exists = True
+        elif resource['path'] == '/' + endpoint_api_name_approval:
+            approval_endpoint_exists = True
 
     if not index_endpoint_exists:
         print("API Gateway: Creating endpoint for index...")
@@ -355,6 +371,73 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, should_clean
             },
             responseTemplates={
                 "text/html": "$input.path('$')"
+            },
+        )
+
+        # Set up POST method
+        api_gateway_client.put_method(
+            restApiId = rest_api_id,
+            resourceId = resource_for_index_endpoint['id'],
+            httpMethod = "POST",
+            authorizationType = "NONE",
+            apiKeyRequired = False,
+        )
+        api_gateway_client.put_method_response(
+            restApiId = rest_api_id,
+            resourceId = resource_for_index_endpoint['id'],
+            httpMethod = 'POST',
+            statusCode = '200',
+            responseParameters = {
+                'method.response.header.Access-Control-Allow-Origin': False
+            },
+            responseModels = {
+                'application/json': 'Empty'
+            }
+        )
+        api_gateway_client.put_integration(
+            restApiId = rest_api_id,
+            resourceId = resource_for_index_endpoint['id'],
+            httpMethod = 'POST',
+            type = 'AWS',
+            integrationHttpMethod = 'POST', # this has to be POST
+            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
+            requestTemplates = {
+                'application/json': \
+'''{
+  "body" : $input.json('$'),
+  "headers": {
+    #foreach($header in $input.params().header.keySet())
+    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
+
+    #end
+  },
+  "method": "$context.httpMethod",
+  "params": {
+    #foreach($param in $input.params().path.keySet())
+    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
+
+    #end
+  },
+  "query": {
+    #foreach($queryParam in $input.params().querystring.keySet())
+    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
+
+    #end
+  }  
+}'''
+            },
+            passthroughBehavior = 'WHEN_NO_TEMPLATES'
+        )
+        api_gateway_client.put_integration_response(
+            restApiId = rest_api_id,
+            resourceId = resource_for_index_endpoint['id'],
+            httpMethod = 'POST',
+            statusCode = '200',
+            responseParameters={
+                'method.response.header.Access-Control-Allow-Origin': "'*'"
+            },
+            responseTemplates={
+                'application/json': ''
             },
         )
     else:
@@ -506,16 +589,161 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, should_clean
     else:
         print("API Gateway: Endpoint for message already exists.")
 
-    if not (index_endpoint_exists and message_endpoint_exists):
+    if not approval_endpoint_exists:
+        print("API Gateway: Creating endpoint for approval...")
+        resource_for_approval_endpoint = api_gateway_client.create_resource(
+            restApiId = rest_api_id,
+            parentId = root_endpoint_id,
+            pathPart = endpoint_api_name_approval
+        )
+        # Set up GET method
+        api_gateway_client.put_method(
+            restApiId = rest_api_id,
+            resourceId = resource_for_approval_endpoint['id'],
+            httpMethod = "GET",
+            authorizationType = "NONE",
+            apiKeyRequired = False,
+        )
+        api_gateway_client.put_method_response(
+            restApiId = rest_api_id,
+            resourceId = resource_for_approval_endpoint['id'],
+            httpMethod = 'GET',
+            statusCode = '200',
+            responseParameters = {
+                'method.response.header.Access-Control-Allow-Origin': False,
+                'method.response.header.Content-Type': False
+            }
+        )
+        api_gateway_client.put_integration(
+            restApiId = rest_api_id,
+            resourceId = resource_for_approval_endpoint['id'],
+            httpMethod = 'GET',
+            type = 'AWS',
+            integrationHttpMethod = 'POST', # this has to be POST
+            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
+            requestTemplates = {
+                'application/json': \
+'''
+{
+  "body" : $input.json('$'),
+  "headers": {
+    #foreach($header in $input.params().header.keySet())
+    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
+
+    #end
+  },
+  "method": "$context.httpMethod",
+  "params": {
+    #foreach($param in $input.params().path.keySet())
+    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
+
+    #end
+  },
+  "query": {
+    #foreach($queryParam in $input.params().querystring.keySet())
+    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
+
+    #end
+  }  
+}
+'''
+            },
+            passthroughBehavior = 'WHEN_NO_TEMPLATES'
+        )
+        api_gateway_client.put_integration_response(
+            restApiId = rest_api_id,
+            resourceId = resource_for_approval_endpoint['id'],
+            httpMethod = 'GET',
+            statusCode = '200',
+            responseParameters={
+                'method.response.header.Access-Control-Allow-Origin': "'*'",
+                'method.response.header.Content-Type': "'text/html'"
+            },
+            responseTemplates={
+                "text/html": "$input.path('$')"
+            },
+        )
+
+        # Set up POST method
+        api_gateway_client.put_method(
+            restApiId = rest_api_id,
+            resourceId = resource_for_approval_endpoint['id'],
+            httpMethod = "POST",
+            authorizationType = "NONE",
+            apiKeyRequired = False,
+        )
+        api_gateway_client.put_method_response(
+            restApiId = rest_api_id,
+            resourceId = resource_for_approval_endpoint['id'],
+            httpMethod = 'POST',
+            statusCode = '200',
+            responseParameters = {
+                'method.response.header.Access-Control-Allow-Origin': False
+            },
+            responseModels = {
+                'application/json': 'Empty'
+            }
+        )
+        api_gateway_client.put_integration(
+            restApiId = rest_api_id,
+            resourceId = resource_for_approval_endpoint['id'],
+            httpMethod = 'POST',
+            type = 'AWS',
+            integrationHttpMethod = 'POST', # this has to be POST
+            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
+            requestTemplates = {
+                'application/json': \
+'''{
+  "body" : $input.json('$'),
+  "headers": {
+    #foreach($header in $input.params().header.keySet())
+    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
+
+    #end
+  },
+  "method": "$context.httpMethod",
+  "params": {
+    #foreach($param in $input.params().path.keySet())
+    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
+
+    #end
+  },
+  "query": {
+    #foreach($queryParam in $input.params().querystring.keySet())
+    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
+
+    #end
+  }  
+}'''
+            },
+            passthroughBehavior = 'WHEN_NO_TEMPLATES'
+        )
+        api_gateway_client.put_integration_response(
+            restApiId = rest_api_id,
+            resourceId = resource_for_approval_endpoint['id'],
+            httpMethod = 'POST',
+            statusCode = '200',
+            responseParameters={
+                'method.response.header.Access-Control-Allow-Origin': "'*'"
+            },
+            responseTemplates={
+                'application/json': ''
+            },
+        )
+    else:
+        print("API Gateway: Endpoint for approval already exists.")
+
+    if not (index_endpoint_exists and message_endpoint_exists and approval_endpoint_exists):
         api_gateway_client.create_deployment(
             restApiId = rest_api_id,
             stageName = "prod",
         )
 
     index_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_index
-    return index_api_endpoint_url
+    approval_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_approval
+    return index_api_endpoint_url, approval_api_endpoint_url
 
-def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, num_hits, is_sandbox):
+def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_sandbox):
     client = boto3.client(
         service_name = 'mturk', 
         region_name = 'us-east-1',
@@ -548,7 +776,7 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, num_hi
 
     # Create the HIT type
     response = client.create_hit_type(
-        # AutoApprovalDelayInSeconds=123,
+        AutoApprovalDelayInSeconds=4*7*24*3600, # auto-approve after 4 weeks
         AssignmentDurationInSeconds=1800,
         Reward=str(hit_reward),
         Title=hit_title,
@@ -692,16 +920,17 @@ def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, f
     if verbose:
         print("Done!")
 
-def setup_aws(task_config, is_sandbox=True):
+def setup_aws(task_config, num_hits, is_sandbox=True):
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
     if not is_sandbox:
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
-    setup_aws_credentials()
+    requester_key_gt = setup_aws_credentials()
     rds_host = setup_rds()
-    index_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_config)
+    index_api_endpoint_url, approval_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt)
 
     chat_interface_url = index_api_endpoint_url + "?endpoint=index&task_group_id={{task_group_id}}&conversation_id={{conversation_id}}&cur_agent_id={{cur_agent_id}}"
+    approval_url = approval_api_endpoint_url + "?endpoint=approval&task_group_id={{task_group_id}}&conversation_id=1&cur_agent_id={{cur_agent_id}}&requester_key="+requester_key_gt
     
     # webbrowser.open(chat_interface_url)
     
-    return rds_host, chat_interface_url
+    return rds_host, chat_interface_url, approval_url
