@@ -6,7 +6,7 @@ from parlai.core.agents import Agent
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 
-class DataEvaluatorAgent(Agent):
+class ModelEvaluatorAgent(Agent):
     """
     MTurk agent for evaluating bots performance given a context.
     Assumes the context is a context from a given task, e.g.
@@ -14,7 +14,7 @@ class DataEvaluatorAgent(Agent):
     """
     def __init__(self, opt, shared=None):
         self.opt = copy.deepcopy(opt)
-        self.id = 'Data Evaluator'
+        self.id = 'Model Evaluator'
         # The bot we will evaluate.
         agent_opt = {}
         agent_opt['model'] = 'ir_baseline'

@@ -6,9 +6,9 @@ from core import manage_hit
 task_module_path_prefix = 'tasks.qa_data_collection'
 Agent = __import__(task_module_path_prefix+'.agents', fromlist=['']).QADataCollectionAgent
 
-# Data evaluator
-# task_module_path_prefix = 'tasks.data_evaluator'
-# Agent = __import__(task_module_path_prefix+'.agents', fromlist=['']).DataEvaluatorAgent
+# Model evaluator
+# task_module_path_prefix = 'tasks.model_evaluator'
+# Agent = __import__(task_module_path_prefix+'.agents', fromlist=['']).ModelEvaluatorAgent
 
 
 task_config = __import__(task_module_path_prefix+'.task_config', fromlist=['']).task_config

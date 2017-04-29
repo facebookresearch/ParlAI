@@ -1,6 +1,5 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
 # Python 2
-
 from __future__ import print_function
 
 import os
