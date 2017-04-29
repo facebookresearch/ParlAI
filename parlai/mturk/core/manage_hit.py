@@ -133,7 +133,7 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
                         is_sandbox=True
                     )
 
-            print('MTurk setup done. Waiting for Turkers to work on the tasks...')
+            print("MTurk setup done. Waiting for Turkers to work on the tasks... (Please don't close your laptop or put your computer into sleep mode.)")
             if chat_page_only:
                 webbrowser.open(mturk_chat_url)
             else:

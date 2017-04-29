@@ -14,7 +14,6 @@ import hashlib
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
 
-# bucket_name = 'parlai-relay-server'  # default name for ParlAI MTurk S3 bucket
 aws_profile_name = 'parlai_mturk'
 region_name = 'us-west-2'
 
@@ -149,7 +148,7 @@ def setup_rds():
 
     return host
 
-def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt, should_clean_up_after_upload=False):
+def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt, should_clean_up_after_upload=True):
     # Dynamically generate handler.py file, and then create zip file
     print("Lambda: Preparing relay server code...")
 
@@ -216,11 +215,11 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
             )
             iam_client.attach_role_policy(
                 RoleName = iam_role_name,
-                PolicyArn = 'arn:aws:iam::aws:policy/AmazonS3FullAccess'
+                PolicyArn = 'arn:aws:iam::aws:policy/AmazonRDSFullAccess'
             )
             iam_client.attach_role_policy(
                 RoleName = iam_role_name,
-                PolicyArn = 'arn:aws:iam::aws:policy/AmazonRDSFullAccess'
+                PolicyArn = 'arn:aws:iam::aws:policy/AmazonMechanicalTurkFullAccess'
             )
 
         iam = boto3.resource('iam')

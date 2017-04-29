@@ -120,7 +120,7 @@ def message(event, context):
         ret = []
         if conversation_id in conversation_dict:
             ret = conversation_dict[conversation_id]
-            ret.sort(key=lambda x: x['timestamp'])
+            ret.sort(key=lambda x: x['message_id'])
             
         return json.dumps(ret)
     if event['method'] == 'POST':
@@ -152,7 +152,6 @@ def message(event, context):
             "message_id": new_message_object.id,
             "id": cur_agent_id,
             "text": message_text,
-            "timestamp": time.mktime(new_message_object.created_time.timetuple()) + new_message_object.created_time.microsecond * 1e-6,
         }
         if reward:
             new_message['reward'] = reward
@@ -223,9 +222,9 @@ def approval(event, context):
                     client = boto3.client(service_name = 'mturk', region_name='us-east-1')
 
                 if action == 'approve':
-                    client.approve_assignment(assignment_id)
+                    client.approve_assignment(AssignmentId=assignment_id)
                 elif action == 'reject':
-                    client.reject_assignment(assignment_id)
+                    client.reject_assignment(AssignmentId=assignment_id, RequesterFeedback='')
 
         except KeyError:
             raise Exception('400')

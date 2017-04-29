@@ -55,6 +55,11 @@
                 </div>
             </div>
         </div>
+        <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
+            <button id="done-button" type="button" class="btn btn-primary btn-lg">
+                <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
+            </button>
+        </div>
         {% else %}
         <div id="approval" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
             <div id="approval-prompt-text" style="width: 100%; display: block; float: left">
@@ -147,6 +152,7 @@
             msg: null,
             episode_done: false
         };
+        if (done_after_responding) post_data_dict['episode_done'] = true;
         post_data_dict['endpoint'] = 'message';
         $.ajax({
             url: '/prod/parlai_relay_server_message',
@@ -165,7 +171,7 @@
                 new_messages.push(data);
                 show_new_messages_on_UI(new_messages);
                 if (done_after_responding) {
-                    all_done_callback();
+                    update_for_response_type('done');
                 } else {
                     check_done(new_messages);
                 }
@@ -182,6 +188,10 @@
     });
 
     function send_approval_and_update_UI(action) {
+        $("div#message_thread").css("display", "none");
+        $("div#approval-prompt-text span.prompt-text").text("Submitting to MTurk...");
+        $("div#approval-buttons-group").css("display", "none");
+
         var post_data_dict = {
             requester_key: get_url_parameter('requester_key'),
             task_group_id: task_group_id,
@@ -196,6 +206,10 @@
             contentType: "application/json",
             success: function(data){
                 if (verbose_log) console.log(data);
+                
+                $("div#approval-prompt-text span.prompt-text").text("Do you approve this work?");
+                $("div#approval-buttons-group").css("display", "");
+
                 if (conversation_id < num_hits) {
                     window.location.href = window.location.href.replace('conversation_id='+conversation_id, 'conversation_id='+(conversation_id+1));
                 } else {
@@ -215,18 +229,24 @@
         send_approval_and_update_UI('reject');
     });
 
+    $("button#done-button").click(function() {
+        all_done_callback();
+    });
+
     var mturk_submit_url = `{{mturk_submit_url}}`;
     var verbose_log = true;
     var task_group_id = `{{task_group_id}}`;
     var conversation_id = parseInt(`{{conversation_id}}`);
     var cur_agent_id = `{{cur_agent_id}}`;
-    var is_cover_page = `{{is_cover_page}}`;
+    var is_cover_page = (`{{is_cover_page}}` === 'True') ? true : false;
+    var is_approval_page = (`{{is_approval_page}}` === 'True') ? true : false;
     var num_hits = parseInt(`{{num_hits}}`);
     var last_message_id = -1;
     var worker_timer = null;
     var messages_processed = {};
     var messages_shown = {};
     var done_after_responding = false;
+    var self_display_name = 'You';
     
     function show_new_messages_on_UI(new_messages) {
         for (var i = 0; i < new_messages.length; i++) {
@@ -257,7 +277,7 @@
                         $('div#message_thread').append(`
                         <div class="row" style="margin-left: 0; margin-right: 0">
                             <div class="alert alert-info" role="alert" style="float: right; display:table">
-                                <span style="font-size: 16px"><b>You</b>: `+reward_text+`</span>
+                                <span style="font-size: 16px"><b>`+self_display_name+`</b>: `+reward_text+`</span>
                             </div>
                         </div>
                         `);
@@ -265,7 +285,7 @@
                         $('div#message_thread').append(`
                         <div class="row" style="margin-left: 0; margin-right: 0">
                             <div class="alert alert-info" role="alert" style="float: right; display:table">
-                                <span style="font-size: 16px"><b>You</b>: `+message_text+`</span>
+                                <span style="font-size: 16px"><b>`+self_display_name+`</b>: `+message_text+`</span>
                             </div>
                         </div>
                         `);
@@ -275,7 +295,8 @@
             }
         }
         if (new_messages.length > 0) {
-           scroll_conversation_to_bottom();
+            $("div#message_thread").css("display", "");
+            scroll_conversation_to_bottom();
         }
     }
 
@@ -287,14 +308,14 @@
         }
     }
 
-    function send_message(msg, is_done=false, callback_function=null) {
+    function send_message(msg, episode_done=false, callback_function=null) {
         var post_data_dict = {
             task_group_id: task_group_id,
             conversation_id: conversation_id,
             cur_agent_id: cur_agent_id,
         };
         if (msg) post_data_dict['msg'] = msg;
-        post_data_dict['episode_done'] = is_done;
+        post_data_dict['episode_done'] = episode_done;
         post_data_dict['endpoint'] = 'message';
         $.ajax({
             url: '/prod/parlai_relay_server_message',
@@ -312,7 +333,7 @@
 
     $("button#id_send_msg_button").click(function () {
         var msg = $("input#id_text_input").val();
-        send_message(msg, false, function(data){
+        send_message(msg, done_after_responding, function(data){
             $("input#id_text_input").val("");
             data = JSON.parse(data);
             // Update last message id for this agent
@@ -324,7 +345,7 @@
             new_messages.push(data);
             show_new_messages_on_UI(new_messages);
             if (done_after_responding) {
-                all_done_callback();
+                update_for_response_type('done');
             } else {
                 check_done(new_messages);
             }
@@ -349,7 +370,7 @@
         success: function(data) {
             if (verbose_log) console.log(data);
             data = JSON.parse(data);
-            // New messages are sorted by timestamp in data
+            // New messages are sorted by message id in data
             for (var i = 0; i < data.length; i++) {
                 message = data[i];
                 var agent_id = message['id'];
@@ -377,7 +398,7 @@
         } else if (response_type == 'binary_reward') {
             $("div#response-type-binary-reward").css("display", "");
         } else if (response_type == 'done') {
-            send_message(null, true, null);
+            $("div#response-type-done").css("display", "");
         } 
         $(window).resize();
     }
@@ -418,13 +439,13 @@
         $("form#mturk_submit_form input#workerId").val(get_url_parameter('workerId'));
         $("form#mturk_submit_form").attr("action", mturk_submit_url);
         $("input#id_text_input").focus();
-        if (is_cover_page == 'True') {
-            is_cover_page = true;
-        } else if (is_cover_page == 'False') {
-            is_cover_page = false;
-        }
         update_for_response_type('text_input');
-        worker();
+        if (is_approval_page) {
+            self_display_name = 'Worker';
+        }
+        if (!is_cover_page) {
+            worker();
+        }
     });
 </script>
 </body>

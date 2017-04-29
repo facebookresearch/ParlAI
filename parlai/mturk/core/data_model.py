@@ -3,7 +3,7 @@ import os
 import sys
 import time
 import json
-from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, UnicodeText, TIMESTAMP
+from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, UnicodeText
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine, func
@@ -25,7 +25,6 @@ class Message(Base):
     conversation_id = Column(Integer, index=True)
     agent_id = Column(String(255))
     message_content = Column(UnicodeText)
-    created_time = Column(TIMESTAMP, server_default=func.now(), index=True)
 
 
 class MTurkHITInfo(Base):
@@ -65,7 +64,6 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
 
         # Extra fields for MTurk state maintenance
         "message_id": xxx, # populated with record on database
-        "timestamp": xxx, # populated with record on database
     }
     """
 
@@ -108,7 +106,6 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
 
                 # Extra fields for MTurk state maintenance
                 "message_id": xxx, # populated with record on database
-                "timestamp": xxx, # populated with record on database
             }
         ], ...
     },
@@ -124,7 +121,9 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
 
     last_message_id = None
 
-    query = db_session.query(Message).filter(Message.task_group_id==task_group_id).filter(~Message.agent_id.in_(excluded_agent_ids)).filter(Message.id > after_message_id)
+    query = db_session.query(Message).filter(Message.task_group_id==task_group_id).filter(Message.id > after_message_id)
+    if len(excluded_agent_ids) > 0:
+        query = query.filter(~Message.agent_id.in_(excluded_agent_ids))
     if conversation_id:
         query = query.filter(Message.conversation_id==conversation_id)
     new_message_objects = query.order_by(Message.id)
@@ -148,8 +147,7 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
 
         if populate_meta_info:
             new_message_dict['message_id'] = new_message_object.id
-            new_message_dict['timestamp'] = time.mktime(new_message_object.created_time.timetuple()) + new_message_object.created_time.microsecond * 1e-6
-        
+            
         if conversation_id not in conversation_dict:
             conversation_dict[conversation_id] = []
         conversation_dict[conversation_id].append(new_message_dict)
