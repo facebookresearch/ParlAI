@@ -6,7 +6,7 @@
 <body>
 <div class="container-fluid">
 <div class="row">
-<div id="left-pane" class="col-xs-4" style="min-height: 100%; background-color: #dff0d8; padding: 30px; overflow:scroll;">
+<div id="left-pane" class="col-xs-4" style="height: 650px; background-color: #dff0d8; padding: 30px; overflow:scroll;">
     <h1>Live Chat</h1>
     <hr style="border-top: 1px solid #555" />
     <span id="task-description" style="font-size: 16px">
@@ -16,13 +16,14 @@
 <div id="right-pane" style="min-height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
     <div id="right-top-pane" style="width: 100%; height: 570px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
         {% if not is_cover_page %}
-        <table id="message_table" style="width: 100%">
-        </table>
+        <div id="message_thread" style="width: 100%">
+        </div>
         {% endif %}
     </div>
 
     {% if not is_cover_page %}
     <div id="right-bottom-pane" style="width: 100%; background-color: #eee">
+        {% if not is_approval_page %}
         <div id="response-type-idle" class="response-type-module" style="display:none">
         </div>
         <div id="response-type-choices" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
@@ -54,6 +55,26 @@
                 </div>
             </div>
         </div>
+        <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
+            <button id="done-button" type="button" class="btn btn-primary btn-lg">
+                <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
+            </button>
+        </div>
+        {% else %}
+        <div id="approval" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
+            <div id="approval-prompt-text" style="width: 100%; display: block; float: left">
+                <span class="prompt-text" style="width: 100%; float: left; font-size: 16px">Do you approve this work?</span>
+            </div>
+            <div id="approval-buttons-group" style="width: 100%; display: block; float: left; margin-top: 30px;">
+                <button id="approve-button" type="button" class="btn btn-primary btn-lg" style="width: 200px">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Approve
+                </button>
+                <button id="reject-button" type="button" class="btn btn-danger btn-lg" style="margin-left: 20px; width: 200px">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reject
+                </button>
+            </div>
+        </div>
+        {% endif %}
     </div>
     {% endif %}
 </div>
@@ -72,6 +93,7 @@
         $("input#id_text_input").width($("div#right-bottom-pane").width() - 210);
         $("div#right-top-pane").height($("div#left-pane").height() - $("div#right-bottom-pane").outerHeight() - 35);
         $("div#reward-buttons-group").css("margin-left")
+        $("div#approval-buttons-group").css("margin-left")
     });
 
     function scroll_conversation_to_bottom() {
@@ -130,6 +152,7 @@
             msg: null,
             episode_done: false
         };
+        if (done_after_responding) post_data_dict['episode_done'] = true;
         post_data_dict['endpoint'] = 'message';
         $.ajax({
             url: '/prod/parlai_relay_server_message',
@@ -138,6 +161,7 @@
             contentType: "application/json",
             success: function(data){
                 if (verbose_log) console.log(data);
+                $("div#response-type-binary-reward").css("display", "none");
                 data = JSON.parse(data);
                 // Update last message id for this agent
                 var message_id = parseInt(data["message_id"]);
@@ -147,7 +171,11 @@
                 var new_messages = [];
                 new_messages.push(data);
                 show_new_messages_on_UI(new_messages);
-                check_done(new_messages);
+                if (done_after_responding) {
+                    update_for_response_type('done');
+                } else {
+                    check_done(new_messages);
+                }
             }
         });
     }
@@ -160,41 +188,86 @@
         send_binary_reward_and_update_UI(false);    
     });
 
+    function send_approval_and_update_UI(action) {
+        $("div#message_thread").css("display", "none");
+        $("div#approval-prompt-text span.prompt-text").text("Submitting to MTurk...");
+        $("div#approval-buttons-group").css("display", "none");
+
+        var post_data_dict = {
+            requester_key: get_url_parameter('requester_key'),
+            task_group_id: task_group_id,
+            conversation_id: conversation_id,
+            action: action
+        };
+        post_data_dict['endpoint'] = 'approval';
+        $.ajax({
+            url: '/prod/parlai_relay_server_approval',
+            type: "POST",
+            data: JSON.stringify(post_data_dict),
+            contentType: "application/json",
+            success: function(data){
+                if (verbose_log) console.log(data);
+
+                $("div#approval-prompt-text span.prompt-text").text("Do you approve this work?");
+                $("div#approval-buttons-group").css("display", "");
+
+                if (conversation_id < num_hits) {
+                    window.location.href = window.location.href.replace('conversation_id='+conversation_id, 'conversation_id='+(conversation_id+1));
+                } else {
+                    $("div#message_thread").css("display", "none");
+                    $("div#approval-prompt-text span.prompt-text").text("All done! Please feel free to close the window.");
+                    $("div#approval-buttons-group").css("display", "none");
+                }
+            }
+        });
+    }
+
+    $("button#approve-button").click(function() {
+        send_approval_and_update_UI('approve');
+    });
+
+    $("button#reject-button").click(function() {
+        send_approval_and_update_UI('reject');
+    });
+
+    $("button#done-button").click(function() {
+        all_done_callback();
+    });
+
     var mturk_submit_url = `{{mturk_submit_url}}`;
-    var verbose_log = false;
+    var verbose_log = true;
     var task_group_id = `{{task_group_id}}`;
     var conversation_id = parseInt(`{{conversation_id}}`);
     var cur_agent_id = `{{cur_agent_id}}`;
-    var is_cover_page = `{{is_cover_page}}`;
+    var is_cover_page = (`{{is_cover_page}}` === 'True') ? true : false;
+    var is_approval_page = (`{{is_approval_page}}` === 'True') ? true : false;
+    var num_hits = parseInt(`{{num_hits}}`);
     var last_message_id = -1;
     var worker_timer = null;
     var messages_processed = {};
     var messages_shown = {};
+    var done_after_responding = false;
+    var self_display_name = 'You';
     
     function show_new_messages_on_UI(new_messages) {
         for (var i = 0; i < new_messages.length; i++) {
             var message = new_messages[i];
             var agent_id = message['id'];
             var message_id = parseInt(message['message_id']);
-            var done = message['episode_done'];
             var message_text = message['text'].replace(/(?:\r\n|\r|\n)/g, '<br />');
             var reward = null;
             if ('reward' in message) {
                 reward = message['reward']
             }
             
-            if (!(message_id in messages_shown) && !done) {
+            if (!(message_id in messages_shown)) {
                 if (agent_id != cur_agent_id) {
-                    $('table#message_table').append(`
-                        <tr>
-                            <td class="col-sm-5">
-                                <div class="alert alert-warning" role="alert">
-                                    <b>`+agent_id+`</b>: `+message_text+`
-                                </div>
-                            </td>
-                            <td class="col-sm-5">
-                            </td>
-                        </tr>
+                    $('div#message_thread').append(`
+                        <div class="row" style="margin-left: 0; margin-right: 0">
+                            <div class="alert alert-warning" role="alert" style="float: left; display:table">
+                                <span style="font-size: 16px"><b>`+agent_id+`</b>: `+message_text+`</span>
+                            </div>
+                        </div>
                     `);
                 } else {
                     if (reward) {
@@ -202,28 +275,20 @@
                         if (reward > 0) {
                             reward_text = '+' + reward_text;
                         }
-                        $('table#message_table').append(`
-                        <tr>
-                            <td class="col-sm-5">
-                            </td>
-                            <td class="col-sm-5">
-                                <div class="alert alert-info" role="alert">
-                                    <b>You</b>: `+reward_text+`
-                                </div>
-                            </td>
-                        </tr>
+                        $('div#message_thread').append(`
+                        <div class="row" style="margin-left: 0; margin-right: 0">
+                            <div class="alert alert-info" role="alert" style="float: right; display:table">
+                                <span style="font-size: 16px"><b>`+self_display_name+`</b>: `+reward_text+`</span>
+                            </div>
+                        </div>
                         `);
                     } else {
-                        $('table#message_table').append(`
-                        <tr>
-                            <td class="col-sm-5">
-                            </td>
-                            <td class="col-sm-5">
-                                <div class="alert alert-info" role="alert">
-                                    <b>You</b>: `+message_text+`
-                                </div>
-                            </td>
-                        </tr>
+                        $('div#message_thread').append(`
+                        <div class="row" style="margin-left: 0; margin-right: 0">
+                            <div class="alert alert-info" role="alert" style="float: right; display:table">
+                                <span style="font-size: 16px"><b>`+self_display_name+`</b>: `+message_text+`</span>
+                            </div>
+                        </div>
                         `);
                     }
                 }
@@ -231,26 +296,28 @@
             }
         }
         if (new_messages.length > 0) {
-           scroll_conversation_to_bottom();
+            $("div#message_thread").css("display", "");
+            $("div#response-type-text-input").css("display", "");
+            scroll_conversation_to_bottom();
         }
     }
 
     function check_done(new_messages) {
         for (var i = 0; i < new_messages.length; i++) {
             if (new_messages[i]['episode_done']) {
-                all_done_callback();
+                done_after_responding = true;
             }
         }
     }
 
-    function send_message(msg, is_done=false, callback_function=null) {
+    function send_message(msg, episode_done=false, callback_function=null) {
         var post_data_dict = {
             task_group_id: task_group_id,
             conversation_id: conversation_id,
             cur_agent_id: cur_agent_id,
         };
         if (msg) post_data_dict['msg'] = msg;
-        post_data_dict['episode_done'] = is_done;
+        post_data_dict['episode_done'] = episode_done;
         post_data_dict['endpoint'] = 'message';
         $.ajax({
             url: '/prod/parlai_relay_server_message',
@@ -268,8 +335,9 @@
 
     $("button#id_send_msg_button").click(function () {
         var msg = $("input#id_text_input").val();
-        send_message(msg, false, function(data){
+        send_message(msg, done_after_responding, function(data){
             $("input#id_text_input").val("");
+            $("div#response-type-text-input").css("display", "none");
             data = JSON.parse(data);
             // Update last message id for this agent
             var message_id = parseInt(data["message_id"]);
@@ -279,7 +347,11 @@
             var new_messages = [];
             new_messages.push(data);
             show_new_messages_on_UI(new_messages);
-            check_done(new_messages);
+            if (done_after_responding) {
+                update_for_response_type('done');
+            } else {
+                check_done(new_messages);
+            }
         });
     });
 
@@ -301,7 +373,7 @@
         success: function(data) {
             if (verbose_log) console.log(data);
             data = JSON.parse(data);
-            // New messages are sorted by timestamp in data
+            // New messages are sorted by message id in data
             for (var i = 0; i < data.length; i++) {
                 message = data[i];
                 var agent_id = message['id'];
@@ -329,18 +401,38 @@
         } else if (response_type == 'binary_reward') {
             $("div#response-type-binary-reward").css("display", "");
         } else if (response_type == 'done') {
-            send_message(null, true, null);
+            $("div#response-type-done").css("display", "");
         } 
         $(window).resize();
     }
 
     function all_done_callback() {
+        // Stop polling
         if (worker_timer) {
             clearTimeout(worker_timer);
         }
-        if (in_mturk_hit_page() && !is_cover_page) {
-            $("input#mturk_submit_button").click();
-        }
+
+        // Post HIT info to server
+        var post_data_dict = {
+            task_group_id: task_group_id,
+            conversation_id: conversation_id,
+            assignmentId: get_url_parameter('assignmentId'),
+            hitId: get_url_parameter('hitId'),
+            workerId: get_url_parameter('workerId')
+        };
+        post_data_dict['endpoint'] = 'index';
+        $.ajax({
+            url: '/prod/parlai_relay_server',
+            type: "POST",
+            data: JSON.stringify(post_data_dict),
+            contentType: "application/json",
+            success: function(data){
+                if (verbose_log) console.log(data);
+                if (in_mturk_hit_page() && !is_cover_page) {
+                    $("input#mturk_submit_button").click();
+                }
+            }
+        });
     }
 
     $(document).ready(function() {
@@ -350,13 +442,18 @@
         $("form#mturk_submit_form input#workerId").val(get_url_parameter('workerId'));
         $("form#mturk_submit_form").attr("action", mturk_submit_url);
         $("input#id_text_input").focus();
-        if (is_cover_page == 'True') {
-            is_cover_page = true;
-        } else if (is_cover_page == 'False') {
-            is_cover_page = false;
-        }
         update_for_response_type('text_input');
-        worker();
+        if (is_approval_page) {
+            self_display_name = 'Worker';
+        }
+        if (is_cover_page) {
+            $("div#left-pane").removeClass('col-xs-4');
+            $("div#left-pane").addClass('col-xs-12');
+        } else {
+            $("div#left-pane").removeClass('col-xs-12');
+            $("div#left-pane").addClass('col-xs-4');
+            worker();
+        }
     });
 </script>
 </body>

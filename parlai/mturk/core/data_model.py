@@ -3,7 +3,7 @@ import os
 import sys
 import time
 import json
-from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, UnicodeText, TIMESTAMP
+from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, UnicodeText
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine, func
@@ -25,8 +25,18 @@ class Message(Base):
     conversation_id = Column(Integer, index=True)
     agent_id = Column(String(255))
     message_content = Column(UnicodeText)
-    created_time = Column(TIMESTAMP, server_default=func.now(), index=True)
 
+
+class MTurkHITInfo(Base):
+    __tablename__ = 'mturk_hit_info'
+    id = Column(Integer, primary_key=True)
+    task_group_id = Column(String(255), index=True)
+    conversation_id = Column(Integer, index=True)
+    assignment_id = Column(String(255))
+    hit_id = Column(String(255))
+    worker_id = Column(String(255))
+    is_sandbox = Column(Boolean())
+    
  
 def init_database(host, db_name, username, password):
     # Create an engine
@@ -54,7 +64,6 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
 
         # Extra fields for MTurk state maintenance
         "message_id": xxx, # populated with record on database
-        "timestamp": xxx, # populated with record on database
     }
     """
 
@@ -83,7 +92,7 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
     return new_message_object
 
 
-def get_new_messages(db_session, task_group_id, conversation_id=None, after_message_id=None, excluded_agent_id=None, populate_state_info=False):
+def get_new_messages(db_session, task_group_id, conversation_id=None, after_message_id=None, excluded_agent_id=None, populate_meta_info=False):
     """
     Return:
     conversation_dict = {
@@ -97,7 +106,6 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
 
                 # Extra fields for MTurk state maintenance
                 "message_id": xxx, # populated with record on database
-                "timestamp": xxx, # populated with record on database
             }
         ], ...
     },
@@ -113,7 +121,9 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
 
     last_message_id = None
 
-    query = db_session.query(Message).filter(Message.task_group_id==task_group_id).filter(~Message.agent_id.in_(excluded_agent_ids)).filter(Message.id > after_message_id)
+    query = db_session.query(Message).filter(Message.task_group_id==task_group_id).filter(Message.id > after_message_id)
+    if len(excluded_agent_ids) > 0:
+        query = query.filter(~Message.agent_id.in_(excluded_agent_ids))
     if conversation_id:
         query = query.filter(Message.conversation_id==conversation_id)
     new_message_objects = query.order_by(Message.id)
@@ -135,12 +145,39 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
             new_message_dict['reward'] = message_content['reward']
         new_message_dict['episode_done'] = message_content.get('episode_done', False)
 
-        if populate_state_info:
+        if populate_meta_info:
             new_message_dict['message_id'] = new_message_object.id
-            new_message_dict['timestamp'] = time.mktime(new_message_object.created_time.timetuple()) + new_message_object.created_time.microsecond * 1e-6
-        
+            
         if conversation_id not in conversation_dict:
             conversation_dict[conversation_id] = []
         conversation_dict[conversation_id].append(new_message_dict)
 
     return conversation_dict, last_message_id
+
+
+def set_hit_info(db_session, task_group_id, conversation_id, assignment_id, hit_id, worker_id, is_sandbox):
+    existing_object = db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.conversation_id==conversation_id).first()
+    if not existing_object:
+        new_hit_info_object = MTurkHITInfo(
+            task_group_id=task_group_id,
+            conversation_id=conversation_id,
+            assignment_id=assignment_id, 
+            hit_id=hit_id, 
+            worker_id=worker_id,
+            is_sandbox=is_sandbox
+        )
+        db_session.add(new_hit_info_object)
+        db_session.commit()
+    else:
+        existing_object.assignment_id = assignment_id
+        existing_object.hit_id = hit_id
+        existing_object.worker_id = worker_id
+        existing_object.is_sandbox = is_sandbox
+        db_session.add(existing_object)
+        db_session.commit()
+
+
+def get_hit_info(db_session, task_group_id, conversation_id):
+    existing_object = db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.conversation_id==conversation_id).first()
+    return existing_object
+

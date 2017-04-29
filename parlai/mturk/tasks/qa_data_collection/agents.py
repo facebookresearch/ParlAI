@@ -26,7 +26,7 @@ class QADataCollectionAgent(Agent):
         self.task = task_class(task_opt)
 
     def act(self):
-        self.turn_index = (self.turn_index + 1) % 3;
+        self.turn_index = (self.turn_index + 1) % 2;
         ad = { 'episode_done': False }
         ad['id'] = self.id
         if self.turn_index == 0:
@@ -37,7 +37,5 @@ class QADataCollectionAgent(Agent):
                         '\n\nPlease provide a question given this context.')
         if self.turn_index == 1:
             ad['text'] = 'Thanks. And what is the answer to your question?'
-        if self.turn_index == 2:
-            ad['text'] = 'Thanks again!'
             ad['episode_done'] = True  # end of episode
         return ad
