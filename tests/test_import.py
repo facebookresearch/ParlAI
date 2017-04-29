@@ -26,11 +26,11 @@ class TestImport(unittest.TestCase):
         assert SharedTable
 
     def test_import_dialog(self):
-        from parlai.core.dialog import DialogTeacher
+        from parlai.core.dialog_teacher import DialogTeacher
         assert DialogTeacher
 
     def test_import_fbdialog(self):
-        from parlai.core.fbdialog import FbDialogTeacher
+        from parlai.core.fbdialog_teacher import FbDialogTeacher
         assert FbDialogTeacher
 
     def test_import_remoteagent(self):
