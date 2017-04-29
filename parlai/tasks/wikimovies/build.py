@@ -17,8 +17,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = "movieqa.tar.gz"
-        url = "http://www.thespermwhale.com/jaseweston/babi/" + fname
+        fname = "wikimovies.tar.gz"
+        url = "https://s3.amazonaws.com/fair-data/parlai/wikimovies/" + fname
         build_data.download(dpath, url)
         build_data.untar(dpath, fname)
 

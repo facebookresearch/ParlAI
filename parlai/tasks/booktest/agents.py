@@ -7,7 +7,7 @@ import copy
 import json
 import random
 from parlai.core.agents import Teacher
-from parlai.core.fbdialog import FbDialogTeacher
+from parlai.core.fbdialog_teacher import FbDialogTeacher
 from .build import build
 
 

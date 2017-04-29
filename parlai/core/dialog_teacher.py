@@ -13,10 +13,11 @@ from .metrics import Metrics
 
 
 class DialogTeacher(Teacher):
-    """This class provides a set a basic functionality:
-    - metrics tracking count of sent vs correctly answered queries
+    """A base teacher class for doing dialog with fixed chat logs.
+    This class provides a set a basic functionality:
     - uses data class to store and query text data
     - generates action tables to send to the student agent from the data
+    - metrics tracking count of sent vs correctly answered queries
 
     If you have opt.numthreads > 1, this also activates a shared memory
     array for the data and lock-protected shared-memory metrics.
@@ -38,8 +39,6 @@ class DialogTeacher(Teacher):
 
         self.datatype = opt['datatype']
         self.startTime = time.time()
-        self.epochDone = False
-        self.lastY = None
         if not hasattr(self, 'id'):
             self.id = opt.get('task', 'teacher')
 
@@ -61,6 +60,14 @@ class DialogTeacher(Teacher):
             self.metrics = shared['metrics']
         else:
             self.metrics = Metrics(opt)
+        self.reset()
+
+    def reset(self):
+        # Reset the dialog so that it is at the start of the epoch,
+        # and all metrics are reset.
+        self.metrics.clear()
+        self.lastY = None
+        self.epochDone = False
 
     def __len__(self):
         return len(self.data)
@@ -88,9 +95,9 @@ class DialogTeacher(Teacher):
         """
         return None
 
-    # Check received text for correct answer then send new query.
-    def act(self):
-        # First process observation for metrics.
+    def observe(self, observation):
+        """Store observation and process for metrics. """
+        self.observation = observation
         if self.lastY is not None:
             obs = self.observation if hasattr(self, 'observation') else {}
             loss = self.metrics.update(
@@ -98,7 +105,8 @@ class DialogTeacher(Teacher):
             self.lastY = None
             self.lastLabelCandidates = None
 
-        # Then build reply.
+    def act(self):
+        """Send new dialog message. """
         action, self.epochDone = next(self.data)
         action['id'] = self.getID()
         self.lastY = action.get('labels', None)

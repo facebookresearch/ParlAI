@@ -6,16 +6,15 @@
 import json
 import random
 from parlai.core.agents import Teacher
-from parlai.core.dialog import DialogTeacher
+from parlai.core.dialog_teacher import DialogTeacher
 from .build import build
 
 
 class HandwrittenTeacher(Teacher):
-    """
-    Hand-written SQuAD teacher, which loads the json squad data and implements
-    its own `act()` method for interacting with student agent, rather than
-    inheriting from the core Dialog Teacher. This code is here as an example of
-    rolling your own without inheritance.
+    """Hand-written SQuAD teacher, which loads the json squad data and
+    implements its own `act()` method for interacting with student agent, rather
+    than inheriting from the core Dialog Teacher. This code is here as an
+    example of rolling your own without inheritance.
     """
 
     def __init__(self, opt, shared=None):
@@ -76,8 +75,7 @@ class HandwrittenTeacher(Teacher):
 
 
 class DefaultTeacher(DialogTeacher):
-    """
-    This version of SQuAD inherits from the core Dialog Teacher, which just
+    """This version of SQuAD inherits from the core Dialog Teacher, which just
     requires it to define an iterator over its data `setup_data` in order to
     inherit basic metrics, a default `act` function, and enables
     Hogwild training with shared memory with no extra work.

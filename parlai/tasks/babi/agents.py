@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 import copy
 
-from parlai.core.fbdialog import FbDialogTeacher
+from parlai.core.fbdialog_teacher import FbDialogTeacher
 from parlai.core.agents import MultiTaskTeacher
 from .build import build
 
@@ -33,7 +33,7 @@ class Task1kTeacher(FbDialogTeacher):
 # Single bAbI task (10k training).
 class Task10kTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
-        task = opt.get('task', 'babi:Task-10k:1')
+        task = opt.get('task', 'babi:Task10k:1')
         opt['datafile'] = _path('-10k', task.split(':')[2], opt)
         opt['cands_datafile'] = _path('', task.split(':')[2], opt, 'train')
         super().__init__(opt, shared)
