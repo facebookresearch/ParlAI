@@ -36,6 +36,7 @@ class MTurkHITInfo(Base):
     hit_id = Column(String(255))
     worker_id = Column(String(255))
     is_sandbox = Column(Boolean())
+    approval_status = Column(String(100), index=True)
     
  
 def init_database(host, db_name, username, password):
@@ -164,7 +165,8 @@ def set_hit_info(db_session, task_group_id, conversation_id, assignment_id, hit_
             assignment_id=assignment_id, 
             hit_id=hit_id, 
             worker_id=worker_id,
-            is_sandbox=is_sandbox
+            is_sandbox=is_sandbox,
+            approval_status='pending'
         )
         db_session.add(new_hit_info_object)
         db_session.commit()
@@ -181,3 +183,8 @@ def get_hit_info(db_session, task_group_id, conversation_id):
     existing_object = db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.conversation_id==conversation_id).first()
     return existing_object
 
+def get_pending_approval_count(db_session, task_group_id):
+    return db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.approval_status=='pending').count()
+
+def get_all_approval_status(db_session, task_group_id):
+    return db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).order_by(MTurkHITInfo.conversation_id).all()

@@ -222,8 +222,12 @@ def approval(event, context):
 
                 if action == 'approve':
                     client.approve_assignment(AssignmentId=assignment_id)
+                    hit_info.approval_status = 'approved'
                 elif action == 'reject':
                     client.reject_assignment(AssignmentId=assignment_id, RequesterFeedback='')
+                    hit_info.approval_status = 'rejected'
+                db_session.add(hit_info)
+                db_session.commit()
 
         except KeyError:
             raise Exception('400')

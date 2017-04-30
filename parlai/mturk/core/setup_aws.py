@@ -133,7 +133,7 @@ def setup_rds():
     status = db_instance['DBInstanceStatus']
 
     if status not in ['available', 'backing-up']:
-        print("RDS: Waiting for DB status to change to available. This might take a couple minutes...")
+        print("RDS: Waiting for newly created database to be available. This might take a couple minutes...")
 
     while status not in ['available', 'backing-up']:
         time.sleep(5)

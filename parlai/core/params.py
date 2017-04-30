@@ -43,6 +43,14 @@ class ParlaiParser(object):
             '-dp', '--datapath', default=default_data_path,
             help='path to datasets, defaults to {parlai_dir}/data')
 
+    def add_mturk_log_path(self):
+        parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
+                      os.path.realpath(__file__)))))
+        default_log_path = parlai_dir + '/logs/mturk/'
+        self.parser.add_argument(
+            '--mturk-log-path', default=default_log_path,
+            help='path to mturk logs, defaults to {parlai_dir}/mturk/logs')
+
     def add_parlai_args(self):
         parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
                       os.path.realpath(__file__)))))
