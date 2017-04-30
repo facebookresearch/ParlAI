@@ -188,4 +188,4 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=No
     with open(task_group_path+'rejected.json', 'w') as file:
         file.write(json.dumps(logs_rejected))
 
-    print("All conversations are are saved to "+opt['mturk_log_path']+" in JSON format.\n")
+    print("All conversations are saved to "+opt['mturk_log_path']+" in JSON format.\n")
