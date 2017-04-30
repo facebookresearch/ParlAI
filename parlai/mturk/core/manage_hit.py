@@ -38,13 +38,14 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=No
     print("")
 
     setup_aws_credentials()
+    if not hit_reward:
+        hit_reward = task_config['hit_reward']
     if not check_mturk_balance(num_hits=num_hits, hit_reward=hit_reward, is_sandbox=is_sandbox):
         return
 
     task_group_timestamp = str(int(time.time()))
     task_group_id = task_group_timestamp + '_' + _get_random_alphanumeric_string(10) # Random string to further avoid collision
-    if not hit_reward:
-        hit_reward = task_config['hit_reward']
+
     print('Setting up MTurk backend...')
     db_session, mturk_chat_url_template, mturk_approval_url_template = setup_relay(task_config, num_hits, is_sandbox)
 
