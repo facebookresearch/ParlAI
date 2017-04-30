@@ -22,7 +22,7 @@ manage_hit.create_hits(
 	task_config=task_config,
 	bot=Agent(opt=argparser.parse_args()), 
 	num_hits=2,
+	hit_reward=0.05, # in US dollars
 	is_sandbox=True,
-	chat_page_only=False,
 	verbose=True
 )
