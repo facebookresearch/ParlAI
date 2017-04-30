@@ -91,7 +91,7 @@
     // UI related
     $(window).resize(function() {
         $("input#id_text_input").width($("div#right-bottom-pane").width() - 210);
-        $("div#right-top-pane").height($("div#left-pane").height() - $("div#right-bottom-pane").outerHeight() - 35);
+        $("div#right-top-pane").height($("div#left-pane").height() - $("div#right-bottom-pane").outerHeight() - 20);
         $("div#reward-buttons-group").css("margin-left")
         $("div#approval-buttons-group").css("margin-left")
     });
@@ -256,6 +256,7 @@
             var message_id = parseInt(message['message_id']);
             var message_text = message['text'].replace(/(?:\r\n|\r|\n)/g, '<br />');
             var reward = null;
+            var received_message_from_other_agents = false;
             if ('reward' in message) {
                 reward = message['reward']
             }
@@ -269,6 +270,7 @@
                             </div>
                         </div>
                     `);
+                    received_message_from_other_agents = true;
                 } else {
                     if (reward) {
                         var reward_text = reward;
@@ -297,8 +299,10 @@
         }
         if (new_messages.length > 0) {
             $("div#message_thread").css("display", "");
-            $("div#response-type-text-input").css("display", "");
             scroll_conversation_to_bottom();
+        }
+        if (received_message_from_other_agents) {
+            $("div#response-type-text-input").css("display", "");
         }
     }
 
@@ -335,24 +339,26 @@
 
     $("button#id_send_msg_button").click(function () {
         var msg = $("input#id_text_input").val();
-        send_message(msg, done_after_responding, function(data){
-            $("input#id_text_input").val("");
-            $("div#response-type-text-input").css("display", "none");
-            data = JSON.parse(data);
-            // Update last message id for this agent
-            var message_id = parseInt(data["message_id"]);
-            if (message_id > last_message_id) {
-                last_message_id = message_id;
-            }
-            var new_messages = [];
-            new_messages.push(data);
-            show_new_messages_on_UI(new_messages);
-            if (done_after_responding) {
-                update_for_response_type('done');
-            } else {
-                check_done(new_messages);
-            }
-        });
+        if (!(msg == '')) {
+            send_message(msg, done_after_responding, function(data){
+                $("input#id_text_input").val("");
+                $("div#response-type-text-input").css("display", "none");
+                data = JSON.parse(data);
+                // Update last message id for this agent
+                var message_id = parseInt(data["message_id"]);
+                if (message_id > last_message_id) {
+                    last_message_id = message_id;
+                }
+                var new_messages = [];
+                new_messages.push(data);
+                show_new_messages_on_UI(new_messages);
+                if (done_after_responding) {
+                    update_for_response_type('done');
+                } else {
+                    check_done(new_messages);
+                }
+            });
+        }
     });
 
     function construct_query_dict() {
@@ -436,7 +442,6 @@
     }
 
     $(document).ready(function() {
-        $(window).resize();
         $("form#mturk_submit_form input#assignmentId").val(get_url_parameter('assignmentId'));
         $("form#mturk_submit_form input#hitId").val(get_url_parameter('hitId'));
         $("form#mturk_submit_form input#workerId").val(get_url_parameter('workerId'));
@@ -445,6 +450,7 @@
         update_for_response_type('text_input');
         if (is_approval_page) {
             self_display_name = 'Worker';
+            $("div#left-pane").css("min-height", $(window).height());
         }
         if (is_cover_page) {
             $("div#left-pane").removeClass('col-xs-4');
@@ -454,6 +460,7 @@
             $("div#left-pane").addClass('col-xs-4');
             worker();
         }
+        $(window).resize();
     });
 </script>
 </body>

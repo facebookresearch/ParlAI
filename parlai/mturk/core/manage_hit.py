@@ -9,7 +9,7 @@ import random
 import string
 import webbrowser
 from parlai.core.agents import create_agent_from_shared
-from .setup_aws import rds_db_name, rds_username, rds_password, setup_aws, create_hit_type, create_hit_with_hit_type
+from .setup_aws import rds_db_name, rds_username, rds_password, setup_aws, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials
 from .data_model import Message, init_database, send_new_message, get_new_messages
 
 
@@ -18,7 +18,7 @@ def _get_random_alphanumeric_string(N):
 
 
 def setup_relay(task_config, num_hits):
-    """Sets up relay server and returns a database session object which can poll
+    """Sets up relay server and returns a database session object which can be used to poll
     new messages and send messages
     """
     # set up relay server
@@ -30,8 +30,14 @@ def setup_relay(task_config, num_hits):
     return db_session, mturk_chat_url_template, mturk_approval_url_template
 
 
-def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose):
+def create_hits(task_config, bot, num_hits, hit_reward=None, is_sandbox=False, chat_page_only=False, verbose=False):
+    setup_aws_credentials()
+    if not check_mturk_balance(num_hits=num_hits, hit_reward=hit_reward, is_sandbox=is_sandbox):
+        return
+
     task_group_id = str(int(time.time())) + '_' + _get_random_alphanumeric_string(10) # Random string to further avoid collision
+    if not hit_reward:
+        hit_reward = task_config['hit_reward']
     print('Setting up MTurk backend...')
     db_session, mturk_chat_url_template, mturk_approval_url_template = setup_relay(task_config, num_hits)
 
@@ -40,11 +46,13 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
     cids = range(1, num_hits+1)
     cid_map = {cid: i for i, cid in enumerate(cids)}
     c_done_map = {cid: False for cid in cids}
-
-    last_message_id = -1
+    logs = {cid: [] for cid in cids}
 
     shared = bot.share()
     bots = []
+    last_message_id = -1
+
+    # If the bot needs to send the first message of the conversation, it will send it here
     for cid in cids:
         new_bot = create_agent_from_shared(shared)
         new_bot.conversation_id = cid
@@ -69,7 +77,8 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
 
     hits_created = False
     conversations_remaining = set(cids)
-    
+
+    # Main loop for polling and handling new messages
     while len(conversations_remaining) > 0:
         conversation_dict, new_last_message_id = get_new_messages(
             db_session=db_session, 
@@ -87,9 +96,9 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
             if conversation_id in conversations_remaining and len(new_messages) > 0:
                 agent = bots[cid_map[conversation_id]]
                 for new_message in new_messages:
-                    # observe could be in the else block?
                     if verbose:
                         print('Bot ' + str(conversation_id) + ' received: ' + str(new_message))
+                    logs[conversation_id].append(new_message)
                     agent.observe(new_message)
                     if new_message.get('episode_done', False) or c_done_map[conversation_id]:
                         # We're done here
@@ -97,12 +106,13 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
                         print('Conversation '+str(conversation_id)+' is DONE!')
                     else:
                         # Agent still needs to reply
-                        response = agent.act()  # Assuming agent returns None if it's still expecting more messages
+                        response = agent.act()
                         if response:
                             if response.get('episode_done', False):
                                 c_done_map[conversation_id] = True
                             if verbose:
                                 print('Bot ' + str(conversation_id) + ' says: ' + str(response))
+                            logs[conversation_id].append(response)
                             send_new_message(
                                 db_session=db_session, 
                                 task_group_id=task_group_id, 
@@ -113,13 +123,14 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
                                 episode_done=response.get('episode_done', False), 
                             )
 
+        # We don't create new HITs until this point, so that the HIT page will always have the conversation fully populated.
         if not hits_created:
             print('Creating HITs...')
             hit_type_id = create_hit_type(
                 hit_title=task_config['hit_title'], 
                 hit_description=task_config['hit_description'] + ' (ID: ' + task_group_id + ')', 
                 hit_keywords=task_config['hit_keywords'], 
-                hit_reward=task_config['hit_reward'], 
+                hit_reward=hit_reward, 
                 is_sandbox=is_sandbox
             )
             mturk_chat_url = None
@@ -133,7 +144,8 @@ def create_hits(task_config, bot, num_hits, is_sandbox, chat_page_only, verbose)
                         is_sandbox=True
                     )
 
-            print("MTurk setup done. Waiting for Turkers to complete the tasks... (Please don't close your laptop or put your computer into sleep mode.)")
+            print("MTurk setup done.")
+            print("Waiting for Turkers to complete the tasks... (Please don't close your laptop or put your computer into sleep mode.)")
             if chat_page_only:
                 webbrowser.open(mturk_chat_url)
             else:

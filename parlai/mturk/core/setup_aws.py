@@ -62,6 +62,7 @@ def setup_aws_credentials():
         print("AWS credentials successfully saved in "+aws_credentials_file_path+" file.")
     os.environ["AWS_PROFILE"] = aws_profile_name
 
+def get_requester_key():
     # Compute requester key
     session = boto3.Session(profile_name=aws_profile_name)
     hash_gen = hashlib.sha512()
@@ -742,6 +743,29 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
     approval_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_approval
     return index_api_endpoint_url, approval_api_endpoint_url
 
+def check_mturk_balance(num_hits, hit_reward, is_sandbox):
+    client = boto3.client(
+        service_name = 'mturk', 
+        region_name = 'us-east-1',
+        endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+    )
+
+    # Region is always us-east-1
+    if not is_sandbox:
+        client = boto3.client(service_name = 'mturk', region_name='us-east-1')
+
+    # Test that you can connect to the API by checking your account balance
+    # In Sandbox this always returns $10,000
+    user_balance = float(client.get_account_balance()['AvailableBalance'])
+    
+    balance_needed = num_hits * hit_reward * 1.2
+
+    if user_balance < balance_needed:
+        print("You might not have enough money in your MTurk account. Please increase your balance to at least $"+f'{balance_needed:.2f}'+" and try again.")
+        return False
+    else:
+        return True
+
 def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_sandbox):
     client = boto3.client(
         service_name = 'mturk', 
@@ -923,7 +947,7 @@ def setup_aws(task_config, num_hits, is_sandbox=True):
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
     if not is_sandbox:
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
-    requester_key_gt = setup_aws_credentials()
+    requester_key_gt = get_requester_key()
     rds_host = setup_rds()
     index_api_endpoint_url, approval_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt)
 
