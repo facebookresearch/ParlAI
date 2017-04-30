@@ -760,7 +760,7 @@ def check_mturk_balance(num_hits, hit_reward, is_sandbox):
         user_balance = float(client.get_account_balance()['AvailableBalance'])
     except ClientError as e:
         if e.response['Error']['Code'] == 'RequestError':
-            print('ERROR: To use the MTurk API, you will need an Amazon Web Services (AWS) Account. Your AWS account must be linked to your Amazon Mechanical Turk Account. Visit https://requestersandbox.mturk.com/developer to get started. (Note: if you have linked your account, please wait for a couple minutes and then try again.)\n')
+            print('ERROR: To use the MTurk API, you will need an Amazon Web Services (AWS) Account. Your AWS account must be linked to your Amazon Mechanical Turk Account. Visit https://requestersandbox.mturk.com/developer to get started. (Note: if you have recently linked your account, please wait for a couple minutes before trying again.)\n')
             quit()
         else:
             raise
