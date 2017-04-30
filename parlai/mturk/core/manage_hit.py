@@ -19,12 +19,12 @@ def _get_random_alphanumeric_string(N):
     return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(N))
 
 
-def setup_relay(task_config, num_hits):
+def setup_relay(task_config, num_hits, is_sandbox):
     """Sets up relay server and returns a database session object which can be used to poll
     new messages and send messages
     """
     # set up relay server
-    rds_host, mturk_chat_url_template, mturk_approval_url_template = setup_aws(task_config, num_hits)
+    rds_host, mturk_chat_url_template, mturk_approval_url_template = setup_aws(task_config, num_hits, is_sandbox)
 
     db_engine, db_session_maker = init_database(rds_host, rds_db_name, rds_username, rds_password)
     db_session = db_session_maker()
@@ -33,6 +33,10 @@ def setup_relay(task_config, num_hits):
 
 
 def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=None, is_sandbox=False, chat_page_only=False, verbose=False):
+    print("\nYou are going to allow workers from Amazon Mechanical Turk to chat with your dialog model running on your local machine.\nDuring this process, Internet connection has to be maintained, and you cannot close your laptop or put your computer into sleep or standby mode.\n")
+    key_input = input("Please press Enter to continue:")
+    print("")
+
     setup_aws_credentials()
     if not check_mturk_balance(num_hits=num_hits, hit_reward=hit_reward, is_sandbox=is_sandbox):
         return
@@ -42,7 +46,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=No
     if not hit_reward:
         hit_reward = task_config['hit_reward']
     print('Setting up MTurk backend...')
-    db_session, mturk_chat_url_template, mturk_approval_url_template = setup_relay(task_config, num_hits)
+    db_session, mturk_chat_url_template, mturk_approval_url_template = setup_relay(task_config, num_hits, is_sandbox)
 
     worker_agent_id = task_config['worker_agent_id']   
     bot_agent_id = bot.getID() 
@@ -145,7 +149,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=No
                     mturk_page_url = create_hit_with_hit_type(
                         page_url=mturk_chat_url, 
                         hit_type_id=hit_type_id, 
-                        is_sandbox=True
+                        is_sandbox=is_sandbox
                     )
 
             print("MTurk setup done.")

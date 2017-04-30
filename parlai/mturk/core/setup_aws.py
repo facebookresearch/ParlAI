@@ -810,7 +810,7 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_san
     hit_type_id = response['HITTypeId']
     return hit_type_id
 
-def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox=True):
+def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox):
     page_url = page_url.replace('&', '&amp;')
 
     frame_height = 650
@@ -899,6 +899,8 @@ def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox=True):
     hit_type_id = response['HIT']['HITTypeId']
     hit_id = response['HIT']['HITId']
     hit_link = "https://workersandbox.mturk.com/mturk/preview?groupId=" + hit_type_id
+    if not is_sandbox:
+        hit_link = "https://www.mturk.com/mturk/preview?groupId=" + hit_type_id
     return hit_link
 
 def setup_all_dependencies(lambda_server_directory_name):
@@ -943,7 +945,7 @@ def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, f
     if verbose:
         print("Done!")
 
-def setup_aws(task_config, num_hits, is_sandbox=True):
+def setup_aws(task_config, num_hits, is_sandbox):
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
     if not is_sandbox:
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
