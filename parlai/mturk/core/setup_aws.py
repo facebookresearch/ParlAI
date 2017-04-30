@@ -40,7 +40,7 @@ def setup_aws_credentials():
     try:
         session = boto3.Session(profile_name=aws_profile_name)
     except ProfileNotFound as e:
-        print("AWS credentials not found. Please create an IAM user with AdministratorAccess permission at https://console.aws.amazon.com/iam/, and then enter the user's security credentials below:")
+        print("AWS credentials not found. Please create an IAM user with programmatic access and AdministratorAccess policy at https://console.aws.amazon.com/iam/, and then enter the user's security credentials below:")
         aws_access_key_id = input('Access Key ID: ')
         aws_secret_access_key = input('Secret Access Key: ')
         aws_credentials_file_path = '~/.aws/credentials'
@@ -59,7 +59,7 @@ def setup_aws_credentials():
             aws_credentials_file.write("["+aws_profile_name+"]\n")
             aws_credentials_file.write("aws_access_key_id="+aws_access_key_id+"\n")
             aws_credentials_file.write("aws_secret_access_key="+aws_secret_access_key+"\n")
-        print("AWS credentials successfully saved in "+aws_credentials_file_path+" file.")
+        print("AWS credentials successfully saved in "+aws_credentials_file_path+" file.\n")
     os.environ["AWS_PROFILE"] = aws_profile_name
 
 def get_requester_key():
@@ -756,7 +756,14 @@ def check_mturk_balance(num_hits, hit_reward, is_sandbox):
 
     # Test that you can connect to the API by checking your account balance
     # In Sandbox this always returns $10,000
-    user_balance = float(client.get_account_balance()['AvailableBalance'])
+    try:
+        user_balance = float(client.get_account_balance()['AvailableBalance'])
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'RequestError':
+            print('ERROR: To use the MTurk API, you will need an Amazon Web Services (AWS) Account. Your AWS account must be linked to your Amazon Mechanical Turk Account. Visit https://requestersandbox.mturk.com/developer to get started. (Note: if you have linked your account, please wait for a couple minutes and then try again.)\n')
+            quit()
+        else:
+            raise
     
     balance_needed = num_hits * hit_reward * 1.2
 

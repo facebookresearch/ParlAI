@@ -33,7 +33,7 @@ def setup_relay(task_config, num_hits, is_sandbox):
 
 
 def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=None, is_sandbox=False, chat_page_only=False, verbose=False):
-    print("\nYou are going to allow workers from Amazon Mechanical Turk to chat with your dialog model running on your local machine.\nDuring this process, Internet connection has to be maintained, and you cannot close your laptop or put your computer into sleep or standby mode.\n")
+    print("\nYou are going to allow workers from Amazon Mechanical Turk to chat with your dialog model running on your local machine.\nDuring this process, Internet connection is required, and you cannot close your laptop or put your computer into sleep or standby mode.\n")
     key_input = input("Please press Enter to continue:")
     print("")
 
@@ -153,12 +153,12 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=No
                         is_sandbox=is_sandbox
                     )
 
-            print("MTurk setup done.")
-            print("Waiting for Turkers to complete the tasks... (Please don't close your laptop or put your computer into sleep mode.)")
+            print("MTurk setup done.\n")
             if chat_page_only:
                 webbrowser.open(mturk_chat_url)
             else:
-                webbrowser.open(mturk_page_url)
+                print("MTurk HIT page: " + mturk_page_url + "\n")
+                print("Waiting for Turkers to complete the tasks... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
             hits_created = True
 
     mturk_approval_url = mturk_approval_url_template.replace('{{task_group_id}}', str(task_group_id)).replace('{{cur_agent_id}}', str(worker_agent_id))
