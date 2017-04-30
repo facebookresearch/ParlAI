@@ -49,7 +49,7 @@ class ParlaiParser(object):
         default_log_path = parlai_dir + '/logs/mturk/'
         self.parser.add_argument(
             '--mturk-log-path', default=default_log_path,
-            help='path to mturk logs, defaults to {parlai_dir}/mturk/logs')
+            help='path to mturk logs, defaults to {parlai_dir}/logs/mturk')
 
     def add_parlai_args(self):
         parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
