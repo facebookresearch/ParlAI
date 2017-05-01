@@ -7,10 +7,9 @@ task_config = {}
 task_config['hit_title'] = 'Give a rating to a dialog between two people'
 task_config['hit_description'] = 'Give a rating to a dialog between two people.'
 task_config['hit_keywords'] = 'chat,dialog,rating'
-task_config['hit_reward'] = 0.05
 
 # Task specific
-task_config['teacher_agent_id'] = 'teacher'
+task_config['teacher_agent_id'] = 'Teacher'
 task_config['worker_agent_id'] = task_config['teacher_agent_id']
 
 # Required for all tasks

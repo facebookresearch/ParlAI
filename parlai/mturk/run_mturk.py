@@ -24,7 +24,7 @@ manage_hit.create_hits(
 	task_config=task_config,
 	task_module_name=task_module_name,
 	bot=Agent(opt=argparser.parse_args()), 
-	num_hits=2,
+	num_hits=2, # Number of HITs you want to create for this task
 	hit_reward=0.05, # in US dollars
 	is_sandbox=True,
 	verbose=True

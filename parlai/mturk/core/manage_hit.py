@@ -33,14 +33,12 @@ def setup_relay(task_config, num_hits, is_sandbox):
     return db_session, mturk_chat_url_template, mturk_approval_url_template
 
 
-def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=None, is_sandbox=False, chat_page_only=False, verbose=False):
+def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, is_sandbox=False, chat_page_only=False, verbose=False):
     print("\nYou are going to allow workers from Amazon Mechanical Turk to chat with your dialog model running on your local machine.\nDuring this process, Internet connection is required, and you cannot close your laptop or put your computer into sleep or standby mode.\n")
     key_input = input("Please press Enter to continue:")
     print("")
 
     setup_aws_credentials()
-    if not hit_reward:
-        hit_reward = task_config['hit_reward']
     if not check_mturk_balance(num_hits=num_hits, hit_reward=hit_reward, is_sandbox=is_sandbox):
         return
 
@@ -160,7 +158,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=No
             if chat_page_only:
                 webbrowser.open(mturk_chat_url)
             else:
-                print("MTurk HIT page: " + mturk_page_url + "\n")
+                print("Link for your HIT: " + mturk_page_url + "\n")
                 print("Waiting for Turkers to complete the tasks... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
             hits_created = True
 
