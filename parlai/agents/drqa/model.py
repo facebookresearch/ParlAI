@@ -25,9 +25,12 @@ class DocReaderModel(object):
         self.updates = 0
 
         # Word embeddings.
-        logger.info('[ Loading pre-trained embeddings ]')
-        embeddings = load_embeddings(opt, word_dict)
-        logger.info('[ Num embeddings = %d ]' % embeddings.size(0))
+        if 'embedding_file' in opt:
+            logger.info('[ Loading pre-trained embeddings ]')
+            embeddings = load_embeddings(opt, word_dict)
+            logger.info('[ Num embeddings = %d ]' % embeddings.size(0))
+        else:
+            embeddings = None
 
         # Fine-tuning special words.
         if self.opt['tune_partial'] > 0:

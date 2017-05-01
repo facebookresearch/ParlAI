@@ -1,7 +1,6 @@
 # Copyright 2004-present Facebook. All Rights Reserved.
 import os
 import sys
-import pathlib
 import logging
 logger = logging.getLogger('DrQA')
 
@@ -11,9 +10,6 @@ def str2bool(v):
 
 
 def add_cmdline_args(parser):
-    # Parlai root directory
-    parlai_dir = pathlib.Path(__file__).parents[3].as_posix()
-
     # Runtime environment
     parser.add_argument('--no_cuda', type='bool', default=False)
     parser.add_argument('--gpu', type=int, default=-1)
@@ -22,8 +18,7 @@ def add_cmdline_args(parser):
     # Basics
     parser.add_argument('--model_file', type=str, default=None,
                         help='Path where best valid models are saved')
-    parser.add_argument('--embedding_file', type=str,
-                        default=parlai_dir + '/data/GloVe/glove.840B.300d.txt',
+    parser.add_argument('--embedding_file', type=str, default=None,
                         help='File of space separated embeddings: w e1 ... ed')
     parser.add_argument('--pretrained_model', type=str, default=None,
                         help='Load dict/features/weights/opts from this file')
@@ -85,12 +80,10 @@ def add_cmdline_args(parser):
 
 
 def set_defaults(opt):
-    # Check critical files exist
-    if not os.path.isfile(opt['embedding_file']):
-        raise IOError('No such file: %s' % args.embedding_file)
-
     # Embeddings options
     if 'embedding_file' in opt:
+        if not os.path.isfile(opt['embedding_file']):
+            raise IOError('No such file: %s' % args.embedding_file)
         with open(opt['embedding_file']) as f:
             dim = len(f.readline().strip().split(' ')) - 1
         if 'embedding_dim' in opt and opt['embedding_dim'] != dim:

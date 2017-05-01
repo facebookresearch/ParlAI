@@ -484,7 +484,7 @@ class BatchWorld(World):
         return False
 
     def report(self):
-        return self.world.report()
+        return self.worlds[0].report()
 
 
 class HogwildProcess(Process):
