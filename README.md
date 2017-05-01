@@ -26,7 +26,7 @@ End goal is general dialogue, which includes many different skills
 - reduce overfitting of models to specific datasets         
 
 End goal is real dialogue with people
-- train and evaluate on live dialogue with humans via MTurk
+- train and evaluate on live dialogue with humans via Mechanical Turk
 - easy setup for connecting turkers with your dialogue agent
 - allow to compare different research groups turk experiments
 
@@ -53,17 +53,17 @@ The main concepts (classes) in ParlAI:
 
 After defining a world, and the agents in it, a main loop can be run for training, testing or displaying which calls the function world.parley(). The skeleton of an example main is given in the left panel, and the actual code for parley() on the right.
 
-<p align=center><img width="100%" src="docs/source/\_static/img/main.png" /></p>
+<p align=center><img width="100%" src="docs/source/_static/img/main.png" /></p>
 
 
 ## Actions and Observations
 
 All agents (including teachers) speak to each other with a single format -- the observation/action object (a python dict).
 This is used to pass text, labels and rewards between agents.
-It’s the same object type when talking (acting) or listening (observing), but a different view (with different values in the fields).
+It’s the same object type when talking (acting) or listening (observing), but a different view (with different values in the fields). 
 The fields are as follows:
 
-<p align=center><img width="33%" src="docs/source/\_static/img/act-obs-dict.png" /></p>
+<p align=center><img width="33%" src="docs/source/_static/img/act-obs-dict.png" /></p>
 
 
 Each of these fields are technically optional, depending on your dataset, though the 'text' field will most likely be used in nearly all exchanges.
@@ -103,6 +103,7 @@ The code is set up into several main directories:
 - **agents**: contains agents which can interact with the different tasks (e.g. machine learning models)
 - **examples**: contains a few basic examples of different loops (building dictionary, train/eval, displaying data)
 - **tasks**: contains code for the different tasks available from within ParlAI
+- **mturk**: contains code for setting up Mechanical Turk, as well as two sample MTurk tasks (QA data collection and dialog model evaluation)
 
 Each directory is described in more detail below, ordered by dependencies.
 
@@ -137,7 +138,7 @@ The core library contains the following files:
 ### Agents
 
 The agents directory contains agents that have been approved into the ParlAI framework for shared use.
-Currently availabe within this directory:
+Currently available within this directory:
 
 - **drqa**: an attentive LSTM model DrQA (https://arxiv.org/abs/1704.00051) implemented in PyTorch that has competitive results on the SQuAD dataset amongst others.
 - **memnn**: code for an end-to-end memory network in Lua Torch
@@ -154,17 +155,17 @@ This directory contains a few particular examples of basic loops.
 - eval_model.py: _uses agent.repeat_label to compute evaluation metrics data for a particular task provided on the command-line_
 - build_dict.py: _build a dictionary from a particular task provided on the command-line using core.dict.DictionaryAgent_
 - memnn_luatorch_cpu: _shows a few examples of training an end-to-end memory network on a few datasets_
-- drqa: _shows how to train the attentive LSTM DrQA model of <a href="https://arxiv.org/abs/1704.00051">Chen et al.</a> on SQuAD._
+- drqa: _shows how to train the attentive LSTM DrQA model of <a href="https://arxiv.org/abs/1704.00051">Chen et al.</a> on SQuAD.
 
 ### Tasks
 
 
-Over 20 tasks are supported in the first release, including popular datasets such as
+Over 20 tasks are supported in the first release, including popular datasets such as 
 SQuAD, bAbI tasks, MCTest, WikiQA, WebQuestions, SimpleQuestions, WikiMovies, QACNN, QADailyMail, CBT, BookTest, bAbI Dialog tasks,
 Ubuntu, OpenSubtitles, Cornell Movie and VQA-COCO2014.
 
 Our first release includes the following datasets (shown in the left panel), and accessing one of them is as simple as specifying the name of the task as a command line option, as shown in the dataset display utility (right panel):
-<p align=center><img width="100%" src="docs/source/\_static/img/tasks.png" /></p>
+<p align=center><img width="100%" src="docs/source/_static/img/tasks.png" /></p>
 
 See <a href="https://github.com/fairinternal/ParlAI/tree/master/parlai/tasks/tasks.json">here</a> for the current complete task list.
 
@@ -184,5 +185,30 @@ To add your own task:
         - if your data is text-based, you can use extend DialogTeacher and thus core.data.TextData, in which case you just need to write your own setup_data function which provides an iterable over the data according to the format described in core.data
         - if your data uses other fields, write your own act() method which provides observations from your task each time it's called
 
-## License
-ParlAI is BSD-licensed. We also provide an additional patent grant.
+### MTurk
+
+The mturk library contains the following directories and files:
+
+- **core**: this directory contains the core code for setting up AWS backend that supports the MTurk chat interface, and code for HIT creation and approval.
+- **tasks**: this directory contains two sample MTurk tasks that are provided in the first release.
+  - **_qa\_data\_collection_**: get questions and answers from turkers, given a random paragraph from SQuAD.
+  - **_model\_evaluator_**: evaluate the information retrieval baseline model on the Reddit movie dialog dataset.
+- **run_mturk.py**: file for calling mturk core code with user-specified task module, dialog model agent, number of HITs, and reward for each HIT.
+
+To run sample MTurk task and agent:
+- In __run\_mturk.py__, uncomment the task module and the agent class you want to use
+- For `create_hits` method, change `num_hits` and `hit_reward` if needed. Set `is_sandbox` to `True` if you want to run the sample in MTurk sandbox only, or set it to `False` to allow turkers to work on it and potentially get paid for it.
+- Run `python run_mturk.py`
+
+To add your own MTurk task and dialog model:
+- create a new folder within the mturk/tasks directory for your new task
+- implement __task\_config.py__, with at least the following fields in the task_config dictionary:
+  - `hit_title`: a short and descriptive title about the kind of task the HIT contains. On the Amazon Mechanical Turk web site, the HIT title appears in search results, and everywhere the HIT is mentioned.
+  - `hit_description`: a description includes detailed information about the kind of task the HIT contains. On the Amazon Mechanical Turk web site, the HIT description appears in the expanded view of search results, and in the HIT and assignment screens.
+  - `hit_keywords`: one or more words or phrases that describe the HIT, separated by commas. On MTurk website, these words are used in searches to find HITs.
+  - `worker_agent_id`: a short name indicating the turker's role in the conversation.
+  - `task_description`: a detailed task description that will be shown on the HIT task preview page and on the left side of the chat page. Supports HTML formatting.
+- implement __agents.py__, with at least an agent class that extends from Agent
+  - write your own `__init__()` method that wraps your dialog model agent. (Please see mturk/tasks/model_evaluator/agents.py file for a concrete example.)
+  - write your own `act()` method that returns your dialog model's response as well as helpful text to the turker for what action they should take next.
+- import your task module and agent class in __run\_mturk.py__ file, and then run `python run_mturk.py`.

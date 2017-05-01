@@ -4,16 +4,16 @@
 task_config = {}
 
 # MTurk config related
-task_config['hit_title'] = 'Chat with a fellow Turker about a paragraph'
-task_config['hit_description'] = 'Ask and answer a question about a paragraph with a fellow Turker.'
-task_config['hit_keywords'] = 'chat,question,answer'
-task_config['hit_reward'] = 0.05
+task_config['hit_title'] = 'Give a rating to a dialog between two people'
+task_config['hit_description'] = 'Give a rating to a dialog between two people.'
+task_config['hit_keywords'] = 'chat,dialog,rating'
 
 # Task specific
-task_config['teacher_agent_id'] = 'teacher'
+task_config['teacher_agent_id'] = 'Teacher'
 task_config['worker_agent_id'] = task_config['teacher_agent_id']
 
 # Required for all tasks
+# Task description shown on the left side of the HIT chat page
 task_config['task_description'] = \
 '''\'\'\'
 In this task, you are going to read a dialog between two people, and you will need to give a rating on how good the response is.<br><br>
