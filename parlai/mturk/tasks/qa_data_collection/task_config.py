@@ -14,6 +14,7 @@ task_config['teacher_agent_id'] = 'teacher'
 task_config['worker_agent_id'] = task_config['teacher_agent_id']
 
 # Required for all tasks
+# Task description shown on the left side of the HIT chat page
 task_config['task_description'] = \
 '''\'\'\'
 In this task, you will need to ask a question about a paragraph, and then provide your own answer to it.<br><br>
