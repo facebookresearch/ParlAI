@@ -16,7 +16,7 @@ def check(opt, reply):
 def check_no_labels(opt, reply):
     assert reply
     assert reply.get('text')
-    assert 'done' in reply
+    assert 'episode_done' in reply
 
 class TestData(unittest.TestCase):
     """Test access to different datasets."""
