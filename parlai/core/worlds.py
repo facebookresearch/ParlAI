@@ -90,6 +90,9 @@ class World(object):
         shared_agents = [a.share() for a in self.agents]
         return shared_agents
 
+    def get_agents(self):
+        return self.agents
+
     def __enter__(self):
         """Empty enter provided for use with `with` statement.
         e.g:
@@ -293,7 +296,7 @@ class MultiWorld(World):
     that world represents.
     """
 
-    def __init__(self, opt, agents):
+    def __init__(self, opt, agents=None, shared=None):
         super().__init__(opt)
         self.worlds = []
         for k in opt['task'].split(','):
@@ -322,6 +325,15 @@ class MultiWorld(World):
             for _ind, t in enumerate(self.worlds):
                 self.len += len(t)
         return self.len
+
+    def get_agents(self):
+        return self.worlds[self.world_idx].agents
+
+    def _share_agents(self):
+        if len(self.worlds) == 0:
+            return None
+        shared_agents = [ w._share_agents() for w in self.worlds]
+        return shared_agents
 
     def epoch_done(self):
         for t in self.worlds:
@@ -411,6 +423,10 @@ class BatchWorld(World):
     def __init__(self, opt, world):
         self.opt = opt
         self.random = opt.get('datatype', None) == 'train'
+        if not self.random:
+            raise NotImplementedError(
+                'Ordered data not implemented yet in batch mode.')
+
         self.world = world
         shared = world.share()
         self.worlds = []
