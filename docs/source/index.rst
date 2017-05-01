@@ -1,3 +1,10 @@
+..
+  Copyright (c) 2017-present, Facebook, Inc.
+  All rights reserved.
+  This source code is licensed under the BSD-style license found in the
+  LICENSE file in the root directory of this source tree. An additional grant
+  of patent rights can be found in the PATENTS file in the same directory.
+
 .. ParlAI documentation master file, created by
    sphinx-quickstart on Wed Apr 19 15:46:54 2017.
    You can adapt this file completely to your liking, but it should at least

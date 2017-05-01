@@ -53,17 +53,17 @@ The main concepts (classes) in ParlAI:
 
 After defining a world, and the agents in it, a main loop can be run for training, testing or displaying which calls the function world.parley(). The skeleton of an example main is given in the left panel, and the actual code for parley() on the right.
 
-<p align=center><img width="100%" src="docs/source/_static/img/main.png" /></p>
+<p align=center><img width="100%" src="docs/source/\_static/img/main.png" /></p>
 
 
 ## Actions and Observations
 
 All agents (including teachers) speak to each other with a single format -- the observation/action object (a python dict).
 This is used to pass text, labels and rewards between agents.
-It’s the same object type when talking (acting) or listening (observing), but a different view (with different values in the fields). 
+It’s the same object type when talking (acting) or listening (observing), but a different view (with different values in the fields).
 The fields are as follows:
 
-<p align=center><img width="33%" src="docs/source/_static/img/act-obs-dict.png" /></p>
+<p align=center><img width="33%" src="docs/source/\_static/img/act-obs-dict.png" /></p>
 
 
 Each of these fields are technically optional, depending on your dataset, though the 'text' field will most likely be used in nearly all exchanges.
@@ -154,17 +154,17 @@ This directory contains a few particular examples of basic loops.
 - eval_model.py: _uses agent.repeat_label to compute evaluation metrics data for a particular task provided on the command-line_
 - build_dict.py: _build a dictionary from a particular task provided on the command-line using core.dict.DictionaryAgent_
 - memnn_luatorch_cpu: _shows a few examples of training an end-to-end memory network on a few datasets_
-- drqa: _shows how to train the attentive LSTM DrQA model of <a href="https://arxiv.org/abs/1704.00051">Chen et al.</a> on SQuAD.
+- drqa: _shows how to train the attentive LSTM DrQA model of <a href="https://arxiv.org/abs/1704.00051">Chen et al.</a> on SQuAD._
 
 ### Tasks
 
 
-Over 20 tasks are supported in the first release, including popular datasets such as 
+Over 20 tasks are supported in the first release, including popular datasets such as
 SQuAD, bAbI tasks, MCTest, WikiQA, WebQuestions, SimpleQuestions, WikiMovies, QACNN, QADailyMail, CBT, BookTest, bAbI Dialog tasks,
 Ubuntu, OpenSubtitles, Cornell Movie and VQA-COCO2014.
 
 Our first release includes the following datasets (shown in the left panel), and accessing one of them is as simple as specifying the name of the task as a command line option, as shown in the dataset display utility (right panel):
-<p align=center><img width="100%" src="docs/source/_static/img/tasks.png" /></p>
+<p align=center><img width="100%" src="docs/source/\_static/img/tasks.png" /></p>
 
 See <a href="https://github.com/fairinternal/ParlAI/tree/master/parlai/tasks/tasks.json">here</a> for the current complete task list.
 
@@ -183,3 +183,6 @@ To add your own task:
     - if not...
         - if your data is text-based, you can use extend DialogTeacher and thus core.data.TextData, in which case you just need to write your own setup_data function which provides an iterable over the data according to the format described in core.data
         - if your data uses other fields, write your own act() method which provides observations from your task each time it's called
+
+## License
+ParlAI is BSD-licensed. We also provide an additional patent grant.

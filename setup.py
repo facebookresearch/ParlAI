@@ -17,7 +17,7 @@ setup(
     version='0.1.0',
     description='Unified API for accessing dialog datasets.',
     long_description=readme,
-    url='https://github.com/facebook/ParlAI',
+    url='http://parl.ai/',
     license=license,
     packages=find_packages(exclude=(
         'data', 'docs', 'downloads', 'examples', 'tests')),
