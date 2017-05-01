@@ -1,4 +1,11 @@
 <html>
+<!--
+Copyright (c) 2017-present, Facebook, Inc.
+All rights reserved.
+This source code is licensed under the BSD-style license found in the
+LICENSE file in the root directory of this source tree. An additional grant
+of patent rights can be found in the PATENTS file in the same directory.
+-->
 <head>
 <title>MTurk Chat</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -185,7 +192,7 @@
     });
 
     $("button#negative-reward-button").click(function() {
-        send_binary_reward_and_update_UI(false);    
+        send_binary_reward_and_update_UI(false);
     });
 
     function send_approval_and_update_UI(action) {
@@ -248,7 +255,7 @@
     var messages_shown = {};
     var done_after_responding = false;
     var self_display_name = 'You';
-    
+
     function show_new_messages_on_UI(new_messages) {
         for (var i = 0; i < new_messages.length; i++) {
             var message = new_messages[i];
@@ -260,7 +267,7 @@
             if ('reward' in message) {
                 reward = message['reward']
             }
-            
+
             if (!(message_id in messages_shown)) {
                 if (agent_id != cur_agent_id) {
                     $('div#message_thread').append(`
@@ -375,7 +382,7 @@
     // background worker that gets new messages from relay server periodically
     function worker() {
       $.ajax({
-        url: '/prod/parlai_relay_server_message', 
+        url: '/prod/parlai_relay_server_message',
         data: construct_query_dict(),
         success: function(data) {
             if (verbose_log) console.log(data);
@@ -409,7 +416,7 @@
             $("div#response-type-binary-reward").css("display", "");
         } else if (response_type == 'done') {
             $("div#response-type-done").css("display", "");
-        } 
+        }
         $(window).resize();
     }
 
@@ -466,4 +473,3 @@
 </script>
 </body>
 </html>
-    

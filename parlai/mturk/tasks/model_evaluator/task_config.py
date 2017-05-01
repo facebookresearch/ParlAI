@@ -1,5 +1,8 @@
-# Copyright 2004-present Facebook. All Rights Reserved.
-# Task config for MTurk task
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 
 task_config = {}
 
@@ -13,7 +16,7 @@ task_config['teacher_agent_id'] = 'Teacher'
 task_config['worker_agent_id'] = task_config['teacher_agent_id']
 
 # Required for all tasks
-# Task description shown on the left side of the HIT chat page
+# Task description shown on the HIT task preview page and the left side of the HIT chat page
 task_config['task_description'] = \
 '''\'\'\'
 In this task, you are going to read a dialog between two people, and you will need to give a rating on how good the response is.<br><br>
