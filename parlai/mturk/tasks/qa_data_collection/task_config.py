@@ -7,10 +7,9 @@ task_config = {}
 task_config['hit_title'] = 'Ask and answer a question about a paragraph'
 task_config['hit_description'] = 'Ask and answer a question about a paragraph.'
 task_config['hit_keywords'] = 'chat,question,answer'
-task_config['hit_reward'] = 0.05
 
 # Task specific
-task_config['teacher_agent_id'] = 'teacher'
+task_config['teacher_agent_id'] = 'Teacher'
 task_config['worker_agent_id'] = task_config['teacher_agent_id']
 
 # Required for all tasks
