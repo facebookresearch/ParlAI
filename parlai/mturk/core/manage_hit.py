@@ -1,11 +1,12 @@
-# Copyright 2004-present Facebook. All Rights Reserved.
-"""Contains basic functionality for setting up a simple MTurk bot evaluation.
-In this example, a bot will be paired with a human, given the default
-instructions and opening message, and then will chat with the bot.
-"""
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 
 import os
 import time
+from datetime import datetime
 import random
 import string
 import webbrowser
@@ -32,19 +33,16 @@ def setup_relay(task_config, num_hits, is_sandbox):
     return db_session, mturk_chat_url_template, mturk_approval_url_template
 
 
-def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=None, is_sandbox=False, chat_page_only=False, verbose=False):
+def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, is_sandbox=False, chat_page_only=False, verbose=False):
     print("\nYou are going to allow workers from Amazon Mechanical Turk to chat with your dialog model running on your local machine.\nDuring this process, Internet connection is required, and you cannot close your laptop or put your computer into sleep or standby mode.\n")
     key_input = input("Please press Enter to continue:")
     print("")
 
     setup_aws_credentials()
-    if not hit_reward:
-        hit_reward = task_config['hit_reward']
     if not check_mturk_balance(num_hits=num_hits, hit_reward=hit_reward, is_sandbox=is_sandbox):
         return
 
-    task_group_timestamp = str(int(time.time()))
-    task_group_id = task_group_timestamp + '_' + _get_random_alphanumeric_string(10) # Random string to further avoid collision
+    task_group_id = str(int(time.time())) + '_' + _get_random_alphanumeric_string(10) # Random string to further avoid collision
 
     print('Setting up MTurk backend...')
     db_session, mturk_chat_url_template, mturk_approval_url_template = setup_relay(task_config, num_hits, is_sandbox)
@@ -70,7 +68,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=No
             if response.get('episode_done', False):
                 c_done_map[cid] = True
             if verbose:
-                print('Bot ' + str(cid) + ' says: ' + str(response))
+                print('Conversation '+str(cid)+' - Bot says: ' + str(response))
             logs[cid].append(response)
             new_message_object = send_new_message(
                 db_session=db_session, 
@@ -106,13 +104,13 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=No
                 agent = bots[cid_map[conversation_id]]
                 for new_message in new_messages:
                     if verbose:
-                        print('Bot ' + str(conversation_id) + ' received: ' + str(new_message))
+                        print('Conversation '+str(conversation_id)+' - Bot received: ' + str(new_message))
                     logs[conversation_id].append(new_message)
                     agent.observe(new_message)
                     if new_message.get('episode_done', False) or c_done_map[conversation_id]:
                         # We're done here
                         conversations_remaining.remove(conversation_id)
-                        print('Conversation '+str(conversation_id)+' is DONE!')
+                        print('Conversation '+str(conversation_id)+' is DONE!\n')
                     else:
                         # Agent still needs to reply
                         response = agent.act()
@@ -120,7 +118,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=No
                             if response.get('episode_done', False):
                                 c_done_map[conversation_id] = True
                             if verbose:
-                                print('Bot ' + str(conversation_id) + ' says: ' + str(response))
+                                print('Conversation '+str(conversation_id)+' - Bot says: ' + str(response))
                             logs[conversation_id].append(response)
                             send_new_message(
                                 db_session=db_session, 
@@ -157,12 +155,15 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=No
             if chat_page_only:
                 webbrowser.open(mturk_chat_url)
             else:
-                print("MTurk HIT page: " + mturk_page_url + "\n")
+                print("Link to your HIT: " + mturk_page_url + "\n")
                 print("Waiting for Turkers to complete the tasks... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
             hits_created = True
 
+    while get_pending_approval_count(db_session, task_group_id) != num_hits:
+        time.sleep(2)
+
     mturk_approval_url = mturk_approval_url_template.replace('{{task_group_id}}', str(task_group_id)).replace('{{cur_agent_id}}', str(worker_agent_id))
-    print("\nAll HITs are done! Please go to the following link to approve/reject them:\n")
+    print("\nAll HITs are done! Please go to the following link to approve/reject them (they will be auto-approved in 4 weeks if no action is taken):\n")
     print(mturk_approval_url)
     print("")
 
@@ -183,7 +184,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=No
     # Saving logs to file
     # Log format: {conversation_id: [list of messages in the conversation]}
     mturk_log_path = opt['mturk_log_path']
-    task_group_path = mturk_log_path + task_module_name + '-' + task_group_timestamp + '/'
+    task_group_path = mturk_log_path + task_module_name + '_' + datetime.now().strftime("%Y-%m-%d_%H:%M:%S") + '/'
     os.makedirs(task_group_path)
     with open(task_group_path+'approved.json', 'w') as file:
         file.write(json.dumps(logs_approved))

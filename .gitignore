@@ -11,6 +11,7 @@ __pycache__/
 env/
 build/
 data/
+logs/
 develop-eggs/
 dist/
 downloads/
@@ -88,3 +89,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# OS X files
+.DS_Store
