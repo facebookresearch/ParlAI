@@ -51,7 +51,7 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
-    def test_cbt(self):
+    def test_booktest(self):
         from parlai.core.params import ParlaiParser
         from parlai.tasks.booktest.agents import EvalTeacher, StreamTeacher
 
@@ -82,6 +82,19 @@ class TestData(unittest.TestCase):
                 teacher = teacher_class(opt)
                 reply = teacher.act()
                 check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
+    def test_cornell_movie(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.cornell_movie.agents import DefaultTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+        for dt in ['train:ordered', 'valid', 'test']:
+            opt['datatype'] = dt
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
 
         shutil.rmtree(self.TMP_PATH)
 
@@ -197,6 +210,20 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
+    def test_opensubtitles(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.opensubtitles.agents import DefaultTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+        for dt in ['train:ordered', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
     def test_qacnn(self):
         from parlai.core.params import ParlaiParser
         from parlai.tasks.qacnn.agents import DefaultTeacher
@@ -233,7 +260,6 @@ class TestData(unittest.TestCase):
             teacher = DefaultTeacher(opt)
             reply = teacher.act()
             check(opt, reply)
-            check(opt, reply)
 
         shutil.rmtree(self.TMP_PATH)
 
@@ -257,6 +283,19 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
+    def test_ubuntu(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.ubuntu.agents import DefaultTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+        for dt in ['train:ordered', 'valid', 'test']:
+            opt['datatype'] = dt
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
     def test_webquestions(self):
         from parlai.core.params import ParlaiParser
         from parlai.tasks.webquestions.agents import DefaultTeacher
@@ -266,9 +305,27 @@ class TestData(unittest.TestCase):
             opt['datatype'] = dt
             teacher = DefaultTeacher(opt)
             reply = teacher.act()
+            check(opt, reply)
 
         shutil.rmtree(self.TMP_PATH)
 
+    def test_vqa_coco2014(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.vqa_coco2014.agents import McTeacher, OeTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+        for dt in ['train:ordered', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = McTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+            teacher = OeTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
 
     def test_wikimovies(self):
         from parlai.core.params import ParlaiParser
