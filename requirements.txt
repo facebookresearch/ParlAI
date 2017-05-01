@@ -1,0 +1,4 @@
+pyzmq
+boto3
+sqlalchemy
+psycopg2
