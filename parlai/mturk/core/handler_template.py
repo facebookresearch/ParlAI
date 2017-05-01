@@ -10,7 +10,7 @@ import calendar
 import requests
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
-from data_model import Message, MTurkHITInfo, init_database, send_new_message, get_new_messages, set_hit_info, get_hit_info
+from data_model import Message, init_database, send_new_message, get_new_messages, set_hit_info, get_hit_info
 
 # Dynamically generated code begin
 # Expects mturk_submit_url, rds_host, rds_db_name, rds_username, rds_password, task_description, requester_key_gt, num_hits, is_sandbox
@@ -222,8 +222,12 @@ def approval(event, context):
 
                 if action == 'approve':
                     client.approve_assignment(AssignmentId=assignment_id)
+                    hit_info.approval_status = 'approved'
                 elif action == 'reject':
                     client.reject_assignment(AssignmentId=assignment_id, RequesterFeedback='')
+                    hit_info.approval_status = 'rejected'
+                db_session.add(hit_info)
+                db_session.commit()
 
         except KeyError:
             raise Exception('400')

@@ -40,7 +40,7 @@ def setup_aws_credentials():
     try:
         session = boto3.Session(profile_name=aws_profile_name)
     except ProfileNotFound as e:
-        print("AWS credentials not found. Please create an IAM user with AdministratorAccess permission at https://console.aws.amazon.com/iam/, and then enter the user's security credentials below:")
+        print("AWS credentials not found. Please create an IAM user with programmatic access and AdministratorAccess policy at https://console.aws.amazon.com/iam/, and then enter the user's security credentials below:")
         aws_access_key_id = input('Access Key ID: ')
         aws_secret_access_key = input('Secret Access Key: ')
         aws_credentials_file_path = '~/.aws/credentials'
@@ -59,7 +59,7 @@ def setup_aws_credentials():
             aws_credentials_file.write("["+aws_profile_name+"]\n")
             aws_credentials_file.write("aws_access_key_id="+aws_access_key_id+"\n")
             aws_credentials_file.write("aws_secret_access_key="+aws_secret_access_key+"\n")
-        print("AWS credentials successfully saved in "+aws_credentials_file_path+" file.")
+        print("AWS credentials successfully saved in "+aws_credentials_file_path+" file.\n")
     os.environ["AWS_PROFILE"] = aws_profile_name
 
 def get_requester_key():
@@ -133,7 +133,7 @@ def setup_rds():
     status = db_instance['DBInstanceStatus']
 
     if status not in ['available', 'backing-up']:
-        print("RDS: Waiting for DB status to change to available. This might take a couple minutes...")
+        print("RDS: Waiting for newly created database to be available. This might take a couple minutes...")
 
     while status not in ['available', 'backing-up']:
         time.sleep(5)
@@ -756,12 +756,19 @@ def check_mturk_balance(num_hits, hit_reward, is_sandbox):
 
     # Test that you can connect to the API by checking your account balance
     # In Sandbox this always returns $10,000
-    user_balance = float(client.get_account_balance()['AvailableBalance'])
+    try:
+        user_balance = float(client.get_account_balance()['AvailableBalance'])
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'RequestError':
+            print('ERROR: To use the MTurk API, you will need an Amazon Web Services (AWS) Account. Your AWS account must be linked to your Amazon Mechanical Turk Account. Visit https://requestersandbox.mturk.com/developer to get started. (Note: if you have recently linked your account, please wait for a couple minutes before trying again.)\n')
+            quit()
+        else:
+            raise
     
     balance_needed = num_hits * hit_reward * 1.2
 
     if user_balance < balance_needed:
-        print("You might not have enough money in your MTurk account. Please increase your balance to at least $"+f'{balance_needed:.2f}'+" and try again.")
+        print("You might not have enough money in your MTurk account. Please go to https://requester.mturk.com/account and increase your balance to at least $"+f'{balance_needed:.2f}'+", and then try again.")
         return False
     else:
         return True
@@ -776,12 +783,6 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_san
     # Region is always us-east-1
     if not is_sandbox:
         client = boto3.client(service_name = 'mturk', region_name='us-east-1')
-
-    # Test that you can connect to the API by checking your account balance
-    # In Sandbox this always returns $10,000
-    user_balance = client.get_account_balance()
-
-    # TODO: check balance to see if enough
 
     # Create a qualification with Locale In('US', 'CA') requirement attached
     localRequirements = [{
@@ -810,7 +811,7 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_san
     hit_type_id = response['HITTypeId']
     return hit_type_id
 
-def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox=True):
+def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox):
     page_url = page_url.replace('&', '&amp;')
 
     frame_height = 650
@@ -832,10 +833,6 @@ def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox=True):
     # Region is always us-east-1
     if not is_sandbox:
         client = boto3.client(service_name = 'mturk', region_name='us-east-1')
-
-    # Test that you can connect to the API by checking your account balance
-    # In Sandbox this always returns $10,000
-    user_balance = client.get_account_balance()
 
     # Create the HIT 
     response = client.create_hit_with_hit_type(
@@ -899,6 +896,8 @@ def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox=True):
     hit_type_id = response['HIT']['HITTypeId']
     hit_id = response['HIT']['HITId']
     hit_link = "https://workersandbox.mturk.com/mturk/preview?groupId=" + hit_type_id
+    if not is_sandbox:
+        hit_link = "https://www.mturk.com/mturk/preview?groupId=" + hit_type_id
     return hit_link
 
 def setup_all_dependencies(lambda_server_directory_name):
@@ -943,7 +942,7 @@ def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, f
     if verbose:
         print("Done!")
 
-def setup_aws(task_config, num_hits, is_sandbox=True):
+def setup_aws(task_config, num_hits, is_sandbox):
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
     if not is_sandbox:
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'

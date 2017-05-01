@@ -4,25 +4,27 @@ In this example, a bot will be paired with a human, given the default
 instructions and opening message, and then will chat with the bot.
 """
 
+import os
 import time
 import random
 import string
 import webbrowser
+import json
 from parlai.core.agents import create_agent_from_shared
 from .setup_aws import rds_db_name, rds_username, rds_password, setup_aws, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials
-from .data_model import Message, init_database, send_new_message, get_new_messages
+from .data_model import Message, init_database, send_new_message, get_new_messages, get_pending_approval_count, get_all_approval_status
 
 
 def _get_random_alphanumeric_string(N):
     return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(N))
 
 
-def setup_relay(task_config, num_hits):
+def setup_relay(task_config, num_hits, is_sandbox):
     """Sets up relay server and returns a database session object which can be used to poll
     new messages and send messages
     """
     # set up relay server
-    rds_host, mturk_chat_url_template, mturk_approval_url_template = setup_aws(task_config, num_hits)
+    rds_host, mturk_chat_url_template, mturk_approval_url_template = setup_aws(task_config, num_hits, is_sandbox)
 
     db_engine, db_session_maker = init_database(rds_host, rds_db_name, rds_username, rds_password)
     db_session = db_session_maker()
@@ -30,16 +32,22 @@ def setup_relay(task_config, num_hits):
     return db_session, mturk_chat_url_template, mturk_approval_url_template
 
 
-def create_hits(task_config, bot, num_hits, hit_reward=None, is_sandbox=False, chat_page_only=False, verbose=False):
+def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=None, is_sandbox=False, chat_page_only=False, verbose=False):
+    print("\nYou are going to allow workers from Amazon Mechanical Turk to chat with your dialog model running on your local machine.\nDuring this process, Internet connection is required, and you cannot close your laptop or put your computer into sleep or standby mode.\n")
+    key_input = input("Please press Enter to continue:")
+    print("")
+
     setup_aws_credentials()
+    if not hit_reward:
+        hit_reward = task_config['hit_reward']
     if not check_mturk_balance(num_hits=num_hits, hit_reward=hit_reward, is_sandbox=is_sandbox):
         return
 
-    task_group_id = str(int(time.time())) + '_' + _get_random_alphanumeric_string(10) # Random string to further avoid collision
-    if not hit_reward:
-        hit_reward = task_config['hit_reward']
+    task_group_timestamp = str(int(time.time()))
+    task_group_id = task_group_timestamp + '_' + _get_random_alphanumeric_string(10) # Random string to further avoid collision
+
     print('Setting up MTurk backend...')
-    db_session, mturk_chat_url_template, mturk_approval_url_template = setup_relay(task_config, num_hits)
+    db_session, mturk_chat_url_template, mturk_approval_url_template = setup_relay(task_config, num_hits, is_sandbox)
 
     worker_agent_id = task_config['worker_agent_id']   
     bot_agent_id = bot.getID() 
@@ -63,6 +71,7 @@ def create_hits(task_config, bot, num_hits, hit_reward=None, is_sandbox=False, c
                 c_done_map[cid] = True
             if verbose:
                 print('Bot ' + str(cid) + ' says: ' + str(response))
+            logs[cid].append(response)
             new_message_object = send_new_message(
                 db_session=db_session, 
                 task_group_id=task_group_id, 
@@ -141,15 +150,15 @@ def create_hits(task_config, bot, num_hits, hit_reward=None, is_sandbox=False, c
                     mturk_page_url = create_hit_with_hit_type(
                         page_url=mturk_chat_url, 
                         hit_type_id=hit_type_id, 
-                        is_sandbox=True
+                        is_sandbox=is_sandbox
                     )
 
-            print("MTurk setup done.")
-            print("Waiting for Turkers to complete the tasks... (Please don't close your laptop or put your computer into sleep mode.)")
+            print("MTurk setup done.\n")
             if chat_page_only:
                 webbrowser.open(mturk_chat_url)
             else:
-                webbrowser.open(mturk_page_url)
+                print("MTurk HIT page: " + mturk_page_url + "\n")
+                print("Waiting for Turkers to complete the tasks... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
             hits_created = True
 
     mturk_approval_url = mturk_approval_url_template.replace('{{task_group_id}}', str(task_group_id)).replace('{{cur_agent_id}}', str(worker_agent_id))
@@ -157,3 +166,28 @@ def create_hits(task_config, bot, num_hits, hit_reward=None, is_sandbox=False, c
     print(mturk_approval_url)
     print("")
 
+    approval_status_dict = {cid: '' for cid in cids}
+    # Loop for checking approval status
+    while get_pending_approval_count(db_session, task_group_id) > 0:
+        time.sleep(2)
+
+    print("Approvals are done!")
+
+    for hit_info in get_all_approval_status(db_session, task_group_id):
+        conversation_id = hit_info.conversation_id
+        approval_status_dict[conversation_id] = hit_info.approval_status
+
+    logs_approved = {cid:log for (cid,log) in logs.items() if approval_status_dict[cid] == 'approved'}
+    logs_rejected = {cid:log for (cid,log) in logs.items() if approval_status_dict[cid] == 'rejected'}
+
+    # Saving logs to file
+    # Log format: {conversation_id: [list of messages in the conversation]}
+    mturk_log_path = opt['mturk_log_path']
+    task_group_path = mturk_log_path + task_module_name + '-' + task_group_timestamp + '/'
+    os.makedirs(task_group_path)
+    with open(task_group_path+'approved.json', 'w') as file:
+        file.write(json.dumps(logs_approved))
+    with open(task_group_path+'rejected.json', 'w') as file:
+        file.write(json.dumps(logs_rejected))
+
+    print("All conversations are saved to "+opt['mturk_log_path']+" in JSON format.\n")
