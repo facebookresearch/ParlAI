@@ -103,7 +103,7 @@ The code is set up into several main directories:
 - **agents**: contains agents which can interact with the different tasks (e.g. machine learning models)
 - **examples**: contains a few basic examples of different loops (building dictionary, train/eval, displaying data)
 - **tasks**: contains code for the different tasks available from within ParlAI
-- **mturk**: contains code for setting up Mechanical Turk, as well as two sample MTurk tasks (QA data collection and dialog model evaluation)
+- **mturk**: contains code for setting up Mechanical Turk, as well as sample MTurk tasks
 
 Each directory is described in more detail below, ordered by dependencies.
 
