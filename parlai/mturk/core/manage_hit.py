@@ -163,7 +163,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
         time.sleep(2)
 
     mturk_approval_url = mturk_approval_url_template.replace('{{task_group_id}}', str(task_group_id)).replace('{{cur_agent_id}}', str(worker_agent_id))
-    print("\nAll HITs are done! Please go to the following link to approve/reject them:\n")
+    print("\nAll HITs are done! Please go to the following link to approve/reject them (they will be auto-approved in 4 weeks if no action is taken):\n")
     print(mturk_approval_url)
     print("")
 
