@@ -299,13 +299,21 @@ class MultiWorld(World):
     def __init__(self, opt, agents=None, shared=None):
         super().__init__(opt)
         self.worlds = []
-        for k in opt['task'].split(','):
+        for index, k in enumerate(opt['task'].split(',')):
             k = k.strip()
             if k:
                 print("[creating world: " + k + "]")
                 opt_singletask = copy.deepcopy(opt)
                 opt_singletask['task'] = k
-                self.worlds.append(create_task_world(opt_singletask, agents))
+                if shared:
+                    # Create agents based on shared data.
+                    # agents = create_agents_from_shared(shared['worlds'][index]['agents'])
+                    # self.worlds.append(create_task_world(opt_singletask, agents))
+                    s = shared['worlds'][index]
+                    self.worlds.append(s['world_class'](s['opt'], None, s))
+                else:
+                    # Agents are already specified.
+                    self.worlds.append(create_task_world(opt_singletask, agents))
         self.world_idx = -1
         self.new_world = True
         self.parleys = 0
@@ -329,11 +337,12 @@ class MultiWorld(World):
     def get_agents(self):
         return self.worlds[self.world_idx].agents
 
-    def _share_agents(self):
-        if len(self.worlds) == 0:
-            return None
-        shared_agents = [ w._share_agents() for w in self.worlds]
-        return shared_agents
+    def share(self):
+        shared_data = {}
+        shared_data['world_class'] = type(self)
+        shared_data['opt'] = self.opt
+        shared_data['worlds'] = [w.share() for w in self.worlds]
+        return shared_data
 
     def epoch_done(self):
         for t in self.worlds:
