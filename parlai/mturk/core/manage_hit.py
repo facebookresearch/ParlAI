@@ -181,6 +181,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward=No
     logs_rejected = {cid:log for (cid,log) in logs.items() if approval_status_dict[cid] == 'rejected'}
 
     # Saving logs to file
+    # Log format: {conversation_id: [list of messages in the conversation]}
     mturk_log_path = opt['mturk_log_path']
     task_group_path = mturk_log_path + task_module_name + '-' + task_group_timestamp + '/'
     os.makedirs(task_group_path)

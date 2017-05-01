@@ -10,7 +10,7 @@ import calendar
 import requests
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
-from data_model import Message, MTurkHITInfo, init_database, send_new_message, get_new_messages, set_hit_info, get_hit_info
+from data_model import Message, init_database, send_new_message, get_new_messages, set_hit_info, get_hit_info
 
 # Dynamically generated code begin
 # Expects mturk_submit_url, rds_host, rds_db_name, rds_username, rds_password, task_description, requester_key_gt, num_hits, is_sandbox

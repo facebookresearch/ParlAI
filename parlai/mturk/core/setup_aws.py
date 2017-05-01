@@ -768,7 +768,7 @@ def check_mturk_balance(num_hits, hit_reward, is_sandbox):
     balance_needed = num_hits * hit_reward * 1.2
 
     if user_balance < balance_needed:
-        print("You might not have enough money in your MTurk account. Please increase your balance to at least $"+f'{balance_needed:.2f}'+" and try again.")
+        print("You might not have enough money in your MTurk account. Please go to https://requester.mturk.com/account and increase your balance to at least $"+f'{balance_needed:.2f}'+", and then try again.")
         return False
     else:
         return True
@@ -783,12 +783,6 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_san
     # Region is always us-east-1
     if not is_sandbox:
         client = boto3.client(service_name = 'mturk', region_name='us-east-1')
-
-    # Test that you can connect to the API by checking your account balance
-    # In Sandbox this always returns $10,000
-    user_balance = client.get_account_balance()
-
-    # TODO: check balance to see if enough
 
     # Create a qualification with Locale In('US', 'CA') requirement attached
     localRequirements = [{
@@ -839,10 +833,6 @@ def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox):
     # Region is always us-east-1
     if not is_sandbox:
         client = boto3.client(service_name = 'mturk', region_name='us-east-1')
-
-    # Test that you can connect to the API by checking your account balance
-    # In Sandbox this always returns $10,000
-    user_balance = client.get_account_balance()
 
     # Create the HIT 
     response = client.create_hit_with_hit_type(

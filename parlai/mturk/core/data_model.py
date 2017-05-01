@@ -156,7 +156,7 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
     return conversation_dict, last_message_id
 
 
-def set_hit_info(db_session, task_group_id, conversation_id, assignment_id, hit_id, worker_id, is_sandbox):
+def set_hit_info(db_session, task_group_id, conversation_id, assignment_id, hit_id, worker_id, is_sandbox, approval_status='pending'):
     existing_object = db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.conversation_id==conversation_id).first()
     if not existing_object:
         new_hit_info_object = MTurkHITInfo(
@@ -166,7 +166,7 @@ def set_hit_info(db_session, task_group_id, conversation_id, assignment_id, hit_
             hit_id=hit_id, 
             worker_id=worker_id,
             is_sandbox=is_sandbox,
-            approval_status='pending'
+            approval_status=approval_status
         )
         db_session.add(new_hit_info_object)
         db_session.commit()
@@ -175,6 +175,7 @@ def set_hit_info(db_session, task_group_id, conversation_id, assignment_id, hit_
         existing_object.hit_id = hit_id
         existing_object.worker_id = worker_id
         existing_object.is_sandbox = is_sandbox
+        existing_object.approval_status = approval_status
         db_session.add(existing_object)
         db_session.commit()
 
