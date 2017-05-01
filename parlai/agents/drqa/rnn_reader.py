@@ -111,9 +111,6 @@ class RnnDocReader(nn.Module):
             x2_emb = nn.functional.dropout(x2_emb, p=self.opt['dropout_emb'],
                                            training=self.training)
 
-        x1_f = nn.functional.dropout(x1_f, p=self.opt['dropout_rnn'],
-                                     training=self.training)
-
         # Add attention-weighted question representation
         if self.opt['use_qemb']:
             x2_weighted_emb = self.qemb_match(x1_emb, x2_emb, x2_mask)
