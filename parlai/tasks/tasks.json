@@ -108,5 +108,10 @@
 		"id": "MovieDD-Reddit",
 		"task": "moviedialog:Task:4",
 		"tags": [ "all",  "ChitChat", "MovieDD" ]
+	},
+	{
+		"id": "Ubuntu",
+		"task": "ubuntu",
+		"tags": [ "all",  "ChitChat" ]
 	}
 ]
