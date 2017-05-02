@@ -93,6 +93,9 @@ class World(object):
     def get_agents(self):
         return self.agents
 
+    def get_acts(self):
+        return self.acts
+
     def __enter__(self):
         """Empty enter provided for use with `with` statement.
         e.g:
@@ -228,7 +231,7 @@ class DialogPartnerWorld(World):
             self.agents = agents
         self.teacher = self.agents[0]
         self.agent = self.agents[1]
-        self.acts = {}
+        self.acts = [None, None]
 
     def __iter__(self):
         return iter(self.teacher)
@@ -252,7 +255,9 @@ class DialogPartnerWorld(World):
         reply = self.agent.act()
         self.teacher.observe(validate(reply))
         self.is_episode_done = query.get('episode_done', False)
-        self.acts = [query, reply]  # store the acts in case we want to recall them
+        # store the acts in case we want to recall them
+        self.acts[0] = query
+        self.acts[1] = reply
 
     def report(self):
         return self.teacher.report()
@@ -344,7 +349,10 @@ class MultiWorld(World):
         return self.len
 
     def get_agents(self):
-        return self.worlds[self.world_idx].agents
+        return self.worlds[self.world_idx].get_agents()
+
+    def get_acts(self):
+        return self.worlds[self.world_idx].get_acts()
 
     def share(self):
         shared_data = {}
@@ -359,7 +367,7 @@ class MultiWorld(World):
                 return False
         return True
 
-    def parley(self):
+    def parley_init(self):
         if self.new_world:
             self.new_world = False
             self.parleys = 0
@@ -374,11 +382,18 @@ class MultiWorld(World):
                                     start_idx != self.world_idx)
                 if start_idx == self.world_idx:
                     return {'text': 'There are no more examples remaining.'}
-        t = self.worlds[self.world_idx]
-        t.parley()
+
+    def parley_finish(self):
         self.parleys = self.parleys + 1
+        t = self.worlds[self.world_idx]
         if t.episode_done():
             self.new_world = True
+
+    def parley(self):
+        self.parley_init()
+        t = self.worlds[self.world_idx]
+        t.parley()
+        self.parley_finish()
 
     def display(self):
         if self.world_idx != -1:
@@ -470,14 +485,14 @@ class BatchWorld(World):
         batch = []
         for w in self.worlds:
             # Half of parley.
-#            agents = w.get_agents()
-#            acts = w.get_acts()
-            w_teacher = w.get_agents()[0]
-            w.acts[0] = w_teacher.act()  
-            w_agent = w.get_agents()[1]
-            w_agent.observe(validate(w.query()))
-            if hasattr(w_agent, 'observation'):
-                batch.append(w_agent.observation)
+            if hasattr(w, 'parley_init'):
+                w.parley_init()
+            agents = w.get_agents()
+            acts = w.get_acts()
+            acts[0] = agents[0].act()  
+            agents[1].observe(validate(acts[0]))
+            if hasattr(agents[1], 'observation'):
+                batch.append(agents[1].observation)
             if not self.random and w.epoch_done():
                 break
         # Collect batch together for each agent, and do update.
@@ -489,15 +504,18 @@ class BatchWorld(World):
             # Reverts to running on each individually.
             batch_reply = []
             for w in self.worlds:
-                w_agent = w.get_agents()[1]
-                batch_reply.append(w_agent.act())
+                agents = w.get_agents()
+                batch_reply.append(agents[1].act())
 
         for index, w in enumerate(self.worlds):
             # Other half of parley.
-            w.acts[1] = batch_reply[index]       
-            w_teacher = w.get_agents()[0]
-            w_teacher.observe(validate(w.reply()))
-            w.is_episode_done = w.query()['episode_done']
+            acts = w.get_acts()
+            agents = w.get_agents()
+            acts[1] = batch_reply[index]       
+            agents[0].observe(validate(acts[1]))
+            w.is_episode_done = acts[0]['episode_done']
+            if hasattr(w, 'parley_finish'):
+                w.parley_finish()
             if not self.random and w.epoch_done():
                 break
 
