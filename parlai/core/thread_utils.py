@@ -6,7 +6,12 @@
 """Provides utilities useful for multiprocessing."""
 
 from multiprocessing import Lock, RawArray
-from collections.abc import MutableMapping
+try:
+    # python3
+    from collections.abc import MutableMapping
+except ImportError:
+    # python2
+    from collections import MutableMapping
 import ctypes
 import sys
 

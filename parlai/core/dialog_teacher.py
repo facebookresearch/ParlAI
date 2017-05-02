@@ -117,5 +117,4 @@ class DialogTeacher(Teacher):
 
     # Return transformed metrics showing total examples and accuracy if avail.
     def report(self):
-        report = self.metrics.report()
-        return report
+        return self.metrics.report()

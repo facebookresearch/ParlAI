@@ -15,7 +15,10 @@ Note:
 To use pretrained word embeddings, set the --embeddings_file path argument.
 GloVe is recommended, see http://nlp.stanford.edu/data/glove.840B.300d.zip.
 """
-import torch
+try:
+    import torch
+except ModuleNotFoundError:
+    raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
 import numpy as np
 import logging
 import copy

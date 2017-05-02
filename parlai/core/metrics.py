@@ -72,7 +72,7 @@ class Metrics(object):
         self.metrics = {}
         self.metrics['cnt'] = 0
         self.metrics['correct'] = 0
-        self.metrics['f1'] = 0
+        self.metrics['f1'] = 0.0
         self.eval_pr = [1, 5, 10, 50, 100]
         for k in self.eval_pr:
             self.metrics['hits@' + str(k)] = 0
@@ -172,6 +172,6 @@ class Metrics(object):
         with self._lock():
             self.metrics['cnt'] = 0
             self.metrics['correct'] = 0
-            self.metrics['f1'] = 0
+            self.metrics['f1'] = 0.0
             for k in self.eval_pr:
                 self.metrics['hits@' + str(k)] = 0

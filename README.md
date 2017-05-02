@@ -4,7 +4,7 @@ ParlAI (pronounced “parley”) is a framework for dialog AI research, implemen
 
 Its goal is to provide researchers a unified framework for training and testing of dialog models, including multi-task training over many datasets at once, as well as the seamless integration of <a href="https://www.mturk.com/mturk/welcome">Amazon Mechanical Turk</a> for data collection and human evaluation.
 
-Over 20 tasks are supported in the first release, including popular datasets such as [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MCTest](https://www.microsoft.com/en-us/research/publication/mctest-challenge-dataset-open-domain-machine-comprehension-text/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [WebQuestions](http://www.aclweb.org/anthology/D13-1160), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialog tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialog](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html) and VQA-COCO2014.
+Over 20 tasks are supported in the first release, including popular datasets such as [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MCTest](https://www.microsoft.com/en-us/research/publication/mctest-challenge-dataset-open-domain-machine-comprehension-text/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [WebQuestions](http://www.aclweb.org/anthology/D13-1160), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialog tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialog](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html) and [VQA-COCO2014](http://visualqa.org/).
 
 Included are examples of training neural models with [PyTorch](http://pytorch.org/) and [Lua Torch](http://torch.ch/), including both batch training on GPU and hogwild training on CPUs. Using [Theano](http://deeplearning.net/software/theano/) or [Tensorflow](https://www.tensorflow.org/) instead is also straightforward.
 
@@ -44,6 +44,59 @@ Set of datasets to bootstrap a working dialogue model for human interaction
 - Examples of training with PyTorch.
 - Uses zmq to talk to other toolboxes not in Python, examples of Lua Torch given.
 - Supports hogwild and batch training of models.
+
+## Basic Examples
+
+Display 10 random examples from task 1 of the "1k training examples" bAbI task:
+```bash
+python examples/display_data.py -t babi:task1k:1
+```
+
+Displays 100 random examples from multi-tasking on the bAbI task and the SQuAD dataset at the same time:
+```bash
+python examples/display_data.py -t babi:task1k:1,squad` -n 100
+```
+
+Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:
+```bash
+python examples/eval_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
+```
+
+Display the predictions of that same IR baseline model:
+```bash
+python examples/display_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
+```
+
+Train a simple cpu-based memory network on the "10k training examples" bAbI task 1 with 8 threads (python processes) using Hogwild (requires zmq and Lua Torch):
+```bash
+python examples/memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -n 8
+```
+
+Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
+```bash
+python examples/drqa/train.py -t squad -b 32
+```
+
+## Requirements
+
+ParlAI currently requires Python3.
+
+Several models included (in parlai/agents) have additional requirements such as [PyTorch](http://pytorch.org/) or [Lua Torch](http://torch.ch/).
+
+## Installing ParlAI
+
+First, clone the repository, then enter the cloned directory.
+
+Linked install:
+Run `python setup.py develop` to link the cloned directory to your site-packages.
+This is the recommended installation procedure if you plan on modifying any parlai code for your run or submitting a pull request, especially if you want to add another task to repository.
+All needed data will be downloaded to ./data, and any model files (currently just the memnn model) if requested will be downloaded to ./downloads.
+
+Copied install (use parlai only as a dependency):
+Run `python setup.py install` to copy contents to your site-packages folder.
+All data will be downloaded to that folder, and to make any changes to the code you will need to run install again.
+If you want to just use parlai as a dependency (e.g. to access the tasks or the core code), this works fine.
+If you want to clear out the downloaded data, then delete the 'data' and 'downloads' (if applicable) folder in site-packages/parlai.
 
 ## Worlds, agents and teachers
 The main concepts (classes) in ParlAI:

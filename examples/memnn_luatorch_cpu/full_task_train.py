@@ -63,20 +63,17 @@ def main():
     agent = ParsedRemoteAgent(opt, {'dictionary': dictionary})
     world_train = create_task(opt, agent)
     opt['datatype'] = 'valid'
-    world_valid = create_task(opt, agent)
 
     start = time.time()
-    with world_valid, world_train:
+    with world_train:
         for _ in range(100):
             print('[ training ]')
             for _ in range(1000 * opt.get('numthreads', 1)):
                 world_train.parley()
             world_train.synchronize()
 
-            print('[ training summary. ]')
-            print(world_train.report())
-
             print('[ validating ]')
+            world_valid = create_task(opt, agent)
             for _ in world_valid:  # check valid accuracy
                 world_valid.parley()
 
@@ -87,6 +84,7 @@ def main():
                 break
 
         # show some example dialogs after training:
+        world_valid = create_task(opt, agent)
         for _k in range(3):
             world_valid.parley()
             print(world_valid.display())
