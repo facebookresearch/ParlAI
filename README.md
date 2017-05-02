@@ -47,21 +47,33 @@ Set of datasets to bootstrap a working dialogue model for human interaction
 
 ## Basic Examples
 
-Display 10 random examples from task 1 of the "1000-example" bAbI task:
+Display 10 random examples from task 1 of the "1k training examples" bAbI task:
 ```bash
 python examples/display_data.py -t babi:task1k:1
 ```
 
+Displays 100 random examples from multi-tasking on the bAbI task and the SQuAD dataset at the same time:
 ```bash
-# Display 10 random examples from task 1 of the "1000-example" bAbI task:
-python examples/display_data.py -t babi:task1k:1
+python examples/display_data.py -t babi:task1k:1,squad` -n 100
+```
 
-# Train a simple cpu-based memory network on the Children's Book Test "Named Entities" subset with 8 threads (python processes) using Hogwild:
-# requires zmq and Lua Torch
-python examples/memnn_luatorch_cpu/full_task_train.py -t cbt:NE -n 8
+Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:
+```bash
+python examples/eval_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
+```
 
-# Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples:
-# requires pytorch and regex
+Display the predictions of that same IR baseline model:
+```bash
+python examples/display_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
+```
+
+Train a simple cpu-based memory network on the "10k training examples" bAbI task 1 with 8 threads (python processes) using Hogwild (requires zmq and Lua Torch):
+```bash
+python examples/memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -n 8
+```
+
+Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
+```bash
 python examples/drqa/train.py -t squad -b 32
 ```
 
