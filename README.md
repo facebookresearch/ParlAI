@@ -15,12 +15,15 @@ We are in an early-release Beta. Expect some adventures and rough edges.
 ## Basic Examples
 
 `python examples/display_data.py -t babi:task1k:1`
+
 Displays 10 random examples from task 1 of the "1000-example" bAbI task.
 
 `python examples/memnn_luatorch_cpu/full_task_train.py -t cbt:NE -n 8`
+
 Trains a simple cpu-based memory network on the Children's Book Test "Named Entities" subset with 8 threads (python processes) using Hogwild.
 
 `python examples/drqa/train.py -t squad -b 32`
+
 Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples.
 
 ## Requirements
