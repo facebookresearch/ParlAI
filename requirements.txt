@@ -1,5 +1,4 @@
 boto3
 nltk
-pyzmq
 psycopg2
 sqlalchemy

@@ -21,5 +21,5 @@ setup(
     license=license,
     packages=find_packages(exclude=(
         'data', 'docs', 'downloads', 'examples', 'tests')),
-    install_requires=['nltk', 'pyzmq'],
+    install_requires=['nltk'],
 )

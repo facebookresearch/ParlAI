@@ -12,41 +12,6 @@ Our aim is for the number of tasks and agents that train on them to grow in a co
 
 We are in an early-release Beta. Expect some adventures and rough edges.
 
-## Basic Examples
-
-`python examples/display_data.py -t babi:task1k:1`
-
-Displays 10 random examples from task 1 of the "1000-example" bAbI task.
-
-`python examples/memnn_luatorch_cpu/full_task_train.py -t cbt:NE -n 8`
-
-Trains a simple cpu-based memory network on the Children's Book Test "Named Entities" subset with 8 threads (python processes) using Hogwild.
-
-`python examples/drqa/train.py -t squad -b 32`
-
-Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples.
-
-## Requirements
-
-ParlAI currently requires Python3.
-
-Several models included (in parlai/agents) have additional requirements such as [PyTorch](http://pytorch.org/) or [Lua Torch](http://torch.ch/).
-
-## Installing ParlAI
-
-First, clone the repository, then enter the cloned directory.
-
-Linked install:
-Run `python setup.py develop` to link the cloned directory to your site-packages.
-This is the recommended installation procedure if you plan on modifying any parlai code for your run or submitting a pull request, especially if you want to add another task to repository.
-All needed data will be downloaded to ./data, and any model files (currently just the memnn model) if requested will be downloaded to ./downloads.
-
-Copied install (use parlai only as a dependency):
-Run `python setup.py install` to copy contents to your site-packages folder.
-All data will be downloaded to that folder, and to make any changes to the code you will need to run install again.
-If you want to just use parlai as a dependency (e.g. to access the tasks or the core code), this works fine.
-If you want to clear out the downloaded data, then delete the 'data' and 'downloads' (if applicable) folder in site-packages/parlai.
-
 ## Goals
 
 Unified framework for evaluation of dialogue models
@@ -79,6 +44,40 @@ Set of datasets to bootstrap a working dialogue model for human interaction
 - Examples of training with PyTorch.
 - Uses zmq to talk to other toolboxes not in Python, examples of Lua Torch given.
 - Supports hogwild and batch training of models.
+
+## Basic Examples
+
+Display 10 random examples from task 1 of the "1000-example" bAbI task:
+`python examples/display_data.py -t babi:task1k:1`
+
+Train a simple cpu-based memory network on the Children's Book Test "Named Entities" subset with 8 threads (python processes) using Hogwild:
+`python examples/memnn_luatorch_cpu/full_task_train.py -t cbt:NE -n 8`
+(requires zmq and lua torch).
+
+Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples:
+`python examples/drqa/train.py -t squad -b 32`
+(requires pytorch and regex).
+
+## Requirements
+
+ParlAI currently requires Python3.
+
+Several models included (in parlai/agents) have additional requirements such as [PyTorch](http://pytorch.org/) or [Lua Torch](http://torch.ch/).
+
+## Installing ParlAI
+
+First, clone the repository, then enter the cloned directory.
+
+Linked install:
+Run `python setup.py develop` to link the cloned directory to your site-packages.
+This is the recommended installation procedure if you plan on modifying any parlai code for your run or submitting a pull request, especially if you want to add another task to repository.
+All needed data will be downloaded to ./data, and any model files (currently just the memnn model) if requested will be downloaded to ./downloads.
+
+Copied install (use parlai only as a dependency):
+Run `python setup.py install` to copy contents to your site-packages folder.
+All data will be downloaded to that folder, and to make any changes to the code you will need to run install again.
+If you want to just use parlai as a dependency (e.g. to access the tasks or the core code), this works fine.
+If you want to clear out the downloaded data, then delete the 'data' and 'downloads' (if applicable) folder in site-packages/parlai.
 
 ## Worlds, agents and teachers
 The main concepts (classes) in ParlAI:
