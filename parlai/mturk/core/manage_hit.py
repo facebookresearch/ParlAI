@@ -34,7 +34,7 @@ def setup_relay(task_config, num_hits, is_sandbox):
 
 
 def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, is_sandbox=False, chat_page_only=False, verbose=False):
-    print("\nYou are going to allow workers from Amazon Mechanical Turk to chat with your dialog model running on your local machine.\nDuring this process, Internet connection is required, and you cannot close your laptop or put your computer into sleep or standby mode.\n")
+    print("\nYou are going to allow workers from Amazon Mechanical Turk to chat with your dialog model running on your local machine.\nDuring this process, Internet connection is required, and you should turn off your computer's auto-sleep feature.\n")
     key_input = input("Please press Enter to continue:")
     print("")
 
