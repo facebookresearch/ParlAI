@@ -8,7 +8,10 @@ In Association for Computational Linguistics (ACL).
 
 Link: https://arxiv.org/abs/1704.00051
 """
-import torch
+try:
+    import torch
+except ModuleNotFoundError:
+    raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
 import numpy as np
 import logging
 import copy
