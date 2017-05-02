@@ -228,7 +228,7 @@ class DialogPartnerWorld(World):
             self.agents = agents
         self.teacher = self.agents[0]
         self.agent = self.agents[1]
-        self.reply = {}
+        self.acts = {}
 
     def __iter__(self):
         return iter(self.teacher)
@@ -237,45 +237,54 @@ class DialogPartnerWorld(World):
         return (self.teacher.epoch_done()
                 if hasattr(self.teacher, 'epoch_done') else False)
 
+    def query(self):
+        # The action of agent[0], the "teacher".
+        return self.acts[0]
+
+    def reply(self):
+        # The action of agent[1]
+        return self.acts[1]
+
     def parley(self):
         """Teacher goes first. Alternate between the teacher and the agent."""
-        self.query = self.teacher.act()
-        self.agent.observe(validate(self.query))
-        self.reply = self.agent.act()
-        self.teacher.observe(validate(self.reply))
-        self.is_episode_done = self.query.get('episode_done', False)
+        query = self.teacher.act()
+        self.agent.observe(validate(query))
+        reply = self.agent.act()
+        self.teacher.observe(validate(reply))
+        self.is_episode_done = query.get('episode_done', False)
+        self.acts = [query, reply]  # store the acts in case we want to recall them
 
     def report(self):
         return self.teacher.report()
 
     def display(self):
         lines = []
-        if self.query.get('reward', None) is not None:
-            lines.append('   [reward: {r}]'.format(r=self.query['reward']))
-        if self.query.get('text', ''):
-            ID = '[' + self.query['id'] + ']: ' if 'id' in self.query else ''
-            lines.append(ID + self.query['text'])
-        if self.query.get('labels', False):
+        if self.query().get('reward', None) is not None:
+            lines.append('   [reward: {r}]'.format(r=self.query()['reward']))
+        if self.query().get('text', ''):
+            ID = '[' + self.query()['id'] + ']: ' if 'id' in self.query() else ''
+            lines.append(ID + self.query()['text'])
+        if self.query().get('labels', False):
             lines.append('[labels: {}]'.format(
-                    '|'.join(self.query['labels'])))
-        if self.query.get('label_candidates', False):
-            cand_len = len(self.query['label_candidates'])
+                    '|'.join(self.query()['labels'])))
+        if self.query().get('label_candidates', False):
+            cand_len = len(self.query()['label_candidates'])
             if cand_len <= 10:
                 lines.append('[cands: {}]'.format(
-                    '|'.join(self.query['label_candidates'])))
+                    '|'.join(self.query()['label_candidates'])))
             else:
                 # select five label_candidates from the candidate set, can't slice in
                 # because it's a set
-                cand_iter = iter(self.query['label_candidates'])
+                cand_iter = iter(self.query()['label_candidates'])
                 display_cands = (next(cand_iter) for _ in range(5))
                 # print those cands plus how many cands remain
                 lines.append('[cands: {}{}]'.format(
                     '|'.join(display_cands),
                     '| ...and {} more'.format(cand_len - 5)
                 ))
-        if self.reply.get('text', ''):
-            ID = '[' + self.reply['id'] + ']: ' if 'id' in self.reply else ''
-            lines.append('   ' + ID + self.reply['text'])
+        if self.reply().get('text', ''):
+            ID = '[' + self.reply()['id'] + ']: ' if 'id' in self.reply() else ''
+            lines.append('   ' + ID + self.reply()['text'])
         if self.episode_done():
             lines.append('- - - - - - - - - - - - - - - - - - - - -')
         return '\n'.join(lines)
@@ -457,14 +466,18 @@ class BatchWorld(World):
         # teacher act, collect the batch, then allow the agent to
         # act in each world, so we can do both forwards and backwards
         # in batch, and still collect metrics in each world.
-        a = self.world.agent
+        a = self.world.get_agents()[1] # The agent in DialogPartnerWorld
         batch = []
         for w in self.worlds:
             # Half of parley.
-            w.query = w.teacher.act()
-            w.agent.observe(validate(w.query))
-            if hasattr(w.agent, 'observation'):
-                batch.append(w.agent.observation)
+#            agents = w.get_agents()
+#            acts = w.get_acts()
+            w_teacher = w.get_agents()[0]
+            w.acts[0] = w_teacher.act()  
+            w_agent = w.get_agents()[1]
+            w_agent.observe(validate(w.query()))
+            if hasattr(w_agent, 'observation'):
+                batch.append(w_agent.observation)
             if not self.random and w.epoch_done():
                 break
         # Collect batch together for each agent, and do update.
@@ -476,13 +489,15 @@ class BatchWorld(World):
             # Reverts to running on each individually.
             batch_reply = []
             for w in self.worlds:
-                batch_reply.append(w.agent.act())
+                w_agent = w.get_agents()[1]
+                batch_reply.append(w_agent.act())
 
         for index, w in enumerate(self.worlds):
             # Other half of parley.
-            w.reply = batch_reply[index]
-            w.teacher.observe(validate(w.reply))
-            w.is_episode_done = w.query['episode_done']
+            w.acts[1] = batch_reply[index]       
+            w_teacher = w.get_agents()[0]
+            w_teacher.observe(validate(w.reply()))
+            w.is_episode_done = w.query()['episode_done']
             if not self.random and w.epoch_done():
                 break
 
