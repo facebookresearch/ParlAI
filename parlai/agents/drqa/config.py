@@ -32,7 +32,7 @@ def add_cmdline_args(parser):
     parser.add_argument('--fix_embeddings', type='bool', default=True)
     parser.add_argument('--tune_partial', type=int, default=0,
                         help='Train the K most frequent word embeddings')
-    parser.add_argument('--embedding_dim', type=int, default=None,
+    parser.add_argument('--embedding_dim', type=int, default=300,
                         help=('Default embedding size if '
                               'embedding_file is not given'))
     parser.add_argument('--hidden_size', type=int, default=128,
@@ -90,9 +90,6 @@ def set_defaults(opt):
             raise IOError('No such file: %s' % args.embedding_file)
         with open(opt['embedding_file']) as f:
             dim = len(f.readline().strip().split(' ')) - 1
-        if 'embedding_dim' in opt and opt['embedding_dim'] != dim:
-            raise ValueError('embedding_dim = %d, but %s has %d dims.' %
-                             (opt['embedding_dim'], opt['embedding_file'], dim))
         opt['embedding_dim'] = dim
     elif 'embedding_dim' not in opt:
         raise RuntimeError(('Either embedding_file or embedding_dim '
