@@ -40,6 +40,79 @@ files_to_copy = [parent_dir+'/'+'data_model.py', parent_dir+'/'+'mturk_index.htm
 lambda_server_directory_name = 'lambda_server'
 lambda_server_zip_file_name = 'lambda_server.zip'
 
+def add_api_gateway_method(api_gateway_client, rest_api_id, endpoint_resource, http_method_type, response_data_type):
+    api_gateway_client.put_method(
+        restApiId = rest_api_id,
+        resourceId = endpoint_resource['id'],
+        httpMethod = http_method_type,
+        authorizationType = "NONE",
+        apiKeyRequired = False,
+    )
+
+    response_parameters = { 'method.response.header.Access-Control-Allow-Origin': False }
+    if response_data_type == 'html':
+        response_parameters['method.response.header.Content-Type'] = False
+    response_models = None
+    if response_data_type == 'json':
+        response_models = { 'application/json': 'Empty' }
+    api_gateway_client.put_method_response(
+        restApiId = rest_api_id,
+        resourceId = endpoint_resource['id'],
+        httpMethod = http_method_type,
+        statusCode = '200',
+        responseParameters = response_parameters,
+        responseModels = response_models
+    )
+
+    api_gateway_client.put_integration(
+        restApiId = rest_api_id,
+        resourceId = endpoint_resource['id'],
+        httpMethod = http_method_type,
+        type = 'AWS',
+        integrationHttpMethod = 'POST', # this has to be POST
+        uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
+        requestTemplates = {
+            'application/json': \
+'''{
+  "body" : $input.json('$'),
+  "headers": {
+    #foreach($header in $input.params().header.keySet())
+    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
+
+    #end
+  },
+  "method": "$context.httpMethod",
+  "params": {
+    #foreach($param in $input.params().path.keySet())
+    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
+
+    #end
+  },
+  "query": {
+    #foreach($queryParam in $input.params().querystring.keySet())
+    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
+
+    #end
+  }
+}'''
+        },
+        passthroughBehavior = 'WHEN_NO_TEMPLATES'
+    )
+
+    response_parameters = { 'method.response.header.Access-Control-Allow-Origin': "'*'" }
+    response_templates = { 'application/json': '' }
+    if response_data_type == 'html':
+        response_parameters['method.response.header.Content-Type'] = "'text/html'"
+        response_templates = { "text/html": "$input.path('$')" }
+    api_gateway_client.put_integration_response(
+        restApiId = rest_api_id,
+        resourceId = endpoint_resource['id'],
+        httpMethod = http_method_type,
+        statusCode = '200',
+        responseParameters=response_parameters,
+        responseTemplates=response_templates,
+    )
+
 def setup_aws_credentials():
     try:
         session = boto3.Session(profile_name=aws_profile_name)
@@ -311,139 +384,23 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
             parentId = root_endpoint_id,
             pathPart = endpoint_api_name_index
         )
+
         # Set up GET method
-        api_gateway_client.put_method(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = "GET",
-            authorizationType = "NONE",
-            apiKeyRequired = False,
-        )
-        api_gateway_client.put_method_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = 'GET',
-            statusCode = '200',
-            responseParameters = {
-                'method.response.header.Access-Control-Allow-Origin': False,
-                'method.response.header.Content-Type': False
-            }
-        )
-        api_gateway_client.put_integration(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = 'GET',
-            type = 'AWS',
-            integrationHttpMethod = 'POST', # this has to be POST
-            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
-            requestTemplates = {
-                'application/json': \
-'''
-{
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($header in $input.params().header.keySet())
-    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "method": "$context.httpMethod",
-  "params": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "query": {
-    #foreach($queryParam in $input.params().querystring.keySet())
-    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
-
-    #end
-  }  
-}
-'''
-            },
-            passthroughBehavior = 'WHEN_NO_TEMPLATES'
-        )
-        api_gateway_client.put_integration_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = 'GET',
-            statusCode = '200',
-            responseParameters={
-                'method.response.header.Access-Control-Allow-Origin': "'*'",
-                'method.response.header.Content-Type': "'text/html'"
-            },
-            responseTemplates={
-                "text/html": "$input.path('$')"
-            },
+        add_api_gateway_method(
+            api_gateway_client = api_gateway_client,
+            rest_api_id = rest_api_id,
+            endpoint_resource = resource_for_index_endpoint,
+            http_method_type = 'GET',
+            response_data_type = 'html'
         )
 
         # Set up POST method
-        api_gateway_client.put_method(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = "POST",
-            authorizationType = "NONE",
-            apiKeyRequired = False,
-        )
-        api_gateway_client.put_method_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = 'POST',
-            statusCode = '200',
-            responseParameters = {
-                'method.response.header.Access-Control-Allow-Origin': False
-            },
-            responseModels = {
-                'application/json': 'Empty'
-            }
-        )
-        api_gateway_client.put_integration(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = 'POST',
-            type = 'AWS',
-            integrationHttpMethod = 'POST', # this has to be POST
-            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
-            requestTemplates = {
-                'application/json': \
-'''{
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($header in $input.params().header.keySet())
-    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "method": "$context.httpMethod",
-  "params": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "query": {
-    #foreach($queryParam in $input.params().querystring.keySet())
-    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
-
-    #end
-  }  
-}'''
-            },
-            passthroughBehavior = 'WHEN_NO_TEMPLATES'
-        )
-        api_gateway_client.put_integration_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = 'POST',
-            statusCode = '200',
-            responseParameters={
-                'method.response.header.Access-Control-Allow-Origin': "'*'"
-            },
-            responseTemplates={
-                'application/json': ''
-            },
+        add_api_gateway_method(
+            api_gateway_client = api_gateway_client,
+            rest_api_id = rest_api_id,
+            endpoint_resource = resource_for_index_endpoint,
+            http_method_type = 'POST',
+            response_data_type = 'json'
         )
     else:
         print("API Gateway: Endpoint for index already exists.")
@@ -455,141 +412,23 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
             parentId = root_endpoint_id,
             pathPart = endpoint_api_name_message
         )
-        # TODO: set up integration configs for this endpoint here
+
         # Set up GET method
-        api_gateway_client.put_method(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = "GET",
-            authorizationType = "NONE",
-            apiKeyRequired = False,
-        )
-        api_gateway_client.put_method_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = 'GET',
-            statusCode = '200',
-            responseParameters = {
-                'method.response.header.Access-Control-Allow-Origin': False
-            },
-            responseModels = {
-                'application/json': 'Empty'
-            }
-        )
-        api_gateway_client.put_integration(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = 'GET',
-            type = 'AWS',
-            integrationHttpMethod = 'POST', # this has to be POST
-            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
-            requestTemplates = {
-                'application/json': \
-'''
-{
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($header in $input.params().header.keySet())
-    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "method": "$context.httpMethod",
-  "params": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "query": {
-    #foreach($queryParam in $input.params().querystring.keySet())
-    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
-
-    #end
-  }  
-}
-'''
-            },
-            passthroughBehavior = 'WHEN_NO_TEMPLATES'
-        )
-        api_gateway_client.put_integration_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = 'GET',
-            statusCode = '200',
-            responseParameters={
-                'method.response.header.Access-Control-Allow-Origin': "'*'"
-            },
-            responseTemplates={
-                "application/json": ""
-            },
+        add_api_gateway_method(
+            api_gateway_client = api_gateway_client,
+            rest_api_id = rest_api_id,
+            endpoint_resource = resource_for_message_endpoint,
+            http_method_type = 'GET',
+            response_data_type = 'json'
         )
 
         # Set up POST method
-        api_gateway_client.put_method(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = "POST",
-            authorizationType = "NONE",
-            apiKeyRequired = False,
-        )
-        api_gateway_client.put_method_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = 'POST',
-            statusCode = '200',
-            responseParameters = {
-                'method.response.header.Access-Control-Allow-Origin': False
-            },
-            responseModels = {
-                'application/json': 'Empty'
-            }
-        )
-        api_gateway_client.put_integration(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = 'POST',
-            type = 'AWS',
-            integrationHttpMethod = 'POST', # this has to be POST
-            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
-            requestTemplates = {
-                'application/json': \
-'''{
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($header in $input.params().header.keySet())
-    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "method": "$context.httpMethod",
-  "params": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "query": {
-    #foreach($queryParam in $input.params().querystring.keySet())
-    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
-
-    #end
-  }  
-}'''
-            },
-            passthroughBehavior = 'WHEN_NO_TEMPLATES'
-        )
-        api_gateway_client.put_integration_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = 'POST',
-            statusCode = '200',
-            responseParameters={
-                'method.response.header.Access-Control-Allow-Origin': "'*'"
-            },
-            responseTemplates={
-                'application/json': ''
-            },
+        add_api_gateway_method(
+            api_gateway_client = api_gateway_client,
+            rest_api_id = rest_api_id,
+            endpoint_resource = resource_for_message_endpoint,
+            http_method_type = 'POST',
+            response_data_type = 'json'
         )
     else:
         print("API Gateway: Endpoint for message already exists.")
@@ -601,139 +440,23 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
             parentId = root_endpoint_id,
             pathPart = endpoint_api_name_approval
         )
+
         # Set up GET method
-        api_gateway_client.put_method(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = "GET",
-            authorizationType = "NONE",
-            apiKeyRequired = False,
-        )
-        api_gateway_client.put_method_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = 'GET',
-            statusCode = '200',
-            responseParameters = {
-                'method.response.header.Access-Control-Allow-Origin': False,
-                'method.response.header.Content-Type': False
-            }
-        )
-        api_gateway_client.put_integration(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = 'GET',
-            type = 'AWS',
-            integrationHttpMethod = 'POST', # this has to be POST
-            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
-            requestTemplates = {
-                'application/json': \
-'''
-{
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($header in $input.params().header.keySet())
-    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "method": "$context.httpMethod",
-  "params": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "query": {
-    #foreach($queryParam in $input.params().querystring.keySet())
-    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
-
-    #end
-  }  
-}
-'''
-            },
-            passthroughBehavior = 'WHEN_NO_TEMPLATES'
-        )
-        api_gateway_client.put_integration_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = 'GET',
-            statusCode = '200',
-            responseParameters={
-                'method.response.header.Access-Control-Allow-Origin': "'*'",
-                'method.response.header.Content-Type': "'text/html'"
-            },
-            responseTemplates={
-                "text/html": "$input.path('$')"
-            },
+        add_api_gateway_method(
+            api_gateway_client = api_gateway_client,
+            rest_api_id = rest_api_id,
+            endpoint_resource = resource_for_approval_endpoint,
+            http_method_type = 'GET',
+            response_data_type = 'html'
         )
 
         # Set up POST method
-        api_gateway_client.put_method(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = "POST",
-            authorizationType = "NONE",
-            apiKeyRequired = False,
-        )
-        api_gateway_client.put_method_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = 'POST',
-            statusCode = '200',
-            responseParameters = {
-                'method.response.header.Access-Control-Allow-Origin': False
-            },
-            responseModels = {
-                'application/json': 'Empty'
-            }
-        )
-        api_gateway_client.put_integration(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = 'POST',
-            type = 'AWS',
-            integrationHttpMethod = 'POST', # this has to be POST
-            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
-            requestTemplates = {
-                'application/json': \
-'''{
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($header in $input.params().header.keySet())
-    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "method": "$context.httpMethod",
-  "params": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "query": {
-    #foreach($queryParam in $input.params().querystring.keySet())
-    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
-
-    #end
-  }  
-}'''
-            },
-            passthroughBehavior = 'WHEN_NO_TEMPLATES'
-        )
-        api_gateway_client.put_integration_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = 'POST',
-            statusCode = '200',
-            responseParameters={
-                'method.response.header.Access-Control-Allow-Origin': "'*'"
-            },
-            responseTemplates={
-                'application/json': ''
-            },
+        add_api_gateway_method(
+            api_gateway_client = api_gateway_client,
+            rest_api_id = rest_api_id,
+            endpoint_resource = resource_for_approval_endpoint,
+            http_method_type = 'POST',
+            response_data_type = 'json'
         )
     else:
         print("API Gateway: Endpoint for approval already exists.")
