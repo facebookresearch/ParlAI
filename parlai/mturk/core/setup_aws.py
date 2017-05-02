@@ -47,6 +47,7 @@ def setup_aws_credentials():
         print("AWS credentials not found. Please create an IAM user with programmatic access and AdministratorAccess policy at https://console.aws.amazon.com/iam/, and then enter the user's security credentials below:")
         aws_access_key_id = input('Access Key ID: ')
         aws_secret_access_key = input('Secret Access Key: ')
+        os.makedirs(os.path.expanduser('~/.aws/'))
         aws_credentials_file_path = '~/.aws/credentials'
         aws_credentials_file_string = None
         if os.path.exists(os.path.expanduser(aws_credentials_file_path)):
