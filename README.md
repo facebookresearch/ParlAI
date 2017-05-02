@@ -47,16 +47,18 @@ Set of datasets to bootstrap a working dialogue model for human interaction
 
 ## Basic Examples
 
-Display 10 random examples from task 1 of the "1000-example" bAbI task:
-`python examples/display_data.py -t babi:task1k:1`
+```bash
+# Display 10 random examples from task 1 of the "1000-example" bAbI task:
+python examples/display_data.py -t babi:task1k:1
 
-Train a simple cpu-based memory network on the Children's Book Test "Named Entities" subset with 8 threads (python processes) using Hogwild:
-`python examples/memnn_luatorch_cpu/full_task_train.py -t cbt:NE -n 8`
-(requires zmq and lua torch).
+# Train a simple cpu-based memory network on the Children's Book Test "Named Entities" subset with 8 threads (python processes) using Hogwild:
+# requires zmq and Lua Torch
+python examples/memnn_luatorch_cpu/full_task_train.py -t cbt:NE -n 8
 
-Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples:
-`python examples/drqa/train.py -t squad -b 32`
-(requires pytorch and regex).
+# Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples:
+# requires pytorch and regex
+python examples/drqa/train.py -t squad -b 32
+```
 
 ## Requirements
 
