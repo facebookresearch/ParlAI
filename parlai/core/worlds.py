@@ -91,6 +91,7 @@ class World(object):
         return shared_agents
 
     def get_agents(self):
+        """Return the list of agents."""
         return self.agents
 
     def get_acts(self):
