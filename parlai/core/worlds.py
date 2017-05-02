@@ -439,7 +439,10 @@ class MultiAgentDialogWorld(World):
 
 class BatchWorld(World):
     """Creates a separate world for each item in the batch, sharing
-    the parameters for each."""
+    the parameters for each.
+    The underlying world(s) it is batching can be either DialogPartnerWorld,
+    or MultiWorld.
+    """
 
     def __init__(self, opt, world):
         self.opt = opt
@@ -465,11 +468,11 @@ class BatchWorld(World):
 
     def parley(self):
         # Collect batch together for each agent, and do update.
-        # Assumes DialogPartnerWorld for now, this allows us make the
-        # agent[0] act, collect the batch, then allow the agent[1] to
-        # act in each world, so we can do both forwards and backwards
-        # in batch, and still collect metrics in each world.
-        a = self.world.get_agents()[1] # The agent in DialogPartnerWorld
+        # Assumes DialogPartnerWorld (or MultiWorld of DialogPartnerWorlds)
+        # for now, this allows us make the agent[0] act, collect the batch,
+        # then allow the agent[1] to act in each world, so we can do both
+        # forwards and backwards in batch, and still collect metrics in each world.
+        a = self.world.get_agents()[1]
         batch = []
         for w in self.worlds:
             # Half of parley.
