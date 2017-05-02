@@ -10,6 +10,10 @@ Reading Wikipedia to Answer Open-Domain Questions.
 In Association for Computational Linguistics (ACL).
 
 Link: https://arxiv.org/abs/1704.00051
+
+Note:
+To use pretrained word embeddings, set the --embeddings_file path argument.
+GloVe is recommended, see http://nlp.stanford.edu/data/glove.840B.300d.zip.
 """
 import torch
 import numpy as np
@@ -45,7 +49,9 @@ def build_dict(opt):
 
 
 def validate(opt, agent, n_iter):
+    opt = copy.deepcopy(opt)
     opt['datatype'] = 'valid'
+    opt['batchsize'] = 1
     valid_world = create_task(opt, agent)
 
     logger.info('[ Running validation... ]')
@@ -81,7 +87,7 @@ def main(opt):
     train_time = Timer()
 
     # Keep track of best model + how long since the last improvement
-    best_valid = validate(opt, doc_reader, -1)
+    best_valid = 0
     impatience = 0
 
     logger.info("[ Ok, let's go... ]")
