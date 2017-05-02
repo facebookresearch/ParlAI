@@ -233,11 +233,11 @@ class DialogPartnerWorld(World):
         self.acts = [None, None]
 
     def __iter__(self):
-        return iter(self.teacher)
+        return iter(self.agents[0])
 
     def epoch_done(self):
-        return (self.teacher.epoch_done()
-                if hasattr(self.teacher, 'epoch_done') else False)
+        return (self.agents[0].epoch_done()
+                if hasattr(self.agents[0], 'epoch_done') else False)
 
     def parley(self):
         """Agent 0 goes first. Alternate between the two agents.
@@ -252,7 +252,7 @@ class DialogPartnerWorld(World):
         self.is_episode_done = acts[0].get('episode_done', False)
 
     def report(self):
-        return self.teacher.report()
+        return self.agents[0].report()
 
     def display(self):
         lines = []
@@ -289,12 +289,12 @@ class DialogPartnerWorld(World):
         return '\n'.join(lines)
 
     def __len__(self):
-        return len(self.teacher)
+        return len(self.agents[0])
 
     def shutdown(self):
         """Shutdown each agent."""
-        self.teacher.shutdown()
-        self.agent.shutdown()
+        for a in self.agents:
+            a.shutdown()
 
 
 class MultiWorld(World):
@@ -465,7 +465,7 @@ class BatchWorld(World):
     def parley(self):
         # Collect batch together for each agent, and do update.
         # Assumes DialogPartnerWorld for now, this allows us make the
-        # teacher act, collect the batch, then allow the agent to
+        # agent[0] act, collect the batch, then allow the agent[1] to
         # act in each world, so we can do both forwards and backwards
         # in batch, and still collect metrics in each world.
         a = self.world.get_agents()[1] # The agent in DialogPartnerWorld
