@@ -106,37 +106,47 @@ def index(event, context):
 def message(event, context):
     if event['method'] == 'GET':
         """
-        return all new message from all other agents as JSON
-        Expects <task_group_id>, <conversation_id> and <last_message_id> as GET body parameters
+        return messages as JSON
+        Expects in GET query parameters:
+        <task_group_id>
+        <last_message_id>
+        <conversation_id> (optional)
+        <excluded_agent_id> (optional)
         """
         task_group_id = event['query']['task_group_id']
-        conversation_id = int(event['query']['conversation_id'])
         last_message_id = int(event['query']['last_message_id'])
+        conversation_id = None
+        if 'conversation_id' in event['query']:
+            conversation_id = int(event['query']['conversation_id'])
+        excluded_agent_id = event['query'].get('excluded_agent_id', None)
 
-        conversation_dict, _ = get_new_messages(
+        conversation_dict, new_last_message_id = get_new_messages(
             db_session=db_session, 
             task_group_id=task_group_id, 
             conversation_id=conversation_id,
             after_message_id=last_message_id,
+            excluded_agent_id=excluded_agent_id,
             populate_meta_info=True
         )
 
-        ret = []
-        if conversation_id in conversation_dict:
-            ret = conversation_dict[conversation_id]
-            ret.sort(key=lambda x: x['message_id'])
+        ret = {}
+        ret['last_message_id'] = new_last_message_id
+        ret['conversation_dict'] = conversation_dict
+
+        for cid, message_list in conversation_dict.items():
+            message_list.sort(key=lambda x: x['message_id'])
             
         return json.dumps(ret)
     if event['method'] == 'POST':
         """
         Send new message for this agent.
-        Expects <task_group_id>, <conversation_id>, <cur_agent_id> and <msg> as POST body parameters
+        Expects <task_group_id>, <conversation_id>, <cur_agent_id> and <text> as POST body parameters
         """
         params = event['body']
         task_group_id = params['task_group_id']
         conversation_id = int(params['conversation_id'])
         cur_agent_id = params['cur_agent_id']
-        message_text = params['msg'] if 'msg' in params else None
+        message_text = params['text'] if 'text' in params else None
         reward = params['reward'] if 'reward' in params else None
         episode_done = params['episode_done']
 
@@ -147,9 +157,7 @@ def message(event, context):
             agent_id=cur_agent_id, 
             message_text=message_text, 
             reward=reward,
-            episode_done=episode_done,
-            binary_file_bytes=None, 
-            binary_file_type=None
+            episode_done=episode_done
         )
 
         new_message = { 

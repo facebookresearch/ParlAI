@@ -468,8 +468,9 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
         )
 
     index_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_index
+    message_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_message
     approval_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_approval
-    return index_api_endpoint_url, approval_api_endpoint_url
+    return index_api_endpoint_url, message_api_endpoint_url, approval_api_endpoint_url
 
 def check_mturk_balance(num_hits, hit_reward, is_sandbox):
     client = boto3.client(
@@ -676,11 +677,9 @@ def setup_aws(task_config, num_hits, is_sandbox):
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
     requester_key_gt = get_requester_key()
     rds_host = setup_rds()
-    index_api_endpoint_url, approval_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt)
+    index_api_endpoint_url, message_api_endpoint_url, approval_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt)
 
     chat_interface_url = index_api_endpoint_url + "?endpoint=index&task_group_id={{task_group_id}}&conversation_id={{conversation_id}}&cur_agent_id={{cur_agent_id}}"
     approval_url = approval_api_endpoint_url + "?endpoint=approval&task_group_id={{task_group_id}}&conversation_id=1&cur_agent_id={{cur_agent_id}}&requester_key="+requester_key_gt
     
-    # webbrowser.open(chat_interface_url)
-    
-    return rds_host, chat_interface_url, approval_url
+    return chat_interface_url, message_api_endpoint_url, approval_url

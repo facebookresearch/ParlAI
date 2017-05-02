@@ -57,7 +57,7 @@ def init_database(host, db_name, username, password):
     return engine, session_maker
 
 
-def send_new_message(db_session, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False, binary_file_bytes=None, binary_file_type=None):
+def send_new_message(db_session, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False):
     """
     Message format:
     {

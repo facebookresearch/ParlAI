@@ -11,27 +11,57 @@ import random
 import string
 import webbrowser
 import json
+import requests
 from parlai.core.agents import create_agent_from_shared
-from .setup_aws import rds_db_name, rds_username, rds_password, setup_aws, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials
-from .data_model import Message, init_database, send_new_message, get_new_messages, get_pending_approval_count, get_all_approval_status
+from .setup_aws import setup_aws, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials
 
 
 def _get_random_alphanumeric_string(N):
     return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(N))
 
 
-def setup_relay(task_config, num_hits, is_sandbox):
+def _setup_relay(task_config, num_hits, is_sandbox):
     """Sets up relay server and returns a database session object which can be used to poll
     new messages and send messages
     """
     # set up relay server
-    rds_host, mturk_chat_url_template, mturk_approval_url_template = setup_aws(task_config, num_hits, is_sandbox)
+    mturk_chat_url_template, message_api_endpoint, mturk_approval_url_template = setup_aws(task_config, num_hits, is_sandbox)
 
-    db_engine, db_session_maker = init_database(rds_host, rds_db_name, rds_username, rds_password)
-    db_session = db_session_maker()
+    return mturk_chat_url_template, message_api_endpoint, mturk_approval_url_template
 
-    return db_session, mturk_chat_url_template, mturk_approval_url_template
+def _send_new_message(message_api_endpoint, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False):
+    post_data_dict = {
+        'endpoint': 'message',
+        'task_group_id': task_group_id,
+        'conversation_id': conversation_id,
+        'cur_agent_id': agent_id,
+        'episode_done': episode_done,
+    }
+    if message_text:
+        post_data_dict['text'] = message_text
+    if reward:
+        post_data_dict['reward'] = reward
+    
+    request = requests.post(message_api_endpoint, data=json.dumps(post_data_dict))
+    return json.loads(request.json())
 
+def _get_new_messages(message_api_endpoint, task_group_id, after_message_id, excluded_agent_id=None):
+    params = {
+        'endpoint': 'message',
+        'task_group_id': task_group_id,
+        'last_message_id': after_message_id,
+    }
+    if excluded_agent_id:
+        params['excluded_agent_id'] = excluded_agent_id
+
+    request = requests.get(message_api_endpoint, params=params)
+    return json.loads(request.json())
+
+def _get_pending_approval_count(approval_api_endpoint, task_group_id):
+    pass
+
+def _get_all_approval_status(approval_api_endpoint, task_group_id):
+    pass
 
 def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, is_sandbox=False, chat_page_only=False, verbose=False):
     print("\nYou are going to allow workers from Amazon Mechanical Turk to chat with your dialog model running on your local machine.\nDuring this process, Internet connection is required, and you should turn off your computer's auto-sleep feature.\n")
@@ -45,7 +75,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
     task_group_id = str(int(time.time())) + '_' + _get_random_alphanumeric_string(10) # Random string to further avoid collision
 
     print('Setting up MTurk backend...')
-    db_session, mturk_chat_url_template, mturk_approval_url_template = setup_relay(task_config, num_hits, is_sandbox)
+    mturk_chat_url_template, message_api_endpoint, mturk_approval_url_template = _setup_relay(task_config, num_hits, is_sandbox)
 
     worker_agent_id = task_config['worker_agent_id']   
     bot_agent_id = bot.getID() 
@@ -70,8 +100,8 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
             if verbose:
                 print('Conversation '+str(cid)+' - Bot says: ' + str(response))
             logs[cid].append(response)
-            new_message_object = send_new_message(
-                db_session=db_session, 
+            new_message = _send_new_message(
+                message_api_endpoint=message_api_endpoint,
                 task_group_id=task_group_id, 
                 conversation_id=cid, 
                 agent_id=bot_agent_id, 
@@ -79,27 +109,30 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
                 reward=response.get('reward', None),
                 episode_done=response.get('episode_done', False), 
             )
-            if new_message_object.id > last_message_id:
-                last_message_id = new_message_object.id
+            if new_message['message_id'] > last_message_id:
+                last_message_id = new_message['message_id']
 
     hits_created = False
     conversations_remaining = set(cids)
 
     # Main loop for polling and handling new messages
     while len(conversations_remaining) > 0:
-        conversation_dict, new_last_message_id = get_new_messages(
-            db_session=db_session, 
+        ret = _get_new_messages(
+            message_api_endpoint=message_api_endpoint,
             task_group_id=task_group_id, 
             after_message_id=last_message_id, 
             excluded_agent_id=bot_agent_id,
         )
-
+        conversation_dict = ret['conversation_dict']
+        new_last_message_id = ret['last_message_id']
+        
         if new_last_message_id:
             last_message_id = new_last_message_id
 
         time.sleep(1)
 
         for conversation_id, new_messages in conversation_dict.items():
+            conversation_id = int(conversation_id)
             if conversation_id in conversations_remaining and len(new_messages) > 0:
                 agent = bots[cid_map[conversation_id]]
                 for new_message in new_messages:
@@ -120,8 +153,8 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
                             if verbose:
                                 print('Conversation '+str(conversation_id)+' - Bot says: ' + str(response))
                             logs[conversation_id].append(response)
-                            send_new_message(
-                                db_session=db_session, 
+                            _send_new_message(
+                                message_api_endpoint=message_api_endpoint,
                                 task_group_id=task_group_id, 
                                 conversation_id=conversation_id, 
                                 agent_id=bot_agent_id, 
@@ -163,7 +196,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
         time.sleep(2)
 
     mturk_approval_url = mturk_approval_url_template.replace('{{task_group_id}}', str(task_group_id)).replace('{{cur_agent_id}}', str(worker_agent_id))
-    print("\nAll HITs are done! Please go to the following link to approve/reject them (they will be auto-approved in 4 weeks if no action is taken):\n")
+    print("\nAll HITs are done! Please go to the following link to approve/reject them (or they will be auto-approved in 4 weeks if no action is taken):\n")
     print(mturk_approval_url)
     print("")
 
