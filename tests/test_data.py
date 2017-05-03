@@ -22,7 +22,7 @@ class TestData(unittest.TestCase):
     """Test access to different datasets."""
 
     # args to pass to argparse for this test
-    TMP_PATH = '/tmp/parlai_test_data/'
+    TMP_PATH = "/Volumes/Seagate Backup Plus Drive/tmp" #'/tmp/parlai_test_data/'
     args = [
         '--datatype', 'train',
         '--datapath', TMP_PATH
