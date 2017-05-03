@@ -2,7 +2,7 @@
 
 ParlAI (pronounced “parley”) is a framework for dialog AI research, implemented in Python.
 
-Its goal is to provide researchers a unified framework for training and testing of dialog models, including multi-task training over many datasets at once, as well as the seamless integration of <a href="https://www.mturk.com/mturk/welcome">Amazon Mechanical Turk</a> for data collection and human evaluation.
+Its goal is to provide researchers a unified framework for the training and testing of dialog models, including multi-task training over many datasets at once, as well as the seamless integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome) for data collection and human evaluation.
 
 Over 20 tasks are supported in the first release, including popular datasets such as [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MCTest](https://www.microsoft.com/en-us/research/publication/mctest-challenge-dataset-open-domain-machine-comprehension-text/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [WebQuestions](http://www.aclweb.org/anthology/D13-1160), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialog tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialog](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html) and [VQA-COCO2014](http://visualqa.org/).
 
@@ -15,15 +15,15 @@ We are in an early-release Beta. Expect some adventures and rough edges.
 ## Goals
 
 Unified framework for evaluation of dialogue models
-- downloads tasks/datasets when requested and provides the same simple interface to them
-- unify dataset input and evaluation frameworks/metrics
-- agents/ directory encourages researchers to commit their training code to the repository to share with others
-- aid reproducibility
+- downloads tasks/datasets on demand and provides the same simple interface to them
+- unifies dataset input and evaluation frameworks/metrics
+- `agents/` directory encourages researchers to submit their training code to the repository to share with others
+- aids reproducibility
 
 End goal is general dialogue, which includes many different skills
-- seamless combination of simulated and real language datasets
-- encourage multi-task model development & evaluation
-- reduce overfitting of models to specific datasets         
+- seamlessly combines simulated and real language tasks
+- encourages multi-task model development & evaluation
+- helps to reduce overfitting of models to specific datasets         
 
 End goal is real dialogue with people
 - train and evaluate on live dialogue with humans via Mechanical Turk
@@ -40,7 +40,7 @@ Set of datasets to bootstrap a working dialogue model for human interaction
 - Both real and simulated tasks.
 - Supports other media, e.g. visual in VQA.
 - Can use Mechanical Turk to run / collect data / evaluate.
-- Python framework
+- Python framework.
 - Examples of training with PyTorch.
 - Uses zmq to talk to other toolboxes not in Python, examples of Lua Torch given.
 - Supports hogwild and batch training of models.
@@ -94,9 +94,9 @@ All needed data will be downloaded to ./data, and any model files (currently jus
 
 Copied install (use parlai only as a dependency):
 Run `python setup.py install` to copy contents to your site-packages folder.
-All data will be downloaded to that folder, and to make any changes to the code you will need to run install again.
+All data will be downloaded to python's `site-packages` folder by default (can override via the command-line), and to make any changes to the code you will need to run install again.
 If you want to just use parlai as a dependency (e.g. to access the tasks or the core code), this works fine.
-If you want to clear out the downloaded data, then delete the 'data' and 'downloads' (if applicable) folder in site-packages/parlai.
+If you want to clear out the downloaded data, then delete the `data` and `downloads` (if applicable) folder in `site-packages/parlai`.
 
 ## Worlds, agents and teachers
 The main concepts (classes) in ParlAI:
@@ -104,7 +104,7 @@ The main concepts (classes) in ParlAI:
 - agent – an agent in the world, e.g. the learner. (There can be multiple learners.)
 - teacher – a type of agent that talks to the learner, implements one of the tasks listed before.
 
-After defining a world, and the agents in it, a main loop can be run for training, testing or displaying which calls the function world.parley(). The skeleton of an example main is given in the left panel, and the actual code for parley() on the right.
+After defining a world and the agents in it, a main loop can be run for training, testing or displaying, which calls the function world.parley(). The skeleton of an example main is given in the left panel, and the actual code for parley() on the right.
 
 <p align=center><img width="100%" src="docs/source/\_static/img/main.png" /></p>
 
@@ -172,7 +172,7 @@ The core library contains the following files:
 - **build_data.py**: basic utilities for setting up data for tasks. you can override if your filesystem needs different functionality.
 - **data.py**: contains some default classes for fixed text datasets
   - TextData: sets up observation tables with 'text', 'labels', 'reward', and/or 'candidates' fields
-  - HogwildTextData: does the same thing as TextData, but stores underlying data in a shared-memory array
+  - HogwildTextData: does the same thing as TextData, but stores underlying data in a shared-memory array, which allows for modification of the data during running if desired
 - **dialog_teacher.py**: contains a base teacher class for doing dialog with fixed chat logs
 - **dict.py**: contains code for building general NLP-style dictionaries from observations
   - DictionaryAgent: agent which tracks the index and frequency of words in a dictionary, and can parse a sentence into indices into its dictionary or back
@@ -208,7 +208,7 @@ This directory contains a few particular examples of basic loops.
 - eval_model.py: _uses agent.repeat_label to compute evaluation metrics data for a particular task provided on the command-line_
 - build_dict.py: _build a dictionary from a particular task provided on the command-line using core.dict.DictionaryAgent_
 - memnn_luatorch_cpu: _shows a few examples of training an end-to-end memory network on a few datasets_
-- drqa: _shows how to train the attentive LSTM DrQA model of <a href="https://arxiv.org/abs/1704.00051">Chen et al.</a> on SQuAD._
+- drqa: _shows how to train the attentive LSTM DrQA model of [Chen et al.](https://arxiv.org/abs/1704.00051) on SQuAD._
 
 ### Tasks
 
