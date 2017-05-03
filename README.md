@@ -1,4 +1,5 @@
-<p align="center"><img width="70%" src="docs/source/\_static/img/parlai.png" /></p>
+<p align="center"><img width="40%" src="docs/source/\_static/img/parlai.png" /></p>
+
 --------------------------------------------------------------------------------
 
 ParlAI (pronounced “par-lay”) is a framework for dialog AI research, implemented in Python.
