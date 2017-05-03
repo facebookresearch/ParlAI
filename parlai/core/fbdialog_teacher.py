@@ -51,12 +51,12 @@ class FbDialogTeacher(DialogTeacher):
 
     def label_candidates(self):
         return self.cands
-
+    
     def load_cands(self, path):
-    """Load global fixed set of candidate labels that the teacher provides every
-    example (the true labels for a specific example are also added to this set,
-    so that it's possible to get the right answer).
-    """
+        """Load global fixed set of candidate labels that the teacher provides every
+        example (the true labels for a specific example are also added to this set,
+        so that it's possible to get the right answer).
+        """
         if path is None:
             return None
         cands = []
