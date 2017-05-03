@@ -55,7 +55,7 @@ def _id_to_task(t_id):
 
 
 def ids_to_tasks(ids):
-    ids = ids.split(',')
+    tasks = ids.split(',')
     for k in range(len(tasks)):
         tasks[k] = _id_to_task(tasks[k])
     task = ','.join(tasks)
