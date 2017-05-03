@@ -176,10 +176,7 @@ The core library contains the following files:
   - **_MultiTaskTeacher_**: creates a set of teachers based on a "task string" passed to the Teacher, creating multiple teachers within it and alternating between them
   - create_task_teacher: instantiate a teacher from a given task string (e.g. 'babi:task:1' or 'squad')
 - **build_data.py**: basic utilities for setting up data for tasks. you can override if your filesystem needs different functionality.
-- **data.py**: contains some default classes for fixed text datasets
-  - TextData: sets up observation tables with 'text', 'labels', 'reward', and/or 'candidates' fields
-  - HogwildTextData: does the same thing as TextData, but stores underlying data in a shared-memory array, which allows for modification of the data during running if desired
-- **dialog_teacher.py**: contains a base teacher class for doing dialog with fixed chat logs
+- **dialog_teacher.py**: contains a base teacher class for doing dialog with fixed chat logs, along with a data class for storing the data
 - **dict.py**: contains code for building general NLP-style dictionaries from observations
   - DictionaryAgent: agent which tracks the index and frequency of words in a dictionary, and can parse a sentence into indices into its dictionary or back
 - **fbdialog_teacher.py**: contains a teacher class which implements a function setup_data which parses data in the FB Dialog data format
