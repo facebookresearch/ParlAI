@@ -160,9 +160,9 @@ of patent rights can be found in the PATENTS file in the same directory.
             episode_done: false
         };
         if (done_after_responding) post_data_dict['episode_done'] = true;
-        post_data_dict['endpoint'] = 'message';
+        post_data_dict['method_name'] = 'send_new_message';
         $.ajax({
-            url: '/prod/parlai_relay_server_message',
+            url: '/prod/json',
             type: "POST",
             data: JSON.stringify(post_data_dict),
             contentType: "application/json",
@@ -206,9 +206,9 @@ of patent rights can be found in the PATENTS file in the same directory.
             conversation_id: conversation_id,
             action: action
         };
-        post_data_dict['endpoint'] = 'approval';
+        post_data_dict['method_name'] = 'review_hit';
         $.ajax({
-            url: '/prod/parlai_relay_server_approval',
+            url: '/prod/json',
             type: "POST",
             data: JSON.stringify(post_data_dict),
             contentType: "application/json",
@@ -330,9 +330,9 @@ of patent rights can be found in the PATENTS file in the same directory.
         };
         if (text) post_data_dict['text'] = text;
         post_data_dict['episode_done'] = episode_done;
-        post_data_dict['endpoint'] = 'message';
+        post_data_dict['method_name'] = 'send_new_message';
         $.ajax({
-            url: '/prod/parlai_relay_server_message',
+            url: '/prod/json',
             type: "POST",
             data: JSON.stringify(post_data_dict),
             contentType: "application/json",
@@ -369,20 +369,16 @@ of patent rights can be found in the PATENTS file in the same directory.
         }
     });
 
-    function construct_query_dict() {
-        var query_dict = {};
-        query_dict['endpoint'] = 'message';
-        query_dict['task_group_id'] = task_group_id;
-        query_dict['conversation_id'] = conversation_id;
-        query_dict['last_message_id'] = last_message_id;
-        return query_dict
-    }
-
     // background worker that gets new messages from relay server periodically
     function worker() {
       $.ajax({
-        url: '/prod/parlai_relay_server_message',
-        data: construct_query_dict(),
+        url: '/prod/json',
+        data: {
+            method_name: 'get_new_messages',
+            task_group_id: task_group_id,
+            conversation_id: conversation_id,
+            last_message_id: last_message_id
+        },
         success: function(data) {
             if (verbose_log) console.log(data);
             data = JSON.parse(data);
@@ -437,9 +433,9 @@ of patent rights can be found in the PATENTS file in the same directory.
             hitId: get_url_parameter('hitId'),
             workerId: get_url_parameter('workerId')
         };
-        post_data_dict['endpoint'] = 'index';
+        post_data_dict['method_name'] = 'save_hit_info';
         $.ajax({
-            url: '/prod/parlai_relay_server',
+            url: '/prod/json',
             type: "POST",
             data: JSON.stringify(post_data_dict),
             contentType: "application/json",

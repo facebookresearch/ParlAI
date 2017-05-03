@@ -41,6 +41,9 @@ class MTurkHITInfo(Base):
     worker_id = Column(String(255))
     is_sandbox = Column(Boolean())
     approval_status = Column(String(100), index=True)
+
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
     
  
 def init_database(host, db_name, username, password):
@@ -188,8 +191,8 @@ def get_hit_info(db_session, task_group_id, conversation_id):
     existing_object = db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.conversation_id==conversation_id).first()
     return existing_object
 
-def get_pending_approval_count(db_session, task_group_id):
+def get_pending_review_count(db_session, task_group_id):
     return db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.approval_status=='pending').count()
 
-def get_all_approval_status(db_session, task_group_id):
+def get_all_review_status(db_session, task_group_id):
     return db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).order_by(MTurkHITInfo.conversation_id).all()

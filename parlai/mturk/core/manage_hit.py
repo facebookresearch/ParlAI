@@ -21,17 +21,16 @@ def _get_random_alphanumeric_string(N):
 
 
 def _setup_relay(task_config, num_hits, is_sandbox):
-    """Sets up relay server and returns a database session object which can be used to poll
-    new messages and send messages
+    """Sets up relay server
     """
     # set up relay server
-    mturk_chat_url_template, message_api_endpoint, mturk_approval_url_template = setup_aws(task_config, num_hits, is_sandbox)
+    html_api_endpoint_url, json_api_endpoint_url, requester_key_gt = setup_aws(task_config, num_hits, is_sandbox)
 
-    return mturk_chat_url_template, message_api_endpoint, mturk_approval_url_template
+    return html_api_endpoint_url, json_api_endpoint_url, requester_key_gt
 
-def _send_new_message(message_api_endpoint, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False):
+def _send_new_message(json_api_endpoint_url, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False):
     post_data_dict = {
-        'endpoint': 'message',
+        'method_name': 'send_new_message',
         'task_group_id': task_group_id,
         'conversation_id': conversation_id,
         'cur_agent_id': agent_id,
@@ -42,30 +41,43 @@ def _send_new_message(message_api_endpoint, task_group_id, conversation_id, agen
     if reward:
         post_data_dict['reward'] = reward
     
-    request = requests.post(message_api_endpoint, data=json.dumps(post_data_dict))
+    request = requests.post(json_api_endpoint_url, data=json.dumps(post_data_dict))
+    print(request.json())
     return json.loads(request.json())
 
-def _get_new_messages(message_api_endpoint, task_group_id, after_message_id, excluded_agent_id=None):
+def _get_new_messages(json_api_endpoint_url, task_group_id, after_message_id, excluded_agent_id=None):
     params = {
-        'endpoint': 'message',
+        'method_name': 'get_new_messages',
         'task_group_id': task_group_id,
         'last_message_id': after_message_id,
     }
     if excluded_agent_id:
         params['excluded_agent_id'] = excluded_agent_id
 
-    request = requests.get(message_api_endpoint, params=params)
+    request = requests.get(json_api_endpoint_url, params=params)
     return json.loads(request.json())
 
-def _get_pending_approval_count(approval_api_endpoint, task_group_id):
-    pass
+def _get_pending_review_count(json_api_endpoint_url, task_group_id, requester_key):
+    params = {
+        'method_name': 'get_pending_review_count',
+        'task_group_id': task_group_id,
+        'requester_key': requester_key
+    }
+    request = requests.get(json_api_endpoint_url, params=params)
+    return request.json()
 
-def _get_all_approval_status(approval_api_endpoint, task_group_id):
-    pass
+def _get_all_review_status(json_api_endpoint_url, task_group_id, requester_key):
+    params = {
+        'method_name': 'get_all_review_status',
+        'task_group_id': task_group_id,
+        'requester_key': requester_key
+    }
+    request = requests.get(json_api_endpoint_url, params=params)
+    return request.json()
 
 def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, is_sandbox=False, chat_page_only=False, verbose=False):
     print("\nYou are going to allow workers from Amazon Mechanical Turk to chat with your dialog model running on your local machine.\nDuring this process, Internet connection is required, and you should turn off your computer's auto-sleep feature.\n")
-    key_input = input("Please press Enter to continue:")
+    key_input = input("Please press Enter to continue... ")
     print("")
 
     setup_aws_credentials()
@@ -75,7 +87,9 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
     task_group_id = str(int(time.time())) + '_' + _get_random_alphanumeric_string(10) # Random string to further avoid collision
 
     print('Setting up MTurk backend...')
-    mturk_chat_url_template, message_api_endpoint, mturk_approval_url_template = _setup_relay(task_config, num_hits, is_sandbox)
+    html_api_endpoint_url, json_api_endpoint_url, requester_key_gt = _setup_relay(task_config, num_hits, is_sandbox)
+
+    approval_index_url_template = html_api_endpoint_url + "?method_name=approval_index&task_group_id={{task_group_id}}&conversation_id=1&cur_agent_id={{cur_agent_id}}&requester_key="+requester_key_gt
 
     worker_agent_id = task_config['worker_agent_id']   
     bot_agent_id = bot.getID() 
@@ -101,7 +115,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
                 print('Conversation '+str(cid)+' - Bot says: ' + str(response))
             logs[cid].append(response)
             new_message = _send_new_message(
-                message_api_endpoint=message_api_endpoint,
+                json_api_endpoint_url=json_api_endpoint_url,
                 task_group_id=task_group_id, 
                 conversation_id=cid, 
                 agent_id=bot_agent_id, 
@@ -118,7 +132,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
     # Main loop for polling and handling new messages
     while len(conversations_remaining) > 0:
         ret = _get_new_messages(
-            message_api_endpoint=message_api_endpoint,
+            json_api_endpoint_url=json_api_endpoint_url,
             task_group_id=task_group_id, 
             after_message_id=last_message_id, 
             excluded_agent_id=bot_agent_id,
@@ -154,7 +168,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
                                 print('Conversation '+str(conversation_id)+' - Bot says: ' + str(response))
                             logs[conversation_id].append(response)
                             _send_new_message(
-                                message_api_endpoint=message_api_endpoint,
+                                json_api_endpoint_url=json_api_endpoint_url,
                                 task_group_id=task_group_id, 
                                 conversation_id=conversation_id, 
                                 agent_id=bot_agent_id, 
@@ -176,7 +190,7 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
             mturk_chat_url = None
             mturk_page_url = None
             for cid in cids:
-                mturk_chat_url = mturk_chat_url_template.replace('{{task_group_id}}', str(task_group_id)).replace('{{conversation_id}}', str(cid)).replace('{{cur_agent_id}}', str(worker_agent_id))
+                mturk_chat_url = html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(task_group_id)+"&conversation_id="+str(cid)+"&cur_agent_id="+str(worker_agent_id)
                 if not chat_page_only:
                     mturk_page_url = create_hit_with_hit_type(
                         page_url=mturk_chat_url, 
@@ -192,24 +206,24 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
                 print("Waiting for Turkers to complete the tasks... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
             hits_created = True
 
-    while get_pending_approval_count(db_session, task_group_id) != num_hits:
+    while _get_pending_review_count(json_api_endpoint_url=json_api_endpoint_url, task_group_id=task_group_id, requester_key=requester_key_gt) != num_hits:
         time.sleep(2)
 
-    mturk_approval_url = mturk_approval_url_template.replace('{{task_group_id}}', str(task_group_id)).replace('{{cur_agent_id}}', str(worker_agent_id))
+    mturk_approval_url = html_api_endpoint_url + "?method_name=approval_index&task_group_id="+str(task_group_id)+"&conversation_id=1&cur_agent_id="+worker_agent_id+"&requester_key="+requester_key_gt
     print("\nAll HITs are done! Please go to the following link to approve/reject them (or they will be auto-approved in 4 weeks if no action is taken):\n")
     print(mturk_approval_url)
     print("")
 
     approval_status_dict = {cid: '' for cid in cids}
     # Loop for checking approval status
-    while get_pending_approval_count(db_session, task_group_id) > 0:
+    while _get_pending_review_count(json_api_endpoint_url=json_api_endpoint_url, task_group_id=task_group_id, requester_key=requester_key_gt) > 0:
         time.sleep(2)
 
     print("Approvals are done!")
 
-    for hit_info in get_all_approval_status(db_session, task_group_id):
-        conversation_id = hit_info.conversation_id
-        approval_status_dict[conversation_id] = hit_info.approval_status
+    for hit_info in _get_all_review_status(json_api_endpoint_url=json_api_endpoint_url, task_group_id=task_group_id, requester_key=requester_key_gt):
+        conversation_id = hit_info['conversation_id']
+        approval_status_dict[conversation_id] = hit_info['approval_status']
 
     logs_approved = {cid:log for (cid,log) in logs.items() if approval_status_dict[cid] == 'approved'}
     logs_rejected = {cid:log for (cid,log) in logs.items() if approval_status_dict[cid] == 'rejected'}

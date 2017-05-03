@@ -24,9 +24,8 @@ region_name = 'us-west-2'
 iam_role_name = 'parlai_relay_server'
 lambda_function_name = 'parlai_relay_server'
 api_gateway_name = 'ParlaiRelayServer'
-endpoint_api_name_index = 'parlai_relay_server'
-endpoint_api_name_message = 'parlai_relay_server_message'
-endpoint_api_name_approval = 'parlai_relay_server_approval'
+endpoint_api_name_html = 'html'  # For GET-ing HTML
+endpoint_api_name_json = 'json'  # For GET-ing and POST-ing JSON
 
 rds_db_instance_identifier = 'parlai-mturk-db'
 rds_db_name = 'parlai_mturk_db'
@@ -40,7 +39,7 @@ files_to_copy = [parent_dir+'/'+'data_model.py', parent_dir+'/'+'mturk_index.htm
 lambda_server_directory_name = 'lambda_server'
 lambda_server_zip_file_name = 'lambda_server.zip'
 
-def add_api_gateway_method(api_gateway_client, rest_api_id, endpoint_resource, http_method_type, response_data_type):
+def add_api_gateway_method(api_gateway_client, lambda_function_arn, rest_api_id, endpoint_resource, http_method_type, response_data_type):
     api_gateway_client.put_method(
         restApiId = rest_api_id,
         resourceId = endpoint_resource['id'],
@@ -52,7 +51,7 @@ def add_api_gateway_method(api_gateway_client, rest_api_id, endpoint_resource, h
     response_parameters = { 'method.response.header.Access-Control-Allow-Origin': False }
     if response_data_type == 'html':
         response_parameters['method.response.header.Content-Type'] = False
-    response_models = None
+    response_models = {}
     if response_data_type == 'json':
         response_models = { 'application/json': 'Empty' }
     api_gateway_client.put_method_response(
@@ -361,63 +360,53 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
         rest_api_id = rest_api['id']
 
     # Create endpoint resources if doesn't exist
-    index_endpoint_exists = False
-    message_endpoint_exists = False
-    approval_endpoint_exists = False
+    html_endpoint_exists = False
+    json_endpoint_exists = False
     root_endpoint_id = None
     response = api_gateway_client.get_resources(restApiId=rest_api_id)
     resources = response['items']
     for resource in resources:
         if resource['path'] == '/':
             root_endpoint_id = resource['id']
-        elif resource['path'] == '/' + endpoint_api_name_index:
-            index_endpoint_exists = True
-        elif resource['path'] == '/' + endpoint_api_name_message:
-            message_endpoint_exists = True
-        elif resource['path'] == '/' + endpoint_api_name_approval:
-            approval_endpoint_exists = True
+        elif resource['path'] == '/' + endpoint_api_name_html:
+            html_endpoint_exists = True
+        elif resource['path'] == '/' + endpoint_api_name_json:
+            json_endpoint_exists = True
 
-    if not index_endpoint_exists:
-        print("API Gateway: Creating endpoint for index...")
-        resource_for_index_endpoint = api_gateway_client.create_resource(
+    if not html_endpoint_exists:
+        print("API Gateway: Creating endpoint for html...")
+        resource_for_html_endpoint = api_gateway_client.create_resource(
             restApiId = rest_api_id,
             parentId = root_endpoint_id,
-            pathPart = endpoint_api_name_index
+            pathPart = endpoint_api_name_html
         )
 
         # Set up GET method
         add_api_gateway_method(
             api_gateway_client = api_gateway_client,
+            lambda_function_arn = lambda_function_arn,
             rest_api_id = rest_api_id,
-            endpoint_resource = resource_for_index_endpoint,
+            endpoint_resource = resource_for_html_endpoint,
             http_method_type = 'GET',
             response_data_type = 'html'
         )
-
-        # Set up POST method
-        add_api_gateway_method(
-            api_gateway_client = api_gateway_client,
-            rest_api_id = rest_api_id,
-            endpoint_resource = resource_for_index_endpoint,
-            http_method_type = 'POST',
-            response_data_type = 'json'
-        )
     else:
-        print("API Gateway: Endpoint for index already exists.")
+        print("API Gateway: Endpoint for html already exists.")
 
-    if not message_endpoint_exists:
-        print("API Gateway: Creating endpoint for message...")
-        resource_for_message_endpoint = api_gateway_client.create_resource(
+    if not json_endpoint_exists:
+        print("API Gateway: Creating endpoint for json...")
+        resource_for_json_endpoint = api_gateway_client.create_resource(
             restApiId = rest_api_id,
             parentId = root_endpoint_id,
-            pathPart = endpoint_api_name_message
+            pathPart = endpoint_api_name_json
         )
 
         # Set up GET method
         add_api_gateway_method(
             api_gateway_client = api_gateway_client,
+            lambda_function_arn = lambda_function_arn,
             rest_api_id = rest_api_id,
-            endpoint_resource = resource_for_message_endpoint,
+            endpoint_resource = resource_for_json_endpoint,
             http_method_type = 'GET',
             response_data_type = 'json'
         )
@@ -425,52 +414,25 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
         # Set up POST method
         add_api_gateway_method(
             api_gateway_client = api_gateway_client,
+            lambda_function_arn = lambda_function_arn,
             rest_api_id = rest_api_id,
-            endpoint_resource = resource_for_message_endpoint,
+            endpoint_resource = resource_for_json_endpoint,
             http_method_type = 'POST',
             response_data_type = 'json'
         )
     else:
-        print("API Gateway: Endpoint for message already exists.")
+        print("API Gateway: Endpoint for json already exists.")
 
-    if not approval_endpoint_exists:
-        print("API Gateway: Creating endpoint for approval...")
-        resource_for_approval_endpoint = api_gateway_client.create_resource(
-            restApiId = rest_api_id,
-            parentId = root_endpoint_id,
-            pathPart = endpoint_api_name_approval
-        )
-
-        # Set up GET method
-        add_api_gateway_method(
-            api_gateway_client = api_gateway_client,
-            rest_api_id = rest_api_id,
-            endpoint_resource = resource_for_approval_endpoint,
-            http_method_type = 'GET',
-            response_data_type = 'html'
-        )
-
-        # Set up POST method
-        add_api_gateway_method(
-            api_gateway_client = api_gateway_client,
-            rest_api_id = rest_api_id,
-            endpoint_resource = resource_for_approval_endpoint,
-            http_method_type = 'POST',
-            response_data_type = 'json'
-        )
-    else:
-        print("API Gateway: Endpoint for approval already exists.")
-
-    if not (index_endpoint_exists and message_endpoint_exists and approval_endpoint_exists):
+    if not (html_endpoint_exists and json_endpoint_exists):
         api_gateway_client.create_deployment(
             restApiId = rest_api_id,
             stageName = "prod",
         )
 
-    index_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_index
-    message_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_message
-    approval_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_approval
-    return index_api_endpoint_url, message_api_endpoint_url, approval_api_endpoint_url
+    html_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_html
+    json_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_json
+
+    return html_api_endpoint_url, json_api_endpoint_url
 
 def check_mturk_balance(num_hits, hit_reward, is_sandbox):
     client = boto3.client(
@@ -677,9 +639,6 @@ def setup_aws(task_config, num_hits, is_sandbox):
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
     requester_key_gt = get_requester_key()
     rds_host = setup_rds()
-    index_api_endpoint_url, message_api_endpoint_url, approval_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt)
+    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt)
 
-    chat_interface_url = index_api_endpoint_url + "?endpoint=index&task_group_id={{task_group_id}}&conversation_id={{conversation_id}}&cur_agent_id={{cur_agent_id}}"
-    approval_url = approval_api_endpoint_url + "?endpoint=approval&task_group_id={{task_group_id}}&conversation_id=1&cur_agent_id={{cur_agent_id}}&requester_key="+requester_key_gt
-    
-    return chat_interface_url, message_api_endpoint_url, approval_url
+    return html_api_endpoint_url, json_api_endpoint_url, requester_key_gt
