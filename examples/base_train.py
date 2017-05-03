@@ -17,7 +17,7 @@ processing the data.
 """
 
 from parlai.core.params import ParlaiParser
-from parlai.core.agents import Agent, Teacher
+from parlai.core.agents import Agent
 from parlai.core.worlds import create_task
 import time
 

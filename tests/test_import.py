@@ -33,13 +33,5 @@ class TestImport(unittest.TestCase):
         from parlai.core.fbdialog_teacher import FbDialogTeacher
         assert FbDialogTeacher
 
-    def test_import_remoteagent(self):
-        # for some reason importing zmq causes an ignored ImportWarning
-        # https://github.com/zeromq/pyzmq/issues/1004
-        # from parlai.agents.remote_agent.agents import RemoteAgent
-        # assert RemoteAgent
-        pass
-
-
 if __name__ == '__main__':
     unittest.main()

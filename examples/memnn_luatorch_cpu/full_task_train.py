@@ -20,6 +20,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.worlds import DialogPartnerWorld, HogwildWorld
 
 import copy
+import os
 import sys
 import time
 
@@ -29,13 +30,15 @@ def main():
     argparser = ParlaiParser()
     DictionaryAgent.add_cmdline_args(argparser)
     ParsedRemoteAgent.add_cmdline_args(argparser)
+    parlai_home = os.environ['PARLAI_HOME']
     if '--remote-cmd' not in sys.argv:
         sys.argv.append('--remote-cmd')
-        sys.argv.append('luajit parlai/agents/memnn_luatorch_cpu/' +
-                        'memnn_zmq_parsed.lua')
+        sys.argv.append('luajit {}/parlai/agents/'.format(parlai_home) +
+                        'memnn_luatorch_cpu/memnn_zmq_parsed.lua')
     if '--remote-args' not in sys.argv:
         sys.argv.append('--remote-args')
-        sys.argv.append('examples/memnn_luatorch_cpu/params/params_default.lua')
+        sys.argv.append('{}/examples/'.format(parlai_home) +
+                        'memnn_luatorch_cpu/params_default.lua')
 
     opt = argparser.parse_args()
 
