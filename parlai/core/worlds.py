@@ -11,26 +11,28 @@ World(object) provides a generic parent class, including __enter__ and __exit__
     and KeyboardInterrupts are less noisy (if desired).
 
 DialogPartnerWorld(World) provides a two-agent turn-based dialog setting
-MultiAgentDialogWorld(World) provides a two-plus turn-based round-robin dialog
-
 MultiAgentDialogWorld provides a multi-agent setting.
 
-HogwildWorld(World) creates another world within itself for every thread, in
-    order to have separate simulated environments for each one. Each world gets
-    its own agents initialized using the "share()" parameters from the original
-    agents.
+MultiWorld(World) creates a set of environments (worlds) for the same agent
+   to multitask over, a different environment will be chosen per episode.
+
+HogwildWorld(World) is a container that creates another world within itself for
+    every thread, in order to have separate simulated environments for each one.
+    Each world gets its own agents initialized using the "share()" parameters
+    from the original agents.
 
 BatchWorld(World) is a container for doing minibatch training over a world by
 collecting batches of N copies of the environment (each with different state).
-
-MultiWorld(World) creates a set of environments for the same agent to multitask.
-
 
 
 All worlds are initialized with the following parameters:
 opt -- contains any options needed to set up the agent. This generally contains
     all command-line arguments recognized from core.params, as well as other
     options that might be set through the framework to enable certain modes.
+agents -- the set of agents that should be attached to the world,
+    e.g. for DialogPartnerWorld this could be the teacher (that defines the
+    task/dataset) and the learner agent. This is ignored in the case of
+    sharing, and the shared parameter is used instead to initalize agents.
 shared (optional) -- if not None, contains any shared data used to construct
     this particular instantiation of the world. This data might have been
     initialized by another world, so that different agents can share the same
@@ -120,6 +122,41 @@ class World(object):
 
     def parley(self):
         pass
+
+    def display(self):
+        """ By default, display the messages between the agents."""
+        lines = []
+        for index, msg in enumerate(self.acts):
+            # Possibly indent the text (for the second speaker, if two).
+            space = ''
+            if len(self.acts) == 2 and index == 1:
+                space = '   '
+            if msg.get('reward', None) is not None:
+                lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
+            if msg.get('text', ''):
+                ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
+                lines.append(space + ID + msg['text'])
+            if msg.get('labels', False):
+                lines.append(space + ('[labels: {}]'.format(
+                            '|'.join(msg['labels']))))
+            if msg.get('label_candidates', False):
+                cand_len = len(msg['label_candidates'])
+                if cand_len <= 10:
+                    lines.append(space + ('[cands: {}]'.format(
+                            '|'.join(msg['label_candidates']))))
+                else:
+                    # select five label_candidates from the candidate set,
+                    # can't slice in because it's a set
+                    cand_iter = iter(msg['label_candidates'])
+                    display_cands = (next(cand_iter) for _ in range(5))
+                    # print those cands plus how many cands remain
+                    lines.append(space + ('[cands: {}{}]'.format(
+                            '|'.join(display_cands),
+                            '| ...and {} more'.format(cand_len - 5)
+                            )))
+        if self.episode_done():
+            lines.append('- - - - - - - - - - - - - - - - - - - - -')
+        return '\n'.join(lines)
 
     def getID(self):
         """Return the name of the world, typically the task the world encodes."""
@@ -225,17 +262,18 @@ class DialogPartnerWorld(World):
             # Create agents based on shared data.
             self.agents = create_agents_from_shared(shared['agents'])
         else:
-            # Add passed in agents directly.
             if len(agents) != 2:
                 raise RuntimeError('There must be exactly two agents for this ' +
                                    'world.')
+            # Add passed in agents directly.
             self.agents = agents
-        self.acts = [None, None]
+        self.acts = [None] * len(self.agents)
 
     def __iter__(self):
         return iter(self.agents[0])
 
     def epoch_done(self):
+        """ Only the first agent indicates when the epoch is done."""
         return (self.agents[0].epoch_done()
                 if hasattr(self.agents[0], 'epoch_done') else False)
 
@@ -247,54 +285,52 @@ class DialogPartnerWorld(World):
     def parley(self):
         """Agent 0 goes first. Alternate between the two agents."""
         acts = self.acts
-        agents = self.agents
+        agents = self.agents    
         acts[0] = agents[0].act()
         agents[1].observe(validate(acts[0]))
-        acts[1] = agents[1].act()
+        acts[1] = agents[1].act()        
         agents[0].observe(validate(acts[1]))
 
     def report(self):
         return self.agents[0].report()
-
-    def display(self):
-        lines = []
-        for index, msg in enumerate(self.acts):
-            # Possibly indent the text (for the second speaker)
-            space = ''
-            if len(self.acts) == 2 and index == 1:
-                space = '   '
-            if msg.get('reward', None) is not None:
-                lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
-            if msg.get('text', ''):
-                ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
-                lines.append(space + ID + msg['text'])
-            if msg.get('labels', False):
-                lines.append(space + ('[labels: {}]'.format(
-                            '|'.join(msg['labels']))))
-            if msg.get('label_candidates', False):
-                cand_len = len(msg['label_candidates'])
-                if cand_len <= 10:
-                    lines.append(space + ('[cands: {}]'.format(
-                            '|'.join(msg['label_candidates']))))
-                else:
-                    # select five label_candidates from the candidate set,
-                    # can't slice in because it's a set
-                    cand_iter = iter(msg['label_candidates'])
-                    display_cands = (next(cand_iter) for _ in range(5))
-                    # print those cands plus how many cands remain
-                    lines.append(space + ('[cands: {}{}]'.format(
-                            '|'.join(display_cands),
-                            '| ...and {} more'.format(cand_len - 5)
-                            )))
-        if self.episode_done():
-            lines.append('- - - - - - - - - - - - - - - - - - - - -')
-        return '\n'.join(lines)
 
     def __len__(self):
         return len(self.agents[0])
 
     def shutdown(self):
         """Shutdown each agent."""
+        for a in self.agents:
+            a.shutdown()
+
+
+class MultiAgentDialogWorld(World):
+    """Basic world where each agent gets a turn in a round-robin fashion,
+    recieving as input the actions of all other agents since that agent last
+    acted.
+    """
+    def __init__(self, opt, agents=None, shared=None):
+        super().__init__(opt)
+        if shared:
+            # Create agents based on shared data.
+            self.agents = create_agents_from_shared(shared['agents'])
+        else:
+            # Add passed in agents directly.
+            self.agents = agents
+            self.acts = [None] * len(agents)
+        super().__init__(opt, agents, shared)
+
+    def parley(self):
+        """For each agent, get an observation of the last action each of the
+        other agents took. Then take an action yourself.
+        """
+        acts = self.acts
+        for index, agent in enumerate(self.agents):
+            acts[index] = agent.act()
+            for other_agent in self.agents:
+                if other_agent != agent:
+                    other_agent.observe(validate(acts[index]))
+
+    def shutdown(self):
         for a in self.agents:
             a.shutdown()
 
@@ -413,29 +449,6 @@ class MultiWorld(World):
             m['accuracy'] = sum_accuracy / num_tasks
             m['total'] = total
         return m
-
-class MultiAgentDialogWorld(World):
-    """Basic world where each agent gets a turn in a round-robin fashion,
-    recieving as input the actions of all other agents since that agent last
-    acted.
-    """
-
-    def __init__(self, opt, agents=None, shared=None):
-        super().__init__(opt, agents, shared)
-
-    def parley(self):
-        """For each agent, get an observation of the last action each of the
-        other agents took. Then take an action yourself.
-        """
-        for agent in self.agents:
-            act = agent.act()
-            for other_agent in self.agents:
-                if other_agent != agent:
-                    other_agent.observe(act)
-
-    def shutdown(self):
-        for a in self.agents:
-            a.shutdown()
 
 
 class BatchWorld(World):
