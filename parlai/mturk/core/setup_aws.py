@@ -13,7 +13,6 @@ import botocore
 import time
 import json
 import webbrowser
-import uuid
 import hashlib
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
@@ -23,6 +22,7 @@ region_name = 'us-west-2'
 
 iam_role_name = 'parlai_relay_server'
 lambda_function_name = 'parlai_relay_server'
+lambda_permission_statement_id = 'lambda-permission-statement-id'
 api_gateway_name = 'ParlaiRelayServer'
 endpoint_api_name_html = 'html'  # For GET-ing HTML
 endpoint_api_name_json = 'json'  # For GET-ing and POST-ing JSON
@@ -329,7 +329,7 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
         # Add permission to endpoints for calling Lambda function
         response = lambda_client.add_permission(
             FunctionName = lambda_function_name,
-            StatementId = str(uuid.uuid1()),
+            StatementId = lambda_permission_statement_id,
             Action = 'lambda:InvokeFunction',
             Principal = 'apigateway.amazonaws.com',
         )
@@ -643,3 +643,104 @@ def setup_aws(task_config, num_hits, is_sandbox):
     html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt)
 
     return html_api_endpoint_url, json_api_endpoint_url, requester_key_gt
+
+def clean_aws():
+    # Remove RDS database
+    try:
+        rds = boto3.client('rds', region_name=region_name)
+        response = rds.delete_db_instance(
+            DBInstanceIdentifier=rds_db_instance_identifier,
+            SkipFinalSnapshot=True,
+        )
+        response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+        db_instances = response['DBInstances']
+        db_instance = db_instances[0]
+        status = db_instance['DBInstanceStatus']
+
+        if status == 'deleting':
+            print("RDS: Deleting database. This might take a couple minutes...")
+
+        while status == 'deleting':
+            time.sleep(5)
+            response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+            db_instances = response['DBInstances']
+            db_instance = db_instances[0]
+            status = db_instance['DBInstanceStatus']
+
+        print("RDS: Database deleted.")
+
+    except ClientError as e: # RDS database does not exist
+        print("RDS: Database doesn't exist.")
+
+    # Remove RDS security group
+    try:
+        ec2 = boto3.client('ec2', region_name=region_name)
+
+        response = ec2.describe_security_groups(GroupNames=[rds_security_group_name])
+        security_group_id = response['SecurityGroups'][0]['GroupId']
+
+        response = ec2.delete_security_group(
+            DryRun=False,
+            GroupName=rds_security_group_name,
+            GroupId=security_group_id
+        )
+        print("RDS: Security group removed.")
+    except ClientError as e: # Security group does not exist
+        print("RDS: Security group doesn't exist.")
+
+    # Remove API Gateway endpoints
+    api_gateway_client = boto3.client('apigateway', region_name=region_name)
+    api_gateway_exists = False
+    rest_api_id = None
+    response = api_gateway_client.get_rest_apis()
+    if not 'items' in response:
+        api_gateway_exists = False
+    else:
+        rest_apis = response['items']
+        for api in rest_apis:
+            if api['name'] == api_gateway_name:
+                api_gateway_exists = True
+                rest_api_id = api['id']
+                break
+    if api_gateway_exists:
+        response = api_gateway_client.delete_rest_api(
+            restApiId=rest_api_id
+        )
+        print("API Gateway: Endpoints are removed.")
+    else:
+        print("API Gateway: Endpoints don't exist.")
+
+    # Remove permission for calling Lambda function
+    try:
+        lambda_client = boto3.client('lambda', region_name=region_name)
+        response = lambda_client.remove_permission(
+            FunctionName=lambda_function_name,
+            StatementId=lambda_permission_statement_id
+        )
+        print("Lambda: Permission removed.")
+    except ClientError as e:
+        print("Lambda: Permission doesn't exist.")
+
+    # Remove Lambda function
+    try:
+        lambda_client = boto3.client('lambda', region_name=region_name)
+        response = lambda_client.delete_function(
+            FunctionName=lambda_function_name
+        )
+        print("Lambda: Function removed.")
+    except ClientError as e:
+        print("Lambda: Function doesn't exist.")
+
+    # Remove IAM role
+    try:
+        response = client.delete_role(
+            RoleName=iam_role_name
+        )
+        time.sleep(10)
+        print("IAM: Role removed.")
+    except ClientError as e:
+        print("IAM: Role doesn't exist.")
+
+if __name__ == "__main__":
+    if sys.argv[1] == 'clean':
+        clean_aws()
