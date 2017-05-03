@@ -81,7 +81,7 @@ python examples/drqa/train.py -t squad -b 32
 
 ParlAI currently requires Python3.
 
-Several models included (in parlai/agents) have additional requirements such as [PyTorch](http://pytorch.org/) or [Lua Torch](http://torch.ch/).
+Dependencies of the core modules are listed in requirement.txt. Several models included (in parlai/agents) have additional requirements such as [PyTorch](http://pytorch.org/) or [Lua Torch](http://torch.ch/)--any python requirements in these modules are listed in requirements_ext.txt.
 
 ## Installing ParlAI
 
