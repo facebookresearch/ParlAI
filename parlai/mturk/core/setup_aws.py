@@ -646,7 +646,7 @@ def setup_aws(task_config, num_hits, is_sandbox):
 
 def clean_aws():
     setup_aws_credentials()
-    
+
     # Remove RDS database
     try:
         rds = boto3.client('rds', region_name=region_name)
@@ -662,16 +662,17 @@ def clean_aws():
         if status == 'deleting':
             print("RDS: Deleting database. This might take a couple minutes...")
 
-        while status == 'deleting':
-            time.sleep(5)
-            response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
-            db_instances = response['DBInstances']
-            db_instance = db_instances[0]
-            status = db_instance['DBInstanceStatus']
+        try:
+            while status == 'deleting':
+                time.sleep(5)
+                response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+                db_instances = response['DBInstances']
+                db_instance = db_instances[0]
+                status = db_instance['DBInstanceStatus']
+        except ClientError as e:
+            print("RDS: Database deleted.")
 
-        print("RDS: Database deleted.")
-
-    except ClientError as e: # RDS database does not exist
+    except ClientError as e:
         print("RDS: Database doesn't exist.")
 
     # Remove RDS security group
@@ -687,7 +688,7 @@ def clean_aws():
             GroupId=security_group_id
         )
         print("RDS: Security group removed.")
-    except ClientError as e: # Security group does not exist
+    except ClientError as e:
         print("RDS: Security group doesn't exist.")
 
     # Remove API Gateway endpoints
@@ -735,7 +736,8 @@ def clean_aws():
 
     # Remove IAM role
     try:
-        response = client.delete_role(
+        iam_client = boto3.client('iam')
+        response = iam_client.delete_role(
             RoleName=iam_role_name
         )
         time.sleep(10)
