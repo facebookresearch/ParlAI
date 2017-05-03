@@ -16,12 +16,16 @@ using the argument parser in the core library, or generate a dictionary before
 processing the data.
 """
 
+from parlai.core.params import ParlaiParser
 from parlai.core.agents import Agent, Teacher
 from parlai.core.worlds import create_task
 import time
 
 def main():
-    opt = {}
+    # Get command line arguments
+    parser = ParlaiParser()
+    parser.add_argument('-n', '--num_examples', default=10)
+    opt = parser.parse_args()
 
     agent = Agent(opt)
 
