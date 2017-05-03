@@ -428,8 +428,7 @@ class BatchWorld(World):
             opti = copy.deepcopy(opt)
             opti['batchindex'] = i
             self.worlds.append(shared['world_class'](opti, None, shared))
-        self.batch_acts = [ [] ] * len(self.worlds)
-        self.batch_observations = [ [] ] * len(self.worlds)
+        self.batch_observations = [ None ] * len(self.worlds)
 
     def __iter__(self):
         return self
@@ -448,7 +447,8 @@ class BatchWorld(World):
         # Given batch observation, do update for agents[index].
         # Call update on agent
         a = self.world.get_agents()[index]
-        if len(batch_observation) > 0 and hasattr(a, 'batch_act'):
+        if (batch_observation is not None and len(batch_observation) > 0 and
+            hasattr(a, 'batch_act')):
             batch_reply = a.batch_act(batch_observation)
             # Store the actions locally in each world.
             for w in self.worlds:
@@ -468,7 +468,6 @@ class BatchWorld(World):
         # Collect batch together for each agent, and do update.
         # Assumes DialogPartnerWorld, MultiAgentWorld, or MultiWorlds of them.
         num_agents = len(self.world.get_agents())
-        batch_acts = self.batch_acts
         batch_observations = self.batch_observations
 
         for w in self.worlds:
@@ -476,11 +475,11 @@ class BatchWorld(World):
                 w.parley_init()
         
         for index in range(num_agents):
-            batch_acts[index] = self.batch_act(index, batch_observations[index])
+            batch_act = self.batch_act(index, batch_observations[index])
             for other_index in range(num_agents):
                 if index != other_index:
                     batch_observations[other_index] = (
-                        self.batch_observe(other_index, batch_acts[index]))
+                        self.batch_observe(other_index, batch_act))
 
     def display(self):
         s = ("[--batchsize " + str(len(self.worlds)) + "--]\n")
