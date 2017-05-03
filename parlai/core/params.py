@@ -14,6 +14,11 @@ import os
 def str2bool(value):
     return value.lower() in ('yes', 'true', 't', '1', 'y')
 
+def path(s):
+    # Add a trailing slash if its not there.
+    if s[-1] != '/':
+        s += '/'
+    return s
 
 class ParlaiParser(object):
     """Pseudo-extension of argparse which sets a number of parameters for the
@@ -54,10 +59,11 @@ class ParlaiParser(object):
     def add_parlai_args(self):
         parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
                       os.path.realpath(__file__)))))
+        os.environ['PARLAI_HOME'] = parlai_dir
         default_downloads_path = parlai_dir + '/downloads/'
 
         self.parser.add_argument(
-            '-t', '--task',
+            '-t', '--task', required=True,
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
         self.parser.add_argument(
             '--download-path', default=default_downloads_path,
@@ -96,10 +102,13 @@ class ParlaiParser(object):
         """
         self.args = self.parser.parse_args(args=args)
         self.opt = {k: v for k, v in vars(self.args).items() if v is not None}
+        if 'download_path' in self.opt:
+            self.opt['download_path'] = path(self.opt['download_path'])
+            os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']
+        if 'datapath' in self.opt:
+            self.opt['datapath'] = path(self.opt['datapath'])
         if print_args:
             self.print_args()
-        if 'download_path' in self.opt:
-            os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']
         return self.opt
 
     def print_args(self):

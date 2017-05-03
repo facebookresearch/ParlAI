@@ -3,13 +3,15 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import copy
-import time
 
 from .agents import Teacher
-from .data import TextData, HogwildTextData
 from .thread_utils import SharedTable
 from .metrics import Metrics
+
+import copy
+import random
+import sys
+import time
 
 
 class DialogTeacher(Teacher):
@@ -43,23 +45,18 @@ class DialogTeacher(Teacher):
             self.id = opt.get('task', 'teacher')
 
         # first initialize any shared objects
+        self.random = self.datatype == 'train'
         if shared and shared.get('data'):
             self.data = shared['data']
         else:
-            # TODO(ahm): remove True
-            if True or opt.get('numthreads', 1) == 1:
-                self.data = TextData(self.setup_data(opt['datafile']),
-                                     cands=self.label_candidates(),
-                                     random=self.datatype == 'train')
-            else:
-                self.data = HogwildTextData(self.setup_data(opt['datafile']),
-                                            cands=self.label_candidates(),
-                                            random=self.datatype == 'train')
+            self.data = DialogData(self.setup_data(opt['datafile']),
+                                   cands=self.label_candidates())
 
         if shared and shared.get('metrics'):
             self.metrics = shared['metrics']
         else:
             self.metrics = Metrics(opt)
+
         self.reset()
 
     def reset(self):
@@ -67,7 +64,9 @@ class DialogTeacher(Teacher):
         # and all metrics are reset.
         self.metrics.clear()
         self.lastY = None
+        self.episode_idx = -1
         self.epochDone = False
+        self.episode_done = True
 
     def __len__(self):
         return len(self.data)
@@ -105,9 +104,24 @@ class DialogTeacher(Teacher):
             self.lastY = None
             self.lastLabelCandidates = None
 
+    def next_example(self):
+        if self.episode_done:
+            num_eps = self.data.num_episodes()
+            if self.random:
+                # select random episode
+                self.episode_idx = random.randrange(num_eps)
+            else:
+                # select next episode
+                self.episode_idx = (self.episode_idx + 1) % num_eps
+            self.entry_idx = 0
+        else:
+            self.entry_idx += 1
+        return self.data.get(self.episode_idx, self.entry_idx)
+
     def act(self):
         """Send new dialog message. """
-        action, self.epochDone = next(self.data)
+        action, self.epochDone = self.next_example()
+        self.episode_done = action['episode_done']
         action['id'] = self.getID()
         self.lastY = action.get('labels', None)
         self.lastLabelCandidates = action.get('label_candidates', None)
@@ -118,3 +132,139 @@ class DialogTeacher(Teacher):
     # Return transformed metrics showing total examples and accuracy if avail.
     def report(self):
         return self.metrics.report()
+
+
+class DialogData(object):
+    """Provides a data structure for accessing textual dialog data.
+    This can be used whenever the dialog data is a fixed log of chats
+    (i.e not a simulator setting). The logs can include dialog text and possibly
+    supervised labels, candidate labels and rewards.
+
+    All these are stored in this internal data format which is used by the
+    DialogTeacher class.
+
+    data_loader is an iterable, with each call returning:
+
+    (x, ...), new_episode?
+
+    Where...
+    x is a query and possibly context
+    ... can contain additional fields, specifically
+        y is an iterable of label(s) for that query
+        r is the str reward for getting that query correct
+        c is an iterable of label candidates that the student can choose from
+    new_episode? is a boolean value specifying whether that example is the start
+    of a new episode. If you don't use episodes set this to True every time.
+
+    cands can be set to provide a list of candidate labels for every example
+        in this dataset, which the agent can choose from (the correct answer
+        should be in this set).
+
+    random tells the data class whether or not to visit episodes sequentially
+    or randomly when returning examples to the caller.
+    """
+
+    def __init__(self, data_loader, cands=None):
+        self.data = []
+        self._load(data_loader)
+        self.cands = None if cands == None else set(sys.intern(c) for c in cands)
+        self.addedCands = []
+
+    def __len__(self):
+        """Returns total number of entries available. Each episode has at least
+        one entry, but might have many more.
+        """
+        length = 0
+        for l in self.data:
+            length += len(l)
+        return length
+
+    def _load(self, data_loader):
+        """Loads up data from an iterator over tuples described in the class
+        docs.
+        """
+        episode = []
+        last_cands = None
+        for entry, new in data_loader:
+            if new:
+                if len(episode) > 0:
+                    self.data.append(tuple(episode))
+                    episode = []
+                    last_cands = None
+
+            # intern all strings so we don't store them more than once
+            new_entry = []
+            if len(entry) > 0:
+                # process text
+                if entry[0] is not None:
+                    new_entry.append(sys.intern(entry[0]))
+                else:
+                    new_entry.append(None)
+                if len(entry) > 1:
+                    # process labels
+                    if entry[1] is not None:
+                        new_entry.append(tuple(sys.intern(e) for e in entry[1]))
+                    else:
+                        new_entry.append(None)
+                    if len(entry) > 2:
+                        # process reward
+                        if entry[2] is not None:
+                            new_entry.append(sys.intern(entry[2]))
+                        else:
+                            new_entry.append(None)
+                        if len(entry) > 3 and entry[3] is not None:
+                            # process label candidates
+                            if last_cands and entry[3] is last_cands:
+                                new_entry.append(
+                                    sys.intern('same as last time'))
+                            else:
+                                last_cands = entry[3]
+                                new_entry.append(tuple(
+                                    sys.intern(e) for e in entry[3]))
+            episode.append(tuple(new_entry))
+
+        if len(episode) > 0:
+            self.data.append(tuple(episode))
+
+    def num_episodes(self):
+        """Return number of episodes in the dataset."""
+        return len(self.data)
+
+    def get(self, episode_idx, entry_idx=0):
+        """Returns a specific entry from the dataset."""
+        # first look up data
+        episode = self.data[episode_idx]
+        entry = episode[entry_idx]
+        episode_done = entry_idx == len(episode) - 1
+        end_of_data = episode_done and episode_idx == len(self.data) - 1
+
+        # now pack it in a action-observation dictionary
+        table = {}
+        table['text'] = entry[0]
+        if len(entry) > 1:
+            table['labels'] = entry[1]
+            if len(entry) > 2:
+                table['reward'] = entry[2]
+                if len(entry) > 3:
+                    table['label_candidates'] = entry[3]
+
+        if (table.get('labels', None) is not None
+            and self.cands is not None):
+            if self.addedCands:
+                # remove elements in addedCands
+                self.cands.difference_update(self.addedCands)
+                self.addedCands.clear()
+            for label in table['labels']:
+                if label not in self.cands:
+                    # add labels, queue them for removal next time
+                    self.cands.add(label)
+                    self.addedCands.append(label)
+            table['label_candidates'] = self.cands
+
+        if 'labels' in table and 'label_candidates' in table:
+            if table['labels'][0] not in table['label_candidates']:
+                raise RuntimeError('true label missing from candidate labels')
+
+        # last entry in this episode
+        table['episode_done'] = episode_done
+        return table, end_of_data

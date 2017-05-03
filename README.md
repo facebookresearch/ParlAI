@@ -1,12 +1,18 @@
-# ParlAI
+<p align="center"><img width="40%" src="docs/source/\_static/img/parlai.png" /></p>
+
+--------------------------------------------------------------------------------
 
 ParlAI (pronounced “par-lay”) is a framework for dialog AI research, implemented in Python.
 
-Its goal is to provide researchers a unified framework for the training and testing of dialog models, including multi-task training over many datasets at once, as well as the seamless integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome) for data collection and human evaluation.
+Its goal is to provide researchers:
+- a unified framework for training and testing dialog models
+- multi-task training over many datasets at once
+- seamless integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome) for data collection and human evaluation
+
 
 Over 20 tasks are supported in the first release, including popular datasets such as [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MCTest](https://www.microsoft.com/en-us/research/publication/mctest-challenge-dataset-open-domain-machine-comprehension-text/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [WebQuestions](http://www.aclweb.org/anthology/D13-1160), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialog tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialog](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html) and [VQA-COCO2014](http://visualqa.org/).
 
-Included are examples of training neural models with [PyTorch](http://pytorch.org/) and [Lua Torch](http://torch.ch/), including both batch training on GPU and hogwild training on CPUs. Using [Theano](http://deeplearning.net/software/theano/) or [Tensorflow](https://www.tensorflow.org/) instead is also straightforward.
+Included are examples of training neural models with [PyTorch](http://pytorch.org/) and [Lua Torch](http://torch.ch/), with batch training on GPU or hogwild training on CPUs. Using [Theano](http://deeplearning.net/software/theano/) or [Tensorflow](https://www.tensorflow.org/) instead is also straightforward.
 
 Our aim is for the number of tasks and agents that train on them to grow in a community-based way.
 
@@ -170,10 +176,7 @@ The core library contains the following files:
   - **_MultiTaskTeacher_**: creates a set of teachers based on a "task string" passed to the Teacher, creating multiple teachers within it and alternating between them
   - create_task_teacher: instantiate a teacher from a given task string (e.g. 'babi:task:1' or 'squad')
 - **build_data.py**: basic utilities for setting up data for tasks. you can override if your filesystem needs different functionality.
-- **data.py**: contains some default classes for fixed text datasets
-  - TextData: sets up observation tables with 'text', 'labels', 'reward', and/or 'candidates' fields
-  - HogwildTextData: does the same thing as TextData, but stores underlying data in a shared-memory array, which allows for modification of the data during running if desired
-- **dialog_teacher.py**: contains a base teacher class for doing dialog with fixed chat logs
+- **dialog_teacher.py**: contains a base teacher class for doing dialog with fixed chat logs, along with a data class for storing the data
 - **dict.py**: contains code for building general NLP-style dictionaries from observations
   - DictionaryAgent: agent which tracks the index and frequency of words in a dictionary, and can parse a sentence into indices into its dictionary or back
 - **fbdialog_teacher.py**: contains a teacher class which implements a function setup_data which parses data in the FB Dialog data format
@@ -203,9 +206,10 @@ Currently available within this directory:
 
 This directory contains a few particular examples of basic loops.
 
+- base_train.py: _very simple example shows the outline of a training/validation loop using the default Agent parent class_
 - display_data.py: _uses agent.repeat_label to display data from a particular task provided on the command-line_
 - display_model.py: _shows the predictions of a provided model on a particular task provided on the command-line_
-- eval_model.py: _uses agent.repeat_label to compute evaluation metrics data for a particular task provided on the command-line_
+- eval_model.py: _uses the named agent to compute evaluation metrics data for a particular task provided on the command-line_
 - build_dict.py: _build a dictionary from a particular task provided on the command-line using core.dict.DictionaryAgent_
 - memnn_luatorch_cpu: _shows a few examples of training an end-to-end memory network on a few datasets_
 - drqa: _shows how to train the attentive LSTM DrQA model of [Chen et al.](https://arxiv.org/abs/1704.00051) on SQuAD._
@@ -220,7 +224,7 @@ Ubuntu, OpenSubtitles, Cornell Movie and VQA-COCO2014.
 Our first release includes the following datasets (shown in the left panel), and accessing one of them is as simple as specifying the name of the task as a command line option, as shown in the dataset display utility (right panel):
 <p align=center><img width="100%" src="docs/source/\_static/img/tasks.png" /></p>
 
-See <a href="https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py">here</a> for the current complete task list.
+See [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) for the current complete task list.
 
 Choosing a task in ParlAI is as easy as specifying it on the command line, as shown in the above image (right). If the dataset has not been used before, ParlAI will automatically download it. As all datasets are treated in the same way in ParlAI (with a single dialog API), a dialog agent can in principle switch training and testing between any of them. Even better, one can specify many tasks at once (multi-tasking) by simply providing a comma-separated list, e.g.  the command line “-t babi,squad”, to use those two datasets, or even all  the QA datasets at once  (-t #qa) or indeed every task in ParlAI at once (-t #all). The aim is to make it easy to build and evaluate very rich dialog models.
 

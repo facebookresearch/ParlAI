@@ -11,26 +11,28 @@ World(object) provides a generic parent class, including __enter__ and __exit__
     and KeyboardInterrupts are less noisy (if desired).
 
 DialogPartnerWorld(World) provides a two-agent turn-based dialog setting
-MultiAgentDialogWorld(World) provides a two-plus turn-based round-robin dialog
-
 MultiAgentDialogWorld provides a multi-agent setting.
 
-HogwildWorld(World) creates another world within itself for every thread, in
-    order to have separate simulated environments for each one. Each world gets
-    its own agents initialized using the "share()" parameters from the original
-    agents.
+MultiWorld(World) creates a set of environments (worlds) for the same agent
+   to multitask over, a different environment will be chosen per episode.
+
+HogwildWorld(World) is a container that creates another world within itself for
+    every thread, in order to have separate simulated environments for each one.
+    Each world gets its own agents initialized using the "share()" parameters
+    from the original agents.
 
 BatchWorld(World) is a container for doing minibatch training over a world by
 collecting batches of N copies of the environment (each with different state).
-
-MultiWorld(World) creates a set of environments for the same agent to multitask.
-
 
 
 All worlds are initialized with the following parameters:
 opt -- contains any options needed to set up the agent. This generally contains
     all command-line arguments recognized from core.params, as well as other
     options that might be set through the framework to enable certain modes.
+agents -- the set of agents that should be attached to the world,
+    e.g. for DialogPartnerWorld this could be the teacher (that defines the
+    task/dataset) and the learner agent. This is ignored in the case of
+    sharing, and the shared parameter is used instead to initalize agents.
 shared (optional) -- if not None, contains any shared data used to construct
     this particular instantiation of the world. This data might have been
     initialized by another world, so that different agents can share the same
@@ -65,7 +67,6 @@ class World(object):
     All children can override these to provide more detailed functionality."""
 
     def __init__(self, opt, agents=None, shared=None):
-        self.is_episode_done = False
         self.id = opt['task']
         self.opt = copy.deepcopy(opt)
         if shared:
@@ -74,6 +75,67 @@ class World(object):
         else:
             # Add passed in agents to world directly.
             self.agents = agents
+
+    def parley(self):
+        """ The main method, that does one step of actions for the agents
+        in the world. This is empty in the base class."""
+        pass
+
+    def getID(self):
+        """Return the name of the world, typically the task the world encodes."""
+        return self.id
+
+    def display(self):
+        """Returns a string describing the current state of the world.
+        Useful for monitoring and debugging.
+        By default, display the messages between the agents."""
+        if not hasattr(self, 'acts'):
+            return ''
+        lines = []
+        for index, msg in enumerate(self.acts):
+            if msg is None:
+                continue
+            # Possibly indent the text (for the second speaker, if two).
+            space = ''
+            if len(self.acts) == 2 and index == 1:
+                space = '   '
+            if msg.get('reward', None) is not None:
+                lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
+            if msg.get('text', ''):
+                ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
+                lines.append(space + ID + msg['text'])
+            if msg.get('labels', False):
+                lines.append(space + ('[labels: {}]'.format(
+                            '|'.join(msg['labels']))))
+            if msg.get('label_candidates', False):
+                cand_len = len(msg['label_candidates'])
+                if cand_len <= 10:
+                    lines.append(space + ('[cands: {}]'.format(
+                            '|'.join(msg['label_candidates']))))
+                else:
+                    # select five label_candidates from the candidate set,
+                    # can't slice in because it's a set
+                    cand_iter = iter(msg['label_candidates'])
+                    display_cands = (next(cand_iter) for _ in range(5))
+                    # print those cands plus how many cands remain
+                    lines.append(space + ('[cands: {}{}]'.format(
+                            '|'.join(display_cands),
+                            '| ...and {} more'.format(cand_len - 5)
+                            )))
+        if self.episode_done():
+            lines.append('- - - - - - - - - - - - - - - - - - - - -')
+        return '\n'.join(lines)
+
+    def episode_done(self):
+        """Whether the episode is done or not. """
+        return False
+
+    def epoch_done(self):
+        """Whether the epoch is done or not. 
+        Not all worlds have the notion of an epoch, but this is useful
+        for fixed training, validation or test sets.
+        """
+        return False
 
     def share(self):
         shared_data = {}
@@ -119,100 +181,13 @@ class World(object):
     def __len__(self):
         return 0
 
-    def parley(self):
-        pass
-
-    def getID(self):
-        """Return the name of the world, typically the task the world encodes."""
-        return self.id
-
-    def display(self):
-        """Returns a string describing the current state of the world.
-        Useful for monitoring and debugging. """
-        return ''
-
-    def episode_done(self):
-        """Whether the episode is done or not. """
-        return self.is_episode_done
-
-    def shutdown(self):
-        """Performs any cleanup, if appropriate."""
-        pass
-
     def synchronize(self):
         """Can be used to synchronize processes."""
         pass
 
-
-def _get_task_world(opt):
-    sp = opt['task'].strip().split(':')
-    if '.' in sp[0]:
-        # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
-        # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
-        world_class = DialogPartnerWorld
-    else:
-        task = sp[0].lower()
-        if len(sp) > 1:
-            sp[1] = sp[1][0].upper() + sp[1][1:]
-            world_name = sp[1] + "World"
-        else:
-            world_name = "DefaultWorld"
-        module_name = "parlai.tasks.%s.worlds" % (task)
-        try:
-            my_module = importlib.import_module(module_name)
-            world_class = getattr(my_module, world_name)
-        except:
-            # Defaults to this if you did not specify a world for your task.
-            world_class = DialogPartnerWorld
-    task_agents = _create_task_agents(opt)
-    return world_class, task_agents
-
-
-def create_task_world(opt, user_agents):
-    world_class, task_agents = _get_task_world(opt)
-    return world_class(opt, task_agents + user_agents)
-
-def create_task(opt, user_agents):
-    """Creates a world + task_agents (aka a task)
-    assuming opt['task']="task_dir:teacher_class:options"
-    e.g. "babi:Task1k:1" or "#babi-1k" or "#QA",
-    see parlai/tasks/tasks.py and see parlai/tasks/tasks.json
-    for list of tasks.
-    """
-    if type(user_agents) != list:
-        user_agents = [user_agents]
-
-    # Convert any hashtag task labels to task directory path names.
-    # (e.g. "#QA" to the list of tasks that are QA tasks).
-    opt = copy.deepcopy(opt)
-    opt['task'] = ids_to_tasks(opt['task'])
-    print('[creating task(s): ' + opt['task'] + ']')
-
-    # Single threaded or hogwild task creation (the latter creates multiple threads).
-    # Check datatype for train, because we need to do single-threaded for
-    # valid and test in order to guarantee exactly one epoch of training.
-    if opt.get('numthreads', 1) == 1 or opt['datatype'] != 'train':
-        if ',' not in opt['task']:
-            # Single task
-            world = create_task_world(opt, user_agents)
-        else:
-            # Multitask teacher/agent
-            world = MultiWorld(opt, user_agents)
-
-        if opt.get('batchsize', 1) > 1:
-            return BatchWorld(opt, world)
-        else:
-            return world
-    else:
-        # more than one thread requested: do hogwild training
-        if ',' not in opt['task']:
-            # Single task
-            # TODO(ahm): fix metrics for multiteacher hogwild training
-            world_class, task_agents = _get_task_world(opt)
-            return HogwildWorld(world_class, opt, task_agents + user_agents)
-        else:
-            # TODO(ahm): fix this
-            raise NotImplementedError('hogwild multiworld not supported yet')
+    def shutdown(self):
+        """Performs any cleanup, if appropriate."""
+        pass
 
 
 class DialogPartnerWorld(World):
@@ -226,74 +201,92 @@ class DialogPartnerWorld(World):
             # Create agents based on shared data.
             self.agents = create_agents_from_shared(shared['agents'])
         else:
-            # Add passed in agents directly.
             if len(agents) != 2:
                 raise RuntimeError('There must be exactly two agents for this ' +
                                    'world.')
+            # Add passed in agents directly.
             self.agents = agents
-        self.acts = [None, None]
-
-    def __iter__(self):
-        return iter(self.agents[0])
-
-    def epoch_done(self):
-        return (self.agents[0].epoch_done()
-                if hasattr(self.agents[0], 'epoch_done') else False)
+        self.acts = [None] * len(self.agents)
 
     def parley(self):
-        """Agent 0 goes first. Alternate between the two agents.
-        Only the first agent indicates when the episode is done.
-        """
+        """Agent 0 goes first. Alternate between the two agents."""
         acts = self.acts
         agents = self.agents
         acts[0] = agents[0].act()
         agents[1].observe(validate(acts[0]))
         acts[1] = agents[1].act()
         agents[0].observe(validate(acts[1]))
-        self.is_episode_done = acts[0].get('episode_done', False)
+
+    def epoch_done(self):
+        """ Only the first agent indicates when the epoch is done."""
+        return (self.agents[0].epoch_done()
+                if hasattr(self.agents[0], 'epoch_done') else False)
+
+    def episode_done(self):
+        """ Only the first agent indicates when the episode is done."""
+        if self.acts[0] is not None:
+            return self.acts[0].get('episode_done', False)
 
     def report(self):
         return self.agents[0].report()
 
-    def display(self):
-        lines = []
-        query = self.acts[0]
-        reply = self.acts[1]
-        if query.get('reward', None) is not None:
-            lines.append('   [reward: {r}]'.format(r=query['reward']))
-        if query.get('text', ''):
-            ID = '[' + query['id'] + ']: ' if 'id' in query else ''
-            lines.append(ID + query['text'])
-        if query.get('labels', False):
-            lines.append('[labels: {}]'.format(
-                    '|'.join(query['labels'])))
-        if query.get('label_candidates', False):
-            cand_len = len(query['label_candidates'])
-            if cand_len <= 10:
-                lines.append('[cands: {}]'.format(
-                    '|'.join(query['label_candidates'])))
-            else:
-                # select five label_candidates from the candidate set, can't slice in
-                # because it's a set
-                cand_iter = iter(query['label_candidates'])
-                display_cands = (next(cand_iter) for _ in range(5))
-                # print those cands plus how many cands remain
-                lines.append('[cands: {}{}]'.format(
-                    '|'.join(display_cands),
-                    '| ...and {} more'.format(cand_len - 5)
-                ))
-        if reply.get('text', ''):
-            ID = '[' + reply['id'] + ']: ' if 'id' in reply else ''
-            lines.append('   ' + ID + reply['text'])
-        if self.episode_done():
-            lines.append('- - - - - - - - - - - - - - - - - - - - -')
-        return '\n'.join(lines)
-
     def __len__(self):
         return len(self.agents[0])
 
+    def __iter__(self):
+        return iter(self.agents[0])
+
     def shutdown(self):
         """Shutdown each agent."""
+        for a in self.agents:
+            a.shutdown()
+
+
+class MultiAgentDialogWorld(World):
+    """Basic world where each agent gets a turn in a round-robin fashion,
+    recieving as input the actions of all other agents since that agent last
+    acted.
+    """
+    def __init__(self, opt, agents=None, shared=None):
+        super().__init__(opt)
+        if shared:
+            # Create agents based on shared data.
+            self.agents = create_agents_from_shared(shared['agents'])
+        else:
+            # Add passed in agents directly.
+            self.agents = agents
+            self.acts = [None] * len(agents)
+        super().__init__(opt, agents, shared)
+
+    def parley(self):
+        """For each agent, get an observation of the last action each of the
+        other agents took. Then take an action yourself.
+        """
+        acts = self.acts
+        for index, agent in enumerate(self.agents):
+            acts[index] = agent.act()
+            for other_agent in self.agents:
+                if other_agent != agent:
+                    other_agent.observe(validate(acts[index]))
+
+    def epoch_done(self):
+        done = False
+        for a in self.agents:
+            if a.epoch_done():
+                done = True
+        return done
+
+    def episode_done(self):
+        done = False
+        for a in self.agents:
+            if a.episode_done():
+                done = True
+        return done
+
+    def report(self):
+        return self.agents[0].report()
+
+    def shutdown(self):
         for a in self.agents:
             a.shutdown()
 
@@ -387,7 +380,7 @@ class MultiWorld(World):
         if self.world_idx != -1:
             s = ''
             w = self.worlds[self.world_idx]
-            if self.parleys == 1:
+            if self.parleys == 0:
                 s = '[world ' + str(self.world_idx) + ':' + w.getID() + ']\n'
             s = s + w.display()
             return s
@@ -413,35 +406,12 @@ class MultiWorld(World):
             m['total'] = total
         return m
 
-class MultiAgentDialogWorld(World):
-    """Basic world where each agent gets a turn in a round-robin fashion,
-    recieving as input the actions of all other agents since that agent last
-    acted.
-    """
-
-    def __init__(self, opt, agents=None, shared=None):
-        super().__init__(opt, agents, shared)
-
-    def parley(self):
-        """For each agent, get an observation of the last action each of the
-        other agents took. Then take an action yourself.
-        """
-        for agent in self.agents:
-            act = agent.act()
-            for other_agent in self.agents:
-                if other_agent != agent:
-                    other_agent.observe(act)
-
-    def shutdown(self):
-        for a in self.agents:
-            a.shutdown()
-
 
 class BatchWorld(World):
     """Creates a separate world for each item in the batch, sharing
     the parameters for each.
     The underlying world(s) it is batching can be either DialogPartnerWorld,
-    or MultiWorld.
+    MultiAgentWorld or MultiWorld.
     """
 
     def __init__(self, opt, world):
@@ -458,6 +428,7 @@ class BatchWorld(World):
             opti = copy.deepcopy(opt)
             opti['batchindex'] = i
             self.worlds.append(shared['world_class'](opti, None, shared))
+        self.batch_observations = [ None ] * len(self.worlds)
 
     def __iter__(self):
         return self
@@ -466,47 +437,49 @@ class BatchWorld(World):
         if self.epoch_done():
             raise StopIteration()
 
-    def parley(self):
-        # Collect batch together for each agent, and do update.
-        # Assumes DialogPartnerWorld (or MultiWorld of DialogPartnerWorlds)
-        # for now, this allows us make the agent[0] act, collect the batch,
-        # then allow the agent[1] to act in each world, so we can do both
-        # forwards and backwards in batch, and still collect metrics in each world.
-        a = self.world.get_agents()[1]
-        batch = []
+    def batch_observe(self, index, batch):
         for w in self.worlds:
-            # Half of parley.
-            if hasattr(w, 'parley_init'):
-                w.parley_init()
             agents = w.get_agents()
-            acts = w.get_acts()
-            acts[0] = agents[0].act()  
-            agents[1].observe(validate(acts[0]))
-            if hasattr(agents[1], 'observation'):
-                batch.append(agents[1].observation)
-            if not self.random and w.epoch_done():
-                break
-        # Collect batch together for each agent, and do update.
-        a.observation = batch
+            agents[index].observe(validate(batch[index]))
+        return batch
+
+    def batch_act(self, index, batch_observation):
+        # Given batch observation, do update for agents[index].
         # Call update on agent
-        if len(batch) > 0 and hasattr(a, 'batch_act'):
-            batch_reply = a.batch_act(batch)
+        a = self.world.get_agents()[index]
+        if (batch_observation is not None and len(batch_observation) > 0 and
+            hasattr(a, 'batch_act')):
+            batch_reply = a.batch_act(batch_observation)
+            # Store the actions locally in each world.
+            for w in self.worlds:
+                acts = w.get_acts()
+                acts[index] = batch_reply[index]
         else:
             # Reverts to running on each individually.
             batch_reply = []
             for w in self.worlds:
                 agents = w.get_agents()
-                batch_reply.append(agents[1].act())
+                acts = w.get_acts()
+                acts[index] = agents[index].act()
+                batch_reply.append(acts[index])    
+        return batch_reply
 
-        for index, w in enumerate(self.worlds):
-            # Other half of parley.
-            acts = w.get_acts()
-            agents = w.get_agents()
-            acts[1] = batch_reply[index]       
-            agents[0].observe(validate(acts[1]))
-            w.is_episode_done = acts[0]['episode_done']
-            if not self.random and w.epoch_done():
-                break
+    def parley(self):
+        # Collect batch together for each agent, and do update.
+        # Assumes DialogPartnerWorld, MultiAgentWorld, or MultiWorlds of them.
+        num_agents = len(self.world.get_agents())
+        batch_observations = self.batch_observations
+
+        for w in self.worlds:
+            if hasattr(w, 'parley_init'):
+                w.parley_init()
+        
+        for index in range(num_agents):
+            batch_act = self.batch_act(index, batch_observations[index])
+            for other_index in range(num_agents):
+                if index != other_index:
+                    batch_observations[other_index] = (
+                        self.batch_observe(other_index, batch_act))
 
     def display(self):
         s = ("[--batchsize " + str(len(self.worlds)) + "--]\n")
@@ -642,3 +615,77 @@ class HogwildWorld(World):
         # wait for threads to close
         for t in self.threads:
             t.join()
+
+
+
+### Functions for creating tasks/worlds given options.
+
+def _get_task_world(opt):
+    sp = opt['task'].strip().split(':')
+    if '.' in sp[0]:
+        # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
+        # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
+        world_class = DialogPartnerWorld
+    else:
+        task = sp[0].lower()
+        if len(sp) > 1:
+            sp[1] = sp[1][0].upper() + sp[1][1:]
+            world_name = sp[1] + "World"
+        else:
+            world_name = "DefaultWorld"
+        module_name = "parlai.tasks.%s.worlds" % (task)
+        try:
+            my_module = importlib.import_module(module_name)
+            world_class = getattr(my_module, world_name)
+        except:
+            # Defaults to this if you did not specify a world for your task.
+            world_class = DialogPartnerWorld
+    task_agents = _create_task_agents(opt)
+    return world_class, task_agents
+
+
+def create_task_world(opt, user_agents):
+    world_class, task_agents = _get_task_world(opt)
+    return world_class(opt, task_agents + user_agents)
+
+def create_task(opt, user_agents):
+    """Creates a world + task_agents (aka a task)
+    assuming opt['task']="task_dir:teacher_class:options"
+    e.g. "babi:Task1k:1" or "#babi-1k" or "#QA",
+    see parlai/tasks/tasks.py and see parlai/tasks/task_list.py
+    for list of tasks.
+    """
+    if type(user_agents) != list:
+        user_agents = [user_agents]
+
+    # Convert any hashtag task labels to task directory path names.
+    # (e.g. "#QA" to the list of tasks that are QA tasks).
+    opt = copy.deepcopy(opt)
+    opt['task'] = ids_to_tasks(opt['task'])
+    print('[creating task(s): ' + opt['task'] + ']')
+
+    # Single threaded or hogwild task creation (the latter creates multiple threads).
+    # Check datatype for train, because we need to do single-threaded for
+    # valid and test in order to guarantee exactly one epoch of training.
+    if opt.get('numthreads', 1) == 1 or opt['datatype'] != 'train':
+        if ',' not in opt['task']:
+            # Single task
+            world = create_task_world(opt, user_agents)
+        else:
+            # Multitask teacher/agent
+            world = MultiWorld(opt, user_agents)
+
+        if opt.get('batchsize', 1) > 1:
+            return BatchWorld(opt, world)
+        else:
+            return world
+    else:
+        # more than one thread requested: do hogwild training
+        if ',' not in opt['task']:
+            # Single task
+            # TODO(ahm): fix metrics for multiteacher hogwild training
+            world_class, task_agents = _get_task_world(opt)
+            return HogwildWorld(world_class, opt, task_agents + user_agents)
+        else:
+            # TODO(ahm): fix this
+            raise NotImplementedError('hogwild multiworld not supported yet')

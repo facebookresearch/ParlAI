@@ -107,9 +107,9 @@ def batchify(batch, null=0):
 
     # Batch documents and features
     max_length = max([d.size(0) for d in docs])
-    x1 = torch.LongTensor(len(docs), max_length).fill_(null).pin_memory()
-    x1_mask = torch.ByteTensor(len(docs), max_length).fill_(1).pin_memory()
-    x1_f = torch.zeros(len(docs), max_length, features[0].size(1)).pin_memory()
+    x1 = torch.LongTensor(len(docs), max_length).fill_(null)
+    x1_mask = torch.ByteTensor(len(docs), max_length).fill_(1)
+    x1_f = torch.zeros(len(docs), max_length, features[0].size(1))
     for i, d in enumerate(docs):
         x1[i, :d.size(0)].copy_(d)
         x1_mask[i, :d.size(0)].fill_(0)
@@ -117,8 +117,8 @@ def batchify(batch, null=0):
 
     # Batch questions
     max_length = max([q.size(0) for q in questions])
-    x2 = torch.LongTensor(len(questions), max_length).fill_(null).pin_memory()
-    x2_mask = torch.ByteTensor(len(questions), max_length).fill_(1).pin_memory()
+    x2 = torch.LongTensor(len(questions), max_length).fill_(null)
+    x2_mask = torch.ByteTensor(len(questions), max_length).fill_(1)
     for i, q in enumerate(questions):
         x2[i, :q.size(0)].copy_(q)
         x2_mask[i, :q.size(0)].fill_(0)
