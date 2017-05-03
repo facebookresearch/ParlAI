@@ -33,7 +33,7 @@ class ModelEvaluatorAgent(Agent):
 
     def observe(self, observation):
         self.observation = observation
-        
+
         # The rating given by turker
         # Because we only have one turn in this conversation, we don't need to track turn_index
         # print(self.observation)
@@ -46,9 +46,9 @@ class ModelEvaluatorAgent(Agent):
         ad = {}
         # Show the dialog model's response to the context, and ask the turker to rate the response
         ad['text'] = (
-            self.world.query['text'] + "\n\n" +
+            self.world.get_acts()[0]['text'] + "\n\n" +
             "How would you rate the following response (from 0 to 10):\n\n" +
-            self.world.reply['text'])
+            self.world.get_acts()[1]['text'])
 
         # TODO: deal with multi-turn dialogs, for now we will just deal
         # with 1-turn dialogs in this task.
