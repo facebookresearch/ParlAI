@@ -101,6 +101,7 @@ end
 -- setup main agent
 opt.parserClass = 'library.parse'
 
+package.path = os.getenv('PARLAI_HOME') .. '/?.lua;' .. package.path
 local MemnnAgent = require('parlai.agents.memnn_luatorch_cpu' ..
                            '.memnn_agent_parsed')
 local agent = MemnnAgent:__init(opt)
@@ -132,6 +133,8 @@ else
                     jobopt['logEveryNSecs'] = nil
                 end
 
+                package.path =
+                    os.getenv('PARLAI_HOME') .. '/?.lua;' .. package.path
                 local MemnnAgent = require('parlai.agents.memnn_luatorch_cpu' ..
                                            '.memnn_agent_parsed')
                 local agent = MemnnAgent:__init(jobopt, shared)
