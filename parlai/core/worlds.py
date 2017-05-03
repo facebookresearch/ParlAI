@@ -240,7 +240,8 @@ class DialogPartnerWorld(World):
                 if hasattr(self.agents[0], 'epoch_done') else False)
 
     def episode_done(self):
-        return acts[0].get('episode_done', False)
+        if acts[0] is not None:
+            return acts[0].get('episode_done', False)
 
     def parley(self):
         """Agent 0 goes first. Alternate between the two agents.
