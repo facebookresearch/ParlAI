@@ -466,6 +466,19 @@ class BatchWorld(World):
         if self.epoch_done():
             raise StopIteration()
 
+
+    def agent_bact_act(index, batch_observation):
+        # Given batch observation, do update for agent[index].
+        # Call update on agent
+        if len(batch) > 0 and hasattr(a, 'batch_act'):
+            batch_reply = a.batch_act(batch_observation)
+        else:
+            # Reverts to running on each individually.
+            batch_reply = []
+            for w in self.worlds:
+                agents = w.get_agents()
+                batch_reply.append(agents[1].act())    
+
     def parley(self):
         # Collect batch together for each agent, and do update.
         # Assumes DialogPartnerWorld (or MultiWorld of DialogPartnerWorlds)
@@ -486,17 +499,17 @@ class BatchWorld(World):
                 batch.append(agents[1].observation)
             if not self.random and w.epoch_done():
                 break
+        batch_reply = agent_batch_act()
         # Collect batch together for each agent, and do update.
-        a.observation = batch
         # Call update on agent
-        if len(batch) > 0 and hasattr(a, 'batch_act'):
-            batch_reply = a.batch_act(batch)
-        else:
-            # Reverts to running on each individually.
-            batch_reply = []
-            for w in self.worlds:
-                agents = w.get_agents()
-                batch_reply.append(agents[1].act())
+        #if len(batch) > 0 and hasattr(a, 'batch_act'):
+        #    batch_reply = a.batch_act(batch)
+        #else:
+        #    # Reverts to running on each individually.
+        #    batch_reply = []
+        #    for w in self.worlds:
+        #        agents = w.get_agents()
+        #        batch_reply.append(agents[1].act())
 
         for index, w in enumerate(self.worlds):
             # Other half of parley.
