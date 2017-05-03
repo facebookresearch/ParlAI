@@ -4,10 +4,10 @@
 
 ParlAI (pronounced “par-lay”) is a framework for dialog AI research, implemented in Python.
 
-Use ParlAI if you are interested in:
-- training and testing on many different dialog tasks
-- comparing different AI models for dialog tasks
-- using Mechanical Turk for collecting dialog data or evaluating dialog models
+Its goal is to provide researchers:
+- a unified framework for training and testing dialog models
+- multi-task training over many datasets at once
+- seamless integration with [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome) for data collection and human evaluation
 
 ## Included in ParlAI
 
