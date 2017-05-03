@@ -209,7 +209,7 @@ This directory contains a few particular examples of basic loops.
 - base_train.py: _very simple example shows the outline of a training/validation loop using the default Agent parent class_
 - display_data.py: _uses agent.repeat_label to display data from a particular task provided on the command-line_
 - display_model.py: _shows the predictions of a provided model on a particular task provided on the command-line_
-- eval_model.py: _uses agent.repeat_label to compute evaluation metrics data for a particular task provided on the command-line_
+- eval_model.py: _uses the named agent to compute evaluation metrics data for a particular task provided on the command-line_
 - build_dict.py: _build a dictionary from a particular task provided on the command-line using core.dict.DictionaryAgent_
 - memnn_luatorch_cpu: _shows a few examples of training an end-to-end memory network on a few datasets_
 - drqa: _shows how to train the attentive LSTM DrQA model of [Chen et al.](https://arxiv.org/abs/1704.00051) on SQuAD._
