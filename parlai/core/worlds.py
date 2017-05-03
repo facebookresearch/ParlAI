@@ -411,7 +411,7 @@ class BatchWorld(World):
     """Creates a separate world for each item in the batch, sharing
     the parameters for each.
     The underlying world(s) it is batching can be either DialogPartnerWorld,
-    or MultiWorld.
+    MultiAgentWorld or MultiWorld.
     """
 
     def __init__(self, opt, world):
