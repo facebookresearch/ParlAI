@@ -737,6 +737,31 @@ def clean_aws():
     # Remove IAM role
     try:
         iam_client = boto3.client('iam')
+
+        try:
+            response = iam_client.detach_role_policy(
+                RoleName=iam_role_name,
+                PolicyArn='arn:aws:iam::aws:policy/AWSLambdaFullAccess'
+            )
+        except ClientError as e:
+            pass
+
+        try:
+            response = iam_client.detach_role_policy(
+                RoleName=iam_role_name,
+                PolicyArn='arn:aws:iam::aws:policy/AmazonRDSFullAccess'
+            )
+        except ClientError as e:
+            pass
+
+        try:
+            response = iam_client.detach_role_policy(
+                RoleName=iam_role_name,
+                PolicyArn='arn:aws:iam::aws:policy/AmazonMechanicalTurkFullAccess'
+            )
+        except ClientError as e:
+            pass
+
         response = iam_client.delete_role(
             RoleName=iam_role_name
         )
