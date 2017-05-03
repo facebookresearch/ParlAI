@@ -645,6 +645,8 @@ def setup_aws(task_config, num_hits, is_sandbox):
     return html_api_endpoint_url, json_api_endpoint_url, requester_key_gt
 
 def clean_aws():
+    setup_aws_credentials()
+    
     # Remove RDS database
     try:
         rds = boto3.client('rds', region_name=region_name)
