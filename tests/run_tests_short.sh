@@ -6,6 +6,6 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-python tests/test_import.py
-python tests/test_dict.py
-python tests/test_threadutils.py
+python test_import.py
+python test_dict.py
+python test_threadutils.py
