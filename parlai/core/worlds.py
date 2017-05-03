@@ -127,7 +127,10 @@ class World(object):
         return False
 
     def epoch_done(self):
-        """Whether the epoch is done or not. """
+        """Whether the epoch is done or not. 
+        Not all worlds have the notion of an epoch, but this is useful
+        for fixed training, validation or test sets.
+        """
         return False
 
     def share(self):
@@ -261,6 +264,23 @@ class MultiAgentDialogWorld(World):
             for other_agent in self.agents:
                 if other_agent != agent:
                     other_agent.observe(validate(acts[index]))
+
+    def epoch_done(self):
+        done = False
+        for a in self.agents:
+            if a.epoch_done():
+                done = True
+        return done
+
+    def episode_done(self):
+        done = False
+        for a in self.agents:
+            if a.episode_done():
+                done = True
+        return done
+
+    def report(self):
+        return self.agents[0].report()
 
     def shutdown(self):
         for a in self.agents:
