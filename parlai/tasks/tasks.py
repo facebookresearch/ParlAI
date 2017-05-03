@@ -21,7 +21,7 @@ def _build(task_list):
 
     for t in task_list:
         task = _preprocess(t['id'])
-        tasks[task] = t
+        tasks[task] = [t]
         for j in t['tags']:
             tag = _preprocess(j)
             if tag in tasks:
@@ -31,16 +31,16 @@ def _build(task_list):
     return tasks, tags
 
 def _id_to_task_data(t_id):
-    clean_tid = _preprocess(t_id)
-    if clean_tid in tasks:
+    t_id = _preprocess(t_id)
+    if t_id in tasks:
         # return the task assoicated with this task id
-        return tasks[t_id]['task']
-    elif clean_tid in tags:
+        return tasks[t_id]
+    elif t_id in tags:
         # return the list of tasks for this tag
         return tags[t_id]
     else:
         # should already be in task form
-        return t_id
+        raise RuntimeError('could not find tag/task id')
 
 
 def _id_to_task(t_id):
@@ -48,8 +48,8 @@ def _id_to_task(t_id):
         # this is a tag, so return all the tasks for this tag
         return ','.join((d['task'] for d in _id_to_task_data(t_id[1:])))
     else:
-        # this is either a task id or is already in task form
-        return _id_to_task_data(t_id)
+        # this should already be in task form
+        return t_id
 
 
 def ids_to_tasks(ids):
