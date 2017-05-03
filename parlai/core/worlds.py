@@ -89,8 +89,12 @@ class World(object):
         """Returns a string describing the current state of the world.
         Useful for monitoring and debugging.
         By default, display the messages between the agents."""
+        if not hasattr(self, 'acts'):
+            return ''
         lines = []
         for index, msg in enumerate(self.acts):
+            if msg is None:
+                continue
             # Possibly indent the text (for the second speaker, if two).
             space = ''
             if len(self.acts) == 2 and index == 1:
@@ -424,6 +428,8 @@ class BatchWorld(World):
             opti = copy.deepcopy(opt)
             opti['batchindex'] = i
             self.worlds.append(shared['world_class'](opti, None, shared))
+        self.batch_acts = [ [] ] * len(self.worlds)
+        self.batch_observations = [ [] ] * len(self.worlds)
 
     def __iter__(self):
         return self
@@ -436,6 +442,7 @@ class BatchWorld(World):
         for w in self.worlds:
             agents = w.get_agents()
             agents[index].observe(validate(batch[index]))
+        return batch
 
     def batch_act(self, index, batch_observation):
         # Given batch observation, do update for agents[index].
@@ -459,17 +466,21 @@ class BatchWorld(World):
 
     def parley(self):
         # Collect batch together for each agent, and do update.
-        # Assumes DialogPartnerWorld (or MultiWorld of DialogPartnerWorlds)
-        # for now, this allows us make the agent[0] act, collect the batch,
-        # then allow the agent[1] to act in each world.
+        # Assumes DialogPartnerWorld, MultiAgentWorld, or MultiWorlds of them.
+        num_agents = len(self.world.get_agents())
+        batch_acts = self.batch_acts
+        batch_observations = self.batch_observations
+
         for w in self.worlds:
             if hasattr(w, 'parley_init'):
                 w.parley_init()
-        batch = [None] * len(w)
-        batch[0] = self.batch_act(0, [])
-        self.batch_observe(1, batch[0])
-        batch[1] = self.batch_act(1, batch[0])
-        self.batch_observe(0, batch[1])
+        
+        for index in range(num_agents):
+            batch_acts[index] = self.batch_act(index, batch_observations[index])
+            for other_index in range(num_agents):
+                if index != other_index:
+                    batch_observations[other_index] = (
+                        self.batch_observe(other_index, batch_acts[index]))
 
     def display(self):
         s = ("[--batchsize " + str(len(self.worlds)) + "--]\n")
