@@ -42,7 +42,6 @@ def _send_new_message(json_api_endpoint_url, task_group_id, conversation_id, age
         post_data_dict['reward'] = reward
     
     request = requests.post(json_api_endpoint_url, data=json.dumps(post_data_dict))
-    print(request.json())
     return json.loads(request.json())
 
 def _get_new_messages(json_api_endpoint_url, task_group_id, after_message_id, excluded_agent_id=None):
