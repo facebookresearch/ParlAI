@@ -4,10 +4,9 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """Basic template of training loop.
-We create an agent that will interact with both the training and validation
-tasks.
-We then create a training teacher and a validation teacher and place them in
-corresponding worlds along with the agent.
+We create an agent that will train on the training task, and be evaluated
+on the validation version of the task.
+
 We then do one iteration over ten training examples and one validation example,
 printing reports from those tasks after completing those iterations.
 
@@ -17,23 +16,24 @@ using the argument parser in the core library, or generate a dictionary before
 processing the data.
 """
 
+from parlai.core.params import ParlaiParser
 from parlai.core.agents import Agent, Teacher
-from parlai.core.worlds import DialogPartnerWorld
+from parlai.core.worlds import create_task
 import time
 
 def main():
-    opt = {}
+    # Get command line arguments
+    parser = ParlaiParser()
+    parser.add_argument('-n', '--num_examples', default=10)
+    opt = parser.parse_args()
 
     agent = Agent(opt)
 
     opt['datatype'] = 'train'
-    teacher_train = Teacher(opt)
+    world_train = create_task(opt, agent)
 
     opt['datatype'] = 'valid'
-    teacher_valid = Teacher(opt)
-
-    world_train = DialogPartnerWorld(opt, [teacher_train, agent])
-    world_valid = DialogPartnerWorld(opt, [teacher_valid, agent])
+    world_valid = create_task(opt, agent)
 
     start = time.time()
     # train / valid loop
