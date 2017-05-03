@@ -1,4 +1,8 @@
-# Copyright 2004-present Facebook. All Rights Reserved.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -25,9 +29,12 @@ class DocReaderModel(object):
         self.updates = 0
 
         # Word embeddings.
-        logger.info('[ Loading pre-trained embeddings ]')
-        embeddings = load_embeddings(opt, word_dict)
-        logger.info('[ Num embeddings = %d ]' % embeddings.size(0))
+        if 'embedding_file' in opt:
+            logger.info('[ Loading pre-trained embeddings ]')
+            embeddings = load_embeddings(opt, word_dict)
+            logger.info('[ Num embeddings = %d ]' % embeddings.size(0))
+        else:
+            embeddings = None
 
         # Fine-tuning special words.
         if self.opt['tune_partial'] > 0:

@@ -1,4 +1,8 @@
-# Copyright 2004-present Facebook. All Rights Reserved.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -52,7 +56,7 @@ class StackedBRNN(nn.Module):
             rnn_input = outputs[-1]
 
             # Apply dropout to hidden input
-            if i > 0 and self.dropout_rate > 0:
+            if self.dropout_rate > 0:
                 rnn_input = F.dropout(rnn_input,
                                       p=self.dropout_rate,
                                       training=self.training)

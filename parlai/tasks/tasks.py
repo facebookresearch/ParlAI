@@ -4,73 +4,56 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """Helper functions for defining the set of tasks in ParlAI.
-   The actual task list and definitions are in the file tasks.json
+The actual task list and definitions are in the file task_list.py
 """
-
+from .task_list import task_list
+from collections import defaultdict
 import copy
 import json
-import os 
+import os
 
 def _preprocess(name):
-    name = name.lower().replace('-', '')
-    return name
+    return name.lower().replace('-', '')
 
-def _build():
+def _build(task_list):
     tasks = {}
-    tags = {}
-    if len(tasks) > 0:
-        return
-    parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
-                    os.path.realpath(__file__)))))
-    task_path = parlai_dir + '/parlai/tasks/tasks.json'
-    with open(task_path) as data_file:
-        task_data = json.load(data_file)
-    for k in task_data:
-        task = _preprocess(k['id'])
-        if task in tasks:
-            raise RunTimeError('task ' + j + ' already exists')
-        tasks[task] = [ k ]
-        for j in k['tags']:
+    tags = defaultdict(list)
+
+    for t in task_list:
+        task = _preprocess(t['id'])
+        tasks[task] = t
+        for j in t['tags']:
             tag = _preprocess(j)
             if tag in tasks:
                 raise RuntimeError('tag ' + tag +
                                    ' is the same as a task name')
-            if tag not in tags:
-                tags[tag] = []
-            tags[tag].append(k)            
+            tags[tag].append(t)
     return tasks, tags
 
-def _id_to_task_data(id):
-    id = _preprocess(id)
-    if id in tasks:
-        return tasks[id]
+def _id_to_task_data(t_id):
+    clean_tid = _preprocess(t_id)
+    if clean_tid in tasks:
+        # return the task assoicated with this task id
+        return tasks[t_id]['task']
+    elif clean_tid in tags:
+        # return the list of tasks for this tag
+        return tags[t_id]
     else:
-        if id in tags:
-            return tags[id]
-        else:
-            raise RuntimeError(id + ' task/tag not found')
+        # should already be in task form
+        return t_id
 
- 
-def _id_to_task(id):
-    if len(id) == 0:
-        return None
-    if id[0] == '#':
-        data = _id_to_task_data(id[1:])
-        tasks =  []
-        for d in data:
-            tasks.append(d['task'])
-        return ','.join(tasks)
+
+def _id_to_task(t_id):
+    if t_id[0] == '#':
+        # this is a tag, so return all the tasks for this tag
+        return ','.join((d['task'] for d in _id_to_task_data(t_id[1:])))
     else:
-        return id
+        # this is either a task id or is already in task form
+        return _id_to_task_data(t_id)
 
 
-def ids_to_tasks(tasks):
-    tasks = tasks.split(',')
-    for k in range(len(tasks)):
-       tasks[k] = _id_to_task(tasks[k])
-    task = ','.join(tasks)
-    return task
+def ids_to_tasks(ids):
+    return ','.join((_id_to_task(i) for i in ids.split(',') if len(i) > 0))
 
 # Build the task list from the json file.
-tasks, tags = _build()
-
+tasks, tags = _build(task_list)

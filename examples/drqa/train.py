@@ -1,5 +1,8 @@
-#!/usr/bin/env python3
-# Copyright 2004-present Facebook. All Rights Reserved.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 """Trains (a partial) implementation of the DrQa Document Reader from:
 
 Danqi Chen, Adam Fisch, Jason Weston, Antoine Bordes. 2017.
@@ -7,8 +10,15 @@ Reading Wikipedia to Answer Open-Domain Questions.
 In Association for Computational Linguistics (ACL).
 
 Link: https://arxiv.org/abs/1704.00051
+
+Note:
+To use pretrained word embeddings, set the --embeddings_file path argument.
+GloVe is recommended, see http://nlp.stanford.edu/data/glove.840B.300d.zip.
 """
-import torch
+try:
+    import torch
+except ModuleNotFoundError:
+    raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
 import numpy as np
 import logging
 import copy
@@ -42,7 +52,9 @@ def build_dict(opt):
 
 
 def validate(opt, agent, n_iter):
+    opt = copy.deepcopy(opt)
     opt['datatype'] = 'valid'
+    opt['batchsize'] = 1
     valid_world = create_task(opt, agent)
 
     logger.info('[ Running validation... ]')
@@ -78,7 +90,7 @@ def main(opt):
     train_time = Timer()
 
     # Keep track of best model + how long since the last improvement
-    best_valid = validate(opt, doc_reader, -1)
+    best_valid = 0
     impatience = 0
 
     logger.info("[ Ok, let's go... ]")

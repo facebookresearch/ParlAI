@@ -83,12 +83,20 @@ class World(object):
         return shared_data
 
     def _share_agents(self):
+        """ create shared data for agents so other classes can create the same
+        agents without duplicating the data (i.e. sharing parameters)."""
         if not hasattr(self, 'agents'):
             return None
-        # create shared data for agents so other classes can create the same
-        # agents without duplicating the data (i.e. sharing parameters).
         shared_agents = [a.share() for a in self.agents]
         return shared_agents
+
+    def get_agents(self):
+        """Return the list of agents."""
+        return self.agents
+
+    def get_acts(self):
+        """Return the last act of each agent."""
+        return self.acts
 
     def __enter__(self):
         """Empty enter provided for use with `with` statement.
@@ -223,67 +231,71 @@ class DialogPartnerWorld(World):
                 raise RuntimeError('There must be exactly two agents for this ' +
                                    'world.')
             self.agents = agents
-        self.teacher = self.agents[0]
-        self.agent = self.agents[1]
-        self.reply = {}
+        self.acts = [None, None]
 
     def __iter__(self):
-        return iter(self.teacher)
+        return iter(self.agents[0])
 
     def epoch_done(self):
-        return (self.teacher.epoch_done()
-                if hasattr(self.teacher, 'epoch_done') else False)
+        return (self.agents[0].epoch_done()
+                if hasattr(self.agents[0], 'epoch_done') else False)
 
     def parley(self):
-        """Teacher goes first. Alternate between the teacher and the agent."""
-        self.query = self.teacher.act()
-        self.agent.observe(validate(self.query))
-        self.reply = self.agent.act()
-        self.teacher.observe(validate(self.reply))
-        self.is_episode_done = self.query.get('episode_done', False)
+        """Agent 0 goes first. Alternate between the two agents.
+        Only the first agent indicates when the episode is done.
+        """
+        acts = self.acts
+        agents = self.agents
+        acts[0] = agents[0].act()
+        agents[1].observe(validate(acts[0]))
+        acts[1] = agents[1].act()
+        agents[0].observe(validate(acts[1]))
+        self.is_episode_done = acts[0].get('episode_done', False)
 
     def report(self):
-        return self.teacher.report()
+        return self.agents[0].report()
 
     def display(self):
         lines = []
-        if self.query.get('reward', None) is not None:
-            lines.append('   [reward: {r}]'.format(r=self.query['reward']))
-        if self.query.get('text', ''):
-            ID = '[' + self.query['id'] + ']: ' if 'id' in self.query else ''
-            lines.append(ID + self.query['text'])
-        if self.query.get('labels', False):
+        query = self.acts[0]
+        reply = self.acts[1]
+        if query.get('reward', None) is not None:
+            lines.append('   [reward: {r}]'.format(r=query['reward']))
+        if query.get('text', ''):
+            ID = '[' + query['id'] + ']: ' if 'id' in query else ''
+            lines.append(ID + query['text'])
+        if query.get('labels', False):
             lines.append('[labels: {}]'.format(
-                    '|'.join(self.query['labels'])))
-        if self.query.get('label_candidates', False):
-            cand_len = len(self.query['label_candidates'])
+                    '|'.join(query['labels'])))
+        if query.get('label_candidates', False):
+            cand_len = len(query['label_candidates'])
             if cand_len <= 10:
                 lines.append('[cands: {}]'.format(
-                    '|'.join(self.query['label_candidates'])))
+                    '|'.join(query['label_candidates'])))
             else:
                 # select five label_candidates from the candidate set, can't slice in
                 # because it's a set
-                cand_iter = iter(self.query['label_candidates'])
+                cand_iter = iter(query['label_candidates'])
                 display_cands = (next(cand_iter) for _ in range(5))
                 # print those cands plus how many cands remain
                 lines.append('[cands: {}{}]'.format(
                     '|'.join(display_cands),
                     '| ...and {} more'.format(cand_len - 5)
                 ))
-        if self.reply.get('text', ''):
-            ID = '[' + self.reply['id'] + ']: ' if 'id' in self.reply else ''
-            lines.append('   ' + ID + self.reply['text'])
+        if reply.get('text', ''):
+            ID = '[' + reply['id'] + ']: ' if 'id' in reply else ''
+            lines.append('   ' + ID + reply['text'])
         if self.episode_done():
             lines.append('- - - - - - - - - - - - - - - - - - - - -')
         return '\n'.join(lines)
 
     def __len__(self):
-        return len(self.teacher)
+        return len(self.agents[0])
 
     def shutdown(self):
         """Shutdown each agent."""
-        self.teacher.shutdown()
-        self.agent.shutdown()
+        for a in self.agents:
+            a.shutdown()
 
 
 class MultiWorld(World):
@@ -293,19 +305,25 @@ class MultiWorld(World):
     that world represents.
     """
 
-    def __init__(self, opt, agents):
+    def __init__(self, opt, agents=None, shared=None):
         super().__init__(opt)
         self.worlds = []
-        for k in opt['task'].split(','):
+        for index, k in enumerate(opt['task'].split(',')):
             k = k.strip()
             if k:
                 print("[creating world: " + k + "]")
                 opt_singletask = copy.deepcopy(opt)
                 opt_singletask['task'] = k
-                self.worlds.append(create_task_world(opt_singletask, agents))
+                if shared:
+                    # Create worlds based on shared data.
+                    s = shared['worlds'][index]
+                    self.worlds.append(s['world_class'](s['opt'], None, s))
+                else:
+                    # Agents are already specified.
+                    self.worlds.append(create_task_world(opt_singletask, agents))
         self.world_idx = -1
         self.new_world = True
-        self.parleys = 0
+        self.parleys = -1
         self.random = opt.get('datatype', None) == 'train'
 
     def __iter__(self):
@@ -323,13 +341,29 @@ class MultiWorld(World):
                 self.len += len(t)
         return self.len
 
+    def get_agents(self):
+        return self.worlds[self.world_idx].get_agents()
+
+    def get_acts(self):
+        return self.worlds[self.world_idx].get_acts()
+
+    def share(self):
+        shared_data = {}
+        shared_data['world_class'] = type(self)
+        shared_data['opt'] = self.opt
+        shared_data['worlds'] = [w.share() for w in self.worlds]
+        return shared_data
+
     def epoch_done(self):
         for t in self.worlds:
             if not t.epoch_done():
                 return False
         return True
 
-    def parley(self):
+    def parley_init(self):
+        self.parleys = self.parleys + 1
+        if self.world_idx >= 0 and self.worlds[self.world_idx].episode_done():
+            self.new_world = True
         if self.new_world:
             self.new_world = False
             self.parleys = 0
@@ -344,11 +378,10 @@ class MultiWorld(World):
                                     start_idx != self.world_idx)
                 if start_idx == self.world_idx:
                     return {'text': 'There are no more examples remaining.'}
-        t = self.worlds[self.world_idx]
-        t.parley()
-        self.parleys = self.parleys + 1
-        if t.episode_done():
-            self.new_world = True
+
+    def parley(self):
+        self.parley_init()
+        self.worlds[self.world_idx].parley()
 
     def display(self):
         if self.world_idx != -1:
@@ -406,11 +439,18 @@ class MultiAgentDialogWorld(World):
 
 class BatchWorld(World):
     """Creates a separate world for each item in the batch, sharing
-    the parameters for each."""
+    the parameters for each.
+    The underlying world(s) it is batching can be either DialogPartnerWorld,
+    or MultiWorld.
+    """
 
     def __init__(self, opt, world):
         self.opt = opt
         self.random = opt.get('datatype', None) == 'train'
+        if not self.random:
+            raise NotImplementedError(
+                'Ordered data not implemented yet in batch mode.')
+
         self.world = world
         shared = world.share()
         self.worlds = []
@@ -428,18 +468,22 @@ class BatchWorld(World):
 
     def parley(self):
         # Collect batch together for each agent, and do update.
-        # Assumes DialogPartnerWorld for now, this allows us make the
-        # teacher act, collect the batch, then allow the agent to
-        # act in each world, so we can do both forwards and backwards
-        # in batch, and still collect metrics in each world.
-        a = self.world.agent
+        # Assumes DialogPartnerWorld (or MultiWorld of DialogPartnerWorlds)
+        # for now, this allows us make the agent[0] act, collect the batch,
+        # then allow the agent[1] to act in each world, so we can do both
+        # forwards and backwards in batch, and still collect metrics in each world.
+        a = self.world.get_agents()[1]
         batch = []
         for w in self.worlds:
             # Half of parley.
-            w.query = w.teacher.act()
-            w.agent.observe(validate(w.query))
-            if hasattr(w.agent, 'observation'):
-                batch.append(w.agent.observation)
+            if hasattr(w, 'parley_init'):
+                w.parley_init()
+            agents = w.get_agents()
+            acts = w.get_acts()
+            acts[0] = agents[0].act()  
+            agents[1].observe(validate(acts[0]))
+            if hasattr(agents[1], 'observation'):
+                batch.append(agents[1].observation)
             if not self.random and w.epoch_done():
                 break
         # Collect batch together for each agent, and do update.
@@ -451,13 +495,16 @@ class BatchWorld(World):
             # Reverts to running on each individually.
             batch_reply = []
             for w in self.worlds:
-                batch_reply.append(w.agent.act())
+                agents = w.get_agents()
+                batch_reply.append(agents[1].act())
 
         for index, w in enumerate(self.worlds):
             # Other half of parley.
-            w.reply = batch_reply[index]
-            w.teacher.observe(validate(w.reply))
-            w.is_episode_done = w.query['episode_done']
+            acts = w.get_acts()
+            agents = w.get_agents()
+            acts[1] = batch_reply[index]       
+            agents[0].observe(validate(acts[1]))
+            w.is_episode_done = acts[0]['episode_done']
             if not self.random and w.epoch_done():
                 break
 
@@ -484,7 +531,7 @@ class BatchWorld(World):
         return False
 
     def report(self):
-        return self.world.report()
+        return self.worlds[0].report()
 
 
 class HogwildProcess(Process):
