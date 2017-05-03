@@ -12,7 +12,6 @@ import time
 import json
 import boto3
 import calendar
-import requests
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
 import data_model
