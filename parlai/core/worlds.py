@@ -65,7 +65,6 @@ class World(object):
     All children can override these to provide more detailed functionality."""
 
     def __init__(self, opt, agents=None, shared=None):
-        self.is_episode_done = False
         self.id = opt['task']
         self.opt = copy.deepcopy(opt)
         if shared:
@@ -133,7 +132,7 @@ class World(object):
 
     def episode_done(self):
         """Whether the episode is done or not. """
-        return self.is_episode_done
+        return False
 
     def shutdown(self):
         """Performs any cleanup, if appropriate."""
@@ -240,6 +239,9 @@ class DialogPartnerWorld(World):
         return (self.agents[0].epoch_done()
                 if hasattr(self.agents[0], 'epoch_done') else False)
 
+    def episode_done(self):
+        return acts[0].get('episode_done', False)
+
     def parley(self):
         """Agent 0 goes first. Alternate between the two agents.
         Only the first agent indicates when the episode is done.
@@ -250,7 +252,6 @@ class DialogPartnerWorld(World):
         agents[1].observe(validate(acts[0]))
         acts[1] = agents[1].act()
         agents[0].observe(validate(acts[1]))
-        self.is_episode_done = acts[0].get('episode_done', False)
 
     def report(self):
         return self.agents[0].report()
@@ -466,60 +467,44 @@ class BatchWorld(World):
         if self.epoch_done():
             raise StopIteration()
 
+    def batch_observe(self, index, batch):
+        for w in self.worlds:
+            agents = w.get_agents()
+            agents[index].observe(validate(batch[index]))
 
-    def agent_bact_act(index, batch_observation):
-        # Given batch observation, do update for agent[index].
+    def batch_act(self, index, batch_observation):
+        # Given batch observation, do update for agents[index].
         # Call update on agent
-        if len(batch) > 0 and hasattr(a, 'batch_act'):
+        a = self.world.get_agents()[index]
+        if len(batch_observation) > 0 and hasattr(a, 'batch_act'):
             batch_reply = a.batch_act(batch_observation)
+            # Store the actions locally in each world.
+            for w in self.worlds:
+                acts = w.get_acts()
+                acts[index] = batch_reply[index]
         else:
             # Reverts to running on each individually.
             batch_reply = []
             for w in self.worlds:
                 agents = w.get_agents()
-                batch_reply.append(agents[1].act())    
+                acts = w.get_acts()
+                acts[index] = agents[index].act()
+                batch_reply.append(acts[index])    
+        return batch_reply
 
     def parley(self):
         # Collect batch together for each agent, and do update.
         # Assumes DialogPartnerWorld (or MultiWorld of DialogPartnerWorlds)
         # for now, this allows us make the agent[0] act, collect the batch,
-        # then allow the agent[1] to act in each world, so we can do both
-        # forwards and backwards in batch, and still collect metrics in each world.
-        a = self.world.get_agents()[1]
-        batch = []
+        # then allow the agent[1] to act in each world.
         for w in self.worlds:
-            # Half of parley.
             if hasattr(w, 'parley_init'):
                 w.parley_init()
-            agents = w.get_agents()
-            acts = w.get_acts()
-            acts[0] = agents[0].act()  
-            agents[1].observe(validate(acts[0]))
-            if hasattr(agents[1], 'observation'):
-                batch.append(agents[1].observation)
-            if not self.random and w.epoch_done():
-                break
-        batch_reply = agent_batch_act()
-        # Collect batch together for each agent, and do update.
-        # Call update on agent
-        #if len(batch) > 0 and hasattr(a, 'batch_act'):
-        #    batch_reply = a.batch_act(batch)
-        #else:
-        #    # Reverts to running on each individually.
-        #    batch_reply = []
-        #    for w in self.worlds:
-        #        agents = w.get_agents()
-        #        batch_reply.append(agents[1].act())
-
-        for index, w in enumerate(self.worlds):
-            # Other half of parley.
-            acts = w.get_acts()
-            agents = w.get_agents()
-            acts[1] = batch_reply[index]       
-            agents[0].observe(validate(acts[1]))
-            w.is_episode_done = acts[0]['episode_done']
-            if not self.random and w.epoch_done():
-                break
+        batch = [None] * len(w)
+        batch[0] = self.batch_act(0, [])
+        self.batch_observe(1, batch[0])
+        batch[1] = self.batch_act(1, batch[0])
+        self.batch_observe(0, batch[1])
 
     def display(self):
         s = ("[--batchsize " + str(len(self.worlds)) + "--]\n")
