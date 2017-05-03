@@ -48,7 +48,7 @@ def _id_to_task(t_id):
         # this is a tag, so return all the tasks for this tag
         return ','.join((d['task'] for d in _id_to_task_data(t_id[1:])))
     else:
-        # this is either a task id or is already in task form--confirm
+        # this is either a task id or is already in task form
         return _id_to_task_data(t_id)
 
 
