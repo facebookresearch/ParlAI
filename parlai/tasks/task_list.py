@@ -76,56 +76,61 @@ task_list = [
 	{
 		"id": "MTurkWikiMovies",
 		"task": "mturkwikimovies",
-		"tags": [ "all",  "QA" ]
+		"tags": [ "all",  "QA" ],
+                "description": "Dataset from Miller, et al. '16. Link: https://arxiv.org/abs/1606.03126"
 	},
 	{
 		"id": "OpenSubtitles",
 		"task": "opensubtitles",
-		"tags": [ "all",  "ChitChat" ]
+		"tags": [ "all",  "ChitChat" ],
+                "description": "Dataset of dialogs from movie scripts: http://opus.lingfil.uu.se/OpenSubtitles.php. A variant of the dataset used in Vinyals & Le '15, https://arxiv.org/abs/1506.05869."
 	},
 	{
 		"id": "QACNN",
 		"task": "qacnn",
 		"tags": [ "all",  "Cloze" ]
-                "description": "Dataset from Hermann et al. '15. Link: https://arxiv.org/abs/1506.03340"
+                "description": "Cloze dataset based on a missing (anonymized) entity phrase from a CNN article, Hermann et al. '15. Link: https://arxiv.org/abs/1506.03340"       
 	},
 	{
 		"id": "QADailyMail",
 		"task": "qadailymail",
 		"tags": [ "all",  "Cloze" ]
-                "description": "Dataset from Hermann et al. '15. Link: https://arxiv.org/abs/1506.03340"
+                "description": "Cloze dataset based on a missing (anonymized) entity phrase from a Daily Mail article, Hermann et al. '15. Link: https://arxiv.org/abs/1506.03340"
 	},
 	{
 		"id": "SimpleQuestions",
 		"task": "simplequestions",
 		"tags": [ "all",  "QA" ],
-                "description": "Dataset from Bordes et al. '15. Link: https://arxiv.org/abs/1506.02075"
+                "description": "Open-domain QA dataset based on Freebase triples from Bordes et al. '15. Link: https://arxiv.org/abs/1506.02075"
 	},
 	{
 		"id": "SQuAD",
 		"task": "squad",
 		"tags": [ "all",  "QA" ],
-                "description": "Dataset from Rajpurkar, et al. '16. Link: https://arxiv.org/abs/1606.05250"
+                "description": "Open-domain QA dataset answerable from a given paragraph from Wikipedia, from Rajpurkar et al. '16. Link: https://arxiv.org/abs/1606.05250"
 	},
 	{
 		"id": "Ubuntu",
 		"task": "ubuntu",
 		"tags": [ "all",  "ChitChat" ],
-                "description": "Dataset from Lowe, et al. '15. Link: https://arxiv.org/abs/1506.08909"
+                "description": "Dialogs between an Ubunt user and an expert trying to fix issue, from Lowe et al. '15. Link: https://arxiv.org/abs/1506.08909"
 	},
 	{
 		"id": "WebQuestions",
 		"task": "webquestions",
-		"tags": [ "all",  "QA" ]
+		"tags": [ "all",  "QA" ],
+                "description": "Open-domain QA dataset from Web queries from Berant et al. '13. Link: http://www.aclweb.org/anthology/D13-1160"
 	},
 	{
 		"id": "WikiMovies",
 		"task": "wikimovies",
-		"tags": [ "all",  "QA" ]
+		"tags": [ "all",  "QA" ],
+                "description": "Closed-domain QA dataset asking questions about movies, answerable from Wikipedia. From Miller et al. '16. Link: https://arxiv.org/abs/1606.03126"
 	},
 	{
 		"id": "WikiQA",
 		"task": "wikiqa",
-		"tags": [ "all",  "QA" ]
+		"tags": [ "all",  "QA" ],
+                "description": "Open domain QA from Wikipedia dataset from Yang, et al. '15. Link: https://www.microsoft.com/en-us/research/publication/wikiqa-a-challenge-dataset-for-open-domain-question-answering/"
 	},
 ]
