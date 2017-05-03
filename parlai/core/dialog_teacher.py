@@ -3,13 +3,15 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import copy
-import time
 
 from .agents import Teacher
-from .data import TextData, HogwildTextData
+from .data import TextData
 from .thread_utils import SharedTable
 from .metrics import Metrics
+
+import copy
+import random
+import time
 
 
 class DialogTeacher(Teacher):
@@ -43,23 +45,18 @@ class DialogTeacher(Teacher):
             self.id = opt.get('task', 'teacher')
 
         # first initialize any shared objects
+        self.random = self.datatype == 'train'
         if shared and shared.get('data'):
             self.data = shared['data']
         else:
-            # TODO(ahm): remove True
-            if True or opt.get('numthreads', 1) == 1:
-                self.data = TextData(self.setup_data(opt['datafile']),
-                                     cands=self.label_candidates(),
-                                     random=self.datatype == 'train')
-            else:
-                self.data = HogwildTextData(self.setup_data(opt['datafile']),
-                                            cands=self.label_candidates(),
-                                            random=self.datatype == 'train')
+            self.data = TextData(self.setup_data(opt['datafile']),
+                                 cands=self.label_candidates())
 
         if shared and shared.get('metrics'):
             self.metrics = shared['metrics']
         else:
             self.metrics = Metrics(opt)
+
         self.reset()
 
     def reset(self):
@@ -67,7 +64,9 @@ class DialogTeacher(Teacher):
         # and all metrics are reset.
         self.metrics.clear()
         self.lastY = None
+        self.episode_idx = -1
         self.epochDone = False
+        self.episode_done = True
 
     def __len__(self):
         return len(self.data)
@@ -105,9 +104,24 @@ class DialogTeacher(Teacher):
             self.lastY = None
             self.lastLabelCandidates = None
 
+    def next_example(self):
+        if self.episode_done:
+            num_eps = self.data.num_episodes()
+            if self.random:
+                # select random episode
+                self.episode_idx = random.randrange(num_eps)
+            else:
+                # select next episode
+                self.episode_idx = (self.episode_idx + 1) % num_eps
+            self.entry_idx = 0
+        else:
+            self.entry_idx += 1
+        return self.data.get(self.episode_idx, self.entry_idx)
+
     def act(self):
         """Send new dialog message. """
-        action, self.epochDone = next(self.data)
+        action, self.epochDone = self.next_example()
+        self.episode_done = action['episode_done']
         action['id'] = self.getID()
         self.lastY = action.get('labels', None)
         self.lastLabelCandidates = action.get('label_candidates', None)

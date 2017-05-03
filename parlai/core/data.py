@@ -3,9 +3,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-from multiprocessing import RawArray
-import ctypes
-import random
+
 import sys
 
 
@@ -38,31 +36,26 @@ class TextData(object):
     random tells the data class whether or not to visit episodes sequentially
     or randomly when returning examples to the caller.
     """
-    # data_loader should be a generator returning (Entry, new) tuples
-    def __init__(self, data_loader, cands=None, random=False):
+
+    def __init__(self, data_loader, cands=None):
         self.data = []
         self._load(data_loader)
-        self.cands = set(sys.intern(c) for c in cands) if (
-            cands is not None) else None
+        self.cands = None if cands == None else set(sys.intern(c) for c in cands)
         self.addedCands = []
-        self.random = random
-        self.entry_generator = self._gen_entries()
 
-    # returns number of entries
     def __len__(self):
+        """Returns total number of entries available. Each episode has at least
+        one entry, but might have many more.
+        """
         length = 0
         for l in self.data:
             length += len(l)
         return length
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return self._get_observation()
-
-    # data is an iterator over ((x,y,...), new_episode) of the data
     def _load(self, data_loader):
+        """Loads up data from an iterator over tuples described in the class
+        docs.
+        """
         episode = []
         last_cands = None
         for entry, new in data_loader:
@@ -106,9 +99,19 @@ class TextData(object):
         if len(episode) > 0:
             self.data.append(tuple(episode))
 
-    def _get_observation(self):
-        entry, episode_done, end_of_data = next(self.entry_generator)
+    def num_episodes(self):
+        """Return number of episodes in the dataset."""
+        return len(self.data)
 
+    def get(self, episode_idx, entry_idx=0):
+        """Returns a specific entry from the dataset."""
+        # first look up data
+        episode = self.data[episode_idx]
+        entry = episode[entry_idx]
+        episode_done = entry_idx == len(episode) - 1
+        end_of_data = episode_done and episode_idx == len(self.data) - 1
+
+        # now pack it in a action-observation dictionary
         table = {}
         table['text'] = entry[0]
         if len(entry) > 1:
@@ -138,92 +141,3 @@ class TextData(object):
         # last entry in this episode
         table['episode_done'] = episode_done
         return table, end_of_data
-
-    # returns entries, doing episodes in order
-    # randomly switches between episodes if random flag set
-    def _gen_entries(self):
-        NUM_EPISODES = len(self.data)
-        episode_idx = -1
-        while True:
-            if self.random:
-                # select random episode
-                episode_idx = random.randrange(NUM_EPISODES)
-            else:
-                # select next episode
-                episode_idx = (episode_idx + 1) % NUM_EPISODES
-            episode = self.data[episode_idx]
-            for i in range(len(episode)):
-                curr_entry = episode[i]
-                end_of_ep = i == len(episode) - 1
-                end_of_data = (end_of_ep and not self.random and
-                               episode_idx == NUM_EPISODES - 1)
-                yield episode[i], end_of_ep, end_of_data
-
-
-class HogwildTextData(TextData):
-
-    def __init__(self, data_loader, cands=None, random=False):
-        super().__init__(data_loader, random=False)
-        self.arr, self.ep_idxs = self._data2array(self.data)
-        del self.data
-        self.entry_generator = self._gen_entries()
-
-    def __len__(self):
-        return self.len
-
-    def _get_observation(self):
-        return next(self.entry_generator)
-
-    def _gen_entries(self):
-        table = {}
-        episode_idx = -1
-        while True:
-            # iterate randomly if training, ordered in valid/test
-            if self.random:
-                episode_idx = random.randrange(len(self.ep_idxs) - 1)
-            else:
-                episode_idx = (episode_idx + 1) % (len(self.ep_idxs) - 1)
-            # loop over each example in this episode, building that ex
-            for idx in range(self.ep_idxs[episode_idx],
-                             self.ep_idxs[episode_idx + 1],
-                             4):
-                table.clear()
-                table['text'] = self.arr[idx]
-                if self.arr[idx + 1]:
-                    table['labels'] = self.arr[idx + 1].split('|')
-                if self.arr[idx + 2]:
-                    table['reward'] = self.arr[idx + 2]
-                if self.arr[idx + 3]:
-                    table['label_candidates'] = self.arr[idx + 3].split('|')
-                table['episode_done'] = idx == self.ep_idxs[episode_idx + 1] - 4
-                yield table
-
-    # returns data in array form, and indices to the start of each episode
-    def _data2array(self, data):
-        num_eps = len(data)
-        num_exs = super().__len__()
-        self.len = num_exs
-        ep_idxs = RawArray('i', num_eps + 1)
-        arr = RawArray(ctypes.c_wchar_p, num_exs * 4)
-
-        arr_idx = 0
-        for i, episode in enumerate(data):
-            ep_idxs[i] = arr_idx
-            for entry in episode:
-                text = entry[0]
-                # default to blank (need something in array), replace if avail.
-                labels, reward, label_candidates = [sys.intern('')] * 3
-                if len(entry) > 1:
-                    labels = sys.intern('|'.join(entry[1]))
-                    if len(entry) > 2:
-                        reward = entry[2]
-                        if len(entry) > 3:
-                            label_candidates = sys.intern('|'.join(entry[3]))
-
-                arr[arr_idx] = text
-                arr[arr_idx + 1] = labels
-                arr[arr_idx + 2] = reward
-                arr[arr_idx + 3] = label_candidates
-                arr_idx += 4
-        ep_idxs[-1] = arr_idx
-        return arr, ep_idxs
