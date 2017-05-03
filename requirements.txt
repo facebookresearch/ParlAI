@@ -2,3 +2,4 @@ boto3
 nltk
 psycopg2
 sqlalchemy
+numpy
