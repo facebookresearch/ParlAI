@@ -387,8 +387,8 @@ class MultiWorld(World):
         if self.world_idx != -1:
             s = ''
             w = self.worlds[self.world_idx]
-            if self.parleys == 1:
-                s = '[world ' + str(self.world_idx) + ':' + w.getID() + ']\n'
+            if self.parleys == 0:
+                s = '[world' + str(self.world_idx) + ':' + w.getID() + ']\n'
             s = s + w.display()
             return s
         else:
@@ -480,7 +480,7 @@ class BatchWorld(World):
                 w.parley_init()
             agents = w.get_agents()
             acts = w.get_acts()
-            acts[0] = agents[0].act()  
+            acts[0] = agents[0].act()
             agents[1].observe(validate(acts[0]))
             if hasattr(agents[1], 'observation'):
                 batch.append(agents[1].observation)
@@ -502,7 +502,7 @@ class BatchWorld(World):
             # Other half of parley.
             acts = w.get_acts()
             agents = w.get_agents()
-            acts[1] = batch_reply[index]       
+            acts[1] = batch_reply[index]
             agents[0].observe(validate(acts[1]))
             w.is_episode_done = acts[0]['episode_done']
             if not self.random and w.epoch_done():
