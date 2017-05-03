@@ -34,7 +34,6 @@ def _build(task_list):
 
 def _id_to_task_data(t_id):
     clean_tid = _preprocess(t_id)
-    import pdb; pdb.set_trace()
     if clean_tid in tasks:
         # return the task assoicated with this task id
         return tasks[clean_tid]['task']
@@ -56,7 +55,7 @@ def _id_to_task(t_id):
 
 
 def ids_to_tasks(ids):
-    tasks = ids.split(',')
+    ids = ids.split(',')
     for k in range(len(tasks)):
         tasks[k] = _id_to_task(tasks[k])
     task = ','.join(tasks)
