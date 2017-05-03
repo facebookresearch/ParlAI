@@ -29,7 +29,7 @@ manage_hit.create_hits(
 	task_module_name=task_module_name,
 	bot=Agent(opt=argparser.parse_args()), 
 	num_hits=2, # Number of HITs you want to create for this task
-	hit_reward=0.05, # in US dollars
-	is_sandbox=True,
+	hit_reward=0.05, # In US dollars
+	is_sandbox=True, # We suggest that you run it in MTurk sandbox mode to test first before moving to live site
 	verbose=True
 )
