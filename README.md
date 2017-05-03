@@ -5,7 +5,7 @@
 ParlAI (pronounced “par-lay”) is a framework for dialog AI research, implemented in Python.
 
 Its goal is to provide researchers:
-- a unified framework for the training and testing of dialog models
+- a unified framework for training and testing dialog models
 - multi-task training over many datasets at once
 - seamless integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome) for data collection and human evaluation
 
@@ -226,7 +226,7 @@ Ubuntu, OpenSubtitles, Cornell Movie and VQA-COCO2014.
 Our first release includes the following datasets (shown in the left panel), and accessing one of them is as simple as specifying the name of the task as a command line option, as shown in the dataset display utility (right panel):
 <p align=center><img width="100%" src="docs/source/\_static/img/tasks.png" /></p>
 
-See <a href="https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py">here</a> for the current complete task list.
+See [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) for the current complete task list.
 
 Choosing a task in ParlAI is as easy as specifying it on the command line, as shown in the above image (right). If the dataset has not been used before, ParlAI will automatically download it. As all datasets are treated in the same way in ParlAI (with a single dialog API), a dialog agent can in principle switch training and testing between any of them. Even better, one can specify many tasks at once (multi-tasking) by simply providing a comma-separated list, e.g.  the command line “-t babi,squad”, to use those two datasets, or even all  the QA datasets at once  (-t #qa) or indeed every task in ParlAI at once (-t #all). The aim is to make it easy to build and evaluate very rich dialog models.
 
