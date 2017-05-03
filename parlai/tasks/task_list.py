@@ -41,43 +41,50 @@ task_list = [
 	{
 		"id": "DBLL-Movie",
 		"task": "dbll_movie",
-		"tags": [ "all",  "Goal" ]
+		"tags": [ "all",  "Goal" ],
+                "description": "Restaurant booking dialogs, from Bordes et al. '16. Link: https://arxiv.org/abs/1605.07683"
 	},
 	{
 		"id": "dialog-bAbI",
 		"task": "dialog_babi",
-		"tags": [ "all",  "Goal" ]
+		"tags": [ "all",  "Goal" ],
+                "description": "Restaurant booking dialogs, from Bordes et al. '16. Link: https://arxiv.org/abs/1605.07683"
 	},
 	{
 		"id": "MCTest",
 		"task": "mctest",
-		"tags": [ "all",  "QA" ]
+		"tags": [ "all",  "QA" ],
+                "description": "Questions about short children's stories, from Richardson et al. '13. Link: https://www.microsoft.com/en-us/research/publication/mctest-challenge-dataset-open-domain-machine-comprehension-text/"
 	},
 	{
 		"id": "MovieDD-QA",
 		"task": "moviedialog:Task:1",
-		"tags": [ "all",  "QA", "MovieDD" ]
+		"tags": [ "all",  "QA", "MovieDD" ],
+                "description": "Closed-domain QA dataset asking templated questions about movies, answerable from Wikipedia, similar to WikiMovies. From Dodge et al. '15. Link: https://arxiv.org/abs/1511.06931"
 	},
 	{
 		"id": "MovieDD-QARecs",
 		"task": "moviedialog:Task:3",
-		"tags": [ "all",  "Goal", "MovieDD" ]
+		"tags": [ "all",  "Goal", "MovieDD" ],
+                "description": "Dialogs discussing questions about movies as well as recommendations. From Dodge et al. '15. Link: https://arxiv.org/abs/1511.06931"
 	},
 	{
 		"id": "MovieDD-Recs",
 		"task": "moviedialog:Task:2",
-		"tags": [ "all",  "QA", "MovieDD" ]
+		"tags": [ "all",  "QA", "MovieDD" ],
+                "description": "Questions asking for movie recommendations. From Dodge et al. '15. Link: https://arxiv.org/abs/1511.06931"
 	},
 	{
 		"id": "MovieDD-Reddit",
 		"task": "moviedialog:Task:4",
-		"tags": [ "all",  "ChitChat", "MovieDD" ]
+		"tags": [ "all",  "ChitChat", "MovieDD" ],
+                "description": "Dialogs discussing Movies from Reddit (the Movies SubReddit). From Dodge et al. '15. Link: https://arxiv.org/abs/1511.06931"
 	},
 	{
 		"id": "MTurkWikiMovies",
 		"task": "mturkwikimovies",
 		"tags": [ "all",  "QA" ],
-                "description": "Dataset from Miller, et al. '16. Link: https://arxiv.org/abs/1606.03126"
+                "description": "Closed-domain QA dataset asking MTurk-derived questions about movies, answerable from Wikipedia. From Li et al. '16. Link: https://arxiv.org/abs/1611.09823"
 	},
 	{
 		"id": "OpenSubtitles",
@@ -88,13 +95,13 @@ task_list = [
 	{
 		"id": "QACNN",
 		"task": "qacnn",
-		"tags": [ "all",  "Cloze" ]
+		"tags": [ "all",  "Cloze" ],
                 "description": "Cloze dataset based on a missing (anonymized) entity phrase from a CNN article, Hermann et al. '15. Link: https://arxiv.org/abs/1506.03340"       
 	},
 	{
 		"id": "QADailyMail",
 		"task": "qadailymail",
-		"tags": [ "all",  "Cloze" ]
+		"tags": [ "all",  "Cloze" ],
                 "description": "Cloze dataset based on a missing (anonymized) entity phrase from a Daily Mail article, Hermann et al. '15. Link: https://arxiv.org/abs/1506.03340"
 	},
 	{
@@ -125,7 +132,7 @@ task_list = [
 		"id": "WikiMovies",
 		"task": "wikimovies",
 		"tags": [ "all",  "QA" ],
-                "description": "Closed-domain QA dataset asking questions about movies, answerable from Wikipedia. From Miller et al. '16. Link: https://arxiv.org/abs/1606.03126"
+                "description": "Closed-domain QA dataset asking templated questions about movies, answerable from Wikipedia. From Miller et al. '16. Link: https://arxiv.org/abs/1606.03126"
 	},
 	{
 		"id": "WikiQA",
