@@ -11,44 +11,52 @@ task_list = [
 	{
 		"id": "bAbI-1k",
 		"task": "babi:All1k",
-		"tags": [ "all",  "QA" ]
+		"tags": [ "all",  "QA" ],
+                "description": "20 synthetic tasks that each test a unique aspect of text and reasoning, and hence test different capabilities of learning models. From Weston et al. '16. Link: http://arxiv.org/abs/1502.05698",
+                "notes": "You can access just one of the bAbI tasks with e.g. 'babi:Task1k:3' for task 3."
 	},
 	{
 		"id": "bAbI-10k",
 		"task": "babi:All10k",
-		"tags": [ "all",  "QA" ]
+		"tags": [ "all",  "QA" ],
+                "description": "20 synthetic tasks that each test a unique aspect of text and reasoning, and hence test different capabilities of learning models. From Weston et al. '16. Link: http://arxiv.org/abs/1502.05698",
+                "notes": "You can access just one of the bAbI tasks with e.g. 'babi:Task10k:3' for task 3."
 	},
 	{
 		"id": "BookTest",
 		"task": "booktest",
-		"tags": [ "all",  "Cloze" ]
+		"tags": [ "all",  "Cloze" ],
+                "description": "Sentence completion given a few sentences as context from a book. A larger version of CBT. From Bajgar et al., 16. Link: https://arxiv.org/abs/1610.00956"
 	},
 	{
 		"id": "CBT",
 		"task": "cbt",
-		"tags": [ "all",  "Cloze" ]
+		"tags": [ "all",  "Cloze" ],
+                "description": "Sentence completion given a few sentences as context from a children's book. From Hill et al., '16. Link: https://arxiv.org/abs/1511.02301"
 	},
 	{
 		"id": "CornellMovie",
 		"task": "cornell_movie",
-		"tags": [ "all",  "ChitChat" ]
+		"tags": [ "all",  "ChitChat" ],
+                "description": "Fictional conversations extracted from raw movie scripts. Link: https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html"
 	},
 	{
 		"id": "DBLL-bAbI",
 		"task": "dbll_babi",
-		"tags": [ "all",  "Goal" ]
+		"tags": [ "all",  "Goal" ],
+                "description": "Short dialogs based on the bAbI tasks, but in the form of a question from a teacher, the answer from the student, and finally a comment on the answer from the teacher. The aim is to find learning models that use the comments to improve. From Weston '16. Link: https://arxiv.org/abs/1604.06045"
 	},
 	{
 		"id": "DBLL-Movie",
 		"task": "dbll_movie",
 		"tags": [ "all",  "Goal" ],
-                "description": "Restaurant booking dialogs, from Bordes et al. '16. Link: https://arxiv.org/abs/1605.07683"
+                "description": "Short dialogs based on WikiMovies, but in the form of a question from a teacher, the answer from the student, and finally a comment on the answer from the teacher. The aim is to find learning models that use the comments to improve. From Weston '16. Link: https://arxiv.org/abs/1604.06045"
 	},
 	{
 		"id": "dialog-bAbI",
 		"task": "dialog_babi",
 		"tags": [ "all",  "Goal" ],
-                "description": "Restaurant booking dialogs, from Bordes et al. '16. Link: https://arxiv.org/abs/1605.07683"
+                "description": "Simulated dialogs of restaurant booking, from Bordes et al. '16. Link: https://arxiv.org/abs/1605.07683"
 	},
 	{
 		"id": "MCTest",
