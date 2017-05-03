@@ -6,17 +6,35 @@
 
 task_config = {}
 
-# MTurk config related
+
+"""A short and descriptive title about the kind of task the HIT contains.
+On the Amazon Mechanical Turk web site, the HIT title appears in search results,
+and everywhere the HIT is mentioned.
+"""
 task_config['hit_title'] = 'Give a rating to a dialog between two people'
+
+
+"""A description includes detailed information about the kind of task the HIT contains.
+On the Amazon Mechanical Turk web site, the HIT description appears in the expanded
+view of search results, and in the HIT and assignment screens.
+"""
 task_config['hit_description'] = 'Give a rating to a dialog between two people.'
+
+
+"""One or more words or phrases that describe the HIT, separated by commas.
+On MTurk website, these words are used in searches to find HITs.
+"""
 task_config['hit_keywords'] = 'chat,dialog,rating'
 
-# Task specific
-task_config['teacher_agent_id'] = 'Teacher'
-task_config['worker_agent_id'] = task_config['teacher_agent_id']
 
-# Required for all tasks
-# Task description shown on the HIT task preview page and the left side of the HIT chat page
+"""A short name indicating the turker's role in the conversation.
+"""
+task_config['worker_agent_id'] = 'Teacher'
+
+
+"""A detailed task description that will be shown on the HIT task preview page
+and on the left side of the chat page. Supports HTML formatting.
+"""
 task_config['task_description'] = \
 '''\'\'\'
 In this task, you are going to read a dialog between two people, and you will need to give a rating on how good the response is.<br><br>
