@@ -244,7 +244,7 @@ An important part of ParlAI is seamless integration with Mechanical Turk for dat
 Human Turkers are also viewed as agents in ParlAI and hence person-person, person-bot, or multiple people and bots in group chat can all converse within the standard framework, switching out the roles as desired with no code changes to the agents. This is because Turkers also receive and send via a (pretty printed) version of the same interface, using the fields of the observation/action dict.
 We provide two examples in the first release, collecting data, and human evaluation of a bot. 
 
-<p align=center><img width="70%" src="docs/source/\_static/img/mturk.png" /></p>
+<p align=center><img width="100%" src="docs/source/\_static/img/mturk.png" /></p>
 
 The mturk library contains the following directories and files:
 
