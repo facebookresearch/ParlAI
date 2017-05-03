@@ -27,6 +27,8 @@ def _build(task_list):
             if tag in tasks:
                 raise RuntimeError('tag ' + tag +
                                    ' is the same as a task name')
+            if tag not in tags:
+                tags[tag] = []
             tags[tag].append(t)
     return tasks, tags
 
@@ -34,7 +36,7 @@ def _id_to_task_data(t_id):
     clean_tid = _preprocess(t_id)
     if clean_tid in tasks:
         # return the task assoicated with this task id
-        return tasks[t_id]['task']
+        return tasks[clean_tid]['task']
     elif clean_tid in tags:
         # return the list of tasks for this tag
         return tags[t_id]
@@ -53,7 +55,12 @@ def _id_to_task(t_id):
 
 
 def ids_to_tasks(ids):
-    return ','.join((_id_to_task(i) for i in ids.split(',') if len(i) > 0))
+    tasks = ids.split(',')
+    for k in range(len(tasks)):
+        tasks[k] = _id_to_task(tasks[k])
+    task = ','.join(tasks)
+    return task
+
 
 # Build the task list from the json file.
 tasks, tags = _build(task_list)
