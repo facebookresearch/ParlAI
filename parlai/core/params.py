@@ -63,7 +63,7 @@ class ParlaiParser(object):
         default_downloads_path = parlai_dir + '/downloads/'
 
         self.parser.add_argument(
-            '-t', '--task', required=True,
+            '-t', '--task',
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
         self.parser.add_argument(
             '--download-path', default=default_downloads_path,
