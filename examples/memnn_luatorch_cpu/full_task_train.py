@@ -30,6 +30,8 @@ def main():
     argparser = ParlaiParser()
     DictionaryAgent.add_cmdline_args(argparser)
     ParsedRemoteAgent.add_cmdline_args(argparser)
+    argparser.add_argument('--num_examples', default=1000, type=int)
+    argparser.add_argument('--num_its', default=100, type=int)
     parlai_home = os.environ['PARLAI_HOME']
     if '--remote-cmd' not in sys.argv:
         sys.argv.append('--remote-cmd')
@@ -69,9 +71,9 @@ def main():
 
     start = time.time()
     with world_train:
-        for _ in range(100):
+        for _ in range(opt['num_its']):
             print('[ training ]')
-            for _ in range(1000 * opt.get('numthreads', 1)):
+            for _ in range(opt['num_examples'] * opt.get('numthreads', 1)):
                 world_train.parley()
             world_train.synchronize()
 

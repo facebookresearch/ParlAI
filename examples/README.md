@@ -41,7 +41,7 @@ python display_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
 
 Build a dictionary on a bAbI "1k training examples" task 1 and save it to /tmp/dict.tsv
 ```bash
-build_dict.py -t babi:task1k:1 --dict-savepath /tmp/dict.tsv
+python build_dict.py -t babi:task1k:1 --dict-savepath /tmp/dict.tsv
 ```
 
 Train a simple cpu-based memory network on the "10k training examples" bAbI task 1 with 8 threads (python processes) using Hogwild (requires zmq and Lua Torch):
