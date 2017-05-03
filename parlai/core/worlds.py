@@ -176,7 +176,7 @@ def create_task(opt, user_agents):
     """Creates a world + task_agents (aka a task)
     assuming opt['task']="task_dir:teacher_class:options"
     e.g. "babi:Task1k:1" or "#babi-1k" or "#QA",
-    see parlai/tasks/tasks.py and see parlai/tasks/tasks.json
+    see parlai/tasks/tasks.py and see parlai/tasks/task_list.py
     for list of tasks.
     """
     if type(user_agents) != list:
@@ -584,6 +584,7 @@ class HogwildWorld(World):
     - An integer Value which contains the number of unprocessed examples queued
         (acquiring the semaphore only claims them--this counter is decremented
         once the processing is complete).
+    
     """
 
     def __init__(self, world_class, opt, agents):

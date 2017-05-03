@@ -220,7 +220,7 @@ Ubuntu, OpenSubtitles, Cornell Movie and VQA-COCO2014.
 Our first release includes the following datasets (shown in the left panel), and accessing one of them is as simple as specifying the name of the task as a command line option, as shown in the dataset display utility (right panel):
 <p align=center><img width="100%" src="docs/source/\_static/img/tasks.png" /></p>
 
-See <a href="https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/tasks.json">here</a> for the current complete task list.
+See <a href="https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py">here</a> for the current complete task list.
 
 Choosing a task in ParlAI is as easy as specifying it on the command line, as shown in the above image (right). If the dataset has not been used before, ParlAI will automatically download it. As all datasets are treated in the same way in ParlAI (with a single dialog API), a dialog agent can in principle switch training and testing between any of them. Even better, one can specify many tasks at once (multi-tasking) by simply providing a comma-separated list, e.g.  the command line “-t babi,squad”, to use those two datasets, or even all  the QA datasets at once  (-t #qa) or indeed every task in ParlAI at once (-t #all). The aim is to make it easy to build and evaluate very rich dialog models.
 
@@ -242,7 +242,7 @@ To add your own task:
 
 An important part of ParlAI is seamless integration with Mechanical Turk for data collection, training and evaluation.
 Human Turkers are also viewed as agents in ParlAI and hence person-person, person-bot, or multiple people and bots in group chat can all converse within the standard framework, switching out the roles as desired with no code changes to the agents. This is because Turkers also receive and send via a (pretty printed) version of the same interface, using the fields of the observation/action dict.
-We provide two examples in the first release, collecting data, and human evaluation of a bot. 
+We provide two examples in the first release, collecting data, and human evaluation of a bot.
 
 <p align=center><img width="100%" src="docs/source/\_static/img/mturk.png" /></p>
 
@@ -273,7 +273,7 @@ To add your own MTurk task and dialog model:
 - import your task module and agent class in __run\_mturk.py__ file, and then run `python run_mturk.py`.
 
 ## The Team
-ParlAI is currently maintained by Alexander H. Miller, Will Feng and Jason Weston. 
+ParlAI is currently maintained by Alexander H. Miller, Will Feng and Jason Weston.
 A non-exhaustive list of other major contributors includes:
 Adam Fisch,  Jiasen Lu, Antoine Bordes, Devi Parikh and Dhruv Batra.
 

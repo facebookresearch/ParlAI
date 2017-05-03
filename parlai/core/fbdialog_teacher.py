@@ -53,8 +53,8 @@ class FbDialogTeacher(DialogTeacher):
         return self.cands
 
     def load_cands(self, path):
-        """Load global fixed set of candidate labels that the teacher provides
-    every example (the true labels for a specific example are also added to this set,
+    """Load global fixed set of candidate labels that the teacher provides every
+    example (the true labels for a specific example are also added to this set,
     so that it's possible to get the right answer).
     """
         if path is None:
@@ -121,6 +121,7 @@ class FbDialogTeacher(DialogTeacher):
         r: '1'
         c: ['hallway', 'kitchen', 'bathroom']
         new_episode = False (this is the second example in the episode)
+        
         """
         print("[loading fbdialog data:" + path + "]")
         with open(path) as read:
