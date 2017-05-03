@@ -240,13 +240,12 @@ class DialogPartnerWorld(World):
                 if hasattr(self.agents[0], 'epoch_done') else False)
 
     def episode_done(self):
-        if acts[0] is not None:
-            return acts[0].get('episode_done', False)
+        """ Only the first agent indicates when the episode is done."""
+        if self.acts[0] is not None:
+            return self.acts[0].get('episode_done', False)
 
     def parley(self):
-        """Agent 0 goes first. Alternate between the two agents.
-        Only the first agent indicates when the episode is done.
-        """
+        """Agent 0 goes first. Alternate between the two agents."""
         acts = self.acts
         agents = self.agents
         acts[0] = agents[0].act()
@@ -259,34 +258,34 @@ class DialogPartnerWorld(World):
 
     def display(self):
         lines = []
-        query = self.acts[0]
-        reply = self.acts[1]
-        if query.get('reward', None) is not None:
-            lines.append('   [reward: {r}]'.format(r=query['reward']))
-        if query.get('text', ''):
-            ID = '[' + query['id'] + ']: ' if 'id' in query else ''
-            lines.append(ID + query['text'])
-        if query.get('labels', False):
-            lines.append('[labels: {}]'.format(
-                    '|'.join(query['labels'])))
-        if query.get('label_candidates', False):
-            cand_len = len(query['label_candidates'])
-            if cand_len <= 10:
-                lines.append('[cands: {}]'.format(
-                    '|'.join(query['label_candidates'])))
-            else:
-                # select five label_candidates from the candidate set, can't slice in
-                # because it's a set
-                cand_iter = iter(query['label_candidates'])
-                display_cands = (next(cand_iter) for _ in range(5))
-                # print those cands plus how many cands remain
-                lines.append('[cands: {}{}]'.format(
-                    '|'.join(display_cands),
-                    '| ...and {} more'.format(cand_len - 5)
-                ))
-        if reply.get('text', ''):
-            ID = '[' + reply['id'] + ']: ' if 'id' in reply else ''
-            lines.append('   ' + ID + reply['text'])
+        for index, msg in enumerate(self.acts):
+            # Possibly indent the text (for the second speaker)
+            space = ''
+            if len(self.acts) == 2 and index == 1:
+                space = '   '
+            if msg.get('reward', None) is not None:
+                lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
+            if msg.get('text', ''):
+                ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
+                lines.append(space + ID + msg['text'])
+            if msg.get('labels', False):
+                lines.append(space + ('[labels: {}]'.format(
+                            '|'.join(msg['labels']))))
+            if msg.get('label_candidates', False):
+                cand_len = len(msg['label_candidates'])
+                if cand_len <= 10:
+                    lines.append(space + ('[cands: {}]'.format(
+                            '|'.join(msg['label_candidates']))))
+                else:
+                    # select five label_candidates from the candidate set,
+                    # can't slice in because it's a set
+                    cand_iter = iter(msg['label_candidates'])
+                    display_cands = (next(cand_iter) for _ in range(5))
+                    # print those cands plus how many cands remain
+                    lines.append(space + ('[cands: {}{}]'.format(
+                            '|'.join(display_cands),
+                            '| ...and {} more'.format(cand_len - 5)
+                            )))
         if self.episode_done():
             lines.append('- - - - - - - - - - - - - - - - - - - - -')
         return '\n'.join(lines)
