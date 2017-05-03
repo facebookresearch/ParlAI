@@ -76,6 +76,60 @@ class World(object):
             # Add passed in agents to world directly.
             self.agents = agents
 
+    def parley(self):
+        """ The main method, that does one step of actions for the agents
+        in the world. This is empty in the base class."""
+        pass
+
+    def getID(self):
+        """Return the name of the world, typically the task the world encodes."""
+        return self.id
+
+    def display(self):
+        """Returns a string describing the current state of the world.
+        Useful for monitoring and debugging.
+        By default, display the messages between the agents."""
+        lines = []
+        for index, msg in enumerate(self.acts):
+            # Possibly indent the text (for the second speaker, if two).
+            space = ''
+            if len(self.acts) == 2 and index == 1:
+                space = '   '
+            if msg.get('reward', None) is not None:
+                lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
+            if msg.get('text', ''):
+                ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
+                lines.append(space + ID + msg['text'])
+            if msg.get('labels', False):
+                lines.append(space + ('[labels: {}]'.format(
+                            '|'.join(msg['labels']))))
+            if msg.get('label_candidates', False):
+                cand_len = len(msg['label_candidates'])
+                if cand_len <= 10:
+                    lines.append(space + ('[cands: {}]'.format(
+                            '|'.join(msg['label_candidates']))))
+                else:
+                    # select five label_candidates from the candidate set,
+                    # can't slice in because it's a set
+                    cand_iter = iter(msg['label_candidates'])
+                    display_cands = (next(cand_iter) for _ in range(5))
+                    # print those cands plus how many cands remain
+                    lines.append(space + ('[cands: {}{}]'.format(
+                            '|'.join(display_cands),
+                            '| ...and {} more'.format(cand_len - 5)
+                            )))
+        if self.episode_done():
+            lines.append('- - - - - - - - - - - - - - - - - - - - -')
+        return '\n'.join(lines)
+
+    def episode_done(self):
+        """Whether the episode is done or not. """
+        return False
+
+    def epoch_done(self):
+        """Whether the epoch is done or not. """
+        return False
+
     def share(self):
         shared_data = {}
         shared_data['world_class'] = type(self)
@@ -120,63 +174,12 @@ class World(object):
     def __len__(self):
         return 0
 
-    def parley(self):
+    def synchronize(self):
+        """Can be used to synchronize processes."""
         pass
-
-    def display(self):
-        """ By default, display the messages between the agents."""
-        lines = []
-        for index, msg in enumerate(self.acts):
-            # Possibly indent the text (for the second speaker, if two).
-            space = ''
-            if len(self.acts) == 2 and index == 1:
-                space = '   '
-            if msg.get('reward', None) is not None:
-                lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
-            if msg.get('text', ''):
-                ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
-                lines.append(space + ID + msg['text'])
-            if msg.get('labels', False):
-                lines.append(space + ('[labels: {}]'.format(
-                            '|'.join(msg['labels']))))
-            if msg.get('label_candidates', False):
-                cand_len = len(msg['label_candidates'])
-                if cand_len <= 10:
-                    lines.append(space + ('[cands: {}]'.format(
-                            '|'.join(msg['label_candidates']))))
-                else:
-                    # select five label_candidates from the candidate set,
-                    # can't slice in because it's a set
-                    cand_iter = iter(msg['label_candidates'])
-                    display_cands = (next(cand_iter) for _ in range(5))
-                    # print those cands plus how many cands remain
-                    lines.append(space + ('[cands: {}{}]'.format(
-                            '|'.join(display_cands),
-                            '| ...and {} more'.format(cand_len - 5)
-                            )))
-        if self.episode_done():
-            lines.append('- - - - - - - - - - - - - - - - - - - - -')
-        return '\n'.join(lines)
-
-    def getID(self):
-        """Return the name of the world, typically the task the world encodes."""
-        return self.id
-
-    def display(self):
-        """Returns a string describing the current state of the world.
-        Useful for monitoring and debugging. """
-        return ''
-
-    def episode_done(self):
-        """Whether the episode is done or not. """
-        return False
 
     def shutdown(self):
         """Performs any cleanup, if appropriate."""
-        pass
-
-    def synchronize(self):
-        """Can be used to synchronize processes."""
         pass
 
 
@@ -269,8 +272,14 @@ class DialogPartnerWorld(World):
             self.agents = agents
         self.acts = [None] * len(self.agents)
 
-    def __iter__(self):
-        return iter(self.agents[0])
+    def parley(self):
+        """Agent 0 goes first. Alternate between the two agents."""
+        acts = self.acts
+        agents = self.agents
+        acts[0] = agents[0].act()
+        agents[1].observe(validate(acts[0]))
+        acts[1] = agents[1].act()
+        agents[0].observe(validate(acts[1]))
 
     def epoch_done(self):
         """ Only the first agent indicates when the epoch is done."""
@@ -282,20 +291,14 @@ class DialogPartnerWorld(World):
         if self.acts[0] is not None:
             return self.acts[0].get('episode_done', False)
 
-    def parley(self):
-        """Agent 0 goes first. Alternate between the two agents."""
-        acts = self.acts
-        agents = self.agents    
-        acts[0] = agents[0].act()
-        agents[1].observe(validate(acts[0]))
-        acts[1] = agents[1].act()        
-        agents[0].observe(validate(acts[1]))
-
     def report(self):
         return self.agents[0].report()
 
     def __len__(self):
         return len(self.agents[0])
+
+    def __iter__(self):
+        return iter(self.agents[0])
 
     def shutdown(self):
         """Shutdown each agent."""
