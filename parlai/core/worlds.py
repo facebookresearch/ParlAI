@@ -183,77 +183,6 @@ class World(object):
         pass
 
 
-def _get_task_world(opt):
-    sp = opt['task'].strip().split(':')
-    if '.' in sp[0]:
-        # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
-        # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
-        world_class = DialogPartnerWorld
-    else:
-        task = sp[0].lower()
-        if len(sp) > 1:
-            sp[1] = sp[1][0].upper() + sp[1][1:]
-            world_name = sp[1] + "World"
-        else:
-            world_name = "DefaultWorld"
-        module_name = "parlai.tasks.%s.worlds" % (task)
-        try:
-            my_module = importlib.import_module(module_name)
-            world_class = getattr(my_module, world_name)
-        except:
-            # Defaults to this if you did not specify a world for your task.
-            world_class = DialogPartnerWorld
-    task_agents = _create_task_agents(opt)
-    return world_class, task_agents
-
-
-def create_task_world(opt, user_agents):
-    world_class, task_agents = _get_task_world(opt)
-    return world_class(opt, task_agents + user_agents)
-
-def create_task(opt, user_agents):
-    """Creates a world + task_agents (aka a task)
-    assuming opt['task']="task_dir:teacher_class:options"
-    e.g. "babi:Task1k:1" or "#babi-1k" or "#QA",
-    see parlai/tasks/tasks.py and see parlai/tasks/tasks.json
-    for list of tasks.
-    """
-    if type(user_agents) != list:
-        user_agents = [user_agents]
-
-    # Convert any hashtag task labels to task directory path names.
-    # (e.g. "#QA" to the list of tasks that are QA tasks).
-    opt = copy.deepcopy(opt)
-    opt['task'] = ids_to_tasks(opt['task'])
-    print('[creating task(s): ' + opt['task'] + ']')
-
-    # Single threaded or hogwild task creation (the latter creates multiple threads).
-    # Check datatype for train, because we need to do single-threaded for
-    # valid and test in order to guarantee exactly one epoch of training.
-    if opt.get('numthreads', 1) == 1 or opt['datatype'] != 'train':
-        if ',' not in opt['task']:
-            # Single task
-            world = create_task_world(opt, user_agents)
-        else:
-            # Multitask teacher/agent
-            world = MultiWorld(opt, user_agents)
-
-        if opt.get('batchsize', 1) > 1:
-            return BatchWorld(opt, world)
-        else:
-            return world
-    else:
-        # more than one thread requested: do hogwild training
-        if ',' not in opt['task']:
-            # Single task
-            # TODO(ahm): fix metrics for multiteacher hogwild training
-            world_class, task_agents = _get_task_world(opt)
-            return HogwildWorld(world_class, opt, task_agents + user_agents)
-        else:
-            # TODO(ahm): fix this
-            raise NotImplementedError('hogwild multiworld not supported yet')
-
-
 class DialogPartnerWorld(World):
     """This basic world switches back and forth between two agents, giving each
     agent one chance to speak per turn and passing that back to the other agent.
@@ -656,3 +585,77 @@ class HogwildWorld(World):
         # wait for threads to close
         for t in self.threads:
             t.join()
+
+
+
+### Functions for creating tasks/worlds given options.
+
+def _get_task_world(opt):
+    sp = opt['task'].strip().split(':')
+    if '.' in sp[0]:
+        # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
+        # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
+        world_class = DialogPartnerWorld
+    else:
+        task = sp[0].lower()
+        if len(sp) > 1:
+            sp[1] = sp[1][0].upper() + sp[1][1:]
+            world_name = sp[1] + "World"
+        else:
+            world_name = "DefaultWorld"
+        module_name = "parlai.tasks.%s.worlds" % (task)
+        try:
+            my_module = importlib.import_module(module_name)
+            world_class = getattr(my_module, world_name)
+        except:
+            # Defaults to this if you did not specify a world for your task.
+            world_class = DialogPartnerWorld
+    task_agents = _create_task_agents(opt)
+    return world_class, task_agents
+
+
+def create_task_world(opt, user_agents):
+    world_class, task_agents = _get_task_world(opt)
+    return world_class(opt, task_agents + user_agents)
+
+def create_task(opt, user_agents):
+    """Creates a world + task_agents (aka a task)
+    assuming opt['task']="task_dir:teacher_class:options"
+    e.g. "babi:Task1k:1" or "#babi-1k" or "#QA",
+    see parlai/tasks/tasks.py and see parlai/tasks/tasks.json
+    for list of tasks.
+    """
+    if type(user_agents) != list:
+        user_agents = [user_agents]
+
+    # Convert any hashtag task labels to task directory path names.
+    # (e.g. "#QA" to the list of tasks that are QA tasks).
+    opt = copy.deepcopy(opt)
+    opt['task'] = ids_to_tasks(opt['task'])
+    print('[creating task(s): ' + opt['task'] + ']')
+
+    # Single threaded or hogwild task creation (the latter creates multiple threads).
+    # Check datatype for train, because we need to do single-threaded for
+    # valid and test in order to guarantee exactly one epoch of training.
+    if opt.get('numthreads', 1) == 1 or opt['datatype'] != 'train':
+        if ',' not in opt['task']:
+            # Single task
+            world = create_task_world(opt, user_agents)
+        else:
+            # Multitask teacher/agent
+            world = MultiWorld(opt, user_agents)
+
+        if opt.get('batchsize', 1) > 1:
+            return BatchWorld(opt, world)
+        else:
+            return world
+    else:
+        # more than one thread requested: do hogwild training
+        if ',' not in opt['task']:
+            # Single task
+            # TODO(ahm): fix metrics for multiteacher hogwild training
+            world_class, task_agents = _get_task_world(opt)
+            return HogwildWorld(world_class, opt, task_agents + user_agents)
+        else:
+            # TODO(ahm): fix this
+            raise NotImplementedError('hogwild multiworld not supported yet')
