@@ -13,7 +13,6 @@ import botocore
 import time
 import json
 import webbrowser
-import uuid
 import hashlib
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
@@ -23,10 +22,10 @@ region_name = 'us-west-2'
 
 iam_role_name = 'parlai_relay_server'
 lambda_function_name = 'parlai_relay_server'
+lambda_permission_statement_id = 'lambda-permission-statement-id'
 api_gateway_name = 'ParlaiRelayServer'
-endpoint_api_name_index = 'parlai_relay_server'
-endpoint_api_name_message = 'parlai_relay_server_message'
-endpoint_api_name_approval = 'parlai_relay_server_approval'
+endpoint_api_name_html = 'html'  # For GET-ing HTML
+endpoint_api_name_json = 'json'  # For GET-ing and POST-ing JSON
 
 rds_db_instance_identifier = 'parlai-mturk-db'
 rds_db_name = 'parlai_mturk_db'
@@ -40,6 +39,79 @@ files_to_copy = [parent_dir+'/'+'data_model.py', parent_dir+'/'+'mturk_index.htm
 lambda_server_directory_name = 'lambda_server'
 lambda_server_zip_file_name = 'lambda_server.zip'
 
+def add_api_gateway_method(api_gateway_client, lambda_function_arn, rest_api_id, endpoint_resource, http_method_type, response_data_type):
+    api_gateway_client.put_method(
+        restApiId = rest_api_id,
+        resourceId = endpoint_resource['id'],
+        httpMethod = http_method_type,
+        authorizationType = "NONE",
+        apiKeyRequired = False,
+    )
+
+    response_parameters = { 'method.response.header.Access-Control-Allow-Origin': False }
+    if response_data_type == 'html':
+        response_parameters['method.response.header.Content-Type'] = False
+    response_models = {}
+    if response_data_type == 'json':
+        response_models = { 'application/json': 'Empty' }
+    api_gateway_client.put_method_response(
+        restApiId = rest_api_id,
+        resourceId = endpoint_resource['id'],
+        httpMethod = http_method_type,
+        statusCode = '200',
+        responseParameters = response_parameters,
+        responseModels = response_models
+    )
+
+    api_gateway_client.put_integration(
+        restApiId = rest_api_id,
+        resourceId = endpoint_resource['id'],
+        httpMethod = http_method_type,
+        type = 'AWS',
+        integrationHttpMethod = 'POST', # this has to be POST
+        uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
+        requestTemplates = {
+            'application/json': \
+'''{
+  "body" : $input.json('$'),
+  "headers": {
+    #foreach($header in $input.params().header.keySet())
+    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
+
+    #end
+  },
+  "method": "$context.httpMethod",
+  "params": {
+    #foreach($param in $input.params().path.keySet())
+    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
+
+    #end
+  },
+  "query": {
+    #foreach($queryParam in $input.params().querystring.keySet())
+    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
+
+    #end
+  }
+}'''
+        },
+        passthroughBehavior = 'WHEN_NO_TEMPLATES'
+    )
+
+    response_parameters = { 'method.response.header.Access-Control-Allow-Origin': "'*'" }
+    response_templates = { 'application/json': '' }
+    if response_data_type == 'html':
+        response_parameters['method.response.header.Content-Type'] = "'text/html'"
+        response_templates = { "text/html": "$input.path('$')" }
+    api_gateway_client.put_integration_response(
+        restApiId = rest_api_id,
+        resourceId = endpoint_resource['id'],
+        httpMethod = http_method_type,
+        statusCode = '200',
+        responseParameters=response_parameters,
+        responseTemplates=response_templates,
+    )
+
 def setup_aws_credentials():
     try:
         session = boto3.Session(profile_name=aws_profile_name)
@@ -47,6 +119,8 @@ def setup_aws_credentials():
         print("AWS credentials not found. Please create an IAM user with programmatic access and AdministratorAccess policy at https://console.aws.amazon.com/iam/, and then enter the user's security credentials below:")
         aws_access_key_id = input('Access Key ID: ')
         aws_secret_access_key = input('Secret Access Key: ')
+        if not os.path.exists(os.path.expanduser('~/.aws/')):
+            os.makedirs(os.path.expanduser('~/.aws/'))
         aws_credentials_file_path = '~/.aws/credentials'
         aws_credentials_file_string = None
         if os.path.exists(os.path.expanduser(aws_credentials_file_path)):
@@ -255,7 +329,7 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
         # Add permission to endpoints for calling Lambda function
         response = lambda_client.add_permission(
             FunctionName = lambda_function_name,
-            StatementId = str(uuid.uuid1()),
+            StatementId = lambda_permission_statement_id,
             Action = 'lambda:InvokeFunction',
             Principal = 'apigateway.amazonaws.com',
         )
@@ -287,465 +361,79 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
         rest_api_id = rest_api['id']
 
     # Create endpoint resources if doesn't exist
-    index_endpoint_exists = False
-    message_endpoint_exists = False
-    approval_endpoint_exists = False
+    html_endpoint_exists = False
+    json_endpoint_exists = False
     root_endpoint_id = None
     response = api_gateway_client.get_resources(restApiId=rest_api_id)
     resources = response['items']
     for resource in resources:
         if resource['path'] == '/':
             root_endpoint_id = resource['id']
-        elif resource['path'] == '/' + endpoint_api_name_index:
-            index_endpoint_exists = True
-        elif resource['path'] == '/' + endpoint_api_name_message:
-            message_endpoint_exists = True
-        elif resource['path'] == '/' + endpoint_api_name_approval:
-            approval_endpoint_exists = True
+        elif resource['path'] == '/' + endpoint_api_name_html:
+            html_endpoint_exists = True
+        elif resource['path'] == '/' + endpoint_api_name_json:
+            json_endpoint_exists = True
 
-    if not index_endpoint_exists:
-        print("API Gateway: Creating endpoint for index...")
-        resource_for_index_endpoint = api_gateway_client.create_resource(
+    if not html_endpoint_exists:
+        print("API Gateway: Creating endpoint for html...")
+        resource_for_html_endpoint = api_gateway_client.create_resource(
             restApiId = rest_api_id,
             parentId = root_endpoint_id,
-            pathPart = endpoint_api_name_index
+            pathPart = endpoint_api_name_html
         )
+
         # Set up GET method
-        api_gateway_client.put_method(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = "GET",
-            authorizationType = "NONE",
-            apiKeyRequired = False,
+        add_api_gateway_method(
+            api_gateway_client = api_gateway_client,
+            lambda_function_arn = lambda_function_arn,
+            rest_api_id = rest_api_id,
+            endpoint_resource = resource_for_html_endpoint,
+            http_method_type = 'GET',
+            response_data_type = 'html'
         )
-        api_gateway_client.put_method_response(
+    else:
+        print("API Gateway: Endpoint for html already exists.")
+
+    if not json_endpoint_exists:
+        print("API Gateway: Creating endpoint for json...")
+        resource_for_json_endpoint = api_gateway_client.create_resource(
             restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = 'GET',
-            statusCode = '200',
-            responseParameters = {
-                'method.response.header.Access-Control-Allow-Origin': False,
-                'method.response.header.Content-Type': False
-            }
+            parentId = root_endpoint_id,
+            pathPart = endpoint_api_name_json
         )
-        api_gateway_client.put_integration(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = 'GET',
-            type = 'AWS',
-            integrationHttpMethod = 'POST', # this has to be POST
-            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
-            requestTemplates = {
-                'application/json': \
-'''
-{
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($header in $input.params().header.keySet())
-    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
 
-    #end
-  },
-  "method": "$context.httpMethod",
-  "params": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "query": {
-    #foreach($queryParam in $input.params().querystring.keySet())
-    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
-
-    #end
-  }  
-}
-'''
-            },
-            passthroughBehavior = 'WHEN_NO_TEMPLATES'
-        )
-        api_gateway_client.put_integration_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = 'GET',
-            statusCode = '200',
-            responseParameters={
-                'method.response.header.Access-Control-Allow-Origin': "'*'",
-                'method.response.header.Content-Type': "'text/html'"
-            },
-            responseTemplates={
-                "text/html": "$input.path('$')"
-            },
+        # Set up GET method
+        add_api_gateway_method(
+            api_gateway_client = api_gateway_client,
+            lambda_function_arn = lambda_function_arn,
+            rest_api_id = rest_api_id,
+            endpoint_resource = resource_for_json_endpoint,
+            http_method_type = 'GET',
+            response_data_type = 'json'
         )
 
         # Set up POST method
-        api_gateway_client.put_method(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = "POST",
-            authorizationType = "NONE",
-            apiKeyRequired = False,
-        )
-        api_gateway_client.put_method_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = 'POST',
-            statusCode = '200',
-            responseParameters = {
-                'method.response.header.Access-Control-Allow-Origin': False
-            },
-            responseModels = {
-                'application/json': 'Empty'
-            }
-        )
-        api_gateway_client.put_integration(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = 'POST',
-            type = 'AWS',
-            integrationHttpMethod = 'POST', # this has to be POST
-            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
-            requestTemplates = {
-                'application/json': \
-'''{
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($header in $input.params().header.keySet())
-    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "method": "$context.httpMethod",
-  "params": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "query": {
-    #foreach($queryParam in $input.params().querystring.keySet())
-    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
-
-    #end
-  }  
-}'''
-            },
-            passthroughBehavior = 'WHEN_NO_TEMPLATES'
-        )
-        api_gateway_client.put_integration_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_index_endpoint['id'],
-            httpMethod = 'POST',
-            statusCode = '200',
-            responseParameters={
-                'method.response.header.Access-Control-Allow-Origin': "'*'"
-            },
-            responseTemplates={
-                'application/json': ''
-            },
+        add_api_gateway_method(
+            api_gateway_client = api_gateway_client,
+            lambda_function_arn = lambda_function_arn,
+            rest_api_id = rest_api_id,
+            endpoint_resource = resource_for_json_endpoint,
+            http_method_type = 'POST',
+            response_data_type = 'json'
         )
     else:
-        print("API Gateway: Endpoint for index already exists.")
+        print("API Gateway: Endpoint for json already exists.")
 
-    if not message_endpoint_exists:
-        print("API Gateway: Creating endpoint for message...")
-        resource_for_message_endpoint = api_gateway_client.create_resource(
-            restApiId = rest_api_id,
-            parentId = root_endpoint_id,
-            pathPart = endpoint_api_name_message
-        )
-        # TODO: set up integration configs for this endpoint here
-        # Set up GET method
-        api_gateway_client.put_method(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = "GET",
-            authorizationType = "NONE",
-            apiKeyRequired = False,
-        )
-        api_gateway_client.put_method_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = 'GET',
-            statusCode = '200',
-            responseParameters = {
-                'method.response.header.Access-Control-Allow-Origin': False
-            },
-            responseModels = {
-                'application/json': 'Empty'
-            }
-        )
-        api_gateway_client.put_integration(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = 'GET',
-            type = 'AWS',
-            integrationHttpMethod = 'POST', # this has to be POST
-            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
-            requestTemplates = {
-                'application/json': \
-'''
-{
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($header in $input.params().header.keySet())
-    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "method": "$context.httpMethod",
-  "params": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "query": {
-    #foreach($queryParam in $input.params().querystring.keySet())
-    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
-
-    #end
-  }  
-}
-'''
-            },
-            passthroughBehavior = 'WHEN_NO_TEMPLATES'
-        )
-        api_gateway_client.put_integration_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = 'GET',
-            statusCode = '200',
-            responseParameters={
-                'method.response.header.Access-Control-Allow-Origin': "'*'"
-            },
-            responseTemplates={
-                "application/json": ""
-            },
-        )
-
-        # Set up POST method
-        api_gateway_client.put_method(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = "POST",
-            authorizationType = "NONE",
-            apiKeyRequired = False,
-        )
-        api_gateway_client.put_method_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = 'POST',
-            statusCode = '200',
-            responseParameters = {
-                'method.response.header.Access-Control-Allow-Origin': False
-            },
-            responseModels = {
-                'application/json': 'Empty'
-            }
-        )
-        api_gateway_client.put_integration(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = 'POST',
-            type = 'AWS',
-            integrationHttpMethod = 'POST', # this has to be POST
-            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
-            requestTemplates = {
-                'application/json': \
-'''{
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($header in $input.params().header.keySet())
-    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "method": "$context.httpMethod",
-  "params": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "query": {
-    #foreach($queryParam in $input.params().querystring.keySet())
-    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
-
-    #end
-  }  
-}'''
-            },
-            passthroughBehavior = 'WHEN_NO_TEMPLATES'
-        )
-        api_gateway_client.put_integration_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_message_endpoint['id'],
-            httpMethod = 'POST',
-            statusCode = '200',
-            responseParameters={
-                'method.response.header.Access-Control-Allow-Origin': "'*'"
-            },
-            responseTemplates={
-                'application/json': ''
-            },
-        )
-    else:
-        print("API Gateway: Endpoint for message already exists.")
-
-    if not approval_endpoint_exists:
-        print("API Gateway: Creating endpoint for approval...")
-        resource_for_approval_endpoint = api_gateway_client.create_resource(
-            restApiId = rest_api_id,
-            parentId = root_endpoint_id,
-            pathPart = endpoint_api_name_approval
-        )
-        # Set up GET method
-        api_gateway_client.put_method(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = "GET",
-            authorizationType = "NONE",
-            apiKeyRequired = False,
-        )
-        api_gateway_client.put_method_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = 'GET',
-            statusCode = '200',
-            responseParameters = {
-                'method.response.header.Access-Control-Allow-Origin': False,
-                'method.response.header.Content-Type': False
-            }
-        )
-        api_gateway_client.put_integration(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = 'GET',
-            type = 'AWS',
-            integrationHttpMethod = 'POST', # this has to be POST
-            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
-            requestTemplates = {
-                'application/json': \
-'''
-{
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($header in $input.params().header.keySet())
-    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "method": "$context.httpMethod",
-  "params": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "query": {
-    #foreach($queryParam in $input.params().querystring.keySet())
-    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
-
-    #end
-  }  
-}
-'''
-            },
-            passthroughBehavior = 'WHEN_NO_TEMPLATES'
-        )
-        api_gateway_client.put_integration_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = 'GET',
-            statusCode = '200',
-            responseParameters={
-                'method.response.header.Access-Control-Allow-Origin': "'*'",
-                'method.response.header.Content-Type': "'text/html'"
-            },
-            responseTemplates={
-                "text/html": "$input.path('$')"
-            },
-        )
-
-        # Set up POST method
-        api_gateway_client.put_method(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = "POST",
-            authorizationType = "NONE",
-            apiKeyRequired = False,
-        )
-        api_gateway_client.put_method_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = 'POST',
-            statusCode = '200',
-            responseParameters = {
-                'method.response.header.Access-Control-Allow-Origin': False
-            },
-            responseModels = {
-                'application/json': 'Empty'
-            }
-        )
-        api_gateway_client.put_integration(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = 'POST',
-            type = 'AWS',
-            integrationHttpMethod = 'POST', # this has to be POST
-            uri = "arn:aws:apigateway:"+region_name+":lambda:path/2015-03-31/functions/"+lambda_function_arn+"/invocations",
-            requestTemplates = {
-                'application/json': \
-'''{
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($header in $input.params().header.keySet())
-    "$header": "$util.escapeJavaScript($input.params().header.get($header))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "method": "$context.httpMethod",
-  "params": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "query": {
-    #foreach($queryParam in $input.params().querystring.keySet())
-    "$queryParam": "$util.escapeJavaScript($input.params().querystring.get($queryParam))" #if($foreach.hasNext),#end
-
-    #end
-  }  
-}'''
-            },
-            passthroughBehavior = 'WHEN_NO_TEMPLATES'
-        )
-        api_gateway_client.put_integration_response(
-            restApiId = rest_api_id,
-            resourceId = resource_for_approval_endpoint['id'],
-            httpMethod = 'POST',
-            statusCode = '200',
-            responseParameters={
-                'method.response.header.Access-Control-Allow-Origin': "'*'"
-            },
-            responseTemplates={
-                'application/json': ''
-            },
-        )
-    else:
-        print("API Gateway: Endpoint for approval already exists.")
-
-    if not (index_endpoint_exists and message_endpoint_exists and approval_endpoint_exists):
+    if not (html_endpoint_exists and json_endpoint_exists):
         api_gateway_client.create_deployment(
             restApiId = rest_api_id,
             stageName = "prod",
         )
 
-    index_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_index
-    approval_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_approval
-    return index_api_endpoint_url, approval_api_endpoint_url
+    html_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_html
+    json_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_json
+
+    return html_api_endpoint_url, json_api_endpoint_url
 
 def check_mturk_balance(num_hits, hit_reward, is_sandbox):
     client = boto3.client(
@@ -952,11 +640,136 @@ def setup_aws(task_config, num_hits, is_sandbox):
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
     requester_key_gt = get_requester_key()
     rds_host = setup_rds()
-    index_api_endpoint_url, approval_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt)
+    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt)
 
-    chat_interface_url = index_api_endpoint_url + "?endpoint=index&task_group_id={{task_group_id}}&conversation_id={{conversation_id}}&cur_agent_id={{cur_agent_id}}"
-    approval_url = approval_api_endpoint_url + "?endpoint=approval&task_group_id={{task_group_id}}&conversation_id=1&cur_agent_id={{cur_agent_id}}&requester_key="+requester_key_gt
-    
-    # webbrowser.open(chat_interface_url)
-    
-    return rds_host, chat_interface_url, approval_url
+    return html_api_endpoint_url, json_api_endpoint_url, requester_key_gt
+
+def clean_aws():
+    setup_aws_credentials()
+
+    # Remove RDS database
+    try:
+        rds = boto3.client('rds', region_name=region_name)
+        response = rds.delete_db_instance(
+            DBInstanceIdentifier=rds_db_instance_identifier,
+            SkipFinalSnapshot=True,
+        )
+        response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+        db_instances = response['DBInstances']
+        db_instance = db_instances[0]
+        status = db_instance['DBInstanceStatus']
+
+        if status == 'deleting':
+            print("RDS: Deleting database. This might take a couple minutes...")
+
+        try:
+            while status == 'deleting':
+                time.sleep(5)
+                response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+                db_instances = response['DBInstances']
+                db_instance = db_instances[0]
+                status = db_instance['DBInstanceStatus']
+        except ClientError as e:
+            print("RDS: Database deleted.")
+
+    except ClientError as e:
+        print("RDS: Database doesn't exist.")
+
+    # Remove RDS security group
+    try:
+        ec2 = boto3.client('ec2', region_name=region_name)
+
+        response = ec2.describe_security_groups(GroupNames=[rds_security_group_name])
+        security_group_id = response['SecurityGroups'][0]['GroupId']
+
+        response = ec2.delete_security_group(
+            DryRun=False,
+            GroupName=rds_security_group_name,
+            GroupId=security_group_id
+        )
+        print("RDS: Security group removed.")
+    except ClientError as e:
+        print("RDS: Security group doesn't exist.")
+
+    # Remove API Gateway endpoints
+    api_gateway_client = boto3.client('apigateway', region_name=region_name)
+    api_gateway_exists = False
+    rest_api_id = None
+    response = api_gateway_client.get_rest_apis()
+    if not 'items' in response:
+        api_gateway_exists = False
+    else:
+        rest_apis = response['items']
+        for api in rest_apis:
+            if api['name'] == api_gateway_name:
+                api_gateway_exists = True
+                rest_api_id = api['id']
+                break
+    if api_gateway_exists:
+        response = api_gateway_client.delete_rest_api(
+            restApiId=rest_api_id
+        )
+        print("API Gateway: Endpoints are removed.")
+    else:
+        print("API Gateway: Endpoints don't exist.")
+
+    # Remove permission for calling Lambda function
+    try:
+        lambda_client = boto3.client('lambda', region_name=region_name)
+        response = lambda_client.remove_permission(
+            FunctionName=lambda_function_name,
+            StatementId=lambda_permission_statement_id
+        )
+        print("Lambda: Permission removed.")
+    except ClientError as e:
+        print("Lambda: Permission doesn't exist.")
+
+    # Remove Lambda function
+    try:
+        lambda_client = boto3.client('lambda', region_name=region_name)
+        response = lambda_client.delete_function(
+            FunctionName=lambda_function_name
+        )
+        print("Lambda: Function removed.")
+    except ClientError as e:
+        print("Lambda: Function doesn't exist.")
+
+    # Remove IAM role
+    try:
+        iam_client = boto3.client('iam')
+
+        try:
+            response = iam_client.detach_role_policy(
+                RoleName=iam_role_name,
+                PolicyArn='arn:aws:iam::aws:policy/AWSLambdaFullAccess'
+            )
+        except ClientError as e:
+            pass
+
+        try:
+            response = iam_client.detach_role_policy(
+                RoleName=iam_role_name,
+                PolicyArn='arn:aws:iam::aws:policy/AmazonRDSFullAccess'
+            )
+        except ClientError as e:
+            pass
+
+        try:
+            response = iam_client.detach_role_policy(
+                RoleName=iam_role_name,
+                PolicyArn='arn:aws:iam::aws:policy/AmazonMechanicalTurkFullAccess'
+            )
+        except ClientError as e:
+            pass
+
+        response = iam_client.delete_role(
+            RoleName=iam_role_name
+        )
+        time.sleep(10)
+        print("IAM: Role removed.")
+    except ClientError as e:
+        print("IAM: Role doesn't exist.")
+
+if __name__ == "__main__":
+    if sys.argv[1] == 'clean':
+        clean_aws()

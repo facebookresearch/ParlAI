@@ -1,5 +1,4 @@
 boto3
+requests
 nltk
-psycopg2
-sqlalchemy
 numpy

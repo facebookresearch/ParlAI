@@ -12,17 +12,16 @@ import time
 import json
 import boto3
 import calendar
-import requests
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
-from data_model import Message, init_database, send_new_message, get_new_messages, set_hit_info, get_hit_info
+import data_model
 
 # Dynamically generated code begin
 # Expects mturk_submit_url, rds_host, rds_db_name, rds_username, rds_password, task_description, requester_key_gt, num_hits, is_sandbox
 # {{block_task_config}}
 # Dynamically generated code end
 
-db_engine, db_session_maker = init_database(rds_host, rds_db_name, rds_username, rds_password)
+db_engine, db_session_maker = data_model.init_database(rds_host, rds_db_name, rds_username, rds_password)
 db_session = db_session_maker()
 
 
@@ -32,7 +31,6 @@ def _render_template(template_context, template_file_name):
     rendered_template = template.render(template_context)
     return rendered_template
 
-
 def lambda_handler(event, context):
     params = None
     if event['method'] == 'GET':
@@ -40,17 +38,11 @@ def lambda_handler(event, context):
     elif event['method'] == 'POST':
         params = event['body']
 
-    if params['endpoint'] == 'index':
-        return index(event, context)
-    elif params['endpoint'] == 'message':
-        return message(event, context)
-    elif params['endpoint'] == 'approval':
-        return approval(event, context)
-    else:
-        return None
+    method_name = params['method_name']
+    if method_name in globals():
+        return globals()[method_name](event, context)
 
-
-def index(event, context):
+def chat_index(event, context):
     if event['method'] == 'GET':
         """
         Handler for chat page endpoint. 
@@ -80,7 +72,8 @@ def index(event, context):
         except KeyError:
             raise Exception('400')
 
-    elif event['method'] == 'POST':
+def save_hit_info(event, context):
+    if event['method'] == 'POST':
         """
         Saves HIT info to DB.
         Expects <task_group_id>, <conversation_id>, <assignmentId>, <hitId>, <workerId> as POST body parameters
@@ -92,7 +85,7 @@ def index(event, context):
         hit_id = params['hitId']
         worker_id = params['workerId']
 
-        set_hit_info(
+        data_model.set_hit_info(
             db_session = db_session, 
             task_group_id = task_group_id, 
             conversation_id = conversation_id, 
@@ -102,54 +95,63 @@ def index(event, context):
             is_sandbox = is_sandbox
         )
 
-
-def message(event, context):
+def get_new_messages(event, context):
     if event['method'] == 'GET':
         """
-        return all new message from all other agents as JSON
-        Expects <task_group_id>, <conversation_id> and <last_message_id> as GET body parameters
+        return messages as JSON
+        Expects in GET query parameters:
+        <task_group_id>
+        <last_message_id>
+        <conversation_id> (optional)
+        <excluded_agent_id> (optional)
         """
         task_group_id = event['query']['task_group_id']
-        conversation_id = int(event['query']['conversation_id'])
         last_message_id = int(event['query']['last_message_id'])
+        conversation_id = None
+        if 'conversation_id' in event['query']:
+            conversation_id = int(event['query']['conversation_id'])
+        excluded_agent_id = event['query'].get('excluded_agent_id', None)
 
-        conversation_dict, _ = get_new_messages(
+        conversation_dict, new_last_message_id = data_model.get_new_messages(
             db_session=db_session, 
             task_group_id=task_group_id, 
             conversation_id=conversation_id,
             after_message_id=last_message_id,
+            excluded_agent_id=excluded_agent_id,
             populate_meta_info=True
         )
 
-        ret = []
-        if conversation_id in conversation_dict:
-            ret = conversation_dict[conversation_id]
-            ret.sort(key=lambda x: x['message_id'])
+        ret = {}
+        ret['last_message_id'] = new_last_message_id
+        ret['conversation_dict'] = conversation_dict
+
+        for cid, message_list in conversation_dict.items():
+            message_list.sort(key=lambda x: x['message_id'])
             
         return json.dumps(ret)
+
+def send_new_message(event, context):
     if event['method'] == 'POST':
         """
         Send new message for this agent.
-        Expects <task_group_id>, <conversation_id>, <cur_agent_id> and <msg> as POST body parameters
+        Expects <task_group_id>, <conversation_id>, <cur_agent_id> and <text> as POST body parameters
         """
         params = event['body']
         task_group_id = params['task_group_id']
         conversation_id = int(params['conversation_id'])
         cur_agent_id = params['cur_agent_id']
-        message_text = params['msg'] if 'msg' in params else None
+        message_text = params['text'] if 'text' in params else None
         reward = params['reward'] if 'reward' in params else None
         episode_done = params['episode_done']
 
-        new_message_object = send_new_message(
+        new_message_object = data_model.send_new_message(
             db_session=db_session, 
             task_group_id=task_group_id, 
             conversation_id=conversation_id, 
             agent_id=cur_agent_id, 
             message_text=message_text, 
             reward=reward,
-            episode_done=episode_done,
-            binary_file_bytes=None, 
-            binary_file_type=None
+            episode_done=episode_done
         )
 
         new_message = { 
@@ -163,8 +165,7 @@ def message(event, context):
         
         return json.dumps(new_message)
 
-
-def approval(event, context):
+def approval_index(event, context):
     if event['method'] == 'GET':
         """
         Handler for approval page endpoint. 
@@ -193,7 +194,8 @@ def approval(event, context):
         except KeyError:
             raise Exception('400')
 
-    elif event['method'] == 'POST':
+def review_hit(event, context):
+    if event['method'] == 'POST':
         """
         Approve or reject assignment.
         Expects <requester_key>, <task_group_id>, <conversation_id>, <action> as POST body parameters
@@ -208,7 +210,7 @@ def approval(event, context):
             conversation_id = int(params['conversation_id'])
             action = params['action'] # 'approve' or 'reject'
 
-            hit_info = get_hit_info(
+            hit_info = data_model.get_hit_info(
                 db_session=db_session, 
                 task_group_id=task_group_id, 
                 conversation_id=conversation_id
@@ -233,6 +235,44 @@ def approval(event, context):
                     hit_info.approval_status = 'rejected'
                 db_session.add(hit_info)
                 db_session.commit()
+        except KeyError:
+            raise Exception('400')
 
+def get_pending_review_count(event, context):
+    if event['method'] == 'GET':
+        """
+        Handler for getting the number of pending reviews.
+        Expects <requester_key>, <task_group_id> as query parameters.
+        """
+        try:
+            requester_key = event['query']['requester_key']
+            if not requester_key == requester_key_gt:
+                raise Exception('403')
+
+            task_group_id = event['query']['task_group_id']
+            return data_model.get_pending_review_count(
+                db_session=db_session,
+                task_group_id=task_group_id
+            )
+        except KeyError:
+            raise Exception('400')
+
+def get_all_review_status(event, context):
+    if event['method'] == 'GET':
+        """
+        Handler for getting the number of pending reviews.
+        Expects <requester_key>, <task_group_id> as query parameters.
+        """
+        try:
+            requester_key = event['query']['requester_key']
+            if not requester_key == requester_key_gt:
+                raise Exception('403')
+
+            task_group_id = event['query']['task_group_id']
+            hit_info_objects = data_model.get_all_review_status(
+                db_session=db_session,
+                task_group_id=task_group_id
+            )
+            return [hio.as_dict() for hio in hit_info_objects]
         except KeyError:
             raise Exception('400')
