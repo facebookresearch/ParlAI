@@ -87,26 +87,31 @@ task_list = [
 		"id": "QACNN",
 		"task": "qacnn",
 		"tags": [ "all",  "Cloze" ]
+                "description": "Dataset from Hermann et al. '15. Link: https://arxiv.org/abs/1506.03340"
 	},
 	{
 		"id": "QADailyMail",
 		"task": "qadailymail",
 		"tags": [ "all",  "Cloze" ]
+                "description": "Dataset from Hermann et al. '15. Link: https://arxiv.org/abs/1506.03340"
 	},
 	{
 		"id": "SimpleQuestions",
 		"task": "simplequestions",
-		"tags": [ "all",  "QA" ]
+		"tags": [ "all",  "QA" ],
+                "description": "Dataset from Bordes et al. '15. Link: https://arxiv.org/abs/1506.02075"
 	},
 	{
 		"id": "SQuAD",
 		"task": "squad",
-		"tags": [ "all",  "QA" ]
+		"tags": [ "all",  "QA" ],
+                "description": "Dataset from Rajpurkar, et al. '16. Link: https://arxiv.org/abs/1606.05250"
 	},
 	{
 		"id": "Ubuntu",
 		"task": "ubuntu",
-		"tags": [ "all",  "ChitChat" ]
+		"tags": [ "all",  "ChitChat" ],
+                "description": "Dataset from Lowe, et al. '15. Link: https://arxiv.org/abs/1506.08909"
 	},
 	{
 		"id": "WebQuestions",
