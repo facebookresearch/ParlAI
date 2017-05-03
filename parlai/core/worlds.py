@@ -376,7 +376,7 @@ class MultiWorld(World):
         if self.world_idx != -1:
             s = ''
             w = self.worlds[self.world_idx]
-            if self.parleys == 1:
+            if self.parleys == 0:
                 s = '[world ' + str(self.world_idx) + ':' + w.getID() + ']\n'
             s = s + w.display()
             return s
@@ -642,7 +642,7 @@ def create_task(opt, user_agents):
     """Creates a world + task_agents (aka a task)
     assuming opt['task']="task_dir:teacher_class:options"
     e.g. "babi:Task1k:1" or "#babi-1k" or "#QA",
-    see parlai/tasks/tasks.py and see parlai/tasks/tasks.json
+    see parlai/tasks/tasks.py and see parlai/tasks/task_list.py
     for list of tasks.
     """
     if type(user_agents) != list:
