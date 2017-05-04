@@ -17,7 +17,7 @@ from jinja2 import FileSystemLoader
 import data_model
 
 # Dynamically generated code begin
-# Expects mturk_submit_url, rds_host, rds_db_name, rds_username, rds_password, task_description, requester_key_gt, num_hits, is_sandbox
+# Expects mturk_submit_url, frame_height, rds_host, rds_db_name, rds_username, rds_password, task_description, requester_key_gt, num_hits, is_sandbox
 # {{block_task_config}}
 # Dynamically generated code end
 
@@ -66,6 +66,7 @@ def chat_index(event, context):
                 template_context['task_description'] = task_description
                 template_context['mturk_submit_url'] = mturk_submit_url
                 template_context['is_cover_page'] = False
+                template_context['frame_height'] = frame_height
 
             return _render_template(template_context, 'mturk_index.html')
 
@@ -188,6 +189,7 @@ def approval_index(event, context):
             template_context['is_cover_page'] = False
             template_context['is_approval_page'] = True
             template_context['num_hits'] = int(num_hits)
+            template_context['frame_height'] = frame_height
 
             return _render_template(template_context, 'mturk_index.html')
 
