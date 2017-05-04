@@ -38,6 +38,7 @@ parent_dir = os.path.dirname(os.path.abspath(__file__))
 files_to_copy = [parent_dir+'/'+'data_model.py', parent_dir+'/'+'mturk_index.html']
 lambda_server_directory_name = 'lambda_server'
 lambda_server_zip_file_name = 'lambda_server.zip'
+mturk_hit_frame_height = 650
 
 def add_api_gateway_method(api_gateway_client, lambda_function_arn, rest_api_id, endpoint_resource, http_method_type, response_data_type):
     api_gateway_client.put_method(
@@ -116,7 +117,7 @@ def setup_aws_credentials():
     try:
         session = boto3.Session(profile_name=aws_profile_name)
     except ProfileNotFound as e:
-        print("AWS credentials not found. Please create an IAM user with programmatic access and AdministratorAccess policy at https://console.aws.amazon.com/iam/, and then enter the user's security credentials below:")
+        print('''AWS credentials not found. Please create an IAM user with programmatic access and AdministratorAccess policy at https://console.aws.amazon.com/iam/ (On the "Set permissions" page, choose "Attach existing policies directly" and then select "AdministratorAccess" policy). \nAfter creating the IAM user, please enter the user's Access Key ID and Secret Access Key below:''')
         aws_access_key_id = input('Access Key ID: ')
         aws_secret_access_key = input('Secret Access Key: ')
         if not os.path.exists(os.path.expanduser('~/.aws/')):
@@ -243,6 +244,7 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
         handler_file_string = handler_template_file.read()
     handler_file_string = handler_file_string.replace(
         '# {{block_task_config}}', 
+        "frame_height = " + str(mturk_hit_frame_height) + "\n" + \
         "mturk_submit_url = \'" + mturk_submit_url + "\'\n" + \
         "rds_host = \'" + rds_host + "\'\n" + \
         "rds_db_name = \'" + rds_db_name + "\'\n" + \
@@ -506,15 +508,11 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_san
 def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox):
     page_url = page_url.replace('&', '&amp;')
 
-    frame_height = 650
-    
     question_data_struture = '''<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
-      <ExternalURL>{{external_url}}</ExternalURL>
-      <FrameHeight>{{frame_height}}</FrameHeight>
+      <ExternalURL>'''+page_url+'''</ExternalURL>
+      <FrameHeight>'''+str(mturk_hit_frame_height)+'''</FrameHeight>
     </ExternalQuestion>
     '''
-
-    question_data_struture = question_data_struture.replace('{{external_url}}', page_url).replace('{{frame_height}}', str(frame_height))
 
     client = boto3.client(
         service_name = 'mturk', 
