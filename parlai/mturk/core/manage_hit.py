@@ -40,7 +40,7 @@ def _send_new_message(json_api_endpoint_url, task_group_id, conversation_id, age
         post_data_dict['text'] = message_text
     if reward:
         post_data_dict['reward'] = reward
-    
+
     request = requests.post(json_api_endpoint_url, data=json.dumps(post_data_dict))
     return json.loads(request.json())
 
@@ -90,8 +90,8 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
 
     approval_index_url_template = html_api_endpoint_url + "?method_name=approval_index&task_group_id={{task_group_id}}&conversation_id=1&cur_agent_id={{cur_agent_id}}&requester_key="+requester_key_gt
 
-    worker_agent_id = task_config['worker_agent_id']   
-    bot_agent_id = bot.getID() 
+    worker_agent_id = task_config['worker_agent_id']
+    bot_agent_id = bot.getID()
     cids = range(1, num_hits+1)
     cid_map = {cid: i for i, cid in enumerate(cids)}
     c_done_map = {cid: False for cid in cids}
@@ -115,12 +115,12 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
             logs[cid].append(response)
             new_message = _send_new_message(
                 json_api_endpoint_url=json_api_endpoint_url,
-                task_group_id=task_group_id, 
-                conversation_id=cid, 
-                agent_id=bot_agent_id, 
-                message_text=response.get('text', None), 
+                task_group_id=task_group_id,
+                conversation_id=cid,
+                agent_id=bot_agent_id,
+                message_text=response.get('text', None),
                 reward=response.get('reward', None),
-                episode_done=response.get('episode_done', False), 
+                episode_done=response.get('episode_done', False),
             )
             if new_message['message_id'] > last_message_id:
                 last_message_id = new_message['message_id']
@@ -132,13 +132,13 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
     while len(conversations_remaining) > 0:
         ret = _get_new_messages(
             json_api_endpoint_url=json_api_endpoint_url,
-            task_group_id=task_group_id, 
-            after_message_id=last_message_id, 
+            task_group_id=task_group_id,
+            after_message_id=last_message_id,
             excluded_agent_id=bot_agent_id,
         )
         conversation_dict = ret['conversation_dict']
         new_last_message_id = ret['last_message_id']
-        
+
         if new_last_message_id:
             last_message_id = new_last_message_id
 
@@ -168,22 +168,22 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
                             logs[conversation_id].append(response)
                             _send_new_message(
                                 json_api_endpoint_url=json_api_endpoint_url,
-                                task_group_id=task_group_id, 
-                                conversation_id=conversation_id, 
-                                agent_id=bot_agent_id, 
-                                message_text=response.get('text', None), 
+                                task_group_id=task_group_id,
+                                conversation_id=conversation_id,
+                                agent_id=bot_agent_id,
+                                message_text=response.get('text', None),
                                 reward=response.get('reward', None),
-                                episode_done=response.get('episode_done', False), 
+                                episode_done=response.get('episode_done', False),
                             )
 
         # We don't create new HITs until this point, so that the HIT page will always have the conversation fully populated.
         if not hits_created:
             print('Creating HITs...')
             hit_type_id = create_hit_type(
-                hit_title=task_config['hit_title'], 
-                hit_description=task_config['hit_description'] + ' (ID: ' + task_group_id + ')', 
-                hit_keywords=task_config['hit_keywords'], 
-                hit_reward=hit_reward, 
+                hit_title=task_config['hit_title'],
+                hit_description=task_config['hit_description'] + ' (ID: ' + task_group_id + ')',
+                hit_keywords=task_config['hit_keywords'],
+                hit_reward=hit_reward,
                 is_sandbox=is_sandbox
             )
             mturk_chat_url = None
@@ -192,8 +192,8 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
                 mturk_chat_url = html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(task_group_id)+"&conversation_id="+str(cid)+"&cur_agent_id="+str(worker_agent_id)
                 if not chat_page_only:
                     mturk_page_url = create_hit_with_hit_type(
-                        page_url=mturk_chat_url, 
-                        hit_type_id=hit_type_id, 
+                        page_url=mturk_chat_url,
+                        hit_type_id=hit_type_id,
                         is_sandbox=is_sandbox
                     )
 
@@ -230,11 +230,13 @@ def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, i
     # Saving logs to file
     # Log format: {conversation_id: [list of messages in the conversation]}
     mturk_log_path = opt['mturk_log_path']
-    task_group_path = mturk_log_path + task_module_name + '_' + datetime.now().strftime("%Y-%m-%d_%H:%M:%S") + '/'
+    task_group_path = os.path.join(mturk_log_path,
+                                   task_module_name + '_' +
+                                   datetime.now().strftime('%Y-%m-%d_%H:%M:%S'))
     os.makedirs(task_group_path)
-    with open(task_group_path+'approved.json', 'w') as file:
-        file.write(json.dumps(logs_approved))
-    with open(task_group_path+'rejected.json', 'w') as file:
-        file.write(json.dumps(logs_rejected))
+    with open(os.path.join(task_group_path, 'approved.json'), 'w') as fout:
+        fout.write(json.dumps(logs_approved))
+    with open(os.path.join(task_group_path, 'rejected.json'), 'w') as fout:
+        fout.write(json.dumps(logs_rejected))
 
     print("All conversations are saved to "+opt['mturk_log_path']+" in JSON format.\n")

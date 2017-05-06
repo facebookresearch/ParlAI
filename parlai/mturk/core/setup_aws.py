@@ -164,7 +164,7 @@ def setup_rds():
                                              VpcId=vpc_id)
         security_group_id = response['GroupId']
         print('RDS: Security group created.')
-        
+
         data = ec2.authorize_security_group_ingress(
             GroupId=security_group_id,
             IpPermissions=[
@@ -220,7 +220,7 @@ def setup_rds():
         db_instances = response['DBInstances']
         db_instance = db_instances[0]
         status = db_instance['DBInstanceStatus']
-    
+
     endpoint = db_instance['Endpoint']
     host = endpoint['Address']
 
@@ -240,10 +240,10 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
         os.remove(parent_dir + '/' + lambda_server_zip_file_name)
 
     # Copying files
-    with open(parent_dir+'/handler_template.py', 'r') as handler_template_file:
+    with open(os.path.join(parent_dir, 'handler_template.py'), 'r') as handler_template_file:
         handler_file_string = handler_template_file.read()
     handler_file_string = handler_file_string.replace(
-        '# {{block_task_config}}', 
+        '# {{block_task_config}}',
         "frame_height = " + str(mturk_hit_frame_height) + "\n" + \
         "mturk_submit_url = \'" + mturk_submit_url + "\'\n" + \
         "rds_host = \'" + rds_host + "\'\n" + \
@@ -254,20 +254,20 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
         "num_hits = " + str(num_hits) + "\n" + \
         "is_sandbox = " + str(is_sandbox) + "\n" + \
         'task_description = ' + task_config['task_description'])
-    with open(parent_dir + '/' + lambda_server_directory_name+'/handler.py', "w") as handler_file:
+    with open(os.path.join(parent_dir, lambda_server_directory_name, 'handler.py'), 'w') as handler_file:
         handler_file.write(handler_file_string)
     create_zip_file(
-        lambda_server_directory_name=lambda_server_directory_name, 
+        lambda_server_directory_name=lambda_server_directory_name,
         lambda_server_zip_file_name=lambda_server_zip_file_name,
         files_to_copy=files_to_copy
     )
-    with open(parent_dir + '/' + lambda_server_zip_file_name, mode='rb') as zip_file:
+    with open(os.path.join(parent_dir, lambda_server_zip_file_name), mode='rb') as zip_file:
         zip_file_content = zip_file.read()
 
     # Create Lambda function
     lambda_client = boto3.client('lambda', region_name=region_name)
     lambda_function_arn = None
-    try: 
+    try:
         # Case 1: if Lambda function exists
         lambda_function = lambda_client.get_function(FunctionName=lambda_function_name)
         print("Lambda: Function already exists. Uploading latest version of code...")
@@ -287,7 +287,7 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
         except ClientError as e:
             # Should create IAM role for Lambda server
             iam_client.create_role(
-                RoleName = iam_role_name, 
+                RoleName = iam_role_name,
                 AssumeRolePolicyDocument = '''{ "Version": "2012-10-17", "Statement": [ { "Effect": "Allow", "Principal": { "Service": "lambda.amazonaws.com" }, "Action": "sts:AssumeRole" } ]}'''
             )
             iam_client.attach_role_policy(
@@ -341,7 +341,7 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
         shutil.rmtree(parent_dir + '/' + lambda_server_directory_name)
         os.remove(parent_dir + '/' + lambda_server_zip_file_name)
 
-    # Check API Gateway existence. 
+    # Check API Gateway existence.
     # If doesn't exist, create the APIs, point them to Lambda function, and set correct configurations
     api_gateway_exists = False
     rest_api_id = None
@@ -439,7 +439,7 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
 
 def check_mturk_balance(num_hits, hit_reward, is_sandbox):
     client = boto3.client(
-        service_name = 'mturk', 
+        service_name = 'mturk',
         region_name = 'us-east-1',
         endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
     )
@@ -458,7 +458,7 @@ def check_mturk_balance(num_hits, hit_reward, is_sandbox):
             quit()
         else:
             raise
-    
+
     balance_needed = num_hits * hit_reward * 1.2
 
     if user_balance < balance_needed:
@@ -469,7 +469,7 @@ def check_mturk_balance(num_hits, hit_reward, is_sandbox):
 
 def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_sandbox):
     client = boto3.client(
-        service_name = 'mturk', 
+        service_name = 'mturk',
         region_name = 'us-east-1',
         endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
     )
@@ -483,7 +483,7 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_san
         'QualificationTypeId': '00000000000000000071',
         'Comparator': 'In',
         'LocaleValues': [
-            {'Country': 'US'}, 
+            {'Country': 'US'},
             {'Country': 'CA'},
             {'Country': 'GB'},
             {'Country': 'AU'},
@@ -515,7 +515,7 @@ def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox):
     '''
 
     client = boto3.client(
-        service_name = 'mturk', 
+        service_name = 'mturk',
         region_name = 'us-east-1',
         endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
     )
@@ -524,7 +524,7 @@ def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox):
     if not is_sandbox:
         client = boto3.client(service_name = 'mturk', region_name='us-east-1')
 
-    # Create the HIT 
+    # Create the HIT
     response = client.create_hit_with_hit_type(
         HITTypeId=hit_type_id,
         MaxAssignments=1,
