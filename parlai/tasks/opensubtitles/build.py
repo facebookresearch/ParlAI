@@ -17,13 +17,8 @@ def create_fb_format(inpath, outpath):
     fvalid = open(os.path.join(outpath, 'valid.txt'), 'w')
     ftest = open(os.path.join(outpath, 'test.txt'), 'w')
 
-    # find all the files.
-    # TODO(ahm): use os.scandir
-    import subprocess
-    result = subprocess.run(['find', inpath], stdout=subprocess.PIPE)
-    list = str(result.stdout).split('\\n')
-
     conv_id = 0
+    # find all the files.
     for root, subfolder, files in os.walk(inpath):
         for f in files:
             if f.endswith('.gz'):

@@ -15,8 +15,7 @@ def _path(opt, filtered):
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0]
-    return os.path.join(opt['datapath'], 'MCTest',
-                        '{}{}.txt'.format(dt, filtered))
+    return os.path.join(opt['datapath'], 'MCTest', dt + filtered + '.txt')
 
 
 class Task160Teacher(FbDialogTeacher):

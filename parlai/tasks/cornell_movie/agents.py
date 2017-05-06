@@ -15,7 +15,7 @@ def _path(opt, filtered):
     build(opt)
     dt = opt['datatype'].split(':')[0]
     return os.path.join(opt['datapath'], 'CornellMovie',
-                        '{type}.txt'.format(type=dt + filtered))
+                        dt + filtered + '.txt')
 
 
 class DefaultTeacher(FbDialogTeacher):
