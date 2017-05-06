@@ -14,12 +14,6 @@ import os
 def str2bool(value):
     return value.lower() in ('yes', 'true', 't', '1', 'y')
 
-def path(s):
-    # Add a trailing slash if its not there.
-    if s[-1] != '/':
-        s += '/'
-    return s
-
 class ParlaiParser(object):
     """Pseudo-extension of argparse which sets a number of parameters for the
     ParlAI framework. More options can be added specific to other modules by
@@ -43,7 +37,7 @@ class ParlaiParser(object):
     def add_parlai_data_path(self):
         parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
                       os.path.realpath(__file__)))))
-        default_data_path = parlai_dir + '/data/'
+        default_data_path = os.path.join(parlai_dir, 'data')
         self.parser.add_argument(
             '-dp', '--datapath', default=default_data_path,
             help='path to datasets, defaults to {parlai_dir}/data')
@@ -51,7 +45,7 @@ class ParlaiParser(object):
     def add_mturk_log_path(self):
         parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
                       os.path.realpath(__file__)))))
-        default_log_path = parlai_dir + '/logs/mturk/'
+        default_log_path = os.path.join(parlai_dir, 'logs', 'mturk')
         self.parser.add_argument(
             '--mturk-log-path', default=default_log_path,
             help='path to mturk logs, defaults to {parlai_dir}/logs/mturk')
@@ -60,7 +54,7 @@ class ParlaiParser(object):
         parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
                       os.path.realpath(__file__)))))
         os.environ['PARLAI_HOME'] = parlai_dir
-        default_downloads_path = parlai_dir + '/downloads/'
+        default_downloads_path = os.path.join(parlai_dir, 'downloads')
 
         self.parser.add_argument(
             '-t', '--task',
@@ -103,10 +97,10 @@ class ParlaiParser(object):
         self.args = self.parser.parse_args(args=args)
         self.opt = {k: v for k, v in vars(self.args).items() if v is not None}
         if 'download_path' in self.opt:
-            self.opt['download_path'] = path(self.opt['download_path'])
+            self.opt['download_path'] = self.opt['download_path']
             os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']
         if 'datapath' in self.opt:
-            self.opt['datapath'] = path(self.opt['datapath'])
+            self.opt['datapath'] = self.opt['datapath']
         if print_args:
             self.print_args()
         return self.opt

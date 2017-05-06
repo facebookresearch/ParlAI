@@ -8,46 +8,60 @@ Utilities for downloading and building data.
 These can be replaced if your particular file system does not support them.
 """
 
+import datetime
 import os
+import requests
+import shutil
+import wget
 
 def built(path):
-    return os.path.isfile(path + "/.built")
+    """Checks if '.built' flag has been set for that task."""
+    return os.path.isfile(os.path.join(path, '.built'))
 
 def download(path, url):
-    s = ('cd "%s"' % path) + '; wget ' + url
-    if os.system(s) != 0:
-        raise RuntimeError('failed: ' + s)
+    """Downloads file using `wget`."""
+    filename = wget.download(url, out=path)
+    print() # wget prints download status, without newline
+
+def download_request(url, path, fname):
+    """Downloads file using `requests`."""
+    with requests.Session() as session:
+        response = session.get(url, stream=True)
+        CHUNK_SIZE = 32768
+        with open(os.path.join(path, fname), 'wb') as f:
+            for chunk in response.iter_content(CHUNK_SIZE):
+                if chunk:  # filter out keep-alive new chunks
+                    f.write(chunk)
+        response.close()
 
 def make_dir(path):
-    s = ('mkdir -p "%s"' % (path))
-    if os.system(s) != 0:
-        raise RuntimeError('failed: ' + s)
+    """Makes the directory and any nonexistent parent directories."""
+    os.makedirs(path, exist_ok=True)
 
 def mark_done(path):
-    s = ('date > "%s"/.built' % path)
-    if os.system(s) != 0:
-        raise RuntimeError('failed: ' + s)
+    """Marks the path as done by adding a '.built' file with the current
+    timestamp.
+    """
+    with open(os.path.join(path, '.built'), 'w') as write:
+        write.write(str(datetime.datetime.today()))
 
 def move(path1, path2):
-    s = ('mv "%s" "%s"' % (path1, path2))
-    if os.system(s) != 0:
-        raise RuntimeError('failed: ' + s)
+    """Renames the given file."""
+    shutil.move(path1, path2)
 
 def remove_dir(path):
-    s = ('rm -rf "%s"' % (path))
-    if os.system(s) != 0:
-        raise RuntimeError('failed: ' + s)
+    """Removes the given directory, if it exists."""
+    shutil.rmtree(path, ignore_errors=True)
 
 def untar(path, fname, deleteTar=True):
+    """Unpacks the given archive file to the same directory, then (by default)
+    deletes the archive file.
+    """
     print('unpacking ' + fname)
-    s = ('cd "%s"' % path) + ';' + 'tar xfz "%s"' % (path + fname)
-    if os.system(s) != 0:
-        raise RuntimeError('failed: ' + s)
-    # remove tar file
+    fullpath = os.path.join(path, fname)
+    shutil.unpack_archive(fullpath, path)
     if deleteTar:
-        s = ('cd "%s"' % path) + ';' + 'rm "%s"' % (path + fname)
-        if os.system(s) != 0:
-            raise RuntimeError('failed: ' + s)
+        os.remove(fullpath)
 
 def _get_confirm_token(response):
     for key, value in response.cookies.items():
@@ -55,12 +69,10 @@ def _get_confirm_token(response):
             return value
     return None
 
-def download_file_from_google_drive(gd_id, destination):
-    import requests
-
+def download_from_google_drive(gd_id, destination):
+    """Uses the requests package to download a file from Google Drive."""
     URL = 'https://docs.google.com/uc?export=download'
 
-    session = requests.Session()
     with requests.Session() as session:
         response = session.get(URL, params={'id': gd_id}, stream=True)
         token = _get_confirm_token(response)

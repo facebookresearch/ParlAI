@@ -3,10 +3,12 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import copy
 
 from parlai.core.fbdialog_teacher import FbDialogTeacher
 from .build import build
+
+import copy
+import os
 
 tasks = {}
 tasks[1] = 'rl1_pure_imitation'
@@ -32,18 +34,18 @@ def _path(subdir, task, opt):
     dt = opt['datatype'].split(':')[0]
     task_name = "%s_%s" % (task.split('_')[1],
                            tasks[int(task.split('_')[0])])
-    return (opt['datapath'] + '/DBLL/dbll/' +
-            '{subdir}_{task}_{suffix}.txt'.format(
-                subdir=subdir, task=task_name,
-                suffix=_suffixes[dt]))
+    return os.path.join(opt['datapath'], 'DBLL', 'dbll',
+                        '{subdir}_{task}_{suffix}.txt'.format(
+                            subdir=subdir, task=task_name,
+                            suffix=_suffixes[dt]))
 
 
 # The knowledge base of facts that can be used to answer questions.
 class KBTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
-        opt['datafile'] = (opt['datapath'] + '/DBLL/dbll/movieqa-dbll/' +
-                           'movie_kb.txt')
+        opt['datafile'] = os.path.join(
+            opt['datapath'], 'DBLL', 'dbll', 'movieqa-dbll', 'movie_kb.txt')
         super().__init__(opt, shared)
 
 
@@ -52,10 +54,11 @@ class TaskTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         params = opt['task'].split(':')[2]
         opt = copy.deepcopy(opt)
-        opt['datafile'] = _path('movieqa-dbll/movieqa1', params, opt)
-        opt['cands_datafile'] = (opt['datapath'] +
-                                 '/WikiMovies/movieqa/' +
-                                 'knowledge_source/entities.txt')
+        opt['datafile'] = _path(os.path.join('movieqa-dbll', 'movieqa1'),
+                                params, opt)
+        opt['cands_datafile'] = os.path.join(opt['datapath'], 'WikiMovies',
+                                             'movieqa', 'knowledge_source',
+                                             'entities.txt')
         super().__init__(opt, shared)
 
 
@@ -64,9 +67,10 @@ class DefaultTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         task = "2_p0.5"
         opt = copy.deepcopy(opt)
-        opt['datafile'] = _path('movieqa-dbll/movieqa1', task, opt)
-        opt['cands_datafile'] = (opt['datapath'] +
-                                 '/WikiMovies/movieqa/' +
-                                 'knowledge_source/entities.txt')
+        opt['datafile'] = _path(os.path.join('movieqa-dbll', 'movieqa1'),
+                                task, opt)
+        opt['cands_datafile'] = os.path.join(opt['datapath'], 'WikiMovies',
+                                             'movieqa', 'knowledge_source',
+                                             'entities.txt')
         super().__init__(opt, shared)
         self.defaultPosReward = 1

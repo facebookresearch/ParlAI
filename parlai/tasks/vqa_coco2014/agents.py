@@ -3,41 +3,40 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import json
-import random
-from PIL import Image
 
 from parlai.core.agents import Teacher
 from .build import build, buildImage
+
+from PIL import Image
+import json
+import random
+import os
 
 
 def _path(opt):
     build(opt)
     dt = opt['datatype'].split(':')[0]
 
-    if dt == "train":
+    if dt == 'train':
         ques_suffix = 'MultipleChoice_mscoco_train2014'
         annotation_suffix = 'mscoco_train2014'
-        img_suffix = 'train2014/COCO_train2014_'
-    elif dt == "valid":
+        img_suffix = os.path.join('train2014', 'COCO_train2014_')
+    elif dt == 'valid':
         ques_suffix = 'MultipleChoice_mscoco_val2014'
         annotation_suffix = 'mscoco_val2014'
-        img_suffix = 'val2014/COCO_val2014_'
+        img_suffix = os.path.join('val2014', 'COCO_val2014_')
     else:
         ques_suffix = 'MultipleChoice_mscoco_test2015'
         annotation_suffix = 'None'
-        img_suffix = 'test2014/COCO_test2014_'
+        img_suffix = os.path.join('test2014', 'COCO_test2014_')
 
-    data_path = (
-        opt['datapath'] + "/VQA-COCO2014/" +
+    data_path = os.path.join(opt['datapath'], 'VQA-COCO2014',
         ques_suffix + '_questions.json')
 
-    annotation_path = (
-        opt['datapath'] + "/VQA-COCO2014/" +
+    annotation_path = os.path.join(opt['datapath'], 'VQA-COCO2014',
         annotation_suffix + '_annotations.json')
 
-    image_path = (
-        opt['datapath'] + "/VQA-COCO2014/" + img_suffix)
+    image_path = os.path.join(opt['datapath'], 'VQA-COCO2014', img_suffix)
 
     return data_path, annotation_path, image_path
 
@@ -67,7 +66,6 @@ class OeTeacher(Teacher):
 
     # return state/action dict based upon passed state
     def act(self):
-
         if self.datatype == 'train':
             self.episode_idx = random.randrange(self.len)
         else:
@@ -94,12 +92,12 @@ class OeTeacher(Teacher):
         }
 
     def _setup_data(self, data_path, annotation_path, image_path):
-        print("loading: " + data_path)
+        print('loading: ' + data_path)
         with open(data_path) as data_file:
             self.ques = json.load(data_file)
 
         if self.datatype != 'test':
-            print("loading: " + annotation_path)
+            print('loading: ' + annotation_path)
             with open(annotation_path) as data_file:
                 self.annotation = json.load(data_file)
 
@@ -119,12 +117,12 @@ class McTeacher(Teacher):
         data_path, annotation_path, image_path = _path(opt)
         self._setup_data(data_path, annotation_path, image_path)
         self.episode_idx = -1
+
     def __len__(self):
         return self.len
 
     # return state/action dict based upon passed state
     def act(self):
-
         if self.datatype == 'train':
             self.episode_idx = random.randrange(self.len)
         else:
@@ -153,13 +151,12 @@ class McTeacher(Teacher):
         }
 
     def _setup_data(self, data_path, annotation_path, image_path):
-
-        print("loading: " + data_path)
+        print('loading: ' + data_path)
         with open(data_path) as data_file:
             self.ques = json.load(data_file)
 
         if self.datatype != 'test':
-            print("loading: " + annotation_path)
+            print('loading: ' + annotation_path)
             with open(annotation_path) as data_file:
                 self.annotation = json.load(data_file)
 

@@ -11,7 +11,7 @@ import os
 
 
 def build(opt):
-    dpath = opt['datapath'] + '/Ubuntu/'
+    dpath = os.path.join(opt['datapath'], 'Ubuntu')
 
     if not build_data.built(dpath):
         print('[building data: ' + dpath + ']')

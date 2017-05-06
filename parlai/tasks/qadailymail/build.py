@@ -6,6 +6,7 @@
 # Download and build the data if it does not exist.
 
 import parlai.core.build_data as build_data
+import os
 
 
 def _process(fname, fout):
@@ -26,17 +27,15 @@ def _process(fname, fout):
 
 def create_fb_format(outpath, dtype, inpath):
     print('building fbformat:' + dtype)
-    import os
-    fout = open(outpath + dtype + '.txt', 'w')
-    for file in os.listdir(inpath):
-        if file.endswith('.question'):
-            fname = os.path.join(inpath, file)
-            _process(fname, fout)
-    fout.close()
+    with open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
+        for f in os.listdir(inpath):
+            if f.endswith('.question'):
+                fname = os.path.join(inpath, f)
+                _process(fname, fout)
 
 
 def build(opt):
-    dpath = opt['datapath'] + '/QADailyMail/'
+    dpath = os.path.join(opt['datapath'], 'QADailyMail')
 
     if not build_data.built(dpath):
         print('[building data: ' + dpath + ']')
@@ -46,13 +45,13 @@ def build(opt):
         # Download the data.
         fname = 'qadailymail.tar.gz'
         gd_id = '0BwmD_VLjROrfN0xhTDVteGQ3eG8'
-        build_data.download_file_from_google_drive(gd_id, dpath + fname)
+        build_data.download_from_google_drive(gd_id, os.path.join(dpath, fname))
         build_data.untar(dpath, fname)
 
-        ext = 'dailymail/questions/'
-        create_fb_format(dpath, 'train', dpath + ext + 'training/')
-        create_fb_format(dpath, 'valid', dpath + ext + 'validation/')
-        create_fb_format(dpath, 'test', dpath + ext + 'test/')
+        ext = os.path.join('dailymail', 'questions')
+        create_fb_format(dpath, 'train', os.path.join(dpath, ext, 'training'))
+        create_fb_format(dpath, 'valid', os.path.join(dpath, ext, 'validation'))
+        create_fb_format(dpath, 'test', os.path.join(dpath, ext, 'test'))
 
         # Mark the data as built.
         build_data.mark_done(dpath)

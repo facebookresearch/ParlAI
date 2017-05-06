@@ -3,17 +3,19 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import copy
 
 from parlai.core.fbdialog_teacher import FbDialogTeacher
 from parlai.core.agents import MultiTaskTeacher
 from .build import build
 
+import copy
+import os
+
 tasks = {}
-tasks[1] = 'task1_qa/task1_qa_'
-tasks[2] = 'task2_recs/task2_recs_'
-tasks[3] = 'task3_qarecs/task3_qarecs_'
-tasks[4] = 'task4_reddit/task4_reddit/task4_reddit_'
+tasks[1] = os.path.join('task1_qa', 'task1_qa_')
+tasks[2] = os.path.join('task2_recs', 'task2_recs_')
+tasks[3] = os.path.join('task3_qarecs', 'task3_qarecs_')
+tasks[4] = os.path.join('task4_reddit', 'task4_reddit', 'task4_reddit_')
 
 def _path(task, opt):
     # Build the data if it doesn't exist.
@@ -27,8 +29,9 @@ def _path(task, opt):
     elif dt == 'valid':
         suffix = 'dev'
 
-    datafile = (opt['datapath'] + '/MovieDialog/movie_dialog_dataset/' +
-                tasks[int(task)] + suffix + '.txt')
+    datafile = os.path.join(opt['datapath'], 'MovieDialog',
+                            'movie_dialog_dataset',
+                            tasks[int(task)] + suffix + '.txt')
     if int(task) == 4:
         if dt == 'train':
             candpath = None
@@ -36,8 +39,8 @@ def _path(task, opt):
             candpath = datafile.replace(suffix + '.txt',
                                         'cand-' + dt + '.txt')
     else:
-        candpath = (opt['datapath'] +
-                    '/MovieDialog/movie_dialog_dataset/entities.txt')
+        candpath = os.path.join(opt['datapath'], 'MovieDialog',
+                                'movie_dialog_dataset', 'entities.txt')
     return datafile, candpath
 
 
@@ -45,9 +48,8 @@ def _path(task, opt):
 class KBTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
-        opt['datafile'] = (opt['datapath'] +
-                           'MovieDialog/movie_dialog_dataset/' +
-                           'movie_kb.txt')
+        opt['datafile'] = os.path.join(opt['datapath'], 'MovieDialog',
+                                       'movie_dialog_dataset', 'movie_kb.txt')
         super().__init__(opt, shared)
 
 

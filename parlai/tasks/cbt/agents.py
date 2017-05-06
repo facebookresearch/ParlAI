@@ -3,11 +3,13 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import copy
 
 from parlai.core.fbdialog_teacher import FbDialogTeacher
 from parlai.core.agents import MultiTaskTeacher
 from .build import build
+
+import copy
+import os
 
 
 def _path(task, opt):
@@ -21,9 +23,9 @@ def _path(task, opt):
         suffix = 'test_2500ex'
     elif dt == 'valid':
         suffix = 'valid_2000ex'
-    return (opt['datapath'] +
-            '/CBT/CBTest/data/' +
-            task + '_' + suffix + '.txt')
+
+    return os.path.join(
+        opt['datapath'], 'CBT', 'CBTest', 'data', task + '_' + suffix + '.txt')
 
 
 class NETeacher(FbDialogTeacher):

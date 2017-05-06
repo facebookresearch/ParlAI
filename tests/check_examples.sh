@@ -1,6 +1,12 @@
 #!/bin/bash
 
-set -e # exit if any command fails
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
+
+set -e # stop if any tests fail
 cd ../examples/
 python display_data.py -t babi:task1k:1
 python base_train.py -t babi:task1k:1

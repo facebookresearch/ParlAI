@@ -3,12 +3,13 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import copy
 
 from parlai.core.fbdialog_teacher import FbDialogTeacher
 from parlai.core.agents import MultiTaskTeacher
 from .build import build
 
+import copy
+import os
 
 tasks = {}
 tasks[1] = 'dialog-babi-task1-API-calls'
@@ -29,18 +30,17 @@ def _path(task, opt):
         suffix = 'tst'
     elif dt == 'valid':
         suffix = 'dev'
-    return (opt['datapath'] + '/dialog-bAbI/dialog-bAbI-tasks/' +
-            '{tsk}-{type}.txt'.format(
-            tsk=tasks[int(task)], type=suffix))
+    return os.path.join(opt['datapath'], 'dialog-bAbI', 'dialog-bAbI-tasks',
+        '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix))
 
 
 # The knowledge base of facts that can be used to answer questions.
 class KBTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
-        opt['datafile'] = (opt['datapath'] +
-                           '/dialog-bAbI/dialog-bAbI-tasks/' +
-                           'dialog-babi-kb-all.txt')
+        opt['datafile'] = os.path.join(opt['datapath'], 'dialog-bAbI',
+                                       'dialog-bAbI-tasks',
+                                       'dialog-babi-kb-all.txt')
         super().__init__(opt, shared)
 
 
@@ -57,7 +57,7 @@ class DefaultTeacher(MultiTaskTeacher):
         opt = copy.deepcopy(opt)
         opt['task'] = ','.join('dialog_babi:Task:%d' % (i + 1)
                                for i in range(6))
-        opt['cands_datafile'] = (opt['datapath'] +
-                                 '/dialog-bAbI/dialog-bAbI-tasks/' +
-                                 'dialog-babi-candidates.txt')
+        opt['cands_datafile'] = os.path.join(opt['datapath'], 'dialog-bAbI',
+                                             'dialog-bAbI-tasks',
+                                             'dialog-babi-candidates.txt')
         super().__init__(opt, shared)
