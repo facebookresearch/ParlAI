@@ -3,10 +3,12 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import copy
 
 from parlai.core.fbdialog_teacher import FbDialogTeacher
 from .build import build
+
+import copy
+import os
 
 
 def _path(opt):
@@ -19,10 +21,9 @@ def _path(opt):
         suffix = 'test'
     elif dt == 'valid':
         suffix = 'dev'
-    return (opt['datapath'] + '/WikiMovies/' +
-            'movieqa/questions/wiki_entities/' +
-            'wiki-entities_qa_{suffix}.txt'.format(
-                suffix=suffix))
+    return os.path.join(opt['datapath'], 'WikiMovies', 'movieqa', 'questions',
+                        'wiki_entities',
+                        'wiki-entities_qa_{suffix}.txt'.format(suffix=suffix))
 
 
 # The knowledge base of facts that can be used to answer questions.
@@ -32,11 +33,11 @@ class KBTeacher(FbDialogTeacher):
         task = opt.get('task', 'wikimovies:KB:kb')
         kb = task.split(':')[2]
         kbs = {}
-        kbs['kb'] = 'wiki_entities/wiki_entities_kb.txt'
+        kbs['kb'] = os.path.join('wiki_entities', 'wiki_entities_kb.txt')
         kbs['wiki'] = 'wiki.txt'
         kbs['ie'] = 'wiki_ie.txt'
-        opt['datafile'] = (opt['datapath'] + '/WikiMovies/movieqa/' +
-                           'knowledge_source/' + kbs[kb])
+        opt['datafile'] = os.path.join(opt['datapath'], 'WikiMovies', 'movieqa',
+                                       'knowledge_source', kbs[kb])
         super().__init__(opt, shared)
 
 
@@ -46,7 +47,7 @@ class DefaultTeacher(FbDialogTeacher):
         build(opt)
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt)
-        opt['cands_datafile'] = (opt['datapath'] +
-                                 '/WikiMovies/movieqa/' +
-                                 'knowledge_source/entities.txt')
+        opt['cands_datafile'] = os.path.join(opt['datapath'], 'WikiMovies',
+                                             'movieqa', 'knowledge_source',
+                                             'entities.txt')
         super().__init__(opt, shared)

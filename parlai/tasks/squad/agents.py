@@ -3,11 +3,14 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import json
-import random
+
 from parlai.core.agents import Teacher
 from parlai.core.dialog_teacher import DialogTeacher
 from .build import build
+
+import json
+import random
+import os
 
 
 class HandwrittenTeacher(Teacher):
@@ -24,9 +27,7 @@ class HandwrittenTeacher(Teacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        datapath = (
-            opt['datapath'] + 'SQuAD/' +
-            suffix + '-v1.1.json')
+        datapath = os.path.join(opt['datapath'], 'SQuAD', suffix + '-v1.1.json')
         self.data = self._setup_data(datapath)
         self.episode_idx = -1
         super().__init__(opt, shared)
@@ -89,10 +90,8 @@ class DefaultTeacher(DialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        opt['datafile'] = (
-            opt['datapath'] + 'SQuAD/' +
-            suffix + '-v1.1.json'
-        )
+        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD',
+                                       suffix + '-v1.1.json')
         self.id = 'squad'
         super().__init__(opt, shared)
 

@@ -3,13 +3,15 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import copy
-import json
-import random
+
 from parlai.core.agents import Teacher
 from parlai.core.fbdialog_teacher import FbDialogTeacher
 from .build import build
 
+import copy
+import json
+import random
+import os
 
 class EvalTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
@@ -18,9 +20,8 @@ class EvalTeacher(FbDialogTeacher):
             suffix = 'validation_NECN.20k'
         else:
             suffix = 'test_CN.10k'
-        opt['datafile'] = (
-            opt['datapath'] + '/BookTest/booktest-gut/' +
-            suffix + '.txt')
+        opt['datafile'] = os.path.join(
+            opt['datapath'], 'BookTest', 'booktest-gut', suffix + '.txt')
         super().__init__(opt, shared)
 
 
@@ -32,9 +33,8 @@ class StreamTeacher(Teacher):
     def __init__(self, opt, shared=None):
         build(opt)
         # Only used for the train set.
-        self.datafile = (
-            opt['datapath'] + '/BookTest/booktest-gut/' +
-            'train.14M+.txt')
+        self.datafile = os.path.join(
+            opt['datapath'], 'BookTest', 'booktest-gut', 'train.14M+.txt')
         self.fin = open(self.datafile)
 
     def __len__(self):

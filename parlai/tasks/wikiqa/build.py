@@ -6,11 +6,12 @@
 # Download and build the data if it does not exist.
 
 import parlai.core.build_data as build_data
+import os
 
 
 def create_fb_format(outpath, dtype, inpath):
-    print("building fbformat:" + dtype)
-    fout = open(outpath + dtype + '.txt', 'w')
+    print('building fbformat:' + dtype)
+    fout = open(os.path.join(outpath, dtype + '.txt'), 'w')
     with open(inpath) as f:
         lines = [line.strip('\n') for line in f]
     lastqid = None
@@ -37,26 +38,32 @@ def create_fb_format(outpath, dtype, inpath):
 
 
 def build(opt):
-    dpath = opt['datapath'] + "/WikiQA/"
+    dpath = os.path.join(opt['datapath'], 'WikiQA')
 
     if not build_data.built(dpath):
-        print("[building data: " + dpath + "]")
+        print('[building data: ' + dpath + ']')
         build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = "wikiqa.tar.gz"
-        url = "https://s3.amazonaws.com/fair-data/parlai/wikiqa/" + fname
+        fname = 'wikiqa.tar.gz'
+        url = 'https://s3.amazonaws.com/fair-data/parlai/wikiqa/' + fname
         build_data.download(dpath, url)
         build_data.untar(dpath, fname)
 
-        dpext = dpath + 'WikiQACorpus/'
-        create_fb_format(dpath, 'train', dpext + 'WikiQA-train.tsv')
-        create_fb_format(dpath, 'valid', dpext + 'WikiQA-dev.tsv')
-        create_fb_format(dpath, 'test', dpext + 'WikiQA-test.tsv')
-        create_fb_format(dpath, 'train-filtered', dpext + 'WikiQA-train.tsv')
-        create_fb_format(dpath, 'valid-filtered', dpext + 'WikiQA-dev.tsv')
-        create_fb_format(dpath, 'test-filtered', dpext + 'WikiQA-test.tsv')
+        dpext = os.path.join(dpath, 'WikiQACorpus')
+        create_fb_format(dpath, 'train',
+                         os.path.join(dpext, 'WikiQA-train.tsv'))
+        create_fb_format(dpath, 'valid',
+                         os.path.join(dpext, 'WikiQA-dev.tsv'))
+        create_fb_format(dpath, 'test',
+                         os.path.join(dpext, 'WikiQA-test.tsv'))
+        create_fb_format(dpath, 'train-filtered',
+                         os.path.join(dpext, 'WikiQA-train.tsv'))
+        create_fb_format(dpath, 'valid-filtered',
+                         os.path.join(dpext, 'WikiQA-dev.tsv'))
+        create_fb_format(dpath, 'test-filtered',
+                         os.path.join(dpext, 'WikiQA-test.tsv'))
 
         # Mark the data as built.
         build_data.mark_done(dpath)

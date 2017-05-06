@@ -3,22 +3,22 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import copy
 
 from parlai.core.fbdialog_teacher import FbDialogTeacher
 from parlai.core.agents import MultiTaskTeacher
 from .build import build
 
+import copy
+import os
 
 def _path(exsz, task, opt, dt=''):
     # Build the data if it doesn't exist.
     build(opt)
     if dt == '':
         dt = opt['datatype'].split(':')[0]
-    return (opt['datapath'] + '/bAbI/' +
-            'tasks_1-20_v1-2/en-valid' +
-            '{exsz}-nosf/qa{task}_{type}.txt'.format(
-                exsz=exsz, task=task, type=dt))
+    return os.path.join(opt['datapath'], 'bAbI', 'tasks_1-20_v1-2',
+                        'en-valid{exsz}-nosf'.format(exsz=exsz),
+                        'qa{task}_{type}.txt'.format(task=task, type=dt))
 
 
 # Single bAbI task (1k training).

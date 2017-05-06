@@ -6,19 +6,19 @@
 # Download and build the data if it does not exist.
 
 import parlai.core.build_data as build_data
-
+import os
 
 def build(opt):
-    dpath = opt['datapath'] + "/BookTest/"
+    dpath = os.path.join(opt['datapath'], 'BookTest')
 
     if not build_data.built(dpath):
-        print("[building data: " + dpath + "]")
+        print('[building data: ' + dpath + ']')
         build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = "booktest.tar.bz2"
-        url = "https://s3.amazonaws.com/fair-data/parlai/booktest/" + fname
+        fname = 'booktest.tar.bz2'
+        url = 'https://s3.amazonaws.com/fair-data/parlai/booktest/' + fname
         build_data.download(dpath, url)
         build_data.untar(dpath, fname)
 

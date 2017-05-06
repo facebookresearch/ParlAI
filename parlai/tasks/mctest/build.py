@@ -6,11 +6,11 @@
 # Download and build the data if it does not exist.
 
 import parlai.core.build_data as build_data
-
+import os
 
 def create_fb_format(outpath, dtype, inpath, inpath2):
-    print("building fbformat:" + dtype)
-    fout = open(outpath + dtype + '.txt', 'w')
+    print('building fbformat:' + dtype)
+    fout = open(os.path.join(outpath, dtype + '.txt'), 'w')
     with open(inpath + '.tsv') as f:
         lines = [line.strip('\n') for line in f]
     if inpath2 is None:
@@ -41,28 +41,34 @@ def create_fb_format(outpath, dtype, inpath, inpath2):
     fout.close()
 
 def build(opt):
-    dpath = opt['datapath'] + "/MCTest/"
+    dpath = os.path.join(opt['datapath'], 'MCTest')
 
     if not build_data.built(dpath):
-        print("[building data: " + dpath + "]")
+        print('[building data: ' + dpath + ']')
         build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = "mctest.tar.gz"
-        url = "https://s3.amazonaws.com/fair-data/parlai/mctest/" + fname
+        fname = 'mctest.tar.gz'
+        url = 'https://s3.amazonaws.com/fair-data/parlai/mctest/' + fname
         build_data.download(dpath, url)
         build_data.untar(dpath, fname)
 
-        dpext = dpath + 'mctest/'
-        create_fb_format(dpath, 'train160', dpext + 'MCTest/mc160.train', None)
-        create_fb_format(dpath, 'valid160', dpext + 'MCTest/mc160.dev', None)
-        create_fb_format(dpath, 'test160', dpext + 'MCTest/mc160.test',
-                         dpext + 'MCTestAnswers/mc160.test.ans')
-        create_fb_format(dpath, 'train500', dpext + 'MCTest/mc500.train', None)
-        create_fb_format(dpath, 'valid500', dpext + 'MCTest/mc500.dev', None)
-        create_fb_format(dpath, 'test500',  dpext + 'MCTest/mc500.test',
-                         dpext + 'MCTestAnswers/mc500.test.ans')
+        dpext = os.path.join(dpath, 'mctest')
+        create_fb_format(dpath, 'train160',
+                         os.path.join(dpext, 'MCTest', 'mc160.train'), None)
+        create_fb_format(dpath, 'valid160',
+                         os.path.join(dpext, 'MCTest', 'mc160.dev'), None)
+        create_fb_format(dpath, 'test160',
+                         os.path.join(dpext, 'MCTest', 'mc160.test'),
+                         os.path.join(dpext, 'MCTestAnswers', 'mc160.test.ans'))
+        create_fb_format(dpath, 'train500',
+                         os.path.join(dpext, 'MCTest', 'mc500.train'), None)
+        create_fb_format(dpath, 'valid500',
+                         os.path.join(dpext, 'MCTest', 'mc500.dev'), None)
+        create_fb_format(dpath, 'test500',
+                         os.path.join(dpext, 'MCTest', 'mc500.test'),
+                         os.path.join(dpext, 'MCTestAnswers', 'mc500.test.ans'))
 
         # Mark the data as built.
         build_data.mark_done(dpath)
