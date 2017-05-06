@@ -23,6 +23,6 @@ setup(
     url='http://parl.ai/',
     license=license,
     packages=find_packages(exclude=(
-        'data', 'docs', 'downloads', 'examples', 'tests')),
+        'data', 'docs', 'downloads', 'examples', 'logs', 'tests')),
     install_requires=reqs.strip().split('\n'),
 )
