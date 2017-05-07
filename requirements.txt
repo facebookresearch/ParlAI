@@ -1,3 +1,4 @@
+wget
 boto3
 requests
 nltk
