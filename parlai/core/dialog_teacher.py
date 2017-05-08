@@ -129,7 +129,7 @@ class DialogTeacher(Teacher):
             epoch_done = False
         elif (self.episode_idx + self.step_size >= num_eps and
                 action['episode_done']):
-            # epoch is done
+            # this is used for ordered data to check whether there's more data
             epoch_done = True
 
         return action, epoch_done

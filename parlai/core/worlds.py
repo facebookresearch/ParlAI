@@ -411,7 +411,7 @@ class MultiWorld(World):
 
 def override_opts_in_shared(table, overrides):
     """Looks recursively for opt dictionaries within shared dict and overrides
-    them.
+    any key-value pairs with pairs from the overrides dict.
     """
     if 'opt' in table:
         # change values if an 'opt' dict is available
@@ -442,7 +442,10 @@ class BatchWorld(World):
         shared = world.share()
         self.worlds = []
         for i in range(opt['batchsize']):
-            override_opts_in_shared(shared, {'batchindex': i})
+            # make sure that any opt dicts in shared have batchindex set to i
+            # this lets all shared agents know which batchindex they have,
+            # which is needed for ordered data (esp valid/test sets)
+            override_opts_in_shared(shared, { 'batchindex': i })
             self.worlds.append(shared['world_class'](opt, None, shared))
         self.batch_observations = [ None ] * len(self.worlds)
 
