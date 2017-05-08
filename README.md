@@ -75,12 +75,12 @@ python examples/display_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
 
 Train a simple cpu-based memory network on the "10k training examples" bAbI task 1 with 8 threads (python processes) using Hogwild (requires zmq and Lua Torch):
 ```bash
-python examples/memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -n 8
+python examples/memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -nt 8
 ```
 
 Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
 ```bash
-python examples/drqa/train.py -t squad -b 32
+python examples/drqa/train.py -t squad -bs 32
 ```
 
 ## Requirements
