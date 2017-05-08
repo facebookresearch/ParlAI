@@ -4,7 +4,12 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+
 from setuptools import setup, find_packages
+import sys
+
+if sys.version_info < (3,):
+    sys.exit('Sorry, Python3 is required for ParlAI.')
 
 with open('README.md') as f:
     readme = f.read()
