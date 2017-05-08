@@ -26,7 +26,6 @@ import time
 
 
 def main():
-
     # Get command line arguments
     argparser = ParlaiParser()
     DictionaryAgent.add_cmdline_args(argparser)
