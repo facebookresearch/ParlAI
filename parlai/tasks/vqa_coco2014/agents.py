@@ -11,7 +11,7 @@ from PIL import Image
 import json
 import random
 import os
-
+import pdb
 
 def _path(opt):
     build(opt)
@@ -36,7 +36,7 @@ def _path(opt):
     annotation_path = os.path.join(opt['datapath'], 'VQA-COCO2014',
         annotation_suffix + '_annotations.json')
 
-    image_path = os.path.join(opt['datapath'], 'VQA-COCO2014', img_suffix)
+    image_path = os.path.join(opt['download_path'], img_suffix)
 
     return data_path, annotation_path, image_path
 

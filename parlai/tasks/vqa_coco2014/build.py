@@ -58,7 +58,7 @@ def build(opt):
         build_data.untar(dpath, fname4)
         build_data.untar(dpath, fname5)
 
-        buildImage(dpath)
+        # buildImage(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath)
