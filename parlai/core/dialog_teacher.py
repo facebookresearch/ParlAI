@@ -57,6 +57,12 @@ class DialogTeacher(Teacher):
         else:
             self.metrics = Metrics(opt)
 
+        # for ordered data in batch mode (especially, for validation and
+        # testing), each teacher in the batch gets a start index and a step
+        # size so they all process disparate sets of the data
+        self.step_size = opt.get('batchsize', 1)
+        self.data_offset = opt.get('batchindex', 0)
+
         self.reset()
 
     def reset(self):
@@ -64,7 +70,7 @@ class DialogTeacher(Teacher):
         # and all metrics are reset.
         self.metrics.clear()
         self.lastY = None
-        self.episode_idx = -1
+        self.episode_idx = self.data_offset - self.step_size
         self.epochDone = False
         self.episode_done = True
 
@@ -105,21 +111,33 @@ class DialogTeacher(Teacher):
             self.lastLabelCandidates = None
 
     def next_example(self):
+        num_eps = self.data.num_episodes()
         if self.episode_done:
-            num_eps = self.data.num_episodes()
             if self.random:
                 # select random episode
                 self.episode_idx = random.randrange(num_eps)
             else:
                 # select next episode
-                self.episode_idx = (self.episode_idx + 1) % num_eps
+                self.episode_idx = (self.episode_idx + self.step_size) % num_eps
             self.entry_idx = 0
         else:
             self.entry_idx += 1
-        return self.data.get(self.episode_idx, self.entry_idx)
+
+        action, epoch_done = self.data.get(self.episode_idx, self.entry_idx)
+
+        if self.random:
+            epoch_done = False
+        elif (self.episode_idx + self.step_size >= num_eps and
+                action['episode_done']):
+            # epoch is done
+            epoch_done = True
+
+        return action, epoch_done
 
     def act(self):
-        """Send new dialog message. """
+        """Send new dialog message."""
+        if self.epochDone:
+            return { 'episode_done': True }
         action, self.epochDone = self.next_example()
         self.episode_done = action['episode_done']
         action['id'] = self.getID()
