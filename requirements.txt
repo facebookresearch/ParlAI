@@ -1,5 +1,6 @@
-wget
 boto3
 requests
 nltk
 numpy
+pyzmq
+wget

@@ -1,3 +1,2 @@
 pytorch
-pyzmq
 regex
