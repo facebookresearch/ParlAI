@@ -10,9 +10,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-:github_url: https://github.com/fairinternal/ParlAI
+:github_url: https://github.com/facebookresearch/ParlAI
 
-ParlAI documentation
+ParlAI Documentation
 ==================================
 
 ParlAI is a one-stop-shop for dialog research.
