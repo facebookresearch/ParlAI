@@ -17,22 +17,22 @@ def _path(opt):
     dt = opt['datatype'].split(':')[0]
 
     if dt == 'train':
-        ques_suffix = 'MultipleChoice_mscoco_train2014'
-        annotation_suffix = 'mscoco_train2014'
+        ques_suffix = 'v2_OpenEnded_mscoco_train2014'
+        annotation_suffix = 'v2_mscoco_train2014'
         img_suffix = os.path.join('train2014', 'COCO_train2014_')
     elif dt == 'valid':
-        ques_suffix = 'MultipleChoice_mscoco_val2014'
-        annotation_suffix = 'mscoco_val2014'
+        ques_suffix = 'v2_OpenEnded_mscoco_val2014'
+        annotation_suffix = 'v2_mscoco_val2014'
         img_suffix = os.path.join('val2014', 'COCO_val2014_')
     else:
-        ques_suffix = 'MultipleChoice_mscoco_test2015'
+        ques_suffix = 'v2_OpenEnded_mscoco_test2015'
         annotation_suffix = 'None'
         img_suffix = os.path.join('test2014', 'COCO_test2014_')
 
-    data_path = os.path.join(opt['datapath'], 'VQA-COCO2014',
+    data_path = os.path.join(opt['datapath'], 'VQA-COCO2014-v2',
         ques_suffix + '_questions.json')
 
-    annotation_path = os.path.join(opt['datapath'], 'VQA-COCO2014',
+    annotation_path = os.path.join(opt['datapath'], 'VQA-COCO2014-v2',
         annotation_suffix + '_annotations.json')
 
     image_path = os.path.join(opt['download_path'], img_suffix)
@@ -103,65 +103,5 @@ class OeTeacher(Teacher):
         self.image_path = image_path
         self.len = len(self.ques['questions'])
 
-
-class McTeacher(Teacher):
-    """
-    Hand-written VQA Multiple-Choice teacher, which loads the json vqa data and
-    implements its own `act()` method for interacting with student
-    agent.
-    """
-    def __init__(self, opt, shared=None):
-        super().__init__(opt)
-        self.datatype = opt['datatype']
-        data_path, annotation_path, image_path = _path(opt)
-        self._setup_data(data_path, annotation_path, image_path)
-        self.episode_idx = -1
-
-    def __len__(self):
-        return self.len
-
-    # return state/action dict based upon passed state
-    def act(self):
-        if self.datatype == 'train':
-            self.episode_idx = random.randrange(self.len)
-        else:
-            self.episode_idx = (self.episode_idx + 1) % self.len
-
-        qa = self.ques['questions'][self.episode_idx]
-        question = qa['question']
-        image_id = qa['image_id']
-        # question_id = qa['question_id']
-        multiple_choices = qa['multiple_choices']
-
-        if self.datatype != 'test':
-            anno = self.annotation['annotations'][self.episode_idx]
-            answers = anno['multiple_choice_answer']
-        else:
-            answers = ['fake_answer']
-
-        img_path = self.image_path + '%012d.jpg' % (image_id)
-
-        return {
-            'image': _image_loader(img_path),
-            'text': question,
-            'candidates': multiple_choices,
-            'labels': [answers],
-            'episode_done': True
-        }
-
-    def _setup_data(self, data_path, annotation_path, image_path):
-        print('loading: ' + data_path)
-        with open(data_path) as data_file:
-            self.ques = json.load(data_file)
-
-        if self.datatype != 'test':
-            print('loading: ' + annotation_path)
-            with open(annotation_path) as data_file:
-                self.annotation = json.load(data_file)
-
-        self.image_path = image_path
-        self.len = len(self.ques['questions'])
-
-
-class DefaultTeacher(McTeacher):
+class DefaultTeacher(OeTeacher):
     pass
