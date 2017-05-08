@@ -26,6 +26,11 @@ class ParlaiParser(object):
     def __init__(self, add_parlai_args=True, add_model_args=False):
         self.parser = argparse.ArgumentParser(description='ParlAI parser.')
         self.parser.register('type', 'bool', str2bool)
+
+        self.parlai_home = (os.path.dirname(os.path.dirname(os.path.dirname(
+                            os.path.realpath(__file__)))))
+        os.environ['PARLAI_HOME'] = self.parlai_home
+        
         if add_parlai_args:
             self.add_parlai_args()
         if add_model_args:
@@ -36,28 +41,19 @@ class ParlaiParser(object):
         self.register = self.parser.register
 
     def add_parlai_data_path(self):
-        parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
-                      os.path.realpath(__file__)))))
-        default_data_path = os.path.join(parlai_dir, 'data')
+        default_data_path = os.path.join(self.parlai_home , 'data')
         self.parser.add_argument(
             '-dp', '--datapath', default=default_data_path,
             help='path to datasets, defaults to {parlai_dir}/data')
 
     def add_mturk_log_path(self):
-        parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
-                      os.path.realpath(__file__)))))
-        default_log_path = os.path.join(parlai_dir, 'logs', 'mturk')
+        default_log_path = os.path.join(self.parlai_home , 'logs', 'mturk')
         self.parser.add_argument(
             '--mturk-log-path', default=default_log_path,
             help='path to mturk logs, defaults to {parlai_dir}/logs/mturk')
 
     def add_parlai_args(self):
-        parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
-                      os.path.realpath(__file__)))))
-        self.parlai_home = parlai_dir
-        os.environ['PARLAI_HOME'] = parlai_dir
-        default_downloads_path = os.path.join(parlai_dir, 'downloads')
-
+        default_downloads_path = os.path.join(self.parlai_home, 'downloads')
         self.parser.add_argument(
             '-t', '--task',
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
