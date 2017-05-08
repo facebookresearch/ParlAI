@@ -14,6 +14,7 @@ import os
 def str2bool(value):
     return value.lower() in ('yes', 'true', 't', '1', 'y')
 
+
 class ParlaiParser(object):
     """Pseudo-extension of argparse which sets a number of parameters for the
     ParlAI framework. More options can be added specific to other modules by
@@ -53,6 +54,7 @@ class ParlaiParser(object):
     def add_parlai_args(self):
         parlai_dir = (os.path.dirname(os.path.dirname(os.path.dirname(
                       os.path.realpath(__file__)))))
+        self.parlai_home = parlai_dir
         os.environ['PARLAI_HOME'] = parlai_dir
         default_downloads_path = os.path.join(parlai_dir, 'downloads')
 
@@ -96,6 +98,7 @@ class ParlaiParser(object):
         """
         self.args = self.parser.parse_args(args=args)
         self.opt = {k: v for k, v in vars(self.args).items() if v is not None}
+        self.opt['parlai_home'] = self.parlai_home
         if 'download_path' in self.opt:
             self.opt['download_path'] = self.opt['download_path']
             os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']

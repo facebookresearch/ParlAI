@@ -26,6 +26,7 @@ import time
 
 
 def main():
+
     # Get command line arguments
     argparser = ParlaiParser()
     DictionaryAgent.add_cmdline_args(argparser)
@@ -34,6 +35,10 @@ def main():
     argparser.add_argument('--num_its', default=100, type=int)
     parlai_home = os.environ['PARLAI_HOME']
     if '--remote-cmd' not in sys.argv:
+        if os.system('which luajit') != 0:
+            raise RuntimeError('Could not detect torch luajit installed: ' +
+                               'please install torch from http://torch.ch ' +
+                               'or manually set --remote-cmd for this example.')
         sys.argv.append('--remote-cmd')
         sys.argv.append('luajit {}/parlai/agents/'.format(parlai_home) +
                         'memnn_luatorch_cpu/memnn_zmq_parsed.lua')
