@@ -25,7 +25,7 @@ def main(opt):
     # Log params
     logger.info('[ Created with options: ] %s' %
                 ''.join(['\n{}\t{}'.format(k, v)
-                         for k, v in doc_reader.items()]))
+                         for k, v in doc_reader.opt.items()]))
 
     while True:
         context = input('Context: ')
