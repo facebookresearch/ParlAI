@@ -71,7 +71,7 @@ class World(object):
         self.opt = copy.deepcopy(opt)
         if shared:
             # Create agents based on shared data.
-            self.agents = create_agents_from_shared(shared.agents)
+            self.agents = create_agents_from_shared(shared['agents'])
         else:
             # Add passed in agents to world directly.
             self.agents = agents
@@ -131,7 +131,7 @@ class World(object):
         return False
 
     def epoch_done(self):
-        """Whether the epoch is done or not. 
+        """Whether the epoch is done or not.
         Not all worlds have the notion of an epoch, but this is useful
         for fixed training, validation or test sets.
         """
@@ -217,15 +217,17 @@ class DialogPartnerWorld(World):
         acts[1] = agents[1].act()
         agents[0].observe(validate(acts[1]))
 
-    def epoch_done(self):
-        """ Only the first agent indicates when the epoch is done."""
-        return (self.agents[0].epoch_done()
-                if hasattr(self.agents[0], 'epoch_done') else False)
-
     def episode_done(self):
         """ Only the first agent indicates when the episode is done."""
         if self.acts[0] is not None:
             return self.acts[0].get('episode_done', False)
+        else:
+            return False
+
+    def epoch_done(self):
+        """Only the first agent indicates when the epoch is done."""
+        return (self.agents[0].epoch_done()
+                if hasattr(self.agents[0], 'epoch_done') else False)
 
     def report(self):
         return self.agents[0].report()
@@ -407,6 +409,25 @@ class MultiWorld(World):
         return m
 
 
+def override_opts_in_shared(table, overrides):
+    """Looks recursively for opt dictionaries within shared dict and overrides
+    any key-value pairs with pairs from the overrides dict.
+    """
+    if 'opt' in table:
+        # change values if an 'opt' dict is available
+        for k, v in overrides.items():
+            table['opt'][k] = v
+    for k, v in table.items():
+        # look for sub-dictionaries which also might contain an 'opt' dict
+        if type(v) == dict and k != 'opt':
+            override_opts_in_shared(v, overrides)
+        elif type(v) == list:
+            for item in v:
+                if type(item) == dict:
+                    override_opts_in_shared(item, overrides)
+    return table
+
+
 class BatchWorld(World):
     """Creates a separate world for each item in the batch, sharing
     the parameters for each.
@@ -417,17 +438,15 @@ class BatchWorld(World):
     def __init__(self, opt, world):
         self.opt = opt
         self.random = opt.get('datatype', None) == 'train'
-        if not self.random:
-            raise NotImplementedError(
-                'Ordered data not implemented yet in batch mode.')
-
         self.world = world
         shared = world.share()
         self.worlds = []
         for i in range(opt['batchsize']):
-            opti = copy.deepcopy(opt)
-            opti['batchindex'] = i
-            self.worlds.append(shared['world_class'](opti, None, shared))
+            # make sure that any opt dicts in shared have batchindex set to i
+            # this lets all shared agents know which batchindex they have,
+            # which is needed for ordered data (esp valid/test sets)
+            override_opts_in_shared(shared, { 'batchindex': i })
+            self.worlds.append(shared['world_class'](opt, None, shared))
         self.batch_observations = [ None ] * len(self.worlds)
 
     def __iter__(self):
@@ -448,7 +467,7 @@ class BatchWorld(World):
         # Call update on agent
         a = self.world.get_agents()[index]
         if (batch_observation is not None and len(batch_observation) > 0 and
-            hasattr(a, 'batch_act')):
+                hasattr(a, 'batch_act')):
             batch_reply = a.batch_act(batch_observation)
             # Store the actions locally in each world.
             for w in self.worlds:
@@ -461,7 +480,7 @@ class BatchWorld(World):
                 agents = w.get_agents()
                 acts = w.get_acts()
                 acts[index] = agents[index].act()
-                batch_reply.append(acts[index])    
+                batch_reply.append(acts[index])
         return batch_reply
 
     def parley(self):
@@ -473,7 +492,7 @@ class BatchWorld(World):
         for w in self.worlds:
             if hasattr(w, 'parley_init'):
                 w.parley_init()
-        
+
         for index in range(num_agents):
             batch_act = self.batch_act(index, batch_observations[index])
             for other_index in range(num_agents):
@@ -486,8 +505,6 @@ class BatchWorld(World):
         for i, w in enumerate(self.worlds):
             s += ("[batch world " + str(i) + ":]\n")
             s += (w.display() + '\n')
-            if not self.random and w.epoch_done():
-                break
         s += ("[--end of batch--]")
         return s
 
@@ -499,9 +516,9 @@ class BatchWorld(World):
 
     def epoch_done(self):
         for world in self.worlds:
-            if world.epoch_done():
-                return True
-        return False
+            if not world.epoch_done():
+                return False
+        return True
 
     def report(self):
         return self.worlds[0].report()

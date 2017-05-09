@@ -30,7 +30,7 @@ class ParlaiParser(object):
         self.parlai_home = (os.path.dirname(os.path.dirname(os.path.dirname(
                             os.path.realpath(__file__)))))
         os.environ['PARLAI_HOME'] = self.parlai_home
-        
+
         if add_parlai_args:
             self.add_parlai_args()
         if add_model_args:

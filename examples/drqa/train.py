@@ -82,7 +82,8 @@ def main(opt):
 
     # Log params
     logger.info('[ Created with options: ] %s' %
-                ''.join(['\n{}\t{}'.format(k, v) for k, v in opt.items()]))
+                ''.join(['\n{}\t{}'.format(k, v)
+                         for k, v in doc_reader.items()]))
 
     # Build training world once
     opt['datatype'] = 'train'
