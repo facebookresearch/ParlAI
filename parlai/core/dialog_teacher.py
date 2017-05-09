@@ -101,14 +101,10 @@ class DialogTeacher(Teacher):
         return None
 
     def observe(self, observation):
-        """Store observation and process for metrics. """
-        self.observation = observation
+        """Process observation for metrics. """
         if self.lastY is not None:
-            obs = self.observation if hasattr(self, 'observation') else {}
-            loss = self.metrics.update(
-                obs, self.lastY, self.lastLabelCandidates)
+            loss = self.metrics.update(observation, self.lastY)
             self.lastY = None
-            self.lastLabelCandidates = None
 
     def next_example(self):
         num_eps = self.data.num_episodes()
@@ -142,7 +138,6 @@ class DialogTeacher(Teacher):
         self.episode_done = action['episode_done']
         action['id'] = self.getID()
         self.lastY = action.get('labels', None)
-        self.lastLabelCandidates = action.get('label_candidates', None)
         if not self.datatype.startswith('train'):
             action.pop('labels', None)
         return action

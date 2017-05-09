@@ -46,13 +46,14 @@ class Agent(object):
             self.id = 'agent'
         if not hasattr(self, 'opt'):
             self.opt = copy.deepcopy(opt)
+        self.observation = None
 
     def observe(self, observation):
         self.observation = observation
 
     def act(self):
         """Return state/action table based upon given observation."""
-        if self.observation is not None:
+        if hasattr(self, 'observation') and self.observation is not None:
             print('agent received observation:')
             print(self.observation)
 

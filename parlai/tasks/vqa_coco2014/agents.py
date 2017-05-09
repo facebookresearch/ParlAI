@@ -50,12 +50,11 @@ def _image_loader(path):
 
 class OeTeacher(Teacher):
     """
-    Hand-written VQA Open-Ended teacher, which loads the json vqa data and
-    implements its own `act` method for interacting with student
-    agent.
+    VQA Open-Ended teacher, which loads the json vqa data and implements its
+    own `act` method for interacting with student agent.
     """
     def __init__(self, opt, shared=None):
-        super().__init__(opt)
+        super().__init__(opt, shared)
         self.datatype = opt['datatype']
         data_path, annotation_path, image_path = _path(opt)
         self._setup_data(data_path, annotation_path, image_path)
@@ -64,7 +63,12 @@ class OeTeacher(Teacher):
     def __len__(self):
         return self.len
 
-    # return state/action dict based upon passed state
+    def observe(self, observation):
+        """Process observation for metrics. """
+        if self.lastY is not None:
+            loss = self.metrics.update(observation, self.lastY)
+            self.lastY = None
+
     def act(self):
         if self.datatype == 'train':
             self.episode_idx = random.randrange(self.len)
@@ -77,17 +81,20 @@ class OeTeacher(Teacher):
 
         img_path = self.image_path + '%012d.jpg' % (image_id)
 
-        t = {
+        action = {
             'image': _image_loader(img_path),
             'text': question,
             'episode_done': True
         }
+
+        if not self.datatype.startswith('test'):
+            anno = self.annotation['annotations'][self.episode_idx]
+            self.lastY = [ans['answer'] for ans in anno['answers']]
 
         if self.datatype.startswith('train'):
-            anno = self.annotation['annotations'][self.episode_idx]
-            t['labels'] = [ans['answer'] for ans in anno['answers']]
+            action['labels'] = self.lastY
 
-        return t
+        return action
 
     def _setup_data(self, data_path, annotation_path, image_path):
         print('loading: ' + data_path)
@@ -103,64 +110,30 @@ class OeTeacher(Teacher):
         self.len = len(self.ques['questions'])
 
 
-class McTeacher(Teacher):
+class McTeacher(OeTeacher):
     """
-    Hand-written VQA Multiple-Choice teacher, which loads the json vqa data and
-    implements its own `act()` method for interacting with student
-    agent.
+    VQA Multiple-Choice teacher, which inherits from OeTeacher but overrides
+    the label and label_candidates fields with multiple choice data.
     """
-    def __init__(self, opt, shared=None):
-        super().__init__(opt)
-        self.datatype = opt['datatype']
-        data_path, annotation_path, image_path = _path(opt)
-        self._setup_data(data_path, annotation_path, image_path)
-        self.episode_idx = -1
 
-    def __len__(self):
-        return self.len
-
-    # return state/action dict based upon passed state
     def act(self):
-        if self.datatype == 'train':
-            self.episode_idx = random.randrange(self.len)
-        else:
-            self.episode_idx = (self.episode_idx + 1) % self.len
+        action = super().act()
 
         qa = self.ques['questions'][self.episode_idx]
-        question = qa['question']
-        image_id = qa['image_id']
-        # question_id = qa['question_id']
         multiple_choices = qa['multiple_choices']
 
-        if self.datatype != 'test':
+        action['label_candidates'] = multiple_choices
+
+        if not self.datatype.startswith('test'):
             anno = self.annotation['annotations'][self.episode_idx]
-            answers = anno['multiple_choice_answer']
-        else:
-            answers = ['fake_answer']
+            self.lastY = [anno['multiple_choice_answer']]
 
-        img_path = self.image_path + '%012d.jpg' % (image_id)
+        if self.datatype.startswith('train'):
+            action['labels'] = self.lastY
 
-        return {
-            'image': _image_loader(img_path),
-            'text': question,
-            'candidates': multiple_choices,
-            'labels': [answers],
-            'episode_done': True
-        }
-
-    def _setup_data(self, data_path, annotation_path, image_path):
-        print('loading: ' + data_path)
-        with open(data_path) as data_file:
-            self.ques = json.load(data_file)
-
-        if self.datatype != 'test':
-            print('loading: ' + annotation_path)
-            with open(annotation_path) as data_file:
-                self.annotation = json.load(data_file)
-
-        self.image_path = image_path
-        self.len = len(self.ques['questions'])
+        return action
 
 
 class DefaultTeacher(McTeacher):
+    # default to Multiple-Choice Teacher
     pass
