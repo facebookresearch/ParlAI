@@ -227,6 +227,10 @@ class DocReaderAgent(Agent):
         """Find the token span of the answer in the context for this example.
         If a token span cannot be found, return None. Otherwise, torchify.
         """
+        # Check if empty input (end of epoch)
+        if not 'text' in ex and ex['episode_done']:
+            return
+
         # Split out document + question
         inputs = {}
         fields = ex['text'].split('\n')

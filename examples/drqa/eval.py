@@ -15,7 +15,6 @@ from parlai.core.worlds import create_task
 def main(opt):
     # Check options
     opt['datatype'] = 'valid'
-    opt['batchsize'] = 1
     assert('pretrained_model' in opt)
 
     # Load document reader
