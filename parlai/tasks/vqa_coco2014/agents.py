@@ -74,22 +74,20 @@ class OeTeacher(Teacher):
         qa = self.ques['questions'][self.episode_idx]
         question = qa['question']
         image_id = qa['image_id']
-        # question_id = qa['question_id']
-
-        if self.datatype != 'test':
-            anno = self.annotation['annotations'][self.episode_idx]
-            answers = [ans['answer'] for ans in anno['answers']]
-        else:
-            answers = ['fake_answer']
 
         img_path = self.image_path + '%012d.jpg' % (image_id)
 
-        return {
+        t = {
             'image': _image_loader(img_path),
             'text': question,
-            'labels': answers,
             'episode_done': True
         }
+
+        if self.datatype.startswith('train'):
+            anno = self.annotation['annotations'][self.episode_idx]
+            t['labels'] = [ans['answer'] for ans in anno['answers']]
+
+        return t
 
     def _setup_data(self, data_path, annotation_path, image_path):
         print('loading: ' + data_path)
