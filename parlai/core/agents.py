@@ -41,7 +41,6 @@ class Agent(object):
     """Basic agent which says hello."""
 
     def __init__(self, opt, shared=None):
-        print('[Agent initializing.]')
         if not hasattr(self, 'id'):
             self.id = 'agent'
         if not hasattr(self, 'opt'):

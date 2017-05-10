@@ -67,6 +67,10 @@ class OeTeacher(Teacher):
                 self.annotation = shared['annotation']
         else:
             self._setup_data(data_path, annotation_path)
+
+        self.step_size = opt.get('batchsize', 1)
+        self.data_offset = opt.get('batchindex', 0)
+
         self.reset()
 
     def __len__(self):
@@ -74,10 +78,11 @@ class OeTeacher(Teacher):
 
     def reset(self):
         super().reset()
-        self.episode_idx = -1
+        self.lastY = None
+        self.episode_idx = self.data_offset - self.step_size
 
     def observe(self, observation):
-        """Process observation for metrics. """
+        """Process observation for metrics."""
         if self.lastY is not None:
             loss = self.metrics.update(observation, self.lastY)
             self.lastY = None
@@ -86,8 +91,8 @@ class OeTeacher(Teacher):
         if self.datatype == 'train':
             self.episode_idx = random.randrange(len(self))
         else:
-            self.episode_idx = (self.episode_idx + 1) % len(self)
-            if self.episode_idx == len(self) - 1:
+            self.episode_idx = (self.episode_idx + self.step_size) % len(self)
+            if self.episode_idx == len(self) - self.step_size:
                 self.epochDone = True
             # always showing the same index now.
         qa = self.ques['questions'][self.episode_idx]
@@ -116,6 +121,7 @@ class OeTeacher(Teacher):
         shared['ques'] = self.ques
         if hasattr(self, 'annotation'):
             shared['annotation'] = self.annotation
+        return shared
 
     def _setup_data(self, data_path, annotation_path):
         print('loading: ' + data_path)
