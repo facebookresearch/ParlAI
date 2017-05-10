@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.dialog_teacher import DialogTeacher
-from .build import build
+from .build import build, buildImage
 
 from PIL import Image
 import json
@@ -14,6 +14,7 @@ import os
 
 def _path(opt):
     build(opt)
+    buildImage(opt)
     dt = opt['datatype'].split(':')[0]
 
     if dt == 'train':
@@ -28,7 +29,7 @@ def _path(opt):
     data_path = os.path.join(opt['datapath'], 'VisDial-v0.9',
         'visdial_0.9_' + suffix + '.json')
 
-    image_path = os.path.join(opt['download_path'], img_suffix)
+    image_path = os.path.join(opt['datapath'], 'COCO-IMG', img_suffix)
 
     return data_path, image_path
 
@@ -50,7 +51,7 @@ class DefaultTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
 
         self.datatype = opt['datatype']
-        data_path, image_path = _path(opt)
+        data_path, self.image_path = _path(opt)
         opt['datafile'] = data_path
         self.id = 'visdial'
 
@@ -66,8 +67,10 @@ class DefaultTeacher(DialogTeacher):
 
         for dialog in self.visdial['data']['dialogs']:
             # for each dialog
-            image_id = dialog['dialog']
+            image_id = dialog['image_id']
             caption = dialog['caption']
+            img_path = self.image_path + '%012d.jpg' % (image_id)
+
             episode_done = False
             for i, qa in enumerate(dialog['dialog']):
                 if i == len(dialog['dialog']):
@@ -80,4 +83,4 @@ class DefaultTeacher(DialogTeacher):
                     answer_options.append(self.answers[ans_id])
                 #answer_options = qa['answer_options']
                 gt_index = qa['gt_index']
-                yield (question, answer, 'None', answer_options), True
+                yield (question, answer, 'None', answer_options, img_path), True
