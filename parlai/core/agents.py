@@ -66,6 +66,9 @@ class Agent(object):
     def getID(self):
         return self.id
 
+    def reset(self):
+        self.observation = None
+
     def share(self):
         """If applicable, share any parameters needed to create a shared version
         of this agent.
@@ -137,11 +140,13 @@ class Teacher(Agent):
         """Teacher can be iterated over. Subclasses can specify a certain length
         of iteration, such as e.g. one epoch.
         """
+        self.epochDone = False
         return self
 
-    def __next__():
-        """Never raise StopIteration: by default can answer infinite times."""
-        pass
+    def __next__(self):
+        """Raise StopIteration if epoch is done (never for default teacher)."""
+        if self.epochDone:
+            raise StopIteration()
 
     # return state/action dict based upon passed state
     def act(self):
@@ -156,6 +161,11 @@ class Teacher(Agent):
     def report(self):
         report = self.metrics.report()
         return report
+
+    def reset(self):
+        super().reset()
+        self.epochDone = False
+        self.metrics.clear()
 
 
 def create_task_agent_from_taskname(opt):

@@ -181,6 +181,10 @@ class World(object):
     def __len__(self):
         return 0
 
+    def reset(self):
+        for a in self.agents:
+            a.reset()
+
     def synchronize(self):
         """Can be used to synchronize processes."""
         pass

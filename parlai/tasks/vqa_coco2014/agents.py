@@ -74,6 +74,8 @@ class OeTeacher(Teacher):
             self.episode_idx = random.randrange(self.len)
         else:
             self.episode_idx = (self.episode_idx + 1) % self.len
+            if self.episode_idx == self.len - 1:
+                self.epochDone = True
             # always showing the same index now.
         qa = self.ques['questions'][self.episode_idx]
         question = qa['question']

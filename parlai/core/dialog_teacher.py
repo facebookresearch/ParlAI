@@ -32,17 +32,16 @@ class DialogTeacher(Teacher):
 
     def __init__(self, opt, shared=None):
         # Check for setup_data
-        self.opt = copy.deepcopy(opt)
         print("[DialogTeacher initializing.]")
         if not hasattr(self, 'setup_data'):
             raise RuntimeError('Must implement setup_data or subclass a class' +
                                ' which implements it (e.g. FbDialogTeacher)' +
                                ' in order to use this class.')
 
+        super().__init__(opt, shared)
+
         self.datatype = opt['datatype']
         self.startTime = time.time()
-        if not hasattr(self, 'id'):
-            self.id = opt.get('task', 'teacher')
 
         # first initialize any shared objects
         self.random = self.datatype == 'train'
@@ -51,11 +50,6 @@ class DialogTeacher(Teacher):
         else:
             self.data = DialogData(self.setup_data(opt['datafile']),
                                    cands=self.label_candidates())
-
-        if shared and shared.get('metrics'):
-            self.metrics = shared['metrics']
-        else:
-            self.metrics = Metrics(opt)
 
         # for ordered data in batch mode (especially, for validation and
         # testing), each teacher in the batch gets a start index and a step

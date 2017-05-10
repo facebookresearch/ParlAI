@@ -65,6 +65,9 @@ class RemoteAgent(Agent):
 
     def act(self):
         """Send message to paired agent listening over zmq."""
+        if 'image' in self.observation:
+            # can't json serialize images
+            self.observation.pop('image', None)
         text = json.dumps(self.observation)
         self.socket.send_unicode(text)
         reply = self.socket.recv_unicode()
