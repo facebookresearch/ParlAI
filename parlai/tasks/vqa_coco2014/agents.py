@@ -14,6 +14,7 @@ import os
 
 def _path(opt):
     build(opt)
+    buildImage(opt)
     dt = opt['datatype'].split(':')[0]
 
     if dt == 'train':
@@ -35,7 +36,7 @@ def _path(opt):
     annotation_path = os.path.join(opt['datapath'], 'VQA-COCO2014',
         annotation_suffix + '_annotations.json')
 
-    image_path = os.path.join(opt['download_path'], img_suffix)
+    image_path = os.path.join(opt['datapath'], 'COCO-IMG', img_suffix)
 
     return data_path, annotation_path, image_path
 
@@ -99,7 +100,7 @@ class OeTeacher(Teacher):
             self.episode_idx = (self.episode_idx + self.step_size) % len(self)
             if self.episode_idx == len(self) - self.step_size:
                 self.epochDone = True
-            # always showing the same index now.
+
         qa = self.ques['questions'][self.episode_idx]
         question = qa['question']
         image_id = qa['image_id']

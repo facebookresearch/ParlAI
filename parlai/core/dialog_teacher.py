@@ -265,7 +265,7 @@ class DialogData(object):
                 table['reward'] = entry[2]
                 if len(entry) > 3:
                     table['label_candidates'] = entry[3]
-                    if len(entry) > 4 and not opt.get('no_images', False):
+                    if len(entry) > 4 and not self.opt.get('no_images', False):
                         table['image'] = load_image(self.opt, entry[4])
 
 
