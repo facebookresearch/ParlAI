@@ -153,12 +153,14 @@ class DialogData(object):
     (x, ...), new_episode?
 
     Where...
-    x is a query and possibly context
+    - x is a query and possibly context
     ... can contain additional fields, specifically
-        y is an iterable of label(s) for that query
-        r is the str reward for getting that query correct
-        c is an iterable of label candidates that the student can choose from
-    new_episode? is a boolean value specifying whether that example is the start
+      - y is an iterable of label(s) for that query
+      - r is the str reward for getting that query correct
+      - c is an iterable of label candidates that the student can choose from
+      - i is a str path to an image on disk, which will be loaded by the data
+          class at request-time. should always point to the raw image file.
+    - new_episode? is a boolean value specifying whether that example is the start
     of a new episode. If you don't use episodes set this to True every time.
 
     cands can be set to provide a list of candidate labels for every example
