@@ -289,7 +289,7 @@ class DialogData(object):
         return table, end_of_data
 
 def load_image(opt, path):
-    if opt.get('no_images', False):
+    if opt.get('no_images', False) or not path:
         return None
     mode = opt.get('image_preprocessor', 'raw')
     if mode != 'raw':
