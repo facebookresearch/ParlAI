@@ -54,7 +54,6 @@ def build_dict(opt):
 def validate(opt, agent, n_iter):
     opt = copy.deepcopy(opt)
     opt['datatype'] = 'valid'
-    opt['batchsize'] = 1
     valid_world = create_task(opt, agent)
 
     logger.info('[ Running validation... ]')
@@ -83,7 +82,7 @@ def main(opt):
     # Log params
     logger.info('[ Created with options: ] %s' %
                 ''.join(['\n{}\t{}'.format(k, v)
-                         for k, v in doc_reader.items()]))
+                         for k, v in doc_reader.opt.items()]))
 
     # Build training world once
     opt['datatype'] = 'train'

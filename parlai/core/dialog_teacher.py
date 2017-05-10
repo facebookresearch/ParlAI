@@ -96,6 +96,7 @@ class DialogTeacher(Teacher):
         if self.lastY is not None:
             loss = self.metrics.update(observation, self.lastY)
             self.lastY = None
+        return observation
 
     def next_example(self):
         num_eps = self.data.num_episodes()

@@ -451,7 +451,7 @@ class BatchWorld(World):
             # which is needed for ordered data (esp valid/test sets)
             override_opts_in_shared(shared, { 'batchindex': i })
             self.worlds.append(shared['world_class'](opt, None, shared))
-        self.batch_observations = [ None ] * len(self.worlds)
+        self.batch_observations = [ None ] * len(self.world.get_agents())
 
     def __iter__(self):
         return self
@@ -460,11 +460,15 @@ class BatchWorld(World):
         if self.epoch_done():
             raise StopIteration()
 
-    def batch_observe(self, index, batch):
-        for w in self.worlds:
+    def batch_observe(self, index, batch_actions):
+        batch_observations = []
+        for i, w in enumerate(self.worlds):
             agents = w.get_agents()
-            agents[index].observe(validate(batch[index]))
-        return batch
+            observation = agents[index].observe(validate(batch_actions[i]))
+            if observation is None:
+                raise ValueError('Agents should return what they observed.')
+            batch_observations.append(observation)
+        return batch_observations
 
     def batch_act(self, index, batch_observation):
         # Given batch observation, do update for agents[index].
@@ -472,20 +476,20 @@ class BatchWorld(World):
         a = self.world.get_agents()[index]
         if (batch_observation is not None and len(batch_observation) > 0 and
                 hasattr(a, 'batch_act')):
-            batch_reply = a.batch_act(batch_observation)
+            batch_actions = a.batch_act(batch_observation)
             # Store the actions locally in each world.
             for w in self.worlds:
                 acts = w.get_acts()
-                acts[index] = batch_reply[index]
+                acts[index] = batch_actions[index]
         else:
             # Reverts to running on each individually.
-            batch_reply = []
+            batch_actions = []
             for w in self.worlds:
                 agents = w.get_agents()
                 acts = w.get_acts()
                 acts[index] = agents[index].act()
-                batch_reply.append(acts[index])
-        return batch_reply
+                batch_actions.append(acts[index])
+        return batch_actions
 
     def parley(self):
         # Collect batch together for each agent, and do update.
