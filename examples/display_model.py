@@ -23,7 +23,7 @@ def main():
 
     # Get command line arguments
     parser = ParlaiParser(True, True)
-    parser.add_argument('-n', '--num_examples', default=10)
+    parser.add_argument('-n', '--num-examples', default=10)
     opt = parser.parse_args()
     # Create model and assign it to the specified task
     agent = create_agent(opt)

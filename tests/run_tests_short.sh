@@ -7,6 +7,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 set -e # stop if any tests fail
+python test_init.py
 python test_import.py
 python test_dict.py
 python test_threadutils.py
