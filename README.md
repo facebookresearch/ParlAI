@@ -237,9 +237,9 @@ Each task folder contains:
 To add your own task:
 - (optional) implement build.py to download any needed data
 - implement agents.py, with at least a DefaultTeacher (extending Teacher or one of its children)
-    - if your data is in FB Dialog format, subclass FbDialogTeacher
+    - if your data is in [FB Dialog format](https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/fbdialog_teacher.py), subclass FbDialogTeacher
     - if not...
-        - if your data is text-based, you can use extend DialogTeacher and thus core.data.TextData, in which case you just need to write your own setup_data function which provides an iterable over the data according to the format described in core.data
+        - if your data consists of fixed logs, you can use extend DialogTeacher and thus core.data.TextData, in which case you just need to write your own setup_data function which provides an iterable over the data according to the format described in core.data
         - if your data uses other fields, write your own act() method which provides observations from your task each time it's called
 
 ### MTurk
