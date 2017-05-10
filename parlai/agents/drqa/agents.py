@@ -149,6 +149,7 @@ class DocReaderAgent(Agent):
             observation['text'] = '\n'.join(dialogue)
         self.observation = observation
         self.episode_done = observation['episode_done']
+        return self.observation
 
     def act(self):
         """Update or predict on a single example (batchsize = 1)."""

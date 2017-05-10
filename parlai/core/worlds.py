@@ -460,8 +460,8 @@ class BatchWorld(World):
         batch_observations = []
         for i, w in enumerate(self.worlds):
             agents = w.get_agents()
-            agents[index].observe(validate(batch_actions[i]))
-            batch_observations.append(agents[index].observation)
+            observation = agents[index].observe(validate(batch_actions[i]))
+            batch_observations.append(observation)
         return batch_observations
 
     def batch_act(self, index, batch_observation):
