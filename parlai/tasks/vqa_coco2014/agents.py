@@ -91,6 +91,7 @@ class OeTeacher(Teacher):
         if self.lastY is not None:
             loss = self.metrics.update(observation, self.lastY)
             self.lastY = None
+        return observation
 
     def act(self):
         if self.datatype == 'train':
