@@ -461,6 +461,8 @@ class BatchWorld(World):
         for i, w in enumerate(self.worlds):
             agents = w.get_agents()
             observation = agents[index].observe(validate(batch_actions[i]))
+            if observation is None:
+                raise ValueError('Agents should return what they observed.')
             batch_observations.append(observation)
         return batch_observations
 

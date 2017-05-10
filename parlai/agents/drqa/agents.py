@@ -149,7 +149,7 @@ class DocReaderAgent(Agent):
             observation['text'] = '\n'.join(dialogue)
         self.observation = observation
         self.episode_done = observation['episode_done']
-        return self.observation
+        return observation
 
     def act(self):
         """Update or predict on a single example (batchsize = 1)."""
@@ -229,7 +229,7 @@ class DocReaderAgent(Agent):
         If a token span cannot be found, return None. Otherwise, torchify.
         """
         # Check if empty input (end of epoch)
-        if not 'text' in ex and ex['episode_done']:
+        if not 'text' in ex:
             return
 
         # Split out document + question

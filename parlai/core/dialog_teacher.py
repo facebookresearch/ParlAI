@@ -109,6 +109,7 @@ class DialogTeacher(Teacher):
                 obs, self.lastY, self.lastLabelCandidates)
             self.lastY = None
             self.lastLabelCandidates = None
+        return observation
 
     def next_example(self):
         num_eps = self.data.num_episodes()
