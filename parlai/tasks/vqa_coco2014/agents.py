@@ -68,6 +68,9 @@ class OeTeacher(Teacher):
         else:
             self._setup_data(data_path, annotation_path)
 
+        # for ordered data in batch mode (especially, for validation and
+        # testing), each teacher in the batch gets a start index and a step
+        # size so they all process disparate sets of the data
         self.step_size = opt.get('batchsize', 1)
         self.data_offset = opt.get('batchindex', 0)
 
@@ -77,6 +80,8 @@ class OeTeacher(Teacher):
         return len(self.ques['questions'])
 
     def reset(self):
+        # Reset the dialog so that it is at the start of the epoch,
+        # and all metrics are reset.
         super().reset()
         self.lastY = None
         self.episode_idx = self.data_offset - self.step_size
