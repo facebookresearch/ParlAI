@@ -54,7 +54,6 @@ def build_dict(opt):
 def validate(opt, agent, n_iter):
     opt = copy.deepcopy(opt)
     opt['datatype'] = 'valid'
-    opt['batchsize'] = 1
     valid_world = create_task(opt, agent)
 
     logger.info('[ Running validation... ]')

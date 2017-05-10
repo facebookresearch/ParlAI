@@ -37,7 +37,7 @@ class ModelEvaluatorAgent(Agent):
         # The rating given by turker
         # Because we only have one turn in this conversation, we don't need to track turn_index
         # print(self.observation)
-        pass
+        return observation
 
     def act(self):
         # All agents act once in the world

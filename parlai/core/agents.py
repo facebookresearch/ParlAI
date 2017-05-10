@@ -49,6 +49,7 @@ class Agent(object):
 
     def observe(self, observation):
         self.observation = observation
+        return observation
 
     def act(self):
         """Return state/action table based upon given observation."""
@@ -266,8 +267,8 @@ class MultiTaskTeacher(Teacher):
         if self.epoch_done():
             raise StopIteration()
 
-    def observe(self, obs):
-        self.tasks[self.task_idx].observe(obs)
+    def observe(self, observation):
+        self.tasks[self.task_idx].observe(observation)
         if self.new_task:
             self.new_task = False
             if self.random:
@@ -281,6 +282,7 @@ class MultiTaskTeacher(Teacher):
                                     start_idx != self.task_idx)
                 if start_idx == self.task_idx:
                     return {'text': 'There are no more examples remaining.'}
+        return observation
 
     def act(self):
         t = self.tasks[self.task_idx].act()
