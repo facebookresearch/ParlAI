@@ -24,7 +24,7 @@ import time
 def main():
     # Get command line arguments
     parser = ParlaiParser()
-    parser.add_argument('-n', '--num_examples', default=10)
+    parser.add_argument('-n', '--num-examples', default=10)
     opt = parser.parse_args()
 
     agent = Agent(opt)

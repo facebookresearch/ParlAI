@@ -18,7 +18,7 @@ class QADataCollectionAgent(Agent):
         self.opt = copy.deepcopy(opt)
         self.id = 'QA Collector'
         self.turn_index = -1
-        
+
         # Initialize a SQuAD teacher agent, which we will later get context from
         module_name = 'parlai.tasks.squad.agents'
         class_name = 'DefaultTeacher'
@@ -40,6 +40,7 @@ class QADataCollectionAgent(Agent):
             # Turker's answer, from the second turn
             # print(self.observation)
             pass
+        return observation
 
     def act(self):
         self.turn_index = (self.turn_index + 1) % 2; # Each turn starts from the QA Collector agent
@@ -55,7 +56,7 @@ class QADataCollectionAgent(Agent):
             context = '\n'.join(qa['text'].split('\n')[:-1])
 
             # Wrap the context with a prompt telling the turker what to do next
-            ad['text'] = (context + 
+            ad['text'] = (context +
                         '\n\nPlease provide a question given this context.')
 
         if self.turn_index == 1:

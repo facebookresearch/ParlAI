@@ -40,57 +40,95 @@ def _path(opt):
     return data_path, annotation_path, image_path
 
 
-def _image_loader(path):
+def _image_loader(opt, path):
     """
     Loads the appropriate image from the image_id and returns PIL Image format.
     """
-    return Image.open(path).convert('RGB')
+    if not opt.get('no_images', False):
+        return Image.open(path).convert('RGB')
+    else:
+        return None
 
 
 class OeTeacher(Teacher):
     """
-    Hand-written VQA Open-Ended teacher, which loads the json vqa data and
-    implements its own `act` method for interacting with student
-    agent.
+    VQA Open-Ended teacher, which loads the json vqa data and implements its
+    own `act` method for interacting with student agent.
     """
     def __init__(self, opt, shared=None):
-        super().__init__(opt)
+        super().__init__(opt, shared)
         self.datatype = opt['datatype']
-        data_path, annotation_path, image_path = _path(opt)
-        self._setup_data(data_path, annotation_path, image_path)
-        self.episode_idx = -1
+        data_path, annotation_path, self.image_path = _path(opt)
+
+        if shared and 'ques' in shared:
+            self.ques = shared['ques']
+            if 'annotation' in shared:
+                self.annotation = shared['annotation']
+        else:
+            self._setup_data(data_path, annotation_path)
+
+        # for ordered data in batch mode (especially, for validation and
+        # testing), each teacher in the batch gets a start index and a step
+        # size so they all process disparate sets of the data
+        self.step_size = opt.get('batchsize', 1)
+        self.data_offset = opt.get('batchindex', 0)
+
+        self.reset()
 
     def __len__(self):
-        return self.len
+        return len(self.ques['questions'])
 
-    # return state/action dict based upon passed state
+    def reset(self):
+        # Reset the dialog so that it is at the start of the epoch,
+        # and all metrics are reset.
+        super().reset()
+        self.lastY = None
+        self.episode_idx = self.data_offset - self.step_size
+
+    def observe(self, observation):
+        """Process observation for metrics."""
+        if self.lastY is not None:
+            loss = self.metrics.update(observation, self.lastY)
+            self.lastY = None
+        return observation
+
     def act(self):
         if self.datatype == 'train':
-            self.episode_idx = random.randrange(self.len)
+            self.episode_idx = random.randrange(len(self))
         else:
-            self.episode_idx = (self.episode_idx + 1) % self.len
+            self.episode_idx = (self.episode_idx + self.step_size) % len(self)
+            if self.episode_idx == len(self) - self.step_size:
+                self.epochDone = True
             # always showing the same index now.
         qa = self.ques['questions'][self.episode_idx]
         question = qa['question']
         image_id = qa['image_id']
-        # question_id = qa['question_id']
-
-        if self.datatype != 'test':
-            anno = self.annotation['annotations'][self.episode_idx]
-            answers = [ans['answer'] for ans in anno['answers']]
-        else:
-            answers = ['fake_answer']
 
         img_path = self.image_path + '%012d.jpg' % (image_id)
 
-        return {
-            'image': _image_loader(img_path),
+        action = {
+            'image': _image_loader(self.opt, img_path),
             'text': question,
-            'labels': answers,
             'episode_done': True
         }
 
-    def _setup_data(self, data_path, annotation_path, image_path):
+        if not self.datatype.startswith('test'):
+            anno = self.annotation['annotations'][self.episode_idx]
+            self.lastY = [ans['answer'] for ans in anno['answers']]
+
+        if self.datatype.startswith('train'):
+            action['labels'] = self.lastY
+
+        return action
+
+    def share(self):
+        shared = super().share()
+        shared['ques'] = self.ques
+        if hasattr(self, 'annotation'):
+            shared['annotation'] = self.annotation
+        return shared
+
+    def _setup_data(self, data_path, annotation_path):
         print('loading: ' + data_path)
         with open(data_path) as data_file:
             self.ques = json.load(data_file)
@@ -100,68 +138,31 @@ class OeTeacher(Teacher):
             with open(annotation_path) as data_file:
                 self.annotation = json.load(data_file)
 
-        self.image_path = image_path
-        self.len = len(self.ques['questions'])
 
-
-class McTeacher(Teacher):
+class McTeacher(OeTeacher):
     """
-    Hand-written VQA Multiple-Choice teacher, which loads the json vqa data and
-    implements its own `act()` method for interacting with student
-    agent.
+    VQA Multiple-Choice teacher, which inherits from OeTeacher but overrides
+    the label and label_candidates fields with multiple choice data.
     """
-    def __init__(self, opt, shared=None):
-        super().__init__(opt)
-        self.datatype = opt['datatype']
-        data_path, annotation_path, image_path = _path(opt)
-        self._setup_data(data_path, annotation_path, image_path)
-        self.episode_idx = -1
 
-    def __len__(self):
-        return self.len
-
-    # return state/action dict based upon passed state
     def act(self):
-        if self.datatype == 'train':
-            self.episode_idx = random.randrange(self.len)
-        else:
-            self.episode_idx = (self.episode_idx + 1) % self.len
+        action = super().act()
 
         qa = self.ques['questions'][self.episode_idx]
-        question = qa['question']
-        image_id = qa['image_id']
-        # question_id = qa['question_id']
         multiple_choices = qa['multiple_choices']
 
-        if self.datatype != 'test':
+        action['label_candidates'] = multiple_choices
+
+        if not self.datatype.startswith('test'):
             anno = self.annotation['annotations'][self.episode_idx]
-            answers = anno['multiple_choice_answer']
-        else:
-            answers = ['fake_answer']
+            self.lastY = [anno['multiple_choice_answer']]
 
-        img_path = self.image_path + '%012d.jpg' % (image_id)
+        if self.datatype.startswith('train'):
+            action['labels'] = self.lastY
 
-        return {
-            'image': _image_loader(img_path),
-            'text': question,
-            'candidates': multiple_choices,
-            'labels': [answers],
-            'episode_done': True
-        }
-
-    def _setup_data(self, data_path, annotation_path, image_path):
-        print('loading: ' + data_path)
-        with open(data_path) as data_file:
-            self.ques = json.load(data_file)
-
-        if self.datatype != 'test':
-            print('loading: ' + annotation_path)
-            with open(annotation_path) as data_file:
-                self.annotation = json.load(data_file)
-
-        self.image_path = image_path
-        self.len = len(self.ques['questions'])
+        return action
 
 
 class DefaultTeacher(McTeacher):
+    # default to Multiple-Choice Teacher
     pass

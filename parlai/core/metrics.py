@@ -100,7 +100,7 @@ class Metrics(object):
             # otherwise do nothing
             return self
 
-    def update_ranking_metrics(self, observation, labels, label_cands):
+    def update_ranking_metrics(self, observation, labels):
         text_cands = observation.get('text_candidates', None)
         if text_cands is None:
             text = observation.get('text', None)
@@ -129,7 +129,7 @@ class Metrics(object):
                     self.metrics['hits@' + str(k)] += 1
 
 
-    def update(self, observation, labels, label_cands):
+    def update(self, observation, labels):
         with self._lock():
             self.metrics['cnt'] += 1
 
@@ -147,7 +147,7 @@ class Metrics(object):
             self.metrics['f1'] += f1
 
         # Ranking metrics.
-        self.update_ranking_metrics(observation, labels, label_cands)
+        self.update_ranking_metrics(observation, labels)
 
         # Return a dict containing the metrics for this specific example.
         # Metrics across all data is stored internally in the class, and
