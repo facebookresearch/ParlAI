@@ -23,7 +23,6 @@ def download(path, url, redownload=True):
     download tar file again if it is present (default true).
     """
     if redownload or not os.path.isfile(path):
-        # only download if file hasn't been downloaded already
         filename = wget.download(url, out=path)
         print() # wget prints download status, without newline
 
