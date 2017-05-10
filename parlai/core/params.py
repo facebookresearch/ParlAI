@@ -71,6 +71,9 @@ class ParlaiParser(object):
             '-nt', '--numthreads', default=1, type=int,
             help='number of threads, e.g. for hogwild')
         self.parser.add_argument(
+            '--no-images', action='store_true',
+            help='do not load any images')
+        self.parser.add_argument(
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
         self.add_parlai_data_path()

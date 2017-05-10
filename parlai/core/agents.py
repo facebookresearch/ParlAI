@@ -167,6 +167,14 @@ class Teacher(Agent):
         self.epochDone = False
         self.metrics.clear()
 
+    def share(self):
+        """If applicable, share any parameters needed to create a shared version
+        of this agent.
+        """
+        shared = super().share()
+        shared['metrics'] = self.metrics
+        return shared
+
 
 def create_task_agent_from_taskname(opt):
     """Creates task agent(s) assuming the input "task_dir:teacher_class"

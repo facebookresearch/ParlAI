@@ -81,11 +81,8 @@ class DialogTeacher(Teacher):
 
     # share datatype, data, metrics, and a lock on the metrics
     def share(self):
-        shared = {}
-        shared['class'] = type(self)
-        shared['opt'] = self.opt
+        shared = super().share()
         shared['data'] = self.data
-        shared['metrics'] = self.metrics
         return shared
 
     def label_candidates(self):

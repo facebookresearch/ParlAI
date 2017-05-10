@@ -67,7 +67,7 @@ def main():
             # pass examples to dictionary
             for _ in world_dict:
                 cnt += 1
-                if cnt > opt['dict_max_exs']:
+                if cnt > opt['dict_max_exs'] and opt['dict_max_exs'] > 0:
                     print('Processed {} exs, moving on.'.format(
                           opt['dict_max_exs']))
                     # don't wait too long...

@@ -41,11 +41,14 @@ def _path(opt):
     return data_path, annotation_path, image_path
 
 
-def _image_loader(path):
+def _image_loader(opt, path):
     """
     Loads the appropriate image from the image_id and returns PIL Image format.
     """
-    return Image.open(path).convert('RGB')
+    if not opt.get('no_images', False):
+        return Image.open(path).convert('RGB')
+    else:
+        return None
 
 
 class OeTeacher(Teacher):
@@ -56,12 +59,22 @@ class OeTeacher(Teacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.datatype = opt['datatype']
-        data_path, annotation_path, image_path = _path(opt)
-        self._setup_data(data_path, annotation_path, image_path)
-        self.episode_idx = -1
+        data_path, annotation_path, self.image_path = _path(opt)
+
+        if shared and 'ques' in shared:
+            self.ques = shared['ques']
+            if 'annotation' in shared:
+                self.annotation = shared['annotation']
+        else:
+            self._setup_data(data_path, annotation_path)
+        self.reset()
 
     def __len__(self):
-        return self.len
+        return len(self.ques['questions'])
+
+    def reset(self):
+        super().reset()
+        self.episode_idx = -1
 
     def observe(self, observation):
         """Process observation for metrics. """
@@ -71,10 +84,10 @@ class OeTeacher(Teacher):
 
     def act(self):
         if self.datatype == 'train':
-            self.episode_idx = random.randrange(self.len)
+            self.episode_idx = random.randrange(len(self))
         else:
-            self.episode_idx = (self.episode_idx + 1) % self.len
-            if self.episode_idx == self.len - 1:
+            self.episode_idx = (self.episode_idx + 1) % len(self)
+            if self.episode_idx == len(self) - 1:
                 self.epochDone = True
             # always showing the same index now.
         qa = self.ques['questions'][self.episode_idx]
@@ -84,7 +97,7 @@ class OeTeacher(Teacher):
         img_path = self.image_path + '%012d.jpg' % (image_id)
 
         action = {
-            'image': _image_loader(img_path),
+            'image': _image_loader(self.opt, img_path),
             'text': question,
             'episode_done': True
         }
@@ -98,7 +111,13 @@ class OeTeacher(Teacher):
 
         return action
 
-    def _setup_data(self, data_path, annotation_path, image_path):
+    def share(self):
+        shared = super().share()
+        shared['ques'] = self.ques
+        if hasattr(self, 'annotation'):
+            shared['annotation'] = self.annotation
+
+    def _setup_data(self, data_path, annotation_path):
         print('loading: ' + data_path)
         with open(data_path) as data_file:
             self.ques = json.load(data_file)
@@ -107,9 +126,6 @@ class OeTeacher(Teacher):
             print('loading: ' + annotation_path)
             with open(annotation_path) as data_file:
                 self.annotation = json.load(data_file)
-
-        self.image_path = image_path
-        self.len = len(self.ques['questions'])
 
 
 class McTeacher(OeTeacher):
