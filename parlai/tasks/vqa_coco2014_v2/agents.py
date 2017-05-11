@@ -106,12 +106,6 @@ class OeTeacher(Teacher):
         question = qa['question']
         image_id = qa['image_id']
 
-        if self.datatype != 'test':
-            anno = self.annotation['annotations'][self.episode_idx]
-            answers = [ans['answer'] for ans in anno['answers']]
-        else:
-            answers = ['fake_answer']
-
         img_path = self.image_path + '%012d.jpg' % (image_id)
 
         action = {
