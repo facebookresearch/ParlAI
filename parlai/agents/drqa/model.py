@@ -76,37 +76,9 @@ class DocReaderModel(object):
 
         # If partially tuning the embeddings, keep the old values
         if self.opt['tune_partial'] > 0:
-            fixed_embedding = embeddings[self.opt['tune_partial'] + 2:]
-            self.network.fixed_embedding = fixed_embedding
-
-    def set_embeddings(self):
-        # Read word embeddings.
-        if 'embedding_file' not in self.opt:
-            logger.warning('[ WARNING: No embeddings provided. '
-                           'Keeping random initialization. ]')
-            return
-        logger.info('[ Loading pre-trained embeddings ]')
-        embeddings = load_embeddings(self.opt, self.word_dict)
-        logger.info('[ Num embeddings = %d ]' % embeddings.size(0))
-
-        # Sanity check dimensions
-        new_size = embeddings.size()
-        old_size = self.network.embedding.weight.size()
-        if new_size[1] != old_size[1]:
-            raise RuntimeError('Embedding dimensions do not match.')
-        if new_size[0] != old_size[0]:
-            logger.warning(
-                '[ WARNING: Number of embeddings changed (%d->%d) ]' %
-                (old_size[0], new_size[0])
-            )
-
-        # Swap weights
-        self.network.embedding.weight.data = embeddings
-
-        # If partially tuning the embeddings, keep the old values
-        if self.opt['tune_partial'] > 0:
-            fixed_embedding = embeddings[self.opt['tune_partial'] + 2:]
-            self.network.fixed_embedding = fixed_embedding
+            if self.opt['tune_partial'] + 2 < embeddings.size(0):
+                fixed_embedding = embeddings[self.opt['tune_partial'] + 2:]
+                self.network.fixed_embedding = fixed_embedding
 
     def update(self, ex):
         # Train mode
@@ -181,8 +153,9 @@ class DocReaderModel(object):
         # Reset fixed embeddings to original value
         if self.opt['tune_partial'] > 0:
             offset = self.opt['tune_partial'] + 2
-            self.network.embedding.weight.data[offset:] \
-                = self.network.fixed_embedding
+            if offset < self.network.embedding.weight.data.size(0):
+                self.network.embedding.weight.data[offset:] \
+                    = self.network.fixed_embedding
 
     def save(self, filename):
         params = {
