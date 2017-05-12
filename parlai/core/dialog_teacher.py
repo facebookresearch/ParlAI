@@ -8,8 +8,9 @@ from .agents import Teacher
 from .thread_utils import SharedTable
 from .metrics import Metrics
 
-import copy
+from PIL import Image
 import random
+import os
 import sys
 import time
 
@@ -32,30 +33,30 @@ class DialogTeacher(Teacher):
 
     def __init__(self, opt, shared=None):
         # Check for setup_data
-        self.opt = copy.deepcopy(opt)
         print("[DialogTeacher initializing.]")
         if not hasattr(self, 'setup_data'):
             raise RuntimeError('Must implement setup_data or subclass a class' +
                                ' which implements it (e.g. FbDialogTeacher)' +
                                ' in order to use this class.')
 
+        super().__init__(opt, shared)
+
         self.datatype = opt['datatype']
         self.startTime = time.time()
-        if not hasattr(self, 'id'):
-            self.id = opt.get('task', 'teacher')
 
         # first initialize any shared objects
         self.random = self.datatype == 'train'
         if shared and shared.get('data'):
             self.data = shared['data']
         else:
-            self.data = DialogData(self.setup_data(opt['datafile']),
+            self.data = DialogData(opt, self.setup_data(opt['datafile']),
                                    cands=self.label_candidates())
 
-        if shared and shared.get('metrics'):
-            self.metrics = shared['metrics']
-        else:
-            self.metrics = Metrics(opt)
+        # for ordered data in batch mode (especially, for validation and
+        # testing), each teacher in the batch gets a start index and a step
+        # size so they all process disparate sets of the data
+        self.step_size = opt.get('batchsize', 1)
+        self.data_offset = opt.get('batchindex', 0)
 
         self.reset()
 
@@ -64,7 +65,7 @@ class DialogTeacher(Teacher):
         # and all metrics are reset.
         self.metrics.clear()
         self.lastY = None
-        self.episode_idx = -1
+        self.episode_idx = self.data_offset - self.step_size
         self.epochDone = False
         self.episode_done = True
 
@@ -81,11 +82,8 @@ class DialogTeacher(Teacher):
 
     # share datatype, data, metrics, and a lock on the metrics
     def share(self):
-        shared = {}
-        shared['class'] = type(self)
-        shared['opt'] = self.opt
+        shared = super().share()
         shared['data'] = self.data
-        shared['metrics'] = self.metrics
         return shared
 
     def label_candidates(self):
@@ -95,36 +93,44 @@ class DialogTeacher(Teacher):
         return None
 
     def observe(self, observation):
-        """Store observation and process for metrics. """
-        self.observation = observation
+        """Process observation for metrics. """
         if self.lastY is not None:
-            obs = self.observation if hasattr(self, 'observation') else {}
-            loss = self.metrics.update(
-                obs, self.lastY, self.lastLabelCandidates)
+            loss = self.metrics.update(observation, self.lastY)
             self.lastY = None
-            self.lastLabelCandidates = None
+        return observation
 
     def next_example(self):
+        num_eps = self.data.num_episodes()
         if self.episode_done:
-            num_eps = self.data.num_episodes()
             if self.random:
                 # select random episode
                 self.episode_idx = random.randrange(num_eps)
             else:
                 # select next episode
-                self.episode_idx = (self.episode_idx + 1) % num_eps
+                self.episode_idx = (self.episode_idx + self.step_size) % num_eps
             self.entry_idx = 0
         else:
             self.entry_idx += 1
-        return self.data.get(self.episode_idx, self.entry_idx)
+
+        action, epoch_done = self.data.get(self.episode_idx, self.entry_idx)
+
+        if self.random:
+            epoch_done = False
+        elif (self.episode_idx + self.step_size >= num_eps and
+                action['episode_done']):
+            # this is used for ordered data to check whether there's more data
+            epoch_done = True
+
+        return action, epoch_done
 
     def act(self):
-        """Send new dialog message. """
+        """Send new dialog message."""
+        if self.epochDone:
+            return { 'episode_done': True }
         action, self.epochDone = self.next_example()
         self.episode_done = action['episode_done']
         action['id'] = self.getID()
         self.lastY = action.get('labels', None)
-        self.lastLabelCandidates = action.get('label_candidates', None)
         if not self.datatype.startswith('train'):
             action.pop('labels', None)
         return action
@@ -148,12 +154,14 @@ class DialogData(object):
     (x, ...), new_episode?
 
     Where...
-    x is a query and possibly context
+    - x is a query and possibly context
     ... can contain additional fields, specifically
-        y is an iterable of label(s) for that query
-        r is the str reward for getting that query correct
-        c is an iterable of label candidates that the student can choose from
-    new_episode? is a boolean value specifying whether that example is the start
+      - y is an iterable of label(s) for that query
+      - r is the str reward for getting that query correct
+      - c is an iterable of label candidates that the student can choose from
+      - i is a str path to an image on disk, which will be loaded by the data
+          class at request-time. should always point to the raw image file.
+    - new_episode? is a boolean value specifying whether that example is the start
     of a new episode. If you don't use episodes set this to True every time.
 
     cands can be set to provide a list of candidate labels for every example
@@ -164,7 +172,11 @@ class DialogData(object):
     or randomly when returning examples to the caller.
     """
 
-    def __init__(self, data_loader, cands=None):
+    def __init__(self, opt, data_loader, cands=None):
+        # self.data is a list of episodes
+        # each episode is a tuple of entries
+        # each entry is a tuple of values for the action/observation table
+        self.opt = opt
         self.data = []
         self._load(data_loader)
         self.cands = None if cands == None else set(sys.intern(c) for c in cands)
@@ -186,41 +198,48 @@ class DialogData(object):
         episode = []
         last_cands = None
         for entry, new in data_loader:
-            if new:
-                if len(episode) > 0:
-                    self.data.append(tuple(episode))
-                    episode = []
-                    last_cands = None
+            if new and len(episode) > 0:
+                self.data.append(tuple(episode))
+                episode = []
+                last_cands = None
 
             # intern all strings so we don't store them more than once
             new_entry = []
             if len(entry) > 0:
-                # process text
+                # process text if available
                 if entry[0] is not None:
                     new_entry.append(sys.intern(entry[0]))
                 else:
                     new_entry.append(None)
                 if len(entry) > 1:
-                    # process labels
+                    # process labels if available
                     if entry[1] is not None:
                         new_entry.append(tuple(sys.intern(e) for e in entry[1]))
                     else:
                         new_entry.append(None)
                     if len(entry) > 2:
-                        # process reward
+                        # process reward if available
                         if entry[2] is not None:
                             new_entry.append(sys.intern(entry[2]))
                         else:
                             new_entry.append(None)
-                        if len(entry) > 3 and entry[3] is not None:
-                            # process label candidates
-                            if last_cands and entry[3] is last_cands:
-                                new_entry.append(
-                                    sys.intern('same as last time'))
+                        if len(entry) > 3:
+                            if entry[3] is not None:
+                                # process label candidates if available
+                                if last_cands and entry[3] is last_cands:
+                                    # if cands are shared, say "same" so we
+                                    # don't store them again
+                                    new_entry.append(
+                                        sys.intern('same as last time'))
+                                else:
+                                    last_cands = entry[3]
+                                    new_entry.append(tuple(
+                                        sys.intern(e) for e in entry[3]))
                             else:
-                                last_cands = entry[3]
-                                new_entry.append(tuple(
-                                    sys.intern(e) for e in entry[3]))
+                                new_entry.append(None)
+                            if len(entry) > 4 and entry[4] is not None:
+                                new_entry.append(sys.intern(entry[4]))
+
             episode.append(tuple(new_entry))
 
         if len(episode) > 0:
@@ -247,6 +266,9 @@ class DialogData(object):
                 table['reward'] = entry[2]
                 if len(entry) > 3:
                     table['label_candidates'] = entry[3]
+                    if len(entry) > 4 and not self.opt.get('no_images', False):
+                        table['image'] = load_image(self.opt, entry[4])
+
 
         if (table.get('labels', None) is not None
             and self.cands is not None):
@@ -268,3 +290,19 @@ class DialogData(object):
         # last entry in this episode
         table['episode_done'] = episode_done
         return table, end_of_data
+
+def load_image(opt, path):
+    if opt.get('no_images', False) or not path:
+        return None
+    mode = opt.get('image_preprocessor', 'raw')
+    if mode != 'raw':
+        prepath, imagefn = os.path.split(path)
+        new_path = os.path.join(prepath, mode, imagefn)
+        if not os.path.isfile(new_path):
+            raise NotImplementedError('image preprocessing mode' +
+                                      '{} not supported yet'.format(mode))
+        else:
+            return Image.open(path)
+    else:
+        # return the image
+        return Image.open(path).convert('RGB')

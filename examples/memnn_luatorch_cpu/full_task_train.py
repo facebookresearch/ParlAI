@@ -20,6 +20,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.worlds import DialogPartnerWorld, HogwildWorld
 
 import copy
+import math
 import os
 import sys
 import time
@@ -30,8 +31,9 @@ def main():
     argparser = ParlaiParser()
     DictionaryAgent.add_cmdline_args(argparser)
     ParsedRemoteAgent.add_cmdline_args(argparser)
-    argparser.add_argument('--num_examples', default=1000, type=int)
-    argparser.add_argument('--num_its', default=100, type=int)
+    argparser.add_argument('--num-examples', default=1000, type=int)
+    argparser.add_argument('--num-its', default=100, type=int)
+    argparser.add_argument('--dict-max-exs', default=10000, type=int)
     parlai_home = os.environ['PARLAI_HOME']
     if '--remote-cmd' not in sys.argv:
         if os.system('which luajit') != 0:
@@ -59,8 +61,18 @@ def main():
             ordered_opt['datatype'] = datatype
             ordered_opt['numthreads'] = 1
             world_dict = create_task(ordered_opt, dictionary)
+
+            print('Dictionary building on {} data.'.format(datatype))
+            cnt = 0
             # pass examples to dictionary
             for _ in world_dict:
+                cnt += 1
+                if cnt > opt['dict_max_exs'] and opt['dict_max_exs'] > 0:
+                    print('Processed {} exs, moving on.'.format(
+                          opt['dict_max_exs']))
+                    # don't wait too long...
+                    break
+
                 world_dict.parley()
 
         # we need to save the dictionary to load it in memnn (sort it by freq)
@@ -72,6 +84,7 @@ def main():
     agent = ParsedRemoteAgent(opt, {'dictionary': dictionary})
     world_train = create_task(opt, agent)
     opt['datatype'] = 'valid'
+    world_valid = create_task(opt, agent)
 
     start = time.time()
     with world_train:
@@ -82,7 +95,7 @@ def main():
             world_train.synchronize()
 
             print('[ validating ]')
-            world_valid = create_task(opt, agent)
+            world_valid.reset()
             for _ in world_valid:  # check valid accuracy
                 world_valid.parley()
 

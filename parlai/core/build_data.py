@@ -18,10 +18,13 @@ def built(path):
     """Checks if '.built' flag has been set for that task."""
     return os.path.isfile(os.path.join(path, '.built'))
 
-def download(path, url):
-    """Downloads file using `wget`."""
-    filename = wget.download(url, out=path)
-    print() # wget prints download status, without newline
+def download(path, url, redownload=True):
+    """Downloads file using `wget`. If redownload is set to false, then will not
+    download tar file again if it is present (default true).
+    """
+    if redownload or not os.path.isfile(path):
+        filename = wget.download(url, out=path)
+        print() # wget prints download status, without newline
 
 def download_request(url, path, fname):
     """Downloads file using `requests`."""
