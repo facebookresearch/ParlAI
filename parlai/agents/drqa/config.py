@@ -54,9 +54,9 @@ def add_cmdline_args(parser):
     parser.add_argument('--display_iter', type=int, default=10,
                         help='Print train error after every \
                               <display_iter> epoches (default 10)')
-    parser.add_argument('--dropout_emb', type=float, default=0.3,
+    parser.add_argument('--dropout_emb', type=float, default=0.4,
                         help='Dropout rate for word embeddings')
-    parser.add_argument('--dropout_rnn', type=float, default=0.3,
+    parser.add_argument('--dropout_rnn', type=float, default=0.4,
                         help='Dropout rate for RNN states')
     parser.add_argument('--dropout_rnn_output', type='bool', default=True,
                         help='Whether to dropout the RNN output')
@@ -81,7 +81,8 @@ def add_cmdline_args(parser):
                         help='Whether to use in_question features')
     parser.add_argument('--use_tf', type='bool', default=True,
                         help='Whether to use tf features')
-
+    parser.add_argument('--use_time', type=int, default=0,
+                        help='Time features marking how recent word was said')
 
 def set_defaults(opt):
     # Embeddings options
@@ -97,16 +98,24 @@ def set_defaults(opt):
 
     # Make sure tune_partial and fix_embeddings are consistent
     if opt['tune_partial'] > 0 and opt['fix_embeddings']:
-        logger.info('Setting fix_embeddings to False as tune_partial > 0.')
+        logger.warning('Setting fix_embeddings to False as tune_partial > 0.')
         opt['fix_embeddings'] = False
 
+    # Make sure fix_embeddings and embedding_file are consistent
+    if opt['fix_embeddings']:
+        if not 'embedding_file' in opt and not 'pretrained_model' in opt:
+            logger.warning(
+                'Setting fix_embeddings to False as embeddings are random.'
+            )
+            opt['fix_embeddings'] = False
 
 def override_args(opt, override_opt):
     # Major model args are reset to the values in override_opt.
     # Non-architecture args (like dropout) are kept.
     args = set(['embedding_file', 'embedding_dim', 'hidden_size', 'doc_layers',
                 'question_layers', 'rnn_type', 'optimizer', 'concat_rnn_layers',
-                'question_merge', 'use_qemb', 'use_in_question', 'use_tf'])
+                'question_merge', 'use_qemb', 'use_in_question', 'use_tf',
+                'vocab_size', 'num_features', 'use_time'])
     for k, v in override_opt.items():
         if k in args:
             opt[k] = v

@@ -12,10 +12,11 @@ from parlai.agents.drqa.agents import DocReaderAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
 
+
 def main(opt):
     # Check options
-    opt['datatype'] = 'valid'
     assert('pretrained_model' in opt)
+    assert(opt['datatype'] in {'test', 'valid'})
 
     # Load document reader
     doc_reader = DocReaderAgent(opt)
@@ -32,8 +33,16 @@ def main(opt):
         valid_world.parley()
 
     metrics = valid_world.report()
-    logger.info('EM = %.2f | F1 = %.2f | exs = %d' %
-                (metrics['accuracy'], metrics['f1'], metrics['total']))
+    if 'tasks' in metrics:
+        for task, t_metrics in metrics['tasks'].items():
+            logger.info('task = %s | EM = %.4f | F1 = %.4f | exs = %d | ' %
+                        (task, t_metrics['accuracy'],
+                         t_metrics['f1'], t_metrics['total']))
+        logger.info('Overall EM = %.4f | exs = %d' %
+                    (metrics['accuracy'], metrics['total']))
+    else:
+        logger.info('EM = %.4f | F1 = %.4f | exs = %d' %
+                    (metrics['accuracy'], metrics['f1'], metrics['total']))
     logger.info('[ Done. Time = %.2f (s) ]' % valid_time.time())
 
 

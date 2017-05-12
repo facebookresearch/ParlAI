@@ -6,8 +6,8 @@
 import torch
 import numpy as np
 import logging
-import regex
 import copy
+import spacy
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -21,25 +21,10 @@ logger = logging.getLogger('DrQA')
 # Dictionary.
 # ------------------------------------------------------------------------------
 
+NLP = spacy.load('en')
 
 class SimpleDictionaryAgent(DictionaryAgent):
-    """Override DictionaryAgent to use a simple and fast regex tokenizer.
-
-    * All tokens are NFD unicode normalized.
-    * Includes a span_tokenize method.
-    * Includes filtering words for which we have no pretrained embedding.
-    * Adapted from NLTK RegexpTokenizer.
-
-    Splits in order of:
-    1) Digit sequences (maybe with $/,/.)
-    3) Unicode alphanumeric/modifier sequences
-    4) Punctuation (single chars)
-    5) Non-whitespace (single chars)
-    """
-    DIGIT = r'\$?[\p{Nd}\.\,]+'
-    ALPHA = r'[\p{L}\p{N}\p{M}]+'
-    PUNCT = r'\p{P}'
-    NONWS = r'[^\p{Z}]'
+    """Override DictionaryAgent to use spaCy tokenizer."""
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -51,12 +36,6 @@ class SimpleDictionaryAgent(DictionaryAgent):
 
     def __init__(self, *args, **kwargs):
         super(SimpleDictionaryAgent, self).__init__(*args, **kwargs)
-
-        # Compile tokenizing regex
-        self._regexp = regex.compile(
-            '%s|%s|%s|%s' %
-            (self.DIGIT, self.ALPHA, self.PUNCT, self.NONWS)
-        )
 
         # Index words in embedding file
         if self.opt['pretrained_words'] and 'embedding_file' in self.opt:
@@ -72,12 +51,12 @@ class SimpleDictionaryAgent(DictionaryAgent):
             self.embedding_words = None
 
     def tokenize(self, text, **kwargs):
-        text = normalize_text(text)
-        return self._regexp.findall(text)
+        tokens = NLP.tokenizer(text)
+        return [t.text for t in tokens]
 
     def span_tokenize(self, text):
-        text = normalize_text(text)
-        return [m.span() for m in self._regexp.finditer(text)]
+        tokens = NLP.tokenizer(text)
+        return [(t.idx, t.idx + len(t.text)) for t in tokens]
 
     def add_to_dict(self, tokens):
         """Builds dictionary from the list of provided tokens.
@@ -117,29 +96,37 @@ class DocReaderAgent(Agent):
         # Set up params/logging/dicts
         self.is_shared = False
         self.id = self.__class__.__name__
+        self.word_dict = word_dict
         self.opt = copy.deepcopy(opt)
         config.set_defaults(self.opt)
-
         if 'pretrained_model' in self.opt:
-            logger.info('[ Loading params from %s ]' %
-                        self.opt['pretrained_model'])
-            params = torch.load(self.opt['pretrained_model'])
-            self.state_dict = params['state_dict']
-            self.dict = params['word_dict']
-            self.feature_dict = params['feature_dict']
-            config.override_args(self.opt, params['config'])
+            self._init_from_saved()
         else:
-            self.state_dict = None
-            self.dict = word_dict
-            self.feature_dict = build_feature_dict(self.opt)
-
-        self.opt['vocab_size'] = len(self.dict)
-        self.opt['num_features'] = len(self.feature_dict)
-
-        # Intialize model
-        logger.info('[ Initializing DocReaderModel ]')
-        self.model = DocReaderModel(self.opt, self.dict, self.state_dict)
+            self._init_from_scratch()
+        if self.opt['cuda']:
+            self.model.cuda()
         self.n_examples = 0
+
+    def _init_from_scratch(self):
+        self.feature_dict = build_feature_dict(self.opt)
+        self.opt['num_features'] = len(self.feature_dict)
+        self.opt['vocab_size'] = len(self.word_dict)
+
+        logger.info('[ Initializing model from scratch ]')
+        self.model = DocReaderModel(self.opt, self.word_dict, self.feature_dict)
+        self.model.set_embeddings()
+
+    def _init_from_saved(self):
+        logger.info('[ Loading model %s ]' % self.opt['pretrained_model'])
+        saved_params = torch.load(self.opt['pretrained_model'])
+
+        # TODO expand dict and embeddings for new data
+        self.word_dict = saved_params['word_dict']
+        self.feature_dict = saved_params['feature_dict']
+        self.state_dict = saved_params['state_dict']
+        config.override_args(self.opt, saved_params['config'])
+        self.model = DocReaderModel(self.opt, self.word_dict,
+                                    self.feature_dict, self.state_dict)
 
     def observe(self, observation):
         observation = copy.deepcopy(observation)
@@ -161,7 +148,9 @@ class DocReaderAgent(Agent):
         ex = self._build_ex(self.observation)
         if ex is None:
             return reply
-        batch = batchify([ex], null=self.dict['<NULL>'])
+        batch = batchify(
+            [ex], null=self.word_dict['<NULL>'], cuda=self.opt['cuda']
+        )
 
         # Either train or predict
         if 'labels' in self.observation:
@@ -193,7 +182,9 @@ class DocReaderAgent(Agent):
             return batch_reply
 
         # Else, use what we have (hopefully everything).
-        batch = batchify(examples, null=self.dict['<NULL>'])
+        batch = batchify(
+            examples, null=self.word_dict['<NULL>'], cuda=self.opt['cuda']
+        )
 
         # Either train or predict
         if 'labels' in observations[0]:
@@ -209,16 +200,7 @@ class DocReaderAgent(Agent):
 
     def save(self, filename):
         """Save the parameters of the agent to a file."""
-        params = {
-            'state_dict': {
-                'network': self.model.network.state_dict(),
-                'optimizer': self.model.optimizer.state_dict(),
-            },
-            'word_dict': self.dict,
-            'feature_dict': self.feature_dict,
-            'config': self.opt,
-        }
-        torch.save(params, filename)
+        self.model.save(self.opt['model_file'])
 
     # --------------------------------------------------------------------------
     # Helper functions.
@@ -236,8 +218,8 @@ class DocReaderAgent(Agent):
         inputs = {}
         fields = ex['text'].split('\n')
         document, question = ' '.join(fields[:-1]), fields[-1]
-        inputs['document'] = self.dict.tokenize(document)
-        inputs['question'] = self.dict.tokenize(question)
+        inputs['document'] = self.word_dict.tokenize(document)
+        inputs['question'] = self.word_dict.tokenize(question)
         inputs['target'] = None
 
         # Find targets (if labels provided).
@@ -249,10 +231,10 @@ class DocReaderAgent(Agent):
                 return
 
         # Vectorize.
-        inputs = vectorize(self.opt, inputs, self.dict, self.feature_dict)
+        inputs = vectorize(self.opt, inputs, self.word_dict, self.feature_dict)
 
         # Return inputs with original text + spans (keep for prediction)
-        return inputs + (document, self.dict.span_tokenize(document))
+        return inputs + (document, self.word_dict.span_tokenize(document))
 
     def _find_target(self, document, labels):
         """Find the start/end token span for all labels in document.
@@ -265,7 +247,7 @@ class DocReaderAgent(Agent):
                         yield(i, j)
         targets = []
         for label in labels:
-            targets.extend(_positions(document, self.dict.tokenize(label)))
+            targets.extend(_positions(document, self.word_dict.tokenize(label)))
         if len(targets) == 0:
             return
         return targets[np.random.choice(len(targets))]

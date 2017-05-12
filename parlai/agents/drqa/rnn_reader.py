@@ -5,15 +5,14 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 import torch
 import torch.nn as nn
-import numpy as np
-from .layers import *
+from . import layers
 
 
 class RnnDocReader(nn.Module):
     """Network for the Document Reader module of DrQA."""
     RNN_TYPES = {'lstm': nn.LSTM, 'gru': nn.GRU, 'rnn': nn.RNN}
 
-    def __init__(self, opt, embeddings=None, tune_indices=None, padding_idx=0):
+    def __init__(self, opt, padding_idx=0):
         super(RnnDocReader, self).__init__()
         # Store config
         self.opt = opt
@@ -23,26 +22,22 @@ class RnnDocReader(nn.Module):
                                       opt['embedding_dim'],
                                       padding_idx=padding_idx)
 
-        # Use pretrained embeddings...
-        if embeddings is not None:
-            assert(embeddings.size() == self.embedding.weight.size())
-            self.embedding.weight = nn.Parameter(embeddings)
-            # ...and maybe keep them fixed
-            if opt['fix_embeddings']:
-                for p in self.embedding.parameters():
-                    p.requires_grad = False
+        # ...(maybe) keep them fixed
+        if opt['fix_embeddings']:
+            for p in self.embedding.parameters():
+                p.requires_grad = False
 
-            # ...or save original + indices for keeping some of them fixed
-            elif tune_indices:
-                embedding_mask = torch.ByteTensor(embeddings.size()).fill_(1)
-                for index in tune_indices:
-                    embedding_mask[index].fill_(0)
-                self.register_buffer('fixed_embedding', embeddings.clone())
-                self.register_buffer('embedding_mask', embedding_mask)
+        # Register a buffer to (maybe) fill later for keeping *some* fixed
+        if opt['tune_partial'] > 0:
+            buffer_size = torch.Size((
+                opt['vocab_size'] - opt['tune_partial'] - 2,
+                opt['embedding_dim']
+            ))
+            self.register_buffer('fixed_embedding', torch.Tensor(buffer_size))
 
         # Projection for attention weighted question
         if opt['use_qemb']:
-            self.qemb_match = SeqAttnMatch(opt['embedding_dim'])
+            self.qemb_match = layers.SeqAttnMatch(opt['embedding_dim'])
 
         # Input size to RNN: word emb + question emb + manual features
         doc_input_size = opt['embedding_dim'] + opt['num_features']
@@ -50,7 +45,7 @@ class RnnDocReader(nn.Module):
             doc_input_size += opt['embedding_dim']
 
         # RNN document encoder
-        self.doc_rnn = StackedBRNN(
+        self.doc_rnn = layers.StackedBRNN(
             input_size=doc_input_size,
             hidden_size=opt['hidden_size'],
             num_layers=opt['doc_layers'],
@@ -62,7 +57,7 @@ class RnnDocReader(nn.Module):
         )
 
         # RNN question encoder
-        self.question_rnn = StackedBRNN(
+        self.question_rnn = layers.StackedBRNN(
             input_size=opt['embedding_dim'],
             hidden_size=opt['hidden_size'],
             num_layers=opt['question_layers'],
@@ -84,14 +79,14 @@ class RnnDocReader(nn.Module):
         if opt['question_merge'] not in ['avg', 'self_attn']:
             raise NotImplementedError('merge_mode = %s' % opt['merge_mode'])
         if opt['question_merge'] == 'self_attn':
-            self.self_attn = LinearSeqAttn(question_hidden_size)
+            self.self_attn = layers.LinearSeqAttn(question_hidden_size)
 
         # Bilinear attention for span start/end
-        self.start_attn = BilinearSeqAttn(
+        self.start_attn = layers.BilinearSeqAttn(
             doc_hidden_size,
             question_hidden_size,
         )
-        self.end_attn = BilinearSeqAttn(
+        self.end_attn = layers.BilinearSeqAttn(
             doc_hidden_size,
             question_hidden_size,
         )
@@ -128,20 +123,12 @@ class RnnDocReader(nn.Module):
         # Encode question with RNN + merge hiddens
         question_hiddens = self.question_rnn(x2_emb, x2_mask)
         if self.opt['question_merge'] == 'avg':
-            q_merge_weights = uniform_weights(question_hiddens, x2_mask)
+            q_merge_weights = layers.uniform_weights(question_hiddens, x2_mask)
         elif self.opt['question_merge'] == 'self_attn':
             q_merge_weights = self.self_attn(question_hiddens, x2_mask)
-        question_hidden = weighted_avg(question_hiddens, q_merge_weights)
+        question_hidden = layers.weighted_avg(question_hiddens, q_merge_weights)
 
         # Predict start and end positions
         start_scores = self.start_attn(doc_hiddens, question_hidden, x1_mask)
         end_scores = self.end_attn(doc_hiddens, question_hidden, x1_mask)
         return start_scores, end_scores
-
-    def partial_reset(self):
-        # Reset fixed embeddings to original value
-        if self.opt['tune_partial'] > 0:
-            self.embedding.weight.data.masked_copy_(
-                self.embedding_mask,
-                self.fixed_embedding.masked_select(self.embedding_mask)
-            )

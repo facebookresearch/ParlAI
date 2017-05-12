@@ -4,7 +4,6 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 import torch
-import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import numpy as np
@@ -19,50 +18,28 @@ logger = logging.getLogger('DrQA')
 
 class DocReaderModel(object):
     """High level model that handles intializing the underlying network
-    architecture, updating train examples, and predicting valid examples.
+    architecture, saving, updating examples, and predicting examples.
     """
 
-    def __init__(self, opt, word_dict, state_dict=None):
-        # Book keeping.
+    def __init__(self, opt, word_dict, feature_dict, state_dict=None):
+        # Book-keeping.
         self.opt = opt
-        self.train_loss = AverageMeter()
+        self.word_dict = word_dict
+        self.feature_dict = feature_dict
         self.updates = 0
-
-        # Word embeddings.
-        if 'embedding_file' in opt:
-            logger.info('[ Loading pre-trained embeddings ]')
-            embeddings = load_embeddings(opt, word_dict)
-            logger.info('[ Num embeddings = %d ]' % embeddings.size(0))
-        else:
-            embeddings = None
-
-        # Fine-tuning special words.
-        if self.opt['tune_partial'] > 0:
-            logger.info('[ Tuning top %d words ]' % self.opt['tune_partial'])
-            tune_partial = self.opt['tune_partial']
-            for i in range(0, 5):
-                logger.info(word_dict[i])
-            logger.info('...')
-            for i in range(tune_partial - 5, tune_partial):
-                logger.info(word_dict[i])
-            tune_indices = list(range(tune_partial))
-        else:
-            tune_indices = None
+        self.train_loss = AverageMeter()
 
         # Building network.
-        logger.info('[ Initializing model ]')
-        self.network = RnnDocReader(
-            opt, embeddings, tune_indices, word_dict['<NULL>']
-        )
+        self.network = RnnDocReader(opt)
         if state_dict:
+            new_state = set(self.network.state_dict().keys())
+            for k in list(state_dict['network'].keys()):
+                if not k in new_state:
+                    del state_dict['network'][k]
             self.network.load_state_dict(state_dict['network'])
-        if opt['cuda']:
-            self.network.cuda()
 
         # Building optimizer.
-        logger.info('[ Make optimizer (%s) ]' % opt['optimizer'])
-        parameters = filter(lambda p: p.requires_grad,
-                            self.network.parameters())
+        parameters = [p for p in self.network.parameters() if p.requires_grad]
         if opt['optimizer'] == 'sgd':
             self.optimizer = optim.SGD(parameters, opt['learning_rate'],
                                        momentum=opt['momentum'],
@@ -72,8 +49,64 @@ class DocReaderModel(object):
                                           weight_decay=opt['weight_decay'])
         else:
             raise RuntimeError('Unsupported optimizer: %s' % opt['optimizer'])
-        if state_dict and 'optimizer' in state_dict:
-            self.optimizer.load_state_dict(state_dict['optimizer'])
+
+    def set_embeddings(self):
+        # Read word embeddings.
+        if 'embedding_file' not in self.opt:
+            logger.warning('[ WARNING: No embeddings provided. '
+                           'Keeping random initialization. ]')
+            return
+        logger.info('[ Loading pre-trained embeddings ]')
+        embeddings = load_embeddings(self.opt, self.word_dict)
+        logger.info('[ Num embeddings = %d ]' % embeddings.size(0))
+
+        # Sanity check dimensions
+        new_size = embeddings.size()
+        old_size = self.network.embedding.weight.size()
+        if new_size[1] != old_size[1]:
+            raise RuntimeError('Embedding dimensions do not match.')
+        if new_size[0] != old_size[0]:
+            logger.warning(
+                '[ WARNING: Number of embeddings changed (%d->%d) ]' %
+                (old_size[0], new_size[0])
+            )
+
+        # Swap weights
+        self.network.embedding.weight.data = embeddings
+
+        # If partially tuning the embeddings, keep the old values
+        if self.opt['tune_partial'] > 0:
+            fixed_embedding = embeddings[self.opt['tune_partial'] + 2:]
+            self.network.fixed_embedding = fixed_embedding
+
+    def set_embeddings(self):
+        # Read word embeddings.
+        if 'embedding_file' not in self.opt:
+            logger.warning('[ WARNING: No embeddings provided. '
+                           'Keeping random initialization. ]')
+            return
+        logger.info('[ Loading pre-trained embeddings ]')
+        embeddings = load_embeddings(self.opt, self.word_dict)
+        logger.info('[ Num embeddings = %d ]' % embeddings.size(0))
+
+        # Sanity check dimensions
+        new_size = embeddings.size()
+        old_size = self.network.embedding.weight.size()
+        if new_size[1] != old_size[1]:
+            raise RuntimeError('Embedding dimensions do not match.')
+        if new_size[0] != old_size[0]:
+            logger.warning(
+                '[ WARNING: Number of embeddings changed (%d->%d) ]' %
+                (old_size[0], new_size[0])
+            )
+
+        # Swap weights
+        self.network.embedding.weight.data = embeddings
+
+        # If partially tuning the embeddings, keep the old values
+        if self.opt['tune_partial'] > 0:
+            fixed_embedding = embeddings[self.opt['tune_partial'] + 2:]
+            self.network.fixed_embedding = fixed_embedding
 
     def update(self, ex):
         # Train mode
@@ -109,7 +142,7 @@ class DocReaderModel(object):
         self.updates += 1
 
         # Reset any partially fixed parameters (e.g. rare words)
-        self.network.partial_reset()
+        self.reset_parameters()
 
     def predict(self, ex):
         # Eval mode
@@ -143,3 +176,27 @@ class DocReaderModel(object):
             predictions.append(text[i][s_offset:e_offset])
 
         return predictions
+
+    def reset_parameters(self):
+        # Reset fixed embeddings to original value
+        if self.opt['tune_partial'] > 0:
+            offset = self.opt['tune_partial'] + 2
+            self.network.embedding.weight.data[offset:] \
+                = self.network.fixed_embedding
+
+    def save(self, filename):
+        params = {
+            'state_dict': {
+                'network': self.network.state_dict(),
+            },
+            'word_dict': self.word_dict,
+            'feature_dict': self.feature_dict,
+            'config': self.opt,
+        }
+        try:
+            torch.save(params, filename)
+        except BaseException:
+            logger.warn('[ WARN: Saving failed... continuing anyway. ]')
+
+    def cuda(self):
+        self.network.cuda()

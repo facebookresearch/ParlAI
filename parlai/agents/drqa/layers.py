@@ -1,3 +1,4 @@
+
 # Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
@@ -6,7 +7,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
 from torch.autograd import Variable
 
 
@@ -81,9 +81,8 @@ class StackedBRNN(nn.Module):
         return output
 
     def _forward_padded(self, x, x_mask):
-        """Slower, but more precise, encoding that handles padding.
-        ~3x slower to train, ~1.5x slower to predict.
-        """
+        """Slower (significantly), but more precise,
+        encoding that handles padding."""
         # Compute sorted sequence lengths
         lengths = x_mask.data.eq(0).long().sum(1).squeeze()
         _, idx_sort = torch.sort(lengths, dim=0, descending=True)
@@ -99,21 +98,26 @@ class StackedBRNN(nn.Module):
         # Transpose batch and sequence dims
         x = x.transpose(0, 1)
 
+        # Pack it up
+        rnn_input = nn.utils.rnn.pack_padded_sequence(x, lengths)
+
         # Encode all layers
-        outputs = [x]
+        outputs = [rnn_input]
         for i in range(self.num_layers):
             rnn_input = outputs[-1]
 
             # Apply dropout to input
             if self.dropout_rate > 0:
-                rnn_input = F.dropout(rnn_input,
-                                      p=self.dropout_rate,
-                                      training=self.training)
-            # Pack, forward, unpack
-            rnn_input = nn.utils.rnn.pack_padded_sequence(rnn_input, lengths)
-            rnn_output = self.rnns[i](rnn_input)[0]
-            rnn_output = nn.utils.rnn.pad_packed_sequence(rnn_output)[0]
-            outputs.append(rnn_output)
+                dropout_input = F.dropout(rnn_input.data,
+                                          p=self.dropout_rate,
+                                          training=self.training)
+                rnn_input = nn.utils.rnn.PackedSequence(dropout_input,
+                                                        rnn_input.batch_sizes)
+            outputs.append(self.rnns[i](rnn_input)[0])
+
+        # Unpack everything
+        for i, o in enumerate(outputs[1:], 1):
+            outputs[i] = nn.utils.rnn.pad_packed_sequence(o)[0]
 
         # Concat hidden layers or take final
         if self.concat_layers:
