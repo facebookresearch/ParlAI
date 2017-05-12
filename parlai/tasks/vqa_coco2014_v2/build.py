@@ -37,31 +37,28 @@ def buildImage(opt):
 
 
 def build(opt):
-    dpath = os.path.join(opt['datapath'], 'VQA-COCO2014')
+    dpath = os.path.join(opt['datapath'], 'VQA-COCO2014-v2')
 
     if not build_data.built(dpath):
         print('[building data: ' + dpath + ']')
-        for item in os.listdir(dpath):
-            item = os.path.join(dpath, item)
-            if os.path.isdir(item):
-                build_data.remove_dir(item)
+        build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname1 = 'Questions_Train_mscoco.zip'
-        fname2 = 'Questions_Val_mscoco.zip'
-        fname3 = 'Questions_Test_mscoco.zip'
+        fname1 = 'v2_Questions_Train_mscoco.zip'
+        fname2 = 'v2_Questions_Val_mscoco.zip'
+        fname3 = 'v2_Questions_Test_mscoco.zip'
 
-        fname4 = 'Annotations_Val_mscoco.zip'
-        fname5 = 'Annotations_Train_mscoco.zip'
+        fname4 = 'v2_Annotations_Val_mscoco.zip'
+        fname5 = 'v2_Annotations_Train_mscoco.zip'
 
         url = 'http://visualqa.org/data/mscoco/vqa/'
-        build_data.download(os.path.join(dpath, fname1), url + fname1)
-        build_data.download(os.path.join(dpath, fname2), url + fname2)
-        build_data.download(os.path.join(dpath, fname3), url + fname3)
+        build_data.download(dpath, url + fname1)
+        build_data.download(dpath, url + fname2)
+        build_data.download(dpath, url + fname3)
 
-        build_data.download(os.path.join(dpath, fname4), url + fname4)
-        build_data.download(os.path.join(dpath, fname5), url + fname5)
+        build_data.download(dpath, url + fname4)
+        build_data.download(dpath, url + fname5)
 
         build_data.untar(dpath, fname1)
         build_data.untar(dpath, fname2)
