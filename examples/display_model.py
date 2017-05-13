@@ -37,6 +37,7 @@ def main():
             if world.epoch_done():
                 print("EPOCH DONE")
                 break
+    world.shutdown()
 
 if __name__ == '__main__':
     main()
