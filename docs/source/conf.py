@@ -109,8 +109,6 @@ html_static_path = ['_static']
 
 html_style = 'css/parlai_theme.css'
 
-# html_logo = '_static/img/parlai-logo-text.png'
-
 
 # -- Options for HTMLHelp output ------------------------------------------
 
