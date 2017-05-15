@@ -47,8 +47,9 @@ Observations are structured as a python `dict` with the following fields:
     :width: 60 %
 
 
-All of these fields are technically optional, and each task is free to use them
-as appropriate.
+All of these fields are technically optional, and each task should use them
+according to what kind of information is available in that task (for example,
+not all tasks contain explicit rewards, or a set of candidate labels to choose from).
 
 Teachers
 ^^^^^^^^
@@ -58,7 +59,7 @@ functions like any agent does, but they also keep track of metrics which they
 return via a ``report`` function, such as the number of questions they have posed
 or how many times those questions have been answered correctly.
 
-Datasets will implement a subclass of Teacher, providing functions which
+Datasets typically implement a subclass of Teacher, providing functions which
 download the dataset from its source if necessary, read the file into the
 right format, and provide an example with each call to the teacher's ``act``
 function.
@@ -116,7 +117,7 @@ fashion.
 Advanced Worlds
 ^^^^^^^^^^^^^^^
 
-We also include a few more advanced worlds: in particular, we include both a
+We also include a few more advanced "container" worlds: in particular, we include both a
 BatchWorld and a HogwildWorld. These worlds are automatically used when either
 the ``numthreads`` parameter or the ``batchsize`` parameter are set to greater
 than one. Some extra functionality is needed to get these to work on the side
