@@ -47,7 +47,6 @@ def build_dict(opt):
     dictionary.sort()
     logger.info('[ Dictionary built. ]')
     logger.info('[ Num words = %d ]' % len(dictionary))
-
     return dictionary
 
 
@@ -62,8 +61,19 @@ def validate(opt, agent, n_iter):
         valid_world.parley()
 
     metrics = valid_world.report()
-    logger.info('[valid] iter = %d | EM = %.2f | F1 = %.2f | exs = %d' %
-                (n_iter, metrics['accuracy'], metrics['f1'], metrics['total']))
+    if 'tasks' in metrics:
+        for task, t_metrics in metrics['tasks'].items():
+            logger.info('[valid] task = %s | iter = %d | exs = %d | ' %
+                        (task, n_iter, t_metrics['total']) +
+                        'EM = %.4f | F1 = %.4f' %
+                        (t_metrics['accuracy'], t_metrics['f1']))
+        logger.info('[valid] iter = %d | overall EM = %.4f | exs = %d' %
+                    (n_iter, metrics['accuracy'], metrics['total']))
+    else:
+        logger.info(
+            '[valid] iter = %d | EM = %.4f | F1 = %.4f | exs = %d' %
+            (n_iter, metrics['accuracy'], metrics['f1'], metrics['total'])
+        )
     logger.info('[ Done. Time = %.2f (s) ]' % valid_time.time())
 
     return metrics[opt['valid_metric']]
@@ -107,13 +117,17 @@ def main(opt):
         valid_metric = validate(opt, doc_reader, iteration)
         if valid_metric > best_valid:
             logger.info(
-                '[ Best eval %d: %s = %.2f (old = %.2f) ]' %
+                '[ Best eval %d: %s = %.4f (old = %.4f) ]' %
                 (iteration, opt['valid_metric'], valid_metric, best_valid)
             )
             best_valid = valid_metric
             impatience = 0
             if 'model_file' in opt:
                 doc_reader.save(opt['model_file'])
+
+            if valid_metric == 1:
+                logger.info('[ Task solved! Stopping. ]')
+                break
         else:
             impatience += 1
 

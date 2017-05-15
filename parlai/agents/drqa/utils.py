@@ -47,6 +47,10 @@ def build_feature_dict(opt):
         feature_dict['in_question_uncased'] = len(feature_dict)
     if opt['use_tf']:
         feature_dict['tf'] = len(feature_dict)
+    if opt['use_time'] > 0:
+        for i in range(opt['use_time'] - 1):
+            feature_dict['time=T%d' % (i + 1)] = len(feature_dict)
+        feature_dict['time>=T%d' % opt['use_time']] = len(feature_dict)
     return feature_dict
 
 
@@ -81,6 +85,19 @@ def vectorize(opt, ex, word_dict, feature_dict):
         for i, w in enumerate(ex['document']):
             features[i][feature_dict['tf']] = counter[w.lower()] * 1.0 / l
 
+    if opt['use_time'] > 0:
+        # Counting from the end, each (full-stop terminated) sentence gets
+        # its own time identitfier.
+        sent_idx = 0
+        def _full_stop(w):
+            return w in {'.', '?', '!'}
+        for i, w in reversed(list(enumerate(ex['document']))):
+            sent_idx = sent_idx + 1 if _full_stop(w) else max(sent_idx, 1)
+            if sent_idx < opt['use_time']:
+                features[i][feature_dict['time=T%d' % sent_idx]] = 1.0
+            else:
+                features[i][feature_dict['time>=T%d' % opt['use_time']]] = 1.0
+
     # Maybe return without target
     if ex['target'] is None:
         return document, features, question
@@ -92,7 +109,7 @@ def vectorize(opt, ex, word_dict, feature_dict):
     return document, features, question, start, end
 
 
-def batchify(batch, null=0):
+def batchify(batch, null=0, cuda=False):
     """Collate inputs into batches."""
     NUM_INPUTS = 3
     NUM_TARGETS = 2
@@ -122,6 +139,14 @@ def batchify(batch, null=0):
     for i, q in enumerate(questions):
         x2[i, :q.size(0)].copy_(q)
         x2_mask[i, :q.size(0)].fill_(0)
+
+    # Pin memory if cuda
+    if cuda:
+        x1 = x1.pin_memory()
+        x1_f = x1_f.pin_memory()
+        x1_mask = x1_mask.pin_memory()
+        x2 = x2.pin_memory()
+        x2_mask = x2_mask.pin_memory()
 
     # Maybe return without targets
     if len(batch[0]) == NUM_INPUTS + NUM_EXTRA:
