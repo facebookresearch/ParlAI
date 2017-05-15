@@ -1,4 +1,4 @@
-<p align="center"><img width="40%" src="docs/source/\_static/img/parlai.png" /></p>
+<p align="center"><img width="50%" src="docs/source/\_static/img/parlai.png" /></p>
 
 --------------------------------------------------------------------------------
 
@@ -87,22 +87,25 @@ python examples/drqa/train.py -t squad -bs 32
 
 ParlAI currently requires Python3.
 
-Dependencies of the core modules are listed in requirement.txt. Several models included (in parlai/agents) have additional requirements such as [PyTorch](http://pytorch.org/) or [Lua Torch](http://torch.ch/)--any python requirements in these modules are listed in requirements_ext.txt.
+Dependencies of the core modules are listed in requirement.txt.
+
+Several models included (in parlai/agents) have additional requirements.
+DrQA requires installing [PyTorch](http://pytorch.org/), and the MemNN model requires installing [Lua Torch](http://torch.ch/). See their respective websites for installation instructions.
 
 ## Installing ParlAI
 
-First, clone the repository, then enter the cloned directory.
+Run the following commands to clone the repository and install ParlAI:
 
-Linked install:
-Run `python setup.py develop` to link the cloned directory to your site-packages.
-This is the recommended installation procedure if you plan on modifying any parlai code for your run or submitting a pull request, especially if you want to add another task to repository.
-All needed data will be downloaded to ./data, and any model files (currently just the memnn model) if requested will be downloaded to ./downloads.
+```bash
+git clone https://github.com/facebookresearch/ParlAI.git ~/ParlAI
+cd ~/ParlAI; python setup.py develop
+```
 
-Copied install (use parlai only as a dependency):
-Run `python setup.py install` to copy contents to your site-packages folder.
-All data will be downloaded to python's `site-packages` folder by default (can override via the command-line), and to make any changes to the code you will need to run install again.
-If you want to just use parlai as a dependency (e.g. to access the tasks or the core code), this works fine.
-If you want to clear out the downloaded data, then delete the `data` and `downloads` (if applicable) folder in `site-packages/parlai`.
+This will link the cloned directory to your site-packages.
+
+This is the recommended installation procedure, as it provides ready access to the examples and allows you to modify anything you might need. This is especially useful if you if you want to submit another task to the repository.
+
+All needed data will be downloaded to ~/ParlAI/data, and any non-data files (such as the MemNN code) if requested will be downloaded to ~/ParlAI/downloads. If you need to clear out the space used by these files, you can safely delete these directories and any files needed will be downloaded again.
 
 ## Worlds, agents and teachers
 The main concepts (classes) in ParlAI:
