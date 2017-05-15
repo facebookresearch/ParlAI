@@ -214,3 +214,37 @@ Tasks are specified in the following format:
 
 * '-t #qa' specifies the 'qa' category, loading up all tasks with that category
   in the 'parlai/core/task_list.py' file.
+
+
+Validation and Testing
+^^^^^^^^^^^^^^^^^^^^^^
+
+During validation and testing, the labels aren't provided to the agent. This
+mode can be set from the command line with '-dt valid'.
+
+Now, the agent no longer has anything to say. For datasets which provide a set
+of candidates to choose from ('label_candidates' in the observation dict), we
+can give our agent a chance of getting the answer correct by replying with one
+of those.
+
+Let's modify our agent's act function to select a random label candidate when
+the labels aren't available:
+
+.. code-block:: python
+
+    import random
+
+    def act(self):
+        reply = {'id': self.id}
+        if 'labels' in self.observation:
+            reply['text'] = ', '.join(self.observation['labels'])
+        elif 'label_candidates' in self.observation:
+            cands = self.observation['label_candidates']
+            reply['text'] = random.choice(cands)
+        else:
+            reply['text'] = "I don't know."
+        return reply
+
+
+Of course, we can do much better than randomly guessing. In the next tutorial,
+we'll set up a better agent which learns from the training data.
