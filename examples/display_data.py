@@ -33,9 +33,9 @@ def main():
     with world:
         for k in range(int(opt['num_examples'])):
             world.parley()
-            print(world.display() + "\n~~")
+            print(world.display() + '\n~~')
             if world.epoch_done():
-                print("EPOCH DONE")
+                print('EPOCH DONE')
                 break
 
 if __name__ == '__main__':
