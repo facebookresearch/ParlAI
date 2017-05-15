@@ -49,7 +49,7 @@ Train a simple cpu-based memory network on the "10k training examples" bAbI task
 python memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -nt 8
 ```
 
-Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
+Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (requires pytorch):
 ```bash
 python drqa/train.py -t squad -bs 32
 ```
