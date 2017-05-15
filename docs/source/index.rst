@@ -19,11 +19,16 @@ ParlAI is a one-stop-shop for dialog research.
 
 .. toctree::
    :maxdepth: 1
+   :caption: Tutorials
+
+   basic_tutorial
+
+.. toctree::
+   :maxdepth: 1
    :caption: Core Library
 
    agents
    build_data
-   data
    dialog
    dict
    fbdialog
