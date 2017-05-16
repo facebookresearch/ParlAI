@@ -95,3 +95,9 @@ ENV/
 
 # OS X files
 .DS_Store
+
+# Editor temporaries
+*.swn
+*.swo
+*.swp
+*~
