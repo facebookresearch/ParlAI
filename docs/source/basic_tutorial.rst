@@ -28,7 +28,7 @@ Follow the step by step guide on how to download and install ParlAI.
 	pip install -r requirements.txt
 3. Install ParlAI on Linux:
 .. code-bock:: bash 
-	python setup.py install```
+	python setup.py install
 4. Several models has additional requirements:
 	a. DrQA requires installing `PyTorch <http://pytorch.org/>`_
 	b. MemNN requires installing `Lua Torch <http://torch.ch/docs/getting-started.html>`_
