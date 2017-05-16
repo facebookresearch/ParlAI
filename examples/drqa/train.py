@@ -23,6 +23,7 @@ import numpy as np
 import logging
 import copy
 import sys
+import random
 
 from parlai.agents.drqa.agents import SimpleDictionaryAgent
 from parlai.agents.drqa.agents import DocReaderAgent
@@ -170,6 +171,7 @@ if __name__ == '__main__':
 
     # Set random state
     np.random.seed(opt['random_seed'])
+    random.seed(opt['random_seed'])
     torch.manual_seed(opt['random_seed'])
     if opt['cuda']:
         torch.cuda.manual_seed(opt['random_seed'])
