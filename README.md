@@ -190,8 +190,8 @@ The core library contains the following files:
 - **worlds.py**: contains a set of basic worlds for tasks to take place inside
   - **_World_**: base class for all other worlds, implements `parley`, `shutdown`, `__enter__`, and `__exit__`
   - **_DialogPartnerWorld_**: default world for turn-based two-agent communication
-        MultiAgentDialogWorld: round-robin turn-based agent communication for two or more agents
-        HogwildWorld: default world for setting up a separate world for every thread when using multiple threads (processes)
+  - **_MultiAgentDialogWorld_**: round-robin turn-based agent communication for two or more agents
+  - **_HogwildWorld_**: default world for setting up a separate world for every thread when using multiple threads (processes)
 
 
 ### Agents
