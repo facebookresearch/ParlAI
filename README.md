@@ -199,10 +199,10 @@ The core library contains the following files:
 The agents directory contains agents that have been approved into the ParlAI framework for shared use.
 Currently available within this directory:
 
-- **drqa**: an attentive LSTM model DrQA (https://arxiv.org/abs/1704.00051) implemented in PyTorch that has competitive results on the SQuAD dataset amongst others.
+- **drqa**: an attentive [LSTM model DrQA](https://arxiv.org/abs/1704.00051) implemented in PyTorch that has competitive results on the SQuAD dataset amongst others.
 - **memnn**: code for an end-to-end memory network in Lua Torch
 - **remote_agent**: basic class for any agent connecting over ZMQ (memnn_luatorch_cpu uses this)
-- **ir_baseline**: simple information retrieval baseline that scores candidate responses with TFIDF-weighted matching
+- **ir_baseline**: simple information retrieval baseline that scores candidate responses with [TFIDF-weighted](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) matching
 - **repeat_label**: basic class for merely repeating all data sent to it (e.g. for piping to a file, debugging)
 
 ### Examples
