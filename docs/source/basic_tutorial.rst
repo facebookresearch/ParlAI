@@ -21,17 +21,23 @@ Install
 Follow the step by step guide on how to download and install ParlAI.
 
 1. Clone ParlAI Repository:
+
 .. code-block:: bash
 
         git clone https://github.com/facebookresearch/ParlAI.git
+
 2. Install Required packages for ParlAI:
+
 .. code-block:: bash 
 
         pip install -r requirements.txt
+
 3. Install ParlAI on Linux:
+
 .. code-block:: bash 
 
         python setup.py install
+
 4. Several models has additional requirements:
         a. DrQA requires installing `PyTorch <http://pytorch.org/>`_
         b. MemNN requires installing `Lua Torch <http://torch.ch/docs/getting-started.html>`_
