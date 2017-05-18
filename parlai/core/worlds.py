@@ -531,6 +531,10 @@ class BatchWorld(World):
     def report(self):
         return self.worlds[0].report()
 
+    def reset(self):
+        for w in self.worlds:
+            w.reset()
+
 
 class HogwildProcess(Process):
     """Process child used for HogwildWorld.
