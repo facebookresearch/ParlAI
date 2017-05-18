@@ -28,7 +28,7 @@ class Seq2SeqAgent(Agent):
              enumerate('~' + string.ascii_letters + ' ?!.,;"\'\n' + UNK + EOS)}
     TOKENS = {i: k for k, i in VOCAB.items()}
     VOCAB_LEN = len(VOCAB)
-    EOS_TENSOR = Variable(torch.LongTensor([VOCAB[EOS]]))
+    EOS_TENSOR = torch.LongTensor([VOCAB[EOS]])
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -113,13 +113,23 @@ class Seq2SeqAgent(Agent):
             p.data.add_(-self.learning_rate, p.grad.data)
 
     def init_zeros(self, bsz=1):
-        return Variable(torch.zeros(self.num_layers, bsz, self.hidden_size))
+        t = torch.zeros(self.num_layers, bsz, self.hidden_size)
+        if self.cuda:
+            t = t.cuda(async=True)
+        return Variable(t)
 
     def init_ones(self, bsz=1):
-        return Variable(torch.ones(self.num_layers, bsz, self.hidden_size))
+        t = torch.zeros(self.num_layers, bsz, self.hidden_size)
+        if self.cuda:
+            t = t.cuda(async=True)
+        return Variable(t)
 
     def init_rand(self, bsz=1):
-        return Variable(torch.FloatTensor(self.num_layers, bsz, self.hidden_size).uniform_(0.05))
+        t = torch.FloatTensor(self.num_layers, bsz, self.hidden_size)
+        t.uniform_(0.05)
+        if self.cuda:
+            t = t.cuda(async=True)
+        return Variable(t)
 
     def observe(self, observation):
         if not self.episode_done:
@@ -136,8 +146,10 @@ class Seq2SeqAgent(Agent):
         # print('----- observing:', obs['text'].replace('\n', '|'))
 
         # encode
-        x = Variable(self.lineToTensor(obs['text']))
-        xe = self.lt(x).unsqueeze(1)
+        x = self.lineToTensor(obs['text'])
+        if self.cuda:
+            x = x.cuda(async=True)
+        xe = self.lt(Variable(x)).unsqueeze(1)
         h0 = self.init_rand()
         c0 = self.init_zeros()
         _output, (hn, cn) = self.encoder(xe, (h0, c0))
@@ -145,7 +157,9 @@ class Seq2SeqAgent(Agent):
 
         # decode
         x = self.EOS_TENSOR
-        xe = self.lt(x).unsqueeze(1)
+        if self.cuda:
+            x = x.cuda(async=True)
+        xe = self.lt(Variable(x)).unsqueeze(1)
         cn = self.init_zeros()
         curr_output = None
         output_line = []
@@ -313,7 +327,7 @@ def main():
     Seq2SeqAgent.add_cmdline_args(parser)
     opt = parser.parse_args()
 
-    opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()
+    opt['cuda'] = not opt['cuda'] and torch.cuda.is_available()
     if opt['cuda']:
         print('[ Using CUDA (GPU %d) ]' % opt['gpu'])
         torch.cuda.set_device(opt['gpu'])
