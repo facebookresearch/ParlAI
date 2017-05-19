@@ -288,5 +288,20 @@ ParlAI is currently maintained by Alexander H. Miller, Will Feng and Jason Westo
 A non-exhaustive list of other major contributors includes:
 Adam Fisch,  Jiasen Lu, Antoine Bordes, Devi Parikh and Dhruv Batra.
 
+## Citation
+
+Please cite the arXiv paper if you use ParlAI in your work:
+
+```
+@article{miller2017parlai,
+  title={ParlAI: A Dialog Research Software Platform},
+  author={{Miller}, A.~H. and {Feng}, W. and {Fisch}, A. and {Lu}, J. and {Batra}, D. and {Bordes}, A. and {Parikh}, D. and {Weston}, J.},
+  journal={arXiv preprint arXiv:{1705.06476},
+  year={2017}
+}
+```
+
 ## License
 ParlAI is BSD-licensed. We also provide an additional patent grant.
+
+
