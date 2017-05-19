@@ -16,6 +16,10 @@ Included are examples of training neural models with [PyTorch](http://pytorch.or
 
 Our aim is for the number of tasks and agents that train on them to grow in a community-based way.
 
+ParlAI is described in the following paper:
+[“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476](https://arxiv.org/abs/1705.06476).
+
+
 We are in an early-release Beta. Expect some adventures and rough edges.
 
 ## Goals
