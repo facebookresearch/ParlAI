@@ -55,8 +55,9 @@ class DictionaryAgent(Agent):
     default_lang = 'english'
     default_maxngram = -1
     default_minfreq = 0
-    default_null = '<NULL>'
-    default_unk = '<UNK>'
+    default_null = '__NULL__'
+    default_eos = '__EOS__'
+    default_unk = '__UNK__'
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -77,12 +78,14 @@ class DictionaryAgent(Agent):
                  'building the dictionary. note: this takes approximate ' +
                  'runtime of len(sentence)^max_ngram_size')
         argparser.add_arg(
-            '--dict-nulltoken', default=DictionaryAgent.default_null,
-            help='empty token, can be used for padding or just empty values')
-        # TODO(ahm): minfreq isn't actually being used, add the functionality
-        argparser.add_arg(
             '--dict-minfreq', default=DictionaryAgent.default_minfreq,
             help='minimum frequency of words to include them in the dictionary')
+        argparser.add_arg(
+           '--dict-nulltoken', default=DictionaryAgent.default_null,
+           help='empty token, can be used for padding or just empty values')
+        argparser.add_arg(
+           '--dict-eostoken', default=DictionaryAgent.default_eos,
+           help='token for end of sentence markers, if needed')
         argparser.add_arg(
             '--dict-unktoken', default=DictionaryAgent.default_unk,
             help='token to return for unavailable words')
@@ -90,15 +93,15 @@ class DictionaryAgent(Agent):
     def __init__(self, opt, shared=None):
         # initialize fields
         self.opt = copy.deepcopy(opt)
-        self.null_token = opt.get('dict_nulltoken')
-        self.unk_token = opt.get('dict_unktoken')
-        self.max_ngram_size = opt.get('dict_max_ngram_size',
-                                      self.default_maxngram)
+        self.null_token = opt['dict_nulltoken']
+        self.eos_token = opt['dict_eostoken']
+        self.unk_token = opt['dict_unktoken']
+        self.max_ngram_size = opt['dict_max_ngram_size']
 
         if shared:
-            self.freq = shared.get('freq', SharedTable({}))
-            self.tok2ind = shared.get('tok2ind', SharedTable({}))
-            self.ind2tok = shared.get('ind2tok', SharedTable({}))
+            self.freq = shared.get('freq', {})
+            self.tok2ind = shared.get('tok2ind', {})
+            self.ind2tok = shared.get('ind2tok', {})
         else:
             self.freq = defaultdict(int)
             self.tok2ind = {}
@@ -108,18 +111,24 @@ class DictionaryAgent(Agent):
                 self.tok2ind[self.null_token] = 0
                 self.ind2tok[0] = self.null_token
 
+            if self.eos_token:
+                # set special unknown word token
+                index = len(self.tok2ind)
+                self.tok2ind[self.eos_token] = index
+                self.ind2tok[index] = self.eos_token
+
             if self.unk_token:
                 # set special unknown word token
                 index = len(self.tok2ind)
                 self.tok2ind[self.unk_token] = index
                 self.ind2tok[index] = self.unk_token
 
-            if opt.get('dict_load_path'):
+            if 'dict_loadpath' in opt:
                 # load existing dictionary
-                self.load(opt.get('dict_load_path'))
+                self.load(opt['dict_loadpath'])
 
         # initialize tokenizers
-        st_path = 'tokenizers/punkt/{0}.pickle'.format(opt.get('dict_language'))
+        st_path = 'tokenizers/punkt/{0}.pickle'.format(opt['dict_language'])
         try:
             self.sent_tok = nltk.data.load(st_path)
         except LookupError:
@@ -129,15 +138,20 @@ class DictionaryAgent(Agent):
         self.word_tok = nltk.tokenize.treebank.TreebankWordTokenizer()
 
         if not shared:
+
             if self.null_token:
-                # fix count for null token to one billion and one
-                self.freq[self.null_token] = 1000000001
+                # fix count for null token to one billion and two
+                self.freq[self.null_token] = 1000000002
+
+            if self.eos_token:
+                # fix count for end of sentence token to one billion and one
+                self.freq[self.eos_token] = 1000000001
 
             if self.unk_token:
                 # fix count for unknown token to one billion
                 self.freq[self.unk_token] = 1000000000
 
-            if opt.get('dict_savepath'):
+            if 'dict_savepath' in opt:
                 self.save_path = opt['dict_savepath']
 
     def __contains__(self, key):
@@ -197,8 +211,6 @@ class DictionaryAgent(Agent):
 
     def tokenize(self, text, building=False):
         """Returns a sequence of tokens from the iterable."""
-        # TODO(ahm): this should be easy to parallelize, since we don't care
-        # about sentence order here
         return (token for sent in self._sent_tokenize(text, building)
                 for token in self._word_tokenize(sent, building))
 
@@ -235,9 +247,10 @@ class DictionaryAgent(Agent):
                 token = split[0]
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
-                index = len(self.tok2ind)
-                self.tok2ind[token] = index
-                self.ind2tok[index] = token
+                if token not in self.tok2ind:
+                    index = len(self.tok2ind)
+                    self.tok2ind[token] = index
+                    self.ind2tok[index] = token
 
     def save(self, filename, append=False, sort=True):
         """Save dictionary to file.
@@ -257,7 +270,7 @@ class DictionaryAgent(Agent):
                 write.write('{tok}\t{cnt}\n'.format(tok=tok, cnt=cnt))
 
     def sort(self):
-        """Sorts the dictonary, so that the elements with the lowest index have
+        """Sorts the dictionary, so that the elements with the lowest index have
         the highest counts. This reindexes the dictionary according to the
         sorted frequencies, breaking ties alphabetically by token.
         """
@@ -315,13 +328,13 @@ class DictionaryAgent(Agent):
                 for text in source:
                     if text:
                         self.add_to_dict(self.tokenize(text))
-        return {}
+        return {'id': 'Dictionary'}
 
     def share(self):
         """Creates shared-memory versions of the internal maps."""
-        self.freq = SharedTable(self.freq)
-        self.tok2ind = SharedTable(self.tok2ind)
-        self.ind2tok = SharedTable(self.ind2tok)
+        # self.freq = SharedTable(self.freq)
+        # self.tok2ind = SharedTable(self.tok2ind)
+        # self.ind2tok = SharedTable(self.ind2tok)
         shared = {}
         shared['freq'] = self.freq
         shared['tok2ind'] = self.tok2ind
@@ -334,3 +347,6 @@ class DictionaryAgent(Agent):
         """Save on shutdown if savepath is set."""
         if hasattr(self, 'save_path'):
             self.save(self.save_path)
+
+    def __str__(self):
+        return str(self.freq)
