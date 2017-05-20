@@ -57,6 +57,8 @@ Set of datasets to bootstrap a working dialogue model for human interaction
 
 ## Basic Examples
 
+Note: If any of these examples fail, check the [requirements section](#requirements) to see if you have missed something.
+
 Display 10 random examples from task 1 of the "1k training examples" bAbI task:
 ```bash
 python examples/display_data.py -t babi:task1k:1
