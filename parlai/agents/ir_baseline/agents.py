@@ -20,6 +20,7 @@ import heapq
 
 from parlai.core.agents import Agent
 from parlai.core.params import ParlaiParser
+from parlai.core.dict import DictionaryAgent
 
 class MaxPriorityQueue(Sequence):
     def __init__(self, max_size):
@@ -114,6 +115,7 @@ class IrBaselineAgent(Agent):
         super().__init__(opt)
         self.id = 'IRBaselineAgent'
         parser = ParlaiParser(False)
+        DictionaryAgent.add_cmdline_args(parser)
         parser.add_argument(
             '-lp', '--length_penalty', default=0.5,
             help='length penalty for responses')
@@ -124,8 +126,17 @@ class IrBaselineAgent(Agent):
             p = []
         model_opts = parser.parse_args(p)
         self.length_penalty = float(model_opts['length_penalty'])
+        self.dictionary = DictionaryAgent(model_opts)
+        self.opt = model_opts
+
+    def observe(self, obs):
+        self.observation = obs
+        self.dictionary.observe(obs)
+        return obs
 
     def act(self):
+        self.dictionary.act()
+
         obs = self.observation
         reply = {}
         reply['id'] = self.getID()
@@ -141,3 +152,6 @@ class IrBaselineAgent(Agent):
         else:
             reply['text'] = "I don't know."
         return reply
+
+    def save(self):
+        self.dictionary.save(self.opt['dict_savepath'])
