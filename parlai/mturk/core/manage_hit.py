@@ -74,7 +74,12 @@ def _get_all_review_status(json_api_endpoint_url, task_group_id, requester_key):
     request = requests.get(json_api_endpoint_url, params=params)
     return request.json()
 
-def create_hits(opt, task_config, task_module_name, bot, num_hits, hit_reward, is_sandbox=False, chat_page_only=False, verbose=False):
+def create_hits(opt, task_config, task_module_name, bot, chat_page_only=False):
+    num_hits = opt['num_hits']
+    hit_reward = opt['reward']
+    is_sandbox = opt['is_sandbox']
+    verbose = opt['verbose']
+
     print("\nYou are going to allow workers from Amazon Mechanical Turk to chat with your dialog model running on your local machine.\nDuring this process, Internet connection is required, and you should turn off your computer's auto-sleep feature.\n")
     key_input = input("Please press Enter to continue... ")
     print("")
