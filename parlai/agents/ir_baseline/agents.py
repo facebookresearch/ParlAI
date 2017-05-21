@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 # Simple IR baselines.
-# We Plan to implements the following variants:
+# We Plan to implement the following variants:
 # Given an input message, either:
 # (i) find the most similar message in the (training) dataset and output the response from that exchange; or
 # (ii) find the most similar response to the input directly.
