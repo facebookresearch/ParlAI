@@ -3,7 +3,6 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""Simple example of using a character-level LSTM to train on ParlAI tasks."""
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -45,32 +44,39 @@ class Seq2SeqAgent(Agent):
             self.EOS = self.dict.eos_token
             self.EOS_TENSOR = torch.LongTensor(self.dict.parse(self.EOS))
 
-        self.id = 'Seq2Seq'
-        hsz = opt['s2s_hiddensize']
-        self.hidden_size = hsz
-        self.num_layers = opt['s2s_numlayers']
-        self.learning_rate = opt['s2s_learningrate']
-        self.use_cuda = opt['cuda']
+
+            self.id = 'Seq2Seq'
+            hsz = opt['s2s_hiddensize']
+            self.hidden_size = hsz
+            self.num_layers = opt['s2s_numlayers']
+            self.learning_rate = opt['s2s_learningrate']
+            self.use_cuda = opt['cuda']
+            self.longest_label = 1
+
+            self.criterion = nn.NLLLoss()
+            self.lt = nn.Embedding(len(self.dict), hsz, padding_idx=0,
+                                   scale_grad_by_freq=True)
+            self.encoder = nn.GRU(hsz, hsz, opt['s2s_numlayers'])
+            self.decoder = nn.GRU(hsz, hsz, opt['s2s_numlayers'])
+            self.d2o = nn.Linear(hsz, len(self.dict))
+            self.dropout = nn.Dropout(0.1)
+            self.softmax = nn.LogSoftmax()
+
+            lr = opt['s2s_learningrate']
+            self.optims = {
+                'lt': optim.Adam(self.lt.parameters(), lr=lr),
+                'encoder': optim.Adam(self.encoder.parameters(), lr=lr),
+                'decoder': optim.Adam(self.decoder.parameters(), lr=lr),
+                'd2o': optim.Adam(self.d2o.parameters(), lr=lr),
+            }
+
+            if self.use_cuda:
+                self.cuda()
+        else:
+            self.act = lambda: raise RuntimeError('This agent is in batch mode,'
+                                                  'so only observe is allowed.')
+
         self.episode_done = True
-        self.longest_label = 1
-
-        self.criterion = nn.NLLLoss()
-        self.lt = nn.Embedding(len(self.dict), hsz, padding_idx=0,
-                               scale_grad_by_freq=True)
-        self.encoder = nn.GRU(hsz, hsz, opt['s2s_numlayers'])
-        self.decoder = nn.GRU(hsz, hsz, opt['s2s_numlayers'])
-        self.d2o = nn.Linear(hsz, len(self.dict))
-        self.dropout = nn.Dropout(0.1)
-        self.softmax = nn.LogSoftmax()
-
-        lr = opt['s2s_learningrate']
-        self.emb_optim = optim.Adam(self.lt.parameters(), lr=lr)
-        self.enc_optim = optim.Adam(self.encoder.parameters(), lr=lr)
-        self.dec_optim = optim.Adam(self.decoder.parameters(), lr=lr)
-        self.d2o_optim = optim.Adam(self.d2o.parameters(), lr=lr)
-
-        if self.use_cuda:
-            self.cuda()
 
     def parse(self, text):
         return torch.LongTensor(self.dict.txt2vec(text))
@@ -99,16 +105,12 @@ class Seq2SeqAgent(Agent):
         return idx, scores
 
     def zero_grad(self):
-        self.emb_optim.zero_grad()
-        self.enc_optim.zero_grad()
-        self.dec_optim.zero_grad()
-        self.d2o_optim.zero_grad()
+        for optimizer in self.optims.values():
+            optimizer.zero_grad()
 
     def update_params(self):
-        self.emb_optim.step()
-        self.enc_optim.step()
-        self.dec_optim.step()
-        self.d2o_optim.step()
+        for optimizer in self.optims.values():
+            optimizer.step()
 
     def init_zeros(self, bsz=1):
         t = torch.zeros(self.num_layers, bsz, self.hidden_size)
@@ -277,85 +279,3 @@ class Seq2SeqAgent(Agent):
 
     def act(self):
         return self.batch_act([self.observation])[0]
-
-    def share(self):
-        shared = super().share()
-        shared['dictionary'] = self.dict
-        return shared
-
-
-def main():
-    # Get command line arguments
-    parser = ParlaiParser()
-    DictionaryAgent.add_cmdline_args(parser)
-    Seq2SeqAgent.add_cmdline_args(parser)
-    parser.add_argument('--dict-maxexs', default=100000, type=int)
-    opt = parser.parse_args()
-
-    opt['cuda'] = opt['cuda'] and torch.cuda.is_available()
-    if opt['cuda']:
-        print('[ Using CUDA ]')
-        torch.cuda.set_device(opt['gpu'])
-
-    # set up dictionary
-    print('Setting up dictionary.')
-    dict_tmp_fn = '/tmp/dict_{}.txt'.format(opt['task'])
-    if os.path.isfile(dict_tmp_fn):
-        opt['dict_loadpath'] = dict_tmp_fn
-    dictionary = DictionaryAgent(opt)
-    ordered_opt = copy.deepcopy(opt)
-    cnt = 0
-
-    if not opt.get('dict_loadpath'):
-        for datatype in ['train:ordered', 'valid']:
-            # we use train and valid sets to build dictionary
-            ordered_opt['datatype'] = datatype
-            ordered_opt['numthreads'] = 1
-            ordered_opt['batchsize'] = 1
-            world_dict = create_task(ordered_opt, dictionary)
-
-            # pass examples to dictionary
-            for _ in world_dict:
-                cnt += 1
-                if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] > 0:
-                    print('Processed {} exs, moving on.'.format(
-                          opt['dict_maxexs']))
-                    # don't wait too long...
-                    break
-                world_dict.parley()
-        dictionary.save(dict_tmp_fn, sort=True)
-
-    agent = Seq2SeqAgent(opt, {'dictionary': dictionary})
-
-    opt['datatype'] = 'train'
-    world_train = create_task(opt, agent)
-
-    opt['datatype'] = 'valid'
-    world_valid = create_task(opt, agent)
-
-    start = time.time()
-    # train / valid loop
-    while True:
-        print('[ training ]')
-        for _ in range(200):  # train for a bit
-            world_train.parley()
-
-        print('[ training summary. ]')
-        print(world_train.report())
-
-        print('[ validating ]')
-        world_valid.reset()
-        for _ in world_valid:  # check valid accuracy
-            world_valid.parley()
-
-        print('[ validation summary. ]')
-        report_valid = world_valid.report()
-        print(report_valid)
-        if report_valid['accuracy'] > 0.95:
-            break
-
-    print('finished in {} s'.format(round(time.time() - start, 2)))
-
-
-if __name__ == '__main__':
-    main()
