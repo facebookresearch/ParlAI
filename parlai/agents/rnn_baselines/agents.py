@@ -39,7 +39,7 @@ class Seq2SeqAgent(Agent):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         if shared and 'dictionary' in shared:
-            # store dictionary if available
+            # only set up everything for the main instance
             self.dict = shared['dictionary']
             self.EOS = self.dict.eos_token
             self.EOS_TENSOR = torch.LongTensor(self.dict.parse(self.EOS))
@@ -72,9 +72,6 @@ class Seq2SeqAgent(Agent):
 
             if self.use_cuda:
                 self.cuda()
-        else:
-            self.act = lambda: raise RuntimeError('This agent is in batch mode,'
-                                                  'so only observe is allowed.')
 
         self.episode_done = True
 
