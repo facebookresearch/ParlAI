@@ -69,3 +69,5 @@ class QADataCollectionAgent(Agent):
             ad['episode_done'] = True  # end of episode
 
         return ad
+
+default_agent_class = QADataCollectionAgent
