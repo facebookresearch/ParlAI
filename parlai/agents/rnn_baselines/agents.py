@@ -144,7 +144,6 @@ class Seq2SeqAgent(Agent):
         # first encode context
         xes = self.lt(xs).t()
         h0 = self.init_zeros(batchsize)
-        # c0 = self.init_zeros(batchsize)
         _output, hn = self.encoder(xes, h0)
 
         # start with EOS tensor for all
@@ -154,8 +153,8 @@ class Seq2SeqAgent(Agent):
         x = Variable(x)
         xe = self.lt(x).unsqueeze(1)
         xes = torch.cat([xe for _ in range(batchsize)], 1)
+        import pdb; pdb.set_trace()
 
-        # cn = self.init_zeros(batchsize)
         output_lines = [[] for _ in range(batchsize)]
 
         self.zero_grad()
@@ -188,7 +187,6 @@ class Seq2SeqAgent(Agent):
         # first encode context
         xes = self.lt(xs).t()
         h0 = self.init_zeros(batchsize)
-        # c0 = self.init_zeros(batchsize)
         _output, hn = self.encoder(xes, h0)
 
         # start with EOS tensor for all
@@ -199,7 +197,6 @@ class Seq2SeqAgent(Agent):
         xe = self.lt(x).unsqueeze(1)
         xes = torch.cat([xe for _ in range(batchsize)], 1)
 
-        # cn = self.init_zeros(batchsize)
         done = [False for _ in range(batchsize)]
         total_done = 0
         max_len = 0
