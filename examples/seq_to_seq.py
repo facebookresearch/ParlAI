@@ -11,6 +11,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
 
 from torch.autograd import Variable
+from torch import optim
 import torch.nn as nn
 import torch
 
@@ -29,7 +30,7 @@ class Seq2SeqAgent(Agent):
             help='size of the hidden layers and embeddings')
         argparser.add_arg('-nl', '--s2s-numlayers', type=int, default=2,
             help='number of hidden layers')
-        argparser.add_arg('-lr', '--s2s-learningrate', type=float, default=0.01,
+        argparser.add_arg('-lr', '--s2s-learningrate', type=float, default=0.5,
             help='learning rate')
         argparser.add_arg('--cuda', action='store_true', default=False,
             help='enable GPUs if available')
@@ -43,8 +44,6 @@ class Seq2SeqAgent(Agent):
             self.dict = shared['dictionary']
             self.EOS = self.dict.eos_token
             self.EOS_TENSOR = torch.LongTensor(self.dict.parse(self.EOS))
-        else:
-            raise RuntimeError('Need dictionary.')
 
         self.id = 'Seq2Seq'
         hsz = opt['s2s_hiddensize']
@@ -58,17 +57,23 @@ class Seq2SeqAgent(Agent):
         self.criterion = nn.NLLLoss()
         self.lt = nn.Embedding(len(self.dict), hsz, padding_idx=0,
                                scale_grad_by_freq=True)
-        self.encoder = nn.LSTM(hsz, hsz, opt['s2s_numlayers'])
-        self.decoder = nn.LSTM(hsz, hsz, opt['s2s_numlayers'])
+        self.encoder = nn.GRU(hsz, hsz, opt['s2s_numlayers'])
+        self.decoder = nn.GRU(hsz, hsz, opt['s2s_numlayers'])
         self.d2o = nn.Linear(hsz, len(self.dict))
         self.dropout = nn.Dropout(0.1)
         self.softmax = nn.LogSoftmax()
+
+        lr = opt['s2s_learningrate']
+        self.emb_optim = optim.Adam(self.lt.parameters(), lr=lr)
+        self.enc_optim = optim.Adam(self.encoder.parameters(), lr=lr)
+        self.dec_optim = optim.Adam(self.decoder.parameters(), lr=lr)
+        self.d2o_optim = optim.Adam(self.d2o.parameters(), lr=lr)
 
         if self.use_cuda:
             self.cuda()
 
     def parse(self, text):
-        return torch.LongTensor(self.dict.txt2vec(text, list))
+        return torch.LongTensor(self.dict.txt2vec(text))
 
     def v2t(self, vec):
         return self.dict.vec2txt(vec)
@@ -94,20 +99,16 @@ class Seq2SeqAgent(Agent):
         return idx, scores
 
     def zero_grad(self):
-        self.lt.zero_grad()
-        self.encoder.zero_grad()
-        self.decoder.zero_grad()
-        self.d2o.zero_grad()
+        self.emb_optim.zero_grad()
+        self.enc_optim.zero_grad()
+        self.dec_optim.zero_grad()
+        self.d2o_optim.zero_grad()
 
     def update_params(self):
-        for p in self.lt.parameters():
-            p.data.add_(-self.learning_rate, p.grad.data)
-        for p in self.encoder.parameters():
-            p.data.add_(-self.learning_rate, p.grad.data)
-        for p in self.decoder.parameters():
-            p.data.add_(-self.learning_rate, p.grad.data)
-        for p in self.d2o.parameters():
-            p.data.add_(-self.learning_rate, p.grad.data)
+        self.emb_optim.step()
+        self.enc_optim.step()
+        self.dec_optim.step()
+        self.d2o_optim.step()
 
     def init_zeros(self, bsz=1):
         t = torch.zeros(self.num_layers, bsz, self.hidden_size)
@@ -138,75 +139,14 @@ class Seq2SeqAgent(Agent):
         self.episode_done = observation['episode_done']
         return observation
 
-    def act(self):
-        obs = self.observation
-
-        # encode
-        x = self.parse(obs['text'])
-        if self.use_cuda:
-            x = x.cuda(async=True)
-        x = Variable(x)
-        xe = self.lt(x).unsqueeze(1)
-        h0 = self.init_rand()
-        c0 = self.init_zeros()
-        _output, (hn, cn) = self.encoder(xe, (h0, c0))
-
-        # decode
-        x = self.EOS_TENSOR
-        if self.use_cuda:
-            x = x.cuda(async=True)
-        x = Variable(x)
-        xe = self.lt(x).unsqueeze(1)
-        # cn = self.init_zeros()
-        curr_output = None
-        output_line = []
-
-        if 'labels' in obs:
-            self.zero_grad()
-            # update model
-            loss = 0
-            label = random.choice(obs['labels']) + ' ' + self.EOS
-            ys = self.parse(label)
-            if self.use_cuda:
-                ys = ys.cuda(async=True)
-            ys = Variable(ys)
-            self.longest_label = max(self.longest_label, ys.size(0))
-            for i in range(ys.size(0)):
-                output, (hn, cn) = self.decoder(xe, (hn, cn))
-                pred, scores = self.hidden_to_idx(output, drop=True)
-                output_line.append(self.v2t(pred.data[0]))
-                y = ys[i]
-                loss += self.criterion(scores, y)
-                # use the true token as the next input
-                xe = self.lt(y).unsqueeze(1)
-            loss.backward()
-            self.update_params()
-        else:
-            while ((curr_output is None or curr_output != x) and
-                    len(output_line) < self.longest_label):
-                # keep predicting until end token is selected
-                output, (hn, cn) = self.decoder(xe, (hn, cn))
-                pred, scores = self.hidden_to_idx(output, drop=False)
-                xe = self.lt(pred)
-                curr_output = pred
-                output_line.append(self.v2t(pred.data[0]))
-
-        action = {'id': self.getID()}
-        action['text'] = ' '.join(c for c in output_line if c != self.EOS)
-        if 'labels' in obs:
-            action['labels'] = obs['labels']
-            action['metrics'] = {'loss': loss.data[0]}
-        print(action)
-        return action
-
     def update(self, xs, ys):
         batchsize = len(xs)
 
         # first encode context
         xes = self.lt(xs).t()
-        h0 = self.init_rand(batchsize)
-        c0 = self.init_zeros(batchsize)
-        _output, (hn, cn) = self.encoder(xes, (h0, c0))
+        h0 = self.init_zeros(batchsize)
+        # c0 = self.init_zeros(batchsize)
+        _output, hn = self.encoder(xes, h0)
 
         # start with EOS tensor for all
         x = self.EOS_TENSOR
@@ -224,13 +164,13 @@ class Seq2SeqAgent(Agent):
         loss = 0
         self.longest_label = max(self.longest_label, ys.size(1))
         for i in range(ys.size(1)):
-            output, (hn, cn) = self.decoder(xes, (hn, cn))
+            output, hn = self.decoder(xes, hn)
             preds, scores = self.hidden_to_idx(output, drop=True)
             y = ys.select(1, i)
             loss += self.criterion(scores, y)
             # use the true token as the next input
             xes = self.lt(y).unsqueeze(0)
-            hn = self.dropout(hn)
+            # hn = self.dropout(hn)
             for j in range(preds.size(0)):
                 token = self.v2t([preds.data[j][0]])
                 output_lines[j].append(token)
@@ -248,9 +188,9 @@ class Seq2SeqAgent(Agent):
 
         # first encode context
         xes = self.lt(xs).t()
-        h0 = self.init_rand(batchsize)
-        c0 = self.init_zeros(batchsize)
-        _output, (hn, cn) = self.encoder(xes, (h0, c0))
+        h0 = self.init_zeros(batchsize)
+        # c0 = self.init_zeros(batchsize)
+        _output, hn = self.encoder(xes, h0)
 
         # start with EOS tensor for all
         x = self.EOS_TENSOR
@@ -267,7 +207,7 @@ class Seq2SeqAgent(Agent):
         output_lines = [[] for _ in range(batchsize)]
 
         while(total_done < batchsize) and max_len < self.longest_label:
-            output, (hn, cn) = self.decoder(xes, (hn, cn))
+            output, hn = self.decoder(xes, hn)
             preds, scores = self.hidden_to_idx(output, drop=False)
             xes = self.lt(preds.t())
             max_len += 1
@@ -334,6 +274,9 @@ class Seq2SeqAgent(Agent):
                 c for c in predictions[i] if c != self.EOS)
 
         return batch_reply
+
+    def act(self):
+        return self.batch_act([self.observation])[0]
 
     def share(self):
         shared = super().share()
@@ -412,6 +355,7 @@ def main():
             break
 
     print('finished in {} s'.format(round(time.time() - start, 2)))
+
 
 if __name__ == '__main__':
     main()

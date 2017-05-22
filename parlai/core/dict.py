@@ -6,7 +6,6 @@
 """Contains code for parsing and building a dictionary from text."""
 
 from .agents import Agent
-from .thread_utils import SharedTable
 from collections import defaultdict
 import copy
 import numpy as np
@@ -285,7 +284,7 @@ class DictionaryAgent(Agent):
         self.ind2tok = new_ind2tok
         return sorted_pairs
 
-    def parse(self, txt_or_vec, vec_type=np.ndarray):
+    def parse(self, txt_or_vec, vec_type=list):
         """Convenience function for parsing either text or vectors of indices.
 
         vec_type is the type of the returned vector if the input is a string.
@@ -297,7 +296,7 @@ class DictionaryAgent(Agent):
         else:
             return self.vec2txt(txt_or_vec)
 
-    def txt2vec(self, text, vec_type=np.ndarray):
+    def txt2vec(self, text, vec_type=list):
         """Converts a string to a vector (list of ints).
         First runs a sentence tokenizer, then a word tokenizer.
         vec_type is the type of the returned vector if the input is a string.
@@ -307,8 +306,10 @@ class DictionaryAgent(Agent):
                 (self[token] for token in self.tokenize(str(text))),
                 np.int
             )
-        else:
+        elif vec_type == list:
             res = vec_type((self[token] for token in self.tokenize(str(text))))
+        else:
+            raise RuntimeError('Type {} not supported by dict'.format(vec_type))
         assert type(res) == vec_type
         return res
 
