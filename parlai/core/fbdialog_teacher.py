@@ -7,12 +7,14 @@
 
 The way FB Dialog data is set up is as follows:
 
-1 Sam went to the kitchen.
-2 Pat gave Sam the milk.
-3 Where is the milk?<TAB>kitchen<TAB>1<TAB>hallway|kitchen|bathroom
-4 Sam went to the hallway
-5 Pat went to the bathroom
-6 Where is the milk?<TAB>hallway<TAB>1<TAB>hallway|kitchen|bathroom
+::
+
+    1 Sam went to the kitchen.
+    2 Pat gave Sam the milk.
+    3 Where is the milk?<TAB>kitchen<TAB>1<TAB>hallway|kitchen|bathroom
+    4 Sam went to the hallway
+    5 Pat went to the bathroom
+    6 Where is the milk?<TAB>hallway<TAB>1<TAB>hallway|kitchen|bathroom
 
 Lines 1-6 represent a single episode, with two different examples: the first
 example is lines 1-3, and the second is lines 4-6.
@@ -28,9 +30,12 @@ and therefore the agent must remember the first example in order to do well.
 
 In general dialog in this format can be any speech, not just QA pairs:
 
-1 Hi how's it going?<TAB>It's going great. What's new?
-2 Well I'm working on a new project at work.<TAB>Oh me too!
-3 Oh cool!<TAB>Tell me about yours.
+::
+
+    1 Hi how's it going?<TAB>It's going great. What's new?
+    2 Well I'm working on a new project at work.<TAB>Oh me too!
+    3 Oh cool!<TAB>Tell me about yours.
+
 etc.
 """
 
@@ -38,8 +43,8 @@ from .dialog_teacher import DialogTeacher
 
 
 class FbDialogTeacher(DialogTeacher):
-    """Subclasses DialogTeacher for functionality and provides an implementation
-    of setup_data which iterates over datasets in the "fbdialog" format.
+    """Subclasses ``DialogTeacher`` for functionality and provides an implementation
+    of ``setup_data()`` which iterates over datasets in the "fbdialog" format.
     """
 
     def __init__(self, opt, shared=None):
@@ -103,24 +108,32 @@ class FbDialogTeacher(DialogTeacher):
 
     def setup_data(self, path):
         """Reads data in the fbdialog format.
-        Returns ((x,y,r,c), new_episode?) tuples.
-        x represents a query, y represents the labels, r represents any reward,
-        and c represents any label_candidates.
+
+        Returns ``((x,y,r,c), new_episode?)`` tuples.
+
+        ``x`` represents a query, ``y`` represents the labels, ``r`` represents any reward,
+        and ``c`` represents any label_candidates.
 
         The example above will be translated into the following tuples:
 
-        x: 'Sam went to the kitchen\Pat gave Sam the milk\nWhere is the milk?'
-        y: ['kitchen']
-        r: '1'
-        c: ['hallway', 'kitchen', 'bathroom']
-        new_episode = True (this is the first example in the episode)
+        ::
 
-        x: 'Sam went to the hallway\nPat went to the bathroom\nWhere is the
-            milk?'
-        y: ['hallway']
-        r: '1'
-        c: ['hallway', 'kitchen', 'bathroom']
-        new_episode = False (this is the second example in the episode)
+            x: 'Sam went to the kitchen\\nPat gave Sam the milk\\nWhere is the milk?'
+            y: ['kitchen']
+            r: '1'
+            c: ['hallway', 'kitchen', 'bathroom']
+            new_episode = True (this is the first example in the episode)
+
+
+        ::
+
+            x: 'Sam went to the hallway\\nPat went to the bathroom\\nWhere is the
+                milk?'
+            y: ['hallway']
+            r: '1'
+            c: ['hallway', 'kitchen', 'bathroom']
+            new_episode = False (this is the second example in the episode)
+        
         
         """
         print("[loading fbdialog data:" + path + "]")

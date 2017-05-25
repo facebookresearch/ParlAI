@@ -87,6 +87,9 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
+autodoc_member_order = 'bysource'
+
+autodoc_default_flags = ['special-members']
 
 # -- Options for HTML output ----------------------------------------------
 

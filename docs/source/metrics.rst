@@ -9,3 +9,4 @@ core.metrics
 ===================================
 .. automodule:: parlai.core.metrics
   :members:
+  :exclude-members: __dict__,__weakref__

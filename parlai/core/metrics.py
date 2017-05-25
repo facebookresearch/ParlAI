@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """Provides standard metric evaluations for dialog.
-Uses locking and shared memory when numthreads is set to >1 to share metrics
+Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics
 between processes.
 """
 

@@ -17,18 +17,19 @@ import time
 
 class DialogTeacher(Teacher):
     """A base teacher class for doing dialog with fixed chat logs.
+
     This class provides a set a basic functionality:
+
     - uses data class to store and query text data
     - generates action tables to send to the student agent from the data
     - metrics tracking count of sent vs correctly answered queries
 
-    If you have opt.numthreads > 1, this also activates a shared memory
+    If you have ``opt.numthreads > 1``, this also activates a shared memory
     array for the data and lock-protected shared-memory metrics.
 
-    In order to subclass this class, you must implement setup_data() in your
-    class (or subclass another class which does, like FbDialogTeacher), which
-    reads your data file as an iterator. See the data module for a description
-    of the requirements for setup_data().
+    In order to subclass this class, you must implement ``setup_data()`` in your
+    class (or subclass another class which does, like ``FbDialogTeacher``), which
+    reads your data file as an iterator. 
     """
 
     def __init__(self, opt, shared=None):
@@ -87,8 +88,8 @@ class DialogTeacher(Teacher):
         return shared
 
     def label_candidates(self):
-        """Returns None by default, but override this in children (such as
-        FbDialogTeacher) to load up candidate labels for every example.
+        """Returns ``None`` by default, but override this in children (such as
+        ``FbDialogTeacher``) to load up candidate labels for every example.
         """
         return None
 
@@ -147,28 +148,32 @@ class DialogData(object):
     supervised labels, candidate labels and rewards.
 
     All these are stored in this internal data format which is used by the
-    DialogTeacher class.
+    ``DialogTeacher`` class.
 
-    data_loader is an iterable, with each call returning:
+    ``data_loader`` is an iterable, with each call returning:
 
-    (x, ...), new_episode?
+        ``(x, ...), new_episode?``
 
-    Where...
-    - x is a query and possibly context
-    ... can contain additional fields, specifically
-      - y is an iterable of label(s) for that query
-      - r is the str reward for getting that query correct
-      - c is an iterable of label candidates that the student can choose from
-      - i is a str path to an image on disk, which will be loaded by the data
+        Where
+
+        - ``x`` is a query and possibly context
+
+        ``...`` can contain additional fields, specifically
+
+        - ``y`` is an iterable of label(s) for that query
+        - ``r`` is the str reward for getting that query correct
+        - ``c`` is an iterable of label candidates that the student can choose from
+        - ``i`` is a str path to an image on disk, which will be loaded by the data
           class at request-time. should always point to the raw image file.
-    - new_episode? is a boolean value specifying whether that example is the start
-    of a new episode. If you don't use episodes set this to True every time.
+        - ``new_episode?`` is a boolean value specifying whether that example is the start of a new episode. If you don't use episodes set this to ``True`` every time.
 
-    cands can be set to provide a list of candidate labels for every example
-        in this dataset, which the agent can choose from (the correct answer
-        should be in this set).
 
-    random tells the data class whether or not to visit episodes sequentially
+    ``cands`` can be set to provide a list of candidate labels for every example
+    in this dataset, which the agent can choose from (the correct answer
+    should be in this set).
+
+
+    ``random`` tells the data class whether or not to visit episodes sequentially
     or randomly when returning examples to the caller.
     """
 
