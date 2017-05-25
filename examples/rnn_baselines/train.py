@@ -5,19 +5,14 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.agents.rnn_baselines.agents import Seq2SeqAgent
-from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
 
-from torch.autograd import Variable
-from torch import optim
-import torch.nn as nn
 import torch
 
 import copy
 import os
-import random
 import time
 
 def main():
@@ -35,7 +30,8 @@ def main():
 
     # set up dictionary
     print('Setting up dictionary.')
-    dict_tmp_fn = '/tmp/dict_{}.txt'.format(opt['task'])
+    fn_suffix = opt['task'].lower()[:30]
+    dict_tmp_fn = os.path.join(opt['logpath'], 'dict_{}.txt'.format(fn_suffix))
     if os.path.isfile(dict_tmp_fn):
         opt['dict_loadpath'] = dict_tmp_fn
     dictionary = DictionaryAgent(opt)
@@ -63,6 +59,11 @@ def main():
 
     agent = Seq2SeqAgent(opt, {'dictionary': dictionary})
 
+    model_fn = os.path.join(opt['logpath'], fn_suffix + '.model')
+    if os.path.isfile(model_fn):
+        print('Loading existing model parameters from ' + model_fn)
+        agent.load(model_fn)
+
     opt['datatype'] = 'train'
     world_train = create_task(opt, agent)
 
@@ -71,24 +72,38 @@ def main():
 
     start = time.time()
     # train / valid loop
-    while True:
-        print('[ training ]')
-        for _ in range(200):  # train for a bit
-            world_train.parley()
+    best_accuracy = 0
+    with open(model_fn.replace('.model', '.validations'), 'w') as validations:
+        while True:
+            print('[ training ]')
+            for _ in range(200):  # train for a bit
+                world_train.parley()
 
-        print('[ training summary. ]')
-        print(world_train.report())
+            print('[ training summary. ]')
+            print(world_train.report())
 
-        print('[ validating ]')
-        world_valid.reset()
-        for _ in world_valid:  # check valid accuracy
-            world_valid.parley()
+            print('[ validating ]')
+            world_valid.reset()
+            for _ in world_valid:  # check valid accuracy
+                world_valid.parley()
 
-        print('[ validation summary. ]')
-        report_valid = world_valid.report()
-        print(report_valid)
-        if report_valid['accuracy'] > 0.95:
-            break
+            print('[ validation summary. ]')
+            report_valid = world_valid.report()
+
+            # log validations and update best accuracy if applicable
+            annotation = ''
+            if report_valid['accuracy'] > best_accuracy:
+                best_accuracy = report_valid['accuracy']
+                agent.save(model_fn)
+                annotation = '*' # mark this valid as a best one
+            curr_time = time.strftime('%Y/%m/%d %H:%M:%S', time.localtime())
+            validations.write('{}: {} {}\n'.format(
+                curr_time, report_valid['accuracy'], annotation))
+            validations.flush()
+            report_valid['best_accuracy'] = best_accuracy
+            print(report_valid)
+            if report_valid['accuracy'] >= 1.0:
+                break
 
     print('finished in {} s'.format(round(time.time() - start, 2)))
 

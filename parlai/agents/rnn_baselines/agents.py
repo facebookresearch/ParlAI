@@ -5,9 +5,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.agents import Agent
-from parlai.core.dict import DictionaryAgent
-from parlai.core.params import ParlaiParser
-from parlai.core.worlds import create_task
 
 from torch.autograd import Variable
 from torch import optim
@@ -15,9 +12,7 @@ import torch.nn as nn
 import torch
 
 import copy
-import os
 import random
-import time
 
 
 class Seq2SeqAgent(Agent):
@@ -25,12 +20,14 @@ class Seq2SeqAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        argparser.add_arg('-hs', '--s2s-hiddensize', type=int, default=64,
+        argparser.add_arg('-hs', '--hiddensize', type=int, default=64,
             help='size of the hidden layers and embeddings')
-        argparser.add_arg('-nl', '--s2s-numlayers', type=int, default=2,
+        argparser.add_arg('-nl', '--numlayers', type=int, default=2,
             help='number of hidden layers')
-        argparser.add_arg('-lr', '--s2s-learningrate', type=float, default=0.5,
+        argparser.add_arg('-lr', '--learningrate', type=float, default=0.5,
             help='learning rate')
+        argparser.add_arg('-dr', '--dropout', type=float, default=0.1,
+            help='dropout rate')
         argparser.add_arg('--cuda', action='store_true', default=False,
             help='enable GPUs if available')
         argparser.add_arg('--gpu', type=int, default=-1,
@@ -44,30 +41,32 @@ class Seq2SeqAgent(Agent):
             self.EOS = self.dict.eos_token
             self.EOS_TENSOR = torch.LongTensor(self.dict.parse(self.EOS))
 
-
             self.id = 'Seq2Seq'
-            hsz = opt['s2s_hiddensize']
+            hsz = opt['hiddensize']
             self.hidden_size = hsz
-            self.num_layers = opt['s2s_numlayers']
-            self.learning_rate = opt['s2s_learningrate']
+            self.num_layers = opt['numlayers']
+            self.learning_rate = opt['learningrate']
             self.use_cuda = opt['cuda']
-            self.longest_label = 1
+            self.longest_label = 2  # TODO: 1
+            if 'babi' in opt['task']:
+                self.babi_mode = True
+                self.dirs = set(['n', 's', 'e', 'w'])
 
             self.criterion = nn.NLLLoss()
             self.lt = nn.Embedding(len(self.dict), hsz, padding_idx=0,
                                    scale_grad_by_freq=True)
-            self.encoder = nn.GRU(hsz, hsz, opt['s2s_numlayers'])
-            self.decoder = nn.GRU(hsz, hsz, opt['s2s_numlayers'])
+            self.encoder = nn.GRU(hsz, hsz, opt['numlayers'])
+            self.decoder = nn.GRU(hsz, hsz, opt['numlayers'])
             self.d2o = nn.Linear(hsz, len(self.dict))
-            self.dropout = nn.Dropout(0.1)
+            self.dropout = nn.Dropout(opt['dropout'])
             self.softmax = nn.LogSoftmax()
 
-            lr = opt['s2s_learningrate']
+            lr = opt['learningrate']
             self.optims = {
-                'lt': optim.Adam(self.lt.parameters(), lr=lr),
-                'encoder': optim.Adam(self.encoder.parameters(), lr=lr),
-                'decoder': optim.Adam(self.decoder.parameters(), lr=lr),
-                'd2o': optim.Adam(self.d2o.parameters(), lr=lr),
+                'lt': optim.SGD(self.lt.parameters(), lr=lr),
+                'encoder': optim.SGD(self.encoder.parameters(), lr=lr),
+                'decoder': optim.SGD(self.decoder.parameters(), lr=lr),
+                'd2o': optim.SGD(self.d2o.parameters(), lr=lr),
             }
 
             if self.use_cuda:
@@ -115,12 +114,6 @@ class Seq2SeqAgent(Agent):
             t = t.cuda(async=True)
         return Variable(t)
 
-    def init_ones(self, bsz=1):
-        t = torch.zeros(self.num_layers, bsz, self.hidden_size)
-        if self.use_cuda:
-            t = t.cuda(async=True)
-        return Variable(t)
-
     def init_rand(self, bsz=1):
         t = torch.FloatTensor(self.num_layers, bsz, self.hidden_size)
         t.uniform_(0.05)
@@ -129,6 +122,7 @@ class Seq2SeqAgent(Agent):
         return Variable(t)
 
     def observe(self, observation):
+        observation = copy.deepcopy(observation)
         if not self.episode_done:
             # if the last example wasn't the end of an episode, then we need to
             # recall what was said in that example
@@ -152,8 +146,7 @@ class Seq2SeqAgent(Agent):
             x = x.cuda(async=True)
         x = Variable(x)
         xe = self.lt(x).unsqueeze(1)
-        xes = torch.cat([xe for _ in range(batchsize)], 1)
-        import pdb; pdb.set_trace()
+        xes = xe.expand(xe.size(0), batchsize, xe.size(2))
 
         output_lines = [[] for _ in range(batchsize)]
 
@@ -195,7 +188,7 @@ class Seq2SeqAgent(Agent):
             x = x.cuda(async=True)
         x = Variable(x)
         xe = self.lt(x).unsqueeze(1)
-        xes = torch.cat([xe for _ in range(batchsize)], 1)
+        xes = xe.expand(xe.size(0), batchsize, xe.size(2))
 
         done = [False for _ in range(batchsize)]
         total_done = 0
@@ -215,6 +208,11 @@ class Seq2SeqAgent(Agent):
                         total_done += 1
                     else:
                         output_lines[i].append(token)
+                        if self.babi_mode and token not in self.dirs:
+                            # for babi, only output one token except when
+                            # giving directions
+                            done[i] = True
+                            total_done += 1
         if random.random() < 0.1:
             print('prediction:', ' '.join(output_lines[0]))
         return output_lines
@@ -247,7 +245,6 @@ class Seq2SeqAgent(Agent):
             if self.use_cuda:
                 ys = ys.cuda(async=True)
             ys = Variable(ys)
-
         return xs, ys, valid_inds
 
     def batch_act(self, observations):
@@ -273,3 +270,27 @@ class Seq2SeqAgent(Agent):
 
     def act(self):
         return self.batch_act([self.observation])[0]
+
+    def save(self, path):
+        model = {}
+        model['lt'] = self.lt.state_dict()
+        model['encoder'] = self.encoder.state_dict()
+        model['decoder'] = self.decoder.state_dict()
+        model['d2o'] = self.d2o.state_dict()
+        model['longest_label'] = self.longest_label
+
+        with open(path, 'wb') as write:
+            torch.save(model, write)
+
+        self.dict.save(path + '.dict')
+
+    def load(self, path):
+        with open(path, 'rb') as read:
+            model = torch.load(read)
+
+        self.lt.load_state_dict(model['lt'])
+        self.encoder.load_state_dict(model['encoder'])
+        self.decoder.load_state_dict(model['decoder'])
+        self.d2o.load_state_dict(model['d2o'])
+        # self.longest_label = model['longest_label']
+        # self.dict.load(path + '.dict')

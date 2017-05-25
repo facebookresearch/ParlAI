@@ -45,17 +45,24 @@ class FbDialogTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         self.opt = opt
         self.cloze = opt.get('cloze', False)
-        self.cands = self.load_cands(opt.get('cands_datafile', None))
-        self.random = opt.get('datatype', None) == 'train'
+        if shared and 'cands' in shared:
+            self.cands = shared['cands']
+        else:
+            self.cands = self.load_cands(opt.get('cands_datafile', None))
         super().__init__(opt, shared)
+
+    def share(self):
+        shared = super().share()
+        shared['cands'] = self.cands
+        return shared
 
     def label_candidates(self):
         return self.cands
-    
+
     def load_cands(self, path):
-        """Load global fixed set of candidate labels that the teacher provides every
-        example (the true labels for a specific example are also added to this set,
-        so that it's possible to get the right answer).
+        """Load global fixed set of candidate labels that the teacher provides
+        every example (the true labels for a specific example are also added to
+        this set, so that it's possible to get the right answer).
         """
         if path is None:
             return None
@@ -88,19 +95,6 @@ class FbDialogTeacher(DialogTeacher):
                         cands.append(line)
         return cands
 
-
-    def keep_dialog(self, index):
-        if (self.random and self.opt.get('batchsize', 0) > 1 and
-            self.opt.get('batchindex', -1) >= 0):
-            # For ordered data in batch mode, we split the
-            # data into equal parts for each member of the batch
-            # so that the data does not repeat.
-            print(str(self.opt['batchindex']) + " " + str(self.opt['batchsize']))
-            return (self.opt['batchindex'] %  self.opt['batchsize']) == 0
-        else:
-            return True
-
-
     def setup_data(self, path):
         """Reads data in the fbdialog format.
         Returns ((x,y,r,c), new_episode?) tuples.
@@ -121,7 +115,7 @@ class FbDialogTeacher(DialogTeacher):
         r: '1'
         c: ['hallway', 'kitchen', 'bathroom']
         new_episode = False (this is the second example in the episode)
-        
+
         """
         print("[loading fbdialog data:" + path + "]")
         with open(path) as read:
@@ -159,8 +153,7 @@ class FbDialogTeacher(DialogTeacher):
                     dialog_index += 1
                     x = x.strip()
                     if x:
-                        if self.keep_dialog(dialog_index):
-                            yield [x, None, reward], start
+                        yield [x, None, reward], start
                     start = True
                     # start a new episode
                     if self.cloze:
@@ -187,12 +180,10 @@ class FbDialogTeacher(DialogTeacher):
                         # split label_candidates
                         split[3] = split[3].split('|')
                     if start:
-                        if self.keep_dialog(dialog_index):
-                            yield split, True
+                        yield split, True
                         start = False
                     else:
-                        if self.keep_dialog(dialog_index):
-                            yield split, False
+                        yield split, False
                     # reset x in case there is unlabeled data still left
                     x = ''
                     reward = None

@@ -10,6 +10,7 @@ from collections import defaultdict
 import copy
 import numpy as np
 import nltk
+import re
 
 
 def find_ngrams(token_dict, text, n):
@@ -190,6 +191,9 @@ class DictionaryAgent(Agent):
             self.tok2ind[key] = index
             self.ind2tok[index] = key
 
+    def freqs(self):
+        return self.freq.items()
+
     def _sent_tokenize(self, text, building=False):
         """Uses nltk-trained PunktTokenizer for sentence tokenization"""
         text = text.replace('|', ' ' if building else ' __pipe__ ')
@@ -332,7 +336,7 @@ class DictionaryAgent(Agent):
         return {'id': 'Dictionary'}
 
     def share(self):
-        """Creates shared-memory versions of the internal maps."""
+        # """Creates shared-memory versions of the internal maps."""
         # self.freq = SharedTable(self.freq)
         # self.tok2ind = SharedTable(self.tok2ind)
         # self.ind2tok = SharedTable(self.ind2tok)

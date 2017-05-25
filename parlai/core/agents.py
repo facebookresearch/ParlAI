@@ -258,16 +258,20 @@ class MultiTaskTeacher(Teacher):
         self.tasks = []
         self.opt = opt
         self.id = opt['task']
-        tasks = opt['task'].split(',')
-        for k in tasks:
-            k = k.strip()
-            if k:
-                opt_singletask = copy.deepcopy(opt)
-                opt_singletask['task'] = k
-                self.tasks.extend(create_task_agent_from_taskname(
-                    opt_singletask))
+        if shared and 'tasks' in shared:
+            self.tasks = [create_agent_from_shared(t) for t in shared['tasks']]
+        else:
+            tasks = opt['task'].split(',')
+            for k in tasks:
+                k = k.strip()
+                if k:
+                    opt_singletask = copy.deepcopy(opt)
+                    opt_singletask['task'] = k
+                    self.tasks.extend(create_task_agent_from_taskname(
+                        opt_singletask))
         self.task_idx = -1
         self.new_task = True
+        self.ignore_reply = False
         self.random = opt.get('datatype') == 'train'
 
     def __len__(self):
@@ -286,7 +290,15 @@ class MultiTaskTeacher(Teacher):
             raise StopIteration()
 
     def observe(self, observation):
-        self.tasks[self.task_idx].observe(observation)
+        if self.ignore_reply:
+            # don't update metrics if you sent an empty message last time
+            # empty messages are sent for tasks which have finished their epoch
+            self.ignore_reply = False
+            return observation
+        else:
+            return self.tasks[self.task_idx].observe(observation)
+
+    def act(self):
         if self.new_task:
             self.new_task = False
             if self.random:
@@ -297,12 +309,11 @@ class MultiTaskTeacher(Teacher):
                 while keep_looking:
                     self.task_idx = (self.task_idx + 1) % len(self.tasks)
                     keep_looking = (self.tasks[self.task_idx].epoch_done() and
-                                    start_idx != self.task_idx)
-                if start_idx == self.task_idx:
-                    return {'text': 'There are no more examples remaining.'}
-        return observation
-
-    def act(self):
+                                    self.task_idx != start_idx)
+                if self.tasks[self.task_idx].epoch_done():
+                    # don't update metrics for this reply
+                    self.ignore_reply = True
+                    return {'episode_done': True}
         t = self.tasks[self.task_idx].act()
         if t['episode_done']:
             self.new_task = True
@@ -333,3 +344,14 @@ class MultiTaskTeacher(Teacher):
         if num_tasks > 0:
             m['accuracy'] = sum_accuracy / num_tasks
         return m
+
+    def reset(self):
+        for t in self.tasks:
+            t.reset()
+
+    def share(self):
+        shared = {}
+        shared['class'] = type(self)
+        shared['opt'] = self.opt
+        shared['tasks'] = [t.share() for t in self.tasks]
+        return shared
