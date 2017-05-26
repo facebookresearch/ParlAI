@@ -276,6 +276,9 @@ To add your own MTurk task and dialog model:
   - write your own `act()` method that returns your dialog model's response as well as helpful text to the turker for what action they should take next.
 - import your task module and agent class in __run\_mturk.py__ file, and then run `python run_mturk.py`.
 
+## Support
+If you have any questions, bug reports or feature requests, please don't hesitate to post on our [Github Issues page](https://github.com/facebookresearch/ParlAI/issues).
+
 ## The Team
 ParlAI is currently maintained by Alexander H. Miller, Will Feng and Jason Weston.
 A non-exhaustive list of other major contributors includes:
