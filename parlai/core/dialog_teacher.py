@@ -66,8 +66,11 @@ class DialogTeacher(Teacher):
         self.metrics.clear()
         self.lastY = None
         self.episode_idx = self.data_offset - self.step_size
-        self.epochDone = False
         self.episode_done = True
+        self.epochDone = False
+        if not self.random and self.data_offset >= self.data.num_episodes():
+            # could have bigger batchsize then episodes... so nothing to do
+            self.epochDone = True
 
     def __len__(self):
         return len(self.data)
@@ -80,7 +83,6 @@ class DialogTeacher(Teacher):
         if self.epochDone:
             raise StopIteration()
 
-    # share datatype, data, metrics, and a lock on the metrics
     def share(self):
         shared = super().share()
         shared['data'] = self.data
@@ -95,7 +97,7 @@ class DialogTeacher(Teacher):
     def observe(self, observation):
         """Process observation for metrics. """
         if self.lastY is not None:
-            loss = self.metrics.update(observation, self.lastY)
+            self.metrics.update(observation, self.lastY)
             self.lastY = None
         return observation
 
@@ -126,7 +128,7 @@ class DialogTeacher(Teacher):
     def act(self):
         """Send new dialog message."""
         if self.epochDone:
-            return { 'episode_done': True }
+            return {'episode_done': True}
         action, self.epochDone = self.next_example()
         self.episode_done = action['episode_done']
         action['id'] = self.getID()
@@ -186,10 +188,7 @@ class DialogData(object):
         """Returns total number of entries available. Each episode has at least
         one entry, but might have many more.
         """
-        length = 0
-        for l in self.data:
-            length += len(l)
-        return length
+        return sum(len(episode) for episode in self.data)
 
     def _load(self, data_loader):
         """Loads up data from an iterator over tuples described in the class
@@ -271,7 +270,7 @@ class DialogData(object):
 
 
         if (table.get('labels', None) is not None
-            and self.cands is not None):
+                and self.cands is not None):
             if self.addedCands:
                 # remove elements in addedCands
                 self.cands.difference_update(self.addedCands)
