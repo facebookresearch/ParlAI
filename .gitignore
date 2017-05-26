@@ -25,6 +25,7 @@ lib64/
 parts/
 sdist/
 var/
+parlai_internal/
 *.egg-info/
 .installed.cfg
 *.egg
