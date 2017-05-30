@@ -23,5 +23,5 @@ class LocalHumanAgent(Agent):
         obs = self.observation
         reply = {}
         reply['id'] = self.getID()
-        reply['text'] = input("Enter Your Reply:")
+        reply['text'] = input("Enter Your Reply: ")
         return reply
