@@ -366,17 +366,15 @@ class MultiWorld(World):
             self.new_world = False
             self.parleys = 0
             if self.random:
+                # select random world
                 self.world_idx = random.randrange(len(self.worlds))
             else:
-                start_idx = self.world_idx
-                keep_looking = True
-                while keep_looking:
+                # do at most one full loop looking for unfinished world
+                for _ in range(len(self.worlds)):
                     self.world_idx = (self.world_idx + 1) % len(self.worlds)
-                    keep_looking = (self.worlds[self.world_idx].epoch_done() and
-                                    self.world_idx != start_idx)
-                if self.worlds[self.world_idx].epoch_done():
-                    raise RuntimeError('Unexpected error: please file an ' +
-                                       'issue on Github with your command.')
+                    if not self.worlds[self.world_idx].epoch_done():
+                        # if this world has examples ready, break
+                        break
 
     def parley(self):
         self.parley_init()

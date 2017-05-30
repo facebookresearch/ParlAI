@@ -73,15 +73,10 @@ class ParlaiParser(object):
         self.parser.set_defaults(verbose=False)
 
     def add_parlai_args(self):
-        default_log_path = os.path.join(self.parlai_home, 'logs')
         default_downloads_path = os.path.join(self.parlai_home, 'downloads')
         self.parser.add_argument(
             '-t', '--task',
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
-        self.parser.add_argument(
-            '--logpath', default=default_log_path,
-            help='path for storing logging files.' +
-                 'defaults to {parlai_dir}/logs')
         self.parser.add_argument(
             '--download-path', default=default_downloads_path,
             help='path for non-data dependencies to store any needed files.' +

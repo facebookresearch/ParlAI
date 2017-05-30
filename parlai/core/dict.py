@@ -192,7 +192,7 @@ class DictionaryAgent(Agent):
             self.ind2tok[index] = key
 
     def freqs(self):
-        return self.freq.items()
+        return self.freq
 
     def _sent_tokenize(self, text, building=False):
         """Uses nltk-trained PunktTokenizer for sentence tokenization"""
