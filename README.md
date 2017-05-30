@@ -69,6 +69,11 @@ Displays 100 random examples from multi-tasking on the bAbI task and the SQuAD d
 python examples/display_data.py -t babi:task1k:1,squad -n 100
 ```
 
+Evaluate on the bAbI test set with a human agent (using the local keyboard as input):
+```bash
+python examples/eval_model.py -m local_human -t babi:Task1k:1 -dt valid
+```
+
 Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:
 ```bash
 python examples/eval_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
@@ -210,6 +215,7 @@ Currently available within this directory:
 - **remote_agent**: basic class for any agent connecting over ZMQ (memnn_luatorch_cpu uses this)
 - **ir_baseline**: simple information retrieval baseline that scores candidate responses with [TFIDF-weighted](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) matching
 - **repeat_label**: basic class for merely repeating all data sent to it (e.g. for piping to a file, debugging)
+- **local_human**: takes input from the keyboard as the act() function of the agent, so a human can act in the environment
 
 ### Examples
 
