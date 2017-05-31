@@ -20,7 +20,9 @@ ParlAI is described in the following paper:
 [“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476](https://arxiv.org/abs/1705.06476).
 
 
-We are in an early-release Beta. Expect some adventures and rough edges. See the [NEWS](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) file for the latest big updates & changes.
+We are in an early-release Beta. Expect some adventures and rough edges. 
+
+See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates.
 
 ## Goals
 
