@@ -7,7 +7,12 @@ import torch
 import numpy as np
 import logging
 import copy
-import spacy
+try:
+    import spacy
+except ModuleNotFoundError:
+    raise ModuleNotFoundError(
+        "Please install spacy and spacy 'en' model: go to spacy.io"
+    )
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent

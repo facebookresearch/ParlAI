@@ -23,10 +23,11 @@ import numpy as np
 import logging
 import copy
 import sys
+import random
 
 from parlai.agents.drqa.agents import SimpleDictionaryAgent
 from parlai.agents.drqa.agents import DocReaderAgent
-from parlai.agents.drqa.utils import Timer
+from parlai.core.utils import Timer
 from parlai.core.worlds import DialogPartnerWorld
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
@@ -170,6 +171,7 @@ if __name__ == '__main__':
 
     # Set random state
     np.random.seed(opt['random_seed'])
+    random.seed(opt['random_seed'])
     torch.manual_seed(opt['random_seed'])
     if opt['cuda']:
         torch.cuda.manual_seed(opt['random_seed'])

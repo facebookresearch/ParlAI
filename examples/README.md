@@ -29,6 +29,11 @@ Displays 100 random examples from multi-tasking on the bAbI task and the SQuAD d
 python display_data.py -t babi:task1k:1,squad -n 100
 ```
 
+Evaluate on the bAbI test set with a human agent (using the local keyboard as input):
+```bash
+python examples/eval_model.py -m local_human -t babi:Task1k:1 -dt valid
+```
+
 Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:
 ```bash
 python eval_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
@@ -49,7 +54,7 @@ Train a simple cpu-based memory network on the "10k training examples" bAbI task
 python memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -nt 8
 ```
 
-Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
+Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (requires pytorch):
 ```bash
 python drqa/train.py -t squad -bs 32
 ```

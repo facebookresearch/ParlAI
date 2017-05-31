@@ -41,13 +41,13 @@ class ParlaiParser(object):
         self.register = self.parser.register
 
     def add_parlai_data_path(self):
-        default_data_path = os.path.join(self.parlai_home , 'data')
+        default_data_path = os.path.join(self.parlai_home, 'data')
         self.parser.add_argument(
             '-dp', '--datapath', default=default_data_path,
             help='path to datasets, defaults to {parlai_dir}/data')
 
     def add_mturk_args(self):
-        default_log_path = os.path.join(self.parlai_home , 'logs', 'mturk')
+        default_log_path = os.path.join(self.parlai_home, 'logs', 'mturk')
         self.parser.add_argument(
             '--mturk-log-path', default=default_log_path,
             help='path to MTurk logs, defaults to {parlai_dir}/logs/mturk')

@@ -10,9 +10,7 @@ between processes.
 
 from .thread_utils import SharedTable
 from collections import Counter
-import copy
-import importlib
-import random
+
 import re
 import string
 
@@ -107,7 +105,7 @@ class Metrics(object):
             if text is None:
                 return
             else:
-                text_cands = [ text ]
+                text_cands = [text]
         # Now loop through text candidates, assuming they are sorted.
         # If any of them is a label then score a point.
         # maintain hits@1, 5, 10, 50, 100,  etc.

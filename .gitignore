@@ -25,6 +25,7 @@ lib64/
 parts/
 sdist/
 var/
+parlai_internal/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -95,3 +96,9 @@ ENV/
 
 # OS X files
 .DS_Store
+
+# Editor temporaries
+*.swn
+*.swo
+*.swp
+*~
