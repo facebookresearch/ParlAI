@@ -10,7 +10,7 @@ except ModuleNotFoundError:
     raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
 import logging
 
-from parlai.agents.drqa.utils import Timer
+from parlai.core.utils import Timer
 from parlai.agents.drqa.agents import DocReaderAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task

@@ -27,7 +27,7 @@ import random
 
 from parlai.agents.drqa.agents import SimpleDictionaryAgent
 from parlai.agents.drqa.agents import DocReaderAgent
-from parlai.agents.drqa.utils import Timer
+from parlai.core.utils import Timer
 from parlai.core.worlds import DialogPartnerWorld
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
