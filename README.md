@@ -21,7 +21,7 @@ ParlAI is described in the following paper:
 
 
 We are in an early-release Beta. Expect some adventures and rough edges.<br> 
-See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates.
+See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates, and the website [http://parl.ai](http://parl.ai) for further docs.
 
 ## Goals
 
