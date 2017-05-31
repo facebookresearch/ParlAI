@@ -16,11 +16,11 @@ def str2bool(value):
 
 
 class ParlaiParser(object):
-    """Pseudo-extension of argparse which sets a number of parameters for the
+    """Pseudo-extension of ``argparse`` which sets a number of parameters for the
     ParlAI framework. More options can be added specific to other modules by
-    passing this object and calling `add_arg` or `add_argument` on it.
+    passing this object and calling ``add_arg()`` or ``add_argument()`` on it.
 
-    For example, see `parlai.core.dict.DictionaryAgent.add_cmdline_args`
+    For example, see ``parlai.core.dict.DictionaryAgent.add_cmdline_args``.
     """
 
     def __init__(self, add_parlai_args=True, add_model_args=False):
@@ -114,9 +114,9 @@ class ParlaiParser(object):
             help='model file name for loading and saving models')
 
     def parse_args(self, args=None, print_args=True):
-        """Parses the provided arguments and returns a dictionary of the args.
-        We specifically remove items with `None` as values in order to support
-        the style `opt.get(key, default)`, which would otherwise return None.
+        """Parses the provided arguments and returns a dictionary of the ``args``.
+        We specifically remove items with ``None`` as values in order to support
+        the style ``opt.get(key, default)``, which would otherwise return ``None``.
         """
         self.args = self.parser.parse_args(args=args)
         self.opt = {k: v for k, v in vars(self.args).items() if v is not None}

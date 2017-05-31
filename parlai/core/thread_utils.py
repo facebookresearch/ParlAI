@@ -19,12 +19,14 @@ class SharedTable(MutableMapping):
     """Provides a simple shared-memory table of integers, floats, or strings.
     Use this class as follows:
 
-    tbl = SharedTable({'cnt': 0})
-    with tbl.get_lock():
-        tbl['startTime'] = time.time()
-    for i in range(10):
+    .. code-block:: python
+
+        tbl = SharedTable({'cnt': 0})
         with tbl.get_lock():
-            tbl['cnt'] += 1
+            tbl['startTime'] = time.time()
+        for i in range(10):
+            with tbl.get_lock():
+                tbl['cnt'] += 1
     """
 
     # currently unused, here for todo below
@@ -39,7 +41,7 @@ class SharedTable(MutableMapping):
         dictionary. Creates an empty array otherwise, which will extend
         automatically when keys are added.
 
-        Each different type (all supported types listed in the `types` array
+        Each different type (all supported types listed in the ``types`` array
         above) has its own array. For each key we store an index into the
         appropriate array as well as the type of value stored for that key.
         """
@@ -93,7 +95,7 @@ class SharedTable(MutableMapping):
         of keys is not likely to change frequently during a run, so do not abuse
         it.
         Raises an error if you try to change the type of the value stored for
-        that key--if you need to do this, you must delete the key first.s
+        that key--if you need to do this, you must delete the key first.
         """
         val_type = type(value)
         if val_type not in self.types:

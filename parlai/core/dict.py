@@ -14,7 +14,7 @@ import re
 
 
 def find_ngrams(token_dict, text, n):
-    """Breaks text into ngrams that appear in token_dict."""
+    """Breaks text into ngrams that appear in ``token_dict``."""
     # base case
     if n <= 1:
         return text
@@ -168,7 +168,7 @@ class DictionaryAgent(Agent):
         exist, return the unknown token.
         If key is a str, return the token's index. If the token is not in the
         dictionary, return the index of the unknown token. If there is no
-        unknown token, return None.
+        unknown token, return ``None``.
         """
         if type(key) == int:
             # return token from index, or unk_token
@@ -259,9 +259,11 @@ class DictionaryAgent(Agent):
         """Save dictionary to file.
         Format is 'token<TAB>count' for every token in the dictionary, sorted
         by count with the most frequent words first.
-        If append (default false) is set to true, appends instead of
+
+        If ``append`` (default ``False``) is set to ``True``, appends instead of
         overwriting.
-        If sort (default true), then first sort the dictionary before saving.
+
+        If ``sort`` (default ``True``), then first sort the dictionary before saving.
         """
         print('Dictionary: saving dictionary to {}.'.format(filename))
         if sort:
@@ -291,7 +293,7 @@ class DictionaryAgent(Agent):
     def parse(self, txt_or_vec, vec_type=list):
         """Convenience function for parsing either text or vectors of indices.
 
-        vec_type is the type of the returned vector if the input is a string.
+        ``vec_type`` is the type of the returned vector if the input is a string.
         """
         if type(txt_or_vec) == str:
             res = self.txt2vec(txt_or_vec, vec_type)
@@ -302,8 +304,10 @@ class DictionaryAgent(Agent):
 
     def txt2vec(self, text, vec_type=list):
         """Converts a string to a vector (list of ints).
+
         First runs a sentence tokenizer, then a word tokenizer.
-        vec_type is the type of the returned vector if the input is a string.
+
+        ``vec_type`` is the type of the returned vector if the input is a string.
         """
         if vec_type == np.ndarray:
             res = np.fromiter(
@@ -319,7 +323,7 @@ class DictionaryAgent(Agent):
 
     def vec2txt(self, vector, delimiter=' '):
         """Converts a vector (iterable of ints) into a string, with each token
-        separated by the delimiter (default ' ').
+        separated by the delimiter (default ``' '``).
         """
         return delimiter.join(self[int(idx)] for idx in vector)
 
@@ -345,7 +349,7 @@ class DictionaryAgent(Agent):
         return shared
 
     def shutdown(self):
-        """Save on shutdown if savepath is set."""
+        """Save on shutdown if ``save_path`` is set."""
         if hasattr(self, 'save_path'):
             self.save(self.save_path)
 

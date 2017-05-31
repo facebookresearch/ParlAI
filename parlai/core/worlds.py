@@ -6,37 +6,39 @@
 """This class defines the basic environments that define how agents interact
 with one another.
 
-World(object) provides a generic parent class, including __enter__ and __exit__
-    statements which allow you to guarantee that the shutdown method is called
-    and KeyboardInterrupts are less noisy (if desired).
+    ``World(object)`` provides a generic parent class, including ``__enter__`` 
+    and ``__exit__`` statements which allow you to guarantee that the shutdown 
+    method is called and KeyboardInterrupts are less noisy (if desired).
 
-DialogPartnerWorld(World) provides a two-agent turn-based dialog setting
-MultiAgentDialogWorld provides a multi-agent setting.
+    ``DialogPartnerWorld(World)`` provides a two-agent turn-based dialog setting.
 
-MultiWorld(World) creates a set of environments (worlds) for the same agent
-   to multitask over, a different environment will be chosen per episode.
+    ``MultiAgentDialogWorld(World)`` provides a multi-agent setting.
 
-HogwildWorld(World) is a container that creates another world within itself for
+    ``MultiWorld(World)`` creates a set of environments (worlds) for the same agent
+    to multitask over, a different environment will be chosen per episode.
+
+    ``HogwildWorld(World)`` is a container that creates another world within itself for
     every thread, in order to have separate simulated environments for each one.
-    Each world gets its own agents initialized using the "share()" parameters
+    Each world gets its own agents initialized using the ``share()`` parameters
     from the original agents.
 
-BatchWorld(World) is a container for doing minibatch training over a world by
-collecting batches of N copies of the environment (each with different state).
+    ``BatchWorld(World)`` is a container for doing minibatch training over a world by
+    collecting batches of N copies of the environment (each with different state).
 
 
 All worlds are initialized with the following parameters:
-opt -- contains any options needed to set up the agent. This generally contains
-    all command-line arguments recognized from core.params, as well as other
-    options that might be set through the framework to enable certain modes.
-agents -- the set of agents that should be attached to the world,
-    e.g. for DialogPartnerWorld this could be the teacher (that defines the
-    task/dataset) and the learner agent. This is ignored in the case of
-    sharing, and the shared parameter is used instead to initalize agents.
-shared (optional) -- if not None, contains any shared data used to construct
-    this particular instantiation of the world. This data might have been
-    initialized by another world, so that different agents can share the same
-    data (possibly in different Processes).
+
+    ``opt`` -- contains any options needed to set up the agent. This generally contains
+        all command-line arguments recognized from core.params, as well as other
+        options that might be set through the framework to enable certain modes.
+    ``agents`` -- the set of agents that should be attached to the world,
+        e.g. for DialogPartnerWorld this could be the teacher (that defines the
+        task/dataset) and the learner agent. This is ignored in the case of
+        sharing, and the shared parameter is used instead to initalize agents.
+    ``shared`` (optional) -- if not None, contains any shared data used to construct
+        this particular instantiation of the world. This data might have been
+        initialized by another world, so that different agents can share the same
+        data (possibly in different Processes).
 """
 
 import copy
@@ -167,16 +169,20 @@ class World(object):
         return self.acts
 
     def __enter__(self):
-        """Empty enter provided for use with `with` statement.
+        """Empty enter provided for use with ``with`` statement.
+
         e.g:
-        with World() as world:
-            for n in range(10):
-                n.parley()
+
+        .. code-block:: python
+
+            with World() as world:
+                for n in range(10):
+                    n.parley()
         """
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        """After `with` statement, call shutdown."""
+        """After ``with`` statement, call shutdown."""
         silent_exit = isinstance(exc_value, KeyboardInterrupt)
         self.shutdown()
         return silent_exit
@@ -423,7 +429,7 @@ class MultiWorld(World):
 
 
 def override_opts_in_shared(table, overrides):
-    """Looks recursively for opt dictionaries within shared dict and overrides
+    """Looks recursively for ``opt`` dictionaries within shared dict and overrides
     any key-value pairs with pairs from the overrides dict.
     """
     if 'opt' in table:
@@ -444,8 +450,8 @@ def override_opts_in_shared(table, overrides):
 class BatchWorld(World):
     """Creates a separate world for each item in the batch, sharing
     the parameters for each.
-    The underlying world(s) it is batching can be either DialogPartnerWorld,
-    MultiAgentWorld or MultiWorld.
+    The underlying world(s) it is batching can be either ``DialogPartnerWorld``,
+    ``MultiAgentWorld`` or ``MultiWorld``.
     """
 
     def __init__(self, opt, world):
@@ -546,8 +552,8 @@ class BatchWorld(World):
 
 
 class HogwildProcess(Process):
-    """Process child used for HogwildWorld.
-    Each HogwildProcess contain its own unique World.
+    """Process child used for ``HogwildWorld``.
+    Each ``HogwildProcess`` contain its own unique ``World``.
     """
 
     def __init__(self, tid, world, opt, agents, sem, fin, term, cnt):
@@ -563,7 +569,7 @@ class HogwildProcess(Process):
 
     def run(self):
         """Runs normal parley loop for as many examples as this thread can get
-        ahold of via the semaphore queued_items.
+        ahold of via the semaphore ``queued_items``.
         """
         shared_agents = create_agents_from_shared(self.agent_shares)
         world = self.world_type(self.opt, shared_agents)
@@ -586,15 +592,19 @@ class HogwildWorld(World):
     """Creates a separate world for each thread (process).
 
     Maintains a few shared objects to keep track of state:
+
     - A Semaphore which represents queued examples to be processed. Every call
-        of parley increments this counter; every time a Process claims an
-        example, it decrements this counter.
+      of parley increments this counter; every time a Process claims an
+      example, it decrements this counter.
+
     - A Condition variable which notifies when there are no more queued
-        examples.
+      examples.
+
     - A boolean Value which represents whether the inner worlds should shutdown.
+
     - An integer Value which contains the number of unprocessed examples queued
-        (acquiring the semaphore only claims them--this counter is decremented
-        once the processing is complete).
+      (acquiring the semaphore only claims them--this counter is decremented
+      once the processing is complete).
     """
 
     def __init__(self, world_class, opt, agents):
@@ -688,9 +698,9 @@ def create_task_world(opt, user_agents):
 
 def create_task(opt, user_agents):
     """Creates a world + task_agents (aka a task)
-    assuming opt['task']="task_dir:teacher_class:options"
-    e.g. "babi:Task1k:1" or "#babi-1k" or "#QA",
-    see parlai/tasks/tasks.py and see parlai/tasks/task_list.py
+    assuming ``opt['task']="task_dir:teacher_class:options"``
+    e.g. ``"babi:Task1k:1"`` or ``"#babi-1k"`` or ``"#QA"``,
+    see ``parlai/tasks/tasks.py`` and see ``parlai/tasks/task_list.py``
     for list of tasks.
     """
     if type(user_agents) != list:

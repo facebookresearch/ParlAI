@@ -19,8 +19,8 @@ def built(path):
     return os.path.isfile(os.path.join(path, '.built'))
 
 def download(path, url, redownload=True):
-    """Downloads file using `wget`. If redownload is set to false, then will not
-    download tar file again if it is present (default true).
+    """Downloads file using `wget`. If ``redownload`` is set to false, then will not
+    download tar file again if it is present (default ``True``).
     """
     if redownload or not os.path.isfile(path):
         filename = wget.download(url, out=path)
