@@ -208,6 +208,7 @@ The core library contains the following files:
 ### Agents
 
 The agents directory contains agents that have been approved into the ParlAI framework for shared use.
+We encourage you to contribute new ones!
 Currently available within this directory:
 
 - **drqa**: an attentive [LSTM model DrQA](https://arxiv.org/abs/1704.00051) implemented in PyTorch that has competitive results on the SQuAD dataset amongst others.
