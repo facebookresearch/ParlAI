@@ -38,7 +38,7 @@ def run_eval(agent, opt, datatype):
     # Write out metrics
     if opt['model_file']:
         f = open(opt['model_file'] + '.' + datatype, "a+")
-        f.write(metrics)
+        f.write(metrics + '\n')
         f.close()
 
 def main():
