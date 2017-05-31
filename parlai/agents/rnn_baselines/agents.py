@@ -28,8 +28,8 @@ class Seq2SeqAgent(Agent):
             help='learning rate')
         argparser.add_arg('-dr', '--dropout', type=float, default=0.1,
             help='dropout rate')
-        argparser.add_arg('--cuda', action='store_true', default=False,
-            help='enable GPUs if available')
+        argparser.add_arg('--no-cuda', action='store_true', default=False,
+            help='disable GPUs even if available')
         argparser.add_arg('--gpu', type=int, default=-1,
             help='which GPU device to use')
 
@@ -46,7 +46,7 @@ class Seq2SeqAgent(Agent):
             self.hidden_size = hsz
             self.num_layers = opt['numlayers']
             self.learning_rate = opt['learningrate']
-            self.use_cuda = opt['cuda']
+            self.use_cuda = opt.get('cuda', False)
             self.longest_label = 2  # TODO: 1
             if 'babi' in opt['task']:
                 self.babi_mode = True
