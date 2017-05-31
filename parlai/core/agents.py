@@ -271,7 +271,6 @@ class MultiTaskTeacher(Teacher):
                         opt_singletask))
         self.task_idx = -1
         self.new_task = True
-        self.ignore_reply = False
         self.random = opt.get('datatype') == 'train'
 
     def __len__(self):
