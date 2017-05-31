@@ -228,7 +228,7 @@ class DocReaderAgent(Agent):
 
         # Data is expected to be text + '\n' + question
         if len(fields) < 2:
-            raise RuntimeError('Invalid input. Is task a QA tast?')
+            raise RuntimeError('Invalid input. Is task a QA task?')
 
         document, question = ' '.join(fields[:-1]), fields[-1]
         inputs['document'] = self.word_dict.tokenize(document)
