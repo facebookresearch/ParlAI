@@ -5,13 +5,15 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 # Simple IR baselines.
-# Implements the following variants:
+# We plan to implement the following variants:
 # Given an input message, either:
 # (i) find the most similar message in the (training) dataset and output the response from that exchange; or
 # (ii) find the most similar response to the input directly.
 # (iii) if label_candidates are provided, simply ranks them according to their similarity to the input message.
+# Currently only (iii) is used.
 #
-# Additonally, TFIDF is either used (requires building a dictionary) or not.
+# Additonally, TFIDF is either used (requires building a dictionary) or not,
+# depending on whether you train on the train set first, or not.
 
 import math
 import random
@@ -20,6 +22,7 @@ import heapq
 
 from parlai.core.agents import Agent
 from parlai.core.params import ParlaiParser
+from parlai.core.dict import DictionaryAgent
 
 class MaxPriorityQueue(Sequence):
     def __init__(self, max_size):
@@ -47,7 +50,6 @@ class MaxPriorityQueue(Sequence):
         return repr([v for _, v in sorted(self.lst)])
 
 
-
 stopwords = { 'i', 'a', 'an', 'are', 'about', 'as', 'at', 'be', 'by',
               'for', 'from', 'how', 'in', 'is', 'it', 'of', 'on', 'or',
               'that', 'the', 'this', 'to', 'was', 'what', 'when', 'where',
@@ -56,21 +58,6 @@ stopwords = { 'i', 'a', 'an', 'are', 'about', 'as', 'at', 'be', 'by',
               "'s", 'not', 'than', 'other', 'you', 'your', 'know', 'just',
               'but', 'does', 'really', 'have', 'into', 'more', 'also',
               'has', 'any', 'why', 'will'}
-
-def build_query_representation(query):
-    """ Build representation of query, e.g. words or n-grams """
-    rep = {}
-    rep['words'] = {}
-    words = query.lower().split(' ')
-    rw = rep['words']
-    used = {}
-    for w in words:
-        if w not in stopwords:
-            rw[w] = 1
-        used[w] = True
-    norm = len(used)
-    rep['norm'] = math.sqrt(len(words))
-    return rep
 
 def score_match(query_rep, text, length_penalty, debug=False):
     words = text.lower().split(' ')
@@ -113,7 +100,8 @@ class IrBaselineAgent(Agent):
     def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.id = 'IRBaselineAgent'
-        parser = ParlaiParser(False)
+        parser = ParlaiParser(True)
+        DictionaryAgent.add_cmdline_args(parser)
         parser.add_argument(
             '-lp', '--length_penalty', default=0.5,
             help='length penalty for responses')
@@ -124,20 +112,53 @@ class IrBaselineAgent(Agent):
             p = []
         model_opts = parser.parse_args(p)
         self.length_penalty = float(model_opts['length_penalty'])
+        self.dictionary = DictionaryAgent(model_opts)
+        self.opt = model_opts
+
+    def observe(self, obs):
+        self.observation = obs
+        self.dictionary.observe(obs)
+        return obs
 
     def act(self):
+        if self.opt.get('datatype', '').startswith('train'):
+            self.dictionary.act()
+
         obs = self.observation
         reply = {}
         reply['id'] = self.getID()
 
         # Rank candidates
         if 'label_candidates' in obs and len(obs['label_candidates']) > 0:
-            rep = build_query_representation(obs['text'])
+            rep = self.build_query_representation(obs['text'])
             reply['text_candidates'] = (
                 rank_candidates(rep, obs['label_candidates'],
                                 self.length_penalty))
             reply['text'] = reply['text_candidates'][0]
-            # score_match(rep, reply['text'], self.length_penalty, True)
         else:
             reply['text'] = "I don't know."
         return reply
+
+    def save(self, fname):
+        self.dictionary.save(fname + '.dict')
+
+    def load(self, fname):
+        self.dictionary.load(fname + '.dict')
+
+    def build_query_representation(self, query):
+        """ Build representation of query, e.g. words or n-grams """
+        rep = {}
+        rep['words'] = {}
+        words = query.lower().split(' ')
+        rw = rep['words']
+        used = {}
+        for w in words:
+            if len(self.dictionary.freqs()) > 0:
+                rw[w] = 1.0 / (1.0 + math.log(1.0 + self.dictionary.freqs()[w]))
+            else:
+                if w not in stopwords:
+                    rw[w] = 1
+            used[w] = True
+        norm = len(used)
+        rep['norm'] = math.sqrt(len(words))
+        return rep

@@ -157,10 +157,11 @@ available or else says "I don't know."
         def __init__(self, opt):
             self.id = 'LabelAgent'
         # #
-        # store observation for later
+        # store observation for later, return it unmodified
         # #
         def observe(self, observation):
             self.observation = observation
+            return observation
         # #
         # return label from before if available
         # #

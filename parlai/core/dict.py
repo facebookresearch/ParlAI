@@ -192,7 +192,7 @@ class DictionaryAgent(Agent):
             self.ind2tok[index] = key
 
     def freqs(self):
-        return self.freq.items()
+        return self.freq
 
     def _sent_tokenize(self, text, building=False):
         """Uses nltk-trained PunktTokenizer for sentence tokenization"""
@@ -310,7 +310,7 @@ class DictionaryAgent(Agent):
                 (self[token] for token in self.tokenize(str(text))),
                 np.int
             )
-        elif vec_type == list:
+        elif vec_type == list or vec_type == tuple or vec_type == set:
             res = vec_type((self[token] for token in self.tokenize(str(text))))
         else:
             raise RuntimeError('Type {} not supported by dict'.format(vec_type))
@@ -336,10 +336,6 @@ class DictionaryAgent(Agent):
         return {'id': 'Dictionary'}
 
     def share(self):
-        # """Creates shared-memory versions of the internal maps."""
-        # self.freq = SharedTable(self.freq)
-        # self.tok2ind = SharedTable(self.tok2ind)
-        # self.ind2tok = SharedTable(self.ind2tok)
         shared = {}
         shared['freq'] = self.freq
         shared['tok2ind'] = self.tok2ind

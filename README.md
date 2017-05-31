@@ -16,6 +16,10 @@ Included are examples of training neural models with [PyTorch](http://pytorch.or
 
 Our aim is for the number of tasks and agents that train on them to grow in a community-based way.
 
+ParlAI is described in the following paper:
+[“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476](https://arxiv.org/abs/1705.06476).
+
+
 We are in an early-release Beta. Expect some adventures and rough edges.
 
 ## Goals
@@ -53,6 +57,8 @@ Set of datasets to bootstrap a working dialogue model for human interaction
 
 ## Basic Examples
 
+Note: If any of these examples fail, check the [requirements section](#requirements) to see if you have missed something.
+
 Display 10 random examples from task 1 of the "1k training examples" bAbI task:
 ```bash
 python examples/display_data.py -t babi:task1k:1
@@ -61,6 +67,11 @@ python examples/display_data.py -t babi:task1k:1
 Displays 100 random examples from multi-tasking on the bAbI task and the SQuAD dataset at the same time:
 ```bash
 python examples/display_data.py -t babi:task1k:1,squad -n 100
+```
+
+Evaluate on the bAbI test set with a human agent (using the local keyboard as input):
+```bash
+python examples/eval_model.py -m local_human -t babi:Task1k:1 -dt valid
 ```
 
 Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:
@@ -190,20 +201,22 @@ The core library contains the following files:
 - **worlds.py**: contains a set of basic worlds for tasks to take place inside
   - **_World_**: base class for all other worlds, implements `parley`, `shutdown`, `__enter__`, and `__exit__`
   - **_DialogPartnerWorld_**: default world for turn-based two-agent communication
-        MultiAgentDialogWorld: round-robin turn-based agent communication for two or more agents
-        HogwildWorld: default world for setting up a separate world for every thread when using multiple threads (processes)
+  - **_MultiAgentDialogWorld_**: round-robin turn-based agent communication for two or more agents
+  - **_HogwildWorld_**: default world for setting up a separate world for every thread when using multiple threads (processes)
 
 
 ### Agents
 
 The agents directory contains agents that have been approved into the ParlAI framework for shared use.
+We encourage you to contribute new ones!
 Currently available within this directory:
 
-- **drqa**: an attentive LSTM model DrQA (https://arxiv.org/abs/1704.00051) implemented in PyTorch that has competitive results on the SQuAD dataset amongst others.
+- **drqa**: an attentive [LSTM model DrQA](https://arxiv.org/abs/1704.00051) implemented in PyTorch that has competitive results on the SQuAD dataset amongst others.
 - **memnn**: code for an end-to-end memory network in Lua Torch
 - **remote_agent**: basic class for any agent connecting over ZMQ (memnn_luatorch_cpu uses this)
-- **ir_baseline**: simple information retrieval baseline that scores candidate responses with TFIDF-weighted matching
+- **ir_baseline**: simple information retrieval baseline that scores candidate responses with [TFIDF-weighted](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) matching
 - **repeat_label**: basic class for merely repeating all data sent to it (e.g. for piping to a file, debugging)
+- **local_human**: takes input from the keyboard as the act() function of the agent, so a human can act in the environment
 
 ### Examples
 
@@ -279,10 +292,28 @@ To add your own MTurk task and dialog model:
   - write your own `act()` method that returns your dialog model's response as well as helpful text to the turker for what action they should take next.
 - import your task module and agent class in __run\_mturk.py__ file, and then run `python run_mturk.py`.
 
+## Support
+If you have any questions, bug reports or feature requests, please don't hesitate to post on our [Github Issues page](https://github.com/facebookresearch/ParlAI/issues).
+
 ## The Team
 ParlAI is currently maintained by Alexander H. Miller, Will Feng and Jason Weston.
 A non-exhaustive list of other major contributors includes:
 Adam Fisch,  Jiasen Lu, Antoine Bordes, Devi Parikh and Dhruv Batra.
 
+## Citation
+
+Please cite the arXiv paper if you use ParlAI in your work:
+
+```
+@article{miller2017parlai,
+  title={ParlAI: A Dialog Research Software Platform},
+  author={{Miller}, A.~H. and {Feng}, W. and {Fisch}, A. and {Lu}, J. and {Batra}, D. and {Bordes}, A. and {Parikh}, D. and {Weston}, J.},
+  journal={arXiv preprint arXiv:{1705.06476},
+  year={2017}
+}
+```
+
 ## License
 ParlAI is BSD-licensed. We also provide an additional patent grant.
+
+

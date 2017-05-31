@@ -290,29 +290,23 @@ class MultiTaskTeacher(Teacher):
             raise StopIteration()
 
     def observe(self, observation):
-        if self.ignore_reply:
-            # don't update metrics if you sent an empty message last time
-            # empty messages are sent for tasks which have finished their epoch
-            self.ignore_reply = False
-            return observation
-        else:
-            return self.tasks[self.task_idx].observe(observation)
+        return self.tasks[self.task_idx].observe(observation)
 
     def act(self):
         if self.new_task:
             self.new_task = False
             if self.random:
+                # select random teacher
                 self.task_idx = random.randrange(len(self.tasks))
             else:
-                start_idx = self.task_idx
-                keep_looking = True
-                while keep_looking:
+                # do at most one full loop looking for unfinished task
+                for _ in range(len(self.tasks)):
                     self.task_idx = (self.task_idx + 1) % len(self.tasks)
-                    keep_looking = (self.tasks[self.task_idx].epoch_done() and
-                                    self.task_idx != start_idx)
+                    if not self.tasks[self.task_idx].epoch_done():
+                        # if this task has examples ready, break
+                        break
                 if self.tasks[self.task_idx].epoch_done():
-                    # don't update metrics for this reply
-                    self.ignore_reply = True
+                    # all tasks are done, so return empty action table
                     return {'episode_done': True}
         t = self.tasks[self.task_idx].act()
         if t['episode_done']:

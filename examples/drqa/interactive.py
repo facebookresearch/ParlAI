@@ -11,7 +11,10 @@ Context: I was thirsty today. So I went to the market and bought some water.
 Question: What did I buy?
 Reply: some water
 """
-import torch
+try:
+    import torch
+except ModuleNotFoundError:
+    raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
 import logging
 
 from parlai.agents.drqa.agents import DocReaderAgent

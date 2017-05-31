@@ -46,11 +46,31 @@ class ParlaiParser(object):
             '-dp', '--datapath', default=default_data_path,
             help='path to datasets, defaults to {parlai_dir}/data')
 
-    def add_mturk_log_path(self):
+    def add_mturk_args(self):
         default_log_path = os.path.join(self.parlai_home, 'logs', 'mturk')
         self.parser.add_argument(
             '--mturk-log-path', default=default_log_path,
-            help='path to mturk logs, defaults to {parlai_dir}/logs/mturk')
+            help='path to MTurk logs, defaults to {parlai_dir}/logs/mturk')
+        self.parser.add_argument(
+            '-t', '--task',
+            help='MTurk task, e.g. "qa_data_collection" or "model_evaluator"')
+        self.parser.add_argument(
+            '-nh', '--num-hits', default=2, type=int,
+            help='number of HITs you want to create for this task')
+        self.parser.add_argument(
+            '-r', '--reward', default=0.05, type=float,
+            help='reward for each HIT, in US dollars')
+        self.parser.add_argument(
+            '--sandbox', dest='is_sandbox', action='store_true',
+            help='submit the HITs to MTurk sandbox site')
+        self.parser.add_argument(
+            '--live', dest='is_sandbox', action='store_false',
+            help='submit the HITs to MTurk live site')
+        self.parser.set_defaults(is_sandbox=True)
+        self.parser.add_argument(
+            '--verbose', dest='verbose', action='store_true',
+            help='print out all messages sent/received in all conversations')
+        self.parser.set_defaults(verbose=False)
 
     def add_parlai_args(self):
         default_log_path = os.path.join(self.parlai_home, 'logs')

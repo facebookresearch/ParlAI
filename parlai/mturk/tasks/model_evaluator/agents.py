@@ -54,3 +54,5 @@ class ModelEvaluatorAgent(Agent):
         # with 1-turn dialogs in this task.
         ad['episode_done'] = True  # self.world.episode_done()
         return ad
+
+default_agent_class = ModelEvaluatorAgent

@@ -60,6 +60,46 @@ def validate(observation):
     else:
         raise RuntimeError('Must return dictionary from act().')
 
+def display_messages(msgs):
+    """Returns a string describing the set of messages provided"""
+    lines = []
+    episode_done = False
+    for index, msg in enumerate(msgs):
+        if msg is None:
+            continue
+        if msg.get('episode_done', False):
+            episode_done = True
+        # Possibly indent the text (for the second speaker, if two).
+        space = ''
+        if len(msgs) == 2 and index == 1:
+            space = '   '
+        if msg.get('reward', None) is not None:
+            lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
+        if msg.get('text', ''):
+            ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
+            lines.append(space + ID + msg['text'])
+        if msg.get('labels', False):
+            lines.append(space + ('[labels: {}]'.format(
+                        '|'.join(msg['labels']))))
+        if msg.get('label_candidates', False):
+            cand_len = len(msg['label_candidates'])
+            if cand_len <= 10:
+                lines.append(space + ('[cands: {}]'.format(
+                        '|'.join(msg['label_candidates']))))
+            else:
+                # select five label_candidates from the candidate set,
+                # can't slice in because it's a set
+                cand_iter = iter(msg['label_candidates'])
+                display_cands = (next(cand_iter) for _ in range(5))
+                # print those cands plus how many cands remain
+                lines.append(space + ('[cands: {}{}]'.format(
+                        '|'.join(display_cands),
+                        '| ...and {} more'.format(cand_len - 5)
+                        )))
+    if episode_done:
+        lines.append('- - - - - - - - - - - - - - - - - - - - -')
+    return '\n'.join(lines)
+
 
 class World(object):
     """Empty parent providing null definitions of API functions for Worlds.
@@ -90,40 +130,7 @@ class World(object):
         By default, display the messages between the agents."""
         if not hasattr(self, 'acts'):
             return ''
-        lines = []
-        for index, msg in enumerate(self.acts):
-            if msg is None:
-                continue
-            # Possibly indent the text (for the second speaker, if two).
-            space = ''
-            if len(self.acts) == 2 and index == 1:
-                space = '   '
-            if msg.get('reward', None) is not None:
-                lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
-            if msg.get('text', ''):
-                ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
-                lines.append(space + ID + msg['text'])
-            if msg.get('labels', False):
-                lines.append(space + ('[labels: {}]'.format(
-                            '|'.join(msg['labels']))))
-            if msg.get('label_candidates', False):
-                cand_len = len(msg['label_candidates'])
-                if cand_len <= 10:
-                    lines.append(space + ('[cands: {}]'.format(
-                            '|'.join(msg['label_candidates']))))
-                else:
-                    # select five label_candidates from the candidate set,
-                    # can't slice in because it's a set
-                    cand_iter = iter(msg['label_candidates'])
-                    display_cands = (next(cand_iter) for _ in range(5))
-                    # print those cands plus how many cands remain
-                    lines.append(space + ('[cands: {}{}]'.format(
-                            '|'.join(display_cands),
-                            '| ...and {} more'.format(cand_len - 5)
-                            )))
-        if self.episode_done():
-            lines.append('- - - - - - - - - - - - - - - - - - - - -')
-        return '\n'.join(lines)
+        return display_messages(self.acts)
 
     def episode_done(self):
         """Whether the episode is done or not. """
@@ -366,16 +373,15 @@ class MultiWorld(World):
             self.new_world = False
             self.parleys = 0
             if self.random:
+                # select random world
                 self.world_idx = random.randrange(len(self.worlds))
             else:
-                start_idx = self.world_idx
-                keep_looking = True
-                while keep_looking:
+                # do at most one full loop looking for unfinished world
+                for _ in range(len(self.worlds)):
                     self.world_idx = (self.world_idx + 1) % len(self.worlds)
-                    keep_looking = (self.worlds[self.world_idx].epoch_done() and
-                                    self.world_idx != start_idx)
-                if self.worlds[self.world_idx].epoch_done():
-                    raise RuntimeError('oops?')
+                    if not self.worlds[self.world_idx].epoch_done():
+                        # if this world has examples ready, break
+                        break
 
     def parley(self):
         self.parley_init()

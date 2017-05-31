@@ -4,10 +4,13 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """Script to run evaluation only on a pretrained model."""
-import torch
+try:
+    import torch
+except ModuleNotFoundError:
+    raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
 import logging
 
-from parlai.agents.drqa.utils import Timer
+from parlai.core.utils import Timer
 from parlai.agents.drqa.agents import DocReaderAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
