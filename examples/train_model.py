@@ -4,14 +4,14 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """Train a model.
-   After training, computes validation and test error.
-   Run with, e.g.:
-   python examples/train_model.py -m ir_baseline -t dialog_babi:Task:1 -mf "/tmp/model"
+After training, computes validation and test error.
+Run with, e.g.:
+python examples/train_model.py -m ir_baseline -t dialog_babi:Task:1 -mf "/tmp/model"
 
-   TODO List:
-   - Add model specific params
-   - Validate & Log while training
-   - Keep best model from validation error, if desired
+TODO List:
+- Add model specific params
+- Validate & Log while training
+- Keep best model from validation error, if desired
 """
 
 from parlai.core.agents import create_agent
@@ -56,6 +56,7 @@ def main():
 
     train_time = Timer()
     print("[training...]")
+    # TODO: should also deal with worlds with no length (fixed number of examples).
     for _ in range(len(world) * opt['num_epochs']):
         world.parley()
         if opt['display_examples']:
