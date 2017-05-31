@@ -123,7 +123,10 @@ class DocReaderAgent(Agent):
 
     def _init_from_saved(self):
         logger.info('[ Loading model %s ]' % self.opt['pretrained_model'])
-        saved_params = torch.load(self.opt['pretrained_model'])
+        saved_params = torch.load(
+            self.opt['pretrained_model'],
+            map_location=lambda storage, loc: storage
+        )
 
         # TODO expand dict and embeddings for new data
         self.word_dict = saved_params['word_dict']
@@ -221,7 +224,12 @@ class DocReaderAgent(Agent):
 
         # Split out document + question
         inputs = {}
-        fields = ex['text'].split('\n')
+        fields = ex['text'].strip().split('\n')
+
+        # Data is expected to be text + '\n' + question
+        if len(fields) < 2:
+            raise RuntimeError('Invalid input. Is task a QA tast?')
+
         document, question = ' '.join(fields[:-1]), fields[-1]
         inputs['document'] = self.word_dict.tokenize(document)
         inputs['question'] = self.word_dict.tokenize(question)
