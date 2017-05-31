@@ -309,9 +309,9 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
-    def test_vqa_coco2014(self):
+    def test_visdial(self):
         from parlai.core.params import ParlaiParser
-        from parlai.tasks.vqa_coco2014.agents import McTeacher, OeTeacher
+        from parlai.tasks.visdial.agents import McTeacher, OeTeacher
 
         opt = ParlaiParser().parse_args(args=self.args)
         for dt in ['train:ordered', 'valid', 'test']:
@@ -325,7 +325,37 @@ class TestData(unittest.TestCase):
             reply = teacher.act()
             check(opt, reply)
 
-        shutil.rmtree(self.TMP_PATH)
+    def test_vqa_v1(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.vqa_v1.agents import McTeacher, OeTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+        for dt in ['train:ordered', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = McTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+            teacher = OeTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+    def test_vqa_v2(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.vqa_v2.agents import McTeacher, OeTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+        for dt in ['train:ordered', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = McTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+            teacher = OeTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
 
     def test_wikimovies(self):
         from parlai.core.params import ParlaiParser
@@ -368,5 +398,7 @@ if __name__ == '__main__':
     if error_code != 0:
         print('At least one test failed. Leaving directory ' +
               '{} with temporary files in place '.format(TestData.TMP_PATH) +
-              'for inspection (only failed tasks remain).')
+              'for inspection (only failed tasks or images remain).')
+    else:
+        shutil.rmtree(TestData.TMP_PATH, ignore_errors=True)
     sys.exit(error_code)

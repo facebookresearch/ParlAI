@@ -10,4 +10,5 @@ set -e # stop if any tests fail
 python test_init.py
 python test_import.py
 python test_dict.py
+python test_tasklist.py
 python test_threadutils.py
