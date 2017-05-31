@@ -120,7 +120,7 @@ task_list = [
         "display_name": "QA CNN",
         "task": "qacnn",
         "tags": [ "all",  "Cloze" ],
-        "description": "Cloze dataset based on a missing (anonymized) entity phrase from a CNN article, Hermann et al. '15. Link: https://arxiv.org/abs/1506.03340"       
+        "description": "Cloze dataset based on a missing (anonymized) entity phrase from a CNN article, Hermann et al. '15. Link: https://arxiv.org/abs/1506.03340"
     },
     {
         "id": "QADailyMail",
@@ -169,6 +169,27 @@ task_list = [
         "display_name": "WikiQA",
         "task": "wikiqa",
         "tags": [ "all",  "QA" ],
-        "description": "Open domain QA from Wikipedia dataset from Yang, et al. '15. Link: https://www.microsoft.com/en-us/research/publication/wikiqa-a-challenge-dataset-for-open-domain-question-answering/"
+        "description": "Open domain QA from Wikipedia dataset from Yang et al. '15. Link: https://www.microsoft.com/en-us/research/publication/wikiqa-a-challenge-dataset-for-open-domain-question-answering/"
     },
+	{
+		"id": "VQAv1",
+		"display_name": "VQAv1",
+		"task": "vqa_v1",
+		"tags": [ "all", "visual"],
+		"description": "Open-ended question answering about visual content. From Agrawal et al. '15. Link: https://arxiv.org/abs/1505.00468"
+	},
+	{
+		"id": "VQAv2",
+		"display_name": "VQAv2",
+		"task": "vqa_v2",
+		"tags": [ "all", "visual"],
+		"description": "Bigger, more balanced version of the original VQA dataset. From Goyal et al. '16. Link: https://arxiv.org/abs/1612.00837"
+	},
+	{
+		"id": "VisDial",
+		"display_name": "VisDial",
+		"task": "visdial",
+		"tags": [ "all", "visual"],
+		"description": "Task which requires agents to hold a meaningful dialog about visual content. From Das et al. '16. Link: https://arxiv.org/abs/1611.08669"
+	},
 ]
