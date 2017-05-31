@@ -44,7 +44,6 @@ import importlib
 import random
 
 from multiprocessing import Process, Value, Condition, Semaphore
-from collections import deque
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
 from parlai.tasks.tasks import ids_to_tasks
 
@@ -374,16 +373,15 @@ class MultiWorld(World):
             self.new_world = False
             self.parleys = 0
             if self.random:
+                # select random world
                 self.world_idx = random.randrange(len(self.worlds))
             else:
-                start_idx = self.world_idx
-                keep_looking = True
-                while keep_looking:
+                # do at most one full loop looking for unfinished world
+                for _ in range(len(self.worlds)):
                     self.world_idx = (self.world_idx + 1) % len(self.worlds)
-                    keep_looking = (self.worlds[self.world_idx].epoch_done() and
-                                    start_idx != self.world_idx)
-                if start_idx == self.world_idx:
-                    return {'text': 'There are no more examples remaining.'}
+                    if not self.worlds[self.world_idx].epoch_done():
+                        # if this world has examples ready, break
+                        break
 
     def parley(self):
         self.parley_init()
@@ -418,6 +416,10 @@ class MultiWorld(World):
             m['accuracy'] = sum_accuracy / num_tasks
             m['total'] = total
         return m
+
+    def reset(self):
+        for w in self.worlds:
+            w.reset()
 
 
 def override_opts_in_shared(table, overrides):
@@ -456,7 +458,7 @@ class BatchWorld(World):
             # make sure that any opt dicts in shared have batchindex set to i
             # this lets all shared agents know which batchindex they have,
             # which is needed for ordered data (esp valid/test sets)
-            override_opts_in_shared(shared, { 'batchindex': i })
+            override_opts_in_shared(shared, {'batchindex': i})
             self.worlds.append(shared['world_class'](opt, None, shared))
         self.batch_observations = [ None ] * len(self.world.get_agents())
 
@@ -537,6 +539,10 @@ class BatchWorld(World):
 
     def report(self):
         return self.worlds[0].report()
+
+    def reset(self):
+        for w in self.worlds:
+            w.reset()
 
 
 class HogwildProcess(Process):

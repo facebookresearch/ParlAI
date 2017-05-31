@@ -258,14 +258,17 @@ class MultiTaskTeacher(Teacher):
         self.tasks = []
         self.opt = opt
         self.id = opt['task']
-        tasks = opt['task'].split(',')
-        for k in tasks:
-            k = k.strip()
-            if k:
-                opt_singletask = copy.deepcopy(opt)
-                opt_singletask['task'] = k
-                self.tasks.extend(create_task_agent_from_taskname(
-                    opt_singletask))
+        if shared and 'tasks' in shared:
+            self.tasks = [create_agent_from_shared(t) for t in shared['tasks']]
+        else:
+            tasks = opt['task'].split(',')
+            for k in tasks:
+                k = k.strip()
+                if k:
+                    opt_singletask = copy.deepcopy(opt)
+                    opt_singletask['task'] = k
+                    self.tasks.extend(create_task_agent_from_taskname(
+                        opt_singletask))
         self.task_idx = -1
         self.new_task = True
         self.random = opt.get('datatype') == 'train'
@@ -286,23 +289,24 @@ class MultiTaskTeacher(Teacher):
             raise StopIteration()
 
     def observe(self, observation):
-        self.tasks[self.task_idx].observe(observation)
+        return self.tasks[self.task_idx].observe(observation)
+
+    def act(self):
         if self.new_task:
             self.new_task = False
             if self.random:
+                # select random teacher
                 self.task_idx = random.randrange(len(self.tasks))
             else:
-                start_idx = self.task_idx
-                keep_looking = True
-                while keep_looking:
+                # do at most one full loop looking for unfinished task
+                for _ in range(len(self.tasks)):
                     self.task_idx = (self.task_idx + 1) % len(self.tasks)
-                    keep_looking = (self.tasks[self.task_idx].epoch_done() and
-                                    start_idx != self.task_idx)
-                if start_idx == self.task_idx:
-                    return {'text': 'There are no more examples remaining.'}
-        return observation
-
-    def act(self):
+                    if not self.tasks[self.task_idx].epoch_done():
+                        # if this task has examples ready, break
+                        break
+                if self.tasks[self.task_idx].epoch_done():
+                    # all tasks are done, so return empty action table
+                    return {'episode_done': True}
         t = self.tasks[self.task_idx].act()
         if t['episode_done']:
             self.new_task = True
@@ -333,3 +337,14 @@ class MultiTaskTeacher(Teacher):
         if num_tasks > 0:
             m['accuracy'] = sum_accuracy / num_tasks
         return m
+
+    def reset(self):
+        for t in self.tasks:
+            t.reset()
+
+    def share(self):
+        shared = {}
+        shared['class'] = type(self)
+        shared['opt'] = self.opt
+        shared['tasks'] = [t.share() for t in self.tasks]
+        return shared
