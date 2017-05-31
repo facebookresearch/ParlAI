@@ -282,8 +282,6 @@ class Seq2SeqAgent(Agent):
         with open(path, 'wb') as write:
             torch.save(model, write)
 
-        self.dict.save(path + '.dict')
-
     def load(self, path):
         with open(path, 'rb') as read:
             model = torch.load(read)
@@ -292,5 +290,4 @@ class Seq2SeqAgent(Agent):
         self.encoder.load_state_dict(model['encoder'])
         self.decoder.load_state_dict(model['decoder'])
         self.d2o.load_state_dict(model['d2o'])
-        # self.longest_label = model['longest_label']
-        # self.dict.load(path + '.dict')
+        self.longest_label = model['longest_label']
