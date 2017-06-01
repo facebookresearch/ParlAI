@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.agents.rnn_baselines.agents import Seq2SeqAgent
+from parlai.agents.rnn_baselines.seq2seq import Seq2seqAgent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
@@ -20,7 +20,7 @@ def main():
     # Get command line arguments
     parser = ParlaiParser(add_model_args=True)
     DictionaryAgent.add_cmdline_args(parser)
-    Seq2SeqAgent.add_cmdline_args(parser)
+    Seq2seqAgent.add_cmdline_args(parser)
     parser.add_argument('--dict-maxexs', default=100000, type=int)
     opt = parser.parse_args()
 
@@ -70,7 +70,7 @@ def main():
         dictionary.save(dict_fn, sort=True)
 
     # create agent
-    agent = Seq2SeqAgent(opt, {'dictionary': dictionary})
+    agent = Seq2seqAgent(opt, {'dictionary': dictionary})
 
     if os.path.isfile(opt['model_file']):
         print('Loading existing model parameters from ' + opt['model_file'])

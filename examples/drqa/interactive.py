@@ -17,7 +17,7 @@ except ModuleNotFoundError:
     raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
 import logging
 
-from parlai.agents.drqa.agents import DocReaderAgent
+from parlai.agents.drqa.drqa import DocReaderAgent
 from parlai.core.params import ParlaiParser
 
 def main(opt):

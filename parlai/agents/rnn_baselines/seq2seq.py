@@ -15,7 +15,7 @@ import copy
 import random
 
 
-class Seq2SeqAgent(Agent):
+class Seq2seqAgent(Agent):
     """Simple agent which uses an LSTM to process incoming text observations."""
 
     @staticmethod

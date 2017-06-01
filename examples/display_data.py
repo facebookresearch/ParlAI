@@ -12,7 +12,7 @@ see a few of them:
 """
 
 from parlai.core.params import ParlaiParser
-from parlai.agents.repeat_label.agents import RepeatLabelAgent
+from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 
 import random

@@ -112,6 +112,7 @@ class ParlaiParser(object):
             '-mf', '--model_file', default='',
             help='model file name for loading and saving models')
         # Find which model specified, and add its specific arguments.
+        model = None
         for index, item in enumerate(sys.argv):
             if item == '-m' or item == '--model':
                 model = sys.argv[index + 1]
