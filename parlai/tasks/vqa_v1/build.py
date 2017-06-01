@@ -35,16 +35,12 @@ def buildImage(opt):
         build_data.mark_done(dpath)
 
 
-
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'VQA-v1')
 
     if not build_data.built(dpath):
         print('[building data: ' + dpath + ']')
-        for item in os.listdir(dpath):
-            item = os.path.join(dpath, item)
-            if os.path.isdir(item):
-                build_data.remove_dir(item)
+        build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.

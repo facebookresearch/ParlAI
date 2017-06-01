@@ -35,7 +35,6 @@ def buildImage(opt):
         build_data.mark_done(dpath)
 
 
-
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'VQA-v2')
 
