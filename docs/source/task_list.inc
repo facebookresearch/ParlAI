@@ -295,7 +295,46 @@ WikiQA
 
 **Group Tags**: ``#all``, ``#QA``
 
-**Description**: Open domain QA from Wikipedia dataset from Yang, et al. '15. Link: https://www.microsoft.com/en-us/research/publication/wikiqa-a-challenge-dataset-for-open-domain-question-answering/
+**Description**: Open domain QA from Wikipedia dataset from Yang et al. '15. Link: https://www.microsoft.com/en-us/research/publication/wikiqa-a-challenge-dataset-for-open-domain-question-answering/
+
+
+
+VQAv1
+^^^^^
+
+**Tag**: ``#VQAv1``
+
+**Full Path**: ``vqa_v1``
+
+**Group Tags**: ``#all``, ``#visual``
+
+**Description**: Open-ended question answering about visual content. From Agrawal et al. '15. Link: https://arxiv.org/abs/1505.00468
+
+
+
+VQAv2
+^^^^^
+
+**Tag**: ``#VQAv2``
+
+**Full Path**: ``vqa_v2``
+
+**Group Tags**: ``#all``, ``#visual``
+
+**Description**: Bigger, more balanced version of the original VQA dataset. From Goyal et al. '16. Link: https://arxiv.org/abs/1612.00837
+
+
+
+VisDial
+^^^^^^^
+
+**Tag**: ``#VisDial``
+
+**Full Path**: ``visdial``
+
+**Group Tags**: ``#all``, ``#visual``
+
+**Description**: Task which requires agents to hold a meaningful dialog about visual content. From Das et al. '16. Link: https://arxiv.org/abs/1611.08669
 
 
 
