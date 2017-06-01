@@ -309,54 +309,6 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
-    def test_visdial(self):
-        from parlai.core.params import ParlaiParser
-        from parlai.tasks.visdial.agents import McTeacher, OeTeacher
-
-        opt = ParlaiParser().parse_args(args=self.args)
-        for dt in ['train:ordered', 'valid', 'test']:
-            opt['datatype'] = dt
-
-            teacher = McTeacher(opt)
-            reply = teacher.act()
-            check(opt, reply)
-
-            teacher = OeTeacher(opt)
-            reply = teacher.act()
-            check(opt, reply)
-
-    def test_vqa_v1(self):
-        from parlai.core.params import ParlaiParser
-        from parlai.tasks.vqa_v1.agents import McTeacher, OeTeacher
-
-        opt = ParlaiParser().parse_args(args=self.args)
-        for dt in ['train:ordered', 'valid', 'test']:
-            opt['datatype'] = dt
-
-            teacher = McTeacher(opt)
-            reply = teacher.act()
-            check(opt, reply)
-
-            teacher = OeTeacher(opt)
-            reply = teacher.act()
-            check(opt, reply)
-
-    def test_vqa_v2(self):
-        from parlai.core.params import ParlaiParser
-        from parlai.tasks.vqa_v2.agents import McTeacher, OeTeacher
-
-        opt = ParlaiParser().parse_args(args=self.args)
-        for dt in ['train:ordered', 'valid', 'test']:
-            opt['datatype'] = dt
-
-            teacher = McTeacher(opt)
-            reply = teacher.act()
-            check(opt, reply)
-
-            teacher = OeTeacher(opt)
-            reply = teacher.act()
-            check(opt, reply)
-
     def test_wikimovies(self):
         from parlai.core.params import ParlaiParser
         from parlai.tasks.wikimovies.agents import DefaultTeacher, KBTeacher
@@ -383,6 +335,44 @@ class TestData(unittest.TestCase):
         for dt in ['train:ordered', 'valid', 'test']:
             opt['datatype'] = dt
             teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
+    def test_coco_datasets(self):
+        # one unit test for tasks with coco so images are only downloaded once
+        from parlai.core.params import ParlaiParser
+        opt = ParlaiParser().parse_args(args=self.args)
+
+        # VisDial
+        from parlai.tasks.visdial.agents import DefaultTeacher
+        for dt in ['train:ordered', 'valid']:
+            opt['datatype'] = dt
+
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        # VQA_v1
+        from parlai.tasks.vqa_v1.agents import McTeacher, OeTeacher
+        for dt in ['train:ordered', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = McTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+            teacher = OeTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        # VQA_v2
+        from parlai.tasks.vqa_v2.agents import OeTeacher
+        for dt in ['train:ordered', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = OeTeacher(opt)
             reply = teacher.act()
             check(opt, reply)
 

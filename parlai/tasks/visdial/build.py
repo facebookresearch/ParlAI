@@ -52,7 +52,6 @@ def build(opt):
         build_data.download(dpath, url + fname1)
         build_data.download(dpath, url + fname2)
 
-
         build_data.untar(dpath, fname1)
         build_data.untar(dpath, fname2)
 

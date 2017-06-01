@@ -12,6 +12,7 @@ import json
 import random
 import os
 
+
 def _path(opt):
     build(opt)
     buildImage(opt)
@@ -25,16 +26,18 @@ def _path(opt):
         ques_suffix = 'MultipleChoice_mscoco_val2014'
         annotation_suffix = 'mscoco_val2014'
         img_suffix = os.path.join('val2014', 'COCO_val2014_')
-    else:
+    elif dt == 'test':
         ques_suffix = 'MultipleChoice_mscoco_test2015'
         annotation_suffix = 'None'
         img_suffix = os.path.join('test2014', 'COCO_test2014_')
+    else:
+        raise RuntimeError('Not valid datatype.')
 
     data_path = os.path.join(opt['datapath'], 'VQA-COCO2014',
-        ques_suffix + '_questions.json')
+                             ques_suffix + '_questions.json')
 
     annotation_path = os.path.join(opt['datapath'], 'VQA-COCO2014',
-        annotation_suffix + '_annotations.json')
+                                   annotation_suffix + '_annotations.json')
 
     image_path = os.path.join(opt['datapath'], 'COCO-IMG', img_suffix)
 
@@ -89,7 +92,7 @@ class OeTeacher(Teacher):
     def observe(self, observation):
         """Process observation for metrics."""
         if self.lastY is not None:
-            loss = self.metrics.update(observation, self.lastY)
+            self.metrics.update(observation, self.lastY)
             self.lastY = None
         return observation
 
