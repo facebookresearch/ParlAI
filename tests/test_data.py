@@ -309,7 +309,9 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
-    def test_visdial(self):
+    def test_coco_datasets(self):
+        # visdial, vqa_v1, and vqa_v2 are combined so coco images are only
+        # retrieved once
         from parlai.core.params import ParlaiParser
         from parlai.tasks.visdial.agents import DefaultTeacher
 
@@ -321,11 +323,8 @@ class TestData(unittest.TestCase):
             reply = teacher.act()
             check(opt, reply)
 
-    def test_vqa_v1(self):
-        from parlai.core.params import ParlaiParser
         from parlai.tasks.vqa_v1.agents import McTeacher, OeTeacher
 
-        opt = ParlaiParser().parse_args(args=self.args)
         for dt in ['train:ordered', 'valid', 'test']:
             opt['datatype'] = dt
 
@@ -337,11 +336,8 @@ class TestData(unittest.TestCase):
             reply = teacher.act()
             check(opt, reply)
 
-    def test_vqa_v2(self):
-        from parlai.core.params import ParlaiParser
         from parlai.tasks.vqa_v2.agents import OeTeacher
 
-        opt = ParlaiParser().parse_args(args=self.args)
         for dt in ['train:ordered', 'valid', 'test']:
             opt['datatype'] = dt
 
