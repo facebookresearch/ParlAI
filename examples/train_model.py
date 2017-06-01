@@ -56,14 +56,13 @@ def main():
 
     train_time = Timer()
     print("[training...]")
-    for _ in range(opt['num_epochs']):
-        for _ in world:
-            world.parley()
-            if opt['display_examples']:
-                print(world.display() + "\n~~")
-                if train_time.time() > opt['max_train_time']:
-                    print("[max_train_time elapsed: " + str(train_time.time()) + "]")
-                    break
+    for i in range(opt['num_epochs'] * len(world)):
+        world.parley()
+        if opt['display_examples']:
+            print(world.display() + "\n~~")
+        if train_time.time() > opt['max_train_time']:
+            print("[max_train_time elapsed: " + str(train_time.time()) + "]")
+            break
     world.shutdown()
 
     if opt['model_file']:
