@@ -256,7 +256,7 @@ def get_agent_module(dir_name):
         module_name = s[0]
         class_name = s[1]
     else:
-        module_name = "parlai.agents.%s.agents" % (dir_name)
+        module_name = "parlai.agents.%s.%s" % (dir_name, dir_name)
         words = dir_name.split('_')
         class_name = ''
         for w in words:

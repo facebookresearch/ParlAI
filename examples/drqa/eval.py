@@ -11,7 +11,7 @@ except ModuleNotFoundError:
 import logging
 
 from parlai.core.utils import Timer
-from parlai.agents.drqa.agents import DocReaderAgent
+from parlai.agents.drqa.drqa import DocReaderAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
 

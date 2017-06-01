@@ -25,8 +25,8 @@ import copy
 import sys
 import random
 
-from parlai.agents.drqa.agents import SimpleDictionaryAgent
-from parlai.agents.drqa.agents import DocReaderAgent
+from parlai.agents.drqa.drqa import SimpleDictionaryAgent
+from parlai.agents.drqa.drqa import DocReaderAgent
 from parlai.core.utils import Timer
 from parlai.core.worlds import DialogPartnerWorld
 from parlai.core.params import ParlaiParser
