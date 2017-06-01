@@ -97,23 +97,19 @@ def rank_candidates(query_rep, cands, length_penalty):
 
 class IrBaselineAgent(Agent):
 
-    def __init__(self, opt, shared=None):
-        super().__init__(opt)
-        self.id = 'IRBaselineAgent'
-        parser = ParlaiParser(True)
+    @staticmethod
+    def add_cmdline_args(parser):
         DictionaryAgent.add_cmdline_args(parser)
         parser.add_argument(
             '-lp', '--length_penalty', default=0.5,
             help='length penalty for responses')
-        p = opt.get('model_params', None)
-        if p:
-            p = p.split(' ')
-        else:
-            p = []
-        model_opts = parser.parse_args(p)
-        self.length_penalty = float(model_opts['length_penalty'])
-        self.dictionary = DictionaryAgent(model_opts)
-        self.opt = model_opts
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt)
+        self.id = 'IRBaselineAgent'
+        self.length_penalty = float(opt['length_penalty'])
+        self.dictionary = DictionaryAgent(opt)
+        self.opt = opt
 
     def observe(self, obs):
         self.observation = obs

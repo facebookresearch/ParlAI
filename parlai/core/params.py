@@ -9,7 +9,8 @@ using the ParlAI package.
 
 import argparse
 import os
-
+import sys
+from parlai.core.agents import get_agent_module
 
 def str2bool(value):
     return value.lower() in ('yes', 'true', 't', '1', 'y')
@@ -31,14 +32,16 @@ class ParlaiParser(object):
                             os.path.realpath(__file__)))))
         os.environ['PARLAI_HOME'] = self.parlai_home
 
+        self.add_arg = self.parser.add_argument
+        self.add_argument = self.parser.add_argument
+        self.register = self.parser.register
+
         if add_parlai_args:
             self.add_parlai_args()
         if add_model_args:
             self.add_model_args()
 
-        self.add_arg = self.parser.add_argument
-        self.add_argument = self.parser.add_argument
-        self.register = self.parser.register
+
 
     def add_parlai_data_path(self):
         default_data_path = os.path.join(self.parlai_home, 'data')
@@ -106,12 +109,16 @@ class ParlaiParser(object):
             '-m', '--model', default='repeat_label',
             help='the model class name, should match parlai/agents/<model>')
         self.parser.add_argument(
-            '-mp', '--model_params', default='',
-            help='the model parameters, a string that is parsed separately '
-            + 'by the model parser after the model class is instantiated')
-        self.parser.add_argument(
             '-mf', '--model_file', default='',
             help='model file name for loading and saving models')
+        # Find which model specified, and add its specific arguments.
+        for index, item in enumerate(sys.argv):
+            if item == '-m' or item == '--model':
+                model = sys.argv[index + 1]
+        if model:
+            agent = get_agent_module(model)
+            if agent.add_cmdline_args:
+                agent.add_cmdline_args(self)
 
     def parse_args(self, args=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the ``args``.
