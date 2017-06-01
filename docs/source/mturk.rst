@@ -147,7 +147,19 @@ A few things to keep in mind:
 Running a Task
 --------------
 
-To run an MTurk task, first ensure that the task directory is in `parlai/mturk/tasks/ <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/>`__. Then, run `run_mturk.py <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/run_mturk.py>`__ with proper flags:
+If you have not used Mechanical Turk before, you will need an MTurk Requester Account and an AWS account (these are two separate accounts). Follow the steps below:
+
+- Sign up for an AWS account at `aws.amazon.com <https://aws.amazon.com/>`__
+
+- Sign up for an MTurk account at `requester.mturk.com <https://requester.mturk.com/>`__
+
+- Go to the developer tab (`https://requester.mturk.com/developer <https://requester.mturk.com/developer>`__) and link your AWS account to your MTurk account (Step 2 on that screen)
+
+- MTurk also has a “Sandbox” which is a test version of the MTurk marketplace. You can use it to test publishing and completing tasks without paying any money. ParlAI supports the Sandbox. To use the Sandbox, you need to sign up for a `Sandbox account <http://requestersandbox.mturk.com/>`__. You will then also need to `link your AWS account <http://requestersandbox.mturk.com/developer>`__ to your Sandbox account. In order to test faster, you will also want to create a `Sandbox Worker account <http://workersandbox.mturk.com/>`__. You can then view tasks your publish from ParlAI and complete them yourself.
+
+- ParlAI will connect to your AWS account and set up some supporting resources including a Lambda function, an API Gateway and an RDS database. It will also use your AWS account to connect to the MTurk API. In order to do this, it will require credentials to access your AWS account. To set this up, you will need to create an `IAM user <https://console.aws.amazon.com/iam/>`__ with programmatic access and an AdministratorAccess policy. You can learn more about how to set up IAM users `here <http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html>`__. Once you have created the account, keep its access key and the secret key handy as you will need it next.
+
+Then, to run an MTurk task, first ensure that the task directory is in `parlai/mturk/tasks/ <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/>`__. Then, run `run_mturk.py <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/run_mturk.py>`__ with proper flags:
 
 .. code-block:: python
 
