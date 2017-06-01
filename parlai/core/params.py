@@ -117,7 +117,7 @@ class ParlaiParser(object):
                 model = sys.argv[index + 1]
         if model:
             agent = get_agent_module(model)
-            if agent.add_cmdline_args:
+            if hasattr(agent, 'add_cmdline_args'):
                 agent.add_cmdline_args(self)
 
     def parse_args(self, args=None, print_args=True):
