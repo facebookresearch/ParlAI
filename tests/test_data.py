@@ -311,17 +311,13 @@ class TestData(unittest.TestCase):
 
     def test_visdial(self):
         from parlai.core.params import ParlaiParser
-        from parlai.tasks.visdial.agents import McTeacher, OeTeacher
+        from parlai.tasks.visdial.agents import DefaultTeacher
 
         opt = ParlaiParser().parse_args(args=self.args)
         for dt in ['train:ordered', 'valid', 'test']:
             opt['datatype'] = dt
 
-            teacher = McTeacher(opt)
-            reply = teacher.act()
-            check(opt, reply)
-
-            teacher = OeTeacher(opt)
+            teacher = DefaultTeacher(opt)
             reply = teacher.act()
             check(opt, reply)
 
@@ -343,15 +339,11 @@ class TestData(unittest.TestCase):
 
     def test_vqa_v2(self):
         from parlai.core.params import ParlaiParser
-        from parlai.tasks.vqa_v2.agents import McTeacher, OeTeacher
+        from parlai.tasks.vqa_v2.agents import OeTeacher
 
         opt = ParlaiParser().parse_args(args=self.args)
         for dt in ['train:ordered', 'valid', 'test']:
             opt['datatype'] = dt
-
-            teacher = McTeacher(opt)
-            reply = teacher.act()
-            check(opt, reply)
 
             teacher = OeTeacher(opt)
             reply = teacher.act()
