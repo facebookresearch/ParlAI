@@ -250,20 +250,14 @@ class MultiTaskTeacher(Teacher):
         return shared
 
 
-def create_agent(opt):
-    """Create an agent from the options ``model``, ``model_params`` and ``model_file``.
-    The input is either of the form ``parlai.agents.ir_baseline.agents:IrBaselineAgent``
-    (i.e. the path followed by the class name) or else just ``ir_baseline`` which
-    assumes the path above, and a class name suffixed with 'Agent'.
-    """
-    dir_name = opt['model']
+def get_agent_module(dir_name):
     if ':' in dir_name:
         s = dir_name.split(':')
         module_name = s[0]
         class_name = s[1]
     else:
         module_name = "parlai.agents.%s.agents" % (dir_name)
-        words = opt['model'].split('_')
+        words = dir_name.split('_')
         class_name = ''
         for w in words:
             class_name += ( w[0].upper() + w[1:])
@@ -271,6 +265,15 @@ def create_agent(opt):
     print(class_name)
     my_module = importlib.import_module(module_name)
     model_class = getattr(my_module, class_name)
+    return model_class
+
+def create_agent(opt):
+    """Create an agent from the options ``model``, ``model_params`` and ``model_file``.
+    The input is either of the form ``parlai.agents.ir_baseline.agents:IrBaselineAgent``
+    (i.e. the path followed by the class name) or else just ``ir_baseline`` which
+    assumes the path above, and a class name suffixed with 'Agent'.
+    """
+    model_class = get_agent_module(opt['model'])
     return model_class(opt)
 
 # Helper functions to create agent/agents given shared parameters
