@@ -8,6 +8,7 @@ from parlai.core.dialog_teacher import DialogTeacher
 from .build import build
 
 import csv
+import random
 import os
 
 
@@ -42,4 +43,5 @@ class DefaultTeacher(DialogTeacher):
                 if len(fields) > 3:
                     cands = [fields[i] for i in range(2, len(fields))]
                     cands.append(response)
+                    random.shuffle(cands)
                 yield (context, [response], None, cands), True

@@ -11,7 +11,7 @@ from PIL import Image
 import json
 import random
 import os
-import pdb
+
 
 def _path(opt):
     build(opt)
@@ -26,16 +26,18 @@ def _path(opt):
         ques_suffix = 'v2_OpenEnded_mscoco_val2014'
         annotation_suffix = 'v2_mscoco_val2014'
         img_suffix = os.path.join('val2014', 'COCO_val2014_')
-    else:
+    elif dt == 'test':
         ques_suffix = 'v2_OpenEnded_mscoco_test2015'
         annotation_suffix = 'None'
         img_suffix = os.path.join('test2014', 'COCO_test2014_')
+    else:
+        raise RuntimeError('Not valid datatype.')
 
     data_path = os.path.join(opt['datapath'], 'VQA-COCO2014-v2',
-        ques_suffix + '_questions.json')
+                             ques_suffix + '_questions.json')
 
     annotation_path = os.path.join(opt['datapath'], 'VQA-COCO2014-v2',
-        annotation_suffix + '_annotations.json')
+                                   annotation_suffix + '_annotations.json')
 
     image_path = os.path.join(opt['datapath'], 'COCO-IMG', img_suffix)
 
@@ -53,9 +55,8 @@ def _image_loader(opt, path):
 
 
 class OeTeacher(Teacher):
-    """
-    VQA v2.0 Open-Ended teacher, which loads the json vqa data and implements its
-    own `act` method for interacting with student agent.
+    """VQA v2.0 Open-Ended teacher, which loads the json VQA data and
+    implements its own `act` method for interacting with student agent.
     agent.
     """
     def __init__(self, opt, shared=None):
@@ -141,6 +142,7 @@ class OeTeacher(Teacher):
                 self.annotation = json.load(data_file)
 
         self.len = len(self.ques['questions'])
+
 
 class DefaultTeacher(OeTeacher):
     pass

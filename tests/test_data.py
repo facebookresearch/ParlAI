@@ -347,7 +347,7 @@ class TestData(unittest.TestCase):
 
         # VisDial
         from parlai.tasks.visdial.agents import DefaultTeacher
-        for dt in ['train:ordered', 'valid', 'test']:
+        for dt in ['train:ordered', 'valid']:
             opt['datatype'] = dt
 
             teacher = DefaultTeacher(opt)

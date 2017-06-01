@@ -29,7 +29,7 @@ class DialogTeacher(Teacher):
 
     In order to subclass this class, you must implement ``setup_data()`` in your
     class (or subclass another class which does, like ``FbDialogTeacher``), which
-    reads your data file as an iterator. 
+    reads your data file as an iterator.
     """
 
     def __init__(self, opt, shared=None):
@@ -263,16 +263,19 @@ class DialogData(object):
 
         # now pack it in a action-observation dictionary
         table = {}
-        table['text'] = entry[0]
+        if entry[0] is not None:
+            table['text'] = entry[0]
         if len(entry) > 1:
-            table['labels'] = entry[1]
+            if entry[1] is not None:
+                table['labels'] = entry[1]
             if len(entry) > 2:
-                table['reward'] = entry[2]
+                if entry[2] is not None:
+                    table['reward'] = entry[2]
                 if len(entry) > 3:
-                    table['label_candidates'] = entry[3]
-                    if len(entry) > 4 and not self.opt.get('no_images', False):
+                    if entry[3] is not None:
+                        table['label_candidates'] = entry[3]
+                    if len(entry) > 4 and entry[4] is not None and not self.opt.get('no_images', False):
                         table['image'] = load_image(self.opt, entry[4])
-
 
         if (table.get('labels', None) is not None
                 and self.cands is not None):
@@ -294,6 +297,7 @@ class DialogData(object):
         # last entry in this episode
         table['episode_done'] = episode_done
         return table, end_of_data
+
 
 def load_image(opt, path):
     if opt.get('no_images', False) or not path:
