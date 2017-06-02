@@ -5,9 +5,9 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.agents import Teacher
+from parlai.core.dialog_teacher import load_image
 from .build import build, buildImage
 
-from PIL import Image
 import json
 import random
 import os
@@ -44,16 +44,6 @@ def _path(opt):
     return data_path, annotation_path, image_path
 
 
-def _image_loader(opt, path):
-    """
-    Loads the appropriate image from the image_id and returns PIL Image format.
-    """
-    if not opt.get('no_images', False):
-        return Image.open(path).convert('RGB')
-    else:
-        return None
-
-
 class OeTeacher(Teacher):
     """VQA v2.0 Open-Ended teacher, which loads the json VQA data and
     implements its own `act` method for interacting with student agent.
@@ -70,7 +60,6 @@ class OeTeacher(Teacher):
                 self.annotation = shared['annotation']
         else:
             self._setup_data(data_path, annotation_path)
-
 
         # for ordered data in batch mode (especially, for validation and
         # testing), each teacher in the batch gets a start index and a step
@@ -93,7 +82,7 @@ class OeTeacher(Teacher):
     def observe(self, observation):
         """Process observation for metrics."""
         if self.lastY is not None:
-            loss = self.metrics.update(observation, self.lastY)
+            self.metrics.update(observation, self.lastY)
             self.lastY = None
         return observation
 
@@ -110,7 +99,7 @@ class OeTeacher(Teacher):
         img_path = self.image_path + '%012d.jpg' % (image_id)
 
         action = {
-            'image': _image_loader(self.opt, img_path),
+            'image': load_image(self.opt, img_path),
             'text': question,
             'episode_done': True
         }
