@@ -35,6 +35,10 @@ class Seq2seqAgent(Agent):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
+        opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()
+        if opt['cuda']:
+            print('[ Using CUDA ]')
+            torch.cuda.set_device(opt['gpu'])
         if shared and 'dictionary' in shared:
             # only set up everything for the main instance
             self.dict = shared['dictionary']
@@ -68,7 +72,6 @@ class Seq2seqAgent(Agent):
                 'decoder': optim.SGD(self.decoder.parameters(), lr=lr),
                 'd2o': optim.SGD(self.d2o.parameters(), lr=lr),
             }
-
             if self.use_cuda:
                 self.cuda()
 

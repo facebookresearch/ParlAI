@@ -41,6 +41,39 @@ def run_eval(agent, opt, datatype):
         f.write(metrics + '\n')
         f.close()
 
+def build_dict():
+    print('Setting up dictionary.')
+    if '.model' in opt['model_file']:
+        dict_fn = opt['model_file'].replace('.model', '.dict')
+    else:
+        dict_fn = opt['model_file'] + '.dict'
+    if os.path.isfile(dict_fn):
+        opt['dict_loadpath'] = dict_fn
+    dictionary = DictionaryAgent(opt)
+    ordered_opt = copy.deepcopy(opt)
+    cnt = 0
+
+    # if dictionary was not loaded, create one
+    if not opt.get('dict_loadpath'):
+        for datatype in ['train:ordered', 'valid']:
+            # we use train and valid sets to build dictionary
+            ordered_opt['datatype'] = datatype
+            ordered_opt['numthreads'] = 1
+            ordered_opt['batchsize'] = 1
+            world_dict = create_task(ordered_opt, dictionary)
+
+            # pass examples to dictionary
+            for _ in world_dict:
+                cnt += 1
+                if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] > 0:
+                    print('Processed {} exs, moving on.'.format(
+                          opt['dict_maxexs']))
+                    # don't wait too long...
+                    break
+                world_dict.parley()
+        dictionary.save(dict_fn, sort=True)
+
+
 def main():
     # Get command line arguments
     parser = ParlaiParser(True, True)
@@ -49,10 +82,13 @@ def main():
     parser.add_argument('-e', '--num-epochs', default=1)
     parser.add_argument('-mtt', '--max-train-time',
                         type=float, default=float('inf'))
+    parser.add_argument('--dict-maxexs', default=100000, type=int)
     opt = parser.parse_args()
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
+
+    # possibly set up dictionary
 
     train_time = Timer()
     print("[training...]")
