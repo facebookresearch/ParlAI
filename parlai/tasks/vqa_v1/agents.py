@@ -33,10 +33,10 @@ def _path(opt):
     else:
         raise RuntimeError('Not valid datatype.')
 
-    data_path = os.path.join(opt['datapath'], 'VQA-COCO2014',
+    data_path = os.path.join(opt['datapath'], 'VQA-v1',
                              ques_suffix + '_questions.json')
 
-    annotation_path = os.path.join(opt['datapath'], 'VQA-COCO2014',
+    annotation_path = os.path.join(opt['datapath'], 'VQA-v1',
                                    annotation_suffix + '_annotations.json')
 
     image_path = os.path.join(opt['datapath'], 'COCO-IMG', img_suffix)
