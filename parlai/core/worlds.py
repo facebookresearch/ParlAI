@@ -6,8 +6,8 @@
 """This class defines the basic environments that define how agents interact
 with one another.
 
-    ``World(object)`` provides a generic parent class, including ``__enter__`` 
-    and ``__exit__`` statements which allow you to guarantee that the shutdown 
+    ``World(object)`` provides a generic parent class, including ``__enter__``
+    and ``__exit__`` statements which allow you to guarantee that the shutdown
     method is called and KeyboardInterrupts are less noisy (if desired).
 
     ``DialogPartnerWorld(World)`` provides a two-agent turn-based dialog setting.
@@ -49,6 +49,7 @@ from multiprocessing import Process, Value, Condition, Semaphore
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
 from parlai.tasks.tasks import ids_to_tasks
 
+
 def validate(observation):
     """Make sure the observation table is valid, or raise an error."""
     if observation is not None and type(observation) == dict:
@@ -62,6 +63,7 @@ def validate(observation):
     else:
         raise RuntimeError('Must return dictionary from act().')
 
+
 def display_messages(msgs):
     """Returns a string describing the set of messages provided"""
     lines = []
@@ -69,7 +71,7 @@ def display_messages(msgs):
     for index, msg in enumerate(msgs):
         if msg is None:
             continue
-        if msg.get('episode_done', False):
+        if msg.get('episode_done'):
             episode_done = True
         # Possibly indent the text (for the second speaker, if two).
         space = ''
@@ -80,10 +82,12 @@ def display_messages(msgs):
         if msg.get('text', ''):
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + msg['text'])
-        if msg.get('labels', False):
+        if type(msg.get('image')) == str:
+            lines.append(msg['image'])
+        if msg.get('labels'):
             lines.append(space + ('[labels: {}]'.format(
                         '|'.join(msg['labels']))))
-        if msg.get('label_candidates', False):
+        if msg.get('label_candidates'):
             cand_len = len(msg['label_candidates'])
             if cand_len <= 10:
                 lines.append(space + ('[cands: {}]'.format(
