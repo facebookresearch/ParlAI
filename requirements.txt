@@ -5,3 +5,4 @@ numpy
 Pillow
 pyzmq
 wget
+asciimatics
