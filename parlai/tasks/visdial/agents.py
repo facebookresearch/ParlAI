@@ -77,11 +77,13 @@ class DefaultTeacher(DialogTeacher):
                     episode_done = True
                 # for each question answer pair.
                 question = self.questions[qa['question']]
-                if i == 0:
-                    # prepend with caption on first question
-                    question = caption + '\n' + question
                 answer = [self.answers[qa['answer']]]
                 answer_options = []
                 for ans_id in qa['answer_options']:
                     answer_options.append(self.answers[ans_id])
-                yield (question, answer, None, answer_options, img_path), episode_done
+                if i == 0:
+                    # prepend with caption on first question
+                    # only load image on first item
+                    yield (caption + '\n' + question, answer, None, answer_options, img_path), episode_done
+                else:
+                    yield (question, answer, None, answer_options), episode_done

@@ -8,6 +8,7 @@ from .agents import Teacher
 from .thread_utils import SharedTable
 from .metrics import Metrics
 
+from asciimatics.renderers import ImageFile
 from PIL import Image
 import random
 import os
@@ -274,8 +275,10 @@ class DialogData(object):
                 if len(entry) > 3:
                     if entry[3] is not None:
                         table['label_candidates'] = entry[3]
-                    if len(entry) > 4 and entry[4] is not None and not self.opt.get('no_images', False):
-                        table['image'] = load_image(self.opt, entry[4])
+                    if len(entry) > 4 and entry[4] is not None:
+                        img = load_image(self.opt, entry[4])
+                        if img is not None:
+                            table['image'] = img
 
         if (table.get('labels', None) is not None
                 and self.cands is not None):
@@ -300,17 +303,24 @@ class DialogData(object):
 
 
 def load_image(opt, path):
-    if opt.get('no_images', False) or not path:
+    mode = opt.get('image_mode', 'raw')
+    if mode is None or mode == 'none':
+        # don't need to load images
         return None
-    mode = opt.get('image_preprocessor', 'raw')
-    if mode != 'raw':
+    elif mode == 'raw':
+        # raw just returns RGB values
+        return Image.open(path).convert('RGB')
+    elif mode == 'ascii':
+        # convert images to ascii ¯\_(ツ)_/¯
+        return str(ImageFile(path, height=30))
+    else:
+        # otherwise, looks for preprocessed version under 'mode' directory
         prepath, imagefn = os.path.split(path)
         new_path = os.path.join(prepath, mode, imagefn)
         if not os.path.isfile(new_path):
+            # currently only supports *downloaded* preprocessing
+            # TODO: generate preprocessed images if not available
             raise NotImplementedError('image preprocessing mode' +
                                       '{} not supported yet'.format(mode))
         else:
             return Image.open(path)
-    else:
-        # return the image
-        return Image.open(path).convert('RGB')
