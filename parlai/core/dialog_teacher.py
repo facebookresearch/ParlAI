@@ -5,10 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from .agents import Teacher
-from .thread_utils import SharedTable
-from .metrics import Metrics
 
-from asciimatics.renderers import ImageFile
 from PIL import Image
 import random
 import os
@@ -302,6 +299,22 @@ class DialogData(object):
         return table, end_of_data
 
 
+_greyscale = '  .,:;crsA23hHG#98&@'
+
+
+def img_to_ascii(path):
+    im = Image.open(path)
+    im.thumbnail((60, 40), Image.BICUBIC)
+    im = im.convert('L')
+    asc = []
+    for y in range(0, im.size[1]):
+        for x in range(0, im.size[0]):
+            lum = 255 - im.getpixel((x, y))
+            asc.append(_greyscale[lum * len(_greyscale) // 256])
+        asc.append('\n')
+    return ''.join(asc)
+
+
 def load_image(opt, path):
     mode = opt.get('image_mode', 'raw')
     if mode is None or mode == 'none':
@@ -312,7 +325,7 @@ def load_image(opt, path):
         return Image.open(path).convert('RGB')
     elif mode == 'ascii':
         # convert images to ascii ¯\_(ツ)_/¯
-        return str(ImageFile(path, height=30))
+        return img_to_ascii(path)
     else:
         # otherwise, looks for preprocessed version under 'mode' directory
         prepath, imagefn = os.path.split(path)

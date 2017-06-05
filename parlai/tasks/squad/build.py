@@ -21,8 +21,8 @@ def build(opt):
         fname1 = 'train-v1.1.json'
         fname2 = 'dev-v1.1.json'
         url = 'https://rajpurkar.github.io/SQuAD-explorer/dataset/'
-        build_data.download(dpath, url + fname1)
-        build_data.download(dpath, url + fname2)
+        build_data.download(url + fname1, dpath, fname1)
+        build_data.download(url + fname2, dpath, fname2)
 
         # Mark the data as built.
         build_data.mark_done(dpath)

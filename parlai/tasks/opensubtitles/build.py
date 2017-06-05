@@ -6,7 +6,6 @@
 # Download and build the data if it does not exist.
 
 import parlai.core.build_data as build_data
-import codecs
 import gzip
 import os
 
@@ -19,7 +18,7 @@ def create_fb_format(inpath, outpath):
 
     conv_id = 0
     # find all the files.
-    for root, subfolder, files in os.walk(inpath):
+    for root, _subfolder, files in os.walk(inpath):
         for f in files:
             if f.endswith('.gz'):
                 dialog = ''
@@ -68,9 +67,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'download.php?f=OpenSubtitles/en.tar.gz'
-        url = ('http://opus.lingfil.uu.se/' + fname)
-        build_data.download(os.path.join(dpath, 'OpenSubtitles.tar.gz'), url)
+        url = ('http://opus.lingfil.uu.se/download.php?f=OpenSubtitles/en.tar.gz')
+        build_data.download(url, dpath, 'OpenSubtitles.tar.gz')
         build_data.untar(dpath, 'OpenSubtitles.tar.gz')
 
         create_fb_format(os.path.join(dpath, 'OpenSubtitles', 'en'), dpath)

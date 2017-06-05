@@ -4,5 +4,3 @@ nltk
 numpy
 Pillow
 pyzmq
-wget
-asciimatics

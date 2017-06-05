@@ -24,13 +24,13 @@ def buildImage(opt):
 
         url = 'http://msvocds.blob.core.windows.net/coco2014/'
 
-        build_data.download(dpath, url + fname1)
-        build_data.download(dpath, url + fname2)
-        build_data.download(dpath, url + fname3)
+        build_data.download(url + fname1, dpath, fname1)
+        build_data.download(url + fname2, dpath, fname2)
+        build_data.download(url + fname3, dpath, fname3)
 
-        build_data.untar(dpath, fname1, False)
-        build_data.untar(dpath, fname2, False)
-        build_data.untar(dpath, fname3, False)
+        build_data.untar(dpath, fname1)
+        build_data.untar(dpath, fname2)
+        build_data.untar(dpath, fname3)
 
         # Mark the data as built.
         build_data.mark_done(dpath)
@@ -49,8 +49,8 @@ def build(opt):
         fname2 = 'visdial_0.9_val.zip'
 
         url = 'https://computing.ece.vt.edu/~abhshkdz/data/visdial/'
-        build_data.download(dpath, url + fname1)
-        build_data.download(dpath, url + fname2)
+        build_data.download(url + fname1, dpath, fname1)
+        build_data.download(url + fname2, dpath, fname2)
 
         build_data.untar(dpath, fname1)
         build_data.untar(dpath, fname2)
