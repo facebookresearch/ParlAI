@@ -167,6 +167,7 @@ class DocReaderAgent(Agent):
             self._log()
         else:
             reply['text'] = self.model.predict(batch)[0]
+
         return reply
 
     def batch_act(self, observations):
