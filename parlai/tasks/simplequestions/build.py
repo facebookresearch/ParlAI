@@ -21,7 +21,7 @@ def build(opt):
         fname = 'simplequestions.tar.gz'
         url = ('https://s3.amazonaws.com/fair-data/parlai/simplequestions/'
                + fname)
-        build_data.download(dpath, url)
+        build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 
         # Mark the data as built.

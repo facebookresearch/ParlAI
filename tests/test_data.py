@@ -5,18 +5,20 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 import unittest
 import shutil
-import subprocess
 import sys
+
 
 def check(opt, reply):
     check_no_labels(opt, reply)
     if opt['datatype'].startswith('train'):
         assert reply.get('labels')
 
+
 def check_no_labels(opt, reply):
     assert reply
     assert reply.get('text')
     assert 'episode_done' in reply
+
 
 class TestData(unittest.TestCase):
     """Test access to different datasets."""
@@ -73,7 +75,7 @@ class TestData(unittest.TestCase):
     def test_cbt(self):
         from parlai.core.params import ParlaiParser
         from parlai.tasks.cbt.agents import (NETeacher, CNTeacher, VTeacher,
-                                               PTeacher)
+                                             PTeacher)
 
         opt = ParlaiParser().parse_args(args=self.args)
         for teacher_class in (NETeacher, CNTeacher, VTeacher, PTeacher):
@@ -154,7 +156,6 @@ class TestData(unittest.TestCase):
                 check(opt, reply)
 
         shutil.rmtree(self.TMP_PATH)
-
 
     def test_mctest(self):
         from parlai.core.params import ParlaiParser

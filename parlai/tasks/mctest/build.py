@@ -51,7 +51,7 @@ def build(opt):
         # Download the data.
         fname = 'mctest.tar.gz'
         url = 'https://s3.amazonaws.com/fair-data/parlai/mctest/' + fname
-        build_data.download(dpath, url)
+        build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 
         dpext = os.path.join(dpath, 'mctest')

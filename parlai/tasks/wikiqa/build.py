@@ -48,7 +48,7 @@ def build(opt):
         # Download the data.
         fname = 'wikiqa.tar.gz'
         url = 'https://s3.amazonaws.com/fair-data/parlai/wikiqa/' + fname
-        build_data.download(dpath, url)
+        build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 
         dpext = os.path.join(dpath, 'WikiQACorpus')

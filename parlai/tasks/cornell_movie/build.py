@@ -59,7 +59,7 @@ def build(opt):
         # Download the data.
         fname = 'cornell_movie_dialogs_corpus.zip'
         url = 'http://www.mpi-sws.org/~cristian/data/' + fname
-        build_data.download_request(url, dpath, fname)
+        build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 
         dpext = os.path.join(dpath, 'cornell movie-dialogs corpus')
