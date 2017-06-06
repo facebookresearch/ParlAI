@@ -3,16 +3,15 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""Train a model.
+"""Train a model. 
 After training, computes validation and test error.
 Run with, e.g.:
 python examples/train_model.py -m ir_baseline -t dialog_babi:Task:1 -mf "/tmp/model"
 ..or..
-python examples/train_model.py -m parlai.agents.rnn_baselines.seq2seq:Seq2seqAgent -t dialog_babi:Task:1 -mf "/tmp/model" -e 1 
+python examples/train_model.py -m parlai.agents.rnn_baselines.seq2seq:Seq2seqAgent -t babi:Task1k:1 -mf "/tmp/model" -dbf True 
 
 TODO List:
-- Validate & Log while training
-- Keep best model from validation error, if desired
+- More logging (e.g. to files), make things prettier.
 """
 
 from parlai.core.agents import create_agent
@@ -24,7 +23,7 @@ import copy
 import math
 import os
 
-def run_eval(agent, opt, datatype):
+def run_eval(agent, opt, datatype, still_training=False):
     ''' Eval on validation/test data. '''
     print("[running eval: " + datatype + "]")
     opt['datatype'] = datatype
@@ -37,13 +36,17 @@ def run_eval(agent, opt, datatype):
         if valid_world.epoch_done():
             break
     valid_world.shutdown()
-    metrics = datatype + ":" + str(valid_world.report())
+    valid_report = valid_world.report()
+    metrics = datatype + ":" + str(valid_report)
     print(metrics)
-    # Write out metrics
-    if opt['model_file']:
-        f = open(opt['model_file'] + '.' + datatype, "a+")
-        f.write(metrics + '\n')
-        f.close()
+    if still_training:
+        return valid_report
+    else:
+        if opt['model_file']:
+            # Write out metrics
+            f = open(opt['model_file'] + '.' + datatype, "a+")
+            f.write(metrics + '\n')
+            f.close()
 
 def build_dict(opt):
     print('[setting up dictionary.]')
@@ -90,11 +93,12 @@ def main():
     parser.add_argument('-mtt', '--max-train-time',
                         type=float, default=float('inf'))
     parser.add_argument('-lt', '--log-every-n-secs',
+                        type=float, default=1)
+    parser.add_argument('-vt', '--validate-every-n-secs',
                         type=float, default=10)
     parser.add_argument('-dbf', '--dict_build_first',
                         type='bool', default=False,
                         help='build dictionary first before training agent')
-
     opt = parser.parse_args()
     # Possibly build a dictionary (not all models do this).
     if opt['dict_build_first']:
@@ -104,15 +108,20 @@ def main():
     world = create_task(opt, agent)
 
     train_time = Timer()
+    validate_time = Timer()
     log_time = Timer()
     print("[training...]")
     parleys = 0
     num_parleys = opt['num_epochs'] * len(world)
+    best_accuracy = 0
     for i in range(num_parleys):
         world.parley()
         parleys = parleys + 1
         if opt['display_examples']:
             print(world.display() + "\n~~")
+        if train_time.time() > opt['max_train_time']:
+            print("[max_train_time elapsed: " + str(train_time.time()) + "]")
+            break
         if log_time.time() > opt['log_every_n_secs']:
             parleys_per_sec =  train_time.time() / parleys
             time_left = (num_parleys - parleys) * parleys_per_sec
@@ -120,11 +129,15 @@ def main():
                   + "s parleys:" + str(parleys) 
                   + " time_left:"
                   + str(math.floor(time_left))  + "s]")
-            # TODO: metrics, what?
+            print(world.report())
             log_time.reset()
-        if train_time.time() > opt['max_train_time']:
-            print("[max_train_time elapsed: " + str(train_time.time()) + "]")
-            break
+        if validate_time.time() > opt['validate_every_n_secs']:
+            valid_report = run_eval(agent, opt, 'valid', True)
+            if valid_report['accuracy'] > best_accuracy:
+                best_accuracy = valid_report['accuracy']
+                print("[current best accuracy: " + str(best_accuracy) +  "]")
+                agent.save(opt['model_file'])
+            validate_time.reset()
     world.shutdown()
 
     if opt['model_file']:

@@ -11,8 +11,8 @@ from torch.autograd import Variable
 from torch import optim
 import torch.nn as nn
 import torch
-
 import copy
+import os 
 import random
 
 
@@ -74,9 +74,9 @@ class Seq2seqAgent(Agent):
         if self.use_cuda:
             self.cuda()
         self.episode_done = True
-        if os.path.isfile(opt['model_file']):
+        if 'model_file' in opt and os.path.isfile(opt['model_file']):
             print('Loading existing model parameters from ' + opt['model_file'])
-        agent.load(opt['model_file'])
+            self.load(opt['model_file'])
 
     def parse(self, text):
         return torch.LongTensor(self.dict.txt2vec(text))
@@ -175,8 +175,8 @@ class Seq2seqAgent(Agent):
 
         if random.random() < 0.1:
             true = self.v2t(ys.data[0])
-            print('loss:', round(loss.data[0], 2),
-                  ' '.join(output_lines[0]), '(true: {})'.format(true))
+            #print('loss:', round(loss.data[0], 2),
+            #      ' '.join(output_lines[0]), '(true: {})'.format(true))
         return output_lines
 
     def predict(self, xs):
