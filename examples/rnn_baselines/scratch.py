@@ -1,30 +1,9 @@
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
-
 from parlai.agents.rnn_baselines.seq2seq import Seq2seqAgent
-from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
-import parlai.core.build_data as bld
 
-import torch
-
-import copy
-import os
-import time
 
 def main():
-    # create agent
-    agent = Seq2seqAgent(opt, {'dictionary': dictionary})
-
-    if os.path.isfile(opt['model_file']):
-        print('Loading existing model parameters from ' + opt['model_file'])
-        agent.load(opt['model_file'])
-
-
     # set up logging
     start = time.time()
     best_accuracy = 0

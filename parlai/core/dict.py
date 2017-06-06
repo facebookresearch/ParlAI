@@ -89,6 +89,9 @@ class DictionaryAgent(Agent):
         argparser.add_arg(
             '--dict-unktoken', default=DictionaryAgent.default_unk,
             help='token to return for unavailable words')
+        argparser.add_arg(
+            '--dict-maxexs', default=100000, type=int,
+            help='max number of examples to build dict on')
 
     def __init__(self, opt, shared=None):
         # initialize fields

@@ -7,6 +7,8 @@
 After training, computes validation and test error.
 Run with, e.g.:
 python examples/train_model.py -m ir_baseline -t dialog_babi:Task:1 -mf "/tmp/model"
+..or..
+python examples/train_model.py -m parlai.agents.rnn_baselines.seq2seq:Seq2seqAgent -t dialog_babi:Task:1 -mf "/tmp/model" -e 1 
 
 TODO List:
 - Validate & Log while training
@@ -16,8 +18,11 @@ TODO List:
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
+from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import Timer
+import copy
 import math
+import os
 
 def run_eval(agent, opt, datatype):
     ''' Eval on validation/test data. '''
@@ -41,37 +46,40 @@ def run_eval(agent, opt, datatype):
         f.close()
 
 def build_dict(opt):
-    if 'dict_loadpath' not in opt:
-        return
     print('[setting up dictionary.]')
-    if '.model' in opt['model_file']:
-        dict_fn = opt['model_file'].replace('.model', '.dict')
-    else:
-        dict_fn = opt['model_file'] + '.dict'
-    if os.path.isfile(dict_fn):
+    if 'dict_loadpath' not in opt:
+        if '.model' in opt['model_file']:
+            dict_fn = opt['model_file'].replace('.model', '.dict')
+        else:
+            dict_fn = opt['model_file'] + '.dict'
         opt['dict_loadpath'] = dict_fn
+    if os.path.isfile(opt['dict_loadpath']):
+        # dict already built
+        print("[dict already built.]")
+        return
+    opt['dict_savepath'] = opt['dict_loadpath']
+    opt.pop('dict_loadpath', None)
     dictionary = DictionaryAgent(opt)
     ordered_opt = copy.deepcopy(opt)
     cnt = 0
-    # If dictionary was not loaded, create one
-    if not opt.get('dict_loadpath'):
-        for datatype in ['train:ordered', 'valid']:
-            # we use train and valid sets to build dictionary
-            ordered_opt['datatype'] = datatype
-            ordered_opt['numthreads'] = 1
-            ordered_opt['batchsize'] = 1
-            world_dict = create_task(ordered_opt, dictionary)
-            # pass examples to dictionary
-            for _ in world_dict:
-                cnt += 1
-                if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] > 0:
-                    print('Processed {} exs, moving on.'.format(
-                          opt['dict_maxexs']))
-                    # don't wait too long...
-                    break
-                world_dict.parley()
-        dictionary.save(dict_fn, sort=True)
-
+    for datatype in ['train:ordered', 'valid']:
+        # we use train and valid sets to build dictionary
+        ordered_opt['datatype'] = datatype
+        ordered_opt['numthreads'] = 1
+        ordered_opt['batchsize'] = 1
+        world_dict = create_task(ordered_opt, dictionary)
+        # pass examples to dictionary
+        for _ in world_dict:
+            cnt += 1
+            if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] > 0:
+                print('Processed {} exs, moving on.'.format(
+                      opt['dict_maxexs']))
+                # don't wait too long...
+                break
+            world_dict.parley()
+    dictionary.save(dict_fn, sort=True)
+    opt['dict_loadpath'] = opt['dict_savepath']
+    opt.pop('dict_savepath', None)
 
 def main():
     # Get command line arguments
@@ -83,27 +91,35 @@ def main():
                         type=float, default=float('inf'))
     parser.add_argument('-lt', '--log-every-n-secs',
                         type=float, default=10)
-    parser.add_argument('--dict-maxexs', default=100000, type=int)
+    parser.add_argument('-dbf', '--dict_build_first',
+                        type='bool', default=False,
+                        help='build dictionary first before training agent')
+
     opt = parser.parse_args()
     # Possibly build a dictionary (not all models do this).
-    build_dict(opt)
+    if opt['dict_build_first']:
+        build_dict(opt)
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
 
-
     train_time = Timer()
     log_time = Timer()
     print("[training...]")
-    cnt = 0
-    for i in range(opt['num_epochs'] * len(world)):
+    parleys = 0
+    num_parleys = opt['num_epochs'] * len(world)
+    for i in range(num_parleys):
         world.parley()
-        cnt = cnt + 1
+        parleys = parleys + 1
         if opt['display_examples']:
             print(world.display() + "\n~~")
         if log_time.time() > opt['log_every_n_secs']:
-            print("[" + str(math.floor(train_time.time()))
-                  + "s: " + str(cnt)  + " parleys]")
+            parleys_per_sec =  train_time.time() / parleys
+            time_left = (num_parleys - parleys) * parleys_per_sec
+            print("[time:" + str(math.floor(train_time.time()))
+                  + "s parleys:" + str(parleys) 
+                  + " time_left:"
+                  + str(math.floor(time_left))  + "s]")
             # TODO: metrics, what?
             log_time.reset()
         if train_time.time() > opt['max_train_time']:
