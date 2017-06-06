@@ -95,7 +95,7 @@ def main():
     parser.add_argument('-lt', '--log-every-n-secs',
                         type=float, default=1)
     parser.add_argument('-vt', '--validate-every-n-secs',
-                        type=float, default=10)
+                        type=float, default=False)
     parser.add_argument('-dbf', '--dict_build_first',
                         type='bool', default=False,
                         help='build dictionary first before training agent')
@@ -131,7 +131,8 @@ def main():
                   + str(math.floor(time_left))  + "s]")
             print(world.report())
             log_time.reset()
-        if validate_time.time() > opt['validate_every_n_secs']:
+        if (opt['validate_every_n_secs'] and
+            validate_time.time() > opt['validate_every_n_secs']):
             valid_report = run_eval(agent, opt, 'valid', True)
             if valid_report['accuracy'] > best_accuracy:
                 best_accuracy = valid_report['accuracy']
