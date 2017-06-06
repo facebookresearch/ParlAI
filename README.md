@@ -56,6 +56,30 @@ Set of datasets to bootstrap a working dialogue model for human interaction
 - Uses zmq to talk to other toolboxes not in Python, examples of Lua Torch given.
 - Supports hogwild and batch training of models.
 
+## Requirements
+
+ParlAI currently requires Python3.
+
+Dependencies of the core modules are listed in requirement.txt.
+
+Several models included (in parlai/agents) have additional requirements.
+DrQA requires installing [PyTorch](http://pytorch.org/), and the MemNN model requires installing [Lua Torch](http://torch.ch/docs/getting-started.html). See their respective websites for installation instructions.
+
+## Installing ParlAI
+
+Run the following commands to clone the repository and install ParlAI:
+
+```bash
+git clone https://github.com/facebookresearch/ParlAI.git ~/ParlAI
+cd ~/ParlAI; python setup.py develop
+```
+
+This will link the cloned directory to your site-packages.
+
+This is the recommended installation procedure, as it provides ready access to the examples and allows you to modify anything you might need. This is especially useful if you if you want to submit another task to the repository.
+
+All needed data will be downloaded to ~/ParlAI/data, and any non-data files (such as the MemNN code) if requested will be downloaded to ~/ParlAI/downloads. If you need to clear out the space used by these files, you can safely delete these directories and any files needed will be downloaded again.
+
 ## Basic Examples
 
 Note: If any of these examples fail, check the [requirements section](#requirements) to see if you have missed something.
@@ -94,30 +118,6 @@ Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 exam
 ```bash
 python examples/drqa/train.py -t squad -bs 32
 ```
-
-## Requirements
-
-ParlAI currently requires Python3.
-
-Dependencies of the core modules are listed in requirement.txt.
-
-Several models included (in parlai/agents) have additional requirements.
-DrQA requires installing [PyTorch](http://pytorch.org/), and the MemNN model requires installing [Lua Torch](http://torch.ch/). See their respective websites for installation instructions.
-
-## Installing ParlAI
-
-Run the following commands to clone the repository and install ParlAI:
-
-```bash
-git clone https://github.com/facebookresearch/ParlAI.git ~/ParlAI
-cd ~/ParlAI; python setup.py develop
-```
-
-This will link the cloned directory to your site-packages.
-
-This is the recommended installation procedure, as it provides ready access to the examples and allows you to modify anything you might need. This is especially useful if you if you want to submit another task to the repository.
-
-All needed data will be downloaded to ~/ParlAI/data, and any non-data files (such as the MemNN code) if requested will be downloaded to ~/ParlAI/downloads. If you need to clear out the space used by these files, you can safely delete these directories and any files needed will be downloaded again.
 
 ## Worlds, agents and teachers
 The main concepts (classes) in ParlAI:
