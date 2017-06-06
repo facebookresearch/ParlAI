@@ -195,6 +195,7 @@ Now that we have our our agent, we'll set up the display loop.
         if world.epoch_done():
             print('EPOCH DONE')
             break
+    world.shutdown()
 
 And that's it! The world.display() automatically cycles through each of the
 world's agents and displays their last action. If you run this on the command
