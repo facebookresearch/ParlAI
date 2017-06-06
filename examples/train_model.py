@@ -4,11 +4,16 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """Train a model. 
+
 After training, computes validation and test error.
+
 Run with, e.g.:
+
 python examples/train_model.py -m ir_baseline -t dialog_babi:Task:1 -mf "/tmp/model"
+
 ..or..
-python examples/train_model.py -m parlai.agents.rnn_baselines.seq2seq:Seq2seqAgent -t babi:Task1k:1 -mf "/tmp/model" -dbf True 
+
+python examples/train_model.py -m parlai.agents.rnn_baselines.seq2seq:Seq2seqAgent -t babi:Task1k:1 -mf "/tmp/model" -dbf True -bs 32 -lr 0.5 -hs 128
 
 TODO List:
 - More logging (e.g. to files), make things prettier.
