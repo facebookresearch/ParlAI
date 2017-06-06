@@ -53,6 +53,8 @@ def main():
         print(world_valid.report())
 
     print('finished in {} s'.format(round(time.time() - start, 2)))
+    world_train.shutdown()
+    world_valid.shutdown()
 
 if __name__ == '__main__':
     main()
