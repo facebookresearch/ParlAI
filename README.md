@@ -102,7 +102,7 @@ ParlAI currently requires Python3.
 Dependencies of the core modules are listed in requirement.txt.
 
 Several models included (in parlai/agents) have additional requirements.
-DrQA requires installing [PyTorch](http://pytorch.org/), and the MemNN model requires installing [Lua Torch](http://torch.ch/). See their respective websites for installation instructions.
+DrQA requires installing [PyTorch](http://pytorch.org/), and the MemNN model requires installing [Lua Torch](http://torch.ch/docs/getting-started.html). See their respective websites for installation instructions.
 
 ## Installing ParlAI
 
@@ -120,6 +120,7 @@ This is the recommended installation procedure, as it provides ready access to t
 All needed data will be downloaded to ~/ParlAI/data, and any non-data files (such as the MemNN code) if requested will be downloaded to ~/ParlAI/downloads. If you need to clear out the space used by these files, you can safely delete these directories and any files needed will be downloaded again.
 
 ## Worlds, agents and teachers
+
 The main concepts (classes) in ParlAI:
 - world - defines the environment (can be very simple, just two agents talking to each other).
 - agent – an agent in the world, e.g. the learner. (There can be multiple learners.)

@@ -16,6 +16,27 @@ Its goal is to provide researchers:
 - multi-task training over many datasets at once
 - seamless integration of Amazon Mechanical Turk for data collection and human evaluation
 
+Install
+-------
+Follow the step by step guide on how to download and install ParlAI.
+
+1. Clone ParlAI Repository:
+
+.. code-block:: bash
+
+        git clone https://github.com/facebookresearch/ParlAI.git ~/ParlAI
+
+2. Install ParlAI:
+
+.. code-block:: bash 
+
+        cd ~/ParlAI; python setup.py develop
+
+3. Several models has additional requirements
+
+  a. DrQA requires installing `PyTorch <http://pytorch.org/>`
+
+  b. MemNN requires installing `Lua Torch <http://torch.ch/docs/getting-started.html>`
 
 Getting Started
 ---------------
