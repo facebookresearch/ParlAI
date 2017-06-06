@@ -9,7 +9,6 @@ Run with, e.g.:
 python examples/train_model.py -m ir_baseline -t dialog_babi:Task:1 -mf "/tmp/model"
 
 TODO List:
-- Add model specific params
 - Validate & Log while training
 - Keep best model from validation error, if desired
 """
@@ -18,7 +17,7 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer
-
+import math
 
 def run_eval(agent, opt, datatype):
     ''' Eval on validation/test data. '''
@@ -41,8 +40,10 @@ def run_eval(agent, opt, datatype):
         f.write(metrics + '\n')
         f.close()
 
-def build_dict():
-    print('Setting up dictionary.')
+def build_dict(opt):
+    if 'dict_loadpath' not in opt:
+        return
+    print('[setting up dictionary.]')
     if '.model' in opt['model_file']:
         dict_fn = opt['model_file'].replace('.model', '.dict')
     else:
@@ -52,8 +53,7 @@ def build_dict():
     dictionary = DictionaryAgent(opt)
     ordered_opt = copy.deepcopy(opt)
     cnt = 0
-
-    # if dictionary was not loaded, create one
+    # If dictionary was not loaded, create one
     if not opt.get('dict_loadpath'):
         for datatype in ['train:ordered', 'valid']:
             # we use train and valid sets to build dictionary
@@ -61,7 +61,6 @@ def build_dict():
             ordered_opt['numthreads'] = 1
             ordered_opt['batchsize'] = 1
             world_dict = create_task(ordered_opt, dictionary)
-
             # pass examples to dictionary
             for _ in world_dict:
                 cnt += 1
@@ -79,23 +78,34 @@ def main():
     parser = ParlaiParser(True, True)
     parser.add_argument('-d', '--display-examples',
                         type='bool', default=False)
-    parser.add_argument('-e', '--num-epochs', default=1)
+    parser.add_argument('-e', '--num-epochs', type=int, default=1)
     parser.add_argument('-mtt', '--max-train-time',
                         type=float, default=float('inf'))
+    parser.add_argument('-lt', '--log-every-n-secs',
+                        type=float, default=10)
     parser.add_argument('--dict-maxexs', default=100000, type=int)
     opt = parser.parse_args()
+    # Possibly build a dictionary (not all models do this).
+    build_dict(opt)
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
 
-    # possibly set up dictionary
 
     train_time = Timer()
+    log_time = Timer()
     print("[training...]")
+    cnt = 0
     for i in range(opt['num_epochs'] * len(world)):
         world.parley()
+        cnt = cnt + 1
         if opt['display_examples']:
             print(world.display() + "\n~~")
+        if log_time.time() > opt['log_every_n_secs']:
+            print("[" + str(math.floor(train_time.time()))
+                  + "s: " + str(cnt)  + " parleys]")
+            # TODO: metrics, what?
+            log_time.reset()
         if train_time.time() > opt['max_train_time']:
             print("[max_train_time elapsed: " + str(train_time.time()) + "]")
             break
