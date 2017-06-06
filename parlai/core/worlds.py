@@ -42,6 +42,7 @@ All worlds are initialized with the following parameters:
 """
 
 import copy
+import math
 import importlib
 import random
 
@@ -534,6 +535,9 @@ class BatchWorld(World):
             s += (w.display() + '\n')
         s += ("[--end of batch--]")
         return s
+
+    def __len__(self):
+        return math.ceil(sum(len(w) for w in self.worlds) / len(self.worlds))
 
     def getID(self):
         return self.world.getID()

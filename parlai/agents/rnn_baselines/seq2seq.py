@@ -41,42 +41,44 @@ class Seq2seqAgent(Agent):
         if opt['cuda']:
             print('[ Using CUDA ]')
             torch.cuda.set_device(opt['gpu'])
-        self.dict = DictionaryAgent(opt)
-        self.id = 'Seq2Seq'
-        hsz = opt['hiddensize']
-        self.EOS = self.dict.eos_token
-        self.EOS_TENSOR = torch.LongTensor(self.dict.parse(self.EOS))
-        self.hidden_size = hsz
-        self.num_layers = opt['numlayers']
-        self.learning_rate = opt['learningrate']
-        self.use_cuda = opt.get('cuda', False)
-        self.longest_label = 2  # TODO: 1
-        if 'babi' in opt['task']:
-            self.babi_mode = True
-            self.dirs = set(['n', 's', 'e', 'w'])
+        if not shared:
+            self.dict = DictionaryAgent(opt)
+            self.id = 'Seq2Seq'
+            hsz = opt['hiddensize']
+            self.EOS = self.dict.eos_token
+            self.EOS_TENSOR = torch.LongTensor(self.dict.parse(self.EOS))
+            self.hidden_size = hsz
+            self.num_layers = opt['numlayers']
+            self.learning_rate = opt['learningrate']
+            self.use_cuda = opt.get('cuda', False)
+            self.longest_label = 2  # TODO: 1
+            if 'babi' in opt['task']:
+                self.babi_mode = True
+                self.dirs = set(['n', 's', 'e', 'w'])
 
-        self.criterion = nn.NLLLoss()
-        self.lt = nn.Embedding(len(self.dict), hsz, padding_idx=0,
-                               scale_grad_by_freq=True)
-        self.encoder = nn.GRU(hsz, hsz, opt['numlayers'])
-        self.decoder = nn.GRU(hsz, hsz, opt['numlayers'])
-        self.d2o = nn.Linear(hsz, len(self.dict))
-        self.dropout = nn.Dropout(opt['dropout'])
-        self.softmax = nn.LogSoftmax()
+            self.criterion = nn.NLLLoss()
+            self.lt = nn.Embedding(len(self.dict), hsz, padding_idx=0,
+                                   scale_grad_by_freq=True)
+            self.encoder = nn.GRU(hsz, hsz, opt['numlayers'])
+            self.decoder = nn.GRU(hsz, hsz, opt['numlayers'])
+            self.d2o = nn.Linear(hsz, len(self.dict))
+            self.dropout = nn.Dropout(opt['dropout'])
+            self.softmax = nn.LogSoftmax()
 
-        lr = opt['learningrate']
-        self.optims = {
-            'lt': optim.SGD(self.lt.parameters(), lr=lr),
-            'encoder': optim.SGD(self.encoder.parameters(), lr=lr),
-            'decoder': optim.SGD(self.decoder.parameters(), lr=lr),
-            'd2o': optim.SGD(self.d2o.parameters(), lr=lr),
-        }
-        if self.use_cuda:
-            self.cuda()
+            lr = opt['learningrate']
+            self.optims = {
+                'lt': optim.SGD(self.lt.parameters(), lr=lr),
+                'encoder': optim.SGD(self.encoder.parameters(), lr=lr),
+                'decoder': optim.SGD(self.decoder.parameters(), lr=lr),
+                'd2o': optim.SGD(self.d2o.parameters(), lr=lr),
+            }
+            if self.use_cuda:
+                self.cuda()
+            if 'model_file' in opt and os.path.isfile(opt['model_file']):
+                print('Loading existing model parameters from ' + opt['model_file'])
+                self.load(opt['model_file'])
+
         self.episode_done = True
-        if 'model_file' in opt and os.path.isfile(opt['model_file']):
-            print('Loading existing model parameters from ' + opt['model_file'])
-            self.load(opt['model_file'])
 
     def parse(self, text):
         return torch.LongTensor(self.dict.txt2vec(text))

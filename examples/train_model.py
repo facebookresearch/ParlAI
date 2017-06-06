@@ -90,11 +90,11 @@ def main():
     parser.add_argument('-d', '--display-examples',
                         type='bool', default=False)
     parser.add_argument('-e', '--num-epochs', type=int, default=1)
-    parser.add_argument('-mtt', '--max-train-time',
+    parser.add_argument('-ttim', '--max-train-time',
                         type=float, default=float('inf'))
-    parser.add_argument('-lt', '--log-every-n-secs',
+    parser.add_argument('-ltim', '--log-every-n-secs',
                         type=float, default=1)
-    parser.add_argument('-vt', '--validate-every-n-secs',
+    parser.add_argument('-vtim', '--validate-every-n-secs',
                         type=float, default=False)
     parser.add_argument('-dbf', '--dict_build_first',
                         type='bool', default=False,

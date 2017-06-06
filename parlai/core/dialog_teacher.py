@@ -35,7 +35,6 @@ class DialogTeacher(Teacher):
 
     def __init__(self, opt, shared=None):
         # Check for setup_data
-        print("[DialogTeacher initializing.]")
         if not hasattr(self, 'setup_data'):
             raise RuntimeError('Must implement setup_data or subclass a class' +
                                ' which implements it (e.g. FbDialogTeacher)' +
