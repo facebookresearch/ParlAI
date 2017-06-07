@@ -24,8 +24,8 @@ class LocalHumanAgent(Agent):
         obs = self.observation
         reply = {}
         reply['id'] = self.getID()
-        reply['text'] = input("Enter Your Reply: ")
-        if reply_text == '[DONE]':
+        reply_text = input("Enter Your Reply: ")
+        if '[DONE]' in reply_text:
             reply['episode_done'] = True
             self.done = True
         reply['text'] = reply_text
