@@ -180,6 +180,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                 show_new_messages_on_UI(new_messages);
                 if (done_after_responding) {
                     update_for_response_type('done');
+                    task_done = true;
                 } else {
                     check_done(new_messages);
                 }
@@ -242,10 +243,15 @@ of patent rights can be found in the PATENTS file in the same directory.
     });
 
     var mturk_submit_url = `{{mturk_submit_url}}`;
-    var verbose_log = false;
+    var verbose_log = true;
     var task_group_id = `{{task_group_id}}`;
     var conversation_id = parseInt(`{{conversation_id}}`);
     var cur_agent_id = `{{cur_agent_id}}`;
+    var mturk_agent_ids = `{{mturk_agent_ids}}`;
+    if (mturk_agent_ids) {
+        mturk_agent_ids = JSON.parse(mturk_agent_ids);
+        console.log(mturk_agent_ids);
+    }
     var is_cover_page = (`{{is_cover_page}}` === 'True') ? true : false;
     var is_approval_page = (`{{is_approval_page}}` === 'True') ? true : false;
     var num_hits = parseInt(`{{num_hits}}`);
@@ -254,7 +260,7 @@ of patent rights can be found in the PATENTS file in the same directory.
     var messages_processed = {};
     var messages_shown = {};
     var done_after_responding = false;
-    var self_display_name = 'You';
+    var task_done = false;
 
     function show_new_messages_on_UI(new_messages) {
         for (var i = 0; i < new_messages.length; i++) {
@@ -269,7 +275,7 @@ of patent rights can be found in the PATENTS file in the same directory.
             }
 
             if (!(message_id in messages_shown)) {
-                if (agent_id != cur_agent_id) {
+                if ((!is_approval_page && agent_id != cur_agent_id) || (is_approval_page && $.inArray(agent_id, mturk_agent_ids) == -1)) {
                     $('div#message_thread').append(`
                         <div class="row" style="margin-left: 0; margin-right: 0">
                             <div class="alert alert-warning" role="alert" style="float: left; display:table">
@@ -287,7 +293,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                         $('div#message_thread').append(`
                         <div class="row" style="margin-left: 0; margin-right: 0">
                             <div class="alert alert-info" role="alert" style="float: right; display:table">
-                                <span style="font-size: 16px"><b>`+self_display_name+`</b>: `+reward_text+`</span>
+                                <span style="font-size: 16px"><b>`+agent_id+`</b>: `+reward_text+`</span>
                             </div>
                         </div>
                         `);
@@ -295,7 +301,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                         $('div#message_thread').append(`
                         <div class="row" style="margin-left: 0; margin-right: 0">
                             <div class="alert alert-info" role="alert" style="float: right; display:table">
-                                <span style="font-size: 16px"><b>`+self_display_name+`</b>: `+message_text+`</span>
+                                <span style="font-size: 16px"><b>`+agent_id+`</b>: `+message_text+`</span>
                             </div>
                         </div>
                         `);
@@ -308,7 +314,7 @@ of patent rights can be found in the PATENTS file in the same directory.
             $("div#message_thread").css("display", "");
             scroll_conversation_to_bottom();
         }
-        if (received_message_from_other_agents) {
+        if (received_message_from_other_agents && (!task_done)) {
             $("div#response-type-text-input").css("display", "");
             $("input#id_text_input").focus();
         }
@@ -362,6 +368,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                 show_new_messages_on_UI(new_messages);
                 if (done_after_responding) {
                     update_for_response_type('done');
+                    task_done = true;
                 } else {
                     check_done(new_messages);
                 }
@@ -456,7 +463,6 @@ of patent rights can be found in the PATENTS file in the same directory.
         $("input#id_text_input").focus();
         update_for_response_type('text_input');
         if (is_approval_page) {
-            self_display_name = 'Worker';
             $("div#left-pane").css("min-height", $(window).height());
         }
         if (is_cover_page) {

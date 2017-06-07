@@ -228,7 +228,7 @@ def setup_rds():
 
     return host
 
-def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt, should_clean_up_after_upload=True):
+def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, requester_key_gt, should_clean_up_after_upload=False):
     # Dynamically generate handler.py file, and then create zip file
     print("Lambda: Preparing relay server code...")
 
@@ -253,7 +253,7 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
         "requester_key_gt = \'" + requester_key_gt + "\'\n" + \
         "num_hits = " + str(num_hits) + "\n" + \
         "is_sandbox = " + str(is_sandbox) + "\n" + \
-        'task_description = ' + task_config['task_description'])
+        'task_description = ' + task_description)
     with open(os.path.join(parent_dir, lambda_server_directory_name, 'handler.py'), 'w') as handler_file:
         handler_file.write(handler_file_string)
     create_zip_file(
@@ -600,7 +600,7 @@ def setup_all_dependencies(lambda_server_directory_name):
     call(command, stdout=devnull, stderr=devnull)
 
     # Set up psycopg2
-    command = "git clone https://github.com/yf225/awslambda-psycopg2.git".split(" ")
+    command = "git clone https://github.com/jkehler/awslambda-psycopg2.git".split(" ")
     call(command, stdout=devnull, stderr=devnull)
     shutil.copytree("./awslambda-psycopg2/with_ssl_support/psycopg2", parent_dir+'/'+lambda_server_directory_name+"/psycopg2")
     shutil.rmtree("./awslambda-psycopg2")
@@ -632,13 +632,13 @@ def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, f
     if verbose:
         print("Done!")
 
-def setup_aws(task_config, num_hits, is_sandbox):
+def setup_aws(task_description, num_hits, is_sandbox):
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
     if not is_sandbox:
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
     requester_key_gt = get_requester_key()
     rds_host = setup_rds()
-    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt)
+    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, requester_key_gt)
 
     return html_api_endpoint_url, json_api_endpoint_url, requester_key_gt
 

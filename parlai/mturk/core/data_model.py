@@ -100,7 +100,7 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
     return new_message_object
 
 
-def get_new_messages(db_session, task_group_id, conversation_id=None, after_message_id=None, excluded_agent_id=None, populate_meta_info=False):
+def get_new_messages(db_session, task_group_id, conversation_id=None, after_message_id=None, excluded_agent_id=None, included_agent_id=None, populate_meta_info=False):
     """
     Return:
     conversation_dict = {
@@ -123,6 +123,10 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
     if not after_message_id:
         after_message_id = -1
 
+    included_agent_ids = []
+    if included_agent_id:
+        included_agent_ids = [included_agent_id]
+
     excluded_agent_ids = []
     if excluded_agent_id:
         excluded_agent_ids = [excluded_agent_id]
@@ -130,6 +134,8 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
     last_message_id = None
 
     query = db_session.query(Message).filter(Message.task_group_id==task_group_id).filter(Message.id > after_message_id)
+    if len(included_agent_ids) > 0:
+        query = query.filter(Message.agent_id.in_(included_agent_ids))
     if len(excluded_agent_ids) > 0:
         query = query.filter(~Message.agent_id.in_(excluded_agent_ids))
     if conversation_id:
@@ -164,7 +170,12 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
 
 
 def set_hit_info(db_session, task_group_id, conversation_id, assignment_id, hit_id, worker_id, is_sandbox, approval_status='pending'):
-    existing_object = db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.conversation_id==conversation_id).first()
+    existing_object = db_session.query(MTurkHITInfo) \
+                        .filter(MTurkHITInfo.task_group_id==task_group_id) \
+                        .filter(MTurkHITInfo.conversation_id==conversation_id) \
+                        .filter(MTurkHITInfo.assignment_id==assignment_id) \
+                        .filter(MTurkHITInfo.hit_id==hit_id) \
+                        .first()
     if not existing_object:
         new_hit_info_object = MTurkHITInfo(
             task_group_id=task_group_id,
@@ -187,12 +198,12 @@ def set_hit_info(db_session, task_group_id, conversation_id, assignment_id, hit_
         db_session.commit()
 
 
-def get_hit_info(db_session, task_group_id, conversation_id):
-    existing_object = db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.conversation_id==conversation_id).first()
-    return existing_object
+def get_all_matching_hit_infos(db_session, task_group_id, conversation_id):
+    matching_hit_infos = list(db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.conversation_id==conversation_id).all())
+    return matching_hit_infos
 
-def get_pending_review_count(db_session, task_group_id):
-    return db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.approval_status=='pending').count()
+def get_review_status_count(db_session, task_group_id, conversation_id, review_status):
+    return db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.conversation_id==conversation_id).filter(MTurkHITInfo.approval_status==review_status).count()
 
 def get_all_review_status(db_session, task_group_id):
     return db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).order_by(MTurkHITInfo.conversation_id).all()
