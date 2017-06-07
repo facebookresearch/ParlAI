@@ -20,8 +20,6 @@ def add_cmdline_args(parser):
     parser.add_argument('--random_seed', type=int, default=1013)
 
     # Basics
-    parser.add_argument('--model_file', type=str, default=None,
-                        help='Path where best valid models are saved')
     parser.add_argument('--embedding_file', type=str, default=None,
                         help='File of space separated embeddings: w e1 ... ed')
     parser.add_argument('--pretrained_model', type=str, default=None,

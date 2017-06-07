@@ -83,11 +83,12 @@ class SimpleDictionaryAgent(DictionaryAgent):
 # ------------------------------------------------------------------------------
 
 
-class DocReaderAgent(Agent):
+class DrqaAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
         config.add_cmdline_args(argparser)
+        SimpleDictionaryAgent.add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None, word_dict=None):
         # All agents keep track of the episode (for multiple questions)

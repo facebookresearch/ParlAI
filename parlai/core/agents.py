@@ -249,20 +249,26 @@ class MultiTaskTeacher(Teacher):
         shared['tasks'] = [t.share() for t in self.tasks]
         return shared
 
+def name_to_agent_class(name):
+    words = name.split('_')
+    class_name = ''
+    for w in words:
+        class_name += ( w[0].upper() + w[1:])
+    class_name += 'Agent'
+    return class_name
 
 def get_agent_module(dir_name):
     if ':' in dir_name:
         s = dir_name.split(':')
         module_name = s[0]
         class_name = s[1]
+    elif '/' in dir_name:
+        sp = dir_name.split('/')
+        module_name = "parlai.agents.%s.%s" % (sp[0], sp[1])
+        class_name = name_to_agent_class(sp[1])
     else:
         module_name = "parlai.agents.%s.%s" % (dir_name, dir_name)
-        words = dir_name.split('_')
-        class_name = ''
-        for w in words:
-            class_name += ( w[0].upper() + w[1:])
-        class_name += 'Agent'
-    print(class_name)
+        class_name = name_to_agent_class(dir_name)
     my_module = importlib.import_module(module_name)
     model_class = getattr(my_module, class_name)
     return model_class

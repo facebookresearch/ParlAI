@@ -13,7 +13,11 @@ python examples/train_model.py -m ir_baseline -t dialog_babi:Task:1 -mf "/tmp/mo
 
 ..or..
 
-python examples/train_model.py -m parlai.agents.rnn_baselines.seq2seq:Seq2seqAgent -t babi:Task1k:1 -mf "/tmp/model" -dbf True -bs 32 -lr 0.5 -hs 128
+python examples/train_model.py -m rnn_baselines/seq2seq -t babi:Task1k:1 -mf "/tmp/model" -dbf True -bs 32 -lr 0.5 -hs 128
+
+..or..
+
+rm -f /tmp/modelz; python examples/train_model.py -m drqa -t babi:Task1k:1 -mf "/tmp/modelz" -dbf True
 
 TODO List:
 - More logging (e.g. to files), make things prettier.
@@ -135,6 +139,7 @@ def main():
                   + " time_left:"
                   + str(math.floor(time_left))  + "s]")
             print(world.report())
+            # world.metrics.clear()
             log_time.reset()
         if (opt['validate_every_n_secs'] and
             validate_time.time() > opt['validate_every_n_secs']):
