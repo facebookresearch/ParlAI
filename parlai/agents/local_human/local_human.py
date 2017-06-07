@@ -15,6 +15,7 @@ class LocalHumanAgent(Agent):
     def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.id = 'localHuman'
+        self.done = False
 
     def observe(self, msg):
         print(display_messages([msg]))
@@ -24,4 +25,11 @@ class LocalHumanAgent(Agent):
         reply = {}
         reply['id'] = self.getID()
         reply['text'] = input("Enter Your Reply: ")
+        if reply_text == '[DONE]':
+            reply['episode_done'] = True
+            self.done = True
+        reply['text'] = reply_text
         return reply
+
+    def epoch_done(self):
+        return self.done
