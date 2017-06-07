@@ -14,9 +14,9 @@ human_agent_1.id = 'human_1'
 human_agent_2 = LocalHumanAgent(opt=None)
 human_agent_2.id = 'human_2'
 
-world = MultiAgentDialogWorld({'task':'test'}, [human_agent_1, human_agent_2, mturk_agent_1, mturk_agent_2])
+world = MultiAgentDialogWorld({'task':task_name}, [human_agent_1, human_agent_2, mturk_agent_1, mturk_agent_2])
 
-while not world.epoch_done():
+while not world.episode_done():
     world.parley()
 
 world.shutdown()

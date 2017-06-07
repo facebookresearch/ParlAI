@@ -178,7 +178,7 @@ class MTurkAgent(Agent):
 
             time.sleep(1)
 
-    def epoch_done(self):
+    def episode_done(self):
         return False
 
     def shutdown(self):

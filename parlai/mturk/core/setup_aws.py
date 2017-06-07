@@ -14,21 +14,23 @@ import time
 import json
 import webbrowser
 import hashlib
+import getpass
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
 
 aws_profile_name = 'parlai_mturk'
 region_name = 'us-west-2'
+user_name = getpass.getuser()
 
 iam_role_name = 'parlai_relay_server'
-lambda_function_name = 'parlai_relay_server'
+lambda_function_name = 'parlai_relay_server_' + user_name
 lambda_permission_statement_id = 'lambda-permission-statement-id'
-api_gateway_name = 'ParlaiRelayServer'
+api_gateway_name = 'ParlaiRelayServer_' + user_name
 endpoint_api_name_html = 'html'  # For GET-ing HTML
 endpoint_api_name_json = 'json'  # For GET-ing and POST-ing JSON
 
-rds_db_instance_identifier = 'parlai-mturk-db'
-rds_db_name = 'parlai_mturk_db'
+rds_db_instance_identifier = 'parlai-mturk-db-' + user_name
+rds_db_name = 'parlai_mturk_db_' + user_name
 rds_username = 'parlai_user'
 rds_password = 'parlai_user_password'
 rds_security_group_name = 'parlai-mturk-db-security-group'
@@ -228,7 +230,7 @@ def setup_rds():
 
     return host
 
-def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, requester_key_gt, should_clean_up_after_upload=False):
+def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, requester_key_gt, should_clean_up_after_upload=True):
     # Dynamically generate handler.py file, and then create zip file
     print("Lambda: Preparing relay server code...")
 
