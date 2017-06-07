@@ -17,13 +17,13 @@ except ModuleNotFoundError:
     raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
 import logging
 
-from parlai.agents.drqa.drqa import DocReaderAgent
+from parlai.agents.drqa.drqa import DrqaAgent
 from parlai.core.params import ParlaiParser
 
 def main(opt):
     # Load document reader
     assert('pretrained_model' in opt)
-    doc_reader = DocReaderAgent(opt)
+    doc_reader = DrqaAgent(opt)
 
     # Log params
     logger.info('[ Created with options: ] %s' %
@@ -43,7 +43,7 @@ def main(opt):
 if __name__ == '__main__':
     # Get command line arguments
     argparser = ParlaiParser()
-    DocReaderAgent.add_cmdline_args(argparser)
+    DrqaAgent.add_cmdline_args(argparser)
     opt = argparser.parse_args()
 
     # Set logging (only stderr)
