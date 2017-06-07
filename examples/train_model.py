@@ -17,7 +17,7 @@ python examples/train_model.py -m rnn_baselines/seq2seq -t babi:Task1k:1 -mf "/t
 
 ..or..
 
-rm -f /tmp/modelz; python examples/train_model.py -m drqa -t babi:Task1k:1 -mf "/tmp/modelz" -dbf True
+python examples/train_model.py -m drqa -t babi:Task1k:1 -mf "/tmp/model" -dbf True
 
 TODO List:
 - More logging (e.g. to files), make things prettier.
@@ -27,9 +27,9 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
 from parlai.core.dict import DictionaryAgent
-from parlai.agents.drqa.drqa import SimpleDictionaryAgent
 from parlai.core.utils import Timer
 import copy
+import importlib
 import math
 import os
 
@@ -72,7 +72,15 @@ def build_dict(opt):
         return
     opt['dict_savepath'] = opt['dict_loadpath']
     opt.pop('dict_loadpath', None)
-    dictionary = SimpleDictionaryAgent(opt)
+    if 'dict_class' in opt:
+        # Custom dictionary class
+        name = opt['dict_classname'].split(':')
+        module = importlib.import_module(name[0])
+        dict_class = getattr(module, name[1])
+        dictionary = dict_class(opt)
+    else:
+        # Default dictionary class
+        dictionary = DictionaryAgent(opt)
     ordered_opt = copy.deepcopy(opt)
     cnt = 0
     for datatype in ['train:ordered', 'valid']:
@@ -142,9 +150,9 @@ def main():
                   + " time_left:"
                   + str(math.floor(time_left))  + "s] ")
             if hasattr(agent, 'report'):
-                log = log + (agent.report())
+                log = log + str(agent.report())
             else:
-                log = log + (world.report())
+                log = log + str(world.report())
                 # TODO: world.reset_metrics()
             print(log)
             log_time.reset()

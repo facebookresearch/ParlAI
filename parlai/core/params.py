@@ -118,6 +118,10 @@ class ParlaiParser(object):
             agent = get_agent_module(model)
             if hasattr(agent, 'add_cmdline_args'):
                 agent.add_cmdline_args(self)
+            if hasattr(agent, 'dictionary_class'):
+                self.parser.add_argument(
+                    '-dict_class', default=agent.dictionary_class(), type=str,
+                    help='the class of the dictionary agent used')
 
     def parse_args(self, args=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the ``args``.

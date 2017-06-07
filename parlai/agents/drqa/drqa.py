@@ -3,7 +3,24 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import torch
+"""(A partial) implementation of the DrQa Document Reader from:
+
+Danqi Chen, Adam Fisch, Jason Weston, Antoine Bordes. 2017.
+Reading Wikipedia to Answer Open-Domain Questions.
+In Association for Computational Linguistics (ACL).
+
+Link: https://arxiv.org/abs/1704.00051
+
+Note:
+To use pretrained word embeddings, set the --embeddings_file path argument.
+GloVe is recommended, see http://nlp.stanford.edu/data/glove.840B.300d.zip.
+"""
+
+try:
+    import torch
+except ModuleNotFoundError:
+    raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
+
 import numpy as np
 import logging
 import copy
@@ -87,6 +104,10 @@ class DrqaAgent(Agent):
     def add_cmdline_args(argparser):
         config.add_cmdline_args(argparser)
         SimpleDictionaryAgent.add_cmdline_args(argparser)
+
+    @staticmethod
+    def dictionary_class():
+        return "parlai.agents.drqa.drqa:SimpleDictionaryAgent"
 
     def __init__(self, opt, shared=None):
         # Load dict.
