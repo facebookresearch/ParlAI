@@ -38,9 +38,9 @@ def run_eval(agent, opt, datatype, still_training=False):
     print("[running eval: " + datatype + "]")
     opt['datatype'] = datatype
     valid_world = create_task(opt, agent)
-    for _ in range(len(valid_world)):
+    for i in range(len(valid_world)):
         valid_world.parley()
-        if opt['display_examples']:
+        if i == 1 and opt['display_examples']:
             print(valid_world.display() + "\n~~")
             print(valid_world.report())
         if valid_world.epoch_done():
@@ -93,6 +93,8 @@ def build_dict(opt):
     dictionary.save(dict_fn, sort=True)
     opt['dict_loadpath'] = opt['dict_savepath']
     opt.pop('dict_savepath', None)
+    print('[dictionary built.]')
+    print('[num words =  %d]' % len(dictionary))
 
 def main():
     # Get command line arguments
@@ -127,12 +129,12 @@ def main():
     for i in range(num_parleys):
         world.parley()
         parleys = parleys + 1
-        if opt['display_examples']:
-            print(world.display() + "\n~~")
         if train_time.time() > opt['max_train_time']:
             print("[max_train_time elapsed: " + str(train_time.time()) + "]")
             break
         if log_time.time() > opt['log_every_n_secs']:
+            if opt['display_examples']:
+                print(world.display() + "\n~~")
             parleys_per_sec =  train_time.time() / parleys
             time_left = (num_parleys - parleys) * parleys_per_sec
             print("[time:" + str(math.floor(train_time.time()))

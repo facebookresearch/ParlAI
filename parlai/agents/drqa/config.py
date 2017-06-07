@@ -6,8 +6,6 @@
 import os
 import sys
 import logging
-logger = logging.getLogger('DrQA')
-
 
 def str2bool(v):
     return v.lower() in ('yes', 'true', 't', '1', 'y')
@@ -96,15 +94,15 @@ def set_defaults(opt):
 
     # Make sure tune_partial and fix_embeddings are consistent
     if opt['tune_partial'] > 0 and opt['fix_embeddings']:
-        logger.warning('Setting fix_embeddings to False as tune_partial > 0.')
+        print('Setting fix_embeddings to False as tune_partial > 0.')
         opt['fix_embeddings'] = False
 
     # Make sure fix_embeddings and embedding_file are consistent
     if opt['fix_embeddings']:
         if not 'embedding_file' in opt and not 'pretrained_model' in opt:
-            logger.warning(
+            print(
                 'Setting fix_embeddings to False as embeddings are random.'
-            )
+                )
             opt['fix_embeddings'] = False
 
 def override_args(opt, override_opt):

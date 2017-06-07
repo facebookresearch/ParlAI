@@ -20,8 +20,6 @@ from . import config
 from .utils import build_feature_dict, vectorize, batchify, normalize_text
 from .model import DocReaderModel
 
-logger = logging.getLogger('DrQA')
-
 # ------------------------------------------------------------------------------
 # Dictionary.
 # ------------------------------------------------------------------------------
@@ -44,14 +42,14 @@ class SimpleDictionaryAgent(DictionaryAgent):
 
         # Index words in embedding file
         if self.opt['pretrained_words'] and 'embedding_file' in self.opt:
-            logger.info('[ Indexing words with embeddings... ]')
+            print('[ Indexing words with embeddings... ]')
             self.embedding_words = set()
             with open(self.opt['embedding_file']) as f:
                 for line in f:
                     w = normalize_text(line.rstrip().split(' ')[0])
                     self.embedding_words.add(w)
-            logger.info('[ Num words in set = %d ]' %
-                        len(self.embedding_words))
+            print('[ Num words in set = %d ]' %
+                  len(self.embedding_words))
         else:
             self.embedding_words = None
 
@@ -113,7 +111,7 @@ class DrqaAgent(Agent):
             self._init_from_scratch()
         self.opt['cuda'] = not self.opt['no_cuda'] and torch.cuda.is_available()
         if self.opt['cuda']:
-            logger.info('[ Using CUDA (GPU %d) ]' % opt['gpu'])
+            print('[ Using CUDA (GPU %d) ]' % opt['gpu'])
             torch.cuda.set_device(opt['gpu'])
             self.model.cuda()
         self.n_examples = 0
@@ -123,12 +121,12 @@ class DrqaAgent(Agent):
         self.opt['num_features'] = len(self.feature_dict)
         self.opt['vocab_size'] = len(self.word_dict)
 
-        logger.info('[ Initializing model from scratch ]')
+        print('[ Initializing model from scratch ]')
         self.model = DocReaderModel(self.opt, self.word_dict, self.feature_dict)
         self.model.set_embeddings()
 
     def _init_from_saved(self):
-        logger.info('[ Loading model %s ]' % self.opt['pretrained_model'])
+        print('[ Loading model %s ]' % self.opt['pretrained_model'])
         saved_params = torch.load(
             self.opt['pretrained_model'],
             map_location=lambda storage, loc: storage
@@ -273,7 +271,7 @@ class DrqaAgent(Agent):
 
     def _log(self):
         if self.model.updates % self.opt['display_iter'] == 0:
-            logger.info(
+            print(
                 '[train] updates = %d | train loss = %.2f | exs = %d' %
                 (self.model.updates, self.model.train_loss.avg, self.n_examples)
             )
