@@ -27,6 +27,7 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
 from parlai.core.dict import DictionaryAgent
+from parlai.agents.drqa.drqa import SimpleDictionaryAgent
 from parlai.core.utils import Timer
 import copy
 import math
@@ -71,7 +72,7 @@ def build_dict(opt):
         return
     opt['dict_savepath'] = opt['dict_loadpath']
     opt.pop('dict_loadpath', None)
-    dictionary = DictionaryAgent(opt)
+    dictionary = SimpleDictionaryAgent(opt)
     ordered_opt = copy.deepcopy(opt)
     cnt = 0
     for datatype in ['train:ordered', 'valid']:
@@ -147,7 +148,8 @@ def main():
             if valid_report['accuracy'] > best_accuracy:
                 best_accuracy = valid_report['accuracy']
                 print("[current best accuracy: " + str(best_accuracy) +  "]")
-                agent.save(opt['model_file'])
+                if opt['model_file']:
+                    agent.save(opt['model_file'])
             validate_time.reset()
     world.shutdown()
 

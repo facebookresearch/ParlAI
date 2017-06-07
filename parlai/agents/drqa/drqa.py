@@ -90,7 +90,9 @@ class DrqaAgent(Agent):
         config.add_cmdline_args(argparser)
         SimpleDictionaryAgent.add_cmdline_args(argparser)
 
-    def __init__(self, opt, shared=None, word_dict=None):
+    def __init__(self, opt, shared=None):
+        # Load dict.
+        word_dict = SimpleDictionaryAgent(opt)
         # All agents keep track of the episode (for multiple questions)
         self.episode_done = True
 
@@ -109,7 +111,10 @@ class DrqaAgent(Agent):
             self._init_from_saved()
         else:
             self._init_from_scratch()
+        self.opt['cuda'] = not self.opt['no_cuda'] and torch.cuda.is_available()
         if self.opt['cuda']:
+            logger.info('[ Using CUDA (GPU %d) ]' % opt['gpu'])
+            torch.cuda.set_device(opt['gpu'])
             self.model.cuda()
         self.n_examples = 0
 
