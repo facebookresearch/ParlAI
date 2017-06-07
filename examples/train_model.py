@@ -137,12 +137,16 @@ def main():
                 print(world.display() + "\n~~")
             parleys_per_sec =  train_time.time() / parleys
             time_left = (num_parleys - parleys) * parleys_per_sec
-            print("[time:" + str(math.floor(train_time.time()))
+            log = ("[time:" + str(math.floor(train_time.time()))
                   + "s parleys:" + str(parleys) 
                   + " time_left:"
-                  + str(math.floor(time_left))  + "s]")
-            print(world.report())
-            # world.metrics.clear()
+                  + str(math.floor(time_left))  + "s] ")
+            if hasattr(agent, 'report'):
+                log = log + (agent.report())
+            else:
+                log = log + (world.report())
+                # TODO: world.reset_metrics()
+            print(log)
             log_time.reset()
         if (opt['validate_every_n_secs'] and
             validate_time.time() > opt['validate_every_n_secs']):

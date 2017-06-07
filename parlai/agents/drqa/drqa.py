@@ -168,7 +168,6 @@ class DrqaAgent(Agent):
         if 'labels' in self.observation:
             self.n_examples += 1
             self.model.update(batch)
-            self._log()
         else:
             reply['text'] = self.model.predict(batch)[0]
 
@@ -202,7 +201,6 @@ class DrqaAgent(Agent):
         if 'labels' in observations[0]:
             self.n_examples += len(examples)
             self.model.update(batch)
-            self._log()
         else:
             predictions = self.model.predict(batch)
             for i in range(len(predictions)):
@@ -269,9 +267,9 @@ class DrqaAgent(Agent):
             return
         return targets[np.random.choice(len(targets))]
 
-    def _log(self):
-        if self.model.updates % self.opt['display_iter'] == 0:
-            print(
-                '[train] updates = %d | train loss = %.2f | exs = %d' %
-                (self.model.updates, self.model.train_loss.avg, self.n_examples)
+    def report(self):
+        return (
+            '[train] updates = %d | train loss = %.2f | exs = %d' %
+            (self.model.updates, self.model.train_loss.avg, self.n_examples)
             )
+
