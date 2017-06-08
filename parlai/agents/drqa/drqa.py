@@ -21,6 +21,7 @@ try:
 except ModuleNotFoundError:
     raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
 
+import os 
 import numpy as np
 import logging
 import copy
@@ -111,7 +112,8 @@ class DrqaAgent(Agent):
 
     def __init__(self, opt, shared=None):
         # Load dict.
-        word_dict = SimpleDictionaryAgent(opt)
+        if not shared:
+            word_dict = SimpleDictionaryAgent(opt)
         # All agents keep track of the episode (for multiple questions)
         self.episode_done = True
 
@@ -126,10 +128,14 @@ class DrqaAgent(Agent):
         self.word_dict = word_dict
         self.opt = copy.deepcopy(opt)
         config.set_defaults(self.opt)
-        if 'pretrained_model' in self.opt:
-            self._init_from_saved()
+        
+        if 'model_file' in self.opt and os.path.isfile(opt['model_file']):
+            self._init_from_saved(opt['model_file'])
         else:
-            self._init_from_scratch()
+            if 'pretrained_model' in self.opt:
+                self._init_from_saved(opt['pretrained_model'])
+            else:
+                self._init_from_scratch()
         self.opt['cuda'] = not self.opt['no_cuda'] and torch.cuda.is_available()
         if self.opt['cuda']:
             print('[ Using CUDA (GPU %d) ]' % opt['gpu'])
@@ -146,10 +152,9 @@ class DrqaAgent(Agent):
         self.model = DocReaderModel(self.opt, self.word_dict, self.feature_dict)
         self.model.set_embeddings()
 
-    def _init_from_saved(self):
-        print('[ Loading model %s ]' % self.opt['pretrained_model'])
-        saved_params = torch.load(
-            self.opt['pretrained_model'],
+    def _init_from_saved(self, fname):
+        print('[ Loading model %s ]' % fname) 
+        saved_params = torch.load(fname,
             map_location=lambda storage, loc: storage
         )
 
@@ -231,6 +236,7 @@ class DrqaAgent(Agent):
 
     def save(self, filename):
         """Save the parameters of the agent to a file."""
+        print("[ saving model: " + self.opt['model_file'] + " ]")
         self.model.save(self.opt['model_file'])
 
     # --------------------------------------------------------------------------

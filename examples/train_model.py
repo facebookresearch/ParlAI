@@ -13,11 +13,11 @@ python examples/train_model.py -m ir_baseline -t dialog_babi:Task:1 -mf "/tmp/mo
 
 ..or..
 
-python examples/train_model.py -m rnn_baselines/seq2seq -t babi:Task1k:1 -mf "/tmp/model" -dbf True -bs 32 -lr 0.5 -hs 128
+python examples/train_model.py -m rnn_baselines/seq2seq -t babi:Task10k:1 -mf "/tmp/model" -dbf True -bs 32 -lr 0.5 -hs 128
 
 ..or..
 
-python examples/train_model.py -m drqa -t babi:Task1k:1 -mf "/tmp/model" -dbf True
+python examples/train_model.py -m drqa -t babi:Task10k:1 -mf "/tmp/model" -dbf True -bs 10
 
 TODO List:
 - More logging (e.g. to files), make things prettier.
@@ -35,7 +35,7 @@ import os
 
 def run_eval(agent, opt, datatype, still_training=False):
     ''' Eval on validation/test data. '''
-    print("[running eval: " + datatype + "]")
+    print("[ running eval: " + datatype + " ]")
     opt['datatype'] = datatype
     valid_world = create_task(opt, agent)
     for i in range(len(valid_world)):
@@ -59,7 +59,7 @@ def run_eval(agent, opt, datatype, still_training=False):
             f.close()
 
 def build_dict(opt):
-    print('[setting up dictionary.]')
+    print('[ setting up dictionary. ]')
     if 'dict_loadpath' not in opt:
         if '.model' in opt['model_file']:
             dict_fn = opt['model_file'].replace('.model', '.dict')
@@ -68,13 +68,13 @@ def build_dict(opt):
         opt['dict_loadpath'] = dict_fn
     if os.path.isfile(opt['dict_loadpath']):
         # dict already built
-        print("[dict already built.]")
+        print("[ dict already built .]")
         return
     opt['dict_savepath'] = opt['dict_loadpath']
     opt.pop('dict_loadpath', None)
     if 'dict_class' in opt:
         # Custom dictionary class
-        name = opt['dict_classname'].split(':')
+        name = opt['dict_class'].split(':')
         module = importlib.import_module(name[0])
         dict_class = getattr(module, name[1])
         dictionary = dict_class(opt)
@@ -101,8 +101,8 @@ def build_dict(opt):
     dictionary.save(dict_fn, sort=True)
     opt['dict_loadpath'] = opt['dict_savepath']
     opt.pop('dict_savepath', None)
-    print('[dictionary built.]')
-    print('[num words =  %d]' % len(dictionary))
+    print('[ dictionary built. ]')
+    print('[ num words =  %d ]' % len(dictionary))
 
 def main():
     # Get command line arguments
@@ -116,6 +116,10 @@ def main():
                         type=float, default=1)
     parser.add_argument('-vtim', '--validate-every-n-secs',
                         type=float, default=False)
+    parser.add_argument('-vimp', '--validation-impatience',
+                        type=int, default=5,
+                        help=('number of iterations of validation where result '
+                              + 'does not improve before we stop training'))
     parser.add_argument('-dbf', '--dict_build_first',
                         type='bool', default=False,
                         help='build dictionary first before training agent')
@@ -130,25 +134,27 @@ def main():
     train_time = Timer()
     validate_time = Timer()
     log_time = Timer()
-    print("[training...]")
+    print("[ training... ]")
     parleys = 0
     num_parleys = opt['num_epochs'] * len(world)
     best_accuracy = 0
+    impatience = 0
+    saved = False
     for i in range(num_parleys):
         world.parley()
         parleys = parleys + 1
         if train_time.time() > opt['max_train_time']:
-            print("[max_train_time elapsed: " + str(train_time.time()) + "]")
+            print("[ max_train_time elapsed: " + str(train_time.time()) + " ]")
             break
         if log_time.time() > opt['log_every_n_secs']:
             if opt['display_examples']:
                 print(world.display() + "\n~~")
             parleys_per_sec =  train_time.time() / parleys
             time_left = (num_parleys - parleys) * parleys_per_sec
-            log = ("[time:" + str(math.floor(train_time.time()))
+            log = ("[ time:" + str(math.floor(train_time.time()))
                   + "s parleys:" + str(parleys) 
                   + " time_left:"
-                  + str(math.floor(time_left))  + "s] ")
+                  + str(math.floor(time_left))  + "s ]")
             if hasattr(agent, 'report'):
                 log = log + str(agent.report())
             else:
@@ -161,14 +167,30 @@ def main():
             valid_report = run_eval(agent, opt, 'valid', True)
             if valid_report['accuracy'] > best_accuracy:
                 best_accuracy = valid_report['accuracy']
-                print("[current best accuracy: " + str(best_accuracy) +  "]")
+                impatience = 0
+                print("[ new best accuracy: " + str(best_accuracy) +  " ]")
                 if opt['model_file']:
                     agent.save(opt['model_file'])
+                    saved = True
+                if best_accuracy == 1:
+                    print('[ task solved! stopping. ]')
+                    break
+            else:
+                impatience += 1
+                print("[ did not beat best accuracy: " + str(best_accuracy) + 
+                      " impatience: " + str(impatience)  + " ]")
             validate_time.reset()
+            if impatience >= opt['validation_impatience']:
+                print('[ ran out of patience! stopping. ]')
+                break
     world.shutdown()
+    if not saved:
+        if opt['model_file']:
+            agent.save(opt['model_file'])
+    else:
+        # reload best validation model
+        agent = create_agent(opt)
 
-    if opt['model_file']:
-        agent.save(opt['model_file'])
     run_eval(agent, opt, 'valid')
     run_eval(agent, opt, 'test')
 
