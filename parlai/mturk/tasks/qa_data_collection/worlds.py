@@ -3,49 +3,28 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import copy
-import importlib
-from parlai.core.agents import Agent
-from parlai.core.agents import create_agent
+from parlai.core.worlds import World, validate
 
-class QADataCollectionAgent(Agent):
+
+class QADataCollectionWorld(World):
     """
-    MTurk agent for recording a turker's question and answer given a context.
+    World for recording a turker's question and answer given a context.
     Assumes the context is a random context from a given task, e.g.
     from SQuAD, CBT, etc.
     """
-    def __init__(self, opt, shared=None):
-        self.opt = copy.deepcopy(opt)
-        self.id = 'QA Collector'
+
+    collector_agent_id = 'QA Collector'
+
+    def __init__(self, opt, task, mturk_agent):
+        self.task = task
+        self.mturk_agent = mturk_agent
+        self.episodeDone = False
         self.turn_index = -1
 
-        # Initialize a SQuAD teacher agent, which we will later get context from
-        module_name = 'parlai.tasks.squad.agents'
-        class_name = 'DefaultTeacher'
-        my_module = importlib.import_module(module_name)
-        task_class = getattr(my_module, class_name)
-        task_opt = {}
-        task_opt['datatype'] = 'train'
-        task_opt['datapath'] = opt['datapath']
-        self.task = task_class(task_opt)
-
-    def observe(self, observation):
-        self.observation = observation
-
-        if self.turn_index == 0:
-            # Turker's question, from the first turn
-            # print(self.observation)
-            pass
-        elif self.turn_index == 1:
-            # Turker's answer, from the second turn
-            # print(self.observation)
-            pass
-        return observation
-
-    def act(self):
+    def parley(self):
         self.turn_index = (self.turn_index + 1) % 2; # Each turn starts from the QA Collector agent
         ad = { 'episode_done': False }
-        ad['id'] = self.id
+        ad['id'] = self.__class__.collector_agent_id
 
         if self.turn_index == 0:
             # At the first turn, the QA Collector agent provides the context and
@@ -59,6 +38,9 @@ class QADataCollectionAgent(Agent):
             ad['text'] = (context +
                         '\n\nPlease provide a question given this context.')
 
+            self.mturk_agent.observe(validate(ad))
+            self.question = self.mturk_agent.act() # Can log the turker's question here
+
         if self.turn_index == 1:
             # At the second turn, the QA Collector collects the turker's question from the first turn,
             # and then prompts the turker to provide the answer
@@ -68,6 +50,18 @@ class QADataCollectionAgent(Agent):
 
             ad['episode_done'] = True  # end of episode
 
-        return ad
+            self.mturk_agent.observe(validate(ad))
+            self.answer = self.mturk_agent.act() # Can log the turker's answer here
 
-default_agent_class = QADataCollectionAgent
+            self.episodeDone = True
+
+    def episode_done(self):
+        return self.episodeDone
+
+    def report(self):
+        # TODO: Add logging code here
+        pass
+
+    def shutdown(self):
+        self.task.shutdown()
+        self.mturk_agent.shutdown()

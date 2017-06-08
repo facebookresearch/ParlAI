@@ -53,6 +53,7 @@ def chat_index(event, context):
         try:
             task_group_id = event['query']['task_group_id']
             conversation_id = event['query']['conversation_id']
+            all_agent_ids = event['query']['all_agent_ids']
             cur_agent_id = event['query']['cur_agent_id']
             assignment_id = event['query']['assignmentId'] # from mturk
 
@@ -63,6 +64,7 @@ def chat_index(event, context):
                 template_context['task_group_id'] = task_group_id
                 template_context['conversation_id'] = conversation_id
                 template_context['cur_agent_id'] = cur_agent_id
+                template_context['all_agent_ids'] = all_agent_ids
                 template_context['task_description'] = task_description
                 template_context['mturk_submit_url'] = mturk_submit_url
                 template_context['is_cover_page'] = False

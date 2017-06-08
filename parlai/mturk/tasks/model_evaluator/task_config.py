@@ -6,7 +6,6 @@
 
 task_config = {}
 
-
 """A short and descriptive title about the kind of task the HIT contains.
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,
 and everywhere the HIT is mentioned.
@@ -25,11 +24,6 @@ task_config['hit_description'] = 'Give a rating to a dialog between two people.'
 On MTurk website, these words are used in searches to find HITs.
 """
 task_config['hit_keywords'] = 'chat,dialog,rating'
-
-
-"""A short name indicating the turker's role in the conversation.
-"""
-task_config['worker_agent_id'] = 'Teacher'
 
 
 """A detailed task description that will be shown on the HIT task preview page

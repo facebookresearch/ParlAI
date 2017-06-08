@@ -243,14 +243,25 @@ of patent rights can be found in the PATENTS file in the same directory.
     });
 
     var mturk_submit_url = `{{mturk_submit_url}}`;
-    var verbose_log = true;
+    var verbose_log = false;
     var task_group_id = `{{task_group_id}}`;
     var conversation_id = parseInt(`{{conversation_id}}`);
     var cur_agent_id = `{{cur_agent_id}}`;
     var mturk_agent_ids = `{{mturk_agent_ids}}`;
     if (mturk_agent_ids) {
         mturk_agent_ids = JSON.parse(mturk_agent_ids);
-        console.log(mturk_agent_ids);
+    }
+    var all_agent_ids = `{{all_agent_ids}}`;
+    var cur_agent_index = null;
+    var previous_agent_id = null;
+    if (all_agent_ids) {
+        all_agent_ids = JSON.parse(all_agent_ids);
+        cur_agent_index = all_agent_ids.indexOf(cur_agent_id);
+        if (cur_agent_index == 0) {
+            previous_agent_id = all_agent_ids[all_agent_ids.length-1];
+        } else {
+            previous_agent_id = all_agent_ids[cur_agent_index-1];
+        }
     }
     var is_cover_page = (`{{is_cover_page}}` === 'True') ? true : false;
     var is_approval_page = (`{{is_approval_page}}` === 'True') ? true : false;
@@ -314,8 +325,8 @@ of patent rights can be found in the PATENTS file in the same directory.
             $("div#message_thread").css("display", "");
             scroll_conversation_to_bottom();
         }
-        if (received_message_from_other_agents && (!task_done)) {
-            $("div#response-type-text-input").css("display", "");
+        if (received_message_from_other_agents && (!task_done) && new_messages[new_messages.length-1]['id'] === previous_agent_id) {
+            update_for_response_type('text_input');
             $("input#id_text_input").focus();
         }
     }
@@ -461,7 +472,11 @@ of patent rights can be found in the PATENTS file in the same directory.
         $("form#mturk_submit_form input#workerId").val(get_url_parameter('workerId'));
         $("form#mturk_submit_form").attr("action", mturk_submit_url);
         $("input#id_text_input").focus();
-        update_for_response_type('text_input');
+        if (cur_agent_index == 0) {
+            update_for_response_type('text_input');
+        } else {
+            update_for_response_type('idle');
+        }
         if (is_approval_page) {
             $("div#left-pane").css("min-height", $(window).height());
         }
