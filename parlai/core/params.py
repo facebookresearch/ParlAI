@@ -107,7 +107,7 @@ class ParlaiParser(object):
             '-m', '--model', default='repeat_label',
             help='the model class name, should match parlai/agents/<model>')
         self.parser.add_argument(
-            '-mf', '--model_file', default='',
+            '-mf', '--model-file', default='',
             help='model file name for loading and saving models')
         # Find which model specified, and add its specific arguments.
         model = None
@@ -120,7 +120,7 @@ class ParlaiParser(object):
                 agent.add_cmdline_args(self)
             if hasattr(agent, 'dictionary_class'):
                 self.parser.add_argument(
-                    '-dict_class', default=agent.dictionary_class(), type=str,
+                    '--dict-class', default=agent.dictionary_class(), type=str,
                     help='the class of the dictionary agent used')
 
     def parse_args(self, args=None, print_args=True):

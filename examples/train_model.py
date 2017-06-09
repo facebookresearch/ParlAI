@@ -114,9 +114,9 @@ def main():
                         type=float, default=float('inf'))
     parser.add_argument('-ltim', '--log-every-n-secs',
                         type=float, default=1)
-    parser.add_argument('-vtim', '--validate-every-n-secs',
+    parser.add_argument('-vtim', '--validation-every-n-secs',
                         type=float, default=False)
-    parser.add_argument('-vimp', '--validation-impatience',
+    parser.add_argument('-vp', '--validation-patience',
                         type=int, default=5,
                         help=('number of iterations of validation where result '
                               + 'does not improve before we stop training'))
@@ -180,7 +180,7 @@ def main():
                 print("[ did not beat best accuracy: " + str(best_accuracy) + 
                       " impatience: " + str(impatience)  + " ]")
             validate_time.reset()
-            if impatience >= opt['validation_impatience']:
+            if impatience >= opt['validation_patience']:
                 print('[ ran out of patience! stopping. ]')
                 break
     world.shutdown()
