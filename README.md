@@ -263,36 +263,36 @@ To add your own task:
 ### MTurk
 
 An important part of ParlAI is seamless integration with Mechanical Turk for data collection, training and evaluation.
+
 Human Turkers are also viewed as agents in ParlAI and hence person-person, person-bot, or multiple people and bots in group chat can all converse within the standard framework, switching out the roles as desired with no code changes to the agents. This is because Turkers also receive and send via a (pretty printed) version of the same interface, using the fields of the observation/action dict.
-We provide two examples in the first release, collecting data, and human evaluation of a bot.
+
+We currently provide three examples: collecting data, human evaluation of a bot, and round-robin chat between local humans and remote Turkers.
 
 <p align=center><img width="100%" src="docs/source/\_static/img/mturk.png" /></p>
 
-The mturk library contains the following directories and files:
+The mturk library contains the following directories:
 
-- **core**: this directory contains the core code for setting up AWS backend that supports the MTurk chat interface, and code for HIT creation and approval.
-- **tasks**: this directory contains two sample MTurk tasks that are provided in the first release.
+- **core**: this directory contains the core code for setting up AWS backend that supports the MTurk chat interface, code for HIT creation and approval, and the wrapper class `MTurkAgent` which encapsulates the MTurk interface into a standard `Agent` class.
+- **tasks**: this directory contains three sample MTurk tasks.
   - **_qa\_data\_collection_**: get questions and answers from turkers, given a random paragraph from SQuAD.
-  - **_model\_evaluator_**: evaluate the information retrieval baseline model on the Reddit movie dialog dataset.
-- **run_mturk.py**: file for calling mturk core code with user-specified task module, dialog model agent, number of HITs, and reward for each HIT.
+  - **_model\_evaluator_**: ask turkers to evaluate the information retrieval baseline model on the Reddit movie dialog dataset.
+  - **_multi\_agent\_dialog_**: round-robin chat between two local human agents and two Turkers.
 
-To run sample MTurk task and agent:
-- In __run\_mturk.py__, uncomment the task module and the agent class you want to use
-- For `create_hits` method, change `num_hits` and `hit_reward` if needed. Set `is_sandbox` to `True` if you want to run the sample in MTurk sandbox only, or set it to `False` to allow turkers to work on it and potentially get paid for it.
-- Run `python run_mturk.py`
+To run an MTurk task:
+- Go into the directory for the task you want to run.
+- Run `python run.py -nh <num_hits> -r <reward> [--sandbox]/[--live]`, with `<num_hits>` and `<reward>` set appropriately. Use `--sandbox` to run the task in MTurk sandbox mode before pushing it live.
 
-To add your own MTurk task and dialog model:
+To add your own MTurk task:
 - create a new folder within the mturk/tasks directory for your new task
-- implement __task\_config.py__, with at least the following fields in the task_config dictionary:
+- implement __task\_config.py__, with at least the following fields in the `task_config` dictionary:
   - `hit_title`: a short and descriptive title about the kind of task the HIT contains. On the Amazon Mechanical Turk web site, the HIT title appears in search results, and everywhere the HIT is mentioned.
   - `hit_description`: a description includes detailed information about the kind of task the HIT contains. On the Amazon Mechanical Turk web site, the HIT description appears in the expanded view of search results, and in the HIT and assignment screens.
   - `hit_keywords`: one or more words or phrases that describe the HIT, separated by commas. On MTurk website, these words are used in searches to find HITs.
-  - `worker_agent_id`: a short name indicating the turker's role in the conversation.
   - `task_description`: a detailed task description that will be shown on the HIT task preview page and on the left side of the chat page. Supports HTML formatting.
-- implement __agents.py__, with at least an agent class that extends from Agent
-  - write your own `__init__()` method that wraps your dialog model agent. (Please see mturk/tasks/model_evaluator/agents.py file for a concrete example.)
-  - write your own `act()` method that returns your dialog model's response as well as helpful text to the turker for what action they should take next.
-- import your task module and agent class in __run\_mturk.py__ file, and then run `python run_mturk.py`.
+- implement __run.py__, with code for setting up and running the world where `MTurkAgent` lives in.
+- (Optional) implement __worlds.py__, with a world class that extends from `World`.
+
+Please see [the MTurk tutorial](http://parl.ai/static/docs/mturk.html) to learn more about the MTurk examples and how to create and run your own task.
 
 ## Support
 If you have any questions, bug reports or feature requests, please don't hesitate to post on our [Github Issues page](https://github.com/facebookresearch/ParlAI/issues).

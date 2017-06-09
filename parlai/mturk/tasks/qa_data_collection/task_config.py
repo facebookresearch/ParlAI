@@ -27,11 +27,6 @@ On MTurk website, these words are used in searches to find HITs.
 task_config['hit_keywords'] = 'chat,question,answer'
 
 
-"""A short name indicating the turker's role in the conversation.
-"""
-task_config['worker_agent_id'] = 'Teacher'
-
-
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """

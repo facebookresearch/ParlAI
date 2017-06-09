@@ -14,21 +14,23 @@ import time
 import json
 import webbrowser
 import hashlib
+import getpass
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
 
 aws_profile_name = 'parlai_mturk'
 region_name = 'us-west-2'
+user_name = getpass.getuser()
 
 iam_role_name = 'parlai_relay_server'
-lambda_function_name = 'parlai_relay_server'
+lambda_function_name = 'parlai_relay_server_' + user_name
 lambda_permission_statement_id = 'lambda-permission-statement-id'
-api_gateway_name = 'ParlaiRelayServer'
+api_gateway_name = 'ParlaiRelayServer_' + user_name
 endpoint_api_name_html = 'html'  # For GET-ing HTML
 endpoint_api_name_json = 'json'  # For GET-ing and POST-ing JSON
 
-rds_db_instance_identifier = 'parlai-mturk-db'
-rds_db_name = 'parlai_mturk_db'
+rds_db_instance_identifier = 'parlai-mturk-db-' + user_name
+rds_db_name = 'parlai_mturk_db_' + user_name
 rds_username = 'parlai_user'
 rds_password = 'parlai_user_password'
 rds_security_group_name = 'parlai-mturk-db-security-group'
@@ -228,7 +230,7 @@ def setup_rds():
 
     return host
 
-def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt, should_clean_up_after_upload=True):
+def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, requester_key_gt, should_clean_up_after_upload=True):
     # Dynamically generate handler.py file, and then create zip file
     print("Lambda: Preparing relay server code...")
 
@@ -253,7 +255,7 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, 
         "requester_key_gt = \'" + requester_key_gt + "\'\n" + \
         "num_hits = " + str(num_hits) + "\n" + \
         "is_sandbox = " + str(is_sandbox) + "\n" + \
-        'task_description = ' + task_config['task_description'])
+        'task_description = ' + task_description)
     with open(os.path.join(parent_dir, lambda_server_directory_name, 'handler.py'), 'w') as handler_file:
         handler_file.write(handler_file_string)
     create_zip_file(
@@ -644,13 +646,13 @@ def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, f
     if verbose:
         print("Done!")
 
-def setup_aws(task_config, num_hits, is_sandbox):
+def setup_aws(task_description, num_hits, is_sandbox):
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
     if not is_sandbox:
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
     requester_key_gt = get_requester_key()
     rds_host = setup_rds()
-    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_config, is_sandbox, num_hits, requester_key_gt)
+    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, requester_key_gt)
 
     return html_api_endpoint_url, json_api_endpoint_url, requester_key_gt
 
