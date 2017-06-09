@@ -10,5 +10,5 @@ agents.repeat_label
 
 Simple label-repeating agent.
 
-.. automodule:: parlai.agents.repeat_label.agents
+.. automodule:: parlai.agents.repeat_label.repeat_label
   :members:
