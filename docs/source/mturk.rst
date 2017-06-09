@@ -45,7 +45,7 @@ As an example, the `QA Data Collection task <https://github.com/facebookresearch
 
 In ``QADataCollectionWorld``, there are two agents: one is the human Turker (``MTurkAgent``), the other is the task agent (``DefaultTeacher`` from SQuAD) that provides the Wikipedia paragraph.
 
-The ``QADataCollectionWorld`` uses ``turn_index`` to denote what stage the conversation is at. One *turn* means that the world has been called ``parley()`` once.
+The ``QADataCollectionWorld`` uses ``turn_index`` to denote what stage the conversation is at. One *turn* means that ``world.parley()`` has been called once.
 
 After two turns, the task is finished, and the Turker's work is submitted for your review.
 
