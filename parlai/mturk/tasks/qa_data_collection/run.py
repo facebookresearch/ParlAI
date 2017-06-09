@@ -10,9 +10,14 @@ from task_config import task_config
 import time
 import os
 import importlib
-
+import copy
+try:
+    from joblib import Parallel, delayed
+except ModuleNotFoundError:
+    raise SystemExit("Please install joblib by running: pip install joblib")
 
 def main():
+    global run_hit
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
@@ -27,7 +32,6 @@ def main():
     task_opt = {}
     task_opt['datatype'] = 'train'
     task_opt['datapath'] = opt['datapath']
-    task = task_class(task_opt)
 
     # Create the MTurk agent which provides a chat interface to the Turker
     opt.update(task_config)
@@ -35,16 +39,20 @@ def main():
     opt['agent_id'] = mturk_agent_id
     opt['mturk_agent_ids'] = [mturk_agent_id]
     opt['all_agent_ids'] = [QADataCollectionWorld.collector_agent_id, mturk_agent_id]
-    opt['conversation_id'] = str(int(time.time()))
+    opt['run_id'] = str(int(time.time()))
 
-    mturk_agent = MTurkAgent(opt=opt)
+    def run_hit(i, task_class, task_opt, opt):
+        task = task_class(task_opt)
+        opt['conversation_id'] = str(i)
+        mturk_agent = MTurkAgent(opt=opt)
+        world = QADataCollectionWorld(opt=opt, task=task, mturk_agent=mturk_agent)
+        while not world.episode_done():
+            world.parley()
+        world.shutdown()
 
-    world = QADataCollectionWorld(opt=opt, task=task, mturk_agent=mturk_agent)
-
-    while not world.episode_done():
-        world.parley()
-
-    world.shutdown()
+    MTurkAgent.init_aws(opt)
+    results = Parallel(n_jobs=opt['num_hits'], backend='threading')(delayed(run_hit)(i, task_class, task_opt, copy.deepcopy(opt)) for i in range(1, opt['num_hits']+1))
+    MTurkAgent.review_hits(opt=opt)
 
 if __name__ == '__main__':
     main()
