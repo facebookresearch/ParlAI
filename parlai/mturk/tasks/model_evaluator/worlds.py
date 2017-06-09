@@ -1,5 +1,4 @@
-from parlai.core.worlds import World, validate
-
+from parlai.core.worlds import World, validate, create_task
 
 class ModelEvaluatorWorld(World):
     """
@@ -9,8 +8,8 @@ class ModelEvaluatorWorld(World):
 
     evaluator_agent_id = 'Model Evaluator'
 
-    def __init__(self, opt, task_world, mturk_agent):
-        self.task_world = task_world
+    def __init__(self, opt, model_agent, task_opt, mturk_agent):
+        self.task_world = create_task(task_opt, model_agent)
         self.mturk_agent = mturk_agent
         self.episodeDone = False
 

@@ -6,7 +6,6 @@
 from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.model_evaluator.worlds import ModelEvaluatorWorld
 from parlai.mturk.core.agents import MTurkAgent
-from parlai.core.worlds import create_task
 from task_config import task_config
 import time
 import os
@@ -22,7 +21,6 @@ def main():
     IrBaselineAgent.add_cmdline_args(argparser)
     opt = argparser.parse_args()
     opt['task'] = os.path.basename(os.getcwd())
-    
     model_agent = IrBaselineAgent(opt=opt)
 
     # The task that we will evaluate the dialog model on
@@ -30,7 +28,6 @@ def main():
     task_opt['datatype'] = 'test'
     task_opt['datapath'] = opt['datapath']
     task_opt['task'] = '#MovieDD-Reddit'
-    task_world = create_task(task_opt, model_agent)
 
     # Create the MTurk agent which provides a chat interface to the Turker
     opt.update(task_config)
@@ -42,7 +39,7 @@ def main():
 
     mturk_agent = MTurkAgent(opt=opt)
 
-    world = ModelEvaluatorWorld(opt=opt, task_world=task_world, mturk_agent=mturk_agent)
+    world = ModelEvaluatorWorld(opt=opt, model_agent=model_agent, task_opt=task_opt, mturk_agent=mturk_agent)
 
     while not world.episode_done():
         world.parley()
