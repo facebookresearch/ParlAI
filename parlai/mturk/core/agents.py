@@ -50,29 +50,49 @@ def _send_new_message(json_api_endpoint_url, task_group_id, conversation_id, age
     request = requests.post(json_api_endpoint_url, data=json.dumps(post_data_dict))
     return json.loads(request.json())
 
-def _get_review_status_count(json_api_endpoint_url, task_group_id, conversation_id, review_status, requester_key):
+def _get_approval_status_count(json_api_endpoint_url, task_group_id, approval_status, requester_key, conversation_id=None):
     params = {
-        'method_name': 'get_review_status_count',
+        'method_name': 'get_approval_status_count',
         'task_group_id': task_group_id,
-        'conversation_id': conversation_id,
-        'review_status': review_status,
+        'approval_status': approval_status,
         'requester_key': requester_key
     }
+    if conversation_id:
+        params['conversation_id'] = conversation_id
     request = requests.get(json_api_endpoint_url, params=params)
     return request.json()
 
 class MTurkAgent(Agent):
 
-    skip_init = False
     html_api_endpoint_url = None
     json_api_endpoint_url = None
     requester_key_gt = None
+    task_group_id = None
     
+    @classmethod
+    def init_aws(cls, opt):
+        print("\nYou are going to allow workers from Amazon Mechanical Turk to be an agent in ParlAI.\nDuring this process, Internet connection is required, and you should turn off your computer's auto-sleep feature.\n")
+        key_input = input("Please press Enter to continue... ")
+        print("")
+
+        setup_aws_credentials()
+
+        if not check_mturk_balance(num_hits=opt['num_hits'], hit_reward=opt['reward'], is_sandbox=opt['is_sandbox']):
+            return
+
+        print('Setting up MTurk backend...')
+        html_api_endpoint_url, json_api_endpoint_url, requester_key_gt = setup_aws(task_description=opt['task_description'], num_hits=opt['num_hits'], is_sandbox=opt['is_sandbox'])
+        cls.html_api_endpoint_url = html_api_endpoint_url
+        cls.json_api_endpoint_url = json_api_endpoint_url
+        cls.requester_key_gt = requester_key_gt
+        print("MTurk setup done.\n")
+
+        cls.task_group_id = str(opt['task']) + '_' + str(opt['run_id'])
+
     def __init__(self, opt, shared=None):
         super().__init__(opt)
 
         self.id = opt['agent_id']
-        self.task_name = opt['task']
         self.is_sandbox = opt['is_sandbox']
         self.conversation_id = opt['conversation_id']
         self.mturk_agent_ids = opt['mturk_agent_ids']
@@ -81,45 +101,20 @@ class MTurkAgent(Agent):
         self.hit_title = opt['hit_title']
         self.hit_description = opt['hit_description']
         self.hit_keywords = opt['hit_keywords']
-        self.task_description = opt['task_description']
+        self.task_additional_info = opt.get('task_additional_info', '')
 
         self.last_message_id = 0
-
-        if not self.__class__.skip_init:
-            print("\nYou are going to allow workers from Amazon Mechanical Turk to be an agent in ParlAI.\nDuring this process, Internet connection is required, and you should turn off your computer's auto-sleep feature.\n")
-            key_input = input("Please press Enter to continue... ")
-            print("")
-            
-        setup_aws_credentials()
-
-        if not check_mturk_balance(num_hits=1, hit_reward=self.hit_reward, is_sandbox=self.is_sandbox):
-            return
-            
-        if not self.__class__.skip_init:
-            print('Setting up MTurk backend...')
-            html_api_endpoint_url, json_api_endpoint_url, requester_key_gt = setup_aws(self.task_description, 1, self.is_sandbox)
-            self.__class__.html_api_endpoint_url = html_api_endpoint_url
-            self.__class__.json_api_endpoint_url = json_api_endpoint_url
-            self.__class__.requester_key_gt = requester_key_gt
-            print("MTurk setup done.\n")
-
-        self.__class__.skip_init = True
-        self.html_api_endpoint_url = self.__class__.html_api_endpoint_url
-        self.json_api_endpoint_url = self.__class__.json_api_endpoint_url
-        self.requester_key_gt = self.__class__.requester_key_gt
-
-        self.task_group_id = str(self.task_name) + '_' + str(self.conversation_id)
 
         print('Creating HITs...')
         hit_type_id = create_hit_type(
             hit_title=self.hit_title,
-            hit_description=self.hit_description + ' (ID: ' + self.task_group_id + ', Role: ' + self.id + ')',
+            hit_description=self.hit_description + ' (ID: ' + self.__class__.task_group_id + ', Role: ' + self.id + ')',
             hit_keywords=self.hit_keywords,
             hit_reward=self.hit_reward,
             is_sandbox=self.is_sandbox
         )
         all_agent_ids_string = str(self.all_agent_ids).replace("'", '''"''')
-        mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)+"&conversation_id="+str(self.conversation_id)+"&all_agent_ids="+all_agent_ids_string+"&cur_agent_id="+str(self.id)
+        mturk_chat_url = self.__class__.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)+"&conversation_id="+str(self.conversation_id)+"&all_agent_ids="+all_agent_ids_string+"&cur_agent_id="+str(self.id)+"&task_additional_info="+str(self.task_additional_info)
         mturk_page_url = create_hit_with_hit_type(
             page_url=mturk_chat_url,
             hit_type_id=hit_type_id,
@@ -132,7 +127,7 @@ class MTurkAgent(Agent):
     def observe(self, msg):
         if msg['id'] not in self.mturk_agent_ids: # If the message sender is an mturk agent, then there is no need to upload this message to db since it's already been done on the message sender side.
             conversation_dict = _get_new_messages(
-                json_api_endpoint_url=self.json_api_endpoint_url, 
+                json_api_endpoint_url=self.__class__.json_api_endpoint_url,
                 task_group_id=self.task_group_id,
                 conversation_id=self.conversation_id,
                 after_message_id=self.last_message_id,
@@ -146,7 +141,7 @@ class MTurkAgent(Agent):
                     return
 
             _send_new_message(
-                json_api_endpoint_url=self.json_api_endpoint_url,
+                json_api_endpoint_url=self.__class__.json_api_endpoint_url,
                 task_group_id=self.task_group_id,
                 conversation_id=self.conversation_id,
                 agent_id=msg['id'],
@@ -158,7 +153,7 @@ class MTurkAgent(Agent):
     def act(self):
         while True:
             ret = _get_new_messages(
-                json_api_endpoint_url=self.json_api_endpoint_url,
+                json_api_endpoint_url=self.__class__.json_api_endpoint_url,
                 task_group_id=self.task_group_id,
                 conversation_id=self.conversation_id,
                 after_message_id=self.last_message_id,
@@ -181,22 +176,22 @@ class MTurkAgent(Agent):
         return False
 
     def shutdown(self):
-        if _get_review_status_count(json_api_endpoint_url=self.json_api_endpoint_url, task_group_id=self.task_group_id, conversation_id=self.conversation_id, review_status='approved', requester_key=self.requester_key_gt) + \
-            _get_review_status_count(json_api_endpoint_url=self.json_api_endpoint_url, task_group_id=self.task_group_id, conversation_id=self.conversation_id, review_status='rejected', requester_key=self.requester_key_gt) > 0:
-            return
-        else:
-            # Loop to ensure all HITs are done
-            while _get_review_status_count(json_api_endpoint_url=self.json_api_endpoint_url, task_group_id=self.task_group_id, conversation_id=self.conversation_id, review_status='pending', requester_key=self.requester_key_gt) < len(self.mturk_agent_ids):
-                time.sleep(2)
+        # Loop to ensure all HITs are done
+        while _get_approval_status_count(json_api_endpoint_url=self.__class__.json_api_endpoint_url, task_group_id=self.task_group_id, conversation_id=self.conversation_id, approval_status='pending', requester_key=self.__class__.requester_key_gt) < len(self.mturk_agent_ids):
+            time.sleep(2)
+        print('Conversation ID: ' + self.conversation_id + ', Agent ID: ' + self.id + ' - HIT is done.')
 
-            mturk_agent_ids_string = str(self.mturk_agent_ids).replace("'", '''"''')
-            mturk_approval_url = self.html_api_endpoint_url + "?method_name=approval_index&task_group_id="+str(self.task_group_id)+"&conversation_id="+str(self.conversation_id)+"&mturk_agent_ids="+mturk_agent_ids_string+"&requester_key="+self.requester_key_gt
-            print("\nAll HITs are done! Please go to the following link to approve/reject them (or they will be auto-approved in 4 weeks if no action is taken):\n")
-            print(mturk_approval_url)
-            print("")
+    @classmethod
+    def review_hits(cls, opt):
+        mturk_agent_ids_string = str(opt['mturk_agent_ids']).replace("'", '''"''')
+        mturk_approval_url = cls.html_api_endpoint_url + "?method_name=approval_index&task_group_id="+str(cls.task_group_id)+"&conversation_id=1"+"&mturk_agent_ids="+mturk_agent_ids_string+"&requester_key="+cls.requester_key_gt
 
-            # Loop for checking review status
-            while _get_review_status_count(json_api_endpoint_url=self.json_api_endpoint_url, task_group_id=self.task_group_id, conversation_id=self.conversation_id, review_status='pending', requester_key=self.requester_key_gt) > 0:
-                time.sleep(2)
+        print("\nAll HITs are done! Please go to the following link to approve/reject them (or they will be auto-approved in 4 weeks if no action is taken):\n")
+        print(mturk_approval_url)
+        print("")
 
-            print("All reviews are done!")
+        # Loop for checking approval status
+        while _get_approval_status_count(json_api_endpoint_url=cls.json_api_endpoint_url, task_group_id=cls.task_group_id, approval_status='pending', requester_key=cls.requester_key_gt) > 0:
+            time.sleep(2)
+
+        print("All reviews are done!")

@@ -56,6 +56,7 @@ def chat_index(event, context):
             all_agent_ids = event['query']['all_agent_ids']
             cur_agent_id = event['query']['cur_agent_id']
             assignment_id = event['query']['assignmentId'] # from mturk
+            task_additional_info = event['query'].get('task_additional_info', '') # Maximum length: 1000 characters
 
             if assignment_id == 'ASSIGNMENT_ID_NOT_AVAILABLE':
                 template_context['task_description'] = task_description
@@ -65,7 +66,7 @@ def chat_index(event, context):
                 template_context['conversation_id'] = conversation_id
                 template_context['cur_agent_id'] = cur_agent_id
                 template_context['all_agent_ids'] = all_agent_ids
-                template_context['task_description'] = task_description
+                template_context['task_description'] = task_description.replace('{{task_additional_info}}', task_additional_info)
                 template_context['mturk_submit_url'] = mturk_submit_url
                 template_context['is_cover_page'] = False
                 template_context['frame_height'] = frame_height
@@ -246,10 +247,10 @@ def review_hit(event, context):
         except KeyError:
             raise Exception('400')
 
-def get_review_status_count(event, context):
+def get_approval_status_count(event, context):
     if event['method'] == 'GET':
         """
-        Handler for getting the number of pending reviews.
+        Handler for getting the number of pending approvals.
         Expects <requester_key>, <task_group_id>, <conversation_id> as query parameters.
         """
         try:
@@ -258,21 +259,21 @@ def get_review_status_count(event, context):
                 raise Exception('403')
 
             task_group_id = event['query']['task_group_id']
-            conversation_id = event['query']['conversation_id']
-            review_status = event['query']['review_status']
-            return data_model.get_review_status_count(
+            conversation_id = event['query'].get('conversation_id', None)
+            approval_status = event['query']['approval_status']
+            return data_model.get_approval_status_count(
                 db_session=db_session,
                 task_group_id=task_group_id,
                 conversation_id=conversation_id,
-                review_status=review_status
+                approval_status=approval_status
             )
         except KeyError:
             raise Exception('400')
 
-def get_all_review_status(event, context):
+def get_all_approval_status(event, context):
     if event['method'] == 'GET':
         """
-        Handler for getting the number of pending reviews.
+        Handler for getting the number of pending approvals.
         Expects <requester_key>, <task_group_id> as query parameters.
         """
         try:
@@ -281,7 +282,7 @@ def get_all_review_status(event, context):
                 raise Exception('403')
 
             task_group_id = event['query']['task_group_id']
-            hit_info_objects = data_model.get_all_review_status(
+            hit_info_objects = data_model.get_all_approval_status(
                 db_session=db_session,
                 task_group_id=task_group_id
             )

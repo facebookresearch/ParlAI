@@ -202,8 +202,11 @@ def get_all_matching_hit_infos(db_session, task_group_id, conversation_id):
     matching_hit_infos = list(db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.conversation_id==conversation_id).all())
     return matching_hit_infos
 
-def get_review_status_count(db_session, task_group_id, conversation_id, review_status):
-    return db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.conversation_id==conversation_id).filter(MTurkHITInfo.approval_status==review_status).count()
+def get_approval_status_count(db_session, task_group_id, approval_status, conversation_id=None):
+    query = db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.approval_status==approval_status)
+    if conversation_id:
+        query = query.filter(MTurkHITInfo.conversation_id==conversation_id)
+    return query.count()
 
-def get_all_review_status(db_session, task_group_id):
+def get_all_approval_status(db_session, task_group_id):
     return db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).order_by(MTurkHITInfo.conversation_id).all()
