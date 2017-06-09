@@ -32,7 +32,7 @@ Follow the step by step guide on how to download and install ParlAI.
 
         cd ~/ParlAI; python setup.py develop
 
-3. Several models has additional requirements
+3. Several models have additional requirements
 
   a. DrQA requires installing `PyTorch <http://pytorch.org/>`
 
