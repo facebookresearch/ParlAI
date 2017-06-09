@@ -9,9 +9,15 @@ from parlai.mturk.core.agents import MTurkAgent
 from task_config import task_config
 import time
 import os
+import copy
+try:
+    from joblib import Parallel, delayed
+except ModuleNotFoundError:
+    raise SystemExit("Please install joblib by running: pip install joblib")
 
 
 def main():
+    global run_hit
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
@@ -21,7 +27,6 @@ def main():
     IrBaselineAgent.add_cmdline_args(argparser)
     opt = argparser.parse_args()
     opt['task'] = os.path.basename(os.getcwd())
-    model_agent = IrBaselineAgent(opt=opt)
 
     # The task that we will evaluate the dialog model on
     task_opt = {}
@@ -36,15 +41,20 @@ def main():
     opt['mturk_agent_ids'] = [mturk_agent_id]
     opt['all_agent_ids'] = [ModelEvaluatorWorld.evaluator_agent_id, mturk_agent_id]
     opt['conversation_id'] = str(int(time.time()))
+    opt['run_id'] = str(int(time.time()))
 
-    mturk_agent = MTurkAgent(opt=opt)
+    def run_hit(i, opt, task_opt):
+        opt['conversation_id'] = str(i)
+        model_agent = IrBaselineAgent(opt=opt)
+        mturk_agent = MTurkAgent(opt=opt)
+        world = ModelEvaluatorWorld(opt=opt, model_agent=model_agent, task_opt=task_opt, mturk_agent=mturk_agent)
+        while not world.episode_done():
+            world.parley()
+        world.shutdown()
 
-    world = ModelEvaluatorWorld(opt=opt, model_agent=model_agent, task_opt=task_opt, mturk_agent=mturk_agent)
-
-    while not world.episode_done():
-        world.parley()
-
-    world.shutdown()
+    MTurkAgent.init_aws(opt)
+    results = Parallel(n_jobs=opt['num_hits'], backend='threading')(delayed(run_hit)(i, copy.deepcopy(opt), task_opt) for i in range(1, opt['num_hits']+1))
+    MTurkAgent.review_hits(opt=opt)
 
 if __name__ == '__main__':
     main()
