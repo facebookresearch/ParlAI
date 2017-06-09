@@ -32,7 +32,7 @@ Follow the step by step guide on how to download and install ParlAI.
 
         cd ~/ParlAI; python setup.py develop
 
-3. Several models has additional requirements
+3. Several models have additional requirements
 
   a. DrQA requires installing `PyTorch <http://pytorch.org/>`
 
@@ -150,7 +150,7 @@ Simple Display Loop
 
 Now that we understand the basic, let's set up a simple loop which displays
 whichever task we specify. A complete version of this for utility is included
-in the ``examples`` directory, but we'll do this one from scratch.
+in the ``examples`` directory (in ``display_data.py``), but we'll do this one from scratch.
 
 First, a few imports:
 
