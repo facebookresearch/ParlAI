@@ -92,7 +92,7 @@ python examples/memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -nt 8
 
 Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
 ```bash
-python examples/drqa/train.py -t squad -bs 32
+python examples/train_model.py -m drqa -t squad -bs 32 -dbf True
 ```
 
 ## Requirements
