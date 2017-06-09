@@ -263,14 +263,16 @@ To add your own task:
 ### MTurk
 
 An important part of ParlAI is seamless integration with Mechanical Turk for data collection, training and evaluation.
+
 Human Turkers are also viewed as agents in ParlAI and hence person-person, person-bot, or multiple people and bots in group chat can all converse within the standard framework, switching out the roles as desired with no code changes to the agents. This is because Turkers also receive and send via a (pretty printed) version of the same interface, using the fields of the observation/action dict.
-We currently provide three examples, which are collecting data, human evaluation of a bot, and round-robin chat between local humans and remote Turkers.
+
+We currently provide three examples: collecting data, human evaluation of a bot, and round-robin chat between local humans and remote Turkers.
 
 <p align=center><img width="100%" src="docs/source/\_static/img/mturk.png" /></p>
 
-The mturk library contains the following directories and files:
+The mturk library contains the following directories:
 
-- **core**: this directory contains the core code for setting up AWS backend that supports the MTurk chat interface, and code for HIT creation and approval.
+- **core**: this directory contains the core code for setting up AWS backend that supports the MTurk chat interface, code for HIT creation and approval, and the wrapper class `MTurkAgent` which encapsulates the MTurk interface into a standard `Agent` class.
 - **tasks**: this directory contains three sample MTurk tasks.
   - **_qa\_data\_collection_**: get questions and answers from turkers, given a random paragraph from SQuAD.
   - **_model\_evaluator_**: ask turkers to evaluate the information retrieval baseline model on the Reddit movie dialog dataset.
@@ -282,7 +284,7 @@ To run an MTurk task:
 
 To add your own MTurk task:
 - create a new folder within the mturk/tasks directory for your new task
-- implement __task\_config.py__, with at least the following fields in the task_config dictionary:
+- implement __task\_config.py__, with at least the following fields in the `task_config` dictionary:
   - `hit_title`: a short and descriptive title about the kind of task the HIT contains. On the Amazon Mechanical Turk web site, the HIT title appears in search results, and everywhere the HIT is mentioned.
   - `hit_description`: a description includes detailed information about the kind of task the HIT contains. On the Amazon Mechanical Turk web site, the HIT description appears in the expanded view of search results, and in the HIT and assignment screens.
   - `hit_keywords`: one or more words or phrases that describe the HIT, separated by commas. On MTurk website, these words are used in searches to find HITs.
@@ -290,7 +292,7 @@ To add your own MTurk task:
 - implement __run.py__, with code for setting up and running the world where `MTurkAgent` lives in.
 - (Optional) implement __worlds.py__, with a world class that extends from `World`.
 
-Please see [the tutorial](http://parl.ai/static/docs/mturk.html) to learn more about the MTurk examples and how to create and run your own task.
+Please see [the MTurk tutorial](http://parl.ai/static/docs/mturk.html) to learn more about the MTurk examples and how to create and run your own task.
 
 ## Support
 If you have any questions, bug reports or feature requests, please don't hesitate to post on our [Github Issues page](https://github.com/facebookresearch/ParlAI/issues).
