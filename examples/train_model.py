@@ -162,8 +162,8 @@ def main():
                 # TODO: world.reset_metrics()
             print(log)
             log_time.reset()
-        if (opt['validate_every_n_secs'] and
-            validate_time.time() > opt['validate_every_n_secs']):
+        if (opt['validation_every_n_secs'] and
+            validate_time.time() > opt['validation_every_n_secs']):
             valid_report = run_eval(agent, opt, 'valid', True)
             if valid_report['accuracy'] > best_accuracy:
                 best_accuracy = valid_report['accuracy']
