@@ -4,8 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-"""
-This is a simple question answering task on the MNIST dataset.
+"""This is a simple question answering task on the MNIST dataset.
 In each episode, agents are presented with a number, which they are asked to
 identify.
 
