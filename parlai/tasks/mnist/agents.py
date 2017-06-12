@@ -29,7 +29,7 @@ def _path(opt):
     return labels_path, image_path
 
 
-class DefaultTeacher(DialogTeacher):
+class MnistTeacher(DialogTeacher):
     """
     This version of MNIST inherits from the core Dialog Teacher, which just
     requires it to define an iterator over its data `setup_data` in order to
@@ -41,11 +41,13 @@ class DefaultTeacher(DialogTeacher):
         labels_path, self.image_path = _path(opt)
         opt['datafile'] = labels_path
         self.id = 'mnist'
+        self.num_strs = ['zero', 'one', 'two', 'three', 'four', 'five',
+                'six', 'seven', 'eight', 'nine']
 
         super().__init__(opt, shared)
 
     def label_candidates(self):
-        return [str(x) for x in range(10)]
+        return [str(x) for x in range(10)] + self.num_strs
 
     def setup_data(self, path):
         print('loading: ' + path)
@@ -57,4 +59,9 @@ class DefaultTeacher(DialogTeacher):
 
         for i in range(len(self.labels)):
             img_path = os.path.join(self.image_path, '%05d.bmp' % i)
-            yield (self.question, self.labels[i], None, None, img_path), episode_done
+            label = [self.labels[i], self.num_strs[int(self.labels[i])]]
+            yield (self.question, label, None, None, img_path), episode_done
+
+
+class DefaultTeacher(MnistTeacher):
+    pass
