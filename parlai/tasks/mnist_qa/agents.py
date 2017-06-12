@@ -29,7 +29,7 @@ def _path(opt):
     return labels_path, image_path
 
 
-class MnistTeacher(DialogTeacher):
+class MnistQATeacher(DialogTeacher):
     """
     This version of MNIST inherits from the core Dialog Teacher, which just
     requires it to define an iterator over its data `setup_data` in order to
@@ -40,7 +40,7 @@ class MnistTeacher(DialogTeacher):
         self.datatype = opt['datatype']
         labels_path, self.image_path = _path(opt)
         opt['datafile'] = labels_path
-        self.id = 'mnist'
+        self.id = 'mnist_qa'
         self.num_strs = ['zero', 'one', 'two', 'three', 'four', 'five',
                 'six', 'seven', 'eight', 'nine']
 
@@ -63,5 +63,5 @@ class MnistTeacher(DialogTeacher):
             yield (self.question, label, None, None, img_path), episode_done
 
 
-class DefaultTeacher(MnistTeacher):
+class DefaultTeacher(MnistQATeacher):
     pass
