@@ -53,8 +53,8 @@ class DefaultTeacher(DialogTeacher):
             self.labels = json.load(labels_file)
 
         self.question = 'Which number is in the image?'
+        episode_done = True
 
         for i in range(len(self.labels)):
             img_path = os.path.join(self.image_path, '%05d.bmp' % i)
-            episode_done = True
             yield (self.question, self.labels[i], None, None, img_path), episode_done
