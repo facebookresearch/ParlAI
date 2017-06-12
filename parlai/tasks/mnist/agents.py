@@ -26,7 +26,7 @@ class MnistTeacher(Teacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         # Fixed question and candidates for mnist task
-        self.question = 'What number do you see?'
+        self.question = 'Which number is in the image?'
         self.candidates = [str(x) for x in range(10)]
 
         self.datatype = opt['datatype']
