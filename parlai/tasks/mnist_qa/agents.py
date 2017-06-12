@@ -36,7 +36,7 @@ class MnistQATeacher(DialogTeacher):
     Hogwild training with shared memory with no extra work.
     """
     def __init__(self, opt, shared=None):
-        self.datatype = opt['datatype']
+        self.datatype = opt['datatype'].split(':')[0]
         labels_path, self.image_path = _path(opt)
         opt['datafile'] = labels_path
         self.id = 'mnist_qa'

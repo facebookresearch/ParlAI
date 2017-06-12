@@ -175,28 +175,28 @@ task_list = [
             "id": "VQAv1",
             "display_name": "VQAv1",
             "task": "vqa_v1",
-            "tags": [ "all", "Visual"],
+            "tags": [ "all", "Visual" ],
             "description": "Open-ended question answering about visual content. From Agrawal et al. '15. Link: https://arxiv.org/abs/1505.00468"
     },
     {
             "id": "VQAv2",
             "display_name": "VQAv2",
             "task": "vqa_v2",
-            "tags": [ "all", "Visual"],
+            "tags": [ "all", "Visual" ],
             "description": "Bigger, more balanced version of the original VQA dataset. From Goyal et al. '16. Link: https://arxiv.org/abs/1612.00837"
     },
     {
             "id": "VisDial",
             "display_name": "VisDial",
             "task": "visdial",
-            "tags": [ "all", "Visual"],
+            "tags": [ "all", "Visual" ],
             "description": "Task which requires agents to hold a meaningful dialog about visual content. From Das et al. '16. Link: https://arxiv.org/abs/1611.08669"
     },
     {
             "id": "MNIST_QA",
             "display_name": "MNIST_QA",
             "task": "mnist_qa",
-            "tags": [ "all", "QA", "Visual"],
+            "tags": [ "all", "Visual" ],
             "description": "Task which requires agents to identify which number they are seeing. From the MNIST dataset."
     },
 ]
