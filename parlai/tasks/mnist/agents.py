@@ -4,114 +4,57 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.agents import Teacher
-from .build import build, data_fname
+from parlai.core.dialog_teacher import DialogTeacher
+from .build import build
 
+import json
 import os
-import random
-import pickle
 
 
 def _path(opt):
-    # Build the data if it doesn't exist
     build(opt)
-    return os.path.join(opt['datapath'], 'mnist', data_fname)
+    dt = opt['datatype'].split(':')[0]
+
+    if dt == 'train':
+        suffix = 'train'
+    elif dt == 'valid':
+        suffix = 'valid'
+    elif dt == 'test':
+        suffix = 'test'
+    else:
+        raise RuntimeError('Not valid datatype.')
+
+    labels_path = os.path.join(opt['datapath'], 'mnist', suffix, 'labels.json')
+    image_path = os.path.join(opt['datapath'], 'mnist', suffix)
+    return labels_path, image_path
 
 
-class MnistTeacher(Teacher):
+class DefaultTeacher(DialogTeacher):
     """
-    Mnist teacher, which loads the dataset and implements its
-    own `act` method for interacting with student agent.
+    This version of VisDial inherits from the core Dialog Teacher, which just
+    requires it to define an iterator over its data `setup_data` in order to
+    inherit basic metrics, a `act` function, and enables
+    Hogwild training with shared memory with no extra work.
     """
     def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        # Fixed question and candidates for mnist task
-        self.question = 'Which number is in the image?'
-        self.candidates = [str(x) for x in range(10)]
-
         self.datatype = opt['datatype']
-        data_path = _path(opt)
+        labels_path, self.image_path = _path(opt)
+        opt['datafile'] = labels_path
+        self.id = 'mnist'
 
-        if shared and 'data' in shared:
-            self.data = shared['data']
-            if 'labels' in shared:
-                self.labels = shared['labels']
-        else:
-            self._setup_data(data_path)
+        super().__init__(opt, shared)
 
-        # for ordered data in batch mode (especially, for validation and
-        # testing), each teacher in the batch gets a start index and a step
-        # size so they all process disparate sets of the data
-        self.step_size = opt.get('batchsize', 1)
-        self.data_offset = opt.get('batchindex', 0)
+    def label_candidates(self):
+        return [str(x) for x in range(10)]
 
-        self.reset()
+    def setup_data(self, path):
+        print('loading: ' + path)
+        with open(path) as labels_file:
+            self.labels = json.load(labels_file)
 
-    def __len__(self):
-        return len(self.data)
+        self.question = 'Which number is in the image?'
 
-    def reset(self):
-        # Reset the dialog so that it is at the start of the epoch,
-        # and all metrics are reset.
-        super().reset()
-        self.lastY = None
-        self.episode_idx = self.data_offset - self.step_size
-
-    def observe(self, observation):
-        """Process observation for metrics."""
-        if self.lastY is not None:
-            self.metrics.update(observation, self.lastY)
-            self.lastY = None
-        return observation
-
-    def act(self):
-        if self.datatype == 'train':
-            self.episode_idx = random.randrange(len(self))
-        else:
-            self.episode_idx = (self.episode_idx + self.step_size) % len(self)
-            if self.episode_idx == len(self) - self.step_size:
-                self.epochDone = True
-
-        action = {
-            'image': self.data[self.episode_idx],
-            'text': self.question,
-            'episode_done': True,
-            'label_candidates': self.candidates
-        }
-
-        if not self.datatype.startswith('test'):
-            self.lastY = self.labels[self.episode_idx]
-
-        if self.datatype.startswith('train'):
-            action['labels'] = self.lastY
-
-        return action
-
-    def share(self):
-        shared = super().share()
-        shared['data'] = self.data
-        if hasattr(self, 'labels'):
-            shared['labels'] = self.labels
-        return shared
-
-    def _setup_data(self, data_path):
-        print('loading: ' + data_path)
-
-        if self.datatype == 'train':
-            dt_idx = 0
-        elif self.datatype == 'valid':
-            dt_idx = 1
-        elif self.datatype == 'test':
-            dt_idx = 2
-        else:
-            raise RuntimeError('Not valid datatype.')
-
-        with open(data_path, 'rb') as data_file:
-            full_data = pickle.load(data_file)[dt_idx]
-            self.data = full_data[0]
-            self.labels = [str(y) for y in full_data[1]]
-
-
-class DefaultTeacher(MnistTeacher):
-    # default to Mnist Teacher
-    pass
+        for i in range(len(self.labels)):
+            img_path = os.path.join(self.image_path, '%05d.bmp' % i)
+            episode_done = True
+            yield (self.question, self.labels[i], None, None, img_path), episode_done
