@@ -4,6 +4,14 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+"""
+This is a simple question answering task on the MNIST dataset.
+In each episode, agents are presented with a number, which they are asked to
+identify.
+
+Useful for debugging and checking that one's image model is up and running.
+"""
+
 from parlai.core.dialog_teacher import DialogTeacher
 from .build import build
 
@@ -15,17 +23,8 @@ def _path(opt):
     build(opt)
     dt = opt['datatype'].split(':')[0]
 
-    if dt == 'train':
-        suffix = 'train'
-    elif dt == 'valid':
-        suffix = 'valid'
-    elif dt == 'test':
-        suffix = 'test'
-    else:
-        raise RuntimeError('Not valid datatype.')
-
-    labels_path = os.path.join(opt['datapath'], 'mnist', suffix, 'labels.json')
-    image_path = os.path.join(opt['datapath'], 'mnist', suffix)
+    labels_path = os.path.join(opt['datapath'], 'mnist', dt, 'labels.json')
+    image_path = os.path.join(opt['datapath'], 'mnist', dt)
     return labels_path, image_path
 
 
