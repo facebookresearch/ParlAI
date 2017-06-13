@@ -53,7 +53,7 @@ def main():
     # set up dictionary
     print('Setting up dictionary.')
     dictionary = DictionaryAgent(opt)
-    if not opt.get('dict_loadpath'):
+    if not opt.get('dict_file'):
         # build dictionary since we didn't load it
         ordered_opt = copy.deepcopy(opt)
         for datatype in ['train:ordered', 'valid']:

@@ -10,6 +10,7 @@ from collections import defaultdict
 import copy
 import numpy as np
 import nltk
+import os
 import re
 
 
@@ -62,11 +63,11 @@ class DictionaryAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         argparser.add_arg(
-            '--dict-savepath',
+            '--dict-file',
             help='if set, the dictionary will automatically save to this path' +
                  ' during shutdown')
         argparser.add_arg(
-            '--dict-loadpath',
+            '--dict-initpath',
             help='path to a saved dictionary to load tokens / counts from to ' +
                  'seed the dictionary with initial tokens and/or frequencies')
         argparser.add_arg(
@@ -126,9 +127,11 @@ class DictionaryAgent(Agent):
                 self.tok2ind[self.unk_token] = index
                 self.ind2tok[index] = self.unk_token
 
-            if 'dict_loadpath' in opt:
-                # load existing dictionary
-                self.load(opt['dict_loadpath'])
+            if 'dict_file' in opt and os.path.isfile(opt['dict_file']):
+                self.load(opt['dict_file'])
+            elif 'dict_initpath' in opt:
+                # load pre-existing dictionary
+                self.load(opt['dict_initpath'])
 
         # initialize tokenizers
         st_path = 'tokenizers/punkt/{0}.pickle'.format(opt['dict_language'])
@@ -154,8 +157,8 @@ class DictionaryAgent(Agent):
                 # fix count for unknown token to one billion
                 self.freq[self.unk_token] = 1000000000
 
-            if 'dict_savepath' in opt:
-                self.save_path = opt['dict_savepath']
+            if 'dict_file' in opt:
+                self.save_path = opt['dict_file']
 
     def __contains__(self, key):
         """If key is an int, returns whether the key is in the indices.
@@ -257,6 +260,7 @@ class DictionaryAgent(Agent):
                     index = len(self.tok2ind)
                     self.tok2ind[token] = index
                     self.ind2tok[index] = token
+        print('[ num words =  %d ]' % len(self))
 
     def save(self, filename, append=False, sort=True):
         """Save dictionary to file.
