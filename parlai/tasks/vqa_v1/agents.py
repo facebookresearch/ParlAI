@@ -29,7 +29,7 @@ def _path(opt):
     elif dt == 'test':
         ques_suffix = 'MultipleChoice_mscoco_test2015'
         annotation_suffix = 'None'
-        img_suffix = os.path.join('test2014', 'COCO_test2014_')
+        img_suffix = os.path.join('test2015', 'COCO_test2015_')
     else:
         raise RuntimeError('Not valid datatype.')
 
