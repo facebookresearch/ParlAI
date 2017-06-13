@@ -260,6 +260,7 @@ class DictionaryAgent(Agent):
                     index = len(self.tok2ind)
                     self.tok2ind[token] = index
                     self.ind2tok[index] = token
+        print('[ num words =  %d ]' % len(self))
 
     def save(self, filename, append=False, sort=True):
         """Save dictionary to file.

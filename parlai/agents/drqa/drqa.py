@@ -113,7 +113,6 @@ class DrqaAgent(Agent):
     def __init__(self, opt, shared=None):
         # Load dict.
         if not shared:
-            
             word_dict = SimpleDictionaryAgent(opt)
         # All agents keep track of the episode (for multiple questions)
         self.episode_done = True

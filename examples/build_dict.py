@@ -47,12 +47,12 @@ def build_dict(opt):
                 # don't wait too long...
                 break
             world_dict.parley()
-    dictionary.save(opt['dict_file'], sort=True)
     print('[ dictionary built. ]')
-    print('[ num words =  %d ]' % len(dictionary))
-    dictionary.save(opt['dict_file'])
+    dictionary.save(opt['dict_file'], sort=True)
+    # print('[ num words =  %d ]' % len(dictionary))
 
 def main():
+    print("HUH??")
     # Get command line arguments
     argparser = ParlaiParser()
     DictionaryAgent.add_cmdline_args(argparser)
