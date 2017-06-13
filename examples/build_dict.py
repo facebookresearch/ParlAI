@@ -52,7 +52,6 @@ def build_dict(opt):
     # print('[ num words =  %d ]' % len(dictionary))
 
 def main():
-    print("HUH??")
     # Get command line arguments
     argparser = ParlaiParser()
     DictionaryAgent.add_cmdline_args(argparser)
