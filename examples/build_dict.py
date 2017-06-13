@@ -9,6 +9,9 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.worlds import DialogPartnerWorld
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
+import copy
+import importlib
+import os
 
 def build_dict(opt):
     if 'dict_file' not in opt:

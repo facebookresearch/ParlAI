@@ -10,6 +10,7 @@ from collections import defaultdict
 import copy
 import numpy as np
 import nltk
+import os
 import re
 
 
@@ -126,8 +127,10 @@ class DictionaryAgent(Agent):
                 self.tok2ind[self.unk_token] = index
                 self.ind2tok[index] = self.unk_token
 
-            if 'dict_initpath' in opt:
-                # load existing dictionary
+            if 'dict_file' in opt and os.path.isfile(opt['dict_file']):
+                self.load(opt['dict_file'])
+            elif 'dict_initpath' in opt:
+                # load pre-existing dictionary
                 self.load(opt['dict_initpath'])
 
         # initialize tokenizers

@@ -80,8 +80,9 @@ def main():
                         help='build dictionary first before training agent')
     opt = parser.parse_args()
     # Possibly build a dictionary (not all models do this).
-    print('[ setting up dictionary. ]')
-    if 'dict_file' in opt and opt['dict_build_first']:
+    if opt['dict_build_first']:
+        if 'dict_file' not in opt and 'model_file' in opt:
+            opt['dict_file'] = opt['model_file'] + '.dict'
         build_dict.build_dict(opt)
     # Create model and assign it to the specified task
     agent = create_agent(opt)
