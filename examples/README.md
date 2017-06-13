@@ -46,7 +46,7 @@ python display_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
 
 Build a dictionary on a bAbI "1k training examples" task 1 and save it to /tmp/dict.tsv
 ```bash
-python build_dict.py -t babi:task1k:1 --dict-savepath /tmp/dict.tsv
+python build_dict.py -t babi:task1k:1 --dict-file /tmp/dict.tsv
 ```
 
 Train a simple cpu-based memory network on the "10k training examples" bAbI task 1 with 8 threads (python processes) using Hogwild (requires zmq and Lua Torch):
@@ -56,5 +56,5 @@ python memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -nt 8
 
 Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (requires pytorch):
 ```bash
-python examples/train_model.py -m drqa -t squad -bs 32 -dbf True
+python examples/train_model.py -m drqa -t squad -bs 32 -mf /tmp/model
 ```
