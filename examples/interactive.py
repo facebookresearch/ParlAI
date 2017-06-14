@@ -29,6 +29,7 @@ def main():
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     opt = parser.parse_args()
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
+    print(opt)
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
