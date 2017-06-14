@@ -31,6 +31,8 @@ class ParlaiParser(argparse.ArgumentParser):
                             os.path.realpath(__file__)))))
         os.environ['PARLAI_HOME'] = self.parlai_home
 
+        self.add_arg = self.add_argument
+
         if add_parlai_args:
             self.add_parlai_args()
         if add_model_args:
