@@ -17,7 +17,8 @@ import shutil
 def built(path, version_string=None):
     """Checks if '.built' flag has been set for that task.
     If a version_string is provided, this has to match, or the version
-    is regarded as not built"""
+    is regarded as not built.
+    """
     if version_string:
         fname = os.path.join(path, '.built')
         if not os.path.isfile(fname):
