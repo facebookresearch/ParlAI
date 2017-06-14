@@ -58,3 +58,17 @@ Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 exam
 ```bash
 python examples/train_model.py -m drqa -t squad -bs 32 -mf /tmp/model
 ```
+
+Evaluates on an already trained SQuAD model:
+```bash
+wget https://s3.amazonaws.com/fair-data/parlai/_models/drqa/squad.mdl
+python examples/eval_model.py -m drqa -t squad -mf squad.mdl -dt valid
+```
+
+Interactive session on an already trained SQuAD model:
+```bash
+wget https://s3.amazonaws.com/fair-data/parlai/_models/drqa/squad.mdl
+python examples/drqa/interactive.py  --pretrained_model squad.mdl 
+```
+
+
