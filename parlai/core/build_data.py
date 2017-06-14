@@ -21,14 +21,22 @@ def built(path, version_string=None):
     if version_string:
         fname = os.path.join(path, '.built')
         if not os.path.isfile(fname):
-            return false
+            return False
         else:
             file = open(fname, 'r') 
             text = file.read().split('\n')
-            return (len(text) == 2 and text[1] != version_string)
+            return (len(text) == 2 and text[1] == version_string)
     else:
         return os.path.isfile(os.path.join(path, '.built'))
 
+def mark_done(path, version_string=None):
+    """Marks the path as done by adding a '.built' file with the current
+    timestamp plus a version description string if specified.
+    """
+    with open(os.path.join(path, '.built'), 'w') as write:
+        write.write(str(datetime.datetime.today()))
+        if version_string:
+            write.write('\n' + version_string)
 
 def log_progress(curr, total, width=40):
     """Displays a bar showing the current progress."""
@@ -75,15 +83,6 @@ def make_dir(path):
     """Makes the directory and any nonexistent parent directories."""
     os.makedirs(path, exist_ok=True)
 
-
-def mark_done(path, version_string=None):
-    """Marks the path as done by adding a '.built' file with the current
-    timestamp.
-    """
-    with open(os.path.join(path, '.built'), 'w') as write:
-        write.write(str(datetime.datetime.today()))
-        if version_string:
-            write.write('\n' + version_string)
 
 def move(path1, path2):
     """Renames the given file."""
