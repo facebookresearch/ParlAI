@@ -7,6 +7,7 @@
 
 import parlai.core.build_data as build_data
 import os
+import json
 
 
 def buildImage(opt):
@@ -54,6 +55,35 @@ def build(opt):
 
         build_data.untar(dpath, fname1)
         build_data.untar(dpath, fname2)
+
+        # Split training set into training and validation.
+        print('[processing downloaded files]')
+        json1 = os.path.join(dpath, fname1.rsplit('.', 1)[0] + '.json')
+        with open(json1) as train_json:
+            train_data = json.load(train_json)
+        valid_data = train_data.copy()
+        valid_data['data'] = train_data['data'].copy()
+        # Put 1000 examples in validation set.
+        valid_data['data']['dialogs'] = train_data['data']['dialogs'][-1000:]
+        train_data['data']['dialogs'] = train_data['data']['dialogs'][:-1000]
+
+        train_json = json1.rsplit('.', 1)[0] + '_train.json'
+        with open(train_json, 'w') as fout:
+            json.dump(train_data, fout)
+        valid_json = json1.rsplit('.', 1)[0] + '_valid.json'
+        with open(valid_json, 'w') as fout:
+            json.dump(valid_data, fout)
+
+        # Use validation data as test.
+        json2 = os.path.join(dpath, fname2.rsplit('.', 1)[0] + '.json')
+        with open(json2) as test_json:
+            test_data = json.load(test_json)
+        test_json = json2.rsplit('.', 1)[0] + '_test.json'
+        with open(test_json, 'w') as fout:
+            json.dump(test_data, fout)
+
+        os.remove(json1)
+        os.remove(json2)
 
         # Mark the data as built.
         build_data.mark_done(dpath)
