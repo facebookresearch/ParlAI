@@ -24,8 +24,8 @@ def built(path, version_string=None):
         if not os.path.isfile(fname):
             return False
         else:
-            file = open(fname, 'r') 
-            text = file.read().split('\n')
+            with open(fname, 'r') as read:
+                text = read.read().split('\n')
             return (len(text) == 2 and text[1] == version_string)
     else:
         return os.path.isfile(os.path.join(path, '.built'))
