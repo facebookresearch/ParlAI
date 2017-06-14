@@ -22,7 +22,7 @@ def _path(opt):
         img_suffix = os.path.join('train2014', 'COCO_train2014_')
     elif dt == 'valid':
         suffix = 'train_valid'
-        img_suffix = os.path.join('val2014', 'COCO_val2014_')
+        img_suffix = os.path.join('train2014', 'COCO_train2014_')
     elif dt == 'test':
         suffix = 'val_test'
         img_suffix = os.path.join('val2014', 'COCO_val2014_')

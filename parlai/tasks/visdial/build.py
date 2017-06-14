@@ -56,15 +56,14 @@ def build(opt):
         build_data.untar(dpath, fname1)
         build_data.untar(dpath, fname2)
 
-        # Split training set into training and validation.
-        print('processing downloaded files')
+        # Use 1000 examples from training set as validation.
+        print('processing unpacked files')
         json1 = os.path.join(dpath, fname1.rsplit('.', 1)[0] + '.json')
-        with open(json1) as train_json:
-            train_data = json.load(train_json)
+        with open(json1) as t_json:
+            train_data = json.load(t_json)
+
         valid_data = train_data.copy()
         valid_data['data'] = train_data['data'].copy()
-
-        # Put 1000 examples in validation set.
         valid_data['data']['dialogs'] = train_data['data']['dialogs'][-1000:]
         train_data['data']['dialogs'] = train_data['data']['dialogs'][:-1000]
 
@@ -73,7 +72,6 @@ def build(opt):
         with open(train_json, 'w') as t_out, open(valid_json, 'w') as v_out:
             json.dump(train_data, t_out)
             json.dump(valid_data, v_out)
-
         os.remove(json1)
 
         # Use validation data as test.
