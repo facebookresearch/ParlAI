@@ -18,7 +18,7 @@ def build_dict(opt):
         return
     print('[ setting up dictionary. ]')
     if os.path.isfile(opt['dict_file']):
-        # dict already built
+        # Dict already built
         print("[ dict already built .]")
         return
     if 'dict_class' in opt:
@@ -32,24 +32,21 @@ def build_dict(opt):
         dictionary = DictionaryAgent(opt)
     ordered_opt = copy.deepcopy(opt)
     cnt = 0
-    for datatype in ['train:ordered', 'valid']:
-        # we use train and valid sets to build dictionary
-        ordered_opt['datatype'] = datatype
-        ordered_opt['numthreads'] = 1
-        ordered_opt['batchsize'] = 1
-        world_dict = create_task(ordered_opt, dictionary)
-        # pass examples to dictionary
-        for _ in world_dict:
-            cnt += 1
-            if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] > 0:
-                print('Processed {} exs, moving on.'.format(
-                      opt['dict_maxexs']))
-                # don't wait too long...
-                break
-            world_dict.parley()
+    # we use train set to build dictionary
+    ordered_opt['datatype'] = 'train:ordered'
+    ordered_opt['numthreads'] = 1
+    ordered_opt['batchsize'] = 1
+    world_dict = create_task(ordered_opt, dictionary)
+    # pass examples to dictionary
+    for _ in world_dict:
+        cnt += 1
+        if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] > 0:
+            print('Processed {} exs, moving on.'.format(opt['dict_maxexs']))
+            # don't wait too long...
+            break
+        world_dict.parley()
     print('[ dictionary built. ]')
     dictionary.save(opt['dict_file'], sort=True)
-    # print('[ num words =  %d ]' % len(dictionary))
 
 def main():
     # Get command line arguments
