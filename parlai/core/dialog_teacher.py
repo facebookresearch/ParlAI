@@ -6,6 +6,7 @@
 
 from .agents import Teacher
 
+from .image_featurizers import load_image
 from PIL import Image
 import random
 import os
@@ -299,40 +300,3 @@ class DialogData(object):
 
 
 _greyscale = '  .,:;crsA23hHG#98&@'
-
-
-def img_to_ascii(path):
-    im = Image.open(path)
-    im.thumbnail((60, 40), Image.BICUBIC)
-    im = im.convert('L')
-    asc = []
-    for y in range(0, im.size[1]):
-        for x in range(0, im.size[0]):
-            lum = 255 - im.getpixel((x, y))
-            asc.append(_greyscale[lum * len(_greyscale) // 256])
-        asc.append('\n')
-    return ''.join(asc)
-
-
-def load_image(opt, path):
-    mode = opt.get('image_mode', 'raw')
-    if mode is None or mode == 'none':
-        # don't need to load images
-        return None
-    elif mode == 'raw':
-        # raw just returns RGB values
-        return Image.open(path).convert('RGB')
-    elif mode == 'ascii':
-        # convert images to ascii ¯\_(ツ)_/¯
-        return img_to_ascii(path)
-    else:
-        # otherwise, looks for preprocessed version under 'mode' directory
-        prepath, imagefn = os.path.split(path)
-        new_path = os.path.join(prepath, mode, imagefn)
-        if not os.path.isfile(new_path):
-            # currently only supports *downloaded* preprocessing
-            # TODO: generate preprocessed images if not available
-            raise NotImplementedError('image preprocessing mode' +
-                                      '{} not supported yet'.format(mode))
-        else:
-            return Image.open(path)
