@@ -55,19 +55,17 @@ python memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -nt 8
 
 Trains an attentive LSTM model of [Chen et al.](https://arxiv.org/abs/1704.00051) on the SQuAD dataset with a batch size of 32 examples (requires pytorch):
 ```bash
-python examples/train_model.py -m drqa -t squad -bs 32 -mf /tmp/model
+python train_model.py -m drqa -t squad -bs 32 -mf /tmp/model
 ```
 
 Evaluates on an already trained SQuAD model:
 ```bash
 wget https://s3.amazonaws.com/fair-data/parlai/_models/drqa/squad.mdl
-python examples/eval_model.py -m drqa -t squad -mf squad.mdl -dt valid
+python eval_model.py -m drqa -t squad -mf squad.mdl -dt valid
 ```
 
 Interactive session on an already trained SQuAD model:
 ```bash
 wget https://s3.amazonaws.com/fair-data/parlai/_models/drqa/squad.mdl
-python examples/interactive.py -m drqa -mf squad.mdl 
+python interactive.py -m drqa -mf squad.mdl 
 ```
-
-
