@@ -8,6 +8,7 @@
 import parlai.core.build_data as build_data
 import os
 import json
+import random
 
 
 def buildImage(opt):
@@ -62,10 +63,13 @@ def build(opt):
         with open(json1) as t_json:
             train_data = json.load(t_json)
 
+        valid_idx = random.choices(range(len(train_data['data']['dialogs'])), k=1000)
         valid_data = train_data.copy()
         valid_data['data'] = train_data['data'].copy()
-        valid_data['data']['dialogs'] = train_data['data']['dialogs'][-1000:]
-        train_data['data']['dialogs'] = train_data['data']['dialogs'][:-1000]
+        valid_data['data']['dialogs'] = []
+        for i in sorted(valid_idx, reverse=True):
+            valid_data['data']['dialogs'].append(train_data['data']['dialogs'][i])
+            del train_data['data']['dialogs'][i]
 
         train_json = json1.rsplit('.', 1)[0] + '_train.json'
         valid_json = json1.rsplit('.', 1)[0] + '_valid.json'
