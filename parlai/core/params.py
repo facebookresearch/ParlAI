@@ -116,7 +116,7 @@ class ParlaiParser(argparse.ArgumentParser):
                     '--dict-class', default=agent.dictionary_class(), type=str,
                     help='the class of the dictionary agent used')
 
-    def parse_args(self, args=None, print_args=True):
+    def parse_args(self, args=None, namespace=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the ``args``.
         We specifically remove items with ``None`` as values in order to support
         the style ``opt.get(key, default)``, which would otherwise return ``None``.
