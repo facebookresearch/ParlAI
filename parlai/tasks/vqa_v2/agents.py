@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.agents import Teacher
-from parlai.core.dialog_teacher import load_image
+from parlai.core.image_featurizers import load_image
 from .build import build, buildImage
 
 import json
@@ -29,7 +29,7 @@ def _path(opt):
     elif dt == 'test':
         ques_suffix = 'v2_OpenEnded_mscoco_test2015'
         annotation_suffix = 'None'
-        img_suffix = os.path.join('test2014', 'COCO_test2014_')
+        img_suffix = os.path.join('test2015', 'COCO_test2015_')
     else:
         raise RuntimeError('Not valid datatype.')
 
