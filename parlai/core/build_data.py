@@ -14,9 +14,20 @@ import requests
 import shutil
 
 
-def built(path):
-    """Checks if '.built' flag has been set for that task."""
-    return os.path.isfile(os.path.join(path, '.built'))
+def built(path, version_string=None):
+    """Checks if '.built' flag has been set for that task.
+    If a version_string is provided, this has to match, or the version
+    is regarded as not built"""
+    if version_string:
+        fname = os.path.join(path, '.built')
+        if not os.path.isfile(fname):
+            return false
+        else:
+            file = open(fname, 'r') 
+            text = file.read().split('\n')
+            return (len(text) == 2 and text[1] != version_string)
+    else:
+        return os.path.isfile(os.path.join(path, '.built'))
 
 
 def log_progress(curr, total, width=40):
@@ -65,13 +76,14 @@ def make_dir(path):
     os.makedirs(path, exist_ok=True)
 
 
-def mark_done(path):
+def mark_done(path, version_string=None):
     """Marks the path as done by adding a '.built' file with the current
     timestamp.
     """
     with open(os.path.join(path, '.built'), 'w') as write:
         write.write(str(datetime.datetime.today()))
-
+        if version_string:
+            write.write('\n' + version_string)
 
 def move(path1, path2):
     """Renames the given file."""
