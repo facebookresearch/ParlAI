@@ -3,7 +3,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""Train a model. 
+"""Train a model.
 
 After training, computes validation and test error.
 
@@ -93,7 +93,7 @@ def main():
     log_time = Timer()
     print("[ training... ]")
     parleys = 0
-    num_parleys = opt['num_epochs'] * len(world)
+    num_parleys = opt['num_epochs'] * int(len(world) / opt['batchsize'])
     best_accuracy = 0
     impatience = 0
     saved = False
@@ -109,7 +109,7 @@ def main():
             parleys_per_sec =  train_time.time() / parleys
             time_left = (num_parleys - parleys) * parleys_per_sec
             log = ("[ time:" + str(math.floor(train_time.time()))
-                  + "s parleys:" + str(parleys) 
+                  + "s parleys:" + str(parleys)
                   + " time_left:"
                   + str(math.floor(time_left))  + "s ]")
             if hasattr(agent, 'report'):
@@ -134,7 +134,7 @@ def main():
                     break
             else:
                 impatience += 1
-                print("[ did not beat best accuracy: " + str(best_accuracy) + 
+                print("[ did not beat best accuracy: " + str(best_accuracy) +
                       " impatience: " + str(impatience)  + " ]")
             validate_time.reset()
             if impatience >= opt['validation_patience']:
@@ -154,5 +154,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
