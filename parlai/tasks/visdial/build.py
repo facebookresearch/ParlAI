@@ -39,9 +39,10 @@ def buildImage(opt):
 
 
 def build(opt):
+    version = 'v0.9'
     dpath = os.path.join(opt['datapath'], 'VisDial-v0.9')
 
-    if not build_data.built(dpath):
+    if not build_data.built(dpath, version):
         print('[building data: ' + dpath + ']')
 
         build_data.remove_dir(dpath)
@@ -50,14 +51,14 @@ def build(opt):
         # Download the data.
         fname1 = 'visdial_0.9_train.zip'
         fname2 = 'visdial_0.9_val.zip'
-       
+
         url = 'https://computing.ece.vt.edu/~abhshkdz/data/visdial/'
         build_data.download(url + fname1, dpath, fname1)
         build_data.download(url + fname2, dpath, fname2)
 
         build_data.untar(dpath, fname1)
         build_data.untar(dpath, fname2)
-        
+
         print('processing unpacked files')
         # Use 1000 examples from training set as validation.
         json1 = os.path.join(dpath, fname1.rsplit('.', 1)[0] + '.json')
@@ -84,4 +85,4 @@ def build(opt):
         build_data.move(json2, test_json)
 
         # Mark the data as built.
-        build_data.mark_done(dpath)
+        build_data.mark_done(dpath, version)
