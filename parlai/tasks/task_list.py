@@ -116,6 +116,20 @@ task_list = [
         "description": "Dataset of dialogs from movie scripts: http://opus.lingfil.uu.se/OpenSubtitles.php. A variant of the dataset used in Vinyals & Le '15, https://arxiv.org/abs/1506.05869."
     },
     {
+        "id": "personalized-dialog-full",
+        "display_name": "Personalized Dialog Full Set",
+        "task": "personalized-dialog:full",
+        "tags": [ "all",  "Goal", "Personalization" ],
+        "description": "Simulated dataset of restaurant booking focused on personalization based on user profiles."
+    },
+    {
+        "id": "personalized-dialog-small",
+        "display_name": "Personalized Dialog Small Set",
+        "task": "personalized-dialog:small",
+        "tags": [ "all",  "Goal", "Personalization" ],
+        "description": "Simulated dataset of restaurant booking focused on personalization based on user profiles."
+    },
+    {
         "id": "QACNN",
         "display_name": "QA CNN",
         "task": "qacnn",
