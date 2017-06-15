@@ -111,6 +111,9 @@ class DrqaAgent(Agent):
         return "parlai.agents.drqa.drqa:SimpleDictionaryAgent"
 
     def __init__(self, opt, shared=None):
+        if opt['numthreads'] >1:
+            raise RuntimeError("numthreads > 1 not supported for this model.")
+
         # Load dict.
         if not shared:
             word_dict = SimpleDictionaryAgent(opt)
