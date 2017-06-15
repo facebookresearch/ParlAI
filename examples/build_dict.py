@@ -18,8 +18,8 @@ def build_dict(opt):
         return
     print('[ setting up dictionary. ]')
     if os.path.isfile(opt['dict_file']):
-        # Dict already built
-        print("[ dict already built .]")
+        # Dictionary already built
+        print("[ dictionary already built .]")
         return
     if 'dict_class' in opt:
         # Custom dictionary class
@@ -47,6 +47,7 @@ def build_dict(opt):
         world_dict.parley()
     print('[ dictionary built. ]')
     dictionary.save(opt['dict_file'], sort=True)
+    # print('[ num words =  %d ]' % len(dictionary))
 
 def main():
     # Get command line arguments
