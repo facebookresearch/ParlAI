@@ -61,7 +61,7 @@ The simplest method available for creating a teacher is to use the ``FbDialogTea
 
 If the data is not in this format or there are different requirements, one can still use the ``DialogTeacher`` which automates much of the work in setting up a dialog task, but gives the user more flexibility in setting up the data. This is shown in the section `DialogTeacher`_.
 
-Finally, if the requirements for the task do not fit any of the above, one can still write a task from scratch without much trouble. This is shown in the section `Task from Scratch`_.
+Finally, if the requirements for the task do not fit any of the above, one can still write a task from scratch without much trouble. This is shown in the section `Task from Scratch`_. (Coming soon)
 
 
 FbDialogTeacher
@@ -254,6 +254,7 @@ And we have finished building our task.
 Task from Scratch
 ~~~~~~~~~~~~~~~~~
 
+Coming soon.
 
 
 Part 3: Add Task to Task List
