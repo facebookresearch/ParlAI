@@ -43,33 +43,33 @@ def build(opt):
 
     if not build_data.built(dpath):
         print('[building data: ' + dpath + ']')
+
         build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.
         fname1 = 'visdial_0.9_train.zip'
         fname2 = 'visdial_0.9_val.zip'
-
+       
         url = 'https://computing.ece.vt.edu/~abhshkdz/data/visdial/'
         build_data.download(url + fname1, dpath, fname1)
         build_data.download(url + fname2, dpath, fname2)
 
         build_data.untar(dpath, fname1)
         build_data.untar(dpath, fname2)
-
-        # Use 1000 examples from training set as validation.
+        
         print('processing unpacked files')
+        # Use 1000 examples from training set as validation.
         json1 = os.path.join(dpath, fname1.rsplit('.', 1)[0] + '.json')
         with open(json1) as t_json:
             train_data = json.load(t_json)
 
-        valid_idx = random.choices(range(len(train_data['data']['dialogs'])), k=1000)
+        random.seed()
         valid_data = train_data.copy()
         valid_data['data'] = train_data['data'].copy()
-        valid_data['data']['dialogs'] = []
-        for i in sorted(valid_idx, reverse=True):
-            valid_data['data']['dialogs'].append(train_data['data']['dialogs'][i])
-            del train_data['data']['dialogs'][i]
+        valid_data['data']['dialogs'] = random.sample(train_data['data']['dialogs'], k=1000)
+        for d in valid_data['data']['dialogs']:
+            train_data['data']['dialogs'].remove(d)
 
         train_json = json1.rsplit('.', 1)[0] + '_train.json'
         valid_json = json1.rsplit('.', 1)[0] + '_valid.json'
