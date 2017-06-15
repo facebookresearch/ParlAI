@@ -43,16 +43,6 @@ class KBTeacher(FbDialogTeacher):
         super().__init__(opt, shared)
 
 
-# Single task.
-class TaskTeacher(FbDialogTeacher):
-    def __init__(self, opt, shared=None):
-        opt['datafile'] = _path(opt['task'].split(':')[2], opt)
-        opt['cands_datafile'] = os.path.join(opt['datapath'], 'dialog-bAbI',
-                                             'dialog-bAbI-tasks',
-                                             'dialog-babi-candidates.txt')
-        super().__init__(opt, shared)
-
-
 # Single full task.
 class FullTaskTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
