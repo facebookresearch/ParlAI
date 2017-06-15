@@ -8,7 +8,7 @@
 Creating a New Task
 ===================
 
-Adding new tasks to ParlAI is a simple process. In this tutorial we will go over the process of adding a simple question-answering task based on the MNIST dataset in order to exemplify how a new task can be created. Using the ``DialogeTeacher`` class makes it very easy to implement dialog tasks such as this one. 
+Adding new tasks to ParlAI is a simple process. In this tutorial we will go over the process of adding a simple question-answering task based on the MNIST dataset in order to exemplify how a new task can be created. Using the ``DialogTeacher`` class makes it very easy to implement dialog tasks such as this one. 
 
 In this task, the agent is presented with the image of a digit and then be asked to answer which number it is seeing. A sample episode is demonstrated below. 
 
