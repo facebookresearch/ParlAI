@@ -10,7 +10,7 @@ import os
 
 
 def build(opt):
-    dpath = os.path.join(opt['datapath'], 'personalized-dialog-full')
+    dpath = os.path.join(opt['datapath'], 'personalized-dialog')
 
     if not build_data.built(dpath):
         print('[building data: ' + dpath + ']')
