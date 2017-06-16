@@ -24,7 +24,15 @@ class ParlaiParser(argparse.ArgumentParser):
     For example, see ``parlai.core.dict.DictionaryAgent.add_cmdline_args``.
     """
 
-    def __init__(self, add_parlai_args=True, add_model_args=False):
+    def __init__(self, add_parlai_args=True, add_model_args=False, model_argv=None):
+        """Initializes the ParlAI argparser.
+        - add_parlai_args (default True) initializes the default arguments for the
+        ParlAI package, including the data download paths and task arguments.
+        - add_model_args (default False) initializes the default arguments for
+        loading models, including initializing arguments from that model.
+        - model_argv (default None uses sys.argv) specifies the list of
+        arguments which includes the model name (e.g. `-m drqa`).
+        """
         super().__init__(description='ParlAI parser.')
         self.register('type', 'bool', str2bool)
         self.parlai_home = (os.path.dirname(os.path.dirname(os.path.dirname(
@@ -36,7 +44,7 @@ class ParlaiParser(argparse.ArgumentParser):
         if add_parlai_args:
             self.add_parlai_args()
         if add_model_args:
-            self.add_model_args()
+            self.add_model_args(model_argv)
 
     def add_parlai_data_path(self):
         default_data_path = os.path.join(self.parlai_home, 'data')
@@ -97,7 +105,7 @@ class ParlaiParser(argparse.ArgumentParser):
             help='batch size for minibatch training schemes')
         self.add_parlai_data_path()
 
-    def add_model_args(self):
+    def add_model_args(self, args=None):
         self.add_argument(
             '-m', '--model', default='repeat_label',
             help='the model class name, should match parlai/agents/<model>')
@@ -105,10 +113,12 @@ class ParlaiParser(argparse.ArgumentParser):
             '-mf', '--model-file', default='',
             help='model file name for loading and saving models')
         # Find which model specified, and add its specific arguments.
+        if args is None:
+            args = sys.argv
         model = None
-        for index, item in enumerate(sys.argv):
+        for index, item in enumerate(args):
             if item == '-m' or item == '--model':
-                model = sys.argv[index + 1]
+                model = args[index + 1]
         if model:
             agent = get_agent_module(model)
             if hasattr(agent, 'add_cmdline_args'):
