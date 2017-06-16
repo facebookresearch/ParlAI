@@ -65,12 +65,17 @@ def build(opt):
         with open(json1) as t_json:
             train_data = json.load(t_json)
 
-        random.seed()
         valid_data = train_data.copy()
         valid_data['data'] = train_data['data'].copy()
-        valid_data['data']['dialogs'] = random.sample(train_data['data']['dialogs'], k=1000)
-        for d in valid_data['data']['dialogs']:
-            train_data['data']['dialogs'].remove(d)
+        valid_data['data']['dialogs'] = []
+
+        # Use constant stride to pick examples.
+        num_valid = 1000
+        total = len(train_data['data']['dialogs'])
+        step = total // (num_valid - 1)
+        for i in range(total-1, 0, -step)[:num_valid]:
+            valid_data['data']['dialogs'].append(train_data['data']['dialogs'][i])
+            del train_data['data']['dialogs'][i]
 
         train_json = json1.rsplit('.', 1)[0] + '_train.json'
         valid_json = json1.rsplit('.', 1)[0] + '_valid.json'
