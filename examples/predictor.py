@@ -3,45 +3,27 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""Provides functionality for setting up a running version of a model and
-requesting predictions from that model on live data.
+"""Basic example which allows local human keyboard input to talk to a trained model.
+
+For example:
+`wget https://s3.amazonaws.com/fair-data/parlai/_models/drqa/squad.mdl`
+`python examples/predictor.py -m drqa -mf squad.mdl`
+
+Then enter something like:
+"Bob is Blue.\nWhat is Bob?"
+as the user input (or in general for the drqa model, enter
+a context followed by '\n' followed by a question all as a single input.)
 """
 
-from parlai.core.params import ParlaiParser
-
-from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_agent
+from parlai.core.predictor import Predictor
 from parlai.agents.local_human.local_human import LocalHumanAgent
 
+import random
 import sys
 
-
-class Predictor(object):
-
-    def __init__(self, args=None, **kwargs):
-        """Initializes the predictor, setting up opt automatically if necessary.
-        Args is expected to be in the same format as sys.argv.
-        """
-        if args is None:
-            args = []
-        for k, v in kwargs.items():
-            args.append('--' + str(k).replace('_', '-'))
-            args.append(str(v))
-        parser = ParlaiParser(True, True, model_argv=args)
-        self.opt = parser.parse_args(args)
-        self.agent = create_agent(self.opt)
-
-    def predict(self, observation):
-        """From a ParlAI-standard observation dict, returns a prediction from
-        the model.
-        """
-        self.agent.observe(observation)
-        reply = self.agent.act()
-        return reply
-
-
-
 def main(arg):
+    random.seed(42)
+
     # Get command line arguments
     p = Predictor(sys.argv[1:])
     interactive = LocalHumanAgent({})
