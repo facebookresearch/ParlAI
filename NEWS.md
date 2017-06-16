@@ -1,5 +1,7 @@
 <h2>News</h2>
 
+2017-06-16: [added Creating a New Task tutorial](http://parl.ai/static/docs/task_tutorial.html)
+
 2017-05-31: [added Seq2Seq model](https://github.com/facebookresearch/ParlAI/pull/96)
 
 2017-05-30: [added interactive mode with local human agent](https://github.com/facebookresearch/ParlAI/pull/110)
