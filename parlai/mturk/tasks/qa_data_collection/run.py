@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.qa_data_collection.worlds import QADataCollectionWorld
-from parlai.mturk.core.agents import MTurkAgent
+from parlai.mturk.core.agents import MTurkAgent, MTurkManager
 from task_config import task_config
 import time
 import os
@@ -17,14 +17,14 @@ except ModuleNotFoundError:
     raise SystemExit("Please install joblib by running: pip install joblib")
 
 def main():
-    global run_hit
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
     opt = argparser.parse_args()
     opt['task'] = os.path.basename(os.getcwd())
+    opt.update(task_config)
 
-    # Initialize a SQuAD teacher agent, which we will later get context from
+    # Initialize a SQuAD teacher agent, which we will get context from
     module_name = 'parlai.tasks.squad.agents'
     class_name = 'DefaultTeacher'
     my_module = importlib.import_module(module_name)
@@ -33,26 +33,21 @@ def main():
     task_opt['datatype'] = 'train'
     task_opt['datapath'] = opt['datapath']
 
-    # Create the MTurk agent which provides a chat interface to the Turker
-    opt.update(task_config)
-    mturk_agent_id = 'Worker'
-    opt['agent_id'] = mturk_agent_id
-    opt['mturk_agent_ids'] = [mturk_agent_id]
-    opt['all_agent_ids'] = [QADataCollectionWorld.collector_agent_id, mturk_agent_id]
-    opt['run_id'] = str(int(time.time()))
-
-    def run_hit(i, task_class, task_opt, opt):
+    global run_hit
+    def run_hit(i, task_class, task_opt, opt, mturk_manager):
         task = task_class(task_opt)
-        opt['conversation_id'] = str(i)
-        mturk_agent = MTurkAgent(opt=opt)
+        # Create the MTurk agent which provides a chat interface to the Turker
+        mturk_agent = MTurkAgent(id='Worker', manager=mturk_manager, conversation_id=i, opt=opt)
         world = QADataCollectionWorld(opt=opt, task=task, mturk_agent=mturk_agent)
         while not world.episode_done():
             world.parley()
         world.shutdown()
 
-    MTurkAgent.init_aws(opt)
-    results = Parallel(n_jobs=opt['num_hits'], backend='threading')(delayed(run_hit)(i, task_class, task_opt, copy.deepcopy(opt)) for i in range(1, opt['num_hits']+1))
-    MTurkAgent.review_hits(opt=opt)
+    mturk_manager = MTurkManager()
+    mturk_manager.init_aws(opt=opt)
+    results = Parallel(n_jobs=opt['num_hits'], backend='threading')(delayed(run_hit)(i, task_class, task_opt, opt, mturk_manager) for i in range(1, opt['num_hits']+1))
+    mturk_manager.review_hits()
+    mturk_manager.shutdown()
 
 if __name__ == '__main__':
     main()

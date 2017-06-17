@@ -102,3 +102,6 @@ ENV/
 *.swo
 *.swp
 *~
+
+# MTurk
+tmp/
