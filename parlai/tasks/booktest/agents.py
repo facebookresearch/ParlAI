@@ -36,6 +36,7 @@ class StreamTeacher(Teacher):
         self.datafile = os.path.join(
             opt['datapath'], 'BookTest', 'booktest-gut', 'train.14M+.txt')
         self.fin = open(self.datafile)
+        super().__init__(opt, shared)
 
     def __len__(self):
         # unknown

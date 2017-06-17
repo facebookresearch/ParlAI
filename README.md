@@ -20,7 +20,7 @@ ParlAI is described in the following paper:
 [“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476](https://arxiv.org/abs/1705.06476).
 
 
-We are in an early-release Beta. Expect some adventures and rough edges.<br> 
+We are in an early-release Beta. Expect some adventures and rough edges.<br>
 See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates, and the website [http://parl.ai](http://parl.ai) for further docs.
 
 ## Goals
@@ -92,7 +92,7 @@ python examples/memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -nt 8
 
 Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
 ```bash
-python examples/drqa/train.py -t squad -bs 32
+python examples/train_model.py -m drqa -t squad -bs 32 -mf /tmp/model
 ```
 
 ## Requirements
@@ -317,5 +317,3 @@ Please cite the arXiv paper if you use ParlAI in your work:
 
 ## License
 ParlAI is BSD-licensed. We also provide an additional patent grant.
-
-

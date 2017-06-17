@@ -353,3 +353,16 @@ VisDial
 
 
 
+MNIST_QA
+^^^^^^^^
+
+**Tag**: ``#MNIST_QA``
+
+**Full Path**: ``mnist_qa``
+
+**Group Tags**: ``#all``, ``#Visual``
+
+**Description**: Task which requires agents to identify which number they are seeing. From the MNIST dataset.
+
+
+

@@ -8,7 +8,6 @@ This directory contains a few particular examples of basic loops.
 - eval_model.py: _uses the named agent to compute evaluation metrics data for a particular task provided on the command-line_
 - build_dict.py: _build a dictionary from a particular task provided on the command-line using core.dict.DictionaryAgent_
 - memnn_luatorch_cpu: _shows a few examples of training an end-to-end memory network on a few datasets_
-- drqa: _shows how to train the attentive LSTM DrQA model of [Chen et al.](https://arxiv.org/abs/1704.00051) on SQuAD._
 
 ## Running These Examples
 
@@ -46,7 +45,7 @@ python display_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
 
 Build a dictionary on a bAbI "1k training examples" task 1 and save it to /tmp/dict.tsv
 ```bash
-python build_dict.py -t babi:task1k:1 --dict-savepath /tmp/dict.tsv
+python build_dict.py -t babi:task1k:1 --dict-file /tmp/dict.tsv
 ```
 
 Train a simple cpu-based memory network on the "10k training examples" bAbI task 1 with 8 threads (python processes) using Hogwild (requires zmq and Lua Torch):
@@ -54,7 +53,19 @@ Train a simple cpu-based memory network on the "10k training examples" bAbI task
 python memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -nt 8
 ```
 
-Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (requires pytorch):
+Trains an attentive LSTM model of [Chen et al.](https://arxiv.org/abs/1704.00051) on the SQuAD dataset with a batch size of 32 examples (requires pytorch):
 ```bash
-python drqa/train.py -t squad -bs 32
+python train_model.py -m drqa -t squad -bs 32 -mf /tmp/model
+```
+
+Evaluates on an already trained SQuAD model:
+```bash
+wget https://s3.amazonaws.com/fair-data/parlai/_models/drqa/squad.mdl
+python eval_model.py -m drqa -t squad -mf squad.mdl -dt valid
+```
+
+Interactive session on an already trained SQuAD model:
+```bash
+wget https://s3.amazonaws.com/fair-data/parlai/_models/drqa/squad.mdl
+python interactive.py -m drqa -mf squad.mdl 
 ```
