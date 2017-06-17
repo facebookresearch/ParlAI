@@ -122,7 +122,8 @@ class MTurkManager():
                                             )
                     self.db_session.add(new_message_in_local_db)
                     self.db_session.commit()
-
+    
+    # Only gets new messages from local db, which syncs with remote db every `polling_interval` seconds.
     def get_new_messages(self, task_group_id, conversation_id, after_message_id, excluded_agent_id=None, included_agent_id=None):
         return _get_new_messages(
             db_session=self.db_session,
