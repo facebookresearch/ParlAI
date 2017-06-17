@@ -31,6 +31,7 @@ except ModuleNotFoundError:
 local_db_file_path_template = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + '/tmp/parlai_mturk_<run_id>.db'
 polling_interval = 1 # in seconds
 create_hit_type_lock = threading.Lock()
+local_db_lock = threading.Lock()
 
 class MTurkManager():
     def __init__(self):
@@ -111,29 +112,31 @@ class MTurkManager():
         # Go through conversation_dict and save data in local db
         for conversation_id, new_messages in conversation_dict.items():
             for new_message in new_messages:
-                if self.db_session.query(Message).filter(Message.id==new_message['message_id']).count() == 0:
-                    obs_act_dict = {k:new_message[k] for k in new_message if k != 'message_id'}
-                    new_message_in_local_db = Message(
-                                                id = new_message['message_id'],
-                                                task_group_id = self.task_group_id,
-                                                conversation_id = conversation_id,
-                                                agent_id = new_message['id'],
-                                                message_content = json.dumps(obs_act_dict)
-                                            )
-                    self.db_session.add(new_message_in_local_db)
-                    self.db_session.commit()
+                with local_db_lock:
+                    if self.db_session.query(Message).filter(Message.id==new_message['message_id']).count() == 0:
+                        obs_act_dict = {k:new_message[k] for k in new_message if k != 'message_id'}
+                        new_message_in_local_db = Message(
+                                                    id = new_message['message_id'],
+                                                    task_group_id = self.task_group_id,
+                                                    conversation_id = conversation_id,
+                                                    agent_id = new_message['id'],
+                                                    message_content = json.dumps(obs_act_dict)
+                                                )
+                        self.db_session.add(new_message_in_local_db)
+                        self.db_session.commit()
     
     # Only gets new messages from local db, which syncs with remote db every `polling_interval` seconds.
     def get_new_messages(self, task_group_id, conversation_id, after_message_id, excluded_agent_id=None, included_agent_id=None):
-        return _get_new_messages(
-            db_session=self.db_session,
-            task_group_id=task_group_id,
-            conversation_id=conversation_id,
-            after_message_id=after_message_id,
-            excluded_agent_id=excluded_agent_id,
-            included_agent_id=included_agent_id,
-            populate_meta_info=True
-        )
+        with local_db_lock:
+            return _get_new_messages(
+                db_session=self.db_session,
+                task_group_id=task_group_id,
+                conversation_id=conversation_id,
+                after_message_id=after_message_id,
+                excluded_agent_id=excluded_agent_id,
+                included_agent_id=included_agent_id,
+                populate_meta_info=True
+            )
 
     def send_new_message(self, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False):
         post_data_dict = {
