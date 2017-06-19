@@ -23,7 +23,7 @@ the model (e.g. p = Predictor(model='drqa')), and the Predictor module will set
 up the model and handle communication with it.
 """
 
-from parlai.core.predictor import Predictor
+from parlai.core.utils import Predictor
 from parlai.agents.local_human.local_human import LocalHumanAgent
 
 import random

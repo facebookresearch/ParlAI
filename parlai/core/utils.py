@@ -5,10 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.params import ParlaiParser
-
-from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
-from parlai.agents.local_human.local_human import LocalHumanAgent
 
 import sys
 import time
