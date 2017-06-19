@@ -25,6 +25,16 @@ of patent rights can be found in the PATENTS file in the same directory.
         {% if not is_cover_page %}
         <div id="message_thread" style="width: 100%">
         </div>
+        {% if not is_approval_page %}
+        <div id="waiting-for-message" class="row" style="margin-left: 0; margin-right: 0; display: none">
+            <div class="alert alert-warning" role="alert" style="float: left; display:table; background-color: #fff">
+                <div id="hourglass" style="margin-top: -1px; margin-right: 5px; display: inline; float: left;">
+                    <?xml version="1.0" encoding="utf-8"?><svg width='25px' height='25px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-hourglass"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><g><path fill="none" stroke="#007282" stroke-width="5" stroke-miterlimit="10" d="M58.4,51.7c-0.9-0.9-1.4-2-1.4-2.3s0.5-0.4,1.4-1.4 C70.8,43.8,79.8,30.5,80,15.5H70H30H20c0.2,15,9.2,28.1,21.6,32.3c0.9,0.9,1.4,1.2,1.4,1.5s-0.5,1.6-1.4,2.5 C29.2,56.1,20.2,69.5,20,85.5h10h40h10C79.8,69.5,70.8,55.9,58.4,51.7z" class="glass"></path><clipPath id="uil-hourglass-clip1"><rect x="15" y="20" width="70" height="25" class="clip"><animate attributeName="height" from="25" to="0" dur="1.5s" repeatCount="indefinite" values="25;0;0" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="20" to="45" dur="1.5s" repeatCount="indefinite" values="20;45;45" keyTimes="0;0.5;1"></animate></rect></clipPath><clipPath id="uil-hourglass-clip2"><rect x="15" y="55" width="70" height="25" class="clip"><animate attributeName="height" from="0" to="25" dur="1.5s" repeatCount="indefinite" values="0;25;25" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="80" to="55" dur="1.5s" repeatCount="indefinite" values="80;55;55" keyTimes="0;0.5;1"></animate></rect></clipPath><path d="M29,23c3.1,11.4,11.3,19.5,21,19.5S67.9,34.4,71,23H29z" clip-path="url(#uil-hourglass-clip1)" fill="#ffab00" class="sand"></path><path d="M71.6,78c-3-11.6-11.5-20-21.5-20s-18.5,8.4-21.5,20H71.6z" clip-path="url(#uil-hourglass-clip2)" fill="#ffab00" class="sand"></path><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="180 50 50" repeatCount="indefinite" dur="1.5s" values="0 50 50;0 50 50;180 50 50" keyTimes="0;0.7;1"></animateTransform></g></svg>
+                </div>
+                <span style="font-size: 16px">Waiting for the next person to speak...</span>
+            </div>
+        </div>
+        {% endif %}
         {% endif %}
     </div>
 
@@ -180,8 +190,10 @@ of patent rights can be found in the PATENTS file in the same directory.
                 show_new_messages_on_UI(new_messages);
                 if (done_after_responding) {
                     update_for_response_type('done');
+                    $("div#waiting-for-message").css("display", "none");
                     task_done = true;
                 } else {
+                    $("div#waiting-for-message").css("display", "");
                     check_done(new_messages);
                 }
             }
@@ -327,6 +339,7 @@ of patent rights can be found in the PATENTS file in the same directory.
         }
         if (received_message_from_other_agents && (!task_done) && new_messages[new_messages.length-1]['id'] === previous_agent_id) {
             update_for_response_type('text_input');
+            $("div#waiting-for-message").css("display", "none");
             $("input#id_text_input").focus();
         }
     }
@@ -380,8 +393,10 @@ of patent rights can be found in the PATENTS file in the same directory.
                 if (done_after_responding) {
                     update_for_response_type('done');
                     task_done = true;
+                    $("div#waiting-for-message").css("display", "none");
                 } else {
                     check_done(new_messages);
+                    $("div#waiting-for-message").css("display", "");
                 }
             });
         }
@@ -474,8 +489,10 @@ of patent rights can be found in the PATENTS file in the same directory.
         $("input#id_text_input").focus();
         if (cur_agent_index == 0) {
             update_for_response_type('text_input');
+            $("div#waiting-for-message").css("display", "none");
         } else {
             update_for_response_type('idle');
+            $("div#waiting-for-message").css("display", "");
         }
         if (is_approval_page) {
             $("div#left-pane").css("min-height", $(window).height());
