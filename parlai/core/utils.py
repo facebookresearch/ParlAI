@@ -17,13 +17,22 @@ import time
 class Predictor(object):
     """Provides functionality for setting up a running version of a model and
     requesting predictions from that model on live data.
+
     Note that this maintains no World state (does not use a World), merely
     providing the observation directly to the model and getting a response.
+
+    This is limiting when it comes to certain use cases, but is
     """
 
     def __init__(self, args=None, **kwargs):
         """Initializes the predictor, setting up opt automatically if necessary.
-        Args is expected to be in the same format as sys.argv.
+
+        Args is expected to be in the same format as sys.argv: e.g. a list in
+        the form ['--model', 'seq2seq', '-hs', 128, '-lr', 0.5].
+
+        kwargs is interpreted by appending '--' to it and replacing underscores
+        with hyphens, so 'dict_file=/tmp/dict.tsv' would be interpreted as
+        '--dict-file /tmp/dict.tsv'.
         """
         if args is None:
             args = []
