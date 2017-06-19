@@ -66,6 +66,14 @@ Note that since the human Turker speaks only once to provide the rating, the ``M
 After one turn, the task is finished, and the Turker's work is submitted for your review.
 
 
+Task 3: Multi-Agent Dialog
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ParlAI supports dialogs between multiple agents, whether they are local ParlAI agents or human Turkers. In the `Multi-Agent Dialog task <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/multi_agent_dialog/>`__, two local human agents and two Turkers engage in a round-robin chat, until the first local human agent sends a message ending with ``[DONE]``, after which other agents will send a final message and the task is concluded.
+
+This task uses the ``MultiAgentDialogWorld`` which is already implemented in ``parlai.core.worlds``.
+
+
 Creating Your Own Task
 ----------------------
 
