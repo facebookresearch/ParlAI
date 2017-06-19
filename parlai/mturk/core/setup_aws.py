@@ -608,16 +608,17 @@ def setup_all_dependencies(lambda_server_directory_name):
     if has_anaconda:
         call(("pip install --target="+parent_dir+'/'+lambda_server_directory_name+" -r "+parent_dir+"/lambda_requirements.txt").split(" "), stdout=devnull, stderr=devnull)
     else:
-        shutil.rmtree("./venv", ignore_errors=True)
+        shutil.rmtree(parent_dir+"/venv", ignore_errors=True)
         call("pip install virtualenv".split(" "), stdout=devnull, stderr=devnull)
         call("virtualenv -p python2 venv".split(" "), stdout=devnull, stderr=devnull)
         call(("venv/bin/pip install --target="+parent_dir+'/'+lambda_server_directory_name+" -r "+parent_dir+"/lambda_requirements.txt").split(" "), stdout=devnull, stderr=devnull)
-        shutil.rmtree("./venv")
+        shutil.rmtree(parent_dir+"/venv")
 
     # Set up psycopg2
-    call("git clone https://github.com/jkehler/awslambda-psycopg2.git".split(" "), stdout=devnull, stderr=devnull)
-    shutil.copytree("./awslambda-psycopg2/with_ssl_support/psycopg2", parent_dir+'/'+lambda_server_directory_name+"/psycopg2")
-    shutil.rmtree("./awslambda-psycopg2")
+    shutil.rmtree(parent_dir + '/awslambda-psycopg2/', ignore_errors=True)
+    call(("git clone https://github.com/jkehler/awslambda-psycopg2.git " + parent_dir + "/awslambda-psycopg2").split(" "), stdout=devnull, stderr=devnull)
+    shutil.copytree(parent_dir + '/awslambda-psycopg2/with_ssl_support/psycopg2', parent_dir+'/'+lambda_server_directory_name+"/psycopg2")
+    shutil.rmtree(parent_dir + '/awslambda-psycopg2/')
 
 def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, files_to_copy=None, verbose=False):
     setup_all_dependencies(lambda_server_directory_name)

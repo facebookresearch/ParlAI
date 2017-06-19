@@ -18,6 +18,13 @@ class ModelEvaluatorWorld(World):
         self.mturk_agent = mturk_agent
         self.episodeDone = False
 
+        # Tell the mturk agents about the configuration
+        self.mturk_agent.mturk_agent_ids = [mturk_agent.id]
+        self.mturk_agent.all_agent_ids = [self.__class__.evaluator_agent_id, mturk_agent.id] # In speaking order
+        
+        # Create HITs for mturk agents
+        self.mturk_agent.create_hit()    
+
     def parley(self):
         self.task_world.parley()
 
