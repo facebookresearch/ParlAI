@@ -12,7 +12,7 @@ from torch import optim
 import torch.nn as nn
 import torch
 import copy
-import os 
+import os
 import random
 
 
@@ -74,7 +74,7 @@ class Seq2seqAgent(Agent):
             }
             if self.use_cuda:
                 self.cuda()
-            if 'model_file' in opt and os.path.isfile(opt['model_file']):
+            if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 print('Loading existing model parameters from ' + opt['model_file'])
                 self.load(opt['model_file'])
 

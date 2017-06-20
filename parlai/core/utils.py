@@ -35,4 +35,3 @@ class Timer(object):
         if self.running:
             return self.total + time.time() - self.start
         return self.total
-

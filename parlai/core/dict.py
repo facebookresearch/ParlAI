@@ -127,11 +127,12 @@ class DictionaryAgent(Agent):
                 self.tok2ind[self.unk_token] = index
                 self.ind2tok[index] = self.unk_token
 
-            if 'dict_file' in opt and os.path.isfile(opt['dict_file']):
-                self.load(opt['dict_file'])
-            elif 'dict_initpath' in opt:
-                # load pre-existing dictionary
+            if opt.get('dict_initpath'):
+                # load seed dictionary
                 self.load(opt['dict_initpath'])
+            if opt.get('dict_file') and os.path.isfile(opt['dict_file']):
+                # load pre-existing dictionary
+                self.load(opt['dict_file'])
 
         # initialize tokenizers
         st_path = 'tokenizers/punkt/{0}.pickle'.format(opt['dict_language'])

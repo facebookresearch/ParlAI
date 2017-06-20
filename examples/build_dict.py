@@ -14,7 +14,9 @@ import importlib
 import os
 
 def build_dict(opt):
-    if 'dict_file' not in opt:
+    if not opt.get('dict_file'):
+        print('Tried to build dictionary but `--dict-file` is not set. Set ' +
+              'this param so the dictionary can be saved.')
         return
     print('[ setting up dictionary. ]')
     if os.path.isfile(opt['dict_file']):
