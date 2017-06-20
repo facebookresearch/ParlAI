@@ -64,6 +64,9 @@ class ParlaiParser(argparse.ArgumentParser):
             '-nh', '--num-hits', default=2, type=int,
             help='number of HITs you want to create for this task')
         self.add_argument(
+            '-na', '--num-assignments', default=1, type=int,
+            help='number of assignments for each HIT')
+        self.add_argument(
             '-r', '--reward', default=0.05, type=float,
             help='reward for each HIT, in US dollars')
         self.add_argument(

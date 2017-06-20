@@ -11,6 +11,7 @@ from parlai.agents.local_human.local_human import LocalHumanAgent
 from parlai.core.worlds import MultiAgentDialogWorld
 from task_config import task_config
 import copy
+from itertools import product
 try:
     from joblib import Parallel, delayed
 except ModuleNotFoundError:
@@ -30,37 +31,40 @@ def main():
     opt['task'] = os.path.basename(os.getcwd())
     opt.update(task_config)
 
+    mturk_manager = MTurkManager()
+    mturk_manager.init_aws(opt=opt)
+
+    mturk_agent_1_id = 'mturk_agent_1'
+    mturk_agent_2_id = 'mturk_agent_2'
+    human_agent_1_id = 'human_1'
+    human_agent_2_id = 'human_2'
+    mturk_manager.mturk_agent_ids = [mturk_agent_1_id, mturk_agent_2_id]
+    mturk_manager.all_agent_ids = [human_agent_1_id, human_agent_2_id] + mturk_manager.mturk_agent_ids # In speaking order
+
     global run_hit
-    def run_hit(i, opt, mturk_manager):
+    def run_hit(hit_index, assignment_index, opt, mturk_manager):
+        conversation_id = str(hit_index) + '_' + str(assignment_index)
+
         # Create mturk agents
-        mturk_agent_1 = MTurkAgent(id='mturk_agent_1', manager=mturk_manager, conversation_id=i, opt=opt)
-        mturk_agent_2 = MTurkAgent(id='mturk_agent_2', manager=mturk_manager, conversation_id=i, opt=opt)
+        mturk_agent_1 = MTurkAgent(id=mturk_agent_1_id, manager=mturk_manager, conversation_id=conversation_id, opt=opt)
+        mturk_agent_2 = MTurkAgent(id=mturk_agent_2_id, manager=mturk_manager, conversation_id=conversation_id, opt=opt)
 
         # Create the local human agents
         human_agent_1 = LocalHumanAgent(opt=None)
-        human_agent_1.id = 'human_1'
+        human_agent_1.id = human_agent_1_id
         human_agent_2 = LocalHumanAgent(opt=None)
-        human_agent_2.id = 'human_2'
+        human_agent_2.id = human_agent_2_id
 
         world = MultiAgentDialogWorld(opt=opt, agents=[human_agent_1, human_agent_2, mturk_agent_1, mturk_agent_2])
-
-        # Since we are using the regular MultiAgentDialogWorld, we do the following outside of the world instead.
-        mturk_agent_ids = [mturk_agent_1.id, mturk_agent_2.id]
-        all_agent_ids = [human_agent_1.id, human_agent_2.id] + mturk_agent_ids
-        mturk_agent_1.mturk_agent_ids = mturk_agent_ids
-        mturk_agent_1.all_agent_ids = all_agent_ids
-        mturk_agent_2.mturk_agent_ids = mturk_agent_ids
-        mturk_agent_2.all_agent_ids = all_agent_ids
-        mturk_agent_1.create_hit()
-        mturk_agent_2.create_hit()
 
         while not world.episode_done():
             world.parley()
         world.shutdown()
 
-    mturk_manager = MTurkManager()
-    mturk_manager.init_aws(opt=opt)
-    results = Parallel(n_jobs=opt['num_hits'], backend='threading')(delayed(run_hit)(i, opt, mturk_manager) for i in range(1, opt['num_hits']+1))
+    mturk_manager.create_hits(opt=opt)
+    results = Parallel(n_jobs=opt['num_hits'] * opt['num_assignments'], backend='threading') \
+                (delayed(run_hit)(hit_index, assignment_index, opt, mturk_manager) \
+                    for hit_index, assignment_index in product(range(1, opt['num_hits']+1), range(1, opt['num_assignments']+1)))
     mturk_manager.review_hits()
     mturk_manager.shutdown()
 

@@ -7,9 +7,10 @@ import os
 import sys
 import time
 import json
+import math
 from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, UnicodeText
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine, func
 
 is_python_2 = False
@@ -26,7 +27,7 @@ class Message(Base):
     __tablename__ = 'message'
     id = Column(Integer, primary_key=True)
     task_group_id = Column(String(255), index=True)  # We assign a new task_group_id for each HIT group
-    conversation_id = Column(Integer, index=True)
+    conversation_id = Column(String(255), index=True)
     agent_id = Column(String(255))
     message_content = Column(UnicodeText)
 
@@ -35,7 +36,7 @@ class MTurkHITInfo(Base):
     __tablename__ = 'mturk_hit_info'
     id = Column(Integer, primary_key=True)
     task_group_id = Column(String(255), index=True)
-    conversation_id = Column(Integer, index=True)
+    conversation_id = Column(String(255), index=True)
     assignment_id = Column(String(255))
     hit_id = Column(String(255))
     worker_id = Column(String(255))
@@ -44,12 +45,54 @@ class MTurkHITInfo(Base):
 
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-    
- 
-def init_database(host, db_name, username, password):
+
+
+class MTurkHITAssignmentInfo(Base):
+    __tablename__ = 'mturk_hit_assignment_info'
+    id = Column(Integer, primary_key=True)
+    task_group_id = Column(String(255), index=True)
+    agent_id = Column(String(255), index=True)
+
+
+def is_database_schema_consistent(Base, engine):
+    session_maker = sessionmaker(bind=engine)
+    session = scoped_session(session_maker)
+
+    # Try insert new objects with current schema
+    try:
+        test_message = Message(id=0, task_group_id='Test', conversation_id='Test', agent_id='Test', message_content='Test')
+        session.add(test_message)
+        session.commit()
+        session.delete(test_message)
+        session.commit()
+
+        test_hit_info = MTurkHITInfo(id=0, task_group_id='Test', conversation_id='Test', assignment_id='Test', hit_id='Test', worker_id='Test', is_sandbox=True, approval_status='Test')
+        session.add(test_hit_info)
+        session.commit()
+        session.delete(test_hit_info)
+        session.commit()
+
+        test_hit_assignment_info = MTurkHITAssignmentInfo(id=0, task_group_id='Test', agent_id='Test')
+        session.add(test_hit_assignment_info)
+        session.commit()
+        session.delete(test_hit_assignment_info)
+        session.commit()
+
+        return True
+    except:
+        return False
+
+
+def init_database(host, db_name, username, password, should_check_schema_consistency=False):
     # Create an engine
     engine = create_engine('postgres://'+username+':'+password+'@'+host+':5432/'+db_name)
-     
+    
+    if should_check_schema_consistency and not is_database_schema_consistent(Base, engine):
+        # Database schema is inconsistent
+        input_key = input("Remote database schema is inconsistent. Please stop all other ParlAI MTurk instances, and press any key to continue:")
+        print('Creating database schema...')
+        Base.metadata.drop_all(engine)
+
     # Create all tables in the engine. This is equivalent to "Create Table"
     # statements in raw SQL.
     Base.metadata.create_all(engine)
@@ -167,6 +210,20 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
         conversation_dict[conversation_id].append(new_message_dict)
 
     return conversation_dict, last_message_id
+
+
+def get_hit_index_and_assignment_index(db_session, task_group_id, agent_id, num_assignments):
+    new_assignment_object = MTurkHITAssignmentInfo(task_group_id=task_group_id, agent_id=agent_id)
+    db_session.add(new_assignment_object)
+    db_session.commit()
+    object_id = new_assignment_object.id
+    existing_assignment_id_list = db_session.query(MTurkHITAssignmentInfo.id) \
+                                    .filter(MTurkHITAssignmentInfo.task_group_id==task_group_id) \
+                                    .filter(MTurkHITAssignmentInfo.agent_id==agent_id) \
+                                    .order_by(MTurkHITAssignmentInfo.id).all()
+    existing_assignment_id_list = [id for (id, ) in existing_assignment_id_list]
+    index_in_list = existing_assignment_id_list.index(object_id)
+    return {'hit_index': math.floor(index_in_list / num_assignments) + 1, 'assignment_index': index_in_list % num_assignments + 1}
 
 
 def set_hit_info(db_session, task_group_id, conversation_id, assignment_id, hit_id, worker_id, is_sandbox, approval_status='pending'):

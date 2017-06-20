@@ -8,8 +8,12 @@ import sys
 import shutil
 from subprocess import call
 import zipfile
-import boto3
-import botocore
+try:
+    import boto3
+    import botocore
+    import psycopg2
+except ModuleNotFoundError:
+    raise SystemExit("Please install boto3 and psycopg2 by running: pip install boto3 psycopg2")
 import time
 import json
 import webbrowser
@@ -17,6 +21,7 @@ import hashlib
 import getpass
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
+from .data_model import init_database
 
 aws_profile_name = 'parlai_mturk'
 region_name = 'us-west-2'
@@ -226,11 +231,13 @@ def setup_rds():
     endpoint = db_instance['Endpoint']
     host = endpoint['Address']
 
+    init_database(host, rds_db_name, rds_username, rds_password, should_check_schema_consistency=True)
+
     print('RDS: DB instance ready.')
 
     return host
 
-def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, requester_key_gt, should_clean_up_after_upload=True):
+def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, num_assignments, requester_key_gt, should_clean_up_after_upload=True):
     # Dynamically generate handler.py file, and then create zip file
     print("Lambda: Preparing relay server code...")
 
@@ -254,6 +261,7 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sand
         "rds_password = \'" + rds_password + "\'\n" + \
         "requester_key_gt = \'" + requester_key_gt + "\'\n" + \
         "num_hits = " + str(num_hits) + "\n" + \
+        "num_assignments = " + str(num_assignments) + "\n" + \
         "is_sandbox = " + str(is_sandbox) + "\n" + \
         'task_description = ' + task_description)
     with open(os.path.join(parent_dir, lambda_server_directory_name, 'handler.py'), 'w') as handler_file:
@@ -507,7 +515,7 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_san
     hit_type_id = response['HITTypeId']
     return hit_type_id
 
-def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox):
+def create_hit_with_hit_type(page_url, hit_type_id, num_assignments, is_sandbox):
     page_url = page_url.replace('&', '&amp;')
 
     question_data_struture = '''<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
@@ -529,7 +537,7 @@ def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox):
     # Create the HIT
     response = client.create_hit_with_hit_type(
         HITTypeId=hit_type_id,
-        MaxAssignments=1,
+        MaxAssignments=num_assignments,
         LifetimeInSeconds=31536000,
         Question=question_data_struture,
         # AssignmentReviewPolicy={
@@ -571,18 +579,6 @@ def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox):
         #     ]
         # },
     )
-
-    # response = client.create_hit(
-    #     MaxAssignments = 1,
-    #     LifetimeInSeconds = 31536000,
-    #     AssignmentDurationInSeconds = 1800,
-    #     Reward = str(hit_reward),
-    #     Title = hit_title,
-    #     Keywords = hit_keywords,
-    #     Description = hit_description,
-    #     Question = question_data_struture,
-    #     #QualificationRequirements = localRequirements
-    # )
 
     # The response included several fields that will be helpful later
     hit_type_id = response['HIT']['HITTypeId']
@@ -647,13 +643,13 @@ def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, f
     if verbose:
         print("Done!")
 
-def setup_aws(task_description, num_hits, is_sandbox):
+def setup_aws(task_description, num_hits, num_assignments, is_sandbox):
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
     if not is_sandbox:
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
     requester_key_gt = get_requester_key()
     rds_host = setup_rds()
-    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, requester_key_gt)
+    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, num_assignments, requester_key_gt)
 
     return html_api_endpoint_url, json_api_endpoint_url, requester_key_gt
 
