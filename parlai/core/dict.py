@@ -158,7 +158,7 @@ class DictionaryAgent(Agent):
                 # fix count for unknown token to one billion
                 self.freq[self.unk_token] = 1000000000
 
-            if 'dict_file' in opt:
+            if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
 
     def __contains__(self, key):

@@ -82,7 +82,7 @@ def add_cmdline_args(parser):
 
 def set_defaults(opt):
     # Embeddings options
-    if 'embedding_file' in opt:
+    if opt.get('embedding_file'):
         if not os.path.isfile(opt['embedding_file']):
             raise IOError('No such file: %s' % args.embedding_file)
         with open(opt['embedding_file']) as f:
