@@ -280,7 +280,7 @@ The mturk library contains the following directories:
 
 To run an MTurk task:
 - Go into the directory for the task you want to run.
-- Run `python run.py -nh <num_hits> -r <reward> [--sandbox]/[--live]`, with `<num_hits>` and `<reward>` set appropriately. Use `--sandbox` to run the task in MTurk sandbox mode before pushing it live.
+- Run `python run.py -nh <num_hits> -na <num_assignments> -r <reward> [--sandbox]/[--live]`, with `<num_hits>`, `<num_assignments>` and `<reward>` set appropriately. Use `--sandbox` to run the task in MTurk sandbox mode before pushing it live.
 
 To add your own MTurk task:
 - create a new folder within the mturk/tasks directory for your new task

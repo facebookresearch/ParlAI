@@ -16,14 +16,7 @@ class ModelEvaluatorWorld(World):
     def __init__(self, opt, model_agent, task_opt, mturk_agent):
         self.task_world = create_task(task_opt, model_agent)
         self.mturk_agent = mturk_agent
-        self.episodeDone = False
-
-        # Tell the mturk agents about the configuration
-        self.mturk_agent.mturk_agent_ids = [mturk_agent.id]
-        self.mturk_agent.all_agent_ids = [self.__class__.evaluator_agent_id, mturk_agent.id] # In speaking order
-        
-        # Create HITs for mturk agents
-        self.mturk_agent.create_hit()    
+        self.episodeDone = False    
 
     def parley(self):
         self.task_world.parley()

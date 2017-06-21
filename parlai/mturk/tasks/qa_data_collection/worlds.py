@@ -21,13 +21,6 @@ class QADataCollectionWorld(World):
         self.episodeDone = False
         self.turn_index = -1
 
-        # Tell the mturk agents about the configuration
-        self.mturk_agent.mturk_agent_ids = [mturk_agent.id]
-        self.mturk_agent.all_agent_ids = [self.__class__.collector_agent_id, mturk_agent.id] # In speaking order
-        
-        # Create HITs for mturk agents
-        self.mturk_agent.create_hit()
-
     def parley(self):
         self.turn_index = (self.turn_index + 1) % 2; # Each turn starts from the QA Collector agent
         ad = { 'episode_done': False }

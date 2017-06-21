@@ -11,6 +11,7 @@ import time
 import os
 import importlib
 import copy
+from itertools import product
 try:
     from joblib import Parallel, delayed
 except ModuleNotFoundError:
@@ -33,19 +34,29 @@ def main():
     task_opt['datatype'] = 'train'
     task_opt['datapath'] = opt['datapath']
 
+    mturk_manager = MTurkManager()
+    mturk_manager.init_aws(opt=opt)
+
+    mturk_agent_id = 'Worker'
+    mturk_manager.mturk_agent_ids = [mturk_agent_id]
+    mturk_manager.all_agent_ids = [QADataCollectionWorld.collector_agent_id, mturk_agent_id] # In speaking order
+
     global run_hit
-    def run_hit(i, task_class, task_opt, opt, mturk_manager):
+    def run_hit(hit_index, assignment_index, task_class, task_opt, opt, mturk_manager):
+        conversation_id = str(hit_index) + '_' + str(assignment_index)
+
         task = task_class(task_opt)
         # Create the MTurk agent which provides a chat interface to the Turker
-        mturk_agent = MTurkAgent(id='Worker', manager=mturk_manager, conversation_id=i, opt=opt)
+        mturk_agent = MTurkAgent(id=mturk_agent_id, manager=mturk_manager, conversation_id=conversation_id, opt=opt)
         world = QADataCollectionWorld(opt=opt, task=task, mturk_agent=mturk_agent)
         while not world.episode_done():
             world.parley()
         world.shutdown()
 
-    mturk_manager = MTurkManager()
-    mturk_manager.init_aws(opt=opt)
-    results = Parallel(n_jobs=opt['num_hits'], backend='threading')(delayed(run_hit)(i, task_class, task_opt, opt, mturk_manager) for i in range(1, opt['num_hits']+1))
+    mturk_manager.create_hits(opt=opt)
+    results = Parallel(n_jobs=opt['num_hits'] * opt['num_assignments'], backend='threading') \
+                (delayed(run_hit)(hit_index, assignment_index, task_class, task_opt, opt, mturk_manager) \
+                    for hit_index, assignment_index in product(range(1, opt['num_hits']+1), range(1, opt['num_assignments']+1)))    
     mturk_manager.review_hits()
     mturk_manager.shutdown()
 

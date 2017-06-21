@@ -231,8 +231,13 @@ of patent rights can be found in the PATENTS file in the same directory.
                 $("div#approval-prompt-text span.prompt-text").text("Do you approve this work?");
                 $("div#approval-buttons-group").css("display", "");
 
-                if (conversation_id < num_hits) {
-                    window.location.href = window.location.href.replace('conversation_id='+conversation_id, 'conversation_id='+(conversation_id+1));
+                hit_index = parseInt(hit_index);
+                assignment_index = parseInt(assignment_index);
+
+                if (assignment_index < num_assignments) {
+                    window.location.href = window.location.href.replace('hit_index='+hit_index+'&assignment_index='+assignment_index, 'hit_index='+hit_index+'&assignment_index='+(assignment_index+1));
+                } else if (hit_index < num_hits) {
+                    window.location.href = window.location.href.replace('hit_index='+hit_index+'&assignment_index='+assignment_index, 'hit_index='+(hit_index+1)+'&assignment_index=1');
                 } else {
                     $("div#message_thread").css("display", "none");
                     $("div#approval-prompt-text span.prompt-text").text("All done! Please feel free to close the window.");
@@ -254,10 +259,31 @@ of patent rights can be found in the PATENTS file in the same directory.
         all_done_callback();
     });
 
+    function get_hit_index_and_assignment_index(callback_function) {
+        $.ajax({
+            url: '/prod/json',
+            data: {
+                method_name: 'get_hit_index_and_assignment_index',
+                task_group_id: task_group_id,
+                agent_id: cur_agent_id
+            },
+            success: function(data) {
+                if (verbose_log) console.log(data);
+                hit_index = parseInt(data['hit_index']);
+                assignment_index = parseInt(data['assignment_index']);
+                if (callback_function) {
+                    callback_function();
+                }
+            },
+        });
+    }
+
     var mturk_submit_url = `{{mturk_submit_url}}`;
     var verbose_log = false;
     var task_group_id = `{{task_group_id}}`;
-    var conversation_id = parseInt(`{{conversation_id}}`);
+    var hit_index = `{{hit_index}}`;
+    var assignment_index = `{{assignment_index}}`;
+    var conversation_id = null;
     var cur_agent_id = `{{cur_agent_id}}`;
     var mturk_agent_ids = `{{mturk_agent_ids}}`;
     if (mturk_agent_ids) {
@@ -278,6 +304,7 @@ of patent rights can be found in the PATENTS file in the same directory.
     var is_cover_page = (`{{is_cover_page}}` === 'True') ? true : false;
     var is_approval_page = (`{{is_approval_page}}` === 'True') ? true : false;
     var num_hits = parseInt(`{{num_hits}}`);
+    var num_assignments = parseInt(`{{num_assignments}}`);
     var last_message_id = -1;
     var worker_timer = null;
     var messages_processed = {};
@@ -481,7 +508,8 @@ of patent rights can be found in the PATENTS file in the same directory.
         });
     }
 
-    $(document).ready(function() {
+    function init() {
+        conversation_id = hit_index + '_' + assignment_index;
         $("form#mturk_submit_form input#assignmentId").val(get_url_parameter('assignmentId'));
         $("form#mturk_submit_form input#hitId").val(get_url_parameter('hitId'));
         $("form#mturk_submit_form input#workerId").val(get_url_parameter('workerId'));
@@ -506,6 +534,15 @@ of patent rights can be found in the PATENTS file in the same directory.
             worker();
         }
         $(window).resize();
+    }
+
+    $(document).ready(function() {
+        if (hit_index === "Pending" && assignment_index === "Pending") {
+            get_hit_index_and_assignment_index(init);
+        } else {
+            assignment_index = parseInt(assignment_index);
+            init();
+        }
     });
 </script>
 </body>

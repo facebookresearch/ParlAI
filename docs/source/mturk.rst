@@ -104,13 +104,13 @@ Then, to run an MTurk task, first ensure that the task directory is in `parlai/m
 
 .. code-block:: python
 
-    python run.py -nh <num_hits> -r <reward> [--sandbox]/[--live]
+    python run.py -nh <num_hits> -na <num_assignments> -r <reward> [--sandbox]/[--live]
 
-E.g. to create 2 HITs for the `QA Data Collection <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/qa_data_collection/>`__ example with $0.05 each in sandbox mode, first go into the task directory and then run:
+E.g. to create 2 HITs for the `QA Data Collection <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/qa_data_collection/>`__ example with 1 assignment per HIT and $0.05 per assignment in sandbox mode, first go into the task directory and then run:
 
 .. code-block:: python
 
-    python run.py -nh 2 -r 0.05 --sandbox
+    python run.py -nh 2 -na 1 -r 0.05 --sandbox
 
 Please make sure to test your task in MTurk sandbox mode first (``--sandbox``) before pushing it live (``--live``).
 
