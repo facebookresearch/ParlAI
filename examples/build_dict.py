@@ -23,12 +23,9 @@ def build_dict(opt):
         # Dictionary already built
         print("[ dictionary already built .]")
         return
-    if 'dict_class' in opt:
+    if opt.get('dict_class'):
         # Custom dictionary class
-        name = opt['dict_class'].split(':')
-        module = importlib.import_module(name[0])
-        dict_class = getattr(module, name[1])
-        dictionary = dict_class(opt)
+        dictionary = opt['dict_class'](opt)
     else:
         # Default dictionary class
         dictionary = DictionaryAgent(opt)

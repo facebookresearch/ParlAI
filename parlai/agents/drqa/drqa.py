@@ -49,14 +49,14 @@ class SimpleDictionaryAgent(DictionaryAgent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        DictionaryAgent.add_cmdline_args(argparser)
-        argparser.add_arg(
+        group = DictionaryAgent.add_cmdline_args(argparser)
+        group.add_argument(
             '--pretrained_words', type='bool', default=True,
             help='Use only words found in provided embedding_file'
         )
 
     def __init__(self, *args, **kwargs):
-        super(SimpleDictionaryAgent, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Index words in embedding file
         if self.opt['pretrained_words'] and self.opt.get('embedding_file'):
@@ -104,11 +104,11 @@ class DrqaAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         config.add_cmdline_args(argparser)
-        SimpleDictionaryAgent.add_cmdline_args(argparser)
+        DrqaAgent.dictionary_class().add_cmdline_args(argparser)
 
     @staticmethod
     def dictionary_class():
-        return "parlai.agents.drqa.drqa:SimpleDictionaryAgent"
+        return SimpleDictionaryAgent
 
     def __init__(self, opt, shared=None):
         if opt['numthreads'] >1:
@@ -116,7 +116,7 @@ class DrqaAgent(Agent):
 
         # Load dict.
         if not shared:
-            word_dict = SimpleDictionaryAgent(opt)
+            word_dict = DrqaAgent.dictionary_class()(opt)
         # All agents keep track of the episode (for multiple questions)
         self.episode_done = True
 
@@ -132,10 +132,10 @@ class DrqaAgent(Agent):
         self.opt = copy.deepcopy(opt)
         config.set_defaults(self.opt)
 
-        if 'model_file' in self.opt and os.path.isfile(opt['model_file']):
+        if self.opt.get('model_file') and os.path.isfile(opt['model_file']):
             self._init_from_saved(opt['model_file'])
         else:
-            if 'pretrained_model' in self.opt:
+            if self.opt.get('pretrained_model'):
                 self._init_from_saved(opt['pretrained_model'])
             else:
                 self._init_from_scratch()

@@ -62,37 +62,39 @@ class DictionaryAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        argparser.add_arg(
+        dictionary = argparser.add_argument_group('Dictionary Arguments')
+        dictionary.add_argument(
             '--dict-file',
             help='if set, the dictionary will automatically save to this path' +
                  ' during shutdown')
-        argparser.add_arg(
+        dictionary.add_argument(
             '--dict-initpath',
             help='path to a saved dictionary to load tokens / counts from to ' +
                  'seed the dictionary with initial tokens and/or frequencies')
-        argparser.add_arg(
+        dictionary.add_argument(
             '--dict-language', default=DictionaryAgent.default_lang,
             help='sets language for the punkt sentence tokenizer')
-        argparser.add_arg(
+        dictionary.add_argument(
             '--dict-max-ngram-size', default=DictionaryAgent.default_maxngram,
             help='looks for ngrams of up to this size. this is ignored when ' +
                  'building the dictionary. note: this takes approximate ' +
                  'runtime of len(sentence)^max_ngram_size')
-        argparser.add_arg(
+        dictionary.add_argument(
             '--dict-minfreq', default=DictionaryAgent.default_minfreq,
             help='minimum frequency of words to include them in the dictionary')
-        argparser.add_arg(
+        dictionary.add_argument(
            '--dict-nulltoken', default=DictionaryAgent.default_null,
            help='empty token, can be used for padding or just empty values')
-        argparser.add_arg(
+        dictionary.add_argument(
            '--dict-eostoken', default=DictionaryAgent.default_eos,
            help='token for end of sentence markers, if needed')
-        argparser.add_arg(
+        dictionary.add_argument(
             '--dict-unktoken', default=DictionaryAgent.default_unk,
             help='token to return for unavailable words')
-        argparser.add_arg(
+        dictionary.add_argument(
             '--dict-maxexs', default=100000, type=int,
             help='max number of examples to build dict on')
+        return dictionary
 
     def __init__(self, opt, shared=None):
         # initialize fields

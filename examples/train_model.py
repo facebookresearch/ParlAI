@@ -64,23 +64,24 @@ def run_eval(agent, opt, datatype, still_training=False):
 def main():
     # Get command line arguments
     parser = ParlaiParser(True, True)
-    parser.add_argument('-et', '--evaltask',
+    train = parser.add_argument_group('Training Loop Arguments')
+    train.add_argument('-et', '--evaltask',
                         help=('task to use for valid/test (defaults to the ' +
                               'one used for training if not set)'))
-    parser.add_argument('-d', '--display-examples',
+    train.add_argument('-d', '--display-examples',
                         type='bool', default=False)
-    parser.add_argument('-e', '--num-epochs', type=int, default=1)
-    parser.add_argument('-ttim', '--max-train-time',
+    train.add_argument('-e', '--num-epochs', type=int, default=1)
+    train.add_argument('-ttim', '--max-train-time',
                         type=float, default=float('inf'))
-    parser.add_argument('-ltim', '--log-every-n-secs',
+    train.add_argument('-ltim', '--log-every-n-secs',
                         type=float, default=1)
-    parser.add_argument('-vtim', '--validation-every-n-secs',
+    train.add_argument('-vtim', '--validation-every-n-secs',
                         type=float, default=0)
-    parser.add_argument('-vp', '--validation-patience',
+    train.add_argument('-vp', '--validation-patience',
                         type=int, default=5,
                         help=('number of iterations of validation where result '
                               + 'does not improve before we stop training'))
-    parser.add_argument('-dbf', '--dict-build-first',
+    train.add_argument('-dbf', '--dict-build-first',
                         type='bool', default=True,
                         help='build dictionary first before training agent')
     opt = parser.parse_args()
