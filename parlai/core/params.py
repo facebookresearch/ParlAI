@@ -110,7 +110,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '-m', '--model', default='repeat_label',
             help='the model class name, should match parlai/agents/<model>')
         self.add_argument(
-            '-mf', '--model-file', default='',
+            '-mf', '--model-file', default=None,
             help='model file name for loading and saving models')
         # Find which model specified, and add its specific arguments.
         if args is None:
@@ -133,8 +133,7 @@ class ParlaiParser(argparse.ArgumentParser):
         We specifically remove items with ``None`` as values in order to support
         the style ``opt.get(key, default)``, which would otherwise return ``None``.
         """
-        self.args = super().parse_args(args=args)
-        self.opt = {k: v for k, v in vars(self.args).items() if v is not None}
+        self.opt = vars(super().parse_args(args=args))
         self.opt['parlai_home'] = self.parlai_home
         if 'download_path' in self.opt:
             self.opt['download_path'] = self.opt['download_path']

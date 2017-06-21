@@ -126,12 +126,14 @@ class DictionaryAgent(Agent):
                 index = len(self.tok2ind)
                 self.tok2ind[self.unk_token] = index
                 self.ind2tok[index] = self.unk_token
-
-            if 'dict_file' in opt and os.path.isfile(opt['dict_file']):
-                self.load(opt['dict_file'])
-            elif 'dict_initpath' in opt:
+              
+            if opt.get('dict_file') and os.path.isfile(opt['dict_file']):
                 # load pre-existing dictionary
+                self.load(opt['dict_file'])
+            elif opt.get('dict_initpath'):
+                # load seed dictionary
                 self.load(opt['dict_initpath'])
+            
 
         # initialize tokenizers
         st_path = 'tokenizers/punkt/{0}.pickle'.format(opt['dict_language'])
@@ -157,7 +159,7 @@ class DictionaryAgent(Agent):
                 # fix count for unknown token to one billion
                 self.freq[self.unk_token] = 1000000000
 
-            if 'dict_file' in opt:
+            if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
 
     def __contains__(self, key):

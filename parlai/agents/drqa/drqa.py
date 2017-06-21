@@ -59,7 +59,7 @@ class SimpleDictionaryAgent(DictionaryAgent):
         super(SimpleDictionaryAgent, self).__init__(*args, **kwargs)
 
         # Index words in embedding file
-        if self.opt['pretrained_words'] and 'embedding_file' in self.opt:
+        if self.opt['pretrained_words'] and self.opt.get('embedding_file'):
             print('[ Indexing words with embeddings... ]')
             self.embedding_words = set()
             with open(self.opt['embedding_file']) as f:
