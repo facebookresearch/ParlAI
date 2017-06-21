@@ -100,7 +100,7 @@ def set_defaults(opt):
 
     # Make sure fix_embeddings and embedding_file are consistent
     if opt['fix_embeddings']:
-        if opt.get('embedding_file') and not opt.get('pretrained_model'):
+        if not opt.get('embedding_file') and not opt.get('pretrained_model'):
             print('Setting fix_embeddings to False as embeddings are random.')
             opt['fix_embeddings'] = False
 
