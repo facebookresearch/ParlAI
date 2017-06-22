@@ -7,7 +7,7 @@
 
 from parlai.core.dict import DictionaryAgent
 from parlai.core.worlds import DialogPartnerWorld
-from parlai.core.params import ParlaiParser
+from parlai.core.params import ParlaiParser, str2class
 from parlai.core.worlds import create_task
 import copy
 import importlib
@@ -25,7 +25,7 @@ def build_dict(opt):
         return
     if opt.get('dict_class'):
         # Custom dictionary class
-        dictionary = opt['dict_class'](opt)
+        dictionary = str2class(opt['dict_class'])(opt)
     else:
         # Default dictionary class
         dictionary = DictionaryAgent(opt)

@@ -23,10 +23,22 @@ def str2bool(value):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def str2class(value):
-    # e.g. 'parlai.agents.drqa.drqa:SimpleDictionaryAgent'
+    """From import path string, returns the class specified. For example, the
+    string 'parlai.agents.drqa.drqa:SimpleDictionaryAgent' returns
+    <class 'parlai.agents.drqa.drqa.SimpleDictionaryAgent'>.
+    """
+    if ':' not in value:
+        raise RuntimeError('Use a colon before the name of the class.')
     name = value.split(':')
     module = importlib.import_module(name[0])
     return getattr(module, name[1])
+
+def class2str(value):
+    """Inverse of params.str2class()."""
+    s = str(value)
+    s = s[s.find('\'') + 1 : s.rfind('\'')] # pull out import path
+    s = ':'.join(s.rsplit('.', 1)) # replace last period with ':'
+    return s
 
 
 class ParlaiParser(argparse.ArgumentParser):
@@ -136,8 +148,8 @@ class ParlaiParser(argparse.ArgumentParser):
             '-mf', '--model-file', default=None,
             help='model file name for loading and saving models')
         model_args.add_argument(
-            '--dict-class', type='class',
-            help='the class of the dictionary agent used')
+            '--dict-class',
+            help='the class of the dictionary agent uses')
         # Find which model specified, and add its specific arguments.
         if args is None:
             args = sys.argv
@@ -150,7 +162,8 @@ class ParlaiParser(argparse.ArgumentParser):
             if hasattr(agent, 'add_cmdline_args'):
                 agent.add_cmdline_args(self)
             if hasattr(agent, 'dictionary_class'):
-                model_args.set_defaults(dict_class=agent.dictionary_class())
+                s = class2str(agent.dictionary_class())
+                model_args.set_defaults(dict_class=s)
 
     def parse_args(self, args=None, namespace=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the ``args``.
