@@ -4,6 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.agents import Agent, create_agent_from_shared
+from parlai.core.dict import DictionaryAgent
 import copy
 import numpy as np
 import json
@@ -110,19 +111,18 @@ class ParsedRemoteAgent(RemoteAgent):
     text into vectors using its dictionary before sending them.
     """
 
+    @staticmethod
+    def add_cmdline_args(argparser):
+        super().add_cmdline_args(argparser)
+        ParsedRemoteAgent.dictionary_class().add_cmdline_args(argparser)
+
+    @staticmethod
+    def dictionary_class():
+        return DictionaryAgent
+
     def __init__(self, opt, shared=None):
-        if 'dictionary_agent' in shared:
-            # use this first--maybe be overriding an original dictionary
-            self.dict = create_agent_from_shared(shared['dictionary_agent'])
-        elif 'dictionary' in shared:
-            # otherwise use this dictionary
-            self.dict = shared['dictionary']
-        else:
-            raise RuntimeError('ParsedRemoteAgent needs a dictionary to parse' +
-                               ' text with--pass in a dictionary using shared' +
-                               '["dictionary"] or pass in the arguments to ' +
-                               'instantiate one using shared["dictionary_args' +
-                               '"] = (class, options, shared).')
+        dict_shared = shared.get('dictionary_shared', None)
+        self.dict = ParsedRemoteAgent.dictionary_class()(opt, dict_shared)
         super().__init__(opt, shared)
 
     def act(self):
@@ -163,5 +163,5 @@ class ParsedRemoteAgent(RemoteAgent):
 
     def share(self):
         shared = super().share()
-        shared['dictionary_agent'] = self.dict.share()
+        shared['dictionary_shared'] = self.dict.share()
         return shared
