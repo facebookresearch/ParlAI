@@ -75,12 +75,13 @@ class DictionaryAgent(Agent):
             '--dict-language', default=DictionaryAgent.default_lang,
             help='sets language for the punkt sentence tokenizer')
         dictionary.add_argument(
-            '--dict-max-ngram-size', default=DictionaryAgent.default_maxngram,
+            '--dict-max-ngram-size', type=int,
+            default=DictionaryAgent.default_maxngram,
             help='looks for ngrams of up to this size. this is ignored when ' +
                  'building the dictionary. note: this takes approximate ' +
                  'runtime of len(sentence)^max_ngram_size')
         dictionary.add_argument(
-            '--dict-minfreq', default=DictionaryAgent.default_minfreq,
+            '--dict-minfreq', default=DictionaryAgent.default_minfreq, type=int,
             help='minimum frequency of words to include them in the dictionary')
         dictionary.add_argument(
            '--dict-nulltoken', default=DictionaryAgent.default_null,
@@ -128,14 +129,14 @@ class DictionaryAgent(Agent):
                 index = len(self.tok2ind)
                 self.tok2ind[self.unk_token] = index
                 self.ind2tok[index] = self.unk_token
-              
+
             if opt.get('dict_file') and os.path.isfile(opt['dict_file']):
                 # load pre-existing dictionary
                 self.load(opt['dict_file'])
             elif opt.get('dict_initpath'):
                 # load seed dictionary
                 self.load(opt['dict_initpath'])
-            
+
 
         # initialize tokenizers
         st_path = 'tokenizers/punkt/{0}.pickle'.format(opt['dict_language'])
