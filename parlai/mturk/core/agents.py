@@ -28,7 +28,7 @@ try:
 except ModuleNotFoundError:
     raise SystemExit("Please install sqlite3 by running: pip install sqlite3")
 
-local_db_file_path_template = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + '/tmp/parlai_mturk_<run_id>.db'
+local_db_file_path_template = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'tmp', 'parlai_mturk_<run_id>.db')
 polling_interval = 1 # in seconds
 create_hit_type_lock = threading.Lock()
 local_db_lock = threading.Lock()
