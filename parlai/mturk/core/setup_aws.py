@@ -8,12 +8,8 @@ import sys
 import shutil
 from subprocess import call
 import zipfile
-try:
-    import boto3
-    import botocore
-    import psycopg2
-except ModuleNotFoundError:
-    raise SystemExit("Please install boto3 and psycopg2 by running: pip install boto3 psycopg2")
+import boto3
+import botocore
 import time
 import json
 import webbrowser
@@ -42,7 +38,7 @@ rds_security_group_name = 'parlai-mturk-db-security-group'
 rds_security_group_description = 'Security group for ParlAI MTurk DB'
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
-files_to_copy = [parent_dir+'/'+'data_model.py', parent_dir+'/'+'mturk_index.html']
+files_to_copy = [os.path.join(parent_dir, 'data_model.py'), os.path.join(parent_dir, 'mturk_index.html')]
 lambda_server_directory_name = 'lambda_server'
 lambda_server_zip_file_name = 'lambda_server.zip'
 mturk_hit_frame_height = 650
@@ -242,11 +238,11 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sand
     print("Lambda: Preparing relay server code...")
 
     # Create clean folder for lambda server code
-    if os.path.exists(parent_dir + '/' + lambda_server_directory_name):
-        shutil.rmtree(parent_dir + '/' + lambda_server_directory_name)
-    os.makedirs(parent_dir + '/' + lambda_server_directory_name)
-    if os.path.exists(parent_dir + '/' + lambda_server_zip_file_name):
-        os.remove(parent_dir + '/' + lambda_server_zip_file_name)
+    if os.path.exists(os.path.join(parent_dir, lambda_server_directory_name)):
+        shutil.rmtree(os.path.join(parent_dir, lambda_server_directory_name))
+    os.makedirs(os.path.join(parent_dir, lambda_server_directory_name))
+    if os.path.exists(os.path.join(parent_dir, lambda_server_zip_file_name)):
+        os.remove(os.path.join(parent_dir, lambda_server_zip_file_name))
 
     # Copying files
     with open(os.path.join(parent_dir, 'handler_template.py'), 'r') as handler_template_file:
@@ -348,8 +344,8 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sand
 
     # Clean up if needed
     if should_clean_up_after_upload:
-        shutil.rmtree(parent_dir + '/' + lambda_server_directory_name)
-        os.remove(parent_dir + '/' + lambda_server_zip_file_name)
+        shutil.rmtree(os.path.join(parent_dir, lambda_server_directory_name))
+        os.remove(os.path.join(parent_dir, lambda_server_zip_file_name))
 
     # Check API Gateway existence.
     # If doesn't exist, create the APIs, point them to Lambda function, and set correct configurations
@@ -602,26 +598,26 @@ def setup_all_dependencies(lambda_server_directory_name):
 
     # Set up all other dependencies
     if has_anaconda:
-        call(("pip install --target="+parent_dir+'/'+lambda_server_directory_name+" -r "+parent_dir+"/lambda_requirements.txt").split(" "), stdout=devnull, stderr=devnull)
+        call(("pip install --target="+os.path.join(parent_dir, lambda_server_directory_name)+" -r "+os.path.join(parent_dir, "lambda_requirements.txt")).split(" "), stdout=devnull, stderr=devnull)
     else:
-        shutil.rmtree(parent_dir+"/venv", ignore_errors=True)
+        shutil.rmtree(os.path.join(parent_dir, "venv"), ignore_errors=True)
         call("pip install virtualenv".split(" "), stdout=devnull, stderr=devnull)
-        call("virtualenv -p python2 venv".split(" "), stdout=devnull, stderr=devnull)
-        call(("venv/bin/pip install --target="+parent_dir+'/'+lambda_server_directory_name+" -r "+parent_dir+"/lambda_requirements.txt").split(" "), stdout=devnull, stderr=devnull)
-        shutil.rmtree(parent_dir+"/venv")
+        call(("virtualenv -p python2 "+os.path.join(parent_dir, "venv")).split(" "), stdout=devnull, stderr=devnull)
+        call((os.path.join(parent_dir, 'venv', 'bin', 'pip')+" install --target="+os.path.join(parent_dir, lambda_server_directory_name)+" -r "+os.path.join(parent_dir, "lambda_requirements.txt")).split(" "), stdout=devnull, stderr=devnull)
+        shutil.rmtree(os.path.join(parent_dir, "venv"), ignore_errors=True)
 
     # Set up psycopg2
-    shutil.rmtree(parent_dir + '/awslambda-psycopg2/', ignore_errors=True)
-    call(("git clone https://github.com/jkehler/awslambda-psycopg2.git " + parent_dir + "/awslambda-psycopg2").split(" "), stdout=devnull, stderr=devnull)
-    shutil.copytree(parent_dir + '/awslambda-psycopg2/with_ssl_support/psycopg2', parent_dir+'/'+lambda_server_directory_name+"/psycopg2")
-    shutil.rmtree(parent_dir + '/awslambda-psycopg2/')
+    shutil.rmtree(os.path.join(parent_dir, 'awslambda-psycopg2'), ignore_errors=True)
+    call(("git clone https://github.com/jkehler/awslambda-psycopg2.git " + os.path.join(parent_dir, "awslambda-psycopg2")).split(" "), stdout=devnull, stderr=devnull)
+    shutil.copytree(os.path.join(parent_dir, 'awslambda-psycopg2', 'with_ssl_support', 'psycopg2'), os.path.join(parent_dir, lambda_server_directory_name, "psycopg2"))
+    shutil.rmtree(os.path.join(parent_dir, 'awslambda-psycopg2'))
 
 def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, files_to_copy=None, verbose=False):
     setup_all_dependencies(lambda_server_directory_name)
     parent_dir = os.path.dirname(os.path.abspath(__file__))
 
-    src = parent_dir + '/' + lambda_server_directory_name
-    dst = parent_dir + '/' + lambda_server_zip_file_name
+    src = os.path.join(parent_dir, lambda_server_directory_name)
+    dst = os.path.join(parent_dir, lambda_server_zip_file_name)
 
     if files_to_copy:
         for file_path in files_to_copy:

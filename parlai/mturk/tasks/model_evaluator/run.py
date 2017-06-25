@@ -11,10 +11,7 @@ import time
 import os
 import copy
 from itertools import product
-try:
-    from joblib import Parallel, delayed
-except ModuleNotFoundError:
-    raise SystemExit("Please install joblib by running: pip install joblib")
+from joblib import Parallel, delayed
 
 
 def main():
