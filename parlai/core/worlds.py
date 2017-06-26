@@ -532,20 +532,18 @@ class BatchWorld(World):
         batch_observations = []
         for i, w in enumerate(self.worlds):
             agents = w.get_agents()
+            observation = None
             if hasattr(w, 'observe'):
                 # The world has its own observe function, which the action
-                # first goes through (agents do not directly receive messages 
-                # from each other).
+                # first goes through (agents receive messages via the world,
+                # not from each other).
                 observation = w.observe(agents[index], validate(batch_actions[i]))
             else:
+                if index == index_acting: return None # don't observe yourself talking
                 observation = validate(batch_actions[i])
-                # An agent does not send a message to itself, but we do allow 
-                # the world to send a message to it after the agent acts.
-                if index == index_acting and observation.id != 'world':
-                    return None
+                if observation is None:
+                    raise ValueError('Agents should return what they observed.')
             observation = agents[index].observe(observation)
-            if observation is None:
-                raise ValueError('Agents should return what they observed.')
             batch_observations.append(observation)
         return batch_observations
 
