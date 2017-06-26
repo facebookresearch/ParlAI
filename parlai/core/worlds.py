@@ -315,85 +315,51 @@ class MultiAgentDialogWorld(World):
             a.shutdown()
 
 
-class ExecutableWorld(World):
+class ExecutableWorld(MultiAgentDialogWorld):
     """A world where messages from agents can be interpreted as _actions_ in the
     world which result in changes in the environment (are executed). Hence a grounded
     simulation can be implemented rather than just dialogue between agents.
     """
     def __init__(self, opt, agents=None, shared=None):
-        super().__init__(opt)
-        if shared:
-            # Create agents based on shared data.
-            self.agents = create_agents_from_shared(shared['agents'])
-        else:
-            # Add passed in agents directly.
-            self.agents = agents
-            self.acts = [None] * len(agents)
         super().__init__(opt, agents, shared)
         self.init_world()
 
     def init_world(self):
         """An executable world class should implement this function, otherwise
-        the world still works, but actions do not do anything.
+        the actions do not do anything (and it is the same as MultiAgentDialogWorld).
         """
         pass
 
-    def gen_observe(self, agent):
-        """ Generate an observation of the world for an agent
-        given the current state of the (executable) world.
-        This is differentiated from a message from another dialogue agent,
-        and hence has the id 'world' in the message.
-        """
-        msg = {}
-        msg['text'] = ''  # By default the world does nothing.
-        msg['id'] = 'world'
-        agent.observe(validate(msg))
-        return msg
-
     def execute(self, agent, act):
-        # Execute action from agent. We also send an update to all other agents
-        # that can observe the change.
-        if 'text' in act:
-            valid = self.g.parse_exec(agent.id, act['text'])
-            if not valid:
-                agent.observe({'id':'world', 'text':'invalid action'})
-        for index, agent in enumerate(self.agents):
-            acts[index] = agent.act()
-            for other_agent in self.agents:
-                if other_agent != agent:
-                    other_agent.observe(validate(acts[index]))
+        """An executable world class should implement this function, otherwise
+        the actions do not do anything (and it is the same as MultiAgentDialogWorld).
+        """
+        pass
 
-
+    def observe(self, agent, act):
+        """An executable world class should implement this function, otherwise
+        the observations for each agent are just the messages from other agents
+        and not confitioned on the world at all (and it is thus the same as
+        MultiAgentDialogWorld). """
+        if agent.id == act['id']:
+            return None
+        else:
+            return act
 
     def parley(self):
-        """For each agent: observe, act, execute action in world
+        """For each agent: act, execute and observe actions in world
         """
-        acts, agents = self.acts, self.agents
-        for index, agent in enumerate(agents):
+        acts = self.acts
+        for index, agent in enumerate(self.agents):
+            # The agent acts.
             acts[index] = agent.act()
-            # execute action in environment
+            # We execute this action in the world. 
             self.execute(agent, acts[index])
-
-    def epoch_done(self):
-        done = False
-        for a in self.agents:
-            if a.epoch_done():
-                done = True
-        return done
-
-    def episode_done(self):
-        done = False
-        for a in self.agents:
-            if a.episode_done():
-                done = True
-        return done
-
-    def report(self):
-        return self.agents[0].report()
-
-    def shutdown(self):
-        for a in self.agents:
-            a.shutdown()
+            # All agents (might) observe the results.
+            for other_agent in self.agents:
+                obs = self.observe(other_agent, acts[index])
+                if obs is not None:
+                    other_agent.observe(obs)
 
 
 class MultiWorld(World):
@@ -538,7 +504,7 @@ class BatchWorld(World):
     """Creates a separate world for each item in the batch, sharing
     the parameters for each.
     The underlying world(s) it is batching can be either ``DialogPartnerWorld``,
-    ``MultiAgentWorld`` or ``MultiWorld``.
+    ``MultiAgentWorld``, ``ExecutableWorld`` or ``MultiWorld``.
     """
 
     def __init__(self, opt, world):
@@ -567,13 +533,19 @@ class BatchWorld(World):
         for i, w in enumerate(self.worlds):
             agents = w.get_agents()
             if hasattr(w, 'observe'):
+                # The world has its own observe function, which the action
+                # first goes through (agents do not directly receive messages 
+                # from each other).
                 observation = w.observe(agents[index], validate(batch_actions[i]))
             else:
-                if index == index_acting:
+                observation = validate(batch_actions[i])
+                # An agent does not send a message to itself, but we do allow 
+                # the world to send a message to it after the agent acts.
+                if index == index_acting and observation.id != 'world':
                     return None
-                observation = agents[index].observe(validate(batch_actions[i]))
-                if observation is None:
-                    raise ValueError('Agents should return what they observed.')
+            observation = agents[index].observe(observation)
+            if observation is None:
+                raise ValueError('Agents should return what they observed.')
             batch_observations.append(observation)
         return batch_observations
 
@@ -614,7 +586,7 @@ class BatchWorld(World):
             # We possibly execute this action in the world.
             for i, w in enumerate(self.worlds):
                 if hasattr(w, 'execute'):
-                    w.execute(batch_actions[i])
+                    w.execute(w.agents[i], batch_act[i])
             # All agents (might) observe the results.
             for other_index in range(num_agents):
                 obs = self.batch_observe(other_index, batch_act, index)
