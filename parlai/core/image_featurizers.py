@@ -1,4 +1,3 @@
-# Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
@@ -17,19 +16,21 @@ import copy
 import numpy as np
 from PIL import Image
 
+_greyscale = '  .,:;crsA23hHG#98&@'
 
-class load_image():
+class ImageLoader():
 	"""Extract image feature using pretrained CNN network.
 	"""	
 	@staticmethod
 	def add_cmdline_args(argparser):
-		argparser.add_arg('--cnn-type', type=str, default='resnet152',
-			help='which CNN archtecture to use to extract the image feature')
-		argparser.add_arg('--layer-num', type=int, default=-1,
+		argparser.add_arg('--image-cnntype', type=str, default='resnet152',
+			help='which CNN archtecture to use to extract the image feature'+
+			'current pretrained option can be found https://github.com/pytorch/vision')
+		argparser.add_arg('--image-layernum', type=int, default=-1,
 			help='which CNN layer of feature to extract.')        
 		argparser.add_arg('--image-size', type=int, default=256,
 			help='')
-		argparser.add_arg('--crop-size', type=int, default=224,
+		argparser.add_arg('--image-cropsize', type=int, default=224,
 			help='')
 
 	def __init__(self, opt):
@@ -39,16 +40,13 @@ class load_image():
 		self.transform = None
 		self.xs = None
 
-
-
-	def init(self):
-		""" Initilize the CNN mode, and which layer of feature to extract.
-		"""
+	def init_cnn(self):
+		"""Lazy initialization of preprocessor model in case we don't need any image preprocessing."""
 		opt = self.opt
-		self.cnn_type = opt['cnn_type']
-		self.layer_num = opt['layer_num']
+		self.cnn_type = opt['image_cnntype']
+		self.layer_num = opt['image_layernum']
 		self.image_size = opt['image_size']
-		self.crop_size = opt['crop_size']
+		self.crop_size = opt['image_cropsize']
 		self.datatype = opt['datatype']
 
 		opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()
@@ -59,10 +57,10 @@ class load_image():
 			torch.cuda.set_device(opt['gpu'])
 		
 		# initialize the pretrained CNN using pytorch.
-		original_CNN = torchvision.models.resnet152(pretrained=True)
+		CNN = getattr(torchvision.models, self.cnn_type)
 		
 		# cut off the additional layer.
-		self.netCNN = nn.Sequential(*list(original_CNN.children())[:self.layer_num])
+		self.netCNN = nn.Sequential(*list(CNN(pretrained=True).children())[:self.layer_num])
 		
 		# initialize the transform function using torch vision.
 		self.transform = transforms.Compose([
@@ -91,15 +89,15 @@ class load_image():
 		np.save(path, feature)
 
 	def extract(self, image, path):
-
+		# check whether initlize CNN network.
+		if not self.netCNN:
+			self.init_cnn()
+	
 		self.xs.data.copy_(self.transform(image))
-
 		# extract the image feature
 		feature = self.netCNN(self.xs)
-
 		# save the feature
 		self.save(feature, path)
-		
 		return feature
 
 	def img_to_ascii(self, path):
@@ -131,6 +129,7 @@ class load_image():
 			prepath, imagefn = os.path.split(path)
 
 			dpath = os.path.join(prepath, mode)
+
 			if not os.path.exists(dpath):
 				build_data.make_dir(dpath)
 
@@ -138,12 +137,7 @@ class load_image():
 			new_path = os.path.join(prepath, mode, imagefn)			
 			
 			if not os.path.isfile(new_path):
-				# check whether initialize CNN before.
-				if not self.netCNN:
-					self.init()
 				return self.extract(Image.open(path).convert('RGB'), new_path)
-				#raise NotImplementedError('image preprocessing mode' +
-				#                          '{} not supported yet'.format(mode))
 			else:
 				return np.load(new_path)
 

@@ -6,7 +6,7 @@
 
 from .agents import Teacher
 
-from .image_featurizers import load_image
+from .image_featurizers import ImageLoader
 from PIL import Image
 import random
 import os
@@ -186,6 +186,7 @@ class DialogData(object):
         self._load(data_loader)
         self.cands = None if cands == None else set(sys.intern(c) for c in cands)
         self.addedCands = []
+        self.image_loader = None
 
     def __len__(self):
         """Returns total number of entries available. Each episode has at least
@@ -241,6 +242,7 @@ class DialogData(object):
                                 new_entry.append(None)
                             if len(entry) > 4 and entry[4] is not None:
                                 new_entry.append(sys.intern(entry[4]))
+                                self.image_loader = ImageLoader(opt) 
 
             episode.append(tuple(new_entry))
 
@@ -273,7 +275,7 @@ class DialogData(object):
                     if entry[3] is not None:
                         table['label_candidates'] = entry[3]
                     if len(entry) > 4 and entry[4] is not None:
-                        img = load_image(self.opt, entry[4])
+                        img = self.image_loader.load(entry[4])
                         if img is not None:
                             table['image'] = img
 
@@ -298,5 +300,3 @@ class DialogData(object):
         table['episode_done'] = episode_done
         return table, end_of_data
 
-
-_greyscale = '  .,:;crsA23hHG#98&@'

@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.agents import Teacher
-from parlai.core.image_featurizers import load_image
+from parlai.core.image_featurizers import ImageLoader
 from .build import build, buildImage
 
 import json
@@ -66,7 +66,7 @@ class OeTeacher(Teacher):
         # size so they all process disparate sets of the data
         self.step_size = opt.get('batchsize', 1)
         self.data_offset = opt.get('batchindex', 0)
-        self.image_loader = load_image(opt)
+        self.image_loader = ImageLoader(opt)
         self.reset()
 
     def __len__(self):
