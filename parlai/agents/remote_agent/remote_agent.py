@@ -11,7 +11,7 @@ import subprocess
 import zmq
 
 
-class RemoteAgent(Agent):
+class RemoteAgentAgent(Agent):
     """Agent which connects over ZMQ to a paired agent. The other agent is
     launched using the command line options set via `add_cmdline_args`."""
 
@@ -105,7 +105,7 @@ class RemoteAgent(Agent):
                 self.process.kill()
 
 
-class ParsedRemoteAgent(RemoteAgent):
+class ParsedRemoteAgent(RemoteAgentAgent):
     """Same as the regular remote agent, except that this agent converts all
     text into vectors using its dictionary before sending them.
     """
