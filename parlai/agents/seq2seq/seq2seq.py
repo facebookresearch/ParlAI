@@ -22,17 +22,18 @@ class Seq2seqAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         DictionaryAgent.add_cmdline_args(argparser)
-        argparser.add_arg('-hs', '--hiddensize', type=int, default=64,
+        agent = argparser.add_argument_group('Seq2Seq Arguments')
+        agent.add_argument('-hs', '--hiddensize', type=int, default=64,
             help='size of the hidden layers and embeddings')
-        argparser.add_arg('-nl', '--numlayers', type=int, default=2,
+        agent.add_argument('-nl', '--numlayers', type=int, default=2,
             help='number of hidden layers')
-        argparser.add_arg('-lr', '--learningrate', type=float, default=0.5,
+        agent.add_argument('-lr', '--learningrate', type=float, default=0.5,
             help='learning rate')
-        argparser.add_arg('-dr', '--dropout', type=float, default=0.1,
+        agent.add_argument('-dr', '--dropout', type=float, default=0.1,
             help='dropout rate')
-        argparser.add_arg('--no-cuda', action='store_true', default=False,
+        agent.add_argument('--no-cuda', action='store_true', default=False,
             help='disable GPUs even if available')
-        argparser.add_arg('--gpu', type=int, default=-1,
+        agent.add_argument('--gpu', type=int, default=-1,
             help='which GPU device to use')
 
     def __init__(self, opt, shared=None):
@@ -53,7 +54,7 @@ class Seq2seqAgent(Agent):
             self.num_layers = opt['numlayers']
             self.learning_rate = opt['learningrate']
             self.use_cuda = opt.get('cuda', False)
-            self.longest_label = 2  # TODO: 1
+            self.longest_label = 1
 
             self.criterion = nn.NLLLoss()
             self.lt = nn.Embedding(len(self.dict), hsz, padding_idx=0,

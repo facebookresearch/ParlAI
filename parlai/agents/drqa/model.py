@@ -52,7 +52,7 @@ class DocReaderModel(object):
 
     def set_embeddings(self):
         # Read word embeddings.
-        if 'embedding_file' not in self.opt:
+        if not self.opt.get('embedding_file'):
             logger.warning('[ WARNING: No embeddings provided. '
                            'Keeping random initialization. ]')
             return
