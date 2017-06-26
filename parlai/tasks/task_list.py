@@ -148,7 +148,7 @@ task_list = [
         "display_name": "Ubuntu",
         "task": "ubuntu",
         "tags": [ "all",  "ChitChat" ],
-        "description": "Dialogs between an Ubunt user and an expert trying to fix issue, from Lowe et al. '15. Link: https://arxiv.org/abs/1506.08909"
+        "description": "Dialogs between an Ubuntu user and an expert trying to fix issue, from Lowe et al. '15. Link: https://arxiv.org/abs/1506.08909"
     },
     {
         "id": "WebQuestions",

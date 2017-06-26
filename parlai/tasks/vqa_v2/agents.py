@@ -60,6 +60,7 @@ class OeTeacher(Teacher):
                 self.annotation = shared['annotation']
         else:
             self._setup_data(data_path, annotation_path)
+        self.len = len(self.ques['questions'])
 
         # for ordered data in batch mode (especially, for validation and
         # testing), each teacher in the batch gets a start index and a step
@@ -129,8 +130,6 @@ class OeTeacher(Teacher):
             print('loading: ' + annotation_path)
             with open(annotation_path) as data_file:
                 self.annotation = json.load(data_file)
-
-        self.len = len(self.ques['questions'])
 
 
 class DefaultTeacher(OeTeacher):

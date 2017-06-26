@@ -17,7 +17,7 @@ from jinja2 import FileSystemLoader
 import data_model
 
 # Dynamically generated code begin
-# Expects mturk_submit_url, frame_height, rds_host, rds_db_name, rds_username, rds_password, task_description, requester_key_gt, num_hits, is_sandbox
+# Expects mturk_submit_url, frame_height, rds_host, rds_db_name, rds_username, rds_password, task_description, requester_key_gt, num_hits, num_assignments, is_sandbox
 # {{block_task_config}}
 # Dynamically generated code end
 
@@ -46,13 +46,13 @@ def chat_index(event, context):
     if event['method'] == 'GET':
         """
         Handler for chat page endpoint. 
-        Expects <task_group_id>, <conversation_id> and <cur_agent_id> as query parameters.
         """
         template_context = {}
 
         try:
             task_group_id = event['query']['task_group_id']
-            conversation_id = event['query']['conversation_id']
+            hit_index = event['query'].get('hit_index', 'Pending')
+            assignment_index = event['query'].get('assignment_index', 'Pending')
             all_agent_ids = event['query']['all_agent_ids']
             cur_agent_id = event['query']['cur_agent_id']
             assignment_id = event['query']['assignmentId'] # from mturk
@@ -63,7 +63,8 @@ def chat_index(event, context):
                 template_context['is_cover_page'] = True
             else:
                 template_context['task_group_id'] = task_group_id
-                template_context['conversation_id'] = conversation_id
+                template_context['hit_index'] = hit_index
+                template_context['assignment_index'] = assignment_index
                 template_context['cur_agent_id'] = cur_agent_id
                 template_context['all_agent_ids'] = all_agent_ids
                 template_context['task_description'] = task_description.replace('{{task_additional_info}}', task_additional_info)
@@ -84,7 +85,7 @@ def save_hit_info(event, context):
         """
         params = event['body']
         task_group_id = params['task_group_id']
-        conversation_id = int(params['conversation_id'])
+        conversation_id = params['conversation_id']
         assignment_id = params['assignmentId']
         hit_id = params['hitId']
         worker_id = params['workerId']
@@ -113,7 +114,7 @@ def get_new_messages(event, context):
         last_message_id = int(event['query']['last_message_id'])
         conversation_id = None
         if 'conversation_id' in event['query']:
-            conversation_id = int(event['query']['conversation_id'])
+            conversation_id = event['query']['conversation_id']
         excluded_agent_id = event['query'].get('excluded_agent_id', None)
         included_agent_id = event['query'].get('included_agent_id', None)
 
@@ -144,7 +145,7 @@ def send_new_message(event, context):
         """
         params = event['body']
         task_group_id = params['task_group_id']
-        conversation_id = int(params['conversation_id'])
+        conversation_id = params['conversation_id']
         cur_agent_id = params['cur_agent_id']
         message_text = params['text'] if 'text' in params else None
         reward = params['reward'] if 'reward' in params else None
@@ -171,6 +172,25 @@ def send_new_message(event, context):
         
         return json.dumps(new_message)
 
+def get_hit_index_and_assignment_index(event, context):
+    if event['method'] == 'GET':
+        """
+        Handler for get assignment index endpoint. 
+        Expects <task_group_id>, <agent_id> as query parameters.
+        """
+        try:
+            task_group_id = event['query']['task_group_id']
+            agent_id = event['query']['agent_id']
+
+            return data_model.get_hit_index_and_assignment_index(
+                db_session=db_session,
+                task_group_id=task_group_id,
+                agent_id=agent_id,
+                num_assignments=num_assignments
+            )
+        except KeyError:
+            raise Exception('400')
+
 def approval_index(event, context):
     if event['method'] == 'GET':
         """
@@ -183,17 +203,20 @@ def approval_index(event, context):
                 raise Exception('403')
 
             task_group_id = event['query']['task_group_id']
-            conversation_id = event['query']['conversation_id']
+            hit_index = event['query']['hit_index']
+            assignment_index = event['query']['assignment_index']
             mturk_agent_ids = event['query']['mturk_agent_ids']
 
             template_context = {}
             template_context['task_group_id'] = task_group_id
-            template_context['conversation_id'] = conversation_id
+            template_context['hit_index'] = hit_index
+            template_context['assignment_index'] = assignment_index
             template_context['mturk_agent_ids'] = mturk_agent_ids
             template_context['task_description'] = task_description
             template_context['is_cover_page'] = False
             template_context['is_approval_page'] = True
             template_context['num_hits'] = int(num_hits)
+            template_context['num_assignments'] = int(num_assignments)
             template_context['frame_height'] = frame_height
 
             return _render_template(template_context, 'mturk_index.html')
@@ -214,7 +237,7 @@ def review_hit(event, context):
                 raise Exception('403')
 
             task_group_id = params['task_group_id']
-            conversation_id = int(params['conversation_id'])
+            conversation_id = params['conversation_id']
             action = params['action'] # 'approve' or 'reject'
 
             hit_infos = data_model.get_all_matching_hit_infos(

@@ -7,46 +7,43 @@
 
 from parlai.core.dict import DictionaryAgent
 from parlai.core.worlds import DialogPartnerWorld
-from parlai.core.params import ParlaiParser
+from parlai.core.params import ParlaiParser, str2class
 from parlai.core.worlds import create_task
 import copy
 import importlib
 import os
 
 def build_dict(opt):
-    if 'dict_file' not in opt:
+    if not opt.get('dict_file'):
+        print('Tried to build dictionary but `--dict-file` is not set. Set ' +
+              'this param so the dictionary can be saved.')
         return
     print('[ setting up dictionary. ]')
     if os.path.isfile(opt['dict_file']):
-        # dict already built
-        print("[ dict already built .]")
+        # Dictionary already built
+        print("[ dictionary already built .]")
         return
-    if 'dict_class' in opt:
+    if opt.get('dict_class'):
         # Custom dictionary class
-        name = opt['dict_class'].split(':')
-        module = importlib.import_module(name[0])
-        dict_class = getattr(module, name[1])
-        dictionary = dict_class(opt)
+        dictionary = str2class(opt['dict_class'])(opt)
     else:
         # Default dictionary class
         dictionary = DictionaryAgent(opt)
     ordered_opt = copy.deepcopy(opt)
     cnt = 0
-    for datatype in ['train:ordered', 'valid']:
-        # we use train and valid sets to build dictionary
-        ordered_opt['datatype'] = datatype
-        ordered_opt['numthreads'] = 1
-        ordered_opt['batchsize'] = 1
-        world_dict = create_task(ordered_opt, dictionary)
-        # pass examples to dictionary
-        for _ in world_dict:
-            cnt += 1
-            if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] > 0:
-                print('Processed {} exs, moving on.'.format(
-                      opt['dict_maxexs']))
-                # don't wait too long...
-                break
-            world_dict.parley()
+    # we use train set to build dictionary
+    ordered_opt['datatype'] = 'train:ordered'
+    ordered_opt['numthreads'] = 1
+    ordered_opt['batchsize'] = 1
+    world_dict = create_task(ordered_opt, dictionary)
+    # pass examples to dictionary
+    for _ in world_dict:
+        cnt += 1
+        if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] > 0:
+            print('Processed {} exs, moving on.'.format(opt['dict_maxexs']))
+            # don't wait too long...
+            break
+        world_dict.parley()
     print('[ dictionary built. ]')
     dictionary.save(opt['dict_file'], sort=True)
     # print('[ num words =  %d ]' % len(dictionary))

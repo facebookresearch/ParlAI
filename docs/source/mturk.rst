@@ -66,6 +66,14 @@ Note that since the human Turker speaks only once to provide the rating, the ``M
 After one turn, the task is finished, and the Turker's work is submitted for your review.
 
 
+Task 3: Multi-Agent Dialog
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ParlAI supports dialogs between multiple agents, whether they are local ParlAI agents or human Turkers. In the `Multi-Agent Dialog task <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/multi_agent_dialog/>`__, two local human agents and two Turkers engage in a round-robin chat, until the first local human agent sends a message ending with ``[DONE]``, after which other agents will send a final message and the task is concluded.
+
+This task uses the ``MultiAgentDialogWorld`` which is already implemented in ``parlai.core.worlds``.
+
+
 Creating Your Own Task
 ----------------------
 
@@ -74,7 +82,8 @@ ParlAI provides a generic MTurk dialog interface that one can use to implement a
 A few things to keep in mind:
 
 1. To end a conversation, you should send a message with ``episode_done = True`` from the first non-MTurk agent, and the conversation is ended after all MTurk agents respond.
-2. Make sure to test your dialog task using MTurk's sandbox mode before pushing it live, by using the ``--sandbox`` flag (enabled by default) when running ``run.py``.
+2. In ``run.py``, You can use ``hit_index`` and ``assignment_index`` to differentiate between different HITs and assignments, and change the content of the task accordingly.
+3. Make sure to test your dialog task using MTurk's sandbox mode before pushing it live, by using the ``--sandbox`` flag (enabled by default) when running ``run.py``.
 
 
 Running a Task
@@ -96,13 +105,13 @@ Then, to run an MTurk task, first ensure that the task directory is in `parlai/m
 
 .. code-block:: python
 
-    python run.py -nh <num_hits> -r <reward> [--sandbox]/[--live]
+    python run.py -nh <num_hits> -na <num_assignments> -r <reward> [--sandbox]/[--live]
 
-E.g. to create 2 HITs for the `QA Data Collection <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/qa_data_collection/>`__ example with $0.05 each in sandbox mode, first go into the task directory and then run:
+E.g. to create 2 HITs for the `QA Data Collection <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/qa_data_collection/>`__ example with 1 assignment per HIT and $0.05 per assignment in sandbox mode, first go into the task directory and then run:
 
 .. code-block:: python
 
-    python run.py -nh 2 -r 0.05 --sandbox
+    python run.py -nh 2 -na 1 -r 0.05 --sandbox
 
 Please make sure to test your task in MTurk sandbox mode first (``--sandbox``) before pushing it live (``--live``).
 

@@ -17,6 +17,7 @@ import hashlib
 import getpass
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
+from .data_model import init_database
 
 aws_profile_name = 'parlai_mturk'
 region_name = 'us-west-2'
@@ -37,7 +38,7 @@ rds_security_group_name = 'parlai-mturk-db-security-group'
 rds_security_group_description = 'Security group for ParlAI MTurk DB'
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
-files_to_copy = [parent_dir+'/'+'data_model.py', parent_dir+'/'+'mturk_index.html']
+files_to_copy = [os.path.join(parent_dir, 'data_model.py'), os.path.join(parent_dir, 'mturk_index.html')]
 lambda_server_directory_name = 'lambda_server'
 lambda_server_zip_file_name = 'lambda_server.zip'
 mturk_hit_frame_height = 650
@@ -226,20 +227,22 @@ def setup_rds():
     endpoint = db_instance['Endpoint']
     host = endpoint['Address']
 
+    init_database(host, rds_db_name, rds_username, rds_password, should_check_schema_consistency=True)
+
     print('RDS: DB instance ready.')
 
     return host
 
-def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, requester_key_gt, should_clean_up_after_upload=True):
+def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, num_assignments, requester_key_gt, should_clean_up_after_upload=True):
     # Dynamically generate handler.py file, and then create zip file
     print("Lambda: Preparing relay server code...")
 
     # Create clean folder for lambda server code
-    if os.path.exists(parent_dir + '/' + lambda_server_directory_name):
-        shutil.rmtree(parent_dir + '/' + lambda_server_directory_name)
-    os.makedirs(parent_dir + '/' + lambda_server_directory_name)
-    if os.path.exists(parent_dir + '/' + lambda_server_zip_file_name):
-        os.remove(parent_dir + '/' + lambda_server_zip_file_name)
+    if os.path.exists(os.path.join(parent_dir, lambda_server_directory_name)):
+        shutil.rmtree(os.path.join(parent_dir, lambda_server_directory_name))
+    os.makedirs(os.path.join(parent_dir, lambda_server_directory_name))
+    if os.path.exists(os.path.join(parent_dir, lambda_server_zip_file_name)):
+        os.remove(os.path.join(parent_dir, lambda_server_zip_file_name))
 
     # Copying files
     with open(os.path.join(parent_dir, 'handler_template.py'), 'r') as handler_template_file:
@@ -254,6 +257,7 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sand
         "rds_password = \'" + rds_password + "\'\n" + \
         "requester_key_gt = \'" + requester_key_gt + "\'\n" + \
         "num_hits = " + str(num_hits) + "\n" + \
+        "num_assignments = " + str(num_assignments) + "\n" + \
         "is_sandbox = " + str(is_sandbox) + "\n" + \
         'task_description = ' + task_description)
     with open(os.path.join(parent_dir, lambda_server_directory_name, 'handler.py'), 'w') as handler_file:
@@ -340,8 +344,8 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sand
 
     # Clean up if needed
     if should_clean_up_after_upload:
-        shutil.rmtree(parent_dir + '/' + lambda_server_directory_name)
-        os.remove(parent_dir + '/' + lambda_server_zip_file_name)
+        shutil.rmtree(os.path.join(parent_dir, lambda_server_directory_name))
+        os.remove(os.path.join(parent_dir, lambda_server_zip_file_name))
 
     # Check API Gateway existence.
     # If doesn't exist, create the APIs, point them to Lambda function, and set correct configurations
@@ -507,7 +511,7 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_san
     hit_type_id = response['HITTypeId']
     return hit_type_id
 
-def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox):
+def create_hit_with_hit_type(page_url, hit_type_id, num_assignments, is_sandbox):
     page_url = page_url.replace('&', '&amp;')
 
     question_data_struture = '''<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
@@ -529,7 +533,7 @@ def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox):
     # Create the HIT
     response = client.create_hit_with_hit_type(
         HITTypeId=hit_type_id,
-        MaxAssignments=1,
+        MaxAssignments=num_assignments,
         LifetimeInSeconds=31536000,
         Question=question_data_struture,
         # AssignmentReviewPolicy={
@@ -572,18 +576,6 @@ def create_hit_with_hit_type(page_url, hit_type_id, is_sandbox):
         # },
     )
 
-    # response = client.create_hit(
-    #     MaxAssignments = 1,
-    #     LifetimeInSeconds = 31536000,
-    #     AssignmentDurationInSeconds = 1800,
-    #     Reward = str(hit_reward),
-    #     Title = hit_title,
-    #     Keywords = hit_keywords,
-    #     Description = hit_description,
-    #     Question = question_data_struture,
-    #     #QualificationRequirements = localRequirements
-    # )
-
     # The response included several fields that will be helpful later
     hit_type_id = response['HIT']['HITTypeId']
     hit_id = response['HIT']['HITId']
@@ -606,25 +598,26 @@ def setup_all_dependencies(lambda_server_directory_name):
 
     # Set up all other dependencies
     if has_anaconda:
-        call(("pip install --target="+parent_dir+'/'+lambda_server_directory_name+" -r "+parent_dir+"/lambda_requirements.txt").split(" "), stdout=devnull, stderr=devnull)
+        call(("pip install --target="+os.path.join(parent_dir, lambda_server_directory_name)+" -r "+os.path.join(parent_dir, "lambda_requirements.txt")).split(" "), stdout=devnull, stderr=devnull)
     else:
-        shutil.rmtree("./venv", ignore_errors=True)
+        shutil.rmtree(os.path.join(parent_dir, "venv"), ignore_errors=True)
         call("pip install virtualenv".split(" "), stdout=devnull, stderr=devnull)
-        call("virtualenv -p python2 venv".split(" "), stdout=devnull, stderr=devnull)
-        call(("venv/bin/pip install --target="+parent_dir+'/'+lambda_server_directory_name+" -r "+parent_dir+"/lambda_requirements.txt").split(" "), stdout=devnull, stderr=devnull)
-        shutil.rmtree("./venv")
+        call(("virtualenv -p python2 "+os.path.join(parent_dir, "venv")).split(" "), stdout=devnull, stderr=devnull)
+        call((os.path.join(parent_dir, 'venv', 'bin', 'pip')+" install --target="+os.path.join(parent_dir, lambda_server_directory_name)+" -r "+os.path.join(parent_dir, "lambda_requirements.txt")).split(" "), stdout=devnull, stderr=devnull)
+        shutil.rmtree(os.path.join(parent_dir, "venv"), ignore_errors=True)
 
     # Set up psycopg2
-    call("git clone https://github.com/jkehler/awslambda-psycopg2.git".split(" "), stdout=devnull, stderr=devnull)
-    shutil.copytree("./awslambda-psycopg2/with_ssl_support/psycopg2", parent_dir+'/'+lambda_server_directory_name+"/psycopg2")
-    shutil.rmtree("./awslambda-psycopg2")
+    shutil.rmtree(os.path.join(parent_dir, 'awslambda-psycopg2'), ignore_errors=True)
+    call(("git clone https://github.com/jkehler/awslambda-psycopg2.git " + os.path.join(parent_dir, "awslambda-psycopg2")).split(" "), stdout=devnull, stderr=devnull)
+    shutil.copytree(os.path.join(parent_dir, 'awslambda-psycopg2', 'with_ssl_support', 'psycopg2'), os.path.join(parent_dir, lambda_server_directory_name, "psycopg2"))
+    shutil.rmtree(os.path.join(parent_dir, 'awslambda-psycopg2'))
 
 def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, files_to_copy=None, verbose=False):
     setup_all_dependencies(lambda_server_directory_name)
     parent_dir = os.path.dirname(os.path.abspath(__file__))
 
-    src = parent_dir + '/' + lambda_server_directory_name
-    dst = parent_dir + '/' + lambda_server_zip_file_name
+    src = os.path.join(parent_dir, lambda_server_directory_name)
+    dst = os.path.join(parent_dir, lambda_server_zip_file_name)
 
     if files_to_copy:
         for file_path in files_to_copy:
@@ -646,13 +639,13 @@ def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, f
     if verbose:
         print("Done!")
 
-def setup_aws(task_description, num_hits, is_sandbox):
+def setup_aws(task_description, num_hits, num_assignments, is_sandbox):
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
     if not is_sandbox:
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
     requester_key_gt = get_requester_key()
     rds_host = setup_rds()
-    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, requester_key_gt)
+    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, num_assignments, requester_key_gt)
 
     return html_api_endpoint_url, json_api_endpoint_url, requester_key_gt
 

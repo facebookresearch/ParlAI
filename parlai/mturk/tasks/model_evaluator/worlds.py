@@ -16,7 +16,7 @@ class ModelEvaluatorWorld(World):
     def __init__(self, opt, model_agent, task_opt, mturk_agent):
         self.task_world = create_task(task_opt, model_agent)
         self.mturk_agent = mturk_agent
-        self.episodeDone = False
+        self.episodeDone = False    
 
     def parley(self):
         self.task_world.parley()

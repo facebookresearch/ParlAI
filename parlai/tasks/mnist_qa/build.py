@@ -12,7 +12,6 @@ import os
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'mnist')
-    print(dpath)
 
     if not build_data.built(dpath):
         print('[building data: ' + dpath + ']')

@@ -251,7 +251,8 @@ class DialogPartnerWorld(World):
                 if hasattr(self.agents[0], 'epoch_done') else False)
 
     def report(self):
-        return self.agents[0].report()
+        if hasattr(self.agents[0], 'report'):
+            return self.agents[0].report()
 
     def __len__(self):
         return len(self.agents[0])
@@ -711,6 +712,9 @@ def create_task(opt, user_agents):
     see ``parlai/tasks/tasks.py`` and see ``parlai/tasks/task_list.py``
     for list of tasks.
     """
+    if not opt.get('task'):
+        raise RuntimeError('No task specified. Please select a task with ' +
+                           '--task {task_name}.')
     if type(user_agents) != list:
         user_agents = [user_agents]
 

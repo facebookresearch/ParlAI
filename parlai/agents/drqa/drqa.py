@@ -21,7 +21,7 @@ try:
 except ModuleNotFoundError:
     raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
 
-import os 
+import os
 import numpy as np
 import logging
 import copy
@@ -49,17 +49,17 @@ class SimpleDictionaryAgent(DictionaryAgent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        DictionaryAgent.add_cmdline_args(argparser)
-        argparser.add_arg(
+        group = DictionaryAgent.add_cmdline_args(argparser)
+        group.add_argument(
             '--pretrained_words', type='bool', default=True,
             help='Use only words found in provided embedding_file'
         )
 
     def __init__(self, *args, **kwargs):
-        super(SimpleDictionaryAgent, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Index words in embedding file
-        if self.opt['pretrained_words'] and 'embedding_file' in self.opt:
+        if self.opt['pretrained_words'] and self.opt.get('embedding_file'):
             print('[ Indexing words with embeddings... ]')
             self.embedding_words = set()
             with open(self.opt['embedding_file']) as f:
@@ -104,16 +104,19 @@ class DrqaAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         config.add_cmdline_args(argparser)
-        SimpleDictionaryAgent.add_cmdline_args(argparser)
+        DrqaAgent.dictionary_class().add_cmdline_args(argparser)
 
     @staticmethod
     def dictionary_class():
-        return "parlai.agents.drqa.drqa:SimpleDictionaryAgent"
+        return SimpleDictionaryAgent
 
     def __init__(self, opt, shared=None):
+        if opt['numthreads'] >1:
+            raise RuntimeError("numthreads > 1 not supported for this model.")
+
         # Load dict.
         if not shared:
-            word_dict = SimpleDictionaryAgent(opt)
+            word_dict = DrqaAgent.dictionary_class()(opt)
         # All agents keep track of the episode (for multiple questions)
         self.episode_done = True
 
@@ -128,11 +131,11 @@ class DrqaAgent(Agent):
         self.word_dict = word_dict
         self.opt = copy.deepcopy(opt)
         config.set_defaults(self.opt)
-        
-        if 'model_file' in self.opt and os.path.isfile(opt['model_file']):
+
+        if self.opt.get('model_file') and os.path.isfile(opt['model_file']):
             self._init_from_saved(opt['model_file'])
         else:
-            if 'pretrained_model' in self.opt:
+            if self.opt.get('pretrained_model'):
                 self._init_from_saved(opt['pretrained_model'])
             else:
                 self._init_from_scratch()
@@ -153,7 +156,7 @@ class DrqaAgent(Agent):
         self.model.set_embeddings()
 
     def _init_from_saved(self, fname):
-        print('[ Loading model %s ]' % fname) 
+        print('[ Loading model %s ]' % fname)
         saved_params = torch.load(fname,
             map_location=lambda storage, loc: storage
         )
@@ -299,4 +302,3 @@ class DrqaAgent(Agent):
             '[train] updates = %d | train loss = %.2f | exs = %d' %
             (self.model.updates, self.model.train_loss.avg, self.n_examples)
             )
-

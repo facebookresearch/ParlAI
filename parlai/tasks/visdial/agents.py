@@ -18,10 +18,13 @@ def _path(opt):
     dt = opt['datatype'].split(':')[0]
 
     if dt == 'train':
-        suffix = 'train'
+        suffix = 'train_train'
         img_suffix = os.path.join('train2014', 'COCO_train2014_')
     elif dt == 'valid':
-        suffix = 'val'
+        suffix = 'train_valid'
+        img_suffix = os.path.join('train2014', 'COCO_train2014_')
+    elif dt == 'test':
+        suffix = 'val_test'
         img_suffix = os.path.join('val2014', 'COCO_val2014_')
     else:
         raise RuntimeError('Not valid datatype.')
