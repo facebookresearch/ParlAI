@@ -15,13 +15,13 @@ def _process(fname, fout):
     # main article
     s = '1 ' + lines[2]
     # add question
-    s = s + lines[4]
+    s = s + ' ' + lines[4]
     # add answer
     s = s + '\t' + lines[6]
     # add candidates (and strip them of the real names)
     for i in range(8, len(lines)):
         lines[i] = lines[i].split(':')[0]
-    s = s + '\t\t' + '|'.join(lines[8:-1])
+    s = s + '\t\t' + '|'.join(lines[8:])
     fout.write(s + '\n\n')
 
 
