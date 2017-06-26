@@ -11,19 +11,25 @@ import subprocess
 import zmq
 
 
-class RemoteAgent(Agent):
+class RemoteAgentAgent(Agent):
     """Agent which connects over ZMQ to a paired agent. The other agent is
     launched using the command line options set via `add_cmdline_args`."""
 
     @staticmethod
     def add_cmdline_args(argparser):
-        argparser.add_arg(
+        argparser.add_argument(
             '--port', default=5555,
             help='first port to connect to for remote agents')
-        argparser.add_arg(
-            '--remote-cmd', required=True,
-            help='command to launch paired agent')
-        argparser.add_arg(
+        argparser.add_argument(
+            '--remote-address', default='localhost',
+            help='address to connect to')
+        argparser.add_argument(
+            '--remote-host', action='store_true',
+            help='whether or not this connection is the host or the client')
+        argparser.add_argument(
+            '--remote-cmd',
+            help='command to launch paired agent, if applicable')
+        argparser.add_argument(
             '--remote-args',
             help='optional arguments to pass to paired agent')
 
@@ -35,41 +41,55 @@ class RemoteAgent(Agent):
         subprocess.Popen for each thread.)
         """
         if shared and 'port' in shared:
+            # for multithreading
             self.port = shared['port']
+            self.address = shared['address']
             self.opt = copy.deepcopy(shared['opt'])
         else:
+            self.opt = copy.deepcopy(opt)
             if 'port' in opt:
                 self.port = opt['port']
+                self.address = opt['remote_address']
+                self.socket_type = zmq.REP if opt['remote_host'] else zmq.REQ
             else:
                 raise RuntimeError('You need to run RemoteAgent.' +
                                    'add_cmdline_args(argparser) before ' +
                                    'calling this class to set up options.')
-            self.process = subprocess.Popen(
-                '{cmd} {port} {numthreads} {args}'.format(
-                    cmd=opt['remote_cmd'], port=opt['port'],
-                    numthreads=opt['numthreads'],
-                    args=opt.get('remote_args', '')
-                ).split()
-            )
-            self.opt = copy.deepcopy(opt)
+            if opt.get('remote_cmd'):
+                # if available, command to launch partner instance, passing on
+                # some shared parameters from ParlAI
+                # useful especially if "remote" agent is running locally, e.g.
+                # in a different language than python
+                self.process = subprocess.Popen(
+                    '{cmd} {port} {numthreads} {args}'.format(
+                        cmd=opt['remote_cmd'], port=opt['port'],
+                        numthreads=opt['numthreads'],
+                        args=opt.get('remote_args', '')
+                    ).split()
+                )
         self.connect()
+        super().__init__(opt, shared)
 
     def connect(self):
         """Connect to ZMQ socket as client. Requires package zmq."""
         context = zmq.Context()
-        self.socket = context.socket(zmq.REQ)
+        self.socket = context.socket(self.socket_type)
         self.socket.setsockopt(zmq.LINGER, 1)
-        self.socket.connect('tcp://localhost:{0}'.format(self.port))
-        print('python thread connected to ' +
-              'tcp://localhost:{0}'.format(self.port))
+        host = 'tcp://{}:{}'.format(self.address, self.port)
+        if self.socket_type == zmq.REP:
+            self.socket.bind(host)
+        else:
+            self.socket.connect(host)
+        print('python thread connected to ' + host)
 
     def act(self):
         """Send message to paired agent listening over zmq."""
-        if 'image' in self.observation:
-            # can't json serialize images
-            self.observation.pop('image', None)
-        text = json.dumps(self.observation)
-        self.socket.send_unicode(text)
+        if self.observation is not None:
+            if 'image' in self.observation:
+                # can't json serialize images
+                self.observation.pop('image', None)
+            text = json.dumps(self.observation)
+            self.socket.send_unicode(text)
         reply = self.socket.recv_unicode()
         return json.loads(reply)
 
@@ -105,7 +125,7 @@ class RemoteAgent(Agent):
                 self.process.kill()
 
 
-class ParsedRemoteAgent(RemoteAgent):
+class ParsedRemoteAgent(RemoteAgentAgent):
     """Same as the regular remote agent, except that this agent converts all
     text into vectors using its dictionary before sending them.
     """

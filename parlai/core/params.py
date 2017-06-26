@@ -110,7 +110,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def add_model_args(self, args=None):
         self.add_argument(
-            '-m', '--model', default='repeat_label',
+            '-m', '--model', default=None,
             help='the model class name, should match parlai/agents/<model>')
         self.add_argument(
             '-mf', '--model-file', default=None,

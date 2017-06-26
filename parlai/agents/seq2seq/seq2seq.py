@@ -42,19 +42,18 @@ class Seq2seqAgent(Agent):
             print('[ Using CUDA ]')
             torch.cuda.set_device(opt['gpu'])
         if not shared:
+            # don't enter this loop for shared (ie batch) instantiations
             self.dict = DictionaryAgent(opt)
             self.id = 'Seq2Seq'
             hsz = opt['hiddensize']
             self.EOS = self.dict.eos_token
+            self.observation = {'text': self.EOS, episode_done = True}
             self.EOS_TENSOR = torch.LongTensor(self.dict.parse(self.EOS))
             self.hidden_size = hsz
             self.num_layers = opt['numlayers']
             self.learning_rate = opt['learningrate']
             self.use_cuda = opt.get('cuda', False)
             self.longest_label = 2  # TODO: 1
-            if 'babi' in opt['task']:
-                self.babi_mode = True
-                self.dirs = set(['n', 's', 'e', 'w'])
 
             self.criterion = nn.NLLLoss()
             self.lt = nn.Embedding(len(self.dict), hsz, padding_idx=0,
@@ -215,11 +214,6 @@ class Seq2seqAgent(Agent):
                         total_done += 1
                     else:
                         output_lines[i].append(token)
-                        if self.babi_mode and token not in self.dirs:
-                            # for babi, only output one token except when
-                            # giving directions
-                            done[i] = True
-                            total_done += 1
         if random.random() < 0.1:
             print('prediction:', ' '.join(output_lines[0]))
         return output_lines
