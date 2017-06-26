@@ -615,9 +615,9 @@ class BatchWorld(World):
                     w.execute(batch_actions[i])
             # All agents (might) observe the results.
             for other_index in range(num_agents):
-                batch_observations[other_index] = (
-                    self.batch_observe(other_index, batch_act))
-                    
+                obs = self.batch_observe(other_index, batch_act))
+                if obs is not None:
+                    batch_observations[other_index] = obs
 
     def display(self):
         s = ("[--batchsize " + str(len(self.worlds)) + "--]\n")
