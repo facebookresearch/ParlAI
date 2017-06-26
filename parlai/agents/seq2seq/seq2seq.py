@@ -43,10 +43,12 @@ class Seq2seqAgent(Agent):
             print('[ Using CUDA ]')
             torch.cuda.set_device(opt['gpu'])
         if not shared:
+            # don't enter this loop for shared (ie batch) instantiations
             self.dict = DictionaryAgent(opt)
             self.id = 'Seq2Seq'
             hsz = opt['hiddensize']
             self.EOS = self.dict.eos_token
+            self.observation = {'text': self.EOS, episode_done = True}
             self.EOS_TENSOR = torch.LongTensor(self.dict.parse(self.EOS))
             self.hidden_size = hsz
             self.num_layers = opt['numlayers']

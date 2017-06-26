@@ -279,8 +279,11 @@ def create_agent(opt):
     (i.e. the path followed by the class name) or else just ``ir_baseline`` which
     assumes the path above, and a class name suffixed with 'Agent'.
     """
-    model_class = get_agent_module(opt['model'])
-    return model_class(opt)
+    if opt.get('model'):
+        model_class = get_agent_module(opt['model'])
+        return model_class(opt)
+    else:
+        raise RuntimeError('Need to set `model` argument to use create_agent.')
 
 # Helper functions to create agent/agents given shared parameters
 # returned from agent.share(). Useful for parallelism, sharing params, etc.

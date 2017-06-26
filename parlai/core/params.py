@@ -142,7 +142,7 @@ class ParlaiParser(argparse.ArgumentParser):
     def add_model_args(self, args=None):
         model_args = self.add_argument_group('ParlAI Model Arguments')
         model_args.add_argument(
-            '-m', '--model', default='repeat_label',
+            '-m', '--model', default=None,
             help='the model class name, should match parlai/agents/<model>')
         model_args.add_argument(
             '-mf', '--model-file', default=None,
