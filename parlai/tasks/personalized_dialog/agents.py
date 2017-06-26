@@ -43,6 +43,7 @@ class KBTeacher(FbDialogTeacher):
         super().__init__(opt, shared)
 
 
+# python <script.py> -t personalized_dialog:FullTask:<task_id>
 # Single full task.
 class FullTaskTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
@@ -52,6 +53,7 @@ class FullTaskTeacher(FbDialogTeacher):
         super().__init__(opt, shared)
 
 
+# python <script.py> -t personalized_dialog:SmallTask:<task_id>
 # Single small task.
 class SmallTaskTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
@@ -61,6 +63,7 @@ class SmallTaskTeacher(FbDialogTeacher):
         super().__init__(opt, shared)
 
 
+# python <script.py> -t personalized_dialog:AllFull
 # By default train on all tasks at once.
 class AllFullTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
@@ -72,6 +75,7 @@ class AllFullTeacher(MultiTaskTeacher):
         super().__init__(opt, shared)
 
 
+# python <script.py> -t personalized_dialog:AllSmall
 # By default train on all tasks at once.
 class AllSmallTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
