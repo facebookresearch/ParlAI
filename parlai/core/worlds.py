@@ -268,7 +268,7 @@ class DialogPartnerWorld(World):
 
 class MultiAgentDialogWorld(World):
     """Basic world where each agent gets a turn in a round-robin fashion,
-    recieving as input the actions of all other agents since that agent last
+    receiving as input the actions of all other agents since that agent last
     acted.
     """
     def __init__(self, opt, agents=None, shared=None):
@@ -292,6 +292,87 @@ class MultiAgentDialogWorld(World):
             for other_agent in self.agents:
                 if other_agent != agent:
                     other_agent.observe(validate(acts[index]))
+
+    def epoch_done(self):
+        done = False
+        for a in self.agents:
+            if a.epoch_done():
+                done = True
+        return done
+
+    def episode_done(self):
+        done = False
+        for a in self.agents:
+            if a.episode_done():
+                done = True
+        return done
+
+    def report(self):
+        return self.agents[0].report()
+
+    def shutdown(self):
+        for a in self.agents:
+            a.shutdown()
+
+
+class ExecutableWorld(World):
+    """A world where messages from agents can be interpreted as _actions_ in the
+    world which result in changes in the environment (are executed). Hence a grounded
+    simulation can be implemented rather than just dialogue between agents.
+    """
+    def __init__(self, opt, agents=None, shared=None):
+        super().__init__(opt)
+        if shared:
+            # Create agents based on shared data.
+            self.agents = create_agents_from_shared(shared['agents'])
+        else:
+            # Add passed in agents directly.
+            self.agents = agents
+            self.acts = [None] * len(agents)
+        super().__init__(opt, agents, shared)
+        self.init_world()
+
+    def init_world(self):
+        """An executable world class should implement this function, otherwise
+        the world still works, but actions do not do anything.
+        """
+        pass
+
+    def gen_observe(self, agent):
+        """ Generate an observation of the world for an agent
+        given the current state of the (executable) world.
+        This is differentiated from a message from another dialogue agent,
+        and hence has the id 'world' in the message.
+        """
+        msg = {}
+        msg['text'] = ''  # By default the world does nothing.
+        msg['id'] = 'world'
+        agent.observe(validate(msg))
+        return msg
+
+    def execute(self, agent, act):
+        # Execute action from agent. We also send an update to all other agents
+        # that can observe the change.
+        if 'text' in act:
+            valid = self.g.parse_exec(agent.id, act['text'])
+            if not valid:
+                agent.observe({'id':'world', 'text':'invalid action'})
+        for index, agent in enumerate(self.agents):
+            acts[index] = agent.act()
+            for other_agent in self.agents:
+                if other_agent != agent:
+                    other_agent.observe(validate(acts[index]))
+
+
+
+    def parley(self):
+        """For each agent: observe, act, execute action in world
+        """
+        acts, agents = self.acts, self.agents
+        for index, agent in enumerate(agents):
+            acts[index] = agent.act()
+            # execute action in environment
+            self.execute(agent, acts[index])
 
     def epoch_done(self):
         done = False
@@ -481,16 +562,6 @@ class BatchWorld(World):
         if self.epoch_done():
             raise StopIteration()
 
-    def batch_observe(self, index, batch_actions):
-        batch_observations = []
-        for i, w in enumerate(self.worlds):
-            agents = w.get_agents()
-            observation = agents[index].observe(validate(batch_actions[i]))
-            if observation is None:
-                raise ValueError('Agents should return what they observed.')
-            batch_observations.append(observation)
-        return batch_observations
-
     def batch_act(self, index, batch_observation):
         # Given batch observation, do update for agents[index].
         # Call update on agent
@@ -512,6 +583,16 @@ class BatchWorld(World):
                 batch_actions.append(acts[index])
         return batch_actions
 
+    def batch_observe(self, index, batch_actions, index_acting):
+        batch_observations = []
+        for i, w in enumerate(self.worlds):
+            agents = w.get_agents()
+            observation = agents[index].observe(validate(batch_actions[i]))
+            if observation is None:
+                raise ValueError('Agents should return what they observed.')
+            batch_observations.append(observation)
+        return batch_observations
+
     def parley(self):
         # Collect batch together for each agent, and do update.
         # Assumes DialogPartnerWorld, MultiAgentWorld, or MultiWorlds of them.
@@ -523,11 +604,17 @@ class BatchWorld(World):
                 w.parley_init()
 
         for index in range(num_agents):
+            # The agent acts.
             batch_act = self.batch_act(index, batch_observations[index])
+            # We possibly execute this action in the world.
+            for i, w in enumerate(self.worlds):
+                if hasattr(w, 'execute'):
+                    w.execute(batch_actions[i])
+            # All agents observe the results.
             for other_index in range(num_agents):
-                if index != other_index:
-                    batch_observations[other_index] = (
-                        self.batch_observe(other_index, batch_act))
+                batch_observations[other_index] = (
+                    self.batch_observe(other_index, batch_act, index))
+                    
 
     def display(self):
         s = ("[--batchsize " + str(len(self.worlds)) + "--]\n")
