@@ -40,17 +40,16 @@ class RemoteAgentAgent(Agent):
         the multithreading effectively in their environment. (We don't run
         subprocess.Popen for each thread.)
         """
+
+        self.opt = copy.deepcopy(opt)
+        self.address = opt['remote_address']
+        self.socket_type = zmq.REP if opt['remote_host'] else zmq.REQ
         if shared and 'port' in shared:
-            # for multithreading
+            # for multithreading, use specified port
             self.port = shared['port']
-            self.address = shared['address']
-            self.opt = copy.deepcopy(shared['opt'])
         else:
-            self.opt = copy.deepcopy(opt)
             if 'port' in opt:
                 self.port = opt['port']
-                self.address = opt['remote_address']
-                self.socket_type = zmq.REP if opt['remote_host'] else zmq.REQ
             else:
                 raise RuntimeError('You need to run RemoteAgent.' +
                                    'add_cmdline_args(argparser) before ' +
