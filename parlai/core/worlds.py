@@ -562,6 +562,16 @@ class BatchWorld(World):
         if self.epoch_done():
             raise StopIteration()
 
+    def batch_observe(self, index, batch_actions, index_acting):
+        batch_observations = []
+        for i, w in enumerate(self.worlds):
+            agents = w.get_agents()
+            observation = agents[index].observe(validate(batch_actions[i]))
+            if observation is None:
+                raise ValueError('Agents should return what they observed.')
+            batch_observations.append(observation)
+        return batch_observations
+
     def batch_act(self, index, batch_observation):
         # Given batch observation, do update for agents[index].
         # Call update on agent
@@ -582,16 +592,6 @@ class BatchWorld(World):
                 acts[index] = agents[index].act()
                 batch_actions.append(acts[index])
         return batch_actions
-
-    def batch_observe(self, index, batch_actions, index_acting):
-        batch_observations = []
-        for i, w in enumerate(self.worlds):
-            agents = w.get_agents()
-            observation = agents[index].observe(validate(batch_actions[i]))
-            if observation is None:
-                raise ValueError('Agents should return what they observed.')
-            batch_observations.append(observation)
-        return batch_observations
 
     def parley(self):
         # Collect batch together for each agent, and do update.
