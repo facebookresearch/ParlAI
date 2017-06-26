@@ -562,7 +562,7 @@ class BatchWorld(World):
         if self.epoch_done():
             raise StopIteration()
 
-    def batch_observe(self, index, batch_actions, index_acting)
+    def batch_observe(self, index, batch_actions, index_acting):
         batch_observations = []
         for i, w in enumerate(self.worlds):
             agents = w.get_agents()
@@ -617,7 +617,7 @@ class BatchWorld(World):
                     w.execute(batch_actions[i])
             # All agents (might) observe the results.
             for other_index in range(num_agents):
-                obs = self.batch_observe(other_index, batch_act, index))
+                obs = self.batch_observe(other_index, batch_act, index)
                 if obs is not None:
                     batch_observations[other_index] = obs
 
