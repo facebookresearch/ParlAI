@@ -307,6 +307,9 @@ def create_task_agent_from_taskname(opt):
     which essentially performs ``from parlai.tasks.babi import Task1kTeacher``
     with the parameter ``1`` in ``opt['task']`` to be used by the class ``Task1kTeacher``.
     """
+    if not opt.get('task'):
+        raise RuntimeError('No task specified. Please select a task with ' +
+                           '--task {task_name}.')
     if ',' not in opt['task']:
         # Single task
         sp = opt['task'].strip().split(':')

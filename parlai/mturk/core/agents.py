@@ -28,7 +28,6 @@ try:
 except ModuleNotFoundError:
     raise SystemExit("Please install sqlite3 by running: pip install sqlite3")
 
-local_db_file_path_template = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + '/tmp/parlai_mturk_<run_id>.db'
 polling_interval = 1 # in seconds
 create_hit_type_lock = threading.Lock()
 local_db_lock = threading.Lock()
@@ -42,7 +41,6 @@ class MTurkManager():
         self.db_last_message_id = 0
         self.db_thread = None
         self.db_thread_stop_event = None
-        self.local_db_file_path = None
         self.run_id = None
         self.mturk_agent_ids = None
         self.all_agent_ids = None
@@ -68,15 +66,8 @@ class MTurkManager():
 
         self.task_group_id = str(opt['task']) + '_' + str(self.run_id)
 
-        # self.connection = sqlite3.connect(local_db_file_name)
-
-        self.local_db_file_path = local_db_file_path_template.replace('<run_id>', self.run_id)
-
-        if not os.path.exists(os.path.dirname(self.local_db_file_path)):
-            os.makedirs(os.path.dirname(self.local_db_file_path))
-
-        # Create an engine
-        engine = create_engine('sqlite:///'+self.local_db_file_path,
+        # Create an engine connected to the in-memory database
+        engine = create_engine('sqlite://',
                                 connect_args={'check_same_thread':False},
                                 poolclass=StaticPool)
          
@@ -215,8 +206,6 @@ class MTurkManager():
 
     def shutdown(self):
         self.db_thread_stop_event.set()
-        if os.path.exists(self.local_db_file_path):
-            os.remove(self.local_db_file_path)
 
 
 class MTurkAgent(Agent):

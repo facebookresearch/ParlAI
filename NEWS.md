@@ -1,5 +1,11 @@
 <h2>News</h2>
 
+2017-06-21: [MTurk now supports multiple assignments per HIT](https://github.com/facebookresearch/ParlAI/pull/156)
+
+2017-06-20: [updated MTurk tutorial to reflect new design](http://parl.ai/static/docs/mturk.html)
+
+2017-06-20: [MTurk now uses general world and agent classes](https://github.com/facebookresearch/ParlAI/pull/128)
+
 2017-06-16: [added Creating a New Task tutorial](http://parl.ai/static/docs/task_tutorial.html)
 
 2017-05-31: [added Seq2Seq model](https://github.com/facebookresearch/ParlAI/pull/96)
