@@ -48,7 +48,7 @@ class Seq2seqAgent(Agent):
             self.id = 'Seq2Seq'
             hsz = opt['hiddensize']
             self.EOS = self.dict.eos_token
-            self.observation = {'text': self.EOS, episode_done = True}
+            self.observation = {'text': self.EOS, 'episode_done': True}
             self.EOS_TENSOR = torch.LongTensor(self.dict.parse(self.EOS))
             self.hidden_size = hsz
             self.num_layers = opt['numlayers']

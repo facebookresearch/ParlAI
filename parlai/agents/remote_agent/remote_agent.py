@@ -12,6 +12,15 @@ import subprocess
 import zmq
 
 
+def sanitize(obs):
+    if 'image' in obs and type(obs['image']) != str:
+        # can't json serialize images, unless they're in ascii format
+        obs.pop('image', None)
+    for k, v in obs.items():
+        if type(v) == set:
+            obs[k] = list(v)
+    return obs
+
 class RemoteAgentAgent(Agent):
     """Agent which connects over ZMQ to a paired agent. The other agent is
     launched using the command line options set via `add_cmdline_args`."""
@@ -23,7 +32,8 @@ class RemoteAgentAgent(Agent):
             help='first port to connect to for remote agents')
         argparser.add_argument(
             '--remote-address', default='localhost',
-            help='address to connect to')
+            help='address to connect to, defaults to localhost for ' +
+                 'connections, overriden with `*` if remote-host is set')
         argparser.add_argument(
             '--remote-host', action='store_true',
             help='whether or not this connection is the host or the client')
@@ -41,9 +51,10 @@ class RemoteAgentAgent(Agent):
         the multithreading effectively in their environment. (We don't run
         subprocess.Popen for each thread.)
         """
-
         self.opt = copy.deepcopy(opt)
         self.address = opt['remote_address']
+        if opt.get('remote_host') and self.address == 'localhost':
+            self.address = '*'
         self.socket_type = zmq.REP if opt['remote_host'] else zmq.REQ
         if shared and 'port' in shared:
             # for multithreading, use specified port
@@ -71,7 +82,7 @@ class RemoteAgentAgent(Agent):
         super().__init__(opt, shared)
 
     def connect(self):
-        """Connect to ZMQ socket as client. Requires package zmq."""
+        """Bind or connect to ZMQ socket. Requires package zmq."""
         context = zmq.Context()
         self.socket = context.socket(self.socket_type)
         self.socket.setsockopt(zmq.LINGER, 1)
@@ -85,10 +96,7 @@ class RemoteAgentAgent(Agent):
     def act(self):
         """Send message to paired agent listening over zmq."""
         if self.observation is not None:
-            if 'image' in self.observation:
-                # can't json serialize images
-                self.observation.pop('image', None)
-            text = json.dumps(self.observation)
+            text = json.dumps(sanitize(self.observation))
             self.socket.send_unicode(text)
         reply = self.socket.recv_unicode()
         return json.loads(reply)
