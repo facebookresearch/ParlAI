@@ -541,9 +541,9 @@ class BatchWorld(World):
             else:
                 if index == index_acting: return None # don't observe yourself talking
                 observation = validate(batch_actions[i])
-                if observation is None:
-                    raise ValueError('Agents should return what they observed.')
             observation = agents[index].observe(observation)
+            if observation is None:
+                raise ValueError('Agents should return what they observed.')
             batch_observations.append(observation)
         return batch_observations
 
