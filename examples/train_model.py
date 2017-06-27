@@ -33,14 +33,17 @@ import importlib
 import math
 import os
 
-def run_eval(agent, opt, datatype, still_training=False):
+def run_eval(agent, opt, datatype, still_training=False, max_exs=-1):
     ''' Eval on validation/test data. '''
     print('[ running eval: ' + datatype + ' ]')
     opt['datatype'] = datatype
     if opt.get('evaltask'):
         opt['task'] = opt['evaltask']
+
     valid_world = create_task(opt, agent)
-    for i in range(len(valid_world)):
+    num_exs = max_exs if max_exs > 0 else len(valid_world)
+    num_exs = math.ceil(num_exs / opt['batchsize'])
+    for i in range(num_exs):
         valid_world.parley()
         if i == 1 and opt['display_examples']:
             print(valid_world.display() + '\n~~')
@@ -49,16 +52,16 @@ def run_eval(agent, opt, datatype, still_training=False):
             break
     valid_world.shutdown()
     valid_report = valid_world.report()
+
     metrics = datatype + ':' + str(valid_report)
     print(metrics)
     if still_training:
         return valid_report
-    else:
-        if opt['model_file']:
-            # Write out metrics
-            f = open(opt['model_file'] + '.' + datatype, 'a+')
-            f.write(metrics + '\n')
-            f.close()
+    elif opt['model_file']:
+        # Write out metrics
+        f = open(opt['model_file'] + '.' + datatype, 'a+')
+        f.write(metrics + '\n')
+        f.close()
 
 def main():
     # Get command line arguments
@@ -69,13 +72,17 @@ def main():
                               'one used for training if not set)'))
     train.add_argument('-d', '--display-examples',
                         type='bool', default=False)
-    train.add_argument('-e', '--num-epochs', type=int, default=1)
+    train.add_argument('-e', '--num-epochs', type=int, default=-1)
     train.add_argument('-ttim', '--max-train-time',
-                        type=float, default=float('inf'))
+                        type=float, default=-1)
     train.add_argument('-ltim', '--log-every-n-secs',
-                        type=float, default=1)
+                        type=float, default=2)
     train.add_argument('-vtim', '--validation-every-n-secs',
-                        type=float, default=0)
+                        type=float, default=-1)
+    train.add_argument('-vme', '--validation-max-exs',
+                        type=int, default=-1,
+                        help='max examples to use during validation (default ' +
+                             '-1 uses all)')
     train.add_argument('-vp', '--validation-patience',
                         type=int, default=5,
                         help=('number of iterations of validation where result '
@@ -102,31 +109,56 @@ def main():
     best_accuracy = 0
     impatience = 0
     saved = False
-    for i in range(num_parleys):
+    while True:
         world.parley()
         parleys = parleys + 1
-        if train_time.time() > opt['max_train_time']:
-            print('[ max_train_time elapsed: ' + str(train_time.time()) + ' ]')
+        if opt['num_epochs'] > 0 and parleys > num_parleys:
+            print('[ max epochs completed ]')
             break
-        if log_time.time() > opt['log_every_n_secs']:
+        if opt['max_train_time'] > 0 and train_time.time() > opt['max_train_time']:
+            print('[ max_train_time elapsed: {} ]'.format(train_time.time()))
+            break
+        if opt['log_every_n_secs'] > 0 and log_time.time() > opt['log_every_n_secs']:
             if opt['display_examples']:
                 print(world.display() + '\n~~')
-            parleys_per_sec =  train_time.time() / parleys
-            time_left = (num_parleys - parleys) * parleys_per_sec
-            log = ('[ time:' + str(math.floor(train_time.time()))
-                  + 's parleys:' + str(parleys)
-                  + ' time_left:'
-                  + str(math.floor(time_left))  + 's ]')
+
+
+            logs = []
+            # time elapsed
+            logs.append('time:{}s'.format(math.floor(train_time.time())))
+            # parlays done
+            logs.append('parleys:{}'.format(parleys))
+
+            # check if we should log amount of time remaining
+            time_left = None
+            if opt['num_epochs'] > 0:
+                parleys_per_sec =  train_time.time() / parleys
+                time_left = (num_parleys - parleys) * parleys_per_sec
+            if opt['max_train_time'] > 0:
+                other_time_left = opt['max_train_time'] - train_time.time()
+                if time_left is not None:
+                    time_left = min(time_left, other_time_left)
+                else:
+                    time_left = other_time_left
+            if time_left is not None:
+                logs.append('time_left:{}s'.format(math.floor(time_left)))
+
+            # join log string
+            log = '[ {} ]'.format(' '.join(logs))
+
+            # add report to log if available
             if hasattr(agent, 'report'):
-                log = log + str(agent.report())
+                log = log + ' ' + str(agent.report())
+                agent.reset_metrics()
             else:
-                log = log + str(world.report())
-                # TODO: world.reset_metrics()
+                log = log + ' ' + str(world.report())
+                world.reset_metrics()
             print(log)
             log_time.reset()
-        if (opt['validation_every_n_secs'] and
-            validate_time.time() > opt['validation_every_n_secs']):
-            valid_report = run_eval(agent, opt, 'valid', True)
+
+        if (opt['validation_every_n_secs'] > 0 and
+                validate_time.time() > opt['validation_every_n_secs']):
+            valid_report = run_eval(agent, opt, 'valid', True, opt['validation_max_exs'])
             if valid_report['accuracy'] > best_accuracy:
                 best_accuracy = valid_report['accuracy']
                 impatience = 0
@@ -139,11 +171,11 @@ def main():
                     break
             else:
                 impatience += 1
-                print('[ did not beat best accuracy: ' + str(best_accuracy) +
-                      ' impatience: ' + str(impatience)  + ' ]')
+                print('[ did not beat best accuracy: {} impatience: {} ]'.format(
+                        round(best_accuracy, 4), impatience))
             validate_time.reset()
-            if impatience >= opt['validation_patience']:
-                print('[ ran out of patience! stopping. ]')
+            if opt['validation_patience'] > 0 and impatience >= opt['validation_patience']:
+                print('[ ran out of patience! stopping training. ]')
                 break
     world.shutdown()
     if not saved:

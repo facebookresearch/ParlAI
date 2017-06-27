@@ -202,6 +202,10 @@ class World(object):
         for a in self.agents:
             a.reset()
 
+    def reset_metrics(self):
+        for a in self.agents:
+            a.reset_metrics()
+
     def synchronize(self):
         """Can be used to synchronize processes."""
         pass
@@ -433,6 +437,10 @@ class MultiWorld(World):
         for w in self.worlds:
             w.reset()
 
+    def reset_metrics(self):
+        for w in self.worlds:
+            w.reset_metrics()
+
 
 def override_opts_in_shared(table, overrides):
     """Looks recursively for ``opt`` dictionaries within shared dict and overrides
@@ -558,6 +566,10 @@ class BatchWorld(World):
     def reset(self):
         for w in self.worlds:
             w.reset()
+
+    def reset_metrics(self):
+        for w in self.worlds:
+            w.reset_metrics()
 
 
 class HogwildProcess(Process):

@@ -76,6 +76,9 @@ class Agent(object):
     def reset(self):
         self.observation = None
 
+    def reset_metrics(self):
+        pass
+
     def share(self):
         """If applicable, share any parameters needed to create a shared version
         of this agent.
@@ -133,7 +136,10 @@ class Teacher(Agent):
 
     def reset(self):
         super().reset()
+        self.reset_metrics()
         self.epochDone = False
+
+    def reset_metrics(self):
         self.metrics.clear()
 
     def share(self):
@@ -241,6 +247,10 @@ class MultiTaskTeacher(Teacher):
     def reset(self):
         for t in self.tasks:
             t.reset()
+
+    def reset_metrics(self):
+        for t in self.tasks:
+            t.reset_metrics()
 
     def share(self):
         shared = {}
