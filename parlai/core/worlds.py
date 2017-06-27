@@ -568,8 +568,7 @@ class BatchWorld(World):
             w.reset()
 
     def reset_metrics(self):
-        for w in self.worlds:
-            w.reset_metrics()
+        self.worlds[0].reset_metrics()
 
 
 class HogwildProcess(Process):
