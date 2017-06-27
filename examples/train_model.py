@@ -41,14 +41,17 @@ def run_eval(agent, opt, datatype, still_training=False, max_exs=-1):
         opt['task'] = opt['evaltask']
 
     valid_world = create_task(opt, agent)
-    num_exs = max_exs if max_exs > 0 else len(valid_world)
-    num_exs = math.ceil(num_exs / opt['batchsize'])
-    for i in range(num_exs):
+    first_run = True
+    for _ in valid_world:
         valid_world.parley()
-        if i == 1 and opt['display_examples']:
+        if first_run and opt['display_examples']:
+            first_run = False
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
-        if valid_world.epoch_done():
+        if valid_world.epoch_done() or (max_exs > 0 and
+                valid_world.report()['total'] > max_exs):
+            # need to check the report for total exs done, since sometimes
+            # when batching some of the batch is empty (for multi-ex episodes)
             break
     valid_world.shutdown()
     valid_report = valid_world.report()
@@ -104,16 +107,15 @@ def main():
     validate_time = Timer()
     log_time = Timer()
     print('[ training... ]')
-    parleys = 0
-    num_parleys = opt['num_epochs'] * int(len(world) / opt['batchsize'])
+    total_exs = 0
+    max_exs = opt['num_epochs'] * len(world)
     best_accuracy = 0
     impatience = 0
     saved = False
     while True:
         world.parley()
-        parleys = parleys + 1
-        if opt['num_epochs'] > 0 and parleys > num_parleys:
-            print('[ max epochs completed ]')
+        if opt['num_epochs'] > 0 and total_exs >= max_exs:
+            print('[ num_epochs completed: {} ]'.format(opt['num_epochs']))
             break
         if opt['max_train_time'] > 0 and train_time.time() > opt['max_train_time']:
             print('[ max_train_time elapsed: {} ]'.format(train_time.time()))
@@ -122,18 +124,25 @@ def main():
             if opt['display_examples']:
                 print(world.display() + '\n~~')
 
-
             logs = []
             # time elapsed
             logs.append('time:{}s'.format(math.floor(train_time.time())))
-            # parlays done
-            logs.append('parleys:{}'.format(parleys))
+
+            # get report and update total examples seen so far
+            if hasattr(agent, 'report'):
+                train_report = agent.report()
+                agent.reset_metrics()
+            else:
+                train_report = world.report()
+                world.reset_metrics()
+            total_exs += train_report['total']
+            logs.append('total_exs:{}'.format(total_exs))
 
             # check if we should log amount of time remaining
             time_left = None
             if opt['num_epochs'] > 0:
-                parleys_per_sec =  train_time.time() / parleys
-                time_left = (num_parleys - parleys) * parleys_per_sec
+                exs_per_sec =  train_time.time() / total_exs
+                time_left = (max_exs - total_exs) * exs_per_sec
             if opt['max_train_time'] > 0:
                 other_time_left = opt['max_train_time'] - train_time.time()
                 if time_left is not None:
@@ -143,16 +152,9 @@ def main():
             if time_left is not None:
                 logs.append('time_left:{}s'.format(math.floor(time_left)))
 
-            # join log string
-            log = '[ {} ]'.format(' '.join(logs))
+            # join log string and add full metrics report to end of log
+            log = '[ {} ] {}'.format(' '.join(logs), train_report)
 
-            # add report to log if available
-            if hasattr(agent, 'report'):
-                log = log + ' ' + str(agent.report())
-                agent.reset_metrics()
-            else:
-                log = log + ' ' + str(world.report())
-                world.reset_metrics()
             print(log)
             log_time.reset()
 
