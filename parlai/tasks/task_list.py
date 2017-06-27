@@ -118,14 +118,14 @@ task_list = [
     {
         "id": "personalized-dialog-full",
         "display_name": "Personalized Dialog Full Set",
-        "task": "personalized-dialog:full",
+        "task": "personalized_dialog:full",
         "tags": [ "all",  "Goal", "Personalization" ],
         "description": "Simulated dataset of restaurant booking focused on personalization based on user profiles. From Joshi et al. '17. Link: https://arxiv.org/abs/1706.07503"
     },
     {
         "id": "personalized-dialog-small",
         "display_name": "Personalized Dialog Small Set",
-        "task": "personalized-dialog:small",
+        "task": "personalized_dialog:small",
         "tags": [ "all",  "Goal", "Personalization" ],
         "description": "Simulated dataset of restaurant booking focused on personalization based on user profiles. From Joshi et al. '17. Link: https://arxiv.org/abs/1706.07503"
     },
