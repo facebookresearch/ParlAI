@@ -75,7 +75,7 @@ def main():
                               'one used for training if not set)'))
     train.add_argument('-d', '--display-examples',
                         type='bool', default=False)
-    train.add_argument('-e', '--num-epochs', type=int, default=-1)
+    train.add_argument('-e', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time',
                         type=float, default=-1)
     train.add_argument('-ltim', '--log-every-n-secs',
@@ -110,7 +110,7 @@ def main():
     parleys = 0
     total_exs = 0
     max_exs = opt['num_epochs'] * len(world)
-    max_parleys = math.floor(max_exs / opt['batchsize'])
+    max_parleys = math.ceil(max_exs / opt['batchsize'])
     best_accuracy = 0
     impatience = 0
     saved = False
