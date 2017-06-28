@@ -8,7 +8,8 @@ Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics
 between processes.
 """
 
-from .thread_utils import SharedTable
+from parlai.core.thread_utils import SharedTable
+from parlai.core.utils import round_sigfigs
 from collections import Counter
 
 import re
@@ -159,11 +160,14 @@ class Metrics(object):
         m = {}
         m['total'] = self.metrics['cnt']
         if self.metrics['cnt'] > 0:
-            m['accuracy'] = self.metrics['correct'] / self.metrics['cnt']
-            m['f1'] = self.metrics['f1'] / self.metrics['cnt']
+            m['accuracy'] = round_sigfigs(
+                self.metrics['correct'] / self.metrics['cnt'], 4)
+            m['f1'] = round_sigfigs(
+                self.metrics['f1'] / self.metrics['cnt'], 4)
             m['hits@k'] = {}
             for k in self.eval_pr:
-                m['hits@k'][k] = self.metrics['hits@' + str(k)] / self.metrics['cnt']
+                m['hits@k'][k] = round_sigfigs(
+                    self.metrics['hits@' + str(k)] / self.metrics['cnt'], 4)
         return m
 
     def clear(self):

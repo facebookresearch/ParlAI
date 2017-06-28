@@ -116,6 +116,20 @@ task_list = [
         "description": "Dataset of dialogs from movie scripts: http://opus.lingfil.uu.se/OpenSubtitles.php. A variant of the dataset used in Vinyals & Le '15, https://arxiv.org/abs/1506.05869."
     },
     {
+        "id": "personalized-dialog-full",
+        "display_name": "Personalized Dialog Full Set",
+        "task": "personalized_dialog:full",
+        "tags": [ "all",  "Goal", "Personalization" ],
+        "description": "Simulated dataset of restaurant booking focused on personalization based on user profiles. From Joshi et al. '17. Link: https://arxiv.org/abs/1706.07503"
+    },
+    {
+        "id": "personalized-dialog-small",
+        "display_name": "Personalized Dialog Small Set",
+        "task": "personalized_dialog:small",
+        "tags": [ "all",  "Goal", "Personalization" ],
+        "description": "Simulated dataset of restaurant booking focused on personalization based on user profiles. From Joshi et al. '17. Link: https://arxiv.org/abs/1706.07503"
+    },
+    {
         "id": "QACNN",
         "display_name": "QA CNN",
         "task": "qacnn",
@@ -172,31 +186,31 @@ task_list = [
         "description": "Open domain QA from Wikipedia dataset from Yang et al. '15. Link: https://www.microsoft.com/en-us/research/publication/wikiqa-a-challenge-dataset-for-open-domain-question-answering/"
     },
     {
-            "id": "VQAv1",
-            "display_name": "VQAv1",
-            "task": "vqa_v1",
-            "tags": [ "all", "Visual" ],
-            "description": "Open-ended question answering about visual content. From Agrawal et al. '15. Link: https://arxiv.org/abs/1505.00468"
+        "id": "VQAv1",
+        "display_name": "VQAv1",
+        "task": "vqa_v1",
+        "tags": [ "all", "Visual" ],
+        "description": "Open-ended question answering about visual content. From Agrawal et al. '15. Link: https://arxiv.org/abs/1505.00468"
     },
     {
-            "id": "VQAv2",
-            "display_name": "VQAv2",
-            "task": "vqa_v2",
-            "tags": [ "all", "Visual" ],
-            "description": "Bigger, more balanced version of the original VQA dataset. From Goyal et al. '16. Link: https://arxiv.org/abs/1612.00837"
+        "id": "VQAv2",
+        "display_name": "VQAv2",
+        "task": "vqa_v2",
+        "tags": [ "all", "Visual" ],
+        "description": "Bigger, more balanced version of the original VQA dataset. From Goyal et al. '16. Link: https://arxiv.org/abs/1612.00837"
     },
     {
-            "id": "VisDial",
-            "display_name": "VisDial",
-            "task": "visdial",
-            "tags": [ "all", "Visual" ],
-            "description": "Task which requires agents to hold a meaningful dialog about visual content. From Das et al. '16. Link: https://arxiv.org/abs/1611.08669"
+        "id": "VisDial",
+        "display_name": "VisDial",
+        "task": "visdial",
+        "tags": [ "all", "Visual" ],
+        "description": "Task which requires agents to hold a meaningful dialog about visual content. From Das et al. '16. Link: https://arxiv.org/abs/1611.08669"
     },
     {
-            "id": "MNIST_QA",
-            "display_name": "MNIST_QA",
-            "task": "mnist_qa",
-            "tags": [ "all", "Visual" ],
-            "description": "Task which requires agents to identify which number they are seeing. From the MNIST dataset."
+        "id": "MNIST_QA",
+        "display_name": "MNIST_QA",
+        "task": "mnist_qa",
+        "tags": [ "all", "Visual" ],
+        "description": "Task which requires agents to identify which number they are seeing. From the MNIST dataset."
     },
 ]

@@ -33,6 +33,8 @@ class RepeatLabelAgent(Agent):
 
     def act(self):
         obs = self.observation
+        if obs is None:
+            return { 'text': "Nothing to repeat yet." }
         reply = {}
         reply['id'] = self.getID()
         if ('labels' in obs and obs['labels'] is not None
