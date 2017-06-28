@@ -23,31 +23,22 @@ class ImageLoader():
 	"""	
 	@staticmethod
 	def add_cmdline_args(argparser):
-		argparser.add_arg('--image-cnntype', type=str, default='resnet152',
-			help='which CNN archtecture to use to extract the image feature'+
-			'current pretrained option can be found https://github.com/pytorch/vision')
-		argparser.add_arg('--image-layernum', type=int, default=-1,
-			help='which CNN layer of feature to extract.')        
 		argparser.add_arg('--image-size', type=int, default=256,
 			help='')
 		argparser.add_arg('--image-cropsize', type=int, default=224,
 			help='')
 
 	def __init__(self, opt):
-		
 		self.opt = copy.deepcopy(opt)
 		self.netCNN = None
-		self.transform = None
-		self.xs = None
 
 	def init_cnn(self):
 		"""Lazy initialization of preprocessor model in case we don't need any image preprocessing."""
 		opt = self.opt
-		self.cnn_type = opt['image_cnntype']
-		self.layer_num = opt['image_layernum']
 		self.image_size = opt['image_size']
 		self.crop_size = opt['image_cropsize']
 		self.datatype = opt['datatype']
+		self.image_mode = opt['image_mode']
 
 		opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()
 		self.use_cuda = opt['cuda']
@@ -56,11 +47,13 @@ class ImageLoader():
 			print('[ Using CUDA ]')
 			torch.cuda.set_device(opt['gpu'])
 		
+		cnn_type, layer_num = self.image_mode_switcher()
+
 		# initialize the pretrained CNN using pytorch.
-		CNN = getattr(torchvision.models, self.cnn_type)
+		CNN = getattr(torchvision.models, cnn_type)
 		
 		# cut off the additional layer.
-		self.netCNN = nn.Sequential(*list(CNN(pretrained=True).children())[:self.layer_num])
+		self.netCNN = nn.Sequential(*list(CNN(pretrained=True).children())[:layer_num])
 		
 		# initialize the transform function using torch vision.
 		self.transform = transforms.Compose([
@@ -87,6 +80,26 @@ class ImageLoader():
 	def save(self, feature, path):
 		feature = feature.cpu().data.numpy()
 		np.save(path, feature)
+
+	def image_mode_switcher(self):
+		switcher = {
+			'resnet152': ['resnet152', -1],
+			'resnet101': ['resnet101', -1],
+			'resnet50': ['resnet50', -1],
+			'resnet34': ['resnet34', -1],
+			'resnet18': ['resnet18', -1],
+			'resnet152_spatial': ['resnet152', -2],
+			'resnet101_spatial': ['resnet101', -2],
+			'resnet50_spatial': ['resnet50', -2],
+			'resnet34_spatial': ['resnet34', -2],
+			'resnet18_spatial': ['resnet18', -2],
+		}
+
+		if self.image_mode not in switcher:
+			raise NotImplementedError('image preprocessing mode' +
+											'{} not supported yet'.format(self.image_mode))
+
+		return switcher.get(self.image_mode)
 
 	def extract(self, image, path):
 		# check whether initlize CNN network.

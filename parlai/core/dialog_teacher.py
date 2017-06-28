@@ -186,7 +186,7 @@ class DialogData(object):
         self._load(data_loader)
         self.cands = None if cands == None else set(sys.intern(c) for c in cands)
         self.addedCands = []
-        self.image_loader = None
+        self.image_loader = ImageLoader(opt) 
 
     def __len__(self):
         """Returns total number of entries available. Each episode has at least
@@ -242,7 +242,6 @@ class DialogData(object):
                                 new_entry.append(None)
                             if len(entry) > 4 and entry[4] is not None:
                                 new_entry.append(sys.intern(entry[4]))
-                                self.image_loader = ImageLoader(opt) 
 
             episode.append(tuple(new_entry))
 

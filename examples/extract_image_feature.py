@@ -27,6 +27,7 @@ def main():
     # Get command line arguments
     parser = ParlaiParser()
     parser.add_argument('-n', '--num-examples', default=10)
+    parser.set_defaults(datatype='train:ordered')
 
     ImageLoader.add_cmdline_args(parser)
     opt = parser.parse_args()
