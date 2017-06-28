@@ -159,11 +159,11 @@ class Metrics(object):
         m = {}
         m['total'] = self.metrics['cnt']
         if self.metrics['cnt'] > 0:
-            m['accuracy'] = self.metrics['correct'] / self.metrics['cnt']
-            m['f1'] = self.metrics['f1'] / self.metrics['cnt']
+            m['accuracy'] = round(self.metrics['correct'] / self.metrics['cnt'], 4)
+            m['f1'] = round(self.metrics['f1'] / self.metrics['cnt'], 4)
             m['hits@k'] = {}
             for k in self.eval_pr:
-                m['hits@k'][k] = self.metrics['hits@' + str(k)] / self.metrics['cnt']
+                m['hits@k'][k] = round(self.metrics['hits@' + str(k)] / self.metrics['cnt'], 4)
         return m
 
     def clear(self):
