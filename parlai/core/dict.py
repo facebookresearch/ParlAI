@@ -296,9 +296,9 @@ class DictionaryAgent(Agent):
             self.sort()
         with open(filename, 'a' if append else 'w') as write:
             for i in range(len(self.ind2tok)):
-                tok = escape(self.ind2tok[i])
+                tok = self.ind2tok[i]
                 cnt = self.freq[tok]
-                write.write('{tok}\t{cnt}\n'.format(tok=tok, cnt=cnt))
+                write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
 
     def sort(self):
         """Sorts the dictionary, so that the elements with the lowest index have
