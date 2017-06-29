@@ -190,7 +190,7 @@ class DrqaAgent(Agent):
         if ex is None:
             return reply
         batch = batchify(
-            [ex], null=self.word_dict['__NULL__'], cuda=self.opt['cuda']
+            [ex], null=self.word_dict[self.word_dict.null_token], cuda=self.opt['cuda']
         )
 
         # Either train or predict
@@ -223,7 +223,7 @@ class DrqaAgent(Agent):
 
         # Else, use what we have (hopefully everything).
         batch = batchify(
-            examples, null=self.word_dict['__NULL__'], cuda=self.opt['cuda']
+            examples, null=self.word_dict[self.word_dict.null_token], cuda=self.opt['cuda']
         )
 
         # Either train or predict
