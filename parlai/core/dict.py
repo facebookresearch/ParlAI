@@ -14,6 +14,20 @@ import os
 import re
 
 
+def escape(s):
+    """Replace potential special characters with escaped version.
+    For example, newline => \\n and tab => \\t
+    """
+    return s.replace('\n', '\\n').replace('\t', '\\t').replace('\r', '\\r')
+
+
+def unescape(s):
+    """Revert escaped characters back to their special version.
+    For example, \\n => newline and \\t => tab
+    """
+    return s.replace('\\n', '\n').replace('\\t', '\t').replace('\\r', '\r')
+
+
 def find_ngrams(token_dict, text, n):
     """Breaks text into ngrams that appear in ``token_dict``."""
     # base case
@@ -258,7 +272,7 @@ class DictionaryAgent(Agent):
         with open(filename) as read:
             for line in read:
                 split = line.strip().split('\t')
-                token = split[0]
+                token = unescape(split[0])
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
                 if token not in self.tok2ind:
@@ -284,7 +298,7 @@ class DictionaryAgent(Agent):
             for i in range(len(self.ind2tok)):
                 tok = self.ind2tok[i]
                 cnt = self.freq[tok]
-                write.write('{tok}\t{cnt}\n'.format(tok=tok, cnt=cnt))
+                write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
 
     def sort(self):
         """Sorts the dictionary, so that the elements with the lowest index have
