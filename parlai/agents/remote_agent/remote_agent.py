@@ -5,6 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.dict import DictionaryAgent
+import argparse
 import copy
 import numpy as np
 import json
@@ -27,20 +28,21 @@ class RemoteAgentAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        argparser.add_argument(
+        remote = argparser.add_argument_group('Remote Agent Args')
+        remote.add_argument(
             '--port', default=5555,
             help='first port to connect to for remote agents')
-        argparser.add_argument(
+        remote.add_argument(
             '--remote-address', default='localhost',
             help='address to connect to, defaults to localhost for ' +
                  'connections, overriden with `*` if remote-host is set')
-        argparser.add_argument(
+        remote.add_argument(
             '--remote-host', action='store_true',
             help='whether or not this connection is the host or the client')
-        argparser.add_argument(
+        remote.add_argument(
             '--remote-cmd',
             help='command to launch paired agent, if applicable')
-        argparser.add_argument(
+        remote.add_argument(
             '--remote-args',
             help='optional arguments to pass to paired agent')
 
@@ -140,8 +142,12 @@ class ParsedRemoteAgent(RemoteAgentAgent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        super().add_cmdline_args(argparser)
-        ParsedRemoteAgent.dictionary_class().add_cmdline_args(argparser)
+        RemoteAgentAgent.add_cmdline_args(argparser)
+        try:
+            ParsedRemoteAgent.dictionary_class().add_cmdline_args(argparser)
+        except argparse.ArgumentError:
+            # don't freak out if the dictionary has already been added
+            pass
 
     @staticmethod
     def dictionary_class():
