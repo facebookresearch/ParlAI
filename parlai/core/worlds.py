@@ -357,7 +357,7 @@ class ExecutableWorld(MultiAgentDialogWorld):
         for index, agent in enumerate(self.agents):
             # The agent acts.
             acts[index] = agent.act()
-            # We execute this action in the world. 
+            # We execute this action in the world.
             self.execute(agent, acts[index])
             # All agents (might) observe the results.
             for other_agent in self.agents:
