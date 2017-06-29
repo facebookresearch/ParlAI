@@ -23,7 +23,7 @@ class TestUtils(unittest.TestCase):
         x = 0.01
         y = 0.01
         assert round_sigfigs(x, 2) == y
-        
+
         x = 0.00123
         y = 0.001
         assert round_sigfigs(x, 1) == y
