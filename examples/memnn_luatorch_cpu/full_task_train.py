@@ -74,12 +74,13 @@ def main():
             world_dict.parley()
 
         # we need to save the dictionary to load it in memnn (sort it by freq)
+        dictionary.sort()
         dictionary.save('/tmp/dict.txt', sort=True)
 
     print('Dictionary ready, moving on to training.')
 
     opt['datatype'] = 'train'
-    agent = ParsedRemoteAgent(opt, {'dictionary': dictionary})
+    agent = ParsedRemoteAgent(opt, {'dictionary_shared': dictionary.share()})
     world_train = create_task(opt, agent)
     opt['datatype'] = 'valid'
     world_valid = create_task(opt, agent)
