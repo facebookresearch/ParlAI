@@ -12,6 +12,18 @@ import unittest
 class TestUtils(unittest.TestCase):
 
     def test_round_sigfigs(self):
+        x = 0
+        y = 0
+        assert round_sigfigs(x, 2) == y
+
+        x = 100
+        y = 100
+        assert round_sigfigs(x, 2) == y
+
+        x = 0.01
+        y = 0.01
+        assert round_sigfigs(x, 2) == y
+
         x = 0.00123
         y = 0.001
         assert round_sigfigs(x, 1) == y

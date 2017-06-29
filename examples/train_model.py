@@ -41,17 +41,17 @@ def run_eval(agent, opt, datatype, still_training=False, max_exs=-1):
         opt['task'] = opt['evaltask']
 
     valid_world = create_task(opt, agent)
-    first_run = True
+    cnt = 0
     for _ in valid_world:
         valid_world.parley()
-        if first_run and opt['display_examples']:
+        if cnt == 0 and opt['display_examples']:
             first_run = False
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
-        if valid_world.epoch_done() or (max_exs > 0 and
-                valid_world.report()['total'] > max_exs):
-            # need to check the report for total exs done, since sometimes
-            # when batching some of the batch is empty (for multi-ex episodes)
+        cnt += opt['batchsize']
+        if valid_world.epoch_done() or (max_exs > 0 and cnt > max_exs):
+            # note this max_exs is approximate--some batches won't always be
+            # full depending on the structure of the data
             break
     valid_world.shutdown()
     valid_report = valid_world.report()
@@ -75,7 +75,7 @@ def main():
                               'one used for training if not set)'))
     train.add_argument('-d', '--display-examples',
                         type='bool', default=False)
-    train.add_argument('-e', '--num-epochs', type=int, default=-1)
+    train.add_argument('-e', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time',
                         type=float, default=-1)
     train.add_argument('-ltim', '--log-every-n-secs',
@@ -107,14 +107,18 @@ def main():
     validate_time = Timer()
     log_time = Timer()
     print('[ training... ]')
+    parleys = 0
     total_exs = 0
     max_exs = opt['num_epochs'] * len(world)
+    max_parleys = math.ceil(max_exs / opt['batchsize'])
     best_accuracy = 0
     impatience = 0
     saved = False
     while True:
         world.parley()
-        if opt['num_epochs'] > 0 and total_exs >= max_exs:
+        parleys += 1
+
+        if opt['num_epochs'] > 0 and parleys >= max_parleys:
             print('[ num_epochs completed: {} ]'.format(opt['num_epochs']))
             break
         if opt['max_train_time'] > 0 and train_time.time() > opt['max_train_time']:
@@ -127,6 +131,7 @@ def main():
             logs = []
             # time elapsed
             logs.append('time:{}s'.format(math.floor(train_time.time())))
+            logs.append('parleys:{}'.format(parleys))
 
             # get report and update total examples seen so far
             if hasattr(agent, 'report'):
@@ -135,8 +140,10 @@ def main():
             else:
                 train_report = world.report()
                 world.reset_metrics()
-            total_exs += train_report['total']
-            logs.append('total_exs:{}'.format(total_exs))
+
+            if hasattr(train_report, 'get') and train_report.get('total'):
+                total_exs += train_report['total']
+                logs.append('total_exs:{}'.format(total_exs))
 
             # check if we should log amount of time remaining
             time_left = None

@@ -84,4 +84,6 @@ class Timer(object):
 
 
 def round_sigfigs(x, sigfigs=4):
+    if x == 0:
+        return 0
     return round(x, -math.floor(math.log10(abs(x)) - sigfigs + 1))
