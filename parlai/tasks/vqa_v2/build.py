@@ -8,7 +8,7 @@
 import parlai.core.build_data as build_data
 import os
 
-from parlai.tasks.vqa_v1 import buildImage
+from parlai.tasks.vqa_v1.build import buildImage
 
 
 def build(opt):
