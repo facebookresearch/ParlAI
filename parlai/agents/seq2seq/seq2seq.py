@@ -273,7 +273,9 @@ class Seq2seqAgent(Agent):
     def act(self):
         return self.batch_act([self.observation])[0]
 
-    def save(self, path):
+    def save(self, path=None):
+        path = self.opt['model_file'] if path is None else path
+
         model = {}
         model['lt'] = self.lt.state_dict()
         model['encoder'] = self.encoder.state_dict()

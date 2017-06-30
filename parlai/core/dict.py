@@ -281,7 +281,7 @@ class DictionaryAgent(Agent):
                     self.ind2tok[index] = token
         print('[ num words =  %d ]' % len(self))
 
-    def save(self, filename, append=False, sort=True):
+    def save(self, filename=None, append=False, sort=True):
         """Save dictionary to file.
         Format is 'token<TAB>count' for every token in the dictionary, sorted
         by count with the most frequent words first.
@@ -294,6 +294,9 @@ class DictionaryAgent(Agent):
         print('Dictionary: saving dictionary to {}.'.format(filename))
         if sort:
             self.sort()
+
+        filename = self.opt['model_file'] if filename is None else filename
+
         with open(filename, 'a' if append else 'w') as write:
             for i in range(len(self.ind2tok)):
                 tok = self.ind2tok[i]

@@ -206,6 +206,12 @@ class World(object):
         for a in self.agents:
             a.reset_metrics()
 
+    def save(self):
+        """Saves all of the agents in the world by calling their respective
+        save() methods"""
+        for a in self.agents:
+            a.save()
+
     def synchronize(self):
         """Can be used to synchronize processes."""
         pass
@@ -633,6 +639,11 @@ class BatchWorld(World):
     def reset_metrics(self):
         self.worlds[0].reset_metrics()
 
+    def save(self):
+        # Because all worlds share the same parameters through sharing, saving
+        # one copy would suffice
+        self.worlds[0].save()
+
     def shutdown(self):
         """Shutdown each world."""
         for w in self.worlds:
@@ -735,6 +746,9 @@ class HogwildWorld(World):
 
     def report(self):
         return self.inner_world.report()
+
+    def save(self):
+        self.inner_world.save()
 
     def synchronize(self):
         """Sync barrier: will wait until all queued examples are processed."""

@@ -79,6 +79,11 @@ class Agent(object):
     def reset_metrics(self):
         pass
 
+    def save(self):
+        """If applicable, save any parameters needed to recreate this agent from
+        loaded parameters."""
+        pass
+
     def share(self):
         """If applicable, share any parameters needed to create a shared version
         of this agent.
@@ -253,6 +258,10 @@ class MultiTaskTeacher(Teacher):
     def reset_metrics(self):
         for t in self.tasks:
             t.reset_metrics()
+
+    def save(self):
+        for t in self.tasks:
+            t.save()
 
     def share(self):
         shared = {}
