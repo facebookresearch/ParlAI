@@ -291,11 +291,10 @@ class DictionaryAgent(Agent):
 
         If ``sort`` (default ``True``), then first sort the dictionary before saving.
         """
+        filename = self.opt['model_file'] if filename is None else filename
         print('Dictionary: saving dictionary to {}.'.format(filename))
         if sort:
             self.sort()
-
-        filename = self.opt['model_file'] if filename is None else filename
 
         with open(filename, 'a' if append else 'w') as write:
             for i in range(len(self.ind2tok)):
