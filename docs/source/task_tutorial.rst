@@ -69,7 +69,7 @@ FbDialogTeacher
 
 In this section we will illustrate the process of using the ``FbDialogTeacher`` class by adding the `MTurk WikiMovies <http://parl.ai/static/docs/tasks.html#mturk-wikimovies>`__ question-answering task. This task has data in textual form and has been formatted to follow the Facebook Dialog format. It is thus very simple to implement it using ``FbDialogTeacher``. More information on this class and the dialog format can be found `here <http://parl.ai/static/docs/fbdialog.html>`__.
 
-In this task, the agent is presented with presented with questions about movies that are answerable from Wikipedia. A sample dialog is demonstrated below. 
+In this task, the agent is presented with questions about movies that are answerable from Wikipedia. A sample dialog is demonstrated below. 
 
 ::
 
