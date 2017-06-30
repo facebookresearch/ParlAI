@@ -12,7 +12,7 @@ import os
 def buildImage(opt):
     dpath = os.path.join(opt['datapath'], 'COCO-IMG')
 
-    if not build_data.built(dpath):
+    if not build_data.built(dpath, version_string='1'):
         print('[building image data: ' + dpath + ']')
         build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
@@ -34,7 +34,7 @@ def buildImage(opt):
         build_data.untar(dpath, fname3)
 
         # Mark the data as built.
-        build_data.mark_done(dpath)
+        build_data.mark_done(dpath, version_string='1')
 
 
 def build(opt):
