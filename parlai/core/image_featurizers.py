@@ -28,7 +28,10 @@ class ImageLoader():
 
 	def init_cnn(self):
 		"""Lazy initialization of preprocessor model in case we don't need any image preprocessing."""
-		import torch
+		try:
+		    import torch
+		except ModuleNotFoundError:
+		    raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
 		from torch.autograd import Variable
 		import torchvision
 		import torchvision.transforms as transforms
