@@ -92,10 +92,15 @@ class OeTeacher(Teacher):
         if self.datatype == 'train':
             self.episode_idx = random.randrange(self.len)
         else:
-            self.episode_idx = (self.episode_idx + 1) % self.len
+            self.episode_idx = (self.episode_idx + self.step_size) % len(self)
+            if self.episode_idx == len(self) - self.step_size:
+                self.epochDone = True
 
         qa = self.ques['questions'][self.episode_idx]
         question = qa['question']
+        image_id = qa['image_id']
+
+        img_path = self.image_path + '%012d.jpg' % (image_id)
 
         action = {
             'image': self.image_loader.load(img_path),
