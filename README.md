@@ -310,7 +310,7 @@ Please cite the arXiv paper if you use ParlAI in your work:
 @article{miller2017parlai,
   title={ParlAI: A Dialog Research Software Platform},
   author={{Miller}, A.~H. and {Feng}, W. and {Fisch}, A. and {Lu}, J. and {Batra}, D. and {Bordes}, A. and {Parikh}, D. and {Weston}, J.},
-  journal={arXiv preprint arXiv:{1705.06476},
+  journal={arXiv preprint arXiv:{1705.06476}},
   year={2017}
 }
 ```
