@@ -258,50 +258,11 @@ In this section we will demonstrate the process of creating a task from scratch 
 
 In this task, the agent is presented with an image of a scene and then asked to answer a question about that scene. A sample episode is demonstrated below. 
 
+.. image:: _static/img/task_tutorial_skateboard.jpg
+
 ::
 
     [vqa_v2]: What is this man holding?
-    3rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrsssAssss9
-    s::::,:,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,::::::::G
-    A:;;;;;;;;;;;;:;;;;;;;;;;;;;;;;;;;;;;::::;;;;;;;;G
-    A;cccccc;;;;;;;;;;;;cccccc;;;;;ccc;;;;;;ccccccccc#
-    A;ccccccr32rccccccccccrrccccccccccccccccrrccccccc#
-    A;;;;ccc#@@3ccccrrrrrrrcrrccccccrrrrrrrrccccccccc#
-    A;c;;;;r@@@h;cccccccccccrrrrrrrrrcccccccccccccrrc#
-    A;c;cc;c8@&Hccccccccccccccccccccccccccccccccccccc#
-    A;cccccc3&@Hccrcccccccccccccccccrcccccccccccccccc#
-    Accccccc3@9srccccccccccccccrrccccccccccccccccccrc#
-    2ccrrAGs;s:292ccccccrrrrrrrrccccccccccccccrrrrrrr#
-    3rrcs9@A...9@Grcccccccccccccccccrrrccccrrrrrrrrrr#
-    2ccA9@&s:::&@9rccccccccccccrrrrrrrrrrrrrrrrssssrr#
-    2cs8&h2s;;;#8@Acccccccrrrrrrrrrrrrrrrrrsrrrrrssrr#
-    2rG@hrrrccr2h&hcrrrrrrrrrrrrrrrrrrrsrrrrrrrssssrr#
-    2r3@GrrrrrsAA9#rrrrrrrrrrrrrrrrrrrrrrrrssssssssss#
-    2rrh&GrrssAArG&srrrrrrrrrrrrsrssrssssssssssssrrrr#
-    2rrc28#A;crrrh@rcrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr#
-    2rrrcs9h,:;;c2&scrcrrrrrrrrrrrrccrrrrrrrrrrrrrrrr#
-    2cccccsr::;crs8Arrrrrrrrrrsrrrrrrrrrrrrrrrrrrrrrr#
-    2crrrrccc;cccr8Hrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrcc#
-    2cccccccsA2As388srrrrrrrrrrrrrrrrrrrrrrrrrrrccccc#
-    2rrrrrrh33HH#@#9srrrrrrrrrrrrrrrrrrrsssrrrrrrrrrr#
-    2rrrrrr#@&&&@@##hrrrrrrrrrrrrrrrrrrrrrrrsrsrrrsss#
-    3ssssssH@@@@@@&h#hArrrrrrrrrrrrsssrrrrrrrrrrrsssr#
-    3ssssssA&@88@@@H9hsrrrrrsssrrrrrrrrrssrssssssssss#
-    3sssssrs8@#2&@@##srsssssssssrssssssssssssssssssss#
-    3rrrrrrrG@#rH@@992rsssssssssssssssssssssssssssssr#
-    2rrrrrrrH@#sA9@893ssssssssssssssrrrrssssssssrrrrr#
-    2rrsssssH@GssH&&#hrsrrrrrrrrrrrrrrrrrrrrrrrssssss#
-    3rrsssssH@#srH&&GHrrrrrrrrrrrrrrsrrrrrrrrrssAAAAs9
-    3rssssssh@9srH@&GHrrrrsrssssssssssssssssssssAAAss9
-    3ssssssr2&&Arh@&G#hArrssssssssssssssssssssssAAAAA9
-    3ssssssrA8@Hrh&&G#H2sAssssssssssssssssssssAsAAAAs#
-    3ssssssrs#@&s3&@GG2AAAAAAssssssssssssssssssssssss#
-    3ssssssssh@@h28@#G2AAAAAsssssssssssssAsAAssssssss#
-    3ssssAAAAh&@Gh&@8#3AAAAsssssssssssssssssssAAAAAss9
-    3sssAAA22h&@GG@8##hAAssssssssssssssssssssA22AA2AA9
-    3sssssAAA2hh23h2AAAssssssssssssssssssssssAAAAAAAs9
-    H3333333333333333333333333333333333333333333333338
-
     [labels: skateboard]
        [Agent]: skateboard
 
@@ -525,4 +486,4 @@ To run the MNIST_QA task, while displaying the images in ascii format, we could 
 
 And for VQAv2:
 
-``python display_data.py -t vqa_v2 -im ascii``
+``python display_data.py -t vqa_v2``
