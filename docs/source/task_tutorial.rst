@@ -61,7 +61,7 @@ The simplest method available for creating a teacher is to use the ``FbDialogTea
 
 If the data is not in this format or there are different requirements, one can still use the ``DialogTeacher`` which automates much of the work in setting up a dialog task, but gives the user more flexibility in setting up the data. This is shown in the section `DialogTeacher`_.
 
-Finally, if the requirements for the task do not fit any of the above, one can still write a task from scratch without much trouble. This is shown in the section `Task from Scratch`_. (Coming soon)
+Finally, if the requirements for the task do not fit any of the above, one can still write a task from scratch without much trouble. This is shown in the section `Task from Scratch`_.
 
 
 FbDialogTeacher
@@ -69,7 +69,7 @@ FbDialogTeacher
 
 In this section we will illustrate the process of using the ``FbDialogTeacher`` class by adding the `MTurk WikiMovies <http://parl.ai/static/docs/tasks.html#mturk-wikimovies>`__ question-answering task. This task has data in textual form and has been formatted to follow the Facebook Dialog format. It is thus very simple to implement it using ``FbDialogTeacher``. More information on this class and the dialog format can be found `here <http://parl.ai/static/docs/fbdialog.html>`__.
 
-In this task, the agent is presented with presented with questions about movies that are answerable from Wikipedia. A sample dialog is demonstrated below. 
+In this task, the agent is presented with questions about movies that are answerable from Wikipedia. A sample dialog is demonstrated below. 
 
 ::
 
@@ -254,7 +254,190 @@ And we have finished building our task.
 Task from Scratch
 ~~~~~~~~~~~~~~~~~
 
-Coming soon.
+In this section we will demonstrate the process of creating a task from scratch by adding the VQAv2 visual question-answering task. To implement this task we will inherit directly from the base ``Teacher`` class instead of using ``DialogTeacher``. This is usually not necessary, but it is done here as an example of creating a task from scratch.
+
+In this task, the agent is presented with an image of a scene and then asked to answer a question about that scene. A sample episode is demonstrated below. 
+
+.. image:: _static/img/task_tutorial_skateboard.jpg
+
+::
+
+    [vqa_v2]: What is this man holding?
+    [labels: skateboard]
+       [Agent]: skateboard
+
+
+We will call our teacher ``OeTeacher`` (for open-ended teacher, since it doesn't provide the agent with label candidates). Let's initialize this class first.
+
+.. code-block:: python
+
+    class OeTeacher(Teacher):
+        def __init__(self, opt, shared=None):
+            super().__init__(opt)
+            # store datatype
+            self.datatype = opt['datatype']
+            # _path method explained below, returns paths to images and labels
+            data_path, annotation_path, self.image_path = _path(opt)
+
+            # setup data if it hasn't been provided in shared
+            if shared and 'ques' in shared:
+                self.ques = shared['ques']
+                if 'annotation' in shared:
+                    self.annotation = shared['annotation']
+            else:
+                self._setup_data(data_path, annotation_path)
+            self.len = len(self.ques['questions'])
+
+            # for ordered data in batch mode (especially, for validation and
+            # testing), each teacher in the batch gets a start index and a step
+            # size so they all process disparate sets of the data
+            self.step_size = opt.get('batchsize', 1)
+            self.data_offset = opt.get('batchindex', 0)
+
+            # instantiate image loader for later usage
+            self.image_loader = ImageLoader(opt)
+
+            self.reset()
+
+There are three important parts to this initialization. First, the call to the ``_path()`` method, which returns the paths to the data, annotation and image files. Second, setting up the data and handling the ``shared`` argument, which is used when initializing multiple teachers (*e.g.*, for batch training). It is a dictionary containing data that can be shared across instances of the class. Third, defining step sizes and offsets for walking over the data in batch mode. Let's look at each of these in order.
+
+First, we need to implement the ``_path()`` method. The version for this example is presented below. It first ensures the data is built by calling the ``build()`` method described above. In this case, it also calls a ``buildImage()`` method, which downloads the images for this task. This method is analogous to ``build()`` and can be found in the same ``build.py`` file. It then sets up the paths for the built data. This should be specific to the dataset being used. If your dataset does not use images, the ``image_path`` is not necessary, for example. (The same applies to the ``image_loader``.)
+
+.. code-block:: python
+
+    def _path(opt):
+        # ensure data is built
+        build(opt)
+        buildImage(opt)
+        dt = opt['datatype'].split(':')[0]
+        
+        # verify datatype to decide which sub-dataset to load
+        if dt == 'train':
+            ques_suffix = 'v2_OpenEnded_mscoco_train2014'
+            annotation_suffix = 'v2_mscoco_train2014'
+            img_suffix = os.path.join('train2014', 'COCO_train2014_')
+        elif dt == 'valid':
+            ques_suffix = 'v2_OpenEnded_mscoco_val2014'
+            annotation_suffix = 'v2_mscoco_val2014'
+            img_suffix = os.path.join('val2014', 'COCO_val2014_')
+        elif dt == 'test':
+            ques_suffix = 'v2_OpenEnded_mscoco_test2015'
+            annotation_suffix = 'None'
+            img_suffix = os.path.join('test2015', 'COCO_test2015_')
+        else:
+            raise RuntimeError('Not valid datatype.')
+
+        # set up paths to data
+        data_path = os.path.join(opt['datapath'], 'VQA-v2',
+                                 ques_suffix + '_questions.json')
+
+        annotation_path = os.path.join(opt['datapath'], 'VQA-v2',
+                                       annotation_suffix + '_annotations.json')
+
+        image_path = os.path.join(opt['datapath'], 'COCO-IMG', img_suffix)
+
+        return data_path, annotation_path, image_path
+
+Now, we can look at how to setup the data and handle the ``shared`` argument. If an ``OeTeacher`` instance is the first one being created in a task execution, ``shared`` will be ``None``, and thus it will need to set up it's data. This is done in the ``_setup_data()`` method, pasted below. In the case of this task, ``_setup_data()`` simply loads the data (and possibly the annotations) and stores them as class attributes.
+
+.. code-block:: python
+
+    def _setup_data(self, data_path, annotation_path):
+        # loads data
+        print('loading: ' + data_path)
+        with open(data_path) as data_file:
+            self.ques = json.load(data_file)
+        # if testing load annotations
+        if self.datatype != 'test':
+            print('loading: ' + annotation_path)
+            with open(annotation_path) as data_file:
+                self.annotation = json.load(data_file)
+
+However, if the ``OeTeacher`` instance being created is not the first one for a certain task execution, we want to avoid having to reload the same data many times. For this to work we need to do two things. First, we define a ``share()`` method, which will set up the task-specific contents of the ``shared`` parameter. This method is presented below. It places the data we have just loaded in ``_setup_data()`` in the shared dictionary and returns it.
+
+.. code-block:: python
+
+    def share(self):
+        shared = super().share()
+        shared['ques'] = self.ques
+        if hasattr(self, 'annotation'):
+            shared['annotation'] = self.annotation
+        return shared
+
+Now that the data sharing is properly set up, when other instances of ``OeTeacher`` are created for a task execution, they will be able to use the ``shared`` argument passed to ``__init__()`` in order to use the already loaded data, as seen before.
+
+We have also seen that we have set up ``self.step_size`` to the size of the batch and ``self.data_offset`` to the batch index, so that different teachers in a batch access diferent parts of the data. A method ``reset()`` is then called to initialize the data loading. Let's look at that method below. It first sets the attribute ``self.lastY`` to ``None``. This attribute will be used to hold the label for the last example seen by the instance. Then, ``self.episode_idx`` is set to a ``step_size`` below the ``data_offset``, so that when the first action is executed, it is incremented and starts exactly at the ``data_offset`` index.
+
+.. code-block:: python
+
+    def reset(self):
+        # Reset the dialog so that it is at the start of the epoch,
+        # and all metrics are reset.
+        super().reset()
+        self.lastY = None
+        self.episode_idx = self.data_offset - self.step_size
+
+Now that we are done with the class initialization, there are only a few steps left in creating the task. First, the ``OeTeacher`` requires a ``__len__()`` method that returns the size of the data it is presenting. Since ``self.len`` had already been defined in the initialization, this is easy to achieve.
+
+.. code-block:: python
+
+    def __len__(self):
+        return self.len
+
+The final step is to define the important ``act()`` and ``observe()`` methods, which are required of all agents in parlai. In the observe method we simply check if a prediction was made in the last step and if so update the metrics with the last observation and label and clear ``lastY``. This is important because it is the job of the ``Teacher`` to update the metrics.
+
+.. code-block:: python
+
+    def observe(self, observation):
+        """Process observation for metrics."""
+        if self.lastY is not None:
+            self.metrics.update(observation, self.lastY)
+            self.lastY = None
+        return observation
+
+In the act method we need to return the ``Teacher``'s action, which will then be presented to the agent(s) performing the task. In this case, this includes an image and a question. We first select which example to use: randomly in the case of training or sequentially in the case of validation/testing. The ``OeTeacher`` then loads the appropriate question, which is placed in the ``text`` field of the dict. The image_path is also constructed and an image object (loaded utilizing the ``ImageLoader`` class) is passed in the ``image`` field. The ``episode_done`` flag is always set to true in this task specifically due to the fact that all episodes consist of only one example.
+
+.. code-block:: python
+
+    def act(self):
+        # pick random example if training, else proceed sequentially
+        if self.datatype == 'train':
+            self.episode_idx = random.randrange(self.len)
+        else:
+            self.episode_idx = (self.episode_idx + self.step_size) % len(self)
+            if self.episode_idx == len(self) - self.step_size:
+                self.epochDone = True
+        # get question and image path for current example
+        qa = self.ques['questions'][self.episode_idx]
+        question = qa['question']
+        image_id = qa['image_id']
+
+        img_path = self.image_path + '%012d.jpg' % (image_id)
+        # build action dict, all episodes consist of 1 example in this task
+        action = {
+            'image': self.image_loader.load(img_path),
+            'text': question,
+            'episode_done': True
+        }
+        # if not testing get annotations and set lastY
+        if not self.datatype.startswith('test'):
+            anno = self.annotation['annotations'][self.episode_idx]
+            self.lastY = [ans['answer'] for ans in anno['answers']]
+        # if training, set fill labels field
+        if self.datatype.startswith('train'):
+            action['labels'] = self.lastY
+
+        return action
+
+The only thing left to be done for this part is to define a ``DefaultTeacher`` class. This is a requirement for any task, since it defaults to this teacher when no one is specified. We can simply default to the class we have built so far.
+
+.. code-block:: python
+
+    class DefaultTeacher(OeTeacher):
+        pass
+
+And we have finished building a task from scratch.
+
 
 
 Part 3: Add Task to Task List
@@ -281,11 +464,11 @@ Now that our task is complete, we must add an entry to the ``task_list.py`` file
             "description": "Task which requires agents to identify which number they are seeing. From the MNIST dataset."
         },
         {
-            "id": "VQAv1",
-            "display_name": "VQAv1",
-            "task": "vqa_v1",
+            "id": "VQAv2",
+            "display_name": "VQAv2",
+            "task": "vqa_v2",
             "tags": [ "all", "Visual" ],
-            "description": "Open-ended question answering about visual content. From Agrawal et al. '15. Link: https://arxiv.org/abs/1505.00468"
+            "description": "Bigger, more balanced version of the original VQA dataset. From Goyal et al. '16. Link: https://arxiv.org/abs/1612.00837"
         },
         # other tasks...
     ]
@@ -300,3 +483,7 @@ A simple way of testing the basic functionality in a task is to run the ``displa
 To run the MNIST_QA task, while displaying the images in ascii format, we could call:
 
 ``python display_data.py -t mnist_qa -im ascii``
+
+And for VQAv2:
+
+``python display_data.py -t vqa_v2``
