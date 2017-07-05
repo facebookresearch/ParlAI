@@ -5,12 +5,6 @@
 
 import parlai.core.build_data as build_data
 
-import torch
-from torch.autograd import Variable
-import torchvision
-import torchvision.transforms as transforms
-import torch.nn as nn
-
 import os
 import copy
 import numpy as np
@@ -20,7 +14,7 @@ _greyscale = '  .,:;crsA23hHG#98&@'
 
 class ImageLoader():
 	"""Extract image feature using pretrained CNN network.
-	"""	
+	"""
 	@staticmethod
 	def add_cmdline_args(argparser):
 		argparser.add_arg('--image-size', type=int, default=256,
@@ -34,6 +28,15 @@ class ImageLoader():
 
 	def init_cnn(self):
 		"""Lazy initialization of preprocessor model in case we don't need any image preprocessing."""
+		try:
+		    import torch
+		except ModuleNotFoundError:
+		    raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
+		from torch.autograd import Variable
+		import torchvision
+		import torchvision.transforms as transforms
+		import torch.nn as nn
+
 		opt = self.opt
 		self.image_size = opt['image_size']
 		self.crop_size = opt['image_cropsize']
@@ -46,15 +49,15 @@ class ImageLoader():
 		if self.use_cuda:
 			print('[ Using CUDA ]')
 			torch.cuda.set_device(opt['gpu'])
-		
+
 		cnn_type, layer_num = self.image_mode_switcher()
 
 		# initialize the pretrained CNN using pytorch.
 		CNN = getattr(torchvision.models, cnn_type)
-		
+
 		# cut off the additional layer.
 		self.netCNN = nn.Sequential(*list(CNN(pretrained=True).children())[:layer_num])
-		
+
 		# initialize the transform function using torch vision.
 		self.transform = transforms.Compose([
 							transforms.Scale(self.image_size),
@@ -97,7 +100,7 @@ class ImageLoader():
 
 		if self.image_mode not in switcher:
 			raise NotImplementedError('image preprocessing mode' +
-											'{} not supported yet'.format(self.image_mode))
+									  '{} not supported yet'.format(self.image_mode))
 
 		return switcher.get(self.image_mode)
 
@@ -105,7 +108,7 @@ class ImageLoader():
 		# check whether initlize CNN network.
 		if not self.netCNN:
 			self.init_cnn()
-	
+
 		self.xs.data.copy_(self.transform(image))
 		# extract the image feature
 		feature = self.netCNN(self.xs)
@@ -147,12 +150,9 @@ class ImageLoader():
 				build_data.make_dir(dpath)
 
 			imagefn = imagefn + '.npy'
-			new_path = os.path.join(prepath, mode, imagefn)			
-			
+			new_path = os.path.join(prepath, mode, imagefn)
+
 			if not os.path.isfile(new_path):
 				return self.extract(Image.open(path).convert('RGB'), new_path)
 			else:
 				return np.load(new_path)
-
-
-
