@@ -33,11 +33,12 @@ def main():
     task_opt['datapath'] = opt['datapath']
 
     mturk_manager = MTurkManager()
-    mturk_manager.init_aws(opt=opt)
 
     mturk_agent_id = 'Worker'
     mturk_manager.mturk_agent_ids = [mturk_agent_id]
     mturk_manager.all_agent_ids = [QADataCollectionWorld.collector_agent_id, mturk_agent_id] # In speaking order
+
+    mturk_manager.init_aws(opt=opt)
 
     global run_hit
     def run_hit(hit_index, assignment_index, task_class, task_opt, opt, mturk_manager):

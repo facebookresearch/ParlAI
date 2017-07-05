@@ -29,7 +29,6 @@ def main():
     opt.update(task_config)
 
     mturk_manager = MTurkManager()
-    mturk_manager.init_aws(opt=opt)
 
     mturk_agent_1_id = 'mturk_agent_1'
     mturk_agent_2_id = 'mturk_agent_2'
@@ -37,6 +36,8 @@ def main():
     human_agent_2_id = 'human_2'
     mturk_manager.mturk_agent_ids = [mturk_agent_1_id, mturk_agent_2_id]
     mturk_manager.all_agent_ids = [human_agent_1_id, human_agent_2_id] + mturk_manager.mturk_agent_ids # In speaking order
+
+    mturk_manager.init_aws(opt=opt)
 
     global run_hit
     def run_hit(hit_index, assignment_index, opt, mturk_manager):

@@ -1,4 +1,4 @@
-# Copyright (c) 2017-present, Facebook, Inc.
+1# Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
@@ -33,11 +33,11 @@ def main():
     task_opt['task'] = '#MovieDD-Reddit'
 
     mturk_manager = MTurkManager()
-    mturk_manager.init_aws(opt=opt)
-
     mturk_agent_id = 'Worker'
     mturk_manager.mturk_agent_ids = [mturk_agent_id]
     mturk_manager.all_agent_ids = [ModelEvaluatorWorld.evaluator_agent_id, mturk_agent_id] # In speaking order
+    
+    mturk_manager.init_aws(opt=opt)
     
     global run_hit
     def run_hit(hit_index, assignment_index, opt, task_opt, mturk_manager):

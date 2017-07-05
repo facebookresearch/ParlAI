@@ -16,7 +16,7 @@ import webbrowser
 import json
 import requests
 from parlai.core.agents import create_agent_from_shared
-from .setup_aws import setup_aws, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials
+from .setup_aws import setup_aws, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials, create_hit_config
 import threading
 from .data_model import Base, Message
 from .data_model import get_new_messages as _get_new_messages
@@ -31,6 +31,7 @@ except ModuleNotFoundError:
 polling_interval = 1 # in seconds
 create_hit_type_lock = threading.Lock()
 local_db_lock = threading.Lock()
+task_dir = os.getcwd()
 
 class MTurkManager():
     def __init__(self):
@@ -44,6 +45,7 @@ class MTurkManager():
         self.run_id = None
         self.mturk_agent_ids = None
         self.all_agent_ids = None
+        self.task_files_to_copy = None
 
     def init_aws(self, opt):
         self.run_id = str(int(time.time()))
@@ -58,7 +60,14 @@ class MTurkManager():
             return
 
         print('Setting up MTurk backend...')
-        html_api_endpoint_url, json_api_endpoint_url, requester_key_gt = setup_aws(task_description=opt['task_description'], num_hits=opt['num_hits'], num_assignments=opt['num_assignments'], is_sandbox=opt['is_sandbox'])
+        create_hit_config(task_description=opt['task_description'], num_hits=opt['num_hits'], num_assignments=opt['num_assignments'], is_sandbox=opt['is_sandbox'])
+        if not self.task_files_to_copy:
+            self.task_files_to_copy = []
+        for mturk_agent_id in self.mturk_agent_ids:
+            self.task_files_to_copy.append(os.path.join(task_dir, 'html', mturk_agent_id+'_cover_page.html'))
+            self.task_files_to_copy.append(os.path.join(task_dir, 'html', mturk_agent_id+'_index.html'))
+        self.task_files_to_copy.append(os.path.join(task_dir, 'html', 'approval_index.html'))
+        html_api_endpoint_url, json_api_endpoint_url, requester_key_gt = setup_aws(task_files_to_copy = self.task_files_to_copy)
         self.html_api_endpoint_url = html_api_endpoint_url
         self.json_api_endpoint_url = json_api_endpoint_url
         self.requester_key_gt = requester_key_gt
@@ -180,7 +189,7 @@ class MTurkManager():
                         is_sandbox=opt['is_sandbox']
                     )
                 all_agent_ids_string = str(self.all_agent_ids).replace("'", '''"''')
-                mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)+"&all_agent_ids="+all_agent_ids_string+"&cur_agent_id="+str(mturk_agent_id)+"&task_additional_info="+str(opt.get('task_additional_info', ''))
+                mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)+"&all_agent_ids="+all_agent_ids_string+"&cur_agent_id="+str(mturk_agent_id)
                 mturk_page_url = create_hit_with_hit_type(
                     page_url=mturk_chat_url,
                     hit_type_id=hit_type_id,
