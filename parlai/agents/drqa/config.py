@@ -85,7 +85,7 @@ def set_defaults(opt):
     # Embeddings options
     if opt.get('embedding_file'):
         if not os.path.isfile(opt['embedding_file']):
-            raise IOError('No such file: %s' % args.embedding_file)
+            raise IOError('No such file: %s' % opt['embedding_file'])
         with open(opt['embedding_file']) as f:
             dim = len(f.readline().strip().split(' ')) - 1
         opt['embedding_dim'] = dim
