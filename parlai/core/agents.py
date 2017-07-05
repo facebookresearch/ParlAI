@@ -262,6 +262,7 @@ class MultiTaskTeacher(Teacher):
         return shared
 
     def shutdown(self):
+        """Shutdown each agent."""
         for t in self.tasks:
             t.shutdown()
 

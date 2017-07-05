@@ -315,6 +315,7 @@ class MultiAgentDialogWorld(World):
         return self.agents[0].report()
 
     def shutdown(self):
+        """Shutdown each agent."""
         for a in self.agents:
             a.shutdown()
 
@@ -633,7 +634,7 @@ class BatchWorld(World):
         self.worlds[0].reset_metrics()
 
     def shutdown(self):
-        """Shutdown each agent."""
+        """Shutdown each world."""
         for w in self.worlds:
             w.shutdown()
         self.world.shutdown()
