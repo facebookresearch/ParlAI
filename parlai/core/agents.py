@@ -92,6 +92,7 @@ class Agent(object):
         """Perform any final cleanup if needed."""
         pass
 
+
 class Teacher(Agent):
     """Basic Teacher agent which keeps track of how many times it's received
     messages. Teachers provide the ``report()`` method to get back metrics."""
@@ -149,6 +150,7 @@ class Teacher(Agent):
         shared = super().share()
         shared['metrics'] = self.metrics
         return shared
+
 
 class MultiTaskTeacher(Teacher):
     """Creates a teacher that is actually a set of teachers each based on
@@ -258,6 +260,11 @@ class MultiTaskTeacher(Teacher):
         shared['opt'] = self.opt
         shared['tasks'] = [t.share() for t in self.tasks]
         return shared
+
+    def shutdown(self):
+        for t in self.tasks:
+            t.shutdown()
+
 
 def name_to_agent_class(name):
     words = name.split('_')

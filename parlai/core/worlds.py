@@ -632,6 +632,12 @@ class BatchWorld(World):
     def reset_metrics(self):
         self.worlds[0].reset_metrics()
 
+    def shutdown(self):
+        """Shutdown each agent."""
+        for w in self.worlds:
+            w.shutdown()
+        self.world.shutdown()
+
 
 class HogwildProcess(Process):
     """Process child used for ``HogwildWorld``.
