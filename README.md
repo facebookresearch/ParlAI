@@ -304,7 +304,7 @@ Adam Fisch,  Jiasen Lu, Antoine Bordes, Devi Parikh and Dhruv Batra.
 
 ## Citation
 
-Please cite the arXiv paper if you use ParlAI in your work:
+Please cite the [arXiv paper](https://arxiv.org/abs/1705.06476) if you use ParlAI in your work:
 
 ```
 @article{miller2017parlai,
