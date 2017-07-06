@@ -9,7 +9,6 @@
 set -e # stop if any tests fail
 python3 test_init.py
 python3 test_import.py
-python3 test_data.py
 python3 test_dict.py
 python3 test_tasklist.py
 python3 test_threadutils.py
