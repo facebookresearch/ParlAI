@@ -213,4 +213,11 @@ task_list = [
         "tags": [ "All", "Visual" ],
         "description": "Task which requires agents to identify which number they are seeing. From the MNIST dataset."
     },
+    {
+        "id": "InsuranceQA",
+        "display_name": "InsuranceQA",
+        "task": "insuranceqa",
+        "tags": [ "All",  "QA" ],
+        "description": "Task which requires agents to identify high quality answers composed by professionals with deep domain knowledge. https://github.com/shuzi/insuranceQA"
+    }
 ]
