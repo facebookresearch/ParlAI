@@ -237,11 +237,12 @@ class DrqaAgent(Agent):
 
         return batch_reply
 
-    def save(self, filename=None):
+    def save(self, fname=None):
         """Save the parameters of the agent to a file."""
-        filename = self.opt['model_file'] if filename is None else filename
-        print("[ saving model: " + filename + " ]")
-        self.model.save(filename)
+        fname = self.opt.get('model_file', None) if fname is None else fname
+        if fname:
+            print("[ saving model: " + fname + " ]")
+            self.model.save(fname)
 
     # --------------------------------------------------------------------------
     # Helper functions.
