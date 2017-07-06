@@ -26,7 +26,7 @@ def built(path, version_string=None):
         else:
             with open(fname, 'r') as read:
                 text = read.read().split('\n')
-            return (len(text) == 2 and text[1] == version_string)
+            return (len(text) > 1 and text[1] == version_string)
     else:
         return os.path.isfile(os.path.join(path, '.built'))
 
@@ -56,13 +56,23 @@ def download(url, path, fname, redownload=True):
     """Downloads file using `requests`. If ``redownload`` is set to false, then
     will not download tar file again if it is present (default ``True``)."""
     outfile = os.path.join(path, fname)
-    if redownload or not os.path.isfile(outfile):
+    resume = os.path.isfile(outfile)
+    if resume:
+        resume_pos = os.path.getsize(outfile)
+        mode = 'ab'
+    else:
+        resume_pos = 0
+        mode = 'wb'
+
+    if redownload or not resume:
         with requests.Session() as session:
-            response = session.get(url, stream=True)
+            header = {'Range': 'bytes=%d-' % resume_pos}
+            response = session.get(url, stream=True, headers=header)
             CHUNK_SIZE = 32768
             total_size = int(response.headers.get('Content-Length', -1))
-            done = 0
-            with open(outfile, 'wb') as f:
+            total_size += resume_pos
+            done = resume_pos
+            with open(outfile, mode) as f:
                 for chunk in response.iter_content(CHUNK_SIZE):
                     if chunk:  # filter out keep-alive new chunks
                         f.write(chunk)
