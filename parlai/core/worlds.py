@@ -631,14 +631,14 @@ class BatchWorld(World):
         return True
 
     def report(self):
-        return self.worlds[0].report()
+        return self.world.report()
 
     def reset(self):
         for w in self.worlds:
             w.reset()
 
     def reset_metrics(self):
-        self.worlds[0].reset_metrics()
+        self.world.reset_metrics()
 
     def save(self):
         # Because all worlds share the same parameters through sharing, saving
