@@ -643,7 +643,7 @@ class BatchWorld(World):
     def save(self):
         # Because all worlds share the same parameters through sharing, saving
         # one copy would suffice
-        self.worlds[0].save()
+        self.world.save()
 
     def shutdown(self):
         """Shutdown each world."""
