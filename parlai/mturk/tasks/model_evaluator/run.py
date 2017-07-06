@@ -1,4 +1,4 @@
-1# Copyright (c) 2017-present, Facebook, Inc.
+# Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
@@ -23,7 +23,7 @@ def main():
     from parlai.agents.ir_baseline.ir_baseline import IrBaselineAgent
     IrBaselineAgent.add_cmdline_args(argparser)
     opt = argparser.parse_args()
-    opt['task'] = os.path.basename(os.getcwd())
+    opt['task'] = os.path.dirname(__file__)
     opt.update(task_config)
 
     # The task that we will evaluate the dialog model on
@@ -32,11 +32,11 @@ def main():
     task_opt['datapath'] = opt['datapath']
     task_opt['task'] = '#MovieDD-Reddit'
 
-    mturk_manager = MTurkManager()
     mturk_agent_id = 'Worker'
-    mturk_manager.mturk_agent_ids = [mturk_agent_id]
-    mturk_manager.all_agent_ids = [ModelEvaluatorWorld.evaluator_agent_id, mturk_agent_id] # In speaking order
-    
+    mturk_manager = MTurkManager(
+        mturk_agent_ids = [mturk_agent_id],
+        all_agent_ids = [ModelEvaluatorWorld.evaluator_agent_id, mturk_agent_id] # In speaking order
+    )
     mturk_manager.init_aws(opt=opt)
     
     global run_hit

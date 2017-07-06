@@ -38,10 +38,8 @@ rds_security_group_name = 'parlai-mturk-db-security-group'
 rds_security_group_description = 'Security group for ParlAI MTurk DB'
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
-task_dir = os.getcwd()
 generic_files_to_copy = [
-    os.path.join(task_dir, 'hit_config.json'),
-
+    os.path.join(parent_dir, 'hit_config.json'),
     os.path.join(parent_dir, 'data_model.py'), 
     os.path.join(parent_dir, 'html', 'core.html'), 
     os.path.join(parent_dir, 'html', 'cover_page.html'), 
@@ -254,7 +252,7 @@ def create_hit_config(task_description, num_hits, num_assignments, is_sandbox):
         'is_sandbox': is_sandbox,
         'mturk_submit_url': mturk_submit_url,
     }
-    hit_config_file_path = os.path.join(task_dir, 'hit_config.json')
+    hit_config_file_path = os.path.join(parent_dir, 'hit_config.json')
     if os.path.exists(hit_config_file_path):
         os.remove(hit_config_file_path)
     with open(hit_config_file_path, 'w') as hit_config_file:
@@ -368,7 +366,7 @@ def setup_relay_server_api(rds_host, requester_key_gt, task_files_to_copy, shoul
     if should_clean_up_after_upload:
         shutil.rmtree(os.path.join(parent_dir, lambda_server_directory_name))
         os.remove(os.path.join(parent_dir, lambda_server_zip_file_name))
-        os.remove(os.path.join(task_dir, 'hit_config.json'))
+        os.remove(os.path.join(parent_dir, 'hit_config.json'))
 
     # Check API Gateway existence.
     # If doesn't exist, create the APIs, point them to Lambda function, and set correct configurations

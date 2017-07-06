@@ -186,7 +186,6 @@ of patent rights can be found in the PATENTS file in the same directory.
 
     /* ================= UI related ================= */
     $(window).resize(function() {
-        alert("resize is triggered");
         $("input#id_text_input").width($("div#right-bottom-pane").width() - 210);
         $("div#right-top-pane").height($("div#left-pane").height() - $("div#right-bottom-pane").outerHeight() - 20);
     });
@@ -199,7 +198,7 @@ of patent rights can be found in the PATENTS file in the same directory.
     });
     
     /* ================= State variables ================= */
-    var verbose_log = true;
+    var verbose_log = false;
     var task_group_id = `{{task_group_id}}`;
     var hit_index = `{{hit_index}}`;
     var assignment_index = `{{assignment_index}}`;

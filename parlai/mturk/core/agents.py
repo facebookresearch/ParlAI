@@ -31,10 +31,9 @@ except ModuleNotFoundError:
 polling_interval = 1 # in seconds
 create_hit_type_lock = threading.Lock()
 local_db_lock = threading.Lock()
-task_dir = os.getcwd()
 
 class MTurkManager():
-    def __init__(self):
+    def __init__(self, mturk_agent_ids, all_agent_ids):
         self.html_api_endpoint_url = None
         self.json_api_endpoint_url = None
         self.requester_key_gt = None
@@ -43,8 +42,8 @@ class MTurkManager():
         self.db_thread = None
         self.db_thread_stop_event = None
         self.run_id = None
-        self.mturk_agent_ids = None
-        self.all_agent_ids = None
+        self.mturk_agent_ids = mturk_agent_ids
+        self.all_agent_ids = all_agent_ids
         self.task_files_to_copy = None
 
     def init_aws(self, opt):
@@ -63,10 +62,11 @@ class MTurkManager():
         create_hit_config(task_description=opt['task_description'], num_hits=opt['num_hits'], num_assignments=opt['num_assignments'], is_sandbox=opt['is_sandbox'])
         if not self.task_files_to_copy:
             self.task_files_to_copy = []
+        task_directory_path = os.path.join(opt['parlai_home'], 'parlai', 'mturk', 'tasks', opt['task'])
         for mturk_agent_id in self.mturk_agent_ids:
-            self.task_files_to_copy.append(os.path.join(task_dir, 'html', mturk_agent_id+'_cover_page.html'))
-            self.task_files_to_copy.append(os.path.join(task_dir, 'html', mturk_agent_id+'_index.html'))
-        self.task_files_to_copy.append(os.path.join(task_dir, 'html', 'approval_index.html'))
+            self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', mturk_agent_id+'_cover_page.html'))
+            self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', mturk_agent_id+'_index.html'))
+        self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', 'approval_index.html'))
         html_api_endpoint_url, json_api_endpoint_url, requester_key_gt = setup_aws(task_files_to_copy = self.task_files_to_copy)
         self.html_api_endpoint_url = html_api_endpoint_url
         self.json_api_endpoint_url = json_api_endpoint_url

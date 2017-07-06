@@ -20,7 +20,7 @@ def main():
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
     opt = argparser.parse_args()
-    opt['task'] = os.path.basename(os.getcwd())
+    opt['task'] = os.path.dirname(__file__)
     opt.update(task_config)
 
     # Initialize a SQuAD teacher agent, which we will get context from
@@ -32,12 +32,11 @@ def main():
     task_opt['datatype'] = 'train'
     task_opt['datapath'] = opt['datapath']
 
-    mturk_manager = MTurkManager()
-
     mturk_agent_id = 'Worker'
-    mturk_manager.mturk_agent_ids = [mturk_agent_id]
-    mturk_manager.all_agent_ids = [QADataCollectionWorld.collector_agent_id, mturk_agent_id] # In speaking order
-
+    mturk_manager = MTurkManager(
+        mturk_agent_ids = [mturk_agent_id],
+        all_agent_ids = [QADataCollectionWorld.collector_agent_id, mturk_agent_id] # In speaking order
+    )
     mturk_manager.init_aws(opt=opt)
 
     global run_hit
