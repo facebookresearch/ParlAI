@@ -218,6 +218,6 @@ task_list = [
         "display_name": "InsuranceQA",
         "task": "insuranceqa",
         "tags": [ "All",  "QA" ],
-        "description": "Task which requires agents to identify high quality answers composed by professionals with deep domain knowledge. https://github.com/shuzi/insuranceQA"
+        "description": "Task which requires agents to identify high quality answers composed by professionals with deep domain knowledge. Link: https://github.com/shuzi/insuranceQA"
     }
 ]
