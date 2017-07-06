@@ -172,9 +172,8 @@ def main():
                 best_accuracy = valid_report['accuracy']
                 impatience = 0
                 print('[ new best accuracy: ' + str(best_accuracy) +  ' ]')
-                if opt['model_file']:
-                    agent.save(opt['model_file'])
-                    saved = True
+                world.save()
+                saved = True
                 if best_accuracy == 1:
                     print('[ task solved! stopping. ]')
                     break
@@ -188,8 +187,7 @@ def main():
                 break
     world.shutdown()
     if not saved:
-        if opt['model_file']:
-            agent.save(opt['model_file'])
+        world.save()
     else:
         # reload best validation model
         agent = create_agent(opt)
