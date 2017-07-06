@@ -25,7 +25,7 @@ def main():
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
     opt = argparser.parse_args()
-    opt['task'] = os.path.dirname(__file__)
+    opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
     opt.update(task_config)
 
     mturk_agent_1_id = 'mturk_agent_1'

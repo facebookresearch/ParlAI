@@ -23,7 +23,7 @@ def main():
     from parlai.agents.ir_baseline.ir_baseline import IrBaselineAgent
     IrBaselineAgent.add_cmdline_args(argparser)
     opt = argparser.parse_args()
-    opt['task'] = os.path.dirname(__file__)
+    opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
     opt.update(task_config)
 
     # The task that we will evaluate the dialog model on
