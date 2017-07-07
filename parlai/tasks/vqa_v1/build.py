@@ -42,7 +42,7 @@ def build(opt):
 
     if not build_data.built(dpath):
         print('[building data: ' + dpath + ']')
-        # build_data.remove_dir(dpath)
+        build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.
