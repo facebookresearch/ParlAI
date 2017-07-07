@@ -15,12 +15,12 @@ def buildImage(opt):
 
     if not build_data.built(dpath, version_string=version):
         print('[building image data: ' + dpath + ']')
-        # if already built but updating version, remove outdated files
+        # An older version exists, so remove these outdated files.
         if build_data.built(dpath):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # download the image data.
+        # Download the image data.
         fname1 = 'train2014.zip'
         fname2 = 'val2014.zip'
         fname3 = 'test2015.zip'
@@ -44,9 +44,9 @@ def build(opt):
     dpath = os.path.join(opt['datapath'], 'VQA-v1')
     version = None
 
-    if not build_data.built(dpath, version):
+    if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
-        # if already built but updating version, remove outdated files
+        # An older version exists, so remove these outdated files.
         if build_data.built(dpath):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
@@ -73,4 +73,4 @@ def build(opt):
         build_data.untar(dpath, fname5)
 
         # Mark the data as built.
-        build_data.mark_done(dpath, version)
+        build_data.mark_done(dpath, version_string=version)
