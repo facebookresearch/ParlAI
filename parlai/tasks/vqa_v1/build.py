@@ -14,7 +14,7 @@ def buildImage(opt):
 
     if not build_data.built(dpath, version_string='1'):
         print('[building image data: ' + dpath + ']')
-        # build_data.remove_dir(dpath)
+        build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # download the image data.
