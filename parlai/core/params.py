@@ -11,7 +11,8 @@ import argparse
 import importlib
 import os
 import sys
-from parlai.core.agents import get_agent_module
+from parlai.core.agents import get_agent_module, get_task_module
+from parlai.tasks.tasks import ids_to_tasks
 
 def str2bool(value):
     v = value.lower()
@@ -148,12 +149,10 @@ class ParlaiParser(argparse.ArgumentParser):
             if item == '-t' or item == '--task':
                 task = args[index + 1]
         if task:
-            agent = get_agent_module(task)
-            if hasattr(agent, 'add_cmdline_args'):
-                agent.add_cmdline_args(self)
-            if hasattr(agent, 'dictionary_class'):
-                s = class2str(agent.dictionary_class())
-                task_args.set_defaults(dict_class=s)
+            for t in ids_to_tasks(task).split(','):
+                agent = get_task_module(t)
+                if hasattr(agent, 'add_cmdline_args'):
+                    agent.add_cmdline_args(self)
 
     def add_model_args(self, args=None):
         model_args = self.add_argument_group('ParlAI Model Arguments')
