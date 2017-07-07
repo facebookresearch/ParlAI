@@ -11,10 +11,13 @@ import os
 
 def buildImage(opt):
     dpath = os.path.join(opt['datapath'], 'COCO-IMG')
+    version = '1'
 
-    if not build_data.built(dpath, version_string='1'):
+    if not build_data.built(dpath, version_string=version):
         print('[building image data: ' + dpath + ']')
-        build_data.remove_dir(dpath)
+        # if already built but updating version, remove outdated files
+        if build_data.built(dpath):
+            build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # download the image data.
@@ -34,15 +37,18 @@ def buildImage(opt):
         build_data.untar(dpath, fname3)
 
         # Mark the data as built.
-        build_data.mark_done(dpath, version_string='1')
+        build_data.mark_done(dpath, version_string=version)
 
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'VQA-v1')
+    version = None
 
-    if not build_data.built(dpath):
+    if not build_data.built(dpath, version):
         print('[building data: ' + dpath + ']')
-        build_data.remove_dir(dpath)
+        # if already built but updating version, remove outdated files
+        if build_data.built(dpath):
+            build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.
@@ -67,4 +73,4 @@ def build(opt):
         build_data.untar(dpath, fname5)
 
         # Mark the data as built.
-        build_data.mark_done(dpath)
+        build_data.mark_done(dpath, version)
