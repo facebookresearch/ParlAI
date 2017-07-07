@@ -60,7 +60,7 @@ def download(url, path, fname, redownload=False):
 
     if download:
         resume_file = outfile + '.part'
-        resume = os.path.isfile(resume_file) and download
+        resume = os.path.isfile(resume_file)
         if resume:
             resume_pos = os.path.getsize(resume_file)
             mode = 'ab'
