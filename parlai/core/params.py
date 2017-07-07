@@ -138,6 +138,19 @@ class ParlaiParser(argparse.ArgumentParser):
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
         self.add_parlai_data_path(parlai)
+        # Find which task specified, and add its specific arguments.
+        args = sys.argv
+        task = None
+        for index, item in enumerate(args):
+            if item == '-t' or item == '--task':
+                task = args[index + 1]
+        if task:
+            agent = get_agent_module(task)
+            if hasattr(agent, 'add_cmdline_args'):
+                agent.add_cmdline_args(self)
+            if hasattr(agent, 'dictionary_class'):
+                s = class2str(agent.dictionary_class())
+                task_args.set_defaults(dict_class=s)
 
     def add_model_args(self, args=None):
         model_args = self.add_argument_group('ParlAI Model Arguments')
