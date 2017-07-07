@@ -78,7 +78,7 @@ def download(url, path, fname, redownload=False):
 
             CHUNK_SIZE = 32768
             total_size = int(response.headers.get('Content-Length', -1))
-            # server returns remaining size, if resuming so adjust total
+            # server returns remaining size if resuming, so adjust total
             total_size += resume_pos
             done = resume_pos
 
