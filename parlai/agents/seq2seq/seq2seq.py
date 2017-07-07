@@ -274,17 +274,18 @@ class Seq2seqAgent(Agent):
         return self.batch_act([self.observation])[0]
 
     def save(self, path=None):
-        path = self.opt['model_file'] if path is None else path
+        path = self.opt.get('model_file', None) if path is None else path
 
-        model = {}
-        model['lt'] = self.lt.state_dict()
-        model['encoder'] = self.encoder.state_dict()
-        model['decoder'] = self.decoder.state_dict()
-        model['d2o'] = self.d2o.state_dict()
-        model['longest_label'] = self.longest_label
+        if path:
+            model = {}
+            model['lt'] = self.lt.state_dict()
+            model['encoder'] = self.encoder.state_dict()
+            model['decoder'] = self.decoder.state_dict()
+            model['d2o'] = self.d2o.state_dict()
+            model['longest_label'] = self.longest_label
 
-        with open(path, 'wb') as write:
-            torch.save(model, write)
+            with open(path, 'wb') as write:
+                torch.save(model, write)
 
     def load(self, path):
         with open(path, 'rb') as read:
