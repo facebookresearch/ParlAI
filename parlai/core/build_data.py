@@ -26,7 +26,7 @@ def built(path, version_string=None):
         else:
             with open(fname, 'r') as read:
                 text = read.read().split('\n')
-            return (len(text) == 2 and text[1] == version_string)
+            return (len(text) > 1 and text[1] == version_string)
     else:
         return os.path.isfile(os.path.join(path, '.built'))
 
@@ -52,17 +52,37 @@ def log_progress(curr, total, width=40):
     print(progress, end='\r')
 
 
-def download(url, path, fname, redownload=True):
+def download(url, path, fname, redownload=False):
     """Downloads file using `requests`. If ``redownload`` is set to false, then
     will not download tar file again if it is present (default ``True``)."""
     outfile = os.path.join(path, fname)
-    if redownload or not os.path.isfile(outfile):
+    download = not os.path.isfile(outfile) or redownload
+
+    if download:
+        resume_file = outfile + '.part'
+        resume = os.path.isfile(resume_file)
+        if resume:
+            resume_pos = os.path.getsize(resume_file)
+            mode = 'ab'
+        else:
+            resume_pos = 0
+            mode = 'wb'
+
         with requests.Session() as session:
-            response = session.get(url, stream=True)
+            header = {'Range': 'bytes=%d-' % resume_pos} if resume else {}
+            response = session.get(url, stream=True, headers=header)
+            # negative reply could be 'none' or just missing
+            if resume and response.headers.get('Accept-Ranges', 'none') == 'none':
+                resume_pos = 0
+                mode = 'wb'
+
             CHUNK_SIZE = 32768
             total_size = int(response.headers.get('Content-Length', -1))
-            done = 0
-            with open(outfile, 'wb') as f:
+            # server returns remaining size if resuming, so adjust total
+            total_size += resume_pos
+            done = resume_pos
+
+            with open(resume_file, mode) as f:
                 for chunk in response.iter_content(CHUNK_SIZE):
                     if chunk:  # filter out keep-alive new chunks
                         f.write(chunk)
@@ -78,6 +98,7 @@ def download(url, path, fname, redownload=True):
                                      ' There may be a download problem.')
             print()
             response.close()
+        move(resume_file, outfile)
 
 
 def make_dir(path):
