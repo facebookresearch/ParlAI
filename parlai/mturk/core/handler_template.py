@@ -181,6 +181,20 @@ def send_new_message(event, context):
         
         return json.dumps(new_message)
 
+def send_new_messages_in_bulk(event, context):
+    if event['method'] == 'POST':
+        """
+        Send new messages in bulk.
+        Expects <new_messages> as POST body parameters
+        """
+        params = event['body']
+        new_messages = params['new_messages']
+
+        data_model.send_new_messages_in_bulk(
+            db_session=db_session,
+            new_messages=new_messages
+        )
+
 def get_hit_index_and_assignment_index(event, context):
     if event['method'] == 'GET':
         """
