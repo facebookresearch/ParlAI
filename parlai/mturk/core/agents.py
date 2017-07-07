@@ -167,6 +167,9 @@ class MTurkManager():
                 'new_messages': self.unsent_messages,
             }
             response = requests.post(self.json_api_endpoint_url, data=json.dumps(post_data_dict))
+            if response.status_code != 200:
+                print(response.content)
+                raise Exception
             self.unsent_messages = []
 
     def get_approval_status_count(self, task_group_id, approval_status, requester_key, conversation_id=None):
