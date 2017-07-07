@@ -138,8 +138,11 @@ class ParlaiParser(argparse.ArgumentParser):
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
         self.add_parlai_data_path(parlai)
+        self.add_task_args()
+
+    def add_task_args(self, args=None):
         # Find which task specified, and add its specific arguments.
-        args = sys.argv
+        args = sys.argv if args is None else args
         task = None
         for index, item in enumerate(args):
             if item == '-t' or item == '--task':
