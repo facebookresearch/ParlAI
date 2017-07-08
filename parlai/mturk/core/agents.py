@@ -162,15 +162,16 @@ class MTurkManager():
 
     def send_new_messages_in_bulk(self):
         with self.unsent_messages_lock:
-            post_data_dict = {
-                'method_name': 'send_new_messages_in_bulk',
-                'new_messages': self.unsent_messages,
-            }
-            response = requests.post(self.json_api_endpoint_url, data=json.dumps(post_data_dict))
-            if response.status_code != 200:
-                print(response.content)
-                raise Exception
-            self.unsent_messages = []
+            if len(self.unsent_messages) > 0:
+                post_data_dict = {
+                    'method_name': 'send_new_messages_in_bulk',
+                    'new_messages': self.unsent_messages,
+                }
+                response = requests.post(self.json_api_endpoint_url, data=json.dumps(post_data_dict))
+                if response.status_code != 200:
+                    print(response.content)
+                    raise Exception
+                self.unsent_messages = []
 
     def get_approval_status_count(self, task_group_id, approval_status, requester_key, conversation_id=None):
         params = {
@@ -182,6 +183,9 @@ class MTurkManager():
         if conversation_id:
             params['conversation_id'] = conversation_id
         response = requests.get(self.json_api_endpoint_url, params=params)
+        if response.status_code != 200:
+            print(response.content)
+            raise Exception
         return response.json()
 
     def create_hits(self, opt):
@@ -238,28 +242,17 @@ class MTurkAgent(Agent):
 
     def observe(self, msg):
         if msg['id'] not in self.manager.mturk_agent_ids: # If the message sender is an mturk agent, then there is no need to upload this message to db since it's already been done on the message sender side.
-            self.manager.get_new_messages_and_save_to_db() # Force a refresh for local db.
-            conversation_dict, _ = self.manager.get_new_messages(
-                task_group_id=self.manager.task_group_id,
-                conversation_id=self.conversation_id,
-                after_message_id=self.last_message_id,
-                included_agent_id=msg['id'])
-            if self.conversation_id in conversation_dict:
-                agent_last_message_in_db = conversation_dict[self.conversation_id][-1]
-                agent_last_message_in_db.pop('message_id', None)
-                if 'episode_done' not in msg:
-                    msg['episode_done'] = False
-                if agent_last_message_in_db == msg:
-                    return
-
-            self.manager.send_new_message(
-                task_group_id=self.manager.task_group_id,
-                conversation_id=self.conversation_id,
-                agent_id=msg['id'],
-                message_text=msg.get('text', None),
-                reward=msg.get('reward', None),
-                episode_done=msg.get('episode_done', False),
-            )
+            # We can't have all mturk agents upload this observed new message to server, otherwise there will be duplication.
+            # Instead we only have the first mturk agent upload this observed message to server.
+            if self.manager.mturk_agent_ids.index(self.id) == 0:
+                self.manager.send_new_message(
+                    task_group_id=self.manager.task_group_id,
+                    conversation_id=self.conversation_id,
+                    agent_id=msg['id'],
+                    message_text=msg.get('text', None),
+                    reward=msg.get('reward', None),
+                    episode_done=msg.get('episode_done', False),
+                )
 
     def act(self):
         while True:
