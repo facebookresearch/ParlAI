@@ -54,7 +54,6 @@ class MTurkHITAgentAllocation(Base):
     id = Column(Integer, primary_key=True)
     task_group_id = Column(String(255), index=True)
     agent_id = Column(String(255), index=True)
-    hit_id = Column(String(255), index=True)
 
 
 def check_database_health():
@@ -81,7 +80,7 @@ def check_database_health():
             session.delete(test_hit_info)
             session.commit()
 
-            test_hit_assignment_info = MTurkHITAgentAllocation(id=0, task_group_id='Test', agent_id='Test', hit_id='Test')
+            test_hit_assignment_info = MTurkHITAgentAllocation(id=0, task_group_id='Test', agent_id='Test')
             session.add(test_hit_assignment_info)
             session.commit()
             session.delete(test_hit_assignment_info)
@@ -267,19 +266,11 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
     return conversation_dict, last_message_id
 
 
-def get_hit_index_and_assignment_index(db_session, task_group_id, agent_id, hit_id, num_assignments):
-    # NOTE: if one Turker returns a HIT and another Turker picks it up, the hit_id from AMT will be unchanged.
-    existing_allocation = db_session.query(MTurkHITAgentAllocation) \
-                            .filter(MTurkHITAgentAllocation.task_group_id==task_group_id) \
-                            .filter(MTurkHITAgentAllocation.agent_id==agent_id) \
-                            .filter(MTurkHITAgentAllocation.hit_id==hit_id).first()
-    if not existing_allocation:
-        new_allocation_object = MTurkHITAgentAllocation(task_group_id=task_group_id, agent_id=agent_id, hit_id=hit_id)
-        db_session.add(new_allocation_object)
-        db_session.commit()
-        existing_allocation = new_allocation_object
-
-    object_id = existing_allocation.id
+def get_hit_index_and_assignment_index(db_session, task_group_id, agent_id, num_assignments):
+    new_allocation_object = MTurkHITAgentAllocation(task_group_id=task_group_id, agent_id=agent_id)
+    db_session.add(new_allocation_object)
+    db_session.commit()
+    object_id = new_allocation_object.id
     existing_allocation_id_list = db_session.query(MTurkHITAgentAllocation.id) \
                                     .filter(MTurkHITAgentAllocation.task_group_id==task_group_id) \
                                     .filter(MTurkHITAgentAllocation.agent_id==agent_id) \

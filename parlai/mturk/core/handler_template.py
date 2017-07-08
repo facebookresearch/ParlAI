@@ -212,14 +212,12 @@ def get_hit_index_and_assignment_index(event, context):
         try:
             task_group_id = event['query']['task_group_id']
             agent_id = event['query']['agent_id']
-            hit_id = event['query']['hit_id']
             num_assignments = event['query']['num_assignments']
 
             return data_model.get_hit_index_and_assignment_index(
                 db_session=db_session,
                 task_group_id=task_group_id,
                 agent_id=agent_id,
-                hit_id=hit_id,
                 num_assignments=int(num_assignments)
             )
         except KeyError:
