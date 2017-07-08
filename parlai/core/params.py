@@ -11,7 +11,8 @@ import argparse
 import importlib
 import os
 import sys
-from parlai.core.agents import get_agent_module
+from parlai.core.agents import get_agent_module, get_task_module
+from parlai.tasks.tasks import ids_to_tasks
 
 def str2bool(value):
     v = value.lower()
@@ -138,6 +139,20 @@ class ParlaiParser(argparse.ArgumentParser):
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
         self.add_parlai_data_path(parlai)
+        self.add_task_args()
+
+    def add_task_args(self, args=None):
+        # Find which task specified, and add its specific arguments.
+        args = sys.argv if args is None else args
+        task = None
+        for index, item in enumerate(args):
+            if item == '-t' or item == '--task':
+                task = args[index + 1]
+        if task:
+            for t in ids_to_tasks(task).split(','):
+                agent = get_task_module(t)
+                if hasattr(agent, 'add_cmdline_args'):
+                    agent.add_cmdline_args(self)
 
     def add_model_args(self, args=None):
         model_args = self.add_argument_group('ParlAI Model Arguments')

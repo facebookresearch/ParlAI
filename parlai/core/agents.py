@@ -326,6 +326,27 @@ def create_agents_from_shared(shared):
         shared_agents.append(agent)
     return shared_agents
 
+def get_task_module(taskname):
+    # get the module of the task agent
+    sp = taskname.strip().split(':')
+    if '.' in sp[0]:
+        module_name = sp[0]
+    else:
+        task = sp[0].lower()
+        module_name = "parlai.tasks.%s.agents" % (task)
+    if len(sp) > 1:
+        sp[1] = sp[1][0].upper() + sp[1][1:]
+        teacher = sp[1]
+        if '.' not in sp[0] and 'Teacher' not in teacher:
+            # Append "Teacher" to class name by default if
+            # a complete path is not given.
+            teacher += "Teacher"
+    else:
+        teacher = "DefaultTeacher"
+    my_module = importlib.import_module(module_name)
+    teacher_class = getattr(my_module, teacher)
+    return teacher_class
+
 def create_task_agent_from_taskname(opt):
     """Creates task agent(s) assuming the input ``task_dir:teacher_class``.
 
@@ -339,23 +360,7 @@ def create_task_agent_from_taskname(opt):
                            '--task {task_name}.')
     if ',' not in opt['task']:
         # Single task
-        sp = opt['task'].strip().split(':')
-        if '.' in sp[0]:
-            module_name = sp[0]
-        else:
-            task = sp[0].lower()
-            module_name = "parlai.tasks.%s.agents" % (task)
-        if len(sp) > 1:
-            sp[1] = sp[1][0].upper() + sp[1][1:]
-            teacher = sp[1]
-            if '.' not in sp[0] and 'Teacher' not in teacher:
-                # Append "Teacher" to class name by default if
-                # a complete path is not given.
-                teacher += "Teacher"
-        else:
-            teacher = "DefaultTeacher"
-        my_module = importlib.import_module(module_name)
-        teacher_class = getattr(my_module, teacher)
+        teacher_class = get_task_module(opt['task'])
         task_agents = teacher_class(opt)
         if type(task_agents) != list:
             task_agents = [task_agents]
