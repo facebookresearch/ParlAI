@@ -17,7 +17,7 @@ import hashlib
 import getpass
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
-from .data_model import init_database
+from parlai.mturk.core.data_model import setup_database_engine, init_database, check_database_health
 
 aws_profile_name = 'parlai_mturk'
 region_name = 'us-west-2'
@@ -40,7 +40,7 @@ rds_security_group_description = 'Security group for ParlAI MTurk DB'
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 generic_files_to_copy = [
     os.path.join(parent_dir, 'hit_config.json'),
-    os.path.join(parent_dir, 'data_model.py'), 
+    os.path.join(parent_dir, 'data_model.py'),
     os.path.join(parent_dir, 'html', 'core.html'), 
     os.path.join(parent_dir, 'html', 'cover_page.html'), 
     os.path.join(parent_dir, 'html', 'mturk_index.html'), 
@@ -194,52 +194,106 @@ def setup_rds():
             response = ec2.describe_security_groups(GroupNames=[rds_security_group_name])
             security_group_id = response['SecurityGroups'][0]['GroupId']
 
-    rds = boto3.client('rds', region_name=region_name)
-    try:
-        rds.create_db_instance(DBInstanceIdentifier=rds_db_instance_identifier,
-                               AllocatedStorage=20,
-                               DBName=rds_db_name,
-                               Engine='postgres',
-                               # General purpose SSD
-                               StorageType='gp2',
-                               StorageEncrypted=False,
-                               AutoMinorVersionUpgrade=True,
-                               MultiAZ=False,
-                               MasterUsername=rds_username,
-                               MasterUserPassword=rds_password,
-                               VpcSecurityGroupIds=[security_group_id],
-                               DBInstanceClass='db.t2.micro',
-                               Tags=[{'Key': 'Name', 'Value': rds_db_instance_identifier}])
-        print('RDS: Starting RDS instance...')
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'DBInstanceAlreadyExists':
-            print('RDS: DB instance already exists.')
-        else:
-            raise
+    rds_instance_is_ready = False
+    while not rds_instance_is_ready:
+        rds = boto3.client('rds', region_name=region_name)
+        try:
+            rds.create_db_instance(DBInstanceIdentifier=rds_db_instance_identifier,
+                                   AllocatedStorage=20,
+                                   DBName=rds_db_name,
+                                   Engine='postgres',
+                                   # General purpose SSD
+                                   StorageType='gp2',
+                                   StorageEncrypted=False,
+                                   AutoMinorVersionUpgrade=True,
+                                   MultiAZ=False,
+                                   MasterUsername=rds_username,
+                                   MasterUserPassword=rds_password,
+                                   VpcSecurityGroupIds=[security_group_id],
+                                   DBInstanceClass='db.t2.medium',
+                                   Tags=[{'Key': 'Name', 'Value': rds_db_instance_identifier}])
+            print('RDS: Starting RDS instance...')
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'DBInstanceAlreadyExists':
+                print('RDS: DB instance already exists.')
+            else:
+                raise
 
-    response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
-    db_instances = response['DBInstances']
-    db_instance = db_instances[0]
-    status = db_instance['DBInstanceStatus']
-
-    if status not in ['available', 'backing-up']:
-        print("RDS: Waiting for newly created database to be available. This might take a couple minutes...")
-
-    while status not in ['available', 'backing-up']:
-        time.sleep(5)
         response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
         db_instances = response['DBInstances']
         db_instance = db_instances[0]
         status = db_instance['DBInstanceStatus']
 
-    endpoint = db_instance['Endpoint']
-    host = endpoint['Address']
+        if status == 'deleting':
+            print("RDS: Waiting for previous delete operation to complete. This might take a couple minutes...")
+            try:
+                while status == 'deleting':
+                    time.sleep(5)
+                    response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+                    db_instances = response['DBInstances']
+                    db_instance = db_instances[0]
+                    status = db_instance['DBInstanceStatus']
+            except ClientError as e:
+                rds_instance_is_ready = False
+                continue
 
-    init_database(host, rds_db_name, rds_username, rds_password, should_check_schema_consistency=True)
+        if status == 'creating':
+            print("RDS: Waiting for newly created database to be available. This might take a couple minutes...")
+            while status == 'creating':
+                time.sleep(5)
+                response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+                db_instances = response['DBInstances']
+                db_instance = db_instances[0]
+                status = db_instance['DBInstanceStatus']
 
-    print('RDS: DB instance ready.')
+        endpoint = db_instance['Endpoint']
+        host = endpoint['Address']
+
+        setup_database_engine(host, rds_db_name, rds_username, rds_password)
+        database_health_status = check_database_health()
+        if database_health_status in ['missing_table', 'healthy']:
+            print("Remote database health status: "+database_health_status)
+            init_database()
+        elif database_health_status in ['inconsistent_schema', 'unknown_error']:
+            print("Remote database error: "+database_health_status+". Removing RDS database...")
+            remove_rds_database()
+            rds_instance_is_ready = False
+            continue
+
+        print('RDS: DB instance ready.')
+        rds_instance_is_ready = True
 
     return host
+
+def remove_rds_database():
+    # Remove RDS database
+    try:
+        rds = boto3.client('rds', region_name=region_name)
+        response = rds.delete_db_instance(
+            DBInstanceIdentifier=rds_db_instance_identifier,
+            SkipFinalSnapshot=True,
+        )
+        response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+        db_instances = response['DBInstances']
+        db_instance = db_instances[0]
+        status = db_instance['DBInstanceStatus']
+
+        if status == 'deleting':
+            print("RDS: Deleting database. This might take a couple minutes...")
+
+        try:
+            while status == 'deleting':
+                time.sleep(5)
+                response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+                db_instances = response['DBInstances']
+                db_instance = db_instances[0]
+                status = db_instance['DBInstanceStatus']
+        except ClientError as e:
+            print("RDS: Database deleted.")
+
+    except ClientError as e:
+        print("RDS: Database doesn't exist.")
+
 
 def create_hit_config(task_description, num_hits, num_assignments, is_sandbox):
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
@@ -671,8 +725,6 @@ def setup_aws(task_files_to_copy):
     return html_api_endpoint_url, json_api_endpoint_url, requester_key_gt
 
 def clean_aws():
-    setup_aws_credentials()
-
     # Remove RDS database
     try:
         rds = boto3.client('rds', region_name=region_name)
@@ -798,4 +850,8 @@ def clean_aws():
 
 if __name__ == "__main__":
     if sys.argv[1] == 'clean':
+        setup_aws_credentials()
         clean_aws()
+    elif sys.argv[1] == 'remove_rds':
+        setup_aws_credentials()
+        remove_rds_database()

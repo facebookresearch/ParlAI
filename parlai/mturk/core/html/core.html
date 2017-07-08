@@ -108,9 +108,7 @@ of patent rights can be found in the PATENTS file in the same directory.
             scroll_conversation_to_bottom();
         }
         if (received_message_from_other_agents && (!task_done) && new_messages[new_messages.length-1]['id'] === previous_agent_id) {
-            update_UI_for_response_type('text_input');
-            $("div#waiting-for-message").css("display", "none");
-            $("input#id_text_input").focus();
+            wait_for_worker_input();
         }
     }
 </script>
@@ -130,6 +128,16 @@ of patent rights can be found in the PATENTS file in the same directory.
             return window.self !== window.top;
         } catch (e) {
             return true;
+        }
+    }
+
+    function wait_for_worker_input() {
+        update_UI_for_response_type('text_input');
+        $("div#waiting-for-message").css("display", "none");
+        $("input#id_text_input").focus();
+        // Pause polling, since we are waiting for the worker to say something
+        if (polling_timer) {
+            clearTimeout(polling_timer);
         }
     }
 
@@ -156,6 +164,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                 method_name: 'get_hit_index_and_assignment_index',
                 task_group_id: task_group_id,
                 agent_id: cur_agent_id,
+                hit_id: hitId,
                 num_assignments: num_assignments
             },
             success: function(data) {
@@ -202,6 +211,9 @@ of patent rights can be found in the PATENTS file in the same directory.
     var task_group_id = `{{task_group_id}}`;
     var hit_index = `{{hit_index}}`;
     var assignment_index = `{{assignment_index}}`;
+    var assignmentId = null;
+    var hitId = null;
+    var workerId = null;
     var conversation_id = null;
     var cur_agent_id = `{{cur_agent_id}}`;
     var mturk_agent_ids = `{{mturk_agent_ids}}`;
@@ -226,7 +238,7 @@ of patent rights can be found in the PATENTS file in the same directory.
     var num_hits = null;
     var num_assignments = null;
     var last_message_id = -1;
-    var worker_timer = null;
+    var polling_timer = null;
     var messages_processed = {};
     var messages_shown = {};
     var done_after_responding = false;
@@ -246,6 +258,9 @@ of patent rights can be found in the PATENTS file in the same directory.
             task_group_id: task_group_id,
             conversation_id: conversation_id,
             cur_agent_id: cur_agent_id,
+            assignment_id: assignmentId,
+            hit_id: hitId,
+            worker_id: workerId
         };
         if (text) post_data_dict['text'] = text;
         post_data_dict['episode_done'] = episode_done;
@@ -287,12 +302,15 @@ of patent rights can be found in the PATENTS file in the same directory.
                     check_done(new_messages);
                     $("div#waiting-for-message").css("display", "");
                 }
+                if (!polling_timer) {
+                    polling_for_new_messages();
+                }
             });
         }
     });
 
-    // background worker that gets new messages from relay server periodically
-    function worker() {
+    // background thread that gets new messages from relay server periodically
+    function polling_for_new_messages() {
       $.ajax({
         url: '/prod/json',
         data: {
@@ -319,7 +337,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                 handle_new_messages(message_list);
                 check_done(message_list);
             }
-            worker_timer = setTimeout(worker, 1000);
+            polling_timer = setTimeout(polling_for_new_messages, 1000);
         },
       });
     }
@@ -343,17 +361,17 @@ of patent rights can be found in the PATENTS file in the same directory.
 
     function all_done_callback() {
         // Stop polling
-        if (worker_timer) {
-            clearTimeout(worker_timer);
+        if (polling_timer) {
+            clearTimeout(polling_timer);
         }
 
         // Post HIT info to server
         var post_data_dict = {
             task_group_id: task_group_id,
             conversation_id: conversation_id,
-            assignmentId: get_url_parameter('assignmentId'),
-            hitId: get_url_parameter('hitId'),
-            workerId: get_url_parameter('workerId'),
+            assignmentId: assignmentId,
+            hitId: hitId,
+            workerId: workerId,
             is_sandbox: is_sandbox,
         };
         post_data_dict['method_name'] = 'save_hit_info';
@@ -384,9 +402,12 @@ of patent rights can be found in the PATENTS file in the same directory.
     function init() {
         // Data related
         conversation_id = hit_index + '_' + assignment_index;
-        $("form#mturk_submit_form input#assignmentId").val(get_url_parameter('assignmentId'));
-        $("form#mturk_submit_form input#hitId").val(get_url_parameter('hitId'));
-        $("form#mturk_submit_form input#workerId").val(get_url_parameter('workerId'));
+        assignmentId = get_url_parameter('assignmentId');
+        hitId = get_url_parameter('hitId');
+        workerId = get_url_parameter('workerId');
+        $("form#mturk_submit_form input#assignmentId").val(assignmentId);
+        $("form#mturk_submit_form input#hitId").val(hitId);
+        $("form#mturk_submit_form input#workerId").val(workerId);
         $("form#mturk_submit_form").attr("action", mturk_submit_url);
         $("span#task-description").html(task_description);
 
@@ -407,7 +428,7 @@ of patent rights can be found in the PATENTS file in the same directory.
         }
 
         $(window).resize();
-        worker();
+        polling_for_new_messages();
     }
 
     $(document).ready(function() {

@@ -16,13 +16,14 @@ import webbrowser
 import json
 import requests
 from parlai.core.agents import create_agent_from_shared
-from .setup_aws import setup_aws, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials, create_hit_config
+from parlai.mturk.core.setup_aws import setup_aws, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials, create_hit_config
 import threading
-from .data_model import Base, Message
-from .data_model import get_new_messages as _get_new_messages
+from parlai.mturk.core.data_model import Base, Message
+from parlai.mturk.core.data_model import get_new_messages as _get_new_messages
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
+import boto3
 try:
     import sqlite3
 except ModuleNotFoundError:
@@ -34,7 +35,7 @@ local_db_lock = threading.Lock()
 debug = False
 
 class MTurkManager():
-    def __init__(self, mturk_agent_ids, all_agent_ids):
+    def __init__(self, opt, mturk_agent_ids, all_agent_ids):
         self.html_api_endpoint_url = None
         self.json_api_endpoint_url = None
         self.requester_key_gt = None
@@ -48,6 +49,7 @@ class MTurkManager():
         self.task_files_to_copy = None
         self.unsent_messages_lock = threading.Lock()
         self.unsent_messages = []
+        self.is_sandbox = opt['is_sandbox']
 
     def init_aws(self, opt):
         self.run_id = str(int(time.time()))
@@ -125,12 +127,15 @@ class MTurkManager():
             for new_message in new_messages:
                 with local_db_lock:
                     if self.db_session.query(Message).filter(Message.id==new_message['message_id']).count() == 0:
-                        obs_act_dict = {k:new_message[k] for k in new_message if k != 'message_id'}
+                        obs_act_dict = {k:new_message[k] for k in new_message if k not in ['message_id', 'assignment_id', 'hit_id', 'worker_id']}
                         new_message_in_local_db = Message(
                                                     id = new_message['message_id'],
                                                     task_group_id = self.task_group_id,
                                                     conversation_id = conversation_id,
                                                     agent_id = new_message['id'],
+                                                    assignment_id = new_message['assignment_id'],
+                                                    hit_id = new_message['hit_id'],
+                                                    worker_id = new_message['worker_id'],
                                                     message_content = json.dumps(obs_act_dict)
                                                 )
                         self.db_session.add(new_message_in_local_db)
@@ -146,7 +151,8 @@ class MTurkManager():
                 after_message_id=after_message_id,
                 excluded_agent_id=excluded_agent_id,
                 included_agent_id=included_agent_id,
-                populate_meta_info=True
+                populate_meta_info=True,
+                populate_hit_info=True
             )
 
     def send_new_message(self, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False):
@@ -211,7 +217,7 @@ class MTurkManager():
             print("Link to HIT for " + str(mturk_agent_id) + ": " + mturk_page_url + "\n")
             print("Waiting for Turkers to respond... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
 
-    def review_hits(self):
+    def review_hits_using_webpage(self):
         mturk_agent_ids_string = str(self.mturk_agent_ids).replace("'", '''"''')
         mturk_approval_url = self.html_api_endpoint_url + "?method_name=approval_index&task_group_id="+str(self.task_group_id)+"&hit_index=1&assignment_index=1&mturk_agent_ids="+mturk_agent_ids_string+"&requester_key="+self.requester_key_gt
 
@@ -225,9 +231,65 @@ class MTurkManager():
                 print("Waiting for HIT review to complete....")
             time.sleep(polling_interval)
 
-        print("All reviews are done!")
+        print("All reviews are done!\n")
+
+    def approve_work(self, assignment_id):
+        client = boto3.client(
+            service_name = 'mturk', 
+            region_name = 'us-east-1',
+            endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+        )
+        # Region is always us-east-1
+        if not self.is_sandbox:
+            client = boto3.client(service_name = 'mturk', region_name='us-east-1')
+
+        client.approve_assignment(AssignmentId=assignment_id)
+
+    def reject_work(self, assignment_id):
+        client = boto3.client(
+            service_name = 'mturk', 
+            region_name = 'us-east-1',
+            endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+        )
+        # Region is always us-east-1
+        if not self.is_sandbox:
+            client = boto3.client(service_name = 'mturk', region_name='us-east-1')
+
+        client.reject_assignment(AssignmentId=assignment_id, RequesterFeedback='')
+
+    def block_worker(self, worker_id, reason):
+        client = boto3.client(
+            service_name = 'mturk', 
+            region_name = 'us-east-1',
+            endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+        )
+        # Region is always us-east-1
+        if not self.is_sandbox:
+            client = boto3.client(service_name = 'mturk', region_name='us-east-1')
+
+        client.create_worker_block(WorkerId=worker_id, Reason=reason)
+
+    def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason):
+        client = boto3.client(
+            service_name = 'mturk', 
+            region_name = 'us-east-1',
+            endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+        )
+        # Region is always us-east-1
+        if not self.is_sandbox:
+            client = boto3.client(service_name = 'mturk', region_name='us-east-1')
+
+        client.send_bonus(
+            WorkerId=worker_id,
+            BonusAmount=bonus_amount,
+            AssignmentId=assignment_id,
+            Reason=reason,
+            # UniqueRequestToken='string' # Could be useful in the future, for handling network errors
+        )
 
     def shutdown(self):
+        setup_aws_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'setup_aws.py')
+        print("Remote database instance will accumulate cost over time (about $30/month for t2.medium instance). Please run `python "+setup_aws_file_path+" remove_rds` to remove RDS instance if you don't plan to use MTurk often.")
         self.db_thread_stop_event.set()
 
 
@@ -239,6 +301,9 @@ class MTurkAgent(Agent):
         self.manager = manager
         self.id = id
         self.last_message_id = 0
+        self.assignment_id = None
+        self.hit_id = None
+        self.worker_id = None
 
     def observe(self, msg):
         if msg['id'] not in self.manager.mturk_agent_ids: # If the message sender is an mturk agent, then there is no need to upload this message to db since it's already been done on the message sender side.
@@ -269,12 +334,28 @@ class MTurkAgent(Agent):
 
                 new_messages = conversation_dict[self.conversation_id]
 
+                self.assignment_id = new_messages[0]['assignment_id']
+                self.hit_id = new_messages[0]['hit_id']
+                self.worker_id = new_messages[0]['worker_id']
+
                 return new_messages[0]
 
             time.sleep(polling_interval)
 
     def episode_done(self):
         return False
+
+    def approve_work(self):
+        self.manager.approve_work(assignment_id=self.assignment_id)
+
+    def reject_work(self):
+        self.manager.reject_work(assignment_id=self.assignment_id)
+
+    def block_worker(self, reason=''):
+        self.manager.block_worker(worker_id=self.worker_id, reason=reason)
+
+    def pay_bonus(self, bonus_amount, reason=''):
+        self.manager.pay_bonus(worker_id=self.worker_id, bonus_amount=bonus_amount, assignment_id=self.assignment_id, reason=reason)
 
     def shutdown(self):
         # Loop to ensure all HITs are done

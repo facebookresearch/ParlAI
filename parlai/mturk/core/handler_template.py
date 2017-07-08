@@ -21,7 +21,8 @@ import data_model
 # {{block_task_config}}
 # Dynamically generated code end
 
-db_engine, db_session_maker = data_model.init_database(rds_host, rds_db_name, rds_username, rds_password)
+data_model.setup_database_engine(rds_host, rds_db_name, rds_username, rds_password)
+db_engine, db_session_maker = data_model.init_database()
 db_session = db_session_maker()
 
 
@@ -134,7 +135,8 @@ def get_new_messages(event, context):
             after_message_id=last_message_id,
             excluded_agent_id=excluded_agent_id,
             included_agent_id=included_agent_id,
-            populate_meta_info=True
+            populate_meta_info=True,
+            populate_hit_info=True
         )
 
         ret = {}
@@ -159,6 +161,9 @@ def send_new_message(event, context):
         message_text = params['text'] if 'text' in params else None
         reward = params['reward'] if 'reward' in params else None
         episode_done = params['episode_done']
+        assignment_id = params['assignment_id']
+        hit_id = params['hit_id']
+        worker_id = params['worker_id']
 
         new_message_object = data_model.send_new_message(
             db_session=db_session, 
@@ -167,7 +172,10 @@ def send_new_message(event, context):
             agent_id=cur_agent_id, 
             message_text=message_text, 
             reward=reward,
-            episode_done=episode_done
+            episode_done=episode_done,
+            assignment_id=assignment_id,
+            hit_id=hit_id,
+            worker_id=worker_id
         )
 
         new_message = { 
@@ -204,12 +212,14 @@ def get_hit_index_and_assignment_index(event, context):
         try:
             task_group_id = event['query']['task_group_id']
             agent_id = event['query']['agent_id']
+            hit_id = event['query']['hit_id']
             num_assignments = event['query']['num_assignments']
 
             return data_model.get_hit_index_and_assignment_index(
                 db_session=db_session,
                 task_group_id=task_group_id,
                 agent_id=agent_id,
+                hit_id=hit_id,
                 num_assignments=int(num_assignments)
             )
         except KeyError:
