@@ -98,6 +98,7 @@ def main():
     if opt['dict_build_first'] and 'dict_file' in opt:
         if opt['dict_file'] is None and opt.get('model_file'):
             opt['dict_file'] = opt['model_file'] + '.dict'
+        print("[ building dictionary first... ]")
         build_dict.build_dict(opt)
     # Create model and assign it to the specified task
     agent = create_agent(opt)
@@ -172,7 +173,7 @@ def main():
                 best_accuracy = valid_report['accuracy']
                 impatience = 0
                 print('[ new best accuracy: ' + str(best_accuracy) +  ' ]')
-                world.save()
+                world.save_agents()
                 saved = True
                 if best_accuracy == 1:
                     print('[ task solved! stopping. ]')
@@ -187,7 +188,7 @@ def main():
                 break
     world.shutdown()
     if not saved:
-        world.save()
+        world.save_agents()
     else:
         # reload best validation model
         agent = create_agent(opt)
