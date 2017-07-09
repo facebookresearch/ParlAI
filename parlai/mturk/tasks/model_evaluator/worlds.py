@@ -48,3 +48,9 @@ class ModelEvaluatorWorld(World):
     def shutdown(self):
         self.task_world.shutdown()
         self.mturk_agent.shutdown()
+        
+    def review_work(self):
+        # self.mturk_agent.approve_work()
+        # self.mturk_agent.reject_work()
+        self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
+        pass

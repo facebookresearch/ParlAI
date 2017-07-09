@@ -65,3 +65,8 @@ class QADataCollectionWorld(World):
     def shutdown(self):
         self.task.shutdown()
         self.mturk_agent.shutdown()
+
+    def review_work(self):
+        # self.mturk_agent.approve_work()
+        # self.mturk_agent.reject_work()
+        pass

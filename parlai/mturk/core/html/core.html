@@ -363,29 +363,9 @@ of patent rights can be found in the PATENTS file in the same directory.
         if (polling_timer) {
             clearTimeout(polling_timer);
         }
-
-        // Post HIT info to server
-        var post_data_dict = {
-            task_group_id: task_group_id,
-            conversation_id: conversation_id,
-            assignmentId: assignmentId,
-            hitId: hitId,
-            workerId: workerId,
-            is_sandbox: is_sandbox,
-        };
-        post_data_dict['method_name'] = 'save_hit_info';
-        $.ajax({
-            url: '/prod/json',
-            type: "POST",
-            data: JSON.stringify(post_data_dict),
-            contentType: "application/json",
-            success: function(data){
-                if (verbose_log) console.log(data);
-                if (in_mturk_hit_page()) {
-                    $("input#mturk_submit_button").click();
-                }
-            }
-        });
+        if (in_mturk_hit_page()) {
+            $("input#mturk_submit_button").click();
+        }
     }
 
     function init_additional() {}

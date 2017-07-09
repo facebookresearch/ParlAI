@@ -63,7 +63,6 @@ def main():
     results = Parallel(n_jobs=opt['num_hits'] * opt['num_assignments'], backend='threading') \
                 (delayed(run_hit)(hit_index, assignment_index, opt, mturk_manager) \
                     for hit_index, assignment_index in product(range(1, opt['num_hits']+1), range(1, opt['num_assignments']+1)))
-    mturk_manager.review_hits_using_webpage()
     mturk_manager.shutdown()
 
 if __name__ == '__main__':

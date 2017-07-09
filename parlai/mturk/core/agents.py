@@ -16,18 +16,23 @@ import webbrowser
 import json
 import requests
 from parlai.core.agents import create_agent_from_shared
-from parlai.mturk.core.setup_aws import setup_aws, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials, create_hit_config
+from parlai.mturk.core.setup_aws import setup_aws, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials, create_hit_config, get_mturk_client
 import threading
 from parlai.mturk.core.data_model import Base, Message
 from parlai.mturk.core.data_model import get_new_messages as _get_new_messages
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
-import boto3
+from botocore.exceptions import ClientError
 try:
     import sqlite3
 except ModuleNotFoundError:
     raise SystemExit("Please install sqlite3 by running: pip install sqlite3")
+
+ASSIGNMENT_NOT_DONE = 'NotDone'
+ASSIGNMENT_DONE = 'Submitted'
+ASSIGNMENT_APPROVED = 'Approved'
+ASSIGNMENT_REJECTED = 'Rejected'
 
 polling_interval = 1 # in seconds
 create_hit_type_lock = threading.Lock()
@@ -38,7 +43,6 @@ class MTurkManager():
     def __init__(self, opt, mturk_agent_ids, all_agent_ids):
         self.html_api_endpoint_url = None
         self.json_api_endpoint_url = None
-        self.requester_key_gt = None
         self.task_group_id = None
         self.db_last_message_id = 0
         self.db_thread = None
@@ -60,7 +64,7 @@ class MTurkManager():
 
         setup_aws_credentials()
 
-        if not check_mturk_balance(num_hits=opt['num_hits'], hit_reward=opt['reward'], is_sandbox=opt['is_sandbox']):
+        if not check_mturk_balance(balance_needed=opt['num_hits']*opt['reward'], is_sandbox=opt['is_sandbox']):
             return
 
         print('Setting up MTurk backend...')
@@ -71,11 +75,9 @@ class MTurkManager():
         for mturk_agent_id in self.mturk_agent_ids:
             self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', mturk_agent_id+'_cover_page.html'))
             self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', mturk_agent_id+'_index.html'))
-        self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', 'approval_index.html'))
-        html_api_endpoint_url, json_api_endpoint_url, requester_key_gt = setup_aws(task_files_to_copy = self.task_files_to_copy)
+        html_api_endpoint_url, json_api_endpoint_url = setup_aws(task_files_to_copy = self.task_files_to_copy)
         self.html_api_endpoint_url = html_api_endpoint_url
         self.json_api_endpoint_url = json_api_endpoint_url
-        self.requester_key_gt = requester_key_gt
         print("MTurk setup done.\n")
 
         self.task_group_id = str(opt['task']) + '_' + str(self.run_id)
@@ -179,20 +181,14 @@ class MTurkManager():
                     raise Exception
                 self.unsent_messages = []
 
-    def get_approval_status_count(self, task_group_id, approval_status, requester_key, conversation_id=None):
-        params = {
-            'method_name': 'get_approval_status_count',
-            'task_group_id': task_group_id,
-            'approval_status': approval_status,
-            'requester_key': requester_key
-        }
-        if conversation_id:
-            params['conversation_id'] = conversation_id
-        response = requests.get(self.json_api_endpoint_url, params=params)
-        if response.status_code != 200:
-            print(response.content)
-            raise Exception
-        return response.json()
+    def get_agent_work_status(self, assignment_id):
+        client = get_mturk_client(self.is_sandbox)
+        try:
+            response = client.get_assignment(AssignmentId=assignment_id)
+            return response['Assignment']['AssignmentStatus']
+        except ClientError as e:
+            if 'This operation can be called with a status of: Reviewable,Approved,Rejected' in e.response['Error']['Message']:
+                return ASSIGNMENT_NOT_DONE
 
     def create_hits(self, opt):
         print('Creating HITs...')
@@ -217,75 +213,33 @@ class MTurkManager():
             print("Link to HIT for " + str(mturk_agent_id) + ": " + mturk_page_url + "\n")
             print("Waiting for Turkers to respond... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
 
-    def review_hits_using_webpage(self):
-        mturk_agent_ids_string = str(self.mturk_agent_ids).replace("'", '''"''')
-        mturk_approval_url = self.html_api_endpoint_url + "?method_name=approval_index&task_group_id="+str(self.task_group_id)+"&hit_index=1&assignment_index=1&mturk_agent_ids="+mturk_agent_ids_string+"&requester_key="+self.requester_key_gt
-
-        print("\nAll HITs are done! Please go to the following link to approve/reject them (or they will be auto-approved in 4 weeks if no action is taken):\n")
-        print(mturk_approval_url)
-        print("")
-
-        # Loop for checking approval status
-        while self.get_approval_status_count(task_group_id=self.task_group_id, approval_status='pending', requester_key=self.requester_key_gt) > 0:
-            if debug:
-                print("Waiting for HIT review to complete....")
-            time.sleep(polling_interval)
-
-        print("All reviews are done!\n")
-
     def approve_work(self, assignment_id):
-        client = boto3.client(
-            service_name = 'mturk', 
-            region_name = 'us-east-1',
-            endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
-        )
-        # Region is always us-east-1
-        if not self.is_sandbox:
-            client = boto3.client(service_name = 'mturk', region_name='us-east-1')
-
+        client = get_mturk_client(self.is_sandbox)
         client.approve_assignment(AssignmentId=assignment_id)
 
     def reject_work(self, assignment_id):
-        client = boto3.client(
-            service_name = 'mturk', 
-            region_name = 'us-east-1',
-            endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
-        )
-        # Region is always us-east-1
-        if not self.is_sandbox:
-            client = boto3.client(service_name = 'mturk', region_name='us-east-1')
-
+        client = get_mturk_client(self.is_sandbox)
         client.reject_assignment(AssignmentId=assignment_id, RequesterFeedback='')
 
     def block_worker(self, worker_id, reason):
-        client = boto3.client(
-            service_name = 'mturk', 
-            region_name = 'us-east-1',
-            endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
-        )
-        # Region is always us-east-1
-        if not self.is_sandbox:
-            client = boto3.client(service_name = 'mturk', region_name='us-east-1')
-
+        client = get_mturk_client(self.is_sandbox)
         client.create_worker_block(WorkerId=worker_id, Reason=reason)
 
     def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason):
-        client = boto3.client(
-            service_name = 'mturk', 
-            region_name = 'us-east-1',
-            endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
-        )
-        # Region is always us-east-1
-        if not self.is_sandbox:
-            client = boto3.client(service_name = 'mturk', region_name='us-east-1')
+        if not check_mturk_balance(balance_needed=bonus_amount, is_sandbox=self.is_sandbox):
+            print("Cannot pay bonus. Reason: Insufficient fund in your MTurk account.")
+            return False
 
+        client = get_mturk_client(self.is_sandbox)
         client.send_bonus(
             WorkerId=worker_id,
-            BonusAmount=bonus_amount,
+            BonusAmount=str(bonus_amount),
             AssignmentId=assignment_id,
             Reason=reason,
             # UniqueRequestToken='string' # Could be useful in the future, for handling network errors
         )
+
+        return True
 
     def shutdown(self):
         setup_aws_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'setup_aws.py')
@@ -346,21 +300,33 @@ class MTurkAgent(Agent):
         return False
 
     def approve_work(self):
-        self.manager.approve_work(assignment_id=self.assignment_id)
+        if self.manager.get_agent_work_status(assignment_id=self.assignment_id) == ASSIGNMENT_DONE:
+            self.manager.approve_work(assignment_id=self.assignment_id)
+            print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is approved.')
+        else:
+            print("Cannot approve HIT. Reason: Turker hasn't completed the HIT yet.")
 
     def reject_work(self):
-        self.manager.reject_work(assignment_id=self.assignment_id)
+        if self.manager.get_agent_work_status(assignment_id=self.assignment_id) == ASSIGNMENT_DONE:
+            self.manager.reject_work(assignment_id=self.assignment_id)
+            print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is rejected.')
+        else:
+            print("Cannot reject HIT. Reason: Turker hasn't completed the HIT yet.")
 
-    def block_worker(self, reason=''):
+    def block_worker(self, reason='unspecified'):
         self.manager.block_worker(worker_id=self.worker_id, reason=reason)
 
-    def pay_bonus(self, bonus_amount, reason=''):
-        self.manager.pay_bonus(worker_id=self.worker_id, bonus_amount=bonus_amount, assignment_id=self.assignment_id, reason=reason)
+    def pay_bonus(self, bonus_amount, reason='unspecified'):
+        if self.manager.pay_bonus(worker_id=self.worker_id, bonus_amount=bonus_amount, assignment_id=self.assignment_id, reason=reason):
+            print("Paid $" + str(bonus_amount) + " bonus to WorkerId: " + self.worker_id)
 
-    def shutdown(self):
-        # Loop to ensure all HITs are done
-        while self.manager.get_approval_status_count(task_group_id=self.manager.task_group_id, conversation_id=self.conversation_id, approval_status='pending', requester_key=self.manager.requester_key_gt) < len(self.manager.mturk_agent_ids):
+    def wait_for_hit_completion(self):
+        while self.manager.get_agent_work_status(assignment_id=self.assignment_id) != ASSIGNMENT_DONE:
             if debug:
-                print("Waiting for all HITs to finish...")
+                print("Waiting for Turker to complete the HIT...")
             time.sleep(polling_interval)
         print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is done.')
+
+    def shutdown(self):
+        time.sleep(2)
+        self.wait_for_hit_completion()

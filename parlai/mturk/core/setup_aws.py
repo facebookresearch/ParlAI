@@ -43,9 +43,7 @@ generic_files_to_copy = [
     os.path.join(parent_dir, 'data_model.py'),
     os.path.join(parent_dir, 'html', 'core.html'), 
     os.path.join(parent_dir, 'html', 'cover_page.html'), 
-    os.path.join(parent_dir, 'html', 'mturk_index.html'), 
-    os.path.join(parent_dir, 'html', 'approval_core.html'),
-    os.path.join(parent_dir, 'html', 'approval_index.html'),
+    os.path.join(parent_dir, 'html', 'mturk_index.html')
 ]
 lambda_server_directory_name = 'lambda_server'
 lambda_server_zip_file_name = 'lambda_server.zip'
@@ -151,15 +149,6 @@ def setup_aws_credentials():
             aws_credentials_file.write("aws_secret_access_key="+aws_secret_access_key+"\n")
         print("AWS credentials successfully saved in "+aws_credentials_file_path+" file.\n")
     os.environ["AWS_PROFILE"] = aws_profile_name
-
-def get_requester_key():
-    # Compute requester key
-    session = boto3.Session(profile_name=aws_profile_name)
-    hash_gen = hashlib.sha512()
-    hash_gen.update(session.get_credentials().access_key.encode('utf-8')+session.get_credentials().secret_key.encode('utf-8'))
-    requester_key_gt = hash_gen.hexdigest()
-
-    return requester_key_gt
 
 def setup_rds():
     # Set up security group rules first
@@ -312,7 +301,7 @@ def create_hit_config(task_description, num_hits, num_assignments, is_sandbox):
     with open(hit_config_file_path, 'w') as hit_config_file:
         hit_config_file.write(json.dumps(hit_config))
 
-def setup_relay_server_api(rds_host, requester_key_gt, task_files_to_copy, should_clean_up_after_upload=True):
+def setup_relay_server_api(rds_host, task_files_to_copy, should_clean_up_after_upload=True):
     # Dynamically generate handler.py file, and then create zip file
     print("Lambda: Preparing relay server code...")
 
@@ -332,8 +321,7 @@ def setup_relay_server_api(rds_host, requester_key_gt, task_files_to_copy, shoul
         "rds_host = \'" + rds_host + "\'\n" + \
         "rds_db_name = \'" + rds_db_name + "\'\n" + \
         "rds_username = \'" + rds_username + "\'\n" + \
-        "rds_password = \'" + rds_password + "\'\n" + \
-        "requester_key_gt = \'" + requester_key_gt + "\'")
+        "rds_password = \'" + rds_password + "\'")
     with open(os.path.join(parent_dir, lambda_server_directory_name, 'handler.py'), 'w') as handler_file:
         handler_file.write(handler_file_string)
     create_zip_file(
@@ -518,7 +506,7 @@ def setup_relay_server_api(rds_host, requester_key_gt, task_files_to_copy, shoul
 
     return html_api_endpoint_url, json_api_endpoint_url
 
-def check_mturk_balance(num_hits, hit_reward, is_sandbox):
+def check_mturk_balance(balance_needed, is_sandbox):
     client = boto3.client(
         service_name = 'mturk',
         region_name = 'us-east-1',
@@ -540,13 +528,24 @@ def check_mturk_balance(num_hits, hit_reward, is_sandbox):
         else:
             raise
 
-    balance_needed = num_hits * hit_reward * 1.2
+    balance_needed = balance_needed * 1.2
 
     if user_balance < balance_needed:
         print("You might not have enough money in your MTurk account. Please go to https://requester.mturk.com/account and increase your balance to at least $"+f'{balance_needed:.2f}'+", and then try again.")
         return False
     else:
         return True
+
+def get_mturk_client(is_sandbox):
+    client = boto3.client(
+        service_name = 'mturk',
+        region_name = 'us-east-1',
+        endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+    )
+    # Region is always us-east-1
+    if not is_sandbox:
+        client = boto3.client(service_name = 'mturk', region_name='us-east-1')
+    return client
 
 def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_sandbox):
     client = boto3.client(
@@ -718,11 +717,10 @@ def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, f
         print("Done!")
 
 def setup_aws(task_files_to_copy):
-    requester_key_gt = get_requester_key()
     rds_host = setup_rds()
-    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(rds_host=rds_host, requester_key_gt=requester_key_gt, task_files_to_copy=task_files_to_copy)
+    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(rds_host=rds_host, task_files_to_copy=task_files_to_copy)
 
-    return html_api_endpoint_url, json_api_endpoint_url, requester_key_gt
+    return html_api_endpoint_url, json_api_endpoint_url
 
 def clean_aws():
     # Remove RDS database
