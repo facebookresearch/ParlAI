@@ -206,7 +206,7 @@ class World(object):
         for a in self.agents:
             a.reset_metrics()
 
-    def save(self):
+    def save_agents(self):
         """Saves all of the agents in the world by calling their respective
         save() methods.
         """
@@ -496,6 +496,10 @@ class MultiWorld(World):
         for w in self.worlds:
             w.reset_metrics()
 
+    def save_agents(self):
+        # Assumes all worlds have same agents, picks first to save.
+        self.worlds[0].save_agents()
+
 
 def override_opts_in_shared(table, overrides):
     """Looks recursively for ``opt`` dictionaries within shared dict and overrides
@@ -640,10 +644,10 @@ class BatchWorld(World):
     def reset_metrics(self):
         self.world.reset_metrics()
 
-    def save(self):
+    def save_agents(self):
         # Because all worlds share the same parameters through sharing, saving
         # one copy would suffice
-        self.world.save()
+        self.world.save_agents()
 
     def shutdown(self):
         """Shutdown each world."""
@@ -748,8 +752,8 @@ class HogwildWorld(World):
     def report(self):
         return self.inner_world.report()
 
-    def save(self):
-        self.inner_world.save()
+    def save_agents(self):
+        self.inner_world.save_agents()
 
     def synchronize(self):
         """Sync barrier: will wait until all queued examples are processed."""
