@@ -234,14 +234,12 @@ This directory contains a few particular examples of basic loops.
 
 ### Tasks
 
-
-Over 20 tasks are supported in the first release, including popular datasets such as
-SQuAD, bAbI tasks, MCTest, WikiQA, WebQuestions, SimpleQuestions, WikiMovies, QACNN, QADailyMail, CBT, BookTest, bAbI Dialog tasks,
-Ubuntu, OpenSubtitles, Cornell Movie, VQA-COCO2014. 
-
-Our first release includes the following datasets (shown in the left panel), and accessing one of them is as simple as specifying the name of the task as a command line option, as shown in the dataset display utility (right panel):
+Our first release included the following datasets (shown in the left panel), and accessing one of them is as simple as specifying the name of the task as a command line option, as shown in the dataset display utility (right panel):
 <p align=center><img width="100%" src="docs/source/\_static/img/tasks.png" /></p>
 
+Over 20 tasks were supported in the first release, including popular datasets such as
+SQuAD, bAbI tasks, MCTest, WikiQA, WebQuestions, SimpleQuestions, WikiMovies, QACNN, QADailyMail, CBT, BookTest, bAbI Dialog tasks,
+Ubuntu, OpenSubtitles, Cornell Movie, VQA-COCO2014. 
 Since then, several datasets have been added such as  VQAv2, VisDial, MNIST_QA, Personalized Dialog and [InsuranceQA](https://github.com/shuzi/insuranceQA). See [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) for the current complete task list.
 
 Choosing a task in ParlAI is as easy as specifying it on the command line, as shown in the above image (right). If the dataset has not been used before, ParlAI will automatically download it. As all datasets are treated in the same way in ParlAI (with a single dialog API), a dialog agent can in principle switch training and testing between any of them. Even better, one can specify many tasks at once (multi-tasking) by simply providing a comma-separated list, e.g.  the command line “-t babi,squad”, to use those two datasets, or even all  the QA datasets at once  (-t #qa) or indeed every task in ParlAI at once (-t #all). The aim is to make it easy to build and evaluate very rich dialog models.
