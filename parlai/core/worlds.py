@@ -208,10 +208,10 @@ class World(object):
 
     def save_agents(self):
         """Saves all of the agents in the world by calling their respective
-        save_agents() methods.
+        save() methods.
         """
         for a in self.agents:
-            a.save_agents()
+            a.save()
 
     def synchronize(self):
         """Can be used to synchronize processes."""
