@@ -52,5 +52,5 @@ class ModelEvaluatorWorld(World):
     def review_work(self):
         # self.mturk_agent.approve_work()
         # self.mturk_agent.reject_work()
-        self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
+        # self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
         pass

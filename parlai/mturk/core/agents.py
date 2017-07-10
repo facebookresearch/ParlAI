@@ -24,6 +24,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
 from botocore.exceptions import ClientError
+import uuid
 try:
     import sqlite3
 except ModuleNotFoundError:
@@ -225,7 +226,8 @@ class MTurkManager():
         client = get_mturk_client(self.is_sandbox)
         client.create_worker_block(WorkerId=worker_id, Reason=reason)
 
-    def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason):
+    def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason, unique_request_token):
+        print(worker_id, bonus_amount, assignment_id, reason, unique_request_token)
         if not check_mturk_balance(balance_needed=bonus_amount, is_sandbox=self.is_sandbox):
             print("Cannot pay bonus. Reason: Insufficient fund in your MTurk account.")
             return False
@@ -236,7 +238,7 @@ class MTurkManager():
             BonusAmount=str(bonus_amount),
             AssignmentId=assignment_id,
             Reason=reason,
-            # UniqueRequestToken='string' # Could be useful in the future, for handling network errors
+            UniqueRequestToken=unique_request_token # Could be useful in the future, for handling network errors
         )
 
         return True
@@ -317,7 +319,8 @@ class MTurkAgent(Agent):
         self.manager.block_worker(worker_id=self.worker_id, reason=reason)
 
     def pay_bonus(self, bonus_amount, reason='unspecified'):
-        if self.manager.pay_bonus(worker_id=self.worker_id, bonus_amount=bonus_amount, assignment_id=self.assignment_id, reason=reason):
+        unique_request_token = str(uuid.uuid4())
+        if self.manager.pay_bonus(worker_id=self.worker_id, bonus_amount=bonus_amount, assignment_id=self.assignment_id, reason=reason, unique_request_token=unique_request_token):
             print("Paid $" + str(bonus_amount) + " bonus to WorkerId: " + self.worker_id)
 
     def wait_for_hit_completion(self):
