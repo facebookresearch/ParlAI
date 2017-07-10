@@ -12,6 +12,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, UnicodeText
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine, func
+from sqlalchemy.pool import NullPool
 
 is_python_2 = False
 if sys.version_info[0] < 3:
@@ -19,7 +20,6 @@ if sys.version_info[0] < 3:
  
 Base = declarative_base()
 engine = None
-session = None
 
 
 class Message(Base):
@@ -79,7 +79,12 @@ def check_database_health():
 def setup_database_engine(host, db_name, username, password):
     # Create an engine
     global engine
-    engine = create_engine('postgres://'+username+':'+password+'@'+host+':5432/'+db_name)
+    engine = create_engine('postgres://'+username+':'+password+'@'+host+':5432/'+db_name, poolclass=NullPool)
+
+
+def close_connection(db_engine, db_session):
+    db_session.close()
+    db_engine.dispose()
 
 
 def init_database():

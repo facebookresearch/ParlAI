@@ -36,6 +36,7 @@ rds_username = 'parlai_user'
 rds_password = 'parlai_user_password'
 rds_security_group_name = 'parlai-mturk-db-security-group'
 rds_security_group_description = 'Security group for ParlAI MTurk DB'
+rds_db_instance_class = 'db.t2.medium'
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 generic_files_to_copy = [
@@ -199,7 +200,7 @@ def setup_rds():
                                    MasterUsername=rds_username,
                                    MasterUserPassword=rds_password,
                                    VpcSecurityGroupIds=[security_group_id],
-                                   DBInstanceClass='db.t2.medium',
+                                   DBInstanceClass=rds_db_instance_class,
                                    Tags=[{'Key': 'Name', 'Value': rds_db_instance_identifier}])
             print('RDS: Starting RDS instance...')
         except ClientError as e:
@@ -211,6 +212,13 @@ def setup_rds():
         response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
         db_instances = response['DBInstances']
         db_instance = db_instances[0]
+
+        if db_instance['DBInstanceClass'] != rds_db_instance_class: # If instance class doesn't match
+            print('RDS: Instance class does not match.')
+            remove_rds_database()
+            rds_instance_is_ready = False
+            continue
+
         status = db_instance['DBInstanceStatus']
 
         if status == 'deleting':
@@ -256,19 +264,27 @@ def setup_rds():
 
 def remove_rds_database():
     # Remove RDS database
+    rds = boto3.client('rds', region_name=region_name)
     try:
-        rds = boto3.client('rds', region_name=region_name)
-        response = rds.delete_db_instance(
-            DBInstanceIdentifier=rds_db_instance_identifier,
-            SkipFinalSnapshot=True,
-        )
         response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
         db_instances = response['DBInstances']
         db_instance = db_instances[0]
         status = db_instance['DBInstanceStatus']
 
         if status == 'deleting':
-            print("RDS: Deleting database. This might take a couple minutes...")
+            print("RDS: Waiting for previous delete operation to complete. This might take a couple minutes...")
+        else:
+            response = rds.delete_db_instance(
+                DBInstanceIdentifier=rds_db_instance_identifier,
+                SkipFinalSnapshot=True,
+            )
+            response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+            db_instances = response['DBInstances']
+            db_instance = db_instances[0]
+            status = db_instance['DBInstanceStatus']
+
+            if status == 'deleting':
+                print("RDS: Deleting database. This might take a couple minutes...")
 
         try:
             while status == 'deleting':
@@ -386,7 +402,7 @@ def setup_relay_server_api(rds_host, task_files_to_copy, should_clean_up_after_u
                     Code={
                         'ZipFile': zip_file_content
                     },
-                    Timeout = 10, # in seconds
+                    Timeout = 300, # in seconds
                     MemorySize = 128, # in MB
                     Publish = True,
                 )
@@ -499,6 +515,7 @@ def setup_relay_server_api(rds_host, task_files_to_copy, should_clean_up_after_u
         api_gateway_client.create_deployment(
             restApiId = rest_api_id,
             stageName = "prod",
+            cacheClusterEnabled = False,
         )
 
     html_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_html

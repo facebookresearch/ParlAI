@@ -33,6 +33,8 @@ def _render_template(template_context, template_file_name):
     return rendered_template
 
 def lambda_handler(event, context):
+    global db_engine, db_session
+
     params = None
     if event['method'] == 'GET':
         params = event['query']
@@ -41,7 +43,9 @@ def lambda_handler(event, context):
 
     method_name = params['method_name']
     if method_name in globals():
-        return globals()[method_name](event, context)
+        result = globals()[method_name](event, context)
+        data_model.close_connection(db_engine, db_session)
+        return result
 
 def chat_index(event, context):
     if event['method'] == 'GET':

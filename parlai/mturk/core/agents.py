@@ -38,7 +38,7 @@ ASSIGNMENT_REJECTED = 'Rejected'
 polling_interval = 1 # in seconds
 create_hit_type_lock = threading.Lock()
 local_db_lock = threading.Lock()
-debug = False
+debug = True
 
 class MTurkManager():
     def __init__(self, opt, mturk_agent_ids, all_agent_ids):
@@ -79,6 +79,8 @@ class MTurkManager():
         html_api_endpoint_url, json_api_endpoint_url = setup_aws(task_files_to_copy = self.task_files_to_copy)
         self.html_api_endpoint_url = html_api_endpoint_url
         self.json_api_endpoint_url = json_api_endpoint_url
+        if debug:
+            print(self.json_api_endpoint_url)
         print("MTurk setup done.\n")
 
         self.task_group_id = str(opt['task']) + '_' + str(self.run_id)
