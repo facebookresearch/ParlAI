@@ -70,10 +70,13 @@ def create_fb_format(outpath, dtype, inpath, d_vocab, d_label_answer):
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'InsuranceQA')
+    version = None
 
-    if not build_data.built(dpath):
+    if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
-        build_data.remove_dir(dpath)
+        if build_data.built(dpath):
+            # An older version exists, so remove these outdated files.
+            build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data from github.
@@ -103,4 +106,4 @@ def build(opt):
         create_fb_format(dpath, 'test', test_path_gz, d_vocab, d_label_answer)
 
         # Mark the data as built.
-        build_data.mark_done(dpath)
+        build_data.mark_done(dpath, version_string=version)

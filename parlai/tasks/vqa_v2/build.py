@@ -13,10 +13,13 @@ from parlai.tasks.vqa_v1.build import buildImage
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'VQA-v2')
+    version = None
 
-    if not build_data.built(dpath):
+    if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
-        build_data.remove_dir(dpath)
+        # An older version exists, so remove these outdated files.
+        if build_data.built(dpath):
+            build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.
@@ -42,4 +45,4 @@ def build(opt):
         build_data.untar(dpath, fname5)
 
         # Mark the data as built.
-        build_data.mark_done(dpath)
+        build_data.mark_done(dpath, version_string=version)
