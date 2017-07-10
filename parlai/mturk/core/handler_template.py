@@ -17,7 +17,7 @@ from jinja2 import FileSystemLoader
 import data_model
 
 # Dynamically generated code begin
-# Expects mturk_submit_url, frame_height, rds_host, rds_db_name, rds_username, rds_password, task_description, requester_key_gt, num_hits, num_assignments, is_sandbox
+# Expects mturk_submit_url, frame_height, rds_host, rds_db_name, rds_username, rds_password, requester_key_gt
 # {{block_task_config}}
 # Dynamically generated code end
 
@@ -56,26 +56,34 @@ def chat_index(event, context):
             all_agent_ids = event['query']['all_agent_ids']
             cur_agent_id = event['query']['cur_agent_id']
             assignment_id = event['query']['assignmentId'] # from mturk
-            task_additional_info = event['query'].get('task_additional_info', '') # Maximum length: 1000 characters
 
             if assignment_id == 'ASSIGNMENT_ID_NOT_AVAILABLE':
-                template_context['task_description'] = task_description
-                template_context['is_cover_page'] = True
+                custom_cover_page = cur_agent_id + '_cover_page.html'
+                if os.path.exists(custom_cover_page):
+                    return _render_template(template_context, custom_cover_page)
+                else:
+                    return _render_template(template_context, 'cover_page.html')
             else:
                 template_context['task_group_id'] = task_group_id
                 template_context['hit_index'] = hit_index
                 template_context['assignment_index'] = assignment_index
                 template_context['cur_agent_id'] = cur_agent_id
                 template_context['all_agent_ids'] = all_agent_ids
-                template_context['task_description'] = task_description.replace('{{task_additional_info}}', task_additional_info)
-                template_context['mturk_submit_url'] = mturk_submit_url
-                template_context['is_cover_page'] = False
                 template_context['frame_height'] = frame_height
 
-            return _render_template(template_context, 'mturk_index.html')
+                custom_index_page = cur_agent_id + '_index.html'
+                if os.path.exists(custom_index_page):
+                    return _render_template(template_context, custom_index_page)
+                else:
+                    return _render_template(template_context, 'mturk_index.html')
 
         except KeyError:
             raise Exception('400')
+
+def get_hit_config(event, context):
+    if event['method'] == 'GET':
+        with open('hit_config.json', 'r') as hit_config_file:
+            return json.loads(hit_config_file.read().replace('\n', ''))
 
 def save_hit_info(event, context):
     if event['method'] == 'POST':
@@ -89,6 +97,7 @@ def save_hit_info(event, context):
         assignment_id = params['assignmentId']
         hit_id = params['hitId']
         worker_id = params['workerId']
+        is_sandbox = params['is_sandbox']
 
         data_model.set_hit_info(
             db_session = db_session, 
@@ -172,6 +181,20 @@ def send_new_message(event, context):
         
         return json.dumps(new_message)
 
+def send_new_messages_in_bulk(event, context):
+    if event['method'] == 'POST':
+        """
+        Send new messages in bulk.
+        Expects <new_messages> as POST body parameters
+        """
+        params = event['body']
+        new_messages = params['new_messages']
+
+        data_model.send_new_messages_in_bulk(
+            db_session=db_session,
+            new_messages=new_messages
+        )
+
 def get_hit_index_and_assignment_index(event, context):
     if event['method'] == 'GET':
         """
@@ -181,12 +204,13 @@ def get_hit_index_and_assignment_index(event, context):
         try:
             task_group_id = event['query']['task_group_id']
             agent_id = event['query']['agent_id']
+            num_assignments = event['query']['num_assignments']
 
             return data_model.get_hit_index_and_assignment_index(
                 db_session=db_session,
                 task_group_id=task_group_id,
                 agent_id=agent_id,
-                num_assignments=num_assignments
+                num_assignments=int(num_assignments)
             )
         except KeyError:
             raise Exception('400')
@@ -212,14 +236,9 @@ def approval_index(event, context):
             template_context['hit_index'] = hit_index
             template_context['assignment_index'] = assignment_index
             template_context['mturk_agent_ids'] = mturk_agent_ids
-            template_context['task_description'] = task_description
-            template_context['is_cover_page'] = False
-            template_context['is_approval_page'] = True
-            template_context['num_hits'] = int(num_hits)
-            template_context['num_assignments'] = int(num_assignments)
             template_context['frame_height'] = frame_height
 
-            return _render_template(template_context, 'mturk_index.html')
+            return _render_template(template_context, 'approval_index.html')
 
         except KeyError:
             raise Exception('400')

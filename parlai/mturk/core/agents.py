@@ -16,7 +16,7 @@ import webbrowser
 import json
 import requests
 from parlai.core.agents import create_agent_from_shared
-from .setup_aws import setup_aws, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials
+from .setup_aws import setup_aws, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials, create_hit_config
 import threading
 from .data_model import Base, Message
 from .data_model import get_new_messages as _get_new_messages
@@ -31,9 +31,10 @@ except ModuleNotFoundError:
 polling_interval = 1 # in seconds
 create_hit_type_lock = threading.Lock()
 local_db_lock = threading.Lock()
+debug = False
 
 class MTurkManager():
-    def __init__(self):
+    def __init__(self, mturk_agent_ids, all_agent_ids):
         self.html_api_endpoint_url = None
         self.json_api_endpoint_url = None
         self.requester_key_gt = None
@@ -42,8 +43,11 @@ class MTurkManager():
         self.db_thread = None
         self.db_thread_stop_event = None
         self.run_id = None
-        self.mturk_agent_ids = None
-        self.all_agent_ids = None
+        self.mturk_agent_ids = mturk_agent_ids
+        self.all_agent_ids = all_agent_ids
+        self.task_files_to_copy = None
+        self.unsent_messages_lock = threading.Lock()
+        self.unsent_messages = []
 
     def init_aws(self, opt):
         self.run_id = str(int(time.time()))
@@ -58,7 +62,15 @@ class MTurkManager():
             return
 
         print('Setting up MTurk backend...')
-        html_api_endpoint_url, json_api_endpoint_url, requester_key_gt = setup_aws(task_description=opt['task_description'], num_hits=opt['num_hits'], num_assignments=opt['num_assignments'], is_sandbox=opt['is_sandbox'])
+        create_hit_config(task_description=opt['task_description'], num_hits=opt['num_hits'], num_assignments=opt['num_assignments'], is_sandbox=opt['is_sandbox'])
+        if not self.task_files_to_copy:
+            self.task_files_to_copy = []
+        task_directory_path = os.path.join(opt['parlai_home'], 'parlai', 'mturk', 'tasks', opt['task'])
+        for mturk_agent_id in self.mturk_agent_ids:
+            self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', mturk_agent_id+'_cover_page.html'))
+            self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', mturk_agent_id+'_index.html'))
+        self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', 'approval_index.html'))
+        html_api_endpoint_url, json_api_endpoint_url, requester_key_gt = setup_aws(task_files_to_copy = self.task_files_to_copy)
         self.html_api_endpoint_url = html_api_endpoint_url
         self.json_api_endpoint_url = json_api_endpoint_url
         self.requester_key_gt = requester_key_gt
@@ -80,13 +92,16 @@ class MTurkManager():
         self.db_session = scoped_session(session_maker)
 
         self.db_thread_stop_event = threading.Event()
-        self.db_thread = threading.Thread(target=self._poll_new_messages_and_save_to_db, args=())
+        self.db_thread = threading.Thread(target=self._sync_with_remote_db, args=())
         self.db_thread.daemon = True
         self.db_thread.start()
 
-    def _poll_new_messages_and_save_to_db(self):
+    def _sync_with_remote_db(self):
         while not self.db_thread_stop_event.is_set():
+            if debug:
+                print("Syncing with remote db...")
             self.get_new_messages_and_save_to_db()
+            self.send_new_messages_in_bulk()
             time.sleep(polling_interval)
 
     def get_new_messages_and_save_to_db(self):
@@ -95,11 +110,11 @@ class MTurkManager():
             'task_group_id': self.task_group_id,
             'last_message_id': self.db_last_message_id,
         }
-        request = requests.get(self.json_api_endpoint_url, params=params)
+        response = requests.get(self.json_api_endpoint_url, params=params)
         try:
-            ret = json.loads(request.json())
-        except TypeError as e:
-            print(request.json())
+            ret = json.loads(response.json())
+        except Exception as e:
+            print(response.content)
             raise e
         conversation_dict = ret['conversation_dict']
         if ret['last_message_id']:
@@ -135,25 +150,28 @@ class MTurkManager():
             )
 
     def send_new_message(self, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False):
-        post_data_dict = {
-            'method_name': 'send_new_message',
-            'task_group_id': task_group_id,
-            'conversation_id': conversation_id,
-            'cur_agent_id': agent_id,
-            'episode_done': episode_done,
-        }
-        if message_text:
-            post_data_dict['text'] = message_text
-        if reward:
-            post_data_dict['reward'] = reward
+        with self.unsent_messages_lock:
+            self.unsent_messages.append({
+                "task_group_id": task_group_id,
+                "conversation_id": conversation_id,
+                "text": message_text,
+                "id": agent_id,
+                "reward": reward,
+                "episode_done": episode_done,
+            })
 
-        request = requests.post(self.json_api_endpoint_url, data=json.dumps(post_data_dict))
-        try:
-            ret = json.loads(request.json())
-            return ret
-        except TypeError as e:
-            print(request.json())
-            raise e
+    def send_new_messages_in_bulk(self):
+        with self.unsent_messages_lock:
+            if len(self.unsent_messages) > 0:
+                post_data_dict = {
+                    'method_name': 'send_new_messages_in_bulk',
+                    'new_messages': self.unsent_messages,
+                }
+                response = requests.post(self.json_api_endpoint_url, data=json.dumps(post_data_dict))
+                if response.status_code != 200:
+                    print(response.content)
+                    raise Exception
+                self.unsent_messages = []
 
     def get_approval_status_count(self, task_group_id, approval_status, requester_key, conversation_id=None):
         params = {
@@ -164,8 +182,11 @@ class MTurkManager():
         }
         if conversation_id:
             params['conversation_id'] = conversation_id
-        request = requests.get(self.json_api_endpoint_url, params=params)
-        return request.json()
+        response = requests.get(self.json_api_endpoint_url, params=params)
+        if response.status_code != 200:
+            print(response.content)
+            raise Exception
+        return response.json()
 
     def create_hits(self, opt):
         print('Creating HITs...')
@@ -180,7 +201,7 @@ class MTurkManager():
                         is_sandbox=opt['is_sandbox']
                     )
                 all_agent_ids_string = str(self.all_agent_ids).replace("'", '''"''')
-                mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)+"&all_agent_ids="+all_agent_ids_string+"&cur_agent_id="+str(mturk_agent_id)+"&task_additional_info="+str(opt.get('task_additional_info', ''))
+                mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)+"&all_agent_ids="+all_agent_ids_string+"&cur_agent_id="+str(mturk_agent_id)
                 mturk_page_url = create_hit_with_hit_type(
                     page_url=mturk_chat_url,
                     hit_type_id=hit_type_id,
@@ -200,6 +221,8 @@ class MTurkManager():
 
         # Loop for checking approval status
         while self.get_approval_status_count(task_group_id=self.task_group_id, approval_status='pending', requester_key=self.requester_key_gt) > 0:
+            if debug:
+                print("Waiting for HIT review to complete....")
             time.sleep(polling_interval)
 
         print("All reviews are done!")
@@ -219,28 +242,17 @@ class MTurkAgent(Agent):
 
     def observe(self, msg):
         if msg['id'] not in self.manager.mturk_agent_ids: # If the message sender is an mturk agent, then there is no need to upload this message to db since it's already been done on the message sender side.
-            self.manager.get_new_messages_and_save_to_db() # Force a refresh for local db.
-            conversation_dict, _ = self.manager.get_new_messages(
-                task_group_id=self.manager.task_group_id,
-                conversation_id=self.conversation_id,
-                after_message_id=self.last_message_id,
-                included_agent_id=msg['id'])
-            if self.conversation_id in conversation_dict:
-                agent_last_message_in_db = conversation_dict[self.conversation_id][-1]
-                agent_last_message_in_db.pop('message_id', None)
-                if 'episode_done' not in msg:
-                    msg['episode_done'] = False
-                if agent_last_message_in_db == msg:
-                    return
-
-            self.manager.send_new_message(
-                task_group_id=self.manager.task_group_id,
-                conversation_id=self.conversation_id,
-                agent_id=msg['id'],
-                message_text=msg.get('text', None),
-                reward=msg.get('reward', None),
-                episode_done=msg.get('episode_done', False),
-            )
+            # We can't have all mturk agents upload this observed new message to server, otherwise there will be duplication.
+            # Instead we only have the first mturk agent upload this observed message to server.
+            if self.manager.mturk_agent_ids.index(self.id) == 0:
+                self.manager.send_new_message(
+                    task_group_id=self.manager.task_group_id,
+                    conversation_id=self.conversation_id,
+                    agent_id=msg['id'],
+                    message_text=msg.get('text', None),
+                    reward=msg.get('reward', None),
+                    episode_done=msg.get('episode_done', False),
+                )
 
     def act(self):
         while True:
@@ -267,5 +279,7 @@ class MTurkAgent(Agent):
     def shutdown(self):
         # Loop to ensure all HITs are done
         while self.manager.get_approval_status_count(task_group_id=self.manager.task_group_id, conversation_id=self.conversation_id, approval_status='pending', requester_key=self.manager.requester_key_gt) < len(self.manager.mturk_agent_ids):
+            if debug:
+                print("Waiting for all HITs to finish...")
             time.sleep(polling_interval)
         print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is done.')

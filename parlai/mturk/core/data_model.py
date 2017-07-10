@@ -143,6 +143,38 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
     return new_message_object
 
 
+def send_new_messages_in_bulk(db_session, new_messages):
+    """
+    Same message format as in send_new_message(), but also needs to include the following in each message:
+    task_group_id
+    conversation_id
+
+    NOTE: we don't need returned objects if we are sending new messages from the local ParlAI system, so no return for this method is fine
+    """
+
+    new_message_objects = []
+    for new_message in new_messages:
+        new_message_dict = {
+            "text": new_message['text'],
+            "id": new_message['id'],
+        }
+        if 'reward' in new_message:
+            new_message_dict['reward'] = new_message['reward']
+        new_message_dict['episode_done'] = new_message.get('episode_done', False)
+        message_content = json.dumps(new_message_dict)
+        if is_python_2:
+            message_content = unicode(message_content)
+        new_message_objects.append(Message(
+            task_group_id = new_message['task_group_id'],
+            conversation_id = new_message['conversation_id'],
+            agent_id = new_message['id'],
+            message_content = message_content
+        ))
+
+    db_session.bulk_save_objects(new_message_objects)
+    db_session.commit()
+
+
 def get_new_messages(db_session, task_group_id, conversation_id=None, after_message_id=None, excluded_agent_id=None, included_agent_id=None, populate_meta_info=False):
     """
     Return:

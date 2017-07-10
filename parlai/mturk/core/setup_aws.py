@@ -38,7 +38,15 @@ rds_security_group_name = 'parlai-mturk-db-security-group'
 rds_security_group_description = 'Security group for ParlAI MTurk DB'
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
-files_to_copy = [os.path.join(parent_dir, 'data_model.py'), os.path.join(parent_dir, 'mturk_index.html')]
+generic_files_to_copy = [
+    os.path.join(parent_dir, 'hit_config.json'),
+    os.path.join(parent_dir, 'data_model.py'), 
+    os.path.join(parent_dir, 'html', 'core.html'), 
+    os.path.join(parent_dir, 'html', 'cover_page.html'), 
+    os.path.join(parent_dir, 'html', 'mturk_index.html'), 
+    os.path.join(parent_dir, 'html', 'approval_core.html'),
+    os.path.join(parent_dir, 'html', 'approval_index.html'),
+]
 lambda_server_directory_name = 'lambda_server'
 lambda_server_zip_file_name = 'lambda_server.zip'
 mturk_hit_frame_height = 650
@@ -233,7 +241,24 @@ def setup_rds():
 
     return host
 
-def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, num_assignments, requester_key_gt, should_clean_up_after_upload=True):
+def create_hit_config(task_description, num_hits, num_assignments, is_sandbox):
+    mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
+    if not is_sandbox:
+        mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
+    hit_config = {
+        'task_description': task_description, 
+        'num_hits': num_hits, 
+        'num_assignments': num_assignments, 
+        'is_sandbox': is_sandbox,
+        'mturk_submit_url': mturk_submit_url,
+    }
+    hit_config_file_path = os.path.join(parent_dir, 'hit_config.json')
+    if os.path.exists(hit_config_file_path):
+        os.remove(hit_config_file_path)
+    with open(hit_config_file_path, 'w') as hit_config_file:
+        hit_config_file.write(json.dumps(hit_config))
+
+def setup_relay_server_api(rds_host, requester_key_gt, task_files_to_copy, should_clean_up_after_upload=True):
     # Dynamically generate handler.py file, and then create zip file
     print("Lambda: Preparing relay server code...")
 
@@ -250,22 +275,17 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sand
     handler_file_string = handler_file_string.replace(
         '# {{block_task_config}}',
         "frame_height = " + str(mturk_hit_frame_height) + "\n" + \
-        "mturk_submit_url = \'" + mturk_submit_url + "\'\n" + \
         "rds_host = \'" + rds_host + "\'\n" + \
         "rds_db_name = \'" + rds_db_name + "\'\n" + \
         "rds_username = \'" + rds_username + "\'\n" + \
         "rds_password = \'" + rds_password + "\'\n" + \
-        "requester_key_gt = \'" + requester_key_gt + "\'\n" + \
-        "num_hits = " + str(num_hits) + "\n" + \
-        "num_assignments = " + str(num_assignments) + "\n" + \
-        "is_sandbox = " + str(is_sandbox) + "\n" + \
-        'task_description = ' + task_description)
+        "requester_key_gt = \'" + requester_key_gt + "\'")
     with open(os.path.join(parent_dir, lambda_server_directory_name, 'handler.py'), 'w') as handler_file:
         handler_file.write(handler_file_string)
     create_zip_file(
         lambda_server_directory_name=lambda_server_directory_name,
         lambda_server_zip_file_name=lambda_server_zip_file_name,
-        files_to_copy=files_to_copy
+        files_to_copy=generic_files_to_copy + task_files_to_copy
     )
     with open(os.path.join(parent_dir, lambda_server_zip_file_name), mode='rb') as zip_file:
         zip_file_content = zip_file.read()
@@ -346,6 +366,7 @@ def setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sand
     if should_clean_up_after_upload:
         shutil.rmtree(os.path.join(parent_dir, lambda_server_directory_name))
         os.remove(os.path.join(parent_dir, lambda_server_zip_file_name))
+        os.remove(os.path.join(parent_dir, 'hit_config.json'))
 
     # Check API Gateway existence.
     # If doesn't exist, create the APIs, point them to Lambda function, and set correct configurations
@@ -621,7 +642,10 @@ def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, f
 
     if files_to_copy:
         for file_path in files_to_copy:
-            shutil.copy2(file_path, src)
+            try:
+                shutil.copy2(file_path, src)
+            except FileNotFoundError:
+                pass
 
     zf = zipfile.ZipFile("%s" % (dst), "w", zipfile.ZIP_DEFLATED)
     abs_src = os.path.abspath(src)
@@ -639,13 +663,10 @@ def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, f
     if verbose:
         print("Done!")
 
-def setup_aws(task_description, num_hits, num_assignments, is_sandbox):
-    mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
-    if not is_sandbox:
-        mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
+def setup_aws(task_files_to_copy):
     requester_key_gt = get_requester_key()
     rds_host = setup_rds()
-    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(mturk_submit_url, rds_host, task_description, is_sandbox, num_hits, num_assignments, requester_key_gt)
+    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(rds_host=rds_host, requester_key_gt=requester_key_gt, task_files_to_copy=task_files_to_copy)
 
     return html_api_endpoint_url, json_api_endpoint_url, requester_key_gt
 
