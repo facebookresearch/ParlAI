@@ -23,6 +23,7 @@ global test_thread
 def test_thread(thread_id):
     print("Thread "+str(thread_id)+" is on.")
     count = 0
+    avg_elapsed = 0
     while True:
         count += 1
         params = {
@@ -33,7 +34,8 @@ def test_thread(thread_id):
         response = requests.get(json_api_endpoint_url, params=params, allow_redirects=False)
         try:
             ret = json.loads(response.json())
-            print("Thread "+str(thread_id)+": Count: "+str(count)+" Success: "+str(ret)+" Elapsed time: "+str(response.elapsed.total_seconds()))
+            avg_elapsed = (avg_elapsed * (count - 1) + response.elapsed.total_seconds()) / count
+            print("Thread "+str(thread_id)+": Count: "+str(count)+" Success: "+str(ret)+" Elapsed time: "+str(avg_elapsed))
             time.sleep(wait_time_between_requests)
         except Exception as e:
             print(response.content)
