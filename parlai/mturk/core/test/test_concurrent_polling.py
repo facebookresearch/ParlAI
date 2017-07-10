@@ -33,7 +33,7 @@ def test_thread(thread_id):
         response = requests.get(json_api_endpoint_url, params=params, allow_redirects=False)
         try:
             ret = json.loads(response.json())
-            print("Thread "+str(thread_id)+": Count: "+str(count)+" Success: "+str(ret))
+            print("Thread "+str(thread_id)+": Count: "+str(count)+" Success: "+str(ret)+" Elapsed time: "+str(response.elapsed.total_seconds()))
             time.sleep(wait_time_between_requests)
         except Exception as e:
             print(response.content)
