@@ -20,7 +20,7 @@ from botocore.exceptions import ProfileNotFound
 from parlai.mturk.core.data_model import setup_database_engine, init_database, check_database_health
 
 aws_profile_name = 'parlai_mturk'
-region_name = 'us-west-2'
+region_name = 'us-east-1'
 user_name = getpass.getuser()
 
 iam_role_name = 'parlai_relay_server'
