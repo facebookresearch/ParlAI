@@ -104,7 +104,7 @@ class Teacher(Agent):
 
     def __init__(self, opt, shared=None):
         if not hasattr(self, 'opt'):
-            self.opt = opt
+             self.opt = copy.deepcopy(opt)
         if not hasattr(self, 'id'):
             self.id = opt.get('task', 'teacher')
         if not hasattr(self, 'metrics'):
