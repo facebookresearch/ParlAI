@@ -10,7 +10,24 @@ Creating a New Task
 
 Adding new tasks to ParlAI is a simple process. In this tutorial we will go over the different ways a new task can be created. 
 
-Tasks are located in the ``parlai/tasks`` directory. Therefore, the first thing to do is to create a directory for your new task there. (Don't forget to create an ``__init__.py`` file there.) The code for the tasks in this tutorial can also be found in this directory.
+Tasks code is located in the ``parlai/tasks`` directory. You will need to create a directory for your new task there. (Don't forget to create an ``__init__.py`` file.) The code for the tasks in this tutorial can also be found in this directory.
+
+
+Summary
+^^^^^^^
+
+In brief, to add your own task you need to:
+
+1. Implement ``build.py`` to `download and build any needed data <http://parl.ai/static/docs/task_tutorial.html#part-1-building-the-data>`__.
+2. Implement ``agents.py``, with at least a ``DefaultTeacher`` (extending ``Teacher`` or one of its children)
+   
+    - if your data is in FB Dialog format, subclass `FbDialogTeacher`_.
+    - if your data consists of fixed logs, you can extend `DialogTeacher`_, in which case you just need to write your own ``setup_data()`` function, which provides an iterable over the data.
+    - if your data uses other fields, build your `task from scratch`_, by subclassing ``Teacher`` and writing your own ``act()`` method, which will provide observations from your task each time it's called.
+
+3. Add the task to the `task list <http://parl.ai/static/docs/task_tutorial.html#part-3-add-task-to-task-list>`__.
+
+Below we go into more details for each of these steps.
 
 
 Part 1: Building the Data
@@ -23,20 +40,24 @@ We first need to create functionality for downloading and setting up the dataset
     import parlai.core.build_data as build_data
     import os
 
-Now we define our build method, which takes in the argument ``opt``, which contains parsed arguments from the command line (or their default), including the path to the data directory. We then use the build_data utilities to check if this data has been previously built, so that work is only done once. If not, we proceed to creating the directory for the data, and then downloading and uncompressing it. Finally, we mark the build as done, so that ``build_data.built`` returns true from now on. Below is an example of setting up the MNIST dataset.
+Now we define our build method, which takes in the argument ``opt``, which contains parsed arguments from the command line (or their default), including the path to the data directory. We can also define a version string, so that the data is updated automatically in case there is a new version (here it was just left as ``None`` as the MNIST dataset doesn't have a version). We then use the build_data utilities to check if this data hasn't been previously built or if the version is outdated. If not, we proceed to creating the directory for the data, and then downloading and uncompressing it. Finally, we mark the build as done, so that ``build_data.built`` returns true from now on. Below is an example of setting up the MNIST dataset.
 
 .. code-block:: python
 
     def build(opt):
         # get path to data directory
         dpath = os.path.join(opt['datapath'], 'mnist')
+        # define version if any
+        version = None
         
         # check if data had been previously built
-        if not build_data.built(dpath):
+        if not build_data.built(dpath, version_string=version):
             print('[building data: ' + dpath + ']')
             
-            # make a clean directory
-            build_data.remove_dir(dpath)
+            # make a clean directory if needed
+            if build_data.built(dpath):
+                # an older version exists, so remove these outdated files.
+                build_data.remove_dir(dpath)
             build_data.make_dir(dpath)
 
             # download the data.
@@ -48,7 +69,7 @@ Now we define our build method, which takes in the argument ``opt``, which conta
             build_data.untar(dpath, fname)
 
             # mark the data as built
-            build_data.mark_done(dpath)
+            build_data.mark_done(dpath, version_string=version)
 
 
 
