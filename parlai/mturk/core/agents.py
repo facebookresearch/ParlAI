@@ -38,7 +38,7 @@ ASSIGNMENT_REJECTED = 'Rejected'
 polling_interval = 1 # in seconds
 create_hit_type_lock = threading.Lock()
 local_db_lock = threading.Lock()
-debug = True
+debug = False
 
 class MTurkManager():
     def __init__(self, opt, mturk_agent_ids, all_agent_ids):
