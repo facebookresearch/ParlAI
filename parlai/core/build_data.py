@@ -76,6 +76,8 @@ def download(url, path, fname, redownload=False):
             if resume and response.headers.get('Accept-Ranges', 'none') == 'none':
                 resume_pos = 0
                 mode = 'wb'
+            elif resume:
+                print('resuming download')
 
             CHUNK_SIZE = 32768
             total_size = int(response.headers.get('Content-Length', -1))
