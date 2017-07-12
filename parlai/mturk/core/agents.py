@@ -229,7 +229,6 @@ class MTurkManager():
         client.create_worker_block(WorkerId=worker_id, Reason=reason)
 
     def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason, unique_request_token):
-        print(worker_id, bonus_amount, assignment_id, reason, unique_request_token)
         if not check_mturk_balance(balance_needed=bonus_amount, is_sandbox=self.is_sandbox):
             print("Cannot pay bonus. Reason: Insufficient fund in your MTurk account.")
             return False
