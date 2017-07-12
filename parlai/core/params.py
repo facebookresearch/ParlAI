@@ -185,7 +185,8 @@ class ParlaiParser(argparse.ArgumentParser):
         We specifically remove items with ``None`` as values in order to support
         the style ``opt.get(key, default)``, which would otherwise return ``None``.
         """
-        self.opt = vars(super().parse_args(args=args))
+        self.args = super().parse_args(args=args)
+        self.opt = vars(self.args)
 
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
@@ -204,5 +205,17 @@ class ParlaiParser(argparse.ArgumentParser):
         """Print out all the arguments in this parser."""
         if not self.opt:
             self.parse_args(print_args=False)
+        values = {}
         for key, value in self.opt.items():
-            print('[' + str(key) + ':' + str(value) + ']')
+            values[str(key)] = str(value)
+        for group in self._action_groups:
+            group_dict={a.dest:getattr(self.args,a.dest,None) for a in group._group_actions}
+            namespace = argparse.Namespace(**group_dict)
+            count = 0
+            for key in namespace.__dict__:
+                if key in values:
+                    if count == 0:
+                        print('[ ' + group.title + ': ] ')
+                    count += 1
+                    print('[  ' + key + ': ' + values[key] + ' ]')
+
