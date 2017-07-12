@@ -32,7 +32,6 @@ import copy
 import importlib
 import math
 import os
-import spacy
 
 def run_eval(agent, opt, datatype, still_training=False, max_exs=-1):
     ''' Eval on validation/test data. '''
@@ -142,10 +141,9 @@ def main():
                 train_report = world.report()
                 world.reset_metrics()
 
-            # if hasattr(train_report, 'get') and train_report.get('total'):
-            #     total_exs += train_report['total']
-            #     logs.append('total_exs:{}'.format(total_exs))
-            total_exs += 1
+            if hasattr(train_report, 'get') and train_report.get('total'):
+                total_exs += train_report['total']
+                logs.append('total_exs:{}'.format(total_exs))
 
             # check if we should log amount of time remaining
             time_left = None
@@ -196,7 +194,6 @@ def main():
         # reload best validation model
         agent = create_agent(opt)
 
-    print('total used {}'.format(train_time.time()))
     run_eval(agent, opt, 'valid')
     run_eval(agent, opt, 'test')
 
