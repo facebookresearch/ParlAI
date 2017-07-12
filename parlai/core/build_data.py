@@ -106,7 +106,6 @@ def download(url, path, fname, redownload=False):
                 print(''.join([' '] * 60), end='\r')  # TODO Better way to clean progress bar?
                 if retry >= 0:
                     print('Connection error, retrying. (%d retries left)' % retry)
-                    print(exp_backoff[retry])
                     time.sleep(exp_backoff[retry])
                 else:
                     print('Retried too many times, stopped retrying.')
