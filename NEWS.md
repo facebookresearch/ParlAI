@@ -1,5 +1,7 @@
 <h2>News</h2>
 
+2017-07-12: [ParlAI Request For Proposals: Funding university teams - 7 awards are available - deadline Aug 25](https://research.fb.com/programs/research-awards/proposals/parlai/)
+
 2017-06-27: [ExecutableWorld class for interactive worlds with dialog](https://github.com/facebookresearch/ParlAI/pull/170)
 
 2017-06-21: [MTurk now supports multiple assignments per HIT](https://github.com/facebookresearch/ParlAI/pull/156)
