@@ -77,7 +77,7 @@ class RnnDocReader(nn.Module):
 
         # Question merging
         if opt['question_merge'] not in ['avg', 'self_attn']:
-            raise NotImplementedError('merge_mode = %s' % opt['merge_mode'])
+            raise NotImplementedError('question_merge = %s' % opt['question_merge'])
         if opt['question_merge'] == 'self_attn':
             self.self_attn = layers.LinearSeqAttn(question_hidden_size)
 

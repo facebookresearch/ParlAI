@@ -50,10 +50,13 @@ def create_fb_format(lines_file, convo_file, outpath):
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'CornellMovie')
+    version = None
 
-    if not build_data.built(dpath):
+    if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
-        build_data.remove_dir(dpath)
+        if build_data.built(dpath):
+            # An older version exists, so remove these outdated files.
+            build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.
@@ -68,4 +71,4 @@ def build(opt):
                          dpath)
 
         # Mark the data as built.
-        build_data.mark_done(dpath)
+        build_data.mark_done(dpath, version_string=version)

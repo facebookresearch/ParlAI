@@ -6,6 +6,7 @@
 
 from .agents import Teacher
 
+from .image_featurizers import ImageLoader
 from PIL import Image
 import random
 import os
@@ -185,6 +186,7 @@ class DialogData(object):
         self._load(data_loader)
         self.cands = None if cands == None else set(sys.intern(c) for c in cands)
         self.addedCands = []
+        self.image_loader = ImageLoader(opt) 
 
     def __len__(self):
         """Returns total number of entries available. Each episode has at least
@@ -272,7 +274,7 @@ class DialogData(object):
                     if entry[3] is not None:
                         table['label_candidates'] = entry[3]
                     if len(entry) > 4 and entry[4] is not None:
-                        img = load_image(self.opt, entry[4])
+                        img = self.image_loader.load(entry[4])
                         if img is not None:
                             table['image'] = img
 
@@ -297,42 +299,3 @@ class DialogData(object):
         table['episode_done'] = episode_done
         return table, end_of_data
 
-
-_greyscale = '  .,:;crsA23hHG#98&@'
-
-
-def img_to_ascii(path):
-    im = Image.open(path)
-    im.thumbnail((60, 40), Image.BICUBIC)
-    im = im.convert('L')
-    asc = []
-    for y in range(0, im.size[1]):
-        for x in range(0, im.size[0]):
-            lum = 255 - im.getpixel((x, y))
-            asc.append(_greyscale[lum * len(_greyscale) // 256])
-        asc.append('\n')
-    return ''.join(asc)
-
-
-def load_image(opt, path):
-    mode = opt.get('image_mode', 'raw')
-    if mode is None or mode == 'none':
-        # don't need to load images
-        return None
-    elif mode == 'raw':
-        # raw just returns RGB values
-        return Image.open(path).convert('RGB')
-    elif mode == 'ascii':
-        # convert images to ascii ¯\_(ツ)_/¯
-        return img_to_ascii(path)
-    else:
-        # otherwise, looks for preprocessed version under 'mode' directory
-        prepath, imagefn = os.path.split(path)
-        new_path = os.path.join(prepath, mode, imagefn)
-        if not os.path.isfile(new_path):
-            # currently only supports *downloaded* preprocessing
-            # TODO: generate preprocessed images if not available
-            raise NotImplementedError('image preprocessing mode' +
-                                      '{} not supported yet'.format(mode))
-        else:
-            return Image.open(path)

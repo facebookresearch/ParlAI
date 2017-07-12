@@ -8,40 +8,18 @@
 import parlai.core.build_data as build_data
 import os
 
-
-def buildImage(opt):
-    dpath = os.path.join(opt['datapath'], 'COCO-IMG')
-
-    if not build_data.built(dpath):
-        print('[building image data: ' + dpath + ']')
-        build_data.remove_dir(dpath)
-        build_data.make_dir(dpath)
-
-        # download the image data.
-        fname1 = 'train2014.zip'
-        fname2 = 'val2014.zip'
-        fname3 = 'test2014.zip'
-
-        url = 'http://msvocds.blob.core.windows.net/coco2014/'
-
-        build_data.download(url + fname1, dpath, fname1)
-        build_data.download(url + fname2, dpath, fname2)
-        build_data.download(url + fname3, dpath, fname3)
-
-        build_data.untar(dpath, fname1)
-        build_data.untar(dpath, fname2)
-        build_data.untar(dpath, fname3)
-
-        # Mark the data as built.
-        build_data.mark_done(dpath)
+from parlai.tasks.vqa_v1.build import buildImage
 
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'VQA-v2')
+    version = None
 
-    if not build_data.built(dpath):
+    if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
-        build_data.remove_dir(dpath)
+        # An older version exists, so remove these outdated files.
+        if build_data.built(dpath):
+            build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.
@@ -67,4 +45,4 @@ def build(opt):
         build_data.untar(dpath, fname5)
 
         # Mark the data as built.
-        build_data.mark_done(dpath)
+        build_data.mark_done(dpath, version_string=version)

@@ -135,8 +135,10 @@ class IrBaselineAgent(Agent):
             reply['text'] = "I don't know."
         return reply
 
-    def save(self, fname):
-        self.dictionary.save(fname + '.dict')
+    def save(self, fname=None):
+        fname = self.opt.get('model_file', None) if fname is None else fname
+        if fname:
+            self.dictionary.save(fname + '.dict')
 
     def load(self, fname):
         self.dictionary.load(fname + '.dict')

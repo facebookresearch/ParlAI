@@ -49,14 +49,14 @@ class SimpleDictionaryAgent(DictionaryAgent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        DictionaryAgent.add_cmdline_args(argparser)
-        argparser.add_arg(
+        group = DictionaryAgent.add_cmdline_args(argparser)
+        group.add_argument(
             '--pretrained_words', type='bool', default=True,
             help='Use only words found in provided embedding_file'
         )
 
     def __init__(self, *args, **kwargs):
-        super(SimpleDictionaryAgent, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Index words in embedding file
         if self.opt['pretrained_words'] and self.opt.get('embedding_file'):
@@ -104,11 +104,11 @@ class DrqaAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         config.add_cmdline_args(argparser)
-        SimpleDictionaryAgent.add_cmdline_args(argparser)
+        DrqaAgent.dictionary_class().add_cmdline_args(argparser)
 
     @staticmethod
     def dictionary_class():
-        return "parlai.agents.drqa.drqa:SimpleDictionaryAgent"
+        return SimpleDictionaryAgent
 
     def __init__(self, opt, shared=None):
         if opt['numthreads'] >1:
@@ -116,7 +116,7 @@ class DrqaAgent(Agent):
 
         # Load dict.
         if not shared:
-            word_dict = SimpleDictionaryAgent(opt)
+            word_dict = DrqaAgent.dictionary_class()(opt)
         # All agents keep track of the episode (for multiple questions)
         self.episode_done = True
 
@@ -132,10 +132,10 @@ class DrqaAgent(Agent):
         self.opt = copy.deepcopy(opt)
         config.set_defaults(self.opt)
 
-        if 'model_file' in self.opt and os.path.isfile(opt['model_file']):
+        if self.opt.get('model_file') and os.path.isfile(opt['model_file']):
             self._init_from_saved(opt['model_file'])
         else:
-            if 'pretrained_model' in self.opt:
+            if self.opt.get('pretrained_model'):
                 self._init_from_saved(opt['pretrained_model'])
             else:
                 self._init_from_scratch()
@@ -190,7 +190,7 @@ class DrqaAgent(Agent):
         if ex is None:
             return reply
         batch = batchify(
-            [ex], null=self.word_dict['<NULL>'], cuda=self.opt['cuda']
+            [ex], null=self.word_dict[self.word_dict.null_token], cuda=self.opt['cuda']
         )
 
         # Either train or predict
@@ -223,7 +223,7 @@ class DrqaAgent(Agent):
 
         # Else, use what we have (hopefully everything).
         batch = batchify(
-            examples, null=self.word_dict['<NULL>'], cuda=self.opt['cuda']
+            examples, null=self.word_dict[self.word_dict.null_token], cuda=self.opt['cuda']
         )
 
         # Either train or predict
@@ -237,10 +237,12 @@ class DrqaAgent(Agent):
 
         return batch_reply
 
-    def save(self, filename):
+    def save(self, fname=None):
         """Save the parameters of the agent to a file."""
-        print("[ saving model: " + self.opt['model_file'] + " ]")
-        self.model.save(self.opt['model_file'])
+        fname = self.opt.get('model_file', None) if fname is None else fname
+        if fname:
+            print("[ saving model: " + fname + " ]")
+            self.model.save(fname)
 
     # --------------------------------------------------------------------------
     # Helper functions.

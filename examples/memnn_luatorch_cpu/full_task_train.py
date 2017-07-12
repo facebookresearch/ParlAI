@@ -56,32 +56,31 @@ def main():
     if not opt.get('dict_file'):
         # build dictionary since we didn't load it
         ordered_opt = copy.deepcopy(opt)
-        for datatype in ['train:ordered', 'valid']:
-            # we use train and valid sets to build dictionary
-            ordered_opt['datatype'] = datatype
-            ordered_opt['numthreads'] = 1
-            world_dict = create_task(ordered_opt, dictionary)
+        ordered_opt['datatype'] = 'train:ordered'
+        ordered_opt['numthreads'] = 1
+        world_dict = create_task(ordered_opt, dictionary)
 
-            print('Dictionary building on {} data.'.format(datatype))
-            cnt = 0
-            # pass examples to dictionary
-            for _ in world_dict:
-                cnt += 1
-                if cnt > opt['dict_max_exs'] and opt['dict_max_exs'] > 0:
-                    print('Processed {} exs, moving on.'.format(
-                          opt['dict_max_exs']))
-                    # don't wait too long...
-                    break
+        print('Dictionary building on training data.')
+        cnt = 0
+        # pass examples to dictionary
+        for _ in world_dict:
+            cnt += 1
+            if cnt > opt['dict_max_exs'] and opt['dict_max_exs'] > 0:
+                print('Processed {} exs, moving on.'.format(
+                      opt['dict_max_exs']))
+                # don't wait too long...
+                break
 
-                world_dict.parley()
+            world_dict.parley()
 
         # we need to save the dictionary to load it in memnn (sort it by freq)
+        dictionary.sort()
         dictionary.save('/tmp/dict.txt', sort=True)
 
     print('Dictionary ready, moving on to training.')
 
     opt['datatype'] = 'train'
-    agent = ParsedRemoteAgent(opt, {'dictionary': dictionary})
+    agent = ParsedRemoteAgent(opt, {'dictionary_shared': dictionary.share()})
     world_train = create_task(opt, agent)
     opt['datatype'] = 'valid'
     world_valid = create_task(opt, agent)

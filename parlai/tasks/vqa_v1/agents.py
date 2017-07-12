@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.agents import Teacher
-from parlai.core.dialog_teacher import load_image
+from parlai.core.image_featurizers import ImageLoader
 from .build import build, buildImage
 
 import json
@@ -29,7 +29,7 @@ def _path(opt):
     elif dt == 'test':
         ques_suffix = 'MultipleChoice_mscoco_test2015'
         annotation_suffix = 'None'
-        img_suffix = os.path.join('test2014', 'COCO_test2014_')
+        img_suffix = os.path.join('test2015', 'COCO_test2015_')
     else:
         raise RuntimeError('Not valid datatype.')
 
@@ -66,7 +66,7 @@ class OeTeacher(Teacher):
         # size so they all process disparate sets of the data
         self.step_size = opt.get('batchsize', 1)
         self.data_offset = opt.get('batchindex', 0)
-
+        self.image_loader = ImageLoader(opt)
         self.reset()
 
     def __len__(self):
@@ -101,7 +101,7 @@ class OeTeacher(Teacher):
         img_path = self.image_path + '%012d.jpg' % (image_id)
 
         action = {
-            'image': load_image(self.opt, img_path),
+            'image': self.image_loader.load(img_path),
             'text': question,
             'episode_done': True
         }

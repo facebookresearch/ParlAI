@@ -14,6 +14,20 @@ import os
 import re
 
 
+def escape(s):
+    """Replace potential special characters with escaped version.
+    For example, newline => \\n and tab => \\t
+    """
+    return s.replace('\n', '\\n').replace('\t', '\\t').replace('\r', '\\r')
+
+
+def unescape(s):
+    """Revert escaped characters back to their special version.
+    For example, \\n => newline and \\t => tab
+    """
+    return s.replace('\\n', '\n').replace('\\t', '\t').replace('\\r', '\r')
+
+
 def find_ngrams(token_dict, text, n):
     """Breaks text into ngrams that appear in ``token_dict``."""
     # base case
@@ -62,37 +76,40 @@ class DictionaryAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        argparser.add_arg(
+        dictionary = argparser.add_argument_group('Dictionary Arguments')
+        dictionary.add_argument(
             '--dict-file',
             help='if set, the dictionary will automatically save to this path' +
                  ' during shutdown')
-        argparser.add_arg(
+        dictionary.add_argument(
             '--dict-initpath',
             help='path to a saved dictionary to load tokens / counts from to ' +
                  'seed the dictionary with initial tokens and/or frequencies')
-        argparser.add_arg(
+        dictionary.add_argument(
             '--dict-language', default=DictionaryAgent.default_lang,
             help='sets language for the punkt sentence tokenizer')
-        argparser.add_arg(
-            '--dict-max-ngram-size', default=DictionaryAgent.default_maxngram,
+        dictionary.add_argument(
+            '--dict-max-ngram-size', type=int,
+            default=DictionaryAgent.default_maxngram,
             help='looks for ngrams of up to this size. this is ignored when ' +
                  'building the dictionary. note: this takes approximate ' +
                  'runtime of len(sentence)^max_ngram_size')
-        argparser.add_arg(
-            '--dict-minfreq', default=DictionaryAgent.default_minfreq,
+        dictionary.add_argument(
+            '--dict-minfreq', default=DictionaryAgent.default_minfreq, type=int,
             help='minimum frequency of words to include them in the dictionary')
-        argparser.add_arg(
+        dictionary.add_argument(
            '--dict-nulltoken', default=DictionaryAgent.default_null,
            help='empty token, can be used for padding or just empty values')
-        argparser.add_arg(
+        dictionary.add_argument(
            '--dict-eostoken', default=DictionaryAgent.default_eos,
            help='token for end of sentence markers, if needed')
-        argparser.add_arg(
+        dictionary.add_argument(
             '--dict-unktoken', default=DictionaryAgent.default_unk,
             help='token to return for unavailable words')
-        argparser.add_arg(
+        dictionary.add_argument(
             '--dict-maxexs', default=100000, type=int,
             help='max number of examples to build dict on')
+        return dictionary
 
     def __init__(self, opt, shared=None):
         # initialize fields
@@ -126,14 +143,14 @@ class DictionaryAgent(Agent):
                 index = len(self.tok2ind)
                 self.tok2ind[self.unk_token] = index
                 self.ind2tok[index] = self.unk_token
-              
+
             if opt.get('dict_file') and os.path.isfile(opt['dict_file']):
                 # load pre-existing dictionary
                 self.load(opt['dict_file'])
             elif opt.get('dict_initpath'):
                 # load seed dictionary
                 self.load(opt['dict_initpath'])
-            
+
 
         # initialize tokenizers
         st_path = 'tokenizers/punkt/{0}.pickle'.format(opt['dict_language'])
@@ -255,7 +272,7 @@ class DictionaryAgent(Agent):
         with open(filename) as read:
             for line in read:
                 split = line.strip().split('\t')
-                token = split[0]
+                token = unescape(split[0])
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
                 if token not in self.tok2ind:
@@ -264,7 +281,7 @@ class DictionaryAgent(Agent):
                     self.ind2tok[index] = token
         print('[ num words =  %d ]' % len(self))
 
-    def save(self, filename, append=False, sort=True):
+    def save(self, filename=None, append=False, sort=True):
         """Save dictionary to file.
         Format is 'token<TAB>count' for every token in the dictionary, sorted
         by count with the most frequent words first.
@@ -274,14 +291,16 @@ class DictionaryAgent(Agent):
 
         If ``sort`` (default ``True``), then first sort the dictionary before saving.
         """
+        filename = self.opt['model_file'] if filename is None else filename
         print('Dictionary: saving dictionary to {}.'.format(filename))
         if sort:
             self.sort()
+
         with open(filename, 'a' if append else 'w') as write:
             for i in range(len(self.ind2tok)):
                 tok = self.ind2tok[i]
                 cnt = self.freq[tok]
-                write.write('{tok}\t{cnt}\n'.format(tok=tok, cnt=cnt))
+                write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
 
     def sort(self):
         """Sorts the dictionary, so that the elements with the lowest index have

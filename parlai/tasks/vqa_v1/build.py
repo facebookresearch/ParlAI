@@ -11,18 +11,21 @@ import os
 
 def buildImage(opt):
     dpath = os.path.join(opt['datapath'], 'COCO-IMG')
+    version = '1'
 
-    if not build_data.built(dpath):
+    if not build_data.built(dpath, version_string=version):
         print('[building image data: ' + dpath + ']')
-        build_data.remove_dir(dpath)
+        if build_data.built(dpath):
+            # An older version exists, so remove these outdated files.
+            build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # download the image data.
+        # Download the image data.
         fname1 = 'train2014.zip'
         fname2 = 'val2014.zip'
-        fname3 = 'test2014.zip'
+        fname3 = 'test2015.zip'
 
-        url = 'http://msvocds.blob.core.windows.net/coco2014/'
+        url = 'https://s3.amazonaws.com/fair-data/parlai/COCO-IMG/'
 
         build_data.download(url + fname1, dpath, fname1)
         build_data.download(url + fname2, dpath, fname2)
@@ -33,15 +36,18 @@ def buildImage(opt):
         build_data.untar(dpath, fname3)
 
         # Mark the data as built.
-        build_data.mark_done(dpath)
+        build_data.mark_done(dpath, version_string=version)
 
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'VQA-v1')
+    version = None
 
-    if not build_data.built(dpath):
+    if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
-        build_data.remove_dir(dpath)
+        if build_data.built(dpath):
+            # An older version exists, so remove these outdated files.
+            build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.
@@ -66,4 +72,4 @@ def build(opt):
         build_data.untar(dpath, fname5)
 
         # Mark the data as built.
-        build_data.mark_done(dpath)
+        build_data.mark_done(dpath, version_string=version)

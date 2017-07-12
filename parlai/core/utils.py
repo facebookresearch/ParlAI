@@ -4,9 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_agent
-
+import math
 import sys
 import time
 
@@ -31,6 +29,9 @@ class Predictor(object):
         with hyphens, so 'dict_file=/tmp/dict.tsv' would be interpreted as
         '--dict-file /tmp/dict.tsv'.
         """
+        from parlai.core.params import ParlaiParser
+        from parlai.core.agents import create_agent
+
         if args is None:
             args = []
         for k, v in kwargs.items():
@@ -80,3 +81,9 @@ class Timer(object):
         if self.running:
             return self.total + time.time() - self.start
         return self.total
+
+
+def round_sigfigs(x, sigfigs=4):
+    if x == 0:
+        return 0
+    return round(x, -math.floor(math.log10(abs(x)) - sigfigs + 1))

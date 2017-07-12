@@ -25,6 +25,7 @@ def main():
     parser = ParlaiParser(True, True)
     parser.add_argument('-n', '--num-examples', default=10)
     opt = parser.parse_args()
+
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
