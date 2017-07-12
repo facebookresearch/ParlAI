@@ -71,6 +71,7 @@ of patent rights can be found in the PATENTS file in the same directory.
     <input type="submit" value="Submit" name="submitButton" id="mturk_submit_button" />
 </form>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.rawgit.com/yf225/jquery-ajax-retry/master/dist/jquery.ajax-retry.min.js"></script>
 
 {% block handle_new_messages %}
 <script type="text/javascript">
@@ -166,16 +167,17 @@ of patent rights can be found in the PATENTS file in the same directory.
                 agent_id: cur_agent_id,
                 num_assignments: num_assignments
             },
-            success: function(data) {
+            timeout: 3000 // in milliseconds
+        }).retry({times: 1000, timeout: 3000}).then(
+            function(data) {
                 if (verbose_log) console.log(data);
                 hit_index = parseInt(data['hit_index']);
                 assignment_index = parseInt(data['assignment_index']);
                 if (callback_function) {
                     callback_function();
                 }
-            },
-            timeout: 30000 // in milliseconds
-        });
+            }
+        );
     }
 
     function get_hit_config(callback_function) {
@@ -184,14 +186,15 @@ of patent rights can be found in the PATENTS file in the same directory.
             data: {
                 method_name: 'get_hit_config',
             },
-            success: function(data) {
+            timeout: 3000 // in milliseconds
+        }).retry({times: 1000, timeout: 3000}).then(
+            function(data) {
                 if (verbose_log) console.log(data);
                 if (callback_function) {
                     callback_function(data);
                 }
-            },
-            timeout: 30000 // in milliseconds
-        });
+            }
+        );
     }
 
     /* ================= UI related ================= */
@@ -271,14 +274,15 @@ of patent rights can be found in the PATENTS file in the same directory.
             type: "POST",
             data: JSON.stringify(post_data_dict),
             contentType: "application/json",
-            success: function(data){
+            timeout: 3000 // in milliseconds
+        }).retry({times: 1000, timeout: 3000}).then(
+            function(data){
                 if (verbose_log) console.log(data);
                 if (callback_function) {
                     callback_function(data);
                 }
-            },
-            timeout: 30000 // in milliseconds
-        });
+            }
+        );
     }
 
     $("button#id_send_msg_button").click(function () {
@@ -321,7 +325,9 @@ of patent rights can be found in the PATENTS file in the same directory.
             conversation_id: conversation_id,
             last_message_id: last_message_id
         },
-        success: function(data) {
+        timeout: 3000 // in milliseconds
+      }).retry({times: 1000, timeout: 3000}).then(
+        function(data) {
             if (verbose_log) console.log(data);
             data = JSON.parse(data);
             conversation_dict = data['conversation_dict'];
@@ -340,9 +346,8 @@ of patent rights can be found in the PATENTS file in the same directory.
                 check_done(message_list);
             }
             polling_timer = setTimeout(polling_for_new_messages, 1000);
-        },
-        timeout: 30000 // in milliseconds
-      });
+        }
+      );
     }
 
     function update_UI_for_response_type(response_type) {
