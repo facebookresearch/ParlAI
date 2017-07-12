@@ -69,7 +69,7 @@ Now we define our build method, which takes in the argument ``opt``, which conta
             build_data.untar(dpath, fname)
 
             # mark the data as built
-            build_data.mark_done(dpath)
+            build_data.mark_done(dpath, version_string=version)
 
 
 
