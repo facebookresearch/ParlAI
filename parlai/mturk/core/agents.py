@@ -331,5 +331,4 @@ class MTurkAgent(Agent):
         print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is done.')
 
     def shutdown(self):
-        time.sleep(2)
         self.wait_for_hit_completion()
