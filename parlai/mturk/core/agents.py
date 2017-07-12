@@ -318,6 +318,7 @@ class MTurkAgent(Agent):
 
     def block_worker(self, reason='unspecified'):
         self.manager.block_worker(worker_id=self.worker_id, reason=reason)
+        print("Blocked worker ID: " + str(self.worker_id) + ". Reason: " + reason)
 
     def pay_bonus(self, bonus_amount, reason='unspecified'):
         unique_request_token = str(uuid.uuid4())
