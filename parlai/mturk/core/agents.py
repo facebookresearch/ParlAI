@@ -56,7 +56,7 @@ class MTurkManager():
         self.unsent_messages = []
         self.is_sandbox = opt['is_sandbox']
 
-    def init_aws(self, opt):
+    def init_aws(self, opt, task_directory_path=None):
         self.run_id = str(int(time.time()))
 
         print("\nYou are going to allow workers from Amazon Mechanical Turk to be an agent in ParlAI.\nDuring this process, Internet connection is required, and you should turn off your computer's auto-sleep feature.\n")
@@ -72,7 +72,8 @@ class MTurkManager():
         create_hit_config(task_description=opt['task_description'], num_hits=opt['num_hits'], num_assignments=opt['num_assignments'], is_sandbox=opt['is_sandbox'])
         if not self.task_files_to_copy:
             self.task_files_to_copy = []
-        task_directory_path = os.path.join(opt['parlai_home'], 'parlai', 'mturk', 'tasks', opt['task'])
+        if not task_directory_path:
+            task_directory_path = os.path.join(opt['parlai_home'], 'parlai', 'mturk', 'tasks', opt['task'])
         for mturk_agent_id in self.mturk_agent_ids:
             self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', mturk_agent_id+'_cover_page.html'))
             self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', mturk_agent_id+'_index.html'))
