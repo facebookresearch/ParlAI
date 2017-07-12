@@ -11,7 +11,7 @@ import json
 import os
 import random
 
-def _path(opt, filtered):
+def _path(opt):
     build(opt)
 
     return (os.path.join(opt['datapath'], 'TriviaQA', 'qa'),
@@ -24,7 +24,7 @@ class DefaultTeacher(DialogTeacher):
         else:
             self.suffix = 'dev'
 
-        opt['datafile'], self.evidence_dir = _path(opt, '')
+        opt['datafile'], self.evidence_dir = _path(opt)
         self.id = 'triviaqa'
         super().__init__(opt, shared)
 
