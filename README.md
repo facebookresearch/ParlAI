@@ -23,6 +23,8 @@ ParlAI is described in the following paper:
 We are in an early-release Beta. Expect some adventures and rough edges.<br>
 See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates, and the website [http://parl.ai](http://parl.ai) for further docs.
 
+Please also note there is a [ParlAI Request For Proposals funding university teams, 7 awards are available - deadline Aug 25.](https://research.fb.com/programs/research-awards/proposals/parlai/)
+
 ## Goals
 
 Unified framework for evaluation of dialogue models
