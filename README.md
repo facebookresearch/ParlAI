@@ -300,7 +300,8 @@ If you have any questions, bug reports or feature requests, please don't hesitat
 ## The Team
 ParlAI is currently maintained by Alexander H. Miller, Will Feng and Jason Weston.
 A non-exhaustive list of other major contributors includes:
-Adam Fisch,  Jiasen Lu, Antoine Bordes, Devi Parikh and Dhruv Batra.
+Adam Fisch,  Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra, 
+Filipe de Avila Belbute Peres and Chao Pan.
 
 ## Citation
 
