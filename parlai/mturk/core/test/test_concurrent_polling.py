@@ -15,9 +15,9 @@ from joblib import Parallel, delayed
 num_concurrent_requests = int(sys.argv[1])
 wait_time_between_requests = 1 # in seconds
 
-task_group_id = 'model_evaluator_1499629716'
-db_last_message_id = 1000
-json_api_endpoint_url = 'https://5lu5k95kwf.execute-api.us-east-1.amazonaws.com/prod/json'
+task_group_id = ''
+db_last_message_id = -1
+json_api_endpoint_url = ''
 
 global test_thread
 def test_thread(thread_id):
