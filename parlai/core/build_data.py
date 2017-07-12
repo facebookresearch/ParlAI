@@ -114,8 +114,7 @@ def download(url, path, fname, redownload=False):
                 if response:
                     response.close()
     if retry < 0:
-        raise RuntimeWarning('Connection broken too many times.' +
-                'There may be a download problem.')
+        raise RuntimeWarning('Connection broken too many times. Stopped retrying.')
 
     if download and retry > 0:
         print()
