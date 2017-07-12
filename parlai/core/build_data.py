@@ -60,7 +60,7 @@ def download(url, path, fname, redownload=False):
     outfile = os.path.join(path, fname)
     download = not os.path.isfile(outfile) or redownload
 
-    retry = 10
+    retry = 5
     exp_backoff = [2 ** r for r in reversed(range(retry))]
     while download and retry >= 0:
         resume_file = outfile + '.part'
