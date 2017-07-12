@@ -10,7 +10,7 @@ Creating a New Task
 
 Adding new tasks to ParlAI is a simple process. In this tutorial we will go over the different ways a new task can be created. 
 
-Tasks are located in the ``parlai/tasks`` directory. You will need to create a directory for your new task there. (Don't forget to create an ``__init__.py`` file.) The code for the tasks in this tutorial can also be found in this directory.
+Tasks code is located in the ``parlai/tasks`` directory. You will need to create a directory for your new task there. (Don't forget to create an ``__init__.py`` file.) The code for the tasks in this tutorial can also be found in this directory.
 
 
 Summary
