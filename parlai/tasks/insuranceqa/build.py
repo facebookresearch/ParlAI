@@ -11,61 +11,169 @@ import os
 import parlai.core.build_data as build_data
 
 
-def read_gz(filename):
-    f = gzip.open(filename, 'rb')
-    return [x.decode('ascii') for x in f.readlines()]
+class ParseInsuranceQA(object):
+    version = None
+    label2answer_fname = None
 
+    @classmethod
+    def read_gz(cls, filename):
+        f = gzip.open(filename, 'rb')
+        return [x.decode('utf-8') for x in f.readlines()]
 
-def wids2sent(wids, d_vocab):
-    return " ".join([d_vocab[w] for w in wids])
+    @classmethod
+    def readlines(cls, path):
+        if path.endswith(".gz"):
+            lines = cls.read_gz(path)
+        else:
+            lines = open(path).readlines()
+        return lines
 
+    @classmethod
+    def wids2sent(cls, wids, d_vocab):
+        return " ".join([d_vocab[w] for w in wids])
 
-def read_vocab(vocab_path):
-    d_vocab = {}
-    with open(vocab_path, "r") as f:
-        for line in f:
-            line = line.rstrip('\n')
-            fields = line.split("\t")
+    @classmethod
+    def read_vocab(cls, vocab_path):
+        d_vocab = {}
+        with open(vocab_path, "r") as f:
+            for line in f:
+                fields = line.rstrip('\n').split("\t")
+                if len(fields) != 2:
+                    raise ValueError("vocab file (%s) corrupted. Line (%s)" % (repr(line), vocab_path))
+                else:
+                    wid, word = fields
+                    d_vocab[wid] = word
+        return d_vocab
+
+    @classmethod
+    def read_label2answer(cls, label2answer_path_gz, d_vocab):
+        lines = cls.readlines(label2answer_path_gz)
+
+        d_label_answer = {}
+        for line in lines:
+            fields = line.rstrip("\n").split("\t")
             if len(fields) != 2:
-                raise ValueError("vocab file (%s) corrupted. Line (%s)" % (repr(line), vocab_path))
+                raise ValueError("label2answer file (%s) corrupted. Line (%s)" % (repr(line), label2answer_path_gz))
             else:
-                wid, word = fields
-                d_vocab[wid] = word
-    return d_vocab
+                aid, s_wids = fields
+                sent = cls.wids2sent(s_wids.split(), d_vocab)
+                d_label_answer[aid] = sent
+        return d_label_answer
+
+    @classmethod
+    def create_fb_format(cls, out_path, dtype, inpath, d_vocab, d_label_answer):
+        pass
+
+    @classmethod
+    def write_data_files(cls, dpext, out_path, d_vocab, d_label_answer):
+        pass
+
+    @classmethod
+    def build(cls, dpath):
+        print("building version: %s" % cls.version)
+
+        # the root of dataset
+        dpext = os.path.join(dpath, 'insuranceQA-master/%s' % cls.version)
+
+        # read vocab file
+        vocab_path = os.path.join(dpext, "vocabulary")
+        d_vocab = cls.read_vocab(vocab_path)
+
+        # read label2answer file
+        label2answer_path_gz = os.path.join(dpext, cls.label2answer_fname)
+        d_label_answer = cls.read_label2answer(label2answer_path_gz, d_vocab)
+
+        # Create out path
+        out_path = os.path.join(dpath, cls.version)
+        build_data.make_dir(out_path)
+
+        # Parse and write data files
+        cls.write_data_files(dpext, out_path, d_vocab, d_label_answer)
 
 
-def read_label2answer(label2answer_path_gz, d_vocab):
-    lines = read_gz(label2answer_path_gz)
-    d_label_answer = {}
-    for line in lines:
-        fields = line.split("\t")
-        if len(fields) != 2:
-            raise ValueError("label2answer file (%s) corrupted. Line (%s)" % (repr(line), label2answer_path_gz))
-        else:
-            aid, s_wids = fields
-            sent = wids2sent(s_wids.split(), d_vocab)
-            d_label_answer[aid] = sent
-    return d_label_answer
+class ParseInsuranceQAV1(ParseInsuranceQA):
+    version = "V1"
+    label2answer_fname = "answers.label.token_idx"
+
+    @classmethod
+    def write_data_files(cls, dpext, out_path, d_vocab, d_label_answer):
+        data_fnames = [
+            ("train", "question.train.token_idx.label"),
+            ("valid", "question.dev.label.token_idx.pool"),
+            ("test", "question.test1.label.token_idx.pool"),
+            # ("test2", "question.test2.label.token_idx.pool")
+        ]
+        for dtype, data_fname in data_fnames:
+            data_path = os.path.join(dpext, data_fname)
+            cls.create_fb_format(out_path, dtype, data_path, d_vocab, d_label_answer)
+
+    @classmethod
+    def create_fb_format(cls, out_path, dtype, inpath, d_vocab, d_label_answer):
+        print('building fbformat:' + dtype)
+        fout = open(os.path.join(out_path, dtype + '.txt'), 'w')
+        lines = open(inpath).readlines()
+
+        for line in lines:
+            fields = line.rstrip("\n").split("\t")
+            if dtype == "train":
+                assert len(fields) == 2, "data file (%s) corrupted." % inpath
+                s_q_wids, s_good_aids = fields
+
+                q = cls.wids2sent(s_q_wids.split(), d_vocab)
+                good_ans = [d_label_answer[aid_] for aid_ in s_good_aids.split()]
+                # save good answers (train only)
+                s = '1 ' + q + '\t' + "|".join(good_ans)
+                fout.write(s + '\n')
+            else:
+                assert len(fields) == 3, "data file (%s) corrupted." % inpath
+                s_good_aids, s_q_wids, s_bad_aids = fields
+
+                q = cls.wids2sent(s_q_wids.split(), d_vocab)
+                good_ans = [d_label_answer[aid_] for aid_ in s_good_aids.split()]
+                bad_ans = [d_label_answer[aid_] for aid_ in s_bad_aids.split()]
+                # save good answers and candidates
+                s = '1 ' + q + '\t' + "|".join(good_ans) + '\t\t' + "|".join(good_ans + bad_ans)
+                fout.write(s + '\n')
+        fout.close()
 
 
-def create_fb_format(outpath, dtype, inpath, d_vocab, d_label_answer):
-    print('building fbformat:' + dtype)
-    fout = open(os.path.join(outpath, dtype + '.txt'), 'w')
-    lines = read_gz(inpath)
+class ParseInsuranceQAV2(ParseInsuranceQA):
+    version = "V2"
+    label2answer_fname = "InsuranceQA.label2answer.token.encoded.gz"
 
-    for line in lines:
-        fields = line.split("\t")
-        if len(fields) != 4:
-            raise ValueError("data file (%s) corrupted. Line (%s)" % (repr(line), inpath))
-        else:
-            _, s_q_wids, s_good_aids, s_bad_aids = fields
-            q = wids2sent(s_q_wids.split(), d_vocab)
-            good_ans = [d_label_answer[aid_] for aid_ in s_good_aids.split()]
-            bad_ans = [d_label_answer[aid_] for aid_ in s_bad_aids.split()]
-            # save
-            s = '1 ' + q + '\t' + "|".join(good_ans) + '\t\t' + "|".join(good_ans + bad_ans)
-            fout.write(s + '\n')
-    fout.close()
+    @classmethod
+    def write_data_files(cls, dpext, out_path, d_vocab, d_label_answer):
+        data_fnames_tmpl = [
+            ("train.%s", "InsuranceQA.question.anslabel.token.%s.pool.solr.train.encoded.gz"),
+            ("valid.%s", "InsuranceQA.question.anslabel.token.%s.pool.solr.valid.encoded.gz"),
+            ("test.%s", "InsuranceQA.question.anslabel.token.%s.pool.solr.test.encoded.gz")
+        ]
+        for n_cands in [100, 500, 1000, 1500]:
+            for dtype_tmp, data_fname_tmp in data_fnames_tmpl:
+                dtype = dtype_tmp % n_cands
+                data_fname = data_fname_tmp % n_cands
+                data_path = os.path.join(dpext, data_fname)
+                cls.create_fb_format(out_path, dtype, data_path, d_vocab, d_label_answer)
+
+    @classmethod
+    def create_fb_format(cls, out_path, dtype, inpath, d_vocab, d_label_answer):
+        print('building fbformat:' + dtype)
+        fout = open(os.path.join(out_path, dtype + '.txt'), 'w')
+        lines = cls.readlines(inpath)
+
+        for line in lines:
+            fields = line.rstrip("\n").split("\t")
+            if len(fields) != 4:
+                raise ValueError("data file (%s) corrupted. Line (%s)" % (repr(line), inpath))
+            else:
+                _, s_q_wids, s_good_aids, s_bad_aids = fields
+                q = cls.wids2sent(s_q_wids.split(), d_vocab)
+                good_ans = [d_label_answer[aid_] for aid_ in s_good_aids.split()]
+                bad_ans = [d_label_answer[aid_] for aid_ in s_bad_aids.split()]
+                # save
+                s = '1 ' + q + '\t' + "|".join(good_ans) + '\t\t' + "|".join(good_ans + bad_ans)
+                fout.write(s + '\n')
+        fout.close()
 
 
 def build(opt):
@@ -82,28 +190,12 @@ def build(opt):
         # Download the data from github.
         fname = 'insuranceqa.zip'
         url = 'https://github.com/shuzi/insuranceQA/archive/master.zip'
-        build_data.download(url, dpath, fname, redownload=False)
+        print('[downloading data from: ' + url + ']')
+        build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 
-        # According to the author, V2 holds the latest data
-        dpext = os.path.join(dpath, 'insuranceQA-master/V2')
-
-        # read vocab file
-        vocab_path = os.path.join(dpext, "vocabulary")
-        d_vocab = read_vocab(vocab_path)
-
-        # read label2answer file
-        label2answer_path_gz = os.path.join(dpext, "InsuranceQA.label2answer.token.encoded.gz")
-        d_label_answer = read_label2answer(label2answer_path_gz, d_vocab)
-
-        # TODO: right now it uses 100 by default, but 500, 1000, 1500 (# of label candidates) should also be available
-        train_path_gz = os.path.join(dpext, "InsuranceQA.question.anslabel.token.100.pool.solr.train.encoded.gz")
-        valid_path_gz = os.path.join(dpext, "InsuranceQA.question.anslabel.token.100.pool.solr.valid.encoded.gz")
-        test_path_gz = os.path.join(dpext, "InsuranceQA.question.anslabel.token.100.pool.solr.test.encoded.gz")
-
-        create_fb_format(dpath, 'train', train_path_gz, d_vocab, d_label_answer)
-        create_fb_format(dpath, 'valid', valid_path_gz, d_vocab, d_label_answer)
-        create_fb_format(dpath, 'test', test_path_gz, d_vocab, d_label_answer)
+        ParseInsuranceQAV1.build(dpath)
+        ParseInsuranceQAV2.build(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
