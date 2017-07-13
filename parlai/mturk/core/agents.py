@@ -220,9 +220,9 @@ class MTurkManager():
         client = get_mturk_client(self.is_sandbox)
         client.approve_assignment(AssignmentId=assignment_id)
 
-    def reject_work(self, assignment_id):
+    def reject_work(self, assignment_id, reason):
         client = get_mturk_client(self.is_sandbox)
-        client.reject_assignment(AssignmentId=assignment_id, RequesterFeedback='')
+        client.reject_assignment(AssignmentId=assignment_id, RequesterFeedback=reason)
 
     def block_worker(self, worker_id, reason):
         client = get_mturk_client(self.is_sandbox)
@@ -309,9 +309,9 @@ class MTurkAgent(Agent):
         else:
             print("Cannot approve HIT. Reason: Turker hasn't completed the HIT yet.")
 
-    def reject_work(self):
+    def reject_work(self, reason='unspecified'):
         if self.manager.get_agent_work_status(assignment_id=self.assignment_id) == ASSIGNMENT_DONE:
-            self.manager.reject_work(assignment_id=self.assignment_id)
+            self.manager.reject_work(assignment_id=self.assignment_id, reason=reason)
             print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is rejected.')
         else:
             print("Cannot reject HIT. Reason: Turker hasn't completed the HIT yet.")

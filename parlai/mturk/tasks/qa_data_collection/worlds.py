@@ -3,10 +3,10 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-from parlai.core.worlds import World, validate
+from parlai.core.worlds import validate
+from parlai.mturk.core.worlds import MTurkWorld
 
-
-class QADataCollectionWorld(World):
+class QADataCollectionWorld(MTurkWorld):
     """
     World for recording a turker's question and answer given a context.
     Assumes the context is a random context from a given task, e.g.
@@ -59,7 +59,6 @@ class QADataCollectionWorld(World):
         return self.episodeDone
 
     def report(self):
-        # TODO: Add logging code here
         pass
 
     def shutdown(self):
@@ -67,6 +66,4 @@ class QADataCollectionWorld(World):
         self.mturk_agent.shutdown()
 
     def review_work(self):
-        # self.mturk_agent.approve_work()
-        # self.mturk_agent.reject_work()
         pass
