@@ -16,7 +16,7 @@ import webbrowser
 import json
 import requests
 from parlai.core.agents import create_agent_from_shared
-from parlai.mturk.core.setup_aws import setup_aws, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials, create_hit_config, get_mturk_client
+from parlai.mturk.core.setup_aws import setup_aws, calculate_mturk_cost, check_mturk_balance, create_hit_type, create_hit_with_hit_type, setup_aws_credentials, create_hit_config, get_mturk_client
 import threading
 from parlai.mturk.core.data_model import Base, Message
 from parlai.mturk.core.data_model import get_new_messages as _get_new_messages
@@ -65,7 +65,14 @@ class MTurkManager():
 
         setup_aws_credentials()
 
-        if not check_mturk_balance(balance_needed=opt['num_hits']*opt['reward'], is_sandbox=opt['is_sandbox']):
+        payment_opt = {
+            'type': 'reward',
+            'num_hits': opt['num_hits'],
+            'num_assignments': opt['num_assignments'],
+            'reward': opt['reward']  # in dollars
+        }
+        total_cost = calculate_mturk_cost(payment_opt=payment_opt)
+        if not check_mturk_balance(balance_needed=total_cost, is_sandbox=opt['is_sandbox']):
             return
 
         print('Setting up MTurk backend...')
@@ -230,7 +237,8 @@ class MTurkManager():
         client.create_worker_block(WorkerId=worker_id, Reason=reason)
 
     def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason, unique_request_token):
-        if not check_mturk_balance(balance_needed=bonus_amount, is_sandbox=self.is_sandbox):
+        total_cost = calculate_mturk_cost(payment_opt={'type': 'bonus', 'amount': bonus_amount})
+        if not check_mturk_balance(balance_needed=total_cost, is_sandbox=self.is_sandbox):
             print("Cannot pay bonus. Reason: Insufficient fund in your MTurk account.")
             return False
 

@@ -523,6 +523,34 @@ def setup_relay_server_api(rds_host, task_files_to_copy, should_clean_up_after_u
 
     return html_api_endpoint_url, json_api_endpoint_url
 
+def calculate_mturk_cost(payment_opt):
+    """MTurk Pricing: https://requester.mturk.com/pricing
+    20% fee on the reward and bonus amount (if any) you pay Workers.
+    HITs with 10 or more assignments will be charged an additional 20% fee on the reward you pay Workers.
+
+    Example payment_opt format for paying reward:
+    {
+        'type': 'reward',
+        'num_hits': 1,
+        'num_assignments': 1,
+        'reward': 0.05  # in dollars
+    }
+
+    Example payment_opt format for paying bonus:
+    {
+        'type': 'bonus',
+        'amount': 1000  # in dollars
+    }
+    """
+    total_cost = 0
+    if payment_opt['type'] == 'reward':
+        total_cost = payment_opt['num_hits'] * payment_opt['num_assignments'] * payment_opt['reward'] * 1.2
+        if payment_opt['num_assignments'] >= 10:
+            total_cost = total_cost * 1.2
+    elif payment_opt['type'] == 'bonus':
+        total_cost = payment_opt['amount'] * 1.2
+    return total_cost
+
 def check_mturk_balance(balance_needed, is_sandbox):
     client = boto3.client(
         service_name = 'mturk',
