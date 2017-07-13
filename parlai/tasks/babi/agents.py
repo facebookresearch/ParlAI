@@ -35,7 +35,7 @@ class Task10kTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         task = opt.get('task', 'babi:Task10k:1')
         opt['datafile'] = _path('-10k', task.split(':')[2], opt)
-        opt['cands_datafile'] = _path('', task.split(':')[2], opt, 'train')
+        opt['cands_datafile'] = _path('-10k', task.split(':')[2], opt, 'train')
         super().__init__(opt, shared)
 
 
