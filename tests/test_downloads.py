@@ -379,6 +379,44 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
+    def test_insuranceqa(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.insuranceqa.agents import V1Teacher, V2Teacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+
+        for dt in ['train', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = V1Teacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+            teacher = V2Teacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
+    def test_ms_marco(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.ms_marco.agents import DefaultTeacher, PassageTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+
+        for dt in ['train', 'valid']:
+            opt['datatype'] = dt
+
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+            teacher = PassageTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
 
 if __name__ == '__main__':
     # clean out temp dir first
