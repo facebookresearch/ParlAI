@@ -184,10 +184,8 @@ class DialogData(object):
         # each entry is a tuple of values for the action/observation table
         self.opt = opt
         if shared:
-            if shared.get('data'):
-                self.data = shared['data']
-            if shared.get('cands'):
-                self.cands = shared['cands']
+            self.data = shared.get('data', [])
+            self.cands = shared.get('cands', None)
         else:
             self.data = []
             self._load(data_loader)
