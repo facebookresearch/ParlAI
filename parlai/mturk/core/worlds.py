@@ -6,9 +6,8 @@
 from parlai.core.worlds import World, validate
 
 class MTurkWorld(World):
-    """
-    Generic world for MTurk
-    """
+    """Generic world for MTurk."""
+    
     def __init__(self, mturk_agent):
         self.mturk_agent = mturk_agent
         self.episodeDone = False    
