@@ -286,7 +286,7 @@ class TestData(unittest.TestCase):
 
     def test_triviaqa(self):
         from parlai.core.params import ParlaiParser
-        from parlai.tasks.triviaqa.agents import (WebTeacher, WikipediaTeacher)
+        from parlai.tasks.triviaqa.agents import WebTeacher, WikipediaTeacher
 
         opt = ParlaiParser().parse_args(args=self.args)
 
