@@ -17,10 +17,10 @@ import hashlib
 import getpass
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
-from .data_model import init_database
+from parlai.mturk.core.data_model import setup_database_engine, init_database, check_database_health
 
 aws_profile_name = 'parlai_mturk'
-region_name = 'us-west-2'
+region_name = 'us-east-1'
 user_name = getpass.getuser()
 
 iam_role_name = 'parlai_relay_server'
@@ -36,16 +36,15 @@ rds_username = 'parlai_user'
 rds_password = 'parlai_user_password'
 rds_security_group_name = 'parlai-mturk-db-security-group'
 rds_security_group_description = 'Security group for ParlAI MTurk DB'
+rds_db_instance_class = 'db.t2.medium'
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 generic_files_to_copy = [
     os.path.join(parent_dir, 'hit_config.json'),
-    os.path.join(parent_dir, 'data_model.py'), 
+    os.path.join(parent_dir, 'data_model.py'),
     os.path.join(parent_dir, 'html', 'core.html'), 
     os.path.join(parent_dir, 'html', 'cover_page.html'), 
-    os.path.join(parent_dir, 'html', 'mturk_index.html'), 
-    os.path.join(parent_dir, 'html', 'approval_core.html'),
-    os.path.join(parent_dir, 'html', 'approval_index.html'),
+    os.path.join(parent_dir, 'html', 'mturk_index.html')
 ]
 lambda_server_directory_name = 'lambda_server'
 lambda_server_zip_file_name = 'lambda_server.zip'
@@ -152,15 +151,6 @@ def setup_aws_credentials():
         print("AWS credentials successfully saved in "+aws_credentials_file_path+" file.\n")
     os.environ["AWS_PROFILE"] = aws_profile_name
 
-def get_requester_key():
-    # Compute requester key
-    session = boto3.Session(profile_name=aws_profile_name)
-    hash_gen = hashlib.sha512()
-    hash_gen.update(session.get_credentials().access_key.encode('utf-8')+session.get_credentials().secret_key.encode('utf-8'))
-    requester_key_gt = hash_gen.hexdigest()
-
-    return requester_key_gt
-
 def setup_rds():
     # Set up security group rules first
     ec2 = boto3.client('ec2', region_name=region_name)
@@ -194,52 +184,121 @@ def setup_rds():
             response = ec2.describe_security_groups(GroupNames=[rds_security_group_name])
             security_group_id = response['SecurityGroups'][0]['GroupId']
 
+    rds_instance_is_ready = False
+    while not rds_instance_is_ready:
+        rds = boto3.client('rds', region_name=region_name)
+        try:
+            rds.create_db_instance(DBInstanceIdentifier=rds_db_instance_identifier,
+                                   AllocatedStorage=20,
+                                   DBName=rds_db_name,
+                                   Engine='postgres',
+                                   # General purpose SSD
+                                   StorageType='gp2',
+                                   StorageEncrypted=False,
+                                   AutoMinorVersionUpgrade=True,
+                                   MultiAZ=False,
+                                   MasterUsername=rds_username,
+                                   MasterUserPassword=rds_password,
+                                   VpcSecurityGroupIds=[security_group_id],
+                                   DBInstanceClass=rds_db_instance_class,
+                                   Tags=[{'Key': 'Name', 'Value': rds_db_instance_identifier}])
+            print('RDS: Starting RDS instance...')
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'DBInstanceAlreadyExists':
+                print('RDS: DB instance already exists.')
+            else:
+                raise
+
+        response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+        db_instances = response['DBInstances']
+        db_instance = db_instances[0]
+
+        if db_instance['DBInstanceClass'] != rds_db_instance_class: # If instance class doesn't match
+            print('RDS: Instance class does not match.')
+            remove_rds_database()
+            rds_instance_is_ready = False
+            continue
+
+        status = db_instance['DBInstanceStatus']
+
+        if status == 'deleting':
+            print("RDS: Waiting for previous delete operation to complete. This might take a couple minutes...")
+            try:
+                while status == 'deleting':
+                    time.sleep(5)
+                    response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+                    db_instances = response['DBInstances']
+                    db_instance = db_instances[0]
+                    status = db_instance['DBInstanceStatus']
+            except ClientError as e:
+                rds_instance_is_ready = False
+                continue
+
+        if status == 'creating':
+            print("RDS: Waiting for newly created database to be available. This might take a couple minutes...")
+            while status == 'creating':
+                time.sleep(5)
+                response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+                db_instances = response['DBInstances']
+                db_instance = db_instances[0]
+                status = db_instance['DBInstanceStatus']
+
+        endpoint = db_instance['Endpoint']
+        host = endpoint['Address']
+
+        setup_database_engine(host, rds_db_name, rds_username, rds_password)
+        database_health_status = check_database_health()
+        if database_health_status in ['missing_table', 'healthy']:
+            print("Remote database health status: "+database_health_status)
+            init_database()
+        elif database_health_status in ['inconsistent_schema', 'unknown_error']:
+            print("Remote database error: "+database_health_status+". Removing RDS database...")
+            remove_rds_database()
+            rds_instance_is_ready = False
+            continue
+
+        print('RDS: DB instance ready.')
+        rds_instance_is_ready = True
+
+    return host
+
+def remove_rds_database():
+    # Remove RDS database
     rds = boto3.client('rds', region_name=region_name)
     try:
-        rds.create_db_instance(DBInstanceIdentifier=rds_db_instance_identifier,
-                               AllocatedStorage=20,
-                               DBName=rds_db_name,
-                               Engine='postgres',
-                               # General purpose SSD
-                               StorageType='gp2',
-                               StorageEncrypted=False,
-                               AutoMinorVersionUpgrade=True,
-                               MultiAZ=False,
-                               MasterUsername=rds_username,
-                               MasterUserPassword=rds_password,
-                               VpcSecurityGroupIds=[security_group_id],
-                               DBInstanceClass='db.t2.micro',
-                               Tags=[{'Key': 'Name', 'Value': rds_db_instance_identifier}])
-        print('RDS: Starting RDS instance...')
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'DBInstanceAlreadyExists':
-            print('RDS: DB instance already exists.')
-        else:
-            raise
-
-    response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
-    db_instances = response['DBInstances']
-    db_instance = db_instances[0]
-    status = db_instance['DBInstanceStatus']
-
-    if status not in ['available', 'backing-up']:
-        print("RDS: Waiting for newly created database to be available. This might take a couple minutes...")
-
-    while status not in ['available', 'backing-up']:
-        time.sleep(5)
         response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
         db_instances = response['DBInstances']
         db_instance = db_instances[0]
         status = db_instance['DBInstanceStatus']
 
-    endpoint = db_instance['Endpoint']
-    host = endpoint['Address']
+        if status == 'deleting':
+            print("RDS: Waiting for previous delete operation to complete. This might take a couple minutes...")
+        else:
+            response = rds.delete_db_instance(
+                DBInstanceIdentifier=rds_db_instance_identifier,
+                SkipFinalSnapshot=True,
+            )
+            response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+            db_instances = response['DBInstances']
+            db_instance = db_instances[0]
+            status = db_instance['DBInstanceStatus']
 
-    init_database(host, rds_db_name, rds_username, rds_password, should_check_schema_consistency=True)
+            if status == 'deleting':
+                print("RDS: Deleting database. This might take a couple minutes...")
 
-    print('RDS: DB instance ready.')
+        try:
+            while status == 'deleting':
+                time.sleep(5)
+                response = rds.describe_db_instances(DBInstanceIdentifier=rds_db_instance_identifier)
+                db_instances = response['DBInstances']
+                db_instance = db_instances[0]
+                status = db_instance['DBInstanceStatus']
+        except ClientError as e:
+            print("RDS: Database deleted.")
 
-    return host
+    except ClientError as e:
+        print("RDS: Database doesn't exist.")
+
 
 def create_hit_config(task_description, num_hits, num_assignments, is_sandbox):
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
@@ -258,7 +317,7 @@ def create_hit_config(task_description, num_hits, num_assignments, is_sandbox):
     with open(hit_config_file_path, 'w') as hit_config_file:
         hit_config_file.write(json.dumps(hit_config))
 
-def setup_relay_server_api(rds_host, requester_key_gt, task_files_to_copy, should_clean_up_after_upload=True):
+def setup_relay_server_api(rds_host, task_files_to_copy, should_clean_up_after_upload=True):
     # Dynamically generate handler.py file, and then create zip file
     print("Lambda: Preparing relay server code...")
 
@@ -278,8 +337,7 @@ def setup_relay_server_api(rds_host, requester_key_gt, task_files_to_copy, shoul
         "rds_host = \'" + rds_host + "\'\n" + \
         "rds_db_name = \'" + rds_db_name + "\'\n" + \
         "rds_username = \'" + rds_username + "\'\n" + \
-        "rds_password = \'" + rds_password + "\'\n" + \
-        "requester_key_gt = \'" + requester_key_gt + "\'")
+        "rds_password = \'" + rds_password + "\'")
     with open(os.path.join(parent_dir, lambda_server_directory_name, 'handler.py'), 'w') as handler_file:
         handler_file.write(handler_file_string)
     create_zip_file(
@@ -344,7 +402,7 @@ def setup_relay_server_api(rds_host, requester_key_gt, task_files_to_copy, shoul
                     Code={
                         'ZipFile': zip_file_content
                     },
-                    Timeout = 10, # in seconds
+                    Timeout = 300, # in seconds
                     MemorySize = 128, # in MB
                     Publish = True,
                 )
@@ -457,6 +515,7 @@ def setup_relay_server_api(rds_host, requester_key_gt, task_files_to_copy, shoul
         api_gateway_client.create_deployment(
             restApiId = rest_api_id,
             stageName = "prod",
+            cacheClusterEnabled = False,
         )
 
     html_api_endpoint_url = 'https://' + rest_api_id + '.execute-api.' + region_name + '.amazonaws.com/prod/' + endpoint_api_name_html
@@ -464,7 +523,35 @@ def setup_relay_server_api(rds_host, requester_key_gt, task_files_to_copy, shoul
 
     return html_api_endpoint_url, json_api_endpoint_url
 
-def check_mturk_balance(num_hits, hit_reward, is_sandbox):
+def calculate_mturk_cost(payment_opt):
+    """MTurk Pricing: https://requester.mturk.com/pricing
+    20% fee on the reward and bonus amount (if any) you pay Workers.
+    HITs with 10 or more assignments will be charged an additional 20% fee on the reward you pay Workers.
+
+    Example payment_opt format for paying reward:
+    {
+        'type': 'reward',
+        'num_hits': 1,
+        'num_assignments': 1,
+        'reward': 0.05  # in dollars
+    }
+
+    Example payment_opt format for paying bonus:
+    {
+        'type': 'bonus',
+        'amount': 1000  # in dollars
+    }
+    """
+    total_cost = 0
+    if payment_opt['type'] == 'reward':
+        total_cost = payment_opt['num_hits'] * payment_opt['num_assignments'] * payment_opt['reward'] * 1.2
+        if payment_opt['num_assignments'] >= 10:
+            total_cost = total_cost * 1.2
+    elif payment_opt['type'] == 'bonus':
+        total_cost = payment_opt['amount'] * 1.2
+    return total_cost
+
+def check_mturk_balance(balance_needed, is_sandbox):
     client = boto3.client(
         service_name = 'mturk',
         region_name = 'us-east-1',
@@ -486,13 +573,24 @@ def check_mturk_balance(num_hits, hit_reward, is_sandbox):
         else:
             raise
 
-    balance_needed = num_hits * hit_reward * 1.2
+    balance_needed = balance_needed * 1.2 # AWS charges 20% fee for both reward and bonus payment
 
     if user_balance < balance_needed:
         print("You might not have enough money in your MTurk account. Please go to https://requester.mturk.com/account and increase your balance to at least $"+f'{balance_needed:.2f}'+", and then try again.")
         return False
     else:
         return True
+
+def get_mturk_client(is_sandbox):
+    client = boto3.client(
+        service_name = 'mturk',
+        region_name = 'us-east-1',
+        endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+    )
+    # Region is always us-east-1
+    if not is_sandbox:
+        client = boto3.client(service_name = 'mturk', region_name='us-east-1')
+    return client
 
 def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_sandbox):
     client = boto3.client(
@@ -664,15 +762,12 @@ def create_zip_file(lambda_server_directory_name, lambda_server_zip_file_name, f
         print("Done!")
 
 def setup_aws(task_files_to_copy):
-    requester_key_gt = get_requester_key()
     rds_host = setup_rds()
-    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(rds_host=rds_host, requester_key_gt=requester_key_gt, task_files_to_copy=task_files_to_copy)
+    html_api_endpoint_url, json_api_endpoint_url = setup_relay_server_api(rds_host=rds_host, task_files_to_copy=task_files_to_copy)
 
-    return html_api_endpoint_url, json_api_endpoint_url, requester_key_gt
+    return html_api_endpoint_url, json_api_endpoint_url
 
 def clean_aws():
-    setup_aws_credentials()
-
     # Remove RDS database
     try:
         rds = boto3.client('rds', region_name=region_name)
@@ -798,4 +893,8 @@ def clean_aws():
 
 if __name__ == "__main__":
     if sys.argv[1] == 'clean':
+        setup_aws_credentials()
         clean_aws()
+    elif sys.argv[1] == 'remove_rds':
+        setup_aws_credentials()
+        remove_rds_database()

@@ -12,15 +12,14 @@ from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, UnicodeText
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine, func
+from sqlalchemy.pool import NullPool
 
 is_python_2 = False
 if sys.version_info[0] < 3:
     is_python_2 = True
-
  
 Base = declarative_base()
 engine = None
-session = None
 
 
 class Message(Base):
@@ -28,71 +27,67 @@ class Message(Base):
     id = Column(Integer, primary_key=True)
     task_group_id = Column(String(255), index=True)  # We assign a new task_group_id for each HIT group
     conversation_id = Column(String(255), index=True)
-    agent_id = Column(String(255))
+    agent_id = Column(String(255), index=True)
+    assignment_id = Column(String(255), default=None)
+    hit_id = Column(String(255), default=None)
+    worker_id = Column(String(255), default=None)
     message_content = Column(UnicodeText)
 
-
-class MTurkHITInfo(Base):
-    __tablename__ = 'mturk_hit_info'
-    id = Column(Integer, primary_key=True)
-    task_group_id = Column(String(255), index=True)
-    conversation_id = Column(String(255), index=True)
-    assignment_id = Column(String(255))
-    hit_id = Column(String(255))
-    worker_id = Column(String(255))
-    is_sandbox = Column(Boolean())
-    approval_status = Column(String(100), index=True)
-
-    def as_dict(self):
-       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-
-class MTurkHITAssignmentInfo(Base):
-    __tablename__ = 'mturk_hit_assignment_info'
+class MTurkHITAgentAllocation(Base):
+    __tablename__ = 'mturk_hit_agent_allocation'
     id = Column(Integer, primary_key=True)
     task_group_id = Column(String(255), index=True)
     agent_id = Column(String(255), index=True)
 
 
-def is_database_schema_consistent(Base, engine):
+def check_database_health():
     session_maker = sessionmaker(bind=engine)
     session = scoped_session(session_maker)
 
-    # Try insert new objects with current schema
     try:
-        test_message = Message(id=0, task_group_id='Test', conversation_id='Test', agent_id='Test', message_content='Test')
-        session.add(test_message)
-        session.commit()
-        session.delete(test_message)
-        session.commit()
+        # Check whether all tables exist
+        for model_class in [Message, MTurkHITAgentAllocation]:
+            if not engine.dialect.has_table(engine, model_class.__tablename__):
+                return 'missing_table'
 
-        test_hit_info = MTurkHITInfo(id=0, task_group_id='Test', conversation_id='Test', assignment_id='Test', hit_id='Test', worker_id='Test', is_sandbox=True, approval_status='Test')
-        session.add(test_hit_info)
-        session.commit()
-        session.delete(test_hit_info)
-        session.commit()
+        # Try insert new objects with current schema
+        try:
+            test_message = Message(id=0, task_group_id='Test', conversation_id='Test', agent_id='Test', assignment_id='Test', hit_id='Test', worker_id='Test', message_content='Test')
+            session.add(test_message)
+            session.commit()
+            session.delete(test_message)
+            session.commit()
 
-        test_hit_assignment_info = MTurkHITAssignmentInfo(id=0, task_group_id='Test', agent_id='Test')
-        session.add(test_hit_assignment_info)
-        session.commit()
-        session.delete(test_hit_assignment_info)
-        session.commit()
+            test_agent_allocation = MTurkHITAgentAllocation(id=0, task_group_id='Test', agent_id='Test')
+            session.add(test_agent_allocation)
+            session.commit()
+            session.delete(test_agent_allocation)
+            session.commit()
 
-        return True
-    except:
-        return False
+            return 'healthy'
+        except KeyboardInterrupt:
+            raise
+        except Exception as e:
+            return 'inconsistent_schema'
+    except KeyboardInterrupt:
+        raise
+    except Exception as e:
+        raise e
+        return 'unknown_error'
 
 
-def init_database(host, db_name, username, password, should_check_schema_consistency=False):
+def setup_database_engine(host, db_name, username, password):
     # Create an engine
-    engine = create_engine('postgres://'+username+':'+password+'@'+host+':5432/'+db_name)
-    
-    if should_check_schema_consistency and not is_database_schema_consistent(Base, engine):
-        # Database schema is inconsistent
-        input_key = input("Remote database schema is inconsistent. Please stop all other ParlAI MTurk instances, and press any key to continue:")
-        print('Creating database schema...')
-        Base.metadata.drop_all(engine)
+    global engine
+    engine = create_engine('postgres://'+username+':'+password+'@'+host+':5432/'+db_name, poolclass=NullPool)
 
+
+def close_connection(db_engine, db_session):
+    db_session.close()
+    db_engine.dispose()
+
+
+def init_database():
     # Create all tables in the engine. This is equivalent to "Create Table"
     # statements in raw SQL.
     Base.metadata.create_all(engine)
@@ -103,7 +98,7 @@ def init_database(host, db_name, username, password, should_check_schema_consist
     return engine, session_maker
 
 
-def send_new_message(db_session, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False):
+def send_new_message(db_session, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False, assignment_id=None, hit_id=None, worker_id=None):
     """
     Message format:
     {
@@ -113,8 +108,10 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
         "reward": xxx,
         "episode_done": xxx, # signals end of episode
 
-        # Extra fields for MTurk state maintenance
-        "message_id": xxx, # populated with record on database
+        # Only from MTurk worker
+        "assignment_id": xxx,
+        "hit_id": xxx,
+        "worker_id": xxx,
     }
     """
 
@@ -135,6 +132,9 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
         task_group_id = task_group_id,
         conversation_id = conversation_id,
         agent_id = agent_id,
+        assignment_id = assignment_id,
+        hit_id = hit_id,
+        worker_id = worker_id,
         message_content = message_content
     )
     db_session.add(new_message_object)
@@ -175,7 +175,7 @@ def send_new_messages_in_bulk(db_session, new_messages):
     db_session.commit()
 
 
-def get_new_messages(db_session, task_group_id, conversation_id=None, after_message_id=None, excluded_agent_id=None, included_agent_id=None, populate_meta_info=False):
+def get_new_messages(db_session, task_group_id, conversation_id=None, after_message_id=None, excluded_agent_id=None, included_agent_id=None, populate_meta_info=False, populate_hit_info=False):
     """
     Return:
     conversation_dict = {
@@ -236,6 +236,11 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
 
         if populate_meta_info:
             new_message_dict['message_id'] = new_message_object.id
+
+        if populate_hit_info:
+            new_message_dict['assignment_id'] = new_message_object.assignment_id
+            new_message_dict['hit_id'] = new_message_object.hit_id
+            new_message_dict['worker_id'] = new_message_object.worker_id
             
         if conversation_id not in conversation_dict:
             conversation_dict[conversation_id] = []
@@ -245,57 +250,14 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
 
 
 def get_hit_index_and_assignment_index(db_session, task_group_id, agent_id, num_assignments):
-    new_assignment_object = MTurkHITAssignmentInfo(task_group_id=task_group_id, agent_id=agent_id)
-    db_session.add(new_assignment_object)
+    new_allocation_object = MTurkHITAgentAllocation(task_group_id=task_group_id, agent_id=agent_id)
+    db_session.add(new_allocation_object)
     db_session.commit()
-    object_id = new_assignment_object.id
-    existing_assignment_id_list = db_session.query(MTurkHITAssignmentInfo.id) \
-                                    .filter(MTurkHITAssignmentInfo.task_group_id==task_group_id) \
-                                    .filter(MTurkHITAssignmentInfo.agent_id==agent_id) \
-                                    .order_by(MTurkHITAssignmentInfo.id).all()
-    existing_assignment_id_list = [id for (id, ) in existing_assignment_id_list]
-    index_in_list = existing_assignment_id_list.index(object_id)
+    object_id = new_allocation_object.id
+    existing_allocation_id_list = db_session.query(MTurkHITAgentAllocation.id) \
+                                    .filter(MTurkHITAgentAllocation.task_group_id==task_group_id) \
+                                    .filter(MTurkHITAgentAllocation.agent_id==agent_id) \
+                                    .order_by(MTurkHITAgentAllocation.id).all()
+    existing_allocation_id_list = [id for (id, ) in existing_allocation_id_list]
+    index_in_list = existing_allocation_id_list.index(object_id)
     return {'hit_index': math.floor(index_in_list / num_assignments) + 1, 'assignment_index': index_in_list % num_assignments + 1}
-
-
-def set_hit_info(db_session, task_group_id, conversation_id, assignment_id, hit_id, worker_id, is_sandbox, approval_status='pending'):
-    existing_object = db_session.query(MTurkHITInfo) \
-                        .filter(MTurkHITInfo.task_group_id==task_group_id) \
-                        .filter(MTurkHITInfo.conversation_id==conversation_id) \
-                        .filter(MTurkHITInfo.assignment_id==assignment_id) \
-                        .filter(MTurkHITInfo.hit_id==hit_id) \
-                        .first()
-    if not existing_object:
-        new_hit_info_object = MTurkHITInfo(
-            task_group_id=task_group_id,
-            conversation_id=conversation_id,
-            assignment_id=assignment_id, 
-            hit_id=hit_id, 
-            worker_id=worker_id,
-            is_sandbox=is_sandbox,
-            approval_status=approval_status
-        )
-        db_session.add(new_hit_info_object)
-        db_session.commit()
-    else:
-        existing_object.assignment_id = assignment_id
-        existing_object.hit_id = hit_id
-        existing_object.worker_id = worker_id
-        existing_object.is_sandbox = is_sandbox
-        existing_object.approval_status = approval_status
-        db_session.add(existing_object)
-        db_session.commit()
-
-
-def get_all_matching_hit_infos(db_session, task_group_id, conversation_id):
-    matching_hit_infos = list(db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.conversation_id==conversation_id).all())
-    return matching_hit_infos
-
-def get_approval_status_count(db_session, task_group_id, approval_status, conversation_id=None):
-    query = db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).filter(MTurkHITInfo.approval_status==approval_status)
-    if conversation_id:
-        query = query.filter(MTurkHITInfo.conversation_id==conversation_id)
-    return query.count()
-
-def get_all_approval_status(db_session, task_group_id):
-    return db_session.query(MTurkHITInfo).filter(MTurkHITInfo.task_group_id==task_group_id).order_by(MTurkHITInfo.conversation_id).all()
