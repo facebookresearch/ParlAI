@@ -8,6 +8,7 @@ Utilities for downloading and building data.
 These can be replaced if your particular file system does not support them.
 """
 
+import time
 import datetime
 import os
 import requests
@@ -39,6 +40,7 @@ def mark_done(path, version_string=None):
         if version_string:
             write.write('\n' + version_string)
 
+
 def log_progress(curr, total, width=40):
     """Displays a bar showing the current progress."""
     done = min(curr * width // total, width)
@@ -58,7 +60,9 @@ def download(url, path, fname, redownload=False):
     outfile = os.path.join(path, fname)
     download = not os.path.isfile(outfile) or redownload
 
-    if download:
+    retry = 5
+    exp_backoff = [2 ** r for r in reversed(range(retry))]
+    while download and retry >= 0:
         resume_file = outfile + '.part'
         resume = os.path.isfile(resume_file)
         if resume:
@@ -67,40 +71,56 @@ def download(url, path, fname, redownload=False):
         else:
             resume_pos = 0
             mode = 'wb'
+        response = None
 
         with requests.Session() as session:
-            header = {'Range': 'bytes=%d-' % resume_pos,
-                    'Accept-Encoding': 'identity'} if resume else {}
-            response = session.get(url, stream=True, headers=header)
-            # negative reply could be 'none' or just missing
-            if resume and response.headers.get('Accept-Ranges', 'none') == 'none':
-                resume_pos = 0
-                mode = 'wb'
-            elif resume:
-                print('resuming download')
+            try:
+                header = {'Range': 'bytes=%d-' % resume_pos,
+                        'Accept-Encoding': 'identity'} if resume else {}
+                response = session.get(url, stream=True, timeout=5, headers=header)
 
-            CHUNK_SIZE = 32768
-            total_size = int(response.headers.get('Content-Length', -1))
-            # server returns remaining size if resuming, so adjust total
-            total_size += resume_pos
-            done = resume_pos
+                # negative reply could be 'none' or just missing
+                if resume and response.headers.get('Accept-Ranges', 'none') == 'none':
+                    resume_pos = 0
+                    mode = 'wb'
 
-            with open(resume_file, mode) as f:
-                for chunk in response.iter_content(CHUNK_SIZE):
-                    if chunk:  # filter out keep-alive new chunks
-                        f.write(chunk)
-                    if total_size > 0:
-                        done += len(chunk)
-                        if total_size < done:
-                            # don't freak out if content-length was too small
-                            total_size = done
-                        log_progress(done, total_size)
-            if done < total_size:
-                raise RuntimeWarning('Received less data than specified in ' +
-                                     'Content-Length header for ' + url + '.' +
-                                     ' There may be a download problem.')
-            print()
-            response.close()
+                CHUNK_SIZE = 32768
+                total_size = int(response.headers.get('Content-Length', -1))
+                # server returns remaining size if resuming, so adjust total
+                total_size += resume_pos
+                done = resume_pos
+
+                with open(resume_file, mode) as f:
+                    for chunk in response.iter_content(CHUNK_SIZE):
+                        if chunk:  # filter out keep-alive new chunks
+                            f.write(chunk)
+                        if total_size > 0:
+                            done += len(chunk)
+                            if total_size < done:
+                                # don't freak out if content-length was too small
+                                total_size = done
+                            log_progress(done, total_size)
+                    break
+            except requests.exceptions.ConnectionError:
+                retry -= 1
+                print(''.join([' '] * 60), end='\r')  # TODO Better way to clean progress bar?
+                if retry >= 0:
+                    print('Connection error, retrying. (%d retries left)' % retry)
+                    time.sleep(exp_backoff[retry])
+                else:
+                    print('Retried too many times, stopped retrying.')
+            finally:
+                if response:
+                    response.close()
+    if retry < 0:
+        raise RuntimeWarning('Connection broken too many times. Stopped retrying.')
+
+    if download and retry > 0:
+        print()
+        if done < total_size:
+            raise RuntimeWarning('Received less data than specified in ' +
+                                 'Content-Length header for ' + url + '.' +
+                                 ' There may be a download problem.')
         move(resume_file, outfile)
 
 
