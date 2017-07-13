@@ -44,12 +44,12 @@ class DefaultTeacher(DialogTeacher):
         with open(path) as data_file:
             for jline in data_file:
                 d_example = json.loads(jline)
-                context = [d["passage_text"] for d in d_example['passages']]
+                context = [d['passage_text'] for d in d_example['passages']]
                 question = d_example['query']
-                if self.datatype != "test":
+                if self.datatype != 'test':
                     answers = d_example['answers']
                     if not answers:
-                        answers = ["NULL"]  # empty list of answers will cause exception
+                        answers = ['NULL']  # empty list of answers will cause exception
                 else:
-                    answers = ["NULL"]
-                yield ("|".join(context) + '\n' + question, answers), True
+                    answers = ['NULL']
+                yield ('\n'.join(context) + '\n' + question, answers), True
