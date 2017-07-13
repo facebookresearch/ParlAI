@@ -9,7 +9,7 @@ class MTurkWorld(World):
     """
     Generic world for MTurk
     """
-    def __init__(self, mturk_agent):
+    def __init__(self, opt, mturk_agent):
         self.mturk_agent = mturk_agent
         self.episodeDone = False    
 
