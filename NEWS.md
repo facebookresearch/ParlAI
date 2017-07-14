@@ -1,6 +1,6 @@
 <h2>News</h2>
 
-2017-07-12: [Several new tasks added: MS Marco, InsuranceQA and MNIST_QA](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)
+2017-07-12: [Several new tasks added: MS Marco, InsuranceQA, personalized-dialog and MNIST_QA](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)
 
 2017-07-12: [ParlAI Request For Proposals: Funding university teams - 7 awards are available - deadline Aug 25](https://research.fb.com/programs/research-awards/proposals/parlai/)
 
