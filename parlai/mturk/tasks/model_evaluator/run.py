@@ -12,6 +12,7 @@ import os
 import copy
 from itertools import product
 from joblib import Parallel, delayed
+import threading
 
 
 def main():
@@ -39,6 +40,7 @@ def main():
         all_agent_ids = [ModelEvaluatorWorld.evaluator_agent_id, mturk_agent_id] # In speaking order
     )
     mturk_manager.init_aws(opt=opt)
+    mturk_manager.start_new_run(opt=opt)
     
     global run_hit
     def run_hit(hit_index, assignment_index, opt, task_opt, mturk_manager):
