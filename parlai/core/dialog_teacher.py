@@ -187,12 +187,12 @@ class DialogData(object):
             self.data = shared.get('data', [])
             self.cands = shared.get('cands', None)
         else:
+            self.image_loader = ImageLoader(opt)
             self.data = []
             self._load(data_loader)
             self.cands = None if cands == None else set(sys.intern(c) for c in cands)
         self.addedCands = []
         self.copied_cands = False
-        self.image_loader = ImageLoader(opt)  # TODO share?
 
     def share(self):
         shared = {'data': self.data, 'cands': self.cands}
