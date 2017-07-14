@@ -32,6 +32,8 @@ import copy
 import importlib
 import math
 import os
+import tensorboard_logger
+
 
 def run_eval(agent, opt, datatype, still_training=False, max_exs=-1):
     ''' Eval on validation/test data. '''
@@ -93,6 +95,8 @@ def main():
     train.add_argument('-dbf', '--dict-build-first',
                         type='bool', default=True,
                         help='build dictionary first before training agent')
+    train.add_argument('--tensorboard-dir', default='',
+                        help='directory for tensorboard logging')
     opt = parser.parse_args()
     # Possibly build a dictionary (not all models do this).
     if opt['dict_build_first'] and 'dict_file' in opt:
@@ -100,6 +104,14 @@ def main():
             opt['dict_file'] = opt['model_file'] + '.dict'
         print("[ building dictionary first... ]")
         build_dict.build_dict(opt)
+    # XXX Set up tensorboard
+    if opt['tensorboard_dir']:
+        opt['tensorboard'] = {}
+        train_board = tensorboard_logger.Logger(
+                os.path.join(opt['tensorboard_dir'], 'train'), flush_secs=5)
+        valid_board = tensorboard_logger.Logger(
+                os.path.join(opt['tensorboard_dir'], 'valid'), flush_secs=5)
+
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
@@ -166,9 +178,20 @@ def main():
             print(log)
             log_time.reset()
 
+            # XXX Log to tensorboard
+            if opt['tensorboard_dir']:
+                opt['tensorboard']['accuracy'] = train_report['accuracy']
+                tensorboard_log(train_board, opt['tensorboard'], total_exs)
+
         if (opt['validation_every_n_secs'] > 0 and
                 validate_time.time() > opt['validation_every_n_secs']):
             valid_report = run_eval(agent, opt, 'valid', True, opt['validation_max_exs'])
+
+            # XXX
+            if opt['tensorboard_dir']:
+                valid_board.log_value('accuracy',
+                        valid_report['accuracy'], total_exs)
+
             if valid_report['accuracy'] > best_accuracy:
                 best_accuracy = valid_report['accuracy']
                 impatience = 0
@@ -195,6 +218,11 @@ def main():
 
     run_eval(agent, opt, 'valid')
     run_eval(agent, opt, 'test')
+
+
+def tensorboard_log(logger, values_dict, step):
+    for name in values_dict:
+        logger.log_value(name, values_dict[name], step)
 
 
 if __name__ == '__main__':
