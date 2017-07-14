@@ -57,8 +57,6 @@ class MTurkManager():
         self.is_sandbox = opt['is_sandbox']
 
     def init_aws(self, opt, task_directory_path=None):
-        self.run_id = str(int(time.time()))
-
         print("\nYou are going to allow workers from Amazon Mechanical Turk to be an agent in ParlAI.\nDuring this process, Internet connection is required, and you should turn off your computer's auto-sleep feature.\n")
         key_input = input("Please press Enter to continue... ")
         print("")
@@ -91,8 +89,6 @@ class MTurkManager():
             print(self.json_api_endpoint_url)
         print("MTurk setup done.\n")
 
-        self.task_group_id = str(opt['task']) + '_' + str(self.run_id)
-
         # Create an engine connected to the in-memory database
         engine = create_engine('sqlite://',
                                 connect_args={'check_same_thread':False},
@@ -105,6 +101,13 @@ class MTurkManager():
         session_maker = sessionmaker(bind=engine)
 
         self.db_session = scoped_session(session_maker)
+
+    def start_new_run(self, opt):
+        if self.db_thread_stop_event:
+            self.db_thread_stop_event.set()
+
+        self.run_id = str(int(time.time()))
+        self.task_group_id = str(opt['task']) + '_' + str(self.run_id)
 
         self.db_thread_stop_event = threading.Event()
         self.db_thread = threading.Thread(target=self._sync_with_remote_db, args=())
@@ -214,6 +217,7 @@ class MTurkManager():
 
     def create_hits(self, opt):
         print('Creating HITs...')
+        mturk_agent_HIT_url_dict = {}
         for mturk_agent_id in self.mturk_agent_ids:
             for hit_index in range(1, opt['num_hits']+1):
                 with create_hit_type_lock:
@@ -234,6 +238,8 @@ class MTurkManager():
                 )
             print("Link to HIT for " + str(mturk_agent_id) + ": " + mturk_page_url + "\n")
             print("Waiting for Turkers to respond... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
+            mturk_agent_HIT_url_dict[mturk_agent_id] = mturk_page_url
+        return mturk_agent_HIT_url_dict
 
     def approve_work(self, assignment_id):
         client = get_mturk_client(self.is_sandbox)
