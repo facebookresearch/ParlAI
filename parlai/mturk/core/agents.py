@@ -264,6 +264,18 @@ class MTurkManager():
 
         return True
 
+    def email_worker(self, worker_id, subject, message_text):
+        client = get_mturk_client(self.is_sandbox)
+        response = client.notify_workers(
+            Subject=subject,
+            MessageText=message_text,
+            WorkerIds=[worker_id]
+        )
+        if len(response['NotifyWorkersFailureStatuses']) > 0:
+            return {'failure': response['NotifyWorkersFailureStatuses'][0]['NotifyWorkersFailureMessage']}
+        else:
+            return {'success': True}
+
     def shutdown(self):
         setup_aws_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'setup_aws.py')
         print("Remote database instance will accumulate cost over time (about $30/month for t2.medium instance). Please run `python "+setup_aws_file_path+" remove_rds` to remove RDS instance if you don't plan to use MTurk often.")
@@ -344,6 +356,13 @@ class MTurkAgent(Agent):
         unique_request_token = str(uuid.uuid4())
         if self.manager.pay_bonus(worker_id=self.worker_id, bonus_amount=bonus_amount, assignment_id=self.assignment_id, reason=reason, unique_request_token=unique_request_token):
             print("Paid $" + str(bonus_amount) + " bonus to WorkerId: " + self.worker_id)
+
+    def email_worker(self, subject, message_text):
+        response = self.manager.email_worker(worker_id=self.worker_id, subject=subject, message_text=message_text)
+        if 'success' in response:
+            print("Email sent to worker ID: "+str(self.worker_id)+": Subject: "+str(subject)+": Text: "+str(message_text))
+        elif 'failure' in response:
+            print("Unable to send email to worker ID: "+str(self.worker_id)+". Error: "+str(response['failure']))
 
     def wait_for_hit_completion(self):
         while self.manager.get_agent_work_status(assignment_id=self.assignment_id) != ASSIGNMENT_DONE:
