@@ -186,6 +186,7 @@ class DialogData(object):
         if shared:
             self.data = shared.get('data', [])
             self.cands = shared.get('cands', None)
+            self.image_loader = shared.get('image_loader', None)
         else:
             self.image_loader = ImageLoader(opt)
             self.data = []
@@ -195,7 +196,8 @@ class DialogData(object):
         self.copied_cands = False
 
     def share(self):
-        shared = {'data': self.data, 'cands': self.cands}
+        shared = {'data': self.data, 'cands': self.cands,
+                'image_loader': self.image_loader}
         return shared
 
     def __len__(self):
