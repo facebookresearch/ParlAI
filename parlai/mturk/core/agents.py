@@ -226,6 +226,7 @@ class MTurkManager():
                         hit_description=opt['hit_description'] + ' (ID: ' + self.task_group_id + ', Role: ' + mturk_agent_id + ')',
                         hit_keywords=opt['hit_keywords'],
                         hit_reward=opt['reward'],
+                        assignment_duration_in_seconds=opt.get('assignment_duration_in_seconds', 30 * 60), # Set to 30 minutes by default
                         is_sandbox=opt['is_sandbox']
                     )
                 all_agent_ids_string = str(self.all_agent_ids).replace("'", '''"''')
