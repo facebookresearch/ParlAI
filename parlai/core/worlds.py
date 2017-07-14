@@ -575,9 +575,9 @@ class BatchWorld(World):
                 hasattr(a, 'batch_act')):
             batch_actions = a.batch_act(batch_observation)
             # Store the actions locally in each world.
-            for w in self.worlds:
+            for i, w in enumerate(self.worlds):
                 acts = w.get_acts()
-                acts[index] = batch_actions[index]
+                acts[index] = batch_actions[i]
         else:
             # Reverts to running on each individually.
             batch_actions = []
