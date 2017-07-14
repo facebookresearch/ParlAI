@@ -48,6 +48,6 @@ class ModelEvaluatorWorld(MTurkWorld):
     def shutdown(self):
         self.task_world.shutdown()
         self.mturk_agent.shutdown()
-        
+
     def review_work(self):
         pass
