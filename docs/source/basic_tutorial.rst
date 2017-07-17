@@ -28,7 +28,7 @@ Follow the step by step guide on how to download and install ParlAI.
 
 2. Install ParlAI:
 
-.. code-block:: bash 
+.. code-block:: bash
 
         cd ~/ParlAI; python setup.py develop
 
@@ -201,11 +201,6 @@ Now that we have our our agent, we'll set up the display loop.
 
     parser = ParlaiParser()
     opt = parser.parse_args()
-
-    if 'task' not in opt:
-        # if task not specified from the command line,
-        # default to the 1000-training example bAbI task 1
-        opt['task'] = 'babi:task1k:1'
 
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
