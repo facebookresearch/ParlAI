@@ -32,7 +32,6 @@ import copy
 import importlib
 import math
 import os
-import tensorboard_logger
 
 
 def run_eval(agent, opt, datatype, still_training=False, max_exs=-1):
@@ -106,6 +105,12 @@ def main():
         build_dict.build_dict(opt)
     # XXX Set up tensorboard
     if opt['tensorboard_dir']:
+        try:
+            import tensorboard_logger
+        except ModuleNotFoundError:
+            raise ModuleNotFoundError('Need to install tensorboard_logger: ' +
+                    'go to https://github.com/TeamHG-Memex/tensorboard_logger')
+
         opt['tensorboard'] = {}
         train_board = tensorboard_logger.Logger(
                 os.path.join(opt['tensorboard_dir'], 'train'), flush_secs=5)
