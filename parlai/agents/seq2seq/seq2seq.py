@@ -17,10 +17,17 @@ import random
 
 
 class Seq2seqAgent(Agent):
-    """Simple agent which uses an LSTM to process incoming text observations."""
+    """Simple agent which uses an RNN to process incoming text observations.
+    The RNN generates a vector which is used to represent the input text,
+    conditioning on the context to generate an output token-by-token.
+
+    For more information, see Sequence to Sequence Learning with Neural Networks
+    `(Sutskever et al. 2014) <https://arxiv.org/abs/1409.3215>`_.
+    """
 
     @staticmethod
     def add_cmdline_args(argparser):
+        """Add command-line arguments specifically for this agent."""
         DictionaryAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument('-hs', '--hiddensize', type=int, default=64,
@@ -37,34 +44,42 @@ class Seq2seqAgent(Agent):
             help='which GPU device to use')
 
     def __init__(self, opt, shared=None):
+        # initialize defaults first
         super().__init__(opt, shared)
-        opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()
-        if opt['cuda']:
-            print('[ Using CUDA ]')
-            torch.cuda.set_device(opt['gpu'])
         if not shared:
-            # don't enter this loop for shared (ie batch) instantiations
+            # this is not a shared instance of this class, so do full
+            # initialization. if shared is set, only set up shared members.
             self.dict = DictionaryAgent(opt)
             self.id = 'Seq2Seq'
-            hsz = opt['hiddensize']
+            # we use EOS markers to break input and output and end our output
             self.EOS = self.dict.eos_token
             self.observation = {'text': self.EOS, 'episode_done': True}
             self.EOS_TENSOR = torch.LongTensor(self.dict.parse(self.EOS))
+
+            # store important params directly
+            hsz = opt['hiddensize']
             self.hidden_size = hsz
             self.num_layers = opt['numlayers']
             self.learning_rate = opt['learningrate']
-            self.use_cuda = opt.get('cuda', False)
             self.longest_label = 1
 
+            # set up modules
             self.criterion = nn.NLLLoss()
+            # lookup table stores word embeddings
             self.lt = nn.Embedding(len(self.dict), hsz, padding_idx=0,
                                    scale_grad_by_freq=True)
+            # encoder captures the input text
             self.encoder = nn.GRU(hsz, hsz, opt['numlayers'])
+            # decoder produces our output states
             self.decoder = nn.GRU(hsz, hsz, opt['numlayers'])
+            # linear layer helps us produce outputs from final decoder state
             self.d2o = nn.Linear(hsz, len(self.dict))
+            # droput on the linear layer helps us generalize
             self.dropout = nn.Dropout(opt['dropout'])
+            # softmax maps output scores to probabilities
             self.softmax = nn.LogSoftmax()
 
+            # set up optims for each module
             lr = opt['learningrate']
             self.optims = {
                 'lt': optim.SGD(self.lt.parameters(), lr=lr),
@@ -72,8 +87,16 @@ class Seq2seqAgent(Agent):
                 'decoder': optim.SGD(self.decoder.parameters(), lr=lr),
                 'd2o': optim.SGD(self.d2o.parameters(), lr=lr),
             }
+
+            # check for cuda
+            self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
+            if self.use_cuda:
+                print('[ Using CUDA ]')
+                torch.cuda.set_device(opt['gpu'])
             if self.use_cuda:
                 self.cuda()
+
+            # load model parameters if available
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 print('Loading existing model parameters from ' + opt['model_file'])
                 self.load(opt['model_file'])
@@ -251,26 +274,35 @@ class Seq2seqAgent(Agent):
 
     def batch_act(self, observations):
         batchsize = len(observations)
+        # initialize a table of replies with this agent's id
         batch_reply = [{'id': self.getID()} for _ in range(batchsize)]
 
+        # convert the observations into batches of inputs and targets
+        # valid_inds tells us the indices of all valid examples
+        # e.g. for input [{}, {'text': 'hello'}, {}, {}], valid_inds is [1]
+        # since the other three elements had no 'text' field
         xs, ys, valid_inds = self.batchify(observations)
 
         if len(xs) == 0:
+            # no valid examples, just return the empty responses we set up
             return batch_reply
 
-        # Either train or predict
+        # produce prodictions either way, but use the targets if available
         if ys is not None:
             predictions = self.update(xs, ys)
         else:
             predictions = self.predict(xs)
 
         for i in range(len(predictions)):
+            # map the predictions back to non-empty examples in the batch
+            # we join with spaces since we produce tokens one at a time
             batch_reply[valid_inds[i]]['text'] = ' '.join(
                 c for c in predictions[i] if c != self.EOS)
 
         return batch_reply
 
     def act(self):
+        # call batch_act with this batch of one
         return self.batch_act([self.observation])[0]
 
     def save(self, path=None):
