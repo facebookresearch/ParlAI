@@ -301,6 +301,11 @@ class MTurkAgent(Agent):
         self.hit_id = None
         self.worker_id = None
 
+        # Wait for MTurk-specific info
+        while not (self.assignment_id and self.hit_id and self.worker_id):
+            self.assignment_id, self.hit_id, self.worker_id = self.manager.get_hit_assignment_info(self.manager.task_group_id, self.conversation_id, self.id)
+            time.sleep(polling_interval)
+
     def observe(self, msg):
         if msg['id'] not in self.manager.mturk_agent_ids: # If the message sender is an mturk agent, then there is no need to upload this message to db since it's already been done on the message sender side.
             # We can't have all mturk agents upload this observed new message to server, otherwise there will be duplication.
@@ -316,10 +321,6 @@ class MTurkAgent(Agent):
                 )
 
     def act(self):
-        while not (self.assignment_id and self.hit_id and self.worker_id):
-            self.assignment_id, self.hit_id, self.worker_id = self.manager.get_hit_assignment_info(self.manager.task_group_id, self.conversation_id, self.id)
-            time.sleep(polling_interval)
-
         while True:
             conversation_dict, new_last_message_id = self.manager.get_new_messages(
                 task_group_id=self.manager.task_group_id,
