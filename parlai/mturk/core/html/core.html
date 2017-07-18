@@ -211,7 +211,9 @@ of patent rights can be found in the PATENTS file in the same directory.
     // Handling keypress event
     $(document).keypress(function(e) {
         if (e.which == 13) {
-            $("button#id_send_msg_button").click();
+            if (!($("button#id_send_msg_button").prop("disabled") === true)) {
+                $("button#id_send_msg_button").click();
+            }
         }
     });
     
