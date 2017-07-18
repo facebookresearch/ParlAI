@@ -284,6 +284,22 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
+    def test_triviaqa(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.triviaqa.agents import WebTeacher, WikipediaTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+
+        for teacher_class in (WebTeacher, WikipediaTeacher):
+            for dt in ['train:ordered', 'valid']:
+                opt['datatype'] = dt
+
+                teacher = teacher_class(opt)
+                reply = teacher.act()
+                check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
     def test_ubuntu(self):
         from parlai.core.params import ParlaiParser
         from parlai.tasks.ubuntu.agents import DefaultTeacher
