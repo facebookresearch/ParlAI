@@ -7,8 +7,9 @@
 
 Creating a New Task
 ===================
+**Author**: Filipe de Avila Belbute Peres
 
-Adding new tasks to ParlAI is a simple process. In this tutorial we will go over the different ways a new task can be created. 
+Adding new tasks to ParlAI is a simple process. In this tutorial we will go over the different ways a new task can be created.
 
 Tasks code is located in the ``parlai/tasks`` directory. You will need to create a directory for your new task there. (Don't forget to create an ``__init__.py`` file.) The code for the tasks in this tutorial can also be found in this directory.
 
@@ -20,7 +21,7 @@ In brief, to add your own task you need to:
 
 1. Implement ``build.py`` to `download and build any needed data <http://parl.ai/static/docs/task_tutorial.html#part-1-building-the-data>`__.
 2. Implement ``agents.py``, with at least a ``DefaultTeacher`` (extending ``Teacher`` or one of its children)
-   
+
     - if your data is in FB Dialog format, subclass `FbDialogTeacher`_.
     - if your data consists of fixed logs, you can extend `DialogTeacher`_, in which case you just need to write your own ``setup_data()`` function, which provides an iterable over the data.
     - if your data uses other fields, build your `task from scratch`_, by subclassing ``Teacher`` and writing your own ``act()`` method, which will provide observations from your task each time it's called.
@@ -33,7 +34,7 @@ Below we go into more details for each of these steps.
 Part 1: Building the Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We first need to create functionality for downloading and setting up the dataset that is going to be used for the task. This is done in the ``build.py`` file. Useful functionality for setting up data can be found in ``parlai.core.build_data``. We thus start by importing it: 
+We first need to create functionality for downloading and setting up the dataset that is going to be used for the task. This is done in the ``build.py`` file. Useful functionality for setting up data can be found in ``parlai.core.build_data``. We thus start by importing it:
 
 .. code-block:: python
 
@@ -49,11 +50,11 @@ Now we define our build method, which takes in the argument ``opt``, which conta
         dpath = os.path.join(opt['datapath'], 'mnist')
         # define version if any
         version = None
-        
+
         # check if data had been previously built
         if not build_data.built(dpath, version_string=version):
             print('[building data: ' + dpath + ']')
-            
+
             # make a clean directory if needed
             if build_data.built(dpath):
                 # an older version exists, so remove these outdated files.
@@ -90,7 +91,7 @@ FbDialogTeacher
 
 In this section we will illustrate the process of using the ``FbDialogTeacher`` class by adding the `MTurk WikiMovies <http://parl.ai/static/docs/tasks.html#mturk-wikimovies>`__ question-answering task. This task has data in textual form and has been formatted to follow the Facebook Dialog format. It is thus very simple to implement it using ``FbDialogTeacher``. More information on this class and the dialog format can be found `here <http://parl.ai/static/docs/fbdialog.html>`__.
 
-In this task, the agent is presented with questions about movies that are answerable from Wikipedia. A sample dialog is demonstrated below. 
+In this task, the agent is presented with questions about movies that are answerable from Wikipedia. A sample dialog is demonstrated below.
 
 ::
 
@@ -106,7 +107,7 @@ Every task requires a ``DefaultTeacher``. We will thus create one for this task.
     class DefaultTeacher(FbDialogTeacher):
         def __init__(self, opt, shared=None):
             opt = copy.deepcopy(opt)
-            
+
             # get datafile
             opt['datafile'] = _path(opt, '')
 
@@ -116,7 +117,7 @@ Every task requires a ``DefaultTeacher``. We will thus create one for this task.
                                                  'entities.txt')
             super().__init__(opt, shared)
 
-We can notice there was a call to a ``_path()`` method, which returns the path to the correct datafile. The path to the file is then stored in the options dictionary under the ``'datafile'`` key. We still need to implement this ``_path()`` method. The version for this example is presented below. It first ensures the data is built by calling the ``build()`` method described above. It then sets up the paths for the built data. 
+We can notice there was a call to a ``_path()`` method, which returns the path to the correct datafile. The path to the file is then stored in the options dictionary under the ``'datafile'`` key. We still need to implement this ``_path()`` method. The version for this example is presented below. It first ensures the data is built by calling the ``build()`` method described above. It then sets up the paths for the built data.
 
 .. code-block:: python
 
@@ -137,12 +138,12 @@ And this is all that needs to be done to create a teacher for our task using ``F
 DialogTeacher
 ~~~~~~~~~~~~~
 
-In this section we will demonstrate the process of using the ``DialogTeacher`` class by adding a simple question-answering task based on the MNIST dataset. This task depends on visual data and so does not fit the ``FbDialogTeacher`` class described above. Still, using ``DialogTeacher`` makes it easy to implement dialog tasks such as this one. 
+In this section we will demonstrate the process of using the ``DialogTeacher`` class by adding a simple question-answering task based on the MNIST dataset. This task depends on visual data and so does not fit the ``FbDialogTeacher`` class described above. Still, using ``DialogTeacher`` makes it easy to implement dialog tasks such as this one.
 
-In this task, the agent is presented with the image of a digit and then asked to answer which number it is seeing. A sample episode is demonstrated below. 
+In this task, the agent is presented with the image of a digit and then asked to answer which number it is seeing. A sample episode is demonstrated below.
 
 ::
-    
+
     [mnist_qa]: Which number is in the image?
     @@@@@@@@@@@@@@@@@@@@@@@@@@@@
     @@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -186,13 +187,13 @@ We will call our teacher ``MnistQATeacher``. Let's initialize this class first.
         def __init__(self, opt, shared=None):
             # store datatype
             self.datatype = opt['datatype'].split(':')[0]
-            
+
             # _path method explained below, returns paths to images and labels
             labels_path, self.image_path = _path(opt)
-            
+
             # store path to label data in options dictionary
             opt['datafile'] = labels_path
-            
+
             # store identifier for the teacher in the dialog
             self.id = 'mnist_qa'
 
@@ -203,9 +204,9 @@ We will call our teacher ``MnistQATeacher``. Let's initialize this class first.
 
             super().__init__(opt, shared)
 
-The ``id`` field names the teacher in the dialog. The ``num_strs`` field is specific to this example task. It is being used simply to store the text version of the digits. 
+The ``id`` field names the teacher in the dialog. The ``num_strs`` field is specific to this example task. It is being used simply to store the text version of the digits.
 
-More importantly, we can notice there was a call to a ``_path()`` method, which returns the paths to the image files and the labels. The path to the file is then stored in the options dictionary under the ``'datafile'`` key. This key should be used to store data that will be useful for performing the task. 
+More importantly, we can notice there was a call to a ``_path()`` method, which returns the paths to the image files and the labels. The path to the file is then stored in the options dictionary under the ``'datafile'`` key. This key should be used to store data that will be useful for performing the task.
 
 We still need to implement this ``_path()`` method. The version for this example is presented below. It first ensures the data is built by calling the ``build()`` method described above. It then sets up the paths for the built data. This should be specific to the dataset being used. If your dataset does not use images, the ``image_path`` is not necessary, for example. Or if your task will use data other than labels, the path to the file containing this information can also be returned.
 
@@ -214,25 +215,25 @@ We still need to implement this ``_path()`` method. The version for this example
     def _path(opt):
         # ensure data is built
         build(opt)
-        
+
         # set up paths to data (specific to each dataset)
         dt = opt['datatype'].split(':')[0]
         labels_path = os.path.join(opt['datapath'], 'mnist', dt, 'labels.json')
         image_path = os.path.join(opt['datapath'], 'mnist', dt)
         return labels_path, image_path
 
-By creating ``MnistQATeacher`` as a subclass of ``DialogTeacher``, the job of creating a teacher for this task becomes much simpler: most of the work that needs to be done will limit itself to defining a ``setup_data`` method. This method is a generator that will take in a path to the data and yield a pair of elements for each call. The first element of the pair is a tuple containing the following information: ``(query, labels, reward, label_candidates, path_to_image)``. The second is a boolean flag ``episode_done?`` which indicates if the current query marks the end of an episode or not. 
+By creating ``MnistQATeacher`` as a subclass of ``DialogTeacher``, the job of creating a teacher for this task becomes much simpler: most of the work that needs to be done will limit itself to defining a ``setup_data`` method. This method is a generator that will take in a path to the data and yield a pair of elements for each call. The first element of the pair is a tuple containing the following information: ``(query, labels, reward, label_candidates, path_to_image)``. The second is a boolean flag ``episode_done?`` which indicates if the current query marks the end of an episode or not.
 
 More information on this format can be found in the documentation on ``data_loader`` in `DialogData <http://parl.ai/static/docs/dialog.html#parlai.core.dialog_teacher.DialogData>`__ (``setup_data`` is provided as a data_loader to ``DialogData``).
 
-The sample ``setup_data`` method for our task is presented below. 
+The sample ``setup_data`` method for our task is presented below.
 
 .. code-block:: python
 
     def setup_data(self, path):
         print('loading: ' + path)
 
-        # open data file with labels 
+        # open data file with labels
         # (path will be provided to setup_data from opt['datafile'] defined above)
         with open(path) as labels_file:
             self.labels = json.load(labels_file)
@@ -253,7 +254,7 @@ The sample ``setup_data`` method for our task is presented below.
 
 As we can see from the code above, for this specific task the question is always the same, and thus it is fixed. For different tasks, this might change at each iteration. Similarly, for this task, each episode consists of only one query, thus ``episode_done?`` is always true (*i.e.*, each query is the end of its episode). This could also vary depending on the task.
 
-Looking at the tuple provided by the iterator at each yield, we can see that we defined a query, a label and an image path. When working with ``DialogTeacher`` in visual tasks, it is important to provide the path to the image in the ``setup_data`` tuple. This allows one to inherit functionality around the "image-mode" command line parameter, such as automatically returning ascii versions of images if -im ascii is set. 
+Looking at the tuple provided by the iterator at each yield, we can see that we defined a query, a label and an image path. When working with ``DialogTeacher`` in visual tasks, it is important to provide the path to the image in the ``setup_data`` tuple. This allows one to inherit functionality around the "image-mode" command line parameter, such as automatically returning ascii versions of images if -im ascii is set.
 
 Finally, one might notice that no reward or label candidates were provided in the tuple (both are set to ``None``). The reward is not specified because it is not useful for this task. The label candidates, however, were not specified per-example for this task because we instead use a single set of universal candidates for every example in this task (the digits from '0' to '9'). For cases like this, with fixed label candidates, one can simply define a method ``label_candidates()`` that returns the unchanging candidates, as demonstrated below. For cases where the label candidates vary for each query, the field in the tuple can be used.
 
@@ -277,7 +278,7 @@ Task from Scratch
 
 In this section we will demonstrate the process of creating a task from scratch by adding the VQAv2 visual question-answering task. To implement this task we will inherit directly from the base ``Teacher`` class instead of using ``DialogTeacher``. This is usually not necessary, but it is done here as an example of creating a task from scratch.
 
-In this task, the agent is presented with an image of a scene and then asked to answer a question about that scene. A sample episode is demonstrated below. 
+In this task, the agent is presented with an image of a scene and then asked to answer a question about that scene. A sample episode is demonstrated below.
 
 .. image:: _static/img/task_tutorial_skateboard.jpg
 
@@ -331,7 +332,7 @@ First, we need to implement the ``_path()`` method. The version for this example
         build(opt)
         buildImage(opt)
         dt = opt['datatype'].split(':')[0]
-        
+
         # verify datatype to decide which sub-dataset to load
         if dt == 'train':
             ques_suffix = 'v2_OpenEnded_mscoco_train2014'

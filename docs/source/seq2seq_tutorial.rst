@@ -7,6 +7,7 @@
 
 Creating an Agent
 =================
+**Author**: Alexander Holden Miller
 
 In this tutorial, we'll be setting up an agent which learns from the data it
 sees to produce the right answers.

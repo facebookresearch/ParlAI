@@ -7,6 +7,7 @@
 
 What is ParlAI?
 ===============
+**Author**: Alexander Holden Miller
 
 It's a python-based platform for enabling dialog AI research.
 
