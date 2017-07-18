@@ -29,17 +29,15 @@ class WebTeacher(DialogTeacher):
             else:
                 self.suffix = 'dev'
 
-        opt['datafile'], self.evidence_dir = _path(opt)
+        qa_dir, self.evidence_dir = _path(opt)
+        opt['datafile'] = os.path.join(qa_dir, self.prefix + 'web-' +
+                                               self.suffix + '.json')
         self.id = 'triviaqa'
         super().__init__(opt, shared)
 
     def setup_data(self, path):
-        dataset = 'web'
-        dataset_path = os.path.join(path,
-                                    self.prefix + dataset + '-' + self.suffix +
-                                    '.json')
-        print('loading: ' + dataset_path)
-        with open(dataset_path) as data_file:
+        print('loading: ' + path)
+        with open(path) as data_file:
             data = json.load(data_file)['Data']
         for datapoint in data:
             question = datapoint['Question']
@@ -50,7 +48,7 @@ class WebTeacher(DialogTeacher):
                 continue
 
             for evidence_item in evidence_list:
-                evidence_file_path = os.path.join(self.evidence_dir, dataset,
+                evidence_file_path = os.path.join(self.evidence_dir, 'web',
                                                   evidence_item['Filename'])
                 with open(evidence_file_path) as evidence_file:
                     evidence = 'Title: %s\n' % evidence_item['Title']
@@ -79,17 +77,16 @@ class WikipediaTeacher(DialogTeacher):
             else:
                 self.suffix = 'dev'
 
-        opt['datafile'], self.evidence_dir = _path(opt)
+        qa_dir, self.evidence_dir = _path(opt)
+        opt['datafile'] = os.path.join(qa_dir, self.prefix + 'wikipedia-' +
+                                               self.suffix + '.json')
+
         self.id = 'triviaqa'
         super().__init__(opt, shared)
 
     def setup_data(self, path):
-        dataset = 'wikipedia'
-        dataset_path = os.path.join(path,
-                                    self.prefix + dataset + '-' + self.suffix +
-                                    '.json')
-        print('loading: ' + dataset_path)
-        with open(dataset_path) as data_file:
+        print('loading: ' + path)
+        with open(path) as data_file:
             data = json.load(data_file)['Data']
         for datapoint in data:
             question = datapoint['Question']
@@ -101,7 +98,8 @@ class WikipediaTeacher(DialogTeacher):
 
             evidence = ''
             for evidence_item in evidence_list:
-                evidence_file_path = os.path.join(self.evidence_dir, dataset,
+                evidence_file_path = os.path.join(self.evidence_dir,
+                                                  'wikipedia',
                                                   evidence_item['Filename'])
                 with open(evidence_file_path) as evidence_file:
                     evidence += 'Title: %s\n' % evidence_item['Title']
