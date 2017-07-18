@@ -3,9 +3,10 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-from parlai.core.worlds import World, validate, create_task
+from parlai.core.worlds import validate, create_task
+from parlai.mturk.core.worlds import MTurkWorld
 
-class ModelEvaluatorWorld(World):
+class ModelEvaluatorWorld(MTurkWorld):
     """
     World for letting Turkers evaluate a dialog model's performance given a context.
     Assumes the context is a context from a given task, e.g. from SQuAD, CBT, etc.
@@ -42,9 +43,11 @@ class ModelEvaluatorWorld(World):
         return self.episodeDone
 
     def report(self):
-        # TODO: Add logging code here
         pass
 
     def shutdown(self):
         self.task_world.shutdown()
         self.mturk_agent.shutdown()
+        
+    def review_work(self):
+        pass

@@ -133,7 +133,7 @@ class DictionaryAgent(Agent):
                 self.ind2tok[0] = self.null_token
 
             if self.eos_token:
-                # set special unknown word token
+                # set special end of sentence token
                 index = len(self.tok2ind)
                 self.tok2ind[self.eos_token] = index
                 self.ind2tok[index] = self.eos_token
@@ -267,7 +267,7 @@ class DictionaryAgent(Agent):
         """Load pre-existing dictionary in 'token[<TAB>count]' format.
         Initialize counts from other dictionary, or 0 if they aren't included.
         """
-        print('Dictionary: loading existing dictionary from {}.'.format(
+        print('Dictionary: loading existing dictionary from {}'.format(
               filename))
         with open(filename) as read:
             for line in read:
@@ -292,7 +292,7 @@ class DictionaryAgent(Agent):
         If ``sort`` (default ``True``), then first sort the dictionary before saving.
         """
         filename = self.opt['model_file'] if filename is None else filename
-        print('Dictionary: saving dictionary to {}.'.format(filename))
+        print('Dictionary: saving dictionary to {}'.format(filename))
         if sort:
             self.sort()
 
