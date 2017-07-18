@@ -49,6 +49,13 @@ class Seq2seqAgent(Agent):
         if not shared:
             # this is not a shared instance of this class, so do full
             # initialization. if shared is set, only set up shared members.
+            if opt.get('model_file') and os.path.isfile(opt['model_file']):
+                # load model parameters if available
+                print('Loading existing model params from ' + opt['model_file'])
+                new_opt, self.states = self.load(opt['model_file'])
+                # override options with stored ones
+                opt = self.override_opt(new_opt)
+
             self.dict = DictionaryAgent(opt)
             self.id = 'Seq2Seq'
             # we use EOS markers to break input and output and end our output
@@ -73,7 +80,7 @@ class Seq2seqAgent(Agent):
             # decoder produces our output states
             self.decoder = nn.GRU(hsz, hsz, opt['numlayers'])
             # linear layer helps us produce outputs from final decoder state
-            self.d2o = nn.Linear(hsz, len(self.dict))
+            self.h2o = nn.Linear(hsz, len(self.dict))
             # droput on the linear layer helps us generalize
             self.dropout = nn.Dropout(opt['dropout'])
             # softmax maps output scores to probabilities
@@ -85,8 +92,12 @@ class Seq2seqAgent(Agent):
                 'lt': optim.SGD(self.lt.parameters(), lr=lr),
                 'encoder': optim.SGD(self.encoder.parameters(), lr=lr),
                 'decoder': optim.SGD(self.decoder.parameters(), lr=lr),
-                'd2o': optim.SGD(self.d2o.parameters(), lr=lr),
+                'h2o': optim.SGD(self.h2o.parameters(), lr=lr),
             }
+
+            if hasattr(self, 'states'):
+                # set loaded states if applicable
+                self.set_states(self.states)
 
             # check for cuda
             self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
@@ -96,12 +107,18 @@ class Seq2seqAgent(Agent):
             if self.use_cuda:
                 self.cuda()
 
-            # load model parameters if available
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
-                print('Loading existing model parameters from ' + opt['model_file'])
-                self.load(opt['model_file'])
-
         self.episode_done = True
+
+    def override_opt(self, new_opt):
+        """Print out each added key and each overriden key."""
+        for k, v in new_opt.items():
+            if k not in self.opt:
+                print('Adding new option [ {k}: {v} ]'.format(k=k, v=v))
+            elif self.opt[k] != v:
+                print('Overriding option [ {k}: {old} => {v}]'.format(
+                      k=k, old=self.opt[k], v=v))
+            self.opt[k] = v
+        return self.opt
 
     def parse(self, text):
         return torch.LongTensor(self.dict.txt2vec(text))
@@ -110,20 +127,22 @@ class Seq2seqAgent(Agent):
         return self.dict.vec2txt(vec)
 
     def cuda(self):
+        self.EOS_TENSOR = self.EOS_TENSOR.cuda(async=True)
         self.criterion.cuda()
         self.lt.cuda()
         self.encoder.cuda()
         self.decoder.cuda()
-        self.d2o.cuda()
+        self.h2o.cuda()
         self.dropout.cuda()
         self.softmax.cuda()
 
-    def hidden_to_idx(self, hidden, drop=False):
+    def hidden_to_idx(self, hidden, dropout=False):
+        """Converts hidden state vectors into indices into the dictionary."""
         if hidden.size(0) > 1:
             raise RuntimeError('bad dimensions of tensor:', hidden)
         hidden = hidden.squeeze(0)
-        scores = self.d2o(hidden)
-        if drop:
+        scores = self.h2o(hidden)
+        if dropout:
             scores = self.dropout(scores)
         scores = self.softmax(scores)
         _max_score, idx = scores.max(1)
@@ -161,7 +180,10 @@ class Seq2seqAgent(Agent):
         self.episode_done = observation['episode_done']
         return observation
 
-    def update(self, xs, ys):
+    def predict(self, xs, ys=None):
+        """Produce a prediction from our model. Update the model using the
+        targets if available.
+        """
         batchsize = len(xs)
 
         # first encode context
@@ -169,87 +191,78 @@ class Seq2seqAgent(Agent):
         h0 = self.init_zeros(batchsize)
         _output, hn = self.encoder(xes, h0)
 
-        # start with EOS tensor for all
-        x = self.EOS_TENSOR
-        if self.use_cuda:
-            x = x.cuda(async=True)
-        x = Variable(x)
+        # next we use EOS as an input to kick off our decoder
+        x = Variable(self.EOS_TENSOR)
         xe = self.lt(x).unsqueeze(1)
         xes = xe.expand(xe.size(0), batchsize, xe.size(2))
 
+        # list of output tokens for each example in the batch
         output_lines = [[] for _ in range(batchsize)]
 
-        self.zero_grad()
-        # update model
-        loss = 0
-        self.longest_label = max(self.longest_label, ys.size(1))
-        for i in range(ys.size(1)):
-            output, hn = self.decoder(xes, hn)
-            preds, scores = self.hidden_to_idx(output, drop=True)
-            y = ys.select(1, i)
-            loss += self.criterion(scores, y)
-            # use the true token as the next input
-            xes = self.lt(y).unsqueeze(0)
-            # hn = self.dropout(hn)
-            for j in range(preds.size(0)):
-                token = self.v2t([preds.data[j][0]])
-                output_lines[j].append(token)
+        if ys is not None:
+            # update the model based on the labels
+            self.zero_grad()
+            loss = 0
+            # keep track of longest label we've ever seen
+            self.longest_label = max(self.longest_label, ys.size(1))
+            for i in range(ys.size(1)):
+                output, hn = self.decoder(xes, hn)
+                preds, scores = self.hidden_to_idx(output, dropout=True)
+                y = ys.select(1, i)
+                loss += self.criterion(scores, y)
+                # use the true token as the next input instead of predicted
+                # this produces a biased prediction but better training
+                xes = self.lt(y).unsqueeze(0)
+                for b in range(batchsize):
+                    # convert the output scores to tokens
+                    token = self.v2t([preds.data[b][0]])
+                    output_lines[b].append(token)
 
-        loss.backward()
-        self.update_params()
+            loss.backward()
+            self.update_params()
+        else:
+            # just produce a prediction without training the model
+            done = [False for _ in range(batchsize)]
+            total_done = 0
+            max_len = 0
 
-        if random.random() < 0.1:
-            true = self.v2t(ys.data[0])
-            #print('loss:', round(loss.data[0], 2),
-            #      ' '.join(output_lines[0]), '(true: {})'.format(true))
+            while(total_done < batchsize) and max_len < self.longest_label:
+                # keep producing tokens until we hit EOS or max length for each
+                # example in the batch
+                output, hn = self.decoder(xes, hn)
+                preds, scores = self.hidden_to_idx(output, dropout=False)
+                xes = self.lt(preds.t())
+                max_len += 1
+                for b in range(batchsize):
+                    if not done[b]:
+                        # only add more tokens for examples that aren't done yet
+                        token = self.v2t(preds.data[b])
+                        if token == self.EOS:
+                            # if we produced EOS, we're done
+                            done[b] = True
+                            total_done += 1
+                        else:
+                            output_lines[b].append(token)
+            if random.random() < 0.1:
+                print('prediction:', ' '.join(output_lines[0]))
+
         return output_lines
 
-    def predict(self, xs):
-        batchsize = len(xs)
 
-        # first encode context
-        xes = self.lt(xs).t()
-        h0 = self.init_zeros(batchsize)
-        _output, hn = self.encoder(xes, h0)
+    def batchify(self, observations):
+        """Convert a list of observations into input & target tensors."""
+        # valid examples
+        exs = [ex for ex in observations if 'text' in ex]
+        # the indices of the valid (non-empty) tensors
+        valid_inds = [i for i, ex in enumerate(observations) if 'text' in ex]
 
-        # start with EOS tensor for all
-        x = self.EOS_TENSOR
-        if self.use_cuda:
-            x = x.cuda(async=True)
-        x = Variable(x)
-        xe = self.lt(x).unsqueeze(1)
-        xes = xe.expand(xe.size(0), batchsize, xe.size(2))
-
-        done = [False for _ in range(batchsize)]
-        total_done = 0
-        max_len = 0
-        output_lines = [[] for _ in range(batchsize)]
-
-        while(total_done < batchsize) and max_len < self.longest_label:
-            output, hn = self.decoder(xes, hn)
-            preds, scores = self.hidden_to_idx(output, drop=False)
-            xes = self.lt(preds.t())
-            max_len += 1
-            for i in range(preds.size(0)):
-                if not done[i]:
-                    token = self.v2t(preds.data[i])
-                    if token == self.EOS:
-                        done[i] = True
-                        total_done += 1
-                    else:
-                        output_lines[i].append(token)
-        if random.random() < 0.1:
-            print('prediction:', ' '.join(output_lines[0]))
-        return output_lines
-
-    def batchify(self, obs):
-        exs = [ex for ex in obs if 'text' in ex]
-        valid_inds = [i for i, ex in enumerate(obs) if 'text' in ex]
-
+        # set up the input tensors
         batchsize = len(exs)
+        # tokenize the text
         parsed = [self.parse(ex['text']) for ex in exs]
         max_x_len = max([len(x) for x in parsed])
         xs = torch.LongTensor(batchsize, max_x_len).fill_(0)
+        # pack the data to the right side of the tensor for this model
         for i, x in enumerate(parsed):
             offset = max_x_len - len(x)
             for j, idx in enumerate(x):
@@ -258,8 +271,11 @@ class Seq2seqAgent(Agent):
             xs = xs.cuda(async=True)
         xs = Variable(xs)
 
+        # set up the target tensors
         ys = None
         if 'labels' in exs[0]:
+            # randomly select one of the labels to update on, if multiple
+            # append EOS to each label
             labels = [random.choice(ex['labels']) + ' ' + self.EOS for ex in exs]
             parsed = [self.parse(y) for y in labels]
             max_y_len = max(len(y) for y in parsed)
@@ -288,10 +304,7 @@ class Seq2seqAgent(Agent):
             return batch_reply
 
         # produce prodictions either way, but use the targets if available
-        if ys is not None:
-            predictions = self.update(xs, ys)
-        else:
-            predictions = self.predict(xs)
+        predictions = self.predict(xs, ys)
 
         for i in range(len(predictions)):
             # map the predictions back to non-empty examples in the batch
@@ -313,18 +326,24 @@ class Seq2seqAgent(Agent):
             model['lt'] = self.lt.state_dict()
             model['encoder'] = self.encoder.state_dict()
             model['decoder'] = self.decoder.state_dict()
-            model['d2o'] = self.d2o.state_dict()
+            model['h2o'] = self.h2o.state_dict()
             model['longest_label'] = self.longest_label
+            model['opt'] = self.opt
 
             with open(path, 'wb') as write:
                 torch.save(model, write)
 
     def load(self, path):
+        """Return opt and model states."""
         with open(path, 'rb') as read:
             model = torch.load(read)
 
-        self.lt.load_state_dict(model['lt'])
-        self.encoder.load_state_dict(model['encoder'])
-        self.decoder.load_state_dict(model['decoder'])
-        self.d2o.load_state_dict(model['d2o'])
-        self.longest_label = model['longest_label']
+        return model['opt'], model
+
+    def set_states(self, states):
+        """Set the state dicts of the modules from saved states."""
+        self.lt.load_state_dict(states['lt'])
+        self.encoder.load_state_dict(states['encoder'])
+        self.decoder.load_state_dict(states['decoder'])
+        self.h2o.load_state_dict(states['h2o'])
+        self.longest_label = states['longest_label']
