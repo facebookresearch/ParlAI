@@ -36,7 +36,6 @@ ASSIGNMENT_APPROVED = 'Approved'
 ASSIGNMENT_REJECTED = 'Rejected'
 
 polling_interval = 1 # in seconds
-create_hit_type_lock = threading.Lock()
 local_db_lock = threading.Lock()
 debug = False
 
@@ -220,15 +219,14 @@ class MTurkManager():
         mturk_agent_HIT_url_dict = {}
         for mturk_agent_id in self.mturk_agent_ids:
             for hit_index in range(1, opt['num_hits']+1):
-                with create_hit_type_lock:
-                    hit_type_id = create_hit_type(
-                        hit_title=opt['hit_title'],
-                        hit_description=opt['hit_description'] + ' (ID: ' + self.task_group_id + ', Role: ' + mturk_agent_id + ')',
-                        hit_keywords=opt['hit_keywords'],
-                        hit_reward=opt['reward'],
-                        assignment_duration_in_seconds=opt.get('assignment_duration_in_seconds', 30 * 60), # Set to 30 minutes by default
-                        is_sandbox=opt['is_sandbox']
-                    )
+                hit_type_id = create_hit_type(
+                    hit_title=opt['hit_title'],
+                    hit_description=opt['hit_description'] + ' (ID: ' + self.task_group_id + ', Role: ' + mturk_agent_id + ')',
+                    hit_keywords=opt['hit_keywords'],
+                    hit_reward=opt['reward'],
+                    assignment_duration_in_seconds=opt.get('assignment_duration_in_seconds', 30 * 60), # Set to 30 minutes by default
+                    is_sandbox=opt['is_sandbox']
+                )
                 all_agent_ids_string = str(self.all_agent_ids).replace("'", '''"''')
                 mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)+"&all_agent_ids="+all_agent_ids_string+"&cur_agent_id="+str(mturk_agent_id)
                 mturk_page_url = create_hit_with_hit_type(
