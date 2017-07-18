@@ -6,7 +6,7 @@
   of patent rights can be found in the PATENTS file in the same directory.
 
 What is ParlAI?
-============
+===============
 
 It's a python-based platform for enabling dialog AI research.
 
@@ -34,7 +34,7 @@ Follow the step by step guide on how to download and install ParlAI.
 
 3. Several models have additional requirements:
 
-- DrQA requires installing `PyTorch <http://pytorch.org/>`_.
+- DrQA and Seq2Seq require installing `PyTorch <http://pytorch.org/>`_.
 
 - MemNN requires installing `Lua Torch <http://torch.ch/docs/getting-started.html>`_.
 

@@ -167,7 +167,7 @@ We'll follow this loose format:
             # no valid examples, just return the empty responses we set up
             return batch_reply
 
-        # produce prodictions either way, but use the targets if available
+        # produce predictions either way, but use the targets if available
         predictions = self.predict(xs, ys)
 
         for i in range(len(predictions)):
@@ -192,38 +192,6 @@ There are a few other useful methods you may want to define in your agent to
 take of additional functionality one might want during training. Many of these
 functions will be automatically called if you use our example training function
 to train your model.
-
-save()
-------
-
-This function saves a copy of your model. We recommended implementing it with
-an optional parameter (path=None)--then, you can provide a specific path in
-calls to the function if you want, but if this is None then check for a
-'model_file' parameter in the `opt` dict.
-
-This allows all models in an environment to save when the validation triggers
-in the train_model function. By calling world.save_agents(), all contained agents'
-save() functions will be called, so they know to save their parameters if they
-want to.
-
-Our seq2seq agent defines the following:
-
-.. code-block:: python
-
-    def save(self, path=None):
-        path = self.opt.get('model_file', None) if path is None else path
-
-        if path:
-            model = {}
-            model['lt'] = self.lt.state_dict()
-            model['encoder'] = self.encoder.state_dict()
-            model['decoder'] = self.decoder.state_dict()
-            model['d2o'] = self.d2o.state_dict()
-            model['longest_label'] = self.longest_label
-
-            with open(path, 'wb') as write:
-                torch.save(model, write)
-            torch.save(model)
 
 share()
 -------

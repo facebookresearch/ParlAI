@@ -303,7 +303,7 @@ class Seq2seqAgent(Agent):
             # no valid examples, just return the empty responses we set up
             return batch_reply
 
-        # produce prodictions either way, but use the targets if available
+        # produce predictions either way, but use the targets if available
         predictions = self.predict(xs, ys)
 
         for i in range(len(predictions)):
