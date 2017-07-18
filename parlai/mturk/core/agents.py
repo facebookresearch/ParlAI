@@ -290,10 +290,10 @@ class MTurkManager():
 
 
 class MTurkAgent(Agent):
-    def __init__(self, id, manager, conversation_id, opt, shared=None):
+    def __init__(self, id, manager, hit_index, assignment_index, opt, shared=None):
         super().__init__(opt)
 
-        self.conversation_id = conversation_id
+        self.conversation_id = str(hit_index) + '_' + str(assignment_index)
         self.manager = manager
         self.id = id
         self.last_message_id = 0

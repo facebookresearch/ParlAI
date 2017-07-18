@@ -42,11 +42,9 @@ def main():
 
     global run_hit
     def run_hit(hit_index, assignment_index, opt, mturk_manager):
-        conversation_id = str(hit_index) + '_' + str(assignment_index)
-
         # Create mturk agents
-        mturk_agent_1 = MTurkAgent(id=mturk_agent_1_id, manager=mturk_manager, conversation_id=conversation_id, opt=opt)
-        mturk_agent_2 = MTurkAgent(id=mturk_agent_2_id, manager=mturk_manager, conversation_id=conversation_id, opt=opt)
+        mturk_agent_1 = MTurkAgent(id=mturk_agent_1_id, manager=mturk_manager, hit_index=hit_index, assignment_index=assignment_index, opt=opt)
+        mturk_agent_2 = MTurkAgent(id=mturk_agent_2_id, manager=mturk_manager, hit_index=hit_index, assignment_index=assignment_index, opt=opt)
 
         # Create the local human agents
         human_agent_1 = LocalHumanAgent(opt=None)
