@@ -12,7 +12,6 @@ import os
 import copy
 from itertools import product
 from joblib import Parallel, delayed
-import threading
 
 
 def main():
@@ -44,11 +43,9 @@ def main():
     
     global run_hit
     def run_hit(hit_index, assignment_index, opt, task_opt, mturk_manager):
-        conversation_id = str(hit_index) + '_' + str(assignment_index)
-
         model_agent = IrBaselineAgent(opt=opt)
         # Create the MTurk agent which provides a chat interface to the Turker
-        mturk_agent = MTurkAgent(id=mturk_agent_id, manager=mturk_manager, conversation_id=conversation_id, opt=opt)
+        mturk_agent = MTurkAgent(id=mturk_agent_id, manager=mturk_manager, hit_index=hit_index, assignment_index=assignment_index, opt=opt)
         world = ModelEvaluatorWorld(opt=opt, model_agent=model_agent, task_opt=task_opt, mturk_agent=mturk_agent)
 
         while not world.episode_done():
