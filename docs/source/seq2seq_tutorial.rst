@@ -18,8 +18,7 @@ Sean Robertson's `Seq2Seq PyTorch tutorial <http://pytorch.org/tutorials/interme
 
 Part 1: Naming Things
 ^^^^^^^^^^^^^^^^^^^^^
-    *"There are two hard problems in computer science:
-    cache invalidation, naming things, and off-by-one errors."*
+    *"There are two hard problems in computer science: cache invalidation, naming things, and off-by-one errors."*
 
 In order to make programmatic importing easier, we use a simple naming scheme
 for our models, so that on the command line we can just type "--model seq2seq"
@@ -38,6 +37,9 @@ For example, "--model parlai.agents.remote_agent.remote_agent:ParsedRemoteAgent"
 
 Part 2: Main Agent Methods
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    *"Action is the real measure of intelligence."*
+
 First off, generally we should inherit from the Agent class in parlai.core.agents.
 This provides us with some default implementations (often, ``pass``) of some utility
 functions like "shutdown".
@@ -184,6 +186,8 @@ the other methods in the Agent API.
 Part 3: Extended Agent API
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+    *"Take time to deliberate, but when the time for action has arrived, stop thinking and go in."*
+
 There are a few other useful methods you may want to define in your agent to
 take of additional functionality one might want during training. Many of these
 functions will be automatically called if you use our example training function
@@ -253,6 +257,7 @@ use this to close their open TCP connection after sending a shutdown signal thro
 
 Part 4: Finishing the Seq2Seq model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    *"Speak clearly, if you speak at all; carve every word before you let it fall."*
 
 Here we'll take a look at the full details of ``__init__``, ``batchify``, ``predict``, and more.
 
@@ -468,5 +473,6 @@ indices into our dictionary, allowing us to return tokens from the dictionary.
         _max_score, idx = scores.max(1)
         return idx, scores
 
-For other utility functions like loading from file, check out the source code at
-parlai/agents/seq2seq!
+For other utility functions like loading from file, or to see any new features
+that we may have added to the model such as attention over the input or ranking
+candidates, check out the source code at parlai/agents/seq2seq.
