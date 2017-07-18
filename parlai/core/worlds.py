@@ -550,12 +550,6 @@ class BatchWorld(World):
 
     def batch_observe(self, index, batch_actions, index_acting):
         batch_observations = []
-        a = self.world.get_agents()[index]
-
-        if (batch_actions is not None and len(batch_actions) > 0 and
-                hasattr(a, 'batch_observe')) and index != index_acting:
-            # if there's anything that needs to be batched, do it here
-            a.batch_observe(batch_actions)
 
         for i, w in enumerate(self.worlds):
             agents = w.get_agents()
@@ -572,6 +566,13 @@ class BatchWorld(World):
             if observation is None:
                 raise ValueError('Agents should return what they observed.')
             batch_observations.append(observation)
+
+        a = self.world.get_agents()[index]
+        if (batch_actions is not None and len(batch_actions) > 0 and
+                hasattr(a, 'batch_observe')) and index != index_acting:
+            # if there's anything that needs to be batched, do it here
+            a.batch_observe(batch_observations)
+
         return batch_observations
 
     def batch_act(self, index, batch_observation):
