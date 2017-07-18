@@ -6,7 +6,7 @@
   of patent rights can be found in the PATENTS file in the same directory.
 
 What is ParlAI?
-===============
+============
 
 It's a python-based platform for enabling dialog AI research.
 
@@ -202,11 +202,6 @@ Now that we have our our agent, we'll set up the display loop.
 
     parser = ParlaiParser()
     opt = parser.parse_args()
-
-    if 'task' not in opt:
-        # if task not specified from the command line,
-        # default to the 1000-training example bAbI task 1
-        opt['task'] = 'babi:task1k:1'
 
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)

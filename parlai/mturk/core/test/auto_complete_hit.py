@@ -49,9 +49,9 @@ while not "There are no HITs in this group available to you at the moment." in d
      
     # Wait for main page to show up
     iframe = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CSS_SELECTOR, "body > form > iframe")))
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     driver.switch_to.frame(iframe)
     input_box = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#id_text_input")))
-    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     
     # Send message
     time.sleep(random.uniform(2, 10))
