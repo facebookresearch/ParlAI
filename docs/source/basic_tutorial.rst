@@ -7,6 +7,7 @@
 
 What is ParlAI?
 ===============
+**Author**: Alexander Holden Miller
 
 It's a python-based platform for enabling dialog AI research.
 
@@ -24,19 +25,20 @@ Follow the step by step guide on how to download and install ParlAI.
 
 .. code-block:: bash
 
-        git clone https://github.com/facebookresearch/ParlAI.git ~/ParlAI
+    git clone https://github.com/facebookresearch/ParlAI.git ~/ParlAI
 
 2. Install ParlAI:
 
 .. code-block:: bash
 
-        cd ~/ParlAI; python setup.py develop
+    cd ~/ParlAI; python setup.py develop
 
-3. Several models have additional requirements
+3. Several models have additional requirements:
 
-  a. DrQA requires installing `PyTorch <http://pytorch.org/>`
+- DrQA and Seq2Seq require installing `PyTorch <http://pytorch.org/>`_.
 
-  b. MemNN requires installing `Lua Torch <http://torch.ch/docs/getting-started.html>`
+- MemNN requires installing `Lua Torch <http://torch.ch/docs/getting-started.html>`_.
+
 
 Getting Started
 ---------------
@@ -264,5 +266,5 @@ the labels aren't available:
         return reply
 
 
-Of course, we can do much better than randomly guessing. In the next tutorial,
+Of course, we can do much better than randomly guessing. In another tutorial,
 we'll set up a better agent which learns from the training data.

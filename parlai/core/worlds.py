@@ -54,12 +54,6 @@ from parlai.tasks.tasks import ids_to_tasks
 def validate(observation):
     """Make sure the observation table is valid, or raise an error."""
     if observation is not None and type(observation) == dict:
-        if ('text_candidates' in observation and
-            'text' in observation and
-            observation['text'] != observation['text_candidates'][0]):
-            raise RuntimeError('If text and text_candidates fields are both ' +
-                               'filled, top text candidate should be the same' +
-                               ' as text.')
         return observation
     else:
         raise RuntimeError('Must return dictionary from act().')

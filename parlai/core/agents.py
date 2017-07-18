@@ -149,9 +149,7 @@ class Teacher(Agent):
         self.metrics.clear()
 
     def share(self):
-        """If applicable, share any parameters needed to create a shared version
-        of this agent.
-        """
+        """In addition to default Agent shared parameters, share metrics."""
         shared = super().share()
         shared['metrics'] = self.metrics
         return shared
