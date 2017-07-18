@@ -198,7 +198,7 @@ calls to the function if you want, but if this is None then check for a
 'model_file' parameter in the `opt` dict.
 
 This allows all models in an environment to save when the validation triggers
-in the train_model function. By calling world.save(), all contained agents'
+in the train_model function. By calling world.save_agents(), all contained agents'
 save() functions will be called, so they know to save their parameters if they
 want to.
 
