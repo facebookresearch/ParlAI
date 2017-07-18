@@ -71,8 +71,9 @@ class DictionaryAgent(Agent):
     default_maxngram = -1
     default_minfreq = 0
     default_null = '__NULL__'
-    default_eos = '__EOS__'
     default_unk = '__UNK__'
+    default_eos = '__EOS__'
+    default_go = '__GO__'
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -101,11 +102,14 @@ class DictionaryAgent(Agent):
            '--dict-nulltoken', default=DictionaryAgent.default_null,
            help='empty token, can be used for padding or just empty values')
         dictionary.add_argument(
+            '--dict-unktoken', default=DictionaryAgent.default_unk,
+            help='token to return for unavailable words')
+        dictionary.add_argument(
            '--dict-eostoken', default=DictionaryAgent.default_eos,
            help='token for end of sentence markers, if needed')
         dictionary.add_argument(
-            '--dict-unktoken', default=DictionaryAgent.default_unk,
-            help='token to return for unavailable words')
+           '--dict-gotoken', default=DictionaryAgent.default_go,
+           help='token for starting sentence generation, if needed')
         dictionary.add_argument(
             '--dict-maxexs', default=100000, type=int,
             help='max number of examples to build dict on')
@@ -115,8 +119,9 @@ class DictionaryAgent(Agent):
         # initialize fields
         self.opt = copy.deepcopy(opt)
         self.null_token = opt['dict_nulltoken']
-        self.eos_token = opt['dict_eostoken']
         self.unk_token = opt['dict_unktoken']
+        self.eos_token = opt['dict_eostoken']
+        self.go_token = opt['dict_gotoken']
         self.max_ngram_size = opt['dict_max_ngram_size']
 
         if shared:
@@ -132,17 +137,23 @@ class DictionaryAgent(Agent):
                 self.tok2ind[self.null_token] = 0
                 self.ind2tok[0] = self.null_token
 
-            if self.eos_token:
-                # set special end of sentence token
-                index = len(self.tok2ind)
-                self.tok2ind[self.eos_token] = index
-                self.ind2tok[index] = self.eos_token
-
             if self.unk_token:
                 # set special unknown word token
                 index = len(self.tok2ind)
                 self.tok2ind[self.unk_token] = index
                 self.ind2tok[index] = self.unk_token
+
+            if self.eos_token:
+                # set special end of sentence word token
+                index = len(self.tok2ind)
+                self.tok2ind[self.eos_token] = index
+                self.ind2tok[index] = self.eos_token
+
+            if self.go_token:
+                # set special start of sentence word token
+                index = len(self.tok2ind)
+                self.tok2ind[self.go_token] = index
+                self.ind2tok[index] = self.go_token
 
             if opt.get('dict_file') and os.path.isfile(opt['dict_file']):
                 # load pre-existing dictionary
@@ -164,13 +175,17 @@ class DictionaryAgent(Agent):
 
         if not shared:
 
-            if self.null_token:
-                # fix count for null token to one billion and two
-                self.freq[self.null_token] = 1000000002
+            if self.go_token:
+                # fix count for start of sentence token to one billion and three
+                self.freq[self.go_token] = 1000000003
 
             if self.eos_token:
-                # fix count for end of sentence token to one billion and one
-                self.freq[self.eos_token] = 1000000001
+                # fix count for end of sentence token to one billion and two
+                self.freq[self.eos_token] = 1000000002
+
+            if self.null_token:
+                # fix count for null token to one billion and one
+                self.freq[self.null_token] = 1000000001
 
             if self.unk_token:
                 # fix count for unknown token to one billion
