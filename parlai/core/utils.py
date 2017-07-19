@@ -4,9 +4,11 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+import os
 import math
 import sys
 import time
+from numbers import Number
 
 
 class Predictor(object):
@@ -50,6 +52,35 @@ class Predictor(object):
         self.agent.observe(observation)
         reply = self.agent.act()
         return reply
+
+
+class TensorboardLogger(object):
+    def __init__(self, logdir):
+        try:
+            import tensorboard_logger
+        except ModuleNotFoundError:
+            raise ModuleNotFoundError('Need to install tensorboard_logger: ' +
+                    'go to https://github.com/TeamHG-Memex/tensorboard_logger')
+
+        self.train_board = tensorboard_logger.Logger(
+                os.path.join(logdir, 'train'), flush_secs=5)
+        self.valid_board = tensorboard_logger.Logger(
+                os.path.join(logdir, 'valid'), flush_secs=5)
+
+    def log_train(self, values_dict, step):
+        self._log(self.train_board, values_dict, step)
+
+    def log_valid(self, values_dict, step):
+        self._log(self.valid_board, values_dict, step)
+
+    def _log(self, logger, values_dict, step):
+        for name in values_dict:
+            if isinstance(values_dict[name], Number):
+                logger.log_value(name, values_dict[name], step)
+
+    def __getstate__(self):
+        # Avoid storing or copying this object as part of another.
+        pass
 
 
 class Timer(object):
