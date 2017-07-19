@@ -328,7 +328,6 @@ class MTurkAgent(Agent):
         while True:
             if timeout:
                 current_time = time.time()
-                print(current_time - start_time)
                 if (current_time - start_time) > timeout:
                     self.hit_is_abandoned = True
                     msg = {
