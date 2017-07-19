@@ -35,6 +35,8 @@ ASSIGNMENT_DONE = 'Submitted'
 ASSIGNMENT_APPROVED = 'Approved'
 ASSIGNMENT_REJECTED = 'Rejected'
 
+TIMEOUT_MESSAGE = '[TIMEOUT]'
+
 polling_interval = 1 # in seconds
 local_db_lock = threading.Lock()
 debug = False
@@ -298,6 +300,7 @@ class MTurkAgent(Agent):
         self.assignment_id = None
         self.hit_id = None
         self.worker_id = None
+        self.hit_is_abandoned = False
 
         # Wait for MTurk-specific info
         while not (self.assignment_id and self.hit_id and self.worker_id):
@@ -318,15 +321,30 @@ class MTurkAgent(Agent):
                     episode_done=msg.get('episode_done', False),
                 )
 
-    def act(self):
+    def act(self, timeout=None): # timeout in seconds
+        if timeout:
+            start_time = time.time()
+
         while True:
+            if timeout:
+                current_time = time.time()
+                print(current_time - start_time)
+                if (current_time - start_time) > timeout:
+                    self.hit_is_abandoned = True
+                    msg = {
+                        'id': self.id,
+                        'text': TIMEOUT_MESSAGE,
+                        'episode_done': True
+                    }
+                    return msg
+
             conversation_dict, new_last_message_id = self.manager.get_new_messages(
                 task_group_id=self.manager.task_group_id,
                 conversation_id=self.conversation_id,
                 after_message_id=self.last_message_id,
                 included_agent_id=self.id
             )
-            
+
             if self.conversation_id in conversation_dict:
                 if new_last_message_id:
                     self.last_message_id = new_last_message_id
@@ -378,4 +396,5 @@ class MTurkAgent(Agent):
         print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is done.')
 
     def shutdown(self):
-        self.wait_for_hit_completion()
+        if not self.hit_is_abandoned:
+            self.wait_for_hit_completion()
