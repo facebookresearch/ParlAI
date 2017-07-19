@@ -59,7 +59,7 @@ class Seq2seqAgent(Agent):
             self.dict = DictionaryAgent(opt)
             self.id = 'Seq2Seq'
             # we use EOS markers to break input and output and end our output
-            self.EOS = self.dict.eos_token
+            self.EOS = self.dict.end_token
             self.observation = {'text': self.EOS, 'episode_done': True}
             self.EOS_TENSOR = torch.LongTensor(self.dict.parse(self.EOS))
 
