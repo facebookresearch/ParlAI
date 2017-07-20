@@ -382,9 +382,15 @@ class MTurkAgent(Agent):
         print("Blocked worker ID: " + str(self.worker_id) + ". Reason: " + reason)
 
     def pay_bonus(self, bonus_amount, reason='unspecified'):
-        unique_request_token = str(uuid.uuid4())
-        if self.manager.pay_bonus(worker_id=self.worker_id, bonus_amount=bonus_amount, assignment_id=self.assignment_id, reason=reason, unique_request_token=unique_request_token):
-            print("Paid $" + str(bonus_amount) + " bonus to WorkerId: " + self.worker_id)
+        if self.hit_is_abandoned:
+            print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is abandoned and thus not available for bonus.')
+        else:
+            if self.manager.get_agent_work_status(assignment_id=self.assignment_id) == ASSIGNMENT_DONE:
+                unique_request_token = str(uuid.uuid4())
+                if self.manager.pay_bonus(worker_id=self.worker_id, bonus_amount=bonus_amount, assignment_id=self.assignment_id, reason=reason, unique_request_token=unique_request_token):
+                    print("Paid $" + str(bonus_amount) + " bonus to WorkerId: " + self.worker_id)
+            else:
+                print("Cannot pay bonus for HIT. Reason: Turker hasn't completed the HIT yet.")
 
     def email_worker(self, subject, message_text):
         response = self.manager.email_worker(worker_id=self.worker_id, subject=subject, message_text=message_text)
