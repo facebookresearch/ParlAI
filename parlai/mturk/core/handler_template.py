@@ -140,9 +140,7 @@ def get_new_messages(event, context):
         """
         task_group_id = event['query']['task_group_id']
         last_message_id = int(event['query']['last_message_id'])
-        receiver_agent_id = None
-        if 'receiver_agent_id' in event['query']:
-            receiver_agent_id = event['query']['receiver_agent_id']
+        receiver_agent_id = event['query']['receiver_agent_id']
         conversation_id = None
         if 'conversation_id' in event['query']:
             conversation_id = event['query']['conversation_id']
@@ -210,7 +208,6 @@ def sync_hit_assignment_info(event, context):
         """
         try:
             params = event['body']
-            print(params)
             task_group_id = params['task_group_id']
             agent_id = params['agent_id']
             num_assignments = params['num_assignments']

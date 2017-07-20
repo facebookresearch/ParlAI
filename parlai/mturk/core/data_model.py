@@ -185,7 +185,7 @@ def send_new_message(db_session, task_group_id, conversation_id, sender_agent_id
     return new_message_object
 
 
-def get_new_messages(db_session, task_group_id, receiver_agent_id=None, conversation_id=None, after_message_id=None, excluded_sender_agent_id=None, included_sender_agent_id=None, populate_meta_info=False):
+def get_new_messages(db_session, task_group_id, receiver_agent_id, conversation_id=None, after_message_id=None, excluded_sender_agent_id=None, included_sender_agent_id=None, populate_meta_info=False):
     """
     Return:
     conversation_dict = {

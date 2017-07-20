@@ -24,7 +24,7 @@ Example 1: Overriding left_pane to display custom image instead:
 
 Example 2: Overriding handle_new_messages to only show messages from this agent
 
-{% block handle_new_messages %}
+{% block additional_scripts %}
 <script type="text/javascript">
     function handle_new_messages(new_messages) {
         for (var i = 0; i < new_messages.length; i++) {

@@ -127,6 +127,7 @@ class MTurkManager():
             'method_name': 'get_new_messages',
             'task_group_id': self.task_group_id,
             'last_message_id': self.db_last_message_id,
+            'receiver_agent_id': '[World]'
         }
         response = requests.get(self.json_api_endpoint_url, params=params)
         try:
@@ -149,18 +150,20 @@ class MTurkManager():
                                                     task_group_id = self.task_group_id,
                                                     conversation_id = conversation_id,
                                                     sender_agent_id = new_message['id'],
+                                                    receiver_agent_id = new_message['receiver_agent_id'],
                                                     message_content = json.dumps(obs_act_dict)
                                                 )
                         self.db_session.add(new_message_in_local_db)
                         self.db_session.commit()
     
     # Only gets new messages from local db, which syncs with remote db every `polling_interval` seconds.
-    def get_new_messages(self, task_group_id, conversation_id, after_message_id, excluded_sender_agent_id=None, included_sender_agent_id=None):
+    def get_new_messages(self, task_group_id, conversation_id, receiver_agent_id, after_message_id, excluded_sender_agent_id=None, included_sender_agent_id=None):
         with local_db_lock:
             return _get_new_messages(
                 db_session=self.db_session,
                 task_group_id=task_group_id,
                 conversation_id=conversation_id,
+                receiver_agent_id=receiver_agent_id,
                 after_message_id=after_message_id,
                 excluded_sender_agent_id=excluded_sender_agent_id,
                 included_sender_agent_id=included_sender_agent_id,
@@ -362,6 +365,7 @@ class MTurkAgent(Agent):
             conversation_dict, new_last_message_id = self.manager.get_new_messages(
                 task_group_id=self.manager.task_group_id,
                 conversation_id=self.conversation_id,
+                receiver_agent_id='[World]',
                 after_message_id=self.last_message_id,
                 included_sender_agent_id=self.id
             )
