@@ -73,45 +73,6 @@ of patent rights can be found in the PATENTS file in the same directory.
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.rawgit.com/yf225/jquery-ajax-retry/master/dist/jquery.ajax-retry.min.js"></script>
 
-{% block handle_new_messages %}
-<script type="text/javascript">
-    function handle_new_messages(new_messages) {
-        for (var i = 0; i < new_messages.length; i++) {
-            var message = new_messages[i];
-            var agent_id = message['id'];
-            var message_id = parseInt(message['message_id']);
-            var message_text = message['text'].replace(/(?:\r\n|\r|\n)/g, '<br />');
-
-            if (!(message_id in messages_shown)) {
-                if (agent_id != cur_agent_id) {
-                    $('div#message_thread').append(`
-                        <div class="row" style="margin-left: 0; margin-right: 0">
-                            <div class="alert alert-warning" role="alert" style="float: left; display:table">
-                                <span style="font-size: 16px"><b>`+agent_id+`</b>: `+message_text+`</span>
-                            </div>
-                        </div>
-                    `);
-                    received_message_from_other_agents = true;
-                } else {
-                    $('div#message_thread').append(`
-                        <div class="row" style="margin-left: 0; margin-right: 0">
-                            <div class="alert alert-info" role="alert" style="float: right; display:table">
-                                <span style="font-size: 16px"><b>`+agent_id+`</b>: `+message_text+`</span>
-                            </div>
-                        </div>
-                    `);
-                }
-                messages_shown[message_id] = true;
-            }
-        }
-        if (new_messages.length > 0) {
-            $("div#message_thread").css("display", "");
-            scroll_conversation_to_bottom();
-        }
-    }
-</script>
-{% endblock %}
-
 <script type="text/javascript">
     /* ================= Utility functions ================= */
     function scroll_conversation_to_bottom() {
@@ -247,13 +208,48 @@ of patent rights can be found in the PATENTS file in the same directory.
         }
     }
 
-    function send_message(text, receiver_agent_id=null, episode_done=false, callback_function=null) {
+    function handle_new_messages(new_messages) {
+        for (var i = 0; i < new_messages.length; i++) {
+            var message = new_messages[i];
+            var agent_id = message['id'];
+            var message_id = parseInt(message['message_id']);
+            var message_text = message['text'].replace(/(?:\r\n|\r|\n)/g, '<br />');
+
+            if (!(message_id in messages_shown)) {
+                if (agent_id != cur_agent_id) {
+                    $('div#message_thread').append(`
+                        <div class="row" style="margin-left: 0; margin-right: 0">
+                            <div class="alert alert-warning" role="alert" style="float: left; display:table">
+                                <span style="font-size: 16px"><b>`+agent_id+`</b>: `+message_text+`</span>
+                            </div>
+                        </div>
+                    `);
+                    received_message_from_other_agents = true;
+                } else {
+                    $('div#message_thread').append(`
+                        <div class="row" style="margin-left: 0; margin-right: 0">
+                            <div class="alert alert-info" role="alert" style="float: right; display:table">
+                                <span style="font-size: 16px"><b>`+agent_id+`</b>: `+message_text+`</span>
+                            </div>
+                        </div>
+                    `);
+                }
+                messages_shown[message_id] = true;
+            }
+        }
+        if (new_messages.length > 0) {
+            $("div#message_thread").css("display", "");
+            scroll_conversation_to_bottom();
+        }
+    }
+
+    function send_message(text, receiver_agent_id, episode_done=false, callback_function=null) {
         var post_data_dict = {
             task_group_id: task_group_id,
             conversation_id: conversation_id,
             sender_agent_id: cur_agent_id,
+            receiver_agent_id: receiver_agent_id
         };
-        if (receiver_agent_id) post_data_dict['receiver_agent_id'] = receiver_agent_id;
         if (text) post_data_dict['text'] = text;
         post_data_dict['episode_done'] = episode_done;
         post_data_dict['method_name'] = 'send_new_message';
@@ -273,10 +269,10 @@ of patent rights can be found in the PATENTS file in the same directory.
         );
     }
 
-    $("button#id_send_msg_button").click(function () {
+    $("button#id_send_msg_button").on('click', function () {
         var text = $("input#id_text_input").val();
         if (!(text == '')) {
-            send_message(text, null, done_after_responding, function(data){
+            send_message(text, '[World]', done_after_responding, function(data){
                 $("input#id_text_input").val("");
                 $("div#response-type-text-input").css("display", "none");
                 data = JSON.parse(data);
@@ -337,7 +333,7 @@ of patent rights can be found in the PATENTS file in the same directory.
         );
     }
 
-    // background thread that gets new messages from relay server periodically
+    // background thread that checks new command periodically
     function polling_for_command() {
         $.ajax({
             url: '/prod/json',
@@ -387,7 +383,7 @@ of patent rights can be found in the PATENTS file in the same directory.
         $(window).resize();
     }
 
-    $("button#done-button").click(function() {
+    $("button#done-button").on('click', function() {
         all_done_callback();
     });
 
@@ -402,22 +398,8 @@ of patent rights can be found in the PATENTS file in the same directory.
         }
     }
 
-    function init_cover_page_additional() {}
-    function init_chat_page_additional() {}
-</script>
-
-{% block additional_scripts %}
-{% endblock %}
-
-{% block additional_init_scripts %}
-{% endblock %}
-
-<script type="text/javascript">
     function init_cover_page() {
         $("span#task-description").html(task_description);
-        if (init_cover_page_additional) {
-            init_cover_page_additional();
-        }
     }
 
     function init_chat_page() {
@@ -434,10 +416,6 @@ of patent rights can be found in the PATENTS file in the same directory.
         $("div#waiting-for-message").css("display", "");
         $("div#left-pane").removeClass('col-xs-12');
         $("div#left-pane").addClass('col-xs-4');
-
-        if (init_chat_page_additional) {
-            init_chat_page_additional();
-        }
 
         $(window).resize();
         polling_for_command();
@@ -463,5 +441,9 @@ of patent rights can be found in the PATENTS file in the same directory.
         });
     });
 </script>
+
+{% block additional_scripts %}
+{% endblock %}
+
 </body>
 </html>
