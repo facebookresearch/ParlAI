@@ -8,7 +8,6 @@ import os
 import math
 import sys
 import time
-from numbers import Number
 
 
 class Predictor(object):
