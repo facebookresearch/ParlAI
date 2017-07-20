@@ -58,10 +58,10 @@ class Seq2seqAgent(Agent):
 
             self.dict = DictionaryAgent(opt)
             self.id = 'Seq2Seq'
-            # we use EOS markers to break input and output and end our output
-            self.EOS = self.dict.end_token
-            self.observation = {'text': self.EOS, 'episode_done': True}
-            self.EOS_TENSOR = torch.LongTensor(self.dict.parse(self.EOS))
+            # we use END markers to break input and output and end our output
+            self.END = self.dict.end_token
+            self.observation = {'text': self.END, 'episode_done': True}
+            self.END_TENSOR = torch.LongTensor(self.dict.parse(self.END))
 
             # store important params directly
             hsz = opt['hiddensize']
@@ -127,7 +127,7 @@ class Seq2seqAgent(Agent):
         return self.dict.vec2txt(vec)
 
     def cuda(self):
-        self.EOS_TENSOR = self.EOS_TENSOR.cuda(async=True)
+        self.END_TENSOR = self.END_TENSOR.cuda(async=True)
         self.criterion.cuda()
         self.lt.cuda()
         self.encoder.cuda()
@@ -191,8 +191,8 @@ class Seq2seqAgent(Agent):
         h0 = self.init_zeros(batchsize)
         _output, hn = self.encoder(xes, h0)
 
-        # next we use EOS as an input to kick off our decoder
-        x = Variable(self.EOS_TENSOR)
+        # next we use END as an input to kick off our decoder
+        x = Variable(self.END_TENSOR)
         xe = self.lt(x).unsqueeze(1)
         xes = xe.expand(xe.size(0), batchsize, xe.size(2))
 
@@ -227,7 +227,7 @@ class Seq2seqAgent(Agent):
             max_len = 0
 
             while(total_done < batchsize) and max_len < self.longest_label:
-                # keep producing tokens until we hit EOS or max length for each
+                # keep producing tokens until we hit END or max length for each
                 # example in the batch
                 output, hn = self.decoder(xes, hn)
                 preds, scores = self.hidden_to_idx(output, dropout=False)
@@ -237,8 +237,8 @@ class Seq2seqAgent(Agent):
                     if not done[b]:
                         # only add more tokens for examples that aren't done yet
                         token = self.v2t(preds.data[b])
-                        if token == self.EOS:
-                            # if we produced EOS, we're done
+                        if token == self.END:
+                            # if we produced END, we're done
                             done[b] = True
                             total_done += 1
                         else:
@@ -275,8 +275,8 @@ class Seq2seqAgent(Agent):
         ys = None
         if 'labels' in exs[0]:
             # randomly select one of the labels to update on, if multiple
-            # append EOS to each label
-            labels = [random.choice(ex['labels']) + ' ' + self.EOS for ex in exs]
+            # append END to each label
+            labels = [random.choice(ex['labels']) + ' ' + self.END for ex in exs]
             parsed = [self.parse(y) for y in labels]
             max_y_len = max(len(y) for y in parsed)
             ys = torch.LongTensor(batchsize, max_y_len).fill_(0)
@@ -310,7 +310,7 @@ class Seq2seqAgent(Agent):
             # map the predictions back to non-empty examples in the batch
             # we join with spaces since we produce tokens one at a time
             batch_reply[valid_inds[i]]['text'] = ' '.join(
-                c for c in predictions[i] if c != self.EOS)
+                c for c in predictions[i] if c != self.END)
 
         return batch_reply
 
