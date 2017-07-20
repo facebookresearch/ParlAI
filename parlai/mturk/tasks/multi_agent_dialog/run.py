@@ -34,8 +34,7 @@ def main():
     human_agent_2_id = 'human_2'
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_1_id, mturk_agent_2_id],
-        all_agent_ids = [human_agent_1_id, human_agent_2_id, mturk_agent_1_id, mturk_agent_2_id] # In speaking order
+        mturk_agent_ids = [mturk_agent_1_id, mturk_agent_2_id]
     )
     mturk_manager.init_aws(opt=opt)
     mturk_manager.start_new_run(opt=opt)

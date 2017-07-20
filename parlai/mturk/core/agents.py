@@ -20,6 +20,7 @@ from parlai.mturk.core.setup_aws import setup_aws, calculate_mturk_cost, check_m
 import threading
 from parlai.mturk.core.data_model import Base, Message
 from parlai.mturk.core.data_model import get_new_messages as _get_new_messages
+from parlai.mturk.core.data_model import COMMAND_GET_NEW_MESSAGES, COMMAND_SEND_MESSAGE
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
@@ -42,7 +43,7 @@ local_db_lock = threading.Lock()
 debug = False
 
 class MTurkManager():
-    def __init__(self, opt, mturk_agent_ids, all_agent_ids):
+    def __init__(self, opt, mturk_agent_ids):
         self.html_api_endpoint_url = None
         self.json_api_endpoint_url = None
         self.task_group_id = None
@@ -51,7 +52,6 @@ class MTurkManager():
         self.db_thread_stop_event = None
         self.run_id = None
         self.mturk_agent_ids = mturk_agent_ids
-        self.all_agent_ids = all_agent_ids
         self.task_files_to_copy = None
         self.unsent_messages_lock = threading.Lock()
         self.unsent_messages = []
@@ -120,7 +120,6 @@ class MTurkManager():
             if debug:
                 print("Syncing with remote db...")
             self.get_new_messages_and_save_to_db()
-            self.send_new_messages_in_bulk()
             time.sleep(polling_interval)
 
     def get_new_messages_and_save_to_db(self):
@@ -149,48 +148,62 @@ class MTurkManager():
                                                     id = new_message['message_id'],
                                                     task_group_id = self.task_group_id,
                                                     conversation_id = conversation_id,
-                                                    agent_id = new_message['id'],
+                                                    sender_agent_id = new_message['id'],
                                                     message_content = json.dumps(obs_act_dict)
                                                 )
                         self.db_session.add(new_message_in_local_db)
                         self.db_session.commit()
     
     # Only gets new messages from local db, which syncs with remote db every `polling_interval` seconds.
-    def get_new_messages(self, task_group_id, conversation_id, after_message_id, excluded_agent_id=None, included_agent_id=None):
+    def get_new_messages(self, task_group_id, conversation_id, after_message_id, excluded_sender_agent_id=None, included_sender_agent_id=None):
         with local_db_lock:
             return _get_new_messages(
                 db_session=self.db_session,
                 task_group_id=task_group_id,
                 conversation_id=conversation_id,
                 after_message_id=after_message_id,
-                excluded_agent_id=excluded_agent_id,
-                included_agent_id=included_agent_id,
+                excluded_sender_agent_id=excluded_sender_agent_id,
+                included_sender_agent_id=included_sender_agent_id,
                 populate_meta_info=True
             )
 
-    def send_new_message(self, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False):
-        with self.unsent_messages_lock:
-            self.unsent_messages.append({
-                "task_group_id": task_group_id,
-                "conversation_id": conversation_id,
-                "text": message_text,
-                "id": agent_id,
-                "reward": reward,
-                "episode_done": episode_done,
-            })
+    def send_new_message(self, task_group_id, conversation_id, sender_agent_id, receiver_agent_id, message_text=None, reward=None, episode_done=False):
+        post_data_dict = {
+            'method_name': 'send_new_message',
+            'task_group_id': task_group_id,
+            'conversation_id': conversation_id,
+            'sender_agent_id': sender_agent_id,
+            'receiver_agent_id': receiver_agent_id,
+            'episode_done': episode_done,
+        }
+        if message_text:
+            post_data_dict['text'] = message_text
+        if reward:
+            post_data_dict['reward'] = reward
 
-    def send_new_messages_in_bulk(self):
-        with self.unsent_messages_lock:
-            if len(self.unsent_messages) > 0:
-                post_data_dict = {
-                    'method_name': 'send_new_messages_in_bulk',
-                    'new_messages': self.unsent_messages,
-                }
-                response = requests.post(self.json_api_endpoint_url, data=json.dumps(post_data_dict))
-                if response.status_code != 200:
-                    print(response.content)
-                    raise Exception
-                self.unsent_messages = []
+        response = requests.post(self.json_api_endpoint_url, data=json.dumps(post_data_dict))
+        try:
+            ret = json.loads(response.json())
+            return ret
+        except Exception as e:
+            print(response.content)
+            raise e
+
+    def send_new_command(self, task_group_id, conversation_id, receiver_agent_id, command):
+        post_data_dict = {
+            'method_name': 'send_new_command',
+            'task_group_id': task_group_id,
+            'conversation_id': conversation_id,
+            'receiver_agent_id': receiver_agent_id,
+            'command': command,
+        }
+        response = requests.post(self.json_api_endpoint_url, data=json.dumps(post_data_dict))
+        try:
+            ret = json.loads(response.json())
+            return ret
+        except Exception as e:
+            print(response.content)
+            raise e
 
     def get_hit_assignment_info(self, task_group_id, conversation_id, agent_id):
         params = {
@@ -229,8 +242,7 @@ class MTurkManager():
                     assignment_duration_in_seconds=opt.get('assignment_duration_in_seconds', 30 * 60), # Set to 30 minutes by default
                     is_sandbox=opt['is_sandbox']
                 )
-                all_agent_ids_string = str(self.all_agent_ids).replace("'", '''"''')
-                mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)+"&all_agent_ids="+all_agent_ids_string+"&cur_agent_id="+str(mturk_agent_id)
+                mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)+"&cur_agent_id="+str(mturk_agent_id)
                 mturk_page_url = create_hit_with_hit_type(
                     page_url=mturk_chat_url,
                     hit_type_id=hit_type_id,
@@ -308,22 +320,32 @@ class MTurkAgent(Agent):
             time.sleep(polling_interval)
 
     def observe(self, msg):
-        if msg['id'] not in self.manager.mturk_agent_ids: # If the message sender is an mturk agent, then there is no need to upload this message to db since it's already been done on the message sender side.
-            # We can't have all mturk agents upload this observed new message to server, otherwise there will be duplication.
-            # Instead we only have the first mturk agent upload this observed message to server.
-            if self.manager.mturk_agent_ids.index(self.id) == 0:
-                self.manager.send_new_message(
-                    task_group_id=self.manager.task_group_id,
-                    conversation_id=self.conversation_id,
-                    agent_id=msg['id'],
-                    message_text=msg.get('text', None),
-                    reward=msg.get('reward', None),
-                    episode_done=msg.get('episode_done', False),
-                )
+        self.manager.send_new_message(
+            task_group_id=self.manager.task_group_id,
+            conversation_id=self.conversation_id,
+            sender_agent_id=msg['id'],
+            receiver_agent_id=self.id,
+            message_text=msg.get('text', None),
+            reward=msg.get('reward', None),
+            episode_done=msg.get('episode_done', False),
+        )
+        self.manager.send_new_command(
+            task_group_id=self.manager.task_group_id,
+            conversation_id=self.conversation_id,
+            receiver_agent_id=self.id,
+            command=COMMAND_GET_NEW_MESSAGES
+        )
 
     def act(self, timeout=None): # timeout in seconds
         if timeout:
             start_time = time.time()
+
+        self.manager.send_new_command(
+            task_group_id=self.manager.task_group_id,
+            conversation_id=self.conversation_id,
+            receiver_agent_id=self.id,
+            command=COMMAND_SEND_MESSAGE
+        )
 
         while True:
             if timeout:
@@ -341,7 +363,7 @@ class MTurkAgent(Agent):
                 task_group_id=self.manager.task_group_id,
                 conversation_id=self.conversation_id,
                 after_message_id=self.last_message_id,
-                included_agent_id=self.id
+                included_sender_agent_id=self.id
             )
 
             if self.conversation_id in conversation_dict:
