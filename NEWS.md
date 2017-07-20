@@ -1,6 +1,8 @@
 <h2>News</h2>
 
-2017-07-13: [ParlAI Request For Proposals: Funding university teams - 7 awards are available - deadline Aug 25](https://research.fb.com/programs/research-awards/proposals/parlai/)
+2017-07-20: [ParlAI Request For Proposals: Funding university teams - 7 awards are available - deadline Aug 25](https://research.fb.com/programs/research-awards/proposals/parlai/)
+
+2017-07-20: [added building an (RNN) agent tutorial](http://www.parl.ai/static/docs/seq2seq_tutorial.html)
 
 2017-07-12: [Several new tasks added: MS Marco, TriviaQA, InsuranceQA, personalized-dialog and MNIST_QA](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)
 
