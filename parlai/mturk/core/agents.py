@@ -385,7 +385,7 @@ class MTurkAgent(Agent):
         if self.hit_is_abandoned:
             print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is abandoned and thus not available for bonus.')
         else:
-            if self.manager.get_agent_work_status(assignment_id=self.assignment_id) == ASSIGNMENT_DONE:
+            if self.manager.get_agent_work_status(assignment_id=self.assignment_id) != ASSIGNMENT_NOT_DONE:
                 unique_request_token = str(uuid.uuid4())
                 if self.manager.pay_bonus(worker_id=self.worker_id, bonus_amount=bonus_amount, assignment_id=self.assignment_id, reason=reason, unique_request_token=unique_request_token):
                     print("Paid $" + str(bonus_amount) + " bonus to WorkerId: " + self.worker_id)
