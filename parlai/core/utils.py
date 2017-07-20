@@ -75,12 +75,8 @@ class TensorboardLogger(object):
 
     def _log(self, logger, values_dict, step):
         for name in values_dict:
-            if isinstance(values_dict[name], Number):
+            if type(values_dict[name]) is not dict:
                 logger.log_value(name, values_dict[name], step)
-
-    def __getstate__(self):
-        # Avoid storing or copying this object as part of another.
-        pass
 
 
 class Timer(object):

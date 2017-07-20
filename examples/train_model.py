@@ -106,7 +106,9 @@ def main():
 
     # Set up logger if directory provided
     if opt['tensorboard_dir']:
-        opt['logger'] = TensorboardLogger(opt['tensorboard_dir'])
+        logger = TensorboardLogger(opt['tensorboard_dir'])
+        opt['train_log'] = {}
+        opt['valid_log'] = {}
 
     # Create model and assign it to the specified task
     agent = create_agent(opt)
@@ -176,16 +178,17 @@ def main():
 
             # Log train values
             if opt['tensorboard_dir']:
-                opt['logger'].log_train(train_report, total_exs)
+                logger.log_train(train_report, total_exs)
+                logger.log_train(opt['train_log'], total_exs)
 
         if (opt['validation_every_n_secs'] > 0 and
                 validate_time.time() > opt['validation_every_n_secs']):
             valid_report = run_eval(agent, opt, 'valid', True, opt['validation_max_exs'])
 
             # Log valid values
-            print(valid_report)
             if opt['tensorboard_dir']:
-                opt['logger'].log_valid(valid_report, total_exs)
+                logger.log_valid(valid_report, total_exs)
+                logger.log_valid(opt['valid_log'], total_exs)
 
             if valid_report['accuracy'] > best_accuracy:
                 best_accuracy = valid_report['accuracy']
