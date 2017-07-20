@@ -562,16 +562,17 @@ class BatchWorld(World):
             else:
                 if index == index_acting: return None # don't observe yourself talking
                 observation = validate(batch_actions[i])
-            observation = agents[index].observe(observation)
-            if observation is None:
-                raise ValueError('Agents should return what they observed.')
             batch_observations.append(observation)
 
         a = self.world.get_agents()[index]
         if (batch_actions is not None and len(batch_actions) > 0 and
-                hasattr(a, 'batch_observe')) and index != index_acting:
-            # if there's anything that needs to be batched, do it here
-            a.batch_observe(batch_observations)
+                hasattr(a, 'batch_observe')):
+            batch_observations = a.batch_observe(batch_observations)
+        else:
+            batch_observations = [w.get_agents()[index].observe(o) for w, o in zip(self.worlds, batch_observations)]
+
+        if batch_observations is None or any([o is None for o in batch_observations]):
+            raise ValueError('Agents should return what they observed.')
 
         return batch_observations
 
