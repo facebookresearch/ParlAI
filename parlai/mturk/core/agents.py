@@ -358,18 +358,24 @@ class MTurkAgent(Agent):
         return False
 
     def approve_work(self):
-        if self.manager.get_agent_work_status(assignment_id=self.assignment_id) == ASSIGNMENT_DONE:
-            self.manager.approve_work(assignment_id=self.assignment_id)
-            print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is approved.')
+        if self.hit_is_abandoned:
+            print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is abandoned and thus not available for review.')
         else:
-            print("Cannot approve HIT. Reason: Turker hasn't completed the HIT yet.")
+            if self.manager.get_agent_work_status(assignment_id=self.assignment_id) == ASSIGNMENT_DONE:
+                self.manager.approve_work(assignment_id=self.assignment_id)
+                print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is approved.')
+            else:
+                print("Cannot approve HIT. Reason: Turker hasn't completed the HIT yet.")
 
     def reject_work(self, reason='unspecified'):
-        if self.manager.get_agent_work_status(assignment_id=self.assignment_id) == ASSIGNMENT_DONE:
-            self.manager.reject_work(assignment_id=self.assignment_id, reason=reason)
-            print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is rejected.')
+        if self.hit_is_abandoned:
+            print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is abandoned and thus not available for review.')
         else:
-            print("Cannot reject HIT. Reason: Turker hasn't completed the HIT yet.")
+            if self.manager.get_agent_work_status(assignment_id=self.assignment_id) == ASSIGNMENT_DONE:
+                self.manager.reject_work(assignment_id=self.assignment_id, reason=reason)
+                print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is rejected.')
+            else:
+                print("Cannot reject HIT. Reason: Turker hasn't completed the HIT yet.")
 
     def block_worker(self, reason='unspecified'):
         self.manager.block_worker(worker_id=self.worker_id, reason=reason)
