@@ -33,6 +33,7 @@ def main():
     human_agent_1_id = 'human_1'
     human_agent_2_id = 'human_2'
     mturk_manager = MTurkManager(
+        opt=opt,
         mturk_agent_ids = [mturk_agent_1_id, mturk_agent_2_id],
         all_agent_ids = [human_agent_1_id, human_agent_2_id, mturk_agent_1_id, mturk_agent_2_id] # In speaking order
     )
@@ -62,7 +63,6 @@ def main():
     results = Parallel(n_jobs=opt['num_hits'] * opt['num_assignments'], backend='threading') \
                 (delayed(run_hit)(hit_index, assignment_index, opt, mturk_manager) \
                     for hit_index, assignment_index in product(range(1, opt['num_hits']+1), range(1, opt['num_assignments']+1)))
-    mturk_manager.review_hits()
     mturk_manager.shutdown()
 
 if __name__ == '__main__':

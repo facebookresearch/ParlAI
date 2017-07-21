@@ -23,6 +23,7 @@ ParlAI is a one-stop-shop for dialog research.
 
    basic_tutorial
    task_tutorial
+   seq2seq_tutorial
    mturk
 
 .. toctree::
@@ -49,7 +50,6 @@ ParlAI is a one-stop-shop for dialog research.
   :maxdepth: 1
   :caption: Reference Models
 
-  memnn_luatorch_cpu
   remote_agent
   repeat_label
 

@@ -46,10 +46,11 @@ class DialogTeacher(Teacher):
         # first initialize any shared objects
         self.random = self.datatype == 'train'
         if shared and shared.get('data'):
-            self.data = shared['data']
+            self.data = DialogData(opt, None, cands=self.label_candidates(),
+                                    shared=shared['data'].share())
         else:
             self.data = DialogData(opt, self.setup_data(opt['datafile']),
-                                   cands=self.label_candidates())
+                                    cands=self.label_candidates())
 
         # for ordered data in batch mode (especially, for validation and
         # testing), each teacher in the batch gets a start index and a step
@@ -177,16 +178,27 @@ class DialogData(object):
     or randomly when returning examples to the caller.
     """
 
-    def __init__(self, opt, data_loader, cands=None):
+    def __init__(self, opt, data_loader, cands=None, shared=None):
         # self.data is a list of episodes
         # each episode is a tuple of entries
         # each entry is a tuple of values for the action/observation table
         self.opt = opt
-        self.data = []
-        self._load(data_loader)
-        self.cands = None if cands == None else set(sys.intern(c) for c in cands)
+        if shared:
+            self.data = shared.get('data', [])
+            self.cands = shared.get('cands', None)
+            self.image_loader = shared.get('image_loader', None)
+        else:
+            self.image_loader = ImageLoader(opt)
+            self.data = []
+            self._load(data_loader)
+            self.cands = None if cands == None else set(sys.intern(c) for c in cands)
         self.addedCands = []
-        self.image_loader = ImageLoader(opt) 
+        self.copied_cands = False
+
+    def share(self):
+        shared = {'data': self.data, 'cands': self.cands,
+                'image_loader': self.image_loader}
+        return shared
 
     def __len__(self):
         """Returns total number of entries available. Each episode has at least
@@ -287,6 +299,9 @@ class DialogData(object):
             for label in table['labels']:
                 if label not in self.cands:
                     # add labels, queue them for removal next time
+                    if not self.copied_cands:
+                        self.cands = self.cands.copy()
+                        self.copied_cands = True
                     self.cands.add(label)
                     self.addedCands.append(label)
             table['label_candidates'] = self.cands
@@ -298,4 +313,3 @@ class DialogData(object):
         # last entry in this episode
         table['episode_done'] = episode_done
         return table, end_of_data
-

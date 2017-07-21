@@ -54,12 +54,6 @@ from parlai.tasks.tasks import ids_to_tasks
 def validate(observation):
     """Make sure the observation table is valid, or raise an error."""
     if observation is not None and type(observation) == dict:
-        if ('text_candidates' in observation and
-            'text' in observation and
-            observation['text'] != observation['text_candidates'][0]):
-            raise RuntimeError('If text and text_candidates fields are both ' +
-                               'filled, top text candidate should be the same' +
-                               ' as text.')
         return observation
     else:
         raise RuntimeError('Must return dictionary from act().')
@@ -575,9 +569,9 @@ class BatchWorld(World):
                 hasattr(a, 'batch_act')):
             batch_actions = a.batch_act(batch_observation)
             # Store the actions locally in each world.
-            for w in self.worlds:
+            for i, w in enumerate(self.worlds):
                 acts = w.get_acts()
-                acts[index] = batch_actions[index]
+                acts[index] = batch_actions[i]
         else:
             # Reverts to running on each individually.
             batch_actions = []

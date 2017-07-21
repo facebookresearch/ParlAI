@@ -7,10 +7,11 @@
 
 Using Mechanical Turk
 =====================
+**Author**: Will Feng
 
-In ParlAI, you can use Amazon Mechanical Turk for **data collection**, **training** and **evaluation** of your dialog model. 
+In ParlAI, you can use Amazon Mechanical Turk for **data collection**, **training** and **evaluation** of your dialog model.
 
-Human Turkers are viewed as just another type of agent in ParlAI, and hence person-to-person, person-to-bot, or multiple people and bots in group chat can all talk to each other within the same framework. 
+Human Turkers are viewed as just another type of agent in ParlAI, and hence person-to-person, person-to-bot, or multiple people and bots in group chat can all talk to each other within the same framework.
 
 The human Turkers communicate in observation/action dict format, the same as all other agents in ParlAI. During the conversation, the message that human Turkers receive is rendered on the live chat webpage in a pretty printed format, similar to the following:
 
@@ -35,7 +36,7 @@ We provide a few examples of using Mechanical Turk with ParlAI:
 Task 1: Collecting Data
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-One of the biggest use cases of Mechanical Turk is to collect natural language data from human Turkers. 
+One of the biggest use cases of Mechanical Turk is to collect natural language data from human Turkers.
 
 As an example, the `QA Data Collection task <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/qa_data_collection/>`__ does the following:
 
@@ -61,7 +62,7 @@ You can easily evaluate your dialog model's performance with human Turkers using
 
 In ``ModelEvaluatorWorld``, there are two main components: one is the ``task_world`` that contains the task and the dialog model we are evaluating, the other is the ``MTurkAgent`` which is an interface to the human Turker.
 
-Note that since the human Turker speaks only once to provide the rating, the ``ModelEvaluatorWorld`` doesn't need to use ``turn_index`` to keep track of the turns. 
+Note that since the human Turker speaks only once to provide the rating, the ``ModelEvaluatorWorld`` doesn't need to use ``turn_index`` to keep track of the turns.
 
 After one turn, the task is finished, and the Turker's work is submitted for your review.
 
@@ -77,7 +78,7 @@ This task uses the ``MultiAgentDialogWorld`` which is already implemented in ``p
 Creating Your Own Task
 ----------------------
 
-ParlAI provides a generic MTurk dialog interface that one can use to implement any kind of dialog tasks. To create your own task, start with reading the tutorials on the provided examples, and then copy and modify the example ``worlds.py``, ``run.py`` and ``task_config.py`` files to create your task. 
+ParlAI provides a generic MTurk dialog interface that one can use to implement any kind of dialog tasks. To create your own task, start with reading the tutorials on the provided examples, and then copy and modify the example ``worlds.py``, ``run.py`` and ``task_config.py`` files to create your task.
 
 A few things to keep in mind:
 
@@ -120,7 +121,7 @@ Please make sure to test your task in MTurk sandbox mode first (``--sandbox``) b
 Reviewing Turker's Work
 -----------------------
 
-After all HITs are completed, you will be provided a webpage link to review them. 
+After all HITs are completed, you will be provided a webpage link to review them.
 
 If you don't take any action in 4 weeks, all HITs will be auto-approved and Turkers will be paid.
 
