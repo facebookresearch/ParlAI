@@ -158,15 +158,20 @@ of patent rights can be found in the PATENTS file in the same directory.
         }
     };
 
-    function get_hit_index_and_assignment_index(callback_function) {
+    function sync_hit_assignment_info(callback_function) {
         $.ajax({
             url: '/prod/json',
-            data: {
-                method_name: 'get_hit_index_and_assignment_index',
+            type: "POST",
+            data: JSON.stringify({
+                method_name: 'sync_hit_assignment_info',
                 task_group_id: task_group_id,
                 agent_id: cur_agent_id,
-                num_assignments: num_assignments
-            },
+                num_assignments: num_assignments,
+                assignment_id: assignmentId,
+                hit_id: hitId,
+                worker_id: workerId
+            }),
+            contentType: "application/json",
             timeout: 3000 // in milliseconds
         }).retry({times: 1000, timeout: 3000}).then(
             function(data) {
@@ -212,6 +217,7 @@ of patent rights can be found in the PATENTS file in the same directory.
     
     /* ================= State variables ================= */
     var verbose_log = false;
+    var is_cover_page = (`{{is_cover_page}}` === 'True') ? true : false;
     var task_group_id = `{{task_group_id}}`;
     var hit_index = `{{hit_index}}`;
     var assignment_index = `{{assignment_index}}`;
@@ -262,9 +268,6 @@ of patent rights can be found in the PATENTS file in the same directory.
             task_group_id: task_group_id,
             conversation_id: conversation_id,
             cur_agent_id: cur_agent_id,
-            assignment_id: assignmentId,
-            hit_id: hitId,
-            worker_id: workerId
         };
         if (text) post_data_dict['text'] = text;
         post_data_dict['episode_done'] = episode_done;
@@ -377,7 +380,8 @@ of patent rights can be found in the PATENTS file in the same directory.
         }
     }
 
-    function init_additional() {}
+    function init_cover_page_additional() {}
+    function init_chat_page_additional() {}
 </script>
 
 {% block additional_scripts %}
@@ -387,12 +391,16 @@ of patent rights can be found in the PATENTS file in the same directory.
 {% endblock %}
 
 <script type="text/javascript">
-    function init() {
+    function init_cover_page() {
+        $("span#task-description").html(task_description);
+        if (init_cover_page_additional) {
+            init_cover_page_additional();
+        }
+    }
+
+    function init_chat_page() {
         // Data related
         conversation_id = hit_index + '_' + assignment_index;
-        assignmentId = get_url_parameter('assignmentId');
-        hitId = get_url_parameter('hitId');
-        workerId = get_url_parameter('workerId');
         $("form#mturk_submit_form input#assignmentId").val(assignmentId);
         $("form#mturk_submit_form input#hitId").val(hitId);
         $("form#mturk_submit_form input#workerId").val(workerId);
@@ -411,8 +419,8 @@ of patent rights can be found in the PATENTS file in the same directory.
         $("div#left-pane").removeClass('col-xs-12');
         $("div#left-pane").addClass('col-xs-4');
 
-        if (init_additional) {
-            init_additional();
+        if (init_chat_page_additional) {
+            init_chat_page_additional();
         }
 
         $(window).resize();
@@ -427,12 +435,14 @@ of patent rights can be found in the PATENTS file in the same directory.
             num_hits = data['num_hits'];
             num_assignments = data['num_assignments'];
 
-            if (hit_index === "Pending" && assignment_index === "Pending") {
-                get_hit_index_and_assignment_index(init);
+            assignmentId = get_url_parameter('assignmentId');
+            hitId = get_url_parameter('hitId');
+            workerId = get_url_parameter('workerId');
+
+            if (is_cover_page) {
+                init_cover_page();
             } else {
-                hit_index = parseInt(hit_index);
-                assignment_index = parseInt(assignment_index);
-                init();
+                sync_hit_assignment_info(init_chat_page);
             }
         });
     });

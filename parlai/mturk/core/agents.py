@@ -140,15 +140,12 @@ class MTurkManager():
             for new_message in new_messages:
                 with local_db_lock:
                     if self.db_session.query(Message).filter(Message.id==new_message['message_id']).count() == 0:
-                        obs_act_dict = {k:new_message[k] for k in new_message if k not in ['message_id', 'assignment_id', 'hit_id', 'worker_id']}
+                        obs_act_dict = {k:new_message[k] for k in new_message if k not in ['message_id']}
                         new_message_in_local_db = Message(
                                                     id = new_message['message_id'],
                                                     task_group_id = self.task_group_id,
                                                     conversation_id = conversation_id,
                                                     agent_id = new_message['id'],
-                                                    assignment_id = new_message['assignment_id'],
-                                                    hit_id = new_message['hit_id'],
-                                                    worker_id = new_message['worker_id'],
                                                     message_content = json.dumps(obs_act_dict)
                                                 )
                         self.db_session.add(new_message_in_local_db)
@@ -164,8 +161,7 @@ class MTurkManager():
                 after_message_id=after_message_id,
                 excluded_agent_id=excluded_agent_id,
                 included_agent_id=included_agent_id,
-                populate_meta_info=True,
-                populate_hit_info=True
+                populate_meta_info=True
             )
 
     def send_new_message(self, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False):
@@ -191,6 +187,21 @@ class MTurkManager():
                     print(response.content)
                     raise Exception
                 self.unsent_messages = []
+
+    def get_hit_assignment_info(self, task_group_id, conversation_id, agent_id):
+        params = {
+            'method_name': 'get_hit_assignment_info',
+            'task_group_id': task_group_id,
+            'agent_id': agent_id,
+            'conversation_id': conversation_id
+        }
+        response = requests.get(self.json_api_endpoint_url, params=params)
+        try:
+            ret = json.loads(response.json())
+            return ret['assignment_id'], ret['hit_id'], ret['worker_id']
+        except Exception as e:
+            print(response.content)
+            raise e
 
     def get_agent_work_status(self, assignment_id):
         client = get_mturk_client(self.is_sandbox)
@@ -286,6 +297,10 @@ class MTurkAgent(Agent):
                 )
 
     def act(self):
+        while not (self.assignment_id and self.hit_id and self.worker_id):
+            self.assignment_id, self.hit_id, self.worker_id = self.manager.get_hit_assignment_info(self.manager.task_group_id, self.conversation_id, self.id)
+            time.sleep(polling_interval)
+
         while True:
             conversation_dict, new_last_message_id = self.manager.get_new_messages(
                 task_group_id=self.manager.task_group_id,
@@ -299,10 +314,6 @@ class MTurkAgent(Agent):
                     self.last_message_id = new_last_message_id
 
                 new_messages = conversation_dict[self.conversation_id]
-
-                self.assignment_id = new_messages[0]['assignment_id']
-                self.hit_id = new_messages[0]['hit_id']
-                self.worker_id = new_messages[0]['worker_id']
 
                 return new_messages[0]
 

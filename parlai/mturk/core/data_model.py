@@ -28,9 +28,6 @@ class Message(Base):
     task_group_id = Column(String(255), index=True)  # We assign a new task_group_id for each HIT group
     conversation_id = Column(String(255), index=True)
     agent_id = Column(String(255), index=True)
-    assignment_id = Column(String(255), default=None)
-    hit_id = Column(String(255), default=None)
-    worker_id = Column(String(255), default=None)
     message_content = Column(UnicodeText)
 
 class MTurkHITAgentAllocation(Base):
@@ -38,6 +35,10 @@ class MTurkHITAgentAllocation(Base):
     id = Column(Integer, primary_key=True)
     task_group_id = Column(String(255), index=True)
     agent_id = Column(String(255), index=True)
+    conversation_id = Column(String(255), index=True, default=None)
+    assignment_id = Column(String(255), default=None)
+    hit_id = Column(String(255), default=None)
+    worker_id = Column(String(255), default=None)
 
 
 def check_database_health():
@@ -52,13 +53,13 @@ def check_database_health():
 
         # Try insert new objects with current schema
         try:
-            test_message = Message(id=0, task_group_id='Test', conversation_id='Test', agent_id='Test', assignment_id='Test', hit_id='Test', worker_id='Test', message_content='Test')
+            test_message = Message(id=0, task_group_id='Test', conversation_id='Test', agent_id='Test', message_content='Test')
             session.add(test_message)
             session.commit()
             session.delete(test_message)
             session.commit()
 
-            test_agent_allocation = MTurkHITAgentAllocation(id=0, task_group_id='Test', agent_id='Test')
+            test_agent_allocation = MTurkHITAgentAllocation(id=0, task_group_id='Test', agent_id='Test', conversation_id='Test', assignment_id='Test', hit_id='Test', worker_id='Test')
             session.add(test_agent_allocation)
             session.commit()
             session.delete(test_agent_allocation)
@@ -98,7 +99,7 @@ def init_database():
     return engine, session_maker
 
 
-def send_new_message(db_session, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False, assignment_id=None, hit_id=None, worker_id=None):
+def send_new_message(db_session, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False):
     """
     Message format:
     {
@@ -107,11 +108,6 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
         "id": xxx, # id of speaker(s)
         "reward": xxx,
         "episode_done": xxx, # signals end of episode
-
-        # Only from MTurk worker
-        "assignment_id": xxx,
-        "hit_id": xxx,
-        "worker_id": xxx,
     }
     """
 
@@ -132,9 +128,6 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
         task_group_id = task_group_id,
         conversation_id = conversation_id,
         agent_id = agent_id,
-        assignment_id = assignment_id,
-        hit_id = hit_id,
-        worker_id = worker_id,
         message_content = message_content
     )
     db_session.add(new_message_object)
@@ -175,7 +168,7 @@ def send_new_messages_in_bulk(db_session, new_messages):
     db_session.commit()
 
 
-def get_new_messages(db_session, task_group_id, conversation_id=None, after_message_id=None, excluded_agent_id=None, included_agent_id=None, populate_meta_info=False, populate_hit_info=False):
+def get_new_messages(db_session, task_group_id, conversation_id=None, after_message_id=None, excluded_agent_id=None, included_agent_id=None, populate_meta_info=False):
     """
     Return:
     conversation_dict = {
@@ -236,11 +229,6 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
 
         if populate_meta_info:
             new_message_dict['message_id'] = new_message_object.id
-
-        if populate_hit_info:
-            new_message_dict['assignment_id'] = new_message_object.assignment_id
-            new_message_dict['hit_id'] = new_message_object.hit_id
-            new_message_dict['worker_id'] = new_message_object.worker_id
             
         if conversation_id not in conversation_dict:
             conversation_dict[conversation_id] = []
@@ -249,10 +237,18 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
     return conversation_dict, last_message_id
 
 
-def get_hit_index_and_assignment_index(db_session, task_group_id, agent_id, num_assignments):
-    new_allocation_object = MTurkHITAgentAllocation(task_group_id=task_group_id, agent_id=agent_id)
+def sync_hit_assignment_info(db_session, task_group_id, agent_id, num_assignments, assignment_id, hit_id, worker_id):
+    new_allocation_object = MTurkHITAgentAllocation(
+                                task_group_id=task_group_id,
+                                agent_id=agent_id,
+                                conversation_id=None,
+                                assignment_id=assignment_id,
+                                hit_id=hit_id,
+                                worker_id=worker_id
+                            )
     db_session.add(new_allocation_object)
     db_session.commit()
+
     object_id = new_allocation_object.id
     existing_allocation_id_list = db_session.query(MTurkHITAgentAllocation.id) \
                                     .filter(MTurkHITAgentAllocation.task_group_id==task_group_id) \
@@ -260,4 +256,31 @@ def get_hit_index_and_assignment_index(db_session, task_group_id, agent_id, num_
                                     .order_by(MTurkHITAgentAllocation.id).all()
     existing_allocation_id_list = [id for (id, ) in existing_allocation_id_list]
     index_in_list = existing_allocation_id_list.index(object_id)
-    return {'hit_index': math.floor(index_in_list / num_assignments) + 1, 'assignment_index': index_in_list % num_assignments + 1}
+
+    hit_index = int(math.floor(index_in_list / num_assignments) + 1)
+    assignment_index = index_in_list % num_assignments + 1
+    conversation_id = str(hit_index) + '_' + str(assignment_index)
+    new_allocation_object.conversation_id = conversation_id
+    db_session.add(new_allocation_object)
+    db_session.commit()
+
+    return {'hit_index': hit_index, 'assignment_index': assignment_index}
+
+def get_hit_assignment_info(db_session, task_group_id, agent_id, conversation_id):
+    existing_allocation_object = db_session.query(MTurkHITAgentAllocation) \
+                                .filter(MTurkHITAgentAllocation.task_group_id==task_group_id) \
+                                .filter(MTurkHITAgentAllocation.agent_id==agent_id) \
+                                .filter(MTurkHITAgentAllocation.conversation_id==conversation_id) \
+                                .first()
+    assignment_id = None
+    hit_id = None
+    worker_id = None
+    if existing_allocation_object:
+        assignment_id = existing_allocation_object.assignment_id
+        hit_id = existing_allocation_object.hit_id
+        worker_id = existing_allocation_object.worker_id
+    return {
+        'assignment_id': assignment_id,
+        'hit_id': hit_id,
+        'worker_id': worker_id
+    }
