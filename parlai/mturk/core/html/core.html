@@ -196,17 +196,8 @@ of patent rights can be found in the PATENTS file in the same directory.
     var polling_timer = null;
     var messages_processed = {};
     var messages_shown = {};
-    var done_after_responding = false;
-    var task_done = false;
 
     /* ================= Message handling ================= */
-    function check_done(new_messages) {
-        for (var i = 0; i < new_messages.length; i++) {
-            if (new_messages[i]['episode_done']) {
-                done_after_responding = true;
-            }
-        }
-    }
 
     function handle_new_messages(new_messages) {
         for (var i = 0; i < new_messages.length; i++) {
@@ -243,7 +234,7 @@ of patent rights can be found in the PATENTS file in the same directory.
         }
     }
 
-    function send_message(text, receiver_agent_id, episode_done=false, callback_function=null) {
+    function send_message(text, receiver_agent_id, callback_function=null) {
         var post_data_dict = {
             task_group_id: task_group_id,
             conversation_id: conversation_id,
@@ -251,7 +242,7 @@ of patent rights can be found in the PATENTS file in the same directory.
             receiver_agent_id: receiver_agent_id
         };
         if (text) post_data_dict['text'] = text;
-        post_data_dict['episode_done'] = episode_done;
+        post_data_dict['episode_done'] = false;
         post_data_dict['method_name'] = 'send_new_message';
         $.ajax({
             url: '/prod/json',
@@ -272,7 +263,7 @@ of patent rights can be found in the PATENTS file in the same directory.
     $("button#id_send_msg_button").on('click', function () {
         var text = $("input#id_text_input").val();
         if (!(text == '')) {
-            send_message(text, '[World]', done_after_responding, function(data){
+            send_message(text, '[World]', function(data){
                 $("input#id_text_input").val("");
                 $("div#response-type-text-input").css("display", "none");
                 data = JSON.parse(data);
@@ -284,14 +275,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                 var new_messages = [];
                 new_messages.push(data);
                 handle_new_messages(new_messages);
-                if (done_after_responding) {
-                    update_UI_for_response_type('done');
-                    task_done = true;
-                    $("div#waiting-for-message").css("display", "none");
-                } else {
-                    check_done(new_messages);
-                    $("div#waiting-for-message").css("display", "");
-                }
+                $("div#waiting-for-message").css("display", "");
                 if (!polling_timer) {
                     polling_for_command();
                 }
@@ -327,7 +311,6 @@ of patent rights can be found in the PATENTS file in the same directory.
                         }
                     }
                     handle_new_messages(message_list);
-                    check_done(message_list);
                 }
             }
         );
@@ -362,6 +345,9 @@ of patent rights can be found in the PATENTS file in the same directory.
                         polling_timer = setTimeout(polling_for_command, 1000);
                     } else if (command === 'COMMAND_SEND_MESSAGE') {
                         wait_for_worker_input();
+                    } else if (command === 'COMMAND_SUBMIT_HIT') {
+                        update_UI_for_response_type('done');
+                        $("div#waiting-for-message").css("display", "none");
                     }
                 } else {
                     polling_timer = setTimeout(polling_for_command, 1000);
