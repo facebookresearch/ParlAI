@@ -30,7 +30,6 @@ def _path(opt):
 
 class DefaultTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
-
         self.datatype = opt['datatype']
         data_path, self.images_path = _path(opt)
         opt['datafile'] = data_path
