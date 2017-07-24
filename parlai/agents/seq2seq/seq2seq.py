@@ -43,7 +43,9 @@ class Seq2seqAgent(Agent):
         agent.add_argument('--gpu', type=int, default=-1,
             help='which GPU device to use')
         agent.add_argument('-r', '--rank-candidates', type='bool', default=False,
-            help='rank candidates if available (disable for faster generation)')
+            help='rank candidates if available. note that this is very weak ' +
+                 'ranking: it is trying to pick the candidate most like the ' +
+                 'generated output. CPU overhead is light, GPU is more heavy.')
 
     def __init__(self, opt, shared=None):
         # initialize defaults first
