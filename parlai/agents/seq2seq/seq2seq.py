@@ -30,7 +30,7 @@ class Seq2seqAgent(Agent):
         """Add command-line arguments specifically for this agent."""
         DictionaryAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Seq2Seq Arguments')
-        agent.add_argument('-hs', '--hiddensize', type=int, default=64,
+        agent.add_argument('-hs', '--hiddensize', type=int, default=128,
             help='size of the hidden layers and embeddings')
         agent.add_argument('-nl', '--numlayers', type=int, default=2,
             help='number of hidden layers')
@@ -42,6 +42,8 @@ class Seq2seqAgent(Agent):
             help='disable GPUs even if available')
         agent.add_argument('--gpu', type=int, default=-1,
             help='which GPU device to use')
+        agent.add_argument('-r', '--rank-candidates', type='bool', default=False,
+            help='rank candidates if available (disable for faster generation)')
 
     def __init__(self, opt, shared=None):
         # initialize defaults first
@@ -62,18 +64,21 @@ class Seq2seqAgent(Agent):
             self.END = self.dict.end_token
             self.observation = {'text': self.END, 'episode_done': True}
             self.END_TENSOR = torch.LongTensor(self.dict.parse(self.END))
+            # get index of null token from dictionary (probably 0)
+            self.NULL_IDX = self.dict.txt2vec(self.dict.null_token)[0]
 
             # store important params directly
             hsz = opt['hiddensize']
             self.hidden_size = hsz
             self.num_layers = opt['numlayers']
             self.learning_rate = opt['learningrate']
+            self.rank = opt['rank_candidates']
             self.longest_label = 1
 
             # set up modules
             self.criterion = nn.NLLLoss()
             # lookup table stores word embeddings
-            self.lt = nn.Embedding(len(self.dict), hsz, padding_idx=0,
+            self.lt = nn.Embedding(len(self.dict), hsz, padding_idx=self.NULL_IDX,
                                    scale_grad_by_freq=True)
             # encoder captures the input text
             self.encoder = nn.GRU(hsz, hsz, opt['numlayers'])
@@ -180,7 +185,7 @@ class Seq2seqAgent(Agent):
         self.episode_done = observation['episode_done']
         return observation
 
-    def predict(self, xs, ys=None):
+    def predict(self, xs, ys=None, cands=None):
         """Produce a prediction from our model. Update the model using the
         targets if available.
         """
@@ -198,6 +203,24 @@ class Seq2seqAgent(Agent):
 
         # list of output tokens for each example in the batch
         output_lines = [[] for _ in range(batchsize)]
+
+        text_candidates = None
+        if cands:
+            text_candidates = []
+            candscores = []
+            for b in range(batchsize):
+                candscores.append([0] * len(cands[b]))
+
+            def update_candscores(batch_idx, word_idx, scores):
+                b = batch_idx
+                for i, c in enumerate(cands[b]):
+                    # c is (parsed_word_idxs, original_text) pair
+                    if word_idx < len(c[0]):
+                        # use the candidate token at this position
+                        candscores[b][i] += scores.data[b][c[0][word_idx]]
+                    else:
+                        # no more tokens, use the score for null
+                        candscores[b][i] += scores.data[b][self.NULL_IDX]
 
         if ys is not None:
             # update the model based on the labels
@@ -217,6 +240,8 @@ class Seq2seqAgent(Agent):
                     # convert the output scores to tokens
                     token = self.v2t([preds.data[b][0]])
                     output_lines[b].append(token)
+                    if cands:
+                        update_candscores(b, i, scores)
 
             loss.backward()
             self.update_params()
@@ -231,6 +256,7 @@ class Seq2seqAgent(Agent):
                 # example in the batch
                 output, hn = self.decoder(xes, hn)
                 preds, scores = self.hidden_to_idx(output, dropout=False)
+
                 xes = self.lt(preds.t())
                 max_len += 1
                 for b in range(batchsize):
@@ -243,10 +269,20 @@ class Seq2seqAgent(Agent):
                             total_done += 1
                         else:
                             output_lines[b].append(token)
+                            if cands:
+                                update_candscores(b, max_len - 1, scores)
+
             if random.random() < 0.1:
+                # sometimes output a prediction for debugging
                 print('prediction:', ' '.join(output_lines[0]))
 
-        return output_lines
+        if cands:
+            for b in range(batchsize):
+                srtd = sorted(
+                    [(-a[0], a[1]) for a in zip(candscores[b], cands[b])])
+                text_candidates.append([a[1][1] for a in srtd])
+
+        return output_lines, text_candidates
 
 
     def batchify(self, observations):
@@ -286,7 +322,25 @@ class Seq2seqAgent(Agent):
             if self.use_cuda:
                 ys = ys.cuda(async=True)
             ys = Variable(ys)
-        return xs, ys, valid_inds
+
+        # set up candidates
+        cands = None
+        if self.rank:
+            # set up candidates if we're going to do ranking
+            cands = []
+            for i in valid_inds:
+                if 'label_candidates' in observations[i]:
+                    # each candidate tuple is a pair of the parsed version and the
+                    # original full string
+                    cands.append([(self.dict.parse(c), c) for c in observations[i]['label_candidates']])
+                else:
+                    # not all valid examples will have label candidates
+                    cands.append(None)
+            if len(cands) == 0:
+                # we were ready to rank but didn't find any candidates
+                cands = None
+
+        return xs, ys, cands, valid_inds
 
     def batch_act(self, observations):
         batchsize = len(observations)
@@ -297,20 +351,22 @@ class Seq2seqAgent(Agent):
         # valid_inds tells us the indices of all valid examples
         # e.g. for input [{}, {'text': 'hello'}, {}, {}], valid_inds is [1]
         # since the other three elements had no 'text' field
-        xs, ys, valid_inds = self.batchify(observations)
+        xs, ys, cands, valid_inds = self.batchify(observations)
 
         if len(xs) == 0:
             # no valid examples, just return the empty responses we set up
             return batch_reply
 
         # produce predictions either way, but use the targets if available
-        predictions = self.predict(xs, ys)
+        predictions, text_candidates = self.predict(xs, ys, cands)
 
         for i in range(len(predictions)):
             # map the predictions back to non-empty examples in the batch
             # we join with spaces since we produce tokens one at a time
-            batch_reply[valid_inds[i]]['text'] = ' '.join(
-                c for c in predictions[i] if c != self.END)
+            curr = batch_reply[valid_inds[i]]
+            curr['text'] = ' '.join(c for c in predictions[i] if c != self.END)
+            if text_candidates:
+                curr['text_candidates'] = text_candidates[i]
 
         return batch_reply
 
