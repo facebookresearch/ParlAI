@@ -231,6 +231,7 @@ class DialogData(object):
                     if entry[1] is None:
                         new_entry.append(None)
                     elif hasattr(entry[1], '__iter__') and type(entry[1]) is not str:
+                        # make sure iterable over labels, not single string
                         new_entry.append(tuple(sys.intern(e) for e in entry[1]))
                     else:
                         raise TypeError('Must provide iterable over labels, not a single string.')
@@ -250,6 +251,7 @@ class DialogData(object):
                                 new_entry.append(
                                     sys.intern('same as last time'))
                             elif hasattr(entry[3], '__iter__') and type(entry[3]) is not str:
+                                # make sure iterable over candidates, not single string
                                 last_cands = entry[3]
                                 new_entry.append(tuple(
                                     sys.intern(e) for e in entry[3]))
