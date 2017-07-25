@@ -22,9 +22,10 @@ if sys.version_info[0] < 3:
 Base = declarative_base()
 engine = None
 
-COMMAND_GET_NEW_MESSAGES = 'COMMAND_GET_NEW_MESSAGES' # MTurk agent is expected to get new messages from server
-COMMAND_SEND_MESSAGE = 'COMMAND_SEND_MESSAGE' # MTurk agent is expected to send a new message to server
-COMMAND_SUBMIT_HIT = 'COMMAND_SUBMIT_HIT' # MTurk agent is expected to hit "DONE" button and submit the HIT
+COMMAND_GET_NEW_MESSAGES = 'COMMAND_GET_NEW_MESSAGES' # MTurk web client is expected to get new messages from server
+COMMAND_SEND_MESSAGE = 'COMMAND_SEND_MESSAGE' # MTurk web client is expected to send a new message to server
+COMMAND_SHOW_DONE_BUTTON = 'COMMAND_SHOW_DONE_BUTTON' # MTurk web client should show the "DONE" button
+COMMAND_SUBMIT_HIT = 'COMMAND_SUBMIT_HIT' # MTurk web client should submit the HIT automatically
 
 def object_as_dict(obj):
     return {c.key: getattr(obj, c.key)

@@ -94,10 +94,6 @@ of patent rights can be found in the PATENTS file in the same directory.
         update_UI_for_response_type('text_input');
         $("div#waiting-for-message").css("display", "none");
         $("input#id_text_input").focus();
-        if (polling_timer) {
-            clearTimeout(polling_timer);
-            polling_timer = null;
-        }
     }
 
     // Get URL parameter
@@ -249,9 +245,6 @@ of patent rights can be found in the PATENTS file in the same directory.
                 new_messages.push(data);
                 handle_new_messages(new_messages);
                 $("div#waiting-for-message").css("display", "");
-                if (!polling_timer) {
-                    polling_for_command();
-                }
             });
         }
     });
@@ -315,16 +308,16 @@ of patent rights can be found in the PATENTS file in the same directory.
                     command = data['command'];
                     if (command === 'COMMAND_GET_NEW_MESSAGES') {
                         get_new_messages();
-                        polling_timer = setTimeout(polling_for_command, 1000);
                     } else if (command === 'COMMAND_SEND_MESSAGE') {
                         wait_for_worker_input();
-                    } else if (command === 'COMMAND_SUBMIT_HIT') {
+                    } else if (command === 'COMMAND_SHOW_DONE_BUTTON') {
                         update_UI_for_response_type('done');
                         $("div#waiting-for-message").css("display", "none");
+                    } else if (command === 'COMMAND_SUBMIT_HIT') {
+                        all_done_callback();
                     }
-                } else {
-                    polling_timer = setTimeout(polling_for_command, 1000);
-                }   
+                }
+                polling_timer = setTimeout(polling_for_command, 1000);
             }
         );
     }

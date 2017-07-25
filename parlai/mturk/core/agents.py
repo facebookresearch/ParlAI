@@ -20,7 +20,7 @@ from parlai.mturk.core.setup_aws import setup_aws, calculate_mturk_cost, check_m
 import threading
 from parlai.mturk.core.data_model import Base, Message
 from parlai.mturk.core.data_model import get_new_messages as _get_new_messages
-from parlai.mturk.core.data_model import COMMAND_GET_NEW_MESSAGES, COMMAND_SEND_MESSAGE, COMMAND_SUBMIT_HIT
+from parlai.mturk.core.data_model import COMMAND_GET_NEW_MESSAGES, COMMAND_SEND_MESSAGE, COMMAND_SHOW_DONE_BUTTON, COMMAND_SUBMIT_HIT
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
@@ -359,7 +359,7 @@ class MTurkAgent(Agent):
             command=COMMAND_GET_NEW_MESSAGES
         )
 
-    def act(self, timeout=None): # timeout in seconds
+    def act(self, timeout): # Timeout in seconds, after which the HIT will be submitted automatically
         if timeout:
             start_time = time.time()
 
@@ -374,7 +374,7 @@ class MTurkAgent(Agent):
             if timeout:
                 current_time = time.time()
                 if (current_time - start_time) > timeout:
-                    self.hit_is_abandoned = True
+                    self.set_hit_is_abandoned()
                     msg = {
                         'id': self.id,
                         'text': TIMEOUT_MESSAGE,
@@ -445,7 +445,16 @@ class MTurkAgent(Agent):
         elif 'failure' in response:
             print("Unable to send email to worker ID: "+str(self.worker_id)+". Error: "+str(response['failure']))
 
-    def wait_for_hit_completion(self, timeout=None): # Timeout in seconds
+    def set_hit_is_abandoned():
+        self.hit_is_abandoned = True
+        self.manager.send_new_command(
+            task_group_id=self.manager.task_group_id,
+            conversation_id=self.conversation_id,
+            receiver_agent_id=self.id,
+            command=COMMAND_SUBMIT_HIT
+        )
+
+    def wait_for_hit_completion(self, timeout): # Timeout in seconds, after which the HIT will be submitted automatically
         if timeout:
             start_time = time.time()
         while self.manager.get_agent_work_status(assignment_id=self.assignment_id) != ASSIGNMENT_DONE:
@@ -453,19 +462,20 @@ class MTurkAgent(Agent):
                 current_time = time.time()
                 if (current_time - start_time) > timeout:
                     print("Timed out waiting for Turker to complete the HIT.")
-                    self.hit_is_abandoned = True
+                    self.set_hit_is_abandoned()
                     return False
             if debug:
                 print("Waiting for Turker to complete the HIT...")
             time.sleep(polling_interval)
         print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is done.')
+        return True
 
-    def shutdown(self, timeout=None): # Timeout in seconds
+    def shutdown(self, timeout): # Timeout in seconds, after which the HIT will be submitted automatically
         if not self.hit_is_abandoned:
             self.manager.send_new_command(
                 task_group_id=self.manager.task_group_id,
                 conversation_id=self.conversation_id,
                 receiver_agent_id=self.id,
-                command=COMMAND_SUBMIT_HIT
+                command=COMMAND_SHOW_DONE_BUTTON
             )
-            self.wait_for_hit_completion(timeout=timeout)
+            return self.wait_for_hit_completion(timeout=timeout)
