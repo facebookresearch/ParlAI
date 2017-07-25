@@ -35,6 +35,8 @@ ASSIGNMENT_DONE = 'Submitted'
 ASSIGNMENT_APPROVED = 'Approved'
 ASSIGNMENT_REJECTED = 'Rejected'
 
+TIMEOUT_MESSAGE = '[TIMEOUT]'
+
 polling_interval = 1 # in seconds
 local_db_lock = threading.Lock()
 debug = False
@@ -298,6 +300,7 @@ class MTurkAgent(Agent):
         self.assignment_id = None
         self.hit_id = None
         self.worker_id = None
+        self.hit_is_abandoned = False
 
         # Wait for MTurk-specific info
         while not (self.assignment_id and self.hit_id and self.worker_id):
@@ -318,15 +321,29 @@ class MTurkAgent(Agent):
                     episode_done=msg.get('episode_done', False),
                 )
 
-    def act(self):
+    def act(self, timeout=None): # timeout in seconds
+        if timeout:
+            start_time = time.time()
+
         while True:
+            if timeout:
+                current_time = time.time()
+                if (current_time - start_time) > timeout:
+                    self.hit_is_abandoned = True
+                    msg = {
+                        'id': self.id,
+                        'text': TIMEOUT_MESSAGE,
+                        'episode_done': True
+                    }
+                    return msg
+
             conversation_dict, new_last_message_id = self.manager.get_new_messages(
                 task_group_id=self.manager.task_group_id,
                 conversation_id=self.conversation_id,
                 after_message_id=self.last_message_id,
                 included_agent_id=self.id
             )
-            
+
             if self.conversation_id in conversation_dict:
                 if new_last_message_id:
                     self.last_message_id = new_last_message_id
@@ -341,27 +358,39 @@ class MTurkAgent(Agent):
         return False
 
     def approve_work(self):
-        if self.manager.get_agent_work_status(assignment_id=self.assignment_id) == ASSIGNMENT_DONE:
-            self.manager.approve_work(assignment_id=self.assignment_id)
-            print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is approved.')
+        if self.hit_is_abandoned:
+            print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is abandoned and thus not available for review.')
         else:
-            print("Cannot approve HIT. Reason: Turker hasn't completed the HIT yet.")
+            if self.manager.get_agent_work_status(assignment_id=self.assignment_id) == ASSIGNMENT_DONE:
+                self.manager.approve_work(assignment_id=self.assignment_id)
+                print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is approved.')
+            else:
+                print("Cannot approve HIT. Reason: Turker hasn't completed the HIT yet.")
 
     def reject_work(self, reason='unspecified'):
-        if self.manager.get_agent_work_status(assignment_id=self.assignment_id) == ASSIGNMENT_DONE:
-            self.manager.reject_work(assignment_id=self.assignment_id, reason=reason)
-            print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is rejected.')
+        if self.hit_is_abandoned:
+            print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is abandoned and thus not available for review.')
         else:
-            print("Cannot reject HIT. Reason: Turker hasn't completed the HIT yet.")
+            if self.manager.get_agent_work_status(assignment_id=self.assignment_id) == ASSIGNMENT_DONE:
+                self.manager.reject_work(assignment_id=self.assignment_id, reason=reason)
+                print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is rejected.')
+            else:
+                print("Cannot reject HIT. Reason: Turker hasn't completed the HIT yet.")
 
     def block_worker(self, reason='unspecified'):
         self.manager.block_worker(worker_id=self.worker_id, reason=reason)
         print("Blocked worker ID: " + str(self.worker_id) + ". Reason: " + reason)
 
     def pay_bonus(self, bonus_amount, reason='unspecified'):
-        unique_request_token = str(uuid.uuid4())
-        if self.manager.pay_bonus(worker_id=self.worker_id, bonus_amount=bonus_amount, assignment_id=self.assignment_id, reason=reason, unique_request_token=unique_request_token):
-            print("Paid $" + str(bonus_amount) + " bonus to WorkerId: " + self.worker_id)
+        if self.hit_is_abandoned:
+            print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is abandoned and thus not available for bonus.')
+        else:
+            if self.manager.get_agent_work_status(assignment_id=self.assignment_id) != ASSIGNMENT_NOT_DONE:
+                unique_request_token = str(uuid.uuid4())
+                if self.manager.pay_bonus(worker_id=self.worker_id, bonus_amount=bonus_amount, assignment_id=self.assignment_id, reason=reason, unique_request_token=unique_request_token):
+                    print("Paid $" + str(bonus_amount) + " bonus to WorkerId: " + self.worker_id)
+            else:
+                print("Cannot pay bonus for HIT. Reason: Turker hasn't completed the HIT yet.")
 
     def email_worker(self, subject, message_text):
         response = self.manager.email_worker(worker_id=self.worker_id, subject=subject, message_text=message_text)
@@ -380,4 +409,5 @@ class MTurkAgent(Agent):
         print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is done.')
 
     def shutdown(self):
-        self.wait_for_hit_completion()
+        if not self.hit_is_abandoned:
+            self.wait_for_hit_completion()
