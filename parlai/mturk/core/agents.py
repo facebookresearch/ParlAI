@@ -76,13 +76,13 @@ class MTurkManager():
             return
 
         print('Setting up MTurk backend...')
-        create_hit_config(task_description=opt['task_description'], num_hits=opt['num_hits'], num_assignments=opt['num_assignments'], is_sandbox=opt['is_sandbox'])
+        create_hit_config(task_description=opt['task_description'], num_hits=opt['num_hits'], num_assignments=opt['num_assignments'], mturk_agent_ids=self.mturk_agent_ids, is_sandbox=opt['is_sandbox'])
         if not self.task_files_to_copy:
             self.task_files_to_copy = []
         if not task_directory_path:
             task_directory_path = os.path.join(opt['parlai_home'], 'parlai', 'mturk', 'tasks', opt['task'])
+        self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', 'cover_page.html'))
         for mturk_agent_id in self.mturk_agent_ids:
-            self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', mturk_agent_id+'_cover_page.html'))
             self.task_files_to_copy.append(os.path.join(task_directory_path, 'html', mturk_agent_id+'_index.html'))
         html_api_endpoint_url, json_api_endpoint_url = setup_aws(task_files_to_copy = self.task_files_to_copy)
         self.html_api_endpoint_url = html_api_endpoint_url
@@ -235,19 +235,18 @@ class MTurkManager():
 
     def create_hits(self, opt):
         print('Creating HITs...')
-        mturk_agent_HIT_url_dict = {}
-        self.mturk_agent_hit_id_dict = {}
+        self.hit_id_list = []
+        hit_type_id = create_hit_type(
+            hit_title=opt['hit_title'],
+            hit_description=opt['hit_description'] + ' (ID: ' + self.task_group_id + ')',
+            hit_keywords=opt['hit_keywords'],
+            hit_reward=opt['reward'],
+            assignment_duration_in_seconds=opt.get('assignment_duration_in_seconds', 30 * 60), # Set to 30 minutes by default
+            is_sandbox=opt['is_sandbox']
+        )
+        mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)
+        mturk_page_url = None
         for mturk_agent_id in self.mturk_agent_ids:
-            hit_type_id = create_hit_type(
-                hit_title=opt['hit_title'],
-                hit_description=opt['hit_description'] + ' (ID: ' + self.task_group_id + ', Role: ' + mturk_agent_id + ')',
-                hit_keywords=opt['hit_keywords'],
-                hit_reward=opt['reward'],
-                assignment_duration_in_seconds=opt.get('assignment_duration_in_seconds', 30 * 60), # Set to 30 minutes by default
-                is_sandbox=opt['is_sandbox']
-            )
-            mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)+"&cur_agent_id="+str(mturk_agent_id)
-            self.mturk_agent_hit_id_dict[mturk_agent_id] = {}
             for hit_index in range(1, opt['num_hits']+1):
                 mturk_page_url, hit_id = create_hit_with_hit_type(
                     page_url=mturk_chat_url,
@@ -255,11 +254,10 @@ class MTurkManager():
                     num_assignments=opt['num_assignments'],
                     is_sandbox=opt['is_sandbox']
                 )
-                self.mturk_agent_hit_id_dict[mturk_agent_id][hit_index] = hit_id
-            print("Link to HIT for " + str(mturk_agent_id) + ": " + mturk_page_url + "\n")
-            print("Waiting for Turkers to respond... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
-            mturk_agent_HIT_url_dict[mturk_agent_id] = mturk_page_url
-        return mturk_agent_HIT_url_dict
+                self.hit_id_list.append(hit_id)
+        print("Link to HIT: " + mturk_page_url + "\n")
+        print("Waiting for Turkers to respond... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
+        return mturk_page_url
 
     def expire_all_hits(self):
         client = get_mturk_client(self.is_sandbox)

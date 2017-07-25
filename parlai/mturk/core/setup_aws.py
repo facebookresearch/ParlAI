@@ -300,7 +300,7 @@ def remove_rds_database():
         print("RDS: Database doesn't exist.")
 
 
-def create_hit_config(task_description, num_hits, num_assignments, is_sandbox):
+def create_hit_config(task_description, num_hits, num_assignments, mturk_agent_ids, is_sandbox):
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
     if not is_sandbox:
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
@@ -308,6 +308,7 @@ def create_hit_config(task_description, num_hits, num_assignments, is_sandbox):
         'task_description': task_description, 
         'num_hits': num_hits, 
         'num_assignments': num_assignments, 
+        'mturk_agent_ids': mturk_agent_ids,
         'is_sandbox': is_sandbox,
         'mturk_submit_url': mturk_submit_url,
     }

@@ -116,33 +116,6 @@ of patent rights can be found in the PATENTS file in the same directory.
         }
     };
 
-    function sync_hit_assignment_info(callback_function) {
-        $.ajax({
-            url: '/prod/json',
-            type: "POST",
-            data: JSON.stringify({
-                method_name: 'sync_hit_assignment_info',
-                task_group_id: task_group_id,
-                agent_id: cur_agent_id,
-                num_assignments: num_assignments,
-                assignment_id: assignmentId,
-                hit_id: hitId,
-                worker_id: workerId
-            }),
-            contentType: "application/json",
-            timeout: 3000 // in milliseconds
-        }).retry({times: 1000, timeout: 3000}).then(
-            function(data) {
-                if (verbose_log) console.log(data);
-                hit_index = parseInt(data['hit_index']);
-                assignment_index = parseInt(data['assignment_index']);
-                if (callback_function) {
-                    callback_function();
-                }
-            }
-        );
-    }
-
     function get_hit_config(callback_function) {
         $.ajax({
             url: '/prod/json',
@@ -422,7 +395,7 @@ of patent rights can be found in the PATENTS file in the same directory.
             if (is_cover_page) {
                 init_cover_page();
             } else {
-                sync_hit_assignment_info(init_chat_page);
+                init_chat_page();
             }
         });
     });

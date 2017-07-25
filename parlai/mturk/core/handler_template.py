@@ -56,26 +56,44 @@ def chat_index(event, context):
 
         try:
             task_group_id = event['query']['task_group_id']
-            cur_agent_id = event['query']['cur_agent_id']
             assignment_id = event['query']['assignmentId'] # from mturk
 
             if assignment_id == 'ASSIGNMENT_ID_NOT_AVAILABLE':
                 template_context['is_cover_page'] = True
-
-                custom_cover_page = cur_agent_id + '_cover_page.html'
-                if os.path.exists(custom_cover_page):
-                    return _render_template(template_context, custom_cover_page)
-                else:
-                    return _render_template(template_context, 'cover_page.html')
+                return _render_template(template_context, 'cover_page.html')
             else:
+                hit_id = event['query']['hitId']
+                worker_id = event['query']['workerId']
+
+                hit_config = None
+                with open('hit_config.json', 'r') as hit_config_file:
+                    hit_config = json.loads(hit_config_file.read().replace('\n', ''))
+
+                num_assignments = int(hit_config['num_assignments'])
+                mturk_agent_ids = hit_config['mturk_agent_ids']
+
+                hit_assignment_info = data_model.sync_hit_assignment_info(
+                    db_session=db_session,
+                    task_group_id=task_group_id,
+                    num_assignments=num_assignments,
+                    mturk_agent_ids=mturk_agent_ids,
+                    assignment_id=assignment_id,
+                    hit_id=hit_id,
+                    worker_id=worker_id
+                )
+
+                hit_index = hit_assignment_info['hit_index']
+                assignment_index = hit_assignment_info['assignment_index']
+                mturk_agent_id = hit_assignment_info['mturk_agent_id']
+
                 template_context['is_cover_page'] = False
                 template_context['task_group_id'] = task_group_id
-                template_context['hit_index'] = 'Pending'
-                template_context['assignment_index'] = 'Pending'
-                template_context['cur_agent_id'] = cur_agent_id
+                template_context['hit_index'] = hit_index
+                template_context['assignment_index'] = assignment_index
+                template_context['cur_agent_id'] = mturk_agent_id
                 template_context['frame_height'] = frame_height
 
-                custom_index_page = cur_agent_id + '_index.html'
+                custom_index_page = mturk_agent_id + '_index.html'
                 if os.path.exists(custom_index_page):
                     return _render_template(template_context, custom_index_page)
                 else:
@@ -199,33 +217,6 @@ def send_new_message(event, context):
         new_message['episode_done'] = episode_done
         
         return json.dumps(new_message)
-
-
-def sync_hit_assignment_info(event, context):
-    if event['method'] == 'POST':
-        """
-        Handler for syncing HIT assignment info between webpage client and remote database.
-        """
-        try:
-            params = event['body']
-            task_group_id = params['task_group_id']
-            agent_id = params['agent_id']
-            num_assignments = params['num_assignments']
-            assignment_id = params['assignment_id']
-            hit_id = params['hit_id']
-            worker_id = params['worker_id']
-
-            return data_model.sync_hit_assignment_info(
-                db_session=db_session,
-                task_group_id=task_group_id,
-                agent_id=agent_id,
-                num_assignments=int(num_assignments),
-                assignment_id=assignment_id,
-                hit_id=hit_id,
-                worker_id=worker_id
-            )
-        except KeyError:
-            raise
 
 def get_hit_assignment_info(event, context):
     if event['method'] == 'GET':
