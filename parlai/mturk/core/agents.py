@@ -117,11 +117,18 @@ class MTurkManager():
         self.db_thread.start()
 
     def _sync_with_remote_db(self):
-        while not self.db_thread_stop_event.is_set():
-            if debug:
-                print("Syncing with remote db...")
-            self.get_new_messages_and_save_to_db()
-            time.sleep(polling_interval)
+        try:
+            while not self.db_thread_stop_event.is_set():
+                if debug:
+                    print("Syncing with remote db...")
+                self.get_new_messages_and_save_to_db()
+                time.sleep(polling_interval)
+        except Exception as exception:
+            self._on_db_thread_exception(exception)
+
+    def _on_db_thread_exception(self, exception):
+        self.expire_all_hits()
+        raise exception
 
     def get_new_messages_and_save_to_db(self):
         params = {
@@ -235,7 +242,7 @@ class MTurkManager():
 
     def create_hits(self, opt):
         print('Creating HITs...')
-        self.hit_id_list = []
+        self.mturk_agent_hit_id_dict = {}
         hit_type_id = create_hit_type(
             hit_title=opt['hit_title'],
             hit_description=opt['hit_description'] + ' (ID: ' + self.task_group_id + ')',
@@ -247,6 +254,7 @@ class MTurkManager():
         mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)
         mturk_page_url = None
         for mturk_agent_id in self.mturk_agent_ids:
+            self.mturk_agent_hit_id_dict[mturk_agent_id] = {}
             for hit_index in range(1, opt['num_hits']+1):
                 mturk_page_url, hit_id = create_hit_with_hit_type(
                     page_url=mturk_chat_url,
@@ -254,12 +262,15 @@ class MTurkManager():
                     num_assignments=opt['num_assignments'],
                     is_sandbox=opt['is_sandbox']
                 )
-                self.hit_id_list.append(hit_id)
+                self.mturk_agent_hit_id_dict[mturk_agent_id][hit_index] = hit_id
         print("Link to HIT: " + mturk_page_url + "\n")
         print("Waiting for Turkers to respond... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
         return mturk_page_url
 
     def expire_all_hits(self):
+        print("Expiring all HITs...")
+        if debug:
+            print(self.mturk_agent_hit_id_dict)
         client = get_mturk_client(self.is_sandbox)
         for mturk_agent_id in self.mturk_agent_hit_id_dict:
             for hit_index in self.mturk_agent_hit_id_dict[mturk_agent_id]:

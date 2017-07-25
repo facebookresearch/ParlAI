@@ -38,7 +38,6 @@ def main():
         mturk_agent_ids = [mturk_agent_id]
     )
     mturk_manager.init_aws(opt=opt)
-    mturk_manager.start_new_run(opt=opt)
     
     global run_hit
     def run_hit(hit_index, assignment_index, opt, task_opt, mturk_manager):
@@ -52,16 +51,17 @@ def main():
         world.shutdown()
         world.review_work()
 
-    mturk_manager.create_hits(opt=opt)
     try:
+        mturk_manager.start_new_run(opt=opt)
+        mturk_manager.create_hits(opt=opt)
         results = Parallel(n_jobs=opt['num_hits'] * opt['num_assignments'], backend='threading') \
                     (delayed(run_hit)(hit_index, assignment_index, opt, task_opt, mturk_manager) \
                         for hit_index, assignment_index in product(range(1, opt['num_hits']+1), range(1, opt['num_assignments']+1)))
     except:
-        print("Expiring all HITs...")
         mturk_manager.expire_all_hits()
         raise
-    mturk_manager.shutdown()
+    finally:
+        mturk_manager.shutdown()
 
 if __name__ == '__main__':
     main()
