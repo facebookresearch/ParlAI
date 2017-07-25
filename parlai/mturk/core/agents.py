@@ -367,8 +367,10 @@ class MTurkAgent(Agent):
         response = self.manager.email_worker(worker_id=self.worker_id, subject=subject, message_text=message_text)
         if 'success' in response:
             print("Email sent to worker ID: "+str(self.worker_id)+": Subject: "+str(subject)+": Text: "+str(message_text))
+            return True
         elif 'failure' in response:
             print("Unable to send email to worker ID: "+str(self.worker_id)+". Error: "+str(response['failure']))
+            return False
 
     def wait_for_hit_completion(self):
         while self.manager.get_agent_work_status(assignment_id=self.assignment_id) != ASSIGNMENT_DONE:
