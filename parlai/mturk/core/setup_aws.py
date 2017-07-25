@@ -701,7 +701,7 @@ def create_hit_with_hit_type(page_url, hit_type_id, num_assignments, is_sandbox)
     hit_link = "https://workersandbox.mturk.com/mturk/preview?groupId=" + hit_type_id
     if not is_sandbox:
         hit_link = "https://www.mturk.com/mturk/preview?groupId=" + hit_type_id
-    return hit_link
+    return hit_link, hit_id
 
 def setup_all_dependencies(lambda_server_directory_name):
     devnull = open(os.devnull, 'w')

@@ -52,6 +52,7 @@ class MTurkManager():
         self.db_thread_stop_event = None
         self.run_id = None
         self.mturk_agent_ids = mturk_agent_ids
+        self.mturk_agent_hit_id_dict = {}
         self.task_files_to_copy = None
         self.unsent_messages_lock = threading.Lock()
         self.unsent_messages = []
@@ -235,27 +236,37 @@ class MTurkManager():
     def create_hits(self, opt):
         print('Creating HITs...')
         mturk_agent_HIT_url_dict = {}
+        self.mturk_agent_hit_id_dict = {}
         for mturk_agent_id in self.mturk_agent_ids:
+            hit_type_id = create_hit_type(
+                hit_title=opt['hit_title'],
+                hit_description=opt['hit_description'] + ' (ID: ' + self.task_group_id + ', Role: ' + mturk_agent_id + ')',
+                hit_keywords=opt['hit_keywords'],
+                hit_reward=opt['reward'],
+                assignment_duration_in_seconds=opt.get('assignment_duration_in_seconds', 30 * 60), # Set to 30 minutes by default
+                is_sandbox=opt['is_sandbox']
+            )
+            mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)+"&cur_agent_id="+str(mturk_agent_id)
+            self.mturk_agent_hit_id_dict[mturk_agent_id] = {}
             for hit_index in range(1, opt['num_hits']+1):
-                hit_type_id = create_hit_type(
-                    hit_title=opt['hit_title'],
-                    hit_description=opt['hit_description'] + ' (ID: ' + self.task_group_id + ', Role: ' + mturk_agent_id + ')',
-                    hit_keywords=opt['hit_keywords'],
-                    hit_reward=opt['reward'],
-                    assignment_duration_in_seconds=opt.get('assignment_duration_in_seconds', 30 * 60), # Set to 30 minutes by default
-                    is_sandbox=opt['is_sandbox']
-                )
-                mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)+"&cur_agent_id="+str(mturk_agent_id)
-                mturk_page_url = create_hit_with_hit_type(
+                mturk_page_url, hit_id = create_hit_with_hit_type(
                     page_url=mturk_chat_url,
                     hit_type_id=hit_type_id,
                     num_assignments=opt['num_assignments'],
                     is_sandbox=opt['is_sandbox']
                 )
+                self.mturk_agent_hit_id_dict[mturk_agent_id][hit_index] = hit_id
             print("Link to HIT for " + str(mturk_agent_id) + ": " + mturk_page_url + "\n")
             print("Waiting for Turkers to respond... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
             mturk_agent_HIT_url_dict[mturk_agent_id] = mturk_page_url
         return mturk_agent_HIT_url_dict
+
+    def expire_all_hits(self):
+        client = get_mturk_client(self.is_sandbox)
+        for mturk_agent_id in self.mturk_agent_hit_id_dict:
+            for hit_index in self.mturk_agent_hit_id_dict[mturk_agent_id]:
+                hit_id = self.mturk_agent_hit_id_dict[mturk_agent_id][hit_index]
+                client.update_expiration_for_hit(HITId=hit_id, ExpireAt=datetime(2015, 1, 1)) # Update it to a time in the past, and the HIT will be immediately expired
 
     def approve_work(self, assignment_id):
         client = get_mturk_client(self.is_sandbox)
