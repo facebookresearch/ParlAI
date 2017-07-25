@@ -592,7 +592,7 @@ def get_mturk_client(is_sandbox):
         client = boto3.client(service_name = 'mturk', region_name='us-east-1')
     return client
 
-def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_sandbox):
+def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, assignment_duration_in_seconds, is_sandbox):
     client = boto3.client(
         service_name = 'mturk',
         region_name = 'us-east-1',
@@ -620,7 +620,7 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward, is_san
     # Create the HIT type
     response = client.create_hit_type(
         AutoApprovalDelayInSeconds=4*7*24*3600, # auto-approve after 4 weeks
-        AssignmentDurationInSeconds=1800,
+        AssignmentDurationInSeconds=assignment_duration_in_seconds,
         Reward=str(hit_reward),
         Title=hit_title,
         Keywords=hit_keywords,

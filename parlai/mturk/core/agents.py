@@ -36,7 +36,6 @@ ASSIGNMENT_APPROVED = 'Approved'
 ASSIGNMENT_REJECTED = 'Rejected'
 
 polling_interval = 1 # in seconds
-create_hit_type_lock = threading.Lock()
 local_db_lock = threading.Lock()
 debug = False
 
@@ -57,8 +56,6 @@ class MTurkManager():
         self.is_sandbox = opt['is_sandbox']
 
     def init_aws(self, opt, task_directory_path=None):
-        self.run_id = str(int(time.time()))
-
         print("\nYou are going to allow workers from Amazon Mechanical Turk to be an agent in ParlAI.\nDuring this process, Internet connection is required, and you should turn off your computer's auto-sleep feature.\n")
         key_input = input("Please press Enter to continue... ")
         print("")
@@ -91,8 +88,6 @@ class MTurkManager():
             print(self.json_api_endpoint_url)
         print("MTurk setup done.\n")
 
-        self.task_group_id = str(opt['task']) + '_' + str(self.run_id)
-
         # Create an engine connected to the in-memory database
         engine = create_engine('sqlite://',
                                 connect_args={'check_same_thread':False},
@@ -105,6 +100,13 @@ class MTurkManager():
         session_maker = sessionmaker(bind=engine)
 
         self.db_session = scoped_session(session_maker)
+
+    def start_new_run(self, opt):
+        if self.db_thread_stop_event:
+            self.db_thread_stop_event.set()
+
+        self.run_id = str(int(time.time()))
+        self.task_group_id = str(opt['task']) + '_' + str(self.run_id)
 
         self.db_thread_stop_event = threading.Event()
         self.db_thread = threading.Thread(target=self._sync_with_remote_db, args=())
@@ -214,16 +216,17 @@ class MTurkManager():
 
     def create_hits(self, opt):
         print('Creating HITs...')
+        mturk_agent_HIT_url_dict = {}
         for mturk_agent_id in self.mturk_agent_ids:
             for hit_index in range(1, opt['num_hits']+1):
-                with create_hit_type_lock:
-                    hit_type_id = create_hit_type(
-                        hit_title=opt['hit_title'],
-                        hit_description=opt['hit_description'] + ' (ID: ' + self.task_group_id + ', Role: ' + mturk_agent_id + ')',
-                        hit_keywords=opt['hit_keywords'],
-                        hit_reward=opt['reward'],
-                        is_sandbox=opt['is_sandbox']
-                    )
+                hit_type_id = create_hit_type(
+                    hit_title=opt['hit_title'],
+                    hit_description=opt['hit_description'] + ' (ID: ' + self.task_group_id + ', Role: ' + mturk_agent_id + ')',
+                    hit_keywords=opt['hit_keywords'],
+                    hit_reward=opt['reward'],
+                    assignment_duration_in_seconds=opt.get('assignment_duration_in_seconds', 30 * 60), # Set to 30 minutes by default
+                    is_sandbox=opt['is_sandbox']
+                )
                 all_agent_ids_string = str(self.all_agent_ids).replace("'", '''"''')
                 mturk_chat_url = self.html_api_endpoint_url + "?method_name=chat_index&task_group_id="+str(self.task_group_id)+"&all_agent_ids="+all_agent_ids_string+"&cur_agent_id="+str(mturk_agent_id)
                 mturk_page_url = create_hit_with_hit_type(
@@ -234,6 +237,8 @@ class MTurkManager():
                 )
             print("Link to HIT for " + str(mturk_agent_id) + ": " + mturk_page_url + "\n")
             print("Waiting for Turkers to respond... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
+            mturk_agent_HIT_url_dict[mturk_agent_id] = mturk_page_url
+        return mturk_agent_HIT_url_dict
 
     def approve_work(self, assignment_id):
         client = get_mturk_client(self.is_sandbox)
@@ -264,6 +269,18 @@ class MTurkManager():
 
         return True
 
+    def email_worker(self, worker_id, subject, message_text):
+        client = get_mturk_client(self.is_sandbox)
+        response = client.notify_workers(
+            Subject=subject,
+            MessageText=message_text,
+            WorkerIds=[worker_id]
+        )
+        if len(response['NotifyWorkersFailureStatuses']) > 0:
+            return {'failure': response['NotifyWorkersFailureStatuses'][0]['NotifyWorkersFailureMessage']}
+        else:
+            return {'success': True}
+
     def shutdown(self):
         setup_aws_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'setup_aws.py')
         print("Remote database instance will accumulate cost over time (about $30/month for t2.medium instance). Please run `python "+setup_aws_file_path+" remove_rds` to remove RDS instance if you don't plan to use MTurk often.")
@@ -271,16 +288,21 @@ class MTurkManager():
 
 
 class MTurkAgent(Agent):
-    def __init__(self, id, manager, conversation_id, opt, shared=None):
+    def __init__(self, id, manager, hit_index, assignment_index, opt, shared=None):
         super().__init__(opt)
 
-        self.conversation_id = conversation_id
+        self.conversation_id = str(hit_index) + '_' + str(assignment_index)
         self.manager = manager
         self.id = id
         self.last_message_id = 0
         self.assignment_id = None
         self.hit_id = None
         self.worker_id = None
+
+        # Wait for MTurk-specific info
+        while not (self.assignment_id and self.hit_id and self.worker_id):
+            self.assignment_id, self.hit_id, self.worker_id = self.manager.get_hit_assignment_info(self.manager.task_group_id, self.conversation_id, self.id)
+            time.sleep(polling_interval)
 
     def observe(self, msg):
         if msg['id'] not in self.manager.mturk_agent_ids: # If the message sender is an mturk agent, then there is no need to upload this message to db since it's already been done on the message sender side.
@@ -297,10 +319,6 @@ class MTurkAgent(Agent):
                 )
 
     def act(self):
-        while not (self.assignment_id and self.hit_id and self.worker_id):
-            self.assignment_id, self.hit_id, self.worker_id = self.manager.get_hit_assignment_info(self.manager.task_group_id, self.conversation_id, self.id)
-            time.sleep(polling_interval)
-
         while True:
             conversation_dict, new_last_message_id = self.manager.get_new_messages(
                 task_group_id=self.manager.task_group_id,
@@ -344,6 +362,15 @@ class MTurkAgent(Agent):
         unique_request_token = str(uuid.uuid4())
         if self.manager.pay_bonus(worker_id=self.worker_id, bonus_amount=bonus_amount, assignment_id=self.assignment_id, reason=reason, unique_request_token=unique_request_token):
             print("Paid $" + str(bonus_amount) + " bonus to WorkerId: " + self.worker_id)
+
+    def email_worker(self, subject, message_text):
+        response = self.manager.email_worker(worker_id=self.worker_id, subject=subject, message_text=message_text)
+        if 'success' in response:
+            print("Email sent to worker ID: "+str(self.worker_id)+": Subject: "+str(subject)+": Text: "+str(message_text))
+            return True
+        elif 'failure' in response:
+            print("Unable to send email to worker ID: "+str(self.worker_id)+". Error: "+str(response['failure']))
+            return False
 
     def wait_for_hit_completion(self):
         while self.manager.get_agent_work_status(assignment_id=self.assignment_id) != ASSIGNMENT_DONE:
