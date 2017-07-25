@@ -13,6 +13,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine, func
 from sqlalchemy.pool import NullPool
+from sqlalchemy import inspect
 
 is_python_2 = False
 if sys.version_info[0] < 3:
@@ -21,14 +22,30 @@ if sys.version_info[0] < 3:
 Base = declarative_base()
 engine = None
 
+COMMAND_GET_NEW_MESSAGES = 'COMMAND_GET_NEW_MESSAGES' # MTurk agent is expected to get new messages from server
+COMMAND_SEND_MESSAGE = 'COMMAND_SEND_MESSAGE' # MTurk agent is expected to send a new message to server
+COMMAND_SUBMIT_HIT = 'COMMAND_SUBMIT_HIT' # MTurk agent is expected to hit "DONE" button and submit the HIT
+
+def object_as_dict(obj):
+    return {c.key: getattr(obj, c.key)
+            for c in inspect(obj).mapper.column_attrs}
 
 class Message(Base):
     __tablename__ = 'message'
     id = Column(Integer, primary_key=True)
     task_group_id = Column(String(255), index=True)  # We assign a new task_group_id for each HIT group
     conversation_id = Column(String(255), index=True)
-    agent_id = Column(String(255), index=True)
+    sender_agent_id = Column(String(255), index=True)
+    receiver_agent_id = Column(String(255), index=True, default=None)
     message_content = Column(UnicodeText)
+
+class Command(Base):
+    __tablename__ = 'command'
+    id = Column(Integer, primary_key=True)
+    task_group_id = Column(String(255), index=True)
+    conversation_id = Column(String(255), index=True)
+    receiver_agent_id = Column(String(255), index=True)
+    command = Column(String(255))
 
 class MTurkHITAgentAllocation(Base):
     __tablename__ = 'mturk_hit_agent_allocation'
@@ -53,10 +70,16 @@ def check_database_health():
 
         # Try insert new objects with current schema
         try:
-            test_message = Message(id=0, task_group_id='Test', conversation_id='Test', agent_id='Test', message_content='Test')
+            test_message = Message(id=0, task_group_id='Test', conversation_id='Test', sender_agent_id='Test', receiver_agent_id='Test', message_content='Test')
             session.add(test_message)
             session.commit()
             session.delete(test_message)
+            session.commit()
+
+            test_command = Command(id=0, task_group_id='Test', conversation_id='Test', receiver_agent_id='Test', command='Test')
+            session.add(test_command)
+            session.commit()
+            session.delete(test_command)
             session.commit()
 
             test_agent_allocation = MTurkHITAgentAllocation(id=0, task_group_id='Test', agent_id='Test', conversation_id='Test', assignment_id='Test', hit_id='Test', worker_id='Test')
@@ -99,7 +122,33 @@ def init_database():
     return engine, session_maker
 
 
-def send_new_message(db_session, task_group_id, conversation_id, agent_id, message_text=None, reward=None, episode_done=False):
+def send_new_command(db_session, task_group_id, conversation_id, receiver_agent_id, command):
+    new_command_object = Command(
+        task_group_id = task_group_id,
+        conversation_id = conversation_id,
+        receiver_agent_id = receiver_agent_id,
+        command = command
+    )
+    db_session.add(new_command_object)
+    db_session.commit()
+
+    return new_command_object
+
+
+def get_command(db_session, task_group_id, conversation_id, receiver_agent_id, after_command_id):
+    query = db_session.query(Command).filter(Command.task_group_id==task_group_id) \
+                                    .filter(Command.conversation_id==conversation_id) \
+                                    .filter(Command.receiver_agent_id==receiver_agent_id) \
+                                    .filter(Command.id > after_command_id) \
+                                    .order_by(Command.id)
+    command_object = query.first()
+    if command_object:
+        return command_object
+    else:
+        return None
+
+
+def send_new_message(db_session, task_group_id, conversation_id, sender_agent_id, receiver_agent_id, message_text=None, reward=None, episode_done=False):
     """
     Message format:
     {
@@ -114,7 +163,7 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
     # ParlAI observation/action dict fields:
     new_message = {
         "text": message_text,
-        "id": agent_id,
+        "id": sender_agent_id,
     }
     if reward:
         new_message['reward'] = reward
@@ -127,7 +176,8 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
     new_message_object = Message(
         task_group_id = task_group_id,
         conversation_id = conversation_id,
-        agent_id = agent_id,
+        sender_agent_id = sender_agent_id,
+        receiver_agent_id = receiver_agent_id,
         message_content = message_content
     )
     db_session.add(new_message_object)
@@ -136,39 +186,7 @@ def send_new_message(db_session, task_group_id, conversation_id, agent_id, messa
     return new_message_object
 
 
-def send_new_messages_in_bulk(db_session, new_messages):
-    """
-    Same message format as in send_new_message(), but also needs to include the following in each message:
-    task_group_id
-    conversation_id
-
-    NOTE: we don't need returned objects if we are sending new messages from the local ParlAI system, so no return for this method is fine
-    """
-
-    new_message_objects = []
-    for new_message in new_messages:
-        new_message_dict = {
-            "text": new_message['text'],
-            "id": new_message['id'],
-        }
-        if 'reward' in new_message:
-            new_message_dict['reward'] = new_message['reward']
-        new_message_dict['episode_done'] = new_message.get('episode_done', False)
-        message_content = json.dumps(new_message_dict)
-        if is_python_2:
-            message_content = unicode(message_content)
-        new_message_objects.append(Message(
-            task_group_id = new_message['task_group_id'],
-            conversation_id = new_message['conversation_id'],
-            agent_id = new_message['id'],
-            message_content = message_content
-        ))
-
-    db_session.bulk_save_objects(new_message_objects)
-    db_session.commit()
-
-
-def get_new_messages(db_session, task_group_id, conversation_id=None, after_message_id=None, excluded_agent_id=None, included_agent_id=None, populate_meta_info=False):
+def get_new_messages(db_session, task_group_id, receiver_agent_id, conversation_id=None, after_message_id=None, excluded_sender_agent_id=None, included_sender_agent_id=None, populate_meta_info=False):
     """
     Return:
     conversation_dict = {
@@ -191,23 +209,25 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
     if not after_message_id:
         after_message_id = -1
 
-    included_agent_ids = []
-    if included_agent_id:
-        included_agent_ids = [included_agent_id]
+    included_sender_agent_ids = []
+    if included_sender_agent_id:
+        included_sender_agent_ids = [included_sender_agent_id]
 
-    excluded_agent_ids = []
-    if excluded_agent_id:
-        excluded_agent_ids = [excluded_agent_id]
+    excluded_sender_agent_ids = []
+    if excluded_sender_agent_id:
+        excluded_sender_agent_ids = [excluded_sender_agent_id]
 
     last_message_id = None
 
     query = db_session.query(Message).filter(Message.task_group_id==task_group_id).filter(Message.id > after_message_id)
-    if len(included_agent_ids) > 0:
-        query = query.filter(Message.agent_id.in_(included_agent_ids))
-    if len(excluded_agent_ids) > 0:
-        query = query.filter(~Message.agent_id.in_(excluded_agent_ids))
+    if len(included_sender_agent_ids) > 0:
+        query = query.filter(Message.sender_agent_id.in_(included_sender_agent_ids))
+    if len(excluded_sender_agent_ids) > 0:
+        query = query.filter(~Message.sender_agent_id.in_(excluded_sender_agent_ids))
     if conversation_id:
         query = query.filter(Message.conversation_id==conversation_id)
+    if receiver_agent_id:
+        query = query.filter(Message.receiver_agent_id==receiver_agent_id)
     new_message_objects = query.order_by(Message.id)
     conversation_dict = {}
 
@@ -221,11 +241,12 @@ def get_new_messages(db_session, task_group_id, conversation_id=None, after_mess
 
         new_message_dict = {
             "text": text,
-            "id": new_message_object.agent_id,
+            "id": new_message_object.sender_agent_id,
         }
         if 'reward' in message_content:
             new_message_dict['reward'] = message_content['reward']
         new_message_dict['episode_done'] = message_content.get('episode_done', False)
+        new_message_dict['receiver_agent_id'] = new_message_object.receiver_agent_id
 
         if populate_meta_info:
             new_message_dict['message_id'] = new_message_object.id

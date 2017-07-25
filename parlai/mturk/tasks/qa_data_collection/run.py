@@ -35,8 +35,7 @@ def main():
     mturk_agent_id = 'Worker'
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_id],
-        all_agent_ids = [QADataCollectionWorld.collector_agent_id, mturk_agent_id] # In speaking order
+        mturk_agent_ids = [mturk_agent_id]
     )
     mturk_manager.init_aws(opt=opt)
     mturk_manager.start_new_run(opt=opt)

@@ -56,7 +56,6 @@ def chat_index(event, context):
 
         try:
             task_group_id = event['query']['task_group_id']
-            all_agent_ids = event['query']['all_agent_ids']
             cur_agent_id = event['query']['cur_agent_id']
             assignment_id = event['query']['assignmentId'] # from mturk
 
@@ -74,7 +73,6 @@ def chat_index(event, context):
                 template_context['hit_index'] = 'Pending'
                 template_context['assignment_index'] = 'Pending'
                 template_context['cur_agent_id'] = cur_agent_id
-                template_context['all_agent_ids'] = all_agent_ids
                 template_context['frame_height'] = frame_height
 
                 custom_index_page = cur_agent_id + '_index.html'
@@ -91,6 +89,44 @@ def get_hit_config(event, context):
         with open('hit_config.json', 'r') as hit_config_file:
             return json.loads(hit_config_file.read().replace('\n', ''))
 
+def send_new_command(event, context):
+    if event['method'] == 'POST':
+        params = event['body']
+        task_group_id = params['task_group_id']
+        conversation_id = params['conversation_id']
+        receiver_agent_id = params['receiver_agent_id']
+        command = params['command']
+
+        new_command_object = data_model.send_new_command(
+            db_session=db_session, 
+            task_group_id=task_group_id, 
+            conversation_id=conversation_id, 
+            receiver_agent_id=receiver_agent_id, 
+            command=command
+        )
+        
+        return json.dumps(data_model.object_as_dict(new_command_object))
+
+def get_command(event, context):
+    if event['method'] == 'GET':
+        task_group_id = event['query']['task_group_id']
+        conversation_id = event['query']['conversation_id']
+        receiver_agent_id = event['query']['receiver_agent_id']
+        last_command_id = int(event['query']['last_command_id'])
+
+        command_object = data_model.get_command(
+            db_session=db_session, 
+            task_group_id=task_group_id, 
+            conversation_id=conversation_id, 
+            receiver_agent_id=receiver_agent_id, 
+            after_command_id=last_command_id
+        )
+         
+        if command_object:   
+            return json.dumps(data_model.object_as_dict(command_object))
+        else:
+            return None
+
 def get_new_messages(event, context):
     if event['method'] == 'GET':
         """
@@ -98,24 +134,27 @@ def get_new_messages(event, context):
         Expects in GET query parameters:
         <task_group_id>
         <last_message_id>
+        <receiver_agent_id>
         <conversation_id> (optional)
-        <excluded_agent_id> (optional)
+        <excluded_sender_agent_id> (optional)
         """
         task_group_id = event['query']['task_group_id']
         last_message_id = int(event['query']['last_message_id'])
+        receiver_agent_id = event['query']['receiver_agent_id']
         conversation_id = None
         if 'conversation_id' in event['query']:
             conversation_id = event['query']['conversation_id']
-        excluded_agent_id = event['query'].get('excluded_agent_id', None)
-        included_agent_id = event['query'].get('included_agent_id', None)
+        excluded_sender_agent_id = event['query'].get('excluded_sender_agent_id', None)
+        included_sender_agent_id = event['query'].get('included_sender_agent_id', None)
 
         conversation_dict, new_last_message_id = data_model.get_new_messages(
             db_session=db_session, 
             task_group_id=task_group_id, 
+            receiver_agent_id=receiver_agent_id,
             conversation_id=conversation_id,
             after_message_id=last_message_id,
-            excluded_agent_id=excluded_agent_id,
-            included_agent_id=included_agent_id,
+            excluded_sender_agent_id=excluded_sender_agent_id,
+            included_sender_agent_id=included_sender_agent_id,
             populate_meta_info=True
         )
 
@@ -130,14 +169,11 @@ def get_new_messages(event, context):
 
 def send_new_message(event, context):
     if event['method'] == 'POST':
-        """
-        Send new message for this agent.
-        Expects <task_group_id>, <conversation_id>, <cur_agent_id> and <text> as POST body parameters
-        """
         params = event['body']
         task_group_id = params['task_group_id']
         conversation_id = params['conversation_id']
-        cur_agent_id = params['cur_agent_id']
+        sender_agent_id = params['sender_agent_id']
+        receiver_agent_id = params['receiver_agent_id'] if 'receiver_agent_id' in params else None
         message_text = params['text'] if 'text' in params else None
         reward = params['reward'] if 'reward' in params else None
         episode_done = params['episode_done']
@@ -146,7 +182,8 @@ def send_new_message(event, context):
             db_session=db_session, 
             task_group_id=task_group_id, 
             conversation_id=conversation_id, 
-            agent_id=cur_agent_id, 
+            sender_agent_id=sender_agent_id, 
+            receiver_agent_id=receiver_agent_id,
             message_text=message_text, 
             reward=reward,
             episode_done=episode_done
@@ -154,7 +191,7 @@ def send_new_message(event, context):
 
         new_message = { 
             "message_id": new_message_object.id,
-            "id": cur_agent_id,
+            "id": sender_agent_id,
             "text": message_text,
         }
         if reward:
@@ -163,19 +200,6 @@ def send_new_message(event, context):
         
         return json.dumps(new_message)
 
-def send_new_messages_in_bulk(event, context):
-    if event['method'] == 'POST':
-        """
-        Send new messages in bulk.
-        Expects <new_messages> as POST body parameters
-        """
-        params = event['body']
-        new_messages = params['new_messages']
-
-        data_model.send_new_messages_in_bulk(
-            db_session=db_session,
-            new_messages=new_messages
-        )
 
 def sync_hit_assignment_info(event, context):
     if event['method'] == 'POST':
@@ -184,7 +208,6 @@ def sync_hit_assignment_info(event, context):
         """
         try:
             params = event['body']
-            print(params)
             task_group_id = params['task_group_id']
             agent_id = params['agent_id']
             num_assignments = params['num_assignments']
