@@ -337,7 +337,7 @@ class MTurkAgent(Agent):
         self.worker_id = None
         self.hit_is_abandoned = False
 
-        # Wait for MTurk-specific info
+        # Wait for Turker to accept the HIT
         while not (self.assignment_id and self.hit_id and self.worker_id):
             self.assignment_id, self.hit_id, self.worker_id = self.manager.get_hit_assignment_info(self.manager.task_group_id, self.conversation_id, self.id)
             time.sleep(polling_interval)
