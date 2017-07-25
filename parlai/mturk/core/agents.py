@@ -359,7 +359,7 @@ class MTurkAgent(Agent):
             command=COMMAND_GET_NEW_MESSAGES
         )
 
-    def act(self, timeout): # Timeout in seconds, after which the HIT will be submitted automatically
+    def act(self, timeout=None): # Timeout in seconds, after which the HIT will be submitted automatically
         if timeout:
             start_time = time.time()
 
@@ -456,7 +456,7 @@ class MTurkAgent(Agent):
             command=COMMAND_SUBMIT_HIT
         )
 
-    def wait_for_hit_completion(self, timeout): # Timeout in seconds, after which the HIT will be submitted automatically
+    def wait_for_hit_completion(self, timeout=None): # Timeout in seconds, after which the HIT will be submitted automatically
         if timeout:
             start_time = time.time()
         while self.manager.get_agent_work_status(assignment_id=self.assignment_id) != ASSIGNMENT_DONE:
@@ -472,7 +472,7 @@ class MTurkAgent(Agent):
         print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is done.')
         return True
 
-    def shutdown(self, timeout): # Timeout in seconds, after which the HIT will be submitted automatically
+    def shutdown(self, timeout=None): # Timeout in seconds, after which the HIT will be submitted automatically
         if not self.hit_is_abandoned:
             self.manager.send_new_command(
                 task_group_id=self.manager.task_group_id,
