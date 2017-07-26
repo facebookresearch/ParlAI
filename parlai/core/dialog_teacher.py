@@ -83,8 +83,8 @@ class DialogTeacher(Teacher):
         if self.epochDone:
             raise StopIteration()
 
-    @staticmethod
-    def internal_states():
+    @classmethod
+    def internal_states(cls):
         return super().internal_states() + ['lastY']
 
     def share(self):
