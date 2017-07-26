@@ -166,6 +166,7 @@ of patent rights can be found in the PATENTS file in the same directory.
     var last_message_id = -1;
     var last_command_id = -1;
     var polling_timer = null;
+    var hit_is_submitted = false;
     var messages_processed = {};
     var messages_shown = {};
 
@@ -352,7 +353,18 @@ of patent rights can be found in the PATENTS file in the same directory.
             polling_timer = null;
         }
         if (in_mturk_hit_page()) {
+            hit_is_submitted = true;
             $("input#mturk_submit_button").click();
+        }
+    }
+
+    if (!is_cover_page) {
+        window.onbeforeunload = function() {
+            if (hit_is_submitted) {
+                return undefined;
+            } else {
+                return true;
+            }
         }
     }
 

@@ -47,6 +47,10 @@ def lambda_handler(event, context):
         data_model.close_connection(db_engine, db_session)
         return result
 
+def _load_hit_config():
+    with open('hit_config.json', 'r') as hit_config_file:
+        return json.loads(hit_config_file.read().replace('\n', ''))
+
 def chat_index(event, context):
     if event['method'] == 'GET':
         """
@@ -58,23 +62,16 @@ def chat_index(event, context):
             task_group_id = event['query']['task_group_id']
             assignment_id = event['query']['assignmentId'] # from mturk
 
-            hit_config = None
-            with open('hit_config.json', 'r') as hit_config_file:
-                hit_config = json.loads(hit_config_file.read().replace('\n', ''))
-
-            max_allocation_count = hit_config['num_hits'] * hit_config['num_assignments'] * len(hit_config['mturk_agent_ids'])
-
-            total_allocation_count = data_model.get_allocation_count(
-                db_session=db_session,
-                task_group_id=task_group_id
-            )
-
-            if total_allocation_count == max_allocation_count:
+            if _worker_did_refresh_HIT_page(task_group_id=task_group_id, assignment_id=assignment_id):
+                return "Sorry, this HIT has expired because you closed or refreshed the page."
+            elif _is_invalid_HIT(task_group_id=task_group_id):
                 return "Sorry, all HITs in this group had already expired."
             elif assignment_id == 'ASSIGNMENT_ID_NOT_AVAILABLE':
                 template_context['is_cover_page'] = True
                 return _render_template(template_context, 'cover_page.html')
             else:
+                hit_config = _load_hit_config()
+
                 hit_id = event['query']['hitId']
                 worker_id = event['query']['workerId']
 
@@ -111,10 +108,28 @@ def chat_index(event, context):
         except KeyError:
             raise
 
+def _is_invalid_HIT(task_group_id):
+    hit_config = _load_hit_config()
+
+    max_allocation_count = hit_config['num_hits'] * hit_config['num_assignments'] * len(hit_config['mturk_agent_ids'])
+
+    total_allocation_count = data_model.get_allocation_count(
+        db_session=db_session,
+        task_group_id=task_group_id
+    )
+
+    return total_allocation_count == max_allocation_count
+
+def _worker_did_refresh_HIT_page(task_group_id, assignment_id):
+    return data_model.check_assignment_exists(
+        db_session=db_session,
+        task_group_id=task_group_id,
+        assignment_id=assignment_id
+    )
+
 def get_hit_config(event, context):
     if event['method'] == 'GET':
-        with open('hit_config.json', 'r') as hit_config_file:
-            return json.loads(hit_config_file.read().replace('\n', ''))
+        return _load_hit_config()
 
 def send_new_command(event, context):
     if event['method'] == 'POST':

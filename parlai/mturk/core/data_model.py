@@ -311,3 +311,6 @@ def get_hit_assignment_info(db_session, task_group_id, agent_id, conversation_id
 
 def get_allocation_count(db_session, task_group_id):
     return db_session.query(MTurkHITAgentAllocation).filter(MTurkHITAgentAllocation.task_group_id==task_group_id).count()
+
+def check_assignment_exists(db_session, task_group_id, assignment_id):
+    return db_session.query(MTurkHITAgentAllocation).filter(MTurkHITAgentAllocation.task_group_id==task_group_id).filter(MTurkHITAgentAllocation.assignment_id==assignment_id).count() > 0
