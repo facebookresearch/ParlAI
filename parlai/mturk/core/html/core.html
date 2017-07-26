@@ -57,6 +57,9 @@ of patent rights can be found in the PATENTS file in the same directory.
                 <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
             </button>
         </div>
+        <div id="response-type-expired" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
+            <span style="font-size: 16px">This HIT had already expired.</span>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -313,8 +316,9 @@ of patent rights can be found in the PATENTS file in the same directory.
                     } else if (command === 'COMMAND_SHOW_DONE_BUTTON') {
                         update_UI_for_response_type('done');
                         $("div#waiting-for-message").css("display", "none");
-                    } else if (command === 'COMMAND_SUBMIT_HIT') {
-                        all_done_callback();
+                    } else if (command === 'COMMAND_EXPIRE_HIT') {
+                        update_UI_for_response_type('expired');
+                        $("div#waiting-for-message").css("display", "none");
                     }
                 }
                 polling_timer = setTimeout(polling_for_command, 1000);
@@ -331,6 +335,8 @@ of patent rights can be found in the PATENTS file in the same directory.
             $("div#response-type-text-input").css("display", "");
         } else if (response_type == 'done') {
             $("div#response-type-done").css("display", "");
+        } else if (response_type == 'expired') {
+            $("div#response-type-expired").css("display", "");
         }
         $(window).resize();
     }

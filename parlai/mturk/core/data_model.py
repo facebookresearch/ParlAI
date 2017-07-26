@@ -25,7 +25,7 @@ engine = None
 COMMAND_GET_NEW_MESSAGES = 'COMMAND_GET_NEW_MESSAGES' # MTurk web client is expected to get new messages from server
 COMMAND_SEND_MESSAGE = 'COMMAND_SEND_MESSAGE' # MTurk web client is expected to send a new message to server
 COMMAND_SHOW_DONE_BUTTON = 'COMMAND_SHOW_DONE_BUTTON' # MTurk web client should show the "DONE" button
-COMMAND_SUBMIT_HIT = 'COMMAND_SUBMIT_HIT' # MTurk web client should submit the HIT automatically
+COMMAND_EXPIRE_HIT = 'COMMAND_EXPIRE_HIT' # MTurk web client should show "HIT is expired"
 
 def object_as_dict(obj):
     return {c.key: getattr(obj, c.key)
@@ -308,3 +308,6 @@ def get_hit_assignment_info(db_session, task_group_id, agent_id, conversation_id
         'hit_id': hit_id,
         'worker_id': worker_id
     }
+
+def get_allocation_count(db_session, task_group_id):
+    return db_session.query(MTurkHITAgentAllocation).filter(MTurkHITAgentAllocation.task_group_id==task_group_id).count()

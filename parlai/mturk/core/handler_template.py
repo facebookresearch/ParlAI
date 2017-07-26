@@ -58,16 +58,25 @@ def chat_index(event, context):
             task_group_id = event['query']['task_group_id']
             assignment_id = event['query']['assignmentId'] # from mturk
 
-            if assignment_id == 'ASSIGNMENT_ID_NOT_AVAILABLE':
+            hit_config = None
+            with open('hit_config.json', 'r') as hit_config_file:
+                hit_config = json.loads(hit_config_file.read().replace('\n', ''))
+
+            max_allocation_count = hit_config['num_hits'] * hit_config['num_assignments'] * len(hit_config['mturk_agent_ids'])
+
+            total_allocation_count = data_model.get_allocation_count(
+                db_session=db_session,
+                task_group_id=task_group_id
+            )
+
+            if total_allocation_count == max_allocation_count:
+                return "Sorry, all HITs in this group had already expired."
+            elif assignment_id == 'ASSIGNMENT_ID_NOT_AVAILABLE':
                 template_context['is_cover_page'] = True
                 return _render_template(template_context, 'cover_page.html')
             else:
                 hit_id = event['query']['hitId']
                 worker_id = event['query']['workerId']
-
-                hit_config = None
-                with open('hit_config.json', 'r') as hit_config_file:
-                    hit_config = json.loads(hit_config_file.read().replace('\n', ''))
 
                 num_assignments = int(hit_config['num_assignments'])
                 mturk_agent_ids = hit_config['mturk_agent_ids']

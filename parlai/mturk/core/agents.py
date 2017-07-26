@@ -20,7 +20,7 @@ from parlai.mturk.core.setup_aws import setup_aws, calculate_mturk_cost, check_m
 import threading
 from parlai.mturk.core.data_model import Base, Message
 from parlai.mturk.core.data_model import get_new_messages as _get_new_messages
-from parlai.mturk.core.data_model import COMMAND_GET_NEW_MESSAGES, COMMAND_SEND_MESSAGE, COMMAND_SHOW_DONE_BUTTON, COMMAND_SUBMIT_HIT
+from parlai.mturk.core.data_model import COMMAND_GET_NEW_MESSAGES, COMMAND_SEND_MESSAGE, COMMAND_SHOW_DONE_BUTTON, COMMAND_EXPIRE_HIT
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
@@ -447,14 +447,15 @@ class MTurkAgent(Agent):
             print("Unable to send email to worker ID: "+str(self.worker_id)+". Error: "+str(response['failure']))
             return False
 
-    def set_hit_is_abandoned():
-        self.hit_is_abandoned = True
-        self.manager.send_new_command(
-            task_group_id=self.manager.task_group_id,
-            conversation_id=self.conversation_id,
-            receiver_agent_id=self.id,
-            command=COMMAND_SUBMIT_HIT
-        )
+    def set_hit_is_abandoned(self):
+        if not self.hit_is_abandoned:
+            self.hit_is_abandoned = True
+            self.manager.send_new_command(
+                task_group_id=self.manager.task_group_id,
+                conversation_id=self.conversation_id,
+                receiver_agent_id=self.id,
+                command=COMMAND_EXPIRE_HIT
+            )
 
     def wait_for_hit_completion(self, timeout=None): # Timeout in seconds, after which the HIT will be submitted automatically
         if timeout:
