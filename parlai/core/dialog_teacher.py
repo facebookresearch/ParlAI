@@ -85,7 +85,7 @@ class DialogTeacher(Teacher):
 
     @staticmethod
     def internal_states():
-        return super(DialogTeacher, DialogTeacher).internal_states() + ['lastY']
+        return super().internal_states() + ['lastY']
 
     def share(self):
         shared = super().share()
