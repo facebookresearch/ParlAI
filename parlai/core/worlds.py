@@ -569,17 +569,21 @@ class BatchWorld(World):
                 hasattr(a, 'batch_observe')):
             batch_observations = a.batch_observe(batch_observations)
         else:
+            # Reverts to running on each individually
+            needspacking = hasattr(a, 'batch_act')
             # Set internal states from batched agent
-            for attname in a.internal_states:
-                if not hasattr(a, 'batch_{}'.format(attname)): continue
-                for w, att in zip(self.worlds, getattr(a, 'batch_{}'.format(attname))):
-                    setattr(w.get_agents()[index], attname, att)
+            if needspacking:
+                for attname in a.internal_states():
+                    if hasattr(a, 'batch_{}'.format(attname)):
+                        for w, att in zip(self.worlds, getattr(a, 'batch_{}'.format(attname))):
+                            setattr(w.get_agents()[index], attname, att)
 
             batch_observations = [w.get_agents()[index].observe(o) for w, o in zip(self.worlds, batch_observations)]
 
             # Get internal states and save in batched agent
-            for attname in a.internal_states:
-                setattr(a, 'batch_{}'.format(attname), [getattr(w.get_agents()[index], attname) for w in self.worlds])
+            if needspacking:
+                for attname in a.internal_states():
+                    setattr(a, 'batch_{}'.format(attname), [getattr(w.get_agents()[index], attname) for w in self.worlds])
 
         if batch_observations is None or any([o is None for o in batch_observations]):
             raise ValueError('Agents should return what they observed.')
@@ -600,11 +604,14 @@ class BatchWorld(World):
         else:
             # Reverts to running on each individually.
 
+            needspacking = hasattr(a, 'batch_observe')
+
             # Set internal states from batched agent
-            for attname in a.internal_states:
-                if not hasattr(a, 'batch_{}'.format(attname)): continue
-                for w, att in zip(self.worlds, getattr(a, 'batch_{}'.format(attname))):
-                    setattr(w.get_agents()[index], attname, att)
+            if needspacking:
+                for attname in a.internal_states():
+                    if hasattr(a, 'batch_{}'.format(attname)):
+                        for w, att in zip(self.worlds, getattr(a, 'batch_{}'.format(attname))):
+                            setattr(w.get_agents()[index], attname, att)
 
             batch_actions = []
             for w in self.worlds:
@@ -614,8 +621,9 @@ class BatchWorld(World):
                 batch_actions.append(acts[index])
 
             # Get internal states and save in batched agent
-            for attname in a.internal_states:
-                setattr(a, 'batch_{}'.format(attname), [getattr(w.get_agents()[index], attname, None) for w in self.worlds])
+            if needspacking:
+                for attname in a.internal_states():
+                    setattr(a, 'batch_{}'.format(attname), [getattr(w.get_agents()[index], attname, None) for w in self.worlds])
 
         return batch_actions
 

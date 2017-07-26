@@ -73,8 +73,8 @@ class Agent(object):
     def getID(self):
         return self.id
 
-    @property
-    def internal_states(self):
+    @staticmethod
+    def internal_states():
         return ['observation']
 
     def reset(self):
