@@ -36,7 +36,7 @@ def load_embeddings(opt, word_dict):
                 embeddings[word_dict[w]].copy_(vec)
 
     # Zero NULL token
-    embeddings[word_dict['<NULL>']].fill_(0)
+    embeddings[word_dict['__NULL__']].fill_(0)
 
     return embeddings
 
