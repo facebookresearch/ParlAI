@@ -58,9 +58,9 @@ def main():
                     (delayed(run_hit)(hit_index, assignment_index, opt, task_opt, mturk_manager) \
                         for hit_index, assignment_index in product(range(1, opt['num_hits']+1), range(1, opt['num_assignments']+1)))
     except:
-        mturk_manager.expire_all_hits()
         raise
     finally:
+        mturk_manager.expire_all_unassigned_hits()
         mturk_manager.shutdown()
 
 if __name__ == '__main__':

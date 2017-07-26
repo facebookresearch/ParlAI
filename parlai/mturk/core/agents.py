@@ -127,7 +127,7 @@ class MTurkManager():
             self._on_db_thread_exception(exception)
 
     def _on_db_thread_exception(self, exception):
-        self.expire_all_hits()
+        self.expire_all_unassigned_hits()
         raise exception
 
     def get_new_messages_and_save_to_db(self):
@@ -267,15 +267,18 @@ class MTurkManager():
         print("Waiting for Turkers to respond... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
         return mturk_page_url
 
-    def expire_all_hits(self):
-        print("Expiring all HITs...")
+    def expire_hit(self, hit_id):
+        client = get_mturk_client(self.is_sandbox)
+        client.update_expiration_for_hit(HITId=hit_id, ExpireAt=datetime(2015, 1, 1)) # Update it to a time in the past, and the HIT will be immediately expired
+
+    def expire_all_unassigned_hits(self):
+        print("Expiring all unassigned HITs...")
         if debug:
             print(self.mturk_agent_hit_id_dict)
-        client = get_mturk_client(self.is_sandbox)
         for mturk_agent_id in self.mturk_agent_hit_id_dict:
             for hit_index in self.mturk_agent_hit_id_dict[mturk_agent_id]:
                 hit_id = self.mturk_agent_hit_id_dict[mturk_agent_id][hit_index]
-                client.update_expiration_for_hit(HITId=hit_id, ExpireAt=datetime(2015, 1, 1)) # Update it to a time in the past, and the HIT will be immediately expired
+                self.expire_hit(hit_id)
 
     def approve_work(self, assignment_id):
         client = get_mturk_client(self.is_sandbox)
@@ -359,7 +362,7 @@ class MTurkAgent(Agent):
             command=COMMAND_GET_NEW_MESSAGES
         )
 
-    def act(self, timeout=None): # Timeout in seconds, after which the HIT will be submitted automatically
+    def act(self, timeout=None): # Timeout in seconds, after which the HIT will be expired automatically
         if timeout:
             start_time = time.time()
 
@@ -457,7 +460,7 @@ class MTurkAgent(Agent):
                 command=COMMAND_EXPIRE_HIT
             )
 
-    def wait_for_hit_completion(self, timeout=None): # Timeout in seconds, after which the HIT will be submitted automatically
+    def wait_for_hit_completion(self, timeout=None): # Timeout in seconds, after which the HIT will be expired automatically
         if timeout:
             start_time = time.time()
         while self.manager.get_agent_work_status(assignment_id=self.assignment_id) != ASSIGNMENT_DONE:
@@ -473,7 +476,7 @@ class MTurkAgent(Agent):
         print('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is done.')
         return True
 
-    def shutdown(self, timeout=None): # Timeout in seconds, after which the HIT will be submitted automatically
+    def shutdown(self, timeout=None): # Timeout in seconds, after which the HIT will be expired automatically
         if not self.hit_is_abandoned:
             self.manager.send_new_command(
                 task_group_id=self.manager.task_group_id,

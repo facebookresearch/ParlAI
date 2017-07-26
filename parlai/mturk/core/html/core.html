@@ -167,6 +167,7 @@ of patent rights can be found in the PATENTS file in the same directory.
     var last_command_id = -1;
     var polling_timer = null;
     var hit_is_submitted = false;
+    var hit_is_expired = false
     var messages_processed = {};
     var messages_shown = {};
 
@@ -319,6 +320,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                         $("div#waiting-for-message").css("display", "none");
                     } else if (command === 'COMMAND_EXPIRE_HIT') {
                         update_UI_for_response_type('expired');
+                        hit_is_expired = true;
                         $("div#waiting-for-message").css("display", "none");
                     }
                 }
@@ -360,7 +362,7 @@ of patent rights can be found in the PATENTS file in the same directory.
 
     if (!is_cover_page) {
         window.onbeforeunload = function() {
-            if (hit_is_submitted) {
+            if (hit_is_submitted || hit_is_expired) {
                 return undefined;
             } else {
                 return true;
