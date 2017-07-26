@@ -83,6 +83,10 @@ class DialogTeacher(Teacher):
         if self.epochDone:
             raise StopIteration()
 
+    @property
+    def internal_states(self):
+        return super().internal_states + ['lastY']
+
     def share(self):
         shared = super().share()
         shared['data'] = self.data
