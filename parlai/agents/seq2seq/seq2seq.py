@@ -128,6 +128,9 @@ class Seq2seqAgent(Agent):
         return self.opt
 
     def parse(self, text):
+        text = text.replace(', ', '__TMP__')
+        text = text.replace(',', ' ')
+        text = text.replace('__TMP__', ', ')
         return self.dict.txt2vec(text)
 
     def v2t(self, vec):
@@ -257,12 +260,12 @@ class Seq2seqAgent(Agent):
                     output, cands_hn = self.decoder(cands_xes, cands_hn)
                     preds, scores = self.hidden_to_idx(output, dropout=False)
                     cs = cview.select(1, i)
-                    cand_scores.add_(torch.gather(scores, 1, cs.view(-1, 1)).view(-1))
+                    cand_scores.add_(torch.gather(scores, 1, cs.unsqueeze(1)).squeeze())
                     cands_xes = self.lt(cs).unsqueeze(0)
 
-                cand_scores = cand_scores.view(cands.size(0), cands.size(1), cands.size(2))
+                cand_scores = cand_scores.view(cands.size(0), cands.size(1))
                 srtd_scores, text_cand_inds = cand_scores.sort(1, True)
-                text_cand_inds = text_cand_inds.squeeze().data
+                text_cand_inds = text_cand_inds.data
 
             # now, generate a response from scratch
             while(total_done < batchsize) and max_len < self.longest_label:
@@ -349,7 +352,7 @@ class Seq2seqAgent(Agent):
                 # found cands, pack them into tensor
                 max_c_len = max(max(len(c) for c in cs) for cs in parsed)
                 max_c_cnt = max(len(cs) for cs in parsed)
-                cands = torch.LongTensor(len(parsed), max_c_cnt, max_c_len)
+                cands = torch.LongTensor(len(parsed), max_c_cnt, max_c_len).fill_(0)
                 for i, cs in enumerate(parsed):
                     for j, c in enumerate(cs):
                         for k, idx in enumerate(c):
@@ -389,7 +392,7 @@ class Seq2seqAgent(Agent):
                 order = text_cand_inds[i]
                 batch_idx, curr_cands = valid_cands[i]
                 curr = batch_reply[batch_idx]
-                curr['text_candidates'] = [curr_cands[idx] for idx in order]
+                curr['text_candidates'] = [curr_cands[idx] for idx in order if idx < len(curr_cands)]
 
         return batch_reply
 
