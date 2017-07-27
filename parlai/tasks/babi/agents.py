@@ -9,6 +9,7 @@ from parlai.core.agents import MultiTaskTeacher
 from .build import build
 
 import copy
+import itertools
 import os
 
 def _path(exsz, task, opt, dt=''):
@@ -20,24 +21,48 @@ def _path(exsz, task, opt, dt=''):
                         'en-valid{exsz}-nosf'.format(exsz=exsz),
                         'qa{task}_{type}.txt'.format(task=task, type=dt))
 
+def mod_entry(entry, task):
+    y = entry[1]
+    if y is not None:
+        if task == '8':
+            # holding, labels like 'milk,cookies,football'
+            # add permutations like 'milk,football,cookies', etc'
+            split = y[0].split(',')
+            entry[1] = [','.join(p) for p in itertools.permutations(split)]
+        elif task == '19':
+            # pathfinding, labels like 'n,e' or 's,w'
+            # add version with spaces, 'n e'
+            entry[1] = [y[0], y[0].replace(',', ' ')]
+
+    return entry
+
 
 # Single bAbI task (1k training).
 class Task1kTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         task = opt.get('task', 'babi:Task1k:1')
-        opt['datafile'] = _path('', task.split(':')[2], opt)
+        self.task_num = task.split(':')[2]
+        opt['datafile'] = _path('', self.task_num, opt)
         opt['cands_datafile'] = _path('', task.split(':')[2], opt, 'train')
         super().__init__(opt, shared)
+
+    def setup_data(self, path):
+        for entry, new in super().setup_data(path):
+            yield mod_entry(entry, self.task_num), new
 
 
 # Single bAbI task (10k training).
 class Task10kTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         task = opt.get('task', 'babi:Task10k:1')
-        opt['datafile'] = _path('-10k', task.split(':')[2], opt)
+        self.task_num = task.split(':')[2]
+        opt['datafile'] = _path('-10k', self.task_num, opt)
         opt['cands_datafile'] = _path('-10k', task.split(':')[2], opt, 'train')
         super().__init__(opt, shared)
 
+    def setup_data(self, path):
+        for entry, new in super().setup_data(path):
+            yield mod_entry(entry, self.task_num), new
 
 # By default train on all tasks at once.
 class All1kTeacher(MultiTaskTeacher):
