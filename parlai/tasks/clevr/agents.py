@@ -28,7 +28,17 @@ def _path(opt):
     return questions_path, images_path
 
 
+counts = [str(i) for i in range(11)]
+materials = ['metal', 'rubber']
+sizes = ['small', 'large']
+shapes = ['cube', 'sphere', 'cylinder']
+colors = ['gray', 'blue', 'brown', 'yellow', 'red', 'green', 'purple', 'cyan']
+
+
 class DefaultTeacher(DialogTeacher):
+    # all possile answers for the questions
+    cands = ['yes', 'no'] + counts + materials + sizes + shapes + colors
+
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
         data_path, self.images_path = _path(opt)
@@ -36,6 +46,9 @@ class DefaultTeacher(DialogTeacher):
         self.id = 'clevr'
 
         super().__init__(opt, shared)
+
+    def label_candidates(self):
+        return self.cands
 
     def setup_data(self, path):
         print('loading: ' + path)
@@ -55,5 +68,4 @@ class DefaultTeacher(DialogTeacher):
 
             question = ques['question']
             answer = [ques['answer']] if ques['split'] != 'test' else None
-            # TODO cands?
             yield (question, answer, None, None, img_path), new_episode
