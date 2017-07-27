@@ -17,24 +17,6 @@ import random
 import re
 
 
-class CommaFixerDictionary(DictionaryAgent):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        DictionaryAgent.add_cmdline_args(argparser)
-
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        self.re_comma = re.compile('(?<=\S),(?=\S)')
-
-    def tokenize(self, text, building=False):
-        """Returns a sequence of tokens from the iterable.
-        Overrides parent to modify comma tokenizing.
-
-        Replaces 'word,word' with 'word word' but leaves 'word, word' intact.
-        """
-        return super().tokenize(self.re_comma.sub(' ', text), building)
-
-
 class Seq2seqAgent(Agent):
     """Simple agent which uses an RNN to process incoming text observations.
     The RNN generates a vector which is used to represent the input text,
@@ -47,7 +29,7 @@ class Seq2seqAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
-        Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
+        DictionaryAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument('-hs', '--hiddensize', type=int, default=128,
             help='size of the hidden layers and embeddings')
@@ -65,10 +47,6 @@ class Seq2seqAgent(Agent):
             help='rank candidates if available. note that this is very weak ' +
                  'ranking: it is trying to pick the candidate most like the ' +
                  'generated output. CPU overhead is light, GPU is more heavy.')
-
-    @staticmethod
-    def dictionary_class():
-        return CommaFixerDictionary
 
     def __init__(self, opt, shared=None):
         # initialize defaults first
