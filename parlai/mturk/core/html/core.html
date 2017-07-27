@@ -73,48 +73,6 @@ of patent rights can be found in the PATENTS file in the same directory.
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.rawgit.com/yf225/jquery-ajax-retry/master/dist/jquery.ajax-retry.min.js"></script>
 
-{% block handle_new_messages %}
-<script type="text/javascript">
-    function handle_new_messages(new_messages) {
-        for (var i = 0; i < new_messages.length; i++) {
-            var message = new_messages[i];
-            var agent_id = message['id'];
-            var message_id = parseInt(message['message_id']);
-            var message_text = message['text'].replace(/(?:\r\n|\r|\n)/g, '<br />');
-
-            if (!(message_id in messages_shown)) {
-                if (agent_id != cur_agent_id) {
-                    $('div#message_thread').append(`
-                        <div class="row" style="margin-left: 0; margin-right: 0">
-                            <div class="alert alert-warning" role="alert" style="float: left; display:table">
-                                <span style="font-size: 16px"><b>`+agent_id+`</b>: `+message_text+`</span>
-                            </div>
-                        </div>
-                    `);
-                    received_message_from_other_agents = true;
-                } else {
-                    $('div#message_thread').append(`
-                        <div class="row" style="margin-left: 0; margin-right: 0">
-                            <div class="alert alert-info" role="alert" style="float: right; display:table">
-                                <span style="font-size: 16px"><b>`+agent_id+`</b>: `+message_text+`</span>
-                            </div>
-                        </div>
-                    `);
-                }
-                messages_shown[message_id] = true;
-            }
-        }
-        if (new_messages.length > 0) {
-            $("div#message_thread").css("display", "");
-            scroll_conversation_to_bottom();
-        }
-        if (received_message_from_other_agents && (!task_done) && new_messages[new_messages.length-1]['id'] === previous_agent_id) {
-            wait_for_worker_input();
-        }
-    }
-</script>
-{% endblock %}
-
 <script type="text/javascript">
     /* ================= Utility functions ================= */
     function scroll_conversation_to_bottom() {
@@ -136,9 +94,9 @@ of patent rights can be found in the PATENTS file in the same directory.
         update_UI_for_response_type('text_input');
         $("div#waiting-for-message").css("display", "none");
         $("input#id_text_input").focus();
-        // Pause polling, since we are waiting for the worker to say something
         if (polling_timer) {
             clearTimeout(polling_timer);
+            polling_timer = null;
         }
     }
 
@@ -158,15 +116,20 @@ of patent rights can be found in the PATENTS file in the same directory.
         }
     };
 
-    function get_hit_index_and_assignment_index(callback_function) {
+    function sync_hit_assignment_info(callback_function) {
         $.ajax({
             url: '/prod/json',
-            data: {
-                method_name: 'get_hit_index_and_assignment_index',
+            type: "POST",
+            data: JSON.stringify({
+                method_name: 'sync_hit_assignment_info',
                 task_group_id: task_group_id,
                 agent_id: cur_agent_id,
-                num_assignments: num_assignments
-            },
+                num_assignments: num_assignments,
+                assignment_id: assignmentId,
+                hit_id: hitId,
+                worker_id: workerId
+            }),
+            contentType: "application/json",
             timeout: 3000 // in milliseconds
         }).retry({times: 1000, timeout: 3000}).then(
             function(data) {
@@ -206,12 +169,15 @@ of patent rights can be found in the PATENTS file in the same directory.
     // Handling keypress event
     $(document).keypress(function(e) {
         if (e.which == 13) {
-            $("button#id_send_msg_button").click();
+            if (!($("button#id_send_msg_button").prop("disabled") === true)) {
+                $("button#id_send_msg_button").click();
+            }
         }
     });
     
     /* ================= State variables ================= */
     var verbose_log = false;
+    var is_cover_page = (`{{is_cover_page}}` === 'True') ? true : false;
     var task_group_id = `{{task_group_id}}`;
     var hit_index = `{{hit_index}}`;
     var assignment_index = `{{assignment_index}}`;
@@ -220,54 +186,63 @@ of patent rights can be found in the PATENTS file in the same directory.
     var workerId = null;
     var conversation_id = null;
     var cur_agent_id = `{{cur_agent_id}}`;
-    var mturk_agent_ids = `{{mturk_agent_ids}}`;
-    if (mturk_agent_ids) {
-        mturk_agent_ids = JSON.parse(mturk_agent_ids);
-    }
-    var all_agent_ids = `{{all_agent_ids}}`;
-    var cur_agent_index = null;
-    var previous_agent_id = null;
-    if (all_agent_ids) {
-        all_agent_ids = JSON.parse(all_agent_ids);
-        cur_agent_index = all_agent_ids.indexOf(cur_agent_id);
-        if (cur_agent_index == 0) {
-            previous_agent_id = all_agent_ids[all_agent_ids.length-1];
-        } else {
-            previous_agent_id = all_agent_ids[cur_agent_index-1];
-        }
-    }
     var task_description = null;
     var is_sandbox = null;
     var mturk_submit_url = null;
     var num_hits = null;
     var num_assignments = null;
     var last_message_id = -1;
+    var last_command_id = -1;
     var polling_timer = null;
     var messages_processed = {};
     var messages_shown = {};
-    var done_after_responding = false;
-    var task_done = false;
 
     /* ================= Message handling ================= */
-    function check_done(new_messages) {
+
+    function handle_new_messages(new_messages) {
         for (var i = 0; i < new_messages.length; i++) {
-            if (new_messages[i]['episode_done']) {
-                done_after_responding = true;
+            var message = new_messages[i];
+            var agent_id = message['id'];
+            var message_id = parseInt(message['message_id']);
+            var message_text = message['text'].replace(/(?:\r\n|\r|\n)/g, '<br />');
+
+            if (!(message_id in messages_shown)) {
+                if (agent_id != cur_agent_id) {
+                    $('div#message_thread').append(`
+                        <div class="row" style="margin-left: 0; margin-right: 0">
+                            <div class="alert alert-warning" role="alert" style="float: left; display:table">
+                                <span style="font-size: 16px"><b>`+agent_id+`</b>: `+message_text+`</span>
+                            </div>
+                        </div>
+                    `);
+                    received_message_from_other_agents = true;
+                } else {
+                    $('div#message_thread').append(`
+                        <div class="row" style="margin-left: 0; margin-right: 0">
+                            <div class="alert alert-info" role="alert" style="float: right; display:table">
+                                <span style="font-size: 16px"><b>`+agent_id+`</b>: `+message_text+`</span>
+                            </div>
+                        </div>
+                    `);
+                }
+                messages_shown[message_id] = true;
             }
+        }
+        if (new_messages.length > 0) {
+            $("div#message_thread").css("display", "");
+            scroll_conversation_to_bottom();
         }
     }
 
-    function send_message(text, episode_done=false, callback_function=null) {
+    function send_message(text, receiver_agent_id, callback_function=null) {
         var post_data_dict = {
             task_group_id: task_group_id,
             conversation_id: conversation_id,
-            cur_agent_id: cur_agent_id,
-            assignment_id: assignmentId,
-            hit_id: hitId,
-            worker_id: workerId
+            sender_agent_id: cur_agent_id,
+            receiver_agent_id: receiver_agent_id
         };
         if (text) post_data_dict['text'] = text;
-        post_data_dict['episode_done'] = episode_done;
+        post_data_dict['episode_done'] = false;
         post_data_dict['method_name'] = 'send_new_message';
         $.ajax({
             url: '/prod/json',
@@ -285,10 +260,10 @@ of patent rights can be found in the PATENTS file in the same directory.
         );
     }
 
-    $("button#id_send_msg_button").click(function () {
+    $("button#id_send_msg_button").on('click', function () {
         var text = $("input#id_text_input").val();
         if (!(text == '')) {
-            send_message(text, done_after_responding, function(data){
+            send_message(text, '[World]', function(data){
                 $("input#id_text_input").val("");
                 $("div#response-type-text-input").css("display", "none");
                 data = JSON.parse(data);
@@ -300,54 +275,85 @@ of patent rights can be found in the PATENTS file in the same directory.
                 var new_messages = [];
                 new_messages.push(data);
                 handle_new_messages(new_messages);
-                if (done_after_responding) {
-                    update_UI_for_response_type('done');
-                    task_done = true;
-                    $("div#waiting-for-message").css("display", "none");
-                } else {
-                    check_done(new_messages);
-                    $("div#waiting-for-message").css("display", "");
-                }
+                $("div#waiting-for-message").css("display", "");
                 if (!polling_timer) {
-                    polling_for_new_messages();
+                    polling_for_command();
                 }
             });
         }
     });
 
-    // background thread that gets new messages from relay server periodically
-    function polling_for_new_messages() {
-      $.ajax({
-        url: '/prod/json',
-        data: {
-            method_name: 'get_new_messages',
-            task_group_id: task_group_id,
-            conversation_id: conversation_id,
-            last_message_id: last_message_id
-        },
-        timeout: 3000 // in milliseconds
-      }).retry({times: 1000, timeout: 3000}).then(
-        function(data) {
-            if (verbose_log) console.log(data);
-            data = JSON.parse(data);
-            conversation_dict = data['conversation_dict'];
-            if (!($.isEmptyObject(conversation_dict))) {
-                message_list = data['conversation_dict'][conversation_id];
-                // New messages are sorted by message id in message_list
-                for (var i = 0; i < message_list.length; i++) {
-                    message = message_list[i];
-                    var agent_id = message['id'];
-                    var message_id = parseInt(message['message_id']);
-                    if (message_id > last_message_id) {
-                        last_message_id = message_id;
+    function get_new_messages() {
+        $.ajax({
+            url: '/prod/json',
+            data: {
+                method_name: 'get_new_messages',
+                task_group_id: task_group_id,
+                conversation_id: conversation_id,
+                receiver_agent_id: cur_agent_id,
+                last_message_id: last_message_id,
+            },
+            timeout: 3000 // in milliseconds
+        }).retry({times: 1000, timeout: 3000}).then(
+            function(data) {
+                if (verbose_log) console.log(data);
+                data = JSON.parse(data);
+                conversation_dict = data['conversation_dict'];
+                if (!($.isEmptyObject(conversation_dict))) {
+                    message_list = data['conversation_dict'][conversation_id];
+                    // New messages are sorted by message id in message_list
+                    for (var i = 0; i < message_list.length; i++) {
+                        message = message_list[i];
+                        var agent_id = message['id'];
+                        var message_id = parseInt(message['message_id']);
+                        if (message_id > last_message_id) {
+                            last_message_id = message_id;
+                        }
                     }
+                    handle_new_messages(message_list);
                 }
-                handle_new_messages(message_list);
-                check_done(message_list);
             }
-            polling_timer = setTimeout(polling_for_new_messages, 1000);
-        }
-      );
+        );
+    }
+
+    // background thread that checks new command periodically
+    function polling_for_command() {
+        $.ajax({
+            url: '/prod/json',
+            data: {
+                method_name: 'get_command',
+                task_group_id: task_group_id,
+                conversation_id: conversation_id,
+                receiver_agent_id: cur_agent_id,
+                last_command_id: last_command_id,
+            },
+            timeout: 3000 // in milliseconds
+        }).retry({times: 1000, timeout: 3000}).then(
+            function(data) {
+                if (verbose_log) console.log(data);
+                if (!(data === null)) {
+                    data = JSON.parse(data);
+
+                    new_last_command_id = data['id'];
+                    if (new_last_command_id > last_command_id) {
+                        last_command_id = new_last_command_id;
+                    }
+
+                    command = data['command'];
+                    if (command === 'COMMAND_GET_NEW_MESSAGES') {
+                        get_new_messages();
+                        polling_timer = setTimeout(polling_for_command, 1000);
+                    } else if (command === 'COMMAND_SEND_MESSAGE') {
+                        wait_for_worker_input();
+                    } else if (command === 'COMMAND_SUBMIT_HIT') {
+                        update_UI_for_response_type('done');
+                        $("div#waiting-for-message").css("display", "none");
+                    }
+                } else {
+                    polling_timer = setTimeout(polling_for_command, 1000);
+                }   
+            }
+        );
     }
 
     function update_UI_for_response_type(response_type) {
@@ -363,7 +369,7 @@ of patent rights can be found in the PATENTS file in the same directory.
         $(window).resize();
     }
 
-    $("button#done-button").click(function() {
+    $("button#done-button").on('click', function() {
         all_done_callback();
     });
 
@@ -371,28 +377,20 @@ of patent rights can be found in the PATENTS file in the same directory.
         // Stop polling
         if (polling_timer) {
             clearTimeout(polling_timer);
+            polling_timer = null;
         }
         if (in_mturk_hit_page()) {
             $("input#mturk_submit_button").click();
         }
     }
 
-    function init_additional() {}
-</script>
+    function init_cover_page() {
+        $("span#task-description").html(task_description);
+    }
 
-{% block additional_scripts %}
-{% endblock %}
-
-{% block additional_init_scripts %}
-{% endblock %}
-
-<script type="text/javascript">
-    function init() {
+    function init_chat_page() {
         // Data related
         conversation_id = hit_index + '_' + assignment_index;
-        assignmentId = get_url_parameter('assignmentId');
-        hitId = get_url_parameter('hitId');
-        workerId = get_url_parameter('workerId');
         $("form#mturk_submit_form input#assignmentId").val(assignmentId);
         $("form#mturk_submit_form input#hitId").val(hitId);
         $("form#mturk_submit_form input#workerId").val(workerId);
@@ -400,23 +398,13 @@ of patent rights can be found in the PATENTS file in the same directory.
         $("span#task-description").html(task_description);
 
         // UI related
-        $("input#id_text_input").focus();
-        if (cur_agent_index == 0) {
-            update_UI_for_response_type('text_input');
-            $("div#waiting-for-message").css("display", "none");
-        } else {
-            update_UI_for_response_type('idle');
-            $("div#waiting-for-message").css("display", "");
-        }
+        update_UI_for_response_type('idle');
+        $("div#waiting-for-message").css("display", "");
         $("div#left-pane").removeClass('col-xs-12');
         $("div#left-pane").addClass('col-xs-4');
 
-        if (init_additional) {
-            init_additional();
-        }
-
         $(window).resize();
-        polling_for_new_messages();
+        polling_for_command();
     }
 
     $(document).ready(function() {
@@ -427,15 +415,21 @@ of patent rights can be found in the PATENTS file in the same directory.
             num_hits = data['num_hits'];
             num_assignments = data['num_assignments'];
 
-            if (hit_index === "Pending" && assignment_index === "Pending") {
-                get_hit_index_and_assignment_index(init);
+            assignmentId = get_url_parameter('assignmentId');
+            hitId = get_url_parameter('hitId');
+            workerId = get_url_parameter('workerId');
+
+            if (is_cover_page) {
+                init_cover_page();
             } else {
-                hit_index = parseInt(hit_index);
-                assignment_index = parseInt(assignment_index);
-                init();
+                sync_hit_assignment_info(init_chat_page);
             }
         });
     });
 </script>
+
+{% block additional_scripts %}
+{% endblock %}
+
 </body>
 </html>

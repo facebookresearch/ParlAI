@@ -7,8 +7,8 @@ import os
 import time
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.agents import MTurkAgent, MTurkManager
+from parlai.mturk.tasks.multi_agent_dialog.worlds import MTurkMultiAgentDialogWorld
 from parlai.agents.local_human.local_human import LocalHumanAgent
-from parlai.core.worlds import MultiAgentDialogWorld
 from task_config import task_config
 import copy
 from itertools import product
@@ -34,18 +34,16 @@ def main():
     human_agent_2_id = 'human_2'
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_1_id, mturk_agent_2_id],
-        all_agent_ids = [human_agent_1_id, human_agent_2_id, mturk_agent_1_id, mturk_agent_2_id] # In speaking order
+        mturk_agent_ids = [mturk_agent_1_id, mturk_agent_2_id]
     )
     mturk_manager.init_aws(opt=opt)
+    mturk_manager.start_new_run(opt=opt)
 
     global run_hit
     def run_hit(hit_index, assignment_index, opt, mturk_manager):
-        conversation_id = str(hit_index) + '_' + str(assignment_index)
-
         # Create mturk agents
-        mturk_agent_1 = MTurkAgent(id=mturk_agent_1_id, manager=mturk_manager, conversation_id=conversation_id, opt=opt)
-        mturk_agent_2 = MTurkAgent(id=mturk_agent_2_id, manager=mturk_manager, conversation_id=conversation_id, opt=opt)
+        mturk_agent_1 = MTurkAgent(id=mturk_agent_1_id, manager=mturk_manager, hit_index=hit_index, assignment_index=assignment_index, opt=opt)
+        mturk_agent_2 = MTurkAgent(id=mturk_agent_2_id, manager=mturk_manager, hit_index=hit_index, assignment_index=assignment_index, opt=opt)
 
         # Create the local human agents
         human_agent_1 = LocalHumanAgent(opt=None)
@@ -53,7 +51,7 @@ def main():
         human_agent_2 = LocalHumanAgent(opt=None)
         human_agent_2.id = human_agent_2_id
 
-        world = MultiAgentDialogWorld(opt=opt, agents=[human_agent_1, human_agent_2, mturk_agent_1, mturk_agent_2])
+        world = MTurkMultiAgentDialogWorld(opt=opt, agents=[human_agent_1, human_agent_2, mturk_agent_1, mturk_agent_2])
 
         while not world.episode_done():
             world.parley()

@@ -9,15 +9,15 @@ After training, computes validation and test error.
 
 Run with, e.g.:
 
-python examples/train_model.py -m ir_baseline -t dialog_babi:Task:1 -mf '/tmp/model'
+python examples/train_model.py -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
 
 ..or..
 
-python examples/train_model.py -m rnn_baselines/seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
+python examples/train_model.py -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
 
 ..or..
 
-python examples/train_model.py -m drqa -t babi:Task10k:1 -mf '/tmp/model' -bs 10
+python examples/train_model.py -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
 
 TODO List:
 - More logging (e.g. to files), make things prettier.

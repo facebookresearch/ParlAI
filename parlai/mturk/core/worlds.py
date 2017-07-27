@@ -22,6 +22,14 @@ class MTurkWorld(World):
 
     def shutdown(self):
         self.mturk_agent.shutdown()
+        """
+        Use the following code if there are multiple MTurk agents:
+        
+        global shutdown_agent
+        def shutdown_agent(mturk_agent):
+            mturk_agent.shutdown()
+        Parallel(n_jobs=len(self.mturk_agents), backend='threading')(delayed(shutdown_agent)(agent) for agent in self.mturk_agents)
+        """
         
     def review_work(self):
         """Programmatically approve/reject the turker's work.
