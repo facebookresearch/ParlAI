@@ -128,7 +128,7 @@ class Seq2seqAgent(Agent):
         return self.opt
 
     def parse(self, text):
-        return torch.LongTensor(self.dict.txt2vec(text))
+        return self.dict.txt2vec(text)
 
     def v2t(self, vec):
         return self.dict.vec2txt(vec)
@@ -192,6 +192,7 @@ class Seq2seqAgent(Agent):
         targets if available.
         """
         batchsize = len(xs)
+        text_cand_inds = None
 
         # first encode context
         xes = self.lt(xs).t()
@@ -205,24 +206,6 @@ class Seq2seqAgent(Agent):
 
         # list of output tokens for each example in the batch
         output_lines = [[] for _ in range(batchsize)]
-
-        text_candidates = None
-        if cands:
-            text_candidates = []
-            candscores = []
-            for b in range(batchsize):
-                candscores.append([0] * len(cands[b]))
-
-            def update_candscores(batch_idx, word_idx, scores):
-                b = batch_idx
-                for i, c in enumerate(cands[b]):
-                    # c is (parsed_word_idxs, original_text) pair
-                    if word_idx < len(c[0]):
-                        # use the candidate token at this position
-                        candscores[b][i] += scores.data[b][c[0][word_idx]]
-                    else:
-                        # no more tokens, use the score for null
-                        candscores[b][i] += scores.data[b][self.NULL_IDX]
 
         if ys is not None:
             # update the model based on the labels
@@ -242,8 +225,6 @@ class Seq2seqAgent(Agent):
                     # convert the output scores to tokens
                     token = self.v2t([preds.data[b][0]])
                     output_lines[b].append(token)
-                    if cands:
-                        update_candscores(b, i, scores)
 
             loss.backward()
             self.update_params()
@@ -253,6 +234,37 @@ class Seq2seqAgent(Agent):
             total_done = 0
             max_len = 0
 
+            if cands:
+                # score each candidate separately
+
+                # cands are exs_with_cands x cands_per_ex x words_per_cand
+                # cview is total_cands x words_per_cand
+                cview = cands.view(-1, cands.size(2))
+                cands_xes = xe.expand(xe.size(0), cview.size(0), xe.size(2))
+                sz = hn.size()
+                cands_hn = (
+                    hn.view(sz[0], sz[1], 1, sz[2])
+                    .expand(sz[0], sz[1], cands.size(1), sz[2])
+                    .contiguous()
+                    .view(sz[0], -1, sz[2])
+                )
+
+                cand_scores = torch.zeros(cview.size(0))
+                if self.use_cuda:
+                    cand_scores = cand_scores.cuda(async=True)
+                cand_scores = Variable(cand_scores)
+                for i in range(cview.size(1)):
+                    output, cands_hn = self.decoder(cands_xes, cands_hn)
+                    preds, scores = self.hidden_to_idx(output, dropout=False)
+                    cs = cview.select(1, i)
+                    cand_scores.add_(torch.gather(scores, 1, cs.view(-1, 1)).view(-1))
+                    cands_xes = self.lt(cs).unsqueeze(0)
+
+                cand_scores = cand_scores.view(cands.size(0), cands.size(1), cands.size(2))
+                srtd_scores, text_cand_inds = cand_scores.sort(1, True)
+                text_cand_inds = text_cand_inds.squeeze().data
+
+            # now, generate a response from scratch
             while(total_done < batchsize) and max_len < self.longest_label:
                 # keep producing tokens until we hit END or max length for each
                 # example in the batch
@@ -271,20 +283,12 @@ class Seq2seqAgent(Agent):
                             total_done += 1
                         else:
                             output_lines[b].append(token)
-                            if cands:
-                                update_candscores(b, max_len - 1, scores)
 
             if random.random() < 0.1:
                 # sometimes output a prediction for debugging
                 print('prediction:', ' '.join(output_lines[0]))
 
-        if cands:
-            for b in range(batchsize):
-                srtd = sorted(
-                    [(-a[0], a[1]) for a in zip(candscores[b], cands[b])])
-                text_candidates.append([a[1][1] for a in srtd])
-
-        return output_lines, text_candidates
+        return output_lines, text_cand_inds
 
 
     def batchify(self, observations):
@@ -297,21 +301,23 @@ class Seq2seqAgent(Agent):
         # set up the input tensors
         batchsize = len(exs)
         # tokenize the text
-        parsed = [self.parse(ex['text']) for ex in exs]
-        max_x_len = max([len(x) for x in parsed])
-        xs = torch.LongTensor(batchsize, max_x_len).fill_(0)
-        # pack the data to the right side of the tensor for this model
-        for i, x in enumerate(parsed):
-            offset = max_x_len - len(x)
-            for j, idx in enumerate(x):
-                xs[i][j + offset] = idx
-        if self.use_cuda:
-            xs = xs.cuda(async=True)
-        xs = Variable(xs)
+        xs = None
+        if batchsize > 0:
+            parsed = [self.parse(ex['text']) for ex in exs]
+            max_x_len = max([len(x) for x in parsed])
+            xs = torch.LongTensor(batchsize, max_x_len).fill_(0)
+            # pack the data to the right side of the tensor for this model
+            for i, x in enumerate(parsed):
+                offset = max_x_len - len(x)
+                for j, idx in enumerate(x):
+                    xs[i][j + offset] = idx
+            if self.use_cuda:
+                xs = xs.cuda(async=True)
+            xs = Variable(xs)
 
         # set up the target tensors
         ys = None
-        if 'labels' in exs[0]:
+        if batchsize > 0 and 'labels' in exs[0]:
             # randomly select one of the labels to update on, if multiple
             # append END to each label
             labels = [random.choice(ex['labels']) + ' ' + self.END for ex in exs]
@@ -327,22 +333,32 @@ class Seq2seqAgent(Agent):
 
         # set up candidates
         cands = None
-        if self.rank:
-            # set up candidates if we're going to do ranking
-            cands = []
+        valid_cands = None
+        if ys is None and self.rank:
+            # only do ranking when no targets available and ranking flag set
+            parsed = []
+            valid_cands = []
             for i in valid_inds:
                 if 'label_candidates' in observations[i]:
                     # each candidate tuple is a pair of the parsed version and the
                     # original full string
-                    cands.append([(self.dict.parse(c), c) for c in observations[i]['label_candidates']])
-                else:
-                    # not all valid examples will have label candidates
-                    cands.append(None)
-            if len(cands) == 0:
-                # we were ready to rank but didn't find any candidates
-                cands = None
+                    cs = list(observations[i]['label_candidates'])
+                    parsed.append([self.parse(c) for c in cs])
+                    valid_cands.append((i, cs))
+            if len(parsed) > 0:
+                # found cands, pack them into tensor
+                max_c_len = max(max(len(c) for c in cs) for cs in parsed)
+                max_c_cnt = max(len(cs) for cs in parsed)
+                cands = torch.LongTensor(len(parsed), max_c_cnt, max_c_len)
+                for i, cs in enumerate(parsed):
+                    for j, c in enumerate(cs):
+                        for k, idx in enumerate(c):
+                            cands[i][j][k] = idx
+                if self.use_cuda:
+                    cands = cands.cuda(async=True)
+                cands = Variable(cands)
 
-        return xs, ys, cands, valid_inds
+        return xs, ys, valid_inds, cands, valid_cands
 
     def batch_act(self, observations):
         batchsize = len(observations)
@@ -353,22 +369,27 @@ class Seq2seqAgent(Agent):
         # valid_inds tells us the indices of all valid examples
         # e.g. for input [{}, {'text': 'hello'}, {}, {}], valid_inds is [1]
         # since the other three elements had no 'text' field
-        xs, ys, cands, valid_inds = self.batchify(observations)
+        xs, ys, valid_inds, cands, valid_cands = self.batchify(observations)
 
-        if len(xs) == 0:
+        if xs is None:
             # no valid examples, just return the empty responses we set up
             return batch_reply
 
         # produce predictions either way, but use the targets if available
-        predictions, text_candidates = self.predict(xs, ys, cands)
+        predictions, text_cand_inds = self.predict(xs, ys, cands)
 
         for i in range(len(predictions)):
             # map the predictions back to non-empty examples in the batch
             # we join with spaces since we produce tokens one at a time
             curr = batch_reply[valid_inds[i]]
             curr['text'] = ' '.join(c for c in predictions[i] if c != self.END)
-            if text_candidates:
-                curr['text_candidates'] = text_candidates[i]
+
+        if text_cand_inds is not None:
+            for i in range(len(valid_cands)):
+                order = text_cand_inds[i]
+                batch_idx, curr_cands = valid_cands[i]
+                curr = batch_reply[batch_idx]
+                curr['text_candidates'] = [curr_cands[idx] for idx in order]
 
         return batch_reply
 
