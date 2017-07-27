@@ -22,25 +22,10 @@ from parlai.core.worlds import display_messages
 import random
 
 
-class ConvAIDebugAgent(Agent):
+class ConvAISampleAgent(Agent):
     def __init__(self, opt, shared=None):
         super().__init__(opt)
-        if 'bot_id' not in opt:
-            raise Exception("You must provide parameter 'bot_id'")
-        else:
-            self.bot_id = opt['bot_id']
-
-        if 'convai_chat' not in opt:
-            raise Exception("You must provide parameter 'convai_chat'")
-        else:
-            self.convai_chat = opt['convai_chat']
-            self.id = 'ConvAiDebugAgent#%s' % self.convai_chat
-
-        if 'convai_world' not in opt or opt['convai_world'] is None:
-            raise Exception("You must provide parameter 'convai_world'")
-        else:
-            self.convai_world = opt['convai_world']
-
+        self.id = "ConvAISampleAgent"
         self.text = 'Nothing to say yet!'
         self.episode_done = False
 
@@ -85,7 +70,7 @@ def main():
     shared = {
         'agents': [
             {
-                'class': ConvAIDebugAgent,
+                'class': ConvAISampleAgent,
                 'opt': opt
             }
         ]
