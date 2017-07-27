@@ -87,7 +87,7 @@ Display the predictions of that same IR baseline model:
 python examples/display_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
 ```
 
-Train a simple sequence to sequence model on the "1k training examples" bAbI task 1 with batch size of 8 examples for one epoch (requires pytorch):
+Train a seq2seq model on the "1k training examples" bAbI task 1 with batch size of 8 examples for one epoch (requires pytorch):
 ```bash
 python examples/train_model.py -m seq2seq -t babi:task1k:1 -bs 8 -e 1 -mf /tmp/model_s2s
 ```
