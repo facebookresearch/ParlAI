@@ -5,10 +5,9 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.worlds import World, display_messages
-from parlai.core.agents import Agent, create_agent_from_shared
+from parlai.core.agents import create_agent_from_shared
 
 import requests
-import os
 import json
 import time
 
