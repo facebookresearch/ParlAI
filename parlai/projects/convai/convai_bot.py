@@ -50,15 +50,7 @@ class ConvAISampleAgent(Agent):
 
 def main():
     parser = ParlaiParser(True, True)
-    parser.add_argument('-bi', '--bot-id', required=True,
-                        help='Id of local bot used to communicate with RouterBot')
-    parser.add_argument('-bc', '--bot-capacity', type=int, default=-1,
-                        help='The maximum number of open dialogs. Use -1 for ' +
-                             'unlimited number of open dialogs')
-    parser.add_argument('-rbu', '--router-bot-url', required=True,
-                        help='Url of RouterBot')
-    parser.add_argument('-rbpd', '--router-bot-pull-delay', type=int, default=1,
-                        help='Delay before new request to RouterBot: minimum 1 sec')
+    ConvAIWorld.add_cmdline_args(parser)
     opt = parser.parse_args()
 
     agent = ConvAISampleAgent(opt)

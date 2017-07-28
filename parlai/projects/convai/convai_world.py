@@ -22,6 +22,20 @@ class ConvAIWorld(World):
     method.
     """
 
+    @staticmethod
+    def add_cmdline_args(argparser):
+        convai = argparser.add_argument_group('ConvAI Arguments')
+        convai.add_argument('-bi', '--bot-id', required=True,
+                            help='Id of local bot used to communicate with RouterBot')
+        convai.add_argument('-bc', '--bot-capacity', type=int, default=-1,
+                            help='The maximum number of open dialogs. Use -1 ' +
+                                 'for unlimited number of open dialogs')
+        convai.add_argument('-rbu', '--router-bot-url', required=True,
+                            help='Url of RouterBot')
+        convai.add_argument('-rbpd', '--router-bot-pull-delay', type=int,
+                            default=1,
+                            help='Delay before new request to RouterBot: minimum 1 sec')
+
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, shared)
 
