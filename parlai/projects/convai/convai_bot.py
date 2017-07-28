@@ -14,8 +14,6 @@ import random
 
 class ConvAISampleAgent(Agent):
 
-    texts =
-
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.id = 'ConvAISampleAgent'
