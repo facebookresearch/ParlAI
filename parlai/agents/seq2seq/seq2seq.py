@@ -14,7 +14,6 @@ import torch
 import copy
 import os
 import random
-import re
 
 
 class Seq2seqAgent(Agent):
@@ -39,6 +38,8 @@ class Seq2seqAgent(Agent):
             help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
             help='dropout rate')
+        # agent.add_argument('-bi', '--bidirectional', type='bool', default=False,
+        #     help='whether to encode the context with a bidirectional RNN')
         agent.add_argument('--no-cuda', action='store_true', default=False,
             help='disable GPUs even if available')
         agent.add_argument('--gpu', type=int, default=-1,
@@ -81,7 +82,8 @@ class Seq2seqAgent(Agent):
             # set up modules
             self.criterion = nn.NLLLoss()
             # lookup table stores word embeddings
-            self.lt = nn.Embedding(len(self.dict), hsz, padding_idx=self.NULL_IDX,
+            self.lt = nn.Embedding(len(self.dict), hsz,
+                                   padding_idx=self.NULL_IDX,
                                    scale_grad_by_freq=True)
             # encoder captures the input text
             self.encoder = nn.GRU(hsz, hsz, opt['numlayers'])
@@ -229,6 +231,10 @@ class Seq2seqAgent(Agent):
 
             loss.backward()
             self.update_params()
+
+            if random.random() < 0.1:
+                # sometimes output a prediction for debugging
+                print('prediction:', ' '.join(output_lines[0]), 'label:', self.dict.vec2txt(ys.data[0]))
         else:
             # just produce a prediction without training the model
             done = [False for _ in range(batchsize)]
@@ -383,14 +389,16 @@ class Seq2seqAgent(Agent):
             # map the predictions back to non-empty examples in the batch
             # we join with spaces since we produce tokens one at a time
             curr = batch_reply[valid_inds[i]]
-            curr['text'] = ' '.join(c for c in predictions[i] if c != self.END)
+            curr['text'] = ' '.join(c for c in predictions[i] if c != self.END
+                                    and c != self.dict.null_token)
 
         if text_cand_inds is not None:
             for i in range(len(valid_cands)):
                 order = text_cand_inds[i]
                 batch_idx, curr_cands = valid_cands[i]
                 curr = batch_reply[batch_idx]
-                curr['text_candidates'] = [curr_cands[idx] for idx in order if idx < len(curr_cands)]
+                curr['text_candidates'] = [curr_cands[idx] for idx in order
+                                           if idx < len(curr_cands)]
 
         return batch_reply
 

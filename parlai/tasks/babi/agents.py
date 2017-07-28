@@ -12,6 +12,7 @@ import copy
 import itertools
 import os
 
+
 def _path(exsz, task, opt, dt=''):
     # Build the data if it doesn't exist.
     build(opt)
@@ -21,18 +22,21 @@ def _path(exsz, task, opt, dt=''):
                         'en-valid{exsz}-nosf'.format(exsz=exsz),
                         'qa{task}_{type}.txt'.format(task=task, type=dt))
 
+
 def mod_entry(entry, task):
     y = entry[1]
     if y is not None:
         if task == '8':
             # holding, labels like 'milk,cookies,football'
             # add permutations like 'milk,football,cookies', etc'
-            split = y[0].split(',')
-            entry[1] = [','.join(p) for p in itertools.permutations(split)]
+            # split = y[0].split(',')
+            # entry[1] = [','.join(p) for p in itertools.permutations(split)]
+            entry[1] = [y[0].replace(',', '_')]
         elif task == '19':
             # pathfinding, labels like 'n,e' or 's,w'
             # add version with spaces, 'n e'
-            entry[1] = [y[0], y[0].replace(',', ' ')]
+            # entry[1] = [y[0], y[0].replace(',', ' ')]
+            entry[1] = [y[0].replace(',', ' ')]
 
     return entry
 
