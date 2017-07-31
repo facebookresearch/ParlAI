@@ -257,15 +257,26 @@ class Seq2seqAgent(Agent):
                 )
 
                 cand_scores = torch.zeros(cview.size(0))
+                cand_lengths = torch.LongTensor(cview.size(0)).fill_(0)
                 if self.use_cuda:
                     cand_scores = cand_scores.cuda(async=True)
+                    cand_lengths = cand_lengths.cuda(async=True)
                 cand_scores = Variable(cand_scores)
+                cand_lengths = Variable(cand_lengths)
+
                 for i in range(cview.size(1)):
                     output, cands_hn = self.decoder(cands_xes, cands_hn)
                     preds, scores = self.hidden_to_idx(output, dropout=False)
                     cs = cview.select(1, i)
-                    cand_scores.add_(torch.gather(scores, 1, cs.unsqueeze(1)).squeeze())
+                    non_nulls = cs.ne(self.NULL_IDX)
+                    cand_lengths += non_nulls.long()
+                    score_per_cand = torch.gather(scores, 1, cs.unsqueeze(1)).squeeze()
+                    torch.addcmul(cand_scores, score_per_cand, non_nulls.float())
+                    cand_scores.add_(score_per_cand)
                     cands_xes = self.lt(cs).unsqueeze(0)
+
+                # average the scores per token
+                cand_scores /= cand_lengths.float()
 
                 cand_scores = cand_scores.view(cands.size(0), cands.size(1))
                 srtd_scores, text_cand_inds = cand_scores.sort(1, True)
@@ -347,12 +358,14 @@ class Seq2seqAgent(Agent):
             valid_cands = []
             for i in valid_inds:
                 if 'label_candidates' in observations[i]:
-                    # each candidate tuple is a pair of the parsed version and the
-                    # original full string
+                    # each candidate tuple is a pair of the parsed version and
+                    # the original full string
                     cs = list(observations[i]['label_candidates'])
                     parsed.append([self.parse(c) for c in cs])
                     valid_cands.append((i, cs))
             if len(parsed) > 0:
+                # TODO: store lengths of cands separately, so don't have zero
+                # padding for varying number of cands per example
                 # found cands, pack them into tensor
                 max_c_len = max(max(len(c) for c in cs) for cs in parsed)
                 max_c_cnt = max(len(cs) for cs in parsed)
