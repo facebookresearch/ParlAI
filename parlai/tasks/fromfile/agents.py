@@ -3,13 +3,15 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
+#
+# This task simply loads the specified file: useful for quick tests without
+# setting up a new task.
 
 from parlai.core.fbdialog_teacher import FbDialogTeacher
 
 import copy
 import os
 
-# By default train on all tasks at once.
 class DefaultTeacher(FbDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
