@@ -162,19 +162,14 @@ of patent rights can be found in the PATENTS file in the same directory.
     /* ================= State variables ================= */
     var verbose_log = false;
     var is_cover_page = (`{{is_cover_page}}` === 'true') ? true : false;
-    var task_group_id = `{{task_group_id}}`;
-    var hit_index = `{{hit_index}}`;
-    var assignment_index = `{{assignment_index}}`;
+    var task_group_id = get_url_parameter('task_group_id');
     var assignmentId = null;
     var hitId = null;
     var workerId = null;
-    var conversation_id = `{{conversation_id}}`;
-    var cur_agent_id = `{{cur_agent_id}}`;
+    var conversation_id = null;
+    var cur_agent_id = null;
     var task_description = null;
-    var is_sandbox = null;
     var mturk_submit_url = null;
-    var num_hits = null;
-    var num_assignments = null;
     var hit_is_submitted = false;
     var hit_is_expired = false
     var commands_received = {};
@@ -208,13 +203,19 @@ of patent rights can be found in the PATENTS file in the same directory.
         return new_message_list;
     }
 
-    function handle_new_messages(new_messages) {
-        var new_message_list = message_list.concat(new_messages);
-        new_message_list = filter_duplicated_messages(new_message_list);
-        if (new_message_list.length <= message_list.length) {
-            return false;
+    function remove_conversation(removed_conversation_id) {
+        var new_message_list = [];
+        for (var i = 0; i < message_list.length; i++) {
+            var conversation_id = message_list[i]['conversation_id'];
+            if (!(conversation_id === removed_conversation_id)) {
+                new_message_list.push(message_list[i]);
+            }
         }
         message_list = new_message_list;
+        display_messages(message_list);
+    }
+
+    function display_messages(message_list) {
         message_list = sort_by_key(message_list, 'timestamp');
 
         $('div#message_thread').empty();
@@ -248,6 +249,18 @@ of patent rights can be found in the PATENTS file in the same directory.
             $("div#message_thread").css("display", "");
             scroll_conversation_to_bottom();
         }
+    }
+
+    function handle_new_messages(new_messages) {
+        var new_message_list = message_list.concat(new_messages);
+        new_message_list = filter_duplicated_messages(new_message_list);
+        if (new_message_list.length <= message_list.length) {
+            return false;
+        }
+        message_list = new_message_list;
+
+        display_messages(message_list);
+
         return true;
     }
 
@@ -266,6 +279,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                     task_group_id: task_group_id,
                     conversation_id: conversation_id,
                     sender_agent_id: cur_agent_id,
+                    sender_worker_id: workerId,
                     receiver_agent_id: receiver_agent_id,
                     message_id: uuidv4(),
                     timestamp: timestamp,
@@ -308,6 +322,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                 if (handle_new_messages(new_messages) && !task_done) {
                     $("div#waiting-for-message").css("display", "");
                 }
+
                 state_lock = false;
             });
         }
@@ -350,14 +365,17 @@ of patent rights can be found in the PATENTS file in the same directory.
                 'agent_alive', 
                 {
                     task_group_id: task_group_id,
-                    conversation_id: conversation_id,
-                    agent_id: cur_agent_id,
                     assignment_id: assignmentId,
                     hit_id: hitId,
                     worker_id: workerId
                 },
                 function(data) {
                     if (verbose_log) console.log(data);
+                    conversation_id = data['conversation_id'];
+                    cur_agent_id = data['agent_id'];
+                    // TODO: in the future, should call get_messages and get_commands here after the worker refreshes or resumes the HIT
+
+                    window.location.href = window.location.href + '&mturk_agent_id=' + cur_agent_id; // Reload page to get agent-specific template
                 }
             );
         });
@@ -396,6 +414,15 @@ of patent rights can be found in the PATENTS file in the same directory.
                 $("div#waiting-for-message").css("display", "none");
             } else if (command === 'COMMAND_SUBMIT_HIT') {
                 all_done_callback();
+            } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
+                command_data = data['command_data'];
+                if (!(conversation_id === command_data['conversation_id'])) {
+                    var old_conversation_id = conversation_id;
+                    conversation_id = command_data['conversation_id'];
+                    cur_agent_id = command_data['agent_id'];
+
+                    remove_conversation(old_conversation_id);
+                }
             }
             state_lock = false;
         });
@@ -488,11 +515,8 @@ of patent rights can be found in the PATENTS file in the same directory.
     $(document).ready(function() {
         get_hit_config(function(data) {
             task_description = data['task_description'];
-            is_sandbox = data['is_sandbox'];
             mturk_submit_url = data['mturk_submit_url'];
-            num_hits = data['num_hits'];
-            num_assignments = data['num_assignments'];
-
+            
             assignmentId = get_url_parameter('assignmentId');
             hitId = get_url_parameter('hitId');
             workerId = get_url_parameter('workerId');

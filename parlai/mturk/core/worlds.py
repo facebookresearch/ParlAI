@@ -5,14 +5,29 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.worlds import World, validate
 
-class MTurkWorld(World):
-    """Generic world for MTurk."""
+class MTurkOnboardWorld(World):
+    """Generic world for onboarding a Turker and collecting information from them."""
     def __init__(self, opt, mturk_agent):
         self.mturk_agent = mturk_agent
         self.episodeDone = False    
 
     def parley(self):
-        self.episode_done = True
+        self.episodeDone = True
+
+    def episode_done(self):
+        return self.episodeDone
+
+    def shutdown(self):
+        pass
+
+class MTurkTaskWorld(World):
+    """Generic world for MTurk tasks."""
+    def __init__(self, opt, mturk_agent):
+        self.mturk_agent = mturk_agent
+        self.episodeDone = False
+
+    def parley(self):
+        self.episodeDone = True
 
     def episode_done(self):
         return self.episodeDone
@@ -30,6 +45,12 @@ class MTurkWorld(World):
             mturk_agent.shutdown()
         Parallel(n_jobs=len(self.mturk_agents), backend='threading')(delayed(shutdown_agent)(agent) for agent in self.mturk_agents)
         """
+
+    def get_num_abandoned_agents(self):
+        if self.mturk_agent.hit_is_abandoned:
+            return 1
+        else:
+            return 0
         
     def review_work(self):
         """Programmatically approve/reject the turker's work.

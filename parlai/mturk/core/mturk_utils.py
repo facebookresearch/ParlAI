@@ -57,8 +57,7 @@ def calculate_mturk_cost(payment_opt):
     Example payment_opt format for paying reward:
     {
         'type': 'reward',
-        'num_hits': 1,
-        'num_assignments': 1,
+        'num_total_assignments': 1,
         'reward': 0.05  # in dollars
     }
 
@@ -70,8 +69,8 @@ def calculate_mturk_cost(payment_opt):
     """
     total_cost = 0
     if payment_opt['type'] == 'reward':
-        total_cost = payment_opt['num_hits'] * payment_opt['num_assignments'] * payment_opt['reward'] * 1.2
-        if payment_opt['num_assignments'] >= 10:
+        total_cost = payment_opt['num_total_assignments'] * payment_opt['reward'] * 1.2
+        if payment_opt['num_total_assignments'] >= 10:
             total_cost = total_cost * 1.2
     elif payment_opt['type'] == 'bonus':
         total_cost = payment_opt['amount'] * 1.2

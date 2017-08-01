@@ -102,56 +102,6 @@ exports.clean_database = function() {
 //     return new_message_object.get({plain: true});
 // }
 
-exports.sync_hit_assignment_info = async function(task_group_id, num_assignments, mturk_agent_ids, assignment_id, hit_id, worker_id) {
-    if (mturk_agent_ids) {
-        var new_allocation_object = await MTurkHITAgentAllocation.create({
-                                                task_group_id: task_group_id,
-                                                agent_id: null,
-                                                conversation_id: null,
-                                                assignment_id: assignment_id,
-                                                hit_id: hit_id,
-                                                worker_id: worker_id
-                                            });
-        var object_id = new_allocation_object.id;
-
-        var existing_allocation_object_list = await MTurkHITAgentAllocation.findAll({
-                                                    where: { task_group_id: task_group_id },
-                                                    order: sequelize.col('id')
-                                                });
-        var existing_allocation_id_list = [];
-
-        existing_allocation_object_list.forEach((allocation_object) => {
-            existing_allocation_id_list.push(allocation_object.get('id'));
-        });
-
-        var index_in_list = existing_allocation_id_list.indexOf(object_id);
-
-        if (index_in_list > -1) {
-            var mturk_agent_id = mturk_agent_ids[index_in_list % mturk_agent_ids.length];
-            var assignment_index = Math.trunc(Math.floor(index_in_list / mturk_agent_ids.length) % num_assignments + 1);
-            var hit_index = Math.trunc(Math.floor(index_in_list / (mturk_agent_ids.length * num_assignments)) + 1);
-
-            var conversation_id = hit_index + '_' + assignment_index;
-
-            await MTurkHITAgentAllocation.update(
-                {
-                    conversation_id: conversation_id,
-                    agent_id: mturk_agent_id
-                },
-                { 
-                    where: { id: new_allocation_object.id }
-                }
-            );
-
-            return {
-                hit_index: hit_index, 
-                assignment_index: assignment_index,
-                mturk_agent_id: mturk_agent_id
-            }
-        }
-    }
-}
-
 exports.get_hit_assignment_info = async function(task_group_id, agent_id, conversation_id) {
     var existing_allocation_object = await MTurkHITAgentAllocation.findOne({
                                                 where: { 
