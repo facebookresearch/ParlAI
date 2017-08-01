@@ -45,9 +45,9 @@ class Seq2seqAgent(Agent):
         agent.add_argument('--gpu', type=int, default=-1,
             help='which GPU device to use')
         agent.add_argument('-r', '--rank-candidates', type='bool', default=False,
-            help='rank candidates if available. note that this is very weak ' +
-                 'ranking: it is trying to pick the candidate most like the ' +
-                 'generated output. CPU overhead is light, GPU is more heavy.')
+            help='rank candidates if available. this is done by computing the' +
+                 ' mean score per token for each candidate and selecting the ' +
+                 'highest scoring one.')
 
     def __init__(self, opt, shared=None):
         # initialize defaults first
@@ -55,6 +55,13 @@ class Seq2seqAgent(Agent):
         if not shared:
             # this is not a shared instance of this class, so do full
             # initialization. if shared is set, only set up shared members.
+            
+            # check for cuda
+            self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
+            if self.use_cuda:
+                print('[ Using CUDA ]')
+                torch.cuda.set_device(opt['gpu'])
+
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
                 print('Loading existing model params from ' + opt['model_file'])
@@ -109,11 +116,6 @@ class Seq2seqAgent(Agent):
                 # set loaded states if applicable
                 self.set_states(self.states)
 
-            # check for cuda
-            self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
-            if self.use_cuda:
-                print('[ Using CUDA ]')
-                torch.cuda.set_device(opt['gpu'])
             if self.use_cuda:
                 self.cuda()
 
@@ -271,11 +273,12 @@ class Seq2seqAgent(Agent):
                     cs = cview.select(1, i)
                     non_nulls = cs.ne(self.NULL_IDX)
                     cand_lengths += non_nulls.long()
-                    score_per_cand = torch.gather(scores, 1, cs.unsqueeze(1)).squeeze()
-                    torch.addcmul(cand_scores, score_per_cand, non_nulls.float())
-                    cand_scores.add_(score_per_cand)
+                    score_per_cand = torch.gather(scores, 1, cs.unsqueeze(1))
+                    cand_scores += score_per_cand.squeeze() * non_nulls.float()
                     cands_xes = self.lt(cs).unsqueeze(0)
 
+                # set empty scores to -1, so when divided by 0 they become -inf
+                cand_scores -= cand_lengths.eq(0).float()
                 # average the scores per token
                 cand_scores /= cand_lengths.float()
 
