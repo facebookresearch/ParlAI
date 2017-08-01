@@ -70,9 +70,9 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if add_parlai_args:
             self.add_parlai_args()
+            self.add_image_args()
         if add_model_args:
             self.add_model_args(model_argv)
-        self.add_image_args()
 
     def add_parlai_data_path(self, argument_group=None):
         if argument_group is None:
