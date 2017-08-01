@@ -77,7 +77,7 @@ class FbDialogTeacher(DialogTeacher):
         cnt = 0
         with open(path) as read:
             for line in read:
-                line = line.strip()
+                line = line.strip().replace('\\n', '\n')
                 if len(line) > 0:
                     cnt = cnt + 1
                     # If lines are numbered we strip them of numbers.
@@ -135,7 +135,7 @@ class FbDialogTeacher(DialogTeacher):
             reward = None
             dialog_index = 0
             for line in read:
-                line = line.strip()
+                line = line.strip().replace('\\n', '\n')
                 if len(line) == 0:
                     continue
 
