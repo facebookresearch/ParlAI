@@ -46,11 +46,11 @@ class DialogTeacher(Teacher):
         # first initialize any shared objects
         self.random = self.datatype == 'train'
         if shared and shared.get('data'):
-            self.data = DialogData(opt, None, cands=self.label_candidates(),
-                                    shared=shared['data'].share())
+            self.data = DialogData(opt, shared=shared['data'])
         else:
-            self.data = DialogData(opt, self.setup_data(opt['datafile']),
-                                    cands=self.label_candidates())
+            self.data = DialogData(opt,
+                data_loader=self.setup_data(opt['datafile']),
+                cands=self.label_candidates())
 
         # for ordered data in batch mode (especially, for validation and
         # testing), each teacher in the batch gets a start index and a step
@@ -85,7 +85,7 @@ class DialogTeacher(Teacher):
 
     def share(self):
         shared = super().share()
-        shared['data'] = self.data
+        shared['data'] = self.data.share()
         return shared
 
     def label_candidates(self):
@@ -178,15 +178,15 @@ class DialogData(object):
     or randomly when returning examples to the caller.
     """
 
-    def __init__(self, opt, data_loader, cands=None, shared=None):
+    def __init__(self, opt, data_loader=None, cands=None, shared=None):
         # self.data is a list of episodes
         # each episode is a tuple of entries
         # each entry is a tuple of values for the action/observation table
         self.opt = opt
         if shared:
+            self.image_loader = shared.get('image_loader', None)
             self.data = shared.get('data', [])
             self.cands = shared.get('cands', None)
-            self.image_loader = shared.get('image_loader', None)
         else:
             self.image_loader = ImageLoader(opt)
             self.data = []
@@ -196,8 +196,11 @@ class DialogData(object):
         self.copied_cands = False
 
     def share(self):
-        shared = {'data': self.data, 'cands': self.cands,
-                'image_loader': self.image_loader}
+        shared = {
+            'data': self.data,
+            'cands': self.cands,
+            'image_loader': self.image_loader
+        }
         return shared
 
     def __len__(self):

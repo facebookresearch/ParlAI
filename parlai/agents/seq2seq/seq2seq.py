@@ -234,7 +234,8 @@ class Seq2seqAgent(Agent):
 
             if random.random() < 0.1:
                 # sometimes output a prediction for debugging
-                print('prediction:', ' '.join(output_lines[0]), 'label:', self.dict.vec2txt(ys.data[0]))
+                print('prediction:', ' '.join(output_lines[0]),
+                      '\nlabel:', self.dict.vec2txt(ys.data[0]))
         else:
             # just produce a prediction without training the model
             done = [False for _ in range(batchsize)]
@@ -308,7 +309,6 @@ class Seq2seqAgent(Agent):
 
         return output_lines, text_cand_inds
 
-
     def batchify(self, observations):
         """Convert a list of observations into input & target tensors."""
         # valid examples
@@ -335,10 +335,10 @@ class Seq2seqAgent(Agent):
 
         # set up the target tensors
         ys = None
-        if batchsize > 0 and 'labels' in exs[0]:
+        if batchsize > 0 and any(['labels' in ex for ex in exs]):
             # randomly select one of the labels to update on, if multiple
             # append END to each label
-            labels = [random.choice(ex['labels']) + ' ' + self.END for ex in exs]
+            labels = [random.choice(ex.get('labels', [''])) + ' ' + self.END for ex in exs]
             parsed = [self.parse(y) for y in labels]
             max_y_len = max(len(y) for y in parsed)
             ys = torch.LongTensor(batchsize, max_y_len).fill_(0)
