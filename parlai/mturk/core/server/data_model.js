@@ -8,10 +8,6 @@ const db_name = _load_server_config()['db_name'];
 const db_username = _load_server_config()['db_username'];
 const db_password = _load_server_config()['db_password'];
 
-const COMMAND_SEND_MESSAGE = 'COMMAND_SEND_MESSAGE'; // MTurk web client is expected to send a new message to server
-const COMMAND_SHOW_DONE_BUTTON = 'COMMAND_SHOW_DONE_BUTTON'; // MTurk web client should show the "DONE" button
-const COMMAND_EXPIRE_HIT = 'COMMAND_EXPIRE_HIT'; // MTurk web client should show "HIT is expired"
-
 var opts = {
     define: {
         //prevent Sequelize from pluralizing table names

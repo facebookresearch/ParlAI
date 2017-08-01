@@ -7,3 +7,4 @@
 COMMAND_SEND_MESSAGE = 'COMMAND_SEND_MESSAGE' # MTurk web client is expected to send a new message to server
 COMMAND_SHOW_DONE_BUTTON = 'COMMAND_SHOW_DONE_BUTTON' # MTurk web client should show the "DONE" button
 COMMAND_EXPIRE_HIT = 'COMMAND_EXPIRE_HIT' # MTurk web client should show "HIT is expired"
+COMMAND_SUBMIT_HIT = 'COMMAND_SUBMIT_HIT' # MTurk web client should submit the HIT directly

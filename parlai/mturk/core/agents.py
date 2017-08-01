@@ -17,7 +17,7 @@ from parlai.core.agents import create_agent_from_shared
 from parlai.mturk.core.server_utils import setup_server, create_hit_config
 from parlai.mturk.core.mturk_utils import calculate_mturk_cost, check_mturk_balance, create_hit_type, create_hit_with_hit_type, get_mturk_client, setup_aws_credentials
 import threading
-from parlai.mturk.core.data_model import COMMAND_SEND_MESSAGE, COMMAND_SHOW_DONE_BUTTON, COMMAND_EXPIRE_HIT
+from parlai.mturk.core.data_model import COMMAND_SEND_MESSAGE, COMMAND_SHOW_DONE_BUTTON, COMMAND_EXPIRE_HIT, COMMAND_SUBMIT_HIT
 from botocore.exceptions import ClientError
 import uuid
 from socketIO_client_nexus import SocketIO
@@ -606,13 +606,16 @@ class MTurkAgent(Agent):
         print_and_log('Conversation ID: ' + str(self.conversation_id) + ', Agent ID: ' + self.id + ' - HIT is done.')
         return True
 
-    def shutdown(self, timeout=None): # Timeout in seconds, after which the HIT will be expired automatically
+    def shutdown(self, timeout=None, direct_submit=False): # Timeout in seconds, after which the HIT will be expired automatically
+        command_to_send = COMMAND_SHOW_DONE_BUTTON
+        if direct_submit:
+            command_to_send = COMMAND_SUBMIT_HIT
         if not self.hit_is_abandoned:
             self.manager.send_new_command(
                 task_group_id=self.manager.task_group_id,
                 conversation_id=self.conversation_id,
                 sender_agent_id='[World]',
                 receiver_agent_id=self.id,
-                command=COMMAND_SHOW_DONE_BUTTON
+                command=command_to_send
             )
             return self.wait_for_hit_completion(timeout=timeout)

@@ -394,6 +394,8 @@ of patent rights can be found in the PATENTS file in the same directory.
                 update_UI_for_response_type('expired');
                 hit_is_expired = true;
                 $("div#waiting-for-message").css("display", "none");
+            } else if (command === 'COMMAND_SUBMIT_HIT') {
+                all_done_callback();
             }
             state_lock = false;
         });
