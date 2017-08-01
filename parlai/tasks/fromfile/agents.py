@@ -13,8 +13,9 @@ import copy
 import os
 
 class DefaultTeacher(FbDialogTeacher):
-    ''' This task simply loads the specified file: useful for quick tests without
-    setting up a new task. '''
+    """This task simply loads the specified file: useful for quick tests without
+    setting up a new task.
+    """
     
     @staticmethod
     def add_cmdline_args(argparser):
