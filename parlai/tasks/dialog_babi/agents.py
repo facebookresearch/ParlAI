@@ -22,6 +22,7 @@ tasks[6] = 'dialog-babi-task6-dstc2'
 def _path(task, opt):
     # Build the data if it doesn't exist.
     build(opt)
+    prefix = os.path.join(opt['datapath'], 'dialog-bAbI', 'dialog-bAbI-tasks')
     suffix = ''
     dt = opt['datatype'].split(':')[0]
     if dt == 'train':
@@ -30,8 +31,16 @@ def _path(task, opt):
         suffix = 'tst'
     elif dt == 'valid':
         suffix = 'dev'
-    return os.path.join(opt['datapath'], 'dialog-bAbI', 'dialog-bAbI-tasks',
-        '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix))
+    datafile = os.path.join(prefix,
+            '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix))
+
+    if opt['task'].split(':')[2] != '6':
+        cands_datafile = os.path.join(prefix, 'dialog-babi-candidates.txt')
+    else:
+        cands_datafile = os.path.join(prefix,
+                'dialog-babi-task6-dstc2-candidates.txt')
+
+    return datafile, cands_datafile
 
 
 # The knowledge base of facts that can be used to answer questions.
@@ -47,10 +56,8 @@ class KBTeacher(FbDialogTeacher):
 # Single task.
 class TaskTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
-        opt['datafile'] = _path(opt['task'].split(':')[2], opt)
-        opt['cands_datafile'] = os.path.join(opt['datapath'], 'dialog-bAbI',
-                                             'dialog-bAbI-tasks',
-                                             'dialog-babi-candidates.txt')
+        paths = _path(opt['task'].split(':')[2], opt)
+        opt['datafile'], opt['cands_datafile'] = paths
         super().__init__(opt, shared)
 
 
@@ -60,7 +67,4 @@ class DefaultTeacher(MultiTaskTeacher):
         opt = copy.deepcopy(opt)
         opt['task'] = ','.join('dialog_babi:Task:%d' % (i + 1)
                                for i in range(6))
-        opt['cands_datafile'] = os.path.join(opt['datapath'], 'dialog-bAbI',
-                                             'dialog-bAbI-tasks',
-                                             'dialog-babi-candidates.txt')
         super().__init__(opt, shared)
