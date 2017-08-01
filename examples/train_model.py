@@ -26,12 +26,13 @@ TODO List:
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import Timer
+from parlai.core.utils import Timer, TensorboardLogger
 import build_dict
 import copy
 import importlib
 import math
 import os
+
 
 def run_eval(agent, opt, datatype, still_training=False, max_exs=-1):
     ''' Eval on validation/test data. '''
@@ -93,6 +94,8 @@ def main():
     train.add_argument('-dbf', '--dict-build-first',
                         type='bool', default=True,
                         help='build dictionary first before training agent')
+    train.add_argument('--tensorboard-dir', default='',
+                        help='directory for tensorboard logging')
     opt = parser.parse_args()
     # Possibly build a dictionary (not all models do this).
     if opt['dict_build_first'] and 'dict_file' in opt:
@@ -100,6 +103,13 @@ def main():
             opt['dict_file'] = opt['model_file'] + '.dict'
         print("[ building dictionary first... ]")
         build_dict.build_dict(opt)
+
+    # Set up logger if directory provided
+    if opt['tensorboard_dir']:
+        logger = TensorboardLogger(opt['tensorboard_dir'])
+        opt['train_log'] = {}
+        opt['valid_log'] = {}
+
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
@@ -149,7 +159,7 @@ def main():
             # check if we should log amount of time remaining
             time_left = None
             if opt['num_epochs'] > 0:
-                exs_per_sec =  train_time.time() / total_exs
+                exs_per_sec = train_time.time() / total_exs
                 time_left = (max_exs - total_exs) * exs_per_sec
             if opt['max_train_time'] > 0:
                 other_time_left = opt['max_train_time'] - train_time.time()
@@ -166,9 +176,20 @@ def main():
             print(log)
             log_time.reset()
 
+            # Log train values
+            if opt['tensorboard_dir']:
+                logger.log_train(train_report, total_exs)
+                logger.log_train(opt['train_log'], total_exs)
+
         if (opt['validation_every_n_secs'] > 0 and
                 validate_time.time() > opt['validation_every_n_secs']):
             valid_report = run_eval(agent, opt, 'valid', True, opt['validation_max_exs'])
+
+            # Log valid values
+            if opt['tensorboard_dir']:
+                logger.log_valid(valid_report, total_exs)
+                logger.log_valid(opt['valid_log'], total_exs)
+
             if valid_report['accuracy'] > best_accuracy:
                 best_accuracy = valid_report['accuracy']
                 impatience = 0
