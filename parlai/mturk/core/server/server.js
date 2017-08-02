@@ -62,7 +62,7 @@ app.get('/chat_index', async function (req, res) {
     template_context['is_cover_page'] = false;
     template_context['frame_height'] = 650;
 
-    custom_index_page = mturk_agent_id + '_index.html';
+    var custom_index_page = mturk_agent_id + '_index.html';
     if (fs.existsSync(task_directory_name+'/'+custom_index_page)) {
       res.render(custom_index_page, template_context);
     } else {

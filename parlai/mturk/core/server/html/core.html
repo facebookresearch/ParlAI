@@ -322,7 +322,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                 if (handle_new_messages(new_messages) && !task_done) {
                     $("div#waiting-for-message").css("display", "");
                 }
-
+                after_send_message();
                 state_lock = false;
             });
         }
@@ -424,6 +424,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                     remove_conversation(old_conversation_id);
                 }
             }
+            after_receive_command(command);
             state_lock = false;
         });
         socket.on('new_message', async function (data) {
@@ -528,6 +529,8 @@ of patent rights can be found in the PATENTS file in the same directory.
             }
         });
     });
+    function after_receive_command(command) {};
+    function after_send_message() {};
 </script>
 
 {% block additional_scripts %}
