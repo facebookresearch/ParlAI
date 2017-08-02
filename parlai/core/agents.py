@@ -237,8 +237,11 @@ class MultiTaskTeacher(Teacher):
         num_tasks = 0
         total = 0
         for i in range(len(self.tasks)):
+            tid = self.tasks[i].getID()
             mt = self.tasks[i].report()
-            m['tasks'][self.tasks[i].getID()] = mt
+            while tid in m['tasks']:
+                tid += '_'
+            m['tasks'][tid] = mt
             total += mt['total']
             if 'accuracy' in mt:
                 sum_accuracy += mt['accuracy']
