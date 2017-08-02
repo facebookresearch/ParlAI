@@ -98,15 +98,12 @@ app.get('/chat_index', async function (req, res) {
     template_context['cur_agent_id'] = mturk_agent_id;
     template_context['frame_height'] = 650;
 
-    // TODO: address custom template case
-    /*
-    custom_index_page = mturk_agent_id + '_index.html'
-    if os.path.exists(custom_index_page):
-        return render_template(custom_index_page, **template_context)
-    else:
-        return render_template('mturk_index.html', **template_context)
-    */
-    res.render('mturk_index.html', template_context);
+    var custom_index_page = mturk_agent_id + '_index.html';
+    if (fs.existsSync(task_directory_name+'/'+custom_index_page)) {
+      res.render(custom_index_page, template_context);
+    } else {
+      res.render('mturk_index.html', template_context);
+    }
   }
 })
 
