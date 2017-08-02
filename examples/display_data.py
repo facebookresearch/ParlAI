@@ -35,7 +35,7 @@ def main():
         cnt = 0
         for _ in world:
             world.parley()
-            # print(world.display() + '\n~~')
+            print(world.display() + '\n~~')
             cnt += 1
             if world.epoch_done():
                 print('EPOCH DONE')

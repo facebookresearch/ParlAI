@@ -170,7 +170,8 @@ class DrqaAgent(Agent):
                                     self.feature_dict, self.state_dict)
 
     def observe(self, observation):
-        observation = copy.deepcopy(observation)
+        # shallow copy observation (deep copy can be expensive)
+        observation = observation.copy()
         if not self.episode_done:
             dialogue = self.observation['text'].split('\n')[:-1]
             dialogue.extend(observation['text'].split('\n'))

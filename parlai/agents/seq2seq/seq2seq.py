@@ -187,6 +187,7 @@ class Seq2seqAgent(Agent):
         return Variable(t)
 
     def observe(self, observation):
+        # shallow copy observation (deep copy can be expensive)
         observation = observation.copy()
         if not self.episode_done:
             # if the last example wasn't the end of an episode, then we need to
