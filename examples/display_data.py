@@ -17,12 +17,13 @@ from parlai.core.worlds import create_task
 
 import random
 
+
 def main():
     random.seed(42)
 
     # Get command line arguments
     parser = ParlaiParser()
-    parser.add_argument('-n', '--num-examples', default=10)
+    parser.add_argument('-n', '--num-examples', default=10, type=int)
     opt = parser.parse_args()
 
     # create repeat label agent and assign it to the specified task
@@ -31,12 +32,17 @@ def main():
 
     # Show some example dialogs.
     with world:
-        for k in range(int(opt['num_examples'])):
+        cnt = 0
+        for _ in world:
             world.parley()
-            print(world.display() + '\n~~')
+            # print(world.display() + '\n~~')
+            cnt += 1
             if world.epoch_done():
                 print('EPOCH DONE')
                 break
+            elif opt['num_examples'] > 0 and cnt >= opt['num_examples']:
+                break
+
 
 if __name__ == '__main__':
     main()
