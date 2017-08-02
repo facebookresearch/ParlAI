@@ -186,6 +186,10 @@ class Seq2seqAgent(Agent):
             t = t.cuda(async=True)
         return Variable(t)
 
+    def reset(self):
+        self.observation = None
+        self.episode_done = True
+
     def observe(self, observation):
         # shallow copy observation (deep copy can be expensive)
         observation = observation.copy()
