@@ -46,8 +46,11 @@ def main():
 
         def run_onboard(mturk_agent):
             world = MTurkMultiAgentDialogOnboardWorld(opt=opt, mturk_agent=mturk_agent)
+            print("here1")
             while not world.episode_done():
+                print("here2")
                 world.parley()
+            print("here3")
             world.shutdown()
 
         mturk_manager.set_onboard_function(onboard_function=run_onboard)
@@ -76,6 +79,7 @@ def main():
 
             return world.get_num_abandoned_agents()
 
+        print("here4")
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
             role_function=get_worker_role,

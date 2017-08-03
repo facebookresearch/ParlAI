@@ -9,6 +9,7 @@ from joblib import Parallel, delayed
 
 class MTurkMultiAgentDialogOnboardWorld(MTurkOnboardWorld):
     def parley(self):
+        print("Onboarding worker...")
         self.episodeDone = True
 
 class MTurkMultiAgentDialogTaskWorld(MultiAgentDialogWorld):

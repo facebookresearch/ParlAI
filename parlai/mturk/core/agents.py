@@ -34,7 +34,7 @@ TIMEOUT_MESSAGE = '[TIMEOUT]'
 
 logging_enabled = True
 logger = None
-debug = False
+debug = True
 
 if logging_enabled:
     logging.basicConfig(filename=str(time.time())+'.log',
@@ -126,10 +126,12 @@ class MTurkManager():
             if self.onboard_function:
                 self.onboard_function(mturk_agent)
             with self.change_condition:
+                print("Adding worker to pool...")
                 self.worker_pool.append(mturk_agent)
                 self.change_condition.notify()
 
         if not mturk_agent.worker_id in self.worker_id_to_onboard_thread:
+            mturk_agent.change_conversation(conversation_id='o_'+str(uuid.uuid4()), agent_id='Worker')
             onboard_thread = threading.Thread(target=_onboard_function, args=(mturk_agent,))
             onboard_thread.daemon = True
             onboard_thread.start()
@@ -137,6 +139,7 @@ class MTurkManager():
 
     def start_task(self, eligibility_function, role_function, task_function):
         def _task_function():
+            print("Starting task...")
             num_abandoned_agents = 0
             if task_function:
                 num_abandoned_agents = task_function()
@@ -149,6 +152,7 @@ class MTurkManager():
                 self.create_additional_hits(num_hits=len(self.mturk_agent_ids)-num_abandoned_agents, unique_worker=self.opt['unique_worker'])
 
         while self.num_completed_conversations < self.opt['num_conversations']:
+            print("here5")
             with self.change_condition:
                 self.worker_candidates = []
                 for worker in self.worker_pool:
@@ -164,7 +168,7 @@ class MTurkManager():
                         worker_agent_id = role_function(worker)
                         worker.change_conversation(conversation_id=new_conversation_id, agent_id=worker_agent_id)
                         
-                    self.worker_candidates.sort(key=lambda x: self.mturk_agent_ids.index(x['id']))
+                    self.worker_candidates.sort(key=lambda x: self.mturk_agent_ids.index(x.id))
 
                     task_thread = threading.Thread(target=_task_function, args=(self.opt, self.worker_candidates))
                     task_thread.daemon = True
@@ -180,6 +184,7 @@ class MTurkManager():
         emit_success = False
         while not emit_success:
             try:
+                print_and_log(event_name + ' sending to server. Data: ' + str(event_data), False)
                 self.socketIO.emit(event_name, event_data, on_event_sent)
                 emit_success = True
             except Exception as e:
@@ -188,6 +193,7 @@ class MTurkManager():
 
         def check_event_sent():
             if event_sent.wait(timeout=1): # Timeout in seconds
+                print_and_log(event_name + ' is acknowledged by server.', False)
                 if response_handler:
                     response_handler()
             else:
@@ -209,7 +215,7 @@ class MTurkManager():
                     'task_group_id': self.task_group_id,
                     'assignment_id': None,
                     'hit_id': None,
-                    'by_worker_id': '[World]'
+                    'worker_id': '[World]'
                 }
             )
 
@@ -229,7 +235,7 @@ class MTurkManager():
                 return
         
             # Match MTurkAgent object with actual Turker
-            mturk_agent = MTurkAgent.get_agent(
+            mturk_agent, is_new_agent = MTurkAgent.get_agent(
                 worker_id=worker_id,
                 opt=self.opt,
                 mturk_manager=self
@@ -247,7 +253,8 @@ class MTurkManager():
             mturk_agent.hit_id = hit_id
             mturk_agent.worker_id = worker_id
 
-            self.onboard_new_worker(mturk_agent=mturk_agent)
+            if is_new_agent:
+                self.onboard_new_worker(mturk_agent=mturk_agent)
 
         def on_new_message(*args):
             print_and_log("on_new_message: " + str(args), False)
@@ -372,6 +379,7 @@ class MTurkManager():
                 return ASSIGNMENT_NOT_DONE
 
     def create_additional_hits(self, num_hits, unique_worker):
+        print_and_log('Creating '+str(num_hits)+' hits. Unique worker: '+str(unique_worker), False)
         hit_type_id = create_hit_type(
             hit_title=self.opt['hit_title'],
             hit_description=self.opt['hit_description'] + ' (ID: ' + self.task_group_id + ')',
@@ -476,6 +484,7 @@ class MTurkManager():
 class MTurkAgent(Agent):
     worker_id_to_instance = {}
     mturk_agent_list = []
+    mturk_agent_list_lock = threading.Lock()
 
     @classmethod
     def set_new_message(cls, worker_id, new_message):
@@ -485,19 +494,19 @@ class MTurkAgent(Agent):
                 agent.new_message = new_message
 
     @classmethod
-    def get_agent(cls, worker_id, opt, agent_id, mturk_manager):
+    def get_agent(cls, worker_id, opt, mturk_manager):
         agent = None
-        if not worker_id in worker_id_to_instance:
-            worker_index = len(mturk_agent_list) + 1
+        is_new_agent = False
+        if not worker_id in cls.worker_id_to_instance:
             agent = MTurkAgent(manager=mturk_manager, opt=opt)
             agent.worker_id = worker_id
-            agent.change_conversation(conversation_id='o_'+worker_index, agent_id='Worker')
-
-            worker_id_to_instance[worker_id] = agent
-            mturk_agent_list.append(agent)            
+            cls.worker_id_to_instance[worker_id] = agent
+            cls.mturk_agent_list.append(agent) 
+            is_new_agent = True           
         else:
-            agent = worker_id_to_instance[worker_id]
-        return agent
+            agent = cls.worker_id_to_instance[worker_id]
+            is_new_agent = False
+        return agent, is_new_agent
 
     def __init__(self, manager, opt, shared=None):
         super().__init__(opt)
@@ -561,6 +570,7 @@ class MTurkAgent(Agent):
         return False
 
     def change_conversation(self, conversation_id, agent_id):
+        print_and_log('Changing conversation...', False)
         self.conversation_id = conversation_id
         self.id = agent_id
 

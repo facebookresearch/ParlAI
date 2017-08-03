@@ -51,7 +51,8 @@ app.get('/chat_index', async function (req, res) {
     res.render('cover_page.html', template_context);
   }
   else if (!mturk_agent_id) {
-    res.send("Initializing...");
+    template_context['left_pane_message'] = 'Initializing...'
+    res.render('mturk_index.html', template_context);
   }
   else {
     var hit_config = _load_hit_config();
@@ -61,6 +62,8 @@ app.get('/chat_index', async function (req, res) {
 
     template_context['is_cover_page'] = false;
     template_context['frame_height'] = 650;
+    template_context['cur_agent_id'] = mturk_agent_id;
+    template_context['conversation_id'] = params['conversation_id'];
 
     var custom_index_page = mturk_agent_id + '_index.html';
     if (fs.existsSync(task_directory_name+'/'+custom_index_page)) {
@@ -114,10 +117,12 @@ var commands_sent = {};
 var messages_sent = {};
 
 function _send_event_to_agent(socket, worker_id, event_name, event_data, callback_function) {
-  var worker_room_id = room_id_to_worker_id[worker_id];
+  var worker_room_id = worker_id_to_room_id[worker_id];
   // Get worker domain
   var worker_domain = worker_id_to_domain[worker_id];
   if (!worker_room_id || !worker_domain) { // Server does not have information about this worker. Should wait for this worker's agent_alive event instead.
+    if (!worker_room_id) console.log("worker room id doesn't exist!");
+    if (!worker_domain) console.log("worker domain doesn't exist!");
     return;
   }
   worker_domain.run(function(){
@@ -157,17 +162,17 @@ io.on('connection', (socket) => {
 
     socket.on('agent_alive', (data, ack) => {
       console.log('on_agent_alive', data);
-      var by_worker_id = data['by_worker_id'];
+      var worker_id = data['worker_id'];
 
-      worker_id_to_room_id[by_worker_id] = socket.id;
-      room_id_to_worker_id[socket.id] = by_worker_id;
-      if (!(worker_id_to_domain[by_worker_id])) {
-        worker_id_to_domain[by_worker_id] = domain.create();
+      worker_id_to_room_id[worker_id] = socket.id;
+      room_id_to_worker_id[socket.id] = worker_id;
+      if (!(worker_id_to_domain[worker_id])) {
+        worker_id_to_domain[worker_id] = domain.create();
       }
-      worker_id_to_event_name[by_worker_id] = 'agent_alive';
-      worker_id_to_event_data[by_worker_id] = data;
+      worker_id_to_event_name[worker_id] = 'agent_alive';
+      worker_id_to_event_data[worker_id] = data;
 
-      if (!(by_worker_id === '[World]')) {
+      if (!(worker_id === '[World]')) {
         _send_event_to_agent(
           socket,
           '[World]',

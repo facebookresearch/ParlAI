@@ -23,6 +23,7 @@ of patent rights can be found in the PATENTS file in the same directory.
 <div id="left-pane" class="col-xs-4" style="height: {{frame_height}}px; background-color: #dff0d8; padding: 30px; overflow:scroll;">
     <h1>Live Chat</h1>
     <hr style="border-top: 1px solid #555" />
+    {{ left_pane_message }}
     <span id="task-description" style="font-size: 16px">
     </span>
 </div>
@@ -160,18 +161,19 @@ of patent rights can be found in the PATENTS file in the same directory.
     });
     
     /* ================= State variables ================= */
-    var verbose_log = false;
+    var verbose_log = true;
     var is_cover_page = (`{{is_cover_page}}` === 'true') ? true : false;
     var task_group_id = get_url_parameter('task_group_id');
     var assignmentId = null;
     var hitId = null;
     var workerId = null;
-    var conversation_id = null;
-    var cur_agent_id = null;
+    var conversation_id = `{{conversation_id}}`;
+    var cur_agent_id = `{{cur_agent_id}}`;
     var task_description = null;
     var mturk_submit_url = null;
     var hit_is_submitted = false;
-    var hit_is_expired = false
+    var hit_is_expired = false;
+    var changing_conversation = false;
     var commands_received = {};
     var messages_received = {};
     var message_list = [];
@@ -281,6 +283,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                     sender_agent_id: cur_agent_id,
                     sender_worker_id: workerId,
                     receiver_agent_id: receiver_agent_id,
+                    receiver_worker_id: '[World]',
                     message_id: uuidv4(),
                     timestamp: timestamp,
 
@@ -333,6 +336,9 @@ of patent rights can be found in the PATENTS file in the same directory.
     }
 
     function _send_event_to_socket(event_name, event_data, callback_function=null) {
+        if (verbose_log) {
+            console.log("Sending: "+event_name+event_data);
+        }
         var event_sent = false;
         var timeout = 2; // in seconds
         var start_time = Date.now();
@@ -340,12 +346,12 @@ of patent rights can be found in the PATENTS file in the same directory.
             while (event_sent === false) {
                 if ((Date.now() - start_time) > (timeout * 1000)) { // Timeout
                     console.log(event_name + ' not acknowledged by server. Sending event again.');
-                    _send_event_to_socket(event_name, event_data, callback_function);
-                    return
+                    return _send_event_to_socket(event_name, event_data, callback_function);
                 } else {
                     await sleep(500);
                 }
             }
+            return true;
         }
         socket.emit(event_name, event_data, function(data) {
             event_sent = true;
@@ -353,7 +359,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                 callback_function(data);
             }
         });
-        check_event_sent();
+        return check_event_sent();
     }
 
     function setup_socket() {
@@ -371,11 +377,6 @@ of patent rights can be found in the PATENTS file in the same directory.
                 },
                 function(data) {
                     if (verbose_log) console.log(data);
-                    conversation_id = data['conversation_id'];
-                    cur_agent_id = data['agent_id'];
-                    // TODO: in the future, should call get_messages and get_commands here after the worker refreshes or resumes the HIT
-
-                    window.location.href = window.location.href + '&mturk_agent_id=' + cur_agent_id; // Reload page to get agent-specific template
                 }
             );
         });
@@ -386,46 +387,49 @@ of patent rights can be found in the PATENTS file in the same directory.
             if (verbose_log) console.log(data);
             command = data['command'];
 
-            _send_event_to_socket(
+            result = await _send_event_to_socket(
                 'new_command_received',
                 {
-                    task_group_id: task_group_id,
-                    conversation_id: conversation_id,
-                    agent_id: cur_agent_id
+                    by_worker_id: workerId
                 }
             );
+            console.log('result: '+result);
 
-            if (commands_received[data['command_id']]) {
-                return;
-            }
-            commands_received[data['command_id']] = true;
-
-            while (state_lock) await sleep(500);
-            state_lock = true;
-            if (command === 'COMMAND_SEND_MESSAGE') {
-                wait_for_worker_input();
-            } else if (command === 'COMMAND_SHOW_DONE_BUTTON') {
-                task_done = true;
-                update_UI_for_response_type('done');
-                $("div#waiting-for-message").css("display", "none");
-            } else if (command === 'COMMAND_EXPIRE_HIT') {
-                update_UI_for_response_type('expired');
-                hit_is_expired = true;
-                $("div#waiting-for-message").css("display", "none");
-            } else if (command === 'COMMAND_SUBMIT_HIT') {
-                all_done_callback();
-            } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
-                command_data = data['command_data'];
-                if (!(conversation_id === command_data['conversation_id'])) {
-                    var old_conversation_id = conversation_id;
-                    conversation_id = command_data['conversation_id'];
-                    cur_agent_id = command_data['agent_id'];
-
-                    remove_conversation(old_conversation_id);
+            if (result === true) {
+                console.log("here1");
+                if (commands_received[data['command_id']]) {
+                    return;
                 }
+                commands_received[data['command_id']] = true;
+
+                while (state_lock) await sleep(500);
+                state_lock = true;
+                if (command === 'COMMAND_SEND_MESSAGE') {
+                    wait_for_worker_input();
+                } else if (command === 'COMMAND_SHOW_DONE_BUTTON') {
+                    task_done = true;
+                    update_UI_for_response_type('done');
+                    $("div#waiting-for-message").css("display", "none");
+                } else if (command === 'COMMAND_EXPIRE_HIT') {
+                    update_UI_for_response_type('expired');
+                    hit_is_expired = true;
+                    $("div#waiting-for-message").css("display", "none");
+                } else if (command === 'COMMAND_SUBMIT_HIT') {
+                    all_done_callback();
+                } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
+                    command_data = data['command_data'];
+                    if (!(conversation_id === command_data['conversation_id'])) {
+                        conversation_id = command_data['conversation_id'];
+                        cur_agent_id = command_data['agent_id'];
+                        
+                        changing_conversation = true;
+                        console.log("Redirecting to new URL...");
+                        window.location.href = window.location.href + '&mturk_agent_id=' + cur_agent_id + '&conversation_id=' + conversation_id; // Reload page to get agent-specific template
+                    }
+                }
+                after_receive_command(command);
+                state_lock = false;
             }
-            after_receive_command(command);
-            state_lock = false;
         });
         socket.on('new_message', async function (data) {
             if (verbose_log) console.log(data);
@@ -434,9 +438,7 @@ of patent rights can be found in the PATENTS file in the same directory.
             _send_event_to_socket(
                 'new_message_received',
                 {
-                    task_group_id: task_group_id,
-                    conversation_id: conversation_id,
-                    agent_id: cur_agent_id
+                    by_worker_id: workerId
                 }
             );
 
@@ -482,7 +484,7 @@ of patent rights can be found in the PATENTS file in the same directory.
 
     if (!is_cover_page) {
         window.onbeforeunload = function() {
-            if (hit_is_submitted || hit_is_expired) {
+            if (hit_is_submitted || hit_is_expired || changing_conversation) {
                 return undefined;
             } else {
                 return true;

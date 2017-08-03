@@ -94,7 +94,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '-nc', '--num-conversations', default=1, type=int,
             help='number of conversations you want to create for this task')
         mturk.add_argument(
-            '--unique', dest='unique_worker', action='store_false',
+            '--unique', dest='unique_worker', default=False, action='store_true',
             help='enforce that no worker can work on your task twice')
         mturk.add_argument(
             '-r', '--reward', default=0.05, type=float,
