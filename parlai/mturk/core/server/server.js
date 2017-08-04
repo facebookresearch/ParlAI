@@ -238,6 +238,34 @@ io.on('connection', (socket) => {
       }
     });
 
+    socket.on('agent_heartbeat', (data, ack) => {
+      console.log('agent_heartbeat', data);
+      var task_group_id = data['task_group_id'];
+      var conversation_id = data['conversation_id'];
+      var sender_agent_id = data['sender_agent_id'];
+      var receiver_agent_id = data['receiver_agent_id'];
+
+      var msg = {
+        task_group_id: task_group_id,
+        conversation_id: conversation_id,
+        sender_agent_id: sender_agent_id,
+        id: sender_agent_id,
+        receiver_agent_id: receiver_agent_id
+      };
+
+      _send_event_to_agent(
+        socket,
+        task_group_id,
+        conversation_id,
+        receiver_agent_id,
+        'new_heartbeat',
+        msg,
+        function() {
+          ack();
+        }
+      );
+    });
+
     socket.on('agent_send_command', (data, ack) => {
       console.log('agent_send_command', data);
 
@@ -272,7 +300,7 @@ io.on('connection', (socket) => {
         command: command,
         //command_id: new_command_object.id
         command_id: command_id
-      }
+      };
 
       // Forward command to receiver agent.
       _send_event_to_agent(
@@ -331,7 +359,7 @@ io.on('connection', (socket) => {
         //message_id: new_message_object['id'],
         message_id: message_id,
         timestamp: timestamp
-      }
+      };
       if (text) message['text'] = text;
       if (reward) message['reward'] = reward;
 
@@ -380,6 +408,16 @@ io.on('connection', (socket) => {
 
       var agent_global_id = get_agent_global_id(task_group_id, conversation_id, agent_id);
       agent_global_id_to_event_name[agent_global_id] = 'agent_alive_received';
+
+      ack();
+    });
+  socket.on('new_heartbeat_received', (data, ack) => {
+      var task_group_id = data['task_group_id'];
+      var conversation_id = data['conversation_id'];
+      var agent_id = data['agent_id'];
+
+      var agent_global_id = get_agent_global_id(task_group_id, conversation_id, agent_id);
+      agent_global_id_to_event_name[agent_global_id] = 'new_heartbeat_received';
 
       ack();
     });

@@ -160,7 +160,7 @@ of patent rights can be found in the PATENTS file in the same directory.
     });
     
     /* ================= State variables ================= */
-    var verbose_log = false;
+    var verbose_log = true;
     var is_cover_page = (`{{is_cover_page}}` === 'true') ? true : false;
     var task_group_id = `{{task_group_id}}`;
     var hit_index = `{{hit_index}}`;
@@ -397,6 +397,9 @@ of patent rights can be found in the PATENTS file in the same directory.
                 $("div#waiting-for-message").css("display", "none");
             } else if (command === 'COMMAND_SUBMIT_HIT') {
                 all_done_callback();
+            } else if (command === 'COMMAND_DISCONNECT_PARTNER') {
+                update_UI_for_response_type('done');
+                $('#done-button').before('<b style="margin-right: 10px">Your partner unexpectedly left the conversation!</b>');
             }
             after_receive_command(command);
             state_lock = false;
@@ -427,6 +430,21 @@ of patent rights can be found in the PATENTS file in the same directory.
             after_receive_message(message);
             state_lock = false;
         });
+    }
+
+    function send_heartbeat() {
+        console.log('heartbeat');
+        _send_event_to_socket(
+            'agent_heartbeat',
+            {
+                task_group_id: task_group_id,
+                conversation_id: conversation_id,
+                sender_agent_id: cur_agent_id,
+                receiver_agent_id: '[World]'
+            }
+        );
+
+        setTimeout(send_heartbeat, 1000);
     }
 
     function update_UI_for_response_type(response_type) {
@@ -486,7 +504,9 @@ of patent rights can be found in the PATENTS file in the same directory.
         $(window).resize();
 
         setup_socket();
+        send_heartbeat();
     }
+
 
     $(document).ready(function() {
         get_hit_config(function(data) {
