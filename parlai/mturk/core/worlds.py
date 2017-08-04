@@ -45,12 +45,6 @@ class MTurkTaskWorld(World):
             mturk_agent.shutdown()
         Parallel(n_jobs=len(self.mturk_agents), backend='threading')(delayed(shutdown_agent)(agent) for agent in self.mturk_agents)
         """
-
-    def get_num_abandoned_agents(self):
-        if self.mturk_agent.hit_is_abandoned:
-            return 1
-        else:
-            return 0
         
     def review_work(self):
         """Programmatically approve/reject the turker's work.

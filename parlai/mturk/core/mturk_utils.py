@@ -13,13 +13,13 @@ import getpass
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
 
+# TODO: remove unused imports 
+
 region_name = 'us-east-1'
 aws_profile_name = 'parlai_mturk'
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 mturk_hit_frame_height = 650
-
-# TODO: clean up the above
 
 def setup_aws_credentials():
     try:

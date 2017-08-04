@@ -1,21 +1,16 @@
-<!--
-Copyright (c) 2017-present, Facebook, Inc.
-All rights reserved.
-This source code is licensed under the BSD-style license found in the
-LICENSE file in the root directory of this source tree. An additional grant
-of patent rights can be found in the PATENTS file in the same directory.
--->
+<!DOCTYPE html>
 <html>
 
 {% block html_head %}
 <head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge;" />
 <title>MTurk Chat</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 {% endblock %}
 
 <body>
-<div class="container-fluid">
+<div class="container-fluid" id="ui-container">
 <div class="row">
 
 {% block main_pane %}
@@ -23,7 +18,6 @@ of patent rights can be found in the PATENTS file in the same directory.
 <div id="left-pane" class="col-xs-4" style="height: {{frame_height}}px; background-color: #dff0d8; padding: 30px; overflow:scroll;">
     <h1>Live Chat</h1>
     <hr style="border-top: 1px solid #555" />
-    {{ left_pane_message }}
     <span id="task-description" style="font-size: 16px">
     </span>
 </div>
@@ -77,6 +71,7 @@ of patent rights can be found in the PATENTS file in the same directory.
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.rawgit.com/yf225/jquery-ajax-retry/master/dist/jquery.ajax-retry.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+<script src="https://github.com/lancedikson/bowser/releases/download/1.6.0/bowser.min.js"></script>
 
 <script type="text/javascript">
     /* ================= Utility functions ================= */
@@ -117,13 +112,23 @@ of patent rights can be found in the PATENTS file in the same directory.
         }
     };
 
+    function replace_url_parameter(url, paramName, paramValue){
+        if(paramValue == null)
+            paramValue = '';
+        var pattern = new RegExp('\\b('+paramName+'=).*?(&|$)')
+        if(url.search(pattern)>=0){
+            return url.replace(pattern,'$1' + paramValue + '$2');
+        }
+        return url + (url.indexOf('?')>0 ? '&' : '?') + paramName + '=' + paramValue 
+    }
+
     function get_hit_config(callback_function) {
         $.ajax({
             url: '/get_hit_config',
             timeout: 3000 // in milliseconds
         }).retry({times: 1000, timeout: 3000}).then(
             function(data) {
-                if (verbose_log) console.log(data);
+                if (verbose_log) console.log(object_to_string(data));
                 if (callback_function) {
                     callback_function(data);
                 }
@@ -137,12 +142,26 @@ of patent rights can be found in the PATENTS file in the same directory.
             timeout: 3000 // in milliseconds
         }).retry({times: 1000, timeout: 3000}).then(
             function(data) {
-                if (verbose_log) console.log(data);
+                if (verbose_log) console.log(object_to_string(data));
                 if (callback_function) {
                     callback_function(data);
                 }
             }
         );
+    }
+
+    function object_to_string(obj) {
+        var str = '';
+        for (var p in obj) {
+            if (obj.hasOwnProperty(p)) {
+                str += p + '::' + obj[p] + '\n';
+            }
+        }
+        return str;
+    }
+
+    function check_websockets_support() {
+        return !((bowser.msie && bowser.version < 10) || (bowser.firefox && bowser.version < 11) || (bowser.chrome && bowser.version < 16) || (bowser.safari && bowser.version < 7) || (bowser.opera && bowser.version < 12.1));
     }
 
     /* ================= UI related ================= */
@@ -162,24 +181,24 @@ of patent rights can be found in the PATENTS file in the same directory.
     
     /* ================= State variables ================= */
     var verbose_log = true;
-    var is_cover_page = (`{{is_cover_page}}` === 'true') ? true : false;
+    var is_cover_page = ("{{is_cover_page}}" === 'true') ? true : false;
+    var is_init_page = ("{{is_init_page}}" === 'true') ? true : false;
     var task_group_id = get_url_parameter('task_group_id');
-    var assignmentId = null;
-    var hitId = null;
-    var workerId = null;
-    var conversation_id = `{{conversation_id}}`;
-    var cur_agent_id = `{{cur_agent_id}}`;
+    var assignment_id = null;
+    var hit_id = null;
+    var worker_id = null;
+    var conversation_id = "{{conversation_id}}" || null;
+    var cur_agent_id = "{{cur_agent_id}}" || null;
     var task_description = null;
     var mturk_submit_url = null;
     var hit_is_submitted = false;
     var hit_is_expired = false;
-    var changing_conversation = false;
     var commands_received = {};
     var messages_received = {};
     var message_list = [];
     var socket = null;
     var task_done = false;
-    var state_lock = false; // We need to acquire this lock first before attempting to update the UI state with new messages or commands.
+    var ui_state_lock = false; // We need to acquire this lock first before attempting to update the UI state with new messages or commands.
 
     /* ================= Message handling ================= */
 
@@ -205,18 +224,6 @@ of patent rights can be found in the PATENTS file in the same directory.
         return new_message_list;
     }
 
-    function remove_conversation(removed_conversation_id) {
-        var new_message_list = [];
-        for (var i = 0; i < message_list.length; i++) {
-            var conversation_id = message_list[i]['conversation_id'];
-            if (!(conversation_id === removed_conversation_id)) {
-                new_message_list.push(message_list[i]);
-            }
-        }
-        message_list = new_message_list;
-        display_messages(message_list);
-    }
-
     function display_messages(message_list) {
         message_list = sort_by_key(message_list, 'timestamp');
 
@@ -228,23 +235,23 @@ of patent rights can be found in the PATENTS file in the same directory.
             var message_id = message['message_id'];
             var message_text = message['text'].replace(/(?:\r\n|\r|\n)/g, '<br />');
 
-            if (agent_id != cur_agent_id) {
-                $('div#message_thread').append(`
-                    <div class="row" style="margin-left: 0; margin-right: 0">
-                        <div class="alert alert-warning" role="alert" style="float: left; display:table">
-                            <span style="font-size: 16px"><b>`+agent_id+`</b>: `+message_text+`</span>
-                        </div>
-                    </div>
-                `);
+            if (agent_id !== cur_agent_id) {
+                $('div#message_thread').append(
+                    '<div class="row" style="margin-left: 0; margin-right: 0">'+
+                        '<div class="alert alert-warning" role="alert" style="float: left; display:table">'+
+                            '<span style="font-size: 16px"><b>'+agent_id+'</b>: '+message_text+'</span>'+
+                        '</div>'+
+                    '</div>'
+                );
                 received_message_from_other_agents = true;
             } else {
-                $('div#message_thread').append(`
-                    <div class="row" style="margin-left: 0; margin-right: 0">
-                        <div class="alert alert-info" role="alert" style="float: right; display:table">
-                            <span style="font-size: 16px"><b>`+agent_id+`</b>: `+message_text+`</span>
-                        </div>
-                    </div>
-                `);
+                $('div#message_thread').append(
+                    '<div class="row" style="margin-left: 0; margin-right: 0">'+
+                        '<div class="alert alert-info" role="alert" style="float: right; display:table">'+
+                            '<span style="font-size: 16px"><b>'+agent_id+'</b>: '+message_text+'</span>'+
+                        '</div>'+
+                    '</div>'
+                );
             }
         }
         if (message_list.length > 0) {
@@ -273,7 +280,7 @@ of patent rights can be found in the PATENTS file in the same directory.
         });
     }
 
-    function send_message(text, receiver_agent_id, episode_done, callback_function=null) {
+    function send_message(text, receiver_agent_id, episode_done, callback_function) {
         if (socket) {
             get_timestamp(function(data) {
                 var timestamp = data['timestamp'];
@@ -281,7 +288,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                     task_group_id: task_group_id,
                     conversation_id: conversation_id,
                     sender_agent_id: cur_agent_id,
-                    sender_worker_id: workerId,
+                    sender_worker_id: worker_id,
                     receiver_agent_id: receiver_agent_id,
                     receiver_worker_id: '[World]',
                     message_id: uuidv4(),
@@ -296,7 +303,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                     'agent_send_message', 
                     message,
                     function (data) {
-                        if (verbose_log) console.log(data);
+                        if (verbose_log) console.log(object_to_string(data));
 
                         if (callback_function) {
                             callback_function(data);
@@ -307,51 +314,62 @@ of patent rights can be found in the PATENTS file in the same directory.
         }
     }
 
-    $("button#id_send_msg_button").on('click', async function () {
+    $("button#id_send_msg_button").on('click', function () {
         var text = $("input#id_text_input").val();
         if (!(text == '')) {
             $("button#id_send_msg_button").addClass("disabled");
             $("button#id_send_msg_button").prop("disabled", true);
 
-            while (state_lock) await sleep(500);
-            state_lock = true;
-            send_message(text, '[World]', false, function(data){
-                $("button#id_send_msg_button").removeClass("disabled");
-                $("button#id_send_msg_button").prop("disabled", false);
-                $("input#id_text_input").val("");
-                $("div#response-type-text-input").css("display", "none");
-                var new_messages = [];
-                new_messages.push(data);
-                if (handle_new_messages(new_messages) && !task_done) {
-                    $("div#waiting-for-message").css("display", "");
+            function execute_with_ui_state_lock() {
+                if (ui_state_lock) {
+                    setTimeout(
+                        function () {
+                            execute_with_ui_state_lock();
+                        }, 
+                        500
+                    );
+                } else {
+                    ui_state_lock = true;
+                    send_message(text, '[World]', false, function(data){
+                        $("button#id_send_msg_button").removeClass("disabled");
+                        $("button#id_send_msg_button").prop("disabled", false);
+                        $("input#id_text_input").val("");
+                        $("div#response-type-text-input").css("display", "none");
+                        var new_messages = [];
+                        new_messages.push(data);
+                        if (handle_new_messages(new_messages) && !task_done) {
+                            $("div#waiting-for-message").css("display", "");
+                        }
+                        after_send_message();
+                        ui_state_lock = false;
+                    });
                 }
-                after_send_message();
-                state_lock = false;
-            });
+            }
+            execute_with_ui_state_lock();
         }
     });
 
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    function _send_event_to_socket(event_name, event_data, callback_function=null) {
+    function _send_event_to_socket(event_name, event_data, callback_function) {
         if (verbose_log) {
             console.log("Sending: "+event_name+event_data);
         }
         var event_sent = false;
         var timeout = 2; // in seconds
         var start_time = Date.now();
-        async function check_event_sent() {
-            while (event_sent === false) {
+        function check_event_sent() {
+            if (event_sent === false) {
                 if ((Date.now() - start_time) > (timeout * 1000)) { // Timeout
                     console.log(event_name + ' not acknowledged by server. Sending event again.');
                     return _send_event_to_socket(event_name, event_data, callback_function);
                 } else {
-                    await sleep(500);
+                    setTimeout(
+                        function() {
+                            check_event_sent();
+                        }, 
+                        500
+                    );
                 }
             }
-            return true;
         }
         socket.emit(event_name, event_data, function(data) {
             event_sent = true;
@@ -359,7 +377,7 @@ of patent rights can be found in the PATENTS file in the same directory.
                 callback_function(data);
             }
         });
-        return check_event_sent();
+        check_event_sent();
     }
 
     function setup_socket() {
@@ -371,74 +389,93 @@ of patent rights can be found in the PATENTS file in the same directory.
                 'agent_alive', 
                 {
                     task_group_id: task_group_id,
-                    assignment_id: assignmentId,
-                    hit_id: hitId,
-                    worker_id: workerId
+                    conversation_id: conversation_id,
+                    agent_id: cur_agent_id,
+                    assignment_id: assignment_id,
+                    hit_id: hit_id,
+                    worker_id: worker_id
                 },
                 function(data) {
-                    if (verbose_log) console.log(data);
+                    if (verbose_log) console.log(object_to_string(data));
                 }
             );
         });
         socket.on('disconnect', function() {
             if (verbose_log) console.log('Server disconnected.');
         });
-        socket.on('new_command', async function (data) {
-            if (verbose_log) console.log(data);
+        socket.on('new_command', function (data) {
+            if (verbose_log) console.log(object_to_string(data));
             command = data['command'];
 
-            result = await _send_event_to_socket(
+            _send_event_to_socket(
                 'new_command_received',
                 {
-                    by_worker_id: workerId
+                    by_worker_id: worker_id
+                },
+                function() {
+                    if (commands_received[data['command_id']]) {
+                        return;
+                    }
+                    commands_received[data['command_id']] = true;
+
+                    // Ignore if the command is from the previous conversation
+                    if (conversation_id !== data['conversation_id']) {
+                        return;
+                    }
+
+                    console.log('here1');
+
+                    function execute_with_ui_state_lock() {
+                        if (ui_state_lock) {
+                            setTimeout(
+                                function() {
+                                    execute_with_ui_state_lock();
+                                },
+                                500
+                            );
+                        } else {
+                            ui_state_lock = true;
+                            if (command === 'COMMAND_SEND_MESSAGE') {
+                                wait_for_worker_input();
+                            } else if (command === 'COMMAND_SHOW_DONE_BUTTON') {
+                                task_done = true;
+                                update_UI_for_response_type('done');
+                                $("div#waiting-for-message").css("display", "none");
+                            } else if (command === 'COMMAND_EXPIRE_HIT') {
+                                update_UI_for_response_type('expired');
+                                hit_is_expired = true;
+                                $("div#waiting-for-message").css("display", "none");
+                            } else if (command === 'COMMAND_SUBMIT_HIT') {
+                                all_done_callback();
+                            } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
+                                command_data = data['command_data'];
+                                console.log('current conversation_id: ' + conversation_id);
+                                if ((conversation_id === null && command_data['conversation_id'].indexOf('o_') !== -1) || (conversation_id.indexOf('o_') !== -1 && command_data['conversation_id'].indexOf('t_') !== -1)) // Only move from init state to onboarding, or from onboarding to task
+                                    {
+                                    console.log("Redirecting to new URL...");
+                                    var new_url = replace_url_parameter(window.location.href, 'mturk_agent_id', command_data['agent_id']);
+                                    new_url = replace_url_parameter(new_url, 'conversation_id', command_data['conversation_id']);
+                                    new_url = replace_url_parameter(new_url, 'changing_conversation', true);
+
+                                    window.location.href = new_url; // Reload page to get agent-specific template
+                                }
+                            }
+                            after_receive_command(command);
+                            ui_state_lock = false;
+                        }
+                    }
+                    execute_with_ui_state_lock();
                 }
             );
-            console.log('result: '+result);
-
-            if (result === true) {
-                console.log("here1");
-                if (commands_received[data['command_id']]) {
-                    return;
-                }
-                commands_received[data['command_id']] = true;
-
-                while (state_lock) await sleep(500);
-                state_lock = true;
-                if (command === 'COMMAND_SEND_MESSAGE') {
-                    wait_for_worker_input();
-                } else if (command === 'COMMAND_SHOW_DONE_BUTTON') {
-                    task_done = true;
-                    update_UI_for_response_type('done');
-                    $("div#waiting-for-message").css("display", "none");
-                } else if (command === 'COMMAND_EXPIRE_HIT') {
-                    update_UI_for_response_type('expired');
-                    hit_is_expired = true;
-                    $("div#waiting-for-message").css("display", "none");
-                } else if (command === 'COMMAND_SUBMIT_HIT') {
-                    all_done_callback();
-                } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
-                    command_data = data['command_data'];
-                    if (!(conversation_id === command_data['conversation_id'])) {
-                        conversation_id = command_data['conversation_id'];
-                        cur_agent_id = command_data['agent_id'];
-                        
-                        changing_conversation = true;
-                        console.log("Redirecting to new URL...");
-                        window.location.href = window.location.href + '&mturk_agent_id=' + cur_agent_id + '&conversation_id=' + conversation_id; // Reload page to get agent-specific template
-                    }
-                }
-                after_receive_command(command);
-                state_lock = false;
-            }
         });
-        socket.on('new_message', async function (data) {
-            if (verbose_log) console.log(data);
+        socket.on('new_message', function (data) {
+            if (verbose_log) console.log(object_to_string(data));
             message = data;
 
             _send_event_to_socket(
                 'new_message_received',
                 {
-                    by_worker_id: workerId
+                    by_worker_id: worker_id
                 }
             );
 
@@ -447,13 +484,29 @@ of patent rights can be found in the PATENTS file in the same directory.
             }
             messages_received[message['message_id']] = true;
 
-            while (state_lock) await sleep(500);
-            state_lock = true;
-            var new_messages = [];
-            new_messages.push(message);
-            handle_new_messages(new_messages);
-            after_receive_message(message);
-            state_lock = false;
+            // Ignore if the message is from the previous conversation
+            if (conversation_id !== data['conversation_id']) {
+                return;
+            }
+
+            function execute_with_ui_state_lock() {
+                if (ui_state_lock) {
+                    setTimeout(
+                        function() {
+                            execute_with_ui_state_lock();
+                        },
+                        500
+                    );
+                } else {
+                    ui_state_lock = true;
+                    var new_messages = [];
+                    new_messages.push(message);
+                    handle_new_messages(new_messages);
+                    after_receive_message(message);
+                    ui_state_lock = false;
+                }
+            }
+            execute_with_ui_state_lock();
         });
     }
 
@@ -483,54 +536,49 @@ of patent rights can be found in the PATENTS file in the same directory.
         }
     }
 
-    if (!is_cover_page) {
-        window.onbeforeunload = function() {
-            if (hit_is_submitted || hit_is_expired || changing_conversation) {
-                return undefined;
-            } else {
-                return true;
-            }
-        }
-    }
-
     function init_cover_page() {
         $("span#task-description").html(task_description);
     }
 
     function init_chat_page() {
-        // Data related
-        $("form#mturk_submit_form input#assignmentId").val(assignmentId);
-        $("form#mturk_submit_form input#hitId").val(hitId);
-        $("form#mturk_submit_form input#workerId").val(workerId);
-        $("form#mturk_submit_form").attr("action", mturk_submit_url);
-        $("span#task-description").html(task_description);
+        if (is_init_page) {
+            $("div#ui-container").html("Initializing...");
+        } else {
+            $("form#mturk_submit_form input#assignmentId").val(assignment_id);
+            $("form#mturk_submit_form input#hitId").val(hit_id);
+            $("form#mturk_submit_form input#workerId").val(worker_id);
+            $("form#mturk_submit_form").attr("action", mturk_submit_url);
+            $("span#task-description").html(task_description);
 
-        // UI related
-        update_UI_for_response_type('idle');
-        $("div#waiting-for-message").css("display", "");
-        $("div#left-pane").removeClass('col-xs-12');
-        $("div#left-pane").addClass('col-xs-4');
+            update_UI_for_response_type('idle');
+            $("div#waiting-for-message").css("display", "");
+            $("div#left-pane").removeClass('col-xs-12');
+            $("div#left-pane").addClass('col-xs-4');
 
-        $(window).resize();
-
+            $(window).resize();
+        }
         setup_socket();
     }
 
     $(document).ready(function() {
-        get_hit_config(function(data) {
-            task_description = data['task_description'];
-            mturk_submit_url = data['mturk_submit_url'];
-            
-            assignmentId = get_url_parameter('assignmentId');
-            hitId = get_url_parameter('hitId');
-            workerId = get_url_parameter('workerId');
+        if (check_websockets_support()) {
+            assignment_id = get_url_parameter('assignmentId');
+            hit_id = get_url_parameter('hitId');
+            worker_id = get_url_parameter('workerId');
 
-            if (is_cover_page) {
-                init_cover_page();
-            } else {
-                init_chat_page();
-            }
-        });
+            get_hit_config(function(data) {
+                task_description = data['task_description'];
+                mturk_submit_url = data['mturk_submit_url'];
+
+                if (is_cover_page) {
+                    init_cover_page();
+                } else {
+                    init_chat_page();
+                }
+            });
+        } else {
+            $("body").html("Sorry, but we found that your browser does not support WebSockets. Please consider updating your browser to a newer version and check this HIT again.");
+        }
     });
     function after_receive_command(command) {};
     function after_receive_message(message) {};
@@ -540,5 +588,4 @@ of patent rights can be found in the PATENTS file in the same directory.
 {% block additional_scripts %}
 {% endblock %}
 
-</body>
 </html>

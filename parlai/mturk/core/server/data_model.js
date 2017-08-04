@@ -50,13 +50,9 @@ sequelize
 //   command: { type: Sequelize.STRING }
 // });
 
-const MTurkHITAgentAllocation = sequelize.define('mturk_hit_agent_allocation', {
-  task_group_id: { type: Sequelize.STRING },
-  conversation_id: { type: Sequelize.STRING, allowNull: true, defaultValue: null },
-  agent_id: { type: Sequelize.STRING, allowNull: true, defaultValue: null},
-  assignment_id: { type: Sequelize.STRING, allowNull: true, defaultValue: null},
-  hit_id: { type: Sequelize.STRING, allowNull: true, defaultValue: null},
-  worker_id: { type: Sequelize.STRING, allowNull: true, defaultValue: null}
+const MTurkWorkerRecord = sequelize.define('mturk_worker_record', {
+    task_group_id: { type: Sequelize.STRING },
+    worker_id: { type: Sequelize.STRING }
 });
 
 // ========================= Models =========================
@@ -102,46 +98,27 @@ exports.clean_database = function() {
 //     return new_message_object.get({plain: true});
 // }
 
-exports.get_hit_assignment_info = async function(task_group_id, agent_id, conversation_id) {
-    var existing_allocation_object = await MTurkHITAgentAllocation.findOne({
-                                                where: { 
-                                                    task_group_id: task_group_id,
-                                                    agent_id: agent_id,
-                                                    conversation_id: conversation_id
-                                                },
-                                            });
-    var assignment_id = null;
-    var hit_id = null;
-    var worker_id = null;
-
-    if (existing_allocation_object) {
-        existing_allocation_object = existing_allocation_object.get({plain: true});
-        assignment_id = existing_allocation_object.assignment_id;
-        hit_id = existing_allocation_object.hit_id;
-        worker_id = existing_allocation_object.worker_id;
-    }
-
-    return {
-        assignment_id: assignment_id,
-        hit_id: hit_id,
-        worker_id: worker_id
-    }
-}
-
-exports.get_allocation_count = async function(task_group_id) {
-    return await MTurkHITAgentAllocation.count({
-                    where: { 
-                        task_group_id: task_group_id
-                    },
-                });
-}
-
-exports.check_assignment_exists = async function(task_group_id, assignment_id) {
-    var assignment_count = await MTurkHITAgentAllocation.count({
+exports.add_worker_record = async function(task_group_id, worker_id) {
+    var existing_record_count = await MTurkWorkerRecord.count({
                                     where: { 
                                         task_group_id: task_group_id,
-                                        assignment_id: assignment_id
+                                        worker_id: worker_id
                                     },
                                 });
-    return (assignment_count > 0);
+    if (existing_record_count === 0) {
+        var new_record_object = await MTurkWorkerRecord.create({
+                                        task_group_id: task_group_id,
+                                        worker_id: worker_id
+                                    });
+    }
+}
+
+exports.worker_record_exists = async function(task_group_id, worker_id) {
+    var existing_record_count = await MTurkWorkerRecord.count({
+                                    where: { 
+                                        task_group_id: task_group_id,
+                                        worker_id: worker_id
+                                    },
+                                });
+    return (existing_record_count > 0);
 }

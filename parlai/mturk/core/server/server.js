@@ -44,32 +44,40 @@ app.get('/chat_index', async function (req, res) {
   var params = req.query;
 
   var assignment_id = params['assignmentId']; // from mturk
-  var mturk_agent_id = params['mturk_agent_id'];
+  var conversation_id = params['conversation_id'] || null;
+  var mturk_agent_id = params['mturk_agent_id'] || null;
+  var task_group_id = params['task_group_id'];
+  var worker_id = params['workerId'] || null;
+  var changing_conversation = params['changing_conversation'] || false;
 
   if (assignment_id === 'ASSIGNMENT_ID_NOT_AVAILABLE') {
     template_context['is_cover_page'] = true;
     res.render('cover_page.html', template_context);
   }
-  else if (!mturk_agent_id) {
-    template_context['left_pane_message'] = 'Initializing...'
-    res.render('mturk_index.html', template_context);
+  else if ((!changing_conversation) && _load_hit_config()['unique_worker'] === true && await data_model.worker_record_exists(task_group_id, worker_id)) {
+    res.send("Sorry, but you can only work on this HIT once.");
   }
   else {
-    var hit_config = _load_hit_config();
-
-    var hit_id = params['hitId'];
-    var worker_id = params['workerId'];
-
-    template_context['is_cover_page'] = false;
-    template_context['frame_height'] = 650;
-    template_context['cur_agent_id'] = mturk_agent_id;
-    template_context['conversation_id'] = params['conversation_id'];
-
-    var custom_index_page = mturk_agent_id + '_index.html';
-    if (fs.existsSync(task_directory_name+'/'+custom_index_page)) {
-      res.render(custom_index_page, template_context);
-    } else {
+    await data_model.add_worker_record(task_group_id, worker_id);
+    if (!conversation_id && !mturk_agent_id) { // if conversation info is not loaded yet
+      // TODO: change to a loading indicator
+      template_context['is_init_page'] = true;
       res.render('mturk_index.html', template_context);
+    }
+    else {
+      var hit_id = params['hitId'];
+
+      template_context['is_cover_page'] = false;
+      template_context['frame_height'] = 650;
+      template_context['cur_agent_id'] = mturk_agent_id;
+      template_context['conversation_id'] = conversation_id;
+
+      var custom_index_page = mturk_agent_id + '_index.html';
+      if (fs.existsSync(task_directory_name+'/'+custom_index_page)) {
+        res.render(custom_index_page, template_context);
+      } else {
+        res.render('mturk_index.html', template_context);
+      }
     }
   }
 });
@@ -94,11 +102,6 @@ app.get('/get_timestamp', function (req, res) {
   res.json({'timestamp': Date.now()}); // in milliseconds
 });
 
-// POST method route
-// app.post('/', function (req, res) {
-//   res.send('POST request to the homepage')
-// })
-
 // ======================= Routing =======================
 
 // ======================= Socket =======================
@@ -112,9 +115,6 @@ var room_id_to_worker_id = {};
 var worker_id_to_event_name = {};
 var worker_id_to_event_data = {};
 var worker_id_to_domain = {};
-
-var commands_sent = {};
-var messages_sent = {};
 
 function _send_event_to_agent(socket, worker_id, event_name, event_data, callback_function) {
   var worker_room_id = worker_id_to_room_id[worker_id];
@@ -160,7 +160,7 @@ io.on('connection', (socket) => {
       console.log('Client disconnected: '+worker_id);
     });
 
-    socket.on('agent_alive', (data, ack) => {
+    socket.on('agent_alive', async (data, ack) => {
       console.log('on_agent_alive', data);
       var worker_id = data['worker_id'];
 
@@ -193,11 +193,6 @@ io.on('connection', (socket) => {
       var receiver_worker_id = data['receiver_worker_id'];
       var command_id = data['command_id'];
 
-      if (commands_sent[command_id]) {
-        ack();
-        return;
-      }
-
       worker_id_to_event_name['[World]'] = 'agent_send_command';
       worker_id_to_event_data['[World]'] = data;
 
@@ -208,7 +203,6 @@ io.on('connection', (socket) => {
         'new_command', 
         data,
         function() {
-          commands_sent[command_id] = true;
           // Send acknowledge event back to command sender.
           ack(data);
         }
@@ -221,11 +215,6 @@ io.on('connection', (socket) => {
       var receiver_worker_id = data['receiver_worker_id'];
       var message_id = data['message_id'];
 
-      if (messages_sent[message_id]) {
-        ack();
-        return;
-      }
-
       worker_id_to_event_name['[World]'] = 'agent_send_message';
       worker_id_to_event_data['[World]'] = data;
 
@@ -236,7 +225,6 @@ io.on('connection', (socket) => {
         'new_message', 
         data,
         function() {
-          messages_sent[message_id] = true;
           // Send acknowledge event back to message sender.
           ack(data);
         }
