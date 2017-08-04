@@ -59,9 +59,14 @@ class MTurkManager():
         self.run_id = None
         self.mturk_agent_ids = mturk_agent_ids
         self.mturk_agent_hit_id_dict = {}
+        self.mturk_agents = {} # keep track of all mturk agents
+        self.agent_to_world = {} # map agent_id to world it's involved in
         self.task_files_to_copy = None
         self.is_sandbox = opt['is_sandbox']
         self.logger = None
+        self.agents_last_heartbeat = {}
+        self.check_heartbeat_thread = None
+        self.timeout_after = 4 # Consider client disconnected if no heartbeat is received for `timeout_after` seconds
 
     def init_aws(self, opt, task_directory_path=None):
         print_and_log("\nYou are going to allow workers from Amazon Mechanical Turk to be an agent in ParlAI.\nDuring this process, Internet connection is required, and you should turn off your computer's auto-sleep feature.\n")
@@ -103,6 +108,63 @@ class MTurkManager():
         self.setup_socket(mturk_server_url=self.server_url, port=443)
 
         print_and_log("MTurk server setup done.\n")
+
+    def register_agent(self, agent):
+        """Register mturk agent"""
+        self.mturk_agents[agent.agent_global_id] = agent
+
+    def deregister_agent(self, agent):
+        if agent.agent_global_id in self.mturk_agents:
+            del self.mturk_agents[agent.agent_global_id]
+
+    def register_heartbeat(self, agent):
+        if isinstance(agent, MTurkAgent):
+            agent_global_id = agent.agent_global_id
+            self.agents_last_heartbeat[agent_global_id] = time.time()
+
+        if self.check_heartbeat_thread is None:
+            self.check_heartbeat_thread = threading.Thread(target=self.check_heartbeat)
+            self.check_heartbeat_thread.daemon = True
+            self.check_heartbeat_thread.start()
+
+    def deregister_heartbeat(self, agent):
+        if isinstance(agent, MTurkAgent):
+            if agent.agent_global_id in self.agents_last_heartbeat:
+                del self.agents_last_heartbeat[agent.agent_global_id]
+
+    def check_heartbeat(self):
+        while True:
+            for agent_id, t in self.agents_last_heartbeat.items():
+                if self.agents_last_heartbeat[agent_id] and time.time() - self.agents_last_heartbeat[agent_id] > 4:
+                    self.disconnected(agent_id)
+                    break
+            time.sleep(0.5)
+
+    def disconnected(self, agent_id):
+        print("DISCONNECT" + agent_id)
+        agent = self.mturk_agents[agent_id]
+        if agent.agent_global_id in self.agent_to_world:
+            # agent is involved in world (dialog) => notify other agents about disconnect
+            world = self.agent_to_world[agent.agent_global_id]
+            for other_agent in world.agents:
+                if other_agent.id != agent.id:
+                    self.send_command_to_agent(self.task_group_id, other_agent.conversation_id, '[World]', other_agent.id, 'COMMAND_DISCONNECT_PARTNER')
+                self.deregister_heartbeat(other_agent)
+                self.deregister_agent(other_agent)
+        else:
+            self.deregister_heartbeat(agent)
+            self.deregister_agent(agent)
+
+
+    def register_world(self, world):
+        for agent in world.agents:
+            self.agent_to_world[agent.agent_global_id] = world
+
+
+    def deregister_world(self, world):
+        for agent in world.agents:
+            self.deregister_agent(agent)
+
 
     def start_new_run(self, opt):
         self.run_id = str(int(time.time()))
@@ -176,24 +238,19 @@ class MTurkManager():
             if task_group_id != self.task_group_id:
                 return
 
-            MTurkAgent.set_hit_assignment_info(
-                task_group_id=task_group_id,
-                agent_id=agent_id,
-                conversation_id=conversation_id,
-                assignment_id=assignment_id,
-                hit_id=hit_id,
-                worker_id=worker_id
-            )
+            global_agent_id = MTurkAgent.get_agent_global_id(task_group_id=task_group_id,
+                                                             agent_id=agent_id,
+                                                             conversation_id=conversation_id)
+            agent = self.mturk_agents[global_agent_id]
+            agent.assignment_id = assignment_id
+            agent.hit_id = hit_id
+            agent.worker_id = worker_id
 
-            MTurkAgent.notify_agent_alive(
-                task_group_id=task_group_id,
-                conversation_id=conversation_id,
-                agent_id=agent_id
-            )
+            agent.notify_alive()
+
 
         def on_new_message(*args):
             print_and_log("on_new_message: " + str(args), False)
-
             message = args[0]
 
             self._send_event_to_socket(
@@ -208,12 +265,14 @@ class MTurkManager():
             if message['task_group_id'] != self.task_group_id:
                 return
 
-            MTurkAgent.set_new_message(
-                task_group_id=message['task_group_id'],
-                conversation_id=message['conversation_id'],
-                agent_id=message['sender_agent_id'],
-                new_message=message
-            )
+            global_agent_id = MTurkAgent.get_agent_global_id(task_group_id=message['task_group_id'],
+                                                             agent_id=message['sender_agent_id'],
+                                                             conversation_id=message['conversation_id'])
+            agent = self.mturk_agents[global_agent_id]
+            with agent.new_message_lock:
+                if message and message['message_id'] not in agent.received_message_ids:
+                    agent.new_message = message
+                    agent.received_message_ids.append(message['message_id'])
 
             # MTurkAgent.notify_agent_new_message(
             #     task_group_id=message['task_group_id'],
@@ -221,10 +280,30 @@ class MTurkManager():
             #     agent_id=message['sender_agent_id']
             # )
 
+        def on_new_heartbeat(*args):
+            print_and_log("on_new_heartbeat: " + str(args), False)
+            message = args[0]
+
+            self._send_event_to_socket(
+                'new_heartbeat_received',
+                {
+                    'task_group_id': message['task_group_id'],
+                    'conversation_id': message['conversation_id'],
+                    'agent_id': '[World]'
+                }
+            )
+            agent_global_id = MTurkAgent.get_agent_global_id(message['task_group_id'],
+                                                             message['conversation_id'],
+                                                             message['sender_agent_id'])
+            if agent_global_id in self.agents_last_heartbeat:
+                self.agents_last_heartbeat[agent_global_id] = time.time()
+
+
         self.socketIO.on('socket_open', on_socket_open)
         self.socketIO.on('agent_alive', on_agent_alive)
         self.socketIO.on('new_message', on_new_message)
         self.socketIO.on('disconnect', on_disconnect)
+        self.socketIO.on('new_heartbeat', on_new_heartbeat)
 
         self.socket_listen_thread = threading.Thread(target=self._socket_receive_events)
         self.socket_listen_thread.daemon = True
@@ -342,8 +421,8 @@ class MTurkManager():
                 self.mturk_agent_hit_id_dict[mturk_agent_id][hit_index] = hit_id
         print_and_log("Link to HIT: " + mturk_page_url + "\n")
         print_and_log("Waiting for Turkers to respond... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
-        if opt['is_sandbox']:
-            webbrowser.open(mturk_page_url)
+        # if opt['is_sandbox']:
+        #     webbrowser.open(mturk_page_url)
         return mturk_page_url
 
     def expire_hit(self, hit_id):
@@ -412,51 +491,6 @@ class MTurkAgent(Agent):
         # Global ID within the local system
         return task_group_id + '_' + conversation_id + '_' + agent_id
 
-    # @classmethod
-    # def notify_agent_new_message(cls, task_group_id, conversation_id, agent_id):
-    #     agent_global_id = cls.get_agent_global_id(
-    #                             task_group_id=task_group_id,
-    #                             conversation_id=conversation_id,
-    #                             agent_id=agent_id
-    #                         )
-    #     if agent_global_id in cls.agent_global_id_to_instance:
-    #         cls.agent_global_id_to_instance[agent_global_id].notify_new_message()
-
-    @classmethod
-    def notify_agent_alive(cls, task_group_id, conversation_id, agent_id):
-        agent_global_id = cls.get_agent_global_id(
-                                task_group_id=task_group_id,
-                                conversation_id=conversation_id,
-                                agent_id=agent_id
-                            )
-        if agent_global_id in cls.agent_global_id_to_instance:
-            cls.agent_global_id_to_instance[agent_global_id].notify_alive()
-
-    @classmethod
-    def set_hit_assignment_info(cls, task_group_id, conversation_id, agent_id, assignment_id, hit_id, worker_id):
-        agent_global_id = cls.get_agent_global_id(
-                                task_group_id=task_group_id,
-                                conversation_id=conversation_id,
-                                agent_id=agent_id
-                            )
-        if agent_global_id in cls.agent_global_id_to_instance:
-            agent = cls.agent_global_id_to_instance[agent_global_id]
-            agent.assignment_id = assignment_id
-            agent.hit_id = hit_id
-            agent.worker_id = worker_id
-
-    @classmethod
-    def set_new_message(cls, task_group_id, conversation_id, agent_id, new_message):
-        agent_global_id = cls.get_agent_global_id(
-                                task_group_id=task_group_id,
-                                conversation_id=conversation_id,
-                                agent_id=agent_id
-                            )
-        if agent_global_id in cls.agent_global_id_to_instance:
-            agent = cls.agent_global_id_to_instance[agent_global_id]
-            with agent.new_message_lock:
-                agent.new_message = new_message
-
     def __init__(self, id, manager, hit_index, assignment_index, opt, shared=None):
         super().__init__(opt)
 
@@ -472,20 +506,23 @@ class MTurkAgent(Agent):
                                     conversation_id=self.conversation_id,
                                     agent_id=id
                                 )
-        MTurkAgent.agent_global_id_to_instance[self.agent_global_id] = self
-
         self.alive_event = threading.Event()
+        self.received_message_ids = []
         self.new_message = None
         self.new_message_lock = threading.Lock()
+
+        self.manager.register_agent(self)
 
         # Wait for Turker to accept the HIT
         if self.alive_event.is_set():
             self.alive_event.clear()
         self.alive_event.wait()
+        self.manager.register_heartbeat(self)
 
     def notify_alive(self):
         if not self.alive_event.is_set():
             self.alive_event.set()
+
 
     # def notify_new_message(self):
     #     with self.new_message_condition:
