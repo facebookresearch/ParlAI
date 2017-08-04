@@ -225,13 +225,13 @@ task_list = [
         "display_name": "InsuranceQA",
         "task": "insuranceqa",
         "tags": [ "All",  "QA" ],
-        "description": "Task which requires agents to identify high quality answers composed by professionals with deep domain knowledge. Link: https://github.com/shuzi/insuranceQA"
+        "description": "Task which requires agents to identify high quality answers composed by professionals with deep domain knowledge. From Feng et al. '15. Link: https://arxiv.org/abs/1508.01585"
     },
     {
         "id": "MS_MARCO",
         "display_name": "MS_MARCO",
         "task": "ms_marco",
         "tags": [ "All",  "QA" ],
-        "description": "A Reading Comprehension Dataset for the Artificial Intelligence research community. Link: http://www.msmarco.org/dataset.aspx"
+        "description": "A Reading Comprehension Dataset for the Artificial Intelligence research community. From Nguyen et al. '16. Link: https://arxiv.org/abs/1611.09268"
     }
 ]
