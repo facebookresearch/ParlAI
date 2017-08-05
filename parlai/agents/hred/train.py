@@ -66,7 +66,7 @@ def init_timings():
     return timings
 
 def save(model, timings, train_iterator, post_fix = ''):
-    print "Saving the model..."
+    print("Saving the model...")
 
     # ignore keyboard interrupt while saving
     start = time.time()
@@ -80,10 +80,10 @@ def save(model, timings, train_iterator, post_fix = ''):
     numpy.savez(model.state['save_dir'] + '/' + model.state['run_id'] + "_" + model.state['prefix'] + post_fix + 'timing.npz', **timings)
     signal.signal(signal.SIGINT, s)
     
-    print "Model saved, took {}".format(time.time() - start)
+    print("Model saved, took {}".format(time.time() - start))
 
 def load(model, filename, parameter_strings_to_ignore):
-    print "Loading the model..."
+    print("Loading the model...")
 
     # ignore keyboard interrupt while saving
     start = time.time()
@@ -91,7 +91,7 @@ def load(model, filename, parameter_strings_to_ignore):
     model.load(filename, parameter_strings_to_ignore)
     signal.signal(signal.SIGINT, s)
 
-    print "Model loaded, took {}".format(time.time() - start)
+    print("Model loaded, took {}".format(time.time() - start))
 
 def main(args):     
     logging.basicConfig(level = logging.DEBUG,
@@ -118,7 +118,7 @@ def main(args):
                 if len(f) > len(auto_resume_postfix):
                     if f[len(f) - len(auto_resume_postfix):len(f)] == auto_resume_postfix:
                         if len(resume_filename) > 0:
-                            print 'ERROR: FOUND MULTIPLE MODELS IN DIRECTORY:', directory
+                            print('ERROR: FOUND MULTIPLE MODELS IN DIRECTORY:', directory)
                             assert False
                         else:
                             resume_filename = directory + f[0:len(f)-len('__auto_model.npz')]
@@ -257,10 +257,10 @@ def main(args):
         if step % 200 == 0:
             # First generate stochastic samples
             for param in model.params:
-                print "%s = %.4f" % (param.name, numpy.sum(param.get_value() ** 2) ** 0.5)
+                print("%s = %.4f" % (param.name, numpy.sum(param.get_value() ** 2) ** 0.5))
 
             samples, costs = random_sampler.sample([[]], n_samples=1, n_turns=3)
-            print "Sampled : {}".format(samples[0])
+            print("Sampled : {}".format(samples[0]))
 
 
         ### Training phase
@@ -288,7 +288,7 @@ def main(args):
         if numpy.sum(numpy.abs(x_reset)) < 1:
             # Print when we reach the end of an example (e.g. the end of a dialogue or a document)
             # Knowing when the training procedure reaches the end is useful for diagnosing training problems
-            #print 'END-OF-BATCH EXAMPLE!'
+            # print('END-OF-BATCH EXAMPLE!')
             is_end_of_batch = True
 
         if state['use_nce']:
@@ -320,19 +320,19 @@ def main(args):
         gamma_bounding()
 
         # Print batch statistics
-        print 'cost_sum', c
-        print 'cost_mean', c / float(numpy.sum(x_cost_mask))
+        print('cost_sum', c)
+        print('cost_mean', c / float(numpy.sum(x_cost_mask)))
 
         if model.add_latent_piecewise_per_utterance or model.add_latent_gaussian_per_utterance:
-            print 'kl_divergence_cost_sum', kl_divergence_cost
-            print 'kl_divergence_cost_mean', kl_divergence_cost / float(len(numpy.where(x_data == model.eos_sym)[0]))
+            print('kl_divergence_cost_sum', kl_divergence_cost)
+            print('kl_divergence_cost_mean', kl_divergence_cost / float(len(numpy.where(x_data == model.eos_sym)[0])))
 
         if model.add_latent_gaussian_per_utterance:
-            print 'posterior_gaussian_mean_variance', posterior_gaussian_mean_variance
-            print 'kl_divergences_between_gaussian_prior_and_posterior', numpy.sum(kl_divergences_between_gaussian_prior_and_posterior), numpy.min(kl_divergences_between_gaussian_prior_and_posterior), numpy.max(kl_divergences_between_gaussian_prior_and_posterior)
+            print('posterior_gaussian_mean_variance', posterior_gaussian_mean_variance)
+            print('kl_divergences_between_gaussian_prior_and_posterior', numpy.sum(kl_divergences_between_gaussian_prior_and_posterior), numpy.min(kl_divergences_between_gaussian_prior_and_posterior), numpy.max(kl_divergences_between_gaussian_prior_and_posterior))
 
         if model.add_latent_piecewise_per_utterance:
-            print 'kl_divergences_between_piecewise_prior_and_posterior', numpy.sum(kl_divergences_between_piecewise_prior_and_posterior), numpy.min(kl_divergences_between_piecewise_prior_and_posterior), numpy.max(kl_divergences_between_piecewise_prior_and_posterior)
+            print('kl_divergences_between_piecewise_prior_and_posterior', numpy.sum(kl_divergences_between_piecewise_prior_and_posterior), numpy.min(kl_divergences_between_piecewise_prior_and_posterior), numpy.max(kl_divergences_between_piecewise_prior_and_posterior))
 
 
         if numpy.isinf(c) or numpy.isnan(c):
@@ -366,7 +366,7 @@ def main(args):
 
             # We need to catch exceptions due to high numbers in exp
             try:
-                print ".. %.2d:%.2d:%.2d %4d mb # %d bs %d maxl %d acc_cost = %.4f acc_word_perplexity = %.4f cur_cost = %.4f cur_word_perplexity = %.4f acc_mean_word_error = %.4f acc_mean_kl_divergence_cost = %.8f acc_mean_posterior_variance = %.8f" % (h, m, s,\
+                print(".. %.2d:%.2d:%.2d %4d mb # %d bs %d maxl %d acc_cost = %.4f acc_word_perplexity = %.4f cur_cost = %.4f cur_word_perplexity = %.4f acc_mean_word_error = %.4f acc_mean_kl_divergence_cost = %.8f acc_mean_posterior_variance = %.8f" % (h, m, s,\
                                  state['time_stop'] - (time.time() - start_time)/60.,\
                                  step, \
                                  batch['x'].shape[1], \
@@ -377,7 +377,7 @@ def main(args):
                                  math.exp(current_train_cost), \
                                  float(train_misclass)/float(train_done), \
                                  float(train_kl_divergence_cost/train_done), \
-                                 float(train_posterior_gaussian_mean_variance/train_dialogues_done))
+                                 float(train_posterior_gaussian_mean_variance/train_dialogues_done)))
             except:
                 pass
 
@@ -386,72 +386,71 @@ def main(args):
         if (step % 20 == 0):
             if model.add_latent_gaussian_per_utterance and model.add_latent_piecewise_per_utterance:
                 try:
-                    print 'posterior_gaussian_mean_combination', model.posterior_mean_combination.W.get_value()
+                    print('posterior_gaussian_mean_combination', model.posterior_mean_combination.W.get_value())
 
                 except:
                     pass
 
-                print 'latent_piecewise_utterance_variable_approx_posterior_alpha', numpy.mean(latent_piecewise_utterance_variable_approx_posterior_alpha), latent_piecewise_utterance_variable_approx_posterior_alpha
+                print('latent_piecewise_utterance_variable_approx_posterior_alpha', numpy.mean(latent_piecewise_utterance_variable_approx_posterior_alpha), latent_piecewise_utterance_variable_approx_posterior_alpha)
 
-                print 'latent_piecewise_utterance_variable_prior_alpha', numpy.mean(latent_piecewise_utterance_variable_prior_alpha), latent_piecewise_utterance_variable_prior_alpha
+                print('latent_piecewise_utterance_variable_prior_alpha', numpy.mean(latent_piecewise_utterance_variable_prior_alpha), latent_piecewise_utterance_variable_prior_alpha)
 
-                print 'latent_piecewise_utterance_variable_alpha_diff', (latent_piecewise_utterance_variable_approx_posterior_alpha-latent_piecewise_utterance_variable_prior_alpha)
+                print('latent_piecewise_utterance_variable_alpha_diff', (latent_piecewise_utterance_variable_approx_posterior_alpha-latent_piecewise_utterance_variable_prior_alpha))
 
-
-                print 'latent_piecewise_posterior_sample', numpy.min(latent_piecewise_posterior_sample), numpy.max(latent_piecewise_posterior_sample), latent_piecewise_posterior_sample[0, 0, :]
-                print 'ran_uniform_const_utterance', numpy.min(ran_uniform_const_utterance), numpy.max(ran_uniform_const_utterance), ran_uniform_const_utterance[0, 0, :]
+                print('latent_piecewise_posterior_sample', numpy.min(latent_piecewise_posterior_sample), numpy.max(latent_piecewise_posterior_sample), latent_piecewise_posterior_sample[0, 0, :])
+                print('ran_uniform_const_utterance', numpy.min(ran_uniform_const_utterance), numpy.max(ran_uniform_const_utterance), ran_uniform_const_utterance[0, 0, :])
 
             if model.utterance_decoder_gating.upper() == 'GRU' and model.decoder_bias_type.upper() == 'ALL':
                 Wd_s_q = model.utterance_decoder.Wd_s_q.get_value()
                 Wd_s_q_len = Wd_s_q.shape[0]
-                print 'model.utterance_decoder Wd_s_q full', numpy.mean(numpy.abs(Wd_s_q)), numpy.mean(Wd_s_q**2)
+                print('model.utterance_decoder Wd_s_q full', numpy.mean(numpy.abs(Wd_s_q)), numpy.mean(Wd_s_q**2))
 
                 if model.add_latent_gaussian_per_utterance and model.add_latent_piecewise_per_utterance:
                     Wd_s_q_gaussian = Wd_s_q[Wd_s_q_len-2*model.latent_piecewise_per_utterance_dim:Wd_s_q_len-model.latent_piecewise_per_utterance_dim, :]
                     Wd_s_q_piecewise = Wd_s_q[Wd_s_q_len-model.latent_piecewise_per_utterance_dim:Wd_s_q_len, :]
 
-                    print 'model.utterance_decoder Wd_s_q gaussian', numpy.mean(numpy.abs(Wd_s_q_gaussian)), numpy.mean(Wd_s_q_gaussian**2)
-                    print 'model.utterance_decoder Wd_s_q piecewise', numpy.mean(numpy.abs(Wd_s_q_piecewise)), numpy.mean(Wd_s_q_piecewise**2)
+                    print('model.utterance_decoder Wd_s_q gaussian', numpy.mean(numpy.abs(Wd_s_q_gaussian)), numpy.mean(Wd_s_q_gaussian**2))
+                    print('model.utterance_decoder Wd_s_q piecewise', numpy.mean(numpy.abs(Wd_s_q_piecewise)), numpy.mean(Wd_s_q_piecewise**2))
 
-                    print 'model.utterance_decoder Wd_s_q piecewise/gaussian', numpy.mean(numpy.abs(Wd_s_q_piecewise))/numpy.mean(numpy.abs(Wd_s_q_gaussian)), numpy.mean(Wd_s_q_piecewise**2)/numpy.mean(Wd_s_q_gaussian**2)
+                    print('model.utterance_decoder Wd_s_q piecewise/gaussian', numpy.mean(numpy.abs(Wd_s_q_piecewise))/numpy.mean(numpy.abs(Wd_s_q_gaussian)), numpy.mean(Wd_s_q_piecewise**2)/numpy.mean(Wd_s_q_gaussian**2))
 
                 elif model.add_latent_gaussian_per_utterance:
                     Wd_s_q_piecewise = Wd_s_q[Wd_s_q_len-model.latent_piecewise_per_utterance_dim:Wd_s_q_len, :]
 
-                    print 'model.utterance_decoder Wd_s_q piecewise', numpy.mean(numpy.abs(Wd_s_q_piecewise)), numpy.mean(Wd_s_q_piecewise**2)
+                    print('model.utterance_decoder Wd_s_q piecewise', numpy.mean(numpy.abs(Wd_s_q_piecewise)), numpy.mean(Wd_s_q_piecewise**2))
 
 
                 elif model.add_latent_piecewise_per_utterance:
                     Wd_s_q_gaussian = Wd_s_q[Wd_s_q_len-model.latent_piecewise_per_utterance_dim:Wd_s_q_len, :]
 
-                    print 'model.utterance_decoder Wd_s_q gaussian', numpy.mean(numpy.abs(Wd_s_q_gaussian)), numpy.mean(Wd_s_q_gaussian**2)
+                    print('model.utterance_decoder Wd_s_q gaussian', numpy.mean(numpy.abs(Wd_s_q_gaussian)), numpy.mean(Wd_s_q_gaussian**2))
 
 
 
             if model.utterance_decoder_gating.upper() == 'BOW' and model.decoder_bias_type.upper() == 'ALL':
                 Wd_bow_W_in = model.utterance_decoder.Wd_bow_W_in.get_value()
                 Wd_bow_W_in_len = Wd_bow_W_in.shape[0]
-                print 'model.utterance_decoder Wd_bow_W_in full', numpy.mean(numpy.abs(Wd_bow_W_in)), numpy.mean(Wd_bow_W_in**2)
+                print('model.utterance_decoder Wd_bow_W_in full', numpy.mean(numpy.abs(Wd_bow_W_in)), numpy.mean(Wd_bow_W_in**2))
 
                 if model.add_latent_gaussian_per_utterance and model.add_latent_piecewise_per_utterance:
                     Wd_bow_W_in_gaussian = Wd_bow_W_in[Wd_bow_W_in_len-2*model.latent_piecewise_per_utterance_dim:Wd_bow_W_in_len-model.latent_piecewise_per_utterance_dim, :]
                     Wd_bow_W_in_piecewise = Wd_bow_W_in[Wd_bow_W_in_len-model.latent_piecewise_per_utterance_dim:Wd_bow_W_in_len, :]
 
-                    print 'model.utterance_decoder Wd_bow_W_in gaussian', numpy.mean(numpy.abs(Wd_bow_W_in_gaussian)), numpy.mean(Wd_bow_W_in_gaussian**2)
-                    print 'model.utterance_decoder Wd_bow_W_in piecewise', numpy.mean(numpy.abs(Wd_bow_W_in_piecewise)), numpy.mean(Wd_bow_W_in_piecewise**2)
+                    print('model.utterance_decoder Wd_bow_W_in gaussian', numpy.mean(numpy.abs(Wd_bow_W_in_gaussian)), numpy.mean(Wd_bow_W_in_gaussian**2))
+                    print('model.utterance_decoder Wd_bow_W_in piecewise', numpy.mean(numpy.abs(Wd_bow_W_in_piecewise)), numpy.mean(Wd_bow_W_in_piecewise**2))
 
-                    print 'model.utterance_decoder Wd_bow_W_in piecewise/gaussian', numpy.mean(numpy.abs(Wd_bow_W_in_piecewise))/numpy.mean(numpy.abs(Wd_bow_W_in_gaussian)), numpy.mean(Wd_bow_W_in_piecewise**2)/numpy.mean(Wd_bow_W_in_gaussian**2)
+                    print('model.utterance_decoder Wd_bow_W_in piecewise/gaussian', numpy.mean(numpy.abs(Wd_bow_W_in_piecewise))/numpy.mean(numpy.abs(Wd_bow_W_in_gaussian)), numpy.mean(Wd_bow_W_in_piecewise**2)/numpy.mean(Wd_bow_W_in_gaussian**2))
 
                 elif model.add_latent_gaussian_per_utterance:
                     Wd_bow_W_in_piecewise = Wd_bow_W_in[Wd_bow_W_in_len-model.latent_piecewise_per_utterance_dim:Wd_bow_W_in_len, :]
 
-                    print 'model.utterance_decoder Wd_bow_W_in piecewise', numpy.mean(numpy.abs(Wd_bow_W_in_piecewise)), numpy.mean(Wd_bow_W_in_piecewise**2)
+                    print('model.utterance_decoder Wd_bow_W_in piecewise', numpy.mean(numpy.abs(Wd_bow_W_in_piecewise)), numpy.mean(Wd_bow_W_in_piecewise**2))
 
 
                 elif model.add_latent_piecewise_per_utterance:
                     Wd_bow_W_in_gaussian = Wd_bow_W_in[Wd_bow_W_in_len-model.latent_piecewise_per_utterance_dim:Wd_bow_W_in_len, :]
 
-                    print 'model.utterance_decoder Wd_bow_W_in gaussian', numpy.mean(numpy.abs(Wd_bow_W_in_gaussian)), numpy.mean(Wd_bow_W_in_gaussian**2)
+                    print('model.utterance_decoder Wd_bow_W_in gaussian', numpy.mean(numpy.abs(Wd_bow_W_in_gaussian)), numpy.mean(Wd_bow_W_in_gaussian**2))
 
 
 
@@ -524,9 +523,9 @@ def main(args):
                     valid_posterior_gaussian_mean_variance += posterior_gaussian_mean_variance
 
                     # Print batch statistics
-                    print 'valid_cost', valid_cost
-                    print 'valid_kl_divergence_cost sample', kl_divergence_cost
-                    print 'posterior_gaussian_mean_variance', posterior_gaussian_mean_variance
+                    print('valid_cost', valid_cost)
+                    print('valid_kl_divergence_cost sample', kl_divergence_cost)
+                    print('posterior_gaussian_mean_variance', posterior_gaussian_mean_variance)
 
 
                     valid_wordpreds_done += batch['num_preds']
@@ -545,7 +544,7 @@ def main(args):
 
                     # Save model if there is decrease in validation cost
                     save(model, timings, train_data)
-                    print 'best valid_cost', valid_cost
+                    print('best valid_cost', valid_cost)
                 elif valid_cost >= timings["valid_cost"][-1] * state['cost_threshold']:
                     patience -= 1
 
@@ -557,10 +556,10 @@ def main(args):
 
                 # We need to catch exceptions due to high numbers in exp
                 try:
-                    print "** valid cost (NLL) = %.4f, valid word-perplexity = %.4f, valid kldiv cost (per word) = %.8f, valid mean posterior variance (per word) = %.8f, patience = %d" % (float(valid_cost), float(math.exp(valid_cost)), float(valid_kl_divergence_cost), float(valid_posterior_gaussian_mean_variance), patience)
+                    print("** valid cost (NLL) = %.4f, valid word-perplexity = %.4f, valid kldiv cost (per word) = %.8f, valid mean posterior variance (per word) = %.8f, patience = %d" % (float(valid_cost), float(math.exp(valid_cost)), float(valid_kl_divergence_cost), float(valid_posterior_gaussian_mean_variance), patience))
                 except:
                     try:
-                        print "** valid cost (NLL) = %.4f, patience = %d" % (float(valid_cost), patience)
+                        print("** valid cost (NLL) = %.4f, patience = %d" % (float(valid_cost), patience))
                     except:
                         pass
 
