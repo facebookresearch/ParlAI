@@ -46,10 +46,11 @@ class DialogTeacher(Teacher):
         # first initialize any shared objects
         self.random = self.datatype == 'train'
         if shared and shared.get('data'):
-            self.data = shared['data']
+            self.data = DialogData(opt, shared=shared['data'])
         else:
-            self.data = DialogData(opt, self.setup_data(opt['datafile']),
-                                   cands=self.label_candidates())
+            self.data = DialogData(opt,
+                data_loader=self.setup_data(opt['datafile']),
+                cands=self.label_candidates())
 
         # for ordered data in batch mode (especially, for validation and
         # testing), each teacher in the batch gets a start index and a step
@@ -84,7 +85,7 @@ class DialogTeacher(Teacher):
 
     def share(self):
         shared = super().share()
-        shared['data'] = self.data
+        shared['data'] = self.data.share()
         return shared
 
     def label_candidates(self):
@@ -177,16 +178,30 @@ class DialogData(object):
     or randomly when returning examples to the caller.
     """
 
-    def __init__(self, opt, data_loader, cands=None):
+    def __init__(self, opt, data_loader=None, cands=None, shared=None):
         # self.data is a list of episodes
         # each episode is a tuple of entries
         # each entry is a tuple of values for the action/observation table
         self.opt = opt
-        self.data = []
-        self._load(data_loader)
-        self.cands = None if cands == None else set(sys.intern(c) for c in cands)
+        if shared:
+            self.image_loader = shared.get('image_loader', None)
+            self.data = shared.get('data', [])
+            self.cands = shared.get('cands', None)
+        else:
+            self.image_loader = ImageLoader(opt)
+            self.data = []
+            self._load(data_loader)
+            self.cands = None if cands == None else set(sys.intern(c) for c in cands)
         self.addedCands = []
-        self.image_loader = ImageLoader(opt) 
+        self.copied_cands = False
+
+    def share(self):
+        shared = {
+            'data': self.data,
+            'cands': self.cands,
+            'image_loader': self.image_loader
+        }
+        return shared
 
     def __len__(self):
         """Returns total number of entries available. Each episode has at least
@@ -216,10 +231,13 @@ class DialogData(object):
                     new_entry.append(None)
                 if len(entry) > 1:
                     # process labels if available
-                    if entry[1] is not None:
+                    if entry[1] is None:
+                        new_entry.append(None)
+                    elif hasattr(entry[1], '__iter__') and type(entry[1]) is not str:
+                        # make sure iterable over labels, not single string
                         new_entry.append(tuple(sys.intern(e) for e in entry[1]))
                     else:
-                        new_entry.append(None)
+                        raise TypeError('Must provide iterable over labels, not a single string.')
                     if len(entry) > 2:
                         # process reward if available
                         if entry[2] is not None:
@@ -227,19 +245,21 @@ class DialogData(object):
                         else:
                             new_entry.append(None)
                         if len(entry) > 3:
-                            if entry[3] is not None:
-                                # process label candidates if available
-                                if last_cands and entry[3] is last_cands:
-                                    # if cands are shared, say "same" so we
-                                    # don't store them again
-                                    new_entry.append(
-                                        sys.intern('same as last time'))
-                                else:
-                                    last_cands = entry[3]
-                                    new_entry.append(tuple(
-                                        sys.intern(e) for e in entry[3]))
-                            else:
+                            # process label candidates if available
+                            if entry[3] is None:
                                 new_entry.append(None)
+                            elif last_cands and entry[3] is last_cands:
+                                # if cands are shared, say "same" so we
+                                # don't store them again
+                                new_entry.append(
+                                    sys.intern('same as last time'))
+                            elif hasattr(entry[3], '__iter__') and type(entry[3]) is not str:
+                                # make sure iterable over candidates, not single string
+                                last_cands = entry[3]
+                                new_entry.append(tuple(
+                                    sys.intern(e) for e in entry[3]))
+                            else:
+                                raise TypeError('Must provide iterable over label candidates, not a single string.')
                             if len(entry) > 4 and entry[4] is not None:
                                 new_entry.append(sys.intern(entry[4]))
 
@@ -287,6 +307,9 @@ class DialogData(object):
             for label in table['labels']:
                 if label not in self.cands:
                     # add labels, queue them for removal next time
+                    if not self.copied_cands:
+                        self.cands = self.cands.copy()
+                        self.copied_cands = True
                     self.cands.add(label)
                     self.addedCands.append(label)
             table['label_candidates'] = self.cands
@@ -298,4 +321,3 @@ class DialogData(object):
         # last entry in this episode
         table['episode_done'] = episode_done
         return table, end_of_data
-

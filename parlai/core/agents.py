@@ -104,7 +104,7 @@ class Teacher(Agent):
 
     def __init__(self, opt, shared=None):
         if not hasattr(self, 'opt'):
-            self.opt = opt
+             self.opt = copy.deepcopy(opt)
         if not hasattr(self, 'id'):
             self.id = opt.get('task', 'teacher')
         if not hasattr(self, 'metrics'):
@@ -149,9 +149,7 @@ class Teacher(Agent):
         self.metrics.clear()
 
     def share(self):
-        """If applicable, share any parameters needed to create a shared version
-        of this agent.
-        """
+        """In addition to default Agent shared parameters, share metrics."""
         shared = super().share()
         shared['metrics'] = self.metrics
         return shared

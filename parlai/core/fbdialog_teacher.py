@@ -77,10 +77,10 @@ class FbDialogTeacher(DialogTeacher):
         cnt = 0
         with open(path) as read:
             for line in read:
-                line = line.strip()
+                line = line.strip().replace('\\n', '\n')
                 if len(line) > 0:
                     cnt = cnt + 1
-                    # If lines are numbered we stip them of numbers.
+                    # If lines are numbered we strip them of numbers.
                     if cnt == 1 and line[0:2] == '1 ':
                         lines_have_ids = True
                     # If tabs then the label_candidates are all the replies.
@@ -135,7 +135,7 @@ class FbDialogTeacher(DialogTeacher):
             reward = None
             dialog_index = 0
             for line in read:
-                line = line.strip()
+                line = line.strip().replace('\\n', '\n')
                 if len(line) == 0:
                     continue
 

@@ -17,13 +17,20 @@ import random
 
 
 class Seq2seqAgent(Agent):
-    """Simple agent which uses an LSTM to process incoming text observations."""
+    """Simple agent which uses an RNN to process incoming text observations.
+    The RNN generates a vector which is used to represent the input text,
+    conditioning on the context to generate an output token-by-token.
+
+    For more information, see Sequence to Sequence Learning with Neural Networks
+    `(Sutskever et al. 2014) <https://arxiv.org/abs/1409.3215>`_.
+    """
 
     @staticmethod
     def add_cmdline_args(argparser):
+        """Add command-line arguments specifically for this agent."""
         DictionaryAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Seq2Seq Arguments')
-        agent.add_argument('-hs', '--hiddensize', type=int, default=64,
+        agent.add_argument('-hs', '--hiddensize', type=int, default=128,
             help='size of the hidden layers and embeddings')
         agent.add_argument('-nl', '--numlayers', type=int, default=2,
             help='number of hidden layers')
@@ -31,76 +38,123 @@ class Seq2seqAgent(Agent):
             help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
             help='dropout rate')
+        # agent.add_argument('-bi', '--bidirectional', type='bool', default=False,
+        #     help='whether to encode the context with a bidirectional RNN')
         agent.add_argument('--no-cuda', action='store_true', default=False,
             help='disable GPUs even if available')
         agent.add_argument('--gpu', type=int, default=-1,
             help='which GPU device to use')
+        agent.add_argument('-r', '--rank-candidates', type='bool', default=False,
+            help='rank candidates if available. this is done by computing the' +
+                 ' mean score per token for each candidate and selecting the ' +
+                 'highest scoring one.')
 
     def __init__(self, opt, shared=None):
+        # initialize defaults first
         super().__init__(opt, shared)
-        opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()
-        if opt['cuda']:
-            print('[ Using CUDA ]')
-            torch.cuda.set_device(opt['gpu'])
         if not shared:
-            # don't enter this loop for shared (ie batch) instantiations
+            # this is not a shared instance of this class, so do full
+            # initialization. if shared is set, only set up shared members.
+            
+            # check for cuda
+            self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
+            if self.use_cuda:
+                print('[ Using CUDA ]')
+                torch.cuda.set_device(opt['gpu'])
+
+            if opt.get('model_file') and os.path.isfile(opt['model_file']):
+                # load model parameters if available
+                print('Loading existing model params from ' + opt['model_file'])
+                new_opt, self.states = self.load(opt['model_file'])
+                # override options with stored ones
+                opt = self.override_opt(new_opt)
+
             self.dict = DictionaryAgent(opt)
             self.id = 'Seq2Seq'
+            # we use END markers to break input and output and end our output
+            self.END = self.dict.end_token
+            self.observation = {'text': self.END, 'episode_done': True}
+            self.END_TENSOR = torch.LongTensor(self.dict.parse(self.END))
+            # get index of null token from dictionary (probably 0)
+            self.NULL_IDX = self.dict.txt2vec(self.dict.null_token)[0]
+
+            # store important params directly
             hsz = opt['hiddensize']
-            self.EOS = self.dict.eos_token
-            self.observation = {'text': self.EOS, 'episode_done': True}
-            self.EOS_TENSOR = torch.LongTensor(self.dict.parse(self.EOS))
             self.hidden_size = hsz
             self.num_layers = opt['numlayers']
             self.learning_rate = opt['learningrate']
-            self.use_cuda = opt.get('cuda', False)
+            self.rank = opt['rank_candidates']
             self.longest_label = 1
 
+            # set up modules
             self.criterion = nn.NLLLoss()
-            self.lt = nn.Embedding(len(self.dict), hsz, padding_idx=0,
+            # lookup table stores word embeddings
+            self.lt = nn.Embedding(len(self.dict), hsz,
+                                   padding_idx=self.NULL_IDX,
                                    scale_grad_by_freq=True)
+            # encoder captures the input text
             self.encoder = nn.GRU(hsz, hsz, opt['numlayers'])
+            # decoder produces our output states
             self.decoder = nn.GRU(hsz, hsz, opt['numlayers'])
-            self.d2o = nn.Linear(hsz, len(self.dict))
+            # linear layer helps us produce outputs from final decoder state
+            self.h2o = nn.Linear(hsz, len(self.dict))
+            # droput on the linear layer helps us generalize
             self.dropout = nn.Dropout(opt['dropout'])
+            # softmax maps output scores to probabilities
             self.softmax = nn.LogSoftmax()
 
+            # set up optims for each module
             lr = opt['learningrate']
             self.optims = {
                 'lt': optim.SGD(self.lt.parameters(), lr=lr),
                 'encoder': optim.SGD(self.encoder.parameters(), lr=lr),
                 'decoder': optim.SGD(self.decoder.parameters(), lr=lr),
-                'd2o': optim.SGD(self.d2o.parameters(), lr=lr),
+                'h2o': optim.SGD(self.h2o.parameters(), lr=lr),
             }
+
+            if hasattr(self, 'states'):
+                # set loaded states if applicable
+                self.set_states(self.states)
+
             if self.use_cuda:
                 self.cuda()
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
-                print('Loading existing model parameters from ' + opt['model_file'])
-                self.load(opt['model_file'])
 
         self.episode_done = True
 
+    def override_opt(self, new_opt):
+        """Print out each added key and each overriden key."""
+        for k, v in new_opt.items():
+            if k not in self.opt:
+                print('Adding new option [ {k}: {v} ]'.format(k=k, v=v))
+            elif self.opt[k] != v:
+                print('Overriding option [ {k}: {old} => {v}]'.format(
+                      k=k, old=self.opt[k], v=v))
+            self.opt[k] = v
+        return self.opt
+
     def parse(self, text):
-        return torch.LongTensor(self.dict.txt2vec(text))
+        return self.dict.txt2vec(text)
 
     def v2t(self, vec):
         return self.dict.vec2txt(vec)
 
     def cuda(self):
+        self.END_TENSOR = self.END_TENSOR.cuda(async=True)
         self.criterion.cuda()
         self.lt.cuda()
         self.encoder.cuda()
         self.decoder.cuda()
-        self.d2o.cuda()
+        self.h2o.cuda()
         self.dropout.cuda()
         self.softmax.cuda()
 
-    def hidden_to_idx(self, hidden, drop=False):
+    def hidden_to_idx(self, hidden, dropout=False):
+        """Converts hidden state vectors into indices into the dictionary."""
         if hidden.size(0) > 1:
             raise RuntimeError('bad dimensions of tensor:', hidden)
         hidden = hidden.squeeze(0)
-        scores = self.d2o(hidden)
-        if drop:
+        scores = self.h2o(hidden)
+        if dropout:
             scores = self.dropout(scores)
         scores = self.softmax(scores)
         _max_score, idx = scores.max(1)
@@ -138,106 +192,156 @@ class Seq2seqAgent(Agent):
         self.episode_done = observation['episode_done']
         return observation
 
-    def update(self, xs, ys):
+    def predict(self, xs, ys=None, cands=None):
+        """Produce a prediction from our model. Update the model using the
+        targets if available.
+        """
         batchsize = len(xs)
+        text_cand_inds = None
 
         # first encode context
         xes = self.lt(xs).t()
         h0 = self.init_zeros(batchsize)
         _output, hn = self.encoder(xes, h0)
 
-        # start with EOS tensor for all
-        x = self.EOS_TENSOR
-        if self.use_cuda:
-            x = x.cuda(async=True)
-        x = Variable(x)
+        # next we use END as an input to kick off our decoder
+        x = Variable(self.END_TENSOR)
         xe = self.lt(x).unsqueeze(1)
         xes = xe.expand(xe.size(0), batchsize, xe.size(2))
 
+        # list of output tokens for each example in the batch
         output_lines = [[] for _ in range(batchsize)]
 
-        self.zero_grad()
-        # update model
-        loss = 0
-        self.longest_label = max(self.longest_label, ys.size(1))
-        for i in range(ys.size(1)):
-            output, hn = self.decoder(xes, hn)
-            preds, scores = self.hidden_to_idx(output, drop=True)
-            y = ys.select(1, i)
-            loss += self.criterion(scores, y)
-            # use the true token as the next input
-            xes = self.lt(y).unsqueeze(0)
-            # hn = self.dropout(hn)
-            for j in range(preds.size(0)):
-                token = self.v2t([preds.data[j][0]])
-                output_lines[j].append(token)
+        if ys is not None:
+            # update the model based on the labels
+            self.zero_grad()
+            loss = 0
+            # keep track of longest label we've ever seen
+            self.longest_label = max(self.longest_label, ys.size(1))
+            for i in range(ys.size(1)):
+                output, hn = self.decoder(xes, hn)
+                preds, scores = self.hidden_to_idx(output, dropout=True)
+                y = ys.select(1, i)
+                loss += self.criterion(scores, y)
+                # use the true token as the next input instead of predicted
+                # this produces a biased prediction but better training
+                xes = self.lt(y).unsqueeze(0)
+                for b in range(batchsize):
+                    # convert the output scores to tokens
+                    token = self.v2t([preds.data[b][0]])
+                    output_lines[b].append(token)
 
-        loss.backward()
-        self.update_params()
+            loss.backward()
+            self.update_params()
 
-        if random.random() < 0.1:
-            true = self.v2t(ys.data[0])
-            #print('loss:', round(loss.data[0], 2),
-            #      ' '.join(output_lines[0]), '(true: {})'.format(true))
-        return output_lines
+            if random.random() < 0.1:
+                # sometimes output a prediction for debugging
+                print('prediction:', ' '.join(output_lines[0]),
+                      '\nlabel:', self.dict.vec2txt(ys.data[0]))
+        else:
+            # just produce a prediction without training the model
+            done = [False for _ in range(batchsize)]
+            total_done = 0
+            max_len = 0
 
-    def predict(self, xs):
-        batchsize = len(xs)
+            if cands:
+                # score each candidate separately
 
-        # first encode context
-        xes = self.lt(xs).t()
-        h0 = self.init_zeros(batchsize)
-        _output, hn = self.encoder(xes, h0)
+                # cands are exs_with_cands x cands_per_ex x words_per_cand
+                # cview is total_cands x words_per_cand
+                cview = cands.view(-1, cands.size(2))
+                cands_xes = xe.expand(xe.size(0), cview.size(0), xe.size(2))
+                sz = hn.size()
+                cands_hn = (
+                    hn.view(sz[0], sz[1], 1, sz[2])
+                    .expand(sz[0], sz[1], cands.size(1), sz[2])
+                    .contiguous()
+                    .view(sz[0], -1, sz[2])
+                )
 
-        # start with EOS tensor for all
-        x = self.EOS_TENSOR
-        if self.use_cuda:
-            x = x.cuda(async=True)
-        x = Variable(x)
-        xe = self.lt(x).unsqueeze(1)
-        xes = xe.expand(xe.size(0), batchsize, xe.size(2))
+                cand_scores = torch.zeros(cview.size(0))
+                cand_lengths = torch.LongTensor(cview.size(0)).fill_(0)
+                if self.use_cuda:
+                    cand_scores = cand_scores.cuda(async=True)
+                    cand_lengths = cand_lengths.cuda(async=True)
+                cand_scores = Variable(cand_scores)
+                cand_lengths = Variable(cand_lengths)
 
-        done = [False for _ in range(batchsize)]
-        total_done = 0
-        max_len = 0
-        output_lines = [[] for _ in range(batchsize)]
+                for i in range(cview.size(1)):
+                    output, cands_hn = self.decoder(cands_xes, cands_hn)
+                    preds, scores = self.hidden_to_idx(output, dropout=False)
+                    cs = cview.select(1, i)
+                    non_nulls = cs.ne(self.NULL_IDX)
+                    cand_lengths += non_nulls.long()
+                    score_per_cand = torch.gather(scores, 1, cs.unsqueeze(1))
+                    cand_scores += score_per_cand.squeeze() * non_nulls.float()
+                    cands_xes = self.lt(cs).unsqueeze(0)
 
-        while(total_done < batchsize) and max_len < self.longest_label:
-            output, hn = self.decoder(xes, hn)
-            preds, scores = self.hidden_to_idx(output, drop=False)
-            xes = self.lt(preds.t())
-            max_len += 1
-            for i in range(preds.size(0)):
-                if not done[i]:
-                    token = self.v2t(preds.data[i])
-                    if token == self.EOS:
-                        done[i] = True
-                        total_done += 1
-                    else:
-                        output_lines[i].append(token)
-        if random.random() < 0.1:
-            print('prediction:', ' '.join(output_lines[0]))
-        return output_lines
+                # set empty scores to -1, so when divided by 0 they become -inf
+                cand_scores -= cand_lengths.eq(0).float()
+                # average the scores per token
+                cand_scores /= cand_lengths.float()
 
-    def batchify(self, obs):
-        exs = [ex for ex in obs if 'text' in ex]
-        valid_inds = [i for i, ex in enumerate(obs) if 'text' in ex]
+                cand_scores = cand_scores.view(cands.size(0), cands.size(1))
+                srtd_scores, text_cand_inds = cand_scores.sort(1, True)
+                text_cand_inds = text_cand_inds.data
 
+            # now, generate a response from scratch
+            while(total_done < batchsize) and max_len < self.longest_label:
+                # keep producing tokens until we hit END or max length for each
+                # example in the batch
+                output, hn = self.decoder(xes, hn)
+                preds, scores = self.hidden_to_idx(output, dropout=False)
+
+                xes = self.lt(preds.t())
+                max_len += 1
+                for b in range(batchsize):
+                    if not done[b]:
+                        # only add more tokens for examples that aren't done yet
+                        token = self.v2t(preds.data[b])
+                        if token == self.END:
+                            # if we produced END, we're done
+                            done[b] = True
+                            total_done += 1
+                        else:
+                            output_lines[b].append(token)
+
+            if random.random() < 0.1:
+                # sometimes output a prediction for debugging
+                print('prediction:', ' '.join(output_lines[0]))
+
+        return output_lines, text_cand_inds
+
+    def batchify(self, observations):
+        """Convert a list of observations into input & target tensors."""
+        # valid examples
+        exs = [ex for ex in observations if 'text' in ex]
+        # the indices of the valid (non-empty) tensors
+        valid_inds = [i for i, ex in enumerate(observations) if 'text' in ex]
+
+        # set up the input tensors
         batchsize = len(exs)
-        parsed = [self.parse(ex['text']) for ex in exs]
-        max_x_len = max([len(x) for x in parsed])
-        xs = torch.LongTensor(batchsize, max_x_len).fill_(0)
-        for i, x in enumerate(parsed):
-            offset = max_x_len - len(x)
-            for j, idx in enumerate(x):
-                xs[i][j + offset] = idx
-        if self.use_cuda:
-            xs = xs.cuda(async=True)
-        xs = Variable(xs)
+        # tokenize the text
+        xs = None
+        if batchsize > 0:
+            parsed = [self.parse(ex['text']) for ex in exs]
+            max_x_len = max([len(x) for x in parsed])
+            xs = torch.LongTensor(batchsize, max_x_len).fill_(0)
+            # pack the data to the right side of the tensor for this model
+            for i, x in enumerate(parsed):
+                offset = max_x_len - len(x)
+                for j, idx in enumerate(x):
+                    xs[i][j + offset] = idx
+            if self.use_cuda:
+                xs = xs.cuda(async=True)
+            xs = Variable(xs)
 
+        # set up the target tensors
         ys = None
-        if 'labels' in exs[0]:
-            labels = [random.choice(ex['labels']) + ' ' + self.EOS for ex in exs]
+        if batchsize > 0 and any(['labels' in ex for ex in exs]):
+            # randomly select one of the labels to update on, if multiple
+            # append END to each label
+            labels = [random.choice(ex.get('labels', [''])) + ' ' + self.END for ex in exs]
             parsed = [self.parse(y) for y in labels]
             max_y_len = max(len(y) for y in parsed)
             ys = torch.LongTensor(batchsize, max_y_len).fill_(0)
@@ -247,30 +351,75 @@ class Seq2seqAgent(Agent):
             if self.use_cuda:
                 ys = ys.cuda(async=True)
             ys = Variable(ys)
-        return xs, ys, valid_inds
+
+        # set up candidates
+        cands = None
+        valid_cands = None
+        if ys is None and self.rank:
+            # only do ranking when no targets available and ranking flag set
+            parsed = []
+            valid_cands = []
+            for i in valid_inds:
+                if 'label_candidates' in observations[i]:
+                    # each candidate tuple is a pair of the parsed version and
+                    # the original full string
+                    cs = list(observations[i]['label_candidates'])
+                    parsed.append([self.parse(c) for c in cs])
+                    valid_cands.append((i, cs))
+            if len(parsed) > 0:
+                # TODO: store lengths of cands separately, so don't have zero
+                # padding for varying number of cands per example
+                # found cands, pack them into tensor
+                max_c_len = max(max(len(c) for c in cs) for cs in parsed)
+                max_c_cnt = max(len(cs) for cs in parsed)
+                cands = torch.LongTensor(len(parsed), max_c_cnt, max_c_len).fill_(0)
+                for i, cs in enumerate(parsed):
+                    for j, c in enumerate(cs):
+                        for k, idx in enumerate(c):
+                            cands[i][j][k] = idx
+                if self.use_cuda:
+                    cands = cands.cuda(async=True)
+                cands = Variable(cands)
+
+        return xs, ys, valid_inds, cands, valid_cands
 
     def batch_act(self, observations):
         batchsize = len(observations)
+        # initialize a table of replies with this agent's id
         batch_reply = [{'id': self.getID()} for _ in range(batchsize)]
 
-        xs, ys, valid_inds = self.batchify(observations)
+        # convert the observations into batches of inputs and targets
+        # valid_inds tells us the indices of all valid examples
+        # e.g. for input [{}, {'text': 'hello'}, {}, {}], valid_inds is [1]
+        # since the other three elements had no 'text' field
+        xs, ys, valid_inds, cands, valid_cands = self.batchify(observations)
 
-        if len(xs) == 0:
+        if xs is None:
+            # no valid examples, just return the empty responses we set up
             return batch_reply
 
-        # Either train or predict
-        if ys is not None:
-            predictions = self.update(xs, ys)
-        else:
-            predictions = self.predict(xs)
+        # produce predictions either way, but use the targets if available
+        predictions, text_cand_inds = self.predict(xs, ys, cands)
 
         for i in range(len(predictions)):
-            batch_reply[valid_inds[i]]['text'] = ' '.join(
-                c for c in predictions[i] if c != self.EOS)
+            # map the predictions back to non-empty examples in the batch
+            # we join with spaces since we produce tokens one at a time
+            curr = batch_reply[valid_inds[i]]
+            curr['text'] = ' '.join(c for c in predictions[i] if c != self.END
+                                    and c != self.dict.null_token)
+
+        if text_cand_inds is not None:
+            for i in range(len(valid_cands)):
+                order = text_cand_inds[i]
+                batch_idx, curr_cands = valid_cands[i]
+                curr = batch_reply[batch_idx]
+                curr['text_candidates'] = [curr_cands[idx] for idx in order
+                                           if idx < len(curr_cands)]
 
         return batch_reply
 
     def act(self):
+        # call batch_act with this batch of one
         return self.batch_act([self.observation])[0]
 
     def save(self, path=None):
@@ -281,18 +430,24 @@ class Seq2seqAgent(Agent):
             model['lt'] = self.lt.state_dict()
             model['encoder'] = self.encoder.state_dict()
             model['decoder'] = self.decoder.state_dict()
-            model['d2o'] = self.d2o.state_dict()
+            model['h2o'] = self.h2o.state_dict()
             model['longest_label'] = self.longest_label
+            model['opt'] = self.opt
 
             with open(path, 'wb') as write:
                 torch.save(model, write)
 
     def load(self, path):
+        """Return opt and model states."""
         with open(path, 'rb') as read:
             model = torch.load(read)
 
-        self.lt.load_state_dict(model['lt'])
-        self.encoder.load_state_dict(model['encoder'])
-        self.decoder.load_state_dict(model['decoder'])
-        self.d2o.load_state_dict(model['d2o'])
-        self.longest_label = model['longest_label']
+        return model['opt'], model
+
+    def set_states(self, states):
+        """Set the state dicts of the modules from saved states."""
+        self.lt.load_state_dict(states['lt'])
+        self.encoder.load_state_dict(states['encoder'])
+        self.decoder.load_state_dict(states['decoder'])
+        self.h2o.load_state_dict(states['h2o'])
+        self.longest_label = states['longest_label']

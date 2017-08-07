@@ -284,6 +284,22 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
+    def test_triviaqa(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.triviaqa.agents import WebTeacher, WikipediaTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+
+        for teacher_class in (WebTeacher, WikipediaTeacher):
+            for dt in ['train:ordered', 'valid']:
+                opt['datatype'] = dt
+
+                teacher = teacher_class(opt)
+                reply = teacher.act()
+                check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
     def test_ubuntu(self):
         from parlai.core.params import ParlaiParser
         from parlai.tasks.ubuntu.agents import DefaultTeacher
@@ -374,6 +390,44 @@ class TestData(unittest.TestCase):
             opt['datatype'] = dt
 
             teacher = OeTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
+    def test_insuranceqa(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.insuranceqa.agents import V1Teacher, V2Teacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+
+        for dt in ['train', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = V1Teacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+            teacher = V2Teacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
+    def test_ms_marco(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.ms_marco.agents import DefaultTeacher, PassageTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+
+        for dt in ['train', 'valid']:
+            opt['datatype'] = dt
+
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+            teacher = PassageTeacher(opt)
             reply = teacher.act()
             check(opt, reply)
 

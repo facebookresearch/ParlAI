@@ -30,7 +30,9 @@ def _path(opt):
 class KBTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
-        task = opt.get('task', 'wikimovies:KB:kb')
+        task = opt.get('task')
+        if not task:
+            task = 'wikimovies:KB:kb'
         kb = task.split(':')
         if len(kb) == 3:
             kb = kb[2]

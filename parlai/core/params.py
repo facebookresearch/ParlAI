@@ -70,6 +70,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if add_parlai_args:
             self.add_parlai_args()
+            self.add_image_args()
         if add_model_args:
             self.add_model_args(model_argv)
 
@@ -180,6 +181,20 @@ class ParlaiParser(argparse.ArgumentParser):
                 s = class2str(agent.dictionary_class())
                 model_args.set_defaults(dict_class=s)
 
+    def add_image_args(self, args=None):
+        # Find which image mode specified, add its specific arguments if needed.
+        args = sys.argv if args is None else args
+        image_mode = None
+        for index, item in enumerate(args):
+            if item == '-im' or item == '--image-mode':
+                image_mode = args[index + 1]
+        if image_mode and image_mode != 'none':
+            parlai = self.add_argument_group('ParlAI Image Preprocessing Arguments')
+            parlai.add_argument('--image-size', type=int, default=256,
+                help='')
+            parlai.add_argument('--image-cropsize', type=int, default=224,
+                help='')
+
     def parse_args(self, args=None, namespace=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the ``args``.
         We specifically remove items with ``None`` as values in order to support
@@ -218,4 +233,3 @@ class ParlaiParser(argparse.ArgumentParser):
                         print('[ ' + group.title + ': ] ')
                     count += 1
                     print('[  ' + key + ': ' + values[key] + ' ]')
-

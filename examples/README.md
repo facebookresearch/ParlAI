@@ -48,14 +48,14 @@ Build a dictionary on a bAbI "1k training examples" task 1 and save it to /tmp/d
 python build_dict.py -t babi:task1k:1 --dict-file /tmp/dict.tsv
 ```
 
-Train a simple cpu-based memory network on the "10k training examples" bAbI task 1 with 8 threads (python processes) using Hogwild (requires zmq and Lua Torch):
+Train a simple sequence to sequence model on the "1k training examples" bAbI task 1 with batch size of 8 examples for one epoch (requires pytorch):
 ```bash
-python memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -nt 8
+python train_model.py -m seq2seq -t babi:task1k:1 -bs 8 -e 1 -mf /tmp/model_s2s
 ```
 
 Trains an attentive LSTM model of [Chen et al.](https://arxiv.org/abs/1704.00051) on the SQuAD dataset with a batch size of 32 examples (requires pytorch):
 ```bash
-python train_model.py -m drqa -t squad -bs 32 -mf /tmp/model
+python train_model.py -m drqa -t squad -bs 32 -mf /tmp/model_drqa
 ```
 
 Evaluates on an already trained SQuAD model:
@@ -67,5 +67,10 @@ python eval_model.py -m drqa -t squad -mf squad.mdl -dt valid
 Interactive session on an already trained SQuAD model:
 ```bash
 wget https://s3.amazonaws.com/fair-data/parlai/_models/drqa/squad.mdl
-python interactive.py -m drqa -mf squad.mdl 
+python interactive.py -m drqa -mf squad.mdl
+```
+
+Train a simple cpu-based memory network on the "10k training examples" bAbI task 1 with 8 threads (python processes) using Hogwild (requires zmq and Lua Torch):
+```bash
+python memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -nt 8
 ```

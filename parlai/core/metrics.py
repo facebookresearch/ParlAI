@@ -13,19 +13,20 @@ from parlai.core.utils import round_sigfigs
 from collections import Counter
 
 import re
-import string
 
-
+re_art = re.compile(r'\b(a|an|the)\b')
+re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~]')
 def _normalize_answer(s):
     """Lower text and remove punctuation, articles and extra whitespace."""
     def remove_articles(text):
-        return re.sub(r'\b(a|an|the)\b', ' ', text)
+        return re_art.sub(' ', text)
 
     def white_space_fix(text):
         return ' '.join(text.split())
 
     def remove_punc(text):
-        exclude = set(string.punctuation)
+        text = re_punc.sub(' ', text)  # convert interword punctuation to spaces
+        exclude = set('_\'')  # remove intraword punctuation completely
         return ''.join(ch for ch in text if ch not in exclude)
 
     def lower(text):
@@ -110,12 +111,12 @@ class Metrics(object):
         # Now loop through text candidates, assuming they are sorted.
         # If any of them is a label then score a point.
         # maintain hits@1, 5, 10, 50, 100,  etc.
-        label_set = set(labels) if type(labels) != set else labels
+        label_set = set(_normalize_answer(l) for l in labels)
         cnts = {k: 0 for k in self.eval_pr}
         cnt = 0
         for c in text_cands:
             cnt += 1
-            if c in label_set:
+            if _normalize_answer(c) in label_set:
                 for k in self.eval_pr:
                     if cnt <= k:
                         cnts[k] += 1
@@ -126,7 +127,6 @@ class Metrics(object):
             for k in self.eval_pr:
                 if cnts[k] > 0:
                     self.metrics['hits@' + str(k)] += 1
-
 
     def update(self, observation, labels):
         with self._lock():
