@@ -36,7 +36,7 @@ RETURN_MESSAGE = '[RETURNED]' # the Turker returned the HIT
 
 logging_enabled = True
 logger = None
-debug = True
+debug = False
 
 if logging_enabled:
     logging.basicConfig(filename=str(time.time())+'.log',
