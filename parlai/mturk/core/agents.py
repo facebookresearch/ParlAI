@@ -576,7 +576,7 @@ class MTurkAgent(Agent):
                     print_and_log('Worker has accepted the HIT (acknowledged by MTurk API).', False)
                     self.hit_is_accepted = True
                     break
-            time.sleep(1)
+            time.sleep(5) # ThrottlingException might happen if we poll too frequently
         while True:
             if self.hit_id:
                 response = self.manager.get_hit(hit_id=self.hit_id)
@@ -590,7 +590,7 @@ class MTurkAgent(Agent):
                     else:
                         print_and_log('Worker has returned the HIT. Since the worker is still in onboarding, we will not expire the HIT.', False)
                     return # we will not be using this MTurkAgent object for other worker, so no need to check its status anymore
-            time.sleep(1)
+            time.sleep(5) # ThrottlingException might happen if we poll too frequently
 
     def is_in_task(self):
         return 't_' in self.conversation_id
@@ -624,7 +624,6 @@ class MTurkAgent(Agent):
             if self.new_message:
                 with self.new_message_lock:
                     new_message = self.new_message
-                    print(new_message)
                     self.new_message = None
                     return new_message
             

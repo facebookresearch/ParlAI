@@ -423,8 +423,6 @@
                         return;
                     }
 
-                    console.log('here1');
-
                     function execute_with_ui_state_lock() {
                         if (ui_state_lock) {
                             setTimeout(
@@ -450,7 +448,7 @@
                             } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
                                 command_data = data['command_data'];
                                 console.log('current conversation_id: ' + conversation_id);
-                                if ((conversation_id === null && command_data['conversation_id'].indexOf('o_') !== -1) || (conversation_id.indexOf('o_') !== -1 && command_data['conversation_id'].indexOf('t_') !== -1)) // Only move from init state to onboarding, or from onboarding to task
+                                if ((conversation_id === null && (command_data['conversation_id'].indexOf('o_') !== -1) || (command_data['conversation_id'].indexOf('t_') !== -1)) || (conversation_id.indexOf('o_') !== -1 && command_data['conversation_id'].indexOf('t_') !== -1)) // Only move from init state to onboarding / task, or from onboarding to task
                                     {
                                     console.log("Redirecting to new URL...");
                                     var new_url = replace_url_parameter(window.location.href, 'mturk_agent_id', command_data['agent_id']);

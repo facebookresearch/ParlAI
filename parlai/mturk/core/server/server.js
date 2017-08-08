@@ -130,16 +130,13 @@ function _send_event_to_agent(socket, worker_id, event_name, event_data, callbac
       socket.to(worker_room_id).emit(event_name, event_data);
       waitUntil()
       .interval(500)
-      .times(2)
+      .times(10)
       .condition(function() {
         console.log(worker_id+': Waiting for: '+event_name + '_received');
         return (worker_id_to_event_name[worker_id] === event_name + '_received');
       })
       .done(function(result) {
-        if (result === false) { // Timeout
-          console.log(worker_id+': Waiting for: '+event_name + '_received'+' failed. Resending event...');
-          _send_event_to_agent(socket, worker_id, event_name, event_data, callback_function);
-        } else { // Success
+        if (result === true) {
           console.log(worker_id+': Received: '+event_name + '_received');
           if (callback_function) {
             callback_function(worker_id_to_event_data[worker_id]);
