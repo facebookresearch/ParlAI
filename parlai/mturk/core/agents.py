@@ -482,8 +482,8 @@ class MTurkManager():
 
         print_and_log("Link to HIT: " + mturk_page_url + "\n")
         print_and_log("Waiting for Turkers to respond... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
-        if self.opt['is_sandbox']:
-            webbrowser.open(mturk_page_url)
+        # if self.opt['is_sandbox']:
+        #     webbrowser.open(mturk_page_url)
         return mturk_page_url
 
     def expire_hit(self, hit_id):
