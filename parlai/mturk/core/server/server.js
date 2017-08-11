@@ -7,7 +7,6 @@ const path = require('path');
 const fs = require("fs");
 const domain = require('domain');
 const AsyncLock = require('async-lock');
-const waitUntil = require('wait-until');
 const bodyParser = require('body-parser');
 const data_model = require("./data_model");
 
@@ -112,151 +111,52 @@ const io = socketIO(
 
 var worker_id_to_room_id = {};
 var room_id_to_worker_id = {};
-var worker_id_to_event_name = {};
-var worker_id_to_event_data = {};
-var worker_id_to_domain = {};
 
-function _send_event_to_agent(socket, worker_id, event_name, event_data, callback_function) {
+function _send_message(socket, worker_id, event_name, event_data) {
   var worker_room_id = worker_id_to_room_id[worker_id];
-  // Get worker domain
-  var worker_domain = worker_id_to_domain[worker_id];
-  if (!worker_room_id || !worker_domain) { // Server does not have information about this worker. Should wait for this worker's agent_alive event instead.
-    if (!worker_room_id) console.log("worker room id doesn't exist!");
-    if (!worker_domain) console.log("worker domain doesn't exist!");
+  // Server does not have information about this worker. Should wait for this worker's agent_alive event instead.
+  if (!worker_room_id) {
+    console.log("Worker room id doesn't exist! Skipping message.")
     return;
   }
-  worker_domain.run(function(){
-    lock.acquire(worker_id, function(){
-      socket.to(worker_room_id).emit(event_name, event_data);
-      waitUntil()
-      .interval(500)
-      .times(10)
-      .condition(function() {
-        console.log(worker_id+': Waiting for: '+event_name + '_received');
-        return (worker_id_to_event_name[worker_id] === event_name + '_received');
-      })
-      .done(function(result) {
-        if (result === true) {
-          console.log(worker_id+': Received: '+event_name + '_received');
-          if (callback_function) {
-            callback_function(worker_id_to_event_data[worker_id]);
-          }
-        }
-      });
-    }, function(err, ret){
-      // lock released
-    });
-  });
+  console.log('worker_room_id' + worker_room_id);
+  socket.broadcast.in(worker_room_id).emit(event_name, event_data);
 }
 
-io.on('connection', (socket) => {
-    console.log('Client connected');
+io.on('connection', function (socket) {
+  console.log('Client connected');
 
-    socket.on('disconnect', () => {
-      var worker_id = room_id_to_worker_id[socket.id];
-      console.log('Client disconnected: '+worker_id);
-    });
+  socket.on('disconnect', function () {
+    var worker_id = room_id_to_worker_id[socket.id];
+    console.log('Client disconnected: '+worker_id);
 
-    socket.on('agent_alive', async (data, ack) => {
-      console.log('on_agent_alive', data);
-      var worker_id = data['worker_id'];
+  });
 
-      worker_id_to_room_id[worker_id] = socket.id;
-      room_id_to_worker_id[socket.id] = worker_id;
-      if (!(worker_id_to_domain[worker_id])) {
-        worker_id_to_domain[worker_id] = domain.create();
-      }
-      worker_id_to_event_name[worker_id] = 'agent_alive';
-      worker_id_to_event_data[worker_id] = data;
+  socket.on('agent alive', function (data, ack) {
+    var worker_id = data["sender_id"];
+    console.log('agent alive', data);
+    worker_id_to_room_id[worker_id] = socket.id;
+    room_id_to_worker_id[socket.id] = worker_id;
 
-      if (!(worker_id === '[World]')) {
-        _send_event_to_agent(
-          socket,
-          '[World]',
-          'agent_alive', 
-          data,
-          function(callback_data) {
-            ack(callback_data);
-          }
-        );
-      } else {
-        ack(data);
-      }
-    });
+    if (!(worker_id === '[World]')) {
+      _send_message(socket, data['receiver_id'], 'new message', data);
+    }
+    if(ack) {
+        ack('agent_alive');
+    }
+  });
 
-    socket.on('agent_send_command', (data, ack) => {
-      console.log('agent_send_command', data);
+  socket.on('route message', function (data, ack) {
+    console.log('route message', data);
+    var worker_id = data['receiver_id'];
 
-      var receiver_worker_id = data['receiver_worker_id'];
-      var command_id = data['command_id'];
+    _send_message(socket, worker_id, 'new message', data);
+    if(ack) {
+        ack('route message');
+    }
+  });
 
-      worker_id_to_event_name['[World]'] = 'agent_send_command';
-      worker_id_to_event_data['[World]'] = data;
-
-      // Forward command to receiver agent.
-      _send_event_to_agent(
-        socket, 
-        receiver_worker_id,
-        'new_command', 
-        data,
-        function() {
-          // Send acknowledge event back to command sender.
-          ack(data);
-        }
-      );
-    });
-
-    socket.on('agent_send_message', (data, ack) => {
-      console.log('agent_send_message', data);
-
-      var receiver_worker_id = data['receiver_worker_id'];
-      var message_id = data['message_id'];
-
-      worker_id_to_event_name['[World]'] = 'agent_send_message';
-      worker_id_to_event_data['[World]'] = data;
-
-      // Forward message to receiver agent.
-      _send_event_to_agent(
-        socket, 
-        receiver_worker_id,
-        'new_message', 
-        data,
-        function() {
-          // Send acknowledge event back to message sender.
-          ack(data);
-        }
-      );      
-    });
-
-    socket.on('new_command_received', (data, ack) => {
-      var by_worker_id = data['by_worker_id'];
-
-      worker_id_to_event_name[by_worker_id] = 'new_command_received';
-      worker_id_to_event_data[by_worker_id] = data;
-
-      ack();
-    });
-
-    socket.on('new_message_received', (data, ack) => {
-      var by_worker_id = data['by_worker_id'];
-
-      worker_id_to_event_name[by_worker_id] = 'new_message_received';
-      worker_id_to_event_data[by_worker_id] = data;
-
-      ack();
-    });
-
-    socket.on('agent_alive_received', (data, ack) => {
-      var by_worker_id = data['by_worker_id'];
-
-      worker_id_to_event_name[by_worker_id] = 'agent_alive_received';
-      worker_id_to_event_data[by_worker_id] = data;
-
-      ack();
-    });
-
-    // Setup is done, ready to accept events.
-    socket.emit('socket_open', 'Socket is open!');
+  socket.emit('socket_open', 'Socket is open!');
 });
 
 // ======================= Socket =======================

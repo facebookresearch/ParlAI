@@ -13,6 +13,7 @@ from datetime import datetime
 import random
 import string
 import json
+import uuid
 from parlai.core.agents import create_agent_from_shared
 from parlai.mturk.core.server_utils import setup_server, create_hit_config
 from parlai.mturk.core.mturk_utils import calculate_mturk_cost, check_mturk_balance, create_hit_type, create_hit_with_hit_type, get_mturk_client, setup_aws_credentials
@@ -21,10 +22,25 @@ from parlai.mturk.core.data_model import COMMAND_SEND_MESSAGE, COMMAND_SHOW_DONE
 from botocore.exceptions import ClientError
 import uuid
 from socketIO_client_nexus import SocketIO
+from queue import Queue, PriorityQueue, Empty
 import webbrowser
 import requests
 import logging
 import math
+
+from collections import namedtuple
+
+STATUS_INIT = 0
+STATUS_SENT = 1
+STATUS_ACK = 2
+
+TYPE_ACK = 'ack'
+TYPE_ALIVE = 'alive'
+TYPE_MESSAGE = 'message'
+TYPE_HEARTBEAT = 'heartbeat'
+
+ACK_TIME = {'alive': 2,
+            'message': 2}
 
 ASSIGNMENT_NOT_DONE = 'NotDone'
 ASSIGNMENT_DONE = 'Submitted'
@@ -36,7 +52,7 @@ RETURN_MESSAGE = '[RETURNED]' # the Turker returned the HIT
 
 logging_enabled = True
 logger = None
-debug = False
+debug = True
 
 if logging_enabled:
     logging.basicConfig(filename=str(time.time())+'.log',
@@ -52,34 +68,200 @@ def print_and_log(message, should_print=True):
     if should_print or debug: # Always print message in debug mode
         print(message)
 
+
+class Message():
+    def __init__(self, id, type, sender_id, receiver_id, data, requires_ack=True, blocking=True):
+        self.id = id
+        self.type = type
+        self.sender_id = sender_id
+        self.receiver_id = receiver_id
+        self.data = data
+        self.status = STATUS_INIT
+        self.blocking = blocking
+        self.requires_ack = requires_ack
+        self.time = None
+
+
+class SocketManager():
+    """SocketManager is a wrapper around socketIO to stabilize its message passing.
+
+    The manager handles resending messages. """
+
+    def __init__(self, server_url, port, alive_callback, message_callback, socket_dead_callback, socket_dead_timeout=4):
+        self.server_url = server_url
+        self.port = port
+        self.alive_callback = alive_callback
+        self.message_callback = message_callback
+        self.socket_dead_callback = socket_dead_callback
+        self.socket_dead_timeout = socket_dead_timeout
+        self.queues = {}
+        self.threads = {}
+        self.last_heartbeat = {}
+
+        self.message_map = {}
+        self.socketIO = None
+        self.listen_thread = None
+        self.setup_socket()
+
+    def setup_socket(self):
+        self.socketIO = SocketIO(self.server_url, self.port)
+
+        def on_socket_open(*args):
+            print_and_log("Socket open: " + str(args), False)
+            self.socketIO.emit('agent alive',
+                               {'id': 'WORLD_ALIVE',
+                                'sender_id': '[World]'})
+
+        def on_disconnect(*args):
+            print_and_log("Server disconnected: " + str(args), False)
+
+        def on_message(*args):
+            print_and_log("On new message: " + str(args), False)
+            msg = args[0]
+            id = msg['id']
+            type = msg['type']
+            sender_id = msg['sender_id']
+            receiver_id = msg['receiver_id']
+            if type == TYPE_ACK:
+                self.message_map[id].status = STATUS_ACK
+            elif type == TYPE_HEARTBEAT:
+                self.last_heartbeat[sender_id] = time.time()
+                msg = {'id': id,
+                       'type': TYPE_HEARTBEAT,
+                       'sender_id': receiver_id,
+                       'receiver_id': sender_id,
+                       'data': ''}
+                self.socketIO.emit('route message', msg, None)
+            else:
+                ack = {'id': id,
+                       'type': TYPE_ACK,
+                       'sender_id': receiver_id,
+                       'receiver_id': sender_id,
+                       'data': ''}
+                self.socketIO.emit('route message', ack, None)
+                if type == TYPE_ALIVE:
+                    self.alive_callback(msg)
+                elif type == TYPE_MESSAGE:
+                    self.message_callback(msg)
+
+
+
+        self.socketIO.on('socket_open', on_socket_open)
+        self.socketIO.on('disconnect', on_disconnect)
+        self.socketIO.on('new message', on_message)
+
+        self.listen_thread = threading.Thread(target=self.socketIO.wait)
+        self.listen_thread.daemon = True
+        self.listen_thread.start()
+
+    def open_channel(self, id):
+        self.queues[id] = PriorityQueue()
+
+        def channel_thread():
+            while True:
+                try:
+                    # if time.time() - self.last_heartbeat[id] > self.socket_dead_timeout:
+                    #     self.socket_dead_callback(id)
+                    #     break
+
+                    item = self.queues[id].get(block=False)
+                    t = item[0]
+                    if time.time() > t:
+
+                        # send message
+                        message = item[1]
+
+                        if message.status is not STATUS_ACK:
+                            # either need to send initial message
+                            # or resend not-acked message
+
+                            msg = {
+                                'id': message.id,
+                                'type': message.type,
+                                'sender_id': message.sender_id,
+                                'receiver_id': message.receiver_id,
+                                'data': message.data
+                            }
+
+                            print_and_log("Send message: " + str(message.data));
+
+                            def set_status_to_sent(data):
+                                message.status = STATUS_SENT
+                            self.socketIO.emit('route message', msg, set_status_to_sent)
+
+                            if message.requires_ack:
+                                if message.blocking:
+                                    # blocking till ack is received
+                                    start_t = time.time()
+                                    while True:
+                                        if message.status == STATUS_ACK:
+                                            break
+                                        if time.time() - start_t > ACK_TIME[message.type]:
+                                            # didn't receive ACK, resend message
+                                            # keep old queue time to ensure this message is processed first
+                                            message.status = STATUS_INIT
+                                            self.queues[id].put(item)
+                                            break
+                                        time.sleep(0.1)
+                                else:
+                                    # non-blocking ack: add ack-check to queue
+                                    t = time.time() + ACK_TIME[message.type]
+                                    self.queues[id].put((t, message))
+
+                    else:
+                        self.queues[id].put(item)
+                except Empty:
+                    pass
+                finally:
+                    time.sleep(0.2)
+
+        self.threads[id] = threading.Thread(target=channel_thread)
+        self.threads[id].daemon = True
+        self.threads[id].start()
+
+    def close_channel(self, id):
+        self.threads[id].close()
+        del self.queues[id]
+
+    def generate_event_id(self, worker_id):
+        return worker_id + '_' + str(uuid.uuid4())
+
+    def send_message(self, message):
+        if not message.receiver_id in self.queues:
+            raise RuntimeError('Can not send message to worker_id ' + message.receiver_id + ': message queue not found.')
+        print_and_log("Put message ("+message.id+") in queue ("+message.receiver_id+")", False)
+        item = (time.time(), message)
+        self.queues[message.receiver_id].put(item)
+        self.message_map[message.id] = message
+
+    def get_status(self, message_id):
+        return self.message_map[message_id].status
+
+
 class MTurkManager():
+
     def __init__(self, opt, mturk_agent_ids):
         self.opt = opt
         self.server_url = None
+        self.port = 443
         self.task_group_id = None
-        self.socket_listen_thread = None
-        self.socketIO = None
         self.run_id = None
         self.mturk_agent_ids = mturk_agent_ids
+        self.mturk_agents = {}
         self.hit_id_list = []
         self.task_files_to_copy = None
         self.is_sandbox = opt['is_sandbox']
         self.worker_pool = []
         self.worker_pool_change_condition = threading.Condition()
         self.worker_index = 0
-        self.worker_candidates = None
         self.worker_id_to_onboard_thread = {}
         self.onboard_function = None
         self.task_threads = []
         self.conversation_index = 0
         self.num_completed_conversations = 0
-        self.messages_received = set()
-        self.commands_received = set()
-        self.worker_id_to_instance = {}
-        self.mturk_agent_list = []
-        self.mturk_agent_list_lock = threading.Lock()
-        self.event_from_worker = {}
-        self.event_from_worker_condition = threading.Condition()
+        self.worker_state = {}
+        self.socket_manager = None
+
 
     def setup_server(self, task_directory_path=None):
         print_and_log("\nYou are going to allow workers from Amazon Mechanical Turk to be an agent in ParlAI.\nDuring this process, Internet connection is required, and you should turn off your computer's auto-sleep feature.\n")
@@ -120,12 +302,11 @@ class MTurkManager():
         response = requests.get(self.server_url+'/clean_database', params=params)
         assert(response.status_code != '200')
 
-        print_and_log('Local: Setting up SocketIO...')
-
         print_and_log("MTurk server setup done.\n")
 
     def ready_to_accept_workers(self):
-        self.setup_socket(mturk_server_url=self.server_url, port=443)
+        print_and_log('Local: Setting up SocketIO...')
+        self.setup_socket()
 
     def start_new_run(self):
         self.run_id = str(int(time.time()))
@@ -137,13 +318,19 @@ class MTurkManager():
     def onboard_new_worker(self, mturk_agent):
         def _onboard_function(mturk_agent):
             if self.onboard_function:
-                mturk_agent.change_conversation(conversation_id='o_'+str(uuid.uuid4()), agent_id='Worker')
+                conversation_id = 'o_'+str(uuid.uuid4())
+                mturk_agent.change_conversation(conversation_id=conversation_id, agent_id='onboarding')
+                while True:
+                    if self.worker_state[mturk_agent.worker_id]['conversation_id'] == conversation_id:
+                        break
+                    time.sleep(0.1)
                 self.onboard_function(mturk_agent)
+            self.worker_state[mturk_agent.worker_id]['status'] = 'onboarded'
+
             with self.worker_pool_change_condition:
                 if not mturk_agent.hit_is_returned:
                     print("Adding worker to pool...")
                     self.worker_pool.append(mturk_agent)
-                    self.worker_pool_change_condition.notify()
 
         if not mturk_agent.worker_id in self.worker_id_to_onboard_thread:
             onboard_thread = threading.Thread(target=_onboard_function, args=(mturk_agent,))
@@ -152,30 +339,44 @@ class MTurkManager():
             self.worker_id_to_onboard_thread[mturk_agent.worker_id] = onboard_thread
 
     def start_task(self, eligibility_function, role_function, task_function):
-        def _task_function(opt, workers):
+        def _task_function(opt, workers, conversation_id):
             print("Starting task...")
+            print("Waiting for all workers to join the conversation...")
+            while True:
+                all_joined = True
+                for worker in workers:
+                    if self.worker_state[worker.worker_id]['conversation_id'] != conversation_id:
+                        all_joined = False
+                if all_joined:
+                    break
+                time.sleep(0.1)
+
+            print("All workers joined the conversation!")
             task_function(opt=opt, workers=workers)
 
         while True:
             with self.worker_pool_change_condition:
-                self.worker_candidates = []
-                for worker in self.worker_pool:
-                    if not worker.hit_is_returned:
-                        if eligibility_function(worker): # Decides whether this worker can be in a conversation
-                            self.worker_candidates.append(worker)
-                            if len(self.worker_candidates) == len(self.mturk_agent_ids):
-                                break
-                if len(self.worker_candidates) == len(self.mturk_agent_ids): # Spawn a TaskWorld and put these workers in a new conversation
+                if len([w for w in self.worker_pool if not w.hit_is_returned and eligibility_function(w)]) >= len(self.mturk_agent_ids):
+                    # enough workers in pool to start new conversation
                     self.conversation_index += 1
                     new_conversation_id = 't_' + str(self.conversation_index)
-                    for worker in self.worker_candidates:
-                        self.worker_pool.remove(worker)
-                        worker_agent_id = role_function(worker)
-                        worker.change_conversation(conversation_id=new_conversation_id, agent_id=worker_agent_id)
-                        
-                    self.worker_candidates.sort(key=lambda x: self.mturk_agent_ids.index(x.id))
 
-                    task_thread = threading.Thread(target=_task_function, args=(self.opt, self.worker_candidates))
+                    selected_workers = []
+                    print(len(self.worker_pool))
+                    for worker in self.worker_pool:
+                        print(worker.worker_id)
+                        print(worker.hit_is_returned)
+                        print(eligibility_function(worker))
+                        if not worker.hit_is_returned and eligibility_function(worker):
+                            print("add")
+                            selected_workers.append(worker)
+                            worker_agent_id = role_function(worker)
+                            worker.change_conversation(conversation_id=new_conversation_id, agent_id=worker_agent_id)
+                    self.worker_pool = []
+
+                    print(len(selected_workers))
+
+                    task_thread = threading.Thread(target=_task_function, args=(self.opt, selected_workers, new_conversation_id))
                     task_thread.daemon = True
                     task_thread.start()
                     self.task_threads.append(task_thread)
@@ -185,262 +386,63 @@ class MTurkManager():
                         for thread in self.task_threads:
                             thread.join() 
                         break
-                self.worker_pool_change_condition.wait()
+            time.sleep(0.1)
 
-    def _send_event_to_socket(self, event_name, event_data, response_handler=None):
-        event_sent = threading.Event()
-        def on_event_sent(*args):
-            if not event_sent.is_set():
-                event_sent.set()
-        emit_success = False
-        while not emit_success:
-            try:
-                print_and_log(event_name + ' sending to server. Data: ' + str(event_data), False)
-                self.socketIO.emit(event_name, event_data, on_event_sent)
-                emit_success = True
-            except Exception as e:
-                print_and_log(e, False)
-                emit_success = False
 
-        def check_event_sent():
-            if event_sent.wait(timeout=2): # Timeout in seconds
-                print_and_log(event_name + ' is acknowledged by server.', False)
-                if response_handler:
-                    response_handler()
-            else:
-                print_and_log(event_name + ' not acknowledged by server. Sending event again.', False)
-                self._send_event_to_socket(event_name, event_data, response_handler)
+    def setup_socket(self):
+        self.socket_manager = SocketManager(self.server_url, self.port,
+                                            self.on_alive, self.on_new_message, self.on_socket_dead)
 
-        thread = threading.Thread(target=check_event_sent)
-        thread.daemon = True
-        thread.start()
+    def on_alive(self, msg):
+        print_and_log("on_agent_alive: " + str(msg), False)
+        worker_id = msg['data']['worker_id']
+        hit_id = msg['data']['hit_id']
+        assignment_id = msg['data']['assignment_id']
+        conversation_id = msg['data']['conversation_id']
+        self.socket_manager.open_channel(worker_id)
 
-    def _wait_for_event(self, from_worker_id, event_name, event_data):
-        # blocking wait
-        while True:
-            with self.event_from_worker_condition:
-                print_and_log(from_worker_id+': Checking for event: '+event_name+str(event_data), False)
-                event_info = self.event_from_worker.get(from_worker_id, None)
-                if event_info:
-                    # Check expected event name and data
-                    if event_name == event_info['event_name'] and event_data.items() <= event_info['event_data'].items():
-                        return True
-                self.event_from_worker_condition.wait()
+        if worker_id not in self.worker_state or not conversation_id:
+            self.worker_state[worker_id] = {'conversation_id': None,
+                                             'status': 'init'}
+            self.create_agent(hit_id, assignment_id, worker_id)
+            self.onboard_new_worker(self.mturk_agents[worker_id])
+        elif worker_id in self.worker_state and conversation_id.startswith('o_'):
+            self.worker_state[worker_id] = {'conversation_id': conversation_id,
+                                             'status': 'onboarding'}
+        elif worker_id in self.worker_state and conversation_id.startswith('t_'):
+            self.worker_state[worker_id] = {'conversation_id': conversation_id,
+                                             'status': 'joined_conversation'}
+        else:
+            print_and_log("Agent (" + worker_id + ") with invalid status tried to join", False)
 
-    def _record_event(self, for_worker_id, event_name, event_data, callback=None):
-        with self.event_from_worker_condition:
-            print_and_log(for_worker_id+': Recording event: '+event_name+str(event_data), False)
-            self.event_from_worker[for_worker_id] = {
-                'event_name': event_name,
-                'event_data': event_data,
-            }
-            self.event_from_worker_condition.notifyAll()
 
-    def setup_socket(self, mturk_server_url, port):
-        self.socketIO = SocketIO(mturk_server_url, port)
+    def on_new_message(self, msg):
+        worker_id = msg['sender_id']
+        self.mturk_agents[worker_id].msg_queue.put(msg['data'])
 
-        def on_socket_open(*args):
-            print_and_log("on_socket_open: " + str(args), False)
-            self._send_event_to_socket(
-                'agent_alive', 
-                {
-                    'task_group_id': self.task_group_id,
-                    'assignment_id': None,
-                    'hit_id': None,
-                    'worker_id': '[World]'
-                }
-            )
+    def on_socket_dead(self, id):
+        print_and_log("Channel {id} disconnected".format(id=id))
+        self.socket_manager.close_channel(id)
 
-        def on_disconnect(*args):
-            print_and_log("Server disconnected: " + str(args), False)
+    def send_message(self, sender_id, receiver_id, data, blocking=True):
+        id = self.socket_manager.generate_event_id(receiver_id)
+        data['type'] = 'MESSAGE'
+        msg = Message(id, TYPE_MESSAGE, sender_id, receiver_id, data, blocking=blocking)
+        self.socket_manager.send_message(msg)
 
-        def on_agent_alive(*args):
-            print_and_log("on_agent_alive: " + str(args), False)
-            agent_info = args[0]
-            task_group_id = agent_info['task_group_id']
-            conversation_id = agent_info['conversation_id']
-            agent_id = agent_info['agent_id']
-            assignment_id = agent_info['assignment_id']
-            hit_id = agent_info['hit_id']
-            worker_id = agent_info['worker_id']
-
-            if task_group_id != self.task_group_id:
-                # The HIT that the worker is working on doesn't belong to the current task group
-                self._send_event_to_socket('agent_alive_received', {'by_worker_id': '[World]'})
-                return
-
-            self._send_event_to_socket(
-                'agent_alive_received', 
-                {
-                    'by_worker_id': '[World]'
-                }
-            )
-
-            # Match MTurkAgent object with actual Turker
-            mturk_agent = None
-            is_new_agent = False
-            if not worker_id in self.worker_id_to_instance:
-                mturk_agent = self.create_agent(
-                    hit_id=hit_id,
-                    assignment_id=assignment_id,
-                    worker_id=worker_id
-                )
-                is_new_agent = True
-            else:
-                mturk_agent = self.worker_id_to_instance[worker_id]
-                is_new_agent = False
-
-            if is_new_agent:
-                self._record_event(
-                    for_worker_id = mturk_agent.worker_id,
-                    event_name = 'agent_alive',
-                    event_data = args[0]
-                )
-                self.onboard_new_worker(mturk_agent=mturk_agent)
-            else:
-                # Don't record this event if it's from the previous conversation
-                if conversation_id == None or ('o_' in conversation_id and 't_' in mturk_agent.conversation_id):
-                    return
-                else:
-                    self._record_event(
-                        for_worker_id = mturk_agent.worker_id,
-                        event_name = 'agent_alive',
-                        event_data = args[0]
-                    )
-
-        def on_new_message(*args):
-            print_and_log("on_new_message: " + str(args), False)
-
-            message = args[0]
-
-            self._send_event_to_socket(
-                'new_message_received', 
-                {
-                    'by_worker_id': '[World]'
-                }
-            )
-
-            if message['task_group_id'] != self.task_group_id:
-                # This message doesn't belong to the current task group
-                return
-
-            mturk_agent = self.worker_id_to_instance[message['sender_worker_id']]
-            if message['conversation_id'] != mturk_agent.conversation_id or message['sender_agent_id'] != mturk_agent.id:
-                # There might be redundant messages sent from the server after the conversation is changed, so we add gating here to ignore those messages
-                return
-
-            if not message['message_id'] in self.messages_received:
-                self.messages_received.add(message['message_id'])
-
-                self._record_event(
-                    for_worker_id = mturk_agent.worker_id,
-                    event_name = 'new_message',
-                    event_data = args[0]
-                )
-
-                self.set_new_message(
-                    worker_id=message['sender_worker_id'],
-                    new_message=message
-                )
-
-        self.socketIO.on('socket_open', on_socket_open)
-        self.socketIO.on('agent_alive', on_agent_alive)
-        self.socketIO.on('new_message', on_new_message)
-        self.socketIO.on('disconnect', on_disconnect)
-
-        self.socket_listen_thread = threading.Thread(target=self._socket_receive_events)
-        self.socket_listen_thread.daemon = True
-        self.socket_listen_thread.start()
-        
-    def _socket_receive_events(self):
-        self.socketIO.wait()
-
-    def send_command_to_agent(self, task_group_id, conversation_id, sender_agent_id, receiver_agent_id, receiver_worker_id, command, command_data=None):
-        command_dict = {
-            'task_group_id': task_group_id,
-            'conversation_id': conversation_id,
-            'sender_agent_id': sender_agent_id,
-            'receiver_agent_id': receiver_agent_id,
-            'receiver_worker_id': receiver_worker_id,
-            'command': command,
-            'command_id': str(uuid.uuid4()),
-        }
-        if command_data:
-            command_dict['command_data'] = command_data
-
-        def on_agent_send_command_response(*args):
-            print_and_log("on_agent_send_command_response: "+str(args), False)
-
-        self._send_event_to_socket(
-            'agent_send_command',
-            command_dict,
-            on_agent_send_command_response
-        )
-        self.socketIO.wait_for_callbacks(seconds=0.1)
-
-    def send_message_to_agent(self, task_group_id, conversation_id, sender_agent_id, receiver_agent_id, receiver_worker_id, message):
-        message['task_group_id'] = task_group_id
-        message['conversation_id'] = conversation_id
-        message['sender_agent_id'] = sender_agent_id
-        message['receiver_agent_id'] = receiver_agent_id
-        message['receiver_worker_id'] = receiver_worker_id
-        message['message_id'] = str(uuid.uuid4())
-
-        timestamp = None
-        response = requests.get(self.server_url+'/get_timestamp')
-        try:
-            ret = response.json()
-            timestamp = ret['timestamp']
-        except Exception as e:
-            print(response.content)
-            raise e
-        message['timestamp'] = timestamp
-
-        def on_agent_send_message_response(*args):
-            print_and_log("on_agent_send_message_response: "+str(args), False)
-
-        self._send_event_to_socket(
-            'agent_send_message',
-            message,
-            on_agent_send_message_response
-        )
-        self.socketIO.wait_for_callbacks(seconds=0.1)
-
-    def set_new_message(self, worker_id, new_message):
-        if worker_id in self.worker_id_to_instance:
-            agent = self.worker_id_to_instance[worker_id]
-            with agent.new_message_lock:
-                agent.new_message = new_message
+    def send_command(self, sender_id, receiver_id, data, blocking=True):
+        data['type'] = 'COMMAND'
+        id = self.socket_manager.generate_event_id(receiver_id)
+        msg = Message(id, TYPE_MESSAGE, sender_id, receiver_id, data, blocking=blocking)
+        self.socket_manager.send_message(msg)
 
     def create_agent(self, hit_id, assignment_id, worker_id):
         agent = MTurkAgent(manager=self, opt=self.opt)
         agent.hit_id = hit_id
         agent.assignment_id = assignment_id
         agent.worker_id = worker_id
-        self.worker_id_to_instance[worker_id] = agent
-        self.mturk_agent_list.append(agent)
-        return agent      
+        self.mturk_agents[worker_id] = agent
 
-    def send_new_message(self, task_group_id, conversation_id, sender_agent_id, receiver_agent_id, receiver_worker_id, message):
-        self.send_message_to_agent(
-            task_group_id=task_group_id,
-            conversation_id=conversation_id,
-            sender_agent_id=sender_agent_id,
-            receiver_agent_id=receiver_agent_id,
-            receiver_worker_id=receiver_worker_id,
-            message=message
-        )
-
-    def send_new_command(self, task_group_id, conversation_id, sender_agent_id, receiver_agent_id, receiver_worker_id, command, command_data=None):
-        self.send_command_to_agent(
-            task_group_id=task_group_id,
-            conversation_id=conversation_id,
-            sender_agent_id=sender_agent_id,
-            receiver_agent_id=receiver_agent_id,
-            receiver_worker_id=receiver_worker_id,
-            command=command,
-            command_data=command_data
-        )
 
     def get_agent_work_status(self, assignment_id):
         client = get_mturk_client(self.is_sandbox)
@@ -560,8 +562,7 @@ class MTurkAgent(Agent):
         self.hit_is_accepted = False # state from Amazon MTurk system
         self.hit_is_returned = False # state from Amazon MTurk system
 
-        self.new_message = None
-        self.new_message_lock = threading.Lock()
+        self.msg_queue = Queue()
 
         self.check_hit_status_thread = threading.Thread(target=self._check_hit_status)
         self.check_hit_status_thread.daemon = True
@@ -596,24 +597,10 @@ class MTurkAgent(Agent):
         return 't_' in self.conversation_id
 
     def observe(self, msg):
-        self.manager.send_new_message(
-            task_group_id=self.manager.task_group_id,
-            conversation_id=self.conversation_id,
-            sender_agent_id=msg['id'],
-            receiver_agent_id=self.id,
-            receiver_worker_id=self.worker_id,
-            message=msg
-        )
+        self.manager.send_message('[World]', self.worker_id, msg)
 
     def act(self, timeout=None): # Timeout in seconds, after which the HIT will be expired automatically
-        self.manager.send_new_command(
-            task_group_id=self.manager.task_group_id,
-            conversation_id=self.conversation_id,
-            sender_agent_id='[World]',
-            receiver_agent_id=self.id,
-            receiver_worker_id=self.worker_id,
-            command=COMMAND_SEND_MESSAGE
-        )
+        self.manager.send_command('[World]', self.worker_id, {'command': 'COMMAND_SEND_MESSAGE'})
 
         if timeout:
             start_time = time.time()
@@ -621,11 +608,8 @@ class MTurkAgent(Agent):
         # Wait for agent's new message
         while True:
             # Check if Turker sends a message
-            if self.new_message:
-                with self.new_message_lock:
-                    new_message = self.new_message
-                    self.new_message = None
-                    return new_message
+            if not self.msg_queue.empty():
+                return self.msg_queue.get()
             
             # Check if the Turker already returned the HIT
             if self.hit_is_returned:
@@ -650,39 +634,16 @@ class MTurkAgent(Agent):
                     return msg
             time.sleep(0.1)
 
+    def change_conversation(self, conversation_id, agent_id):
+        data = {'command': 'COMMAND_CHANGE_CONVERSATION',
+                'conversation_id': conversation_id,
+                'agent_id': agent_id}
+        self.manager.send_command('[World]', self.worker_id, data)
+        # self.manager.socket_manager.close_channel(self.worker_id)
+
     def episode_done(self):
         return False
 
-    def change_conversation(self, conversation_id, agent_id):
-        print_and_log('Changing conversation...', False)
-
-        old_conversation_id = self.conversation_id
-        old_agent_id = self.id
-
-        self.conversation_id = conversation_id
-        self.id = agent_id
-
-        self.manager.send_new_command(
-            task_group_id=self.manager.task_group_id,
-            conversation_id=old_conversation_id,
-            sender_agent_id='[World]',
-            receiver_agent_id=old_agent_id,
-            receiver_worker_id=self.worker_id,
-            command=COMMAND_CHANGE_CONVERSATION,
-            command_data={
-                'conversation_id': conversation_id,
-                'agent_id': agent_id
-            }
-        )
-
-        self.manager._wait_for_event(
-            from_worker_id=self.worker_id,
-            event_name='agent_alive',
-            event_data={
-                'conversation_id': conversation_id,
-                'agent_id': agent_id
-            }
-        )
 
     def approve_work(self):
         if self.hit_is_abandoned:

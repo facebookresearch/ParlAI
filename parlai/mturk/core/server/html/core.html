@@ -193,12 +193,26 @@
     var mturk_submit_url = null;
     var hit_is_submitted = false;
     var hit_is_expired = false;
-    var commands_received = {};
-    var messages_received = {};
     var message_list = [];
     var socket = null;
     var task_done = false;
     var ui_state_lock = false; // We need to acquire this lock first before attempting to update the UI state with new messages or commands.
+    var message_map = {};
+    var message_callback = {};
+    var STATUS_ACK = 'ack';
+    var STATUS_INIT = 'init';
+    var STATUS_SENT = 'sent';
+    var TYPE_ACK = 'ack';
+    var TYPE_MESSAGE = 'message';
+    var TYPE_HEARTBEAT = 'heartbeat';
+    var TYPE_ALIVE = 'alive';
+    var message_id = 0;
+    var q = new PriorityQueue();
+    var blocking_id = null;
+    var blocking_sent_time = null;
+    var last_server_heartbeat = null;
+    var thread_refresh = 100;
+    var ack_timeout = 2000;
 
     /* ================= Message handling ================= */
 
@@ -225,7 +239,6 @@
     }
 
     function display_messages(message_list) {
-        message_list = sort_by_key(message_list, 'timestamp');
 
         $('div#message_thread').empty();
 
@@ -260,17 +273,34 @@
         }
     }
 
-    function handle_new_messages(new_messages) {
-        var new_message_list = message_list.concat(new_messages);
-        new_message_list = filter_duplicated_messages(new_message_list);
-        if (new_message_list.length <= message_list.length) {
-            return false;
+    function handle_new_message(message) {
+        console.log('handle message');
+        console.log(message);
+        var agent_id = message.id;
+        var message_text = message.text;
+        console.log(message_text);
+
+        if (agent_id !== cur_agent_id) {
+            $('div#message_thread').append(
+                '<div class="row" style="margin-left: 0; margin-right: 0">'+
+                    '<div class="alert alert-warning" role="alert" style="float: left; display:table">'+
+                        '<span style="font-size: 16px"><b>'+agent_id+'</b>: '+message_text+'</span>'+
+                    '</div>'+
+                '</div>'
+            );
+        } else {
+            $('div#message_thread').append(
+                '<div class="row" style="margin-left: 0; margin-right: 0">'+
+                    '<div class="alert alert-info" role="alert" style="float: right; display:table">'+
+                        '<span style="font-size: 16px"><b>'+agent_id+'</b>: '+message_text+'</span>'+
+                    '</div>'+
+                '</div>'
+            );
         }
-        message_list = new_message_list;
 
-        display_messages(message_list);
+        $("div#message_thread").css("display", "");
+        scroll_conversation_to_bottom();
 
-        return true;
     }
 
     function uuidv4() {
@@ -280,231 +310,194 @@
         });
     }
 
-    function send_message(text, receiver_agent_id, episode_done, callback_function) {
-        if (socket) {
-            get_timestamp(function(data) {
-                var timestamp = data['timestamp'];
-                var message = {
-                    task_group_id: task_group_id,
-                    conversation_id: conversation_id,
-                    sender_agent_id: cur_agent_id,
-                    sender_worker_id: worker_id,
-                    receiver_agent_id: receiver_agent_id,
-                    receiver_worker_id: '[World]',
-                    message_id: uuidv4(),
-                    timestamp: timestamp,
-
-                    id: cur_agent_id,
-                    episode_done: episode_done
-                }
-                if (text) message['text'] = text;
-
-                _send_event_to_socket(
-                    'agent_send_message', 
-                    message,
-                    function (data) {
-                        if (verbose_log) console.log(object_to_string(data));
-
-                        if (callback_function) {
-                            callback_function(data);
-                        }
-                    }
-                );
-            });
-        }
-    }
-
     $("button#id_send_msg_button").on('click', function () {
         var text = $("input#id_text_input").val();
         if (!(text == '')) {
             $("button#id_send_msg_button").addClass("disabled");
             $("button#id_send_msg_button").prop("disabled", true);
 
-            function execute_with_ui_state_lock() {
-                if (ui_state_lock) {
-                    setTimeout(
-                        function () {
-                            execute_with_ui_state_lock();
-                        }, 
-                        500
-                    );
-                } else {
-                    ui_state_lock = true;
-                    send_message(text, '[World]', false, function(data){
-                        $("button#id_send_msg_button").removeClass("disabled");
-                        $("button#id_send_msg_button").prop("disabled", false);
-                        $("input#id_text_input").val("");
-                        $("div#response-type-text-input").css("display", "none");
-                        var new_messages = [];
-                        new_messages.push(data);
-                        if (handle_new_messages(new_messages) && !task_done) {
-                            $("div#waiting-for-message").css("display", "");
-                        }
-                        after_send_message();
-                        ui_state_lock = false;
-                    });
+            send_message(
+                TYPE_MESSAGE,
+                {text: text,
+                 id: cur_agent_id,
+                 message_id: message_id,
+                 episode_done: false},
+                true,
+                true,
+                function(msg) {
+                    $("button#id_send_msg_button").removeClass("disabled");
+                    $("button#id_send_msg_button").prop("disabled", false);
+                    $("input#id_text_input").val("");
+                    message_id += 1;
+                    $("div#response-type-text-input").css("display", "none");
+                    handle_new_message(msg.data);
+                    after_send_message();
                 }
-            }
-            execute_with_ui_state_lock();
+            );
         }
     });
 
-    function _send_event_to_socket(event_name, event_data, callback_function) {
-        if (verbose_log) {
-            console.log("Sending: "+event_name+event_data);
-        }
-        var event_sent = false;
-        var timeout = 2; // in seconds
-        var start_time = Date.now();
-        function check_event_sent() {
-            if (event_sent === false) {
-                if ((Date.now() - start_time) > (timeout * 1000)) { // Timeout
-                    console.log(event_name + ' not acknowledged by server. Sending event again.');
-                    return _send_event_to_socket(event_name, event_data, callback_function);
-                } else {
-                    setTimeout(
-                        function() {
-                            check_event_sent();
-                        }, 
-                        500
-                    );
+    function PriorityQueue() {
+        this.data = []
+    }
+
+    PriorityQueue.prototype.push = function(element, priority) {
+        priority = +priority
+        for (var i = 0; i < this.data.length && this.data[i][0] < priority; i++);
+        this.data.splice(i, 0, [element, priority])
+    }
+
+    PriorityQueue.prototype.pop = function() {
+        return this.data.shift()
+    }
+
+    PriorityQueue.prototype.peek = function() {
+        return this.data[0]
+    }
+
+    PriorityQueue.prototype.size = function() {
+      return this.data.length
+    }
+
+    function _sending_thread() {
+        if (blocking_id === null) {
+            // not blocking => see if we can process next message
+            if (q.size() > 0) {
+                if (Date.now() > q.peek()[1]) {
+                    var item = q.pop();
+                    var msg = item[0];
+                    var t = item[1];
+                    if (msg.status !== STATUS_ACK) {
+                        var event_name = 'route message';
+                        if (msg.type === TYPE_ALIVE) event_name = 'agent alive';
+
+                        socket.emit(event_name, msg);
+
+                        if (msg.require_ack) {
+                            if (msg.blocking) {
+                                blocking_id = msg.id;
+                                blocking_sent_time = Date.now();
+                            } else {
+                                q.push(msg, t + ack_timeout); // 2 sec timeout
+                            }
+                        }
+                    }
                 }
             }
-        }
-        socket.emit(event_name, event_data, function(data) {
-            event_sent = true;
-            if (callback_function) {
-                callback_function(data);
+        } else {
+            // blocking on message `blocking_id`
+            if ((Date.now() - blocking_sent_time) > ack_timeout) {
+                console.log('Timeout: ' + blocking_id);
+                // timeout
+                var m = message_map[blocking_id];
+                q.push(m, blocking_sent_time);
+                blocking_id = null;
             }
-        });
-        check_event_sent();
+        }
+        setTimeout(_sending_thread, thread_refresh);
+    }
+
+    function send_message(type, data, require_ack, blocking, callback) {
+        var time = Date.now();
+        var id = uuidv4();
+
+        var msg = {id: id,
+                   type: type,
+                   sender_id: worker_id,
+                   receiver_id: '[World]',
+                   data: data,
+                   status: STATUS_INIT,
+                   require_ack: require_ack,
+                   blocking: blocking};
+        q.push(msg, time);
+        message_map[id] = msg;
+        message_callback[id] = callback;
+    }
+
+    function handle_command(msg) {
+        var command = msg['command'];
+        if (command === 'COMMAND_SEND_MESSAGE') {
+            wait_for_worker_input();
+        } else if (command === 'COMMAND_SHOW_DONE_BUTTON') {
+            task_done = true;
+            update_UI_for_response_type('done');
+            $("div#waiting-for-message").css("display", "none");
+        } else if (command === 'COMMAND_EXPIRE_HIT') {
+            update_UI_for_response_type('expired');
+            hit_is_expired = true;
+            $("div#waiting-for-message").css("display", "none");
+        } else if (command === 'COMMAND_SUBMIT_HIT') {
+            all_done_callback();
+        } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
+            console.log('current conversation_id: ' + conversation_id);
+            var new_conversation_id = msg['conversation_id'];
+            var new_agent_id = msg['agent_id'];
+            if ((conversation_id === null && (new_conversation_id.indexOf('o_') !== -1) || (new_conversation_id.indexOf('t_') !== -1)) || (new_conversation_id.indexOf('o_') !== -1 && new_conversation_id.indexOf('t_') !== -1)) // Only move from init state to onboarding / task, or from onboarding to task
+                {
+                console.log("Redirecting to new URL...");
+                var new_url = replace_url_parameter(window.location.href, 'mturk_agent_id', new_agent_id);
+                new_url = replace_url_parameter(new_url, 'conversation_id', new_conversation_id);
+                new_url = replace_url_parameter(new_url, 'changing_conversation', true);
+
+                window.location.href = new_url; // Reload page to get agent-specific template
+            }
+        }
     }
 
     function setup_socket() {
         var host = window.location.hostname;
         socket = io(host);
+
         socket.on('socket_open', function() {
             if (verbose_log) console.log('Server connected.');
-            _send_event_to_socket(
-                'agent_alive', 
-                {
-                    task_group_id: task_group_id,
-                    conversation_id: conversation_id,
-                    agent_id: cur_agent_id,
-                    assignment_id: assignment_id,
-                    hit_id: hit_id,
-                    worker_id: worker_id
-                },
-                function(data) {
-                    if (verbose_log) console.log(object_to_string(data));
-                }
+            send_message(
+                TYPE_ALIVE,
+                {hit_id: hit_id,
+                 assignment_id: assignment_id,
+                 worker_id: worker_id,
+                 conversation_id: conversation_id},
+                true,
+                true,
+                null
             );
         });
         socket.on('disconnect', function() {
             if (verbose_log) console.log('Server disconnected.');
         });
-        socket.on('new_command', function (data) {
-            if (verbose_log) console.log(object_to_string(data));
-            command = data['command'];
 
-            _send_event_to_socket(
-                'new_command_received',
-                {
-                    by_worker_id: worker_id
-                },
-                function() {
-                    if (commands_received[data['command_id']]) {
-                        return;
+        socket.on('new message', function(msg) {
+            console.log('received: ' + msg.id);
+            if (msg.type === TYPE_HEARTBEAT) {
+                last_server_heartbeat = Date.now();
+            } else if (msg.type === TYPE_ACK) {
+                message_map[msg.id].status = STATUS_ACK;
+                if (msg.id === blocking_id) {
+                    // release lock when ack arrives
+                    blocking_id = null;
+                    blocking_sent_time = null;
+                    //execute callback
+                    if (message_callback[msg.id]) {
+                        message_callback[msg.id](message_map[msg.id]);
                     }
-                    commands_received[data['command_id']] = true;
-
-                    // Ignore if the command is from the previous conversation
-                    if (conversation_id !== data['conversation_id']) {
-                        return;
-                    }
-
-                    function execute_with_ui_state_lock() {
-                        if (ui_state_lock) {
-                            setTimeout(
-                                function() {
-                                    execute_with_ui_state_lock();
-                                },
-                                500
-                            );
-                        } else {
-                            ui_state_lock = true;
-                            if (command === 'COMMAND_SEND_MESSAGE') {
-                                wait_for_worker_input();
-                            } else if (command === 'COMMAND_SHOW_DONE_BUTTON') {
-                                task_done = true;
-                                update_UI_for_response_type('done');
-                                $("div#waiting-for-message").css("display", "none");
-                            } else if (command === 'COMMAND_EXPIRE_HIT') {
-                                update_UI_for_response_type('expired');
-                                hit_is_expired = true;
-                                $("div#waiting-for-message").css("display", "none");
-                            } else if (command === 'COMMAND_SUBMIT_HIT') {
-                                all_done_callback();
-                            } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
-                                command_data = data['command_data'];
-                                console.log('current conversation_id: ' + conversation_id);
-                                if ((conversation_id === null && (command_data['conversation_id'].indexOf('o_') !== -1) || (command_data['conversation_id'].indexOf('t_') !== -1)) || (conversation_id.indexOf('o_') !== -1 && command_data['conversation_id'].indexOf('t_') !== -1)) // Only move from init state to onboarding / task, or from onboarding to task
-                                    {
-                                    console.log("Redirecting to new URL...");
-                                    var new_url = replace_url_parameter(window.location.href, 'mturk_agent_id', command_data['agent_id']);
-                                    new_url = replace_url_parameter(new_url, 'conversation_id', command_data['conversation_id']);
-                                    new_url = replace_url_parameter(new_url, 'changing_conversation', true);
-
-                                    window.location.href = new_url; // Reload page to get agent-specific template
-                                }
-                            }
-                            after_receive_command(command);
-                            ui_state_lock = false;
-                        }
-                    }
-                    execute_with_ui_state_lock();
                 }
-            );
-        });
-        socket.on('new_message', function (data) {
-            if (verbose_log) console.log(object_to_string(data));
-            message = data;
-
-            _send_event_to_socket(
-                'new_message_received',
-                {
-                    by_worker_id: worker_id
-                }
-            );
-
-            if (messages_received[message['message_id']]) {
-                return;
-            }
-            messages_received[message['message_id']] = true;
-
-            // Ignore if the message is from the previous conversation
-            if (conversation_id !== data['conversation_id']) {
-                return;
-            }
-
-            function execute_with_ui_state_lock() {
-                if (ui_state_lock) {
-                    setTimeout(
-                        function() {
-                            execute_with_ui_state_lock();
-                        },
-                        500
-                    );
-                } else {
-                    ui_state_lock = true;
-                    var new_messages = [];
-                    new_messages.push(message);
-                    handle_new_messages(new_messages);
-                    after_receive_message(message);
-                    ui_state_lock = false;
+            } else if (msg.type === TYPE_MESSAGE) {
+                //send ack
+                socket.emit(
+                    'route message',
+                    {
+                        id: msg.id,
+                        sender_id: msg.receiver_id,
+                        receiver_id: msg.sender_id,
+                        type: TYPE_ACK,
+                        data: null
+                    }
+                );
+                if (msg.data.type === 'COMMAND'){
+                    handle_command(msg.data);
+                } else if (msg.data.type === 'MESSAGE') {
+                    handle_new_message(msg.data);
                 }
             }
-            execute_with_ui_state_lock();
         });
     }
 
@@ -556,6 +549,7 @@
             $(window).resize();
         }
         setup_socket();
+        _sending_thread();
     }
 
     $(document).ready(function() {
