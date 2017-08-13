@@ -48,6 +48,7 @@
             </div>
         </div>
         <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
+            <span id="disconnect" style="font-size: 14pt;margin-right: 15px"></span>
             <button id="done-button" type="button" class="btn btn-primary btn-lg">
                 <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
             </button>
@@ -136,20 +137,6 @@
         );
     }
 
-    function get_timestamp(callback_function) {
-        $.ajax({
-            url: '/get_timestamp',
-            timeout: 3000 // in milliseconds
-        }).retry({times: 1000, timeout: 3000}).then(
-            function(data) {
-                if (verbose_log) console.log(object_to_string(data));
-                if (callback_function) {
-                    callback_function(data);
-                }
-            }
-        );
-    }
-
     function object_to_string(obj) {
         var str = '';
         for (var p in obj) {
@@ -216,69 +203,40 @@
 
     /* ================= Message handling ================= */
 
-    function sort_by_key(array, key) {
-        return array.sort(function(a, b) {
-            var x = a[key]; var y = b[key];
-            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-        });
-    }
+    function handle_command(msg) {
+        var command = msg['text'];
+        if (command === 'COMMAND_SEND_MESSAGE') {
+            wait_for_worker_input();
+        } else if (command === 'COMMAND_SHOW_DONE_BUTTON') {
+            task_done = true;
+            update_UI_for_response_type('done');
+            $("div#waiting-for-message").css("display", "none");
+        } else if (command === 'COMMAND_DISCONNECT_PARTNER') {
+            task_done = true;
+            update_UI_for_response_type('done');
+            $('#disconnect').text(msg['disconnect_text']);
+;            $("div#waiting-for-message").css("display", "none");
+        } else if (command === 'COMMAND_SUBMIT_HIT') {
+            all_done_callback();
+        } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
+            console.log('current conversation_id: ' + conversation_id);
+            var new_conversation_id = msg['conversation_id'];
+            var new_agent_id = msg['agent_id'];
+            if ((conversation_id === null && (new_conversation_id.indexOf('o_') !== -1) || (new_conversation_id.indexOf('t_') !== -1)) || (new_conversation_id.indexOf('o_') !== -1 && new_conversation_id.indexOf('t_') !== -1)) // Only move from init state to onboarding / task, or from onboarding to task
+                {
+                console.log("Redirecting to new URL...");
+                var new_url = replace_url_parameter(window.location.href, 'mturk_agent_id', new_agent_id);
+                new_url = replace_url_parameter(new_url, 'conversation_id', new_conversation_id);
+                new_url = replace_url_parameter(new_url, 'changing_conversation', true);
 
-    function filter_duplicated_messages(unfiltered_message_list) {
-        var new_message_list = [];
-        var current_message_id = null;
-        unfiltered_message_list = sort_by_key(unfiltered_message_list, 'message_id');
-
-        for (var i = 0; i < unfiltered_message_list.length; i++) {
-            var message = unfiltered_message_list[i];
-            if (!(message['message_id'] === current_message_id)) {
-                new_message_list.push(message);
-                current_message_id = message['message_id'];
+                window.location.href = new_url; // Reload page to get agent-specific template
             }
-        }
-        return new_message_list;
-    }
-
-    function display_messages(message_list) {
-
-        $('div#message_thread').empty();
-
-        for (var i = 0; i < message_list.length; i++) {
-            var message = message_list[i];
-            var agent_id = message['id'];
-            var message_id = message['message_id'];
-            var message_text = message['text'].replace(/(?:\r\n|\r|\n)/g, '<br />');
-
-            if (agent_id !== cur_agent_id) {
-                $('div#message_thread').append(
-                    '<div class="row" style="margin-left: 0; margin-right: 0">'+
-                        '<div class="alert alert-warning" role="alert" style="float: left; display:table">'+
-                            '<span style="font-size: 16px"><b>'+agent_id+'</b>: '+message_text+'</span>'+
-                        '</div>'+
-                    '</div>'
-                );
-                received_message_from_other_agents = true;
-            } else {
-                $('div#message_thread').append(
-                    '<div class="row" style="margin-left: 0; margin-right: 0">'+
-                        '<div class="alert alert-info" role="alert" style="float: right; display:table">'+
-                            '<span style="font-size: 16px"><b>'+agent_id+'</b>: '+message_text+'</span>'+
-                        '</div>'+
-                    '</div>'
-                );
-            }
-        }
-        if (message_list.length > 0) {
-            $("div#message_thread").css("display", "");
-            scroll_conversation_to_bottom();
         }
     }
 
     function handle_new_message(message) {
-        console.log('handle message');
-        console.log(message);
         var agent_id = message.id;
-        var message_text = message.text;
-        console.log(message_text);
+        var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
 
         if (agent_id !== cur_agent_id) {
             $('div#message_thread').append(
@@ -300,7 +258,6 @@
 
         $("div#message_thread").css("display", "");
         scroll_conversation_to_bottom();
-
     }
 
     function uuidv4() {
@@ -403,7 +360,7 @@
 
         var msg = {id: id,
                    type: type,
-                   sender_id: worker_id,
+                   sender_id: assignment_id,
                    receiver_id: '[World]',
                    data: data,
                    status: STATUS_INIT,
@@ -412,36 +369,6 @@
         q.push(msg, time);
         message_map[id] = msg;
         message_callback[id] = callback;
-    }
-
-    function handle_command(msg) {
-        var command = msg['command'];
-        if (command === 'COMMAND_SEND_MESSAGE') {
-            wait_for_worker_input();
-        } else if (command === 'COMMAND_SHOW_DONE_BUTTON') {
-            task_done = true;
-            update_UI_for_response_type('done');
-            $("div#waiting-for-message").css("display", "none");
-        } else if (command === 'COMMAND_EXPIRE_HIT') {
-            update_UI_for_response_type('expired');
-            hit_is_expired = true;
-            $("div#waiting-for-message").css("display", "none");
-        } else if (command === 'COMMAND_SUBMIT_HIT') {
-            all_done_callback();
-        } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
-            console.log('current conversation_id: ' + conversation_id);
-            var new_conversation_id = msg['conversation_id'];
-            var new_agent_id = msg['agent_id'];
-            if ((conversation_id === null && (new_conversation_id.indexOf('o_') !== -1) || (new_conversation_id.indexOf('t_') !== -1)) || (new_conversation_id.indexOf('o_') !== -1 && new_conversation_id.indexOf('t_') !== -1)) // Only move from init state to onboarding / task, or from onboarding to task
-                {
-                console.log("Redirecting to new URL...");
-                var new_url = replace_url_parameter(window.location.href, 'mturk_agent_id', new_agent_id);
-                new_url = replace_url_parameter(new_url, 'conversation_id', new_conversation_id);
-                new_url = replace_url_parameter(new_url, 'changing_conversation', true);
-
-                window.location.href = new_url; // Reload page to get agent-specific template
-            }
-        }
     }
 
     function setup_socket() {
@@ -501,6 +428,16 @@
         });
     }
 
+    function _heartbeat_thread() {
+        var hb = {'id': uuidv4(),
+                  'receiver_id': '[World]',
+                  'sender_id': assignment_id,
+                  'type': TYPE_HEARTBEAT,
+                  'data': null}
+        socket.emit('route message', hb);
+        setTimeout(_heartbeat_thread, 1000);
+    }
+
     function update_UI_for_response_type(response_type) {
         $("div.response-type-module").css("display", "none");
 
@@ -550,6 +487,7 @@
         }
         setup_socket();
         _sending_thread();
+        _heartbeat_thread();
     }
 
     $(document).ready(function() {

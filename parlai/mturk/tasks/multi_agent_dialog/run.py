@@ -64,7 +64,7 @@ def main():
             worker_count += 1
             return worker_role
 
-        def run_conversation(opt, workers):
+        def run_conversation(mturk_manager, opt, workers):
             # Create mturk agents
             mturk_agent_1 = workers[0]
             mturk_agent_2 = workers[1]
@@ -75,9 +75,16 @@ def main():
             
             world = MTurkMultiAgentDialogWorld(opt=opt, agents=[human_agent_1, mturk_agent_1, mturk_agent_2])
 
+            # Couple agents to world in mturk_manager so that we can handle disconnects
+            mturk_manager.register_agent_to_world(mturk_agent_1, world)
+            mturk_manager.register_agent_to_world(mturk_agent_2, world)
+
             while not world.episode_done():
                 world.parley()
             world.shutdown()
+
+            mturk_manager.deregister_agent_to_world(mturk_agent_1)
+            mturk_manager.deregister_agent_to_world(mturk_agent_2)
 
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
