@@ -67,6 +67,13 @@ task_list = [
         "description": "Simulated dialogs of restaurant booking, from Bordes et al. '16. Link: https://arxiv.org/abs/1605.07683"
     },
     {
+        "id": "FVQA",
+        "display_name": "FVQA",
+        "task": "fvqa",
+        "tags": [ "All", "Visual" ],
+        "description": "The FVQA, a VQA dataset which requires, and supports, much deeper reasoning. We extend a conventional visual question answering dataset, which contains image-question-answer triplets, through additional image-question-answer-supporting fact tuples. The supporting fact is represented as a structural triplet, such as <Cat,CapableOf,ClimbingTrees>.  Link: https://arxiv.org/abs/1606.05433"
+    },
+    {
         "id": "MCTest",
         "display_name": "MCTest",
         "task": "mctest",
