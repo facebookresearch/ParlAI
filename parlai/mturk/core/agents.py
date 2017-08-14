@@ -430,10 +430,13 @@ class MTurkManager():
         if agent in self.worker_pool:
             with self.worker_pool_change_condition:
                 self.worker_pool.remove(agent)
+
         # if in conversation, inform world about disconnect
         if id in self.agent_to_world:
             world = self.agent_to_world[id]
             world.handle_disconnect(agent)
+            for agent in self.agent_to_world:
+                self.deregister_agent_to_world(agent)
         # close the sending thread
         self.socket_manager.close_channel(id)
 
