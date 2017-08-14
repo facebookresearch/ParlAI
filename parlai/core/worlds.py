@@ -192,16 +192,6 @@ class World(object):
     def __len__(self):
         return 0
 
-    def handle_disconnect(self, agent):
-        for other_agent in self.agents:
-            print(other_agent.id)
-            if agent.id != other_agent.id:
-                msg = {'id': 'World',
-                       'text': 'COMMAND_DISCONNECT_PARTNER',
-                       'disconnect_text': 'One of the other agents unexpectedly disconnected.',
-                       'type': 'COMMAND'}
-                other_agent.observe(msg)
-
     def reset(self):
         for a in self.agents:
             a.reset()

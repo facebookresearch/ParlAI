@@ -47,6 +47,7 @@ ASSIGNMENT_DONE = 'Submitted'
 ASSIGNMENT_APPROVED = 'Approved'
 ASSIGNMENT_REJECTED = 'Rejected'
 
+MTURK_DISCONNECT_MESSAGE = '[DISCONNECT]' # some Turker disconnected from conversation
 TIMEOUT_MESSAGE = '[TIMEOUT]' # the Turker did not respond, but didn't return the HIT
 RETURN_MESSAGE = '[RETURNED]' # the Turker returned the HIT
 
@@ -403,7 +404,7 @@ class MTurkManager():
         conversation_id = msg['data']['conversation_id']
         self.socket_manager.open_channel(assignment_id)
 
-        if assignment_id not in self.assignment_state or not conversation_id:
+        if not conversation_id:
             self.assignment_state[assignment_id] = {'conversation_id': None,
                                              'status': 'init'}
             self.create_agent(hit_id, assignment_id, worker_id)
@@ -434,9 +435,15 @@ class MTurkManager():
         # if in conversation, inform world about disconnect
         if id in self.agent_to_world:
             world = self.agent_to_world[id]
-            world.handle_disconnect(agent)
-            for agent in self.agent_to_world:
-                self.deregister_agent_to_world(agent)
+            for other_agent in world.agents:
+                if agent.id != other_agent.id:
+                    msg = {'id': 'World',
+                           'text': 'COMMAND_DISCONNECT_PARTNER',
+                           'disconnect_text': 'One of the other agents unexpectedly disconnected.',
+                           'type': 'COMMAND'}
+                    other_agent.observe(msg)
+                other_agent.some_agent_disconnected = True
+
         # close the sending thread
         self.socket_manager.close_channel(id)
 
@@ -579,6 +586,7 @@ class MTurkAgent(Agent):
         self.assignment_id = assignment_id
         self.hit_id = hit_id
         self.worker_id = worker_id
+        self.some_agent_disconnected = False
         self.hit_is_abandoned = False
         self.hit_is_accepted = False # state from Amazon MTurk system
         self.hit_is_returned = False # state from Amazon MTurk system
@@ -615,7 +623,9 @@ class MTurkAgent(Agent):
             time.sleep(5) # ThrottlingException might happen if we poll too frequently
 
     def is_in_task(self):
-        return 't_' in self.conversation_id
+        if self.conversation_id:
+            return 't_' in self.conversation_id
+        return False
 
     def observe(self, msg):
         self.manager.send_message('[World]', self.assignment_id, msg)
@@ -631,7 +641,16 @@ class MTurkAgent(Agent):
             # Check if Turker sends a message
             if not self.msg_queue.empty():
                 return self.msg_queue.get()
-            
+
+            if self.some_agent_disconnected:
+                print("SOME AGENT DISCONNECTED")
+                msg = {
+                    'id': self.id,
+                    'text': MTURK_DISCONNECT_MESSAGE,
+                    'episode_done': True
+                }
+                return msg
+
             # Check if the Turker already returned the HIT
             if self.hit_is_returned:
                 msg = {
