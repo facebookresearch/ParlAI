@@ -125,8 +125,11 @@ class ParlaiParser(argparse.ArgumentParser):
                  'defaults to {parlai_dir}/downloads')
         parlai.add_argument(
             '-dt', '--datatype', default='train',
-            choices=['train', 'train:ordered', 'valid', 'test'],
+            choices=['train', 'train:stream', 'train:ordered', 'valid',
+                'valid:stream', 'test', 'test:stream'],
             help='choose from: train, train:ordered, valid, test. ' +
+                 'to stream data add ":stream" to any option ' +
+                 '(e.g., train:stream). ' +
                  'by default: train is random with replacement, ' +
                  'valid is ordered, test is ordered.')
         parlai.add_argument(
@@ -139,10 +142,6 @@ class ParlaiParser(argparse.ArgumentParser):
         parlai.add_argument(
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
-        parlai.add_argument(
-            '--stream', default=None, type='bool',
-            help='stream data. default leaves it up to the task to choose, ' +
-            'if not specified by task defaults to not streaming')
         self.add_parlai_data_path(parlai)
         self.add_task_args()
 

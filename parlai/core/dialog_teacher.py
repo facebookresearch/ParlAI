@@ -41,14 +41,12 @@ class DialogTeacher(Teacher):
 
         self.datatype = opt['datatype']
         self.startTime = time.time()
-        self.stream = opt['stream']
-        if self.stream is None:
-            self.stream = False
+        self.stream = 'stream' in opt['datatype'].split(':')
 
         # first initialize any shared objects
         self.random = self.datatype == 'train'
         data_class = StreamDialogData if self.stream else DialogData
-        kwargs = {'cycle': self.random} if self.stream else {}
+        kwargs = {'cycle': 'train' in self.datatype} if self.stream else {}
         if shared and shared.get('data'):
             self.data = data_class(opt, shared=shared['data'], **kwargs)
         else:
@@ -363,7 +361,7 @@ class StreamDialogData(DialogData):
             self.reset_data = None
             self.is_reset = True
         self.entry_idx = 0
-        self.last_episode = None
+        self.next_episode = None
 
     def share(self):
         shared = super().share()
@@ -399,24 +397,24 @@ class StreamDialogData(DialogData):
         this instance. When episode is done returns first entry of next episode.
         """
         # first look up data
-        if self.last_episode is None:
-            self.last_episode = next(self.data)
+        if self.next_episode is None:
+            self.next_episode = next(self.data)
         if self.entry_idx == 0:
-            self.cur_episode = self.last_episode
-            self.last_episode = next(self.data)
+            self.cur_episode = self.next_episode
+            self.next_episode = next(self.data)
         entry = self.cur_episode[self.entry_idx]
 
         # now pack it in a action-observation dictionary
         table = self.build_table(entry)
 
-        end_of_data = self.last_episode[0][0] is None
-        episode_done = self.entry_idx == len(self.cur_episode) - 1 or end_of_data
+        episode_done = self.entry_idx == len(self.cur_episode) - 1
         if episode_done:
             self.entry_idx = 0
         else:
             self.entry_idx += 1
+        end_of_data = episode_done and self.next_episode[0][0] is None
         if end_of_data and self.cycle:
-            self.last_episode = next(self.data)
+            self.next_episode = next(self.data)
 
         # last entry in this episode
         table['episode_done'] = episode_done
@@ -427,11 +425,11 @@ class StreamDialogData(DialogData):
         if self.reset_data is not None:
             # auxiliary instance, reset main datastream
             self.data = self.reset_data()
-            self.last_episode = None
+            self.next_episode = None
         elif not self.is_reset:
             # if main instance is not reset, reset datastream
             self._load(self.data_loader, self.datafile)
             self.is_reset = True
-            self.last_episode = None
+            self.next_episode = None
         self.entry_idx = 0
         return self.data
