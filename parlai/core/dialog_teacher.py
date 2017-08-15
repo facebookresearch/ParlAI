@@ -9,7 +9,6 @@ from .agents import Teacher
 from .image_featurizers import ImageLoader
 from PIL import Image
 import random
-import os
 import sys
 import time
 
@@ -42,15 +41,19 @@ class DialogTeacher(Teacher):
 
         self.datatype = opt['datatype']
         self.startTime = time.time()
+        self.stream = opt['stream']
+        if self.stream is None:
+            self.stream = False
 
         # first initialize any shared objects
         self.random = self.datatype == 'train'
+        data_class = StreamDialogData if self.stream else DialogData
+        kwargs = {'cycle': self.random} if self.stream else {}
         if shared and shared.get('data'):
-            self.data = DialogData(opt, shared=shared['data'])
+            self.data = data_class(opt, shared=shared['data'], **kwargs)
         else:
-            self.data = DialogData(opt,
-                data_loader=self.setup_data(opt['datafile']),
-                cands=self.label_candidates())
+            self.data = data_class(opt, data_loader=self.setup_data,
+                    cands=self.label_candidates(), **kwargs)
 
         # for ordered data in batch mode (especially, for validation and
         # testing), each teacher in the batch gets a start index and a step
@@ -68,7 +71,9 @@ class DialogTeacher(Teacher):
         self.episode_idx = self.data_offset - self.step_size
         self.episode_done = True
         self.epochDone = False
-        if not self.random and self.data_offset >= self.data.num_episodes():
+        if self.stream:
+            self.data.reset()
+        elif not self.random and self.data_offset >= self.data.num_episodes():
             # could have bigger batchsize then episodes... so nothing to do
             self.epochDone = True
 
@@ -103,23 +108,25 @@ class DialogTeacher(Teacher):
 
     def next_example(self):
         num_eps = self.data.num_episodes()
-        if self.episode_done:
-            if self.random:
-                # select random episode
-                self.episode_idx = random.randrange(num_eps)
+        if not self.stream:
+            if self.episode_done:
+                if self.random:
+                    # select random episode
+                    self.episode_idx = random.randrange(num_eps)
+                else:
+                    # select next episode
+                    self.episode_idx = (self.episode_idx + self.step_size) % num_eps
+                self.entry_idx = 0
             else:
-                # select next episode
-                self.episode_idx = (self.episode_idx + self.step_size) % num_eps
-            self.entry_idx = 0
+                self.entry_idx += 1
+            action, epoch_done = self.data.get(self.episode_idx, self.entry_idx)
         else:
-            self.entry_idx += 1
-
-        action, epoch_done = self.data.get(self.episode_idx, self.entry_idx)
+            action, epoch_done = self.data.get()
 
         if self.random:
             epoch_done = False
         elif (self.episode_idx + self.step_size >= num_eps and
-                action['episode_done']):
+                action['episode_done'] and not self.stream):
             # this is used for ordered data to check whether there's more data
             epoch_done = True
 
@@ -178,11 +185,10 @@ class DialogData(object):
     or randomly when returning examples to the caller.
     """
 
-    def __init__(self, opt, data_loader=None, cands=None, shared=None):
+    def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
         # self.data is a list of episodes
         # each episode is a tuple of entries
         # each entry is a tuple of values for the action/observation table
-        self.opt = opt
         if shared:
             self.image_loader = shared.get('image_loader', None)
             self.data = shared.get('data', [])
@@ -190,7 +196,7 @@ class DialogData(object):
         else:
             self.image_loader = ImageLoader(opt)
             self.data = []
-            self._load(data_loader)
+            self._load(data_loader, opt['datafile'])
             self.cands = None if cands == None else set(sys.intern(c) for c in cands)
         self.addedCands = []
         self.copied_cands = False
@@ -209,15 +215,14 @@ class DialogData(object):
         """
         return sum(len(episode) for episode in self.data)
 
-    def _load(self, data_loader):
-        """Loads up data from an iterator over tuples described in the class
-        docs.
+    def _read_episode(self, data_generator):
+        """Reads one episode at a time from the provided iterator over entries.
         """
         episode = []
         last_cands = None
-        for entry, new in data_loader:
+        for entry, new in data_generator:
             if new and len(episode) > 0:
-                self.data.append(tuple(episode))
+                yield tuple(episode)
                 episode = []
                 last_cands = None
 
@@ -266,7 +271,14 @@ class DialogData(object):
             episode.append(tuple(new_entry))
 
         if len(episode) > 0:
-            self.data.append(tuple(episode))
+            yield tuple(episode)
+
+    def _load(self, data_loader, datafile):
+        """Loads up data from an iterator over tuples described in the class
+        docs.
+        """
+        for episode in self._read_episode(data_loader(datafile)):
+            self.data.append(episode)
 
     def num_episodes(self):
         """Return number of episodes in the dataset."""
@@ -281,6 +293,14 @@ class DialogData(object):
         end_of_data = episode_done and episode_idx == len(self.data) - 1
 
         # now pack it in a action-observation dictionary
+        table = self.build_table(entry)
+
+        # last entry in this episode
+        table['episode_done'] = episode_done
+        return table, end_of_data
+
+    def build_table(self, entry):
+        """Packs an entry into an action-observation dictionary."""
         table = {}
         if entry[0] is not None:
             table['text'] = entry[0]
@@ -317,7 +337,101 @@ class DialogData(object):
         if 'labels' in table and 'label_candidates' in table:
             if table['labels'][0] not in table['label_candidates']:
                 raise RuntimeError('true label missing from candidate labels')
+        return table
+
+
+class StreamDialogData(DialogData):
+    """Provides a data structure for streaming textual dialog data.
+    This can be used whenever the dialog data follows the format described in
+    DialogData but cannot fit entirely into memory.
+
+    Additional keyword-argument cycle defines if the stream should restart from
+    the beginning after an epoch is finished (defaults to True).
+    """
+
+    def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
+        # super() call initiates stream in self.data by calling _load()
+        super().__init__(opt, data_loader, cands, shared, **kwargs)
+        self.cycle = kwargs['cycle'] if 'cycle' in kwargs else True
+        if shared:
+            # auxiliary instances hold pointer to main datastream (in self.data)
+            self.reset_data = shared['reset']
+        else:
+            # main instance holds the stream and shares pointer to it
+            self.data_loader = data_loader
+            self.datafile = opt['datafile']
+            self.reset_data = None
+            self.is_reset = True
+        self.entry_idx = 0
+        self.last_episode = None
+
+    def share(self):
+        shared = super().share()
+        # also share reset method to allow datastream to be reset
+        shared['reset'] = self.reset
+        return shared
+
+    def __len__(self):
+        # unknown
+        return 0
+
+    def _load(self, data_loader, datafile):
+        """Load data generator into data field."""
+        self.data = self._data_generator(data_loader, datafile)
+
+    def _data_generator(self, data_loader, datafile):
+        """Generates data using the iterator over tuples constructed 
+        by data_loader.
+        """
+        self.is_reset = False
+        while True:
+            for episode in self._read_episode(data_loader(datafile)):
+                yield episode
+            while not self.cycle:
+                yield ((None,),)
+
+    def num_episodes(self):
+        # unknown
+        return 0
+
+    def get(self):
+        """Returns a the next entry from the stream in the current episode for
+        this instance. When episode is done returns first entry of next episode.
+        """
+        # first look up data
+        if self.last_episode is None:
+            self.last_episode = next(self.data)
+        if self.entry_idx == 0:
+            self.cur_episode = self.last_episode
+            self.last_episode = next(self.data)
+        entry = self.cur_episode[self.entry_idx]
+
+        # now pack it in a action-observation dictionary
+        table = self.build_table(entry)
+
+        end_of_data = self.last_episode[0][0] is None
+        episode_done = self.entry_idx == len(self.cur_episode) - 1 or end_of_data
+        if episode_done:
+            self.entry_idx = 0
+        else:
+            self.entry_idx += 1
+        if end_of_data and self.cycle:
+            self.last_episode = next(self.data)
 
         # last entry in this episode
         table['episode_done'] = episode_done
         return table, end_of_data
+
+    def reset(self):
+        """Reset the datastream to its beginning"""
+        if self.reset_data is not None:
+            # auxiliary instance, reset main datastream
+            self.data = self.reset_data()
+            self.last_episode = None
+        elif not self.is_reset:
+            # if main instance is not reset, reset datastream
+            self._load(self.data_loader, self.datafile)
+            self.is_reset = True
+            self.last_episode = None
+        self.entry_idx = 0
+        return self.data

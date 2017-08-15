@@ -139,6 +139,10 @@ class ParlaiParser(argparse.ArgumentParser):
         parlai.add_argument(
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
+        parlai.add_argument(
+            '--stream', default=None, type='bool',
+            help='stream data. default leaves it up to the task to choose, ' +
+            'if not specified by task defaults to not streaming')
         self.add_parlai_data_path(parlai)
         self.add_task_args()
 
