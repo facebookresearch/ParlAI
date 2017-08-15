@@ -41,7 +41,7 @@ server_source_directory_name = 'server'
 heroku_server_directory_name = 'heroku_server'
 task_directory_name = 'task'
 
-def create_hit_config(task_description, unique_worker, is_sandbox):
+def create_hit_config(task_description, unique_worker, num_assignments, is_sandbox):
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
     if not is_sandbox:
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
@@ -50,6 +50,7 @@ def create_hit_config(task_description, unique_worker, is_sandbox):
         'is_sandbox': is_sandbox,
         'mturk_submit_url': mturk_submit_url,
         'unique_worker': unique_worker,
+        'num_assignments': num_assignments,
     }
     hit_config_file_path = os.path.join(parent_dir, 'hit_config.json')
     if os.path.exists(hit_config_file_path):
@@ -239,12 +240,12 @@ def setup_heroku_server(task_files_to_copy=None):
     heroku_directory_name = glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))[0]
     heroku_directory_path = os.path.join(parent_dir, heroku_directory_name)
     heroku_executable_path = os.path.join(heroku_directory_path, 'bin', 'heroku')
-    
+
     server_source_directory_path = os.path.join(parent_dir, server_source_directory_name)
     heroku_server_directory_path = os.path.join(parent_dir, heroku_server_directory_name)
 
     sh.rm(shlex.split('-rf '+heroku_server_directory_path))
-    
+
     shutil.copytree(server_source_directory_path, heroku_server_directory_path)
 
     task_directory_path = os.path.join(heroku_server_directory_path, task_directory_name)
@@ -255,7 +256,7 @@ def setup_heroku_server(task_files_to_copy=None):
 
     server_config_file_path = os.path.join(parent_dir, 'server_config.json')
     sh.mv(server_config_file_path, heroku_server_directory_path)
-    
+
     for file_path in task_files_to_copy:
         try:
             shutil.copy2(file_path, task_directory_path)
@@ -292,16 +293,16 @@ def setup_heroku_server(task_files_to_copy=None):
     sh.git(shlex.split('push -f heroku master'))
     subprocess.check_output(shlex.split(heroku_executable_path+' ps:scale web=1'))
     os.chdir(parent_dir)
-    
+
     if os.path.exists(heroku_directory_path):
         shutil.rmtree(heroku_directory_path)
     if os.path.exists(os.path.join(parent_dir, 'heroku.tar.gz')):
         os.remove(os.path.join(parent_dir, 'heroku.tar.gz'))
-    
+
     sh.rm(shlex.split('-rf '+heroku_server_directory_path))
 
     return 'https://'+heroku_app_name+'.herokuapp.com'
-    
+
 def setup_server(task_files_to_copy):
     db_host = setup_rds()
     create_server_config(

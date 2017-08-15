@@ -52,6 +52,8 @@ sequelize
 
 const MTurkWorkerRecord = sequelize.define('mturk_worker_record', {
     task_group_id: { type: Sequelize.STRING },
+    assignment_id: { type: Sequelize.STRING },
+    hit_id: { type: Sequelize.STRING },
     worker_id: { type: Sequelize.STRING }
 });
 
@@ -98,27 +100,61 @@ exports.clean_database = function() {
 //     return new_message_object.get({plain: true});
 // }
 
-exports.add_worker_record = async function(task_group_id, worker_id) {
+exports.add_worker_record = async function(task_group_id, hit_id, assignment_id, worker_id) {
     var existing_record_count = await MTurkWorkerRecord.count({
-                                    where: { 
+                                    where: {
                                         task_group_id: task_group_id,
+                                        hit_id: hit_it,
+                                        assignment_id: assignment_id,
                                         worker_id: worker_id
                                     },
                                 });
     if (existing_record_count === 0) {
         var new_record_object = await MTurkWorkerRecord.create({
                                         task_group_id: task_group_id,
+                                        hit_id: hit_it,
+                                        assignment_id: assignment_id,
                                         worker_id: worker_id
                                     });
     }
 }
 
+exports.assignment_record_exists = async function(task_group_id, assignment_id) {
+  var existing_record_count = await MTurkWorkerRecord.count({
+                                    where: {
+                                        task_group_id: task_group_id,
+                                        assignment_id: assignment_id
+                                    },
+                               });
+  return (existing_record_count > 0);
+
+
+exports.assignment_worker_record_exists = async function(task_group_id, assignment_id, worker_id) {
+    var existing_record_count = await MTurkWorkerRecord.count({
+                                      where: {
+                                          task_group_id: task_group_id,
+                                          assignment_id: assignment_id,
+                                          worker_id: worker_id
+                                      },
+                                 });
+    return (existing_record_count > 0);
+
 exports.worker_record_exists = async function(task_group_id, worker_id) {
     var existing_record_count = await MTurkWorkerRecord.count({
-                                    where: { 
+                                    where: {
                                         task_group_id: task_group_id,
                                         worker_id: worker_id
                                     },
                                 });
     return (existing_record_count > 0);
+}
+
+exports.hit_record_count = async function(task_group_id, hit_id) {
+    var existing_record_count = await MTurkWorkerRecord.count({
+                                   where: {
+                                       task_group_id: task_group_id,
+                                       hit_id: hit_id
+                                   },
+                               });
+    return existing_record_count;
 }

@@ -293,6 +293,7 @@ class MTurkManager():
         create_hit_config(
             task_description=self.opt['task_description'],
             unique_worker=self.opt['unique_worker'],
+            num_assignments=self.opt['num_conversations'] * len(self.mturk_agent_ids),
             is_sandbox=self.opt['is_sandbox']
         )
         if not self.task_files_to_copy:
@@ -320,7 +321,13 @@ class MTurkManager():
 
     def start_new_run(self):
         self.run_id = str(int(time.time()))
-        self.task_group_id = str(self.opt['task']) + '_' + str(self.run_id)
+        self.task_group_id = str(self.opt['task']) + '_' + str(self.run_id
+
+        # Reset state
+        self.conversation_index = 0
+        self.hit_id_list = []
+        self.worker_pool = []
+        self.task_threads = []
 
     def set_onboard_function(self, onboard_function):
         self.onboard_function = onboard_function
@@ -377,7 +384,10 @@ class MTurkManager():
                             selected_workers.append(worker)
                             worker.id = role_function(worker)
                             worker.change_conversation(conversation_id=new_conversation_id, agent_id=worker.id)
-                    self.worker_pool = []
+
+                    # Remove selected workers from the pool
+                    for worker in selected_workers:
+                        self.worker_pool.remove(worker)
 
                     task_thread = threading.Thread(target=_task_function, args=(self.opt, selected_workers, new_conversation_id))
                     task_thread.daemon = True
@@ -385,9 +395,11 @@ class MTurkManager():
                     self.task_threads.append(task_thread)
 
                     if self.conversation_index == self.opt['num_conversations']:
+                        self.expire_all_unassigned_hits()
+
                         # Wait for all conversations to finish, then break from the while loop
                         for thread in self.task_threads:
-                            thread.join() 
+                            thread.join()
                         break
             time.sleep(0.1)
 
@@ -494,14 +506,13 @@ class MTurkManager():
         print_and_log(mturk_chat_url, False)
         mturk_page_url = None
 
-        for i in range(num_hits):
-            mturk_page_url, hit_id = create_hit_with_hit_type(
-                page_url=mturk_chat_url,
-                hit_type_id=hit_type_id,
-                num_assignments=1,
-                is_sandbox=self.is_sandbox
-            )
-            self.hit_id_list.append(hit_id)
+        mturk_page_url, hit_id = create_hit_with_hit_type(
+            page_url=mturk_chat_url,
+            hit_type_id=hit_type_id,
+            num_assignments=num_hits,
+            is_sandbox=self.is_sandbox
+        )
+        self.hit_id_list.append(hit_id)
         return mturk_page_url
 
     def create_hits(self):
@@ -592,10 +603,10 @@ class MTurkAgent(Agent):
         self.hit_is_returned = False # state from Amazon MTurk system
 
         self.msg_queue = Queue()
-
-        self.check_hit_status_thread = threading.Thread(target=self._check_hit_status)
-        self.check_hit_status_thread.daemon = True
-        self.check_hit_status_thread.start()
+        #
+        # self.check_hit_status_thread = threading.Thread(target=self._check_hit_status)
+        # self.check_hit_status_thread.daemon = True
+        # self.check_hit_status_thread.start()
 
     def _check_hit_status(self):
         # Check if HIT is returned
@@ -612,7 +623,7 @@ class MTurkAgent(Agent):
                 response = self.manager.get_hit(hit_id=self.hit_id)
                 if response['HIT']['NumberOfAssignmentsAvailable'] == 1: # HIT is returned
                     self.hit_is_returned = True
-                    # If the worker is still in onboarding, then we don't need to expire the HIT. 
+                    # If the worker is still in onboarding, then we don't need to expire the HIT.
                     # If the worker is already in a conversation, then we should expire the HIT to keep the total number of available HITs consistent with the number of conversations left.
                     if self.is_in_task():
                         print_and_log('Worker has returned the HIT. Since the worker is already in a task conversation, we are expiring the HIT.', False)

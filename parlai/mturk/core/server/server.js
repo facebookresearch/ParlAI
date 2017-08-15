@@ -43,13 +43,20 @@ app.get('/chat_index', async function (req, res) {
   var params = req.query;
 
   var assignment_id = params['assignmentId']; // from mturk
+  var hit_id = params['hitId'];
   var conversation_id = params['conversation_id'] || null;
   var mturk_agent_id = params['mturk_agent_id'] || null;
   var task_group_id = params['task_group_id'];
   var worker_id = params['workerId'] || null;
   var changing_conversation = params['changing_conversation'] || false;
 
-  if (assignment_id === 'ASSIGNMENT_ID_NOT_AVAILABLE') {
+  if ((!changing_conversation) && (await data_model.hit_record_count(task_group_id, hit_id)) == _load_hit_config()['num_assignments']) {
+    res.send('Sorry, there is no HIT available in this group right now.')
+  }
+  // else if ((await data_model.assignment_record_exists(task_group_id, assignment_id)) && !(await data_model.assignment_worker_record_exists(task_group_id, assignment_id, worker_id))) { // This HIT is already returned by another worker
+  //   res.send('Sorry, this HIT has been worked on by someone else before and will be expired soon. If there is "Skip HIT" button, please click on it to find out if the next HIT is available.');
+  // }
+  else if (assignment_id === 'ASSIGNMENT_ID_NOT_AVAILABLE') {
     template_context['is_cover_page'] = true;
     res.render('cover_page.html', template_context);
   }
@@ -57,15 +64,13 @@ app.get('/chat_index', async function (req, res) {
     res.send("Sorry, but you can only work on this HIT once.");
   }
   else {
-    await data_model.add_worker_record(task_group_id, worker_id);
+    await data_model.add_worker_record(task_group_id, hit_id, assignment_id, worker_id);
     if (!conversation_id && !mturk_agent_id) { // if conversation info is not loaded yet
       // TODO: change to a loading indicator
       template_context['is_init_page'] = true;
       res.render('mturk_index.html', template_context);
     }
     else {
-      var hit_id = params['hitId'];
-
       template_context['is_cover_page'] = false;
       template_context['frame_height'] = 650;
       template_context['cur_agent_id'] = mturk_agent_id;
