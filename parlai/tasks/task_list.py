@@ -234,4 +234,11 @@ task_list = [
         "tags": [ "All",  "QA" ],
         "description": "A large scale Machine Reading Comprehension Dataset with questions sampled from real anonymized user queries and contexts from web documents. From Nguyen et al. '16. Link: https://arxiv.org/abs/1611.09268"
     }
+    {
+        "id": "CLEVR",
+        "display_name": "CLEVR",
+        "task": "clevr",
+        "tags": [ "All",  "Visual" ],
+        "description": "A visual reasoning dataset that tests abilities such as attribute identification, counting, comparison, spatial relationships, and logical operations. From Johnson et al. '16. Link: https://arxiv.org/abs/1612.06890"
+    }
 ]
