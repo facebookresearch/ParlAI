@@ -85,7 +85,6 @@ class Message():
 
 class SocketManager():
     """SocketManager is a wrapper around socketIO to stabilize its message passing.
-
     The manager handles resending messages. """
 
     def __init__(self, server_url, port, alive_callback, message_callback, socket_dead_callback, socket_dead_timeout=4):
@@ -237,7 +236,7 @@ class SocketManager():
 
     def send_message(self, message):
         if not message.receiver_id in self.queues:
-            raise RuntimeError('Can not send message to worker_id ' + message.receiver_id + ': message queue not found.')
+            raise RuntimeError('Can not send message to worker_id ' + message.receiver_id + ': message queue not found. Message: {}'.format(message.data))
         print_and_log("Put message ("+message.id+") in queue ("+message.receiver_id+")", False)
         item = (time.time(), message)
         self.queues[message.receiver_id].put(item)
@@ -293,7 +292,6 @@ class MTurkManager():
         create_hit_config(
             task_description=self.opt['task_description'],
             unique_worker=self.opt['unique_worker'],
-            num_assignments=self.opt['num_conversations'] * len(self.mturk_agent_ids),
             is_sandbox=self.opt['is_sandbox']
         )
         if not self.task_files_to_copy:
@@ -321,13 +319,18 @@ class MTurkManager():
 
     def start_new_run(self):
         self.run_id = str(int(time.time()))
-        self.task_group_id = str(self.opt['task']) + '_' + str(self.run_id
+        self.task_group_id = str(self.opt['task']) + '_' + str(self.run_id)
 
         # Reset state
+        self.mturk_agents = {}
+        self.worker_index = 0
+        self.assignment_to_onboard_thread = {}
         self.conversation_index = 0
         self.hit_id_list = []
         self.worker_pool = []
         self.task_threads = []
+        self.conversation_index = 0
+        self.assignment_state = {}
 
     def set_onboard_function(self, onboard_function):
         self.onboard_function = onboard_function
@@ -493,83 +496,129 @@ class MTurkManager():
                 return ASSIGNMENT_NOT_DONE
 
     def create_additional_hits(self, num_hits):
+        """Helper to handle creation for a specific number of hits/assignments
+        Puts created HIT ids into the hit_id_list
+        """
         print_and_log('Creating '+str(num_hits)+' hits...', False)
         hit_type_id = create_hit_type(
             hit_title=self.opt['hit_title'],
-            hit_description=self.opt['hit_description'] + ' (ID: ' + self.task_group_id + ')',
+            hit_description=self.opt['hit_description'] + \
+                            ' (ID: ' + self.task_group_id + ')',
             hit_keywords=self.opt['hit_keywords'],
             hit_reward=self.opt['reward'],
-            assignment_duration_in_seconds=self.opt.get('assignment_duration_in_seconds', 30 * 60), # Set to 30 minutes by default
+            assignment_duration_in_seconds= # Set to 30 minutes by default
+                self.opt.get('assignment_duration_in_seconds', 30 * 60),
             is_sandbox=self.opt['is_sandbox']
         )
-        mturk_chat_url = self.server_url + "/chat_index?task_group_id="+str(self.task_group_id)
+        mturk_chat_url = self.server_url + "/chat_index?task_group_id=" + \
+            str(self.task_group_id)
         print_and_log(mturk_chat_url, False)
         mturk_page_url = None
 
-        mturk_page_url, hit_id = create_hit_with_hit_type(
-            page_url=mturk_chat_url,
-            hit_type_id=hit_type_id,
-            num_assignments=num_hits,
-            is_sandbox=self.is_sandbox
-        )
-        self.hit_id_list.append(hit_id)
+        if self.opt['unique_worker'] == True:
+            # Use a single hit with many assignments to allow
+            # workers to only work on the task once
+            mturk_page_url, hit_id = create_hit_with_hit_type(
+                page_url=mturk_chat_url,
+                hit_type_id=hit_type_id,
+                num_assignments=num_hits,
+                is_sandbox=self.is_sandbox
+            )
+            self.hit_id_list.append(hit_id)
+        else:
+            # Create unique hits, allowing one worker to be able to handle many
+            # tasks without needing to be unique
+            for i in range(num_hits):
+                mturk_page_url, hit_id = create_hit_with_hit_type(
+                    page_url=mturk_chat_url,
+                    hit_type_id=hit_type_id,
+                    num_assignments=1,
+                    is_sandbox=self.is_sandbox
+                )
+                self.hit_id_list.append(hit_id)
         return mturk_page_url
 
     def create_hits(self):
+        """Creates hits based on the managers current config, returns hit url"""
         print_and_log('Creating HITs...')
 
-        mturk_page_url = self.create_additional_hits(num_hits=self.opt['num_conversations'] * len(self.mturk_agent_ids))
+        mturk_page_url = self.create_additional_hits(
+            num_hits=self.opt['num_conversations'] * len(self.mturk_agent_ids)
+        )
 
         print_and_log("Link to HIT: " + mturk_page_url + "\n")
-        print_and_log("Waiting for Turkers to respond... (Please don't close your laptop or put your computer into sleep or standby mode.)\n")
+        print_and_log("Waiting for Turkers to respond... (Please don't close" +\
+            " your laptop or put your computer into sleep or standby mode.)\n")
         # if self.opt['is_sandbox']:
         #     webbrowser.open(mturk_page_url)
         return mturk_page_url
 
     def expire_hit(self, hit_id):
-        # This will only expire HITs that are in "pending" state
+        """Expires given HIT
+        Only works if the hit is in the "pending" state
+        """
         client = get_mturk_client(self.is_sandbox)
-        client.update_expiration_for_hit(HITId=hit_id, ExpireAt=datetime(2015, 1, 1)) # Update it to a time in the past, and the HIT will be immediately expired
+        # Update expiration to a time in the past, the HIT will expire instantly
+        past_time = datetime(2015, 1, 1)
+        client.update_expiration_for_hit(HITId=hit_id, ExpireAt=past_time)
 
     def get_hit(self, hit_id):
+        """Gets hit from mturk by hit_id"""
         client = get_mturk_client(self.is_sandbox)
         return client.get_hit(HITId=hit_id)
 
     def expire_all_unassigned_hits(self):
+        """Moves through the whole hit_id list and attempts to expire the hit,
+        though this only immediately expires those that are pending.
+        """
         print_and_log("Expiring all unassigned HITs...")
         for hit_id in self.hit_id_list:
             self.expire_hit(hit_id)
 
     def approve_work(self, assignment_id):
+        """approves work for a given assignment through the mturk client"""
         client = get_mturk_client(self.is_sandbox)
         client.approve_assignment(AssignmentId=assignment_id)
 
     def reject_work(self, assignment_id, reason):
+        """rejects work for a given assignment through the mturk client"""
         client = get_mturk_client(self.is_sandbox)
-        client.reject_assignment(AssignmentId=assignment_id, RequesterFeedback=reason)
+        client.reject_assignment(
+            AssignmentId=assignment_id,
+            RequesterFeedback=reason
+        )
 
     def block_worker(self, worker_id, reason):
+        """Blocks a worker by id using the mturk client, passes reason along"""
         client = get_mturk_client(self.is_sandbox)
         client.create_worker_block(WorkerId=worker_id, Reason=reason)
 
-    def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason, unique_request_token):
-        total_cost = calculate_mturk_cost(payment_opt={'type': 'bonus', 'amount': bonus_amount})
-        if not check_mturk_balance(balance_needed=total_cost, is_sandbox=self.is_sandbox):
-            print_and_log("Cannot pay bonus. Reason: Insufficient fund in your MTurk account.")
+    def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason,
+                  unique_request_token):
+        """Handles paying bonus to a turker, fails for insufficient funds"""
+        total_cost = calculate_mturk_cost(
+            payment_opt={'type': 'bonus', 'amount': bonus_amount}
+        )
+        if not check_mturk_balance(balance_needed=total_cost,
+                                   is_sandbox=self.is_sandbox):
+            print_and_log("Cannot pay bonus. Reason: Insufficient funds" + \
+                          " in your MTurk account.")
             return False
 
         client = get_mturk_client(self.is_sandbox)
+        # unique_request_token may be useful for handling future network errors
         client.send_bonus(
             WorkerId=worker_id,
             BonusAmount=bonus_amount,
             AssignmentId=assignment_id,
             Reason=reason,
-            UniqueRequestToken=unique_request_token # Could be useful in the future, for handling network errors
+            UniqueRequestToken=unique_request_token
         )
 
         return True
 
     def email_worker(self, worker_id, subject, message_text):
+        """Send an email to a worker through the mturk client"""
         client = get_mturk_client(self.is_sandbox)
         response = client.notify_workers(
             Subject=subject,
@@ -577,13 +626,22 @@ class MTurkManager():
             WorkerIds=[worker_id]
         )
         if len(response['NotifyWorkersFailureStatuses']) > 0:
-            return {'failure': response['NotifyWorkersFailureStatuses'][0]['NotifyWorkersFailureMessage']}
+            failure_message = response['NotifyWorkersFailureStatuses'][0]
+            return {'failure': failure_message['NotifyWorkersFailureMessage']}
         else:
             return {'success': True}
 
     def shutdown(self):
-        setup_aws_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'server_utils.py')
-        print_and_log("Remote database instance will accumulate cost over time (about $30/month for t2.medium instance). Please run `python "+setup_aws_file_path+" remove_rds` to remove RDS instance if you don't plan to use MTurk often.")
+        """Handles mturk client shutdown cleanup. For now this reminds user that
+        a script needs to be run to shut down the external database"""
+        setup_aws_file_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'server_utils.py'
+        )
+        print_and_log("Remote database instance will accumulate cost over " + \
+            "time (about $30/month for t2.medium). Please run `python " + \
+            setup_aws_file_path + " remove_rds` to remove RDS instance if " + \
+            "you don't plan to use MTurk often.")
 
 
 class MTurkAgent(Agent):

@@ -112,7 +112,7 @@ exports.add_worker_record = async function(task_group_id, hit_id, assignment_id,
     if (existing_record_count === 0) {
         var new_record_object = await MTurkWorkerRecord.create({
                                         task_group_id: task_group_id,
-                                        hit_id: hit_it,
+                                        hit_id: hit_id,
                                         assignment_id: assignment_id,
                                         worker_id: worker_id
                                     });
@@ -127,7 +127,7 @@ exports.assignment_record_exists = async function(task_group_id, assignment_id) 
                                     },
                                });
   return (existing_record_count > 0);
-
+}
 
 exports.assignment_worker_record_exists = async function(task_group_id, assignment_id, worker_id) {
     var existing_record_count = await MTurkWorkerRecord.count({
@@ -138,6 +138,7 @@ exports.assignment_worker_record_exists = async function(task_group_id, assignme
                                       },
                                  });
     return (existing_record_count > 0);
+}
 
 exports.worker_record_exists = async function(task_group_id, worker_id) {
     var existing_record_count = await MTurkWorkerRecord.count({
