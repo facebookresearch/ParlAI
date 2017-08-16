@@ -4,7 +4,6 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 import os
-import sys
 import time
 import json
 import math
@@ -14,10 +13,6 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine, func
 from sqlalchemy.pool import NullPool
 from sqlalchemy import inspect
-
-is_python_2 = False
-if sys.version_info[0] < 3:
-    is_python_2 = True
  
 Base = declarative_base()
 engine = None
@@ -170,8 +165,10 @@ def send_new_message(db_session, task_group_id, conversation_id, sender_agent_id
     new_message['episode_done'] = episode_done
 
     message_content = json.dumps(new_message)
-    if is_python_2:
+    try:
         message_content = unicode(message_content)
+    except NameError:   # unicode() was removed in Python 3
+        pass
 
     new_message_object = Message(
         task_group_id = task_group_id,
