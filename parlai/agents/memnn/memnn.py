@@ -93,7 +93,7 @@ class MemnnAgent(Agent):
         if not self.episode_done:
             # if the last example wasn't the end of an episode, then we need to
             # recall what was said in that example
-            prev_dialogue = self.observation['text']
+            prev_dialogue = self.observation['text'] if self.observation is not None else ''
             batch_idx = self.opt.get('batchindex', 0)
             if self.answers[batch_idx] is not None:
                 prev_dialogue += '\n' + self.answers[batch_idx]
@@ -194,6 +194,8 @@ class MemnnAgent(Agent):
         """
         exs = [ex for ex in obs if 'text' in ex]
         valid_inds = [i for i, ex in enumerate(obs) if 'text' in ex]
+        if not exs:
+            return [None] * 4
 
         parsed = [self.parse(ex['text']) for ex in exs]
         queries = torch.cat([x[0] for x in parsed])
@@ -232,7 +234,7 @@ class MemnnAgent(Agent):
 
         xs, ys, cands, valid_inds = self.batchify(observations)
 
-        if len(xs[1]) == 0:
+        if xs is None or len(xs[1]) == 0:
             return batch_reply
 
         # Either train or predict
