@@ -303,15 +303,15 @@ def setup_heroku_server(task_files_to_copy=None):
     return 'https://'+heroku_app_name+'.herokuapp.com'
 
 def setup_server(task_files_to_copy):
-    db_host = setup_rds()
+    # db_host = setup_rds()
     create_server_config(
-        db_host=db_host,
+        db_host="fake_host",
         db_name=rds_db_name,
         db_username=rds_username,
         db_password=rds_password
     )
     server_url = setup_heroku_server(task_files_to_copy=task_files_to_copy)
-    return server_url, db_host
+    return server_url, "fake_host"
 
 if __name__ == "__main__":
     if sys.argv[1] == 'remove_rds':

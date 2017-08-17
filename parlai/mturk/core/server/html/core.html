@@ -120,7 +120,7 @@
         if(url.search(pattern)>=0){
             return url.replace(pattern,'$1' + paramValue + '$2');
         }
-        return url + (url.indexOf('?')>0 ? '&' : '?') + paramName + '=' + paramValue 
+        return url + (url.indexOf('?')>0 ? '&' : '?') + paramName + '=' + paramValue
     }
 
     function get_hit_config(callback_function) {
@@ -165,7 +165,7 @@
             }
         }
     });
-    
+
     /* ================= State variables ================= */
     var verbose_log = true;
     var is_cover_page = ("{{is_cover_page}}" === 'true') ? true : false;
@@ -215,9 +215,13 @@
             task_done = true;
             update_UI_for_response_type('done');
             $('#disconnect').text(msg['disconnect_text']);
-;            $("div#waiting-for-message").css("display", "none");
+            $("div#waiting-for-message").css("display", "none");
         } else if (command === 'COMMAND_SUBMIT_HIT') {
             all_done_callback();
+        } else if (command === 'COMMAND_EXPIRE_HIT') {
+            socket.close();
+            hit_is_expired = true;
+            update_UI_for_response_type('expired');
         } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
             console.log('current conversation_id: ' + conversation_id);
             var new_conversation_id = msg['conversation_id'];
@@ -360,7 +364,8 @@
 
         var msg = {id: id,
                    type: type,
-                   sender_id: assignment_id,
+                   sender_id: worker_id,
+                   assignment_id: assignment_id,
                    receiver_id: '[World]',
                    data: data,
                    status: STATUS_INIT,
@@ -415,6 +420,7 @@
                         id: msg.id,
                         sender_id: msg.receiver_id,
                         receiver_id: msg.sender_id,
+                        assignment_id: assignment_id,
                         type: TYPE_ACK,
                         data: null
                     }
@@ -431,7 +437,8 @@
     function _heartbeat_thread() {
         var hb = {'id': uuidv4(),
                   'receiver_id': '[World]',
-                  'sender_id': assignment_id,
+                  'assignment_id': assignment_id,
+                  'sender_id' : worker_id,
                   'type': TYPE_HEARTBEAT,
                   'data': null}
         socket.emit('route message', hb);

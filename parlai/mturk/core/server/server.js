@@ -8,7 +8,7 @@ const fs = require("fs");
 const domain = require('domain');
 const AsyncLock = require('async-lock');
 const bodyParser = require('body-parser');
-const data_model = require("./data_model");
+//const data_model = require("./data_model");
 
 const task_directory_name = 'task'
 
@@ -24,7 +24,7 @@ nunjucks.configure(task_directory_name, {
     express: app
 });
 
-// ======================= Routing =======================
+// ======================= <Routing> =======================
 
 function _load_hit_config() {
   var content = fs.readFileSync(task_directory_name+'/hit_config.json');
@@ -50,21 +50,10 @@ app.get('/chat_index', async function (req, res) {
   var worker_id = params['workerId'] || null;
   var changing_conversation = params['changing_conversation'] || false;
 
-  if ((!changing_conversation) && (await data_model.hit_record_count(task_group_id, hit_id)) == _load_hit_config()['num_assignments']) {
-    res.send('Sorry, there is no HIT available in this group right now.')
-  }
-  // else if ((await data_model.assignment_record_exists(task_group_id, assignment_id)) && !(await data_model.assignment_worker_record_exists(task_group_id, assignment_id, worker_id))) { // This HIT is already returned by another worker
-  //   res.send('Sorry, this HIT has been worked on by someone else before and will be expired soon. If there is "Skip HIT" button, please click on it to find out if the next HIT is available.');
-  // }
-  else if (assignment_id === 'ASSIGNMENT_ID_NOT_AVAILABLE') {
+  if (assignment_id === 'ASSIGNMENT_ID_NOT_AVAILABLE') {
     template_context['is_cover_page'] = true;
     res.render('cover_page.html', template_context);
-  }
-  else if ((!changing_conversation) && _load_hit_config()['unique_worker'] === true && await data_model.worker_record_exists(task_group_id, worker_id)) {
-    res.send("Sorry, but you can only work on this HIT once.");
-  }
-  else {
-    await data_model.add_worker_record(task_group_id, hit_id, assignment_id, worker_id);
+  } else {
     if (!conversation_id && !mturk_agent_id) { // if conversation info is not loaded yet
       // TODO: change to a loading indicator
       template_context['is_init_page'] = true;
@@ -91,71 +80,92 @@ app.get('/get_hit_config', function (req, res) {
 });
 
 app.get('/clean_database', function (req, res) {
-  var params = req.query;
-  var db_host = _load_server_config()['db_host'];
-
-  if (params['db_host'] === db_host) {
-    data_model.clean_database();
-    res.sendStatus(200);
-  } else {
-    res.sendStatus(401);
-  }
+  res.sendStatus(200);
+  // var params = req.query;
+  // var db_host = _load_server_config()['db_host'];
+  //
+  // if (params['db_host'] === db_host) {
+  //   data_model.clean_database();
+  //   res.sendStatus(200);
+  // } else {
+  //   res.sendStatus(401);
+  // }
 });
 
 app.get('/get_timestamp', function (req, res) {
   res.json({'timestamp': Date.now()}); // in milliseconds
 });
 
-// ======================= Routing =======================
+// ======================= </Routing> =======================
 
-// ======================= Socket =======================
+// ======================= <Socket> =======================
 
 const io = socketIO(
   app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
 );
 
-var worker_id_to_room_id = {};
-var room_id_to_worker_id = {};
+var connection_id_to_room_id = {};
+var room_id_to_connection_id = {};
 
-function _send_message(socket, worker_id, event_name, event_data) {
-  var worker_room_id = worker_id_to_room_id[worker_id];
+function _send_message(socket, connection_id, event_name, event_data) {
+  var connection_room_id = connection_id_to_room_id[connection_id];
   // Server does not have information about this worker. Should wait for this worker's agent_alive event instead.
-  if (!worker_room_id) {
-    console.log("Worker room id doesn't exist! Skipping message.")
+  if (!connection_room_id) {
+    console.log('Connection room id for ' + connection_id +' doesn\'t exist! Skipping message.')
     return;
   }
-  console.log('worker_room_id' + worker_room_id);
-  socket.broadcast.in(worker_room_id).emit(event_name, event_data);
+  socket.broadcast.in(connection_room_id).emit(event_name, event_data);
+}
+
+function _get_to_conn_id(data) {
+  var reciever_id = data['receiver_id'];
+  if (reciever_id === '[World]') {
+    return reciever_id;
+  } else {
+    return reciever_id + '_' + data['assignment_id'];
+  }
+}
+
+function _get_from_conn_id(data) {
+  var sender_id = data['sender_id'];
+  if (sender_id === '[World]') {
+    return sender_id;
+  } else {
+    return sender_id + '_' + data['assignment_id'];
+  }
 }
 
 io.on('connection', function (socket) {
   console.log('Client connected');
 
   socket.on('disconnect', function () {
-    var worker_id = room_id_to_worker_id[socket.id];
-    console.log('Client disconnected: '+worker_id);
-
+    var connection_id = room_id_to_connection_id[socket.id];
+    console.log('Client disconnected: ' + connection_id);
   });
 
   socket.on('agent alive', function (data, ack) {
-    var worker_id = data["sender_id"];
+    var sender_id = data['sender_id'];
+    var in_connection_id = _get_from_conn_id(data);
+    var out_connection_id = _get_to_conn_id(data);
     console.log('agent alive', data);
-    worker_id_to_room_id[worker_id] = socket.id;
-    room_id_to_worker_id[socket.id] = worker_id;
+    connection_id_to_room_id[in_connection_id] = socket.id;
+    room_id_to_connection_id[socket.id] = in_connection_id;
+    console.log('connection_id ' + in_connection_id + ' registered');
 
-    if (!(worker_id === '[World]')) {
-      _send_message(socket, data['receiver_id'], 'new message', data);
+    if (!(sender_id === '[World]')) {
+      // Send alive messages to the world, but not from the world
+      _send_message(socket, out_connection_id, 'new message', data);
     }
     if(ack) {
-        ack('agent_alive');
+      ack('agent_alive');
     }
   });
 
   socket.on('route message', function (data, ack) {
     console.log('route message', data);
-    var worker_id = data['receiver_id'];
+    var out_connection_id = _get_to_conn_id(data);
 
-    _send_message(socket, worker_id, 'new message', data);
+    _send_message(socket, out_connection_id, 'new message', data);
     if(ack) {
         ack('route message');
     }
@@ -164,4 +174,4 @@ io.on('connection', function (socket) {
   socket.emit('socket_open', 'Socket is open!');
 });
 
-// ======================= Socket =======================
+// ======================= </Socket> =======================

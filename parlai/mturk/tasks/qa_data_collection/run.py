@@ -39,17 +39,18 @@ def main():
     )
     mturk_manager.setup_server()
 
+    def run_onboard(worker):
+        world = QADataCollectionOnboardWorld(opt=opt, mturk_agent=worker)
+        while not world.episode_done():
+            world.parley()
+        world.shutdown()
+
+    mturk_manager.set_onboard_function(onboard_function=None)
+
     try:
         mturk_manager.start_new_run()
         mturk_manager.create_hits()
 
-        def run_onboard(worker):
-            world = QADataCollectionOnboardWorld(opt=opt, mturk_agent=worker)
-            while not world.episode_done():
-                world.parley()
-            world.shutdown()
-
-        mturk_manager.set_onboard_function(onboard_function=run_onboard)
         mturk_manager.ready_to_accept_workers()
 
         def check_worker_eligibility(worker):
@@ -59,7 +60,7 @@ def main():
             return mturk_agent_id
 
         global run_conversation
-        def run_conversation(opt, workers):
+        def run_conversation(mturk_manager, opt, workers):
             task = task_class(task_opt)
             mturk_agent = workers[0]
             world = QADataCollectionWorld(opt=opt, task=task, mturk_agent=mturk_agent)
