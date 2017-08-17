@@ -40,9 +40,10 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
     - valid_world can be an existing world which will be reset instead of reinitialized
     """
     print('[ running eval: ' + datatype + ' ]')
+    if 'stream' in opt['datatype']:
+        datatype += ':stream'
     opt['datatype'] = datatype
     if opt.get('evaltask'):
-
         opt['task'] = opt['evaltask']
 
     if valid_world is None:

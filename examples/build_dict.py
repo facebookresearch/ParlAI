@@ -33,6 +33,8 @@ def build_dict(opt):
     cnt = 0
     # we use train set to build dictionary
     ordered_opt['datatype'] = 'train:ordered'
+    if 'stream' in opt['datatype']:
+        ordered_opt['datatype'] += ':stream'
     ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
     world_dict = create_task(ordered_opt, dictionary)
