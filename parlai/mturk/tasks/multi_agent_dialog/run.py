@@ -17,7 +17,7 @@ import threading
 
 """
 This task consists of one local human agent and two MTurk agents,
-each MTurk agent will go through the onboarding step to provide 
+each MTurk agent will go through the onboarding step to provide
 information about themselves, before being put into a conversation.
 You can end the conversation by sending a message ending with
 `[DONE]` from human_1.
@@ -72,19 +72,15 @@ def main():
             # Create the local human agents
             human_agent_1 = LocalHumanAgent(opt=None)
             human_agent_1.id = human_agent_1_id
-            
-            world = MTurkMultiAgentDialogWorld(opt=opt, agents=[human_agent_1, mturk_agent_1, mturk_agent_2])
 
-            # Couple agents to world in mturk_manager so that we can handle disconnects
-            mturk_manager.register_agent_to_world(mturk_agent_1, world)
-            mturk_manager.register_agent_to_world(mturk_agent_2, world)
+            world = MTurkMultiAgentDialogWorld(opt=opt, agents=[human_agent_1, mturk_agent_1, mturk_agent_2])
 
             while not world.episode_done():
                 world.parley()
-            world.shutdown()
 
-            mturk_manager.deregister_agent_to_world(mturk_agent_1)
-            mturk_manager.deregister_agent_to_world(mturk_agent_2)
+            mturk_manager.mark_workers_done(workers)
+            world.shutdown()
+            mturk_manager.free_workers(workers)
 
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,

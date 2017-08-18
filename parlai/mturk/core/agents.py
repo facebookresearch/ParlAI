@@ -467,8 +467,8 @@ class MTurkManager():
                 def _set_status_to_onboard(msg):
                     """Callback for changing conversations to onboarding"""
                     # TODO move internal defs out into reasonable groups
-                    worker_id = mturk_agent.worker_id
-                    assign_id = mturk_agent.assignment_id
+                    # TODO base the getting of state info from the msg to avoid
+                    # edge race condiitons
                     assign_state.status = ASSIGN_STATUS_ONBOARDING
                     assign_state.conversation_id = conversation_id
 
@@ -491,8 +491,8 @@ class MTurkManager():
             def _set_status_to_waiting(msg):
                 """Callback for changing conversations to waiting pool"""
                 # TODO move internal defs out into reasonable groups
-                worker_id = mturk_agent.worker_id
-                assign_id = mturk_agent.assignment_id
+                # TODO base the getting of state info from the msg to avoid
+                # edge race condiitons
                 assign_state.status = ASSIGN_STATUS_WAITING
                 assign_state.conversation_id = conversation_id
 
@@ -538,6 +538,10 @@ class MTurkManager():
                     worker_id = worker.worker_id
                     assign_id = worker.assignment_id
                     worker_state = self.worker_state[worker_id]
+                    if not assign_id in worker_state.assignments:
+                        # This assignment was removed, we should exit this loop
+                        print("At least one worker dropped before all joined!")
+                        return
                     status = worker_state.assignments[assign_id].status
                     if status != ASSIGN_STATUS_IN_TASK:
                         all_joined = False
@@ -564,8 +568,10 @@ class MTurkManager():
                             def _change_worker_to_conversation(msg):
                                 """Callback to update a worker to a new conv"""
                                 # TODO move intern defs out to reasonable groups
+                                worker_id = msg['sender_id']
+                                assignment_id = msg['assignment_id']
                                 self.assign_agent_to_conversation(
-                                    worker,
+                                    self.mturk_agents[worker_id][assignment_id],
                                     new_conversation_id
                                 )
 
@@ -693,16 +699,24 @@ class MTurkManager():
             del agent
         elif status == ASSIGN_STATUS_IN_TASK:
             # in conversation, inform world about disconnect
-            if assignment_id in self.assignment_to_world:
-                world = self.assignment_to_world[assignment_id]
-                for other_agent in world.agents:
+            conversation_id = assignments[assignment_id].conversation_id
+            if agent in self.conv_to_agent[conversation_id]:
+                for other_agent in self.conv_to_agent[conversation_id]:
                     if agent.id != other_agent.id:
-                        msg = {'id': 'World',
-                               'text': 'COMMAND_DISCONNECT_PARTNER',
-                               'disconnect_text': 'One of the other agents ' + \
-                                                  'unexpectedly disconnected.',
-                               'type': 'COMMAND'}
-                        other_agent.observe(msg)
+                        data = {
+                            'text': 'COMMAND_DISCONNECT_PARTNER',
+                            'disconnect_text': 'One of the other agents ' + \
+                                               'unexpectedly disconnected.',
+                            'conversation_id': conversation_id,
+                            'agent_id': agent_id
+                        }
+                        self.manager.send_command(
+                            '[World]',
+                            self.worker_id,
+                            self.assignment_id,
+                            data,
+                            ack_func=change_callback
+                        )
                     other_agent.some_agent_disconnected = True
                     # TODO logic to delete these assignments from other workers
         elif status == ASSIGN_STATUS_DONE:
@@ -781,8 +795,11 @@ class MTurkManager():
         """Registers an agent object with a conversation id, updates status"""
         worker_id = agent.worker_id
         assignment_id = agent.assignment_id
+        print("ASSIGNING " + worker_id + " assign " + assignment_id)
         assign_state = self.worker_state[worker_id].assignments[assignment_id]
-        assign_state.status = ASSIGN_STATUS_ASSIGNED
+        if assign_state.status != ASSIGN_STATUS_IN_TASK:
+            # Avoid on a second ack if alive already came through
+            assign_state.status = ASSIGN_STATUS_ASSIGNED
         assign_state.conversation_id = conv_id
         if not conv_id in self.conv_to_agent:
             self.conv_to_agent[conv_id] = []
@@ -982,16 +999,6 @@ class MTurkManager():
         """Handles any mturk client shutdown cleanup."""
         # TODO save worker state (disconnects to local db)
         pass # Current implementation has no cleanup
-        # For now this reminds user that
-        # a script needs to be run to shut down the external database"""
-        # setup_aws_file_path = os.path.join(
-        #     os.path.dirname(os.path.abspath(__file__)),
-        #     'server_utils.py'
-        # )
-        # print_and_log("Remote database instance will accumulate cost over " + \
-        #     "time (about $30/month for t2.medium). Please run `python " + \
-        #     setup_aws_file_path + " remove_rds` to remove RDS instance if " + \
-        #     "you don't plan to use MTurk often.")
 
 
 # TODO clean up this class
