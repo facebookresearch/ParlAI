@@ -114,9 +114,10 @@ class MemnnAgent(Agent):
         scores = self.score(cands, output_embeddings, answer_embeddings)
 
         label_inds = [cand_list.index(self.labels[i]) for i, cand_list in enumerate(cands)]
-        label_inds = Variable(torch.LongTensor(label_inds))
         if self.opt['cuda']:
-            label_inds = label_inds.cuda(async=True)
+            label_inds = Variable(torch.cuda.LongTensor(label_inds))
+        else:
+            label_inds = Variable(torch.LongTensor(label_inds))
 
         loss = self.loss_fn(scores, label_inds)
         loss.backward()
@@ -137,16 +138,14 @@ class MemnnAgent(Agent):
     def score(self, cands, output_embeddings, answer_embeddings=None):
         last_cand = None
         max_len = max([len(c) for c in cands])
-        scores = Variable(torch.Tensor(len(cands), max_len).fill_(-float('inf')))
-        if self.opt['cuda']:
-            scores = scores.cuda(async=True)
+        scores = Variable(output_embeddings.data.new(len(cands), max_len))
         for i, cand_list in enumerate(cands):
             if last_cand != cand_list:
                 candidate_lengths, candidate_indices = to_tensors(cand_list, self.dict)
                 candidate_lengths, candidate_indices = Variable(candidate_lengths), Variable(candidate_indices)
                 candidate_embeddings = self.model.answer_embedder(candidate_lengths, candidate_indices)
                 if self.opt['cuda']:
-                    candidate_embeddings = candidate_embeddings.cuda(async=True)
+                    candidate_embeddings = candidate_embeddings.cuda()
                 last_cand = cand_list
             scores[i, :len(cand_list)] = self.model.score.one_to_many(output_embeddings[i].unsqueeze(0), candidate_embeddings)
         return scores

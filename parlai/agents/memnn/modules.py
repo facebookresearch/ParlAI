@@ -41,10 +41,7 @@ class MemNN(nn.Module):
 
         if opt['cuda']:
             self.score.cuda()
-            if hasattr(self, 'memory_hop'):
-                self.memory_hop.cuda()
-
-        self.original_cuda_params = [(p, p.data) for p in self.parameters() if p.data.is_cuda]
+            self.memory_hop.cuda()
 
     def time_feature(self, t):
         return self.time_features[min(t, self.num_time_features - 1)]
@@ -180,3 +177,4 @@ class DotScore(nn.Module):
 
     def one_to_many(self, query_embeddings, answer_embeddings, reply_embeddings=None):
         return query_embeddings.mm(answer_embeddings.t())
+
