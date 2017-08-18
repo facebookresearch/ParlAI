@@ -703,19 +703,19 @@ class MTurkManager():
             if agent in self.conv_to_agent[conversation_id]:
                 for other_agent in self.conv_to_agent[conversation_id]:
                     if agent.id != other_agent.id:
+                        # TODO this should be handled more cleanly
                         data = {
                             'text': 'COMMAND_DISCONNECT_PARTNER',
                             'disconnect_text': 'One of the other agents ' + \
                                                'unexpectedly disconnected.',
                             'conversation_id': conversation_id,
-                            'agent_id': agent_id
+                            'agent_id': other_agent.id
                         }
-                        self.manager.send_command(
+                        self.send_command(
                             '[World]',
-                            self.worker_id,
-                            self.assignment_id,
-                            data,
-                            ack_func=change_callback
+                            worker_id,
+                            assignment_id,
+                            data
                         )
                     other_agent.some_agent_disconnected = True
                     # TODO logic to delete these assignments from other workers
