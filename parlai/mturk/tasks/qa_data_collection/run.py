@@ -66,7 +66,9 @@ def main():
             world = QADataCollectionWorld(opt=opt, task=task, mturk_agent=mturk_agent)
             while not world.episode_done():
                 world.parley()
+            mturk_manager.mark_workers_done(workers)
             world.shutdown()
+            mturk_manager.free_workers(workers)
             world.review_work()
 
         mturk_manager.start_task(

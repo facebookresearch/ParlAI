@@ -75,6 +75,8 @@
 <script src="https://github.com/lancedikson/bowser/releases/download/1.6.0/bowser.min.js"></script>
 
 <script type="text/javascript">
+    // TODO clean up as much as possible
+
     /* ================= Utility functions ================= */
     function scroll_conversation_to_bottom() {
         $('div#right-top-pane').animate({
@@ -225,8 +227,9 @@
         } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
             console.log('current conversation_id: ' + conversation_id);
             var new_conversation_id = msg['conversation_id'];
+            console.log('new conversation_id: ' + new_conversation_id);
             var new_agent_id = msg['agent_id'];
-            if ((conversation_id === null && (new_conversation_id.indexOf('o_') !== -1) || (new_conversation_id.indexOf('t_') !== -1)) || (new_conversation_id.indexOf('o_') !== -1 && new_conversation_id.indexOf('t_') !== -1)) // Only move from init state to onboarding / task, or from onboarding to task
+            if ((conversation_id === null && ((new_conversation_id.indexOf('o_') !== -1) || (new_conversation_id.indexOf('t_') !== -1))) || (conversation_id !== null && conversation_id.indexOf('w_') !== -1 && new_conversation_id.indexOf('t_') !== -1)) // Only move from init state to onboarding / task, or from waiting to task
                 {
                 console.log("Redirecting to new URL...");
                 var new_url = replace_url_parameter(window.location.href, 'mturk_agent_id', new_agent_id);
@@ -234,6 +237,9 @@
                 new_url = replace_url_parameter(new_url, 'changing_conversation', true);
 
                 window.location.href = new_url; // Reload page to get agent-specific template
+            } else {
+              // Update the conversation id
+              conversation_id = new_conversation_id
             }
         }
     }
