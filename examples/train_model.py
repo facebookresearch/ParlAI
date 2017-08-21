@@ -98,6 +98,8 @@ def main():
                         type=int, default=5,
                         help=('number of iterations of validation where result '
                               + 'does not improve before we stop training'))
+    train.add_argument('-vmt', '--validation-metric', default='accuracy',
+                       help='key into report table for selecting best validation')
     train.add_argument('-dbf', '--dict-build-first',
                         type='bool', default=True,
                         help='build dictionary first before training agent')
@@ -120,7 +122,7 @@ def main():
     total_exs = 0
     max_exs = opt['num_epochs'] * len(world)
     max_parleys = math.ceil(max_exs / opt['batchsize'])
-    best_accuracy = 0
+    best_valid = 0
     impatience = 0
     saved = False
     valid_world = None
@@ -177,20 +179,24 @@ def main():
 
         if (opt['validation_every_n_secs'] > 0 and
                 validate_time.time() > opt['validation_every_n_secs']):
-            valid_report, valid_world = run_eval(agent, opt, 'valid', opt['validation_max_exs'], valid_world=valid_world)
-            if valid_report['accuracy'] > best_accuracy:
-                best_accuracy = valid_report['accuracy']
+            valid_report, valid_world = run_eval(
+                agent, opt, 'valid', opt['validation_max_exs'],
+                valid_world=valid_world)
+            if valid_report[opt['validation_metric']] > best_valid:
+                best_valid = valid_report[opt['validation_metric']]
                 impatience = 0
-                print('[ new best accuracy: ' + str(best_accuracy) + ' ]')
+                print('[ new best {}: {} ]'.format(
+                    opt['validation_metric'], best_valid))
                 world.save_agents()
                 saved = True
-                if best_accuracy == 1:
+                if opt['validation_metric'] == 'accuracy' and best_valid == 1:
                     print('[ task solved! stopping. ]')
                     break
             else:
                 impatience += 1
-                print('[ did not beat best accuracy: {} impatience: {} ]'.format(
-                        round(best_accuracy, 4), impatience))
+                print('[ did not beat best {}: {} impatience: {} ]'.format(
+                        opt['validation_metric'], round(best_valid, 4),
+                        impatience))
             validate_time.reset()
             if opt['validation_patience'] > 0 and impatience >= opt['validation_patience']:
                 print('[ ran out of patience! stopping training. ]')
