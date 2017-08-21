@@ -548,6 +548,21 @@ class MTurkManager():
             self.assignment_to_onboard_thread[mturk_agent.assignment_id] = onboard_thread
 
 
+    def get_unique_pool(self, eligibility_function):
+        """Returns a filtered version of the worker pool where each worker is
+        only listed a maximum of one time. In sandbox this is overridden for
+        testing purposes, and the same worker can be returned more than once"""
+        workers = [w for w in self.worker_pool if
+                   not w.hit_is_returned and eligibility_function(w)]
+        unique_workers = []
+        unique_worker_ids = []
+        for w in workers:
+            if (self.is_sandbox) or (w.worker_id not in unique_worker_ids):
+                unique_workers.append(w)
+                unique_worker_ids.append(w.worker_id)
+        return unique_workers
+
+
     # TODO clean up this function
     def start_task(self, eligibility_function, role_function, task_function):
         """Handles running a task by checking to see when enough agents are in
@@ -584,15 +599,14 @@ class MTurkManager():
         while True:
             # Loop forever starting task worlds until desired convos are had
             with self.worker_pool_change_condition:
-                # TODO replace with a get_avail_workers pool which will only
-                # return each worker_id a max of once
-                if len([w for w in self.worker_pool if not w.hit_is_returned and eligibility_function(w)]) >= len(self.mturk_agent_ids):
+                valid_workers = self.get_unique_pool(eligibility_function)
+                if len(valid_workers) >= len(self.mturk_agent_ids):
                     # enough workers in pool to start new conversation
                     self.conversation_index += 1
                     new_conversation_id = 't_' + str(self.conversation_index)
 
                     selected_workers = []
-                    for worker in self.worker_pool:
+                    for worker in valid_workers:
                         if not worker.hit_is_returned and eligibility_function(worker):
                             selected_workers.append(worker)
                             worker.id = role_function(worker)
