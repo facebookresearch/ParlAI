@@ -498,6 +498,13 @@ class MTurkManager():
         assign_state.conversation_id = conversation_id
 
 
+    def wait_for_status(self, assign_state, desired_status):
+        while True:
+            if assign_state.status == desired_status:
+                break
+            time.sleep(0.1)
+
+
     # TODO clean up this function
     def onboard_new_worker(self, mturk_agent):
         # get state variable in question
@@ -514,12 +521,9 @@ class MTurkManager():
                     agent_id='onboarding',
                     change_callback=self._set_status_to_onboard
                 )
-                while True:
-                    # TODO refactor this wait into a helper function
-                    # Wait for turker to be in onboarding status
-                    if assign_state.status == ASSIGN_STATUS_ONBOARDING:
-                        break
-                    time.sleep(0.1)
+
+                # Wait for turker to be in onboarding status
+                self.wait_for_status(assign_state, ASSIGN_STATUS_ONBOARDING)
                 # call onboarding function
                 self.onboard_function(mturk_agent)
 
@@ -530,11 +534,8 @@ class MTurkManager():
                 agent_id='waiting',
                 change_callback=self._set_status_to_waiting
             )
-            while True:
-                # Wait for turker to be in waiting status
-                if assign_state.status == ASSIGN_STATUS_WAITING:
-                    break
-                time.sleep(0.1)
+            # Wait for turker to be in waiting status
+            self.wait_for_status(assign_state, ASSIGN_STATUS_WAITING)
 
             with self.worker_pool_change_condition:
                 if not mturk_agent.hit_is_returned:
