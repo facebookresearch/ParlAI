@@ -31,11 +31,6 @@ function _load_hit_config() {
   return JSON.parse(content);
 }
 
-function _load_server_config() {
-  var content = fs.readFileSync('server_config.json');
-  return JSON.parse(content);
-}
-
 app.get('/chat_index', async function (req, res) {
   var template_context = {};
   var params = req.query;
@@ -78,19 +73,6 @@ app.get('/get_hit_config', function (req, res) {
   res.json(_load_hit_config());
 });
 
-app.get('/clean_database', function (req, res) {
-  res.sendStatus(200);
-  // var params = req.query;
-  // var db_host = _load_server_config()['db_host'];
-  //
-  // if (params['db_host'] === db_host) {
-  //   data_model.clean_database();
-  //   res.sendStatus(200);
-  // } else {
-  //   res.sendStatus(401);
-  // }
-});
-
 app.get('/get_timestamp', function (req, res) {
   res.json({'timestamp': Date.now()}); // in milliseconds
 });
@@ -111,7 +93,7 @@ function _send_message(socket, connection_id, event_name, event_data) {
   // Server does not have information about this worker. Should wait for this
   // worker's agent_alive event instead.
   if (!connection_room_id) {
-    console.log('Connection room id for ' + connection_id + 
+    console.log('Connection room id for ' + connection_id +
       ' doesn\'t exist! Skipping message.')
     return;
   }
