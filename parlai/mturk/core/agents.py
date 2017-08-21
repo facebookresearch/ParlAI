@@ -473,7 +473,7 @@ class MTurkManager():
         return pkt['sender_id'], pkt['assignment_id'], pkt['conversation_id']
 
 
-    def _change_worker_to_conversation(self, pkt):
+    def _change_worker_to_conv(self, pkt):
         """Callback to update a worker to a new conversation"""
         worker_id, assignment_id, conversation_id = self.get_ids_from_pkt(pkt)
         self.assign_agent_to_conversation(
@@ -507,7 +507,6 @@ class MTurkManager():
             time.sleep(0.1)
 
 
-    # TODO clean up this function
     def onboard_new_worker(self, mturk_agent):
         # get state variable in question
         worker_id = mturk_agent.worker_id
@@ -544,11 +543,13 @@ class MTurkManager():
                     print("Adding worker to pool...")
                     self.worker_pool.append(mturk_agent)
 
-        if not mturk_agent.assignment_id in self.assignment_to_onboard_thread:
-            onboard_thread = threading.Thread(target=_onboard_function, args=(mturk_agent,))
+        if not assignment_id in self.assignment_to_onboard_thread:
+            onboard_thread = threading.Thread(target=_onboard_function,
+                                              args=(mturk_agent,))
             onboard_thread.daemon = True
             onboard_thread.start()
-            self.assignment_to_onboard_thread[mturk_agent.assignment_id] = onboard_thread
+
+            self.assignment_to_onboard_thread[assignment_id] = onboard_thread
 
 
     def get_unique_pool(self, eligibility_function):
@@ -566,7 +567,6 @@ class MTurkManager():
         return unique_workers
 
 
-    # TODO clean up this function
     def start_task(self, eligibility_function, role_function, task_function):
         """Handles running a task by checking to see when enough agents are in
         the pool to start an instance of the task. It continues doing this until
@@ -603,37 +603,42 @@ class MTurkManager():
             # Loop forever starting task worlds until desired convos are had
             with self.worker_pool_change_condition:
                 valid_workers = self.get_unique_pool(eligibility_function)
-                if len(valid_workers) >= len(self.mturk_agent_ids):
+                needed_workers = len(self.mturk_agent_ids)
+                if len(valid_workers) >= needed_workers:
                     # enough workers in pool to start new conversation
                     self.conversation_index += 1
                     new_conversation_id = 't_' + str(self.conversation_index)
 
+                    # Add the required number of valid workers to the conv
                     selected_workers = []
-                    for worker in valid_workers:
-                        if not worker.hit_is_returned and eligibility_function(worker):
-                            selected_workers.append(worker)
-                            worker.id = role_function(worker)
-                            # TODO suspend checking alives for threads that are
-                            # switching to a task conversations
-                            worker.change_conversation(
-                                conversation_id=new_conversation_id,
-                                agent_id=worker.id,
-                                change_callback=self._change_worker_to_conversation
-                            )
+                    for w in valid_workers[:needed_workers]:
+                        selected_workers.append(w)
+                        w.id = role_function(w)
+                        # TODO suspend checking alives for threads that are
+                        # switching to a task conversations
+                        w.change_conversation(
+                            conversation_id=new_conversation_id,
+                            agent_id=w.id,
+                            change_callback=self._change_worker_to_conv
+                        )
 
                     # Remove selected workers from the pool
                     for worker in selected_workers:
                         self.worker_pool.remove(worker)
 
-                    task_thread = threading.Thread(target=_task_function, args=(self.opt, selected_workers, new_conversation_id))
+                    # Start a new thread for this task world
+                    task_thread = threading.Thread(target=_task_function,
+                        args=(self.opt, selected_workers, new_conversation_id))
                     task_thread.daemon = True
                     task_thread.start()
                     self.task_threads.append(task_thread)
 
+                    # Once we've had enough conversations, finish and break
                     if self.conversation_index == self.opt['num_conversations']:
                         self.expire_all_unassigned_hits()
 
-                        # Wait for all conversations to finish, then break from the while loop
+                        # Wait for all conversations to finish, then break from
+                        # the while loop
                         for thread in self.task_threads:
                             thread.join()
                         break
@@ -842,6 +847,7 @@ class MTurkManager():
             assign_state.status = ASSIGN_STATUS_ASSIGNED
 
         assign_state.conversation_id = conv_id
+        agent.conversation_id = conv_id
         if not conv_id in self.conv_to_agent:
             self.conv_to_agent[conv_id] = []
         self.conv_to_agent[conv_id].append(agent)
