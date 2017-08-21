@@ -123,7 +123,6 @@ class SocketManager():
     status for all the connections it forms"""
 
 
-
     def __init__(self, server_url, port, alive_callback, message_callback,
                  socket_dead_callback, socket_dead_timeout=DEF_SOCKET_TIMEOUT):
         """
@@ -182,6 +181,7 @@ class SocketManager():
             sender_id = packet['sender_id']
             receiver_id = packet['receiver_id']
             assignment_id = packet['assignment_id']
+            conversation_id = packet['conversation_id']
             connection_id = sender_id + '_' + assignment_id
             if packet_type == TYPE_ACK:
                 # Acknowledgements should mark a packet as acknowledged
@@ -200,6 +200,7 @@ class SocketManager():
                     'sender_id': receiver_id,
                     'receiver_id': sender_id,
                     'assignment_id': assignment_id,
+                    'conversation_id': conversation_id,
                     'data': ''
                 }
                 self.socketIO.emit('route packet', packet, None)
@@ -212,6 +213,7 @@ class SocketManager():
                     'sender_id': receiver_id,
                     'receiver_id': sender_id,
                     'assignment_id': assignment_id,
+                    'conversation_id': conversation_id,
                     'data': ''
                 }
                 self.socketIO.emit('route packet', ack, None)
@@ -466,29 +468,51 @@ class MTurkManager():
         self.onboard_function = onboard_function
 
 
+    def get_ids_from_pkt(self, pkt):
+        """Wrapper to get sender, assignment, and conv ids from a packet"""
+        return pkt['sender_id'], pkt['assignment_id'], pkt['conversation_id']
+
+
+    def _change_worker_to_conversation(self, pkt):
+        """Callback to update a worker to a new conversation"""
+        worker_id, assignment_id, conversation_id = self.get_ids_from_pkt(pkt)
+        self.assign_agent_to_conversation(
+            self.mturk_agents[worker_id][assignment_id],
+            conversation_id
+        )
+
+
+    def _set_status_to_onboard(self, pkt):
+        """Callback for changing conversations to onboarding"""
+        worker_id, assignment_id, conversation_id = self.get_ids_from_pkt(pkt)
+        assign_state = self.worker_state[worker_id].assignments[assignment_id]
+        assign_state.status = ASSIGN_STATUS_ONBOARDING
+        assign_state.conversation_id = conversation_id
+
+
+    def _set_status_to_waiting(self, pkt):
+        """Callback for changing conversations to waiting pool"""
+        worker_id, assignment_id, conversation_id = self.get_ids_from_pkt(pkt)
+        assign_state = self.worker_state[worker_id].assignments[assignment_id]
+        assign_state.status = ASSIGN_STATUS_WAITING
+        assign_state.conversation_id = conversation_id
+
+
     # TODO clean up this function
     def onboard_new_worker(self, mturk_agent):
         # get state variable in question
         worker_id = mturk_agent.worker_id
-        assign_id = mturk_agent.assignment_id
-        assign_state = self.worker_state[worker_id].assignments[assign_id]
+        assignment_id = mturk_agent.assignment_id
+        assign_state = self.worker_state[worker_id].assignments[assignment_id]
 
         def _onboard_function(mturk_agent):
             """Onboarding wrapper to set state to onboarding properly"""
             if self.onboard_function:
                 conversation_id = 'o_'+str(uuid.uuid4())
-                def _set_status_to_onboard(msg):
-                    """Callback for changing conversations to onboarding"""
-                    # TODO move internal defs out into reasonable groups
-                    # TODO base the getting of state info from the msg to avoid
-                    # edge race condiitons
-                    assign_state.status = ASSIGN_STATUS_ONBOARDING
-                    assign_state.conversation_id = conversation_id
-
                 mturk_agent.change_conversation(
                     conversation_id=conversation_id,
                     agent_id='onboarding',
-                    change_callback=_set_status_to_onboard
+                    change_callback=self._set_status_to_onboard
                 )
                 while True:
                     # TODO refactor this wait into a helper function
@@ -501,18 +525,10 @@ class MTurkManager():
 
             # once onboarding is done, move into a waiting world
             conversation_id = 'w_'+str(uuid.uuid4())
-            def _set_status_to_waiting(msg):
-                """Callback for changing conversations to waiting pool"""
-                # TODO move internal defs out into reasonable groups
-                # TODO base the getting of state info from the msg to avoid
-                # edge race condiitons
-                assign_state.status = ASSIGN_STATUS_WAITING
-                assign_state.conversation_id = conversation_id
-
             mturk_agent.change_conversation(
                 conversation_id=conversation_id,
                 agent_id='waiting',
-                change_callback=_set_status_to_waiting
+                change_callback=self._set_status_to_waiting
             )
             while True:
                 # Wait for turker to be in waiting status
@@ -578,16 +594,6 @@ class MTurkManager():
                     selected_workers = []
                     for worker in self.worker_pool:
                         if not worker.hit_is_returned and eligibility_function(worker):
-                            def _change_worker_to_conversation(msg):
-                                """Callback to update a worker to a new conv"""
-                                # TODO move intern defs out to reasonable groups
-                                worker_id = msg['sender_id']
-                                assignment_id = msg['assignment_id']
-                                self.assign_agent_to_conversation(
-                                    self.mturk_agents[worker_id][assignment_id],
-                                    new_conversation_id
-                                )
-
                             selected_workers.append(worker)
                             worker.id = role_function(worker)
                             # TODO suspend checking alives for threads that are
@@ -595,7 +601,7 @@ class MTurkManager():
                             worker.change_conversation(
                                 conversation_id=new_conversation_id,
                                 agent_id=worker.id,
-                                change_callback=_change_worker_to_conversation
+                                change_callback=self._change_worker_to_conversation
                             )
 
                     # Remove selected workers from the pool
@@ -809,9 +815,15 @@ class MTurkManager():
         assignment_id = agent.assignment_id
         print("ASSIGNING " + worker_id + " assign " + assignment_id)
         assign_state = self.worker_state[worker_id].assignments[assignment_id]
-        if assign_state.status != ASSIGN_STATUS_IN_TASK:
+        if assign_state.status == ASSIGN_STATUS_WAITING and 't_' in conv_id:
+            # An agent didn't acknowledge the conversation change before
+            # refreshing, so we didn't put them in assigned before this call
+            assign_state.status = ASSIGN_STATUS_IN_TASK
+            print_and_log("Worker reconnected in waiting")
+        elif assign_state.status != ASSIGN_STATUS_IN_TASK:
             # Avoid on a second ack if alive already came through
             assign_state.status = ASSIGN_STATUS_ASSIGNED
+
         assign_state.conversation_id = conv_id
         if not conv_id in self.conv_to_agent:
             self.conv_to_agent[conv_id] = []
