@@ -89,6 +89,14 @@ class Seq2seqAgent(Agent):
             self.rank = opt['rank_candidates']
             self.longest_label = 1
 
+            # set up tensors
+            self.zeros = torch.zeros(self.num_layers, 1, hsz)
+            self.xs = torch.LongTensor(1, 1)
+            self.ys = torch.LongTensor(1, 1)
+            self.cands = torch.LongTensor(1, 1, 1)
+            self.cand_scores = torch.FloatTensor(1)
+            self.cand_lengths = torch.LongTensor(1)
+
             # set up modules
             self.criterion = nn.NLLLoss()
             # lookup table stores word embeddings
@@ -150,6 +158,12 @@ class Seq2seqAgent(Agent):
     def cuda(self):
         self.START_TENSOR = self.START_TENSOR.cuda(async=True)
         self.END_TENSOR = self.END_TENSOR.cuda(async=True)
+        self.zeros = self.zeros.cuda(async=True)
+        self.xs = self.xs.cuda(async=True)
+        self.ys = self.ys.cuda(async=True)
+        self.cands = self.cands.cuda(async=True)
+        self.cand_scores = self.cand_scores.cuda(async=True)
+        self.cand_lengths = self.cand_lengths.cuda(async=True)
         self.criterion.cuda()
         self.lt.cuda()
         self.encoder.cuda()
@@ -178,19 +192,6 @@ class Seq2seqAgent(Agent):
         for optimizer in self.optims.values():
             optimizer.step()
 
-    def init_zeros(self, bsz=1):
-        t = torch.zeros(self.num_layers, bsz, self.hidden_size)
-        if self.use_cuda:
-            t = t.cuda(async=True)
-        return Variable(t)
-
-    def init_rand(self, bsz=1):
-        t = torch.FloatTensor(self.num_layers, bsz, self.hidden_size)
-        t.uniform_(0.05)
-        if self.use_cuda:
-            t = t.cuda(async=True)
-        return Variable(t)
-
     def reset(self):
         self.observation = None
         self.episode_done = True
@@ -216,7 +217,9 @@ class Seq2seqAgent(Agent):
 
         # first encode context
         xes = self.lt(xs).t()
-        h0 = self.init_zeros(batchsize)
+        if self.zeros.size(1) != batchsize:
+            self.zeros.resize_(self.num_layers, batchsize, self.hidden_size).fill_(0)
+        h0 = Variable(self.zeros)
         _output, hn = self.encoder(xes, h0)
 
         # next we use END as an input to kick off our decoder
@@ -274,13 +277,10 @@ class Seq2seqAgent(Agent):
                     .view(sz[0], -1, sz[2])
                 )
 
-                cand_scores = torch.zeros(cview.size(0))
-                cand_lengths = torch.LongTensor(cview.size(0)).fill_(0)
-                if self.use_cuda:
-                    cand_scores = cand_scores.cuda(async=True)
-                    cand_lengths = cand_lengths.cuda(async=True)
-                cand_scores = Variable(cand_scores)
-                cand_lengths = Variable(cand_lengths)
+                cand_scores = Variable(
+                    self.cand_scores.resize_(cview.size(0)).fill_(0))
+                cand_lengths = Variable(
+                    self.cand_lengths.resize_(cview.size(0)).fill_(0))
 
                 for i in range(cview.size(1)):
                     output, cands_hn = self.decoder(cands_xes, cands_hn)
@@ -352,8 +352,12 @@ class Seq2seqAgent(Agent):
                 for j, idx in enumerate(x):
                     xs[i][j + offset] = idx
             if self.use_cuda:
-                xs = xs.cuda(async=True)
-            xs = Variable(xs)
+                # copy to gpu
+                self.xs.resize_(xs.size())
+                self.xs.copy_(xs, async=True)
+                xs = Variable(self.xs)
+            else:
+                xs = Variable(xs)
 
         # set up the target tensors
         ys = None
@@ -372,8 +376,12 @@ class Seq2seqAgent(Agent):
                 for j, idx in enumerate(y):
                     ys[i][j] = idx
             if self.use_cuda:
-                ys = ys.cuda(async=True)
-            ys = Variable(ys)
+                # copy to gpu
+                self.ys.resize_(ys.size())
+                self.ys.copy_(ys, async=True)
+                ys = Variable(self.ys)
+            else:
+                ys = Variable(ys)
 
         # set up candidates
         cands = None
@@ -401,8 +409,12 @@ class Seq2seqAgent(Agent):
                         for k, idx in enumerate(c):
                             cands[i][j][k] = idx
                 if self.use_cuda:
-                    cands = cands.cuda(async=True)
-                cands = Variable(cands)
+                    # copy to gpu
+                    self.cands.resize_(cands.size())
+                    self.cands.copy_(cands, async=True)
+                    cands = Variable(self.cands)
+                else:
+                    cands = Variable(cands)
 
         return xs, ys, valid_inds, cands, valid_cands
 
