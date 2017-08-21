@@ -1275,7 +1275,7 @@ class MTurkAgent(Agent):
                 unique_request_token = str(uuid.uuid4())
                 if self.manager.pay_bonus(
                     worker_id=self.worker_id,
-                    bonus_amount=bonus_amount,
+                    bonus_amount=str(bonus_amount),
                     assignment_id=self.assignment_id,
                     reason=reason,
                     unique_request_token=unique_request_token
