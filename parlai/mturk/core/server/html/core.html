@@ -203,6 +203,7 @@
     var last_server_heartbeat = null;
     var thread_refresh = 100;
     var ack_timeout = 2000;
+    var displayed_messages = [];
 
     /* ================= Message handling ================= */
 
@@ -241,15 +242,20 @@
                 window.location.href = new_url; // Reload page to get agent-specific template
             } else {
               // Update the conversation id
-              conversation_id = new_conversation_id
+              conversation_id = new_conversation_id;
             }
         }
     }
 
-    function handle_new_message(message) {
+    function handle_new_message(new_message_id, message) {
         var agent_id = message.id;
         var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+        if (displayed_messages.indexOf(new_message_id) !== -1) {
+          // This message has already been seen and put up into the chat
+          return;
+        }
 
+        displayed_messages.push(new_message_id);
         if (agent_id !== cur_agent_id) {
             $('div#message_thread').append(
                 '<div class="row" style="margin-left: 0; margin-right: 0">'+
@@ -299,7 +305,7 @@
                     $("input#id_text_input").val("");
                     message_id += 1;
                     $("div#response-type-text-input").css("display", "none");
-                    handle_new_message(msg.data);
+                    handle_new_message(message_id, msg.data);
                     after_send_packet();
                 }
             );
@@ -422,7 +428,6 @@
                     }
                 }
             } else if (msg.type === TYPE_MESSAGE) {
-
                 //send ack
                 socket.emit(
                     'route packet',
@@ -439,7 +444,7 @@
                         if (msg.data.type === 'COMMAND'){
                             handle_command(msg.data);
                         } else if (msg.data.type === 'MESSAGE') {
-                            handle_new_message(msg.data);
+                            handle_new_message(msg.id, msg.data);
                         }
                     }
                 );
