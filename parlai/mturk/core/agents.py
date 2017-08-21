@@ -34,8 +34,6 @@ import math
 
 from collections import namedtuple
 
-# TODO move timeouts to constants up here
-
 STATUS_INIT = 0
 STATUS_SENT = 1
 STATUS_ACK = 2
@@ -44,6 +42,9 @@ TYPE_ACK = 'ack'
 TYPE_ALIVE = 'alive'
 TYPE_MESSAGE = 'message'
 TYPE_HEARTBEAT = 'heartbeat'
+
+MESSAGE_TYPE_MESSAGE = 'MESSAGE'
+MESSAGE_TYPE_COMMAND = 'COMMAND'
 
 ACK_TIME = {'alive': 2,
             'message': 2}
@@ -65,6 +66,15 @@ TIMEOUT_MESSAGE = '[TIMEOUT]' # the Turker did not respond but didn't return HIT
 RETURN_MESSAGE = '[RETURNED]' # the Turker returned the HIT
 
 INVALID_TASK_RETURN = '[INVALID]'
+
+SOCKET_OPEN_STRING = 'socket_open'
+SOCKET_DISCONNECT_STRING = 'disconnect'
+SOCKET_NEW_PACKET_STRING = 'new packet'
+SOCKET_ROUTE_PACKET_STRING = 'route packet'
+SOCKET_AGENT_ALIVE_STRING = 'agent alive'
+
+THREAD_SHORT_SLEEP = 0.1
+THREAD_MEDIUM_SLEEP = 0.3
 
 DEF_SOCKET_TIMEOUT = 8
 
@@ -109,18 +119,87 @@ class WorkerState():
 class Packet():
     """Class for holding information sent over a socket"""
     def __init__(self, id, type, sender_id, receiver_id, assignment_id, data,
-                 requires_ack=True, blocking=True, ack_func=None):
+                 conversation_id=None, requires_ack=True, blocking=True,
+                 ack_func=None):
         self.id = id
         self.type = type
         self.sender_id = sender_id
         self.receiver_id = receiver_id
         self.assignment_id = assignment_id
         self.data = data
+        self.conversation_id = conversation_id
         self.requires_ack = requires_ack
         self.blocking = blocking
         self.ack_func = ack_func
         self.status = STATUS_INIT
         self.time = None
+
+    @staticmethod
+    def from_dict(packet):
+        """Creates a packet from the dictionary that would be recieved over
+        a socket"""
+        packet_id = packet['id']
+        packet_type = packet['type']
+        sender_id = packet['sender_id']
+        receiver_id = packet['receiver_id']
+        assignment_id = packet['assignment_id']
+        data = None
+        if 'data' in packet:
+            data = packet['data']
+        else:
+            data = ''
+        conversation_id = packet['conversation_id']
+
+        return Packet(packet_id, packet_type, sender_id, receiver_id,
+            assignment_id, data, conversation_id)
+
+
+    def swap_sender(self):
+        """Swaps the sender_id and receiver_id"""
+        self.sender_id, self.receiver_id = self.receiver_id, self.sender_id
+        return self
+
+
+    def set_type(self, new_type):
+        """Updates the message type"""
+        self.type = new_type
+        return self
+
+
+    def set_data(self, new_data):
+        """Updates the message data"""
+        self.data = new_data
+        return self
+
+
+    def get_sender_connection_id(self):
+        """Gets the connection_id that this packet came from"""
+        return self.sender_id + '_' + self.assignment_id
+
+
+    def get_receiver_connection_id(self):
+        """Gets the connection_id that this packet came from"""
+        return self.receiver_id + '_' + self.assignment_id
+
+
+    def as_dict(self):
+        """Converts a packet into a form that can be pushed over a socket"""
+        return {
+            'id': self.id,
+            'type': self.type,
+            'sender_id': self.sender_id,
+            'receiver_id': self.receiver_id,
+            'assignment_id': self.assignment_id,
+            'conversation_id': self.conversation_id,
+            'data': self.data
+        }
+
+
+    def get_ack(self):
+        """Returns a new packet that can be used to acknowledge this packet"""
+        return Packet(self.id, TYPE_ACK, self.receiver_id, self.sender_id,
+            self.assignment_id, '', self.conversation_id, False, False)
+
 
 
 class SocketManager():
@@ -170,7 +249,7 @@ class SocketManager():
         def on_socket_open(*args):
             """Registers world with the passthrough server"""
             print_and_log("Socket open: " + str(args), False)
-            self.socketIO.emit('agent alive',
+            self.socketIO.emit(SOCKET_AGENT_ALIVE_STRING,
                                {'id': 'WORLD_ALIVE',
                                 'sender_id': '[World]'})
 
@@ -181,14 +260,10 @@ class SocketManager():
         def on_message(*args):
             """Incoming message handler for ACKs, ALIVEs, HEARTBEATs,
             and MESSAGEs"""
-            packet = args[0]
-            packet_id = packet['id']
-            packet_type = packet['type']
-            sender_id = packet['sender_id']
-            receiver_id = packet['receiver_id']
-            assignment_id = packet['assignment_id']
-            conversation_id = packet['conversation_id']
-            connection_id = sender_id + '_' + assignment_id
+            packet = Packet.from_dict(args[0])
+            packet_id = packet.id
+            packet_type = packet.type
+            connection_id = packet.get_sender_connection_id()
             if packet_type == TYPE_ACK:
                 # Acknowledgements should mark a packet as acknowledged
                 print_and_log("On new ack: " + str(args), False)
@@ -200,29 +275,13 @@ class SocketManager():
                 # Heartbeats update the last heartbeat time and respond in kind
                 self.last_heartbeat[connection_id] = time.time()
                 # TODO Is response heartbeat necessary?
-                packet = {
-                    'id': packet_id,
-                    'type': TYPE_HEARTBEAT,
-                    'sender_id': receiver_id,
-                    'receiver_id': sender_id,
-                    'assignment_id': assignment_id,
-                    'conversation_id': conversation_id,
-                    'data': ''
-                }
-                self.socketIO.emit('route packet', packet, None)
+                out_pack = packet.swap_sender().set_data('').as_dict()
+                self.socketIO.emit(SOCKET_ROUTE_PACKET_STRING, out_pack, None)
             else:
                 # Remaining packet types need to be acknowledged
                 print_and_log("On new message: " + str(args), False)
-                ack = {
-                    'id': packet_id,
-                    'type': TYPE_ACK,
-                    'sender_id': receiver_id,
-                    'receiver_id': sender_id,
-                    'assignment_id': assignment_id,
-                    'conversation_id': conversation_id,
-                    'data': ''
-                }
-                self.socketIO.emit('route packet', ack, None)
+                ack = packet.get_ack().as_dict()
+                self.socketIO.emit(SOCKET_ROUTE_PACKET_STRING, ack, None)
                 if packet_type == TYPE_ALIVE:
                     self.last_heartbeat[connection_id] = time.time()
                     self.alive_callback(packet)
@@ -230,10 +289,9 @@ class SocketManager():
                     self.message_callback(packet)
 
         # Register Handlers
-        # TODO move these magic strings into constants
-        self.socketIO.on('socket_open', on_socket_open)
-        self.socketIO.on('disconnect', on_disconnect)
-        self.socketIO.on('new packet', on_message)
+        self.socketIO.on(SOCKET_OPEN_STRING, on_socket_open)
+        self.socketIO.on(SOCKET_DISCONNECT_STRING, on_disconnect)
+        self.socketIO.on(SOCKET_NEW_PACKET_STRING, on_message)
 
         # Start listening thread
         self.listen_thread = threading.Thread(target=self.socketIO.wait)
@@ -275,21 +333,14 @@ class SocketManager():
                         if packet.status is not STATUS_ACK:
                             # either need to send initial packet
                             # or resend not-acked packet
-                            pkt = {
-                                'id': packet.id,
-                                'type': packet.type,
-                                'sender_id': packet.sender_id,
-                                'receiver_id': packet.receiver_id,
-                                'assignment_id': packet.assignment_id,
-                                'data': packet.data
-                            }
+                            pkt = packet.as_dict()
 
                             # send the packet
                             print_and_log("Send packet: " + str(packet.data))
                             def set_status_to_sent(data):
                                 packet.status = STATUS_SENT
                             self.socketIO.emit(
-                                'route packet',
+                                SOCKET_ROUTE_PACKET_STRING,
                                 pkt,
                                 set_status_to_sent
                             )
@@ -309,7 +360,7 @@ class SocketManager():
                                             packet.status = STATUS_INIT
                                             self.queues[connection_id].put(item)
                                             break
-                                        time.sleep(0.1)
+                                        time.sleep(THREAD_SHORT_SLEEP)
                                 else:
                                     # non-blocking ack: add ack-check to queue
                                     t = time.time() + ACK_TIME[packet.type]
@@ -317,7 +368,7 @@ class SocketManager():
                 except Empty:
                     pass
                 finally:
-                    time.sleep(0.2)
+                    time.sleep(THREAD_MEDIUM_SLEEP)
 
         # Setup and run the channel sending thread
         self.threads[connection_id] = threading.Thread(target=channel_thread)
@@ -357,7 +408,7 @@ class SocketManager():
 
     def send_packet(self, packet):
         """Queues sending a packet to its intended owner"""
-        connection_id = packet.receiver_id + '_' + packet.assignment_id
+        connection_id = packet.get_receiver_connection_id()
         if not self.socket_is_open(connection_id):
             # Warn if there is no socket to send through for the expected recip
             print_and_log('Can not send packet to worker_id ' + \
@@ -484,8 +535,8 @@ class MTurkManager():
 
     def get_ids_from_pkt(self, pkt):
         """Wrapper to get sender, assignment, and conv ids from a packet"""
-        worker_id = pkt['sender_id']
-        assignment_id = pkt['assignment_id']
+        worker_id = pkt.sender_id
+        assignment_id = pkt.assignment_id
         agent = self.mturk_agents[worker_id][assignment_id]
         conversation_id = agent.conversation_id
         return worker_id, assignment_id, conversation_id
@@ -522,7 +573,7 @@ class MTurkManager():
         while True:
             if assign_state.status == desired_status:
                 break
-            time.sleep(0.1)
+            time.sleep(THREAD_SHORT_SLEEP)
 
 
     def onboard_new_worker(self, mturk_agent):
@@ -612,7 +663,7 @@ class MTurkManager():
                         all_joined = False
                 if all_joined:
                     break
-                time.sleep(0.1)
+                time.sleep(THREAD_SHORT_SLEEP)
 
             print("All workers joined the conversation!")
             task_function(mturk_manager=self, opt=opt, workers=workers)
@@ -660,7 +711,7 @@ class MTurkManager():
                         for thread in self.task_threads:
                             thread.join()
                         break
-            time.sleep(0.3)
+            time.sleep(THREAD_MEDIUM_SLEEP)
 
 
     def setup_socket(self):
@@ -675,10 +726,10 @@ class MTurkManager():
         alive packet. This asks the socket manager to open a new channel and
         then handles ensuring the worker state is consistent"""
         print_and_log("on_agent_alive: " + str(pkt), False)
-        worker_id = pkt['data']['worker_id']
-        hit_id = pkt['data']['hit_id']
-        assign_id = pkt['data']['assignment_id']
-        conversation_id = pkt['data']['conversation_id']
+        worker_id = pkt.data['worker_id']
+        hit_id = pkt.data['hit_id']
+        assign_id = pkt.data['assignment_id']
+        conversation_id = pkt.data['conversation_id']
         # Open a channel if it doesn't already exist
         self.socket_manager.open_channel(worker_id, assign_id)
 
@@ -723,9 +774,9 @@ class MTurkManager():
 
     def on_new_message(self, pkt):
         """Put an incoming message onto the correct agent's message queue"""
-        worker_id = pkt['sender_id']
-        assignment_id = pkt['assignment_id']
-        self.mturk_agents[worker_id][assignment_id].msg_queue.put(pkt['data'])
+        worker_id = pkt.sender_id
+        assignment_id = pkt.assignment_id
+        self.mturk_agents[worker_id][assignment_id].msg_queue.put(pkt.data)
 
 
     def on_socket_dead(self, worker_id, assignment_id):
@@ -812,14 +863,13 @@ class MTurkManager():
     def send_message(self, sender_id, receiver_id, assignment_id, data,
                      blocking=True, ack_func=None):
         """Sends a message through the socket manager"""
-        # TODO move content type into constant, redo constants
         self.send_through_socket(
             sender_id,
             receiver_id,
             assignment_id,
             data,
             blocking,
-            'MESSAGE',
+            MESSAGE_TYPE_MESSAGE,
             ack_func
         )
 
@@ -827,14 +877,13 @@ class MTurkManager():
     def send_command(self, sender_id, receiver_id, assignment_id, data,
                      blocking=True, ack_func=None):
         """Sends a command through the socket manager"""
-        # TODO move content type into constant, redo constants
         self.send_through_socket(
             sender_id,
             receiver_id,
             assignment_id,
             data,
             blocking,
-            'COMMAND',
+            MESSAGE_TYPE_COMMAND,
             ack_func
         )
 
@@ -853,7 +902,7 @@ class MTurkManager():
         """Registers an agent object with a conversation id, updates status"""
         worker_id = agent.worker_id
         assignment_id = agent.assignment_id
-        print("ASSIGNING " + worker_id + " assign " + assignment_id)
+        print("ASSIGNING " + worker_id + "_" + assignment_id)
         assign_state = self.worker_state[worker_id].assignments[assignment_id]
         if assign_state.status == ASSIGN_STATUS_WAITING and 't_' in conv_id:
             # An agent didn't acknowledge the conversation change before
@@ -1193,7 +1242,7 @@ class MTurkAgent(Agent):
                         'episode_done': True
                     }
                     return msg
-            time.sleep(0.1)
+            time.sleep(THREAD_SHORT_SLEEP)
 
 
     def change_conversation(self, conversation_id, agent_id, change_callback):
