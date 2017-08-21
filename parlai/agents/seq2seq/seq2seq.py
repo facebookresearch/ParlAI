@@ -37,13 +37,15 @@ class Seq2seqAgent(Agent):
             help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
             help='dropout rate')
+        # agent.add_argument('-att', '--attention', type='bool', default=False,
+        #     help='whether to use attention over the context during decoding')
         # agent.add_argument('-bi', '--bidirectional', type='bool', default=False,
         #     help='whether to encode the context with a bidirectional RNN')
         agent.add_argument('--no-cuda', action='store_true', default=False,
             help='disable GPUs even if available')
         agent.add_argument('--gpu', type=int, default=-1,
             help='which GPU device to use')
-        agent.add_argument('-r', '--rank-candidates', type='bool', default=False,
+        agent.add_argument('-rc', '--rank-candidates', type='bool', default=False,
             help='rank candidates if available. this is done by computing the' +
                  ' mean score per token for each candidate and selecting the ' +
                  'highest scoring one.')
@@ -70,9 +72,11 @@ class Seq2seqAgent(Agent):
 
             self.dict = DictionaryAgent(opt)
             self.id = 'Seq2Seq'
-            # we use END markers to break input and output and end our output
+            # we use START markers to start our output
+            self.START = self.dict.start_token
+            self.START_TENSOR = torch.LongTensor(self.dict.parse(self.START))
+            # we use END markers to end our output
             self.END = self.dict.end_token
-            self.observation = {'text': self.END, 'episode_done': True}
             self.END_TENSOR = torch.LongTensor(self.dict.parse(self.END))
             # get index of null token from dictionary (probably 0)
             self.NULL_IDX = self.dict.txt2vec(self.dict.null_token)[0]
@@ -144,6 +148,7 @@ class Seq2seqAgent(Agent):
         return self.dict.vec2txt(vec)
 
     def cuda(self):
+        self.START_TENSOR = self.START_TENSOR.cuda(async=True)
         self.END_TENSOR = self.END_TENSOR.cuda(async=True)
         self.criterion.cuda()
         self.lt.cuda()
@@ -215,7 +220,7 @@ class Seq2seqAgent(Agent):
         _output, hn = self.encoder(xes, h0)
 
         # next we use END as an input to kick off our decoder
-        x = Variable(self.END_TENSOR)
+        x = Variable(self.START_TENSOR)
         xe = self.lt(x).unsqueeze(1)
         xes = xe.expand(xe.size(0), batchsize, xe.size(2))
 
@@ -335,11 +340,15 @@ class Seq2seqAgent(Agent):
         xs = None
         if batchsize > 0:
             parsed = [self.parse(ex['text']) for ex in exs]
+            min_x_len = min([len(x) for x in parsed])
             max_x_len = max([len(x) for x in parsed])
-            xs = torch.LongTensor(batchsize, max_x_len).fill_(0)
+            parsed_x_len = min(min_x_len + 12, max_x_len, 48)
+            # shrink xs to to limit batch computation
+            parsed = [x[:parsed_x_len] for x in parsed]
+            xs = torch.LongTensor(batchsize, parsed_x_len).fill_(0)
             # pack the data to the right side of the tensor for this model
             for i, x in enumerate(parsed):
-                offset = max_x_len - len(x)
+                offset = parsed_x_len - len(x)
                 for j, idx in enumerate(x):
                     xs[i][j + offset] = idx
             if self.use_cuda:
@@ -353,8 +362,12 @@ class Seq2seqAgent(Agent):
             # append END to each label
             labels = [random.choice(ex.get('labels', [''])) + ' ' + self.END for ex in exs]
             parsed = [self.parse(y) for y in labels]
+            min_y_len = min(len(y) for y in parsed)
             max_y_len = max(len(y) for y in parsed)
-            ys = torch.LongTensor(batchsize, max_y_len).fill_(0)
+            # shrink ys to to limit batch computation
+            parsed_y_len = min(min_y_len + 6, max_y_len)
+            parsed = [y[:parsed_y_len] for y in parsed]
+            ys = torch.LongTensor(batchsize, parsed_y_len).fill_(0)
             for i, y in enumerate(parsed):
                 for j, idx in enumerate(y):
                     ys[i][j] = idx
@@ -435,7 +448,7 @@ class Seq2seqAgent(Agent):
     def save(self, path=None):
         path = self.opt.get('model_file', None) if path is None else path
 
-        if path:
+        if path and hasattr(self, 'lt'):
             model = {}
             model['lt'] = self.lt.state_dict()
             model['encoder'] = self.encoder.state_dict()
@@ -446,6 +459,13 @@ class Seq2seqAgent(Agent):
 
             with open(path, 'wb') as write:
                 torch.save(model, write)
+
+    def shutdown(self):
+        """Save the state of the model when shutdown."""
+        path = self.opt.get('model_file', None)
+        if path is not None:
+            self.save(path + '.shutdown_state')
+        super().shutdown()
 
     def load(self, path):
         """Return opt and model states."""
