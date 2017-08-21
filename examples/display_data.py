@@ -32,15 +32,11 @@ def main():
 
     # Show some example dialogs.
     with world:
-        cnt = 0
-        for _ in world:
+        for _ in range(opt['num_examples']):
             world.parley()
             print(world.display() + '\n~~')
-            cnt += 1
             if world.epoch_done():
                 print('EPOCH DONE')
-                break
-            elif opt['num_examples'] > 0 and cnt >= opt['num_examples']:
                 break
 
 
