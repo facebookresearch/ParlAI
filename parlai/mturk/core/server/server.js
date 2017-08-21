@@ -36,8 +36,6 @@ function _load_server_config() {
   return JSON.parse(content);
 }
 
-//res.render('index.html', { foo: 'bar' });
-
 app.get('/chat_index', async function (req, res) {
   var template_context = {};
   var params = req.query;
@@ -54,7 +52,8 @@ app.get('/chat_index', async function (req, res) {
     template_context['is_cover_page'] = true;
     res.render('cover_page.html', template_context);
   } else {
-    if (!conversation_id && !mturk_agent_id) { // if conversation info is not loaded yet
+    if (!conversation_id && !mturk_agent_id) {
+      // if conversation info is not loaded yet
       // TODO: change to a loading indicator
       template_context['is_init_page'] = true;
       res.render('mturk_index.html', template_context);
@@ -109,9 +108,11 @@ var room_id_to_connection_id = {};
 
 function _send_message(socket, connection_id, event_name, event_data) {
   var connection_room_id = connection_id_to_room_id[connection_id];
-  // Server does not have information about this worker. Should wait for this worker's agent_alive event instead.
+  // Server does not have information about this worker. Should wait for this
+  // worker's agent_alive event instead.
   if (!connection_room_id) {
-    console.log('Connection room id for ' + connection_id +' doesn\'t exist! Skipping message.')
+    console.log('Connection room id for ' + connection_id + 
+      ' doesn\'t exist! Skipping message.')
     return;
   }
   socket.broadcast.in(connection_room_id).emit(event_name, event_data);
