@@ -499,6 +499,8 @@ class MTurkManager():
 
 
     def wait_for_status(self, assign_state, desired_status):
+        """Suspends a thread until a particular assignment state changes to the
+        desired state"""
         while True:
             if assign_state.status == desired_status:
                 break
