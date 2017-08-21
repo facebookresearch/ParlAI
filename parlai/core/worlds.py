@@ -474,6 +474,7 @@ class MultiWorld(World):
             wid = self.worlds[i].getID()
             mt = self.worlds[i].report()
             while wid in m['tasks']:
+                # prevent name cloberring if using multiple tasks with same ID
                 wid += '_'
             m['tasks'][wid] = mt
             total += mt['total']
