@@ -471,8 +471,12 @@ class MultiWorld(World):
         num_tasks = 0
         total = 0
         for i in range(len(self.worlds)):
+            wid = self.worlds[i].getID()
             mt = self.worlds[i].report()
-            m['tasks'][self.worlds[i].getID()] = mt
+            while wid in m['tasks']:
+                # prevent name cloberring if using multiple tasks with same ID
+                wid += '_'
+            m['tasks'][wid] = mt
             total += mt['total']
             if 'accuracy' in mt:
                 sum_accuracy += mt['accuracy']

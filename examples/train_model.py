@@ -57,7 +57,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
         cnt += opt['batchsize']
-        if valid_world.epoch_done() or (max_exs > 0 and cnt > max_exs):
+        if valid_world.epoch_done() or (max_exs > 0 and cnt >= max_exs):
             # note this max_exs is approximate--some batches won't always be
             # full depending on the structure of the data
             break

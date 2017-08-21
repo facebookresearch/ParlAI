@@ -7,7 +7,6 @@
 from .agents import Teacher
 
 from .image_featurizers import ImageLoader
-from PIL import Image
 import random
 import sys
 import time

@@ -218,6 +218,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
+
         return self.opt
 
     def print_args(self):

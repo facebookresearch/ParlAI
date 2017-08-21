@@ -11,7 +11,6 @@ from torch.autograd import Variable
 from torch import optim
 import torch.nn as nn
 import torch
-import copy
 import os
 import random
 
@@ -55,7 +54,7 @@ class Seq2seqAgent(Agent):
         if not shared:
             # this is not a shared instance of this class, so do full
             # initialization. if shared is set, only set up shared members.
-            
+
             # check for cuda
             self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
             if self.use_cuda:
@@ -122,8 +121,14 @@ class Seq2seqAgent(Agent):
         self.episode_done = True
 
     def override_opt(self, new_opt):
-        """Print out each added key and each overriden key."""
+        """Print out each added key and each overriden key.
+        Only override args specific to the model.
+        """
+        model_args = {'hiddensize', 'numlayers'}
         for k, v in new_opt.items():
+            if k not in model_args:
+                # skip non-model args
+                continue
             if k not in self.opt:
                 print('Adding new option [ {k}: {v} ]'.format(k=k, v=v))
             elif self.opt[k] != v:
@@ -181,8 +186,13 @@ class Seq2seqAgent(Agent):
             t = t.cuda(async=True)
         return Variable(t)
 
+    def reset(self):
+        self.observation = None
+        self.episode_done = True
+
     def observe(self, observation):
-        observation = copy.deepcopy(observation)
+        # shallow copy observation (deep copy can be expensive)
+        observation = observation.copy()
         if not self.episode_done:
             # if the last example wasn't the end of an episode, then we need to
             # recall what was said in that example
