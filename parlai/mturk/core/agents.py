@@ -451,17 +451,8 @@ class MTurkManager():
                 'html',
                 mturk_agent_id+'_index.html'
             ))
-        self.server_url, db_host = \
-            setup_server(task_files_to_copy = self.task_files_to_copy)
+        self.server_url = setup_server(self.task_files_to_copy)
         print_and_log(self.server_url, False)
-
-        # print_and_log('RDS: Cleaning database...')
-        # params = {
-        #     'db_host': db_host
-        # }
-        # response = requests.get(self.server_url+'/clean_database',
-        #                         params=params)
-        # assert(response.status_code != '200')
 
         print_and_log("MTurk server setup done.\n")
 
