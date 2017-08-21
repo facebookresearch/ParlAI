@@ -380,7 +380,6 @@ class SocketManager():
 class MTurkManager():
 
     def __init__(self, opt, mturk_agent_ids):
-        # TODO clean up these members
         self.opt = opt
         self.server_url = None
         self.port = 443
@@ -388,7 +387,6 @@ class MTurkManager():
         self.run_id = None
         self.mturk_agent_ids = mturk_agent_ids
         self.mturk_agents = {}
-        self.agent_to_world = {}
         self.hit_id_list = []
         self.task_files_to_copy = None
         self.is_sandbox = opt['is_sandbox']
@@ -399,7 +397,6 @@ class MTurkManager():
         self.onboard_function = None
         self.task_threads = []
         self.conversation_index = 0
-        self.num_completed_conversations = 0
         self.worker_state = {}
         self.socket_manager = None
         self.conv_to_agent = {}
@@ -503,7 +500,7 @@ class MTurkManager():
         )
 
 
-    def _set_status_to_onboard(self, pkt):
+    def _set_worker_status_to_onboard(self, pkt):
         """Callback for changing conversations to onboarding"""
         worker_id, assignment_id, conversation_id = self.get_ids_from_pkt(pkt)
         assign_state = self.worker_state[worker_id].assignments[assignment_id]
@@ -511,7 +508,7 @@ class MTurkManager():
         assign_state.conversation_id = conversation_id
 
 
-    def _set_status_to_waiting(self, pkt):
+    def _set_worker_status_to_waiting(self, pkt):
         """Callback for changing conversations to waiting pool"""
         worker_id, assignment_id, conversation_id = self.get_ids_from_pkt(pkt)
         assign_state = self.worker_state[worker_id].assignments[assignment_id]
@@ -541,7 +538,7 @@ class MTurkManager():
                 mturk_agent.change_conversation(
                     conversation_id=conversation_id,
                     agent_id='onboarding',
-                    change_callback=self._set_status_to_onboard
+                    change_callback=self._set_worker_status_to_onboard
                 )
 
                 # Wait for turker to be in onboarding status
@@ -554,7 +551,7 @@ class MTurkManager():
             mturk_agent.change_conversation(
                 conversation_id=conversation_id,
                 agent_id='waiting',
-                change_callback=self._set_status_to_waiting
+                change_callback=self._set_worker_status_to_waiting
             )
             # Wait for turker to be in waiting status
             self.wait_for_status(assign_state, ASSIGN_STATUS_WAITING)
