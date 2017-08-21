@@ -1016,7 +1016,7 @@ class MTurkManager():
         # unique_request_token may be useful for handling future network errors
         client.send_bonus(
             WorkerId=worker_id,
-            BonusAmount=bonus_amount,
+            BonusAmount=str(bonus_amount),
             AssignmentId=assignment_id,
             Reason=reason,
             UniqueRequestToken=unique_request_token
@@ -1272,7 +1272,7 @@ class MTurkAgent(Agent):
                 unique_request_token = str(uuid.uuid4())
                 if self.manager.pay_bonus(
                     worker_id=self.worker_id,
-                    bonus_amount=str(bonus_amount),
+                    bonus_amount=bonus_amount,
                     assignment_id=self.assignment_id,
                     reason=reason,
                     unique_request_token=unique_request_token
