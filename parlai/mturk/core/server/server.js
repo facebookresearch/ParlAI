@@ -153,21 +153,21 @@ io.on('connection', function (socket) {
     console.log('connection_id ' + in_connection_id + ' registered');
 
     if (!(sender_id === '[World]')) {
-      // Send alive messages to the world, but not from the world
-      _send_message(socket, out_connection_id, 'new message', data);
+      // Send alive packets to the world, but not from the world
+      _send_message(socket, out_connection_id, 'new packet', data);
     }
     if(ack) {
       ack('agent_alive');
     }
   });
 
-  socket.on('route message', function (data, ack) {
-    console.log('route message', data);
+  socket.on('route packet', function (data, ack) {
+    console.log('route packet', data);
     var out_connection_id = _get_to_conn_id(data);
 
-    _send_message(socket, out_connection_id, 'new message', data);
+    _send_message(socket, out_connection_id, 'new packet', data);
     if(ack) {
-        ack('route message');
+        ack('route packet');
     }
   });
 

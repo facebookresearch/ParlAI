@@ -187,8 +187,8 @@
     var socket = null;
     var task_done = false;
     var ui_state_lock = false; // We need to acquire this lock first before attempting to update the UI state with new messages or commands.
-    var message_map = {};
-    var message_callback = {};
+    var packet_map = {};
+    var packet_callback = {};
     var STATUS_ACK = 'ack';
     var STATUS_INIT = 'init';
     var STATUS_SENT = 'sent';
@@ -284,7 +284,7 @@
             $("button#id_send_msg_button").addClass("disabled");
             $("button#id_send_msg_button").prop("disabled", true);
 
-            send_message(
+            send_packet(
                 TYPE_MESSAGE,
                 {text: text,
                  id: cur_agent_id,
@@ -299,7 +299,7 @@
                     message_id += 1;
                     $("div#response-type-text-input").css("display", "none");
                     handle_new_message(msg.data);
-                    after_send_message();
+                    after_send_packet();
                 }
             );
         }
@@ -329,14 +329,14 @@
 
     function _sending_thread() {
         if (blocking_id === null) {
-            // not blocking => see if we can process next message
+            // not blocking => see if we can process next packet
             if (q.size() > 0) {
                 if (Date.now() > q.peek()[1]) {
                     var item = q.pop();
                     var msg = item[0];
                     var t = item[1];
                     if (msg.status !== STATUS_ACK) {
-                        var event_name = 'route message';
+                        var event_name = 'route packet';
                         if (msg.type === TYPE_ALIVE) event_name = 'agent alive';
 
                         socket.emit(event_name, msg);
@@ -353,11 +353,11 @@
                 }
             }
         } else {
-            // blocking on message `blocking_id`
+            // blocking on packet `blocking_id`
             if ((Date.now() - blocking_sent_time) > ack_timeout) {
                 console.log('Timeout: ' + blocking_id);
                 // timeout
-                var m = message_map[blocking_id];
+                var m = packet_map[blocking_id];
                 q.push(m, blocking_sent_time);
                 blocking_id = null;
             }
@@ -365,7 +365,7 @@
         setTimeout(_sending_thread, thread_refresh);
     }
 
-    function send_message(type, data, require_ack, blocking, callback) {
+    function send_packet(type, data, require_ack, blocking, callback) {
         var time = Date.now();
         var id = uuidv4();
 
@@ -379,8 +379,8 @@
                    require_ack: require_ack,
                    blocking: blocking};
         q.push(msg, time);
-        message_map[id] = msg;
-        message_callback[id] = callback;
+        packet_map[id] = msg;
+        packet_callback[id] = callback;
     }
 
     function setup_socket() {
@@ -389,7 +389,7 @@
 
         socket.on('socket_open', function() {
             if (verbose_log) console.log('Server connected.');
-            send_message(
+            send_packet(
                 TYPE_ALIVE,
                 {hit_id: hit_id,
                  assignment_id: assignment_id,
@@ -404,25 +404,25 @@
             if (verbose_log) console.log('Server disconnected.');
         });
 
-        socket.on('new message', function(msg) {
+        socket.on('new packet', function(msg) {
             console.log('received: ' + msg.id);
             if (msg.type === TYPE_HEARTBEAT) {
                 last_server_heartbeat = Date.now();
             } else if (msg.type === TYPE_ACK) {
-                message_map[msg.id].status = STATUS_ACK;
+                packet_map[msg.id].status = STATUS_ACK;
                 if (msg.id === blocking_id) {
                     // release lock when ack arrives
                     blocking_id = null;
                     blocking_sent_time = null;
                     //execute callback
-                    if (message_callback[msg.id]) {
-                        message_callback[msg.id](message_map[msg.id]);
+                    if (packet_callback[msg.id]) {
+                        packet_callback[msg.id](packet_map[msg.id]);
                     }
                 }
             } else if (msg.type === TYPE_MESSAGE) {
                 //send ack
                 socket.emit(
-                    'route message',
+                    'route packet',
                     {
                         id: msg.id,
                         sender_id: msg.receiver_id,
@@ -448,7 +448,7 @@
                   'sender_id' : worker_id,
                   'type': TYPE_HEARTBEAT,
                   'data': null}
-        socket.emit('route message', hb);
+        socket.emit('route packet', hb);
         setTimeout(_heartbeat_thread, 1000);
     }
 
@@ -526,7 +526,7 @@
     });
     function after_receive_command(command) {};
     function after_receive_message(message) {};
-    function after_send_message() {};
+    function after_send_packet() {};
 </script>
 
 {% block additional_scripts %}

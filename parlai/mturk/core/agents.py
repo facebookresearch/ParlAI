@@ -100,10 +100,8 @@ class WorkerState():
         self.disconnects = disconnects
 
 
-# TODO rename to "Packet" to create distinction between packets that contain
-# MESSAGEs vs COMMANDs
-class Message():
-    """Class for holding socket message information"""
+class Packet():
+    """Class for holding information sent over a socket"""
     def __init__(self, id, type, sender_id, receiver_id, assignment_id, data,
                  requires_ack=True, blocking=True, ack_func=None):
         self.id = id
@@ -112,19 +110,33 @@ class Message():
         self.receiver_id = receiver_id
         self.assignment_id = assignment_id
         self.data = data
-        self.status = STATUS_INIT
-        self.blocking = blocking
         self.requires_ack = requires_ack
+        self.blocking = blocking
         self.ack_func = ack_func
+        self.status = STATUS_INIT
         self.time = None
 
 
 class SocketManager():
-    """SocketManager is a wrapper around socketIO to stabilize its message
-    passing. The manager handles resending messages."""
+    """SocketManager is a wrapper around socketIO to stabilize its packet
+    passing. The manager handles resending packet, as well as maintaining alive
+    status for all the connections it forms"""
+
+
 
     def __init__(self, server_url, port, alive_callback, message_callback,
                  socket_dead_callback, socket_dead_timeout=DEF_SOCKET_TIMEOUT):
+        """
+        server_url:           url at which the server is to be run
+        port:                 port for the socket to operate on
+        alive_callback:       function to be called on alive Packets, defined
+                              def alive_callback(self, pkt)
+        message_callback:     function to be called on message Packets, defined
+                              def message_callback(self, pkt)
+        socket_dead_callback: function to be called when a socket dies, defined
+                              def on_socket_dead(self, worker_id, assignment_id)
+        socket_dead_timeout:  time to wait between heartbeats before dying
+        """
         self.server_url = server_url
         self.port = port
         self.alive_callback = alive_callback
@@ -140,7 +152,7 @@ class SocketManager():
         self.threads = {}
         self.run = {}
         self.last_heartbeat = {}
-        self.message_map = {}
+        self.packet_map = {}
 
         # setup the socket
         self.setup_socket()
@@ -164,55 +176,56 @@ class SocketManager():
         def on_message(*args):
             """Incoming message handler for ACKs, ALIVEs, HEARTBEATs,
             and MESSAGEs"""
-            msg = args[0]
-            msg_id = msg['id']
-            message_type = msg['type']
-            sender_id = msg['sender_id']
-            receiver_id = msg['receiver_id']
-            assignment_id = msg['assignment_id']
+            packet = args[0]
+            packet_id = packet['id']
+            packet_type = packet['type']
+            sender_id = packet['sender_id']
+            receiver_id = packet['receiver_id']
+            assignment_id = packet['assignment_id']
             connection_id = sender_id + '_' + assignment_id
-            if message_type == TYPE_ACK:
-                # Acknowledgements should mark a message as acknowledged
+            if packet_type == TYPE_ACK:
+                # Acknowledgements should mark a packet as acknowledged
                 print_and_log("On new ack: " + str(args), False)
-                self.message_map[msg_id].status = STATUS_ACK
-                # If the message sender wanted to do something on acknowledge
-                if self.message_map[msg_id].ack_func:
-                    self.message_map[msg_id].ack_func(msg)
-            elif message_type == TYPE_HEARTBEAT:
+                self.packet_map[packet_id].status = STATUS_ACK
+                # If the packet sender wanted to do something on acknowledge
+                if self.packet_map[packet_id].ack_func:
+                    self.packet_map[packet_id].ack_func(packet)
+            elif packet_type == TYPE_HEARTBEAT:
                 # Heartbeats update the last heartbeat time and respond in kind
                 self.last_heartbeat[connection_id] = time.time()
                 # TODO Is response heartbeat necessary?
-                msg = {
-                    'id': msg_id,
+                packet = {
+                    'id': packet_id,
                     'type': TYPE_HEARTBEAT,
                     'sender_id': receiver_id,
                     'receiver_id': sender_id,
                     'assignment_id': assignment_id,
                     'data': ''
                 }
-                self.socketIO.emit('route message', msg, None)
+                self.socketIO.emit('route packet', packet, None)
             else:
-                # Remaining message types need to be acknowledged
+                # Remaining packet types need to be acknowledged
                 print_and_log("On new message: " + str(args), False)
                 ack = {
-                    'id': msg_id,
+                    'id': packet_id,
                     'type': TYPE_ACK,
                     'sender_id': receiver_id,
                     'receiver_id': sender_id,
                     'assignment_id': assignment_id,
                     'data': ''
                 }
-                self.socketIO.emit('route message', ack, None)
-                if message_type == TYPE_ALIVE:
+                self.socketIO.emit('route packet', ack, None)
+                if packet_type == TYPE_ALIVE:
                     self.last_heartbeat[connection_id] = time.time()
-                    self.alive_callback(msg)
-                elif message_type == TYPE_MESSAGE:
-                    self.message_callback(msg)
+                    self.alive_callback(packet)
+                elif packet_type == TYPE_MESSAGE:
+                    self.message_callback(packet)
 
         # Register Handlers
+        # TODO move these magic strings into constants
         self.socketIO.on('socket_open', on_socket_open)
         self.socketIO.on('disconnect', on_disconnect)
-        self.socketIO.on('new message', on_message)
+        self.socketIO.on('new packet', on_message)
 
         # Start listening thread
         self.listen_thread = threading.Thread(target=self.socketIO.wait)
@@ -248,50 +261,50 @@ class SocketManager():
                         # Put the item back into the queue, it's not time to pop yet
                         self.queues[connection_id].put(item)
                     else:
-                        # Try to send the message
-                        message = item[1]
-                        if message.status is not STATUS_ACK:
-                            # either need to send initial message
-                            # or resend not-acked message
-                            msg = {
-                                'id': message.id,
-                                'type': message.type,
-                                'sender_id': message.sender_id,
-                                'receiver_id': message.receiver_id,
-                                'assignment_id': message.assignment_id,
-                                'data': message.data
+                        # Try to send the packet
+                        packet = item[1]
+                        if packet.status is not STATUS_ACK:
+                            # either need to send initial packet
+                            # or resend not-acked packet
+                            pkt = {
+                                'id': packet.id,
+                                'type': packet.type,
+                                'sender_id': packet.sender_id,
+                                'receiver_id': packet.receiver_id,
+                                'assignment_id': packet.assignment_id,
+                                'data': packet.data
                             }
 
-                            # send the message
-                            print_and_log("Send message: " + str(message.data))
+                            # send the packet
+                            print_and_log("Send packet: " + str(packet.data))
                             def set_status_to_sent(data):
-                                message.status = STATUS_SENT
+                                packet.status = STATUS_SENT
                             self.socketIO.emit(
-                                'route message',
-                                msg,
+                                'route packet',
+                                pkt,
                                 set_status_to_sent
                             )
 
-                            if message.requires_ack:
-                                if message.blocking:
+                            if packet.requires_ack:
+                                if packet.blocking:
                                     # blocking till ack is received or timeout
                                     start_t = time.time()
                                     while True:
-                                        if message.status == STATUS_ACK:
+                                        if packet.status == STATUS_ACK:
                                             break
                                         if time.time() - start_t \
-                                                > ACK_TIME[message.type]:
-                                            # didn't receive ACK, resend message
+                                                > ACK_TIME[packet.type]:
+                                            # didn't receive ACK, resend packet
                                             # keep old queue time to ensure this
-                                            # message is processed first
-                                            message.status = STATUS_INIT
+                                            # packet is processed first
+                                            packet.status = STATUS_INIT
                                             self.queues[connection_id].put(item)
                                             break
                                         time.sleep(0.1)
                                 else:
                                     # non-blocking ack: add ack-check to queue
-                                    t = time.time() + ACK_TIME[message.type]
-                                    self.queues[connection_id].put((t, message))
+                                    t = time.time() + ACK_TIME[packet.type]
+                                    self.queues[connection_id].put((t, packet))
                 except Empty:
                     pass
                 finally:
@@ -325,7 +338,7 @@ class SocketManager():
 
 
     def generate_event_id(self, worker_id):
-        """Creates a unique id to use for identifying a message"""
+        """Creates a unique id to use for identifying a packet"""
         return worker_id + '_' + str(uuid.uuid4())
 
 
@@ -333,26 +346,26 @@ class SocketManager():
         return connection_id in self.queues
 
 
-    def send_message(self, message):
-        """Queues sending a message to its intended owner"""
-        connection_id = message.receiver_id + '_' + message.assignment_id
+    def send_packet(self, packet):
+        """Queues sending a packet to its intended owner"""
+        connection_id = packet.receiver_id + '_' + packet.assignment_id
         if not self.socket_is_open(connection_id):
             # Warn if there is no socket to send through for the expected recip
-            print_and_log('Can not send message to worker_id ' + \
-                '{}: message queue not found. Message: {}'.format(
-                    connection_id, message.data))
+            print_and_log('Can not send packet to worker_id ' + \
+                '{}: packet queue not found. Message: {}'.format(
+                    connection_id, packet.data))
             return
-        print_and_log('Put message (' + message.id + ') in queue (' + \
+        print_and_log('Put packet (' + packet.id + ') in queue (' + \
             connection_id + ')', False)
-        # Get the current time to put message into the priority queue
-        self.message_map[message.id] = message
-        item = (time.time(), message)
+        # Get the current time to put packet into the priority queue
+        self.packet_map[packet.id] = packet
+        item = (time.time(), packet)
         self.queues[connection_id].put(item)
 
 
-    def get_status(self, message_id):
-        """Returns the status of a particular message by id"""
-        return self.message_map[message_id].status
+    def get_status(self, packet_id):
+        """Returns the status of a particular packet by id"""
+        return self.packet_map[packet_id].status
 
 
 class MTurkManager():
@@ -611,15 +624,15 @@ class MTurkManager():
                                             self.on_socket_dead)
 
 
-    def on_alive(self, msg):
+    def on_alive(self, pkt):
         """Handler for updating MTurkManager's state when a worker sends an
-        alive message. This asks the socket manager to open a new channel and
+        alive packet. This asks the socket manager to open a new channel and
         then handles ensuring the worker state is consistent"""
-        print_and_log("on_agent_alive: " + str(msg), False)
-        worker_id = msg['data']['worker_id']
-        hit_id = msg['data']['hit_id']
-        assign_id = msg['data']['assignment_id']
-        conversation_id = msg['data']['conversation_id']
+        print_and_log("on_agent_alive: " + str(pkt), False)
+        worker_id = pkt['data']['worker_id']
+        hit_id = pkt['data']['hit_id']
+        assign_id = pkt['data']['assignment_id']
+        conversation_id = pkt['data']['conversation_id']
         # Open a channel if it doesn't already exist
         self.socket_manager.open_channel(worker_id, assign_id)
 
@@ -630,10 +643,9 @@ class MTurkManager():
         # Update state of worker based on this connect
         curr_worker_assign = self.worker_state[worker_id].assignments
 
-
         if conversation_id and not curr_worker_assign:
             # This was a request from a previous run and should be expired
-            # TODO send message to turker noting that their hit is expired
+            # TODO send packet to turker noting that their hit is expired
             return
         if not assign_id:
             # invalid assignment_id is an auto-fail
@@ -648,8 +660,8 @@ class MTurkManager():
         elif curr_worker_assign[assign_id].status == ASSIGN_STATUS_NONE:
             # Invalid reconnect
             print_and_log('Agent (' + worker_id + ') with invalid status ' + \
-                'called alive', False)
-            # TODO notify worker they are in invalid state
+                'none called alive', False)
+            # TODO handle reconnecting and moving to onboarding
         elif curr_worker_assign[assign_id].status == ASSIGN_STATUS_ASSIGNED:
             # Connect after a switch to a task world
             curr_worker_assign[assign_id].status = ASSIGN_STATUS_IN_TASK
@@ -663,11 +675,11 @@ class MTurkManager():
             # TODO handle reconnect logic for workers who send a new alive
 
 
-    def on_new_message(self, msg):
+    def on_new_message(self, pkt):
         """Put an incoming message onto the correct agent's message queue"""
-        worker_id = msg['sender_id']
-        assignment_id = msg['assignment_id']
-        self.mturk_agents[worker_id][assignment_id].msg_queue.put(msg['data'])
+        worker_id = pkt['sender_id']
+        assignment_id = pkt['assignment_id']
+        self.mturk_agents[worker_id][assignment_id].msg_queue.put(pkt['data'])
 
 
     def on_socket_dead(self, worker_id, assignment_id):
@@ -738,7 +750,7 @@ class MTurkManager():
         """Wrapper for pushing through socket"""
         data['type'] = content_type
         event_id = self.socket_manager.generate_event_id(receiver_id)
-        msg = Message(
+        packet = Packet(
             event_id,
             TYPE_MESSAGE,
             sender_id,
@@ -748,7 +760,7 @@ class MTurkManager():
             blocking=blocking,
             ack_func=ack_func
         )
-        self.socket_manager.send_message(msg)
+        self.socket_manager.send_packet(packet)
 
 
     def send_message(self, sender_id, receiver_id, assignment_id, data,
