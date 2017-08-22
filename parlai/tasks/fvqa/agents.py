@@ -24,7 +24,7 @@ class FVQATeacher(Teacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('FVQA Task Arguments')
-        agent.add_argument('--trainset', default=0, choices=range(0, 5), type=int,
+        agent.add_argument('--fvqa-trainset', default=0, choices=range(0, 5), type=int,
                            help="ID of train/test split.  0-4 inclusive.")
 
     def __init__(self, opt, shared=None):
@@ -62,7 +62,9 @@ class FVQATeacher(Teacher):
         return self.len
 
     def report(self):
-        return [super().report(), self.factmetric.report()]
+        r = super().report()
+        r['factmetrics'] = self.factmetric.report()
+        return r
 
     def reset(self):
         # Reset the dialog so that it is at the start of the epoch,
@@ -91,14 +93,14 @@ class FVQATeacher(Teacher):
             action = {'text': 'What fact supports this answer?', 'episode_done': True}
             if self.datatype.startswith('train'):
                 action['labels'] = self.lastY[1]
+            if self.datatype != 'train' and self.episode_idx + self.step_size >= len(self):
+                self.epochDone = True
             return action
 
         if self.datatype == 'train':
             self.episode_idx = random.randrange(self.len)
         else:
             self.episode_idx = (self.episode_idx + self.step_size) % len(self)
-            if self.episode_idx == len(self) - self.step_size:
-                self.epochDone = True
 
         self.asked_question = True
         qa = self.ques[self.episode_idx]
@@ -132,7 +134,7 @@ class FVQATeacher(Teacher):
             questions = json.load(questions_file)
         train_test = opt['datatype'].split(':')[0]
         train_test_images = set()
-        with open(os.path.join(trainset_path, '{}_list_{}.txt'.format(train_test, opt['trainset']))) as imageset:
+        with open(os.path.join(trainset_path, '{}_list_{}.txt'.format(train_test, opt['fvqa_trainset']))) as imageset:
             for line in imageset:
                 train_test_images.add(line.strip())
         self.ques = [questions[k] for k in sorted(questions.keys()) if questions[k]['img_file'] in train_test_images]
