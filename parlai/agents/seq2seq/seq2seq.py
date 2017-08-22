@@ -49,6 +49,9 @@ class Seq2seqAgent(Agent):
             help='rank candidates if available. this is done by computing the' +
                  ' mean score per token for each candidate and selecting the ' +
                  'highest scoring one.')
+        agent.add_argument('-tr', '--truncate', type='bool', default=True,
+            help='truncate input & output lengths to speed up training ' +
+                 '(may reduce accuracy)')
 
     def __init__(self, opt, shared=None):
         # initialize defaults first
@@ -88,6 +91,7 @@ class Seq2seqAgent(Agent):
             self.learning_rate = opt['learningrate']
             self.rank = opt['rank_candidates']
             self.longest_label = 1
+            self.truncate = opt['truncate']
 
             # set up tensors
             self.zeros = torch.zeros(self.num_layers, 1, hsz)
@@ -340,15 +344,16 @@ class Seq2seqAgent(Agent):
         xs = None
         if batchsize > 0:
             parsed = [self.parse(ex['text']) for ex in exs]
-            min_x_len = min([len(x) for x in parsed])
             max_x_len = max([len(x) for x in parsed])
-            parsed_x_len = min(min_x_len + 12, max_x_len, 48)
-            # shrink xs to to limit batch computation
-            parsed = [x[:parsed_x_len] for x in parsed]
-            xs = torch.LongTensor(batchsize, parsed_x_len).fill_(0)
+            if self.truncate:
+                # shrink xs to to limit batch computation
+                min_x_len = min([len(x) for x in parsed])
+                max_x_len = min(min_x_len + 12, max_x_len, 48)
+                parsed = [x[:max_x_len] for x in parsed]
+            xs = torch.LongTensor(batchsize, max_x_len).fill_(0)
             # pack the data to the right side of the tensor for this model
             for i, x in enumerate(parsed):
-                offset = parsed_x_len - len(x)
+                offset = max_x_len - len(x)
                 for j, idx in enumerate(x):
                     xs[i][j + offset] = idx
             if self.use_cuda:
@@ -366,12 +371,13 @@ class Seq2seqAgent(Agent):
             # append END to each label
             labels = [random.choice(ex.get('labels', [''])) + ' ' + self.END for ex in exs]
             parsed = [self.parse(y) for y in labels]
-            min_y_len = min(len(y) for y in parsed)
             max_y_len = max(len(y) for y in parsed)
-            # shrink ys to to limit batch computation
-            parsed_y_len = min(min_y_len + 6, max_y_len)
-            parsed = [y[:parsed_y_len] for y in parsed]
-            ys = torch.LongTensor(batchsize, parsed_y_len).fill_(0)
+            if self.truncate:
+                # shrink ys to to limit batch computation
+                min_y_len = min(len(y) for y in parsed)
+                max_y_len = min(min_y_len + 12, max_y_len, 48)
+                parsed = [y[:max_y_len] for y in parsed]
+            ys = torch.LongTensor(batchsize, max_y_len).fill_(0)
             for i, y in enumerate(parsed):
                 for j, idx in enumerate(y):
                     ys[i][j] = idx
