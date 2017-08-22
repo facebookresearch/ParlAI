@@ -54,12 +54,15 @@ ASSIGNMENT_DONE = 'Submitted'
 ASSIGNMENT_APPROVED = 'Approved'
 ASSIGNMENT_REJECTED = 'Rejected'
 
-ASSIGN_STATUS_NONE = 0
-ASSIGN_STATUS_ONBOARDING = 1
-ASSIGN_STATUS_WAITING = 2
-ASSIGN_STATUS_ASSIGNED = 3
-ASSIGN_STATUS_IN_TASK = 4
-ASSIGN_STATUS_DONE = 5
+ASSIGN_STATUS_NONE = 'none'
+ASSIGN_STATUS_ONBOARDING = 'onboarding'
+ASSIGN_STATUS_WAITING = 'waiting'
+ASSIGN_STATUS_ASSIGNED = 'assigned'
+ASSIGN_STATUS_IN_TASK = 'in task'
+ASSIGN_STATUS_DONE = 'done'
+ASSIGN_STATUS_DISCONNECT = 'disconnect'
+ASSIGN_STATUS_PARTNER_DISCONNECT = 'partner disconnect'
+ASSIGN_STATUS_EXPIRED = 'expired'
 
 MTURK_DISCONNECT_MESSAGE = '[DISCONNECT]' # Turker disconnected from conv
 TIMEOUT_MESSAGE = '[TIMEOUT]' # the Turker did not respond but didn't return HIT
@@ -108,12 +111,24 @@ class AssignState():
         self.conversation_id = conversation_id
 
 
+    def log_reconnect(self, worker_id):
+        """Logs reconnect of a given worker to this assignment"""
+        print_and_log('Agent ({})_({}) reconnected to {} with status {}'.format(
+            worker_id,
+            self.assignment_id,
+            self.conversation_id,
+            self.status
+        ))
+
+
+
 class WorkerState():
     """Class for holding state information about an mturk worker"""
     def __init__(self, worker_id, disconnects=0):
         self.worker_id = worker_id
         self.assignments = {}
         self.disconnects = disconnects
+
 
 
 class Packet():
@@ -746,32 +761,44 @@ class MTurkManager():
             # This was a request from a previous run and should be expired
             # TODO send packet to turker noting that their hit is expired
             return
-        if not assign_id:
+        elif not assign_id:
             # invalid assignment_id is an auto-fail
-            print_and_log('Agent (' + worker_id + ') with no assign_id ' + \
-                'called alive', False)
+            print_and_log('Agent ({}) with no assign_id called alive'.format(
+                worker_id
+            ), False)
             return
-        if not assign_id in curr_worker_assign:
+        elif not assign_id in curr_worker_assign:
             # First time this worker has connected under this assignment, init
             curr_worker_assign[assign_id] = AssignState(assign_id)
             self.create_agent(hit_id, assign_id, worker_id)
             self.onboard_new_worker(self.mturk_agents[worker_id][assign_id])
-        elif curr_worker_assign[assign_id].status == ASSIGN_STATUS_NONE:
-            # Invalid reconnect
-            print_and_log('Agent (' + worker_id + ') with invalid status ' + \
-                'none called alive', False)
-            # TODO handle reconnecting and moving to onboarding
-        elif curr_worker_assign[assign_id].status == ASSIGN_STATUS_ASSIGNED:
-            # Connect after a switch to a task world
-            curr_worker_assign[assign_id].status = ASSIGN_STATUS_IN_TASK
-        elif curr_worker_assign[assign_id].status == ASSIGN_STATUS_ONBOARDING:
-            # reconnecting to onboarding world is a no-op
-            return
         else:
-            # Reconnecting while already in a world, check to see if still alive
-            print_and_log('Agent (' + worker_id + ') had unexpected reconnect',
-                False)
-            # TODO handle reconnect logic for workers who send a new alive
+            curr_assign = curr_worker_assign[assign_id]
+            curr_assign.log_reconnect(worker_id)
+            if curr_assign.status == ASSIGN_STATUS_NONE:
+                # Reconnecting before even being given a world. The retries for
+                # switching to the onboarding world should catch this
+                return
+            elif curr_assign.status == ASSIGN_STATUS_ONBOARDING or
+                 curr_assign.status == ASSIGN_STATUS_IN_TASK:
+                # Reconnecting to the onboarding world or to a task world should
+                # resend the messages already in the conversation
+                # TODO investigate retaining a message thread
+                return
+            elif curr_assign.status == ASSIGN_STATUS_WAITING:
+                # Reconnecting to the waiting queue is a no-op
+                return
+            elif curr_assign.status == ASSIGN_STATUS_ASSIGNED:
+                # Connect after a switch to a task world, mark the switch
+                curr_assign.status = ASSIGN_STATUS_IN_TASK
+            elif curr_assign.status == ASSIGN_STATUS_DISCONNECT or
+                 curr_assign.status == ASSIGN_STATUS_DONE or
+                 curr_assign.status == ASSIGN_STATUS_EXPIRED or
+                 curr_assign.status == ASSIGN_STATUS_PARTNER_DISCONNECT:
+                # inform the connecting user in all of these cases that the task
+                # has already been completed.
+                # TODO create logic to inform worker of task status
+                return
 
 
     def on_new_message(self, pkt):
