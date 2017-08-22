@@ -702,6 +702,8 @@ class MTurkManager():
                     task_thread.start()
                     self.task_threads.append(task_thread)
 
+                    # TODO handle returned hits properly, right now it's better
+                    # we completely skip breaking on conversations until we do
                     # Once we've had enough conversations, finish and break
                     if self.conversation_index == self.opt['num_conversations']:
                         self.expire_all_unassigned_hits()
