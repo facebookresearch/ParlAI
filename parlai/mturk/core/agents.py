@@ -63,6 +63,7 @@ ASSIGN_STATUS_DONE = 'done'
 ASSIGN_STATUS_DISCONNECT = 'disconnect'
 ASSIGN_STATUS_PARTNER_DISCONNECT = 'partner disconnect'
 ASSIGN_STATUS_EXPIRED = 'expired'
+ASSIGN_STATUS_RETURNED = 'returned'
 
 MTURK_DISCONNECT_MESSAGE = '[DISCONNECT]' # Turker disconnected from conv
 TIMEOUT_MESSAGE = '[TIMEOUT]' # the Turker did not respond but didn't return HIT
@@ -779,8 +780,8 @@ class MTurkManager():
                 # Reconnecting before even being given a world. The retries for
                 # switching to the onboarding world should catch this
                 return
-            elif curr_assign.status == ASSIGN_STATUS_ONBOARDING or
-                 curr_assign.status == ASSIGN_STATUS_IN_TASK:
+            elif (curr_assign.status == ASSIGN_STATUS_ONBOARDING or
+                  curr_assign.status == ASSIGN_STATUS_IN_TASK):
                 # Reconnecting to the onboarding world or to a task world should
                 # resend the messages already in the conversation
                 # TODO investigate retaining a message thread
@@ -791,12 +792,13 @@ class MTurkManager():
             elif curr_assign.status == ASSIGN_STATUS_ASSIGNED:
                 # Connect after a switch to a task world, mark the switch
                 curr_assign.status = ASSIGN_STATUS_IN_TASK
-            elif curr_assign.status == ASSIGN_STATUS_DISCONNECT or
-                 curr_assign.status == ASSIGN_STATUS_DONE or
-                 curr_assign.status == ASSIGN_STATUS_EXPIRED or
-                 curr_assign.status == ASSIGN_STATUS_PARTNER_DISCONNECT:
+            elif (curr_assign.status == ASSIGN_STATUS_DISCONNECT or
+                  curr_assign.status == ASSIGN_STATUS_DONE or
+                  curr_assign.status == ASSIGN_STATUS_EXPIRED or
+                  curr_assign.status == ASSIGN_STATUS_PARTNER_DISCONNECT or
+                  curr_assign.status == ASSIGN_STATUS_RETURNED):
                 # inform the connecting user in all of these cases that the task
-                # has already been completed.
+                # is no longer workable, generate appropriate text for each.
                 # TODO create logic to inform worker of task status
                 return
 
@@ -857,14 +859,18 @@ class MTurkManager():
                         )
                     other_agent.some_agent_disconnected = True
                     # TODO logic to delete these assignments from other workers
-        elif status == ASSIGN_STATUS_DONE:
-            # It's okay if a complete assignment dies, but wait for the world
-            # to clean up the socket
+        elif (status == ASSIGN_STATUS_DONE or
+              status == ASSIGN_STATUS_EXPIRED or
+              status == ASSIGN_STATUS_DISCONNECT or
+              status == ASSIGN_STATUS_PARTNER_DISCONNECT or
+              status == ASSIGN_STATUS_RETURNED):
+            # It's okay if a complete assignment socket dies, but wait for the
+            # world to clean up the resource
             return
         else:
             # A disconnect shouldn't happen in the "Assigned" state, as we don't
             # check alive status when reconnecting after given an assignment
-            print_and_log("Disconnect had invalid status " + str(status))
+            print_and_log("Disconnect had invalid status " + status)
 
         # TODO Attempt to notify worker they have disconnected before the below
         # close the sending thread
