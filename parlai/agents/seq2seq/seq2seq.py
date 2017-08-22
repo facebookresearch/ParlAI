@@ -220,7 +220,7 @@ class Seq2seqAgent(Agent):
         text_cand_inds = None
 
         # first encode context
-        xes = self.lt(xs).t()
+        xes = self.lt(xs).transpose(0, 1)
         if self.zeros.size(1) != batchsize:
             self.zeros.resize_(self.num_layers, batchsize, self.hidden_size).fill_(0)
         h0 = Variable(self.zeros)
@@ -312,7 +312,7 @@ class Seq2seqAgent(Agent):
                 output, hn = self.decoder(xes, hn)
                 preds, scores = self.hidden_to_idx(output, dropout=False)
 
-                xes = self.lt(preds.t())
+                xes = self.lt(preds.transpose(0, 1))
                 max_len += 1
                 for b in range(batchsize):
                     if not done[b]:
