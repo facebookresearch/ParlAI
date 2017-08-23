@@ -11,7 +11,8 @@
 
 <body>
 <div class="container-fluid" id="ui-container">
-<div class="row">
+<div id="ui-placeholder"></div>
+<div class="row" id="ui-content" style="display: none">
 
 {% block main_pane %}
 {% block left_pane %}
@@ -54,7 +55,7 @@
             </button>
         </div>
         <div id="response-type-expired" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
-            <span style="font-size: 16px">This HIT had already expired.</span>
+            <span id="inactive" style="font-size: 16px"></span>
         </div>
     </div>
 </div>
@@ -209,11 +210,20 @@
 
     function handle_command(msg) {
         var command = msg['text'];
+        console.log('Recieved command ' + command);
         if (command === 'COMMAND_SEND_MESSAGE') {
             wait_for_worker_input();
         } else if (command === 'COMMAND_SHOW_DONE_BUTTON') {
             task_done = true;
             update_UI_for_response_type('done');
+            $("div#waiting-for-message").css("display", "none");
+        } else if (command === 'COMMAND_INACTIVE_DONE') {
+            // This is done without refresh
+            init_chat_panel();
+            socket.close();
+            task_done = true;
+            update_UI_for_response_type('done');
+            $('#disconnect').text(msg['inactive_text']);
             $("div#waiting-for-message").css("display", "none");
         } else if (command === 'COMMAND_DISCONNECT_PARTNER') {
             task_done = true;
@@ -225,7 +235,15 @@
         } else if (command === 'COMMAND_EXPIRE_HIT') {
             socket.close();
             hit_is_expired = true;
-            update_UI_for_response_type('expired');
+            $('#inactive').text(msg['inactive_text']);
+            update_UI_for_response_type('inactive');
+        } else if (command === 'COMMAND_INACTIVE_HIT') {
+            is_init_page = false;
+            // This is done without refresh
+            init_chat_panel();
+            socket.close();
+            $('#inactive').text(msg['inactive_text']);
+            update_UI_for_response_type('inactive');
         } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
             console.log('current conversation_id: ' + conversation_id);
             var new_conversation_id = msg['conversation_id'];
@@ -494,22 +512,28 @@
         $("span#task-description").html(task_description);
     }
 
+    function init_chat_panel() {
+      $("div#ui-placeholder").css("display", "none");
+      $("div#ui-content").css("display", "");
+      $("form#mturk_submit_form input#assignmentId").val(assignment_id);
+      $("form#mturk_submit_form input#hitId").val(hit_id);
+      $("form#mturk_submit_form input#workerId").val(worker_id);
+      $("form#mturk_submit_form").attr("action", mturk_submit_url);
+      $("span#task-description").html(task_description);
+
+      update_UI_for_response_type('idle');
+      $("div#waiting-for-message").css("display", "");
+      $("div#left-pane").removeClass('col-xs-12');
+      $("div#left-pane").addClass('col-xs-4');
+
+      $(window).resize();
+    }
+
     function init_chat_page() {
         if (is_init_page) {
-            $("div#ui-container").html("Initializing...");
+            $("div#ui-placeholder").html("Initializing...");
         } else {
-            $("form#mturk_submit_form input#assignmentId").val(assignment_id);
-            $("form#mturk_submit_form input#hitId").val(hit_id);
-            $("form#mturk_submit_form input#workerId").val(worker_id);
-            $("form#mturk_submit_form").attr("action", mturk_submit_url);
-            $("span#task-description").html(task_description);
-
-            update_UI_for_response_type('idle');
-            $("div#waiting-for-message").css("display", "");
-            $("div#left-pane").removeClass('col-xs-12');
-            $("div#left-pane").addClass('col-xs-4');
-
-            $(window).resize();
+            init_chat_panel();
         }
         setup_socket();
         _sending_thread();

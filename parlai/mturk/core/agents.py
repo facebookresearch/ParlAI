@@ -122,6 +122,52 @@ class AssignState():
         ))
 
 
+    def get_inactive_command_data(self, worker_id):
+        """Gets appropriate inactive command to respond to a reconnect
+        given current assignment state"""
+        command = 'COMMAND_INACTIVE_HIT'
+        text = None
+        if self.status == ASSIGN_STATUS_DISCONNECT:
+            text = 'You disconnected in the middle of this HIT and were ' + \
+                   'marked as inactive. As these HITs often require real-' + \
+                   'time interaction, it is no longer available for ' + \
+                   'completion. Please return this HIT and accept a new one' + \
+                   ' if you would like to try again.'
+        elif self.status == ASSIGN_STATUS_DONE:
+            command = 'COMMAND_INACTIVE_DONE'
+            text = 'You disconnected after completing this HIT without ' + \
+                   'marking it as completed. Please press the done button ' + \
+                   'below to finish the hit.'
+        elif self.status == ASSIGN_STATUS_EXPIRED:
+            text = 'You disconnected in the middle of this HIT and the ' + \
+                   'HIT expired before you reconnected. It is no longer ' + \
+                   'available for completion. Please return this HIT and ' + \
+                   'accept a new one if you would like to try again.'
+        elif self.status == ASSIGN_STATUS_PARTNER_DISCONNECT:
+            command = 'COMMAND_INACTIVE_DONE'
+            text = 'One of your partners disconnected in the middle of the ' + \
+                   'HIT. We won\'t penalize you for their disconnect, so ' + \
+                   'please use the button below to mark the HIT as complete.'
+        elif self.status == ASSIGN_STATUS_RETURNED:
+            text = 'You disconnected from this HIT and then returned ' + \
+                   'it. As we have marked the HIT as returned, it is no ' + \
+                   'longer available for completion. Please accept a new ' + \
+                   'HIT if you would like to try again'
+        else:
+            # We shouldn't be getting an inactive command for the other states,
+            # so consider this a server error
+            text = 'Our server was unable to handle your reconnect properly' + \
+                   ' and thus this HIT no longer seems available for ' + \
+                   'completion. Please try to connect again or return this ' + \
+                   'HIT and accept a new one.'
+
+        return {
+            'text': command,
+            'inactive_text': text,
+            'conversation_id': self.conversation_id,
+            'agent_id': worker_id
+        }
+
 
 class WorkerState():
     """Class for holding state information about an mturk worker"""
@@ -799,7 +845,13 @@ class MTurkManager():
                   curr_assign.status == ASSIGN_STATUS_RETURNED):
                 # inform the connecting user in all of these cases that the task
                 # is no longer workable, generate appropriate text for each.
-                # TODO create logic to inform worker of task status
+                data = curr_assign.get_inactive_command_data(worker_id)
+                self.send_command(
+                    '[World]',
+                    worker_id,
+                    assign_id,
+                    data
+                )
                 return
 
 
@@ -1409,8 +1461,9 @@ class MTurkAgent(Agent):
                     print_and_log("Timeout waiting for Turker to complete HIT.")
                     self.set_hit_is_abandoned()
                     return False
-            print_and_log("Waiting for Turker to complete the HIT...", False)
-            status = self.manager.get_agent_work_status(self.assignment_id)
+            print_and_log('Waiting for ({})_({}) to complete {}...'.format(
+                self.worker_id, self.assignment_id, self.conversation_id
+            ), False)
             time.sleep(2)
         print_and_log('Conversation ID: ' + str(self.conversation_id) + \
                       ', Agent ID: ' + self.id + ' - HIT is done.')
