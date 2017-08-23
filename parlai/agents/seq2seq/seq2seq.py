@@ -53,7 +53,8 @@ class Seq2seqAgent(Agent):
             help='truncate input & output lengths to speed up training ' +
                  '(may reduce accuracy). This fixes all input and output ' +
                  'to have a maximum length and to be similar in length to ' +
-                 'one another by throwing away extra tokens.')
+                 'one another by throwing away extra tokens. This reduces ' +
+                 'the total amount of padding in the batches.')
 
     def __init__(self, opt, shared=None):
         # initialize defaults first
