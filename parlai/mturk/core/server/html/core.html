@@ -187,7 +187,6 @@
     var message_list = [];
     var socket = null;
     var task_done = false;
-    var ui_state_lock = false; // We need to acquire this lock first before attempting to update the UI state with new messages or commands.
     var packet_map = {};
     var packet_callback = {};
     var STATUS_ACK = 'ack';
@@ -197,6 +196,7 @@
     var TYPE_MESSAGE = 'message';
     var TYPE_HEARTBEAT = 'heartbeat';
     var TYPE_ALIVE = 'alive';
+    var SERVER_HEARTBEAT_TIMEOUT = 8000
     var message_id = 0;
     var q = new PriorityQueue();
     var blocking_id = null;
@@ -210,7 +210,7 @@
 
     function handle_command(msg) {
         var command = msg['text'];
-        console.log('Recieved command ' + command);
+        if (verbose_log) console.log('Recieved command ' + command);
         if (command === 'COMMAND_SEND_MESSAGE') {
             wait_for_worker_input();
         } else if (command === 'COMMAND_SHOW_DONE_BUTTON') {
@@ -382,7 +382,7 @@
         } else {
             // blocking on packet `blocking_id`
             if ((Date.now() - blocking_sent_time) > ack_timeout) {
-                console.log('Timeout: ' + blocking_id);
+                if (verbose_log) console.log('Timeout: ' + blocking_id);
                 // timeout
                 var m = packet_map[blocking_id];
                 q.push(m, blocking_sent_time);
@@ -481,7 +481,20 @@
                   'type': TYPE_HEARTBEAT,
                   'data': null}
         socket.emit('route packet', hb);
-        setTimeout(_heartbeat_thread, 1000);
+        if (last_server_heartbeat != null &&
+              Date.now() - last_server_heartbeat > SERVER_HEARTBEAT_TIMEOUT) {
+          socket.close();
+          hit_is_expired = true;
+          $('#inactive').text('You have disconnected from the server, \
+            please return this HIT and take a new one if you want to keep \
+            working on these tasks. After too many \
+            disconnects you will not be able to work on these HITs in the \
+            future, check your connection if you see this message often.');
+          $("div#waiting-for-message").css("display", "none");
+          update_UI_for_response_type('inactive');
+        } else {
+          setTimeout(_heartbeat_thread, 1000);
+        }
     }
 
     function update_UI_for_response_type(response_type) {
