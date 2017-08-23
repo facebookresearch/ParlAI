@@ -1193,12 +1193,11 @@ class MTurkManager():
 
 
     def free_workers(self, workers):
-        """end completed worker threads and update state"""
+        """end completed worker threads"""
         for worker in workers:
             worker_id = worker.worker_id
             assign_id = worker.assignment_id
             self.socket_manager.close_channel(worker_id, assign_id)
-            del self.worker_state[worker_id].assignments[assign_id]
 
 
     def shutdown(self):
