@@ -866,6 +866,7 @@ class MTurkManager():
         """Handles a disconnect event, updating state as required and notifying
         other agents if the disconnected agent was in conversation with them"""
         agent = self.mturk_agents[worker_id][assignment_id]
+        agent.disconnected = True
         assignments = self.worker_state[worker_id].assignments
         status = assignments[assignment_id].status
         print_and_log("Worker {} disconnected from {} in status {}".format(
