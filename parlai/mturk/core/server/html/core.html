@@ -54,7 +54,7 @@
                 <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
             </button>
         </div>
-        <div id="response-type-expired" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
+        <div id="response-type-inactive" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
             <span id="inactive" style="font-size: 16px"></span>
         </div>
     </div>
@@ -236,6 +236,7 @@
             socket.close();
             hit_is_expired = true;
             $('#inactive').text(msg['inactive_text']);
+            $("div#waiting-for-message").css("display", "none");
             update_UI_for_response_type('inactive');
         } else if (command === 'COMMAND_INACTIVE_HIT') {
             is_init_page = false;
@@ -243,6 +244,7 @@
             init_chat_panel();
             socket.close();
             $('#inactive').text(msg['inactive_text']);
+            $("div#waiting-for-message").css("display", "none");
             update_UI_for_response_type('inactive');
         } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
             console.log('current conversation_id: ' + conversation_id);
@@ -491,7 +493,7 @@
             $("div#response-type-text-input").css("display", "");
         } else if (response_type == 'done') {
             $("div#response-type-done").css("display", "");
-        } else if (response_type == 'expired') {
+        } else if (response_type == 'inactive') {
             $("div#response-type-expired").css("display", "");
         }
         $(window).resize();

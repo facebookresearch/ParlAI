@@ -806,7 +806,29 @@ class MTurkManager():
 
         if conversation_id and not curr_worker_assign:
             # This was a request from a previous run and should be expired
-            # TODO send packet to turker noting that their hit is expired
+            def _close_my_socket(data):
+                """Small helper to close the socket after user acknowledges that
+                it shouldn't exist"""
+                self.socket_manager.close_channel(worker_id, assign_id)
+
+            # TODO move this (and other data message creation logic) to utils
+            text = 'You disconnected in the middle of this HIT and the ' + \
+                   'HIT expired before you reconnected. It is no longer ' + \
+                   'available for completion. Please return this HIT and ' + \
+                   'accept a new one if you would like to try again.'
+            data = {
+                'text': 'COMMAND_INACTIVE_HIT',
+                'inactive_text': text,
+                'conversation_id': conversation_id,
+                'agent_id': worker_id
+            }
+            self.send_command(
+                '[World]',
+                worker_id,
+                assign_id,
+                data,
+                ack_func=_close_my_socket
+            )
             return
         elif not assign_id:
             # invalid assignment_id is an auto-fail
