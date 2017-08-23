@@ -401,7 +401,7 @@
                    sender_id: worker_id,
                    assignment_id: assignment_id,
                    conversation_id: conversation_id,
-                   receiver_id: '[World]',
+                   receiver_id: '[World_' + task_group_id + ']',
                    data: data,
                    status: STATUS_INIT,
                    require_ack: require_ack,
@@ -474,7 +474,7 @@
 
     function _heartbeat_thread() {
         var hb = {'id': uuidv4(),
-                  'receiver_id': '[World]',
+                  'receiver_id': '[World_' + task_group_id + ']',
                   'assignment_id': assignment_id,
                   'sender_id' : worker_id,
                   'conversation_id': conversation_id,

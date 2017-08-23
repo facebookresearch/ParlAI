@@ -102,7 +102,7 @@ function _send_message(socket, connection_id, event_name, event_data) {
 
 function _get_to_conn_id(data) {
   var reciever_id = data['receiver_id'];
-  if (reciever_id === '[World]') {
+  if (reciever_id && reciever_id.startsWith('[World')) {
     return reciever_id;
   } else {
     return reciever_id + '_' + data['assignment_id'];
@@ -111,7 +111,7 @@ function _get_to_conn_id(data) {
 
 function _get_from_conn_id(data) {
   var sender_id = data['sender_id'];
-  if (sender_id === '[World]') {
+  if (sender_id && sender_id.startsWith('[World')) {
     return sender_id;
   } else {
     return sender_id + '_' + data['assignment_id'];
@@ -135,7 +135,7 @@ io.on('connection', function (socket) {
     room_id_to_connection_id[socket.id] = in_connection_id;
     console.log('connection_id ' + in_connection_id + ' registered');
 
-    if (!(sender_id === '[World]')) {
+    if (!(sender_id && sender_id.startsWith('[World'))) {
       // Send alive packets to the world, but not from the world
       _send_message(socket, out_connection_id, 'new packet', data);
     }

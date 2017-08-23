@@ -271,7 +271,8 @@ class SocketManager():
 
 
     def __init__(self, server_url, port, alive_callback, message_callback,
-                 socket_dead_callback, socket_dead_timeout=DEF_SOCKET_TIMEOUT):
+                 socket_dead_callback, task_group_id,
+                 socket_dead_timeout=DEF_SOCKET_TIMEOUT):
         """
         server_url:           url at which the server is to be run
         port:                 port for the socket to operate on
@@ -289,6 +290,7 @@ class SocketManager():
         self.message_callback = message_callback
         self.socket_dead_callback = socket_dead_callback
         self.socket_dead_timeout = socket_dead_timeout
+        self.task_group_id = task_group_id
 
         self.socketIO = None
 
@@ -311,9 +313,11 @@ class SocketManager():
         def on_socket_open(*args):
             """Registers world with the passthrough server"""
             print_and_log("Socket open: " + str(args), False)
-            self.socketIO.emit(SOCKET_AGENT_ALIVE_STRING,
-                               {'id': 'WORLD_ALIVE',
-                                'sender_id': '[World]'})
+            self.socketIO.emit(
+                SOCKET_AGENT_ALIVE_STRING,
+                {'id': 'WORLD_ALIVE',
+                    'sender_id': '[World_' + self.task_group_id + ']'}
+            )
 
         def on_disconnect(*args):
             print_and_log("World server disconnected: " + str(args), False)
@@ -781,7 +785,8 @@ class MTurkManager():
         """Sets up a socket_manager with defined callbacks"""
         self.socket_manager = SocketManager(self.server_url, self.port,
                                             self.on_alive, self.on_new_message,
-                                            self.on_socket_dead)
+                                            self.on_socket_dead,
+                                            self.task_group_id)
 
 
     def on_alive(self, pkt):
@@ -822,7 +827,7 @@ class MTurkManager():
                 'agent_id': worker_id
             }
             self.send_command(
-                '[World]',
+                '[World_' + self.task_group_id + ']',
                 worker_id,
                 assign_id,
                 data,
@@ -868,7 +873,7 @@ class MTurkManager():
                 # is no longer workable, generate appropriate text for each.
                 data = curr_assign.get_inactive_command_data(worker_id)
                 self.send_command(
-                    '[World]',
+                    '[World_' + self.task_group_id + ']',
                     worker_id,
                     assign_id,
                     data
@@ -929,7 +934,7 @@ class MTurkManager():
                             'agent_id': other_agent.id
                         }
                         self.send_command(
-                            '[World]',
+                            '[World_' + self.task_group_id + ']',
                             other_agent.worker_id,
                             other_agent.assignment_id,
                             data
@@ -939,7 +944,7 @@ class MTurkManager():
                     other_assignments = \
                         self.worker_state[other_agent.worker_id].assignments
                     other_assignments[other_agent.assignment_id].status = \
-                        ASSIGN_STATUS_PARTNET_DISCONNECT
+                        ASSIGN_STATUS_PARTNER_DISCONNECT
         elif (status == ASSIGN_STATUS_DONE or
               status == ASSIGN_STATUS_EXPIRED or
               status == ASSIGN_STATUS_DISCONNECT or
@@ -1245,6 +1250,7 @@ class MTurkAgent(Agent):
         self.hit_is_accepted = False # state from Amazon MTurk system
         self.hit_is_returned = False # state from Amazon MTurk system
         self.disconnected = False
+        self.task_group_id = manager.task_group_id
 
         self.msg_queue = Queue()
         #
@@ -1305,7 +1311,7 @@ class MTurkAgent(Agent):
     def observe(self, msg):
         """Sends a agent a message through the mturk manager"""
         self.manager.send_message(
-            '[World]',
+            '[World_' + self.manager.task_group_id + ']',
             self.worker_id,
             self.assignment_id,
             msg
@@ -1315,7 +1321,8 @@ class MTurkAgent(Agent):
     def act(self, timeout=None):
         """Waits for a message to send to other agents in the world"""
         # Timeout in seconds, after which the HIT will be expired automatically
-        self.manager.send_command('[World]', self.worker_id, self.assignment_id,
+        self.manager.send_command('[World_' + self.task_group_id + ']',
+                                  self.worker_id, self.assignment_id,
                                   {'text': 'COMMAND_SEND_MESSAGE'})
 
         if timeout:
@@ -1371,7 +1378,7 @@ class MTurkAgent(Agent):
         }
         self.conversation_id = conversation_id
         self.manager.send_command(
-            '[World]',
+            '[World_' + self.task_group_id + ']',
             self.worker_id,
             self.assignment_id,
             data,
@@ -1470,7 +1477,8 @@ class MTurkAgent(Agent):
     def set_hit_is_abandoned(self):
         if not self.hit_is_abandoned:
             self.hit_is_abandoned = True
-            self.manager.send_command('[World]', self.worker_id, self.assignment_id,
+            self.manager.send_command('[World_' + self.task_group_id + ']',
+                                      self.worker_id, self.assignment_id,
                                       {'text': 'COMMAND_EXPIRE_HIT'})
 
 
@@ -1507,7 +1515,7 @@ class MTurkAgent(Agent):
             command_to_send = COMMAND_SUBMIT_HIT
         if not (self.hit_is_abandoned or self.hit_is_returned):
             self.manager.send_command(
-                '[World]',
+                '[World_' + self.task_group_id + ']',
                 self.worker_id,
                 self.assignment_id,
                 {'text': command_to_send},
