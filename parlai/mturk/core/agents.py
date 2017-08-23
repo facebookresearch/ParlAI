@@ -865,14 +865,14 @@ class MTurkManager():
     def on_socket_dead(self, worker_id, assignment_id):
         """Handles a disconnect event, updating state as required and notifying
         other agents if the disconnected agent was in conversation with them"""
-        print_and_log("Worker {} disconnected from assignment {}".format(
-            worker_id, assignment_id))
-        self.worker_state[worker_id].disconnects += 1
-        # TODO Block worker if disconnects exceed some amount
-
         agent = self.mturk_agents[worker_id][assignment_id]
         assignments = self.worker_state[worker_id].assignments
         status = assignments[assignment_id].status
+        print_and_log("Worker {} disconnected from {} in status {}".format(
+            worker_id, assignment_id, status))
+        self.worker_state[worker_id].disconnects += 1
+        # TODO Block worker if disconnects exceed some amount
+
         if status == ASSIGN_STATUS_NONE:
             # Agent never made it to onboarding, delete
             del assignments[assignment_id]
@@ -890,11 +890,14 @@ class MTurkManager():
             del assignments[assignment_id]
             del agent
         elif status == ASSIGN_STATUS_IN_TASK:
+            # Disconnect in conversation is not workable (if its a conversation)
+            # TODO handle solo turker tasks with message thread reconnects
+            status = ASSIGN_STATUS_DISCONNECT
             # in conversation, inform world about disconnect
             conversation_id = assignments[assignment_id].conversation_id
             if agent in self.conv_to_agent[conversation_id]:
                 for other_agent in self.conv_to_agent[conversation_id]:
-                    if agent.id != other_agent.id:
+                    if agent.assignment_id != other_agent.assignment_id:
                         # TODO this should be handled more cleanly
                         data = {
                             'text': 'COMMAND_DISCONNECT_PARTNER',
@@ -905,8 +908,8 @@ class MTurkManager():
                         }
                         self.send_command(
                             '[World]',
-                            worker_id,
-                            assignment_id,
+                            other_agent.worker_id,
+                            other_agent.assignment_id,
                             data
                         )
                     other_agent.some_agent_disconnected = True
@@ -1216,6 +1219,7 @@ class MTurkAgent(Agent):
         self.hit_is_abandoned = False
         self.hit_is_accepted = False # state from Amazon MTurk system
         self.hit_is_returned = False # state from Amazon MTurk system
+        self.disconnected = False
 
         self.msg_queue = Queue()
         #
