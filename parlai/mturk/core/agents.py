@@ -336,7 +336,6 @@ class SocketManager():
             elif packet_type == TYPE_HEARTBEAT:
                 # Heartbeats update the last heartbeat time and respond in kind
                 self.last_heartbeat[connection_id] = time.time()
-                # TODO Is response heartbeat necessary?
                 out_pack = packet.swap_sender().set_data('').as_dict()
                 self.socketIO.emit(SOCKET_ROUTE_PACKET_STRING, out_pack, None)
             else:
