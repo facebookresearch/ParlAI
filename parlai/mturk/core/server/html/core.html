@@ -205,8 +205,20 @@
     var thread_refresh = 100;
     var ack_timeout = 2000;
     var displayed_messages = [];
+    var socket_closed = false;
 
     /* ================= Message handling ================= */
+
+    function handle_no_done_inactive(msg) {
+      is_init_page = false;
+      init_chat_panel();
+      socket.close();
+      socket_closed = true;
+      $('#inactive').text(msg['inactive_text']);
+      $("div#waiting-for-message").css("display", "none");
+      update_UI_for_response_type('inactive');
+      scroll_conversation_to_bottom();
+    }
 
     function handle_command(msg) {
         var command = msg['text'];
@@ -221,6 +233,7 @@
             // This is done without refresh
             init_chat_panel();
             socket.close();
+            socket_closed = true;
             task_done = true;
             update_UI_for_response_type('done');
             $('#disconnect').text(msg['inactive_text']);
@@ -233,19 +246,10 @@
         } else if (command === 'COMMAND_SUBMIT_HIT') {
             all_done_callback();
         } else if (command === 'COMMAND_EXPIRE_HIT') {
-            socket.close();
             hit_is_expired = true;
-            $('#inactive').text(msg['inactive_text']);
-            $("div#waiting-for-message").css("display", "none");
-            update_UI_for_response_type('inactive');
+            handle_no_done_inactive(msg)
         } else if (command === 'COMMAND_INACTIVE_HIT') {
-            is_init_page = false;
-            // This is done without refresh
-            init_chat_panel();
-            socket.close();
-            $('#inactive').text(msg['inactive_text']);
-            $("div#waiting-for-message").css("display", "none");
-            update_UI_for_response_type('inactive');
+            handle_no_done_inactive(msg)
         } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
             console.log('current conversation_id: ' + conversation_id);
             var new_conversation_id = msg['conversation_id'];
@@ -473,6 +477,7 @@
     }
 
     function _heartbeat_thread() {
+        if (socket_closed) return;
         var hb = {'id': uuidv4(),
                   'receiver_id': '[World_' + task_group_id + ']',
                   'assignment_id': assignment_id,

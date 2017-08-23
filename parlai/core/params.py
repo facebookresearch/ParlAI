@@ -109,6 +109,9 @@ class ParlaiParser(argparse.ArgumentParser):
         mturk.add_argument(
             '--verbose', dest='verbose', action='store_true',
             help='print out all messages sent/received in all conversations')
+        mturk.add_argument(
+            '--count-complete', dest='count_complete',  default=False, action='store_true',
+            help='continue until the requested number of conversations are completed rather than attempted')
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(verbose=False)
