@@ -92,14 +92,14 @@ class ParlaiParser(argparse.ArgumentParser):
             '-t', '--task',
             help='MTurk task, e.g. "qa_data_collection" or "model_evaluator"')
         mturk.add_argument(
-            '-nh', '--num-hits', default=2, type=int,
-            help='number of HITs you want to create for this task')
+            '-nc', '--num-conversations', default=1, type=int,
+            help='number of conversations you want to create for this task')
         mturk.add_argument(
-            '-na', '--num-assignments', default=1, type=int,
-            help='number of assignments for each HIT')
+            '--unique', dest='unique_worker', default=False, action='store_true',
+            help='enforce that no worker can work on your task twice')
         mturk.add_argument(
             '-r', '--reward', default=0.05, type=float,
-            help='reward for each HIT, in US dollars')
+            help='reward for each worker for finishing the conversation, in US dollars')
         mturk.add_argument(
             '--sandbox', dest='is_sandbox', action='store_true',
             help='submit the HITs to MTurk sandbox site')

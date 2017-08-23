@@ -5,14 +5,29 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.worlds import World, validate
 
-class MTurkWorld(World):
-    """Generic world for MTurk."""
+class MTurkOnboardWorld(World):
+    """Generic world for onboarding a Turker and collecting information from them."""
     def __init__(self, opt, mturk_agent):
         self.mturk_agent = mturk_agent
         self.episodeDone = False    
 
     def parley(self):
-        self.episode_done = True
+        self.episodeDone = True
+
+    def episode_done(self):
+        return self.episodeDone
+
+    def shutdown(self):
+        pass
+
+class MTurkTaskWorld(World):
+    """Generic world for MTurk tasks."""
+    def __init__(self, opt, mturk_agent):
+        self.mturk_agent = mturk_agent
+        self.episodeDone = False
+
+    def parley(self):
+        self.episodeDone = True
 
     def episode_done(self):
         return self.episodeDone

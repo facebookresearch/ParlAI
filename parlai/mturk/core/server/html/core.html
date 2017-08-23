@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+
+{% block html_head %}
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge;" />
+<title>MTurk Chat</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+{% endblock %}
+
+<body>
+<div class="container-fluid" id="ui-container">
+<div class="row">
+
+{% block main_pane %}
+{% block left_pane %}
+<div id="left-pane" class="col-xs-4" style="height: {{frame_height}}px; background-color: #dff0d8; padding: 30px; overflow:scroll;">
+    <h1>Live Chat</h1>
+    <hr style="border-top: 1px solid #555" />
+    <span id="task-description" style="font-size: 16px">
+    </span>
+</div>
+{% endblock %}
+
+{% block right_pane %}
+<div id="right-pane" style="min-height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+    <div id="right-top-pane" style="width: 100%; height: 570px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
+        <div id="message_thread" style="width: 100%">
+        </div>
+        <div id="waiting-for-message" class="row" style="margin-left: 0; margin-right: 0; display: none">
+            <div class="alert alert-warning" role="alert" style="float: left; display:table; background-color: #fff">
+                <div id="hourglass" style="margin-top: -1px; margin-right: 5px; display: inline; float: left;">
+                    <?xml version="1.0" encoding="utf-8"?><svg width='25px' height='25px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-hourglass"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><g><path fill="none" stroke="#007282" stroke-width="5" stroke-miterlimit="10" d="M58.4,51.7c-0.9-0.9-1.4-2-1.4-2.3s0.5-0.4,1.4-1.4 C70.8,43.8,79.8,30.5,80,15.5H70H30H20c0.2,15,9.2,28.1,21.6,32.3c0.9,0.9,1.4,1.2,1.4,1.5s-0.5,1.6-1.4,2.5 C29.2,56.1,20.2,69.5,20,85.5h10h40h10C79.8,69.5,70.8,55.9,58.4,51.7z" class="glass"></path><clipPath id="uil-hourglass-clip1"><rect x="15" y="20" width="70" height="25" class="clip"><animate attributeName="height" from="25" to="0" dur="1.5s" repeatCount="indefinite" values="25;0;0" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="20" to="45" dur="1.5s" repeatCount="indefinite" values="20;45;45" keyTimes="0;0.5;1"></animate></rect></clipPath><clipPath id="uil-hourglass-clip2"><rect x="15" y="55" width="70" height="25" class="clip"><animate attributeName="height" from="0" to="25" dur="1.5s" repeatCount="indefinite" values="0;25;25" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="80" to="55" dur="1.5s" repeatCount="indefinite" values="80;55;55" keyTimes="0;0.5;1"></animate></rect></clipPath><path d="M29,23c3.1,11.4,11.3,19.5,21,19.5S67.9,34.4,71,23H29z" clip-path="url(#uil-hourglass-clip1)" fill="#ffab00" class="sand"></path><path d="M71.6,78c-3-11.6-11.5-20-21.5-20s-18.5,8.4-21.5,20H71.6z" clip-path="url(#uil-hourglass-clip2)" fill="#ffab00" class="sand"></path><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="180 50 50" repeatCount="indefinite" dur="1.5s" values="0 50 50;0 50 50;180 50 50" keyTimes="0;0.7;1"></animateTransform></g></svg>
+                </div>
+                <span style="font-size: 16px">Waiting for the next person to speak...</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="right-bottom-pane" style="width: 100%; background-color: #eee">
+        <div id="response-type-idle" class="response-type-module" style="display:none">
+        </div>
+        <div id="response-type-text-input" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <div style="height: 50px; width: 100%; display: block; float: left; ">
+                <input id="id_text_input" type="text" style="width: 80%; height: 100%; float: left; font-size: 16px" class="form-control" value="" placeholder="Please enter here...">
+                <button class="btn btn-primary" style="width: 100px; height: 100%; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="id_send_msg_button">Send</button>
+            </div>
+        </div>
+        <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
+            <span id="disconnect" style="font-size: 14pt;margin-right: 15px"></span>
+            <button id="done-button" type="button" class="btn btn-primary btn-lg">
+                <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
+            </button>
+        </div>
+        <div id="response-type-expired" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
+            <span style="font-size: 16px">This HIT had already expired.</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% endblock %}
+
+</div>
+</div>
+<form id="mturk_submit_form" action="" method="post" style="display:none">
+    <input id="assignmentId" name="assignmentId" value="" />
+    <input id="hitId" name="hitId" value="" />
+    <input id="workerId" name="workerId" value="" />
+    <input type="submit" value="Submit" name="submitButton" id="mturk_submit_button" />
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.rawgit.com/yf225/jquery-ajax-retry/master/dist/jquery.ajax-retry.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+<script src="https://github.com/lancedikson/bowser/releases/download/1.6.0/bowser.min.js"></script>
+
+<script type="text/javascript">
+    /* ================= Utility functions ================= */
+    function scroll_conversation_to_bottom() {
+        $('div#right-top-pane').animate({
+            scrollTop: $('div#right-top-pane').get(0).scrollHeight
+        }, 500);
+    }
+
+    // Check if in mturk hit page, by checking whether in iframe
+    function in_mturk_hit_page () {
+        try {
+            return window.self !== window.top;
+        } catch (e) {
+            return true;
+        }
+    }
+
+    function wait_for_worker_input() {
+        update_UI_for_response_type('text_input');
+        $("div#waiting-for-message").css("display", "none");
+        $("input#id_text_input").focus();
+    }
+
+    // Get URL parameter
+    function get_url_parameter(sParam) {
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : sParameterName[1];
+            }
+        }
+    };
+
+    function replace_url_parameter(url, paramName, paramValue){
+        if(paramValue == null)
+            paramValue = '';
+        var pattern = new RegExp('\\b('+paramName+'=).*?(&|$)')
+        if(url.search(pattern)>=0){
+            return url.replace(pattern,'$1' + paramValue + '$2');
+        }
+        return url + (url.indexOf('?')>0 ? '&' : '?') + paramName + '=' + paramValue 
+    }
+
+    function get_hit_config(callback_function) {
+        $.ajax({
+            url: '/get_hit_config',
+            timeout: 3000 // in milliseconds
+        }).retry({times: 1000, timeout: 3000}).then(
+            function(data) {
+                if (verbose_log) console.log(object_to_string(data));
+                if (callback_function) {
+                    callback_function(data);
+                }
+            }
+        );
+    }
+
+    function object_to_string(obj) {
+        var str = '';
+        for (var p in obj) {
+            if (obj.hasOwnProperty(p)) {
+                str += p + '::' + obj[p] + '\n';
+            }
+        }
+        return str;
+    }
+
+    function check_websockets_support() {
+        return !((bowser.msie && bowser.version < 10) || (bowser.firefox && bowser.version < 11) || (bowser.chrome && bowser.version < 16) || (bowser.safari && bowser.version < 7) || (bowser.opera && bowser.version < 12.1));
+    }
+
+    /* ================= UI related ================= */
+    $(window).resize(function() {
+        $("input#id_text_input").width($("div#right-bottom-pane").width() - 210);
+        $("div#right-top-pane").height($("div#left-pane").height() - $("div#right-bottom-pane").outerHeight() - 20);
+    });
+
+    // Handling keypress event
+    $(document).keypress(function(e) {
+        if (e.which == 13) {
+            if (!($("button#id_send_msg_button").prop("disabled") === true)) {
+                $("button#id_send_msg_button").click();
+            }
+        }
+    });
+    
+    /* ================= State variables ================= */
+    var verbose_log = true;
+    var is_cover_page = ("{{is_cover_page}}" === 'true') ? true : false;
+    var is_init_page = ("{{is_init_page}}" === 'true') ? true : false;
+    var task_group_id = get_url_parameter('task_group_id');
+    var assignment_id = null;
+    var hit_id = null;
+    var worker_id = null;
+    var conversation_id = "{{conversation_id}}" || null;
+    var cur_agent_id = "{{cur_agent_id}}" || null;
+    var task_description = null;
+    var mturk_submit_url = null;
+    var hit_is_submitted = false;
+    var hit_is_expired = false;
+    var message_list = [];
+    var socket = null;
+    var task_done = false;
+    var ui_state_lock = false; // We need to acquire this lock first before attempting to update the UI state with new messages or commands.
+    var message_map = {};
+    var message_callback = {};
+    var STATUS_ACK = 'ack';
+    var STATUS_INIT = 'init';
+    var STATUS_SENT = 'sent';
+    var TYPE_ACK = 'ack';
+    var TYPE_MESSAGE = 'message';
+    var TYPE_HEARTBEAT = 'heartbeat';
+    var TYPE_ALIVE = 'alive';
+    var message_id = 0;
+    var q = new PriorityQueue();
+    var blocking_id = null;
+    var blocking_sent_time = null;
+    var last_server_heartbeat = null;
+    var thread_refresh = 100;
+    var ack_timeout = 2000;
+
+    /* ================= Message handling ================= */
+
+    function handle_command(msg) {
+        var command = msg['text'];
+        if (command === 'COMMAND_SEND_MESSAGE') {
+            wait_for_worker_input();
+        } else if (command === 'COMMAND_SHOW_DONE_BUTTON') {
+            task_done = true;
+            update_UI_for_response_type('done');
+            $("div#waiting-for-message").css("display", "none");
+        } else if (command === 'COMMAND_DISCONNECT_PARTNER') {
+            task_done = true;
+            update_UI_for_response_type('done');
+            $('#disconnect').text(msg['disconnect_text']);
+;            $("div#waiting-for-message").css("display", "none");
+        } else if (command === 'COMMAND_SUBMIT_HIT') {
+            all_done_callback();
+        } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
+            console.log('current conversation_id: ' + conversation_id);
+            var new_conversation_id = msg['conversation_id'];
+            var new_agent_id = msg['agent_id'];
+            if ((conversation_id === null && (new_conversation_id.indexOf('o_') !== -1) || (new_conversation_id.indexOf('t_') !== -1)) || (new_conversation_id.indexOf('o_') !== -1 && new_conversation_id.indexOf('t_') !== -1)) // Only move from init state to onboarding / task, or from onboarding to task
+                {
+                console.log("Redirecting to new URL...");
+                var new_url = replace_url_parameter(window.location.href, 'mturk_agent_id', new_agent_id);
+                new_url = replace_url_parameter(new_url, 'conversation_id', new_conversation_id);
+                new_url = replace_url_parameter(new_url, 'changing_conversation', true);
+
+                window.location.href = new_url; // Reload page to get agent-specific template
+            }
+        }
+    }
+
+    function handle_new_message(message) {
+        var agent_id = message.id;
+        var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+
+        if (agent_id !== cur_agent_id) {
+            $('div#message_thread').append(
+                '<div class="row" style="margin-left: 0; margin-right: 0">'+
+                    '<div class="alert alert-warning" role="alert" style="float: left; display:table">'+
+                        '<span style="font-size: 16px"><b>'+agent_id+'</b>: '+message_text+'</span>'+
+                    '</div>'+
+                '</div>'
+            );
+        } else {
+            $('div#message_thread').append(
+                '<div class="row" style="margin-left: 0; margin-right: 0">'+
+                    '<div class="alert alert-info" role="alert" style="float: right; display:table">'+
+                        '<span style="font-size: 16px"><b>'+agent_id+'</b>: '+message_text+'</span>'+
+                    '</div>'+
+                '</div>'
+            );
+        }
+
+        $("div#message_thread").css("display", "");
+        scroll_conversation_to_bottom();
+    }
+
+    function uuidv4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    $("button#id_send_msg_button").on('click', function () {
+        var text = $("input#id_text_input").val();
+        if (!(text == '')) {
+            $("button#id_send_msg_button").addClass("disabled");
+            $("button#id_send_msg_button").prop("disabled", true);
+
+            send_message(
+                TYPE_MESSAGE,
+                {text: text,
+                 id: cur_agent_id,
+                 message_id: message_id,
+                 episode_done: false},
+                true,
+                true,
+                function(msg) {
+                    $("button#id_send_msg_button").removeClass("disabled");
+                    $("button#id_send_msg_button").prop("disabled", false);
+                    $("input#id_text_input").val("");
+                    message_id += 1;
+                    $("div#response-type-text-input").css("display", "none");
+                    handle_new_message(msg.data);
+                    after_send_message();
+                }
+            );
+        }
+    });
+
+    function PriorityQueue() {
+        this.data = []
+    }
+
+    PriorityQueue.prototype.push = function(element, priority) {
+        priority = +priority
+        for (var i = 0; i < this.data.length && this.data[i][0] < priority; i++);
+        this.data.splice(i, 0, [element, priority])
+    }
+
+    PriorityQueue.prototype.pop = function() {
+        return this.data.shift()
+    }
+
+    PriorityQueue.prototype.peek = function() {
+        return this.data[0]
+    }
+
+    PriorityQueue.prototype.size = function() {
+      return this.data.length
+    }
+
+    function _sending_thread() {
+        if (blocking_id === null) {
+            // not blocking => see if we can process next message
+            if (q.size() > 0) {
+                if (Date.now() > q.peek()[1]) {
+                    var item = q.pop();
+                    var msg = item[0];
+                    var t = item[1];
+                    if (msg.status !== STATUS_ACK) {
+                        var event_name = 'route message';
+                        if (msg.type === TYPE_ALIVE) event_name = 'agent alive';
+
+                        socket.emit(event_name, msg);
+
+                        if (msg.require_ack) {
+                            if (msg.blocking) {
+                                blocking_id = msg.id;
+                                blocking_sent_time = Date.now();
+                            } else {
+                                q.push(msg, t + ack_timeout); // 2 sec timeout
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            // blocking on message `blocking_id`
+            if ((Date.now() - blocking_sent_time) > ack_timeout) {
+                console.log('Timeout: ' + blocking_id);
+                // timeout
+                var m = message_map[blocking_id];
+                q.push(m, blocking_sent_time);
+                blocking_id = null;
+            }
+        }
+        setTimeout(_sending_thread, thread_refresh);
+    }
+
+    function send_message(type, data, require_ack, blocking, callback) {
+        var time = Date.now();
+        var id = uuidv4();
+
+        var msg = {id: id,
+                   type: type,
+                   sender_id: assignment_id,
+                   receiver_id: '[World]',
+                   data: data,
+                   status: STATUS_INIT,
+                   require_ack: require_ack,
+                   blocking: blocking};
+        q.push(msg, time);
+        message_map[id] = msg;
+        message_callback[id] = callback;
+    }
+
+    function setup_socket() {
+        var host = window.location.hostname;
+        socket = io(host);
+
+        socket.on('socket_open', function() {
+            if (verbose_log) console.log('Server connected.');
+            send_message(
+                TYPE_ALIVE,
+                {hit_id: hit_id,
+                 assignment_id: assignment_id,
+                 worker_id: worker_id,
+                 conversation_id: conversation_id},
+                true,
+                true,
+                null
+            );
+        });
+        socket.on('disconnect', function() {
+            if (verbose_log) console.log('Server disconnected.');
+        });
+
+        socket.on('new message', function(msg) {
+            console.log('received: ' + msg.id);
+            if (msg.type === TYPE_HEARTBEAT) {
+                last_server_heartbeat = Date.now();
+            } else if (msg.type === TYPE_ACK) {
+                message_map[msg.id].status = STATUS_ACK;
+                if (msg.id === blocking_id) {
+                    // release lock when ack arrives
+                    blocking_id = null;
+                    blocking_sent_time = null;
+                    //execute callback
+                    if (message_callback[msg.id]) {
+                        message_callback[msg.id](message_map[msg.id]);
+                    }
+                }
+            } else if (msg.type === TYPE_MESSAGE) {
+                //send ack
+                socket.emit(
+                    'route message',
+                    {
+                        id: msg.id,
+                        sender_id: msg.receiver_id,
+                        receiver_id: msg.sender_id,
+                        type: TYPE_ACK,
+                        data: null
+                    }
+                );
+                if (msg.data.type === 'COMMAND'){
+                    handle_command(msg.data);
+                } else if (msg.data.type === 'MESSAGE') {
+                    handle_new_message(msg.data);
+                }
+            }
+        });
+    }
+
+    function _heartbeat_thread() {
+        var hb = {'id': uuidv4(),
+                  'receiver_id': '[World]',
+                  'sender_id': assignment_id,
+                  'type': TYPE_HEARTBEAT,
+                  'data': null}
+        socket.emit('route message', hb);
+        setTimeout(_heartbeat_thread, 1000);
+    }
+
+    function update_UI_for_response_type(response_type) {
+        $("div.response-type-module").css("display", "none");
+
+        if (response_type == 'idle') {
+            $("div#response-type-idle").css("display", "");
+        } else if (response_type == 'text_input') {
+            $("div#response-type-text-input").css("display", "");
+        } else if (response_type == 'done') {
+            $("div#response-type-done").css("display", "");
+        } else if (response_type == 'expired') {
+            $("div#response-type-expired").css("display", "");
+        }
+        $(window).resize();
+    }
+
+    $("button#done-button").on('click', function() {
+        all_done_callback();
+    });
+
+    function all_done_callback() {
+        if (in_mturk_hit_page()) {
+            hit_is_submitted = true;
+            $("input#mturk_submit_button").click();
+        }
+    }
+
+    function init_cover_page() {
+        $("span#task-description").html(task_description);
+    }
+
+    function init_chat_page() {
+        if (is_init_page) {
+            $("div#ui-container").html("Initializing...");
+        } else {
+            $("form#mturk_submit_form input#assignmentId").val(assignment_id);
+            $("form#mturk_submit_form input#hitId").val(hit_id);
+            $("form#mturk_submit_form input#workerId").val(worker_id);
+            $("form#mturk_submit_form").attr("action", mturk_submit_url);
+            $("span#task-description").html(task_description);
+
+            update_UI_for_response_type('idle');
+            $("div#waiting-for-message").css("display", "");
+            $("div#left-pane").removeClass('col-xs-12');
+            $("div#left-pane").addClass('col-xs-4');
+
+            $(window).resize();
+        }
+        setup_socket();
+        _sending_thread();
+        _heartbeat_thread();
+    }
+
+    $(document).ready(function() {
+        if (check_websockets_support()) {
+            assignment_id = get_url_parameter('assignmentId');
+            hit_id = get_url_parameter('hitId');
+            worker_id = get_url_parameter('workerId');
+
+            get_hit_config(function(data) {
+                task_description = data['task_description'];
+                mturk_submit_url = data['mturk_submit_url'];
+
+                if (is_cover_page) {
+                    init_cover_page();
+                } else {
+                    init_chat_page();
+                }
+            });
+        } else {
+            $("body").html("Sorry, but we found that your browser does not support WebSockets. Please consider updating your browser to a newer version and check this HIT again.");
+        }
+    });
+    function after_receive_command(command) {};
+    function after_receive_message(message) {};
+    function after_send_message() {};
+</script>
+
+{% block additional_scripts %}
+{% endblock %}
+
+</html>
