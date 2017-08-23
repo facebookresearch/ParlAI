@@ -103,7 +103,7 @@ def print_and_log(message, should_print=True):
         print(message)
 
 class AssignState():
-    """Class for holding state information about an assignment currentyly
+    """Class for holding state information about an assignment currently
     claimed by an agent"""
     def __init__(self, assignment_id, status=ASSIGN_STATUS_NONE,
                  conversation_id=None):
@@ -875,11 +875,11 @@ class MTurkManager():
 
         if status == ASSIGN_STATUS_NONE:
             # Agent never made it to onboarding, delete
-            del assignments[assignment_id]
+            assignments[assignment_id].status = ASSIGN_STATUS_DISCONNECT
             del agent
         elif status == ASSIGN_STATUS_ONBOARDING:
-            # Agent never made it to task pool, delete
-            del assignments[assignment_id]
+            # Agent never made it to task pool, queue a delete
+            assignments[assignment_id].status = ASSIGN_STATUS_DISCONNECT
             del agent
             # TODO kill onboarding world's thread
         elif status == ASSIGN_STATUS_WAITING:
@@ -887,18 +887,18 @@ class MTurkManager():
             if agent in self.worker_pool:
                 with self.worker_pool_change_condition:
                     self.worker_pool.remove(agent)
-            del assignments[assignment_id]
+            assignments[assignment_id].status = ASSIGN_STATUS_DISCONNECT
             del agent
         elif status == ASSIGN_STATUS_IN_TASK:
             # Disconnect in conversation is not workable (if its a conversation)
             # TODO handle solo turker tasks with message thread reconnects
-            status = ASSIGN_STATUS_DISCONNECT
-            # in conversation, inform world about disconnect
+            assignments[assignment_id].status = ASSIGN_STATUS_DISCONNECT
+            # in conversation, inform others about disconnect
             conversation_id = assignments[assignment_id].conversation_id
             if agent in self.conv_to_agent[conversation_id]:
                 for other_agent in self.conv_to_agent[conversation_id]:
                     if agent.assignment_id != other_agent.assignment_id:
-                        # TODO this should be handled more cleanly
+                        # TODO creating this should be abstracted into helpers
                         data = {
                             'text': 'COMMAND_DISCONNECT_PARTNER',
                             'disconnect_text': 'One of the other agents ' + \
@@ -912,8 +912,12 @@ class MTurkManager():
                             other_agent.assignment_id,
                             data
                         )
+                    # Mark this assignment for other agent as partner disconnect
                     other_agent.some_agent_disconnected = True
-                    # TODO logic to delete these assignments from other workers
+                    other_assignments = \
+                        self.worker_state[other_agent.worker_id].assignments
+                    other_assignments[other_agent.assignment_id].status = \
+                        ASSIGN_STATUS_PARTNET_DISCONNECT
         elif (status == ASSIGN_STATUS_DONE or
               status == ASSIGN_STATUS_EXPIRED or
               status == ASSIGN_STATUS_DISCONNECT or

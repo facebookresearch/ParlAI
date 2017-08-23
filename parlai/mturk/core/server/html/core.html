@@ -509,6 +509,8 @@
     }
 
     function init_cover_page() {
+        $("div#ui-placeholder").css("display", "none");
+        $("div#ui-content").css("display", "");
         $("span#task-description").html(task_description);
     }
 
@@ -549,7 +551,8 @@
             get_hit_config(function(data) {
                 task_description = data['task_description'];
                 mturk_submit_url = data['mturk_submit_url'];
-
+                console.log("Is cover page? " + is_cover_page)
+                console.log("Task Description " + task_description)
                 if (is_cover_page) {
                     init_cover_page();
                 } else {
