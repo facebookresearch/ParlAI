@@ -184,7 +184,6 @@
     var mturk_submit_url = null;
     var hit_is_submitted = false;
     var hit_is_expired = false;
-    var message_list = [];
     var socket = null;
     var task_done = false;
     var packet_map = {};
@@ -197,13 +196,13 @@
     var TYPE_HEARTBEAT = 'heartbeat';
     var TYPE_ALIVE = 'alive';
     var SERVER_HEARTBEAT_TIMEOUT = 8000
-    var message_id = 0;
     var q = new PriorityQueue();
     var blocking_id = null;
     var blocking_sent_time = null;
     var last_server_heartbeat = null;
     var thread_refresh = 100;
     var ack_timeout = 2000;
+    var message_id = 0;
     var displayed_messages = [];
     var socket_closed = false;
 
@@ -218,6 +217,12 @@
       $("div#waiting-for-message").css("display", "none");
       update_UI_for_response_type('inactive');
       scroll_conversation_to_bottom();
+    }
+
+    function clear_messages() {
+      var message_id = 0;
+      var displayed_messages = [];
+      $('div#message_thread').html("");
     }
 
     function handle_command(msg) {
@@ -250,13 +255,24 @@
             handle_no_done_inactive(msg)
         } else if (command === 'COMMAND_INACTIVE_HIT') {
             handle_no_done_inactive(msg)
+        } else if (command === 'COMMAND_RESTORE_STATE') {
+            last_command = msg['last_command']
+            clear_messages();
+            messages = msg['messages'];
+            for (var i = 0; i < messages.length; i++) {
+              handle_new_message(message_id, messages[i]);
+              message_id += 1;
+            }
+            if (last_command) {
+              handle_command(last_command);
+            }
         } else if (command === 'COMMAND_CHANGE_CONVERSATION') {
             console.log('current conversation_id: ' + conversation_id);
             var new_conversation_id = msg['conversation_id'];
             console.log('new conversation_id: ' + new_conversation_id);
             var new_agent_id = msg['agent_id'];
 
-            if ((conversation_id === null && ((new_conversation_id.indexOf('o_') !== -1) || (new_conversation_id.indexOf('t_') !== -1))) || (conversation_id !== null && conversation_id.indexOf('w_') !== -1 && new_conversation_id.indexOf('t_') !== -1)) // Only move from init state to onboarding / task, or from waiting to task
+            if ((conversation_id === null && ((new_conversation_id.indexOf('o_') !== -1) || (new_conversation_id.indexOf('t_') !== -1) || (new_conversation_id.indexOf('w_') !== -1))) || (conversation_id !== null && conversation_id.indexOf('w_') !== -1 && new_conversation_id.indexOf('t_') !== -1)) // Only move from init state to onboarding / task, or from waiting to task
             {
                 console.log("Redirecting to new URL...");
                 var new_url = replace_url_parameter(window.location.href, 'mturk_agent_id', new_agent_id);
@@ -300,6 +316,7 @@
 
         $("div#message_thread").css("display", "");
         scroll_conversation_to_bottom();
+        $("div#waiting-for-message").css("display", "");
     }
 
     function uuidv4() {
@@ -553,9 +570,9 @@
 
     function init_chat_page() {
         if (is_init_page) {
-            $("div#ui-placeholder").html("Initializing...");
+        $("div#ui-placeholder").html("Initializing...");
         } else {
-            init_chat_panel();
+          init_chat_panel();
         }
         setup_socket();
         _sending_thread();
@@ -571,7 +588,8 @@
             get_hit_config(function(data) {
                 task_description = data['task_description'];
                 mturk_submit_url = data['mturk_submit_url'];
-                console.log("Is cover page? " + is_cover_page)
+                var frame_height = data['frame_height'];
+                $("div#left-pane").css("height", frame_height+"px")
                 console.log("Task Description " + task_description)
                 if (is_cover_page) {
                     init_cover_page();

@@ -13,7 +13,7 @@ import getpass
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
 
-# TODO: remove unused imports 
+# TODO: remove unused imports
 
 region_name = 'us-east-1'
 aws_profile_name = 'parlai_mturk'
@@ -105,6 +105,23 @@ def check_mturk_balance(balance_needed, is_sandbox):
         return False
     else:
         return True
+
+def create_hit_config(task_description, unique_worker, is_sandbox):
+    mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
+    if not is_sandbox:
+        mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
+    hit_config = {
+        'task_description': task_description,
+        'is_sandbox': is_sandbox,
+        'mturk_submit_url': mturk_submit_url,
+        'unique_worker': unique_worker,
+        'frame_height': mturk_hit_frame_height
+    }
+    hit_config_file_path = os.path.join(parent_dir, 'hit_config.json')
+    if os.path.exists(hit_config_file_path):
+        os.remove(hit_config_file_path)
+    with open(hit_config_file_path, 'w') as hit_config_file:
+        hit_config_file.write(json.dumps(hit_config))
 
 def get_mturk_client(is_sandbox):
     client = boto3.client(

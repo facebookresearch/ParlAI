@@ -15,10 +15,10 @@ import string
 import json
 import uuid
 from parlai.core.agents import create_agent_from_shared
-from parlai.mturk.core.server_utils import setup_server, create_hit_config
+from parlai.mturk.core.server_utils import setup_server
 from parlai.mturk.core.mturk_utils import calculate_mturk_cost, \
     check_mturk_balance, create_hit_type, create_hit_with_hit_type, \
-    get_mturk_client, setup_aws_credentials
+    get_mturk_client, setup_aws_credentials, create_hit_config
 import threading
 from parlai.mturk.core.data_model import COMMAND_SEND_MESSAGE, \
     COMMAND_SHOW_DONE_BUTTON, COMMAND_EXPIRE_HIT, COMMAND_SUBMIT_HIT, \
@@ -106,6 +106,10 @@ def print_and_log(message, should_print=True):
     if should_print or debug: # Always print message in debug mode
         print(message)
 
+def generate_event_id(worker_id):
+    """Creates a unique id to use for identifying a packet"""
+    return worker_id + '_' + str(uuid.uuid4())
+
 class AssignState():
     """Class for holding state information about an assignment currently
     claimed by an agent"""
@@ -114,6 +118,8 @@ class AssignState():
         self.assignment_id = assignment_id
         self.status = status
         self.conversation_id = conversation_id
+        self.messages = []
+        self.last_command = None
 
 
     def log_reconnect(self, worker_id):
@@ -171,6 +177,17 @@ class AssignState():
             'conversation_id': self.conversation_id,
             'agent_id': worker_id
         }
+
+
+    def __repr__(self):
+        return 'Assignment <{},{},{}> [{}] lc - {}'.format(
+            self.assignment_id,
+            self.conversation_id,
+            self.status,
+            self.messages,
+            self.last_command
+        )
+
 
 
 class WorkerState():
@@ -266,6 +283,17 @@ class Packet():
         return Packet(self.id, TYPE_ACK, self.receiver_id, self.sender_id,
             self.assignment_id, '', self.conversation_id, False, False)
 
+
+    def new_copy(self):
+        """Returns a new packet that is a copy of this packet with a new id and
+        with a fresh status"""
+        packet = Packet.from_dict(self.as_dict())
+        packet.id = generate_event_id(self.receiver_id)
+        return packet
+
+
+    def __repr__(self):
+        return 'Packet <' + str(self.as_dict()) + '>'
 
 
 class SocketManager():
@@ -467,11 +495,6 @@ class SocketManager():
             self.close_channel_internal(connection_id)
 
 
-    def generate_event_id(self, worker_id):
-        """Creates a unique id to use for identifying a packet"""
-        return worker_id + '_' + str(uuid.uuid4())
-
-
     def socket_is_open(self, connection_id):
         return connection_id in self.queues
 
@@ -666,7 +689,6 @@ class MTurkManager():
                     agent_id='onboarding',
                     change_callback=self._set_worker_status_to_onboard
                 )
-
                 # Wait for turker to be in onboarding status
                 self.wait_for_status(assign_state, ASSIGN_STATUS_ONBOARDING)
                 # call onboarding function
@@ -839,6 +861,29 @@ class MTurkManager():
             time.sleep(THREAD_MEDIUM_SLEEP)
 
 
+    def restore_worker_state(self, worker_id, assignment_id):
+        assignment = self.worker_state[worker_id].assignments[assignment_id]
+        def _push_worker_state(msg):
+            data = {
+                'text': 'COMMAND_RESTORE_STATE',
+                'messages': assignment.messages,
+                'last_command': assignment.last_command
+            }
+            self.send_command(
+                '[World_' + self.task_group_id + ']',
+                worker_id,
+                assignment_id,
+                data
+            )
+
+        agent = self.mturk_agents[worker_id][assignment_id]
+        agent.change_conversation(
+            conversation_id=agent.conversation_id,
+            agent_id=agent.id,
+            change_callback=_push_worker_state
+        )
+
+
     def setup_socket(self):
         """Sets up a socket_manager with defined callbacks"""
         self.socket_manager = SocketManager(self.server_url, self.port,
@@ -927,10 +972,11 @@ class MTurkManager():
                 # Reconnecting before even being given a world. The retries for
                 # switching to the onboarding world should catch this
                 return
-            elif curr_assign.status == ASSIGN_STATUS_ONBOARDING:
-                # Reconnecting to the onboarding world or to a task world should
-                # resend the messages already in the conversation
-                # TODO investigate retaining a message thread
+            elif (curr_assign.status == ASSIGN_STATUS_ONBOARDING or
+                  curr_assign.status == ASSIGN_STATUS_WAITING):
+                # Reconnecting to the onboarding world or to a waiting world
+                # should either restore state or expire (if workers are no
+                # longer being accepted for this task)
                 if not self.accepting_workers:
                     # TODO move this message creation logic elsewhere
                     data = {
@@ -947,34 +993,17 @@ class MTurkManager():
                         data
                     )
                     curr_assign.status == ASSIGN_STATUS_EXPIRED
-                return
+                else:
+                    self.restore_worker_state(worker_id, assign_id)
             elif curr_assign.status == ASSIGN_STATUS_IN_TASK:
                 # Reconnecting to the onboarding world or to a task world should
                 # resend the messages already in the conversation
-                # TODO investigate retaining a message thread
-                return
-            elif curr_assign.status == ASSIGN_STATUS_WAITING:
-                # Reconnecting to the waiting queue is a no-op
-                if not self.accepting_workers:
-                    # TODO move this message creation logic elsewhere
-                    data = {
-                        'text': 'COMMAND_EXPIRE_HIT',
-                        'inactive_text': \
-                            'This HIT is expired, please return and take a new ' + \
-                            'one if you\'d want to work on this task.',
-                        'conversation_id': conversation_id
-                    }
-                    self.send_command(
-                        '[World_' + self.task_group_id + ']',
-                        worker_id,
-                        assign_id,
-                        data
-                    )
-                    curr_assign.status == ASSIGN_STATUS_EXPIRED
-                return
+                self.restore_worker_state(worker_id, assign_id)
             elif curr_assign.status == ASSIGN_STATUS_ASSIGNED:
                 # Connect after a switch to a task world, mark the switch
                 curr_assign.status = ASSIGN_STATUS_IN_TASK
+                curr_assign.last_command = None
+                curr_assign.messages = []
             elif (curr_assign.status == ASSIGN_STATUS_DISCONNECT or
                   curr_assign.status == ASSIGN_STATUS_DONE or
                   curr_assign.status == ASSIGN_STATUS_EXPIRED or
@@ -989,13 +1018,20 @@ class MTurkManager():
                     assign_id,
                     data
                 )
-                return
 
 
     def on_new_message(self, pkt):
-        """Put an incoming message onto the correct agent's message queue"""
+        """Put an incoming message onto the correct agent's message queue and
+        add it to the proper message thread"""
         worker_id = pkt.sender_id
         assignment_id = pkt.assignment_id
+        # Push the message to the message thread ready to send on a reconnect
+        self.worker_state[worker_id].assignments[assignment_id].messages.append(
+            pkt.data
+        )
+        # Clear the send message command
+        self.worker_state[worker_id].assignments[assignment_id].last_command = \
+            None
         self.mturk_agents[worker_id][assignment_id].msg_queue.put(pkt.data)
 
 
@@ -1078,11 +1114,11 @@ class MTurkManager():
         self.socket_manager.close_channel(worker_id, assignment_id)
 
 
-    def send_through_socket(self, sender_id, receiver_id, assignment_id, data,
-                            blocking, content_type, ack_func):
-        """Wrapper for pushing through socket"""
-        data['type'] = content_type
-        event_id = self.socket_manager.generate_event_id(receiver_id)
+    def send_message(self, sender_id, receiver_id, assignment_id, data,
+                     blocking=True, ack_func=None):
+        """Sends a message through the socket manager, updates state"""
+        data['type'] = MESSAGE_TYPE_MESSAGE
+        event_id = generate_event_id(receiver_id)
         packet = Packet(
             event_id,
             TYPE_MESSAGE,
@@ -1093,36 +1129,35 @@ class MTurkManager():
             blocking=blocking,
             ack_func=ack_func
         )
+        # Push outgoing message to the message thread to be able to resend
+        assignment = self.worker_state[receiver_id].assignments[assignment_id]
+        assignment.messages.append(packet.data)
         self.socket_manager.send_packet(packet)
-
-
-    def send_message(self, sender_id, receiver_id, assignment_id, data,
-                     blocking=True, ack_func=None):
-        """Sends a message through the socket manager"""
-        self.send_through_socket(
-            sender_id,
-            receiver_id,
-            assignment_id,
-            data,
-            blocking,
-            MESSAGE_TYPE_MESSAGE,
-            ack_func
-        )
 
 
     def send_command(self, sender_id, receiver_id, assignment_id, data,
                      blocking=True, ack_func=None):
-        """Sends a command through the socket manager"""
-        self.send_through_socket(
+        """Sends a command through the socket manager, updates state"""
+        data['type'] = MESSAGE_TYPE_COMMAND
+        event_id = generate_event_id(receiver_id)
+        packet = Packet(
+            event_id,
+            TYPE_MESSAGE,
             sender_id,
             receiver_id,
             assignment_id,
             data,
-            blocking,
-            MESSAGE_TYPE_COMMAND,
-            ack_func
+            blocking=blocking,
+            ack_func=ack_func
         )
 
+        if (data['text'] != COMMAND_CHANGE_CONVERSATION and
+            data['text'] != 'COMMAND_RESTORE_STATE'):
+            # Append last command, as it might be necessary to restore state
+            assign = self.worker_state[receiver_id].assignments[assignment_id]
+            assign.last_command = packet.data
+
+        self.socket_manager.send_packet(packet)
 
     def create_agent(self, hit_id, assignment_id, worker_id):
         """Initializes an agent and adds it to the map"""
@@ -1144,6 +1179,8 @@ class MTurkManager():
             # An agent didn't acknowledge the conversation change before
             # refreshing, so we didn't put them in assigned before this call
             assign_state.status = ASSIGN_STATUS_IN_TASK
+            assign_state.last_command = None
+            assign_state.messages = []
             print_and_log("Worker reconnected in waiting")
         elif assign_state.status != ASSIGN_STATUS_IN_TASK:
             # Avoid on a second ack if alive already came through
@@ -1339,6 +1376,7 @@ class MTurkManager():
             assign_id = worker.assignment_id
             state = self.worker_state[worker_id].assignments[assign_id]
             state.status = ASSIGN_STATUS_DONE
+            print (state)
 
 
     def free_workers(self, workers):
@@ -1492,12 +1530,13 @@ class MTurkAgent(Agent):
     def change_conversation(self, conversation_id, agent_id, change_callback):
         """Handles changing a conversation for an agent, takes a callback for
         when the command is acknowledged"""
+        self.id = agent_id
+        self.conversation_id = conversation_id
         data = {
-            'text': 'COMMAND_CHANGE_CONVERSATION',
+            'text': COMMAND_CHANGE_CONVERSATION,
             'conversation_id': conversation_id,
             'agent_id': agent_id
         }
-        self.conversation_id = conversation_id
         self.manager.send_command(
             '[World_' + self.task_group_id + ']',
             self.worker_id,
