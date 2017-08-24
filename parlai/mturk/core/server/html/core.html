@@ -260,8 +260,7 @@
             clear_messages();
             messages = msg['messages'];
             for (var i = 0; i < messages.length; i++) {
-              handle_new_message(message_id, messages[i]);
-              message_id += 1;
+              handle_new_message(messages[i]['message_id'], messages[i]);
             }
             if (last_command) {
               handle_command(last_command);
@@ -271,7 +270,6 @@
             var new_conversation_id = msg['conversation_id'];
             console.log('new conversation_id: ' + new_conversation_id);
             var new_agent_id = msg['agent_id'];
-
             if ((conversation_id === null && ((new_conversation_id.indexOf('o_') !== -1) || (new_conversation_id.indexOf('t_') !== -1) || (new_conversation_id.indexOf('w_') !== -1))) || (conversation_id !== null && conversation_id.indexOf('w_') !== -1 && new_conversation_id.indexOf('t_') !== -1)) // Only move from init state to onboarding / task, or from waiting to task
             {
                 console.log("Redirecting to new URL...");
@@ -336,7 +334,7 @@
                 TYPE_MESSAGE,
                 {text: text,
                  id: cur_agent_id,
-                 message_id: message_id,
+                 message_id: uuidv4(),
                  episode_done: false},
                 true,
                 true,

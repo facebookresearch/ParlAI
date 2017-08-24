@@ -866,17 +866,18 @@ class MTurkManager():
     def restore_worker_state(self, worker_id, assignment_id):
         assignment = self.worker_state[worker_id].assignments[assignment_id]
         def _push_worker_state(msg):
-            data = {
-                'text': 'COMMAND_RESTORE_STATE',
-                'messages': assignment.messages,
-                'last_command': assignment.last_command
-            }
-            self.send_command(
-                '[World_' + self.task_group_id + ']',
-                worker_id,
-                assignment_id,
-                data
-            )
+            if len(assignment.messages) != 0:
+                data = {
+                    'text': 'COMMAND_RESTORE_STATE',
+                    'messages': assignment.messages,
+                    'last_command': assignment.last_command
+                }
+                self.send_command(
+                    '[World_' + self.task_group_id + ']',
+                    worker_id,
+                    assignment_id,
+                    data
+                )
 
         agent = self.mturk_agents[worker_id][assignment_id]
         agent.change_conversation(
@@ -995,12 +996,13 @@ class MTurkManager():
                         data
                     )
                     curr_assign.status == ASSIGN_STATUS_EXPIRED
-                else:
+                elif not conversation_id:
                     self.restore_worker_state(worker_id, assign_id)
             elif curr_assign.status == ASSIGN_STATUS_IN_TASK:
                 # Reconnecting to the onboarding world or to a task world should
                 # resend the messages already in the conversation
-                self.restore_worker_state(worker_id, assign_id)
+                if not conversation_id:
+                    self.restore_worker_state(worker_id, assign_id)
             elif curr_assign.status == ASSIGN_STATUS_ASSIGNED:
                 # Connect after a switch to a task world, mark the switch
                 curr_assign.status = ASSIGN_STATUS_IN_TASK
@@ -1121,6 +1123,9 @@ class MTurkManager():
                      blocking=True, ack_func=None):
         """Sends a message through the socket manager, updates state"""
         data['type'] = MESSAGE_TYPE_MESSAGE
+        # Force messages to have a unique ID
+        if 'message_id' not in data:
+            data['message_id'] = str(uuid.uuid4())
         event_id = generate_event_id(receiver_id)
         packet = Packet(
             event_id,
