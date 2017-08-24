@@ -1261,7 +1261,6 @@ class MTurkManager():
         return client.get_assignment(AssignmentId=assignment_id)
 
 
-
     def expire_all_unassigned_hits(self):
         """Moves through the whole hit_id list and attempts to expire the hit,
         though this only immediately expires those that are pending.
@@ -1623,7 +1622,7 @@ class MTurkAgent(Agent):
             print_and_log('Waiting for ({})_({}) to complete {}...'.format(
                 self.worker_id, self.assignment_id, self.conversation_id
             ), False)
-            time.sleep(2)
+            time.sleep(THREAD_MTURK_POLLING_SLEEP)
         print_and_log('Conversation ID: ' + str(self.conversation_id) + \
                       ', Agent ID: ' + self.id + ' - HIT is done.')
         return True
