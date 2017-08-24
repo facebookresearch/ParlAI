@@ -312,7 +312,9 @@ class SocketManager():
                               def alive_callback(self, pkt)
         message_callback:     function to be called on message Packets, defined
                               def message_callback(self, pkt)
-        socket_dead_callback: function to be called when a socket dies, defined
+        socket_dead_callback: function to be called when a socket dies, should
+                              return false if the socket_manager should ignore
+                              the death and treat the socket as alive defined
                               def on_socket_dead(self, worker_id, assignment_id)
         socket_dead_timeout:  time to wait between heartbeats before dying
         """
@@ -412,10 +414,10 @@ class SocketManager():
             while self.run[connection_id]:
                 try:
                     # Check if client is still alive
-                    if time.time() - self.last_heartbeat[connection_id] \
-                            > self.socket_dead_timeout:
-                        self.socket_dead_callback(worker_id, assignment_id)
-                        break
+                    if (time.time() - self.last_heartbeat[connection_id]
+                            > self.socket_dead_timeout):
+                        if self.socket_dead_callback(worker_id, assignment_id):
+                            break
 
                     # Get first item in the queue, check if we can send it yet
                     item = self.queues[connection_id].get(block=False)
@@ -1041,7 +1043,7 @@ class MTurkManager():
         if (worker_id not in self.mturk_agents) or (assignment_id not \
                     in self.mturk_agents[worker_id]):
             # This worker never registered, so we don't do anything
-            return
+            return True
         agent = self.mturk_agents[worker_id][assignment_id]
         agent.disconnected = True
         assignments = self.worker_state[worker_id].assignments
@@ -1103,15 +1105,16 @@ class MTurkManager():
               status == ASSIGN_STATUS_RETURNED):
             # It's okay if a complete assignment socket dies, but wait for the
             # world to clean up the resource
-            return
+            return True
         else:
-            # A disconnect shouldn't happen in the "Assigned" state, as we don't
+            # A disconnect should be ignored in the "Assigned" state, as we dont
             # check alive status when reconnecting after given an assignment
-            print_and_log("Disconnect had invalid status " + status)
+            return False
 
         # TODO Attempt to notify worker they have disconnected before the below
         # close the sending thread
         self.socket_manager.close_channel(worker_id, assignment_id)
+        return True
 
 
     def send_message(self, sender_id, receiver_id, assignment_id, data,
