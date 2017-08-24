@@ -81,6 +81,8 @@ SOCKET_AGENT_ALIVE_STRING = 'agent alive'
 
 THREAD_SHORT_SLEEP = 0.1
 THREAD_MEDIUM_SLEEP = 0.3
+# ThrottlingException might happen if we poll too frequently
+THREAD_MTURK_POLLING_SLEEP = 10
 
 DEF_SOCKET_TIMEOUT = 8
 
@@ -1253,6 +1255,13 @@ class MTurkManager():
         return client.get_hit(HITId=hit_id)
 
 
+    def get_assignment(self, assignment_id):
+        """Gets hit from mturk by assignment_id"""
+        client = get_mturk_client(self.is_sandbox)
+        return client.get_assignment(AssignmentId=assignment_id)
+
+
+
     def expire_all_unassigned_hits(self):
         """Moves through the whole hit_id list and attempts to expire the hit,
         though this only immediately expires those that are pending.
@@ -1368,7 +1377,7 @@ class MTurkAgent(Agent):
         self.task_group_id = manager.task_group_id
 
         self.msg_queue = Queue()
-        #
+
         # self.check_hit_status_thread = threading.Thread(
         #    target=self._check_hit_status)
         # self.check_hit_status_thread.daemon = True
@@ -1376,7 +1385,7 @@ class MTurkAgent(Agent):
 
     def _check_hit_status(self):
         """Monitors the HIT status by polling"""
-        # TODO replace/modify this with code that subscribes to mturk notifs
+        # TODO (t21222476) replace with code that subscribes to mturk notifs
         # Check if HIT is accepted
         while True:
             if self.hit_id:
@@ -1387,8 +1396,7 @@ class MTurkAgent(Agent):
                                   '(acknowledged by MTurk API).', False)
                     self.hit_is_accepted = True
                     break
-            # ThrottlingException might happen if we poll too frequently
-            time.sleep(5)
+            time.sleep(THREAD_MTURK_POLLING_SLEEP)
         while True:
             if self.hit_id:
                 response = self.manager.get_hit(hit_id=self.hit_id)
@@ -1412,8 +1420,7 @@ class MTurkAgent(Agent):
                     # we will not be using this MTurkAgent object for another
                     # worker, so no need to check its status anymore
                     return
-            # ThrottlingException might happen if we poll too frequently
-            time.sleep(5)
+            time.sleep(THREAD_MTURK_POLLING_SLEEP)
 
 
     def is_in_task(self):
