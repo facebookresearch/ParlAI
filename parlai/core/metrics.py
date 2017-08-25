@@ -25,7 +25,7 @@ def _normalize_answer(s):
         return ' '.join(text.split())
 
     def remove_punc(text):
-        return re_punc.sub(' ', text)  # convert interword punctuation to spaces
+        return re_punc.sub(' ', text)  # convert punctuation to spaces
 
     def lower(text):
         return text.lower()
