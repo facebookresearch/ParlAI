@@ -78,9 +78,7 @@ def main():
             while not world.episode_done():
                 world.parley()
 
-            mturk_manager.mark_workers_done(workers)
             world.shutdown()
-            mturk_manager.free_workers(workers)
 
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,

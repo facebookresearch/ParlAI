@@ -1113,6 +1113,7 @@ class MTurkManager():
 
             print("All workers joined the conversation!")
             task_function(mturk_manager=self, opt=opt, workers=workers)
+            self.mark_workers_done(workers)
 
         while True:
             # Loop forever starting task worlds until desired convos are had
@@ -1694,6 +1695,7 @@ class MTurkAgent(Agent):
             time.sleep(THREAD_MTURK_POLLING_SLEEP)
         print_and_log('Conversation ID: ' + str(self.conversation_id) + \
                       ', Agent ID: ' + self.id + ' - HIT is done.')
+        self.manager.free_workers([self])
         return True
 
 
