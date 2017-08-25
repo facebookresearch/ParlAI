@@ -67,6 +67,13 @@ task_list = [
         "description": "Simulated dialogs of restaurant booking, from Bordes et al. '16. Link: https://arxiv.org/abs/1605.07683"
     },
     {
+        "id": "Negotiation",
+        "display_name": "Negotiation",
+        "task": "negotiation",
+        "tags": [ "All" ],
+        "description": "End-to-end negotiation task which requires two agents to agree on how to divide a set of items with different values, each agent with different values assigned to the items"
+    },
+    {
         "id": "MCTest",
         "display_name": "MCTest",
         "task": "mctest",
