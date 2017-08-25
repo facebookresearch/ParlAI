@@ -16,7 +16,7 @@ import os
 import copy
 import random
 
-from .modules import MemNN
+from .modules import MemNN, Decoder
 
 
 class MemnnAgent(Agent):
@@ -26,23 +26,30 @@ class MemnnAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         DictionaryAgent.add_cmdline_args(argparser)
-        argparser.add_arg('-lr', '--learning-rate', type=float, default=0.01,
+        arg_group = argparser.add_argument_group('MemNN Arguments')
+        arg_group.add_argument('-lr', '--learning-rate', type=float, default=0.01,
             help='learning rate')
-        argparser.add_arg('--embedding-size', type=int, default=128,
+        arg_group.add_argument('--embedding-size', type=int, default=128,
             help='size of token embeddings')
-        argparser.add_arg('--hops', type=int, default=3,
+        arg_group.add_argument('--hops', type=int, default=3,
             help='number of memory hops')
-        argparser.add_arg('--mem-size', type=int, default=100,
+        arg_group.add_argument('--mem-size', type=int, default=100,
             help='size of memory')
-        argparser.add_arg('--time-features', type='bool', default=True,
+        arg_group.add_argument('--time-features', type='bool', default=True,
             help='use time features for memory embeddings')
-        argparser.add_arg('--position-encoding', type='bool', default=False,
+        arg_group.add_argument('--position-encoding', type='bool', default=False,
             help='use position encoding instead of bag of words embedding')
-        argparser.add_arg('--optimizer', default='adam',
+        arg_group.add_argument('--output', type=str, default='rank',
+            help='type of output (rank|generate)')
+        arg_group.add_argument('--rnn-layers', type=int, default=2,
+            help='number of hidden layers in RNN decoder for generative output')
+        arg_group.add_argument('--dropout', type=float, default=0.1,
+            help='dropout probability for RNN decoder training')
+        arg_group.add_argument('--optimizer', default='adam',
             help='optimizer type (sgd|adam)')
-        argparser.add_argument('--no-cuda', action='store_true', default=False,
+        arg_group.add_argument('--no-cuda', action='store_true', default=False,
             help='disable GPUs even if available')
-        argparser.add_arg('--gpu', type=int, default=-1,
+        arg_group.add_argument('--gpu', type=int, default=-1,
             help='which GPU device to use')
 
     def __init__(self, opt, shared=None):
@@ -55,23 +62,41 @@ class MemnnAgent(Agent):
             self.opt = opt
             self.id = 'MemNN'
             self.dict = DictionaryAgent(opt)
-            freqs = torch.LongTensor(list(self.dict.freqs().values()))
-
-            self.model = MemNN(opt, freqs)
-            self.mem_size = opt['mem_size']
-            self.loss_fn = CrossEntropyLoss()
             self.answers = [None] * opt['batchsize']
 
+            self.model = MemNN(opt, self.dict)
+            self.mem_size = opt['mem_size']
+            self.loss_fn = CrossEntropyLoss()
+
+            self.decoder = None
+            self.longest_label = 1
+            self.END = self.dict.end_token
+            self.END_TENSOR = torch.LongTensor(self.dict.parse(self.END))
+            self.START = self.dict.start_token
+            self.START_TENSOR = torch.LongTensor(self.dict.parse(self.START))
+            if opt['output'] == 'generate' or opt['output'] == 'g':
+                self.decoder = Decoder(opt['embedding_size'], opt['embedding_size'],
+                                        opt['rnn_layers'], opt, self.dict)
+            elif opt['output'] != 'rank' and opt['output'] != 'r':
+                raise NotImplementedError('Output type not supported.')
+
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
+            lr = opt['learning_rate']
             if opt['optimizer'] == 'sgd':
-                self.optimizer = optim.SGD(optim_params, lr=opt['learning_rate'])
+                self.optimizers = {'memnn': optim.SGD(optim_params, lr=lr)}
+                if self.decoder is not None:
+                    self.optimizers['decoder'] = optim.SGD(self.decoder.parameters(), lr=lr)
             elif opt['optimizer'] == 'adam':
-                self.optimizer = optim.Adam(optim_params, lr=opt['learning_rate'])
+                self.optimizers = {'memnn': optim.Adam(optim_params, lr=lr)}
+                if self.decoder is not None:
+                    self.optimizers['decoder'] = optim.Adam(self.decoder.parameters(), lr=lr)
             else:
                 raise NotImplementedError('Optimizer not supported.')
 
             if opt['cuda']:
                 self.model.share_memory()
+                if self.decoder is not None:
+                    self.decoder.cuda()
 
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 print('Loading existing model parameters from ' + opt['model_file'])
@@ -103,39 +128,38 @@ class MemnnAgent(Agent):
         self.episode_done = observation['episode_done']
         return observation
 
-    def update(self, xs, ys, cands):
-        self.model.train()
-        self.optimizer.zero_grad()
-
+    def predict(self, xs, cands, ys=None):
+        is_training = ys is not None
+        self.model.train(mode=is_training)
         # Organize inputs for network (see contents of xs and ys in batchify method)
-        inputs = [xs[0], xs[1], ys[0], xs[2], xs[3], ys[1]]
-        inputs = [Variable(x) for x in inputs]
-        output_embeddings, answer_embeddings = self.model(*inputs)
-        scores = self.score(cands, output_embeddings, answer_embeddings)
+        inputs = [Variable(x, volatile=is_training) for x in xs]
+        output_embeddings = self.model(*inputs)
 
-        label_inds = [cand_list.index(self.labels[i]) for i, cand_list in enumerate(cands)]
-        if self.opt['cuda']:
-            label_inds = Variable(torch.cuda.LongTensor(label_inds))
+        if self.decoder is None:
+            scores = self.score(cands, output_embeddings)
+            if is_training:
+                label_inds = [cand_list.index(self.labels[i]) for i, cand_list in enumerate(cands)]
+                if self.opt['cuda']:
+                    label_inds = Variable(torch.cuda.LongTensor(label_inds))
+                else:
+                    label_inds = Variable(torch.LongTensor(label_inds))
+                loss = self.loss_fn(scores, label_inds)
+            predictions = self.ranked_predictions(cands, scores)
         else:
-            label_inds = Variable(torch.LongTensor(label_inds))
+            self.decoder.train(mode=is_training)
 
-        loss = self.loss_fn(scores, label_inds)
-        loss.backward()
-        self.optimizer.step()
-        return self.ranked_predictions(cands, scores)
+            output_lines, loss = self.decode(output_embeddings, ys)
+            predictions = self.generated_predictions(output_lines)
 
-    def predict(self, xs, cands):
-        self.model.eval()
+        if is_training:
+            for o in self.optimizers.values():
+                o.zero_grad()
+            loss.backward()
+            for o in self.optimizers.values():
+                o.step()
+        return predictions
 
-        # Organize inputs for network (see contents of xs in batchify method)
-        inputs = [xs[0], xs[1], None, xs[2], xs[3], None]
-        inputs = [Variable(x, volatile=True) for x in inputs]
-        output_embeddings, _ = self.model(*inputs)
-
-        scores = self.score(cands, output_embeddings)
-        return self.ranked_predictions(cands, scores)
-
-    def score(self, cands, output_embeddings, answer_embeddings=None):
+    def score(self, cands, output_embeddings):
         last_cand = None
         max_len = max([len(c) for c in cands])
         scores = Variable(output_embeddings.data.new(len(cands), max_len))
@@ -154,6 +178,47 @@ class MemnnAgent(Agent):
         _, inds = scores.data.sort(descending=True, dim=1)
         return [[cands[i][j] for j in r if j < len(cands[i])]
                     for i, r in enumerate(inds)]
+
+    def decode(self, output_embeddings, ys=None):
+        batchsize = output_embeddings.size(0)
+        hn = output_embeddings.unsqueeze(0).expand(self.opt['rnn_layers'], batchsize, output_embeddings.size(1))
+        x = self.model.answer_embedder(Variable(torch.LongTensor([1])), Variable(self.START_TENSOR))
+        xes = x.unsqueeze(1).expand(x.size(0), batchsize, x.size(1))
+
+        loss = 0
+        output_lines = [[] for _ in range(batchsize)]
+        done = [False for _ in range(batchsize)]
+        total_done = 0
+        idx = 0
+        while(total_done < batchsize) and idx < self.longest_label:
+            # keep producing tokens until we hit END or max length for each ex
+            if self.opt['cuda']:
+                xes = xes.cuda()
+                hn = hn.contiguous()
+            preds, scores = self.decoder(xes, hn)
+            if ys is not None:
+                y = Variable(ys[0][:, idx])
+                temp_y = y.cuda() if self.opt['cuda'] else y
+                loss += self.loss_fn(scores, temp_y)
+            else:
+                y = preds
+            # use the true token as the next input for better training
+            xes = self.model.answer_embedder(Variable(torch.LongTensor(preds.numel()).fill_(1)), y).unsqueeze(0)
+
+            for b in range(batchsize):
+                if not done[b]:
+                    token = self.dict.vec2txt(preds.data[b])
+                    if token == self.END:
+                        done[b] = True
+                        total_done += 1
+                    else:
+                        output_lines[b].append(token)
+            idx += 1
+        return output_lines, loss
+
+    def generated_predictions(self, output_lines):
+        return [[' '.join(c for c in o if c != self.END
+                        and c != self.dict.null_token)] for o in output_lines]
 
     def parse(self, text):
         """Returns:
@@ -181,7 +246,6 @@ class MemnnAgent(Agent):
         memory = [torch.LongTensor(m) for m in memory]
         memory_lengths = torch.LongTensor([len(m) for m in memory])
         memory = torch.cat(memory)
-
         return (query, memory, query_length, memory_lengths)
 
     def batchify(self, obs):
@@ -212,7 +276,10 @@ class MemnnAgent(Agent):
             parsed = [self.dict.txt2vec(l) for l in self.labels]
             parsed = [torch.LongTensor(p) for p in parsed]
             label_lengths = torch.LongTensor([len(p) for p in parsed]).unsqueeze(1)
-            labels = torch.cat(parsed)
+            self.longest_label = max(self.longest_label, label_lengths.max())
+            padded = [torch.cat((p, torch.LongTensor(self.longest_label - len(p))
+                        .fill_(self.END_TENSOR[0]))) for p in parsed]
+            labels = torch.stack(padded)
             ys = [labels, label_lengths]
 
         cands = [ex['label_candidates'] for ex in exs if 'label_candidates' in ex]
@@ -224,7 +291,6 @@ class MemnnAgent(Agent):
             self.last_cands = cands
             self.last_cands_list = [list(c) for c in cands]
         cands = self.last_cands_list
-
         return xs, ys, cands, valid_inds
 
     def batch_act(self, observations):
@@ -237,10 +303,7 @@ class MemnnAgent(Agent):
             return batch_reply
 
         # Either train or predict
-        if ys is not None:
-            predictions = self.update(xs, ys, cands)
-        else:
-            predictions = self.predict(xs, cands)
+        predictions = self.predict(xs, cands, ys)
 
         for i in range(len(valid_inds)):
             self.answers[valid_inds[i]] = predictions[i][0]
@@ -255,16 +318,25 @@ class MemnnAgent(Agent):
         path = self.opt.get('model_file', None) if path is None else path
 
         if path:
-            model_state = self.model.state_dict()
-            optim_state = self.optimizer.state_dict()
+            checkpoint = {}
+            checkpoint['memnn'] = self.model.state_dict()
+            checkpoint['memnn_optim'] = self.optimizers['memnn'].state_dict()
+            if self.decoder is not None:
+                checkpoint['decoder'] = self.decoder.state_dict()
+                checkpoint['decoder_optim'] = self.optimizers['decoder'].state_dict()
+                checkpoint['longest_label'] = self.longest_label
             with open(path, 'wb') as write:
-                torch.save((model_state, optim_state), write)
+                torch.save(checkpoint, write)
 
     def load(self, path):
         with open(path, 'rb') as read:
-            (model, optim) = torch.load(read)
-        self.model.load_state_dict(model)
-        self.optimizer.load_state_dict(optim)
+            checkpoint = torch.load(read)
+        self.model.load_state_dict(checkpoint['memnn'])
+        self.optimizers['memnn'].load_state_dict(checkpoint['memnn_optim'])
+        if self.decoder is not None:
+            self.decoder.load_state_dict(checkpoint['decoder'])
+            self.optimizers['decoder'].load_state_dict(checkpoint['decoder_optim'])
+            self.longest_label = checkpoint['longest_label']
 
 
 def to_tensors(sentences, dictionary):
