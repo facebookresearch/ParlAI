@@ -15,7 +15,7 @@ from collections import Counter
 import re
 
 re_art = re.compile(r'\b(a|an|the)\b')
-re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~]')
+re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
 def _normalize_answer(s):
     """Lower text and remove punctuation, articles and extra whitespace."""
     def remove_articles(text):
@@ -25,9 +25,7 @@ def _normalize_answer(s):
         return ' '.join(text.split())
 
     def remove_punc(text):
-        text = re_punc.sub(' ', text)  # convert interword punctuation to spaces
-        exclude = set('_\'')  # remove intraword punctuation completely
-        return ''.join(ch for ch in text if ch not in exclude)
+        return re_punc.sub(' ', text)  # convert interword punctuation to spaces
 
     def lower(text):
         return text.lower()
