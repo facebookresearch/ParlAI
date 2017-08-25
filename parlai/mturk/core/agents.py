@@ -88,6 +88,9 @@ THREAD_MTURK_POLLING_SLEEP = 10
 DEF_SOCKET_TIMEOUT = 8
 WORLD_START_TIMEOUT = 11
 
+# Multiplier to apply when creating hits to ensure worker availibility
+HIT_MULT = 1.5
+
 logging_enabled = True
 logger = None
 debug = True
@@ -102,16 +105,20 @@ if logging_enabled:
     )
     logger = logging.getLogger('mturk')
 
+#RTODO move to utils
 def print_and_log(message, should_print=True):
     if logging_enabled:
         logger.info(message)
     if should_print or debug: # Always print message in debug mode
         print(message)
 
+#RTODO move to utils
 def generate_event_id(worker_id):
     """Creates a unique id to use for identifying a packet"""
     return worker_id + '_' + str(uuid.uuid4())
 
+
+#RTODO move to a data_model-style class
 class AssignState():
     """Class for holding state information about an assignment currently
     claimed by an agent"""
@@ -192,6 +199,7 @@ class AssignState():
 
 
 
+#RTODO move to a data_model-style class
 class WorkerState():
     """Class for holding state information about an mturk worker"""
     def __init__(self, worker_id, disconnects=0):
@@ -201,6 +209,7 @@ class WorkerState():
 
 
 
+#RTODO move to a socket managing class
 class Packet():
     """Class for holding information sent over a socket"""
     def __init__(self, id, type, sender_id, receiver_id, assignment_id, data,
@@ -257,34 +266,6 @@ class Packet():
             assignment_id, data, conversation_id)
 
 
-    def get_sender_connection_id(self):
-        """Gets the connection_id that this packet came from"""
-        return self.sender_id + '_' + self.assignment_id
-
-
-    def get_receiver_connection_id(self):
-        """Gets the connection_id that this is going to"""
-        return self.receiver_id + '_' + self.assignment_id
-
-
-    def swap_sender(self):
-        """Swaps the sender_id and receiver_id"""
-        self.sender_id, self.receiver_id = self.receiver_id, self.sender_id
-        return self
-
-
-    def set_type(self, new_type):
-        """Updates the message type"""
-        self.type = new_type
-        return self
-
-
-    def set_data(self, new_data):
-        """Updates the message data"""
-        self.data = new_data
-        return self
-
-
     def as_dict(self):
         """Converts a packet into a form that can be pushed over a socket"""
         return {
@@ -296,6 +277,16 @@ class Packet():
             'conversation_id': self.conversation_id,
             'data': self.data
         }
+
+
+    def get_sender_connection_id(self):
+        """Gets the connection_id that this packet came from"""
+        return self.sender_id + '_' + self.assignment_id
+
+
+    def get_receiver_connection_id(self):
+        """Gets the connection_id that this is going to"""
+        return self.receiver_id + '_' + self.assignment_id
 
 
     def get_ack(self):
@@ -316,6 +307,26 @@ class Packet():
         return 'Packet <' + str(self.as_dict()) + '>'
 
 
+    def swap_sender(self):
+        """Swaps the sender_id and receiver_id"""
+        self.sender_id, self.receiver_id = self.receiver_id, self.sender_id
+        return self
+
+
+    def set_type(self, new_type):
+        """Updates the message type"""
+        self.type = new_type
+        return self
+
+
+    def set_data(self, new_data):
+        """Updates the message data"""
+        self.data = new_data
+        return self
+
+
+
+#RTODO move to a socket managing class
 class SocketManager():
     """SocketManager is a wrapper around socketIO to stabilize its packet
     passing. The manager handles resending packet, as well as maintaining alive
@@ -357,7 +368,7 @@ class SocketManager():
         self.packet_map = {}
 
         # setup the socket
-        self.setup_socket()
+        self._setup_socket()
 
 
     def get_my_sender_id(self):
@@ -365,24 +376,27 @@ class SocketManager():
         return '[World_{}]'.format(self.task_group_id)
 
 
-    def send_world_alive(self):
+    def _send_world_alive(self):
         """Registers world with the passthrough server"""
         self.socketIO.emit(
             SOCKET_AGENT_ALIVE_STRING,
             {'id': 'WORLD_ALIVE', 'sender_id': self.get_my_sender_id()}
         )
 
-    def send_response_heartbeat(self, packet):
+
+    def _send_response_heartbeat(self, packet):
         """Sends a response heartbeat to an incoming heartbeat packet"""
         out_pack = packet.swap_sender().set_data('').as_dict()
         self.socketIO.emit(SOCKET_ROUTE_PACKET_STRING, out_pack, None)
 
-    def send_ack(self, packet):
+
+    def _send_ack(self, packet):
         """Sends an ack to a given packet"""
         ack = packet.get_ack().as_dict()
         self.socketIO.emit(SOCKET_ROUTE_PACKET_STRING, ack, None)
 
-    def send_packet(self, packet, connection_id, send_time):
+
+    def _send_packet(self, packet, connection_id, send_time):
         """Sends a packet, blocks if the packet is blocking"""
         # Send the packet
         pkt = packet.as_dict()
@@ -411,13 +425,14 @@ class SocketManager():
                 t = time.time() + ACK_TIME[packet.type]
                 self.queues[connection_id].put((t, packet))
 
-    def setup_socket(self):
+
+    def _setup_socket(self):
         """Creates socket handlers and registers the socket"""
         self.socketIO = SocketIO(self.server_url, self.port)
 
         def on_socket_open(*args):
             print_and_log("Socket open: " + str(args), False)
-            self.send_world_alive()
+            self._send_world_alive()
 
         def on_disconnect(*args):
             print_and_log("World server disconnected: " + str(args), False)
@@ -440,11 +455,11 @@ class SocketManager():
             elif packet_type == TYPE_HEARTBEAT:
                 # Heartbeats update the last heartbeat time and respond in kind
                 self.last_heartbeat[connection_id] = time.time()
-                self.send_response_heartbeat(packet)
+                self._send_response_heartbeat(packet)
             else:
                 # Remaining packet types need to be acknowledged
                 print_and_log("On new message: " + str(args), False)
-                self.send_ack(packet)
+                self._send_ack(packet)
                 # Call the appropriate callback
                 if packet_type == TYPE_ALIVE:
                     self.last_heartbeat[connection_id] = time.time()
@@ -498,7 +513,7 @@ class SocketManager():
                         if packet.status is not STATUS_ACK:
                             # either need to send initial packet
                             # or resend not-acked packet
-                            self.send_packet(packet, connection_id, t)
+                            self._send_packet(packet, connection_id, t)
                 except Empty:
                     pass
                 finally:
@@ -510,7 +525,7 @@ class SocketManager():
         self.threads[connection_id].start()
 
 
-    def close_channel_internal(self, connection_id):
+    def _close_channel_internal(self, connection_id):
         """Closes a channel by connection_id"""
         print_and_log("Closing channel " + connection_id, False)
         self.run[connection_id] = False
@@ -521,7 +536,7 @@ class SocketManager():
 
     def close_channel(self, worker_id, assignment_id):
         """Closes a channel by worker_id and assignment_id"""
-        self.close_channel_internal(worker_id + '_' + assignment_id)
+        self._close_channel_internal(worker_id + '_' + assignment_id)
 
 
     def close_all_channels(self):
@@ -529,7 +544,7 @@ class SocketManager():
         print_and_log("Closing all channels")
         connection_ids = list(self.queues.keys())
         for connection_id in connection_ids:
-            self.close_channel_internal(connection_id)
+            self._close_channel_internal(connection_id)
 
 
     def socket_is_open(self, connection_id):
@@ -558,6 +573,7 @@ class SocketManager():
         return self.packet_map[packet_id].status
 
 
+#RTODO move to own class
 class MTurkManager():
 
     def __init__(self, opt, mturk_agent_ids):
@@ -580,95 +596,17 @@ class MTurkManager():
         self.conversation_index = 0
         self.completed_conversations = 0
         self.num_conversations = opt['num_conversations']
-        self.required_hits = \
-            math.ceil(self.num_conversations * len(self.mturk_agent_ids) * 1.5)
+        self.required_hits = math.ceil(
+            self.num_conversations * len(self.mturk_agent_ids) * HIT_MULT
+        )
         self.worker_state = {}
         self.socket_manager = None
         self.conv_to_agent = {}
         self.accepting_workers = True
 
+    ### Helpers and internal manager methods ###
 
-    def setup_server(self, task_directory_path=None):
-        print_and_log("\nYou are going to allow workers from Amazon " + \
-              "Mechanical Turk to be an agent in ParlAI.\nDuring this " + \
-              "process, Internet connection is required, and you should " + \
-              "turn off your computer's auto-sleep feature.\n")
-        key_input = input("Please press Enter to continue... ")
-        print_and_log("")
-
-        setup_aws_credentials()
-
-        # See if there's enough money in the account to fund the HITs requested
-        num_assignments = self.required_hits
-        payment_opt = {
-            'type': 'reward',
-            'num_total_assignments': num_assignments,
-            'reward': self.opt['reward']  # in dollars
-        }
-        total_cost = calculate_mturk_cost(payment_opt=payment_opt)
-        if not check_mturk_balance(balance_needed=total_cost,
-                                   is_sandbox=self.opt['is_sandbox']):
-            return
-
-        print_and_log('Setting up MTurk server...')
-        create_hit_config(
-            task_description=self.opt['task_description'],
-            unique_worker=self.opt['unique_worker'],
-            is_sandbox=self.opt['is_sandbox']
-        )
-        if not self.task_files_to_copy:
-            self.task_files_to_copy = []
-        if not task_directory_path:
-            task_directory_path = os.path.join(
-                self.opt['parlai_home'],
-                'parlai',
-                'mturk',
-                'tasks',
-                self.opt['task']
-            )
-        self.task_files_to_copy.append(
-            os.path.join(task_directory_path, 'html', 'cover_page.html'))
-        for mturk_agent_id in self.mturk_agent_ids:
-            self.task_files_to_copy.append(os.path.join(
-                task_directory_path,
-                'html',
-                mturk_agent_id+'_index.html'
-            ))
-        self.server_url = setup_server(self.task_files_to_copy)
-        print_and_log(self.server_url, False)
-
-        print_and_log("MTurk server setup done.\n")
-
-
-    def ready_to_accept_workers(self):
-        """ Sets up socket to start communicating to workers"""
-        print_and_log('Local: Setting up SocketIO...')
-        self.setup_socket()
-
-
-    def start_new_run(self):
-        """Clears state to prepare for a new run"""
-        self.run_id = str(int(time.time()))
-        self.task_group_id = str(self.opt['task']) + '_' + str(self.run_id)
-
-        # Reset state
-        # TODO more cleanup, kill things before just clearing
-        self.mturk_agents = {}
-        self.worker_index = 0
-        self.assignment_to_onboard_thread = {}
-        self.conversation_index = 0
-        self.hit_id_list = []
-        self.worker_pool = []
-        self.task_threads = []
-        self.conversation_index = 0
-        self.worker_state = {}
-
-
-    def set_onboard_function(self, onboard_function):
-        self.onboard_function = onboard_function
-
-
-    def get_ids_from_pkt(self, pkt):
+    def _get_ids_from_pkt(self, pkt):
         """Wrapper to get sender, assignment, and conv ids from a packet"""
         worker_id = pkt.sender_id
         assignment_id = pkt.assignment_id
@@ -679,8 +617,8 @@ class MTurkManager():
 
     def _change_worker_to_conv(self, pkt):
         """Callback to update a worker to a new conversation"""
-        worker_id, assignment_id, conversation_id = self.get_ids_from_pkt(pkt)
-        self.assign_agent_to_conversation(
+        worker_id, assignment_id, conversation_id = self._get_ids_from_pkt(pkt)
+        self._assign_agent_to_conversation(
             self.mturk_agents[worker_id][assignment_id],
             conversation_id
         )
@@ -688,7 +626,7 @@ class MTurkManager():
 
     def _set_worker_status_to_onboard(self, pkt):
         """Callback for changing conversations to onboarding"""
-        worker_id, assignment_id, conversation_id = self.get_ids_from_pkt(pkt)
+        worker_id, assignment_id, conversation_id = self._get_ids_from_pkt(pkt)
         assign_state = self.worker_state[worker_id].assignments[assignment_id]
         assign_state.status = ASSIGN_STATUS_ONBOARDING
         assign_state.conversation_id = conversation_id
@@ -696,13 +634,13 @@ class MTurkManager():
 
     def _set_worker_status_to_waiting(self, pkt):
         """Callback for changing conversations to waiting pool"""
-        worker_id, assignment_id, conversation_id = self.get_ids_from_pkt(pkt)
+        worker_id, assignment_id, conversation_id = self._get_ids_from_pkt(pkt)
         assign_state = self.worker_state[worker_id].assignments[assignment_id]
         assign_state.status = ASSIGN_STATUS_WAITING
         assign_state.conversation_id = conversation_id
 
         # Wait for turker to be in waiting status
-        self.wait_for_status(assign_state, ASSIGN_STATUS_WAITING)
+        self._wait_for_status(assign_state, ASSIGN_STATUS_WAITING)
 
         # Add the worker to pool
         with self.worker_pool_change_condition:
@@ -710,104 +648,7 @@ class MTurkManager():
             self.worker_pool.append(self.mturk_agents[worker_id][assignment_id])
 
 
-    def wait_for_status(self, assign_state, desired_status):
-        """Suspends a thread until a particular assignment state changes to the
-        desired state"""
-        while True:
-            if assign_state.status == desired_status:
-                break
-            time.sleep(THREAD_SHORT_SLEEP)
-
-
-    def onboard_new_worker(self, mturk_agent):
-        # get state variable in question
-        worker_id = mturk_agent.worker_id
-        assignment_id = mturk_agent.assignment_id
-        assign_state = self.worker_state[worker_id].assignments[assignment_id]
-
-        def _onboard_function(mturk_agent):
-            """Onboarding wrapper to set state to onboarding properly"""
-            if self.onboard_function:
-                conversation_id = 'o_'+str(uuid.uuid4())
-                mturk_agent.change_conversation(
-                    conversation_id=conversation_id,
-                    agent_id='onboarding',
-                    change_callback=self._set_worker_status_to_onboard
-                )
-                # Wait for turker to be in onboarding status
-                self.wait_for_status(assign_state, ASSIGN_STATUS_ONBOARDING)
-                # call onboarding function
-                self.onboard_function(mturk_agent)
-
-            # once onboarding is done, move into a waiting world
-            self.move_workers_to_waiting([mturk_agent])
-
-        if not assignment_id in self.assignment_to_onboard_thread:
-            # Start the onboarding thread and run it
-            onboard_thread = threading.Thread(target=_onboard_function,
-                                              args=(mturk_agent,))
-            onboard_thread.daemon = True
-            onboard_thread.start()
-
-            self.assignment_to_onboard_thread[assignment_id] = onboard_thread
-
-
-    def expire_onboarding_pool(self):
-        for worker_id in self.worker_state:
-            for assign_id in self.worker_state[worker_id].assignments:
-                assign = self.worker_state[worker_id].assignments[assign_id]
-                if (assign.status == ASSIGN_STATUS_ONBOARDING):
-                    assign.status = ASSIGN_STATUS_EXPIRED
-                    data = {
-                        'text': COMMAND_EXPIRE_HIT,
-                        'inactive_text': 'This HIT is expired, please return and ' + \
-                                           'take a new one if you\'d want to work ' + \
-                                           'on this task.',
-                        'conversation_id': assign.conversation_id,
-                    }
-                    self.send_command(worker_id, assign_id, data)
-                    self.mturk_agents[worker_id][assign_id].hit_is_expired = True
-
-
-    def expire_worker_pool(self):
-        """Expires all workers in the worker pool"""
-        for agent in self.worker_pool:
-            self.force_expire_hit(agent.worker_id, agent.assignment_id)
-
-
-    def get_unique_pool(self, eligibility_function):
-        """Returns a filtered version of the worker pool where each worker is
-        only listed a maximum of one time. In sandbox this is overridden for
-        testing purposes, and the same worker can be returned more than once"""
-        workers = [w for w in self.worker_pool if
-                   not w.hit_is_returned and eligibility_function(w)]
-        unique_workers = []
-        unique_worker_ids = []
-        for w in workers:
-            if (self.is_sandbox) or (w.worker_id not in unique_worker_ids):
-                unique_workers.append(w)
-                unique_worker_ids.append(w.worker_id)
-        return unique_workers
-
-
-    def force_expire_hit(self, worker_id, assign_id, text=None, ack_func=None):
-        """Sends a command to expire a hit to the provided agent, updates State
-        to reflect that the HIT is now expired"""
-        if worker_id in self.worker_state:
-            if assign_id in self.worker_state[worker_id]:
-                self.worker_state[worker_id].assignments[assign_id]\
-                    .status = ASSIGN_STATUS_EXPIRED
-        if worker_id in self.mturk_agents:
-            if assign_id in self.mturk_agent_ids[worker_id]:
-                self.mturk_agents[worker_id][assign_id].hit_is_expired = True
-        if text == None:
-            text = 'This HIT is expired, please return and take a new ' + \
-            'one if you\'d want to work on this task.'
-        data = {'text': COMMAND_EXPIRE_HIT, 'inactive_text': text}
-        self.send_command(worker_id, assign_id, data, ack_func=ack_func)
-
-
-    def move_workers_to_waiting(self, workers):
+    def _move_workers_to_waiting(self, workers):
         """Puts all workers into waiting worlds, expires them if no longer
         accepting workers"""
         for worker in workers:
@@ -827,94 +668,65 @@ class MTurkManager():
                 force_expire_hit(worker_id, assignment_id)
 
 
-    def start_task(self, eligibility_function, role_function, task_function):
-        """Handles running a task by checking to see when enough agents are in
-        the pool to start an instance of the task. It continues doing this until
-        the desired number of conversations is had."""
-
-        def _task_function(opt, workers, conversation_id):
-            """waits for all workers to join world before running the task"""
-            print("Starting task...")
-            print("Waiting for all workers to join the conversation...")
-            start_time = time.time()
-            while True:
-                all_joined = True
-                for worker in workers:
-                    # check the status of an individual worker assignment
-                    worker_id = worker.worker_id
-                    assign_id = worker.assignment_id
-                    worker_state = self.worker_state[worker_id]
-                    if not assign_id in worker_state.assignments:
-                        # This assignment was removed, we should exit this loop
-                        print("At least one worker dropped before all joined!")
-                        return
-                    status = worker_state.assignments[assign_id].status
-                    if status != ASSIGN_STATUS_IN_TASK:
-                        all_joined = False
-                if all_joined:
-                    break
-                if time.time() - start_time > WORLD_START_TIMEOUT:
-                    # We waited but not all workers rejoined, throw workers
-                    # back into the waiting pool. Stragglers will disconnect
-                    # from there
-                    print("Timeout waiting for workers, moving back to waiting")
-                    self.move_workers_to_waiting(workers)
-                    return
-                time.sleep(THREAD_SHORT_SLEEP)
-
-            print("All workers joined the conversation!")
-            task_function(mturk_manager=self, opt=opt, workers=workers)
-
+    def _wait_for_status(self, assign_state, desired_status):
+        """Suspends a thread until a particular assignment state changes to the
+        desired state"""
         while True:
-            # Loop forever starting task worlds until desired convos are had
-            with self.worker_pool_change_condition:
-                valid_workers = self.get_unique_pool(eligibility_function)
-                needed_workers = len(self.mturk_agent_ids)
-                if len(valid_workers) >= needed_workers:
-                    # enough workers in pool to start new conversation
-                    self.conversation_index += 1
-                    new_conversation_id = 't_' + str(self.conversation_index)
-
-                    # Add the required number of valid workers to the conv
-                    selected_workers = []
-                    for w in valid_workers[:needed_workers]:
-                        selected_workers.append(w)
-                        w.id = role_function(w)
-                        w.change_conversation(
-                            conversation_id=new_conversation_id,
-                            agent_id=w.id,
-                            change_callback=self._change_worker_to_conv
-                        )
-
-                    # Remove selected workers from the pool
-                    for worker in selected_workers:
-                        self.worker_pool.remove(worker)
-
-                    # Start a new thread for this task world
-                    task_thread = threading.Thread(target=_task_function,
-                        args=(self.opt, selected_workers, new_conversation_id))
-                    task_thread.daemon = True
-                    task_thread.start()
-                    self.task_threads.append(task_thread)
-
-            # Once we've had enough conversations, finish and break
-            compare_count = self.conversation_index
-            if (self.opt['count_complete']):
-                compare_count = self.completed_conversations
-            if compare_count == self.num_conversations:
-                self.accepting_workers = False
-                self.expire_all_unassigned_hits()
-                self.expire_onboarding_pool()
-                self.expire_worker_pool()
-                # Wait for all conversations to finish, then break from
-                # the while loop
-                for thread in self.task_threads:
-                    thread.join()
+            if assign_state.status == desired_status:
                 break
-            time.sleep(THREAD_MEDIUM_SLEEP)
+            time.sleep(THREAD_SHORT_SLEEP)
 
 
-    def restore_worker_state(self, worker_id, assignment_id):
+    def _expire_onboarding_pool(self):
+        """Expires any worker that is in an onboarding thread"""
+        for worker_id in self.worker_state:
+            for assign_id in self.worker_state[worker_id].assignments:
+                assign = self.worker_state[worker_id].assignments[assign_id]
+                if (assign.status == ASSIGN_STATUS_ONBOARDING):
+                    self.force_expire_hit(worker_id, assign_id)
+
+
+    def _expire_worker_pool(self):
+        """Expires all workers in the worker pool"""
+        for agent in self.worker_pool:
+            self.force_expire_hit(agent.worker_id, agent.assignment_id)
+
+
+    def _get_unique_pool(self, eligibility_function):
+        """Returns a filtered version of the worker pool where each worker is
+        only listed a maximum of one time. In sandbox this is overridden for
+        testing purposes, and the same worker can be returned more than once"""
+        workers = [w for w in self.worker_pool if
+                   not w.hit_is_returned and eligibility_function(w)]
+        unique_workers = []
+        unique_worker_ids = []
+        for w in workers:
+            if (self.is_sandbox) or (w.worker_id not in unique_worker_ids):
+                unique_workers.append(w)
+                unique_worker_ids.append(w.worker_id)
+        return unique_workers
+
+
+    def _handle_partner_disconnect(self, worker_id, assignment_id):
+        """Sends a message to a worker notifying them that a partner has
+        disconnected and we marked the HIT as complete for them"""
+        # Create and send the command
+        data = {
+            'text': COMMAND_DISCONNECT_PARTNER,
+            'disconnect_text': 'One of the other agents ' + \
+                               'unexpectedly disconnected.',
+        }
+        self.send_command(worker_id, assignment_id, data)
+
+        # Update the assignment state
+        agent = self.mturk_agents[worker_id][assignment_id]
+        agent.some_agent_disconnected = True
+        self.worker_state[worker_id].assignments[assignment_id].status = \
+            ASSIGN_STATUS_PARTNER_DISCONNECT
+
+
+    def _restore_worker_state(self, worker_id, assignment_id):
+        """Sends a command to restore the state of an agent who reconnected"""
         assignment = self.worker_state[worker_id].assignments[assignment_id]
         def _push_worker_state(msg):
             if len(assignment.messages) != 0:
@@ -933,15 +745,19 @@ class MTurkManager():
         )
 
 
-    def setup_socket(self):
+    def _setup_socket(self):
         """Sets up a socket_manager with defined callbacks"""
-        self.socket_manager = SocketManager(self.server_url, self.port,
-                                            self.on_alive, self.on_new_message,
-                                            self.on_socket_dead,
-                                            self.task_group_id)
+        self.socket_manager = SocketManager(
+            self.server_url,
+            self.port,
+            self._on_alive,
+            self._on_new_message,
+            self._on_socket_dead,
+            self.task_group_id
+        )
 
 
-    def on_alive(self, pkt):
+    def _on_alive(self, pkt):
         """Handler for updating MTurkManager's state when a worker sends an
         alive packet. This asks the socket manager to open a new channel and
         then handles ensuring the worker state is consistent"""
@@ -985,8 +801,10 @@ class MTurkManager():
             # if we are still accepting workers
             if self.accepting_workers:
                 curr_worker_assign[assign_id] = AssignState(assign_id)
-                self.create_agent(hit_id, assign_id, worker_id)
-                self.onboard_new_worker(self.mturk_agents[worker_id][assign_id])
+                self._create_agent(hit_id, assign_id, worker_id)
+                self._onboard_new_worker(
+                    self.mturk_agents[worker_id][assign_id]
+                )
             else:
                 self.force_expire_hit(worker_id, assign_id)
         else:
@@ -1004,12 +822,12 @@ class MTurkManager():
                 if not self.accepting_workers:
                     self.force_expire_hit(worker_id, assign_id)
                 elif not conversation_id:
-                    self.restore_worker_state(worker_id, assign_id)
+                    self._restore_worker_state(worker_id, assign_id)
             elif curr_assign.status == ASSIGN_STATUS_IN_TASK:
                 # Reconnecting to the onboarding world or to a task world should
                 # resend the messages already in the conversation
                 if not conversation_id:
-                    self.restore_worker_state(worker_id, assign_id)
+                    self._restore_worker_state(worker_id, assign_id)
             elif curr_assign.status == ASSIGN_STATUS_ASSIGNED:
                 # Connect after a switch to a task world, mark the switch
                 curr_assign.status = ASSIGN_STATUS_IN_TASK
@@ -1026,7 +844,7 @@ class MTurkManager():
                 self.send_command(worker_id, assign_id, data)
 
 
-    def on_new_message(self, pkt):
+    def _on_new_message(self, pkt):
         """Put an incoming message onto the correct agent's message queue and
         add it to the proper message thread"""
         worker_id = pkt.sender_id
@@ -1041,25 +859,7 @@ class MTurkManager():
         self.mturk_agents[worker_id][assignment_id].msg_queue.put(pkt.data)
 
 
-    def handle_partner_disconnect(self, worker_id, assignment_id):
-        """Sends a message to a worker notifying them that a partner has
-        disconnected and we marked the HIT as complete for them"""
-        # Create and send the command
-        data = {
-            'text': COMMAND_DISCONNECT_PARTNER,
-            'disconnect_text': 'One of the other agents ' + \
-                               'unexpectedly disconnected.',
-        }
-        self.send_command(worker_id, assignment_id, data)
-
-        # Update the assignment state
-        agent = self.mturk_agents[worker_id][assignment_id]
-        agent.some_agent_disconnected = True
-        self.worker_state[worker_id].assignments[assignment_id].status = \
-            ASSIGN_STATUS_PARTNER_DISCONNECT
-
-
-    def on_socket_dead(self, worker_id, assignment_id):
+    def _on_socket_dead(self, worker_id, assignment_id):
         """Handles a disconnect event, updating state as required and notifying
         other agents if the disconnected agent was in conversation with them"""
         if (worker_id not in self.mturk_agents) or (assignment_id not \
@@ -1100,7 +900,7 @@ class MTurkManager():
             if agent in self.conv_to_agent[conversation_id]:
                 for other_agent in self.conv_to_agent[conversation_id]:
                     if agent.assignment_id != other_agent.assignment_id:
-                        self.handle_partner_disconnect(
+                        self._handle_partner_disconnect(
                             other_agent.worker_id,
                             other_agent.assignment_id
                         )
@@ -1122,6 +922,273 @@ class MTurkManager():
         # close the sending thread
         self.socket_manager.close_channel(worker_id, assignment_id)
         return True
+
+
+    def _create_agent(self, hit_id, assignment_id, worker_id):
+        """Initializes an agent and adds it to the map"""
+        agent = MTurkAgent(self.opt, self, hit_id, assignment_id, worker_id)
+        if (worker_id in self.mturk_agents):
+            self.mturk_agents[worker_id][assignment_id] = agent
+        else:
+            self.mturk_agents[worker_id] = {}
+            self.mturk_agents[worker_id][assignment_id] = agent
+
+
+    def _onboard_new_worker(self, mturk_agent):
+        """Handles creating an onboarding thread and moving an agent through
+        the onboarding process, updating the state properly along the way"""
+        # get state variable in question
+        worker_id = mturk_agent.worker_id
+        assignment_id = mturk_agent.assignment_id
+        assign_state = self.worker_state[worker_id].assignments[assignment_id]
+
+        def _onboard_function(mturk_agent):
+            """Onboarding wrapper to set state to onboarding properly"""
+            if self.onboard_function:
+                conversation_id = 'o_'+str(uuid.uuid4())
+                mturk_agent.change_conversation(
+                    conversation_id=conversation_id,
+                    agent_id='onboarding',
+                    change_callback=self._set_worker_status_to_onboard
+                )
+                # Wait for turker to be in onboarding status
+                self._wait_for_status(assign_state, ASSIGN_STATUS_ONBOARDING)
+                # call onboarding function
+                self.onboard_function(mturk_agent)
+
+            # once onboarding is done, move into a waiting world
+            self._move_workers_to_waiting([mturk_agent])
+
+        if not assignment_id in self.assignment_to_onboard_thread:
+            # Start the onboarding thread and run it
+            onboard_thread = threading.Thread(target=_onboard_function,
+                                              args=(mturk_agent,))
+            onboard_thread.daemon = True
+            onboard_thread.start()
+
+            self.assignment_to_onboard_thread[assignment_id] = onboard_thread
+
+
+    def _assign_agent_to_conversation(self, agent, conv_id):
+        """Registers an agent object with a conversation id, updates status"""
+        worker_id = agent.worker_id
+        assignment_id = agent.assignment_id
+        print("ASSIGNING " + worker_id + "_" + assignment_id)
+        assign_state = self.worker_state[worker_id].assignments[assignment_id]
+        if assign_state.status == ASSIGN_STATUS_WAITING and 't_' in conv_id:
+            # An agent didn't acknowledge the conversation change before
+            # refreshing, so we didn't put them in assigned before this call
+            assign_state.status = ASSIGN_STATUS_IN_TASK
+            assign_state.last_command = None
+            assign_state.messages = []
+            print_and_log("Worker reconnected in waiting")
+        elif assign_state.status != ASSIGN_STATUS_IN_TASK:
+            # Avoid on a second ack if alive already came through
+            assign_state.status = ASSIGN_STATUS_ASSIGNED
+
+        assign_state.conversation_id = conv_id
+        if not conv_id in self.conv_to_agent:
+            self.conv_to_agent[conv_id] = []
+        self.conv_to_agent[conv_id].append(agent)
+
+
+    ### Manager Lifecycle Functions ###
+
+    def setup_server(self, task_directory_path=None):
+        print_and_log("\nYou are going to allow workers from Amazon " + \
+              "Mechanical Turk to be an agent in ParlAI.\nDuring this " + \
+              "process, Internet connection is required, and you should " + \
+              "turn off your computer's auto-sleep feature.\n")
+        key_input = input("Please press Enter to continue... ")
+        print_and_log("")
+
+        setup_aws_credentials()
+
+        # See if there's enough money in the account to fund the HITs requested
+        num_assignments = self.required_hits
+        payment_opt = {
+            'type': 'reward',
+            'num_total_assignments': num_assignments,
+            'reward': self.opt['reward']  # in dollars
+        }
+        total_cost = calculate_mturk_cost(payment_opt=payment_opt)
+        if not check_mturk_balance(balance_needed=total_cost,
+                                   is_sandbox=self.opt['is_sandbox']):
+            return
+
+        print_and_log('Setting up MTurk server...')
+        create_hit_config(
+            task_description=self.opt['task_description'],
+            unique_worker=self.opt['unique_worker'],
+            is_sandbox=self.opt['is_sandbox']
+        )
+        # Poplulate files to copy over to the server
+        if not self.task_files_to_copy:
+            self.task_files_to_copy = []
+        if not task_directory_path:
+            task_directory_path = os.path.join(
+                self.opt['parlai_home'],
+                'parlai',
+                'mturk',
+                'tasks',
+                self.opt['task']
+            )
+        self.task_files_to_copy.append(
+            os.path.join(task_directory_path, 'html', 'cover_page.html'))
+        for mturk_agent_id in self.mturk_agent_ids:
+            self.task_files_to_copy.append(os.path.join(
+                task_directory_path,
+                'html',
+                mturk_agent_id+'_index.html'
+            ))
+        # Setup the server
+        self.server_url = setup_server(self.task_files_to_copy)
+        print_and_log(self.server_url, False)
+
+        print_and_log("MTurk server setup done.\n")
+
+
+    def ready_to_accept_workers(self):
+        """ Sets up socket to start communicating to workers"""
+        print_and_log('Local: Setting up SocketIO...')
+        self._setup_socket()
+
+
+    def start_new_run(self):
+        """Clears state to prepare for a new run"""
+        self.run_id = str(int(time.time()))
+        self.task_group_id = str(self.opt['task']) + '_' + str(self.run_id)
+
+        # Reset state
+        # TODO more cleanup, kill things before just clearing
+        self.mturk_agents = {}
+        self.worker_index = 0
+        self.assignment_to_onboard_thread = {}
+        self.conversation_index = 0
+        self.hit_id_list = []
+        self.worker_pool = []
+        self.task_threads = []
+        self.conversation_index = 0
+        self.worker_state = {}
+
+
+    def set_onboard_function(self, onboard_function):
+        self.onboard_function = onboard_function
+
+
+    def start_task(self, eligibility_function, role_function, task_function):
+        """Handles running a task by checking to see when enough agents are in
+        the pool to start an instance of the task. It continues doing this until
+        the desired number of conversations is had."""
+
+        def _task_function(opt, workers, conversation_id):
+            """waits for all workers to join world before running the task"""
+            print("Starting task...")
+            print("Waiting for all workers to join the conversation...")
+            start_time = time.time()
+            while True:
+                all_joined = True
+                for worker in workers:
+                    # check the status of an individual worker assignment
+                    worker_id = worker.worker_id
+                    assign_id = worker.assignment_id
+                    worker_state = self.worker_state[worker_id]
+                    if not assign_id in worker_state.assignments:
+                        # This assignment was removed, we should exit this loop
+                        print("At least one worker dropped before all joined!")
+                        return
+                    status = worker_state.assignments[assign_id].status
+                    if status != ASSIGN_STATUS_IN_TASK:
+                        all_joined = False
+                if all_joined:
+                    break
+                if time.time() - start_time > WORLD_START_TIMEOUT:
+                    # We waited but not all workers rejoined, throw workers
+                    # back into the waiting pool. Stragglers will disconnect
+                    # from there
+                    print("Timeout waiting for workers, moving back to waiting")
+                    self._move_workers_to_waiting(workers)
+                    return
+                time.sleep(THREAD_SHORT_SLEEP)
+
+            print("All workers joined the conversation!")
+            task_function(mturk_manager=self, opt=opt, workers=workers)
+
+        while True:
+            # Loop forever starting task worlds until desired convos are had
+            with self.worker_pool_change_condition:
+                valid_workers = self._get_unique_pool(eligibility_function)
+                needed_workers = len(self.mturk_agent_ids)
+                if len(valid_workers) >= needed_workers:
+                    # enough workers in pool to start new conversation
+                    self.conversation_index += 1
+                    new_conversation_id = 't_' + str(self.conversation_index)
+
+                    # Add the required number of valid workers to the conv
+                    selected_workers = []
+                    for w in valid_workers[:needed_workers]:
+                        selected_workers.append(w)
+                        w.id = role_function(w)
+                        w.change_conversation(
+                            conversation_id=new_conversation_id,
+                            agent_id=w.id,
+                            change_callback=self._change_worker_to_conv
+                        )
+
+                    # Remove selected workers from the pool
+                    for worker in selected_workers:
+                        self.worker_pool.remove(worker)
+
+                    # Start a new thread for this task world
+                    task_thread = threading.Thread(target=_task_function,
+                        args=(self.opt, selected_workers, new_conversation_id))
+                    task_thread.daemon = True
+                    task_thread.start()
+                    self.task_threads.append(task_thread)
+
+            # Once we've had enough conversations, finish and break
+            compare_count = self.conversation_index
+            if (self.opt['count_complete']):
+                compare_count = self.completed_conversations
+            if compare_count == self.num_conversations:
+                self.accepting_workers = False
+                self.expire_all_unassigned_hits()
+                self._expire_onboarding_pool()
+                self._expire_worker_pool()
+                # Wait for all conversations to finish, then break from
+                # the while loop
+                for thread in self.task_threads:
+                    thread.join()
+                break
+            time.sleep(THREAD_MEDIUM_SLEEP)
+
+
+    def shutdown(self):
+        """Handles any mturk client shutdown cleanup."""
+        # TODO save worker state (disconnects to local db)
+        pass # Current implementation has no cleanup
+
+
+    ### MTurk Agent Interaction Functions ###
+
+    def force_expire_hit(self, worker_id, assign_id, text=None, ack_func=None):
+        """Sends a command to expire a hit to the provided agent, updates State
+        to reflect that the HIT is now expired"""
+        # Expire in the state
+        if worker_id in self.worker_state:
+            if assign_id in self.worker_state[worker_id]:
+                self.worker_state[worker_id].assignments[assign_id]\
+                    .status = ASSIGN_STATUS_EXPIRED
+        # Expire in the agent
+        if worker_id in self.mturk_agents:
+            if assign_id in self.mturk_agent_ids[worker_id]:
+                self.mturk_agents[worker_id][assign_id].hit_is_expired = True
+        # Send the command
+        if text == None:
+            text = 'This HIT is expired, please return and take a new ' + \
+            'one if you\'d want to work on this task.'
+        data = {'text': COMMAND_EXPIRE_HIT, 'inactive_text': text}
+        self.send_command(worker_id, assign_id, data, ack_func=ack_func)
 
 
     def send_message(self, receiver_id, assignment_id, data,
@@ -1147,6 +1214,7 @@ class MTurkManager():
         assignment.messages.append(packet.data)
         self.socket_manager.queue_packet(packet)
 
+
     def send_command(self, receiver_id, assignment_id, data, blocking=True,
                      ack_func=None):
         """Sends a command through the socket manager, updates state"""
@@ -1171,38 +1239,29 @@ class MTurkManager():
 
         self.socket_manager.queue_packet(packet)
 
-    def create_agent(self, hit_id, assignment_id, worker_id):
-        """Initializes an agent and adds it to the map"""
-        agent = MTurkAgent(self.opt, self, hit_id, assignment_id, worker_id)
-        if (worker_id in self.mturk_agents):
-            self.mturk_agents[worker_id][assignment_id] = agent
-        else:
-            self.mturk_agents[worker_id] = {}
-            self.mturk_agents[worker_id][assignment_id] = agent
+
+    def mark_workers_done(self, workers):
+        """Mark a group of workers as done to keep state consistent"""
+        # TODO move completed conversations logic out of being intertwined with
+        # world logic
+        self.completed_conversations += 1
+        for worker in workers:
+            worker_id = worker.worker_id
+            assign_id = worker.assignment_id
+            state = self.worker_state[worker_id].assignments[assign_id]
+            state.status = ASSIGN_STATUS_DONE
+            print (state)
 
 
-    def assign_agent_to_conversation(self, agent, conv_id):
-        """Registers an agent object with a conversation id, updates status"""
-        worker_id = agent.worker_id
-        assignment_id = agent.assignment_id
-        print("ASSIGNING " + worker_id + "_" + assignment_id)
-        assign_state = self.worker_state[worker_id].assignments[assignment_id]
-        if assign_state.status == ASSIGN_STATUS_WAITING and 't_' in conv_id:
-            # An agent didn't acknowledge the conversation change before
-            # refreshing, so we didn't put them in assigned before this call
-            assign_state.status = ASSIGN_STATUS_IN_TASK
-            assign_state.last_command = None
-            assign_state.messages = []
-            print_and_log("Worker reconnected in waiting")
-        elif assign_state.status != ASSIGN_STATUS_IN_TASK:
-            # Avoid on a second ack if alive already came through
-            assign_state.status = ASSIGN_STATUS_ASSIGNED
+    def free_workers(self, workers):
+        """end completed worker threads"""
+        for worker in workers:
+            worker_id = worker.worker_id
+            assign_id = worker.assignment_id
+            self.socket_manager.close_channel(worker_id, assign_id)
 
-        assign_state.conversation_id = conv_id
-        if not conv_id in self.conv_to_agent:
-            self.conv_to_agent[conv_id] = []
-        self.conv_to_agent[conv_id].append(agent)
 
+    ### Amazon MTurk Server Functions ###
 
     def get_agent_work_status(self, assignment_id):
         """Gets the current status of an assignment's work"""
@@ -1279,7 +1338,7 @@ class MTurkManager():
 
 
     def expire_hit(self, hit_id):
-        """Expires given HIT
+        """Expires given HIT from the MTurk side
         Only works if the hit is in the "pending" state
         """
         client = get_mturk_client(self.is_sandbox)
@@ -1370,34 +1429,9 @@ class MTurkManager():
             return {'success': True}
 
 
-    def mark_workers_done(self, workers):
-        """Mark a group of workers as done to keep state consistent"""
-        self.completed_conversations += 1
-        for worker in workers:
-            worker_id = worker.worker_id
-            assign_id = worker.assignment_id
-            state = self.worker_state[worker_id].assignments[assign_id]
-            state.status = ASSIGN_STATUS_DONE
-            print (state)
-
-
-    def free_workers(self, workers):
-        """end completed worker threads"""
-        for worker in workers:
-            worker_id = worker.worker_id
-            assign_id = worker.assignment_id
-            self.socket_manager.close_channel(worker_id, assign_id)
-
-
-    def shutdown(self):
-        """Handles any mturk client shutdown cleanup."""
-        # TODO save worker state (disconnects to local db)
-        pass # Current implementation has no cleanup
-
-
 
 class MTurkAgent(Agent):
-    """Class for an MTurkAgent that can act in a ParlAI world"""
+    """Base class for an MTurkAgent that can act in a ParlAI world"""
     def __init__(self, opt, manager, hit_id, assignment_id, worker_id):
         super().__init__(opt)
 
