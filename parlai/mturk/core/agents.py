@@ -85,6 +85,7 @@ THREAD_MEDIUM_SLEEP = 0.3
 THREAD_MTURK_POLLING_SLEEP = 10
 
 DEF_SOCKET_TIMEOUT = 8
+WORLD_START_TIMEOUT = 11
 
 logging_enabled = True
 logger = None
@@ -400,7 +401,8 @@ class SocketManager():
 
     def open_channel(self, worker_id, assignment_id):
         """Opens a channel for a worker on a given assignment, doesn't re-open
-        if the channel is already open"""
+        if the channel is already open. Handles creation of the thread that
+        monitors that channel"""
         connection_id = worker_id + '_' + assignment_id
         if connection_id in self.queues:
             print_and_log('Channel (' + connection_id + ') already open', False)
@@ -666,6 +668,14 @@ class MTurkManager():
         assign_state.status = ASSIGN_STATUS_WAITING
         assign_state.conversation_id = conversation_id
 
+        # Wait for turker to be in waiting status
+        self.wait_for_status(assign_state, ASSIGN_STATUS_WAITING)
+
+        # Add the worker to pool
+        with self.worker_pool_change_condition:
+            print("Adding worker to pool...")
+            self.worker_pool.append(self.mturk_agents[worker_id][assignment_id])
+
 
     def wait_for_status(self, assign_state, desired_status):
         """Suspends a thread until a particular assignment state changes to the
@@ -697,21 +707,10 @@ class MTurkManager():
                 self.onboard_function(mturk_agent)
 
             # once onboarding is done, move into a waiting world
-            conversation_id = 'w_'+str(uuid.uuid4())
-            mturk_agent.change_conversation(
-                conversation_id=conversation_id,
-                agent_id='waiting',
-                change_callback=self._set_worker_status_to_waiting
-            )
-            # Wait for turker to be in waiting status
-            self.wait_for_status(assign_state, ASSIGN_STATUS_WAITING)
-
-            with self.worker_pool_change_condition:
-                if not mturk_agent.hit_is_returned:
-                    print("Adding worker to pool...")
-                    self.worker_pool.append(mturk_agent)
+            self.move_workers_to_waiting([mturk_agent])
 
         if not assignment_id in self.assignment_to_onboard_thread:
+            # Start the onboarding thread and run it
             onboard_thread = threading.Thread(target=_onboard_function,
                                               args=(mturk_agent,))
             onboard_thread.daemon = True
@@ -780,6 +779,39 @@ class MTurkManager():
         return unique_workers
 
 
+    def move_workers_to_waiting(self, workers):
+        # Move all workers to the waiting world unless we're not accepting
+        # workers anymore
+        for worker in workers:
+            worker_id = worker.worker_id
+            assignment_id = worker.assignment_id
+            assignment = self.worker_state[worker_id].assignments[assignment_id]
+            conversation_id = 'w_'+str(uuid.uuid4())
+
+            if self.accepting_workers:
+                # Move the worker into a waiting world
+                worker.change_conversation(
+                    conversation_id=conversation_id,
+                    agent_id='waiting',
+                    change_callback=self._set_worker_status_to_waiting
+                )
+            else:
+                # TODO this should be a function
+                data = {
+                    'text': 'COMMAND_EXPIRE_HIT',
+                    'inactive_text': \
+                        'This HIT is expired, please return and take a new ' + \
+                        'one if you\'d want to work on this task.',
+                    'conversation_id': conversation_id
+                }
+                self.send_command(
+                    '[World_' + self.task_group_id + ']',
+                    worker_id,
+                    assignment_id,
+                    data
+                )
+
+
     def start_task(self, eligibility_function, role_function, task_function):
         """Handles running a task by checking to see when enough agents are in
         the pool to start an instance of the task. It continues doing this until
@@ -789,9 +821,8 @@ class MTurkManager():
             """waits for all workers to join world before running the task"""
             print("Starting task...")
             print("Waiting for all workers to join the conversation...")
+            start_time = time.time()
             while True:
-                # TODO Add timeout to return people to the queue if not everyone
-                # connects in time, requires conversation_id to check
                 all_joined = True
                 for worker in workers:
                     # check the status of an individual worker assignment
@@ -807,6 +838,13 @@ class MTurkManager():
                         all_joined = False
                 if all_joined:
                     break
+                if time.time() - start_time > WORLD_START_TIMEOUT:
+                    # We waited but not all workers rejoined, throw workers
+                    # back into the waiting pool. Stragglers will disconnect
+                    # from there
+                    print("Timeout waiting for workers, moving back to waiting")
+                    self.move_workers_to_waiting(workers)
+                    return
                 time.sleep(THREAD_SHORT_SLEEP)
 
             print("All workers joined the conversation!")
@@ -827,8 +865,6 @@ class MTurkManager():
                     for w in valid_workers[:needed_workers]:
                         selected_workers.append(w)
                         w.id = role_function(w)
-                        # TODO suspend checking alives for threads that are
-                        # switching to a task conversations
                         w.change_conversation(
                             conversation_id=new_conversation_id,
                             agent_id=w.id,

@@ -217,6 +217,8 @@
       $("div#waiting-for-message").css("display", "none");
       update_UI_for_response_type('inactive');
       scroll_conversation_to_bottom();
+
+      $(window).resize();
     }
 
     function clear_messages() {
@@ -281,6 +283,7 @@
             } else {
               // Update the conversation id
               conversation_id = new_conversation_id;
+              agent_id = new_agent_id;
             }
         }
     }
