@@ -8,7 +8,7 @@ from parlai.core.agents import Teacher
 from .build import build
 
 import os
-
+import random
 
 WELCOME_MESSAGE = (
     'Negotiate with your opponent to decide who gets how many of each item. '
@@ -36,14 +36,16 @@ def get_tag(tokens, tag):
 
 class NegotiationTeacher(Teacher):
     """End-to-end negotiation teacher that loads the data from
-    https://github.com/facebookresearch/end-to-end-negotiator."""
+    https://github.com/facebookresearch/end-to-end-negotiator.
+    """
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.datatype = opt['datatype']
+        self.datatype = opt['datatype'].split(':')[0]
+        self.random = self.datatype == 'train'
         build(opt)
 
-        filename = "val" if self.datatype == "valid" else self.datatype
+        filename = 'val' if self.datatype == 'valid' else self.datatype
         data_path = os.path.join(
             opt['datapath'], 'negotiation',
             'end-to-end-negotiator-master', 'src',
@@ -54,13 +56,20 @@ class NegotiationTeacher(Teacher):
         else:
             self._setup_data(data_path)
 
+        # for ordered data in batch mode (especially, for validation and
+        # testing), each teacher in the batch gets a start index and a step
+        # size so they all process disparate sets of the data
+        self.step_size = opt.get('batchsize', 1)
+        self.data_offset = opt.get('batchindex', 0)
+        
         self.reset()
 
     def reset(self):
         super().reset()
-        self.episode_idx = -1
+        self.episode_idx = self.data_offset - self.step_size
         self.dialogue_idx = None
         self.expected_reponse = None
+        self.epochDone = False
 
     def share(self):
         shared = super().share()
@@ -71,15 +80,31 @@ class NegotiationTeacher(Teacher):
         print('loading: ' + data_path)
         with open(data_path) as data_file:
             self.episodes = data_file.readlines()
-
+    
+    def observe(self, observation):
+        """Process observation for metrics."""
+        if self.expected_reponse is not None:
+            self.metrics.update(observation, self.expected_reponse)
+            self.expected_reponse = None
+        return observation
+            
     def act(self):
-        if self.dialogue_idx is None:
-            self.episode_idx += 1
-            if self.episode_idx == len(self.episodes) - 1:
-                self.epochDone = True
-            return self._start_dialogue()
-        else:
+        if self.dialogue_idx is not None:
+            # continue existing conversation
             return self._continue_dialogue()
+        elif self.random:
+            # if random, then select the next random example
+            self.episode_idx = random.randrange(len(self.episodes))
+            return self._start_dialogue()
+        elif self.episode_idx + self.step_size >= len(self.episodes):
+            # end of examples
+            self.epochDone = True
+            return {'episode_done': True}
+        else:
+            # get next non-random example
+            self.episode_idx = (self.episode_idx + self.step_size) % len(self.episodes)
+            return self._start_dialogue()
+           
 
     def _split_dialogue(self, words, separator=EOS_TOKEN):
         sentences = []
@@ -150,13 +175,6 @@ class NegotiationTeacher(Teacher):
             action['episode_done'] = False
 
         return action
-
-    def observe(self, observation):
-        """Process observation for metrics."""
-        if self.expected_reponse is not None:
-            self.metrics.update(observation, self.expected_reponse)
-            self.expected_reponse = None
-        return observation
 
 
 class DefaultTeacher(NegotiationTeacher):
