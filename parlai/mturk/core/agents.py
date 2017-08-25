@@ -22,7 +22,8 @@ from parlai.mturk.core.mturk_utils import calculate_mturk_cost, \
 import threading
 from parlai.mturk.core.data_model import COMMAND_SEND_MESSAGE, \
     COMMAND_SHOW_DONE_BUTTON, COMMAND_EXPIRE_HIT, COMMAND_SUBMIT_HIT, \
-    COMMAND_CHANGE_CONVERSATION
+    COMMAND_CHANGE_CONVERSATION, COMMAND_RESTORE_STATE, \
+    COMMAND_DISCONNECT_PARTNER, COMMAND_INACTIVE_HIT, COMMAND_INACTIVE_DONE
 from botocore.exceptions import ClientError
 import uuid
 from socketIO_client_nexus import SocketIO
@@ -136,7 +137,7 @@ class AssignState():
     def get_inactive_command_data(self, worker_id):
         """Gets appropriate inactive command to respond to a reconnect
         given current assignment state"""
-        command = 'COMMAND_INACTIVE_HIT'
+        command = COMMAND_INACTIVE_HIT
         text = None
         if self.status == ASSIGN_STATUS_DISCONNECT:
             text = 'You disconnected in the middle of this HIT and were ' + \
@@ -145,7 +146,7 @@ class AssignState():
                    'completion. Please return this HIT and accept a new one' + \
                    ' if you would like to try again.'
         elif self.status == ASSIGN_STATUS_DONE:
-            command = 'COMMAND_INACTIVE_DONE'
+            command = COMMAND_INACTIVE_DONE
             text = 'You disconnected after completing this HIT without ' + \
                    'marking it as completed. Please press the done button ' + \
                    'below to finish the hit.'
@@ -155,7 +156,7 @@ class AssignState():
                    'available for completion. Please return this HIT and ' + \
                    'accept a new one if you would like to try again.'
         elif self.status == ASSIGN_STATUS_PARTNER_DISCONNECT:
-            command = 'COMMAND_INACTIVE_DONE'
+            command = COMMAND_INACTIVE_DONE
             text = 'One of your partners disconnected in the middle of the ' + \
                    'HIT. We won\'t penalize you for their disconnect, so ' + \
                    'please use the button below to mark the HIT as complete.'
@@ -205,6 +206,23 @@ class Packet():
     def __init__(self, id, type, sender_id, receiver_id, assignment_id, data,
                  conversation_id=None, requires_ack=True, blocking=True,
                  ack_func=None):
+        """
+        id:               Unique ID to distinguish this packet from others
+        type:             TYPE of packet (ACK, ALIVE, MESSAGE, HEARTBEAT)
+        sender_id:        Sender ID for this packet
+        receiver_id:      Recipient ID for this packet
+        assignment_id:    Assignment ID for this packet
+        data:             Contents of the packet
+        conversation_id:  Packet metadata - what conversation this belongs to
+        requires_ack:     Whether or not this packet needs to be acknowledged,
+                           determines if retry logic will be used until ack is
+                           recieved.
+        blocking:         Whether or not this packet requires blocking to remain
+                           in order amongst other packets in the queue. Default
+                           is True
+        ack_func:         Function to call upon successful ack of a packet
+                           Default calls no function on ack
+        """
         self.id = id
         self.type = type
         self.sender_id = sender_id
@@ -217,6 +235,7 @@ class Packet():
         self.ack_func = ack_func
         self.status = STATUS_INIT
         self.time = None
+
 
     @staticmethod
     def from_dict(packet):
@@ -238,6 +257,16 @@ class Packet():
             assignment_id, data, conversation_id)
 
 
+    def get_sender_connection_id(self):
+        """Gets the connection_id that this packet came from"""
+        return self.sender_id + '_' + self.assignment_id
+
+
+    def get_receiver_connection_id(self):
+        """Gets the connection_id that this is going to"""
+        return self.receiver_id + '_' + self.assignment_id
+
+
     def swap_sender(self):
         """Swaps the sender_id and receiver_id"""
         self.sender_id, self.receiver_id = self.receiver_id, self.sender_id
@@ -254,16 +283,6 @@ class Packet():
         """Updates the message data"""
         self.data = new_data
         return self
-
-
-    def get_sender_connection_id(self):
-        """Gets the connection_id that this packet came from"""
-        return self.sender_id + '_' + self.assignment_id
-
-
-    def get_receiver_connection_id(self):
-        """Gets the connection_id that this packet came from"""
-        return self.receiver_id + '_' + self.assignment_id
 
 
     def as_dict(self):
@@ -341,18 +360,64 @@ class SocketManager():
         self.setup_socket()
 
 
+    def get_my_sender_id(self):
+        """Gives the name that this socket manager should use for its world"""
+        return '[World_{}]'.format(self.task_group_id)
+
+
+    def send_world_alive(self):
+        """Registers world with the passthrough server"""
+        self.socketIO.emit(
+            SOCKET_AGENT_ALIVE_STRING,
+            {'id': 'WORLD_ALIVE', 'sender_id': self.get_my_sender_id()}
+        )
+
+    def send_response_heartbeat(self, packet):
+        """Sends a response heartbeat to an incoming heartbeat packet"""
+        out_pack = packet.swap_sender().set_data('').as_dict()
+        self.socketIO.emit(SOCKET_ROUTE_PACKET_STRING, out_pack, None)
+
+    def send_ack(self, packet):
+        """Sends an ack to a given packet"""
+        ack = packet.get_ack().as_dict()
+        self.socketIO.emit(SOCKET_ROUTE_PACKET_STRING, ack, None)
+
+    def send_packet(self, packet, connection_id, send_time):
+        """Sends a packet, blocks if the packet is blocking"""
+        # Send the packet
+        pkt = packet.as_dict()
+        print_and_log("Send packet: " + str(packet.data))
+        def set_status_to_sent(data):
+            packet.status = STATUS_SENT
+        self.socketIO.emit(SOCKET_ROUTE_PACKET_STRING, pkt, set_status_to_sent)
+
+        # Handles acks and blocking
+        if packet.requires_ack:
+            if packet.blocking:
+                # blocking till ack is received or timeout
+                start_t = time.time()
+                while True:
+                    if packet.status == STATUS_ACK:
+                        break
+                    if time.time() - start_t > ACK_TIME[packet.type]:
+                        # didn't receive ACK, resend packet keep old queue time
+                        # to ensure this packet is processed first
+                        packet.status = STATUS_INIT
+                        self.queues[connection_id].put((send_time, packet))
+                        break
+                    time.sleep(THREAD_SHORT_SLEEP)
+            else:
+                # non-blocking ack: add ack-check to queue
+                t = time.time() + ACK_TIME[packet.type]
+                self.queues[connection_id].put((t, packet))
+
     def setup_socket(self):
         """Creates socket handlers and registers the socket"""
         self.socketIO = SocketIO(self.server_url, self.port)
 
         def on_socket_open(*args):
-            """Registers world with the passthrough server"""
             print_and_log("Socket open: " + str(args), False)
-            self.socketIO.emit(
-                SOCKET_AGENT_ALIVE_STRING,
-                {'id': 'WORLD_ALIVE',
-                    'sender_id': '[World_' + self.task_group_id + ']'}
-            )
+            self.send_world_alive()
 
         def on_disconnect(*args):
             print_and_log("World server disconnected: " + str(args), False)
@@ -375,13 +440,12 @@ class SocketManager():
             elif packet_type == TYPE_HEARTBEAT:
                 # Heartbeats update the last heartbeat time and respond in kind
                 self.last_heartbeat[connection_id] = time.time()
-                out_pack = packet.swap_sender().set_data('').as_dict()
-                self.socketIO.emit(SOCKET_ROUTE_PACKET_STRING, out_pack, None)
+                self.send_response_heartbeat(packet)
             else:
                 # Remaining packet types need to be acknowledged
                 print_and_log("On new message: " + str(args), False)
-                ack = packet.get_ack().as_dict()
-                self.socketIO.emit(SOCKET_ROUTE_PACKET_STRING, ack, None)
+                self.send_ack(packet)
+                # Call the appropriate callback
                 if packet_type == TYPE_ALIVE:
                     self.last_heartbeat[connection_id] = time.time()
                     self.alive_callback(packet)
@@ -434,38 +498,7 @@ class SocketManager():
                         if packet.status is not STATUS_ACK:
                             # either need to send initial packet
                             # or resend not-acked packet
-                            pkt = packet.as_dict()
-
-                            # send the packet
-                            print_and_log("Send packet: " + str(packet.data))
-                            def set_status_to_sent(data):
-                                packet.status = STATUS_SENT
-                            self.socketIO.emit(
-                                SOCKET_ROUTE_PACKET_STRING,
-                                pkt,
-                                set_status_to_sent
-                            )
-
-                            if packet.requires_ack:
-                                if packet.blocking:
-                                    # blocking till ack is received or timeout
-                                    start_t = time.time()
-                                    while True:
-                                        if packet.status == STATUS_ACK:
-                                            break
-                                        if time.time() - start_t \
-                                                > ACK_TIME[packet.type]:
-                                            # didn't receive ACK, resend packet
-                                            # keep old queue time to ensure this
-                                            # packet is processed first
-                                            packet.status = STATUS_INIT
-                                            self.queues[connection_id].put(item)
-                                            break
-                                        time.sleep(THREAD_SHORT_SLEEP)
-                                else:
-                                    # non-blocking ack: add ack-check to queue
-                                    t = time.time() + ACK_TIME[packet.type]
-                                    self.queues[connection_id].put((t, packet))
+                            self.send_packet(packet, connection_id, t)
                 except Empty:
                     pass
                 finally:
@@ -503,7 +536,7 @@ class SocketManager():
         return connection_id in self.queues
 
 
-    def send_packet(self, packet):
+    def queue_packet(self, packet):
         """Queues sending a packet to its intended owner"""
         connection_id = packet.get_receiver_connection_id()
         if not self.socket_is_open(connection_id):
@@ -726,42 +759,20 @@ class MTurkManager():
                 if (assign.status == ASSIGN_STATUS_ONBOARDING):
                     assign.status = ASSIGN_STATUS_EXPIRED
                     data = {
-                        'text': 'COMMAND_EXPIRE_HIT',
+                        'text': COMMAND_EXPIRE_HIT,
                         'inactive_text': 'This HIT is expired, please return and ' + \
                                            'take a new one if you\'d want to work ' + \
                                            'on this task.',
                         'conversation_id': assign.conversation_id,
                     }
-                    self.send_command(
-                        '[World_' + self.task_group_id + ']',
-                        worker_id,
-                        assign_id,
-                        data
-                    )
+                    self.send_command(worker_id, assign_id, data)
                     self.mturk_agents[worker_id][assign_id].hit_is_expired = True
 
 
     def expire_worker_pool(self):
+        """Expires all workers in the worker pool"""
         for agent in self.worker_pool:
-            # TODO creating this should be abstracted into helpers
-            data = {
-                'text': 'COMMAND_EXPIRE_HIT',
-                'inactive_text': 'This HIT is expired, please return and ' + \
-                                   'take a new one if you\'d want to work ' + \
-                                   'on this task.',
-                'conversation_id': agent.conversation_id,
-                'agent_id': agent.id
-            }
-            self.send_command(
-                '[World_' + self.task_group_id + ']',
-                agent.worker_id,
-                agent.assignment_id,
-                data
-            )
-            # Mark this assignment as an expiration
-            agent.hit_is_expired = True
-            assignments = self.worker_state[agent.worker_id].assignments
-            assignments[agent.assignment_id].status = ASSIGN_STATUS_EXPIRED
+            self.force_expire_hit(agent.worker_id, agent.assignment_id)
 
 
     def get_unique_pool(self, eligibility_function):
@@ -779,9 +790,26 @@ class MTurkManager():
         return unique_workers
 
 
+    def force_expire_hit(self, worker_id, assign_id, text=None, ack_func=None):
+        """Sends a command to expire a hit to the provided agent, updates State
+        to reflect that the HIT is now expired"""
+        if worker_id in self.worker_state:
+            if assign_id in self.worker_state[worker_id]:
+                self.worker_state[worker_id].assignments[assign_id]\
+                    .status = ASSIGN_STATUS_EXPIRED
+        if worker_id in self.mturk_agents:
+            if assign_id in self.mturk_agent_ids[worker_id]:
+                self.mturk_agents[worker_id][assign_id].hit_is_expired = True
+        if text == None:
+            text = 'This HIT is expired, please return and take a new ' + \
+            'one if you\'d want to work on this task.'
+        data = {'text': COMMAND_EXPIRE_HIT, 'inactive_text': text}
+        self.send_command(worker_id, assign_id, data, ack_func=ack_func)
+
+
     def move_workers_to_waiting(self, workers):
-        # Move all workers to the waiting world unless we're not accepting
-        # workers anymore
+        """Puts all workers into waiting worlds, expires them if no longer
+        accepting workers"""
         for worker in workers:
             worker_id = worker.worker_id
             assignment_id = worker.assignment_id
@@ -796,20 +824,7 @@ class MTurkManager():
                     change_callback=self._set_worker_status_to_waiting
                 )
             else:
-                # TODO this should be a function
-                data = {
-                    'text': 'COMMAND_EXPIRE_HIT',
-                    'inactive_text': \
-                        'This HIT is expired, please return and take a new ' + \
-                        'one if you\'d want to work on this task.',
-                    'conversation_id': conversation_id
-                }
-                self.send_command(
-                    '[World_' + self.task_group_id + ']',
-                    worker_id,
-                    assignment_id,
-                    data
-                )
+                force_expire_hit(worker_id, assignment_id)
 
 
     def start_task(self, eligibility_function, role_function, task_function):
@@ -904,16 +919,11 @@ class MTurkManager():
         def _push_worker_state(msg):
             if len(assignment.messages) != 0:
                 data = {
-                    'text': 'COMMAND_RESTORE_STATE',
+                    'text': COMMAND_RESTORE_STATE,
                     'messages': assignment.messages,
                     'last_command': assignment.last_command
                 }
-                self.send_command(
-                    '[World_' + self.task_group_id + ']',
-                    worker_id,
-                    assignment_id,
-                    data
-                )
+                self.send_command(worker_id, assignment_id, data)
 
         agent = self.mturk_agents[worker_id][assignment_id]
         agent.change_conversation(
@@ -951,30 +961,18 @@ class MTurkManager():
         curr_worker_assign = self.worker_state[worker_id].assignments
 
         if conversation_id and not curr_worker_assign:
-            # This was a request from a previous run and should be expired
+            # This was a request from a previous run and should be expired,
+            # send a message and expire when it is acknowledged
             def _close_my_socket(data):
                 """Small helper to close the socket after user acknowledges that
                 it shouldn't exist"""
                 self.socket_manager.close_channel(worker_id, assign_id)
 
-            # TODO move this (and other data message creation logic) to utils
             text = 'You disconnected in the middle of this HIT and the ' + \
                    'HIT expired before you reconnected. It is no longer ' + \
                    'available for completion. Please return this HIT and ' + \
                    'accept a new one if you would like to try again.'
-            data = {
-                'text': 'COMMAND_INACTIVE_HIT',
-                'inactive_text': text,
-                'conversation_id': conversation_id,
-                'agent_id': worker_id
-            }
-            self.send_command(
-                '[World_' + self.task_group_id + ']',
-                worker_id,
-                assign_id,
-                data,
-                ack_func=_close_my_socket
-            )
+            self.force_expire_hit(worker_id, assign_id, text, _close_my_socket)
             return
         elif not assign_id:
             # invalid assignment_id is an auto-fail
@@ -990,20 +988,7 @@ class MTurkManager():
                 self.create_agent(hit_id, assign_id, worker_id)
                 self.onboard_new_worker(self.mturk_agents[worker_id][assign_id])
             else:
-                # TODO move this message creation logic elsewhere
-                data = {
-                    'text': 'COMMAND_EXPIRE_HIT',
-                    'inactive_text': \
-                        'This HIT is expired, please return and take a new ' + \
-                        'one if you\'d want to work on this task.',
-                    'conversation_id': conversation_id
-                }
-                self.send_command(
-                    '[World_' + self.task_group_id + ']',
-                    worker_id,
-                    assign_id,
-                    data
-                )
+                self.force_expire_hit(worker_id, assign_id)
         else:
             curr_assign = curr_worker_assign[assign_id]
             curr_assign.log_reconnect(worker_id)
@@ -1017,21 +1002,7 @@ class MTurkManager():
                 # should either restore state or expire (if workers are no
                 # longer being accepted for this task)
                 if not self.accepting_workers:
-                    # TODO move this message creation logic elsewhere
-                    data = {
-                        'text': 'COMMAND_EXPIRE_HIT',
-                        'inactive_text': \
-                            'This HIT is expired, please return and take a new ' + \
-                            'one if you\'d want to work on this task.',
-                        'conversation_id': conversation_id
-                    }
-                    self.send_command(
-                        '[World_' + self.task_group_id + ']',
-                        worker_id,
-                        assign_id,
-                        data
-                    )
-                    curr_assign.status == ASSIGN_STATUS_EXPIRED
+                    self.force_expire_hit(worker_id, assign_id)
                 elif not conversation_id:
                     self.restore_worker_state(worker_id, assign_id)
             elif curr_assign.status == ASSIGN_STATUS_IN_TASK:
@@ -1052,12 +1023,7 @@ class MTurkManager():
                 # inform the connecting user in all of these cases that the task
                 # is no longer workable, generate appropriate text for each.
                 data = curr_assign.get_inactive_command_data(worker_id)
-                self.send_command(
-                    '[World_' + self.task_group_id + ']',
-                    worker_id,
-                    assign_id,
-                    data
-                )
+                self.send_command(worker_id, assign_id, data)
 
 
     def on_new_message(self, pkt):
@@ -1073,6 +1039,24 @@ class MTurkManager():
         self.worker_state[worker_id].assignments[assignment_id].last_command = \
             None
         self.mturk_agents[worker_id][assignment_id].msg_queue.put(pkt.data)
+
+
+    def handle_partner_disconnect(self, worker_id, assignment_id):
+        """Sends a message to a worker notifying them that a partner has
+        disconnected and we marked the HIT as complete for them"""
+        # Create and send the command
+        data = {
+            'text': COMMAND_DISCONNECT_PARTNER,
+            'disconnect_text': 'One of the other agents ' + \
+                               'unexpectedly disconnected.',
+        }
+        self.send_command(worker_id, assignment_id, data)
+
+        # Update the assignment state
+        agent = self.mturk_agents[worker_id][assignment_id]
+        agent.some_agent_disconnected = True
+        self.worker_state[worker_id].assignments[assignment_id].status = \
+            ASSIGN_STATUS_PARTNER_DISCONNECT
 
 
     def on_socket_dead(self, worker_id, assignment_id):
@@ -1116,26 +1100,11 @@ class MTurkManager():
             if agent in self.conv_to_agent[conversation_id]:
                 for other_agent in self.conv_to_agent[conversation_id]:
                     if agent.assignment_id != other_agent.assignment_id:
-                        # TODO creating this should be abstracted into helpers
-                        data = {
-                            'text': 'COMMAND_DISCONNECT_PARTNER',
-                            'disconnect_text': 'One of the other agents ' + \
-                                               'unexpectedly disconnected.',
-                            'conversation_id': conversation_id,
-                            'agent_id': other_agent.id
-                        }
-                        self.send_command(
-                            '[World_' + self.task_group_id + ']',
+                        self.handle_partner_disconnect(
                             other_agent.worker_id,
-                            other_agent.assignment_id,
-                            data
+                            other_agent.assignment_id
                         )
-                    # Mark this assignment for other agent as partner disconnect
-                    other_agent.some_agent_disconnected = True
-                    other_assignments = \
-                        self.worker_state[other_agent.worker_id].assignments
-                    other_assignments[other_agent.assignment_id].status = \
-                        ASSIGN_STATUS_PARTNER_DISCONNECT
+
         elif (status == ASSIGN_STATUS_DONE or
               status == ASSIGN_STATUS_EXPIRED or
               status == ASSIGN_STATUS_DISCONNECT or
@@ -1155,7 +1124,7 @@ class MTurkManager():
         return True
 
 
-    def send_message(self, sender_id, receiver_id, assignment_id, data,
+    def send_message(self, receiver_id, assignment_id, data,
                      blocking=True, ack_func=None):
         """Sends a message through the socket manager, updates state"""
         data['type'] = MESSAGE_TYPE_MESSAGE
@@ -1166,7 +1135,7 @@ class MTurkManager():
         packet = Packet(
             event_id,
             TYPE_MESSAGE,
-            sender_id,
+            self.socket_manager.get_my_sender_id(),
             receiver_id,
             assignment_id,
             data,
@@ -1176,18 +1145,17 @@ class MTurkManager():
         # Push outgoing message to the message thread to be able to resend
         assignment = self.worker_state[receiver_id].assignments[assignment_id]
         assignment.messages.append(packet.data)
-        self.socket_manager.send_packet(packet)
+        self.socket_manager.queue_packet(packet)
 
-
-    def send_command(self, sender_id, receiver_id, assignment_id, data,
-                     blocking=True, ack_func=None):
+    def send_command(self, receiver_id, assignment_id, data, blocking=True,
+                     ack_func=None):
         """Sends a command through the socket manager, updates state"""
         data['type'] = MESSAGE_TYPE_COMMAND
         event_id = generate_event_id(receiver_id)
         packet = Packet(
             event_id,
             TYPE_MESSAGE,
-            sender_id,
+            self.socket_manager.get_my_sender_id(),
             receiver_id,
             assignment_id,
             data,
@@ -1196,12 +1164,12 @@ class MTurkManager():
         )
 
         if (data['text'] != COMMAND_CHANGE_CONVERSATION and
-            data['text'] != 'COMMAND_RESTORE_STATE'):
+            data['text'] != COMMAND_RESTORE_STATE):
             # Append last command, as it might be necessary to restore state
             assign = self.worker_state[receiver_id].assignments[assignment_id]
             assign.last_command = packet.data
 
-        self.socket_manager.send_packet(packet)
+        self.socket_manager.queue_packet(packet)
 
     def create_agent(self, hit_id, assignment_id, worker_id):
         """Initializes an agent and adds it to the map"""
@@ -1234,16 +1202,6 @@ class MTurkManager():
         if not conv_id in self.conv_to_agent:
             self.conv_to_agent[conv_id] = []
         self.conv_to_agent[conv_id].append(agent)
-
-
-    def remove_agent_from_conversation(self, agent, conv_id):
-        """Deregisters an agent object from a conversation id"""
-        # TODO handle dealing with state changes
-        if not conv_id in self.conv_to_agent:
-            return
-        if not agent in self.conv_to_agent[conv_id]:
-            return
-        self.conv_to_agent[conv_id].delete(agent)
 
 
     def get_agent_work_status(self, assignment_id):
@@ -1513,21 +1471,18 @@ class MTurkAgent(Agent):
 
     def observe(self, msg):
         """Sends a agent a message through the mturk manager"""
-        self.manager.send_message(
-            '[World_' + self.manager.task_group_id + ']',
-            self.worker_id,
-            self.assignment_id,
-            msg
-        )
+        self.manager.send_message(self.worker_id, self.assignment_id, msg)
 
 
     def act(self, timeout=None):
         """Waits for a message to send to other agents in the world"""
-        # Timeout in seconds, after which the HIT will be expired automatically
-        self.manager.send_command('[World_' + self.task_group_id + ']',
-                                  self.worker_id, self.assignment_id,
-                                  {'text': 'COMMAND_SEND_MESSAGE'})
+        self.manager.send_command(
+            self.worker_id,
+            self.assignment_id,
+            {'text': COMMAND_SEND_MESSAGE}
+        )
 
+        # Timeout in seconds, after which the HIT will be expired automatically
         if timeout:
             start_time = time.time()
 
@@ -1582,7 +1537,6 @@ class MTurkAgent(Agent):
             'agent_id': agent_id
         }
         self.manager.send_command(
-            '[World_' + self.task_group_id + ']',
             self.worker_id,
             self.assignment_id,
             data,
@@ -1681,9 +1635,7 @@ class MTurkAgent(Agent):
     def set_hit_is_abandoned(self):
         if not self.hit_is_abandoned:
             self.hit_is_abandoned = True
-            self.manager.send_command('[World_' + self.task_group_id + ']',
-                                      self.worker_id, self.assignment_id,
-                                      {'text': 'COMMAND_EXPIRE_HIT'})
+            self.manager.force_expire_hit(self.worker_id, self.assignment_id)
 
 
     def wait_for_hit_completion(self, timeout=None):
@@ -1720,7 +1672,6 @@ class MTurkAgent(Agent):
         if not (self.hit_is_abandoned or self.hit_is_returned or \
                 self.disconnected or self.hit_is_expired):
             self.manager.send_command(
-                '[World_' + self.task_group_id + ']',
                 self.worker_id,
                 self.assignment_id,
                 {'text': command_to_send},
