@@ -71,7 +71,7 @@ task_list = [
         "display_name": "Deal or No Deal",
         "task": "dealnodeal",
         "tags": [ "All", "Negotiation" ],
-        "description": "End-to-end negotiation task which requires two agents to agree on how to divide a set of items with different values, each agent with different values assigned to the items"
+        "description": "End-to-end negotiation task which requires two agents to agree on how to divide a set of items, with each agent assigning different values to each item. From Lewis et al. '17. Link: https://arxiv.org/abs/1706.05125"
     },
     {
         "id": "MCTest",
