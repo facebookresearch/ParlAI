@@ -933,7 +933,6 @@ class MTurkManager():
                             other_agent.worker_id,
                             other_agent.assignment_id
                         )
-            # TODO kill task thread
         elif (status == ASSIGN_STATUS_DONE or
               status == ASSIGN_STATUS_EXPIRED or
               status == ASSIGN_STATUS_DISCONNECT or
@@ -1012,6 +1011,15 @@ class MTurkManager():
         if not conv_id in self.conv_to_agent:
             self.conv_to_agent[conv_id] = []
         self.conv_to_agent[conv_id].append(agent)
+
+
+    def _all_workers_complete(self, workers):
+        """Helper to determine if all the given workers completed their task"""
+        for w in workers:
+            state = self.worker_state[w.worker_id].assignments[w.assignment_id]
+            if state != ASSIGN_STATUS_DONE:
+                return False
+        return True
 
 
     ### Manager Lifecycle Functions ###
@@ -1136,8 +1144,8 @@ class MTurkManager():
             print("All workers joined the conversation!")
             self.started_conversations += 1
             task_function(mturk_manager=self, opt=opt, workers=workers)
-            # TODO only mark completed if all conversations are completed
-            self.completed_conversations += 1
+            if self._all_workers_complete(workers):
+                self.completed_conversations += 1
 
         while True:
             # Loop forever starting task worlds until desired convos are had
@@ -1278,7 +1286,8 @@ class MTurkManager():
             worker_id = worker.worker_id
             assign_id = worker.assignment_id
             state = self.worker_state[worker_id].assignments[assign_id]
-            state.status = ASSIGN_STATUS_DONE
+            if not state.is_final():
+                state.status = ASSIGN_STATUS_DONE
 
 
     def free_workers(self, workers):
@@ -1538,11 +1547,13 @@ class MTurkAgent(Agent):
 
     def act(self, timeout=None):
         """Waits for a message to send to other agents in the world"""
-        self.manager.send_command(
-            self.worker_id,
-            self.assignment_id,
-            {'text': COMMAND_SEND_MESSAGE}
-        )
+        if not (self.disconnected or self.some_agent_disconnected or
+                self.hit_is_expired):
+            self.manager.send_command(
+                self.worker_id,
+                self.assignment_id,
+                {'text': COMMAND_SEND_MESSAGE}
+            )
 
         # Timeout in seconds, after which the HIT will be expired automatically
         if timeout:
@@ -1555,6 +1566,15 @@ class MTurkAgent(Agent):
                 msg = self.msg_queue.get()
                 if msg['id'] == self.id:
                     return msg
+
+            if self.disconnected:
+                print("THIS AGENT DISCONNECTED")
+                msg = {
+                    'id': self.id,
+                    'text': MTURK_DISCONNECT_MESSAGE,
+                    'episode_done': True
+                }
+                return msg
 
             # See if another agent has disconnected
             if self.some_agent_disconnected:
