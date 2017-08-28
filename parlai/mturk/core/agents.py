@@ -594,6 +594,7 @@ class MTurkManager():
         self.onboard_function = None
         self.task_threads = []
         self.conversation_index = 0
+        self.started_conversations = 0
         self.completed_conversations = 0
         self.num_conversations = opt['num_conversations']
         self.required_hits = math.ceil(
@@ -665,7 +666,7 @@ class MTurkManager():
                     change_callback=self._set_worker_status_to_waiting
                 )
             else:
-                force_expire_hit(worker_id, assignment_id)
+                self.force_expire_hit(worker_id, assignment_id)
 
 
     def _wait_for_status(self, assign_state, desired_status):
@@ -1112,6 +1113,7 @@ class MTurkManager():
                 time.sleep(THREAD_SHORT_SLEEP)
 
             print("All workers joined the conversation!")
+            self.started_conversations += 1
             task_function(mturk_manager=self, opt=opt, workers=workers)
             self.mark_workers_done(workers)
 
@@ -1148,7 +1150,7 @@ class MTurkManager():
                     self.task_threads.append(task_thread)
 
             # Once we've had enough conversations, finish and break
-            compare_count = self.conversation_index
+            compare_count = self.started_conversations
             if (self.opt['count_complete']):
                 compare_count = self.completed_conversations
             if compare_count == self.num_conversations:
@@ -1177,12 +1179,12 @@ class MTurkManager():
         to reflect that the HIT is now expired"""
         # Expire in the state
         if worker_id in self.worker_state:
-            if assign_id in self.worker_state[worker_id]:
+            if assign_id in self.worker_state[worker_id].assignments:
                 self.worker_state[worker_id].assignments[assign_id]\
                     .status = ASSIGN_STATUS_EXPIRED
         # Expire in the agent
         if worker_id in self.mturk_agents:
-            if assign_id in self.mturk_agent_ids[worker_id]:
+            if assign_id in self.mturk_agents[worker_id]:
                 self.mturk_agents[worker_id][assign_id].hit_is_expired = True
         # Send the command
         if text == None:
@@ -1525,7 +1527,9 @@ class MTurkAgent(Agent):
         while True:
             # Check if Turker sends a message
             if not self.msg_queue.empty():
-                return self.msg_queue.get()
+                msg = self.msg_queue.get()
+                if msg['id'] == self.id:
+                    return msg
 
             # See if another agent has disconnected
             if self.some_agent_disconnected:
