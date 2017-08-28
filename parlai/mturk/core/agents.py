@@ -141,6 +141,16 @@ class AssignState():
         ))
 
 
+    def is_final(self):
+        """True if the assignment is in a final status that can no longer
+        be acted on"""
+        return (self.status == ASSIGN_STATUS_DISCONNECT or
+                self.status == ASSIGN_STATUS_DONE or
+                self.status == ASSIGN_STATUS_PARTNER_DISCONNECT or
+                self.status == ASSIGN_STATUS_RETURNED or
+                self.status == ASSIGN_STATUS_EXPIRED)
+
+
     def get_inactive_command_data(self, worker_id):
         """Gets appropriate inactive command to respond to a reconnect
         given current assignment state"""
@@ -711,19 +721,21 @@ class MTurkManager():
     def _handle_partner_disconnect(self, worker_id, assignment_id):
         """Sends a message to a worker notifying them that a partner has
         disconnected and we marked the HIT as complete for them"""
-        # Create and send the command
-        data = {
-            'text': COMMAND_DISCONNECT_PARTNER,
-            'disconnect_text': 'One of the other agents ' + \
-                               'unexpectedly disconnected.',
-        }
-        self.send_command(worker_id, assignment_id, data)
+        state = self.worker_state[worker_id].assignments[assignment_id]
+        if not state.is_final():
+            # Update the assignment state
+            agent = self.mturk_agents[worker_id][assignment_id]
+            agent.some_agent_disconnected = True
+            state.status = \
+                ASSIGN_STATUS_PARTNER_DISCONNECT
 
-        # Update the assignment state
-        agent = self.mturk_agents[worker_id][assignment_id]
-        agent.some_agent_disconnected = True
-        self.worker_state[worker_id].assignments[assignment_id].status = \
-            ASSIGN_STATUS_PARTNER_DISCONNECT
+            # Create and send the command
+            data = {
+                'text': COMMAND_DISCONNECT_PARTNER,
+                'disconnect_text': 'One of the other agents ' + \
+                                   'unexpectedly disconnected.',
+            }
+            self.send_command(worker_id, assignment_id, data)
 
 
     def _restore_worker_state(self, worker_id, assignment_id):
@@ -905,7 +917,7 @@ class MTurkManager():
                             other_agent.worker_id,
                             other_agent.assignment_id
                         )
-
+            # TODO kill task thread
         elif (status == ASSIGN_STATUS_DONE or
               status == ASSIGN_STATUS_EXPIRED or
               status == ASSIGN_STATUS_DISCONNECT or
@@ -976,14 +988,7 @@ class MTurkManager():
         assignment_id = agent.assignment_id
         print("ASSIGNING " + worker_id + "_" + assignment_id)
         assign_state = self.worker_state[worker_id].assignments[assignment_id]
-        if assign_state.status == ASSIGN_STATUS_WAITING and 't_' in conv_id:
-            # An agent didn't acknowledge the conversation change before
-            # refreshing, so we didn't put them in assigned before this call
-            assign_state.status = ASSIGN_STATUS_IN_TASK
-            assign_state.last_command = None
-            assign_state.messages = []
-            print_and_log("Worker reconnected in waiting")
-        elif assign_state.status != ASSIGN_STATUS_IN_TASK:
+        if assign_state.status != ASSIGN_STATUS_IN_TASK:
             # Avoid on a second ack if alive already came through
             assign_state.status = ASSIGN_STATUS_ASSIGNED
 
@@ -1115,7 +1120,7 @@ class MTurkManager():
             print("All workers joined the conversation!")
             self.started_conversations += 1
             task_function(mturk_manager=self, opt=opt, workers=workers)
-            self.mark_workers_done(workers)
+            self.completed_conversations += 1
 
         while True:
             # Loop forever starting task worlds until desired convos are had
@@ -1178,20 +1183,26 @@ class MTurkManager():
         """Sends a command to expire a hit to the provided agent, updates State
         to reflect that the HIT is now expired"""
         # Expire in the state
+        is_final = True
         if worker_id in self.worker_state:
             if assign_id in self.worker_state[worker_id].assignments:
-                self.worker_state[worker_id].assignments[assign_id]\
-                    .status = ASSIGN_STATUS_EXPIRED
-        # Expire in the agent
-        if worker_id in self.mturk_agents:
-            if assign_id in self.mturk_agents[worker_id]:
-                self.mturk_agents[worker_id][assign_id].hit_is_expired = True
-        # Send the command
-        if text == None:
-            text = 'This HIT is expired, please return and take a new ' + \
-            'one if you\'d want to work on this task.'
-        data = {'text': COMMAND_EXPIRE_HIT, 'inactive_text': text}
-        self.send_command(worker_id, assign_id, data, ack_func=ack_func)
+                state = self.worker_state[worker_id].assignments[assign_id]
+                if not state.is_final():
+                    is_final = False
+                    state.status = ASSIGN_STATUS_EXPIRED
+        if not is_final:
+            # Expire in the agent
+            if worker_id in self.mturk_agents:
+                if assign_id in self.mturk_agents[worker_id]:
+                    agent = self.mturk_agents[worker_id][assign_id]
+                    agent.hit_is_expired = True
+
+            # Send the expiration command
+            if text == None:
+                text = 'This HIT is expired, please return and take a new ' + \
+                'one if you\'d want to work on this task.'
+            data = {'text': COMMAND_EXPIRE_HIT, 'inactive_text': text}
+            self.send_command(worker_id, assign_id, data, ack_func=ack_func)
 
 
     def send_message(self, receiver_id, assignment_id, data,
@@ -1245,15 +1256,11 @@ class MTurkManager():
 
     def mark_workers_done(self, workers):
         """Mark a group of workers as done to keep state consistent"""
-        # TODO move completed conversations logic out of being intertwined with
-        # world logic
-        self.completed_conversations += 1
         for worker in workers:
             worker_id = worker.worker_id
             assign_id = worker.assignment_id
             state = self.worker_state[worker_id].assignments[assign_id]
             state.status = ASSIGN_STATUS_DONE
-            print (state)
 
 
     def free_workers(self, workers):
@@ -1711,6 +1718,7 @@ class MTurkAgent(Agent):
             command_to_send = COMMAND_SUBMIT_HIT
         if not (self.hit_is_abandoned or self.hit_is_returned or \
                 self.disconnected or self.hit_is_expired):
+            self.mark_workers_done([self])
             self.manager.send_command(
                 self.worker_id,
                 self.assignment_id,
