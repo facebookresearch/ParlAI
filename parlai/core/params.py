@@ -112,6 +112,9 @@ class ParlaiParser(argparse.ArgumentParser):
         mturk.add_argument(
             '--count-complete', dest='count_complete',  default=False, action='store_true',
             help='continue until the requested number of conversations are completed rather than attempted')
+        mturk.add_argument(
+            '--allowed-conversations', dest='allowed_conversations',  default=0, type=int,
+            help='number of concurrent conversations that one mturk worker is able to be involved in, 0 is unlimited')
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(verbose=False)

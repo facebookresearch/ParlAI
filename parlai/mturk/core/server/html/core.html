@@ -253,8 +253,10 @@
         } else if (command === 'COMMAND_SUBMIT_HIT') {
             all_done_callback();
         } else if (command === 'COMMAND_EXPIRE_HIT') {
-            hit_is_expired = true;
-            handle_no_done_inactive(msg)
+            if (!task_done) {
+              hit_is_expired = true;
+              handle_no_done_inactive(msg);
+            }
         } else if (command === 'COMMAND_INACTIVE_HIT') {
             handle_no_done_inactive(msg)
         } else if (command === 'COMMAND_RESTORE_STATE') {

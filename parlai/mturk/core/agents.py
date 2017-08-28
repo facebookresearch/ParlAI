@@ -217,6 +217,12 @@ class WorkerState():
         self.assignments = {}
         self.disconnects = disconnects
 
+    def active_conversation_count(self):
+        count = 0
+        for assign_id in self.assignments:
+            if not self.assignments[assign_id].is_final():
+                count += 1
+        return count
 
 
 #RTODO move to a socket managing class
@@ -813,11 +819,21 @@ class MTurkManager():
             # First time this worker has connected under this assignment, init
             # if we are still accepting workers
             if self.accepting_workers:
-                curr_worker_assign[assign_id] = AssignState(assign_id)
-                self._create_agent(hit_id, assign_id, worker_id)
-                self._onboard_new_worker(
-                    self.mturk_agents[worker_id][assign_id]
-                )
+                convs = self.worker_state[worker_id].active_conversation_count()
+                allowed_convs = self.opt['allowed_conversations']
+                if allowed_convs == 0 or convs < allowed_convs:
+                    curr_worker_assign[assign_id] = AssignState(assign_id)
+                    self._create_agent(hit_id, assign_id, worker_id)
+                    self._onboard_new_worker(
+                        self.mturk_agents[worker_id][assign_id]
+                    )
+                else:
+                    text = ('You can participate in only {} of these HITs at '
+                           'once. Please return this HIT and finish your '
+                           'existing HITs before accepting more.'.format(
+                                allowed_convs
+                           ))
+                    self.force_expire_hit(worker_id, assign_id, text)
             else:
                 self.force_expire_hit(worker_id, assign_id)
         else:
@@ -1120,6 +1136,7 @@ class MTurkManager():
             print("All workers joined the conversation!")
             self.started_conversations += 1
             task_function(mturk_manager=self, opt=opt, workers=workers)
+            # TODO only mark completed if all conversations are completed
             self.completed_conversations += 1
 
         while True:
@@ -1197,12 +1214,12 @@ class MTurkManager():
                     agent = self.mturk_agents[worker_id][assign_id]
                     agent.hit_is_expired = True
 
-            # Send the expiration command
-            if text == None:
-                text = 'This HIT is expired, please return and take a new ' + \
-                'one if you\'d want to work on this task.'
-            data = {'text': COMMAND_EXPIRE_HIT, 'inactive_text': text}
-            self.send_command(worker_id, assign_id, data, ack_func=ack_func)
+        # Send the expiration command
+        if text == None:
+            text = 'This HIT is expired, please return and take a new ' + \
+            'one if you\'d want to work on this task.'
+        data = {'text': COMMAND_EXPIRE_HIT, 'inactive_text': text}
+        self.send_command(worker_id, assign_id, data, ack_func=ack_func)
 
 
     def send_message(self, receiver_id, assignment_id, data,
@@ -1246,7 +1263,8 @@ class MTurkManager():
         )
 
         if (data['text'] != COMMAND_CHANGE_CONVERSATION and
-            data['text'] != COMMAND_RESTORE_STATE):
+            data['text'] != COMMAND_RESTORE_STATE and
+            assignment_id in self.worker_state[receiver_id].assignments):
             # Append last command, as it might be necessary to restore state
             assign = self.worker_state[receiver_id].assignments[assignment_id]
             assign.last_command = packet.data
@@ -1718,7 +1736,7 @@ class MTurkAgent(Agent):
             command_to_send = COMMAND_SUBMIT_HIT
         if not (self.hit_is_abandoned or self.hit_is_returned or \
                 self.disconnected or self.hit_is_expired):
-            self.mark_workers_done([self])
+            self.manager.mark_workers_done([self])
             self.manager.send_command(
                 self.worker_id,
                 self.assignment_id,
