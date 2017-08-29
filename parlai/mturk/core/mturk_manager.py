@@ -23,7 +23,7 @@ from parlai.mturk.core.shared_utils import print_and_log, generate_event_id, \
 import parlai.mturk.core.data_model as data_model
 from botocore.exceptions import ClientError
 
-# TODO move these somewhere that makes more sense when resturcturing HIT status
+# TODO-1 move these somewhere that makes more sense
 ASSIGNMENT_NOT_DONE = 'NotDone'
 ASSIGNMENT_DONE = 'Submitted'
 ASSIGNMENT_APPROVED = 'Approved'
@@ -44,29 +44,32 @@ class MTurkManager():
         self.task_group_id = None
         self.run_id = None
         self.mturk_agent_ids = mturk_agent_ids
-        self.mturk_agents = {}
-        self.hit_id_list = []
         self.task_files_to_copy = None
         self.is_sandbox = opt['is_sandbox']
-        self.worker_pool = []
         self.worker_pool_change_condition = threading.Condition()
-        self.worker_index = 0
-        self.assignment_to_onboard_thread = {}
         self.onboard_function = None
-        self.task_threads = []
-        self.conversation_index = 0
-        self.started_conversations = 0
-        self.completed_conversations = 0
         self.num_conversations = opt['num_conversations']
         self.required_hits = math.ceil(
             self.num_conversations * len(self.mturk_agent_ids) * HIT_MULT
         )
-        self.worker_state = {}
         self.socket_manager = None
-        self.conv_to_agent = {}
-        self.accepting_workers = True
+
 
     ### Helpers and internal manager methods ###
+
+    def _init_state(self):
+        self.mturk_agents = {}
+        self.hit_id_list = []
+        self.worker_pool = []
+        self.worker_index = 0
+        self.assignment_to_onboard_thread = {}
+        self.task_threads = []
+        self.conversation_index = 0
+        self.started_conversations = 0
+        self.completed_conversations = 0
+        self.worker_state = {}
+        self.conv_to_agent = {}
+        self.accepting_workers = True
 
     def _get_ids_from_pkt(self, pkt):
         """Wrapper to get sender, assignment, and conv ids from a packet"""
@@ -346,17 +349,17 @@ class MTurkManager():
         print_and_log('Worker {} disconnected from {} in status {}'.format(
             worker_id, assignment_id, status))
         self.worker_state[worker_id].disconnects += 1
-        # TODO Block worker if disconnects exceed some amount
+        # TODO-3 Block worker if disconnects exceed some amount
 
         if status == AssignState.STATUS_NONE:
             # Agent never made it to onboarding, delete
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
             del agent
         elif status == AssignState.STATUS_ONBOARDING:
-            # Agent never made it to task pool, queue a delete
+            # Agent never made it to task pool, kill the onboarding thread
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
+            self.assignment_to_onboard_thread[assignment_id].terminate()
             del agent
-            # TODO kill onboarding world's thread
         elif status == AssignState.STATUS_WAITING:
             # agent is in pool, remove from pool and delete
             if agent in self.worker_pool:
@@ -366,7 +369,6 @@ class MTurkManager():
             del agent
         elif status == AssignState.STATUS_IN_TASK:
             # Disconnect in conversation is not workable (if its a conversation)
-            # TODO handle solo turker tasks with message thread reconnects
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
             # in conversation, inform others about disconnect
             conversation_id = assignments[assignment_id].conversation_id
@@ -390,7 +392,7 @@ class MTurkManager():
             # check alive status when reconnecting after given an assignment
             return False
 
-        # TODO Attempt to notify worker they have disconnected before the below
+        # TODO-4 Attempt to notify worker they of disconnect before the below
         # close the sending thread
         self.socket_manager.close_channel(worker_id, assignment_id)
         return True
@@ -534,18 +536,7 @@ class MTurkManager():
         """Clears state to prepare for a new run"""
         self.run_id = str(int(time.time()))
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
-
-        # Reset state
-        # TODO more cleanup, kill things before just clearing
-        self.mturk_agents = {}
-        self.worker_index = 0
-        self.assignment_to_onboard_thread = {}
-        self.conversation_index = 0
-        self.hit_id_list = []
-        self.worker_pool = []
-        self.task_threads = []
-        self.conversation_index = 0
-        self.worker_state = {}
+        self._init_state()
 
 
     def set_onboard_function(self, onboard_function):
@@ -644,8 +635,14 @@ class MTurkManager():
 
     def shutdown(self):
         """Handles any mturk client shutdown cleanup."""
-        # TODO save worker state (disconnects to local db)
-        pass # Current implementation has no cleanup
+        # Ensure all threads are cleaned and handled
+        self.expire_all_unassigned_hits()
+        self._expire_onboarding_pool()
+        self._expire_worker_pool()
+        for assignment_id in self.assignment_to_onboard_thread:
+            self.assignment_to_onboard_thread[assignment_id].join()
+        # TODO-5 save worker state locally here
+        pass
 
 
     ### MTurk Agent Interaction Functions ###
@@ -895,6 +892,10 @@ class MTurkManager():
             Reason=reason,
             UniqueRequestToken=unique_request_token
         )
+        print_and_log('Paid ${} bonus to WorkerId: {}'.format(
+            bonus_amount,
+            worker_id
+        ))
         return True
 
 

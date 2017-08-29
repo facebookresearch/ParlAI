@@ -15,6 +15,7 @@ import parlai.mturk.core.data_model as data_model
 from parlai.mturk.core.shared_utils import print_and_log, THREAD_SHORT_SLEEP, \
                                            THREAD_MTURK_POLLING_SLEEP
 
+# TODO-1 move these somewhere that makes more sense
 ASSIGNMENT_NOT_DONE = 'NotDone'
 ASSIGNMENT_DONE = 'Submitted'
 ASSIGNMENT_APPROVED = 'Approved'
@@ -54,7 +55,7 @@ class MTurkAgent(Agent):
 
     def _check_hit_status(self):
         """Monitors the HIT status by polling"""
-        # TODO (t21222476) replace with code that subscribes to mturk notifs
+        # TODO-1 replace with code that subscribes to notifs to update status
         # Check if HIT is accepted
         while True:
             if self.hit_id:
@@ -188,7 +189,7 @@ class MTurkAgent(Agent):
 
 
     def episode_done(self):
-        # TODO provide documentation for what this is supposed to be used for
+        # TODO-2 provide documentation for what this is supposed to be used for
         return False
 
 
@@ -245,17 +246,13 @@ class MTurkAgent(Agent):
             if self.manager.get_agent_work_status(self.assignment_id) == \
                     ASSIGNMENT_DONE:
                 unique_request_token = str(uuid.uuid4())
-                if self.manager.pay_bonus(
+                self.manager.pay_bonus(
                     worker_id=self.worker_id,
                     bonus_amount=bonus_amount,
                     assignment_id=self.assignment_id,
                     reason=reason,
                     unique_request_token=unique_request_token
-                ):
-                    print_and_log('Paid ${} bonus to WorkerId: {}'.format(
-                        bonus_amount,
-                        self.worker_id
-                    ))
+                )
             else:
                 print_and_log('Cannot pay bonus for HIT. Reason: Turker '
                               'hasn\'t completed the HIT yet.')

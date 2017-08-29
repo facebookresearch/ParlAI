@@ -5,11 +5,13 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.worlds import World, validate
 
+# TODO-6 clean up length issues here
+
 class MTurkOnboardWorld(World):
     """Generic world for onboarding a Turker and collecting information from them."""
     def __init__(self, opt, mturk_agent):
         self.mturk_agent = mturk_agent
-        self.episodeDone = False    
+        self.episodeDone = False
 
     def parley(self):
         self.episodeDone = True
@@ -39,13 +41,13 @@ class MTurkTaskWorld(World):
         self.mturk_agent.shutdown()
         """
         Use the following code if there are multiple MTurk agents:
-        
+
         global shutdown_agent
         def shutdown_agent(mturk_agent):
             mturk_agent.shutdown()
         Parallel(n_jobs=len(self.mturk_agents), backend='threading')(delayed(shutdown_agent)(agent) for agent in self.mturk_agents)
         """
-        
+
     def review_work(self):
         """Programmatically approve/reject the turker's work.
         For example:
