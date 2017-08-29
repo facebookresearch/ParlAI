@@ -3,21 +3,24 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""a string match retreve dictionary."""
+"""a string match retrever."""
 
 
 from collections import defaultdict
 import copy
 from numpy import random
 
-# importing DictionaryAgent for accessing the tokenizer,
-# TODO: remove this import once "tokenizer" moved to more genearl place
 from .agents import Agent
+# importing DictionaryAgent only for accessing the tokenizer.
 from .dict import DictionaryAgent
 
 
 class StringMatchRetrieverAgent(Agent):
+    """Builds and/or loads a string match retriever
 
+    The retriever identifies all facts that overlap the input query string, and
+    output these facts either in a random order, or by frequency decreasing.
+    """
 
     def __init__(self, opt):
         if not hasattr(self, 'id'):
@@ -25,7 +28,6 @@ class StringMatchRetrieverAgent(Agent):
         if not hasattr(self, 'opt'):
             self.opt = copy.deepcopy(opt)
         self.observation = None
-        # TODO: remove usage of DictionaryAgent
         self.dict_agent = DictionaryAgent(opt)
         self.token2facts = {}
         self.facts = []
@@ -39,7 +41,7 @@ class StringMatchRetrieverAgent(Agent):
             self.token2facts[token].append(fact)
         return {'id': 'Retriever'}
 
-    def retrive(self, target_str, max_results=100, ordered_by_freq=False):
+    def retrieve(self, target_str, max_results=100, ordered_by_freq=False):
         facts_freq = {}
         for token in set(self.dict_agent.tokenize(target_str)):
             if token not in self.token2facts:
@@ -50,6 +52,8 @@ class StringMatchRetrieverAgent(Agent):
                     facts_freq[fact] = 0
                 # freq of a fact = sum of freq of each token
                 facts_freq[fact] += token_freq
+        if not facts_freq:
+            return []
         max_results = min(max_results, len(facts_freq))
         if ordered_by_freq:
             return sorted(facts_freq, key=facts_freq.get, reverse=True)[:max_results]

@@ -25,7 +25,7 @@ class TestStringMatchRetriever(unittest.TestCase):
             'dict_maxexs': 100000,
         }
         my_retriever = StringMatchRetrieverAgent(opt)
-        facts = [
+        test_facts = [
             "Unconditional directed_by Brent McCorkle",
             "Unconditional written_by Brent McCorkle",
             "Unconditional release_year 2012",
@@ -43,20 +43,29 @@ class TestStringMatchRetriever(unittest.TestCase):
             "a refrigerator falls from an aircraft and lands on his wife. " +
             "He decides to getaway ...",
         ]
-        for fact in facts:
+        for fact in test_facts:
             my_retriever.observe({'text': fact})
             my_retriever.act()
-        # check that random facts are returned: i.e., not the same content being returned everytime
-        ans1 = my_retriever.retrive("Unconditional", 2)
-        ans2 = my_retriever.retrive("Unconditional", 2)
-        ans3 = my_retriever.retrive("Unconditional", 2)
-        ans4 = my_retriever.retrive("Unconditional", 2)
-        assert(len(set(ans1 + ans2 + ans3 + ans4)) > 2)
-        ans5 = my_retriever.retrive("Unconditional directed_by Brent", 2, ordered_by_freq=True)
+        # test that random facts are retrieved: i.e., not the same fact being returned everytime
+        # If you are unlucky, there is a very slim chance (1/5^4 < 1%) that this test will fail.
+        ans1 = my_retriever.retrieve("Unconditional", 1)
+        ans2 = my_retriever.retrieve("Unconditional", 1)
+        ans3 = my_retriever.retrieve("Unconditional", 1)
+        ans4 = my_retriever.retrieve("Unconditional", 1)
+        assert(len(set(ans1 + ans2 + ans3 + ans4)) > 1)
+        ans5 = my_retriever.retrieve("Unconditional directed_by Brent", 2, ordered_by_freq=True)
         assert(ans5 == [
             "Unconditional directed_by Brent McCorkle",
             "Unconditional written_by Brent McCorkle",
         ])
+        # test input string that are not in facts
+        ans6 = my_retriever.retrieve("not_in_facts", 1)
+        assert(ans6 == [])
+        # test input string that are partially not in facts
+        ans7 = my_retriever.retrieve("directed_by Brent not_in_facts", 1, ordered_by_freq=True)
+        assert(ans7 == ["Unconditional directed_by Brent McCorkle"])
+
+
 
 
 if __name__ == '__main__':
