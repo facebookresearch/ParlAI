@@ -1,19 +1,15 @@
-import os
-import sys
-import shutil
-from subprocess import call
-import zipfile
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
+
 import boto3
 import botocore
-import time
+import os
 import json
-import webbrowser
-import hashlib
-import getpass
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
-
-# TODO: remove unused imports
 
 region_name = 'us-east-1'
 aws_profile_name = 'parlai_mturk'

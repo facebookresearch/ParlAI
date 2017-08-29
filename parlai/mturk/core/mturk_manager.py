@@ -4,12 +4,12 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+import math
 import os
+import threading
 import time
 import uuid
-import threading
 import webbrowser
-import math
 from datetime import datetime
 from parlai.mturk.core.server_utils import setup_server
 from parlai.mturk.core.mturk_utils import calculate_mturk_cost, \

@@ -4,8 +4,8 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-import time
 import threading
+import time
 from queue import PriorityQueue, Empty
 from socketIO_client_nexus import SocketIO
 from parlai.mturk.core.shared_utils import print_and_log, generate_event_id, \

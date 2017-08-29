@@ -5,8 +5,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 import logging
-import uuid
 import time
+import uuid
 
 # Sleep constants
 THREAD_SHORT_SLEEP = 0.1

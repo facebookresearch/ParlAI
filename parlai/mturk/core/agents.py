@@ -5,10 +5,10 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 
-import time
-import uuid
 import threading
+import time
 from queue import Queue
+import uuid
 
 from parlai.core.agents import Agent
 import parlai.mturk.core.data_model as data_model

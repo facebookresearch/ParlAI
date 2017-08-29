@@ -3,25 +3,19 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
+
+import botocore
+import getpass
+import glob
+import hashlib
+import json
+import netrc
 import os
 import platform
 import sh
 import shlex
-import hashlib
-import netrc
-import sys
 import shutil
 import subprocess
-import zipfile
-import boto3
-import botocore
-import time
-import json
-import webbrowser
-import hashlib
-import getpass
-import re
-import glob
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
 
