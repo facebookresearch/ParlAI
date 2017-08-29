@@ -105,3 +105,4 @@ ENV/
 
 # MTurk
 tmp/
+*.pickle

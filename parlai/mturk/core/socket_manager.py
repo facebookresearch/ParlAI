@@ -330,6 +330,11 @@ class SocketManager():
                         if self.socket_dead_callback(worker_id, assignment_id):
                             self.run[connection_id] = False
 
+                    # Make sure the queue still exists
+                        if not connection_id in self.queues:
+                            self.run[connection_id] = False
+                            break
+
                     # Get first item in the queue, check if we can send it yet
                     item = self.queues[connection_id].get(block=False)
                     t = item[0]

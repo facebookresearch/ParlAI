@@ -6,6 +6,7 @@
 
 import math
 import os
+import pickle
 import threading
 import time
 import uuid
@@ -35,6 +36,17 @@ WORLD_START_TIMEOUT = 11
 # Multiplier to apply when creating hits to ensure worker availibility
 HIT_MULT = 1.5
 
+# Max number of disconnects before a turker should be blocked
+MAX_DISCONNECTS = 25
+
+# Time to persist a disconnect before forgetting about it. Combined with the
+# above this will block workers that disconnect at least 25 times in a week
+DISCONNECT_PERSIST_LENGTH = 60 * 24 * 7
+
+DISCONNECT_FILE_NAME = 'disconnects.pickle'
+
+parent_dir = os.path.dirname(os.path.abspath(__file__))
+
 class MTurkManager():
 
     def __init__(self, opt, mturk_agent_ids):
@@ -54,7 +66,6 @@ class MTurkManager():
         )
         self.socket_manager = None
 
-
     ### Helpers and internal manager methods ###
 
     def _init_state(self):
@@ -70,6 +81,31 @@ class MTurkManager():
         self.worker_state = {}
         self.conv_to_agent = {}
         self.accepting_workers = True
+        self._load_disconnects()
+
+
+    def _load_disconnects(self):
+        self.disconnects = []
+        file_path = os.path.join(parent_dir, DISCONNECT_FILE_NAME)
+        compare_time = time.time()
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as f:
+                old_disconnects = pickle.load(f)
+                print (old_disconnects)
+                self.disconnects = [
+                    d
+                    for d in old_disconnects
+                    if (compare_time - d['time']) < DISCONNECT_PERSIST_LENGTH
+                ]
+        print (self.disconnects)
+
+    def _save_disconnects(self):
+        file_path = os.path.join(parent_dir, DISCONNECT_FILE_NAME)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        with open(file_path, 'wb') as f:
+            pickle.dump(self.disconnects, f, pickle.HIGHEST_PROTOCOL)
+
 
     def _get_ids_from_pkt(self, pkt):
         """Wrapper to get sender, assignment, and conv ids from a packet"""
@@ -359,6 +395,7 @@ class MTurkManager():
             # Agent never made it to task pool, kill the onboarding thread
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
             self.assignment_to_onboard_thread[assignment_id].terminate()
+            self.disconnects.append({'time': time.time(), 'id': worker_id})
             del agent
         elif status == AssignState.STATUS_WAITING:
             # agent is in pool, remove from pool and delete
@@ -366,6 +403,7 @@ class MTurkManager():
                 with self.worker_pool_change_condition:
                     self.worker_pool.remove(agent)
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
+            self.disconnects.append({'time': time.time(), 'id': worker_id})
             del agent
         elif status == AssignState.STATUS_IN_TASK:
             # Disconnect in conversation is not workable (if its a conversation)
@@ -379,6 +417,7 @@ class MTurkManager():
                             other_agent.worker_id,
                             other_agent.assignment_id
                         )
+            self.disconnects.append({'time': time.time(), 'id': worker_id})
         elif (status == AssignState.STATUS_DONE or
               status == AssignState.STATUS_EXPIRED or
               status == AssignState.STATUS_DISCONNECT or
@@ -641,7 +680,7 @@ class MTurkManager():
         self._expire_worker_pool()
         for assignment_id in self.assignment_to_onboard_thread:
             self.assignment_to_onboard_thread[assignment_id].join()
-        # TODO-5 save worker state locally here
+        self._save_disconnects()
         pass
 
 
