@@ -257,11 +257,11 @@ class SocketManager():
         self.socketIO = SocketIO(self.server_url, self.port)
 
         def on_socket_open(*args):
-            print_and_log('Socket open: '.format(args), False)
+            print_and_log('Socket open: {}'.format(args), False)
             self._send_world_alive()
 
         def on_disconnect(*args):
-            print_and_log('World server disconnected: '.format(args), False)
+            print_and_log('World server disconnected: {}'.format(args), False)
             # TODO handle world cleanup? Kill socket?
 
         def on_message(*args):
@@ -273,7 +273,7 @@ class SocketManager():
             connection_id = packet.get_sender_connection_id()
             if packet_type == Packet.TYPE_ACK:
                 # Acknowledgements should mark a packet as acknowledged
-                print_and_log('On new ack: '.format(args), False)
+                print_and_log('On new ack: {}'.format(args), False)
                 self.packet_map[packet_id].status = Packet.STATUS_ACK
                 # If the packet sender wanted to do something on acknowledge
                 if self.packet_map[packet_id].ack_func:
