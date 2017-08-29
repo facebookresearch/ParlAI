@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.qa_data_collection.worlds import QADataCollectionOnboardWorld, QADataCollectionWorld
-from parlai.mturk.core.agents import MTurkAgent, MTurkManager
+from parlai.mturk.core.mturk_manager import MTurkManager
 from task_config import task_config
 import time
 import os

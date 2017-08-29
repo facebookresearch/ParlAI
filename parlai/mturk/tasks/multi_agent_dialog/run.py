@@ -6,7 +6,7 @@
 import os
 import time
 from parlai.core.params import ParlaiParser
-from parlai.mturk.core.agents import MTurkAgent, MTurkManager
+from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.tasks.multi_agent_dialog.worlds import MTurkMultiAgentDialogWorld, MTurkMultiAgentDialogOnboardWorld
 from parlai.agents.local_human.local_human import LocalHumanAgent
 from task_config import task_config

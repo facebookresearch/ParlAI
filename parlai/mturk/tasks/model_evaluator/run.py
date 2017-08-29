@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.model_evaluator.worlds import ModelEvaluatorWorld, ModelEvaluatorOnboardWorld
-from parlai.mturk.core.agents import MTurkAgent, MTurkManager
+from parlai.mturk.core.mturk_manager import MTurkManager
 from task_config import task_config
 import time
 import os
@@ -60,7 +60,7 @@ def main():
         global run_conversation
         def run_conversation(opt, workers):
             mturk_agent = workers[0]
-            
+
             model_agent = IrBaselineAgent(opt=opt)
             # Create the MTurk agent which provides a chat interface to the Turker
             world = ModelEvaluatorWorld(opt=opt, model_agent=model_agent, task_opt=task_opt, mturk_agent=mturk_agent)
