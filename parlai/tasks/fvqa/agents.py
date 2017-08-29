@@ -1,7 +1,7 @@
 from parlai.core.agents import Teacher
 from parlai.core.image_featurizers import ImageLoader
+from parlai.core.metrics import Metrics
 from .build import build
-from .factmetric import FactMetric
 
 import json
 import random
@@ -34,11 +34,11 @@ class FVQATeacher(Teacher):
         if dt not in ('train', 'test'):
             raise RuntimeError('Not valid datatype.')
 
-        if not hasattr(self, 'factmetric'):
-            if shared and shared.get('factmetric'):
-                self.factmetric = shared['factmetric']
+        if not hasattr(self, 'factmetrics'):
+            if shared and shared.get('factmetrics'):
+                self.factmetrics = shared['factmetrics']
             else:
-                self.factmetric = FactMetric(opt)
+                self.factmetrics = Metrics(opt)
             self.datatype = opt['datatype']
         questions_path, trainset_path, self.image_path = _path(opt)
 
@@ -63,7 +63,7 @@ class FVQATeacher(Teacher):
 
     def report(self):
         r = super().report()
-        r['factmetrics'] = self.factmetric.report()
+        r['factmetrics'] = self.factmetrics.report()
         return r
 
     def reset(self):
@@ -75,7 +75,7 @@ class FVQATeacher(Teacher):
 
     def reset_metrics(self):
         super().reset_metrics()
-        self.factmetric.clear()
+        self.factmetrics.clear()
 
     def observe(self, observation):
         """Process observation for metrics."""
@@ -83,7 +83,7 @@ class FVQATeacher(Teacher):
             if self.asked_question:
                 self.metrics.update(observation, self.lastY[0])
             else:
-                self.factmetric.update(observation, self.lastY[1])
+                self.factmetrics.update(observation, self.lastY[1])
                 self.lastY = None
         return observation
 
@@ -113,7 +113,8 @@ class FVQATeacher(Teacher):
             'episode_done': False
         }
 
-        self.lastY = [[qa['answer']], qa['fact']]
+        human_readable = qa['fact_surface'].replace('[', '').replace(']', '')
+        self.lastY = [[qa['answer']], [human_readable]]
 
         if self.datatype.startswith('train'):
             action['labels'] = self.lastY[0]
@@ -122,7 +123,7 @@ class FVQATeacher(Teacher):
 
     def share(self):
         shared = super().share()
-        shared['factmetric'] = self.factmetric
+        shared['factmetrics'] = self.factmetrics
         shared['ques'] = self.ques
         if hasattr(self, 'facts'):
             shared['facts'] = self.facts
