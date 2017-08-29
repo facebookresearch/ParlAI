@@ -310,14 +310,14 @@ class SocketManager():
         if the channel is already open. Handles creation of the thread that
         monitors that channel"""
         connection_id = '{}_{}'.format(worker_id, assignment_id)
-        if connection_id in self.queues:
+        if connection_id in self.queues and self.run[connection_id]:
             print_and_log(
                 'Channel ({}) already open'.format(connection_id),
                 False
             )
             return
-        self.queues[connection_id] = PriorityQueue()
         self.run[connection_id] = True
+        self.queues[connection_id] = PriorityQueue()
 
         def channel_thread():
             """Handler thread for monitoring a single channel"""
@@ -328,7 +328,7 @@ class SocketManager():
                     if (time.time() - self.last_heartbeat[connection_id]
                             > self.socket_dead_timeout):
                         if self.socket_dead_callback(worker_id, assignment_id):
-                            break
+                            self.run[connection_id] = False
 
                     # Get first item in the queue, check if we can send it yet
                     item = self.queues[connection_id].get(block=False)

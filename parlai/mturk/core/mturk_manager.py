@@ -266,7 +266,6 @@ class MTurkManager():
                 convs = self.worker_state[worker_id].active_conversation_count()
                 allowed_convs = self.opt['allowed_conversations']
                 if allowed_convs == 0 or convs < allowed_convs:
-
                     curr_worker_state.add_assignment(assign_id)
                     self._create_agent(hit_id, assign_id, worker_id)
                     self._onboard_new_worker(
