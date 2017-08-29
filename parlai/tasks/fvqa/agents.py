@@ -1,3 +1,7 @@
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
+
 from parlai.core.agents import Teacher
 from parlai.core.image_featurizers import ImageLoader
 from parlai.core.metrics import Metrics
@@ -6,6 +10,7 @@ from .build import build
 import json
 import random
 import os
+
 
 def _path(opt):
     build(opt)
@@ -17,22 +22,28 @@ def _path(opt):
     return questions_path, trainset_path, image_path
 
 
-class FVQATeacher(Teacher):
+class SplitTeacher(Teacher):
     """FVQA Teacher, which loads the json VQA data and implements its own
     `act` method for interacting with student agent.
+
+    Use "fvqa:split:X" to choose between splits 0-4 (inclusive), or just
+    "fvqa" to use the default split (0).
     """
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('FVQA Task Arguments')
-        agent.add_argument('--fvqa-trainset', default=0, choices=range(0, 5), type=int,
-                           help="ID of train/test split.  0-4 inclusive.")
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
 
         dt = opt['datatype'].split(':')[0]
         if dt not in ('train', 'test'):
-            raise RuntimeError('Not valid datatype.')
+            raise RuntimeError('Not valid datatype (only train/test).')
+
+        task = opt.get('task', 'fvqa:split:0')
+        task_num = 0  # default to train/split 0
+        split = task.split(':')
+        if len(split) > 2:
+            task_num = split[2]
+            if task_num not in [str(i) for i in range(5)]:
+                raise RuntimeError('Invalid train/test split ID (0-4 inclusive)')
 
         if not hasattr(self, 'factmetrics'):
             if shared and shared.get('factmetrics'):
@@ -45,7 +56,7 @@ class FVQATeacher(Teacher):
         if shared and 'ques' in shared:
             self.ques = shared['ques']
         else:
-            self._setup_data(questions_path, trainset_path, opt)
+            self._setup_data(questions_path, trainset_path, dt, task_num)
         self.len = len(self.ques)
 
         self.asked_question = False
@@ -72,6 +83,7 @@ class FVQATeacher(Teacher):
         super().reset()
         self.lastY = None
         self.episode_idx = self.data_offset - self.step_size
+        self.epochDone = False
 
     def reset_metrics(self):
         super().reset_metrics()
@@ -90,7 +102,7 @@ class FVQATeacher(Teacher):
     def act(self):
         if self.asked_question:
             self.asked_question = False
-            action = {'text': 'What fact supports this answer?', 'episode_done': True}
+            action = {'text': 'Which fact supports this answer?', 'episode_done': True}
             if self.datatype.startswith('train'):
                 action['labels'] = self.lastY[1]
             if self.datatype != 'train' and self.episode_idx + self.step_size >= len(self):
@@ -129,16 +141,15 @@ class FVQATeacher(Teacher):
             shared['facts'] = self.facts
         return shared
 
-    def _setup_data(self, questions_path, trainset_path, opt):
+    def _setup_data(self, questions_path, trainset_path, datatype, task_num):
         print('loading: ' + questions_path)
         with open(questions_path) as questions_file:
             questions = json.load(questions_file)
-        train_test = opt['datatype'].split(':')[0]
         train_test_images = set()
-        with open(os.path.join(trainset_path, '{}_list_{}.txt'.format(train_test, opt['fvqa_trainset']))) as imageset:
+        with open(os.path.join(trainset_path, '{}_list_{}.txt'.format(datatype, task_num))) as imageset:
             for line in imageset:
                 train_test_images.add(line.strip())
         self.ques = [questions[k] for k in sorted(questions.keys()) if questions[k]['img_file'] in train_test_images]
 
-class DefaultTeacher(FVQATeacher):
+class DefaultTeacher(SplitTeacher):
     pass
