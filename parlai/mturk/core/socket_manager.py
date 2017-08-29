@@ -95,12 +95,12 @@ class Packet():
 
     def get_sender_connection_id(self):
         """Gets the connection_id that this packet came from"""
-        return self.sender_id + '_' + self.assignment_id
+        return '{}_{}'.format(self.sender_id, self.assignment_id)
 
 
     def get_receiver_connection_id(self):
         """Gets the connection_id that this is going to"""
-        return self.receiver_id + '_' + self.assignment_id
+        return '{}_{}'.format(self.receiver_id, self.assignment_id)
 
 
     def get_ack(self):
@@ -118,7 +118,7 @@ class Packet():
 
 
     def __repr__(self):
-        return 'Packet <' + str(self.as_dict()) + '>'
+        return 'Packet <{}>'.format(self.as_dict())
 
 
     def swap_sender(self):
@@ -222,7 +222,7 @@ class SocketManager():
         """Sends a packet, blocks if the packet is blocking"""
         # Send the packet
         pkt = packet.as_dict()
-        print_and_log("Send packet: " + str(packet.data))
+        print_and_log('Send packet: {}'.format(packet.data))
         def set_status_to_sent(data):
             packet.status = Packet.STATUS_SENT
         self.socketIO.emit(
@@ -257,11 +257,11 @@ class SocketManager():
         self.socketIO = SocketIO(self.server_url, self.port)
 
         def on_socket_open(*args):
-            print_and_log("Socket open: " + str(args), False)
+            print_and_log('Socket open: '.format(args), False)
             self._send_world_alive()
 
         def on_disconnect(*args):
-            print_and_log("World server disconnected: " + str(args), False)
+            print_and_log('World server disconnected: '.format(args), False)
             # TODO handle world cleanup? Kill socket?
 
         def on_message(*args):
@@ -273,7 +273,7 @@ class SocketManager():
             connection_id = packet.get_sender_connection_id()
             if packet_type == Packet.TYPE_ACK:
                 # Acknowledgements should mark a packet as acknowledged
-                print_and_log("On new ack: " + str(args), False)
+                print_and_log('On new ack: '.format(args), False)
                 self.packet_map[packet_id].status = Packet.STATUS_ACK
                 # If the packet sender wanted to do something on acknowledge
                 if self.packet_map[packet_id].ack_func:
@@ -284,7 +284,7 @@ class SocketManager():
                 self._send_response_heartbeat(packet)
             else:
                 # Remaining packet types need to be acknowledged
-                print_and_log("On new message: " + str(args), False)
+                print_and_log('On new message: {}'.format(args), False)
                 self._send_ack(packet)
                 # Call the appropriate callback
                 if packet_type == Packet.TYPE_ALIVE:
@@ -308,9 +308,12 @@ class SocketManager():
         """Opens a channel for a worker on a given assignment, doesn't re-open
         if the channel is already open. Handles creation of the thread that
         monitors that channel"""
-        connection_id = worker_id + '_' + assignment_id
+        connection_id = '{}_{}'.format(worker_id, assignment_id)
         if connection_id in self.queues:
-            print_and_log('Channel (' + connection_id + ') already open', False)
+            print_and_log(
+                'Channel ({}) already open'.format(connection_id),
+                False
+            )
             return
         self.queues[connection_id] = PriorityQueue()
         self.run[connection_id] = True
@@ -353,7 +356,7 @@ class SocketManager():
 
     def _close_channel_internal(self, connection_id):
         """Closes a channel by connection_id"""
-        print_and_log("Closing channel " + connection_id, False)
+        print_and_log('Closing channel {}'.format(connection_id), False)
         self.run[connection_id] = False
         if connection_id in self.queues:
             del self.queues[connection_id]
@@ -362,12 +365,12 @@ class SocketManager():
 
     def close_channel(self, worker_id, assignment_id):
         """Closes a channel by worker_id and assignment_id"""
-        self._close_channel_internal(worker_id + '_' + assignment_id)
+        self._close_channel_internal('{}_{}'.format(worker_id, assignment_id))
 
 
     def close_all_channels(self):
         """Closes a channel by clearing the list of channels"""
-        print_and_log("Closing all channels")
+        print_and_log('Closing all channels')
         connection_ids = list(self.queues.keys())
         for connection_id in connection_ids:
             self._close_channel_internal(connection_id)
@@ -382,12 +385,15 @@ class SocketManager():
         connection_id = packet.get_receiver_connection_id()
         if not self.socket_is_open(connection_id):
             # Warn if there is no socket to send through for the expected recip
-            print_and_log('Can not send packet to worker_id ' + \
-                '{}: packet queue not found. Message: {}'.format(
-                    connection_id, packet.data))
+            print_and_log(
+                'Can not send packet to worker_id {}: packet queue not found. '
+                'Message: {}'.format(connection_id, packet.data)
+            )
             return
-        print_and_log('Put packet (' + packet.id + ') in queue (' + \
-            connection_id + ')', False)
+        print_and_log('Put packet ({}) in queue ({})'.format(
+            packet.id,
+            connection_id
+        ), False)
         # Get the current time to put packet into the priority queue
         self.packet_map[packet.id] = packet
         item = (time.time(), packet)

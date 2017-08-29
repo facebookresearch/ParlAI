@@ -61,8 +61,8 @@ class MTurkAgent(Agent):
                 response = self.manager.get_hit(hit_id=self.hit_id)
                 # Amazon MTurk system acknowledges that the HIT is accepted
                 if response['HIT']['NumberOfAssignmentsPending'] == 1:
-                    print_and_log('Worker has accepted the HIT ' + \
-                                  '(acknowledged by MTurk API).', False)
+                    print_and_log(('Worker has accepted the HIT '
+                                   '(acknowledged by MTurk API).'), False)
                     self.hit_is_accepted = True
                     break
             time.sleep(THREAD_MTURK_POLLING_SLEEP)
@@ -78,14 +78,14 @@ class MTurkAgent(Agent):
                     # expire the HIT to keep the total number of available HITs
                     # consistent with the number of conversations left.
                     if self.is_in_task():
-                        print_and_log('Worker has returned the HIT. Since ' + \
-                            'the worker is already in a task conversation, ' + \
-                            'we are expiring the HIT.', False)
+                        print_and_log(('Worker has returned the HIT. Since '
+                            'the worker is already in a task conversation, '
+                            'we are expiring the HIT.'), False)
                         self.manager.expire_hit(hit_id=self.hit_id)
                     else:
-                        print_and_log('Worker has returned the HIT. Since ' + \
-                            'the worker is still in onboarding, we will not' + \
-                            ' expire the HIT.', False)
+                        print_and_log(('Worker has returned the HIT. Since '
+                            'the worker is still in onboarding, we will not '
+                            'expire the HIT.'), False)
                     # we will not be using this MTurkAgent object for another
                     # worker, so no need to check its status anymore
                     return
@@ -158,7 +158,7 @@ class MTurkAgent(Agent):
             if timeout:
                 current_time = time.time()
                 if (current_time - start_time) > timeout:
-                    print_and_log(self.id+' is timeout.', False)
+                    print_and_log('{} is timeout.'.format(self.id), False)
                     self.set_hit_is_abandoned()
                     msg = {
                         'id': self.id,
@@ -192,53 +192,55 @@ class MTurkAgent(Agent):
         return False
 
 
+    def _print_not_available_for(self, item):
+        print_and_log(
+            'Conversation ID: {}, Agent ID: {} - HIT '
+            'is abandoned and thus not available for '
+            '{}.'.format(self.conversation_id, self.id, item)
+        )
+
     def approve_work(self):
         """Handles approving work after it has been submitted"""
         if self.hit_is_abandoned:
-            print_and_log('Conversation ID: ' + str(self.conversation_id) + \
-                    ', Agent ID: ' + self.id + ' - HIT is abandoned and ' + \
-                    'thus not available for review.')
+            self._print_not_available_for('review')
         else:
             if self.manager.get_agent_work_status(self.assignment_id) == \
                     ASSIGNMENT_DONE:
                 self.manager.approve_work(assignment_id=self.assignment_id)
-                print_and_log('Conversation ID: ' + str(self.conversation_id) +\
-                              ', Agent ID: ' + self.id + ' - HIT is approved.')
+                print_and_log('Conversation ID: {}, Agent ID: {} - HIT is '
+                              'approved.'.format(self.conversation_id, self.id))
             else:
-                print_and_log("Cannot approve HIT. Reason: Turker hasn't " + \
-                              "completed the HIT yet.")
+                print_and_log('Cannot approve HIT. Reason: Turker hasn\'t '
+                              'completed the HIT yet.')
 
 
     def reject_work(self, reason='unspecified'):
         """Handles rejecting work after it has been submitted"""
         if self.hit_is_abandoned:
-            print_and_log('Conversation ID: ' + str(self.conversation_id) + \
-                    ', Agent ID: ' + self.id + ' - HIT is abandoned and ' + \
-                    'thus not available for review.')
+            self._print_not_available_for('review')
         else:
             if self.manager.get_agent_work_status(self.assignment_id) == \
                     ASSIGNMENT_DONE:
                 self.manager.reject_work(self.assignment_id, reason)
-                print_and_log('Conversation ID: ' + str(self.conversation_id) +\
-                              ', Agent ID: ' + self.id + ' - HIT is rejected.')
+                print_and_log('Conversation ID: {}, Agent ID: {} - HIT is '
+                              'rejected.'.format(self.conversation_id, self.id))
             else:
-                print_and_log("Cannot reject HIT. Reason: Turker hasn't " + \
-                              "completed the HIT yet.")
+                print_and_log('Cannot reject HIT. Reason: Turker hasn\'t '
+                              'completed the HIT yet.')
 
 
     def block_worker(self, reason='unspecified'):
         """Blocks a worker from our tasks"""
         self.manager.block_worker(worker_id=self.worker_id, reason=reason)
-        print_and_log("Blocked worker ID: " + str(self.worker_id) + \
-                      ". Reason: " + reason)
+        print_and_log(
+            'Blocked worker ID: {}. Reason: {}'.format(self.worker_id, reason)
+        )
 
 
     def pay_bonus(self, bonus_amount, reason='unspecified'):
         """Pays the given agent the given bonus"""
         if self.hit_is_abandoned:
-            print_and_log('Conversation ID: ' + str(self.conversation_id) + \
-                    ', Agent ID: ' + self.id + ' - HIT is abandoned and ' + \
-                    'thus not available for bonus.')
+            self._print_not_available_for('bonus')
         else:
             if self.manager.get_agent_work_status(self.assignment_id) == \
                     ASSIGNMENT_DONE:
@@ -250,11 +252,13 @@ class MTurkAgent(Agent):
                     reason=reason,
                     unique_request_token=unique_request_token
                 ):
-                    print_and_log("Paid $" + str(bonus_amount) + \
-                                  " bonus to WorkerId: " + self.worker_id)
+                    print_and_log('Paid ${} bonus to WorkerId: {}'.format(
+                        bonus_amount,
+                        self.worker_id
+                    ))
             else:
-                print_and_log("Cannot pay bonus for HIT. Reason: Turker " + \
-                              "hasn't completed the HIT yet.")
+                print_and_log('Cannot pay bonus for HIT. Reason: Turker '
+                              'hasn\'t completed the HIT yet.')
 
 
     def email_worker(self, subject, message_text):
@@ -265,13 +269,21 @@ class MTurkAgent(Agent):
             message_text=message_text
         )
         if 'success' in response:
-            print_and_log("Email sent to worker ID: " + str(self.worker_id) + \
-                ": Subject: " + str(subject) + ": Text: " + str(message_text))
+            print_and_log(
+                'Email sent to worker ID: {}: Subject: {}: Text: {}'.format(
+                    self.worker_id,
+                    subject,
+                    message_text
+                )
+            )
             return True
         elif 'failure' in response:
-            print_and_log("Unable to send email to worker ID: " + \
-                          str(self.worker_id) + ". Error: " + \
-                          str(response['failure']))
+            print_and_log(
+                "Unable to send email to worker ID: {}. Error: {}".format(
+                    self.worker_id,
+                    response['failure']
+                )
+            )
             return False
 
 
@@ -301,8 +313,8 @@ class MTurkAgent(Agent):
                 self.worker_id, self.assignment_id, self.conversation_id
             ), False)
             time.sleep(THREAD_MTURK_POLLING_SLEEP)
-        print_and_log('Conversation ID: ' + str(self.conversation_id) + \
-                      ', Agent ID: ' + self.id + ' - HIT is done.')
+        print_and_log('Conversation ID: {}, Agent ID: {} - HIT is '
+                      'done.'.format(self.conversation_id, self.id))
         self.manager.free_workers([self])
         return True
 

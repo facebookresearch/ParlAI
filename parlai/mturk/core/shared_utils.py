@@ -38,4 +38,4 @@ def print_and_log(message, should_print=True):
 
 def generate_event_id(worker_id):
     """Creates a unique id to use for identifying a packet"""
-    return worker_id + '_' + str(uuid.uuid4())
+    return '{}_{}'.format(worker_id, uuid.uuid4())
