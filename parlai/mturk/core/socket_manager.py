@@ -261,8 +261,9 @@ class SocketManager():
             self._send_world_alive()
 
         def on_disconnect(*args):
+            """Disconnect event is a no-op for us, as the server reconnects
+            automatically on a retry"""
             print_and_log('World server disconnected: {}'.format(args), False)
-            # TODO handle world cleanup? Kill socket?
 
         def on_message(*args):
             """Incoming message handler for ACKs, ALIVEs, HEARTBEATs,
