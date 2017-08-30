@@ -538,10 +538,16 @@ class MTurkManager():
     ### Manager Lifecycle Functions ###
 
     def setup_server(self, task_directory_path=None):
+        completion_type = 'started'
+        if self.opt['count_complete']:
+            completion_type = 'completed'
         print_and_log('\nYou are going to allow workers from Amazon '
               'Mechanical Turk to be an agent in ParlAI.\nDuring this '
               'process, Internet connection is required, and you should '
-              'turn off your computer\'s auto-sleep feature.\n')
+              'turn off your computer\'s auto-sleep feature.\n'
+              'Enough HITs will be created to fulfill {} times the number of '
+              'conversations requested, extra HITs will be expired once the '
+              'desired conversations are {}.'.format(HIT_MULT, completion_type))
         key_input = input('Please press Enter to continue... ')
         print_and_log('')
 
@@ -558,7 +564,23 @@ class MTurkManager():
         total_cost = calculate_mturk_cost(payment_opt=payment_opt)
         if not check_mturk_balance(balance_needed=total_cost,
                                    is_sandbox=self.opt['is_sandbox']):
-            return
+            raise SystemExit('Insufficient funds')
+
+        if total_cost > 100 or self.opt['reward'] > 1:
+            confirm_string = '$%.2f' % total_cost
+            print_and_log(
+                'You are going to create {} HITs at {} per assignment, for a '
+                'total cost of {} after MTurk fees. Please enter "{}" to '
+                'confirm and continue, and anything else to cancel'.format(
+                    self.required_hits,
+                    '$%.2f' % self.opt['reward'],
+                    confirm_string,
+                    confirm_string
+                )
+            )
+            check = input('Enter here: ')
+            if (check != confirm_string):
+                raise SystemExit('Cancelling')
 
         print_and_log('Setting up MTurk server...')
         create_hit_config(
