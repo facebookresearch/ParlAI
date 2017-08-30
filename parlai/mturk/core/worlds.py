@@ -3,12 +3,12 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
+
 from parlai.core.worlds import World, validate
 
-# TODO-6 clean up length issues here
-
 class MTurkOnboardWorld(World):
-    """Generic world for onboarding a Turker and collecting information from them."""
+    """Generic world for onboarding a Turker and collecting
+    information from them."""
     def __init__(self, opt, mturk_agent):
         self.mturk_agent = mturk_agent
         self.episodeDone = False
@@ -45,7 +45,10 @@ class MTurkTaskWorld(World):
         global shutdown_agent
         def shutdown_agent(mturk_agent):
             mturk_agent.shutdown()
-        Parallel(n_jobs=len(self.mturk_agents), backend='threading')(delayed(shutdown_agent)(agent) for agent in self.mturk_agents)
+        Parallel(
+            n_jobs=len(self.mturk_agents),
+            backend='threading'
+        )(delayed(shutdown_agent)(agent) for agent in self.mturk_agents)
         """
 
     def review_work(self):
@@ -53,10 +56,13 @@ class MTurkTaskWorld(World):
         For example:
         .. code-block:: python
             if self.turker_response == '0':
-                self.mturk_agent.reject_work('You rated our model's response as a 0/10 but we know we're better than that')
+                self.mturk_agent.reject_work(
+                    'You rated our model's response as a 0/10 but we '
+                    'know we\'re better than that'
+                )
             else:
                 if self.turker_response == '10':
-                    self.mturk_agent.pay_bonus(1, 'Thanks for the great rating!')
+                    self.mturk_agent.pay_bonus(1, 'Thanks for a great rating!')
                 self.mturk_agent.approve_work()
         """
         # self.mturk_agent.approve_work()

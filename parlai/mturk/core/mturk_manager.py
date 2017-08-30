@@ -552,7 +552,8 @@ class MTurkManager():
         payment_opt = {
             'type': 'reward',
             'num_total_assignments': num_assignments,
-            'reward': self.opt['reward']  # in dollars
+            'reward': self.opt['reward'],  # in dollars
+            'unique': self.opt['unique_worker']
         }
         total_cost = calculate_mturk_cost(payment_opt=payment_opt)
         if not check_mturk_balance(balance_needed=total_cost,

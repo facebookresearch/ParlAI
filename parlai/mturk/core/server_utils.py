@@ -4,8 +4,6 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-# TODO-6 clean up length issues here
-
 import botocore
 import getpass
 import glob
@@ -30,10 +28,12 @@ heroku_server_directory_name = 'heroku_server'
 task_directory_name = 'task'
 
 def setup_heroku_server(task_files_to_copy=None):
+    print("Heroku: Collecting files...")
     # Install Heroku CLI
     os_name = None
     bit_architecture = None
 
+    # Get the platform we are working on
     platform_info = platform.platform()
     if 'Darwin' in platform_info: # Mac OS X
         os_name = 'darwin'
@@ -42,35 +42,59 @@ def setup_heroku_server(task_files_to_copy=None):
     else:
         os_name = 'windows'
 
+    # Find our architecture
     bit_architecture_info = platform.architecture()[0]
     if '64bit' in bit_architecture_info:
         bit_architecture = 'x64'
     else:
         bit_architecture = 'x86'
 
-    existing_heroku_directory_names = glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))
+    # Remove existing heroku client files
+    existing_heroku_directory_names = \
+        glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))
     if len(existing_heroku_directory_names):
-        shutil.rmtree(os.path.join(parent_dir, existing_heroku_directory_names[0]))
+        shutil.rmtree(os.path.join(
+            parent_dir,
+            existing_heroku_directory_names[0]
+        ))
     if os.path.exists(os.path.join(parent_dir, 'heroku.tar.gz')):
         os.remove(os.path.join(parent_dir, 'heroku.tar.gz'))
 
+    # Get the heroku client and unzip
     os.chdir(parent_dir)
-    sh.wget(shlex.split('https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli-{}-{}.tar.gz -O heroku.tar.gz'.format(os_name, bit_architecture)))
+    url = 'https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli'
+    sh.wget(shlex.split('{}-{}-{}.tar.gz -O heroku.tar.gz'.format(
+        url,
+        os_name,
+        bit_architecture
+    )))
     sh.tar(shlex.split('-xvzf heroku.tar.gz'))
 
-    heroku_directory_name = glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))[0]
+
+    heroku_directory_name = \
+        glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))[0]
     heroku_directory_path = os.path.join(parent_dir, heroku_directory_name)
-    heroku_executable_path = os.path.join(heroku_directory_path, 'bin', 'heroku')
+    heroku_executable_path = \
+        os.path.join(heroku_directory_path, 'bin', 'heroku')
 
-    server_source_directory_path = os.path.join(parent_dir, server_source_directory_name)
-    heroku_server_directory_path = os.path.join(parent_dir, heroku_server_directory_name)
+    server_source_directory_path = \
+        os.path.join(parent_dir, server_source_directory_name)
+    heroku_server_directory_path = \
+        os.path.join(parent_dir, heroku_server_directory_name)
 
+    # Delete old server files
     sh.rm(shlex.split('-rf '+heroku_server_directory_path))
 
+    # Copy over a clean copy into the server directory
     shutil.copytree(server_source_directory_path, heroku_server_directory_path)
 
-    task_directory_path = os.path.join(heroku_server_directory_path, task_directory_name)
-    sh.mv(os.path.join(heroku_server_directory_path, 'html'), task_directory_path)
+    # Consolidate task files
+    task_directory_path = \
+        os.path.join(heroku_server_directory_path, task_directory_name)
+    sh.mv(
+        os.path.join(heroku_server_directory_path, 'html'),
+        task_directory_path
+    )
 
     hit_config_file_path = os.path.join(parent_dir, 'hit_config.json')
     sh.mv(hit_config_file_path, task_directory_path)
@@ -85,41 +109,71 @@ def setup_heroku_server(task_files_to_copy=None):
 
     os.chdir(heroku_server_directory_path)
     sh.git('init')
+
+    # get heroku credentials
     heroku_user_identifier = None
     while not heroku_user_identifier:
         try:
-            subprocess.check_output(shlex.split(heroku_executable_path+' auth:token'))
-            heroku_user_identifier = netrc.netrc(os.path.join(os.path.expanduser("~"), '.netrc')).hosts['api.heroku.com'][0]
+            subprocess.check_output(
+                shlex.split(heroku_executable_path+' auth:token')
+            )
+            heroku_user_identifier = (
+                netrc.netrc(os.path.join(os.path.expanduser("~"), '.netrc'))
+                     .hosts['api.heroku.com'][0]
+            )
         except subprocess.CalledProcessError:
-            raise SystemExit("A free Heroku account is required for launching MTurk tasks. Please register at https://signup.heroku.com/ and run `"+heroku_executable_path+" login` at the terminal to login to Heroku, and then run this program again.")
+            raise SystemExit(
+                'A free Heroku account is required for launching MTurk tasks. '
+                'Please register at https://signup.heroku.com/ and run `{} '
+                'login` at the terminal to login to Heroku, and then run this '
+                'program again.'.format(heroku_executable_path)
+            )
 
-    heroku_app_name = (user_name + '-' + hashlib.md5(heroku_user_identifier.encode('utf-8')).hexdigest())[:30]
+    heroku_app_name = ('{}-{}'.format(
+        user_name,
+        hashlib.md5(heroku_user_identifier.encode('utf-8')).hexdigest()
+    ))[:30]
+
+    # Create or attach to the server
     try:
-        subprocess.check_output(shlex.split(heroku_executable_path+' create ' + heroku_app_name))
+        subprocess.check_output(shlex.split(
+            '{} create {}'.format(heroku_executable_path, heroku_app_name)
+        ))
     except subprocess.CalledProcessError: # Heroku app already exists
-        subprocess.check_output(shlex.split(heroku_executable_path+' git:remote -a ' + heroku_app_name))
+        subprocess.check_output(shlex.split('{} git:remote -a {}'.format(
+            heroku_executable_path,
+            heroku_app_name
+        )))
 
     # Enable WebSockets
     try:
-        subprocess.check_output(shlex.split(heroku_executable_path+' features:enable http-session-affinity'))
+        subprocess.check_output(shlex.split(
+            '{} features:enable http-session-affinity'.format(
+                heroku_executable_path
+            )
+        ))
     except subprocess.CalledProcessError: # Already enabled WebSockets
         pass
 
+    # commit and push to the heroku server
     os.chdir(heroku_server_directory_path)
     sh.git(shlex.split('add -A'))
     sh.git(shlex.split('commit -m "app"'))
     sh.git(shlex.split('push -f heroku master'))
-    subprocess.check_output(shlex.split(heroku_executable_path+' ps:scale web=1'))
+    subprocess.check_output(shlex.split('{} ps:scale web=1'.format(
+        heroku_executable_path)
+    ))
     os.chdir(parent_dir)
 
+    # Clean up heroku files
     if os.path.exists(heroku_directory_path):
         shutil.rmtree(heroku_directory_path)
     if os.path.exists(os.path.join(parent_dir, 'heroku.tar.gz')):
         os.remove(os.path.join(parent_dir, 'heroku.tar.gz'))
 
-    sh.rm(shlex.split('-rf '+heroku_server_directory_path))
+    sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
 
-    return 'https://'+heroku_app_name+'.herokuapp.com'
+    return 'https://{}.herokuapp.com'.format(heroku_app_name)
 
 def setup_server(task_files_to_copy):
     return setup_heroku_server(task_files_to_copy=task_files_to_copy)
