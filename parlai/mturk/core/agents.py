@@ -243,7 +243,8 @@ class MTurkAgent(Agent):
         if self.hit_is_abandoned:
             self._print_not_available_for('bonus')
         else:
-            if self.manager.get_agent_work_status(self.assignment_id) in (ASSIGNMENT_DONE, ASSIGNMENT_APPROVED):
+            if self.manager.get_agent_work_status(self.assignment_id) in \
+                    (ASSIGNMENT_DONE, ASSIGNMENT_APPROVED):
                 unique_request_token = str(uuid.uuid4())
                 self.manager.pay_bonus(
                     worker_id=self.worker_id,
