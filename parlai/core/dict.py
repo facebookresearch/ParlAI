@@ -306,7 +306,7 @@ class DictionaryAgent(Agent):
 
         If ``sort`` (default ``True``), then first sort the dictionary before saving.
         """
-        filename = self.opt['model_file'] if filename is None else filename
+        filename = self.opt['dict_file'] if filename is None else filename
         print('Dictionary: saving dictionary to {}'.format(filename))
         if sort:
             self.sort()
