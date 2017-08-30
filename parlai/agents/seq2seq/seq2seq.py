@@ -10,9 +10,11 @@ from parlai.core.dict import DictionaryAgent
 from torch.autograd import Variable
 from torch import optim
 import torch.nn as nn
+import torch.nn.functional as F
 import torch
 import os
 import random
+import pdb
 
 
 class Seq2seqAgent(Agent):
@@ -37,8 +39,8 @@ class Seq2seqAgent(Agent):
             help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
             help='dropout rate')
-        # agent.add_argument('-att', '--attention', type='bool', default=False,
-        #     help='whether to use attention over the context during decoding')
+        agent.add_argument('-att', '--attention', type=int, default=0,
+            help='if greater than 0, use attention of specified length while decoding')
         # agent.add_argument('-bi', '--bidirectional', type='bool', default=False,
         #     help='whether to encode the context with a bidirectional RNN')
         agent.add_argument('--no-cuda', action='store_true', default=False,
@@ -95,9 +97,11 @@ class Seq2seqAgent(Agent):
             self.rank = opt['rank_candidates']
             self.longest_label = 1
             self.truncate = opt['truncate']
+            self.attention = opt['attention']
 
             # set up tensors
             self.zeros = torch.zeros(self.num_layers, 1, hsz)
+            #self.encoder_output = torch.zeros(1, self.max_length, self.hidden_size)
             self.xs = torch.LongTensor(1, 1)
             self.ys = torch.LongTensor(1, 1)
             self.cands = torch.LongTensor(1, 1, 1)
@@ -120,6 +124,16 @@ class Seq2seqAgent(Agent):
             self.dropout = nn.Dropout(opt['dropout'])
             # softmax maps output scores to probabilities
             self.softmax = nn.LogSoftmax()
+
+            self.use_attention = False
+            # if attention is greater than 0, set up additional members
+            if self.attention > 0:
+                self.use_attention = True
+                self.max_length = self.attention
+                # Linear layer to combine input and previous hidden output layer
+                self.attn = nn.Linear(hsz*2, self.max_length)
+                # Linear layer to combined attention weights with encoder outputs
+                self.attn_combine = nn.Linear(hsz*2, hsz)
 
             # set up optims for each module
             lr = opt['learningrate']
@@ -166,6 +180,7 @@ class Seq2seqAgent(Agent):
         self.START_TENSOR = self.START_TENSOR.cuda(async=True)
         self.END_TENSOR = self.END_TENSOR.cuda(async=True)
         self.zeros = self.zeros.cuda(async=True)
+        #self.encoder_output = self.encoder_output.cuda(async=True)
         self.xs = self.xs.cuda(async=True)
         self.ys = self.ys.cuda(async=True)
         self.cands = self.cands.cuda(async=True)
@@ -178,6 +193,9 @@ class Seq2seqAgent(Agent):
         self.h2o.cuda()
         self.dropout.cuda()
         self.softmax.cuda()
+        if self.use_attention:
+            self.attn.cuda()
+            self.attn_combine.cuda()
 
     def hidden_to_idx(self, hidden, dropout=False):
         """Converts hidden state vectors into indices into the dictionary."""
@@ -215,6 +233,199 @@ class Seq2seqAgent(Agent):
         self.episode_done = observation['episode_done']
         return observation
 
+    def _call_encoder(self, xs):
+        """
+        Call encoder and return output and hidden states
+        """
+        batchsize = len(xs)
+
+        # first encode context
+        xes = self.lt(xs).transpose(0, 1)
+        if self.zeros.size(1) != batchsize:
+            self.zeros.resize_(self.num_layers, batchsize, self.hidden_size).fill_(0)
+        h0 = Variable(self.zeros)
+        encoder_output, hidden = self.encoder(xes, h0)
+        encoder_output = encoder_output.transpose(0, 1)
+        
+        if self.use_attention:
+            if encoder_output.size(1) > self.max_length:
+                offset = encoder_output.size(1) - self.max_length
+                encoder_output = encoder_output.narrow(1, offset, self.max_length)
+        
+        return encoder_output, hidden
+
+
+    def _apply_attention(self, xes, encoder_output, encoder_hidden):
+        """
+        Apply attention to encoder hidden layer
+        """
+        attn_weights = F.softmax(self.attn(torch.cat((xes[0], encoder_hidden[-1]), 1)))
+        
+        if attn_weights.size(1) > encoder_output.size(1):
+            attn_weights = attn_weights.narrow(1, 0, encoder_output.size(1) )
+
+        attn_applied = torch.bmm(attn_weights.unsqueeze(1), encoder_output).squeeze(1)
+
+        output = torch.cat((xes[0], attn_applied), 1)
+        output = self.attn_combine(output).unsqueeze(0)
+        output = F.relu(output)
+
+        return output
+
+
+    def _decode_and_train(self, batchsize, xes, ys, encoder_output, hidden):
+        # update the model based on the labels
+        self.zero_grad()
+        loss = 0
+
+        output_lines = [[] for _ in range(batchsize)]
+
+        # keep track of longest label we've ever seen
+        self.longest_label = max(self.longest_label, ys.size(1))
+        for i in range(ys.size(1)):
+            output = self._apply_attention(xes, encoder_output, hidden) if self.use_attention else xes
+
+            output, hidden = self.decoder(output, hidden)
+            preds, scores = self.hidden_to_idx(output, dropout=True)
+            y = ys.select(1, i)
+            loss += self.criterion(scores, y)
+            # use the true token as the next input instead of predicted
+            # this produces a biased prediction but better training
+            xes = self.lt(y).unsqueeze(0)
+            for b in range(batchsize):
+                # convert the output scores to tokens
+                token = self.v2t([preds.data[b]])
+                output_lines[b].append(token)
+
+        loss.backward()
+        self.update_params()
+
+        if random.random() < 0.1:
+            # sometimes output a prediction for debugging
+            print('prediction:', ' '.join(output_lines[0]),
+                      '\nlabel:', self.dict.vec2txt(ys.data[0]))
+
+        return output_lines
+
+    def _decode_only(self, batchsize, xes, ys, encoder_output, hidden):
+        # just produce a prediction without training the model
+        done = [False for _ in range(batchsize)]
+        total_done = 0
+        max_len = 0
+        
+        output_lines = [[] for _ in range(batchsize)]
+        
+        # now, generate a response from scratch
+        while(total_done < batchsize) and max_len < self.longest_label:
+            # keep producing tokens until we hit END or max length for each
+            # example in the batch
+            output = self._apply_attention(xes, encoder_output, hidden) if self.use_attention else xes
+
+            output, hidden = self.decoder(output, hidden)
+            preds, scores = self.hidden_to_idx(output, dropout=False)
+
+            xes = self.lt(preds.unsqueeze(0))
+            max_len += 1
+            for b in range(batchsize):
+                if not done[b]:
+                    # only add more tokens for examples that aren't done yet
+                    token = self.v2t([preds.data[b]])
+                    if token == self.END:
+                        # if we produced END, we're done
+                        done[b] = True
+                        total_done += 1
+                    else:
+                        output_lines[b].append(token)
+        
+        if random.random() < 0.1:
+            # sometimes output a prediction for debugging
+            print('prediction:', ' '.join(output_lines[0]))
+        
+        return output_lines
+
+    def _score_candidates(self, cands, xe, encoder_output, hidden):
+        # score each candidate separately
+
+        # cands are exs_with_cands x cands_per_ex x words_per_cand
+        # cview is total_cands x words_per_cand
+        cview = cands.view(-1, cands.size(2))
+        cands_xes = xe.expand(xe.size(0), cview.size(0), xe.size(2))
+        sz = hidden.size()
+        cands_hn = (
+            hidden.view(sz[0], sz[1], 1, sz[2])
+            .expand(sz[0], sz[1], cands.size(1), sz[2])
+            .contiguous()
+            .view(sz[0], -1, sz[2])
+        )
+        
+        sz = encoder_output.size()
+        cands_encoder_output = (
+            encoder_output.contiguous()    
+            .view(sz[0], 1, sz[1], sz[2])
+            .expand(sz[0], cands.size(1), sz[1], sz[2])
+            .contiguous()
+            .view(-1, sz[1], sz[2])
+        )
+
+        cand_scores = Variable(
+                    self.cand_scores.resize_(cview.size(0)).fill_(0))
+        cand_lengths = Variable(
+                    self.cand_lengths.resize_(cview.size(0)).fill_(0))
+
+        for i in range(cview.size(1)):
+            output = self._apply_attention(cands_xes, cands_encoder_output, cands_hn) \
+                    if self.use_attention else cands_xes
+            
+            output, cands_hn = self.decoder(output, cands_hn)
+            preds, scores = self.hidden_to_idx(output, dropout=False)
+            cs = cview.select(1, i)
+            non_nulls = cs.ne(self.NULL_IDX)
+            cand_lengths += non_nulls.long()
+            score_per_cand = torch.gather(scores, 1, cs.unsqueeze(1))
+            cand_scores += score_per_cand.squeeze() * non_nulls.float()
+            cands_xes = self.lt(cs).unsqueeze(0)
+
+        # set empty scores to -1, so when divided by 0 they become -inf
+        cand_scores -= cand_lengths.eq(0).float()
+        # average the scores per token
+        cand_scores /= cand_lengths.float()
+
+        cand_scores = cand_scores.view(cands.size(0), cands.size(1))
+        srtd_scores, text_cand_inds = cand_scores.sort(1, True)
+        text_cand_inds = text_cand_inds.data
+        
+        return text_cand_inds
+        
+
+    def predict_with_attention(self, xs, ys=None, cands=None):
+        """Produce a prediction from our model. Update the model using the
+        targets if available.
+        """
+        batchsize = len(xs)
+        text_cand_inds = None
+        encoder_output, hidden = self._call_encoder(xs);
+
+        # next we use END as an input to kick off our decoder
+        x = Variable(self.START_TENSOR)
+        xe = self.lt(x).unsqueeze(1)
+        xes = xe.expand(xe.size(0), batchsize, xe.size(2))
+
+        # list of output tokens for each example in the batch
+        output_lines = None
+
+        if ys is not None:
+            output_lines = self._decode_and_train(batchsize, xes, ys,encoder_output, hidden)
+
+        else:
+            if cands is not None:
+                text_cand_inds = self._score_candidates(cands, xe, encoder_output, hidden)
+
+            output_lines = self._decode_only(batchsize, xes, ys,encoder_output, hidden)
+            
+
+        return output_lines, text_cand_inds
+
+    #TODO Remove this
     def predict(self, xs, ys=None, cands=None):
         """Produce a prediction from our model. Update the model using the
         targets if available.
@@ -283,7 +494,7 @@ class Seq2seqAgent(Agent):
                     .contiguous()
                     .view(sz[0], -1, sz[2])
                 )
-
+                
                 cand_scores = Variable(
                     self.cand_scores.resize_(cview.size(0)).fill_(0))
                 cand_lengths = Variable(
@@ -443,7 +654,8 @@ class Seq2seqAgent(Agent):
             return batch_reply
 
         # produce predictions either way, but use the targets if available
-        predictions, text_cand_inds = self.predict(xs, ys, cands)
+
+        predictions, text_cand_inds = self.predict_with_attention(xs, ys, cands)
 
         for i in range(len(predictions)):
             # map the predictions back to non-empty examples in the batch
