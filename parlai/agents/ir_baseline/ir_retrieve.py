@@ -3,7 +3,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""a string match retrever."""
+"""a string match retriever."""
 
 
 import copy
@@ -74,7 +74,7 @@ class StringMatchRetrieverAgent(Agent):
         return reversed(result)
 
     def load(self, filename):
-        """Load pre-existing StringMatch in format:
+        """Load pre-existing StringMatchRetriever in format:
             the first line: 'fact1<TAB>fact2<TAB>...'
             starting from second line: 'token<TAB>fact_index1<TAB>fact_index2...'
         """
@@ -103,7 +103,7 @@ class StringMatchRetrieverAgent(Agent):
               % (len(self.facts), len(self.token2facts)))
 
     def save(self, filename=None):
-        """Save StringMatch to file.
+        """Save StringMatchRetriever to file.
         Format is:
             the first line: 'fact1<TAB>fact2<TAB>...'
             starting from second line: 'token<TAB>fact_index1<TAB>fact_index2...'
