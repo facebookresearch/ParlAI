@@ -282,6 +282,10 @@
                 new_url = replace_url_parameter(new_url, 'changing_conversation', true);
 
                 window.location.href = new_url; // Reload page to get agent-specific template
+            } else if (new_conversation_id !== null && new_conversation_id.indexOf('w_') !== -1) {
+                conversation_id = new_conversation_id;
+                agent_id = new_agent_id;
+                show_waiting_world();
             } else {
               // Update the conversation id
               conversation_id = new_conversation_id;
@@ -607,6 +611,7 @@
     function after_receive_command(command) {};
     function after_receive_message(message) {};
     function after_send_packet() {};
+    function show_waiting_world(){};
 </script>
 
 {% block additional_scripts %}
