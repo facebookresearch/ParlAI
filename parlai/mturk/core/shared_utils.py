@@ -37,5 +37,5 @@ def print_and_log(message, should_print=True):
 
 
 def generate_event_id(worker_id):
-    """Creates a unique id to use for identifying a packet"""
+    """Return a unique id to use for identifying a packet for a worker"""
     return '{}_{}'.format(worker_id, uuid.uuid4())

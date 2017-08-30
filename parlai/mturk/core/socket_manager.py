@@ -9,7 +9,7 @@ import time
 from queue import PriorityQueue, Empty
 from socketIO_client_nexus import SocketIO
 from parlai.mturk.core.shared_utils import print_and_log, generate_event_id, \
-                                         THREAD_SHORT_SLEEP, THREAD_MEDIUM_SLEEP
+                                        THREAD_SHORT_SLEEP, THREAD_MEDIUM_SLEEP
 import parlai.mturk.core.data_model as data_model
 
 class Packet():
@@ -30,6 +30,8 @@ class Packet():
                  conversation_id=None, requires_ack=True, blocking=True,
                  ack_func=None):
         """
+        Create a packet to be used for holding information before it is
+        sent through the socket
         id:               Unique ID to distinguish this packet from others
         type:             TYPE of packet (ACK, ALIVE, MESSAGE, HEARTBEAT)
         sender_id:        Sender ID for this packet
@@ -40,9 +42,9 @@ class Packet():
         requires_ack:     Whether or not this packet needs to be acknowledged,
                            determines if retry logic will be used until ack is
                            recieved.
-        blocking:         Whether or not this packet requires blocking to remain
-                           in order amongst other packets in the queue. Default
-                           is True
+        blocking:         Whether or not this packet requires blocking to
+                           remain in order amongst other packets in the queue.
+                           Default is True
         ack_func:         Function to call upon successful ack of a packet
                            Default calls no function on ack
         """
@@ -59,11 +61,11 @@ class Packet():
         self.status = self.STATUS_INIT
         self.time = None
 
-
     @staticmethod
     def from_dict(packet):
-        """Creates a packet from the dictionary that would be recieved over
-        a socket"""
+        """Create a packet from the dictionary that would
+        be recieved over a socket
+        """
         packet_id = packet['id']
         packet_type = packet['type']
         sender_id = packet['sender_id']
@@ -79,9 +81,8 @@ class Packet():
         return Packet(packet_id, packet_type, sender_id, receiver_id,
             assignment_id, data, conversation_id)
 
-
     def as_dict(self):
-        """Converts a packet into a form that can be pushed over a socket"""
+        """Convert a packet into a form that can be pushed over a socket"""
         return {
             'id': self.id,
             'type': self.type,
@@ -92,46 +93,39 @@ class Packet():
             'data': self.data
         }
 
-
     def get_sender_connection_id(self):
-        """Gets the connection_id that this packet came from"""
+        """Get the connection_id that this packet came from"""
         return '{}_{}'.format(self.sender_id, self.assignment_id)
 
-
     def get_receiver_connection_id(self):
-        """Gets the connection_id that this is going to"""
+        """Get the connection_id that this is going to"""
         return '{}_{}'.format(self.receiver_id, self.assignment_id)
 
-
     def get_ack(self):
-        """Returns a new packet that can be used to acknowledge this packet"""
+        """Return a new packet that can be used to acknowledge this packet"""
         return Packet(self.id, self.TYPE_ACK, self.receiver_id, self.sender_id,
             self.assignment_id, '', self.conversation_id, False, False)
 
-
     def new_copy(self):
-        """Returns a new packet that is a copy of this packet with a new id and
-        with a fresh status"""
+        """Return a new packet that is a copy of this packet with
+        a new id and with a fresh status
+        """
         packet = Packet.from_dict(self.as_dict())
         packet.id = generate_event_id(self.receiver_id)
         return packet
 
-
     def __repr__(self):
         return 'Packet <{}>'.format(self.as_dict())
-
 
     def swap_sender(self):
         """Swaps the sender_id and receiver_id"""
         self.sender_id, self.receiver_id = self.receiver_id, self.sender_id
         return self
 
-
     def set_type(self, new_type):
         """Updates the message type"""
         self.type = new_type
         return self
-
 
     def set_data(self, new_data):
         """Updates the message data"""
@@ -141,8 +135,9 @@ class Packet():
 
 class SocketManager():
     """SocketManager is a wrapper around socketIO to stabilize its packet
-    passing. The manager handles resending packet, as well as maintaining alive
-    status for all the connections it forms"""
+    passing. The manager handles resending packet, as well as maintaining
+    alive status for all the connections it forms
+    """
 
     # Time to acknowledge different message types
     ACK_TIME = {Packet.TYPE_ALIVE: 2,
@@ -152,18 +147,19 @@ class SocketManager():
     DEF_SOCKET_TIMEOUT = 8
 
     def __init__(self, server_url, port, alive_callback, message_callback,
-                 socket_dead_callback, task_group_id, socket_dead_timeout=None):
+                 socket_dead_callback, task_group_id,
+                 socket_dead_timeout=None):
         """
         server_url:           url at which the server is to be run
         port:                 port for the socket to operate on
         alive_callback:       function to be called on alive Packets, defined
-                              def alive_callback(self, pkt)
+                               alive_callback(self, pkt)
         message_callback:     function to be called on message Packets, defined
-                              def message_callback(self, pkt)
+                               message_callback(self, pkt)
         socket_dead_callback: function to be called when a socket dies, should
                               return false if the socket_manager should ignore
                               the death and treat the socket as alive defined
-                              def on_socket_dead(self, worker_id, assignment_id)
+                               on_socket_dead(self, worker_id, assignment_id)
         socket_dead_timeout:  time to wait between heartbeats before dying
         """
         self.server_url = server_url
@@ -190,11 +186,9 @@ class SocketManager():
         # setup the socket
         self._setup_socket()
 
-
     def get_my_sender_id(self):
         """Gives the name that this socket manager should use for its world"""
         return '[World_{}]'.format(self.task_group_id)
-
 
     def _send_world_alive(self):
         """Registers world with the passthrough server"""
@@ -203,7 +197,6 @@ class SocketManager():
             {'id': 'WORLD_ALIVE', 'sender_id': self.get_my_sender_id()}
         )
 
-
     def _send_response_heartbeat(self, packet):
         """Sends a response heartbeat to an incoming heartbeat packet"""
         self.socketIO.emit(
@@ -211,12 +204,10 @@ class SocketManager():
             packet.swap_sender().set_data('').as_dict()
         )
 
-
     def _send_ack(self, packet):
         """Sends an ack to a given packet"""
         ack = packet.get_ack().as_dict()
         self.socketIO.emit(data_model.SOCKET_ROUTE_PACKET_STRING, ack, None)
-
 
     def _send_packet(self, packet, connection_id, send_time):
         """Sends a packet, blocks if the packet is blocking"""
@@ -251,9 +242,8 @@ class SocketManager():
                 t = time.time() + self.ACK_TIME[packet.type]
                 self.queues[connection_id].put((t, packet))
 
-
     def _setup_socket(self):
-        """Creates socket handlers and registers the socket"""
+        """Create socket handlers and registers the socket"""
         self.socketIO = SocketIO(self.server_url, self.port)
 
         def on_socket_open(*args):
@@ -303,7 +293,6 @@ class SocketManager():
         self.listen_thread = threading.Thread(target=self.socketIO.wait)
         self.listen_thread.daemon = True
         self.listen_thread.start()
-
 
     def open_channel(self, worker_id, assignment_id):
         """Opens a channel for a worker on a given assignment, doesn't re-open
@@ -359,7 +348,6 @@ class SocketManager():
         self.threads[connection_id].daemon = True
         self.threads[connection_id].start()
 
-
     def _close_channel_internal(self, connection_id):
         """Closes a channel by connection_id"""
         print_and_log('Closing channel {}'.format(connection_id), False)
@@ -368,11 +356,9 @@ class SocketManager():
             del self.queues[connection_id]
             del self.threads[connection_id]
 
-
     def close_channel(self, worker_id, assignment_id):
         """Closes a channel by worker_id and assignment_id"""
         self._close_channel_internal('{}_{}'.format(worker_id, assignment_id))
-
 
     def close_all_channels(self):
         """Closes a channel by clearing the list of channels"""
@@ -381,10 +367,8 @@ class SocketManager():
         for connection_id in connection_ids:
             self._close_channel_internal(connection_id)
 
-
     def socket_is_open(self, connection_id):
         return connection_id in self.queues
-
 
     def queue_packet(self, packet):
         """Queues sending a packet to its intended owner"""
@@ -404,7 +388,6 @@ class SocketManager():
         self.packet_map[packet.id] = packet
         item = (time.time(), packet)
         self.queues[connection_id].put(item)
-
 
     def get_status(self, packet_id):
         """Returns the status of a particular packet by id"""

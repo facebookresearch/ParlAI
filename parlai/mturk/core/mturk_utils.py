@@ -29,8 +29,9 @@ def setup_aws_credentials():
             'programmatic access and AdministratorAccess policy at '
             'https://console.aws.amazon.com/iam/ (On the "Set permissions" '
             'page, choose "Attach existing policies directly" and then select '
-            '"AdministratorAccess" policy). After creating the IAM user, please'
-            ' enter the user\'s Access Key ID and Secret Access Key below:'
+            '"AdministratorAccess" policy). After creating the IAM user, '
+            'please enter the user\'s Access Key ID and Secret Access '
+            'Key below:'
         )
         aws_access_key_id = input('Access Key ID: ')
         aws_secret_access_key = input('Secret Access Key: ')
@@ -98,17 +99,19 @@ def calculate_mturk_cost(payment_opt):
 
 
 def check_mturk_balance(balance_needed, is_sandbox):
-    """Checks to see if there is at least balance_needed amount in the requester
-    account, returns True if the balance is greater than balance_needed"""
+    """Checks to see if there is at least balance_needed amount in the
+    requester account, returns True if the balance is greater than
+    balance_needed
+    """
     client = boto3.client(
-        service_name = 'mturk',
-        region_name = 'us-east-1',
-        endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+        service_name='mturk',
+        region_name='us-east-1',
+        endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
     )
 
     # Region is always us-east-1
     if not is_sandbox:
-        client = boto3.client(service_name = 'mturk', region_name='us-east-1')
+        client = boto3.client(service_name='mturk', region_name='us-east-1')
 
     # Test that you can connect to the API by checking your account balance
     # In Sandbox this always returns $10,000
@@ -227,9 +230,9 @@ def create_hit_with_hit_type(page_url, hit_type_id, num_assignments,
     )
 
     client = boto3.client(
-        service_name = 'mturk',
-        region_name = 'us-east-1',
-        endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+        service_name='mturk',
+        region_name='us-east-1',
+        endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
     )
 
     # Region is always us-east-1
