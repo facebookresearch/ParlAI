@@ -423,7 +423,7 @@ class MTurkManager():
         elif status == AssignState.STATUS_ONBOARDING:
             # Agent never made it to task pool, kill the onboarding thread
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
-            self.assignment_to_onboard_thread[assignment_id].terminate()
+            #self.assignment_to_onboard_thread[assignment_id].terminate()
             del agent
         elif status == AssignState.STATUS_WAITING:
             # agent is in pool, remove from pool and delete
