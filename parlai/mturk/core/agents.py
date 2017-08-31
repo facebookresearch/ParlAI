@@ -103,10 +103,43 @@ class MTurkAgent(Agent):
         """Send an agent a message through the mturk manager"""
         self.manager.send_message(self.worker_id, self.assignment_id, msg)
 
+    def get_new_act_message(self):
+        """Get a new act message if one exists, return None otherwise"""
+        # Check if Turker sends a message
+        if not self.msg_queue.empty():
+            msg = self.msg_queue.get()
+            if msg['id'] == self.id:
+                return msg
+
+        # See if any agent has disconnected
+        if self.disconnected or self.some_agent_disconnected:
+            msg = {
+                'id': self.id,
+                'text': MTURK_DISCONNECT_MESSAGE,
+                'episode_done': True
+            }
+            return msg
+
+        # Check if the current turker already returned the HIT
+        if self.hit_is_returned:
+            msg = {
+                'id': self.id,
+                'text': RETURN_MESSAGE,
+                'episode_done': True
+            }
+            return msg
+
+        # There are no messages to be sent
+        return None
 
     def act(self, timeout=None, blocking=True):
-        if blocking:
-            """Waits for a message to send to other agents in the world"""
+        """Sends a message to other agents in the world. If blocking, this
+        will wait for the message to come in so it can be sent. Otherwise
+        it will return None.
+        """
+        if not blocking:
+            return self.get_new_act_message()
+        else:
             if not (self.disconnected or self.some_agent_disconnected or
                     self.hit_is_expired):
                 self.manager.send_command(
@@ -121,38 +154,8 @@ class MTurkAgent(Agent):
 
             # Wait for agent's new message
             while True:
-                # Check if Turker sends a message
-                if not self.msg_queue.empty():
-                    msg = self.msg_queue.get()
-                    if msg['id'] == self.id:
-                        return msg
-
-                if self.disconnected:
-                    print("THIS AGENT DISCONNECTED")
-                    msg = {
-                        'id': self.id,
-                        'text': MTURK_DISCONNECT_MESSAGE,
-                        'episode_done': True
-                    }
-                    return msg
-
-                # See if another agent has disconnected
-                if self.some_agent_disconnected:
-                    print("SOME AGENT DISCONNECTED")
-                    msg = {
-                        'id': self.id,
-                        'text': MTURK_DISCONNECT_MESSAGE,
-                        'episode_done': True
-                    }
-                    return msg
-
-                # Check if the current turker already returned the HIT
-                if self.hit_is_returned:
-                    msg = {
-                        'id': self.id,
-                        'text': RETURN_MESSAGE,
-                        'episode_done': True
-                    }
+                msg = self.get_new_act_message()
+                if msg is not None:
                     return msg
 
                 # Check if the Turker waited too long to respond
@@ -168,15 +171,6 @@ class MTurkAgent(Agent):
                         }
                         return msg
                 time.sleep(THREAD_SHORT_SLEEP)
-        else:
-            if self.some_agent_disconnected:
-                return {'id': self.id,
-                        'text': MTURK_DISCONNECT_MESSAGE,
-                        'episode_done': True}
-            elif self.msg_queue.empty():
-                return None
-            else:
-                return self.msg_queue.get()
 
     def change_conversation(self, conversation_id, agent_id, change_callback):
         """Handle changing a conversation for an agent, takes a callback for

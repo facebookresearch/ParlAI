@@ -183,15 +183,17 @@ class MTurkManager():
             self.worker_pool.append(self.mturk_agents[worker_id][assignment_id])
 
     def _move_workers_to_waiting(self, workers):
-        """Puts all workers into waiting worlds, expires them if no longer
-        accepting workers"""
+        """Put all workers into waiting worlds, expire them if no longer
+        accepting workers. If the worker is already final, delete it
+        """
         for worker in workers:
             worker_id = worker.worker_id
             assignment_id = worker.assignment_id
             assignment = \
                 self.worker_state[worker_id].assignments[assignment_id]
             if assignment.is_final():
-                #This worker must've disconnected or expired, don't move them
+                #This worker must've disconnected or expired, remove them
+                del worker
                 continue
             conversation_id = 'w_{}'.format(uuid.uuid4())
 
@@ -424,9 +426,9 @@ class MTurkManager():
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
             del agent
         elif status == AssignState.STATUS_ONBOARDING:
-            # Agent never made it to task pool, kill the onboarding thread
+            # Agent never made it to task pool, the onboarding thread will die
+            # and delete the agent if we mark it as a disconnect
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
-            del agent
         elif status == AssignState.STATUS_WAITING:
             # agent is in pool, remove from pool and delete
             if agent in self.worker_pool:
