@@ -175,5 +175,6 @@ def setup_heroku_server(task_files_to_copy=None):
 
     return 'https://{}.herokuapp.com'.format(heroku_app_name)
 
+
 def setup_server(task_files_to_copy):
     return setup_heroku_server(task_files_to_copy=task_files_to_copy)
