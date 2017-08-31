@@ -27,7 +27,10 @@ server_source_directory_name = 'server'
 heroku_server_directory_name = 'heroku_server'
 task_directory_name = 'task'
 
-def setup_heroku_server(task_files_to_copy=None):
+heroku_url = \
+    'https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli'
+
+def setup_heroku_server(task_name, task_files_to_copy=None):
     print("Heroku: Collecting files...")
     # Install Heroku CLI
     os_name = None
@@ -52,23 +55,18 @@ def setup_heroku_server(task_files_to_copy=None):
     # Remove existing heroku client files
     existing_heroku_directory_names = \
         glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))
-    if len(existing_heroku_directory_names):
-        shutil.rmtree(os.path.join(
-            parent_dir,
-            existing_heroku_directory_names[0]
-        ))
-    if os.path.exists(os.path.join(parent_dir, 'heroku.tar.gz')):
-        os.remove(os.path.join(parent_dir, 'heroku.tar.gz'))
+    if len(existing_heroku_directory_names) == 0:
+        if os.path.exists(os.path.join(parent_dir, 'heroku.tar.gz')):
+            os.remove(os.path.join(parent_dir, 'heroku.tar.gz'))
 
-    # Get the heroku client and unzip
-    os.chdir(parent_dir)
-    url = 'https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli'
-    sh.wget(shlex.split('{}-{}-{}.tar.gz -O heroku.tar.gz'.format(
-        url,
-        os_name,
-        bit_architecture
-    )))
-    sh.tar(shlex.split('-xvzf heroku.tar.gz'))
+        # Get the heroku client and unzip
+        os.chdir(parent_dir)
+        sh.wget(shlex.split('{}-{}-{}.tar.gz -O heroku.tar.gz'.format(
+            heroku_url,
+            os_name,
+            bit_architecture
+        )))
+        sh.tar(shlex.split('-xvzf heroku.tar.gz'))
 
 
     heroku_directory_name = \
@@ -129,8 +127,9 @@ def setup_heroku_server(task_files_to_copy=None):
                 'program again.'.format(heroku_executable_path)
             )
 
-    heroku_app_name = ('{}-{}'.format(
+    heroku_app_name = ('{}-{}-{}'.format(
         user_name,
+        task_name,
         hashlib.md5(heroku_user_identifier.encode('utf-8')).hexdigest()
     ))[:30]
 
@@ -166,8 +165,6 @@ def setup_heroku_server(task_files_to_copy=None):
     os.chdir(parent_dir)
 
     # Clean up heroku files
-    if os.path.exists(heroku_directory_path):
-        shutil.rmtree(heroku_directory_path)
     if os.path.exists(os.path.join(parent_dir, 'heroku.tar.gz')):
         os.remove(os.path.join(parent_dir, 'heroku.tar.gz'))
 
@@ -176,5 +173,35 @@ def setup_heroku_server(task_files_to_copy=None):
     return 'https://{}.herokuapp.com'.format(heroku_app_name)
 
 
-def setup_server(task_files_to_copy):
-    return setup_heroku_server(task_files_to_copy=task_files_to_copy)
+def delete_heroku_server(task_name):
+    heroku_directory_name = \
+        glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))[0]
+    heroku_directory_path = os.path.join(parent_dir, heroku_directory_name)
+    heroku_executable_path = \
+        os.path.join(heroku_directory_path, 'bin', 'heroku')
+
+    heroku_user_identifier = (
+        netrc.netrc(os.path.join(os.path.expanduser("~"), '.netrc'))
+             .hosts['api.heroku.com'][0]
+    )
+
+    heroku_app_name = ('{}-{}-{}'.format(
+        user_name,
+        task_name,
+        hashlib.md5(heroku_user_identifier.encode('utf-8')).hexdigest()
+    ))[:30]
+    print("Heroku: Deleting server: {}".format(heroku_app_name))
+    subprocess.check_output(shlex.split(
+        '{} destroy {} --confirm {}'.format(
+            heroku_executable_path,
+            heroku_app_name,
+            heroku_app_name
+        )
+    ))
+
+def setup_server(task_name, task_files_to_copy):
+    return setup_heroku_server(task_name, task_files_to_copy=task_files_to_copy)
+
+
+def delete_server(task_name):
+    delete_heroku_server(task_name)

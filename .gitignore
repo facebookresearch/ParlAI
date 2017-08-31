@@ -106,3 +106,5 @@ ENV/
 # MTurk
 tmp/
 *.pickle
+# Heroku things
+heroku-cli-*

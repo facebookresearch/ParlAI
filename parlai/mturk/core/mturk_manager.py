@@ -14,7 +14,7 @@ import uuid
 from botocore.exceptions import ClientError
 from datetime import datetime
 
-from parlai.mturk.core.server_utils import setup_server
+from parlai.mturk.core.server_utils import setup_server, delete_server
 from parlai.mturk.core.mturk_utils import calculate_mturk_cost, \
     check_mturk_balance, create_hit_type, create_hit_with_hit_type, \
     get_mturk_client, setup_aws_credentials, create_hit_config
@@ -613,8 +613,13 @@ class MTurkManager():
                 'html',
                 '{}_index.html'.format(mturk_agent_id)
             ))
+
         # Setup the server
-        self.server_url = setup_server(self.task_files_to_copy)
+        task_name = '{}_{}'.format(self.opt['task'], int(time.time()))
+        self.server_task_name = \
+            ''.join(e for e in task_name if e.isalnum() or e == '-')
+        self.server_url = \
+            setup_server(self.server_task_name, self.task_files_to_copy)
         print_and_log(self.server_url, False)
 
         print_and_log("MTurk server setup done.\n")
@@ -733,7 +738,7 @@ class MTurkManager():
         for assignment_id in self.assignment_to_onboard_thread:
             self.assignment_to_onboard_thread[assignment_id].join()
         self._save_disconnects()
-
+        delete_server(self.server_task_name)
 
     ### MTurk Agent Interaction Functions ###
 
