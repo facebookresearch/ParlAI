@@ -253,7 +253,7 @@ class Seq2seqAgent(Agent):
                 xes = self.lt(y).unsqueeze(0)
                 for b in range(batchsize):
                     # convert the output scores to tokens
-                    token = self.v2t([preds.data[b][0]])
+                    token = self.v2t([preds.data[b]])
                     output_lines[b].append(token)
 
             loss.backward()
@@ -315,12 +315,12 @@ class Seq2seqAgent(Agent):
                 output, hn = self.decoder(xes, hn)
                 preds, scores = self.hidden_to_idx(output, dropout=False)
 
-                xes = self.lt(preds.transpose(0, 1))
+                xes = self.lt(preds.unsqueeze(0))
                 max_len += 1
                 for b in range(batchsize):
                     if not done[b]:
                         # only add more tokens for examples that aren't done yet
-                        token = self.v2t(preds.data[b])
+                        token = self.v2t([preds.data[b]])
                         if token == self.END:
                             # if we produced END, we're done
                             done[b] = True
