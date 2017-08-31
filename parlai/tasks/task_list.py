@@ -74,6 +74,13 @@ task_list = [
         "description": "The FVQA, a VQA dataset which requires, and supports, much deeper reasoning. We extend a conventional visual question answering dataset, which contains image-question-answer triplets, through additional image-question-answer-supporting fact tuples. The supporting fact is represented as a structural triplet, such as <Cat,CapableOf,ClimbingTrees>.  Link: https://arxiv.org/abs/1606.05433"
     },
     {
+        "id": "DealNoDeal",
+        "display_name": "Deal or No Deal",
+        "task": "dealnodeal",
+        "tags": [ "All", "Negotiation" ],
+        "description": "End-to-end negotiation task which requires two agents to agree on how to divide a set of items, with each agent assigning different values to each item. From Lewis et al. '17. Link: https://arxiv.org/abs/1706.05125"
+    },
+    {
         "id": "MCTest",
         "display_name": "MCTest",
         "task": "mctest",
