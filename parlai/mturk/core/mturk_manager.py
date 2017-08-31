@@ -190,6 +190,9 @@ class MTurkManager():
             assignment_id = worker.assignment_id
             assignment = \
                 self.worker_state[worker_id].assignments[assignment_id]
+            if assignment.is_final():
+                #This worker must've disconnected or expired, don't move them
+                continue
             conversation_id = 'w_{}'.format(uuid.uuid4())
 
             if self.accepting_workers:
@@ -423,7 +426,6 @@ class MTurkManager():
         elif status == AssignState.STATUS_ONBOARDING:
             # Agent never made it to task pool, kill the onboarding thread
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
-            #self.assignment_to_onboard_thread[assignment_id].terminate()
             del agent
         elif status == AssignState.STATUS_WAITING:
             # agent is in pool, remove from pool and delete
