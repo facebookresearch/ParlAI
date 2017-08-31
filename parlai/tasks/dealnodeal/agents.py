@@ -10,12 +10,21 @@ from .build import build
 import os
 import random
 
-WELCOME_MESSAGE = (
+NEGOTIATION_WELCOME = (
     'Negotiate with your opponent to decide who gets how many of each item. '
     'You must both agree on the distribution of items (or you both get zero), '
     'but try to get as much value as you can. There are {book_cnt} book(s), '
     'each with a value of {book_val}, {hat_cnt} hat(s), each with a value of '
     '{hat_val}, and {ball_cnt} ball(s), each with a value of {ball_val}.')
+
+SELECTION_WELCOME = (
+    'Given the dialogue of a negotiation between you and an opponent, output '
+    'what you think the agreed decision was. You had to agree on the '
+    'distribution of items while getting as much value as you could. There '
+    'were {book_cnt} book(s), each with a value of {book_val}, {hat_cnt} '
+    'hat(s), each with a value of {hat_val}, and {ball_cnt} ball(s), each '
+    'with a value of {ball_val}.')
+
 
 EOS_TOKEN = '<eos>'
 SELECTION_TOKEN = '<selection>'
@@ -39,7 +48,7 @@ class NegotiationTeacher(Teacher):
     https://github.com/facebookresearch/end-to-end-negotiator.
     """
 
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt, shared=None, split=True):
         super().__init__(opt, shared)
         self.datatype = opt['datatype'].split(':')[0]
         self.random = self.datatype == 'train'
@@ -61,7 +70,8 @@ class NegotiationTeacher(Teacher):
         # size so they all process disparate sets of the data
         self.step_size = opt.get('batchsize', 1)
         self.data_offset = opt.get('batchindex', 0)
-        
+        self.split = split
+
         self.reset()
 
     def reset(self):
@@ -80,14 +90,17 @@ class NegotiationTeacher(Teacher):
         print('loading: ' + data_path)
         with open(data_path) as data_file:
             self.episodes = data_file.readlines()
-    
+
+    def __len__(self):
+        return len(self.episodes)
+
     def observe(self, observation):
         """Process observation for metrics."""
         if self.expected_reponse is not None:
             self.metrics.update(observation, self.expected_reponse)
             self.expected_reponse = None
         return observation
-            
+
     def act(self):
         if self.dialogue_idx is not None:
             # continue existing conversation
@@ -104,7 +117,6 @@ class NegotiationTeacher(Teacher):
             # get next non-random example
             self.episode_idx = (self.episode_idx + self.step_size) % len(self.episodes)
             return self._start_dialogue()
-           
 
     def _split_dialogue(self, words, separator=EOS_TOKEN):
         sentences = []
@@ -127,18 +139,30 @@ class NegotiationTeacher(Teacher):
 
         (book_cnt, book_val, hat_cnt,
             hat_val, ball_cnt, ball_val) = self.values
-        welcome = WELCOME_MESSAGE.format(
+
+        message = NEGOTIATION_WELCOME if self.split else SELECTION_WELCOME
+        welcome = message.format(
             book_cnt=book_cnt, book_val=book_val,
             hat_cnt=hat_cnt, hat_val=hat_val,
             ball_cnt=ball_cnt, ball_val=ball_val)
 
         self.dialogue_idx = -1
-        if self.dialogue[0][0] == THEM_TOKEN:
+        if not self.split:
+            action = {}
+            action['text'] = (welcome + '\n' +
+                              ' '.join(get_tag(words, DIALOGUE_TAG)))
+            self.expected_reponse = [' '.join(self.output)]
+            if self.datatype.startswith('train'):
+                action['labels'] = self.expected_reponse
+            action['episode_done'] = True
+            self.dialogue_idx = None
+        elif self.dialogue[0][0] == THEM_TOKEN:
             action = self._continue_dialogue()
             action['text'] = welcome + '\n' + action['text']
         else:
             action = self._continue_dialogue(skip_teacher=True)
             action['text'] = welcome
+        action['custom'] = ' '.join(self.values)
 
         return action
 
@@ -157,15 +181,15 @@ class NegotiationTeacher(Teacher):
 
         # Fill in learner's response (YOU)
         self.dialogue_idx += 1
+        if self.dialogue_idx >= len(self.dialogue):
+            # the agent should finish by reporting what they think the
+            # agreed decision was
+            self.expected_reponse = [' '.join(self.output)]
+        else:
+            sentence = self.dialogue[self.dialogue_idx]
+            assert sentence[0] == YOU_TOKEN
+            self.expected_reponse = [' '.join(sentence[1:])]
         if self.datatype.startswith('train'):
-            if self.dialogue_idx >= len(self.dialogue):
-                # the agent should finish by reporting what they think the
-                # agreed decision was
-                self.expected_reponse = [' '.join(self.output)]
-            else:
-                sentence = self.dialogue[self.dialogue_idx]
-                assert sentence[0] == YOU_TOKEN
-                self.expected_reponse = [' '.join(sentence[1:])]
             action['labels'] = self.expected_reponse
 
         if self.dialogue_idx >= len(self.dialogue):
@@ -175,6 +199,14 @@ class NegotiationTeacher(Teacher):
             action['episode_done'] = False
 
         return action
+
+
+class SelectionTeacher(NegotiationTeacher):
+    """Teacher for training an agent to output the agreed decision given a
+    dialogue of a negotiation between him and an apponent.
+    """
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared, split=False)
 
 
 class DefaultTeacher(NegotiationTeacher):
