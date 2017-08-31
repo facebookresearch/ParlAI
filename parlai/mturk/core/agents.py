@@ -105,69 +105,79 @@ class MTurkAgent(Agent):
         self.manager.send_message(self.worker_id, self.assignment_id, msg)
 
 
-    def act(self, timeout=None):
-        """Waits for a message to send to other agents in the world"""
-        if not (self.disconnected or self.some_agent_disconnected or
-                self.hit_is_expired):
-            self.manager.send_command(
-                self.worker_id,
-                self.assignment_id,
-                {'text': data_model.COMMAND_SEND_MESSAGE}
-            )
+    def act(self, timeout=None, blocking=True):
+        if blocking:
+            """Waits for a message to send to other agents in the world"""
+            if not (self.disconnected or self.some_agent_disconnected or
+                    self.hit_is_expired):
+                self.manager.send_command(
+                    self.worker_id,
+                    self.assignment_id,
+                    {'text': data_model.COMMAND_SEND_MESSAGE}
+                )
 
-        # Timeout in seconds, after which the HIT will be expired automatically
-        if timeout:
-            start_time = time.time()
-
-        # Wait for agent's new message
-        while True:
-            # Check if Turker sends a message
-            if not self.msg_queue.empty():
-                msg = self.msg_queue.get()
-                if msg['id'] == self.id:
-                    return msg
-
-            if self.disconnected:
-                print("THIS AGENT DISCONNECTED")
-                msg = {
-                    'id': self.id,
-                    'text': MTURK_DISCONNECT_MESSAGE,
-                    'episode_done': True
-                }
-                return msg
-
-            # See if another agent has disconnected
-            if self.some_agent_disconnected:
-                print("SOME AGENT DISCONNECTED")
-                msg = {
-                    'id': self.id,
-                    'text': MTURK_DISCONNECT_MESSAGE,
-                    'episode_done': True
-                }
-                return msg
-
-            # Check if the current turker already returned the HIT
-            if self.hit_is_returned:
-                msg = {
-                    'id': self.id,
-                    'text': RETURN_MESSAGE,
-                    'episode_done': True
-                }
-                return msg
-
-            # Check if the Turker waited too long to respond
+            # Timeout in seconds, after which the HIT will be expired automatically
             if timeout:
-                current_time = time.time()
-                if (current_time - start_time) > timeout:
-                    print_and_log('{} is timeout.'.format(self.id), False)
-                    self.set_hit_is_abandoned()
+                start_time = time.time()
+
+            # Wait for agent's new message
+            while True:
+                # Check if Turker sends a message
+                if not self.msg_queue.empty():
+                    msg = self.msg_queue.get()
+                    if msg['id'] == self.id:
+                        return msg
+
+                if self.disconnected:
+                    print("THIS AGENT DISCONNECTED")
                     msg = {
                         'id': self.id,
-                        'text': TIMEOUT_MESSAGE,
+                        'text': MTURK_DISCONNECT_MESSAGE,
                         'episode_done': True
                     }
                     return msg
-            time.sleep(THREAD_SHORT_SLEEP)
+
+                # See if another agent has disconnected
+                if self.some_agent_disconnected:
+                    print("SOME AGENT DISCONNECTED")
+                    msg = {
+                        'id': self.id,
+                        'text': MTURK_DISCONNECT_MESSAGE,
+                        'episode_done': True
+                    }
+                    return msg
+
+                # Check if the current turker already returned the HIT
+                if self.hit_is_returned:
+                    msg = {
+                        'id': self.id,
+                        'text': RETURN_MESSAGE,
+                        'episode_done': True
+                    }
+                    return msg
+
+                # Check if the Turker waited too long to respond
+                if timeout:
+                    current_time = time.time()
+                    if (current_time - start_time) > timeout:
+                        print_and_log('{} is timeout.'.format(self.id), False)
+                        self.set_hit_is_abandoned()
+                        msg = {
+                            'id': self.id,
+                            'text': TIMEOUT_MESSAGE,
+                            'episode_done': True
+                        }
+                        return msg
+                time.sleep(THREAD_SHORT_SLEEP)
+        else:
+            if self.some_agent_disconnected:
+                return {'id': self.id,
+                        'text': MTURK_DISCONNECT_MESSAGE,
+                        'episode_done': True}
+            elif self.msg_queue.empty():
+                return None
+            else:
+                return self.msg_queue.get()
 
 
     def change_conversation(self, conversation_id, agent_id, change_callback):
