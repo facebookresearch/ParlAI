@@ -9,74 +9,26 @@ from parlai.core.fbdialog_teacher import FbDialogTeacher
 from .build import build
 
 import copy
-import json
-import random
 import os
 
-class EvalTeacher(FbDialogTeacher):
+
+def _path(opt):
+    build(opt)
+    dt = opt['datatype'].split(':')[0]
+    if dt == 'train':
+        suffix = 'train.14M+.txt'
+    elif dt == 'valid':
+        suffix = 'validation_NECN.20k.txt'
+    else:
+        suffix = 'test_CN.10k.txt'
+    return os.path.join(opt['datapath'], 'BookTest', 'booktest-gut', suffix)
+
+
+class DefaultTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        if opt['datatype'].startswith('valid'):
-            suffix = 'validation_NECN.20k'
-        else:
-            suffix = 'test_CN.10k'
-        opt['datafile'] = os.path.join(
-            opt['datapath'], 'BookTest', 'booktest-gut', suffix + '.txt')
+        opt['datafile'] = _path(opt)
+        if 'stream' not in opt['datatype']:
+            print('Dataset might not fit in memory. If this is the case, use' +
+                ' streaming by setting "-dt ' + opt['datatype'] + ':stream".')
         super().__init__(opt, shared)
-
-
-class StreamTeacher(Teacher):
-    """ Hand-written streaming teacher,
-    as the data is too big to fit in memory.
-    """
-
-    def __init__(self, opt, shared=None):
-        build(opt)
-        # Only used for the train set.
-        self.datafile = os.path.join(
-            opt['datapath'], 'BookTest', 'booktest-gut', 'train.14M+.txt')
-        self.fin = open(self.datafile)
-        super().__init__(opt, shared)
-
-    def __len__(self):
-        # unknown
-        return 0
-
-    def get_next(self):
-        context = ''
-        while True:
-            l = self.fin.readline()
-            if l == '':
-                # reopen file
-                context = ''
-                self.fin.close()
-                self.fin = open(self.datafile)
-                continue
-
-            l = l.rstrip('\n')
-            l = l[l.find(' ')+1:]  # strip index
-            s = l.split('\t')
-            if len(s) == 1:
-                context += s[0] + '\n'
-            else:
-                return {
-                    'text': context + s[0],
-                    'labels': [s[1]],
-                    'candidates': s[3].split('|') if len(s) > 3 else None,
-                    'episode_done': True
-                }
-        return obs
-
-
-    # return state/action dict based upon passed state
-    def act(self):
-        obs = self.get_next()
-        return obs
-
-
-def create_agents(opt):
-    dt = opt['datatype']
-    if dt.startswith('train'):
-        return StreamTeacher(opt)
-    else:
-        return EvalTeacher(opt)

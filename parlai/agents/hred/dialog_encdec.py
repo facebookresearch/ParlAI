@@ -107,14 +107,14 @@ class OneLayerMLP(EncoderDecoderBase):
         # Create batch norm updates
         updates = []
         if self.normop_type == 'BN':
-            print ' Creating batch norm updates for OneLayerMLP (' + self.name + '):'
+            print(' Creating batch norm updates for OneLayerMLP (' + self.name + '):')
             vars_to_update = [self.normop_in_act_h1_mean, self.normop_in_act_h1_var]
             vars_estimates = [h_nonlinear_inp_mean, h_nonlinear_inp_var, output_mean, output_var]
 
             assert len(vars_estimates) == len(vars_to_update)
 
             for i in range(len(vars_estimates)):
-                print '     ', vars_to_update[i]
+                print('     ', vars_to_update[i])
                 new_value = self.normop_moving_average_const*vars_to_update[i] \
                             + (1.0 - self.normop_moving_average_const)*vars_estimates[i]
                 updates.append((vars_to_update[i], new_value))
@@ -184,14 +184,14 @@ class TwoLayerMLP(EncoderDecoderBase):
         # Create batch norm updates
         updates = []
         if self.normop_type == 'BN':
-            print ' Creating batch norm updates for TwoLayerMLP (' + self.name + '):'
+            print(' Creating batch norm updates for TwoLayerMLP (' + self.name + '):')
             vars_to_update = [self.normop_in_tanh_h1_mean, self.normop_in_tanh_h1_var, self.normop_in_skip_h1_mean, self.normop_in_skip_h1_var, self.normop_in_skip_h2_mean, self.normop_in_skip_h2_var, self.normop_in_tanh_h2_mean, self.normop_in_tanh_h2_var]
             vars_estimates = [h_linear_inp_mean, h_linear_inp_var, h_nonlinear_inp_mean, h_nonlinear_inp_var, h2_linear_inp_mean, h2_linear_inp_var, h2_nonlinear_inp_mean, h2_nonlinear_inp_var]
 
             assert len(vars_estimates) == len(vars_to_update)
 
             for i in range(len(vars_estimates)):
-                print '     ', vars_to_update[i]
+                print('     ', vars_to_update[i])
                 new_value = self.normop_moving_average_const*vars_to_update[i] \
                             + (1.0 - self.normop_moving_average_const)*vars_estimates[i]
                 updates.append((vars_to_update[i], new_value))
@@ -430,13 +430,13 @@ class UtteranceEncoder(EncoderDecoderBase):
                     vars_to_update = [self.normop_r_x_mean, self.normop_r_x_var, self.normop_r_h_mean, self.normop_r_h_var, self.normop_z_x_mean, self.normop_z_x_var, self.normop_z_h_mean, self.normop_z_h_var, self.normop_in_x_mean, self.normop_in_x_var, self.normop_in_h_mean, self.normop_in_h_var]
 
                     assert len(_res) == len(vars_to_update)+5
-                    print ' Creating batch norm updates for GRU Utterance Encoder (' + self.name + '):'
+                    print(' Creating batch norm updates for GRU Utterance Encoder (' + self.name + '):')
                     for varidx, var in enumerate(vars_to_update):
                         sub_new_value = self.normop_moving_average_const*var[0:n_max] \
                                                 + (1.0-self.normop_moving_average_const)*_res[5+varidx][0:n_max]
                         new_value = T.set_subtensor(var[0:n_max], sub_new_value)
                         updates.append((var, new_value))
-                        print '     ' + str(var)
+                        print('     ' + str(var))
 
         else:
            h = _res
@@ -784,7 +784,7 @@ class DialogEncoder(EncoderDecoderBase):
                     batch_examples_per_timestep = T.sum(bnmask, axis=1).dimshuffle(0, 'x')
 
                     assert len(_res) == len(vars_to_update)+4
-                    print ' Creating batch norm updates for GRU Dialog Encoder (' + self.name + '):'
+                    print(' Creating batch norm updates for GRU Dialog Encoder (' + self.name + '):')
                     for varidx, var in enumerate(vars_to_update):
                         average_var = T.sum(_res[4+varidx]*batch_examples_per_timestep, axis=0) \
                                         / T.sum(batch_examples_per_timestep, axis=0)
@@ -793,7 +793,7 @@ class DialogEncoder(EncoderDecoderBase):
                                                 + (1.0-self.normop_moving_average_const)*average_var
 
                         updates.append((var, new_value))
-                        print '     ' + str(var)
+                        print('     ' + str(var))
 
         return hs, updates
 
@@ -2395,7 +2395,7 @@ class DialogEncoderDecoder(Model):
             utterances_to_compute.append(utterances[utterance_id])
 
             if (len(utterances_to_compute) == self.bs) or (utterance_id+1 == len(utterances)):
-                print 'utterance_id', utterance_id
+                print('utterance_id', utterance_id)
 
                 computed_emb = self.compute_utterance_embeddings(utterances_to_compute)
                 utterance_embeddings[last_utterance_id_computed:last_utterance_id_computed+computed_emb.shape[0], :] = computed_emb[:, :]
@@ -2470,7 +2470,7 @@ class DialogEncoderDecoder(Model):
             utterances_to_compute.append(utterances[utterance_id])
 
             if (len(utterances_to_compute) == self.bs) or (utterance_id+1 == len(utterances)):
-                print 'utterance_id', utterance_id
+                print('utterance_id', utterance_id)
 
                 computed_emb, computed_emb_variance = self.compute_utterance_embeddings_with_variance(utterances_to_compute)
                 utterance_embeddings[last_utterance_id_computed:last_utterance_id_computed+computed_emb.shape[0], :] = computed_emb[:, :]
@@ -3322,14 +3322,14 @@ class DialogEncoderDecoder(Model):
             # which projects gamma parameters back to their constrained intervals:
             self.normop_gamma_params = []
             if not self.normop_type.upper() == 'NONE':
-                print ' Searching for gamma parameters which must have bounded interval:'
+                print(' Searching for gamma parameters which must have bounded interval:')
                 for param in self.params:
                     if len(param.name) > 9:
                         if param.name[0:3] == 'normop_':
                             if '_gamma_' in param.name:
                                 if not '_optimizer_' in param.name:
                                     self.normop_gamma_params += [param]
-                                    print '     ', param.name
+                                    print('     ', param.name)
 
             self.gamma_bounding_updates = []
             for param in self.normop_gamma_params:
