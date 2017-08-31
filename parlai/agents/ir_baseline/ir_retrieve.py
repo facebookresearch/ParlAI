@@ -26,6 +26,13 @@ class StringMatchRetrieverAgent(Agent):
     output these facts either in a random order, or by frequency decreasing.
     """
 
+    @staticmethod
+    def add_cmdline_args(argparser):
+        retriever = argparser.add_argument_group('Retriever Arguments')
+        retriever.add_argument(
+            '--retriever-file',
+            help='if set, the retriever will automatically save to this path.')
+
     def __init__(self, opt):
         super().__init__(opt)
         self.id = 'StringMatchRetrieverAgent'
@@ -108,7 +115,7 @@ class StringMatchRetrieverAgent(Agent):
             the first line: 'fact1<TAB>fact2<TAB>...'
             starting from second line: 'token<TAB>fact_index1<TAB>fact_index2...'
         """
-        filename = self.opt['model_file'] if filename is None else filename
+        filename = self.opt['retriever_file'] if filename is None else filename
         print('StringMatchRetriever: saving model to {}'.format(filename))
         with open(filename, 'w') as write:
             write.write('\t'.join(self.facts) + '\n')

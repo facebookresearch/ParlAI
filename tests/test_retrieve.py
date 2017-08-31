@@ -54,18 +54,23 @@ class TestStringMatchRetriever(unittest.TestCase):
             dict_agent.act()
         dict_agent.save(DICT_FILE)
         # test retriever
+        RETRIEVER_FILE = TMP_PATH + 'retrieve.tsv'
+        if os.path.isfile(RETRIEVER_FILE):
+            os.remove(RETRIEVER_FILE)
         args = [
             '--dict-file',
             DICT_FILE,
+            '--retriever-file',
+            RETRIEVER_FILE,
         ]
         argparser = ParlaiParser()
         DictionaryAgent.add_cmdline_args(argparser)
+        StringMatchRetrieverAgent.add_cmdline_args(argparser)
         opt = argparser.parse_args(args)
         my_retriever = StringMatchRetrieverAgent(opt)
         self._test_retriever_functionality(my_retriever)
         # test save and load
-        RETRIEVER_FILE = TMP_PATH + 'retrieve.tsv'
-        my_retriever.save(RETRIEVER_FILE)
+        my_retriever.save()
         my_retriever2 = StringMatchRetrieverAgent(opt)
         my_retriever2.load(RETRIEVER_FILE)
         self._test_retriever_functionality(my_retriever2)
