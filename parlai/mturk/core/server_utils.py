@@ -144,9 +144,10 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
         sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
         raise SystemExit(
             'You have hit your limit on concurrent apps with heroku, which are'
-            ' required to run multiple concurrent tasks.\nPlease login to '
-            'heroku and delete some of your existing task apps before trying '
-            'to start a new task'
+            ' required to run multiple concurrent tasks.\nPlease wait for some'
+            ' of your existing tasks to complete. If you have no tasks '
+            'running, login to heroku and delete some of the running apps or '
+            'verify your account to allow more concurrent apps'
         )
 
     # Enable WebSockets
