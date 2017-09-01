@@ -27,12 +27,11 @@ class StringMatchRetrieverAgent(Agent):
     output these facts either in a random order, or by frequency decreasing.
     """
 
-
     DEFAULT_MAX_FACTS = 100000
 
     @staticmethod
     def print_info(msg):
-        print("[StringMatchRetriever]: " + str(msg))
+        print("[ StringMatchRetriever ]: " + str(msg))
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -60,14 +59,7 @@ class StringMatchRetrieverAgent(Agent):
             self.load(opt['retriever_file'])
 
     def act(self):
-        # HACK: break lines manually
         fact = self.observation.get('text')
-        if '\n' in fact:
-            for line_fact in fact.strip().split('\n'):
-                self.observe({'text':line_fact})
-                self.act()
-            return {'id': 'Retriever'}
-        # end of HACK
         self.facts.append(fact)
         for token in set(self.dict_agent.tokenize(fact.lower())):
             if token in stopwords:
