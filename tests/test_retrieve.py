@@ -111,11 +111,11 @@ class TestStringMatchRetriever(unittest.TestCase):
         if not os.path.isdir(TMP_PATH):
             os.mkdir(TMP_PATH)
         DICT_FILE = TMP_PATH + 'dict.tsv'
-        # if os.path.isfile(DICT_FILE):
-        #     os.remove(DICT_FILE)
+        if os.path.isfile(DICT_FILE):
+            os.remove(DICT_FILE)
         RETRIEVER_FILE = TMP_PATH + 'retrieve.tsv'
-        # if os.path.isfile(RETRIEVER_FILE):
-        #     os.remove(RETRIEVER_FILE)
+        if os.path.isfile(RETRIEVER_FILE):
+            os.remove(RETRIEVER_FILE)
         DATABASE = 'wikimovies:KB:kb'
         args = [
             '--dict-file',
@@ -129,9 +129,9 @@ class TestStringMatchRetriever(unittest.TestCase):
         DictionaryAgent.add_cmdline_args(argparser)
         StringMatchRetrieverAgent.add_cmdline_args(argparser)
         opt = argparser.parse_args(args)
-        # build_dict(opt)
+        build_dict(opt)
         # build retriever
-        # build_retriever(opt)
+        build_retriever(opt)
         # test retriever
         my_retriever = StringMatchRetrieverAgent(opt)
         ans1 = my_retriever.retrieve("who directed Jurassic park", 10)
