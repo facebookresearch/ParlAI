@@ -74,8 +74,8 @@ class TestStringMatchRetriever(unittest.TestCase):
         self._test_retriever_functionality(my_retriever)
         # test save and load
         my_retriever.save()
+        # load is done automatically since arg '--retriever-file' is set
         my_retriever2 = StringMatchRetrieverAgent(opt)
-        my_retriever2.load(RETRIEVER_FILE)
         self._test_retriever_functionality(my_retriever2)
 
     def _test_retriever_functionality(self, my_retriever):
@@ -105,16 +105,16 @@ class TestStringMatchRetriever(unittest.TestCase):
         assert(ans8 == [])
 
 
-    def test_build_retriever(self):
+    def test_build_retriever(self, rebuild=True):
         # build dict
         TMP_PATH = '/tmp/parlai_test_build_retriever/'
         if not os.path.isdir(TMP_PATH):
             os.mkdir(TMP_PATH)
         DICT_FILE = TMP_PATH + 'dict.tsv'
-        if os.path.isfile(DICT_FILE):
+        if os.path.isfile(DICT_FILE) and rebuild:
             os.remove(DICT_FILE)
         RETRIEVER_FILE = TMP_PATH + 'retrieve.tsv'
-        if os.path.isfile(RETRIEVER_FILE):
+        if os.path.isfile(RETRIEVER_FILE) and rebuild:
             os.remove(RETRIEVER_FILE)
         DATABASE = 'wikimovies:KB:kb'
         args = [

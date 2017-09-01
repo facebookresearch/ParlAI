@@ -8,7 +8,7 @@
 
 import copy
 import os
-import numpy.random
+from numpy import random
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -29,6 +29,10 @@ class StringMatchRetrieverAgent(Agent):
 
 
     DEFAULT_MAX_FACTS = 100000
+
+    @staticmethod
+    def print_info(msg):
+        print("[StringMatchRetriever]: " + str(msg))
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -112,19 +116,16 @@ class StringMatchRetrieverAgent(Agent):
             starting from second line: 'token<TAB>fact_index1<TAB>fact_index2...'
         """
 
-        print('StringMatchRetriever: loading StringMatch from {}'.format(
-              filename))
-        if not hasattr(self, 'facts'):
-            self.facts = []
-        if not hasattr(self, 'token2facts'):
-            self.token2facts = {}
+        self.print_info('loading StringMatch from {}'.format(filename))
+        self.facts = []
+        self.token2facts = {}
         with open(filename) as read:
             for line in read.readlines():
                 if not self.facts:
                     # the first line contains all the facts
                     self.facts = line.strip().split('\t')
                     if not self.facts:
-                        print("StringMatch: Empty model loaded.")
+                        self.print_info("empty model loaded.")
                         return
                     continue
                 split = line.strip().split('\t')
@@ -132,7 +133,7 @@ class StringMatchRetrieverAgent(Agent):
                 self.token2facts[token] = [
                     self.facts[int(_fact_ind)] for _fact_ind in split[1:]
                 ]
-        print('StringMatchRetriever: %d facts with %d tokens loaded.'
+        self.print_info('%d facts with %d tokens loaded.'
               % (len(self.facts), len(self.token2facts)))
 
     def save(self, filename=None):
@@ -142,7 +143,7 @@ class StringMatchRetrieverAgent(Agent):
             starting from second line: 'token<TAB>fact_index1<TAB>fact_index2...'
         """
         filename = self.opt['retriever_file'] if filename is None else filename
-        print('StringMatchRetriever: saving model to {}'.format(filename))
+        self.print_info('saving model to {}'.format(filename))
         with open(filename, 'w') as write:
             write.write('\t'.join(self.facts) + '\n')
             facts_ind = {fact: ind for (ind, fact) in enumerate(self.facts)}
@@ -153,4 +154,4 @@ class StringMatchRetrieverAgent(Agent):
                     + '\n'
                 )
             write.close()
-        print('StringMatchRetriever: model successfully saved.')
+        self.print_info('model successfully saved.')

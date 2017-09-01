@@ -19,13 +19,13 @@ from parlai.core.worlds import (
 
 def build_retriever(opt):
     if not opt.get('retriever_file'):
-        print('Tried to build retriever but `--retriever-file` is not set. Set ' +
+        StringMatchRetrieverAgent.print_info('Tried to build retriever but `--retriever-file` is not set. Set ' +
               'this param to save the retriever.')
         return
-    print('[ setting up retriever. ]')
+    StringMatchRetrieverAgent.print_info('setting up retriever.')
     if os.path.isfile(opt['retriever_file']):
         # retriever already built
-        print("[ retriever already built .]")
+        StringMatchRetrieverAgent.print_info("retriever already built.")
         return
     if opt.get('retriever_class'):
         # Custom retriever class
@@ -46,13 +46,13 @@ def build_retriever(opt):
     for _ in world_dict:
         cnt += 1
         if cnt > opt['retriever_maxexs'] and opt['retriever_maxexs'] > 0:
-            print('Processed {} exs, moving on.'.format(opt['retriever_maxexs']))
+            StringMatchRetrieverAgent.print_info('Processed {} exs, moving on.'.format(opt['retriever_maxexs']))
             # don't wait too long...
             break
         world_dict.parley()
-    print('[ retriever built. ]')
+    StringMatchRetrieverAgent.print_info('retriever built.')
     retriever.save()
-    # print('[ num words =  %d ]' % len(retriever))
+    
 
 def main():
     # Get command line arguments
