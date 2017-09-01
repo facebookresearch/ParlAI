@@ -614,8 +614,8 @@ class MTurkManager():
                 '{}_index.html'.format(mturk_agent_id)
             ))
 
-        # Setup the server
-        task_name = '{}_{}'.format(self.opt['task'], int(time.time()))
+        # Setup the server with a likely-unique app-name
+        task_name = '{}-{}'.format(str(uuid.uuid4())[:8], self.opt['task'])
         self.server_task_name = \
             ''.join(e for e in task_name if e.isalnum() or e == '-')
         self.server_url = \

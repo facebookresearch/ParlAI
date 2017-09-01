@@ -77,8 +77,10 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
 
     server_source_directory_path = \
         os.path.join(parent_dir, server_source_directory_name)
-    heroku_server_directory_path = \
-        os.path.join(parent_dir, heroku_server_directory_name)
+    heroku_server_directory_path = os.path.join(parent_dir, '{}_{}'.format(
+        heroku_server_directory_name,
+        task_name
+    ))
 
     # Delete old server files
     sh.rm(shlex.split('-rf '+heroku_server_directory_path))
@@ -138,11 +140,14 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
         subprocess.check_output(shlex.split(
             '{} create {}'.format(heroku_executable_path, heroku_app_name)
         ))
-    except subprocess.CalledProcessError: # Heroku app already exists
-        subprocess.check_output(shlex.split('{} git:remote -a {}'.format(
-            heroku_executable_path,
-            heroku_app_name
-        )))
+    except subprocess.CalledProcessError: # User has too many apps
+        sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
+        raise SystemExit(
+            'You have hit your limit on concurrent apps with heroku, which are'
+            ' required to run multiple concurrent tasks.\nPlease login to '
+            'heroku and delete some of your existing task apps before trying '
+            'to start a new task'
+        )
 
     # Enable WebSockets
     try:
