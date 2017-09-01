@@ -13,6 +13,9 @@ from parlai.agents.ir_baseline.ir_util import (
 )
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
+from examples.build_dict import build_dict
+from examples.build_retriever import build_retriever
+
 
 class TestStringMatchRetriever(unittest.TestCase):
     """Basic tests on the built-in parlai StringMatchRetriever."""
@@ -38,7 +41,7 @@ class TestStringMatchRetriever(unittest.TestCase):
 
     def test_retriever(self):
         # build a dict-file
-        TMP_PATH = '/tmp/parlai_test_data/'
+        TMP_PATH = '/tmp/parlai_test_retrieve/'
         if not os.path.isdir(TMP_PATH):
             os.mkdir(TMP_PATH)
         DICT_FILE = TMP_PATH + 'dict.tsv'
@@ -54,7 +57,7 @@ class TestStringMatchRetriever(unittest.TestCase):
             dict_agent.act()
         dict_agent.save(DICT_FILE)
         # test retriever
-        RETRIEVER_FILE = TMP_PATH + 'retrieve.tsv'
+        RETRIEVER_FILE = TMP_PATH + 'retriever.tsv'
         if os.path.isfile(RETRIEVER_FILE):
             os.remove(RETRIEVER_FILE)
         args = [
@@ -100,6 +103,41 @@ class TestStringMatchRetriever(unittest.TestCase):
         # test input string that are stop words
         ans8 = my_retriever.retrieve("of", 1)
         assert(ans8 == [])
+
+
+    def test_build_retriever(self):
+        # build dict
+        TMP_PATH = '/tmp/parlai_test_build_retriever/'
+        if not os.path.isdir(TMP_PATH):
+            os.mkdir(TMP_PATH)
+        DICT_FILE = TMP_PATH + 'dict.tsv'
+        # if os.path.isfile(DICT_FILE):
+        #     os.remove(DICT_FILE)
+        RETRIEVER_FILE = TMP_PATH + 'retrieve.tsv'
+        # if os.path.isfile(RETRIEVER_FILE):
+        #     os.remove(RETRIEVER_FILE)
+        DATABASE = 'wikimovies:KB:kb'
+        args = [
+            '--dict-file',
+            DICT_FILE,
+            '-t',
+            DATABASE,
+            '--retriever-file',
+            RETRIEVER_FILE,
+        ]
+        argparser = ParlaiParser()
+        DictionaryAgent.add_cmdline_args(argparser)
+        StringMatchRetrieverAgent.add_cmdline_args(argparser)
+        opt = argparser.parse_args(args)
+        # build_dict(opt)
+        # build retriever
+        # build_retriever(opt)
+        # test retriever
+        my_retriever = StringMatchRetrieverAgent(opt)
+        ans1 = my_retriever.retrieve("who directed Jurassic park", 10)
+        assert("Jurassic Park directed_by Steven Spielberg" in list(ans1))
+        ans2 = my_retriever.retrieve("what movies did Steven Spielberg direct", 15)
+        assert("Jurassic Park directed_by Steven Spielberg" in list(ans2))
 
 
 if __name__ == '__main__':

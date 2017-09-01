@@ -7,7 +7,8 @@
 
 
 import copy
-from numpy import random
+import os
+import numpy.random
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -26,12 +27,22 @@ class StringMatchRetrieverAgent(Agent):
     output these facts either in a random order, or by frequency decreasing.
     """
 
+
+    DEFAULT_MAX_FACTS = 100000
+
     @staticmethod
     def add_cmdline_args(argparser):
         retriever = argparser.add_argument_group('Retriever Arguments')
         retriever.add_argument(
             '--retriever-file',
-            help='if set, the retriever will automatically save to this path.')
+            help='if set, the retriever will save to this path as default',
+        )
+        retriever.add_argument(
+            '--retriever-maxexs',
+            default=StringMatchRetrieverAgent.DEFAULT_MAX_FACTS,
+            type=int,
+            help='max number of examples to build retriever on',
+        )
 
     def __init__(self, opt):
         super().__init__(opt)
@@ -40,11 +51,21 @@ class StringMatchRetrieverAgent(Agent):
         self.token2facts = {}
         self.facts = []
         self.length_penalty = float(opt.get('length_penalty') or DEFAULT_LENGTH_PENALTY)
+        if opt.get('retriever_file') and os.path.isfile(opt['retriever_file']):
+            # load pre-existing retriever
+            self.load(opt['retriever_file'])
 
     def act(self):
+        # HACK: break lines manually
         fact = self.observation.get('text')
+        if '\n' in fact:
+            for line_fact in fact.strip().split('\n'):
+                self.observe({'text':line_fact})
+                self.act()
+            return {'id': 'Retriever'}
+        # end of HACK
         self.facts.append(fact)
-        for token in set(self.dict_agent.tokenize(fact)):
+        for token in set(self.dict_agent.tokenize(fact.lower())):
             if token in stopwords:
                 continue
             if token not in self.token2facts:
@@ -53,7 +74,7 @@ class StringMatchRetrieverAgent(Agent):
         return {'id': 'Retriever'}
 
     def retrieve(self, query, max_results=100, ordered_randomly=False):
-        query_tokens = set(self.dict_agent.tokenize(query))
+        query_tokens = set(self.dict_agent.tokenize(query.lower()))
         # compute query representation
         query_rep = build_query_representation(self, query_tokens, self.dict_agent.freqs())
         # gather the candidate facts
@@ -73,7 +94,12 @@ class StringMatchRetrieverAgent(Agent):
         # ordered by score
         facts_score = {}
         for (fact, tokens) in cand_facts.items():
-            facts_score[fact] = score_match(query_rep, tokens)
+            facts_score[fact] = \
+                score_match(
+                    query_rep,
+                    tokens,
+                    self.dict_agent.tokenize(fact),
+                )
         max_results = min(max_results, len(cand_facts))
         result = MaxPriorityQueue(max_results)
         for (fact, score) in facts_score.items():

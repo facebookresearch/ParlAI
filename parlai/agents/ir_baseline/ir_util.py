@@ -67,13 +67,12 @@ def build_query_representation(self, tokens, freqs):
     return rep
 
 
-def score_match(query_rep, text_tokens, length_penalty=DEFAULT_LENGTH_PENALTY):
-    text_tokens_set = set(text_tokens)
+def score_match(query_rep, matched_tokens, text_tokens, length_penalty=DEFAULT_LENGTH_PENALTY):
     score = 0
     rep_tokens = query_rep['tokens']
-    for token in text_tokens_set:
+    for token in matched_tokens:
         # check: change from score += 1
         score += rep_tokens[token]
-    norm = math.sqrt(len(text_tokens_set))
+    norm = math.sqrt(len(set(text_tokens)))
     score = score / math.pow(norm * query_rep['norm'], length_penalty)
     return score
