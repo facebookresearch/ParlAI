@@ -192,8 +192,13 @@ class MTurkAgent(Agent):
         )
 
     def episode_done(self):
-        # TODO-2 provide documentation for what this is supposed to be used for
-        return False
+        """Return whether or not this agent believes the conversation to
+        be done"""
+        if self.manager.get_agent_work_status(self.assignment_id) == \
+                self.ASSIGNMENT_NOT_DONE:
+            return False
+        else:
+            return True
 
     def _print_not_available_for(self, item):
         print_and_log(
