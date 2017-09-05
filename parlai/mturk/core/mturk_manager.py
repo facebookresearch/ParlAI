@@ -25,12 +25,6 @@ from parlai.mturk.core.shared_utils import print_and_log, generate_event_id, \
                                         THREAD_SHORT_SLEEP, THREAD_MEDIUM_SLEEP
 import parlai.mturk.core.data_model as data_model
 
-# TODO-1 move these somewhere that makes more sense
-ASSIGNMENT_NOT_DONE = 'NotDone'
-ASSIGNMENT_DONE = 'Submitted'
-ASSIGNMENT_APPROVED = 'Approved'
-ASSIGNMENT_REJECTED = 'Rejected'
-
 # Timeout before cancelling a world start
 WORLD_START_TIMEOUT = 11
 
@@ -461,8 +455,6 @@ class MTurkManager():
             # check alive status when reconnecting after given an assignment
             return False
 
-        # TODO-4 Attempt to notify worker they of disconnect before the below
-        # close the sending thread
         self.socket_manager.close_channel(worker_id, assignment_id)
         return True
 
@@ -847,7 +839,7 @@ class MTurkManager():
             not_done_message = ('This operation can be called with a status '
                                 'of: Reviewable,Approved,Rejected')
             if not_done_message in e.response['Error']['Message']:
-                return ASSIGNMENT_NOT_DONE
+                return MTurkAgent.ASSIGNMENT_NOT_DONE
 
     def create_additional_hits(self, num_hits):
         """Handle creation for a specific number of hits/assignments

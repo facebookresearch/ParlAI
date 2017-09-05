@@ -15,12 +15,6 @@ import parlai.mturk.core.data_model as data_model
 from parlai.mturk.core.shared_utils import print_and_log, THREAD_SHORT_SLEEP, \
                                            THREAD_MTURK_POLLING_SLEEP
 
-# TODO-1 move these somewhere that makes more sense
-ASSIGNMENT_NOT_DONE = 'NotDone'
-ASSIGNMENT_DONE = 'Submitted'
-ASSIGNMENT_APPROVED = 'Approved'
-ASSIGNMENT_REJECTED = 'Rejected'
-
 # Special act messages for failure states
 MTURK_DISCONNECT_MESSAGE = '[DISCONNECT]' # Turker disconnected from conv
 TIMEOUT_MESSAGE = '[TIMEOUT]' # the Turker did not respond but didn't return
@@ -29,6 +23,13 @@ RETURN_MESSAGE = '[RETURNED]' # the Turker returned the HIT
 
 class MTurkAgent(Agent):
     """Base class for an MTurkAgent that can act in a ParlAI world"""
+
+    # MTurkAgent Possible Statuses
+    ASSIGNMENT_NOT_DONE = 'NotDone'
+    ASSIGNMENT_DONE = 'Submitted'
+    ASSIGNMENT_APPROVED = 'Approved'
+    ASSIGNMENT_REJECTED = 'Rejected'
+
     def __init__(self, opt, manager, hit_id, assignment_id, worker_id):
         super().__init__(opt)
 
@@ -207,7 +208,7 @@ class MTurkAgent(Agent):
             self._print_not_available_for('review')
         else:
             if self.manager.get_agent_work_status(self.assignment_id) == \
-                    ASSIGNMENT_DONE:
+                    self.ASSIGNMENT_DONE:
                 self.manager.approve_work(assignment_id=self.assignment_id)
                 print_and_log(
                     'Conversation ID: {}, Agent ID: {} - HIT is '
@@ -223,7 +224,7 @@ class MTurkAgent(Agent):
             self._print_not_available_for('review')
         else:
             if self.manager.get_agent_work_status(self.assignment_id) == \
-                    ASSIGNMENT_DONE:
+                    self.ASSIGNMENT_DONE:
                 self.manager.reject_work(self.assignment_id, reason)
                 print_and_log(
                     'Conversation ID: {}, Agent ID: {} - HIT is '
@@ -246,7 +247,7 @@ class MTurkAgent(Agent):
             self._print_not_available_for('bonus')
         else:
             if self.manager.get_agent_work_status(self.assignment_id) in \
-                    (ASSIGNMENT_DONE, ASSIGNMENT_APPROVED):
+                    (self.ASSIGNMENT_DONE, self.ASSIGNMENT_APPROVED):
                 unique_request_token = str(uuid.uuid4())
                 self.manager.pay_bonus(
                     worker_id=self.worker_id,
@@ -296,7 +297,7 @@ class MTurkAgent(Agent):
         if timeout:
             start_time = time.time()
         while self.manager.get_agent_work_status(self.assignment_id) != \
-                ASSIGNMENT_DONE:
+                self.ASSIGNMENT_DONE:
             # Check if the Turker already returned/disconnected
             if self.hit_is_returned or self.disconnected:
                 return False
