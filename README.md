@@ -9,7 +9,7 @@ Its goal is to provide researchers:
 - multi-task training over many datasets at once
 - seamless integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome) for data collection and human evaluation
 
-Over 20 [tasks](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) are currently supported, including popular datasets such as [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MS MARCO](http://www.msmarco.org/), [MCTest](https://www.microsoft.com/en-us/research/publication/mctest-challenge-dataset-open-domain-machine-comprehension-text/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [WebQuestions](http://www.aclweb.org/anthology/D13-1160), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialog tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialog](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html), [VQA-COCO2014](http://visualqa.org/) and [VisDial](https://arxiv.org/abs/1611.08669). See [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) for the current complete task list.
+Over 20 [tasks](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) are currently supported, including popular datasets such as [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MS MARCO](http://www.msmarco.org/), [MCTest](https://www.microsoft.com/en-us/research/publication/mctest-challenge-dataset-open-domain-machine-comprehension-text/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [WebQuestions](http://www.aclweb.org/anthology/D13-1160), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialog tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialog](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html), [VQA-COCO2014](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/). See [here](http://www.parl.ai/static/docs/tasks.html#) for the current complete task list.
 
 Included are examples of training neural models with [PyTorch](http://pytorch.org/) and [Lua Torch](http://torch.ch/), with batch training on GPU or hogwild training on CPUs. Using [Theano](http://deeplearning.net/software/theano/) or [Tensorflow](https://www.tensorflow.org/) instead is also straightforward.
 
@@ -125,7 +125,8 @@ All needed data will be downloaded to ~/ParlAI/data, and any non-data files (suc
 The main concepts (classes) in ParlAI:
 - world - defines the environment (can be very simple, just two agents talking to each other).
 - agent – an agent in the world, e.g. the learner. (There can be multiple learners.)
-- teacher – a type of agent that talks to the learner, implements one of the tasks listed before.
+- teacher – a type of agent that talks to the learner, implements one of the 
+listed before.
 
 After defining a world and the agents in it, a main loop can be run for training, testing or displaying, which calls the function world.parley(). The skeleton of an example main is given in the left panel, and the actual code for parley() on the right.
 
@@ -241,7 +242,7 @@ Our first release included the following datasets (shown in the left panel), and
 Over 20 tasks were supported in the first release, including popular datasets such as
 SQuAD, bAbI tasks, MCTest, WikiQA, WebQuestions, SimpleQuestions, WikiMovies, QACNN, QADailyMail, CBT, BookTest, bAbI Dialog tasks,
 Ubuntu, OpenSubtitles, Cornell Movie, VQA-COCO2014.
-Since then, several datasets have been added such as  VQAv2, VisDial, MNIST_QA, Personalized Dialog, InsuranceQA, MS MARCO, TriviaQA, and CLEVR. See [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) for the current complete task list.
+Since then, several datasets have been added such as  VQAv2, VisDial, MNIST_QA, Personalized Dialog, InsuranceQA, MS MARCO, TriviaQA, and CLEVR. See [here](http://www.parl.ai/static/docs/tasks.html#) for the current complete task list.
 
 Choosing a task in ParlAI is as easy as specifying it on the command line, as shown in the above image (right). If the dataset has not been used before, ParlAI will automatically download it. As all datasets are treated in the same way in ParlAI (with a single dialog API), a dialog agent can in principle switch training and testing between any of them. Even better, one can specify many tasks at once (multi-tasking) by simply providing a comma-separated list, e.g.  the command line “-t babi,squad”, to use those two datasets, or even all  the QA datasets at once  (-t #qa) or indeed every task in ParlAI at once (-t #all). The aim is to make it easy to build and evaluate very rich dialog models.
 
@@ -297,9 +298,9 @@ Please see [the MTurk tutorial](http://parl.ai/static/docs/mturk.html) to learn 
 If you have any questions, bug reports or feature requests, please don't hesitate to post on our [Github Issues page](https://github.com/facebookresearch/ParlAI/issues).
 
 ## The Team
-ParlAI is currently maintained by Alexander H. Miller, Will Feng and Jason Weston.
+ParlAI is currently maintained by Alexander H. Miller, Jack Urbanek and Jason Weston.
 A non-exhaustive list of other major contributors includes:
-Adam Fisch,  Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra,
+Will Feng, Adam Fisch,  Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra,
 Filipe de Avila Belbute Peres and Chao Pan.
 
 ## Citation

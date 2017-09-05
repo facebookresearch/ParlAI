@@ -1,3 +1,9 @@
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
+
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
@@ -7,13 +13,13 @@ from functools import lru_cache
 
 
 class MemNN(nn.Module):
-    def __init__(self, opt, freqs):
-        super(MemNN, self).__init__()
+    def __init__(self, opt, dictionary):
+        super().__init__()
         self.opt = opt
 
         # Prepare features
         self.num_time_features = opt['mem_size']
-        num_features = freqs.numel()
+        num_features = len(dictionary)
         self.extra_features_slots = 0
         if opt['time_features']:
             self.time_features = torch.LongTensor(range(num_features,
@@ -35,10 +41,7 @@ class MemNN(nn.Module):
 
         if opt['cuda']:
             self.score.cuda()
-            if hasattr(self, 'memory_hop'):
-                self.memory_hop.cuda()
-
-        self.original_cuda_params = [(p, p.data) for p in self.parameters() if p.data.is_cuda]
+            self.memory_hop.cuda()
 
     def time_feature(self, t):
         return self.time_features[min(t, self.num_time_features - 1)]
@@ -64,31 +67,24 @@ class MemNN(nn.Module):
             memory_lengths += memory_lengths.ne(0).long() * self.extra_features_slots
             memories.set_(updated_memories)
 
-    def forward(self, memories, queries, answers,
-                memory_lengths, query_lengths, answer_lengths):
+    def forward(self, memories, queries, memory_lengths, query_lengths):
         self.update_memories_with_extra_features_(memory_lengths, memories)
 
         in_memory_embeddings = self.in_memory_embedder(memory_lengths, memories)
         out_memory_embeddings = self.out_memory_embedder(memory_lengths, memories)
         query_embeddings = self.query_embedder(query_lengths, queries)
-        answer_embeddings = None
-        if answer_lengths.numel() > 0:
-            answer_embeddings = self.answer_embedder(answer_lengths, answers)
         attention_mask = Variable(memory_lengths.data.ne(0), requires_grad=False)
 
         if self.opt['cuda']:
-            in_memory_embeddings = in_memory_embeddings.cuda(async=True)
-            out_memory_embeddings = out_memory_embeddings.cuda(async=True)
-            query_embeddings = query_embeddings.cuda(async=True)
-            if answer_lengths.numel() > 0:
-                answer_embeddings = answer_embeddings.cuda(async=True)
-            attention_mask = attention_mask.cuda(async=True)
+            in_memory_embeddings = in_memory_embeddings.cuda()
+            out_memory_embeddings = out_memory_embeddings.cuda()
+            query_embeddings = query_embeddings.cuda()
+            attention_mask = attention_mask.cuda()
 
         for _ in range(self.opt['hops']):
             query_embeddings = self.memory_hop(query_embeddings,
                     in_memory_embeddings, out_memory_embeddings, attention_mask)
-
-        return query_embeddings, answer_embeddings
+        return query_embeddings
 
 
 class Embed(nn.Embedding):
@@ -166,6 +162,30 @@ class Hop(nn.Module):
         query_embeddings = self.linear(query_embeddings)
         output = memory_output + query_embeddings
         return output
+
+
+class Decoder(nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers, opt, dictionary):
+        super().__init__()
+        self.dict = dictionary
+        self.h2o = nn.Linear(hidden_size, len(dictionary))
+        self.dropout = nn.Dropout(opt['dropout'])
+        self.rnn = nn.GRU(input_size, hidden_size, num_layers)
+
+    def hidden_to_idx(self, hidden, dropout=False):
+        """Converts hidden state vectors into indices into the dictionary."""
+        if hidden.size(0) > 1:
+            raise RuntimeError('Bad dimensions of tensor:', hidden)
+        hidden = hidden.squeeze(0)
+        scores = self.h2o(hidden)
+        if dropout:
+            scores = self.dropout(scores)
+        _, idx = scores.max(1)
+        return idx, scores
+
+    def forward(self, input, state):
+        output, state = self.rnn(input, state)
+        return self.hidden_to_idx(output, dropout=self.training)
 
 
 class DotScore(nn.Module):
