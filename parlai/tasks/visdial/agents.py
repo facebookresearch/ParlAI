@@ -89,6 +89,6 @@ class DefaultTeacher(DialogTeacher):
                     episode_done = False
                 else:
                     yield (question, answer, None, answer_options), episode_done
-                    if i == len(dialog['dialog']):
+                    if i == len(dialog['dialog']) - 1:
                         episode_done = True
                 
