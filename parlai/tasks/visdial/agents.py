@@ -67,6 +67,7 @@ class DefaultTeacher(DialogTeacher):
 
         self.questions = self.visdial['data']['questions']
         self.answers = self.visdial['data']['answers']
+        episode_done = False
 
         for dialog in self.visdial['data']['dialogs']:
             # for each dialog
@@ -74,10 +75,7 @@ class DefaultTeacher(DialogTeacher):
             caption = dialog['caption']
             img_path = self.image_path + '%012d.jpg' % (image_id)
 
-            episode_done = False
             for i, qa in enumerate(dialog['dialog']):
-                if i == len(dialog['dialog']):
-                    episode_done = True
                 # for each question answer pair.
                 question = self.questions[qa['question']]
                 answer = [self.answers[qa['answer']]]
@@ -88,5 +86,9 @@ class DefaultTeacher(DialogTeacher):
                     # prepend with caption on first question
                     # only load image on first item
                     yield (caption + '\n' + question, answer, None, answer_options, img_path), episode_done
+                    episode_done = False
                 else:
                     yield (question, answer, None, answer_options), episode_done
+                    if i == len(dialog['dialog']) - 1:
+                        episode_done = True
+                
