@@ -23,9 +23,6 @@ COMMAND_RESTORE_STATE ..... / MTurk web client should restore the state of a
                             |  disconnected conversation. The previously sent
                             |  messages are in the 'messages' param, and the
                             \  last sent command is in 'last_command'
-COMMAND_DISCONNECT_PARTNER  / MTurk web client should display a done button in
-                            |  the window and handle the text in the
-                            \  'disconnect_text' param.
 COMMAND_INACTIVE_HIT ...... / MTurk web client should remove the done button
                             |  and text box and instead display the contents of
                             \  'inactive_text' param.
@@ -39,8 +36,6 @@ COMMAND_EXPIRE_HIT = 'COMMAND_EXPIRE_HIT'
 COMMAND_SUBMIT_HIT = 'COMMAND_SUBMIT_HIT'
 COMMAND_CHANGE_CONVERSATION = 'COMMAND_CHANGE_CONVERSATION'
 COMMAND_RESTORE_STATE = 'COMMAND_RESTORE_STATE'
-# TODO merge command_disconnect_partner into command_inactive_done
-COMMAND_DISCONNECT_PARTNER = 'COMMAND_DISCONNECT_PARTNER'
 COMMAND_INACTIVE_HIT = 'COMMAND_INACTIVE_HIT'
 COMMAND_INACTIVE_DONE = 'COMMAND_INACTIVE_DONE'
 

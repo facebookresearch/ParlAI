@@ -256,11 +256,7 @@ class MTurkManager():
             state.status = AssignState.STATUS_PARTNER_DISCONNECT
 
             # Create and send the command
-            data = {
-                'text': data_model.COMMAND_DISCONNECT_PARTNER,
-                'disconnect_text': ('One of the other agents '
-                                    'unexpectedly disconnected.'),
-            }
+            data = state.get_inactive_command_data(worker_id)
             self.send_command(worker_id, assignment_id, data)
 
     def _restore_worker_state(self, worker_id, assignment_id):

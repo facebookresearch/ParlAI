@@ -49,13 +49,10 @@
             </div>
         </div>
         <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
-            <span id="disconnect" style="font-size: 14pt;margin-right: 15px"></span>
+            <span id="inactive" style="font-size: 14pt;margin-right: 15px"></span>
             <button id="done-button" type="button" class="btn btn-primary btn-lg">
                 <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
             </button>
-        </div>
-        <div id="response-type-inactive" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
-            <span id="inactive" style="font-size: 16px"></span>
         </div>
     </div>
 </div>
@@ -84,8 +81,6 @@
   var COMMAND_SUBMIT_HIT = 'COMMAND_SUBMIT_HIT'
   var COMMAND_CHANGE_CONVERSATION = 'COMMAND_CHANGE_CONVERSATION'
   var COMMAND_RESTORE_STATE = 'COMMAND_RESTORE_STATE'
-  // TODO merge command_disconnect_partner into command_inactive_done
-  var COMMAND_DISCONNECT_PARTNER = 'COMMAND_DISCONNECT_PARTNER'
   var COMMAND_INACTIVE_HIT = 'COMMAND_INACTIVE_HIT'
   var COMMAND_INACTIVE_DONE = 'COMMAND_INACTIVE_DONE'
 
@@ -117,7 +112,7 @@
 
   /* ================= State variables ================= */
 
-  var verbosity = 2;
+  var verbosity = 4;
 
   var q = new PriorityQueue();
   var mturk_submit_url = null;
@@ -399,7 +394,8 @@
     } else if (response_type == 'done') {
       $("div#response-type-done").css("display", "");
     } else if (response_type == 'inactive') {
-      $("div#response-type-inactive").css("display", "");
+      $("div#response-type-done").css("display", "");
+      $("button#done-button").css("display", "none");
     }
 
     // Redraw the elements
@@ -521,6 +517,7 @@
             data: null
           },
           function(data) {
+            log(msg, 3);
             if (msg.data.type === MESSAGE_TYPE_COMMAND){
               handle_command(msg.data);
             } else if (msg.data.type === MESSAGE_TYPE_MESSAGE) {
@@ -578,6 +575,7 @@
       wait_for_worker_input();
     } else if (command === COMMAND_SHOW_DONE_BUTTON) {
       // Update the UI to show the done button
+      set_inactive_text('');
       handle_done();
     } else if (command === COMMAND_INACTIVE_DONE) {
       // Update the UI to show done with additional inactive text
@@ -586,11 +584,6 @@
       init_chat_panel();
       set_inactive_text(msg['inactive_text']);
       handle_done();
-    } else if (command === COMMAND_DISCONNECT_PARTNER) {
-      // TODO use COMMAND_INACTIVE_DONE instead
-      task_done = true;
-      set_inactive_text(msg['disconnect_text']);
-      update_UI_for_response_type('done');
     } else if (command === COMMAND_SUBMIT_HIT) {
       // Force the hit to submit as done
       all_done_callback();
