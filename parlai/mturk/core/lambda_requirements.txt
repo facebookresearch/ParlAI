@@ -1,4 +1,0 @@
-Jinja2==2.9.6
-MarkupSafe==1.0
-# psycopg2==2.7.1  # Need to download from https://github.com/jkehler/awslambda-psycopg2
-SQLAlchemy==1.1.9
