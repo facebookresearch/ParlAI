@@ -177,10 +177,9 @@ class ConvAIWorld(World):
         If after processing all messages message stack is still empty then new request to server will be performed.
         :return: None
         """
-        print('Wait for new messages from server', end='', flush=True)
+        print('Waiting for new messages from server...', flush=True)
         while True:
             time.sleep(self.router_bot_pull_delay)
-            print('.', end='', flush=True)
             msgs = self._get_updates()
             if len(msgs) > 0:
                 for msg in msgs:
@@ -205,7 +204,7 @@ class ConvAIWorld(World):
                 if len(self.messages) > 0:
                     break
                 else:
-                    print('Wait for new messages from server', end='', flush=True)
+                    print('Waiting for new messages from server...', flush=True)
 
     def parley(self):
         """Pops next message from stack, gets corresponding chat, agents, world
