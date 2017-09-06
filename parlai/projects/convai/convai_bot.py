@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.convai.convai_world import ConvAIWorld
+from parlai.projects.convai.convai_world import ConvAIWorld
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import Agent
 from parlai.core.worlds import display_messages
