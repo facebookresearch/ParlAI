@@ -395,6 +395,22 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
+    def test_fvqa(self):
+        from parlai.core.params import ParlaiParser
+        parser = ParlaiParser()
+        parser.add_task_args(['-t', 'fvqa'])
+        opt = parser.parse_args(args=self.args)
+
+        from parlai.tasks.fvqa.agents import DefaultTeacher
+        for dt in ['train:ordered', 'test']:
+            opt['datatype'] = dt
+
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
     def test_insuranceqa(self):
         from parlai.core.params import ParlaiParser
         from parlai.tasks.insuranceqa.agents import V1Teacher, V2Teacher
