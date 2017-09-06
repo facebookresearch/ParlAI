@@ -4,9 +4,19 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.worlds import validate, create_task
-from parlai.mturk.core.worlds import MTurkWorld
+from parlai.mturk.core.worlds import MTurkTaskWorld, MTurkOnboardWorld
+import time
 
-class ModelEvaluatorWorld(MTurkWorld):
+class ModelEvaluatorOnboardWorld(MTurkOnboardWorld):
+    def parley(self):
+        ad = {}
+        ad['id'] = 'System'
+        ad['text'] = 'Welcome onboard!'
+        self.mturk_agent.observe(ad)
+        response = self.mturk_agent.act()
+        self.episodeDone = True
+
+class ModelEvaluatorWorld(MTurkTaskWorld):
     """
     World for letting Turkers evaluate a dialog model's performance given a context.
     Assumes the context is a context from a given task, e.g. from SQuAD, CBT, etc.

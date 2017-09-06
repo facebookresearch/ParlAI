@@ -70,6 +70,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if add_parlai_args:
             self.add_parlai_args()
+            self.add_image_args()
         if add_model_args:
             self.add_model_args(model_argv)
 
@@ -91,14 +92,14 @@ class ParlaiParser(argparse.ArgumentParser):
             '-t', '--task',
             help='MTurk task, e.g. "qa_data_collection" or "model_evaluator"')
         mturk.add_argument(
-            '-nh', '--num-hits', default=2, type=int,
-            help='number of HITs you want to create for this task')
+            '-nc', '--num-conversations', default=1, type=int,
+            help='number of conversations you want to create for this task')
         mturk.add_argument(
-            '-na', '--num-assignments', default=1, type=int,
-            help='number of assignments for each HIT')
+            '--unique', dest='unique_worker', default=False, action='store_true',
+            help='enforce that no worker can work on your task twice')
         mturk.add_argument(
             '-r', '--reward', default=0.05, type=float,
-            help='reward for each HIT, in US dollars')
+            help='reward for each worker for finishing the conversation, in US dollars')
         mturk.add_argument(
             '--sandbox', dest='is_sandbox', action='store_true',
             help='submit the HITs to MTurk sandbox site')
@@ -108,6 +109,12 @@ class ParlaiParser(argparse.ArgumentParser):
         mturk.add_argument(
             '--verbose', dest='verbose', action='store_true',
             help='print out all messages sent/received in all conversations')
+        mturk.add_argument(
+            '--count-complete', dest='count_complete',  default=False, action='store_true',
+            help='continue until the requested number of conversations are completed rather than attempted')
+        mturk.add_argument(
+            '--allowed-conversations', dest='allowed_conversations',  default=0, type=int,
+            help='number of concurrent conversations that one mturk worker is able to be involved in, 0 is unlimited')
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(verbose=False)
@@ -124,8 +131,12 @@ class ParlaiParser(argparse.ArgumentParser):
                  'defaults to {parlai_dir}/downloads')
         parlai.add_argument(
             '-dt', '--datatype', default='train',
-            choices=['train', 'train:ordered', 'valid', 'test'],
+            choices=['train', 'train:stream', 'train:ordered',
+                'train:ordered:stream', 'train:stream:ordered',
+                'valid', 'valid:stream', 'test', 'test:stream'],
             help='choose from: train, train:ordered, valid, test. ' +
+                 'to stream data add ":stream" to any option ' +
+                 '(e.g., train:stream). ' +
                  'by default: train is random with replacement, ' +
                  'valid is ordered, test is ordered.')
         parlai.add_argument(
@@ -180,6 +191,20 @@ class ParlaiParser(argparse.ArgumentParser):
                 s = class2str(agent.dictionary_class())
                 model_args.set_defaults(dict_class=s)
 
+    def add_image_args(self, args=None):
+        # Find which image mode specified, add its specific arguments if needed.
+        args = sys.argv if args is None else args
+        image_mode = None
+        for index, item in enumerate(args):
+            if item == '-im' or item == '--image-mode':
+                image_mode = args[index + 1]
+        if image_mode and image_mode != 'none':
+            parlai = self.add_argument_group('ParlAI Image Preprocessing Arguments')
+            parlai.add_argument('--image-size', type=int, default=256,
+                help='')
+            parlai.add_argument('--image-cropsize', type=int, default=224,
+                help='')
+
     def parse_args(self, args=None, namespace=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the ``args``.
         We specifically remove items with ``None`` as values in order to support
@@ -199,6 +224,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
+
         return self.opt
 
     def print_args(self):
@@ -218,4 +244,3 @@ class ParlaiParser(argparse.ArgumentParser):
                         print('[ ' + group.title + ': ] ')
                     count += 1
                     print('[  ' + key + ': ' + values[key] + ' ]')
-

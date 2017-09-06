@@ -1,5 +1,6 @@
 # MISC
 *.tmp
+.watchmanconfig
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -105,3 +106,6 @@ ENV/
 
 # MTurk
 tmp/
+*.pickle
+# Heroku things
+heroku-cli-*

@@ -282,7 +282,7 @@ class DictionaryAgent(Agent):
         """Load pre-existing dictionary in 'token[<TAB>count]' format.
         Initialize counts from other dictionary, or 0 if they aren't included.
         """
-        print('Dictionary: loading existing dictionary from {}'.format(
+        print('Dictionary: loading dictionary from {}'.format(
               filename))
         with open(filename) as read:
             for line in read:
@@ -306,7 +306,7 @@ class DictionaryAgent(Agent):
 
         If ``sort`` (default ``True``), then first sort the dictionary before saving.
         """
-        filename = self.opt['model_file'] if filename is None else filename
+        filename = self.opt['dict_file'] if filename is None else filename
         print('Dictionary: saving dictionary to {}'.format(filename))
         if sort:
             self.sort()

@@ -4,8 +4,8 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.params import ParlaiParser
-from parlai.mturk.tasks.qa_data_collection.worlds import QADataCollectionWorld
-from parlai.mturk.core.agents import MTurkAgent, MTurkManager
+from parlai.mturk.tasks.qa_data_collection.worlds import QADataCollectionOnboardWorld, QADataCollectionWorld
+from parlai.mturk.core.mturk_manager import MTurkManager
 from task_config import task_config
 import time
 import os
@@ -37,25 +37,48 @@ def main():
         opt=opt,
         mturk_agent_ids = [mturk_agent_id]
     )
-    mturk_manager.init_aws(opt=opt)
-    mturk_manager.start_new_run(opt=opt)
+    mturk_manager.setup_server()
 
-    global run_hit
-    def run_hit(hit_index, assignment_index, task_class, task_opt, opt, mturk_manager):
-        task = task_class(task_opt)
-        # Create the MTurk agent which provides a chat interface to the Turker
-        mturk_agent = MTurkAgent(id=mturk_agent_id, manager=mturk_manager, hit_index=hit_index, assignment_index=assignment_index, opt=opt)
-        world = QADataCollectionWorld(opt=opt, task=task, mturk_agent=mturk_agent)
+    def run_onboard(worker):
+        world = QADataCollectionOnboardWorld(opt=opt, mturk_agent=worker)
         while not world.episode_done():
             world.parley()
         world.shutdown()
-        world.review_work()
 
-    mturk_manager.create_hits(opt=opt)
-    results = Parallel(n_jobs=opt['num_hits'] * opt['num_assignments'], backend='threading') \
-                (delayed(run_hit)(hit_index, assignment_index, task_class, task_opt, opt, mturk_manager) \
-                    for hit_index, assignment_index in product(range(1, opt['num_hits']+1), range(1, opt['num_assignments']+1)))    
-    mturk_manager.shutdown()
+    mturk_manager.set_onboard_function(onboard_function=None)
+
+    try:
+        mturk_manager.start_new_run()
+        mturk_manager.create_hits()
+
+        mturk_manager.ready_to_accept_workers()
+
+        def check_worker_eligibility(worker):
+            return True
+
+        def get_worker_role(worker):
+            return mturk_agent_id
+
+        global run_conversation
+        def run_conversation(mturk_manager, opt, workers):
+            task = task_class(task_opt)
+            mturk_agent = workers[0]
+            world = QADataCollectionWorld(opt=opt, task=task, mturk_agent=mturk_agent)
+            while not world.episode_done():
+                world.parley()
+            world.shutdown()
+            world.review_work()
+
+        mturk_manager.start_task(
+            eligibility_function=check_worker_eligibility,
+            role_function=get_worker_role,
+            task_function=run_conversation
+        )
+    except:
+        raise
+    finally:
+        mturk_manager.expire_all_unassigned_hits()
+        mturk_manager.shutdown()
 
 if __name__ == '__main__':
     main()

@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.tasks.task_list import task_list
 
-category_order = ['QA', 'Cloze', 'Goal', 'ChitChat', 'Visual']
+category_order = ['QA', 'Cloze', 'Goal', 'ChitChat', 'Negotiation', 'Visual']
 category_task_list = {x:[] for x in category_order}
 
 for task_dict in task_list:
