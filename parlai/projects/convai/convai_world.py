@@ -50,7 +50,7 @@ class ConvAIWorld(World):
         # Finished chats
         self.finished_chats = set()
         # Pairs of exchanges between remote and local agents (for printing)
-        self.last_exchanges = []
+        self.last_exchanges = dict()
         # Pool of messages from RouterBot
         self.messages = []
         # Url of RouterBot
