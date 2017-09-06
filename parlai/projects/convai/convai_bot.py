@@ -54,7 +54,7 @@ def main():
     opt = parser.parse_args()
 
     agent = ConvAISampleAgent(opt)
-    world = ConvAIWorld(opt, agent)
+    world = ConvAIWorld(opt, [agent])
 
     while True:
         try:
