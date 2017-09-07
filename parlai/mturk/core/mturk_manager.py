@@ -12,12 +12,11 @@ import time
 import uuid
 
 from botocore.exceptions import ClientError
-from datetime import datetime
 
 from parlai.mturk.core.server_utils import setup_server, delete_server
 from parlai.mturk.core.mturk_utils import calculate_mturk_cost, \
     check_mturk_balance, create_hit_type, create_hit_with_hit_type, \
-    get_mturk_client, setup_aws_credentials, create_hit_config
+    get_mturk_client, setup_aws_credentials, create_hit_config, expire_hit
 from parlai.mturk.core.worker_state import WorkerState, AssignState
 from parlai.mturk.core.socket_manager import Packet, SocketManager
 from parlai.mturk.core.agents import MTurkAgent
@@ -899,15 +898,6 @@ class MTurkManager():
             ' your laptop or put your computer into sleep or standby mode.)\n')
         return mturk_page_url
 
-    def expire_hit(self, hit_id):
-        """Expire given HIT from the MTurk side
-        Only works if the hit is in the "pending" state
-        """
-        client = get_mturk_client(self.is_sandbox)
-        # Update expiration to a time in the past, the HIT expires instantly
-        past_time = datetime(2015, 1, 1)
-        client.update_expiration_for_hit(HITId=hit_id, ExpireAt=past_time)
-
     def get_hit(self, hit_id):
         """Get hit from mturk by hit_id"""
         client = get_mturk_client(self.is_sandbox)
@@ -926,7 +916,7 @@ class MTurkManager():
         """
         print_and_log("Expiring all unassigned HITs...")
         for hit_id in self.hit_id_list:
-            self.expire_hit(hit_id)
+            expire_hit(self.is_sandbox, hit_id)
 
     def approve_work(self, assignment_id):
         """approve work for a given assignment through the mturk client"""
