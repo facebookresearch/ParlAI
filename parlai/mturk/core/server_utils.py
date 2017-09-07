@@ -135,6 +135,9 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
         hashlib.md5(heroku_user_identifier.encode('utf-8')).hexdigest()
     ))[:30]
 
+    while heroku_app_name[-1] == '-':
+        heroku_app_name = heroku_app_name[:-1]
+
     # Create or attach to the server
     try:
         subprocess.check_output(shlex.split(
@@ -196,6 +199,8 @@ def delete_heroku_server(task_name):
         task_name,
         hashlib.md5(heroku_user_identifier.encode('utf-8')).hexdigest()
     ))[:30]
+    while heroku_app_name[-1] == '-':
+        heroku_app_name = heroku_app_name[:-1]
     print("Heroku: Deleting server: {}".format(heroku_app_name))
     subprocess.check_output(shlex.split(
         '{} destroy {} --confirm {}'.format(
