@@ -4,6 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+import logging
 import os
 import unittest
 
@@ -71,38 +72,37 @@ class TestStringMatchRetriever(unittest.TestCase):
         StringMatchRetrieverAgent.add_cmdline_args(argparser)
         opt = argparser.parse_args(args)
         my_retriever = StringMatchRetrieverAgent(opt)
+        for fact in self.test_facts:
+            my_retriever.observe({'text': fact})
+            my_retriever.act()
         self._test_retriever_functionality(my_retriever)
         # test save and load
         my_retriever.save()
-        # load is done automatically since arg '--retriever-file' is set
         my_retriever2 = StringMatchRetrieverAgent(opt)
         self._test_retriever_functionality(my_retriever2)
 
     def _test_retriever_functionality(self, my_retriever):
-        for fact in self.test_facts:
-            my_retriever.observe({'text': fact})
-            my_retriever.act()
         # test that random facts are retrieved: i.e., not the same fact being returned everytime
         # If you are unlucky, there is a very slim chance (1/5^4 < 1%) that this test will fail.
         ans1 = my_retriever.retrieve("Unconditional", 1, ordered_randomly=True)
         ans2 = my_retriever.retrieve("Unconditional", 1, ordered_randomly=True)
         ans3 = my_retriever.retrieve("Unconditional", 1, ordered_randomly=True)
         ans4 = my_retriever.retrieve("Unconditional", 1, ordered_randomly=True)
-        assert(len(set(ans1 + ans2 + ans3 + ans4)) > 1)
+        self.assertGreater(len(set(ans1 + ans2 + ans3 + ans4)), 1)
         ans5 = my_retriever.retrieve("Unconditional directed_by Brent", 2)
-        assert(list(ans5) == [
+        self.assertEqual(list(ans5), [
             "Unconditional directed_by Brent McCorkle",
             "Unconditional written_by Brent McCorkle",
-        ])
+            ])
         # test input string that are not in facts
         ans6 = my_retriever.retrieve("not_in_facts", 1)
-        assert(ans6 == [])
+        self.assertEqual(ans6, [])
         # test input string that are partially not in facts
         ans7 = my_retriever.retrieve("directed_by Brent not_in_facts", 1)
-        assert(list(ans7) == ["Unconditional directed_by Brent McCorkle"])
+        self.assertEqual(list(ans7), ["Unconditional directed_by Brent McCorkle"])
         # test input string that are stop words
         ans8 = my_retriever.retrieve("of", 1)
-        assert(ans8 == [])
+        self.assertEqual(ans8, [])
 
 
     def test_build_retriever(self, rebuild=True):
@@ -124,6 +124,8 @@ class TestStringMatchRetriever(unittest.TestCase):
             DATABASE,
             '--retriever-file',
             RETRIEVER_FILE,
+            '--retriever-maxexs',
+            0,
         ]
         argparser = ParlaiParser()
         DictionaryAgent.add_cmdline_args(argparser)
@@ -135,10 +137,10 @@ class TestStringMatchRetriever(unittest.TestCase):
         # test retriever
         my_retriever = StringMatchRetrieverAgent(opt)
         ans1 = my_retriever.retrieve("who directed Jurassic park", 10)
-        assert("Jurassic Park directed_by Steven Spielberg" in list(ans1))
+        self.assertTrue("Jurassic Park directed_by Steven Spielberg" in list(ans1))
         ans2 = my_retriever.retrieve("what movies did Steven Spielberg direct", 15)
-        assert("Jurassic Park directed_by Steven Spielberg" in list(ans2))
-
+        self.assertTrue("Jurassic Park directed_by Steven Spielberg" in list(ans2))
 
 if __name__ == '__main__':
+    logging.basicConfig(format='[ *%(levelname)s* ] %(message)s', level=logging.INFO)
     unittest.main()

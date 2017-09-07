@@ -8,7 +8,10 @@
 
 import copy
 import os
+import logging
 from numpy import random
+import sqlite3
+
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -28,10 +31,12 @@ class StringMatchRetrieverAgent(Agent):
     """
 
     DEFAULT_MAX_FACTS = 100000
+    DOC_TABLE_NAME = 'document'
+    FREQ_TABLE_NAME = 'freq'
 
     @staticmethod
     def print_info(msg):
-        print("[ StringMatchRetriever ]: " + str(msg))
+        logging.info("[ StringMatchRetriever ]: " + str(msg))
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -54,20 +59,61 @@ class StringMatchRetrieverAgent(Agent):
         self.token2facts = {}
         self.facts = []
         self.length_penalty = float(opt.get('length_penalty') or DEFAULT_LENGTH_PENALTY)
-        if opt.get('retriever_file') and os.path.isfile(opt['retriever_file']):
-            # load pre-existing retriever
-            self.load(opt['retriever_file'])
+        is_file_exists = os.path.isfile(opt.get('retriever_file'))
+        self.sql_connection = sqlite3.connect(opt.get('retriever_file'))
+        self.cursor = self.sql_connection.cursor()
+        if not is_file_exists:
+            self.cursor.execute(
+                "CREATE TABLE %s (fact_id INTEGER PRIMARY KEY AUTOINCREMENT, fact)"
+                % self.DOC_TABLE_NAME
+            )
+            self.cursor.execute(
+                "CREATE TABLE %s (token, fact_id, freq)"
+                % self.FREQ_TABLE_NAME
+            )
+
+    def _get_fact_id(self, fact):
+        self.cursor.execute(
+            "SELECT fact_id FROM %s WHERE fact = ?" % self.DOC_TABLE_NAME,
+            (fact,),
+        )
+        try:
+            return int(self.cursor.fetchall()[0][0])
+        except ValueError or IndexError:
+            return -1
 
     def act(self):
         fact = self.observation.get('text')
-        self.facts.append(fact)
-        for token in set(self.dict_agent.tokenize(fact.lower())):
-            if token in stopwords:
+        self.cursor.execute(
+            "INSERT INTO %s(fact) VALUES(?)" % self.DOC_TABLE_NAME,
+            (fact, ),
+        )
+        # TODO: the following fact_id assignment won't work for multi-thread
+        fact_id = self.cursor.lastrowid
+        token_cnt = {}
+        for _token in set(self.dict_agent.tokenize(fact.lower())):
+            if _token in stopwords:
                 continue
-            if token not in self.token2facts:
-                self.token2facts[token] = []
-            self.token2facts[token].append(fact)
+            if _token not in token_cnt:
+                token_cnt[_token] = 0
+            token_cnt[_token] += 1
+        for (_token, _cnt) in token_cnt.items():
+            self.cursor.execute(
+                "INSERT INTO %s(token, fact_id, freq) VALUES(?, ?, ?)" %
+                self.FREQ_TABLE_NAME,
+                (_token, fact_id, _cnt,),
+            )
         return {'id': 'Retriever'}
+
+
+    def _get_facts_names(self, fact_ids):
+        formatted_fact_ids = [int(_fact_id) for _fact_id in fact_ids]
+        return [_row[0] for _row in \
+            self.cursor.execute(
+                "SELECT fact FROM %s WHERE fact_id in (%s)" %
+                (self.DOC_TABLE_NAME, ','.join('?' for _ in fact_ids)),
+                formatted_fact_ids,
+            )]
 
     def retrieve(self, query, max_results=100, ordered_randomly=False):
         query_tokens = set(self.dict_agent.tokenize(query.lower()))
@@ -75,75 +121,38 @@ class StringMatchRetrieverAgent(Agent):
         query_rep = build_query_representation(self, query_tokens, self.dict_agent.freqs())
         # gather the candidate facts
         cand_facts = {}
-        for token in query_tokens:
-            if token not in self.token2facts:
-                continue
-            for fact in self.token2facts[token]:
-                if fact not in cand_facts:
-                    cand_facts[fact] = [token]
-                else:
-                    cand_facts[fact].append(token)
+        for _token in query_tokens:
+            for _row in self.cursor.execute(
+                            "SELECT fact_id FROM %s WHERE token = ?"
+                            % self.FREQ_TABLE_NAME,
+                            (_token,),
+                        ):
+                _fact_id = _row[0]
+                if _fact_id not in cand_facts:
+                    cand_facts[_fact_id] = []
+                cand_facts[_fact_id].append(_token)
         if not cand_facts:
             return []
-        if ordered_randomly:
-            return list(random.choice(list(cand_facts.keys()), max_results, replace=False))
-        # ordered by score
-        facts_score = {}
-        for (fact, tokens) in cand_facts.items():
-            facts_score[fact] = \
-                score_match(
-                    query_rep,
-                    tokens,
-                    self.dict_agent.tokenize(fact),
-                )
         max_results = min(max_results, len(cand_facts))
+        if ordered_randomly:
+            fact_ids = random.choice(list(cand_facts.keys()), max_results, replace=False)
+            return self._get_facts_names(fact_ids)
+        # ordered by score
         result = MaxPriorityQueue(max_results)
-        for (fact, score) in facts_score.items():
-            result.add(fact, score)
+        for (_fact_id, _tokens) in cand_facts.items():
+            self.cursor.execute(
+                "SELECT fact FROM %s WHERE fact_id=?" % self.DOC_TABLE_NAME,
+                (_fact_id,),
+            )
+            _fact = self.cursor.fetchall()[0][0]
+            _score = score_match(
+                        query_rep,
+                        _tokens,
+                        self.dict_agent.tokenize(_fact),
+                     )
+            result.add(_fact, _score)
         return reversed(result)
 
-    def load(self, filename):
-        """Load pre-existing StringMatchRetriever in format:
-            the first line: 'fact1<TAB>fact2<TAB>...'
-            starting from second line: 'token<TAB>fact_index1<TAB>fact_index2...'
-        """
-
-        self.print_info('loading StringMatch from {}'.format(filename))
-        self.facts = []
-        self.token2facts = {}
-        with open(filename) as read:
-            for line in read.readlines():
-                if not self.facts:
-                    # the first line contains all the facts
-                    self.facts = line.strip().split('\t')
-                    if not self.facts:
-                        self.print_info("empty model loaded.")
-                        return
-                    continue
-                split = line.strip().split('\t')
-                token = split[0]
-                self.token2facts[token] = [
-                    self.facts[int(_fact_ind)] for _fact_ind in split[1:]
-                ]
-        self.print_info('%d facts with %d tokens loaded.'
-              % (len(self.facts), len(self.token2facts)))
-
-    def save(self, filename=None):
-        """Save StringMatchRetriever to file.
-        Format is:
-            the first line: 'fact1<TAB>fact2<TAB>...'
-            starting from second line: 'token<TAB>fact_index1<TAB>fact_index2...'
-        """
-        filename = self.opt['retriever_file'] if filename is None else filename
-        self.print_info('saving model to {}'.format(filename))
-        with open(filename, 'w') as write:
-            write.write('\t'.join(self.facts) + '\n')
-            facts_ind = {fact: ind for (ind, fact) in enumerate(self.facts)}
-            for token in self.token2facts:
-                write.write(
-                    token + '\t'
-                    + '\t'.join([str(facts_ind[fact]) for fact in self.token2facts[token]])
-                    + '\n'
-                )
-            write.close()
+    def save(self):
+        self.sql_connection.commit()
         self.print_info('model successfully saved.')

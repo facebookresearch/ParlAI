@@ -8,6 +8,7 @@
 import copy
 import importlib
 import os
+from tqdm import tqdm
 
 from parlai.agents.ir_baseline.ir_retrieve import StringMatchRetrieverAgent
 from parlai.core.dict import DictionaryAgent
@@ -43,7 +44,8 @@ def build_retriever(opt):
     ordered_opt['batchsize'] = 1
     world_dict = create_task(ordered_opt, retriever)
     # pass examples to retriever
-    for _ in world_dict:
+    StringMatchRetrieverAgent.print_info('start building retriever...')
+    for _ in tqdm(world_dict):
         cnt += 1
         if cnt > opt['retriever_maxexs'] and opt['retriever_maxexs'] > 0:
             StringMatchRetrieverAgent.print_info('Processed {} exs, moving on.'.format(opt['retriever_maxexs']))
@@ -52,7 +54,7 @@ def build_retriever(opt):
         world_dict.parley()
     StringMatchRetrieverAgent.print_info('retriever built.')
     retriever.save()
-    
+
 
 def main():
     # Get command line arguments
