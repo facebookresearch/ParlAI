@@ -8,6 +8,8 @@ import boto3
 import botocore
 import os
 import json
+from datetime import datetime
+
 from botocore.exceptions import ClientError
 from botocore.exceptions import ProfileNotFound
 
@@ -298,3 +300,10 @@ def create_hit_with_hit_type(page_url, hit_type_id, num_assignments,
         hit_type_id
     )
     return hit_link, hit_id
+
+
+def expire_hit(is_sandbox, hit_id):
+    client = get_mturk_client(is_sandbox)
+    # Update expiration to a time in the past, the HIT expires instantly
+    past_time = datetime(2015, 1, 1)
+    client.update_expiration_for_hit(HITId=hit_id, ExpireAt=past_time)
