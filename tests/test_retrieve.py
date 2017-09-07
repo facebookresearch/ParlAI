@@ -6,6 +6,8 @@
 
 import logging
 import os
+import threading
+from tqdm import tqdm
 import unittest
 
 from parlai.agents.ir_baseline.ir_retrieve import StringMatchRetrieverAgent
@@ -80,6 +82,8 @@ class TestStringMatchRetriever(unittest.TestCase):
         my_retriever.save()
         my_retriever2 = StringMatchRetrieverAgent(opt)
         self._test_retriever_functionality(my_retriever2)
+        # test multi-thread
+        self._test_retriever_multithread(opt)
 
     def _test_retriever_functionality(self, my_retriever):
         # test that random facts are retrieved: i.e., not the same fact being returned everytime
@@ -140,6 +144,38 @@ class TestStringMatchRetriever(unittest.TestCase):
         self.assertTrue("Jurassic Park directed_by Steven Spielberg" in list(ans1))
         ans2 = my_retriever.retrieve("what movies did Steven Spielberg direct", 15)
         self.assertTrue("Jurassic Park directed_by Steven Spielberg" in list(ans2))
+
+
+    def _test_retriever_multithread(self, opt):
+        # prepare lock for using multi-thread
+        StringMatchRetrieverAgent.prepare_multi_thread()
+
+        def _trivial_insert(opt, fact, insert_times):
+            retriever = StringMatchRetrieverAgent(opt)
+            for _ in range(insert_times):
+                retriever.observe({'text': fact})
+                retriever.act()
+            retriever.save()
+
+        threads = []
+        for ind in range(10):
+            threads.append(threading.Thread(target=_trivial_insert,
+                                            args=(opt, 'x' if ind % 2 == 1 else 'y', 1000)))
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+        # check token 'x' only appears in fact 'x',
+        # and # of 'x' facts is half of total insertion
+        retriever = StringMatchRetrieverAgent(opt)
+        for row in retriever.cursor.execute(
+            ("SELECT t2.fact, COUNT(*) FROM ((SELECT fact_id FROM %s WHERE token=?) AS t1 JOIN " +
+            "%s AS t2 ON t1.fact_id = t2.fact_id) ")
+            % (StringMatchRetrieverAgent.FREQ_TABLE_NAME, StringMatchRetrieverAgent.DOC_TABLE_NAME),
+            'x',
+        ):
+            self.assertEqual(row, ('x', 1000 * 10 / 2))
 
 if __name__ == '__main__':
     logging.basicConfig(format='[ *%(levelname)s* ] %(message)s', level=logging.INFO)

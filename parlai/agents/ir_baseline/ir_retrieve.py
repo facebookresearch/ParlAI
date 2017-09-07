@@ -11,10 +11,11 @@ import os
 import logging
 from numpy import random
 import sqlite3
-
+import threading
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
+from parlai.core.thread_utils import synchronized_with_attr
 from .ir_util import (
     DEFAULT_LENGTH_PENALTY,
     MaxPriorityQueue,
@@ -26,6 +27,13 @@ from .ir_util import (
 class StringMatchRetrieverAgent(Agent):
     """Builds and/or loads a string match retriever
 
+    Model saved as two DB tables in <retriever-file>:
+        document(fact_id, fact):
+            all <fact>s and their unique <fact_id>s
+        freq(token, fact_id, freq):
+            # of times (i.e., <frequency>) that <token> appears in
+            fact with <fact_id>
+
     The retriever identifies all facts that overlap the input query string, and
     output these facts either in a random order, or by frequency decreasing.
     """
@@ -33,6 +41,12 @@ class StringMatchRetrieverAgent(Agent):
     DEFAULT_MAX_FACTS = 100000
     DOC_TABLE_NAME = 'document'
     FREQ_TABLE_NAME = 'freq'
+
+
+    @staticmethod
+    def prepare_multi_thread():
+        global insert_lock
+        insert_lock = threading.Lock()
 
     @staticmethod
     def print_info(msg):
@@ -49,7 +63,7 @@ class StringMatchRetrieverAgent(Agent):
             '--retriever-maxexs',
             default=StringMatchRetrieverAgent.DEFAULT_MAX_FACTS,
             type=int,
-            help='max number of examples to build retriever on',
+            help='max number of examples to build retriever on; input 0 if no limit.',
         )
 
     def __init__(self, opt):
@@ -72,6 +86,7 @@ class StringMatchRetrieverAgent(Agent):
                 % self.FREQ_TABLE_NAME
             )
 
+
     def _get_fact_id(self, fact):
         self.cursor.execute(
             "SELECT fact_id FROM %s WHERE fact = ?" % self.DOC_TABLE_NAME,
@@ -82,14 +97,17 @@ class StringMatchRetrieverAgent(Agent):
         except ValueError or IndexError:
             return -1
 
-    def act(self):
-        fact = self.observation.get('text')
+    @synchronized_with_attr('insert_lock')
+    def insert_fact_without_id(self, fact):
         self.cursor.execute(
             "INSERT INTO %s(fact) VALUES(?)" % self.DOC_TABLE_NAME,
             (fact, ),
         )
-        # TODO: the following fact_id assignment won't work for multi-thread
-        fact_id = self.cursor.lastrowid
+        return self.cursor.lastrowid
+
+    def act(self):
+        fact = self.observation.get('text')
+        fact_id = self.insert_fact_without_id(fact)
         token_cnt = {}
         for _token in set(self.dict_agent.tokenize(fact.lower())):
             if _token in stopwords:
