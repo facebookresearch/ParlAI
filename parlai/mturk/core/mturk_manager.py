@@ -11,8 +11,6 @@ import threading
 import time
 import uuid
 
-import gc
-
 from botocore.exceptions import ClientError
 
 from parlai.mturk.core.server_utils import setup_server, delete_server
