@@ -234,13 +234,13 @@ class SocketManager():
                         # didn't receive ACK, resend packet keep old queue time
                         # to ensure this packet is processed first
                         packet.status = Packet.STATUS_INIT
-                        self.queues[connection_id].put((send_time, packet))
+                        self._safe_put(connection_id, (send_time, packet))
                         break
                     time.sleep(THREAD_SHORT_SLEEP)
             else:
                 # non-blocking ack: add ack-check to queue
                 t = time.time() + self.ACK_TIME[packet.type]
-                self.queues[connection_id].put((t, packet))
+                self._safe_put(connection_id, (t, packet))
 
     def _setup_socket(self):
         """Create socket handlers and registers the socket"""
@@ -330,7 +330,7 @@ class SocketManager():
                     if time.time() < t:
                         # Put the item back into the queue,
                         # it's not time to pop yet
-                        self.queues[connection_id].put(item)
+                        self._safe_put(connection_id, item)
                     else:
                         # Try to send the packet
                         packet = item[1]
@@ -387,8 +387,20 @@ class SocketManager():
         # Get the current time to put packet into the priority queue
         self.packet_map[packet.id] = packet
         item = (time.time(), packet)
-        self.queues[connection_id].put(item)
+        self._safe_put(connection_id, item)
+
 
     def get_status(self, packet_id):
         """Returns the status of a particular packet by id"""
         return self.packet_map[packet_id].status
+
+    def _safe_put(self, connection_id, item):
+        """Ensures that a queue exists before putting an item into it, logs
+        if there's a failure
+        """
+        if connection_id in self.queues:
+            self.queues[connection_id].put(item)
+        else:
+            print_and_log('Queue {} did not exist to put a message in'.format(
+                connection_id
+            ))
