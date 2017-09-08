@@ -16,6 +16,7 @@ from parlai.core.params import ParlaiParser, str2class
 from parlai.core.worlds import (
     DialogPartnerWorld,
     create_task,
+    execute_world,
 )
 
 def build_retriever(opt):
@@ -40,18 +41,11 @@ def build_retriever(opt):
     ordered_opt['datatype'] = 'train:ordered'
     if 'stream' in opt['datatype']:
         ordered_opt['datatype'] += ':stream'
-    ordered_opt['numthreads'] = 1
+    # ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
     world_dict = create_task(ordered_opt, retriever)
-    # pass examples to retriever
     StringMatchRetrieverAgent.print_info('start building retriever...')
-    for _ in tqdm(world_dict):
-        cnt += 1
-        if cnt > opt['retriever_maxexs'] and opt['retriever_maxexs'] > 0:
-            StringMatchRetrieverAgent.print_info('Processed {} exs, moving on.'.format(opt['retriever_maxexs']))
-            # don't wait too long...
-            break
-        world_dict.parley()
+    execute_world(world_dict, use_tqdm=False, maxes=opt.get('retriever_maxexs'))
     StringMatchRetrieverAgent.print_info('retriever built.')
     retriever.save()
 

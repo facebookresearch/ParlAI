@@ -108,7 +108,6 @@ class TestStringMatchRetriever(unittest.TestCase):
         ans8 = my_retriever.retrieve("of", 1)
         self.assertEqual(ans8, [])
 
-
     def test_build_retriever(self, rebuild=True):
         # build dict
         TMP_PATH = '/tmp/parlai_test_build_retriever/'
@@ -140,6 +139,50 @@ class TestStringMatchRetriever(unittest.TestCase):
         build_retriever(opt)
         # test retriever
         my_retriever = StringMatchRetrieverAgent(opt)
+        ans1 = my_retriever.retrieve("who directed Jurassic park", 10)
+        self.assertTrue("Jurassic Park directed_by Steven Spielberg" in list(ans1))
+        ans2 = my_retriever.retrieve("what movies did Steven Spielberg direct", 15)
+        self.assertTrue("Jurassic Park directed_by Steven Spielberg" in list(ans2))
+
+    def test_build_retriever_multithread(self, rebuild_dict=False, rebuild_rtr=True):
+        # build dict
+        TMP_PATH = '/tmp/parlai_test_build_retriever/'
+        if not os.path.isdir(TMP_PATH):
+            os.mkdir(TMP_PATH)
+        DICT_FILE = TMP_PATH + 'dict.tsv'
+        if os.path.isfile(DICT_FILE) and rebuild_dict:
+            os.remove(DICT_FILE)
+        RETRIEVER_FILE = TMP_PATH + 'retrieve.tsv'
+        if os.path.isfile(RETRIEVER_FILE) and rebuild_rtr:
+            os.remove(RETRIEVER_FILE)
+        DATABASE = 'wikimovies:KB:kb'
+        args = [
+            '--dict-file',
+            DICT_FILE,
+            '-t',
+            DATABASE,
+            '--retriever-file',
+            RETRIEVER_FILE,
+            '--retriever-maxexs',
+            0,
+        ]
+        argparser = ParlaiParser()
+        DictionaryAgent.add_cmdline_args(argparser)
+        StringMatchRetrieverAgent.add_cmdline_args(argparser)
+        StringMatchRetrieverAgent.prepare_multi_thread()
+        opt = argparser.parse_args(args)
+        # HACK: '--numthreads' not working
+        opt['numthreads'] = 2
+        build_dict(opt)
+        # build retriever
+        build_retriever(opt)
+        # test retriever
+        opt['numthreads'] = 1
+        my_retriever = StringMatchRetrieverAgent(opt)
+        my_retriever.cursor.execute(
+            "SELECT * from document",
+            # ('%Jurassic%',),
+        )
         ans1 = my_retriever.retrieve("who directed Jurassic park", 10)
         self.assertTrue("Jurassic Park directed_by Steven Spielberg" in list(ans1))
         ans2 = my_retriever.retrieve("what movies did Steven Spielberg direct", 15)

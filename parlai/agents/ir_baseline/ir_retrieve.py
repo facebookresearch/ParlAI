@@ -42,7 +42,6 @@ class StringMatchRetrieverAgent(Agent):
     DOC_TABLE_NAME = 'document'
     FREQ_TABLE_NAME = 'freq'
 
-
     @staticmethod
     def prepare_multi_thread():
         global insert_lock
@@ -66,12 +65,10 @@ class StringMatchRetrieverAgent(Agent):
             help='max number of examples to build retriever on; input 0 if no limit.',
         )
 
-    def __init__(self, opt):
+    def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.id = 'StringMatchRetrieverAgent'
         self.dict_agent = DictionaryAgent(opt)
-        self.token2facts = {}
-        self.facts = []
         self.length_penalty = float(opt.get('length_penalty') or DEFAULT_LENGTH_PENALTY)
         is_file_exists = os.path.isfile(opt.get('retriever_file'))
         self.sql_connection = sqlite3.connect(opt.get('retriever_file'))
@@ -85,7 +82,6 @@ class StringMatchRetrieverAgent(Agent):
                 "CREATE TABLE %s (token, fact_id, freq)"
                 % self.FREQ_TABLE_NAME
             )
-
 
     def _get_fact_id(self, fact):
         self.cursor.execute(
@@ -173,4 +169,12 @@ class StringMatchRetrieverAgent(Agent):
 
     def save(self):
         self.sql_connection.commit()
-        self.print_info('model successfully saved.')
+
+    def share(self):
+        shared = {}
+        shared['opt'] = self.opt
+        shared['class'] = type(self)
+        return shared
+
+    def shutdown(self):
+        self.save()
