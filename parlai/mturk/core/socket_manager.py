@@ -389,7 +389,6 @@ class SocketManager():
         item = (time.time(), packet)
         self._safe_put(connection_id, item)
 
-
     def get_status(self, packet_id):
         """Returns the status of a particular packet by id"""
         return self.packet_map[packet_id].status
