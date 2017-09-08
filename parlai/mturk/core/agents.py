@@ -164,7 +164,10 @@ class MTurkAgent(Agent):
                     current_time = time.time()
                     if (current_time - start_time) > timeout:
                         print_and_log('{} is timeout.'.format(self.id), False)
-                        self.set_hit_is_abandoned()
+                        self.manager.handle_turker_timeout(
+                            self.worker_id,
+                            self.assignment_id
+                        )
                         msg = {
                             'id': self.id,
                             'text': TIMEOUT_MESSAGE,

@@ -237,6 +237,28 @@ class MTurkManager():
                 unique_worker_ids.append(w.worker_id)
         return unique_workers
 
+    def _handle_worker_disconnect(self, worker_id, assignment_id):
+        """Mark a worker as disconnected and send a message to all agents in
+        his conversation that a partner has disconnected.
+        """
+        agent = self.mturk_agents[worker_id][assignment_id]
+        assignments = self.worker_state[worker_id].assignments
+        # Disconnect in conversation is not workable
+        assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
+        # in conversation, inform others about disconnect
+        conversation_id = assignments[assignment_id].conversation_id
+        if agent in self.conv_to_agent[conversation_id]:
+            for other_agent in self.conv_to_agent[conversation_id]:
+                if agent.assignment_id != other_agent.assignment_id:
+                    self._handle_partner_disconnect(
+                        other_agent.worker_id,
+                        other_agent.assignment_id
+                    )
+        if len(self.mturk_agent_ids) > 1:
+            # The user disconnected from inside a conversation with
+            # another turker, record this as bad behavoir
+            self._handle_bad_disconnect(worker_id)
+
     def _handle_partner_disconnect(self, worker_id, assignment_id):
         """Send a message to a worker notifying them that a partner has
         disconnected and we marked the HIT as complete for them
@@ -426,21 +448,7 @@ class MTurkManager():
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
             del agent
         elif status == AssignState.STATUS_IN_TASK:
-            # Disconnect in conversation is not workable
-            assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
-            # in conversation, inform others about disconnect
-            conversation_id = assignments[assignment_id].conversation_id
-            if agent in self.conv_to_agent[conversation_id]:
-                for other_agent in self.conv_to_agent[conversation_id]:
-                    if agent.assignment_id != other_agent.assignment_id:
-                        self._handle_partner_disconnect(
-                            other_agent.worker_id,
-                            other_agent.assignment_id
-                        )
-            if len(self.mturk_agent_ids) > 1:
-                # The user disconnected from inside a conversation with
-                # another turker, record this as bad behavoir
-                self._handle_bad_disconnect(worker_id)
+            self._handle_worker_disconnect(worker_id, assignment_id)
         elif (status == AssignState.STATUS_DONE or
               status == AssignState.STATUS_EXPIRED or
               status == AssignState.STATUS_DISCONNECT or
@@ -754,6 +762,21 @@ class MTurkManager():
                     'one if you\'d want to work on this task.')
         data = {'text': data_model.COMMAND_EXPIRE_HIT, 'inactive_text': text}
         self.send_command(worker_id, assign_id, data, ack_func=ack_func)
+
+    def handle_turker_timeout(self, worker_id, assign_id):
+        """To be used by the MTurk agent when the worker doesn't send a message
+        within the expected window.
+        """
+        # Expire the hit for the disconnected user
+        text = ('You haven\'t entered a message in too long, leaving the other'
+                ' participant unable to complete the HIT. Thus this hit has '
+                'been expired and you have been considered disconnected. '
+                'Disconnect too frequently and you will be blocked from '
+                'working on these HITs in the future.')
+        self.force_expire_hit(worker_id, assign_id, text)
+
+        # Send the disconnect event to all workers in the convo
+        self._handle_worker_disconnect(worker_id, assign_id)
 
     def send_message(self, receiver_id, assignment_id, data,
                      blocking=True, ack_func=None):
