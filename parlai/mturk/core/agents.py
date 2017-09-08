@@ -337,6 +337,10 @@ class MTurkAgent(Agent):
         """Waits for a hit to be marked as complete"""
         # Timeout in seconds, after which the HIT will be expired automatically
         if timeout:
+            if timeout < 0:
+                # Negative timeout is for testing
+                self.manager.free_workers([self])
+                return True
             start_time = time.time()
         while self.manager.get_agent_work_status(self.assignment_id) != \
                 self.ASSIGNMENT_DONE:

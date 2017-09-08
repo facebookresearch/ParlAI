@@ -60,6 +60,7 @@ class Packet():
         self.ack_func = ack_func
         self.status = self.STATUS_INIT
         self.time = None
+        self.alive = False
 
     @staticmethod
     def from_dict(packet):
@@ -251,11 +252,13 @@ class SocketManager():
         def on_socket_open(*args):
             print_and_log('Socket open: {}'.format(args), False)
             self._send_world_alive()
+            self.alive = True
 
         def on_disconnect(*args):
             """Disconnect event is a no-op for us, as the server reconnects
             automatically on a retry"""
             print_and_log('World server disconnected: {}'.format(args), False)
+            self.alive = False
 
         def on_message(*args):
             """Incoming message handler for ACKs, ALIVEs, HEARTBEATs,

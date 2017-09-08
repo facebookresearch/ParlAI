@@ -391,6 +391,7 @@ class MTurkManager():
 
             # Clear the send message command, as a message was recieved
             agent.state.last_command = None
+            # TODO ensure you can't duplicate a message push here
             agent.msg_queue.put(pkt.data)
 
     def _on_socket_dead(self, worker_id, assignment_id):
@@ -430,15 +431,11 @@ class MTurkManager():
         elif agent.state.status == AssignState.STATUS_IN_TASK:
             self._handle_worker_disconnect(worker_id, assignment_id)
             agent.disconnected = True
-        elif (agent.state.status == AssignState.STATUS_DONE or
-              agent.state.status == AssignState.STATUS_EXPIRED or
-              agent.state.status == AssignState.STATUS_DISCONNECT or
-              agent.state.status == AssignState.STATUS_PARTNER_DISCONNECT or
-              agent.state.status == AssignState.STATUS_RETURNED):
+        elif agent.state.status == AssignState.STATUS_DONE:
             # It's okay if a complete assignment socket dies, but wait for the
             # world to clean up the resource
             return
-        else:
+        elif agent.state.status == AssignState.STATUS_ASSIGNED:
             # mark the agent in the assigned state as disconnected, the task
             # spawn thread is responsible for cleanup
             agent.state.status = AssignState.STATUS_DISCONNECT
