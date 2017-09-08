@@ -423,7 +423,6 @@ class MTurkManager():
             # This worker never registered, so we don't do anything
             return True
         agent = self.mturk_agents[worker_id][assignment_id]
-        agent.disconnected = True
         assignments = self.worker_state[worker_id].assignments
         status = assignments[assignment_id].status
         print_and_log('Worker {} disconnected from {} in status {}'.format(
@@ -440,6 +439,7 @@ class MTurkManager():
             # Agent never made it to task pool, the onboarding thread will die
             # and delete the agent if we mark it as a disconnect
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
+            agent.disconnected = True
         elif status == AssignState.STATUS_WAITING:
             # agent is in pool, remove from pool and delete
             if agent in self.worker_pool:
@@ -449,6 +449,7 @@ class MTurkManager():
             del self.mturk_agents[worker_id][assignment_id]
         elif status == AssignState.STATUS_IN_TASK:
             self._handle_worker_disconnect(worker_id, assignment_id)
+            agent.disconnected = True
         elif (status == AssignState.STATUS_DONE or
               status == AssignState.STATUS_EXPIRED or
               status == AssignState.STATUS_DISCONNECT or
