@@ -11,6 +11,8 @@ import threading
 import time
 import uuid
 
+import gc
+
 from botocore.exceptions import ClientError
 
 from parlai.mturk.core.server_utils import setup_server, delete_server
@@ -186,7 +188,7 @@ class MTurkManager():
                 self.worker_state[worker_id].assignments[assignment_id]
             if assignment.is_final():
                 #This worker must've disconnected or expired, remove them
-                del worker
+                del self.mturk_agents[worker_id][assignment_id]
                 continue
             conversation_id = 'w_{}'.format(uuid.uuid4())
 
@@ -435,7 +437,7 @@ class MTurkManager():
         if status == AssignState.STATUS_NONE:
             # Agent never made it to onboarding, delete
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
-            del agent
+            del self.mturk_agents[worker_id][assignment_id]
         elif status == AssignState.STATUS_ONBOARDING:
             # Agent never made it to task pool, the onboarding thread will die
             # and delete the agent if we mark it as a disconnect
@@ -446,7 +448,7 @@ class MTurkManager():
                 with self.worker_pool_change_condition:
                     self.worker_pool.remove(agent)
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
-            del agent
+            del self.mturk_agents[worker_id][assignment_id]
         elif status == AssignState.STATUS_IN_TASK:
             self._handle_worker_disconnect(worker_id, assignment_id)
         elif (status == AssignState.STATUS_DONE or
@@ -505,8 +507,11 @@ class MTurkManager():
 
         if not assignment_id in self.assignment_to_onboard_thread:
             # Start the onboarding thread and run it
-            onboard_thread = threading.Thread(target=_onboard_function,
-                                              args=(mturk_agent,))
+            onboard_thread = threading.Thread(
+                target=_onboard_function,
+                args=(mturk_agent,),
+                name='onboard-{}-{}'.format(worker_id, assignment_id)
+            )
             onboard_thread.daemon = True
             onboard_thread.start()
 
@@ -672,6 +677,15 @@ class MTurkManager():
             print('All workers joined the conversation!')
             self.started_conversations += 1
             task_function(mturk_manager=self, opt=opt, workers=workers)
+            # Delete extra state data that is now unneeded
+            for worker in workers:
+                worker_id = worker.worker_id
+                assignment_id = worker.assignment_id
+                assign_state = \
+                    self.worker_state[worker_id].assignments[assignment_id]
+                del assign_state.messages
+                del assign_state.last_command
+            # Count if it's a completed conversation
             if self._no_workers_incomplete(workers):
                 self.completed_conversations += 1
 
@@ -702,8 +716,11 @@ class MTurkManager():
                         self.worker_pool.remove(worker)
 
                     # Start a new thread for this task world
-                    task_thread = threading.Thread(target=_task_function,
-                        args=(self.opt, selected_workers, new_conversation_id))
+                    task_thread = threading.Thread(
+                        target=_task_function,
+                        args=(self.opt, selected_workers, new_conversation_id),
+                        name='task-{}'.format(new_conversation_id)
+                    )
                     task_thread.daemon = True
                     task_thread.start()
                     self.task_threads.append(task_thread)
@@ -730,6 +747,7 @@ class MTurkManager():
         self.expire_all_unassigned_hits()
         self._expire_onboarding_pool()
         self._expire_worker_pool()
+        self.socket_manager.close_all_channels()
         for assignment_id in self.assignment_to_onboard_thread:
             self.assignment_to_onboard_thread[assignment_id].join()
         self._save_disconnects()
