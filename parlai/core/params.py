@@ -92,14 +92,14 @@ class ParlaiParser(argparse.ArgumentParser):
             '-t', '--task',
             help='MTurk task, e.g. "qa_data_collection" or "model_evaluator"')
         mturk.add_argument(
-            '-nh', '--num-hits', default=2, type=int,
-            help='number of HITs you want to create for this task')
+            '-nc', '--num-conversations', default=1, type=int,
+            help='number of conversations you want to create for this task')
         mturk.add_argument(
-            '-na', '--num-assignments', default=1, type=int,
-            help='number of assignments for each HIT')
+            '--unique', dest='unique_worker', default=False, action='store_true',
+            help='enforce that no worker can work on your task twice')
         mturk.add_argument(
             '-r', '--reward', default=0.05, type=float,
-            help='reward for each HIT, in US dollars')
+            help='reward for each worker for finishing the conversation, in US dollars')
         mturk.add_argument(
             '--sandbox', dest='is_sandbox', action='store_true',
             help='submit the HITs to MTurk sandbox site')
@@ -109,6 +109,12 @@ class ParlaiParser(argparse.ArgumentParser):
         mturk.add_argument(
             '--verbose', dest='verbose', action='store_true',
             help='print out all messages sent/received in all conversations')
+        mturk.add_argument(
+            '--count-complete', dest='count_complete',  default=False, action='store_true',
+            help='continue until the requested number of conversations are completed rather than attempted')
+        mturk.add_argument(
+            '--allowed-conversations', dest='allowed_conversations',  default=0, type=int,
+            help='number of concurrent conversations that one mturk worker is able to be involved in, 0 is unlimited')
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(verbose=False)
