@@ -229,6 +229,8 @@ class SocketManager():
                 start_t = time.time()
                 while True:
                     if packet.status == Packet.STATUS_ACK:
+                        # Clear the data to save memory as we no longer need it
+                        packet.data = None
                         break
                     if time.time() - start_t > self.ACK_TIME[packet.type]:
                         # didn't receive ACK, resend packet keep old queue time
@@ -263,12 +265,17 @@ class SocketManager():
             packet_type = packet.type
             connection_id = packet.get_sender_connection_id()
             if packet_type == Packet.TYPE_ACK:
+                if packet_id not in self.packet_map:
+                    # Don't do anything when acking a packet we don't have
+                    return
                 # Acknowledgements should mark a packet as acknowledged
                 print_and_log('On new ack: {}'.format(args), False)
                 self.packet_map[packet_id].status = Packet.STATUS_ACK
                 # If the packet sender wanted to do something on acknowledge
                 if self.packet_map[packet_id].ack_func:
                     self.packet_map[packet_id].ack_func(packet)
+                # clear the stored packet data for memory reasons
+                self.packet_map[packet_id].data = None
             elif packet_type == Packet.TYPE_HEARTBEAT:
                 # Heartbeats update the last heartbeat time and respond in kind
                 self.last_heartbeat[connection_id] = time.time()
@@ -290,7 +297,10 @@ class SocketManager():
         self.socketIO.on(data_model.SOCKET_NEW_PACKET_STRING, on_message)
 
         # Start listening thread
-        self.listen_thread = threading.Thread(target=self.socketIO.wait)
+        self.listen_thread = threading.Thread(
+            target=self.socketIO.wait,
+            name='Main-Socket-Thread'
+        )
         self.listen_thread.daemon = True
         self.listen_thread.start()
 
@@ -334,6 +344,9 @@ class SocketManager():
                     else:
                         # Try to send the packet
                         packet = item[1]
+                        if not packet:
+                            # This packet was deleted out from under us
+                            continue
                         if packet.status is not Packet.STATUS_ACK:
                             # either need to send initial packet
                             # or resend not-acked packet
@@ -344,7 +357,10 @@ class SocketManager():
                     time.sleep(THREAD_MEDIUM_SLEEP)
 
         # Setup and run the channel sending thread
-        self.threads[connection_id] = threading.Thread(target=channel_thread)
+        self.threads[connection_id] = threading.Thread(
+            target=channel_thread,
+            name='Socket-Queue-{}'.format(connection_id)
+        )
         self.threads[connection_id].daemon = True
         self.threads[connection_id].start()
 
@@ -353,6 +369,13 @@ class SocketManager():
         print_and_log('Closing channel {}'.format(connection_id), False)
         self.run[connection_id] = False
         if connection_id in self.queues:
+            # Clean up packets
+            packet_ids = list(self.packet_map.keys())
+            for packet_id in packet_ids:
+                if connection_id == \
+                       self.packet_map[packet_id].get_receiver_connection_id():
+                    del self.packet_map[packet_id]
+            # Clean up other resources
             del self.queues[connection_id]
             del self.threads[connection_id]
 
