@@ -31,7 +31,7 @@ class StringMatchRetrieverAgent(Agent):
         document(fact_id, fact):
             all <fact>s and their unique <fact_id>s
         freq(token, fact_id, freq):
-            # of times (i.e., <frequency>) that <token> appears in
+            number of times (i.e., <frequency>) that <token> appears in
             fact with <fact_id>
 
     The retriever identifies all facts that overlap the input query string, and
@@ -72,6 +72,8 @@ class StringMatchRetrieverAgent(Agent):
         self.length_penalty = float(opt.get('length_penalty') or DEFAULT_LENGTH_PENALTY)
         is_file_exists = os.path.isfile(opt.get('retriever_file'))
         self.sql_connection = sqlite3.connect(opt.get('retriever_file'))
+        self.sql_connection.execute("PRAGMA journal_mode=WAL")
+        self.sql_connection.execute("PRAGMA busy_timeout=10000")
         self.cursor = self.sql_connection.cursor()
         if not is_file_exists:
             self.cursor.execute(
@@ -101,6 +103,14 @@ class StringMatchRetrieverAgent(Agent):
         )
         return self.cursor.lastrowid
 
+    @synchronized_with_attr('insert_lock')
+    def insert_freq(self, token, fact_id, freq):
+        self.cursor.execute(
+            "INSERT INTO %s(token, fact_id, freq) VALUES(?, ?, ?)" %
+            self.FREQ_TABLE_NAME,
+            (token, fact_id, freq,),
+        )
+
     def act(self):
         fact = self.observation.get('text')
         fact_id = self.insert_fact_without_id(fact)
@@ -112,13 +122,8 @@ class StringMatchRetrieverAgent(Agent):
                 token_cnt[_token] = 0
             token_cnt[_token] += 1
         for (_token, _cnt) in token_cnt.items():
-            self.cursor.execute(
-                "INSERT INTO %s(token, fact_id, freq) VALUES(?, ?, ?)" %
-                self.FREQ_TABLE_NAME,
-                (_token, fact_id, _cnt,),
-            )
+            self.insert_freq(_token, fact_id, _cnt)
         return {'id': 'Retriever'}
-
 
     def _get_facts_names(self, fact_ids):
         formatted_fact_ids = [int(_fact_id) for _fact_id in fact_ids]

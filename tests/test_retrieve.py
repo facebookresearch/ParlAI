@@ -192,24 +192,22 @@ class TestStringMatchRetriever(unittest.TestCase):
     def _test_retriever_multithread(self, opt):
         # prepare lock for using multi-thread
         StringMatchRetrieverAgent.prepare_multi_thread()
-
+        TEST_STR_DUPS = 500
         def _trivial_insert(opt, fact, insert_times):
             retriever = StringMatchRetrieverAgent(opt)
             for _ in range(insert_times):
                 retriever.observe({'text': fact})
                 retriever.act()
             retriever.save()
-
         threads = []
         for ind in range(10):
             threads.append(threading.Thread(target=_trivial_insert,
-                                            args=(opt, 'x' if ind % 2 == 1 else 'y', 1000)))
+                                            args=(opt, 'x ' * TEST_STR_DUPS if ind % 2 == 1 else 'y ' * TEST_STR_DUPS, 1000)))
         for thread in threads:
             thread.start()
         for thread in threads:
             thread.join()
-
-        # check token 'x' only appears in fact 'x',
+        # check if token 'x' only appears in fact 'x x ...',
         # and # of 'x' facts is half of total insertion
         retriever = StringMatchRetrieverAgent(opt)
         for row in retriever.cursor.execute(
@@ -218,7 +216,7 @@ class TestStringMatchRetriever(unittest.TestCase):
             % (StringMatchRetrieverAgent.FREQ_TABLE_NAME, StringMatchRetrieverAgent.DOC_TABLE_NAME),
             'x',
         ):
-            self.assertEqual(row, ('x', 1000 * 10 / 2))
+            self.assertEqual(row, ('x ' * TEST_STR_DUPS, 1000 * 10 / 2))
 
 if __name__ == '__main__':
     logging.basicConfig(format='[ *%(levelname)s* ] %(message)s', level=logging.INFO)

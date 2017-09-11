@@ -862,6 +862,5 @@ def execute_world(world, use_tqdm=False, maxes=0):
         num_iter = math.min(num_iter, maxes)
     for _ in (tqdm(range(num_iter)) if use_tqdm else range(num_iter)):
         world.parley()
-    if hasattr(world, 'synchronize'):
-        world.synchronize()
+    world.synchronize()
     world.shutdown()
