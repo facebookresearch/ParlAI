@@ -186,7 +186,8 @@ class MTurkManager():
                 self.worker_state[worker_id].assignments[assignment_id]
             if assignment.is_final():
                 #This worker must've disconnected or expired, remove them
-                del self.mturk_agents[worker_id][assignment_id]
+                if assignment_id in self.mturk_agents[worker_id]
+                    del self.mturk_agents[worker_id][assignment_id]
                 continue
             conversation_id = 'w_{}'.format(uuid.uuid4())
 
@@ -682,8 +683,7 @@ class MTurkManager():
                 assignment_id = worker.assignment_id
                 assign_state = \
                     self.worker_state[worker_id].assignments[assignment_id]
-                del assign_state.messages
-                del assign_state.last_command
+                assign_state.clear_messages()
             # Count if it's a completed conversation
             if self._no_workers_incomplete(workers):
                 self.completed_conversations += 1
