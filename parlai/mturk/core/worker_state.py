@@ -47,6 +47,10 @@ class AssignState():
             self.last_command,
         )
 
+    def clear_messages(self):
+        self.messages = []
+        self.last_command = None
+
     def log_reconnect(self, worker_id):
         """Log a reconnect of a given worker to this assignment"""
         print_and_log(
