@@ -326,6 +326,10 @@ class MTurkAgent(Agent):
         self.manager.free_workers([self])
         return True
 
+    def reduce_state():
+        """Cleans up resources related to maintaining complete state"""
+        self.msg_queue = None
+
     def shutdown(self, timeout=None, direct_submit=False):
         """Shuts down a hit when it is completed"""
         # Timeout in seconds, after which the HIT will be expired automatically
