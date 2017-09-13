@@ -188,6 +188,7 @@ class MTurkManager():
                 #This worker must've disconnected or expired, remove them
                 if assignment_id in self.mturk_agents[worker_id]:
                     del self.mturk_agents[worker_id][assignment_id]
+                self.socket_manager.close_channel(worker_id, assignment_id)
                 continue
             conversation_id = 'w_{}'.format(uuid.uuid4())
 
