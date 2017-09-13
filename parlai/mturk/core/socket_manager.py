@@ -326,8 +326,7 @@ class SocketManager():
                     # Check if client is still alive
                     if (time.time() - self.last_heartbeat[connection_id]
                             > self.socket_dead_timeout):
-                        if self.socket_dead_callback(worker_id, assignment_id):
-                            self.run[connection_id] = False
+                        self.run[connection_id] = False
 
                         # Make sure the queue still exists
                         if not connection_id in self.queues:
@@ -364,7 +363,7 @@ class SocketManager():
         self.threads[connection_id].daemon = True
         self.threads[connection_id].start()
 
-    def _close_channel_internal(self, connection_id):
+    def close_channel(self, connection_id):
         """Closes a channel by connection_id"""
         print_and_log('Closing channel {}'.format(connection_id), False)
         self.run[connection_id] = False
@@ -379,19 +378,20 @@ class SocketManager():
             del self.queues[connection_id]
             del self.threads[connection_id]
 
-    def close_channel(self, worker_id, assignment_id):
-        """Closes a channel by worker_id and assignment_id"""
-        self._close_channel_internal('{}_{}'.format(worker_id, assignment_id))
+    def delay_heartbeat_until(self, connection_id, delayed_time):
+        """Delay a heartbeat prolong a disconnect until delayed_time"""
+        self.last_heartbeat[connection_id] = delayed_time
 
     def close_all_channels(self):
         """Closes a channel by clearing the list of channels"""
         print_and_log('Closing all channels')
         connection_ids = list(self.queues.keys())
         for connection_id in connection_ids:
-            self._close_channel_internal(connection_id)
+            self.close_channel(connection_id)
 
     def socket_is_open(self, connection_id):
         return connection_id in self.queues
+
 
     def queue_packet(self, packet):
         """Queues sending a packet to its intended owner"""

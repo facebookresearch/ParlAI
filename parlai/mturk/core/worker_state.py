@@ -24,41 +24,19 @@ class AssignState():
     STATUS_EXPIRED = 'expired'
     STATUS_RETURNED = 'returned'
 
-    def __init__(self, assignment_id, status=None,
-                 conversation_id=None):
+    def __init__(self, status=None, conversation_id=None):
         """Create an AssignState with the given assignment_id. status and
         conversation_id are optional
         """
         if status == None:
             status = self.STATUS_NONE
-        self.assignment_id = assignment_id
         self.status = status
-        self.conversation_id = conversation_id
         self.messages = []
         self.last_command = None
-
-    def __repr__(self):
-        """Get a readable representation of an assignment"""
-        return 'Assignment <{},{},{}> [{}] lc - {}'.format(
-            self.assignment_id,
-            self.conversation_id,
-            self.status,
-            self.messages,
-            self.last_command,
-        )
 
     def clear_messages(self):
         self.messages = []
         self.last_command = None
-
-    def log_reconnect(self, worker_id):
-        """Log a reconnect of a given worker to this assignment"""
-        print_and_log(
-            'Agent ({})_({}) reconnected to {} with status {}'.format(
-                worker_id, self.assignment_id,
-                self.conversation_id, self.status
-            )
-        )
 
     def is_final(self):
         """Return True if the assignment is in a final status that
@@ -70,9 +48,11 @@ class AssignState():
                 self.status == self.STATUS_RETURNED or
                 self.status == self.STATUS_EXPIRED)
 
-    def get_inactive_command_data(self, worker_id):
-        """Get appropriate inactive command data to respond to a reconnect
+    def get_inactive_command_text(self):
+        """Get appropriate inactive command and text to respond to a reconnect
         given the current assignment state
+
+        returns text, command
         """
         command = data_model.COMMAND_INACTIVE_HIT
         text = None
@@ -110,12 +90,7 @@ class AssignState():
                     'completion. Please try to connect again or return this '
                     'HIT and accept a new one.')
 
-        return {
-            'text': command,
-            'inactive_text': text,
-            'conversation_id': self.conversation_id,
-            'agent_id': worker_id,
-        }
+        return text, command
 
 
 class WorkerState():
@@ -125,7 +100,7 @@ class WorkerState():
         prior disconnects is optional.
         """
         self.worker_id = worker_id
-        self.assignments = {}
+        self.agents = {}
         self.disconnects = disconnects
 
     def active_conversation_count(self):
@@ -133,11 +108,11 @@ class WorkerState():
         that aren't in a final state
         """
         count = 0
-        for assign_id in self.assignments:
-            if not self.assignments[assign_id].is_final():
+        for assign_id in self.agents:
+            if not self.agents[assign_id].state.is_final():
                 count += 1
         return count
 
-    def add_assignment(self, assign_id):
+    def add_agent(self, assign_id, mturk_agent):
         """Add an assignment to this worker state with the given assign_it"""
-        self.assignments[assign_id] = AssignState(assign_id)
+        self.agents[assign_id] = mturk_agent
