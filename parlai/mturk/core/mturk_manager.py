@@ -192,7 +192,7 @@ class MTurkManager():
             if assignment.is_final():
                 #This worker must've disconnected or expired, remove them
                 if assignment_id in self.mturk_agents[worker_id]:
-                    del self.mturk_agents[worker_id][assignment_id]
+                    self.mturk_agents[worker_id][assignment_id].reduce_state()
                 self.socket_manager.close_channel(worker_id, assignment_id)
                 continue
             conversation_id = 'w_{}'.format(uuid.uuid4())
@@ -409,17 +409,18 @@ class MTurkManager():
 
     def _on_new_message(self, pkt):
         """Put an incoming message onto the correct agent's message queue and
-        add it to the proper message thread
+        add it to the proper message thread as long as the agent is active
         """
         worker_id = pkt.sender_id
         assignment_id = pkt.assignment_id
         curr_state = self.worker_state[worker_id].assignments[assignment_id]
-        # Push the message to the message thread ready to send on a reconnect
-        curr_state.messages.append(pkt.data)
+        if not curr_state.is_final():
+            # Push the message to the message thread to send on a reconnect
+            curr_state.messages.append(pkt.data)
 
-        # Clear the send message command, as a message was recieved
-        curr_state.last_command = None
-        self.mturk_agents[worker_id][assignment_id].msg_queue.put(pkt.data)
+            # Clear the send message command, as a message was recieved
+            curr_state.last_command = None
+            self.mturk_agents[worker_id][assignment_id].msg_queue.put(pkt.data)
 
     def _on_socket_dead(self, worker_id, assignment_id):
         """Handle a disconnect event, update state as required and notifying
@@ -441,7 +442,7 @@ class MTurkManager():
         if status == AssignState.STATUS_NONE:
             # Agent never made it to onboarding, delete
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
-            del self.mturk_agents[worker_id][assignment_id]
+            self.mturk_agents[worker_id][assignment_id].reduce_state()
         elif status == AssignState.STATUS_ONBOARDING:
             # Agent never made it to task pool, the onboarding thread will die
             # and delete the agent if we mark it as a disconnect
@@ -453,7 +454,7 @@ class MTurkManager():
                 with self.worker_pool_change_condition:
                     self.worker_pool.remove(agent)
             assignments[assignment_id].status = AssignState.STATUS_DISCONNECT
-            del self.mturk_agents[worker_id][assignment_id]
+            self.mturk_agents[worker_id][assignment_id].reduce_state()
         elif status == AssignState.STATUS_IN_TASK:
             self._handle_worker_disconnect(worker_id, assignment_id)
             agent.disconnected = True
