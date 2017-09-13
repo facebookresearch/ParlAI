@@ -122,18 +122,23 @@ class MTurkManager():
         """Update the number of bad disconnects for the given worker, block
         them if they've exceeded the disconnect limit
         """
-        self.worker_state[worker_id].disconnects += 1
-        self.disconnects.append({'time': time.time(), 'id': worker_id})
-        if self.worker_state[worker_id].disconnects > MAX_DISCONNECTS:
-            text = ('This worker has repeatedly disconnected from these tasks,'
+        if not self.is_sandbox:
+            self.worker_state[worker_id].disconnects += 1
+            self.disconnects.append({'time': time.time(), 'id': worker_id})
+            if self.worker_state[worker_id].disconnects > MAX_DISCONNECTS:
+                text = (
+                    'This worker has repeatedly disconnected from these tasks,'
                     ' which require constant connection to complete properly '
                     'as they involve interaction with other Turkers. They have'
                     ' been blocked to ensure a better experience for other '
-                    'workers who don\'t disconnect.')
-            self.block_worker(worker_id, text)
-            print_and_log('Worker {} was blocked - too many disconnects'.format(
-                worker_id
-            ))
+                    'workers who don\'t disconnect.'
+                )
+                self.block_worker(worker_id, text)
+                print_and_log(
+                    'Worker {} was blocked - too many disconnects'.format(
+                        worker_id
+                    )
+                )
 
     def _get_ids_from_pkt(self, pkt):
         """Get sender, assignment, and conv ids from a packet"""
