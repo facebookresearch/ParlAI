@@ -54,8 +54,8 @@ def main():
         def check_worker_eligibility(worker):
             return True
 
-        def get_worker_role(worker):
-            return mturk_agent_id
+        def assign_worker_roles(worker):
+            worker[0].id = mturk_agent_id
 
         global run_conversation
         def run_conversation(opt, workers):
@@ -72,7 +72,7 @@ def main():
 
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
-            role_function=get_worker_role,
+            assign_role_function=assign_worker_roles,
             task_function=run_conversation
         )
     except:

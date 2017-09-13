@@ -638,7 +638,8 @@ class MTurkManager():
     def set_onboard_function(self, onboard_function):
         self.onboard_function = onboard_function
 
-    def start_task(self, eligibility_function, role_function, task_function):
+    def start_task(self, eligibility_function, assign_role_function,
+                   task_function):
         """Handle running a task by checking to see when enough agents are
         in the pool to start an instance of the task. Continue doing this
         until the desired number of conversations is had.
@@ -700,24 +701,21 @@ class MTurkManager():
                         't_{}'.format(self.conversation_index)
 
                     # Add the required number of valid workers to the conv
-                    selected_workers = []
-                    for w in valid_workers[:needed_workers]:
-                        selected_workers.append(w)
-                        w.id = role_function(w)
+                    workers = [w for w in valid_workers[:needed_workers]]
+                    assign_role_function(workers)
+                    for w in workers:
                         w.change_conversation(
                             conversation_id=new_conversation_id,
                             agent_id=w.id,
                             change_callback=self._change_worker_to_conv
                         )
-
-                    # Remove selected workers from the pool
-                    for worker in selected_workers:
-                        self.worker_pool.remove(worker)
+                        # Remove selected workers from the pool
+                        self.worker_pool.remove(w)
 
                     # Start a new thread for this task world
                     task_thread = threading.Thread(
                         target=_task_function,
-                        args=(self.opt, selected_workers, new_conversation_id),
+                        args=(self.opt, workers, new_conversation_id),
                         name='task-{}'.format(new_conversation_id)
                     )
                     task_thread.daemon = True
