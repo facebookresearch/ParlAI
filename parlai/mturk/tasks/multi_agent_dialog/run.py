@@ -7,7 +7,8 @@ import os
 import time
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
-from parlai.mturk.tasks.multi_agent_dialog.worlds import MTurkMultiAgentDialogWorld, MTurkMultiAgentDialogOnboardWorld
+from parlai.mturk.tasks.multi_agent_dialog.worlds import \
+    MTurkMultiAgentDialogWorld, MTurkMultiAgentDialogOnboardWorld
 from parlai.agents.local_human.local_human import LocalHumanAgent
 from task_config import task_config
 import copy
@@ -45,7 +46,10 @@ def main():
         mturk_manager.create_hits()
 
         def run_onboard(worker):
-            world = MTurkMultiAgentDialogOnboardWorld(opt=opt, mturk_agent=worker)
+            world = MTurkMultiAgentDialogOnboardWorld(
+                opt=opt,
+                mturk_agent=worker
+            )
             while not world.episode_done():
                 world.parley()
             world.shutdown()
