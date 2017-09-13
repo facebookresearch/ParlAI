@@ -7,7 +7,8 @@ import os
 import time
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
-from parlai.mturk.tasks.multi_agent_dialog.worlds import MTurkMultiAgentDialogWorld, MTurkMultiAgentDialogOnboardWorld
+from parlai.mturk.tasks.multi_agent_dialog.worlds import \
+    MTurkMultiAgentDialogWorld, MTurkMultiAgentDialogOnboardWorld
 from parlai.agents.local_human.local_human import LocalHumanAgent
 from task_config import task_config
 import copy
@@ -45,24 +46,24 @@ def main():
         mturk_manager.create_hits()
 
         def run_onboard(worker):
-            world = MTurkMultiAgentDialogOnboardWorld(opt=opt, mturk_agent=worker)
+            world = MTurkMultiAgentDialogOnboardWorld(
+                opt=opt,
+                mturk_agent=worker
+            )
             while not world.episode_done():
                 world.parley()
             world.shutdown()
 
-        mturk_manager.set_onboard_function(onboard_function=run_onboard) # Set onboard_function to None to skip onboarding
+        # You can set onboard_function to None to skip onboarding
+        mturk_manager.set_onboard_function(onboard_function=run_onboard)
         mturk_manager.ready_to_accept_workers()
 
         def check_worker_eligibility(worker):
             return True
 
-        global worker_count
-        worker_count = 0
-        def get_worker_role(worker):
-            global worker_count
-            worker_role = mturk_agent_ids[worker_count % len(mturk_agent_ids)]
-            worker_count += 1
-            return worker_role
+        def assign_worker_roles(workers):
+            for index, worker in enumerate(workers):
+                worker.id = mturk_agent_ids[index % len(mturk_agent_ids)]
 
         def run_conversation(mturk_manager, opt, workers):
             # Create mturk agents
@@ -73,7 +74,10 @@ def main():
             human_agent_1 = LocalHumanAgent(opt=None)
             human_agent_1.id = human_agent_1_id
 
-            world = MTurkMultiAgentDialogWorld(opt=opt, agents=[human_agent_1, mturk_agent_1, mturk_agent_2])
+            world = MTurkMultiAgentDialogWorld(
+                opt=opt,
+                agents=[human_agent_1, mturk_agent_1, mturk_agent_2]
+            )
 
             while not world.episode_done():
                 world.parley()
@@ -82,7 +86,7 @@ def main():
 
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
-            role_function=get_worker_role,
+            assign_role_function=assign_worker_roles,
             task_function=run_conversation
         )
 

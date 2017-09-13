@@ -4,7 +4,8 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.params import ParlaiParser
-from parlai.mturk.tasks.model_evaluator.worlds import ModelEvaluatorWorld, ModelEvaluatorOnboardWorld
+from parlai.mturk.tasks.model_evaluator.worlds import \
+    ModelEvaluatorWorld, ModelEvaluatorOnboardWorld
 from parlai.mturk.core.mturk_manager import MTurkManager
 from task_config import task_config
 import time
@@ -54,16 +55,21 @@ def main():
         def check_worker_eligibility(worker):
             return True
 
-        def get_worker_role(worker):
-            return mturk_agent_id
+        def assign_worker_roles(worker):
+            worker[0].id = mturk_agent_id
 
         global run_conversation
         def run_conversation(opt, workers):
             mturk_agent = workers[0]
 
             model_agent = IrBaselineAgent(opt=opt)
-            # Create the MTurk agent which provides a chat interface to the Turker
-            world = ModelEvaluatorWorld(opt=opt, model_agent=model_agent, task_opt=task_opt, mturk_agent=mturk_agent)
+
+            world = ModelEvaluatorWorld(
+                opt=opt,
+                model_agent=model_agent,
+                task_opt=task_opt,
+                mturk_agent=mturk_agent
+            )
 
             while not world.episode_done():
                 world.parley()
@@ -72,7 +78,7 @@ def main():
 
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
-            role_function=get_worker_role,
+            assign_role_function=assign_worker_roles,
             task_function=run_conversation
         )
     except:
