@@ -132,7 +132,7 @@ class FbDialogTeacher(DialogTeacher):
         with open(path) as read:
             start = True
             x = ''
-            reward = None
+            reward = 0
             dialog_index = 0
             for line in read:
                 line = line.strip().replace('\\n', '\n')
@@ -166,6 +166,7 @@ class FbDialogTeacher(DialogTeacher):
                     if x:
                         yield [x, None, reward], start
                     start = True
+                    reward = 0
                     # start a new episode
                     if self.cloze:
                         x = 'Fill in the blank in the last sentence.\n{x}'.format(
@@ -181,6 +182,8 @@ class FbDialogTeacher(DialogTeacher):
                         if len(split) > 2:
                             reward = split[2]
                         x = split[0]
+                if len(split) > 2:
+                    reward += float(split[2])
 
                 if len(split) > 1 and split[1]:
                     # only generate an example if we have a y
@@ -190,6 +193,10 @@ class FbDialogTeacher(DialogTeacher):
                     if len(split) > 3:
                         # split label_candidates
                         split[3] = split[3].split('|')
+                    if len(split) > 2:
+                        split[2] = reward
+                    else:
+                        split.append(reward)
                     if start:
                         yield split, True
                         start = False
@@ -197,4 +204,4 @@ class FbDialogTeacher(DialogTeacher):
                         yield split, False
                     # reset x in case there is unlabeled data still left
                     x = ''
-                    reward = None
+                    reward = 0
