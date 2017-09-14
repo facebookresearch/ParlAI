@@ -312,7 +312,7 @@ class MTurkManager():
             self.mturk_workers[worker_id] = WorkerState(worker_id)
 
         # Update state of worker based on this connect
-        curr_worker_state = self._get_worker[worker_id]
+        curr_worker_state = self._get_worker(worker_id)
 
         if not assign_id:
             # invalid assignment_id is an auto-fail
