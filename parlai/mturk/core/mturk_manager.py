@@ -234,7 +234,6 @@ class MTurkManager():
             agent.state.status = AssignState.STATUS_DISCONNECT
             # in conversation, inform others about disconnect
             conversation_id = agent.conversation_id
-            print (self.conv_to_agent)
             if agent in self.conv_to_agent[conversation_id]:
                 for other_agent in self.conv_to_agent[conversation_id]:
                     if agent.assignment_id != other_agent.assignment_id:
