@@ -253,7 +253,7 @@ class MTurkManager():
         agent = self._get_agent(worker_id, assignment_id)
         if agent is None:
             self._log_missing_agent(worker_id, assignment_id)
-        else if not agent.state.is_final():
+        elif not agent.state.is_final():
             # Update the assignment state
             agent.some_agent_disconnected = True
             agent.state.status = AssignState.STATUS_PARTNER_DISCONNECT
