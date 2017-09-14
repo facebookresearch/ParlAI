@@ -143,29 +143,33 @@ class MTurkManager():
         """Get sender, assignment, and conv ids from a packet"""
         worker_id = pkt.sender_id
         assignment_id = pkt.assignment_id
-        return self.mturk_workers[worker_id].agents[assignment_id]
+        self._log_missing_agent(worker_id, assignment_id)
+        return self._get_agent(worker_id, assignment_id)
 
     def _change_worker_to_conv(self, pkt):
         """Update a worker to a new conversation given a packet from the
         conversation to be switched to
         """
         agent = self._get_agent_from_pkt(pkt)
-        self._assign_agent_to_conversation(agent, agent.conversation_id)
+        if agent is not None:
+            self._assign_agent_to_conversation(agent, agent.conversation_id)
 
     def _set_worker_status_to_onboard(self, pkt):
         """Changes assignment status to onboarding based on the packet"""
         agent = self._get_agent_from_pkt(pkt)
-        agent.state.status = AssignState.STATUS_ONBOARDING
+        if agent is not None:
+            agent.state.status = AssignState.STATUS_ONBOARDING
 
     def _set_worker_status_to_waiting(self, pkt):
         """Changes assignment status to waiting based on the packet"""
         agent = self._get_agent_from_pkt(pkt)
-        agent.state.status = AssignState.STATUS_WAITING
+        if agent is not None:
+            agent.state.status = AssignState.STATUS_WAITING
 
-        # Add the worker to pool
-        with self.worker_pool_change_condition:
-            print("Adding worker to pool...")
-            self.worker_pool.append(agent)
+            # Add the worker to pool
+            with self.worker_pool_change_condition:
+                print("Adding worker to pool...")
+                self.worker_pool.append(agent)
 
     def _move_workers_to_waiting(self, workers):
         """Put all workers into waiting worlds, expire them if no longer
@@ -222,11 +226,14 @@ class MTurkManager():
         """Mark a worker as disconnected and send a message to all agents in
         his conversation that a partner has disconnected.
         """
-        agent = self.mturk_workers[worker_id].agents[assignment_id]
-        # Disconnect in conversation is not workable
-        agent.state.status = AssignState.STATUS_DISCONNECT
+        agent = self._get_agent(worker_id, assignment_id)
+        if agent is not None:
+            # Disconnect in conversation is not workable
+            agent.state.status = AssignState.STATUS_DISCONNECT
+        else:
+            self._log_missing_agent(worker_id, assignment_id)
         # in conversation, inform others about disconnect
-        conversation_id = agent.conversation_id
+        conversation_id = '{}_{}'.format(worker_id, assignment_id)
         if agent in self.conv_to_agent[conversation_id]:
             for other_agent in self.conv_to_agent[conversation_id]:
                 if agent.assignment_id != other_agent.assignment_id:
@@ -243,8 +250,10 @@ class MTurkManager():
         """Send a message to a worker notifying them that a partner has
         disconnected and we marked the HIT as complete for them
         """
-        agent = self.mturk_workers[worker_id].agents[assignment_id]
-        if not agent.state.is_final():
+        agent = self._get_agent(worker_id, assignment_id)
+        if agent is None:
+            self._log_missing_agent(worker_id, assignment_id)
+        else if not agent.state.is_final():
             # Update the assignment state
             agent.some_agent_disconnected = True
             agent.state.status = AssignState.STATUS_PARTNER_DISCONNECT
@@ -255,21 +264,24 @@ class MTurkManager():
 
     def _restore_worker_state(self, worker_id, assignment_id):
         """Send a command to restore the state of an agent who reconnected"""
-        agent = self.mturk_workers[worker_id].agents[assignment_id]
-        def _push_worker_state(msg):
-            if len(agent.state.messages) != 0:
-                data = {
-                    'text': data_model.COMMAND_RESTORE_STATE,
-                    'messages': agent.state.messages,
-                    'last_command': agent.state.last_command
-                }
-                self.send_command(worker_id, assignment_id, data)
+        agent = self._get_agent(worker_id, assignment_id)
+        if agent is None:
+            self._log_missing_agent(worker_id, assignment_id)
+        else:
+            def _push_worker_state(msg):
+                if len(agent.state.messages) != 0:
+                    data = {
+                        'text': data_model.COMMAND_RESTORE_STATE,
+                        'messages': agent.state.messages,
+                        'last_command': agent.state.last_command
+                    }
+                    self.send_command(worker_id, assignment_id, data)
 
-        agent.change_conversation(
-            conversation_id=agent.conversation_id,
-            agent_id=agent.id,
-            change_callback=_push_worker_state
-        )
+            agent.change_conversation(
+                conversation_id=agent.conversation_id,
+                agent_id=agent.id,
+                change_callback=_push_worker_state
+            )
 
     def _setup_socket(self):
         """Set up a socket_manager with defined callbacks"""
@@ -300,7 +312,7 @@ class MTurkManager():
             self.mturk_workers[worker_id] = WorkerState(worker_id)
 
         # Update state of worker based on this connect
-        curr_worker_state = self.mturk_workers[worker_id]
+        curr_worker_state = self._get_worker[worker_id]
 
         if not assign_id:
             # invalid assignment_id is an auto-fail
@@ -311,8 +323,7 @@ class MTurkManager():
             # First time this worker has connected under this assignment, init
             # new agent if we are still accepting workers
             if self.accepting_workers:
-                convs = \
-                    self.mturk_workers[worker_id].active_conversation_count()
+                convs = curr_worker_state.active_conversation_count()
                 allowed_convs = self.opt['allowed_conversations']
                 if allowed_convs == 0 or convs < allowed_convs:
                     agent = self._create_agent(hit_id, assign_id, worker_id)
@@ -369,8 +380,10 @@ class MTurkManager():
         """
         worker_id = pkt.sender_id
         assignment_id = pkt.assignment_id
-        agent = self.mturk_workers[worker_id].agents[assignment_id]
-        if not agent.state.is_final():
+        agent = self._get_agent(worker_id, assignment_id)
+        if agent is None:
+            self._log_missing_agent(worker_id, assignment_id)
+        elif not agent.state.is_final():
             # Push the message to the message thread to send on a reconnect
             agent.state.messages.append(pkt.data)
 
@@ -385,11 +398,11 @@ class MTurkManager():
         returns False if the socket death should be ignored and the socket
         should stay open and not be considered disconnected
         """
-        if (worker_id not in self.mturk_workers) or \
-                (assignment_id not in self.mturk_workers[worker_id].agents):
+        agent = self._get_agent(worker_id, assignment_id)
+        if agent is None:
             # This worker never registered, so we don't do anything
             return
-        agent = self.mturk_workers[worker_id].agents[assignment_id]
+
         print_and_log('Worker {} disconnected from {} in status {}'.format(
             worker_id,
             assignment_id,
@@ -496,6 +509,29 @@ class MTurkManager():
                 return False
         return True
 
+    def _get_worker(self, worker_id):
+        """A safe way to get a worker by worker_id"""
+        if worker_id in self.mturk_workers:
+            return self.mturk_workers[worker_id]
+        return None
+
+    def _get_agent(self, worker_id, assignment_id):
+        """A safe way to get an agent by worker and assignment_id"""
+        worker = self._get_worker(worker_id)
+        if worker is not None:
+            if assignment_id in worker.agents:
+                return worker.agents[assignment_id]
+        return None
+
+    def _log_missing_agent(self, worker_id, assignment_id):
+        """Logs when an agent was expected to exist, yet for some reason it
+        didn't. If these happen often there is a problem"""
+        print_and_log(
+            'Expected to have an agent for {}_{}, yet none was found'.format(
+                worker_id,
+                assignment_id
+            )
+        )
 
     ### Manager Lifecycle Functions ###
 
@@ -704,13 +740,12 @@ class MTurkManager():
         """
         # Expire in the state
         is_final = True
-        if worker_id in self.mturk_workers:
-            if assign_id in self.mturk_workers[worker_id].agents:
-                agent = self.mturk_workers[worker_id].agents[assign_id]
-                if not agent.state.is_final():
-                    is_final = False
-                    agent.state.status = AssignState.STATUS_EXPIRED
-                    agent.hit_is_expired = True
+        agent = self._get_agent(worker_id, assign_id)
+        if agent is not None:
+            if not agent.state.is_final():
+                is_final = False
+                agent.state.status = AssignState.STATUS_EXPIRED
+                agent.hit_is_expired = True
 
         # Send the expiration command
         if text == None:
@@ -756,8 +791,9 @@ class MTurkManager():
         )
         # Push outgoing message to the message thread to be able to resend
         # on a reconnect event
-        agent = self.mturk_workers[receiver_id].agents[assignment_id]
-        agent.state.messages.append(packet.data)
+        agent = self._get_agent(receiver_id, assignment_id)
+        if agent is not None:
+            agent.state.messages.append(packet.data)
         self.socket_manager.queue_packet(packet)
 
     def send_command(self, receiver_id, assignment_id, data, blocking=True,
@@ -778,11 +814,11 @@ class MTurkManager():
             ack_func=ack_func
         )
 
+        agent = self._get_agent(receiver_id, assignment_id)
         if (data['text'] != data_model.COMMAND_CHANGE_CONVERSATION and
             data['text'] != data_model.COMMAND_RESTORE_STATE and
-            assignment_id in self.mturk_workers[receiver_id].agents):
+            agent is not None):
             # Append last command, as it might be necessary to restore state
-            agent = self.mturk_workers[receiver_id].agents[assignment_id]
             agent.state.last_command = packet.data
 
         self.socket_manager.queue_packet(packet)
