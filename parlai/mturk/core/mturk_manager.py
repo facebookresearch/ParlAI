@@ -227,24 +227,25 @@ class MTurkManager():
         his conversation that a partner has disconnected.
         """
         agent = self._get_agent(worker_id, assignment_id)
-        if agent is not None:
+        if agent is None:
+            self._log_missing_agent(worker_id, assignment_id)
+        else:
             # Disconnect in conversation is not workable
             agent.state.status = AssignState.STATUS_DISCONNECT
-        else:
-            self._log_missing_agent(worker_id, assignment_id)
-        # in conversation, inform others about disconnect
-        conversation_id = '{}_{}'.format(worker_id, assignment_id)
-        if agent in self.conv_to_agent[conversation_id]:
-            for other_agent in self.conv_to_agent[conversation_id]:
-                if agent.assignment_id != other_agent.assignment_id:
-                    self._handle_partner_disconnect(
-                        other_agent.worker_id,
-                        other_agent.assignment_id
-                    )
-        if len(self.mturk_agent_ids) > 1:
-            # The user disconnected from inside a conversation with
-            # another turker, record this as bad behavoir
-            self._handle_bad_disconnect(worker_id)
+            # in conversation, inform others about disconnect
+            conversation_id = agent.conversation_id
+            print (self.conv_to_agent)
+            if agent in self.conv_to_agent[conversation_id]:
+                for other_agent in self.conv_to_agent[conversation_id]:
+                    if agent.assignment_id != other_agent.assignment_id:
+                        self._handle_partner_disconnect(
+                            other_agent.worker_id,
+                            other_agent.assignment_id
+                        )
+            if len(self.mturk_agent_ids) > 1:
+                # The user disconnected from inside a conversation with
+                # another turker, record this as bad behavoir
+                self._handle_bad_disconnect(worker_id)
 
     def _handle_partner_disconnect(self, worker_id, assignment_id):
         """Send a message to a worker notifying them that a partner has
