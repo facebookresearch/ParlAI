@@ -179,8 +179,6 @@ class FbDialogTeacher(DialogTeacher):
                         # otherwise add current x to what we have so far
                         x = '{x}\n{next_x}'.format(x=x, next_x=split[0])
                     else:
-                        if len(split) > 2:
-                            reward = split[2]
                         x = split[0]
                 if len(split) > 2:
                     reward += float(split[2])

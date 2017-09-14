@@ -243,7 +243,7 @@ class DialogData(object):
                     if len(entry) > 2:
                         # process reward if available
                         if entry[2] is not None:
-                            new_entry.append(sys.intern(entry[2]))
+                            new_entry.append(entry[2])
                         else:
                             new_entry.append(None)
                         if len(entry) > 3:
