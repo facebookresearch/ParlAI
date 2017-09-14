@@ -327,11 +327,12 @@ class SocketManager():
                     if (time.time() - self.last_heartbeat[connection_id]
                             > self.socket_dead_timeout):
                         self.run[connection_id] = False
+                        self.socket_dead_callback(worker_id, assignment_id)
 
-                        # Make sure the queue still exists
-                        if not connection_id in self.queues:
-                            self.run[connection_id] = False
-                            break
+                    # Make sure the queue still exists
+                    if not connection_id in self.queues:
+                        self.run[connection_id] = False
+                        break
 
                     # Get first item in the queue, check if we can send it yet
                     item = self.queues[connection_id].get(block=False)
@@ -391,7 +392,6 @@ class SocketManager():
 
     def socket_is_open(self, connection_id):
         return connection_id in self.queues
-
 
     def queue_packet(self, packet):
         """Queues sending a packet to its intended owner"""
