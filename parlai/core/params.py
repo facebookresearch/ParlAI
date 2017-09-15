@@ -69,7 +69,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.add_arg = self.add_argument
 
         if add_parlai_args:
-            self.add_parlai_args()
+            self.add_parlai_args(model_argv)
             self.add_image_args()
         if add_model_args:
             self.add_model_args(model_argv)
@@ -119,7 +119,7 @@ class ParlaiParser(argparse.ArgumentParser):
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(verbose=False)
 
-    def add_parlai_args(self):
+    def add_parlai_args(self, args=None):
         default_downloads_path = os.path.join(self.parlai_home, 'downloads')
         parlai = self.add_argument_group('Main ParlAI Arguments')
         parlai.add_argument(
@@ -150,9 +150,9 @@ class ParlaiParser(argparse.ArgumentParser):
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
         self.add_parlai_data_path(parlai)
-        self.add_task_args()
+        self.add_task_args(args)
 
-    def add_task_args(self, args=None):
+    def add_task_args(self, args):
         # Find which task specified, and add its specific arguments.
         args = sys.argv if args is None else args
         task = None
