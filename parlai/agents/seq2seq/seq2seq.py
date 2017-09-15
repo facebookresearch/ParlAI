@@ -57,6 +57,14 @@ class Seq2seqAgent(Agent):
                  'to have a maximum length and to be similar in length to ' +
                  'one another by throwing away extra tokens. This reduces ' +
                  'the total amount of padding in the batches.')
+        agent.add_argument('-enc', '--encoder', default='gru',
+                           choices=['rnn', 'gru', 'lstm'],
+                           help='Choose between different encoder modules.')
+        agent.add_argument('-dec', '--decoder', default='shared',
+                           choices=['shared', 'rnn', 'gru', 'lstm'],
+                           help='Choose between different decoder modules.'
+                                'If set to shared, uses the exact same module'
+                                ' and weights as the encoder.')
 
     def __init__(self, opt, shared=None):
         # initialize defaults first
@@ -114,10 +122,16 @@ class Seq2seqAgent(Agent):
             self.lt = nn.Embedding(len(self.dict), hsz,
                                    padding_idx=self.NULL_IDX,
                                    scale_grad_by_freq=True)
+            opt_to_class = {'rnn': nn.RNN, 'gru': nn.GRU, 'lstm': nn.LSTM}
             # encoder captures the input text
-            self.encoder = nn.GRU(hsz, hsz, opt['numlayers'])
+            enc_class = opt_to_class[opt['encoder']]
+            self.encoder = enc_class(hsz, hsz, opt['numlayers'])
             # decoder produces our output states
-            self.decoder = nn.GRU(hsz, hsz, opt['numlayers'])
+            if opt['decoder'] == 'shared':
+                self.decoder = self.encoder
+            else:
+                dec_class = opt_to_class[opt['decoder']]
+                self.decoder = dec_class(hsz, hsz, opt['numlayers'])
             # linear layer helps us produce outputs from final decoder state
             self.h2o = nn.Linear(hsz, len(self.dict))
             # droput on the linear layer helps us generalize
@@ -246,12 +260,12 @@ class Seq2seqAgent(Agent):
         h0 = Variable(self.zeros)
         encoder_output, hidden = self.encoder(xes, h0)
         encoder_output = encoder_output.transpose(0, 1)
-        
+
         if self.use_attention:
             if encoder_output.size(1) > self.max_length:
                 offset = encoder_output.size(1) - self.max_length
                 encoder_output = encoder_output.narrow(1, offset, self.max_length)
-        
+
         return encoder_output, hidden
 
 
@@ -260,7 +274,7 @@ class Seq2seqAgent(Agent):
         Apply attention to encoder hidden layer
         """
         attn_weights = F.softmax(self.attn(torch.cat((xes[0], encoder_hidden[-1]), 1)))
-        
+
         if attn_weights.size(1) > encoder_output.size(1):
             attn_weights = attn_weights.narrow(1, 0, encoder_output.size(1) )
 
@@ -312,9 +326,9 @@ class Seq2seqAgent(Agent):
         done = [False for _ in range(batchsize)]
         total_done = 0
         max_len = 0
-        
+
         output_lines = [[] for _ in range(batchsize)]
-        
+
         # now, generate a response from scratch
         while(total_done < batchsize) and max_len < self.longest_label:
             # keep producing tokens until we hit END or max length for each
@@ -336,11 +350,11 @@ class Seq2seqAgent(Agent):
                         total_done += 1
                     else:
                         output_lines[b].append(token)
-        
+
         if random.random() < 0.1:
             # sometimes output a prediction for debugging
             print('prediction:', ' '.join(output_lines[0]))
-        
+
         return output_lines
 
     def _score_candidates(self, cands, xe, encoder_output, hidden):
@@ -357,10 +371,10 @@ class Seq2seqAgent(Agent):
             .contiguous()
             .view(sz[0], -1, sz[2])
         )
-        
+
         sz = encoder_output.size()
         cands_encoder_output = (
-            encoder_output.contiguous()    
+            encoder_output.contiguous()
             .view(sz[0], 1, sz[1], sz[2])
             .expand(sz[0], cands.size(1), sz[1], sz[2])
             .contiguous()
@@ -375,7 +389,7 @@ class Seq2seqAgent(Agent):
         for i in range(cview.size(1)):
             output = self._apply_attention(cands_xes, cands_encoder_output, cands_hn) \
                     if self.use_attention else cands_xes
-            
+
             output, cands_hn = self.decoder(output, cands_hn)
             preds, scores = self.hidden_to_idx(output, dropout=False)
             cs = cview.select(1, i)
@@ -393,9 +407,9 @@ class Seq2seqAgent(Agent):
         cand_scores = cand_scores.view(cands.size(0), cands.size(1))
         srtd_scores, text_cand_inds = cand_scores.sort(1, True)
         text_cand_inds = text_cand_inds.data
-        
+
         return text_cand_inds
-        
+
 
     def predict_with_attention(self, xs, ys=None, cands=None):
         """Produce a prediction from our model. Update the model using the
@@ -421,7 +435,7 @@ class Seq2seqAgent(Agent):
                 text_cand_inds = self._score_candidates(cands, xe, encoder_output, hidden)
 
             output_lines = self._decode_only(batchsize, xes, ys,encoder_output, hidden)
-            
+
 
         return output_lines, text_cand_inds
 
@@ -494,7 +508,7 @@ class Seq2seqAgent(Agent):
                     .contiguous()
                     .view(sz[0], -1, sz[2])
                 )
-                
+
                 cand_scores = Variable(
                     self.cand_scores.resize_(cview.size(0)).fill_(0))
                 cand_lengths = Variable(
