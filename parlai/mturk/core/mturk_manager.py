@@ -143,8 +143,10 @@ class MTurkManager():
         """Get sender, assignment, and conv ids from a packet"""
         worker_id = pkt.sender_id
         assignment_id = pkt.assignment_id
-        self._log_missing_agent(worker_id, assignment_id)
-        return self._get_agent(worker_id, assignment_id)
+        agent = self._get_agent(worker_id, assignment_id)
+        if agent == None:
+            self._log_missing_agent(worker_id, assignment_id)
+        return agent
 
     def _change_worker_to_conv(self, pkt):
         """Update a worker to a new conversation given a packet from the
