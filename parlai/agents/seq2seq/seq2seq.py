@@ -14,16 +14,13 @@ import torch.nn.functional as F
 import torch
 import os
 import random
-import pdb
 
 
 class Seq2seqAgent(Agent):
-    """Simple agent which uses an RNN to process incoming text observations.
-    The RNN generates a vector which is used to represent the input text,
-    conditioning on the context to generate an output token-by-token.
+    """Agent which takes an input sequence and produces an output sequence.
 
-    For more information, see Sequence to Sequence Learning with Neural Networks
-    `(Sutskever et al. 2014) <https://arxiv.org/abs/1409.3215>`_.
+    For more information, see Sequence to Sequence Learning with Neural
+    Networks `(Sutskever et al. 2014) <https://arxiv.org/abs/1409.3215>`_.
     """
 
     @staticmethod
@@ -32,31 +29,32 @@ class Seq2seqAgent(Agent):
         DictionaryAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument('-hs', '--hiddensize', type=int, default=128,
-            help='size of the hidden layers and embeddings')
+                           help='size of the hidden layers and embeddings')
         agent.add_argument('-nl', '--numlayers', type=int, default=2,
-            help='number of hidden layers')
+                           help='number of hidden layers')
         agent.add_argument('-lr', '--learningrate', type=float, default=0.5,
-            help='learning rate')
+                           help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
-            help='dropout rate')
+                           help='dropout rate')
         agent.add_argument('-att', '--attention', type=int, default=0,
-            help='if greater than 0, use attention of specified length while decoding')
-        # agent.add_argument('-bi', '--bidirectional', type='bool', default=False,
-        #     help='whether to encode the context with a bidirectional RNN')
+                           help='if greater than 0, use attention of specified'
+                                ' length while decoding')
         agent.add_argument('--no-cuda', action='store_true', default=False,
-            help='disable GPUs even if available')
+                           help='disable GPUs even if available')
         agent.add_argument('--gpu', type=int, default=-1,
-            help='which GPU device to use')
-        agent.add_argument('-rc', '--rank-candidates', type='bool', default=False,
-            help='rank candidates if available. this is done by computing the' +
-                 ' mean score per token for each candidate and selecting the ' +
-                 'highest scoring one.')
+                           help='which GPU device to use')
+        agent.add_argument('-rc', '--rank-candidates', type='bool',
+                           default=False,
+                           help='rank candidates if available. this is done by'
+                                ' computing the mean score per token for each '
+                                'candidate and selecting the highest scoring.')
         agent.add_argument('-tr', '--truncate', type='bool', default=True,
-            help='truncate input & output lengths to speed up training ' +
-                 '(may reduce accuracy). This fixes all input and output ' +
-                 'to have a maximum length and to be similar in length to ' +
-                 'one another by throwing away extra tokens. This reduces ' +
-                 'the total amount of padding in the batches.')
+                           help='truncate input & output lengths to speed up '
+                           'training (may reduce accuracy). This fixes all '
+                           'input and output to have a maximum length and to '
+                           'be similar in length to one another by throwing '
+                           'away extra tokens. This reduces the total amount '
+                           'of padding in the batches.')
         agent.add_argument('-enc', '--encoder', default='gru',
                            choices=['rnn', 'gru', 'lstm'],
                            help='Choose between different encoder modules.')
@@ -67,7 +65,7 @@ class Seq2seqAgent(Agent):
                                 ' and weights as the encoder.')
 
     def __init__(self, opt, shared=None):
-        # initialize defaults first
+        """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
         if not shared:
             # this is not a shared instance of this class, so do full
@@ -109,7 +107,6 @@ class Seq2seqAgent(Agent):
 
             # set up tensors
             self.zeros = torch.zeros(self.num_layers, 1, hsz)
-            #self.encoder_output = torch.zeros(1, self.max_length, self.hidden_size)
             self.xs = torch.LongTensor(1, 1)
             self.ys = torch.LongTensor(1, 1)
             self.cands = torch.LongTensor(1, 1, 1)
@@ -136,18 +133,16 @@ class Seq2seqAgent(Agent):
             self.h2o = nn.Linear(hsz, len(self.dict))
             # droput on the linear layer helps us generalize
             self.dropout = nn.Dropout(opt['dropout'])
-            # softmax maps output scores to probabilities
-            self.softmax = nn.LogSoftmax()
 
             self.use_attention = False
             # if attention is greater than 0, set up additional members
             if self.attention > 0:
                 self.use_attention = True
                 self.max_length = self.attention
-                # Linear layer to combine input and previous hidden output layer
-                self.attn = nn.Linear(hsz*2, self.max_length)
-                # Linear layer to combined attention weights with encoder outputs
-                self.attn_combine = nn.Linear(hsz*2, hsz)
+                # combines input and previous hidden output layer
+                self.attn = nn.Linear(hsz * 2, self.max_length)
+                # combines attention weights with encoder outputs
+                self.attn_combine = nn.Linear(hsz * 2, hsz)
 
             # set up optims for each module
             lr = opt['learningrate']
@@ -165,10 +160,12 @@ class Seq2seqAgent(Agent):
             if self.use_cuda:
                 self.cuda()
 
-        self.episode_done = True
+        self.reset()
 
     def override_opt(self, new_opt):
-        """Print out each added key and each overriden key.
+        """Set overridable opts from loaded opt file.
+
+        Print out each added key and each overriden key.
         Only override args specific to the model.
         """
         model_args = {'hiddensize', 'numlayers'}
@@ -185,16 +182,18 @@ class Seq2seqAgent(Agent):
         return self.opt
 
     def parse(self, text):
+        """Convert string to token indices."""
         return self.dict.txt2vec(text)
 
     def v2t(self, vec):
+        """Convert token indices to string of tokens."""
         return self.dict.vec2txt(vec)
 
     def cuda(self):
+        """Push parameters to the GPU."""
         self.START_TENSOR = self.START_TENSOR.cuda(async=True)
         self.END_TENSOR = self.END_TENSOR.cuda(async=True)
         self.zeros = self.zeros.cuda(async=True)
-        #self.encoder_output = self.encoder_output.cuda(async=True)
         self.xs = self.xs.cuda(async=True)
         self.ys = self.ys.cuda(async=True)
         self.cands = self.cands.cuda(async=True)
@@ -212,30 +211,34 @@ class Seq2seqAgent(Agent):
             self.attn_combine.cuda()
 
     def hidden_to_idx(self, hidden, dropout=False):
-        """Converts hidden state vectors into indices into the dictionary."""
+        """Convert hidden state vectors into indices into the dictionary."""
         if hidden.size(0) > 1:
             raise RuntimeError('bad dimensions of tensor:', hidden)
         hidden = hidden.squeeze(0)
         scores = self.h2o(hidden)
         if dropout:
             scores = self.dropout(scores)
-        scores = self.softmax(scores)
+        scores = F.log_softmax(scores)
         _max_score, idx = scores.max(1)
         return idx, scores
 
     def zero_grad(self):
+        """Zero out optimizers."""
         for optimizer in self.optims.values():
             optimizer.zero_grad()
 
     def update_params(self):
+        """Do one optimization step."""
         for optimizer in self.optims.values():
             optimizer.step()
 
     def reset(self):
+        """Reset observation and episode_done."""
         self.observation = None
         self.episode_done = True
 
     def observe(self, observation):
+        """Save the observation for the next step."""
         # shallow copy observation (deep copy can be expensive)
         observation = observation.copy()
         if not self.episode_done:
@@ -247,10 +250,8 @@ class Seq2seqAgent(Agent):
         self.episode_done = observation['episode_done']
         return observation
 
-    def _call_encoder(self, xs):
-        """
-        Call encoder and return output and hidden states
-        """
+    def _encode(self, xs):
+        """Call encoder and return output and hidden states."""
         batchsize = len(xs)
 
         # first encode context
@@ -270,9 +271,7 @@ class Seq2seqAgent(Agent):
 
 
     def _apply_attention(self, xes, encoder_output, encoder_hidden):
-        """
-        Apply attention to encoder hidden layer
-        """
+        """Apply attention to encoder hidden layer."""
         attn_weights = F.softmax(self.attn(torch.cat((xes[0], encoder_hidden[-1]), 1)))
 
         if attn_weights.size(1) > encoder_output.size(1):
@@ -410,14 +409,15 @@ class Seq2seqAgent(Agent):
 
         return text_cand_inds
 
+    def predict(self, xs, ys=None, cands=None):
+        """Produce a prediction from our model.
 
-    def predict_with_attention(self, xs, ys=None, cands=None):
-        """Produce a prediction from our model. Update the model using the
-        targets if available.
+        Update the model using the targets if available, otherwise rank
+        candidates as well if they are available.
         """
         batchsize = len(xs)
         text_cand_inds = None
-        encoder_output, hidden = self._call_encoder(xs);
+        encoder_output, hidden = self._encode(xs)
 
         # next we use END as an input to kick off our decoder
         x = Variable(self.START_TENSOR)
@@ -428,134 +428,16 @@ class Seq2seqAgent(Agent):
         output_lines = None
 
         if ys is not None:
-            output_lines = self._decode_and_train(batchsize, xes, ys,encoder_output, hidden)
+            output_lines = self._decode_and_train(batchsize, xes, ys,
+                                                  encoder_output, hidden)
 
         else:
             if cands is not None:
-                text_cand_inds = self._score_candidates(cands, xe, encoder_output, hidden)
+                text_cand_inds = self._score_candidates(cands, xe,
+                                                        encoder_output, hidden)
 
-            output_lines = self._decode_only(batchsize, xes, ys,encoder_output, hidden)
-
-
-        return output_lines, text_cand_inds
-
-    #TODO Remove this
-    def predict(self, xs, ys=None, cands=None):
-        """Produce a prediction from our model. Update the model using the
-        targets if available.
-        """
-        batchsize = len(xs)
-        text_cand_inds = None
-
-        # first encode context
-        xes = self.lt(xs).transpose(0, 1)
-        if self.zeros.size(1) != batchsize:
-            self.zeros.resize_(self.num_layers, batchsize, self.hidden_size).fill_(0)
-        h0 = Variable(self.zeros)
-        _output, hn = self.encoder(xes, h0)
-
-        # next we use END as an input to kick off our decoder
-        x = Variable(self.START_TENSOR)
-        xe = self.lt(x).unsqueeze(1)
-        xes = xe.expand(xe.size(0), batchsize, xe.size(2))
-
-        # list of output tokens for each example in the batch
-        output_lines = [[] for _ in range(batchsize)]
-
-        if ys is not None:
-            # update the model based on the labels
-            self.zero_grad()
-            loss = 0
-            # keep track of longest label we've ever seen
-            self.longest_label = max(self.longest_label, ys.size(1))
-            for i in range(ys.size(1)):
-                output, hn = self.decoder(xes, hn)
-                preds, scores = self.hidden_to_idx(output, dropout=True)
-                y = ys.select(1, i)
-                loss += self.criterion(scores, y)
-                # use the true token as the next input instead of predicted
-                # this produces a biased prediction but better training
-                xes = self.lt(y).unsqueeze(0)
-                for b in range(batchsize):
-                    # convert the output scores to tokens
-                    token = self.v2t([preds.data[b]])
-                    output_lines[b].append(token)
-
-            loss.backward()
-            self.update_params()
-
-            if random.random() < 0.1:
-                # sometimes output a prediction for debugging
-                print('prediction:', ' '.join(output_lines[0]),
-                      '\nlabel:', self.dict.vec2txt(ys.data[0]))
-        else:
-            # just produce a prediction without training the model
-            done = [False for _ in range(batchsize)]
-            total_done = 0
-            max_len = 0
-
-            if cands:
-                # score each candidate separately
-
-                # cands are exs_with_cands x cands_per_ex x words_per_cand
-                # cview is total_cands x words_per_cand
-                cview = cands.view(-1, cands.size(2))
-                cands_xes = xe.expand(xe.size(0), cview.size(0), xe.size(2))
-                sz = hn.size()
-                cands_hn = (
-                    hn.view(sz[0], sz[1], 1, sz[2])
-                    .expand(sz[0], sz[1], cands.size(1), sz[2])
-                    .contiguous()
-                    .view(sz[0], -1, sz[2])
-                )
-
-                cand_scores = Variable(
-                    self.cand_scores.resize_(cview.size(0)).fill_(0))
-                cand_lengths = Variable(
-                    self.cand_lengths.resize_(cview.size(0)).fill_(0))
-
-                for i in range(cview.size(1)):
-                    output, cands_hn = self.decoder(cands_xes, cands_hn)
-                    preds, scores = self.hidden_to_idx(output, dropout=False)
-                    cs = cview.select(1, i)
-                    non_nulls = cs.ne(self.NULL_IDX)
-                    cand_lengths += non_nulls.long()
-                    score_per_cand = torch.gather(scores, 1, cs.unsqueeze(1))
-                    cand_scores += score_per_cand.squeeze() * non_nulls.float()
-                    cands_xes = self.lt(cs).unsqueeze(0)
-
-                # set empty scores to -1, so when divided by 0 they become -inf
-                cand_scores -= cand_lengths.eq(0).float()
-                # average the scores per token
-                cand_scores /= cand_lengths.float()
-
-                cand_scores = cand_scores.view(cands.size(0), cands.size(1))
-                srtd_scores, text_cand_inds = cand_scores.sort(1, True)
-                text_cand_inds = text_cand_inds.data
-
-            # now, generate a response from scratch
-            while(total_done < batchsize) and max_len < self.longest_label:
-                # keep producing tokens until we hit END or max length for each
-                # example in the batch
-                output, hn = self.decoder(xes, hn)
-                preds, scores = self.hidden_to_idx(output, dropout=False)
-
-                xes = self.lt(preds.unsqueeze(0))
-                max_len += 1
-                for b in range(batchsize):
-                    if not done[b]:
-                        # only add more tokens for examples that aren't done yet
-                        token = self.v2t([preds.data[b]])
-                        if token == self.END:
-                            # if we produced END, we're done
-                            done[b] = True
-                            total_done += 1
-                        else:
-                            output_lines[b].append(token)
-
-            if random.random() < 0.1:
-                # sometimes output a prediction for debugging
-                print('prediction:', ' '.join(output_lines[0]))
+            output_lines = self._decode_only(batchsize, xes, ys,
+                                             encoder_output, hidden)
 
         return output_lines, text_cand_inds
 
@@ -577,7 +459,7 @@ class Seq2seqAgent(Agent):
                 # shrink xs to to limit batch computation
                 min_x_len = min([len(x) for x in parsed])
                 max_x_len = min(min_x_len + 12, max_x_len, 48)
-                parsed = [x[:max_x_len] for x in parsed]
+                parsed = [x[-max_x_len:] for x in parsed]
             xs = torch.LongTensor(batchsize, max_x_len).fill_(0)
             # pack the data to the right side of the tensor for this model
             for i, x in enumerate(parsed):
@@ -669,7 +551,7 @@ class Seq2seqAgent(Agent):
 
         # produce predictions either way, but use the targets if available
 
-        predictions, text_cand_inds = self.predict_with_attention(xs, ys, cands)
+        predictions, text_cand_inds = self.predict(xs, ys, cands)
 
         for i in range(len(predictions)):
             # map the predictions back to non-empty examples in the batch
