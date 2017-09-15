@@ -11,6 +11,7 @@ from queue import Queue
 import uuid
 
 from parlai.core.agents import Agent
+from parlai.mturk.core.worker_state import WorkerState, AssignState
 import parlai.mturk.core.data_model as data_model
 from parlai.mturk.core.shared_utils import print_and_log, THREAD_SHORT_SLEEP, \
                                            THREAD_MTURK_POLLING_SLEEP
@@ -36,6 +37,7 @@ class MTurkAgent(Agent):
         self.conversation_id = None
         self.manager = manager
         self.id = None
+        self.state = AssignState()
         self.assignment_id = assignment_id
         self.hit_id = hit_id
         self.worker_id = worker_id
@@ -93,6 +95,38 @@ class MTurkAgent(Agent):
                     # worker, so no need to check its status anymore
                     return
             time.sleep(THREAD_MTURK_POLLING_SLEEP)
+
+    def get_connection_id(self):
+        """Returns an appropriate connection_id for this agent"""
+        return "{}_{}".format(self.worker_id, self.assignment_id)
+
+    def log_reconnect(self):
+        """Log a reconnect of this agent """
+        print_and_log(
+            'Agent ({})_({}) reconnected to {} with status {}'.format(
+                self.worker_id, self.assignment_id,
+                self.conversation_id, self.state.status
+            )
+        )
+
+    def get_inactive_command_data(self):
+        """Get appropriate inactive command data to respond to a reconnect"""
+        text, command = self.state.get_inactive_command_text()
+        return {
+            'text': command,
+            'inactive_text': text,
+            'conversation_id': self.conversation_id,
+            'agent_id': self.worker_id,
+        }
+
+    def wait_for_status(self, desired_status):
+        """Suspend a thread until a particular assignment state changes
+        to the desired state
+        """
+        while True:
+            if self.state.status == desired_status:
+                break
+            time.sleep(THREAD_SHORT_SLEEP)
 
     def is_in_task(self):
         """Use conversation_id to determine if an agent is in a task"""
@@ -326,9 +360,10 @@ class MTurkAgent(Agent):
         self.manager.free_workers([self])
         return True
 
-    def reduce_state():
+    def reduce_state(self):
         """Cleans up resources related to maintaining complete state"""
         self.msg_queue = None
+        self.state.clear_messages()
 
     def shutdown(self, timeout=None, direct_submit=False):
         """Shuts down a hit when it is completed"""
