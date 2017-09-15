@@ -6,18 +6,12 @@
 
 import logging
 import os
-import threading
-from tqdm import tqdm
+from multiprocessing import Process
 import unittest
 
-from parlai.agents.ir_baseline.ir_retrieve import StringMatchRetrieverAgent
-from parlai.agents.ir_baseline.ir_util import (
-    DEFAULT_LENGTH_PENALTY,
-)
-from parlai.core.dict import DictionaryAgent
-from parlai.core.params import ParlaiParser
-from examples.build_dict import build_dict
 from examples.build_retriever import build_retriever
+from parlai.agents.ir_baseline.ir_retrieve import StringMatchRetrieverAgent
+from parlai.core.params import ParlaiParser
 
 
 class TestStringMatchRetriever(unittest.TestCase):
@@ -42,181 +36,127 @@ class TestStringMatchRetriever(unittest.TestCase):
         "He decides to getaway ...",
     ]
 
-    def test_retriever(self):
-        # build a dict-file
+    def _init_opt(self, rebuild=True, numthreads=1):
         TMP_PATH = '/tmp/parlai_test_retrieve/'
         if not os.path.isdir(TMP_PATH):
             os.mkdir(TMP_PATH)
-        DICT_FILE = TMP_PATH + 'dict.tsv'
-        if os.path.isfile(DICT_FILE):
-            os.remove(DICT_FILE)
-        args = []
-        argparser = ParlaiParser()
-        DictionaryAgent.add_cmdline_args(argparser)
-        opt = argparser.parse_args(args)
-        dict_agent = DictionaryAgent(opt)
-        for fact in self.test_facts:
-            dict_agent.observe({'text': fact})
-            dict_agent.act()
-        dict_agent.save(DICT_FILE)
-        # test retriever
-        RETRIEVER_FILE = TMP_PATH + 'retriever.tsv'
-        if os.path.isfile(RETRIEVER_FILE):
+        RETRIEVER_FILE = TMP_PATH + 'retriever.npz'
+        RETRIEVER_DB_FILE = TMP_PATH + 'retriever_database.db'
+        RETRIEVER_TOKEN_FILE = TMP_PATH + 'retriever_token.npy'
+        if os.path.isfile(RETRIEVER_FILE) and rebuild:
             os.remove(RETRIEVER_FILE)
+        if os.path.isfile(RETRIEVER_DB_FILE) and rebuild:
+            os.remove(RETRIEVER_DB_FILE)
+        if os.path.isfile(RETRIEVER_TOKEN_FILE) and rebuild:
+            os.remove(RETRIEVER_TOKEN_FILE)
+        TASK = 'wikimovies:KB:kb'
         args = [
-            '--dict-file',
-            DICT_FILE,
+            '-t',
+            TASK,
+            '--numthreads',
+            str(numthreads),
             '--retriever-file',
             RETRIEVER_FILE,
+            '--retriever-database',
+            RETRIEVER_DB_FILE,
+            '--retriever-tokens',
+            RETRIEVER_TOKEN_FILE,
+            '--retriever-maxexs',
+            '0',
         ]
         argparser = ParlaiParser()
-        DictionaryAgent.add_cmdline_args(argparser)
         StringMatchRetrieverAgent.add_cmdline_args(argparser)
-        opt = argparser.parse_args(args)
+        return argparser.parse_args(args)
+
+    def test_retriever(self):
+        opt = self._init_opt()
         my_retriever = StringMatchRetrieverAgent(opt)
         for fact in self.test_facts:
             my_retriever.observe({'text': fact})
             my_retriever.act()
-        self._test_retriever_functionality(my_retriever)
-        # test save and load
         my_retriever.save()
+        self._test_retriever_functionality(my_retriever)
+        # test dynamic update
+        my_retriever.observe({'text': "test additional"})
+        my_retriever.act()
+        ans1 = list(my_retriever.retrieve('test', 1))
+        self.assertEqual(ans1, ["test additional"])
+        # test save/load
         my_retriever2 = StringMatchRetrieverAgent(opt)
         self._test_retriever_functionality(my_retriever2)
-        # test multi-thread
-        self._test_retriever_multithread(opt)
+
+    def test_retriever_multithread(self):
+        numthreads = 10
+        num_iter = 1000
+        opt = self._init_opt(numthreads=numthreads)
+        my_retriever = StringMatchRetrieverAgent(opt)
+
+
+        class LoadTestProcess(Process):
+
+            def __init__(self, process_id, tests, num_iter, opt, retriever):
+                self.process_id = process_id
+                self.shared = retriever.share()
+                self.opt = opt
+                self.tests = tests
+                self.num_iter = num_iter
+                super().__init__()
+
+            def run(self):
+                my_retriever = StringMatchRetrieverAgent(self.opt, self.shared)
+                for ind in range(self.num_iter):
+                    for fact in self.tests:
+                        my_retriever.observe(
+                            {'text': ('process%d iter%d : ' + fact) % (self.process_id, ind)}
+                        )
+                        my_retriever.act()
+                my_retriever.shutdown()
+
+        for ind in range(numthreads):
+            LoadTestProcess(ind, self.test_facts, num_iter, opt, my_retriever).start()
+        my_retriever.shutdown()
+        my_retriever2 = StringMatchRetrieverAgent(opt)
+        ans1 = list(my_retriever.retrieve("iter1 Drama", numthreads))
+        self.assertEqual(set(ans1), set([
+            "process%d iter1 : Unconditional has_genre Drama" % ind
+            for ind in range(numthreads)]))
+
 
     def _test_retriever_functionality(self, my_retriever):
-        # test that random facts are retrieved: i.e., not the same fact being returned everytime
-        # If you are unlucky, there is a very slim chance (1/5^4 < 1%) that this test will fail.
-        ans1 = my_retriever.retrieve("Unconditional", 1, ordered_randomly=True)
-        ans2 = my_retriever.retrieve("Unconditional", 1, ordered_randomly=True)
-        ans3 = my_retriever.retrieve("Unconditional", 1, ordered_randomly=True)
-        ans4 = my_retriever.retrieve("Unconditional", 1, ordered_randomly=True)
-        self.assertGreater(len(set(ans1 + ans2 + ans3 + ans4)), 1)
-        ans5 = my_retriever.retrieve("Unconditional directed_by Brent", 2)
-        self.assertEqual(list(ans5), [
+        ans5 = list(my_retriever.retrieve("Unconditional Brent", 2))
+        self.assertEqual(ans5, [
             "Unconditional directed_by Brent McCorkle",
             "Unconditional written_by Brent McCorkle",
             ])
         # test input string that are not in facts
-        ans6 = my_retriever.retrieve("not_in_facts", 1)
+        ans6 = list(my_retriever.retrieve("not_in_facts", 1))
         self.assertEqual(ans6, [])
         # test input string that are partially not in facts
-        ans7 = my_retriever.retrieve("directed_by Brent not_in_facts", 1)
-        self.assertEqual(list(ans7), ["Unconditional directed_by Brent McCorkle"])
+        ans7 = list(my_retriever.retrieve("directed_by Brent not_in_facts", 1))
+        self.assertEqual(ans7, ["Unconditional directed_by Brent McCorkle"])
         # test input string that are stop words
-        ans8 = my_retriever.retrieve("of", 1)
+        ans8 = list(my_retriever.retrieve("of", 1))
         self.assertEqual(ans8, [])
 
-    def test_build_retriever(self, rebuild=True):
-        # build dict
-        TMP_PATH = '/tmp/parlai_test_build_retriever/'
-        if not os.path.isdir(TMP_PATH):
-            os.mkdir(TMP_PATH)
-        DICT_FILE = TMP_PATH + 'dict.tsv'
-        if os.path.isfile(DICT_FILE) and rebuild:
-            os.remove(DICT_FILE)
-        RETRIEVER_FILE = TMP_PATH + 'retrieve.tsv'
-        if os.path.isfile(RETRIEVER_FILE) and rebuild:
-            os.remove(RETRIEVER_FILE)
-        DATABASE = 'wikimovies:KB:kb'
-        args = [
-            '--dict-file',
-            DICT_FILE,
-            '-t',
-            DATABASE,
-            '--retriever-file',
-            RETRIEVER_FILE,
-            '--retriever-maxexs',
-            0,
-        ]
-        argparser = ParlaiParser()
-        DictionaryAgent.add_cmdline_args(argparser)
-        StringMatchRetrieverAgent.add_cmdline_args(argparser)
-        opt = argparser.parse_args(args)
-        build_dict(opt)
-        # build retriever
-        build_retriever(opt)
-        # test retriever
-        my_retriever = StringMatchRetrieverAgent(opt)
-        ans1 = my_retriever.retrieve("who directed Jurassic park", 10)
-        self.assertTrue("Jurassic Park directed_by Steven Spielberg" in list(ans1))
-        ans2 = my_retriever.retrieve("what movies did Steven Spielberg direct", 15)
-        self.assertTrue("Jurassic Park directed_by Steven Spielberg" in list(ans2))
 
-    def test_build_retriever_multithread(self, rebuild_dict=False, rebuild_rtr=True):
-        # build dict
-        TMP_PATH = '/tmp/parlai_test_build_retriever/'
-        if not os.path.isdir(TMP_PATH):
-            os.mkdir(TMP_PATH)
-        DICT_FILE = TMP_PATH + 'dict.tsv'
-        if os.path.isfile(DICT_FILE) and rebuild_dict:
-            os.remove(DICT_FILE)
-        RETRIEVER_FILE = TMP_PATH + 'retrieve.tsv'
-        if os.path.isfile(RETRIEVER_FILE) and rebuild_rtr:
-            os.remove(RETRIEVER_FILE)
-        DATABASE = 'wikimovies:KB:kb'
-        args = [
-            '--dict-file',
-            DICT_FILE,
-            '-t',
-            DATABASE,
-            '--retriever-file',
-            RETRIEVER_FILE,
-            '--retriever-maxexs',
-            0,
-        ]
-        argparser = ParlaiParser()
-        DictionaryAgent.add_cmdline_args(argparser)
-        StringMatchRetrieverAgent.add_cmdline_args(argparser)
-        StringMatchRetrieverAgent.prepare_multi_thread()
-        opt = argparser.parse_args(args)
-        # HACK: '--numthreads' not working
-        opt['numthreads'] = 2
-        build_dict(opt)
-        # build retriever
+    def _test_retriever_functionality_wikimovie(self, my_retriever):
+        ans1 = list(my_retriever.retrieve("who directed Jurassic park", 50))
+        self.assertTrue("Jurassic Park directed_by Steven Spielberg" in ans1)
+        ans2 = list(my_retriever.retrieve("what movies did Steven Spielberg direct", 50))
+        self.assertTrue("Jurassic Park directed_by Steven Spielberg" in ans2)
+
+    def test_build_retriever(self):
+        opt = self._init_opt()
         build_retriever(opt)
-        # test retriever
+        my_retriever = StringMatchRetrieverAgent(opt)
+        self._test_retriever_functionality_wikimovie(my_retriever)
+
+    def test_build_retriever_multithread(self):
+        opt = self._init_opt(numthreads=2)
+        build_retriever(opt)
         opt['numthreads'] = 1
         my_retriever = StringMatchRetrieverAgent(opt)
-        my_retriever.cursor.execute(
-            "SELECT * from document",
-            # ('%Jurassic%',),
-        )
-        ans1 = my_retriever.retrieve("who directed Jurassic park", 10)
-        self.assertTrue("Jurassic Park directed_by Steven Spielberg" in list(ans1))
-        ans2 = my_retriever.retrieve("what movies did Steven Spielberg direct", 15)
-        self.assertTrue("Jurassic Park directed_by Steven Spielberg" in list(ans2))
-
-
-    def _test_retriever_multithread(self, opt):
-        # prepare lock for using multi-thread
-        StringMatchRetrieverAgent.prepare_multi_thread()
-        TEST_STR_DUPS = 500
-        def _trivial_insert(opt, fact, insert_times):
-            retriever = StringMatchRetrieverAgent(opt)
-            for _ in range(insert_times):
-                retriever.observe({'text': fact})
-                retriever.act()
-            retriever.save()
-        threads = []
-        for ind in range(10):
-            threads.append(threading.Thread(target=_trivial_insert,
-                                            args=(opt, 'x ' * TEST_STR_DUPS if ind % 2 == 1 else 'y ' * TEST_STR_DUPS, 1000)))
-        for thread in threads:
-            thread.start()
-        for thread in threads:
-            thread.join()
-        # check if token 'x' only appears in fact 'x x ...',
-        # and # of 'x' facts is half of total insertion
-        retriever = StringMatchRetrieverAgent(opt)
-        for row in retriever.cursor.execute(
-            ("SELECT t2.fact, COUNT(*) FROM ((SELECT fact_id FROM %s WHERE token=?) AS t1 JOIN " +
-            "%s AS t2 ON t1.fact_id = t2.fact_id) ")
-            % (StringMatchRetrieverAgent.FREQ_TABLE_NAME, StringMatchRetrieverAgent.DOC_TABLE_NAME),
-            'x',
-        ):
-            self.assertEqual(row, ('x ' * TEST_STR_DUPS, 1000 * 10 / 2))
+        self._test_retriever_functionality_wikimovie(my_retriever)
 
 if __name__ == '__main__':
     logging.basicConfig(format='[ *%(levelname)s* ] %(message)s', level=logging.INFO)
