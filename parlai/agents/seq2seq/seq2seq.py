@@ -55,6 +55,14 @@ class Seq2seqAgent(Agent):
                            'be similar in length to one another by throwing '
                            'away extra tokens. This reduces the total amount '
                            'of padding in the batches.')
+        agent.add_argument('-enc', '--encoder', default='gru',
+                           choices=['rnn', 'gru', 'lstm'],
+                           help='Choose between different encoder modules.')
+        agent.add_argument('-dec', '--decoder', default='shared',
+                           choices=['shared', 'rnn', 'gru', 'lstm'],
+                           help='Choose between different decoder modules.'
+                                'If set to shared, uses the exact same module'
+                                ' and weights as the encoder.')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -111,10 +119,16 @@ class Seq2seqAgent(Agent):
             self.lt = nn.Embedding(len(self.dict), hsz,
                                    padding_idx=self.NULL_IDX,
                                    scale_grad_by_freq=True)
+            opt_to_class = {'rnn': nn.RNN, 'gru': nn.GRU, 'lstm': nn.LSTM}
             # encoder captures the input text
-            self.encoder = nn.GRU(hsz, hsz, opt['numlayers'])
+            enc_class = opt_to_class[opt['encoder']]
+            self.encoder = enc_class(hsz, hsz, opt['numlayers'])
             # decoder produces our output states
-            self.decoder = nn.GRU(hsz, hsz, opt['numlayers'])
+            if opt['decoder'] == 'shared':
+                self.decoder = self.encoder
+            else:
+                dec_class = opt_to_class[opt['decoder']]
+                self.decoder = dec_class(hsz, hsz, opt['numlayers'])
             # linear layer helps us produce outputs from final decoder state
             self.h2o = nn.Linear(hsz, len(self.dict))
             # droput on the linear layer helps us generalize
