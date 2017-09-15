@@ -79,30 +79,31 @@ def main():
     parser = ParlaiParser(True, True)
     train = parser.add_argument_group('Training Loop Arguments')
     train.add_argument('-et', '--evaltask',
-                        help=('task to use for valid/test (defaults to the ' +
-                              'one used for training if not set)'))
+                       help=('task to use for valid/test (defaults to the '
+                             'one used for training if not set)'))
     train.add_argument('-d', '--display-examples',
-                        type='bool', default=False)
+                       type='bool', default=False)
     train.add_argument('-e', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time',
-                        type=float, default=-1)
+                       type=float, default=-1)
     train.add_argument('-ltim', '--log-every-n-secs',
-                        type=float, default=2)
+                       type=float, default=2)
     train.add_argument('-vtim', '--validation-every-n-secs',
-                        type=float, default=-1)
+                       type=float, default=-1)
     train.add_argument('-vme', '--validation-max-exs',
-                        type=int, default=-1,
-                        help='max examples to use during validation (default ' +
-                             '-1 uses all)')
+                       type=int, default=-1,
+                       help='max examples to use during validation (default '
+                            '-1 uses all)')
     train.add_argument('-vp', '--validation-patience',
-                        type=int, default=5,
-                        help=('number of iterations of validation where result '
-                              + 'does not improve before we stop training'))
+                       type=int, default=5,
+                       help=('number of iterations of validation where result'
+                             ' does not improve before we stop training'))
     train.add_argument('-vmt', '--validation-metric', default='accuracy',
-                       help='key into report table for selecting best validation')
+                       help='key into report table for selecting best '
+                            'validation')
     train.add_argument('-dbf', '--dict-build-first',
-                        type='bool', default=True,
-                        help='build dictionary first before training agent')
+                       type='bool', default=True,
+                       help='build dictionary first before training agent')
     opt = parser.parse_args()
     # Possibly build a dictionary (not all models do this).
     if opt['dict_build_first'] and 'dict_file' in opt:
