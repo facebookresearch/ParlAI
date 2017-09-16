@@ -741,6 +741,9 @@ class HogwildWorld(World):
             t.start()
 
     def __iter__(self):
+        # prepare to iter
+        for agent in self.inner_world.agents:
+            agent.start_data_collection()
         return self
 
     def __next__(self):

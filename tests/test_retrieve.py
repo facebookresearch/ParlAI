@@ -36,7 +36,7 @@ class TestStringMatchRetriever(unittest.TestCase):
         "He decides to getaway ...",
     ]
 
-    def _init_opt(self, rebuild=True, numthreads=1):
+    def _init_opt(self, rebuild=True, numthreads=1, task='wikimovies:KB:kb'):
         TMP_PATH = '/tmp/parlai_test_retrieve/'
         if not os.path.isdir(TMP_PATH):
             os.mkdir(TMP_PATH)
@@ -49,10 +49,9 @@ class TestStringMatchRetriever(unittest.TestCase):
             os.remove(RETRIEVER_DB_FILE)
         if os.path.isfile(RETRIEVER_TOKEN_FILE) and rebuild:
             os.remove(RETRIEVER_TOKEN_FILE)
-        TASK = 'wikimovies:KB:kb'
         args = [
             '-t',
-            TASK,
+            task,
             '--numthreads',
             str(numthreads),
             '--retriever-file',
@@ -157,6 +156,10 @@ class TestStringMatchRetriever(unittest.TestCase):
         opt['numthreads'] = 1
         my_retriever = StringMatchRetrieverAgent(opt)
         self._test_retriever_functionality_wikimovie(my_retriever)
+
+    def test_build_retriever_zreddit(self):
+        opt = self._init_opt(numthreads=8, task='zreddit')
+        build_retriever(opt)
 
 if __name__ == '__main__':
     logging.basicConfig(format='[ *%(levelname)s* ] %(message)s', level=logging.INFO)

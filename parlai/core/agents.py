@@ -97,6 +97,10 @@ class Agent(object):
         """Perform any final cleanup if needed."""
         pass
 
+    def start_data_collection(self):
+        """"collect data if multi-thread is used"""
+        pass
+
 
 class Teacher(Agent):
     """Basic Teacher agent which keeps track of how many times it's received
