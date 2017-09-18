@@ -639,6 +639,8 @@ def test_solo_with_onboarding(opt, server_url):
     # Run through onboarding, then disconnect and reconnect
     test_agent_fail.always_beat = True
     test_agent_fail.send_heartbeat()
+    wait_for_state_time(3, mturk_manager)
+
     assert test_agent_fail.conversation_id.startswith('o_'), \
         'Mock agent didn\'t make it to onboarding'
     assert last_command.data['text'] == data_model.COMMAND_SEND_MESSAGE, \
@@ -678,6 +680,8 @@ def test_solo_with_onboarding(opt, server_url):
     # Run through onboarding
     test_agent.always_beat = True
     test_agent.send_heartbeat()
+    wait_for_state_time(3, mturk_manager)
+
     assert test_agent.conversation_id.startswith('o_'), \
         'Mock agent didn\'t make it to onboarding'
     assert last_command.data['text'] == data_model.COMMAND_SEND_MESSAGE, \
@@ -788,7 +792,7 @@ def test_solo_no_onboarding(opt, server_url):
 
     test_agent.always_beat = True
     test_agent.send_heartbeat()
-    wait_for_state_time(2, mturk_manager)
+    wait_for_state_time(3, mturk_manager)
 
     # Run through task
     assert test_agent.conversation_id.startswith('t_'), \
@@ -876,6 +880,7 @@ def test_solo_refresh_in_middle(opt, server_url):
     # Run through onboarding
     test_agent.always_beat = True
     test_agent.send_heartbeat()
+    wait_for_state_time(3, mturk_manager)
 
     # Run through task
     assert test_agent.conversation_id.startswith('t_'), \
@@ -1042,6 +1047,7 @@ def test_duo_with_onboarding(opt, server_url):
     test_agent_1.send_heartbeat()
     test_agent_2.always_beat = True
     test_agent_2.send_heartbeat()
+    wait_for_state_time(3, mturk_manager)
 
     # Run agent_1 through onboarding
     assert test_agent_1.conversation_id.startswith('o_'), \
@@ -1208,6 +1214,7 @@ def test_duo_no_onboarding(opt, server_url):
 
     # Start heartbeats for 3
     test_agent_3.send_heartbeat()
+    wait_for_state_time(3, mturk_manager)
 
     # Ensure agent 3 is sitting in a waiting world now
     assert test_agent_3.conversation_id.startswith('w_'), \
@@ -1300,6 +1307,7 @@ def test_duo_no_onboarding(opt, server_url):
     # Start heartbeats for 1
     test_agent_1.always_beat = True
     test_agent_1.send_heartbeat()
+    wait_for_state_time(3, mturk_manager)
 
     # Ensure agent 1 is sitting in a waiting world now
     assert test_agent_1.conversation_id.startswith('w_'), \
@@ -1340,7 +1348,7 @@ def test_duo_no_onboarding(opt, server_url):
     # Start heartbeats for 2
     test_agent_2.always_beat = True
     test_agent_2.send_heartbeat()
-    wait_for_state_time(2, mturk_manager)
+    wait_for_state_time(3, mturk_manager)
 
     # Ensure both agents are in a task world
     assert test_agent_1.conversation_id.startswith('t_'), \
@@ -1484,6 +1492,7 @@ def test_duo_valid_reconnects(opt, server_url):
     # Start heartbeats for 1
     test_agent_1.always_beat = True
     test_agent_1.send_heartbeat()
+    wait_for_state_time(2, mturk_manager)
 
     # Ensure agent 1 is sitting in a waiting world now
     assert test_agent_1.conversation_id.startswith('w_'), \
@@ -1683,6 +1692,7 @@ def test_duo_one_disconnect(opt, server_url):
     # Start heartbeats for 1
     test_agent_1.always_beat = True
     test_agent_1.send_heartbeat()
+    wait_for_state_time(2, mturk_manager)
 
     # Ensure agent 1 is sitting in a waiting world now
     assert test_agent_1.conversation_id.startswith('w_'), \
@@ -1871,6 +1881,7 @@ def test_count_complete(opt, server_url):
     # Run through onboarding
     test_agent_1.always_beat = True
     test_agent_1.send_heartbeat()
+    wait_for_state_time(3, mturk_manager)
 
     # Run through task
     assert test_agent_1.conversation_id.startswith('t_'), \
@@ -1917,6 +1928,7 @@ def test_count_complete(opt, server_url):
     # Run through onboarding
     test_agent_2.always_beat = True
     test_agent_2.send_heartbeat()
+    wait_for_state_time(3, mturk_manager)
 
     # Run through task
     assert test_agent_2.conversation_id.startswith('t_'), \
@@ -2101,6 +2113,7 @@ def test_expire_hit(opt, server_url):
     test_agent_3.send_heartbeat()
     test_agent_4.always_beat = True
     test_agent_4.send_heartbeat()
+    wait_for_state_time(2, mturk_manager)
 
     # Run agent_1 through onboarding
     assert test_agent_1.conversation_id.startswith('o_'), \
@@ -2109,7 +2122,7 @@ def test_expire_hit(opt, server_url):
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state_1.status, AssignState.STATUS_ONBOARDING)
     test_agent_1.send_message('Onboard2', dummy)
-    wait_for_state_time(2, mturk_manager)
+    wait_for_state_time(3, mturk_manager)
 
     # Ensure agent 1 is sitting in a waiting world now
     assert test_agent_1.conversation_id.startswith('w_'), \
@@ -2123,7 +2136,7 @@ def test_expire_hit(opt, server_url):
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state_2.status, AssignState.STATUS_ONBOARDING)
     test_agent_2.send_message('Onboard2', dummy)
-    wait_for_state_time(2, mturk_manager)
+    wait_for_state_time(3, mturk_manager)
 
     # Ensure both agents are in a task world
     assert test_agent_1.conversation_id.startswith('t_'), \
@@ -2284,6 +2297,7 @@ def test_allowed_conversations(opt, server_url):
     assign_state = mturk_manager_assign.state
     test_agent.always_beat = True
     test_agent.send_heartbeat()
+    wait_for_state_time(3, mturk_manager)
 
     # Run through task
     assert test_agent.conversation_id.startswith('t_'), \
@@ -2328,6 +2342,7 @@ def test_allowed_conversations(opt, server_url):
     assign_state_2 = mturk_manager_assign_2.state
     test_agent_2.always_beat = True
     test_agent_2.send_heartbeat()
+    wait_for_state_time(3, mturk_manager)
 
     # Run through task
     assert test_agent_2.conversation_id.startswith('t_'), \
@@ -2428,6 +2443,7 @@ def test_unique_workers_in_conversation(opt, server_url):
     # Start heartbeats for 1
     test_agent_1.always_beat = True
     test_agent_1.send_heartbeat()
+    wait_for_state_time(3, mturk_manager)
 
     # Ensure agent 1 is sitting in a waiting world now
     assert test_agent_1.conversation_id.startswith('w_'), \
@@ -2456,7 +2472,7 @@ def test_unique_workers_in_conversation(opt, server_url):
         make_packet_handler(test_agent_2, dummy, dummy, msg_callback_2)
     test_agent_2.setup_socket(server_url, message_handler_2)
     test_agent_2.wait_for_alive()
-    wait_for_state_time(2, mturk_manager)
+    wait_for_state_time(3, mturk_manager)
 
     # Ensure no task has started yet
     assert test_agent_2.conversation_id.startswith('w_'), \
