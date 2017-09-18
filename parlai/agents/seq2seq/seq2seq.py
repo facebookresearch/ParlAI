@@ -238,7 +238,9 @@ class Seq2seqAgent(Agent):
         self.episode_done = True
 
     def observe(self, observation):
-        """Save the observation for the next step."""
+        """Save observation for act.
+        If multiple observations are from the same episode, concatenate them.
+        """
         # shallow copy observation (deep copy can be expensive)
         observation = observation.copy()
         if not self.episode_done:
@@ -259,7 +261,14 @@ class Seq2seqAgent(Agent):
         if self.zeros.size(1) != batchsize:
             self.zeros.resize_(self.num_layers, batchsize, self.hidden_size).fill_(0)
         h0 = Variable(self.zeros)
-        encoder_output, hidden = self.encoder(xes, h0)
+        if type(self.encoder) == nn.LSTM:
+            encoder_output, hidden = self.encoder(xes, (h0, h0))
+            if type(self.decoder) != nn.LSTM:
+                hidden = hidden[0]
+        else:
+            encoder_output, hidden = self.encoder(xes, h0)
+            if type(self.decoder) == nn.LSTM:
+                hidden = (hidden, h0)
         encoder_output = encoder_output.transpose(0, 1)
 
         if self.use_attention:
@@ -316,7 +325,7 @@ class Seq2seqAgent(Agent):
         if random.random() < 0.1:
             # sometimes output a prediction for debugging
             print('prediction:', ' '.join(output_lines[0]),
-                      '\nlabel:', self.dict.vec2txt(ys.data[0]))
+                  '\nlabel:', self.dict.vec2txt(ys.data[0]))
 
         return output_lines
 
