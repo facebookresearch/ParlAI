@@ -56,10 +56,10 @@ class Seq2seqAgent(Agent):
                            'away extra tokens. This reduces the total amount '
                            'of padding in the batches.')
         agent.add_argument('-enc', '--encoder', default='gru',
-                           choices=['rnn', 'gru'],
+                           choices=['rnn', 'gru', 'lstm'],
                            help='Choose between different encoder modules.')
         agent.add_argument('-dec', '--decoder', default='shared',
-                           choices=['shared', 'rnn', 'gru'],
+                           choices=['shared', 'rnn', 'gru', 'lstm'],
                            help='Choose between different decoder modules.'
                                 'If set to shared, uses the exact same module'
                                 ' and weights as the encoder.')
