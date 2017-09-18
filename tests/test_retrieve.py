@@ -158,7 +158,7 @@ class TestStringMatchRetriever(unittest.TestCase):
         self._test_retriever_functionality_wikimovie(my_retriever)
 
     def test_build_retriever_zreddit(self):
-        opt = self._init_opt(numthreads=8, task='zreddit')
+        opt = self._init_opt(numthreads=7, task='zreddit')
         build_retriever(opt)
 
 if __name__ == '__main__':

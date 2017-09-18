@@ -37,6 +37,7 @@ class StringMatchRetrieverAgent(Agent):
     The retrieve() function outputs facts sorted by tfidfs.
     """
 
+    BUFFER_SIZE = 1000
     END_OF_DATA = "EOD"
     DEFAULT_MAX_FACTS = 100000
     DOC_TABLE_NAME = 'document'
@@ -89,6 +90,7 @@ class StringMatchRetrieverAgent(Agent):
         self.freq_freq = []
         self.cnt = 0
         self.load()
+        self.insert_wait_list = []
         if shared:
             self.fact_id = shared['fact_id']
             self.db_lock = shared['db_lock']
@@ -120,6 +122,15 @@ class StringMatchRetrieverAgent(Agent):
             tfs = count_matrix.log1p()
             self.tfidfs = idfs.dot(tfs)
         return self.tfidfs
+
+    def _flush_db_wait_list(self, is_block):
+        if not self.insert_wait_list:
+            return
+        if self.db_lock.acquire(is_block):
+            with self.cursor.connection:
+                self.cursor.executemany(self.FACT_QUERY, self.insert_wait_list)
+            self.insert_wait_list = []
+            self.db_lock.release()
 
     def _get_doc_freqs(self, cnts):
         if not hasattr(self, 'doc_freqs'):
@@ -156,9 +167,9 @@ class StringMatchRetrieverAgent(Agent):
 
     def _insert_fact_without_id(self, fact):
         new_fact_id = self._new_fact_id()
-        with self.db_lock:
-            with self.cursor.connection:
-                self.cursor.execute(self.FACT_QUERY, (new_fact_id, fact,))
+        self.insert_wait_list.append((new_fact_id, fact,))
+        if len(self.insert_wait_list) >= self.BUFFER_SIZE:
+            self._flush_db_wait_list(False)
         return new_fact_id
 
     def _new_fact_id(self):
@@ -197,17 +208,18 @@ class StringMatchRetrieverAgent(Agent):
             data = self.comm_queues[queue_ind].get()
             if data == self.END_OF_DATA:
                 break
-            elif len(data) == 2:
-                (_token, _token_id) = data
-                _true_token_id = self._token2id(_token)
-                self.child_token_map[queue_ind][_token_id] = _true_token_id
-            elif len(data) == 3:
-                (_token_id, _fact_id, _freq) = data
-                self._new_freq(
-                    self.child_token_map[queue_ind][_token_id],
-                    _fact_id,
-                    _freq,
-                )
+            elif isinstance(data, dict):
+                for (_token, _token_id) in data.items():
+                    _true_token_id = self._token2id(_token)
+                    self.child_token_map[queue_ind][_token_id] = _true_token_id
+            elif isinstance(data, list):
+                [_token_ids, _fact_ids, _freqs] = data
+                for ind in trange(len(_token_ids)):
+                    self._new_freq(
+                        self.child_token_map[queue_ind][_token_ids[ind]],
+                        _fact_ids[ind],
+                        _freqs[ind],
+                    )
             else:
                 raise RuntimeError("StringMatchRetrieverAgent: wrong data format send from child to master.")
 
@@ -268,19 +280,16 @@ class StringMatchRetrieverAgent(Agent):
         return shared
 
     def shutdown(self):
+        self._flush_db_wait_list(True)
         if hasattr(self, "comm_queue"):
             # workder: send task ids, freqs to master
             self.shared_queue.put(self.child_id)
-            self.print_info("start sending token ids...")
-            for _task, _task_id in self.all_tokens.items():
-                self.comm_queue.put((_task, _task_id))
-            self.print_info("start sending freqs...")
-            for ind in trange(len(self.freq_fact_id), desc="Process %d" % self.child_id):
-                self.comm_queue.put((
-                    self.freq_token[ind],
-                    self.freq_fact_id[ind],
-                    self.freq_freq[ind],
-                ))
+            self.comm_queue.put(self.all_tokens)
+            self.comm_queue.put([
+                    self.freq_token,
+                    self.freq_fact_id,
+                    self.freq_freq,
+            ])
             self.comm_queue.put(self.END_OF_DATA)
             self.print_info("all data send.")
         else:
@@ -307,6 +316,7 @@ class StringMatchRetrieverAgent(Agent):
         )
 
     def retrieve(self, query, max_results=100):
+        self._flush_db_wait_list(True)
         tokens = [token for token in self._tokenize(query) if token in self.all_tokens]
         if not tokens:
             return
