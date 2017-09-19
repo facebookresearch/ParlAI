@@ -402,7 +402,7 @@ class MTurkManager():
         elif not agent.state.is_final():
             shared_utils.print_and_log(
                 logging.INFO,
-                'Manager received: '.format(pkt),
+                'Manager received: {}'.format(pkt),
                 should_print=self.opt['verbose']
             )
             # Push the message to the message thread to send on a reconnect
@@ -562,7 +562,7 @@ class MTurkManager():
         fin_word = 'start'
         if self.opt['count_complete']:
             fin_word = 'finish'
-        shared_uils.print_and_log(
+        shared_utils.print_and_log(
             logging.INFO,
             '\nYou are going to allow workers from Amazon Mechanical Turk to '
             'be an agent in ParlAI.\nDuring this process, Internet connection '
@@ -836,6 +836,12 @@ class MTurkManager():
             data,
             blocking=blocking,
             ack_func=ack_func
+        )
+
+        shared_utils.print_and_log(
+            logging.INFO,
+            'Manager sending: {}'.format(packet),
+            should_print=self.opt['verbose']
         )
         # Push outgoing message to the message thread to be able to resend
         # on a reconnect event

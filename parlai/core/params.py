@@ -115,7 +115,7 @@ class ParlaiParser(argparse.ArgumentParser):
             help='print and log all server interactions and messages')
         mturk.add_argument(
             '--verbose', dest='verbose', action='store_true',
-            help='print all messages sent from turkers')
+            help='print all messages sent to and from Turkers')
         mturk.add_argument(
             '--log-level', dest='log_level', type=int, default=20,
             help='importance level for what to put into the logs. the lower '
