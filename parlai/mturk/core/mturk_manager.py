@@ -45,7 +45,7 @@ class MTurkManager():
     between a world and the MTurk server.
     """
 
-    def __init__(self, opt, mturk_agent_ids):
+    def __init__(self, opt, mturk_agent_ids, is_test=False):
         """Create an MTurkManager using the given setup opts and a list of
         agent_ids that will participate in each conversation
         """
@@ -64,6 +64,7 @@ class MTurkManager():
             self.num_conversations * len(self.mturk_agent_ids) * HIT_MULT
         )
         self.socket_manager = None
+        self.is_test = is_test
         self._init_logs()
 
 
@@ -399,6 +400,11 @@ class MTurkManager():
         if agent is None:
             self._log_missing_agent(worker_id, assignment_id)
         elif not agent.state.is_final():
+            shared_utils.print_and_log(
+                logging.INFO,
+                'Manager received: '.format(pkt),
+                should_print=self.opt['verbose']
+            )
             # Push the message to the message thread to send on a reconnect
             agent.state.messages.append(pkt.data)
 
@@ -644,7 +650,8 @@ class MTurkManager():
     def ready_to_accept_workers(self):
         """Set up socket to start communicating to workers"""
         shared_utils.print_and_log(logging.INFO,
-                                   'Local: Setting up SocketIO...', True)
+                                   'Local: Setting up SocketIO...',
+                                   not self.is_test)
         self._setup_socket()
 
     def start_new_run(self):
@@ -974,7 +981,7 @@ class MTurkManager():
         """
         shared_utils.print_and_log(logging.INFO,
                                    'Expiring all unassigned HITs...',
-                                   should_print=True)
+                                   should_print=not self.is_test)
         for hit_id in self.hit_id_list:
             mturk_utils.expire_hit(self.is_sandbox, hit_id)
 

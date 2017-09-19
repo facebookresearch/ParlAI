@@ -65,6 +65,7 @@ FAKE_WORKER_ID = 'FAKE_WORKER_ID_{}_{}'
 DISCONNECT_WAIT_TIME = SocketManager.DEF_SOCKET_TIMEOUT + 1.5
 
 completed_threads = {}
+start_times = {}
 
 def dummy(*args):
     pass
@@ -579,7 +580,7 @@ def test_solo_with_onboarding(opt, server_url):
     onboarding to ensure the agent is marked disconnected.
     """
     global completed_threads
-    print('Starting {}'.format(SOLO_ONBOARDING_TEST))
+    print('{} Starting'.format(SOLO_ONBOARDING_TEST))
     opt['task'] = SOLO_ONBOARDING_TEST
     hit_id = FAKE_HIT_ID.format(SOLO_ONBOARDING_TEST)
     assign_id_1 = FAKE_ASSIGNMENT_ID.format(SOLO_ONBOARDING_TEST, 1)
@@ -738,7 +739,7 @@ def test_solo_no_onboarding(opt, server_url):
     and is able to complete the task and be marked as completed
     """
     global completed_threads
-    print('Starting {}'.format(SOLO_NO_ONBOARDING_TEST))
+    print('{} Starting'.format(SOLO_NO_ONBOARDING_TEST))
     opt['task'] = SOLO_NO_ONBOARDING_TEST
     hit_id = FAKE_HIT_ID.format(SOLO_NO_ONBOARDING_TEST)
     assign_id = FAKE_ASSIGNMENT_ID.format(SOLO_NO_ONBOARDING_TEST, 1)
@@ -824,7 +825,7 @@ def test_solo_refresh_in_middle(opt, server_url):
     properly restored
     """
     global completed_threads
-    print('Starting {}'.format(SOLO_REFRESH_TEST))
+    print('{} Starting'.format(SOLO_REFRESH_TEST))
     opt['task'] = SOLO_REFRESH_TEST
     hit_id = FAKE_HIT_ID.format(SOLO_REFRESH_TEST)
     assign_id = FAKE_ASSIGNMENT_ID.format(SOLO_REFRESH_TEST, 1)
@@ -838,7 +839,8 @@ def test_solo_refresh_in_middle(opt, server_url):
     mturk_agent_id = AGENT_1_ID
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_id]
+        mturk_agent_ids=[mturk_agent_id],
+        is_test=True
     )
     mturk_manager.server_url = server_url
     mturk_manager.start_new_run()
@@ -935,7 +937,7 @@ def test_duo_with_onboarding(opt, server_url):
     able to join after the conversation starts, as the HIT should be expired
     """
     global completed_threads
-    print('Starting {}'.format(DUO_ONBOARDING_TEST))
+    print('{} Starting'.format(DUO_ONBOARDING_TEST))
     opt['task'] = DUO_ONBOARDING_TEST
     hit_id = FAKE_HIT_ID.format(DUO_ONBOARDING_TEST)
     assign_id_1 = FAKE_ASSIGNMENT_ID.format(DUO_ONBOARDING_TEST, 1)
@@ -959,7 +961,8 @@ def test_duo_with_onboarding(opt, server_url):
     mturk_agent_id_2 = AGENT_2_ID
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_id_1, mturk_agent_id_2]
+        mturk_agent_ids=[mturk_agent_id_1, mturk_agent_id_2],
+        is_test=True
     )
     mturk_manager.server_url = server_url
     mturk_manager.start_new_run()
@@ -1148,7 +1151,7 @@ def test_duo_no_onboarding(opt, server_url):
     agent returns to waiting
     """
     global completed_threads
-    print('Starting {}'.format(DUO_NO_ONBOARDING_TEST))
+    print('{} Starting'.format(DUO_NO_ONBOARDING_TEST))
     opt['task'] = DUO_NO_ONBOARDING_TEST
     opt['count_complete'] = True
     hit_id = FAKE_HIT_ID.format(DUO_NO_ONBOARDING_TEST)
@@ -1174,7 +1177,8 @@ def test_duo_no_onboarding(opt, server_url):
     mturk_agent_id_2 = AGENT_2_ID
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_id_1, mturk_agent_id_2]
+        mturk_agent_ids=[mturk_agent_id_1, mturk_agent_id_2],
+        is_test=True
     )
     mturk_manager.server_url = server_url
     mturk_manager.start_new_run()
@@ -1413,7 +1417,7 @@ def test_duo_valid_reconnects(opt, server_url):
     state, as well as completing a task after a reconnect.
     """
     global completed_threads
-    print('Starting {}'.format(DUO_VALID_RECONNECT_TEST))
+    print('{} Starting'.format(DUO_VALID_RECONNECT_TEST))
     opt['task'] = DUO_VALID_RECONNECT_TEST
     hit_id = FAKE_HIT_ID.format(DUO_VALID_RECONNECT_TEST)
     assign_id_1 = FAKE_ASSIGNMENT_ID.format(DUO_VALID_RECONNECT_TEST, 1)
@@ -1433,7 +1437,8 @@ def test_duo_valid_reconnects(opt, server_url):
     mturk_agent_id_2 = AGENT_2_ID
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_id_1, mturk_agent_id_2]
+        mturk_agent_ids=[mturk_agent_id_1, mturk_agent_id_2],
+        is_test=True
     )
     mturk_manager.server_url = server_url
     mturk_manager.start_new_run()
@@ -1620,7 +1625,7 @@ def test_duo_one_disconnect(opt, server_url):
     a partner disconnect or after a disconnect.
     """
     global completed_threads
-    print('Starting {}'.format(DUO_ONE_DISCONNECT_TEST))
+    print('{} Starting'.format(DUO_ONE_DISCONNECT_TEST))
     opt['task'] = DUO_ONE_DISCONNECT_TEST
     hit_id = FAKE_HIT_ID.format(DUO_ONE_DISCONNECT_TEST)
     assign_id_1 = FAKE_ASSIGNMENT_ID.format(DUO_ONE_DISCONNECT_TEST, 1)
@@ -1641,7 +1646,8 @@ def test_duo_one_disconnect(opt, server_url):
     mturk_agent_id_2 = AGENT_2_ID
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_id_1, mturk_agent_id_2]
+        mturk_agent_ids=[mturk_agent_id_1, mturk_agent_id_2],
+        is_test=True
     )
     mturk_manager.server_url = server_url
     mturk_manager.start_new_run()
@@ -1823,7 +1829,7 @@ def test_count_complete(opt, server_url):
     count_complete flag.
     """
     global completed_threads
-    print('Starting {}'.format(COUNT_COMPLETE_TEST))
+    print('{} Starting'.format(COUNT_COMPLETE_TEST))
     opt['task'] = COUNT_COMPLETE_TEST
     opt['count_complete'] = True
     opt['num_conversations'] = 1
@@ -1839,7 +1845,8 @@ def test_count_complete(opt, server_url):
 
     mturk_agent_id = AGENT_1_ID
     mturk_manager = MTurkManager(opt=opt,
-                                 mturk_agent_ids = [mturk_agent_id])
+                                 mturk_agent_ids=[mturk_agent_id],
+                                 is_test=True)
     mturk_manager.server_url = server_url
     mturk_manager.start_new_run()
     task_group_id = mturk_manager.task_group_id
@@ -1978,7 +1985,7 @@ def test_expire_hit(opt, server_url):
     one in onboarding and sending 3 to waiting, then ensuring that the
     remaining waiting worker gets expired"""
     global completed_threads
-    print('Starting {}'.format(EXPIRE_HIT_TEST))
+    print('{} Starting'.format(EXPIRE_HIT_TEST))
     opt['task'] = EXPIRE_HIT_TEST
     opt['count_complete'] = True
     hit_id = FAKE_HIT_ID.format(EXPIRE_HIT_TEST)
@@ -2006,7 +2013,8 @@ def test_expire_hit(opt, server_url):
     mturk_agent_id_2 = AGENT_2_ID
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_id_1, mturk_agent_id_2]
+        mturk_agent_ids=[mturk_agent_id_1, mturk_agent_id_2],
+        is_test=True
     )
     mturk_manager.server_url = server_url
     mturk_manager.start_new_run()
@@ -2241,7 +2249,7 @@ def test_allowed_conversations(opt, server_url):
     they're allowed to start it after finishing the first
     """
     global completed_threads
-    print('Starting {}'.format(ALLOWED_CONVERSATION_TEST))
+    print('{} Starting'.format(ALLOWED_CONVERSATION_TEST))
     opt['allowed_conversations'] = 1
     opt['num_conversations'] = 2
     opt['task'] = ALLOWED_CONVERSATION_TEST
@@ -2258,7 +2266,8 @@ def test_allowed_conversations(opt, server_url):
     mturk_agent_id = AGENT_1_ID
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_id]
+        mturk_agent_ids=[mturk_agent_id],
+        is_test=True
     )
     mturk_manager.server_url = server_url
     mturk_manager.start_new_run()
@@ -2376,7 +2385,7 @@ def test_unique_workers_in_conversation(opt, server_url):
     when not in the sandbox
     """
     global completed_threads
-    print('Starting {}'.format(UNIQUE_CONVERSATION_TEST))
+    print('{} Starting'.format(UNIQUE_CONVERSATION_TEST))
     opt['task'] = UNIQUE_CONVERSATION_TEST
     opt['is_sandbox'] = False
     opt['count_complete'] = True
@@ -2399,7 +2408,8 @@ def test_unique_workers_in_conversation(opt, server_url):
     mturk_agent_id_2 = AGENT_2_ID
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_id_1, mturk_agent_id_2]
+        mturk_agent_ids=[mturk_agent_id_1, mturk_agent_id_2],
+        is_test=True
     )
     mturk_manager.server_url = server_url
     mturk_manager.start_new_run()
@@ -2598,20 +2608,21 @@ def test_unique_workers_in_conversation(opt, server_url):
     completed_threads[UNIQUE_CONVERSATION_TEST] = True
 
 
-# Map of tests to run to their testing function
+# Map of tests to run to their testing function, slowest tests first reduces
+# overall runtime
 TESTS = {
-    SOCKET_TEST: test_socket_manager,
-    SOLO_ONBOARDING_TEST: test_solo_with_onboarding,
-    SOLO_NO_ONBOARDING_TEST: test_solo_no_onboarding,
-    SOLO_REFRESH_TEST: test_solo_refresh_in_middle,
-    DUO_ONBOARDING_TEST: test_duo_with_onboarding,
     DUO_NO_ONBOARDING_TEST: test_duo_no_onboarding,
-    DUO_VALID_RECONNECT_TEST: test_duo_valid_reconnects,
-    DUO_ONE_DISCONNECT_TEST: test_duo_one_disconnect,
-    COUNT_COMPLETE_TEST: test_count_complete,
+    SOLO_ONBOARDING_TEST: test_solo_with_onboarding,
+    DUO_ONBOARDING_TEST: test_duo_with_onboarding,
     EXPIRE_HIT_TEST: test_expire_hit,
+    DUO_ONE_DISCONNECT_TEST: test_duo_one_disconnect,
+    DUO_VALID_RECONNECT_TEST: test_duo_valid_reconnects,
+    UNIQUE_CONVERSATION_TEST: test_unique_workers_in_conversation,
     ALLOWED_CONVERSATION_TEST: test_allowed_conversations,
-    UNIQUE_CONVERSATION_TEST: test_unique_workers_in_conversation
+    SOLO_REFRESH_TEST: test_solo_refresh_in_middle,
+    SOLO_NO_ONBOARDING_TEST: test_solo_no_onboarding,
+    COUNT_COMPLETE_TEST: test_count_complete,
+    SOCKET_TEST: test_socket_manager
 }
 
 # Runtime threads, MAX_THREADS is used on initial pass, RETEST_THREADS is used
@@ -2621,6 +2632,7 @@ MAX_THREADS = 8
 RETEST_THREADS = 2
 
 def run_tests(tests_to_run, max_threads, base_opt, server_url):
+    global start_time
     failed_tests = []
     threads = {}
     for test_name in tests_to_run:
@@ -2631,24 +2643,43 @@ def run_tests(tests_to_run, max_threads, base_opt, server_url):
                     new_threads[n] = threads[n]
                 else:
                     if n in completed_threads:
-                        print("{} Passed".format(n))
+                        print("{} Passed. Runtime - {} Seconds".format(
+                            n,
+                            time.time() - start_times[n]
+                        ))
                     else:
-                        print("{} FAILED".format(n))
+                        print("{} Failed. Runtime - {} Seconds".format(
+                            n,
+                            time.time() - start_times[n]
+                        ))
                         failed_tests.append(n)
             threads = new_threads
             time.sleep(1)
         new_thread = threading.Thread(target=TESTS[test_name],
                                       args=(base_opt.copy(), server_url))
         new_thread.start()
+        start_times[test_name] = time.time()
         threads[test_name] = new_thread
         time.sleep(0.25)
-    for thread_name in threads:
-        threads[thread_name].join()
-        if thread_name in completed_threads:
-            print("{} Passed".format(thread_name))
-        else:
-            print("{} FAILED".format(thread_name))
-            failed_tests.append(thread_name)
+    while len(threads) > 0:
+        new_threads = {}
+        for n in threads:
+            if threads[n].isAlive():
+                new_threads[n] = threads[n]
+            else:
+                if n in completed_threads:
+                    print("{} Passed. Runtime - {} Seconds".format(
+                        n,
+                        time.time() - start_times[n]
+                    ))
+                else:
+                    print("{} Failed. Runtime - {} Seconds".format(
+                        n,
+                        time.time() - start_times[n]
+                    ))
+                    failed_tests.append(n)
+        threads = new_threads
+        time.sleep(1)
     return failed_tests
 
 

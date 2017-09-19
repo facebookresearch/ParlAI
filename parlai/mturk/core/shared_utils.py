@@ -14,8 +14,8 @@ THREAD_MEDIUM_SLEEP = 0.3
 # ThrottlingException might happen if we poll too frequently
 THREAD_MTURK_POLLING_SLEEP = 10
 
-logging_enabled = True
 logger = None
+logging_enabled = True
 debug = True
 log_level = logging.ERROR
 

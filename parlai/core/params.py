@@ -114,6 +114,9 @@ class ParlaiParser(argparse.ArgumentParser):
             '--debug', dest='is_debug', action='store_true',
             help='print and log all server interactions and messages')
         mturk.add_argument(
+            '--verbose', dest='verbose', action='store_true',
+            help='print all messages sent from turkers')
+        mturk.add_argument(
             '--log-level', dest='log_level', type=int, default=20,
             help='importance level for what to put into the logs. the lower '
                  'the level the more that gets logged. values are 0-50')
@@ -130,6 +133,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)
+        mturk.set_defaults(verbose=False)
 
     def add_parlai_args(self, args=None):
         default_downloads_path = os.path.join(self.parlai_home, 'downloads')
