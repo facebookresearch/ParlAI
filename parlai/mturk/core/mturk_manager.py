@@ -4,13 +4,13 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+import logging
 import math
 import os
 import pickle
 import threading
 import time
 import uuid
-import logging
 
 from botocore.exceptions import ClientError
 
@@ -64,6 +64,7 @@ class MTurkManager():
             self.num_conversations * len(self.mturk_agent_ids) * HIT_MULT
         )
         self.socket_manager = None
+        self._init_logs()
 
 
     ### Helpers and internal manager methods ###
@@ -81,6 +82,11 @@ class MTurkManager():
         self.conv_to_agent = {}
         self.accepting_workers = True
         self._load_disconnects()
+
+    def _init_logs(self):
+        """Initialize logging settings from the opt"""
+        shared_utils.set_is_debug(self.opt['is_debug'])
+        shared_utils.set_log_level(self.opt['log_level'])
 
     def _load_disconnects(self):
         """Load disconnects from file, populate the disconnects field for any
@@ -170,7 +176,10 @@ class MTurkManager():
 
             # Add the worker to pool
             with self.worker_pool_change_condition:
-                print("Adding worker to pool...")
+                shared_utils.print_and_log(
+                    logging.DEBUG,
+                    "Adding worker {} to pool...".format(agent.worker_id)
+                )
                 self.worker_pool.append(agent)
 
     def _move_workers_to_waiting(self, workers):
@@ -656,8 +665,14 @@ class MTurkManager():
 
         def _task_function(opt, workers, conversation_id):
             """Wait for all workers to join world before running the task"""
-            print('Starting task...')
-            print('Waiting for all workers to join the conversation...')
+            shared_utils.print_and_log(
+                logging.INFO,
+                'Starting task {}...'.format(conversation_id)
+            )
+            shared_utils.print_and_log(
+                logging.DEBUG,
+                'Waiting for all workers to join the conversation...'
+            )
             start_time = time.time()
             while True:
                 all_joined = True
@@ -671,12 +686,22 @@ class MTurkManager():
                     # We waited but not all workers rejoined, throw workers
                     # back into the waiting pool. Stragglers will disconnect
                     # from there
-                    print('Timeout waiting for workers, move back to waiting')
+                    shared_utils.print_and_log(
+                        logging.INFO,
+                        'Timeout waiting for {}, move back to waiting'.format(
+                            conversation_id
+                        )
+                    )
                     self._move_workers_to_waiting(workers)
                     return
                 time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
-            print('All workers joined the conversation!')
+            shared_utils.print_and_log(
+                logging.INFO,
+                'All workers joined the conversation {}!'.format(
+                    conversation_id
+                )
+            )
             self.started_conversations += 1
             task_function(mturk_manager=self, opt=opt, workers=workers)
             # Delete extra state data that is now unneeded
