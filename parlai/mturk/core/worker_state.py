@@ -4,7 +4,6 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.mturk.core.shared_utils import print_and_log
 import parlai.mturk.core.data_model as data_model
 
 class AssignState():

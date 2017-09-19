@@ -17,6 +17,7 @@ THREAD_MTURK_POLLING_SLEEP = 10
 logging_enabled = True
 logger = None
 debug = True
+log_level = logging.ERROR
 
 if logging_enabled:
     logging.basicConfig(
@@ -28,10 +29,19 @@ if logging_enabled:
     )
     logger = logging.getLogger('mturk')
 
+def set_log_level(new_level):
+    global log_level
+    log_level = new_level
 
-def print_and_log(message, should_print=True):
-    if logging_enabled:
-        logger.info(message)
+
+def set_is_debug(is_debug):
+    global debug
+    debug = is_debug
+
+
+def print_and_log(level, message, should_print=False):
+    if logging_enabled and level >= log_level:
+        logger.log(level, message)
     if should_print or debug: # Always print message in debug mode
         print(message)
 

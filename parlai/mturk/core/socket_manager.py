@@ -4,13 +4,15 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+import logging
 import threading
 import time
 from queue import PriorityQueue, Empty
 from socketIO_client_nexus import SocketIO
-from parlai.mturk.core.shared_utils import print_and_log, generate_event_id, \
-                                        THREAD_SHORT_SLEEP, THREAD_MEDIUM_SLEEP
+
+from parlai.mturk.core.shared_utils import print_and_log
 import parlai.mturk.core.data_model as data_model
+import parlai.mturk.core.shared_utils as shared_utils
 
 class Packet():
     """Class for holding information sent over a socket"""
@@ -112,7 +114,7 @@ class Packet():
         a new id and with a fresh status
         """
         packet = Packet.from_dict(self.as_dict())
-        packet.id = generate_event_id(self.receiver_id)
+        packet.id = shared_utils.generate_event_id(self.receiver_id)
         return packet
 
     def __repr__(self):
@@ -214,7 +216,10 @@ class SocketManager():
         """Sends a packet, blocks if the packet is blocking"""
         # Send the packet
         pkt = packet.as_dict()
-        print_and_log('Send packet: {}'.format(packet.data))
+        shared_utils.print_and_log(
+            logging.DEBUG,
+            'Send packet: {}'.format(packet.data)
+        )
         def set_status_to_sent(data):
             packet.status = Packet.STATUS_SENT
         self.socketIO.emit(
@@ -239,7 +244,7 @@ class SocketManager():
                         packet.status = Packet.STATUS_INIT
                         self._safe_put(connection_id, (send_time, packet))
                         break
-                    time.sleep(THREAD_SHORT_SLEEP)
+                    time.sleep(shared_utils.THREAD_SHORT_SLEEP)
             else:
                 # non-blocking ack: add ack-check to queue
                 t = time.time() + self.ACK_TIME[packet.type]
@@ -250,14 +255,20 @@ class SocketManager():
         self.socketIO = SocketIO(self.server_url, self.port)
 
         def on_socket_open(*args):
-            print_and_log('Socket open: {}'.format(args), False)
+            shared_utils.print_and_log(
+                logging.DEBUG,
+                'Socket open: {}'.format(args)
+            )
             self._send_world_alive()
             self.alive = True
 
         def on_disconnect(*args):
             """Disconnect event is a no-op for us, as the server reconnects
             automatically on a retry"""
-            print_and_log('World server disconnected: {}'.format(args), False)
+            shared_utils.print_and_log(
+                logging.INFO,
+                'World server disconnected: {}'.format(args)
+            )
             self.alive = False
 
         def on_message(*args):
@@ -272,7 +283,10 @@ class SocketManager():
                     # Don't do anything when acking a packet we don't have
                     return
                 # Acknowledgements should mark a packet as acknowledged
-                print_and_log('On new ack: {}'.format(args), False)
+                shared_utils.print_and_log(
+                    logging.DEBUG,
+                    'On new ack: {}'.format(args)
+                )
                 self.packet_map[packet_id].status = Packet.STATUS_ACK
                 # If the packet sender wanted to do something on acknowledge
                 if self.packet_map[packet_id].ack_func:
@@ -285,7 +299,10 @@ class SocketManager():
                 self._send_response_heartbeat(packet)
             else:
                 # Remaining packet types need to be acknowledged
-                print_and_log('On new message: {}'.format(args), False)
+                shared_utils.print_and_log(
+                    logging.DEBUG,
+                    'On new message: {}'.format(args)
+                )
                 self._send_ack(packet)
                 # Call the appropriate callback
                 if packet_type == Packet.TYPE_ALIVE:
@@ -313,9 +330,9 @@ class SocketManager():
         monitors that channel"""
         connection_id = '{}_{}'.format(worker_id, assignment_id)
         if connection_id in self.queues and self.run[connection_id]:
-            print_and_log(
-                'Channel ({}) already open'.format(connection_id),
-                False
+            shared_utils.print_and_log(
+                logging.DEBUG,
+                'Channel ({}) already open'.format(connection_id)
             )
             return
         self.run[connection_id] = True
@@ -357,7 +374,7 @@ class SocketManager():
                 except Empty:
                     pass
                 finally:
-                    time.sleep(THREAD_MEDIUM_SLEEP)
+                    time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)
 
         # Setup and run the channel sending thread
         self.threads[connection_id] = threading.Thread(
@@ -369,7 +386,10 @@ class SocketManager():
 
     def close_channel(self, connection_id):
         """Closes a channel by connection_id"""
-        print_and_log('Closing channel {}'.format(connection_id), False)
+        shared_utils.print_and_log(
+            logging.DEBUG,
+            'Closing channel {}'.format(connection_id)
+        )
         self.run[connection_id] = False
         if connection_id in self.queues:
             # Clean up packets
@@ -388,7 +408,7 @@ class SocketManager():
 
     def close_all_channels(self):
         """Closes a channel by clearing the list of channels"""
-        print_and_log('Closing all channels')
+        shared_utils.print_and_log(logging.DEBUG, 'Closing all channels')
         connection_ids = list(self.queues.keys())
         for connection_id in connection_ids:
             self.close_channel(connection_id)
@@ -401,15 +421,16 @@ class SocketManager():
         connection_id = packet.get_receiver_connection_id()
         if not self.socket_is_open(connection_id):
             # Warn if there is no socket to send through for the expected recip
-            print_and_log(
+            shared_utils.print_and_log(
+                logging.WARN,
                 'Can not send packet to worker_id {}: packet queue not found. '
                 'Message: {}'.format(connection_id, packet.data)
             )
             return
-        print_and_log('Put packet ({}) in queue ({})'.format(
-            packet.id,
-            connection_id
-        ), False)
+        shared_utils.print_and_log(
+            logging.DEBUG,
+            'Put packet ({}) in queue ({})'.format(packet.id, connection_id)
+        )
         # Get the current time to put packet into the priority queue
         self.packet_map[packet.id] = packet
         item = (time.time(), packet)
@@ -426,6 +447,9 @@ class SocketManager():
         if connection_id in self.queues:
             self.queues[connection_id].put(item)
         else:
-            print_and_log('Queue {} did not exist to put a message in'.format(
-                connection_id
-            ))
+            shared_utils.print_and_log(
+                logging.WARN,
+                'Queue {} did not exist to put a message in'.format(
+                    connection_id
+                )
+            )
