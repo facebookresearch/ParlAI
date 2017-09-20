@@ -58,11 +58,11 @@ class Seq2seqAgent(Agent):
         agent.add_argument('-enc', '--encoder', default='gru',
                            choices=['rnn', 'gru'],
                            help='Choose between different encoder modules.')
-        agent.add_argument('-dec', '--decoder', default='shared',
-                           choices=['shared', 'rnn', 'gru'],
-                           help='Choose between different decoder modules.'
-                                'If set to shared, uses the exact same module'
-                                ' and weights as the encoder.')
+        agent.add_argument('-dec', '--decoder', default='same',
+                           choices=['same', 'shared', 'rnn', 'gru'],
+                           help='Choose between different decoder modules. '
+                                'Default "same" uses same class as encoder, '
+                                'while "shared" also uses the same weights.')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -126,6 +126,8 @@ class Seq2seqAgent(Agent):
             # decoder produces our output states
             if opt['decoder'] == 'shared':
                 self.decoder = self.encoder
+            elif opt['decoder'] == 'same':
+                self.decoder = enc_class(hsz, hsz, opt['numlayers'])
             else:
                 dec_class = opt_to_class[opt['decoder']]
                 self.decoder = dec_class(hsz, hsz, opt['numlayers'])
