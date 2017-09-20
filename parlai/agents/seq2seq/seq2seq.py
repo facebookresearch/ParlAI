@@ -207,7 +207,6 @@ class Seq2seqAgent(Agent):
         self.decoder.cuda()
         self.h2o.cuda()
         self.dropout.cuda()
-        self.softmax.cuda()
         if self.use_attention:
             self.attn.cuda()
             self.attn_combine.cuda()
