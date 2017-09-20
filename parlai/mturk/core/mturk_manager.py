@@ -593,20 +593,25 @@ class MTurkManager():
 
         if total_cost > 100 or self.opt['reward'] > 1:
             confirm_string = '$%.2f' % total_cost
+            expected_cost = total_cost / HIT_MULT
+            expected_string = '$%.2f' % expected_cost
             shared_utils.print_and_log(
                 logging.INFO,
                 'You are going to create {} HITs at {} per assignment, for a '
-                'total cost of {} after MTurk fees. Please enter "{}" to '
-                'confirm and continue, and anything else to cancel'.format(
+                'total cost up to {} after MTurk fees. Please enter "{}" to '
+                'confirm and continue, and anything else to cancel.\nNote that'
+                ' of the {}, the target amount to spend is {}.'.format(
                     self.required_hits,
                     '$%.2f' % self.opt['reward'],
                     confirm_string,
-                    confirm_string
+                    confirm_string,
+                    confirm_string,
+                    expected_string
                 ),
                 should_print=True
             )
             check = input('Enter here: ')
-            if (check != confirm_string):
+            if (check != confirm_string and ('$' + check) != confirm_string):
                 raise SystemExit('Cancelling')
 
         shared_utils.print_and_log(logging.INFO, 'Setting up MTurk server...',
