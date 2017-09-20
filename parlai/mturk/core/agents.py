@@ -47,9 +47,11 @@ class MTurkAgent(Agent):
         self.hit_is_returned = False # state from Amazon MTurk system
         self.disconnected = False
         self.task_group_id = manager.task_group_id
+        self.message_request_time = None
 
         self.msg_queue = Queue()
 
+        # TODO-1 replace with code that subscribes to notifs to update status
         # self.check_hit_status_thread = threading.Thread(
         #    target=self._check_hit_status)
         # self.check_hit_status_thread.daemon = True
@@ -183,13 +185,45 @@ class MTurkAgent(Agent):
         # There are no messages to be sent
         return None
 
+    def prepare_timeout(self):
+        """Log a timeout event, tell mturk manager it occurred, return message
+        to return for the act call
+        """
+        shared_utils.print_and_log(
+            logging.INFO,
+            '{} timed out before sending.'.format(self.id)
+        )
+        self.manager.handle_turker_timeout(
+            self.worker_id,
+            self.assignment_id
+        )
+        msg = {
+            'id': self.id,
+            'text': TIMEOUT_MESSAGE,
+            'episode_done': True
+        }
+        return msg
+
     def act(self, timeout=None, blocking=True):
         """Sends a message to other agents in the world. If blocking, this
         will wait for the message to come in so it can be sent. Otherwise
         it will return None.
         """
         if not blocking:
-            return self.get_new_act_message()
+            # If checking timeouts
+            if timeout:
+                # if this is the first act since last sent message start timing
+                if self.message_request_time is None:
+                    self.message_request_time = time.time()
+                # If time is exceeded, timeout
+                if time.time() - self.message_request_time > timeout:
+                    return self.prepare_timeout()
+
+            # Get a new message, if it's not None reset the timeout
+            msg = self.get_new_act_message()
+            if msg is not None and self.message_request_time is not None:
+                self.message_request_time = None
+            return msg
         else:
             if not (self.disconnected or self.some_agent_disconnected or
                     self.hit_is_expired):
@@ -213,20 +247,7 @@ class MTurkAgent(Agent):
                 if timeout:
                     current_time = time.time()
                     if (current_time - start_time) > timeout:
-                        shared_utils.print_and_log(
-                            logging.INFO,
-                            '{} timed out before sending.'.format(self.id)
-                        )
-                        self.manager.handle_turker_timeout(
-                            self.worker_id,
-                            self.assignment_id
-                        )
-                        msg = {
-                            'id': self.id,
-                            'text': TIMEOUT_MESSAGE,
-                            'episode_done': True
-                        }
-                        return msg
+                        return self.prepare_timeout()
                 time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
     def change_conversation(self, conversation_id, agent_id, change_callback):
