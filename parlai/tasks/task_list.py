@@ -254,5 +254,12 @@ task_list = [
         "task": "clevr",
         "tags": [ "All",  "Visual" ],
         "description": "A visual reasoning dataset that tests abilities such as attribute identification, counting, comparison, spatial relationships, and logical operations. From Johnson et al. '16. Link: https://arxiv.org/abs/1612.06890"
+    },
+    {
+        "id": "WMT",
+        "display_name": "WMT",
+        "task": "wmt",
+        "tags": [ "All"],
+        "description": "A machine translation dataset, currently only includes en_de."
     }
 ]
