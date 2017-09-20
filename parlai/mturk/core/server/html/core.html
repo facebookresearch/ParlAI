@@ -771,10 +771,19 @@
 
   /* =================== Initialization =================== */
 
+  function fail_initialize() {
+    $("div#ui-placeholder").html('Unable to initialize. We may be having \
+      issues with our chat servers. Please refresh the page, or if that \
+      isn\'t working return the HIT and try again later if you would like \
+      to work on this task.');
+    close_socket();
+  }
+
   // Initializes the chat page
   function init_chat_page() {
     if (is_init_page) {
       $("div#ui-placeholder").html("Initializing...");
+      setTimeout(fail_initialize, 10000);
     } else {
       init_chat_panel();
     }
