@@ -591,7 +591,8 @@ class MTurkManager():
                 is_sandbox=self.opt['is_sandbox']):
             raise SystemExit('Insufficient funds')
 
-        if total_cost > 100 or self.opt['reward'] > 1:
+        if ((not self.opt['is_sandbox']) and
+                (total_cost > 100 or self.opt['reward'] > 1)):
             confirm_string = '$%.2f' % total_cost
             expected_cost = total_cost / HIT_MULT
             expected_string = '$%.2f' % expected_cost
