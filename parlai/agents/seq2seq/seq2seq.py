@@ -351,7 +351,7 @@ class Seq2seqAgent(Agent):
             loss += self.criterion(scores, y)
             # use the true token as the next input instead of predicted
             # this produces a biased prediction but better training
-            xes = self.lt2enc(self.lt(y).unsqueeze(0))
+            xes = self.lt2dec(self.lt(y).unsqueeze(0))
             for b in range(batchsize):
                 # convert the output scores to tokens
                 token = self.v2t([preds.data[b]])
@@ -384,7 +384,7 @@ class Seq2seqAgent(Agent):
             output, hidden = self.decoder(output, hidden)
             preds, scores = self.hidden_to_idx(output, dropout=False)
 
-            xes = self.lt2enc(self.lt(preds.unsqueeze(0)))
+            xes = self.lt2dec(self.lt(preds.unsqueeze(0)))
             max_len += 1
             for b in range(batchsize):
                 if not done[b]:
@@ -443,7 +443,7 @@ class Seq2seqAgent(Agent):
             cand_lengths += non_nulls.long()
             score_per_cand = torch.gather(scores, 1, cs.unsqueeze(1))
             cand_scores += score_per_cand.squeeze() * non_nulls.float()
-            cands_xes = self.lt2enc(self.lt(cs).unsqueeze(0))
+            cands_xes = self.lt2dec(self.lt(cs).unsqueeze(0))
 
         # set empty scores to -1, so when divided by 0 they become -inf
         cand_scores -= cand_lengths.eq(0).float()
@@ -469,7 +469,7 @@ class Seq2seqAgent(Agent):
 
         # next we use END as an input to kick off our decoder
         x = Variable(self.START_TENSOR)
-        xe = self.lt2enc(self.lt(x).unsqueeze(1))
+        xe = self.lt2dec(self.lt(x).unsqueeze(1))
         xes = xe.expand(xe.size(0), batchsize, xe.size(2))
 
         # list of output tokens for each example in the batch
