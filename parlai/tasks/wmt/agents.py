@@ -20,7 +20,7 @@ def _path(task, opt, dt=''):
                         '{task}_{type}.txt'.format(task=task, type=dt))
 
 
-class En_deTeacher(FbDialogTeacher):
+class EnDeTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         task = opt.get('task', 'wmt:en_de')
@@ -28,5 +28,5 @@ class En_deTeacher(FbDialogTeacher):
         opt['datafile'] = _path(self.task_name, opt, 'train')
         super().__init__(opt, shared)
 
-class DefaultTeacher(En_deTeacher):
+class DefaultTeacher(EnDeTeacher):
     pass

@@ -26,7 +26,6 @@ def build(opt):
         ('newstest2014.en','newstest2014.de', 'en_de_test.txt')]
         for (en_fname, de_fname, w_fname) in fnames:
             url_base = 'https://nlp.stanford.edu/projects/nmt/data/wmt14.en-de/'
-            # url_base = 'http://localhost:8000/nmt/data/wmt14.en-de/'
             en_url = url_base + en_fname
             de_url = url_base + de_fname
             build_data.download(en_url, dpath, en_fname)
