@@ -56,13 +56,13 @@ class Seq2seqAgent(Agent):
                            'away extra tokens. This reduces the total amount '
                            'of padding in the batches.')
         agent.add_argument('-enc', '--encoder', default='gru',
-                           choices=['rnn', 'gru'],
+                           choices=['rnn', 'gru', 'lstm'],
                            help='Choose between different encoder modules.')
-        agent.add_argument('-dec', '--decoder', default='shared',
-                           choices=['shared', 'rnn', 'gru'],
-                           help='Choose between different decoder modules.'
-                                'If set to shared, uses the exact same module'
-                                ' and weights as the encoder.')
+        agent.add_argument('-dec', '--decoder', default='same',
+                           choices=['same', 'shared', 'rnn', 'gru', 'lstm'],
+                           help='Choose between different decoder modules. '
+                                'Default "same" uses same class as encoder, '
+                                'while "shared" also uses the same weights.')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -126,6 +126,8 @@ class Seq2seqAgent(Agent):
             # decoder produces our output states
             if opt['decoder'] == 'shared':
                 self.decoder = self.encoder
+            elif opt['decoder'] == 'same':
+                self.decoder = enc_class(hsz, hsz, opt['numlayers'])
             else:
                 dec_class = opt_to_class[opt['decoder']]
                 self.decoder = dec_class(hsz, hsz, opt['numlayers'])
@@ -205,7 +207,6 @@ class Seq2seqAgent(Agent):
         self.decoder.cuda()
         self.h2o.cuda()
         self.dropout.cuda()
-        self.softmax.cuda()
         if self.use_attention:
             self.attn.cuda()
             self.attn_combine.cuda()
@@ -238,7 +239,9 @@ class Seq2seqAgent(Agent):
         self.episode_done = True
 
     def observe(self, observation):
-        """Save the observation for the next step."""
+        """Save observation for act.
+        If multiple observations are from the same episode, concatenate them.
+        """
         # shallow copy observation (deep copy can be expensive)
         observation = observation.copy()
         if not self.episode_done:
@@ -259,7 +262,14 @@ class Seq2seqAgent(Agent):
         if self.zeros.size(1) != batchsize:
             self.zeros.resize_(self.num_layers, batchsize, self.hidden_size).fill_(0)
         h0 = Variable(self.zeros)
-        encoder_output, hidden = self.encoder(xes, h0)
+        if type(self.encoder) == nn.LSTM:
+            encoder_output, hidden = self.encoder(xes, (h0, h0))
+            if type(self.decoder) != nn.LSTM:
+                hidden = hidden[0]
+        else:
+            encoder_output, hidden = self.encoder(xes, h0)
+            if type(self.decoder) == nn.LSTM:
+                hidden = (hidden, h0)
         encoder_output = encoder_output.transpose(0, 1)
 
         if self.use_attention:
@@ -316,7 +326,7 @@ class Seq2seqAgent(Agent):
         if random.random() < 0.1:
             # sometimes output a prediction for debugging
             print('prediction:', ' '.join(output_lines[0]),
-                      '\nlabel:', self.dict.vec2txt(ys.data[0]))
+                  '\nlabel:', self.dict.vec2txt(ys.data[0]))
 
         return output_lines
 

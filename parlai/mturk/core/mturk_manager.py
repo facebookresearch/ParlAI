@@ -4,6 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+import logging
 import math
 import os
 import pickle
@@ -13,16 +14,13 @@ import uuid
 
 from botocore.exceptions import ClientError
 
-from parlai.mturk.core.server_utils import setup_server, delete_server
-from parlai.mturk.core.mturk_utils import calculate_mturk_cost, \
-    check_mturk_balance, create_hit_type, create_hit_with_hit_type, \
-    get_mturk_client, setup_aws_credentials, create_hit_config, expire_hit
-from parlai.mturk.core.worker_state import WorkerState, AssignState
-from parlai.mturk.core.socket_manager import Packet, SocketManager
 from parlai.mturk.core.agents import MTurkAgent
-from parlai.mturk.core.shared_utils import print_and_log, generate_event_id, \
-                                        THREAD_SHORT_SLEEP, THREAD_MEDIUM_SLEEP
+from parlai.mturk.core.socket_manager import Packet, SocketManager
+from parlai.mturk.core.worker_state import WorkerState, AssignState
 import parlai.mturk.core.data_model as data_model
+import parlai.mturk.core.mturk_utils as mturk_utils
+import parlai.mturk.core.server_utils as server_utils
+import parlai.mturk.core.shared_utils as shared_utils
 
 # Timeout before cancelling a world start
 WORLD_START_TIMEOUT = 11
@@ -47,7 +45,7 @@ class MTurkManager():
     between a world and the MTurk server.
     """
 
-    def __init__(self, opt, mturk_agent_ids):
+    def __init__(self, opt, mturk_agent_ids, is_test=False):
         """Create an MTurkManager using the given setup opts and a list of
         agent_ids that will participate in each conversation
         """
@@ -66,6 +64,8 @@ class MTurkManager():
             self.num_conversations * len(self.mturk_agent_ids) * HIT_MULT
         )
         self.socket_manager = None
+        self.is_test = is_test
+        self._init_logs()
 
 
     ### Helpers and internal manager methods ###
@@ -83,6 +83,11 @@ class MTurkManager():
         self.conv_to_agent = {}
         self.accepting_workers = True
         self._load_disconnects()
+
+    def _init_logs(self):
+        """Initialize logging settings from the opt"""
+        shared_utils.set_is_debug(self.opt['is_debug'])
+        shared_utils.set_log_level(self.opt['log_level'])
 
     def _load_disconnects(self):
         """Load disconnects from file, populate the disconnects field for any
@@ -133,10 +138,12 @@ class MTurkManager():
                     'workers who don\'t disconnect.'
                 )
                 self.block_worker(worker_id, text)
-                print_and_log(
+                shared_utils.print_and_log(
+                    logging.INFO,
                     'Worker {} was blocked - too many disconnects'.format(
                         worker_id
-                    )
+                    ),
+                    True
                 )
 
     def _get_agent_from_pkt(self, pkt):
@@ -170,7 +177,10 @@ class MTurkManager():
 
             # Add the worker to pool
             with self.worker_pool_change_condition:
-                print("Adding worker to pool...")
+                shared_utils.print_and_log(
+                    logging.DEBUG,
+                    "Adding worker {} to pool...".format(agent.worker_id)
+                )
                 self.worker_pool.append(agent)
 
     def _move_workers_to_waiting(self, workers):
@@ -301,7 +311,10 @@ class MTurkManager():
         alive packet. This asks the socket manager to open a new channel and
         then handles ensuring the worker state is consistent
         """
-        print_and_log('on_agent_alive: {}'.format(pkt), False)
+        shared_utils.print_and_log(
+            logging.DEBUG,
+            'on_agent_alive: {}'.format(pkt)
+        )
         worker_id = pkt.data['worker_id']
         hit_id = pkt.data['hit_id']
         assign_id = pkt.data['assignment_id']
@@ -318,9 +331,10 @@ class MTurkManager():
 
         if not assign_id:
             # invalid assignment_id is an auto-fail
-            print_and_log('Agent ({}) with no assign_id called alive'.format(
-                worker_id
-            ), False)
+            shared_utils.print_and_log(
+                logging.WARN,
+                'Agent ({}) with no assign_id called alive'.format(worker_id)
+            )
         elif not assign_id in curr_worker_state.agents:
             # First time this worker has connected under this assignment, init
             # new agent if we are still accepting workers
@@ -386,6 +400,11 @@ class MTurkManager():
         if agent is None:
             self._log_missing_agent(worker_id, assignment_id)
         elif not agent.state.is_final():
+            shared_utils.print_and_log(
+                logging.INFO,
+                'Manager received: {}'.format(pkt),
+                should_print=self.opt['verbose']
+            )
             # Push the message to the message thread to send on a reconnect
             agent.state.messages.append(pkt.data)
 
@@ -406,11 +425,14 @@ class MTurkManager():
             # This worker never registered, so we don't do anything
             return
 
-        print_and_log('Worker {} disconnected from {} in status {}'.format(
-            worker_id,
-            assignment_id,
-            agent.state.status
-        ))
+        shared_utils.print_and_log(
+            logging.DEBUG,
+            'Worker {} disconnected from {} in status {}'.format(
+                worker_id,
+                assignment_id,
+                agent.state.status
+            )
+        )
 
         if agent.state.status == AssignState.STATUS_NONE:
             # Agent never made it to onboarding, delete
@@ -525,7 +547,8 @@ class MTurkManager():
     def _log_missing_agent(self, worker_id, assignment_id):
         """Logs when an agent was expected to exist, yet for some reason it
         didn't. If these happen often there is a problem"""
-        print_and_log(
+        shared_utils.print_and_log(
+            logging.WARN,
             'Expected to have an agent for {}_{}, yet none was found'.format(
                 worker_id,
                 assignment_id
@@ -536,20 +559,23 @@ class MTurkManager():
 
     def setup_server(self, task_directory_path=None):
         """Prepare the MTurk server for the new HIT we would like to submit"""
-        completion_type = 'start'
+        fin_word = 'start'
         if self.opt['count_complete']:
-            completion_type = 'finish'
-        print_and_log('\nYou are going to allow workers from Amazon '
-              'Mechanical Turk to be an agent in ParlAI.\nDuring this '
-              'process, Internet connection is required, and you should '
-              'turn off your computer\'s auto-sleep feature.\n'
-              'Enough HITs will be created to fulfill {} times the number of '
-              'conversations requested, extra HITs will be expired once the '
-              'desired conversations {}.'.format(HIT_MULT, completion_type))
+            fin_word = 'finish'
+        shared_utils.print_and_log(
+            logging.INFO,
+            '\nYou are going to allow workers from Amazon Mechanical Turk to '
+            'be an agent in ParlAI.\nDuring this process, Internet connection '
+            'is required, and you should turn off your computer\'s auto-sleep '
+            'feature.\nEnough HITs will be created to fulfill {} times the '
+            'number of conversations requested, extra HITs will be expired '
+            'once the desired conversations {}.'.format(HIT_MULT, fin_word),
+            should_print=True
+        )
         key_input = input('Please press Enter to continue... ')
-        print_and_log('')
+        shared_utils.print_and_log(logging.NOTSET, '', True)
 
-        setup_aws_credentials()
+        mturk_utils.setup_aws_credentials()
 
         # See if there's enough money in the account to fund the HITs requested
         num_assignments = self.required_hits
@@ -559,29 +585,39 @@ class MTurkManager():
             'reward': self.opt['reward'],  # in dollars
             'unique': self.opt['unique_worker']
         }
-        total_cost = calculate_mturk_cost(payment_opt=payment_opt)
-        if not check_mturk_balance(balance_needed=total_cost,
-                                   is_sandbox=self.opt['is_sandbox']):
+        total_cost = mturk_utils.calculate_mturk_cost(payment_opt=payment_opt)
+        if not mturk_utils.check_mturk_balance(
+                balance_needed=total_cost,
+                is_sandbox=self.opt['is_sandbox']):
             raise SystemExit('Insufficient funds')
 
-        if total_cost > 100 or self.opt['reward'] > 1:
+        if ((not self.opt['is_sandbox']) and
+                (total_cost > 100 or self.opt['reward'] > 1)):
             confirm_string = '$%.2f' % total_cost
-            print_and_log(
+            expected_cost = total_cost / HIT_MULT
+            expected_string = '$%.2f' % expected_cost
+            shared_utils.print_and_log(
+                logging.INFO,
                 'You are going to create {} HITs at {} per assignment, for a '
-                'total cost of {} after MTurk fees. Please enter "{}" to '
-                'confirm and continue, and anything else to cancel'.format(
+                'total cost up to {} after MTurk fees. Please enter "{}" to '
+                'confirm and continue, and anything else to cancel.\nNote that'
+                ' of the {}, the target amount to spend is {}.'.format(
                     self.required_hits,
                     '$%.2f' % self.opt['reward'],
                     confirm_string,
-                    confirm_string
-                )
+                    confirm_string,
+                    confirm_string,
+                    expected_string
+                ),
+                should_print=True
             )
             check = input('Enter here: ')
-            if (check != confirm_string):
+            if (check != confirm_string and ('$' + check) != confirm_string):
                 raise SystemExit('Cancelling')
 
-        print_and_log('Setting up MTurk server...')
-        create_hit_config(
+        shared_utils.print_and_log(logging.INFO, 'Setting up MTurk server...',
+                                   should_print=True)
+        mturk_utils.create_hit_config(
             task_description=self.opt['task_description'],
             unique_worker=self.opt['unique_worker'],
             is_sandbox=self.opt['is_sandbox']
@@ -610,15 +646,18 @@ class MTurkManager():
         task_name = '{}-{}'.format(str(uuid.uuid4())[:8], self.opt['task'])
         self.server_task_name = \
             ''.join(e for e in task_name if e.isalnum() or e == '-')
-        self.server_url = \
-            setup_server(self.server_task_name, self.task_files_to_copy)
-        print_and_log(self.server_url, False)
+        self.server_url = server_utils.setup_server(self.server_task_name,
+                                                    self.task_files_to_copy)
+        shared_utils.print_and_log(logging.INFO, self.server_url)
 
-        print_and_log("MTurk server setup done.\n")
+        shared_utils.print_and_log(logging.INFO, "MTurk server setup done.\n",
+                                   should_print=True)
 
     def ready_to_accept_workers(self):
         """Set up socket to start communicating to workers"""
-        print_and_log('Local: Setting up SocketIO...')
+        shared_utils.print_and_log(logging.INFO,
+                                   'Local: Setting up SocketIO...',
+                                   not self.is_test)
         self._setup_socket()
 
     def start_new_run(self):
@@ -639,8 +678,14 @@ class MTurkManager():
 
         def _task_function(opt, workers, conversation_id):
             """Wait for all workers to join world before running the task"""
-            print('Starting task...')
-            print('Waiting for all workers to join the conversation...')
+            shared_utils.print_and_log(
+                logging.INFO,
+                'Starting task {}...'.format(conversation_id)
+            )
+            shared_utils.print_and_log(
+                logging.DEBUG,
+                'Waiting for all workers to join the conversation...'
+            )
             start_time = time.time()
             while True:
                 all_joined = True
@@ -654,12 +699,22 @@ class MTurkManager():
                     # We waited but not all workers rejoined, throw workers
                     # back into the waiting pool. Stragglers will disconnect
                     # from there
-                    print('Timeout waiting for workers, move back to waiting')
+                    shared_utils.print_and_log(
+                        logging.INFO,
+                        'Timeout waiting for {}, move back to waiting'.format(
+                            conversation_id
+                        )
+                    )
                     self._move_workers_to_waiting(workers)
                     return
-                time.sleep(THREAD_SHORT_SLEEP)
+                time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
-            print('All workers joined the conversation!')
+            shared_utils.print_and_log(
+                logging.INFO,
+                'All workers joined the conversation {}!'.format(
+                    conversation_id
+                )
+            )
             self.started_conversations += 1
             task_function(mturk_manager=self, opt=opt, workers=workers)
             # Delete extra state data that is now unneeded
@@ -717,7 +772,7 @@ class MTurkManager():
                 for thread in self.task_threads:
                     thread.join()
                 break
-            time.sleep(THREAD_MEDIUM_SLEEP)
+            time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)
 
     def shutdown(self):
         """Handle any mturk client shutdown cleanup."""
@@ -729,7 +784,7 @@ class MTurkManager():
         for assignment_id in self.assignment_to_onboard_thread:
             self.assignment_to_onboard_thread[assignment_id].join()
         self._save_disconnects()
-        delete_server(self.server_task_name)
+        server_utils.delete_server(self.server_task_name)
 
     ### MTurk Agent Interaction Functions ###
 
@@ -777,7 +832,7 @@ class MTurkManager():
         # Force messages to have a unique ID
         if 'message_id' not in data:
             data['message_id'] = str(uuid.uuid4())
-        event_id = generate_event_id(receiver_id)
+        event_id = shared_utils.generate_event_id(receiver_id)
         packet = Packet(
             event_id,
             Packet.TYPE_MESSAGE,
@@ -787,6 +842,12 @@ class MTurkManager():
             data,
             blocking=blocking,
             ack_func=ack_func
+        )
+
+        shared_utils.print_and_log(
+            logging.INFO,
+            'Manager sending: {}'.format(packet),
+            should_print=self.opt['verbose']
         )
         # Push outgoing message to the message thread to be able to resend
         # on a reconnect event
@@ -801,7 +862,7 @@ class MTurkManager():
         update conversation state
         """
         data['type'] = data_model.MESSAGE_TYPE_COMMAND
-        event_id = generate_event_id(receiver_id)
+        event_id = shared_utils.generate_event_id(receiver_id)
         packet = Packet(
             event_id,
             Packet.TYPE_MESSAGE,
@@ -838,7 +899,7 @@ class MTurkManager():
 
     def get_agent_work_status(self, assignment_id):
         """Get the current status of an assignment's work"""
-        client = get_mturk_client(self.is_sandbox)
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
         try:
             response = client.get_assignment(AssignmentId=assignment_id)
             return response['Assignment']['AssignmentStatus']
@@ -853,8 +914,9 @@ class MTurkManager():
         """Handle creation for a specific number of hits/assignments
         Put created HIT ids into the hit_id_list
         """
-        print_and_log('Creating {} hits...'.format(num_hits), False)
-        hit_type_id = create_hit_type(
+        shared_utils.print_and_log(logging.INFO,
+                                   'Creating {} hits...'.format(num_hits))
+        hit_type_id = mturk_utils.create_hit_type(
             hit_title=self.opt['hit_title'],
             hit_description='{} (ID: {})'.format(self.opt['hit_description'],
                                                  self.task_group_id),
@@ -868,13 +930,13 @@ class MTurkManager():
             self.server_url,
             self.task_group_id
         )
-        print_and_log(mturk_chat_url, False)
+        shared_utils.print_and_log(logging.INFO, mturk_chat_url)
         mturk_page_url = None
 
         if self.opt['unique_worker'] == True:
             # Use a single hit with many assignments to allow
             # workers to only work on the task once
-            mturk_page_url, hit_id = create_hit_with_hit_type(
+            mturk_page_url, hit_id = mturk_utils.create_hit_with_hit_type(
                 page_url=mturk_chat_url,
                 hit_type_id=hit_type_id,
                 num_assignments=num_hits,
@@ -885,7 +947,7 @@ class MTurkManager():
             # Create unique hits, allowing one worker to be able to handle many
             # tasks without needing to be unique
             for i in range(num_hits):
-                mturk_page_url, hit_id = create_hit_with_hit_type(
+                mturk_page_url, hit_id = mturk_utils.create_hit_with_hit_type(
                     page_url=mturk_chat_url,
                     hit_type_id=hit_type_id,
                     num_assignments=1,
@@ -896,45 +958,53 @@ class MTurkManager():
 
     def create_hits(self):
         """Create hits based on the managers current config, return hit url"""
-        print_and_log('Creating HITs...')
+        shared_utils.print_and_log(logging.INFO, 'Creating HITs...', True)
 
         mturk_page_url = self.create_additional_hits(
             num_hits=self.required_hits
         )
 
-        print_and_log('Link to HIT: {}\n'.format(mturk_page_url))
-        print_and_log('Waiting for Turkers to respond... (Please don\'t close'
-            ' your laptop or put your computer into sleep or standby mode.)\n')
+        shared_utils.print_and_log(logging.INFO,
+                                   'Link to HIT: {}\n'.format(mturk_page_url),
+                                   should_print=True)
+        shared_utils.print_and_log(
+            logging.INFO,
+            'Waiting for Turkers to respond... (Please don\'t close'
+            ' your laptop or put your computer into sleep or standby mode.)\n',
+            should_print=True
+        )
         return mturk_page_url
 
     def get_hit(self, hit_id):
         """Get hit from mturk by hit_id"""
-        client = get_mturk_client(self.is_sandbox)
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
         return client.get_hit(HITId=hit_id)
 
     def get_assignment(self, assignment_id):
         """Gets assignment from mturk by assignment_id. Only works if the
         assignment is in a completed state
         """
-        client = get_mturk_client(self.is_sandbox)
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
         return client.get_assignment(AssignmentId=assignment_id)
 
     def expire_all_unassigned_hits(self):
         """Move through the whole hit_id list and attempt to expire the
         HITs, though this only immediately expires those that aren't assigned.
         """
-        print_and_log("Expiring all unassigned HITs...")
+        shared_utils.print_and_log(logging.INFO,
+                                   'Expiring all unassigned HITs...',
+                                   should_print=not self.is_test)
         for hit_id in self.hit_id_list:
-            expire_hit(self.is_sandbox, hit_id)
+            mturk_utils.expire_hit(self.is_sandbox, hit_id)
 
     def approve_work(self, assignment_id):
         """approve work for a given assignment through the mturk client"""
-        client = get_mturk_client(self.is_sandbox)
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
         client.approve_assignment(AssignmentId=assignment_id)
 
     def reject_work(self, assignment_id, reason):
         """reject work for a given assignment through the mturk client"""
-        client = get_mturk_client(self.is_sandbox)
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
         client.reject_assignment(
             AssignmentId=assignment_id,
             RequesterFeedback=reason
@@ -942,7 +1012,7 @@ class MTurkManager():
 
     def block_worker(self, worker_id, reason):
         """Block a worker by id using the mturk client, passes reason along"""
-        client = get_mturk_client(self.is_sandbox)
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
         client.create_worker_block(WorkerId=worker_id, Reason=reason)
 
     def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason,
@@ -950,16 +1020,20 @@ class MTurkManager():
         """Handles paying bonus to a turker, fails for insufficient funds.
         Returns True on success and False on failure
         """
-        total_cost = calculate_mturk_cost(
+        total_cost = mturk_utils.calculate_mturk_cost(
             payment_opt={'type': 'bonus', 'amount': bonus_amount}
         )
-        if not check_mturk_balance(balance_needed=total_cost,
-                                   is_sandbox=self.is_sandbox):
-            print_and_log('Cannot pay bonus. Reason: Insufficient funds'
-                          ' in your MTurk account.')
+        if not mturk_utils.check_mturk_balance(balance_needed=total_cost,
+                                               is_sandbox=self.is_sandbox):
+            shared_utils.print_and_log(
+                logging.WARN,
+                'Cannot pay bonus. Reason: Insufficient '
+                'funds in your MTurk account.',
+                should_print=True
+            )
             return False
 
-        client = get_mturk_client(self.is_sandbox)
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
         # unique_request_token may be useful for handling future network errors
         client.send_bonus(
             WorkerId=worker_id,
@@ -968,15 +1042,18 @@ class MTurkManager():
             Reason=reason,
             UniqueRequestToken=unique_request_token
         )
-        print_and_log('Paid ${} bonus to WorkerId: {}'.format(
-            bonus_amount,
-            worker_id
-        ))
+        shared_utils.print_and_log(
+            logging.INFO,
+            'Paid ${} bonus to WorkerId: {}'.format(
+                bonus_amount,
+                worker_id
+            )
+        )
         return True
 
     def email_worker(self, worker_id, subject, message_text):
         """Send an email to a worker through the mturk client"""
-        client = get_mturk_client(self.is_sandbox)
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
         response = client.notify_workers(
             Subject=subject,
             MessageText=message_text,
