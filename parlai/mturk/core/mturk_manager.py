@@ -51,6 +51,7 @@ class MTurkManager():
         """
         self.opt = opt
         self.server_url = None
+        self.topic_arn = None
         self.port = 443
         self.task_group_id = None
         self.run_id = None
@@ -665,6 +666,11 @@ class MTurkManager():
         self.run_id = str(int(time.time()))
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
         self._init_state()
+        self.topic_arn = mturk_utils.setup_sns_topic(
+            self.server_task_name,
+            self.server_url,
+            self.task_group_id
+        )
 
     def set_onboard_function(self, onboard_function):
         self.onboard_function = onboard_function
@@ -777,14 +783,19 @@ class MTurkManager():
     def shutdown(self):
         """Handle any mturk client shutdown cleanup."""
         # Ensure all threads are cleaned and state and HITs are handled
-        self.expire_all_unassigned_hits()
-        self._expire_onboarding_pool()
-        self._expire_worker_pool()
-        self.socket_manager.close_all_channels()
-        for assignment_id in self.assignment_to_onboard_thread:
-            self.assignment_to_onboard_thread[assignment_id].join()
-        self._save_disconnects()
-        server_utils.delete_server(self.server_task_name)
+        try:
+            self.expire_all_unassigned_hits()
+            self._expire_onboarding_pool()
+            self._expire_worker_pool()
+            self.socket_manager.close_all_channels()
+            for assignment_id in self.assignment_to_onboard_thread:
+                self.assignment_to_onboard_thread[assignment_id].join()
+        except:
+            pass
+        finally:
+            server_utils.delete_server(self.server_task_name)
+            mturk_utils.delete_sns_topic(self.topic_arn)
+            self._save_disconnects()
 
     ### MTurk Agent Interaction Functions ###
 
@@ -932,6 +943,12 @@ class MTurkManager():
         )
         shared_utils.print_and_log(logging.INFO, mturk_chat_url)
         mturk_page_url = None
+
+        mturk_utils.subscribe_to_hits(
+            hit_type_id,
+            self.is_sandbox,
+            self.topic_arn
+        )
 
         if self.opt['unique_worker'] == True:
             # Use a single hit with many assignments to allow

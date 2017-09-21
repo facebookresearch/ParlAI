@@ -307,3 +307,72 @@ def expire_hit(is_sandbox, hit_id):
     # Update expiration to a time in the past, the HIT expires instantly
     past_time = datetime(2015, 1, 1)
     client.update_expiration_for_hit(HITId=hit_id, ExpireAt=past_time)
+
+def setup_sns_topic(task_name, server_url, task_group_id):
+    # Create the topic and subscribe to it so that our server receives notifs
+    client = boto3.client('sns', region_name='us-east-1',)
+    response = client.create_topic(Name=task_name)
+    arn = response['TopicArn']
+    topic_sub_url = \
+        '{}/sns_posts?task_group_id={}'.format(server_url, task_group_id)
+    client.subscribe(TopicArn=arn, Protocol='https', Endpoint=topic_sub_url)
+    response = client.get_topic_attributes(
+        TopicArn=arn
+    )
+    print(response)
+    policy_json = '''{{
+    "Version": "2008-10-17",
+    "Id": "{}/MTurkOnlyPolicy",
+    "Statement": [
+        {{
+            "Sid": "MTurkOnlyPolicy",
+            "Effect": "Allow",
+            "Principal": {{
+                "Service": "mturk-requester.amazonaws.com"
+            }},
+            "Action": "SNS:Publish",
+            "Resource": "{}"
+        }}
+    ]}}'''.format(arn,arn)
+    print(policy_json)
+    client.set_topic_attributes(
+        TopicArn=arn,
+        AttributeName='Policy',
+        AttributeValue=policy_json
+    )
+    return arn
+
+def subscribe_to_hits(hit_type_id, is_sandbox, sns_arn):
+    # Get the mturk client and create notifications for our hits
+    client = get_mturk_client(is_sandbox)
+    response = client.update_notification_settings(
+        HITTypeId=hit_type_id,
+        Notification={
+            'Destination': sns_arn,
+            'Transport': 'SNS',
+            'Version': '2006-05-05',
+            'EventTypes': ['AssignmentAbandoned', 'AssignmentReturned',
+                           'AssignmentSubmitted']
+        },
+        Active=True
+    )
+    print("subscribed to hits!")
+    print(response)
+
+def send_test_notif(topic_arn, event_type):
+    client = get_mturk_client(True)
+    response = client.send_test_event_notification(
+        Notification={
+            'Destination': topic_arn,
+            'Transport': 'SNS',
+            'Version': '2006-05-05',
+            'EventTypes': ['AssignmentAbandoned', 'AssignmentReturned',
+                           'AssignmentSubmitted']
+        },
+        TestEventType=event_type
+    )
+    print(response)
+
+def delete_sns_topic(topic_arn):
+    client = boto3.client('sns', region_name='us-east-1',)
+    client.delete_topic(TopicArn=topic_arn)
