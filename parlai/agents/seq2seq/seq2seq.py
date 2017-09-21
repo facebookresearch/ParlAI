@@ -144,6 +144,7 @@ class Seq2seqAgent(Agent):
                                    padding_idx=self.NULL_IDX,
                                    scale_grad_by_freq=True)
             self.lt2enc = nn.Linear(emb, hsz)
+            self.lt2dec = nn.Linear(emb, hsz)
             # encoder captures the input text
             enc_class = Seq2seqAgent.ENC_OPTS[opt['encoder']]
             self.encoder = enc_class(hsz, hsz, opt['numlayers'])
@@ -177,6 +178,7 @@ class Seq2seqAgent(Agent):
             self.optims = {
                 'lt': optim_class(self.lt.parameters(), lr=lr),
                 'lt2enc': optim_class(self.lt2enc.parameters(), lr=lr),
+                'lt2dec': optim_class(self.lt2dec.parameters(), lr=lr),
                 'encoder': optim_class(self.encoder.parameters(), lr=lr),
                 'decoder': optim_class(self.decoder.parameters(), lr=lr),
                 'h2o': optim_class(self.h2o.parameters(), lr=lr),
@@ -232,6 +234,7 @@ class Seq2seqAgent(Agent):
         self.criterion.cuda()
         self.lt.cuda()
         self.lt2enc.cuda()
+        self.lt2dec.cuda()
         self.encoder.cuda()
         self.decoder.cuda()
         self.h2o.cuda()
@@ -626,6 +629,7 @@ class Seq2seqAgent(Agent):
             model = {}
             model['lt'] = self.lt.state_dict()
             model['lt2enc'] = self.lt2enc.state_dict()
+            model['lt2dec'] = self.lt2dec.state_dict()
             model['encoder'] = self.encoder.state_dict()
             model['decoder'] = self.decoder.state_dict()
             model['h2o'] = self.h2o.state_dict()
@@ -655,6 +659,7 @@ class Seq2seqAgent(Agent):
         """Set the state dicts of the modules from saved states."""
         self.lt.load_state_dict(states['lt'])
         self.lt2enc.load_state_dict(states['lt2enc'])
+        self.lt2dec.load_state_dict(states['lt2dec'])
         self.encoder.load_state_dict(states['encoder'])
         self.decoder.load_state_dict(states['decoder'])
         self.h2o.load_state_dict(states['h2o'])
