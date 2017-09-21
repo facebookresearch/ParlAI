@@ -259,7 +259,7 @@ task_list = [
         "id": "WMT",
         "display_name": "WMT",
         "task": "wmt",
-        "tags": [ "All"],
-        "description": "A machine translation dataset, currently only includes en_de."
+        "tags": [ "All", "MT" ],
+        "description": "Workshop on Machine Translation task, currently only includes en_de."
     }
 ]
