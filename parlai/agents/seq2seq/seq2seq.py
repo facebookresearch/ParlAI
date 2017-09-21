@@ -197,8 +197,8 @@ class Seq2seqAgent(Agent):
         Print out each added key and each overriden key.
         Only override args specific to the model.
         """
-        model_args = {'hiddensize', 'numlayers', 'optimizer', 'encoder',
-                      'decoder'}
+        model_args = {'hiddensize', 'embeddingsize', 'numlayers', 'optimizer',
+                      'encoder', 'decoder'}
         for k, v in new_opt.items():
             if k not in model_args:
                 # skip non-model args
@@ -625,6 +625,7 @@ class Seq2seqAgent(Agent):
         if path and hasattr(self, 'lt'):
             model = {}
             model['lt'] = self.lt.state_dict()
+            model['lt2enc'] = self.lt2enc.state_dict()
             model['encoder'] = self.encoder.state_dict()
             model['decoder'] = self.decoder.state_dict()
             model['h2o'] = self.h2o.state_dict()
@@ -653,6 +654,7 @@ class Seq2seqAgent(Agent):
     def set_states(self, states):
         """Set the state dicts of the modules from saved states."""
         self.lt.load_state_dict(states['lt'])
+        self.lt2enc.load_state_dict(states['lt2enc'])
         self.encoder.load_state_dict(states['encoder'])
         self.decoder.load_state_dict(states['decoder'])
         self.h2o.load_state_dict(states['h2o'])
