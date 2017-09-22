@@ -28,6 +28,16 @@ def _path(task, opt):
     return datafile, cands_datafile
 
 
+# The knowledge base of facts that can be used to answer questions.
+class KBTeacher(FbDialogTeacher):
+    def __init__(self, opt, shared=None):
+        build(opt)
+        opt['datafile'] = os.path.join(opt['datapath'], 'dialog-bAbI-plus',
+                                       'dialog-bAbI-plus-tasks',
+                                       'dialog-babi-kb-all.txt')
+        super().__init__(opt, shared)
+
+
 # Single task.
 class TaskTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):

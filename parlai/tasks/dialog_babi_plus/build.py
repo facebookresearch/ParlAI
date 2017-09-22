@@ -8,7 +8,7 @@ def build(opt):
     fname = "dialog-bAbI-plus.zip"
     version = None
 
-    if not build_data.built(os.path.join(dpath, "dialog-bAbI-plus"), version_string=version):
+    if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files.
