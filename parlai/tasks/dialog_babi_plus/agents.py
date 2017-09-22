@@ -43,8 +43,9 @@ class KBTeacher(FbDialogTeacher):
 
 
 # Single task.
-class TaskTeacher(FbDialogTeacher):
+class DefaultTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
-        paths = _path(opt['task'].split(':')[2], opt)
+        default_task_id = 1
+        paths = _path(default_task_id, opt)
         opt['datafile'], opt['cands_datafile'] = paths
         super().__init__(opt, shared)
