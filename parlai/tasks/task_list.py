@@ -67,6 +67,13 @@ task_list = [
         "description": "Simulated dialogs of restaurant booking, from Bordes et al. '16. Link: https://arxiv.org/abs/1605.07683"
     },
     {
+        "id": "dialog-bAbI-plus",
+        "display_name": "Dialog bAbI+",
+        "task": "dialog_babi_plus",
+        "tags": ["All", "Goal"],
+        "description": "bAbI+ is an extension of the bAbI Task 1 dialogues with everyday incremental dialogue phenomena (hesitations, restarts, and corrections) which model the disfluencies and communication problems in everyday spoken interaction in real-world environments. See https://www.researchgate.net/publication/319128941_Challenging_Neural_Dialogue_Models_with_Natural_Data_Memory_Networks_Fail_on_Incremental_Phenomena, http://aclweb.org/anthology/D17-1235"
+    },
+    {
         "id": "FVQA",
         "display_name": "FVQA",
         "task": "fvqa",
@@ -254,5 +261,12 @@ task_list = [
         "task": "clevr",
         "tags": [ "All",  "Visual" ],
         "description": "A visual reasoning dataset that tests abilities such as attribute identification, counting, comparison, spatial relationships, and logical operations. From Johnson et al. '16. Link: https://arxiv.org/abs/1612.06890"
+    },
+    {
+        "id": "WMT",
+        "display_name": "WMT",
+        "task": "wmt",
+        "tags": [ "All", "MT" ],
+        "description": "Workshop on Machine Translation task, currently only includes en_de."
     }
 ]

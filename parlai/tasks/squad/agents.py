@@ -54,7 +54,7 @@ class HandwrittenTeacher(Teacher):
         self.episode_idx = self.data_offset - self.step_size
         self.episode_done = True
         self.epochDone = False
-        if not self.random and self.data_offset >= self.data.num_episodes():
+        if not self.random and self.data_offset >= len(self.examples):
             # could have bigger batchsize then episodes... so nothing to do
             self.epochDone = True
 

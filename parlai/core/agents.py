@@ -345,9 +345,13 @@ def get_task_module(taskname):
         sp[1] = sp[1][0].upper() + sp[1][1:]
         teacher = sp[1]
         if '.' not in sp[0] and 'Teacher' not in teacher:
-            # Append "Teacher" to class name by default if
-            # a complete path is not given.
-            teacher += "Teacher"
+            # Reformat from underscore to CamelCase and append "Teacher" to
+            # class name by default if a complete path is not given.
+            words = teacher.split('_')
+            teacher_name = ''
+            for w in words:
+                teacher_name += ( w[0].upper() + w[1:])
+            teacher = teacher_name + "Teacher"
     else:
         teacher = "DefaultTeacher"
     my_module = importlib.import_module(module_name)
