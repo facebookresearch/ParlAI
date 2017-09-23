@@ -36,9 +36,13 @@ class Seq2seqAgent(Agent):
                            help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
                            help='dropout rate')
-        agent.add_argument('-att', '--attention', type=int, default=0,
-                           help='if greater than 0, use attention of specified'
-                                ' length while decoding')
+        agent.add_argument('-att', '--attention',
+                           choices=['none', 'last-n', 'final', 'max-pool'],
+                           default='none',
+                           help='type of attention to use while decoding')
+        agent.add_argument('-attlen', '--attentionlength', type=int, default=1,
+                           help='number of last states to look at if using '
+                           'attention')
         agent.add_argument('--no-cuda', action='store_true', default=False,
                            help='disable GPUs even if available')
         agent.add_argument('--gpu', type=int, default=-1,
@@ -63,6 +67,9 @@ class Seq2seqAgent(Agent):
                            help='Choose between different decoder modules. '
                                 'Default "same" uses same class as encoder, '
                                 'while "shared" also uses the same weights.')
+        agent.add_argument('-bi', '--bidirectional', type='bool', default=False,
+                            help='whether to encode the context with a '
+                            'bidirectional rnn')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -104,9 +111,12 @@ class Seq2seqAgent(Agent):
             self.longest_label = 1
             self.truncate = opt['truncate']
             self.attention = opt['attention']
+            self.attention_length = opt['attentionlength']
+            self.bidirectional = opt['bidirectional']
+            self.num_directions = 2 if self.bidirectional else 1
 
             # set up tensors
-            self.zeros = torch.zeros(self.num_layers, 1, hsz)
+            self.zeros = torch.zeros(self.num_layers * self.num_directions, 1, hsz)
             self.xs = torch.LongTensor(1, 1)
             self.ys = torch.LongTensor(1, 1)
             self.cands = torch.LongTensor(1, 1, 1)
@@ -122,7 +132,9 @@ class Seq2seqAgent(Agent):
             opt_to_class = {'rnn': nn.RNN, 'gru': nn.GRU, 'lstm': nn.LSTM}
             # encoder captures the input text
             enc_class = opt_to_class[opt['encoder']]
-            self.encoder = enc_class(hsz, hsz, opt['numlayers'])
+            self.encoder = enc_class(hsz, hsz, opt['numlayers'],
+                                    bidirectional=self.bidirectional)
+
             # decoder produces our output states
             if opt['decoder'] == 'shared':
                 self.decoder = self.encoder
@@ -137,14 +149,14 @@ class Seq2seqAgent(Agent):
             self.dropout = nn.Dropout(opt['dropout'])
 
             self.use_attention = False
-            # if attention is greater than 0, set up additional members
-            if self.attention > 0:
+            # if attention is not 'none', set up additional members
+            if self.attention != 'none':
                 self.use_attention = True
-                self.max_length = self.attention
+                self.max_length = self.attention_length
                 # combines input and previous hidden output layer
                 self.attn = nn.Linear(hsz * 2, self.max_length)
                 # combines attention weights with encoder outputs
-                self.attn_combine = nn.Linear(hsz * 2, hsz)
+                self.attn_combine = nn.Linear(hsz * (1 + self.num_directions), hsz)
 
             # set up optims for each module
             lr = opt['learningrate']
@@ -260,7 +272,8 @@ class Seq2seqAgent(Agent):
         # first encode context
         xes = self.lt(xs).transpose(0, 1)
         if self.zeros.size(1) != batchsize:
-            self.zeros.resize_(self.num_layers, batchsize, self.hidden_size).fill_(0)
+            self.zeros.resize_(self.num_layers * self.num_directions, batchsize,
+                               self.hidden_size).fill_(0)
         h0 = Variable(self.zeros)
         if type(self.encoder) == nn.LSTM:
             encoder_output, hidden = self.encoder(xes, (h0, h0))
@@ -273,7 +286,10 @@ class Seq2seqAgent(Agent):
         encoder_output = encoder_output.transpose(0, 1)
 
         if self.use_attention:
-            if encoder_output.size(1) > self.max_length:
+            # Element-wise maximum over the encoder_outputs
+            if self.attention == "max-pool":
+                encoder_output, _ = torch.max(encoder_output, 1, keepdim=True)
+            elif encoder_output.size(1) > self.max_length:
                 offset = encoder_output.size(1) - self.max_length
                 encoder_output = encoder_output.narrow(1, offset, self.max_length)
 
@@ -282,8 +298,10 @@ class Seq2seqAgent(Agent):
 
     def _apply_attention(self, xes, encoder_output, encoder_hidden):
         """Apply attention to encoder hidden layer."""
-        attn_weights = F.softmax(self.attn(torch.cat((xes[0], encoder_hidden[-1]), 1)))
+        if type(self.encoder) == nn.LSTM:
+            encoder_hidden = encoder_hidden[0]
 
+        attn_weights = F.softmax(self.attn(torch.cat((xes[0], encoder_hidden[-1]), 1)))
         if attn_weights.size(1) > encoder_output.size(1):
             attn_weights = attn_weights.narrow(1, 0, encoder_output.size(1) )
 
