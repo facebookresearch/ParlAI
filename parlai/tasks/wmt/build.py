@@ -31,10 +31,12 @@ def build(opt):
             build_data.download(en_url, dpath, en_fname)
             build_data.download(de_url, dpath, de_fname)
             with open(os.path.join(dpath, en_fname), 'r') as f:
-                en = [l[:-1] for l in f]
+                # We replace '##AT##-##AT##' as a workaround in order to use the
+                # nltk tokenizer specified by DictionaryAgent
+                en = [l[:-1].replace("##AT##-##AT##", "__AT__") for l in f]
 
             with open(os.path.join(dpath, de_fname), 'r') as f:
-                de = [l[:-1] for l in f]
+                de = [l[:-1].replace("##AT##-##AT##", "__AT__") for l in f]
 
             with open(os.path.join(dpath, w_fname), 'w') as f:
               for de_sent,en_sent in zip(de,en):
