@@ -14,6 +14,7 @@ import torch.nn.functional as F
 import torch
 import os
 import random
+from parlai.agents.seq2seq import vcrnn
 
 
 class Seq2seqAgent(Agent):
@@ -35,7 +36,7 @@ class Seq2seqAgent(Agent):
         'sgd': optim.SGD,
     }
 
-    ENC_OPTS = {'rnn': nn.RNN, 'gru': nn.GRU, 'lstm': nn.LSTM}
+    ENC_OPTS = {'rnn': nn.RNN, 'gru': nn.GRU, 'lstm': nn.LSTM, 'vcrnn': vcrnn.VCRNN}
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -340,6 +341,9 @@ class Seq2seqAgent(Agent):
         self.zero_grad()
         loss = 0
 
+        if hasattr(self.encoder, 'get_last_forward_extra_loss'):
+            loss += self.encoder.get_last_forward_extra_loss()
+
         output_lines = [[] for _ in range(batchsize)]
 
         # keep track of longest label we've ever seen
@@ -348,6 +352,10 @@ class Seq2seqAgent(Agent):
             output = self._apply_attention(xes, encoder_output, hidden) if self.use_attention else xes
 
             output, hidden = self.decoder(output, hidden)
+
+            if hasattr(self.decoder, 'get_last_forward_extra_loss'):
+                loss += self.decoder.get_last_forward_extra_loss()
+
             preds, scores = self.hidden_to_idx(output, dropout=True)
             y = ys.select(1, i)
             loss += self.criterion(scores, y)
@@ -675,3 +683,10 @@ class Seq2seqAgent(Agent):
         for k, v in states['optims'].items():
             self.optims[k].load_state_dict(v)
         self.longest_label = states['longest_label']
+
+    def new_training_epoch(self, epoch):
+        if hasattr(self.encoder, 'new_training_epoch'):
+            self.encoder.new_training_epoch(epoch)
+        if hasattr(self.decoder, 'new_training_epoch'):
+            self.decoder.new_training_epoch(epoch)
+

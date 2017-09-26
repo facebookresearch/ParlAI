@@ -11,7 +11,7 @@ import math
 class VCRNN(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers=1, bias=True,
                  batch_first=False, nonlinearity="tanh", initial_lambda = 0.1,
-                 epsilon = 1e-5):
+                 epsilon = 1e-5, target_m = 0.4, m_loss_weight = 0.3):
         super(VCRNN, self).__init__()
         assert num_layers == 1, 'VCRNN\'s behavior is only defined with single hidden layer'
 
@@ -23,6 +23,12 @@ class VCRNN(nn.Module):
         self.nonlinearity = nonlinearity
         self.initial_lambda = self.lamda = initial_lambda
         self.epsilon = epsilon
+
+        # m regularization loss
+        self.l1_criterion = nn.L1Loss()
+        self.register_buffer('target_m', torch.FloatTensor(1, 1).fill_(target_m))
+        self.m_loss_weight = m_loss_weight
+        self.last_forward_m_loss = None
 
         if nonlinearity == "tanh":
             self.base_unit = rnn.RNNTanhCell
@@ -81,6 +87,10 @@ class VCRNN(nn.Module):
         soft_mask_clone[soft_mask < self.epsilon] = 0
         return soft_mask_clone
 
+    def get_last_forward_extra_loss(self):
+        assert self.last_forward_m_loss is not None
+        return self.last_forward_m_loss
+
     def cell_forward(self, input, hidden_ms, input_indices, hidden_indices, l):
         m_model, *layer_weight = self.layer_weights[l]
         h_prev, ms = hidden_ms
@@ -118,45 +128,30 @@ class VCRNN(nn.Module):
             max_batch_size = input.size(1)
             net = rnn.Recurrent(self.cell_forward)
 
-        if self.training and type(hx) is tuple:
-            prev_ms = hx[1]
-            # transpose previous ms to #batch first dim
-            if not self.batch_first:
-                prev_ms = prev_ms.transpose(0, 1)
-        else:
-            prev_ms = None
-
         if hx is None:
             hx = Variable(input.data.new(self.num_layers, max_batch_size, self.hidden_size).zero_(), requires_grad=False)
-        if type(hx) is not tuple:
-            ms = None
-        else:
-            hx, ms = hx
 
         indices = Variable(self.input_indices), Variable(self.hidden_indices)
 
         next_hidden = []
-        layer_ms = []
+        ms = []
 
         for l in range(self.num_layers):
 
             (hidden, m), output = net(input, (hx[l], []), indices + (l,))
             next_hidden.append(hidden)
-            layer_ms.append(torch.cat(m, 1).transpose(0, 1))
+            ms.append(torch.cat(m, 1).transpose(0, 1))
 
             input = output
 
         next_hidden = torch.stack(next_hidden, 0)
-        layer_ms = torch.stack(layer_ms)
+        ms = torch.stack(ms)
 
         if self.training:
-            if ms is not None:
-                ms = torch.cat((ms, layer_ms), 1)
-            else:
-                ms = layer_ms
+            self.last_forward_m_loss = self.l1_criterion(ms, Variable(self.target_m.expand_as(ms))) * self.m_loss_weight
+        else:
+            self.last_forward_m_loss = None
 
-            if self.batch_first:
-                ms = ms.transpose(1, 2)
         # transpose back if necessary
         if self.batch_first:
             output = output.transpose(0, 1)
@@ -164,10 +159,7 @@ class VCRNN(nn.Module):
         if is_packed:
             output = PackedSequence(output, batch_sizes)
 
-        if self.training:
-            return output, (next_hidden, ms)
-        else:
-            return output, next_hidden
+        return output, next_hidden
 
     def __repr__(self):
         s = '{name}({input_size}, {hidden_size}, {num_layers}'
@@ -185,5 +177,8 @@ class VCRNN(nn.Module):
             s += ', epsilon={epsilon}'
         s += ')'
         return s.format(name=self.__class__.__name__, **self.__dict__)
+
+    def new_training_epoch(self, epoch):
+        self.lamda = min(self.lamda + 0.1, 1)
 
 
