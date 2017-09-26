@@ -338,10 +338,28 @@ class Seq2seqAgent(Agent):
 
         # keep track of longest label we've ever seen
         self.longest_label = max(self.longest_label, ys.size(1))
-        for i in range(ys.size(1)):
-            output = self._apply_attention(xes, encoder_output, hidden) if self.use_attention else xes
+        if self.use_attention:
+            # using attention, we need to go one token at a time (TODO: no?)
+            for i in range(ys.size(1)):
+                output = self._apply_attention(xes, encoder_output, hidden)
+                output, hidden = self.decoder(output, hidden)
+                preds, scores = self.hidden_to_idx(output, dropout=True)
+                y = ys.select(1, i)
+                loss += self.criterion(scores, y)
+                # use the true token as the next input instead of predicted
+                # this produces a biased prediction but better training
+                xes = self.lt(y).unsqueeze(0)
+                for b in range(batchsize):
+                    # convert the output scores to tokens
+                    token = self.v2t([preds.data[b]])
+                    output_lines[b].append(token)
+        else:
+            # otherwise we can just force the entire sequence at once
+            y_in = ys.narrow(1, 0, ys.size(1) - 1)
+            xes = torch.cat([xes, self.lt(y_in).transpose(0, 1)])
 
-            output, hidden = self.decoder(output, hidden)
+            output, hidden = self.decoder(xes, hidden)
+            import pdb; pdb.set_trace()
             preds, scores = self.hidden_to_idx(output, dropout=True)
             y = ys.select(1, i)
             loss += self.criterion(scores, y)
