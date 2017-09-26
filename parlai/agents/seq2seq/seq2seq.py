@@ -287,6 +287,7 @@ class Seq2seqAgent(Agent):
 
     def _encode(self, xs, dropout=False):
         """Call encoder and return output and hidden states."""
+        # can be in either train or eval mode
         batchsize = len(xs)
 
         # first encode context
@@ -334,6 +335,7 @@ class Seq2seqAgent(Agent):
 
 
     def _decode_and_train(self, batchsize, xes, ys, encoder_output, hidden):
+        # in train mode
         # update the model based on the labels
         self.zero_grad()
         loss = 0
@@ -368,6 +370,7 @@ class Seq2seqAgent(Agent):
         return output_lines
 
     def _decode_only(self, batchsize, xes, ys, encoder_output, hidden):
+        # in eval mode
         # just produce a prediction without training the model
         done = [False for _ in range(batchsize)]
         total_done = 0
@@ -404,6 +407,7 @@ class Seq2seqAgent(Agent):
         return output_lines
 
     def _score_candidates(self, cands, xe, encoder_output, hidden):
+        # in eval mode
         # score each candidate separately
 
         # cands are exs_with_cands x cands_per_ex x words_per_cand
@@ -465,6 +469,9 @@ class Seq2seqAgent(Agent):
         batchsize = len(xs)
         text_cand_inds = None
         is_training = ys is not None
+        # set RNNs to train/eval mode
+        self.encoder.train(is_training)
+        self.decoder.train(is_training)
         encoder_output, hidden = self._encode(xs, dropout=is_training)
 
         # next we use END as an input to kick off our decoder
@@ -476,10 +483,12 @@ class Seq2seqAgent(Agent):
         output_lines = None
 
         if is_training:
+            # in train mode
             output_lines = self._decode_and_train(batchsize, xes, ys,
                                                   encoder_output, hidden)
 
         else:
+            # in eval mode
             if cands is not None:
                 text_cand_inds = self._score_candidates(cands, xe,
                                                         encoder_output, hidden)
