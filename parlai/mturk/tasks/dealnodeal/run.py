@@ -10,6 +10,7 @@ from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.tasks.dealnodeal.worlds import \
     MTurkDealNoDealDialogWorld
 from parlai.agents.local_human.local_human import LocalHumanAgent
+from parlai.core.agents import create_agent
 from task_config import task_config
 import copy
 from itertools import product
@@ -17,21 +18,25 @@ from joblib import Parallel, delayed
 import threading
 
 """
-This task consists of one agent talking to an MTurk worker
+This task consists of one agent talking to an MTurk worker to negotiate a deal.
 """
 def main():
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
+    argparser.add_argument('--two_mturk_agents', dest='two_mturk_agents', action='store_true',
+                        help='data collection mode with converations between two MTurk agents')
+
     opt = argparser.parse_args()
     opt['task'] = 'dealnodeal'
     opt['datatype'] = 'valid'
     opt.update(task_config)
 
-    mturk_agent_1_id = 'mturk_agent_1'
-    mturk_agent_2_id = 'mturk_agent_2'
-    human_agent_1_id = 'human_1'
-    mturk_agent_ids = [mturk_agent_1_id] #, mturk_agent_2_id]
+    local_agent_1_id = 'local_1'
+    mturk_agent_ids = ['mturk_agent_1']
+    if opt['two_mturk_agents']:
+        mturk_agent_ids.append('mturk_agent_2')
+
     mturk_manager = MTurkManager(
         opt=opt,
         mturk_agent_ids = mturk_agent_ids
@@ -54,14 +59,23 @@ def main():
                 worker.id = mturk_agent_ids[index % len(mturk_agent_ids)]
 
         def run_conversation(mturk_manager, opt, workers):
-            # Create the local human agents
-            human_agent_1 = LocalHumanAgent(opt=None)
-            human_agent_1.id = human_agent_1_id
+            agents = workers[:]
+
+            # Create a local agent
+            if not opt['two_mturk_agents']:
+                if 'model' in opt:
+                    local_agent = create_agent(opt)
+                else:
+                    local_agent = LocalHumanAgent(opt=None)
+
+                local_agent.id = local_agent_1_id
+                agents.append(local_agent)
+
             opt["batchindex"] = mturk_manager.started_conversations
 
             world = MTurkDealNoDealDialogWorld(
                 opt=opt,
-                agents=[human_agent_1] + workers
+                agents=agents
             )
 
             while not world.episode_done():

@@ -56,6 +56,9 @@ var numberOfItemTypes;
 var your_selection = "";
 var their_selection = "";
 
+var image_path = "https://github.com/facebookresearch/end-to-end-negotiator/raw/master/src/images/";
+var image_names = ["book", "hat", "ball"];
+
 $("button#id_send_deal_button").hide();
 $("button#id_no_deal_button").hide();
 
@@ -93,7 +96,7 @@ function makeInput(items) {
         for (var i=0; i<4; i++) {
           string += '<td>';
             if (i < number) {
-              string += '<img width=75px src="./item' + item +'.png"></img>';
+              string += '<img width=75px src="' + image_path + '/' + image_names[item] + '.png"></img>';
             }
           string += '</td>';
         }

@@ -10,9 +10,7 @@ from parlai.tasks.dealnodeal.agents import NegotiationTeacher
 import random
 
 class MTurkDealNoDealDialogWorld(MTurkTaskWorld):
-    """Basic world where each agent gets a turn in a round-robin fashion,
-    receiving as input the actions of all other agents since that agent last
-    acted.
+    """World where two agents have a dialogue to negotiate a deal.
     """
     def __init__(self, opt, agents=None, shared=None):
         # Add passed in agents directly.
@@ -30,8 +28,7 @@ class MTurkDealNoDealDialogWorld(MTurkTaskWorld):
 
 
     def parley(self):
-        """For each agent, get an observation of the last action each of the
-        other agents took. Then take an action yourself.
+        """Alternate taking turns, until both agents have made a choice (indicated by a turn starting with <selection>)
         """
         if self.first_turn:
             self.num_negotiations += 1
