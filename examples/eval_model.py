@@ -14,6 +14,7 @@ or
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
+import build_dict
 
 import random
 
@@ -24,8 +25,16 @@ def main():
     parser = ParlaiParser(True, True)
     parser.add_argument('-n', '--num-examples', default=100000000)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
+    parser.add_argument('-dbf', '--dict-build-first', type='bool', default=True)
     parser.set_defaults(datatype='valid')
     opt = parser.parse_args()
+        
+    if opt['dict_build_first'] and 'dict_file' in opt:
+        if opt['dict_file'] is None and opt.get('model_file'):
+            opt['dict_file'] = opt['model_file'] + '.dict'
+        print("[ building dictionary first... ]")
+        build_dict.build_dict(opt)
+
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
