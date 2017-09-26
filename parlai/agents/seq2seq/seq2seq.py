@@ -279,6 +279,8 @@ class Seq2seqAgent(Agent):
         if not self.episode_done:
             # if the last example wasn't the end of an episode, then we need to
             # recall what was said in that example
+            self.context = '{context}{response}{start}{query}{end}'
+            self.context = self.context + self.lastResponse + self.START + observation['text']
             prev_dialogue = self.observation['text']
             observation['text'] = prev_dialogue + '\n' + observation['text']
         self.observation = observation
