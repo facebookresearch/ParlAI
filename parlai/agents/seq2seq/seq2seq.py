@@ -143,19 +143,17 @@ class Seq2seqAgent(Agent):
             self.lt = nn.Embedding(len(self.dict), emb,
                                    padding_idx=self.NULL_IDX,
                                    scale_grad_by_freq=True)
-            self.lt2enc = nn.Linear(emb, hsz)
-            self.lt2dec = nn.Linear(emb, hsz)
             # encoder captures the input text
             enc_class = Seq2seqAgent.ENC_OPTS[opt['encoder']]
-            self.encoder = enc_class(hsz, hsz, opt['numlayers'])
+            self.encoder = enc_class(emb, hsz, opt['numlayers'])
             # decoder produces our output states
             if opt['decoder'] == 'shared':
                 self.decoder = self.encoder
             elif opt['decoder'] == 'same':
-                self.decoder = enc_class(hsz, hsz, opt['numlayers'])
+                self.decoder = enc_class(emb, hsz, opt['numlayers'])
             else:
                 dec_class = Seq2seqAgent.ENC_OPTS[opt['decoder']]
-                self.decoder = dec_class(hsz, hsz, opt['numlayers'])
+                self.decoder = dec_class(emb, hsz, opt['numlayers'])
             # linear layer helps us produce outputs from final decoder state
             self.h2o = nn.Linear(hsz, len(self.dict))
             # droput on the linear layer helps us generalize
@@ -177,8 +175,6 @@ class Seq2seqAgent(Agent):
             optim_class = Seq2seqAgent.OPTIM_OPTS[opt['optimizer']]
             self.optims = {
                 'lt': optim_class(self.lt.parameters(), lr=lr),
-                'lt2enc': optim_class(self.lt2enc.parameters(), lr=lr),
-                'lt2dec': optim_class(self.lt2dec.parameters(), lr=lr),
                 'encoder': optim_class(self.encoder.parameters(), lr=lr),
                 'decoder': optim_class(self.decoder.parameters(), lr=lr),
                 'h2o': optim_class(self.h2o.parameters(), lr=lr),
@@ -233,8 +229,6 @@ class Seq2seqAgent(Agent):
         self.cand_lengths = self.cand_lengths.cuda(async=True)
         self.criterion.cuda()
         self.lt.cuda()
-        self.lt2enc.cuda()
-        self.lt2dec.cuda()
         self.encoder.cuda()
         self.decoder.cuda()
         self.h2o.cuda()
@@ -296,7 +290,7 @@ class Seq2seqAgent(Agent):
         if dropout:
             xes = self.dropout(xes)
         # project from emb_size to hidden_size dimensions
-        xes = self.lt2enc(xes).transpose(0, 1)
+        xes = xes.transpose(0, 1)
 
         if self.zeros.size(1) != batchsize:
             self.zeros.resize_(self.num_layers, batchsize, self.hidden_size).fill_(0)
@@ -353,7 +347,7 @@ class Seq2seqAgent(Agent):
             loss += self.criterion(scores, y)
             # use the true token as the next input instead of predicted
             # this produces a biased prediction but better training
-            xes = self.lt2dec(self.lt(y).unsqueeze(0))
+            xes = self.lt(y).unsqueeze(0)
             for b in range(batchsize):
                 # convert the output scores to tokens
                 token = self.v2t([preds.data[b]])
@@ -386,7 +380,7 @@ class Seq2seqAgent(Agent):
             output, hidden = self.decoder(output, hidden)
             preds, scores = self.hidden_to_idx(output, dropout=False)
 
-            xes = self.lt2dec(self.lt(preds.unsqueeze(0)))
+            xes = self.lt(preds.unsqueeze(0))
             max_len += 1
             for b in range(batchsize):
                 if not done[b]:
@@ -445,7 +439,7 @@ class Seq2seqAgent(Agent):
             cand_lengths += non_nulls.long()
             score_per_cand = torch.gather(scores, 1, cs.unsqueeze(1))
             cand_scores += score_per_cand.squeeze() * non_nulls.float()
-            cands_xes = self.lt2dec(self.lt(cs).unsqueeze(0))
+            cands_xes = self.lt(cs).unsqueeze(0)
 
         # set empty scores to -1, so when divided by 0 they become -inf
         cand_scores -= cand_lengths.eq(0).float()
@@ -471,7 +465,7 @@ class Seq2seqAgent(Agent):
 
         # next we use END as an input to kick off our decoder
         x = Variable(self.START_TENSOR)
-        xe = self.lt2dec(self.lt(x).unsqueeze(1))
+        xe = self.lt(x).unsqueeze(1)
         xes = xe.expand(xe.size(0), batchsize, xe.size(2))
 
         # list of output tokens for each example in the batch
@@ -630,8 +624,6 @@ class Seq2seqAgent(Agent):
         if path and hasattr(self, 'lt'):
             model = {}
             model['lt'] = self.lt.state_dict()
-            model['lt2enc'] = self.lt2enc.state_dict()
-            model['lt2dec'] = self.lt2dec.state_dict()
             model['encoder'] = self.encoder.state_dict()
             model['decoder'] = self.decoder.state_dict()
             model['h2o'] = self.h2o.state_dict()
@@ -660,8 +652,6 @@ class Seq2seqAgent(Agent):
     def set_states(self, states):
         """Set the state dicts of the modules from saved states."""
         self.lt.load_state_dict(states['lt'])
-        self.lt2enc.load_state_dict(states['lt2enc'])
-        self.lt2dec.load_state_dict(states['lt2dec'])
         self.encoder.load_state_dict(states['encoder'])
         self.decoder.load_state_dict(states['decoder'])
         self.h2o.load_state_dict(states['h2o'])
