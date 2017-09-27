@@ -141,7 +141,6 @@ app.post('/sns_posts', async function (req, res, next) {
   console.log(req);
   if (req.headers['x-amz-sns-message-type'] == 'SubscriptionConfirmation') {
     var content = JSON.parse(req.body);
-    console.log(content);
     var confirm_url = content.SubscribeURL;
     request(confirm_url, function (error, response, body) {
       if (!error && response.statusCode == 200) {
@@ -149,12 +148,33 @@ app.post('/sns_posts', async function (req, res, next) {
       }
     })
   } else {
-    console.log(req.query['task_group_id']);
     var task_group_id = req.query['task_group_id'];
     var world_id = '[World_' + task_group_id + ']';
     var content = JSON.parse(req.body);
     console.log(content);
-    _send_message(global_socket, world_id, 'new packet', content);
+    if (content['MessageId'] != '') {
+      var message_id = content['MessageId'];
+      var sender_id = 'AmazonMTurk';
+      var message = JSON.parse(content['Message']);
+      console.log(message);
+      var event_type = message['Events'][0]['EventType'];
+      var assignment_id = message['Events'][0]['AssignmentId'];
+      var data = {
+        text: event_type,
+        id: sender_id,
+        message_id: message_id
+      };
+      var msg = {
+        id: message_id,
+        type: 'message',
+        sender_id: sender_id,
+        assignment_id: assignment_id,
+        conversation_id: 'AmazonSNS',
+        receiver_id: world_id,
+        data: data
+      };
+      _send_message(global_socket, world_id, 'new packet', msg);
+    }
   }
 });
 

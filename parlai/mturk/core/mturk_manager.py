@@ -38,6 +38,12 @@ DISCONNECT_PERSIST_LENGTH = 60 * 24 * 7
 
 DISCONNECT_FILE_NAME = 'disconnects.pickle'
 
+AMAZON_SNS_NAME = 'AmazonMTurk'
+SNS_ASSIGN_ABANDONDED = 'AssignmentAbandoned'
+SNS_ASSIGN_SUBMITTED = 'AssignmentSubmitted'
+SNS_ASSIGN_RETURNED = 'AssignmentReturned'
+
+
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 
 class MTurkManager():
@@ -84,6 +90,7 @@ class MTurkManager():
         self.conv_to_agent = {}
         self.accepting_workers = True
         self._load_disconnects()
+        self.assignment_to_worker_id = {}
 
     def _init_logs(self):
         """Initialize logging settings from the opt"""
@@ -340,6 +347,7 @@ class MTurkManager():
             # First time this worker has connected under this assignment, init
             # new agent if we are still accepting workers
             if self.accepting_workers:
+                self.assignment_to_worker_id[assign_id] = worker_id
                 convs = curr_worker_state.active_conversation_count()
                 allowed_convs = self.opt['allowed_conversations']
                 if allowed_convs == 0 or convs < allowed_convs:
@@ -391,11 +399,34 @@ class MTurkManager():
                 data = agent.get_inactive_command_data()
                 self.send_command(worker_id, assign_id, data)
 
+    def _handle_mturk_message(self, pkt):
+        assignment_id = pkt.assignment_id
+        worker_id = self.assignment_to_worker_id[assignment_id]
+        mturk_event_type = pkt.data['text']
+        agent = self._get_agent(worker_id, assignment_id)
+        if agent is None:
+            return
+
+        if mturk_event_type == SNS_ASSIGN_RETURNED:
+            agent.hit_is_returned = True
+            # Treat as a socket_dead event
+            self._on_socket_dead(worker_id, assignment_id)
+        elif mturk_event_type == SNS_ASSIGN_ABANDONDED:
+            agent.set_hit_is_abandoned()
+            # Treat as a socket_dead event
+            self._on_socket_dead(worker_id, assignment_id)
+        elif mturk_event_type == SNS_ASSIGN_SUBMITTED:
+            # Socket dead already called, just mark as complete
+            agent.hit_is_complete = True
+
     def _on_new_message(self, pkt):
         """Put an incoming message onto the correct agent's message queue and
         add it to the proper message thread as long as the agent is active
         """
         worker_id = pkt.sender_id
+        if pkt.sender_id == AMAZON_SNS_NAME:
+            self._handle_mturk_message(pkt)
+            return
         assignment_id = pkt.assignment_id
         agent = self._get_agent(worker_id, assignment_id)
         if agent is None:

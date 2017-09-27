@@ -319,7 +319,6 @@ def setup_sns_topic(task_name, server_url, task_group_id):
     response = client.get_topic_attributes(
         TopicArn=arn
     )
-    print(response)
     policy_json = '''{{
     "Version": "2008-10-17",
     "Id": "{}/MTurkOnlyPolicy",
@@ -334,7 +333,6 @@ def setup_sns_topic(task_name, server_url, task_group_id):
             "Resource": "{}"
         }}
     ]}}'''.format(arn,arn)
-    print(policy_json)
     client.set_topic_attributes(
         TopicArn=arn,
         AttributeName='Policy',
@@ -356,8 +354,6 @@ def subscribe_to_hits(hit_type_id, is_sandbox, sns_arn):
         },
         Active=True
     )
-    print("subscribed to hits!")
-    print(response)
 
 def send_test_notif(topic_arn, event_type):
     client = get_mturk_client(True)
@@ -371,7 +367,6 @@ def send_test_notif(topic_arn, event_type):
         },
         TestEventType=event_type
     )
-    print(response)
 
 def delete_sns_topic(topic_arn):
     client = boto3.client('sns', region_name='us-east-1',)
