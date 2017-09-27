@@ -123,6 +123,7 @@ class DictionaryAgent(Agent):
         self.unk_token = opt['dict_unktoken']
         self.start_token = opt['dict_starttoken']
         self.max_ngram_size = opt['dict_max_ngram_size']
+        self.min_freq = opt['dict_minfreq']
 
         if shared:
             self.freq = shared.get('freq', {})
@@ -273,7 +274,11 @@ class DictionaryAgent(Agent):
                 # queue up removals since can't mutate dict during iteration
                 to_remove.append(token)
                 # other dicts can be modified as we go
+<<<<<<< HEAD
                 idx = self.tok2ind.pop(token)
+=======
+                idx = self.tok2inx.pop(token)
+>>>>>>> ba8fbe9ef6315d4e9eef89dea6cc80dae043a074
                 del self.ind2tok[idx]
         for token in to_remove:
             del self.freq[token]
