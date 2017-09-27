@@ -119,10 +119,11 @@ class MemnnAgent(Agent):
             # if the last example wasn't the end of an episode, then we need to
             # recall what was said in that example
             prev_dialogue = self.observation['text'] if self.observation is not None else ''
-            batch_idx = self.opt.get('batchindex', 0)
-            if self.answers[batch_idx] is not None:
-                prev_dialogue += '\n' + self.answers[batch_idx]
-                self.answers[batch_idx] = None
+            # batch_idx = self.opt.get('batchindex', 0)
+            # if self.answers[batch_idx] is not None:
+            #    prev_dialogue += '\n' + self.answers[batch_idx]
+            #    self.answers[batch_idx] = None
+            prev_dialogue = prev_dialogue + '__END__' + self.observation['labels'][0]
             observation['text'] = prev_dialogue + '\n' + observation['text']
         self.observation = observation
         self.episode_done = observation['episode_done']
