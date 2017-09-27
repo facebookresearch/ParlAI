@@ -281,7 +281,7 @@ class DictionaryAgent(Agent):
 
     def load(self, filename):
         """Load pre-existing dictionary in 'token[<TAB>count]' format.
-        Initialize counts from other dictionary, or 0 if they aren't included.
+        Initialize counts from other diCtionary, or 0 if they aren't included.
         """
         print('Dictionary: loading dictionary from {}'.format(
               filename))
