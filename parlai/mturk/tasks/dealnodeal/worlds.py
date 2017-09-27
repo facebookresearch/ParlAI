@@ -7,6 +7,9 @@ from parlai.mturk.core.worlds import MTurkTaskWorld
 from parlai.core.worlds import validate
 from joblib import Parallel, delayed
 from parlai.tasks.dealnodeal.agents import NegotiationTeacher
+from parlai.tasks.dealnodeal.agents import get_tag
+from parlai.tasks.dealnodeal.agents import WELCOME_MESSAGE
+
 import random
 
 class MTurkDealNoDealDialogWorld(MTurkTaskWorld):
@@ -31,13 +34,22 @@ class MTurkDealNoDealDialogWorld(MTurkTaskWorld):
         """Alternate taking turns, until both agents have made a choice (indicated by a turn starting with <selection>)
         """
         if self.first_turn:
+            # Use NegotiationTeacher to load data for us
+            data = self.task.episodes[self.num_negotiations % len(self.task.episodes)].strip().split()
             self.num_negotiations += 1
 
-            # Use NegotiationTeacher to load data for us
-            self.task.dialogue_idx = None
-            act = self.task.act()
-            for other_agent in self.agents:
-                other_agent.observe(validate(act))
+            for agent, tag in zip(self.agents, ['input', 'partner_input']):
+                (book_cnt, book_val, hat_cnt, hat_val, ball_cnt, ball_val) = get_tag(data, tag)
+                action = {}
+                action['text'] = WELCOME_MESSAGE.format(
+                    book_cnt=book_cnt, book_val=book_val,
+                    hat_cnt=hat_cnt, hat_val=hat_val,
+                    ball_cnt=ball_cnt, ball_val=ball_val)
+
+                action['items'] = {"book_cnt": book_cnt, "book_val": book_val, "hat_cnt": hat_cnt, "hat_val": hat_val,
+                                   "ball_cnt": ball_cnt, "ball_val": ball_val}
+
+                agent.observe(validate(action))
             self.first_turn = False
         else:
             self.turns += 1
