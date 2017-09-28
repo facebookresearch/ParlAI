@@ -74,10 +74,7 @@ class DefaultTeacher(DialogTeacher):
             caption = dialog['caption']
             img_path = self.image_path + '%012d.jpg' % (image_id)
 
-            episode_done = False
             for i, qa in enumerate(dialog['dialog']):
-                if i == len(dialog['dialog']):
-                    episode_done = True
                 # for each question answer pair.
                 question = self.questions[qa['question']]
                 answer = [self.answers[qa['answer']]]
@@ -87,6 +84,6 @@ class DefaultTeacher(DialogTeacher):
                 if i == 0:
                     # prepend with caption on first question
                     # only load image on first item
-                    yield (caption + '\n' + question, answer, None, answer_options, img_path), episode_done
+                    yield (caption + '\n' + question, answer, None, answer_options, img_path), True
                 else:
-                    yield (question, answer, None, answer_options), episode_done
+                    yield (question, answer, None, answer_options), False
