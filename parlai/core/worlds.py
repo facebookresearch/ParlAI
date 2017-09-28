@@ -82,6 +82,9 @@ def display_messages(msgs):
         if msg.get('labels'):
             lines.append(space + ('[labels: {}]'.format(
                         '|'.join(msg['labels']))))
+        if msg.get('eval_labels'):
+            lines.append(space + ('[eval_labels: {}]'.format(
+                        '|'.join(msg['eval_labels']))))
         if msg.get('label_candidates'):
             cand_len = len(msg['label_candidates'])
             if cand_len <= 10:
