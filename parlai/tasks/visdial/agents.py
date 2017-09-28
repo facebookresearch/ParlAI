@@ -85,9 +85,6 @@ class DefaultTeacher(DialogTeacher):
                 if i == 0:
                     # prepend with caption on first question
                     # only load image on first item
-                    yield (caption + '\n' + question, answer, None, answer_options, img_path), episode_done
-                    episode_done = False
+                    yield (caption + '\n' + question, answer, None, answer_options, img_path), True
                 else:
-                    yield (question, answer, None, answer_options), episode_done
-                    if i == len(dialog['dialog']) - 1:
-                        episode_done = True
+                    yield (question, answer, None, answer_options), False

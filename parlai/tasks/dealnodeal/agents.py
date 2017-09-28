@@ -61,7 +61,7 @@ class NegotiationTeacher(Teacher):
         # size so they all process disparate sets of the data
         self.step_size = opt.get('batchsize', 1)
         self.data_offset = opt.get('batchindex', 0)
-        
+
         self.reset()
 
     def reset(self):
@@ -139,6 +139,9 @@ class NegotiationTeacher(Teacher):
         else:
             action = self._continue_dialogue(skip_teacher=True)
             action['text'] = welcome
+
+        action['items'] = { "book_cnt" : book_cnt , "book_val" : book_val, "hat_cnt" : hat_cnt, "hat_val" : hat_val,
+            "ball_cnt" : ball_cnt, "ball_val" : ball_val}
 
         return action
 
