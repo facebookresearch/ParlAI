@@ -48,7 +48,7 @@ class Seq2seqAgent(Agent):
                            help='size of the token embeddings')
         agent.add_argument('-nl', '--numlayers', type=int, default=1,
                            help='number of hidden layers')
-        agent.add_argument('-lr', '--learningrate', type=float, default=0.5,
+        agent.add_argument('-lr', '--learningrate', type=float, default=0.005,
                            help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
                            help='dropout rate')
@@ -79,7 +79,17 @@ class Seq2seqAgent(Agent):
                            help='Choose between different decoder modules. '
                                 'Default "same" uses same class as encoder, '
                                 'while "shared" also uses the same weights.')
-        agent.add_argument('-opt', '--optimizer', default='sgd',
+        agent.add_argument('-lt', '--lookuptable', default='all',
+                           choices=['unique', 'enc_dec', 'dec_out', 'all'],
+                           help='The encoder, decoder, and output modules can '
+                                'share weights, or not. '
+                                'Unique has independent embeddings for each.'
+                                'Enc_dec shares the embedding for the encoder '
+                                'and decoder.'
+                                'Dec_out shares decoder embedding and output '
+                                'weights.'
+                                'All shares all three weights.')
+        agent.add_argument('-opt', '--optimizer', default='adam',
                            choices=Seq2seqAgent.OPTIM_OPTS.keys(),
                            help='Choose between pytorch optimizers. '
                                 'Any member of torch.optim is valid and will '
@@ -112,6 +122,8 @@ class Seq2seqAgent(Agent):
                 # override options with stored ones
                 opt = self.override_opt(new_opt)
 
+            if opt['dict_file'] is None and opt.get('model_file'):
+                opt['dict_file'] = opt['model_file'] + '.dict'
             self.dict = DictionaryAgent(opt)
             self.id = 'Seq2Seq'
             # we use START markers to start our output
@@ -146,9 +158,16 @@ class Seq2seqAgent(Agent):
             # set up modules
             self.criterion = nn.NLLLoss()
             # lookup table stores word embeddings
-            self.lt = nn.Embedding(len(self.dict), emb,
-                                   padding_idx=self.NULL_IDX,
-                                   scale_grad_by_freq=True)
+            self.enc_lt = nn.Embedding(len(self.dict), emb,
+                                       padding_idx=self.NULL_IDX,
+                                       scale_grad_by_freq=False)
+
+            if opt['lookuptable'] in ['enc_dec', 'all']:
+                self.dec_lt = self.enc_lt
+            else:
+                self.dec_lt = nn.Embedding(len(self.dict), emb,
+                                           padding_idx=self.NULL_IDX,
+                                           scale_grad_by_freq=False)
             # encoder captures the input text
             enc_class = Seq2seqAgent.ENC_OPTS[opt['encoder']]
             self.encoder = enc_class(emb, hsz, opt['numlayers'])
@@ -160,9 +179,13 @@ class Seq2seqAgent(Agent):
             else:
                 dec_class = Seq2seqAgent.ENC_OPTS[opt['decoder']]
                 self.decoder = dec_class(emb, hsz, opt['numlayers'])
-            # linear layer helps us produce outputs from final decoder state
-            self.h2o = nn.Linear(hsz, len(self.dict))
-            # droput on the linear layer helps us generalize
+            # linear layers help us produce outputs from final decoder state
+            self.h2e = nn.Linear(hsz, emb)
+            self.e2o = nn.Linear(emb, len(self.dict))
+            if opt['lookuptable'] in ['dec_out', 'all']:
+                self.e2o.weight = self.dec_lt.weight
+
+            # droput helps us generalize
             self.dropout = nn.Dropout(opt['dropout'])
 
             self.use_attention = False
@@ -179,12 +202,20 @@ class Seq2seqAgent(Agent):
             lr = opt['learningrate']
 
             optim_class = Seq2seqAgent.OPTIM_OPTS[opt['optimizer']]
+            kwargs = {'lr': lr}
+            if opt['optimizer'] == 'sgd':
+                kwargs['momentum'] = 0.1
+                kwargs['nesterov'] = True
             self.optims = {
-                'lt': optim_class(self.lt.parameters(), lr=lr),
-                'encoder': optim_class(self.encoder.parameters(), lr=lr),
-                'decoder': optim_class(self.decoder.parameters(), lr=lr),
-                'h2o': optim_class(self.h2o.parameters(), lr=lr),
+                'enc_lt': optim_class(self.enc_lt.parameters(), **kwargs),
+                'encoder': optim_class(self.encoder.parameters(), **kwargs),
+                'decoder': optim_class(self.decoder.parameters(), **kwargs),
+                'h2e': optim_class(self.h2e.parameters(), **kwargs),
+                'e2o': optim_class(self.e2o.parameters(), **kwargs),
             }
+            if opt['lookuptable'] not in ['enc_dec', 'all']:
+                self.optims['dec_lt'] = optim_class(
+                    self.dec_lt.parameters(), **kwargs),
 
             if hasattr(self, 'states'):
                 # set loaded states if applicable
@@ -202,7 +233,7 @@ class Seq2seqAgent(Agent):
         Only override args specific to the model.
         """
         model_args = {'hiddensize', 'embeddingsize', 'numlayers', 'optimizer',
-                      'encoder', 'decoder'}
+                      'encoder', 'decoder', 'lookuptable'}
         for k, v in new_opt.items():
             if k not in model_args:
                 # skip non-model args
@@ -234,10 +265,12 @@ class Seq2seqAgent(Agent):
         self.cand_scores = self.cand_scores.cuda(async=True)
         self.cand_lengths = self.cand_lengths.cuda(async=True)
         self.criterion.cuda()
-        self.lt.cuda()
+        self.enc_lt.cuda()
+        self.dec_lt.cuda()
         self.encoder.cuda()
         self.decoder.cuda()
-        self.h2o.cuda()
+        self.h2e.cuda()
+        self.e2o.cuda()
         self.dropout.cuda()
         if self.use_attention:
             self.attn.cuda()
@@ -245,13 +278,15 @@ class Seq2seqAgent(Agent):
 
     def hidden_to_idx(self, hidden, dropout=False):
         """Convert hidden state vectors into indices into the dictionary."""
-        scores = self.h2o(hidden)
+        scores = self.e2o(self.h2e(hidden))
+        # scores = self.e2o(hidden)
         if dropout:
             scores = self.dropout(scores)
         # softmax along along batch
         scores = torch.cat([F.log_softmax(scores[i]).unsqueeze(0)
                             for i in range(scores.size(0))])
         _max_score, idx = scores.max(2)
+
         return idx, scores
 
     def zero_grad(self):
@@ -268,7 +303,6 @@ class Seq2seqAgent(Agent):
         """Reset observation and episode_done."""
         self.observation = None
         self.episode_done = True
-        self.lastY = None
 
     def share(self):
         shared = super().share()
@@ -313,7 +347,7 @@ class Seq2seqAgent(Agent):
         batchsize = len(xs)
 
         # first encode context
-        xes = self.lt(xs)
+        xes = self.enc_lt(xs)
         if dropout:
             xes = self.dropout(xes)
         # project from emb_size to hidden_size dimensions
@@ -375,7 +409,7 @@ class Seq2seqAgent(Agent):
                 loss += self.criterion(scores[0], y)
                 # use the true token as the next input instead of predicted
                 # this produces a biased prediction but better training
-                xes = self.lt(y).unsqueeze(0)
+                xes = self.dec_lt(y).unsqueeze(0)
                 for b in range(batchsize):
                     # convert the output scores to tokens
                     token = self.v2t([preds.data[0][b]])
@@ -383,7 +417,7 @@ class Seq2seqAgent(Agent):
         else:
             # otherwise we can just force the entire sequence at once
             y_in = ys.narrow(1, 0, ys.size(1) - 1)
-            xes = torch.cat([xes, self.lt(y_in).transpose(0, 1)])
+            xes = torch.cat([xes, self.dec_lt(y_in).transpose(0, 1)])
 
             output, hidden = self.decoder(xes, hidden)
             preds, scores = self.hidden_to_idx(output.transpose(0, 1), dropout=True)
@@ -427,7 +461,7 @@ class Seq2seqAgent(Agent):
             output, hidden = self.decoder(output, hidden)
             preds, _scores = self.hidden_to_idx(output, dropout=False)
 
-            xes = self.lt(preds)
+            xes = self.dec_lt(preds)
             max_len += 1
             for b in range(batchsize):
                 if not done[b]:
@@ -440,7 +474,7 @@ class Seq2seqAgent(Agent):
                     else:
                         output_lines[b].append(token)
 
-        if random.random() < 0.1:
+        if random.random() < 0.2:
             # sometimes output a prediction for debugging
             print('prediction:', ' '.join(output_lines[0]))
 
@@ -486,12 +520,12 @@ class Seq2seqAgent(Agent):
                 cand_lengths += non_nulls.long()
                 score_per_cand = torch.gather(scores[0], 1, cs.unsqueeze(1))
                 cand_scores += score_per_cand.squeeze() * non_nulls.float()
-                c_xes = self.lt(cs).unsqueeze(0)
+                c_xes = self.dec_lt(cs).unsqueeze(0)
         else:
             # otherwise process entire sequence at once
             if cview.size(1) > 1:
                 cands_in = cview.narrow(1, 0, cview.size(1) - 1)
-                c_xes = torch.cat([c_xes, self.lt(cands_in.transpose(0, 1))])
+                c_xes = torch.cat([c_xes, self.dec_lt(cands_in.transpose(0, 1))])
             output, cands_hn = self.decoder(c_xes, cands_hn)
             _preds, scores = self.hidden_to_idx(output, dropout=False)
 
@@ -527,7 +561,7 @@ class Seq2seqAgent(Agent):
 
         # next we use END as an input to kick off our decoder
         x = Variable(self.START_TENSOR)
-        xe = self.lt(x).unsqueeze(1)
+        xe = self.dec_lt(x).unsqueeze(1)
         xes = xe.expand(xe.size(0), batchsize, xe.size(2))
 
         # list of output tokens for each example in the batch
@@ -689,12 +723,17 @@ class Seq2seqAgent(Agent):
     def save(self, path=None):
         path = self.opt.get('model_file', None) if path is None else path
 
-        if path and hasattr(self, 'lt'):
+        if path and hasattr(self, 'optims'):
             model = {}
-            model['lt'] = self.lt.state_dict()
+            model['enc_lt'] = self.enc_lt.state_dict()
+            if self.opt['lookuptable'] not in ['enc_dec', 'all']:
+                # dec_lt is enc_lt
+                raise RuntimeError()
+                # model['dec_lt'] = self.dec_lt.state_dict()
             model['encoder'] = self.encoder.state_dict()
             model['decoder'] = self.decoder.state_dict()
-            model['h2o'] = self.h2o.state_dict()
+            model['h2e'] = self.h2e.state_dict()
+            model['e2o'] = self.e2o.state_dict()
             model['optims'] = {k: v.state_dict()
                                for k, v in self.optims.items()}
             model['longest_label'] = self.longest_label
@@ -719,10 +758,15 @@ class Seq2seqAgent(Agent):
 
     def set_states(self, states):
         """Set the state dicts of the modules from saved states."""
-        self.lt.load_state_dict(states['lt'])
+        self.enc_lt.load_state_dict(states['enc_lt'])
+        if self.opt['lookuptable'] not in ['enc_dec', 'all']:
+            # dec_lt is enc_lt
+            raise RuntimeError()
+            # self.dec_lt.load_state_dict(states['dec_lt'])
         self.encoder.load_state_dict(states['encoder'])
         self.decoder.load_state_dict(states['decoder'])
-        self.h2o.load_state_dict(states['h2o'])
+        self.h2e.load_state_dict(states['h2e'])
+        self.e2o.load_state_dict(states['e2o'])
         for k, v in states['optims'].items():
             self.optims[k].load_state_dict(v)
         self.longest_label = states['longest_label']
