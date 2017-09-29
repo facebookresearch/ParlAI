@@ -20,8 +20,7 @@ from .modules import MemNN, Decoder
 
 
 class MemnnAgent(Agent):
-    """ Memory Network agent.
-    """
+    """Memory Network agent."""
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -53,12 +52,12 @@ class MemnnAgent(Agent):
             help='which GPU device to use')
 
     def __init__(self, opt, shared=None):
-        opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()
-        if opt['cuda']:
-            print('[ Using CUDA ]')
-            torch.cuda.device(opt['gpu'])
-
         if not shared:
+            opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()
+            if opt['cuda']:
+                print('[ Using CUDA ]')
+                torch.cuda.device(opt['gpu'])
+
             self.opt = opt
             self.id = 'MemNN'
             self.dict = DictionaryAgent(opt)
@@ -207,6 +206,8 @@ class MemnnAgent(Agent):
 
             for b in range(batchsize):
                 if not done[b]:
+                    if preds.dim() == 1:
+                        preds = preds.unsqueeze(1)
                     token = self.dict.vec2txt(preds.data[b])
                     if token == self.END:
                         done[b] = True
