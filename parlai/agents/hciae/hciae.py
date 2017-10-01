@@ -8,6 +8,7 @@ from torch.autograd import Variable
 import os
 import copy
 import random
+import numpy as np
 
 class HCIAEAgent(Agent):
     """ HCIAEAgent.
@@ -19,12 +20,13 @@ class HCIAEAgent(Agent):
         arg_group = argparser.add_cmdline_args('HCIAE Arguments')
 
     def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
         opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()
         if opt['cuda']:
             print(['[Uding CUDA]'])
             torch.cuda.device(opt['gpu'])
         
-        if not shares:
+        if not shared:
             self.opt = opt
             self.id = 'HCIAE'
             self.dict = DictionaryAgent(opt)
@@ -33,7 +35,9 @@ class HCIAEAgent(Agent):
             self.END = self.dict.end_token
             self.END_TENSOR = torch.LongTensor(self.dict.parse(self.END))
             self.START = self.dict.start_token
-            self.START_TENSOR = torch.LongTensor(self.dict.parese(self.START))
+            self.START_TENSOR = torch.LongTensor(self.dict.parse(self.START))
+            self.mem_size = 10
+            self.longest_label = 1
 
             lr = opt['learning_rate']
             #if opt['optimizer'] = 'sgd':
@@ -47,7 +51,7 @@ class HCIAEAgent(Agent):
         self.episode_done = True
         self.img_feature = None
         self.last_cands, self.last_cands_list = None, None
-        super().__init__(opt, shared)
+        
     
     def share(self):
         shared = super().share()
@@ -116,9 +120,41 @@ class HCIAEAgent(Agent):
         for i in range(len(exs)):
             if len(parsed[i][3]) > 0:
                 memory_lengths[i, -len(parsed[i][3]):] = parsed[i][3]
-        xs = [memories, queries, memory_lengths, query_lengths]
 
-                ys = None
+        # bachify memories (batchsize * memory_length * max_sentence_length)
+        batch_size = len(valid_inds)
+        start_idx = memory_lengths.numpy()[0].nonzero()[0][0]
+        idx = 0
+        memories_tensor = []
+        for i in range(batch_size):
+            memory = []
+            for j in range(start_idx, 10):
+                temp = []
+                length = memory_lengths[i][j]
+                temp = [memories[idx+i] for i in range(length)]
+                temp.extend([0] * (20-length))
+                idx += length
+                memory.append(temp)
+            memories_tensor.append(memory)
+        memories_tensor = torch.from_numpy(np.array(memories_tensor))
+
+        # bachify queries (batch_size * max_query_length)
+        idx = 0
+        max_length = max(query_lengths)
+
+        queries_tensor = []
+        for i in range(batch_size):
+            temp = []
+            length = query_lengths[i]
+            temp = [queries[idx+i] for i in range(length)]
+            temp.extend([0] * (max_length - length))
+            idx += length
+            queries_tensor.append(temp)
+        queries_tensor = torch.from_numpy(np.array(queries_tensor))
+
+        xs = [memories_tensor, queries_tensor, memory_lengths, query_lengths]
+
+        ys = None
         self.labels = [random.choice(ex['labels']) for ex in exs if 'labels' in ex]
         if len(self.labels) == len(exs):
             parsed = [self.dict.txt2vec(l) for l in self.labels]
