@@ -123,6 +123,7 @@ class DictionaryAgent(Agent):
         self.unk_token = opt['dict_unktoken']
         self.start_token = opt['dict_starttoken']
         self.max_ngram_size = opt['dict_max_ngram_size']
+        self.min_freq = opt['dict_minfreq']
 
         if shared:
             self.freq = shared.get('freq', {})
@@ -273,14 +274,18 @@ class DictionaryAgent(Agent):
                 # queue up removals since can't mutate dict during iteration
                 to_remove.append(token)
                 # other dicts can be modified as we go
-                idx = self.tok2idx.pop(token)
+<<<<<<< HEAD
+                idx = self.tok2ind.pop(token)
+=======
+                idx = self.tok2inx.pop(token)
+>>>>>>> ba8fbe9ef6315d4e9eef89dea6cc80dae043a074
                 del self.ind2tok[idx]
         for token in to_remove:
             del self.freq[token]
 
     def load(self, filename):
         """Load pre-existing dictionary in 'token[<TAB>count]' format.
-        Initialize counts from other dictionary, or 0 if they aren't included.
+        Initialize counts from other diCtionary, or 0 if they aren't included.
         """
         print('Dictionary: loading dictionary from {}'.format(
               filename))
@@ -306,6 +311,7 @@ class DictionaryAgent(Agent):
 
         If ``sort`` (default ``True``), then first sort the dictionary before saving.
         """
+        self.remove_tail(self.min_freq)
         filename = self.opt['dict_file'] if filename is None else filename
         print('Dictionary: saving dictionary to {}'.format(filename))
         if sort:

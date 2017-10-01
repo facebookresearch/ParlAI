@@ -67,7 +67,8 @@ class DefaultTeacher(DialogTeacher):
 
         self.questions = self.visdial['data']['questions']
         self.answers = self.visdial['data']['answers']
-
+        episode_done = False
+        
         for dialog in self.visdial['data']['dialogs']:
             # for each dialog
             image_id = dialog['image_id']
