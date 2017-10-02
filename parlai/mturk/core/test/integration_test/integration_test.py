@@ -25,6 +25,7 @@ from parlai.mturk.core.socket_manager import Packet, SocketManager
 from parlai.mturk.core.worker_state import WorkerState, AssignState
 from parlai.mturk.core.agents import MTURK_DISCONNECT_MESSAGE
 import parlai.mturk.core.data_model as data_model
+import parlai.mturk.core.mturk_utils as mturk_utils
 from parlai.mturk.core.mturk_utils import create_hit_config
 from socketIO_client_nexus import SocketIO
 import time
@@ -58,6 +59,7 @@ COUNT_COMPLETE_TEST = 'COUNT_COMPLETE_TEST'
 EXPIRE_HIT_TEST = 'EXPIRE_HIT_TEST'
 ALLOWED_CONVERSATION_TEST = 'ALLOWED_CONVERSATION_TEST'
 UNIQUE_CONVERSATION_TEST = 'UNIQUE_CONVERSATION_TEST'
+AMAZON_SNS_TEST = 'AMAZON_SNS_TEST'
 
 FAKE_ASSIGNMENT_ID = 'FAKE_ASSIGNMENT_ID_{}_{}'
 FAKE_WORKER_ID = 'FAKE_WORKER_ID_{}_{}'
@@ -406,6 +408,36 @@ def check_new_agent_setup(agent, mturk_manager,
     assert mturk_manager.socket_manager.socket_is_open(connection_id), \
         'The socket manager didn\'t open a socket for this agent'
 
+
+def test_sns_service(opt, server_url):
+    global completed_threads
+    task_name = AMAZON_SNS_TEST
+    task_group_id = AMAZON_SNS_TEST
+    def world_on_alive(pkt):
+        print("Alive {}".format(pkt))
+
+    def world_on_new_message(pkt):
+        print("Message {}".format(pkt))
+
+    def world_on_socket_dead(worker_id, assign_id):
+        print("Dead {}".format(pkt))
+
+    socket_manager = SocketManager(
+        server_url,
+        PORT,
+        world_on_alive,
+        world_on_new_message,
+        world_on_socket_dead,
+        task_group_id
+    )
+
+    mturk_utils.setup_aws_credentials()
+    arn = mturk_utils.setup_sns_topic(task_name, server_url, task_group_id)
+    mturk_utils.send_test_notif(arn, 'AssignmentAbandoned')
+    mturk_utils.send_test_notif(arn, 'AssignmentReturned')
+    mturk_utils.send_test_notif(arn, 'AssignmentSubmitted')
+    mturk_utils.delete_sns_topic(arn)
+    completed_threads[AMAZON_SNS_TEST] = True
 
 def test_socket_manager(opt, server_url):
     global completed_threads
@@ -2622,7 +2654,8 @@ TESTS = {
     SOLO_REFRESH_TEST: test_solo_refresh_in_middle,
     SOLO_NO_ONBOARDING_TEST: test_solo_no_onboarding,
     COUNT_COMPLETE_TEST: test_count_complete,
-    SOCKET_TEST: test_socket_manager
+    SOCKET_TEST: test_socket_manager,
+    AMAZON_SNS_TEST: test_sns_service,
 }
 
 # Runtime threads, MAX_THREADS is used on initial pass, RETEST_THREADS is used

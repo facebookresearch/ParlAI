@@ -69,20 +69,28 @@ class Packet():
         """Create a packet from the dictionary that would
         be recieved over a socket
         """
-        packet_id = packet['id']
-        packet_type = packet['type']
-        sender_id = packet['sender_id']
-        receiver_id = packet['receiver_id']
-        assignment_id = packet['assignment_id']
-        data = None
-        if 'data' in packet:
-            data = packet['data']
-        else:
-            data = ''
-        conversation_id = packet['conversation_id']
+        try:
+            packet_id = packet['id']
+            packet_type = packet['type']
+            sender_id = packet['sender_id']
+            receiver_id = packet['receiver_id']
+            assignment_id = packet['assignment_id']
+            data = None
+            if 'data' in packet:
+                data = packet['data']
+            else:
+                data = ''
+            conversation_id = packet['conversation_id']
 
-        return Packet(packet_id, packet_type, sender_id, receiver_id,
-            assignment_id, data, conversation_id)
+            return Packet(packet_id, packet_type, sender_id, receiver_id,
+                assignment_id, data, conversation_id)
+        except:
+            print_and_log(
+                logging.WARN,
+                'Could not create a valid packet out of the dictionary'
+                'provided: {}'.format(packet)
+            )
+            return None
 
     def as_dict(self):
         """Convert a packet into a form that can be pushed over a socket"""
@@ -275,6 +283,8 @@ class SocketManager():
             """Incoming message handler for ACKs, ALIVEs, HEARTBEATs,
             and MESSAGEs"""
             packet = Packet.from_dict(args[0])
+            if packet is None:
+                return
             packet_id = packet.id
             packet_type = packet.type
             connection_id = packet.get_sender_connection_id()

@@ -7,7 +7,7 @@
 
 Using Mechanical Turk
 =====================
-**Author**: Will Feng
+**Authors**: Will Feng, Jack Urbanek
 
 In ParlAI, you can use Amazon Mechanical Turk for **data collection**, **training** and **evaluation** of your dialog model.
 
@@ -18,7 +18,7 @@ The human Turkers communicate in observation/action dict format, the same as all
 .. figure:: _static/img/mturk-small.png
    :align: center
 
-   Example: Human Turker participating in a QA data collection task
+   *Example: Human Turker participating in a QA data collection task*
 
 Each MTurk task has at least one human Turker that connects to ParlAI via the Mechanical Turk Live Chat interface, encapsulated as an ``MTurkAgent`` object.
 
@@ -31,7 +31,8 @@ We provide a few examples of using Mechanical Turk with ParlAI:
 
 - `QA Data Collection <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/qa_data_collection/>`__: collect questions and answers from Turkers, given a random Wikipedia paragraph from SQuAD.
 - `Model Evaluator <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/model_evaluator/>`__: ask Turkers to evaluate the information retrieval baseline model on the Reddit movie dialog dataset.
-- `Multi-Agent Dialog <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/multi_agent_dialog/>`__: round-robin chat between two local human agents and two Turkers.
+- `Multi-Agent Dialog <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/multi_agent_dialog/>`__: round-robin chat between a local human agent and two Turkers.
+- `Deal or No Deal <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/dealnodeal/>`__: negotiation chat between two agents over how to fairly divide a fixed set of items when each agent values the items differently.
 
 Task 1: Collecting Data
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -70,9 +71,17 @@ After one turn, the task is finished, and the Turker's work is submitted for you
 Task 3: Multi-Agent Dialog
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-ParlAI supports dialogs between multiple agents, whether they are local ParlAI agents or human Turkers. In the `Multi-Agent Dialog task <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/multi_agent_dialog/>`__, two local human agents and two Turkers engage in a round-robin chat, until the first local human agent sends a message ending with ``[DONE]``, after which other agents will send a final message and the task is concluded.
+ParlAI supports dialogs between multiple agents, whether they are local ParlAI agents or human Turkers. In the `Multi-Agent Dialog task <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/multi_agent_dialog/>`__, one local human agents and two Turkers engage in a round-robin chat, until the first local human agent sends a message ending with ``[DONE]``, after which other agents will send a final message and the task is concluded.
 
 This task uses the ``MultiAgentDialogWorld`` which is already implemented in ``parlai.core.worlds``.
+
+Task 4: Advanced Functionality - Deal or No Deal
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ParlAI is able to support more than just generic chat. The `Deal or No Deal task <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/dealnodeal/>`__ provides additional functionality over the regular chat window to allow users to view the items they are dividing, select an allocation, and then submit a deal.
+
+This task leverages the ability to override base functionality of the core.html page using ``task_config.py``. Javascript is added here to replace the task description with additional buttons and UI elements that are required for the more complicated task. These trigger within an overridden handle_new_message function, which will only fire after an agent has entered the chat.
+In general it is easier/preferred to use a custom webpage as described in step 4 of "Creating Your Own Task", though this is an alternate that can be used if you specifically only want to show additional components in the task description pane of the chat window.
 
 
 Creating Your Own Task
@@ -101,21 +110,29 @@ If you have not used Mechanical Turk before, you will need an MTurk Requester Ac
 
 - MTurk also has a “Sandbox” which is a test version of the MTurk marketplace. You can use it to test publishing and completing tasks without paying any money. ParlAI supports the Sandbox. To use the Sandbox, you need to sign up for a `Sandbox account <http://requestersandbox.mturk.com/>`__. You will then also need to `link your AWS account <http://requestersandbox.mturk.com/developer>`__ to your Sandbox account. In order to test faster, you will also want to create a `Sandbox Worker account <http://workersandbox.mturk.com/>`__. You can then view tasks your publish from ParlAI and complete them yourself.
 
-- ParlAI will connect to your AWS account and set up some supporting resources including a Lambda function, an API Gateway and an RDS database. It will also use your AWS account to connect to the MTurk API. In order to do this, it will require credentials to access your AWS account. To set this up, you will need to create an `IAM user <https://console.aws.amazon.com/iam/>`__ with programmatic access and an AdministratorAccess policy. You can learn more about how to set up IAM users `here <http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html>`__. Once you have created the account, keep its access key and the secret key handy as you will need it next.
+- ParlAI's MTurk functionality requires a free heroku account which can be obtained `here <https://signup.heroku.com/>`__. Running any ParlAI MTurk operation will walk you through linking the two.
 
 Then, to run an MTurk task, first ensure that the task directory is in `parlai/mturk/tasks/ <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/>`__. Then, run its ``run.py`` file with proper flags:
 
-.. code-block:: python
+.. code-block:: console
 
-    python run.py -nh <num_hits> -na <num_assignments> -r <reward> [--sandbox]/[--live]
+    python run.py -nc <num_conversations> -r <reward> [--sandbox]/[--live]
 
-E.g. to create 2 HITs for the `QA Data Collection <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/qa_data_collection/>`__ example with 1 assignment per HIT and $0.05 per assignment in sandbox mode, first go into the task directory and then run:
+E.g. to create 2 conversations for the `QA Data Collection <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/qa_data_collection/>`__ example with a reward of $0.05 per assignment in sandbox mode, first go into the task directory and then run:
 
-.. code-block:: python
+.. code-block:: console
 
-    python run.py -nh 2 -na 1 -r 0.05 --sandbox
+    python run.py -nc 2 -r 0.05 --sandbox
 
 Please make sure to test your task in MTurk sandbox mode first (``--sandbox``) before pushing it live (``--live``).
+
+Additional flags can be used for more specific purposes.
+
+- ``--unique`` ensures that an Turker is only able to complete one assignment, thus ensuring each assignment is completed by a unique person.
+
+- ``--allowed-conversations <num>`` prevents a Turker from entering more than <num> conversations at once (by using multiple windows/tabs). This defaults to 0, which is unlimited.
+
+- ``--count-complete`` only counts completed assignments towards the num_conversations requested. This may lead to more conversations being had than requested (and thus higher costs for instances where one Turker disconnects and we pay the other) but it ensures that if you request 1,000 conversations you end up with at least 1,000 completed data points.
 
 
 Reviewing Turker's Work
