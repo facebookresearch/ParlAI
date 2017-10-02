@@ -698,7 +698,7 @@ class MTurkManager():
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
         self._init_state()
         self.topic_arn = mturk_utils.setup_sns_topic(
-            self.server_task_name,
+            self.opt['task'],
             self.server_url,
             self.task_group_id
         )
