@@ -2643,18 +2643,18 @@ def test_unique_workers_in_conversation(opt, server_url):
 # Map of tests to run to their testing function, slowest tests first reduces
 # overall runtime
 TESTS = {
-    # DUO_NO_ONBOARDING_TEST: test_duo_no_onboarding,
-    # SOLO_ONBOARDING_TEST: test_solo_with_onboarding,
-    # DUO_ONBOARDING_TEST: test_duo_with_onboarding,
-    # EXPIRE_HIT_TEST: test_expire_hit,
-    # DUO_ONE_DISCONNECT_TEST: test_duo_one_disconnect,
-    # DUO_VALID_RECONNECT_TEST: test_duo_valid_reconnects,
-    # UNIQUE_CONVERSATION_TEST: test_unique_workers_in_conversation,
-    # ALLOWED_CONVERSATION_TEST: test_allowed_conversations,
-    # SOLO_REFRESH_TEST: test_solo_refresh_in_middle,
-    # SOLO_NO_ONBOARDING_TEST: test_solo_no_onboarding,
-    # COUNT_COMPLETE_TEST: test_count_complete,
-    # SOCKET_TEST: test_socket_manager,
+    DUO_NO_ONBOARDING_TEST: test_duo_no_onboarding,
+    SOLO_ONBOARDING_TEST: test_solo_with_onboarding,
+    DUO_ONBOARDING_TEST: test_duo_with_onboarding,
+    EXPIRE_HIT_TEST: test_expire_hit,
+    DUO_ONE_DISCONNECT_TEST: test_duo_one_disconnect,
+    DUO_VALID_RECONNECT_TEST: test_duo_valid_reconnects,
+    UNIQUE_CONVERSATION_TEST: test_unique_workers_in_conversation,
+    ALLOWED_CONVERSATION_TEST: test_allowed_conversations,
+    SOLO_REFRESH_TEST: test_solo_refresh_in_middle,
+    SOLO_NO_ONBOARDING_TEST: test_solo_no_onboarding,
+    COUNT_COMPLETE_TEST: test_count_complete,
+    SOCKET_TEST: test_socket_manager,
     AMAZON_SNS_TEST: test_sns_service,
 }
 
