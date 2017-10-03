@@ -84,8 +84,15 @@ task_list = [
         "id": "DealNoDeal",
         "display_name": "Deal or No Deal",
         "task": "dealnodeal",
-        "tags": [ "All", "Negotiation" ],
+        "tags": ["All", "Negotiation"],
         "description": "End-to-end negotiation task which requires two agents to agree on how to divide a set of items, with each agent assigning different values to each item. From Lewis et al. '17. Link: https://arxiv.org/abs/1706.05125"
+    },
+    {
+        "id": "MutualFriends",
+        "display_name": "MutualFriends",
+        "task": "mutualfriends",
+        "tags": [ "All", "Negotiation"],
+        "description": "Task where two agents must discover which friend of theirs is mutual based on the friends's attributes. From He He et al. '17. Link: https://stanfordnlp.github.io/cocoa/'"
     },
     {
         "id": "MCTest",
