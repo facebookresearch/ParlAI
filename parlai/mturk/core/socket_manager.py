@@ -21,6 +21,7 @@ class Packet():
     STATUS_INIT = 0
     STATUS_SENT = 1
     STATUS_ACK = 2
+    STATUS_FAIL = 3
 
     # Possible Packet Types
     TYPE_ACK = 'ack'
@@ -246,6 +247,9 @@ class SocketManager():
                         # Clear the data to save memory as we no longer need it
                         packet.data = None
                         break
+                    if packet.status == Packet.STATUS_FAIL:
+                        # Failed packets shouldn't be re-queued as they errored
+                        break
                     if time.time() - start_t > self.ACK_TIME[packet.type]:
                         # didn't receive ACK, resend packet keep old queue time
                         # to ensure this packet is processed first
@@ -457,6 +461,7 @@ class SocketManager():
         if connection_id in self.queues:
             self.queues[connection_id].put(item)
         else:
+            item[1].status = Packet.STATUS_FAIL
             shared_utils.print_and_log(
                 logging.WARN,
                 'Queue {} did not exist to put a message in'.format(

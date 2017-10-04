@@ -48,6 +48,7 @@ class MTurkAgent(Agent):
         self.disconnected = False
         self.task_group_id = manager.task_group_id
         self.message_request_time = None
+        self.recieved_packets = {}
 
         self.msg_queue = Queue()
 
@@ -93,6 +94,12 @@ class MTurkAgent(Agent):
     def observe(self, msg):
         """Send an agent a message through the mturk manager"""
         self.manager.send_message(self.worker_id, self.assignment_id, msg)
+
+    def put_data(self, id, data):
+        """Put data into the message queue if it hasn't already been seen"""
+        if id not in self.recieved_packets:
+            self.recieved_packets[id] = True
+            self.msg_queue.put(data)
 
     def get_new_act_message(self):
         """Get a new act message if one exists, return None otherwise"""
@@ -386,6 +393,7 @@ class MTurkAgent(Agent):
         """Cleans up resources related to maintaining complete state"""
         self.msg_queue = None
         self.state.clear_messages()
+        self.recieved_packets = None
 
     def shutdown(self, timeout=None, direct_submit=False):
         """Shuts down a hit when it is completed"""
