@@ -496,9 +496,9 @@ class Seq2seqAgent(Agent):
         )
 
         cand_scores = Variable(
-                    self.cand_scores.resize_(cview.size(0)).fill_(0))
+            self.cand_scores.resize_(cview.size(0)).fill_(0))
         cand_lengths = Variable(
-                    self.cand_lengths.resize_(cview.size(0)).fill_(0))
+            self.cand_lengths.resize_(cview.size(0)).fill_(0))
 
         if self.use_attention:
             # using attention, do one token at a time (TODO: can we not?)
@@ -710,7 +710,7 @@ class Seq2seqAgent(Agent):
             for i in range(len(valid_cands)):
                 order = text_cand_inds[i]
                 batch_idx, curr_cands = valid_cands[i]
-                curr = batch_reply[batch_idx]
+                curr = batch_reply[valid_inds[batch_idx]]
                 curr['text_candidates'] = [curr_cands[idx] for idx in order
                                            if idx < len(curr_cands)]
 
