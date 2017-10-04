@@ -442,8 +442,7 @@ class MTurkManager():
 
             # Clear the send message command, as a message was recieved
             agent.state.last_command = None
-            # TODO ensure you can't duplicate a message push here
-            agent.msg_queue.put(pkt.data)
+            agent.put_data(pkt.id, pkt.data)
 
     def _on_socket_dead(self, worker_id, assignment_id):
         """Handle a disconnect event, update state as required and notifying

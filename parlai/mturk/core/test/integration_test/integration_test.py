@@ -2753,4 +2753,5 @@ def main():
         handle_shutdown(task_name)
 
 if __name__ == '__main__':
+    mturk_utils.setup_aws_credentials()
     main()
