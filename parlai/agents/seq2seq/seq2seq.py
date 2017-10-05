@@ -46,7 +46,7 @@ class Seq2seqAgent(Agent):
                            help='size of the hidden layers')
         agent.add_argument('-emb', '--embeddingsize', type=int, default=128,
                            help='size of the token embeddings')
-        agent.add_argument('-nl', '--numlayers', type=int, default=1,
+        agent.add_argument('-nl', '--numlayers', type=int, default=2,
                            help='number of hidden layers')
         agent.add_argument('-lr', '--learningrate', type=float, default=0.005,
                            help='learning rate')
@@ -215,7 +215,18 @@ class Seq2seqAgent(Agent):
             }
             if opt['lookuptable'] not in ['enc_dec', 'all']:
                 self.optims['dec_lt'] = optim_class(
-                    self.dec_lt.parameters(), **kwargs),
+                    self.dec_lt.parameters(), **kwargs)
+
+            self.use_attention = False
+            # if attention is greater than 0, set up additional members
+            if self.attention > 0:
+                self.use_attention = True
+                self.max_length = self.attention
+                # combines input and previous hidden output layer
+                self.attn = nn.Linear(hsz * 2, self.max_length)
+                # combines attention weights with encoder outputs
+                self.attn_combine = nn.Linear(hsz * 2, hsz)
+                raise RuntimeError('add attn to optim')
 
             if hasattr(self, 'states'):
                 # set loaded states if applicable
