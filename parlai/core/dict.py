@@ -11,7 +11,6 @@ import copy
 import numpy as np
 import nltk
 import os
-import re
 
 
 def escape(s):
@@ -69,7 +68,7 @@ class DictionaryAgent(Agent):
 
     default_lang = 'english'
     default_maxngram = -1
-    default_minfreq = 0
+    default_minfreq = -1
     default_null = '__NULL__'
     default_end = '__END__'
     default_unk = '__UNK__'
@@ -123,6 +122,7 @@ class DictionaryAgent(Agent):
         self.unk_token = opt['dict_unktoken']
         self.start_token = opt['dict_starttoken']
         self.max_ngram_size = opt['dict_max_ngram_size']
+        self.min_freq = opt['dict_minfreq']
 
         if shared:
             self.freq = shared.get('freq', {})
@@ -323,7 +323,8 @@ class DictionaryAgent(Agent):
         sorted frequencies, breaking ties alphabetically by token.
         """
         # sort first by count, then alphabetically
-        sorted_pairs = sorted(self.freq.items(), key=lambda x: (-x[1], x[0]))
+        freqs = ((k, v) for k, v in self.freq.items() if v > self.min_freq)
+        sorted_pairs = sorted(freqs, key=lambda x: (-x[1], x[0]))
         new_tok2ind = {}
         new_ind2tok = {}
         for i, (tok, _) in enumerate(sorted_pairs):
