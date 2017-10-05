@@ -203,3 +203,5 @@ class FbDialogTeacher(DialogTeacher):
                     # reset x in case there is unlabeled data still left
                     x = ''
                     reward = 0
+            if x:
+                yield [x, None, reward], start
