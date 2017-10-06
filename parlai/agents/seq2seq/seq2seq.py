@@ -83,7 +83,7 @@ class Seq2seqAgent(Agent):
                            choices=Seq2seqAgent.ENC_OPTS.keys(),
                            help='Choose between different encoder modules.')
         agent.add_argument('-dec', '--decoder', default='same',
-                           choices=['same', 'shared'] + list(Seq2seqAgent.ENC_OPTS.keys()),
+                           choices=['same'] + list(Seq2seqAgent.ENC_OPTS.keys()),
                            help='Choose between different decoder modules. '
                                 'Default "same" uses same class as encoder, '
                                 'while "shared" also uses the same weights.')
@@ -199,9 +199,7 @@ class Seq2seqAgent(Agent):
             enc_class = Seq2seqAgent.ENC_OPTS[opt['encoder']]
             self.encoder = enc_class(emb, hsz, opt['numlayers'])
             # decoder produces our output states
-            if opt['decoder'] == 'shared':
-                self.decoder = self.encoder
-            elif opt['decoder'] == 'same':
+            if opt['decoder'] == 'same':
                 self.decoder = enc_class(emb, hsz, opt['numlayers'])
             else:
                 dec_class = Seq2seqAgent.ENC_OPTS[opt['decoder']]
@@ -273,7 +271,8 @@ class Seq2seqAgent(Agent):
         Only override args specific to the model.
         """
         model_args = {'hiddensize', 'embeddingsize', 'numlayers', 'optimizer',
-                      'encoder', 'decoder', 'lookuptable'}
+                      'encoder', 'decoder', 'lookuptable', 'attention',
+                      'attention_length'}
         for k, v in new_opt.items():
             if k not in model_args:
                 # skip non-model args
@@ -521,8 +520,6 @@ class Seq2seqAgent(Agent):
                 output = xes
             else:
                 output = self._apply_attention(xes, encoder_output, hidden, attn_mask)
-            output, hidden = self.decoder(output, hidden)
-
             output, hidden = self.decoder(output, hidden)
             preds, _scores = self.hidden_to_idx(output, dropout=False)
 
@@ -843,6 +840,10 @@ class Seq2seqAgent(Agent):
             model['longest_label'] = self.longest_label
             model['opt'] = self.opt
 
+            for attn_name in ['attn', 'attn_v', 'attn_combine']:
+                if hasattr(self, attn_name):
+                    model[attn_name] = getattr(self, attn_name).state_dict()
+
             with open(path, 'wb') as write:
                 torch.save(model, write)
 
@@ -866,11 +867,14 @@ class Seq2seqAgent(Agent):
         if self.opt['lookuptable'] not in ['enc_dec', 'all']:
             # dec_lt is enc_lt
             raise RuntimeError()
-            # self.dec_lt.load_state_dict(states['dec_lt'])
         self.encoder.load_state_dict(states['encoder'])
         self.decoder.load_state_dict(states['decoder'])
         self.h2e.load_state_dict(states['h2e'])
         self.e2o.load_state_dict(states['e2o'])
+        for attn_name in ['attn', 'attn_v', 'attn_combine']:
+            if attn_name in states:
+                getattr(self, attn_name).load_state_dict(states[attn_name])
+
         for k, v in states['optims'].items():
             self.optims[k].load_state_dict(v)
         self.longest_label = states['longest_label']
