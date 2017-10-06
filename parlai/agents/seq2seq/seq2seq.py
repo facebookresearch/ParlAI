@@ -223,14 +223,14 @@ class Seq2seqAgent(Agent):
                 # combines input and previous hidden output layer
                 self.attn = nn.Linear(hsz * 2, self.max_length)
                 # combines attention weights with encoder outputs
-                self.attn_combine = nn.Linear(hsz * 2, hsz)
+                self.attn_combine = nn.Linear(hsz * 2, emb)
             elif self.attention == 'concat':
                 self.attn = nn.Linear(hsz * 2, hsz)
                 self.attn_v = nn.Linear(hsz, 1)
-                self.attn_combine = nn.Linear(hsz * 2, hsz)
+                self.attn_combine = nn.Linear(hsz + emb, emb)
             elif self.attention == 'general':
                 self.attn = nn.Linear(hsz, hsz)
-                self.attn_combine = nn.Linear(hsz * 2, hsz)
+                self.attn_combine = nn.Linear(hsz + emb, emb)
 
             # set up optims for each module
             lr = opt['learningrate']
@@ -439,7 +439,7 @@ class Seq2seqAgent(Agent):
                 torch.cat((xes[0], hidden[-1]), 1)))
             if attn_weights.size(1) > encoder_output.size(1):
                 attn_weights = attn_weights.narrow(
-                    1, 0, encoder_output.size(1) )
+                    1, 0, encoder_output.size(1))
 
         attn_applied = torch.bmm(
             attn_weights.unsqueeze(1), encoder_output).squeeze(1)
@@ -462,7 +462,8 @@ class Seq2seqAgent(Agent):
         if self.attention != 'none':
             # using attention, we need to go one token at a time
             for i in range(ys.size(1)):
-                output = self._apply_attention(xes, encoder_output, hidden, attn_mask)
+                h_att = hidden[0] if type(self.decoder) == nn.LSTM else hidden
+                output = self._apply_attention(xes, encoder_output, h_att, attn_mask)
                 output, hidden = self.decoder(output, hidden)
                 preds, scores = self.hidden_to_idx(output, dropout=True)
                 y = ys.select(1, i)
@@ -592,8 +593,18 @@ class Seq2seqAgent(Agent):
                 .contiguous()
                 .view(-1, sz[1], sz[2])
             )
+
+            msz = attn_mask.size()
+            cands_attn_mask = (
+                attn_mask.contiguous()
+                .view(msz[0], 1, msz[1])
+                .expand(msz[0], cands.size(1), msz[1])
+                .contiguous()
+                .view(-1, msz[1])
+            )
             for i in range(cview.size(1)):
-                output = self._apply_attention(c_xes, cands_encoder_output, cands_hn, attn_mask)
+                h_att = cands_hn[0] if type(self.decoder) == nn.LSTM else cands_hn
+                output = self._apply_attention(c_xes, cands_encoder_output, h_att, cands_attn_mask)
                 output, cands_hn = self.decoder(output, cands_hn)
                 _preds, scores = self.hidden_to_idx(output, dropout=False)
                 cs = cview.select(1, i)
