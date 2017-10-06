@@ -16,8 +16,6 @@ import torch
 import os
 import random
 
-import torchtext.vocab as vocab
-
 
 class Seq2seqAgent(Agent):
     """Agent which takes an input sequence and produces an output sequence.
@@ -183,6 +181,11 @@ class Seq2seqAgent(Agent):
                                            scale_grad_by_freq=False)
 
             if opt['embedding_init'] == 'glove':
+                try:
+                    import torchtext.vocab as vocab
+                except ImportError:
+                    raise ImportError('Please install torchtext from'
+                                      'github.com/pytorch/text')
                 Glove = vocab.GloVe(name='840B', dim=300)
                 # do better than uniform random
                 proj = torch.FloatTensor(emb, 300).uniform_(-0.057735, 0.057735) if emb != 300 else None
