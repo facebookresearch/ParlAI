@@ -205,7 +205,6 @@ class Seq2seqAgent(Agent):
                                       'github.com/pytorch/text')
                 Glove = vocab.GloVe(name='840B', dim=300)
                 # do better than uniform random
-                # 0.057735 = sqrt(300)
                 proj = torch.FloatTensor(emb, 300).uniform_(-0.057735, 0.057735) if emb != 300 else None
                 for w in self.dict.freq:
                     if w in Glove.stoi:
