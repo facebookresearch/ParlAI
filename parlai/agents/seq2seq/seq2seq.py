@@ -59,13 +59,17 @@ class Seq2seqAgent(Agent):
                            help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
                            help='dropout rate')
+        agent.add_argument('-bi', '--bidirectional', type='bool',
+                           default=False,
+                           help='whether to encode the context with a '
+                                'bidirectional rnn')
         agent.add_argument('-att', '--attention', default='none',
                            choices=['none', 'concat', 'general', 'local'],
                            help='Choices: none, concat, general, local. '
                                 'If set local, also set attention-length. '
                                 'For more details see: '
                                 'https://arxiv.org/pdf/1508.04025.pdf')
-        agent.add_argument('-attl', '--attention-length', default=-1, type=int,
+        agent.add_argument('-attl', '--attention-length', default=48, type=int,
                            help='Length of local attention.')
         agent.add_argument('--no-cuda', action='store_true', default=False,
                            help='disable GPUs even if available')
@@ -171,9 +175,11 @@ class Seq2seqAgent(Agent):
             self.longest_label = 1
             self.truncate = opt['truncate']
             self.attention = opt['attention']
+            self.bidirectional = opt['bidirectional']
+            self.num_dirs = 2 if self.bidirectional else 1
 
             # set up tensors once
-            self.zeros = torch.zeros(self.num_layers, 1, hsz)
+            self.zeros = torch.zeros(self.num_layers * self.num_dirs, 1, hsz)
             self.xs = torch.LongTensor(1, 1)
             self.ys = torch.LongTensor(1, 1)
             if self.rank:
@@ -186,7 +192,7 @@ class Seq2seqAgent(Agent):
             # lookup table stores word embeddings
             self.enc_lt = nn.Embedding(len(self.dict), emb,
                                        padding_idx=self.NULL_IDX,
-                                       max_norm=1)
+                                       max_norm=5)
 
             if opt['lookuptable'] in ['enc_dec', 'all']:
                 # share this with the encoder
@@ -194,7 +200,7 @@ class Seq2seqAgent(Agent):
             else:
                 self.dec_lt = nn.Embedding(len(self.dict), emb,
                                            padding_idx=self.NULL_IDX,
-                                           max_norm=1)
+                                           max_norm=5)
 
             if opt['embedding_init'] == 'glove':
                 # set up pre-initialized vectors from GloVe
@@ -202,7 +208,7 @@ class Seq2seqAgent(Agent):
                     import torchtext.vocab as vocab
                 except ImportError:
                     raise ImportError('Please install torchtext from'
-                                      'github.com/pytorch/text')
+                                      'github.com/pytorch/text.')
                 Glove = vocab.GloVe(name='840B', dim=300)
                 # do better than uniform random
                 proj = torch.FloatTensor(emb, 300).uniform_(-0.057735, 0.057735) if emb != 300 else None
@@ -216,18 +222,27 @@ class Seq2seqAgent(Agent):
 
             # encoder captures the input text
             enc_class = Seq2seqAgent.ENC_OPTS[opt['encoder']]
-            self.encoder = enc_class(emb, hsz, opt['numlayers'])
+            self.encoder = enc_class(emb, hsz, opt['numlayers'],
+                                     dropout=opt['dropout'], batch_first=True,
+                                     bidirectional=self.bidirectional)
             # decoder produces our output states
             if opt['decoder'] == 'same':
                 # use same class as encoder
-                self.decoder = enc_class(emb, hsz, opt['numlayers'])
+                self.decoder = enc_class(emb, hsz, opt['numlayers'],
+                                         dropout=opt['dropout'],
+                                         batch_first=True,
+                                         bidirectional=self.bidirectional)
             else:
                 # use set class
                 dec_class = Seq2seqAgent.ENC_OPTS[opt['decoder']]
-                self.decoder = dec_class(emb, hsz, opt['numlayers'])
+                self.decoder = dec_class(emb, hsz, opt['numlayers'],
+                                         dropout=opt['dropout'],
+                                         batch_first=True,
+                                         bidirectional=self.bidirectional)
 
             # linear layers help us produce outputs from final decoder state
-            self.h2e = nn.Linear(hsz, emb)  # hidden to embedding
+            hszXdirs = hsz * self.num_dirs
+            self.h2e = nn.Linear(hszXdirs, emb)  # hidden to embedding
             self.e2o = nn.Linear(emb, len(self.dict))  # embedding to output
             if opt['lookuptable'] in ['dec_out', 'all']:
                 # share these weights with the decoder lookup table
@@ -242,23 +257,23 @@ class Seq2seqAgent(Agent):
                     raise RuntimeError('Set attention length to > 0.')
                 self.max_length = opt['attention_length']
                 # combines input and previous hidden output layer
-                self.attn = nn.Linear(hsz * 2, self.max_length)
+                self.attn = nn.Linear(hszXdirs + emb, self.max_length)
                 # combines attention weights with encoder outputs
-                self.attn_combine = nn.Linear(hsz + emb, emb)
+                self.attn_combine = nn.Linear(hszXdirs + emb, emb)
             elif self.attention == 'concat':
-                self.attn = nn.Linear(hsz * 2, hsz)
+                self.attn = nn.Linear(hszXdirs * 2, hsz)
                 self.attn_v = nn.Linear(hsz, 1)
-                self.attn_combine = nn.Linear(hsz + emb, emb)
+                self.attn_combine = nn.Linear(hszXdirs + emb, emb)
             elif self.attention == 'general':
-                self.attn = nn.Linear(hsz, hsz)
-                self.attn_combine = nn.Linear(hsz + emb, emb)
+                self.attn = nn.Linear(hszXdirs, hszXdirs)
+                self.attn_combine = nn.Linear(hszXdirs + emb, emb)
 
             # set up optims for each module
             lr = opt['learningrate']
             optim_class = Seq2seqAgent.OPTIM_OPTS[opt['optimizer']]
             kwargs = {'lr': lr}
             if opt['optimizer'] == 'sgd':
-                kwargs['momentum'] = 0.1
+                kwargs['momentum'] = 0.9
                 kwargs['nesterov'] = True
             self.optims = {
                 'enc_lt': optim_class(self.enc_lt.parameters(), **kwargs),
@@ -345,7 +360,7 @@ class Seq2seqAgent(Agent):
         if dropout:
             dr = self.dropout
             # dropout at each step
-            out = dr(self.e2o(dr(self.h2e(dr(hidden)))))
+            out = dr(self.e2o(dr(self.h2e(hidden))))
         else:
             out = self.e2o(self.h2e(hidden))
 
@@ -357,10 +372,9 @@ class Seq2seqAgent(Agent):
             # we need a softmax per token
             # index on argmin(batch_size,seq_length) so fewer cats / bigger ops
             dim = 0 if out.size(0) < out.size(1) else 1
-            torch.cat([F.log_softmax(out.select(dim, i)).unsqueeze(dim)
-                       for i in range(out.size(dim))], dim)
+            scores = torch.cat([F.log_softmax(out.select(dim, i)).unsqueeze(dim)
+                                for i in range(out.size(dim))], dim)
         _max_score, idx = scores.max(2)
-
         return idx, scores
 
     def zero_grad(self):
@@ -416,22 +430,23 @@ class Seq2seqAgent(Agent):
         self.episode_done = observation['episode_done']
         return observation
 
-    def _encode(self, xs, dropout=False):
+    def _encode(self, xs, is_training=False):
         """Call encoder and return output and hidden states."""
         self.lastxs = xs
         batchsize = len(xs)
 
         # first encode context
         xes = self.enc_lt(xs)
-        if dropout:
+        if is_training:
             xes = self.dropout(xes)
         # project from emb_size to hidden_size dimensions
         x_lens = [x for x in torch.sum((xs > 0).int(), dim=1).data]
-        xes_packed = pack_padded_sequence(xes.transpose(0, 1), x_lens)
+        xes_packed = pack_padded_sequence(xes, x_lens, batch_first=True)
 
         if self.zeros.size(1) != batchsize:
-            self.zeros.resize_(self.num_layers, batchsize, self.hidden_size).fill_(0)
-        self.zeros.normal_(0, 0.1)
+            self.zeros.resize_(self.num_layers * self.num_dirs,
+                               batchsize, self.hidden_size).fill_(0)
+
         h0 = Variable(self.zeros)
         if type(self.encoder) == nn.LSTM:
             encoder_output_packed, hidden = self.encoder(xes_packed, (h0, h0))
@@ -441,8 +456,9 @@ class Seq2seqAgent(Agent):
             encoder_output_packed, hidden = self.encoder(xes_packed, h0)
             if type(self.decoder) == nn.LSTM:
                 hidden = (hidden, h0)
-        encoder_output, _ = pad_packed_sequence(encoder_output_packed)
-        encoder_output = encoder_output.transpose(0, 1)
+        encoder_output, _ = pad_packed_sequence(encoder_output_packed,
+                                                batch_first=True)
+        encoder_output = encoder_output
 
         if self.attention == 'local':
             # if using local attention, narrow encoder_output to max_length
@@ -455,16 +471,20 @@ class Seq2seqAgent(Agent):
 
     def _apply_attention(self, xes, encoder_output, hidden, attn_mask=None):
         """Apply attention to encoder hidden layer."""
+        if self.bidirectional:
+            last_hidden = torch.cat([hidden[-2], hidden[-1]], 1)
+        else:
+            last_hidden = hidden[-1]  # select hidden from last RNN layer
         if self.attention == 'concat':
-            hidden_expand = hidden[-1].unsqueeze(1).expand(
-                hidden.size()[1], encoder_output.size()[1], hidden.size()[2])
+            hidden_expand = last_hidden.unsqueeze(1).expand(
+                last_hidden.size(0), encoder_output.size(1), last_hidden.size(1))
             attn_w_premask = self.attn_v(F.tanh(self.attn(
                 torch.cat((encoder_output, hidden_expand), 2)))).squeeze(2)
             attn_weights = F.softmax(attn_w_premask * attn_mask -
                                      (1 - attn_mask) * 1e20)
 
         elif self.attention == 'general':
-            hidden_expand = hidden[-1].unsqueeze(1)
+            hidden_expand = last_hidden.unsqueeze(1)
             attn_w_premask = torch.bmm(self.attn(hidden_expand),
                                        encoder_output.transpose(1, 2)
                                        ).squeeze(1)
@@ -473,7 +493,7 @@ class Seq2seqAgent(Agent):
 
         elif self.attention == 'local':
             attn_weights = F.softmax(self.attn(
-                torch.cat((xes[0], hidden[-1]), 1)))
+                torch.cat((xes.squeeze(1), last_hidden), 1)))
             if attn_weights.size(1) > encoder_output.size(1):
                 attn_weights = attn_weights.narrow(
                     1, 0, encoder_output.size(1))
@@ -481,8 +501,8 @@ class Seq2seqAgent(Agent):
         attn_applied = torch.bmm(
             attn_weights.unsqueeze(1), encoder_output).squeeze(1)
 
-        output = torch.cat((xes[0], attn_applied), 1)
-        output = self.attn_combine(output).unsqueeze(0)
+        output = torch.cat((xes.squeeze(1), attn_applied), 1)
+        output = self.attn_combine(output).unsqueeze(1)
         output = F.tanh(output)
 
         return output
@@ -505,39 +525,37 @@ class Seq2seqAgent(Agent):
                 output, hidden = self.decoder(output, hidden)
                 preds, scores = self.hidden_to_idx(output, dropout=True)
                 y = ys.select(1, i)
-                loss += self.criterion(scores[0], y)
+                loss += self.criterion(scores.squeeze(1), y)
                 # use the true token as the next input instead of predicted
                 # this produces a biased prediction but better training
-                xes = self.dec_lt(y).unsqueeze(0)
+                xes = self.dec_lt(y).unsqueeze(1)
                 xes = self.dropout(xes)
                 for b in range(batchsize):
                     # convert the output scores to tokens
-                    token = self.v2t([preds.data[0][b]])
+                    token = self.v2t(preds.data[b])
                     output_lines[b].append(token)
         else:
             # force the entire sequence at once by feeding in START + y[:-2]
             y_in = ys.narrow(1, 0, ys.size(1) - 1)
-            xes = torch.cat([xes, self.dec_lt(y_in).transpose(0, 1)])
+            xes = torch.cat([xes, self.dec_lt(y_in)], 1)
 
             output, hidden = self.decoder(xes, hidden)
-            preds, scores = self.hidden_to_idx(output.transpose(0, 1), dropout=True)
+            preds, scores = self.hidden_to_idx(output, dropout=True)
             for i in range(ys.size(1)):
                 # sum loss per-token
                 score = scores.select(1, i)
                 y = ys.select(1, i)
                 loss += self.criterion(score, y)
             for b in range(batchsize):
-                for i in range(ys.size(1)):
-                    # convert the output scores to tokens
-                    token = self.v2t([preds.data[b][i]])
-                    output_lines[b].append(token)
+                output_lines[b].extend(self.v2t(preds.data[b]).split(' '))
         loss.backward()
         self.update_params()
 
         if random.random() < 0.1:
             # sometimes output a prediction for debugging
             print('prediction:', ' '.join(output_lines[0]),
-                  '\nlabel:', self.v2t(ys.data[0]))
+                  '\nlabel:', self.v2t(ys.data[0]),
+                  '\nloss:', loss.data[0])
 
         return output_lines
 
@@ -566,7 +584,7 @@ class Seq2seqAgent(Agent):
             for b in range(batchsize):
                 if not done[b]:
                     # only add more tokens for examples that aren't done yet
-                    token = self.v2t([preds.data[0][b]])
+                    token = self.v2t(preds.data[b])
                     if token == self.END:
                         # if we produced END, we're done
                         done[b] = True
@@ -588,7 +606,7 @@ class Seq2seqAgent(Agent):
         # cands are exs_with_cands x cands_per_ex x words_per_cand
         # cview is total_cands x words_per_cand
         cview = cands.view(-1, cands.size(2))
-        c_xes = start.expand(start.size(0), cview.size(0), start.size(2))
+        c_xes = start.expand(cview.size(0), start.size(0), start.size(1))
 
         if len(cand_inds) != hidden.size(1):
             # only use hidden state from inputs with associated candidates
@@ -647,15 +665,15 @@ class Seq2seqAgent(Agent):
                 cs = cview.select(1, i)
                 non_nulls = cs.ne(self.NULL_IDX)
                 cand_lengths += non_nulls.long()
-                score_per_cand = torch.gather(scores[0], 1, cs.unsqueeze(1))
+                score_per_cand = torch.gather(scores.select(1, i), 1, cs.unsqueeze(1))
                 cand_scores += score_per_cand.squeeze() * non_nulls.float()
-                c_xes = self.dec_lt(cs).unsqueeze(0)
+                c_xes = self.dec_lt(cs).unsqueeze(1)
         else:
             # process entire sequence at once
             if cview.size(1) > 1:
                 # feed in START + cands[:-2]
                 cands_in = cview.narrow(1, 0, cview.size(1) - 1)
-                c_xes = torch.cat([c_xes, self.dec_lt(cands_in.transpose(0, 1))])
+                c_xes = torch.cat([c_xes, self.dec_lt(cands_in)], 1)
             output, cands_hn = self.decoder(c_xes, cands_hn)
             _preds, scores = self.hidden_to_idx(output, dropout=False)
 
@@ -664,7 +682,7 @@ class Seq2seqAgent(Agent):
                 cs = cview.select(1, i)
                 non_nulls = cs.ne(self.NULL_IDX)
                 cand_lengths += non_nulls.long()
-                score_per_cand = torch.gather(scores[i], 1, cs.unsqueeze(1))
+                score_per_cand = torch.gather(scores.select(1, i), 1, cs.unsqueeze(1))
                 cand_scores += score_per_cand.squeeze() * non_nulls.float()
 
         # set empty scores to -1, so when divided by 0 they become -inf
@@ -687,15 +705,15 @@ class Seq2seqAgent(Agent):
         batchsize = len(xs)
         text_cand_inds = None
         is_training = ys is not None
-        encoder_output, hidden = self._encode(xs, dropout=is_training)
+        encoder_output, hidden = self._encode(xs, is_training)
 
         # next we use END as an input to kick off our decoder
         x = Variable(self.START_TENSOR)
-        xe = self.dec_lt(x).unsqueeze(1)
+        xe = self.dec_lt(x)
         if is_training:
             # make sure we don't store too much info in START_TENSOR embedding
             xe = self.dropout(xe)
-        xes = xe.expand(xe.size(0), batchsize, xe.size(2))
+        xes = xe.expand(batchsize, 1, xe.size(1))
 
         # list of output tokens for each example in the batch
         output_lines = None
