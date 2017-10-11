@@ -135,5 +135,24 @@ class OeTeacher(Teacher):
                 self.annotation = json.load(data_file)
 
 
+class AllTeacher(OeTeacher):
+    """
+    VQA v2.0 Open-Ended teacher, which inherits from OeTeacher and 
+    gives access to the multiple choice answer.
+    """
+
+    def act(self):
+        action = super().act()
+
+        if not self.datatype.startswith('test'):
+            anno = self.annotation['annotations'][self.episode_idx]
+            self.mclabel = [anno['multiple_choice_answer']]
+
+        if self.datatype.startswith('train'):
+            action['mc_label'] = self.mclabel
+
+        return action
+
+
 class DefaultTeacher(OeTeacher):
     pass

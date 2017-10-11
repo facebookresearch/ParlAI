@@ -157,6 +157,30 @@ class McTeacher(OeTeacher):
         return action
 
 
+class AllTeacher(OeTeacher):
+    """
+    VQA Teacher, which inherits from OeTeacher and gives access to
+    the multiple choices and the multiple choice answer.
+    """
+
+    def act(self):
+        action = super().act()
+
+        qa = self.ques['questions'][self.episode_idx]
+        multiple_choices = qa['multiple_choices']
+
+        action['label_candidates'] = multiple_choices
+
+        if not self.datatype.startswith('test'):
+            anno = self.annotation['annotations'][self.episode_idx]
+            self.mclabel = [anno['multiple_choice_answer']]
+
+        if self.datatype.startswith('train'):
+            action['mc_label'] = self.mclabel
+
+        return action
+
+
 class DefaultTeacher(McTeacher):
     # default to Multiple-Choice Teacher
     pass
