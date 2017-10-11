@@ -459,7 +459,7 @@ class Seq2seqAgent(Agent):
             encoder_output_packed, hidden = self.encoder(xes_packed, h0)
             hidden = self.enc2dec(hidden.transpose(0, -1)).transpose(0, -1).contiguous()
             if type(self.decoder) == nn.LSTM:
-                hidden = (hidden, h0)
+                hidden = (hidden, h0.narrow(0, 0, 2))
         encoder_output, _ = pad_packed_sequence(encoder_output_packed,
                                                 batch_first=True)
         encoder_output = encoder_output
