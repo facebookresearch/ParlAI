@@ -260,11 +260,11 @@ class Seq2seqAgent(Agent):
                 # combines attention weights with encoder outputs
                 self.attn_combine = nn.Linear(hszXdirs + emb, emb)
             elif self.attention == 'concat':
-                self.attn = nn.Linear(hsz * 2, hsz)
+                self.attn = nn.Linear(hsz + hszXdirs, hsz)
                 self.attn_v = nn.Linear(hsz, 1)
                 self.attn_combine = nn.Linear(hszXdirs + emb, emb)
             elif self.attention == 'general':
-                self.attn = nn.Linear(hsz, hsz)
+                self.attn = nn.Linear(hsz, hszXdirs)
                 self.attn_combine = nn.Linear(hszXdirs + emb, emb)
 
             # set up optims for each module
