@@ -26,17 +26,20 @@ class DefaultTeacher(DialogTeacher):
         super().__init__(opt, shared)
 
     def act(self):
+        """Use DialogTeacher act but set id to "Teacher" for intro message."""
         reply = super().act()
         if reply.get('text', '').startswith('You have the following friends'):
             reply['id'] = 'Teacher'
         return reply
 
     def setup_data(self, path):
+        """Load json data of conversations."""
         print('loading: ' + path)
         with open(path) as data_file:
             self.data = json.load(data_file)
         for ex in self.data:
             if len(ex['events']) > 0:
+                # TODO: add reverse conversation as well
                 curr_agent = ex['events'][0]['agent']
                 conversation = [
                     ('You have the following friends:\n' +
