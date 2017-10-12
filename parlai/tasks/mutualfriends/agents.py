@@ -25,6 +25,12 @@ class DefaultTeacher(DialogTeacher):
         self.id = 'mutualfriends'
         super().__init__(opt, shared)
 
+    def act(self):
+        reply = super().act()
+        if reply.get('text', '').startswith('You have the following friends'):
+            reply['id'] = 'Teacher'
+        return reply
+
     def setup_data(self, path):
         print('loading: ' + path)
         with open(path) as data_file:
@@ -32,9 +38,6 @@ class DefaultTeacher(DialogTeacher):
         for ex in self.data:
             if len(ex['events']) > 0:
                 curr_agent = ex['events'][0]['agent']
-                # agents = set(ex['agents'].keys())
-                # agents.remove(str(curr_agent))
-                # other_agent = int(agents.pop())
                 conversation = [
                     ('You have the following friends:\n' +
                     '\n'.join(', '.join('{}={}'.format(k, v)
