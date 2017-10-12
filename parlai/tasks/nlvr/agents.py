@@ -24,8 +24,6 @@ def _path(opt):
     prefix = os.path.join(opt['datapath'], 'nlvr', 'nlvr-master')
     questions_path = os.path.join(prefix, dt, dt + '.json')
     images_path = os.path.join(prefix, dt, 'images')
-    print("Questions path is", questions_path)
-    print("Images path is ", images_path)
 
     return questions_path, images_path
 
