@@ -13,13 +13,12 @@ from functools import lru_cache
 
 
 class MemNN(nn.Module):
-    def __init__(self, opt, dictionary):
+    def __init__(self, opt, num_features):
         super().__init__()
         self.opt = opt
 
         # Prepare features
         self.num_time_features = opt['mem_size']
-        num_features = len(dictionary)
         self.extra_features_slots = 0
         if opt['time_features']:
             self.time_features = torch.LongTensor(range(num_features,

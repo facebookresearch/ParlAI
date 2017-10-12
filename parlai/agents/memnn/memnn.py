@@ -64,7 +64,7 @@ class MemnnAgent(Agent):
             self.dict = DictionaryAgent(opt)
             self.answers = [None] * opt['batchsize']
 
-            self.model = MemNN(opt, self.dict)
+            self.model = MemNN(opt, len(self.dict))
             self.mem_size = opt['mem_size']
             self.loss_fn = CrossEntropyLoss()
 
