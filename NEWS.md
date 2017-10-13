@@ -1,5 +1,7 @@
 <h2>News</h2>
 
+2017-10-13: [New model added: Fairseq-py](https://github.com/facebookresearch/fairseq-py)
+
 2017-10-12: [New task added: Stanford's MutualFriends](https://stanfordnlp.github.io/cocoa/)
 
 2017-09-22: [New task added: babi+](https://www.researchgate.net/publication/319128941_Challenging_Neural_Dialogue_Models_with_Natural_Data_Memory_Networks_Fail_on_Incremental_Phenomena)
