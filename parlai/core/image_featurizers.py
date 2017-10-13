@@ -142,6 +142,7 @@ class ImageLoader():
             if not os.path.exists(dpath):
                 build_data.make_dir(dpath)
 
+            imagefn = imagefn.split('.')[0]
             imagefn = imagefn + '.npy'
             new_path = os.path.join(prepath, mode, imagefn)
 
