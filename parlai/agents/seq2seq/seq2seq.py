@@ -530,7 +530,7 @@ class Seq2seqAgent(Agent):
                 h_att = hidden[0] if type(self.decoder) == nn.LSTM else hidden
                 output = self._apply_attention(xes, encoder_output, h_att, attn_mask)
                 output, hidden = self.decoder(output, hidden)
-                preds, scores = self.hidden_to_idx(output, dropout=True)
+                preds, scores = self.hidden_to_idx(output, is_training=True)
                 y = ys.select(1, i)
                 loss += self.criterion(scores.squeeze(1), y)
                 # use the true token as the next input instead of predicted
@@ -546,7 +546,7 @@ class Seq2seqAgent(Agent):
             xes = torch.cat([xes, self.dec_lt(y_in)], 1)
 
             output, hidden = self.decoder(xes, hidden)
-            preds, scores = self.hidden_to_idx(output, dropout=True)
+            preds, scores = self.hidden_to_idx(output, is_training=True)
             for i in range(ys.size(1)):
                 # sum loss per-token
                 score = scores.select(1, i)
@@ -583,7 +583,7 @@ class Seq2seqAgent(Agent):
                 h_att = hidden[0] if type(self.decoder) == nn.LSTM else hidden
                 output = self._apply_attention(xes, encoder_output, h_att, attn_mask)
             output, hidden = self.decoder(output, hidden)
-            preds, _scores = self.hidden_to_idx(output, dropout=False)
+            preds, _scores = self.hidden_to_idx(output, is_training=False)
 
             xes = self.dec_lt(preds)
             max_len += 1
@@ -667,7 +667,7 @@ class Seq2seqAgent(Agent):
                 h_att = cands_hn[0] if type(self.decoder) == nn.LSTM else cands_hn
                 output = self._apply_attention(c_xes, cands_encoder_output, h_att, cands_attn_mask)
                 output, cands_hn = self.decoder(output, cands_hn)
-                _preds, scores = self.hidden_to_idx(output, dropout=False)
+                _preds, scores = self.hidden_to_idx(output, is_training=False)
                 cs = cview.select(1, i)
                 non_nulls = cs.ne(self.NULL_IDX)
                 cand_lengths += non_nulls.long()
@@ -681,7 +681,7 @@ class Seq2seqAgent(Agent):
                 cands_in = cview.narrow(1, 0, cview.size(1) - 1)
                 c_xes = torch.cat([c_xes, self.dec_lt(cands_in)], 1)
             output, cands_hn = self.decoder(c_xes, cands_hn)
-            _preds, scores = self.hidden_to_idx(output, dropout=False)
+            _preds, scores = self.hidden_to_idx(output, is_training=False)
 
             for i in range(cview.size(1)):
                 # calculate score at each token
