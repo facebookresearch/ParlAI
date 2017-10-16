@@ -97,6 +97,10 @@ class Agent(object):
         """Perform any final cleanup if needed."""
         pass
 
+    def new_training_epoch(self, epoch):
+        """Perform any update if needed, e.g. updating lr."""
+        pass
+
 
 class Teacher(Agent):
     """Basic Teacher agent which keeps track of how many times it's received

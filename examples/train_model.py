@@ -127,6 +127,7 @@ def main():
     impatience = 0
     saved = False
     valid_world = None
+    epoch = 0
     while True:
         world.parley()
         parleys += 1
@@ -137,6 +138,10 @@ def main():
         if opt['max_train_time'] > 0 and train_time.time() > opt['max_train_time']:
             print('[ max_train_time elapsed: {} ]'.format(train_time.time()))
             break
+        new_epoch = parleys * opt['batchsize'] // len(world)
+        if new_epoch > epoch:
+            epoch = new_epoch
+            agent.new_training_epoch(epoch)
         if opt['log_every_n_secs'] > 0 and log_time.time() > opt['log_every_n_secs']:
             if opt['display_examples']:
                 print(world.display() + '\n~~')
