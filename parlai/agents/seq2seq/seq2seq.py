@@ -244,6 +244,9 @@ class Seq2seqAgent(Agent):
                                          batch_first=True)
             if opt['decoder'] == 'shared':
                 # shared weights: use the decoder to encode
+                if self.bidirectional:
+                    raise RuntimeError('Cannot share enc/dec and do '
+                                       'bidirectional encoding.')
                 self.encoder = self.decoder
             else:
                 self.encoder = enc_class(emb, hsz, opt['numlayers'],
@@ -280,7 +283,7 @@ class Seq2seqAgent(Agent):
             optim_class = Seq2seqAgent.OPTIM_OPTS[opt['optimizer']]
             kwargs = {'lr': lr}
             if opt['optimizer'] == 'sgd':
-                kwargs['momentum'] = 0.9
+                kwargs['momentum'] = 0.95
                 kwargs['nesterov'] = True
             self.optims = {
                 'enc_lt': optim_class(self.enc_lt.parameters(), **kwargs),
