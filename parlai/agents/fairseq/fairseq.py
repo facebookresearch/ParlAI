@@ -41,7 +41,8 @@ def _make_fairseq_dict(parlai_dict):
 class FairseqAgent(Agent):
     """Agent which takes an input sequence and produces an output sequence.
 
-    For more information, see paper `(Sutskever et al. 2014) <url>`_.
+    For more information, see Convolutional Sequence to Sequence Learning
+     `(Gehring et al. 2017) <https://arxiv.org/abs/1705.03122>`_.
     """
 
     @staticmethod
@@ -398,7 +399,7 @@ class FairseqAgent(Agent):
 
     def save(self, path=None):
         path = self.opt.get('model_file', None) if path is None else path
-        if path:
+        if path and hasattr(self, 'trainer'):
             model = {}
             model['state_dict'] = self.trainer.get_model().state_dict()
             model['opt'] = self.opt
