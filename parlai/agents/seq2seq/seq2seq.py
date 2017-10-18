@@ -872,13 +872,14 @@ class Seq2seqAgent(Agent):
         predictions, text_cand_inds = self.predict(xs, ys, cands, valid_cands)
 
         if self.lm and ys is not None:
-            # also train on lm task: given "START", predict
+            # also train on lm task: given [START], predict [x y]
+            # (regular task is given [x START] produce [y])
             new_obs = [
                 {
-                    'text': self.START,
+                    'text': [self.START_IDX],
                     'labels': [
                         '{x} {s} {y}'.format(
-                            x=obs['text'].replace(self.START, ''),
+                            x=self.v2t(obs['text'][1:]),  # skip START token
                             s=self.START,
                             y=random.choice(obs.get('labels', [''])))
                     ]
@@ -894,14 +895,20 @@ class Seq2seqAgent(Agent):
             curr = batch_reply[valid_inds[i]]
             output_tokens = []
             for c in predictions.data[i]:
-                if c == self.END_IDX:
+                if c == self.END_IDX or c == self.NULL_IDX:
                     break
                 else:
                     output_tokens.append(c)
             curr_pred = self.v2t(output_tokens)
             curr['text'] = curr_pred
             if labels is not None:
-                self.answers[valid_inds[i]] = [i for i in ys.data[0]]
+                y = []
+                for c in ys.data[i]:
+                    if c == self.END_IDX or c == self.NULL_IDX:
+                        break
+                    else:
+                        y.append(c)
+                self.answers[valid_inds[i]] = y
             else:
                 self.answers[valid_inds[i]] = output_tokens
 
