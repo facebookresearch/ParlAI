@@ -7,7 +7,8 @@ SWEEP_NAME=memnn_bAbI_parameter_sweep  # Sweep name
 JOBSCRIPTS=scripts
 mkdir -p ${JOBSCRIPTS}
 
-SAVE_ROOT=/checkpoint/kshuster/${DATE}/${SWEEP_NAME}
+SAVE_ROOT=/path/to/model/save/root     # Where to save the model files
+                                       # (e.g. /tmp/${DATE}/${SWEEP_NAME})
 mkdir -p stdout stderr
 
 # Training parameters
