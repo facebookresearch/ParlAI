@@ -199,7 +199,7 @@ class Seq2seqAgent(Agent):
                 self.cand_lengths = torch.LongTensor(1)
 
             # set up modules
-            self.criterion = nn.NLLLoss(ignore_index=self.NULL_IDX)
+            self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX)
             # lookup table stores word embeddings
             self.enc_lt = nn.Embedding(len(self.dict), emb,
                                        padding_idx=self.NULL_IDX,
@@ -375,18 +375,7 @@ class Seq2seqAgent(Agent):
         """Convert hidden state vectors into indices into the dictionary."""
         # dropout at each step
         e = F.dropout(self.h2e(hidden), p=self.dropout, training=is_training)
-        out = F.dropout(self.e2o(e), p=self.dropout, training=is_training)
-
-        # out is batch_size x sequence_length x dict_sz
-        if out.size(1) == 1:
-            # sequence length is one, just squeeze it so we don't need to cat
-            scores = F.log_softmax(out.squeeze(1)).unsqueeze(1)
-        else:
-            # we need a softmax per token
-            # index on argmin(batch_size,seq_length) so fewer cats / bigger ops
-            dim = 0 if out.size(0) < out.size(1) else 1
-            scores = torch.cat([F.log_softmax(out.select(dim, i)).unsqueeze(dim)
-                                for i in range(out.size(dim))], dim)
+        scores = F.dropout(self.e2o(e), p=self.dropout, training=is_training)
         _max_score, idx = scores.max(2)
         return idx, scores
 
