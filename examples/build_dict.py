@@ -6,11 +6,9 @@
 """Generates a dictionary file from the training data."""
 
 from parlai.core.dict import DictionaryAgent
-from parlai.core.worlds import DialogPartnerWorld
 from parlai.core.params import ParlaiParser, str2class
 from parlai.core.worlds import create_task
 import copy
-import importlib
 import os
 
 def build_dict(opt):
@@ -37,6 +35,7 @@ def build_dict(opt):
         ordered_opt['datatype'] += ':stream'
     ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
+    ordered_opt['image_mode'] = 'none'
     world_dict = create_task(ordered_opt, dictionary)
     # pass examples to dictionary
     for _ in world_dict:
