@@ -346,7 +346,13 @@ class Seq2seqAgent(Agent):
 
     def v2t(self, vec):
         """Convert token indices to string of tokens."""
-        return self.dict.vec2txt(vec)
+        new_vec = []
+        for i in vec:
+            if i == self.END_IDX:
+                break
+            elif i not in [self.NULL_IDX, self.START_IDX]:
+                new_vec.append(i)
+        return self.dict.vec2txt(new_vec)
 
     def cuda(self):
         """Push parameters to the GPU."""
