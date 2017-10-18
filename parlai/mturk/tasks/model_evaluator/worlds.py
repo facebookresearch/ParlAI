@@ -11,7 +11,7 @@ class ModelEvaluatorOnboardWorld(MTurkOnboardWorld):
     def parley(self):
         ad = {}
         ad['id'] = 'System'
-        ad['text'] = 'Welcome onboard!'
+        ad['text'] = 'Welcome onboard! Enter anything to confirm you\'re here.'
         self.mturk_agent.observe(ad)
         response = self.mturk_agent.act()
         self.episodeDone = True
@@ -27,7 +27,7 @@ class ModelEvaluatorWorld(MTurkTaskWorld):
     def __init__(self, opt, model_agent, task_opt, mturk_agent):
         self.task_world = create_task(task_opt, model_agent)
         self.mturk_agent = mturk_agent
-        self.episodeDone = False    
+        self.episodeDone = False
 
     def parley(self):
         self.task_world.parley()
@@ -43,7 +43,7 @@ class ModelEvaluatorWorld(MTurkTaskWorld):
         # TODO: deal with multi-turn dialogs, for now we will just deal
         # with 1-turn dialogs in this task.
         ad['episode_done'] = True  # self.world.episode_done()
-        
+
         self.mturk_agent.observe(validate(ad))
         rating = self.mturk_agent.act()
 

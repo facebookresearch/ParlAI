@@ -59,7 +59,7 @@ def main():
             worker[0].id = mturk_agent_id
 
         global run_conversation
-        def run_conversation(opt, workers):
+        def run_conversation(mturk_manager, opt, workers):
             mturk_agent = workers[0]
 
             model_agent = IrBaselineAgent(opt=opt)
