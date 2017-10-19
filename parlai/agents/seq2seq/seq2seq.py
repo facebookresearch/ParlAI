@@ -113,11 +113,13 @@ class Seq2seqAgent(Agent):
                                 'Any member of torch.optim is valid and will '
                                 'be used with default params except learning '
                                 'rate (as specified by -lr).')
-        agent.add_argument('-emb', '--embedding-init', default='random',
-                           choices=['random', 'glove'],
-                           help='Choose between initialization strategies '
+        agent.add_argument('-emb', '--embedding-type', default='random',
+                           choices=['random', 'glove', 'glove-fixed'],
+                           help='Choose between different strategies '
                                 'for word embeddings. Default is random, '
-                                'but can also preinitialize from Glove')
+                                'but can also preinitialize from Glove.'
+                                'Preinitialized embeddings can also be fixed '
+                                'so they are not updated during training.')
         agent.add_argument('-lm', '--language-model', type='bool',
                            default=False,
                            help='enabled language modeling training on the '
@@ -213,7 +215,7 @@ class Seq2seqAgent(Agent):
                                            padding_idx=self.NULL_IDX,
                                            max_norm=10)
 
-            if not states and opt['embedding_init'] == 'glove':
+            if not states and opt['embedding_type'].startswith('glove'):
                 # set up pre-initialized vectors from GloVe
                 try:
                     import torchtext.vocab as vocab
@@ -291,18 +293,27 @@ class Seq2seqAgent(Agent):
                 kwargs['momentum'] = 0.95
                 kwargs['nesterov'] = True
             self.optims = {
-                'enc_lt': optim_class(self.enc_lt.parameters(), **kwargs),
                 'decoder': optim_class(self.decoder.parameters(), **kwargs),
                 'h2e': optim_class(self.h2e.parameters(), **kwargs),
-                'e2o': optim_class(self.e2o.parameters(), **kwargs),
             }
             if opt['decoder'] != 'shared':
+                # update the encoder as well
                 self.optims['encoder'] = optim_class(
                     self.encoder.parameters(), **kwargs)
-            if opt['lookuptable'] not in ['enc_dec', 'all']:
-                # only add dec if it's separate from enc
-                self.optims['dec_lt'] = optim_class(
-                    self.dec_lt.parameters(), **kwargs)
+            if not opt['embedding_type'].endswith('-fixed'):
+                # update embeddings during training
+                self.optims['enc_lt'] = optim_class(
+                    self.enc_lt.parameters(), **kwargs)
+                self.optims['e2o'] = optim_class(
+                    self.e2o.parameters(), **kwargs)
+                if opt['lookuptable'] not in ['enc_dec', 'all']:
+                    # only add dec if it's separate from enc
+                    self.optims['dec_lt'] = optim_class(
+                        self.dec_lt.parameters(), **kwargs)
+            elif opt['lookuptable'] not in ['dec_out', 'all']:
+                # don't update e2o if it's shared and we have fixed embeddings
+                self.optims['e2o'] = optim_class(
+                    self.e2o.parameters(), **kwargs)
 
             # add attention parameters into optims if available
             for attn_name in ['attn', 'attn_v', 'attn_combine']:
@@ -564,6 +575,7 @@ class Seq2seqAgent(Agent):
         self.update_params()
 
         predictions = torch.cat(predictions, 1)
+
         if random.random() < 0.1:
             # sometimes output a prediction for debugging
             # print('prediction:', ' '.join(output_lines[0]))
@@ -978,7 +990,10 @@ class Seq2seqAgent(Agent):
         for attn_name in ['attn', 'attn_v', 'attn_combine']:
             if attn_name in states:
                 getattr(self, attn_name).load_state_dict(states[attn_name])
-
-        for k, v in states['optims'].items():
-            self.optims[k].load_state_dict(v)
+        for k, optimizer in self.optims.items():
+            if k in states['optims']:
+                optimizer.load_state_dict(states['optims'][k])
+            else:
+                print('WARNING: loaded other optims, but none found for ' + k +
+                      '. Using default initialization instead.')
         self.longest_label = states['longest_label']
