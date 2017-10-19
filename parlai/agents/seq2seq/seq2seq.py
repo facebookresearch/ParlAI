@@ -311,7 +311,7 @@ class Seq2seqAgent(Agent):
                     self.optims['dec_lt'] = optim_class(
                         self.dec_lt.parameters(), **kwargs)
             elif opt['lookuptable'] not in ['dec_out', 'all']:
-                # don't update e2o if it's shared and we have fixed embeddings
+                # embeddings are fixed, so only update e2o if it's not shared
                 self.optims['e2o'] = optim_class(
                     self.e2o.parameters(), **kwargs)
 
@@ -715,7 +715,6 @@ class Seq2seqAgent(Agent):
 
         cand_scores = cand_scores.view(cands.size(0), cands.size(1))
         srtd_scores, text_cand_inds = cand_scores.sort(1, True)
-        text_cand_inds = text_cand_inds.data
 
         return text_cand_inds
 
@@ -772,12 +771,15 @@ class Seq2seqAgent(Agent):
             # check if this is an example our model should actually process
             return 'text' in obs and ('labels' in obs or 'eval_labels' in obs)
         # valid examples and their indices
-        valid_inds, exs = zip(*[(i, ex) for i, ex in enumerate(observations) if valid(ex)])
+        try:
+            valid_inds, exs = zip(*[(i, ex) for i, ex in
+                                    enumerate(observations) if valid(ex)])
+        except ValueError:
+            # zero examples to process in this batch, so zip failed to unpack
+            return None, None, None, None, None, None
 
         # set up the input tensors
         batchsize = len(exs)
-        if batchsize == 0:
-            return None, None, None, None, None, None
 
         # `x` text is already tokenized and truncated
         parsed = [ex['text'] for ex in exs]
@@ -921,10 +923,11 @@ class Seq2seqAgent(Agent):
                 self.answers[valid_inds[i]] = output_tokens
 
         if text_cand_inds is not None:
+            text_cand_inds = text_cand_inds.cpu().data
             for i in range(len(valid_cands)):
                 order = text_cand_inds[i]
                 _, batch_idx, curr_cands = valid_cands[i]
-                curr = batch_reply[valid_inds[batch_idx]]
+                curr = batch_reply[batch_idx]
                 curr['text_candidates'] = [curr_cands[idx] for idx in order
                                            if idx < len(curr_cands)]
 
