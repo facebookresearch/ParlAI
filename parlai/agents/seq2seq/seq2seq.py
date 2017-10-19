@@ -382,8 +382,10 @@ class Seq2seqAgent(Agent):
         # dropout at each step
         e = F.dropout(self.h2e(hidden), p=self.dropout, training=is_training)
         scores = F.dropout(self.e2o(e), p=self.dropout, training=is_training)
-        _max_score, idx = scores.max(2)
-        return idx, scores
+        # skip zero (null_idx) when selecting a score
+        _max_score, idx = scores.narrow(2, 1, scores.size(2) - 1).max(2)
+        # add one back to index since we removed first option
+        return idx.add_(1), scores
 
     def zero_grad(self):
         """Zero out optimizers."""
@@ -797,10 +799,9 @@ class Seq2seqAgent(Agent):
             labels = [random.choice(ex.get('labels', [''])) for ex in exs]
             parsed = [self.parse(y + ' ' + self.END) for y in labels if y]
             max_y_len = max(len(y) for y in parsed)
-            if self.truncate > 0:
-                # shrink ys to to limit batch computation
-                max_y_len = min(max_y_len, self.truncate)
-                parsed = [y[:max_y_len] for y in parsed]
+            if self.truncate > 0 and max_y_len > self.truncate:
+                parsed = [y[:self.truncate] for y in parsed]
+                max_y_len = self.truncate
             ys = torch.LongTensor(batchsize, max_y_len).fill_(self.NULL_IDX)
             for i, y in enumerate(parsed):
                 for j, idx in enumerate(y):
