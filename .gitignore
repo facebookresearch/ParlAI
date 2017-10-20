@@ -110,6 +110,4 @@ tmp/
 # Heroku things
 heroku-cli-*
 
-#PyCharm
-.idea/
-*.iml
+.idea
