@@ -401,6 +401,8 @@ class MTurkManager():
 
     def _handle_mturk_message(self, pkt):
         assignment_id = pkt.assignment_id
+        if assignment_id not in self.assignment_to_worker_id:
+            return
         worker_id = self.assignment_to_worker_id[assignment_id]
         mturk_event_type = pkt.data['text']
         agent = self._get_agent(worker_id, assignment_id)
@@ -666,6 +668,10 @@ class MTurkManager():
             )
         self.task_files_to_copy.append(
             os.path.join(task_directory_path, 'html', 'cover_page.html'))
+        for file_name in os.listdir(os.path.join(task_directory_path, 'html')):
+            self.task_files_to_copy.append(os.path.join(
+                task_directory_path, 'html', file_name
+            ))
         for mturk_agent_id in self.mturk_agent_ids + ['onboarding']:
             self.task_files_to_copy.append(os.path.join(
                 task_directory_path,
@@ -676,7 +682,7 @@ class MTurkManager():
         # Setup the server with a likely-unique app-name
         task_name = '{}-{}'.format(str(uuid.uuid4())[:8], self.opt['task'])
         self.server_task_name = \
-            ''.join(e for e in task_name if e.isalnum() or e == '-')
+            ''.join(e for e in task_name.lower() if e.isalnum() or e == '-')
         self.server_url = server_utils.setup_server(self.server_task_name,
                                                     self.task_files_to_copy)
         shared_utils.print_and_log(logging.INFO, self.server_url)
