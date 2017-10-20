@@ -149,17 +149,28 @@ class MTurkAgent(Agent):
         }
         return msg
 
+    def request_message(self):
+        if not (self.disconnected or self.some_agent_disconnected or
+                self.hit_is_expired):
+            self.manager.send_command(
+                self.worker_id,
+                self.assignment_id,
+                {'text': data_model.COMMAND_SEND_MESSAGE}
+            )
+
     def act(self, timeout=None, blocking=True):
         """Sends a message to other agents in the world. If blocking, this
         will wait for the message to come in so it can be sent. Otherwise
         it will return None.
         """
         if not blocking:
+            # if this is the first act since last sent message start timing
+            if self.message_request_time is None:
+                self.request_message()
+                self.message_request_time = time.time()
+
             # If checking timeouts
             if timeout:
-                # if this is the first act since last sent message start timing
-                if self.message_request_time is None:
-                    self.message_request_time = time.time()
                 # If time is exceeded, timeout
                 if time.time() - self.message_request_time > timeout:
                     return self.prepare_timeout()
@@ -170,13 +181,7 @@ class MTurkAgent(Agent):
                 self.message_request_time = None
             return msg
         else:
-            if not (self.disconnected or self.some_agent_disconnected or
-                    self.hit_is_expired):
-                self.manager.send_command(
-                    self.worker_id,
-                    self.assignment_id,
-                    {'text': data_model.COMMAND_SEND_MESSAGE}
-                )
+            self.request_message()
 
             # Timeout in seconds, after which the HIT will be expired automatically
             if timeout:

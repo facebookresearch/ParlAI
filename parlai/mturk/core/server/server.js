@@ -209,7 +209,9 @@ app.get('/chat_index', async function (req, res) {
 
       // Load custom pages by the mturk_agent_id if the custom pages exist
       var custom_index_page = mturk_agent_id + '_index.html';
+      console.log('custom_index_page:' + custom_index_page)
       if (fs.existsSync(task_directory_name+'/'+custom_index_page)) {
+        console.log('rendering custom page:' + custom_index_page)
         res.render(custom_index_page, template_context);
       } else {
         res.render('mturk_index.html', template_context);
