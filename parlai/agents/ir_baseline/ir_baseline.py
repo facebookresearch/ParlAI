@@ -59,14 +59,17 @@ stopwords = { 'i', 'a', 'an', 'are', 'about', 'as', 'at', 'be', 'by',
               'but', 'does', 'really', 'have', 'into', 'more', 'also',
               'has', 'any', 'why', 'will'}
 
-def score_match(query_rep, text, length_penalty, debug=False):
-    words = text.lower().split(' ')
+def score_match(query_rep, text, length_penalty, debug=False, dictionary=None):
+    if not dictionary:
+       words = text.lower().split(' ')
+    else:
+       words = [w for w in dictionary.tokenize(text.lower())]
     score = 0
     rw = query_rep['words']
     used = {}
     for w in words:
         if w in rw and w not in used:
-            score += 1
+            score += rw[w]
             if debug:
                 print("match: " + w)
         used[w] = True
@@ -74,19 +77,19 @@ def score_match(query_rep, text, length_penalty, debug=False):
     score = score / math.pow(norm * query_rep['norm'], length_penalty)
     return score
 
-def rank_candidates(query_rep, cands, length_penalty):
+def rank_candidates(query_rep, cands, length_penalty, dictionary=None):
     """ Rank candidates given representation of query """
     if True:
         mpq = MaxPriorityQueue(100)
         for c in cands:
-            score = score_match(query_rep, c, length_penalty)
+            score = score_match(query_rep, c, length_penalty, dictionary)
             mpq.add(c, score)
         return list(reversed(mpq))
     else:
         cands = list(cands)
         score = [0] * len(cands)
         for i, c in enumerate(cands):
-            score[i] = -score_match(query_rep, c, length_penalty)
+            score[i] = -score_match(query_rep, c, length_penalty, dictionary)
         r = [i[0] for i in sorted(enumerate(score), key=lambda x:x[1])]
         res = []
         for i in range(min(100, len(score))):
@@ -129,7 +132,7 @@ class IrBaselineAgent(Agent):
             rep = self.build_query_representation(obs['text'])
             reply['text_candidates'] = (
                 rank_candidates(rep, obs['label_candidates'],
-                                self.length_penalty))
+                                self.length_penalty, self.dictionary))
             reply['text'] = reply['text_candidates'][0]
         else:
             reply['text'] = "I don't know."
@@ -147,7 +150,7 @@ class IrBaselineAgent(Agent):
         """ Build representation of query, e.g. words or n-grams """
         rep = {}
         rep['words'] = {}
-        words = query.lower().split(' ')
+        words = [w for w in self.dictionary.tokenize(query.lower())]
         rw = rep['words']
         used = {}
         for w in words:

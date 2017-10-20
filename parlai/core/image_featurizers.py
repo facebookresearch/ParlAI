@@ -74,7 +74,6 @@ class ImageLoader():
         self.netCNN.cuda()
 
     def save(self, feature, path):
-        feature = feature.cpu().data.numpy()
         np.save(path, feature)
 
     def image_mode_switcher(self):
@@ -105,6 +104,7 @@ class ImageLoader():
         self.xs.data.copy_(self.transform(image))
         # extract the image feature
         feature = self.netCNN(self.xs)
+        feature = feature.cpu().data.numpy()
         # save the feature
         self.save(feature, path)
         return feature
@@ -142,6 +142,7 @@ class ImageLoader():
             if not os.path.exists(dpath):
                 build_data.make_dir(dpath)
 
+            imagefn = imagefn.split('.')[0]
             imagefn = imagefn + '.npy'
             new_path = os.path.join(prepath, mode, imagefn)
 

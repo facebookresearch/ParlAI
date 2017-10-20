@@ -50,7 +50,7 @@ task_list = [
         "display_name": "Dialog Based Language Learning: bAbI Task",
         "task": "dbll_babi",
         "tags": [ "All",  "Goal" ],
-        "description": "Short dialogs based on the bAbI tasks, but in the form of a question from a teacher, the answer from the student, and finally a comment on the answer from the teacher. The aim is to find learning models that use the comments to improve. From Weston '16. Link: https://arxiv.org/abs/1604.06045"
+        "description": "Short dialogs based on the bAbI tasks, but in the form of a question from a teacher, the answer from the student, and finally a comment on the answer from the teacher. The aim is to find learning models that use the comments to improve. From Weston '16. Link: https://arxiv.org/abs/1604.06045. Tasks can be accessed with a format like: 'python examples/display_data.py -t dbll_babi:task:2_p0.5' which specifies task 2, and policy with 0.5 answers correct, see the paper for more details of the tasks."
     },
     {
         "id": "DBLL-Movie",
@@ -65,6 +65,34 @@ task_list = [
         "task": "dialog_babi",
         "tags": [ "All",  "Goal" ],
         "description": "Simulated dialogs of restaurant booking, from Bordes et al. '16. Link: https://arxiv.org/abs/1605.07683"
+    },
+    {
+        "id": "dialog-bAbI-plus",
+        "display_name": "Dialog bAbI+",
+        "task": "dialog_babi_plus",
+        "tags": ["All", "Goal"],
+        "description": "bAbI+ is an extension of the bAbI Task 1 dialogues with everyday incremental dialogue phenomena (hesitations, restarts, and corrections) which model the disfluencies and communication problems in everyday spoken interaction in real-world environments. See https://www.researchgate.net/publication/319128941_Challenging_Neural_Dialogue_Models_with_Natural_Data_Memory_Networks_Fail_on_Incremental_Phenomena, http://aclweb.org/anthology/D17-1235"
+    },
+    {
+        "id": "FVQA",
+        "display_name": "FVQA",
+        "task": "fvqa",
+        "tags": [ "All", "Visual" ],
+        "description": "The FVQA, a VQA dataset which requires, and supports, much deeper reasoning. We extend a conventional visual question answering dataset, which contains image-question-answer triplets, through additional image-question-answer-supporting fact tuples. The supporting fact is represented as a structural triplet, such as <Cat,CapableOf,ClimbingTrees>.  Link: https://arxiv.org/abs/1606.05433"
+    },
+    {
+        "id": "DealNoDeal",
+        "display_name": "Deal or No Deal",
+        "task": "dealnodeal",
+        "tags": ["All", "Negotiation"],
+        "description": "End-to-end negotiation task which requires two agents to agree on how to divide a set of items, with each agent assigning different values to each item. From Lewis et al. '17. Link: https://arxiv.org/abs/1706.05125"
+    },
+    {
+        "id": "MutualFriends",
+        "display_name": "MutualFriends",
+        "task": "mutualfriends",
+        "tags": [ "All", "Negotiation"],
+        "description": "Task where two agents must discover which friend of theirs is mutual based on the friends's attributes. From He He et al. '17. Link: https://stanfordnlp.github.io/cocoa/'"
     },
     {
         "id": "MCTest",
@@ -225,14 +253,28 @@ task_list = [
         "display_name": "InsuranceQA",
         "task": "insuranceqa",
         "tags": [ "All",  "QA" ],
-        "description": "Task which requires agents to identify high quality answers composed by professionals with deep domain knowledge. Link: https://github.com/shuzi/insuranceQA"
+        "description": "Task which requires agents to identify high quality answers composed by professionals with deep domain knowledge. From Feng et al. '15. Link: https://arxiv.org/abs/1508.01585"
     },
     {
         "id": "MS_MARCO",
         "display_name": "MS_MARCO",
         "task": "ms_marco",
         "tags": [ "All",  "QA" ],
-        "description": "A Reading Comprehension Dataset for the Artificial Intelligence research community. Link: http://www.msmarco.org/dataset.aspx"
+        "description": "A large scale Machine Reading Comprehension Dataset with questions sampled from real anonymized user queries and contexts from web documents. From Nguyen et al. '16. Link: https://arxiv.org/abs/1611.09268"
+    },
+    {
+        "id": "CLEVR",
+        "display_name": "CLEVR",
+        "task": "clevr",
+        "tags": [ "All",  "Visual" ],
+        "description": "A visual reasoning dataset that tests abilities such as attribute identification, counting, comparison, spatial relationships, and logical operations. From Johnson et al. '16. Link: https://arxiv.org/abs/1612.06890"
+    },
+    {
+        "id": "WMT",
+        "display_name": "WMT",
+        "task": "wmt",
+        "tags": [ "All", "MT" ],
+        "description": "Workshop on Machine Translation task, currently only includes en_de."
     },
     {
         "id": "ConvAIChitChat",

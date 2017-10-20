@@ -43,16 +43,18 @@ def class2str(value):
 
 
 class ParlaiParser(argparse.ArgumentParser):
-    """Pseudo-extension of ``argparse`` which sets a number of parameters for the
-    ParlAI framework. More options can be added specific to other modules by
-    passing this object and calling ``add_arg()`` or ``add_argument()`` on it.
+    """Pseudo-extension of ``argparse`` which sets a number of parameters
+    for the ParlAI framework. More options can be added specific to other
+    modules by passing this object and calling ``add_arg()`` or
+    ``add_argument()`` on it.
 
     For example, see ``parlai.core.dict.DictionaryAgent.add_cmdline_args``.
     """
 
-    def __init__(self, add_parlai_args=True, add_model_args=False, model_argv=None):
+    def __init__(self, add_parlai_args=True, add_model_args=False,
+                 model_argv=None):
         """Initializes the ParlAI argparser.
-        - add_parlai_args (default True) initializes the default arguments for the
+        - add_parlai_args (default True) initializes the default arguments for
         ParlAI package, including the data download paths and task arguments.
         - add_model_args (default False) initializes the default arguments for
         loading models, including initializing arguments from that model.
@@ -69,7 +71,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.add_arg = self.add_argument
 
         if add_parlai_args:
-            self.add_parlai_args()
+            self.add_parlai_args(model_argv)
             self.add_image_args()
         if add_model_args:
             self.add_model_args(model_argv)
@@ -92,14 +94,16 @@ class ParlaiParser(argparse.ArgumentParser):
             '-t', '--task',
             help='MTurk task, e.g. "qa_data_collection" or "model_evaluator"')
         mturk.add_argument(
-            '-nh', '--num-hits', default=2, type=int,
-            help='number of HITs you want to create for this task')
+            '-nc', '--num-conversations', default=1, type=int,
+            help='number of conversations you want to create for this task')
         mturk.add_argument(
-            '-na', '--num-assignments', default=1, type=int,
-            help='number of assignments for each HIT')
+            '--unique', dest='unique_worker', default=False,
+            action='store_true',
+            help='enforce that no worker can work on your task twice')
         mturk.add_argument(
             '-r', '--reward', default=0.05, type=float,
-            help='reward for each HIT, in US dollars')
+            help='reward for each worker for finishing the conversation, '
+                 'in US dollars')
         mturk.add_argument(
             '--sandbox', dest='is_sandbox', action='store_true',
             help='submit the HITs to MTurk sandbox site')
@@ -107,13 +111,31 @@ class ParlaiParser(argparse.ArgumentParser):
             '--live', dest='is_sandbox', action='store_false',
             help='submit the HITs to MTurk live site')
         mturk.add_argument(
+            '--debug', dest='is_debug', action='store_true',
+            help='print and log all server interactions and messages')
+        mturk.add_argument(
             '--verbose', dest='verbose', action='store_true',
-            help='print out all messages sent/received in all conversations')
+            help='print all messages sent to and from Turkers')
+        mturk.add_argument(
+            '--log-level', dest='log_level', type=int, default=20,
+            help='importance level for what to put into the logs. the lower '
+                 'the level the more that gets logged. values are 0-50')
+        mturk.add_argument(
+            '--count-complete', dest='count_complete',
+            default=False, action='store_true',
+            help='continue until the requested number of conversations are '
+                 'completed rather than attempted')
+        mturk.add_argument(
+            '--allowed-conversations', dest='allowed_conversations',
+            default=0, type=int,
+            help='number of concurrent conversations that one mturk worker '
+                 'is able to be involved in, 0 is unlimited')
 
         mturk.set_defaults(is_sandbox=True)
+        mturk.set_defaults(is_debug=False)
         mturk.set_defaults(verbose=False)
 
-    def add_parlai_args(self):
+    def add_parlai_args(self, args=None):
         default_downloads_path = os.path.join(self.parlai_home, 'downloads')
         parlai = self.add_argument_group('Main ParlAI Arguments')
         parlai.add_argument(
@@ -121,13 +143,16 @@ class ParlaiParser(argparse.ArgumentParser):
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
         parlai.add_argument(
             '--download-path', default=default_downloads_path,
-            help='path for non-data dependencies to store any needed files.' +
+            help='path for non-data dependencies to store any needed files.'
                  'defaults to {parlai_dir}/downloads')
         parlai.add_argument(
             '-dt', '--datatype', default='train',
-            choices=['train', 'train:ordered', 'valid', 'test'],
-            help='choose from: train, train:ordered, valid, test. ' +
-                 'by default: train is random with replacement, ' +
+            choices=['train', 'train:stream', 'train:ordered',
+                'train:ordered:stream', 'train:stream:ordered',
+                'valid', 'valid:stream', 'test', 'test:stream'],
+            help='choose from: train, train:ordered, valid, test. to stream '
+                 'data add ":stream" to any option (e.g., train:stream). '
+                 'by default: train is random with replacement, '
                  'valid is ordered, test is ordered.')
         parlai.add_argument(
             '-im', '--image-mode', default='raw', type=str,
@@ -140,9 +165,9 @@ class ParlaiParser(argparse.ArgumentParser):
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
         self.add_parlai_data_path(parlai)
-        self.add_task_args()
+        self.add_task_args(args)
 
-    def add_task_args(self, args=None):
+    def add_task_args(self, args):
         # Find which task specified, and add its specific arguments.
         args = sys.argv if args is None else args
         task = None
@@ -189,16 +214,18 @@ class ParlaiParser(argparse.ArgumentParser):
             if item == '-im' or item == '--image-mode':
                 image_mode = args[index + 1]
         if image_mode and image_mode != 'none':
-            parlai = self.add_argument_group('ParlAI Image Preprocessing Arguments')
+            parlai = \
+                self.add_argument_group('ParlAI Image Preprocessing Arguments')
             parlai.add_argument('--image-size', type=int, default=256,
                 help='')
             parlai.add_argument('--image-cropsize', type=int, default=224,
                 help='')
 
     def parse_args(self, args=None, namespace=None, print_args=True):
-        """Parses the provided arguments and returns a dictionary of the ``args``.
-        We specifically remove items with ``None`` as values in order to support
-        the style ``opt.get(key, default)``, which would otherwise return ``None``.
+        """Parses the provided arguments and returns a dictionary of the
+        ``args``. We specifically remove items with ``None`` as values in order
+        to support the style ``opt.get(key, default)``, which would otherwise
+        return ``None``.
         """
         self.args = super().parse_args(args=args)
         self.opt = vars(self.args)
@@ -214,6 +241,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
+
         return self.opt
 
     def print_args(self):
@@ -224,7 +252,10 @@ class ParlaiParser(argparse.ArgumentParser):
         for key, value in self.opt.items():
             values[str(key)] = str(value)
         for group in self._action_groups:
-            group_dict={a.dest:getattr(self.args,a.dest,None) for a in group._group_actions}
+            group_dict = {
+                a.dest:getattr(self.args,a.dest,None)
+                for a in group._group_actions
+            }
             namespace = argparse.Namespace(**group_dict)
             count = 0
             for key in namespace.__dict__:

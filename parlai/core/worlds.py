@@ -82,6 +82,9 @@ def display_messages(msgs):
         if msg.get('labels'):
             lines.append(space + ('[labels: {}]'.format(
                         '|'.join(msg['labels']))))
+        if msg.get('eval_labels'):
+            lines.append(space + ('[eval_labels: {}]'.format(
+                        '|'.join(msg['eval_labels']))))
         if msg.get('label_candidates'):
             cand_len = len(msg['label_candidates'])
             if cand_len <= 10:
@@ -471,8 +474,12 @@ class MultiWorld(World):
         num_tasks = 0
         total = 0
         for i in range(len(self.worlds)):
+            wid = self.worlds[i].getID()
             mt = self.worlds[i].report()
-            m['tasks'][self.worlds[i].getID()] = mt
+            while wid in m['tasks']:
+                # prevent name cloberring if using multiple tasks with same ID
+                wid += '_'
+            m['tasks'][wid] = mt
             total += mt['total']
             if 'accuracy' in mt:
                 sum_accuracy += mt['accuracy']
@@ -508,7 +515,7 @@ def override_opts_in_shared(table, overrides):
         if type(v) == dict and k != 'opt':
             override_opts_in_shared(v, overrides)
         elif type(v) == list:
-            for item in v:
+            for item in v[:1]:  # don't actually want to iterate over all items
                 if type(item) == dict:
                     override_opts_in_shared(item, overrides)
     return table
@@ -533,7 +540,7 @@ class BatchWorld(World):
             # which is needed for ordered data (esp valid/test sets)
             override_opts_in_shared(shared, {'batchindex': i})
             self.worlds.append(shared['world_class'](opt, None, shared))
-        self.batch_observations = [ None ] * len(self.world.get_agents())
+        self.batch_observations = [None] * len(self.world.get_agents())
 
     def __iter__(self):
         return self
@@ -820,7 +827,7 @@ def create_task(opt, user_agents):
     # Single threaded or hogwild task creation (the latter creates multiple threads).
     # Check datatype for train, because we need to do single-threaded for
     # valid and test in order to guarantee exactly one epoch of training.
-    if opt.get('numthreads', 1) == 1 or opt['datatype'] != 'train':
+    if opt.get('numthreads', 1) == 1 or 'train' not in opt['datatype']:
         if ',' not in opt['task']:
             # Single task
             world = create_task_world(opt, user_agents)

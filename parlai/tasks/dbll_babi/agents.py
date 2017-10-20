@@ -3,6 +3,13 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
+#
+# Accessing the tasks can be done with something like:
+#
+#   python examples/display_data.py -t dbll_babi:task:2_p0.5
+#
+# which specifies task 2, and policy with 0.5 answers correct, see the paper
+# for more details: https://arxiv.org/abs/1604.06045
 
 from parlai.core.fbdialog_teacher import FbDialogTeacher
 from .build import build

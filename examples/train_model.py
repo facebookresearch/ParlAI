@@ -40,9 +40,10 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
     - valid_world can be an existing world which will be reset instead of reinitialized
     """
     print('[ running eval: ' + datatype + ' ]')
+    if 'stream' in opt['datatype']:
+        datatype += ':stream'
     opt['datatype'] = datatype
     if opt.get('evaltask'):
-
         opt['task'] = opt['evaltask']
 
     if valid_world is None:
@@ -56,7 +57,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
         cnt += opt['batchsize']
-        if valid_world.epoch_done() or (max_exs > 0 and cnt > max_exs):
+        if valid_world.epoch_done() or (max_exs > 0 and cnt >= max_exs):
             # note this max_exs is approximate--some batches won't always be
             # full depending on the structure of the data
             break
@@ -78,28 +79,31 @@ def main():
     parser = ParlaiParser(True, True)
     train = parser.add_argument_group('Training Loop Arguments')
     train.add_argument('-et', '--evaltask',
-                        help=('task to use for valid/test (defaults to the ' +
-                              'one used for training if not set)'))
+                       help=('task to use for valid/test (defaults to the '
+                             'one used for training if not set)'))
     train.add_argument('-d', '--display-examples',
-                        type='bool', default=False)
+                       type='bool', default=False)
     train.add_argument('-e', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time',
-                        type=float, default=-1)
+                       type=float, default=-1)
     train.add_argument('-ltim', '--log-every-n-secs',
-                        type=float, default=2)
+                       type=float, default=2)
     train.add_argument('-vtim', '--validation-every-n-secs',
-                        type=float, default=-1)
+                       type=float, default=-1)
     train.add_argument('-vme', '--validation-max-exs',
-                        type=int, default=-1,
-                        help='max examples to use during validation (default ' +
-                             '-1 uses all)')
+                       type=int, default=-1,
+                       help='max examples to use during validation (default '
+                            '-1 uses all)')
     train.add_argument('-vp', '--validation-patience',
-                        type=int, default=5,
-                        help=('number of iterations of validation where result '
-                              + 'does not improve before we stop training'))
+                       type=int, default=5,
+                       help=('number of iterations of validation where result'
+                             ' does not improve before we stop training'))
+    train.add_argument('-vmt', '--validation-metric', default='accuracy',
+                       help='key into report table for selecting best '
+                            'validation')
     train.add_argument('-dbf', '--dict-build-first',
-                        type='bool', default=True,
-                        help='build dictionary first before training agent')
+                       type='bool', default=True,
+                       help='build dictionary first before training agent')
     opt = parser.parse_args()
     # Possibly build a dictionary (not all models do this).
     if opt['dict_build_first'] and 'dict_file' in opt:
@@ -119,7 +123,7 @@ def main():
     total_exs = 0
     max_exs = opt['num_epochs'] * len(world)
     max_parleys = math.ceil(max_exs / opt['batchsize'])
-    best_accuracy = 0
+    best_valid = 0
     impatience = 0
     saved = False
     valid_world = None
@@ -176,20 +180,24 @@ def main():
 
         if (opt['validation_every_n_secs'] > 0 and
                 validate_time.time() > opt['validation_every_n_secs']):
-            valid_report, valid_world = run_eval(agent, opt, 'valid', opt['validation_max_exs'], valid_world=valid_world)
-            if valid_report['accuracy'] > best_accuracy:
-                best_accuracy = valid_report['accuracy']
+            valid_report, valid_world = run_eval(
+                agent, opt, 'valid', opt['validation_max_exs'],
+                valid_world=valid_world)
+            if valid_report[opt['validation_metric']] > best_valid:
+                best_valid = valid_report[opt['validation_metric']]
                 impatience = 0
-                print('[ new best accuracy: ' + str(best_accuracy) + ' ]')
+                print('[ new best {}: {} ]'.format(
+                    opt['validation_metric'], best_valid))
                 world.save_agents()
                 saved = True
-                if best_accuracy == 1:
+                if opt['validation_metric'] == 'accuracy' and best_valid == 1:
                     print('[ task solved! stopping. ]')
                     break
             else:
                 impatience += 1
-                print('[ did not beat best accuracy: {} impatience: {} ]'.format(
-                        round(best_accuracy, 4), impatience))
+                print('[ did not beat best {}: {} impatience: {} ]'.format(
+                        opt['validation_metric'], round(best_valid, 4),
+                        impatience))
             validate_time.reset()
             if opt['validation_patience'] > 0 and impatience >= opt['validation_patience']:
                 print('[ ran out of patience! stopping training. ]')

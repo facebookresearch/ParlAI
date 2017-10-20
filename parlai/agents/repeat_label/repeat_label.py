@@ -30,15 +30,14 @@ class RepeatLabelAgent(Agent):
         self.cantAnswerPercent = opt.get('cantAnswerPercent', 0)
         self.id = 'RepeatLabelAgent'
 
-
     def act(self):
         obs = self.observation
         if obs is None:
-            return { 'text': "Nothing to repeat yet." }
+            return {'text': 'Nothing to repeat yet.'}
         reply = {}
         reply['id'] = self.getID()
         if ('labels' in obs and obs['labels'] is not None
-            and len(obs['labels']) > 0):
+                and len(obs['labels']) > 0):
             labels = obs['labels']
             if random.random() >= self.cantAnswerPercent:
                 if self.returnOneRandomAnswer:
@@ -54,7 +53,8 @@ class RepeatLabelAgent(Agent):
 
         if 'label_candidates' in obs and len(obs['label_candidates']) > 0:
             # Produce text_candidates by selecting random candidate labels.
-            reply['text_candidates'] = [ reply['text'] ]
+            reply['text_candidates'] = [reply['text']]
             reply['text_candidates'].extend(random.sample(
                 obs['label_candidates'], min(len(obs['label_candidates']), 99)))
+
         return reply

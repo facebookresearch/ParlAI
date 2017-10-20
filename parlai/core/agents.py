@@ -234,19 +234,28 @@ class MultiTaskTeacher(Teacher):
         m = {}
         m['tasks'] = {}
         sum_accuracy = 0
+        sum_f1 = 0
         num_tasks = 0
         total = 0
         for i in range(len(self.tasks)):
+            tid = self.tasks[i].getID()
             mt = self.tasks[i].report()
-            m['tasks'][self.tasks[i].getID()] = mt
+            while tid in m['tasks']:
+                # prevent name cloberring if using multiple tasks with same ID
+                tid += '_'
+            m['tasks'][tid] = mt
             total += mt['total']
             if 'accuracy' in mt:
                 sum_accuracy += mt['accuracy']
                 num_tasks += 1
+                if 'f1' in mt:
+                    sum_f1 += mt['f1']
         m['total'] = total
         m['accuracy'] = 0
         if num_tasks > 0:
             m['accuracy'] = sum_accuracy / num_tasks
+            if sum_f1 > 0:
+                m['f1'] = sum_f1 / num_tasks
         return m
 
     def reset(self):
@@ -336,9 +345,13 @@ def get_task_module(taskname):
         sp[1] = sp[1][0].upper() + sp[1][1:]
         teacher = sp[1]
         if '.' not in sp[0] and 'Teacher' not in teacher:
-            # Append "Teacher" to class name by default if
-            # a complete path is not given.
-            teacher += "Teacher"
+            # Reformat from underscore to CamelCase and append "Teacher" to
+            # class name by default if a complete path is not given.
+            words = teacher.split('_')
+            teacher_name = ''
+            for w in words:
+                teacher_name += ( w[0].upper() + w[1:])
+            teacher = teacher_name + "Teacher"
     else:
         teacher = "DefaultTeacher"
     my_module = importlib.import_module(module_name)

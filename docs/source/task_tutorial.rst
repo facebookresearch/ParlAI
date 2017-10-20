@@ -140,7 +140,8 @@ DialogTeacher
 
 In this section we will demonstrate the process of using the ``DialogTeacher`` class by adding a simple question-answering task based on the MNIST dataset. This task depends on visual data and so does not fit the ``FbDialogTeacher`` class described above. Still, using ``DialogTeacher`` makes it easy to implement dialog tasks such as this one.
 
-In this task, the agent is presented with the image of a digit and then asked to answer which number it is seeing. A sample episode is demonstrated below.
+In this task, the agent is presented with the image of a digit and then asked to answer which number it is seeing.
+A sample episode is demonstrated below. Note that we display an ASCII rendition here for human-viewing, and while you could try to train a model on the ASCII, the pixel values and several preprocessing options are available instead.
 
 ::
 
