@@ -7,16 +7,18 @@
 
 import parlai.core.build_data as build_data
 import os
+import random
+
+random.seed(1)
 
 
 def _train_test_valid_split(dialogs):
     import math
-    import random
-    dialogs = random.shuffle(dialogs)
-    l = len(dialogs)
-    border_valid = math.floor(l * 0.1)
+    random.shuffle(dialogs)
+    count = len(dialogs)
+    border_valid = math.floor(count * 0.1)
     valid = dialogs[:border_valid]
-    border_test = border_valid + math.floor(l * 0.1)
+    border_test = border_valid + math.floor(count * 0.1)
     test = dialogs[border_valid:border_test]
     train = dialogs[border_test:]
     return train, test, valid
@@ -41,11 +43,11 @@ def build(opt):
         with open(os.path.join(dpath, fname)) as dataset:
             dialogs = json.load(dataset)
             train, test, valid = _train_test_valid_split(dialogs)
-            with open(os.path.join(dpath, "valid.json")) as outfile:
+            with open(os.path.join(dpath, "valid.json"), 'w') as outfile:
                 json.dump(valid, outfile)
-            with open(os.path.join(dpath, "test.json")) as outfile:
+            with open(os.path.join(dpath, "test.json"), 'w') as outfile:
                 json.dump(test, outfile)
-            with open(os.path.join(dpath, "train.json")) as outfile:
+            with open(os.path.join(dpath, "train.json"), 'w') as outfile:
                 json.dump(train, outfile)
 
         build_data.mark_done(dpath, version_string=version)

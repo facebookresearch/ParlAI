@@ -233,5 +233,12 @@ task_list = [
         "task": "ms_marco",
         "tags": [ "All",  "QA" ],
         "description": "A Reading Comprehension Dataset for the Artificial Intelligence research community. Link: http://www.msmarco.org/dataset.aspx"
+    },
+    {
+        "id": "ConvAIChitChat",
+        "display_name": "ConvAIChitChat",
+        "task": "convai_chitchat",
+        "tags": [ "All", "ChitChat" ],
+        "description": "Human-bot dialogues containing free discussions of randomly chosen paragraphs from SQuAD. Link to dataset: http://convai.io/data/"
     }
 ]

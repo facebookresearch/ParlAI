@@ -6,10 +6,10 @@
 
 from parlai.core.dialog_teacher import DialogTeacher
 
-class ConvaiChitChatTeacher(DialogTeacher):
+class DefaultTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
-        self.data_path = ConvaiChitChatTeacher._path(opt)
+        self.data_path = DefaultTeacher._path(opt)
         opt['datafile'] = self.data_path
         self.id = 'ConvAIChitChat'
         super().__init__(opt, shared)
@@ -45,7 +45,8 @@ class ConvaiChitChatTeacher(DialogTeacher):
                 episode_done = False
                 if i == len(dialog["thread"]) - 1:
                     episode_done = True
-                res = ((prev_utterance['text'], prev_utterance['userId']), (utterance['text'], utterance['userId']))
-                prev_utterance = utterance
+                clean_utterance = ': '.join([utterance['userId'], utterance['text']])
+                res = (prev_utterance, [ clean_utterance ])
+                prev_utterance = clean_utterance
 
                 yield res, episode_done
