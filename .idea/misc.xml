@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="HaskellBuildOptions">
+    <ghcPath>/usr/local/bin//ghc</ghcPath>
+    <cabalPath>/usr/local/bin//cabal</cabalPath>
+    <stackPath>/usr/local/bin//stack</stackPath>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" />
+</project>
