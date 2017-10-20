@@ -105,3 +105,6 @@ ENV/
 
 # MTurk
 tmp/
+
+#PyCharm
+.idea/
