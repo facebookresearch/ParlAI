@@ -757,7 +757,9 @@
       'data': null
     };
 
-    socket.emit(SOCKET_ROUTE_PACKET_STRING, hb, function() {last_local_heartbeat=Date.now();});
+    socket.emit(SOCKET_ROUTE_PACKET_STRING, hb, function() {
+      last_local_heartbeat=Date.now();
+    });
 
     // Check to see if we've disconnected from the server
     if (last_local_heartbeat != null &&
