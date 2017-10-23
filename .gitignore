@@ -110,4 +110,7 @@ tmp/
 # Heroku things
 heroku-cli-*
 
+# IntelliJ IDEA
 .idea
+*.iml
+

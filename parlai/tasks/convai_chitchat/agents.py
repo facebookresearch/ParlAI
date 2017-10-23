@@ -26,7 +26,7 @@ class DefaultTeacher(DialogTeacher):
         elif dt == 'test':
             path = os.path.join(opt['datapath'], 'ConvAIChitChat', 'test.json')
         elif dt == 'valid':
-            raise RuntimeError('Valid datatype not supported.')
+            path = None
         else:
             raise RuntimeError('Not valid datatype.')
 
@@ -34,7 +34,12 @@ class DefaultTeacher(DialogTeacher):
 
     def setup_data(self, path):
         import json
+        import sys
         print('loading: ' + path)
+
+        if path is None:
+            print('warning: validation is not supporting', file=sys.stderr)
+            return (None, []), True
 
         with open(path) as data_file:
             self.dialogs = json.load(data_file)
@@ -46,7 +51,7 @@ class DefaultTeacher(DialogTeacher):
                 if i == len(dialog["thread"]) - 1:
                     episode_done = True
                 clean_utterance = ': '.join([utterance['userId'], utterance['text']])
-                res = (prev_utterance, [ clean_utterance ])
+                res = (prev_utterance, [clean_utterance])
                 prev_utterance = clean_utterance
 
                 yield res, episode_done
