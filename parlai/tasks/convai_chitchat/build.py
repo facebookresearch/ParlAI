@@ -6,47 +6,33 @@
 
 import parlai.core.build_data as build_data
 import os
-import random
-
-random.seed(1)
-
-
-def _train_test_valid_split(dialogs):
-    import math
-    random.shuffle(dialogs)
-    count = len(dialogs)
-    border_valid = math.floor(count * 0.1)
-    valid = dialogs[:border_valid]
-    border_test = border_valid + math.floor(count * 0.1)
-    test = dialogs[border_valid:border_test]
-    train = dialogs[border_test:]
-    return train, test, valid
 
 
 def build(opt):
     import json
-    dpath = os.path.join(opt['datapath'], 'ConvAIChitChat')
-    version = None
+    data_path = os.path.join(opt['datapath'], 'ConvAIChitChat')
+    version = '1501534800'
 
-    if not build_data.built(dpath, version_string=version):
-        print('[building data: ' + dpath + ']')
+    if not build_data.built(data_path, version_string=version):
+        print('[building data: ' + data_path + ']')
 
-        if build_data.built(dpath):
-            build_data.remove_dir(dpath)
-        build_data.make_dir(dpath)
+        if build_data.built(data_path):
+            build_data.remove_dir(data_path)
+        build_data.make_dir(data_path)
 
-        fname = 'train_full.json'
+        fname = 'data_' + version + '.tar.gz'
         url = 'https://raw.githubusercontent.com/deepmipt/turing-data/master/' + fname
-        build_data.download(url, dpath, fname)
+        build_data.download(url, data_path, fname)
+        build_data.untar(data_path, fname)
 
-        with open(os.path.join(dpath, fname)) as dataset:
-            dialogs = json.load(dataset)
-            train, test, valid = _train_test_valid_split(dialogs)
-            with open(os.path.join(dpath, "valid.json"), 'w') as outfile:
-                json.dump(valid, outfile)
-            with open(os.path.join(dpath, "test.json"), 'w') as outfile:
-                json.dump(test, outfile)
-            with open(os.path.join(dpath, "train.json"), 'w') as outfile:
-                json.dump(train, outfile)
+        with open(os.path.join(data_path, 'data_train_' + version + '.json')) as train_file:
+            train = json.load(train_file)
+        with open(os.path.join(data_path, 'data_test_' + version + '.json')) as test_file:
+            test = json.load(test_file)
 
-        build_data.mark_done(dpath, version_string=version)
+        with open(os.path.join(data_path, "test.json"), 'w') as outfile:
+            json.dump(test, outfile)
+        with open(os.path.join(data_path, "train.json"), 'w') as outfile:
+            json.dump(train, outfile)
+
+        build_data.mark_done(data_path, version_string=version)

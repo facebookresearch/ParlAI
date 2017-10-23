@@ -23,10 +23,10 @@ class DefaultTeacher(DialogTeacher):
 
         if dt == 'train':
             path = os.path.join(opt['datapath'], 'ConvAIChitChat', 'train.json')
-        elif dt == 'valid':
-            path = os.path.join(opt['datapath'], 'ConvAIChitChat', 'valid.json')
         elif dt == 'test':
             path = os.path.join(opt['datapath'], 'ConvAIChitChat', 'test.json')
+        elif dt == 'valid':
+            raise RuntimeError('Valid datatype not supported.')
         else:
             raise RuntimeError('Not valid datatype.')
 
