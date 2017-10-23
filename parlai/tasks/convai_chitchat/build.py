@@ -25,14 +25,4 @@ def build(opt):
         build_data.download(url, data_path, fname)
         build_data.untar(data_path, fname)
 
-        with open(os.path.join(data_path, 'data_train_' + version + '.json')) as train_file:
-            train = json.load(train_file)
-        with open(os.path.join(data_path, 'data_test_' + version + '.json')) as test_file:
-            test = json.load(test_file)
-
-        with open(os.path.join(data_path, "test.json"), 'w') as outfile:
-            json.dump(test, outfile)
-        with open(os.path.join(data_path, "train.json"), 'w') as outfile:
-            json.dump(train, outfile)
-
         build_data.mark_done(data_path, version_string=version)
