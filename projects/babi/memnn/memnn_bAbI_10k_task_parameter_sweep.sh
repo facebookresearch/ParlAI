@@ -3,15 +3,14 @@
 # Reproduce results from https://arxiv.org/abs/1503.08895 bAbI tasks 1-3 with
 # 10k training examples 
 
-PARLAI=/path/to/ParlAI                 # Where ParlAI exists in filesystem
+PARLAI=../../..                # Where ParlAI exists in filesystem
 
 DATE=`date +"%Y%m%d"`
 SWEEP_NAME=memnn_bAbI_task10k_t1to3_parameter_sweep  # Sweep name
 JOBSCRIPTS=scripts
 mkdir -p ${JOBSCRIPTS}
 
-SAVE_ROOT=/path/to/model/save/root/    # Where to save the model files
-                                       # (e.g. /tmp/${DATE}/${SWEEP_NAME})
+SAVE_ROOT=/tmp/${DATE}/${SWEEP_NAME}    # Where to save the model files
 mkdir -p stdout stderr
 
 # Training parameters
