@@ -9,7 +9,6 @@ import os
 
 
 def build(opt):
-    import json
     data_path = os.path.join(opt['datapath'], 'ConvAIChitChat')
     version = '1501534800'
 
@@ -24,5 +23,8 @@ def build(opt):
         url = 'https://raw.githubusercontent.com/deepmipt/turing-data/master/' + fname
         build_data.download(url, data_path, fname)
         build_data.untar(data_path, fname)
+
+        os.rename(os.path.join(data_path, 'data_train_' + version + '.json'), os.path.join(data_path, 'train.json'))
+        os.rename(os.path.join(data_path, 'data_test_' + version + '.json'), os.path.join(data_path, 'test.json'))
 
         build_data.mark_done(data_path, version_string=version)
