@@ -39,7 +39,7 @@ class DefaultTeacher(DialogTeacher):
 
         if path is None:
             print('warning: validation is not supporting', file=sys.stderr)
-            return (None, []), True
+            return iter(())
 
         with open(path) as data_file:
             self.dialogs = json.load(data_file)
