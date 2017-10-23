@@ -1,14 +1,13 @@
 #!/bin/sh
 
-PARLAI=/path/to/ParlAI                 # Where ParlAI exists in filesystem
+PARLAI=../../..                # Where ParlAI exists in filesystem relative to script
 
 DATE=`date +"%Y%m%d"`
-SWEEP_NAME=memnn_bAbI_parameter_sweep  # Sweep name
+SWEEP_NAME=memnn_bAbI_task1k_parameter_sweep  # Sweep name
 JOBSCRIPTS=scripts
 mkdir -p ${JOBSCRIPTS}
 
-SAVE_ROOT=/path/to/model/save/root     # Where to save the model files
-                                       # (e.g. /tmp/${DATE}/${SWEEP_NAME})
+SAVE_ROOT=/tmp/${DATE}/${SWEEP_NAME}     # Where to save the model files
 mkdir -p stdout stderr
 
 # Training parameters

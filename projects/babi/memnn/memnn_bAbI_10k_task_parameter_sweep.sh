@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # Reproduce results from https://arxiv.org/abs/1503.08895 bAbI tasks 1-3 with
-# 10k training examples 
+# 10k training examples
 
-PARLAI=../../..                # Where ParlAI exists in filesystem
+PARLAI=../../..                # Where ParlAI exists in filesystem relative to script
 
 DATE=`date +"%Y%m%d"`
 SWEEP_NAME=memnn_bAbI_task10k_t1to3_parameter_sweep  # Sweep name
