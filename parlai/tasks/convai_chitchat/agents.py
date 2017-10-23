@@ -17,6 +17,7 @@ class DefaultTeacher(DialogTeacher):
     @classmethod
     def _path(cls, opt):
         import os
+        import sys
         from parlai.tasks.convai_chitchat.build import build
         build(opt)
         dt = opt['datatype'].split(':')[0]
@@ -26,6 +27,7 @@ class DefaultTeacher(DialogTeacher):
         elif dt == 'test':
             path = os.path.join(opt['datapath'], 'ConvAIChitChat', 'test.json')
         elif dt == 'valid':
+            print('warning: validation is not supporting', file=sys.stderr)
             path = None
         else:
             raise RuntimeError('Not valid datatype.')
@@ -34,11 +36,9 @@ class DefaultTeacher(DialogTeacher):
 
     def setup_data(self, path):
         import json
-        import sys
         print('loading: ' + path)
 
         if path is None:
-            print('warning: validation is not supporting', file=sys.stderr)
             return iter(())
 
         with open(path) as data_file:
