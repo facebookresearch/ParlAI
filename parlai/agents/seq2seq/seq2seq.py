@@ -64,7 +64,7 @@ class Seq2seqAgent(Agent):
                            help='whether to encode the context with a '
                                 'bidirectional rnn')
         agent.add_argument('-att', '--attention', default='none',
-                           choices=['none', 'concat', 'general', 'local'],
+                           choices=['none', 'concat', 'general', 'dot', 'local'],
                            help='Choices: none, concat, general, local. '
                                 'If set local, also set attention-length. '
                                 'For more details see: '
@@ -120,10 +120,10 @@ class Seq2seqAgent(Agent):
                                 'but can also preinitialize from Glove.'
                                 'Preinitialized embeddings can also be fixed '
                                 'so they are not updated during training.')
-        agent.add_argument('-lm', '--language-model', type='bool',
-                           default=False,
-                           help='enabled language modeling training on the '
-                                'concatenated input and label data')
+        agent.add_argument('-lm', '--language-model', default='none',
+                           choices=['none', 'only', 'both'],
+                           help='Enabled language modeling training on the '
+                                'concatenated input and label data.')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -268,6 +268,9 @@ class Seq2seqAgent(Agent):
                 # share these weights with the decoder lookup table
                 self.e2o.weight = self.dec_lt.weight
 
+            if self.attention != 'none':
+                # we'll need this for all attention types
+                self.attn_combine = nn.Linear(hszXdirs + emb, emb)
             if self.attention == 'local':
                 # local attention over fixed set of output states
                 if opt['attention_length'] < 0:
@@ -276,14 +279,12 @@ class Seq2seqAgent(Agent):
                 # combines input and previous hidden output layer
                 self.attn = nn.Linear(hsz + emb, self.max_length)
                 # combines attention weights with encoder outputs
-                self.attn_combine = nn.Linear(hszXdirs + emb, emb)
             elif self.attention == 'concat':
                 self.attn = nn.Linear(hsz + hszXdirs, hsz)
                 self.attn_v = nn.Linear(hsz, 1)
-                self.attn_combine = nn.Linear(hszXdirs + emb, emb)
             elif self.attention == 'general':
+                # equivalent to dot if attn is identity
                 self.attn = nn.Linear(hsz, hszXdirs)
-                self.attn_combine = nn.Linear(hszXdirs + emb, emb)
 
             # set up optims for each module
             lr = opt['learningrate']
@@ -357,11 +358,13 @@ class Seq2seqAgent(Agent):
 
     def v2t(self, vec):
         """Convert token indices to string of tokens."""
+        if type(vec) == Variable:
+            vec = vec.data
         new_vec = []
         for i in vec:
             if i == self.END_IDX:
                 break
-            elif i not in [self.NULL_IDX, self.START_IDX]:
+            elif i != self.START_IDX:
                 new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
@@ -429,30 +432,35 @@ class Seq2seqAgent(Agent):
         # shallow copy observation (deep copy can be expensive)
         observation = observation.copy()
         if 'text' in observation:
-            # put START and END around text
-            parsed_x = [self.START_IDX]
-            parsed_x.extend(self.parse(observation['text']))
-            parsed_x.append(self.END_IDX)
-            if self.truncate > 0:
-                parsed_x = parsed_x[-self.truncate:]
-            observation['text'] = parsed_x
-        if not self.episode_done:
-            prev_dialog = self.observation['text']
-            # get last y
-            batch_idx = self.opt.get('batchindex', 0)
-            if self.answers[batch_idx] is not None:
-                # use our last answer, which is the label during training
-                lastY = self.answers[batch_idx]
-                prev_dialog.append(self.START_IDX)
-                prev_dialog.extend(lastY)
-                prev_dialog.append(self.END_IDX)
-                self.answers[batch_idx] = None  # forget last y
-            prev_dialog.extend(parsed_x)
-            if self.truncate > 0:
-                prev_dialog = prev_dialog[-self.truncate:]
-            observation['text'] = prev_dialog
-        self.observation = observation
-        self.episode_done = observation['episode_done']
+            if observation['text'] == '':
+                observation.pop('text')
+            else:
+                # put START and END around text
+                parsed_x = [self.START_IDX]
+                parsed_x.extend(self.parse(observation['text']))
+                parsed_x.append(self.END_IDX)
+                if self.truncate > 0:
+                    parsed_x = parsed_x[-self.truncate:]
+                observation['text'] = parsed_x
+
+                if not self.episode_done:
+                    # remember past dialog
+                    prev_dialog = self.observation['text']
+                    # get last y
+                    batch_idx = self.opt.get('batchindex', 0)
+                    if self.answers[batch_idx] is not None:
+                        # use our last answer, which is the label during training
+                        lastY = self.answers[batch_idx]
+                        prev_dialog.append(self.START_IDX)
+                        prev_dialog.extend(lastY)
+                        prev_dialog.append(self.END_IDX)
+                        self.answers[batch_idx] = None  # forget last y
+                    prev_dialog.extend(parsed_x)
+                    if self.truncate > 0:
+                        prev_dialog = prev_dialog[-self.truncate:]
+                    observation['text'] = prev_dialog
+                self.observation = observation
+                self.episode_done = observation['episode_done']
 
         return observation
 
@@ -502,6 +510,7 @@ class Seq2seqAgent(Agent):
     def _apply_attention(self, xes, encoder_output, hidden, attn_mask=None):
         """Apply attention to encoder hidden layer."""
         last_hidden = hidden[-1]  # select hidden from last RNN layer
+
         if self.attention == 'concat':
             hidden_expand = last_hidden.unsqueeze(1).expand(
                 last_hidden.size(0), encoder_output.size(1), last_hidden.size(1))
@@ -509,14 +518,19 @@ class Seq2seqAgent(Agent):
                 torch.cat((encoder_output, hidden_expand), 2)))).squeeze(2)
             attn_weights = F.softmax(attn_w_premask * attn_mask -
                                      (1 - attn_mask) * 1e20)
-
+        elif self.attention == 'dot':
+            hidden_expand = last_hidden.unsqueeze(1)
+            attn_w_premask = torch.bmm(hidden_expand,
+                                       encoder_output.transpose(1, 2)
+                                       ).squeeze(1)
+            attn_weights = F.softmax(attn_w_premask * attn_mask -
+                                     (1 - attn_mask) * 1e20)
         elif self.attention == 'general':
             hidden_expand = last_hidden.unsqueeze(1)
             attn_w_premask = torch.bmm(self.attn(hidden_expand),
                                        encoder_output.transpose(1, 2)
                                        ).squeeze(1)
-            attn_weights = F.softmax(attn_w_premask * attn_mask -
-                                     (1 - attn_mask) * 1e20)
+            attn_weights = F.softmax(attn_w_premask * attn_mask - (1 - attn_mask) * 1e20)
 
         elif self.attention == 'local':
             attn_weights = F.softmax(self.attn(
@@ -532,6 +546,8 @@ class Seq2seqAgent(Agent):
         output = self.attn_combine(output).unsqueeze(1)
         output = F.tanh(output)
 
+        self.attn_weights = attn_weights
+
         return output
 
     def _decode_and_train(self, batchsize, xes, ys, encoder_output, hidden, attn_mask, lm=False):
@@ -541,10 +557,6 @@ class Seq2seqAgent(Agent):
 
         predictions = []
 
-        # keep track of longest label we've ever seen
-        # we'll never produce longer ones than that during prediction
-        if not lm:
-            self.longest_label = max(self.longest_label, ys.size(1))
         if self.attention != 'none':
             # using attention, produce one token at a time
             for i in range(ys.size(1)):
@@ -576,13 +588,13 @@ class Seq2seqAgent(Agent):
 
         predictions = torch.cat(predictions, 1)
 
-        if random.random() < 0.1:
+        # if random.random() < 0.1:
             # sometimes output a prediction for debugging
             # print('prediction:', ' '.join(output_lines[0]))
             # print('label:', self.v2t(ys.data[0]))
-            print('lm' if lm else '  ', 'loss:', loss.data[0])
+            # print('lm' if lm else '  ', 'loss:', loss.data[0])
 
-        return predictions
+        return predictions, {('lm' if lm else '') + 'loss': loss.mul_(batchsize).data}
 
     def _decode_only(self, batchsize, xes, ys, encoder_output, hidden, attn_mask):
         """Just produce a prediction without training the model."""
@@ -662,6 +674,15 @@ class Seq2seqAgent(Agent):
 
         if self.attention != 'none':
             # using attention
+            # select only encoder output matching xs we want
+            if len(cand_inds) != len(encoder_output):
+                indices = torch.LongTensor([i[0] for i in cand_inds])
+                if self.use_cuda:
+                    indices = indices.cuda()
+                indices = Variable(indices)
+                encoder_output = encoder_output.index_select(0, indices)
+                attn_mask = attn_mask.index_select(0, indices)
+
             sz = encoder_output.size()
             cands_encoder_output = (
                 encoder_output.contiguous()
@@ -688,7 +709,7 @@ class Seq2seqAgent(Agent):
                 cs = cview.select(1, i)
                 non_nulls = cs.ne(self.NULL_IDX)
                 cand_lengths += non_nulls.long()
-                score_per_cand = torch.gather(scores.select(1, i), 1, cs.unsqueeze(1))
+                score_per_cand = torch.gather(scores.squeeze(), 1, cs.unsqueeze(1))
                 cand_scores += score_per_cand.squeeze() * non_nulls.float()
                 c_xes = self.dec_lt(cs).unsqueeze(1)
         else:
@@ -749,10 +770,11 @@ class Seq2seqAgent(Agent):
         else:
             attn_mask = xs.ne(0).float()
 
+        loss = None
         if is_training:
-            predictions = self._decode_and_train(batchsize, xes, ys,
-                                                 encoder_output, hidden,
-                                                 attn_mask, lm=lm)
+            predictions, loss = self._decode_and_train(batchsize, xes, ys,
+                                                       encoder_output, hidden,
+                                                       attn_mask, lm=lm)
         else:
             if cands is not None:
                 text_cand_inds = self._score_candidates(cands, valid_cands, xe,
@@ -763,7 +785,7 @@ class Seq2seqAgent(Agent):
                                              encoder_output, hidden,
                                              attn_mask)
 
-        return predictions, text_cand_inds
+        return predictions, text_cand_inds, loss
 
     def batchify(self, observations):
         """Convert a list of observations into input & target tensors."""
@@ -836,10 +858,10 @@ class Seq2seqAgent(Agent):
             parsed = []
             valid_cands = []
             for i, v in enumerate(valid_inds):
-                if 'label_candidates' in observations[i]:
+                if 'label_candidates' in observations[v]:
                     # each candidate tuple is a pair of the parsed version and
                     # the original full string
-                    cs = list(observations[i]['label_candidates'])
+                    cs = list(observations[v]['label_candidates'])
                     parsed.append([self.parse(c) for c in cs])
                     valid_cands.append((i, v, cs))
             if len(parsed) > 0:
@@ -874,62 +896,78 @@ class Seq2seqAgent(Agent):
         # since the other three elements had no 'text' field
         xs, ys, labels, valid_inds, cands, valid_cands = self.batchify(observations)
 
+        if ys is not None:
+            # keep track of longest label we've ever seen
+            # we'll never produce longer ones than that during prediction
+            self.longest_label = max(self.longest_label, ys.size(1))
+
         if xs is None:
             # no valid examples, just return empty responses
             return batch_reply
 
-        # produce predictions, train on targets if available
-        predictions, text_cand_inds = self.predict(xs, ys, cands, valid_cands)
-
-        if self.lm and ys is not None:
-            # also train on lm task: given [START], predict [x y]
+        if self.lm != 'none' and ys is not None:
+            # train on lm task: given [START], predict [x y]
             # (regular task is given [x START] produce [y])
             new_obs = [
                 {
                     'text': [self.START_IDX],
                     'labels': [
                         '{x} {s} {y}'.format(
-                            x=self.v2t(obs['text'][1:]),  # skip START token
+                            x=self.v2t(obs.get('text', '')[1:]),  # skip START token
                             s=self.START,
                             y=random.choice(obs.get('labels', [''])))
                     ]
                 } for obs in observations
             ]
             xs, ys, _, _, _, _ = self.batchify(new_obs)
-            _, _ = self.predict(xs, ys, lm=True)
+            _, _, loss = self.predict(xs, ys, lm=True)
+            if loss is not None:
+                batch_reply[0]['metrics'] = loss
 
-        predictions = predictions.cpu()
-        for i in range(len(predictions)):
-            # map the predictions back to non-empty examples in the batch
-            # we join with spaces since we produce tokens one at a time
-            curr = batch_reply[valid_inds[i]]
-            output_tokens = []
-            for c in predictions.data[i]:
-                if c == self.END_IDX or c == self.NULL_IDX:
-                    break
+        if self.lm != 'only' or ys is None:
+            # produce predictions, train on targets if availables
+            predictions, text_cand_inds, loss = self.predict(xs, ys, cands, valid_cands)
+            if loss is not None:
+                if 'metrics' in batch_reply[0]:
+                    for k, v in loss:
+                        batch_reply[0]['metrics'][k] = v
                 else:
-                    output_tokens.append(c)
-            curr_pred = self.v2t(output_tokens)
-            curr['text'] = curr_pred
-            if labels is not None:
-                y = []
-                for c in ys.data[i]:
-                    if c == self.END_IDX or c == self.NULL_IDX:
+                    batch_reply[0]['metrics'] = loss
+
+            predictions = predictions.cpu()
+            for i in range(len(predictions)):
+                # map the predictions back to non-empty examples in the batch
+                # we join with spaces since we produce tokens one at a time
+                curr = batch_reply[valid_inds[i]]
+                output_tokens = []
+                for c in predictions.data[i]:
+                    if c == self.END_IDX:
                         break
                     else:
-                        y.append(c)
-                self.answers[valid_inds[i]] = y
-            else:
-                self.answers[valid_inds[i]] = output_tokens
+                        output_tokens.append(c)
+                curr_pred = self.v2t(output_tokens)
+                curr['text'] = curr_pred
+                if labels is not None:
+                    y = []
+                    for c in ys.data[i]:
+                        if c == self.END_IDX:
+                            break
+                        else:
+                            y.append(c)
+                    self.answers[valid_inds[i]] = y
+                else:
+                    self.answers[valid_inds[i]] = output_tokens
+                if self.NULL_IDX in self.answers[valid_inds[i]]:
+                    raise RuntimeError('This shouldnt happen but might.')
 
-        if text_cand_inds is not None:
-            text_cand_inds = text_cand_inds.cpu().data
-            for i in range(len(valid_cands)):
-                order = text_cand_inds[i]
-                _, batch_idx, curr_cands = valid_cands[i]
-                curr = batch_reply[batch_idx]
-                curr['text_candidates'] = [curr_cands[idx] for idx in order
-                                           if idx < len(curr_cands)]
+            if text_cand_inds is not None:
+                text_cand_inds = text_cand_inds.cpu().data
+                for i in range(len(valid_cands)):
+                    order = text_cand_inds[i]
+                    _, batch_idx, curr_cands = valid_cands[i]
+                    curr = batch_reply[batch_idx]
+                    curr['text_candidates'] = [curr_cands[idx] for idx in order
+                                               if idx < len(curr_cands)]
 
         return batch_reply
 
@@ -945,9 +983,8 @@ class Seq2seqAgent(Agent):
             model = {}
             model['enc_lt'] = self.enc_lt.state_dict()
             if self.opt['lookuptable'] not in ['enc_dec', 'all']:
-                # dec_lt is enc_lt
-                raise RuntimeError()
-                # model['dec_lt'] = self.dec_lt.state_dict()
+                # dec_lt is not shared with enc_lt, so save it
+                model['dec_lt'] = self.dec_lt.state_dict()
             if self.opt['decoder'] != 'shared':
                 model['encoder'] = self.encoder.state_dict()
             model['decoder'] = self.decoder.state_dict()
@@ -983,8 +1020,8 @@ class Seq2seqAgent(Agent):
         """Set the state dicts of the modules from saved states."""
         self.enc_lt.load_state_dict(states['enc_lt'])
         if self.opt['lookuptable'] not in ['enc_dec', 'all']:
-            # dec_lt is enc_lt
-            raise RuntimeError('dec_lt state should not exist--it is same as enc_lt.')
+            # dec_lt is not shared with enc_lt, so load it
+            self.dec_lt.load_state_dict(states['dec_lt'])
         if self.opt['decoder'] != 'shared':
             self.encoder.load_state_dict(states['encoder'])
         self.decoder.load_state_dict(states['decoder'])

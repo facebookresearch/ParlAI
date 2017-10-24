@@ -5,7 +5,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 import math
-import sys
 import time
 
 
@@ -82,8 +81,11 @@ class Timer(object):
             return self.total + time.time() - self.start
         return self.total
 
-
 def round_sigfigs(x, sigfigs=4):
-    if x == 0:
-        return 0
+    try:
+        if x == 0:
+            return 0
+    except RuntimeError:
+        # handle 1D torch tensors
+        x = x[0]
     return round(x, -math.floor(math.log10(abs(x)) - sigfigs + 1))
