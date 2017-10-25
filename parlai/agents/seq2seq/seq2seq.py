@@ -205,16 +205,14 @@ class Seq2seqAgent(Agent):
             self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX)
             # lookup table stores word embeddings
             self.enc_lt = nn.Embedding(len(self.dict), emb,
-                                       padding_idx=self.NULL_IDX,
-                                       max_norm=10)
+                                       padding_idx=self.NULL_IDX)
 
             if opt['lookuptable'] in ['enc_dec', 'all']:
                 # share this with the encoder
                 self.dec_lt = self.enc_lt
             else:
                 self.dec_lt = nn.Embedding(len(self.dict), emb,
-                                           padding_idx=self.NULL_IDX,
-                                           max_norm=10)
+                                           padding_idx=self.NULL_IDX)
 
             if not states and opt['embedding_type'].startswith('glove'):
                 # set up pre-initialized vectors from GloVe
