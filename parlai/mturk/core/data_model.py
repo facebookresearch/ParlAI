@@ -40,11 +40,11 @@ COMMAND_INACTIVE_HIT = 'COMMAND_INACTIVE_HIT'
 COMMAND_INACTIVE_DONE = 'COMMAND_INACTIVE_DONE'
 
 # Socket function names
-SOCKET_OPEN_STRING = 'socket_open' # Event fires when a socket opens
-SOCKET_DISCONNECT_STRING = 'disconnect' # Event fires when a socket disconnects
-SOCKET_NEW_PACKET_STRING = 'new packet' # Event fires when packets arrive
-SOCKET_ROUTE_PACKET_STRING = 'route packet' # Event to send outgoing packets
-SOCKET_AGENT_ALIVE_STRING = 'agent alive' # Event to send alive packets
+SOCKET_OPEN_STRING = 'socket_open'  # Event fires when a socket opens
+SOCKET_DISCONNECT_STRING = 'disconnect'  # Event fires when socket disconnects
+SOCKET_NEW_PACKET_STRING = 'new packet'  # Event fires when packets arrive
+SOCKET_ROUTE_PACKET_STRING = 'route packet'  # Event to send outgoing packets
+SOCKET_AGENT_ALIVE_STRING = 'agent alive'  # Event to send alive packets
 
 # Message types
 MESSAGE_TYPE_MESSAGE = 'MESSAGE'

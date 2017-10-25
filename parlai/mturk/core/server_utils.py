@@ -4,11 +4,9 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-import botocore
 import getpass
 import glob
 import hashlib
-import json
 import netrc
 import os
 import platform
@@ -16,8 +14,6 @@ import sh
 import shlex
 import shutil
 import subprocess
-from botocore.exceptions import ClientError
-from botocore.exceptions import ProfileNotFound
 
 region_name = 'us-east-1'
 user_name = getpass.getuser()
@@ -30,6 +26,7 @@ task_directory_name = 'task'
 heroku_url = \
     'https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli'
 
+
 def setup_heroku_server(task_name, task_files_to_copy=None):
     print("Heroku: Collecting files...")
     # Install Heroku CLI
@@ -38,9 +35,9 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
 
     # Get the platform we are working on
     platform_info = platform.platform()
-    if 'Darwin' in platform_info: # Mac OS X
+    if 'Darwin' in platform_info:  # Mac OS X
         os_name = 'darwin'
-    elif 'Linux' in platform_info: # Linux
+    elif 'Linux' in platform_info:  # Linux
         os_name = 'linux'
     else:
         os_name = 'windows'
@@ -67,7 +64,6 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
             bit_architecture
         )))
         sh.tar(shlex.split('-xvzf heroku.tar.gz'))
-
 
     heroku_directory_name = \
         glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))[0]
@@ -102,7 +98,7 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
     for file_path in task_files_to_copy:
         try:
             shutil.copy2(file_path, task_directory_path)
-        except FileNotFoundError:
+        except FileNotFoundError:  # noqa: F821 we don't support python2
             pass
 
     print("Heroku: Starting server...")
@@ -143,7 +139,7 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
         subprocess.check_output(shlex.split(
             '{} create {}'.format(heroku_executable_path, heroku_app_name)
         ))
-    except subprocess.CalledProcessError: # User has too many apps
+    except subprocess.CalledProcessError:  # User has too many apps
         sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
         raise SystemExit(
             'You have hit your limit on concurrent apps with heroku, which are'
@@ -160,7 +156,7 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
                 heroku_executable_path
             )
         ))
-    except subprocess.CalledProcessError: # Already enabled WebSockets
+    except subprocess.CalledProcessError:  # Already enabled WebSockets
         pass
 
     # commit and push to the heroku server
@@ -210,8 +206,12 @@ def delete_heroku_server(task_name):
         )
     ))
 
+
 def setup_server(task_name, task_files_to_copy):
-    return setup_heroku_server(task_name, task_files_to_copy=task_files_to_copy)
+    return setup_heroku_server(
+        task_name,
+        task_files_to_copy=task_files_to_copy
+    )
 
 
 def delete_server(task_name):
