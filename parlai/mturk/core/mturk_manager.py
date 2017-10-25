@@ -718,7 +718,7 @@ class MTurkManager():
         """
 
         def _task_function(opt, workers, conversation_id):
-            """Wait for all workers to join world before running the task"""
+            """Wait for workers to join the world, then run task function"""
             shared_utils.print_and_log(
                 logging.INFO,
                 'Starting task {}...'.format(conversation_id)
@@ -780,6 +780,9 @@ class MTurkManager():
                     # Add the required number of valid workers to the conv
                     workers = [w for w in valid_workers[:needed_workers]]
                     assign_role_function(workers)
+                    # Allow task creator to filter out workers and run
+                    # versions of the task that require fewer agents
+                    workers = [w for w in workers if w.id is not None]
                     for w in workers:
                         w.change_conversation(
                             conversation_id=new_conversation_id,
