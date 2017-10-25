@@ -6,14 +6,16 @@
 from parlai.core.worlds import validate
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 
+
 class QADataCollectionOnboardWorld(MTurkOnboardWorld):
     def parley(self):
         ad = {}
         ad['id'] = 'System'
         ad['text'] = 'Welcome onboard!'
         self.mturk_agent.observe(ad)
-        response = self.mturk_agent.act()
+        self.mturk_agent.act()
         self.episodeDone = True
+
 
 class QADataCollectionWorld(MTurkTaskWorld):
     """
@@ -31,13 +33,14 @@ class QADataCollectionWorld(MTurkTaskWorld):
         self.turn_index = -1
 
     def parley(self):
-        self.turn_index = (self.turn_index + 1) % 2; # Each turn starts from the QA Collector agent
-        ad = { 'episode_done': False }
+        # Each turn starts from the QA Collector agent
+        self.turn_index = (self.turn_index + 1) % 2
+        ad = {'episode_done': False}
         ad['id'] = self.__class__.collector_agent_id
 
         if self.turn_index == 0:
-            # At the first turn, the QA Collector agent provides the context and
-            # prompts the turker to ask a question regarding the context
+            # At the first turn, the QA Collector agent provides the context
+            # and prompts the turker to ask a question regarding the context
 
             # Get context from SQuAD teacher agent
             qa = self.task.act()
@@ -45,14 +48,16 @@ class QADataCollectionWorld(MTurkTaskWorld):
 
             # Wrap the context with a prompt telling the turker what to do next
             ad['text'] = (context +
-                        '\n\nPlease provide a question given this context.')
+                          '\n\nPlease provide a question given this context.')
 
             self.mturk_agent.observe(validate(ad))
-            self.question = self.mturk_agent.act() # Can log the turker's question here
+            self.question = self.mturk_agent.act()
+            # Can log the turker's question here
 
         if self.turn_index == 1:
-            # At the second turn, the QA Collector collects the turker's question from the first turn,
-            # and then prompts the turker to provide the answer
+            # At the second turn, the QA Collector collects the turker's
+            # question from the first turn, and then prompts the
+            # turker to provide the answer
 
             # A prompt telling the turker what to do next
             ad['text'] = 'Thanks. And what is the answer to your question?'
@@ -60,7 +65,8 @@ class QADataCollectionWorld(MTurkTaskWorld):
             ad['episode_done'] = True  # end of episode
 
             self.mturk_agent.observe(validate(ad))
-            self.answer = self.mturk_agent.act() # Can log the turker's answer here
+            self.answer = self.mturk_agent.act()
+            # Can log the turker's answer here
 
             self.episodeDone = True
 

@@ -7,6 +7,7 @@ from parlai.core.worlds import validate
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import time
 
+
 class TestOnboardWorld(MTurkOnboardWorld):
     TEST_ID = 'ONBOARD_SYSTEM'
     TEST_TEXT_1 = 'FIRST_ONBOARD_MESSAGE'
@@ -17,12 +18,12 @@ class TestOnboardWorld(MTurkOnboardWorld):
         ad['id'] = self.TEST_ID
         ad['text'] = self.TEST_TEXT_1
         self.mturk_agent.observe(ad)
-        response = self.mturk_agent.act()
+        self.response = self.mturk_agent.act()
         self.mturk_agent.observe({
             'id': self.TEST_ID,
             'text': self.TEST_TEXT_2
         })
-        response = self.mturk_agent.act()
+        self.response = self.mturk_agent.act()
         self.episodeDone = True
 
 
@@ -43,7 +44,7 @@ class TestSoloWorld(MTurkTaskWorld):
 
     def parley(self):
         self.turn_index = (self.turn_index + 1) % 2
-        ad = { 'episode_done': False }
+        ad = {'episode_done': False}
         ad['id'] = self.__class__.TEST_ID
 
         if self.turn_index == 0:
@@ -78,6 +79,7 @@ class TestSoloWorld(MTurkTaskWorld):
     def review_work(self):
         pass
 
+
 class TestDuoWorld(MTurkTaskWorld):
     """World where 2 participants send messages in a circle for 2 rounds"""
 
@@ -101,7 +103,7 @@ class TestDuoWorld(MTurkTaskWorld):
             try:
                 acts[index] = agent.act(timeout=None)
             except TypeError:
-                acts[index] = agent.act() # not MTurkAgent
+                acts[index] = agent.act()  # not MTurkAgent
             if acts[index]['episode_done']:
                 self.episodeDone = True
             for other_agent in self.agents:
@@ -116,5 +118,5 @@ class TestDuoWorld(MTurkTaskWorld):
         return self.episodeDone
 
     def shutdown(self):
-        for index, agent in enumerate(self.agents):
+        for _index, agent in enumerate(self.agents):
             agent.shutdown(timeout=-1)

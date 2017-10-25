@@ -7,18 +7,21 @@ from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 from parlai.core.worlds import validate
 from joblib import Parallel, delayed
 
+
 class MTurkMultiAgentDialogOnboardWorld(MTurkOnboardWorld):
     def parley(self):
         self.mturk_agent.observe({
             'id': 'System',
             'text': 'Welcome onboard!'
         })
-        response = self.mturk_agent.act()
+        self.mturk_agent.act()
         self.mturk_agent.observe({
             'id': 'System',
-            'text': 'Thank you for your input! Please wait while we match you with another worker...'
+            'text': 'Thank you for your input! Please wait while '
+                    'we match you with another worker...'
         })
         self.episodeDone = True
+
 
 class MTurkMultiAgentDialogWorld(MTurkTaskWorld):
     """Basic world where each agent gets a turn in a round-robin fashion,
@@ -40,7 +43,7 @@ class MTurkMultiAgentDialogWorld(MTurkTaskWorld):
             try:
                 acts[index] = agent.act(timeout=None)
             except TypeError:
-                acts[index] = agent.act() # not MTurkAgent
+                acts[index] = agent.act()  # not MTurkAgent
             if acts[index]['episode_done']:
                 self.episodeDone = True
             for other_agent in self.agents:
@@ -52,11 +55,17 @@ class MTurkMultiAgentDialogWorld(MTurkTaskWorld):
 
     def shutdown(self):
         """Shutdown all mturk agents in parallel, otherwise if one mturk agent
-        is disconnected then it could prevent other mturk agents from completing."""
+        is disconnected then it could prevent other mturk agents from
+        completing.
+        """
         global shutdown_agent
+
         def shutdown_agent(agent):
             try:
                 agent.shutdown(timeout=None)
-            except:
-                agent.shutdown() # not MTurkAgent
-        Parallel(n_jobs=len(self.agents), backend='threading')(delayed(shutdown_agent)(agent) for agent in self.agents)
+            except Exception:
+                agent.shutdown()  # not MTurkAgent
+        Parallel(
+            n_jobs=len(self.agents),
+            backend='threading'
+        )(delayed(shutdown_agent)(agent) for agent in self.agents)

@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.worlds import validate, create_task
 from parlai.mturk.core.worlds import MTurkTaskWorld, MTurkOnboardWorld
-import time
+
 
 class ModelEvaluatorOnboardWorld(MTurkOnboardWorld):
     def parley(self):
@@ -13,13 +13,14 @@ class ModelEvaluatorOnboardWorld(MTurkOnboardWorld):
         ad['id'] = 'System'
         ad['text'] = 'Welcome onboard! Enter anything to confirm you\'re here.'
         self.mturk_agent.observe(ad)
-        response = self.mturk_agent.act()
+        self.mturk_agent.act()
         self.episodeDone = True
 
+
 class ModelEvaluatorWorld(MTurkTaskWorld):
-    """
-    World for letting Turkers evaluate a dialog model's performance given a context.
-    Assumes the context is a context from a given task, e.g. from SQuAD, CBT, etc.
+    """World for letting Turkers evaluate a dialog model's performance given a
+    context. Assumes the context is a context from a given task, e.g.
+    from SQuAD, CBT, etc.
     """
 
     evaluator_agent_id = 'Model Evaluator'
@@ -33,7 +34,8 @@ class ModelEvaluatorWorld(MTurkTaskWorld):
         self.task_world.parley()
 
         ad = {}
-        # Show the dialog model's response to the context, and ask the turker to rate the response
+        # Show the dialog model's response to the context, and ask the turker
+        # to rate the response
         ad['id'] = self.__class__.evaluator_agent_id
         ad['text'] = (
             self.task_world.get_acts()[0]['text'] + "\n\n" +
@@ -45,8 +47,8 @@ class ModelEvaluatorWorld(MTurkTaskWorld):
         ad['episode_done'] = True  # self.world.episode_done()
 
         self.mturk_agent.observe(validate(ad))
-        rating = self.mturk_agent.act()
-
+        self.rating = self.mturk_agent.act()
+        # Can log the rating here
         self.episodeDone = True
 
     def episode_done(self):
