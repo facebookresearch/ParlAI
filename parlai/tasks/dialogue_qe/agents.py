@@ -20,14 +20,14 @@ class DefaultTeacher(DialogTeacher):
     def _path(opt):
         import os
         import sys
-        from parlai.tasks.convai_chitchat.build import build
+        from parlai.tasks.dialogue_qe.build import build
         build(opt)
         dt = opt['datatype'].split(':')[0]
 
         if dt == 'train':
-            path = os.path.join(opt['datapath'], 'ConvAIChitChat', 'train.json')
+            path = os.path.join(opt['datapath'], 'DialogueQE', 'train.json')
         elif dt == 'test':
-            path = os.path.join(opt['datapath'], 'ConvAIChitChat', 'test.json')
+            path = os.path.join(opt['datapath'], 'DialogueQE', 'test.json')
         elif dt == 'valid':
             print('warning: validation is not supporting', file=sys.stderr)
             path = None

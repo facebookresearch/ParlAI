@@ -1,4 +1,3 @@
-
 # Copyright (c) 2017-present, Moscow Institute of Physics and Technology.
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
@@ -10,7 +9,7 @@ import os
 
 
 def build(opt):
-    data_path = os.path.join(opt['datapath'], 'ConvAIChitChat')
+    data_path = os.path.join(opt['datapath'], 'DialogueQE')
     version = '1501534800'
 
     if not build_data.built(data_path, version_string=version):
