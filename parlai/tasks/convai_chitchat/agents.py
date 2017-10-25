@@ -50,8 +50,8 @@ class DefaultTeacher(DialogTeacher):
                 episode_done = False
                 if i == len(dialog["thread"]) - 1:
                     episode_done = True
-                clean_utterance = ': '.join([utterance['userId'], utterance['text']])
-                res = (prev_utterance, [clean_utterance])
-                prev_utterance = clean_utterance
+                current_utterance = ': '.join([utterance['userId'], utterance['text']])
+                res = (prev_utterance, [current_utterance])
+                prev_utterance = current_utterance
 
                 yield res, episode_done
