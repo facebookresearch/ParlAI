@@ -11,7 +11,6 @@ import copy
 import numpy as np
 import nltk
 import os
-import re
 
 
 def escape(s):
@@ -236,7 +235,6 @@ class DictionaryAgent(Agent):
 
     def _sent_tokenize(self, text, building=False):
         """Uses nltk-trained PunktTokenizer for sentence tokenization"""
-        text = text.replace('|', ' ' if building else ' __pipe__ ')
         return self.sent_tok.tokenize(text)
 
     def _word_tokenize(self, text, building=False):

@@ -7,12 +7,13 @@
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 
+import torch
 from torch.autograd import Variable
 from torch import optim
 import torch.nn as nn
 from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 import torch.nn.functional as F
-import torch
+
 import os
 import random
 
@@ -782,16 +783,16 @@ class Seq2seqAgent(Agent):
                                                         attn_mask)
 
             predictions = self._decode_only(batchsize, xes, ys,
-                                             encoder_output, hidden,
-                                             attn_mask)
+                                               encoder_output, hidden,
+                                               attn_mask)
 
         return predictions, text_cand_inds, loss
 
-    def batchify(self, observations):
+    def batchify(self, observations, lm=False):
         """Convert a list of observations into input & target tensors."""
         def valid(obs):
             # check if this is an example our model should actually process
-            return 'text' in obs and ('labels' in obs or 'eval_labels' in obs)
+            return 'text' in obs
         # valid examples and their indices
         try:
             valid_inds, exs = zip(*[(i, ex) for i, ex in
@@ -804,27 +805,32 @@ class Seq2seqAgent(Agent):
         batchsize = len(exs)
 
         # `x` text is already tokenized and truncated
-        parsed = [ex['text'] for ex in exs]
-        x_lens = [len(x) for x in parsed]
+        parsed_x = [ex['text'] for ex in exs]
+        x_lens = [len(x) for x in parsed_x]
         ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
 
         exs = [exs[k] for k in ind_sorted]
         valid_inds = [valid_inds[k] for k in ind_sorted]
-        parsed = [parsed[k] for k in ind_sorted]
+        parsed_x = [parsed_x[k] for k in ind_sorted]
 
-        max_x_len = max([len(x) for x in parsed])
-        xs = torch.LongTensor(batchsize, max_x_len).fill_(self.NULL_IDX)
-        # right-padded with zeros
-        for i, x in enumerate(parsed):
-            for j, idx in enumerate(x):
-                xs[i][j] = idx
-        if self.use_cuda:
-            # copy to gpu
-            self.xs.resize_(xs.size())
-            self.xs.copy_(xs, async=True)
+        if lm:
+            self.xs.resize_(batchsize, 1)
+            self.xs.fill_(self.START_IDX)
             xs = Variable(self.xs)
         else:
-            xs = Variable(xs)
+            max_x_len = max([len(x) for x in parsed_x])
+            xs = torch.LongTensor(batchsize, max_x_len).fill_(self.NULL_IDX)
+            # right-padded with zeros
+            for i, x in enumerate(parsed_x):
+                for j, idx in enumerate(x):
+                    xs[i][j] = idx
+            if self.use_cuda:
+                # copy to gpu
+                self.xs.resize_(xs.size())
+                self.xs.copy_(xs, async=True)
+                xs = Variable(self.xs)
+            else:
+                xs = Variable(xs)
 
         # set up the target tensors
         ys = None
@@ -833,13 +839,16 @@ class Seq2seqAgent(Agent):
             # randomly select one of the labels to update on, if multiple
             # append END to each label
             labels = [random.choice(ex.get('labels', [''])) for ex in exs]
-            parsed = [self.parse(y + ' ' + self.END) for y in labels if y]
-            max_y_len = max(len(y) for y in parsed)
+            parsed_y = [self.parse(y + ' ' + self.END) for y in labels]
+            if lm:
+                parsed_y = [parsed_x[i] + parsed_y[i] for i in range(batchsize)]
+
+            max_y_len = max(len(y) for y in parsed_y)
             if self.truncate > 0 and max_y_len > self.truncate:
-                parsed = [y[:self.truncate] for y in parsed]
+                parsed_y = [y[:self.truncate] for y in parsed_y]
                 max_y_len = self.truncate
             ys = torch.LongTensor(batchsize, max_y_len).fill_(self.NULL_IDX)
-            for i, y in enumerate(parsed):
+            for i, y in enumerate(parsed_y):
                 for j, idx in enumerate(y):
                     ys[i][j] = idx
             if self.use_cuda:
@@ -855,23 +864,23 @@ class Seq2seqAgent(Agent):
         valid_cands = None
         if ys is None and self.rank:
             # only do ranking when no targets available and ranking flag set
-            parsed = []
+            parsed_cs = []
             valid_cands = []
             for i, v in enumerate(valid_inds):
                 if 'label_candidates' in observations[v]:
                     # each candidate tuple is a pair of the parsed version and
                     # the original full string
                     cs = list(observations[v]['label_candidates'])
-                    parsed.append([self.parse(c) for c in cs])
+                    parsed_cs.append([self.parse(c) for c in cs])
                     valid_cands.append((i, v, cs))
-            if len(parsed) > 0:
+            if len(parsed_cs) > 0:
                 # TODO: store lengths of cands separately, so don't have zero
                 #       padding for varying number of cands per example
                 # found cands, pack them into tensor
-                max_c_len = max(max(len(c) for c in cs) for cs in parsed)
-                max_c_cnt = max(len(cs) for cs in parsed)
-                cands = torch.LongTensor(len(parsed), max_c_cnt, max_c_len).fill_(self.NULL_IDX)
-                for i, cs in enumerate(parsed):
+                max_c_len = max(max(len(c) for c in cs) for cs in parsed_cs)
+                max_c_cnt = max(len(cs) for cs in parsed_cs)
+                cands = torch.LongTensor(len(parsed_cs), max_c_cnt, max_c_len).fill_(self.NULL_IDX)
+                for i, cs in enumerate(parsed_cs):
                     for j, c in enumerate(cs):
                         for k, idx in enumerate(c):
                             cands[i][j][k] = idx
@@ -908,18 +917,7 @@ class Seq2seqAgent(Agent):
         if self.lm != 'none' and ys is not None:
             # train on lm task: given [START], predict [x y]
             # (regular task is given [x START] produce [y])
-            new_obs = [
-                {
-                    'text': [self.START_IDX],
-                    'labels': [
-                        '{x} {s} {y}'.format(
-                            x=self.v2t(obs.get('text', '')[1:]),  # skip START token
-                            s=self.START,
-                            y=random.choice(obs.get('labels', [''])))
-                    ]
-                } for obs in observations
-            ]
-            xs, ys, _, _, _, _ = self.batchify(new_obs)
+            xs, ys, _, _, _, _ = self.batchify(observations, lm=True)
             _, _, loss = self.predict(xs, ys, lm=True)
             if loss is not None:
                 batch_reply[0]['metrics'] = loss
