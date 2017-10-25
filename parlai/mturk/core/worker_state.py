@@ -6,6 +6,7 @@
 
 import parlai.mturk.core.data_model as data_model
 
+
 class AssignState():
     """Class for holding state information about an assignment currently
     claimed by an agent
@@ -27,7 +28,7 @@ class AssignState():
         """Create an AssignState with the given assignment_id. status and
         conversation_id are optional
         """
-        if status == None:
+        if status is None:
             status = self.STATUS_NONE
         self.status = status
         self.messages = []

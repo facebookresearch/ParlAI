@@ -5,20 +5,19 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 import logging
-import threading
 import time
 from queue import Queue
 import uuid
 
 from parlai.core.agents import Agent
-from parlai.mturk.core.worker_state import WorkerState, AssignState
+from parlai.mturk.core.worker_state import AssignState
 import parlai.mturk.core.data_model as data_model
 import parlai.mturk.core.shared_utils as shared_utils
 
 # Special act messages for failure states
-MTURK_DISCONNECT_MESSAGE = '[DISCONNECT]' # Turker disconnected from conv
-TIMEOUT_MESSAGE = '[TIMEOUT]' # the Turker did not respond but didn't return
-RETURN_MESSAGE = '[RETURNED]' # the Turker returned the HIT
+MTURK_DISCONNECT_MESSAGE = '[DISCONNECT]'  # Turker disconnected from conv
+TIMEOUT_MESSAGE = '[TIMEOUT]'  # the Turker did not respond but didn't return
+RETURN_MESSAGE = '[RETURNED]'  # the Turker returned the HIT
 
 
 class MTurkAgent(Agent):
@@ -42,9 +41,9 @@ class MTurkAgent(Agent):
         self.worker_id = worker_id
         self.some_agent_disconnected = False
         self.hit_is_expired = False
-        self.hit_is_abandoned = False # state from Amazon MTurk system
-        self.hit_is_returned = False # state from Amazon MTurk system
-        self.hit_is_complete = False # state from Amazon MTurk system
+        self.hit_is_abandoned = False  # state from Amazon MTurk system
+        self.hit_is_returned = False  # state from Amazon MTurk system
+        self.hit_is_complete = False  # state from Amazon MTurk system
         self.disconnected = False
         self.task_group_id = manager.task_group_id
         self.message_request_time = None
@@ -183,7 +182,7 @@ class MTurkAgent(Agent):
         else:
             self.request_message()
 
-            # Timeout in seconds, after which the HIT will be expired automatically
+            # Timeout in seconds, after which the HIT is expired automatically
             if timeout:
                 start_time = time.time()
 
@@ -406,7 +405,7 @@ class MTurkAgent(Agent):
         command_to_send = data_model.COMMAND_SHOW_DONE_BUTTON
         if direct_submit:
             command_to_send = data_model.COMMAND_SUBMIT_HIT
-        if not (self.hit_is_abandoned or self.hit_is_returned or \
+        if not (self.hit_is_abandoned or self.hit_is_returned or
                 self.disconnected or self.hit_is_expired):
             self.manager.mark_workers_done([self])
             self.manager.send_command(
