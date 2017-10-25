@@ -443,8 +443,9 @@ class Seq2seqAgent(Agent):
                 observation['text'] = parsed_x
 
                 if not self.episode_done:
-                    # remember past dialog
-                    prev_dialog = self.observation['text']
+                    # don't remember past dialog
+                    # prev_dialog = self.observation['text']
+                    prev_dialog = []
                     # get last y
                     batch_idx = self.opt.get('batchindex', 0)
                     if self.answers[batch_idx] is not None:
@@ -925,7 +926,7 @@ class Seq2seqAgent(Agent):
             predictions, text_cand_inds, loss = self.predict(xs, ys, cands, valid_cands)
             if loss is not None:
                 if 'metrics' in batch_reply[0]:
-                    for k, v in loss:
+                    for k, v in loss.items():
                         batch_reply[0]['metrics'][k] = v
                 else:
                     batch_reply[0]['metrics'] = loss
