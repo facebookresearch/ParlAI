@@ -97,7 +97,7 @@ class DialogTeacher(Teacher):
         return None
 
     def observe(self, observation):
-        """Process observation for metrics. """
+        """Process observation for metrics."""
         if self.lastY is not None:
             self.metrics.update(observation, self.lastY)
             self.lastY = None
