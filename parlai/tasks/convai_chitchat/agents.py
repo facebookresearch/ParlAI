@@ -56,14 +56,17 @@ class DefaultTeacher(DialogTeacher):
     def _data_generator(dialogs_dict):
         for dialog in dialogs_dict:
             folded_dialog = DefaultTeacher._fold_utterances(dialog["thread"])
+            context = dialog['context']
             if len(folded_dialog) < 2:
                 continue
             u1_utterances = folded_dialog[::2]
             u2_utterances = folded_dialog[1::2]
-            for i in DefaultTeacher._create_learning_examples(u1_utterances, u2_utterances):
-                yield i
-            for i in DefaultTeacher._create_learning_examples(u2_utterances, u1_utterances):
-                yield i
+            for second_user_examples in [((context, ['']), False)] + \
+                    DefaultTeacher._create_learning_examples(u1_utterances, u2_utterances):
+                yield second_user_examples
+            for first_user_examples in [((context, [u1_utterances[0]['text']]), False)] + \
+                    DefaultTeacher._create_learning_examples(u2_utterances, u1_utterances[1:]):
+                yield first_user_examples
 
     @staticmethod
     def setup_data(path):
