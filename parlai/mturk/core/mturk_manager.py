@@ -138,21 +138,26 @@ class MTurkManager():
             self.mturk_workers[worker_id].disconnects += 1
             self.disconnects.append({'time': time.time(), 'id': worker_id})
             if self.mturk_workers[worker_id].disconnects > MAX_DISCONNECTS:
-                text = (
-                    'This worker has repeatedly disconnected from these tasks,'
-                    ' which require constant connection to complete properly '
-                    'as they involve interaction with other Turkers. They have'
-                    ' been blocked to ensure a better experience for other '
-                    'workers who don\'t disconnect.'
-                )
-                self.block_worker(worker_id, text)
-                shared_utils.print_and_log(
-                    logging.INFO,
-                    'Worker {} was blocked - too many disconnects'.format(
-                        worker_id
-                    ),
-                    True
-                )
+                if self.opt['hard_block']:
+                    text = (
+                        'This worker has repeatedly disconnected from these '
+                        'tasks, which require constant connection to complete '
+                        'properly as they involve interaction with other '
+                        'Turkers. They have been blocked after being warned '
+                        'and failing to adhere. This was done in order to '
+                        'ensure a better experience for other '
+                        'workers who don\'t disconnect.'
+                    )
+                    self.block_worker(worker_id, text)
+                    shared_utils.print_and_log(
+                        logging.INFO,
+                        'Worker {} was blocked - too many disconnects'.format(
+                            worker_id
+                        ),
+                        True
+                    )
+                elif self.opt['block_qualification'] != '':
+                    self.soft_block_worker(worker_id)
 
     def _get_agent_from_pkt(self, pkt):
         """Get sender, assignment, and conv ids from a packet"""
@@ -193,7 +198,7 @@ class MTurkManager():
 
     def _move_workers_to_waiting(self, workers):
         """Put all workers into waiting worlds, expire them if no longer
-        accepting workers. If the worker is already final, delete it
+        accepting workers. If the worker is already final, clean it
         """
         for worker in workers:
             worker_id = worker.worker_id
@@ -956,12 +961,33 @@ class MTurkManager():
             if not_done_message in e.response['Error']['Message']:
                 return MTurkAgent.ASSIGNMENT_NOT_DONE
 
-    def create_additional_hits(self, num_hits):
+    def create_additional_hits(self, num_hits, qualifications=None):
         """Handle creation for a specific number of hits/assignments
         Put created HIT ids into the hit_id_list
         """
         shared_utils.print_and_log(logging.INFO,
                                    'Creating {} hits...'.format(num_hits))
+        if qualifications is None:
+            qualifications = []
+
+        # Add the soft block qualification if it has been specified
+        if self.opt['block_qualification'] != '':
+            block_qual_id = mturk_utils.find_or_create_qualification(
+                self.opt['block_qualification'],
+                'A soft ban from using a ParlAI-created HIT due to frequent '
+                'disconnects from conversations, leading to negative '
+                'experiences for other Turkers and for the requester.'
+            )
+            assert block_qual_id is not None, (
+                'Hits could not be created as block qualification could not be'
+                ' acquired. Shutting down server.'
+            )
+            qualifications.append({
+                'QualificationTypeId': block_qual_id,
+                'Comparator': 'DoesNotExist',
+                'RequiredToPreview': True
+            })
+
         hit_type_id = mturk_utils.create_hit_type(
             hit_title=self.opt['hit_title'],
             hit_description='{} (ID: {})'.format(self.opt['hit_description'],
@@ -971,7 +997,8 @@ class MTurkManager():
             # Set to 30 minutes by default
             assignment_duration_in_seconds=self.opt.get(
                 'assignment_duration_in_seconds', 30 * 60),
-            is_sandbox=self.opt['is_sandbox']
+            is_sandbox=self.opt['is_sandbox'],
+            qualifications=qualifications,
         )
         mturk_chat_url = '{}/chat_index?task_group_id={}'.format(
             self.server_url,
@@ -1009,12 +1036,13 @@ class MTurkManager():
                 self.hit_id_list.append(hit_id)
         return mturk_page_url
 
-    def create_hits(self):
+    def create_hits(self, qualifications=None):
         """Create hits based on the managers current config, return hit url"""
         shared_utils.print_and_log(logging.INFO, 'Creating HITs...', True)
 
         mturk_page_url = self.create_additional_hits(
-            num_hits=self.required_hits
+            num_hits=self.required_hits,
+            qualifications=qualifications,
         )
 
         shared_utils.print_and_log(logging.INFO,
@@ -1067,6 +1095,35 @@ class MTurkManager():
         """Block a worker by id using the mturk client, passes reason along"""
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         client.create_worker_block(WorkerId=worker_id, Reason=reason)
+
+    def soft_block_worker(self, worker_id):
+        """Soft block a worker by giving the worker the block qualification"""
+        qual_name = self.opt['block_qualification']
+        assert qual_name != '', ('No block qualification has been specified')
+        self.give_worker_qualification(worker_id, qual_name)
+
+    def give_worker_qualification(self, worker_id, qual_name, qual_value=None):
+        """Give a worker a particular qualification"""
+        qual_id = mturk_utils.find_qualification(qual_name)
+        if qual_id is False or qual_id is None:
+            print(
+                'Could not give worker {} qualification {}, as the '
+                'qualification could not be found to exist.'
+            )
+            return
+        mturk_utils.give_worker_qualification(worker_id, qual_id, qual_value)
+
+    def create_qualification(self, qualification_name, description,
+                             can_exist=True):
+        if not can_exist:
+            qual_id = mturk_utils.find_qualification(qualification_name)
+            if qual_id is not None:
+                print('Could not create qualification, as it existed')
+                return None
+        return mturk_utils.find_or_create_qualification(
+            qualification_name,
+            description
+        )
 
     def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason,
                   unique_request_token):
