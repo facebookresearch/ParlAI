@@ -174,8 +174,117 @@ def get_mturk_client(is_sandbox):
     return client
 
 
+def delete_qualification(qualification_id):
+    """Deletes a qualification by id"""
+    client = boto3.client(
+        service_name='mturk',
+        region_name='us-east-1',
+        endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+    )
+    client.delete_qualification_type(
+        QualificationTypeId=qualification_id
+    )
+
+
+def find_qualification(qualification_name, must_be_owned=True):
+    """Query amazon to find the existing qualification name, return the Id,
+    otherwise return none.
+    If must_be_owned is true, it only returns qualifications owned by the user.
+    Will return False if it finds another's qualification
+    """
+    client = boto3.client(
+        service_name='mturk',
+        region_name='us-east-1',
+        endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+    )
+
+    # Search for the qualification owned by the current user
+    response = client.list_qualification_types(
+        Query=qualification_name,
+        MustBeRequestable=True,
+        MustBeOwnedByCaller=True,
+    )
+
+    for qualification in response['QualificationTypes']:
+        if qualification['Name'] == qualification_name:
+            return qualification['QualificationTypeId']
+
+    # Qualification was not found to exist, check to see if someone else has it
+    response = client.list_qualification_types(
+        Query=qualification_name,
+        MustBeRequestable=True,
+        MustBeOwnedByCaller=False,
+    )
+
+    for qualification in response['QualificationTypes']:
+        if qualification['Name'] == qualification_name:
+            if must_be_owned:
+                print(
+                    'Sorry, the qualification name {} is already owned, '
+                    'please use a different name for your qualification.'
+                    ''.format(qualification_name)
+                )
+                return False
+            return qualification['QualificationTypeId']
+    return None
+
+
+def find_or_create_qualification(qualification_name, description,
+                                 must_be_owned=True):
+    """Query amazon to find the existing qualification name, return the Id. If
+    it exists and must_be_owned is true but we don't own it, this prints an
+    error and returns none. If it doesn't exist, the qualification is created
+    """
+    qual_id = find_qualification(
+        qualification_name,
+        must_be_owned=must_be_owned
+    )
+
+    if qual_id is False:
+        return None
+    if qual_id is not None:
+        return qual_id
+
+    # Create the qualification, as it doesn't exist yet
+    client = boto3.client(
+        service_name='mturk',
+        region_name='us-east-1',
+        endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+    )
+    response = client.create_qualification_type(
+        Name=qualification_name,
+        Description=description,
+        QualificationTypeStatus='Active',
+    )
+    return response['QualificationType']['QualificationTypeId']
+
+
+def give_worker_qualification(worker_id, qualification_id, value=None):
+    """Give a qualification to the given worker"""
+    client = boto3.client(
+        service_name='mturk',
+        region_name='us-east-1',
+        endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+    )
+
+    if value is not None:
+        client.associate_qualification_with_worker(
+            QualificationTypeId='string',
+            WorkerId='string',
+            IntegerValue=value,
+            SendNotification=False
+        )
+    else:
+        client.associate_qualification_with_worker(
+            QualificationTypeId='string',
+            WorkerId='string',
+            SendNotification=False
+        )
+
+
 def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward,
-                    assignment_duration_in_seconds, is_sandbox):
+                    assignment_duration_in_seconds, is_sandbox,
+                    qualifications=None):
     """Create a HIT type to be used to generate HITs of the requested params"""
     client = boto3.client(
         service_name='mturk',
@@ -200,6 +309,8 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward,
         ],
         'RequiredToPreview': True
     }]
+    if qualifications is not None:
+        localRequirements += qualifications
 
     # Create the HIT type
     response = client.create_hit_type(

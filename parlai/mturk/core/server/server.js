@@ -39,24 +39,26 @@ const io = socketIO(
 
 // Track connections
 var connection_id_to_room_id = {};
+var connection_id_to_socket = {};
 var room_id_to_connection_id = {};
 var NOTIF_ID = 'MTURK_NOTIFICATIONS'
 var global_socket = null;
 
 // Handles sending a message through the socket
-function _send_message(socket, connection_id, event_name, event_data) {
-  // Find the room the connection exists in
-  var connection_room_id = connection_id_to_room_id[connection_id];
+function _send_message(connection_id, event_name, event_data) {
+  // Find the connection's socket
+  var socket = connection_id_to_socket[connection_id];
   // Server does not have information about this worker. Should wait for this
   // worker's agent_alive event instead.
-  if (!connection_room_id) {
-    console.log('Connection room id for ' + connection_id +
+  if (!socket) {
+    console.log('Socket for ' + connection_id +
       ' doesn\'t exist! Skipping message.')
     return;
   }
   // Send the message through
-  socket.broadcast.in(connection_room_id).emit(event_name, event_data);
+  socket.emit(event_name, event_data);
 }
+
 
 // Connection ids differ when they are heading to or from the world, these
 // functions let the rest of message sending logic remain consistent
@@ -81,8 +83,7 @@ function _get_from_conn_id(data) {
 // Register handlers
 io.on('connection', function (socket) {
   console.log('Client connected');
-  global_socket = socket;
-
+  console.log(socket.id)
   // Disconnects are logged
   socket.on('disconnect', function () {
     var connection_id = room_id_to_connection_id[socket.id];
@@ -97,12 +98,13 @@ io.on('connection', function (socket) {
     var out_connection_id = _get_to_conn_id(data);
     console.log('agent alive', data);
     connection_id_to_room_id[in_connection_id] = socket.id;
+    connection_id_to_socket[in_connection_id] = socket;
     room_id_to_connection_id[socket.id] = in_connection_id;
     console.log('connection_id ' + in_connection_id + ' registered');
 
     // Send alive packets to the world, but not from the world
     if (!(sender_id && sender_id.startsWith('[World'))) {
-      _send_message(socket, out_connection_id, 'new packet', data);
+      _send_message(out_connection_id, 'new packet', data);
     }
     // Acknowledge that the message was recieved
     if(ack) {
@@ -115,7 +117,7 @@ io.on('connection', function (socket) {
     console.log('route packet', data);
     var out_connection_id = _get_to_conn_id(data);
 
-    _send_message(socket, out_connection_id, 'new packet', data);
+    _send_message(out_connection_id, 'new packet', data);
     // Acknowledge if required
     if(ack) {
       ack('route packet');
@@ -138,20 +140,18 @@ function _load_hit_config() {
 
 app.post('/sns_posts', async function (req, res, next) {
   res.end('Successful POST');
-  console.log(req);
   if (req.headers['x-amz-sns-message-type'] == 'SubscriptionConfirmation') {
     var content = JSON.parse(req.body);
     var confirm_url = content.SubscribeURL;
     request(confirm_url, function (error, response, body) {
       if (!error && response.statusCode == 200) {
-        console.log(body)
+        console.log('Subscribed successfully')
       }
     })
   } else {
     var task_group_id = req.query['task_group_id'];
     var world_id = '[World_' + task_group_id + ']';
     var content = JSON.parse(req.body);
-    console.log(content);
     if (content['MessageId'] != '') {
       var message_id = content['MessageId'];
       var sender_id = 'AmazonMTurk';
@@ -173,7 +173,7 @@ app.post('/sns_posts', async function (req, res, next) {
         receiver_id: world_id,
         data: data
       };
-      _send_message(global_socket, world_id, 'new packet', msg);
+      _send_message(world_id, 'new packet', msg);
     }
   }
 });

@@ -64,7 +64,6 @@ class Packet():
         self.ack_func = ack_func
         self.status = self.STATUS_INIT
         self.time = None
-        self.alive = False
 
     @staticmethod
     def from_dict(packet):
@@ -196,6 +195,7 @@ class SocketManager():
         self.run = {}
         self.last_heartbeat = {}
         self.packet_map = {}
+        self.alive = False
 
         # setup the socket
         self._setup_socket()
