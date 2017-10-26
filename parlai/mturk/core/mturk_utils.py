@@ -175,7 +175,7 @@ def get_mturk_client(is_sandbox):
 
 
 def delete_qualification(qualification_id):
-    """Deletes a qualification by name"""
+    """Deletes a qualification by id"""
     client = boto3.client(
         service_name='mturk',
         region_name='us-east-1',
@@ -260,7 +260,7 @@ def find_or_create_qualification(qualification_name, description,
 
 
 def give_worker_qualification(worker_id, qualification_id, value=None):
-    """Gives a qualification to the given worker"""
+    """Give a qualification to the given worker"""
     client = boto3.client(
         service_name='mturk',
         region_name='us-east-1',

@@ -151,13 +151,20 @@ class MTurkManager():
                     self.block_worker(worker_id, text)
                     shared_utils.print_and_log(
                         logging.INFO,
-                        'Worker {} was blocked - too many disconnects'.format(
+                        'Worker {} blocked - too many disconnects'.format(
                             worker_id
                         ),
                         True
                     )
                 elif self.opt['block_qualification'] != '':
                     self.soft_block_worker(worker_id)
+                    shared_utils.print_and_log(
+                        logging.INFO,
+                        'Worker {} soft blocked - too many disconnects'.format(
+                            worker_id
+                        ),
+                        True
+                    )
 
     def _get_agent_from_pkt(self, pkt):
         """Get sender, assignment, and conv ids from a packet"""
@@ -1106,19 +1113,30 @@ class MTurkManager():
         """Give a worker a particular qualification"""
         qual_id = mturk_utils.find_qualification(qual_name)
         if qual_id is False or qual_id is None:
-            print(
+            shared_utils.print_and_log(
+                logging.WARN,
                 'Could not give worker {} qualification {}, as the '
                 'qualification could not be found to exist.'
+                ''.format(worker_id, qual_name),
+                should_print=True
             )
             return
         mturk_utils.give_worker_qualification(worker_id, qual_id, qual_value)
 
     def create_qualification(self, qualification_name, description,
                              can_exist=True):
+        """Create a new qualification. If can_exist is set, simply return
+        the ID of the existing qualification rather than throw an error
+        """
         if not can_exist:
             qual_id = mturk_utils.find_qualification(qualification_name)
             if qual_id is not None:
-                print('Could not create qualification, as it existed')
+                shared_utils.print_and_log(
+                    logging.WARN,
+                    'Could not create qualification {}, as it existed'
+                    ''.format(qualification_name),
+                    should_print=True
+                )
                 return None
         return mturk_utils.find_or_create_qualification(
             qualification_name,

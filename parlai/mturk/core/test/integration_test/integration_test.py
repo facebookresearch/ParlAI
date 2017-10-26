@@ -56,7 +56,6 @@ EXPIRE_HIT_TEST = 'EXPIRE_HIT_TEST'
 ALLOWED_CONVERSATION_TEST = 'ALLOWED_CONVERSATION_TEST'
 UNIQUE_CONVERSATION_TEST = 'UNIQUE_CONVERSATION_TEST'
 AMAZON_SNS_TEST = 'AMAZON_SNS_TEST'
-AMAZON_QUALIFICATION_TEST = 'AMAZON_QUALIFICATION_TEST'
 
 FAKE_ASSIGNMENT_ID = 'FAKE_ASSIGNMENT_ID_{}_{}'
 FAKE_WORKER_ID = 'FAKE_WORKER_ID_{}_{}'
@@ -456,10 +455,6 @@ def test_sns_service(opt, server_url):
     mturk_utils.delete_sns_topic(arn)
 
     completed_threads[AMAZON_SNS_TEST] = True
-
-
-def test_qualifications(opt, server_url):
-    completed_threads[AMAZON_QUALIFICATION_TEST] = True
 
 
 def test_socket_manager(opt, server_url):
