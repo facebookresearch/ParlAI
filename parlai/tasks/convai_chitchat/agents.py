@@ -65,7 +65,8 @@ class DefaultTeacher(DialogTeacher):
             for i in DefaultTeacher._create_learning_examples(u2_utterances, u1_utterances):
                 yield i
 
-    def setup_data(self, path):
+    @staticmethod
+    def setup_data(path):
         import json
         print('loading: ' + path)
 
