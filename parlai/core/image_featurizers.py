@@ -9,6 +9,7 @@ import os
 import copy
 import numpy as np
 from PIL import Image
+from functools import lru_cache
 
 _greyscale = '  .,:;crsA23hHG#98&@'
 
@@ -74,7 +75,6 @@ class ImageLoader():
         self.netCNN.cuda()
 
     def save(self, feature, path):
-        feature = feature.cpu().data.numpy()
         np.save(path, feature)
 
     def image_mode_switcher(self):
@@ -105,6 +105,7 @@ class ImageLoader():
         self.xs.data.copy_(self.transform(image))
         # extract the image feature
         feature = self.netCNN(self.xs)
+        feature = feature.cpu().data.numpy()
         # save the feature
         self.save(feature, path)
         return feature
@@ -121,6 +122,7 @@ class ImageLoader():
             asc.append('\n')
         return ''.join(asc)
 
+    @lru_cache(maxsize=None)
     def load(self, path):
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
@@ -142,6 +144,7 @@ class ImageLoader():
             if not os.path.exists(dpath):
                 build_data.make_dir(dpath)
 
+            imagefn = imagefn.split('.')[0]
             imagefn = imagefn + '.npy'
             new_path = os.path.join(prepath, mode, imagefn)
 

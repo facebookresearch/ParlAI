@@ -50,7 +50,7 @@ task_list = [
         "display_name": "Dialog Based Language Learning: bAbI Task",
         "task": "dbll_babi",
         "tags": [ "All",  "Goal" ],
-        "description": "Short dialogs based on the bAbI tasks, but in the form of a question from a teacher, the answer from the student, and finally a comment on the answer from the teacher. The aim is to find learning models that use the comments to improve. From Weston '16. Link: https://arxiv.org/abs/1604.06045"
+        "description": "Short dialogs based on the bAbI tasks, but in the form of a question from a teacher, the answer from the student, and finally a comment on the answer from the teacher. The aim is to find learning models that use the comments to improve. From Weston '16. Link: https://arxiv.org/abs/1604.06045. Tasks can be accessed with a format like: 'python examples/display_data.py -t dbll_babi:task:2_p0.5' which specifies task 2, and policy with 0.5 answers correct, see the paper for more details of the tasks."
     },
     {
         "id": "DBLL-Movie",
@@ -67,6 +67,13 @@ task_list = [
         "description": "Simulated dialogs of restaurant booking, from Bordes et al. '16. Link: https://arxiv.org/abs/1605.07683"
     },
     {
+        "id": "dialog-bAbI-plus",
+        "display_name": "Dialog bAbI+",
+        "task": "dialog_babi_plus",
+        "tags": ["All", "Goal"],
+        "description": "bAbI+ is an extension of the bAbI Task 1 dialogues with everyday incremental dialogue phenomena (hesitations, restarts, and corrections) which model the disfluencies and communication problems in everyday spoken interaction in real-world environments. See https://www.researchgate.net/publication/319128941_Challenging_Neural_Dialogue_Models_with_Natural_Data_Memory_Networks_Fail_on_Incremental_Phenomena, http://aclweb.org/anthology/D17-1235"
+    },
+    {
         "id": "FVQA",
         "display_name": "FVQA",
         "task": "fvqa",
@@ -77,8 +84,15 @@ task_list = [
         "id": "DealNoDeal",
         "display_name": "Deal or No Deal",
         "task": "dealnodeal",
-        "tags": [ "All", "Negotiation" ],
+        "tags": ["All", "Negotiation"],
         "description": "End-to-end negotiation task which requires two agents to agree on how to divide a set of items, with each agent assigning different values to each item. From Lewis et al. '17. Link: https://arxiv.org/abs/1706.05125"
+    },
+    {
+        "id": "MutualFriends",
+        "display_name": "MutualFriends",
+        "task": "mutualfriends",
+        "tags": [ "All", "Negotiation"],
+        "description": "Task where two agents must discover which friend of theirs is mutual based on the friends's attributes. From He He et al. '17. Link: https://stanfordnlp.github.io/cocoa/'"
     },
     {
         "id": "MCTest",
@@ -132,14 +146,14 @@ task_list = [
     {
         "id": "personalized-dialog-full",
         "display_name": "Personalized Dialog Full Set",
-        "task": "personalized_dialog:full",
+        "task": "personalized_dialog:AllFull",
         "tags": [ "All",  "Goal", "Personalization" ],
         "description": "Simulated dataset of restaurant booking focused on personalization based on user profiles. From Joshi et al. '17. Link: https://arxiv.org/abs/1706.07503"
     },
     {
         "id": "personalized-dialog-small",
         "display_name": "Personalized Dialog Small Set",
-        "task": "personalized_dialog:small",
+        "task": "personalized_dialog:AllSmall",
         "tags": [ "All",  "Goal", "Personalization" ],
         "description": "Simulated dataset of restaurant booking focused on personalization based on user profiles. From Joshi et al. '17. Link: https://arxiv.org/abs/1706.07503"
     },
@@ -254,5 +268,12 @@ task_list = [
         "task": "clevr",
         "tags": [ "All",  "Visual" ],
         "description": "A visual reasoning dataset that tests abilities such as attribute identification, counting, comparison, spatial relationships, and logical operations. From Johnson et al. '16. Link: https://arxiv.org/abs/1612.06890"
+    },
+    {
+        "id": "WMT",
+        "display_name": "WMT",
+        "task": "wmt",
+        "tags": [ "All", "MT" ],
+        "description": "Workshop on Machine Translation task, currently only includes en_de."
     }
 ]

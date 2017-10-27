@@ -237,7 +237,7 @@ This directory contains a few particular examples of basic loops.
 ### Tasks
 
 Our first release included the following datasets (shown in the left panel), and accessing one of them is as simple as specifying the name of the task as a command line option, as shown in the dataset display utility (right panel):
-<p align=center><img width="100%" src="docs/source/\_static/img/tasks.png" /></p>
+<p align=center><img width="100%" src="docs/source/\_static/img/tasks2.png" /></p>
 
 Over 20 tasks were supported in the first release, including popular datasets such as
 SQuAD, bAbI tasks, MCTest, WikiQA, WebQuestions, SimpleQuestions, WikiMovies, QACNN, QADailyMail, CBT, BookTest, bAbI Dialog tasks,

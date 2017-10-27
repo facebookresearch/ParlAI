@@ -97,7 +97,7 @@ class DialogTeacher(Teacher):
         return None
 
     def observe(self, observation):
-        """Process observation for metrics. """
+        """Process observation for metrics."""
         if self.lastY is not None:
             self.metrics.update(observation, self.lastY)
             self.lastY = None
@@ -137,8 +137,10 @@ class DialogTeacher(Teacher):
         self.episode_done = action['episode_done']
         action['id'] = self.getID()
         self.lastY = action.get('labels', None)
-        if not self.datatype.startswith('train'):
-            action.pop('labels', None)
+        if not self.datatype.startswith('train') and 'labels' in action:
+            # move labels to eval field so not used for training
+            # but this way the model can use the labels for perplexity or loss
+            action['eval_labels'] = action.pop('labels')
         return action
 
     # Return transformed metrics showing total examples and accuracy if avail.
@@ -243,7 +245,7 @@ class DialogData(object):
                     if len(entry) > 2:
                         # process reward if available
                         if entry[2] is not None:
-                            new_entry.append(sys.intern(entry[2]))
+                            new_entry.append(entry[2])
                         else:
                             new_entry.append(None)
                         if len(entry) > 3:
@@ -377,7 +379,7 @@ class StreamDialogData(DialogData):
         self.data = self._data_generator(data_loader, datafile)
 
     def _data_generator(self, data_loader, datafile):
-        """Generates data using the iterator over tuples constructed 
+        """Generates data using the iterator over tuples constructed
         by data_loader.
         """
         self.is_reset = False

@@ -4,21 +4,20 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-
-import threading
+import logging
 import time
 from queue import Queue
 import uuid
 
 from parlai.core.agents import Agent
+from parlai.mturk.core.worker_state import AssignState
 import parlai.mturk.core.data_model as data_model
-from parlai.mturk.core.shared_utils import print_and_log, THREAD_SHORT_SLEEP, \
-                                           THREAD_MTURK_POLLING_SLEEP
+import parlai.mturk.core.shared_utils as shared_utils
 
 # Special act messages for failure states
-MTURK_DISCONNECT_MESSAGE = '[DISCONNECT]' # Turker disconnected from conv
-TIMEOUT_MESSAGE = '[TIMEOUT]' # the Turker did not respond but didn't return
-RETURN_MESSAGE = '[RETURNED]' # the Turker returned the HIT
+MTURK_DISCONNECT_MESSAGE = '[DISCONNECT]'  # Turker disconnected from conv
+TIMEOUT_MESSAGE = '[TIMEOUT]'  # the Turker did not respond but didn't return
+RETURN_MESSAGE = '[RETURNED]'  # the Turker returned the HIT
 
 
 class MTurkAgent(Agent):
@@ -36,63 +35,54 @@ class MTurkAgent(Agent):
         self.conversation_id = None
         self.manager = manager
         self.id = None
+        self.state = AssignState()
         self.assignment_id = assignment_id
         self.hit_id = hit_id
         self.worker_id = worker_id
         self.some_agent_disconnected = False
-        self.hit_is_abandoned = False
         self.hit_is_expired = False
-        self.hit_is_accepted = False # state from Amazon MTurk system
-        self.hit_is_returned = False # state from Amazon MTurk system
+        self.hit_is_abandoned = False  # state from Amazon MTurk system
+        self.hit_is_returned = False  # state from Amazon MTurk system
+        self.hit_is_complete = False  # state from Amazon MTurk system
         self.disconnected = False
         self.task_group_id = manager.task_group_id
+        self.message_request_time = None
+        self.recieved_packets = {}
 
         self.msg_queue = Queue()
 
-        # self.check_hit_status_thread = threading.Thread(
-        #    target=self._check_hit_status)
-        # self.check_hit_status_thread.daemon = True
-        # self.check_hit_status_thread.start()
+    def get_connection_id(self):
+        """Returns an appropriate connection_id for this agent"""
+        return "{}_{}".format(self.worker_id, self.assignment_id)
 
-    def _check_hit_status(self):
-        """Monitor and update the HIT status by polling"""
-        # TODO-1 replace with code that subscribes to notifs to update status
-        # Check if HIT is accepted
+    def log_reconnect(self):
+        """Log a reconnect of this agent """
+        shared_utils.print_and_log(
+            logging.DEBUG,
+            'Agent ({})_({}) reconnected to {} with status {}'.format(
+                self.worker_id, self.assignment_id,
+                self.conversation_id, self.state.status
+            )
+        )
+
+    def get_inactive_command_data(self):
+        """Get appropriate inactive command data to respond to a reconnect"""
+        text, command = self.state.get_inactive_command_text()
+        return {
+            'text': command,
+            'inactive_text': text,
+            'conversation_id': self.conversation_id,
+            'agent_id': self.worker_id,
+        }
+
+    def wait_for_status(self, desired_status):
+        """Suspend a thread until a particular assignment state changes
+        to the desired state
+        """
         while True:
-            if self.hit_id:
-                response = self.manager.get_hit(hit_id=self.hit_id)
-                # Amazon MTurk system acknowledges that the HIT is accepted
-                if response['HIT']['NumberOfAssignmentsPending'] == 1:
-                    print_and_log(('Worker has accepted the HIT '
-                                   '(acknowledged by MTurk API).'), False)
-                    self.hit_is_accepted = True
-                    break
-            time.sleep(THREAD_MTURK_POLLING_SLEEP)
-        while True:
-            if self.hit_id:
-                response = self.manager.get_hit(hit_id=self.hit_id)
-                # HIT is returned
-                if response['HIT']['NumberOfAssignmentsAvailable'] == 1:
-                    self.hit_is_returned = True
-                    # If the worker is still in onboarding, then we don't need
-                    # to expire the HIT.
-                    # If the worker is already in a conversation, then we
-                    # should expire the HIT to keep the total number of
-                    # available HITs consistent with the number of
-                    # conversations left.
-                    if self.is_in_task():
-                        print_and_log(('Worker has returned the HIT. Since '
-                            'the worker is already in a task conversation, '
-                            'we are expiring the HIT.'), False)
-                        self.manager.expire_hit(hit_id=self.hit_id)
-                    else:
-                        print_and_log(('Worker has returned the HIT. Since '
-                            'the worker is still in onboarding, we will not '
-                            'expire the HIT.'), False)
-                    # we will not be using this MTurkAgent object for another
-                    # worker, so no need to check its status anymore
-                    return
-            time.sleep(THREAD_MTURK_POLLING_SLEEP)
+            if self.state.status == desired_status:
+                break
+            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
     def is_in_task(self):
         """Use conversation_id to determine if an agent is in a task"""
@@ -103,6 +93,12 @@ class MTurkAgent(Agent):
     def observe(self, msg):
         """Send an agent a message through the mturk manager"""
         self.manager.send_message(self.worker_id, self.assignment_id, msg)
+
+    def put_data(self, id, data):
+        """Put data into the message queue if it hasn't already been seen"""
+        if id not in self.recieved_packets:
+            self.recieved_packets[id] = True
+            self.msg_queue.put(data)
 
     def get_new_act_message(self):
         """Get a new act message if one exists, return None otherwise"""
@@ -133,23 +129,60 @@ class MTurkAgent(Agent):
         # There are no messages to be sent
         return None
 
+    def prepare_timeout(self):
+        """Log a timeout event, tell mturk manager it occurred, return message
+        to return for the act call
+        """
+        shared_utils.print_and_log(
+            logging.INFO,
+            '{} timed out before sending.'.format(self.id)
+        )
+        self.manager.handle_turker_timeout(
+            self.worker_id,
+            self.assignment_id
+        )
+        msg = {
+            'id': self.id,
+            'text': TIMEOUT_MESSAGE,
+            'episode_done': True
+        }
+        return msg
+
+    def request_message(self):
+        if not (self.disconnected or self.some_agent_disconnected or
+                self.hit_is_expired):
+            self.manager.send_command(
+                self.worker_id,
+                self.assignment_id,
+                {'text': data_model.COMMAND_SEND_MESSAGE}
+            )
+
     def act(self, timeout=None, blocking=True):
         """Sends a message to other agents in the world. If blocking, this
         will wait for the message to come in so it can be sent. Otherwise
         it will return None.
         """
         if not blocking:
-            return self.get_new_act_message()
-        else:
-            if not (self.disconnected or self.some_agent_disconnected or
-                    self.hit_is_expired):
-                self.manager.send_command(
-                    self.worker_id,
-                    self.assignment_id,
-                    {'text': data_model.COMMAND_SEND_MESSAGE}
-                )
+            # if this is the first act since last sent message start timing
+            if self.message_request_time is None:
+                self.request_message()
+                self.message_request_time = time.time()
 
-            # Timeout in seconds, after which the HIT will be expired automatically
+            # If checking timeouts
+            if timeout:
+                # If time is exceeded, timeout
+                if time.time() - self.message_request_time > timeout:
+                    return self.prepare_timeout()
+
+            # Get a new message, if it's not None reset the timeout
+            msg = self.get_new_act_message()
+            if msg is not None and self.message_request_time is not None:
+                self.message_request_time = None
+            return msg
+        else:
+            self.request_message()
+
+            # Timeout in seconds, after which the HIT is expired automatically
             if timeout:
                 start_time = time.time()
 
@@ -163,15 +196,8 @@ class MTurkAgent(Agent):
                 if timeout:
                     current_time = time.time()
                     if (current_time - start_time) > timeout:
-                        print_and_log('{} is timeout.'.format(self.id), False)
-                        self.set_hit_is_abandoned()
-                        msg = {
-                            'id': self.id,
-                            'text': TIMEOUT_MESSAGE,
-                            'episode_done': True
-                        }
-                        return msg
-                time.sleep(THREAD_SHORT_SLEEP)
+                        return self.prepare_timeout()
+                time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
     def change_conversation(self, conversation_id, agent_id, change_callback):
         """Handle changing a conversation for an agent, takes a callback for
@@ -201,10 +227,12 @@ class MTurkAgent(Agent):
             return True
 
     def _print_not_available_for(self, item):
-        print_and_log(
+        shared_utils.print_and_log(
+            logging.WARN,
             'Conversation ID: {}, Agent ID: {} - HIT '
             'is abandoned and thus not available for '
-            '{}.'.format(self.conversation_id, self.id, item)
+            '{}.'.format(self.conversation_id, self.id, item),
+            should_print=True
         )
 
     def approve_work(self):
@@ -215,13 +243,16 @@ class MTurkAgent(Agent):
             if self.manager.get_agent_work_status(self.assignment_id) == \
                     self.ASSIGNMENT_DONE:
                 self.manager.approve_work(assignment_id=self.assignment_id)
-                print_and_log(
+                shared_utils.print_and_log(
+                    logging.INFO,
                     'Conversation ID: {}, Agent ID: {} - HIT is '
                     'approved.'.format(self.conversation_id, self.id)
                 )
             else:
-                print_and_log('Cannot approve HIT. Reason: Turker hasn\'t '
-                              'completed the HIT yet.')
+                shared_utils.print_and_log(
+                    logging.WARN,
+                    'Cannot approve HIT. Turker hasn\'t completed the HIT yet.'
+                )
 
     def reject_work(self, reason='unspecified'):
         """Reject work after it has been submitted"""
@@ -231,19 +262,24 @@ class MTurkAgent(Agent):
             if self.manager.get_agent_work_status(self.assignment_id) == \
                     self.ASSIGNMENT_DONE:
                 self.manager.reject_work(self.assignment_id, reason)
-                print_and_log(
+                shared_utils.print_and_log(
+                    logging.INFO,
                     'Conversation ID: {}, Agent ID: {} - HIT is '
                     'rejected.'.format(self.conversation_id, self.id)
                 )
             else:
-                print_and_log('Cannot reject HIT. Reason: Turker hasn\'t '
-                              'completed the HIT yet.')
+                shared_utils.print_and_log(
+                    logging.WARN,
+                    'Cannot reject HIT. Turker hasn\'t completed the HIT yet.'
+                )
 
     def block_worker(self, reason='unspecified'):
         """Block a worker from our tasks"""
         self.manager.block_worker(worker_id=self.worker_id, reason=reason)
-        print_and_log(
-            'Blocked worker ID: {}. Reason: {}'.format(self.worker_id, reason)
+        shared_utils.print_and_log(
+            logging.WARN,
+            'Blocked worker ID: {}. Reason: {}'.format(self.worker_id, reason),
+            should_print=True
         )
 
     def pay_bonus(self, bonus_amount, reason='unspecified'):
@@ -262,8 +298,11 @@ class MTurkAgent(Agent):
                     unique_request_token=unique_request_token
                 )
             else:
-                print_and_log('Cannot pay bonus for HIT. Reason: Turker '
-                              'hasn\'t completed the HIT yet.')
+                shared_utils.print_and_log(
+                    logging.WARN,
+                    'Cannot pay bonus for HIT. Reason: Turker '
+                    'hasn\'t completed the HIT yet.'
+                )
 
     def email_worker(self, subject, message_text):
         """Sends an email to a worker, returns true on a successful send"""
@@ -273,7 +312,8 @@ class MTurkAgent(Agent):
             message_text=message_text
         )
         if 'success' in response:
-            print_and_log(
+            shared_utils.print_and_log(
+                logging.INFO,
                 'Email sent to worker ID: {}: Subject: {}: Text: {}'.format(
                     self.worker_id,
                     subject,
@@ -282,7 +322,8 @@ class MTurkAgent(Agent):
             )
             return True
         elif 'failure' in response:
-            print_and_log(
+            shared_utils.print_and_log(
+                logging.WARN,
                 "Unable to send email to worker ID: {}. Error: {}".format(
                     self.worker_id,
                     response['failure']
@@ -300,28 +341,63 @@ class MTurkAgent(Agent):
         """Waits for a hit to be marked as complete"""
         # Timeout in seconds, after which the HIT will be expired automatically
         if timeout:
+            if timeout < 0:
+                # Negative timeout is for testing
+                self.manager.free_workers([self])
+                return True
             start_time = time.time()
-        while self.manager.get_agent_work_status(self.assignment_id) != \
+        iters = (shared_utils.THREAD_MTURK_POLLING_SLEEP /
+                 shared_utils.THREAD_SHORT_SLEEP)
+        i = 0
+        while not self.hit_is_complete and i < iters:
+            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+            i += 1
+        while not self.hit_is_complete and \
+                self.manager.get_agent_work_status(self.assignment_id) != \
                 self.ASSIGNMENT_DONE:
             # Check if the Turker already returned/disconnected
             if self.hit_is_returned or self.disconnected:
+                self.manager.free_workers([self])
                 return False
             if timeout:
                 current_time = time.time()
                 if (current_time - start_time) > timeout:
-                    print_and_log(
-                        "Timeout waiting for Turker to complete HIT."
+                    shared_utils.print_and_log(
+                        logging.INFO,
+                        "Timeout waiting for ({})_({}) to complete {}.".format(
+                            self.worker_id,
+                            self.assignment_id,
+                            self.conversation_id
+                        )
                     )
                     self.set_hit_is_abandoned()
+                    self.manager.free_workers([self])
                     return False
-            print_and_log('Waiting for ({})_({}) to complete {}...'.format(
-                self.worker_id, self.assignment_id, self.conversation_id
-            ), False)
-            time.sleep(THREAD_MTURK_POLLING_SLEEP)
-        print_and_log('Conversation ID: {}, Agent ID: {} - HIT is '
-                      'done.'.format(self.conversation_id, self.id))
+            shared_utils.print_and_log(
+                logging.DEBUG,
+                'Waiting for ({})_({}) to complete {}...'.format(
+                    self.worker_id, self.assignment_id, self.conversation_id
+                )
+            )
+            i = 0
+            while not self.hit_is_complete and i < iters:
+                time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+                i += 1
+
+        shared_utils.print_and_log(
+            logging.INFO,
+            'Conversation ID: {}, Agent ID: {} - HIT is done.'.format(
+                self.conversation_id, self.id
+            )
+        )
         self.manager.free_workers([self])
         return True
+
+    def reduce_state(self):
+        """Cleans up resources related to maintaining complete state"""
+        self.msg_queue = None
+        self.state.clear_messages()
+        self.recieved_packets = None
 
     def shutdown(self, timeout=None, direct_submit=False):
         """Shuts down a hit when it is completed"""
@@ -329,7 +405,7 @@ class MTurkAgent(Agent):
         command_to_send = data_model.COMMAND_SHOW_DONE_BUTTON
         if direct_submit:
             command_to_send = data_model.COMMAND_SUBMIT_HIT
-        if not (self.hit_is_abandoned or self.hit_is_returned or \
+        if not (self.hit_is_abandoned or self.hit_is_returned or
                 self.disconnected or self.hit_is_expired):
             self.manager.mark_workers_done([self])
             self.manager.send_command(

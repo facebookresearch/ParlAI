@@ -58,15 +58,16 @@ class OeTeacher(Teacher):
             self.ques = shared['ques']
             if 'annotation' in shared:
                 self.annotation = shared['annotation']
+            self.image_loader = shared['image_loader']
         else:
             self._setup_data(data_path, annotation_path)
+            self.image_loader = ImageLoader(opt)
 
         # for ordered data in batch mode (especially, for validation and
         # testing), each teacher in the batch gets a start index and a step
         # size so they all process disparate sets of the data
         self.step_size = opt.get('batchsize', 1)
         self.data_offset = opt.get('batchindex', 0)
-        self.image_loader = ImageLoader(opt)
         self.reset()
 
     def __len__(self):
@@ -120,6 +121,7 @@ class OeTeacher(Teacher):
         shared['ques'] = self.ques
         if hasattr(self, 'annotation'):
             shared['annotation'] = self.annotation
+        shared['image_loader'] = self.image_loader
         return shared
 
     def _setup_data(self, data_path, annotation_path):
@@ -153,6 +155,30 @@ class McTeacher(OeTeacher):
 
         if self.datatype.startswith('train'):
             action['labels'] = self.lastY
+
+        return action
+
+
+class AllTeacher(OeTeacher):
+    """
+    VQA Teacher, which inherits from OeTeacher and gives access to
+    the multiple choices and the multiple choice answer.
+    """
+
+    def act(self):
+        action = super().act()
+
+        qa = self.ques['questions'][self.episode_idx]
+        multiple_choices = qa['multiple_choices']
+
+        action['label_candidates'] = multiple_choices
+
+        if not self.datatype.startswith('test'):
+            anno = self.annotation['annotations'][self.episode_idx]
+            self.mclabel = [anno['multiple_choice_answer']]
+
+        if self.datatype.startswith('train'):
+            action['mc_label'] = self.mclabel
 
         return action
 

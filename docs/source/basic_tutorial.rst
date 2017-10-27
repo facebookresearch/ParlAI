@@ -33,11 +33,7 @@ Follow the step by step guide on how to download and install ParlAI.
 
     cd ~/ParlAI; python setup.py develop
 
-3. Several models have additional requirements:
-
-- DrQA and Seq2Seq require installing `PyTorch <http://pytorch.org/>`_.
-
-- MemNN requires installing `Lua Torch <http://torch.ch/docs/getting-started.html>`_.
+3. Several models have additional requirements, such as `PyTorch <http://pytorch.org/>`_.
 
 
 Getting Started
@@ -73,6 +69,14 @@ Observations are structured as a python `dict` with the following fields:
 All of these fields are technically optional, and each task should use them
 according to what kind of information is available in that task (for example,
 not all tasks contain explicit rewards, or a set of candidate labels to choose from).
+
+During validation and testing, we move the labels to a different field called
+'eval_labels'--this way, the model won't accidentally train on the labels, but
+they are still available for calculating model-side loss.
+
+Dataset-specific fields are available in some cases in order to support
+reproducing paper results. For example, SQuAD has an "answer_starts" field,
+which is available in the "squad:index" task.
 
 Teachers
 ^^^^^^^^
@@ -239,8 +243,11 @@ Tasks are specified in the following format:
 Validation and Testing
 ^^^^^^^^^^^^^^^^^^^^^^
 
-During validation and testing, the labels aren't provided to the agent. This
-mode can be set from the command line with '-dt valid'.
+During validation and testing, the 'labels' field is removed from the observation dict.
+This tells the agent not to use these labels for training--however, the labels are
+still available via the 'eval_labels' field in case you need to compute model-side
+metrics such as perplexity.
+These modes can be set from the command line with '-dt valid' / '-dt test'.
 
 Now, the agent no longer has anything to say. For datasets which provide a set
 of candidates to choose from ('label_candidates' in the observation dict), we

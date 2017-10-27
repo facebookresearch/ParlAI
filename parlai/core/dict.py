@@ -11,7 +11,6 @@ import copy
 import numpy as np
 import nltk
 import os
-import re
 
 
 def escape(s):
@@ -71,20 +70,20 @@ class DictionaryAgent(Agent):
     default_maxngram = -1
     default_minfreq = 0
     default_null = '__NULL__'
+    default_start = '__START__'
     default_end = '__END__'
     default_unk = '__UNK__'
-    default_start = '__START__'
 
     @staticmethod
     def add_cmdline_args(argparser):
         dictionary = argparser.add_argument_group('Dictionary Arguments')
         dictionary.add_argument(
             '--dict-file',
-            help='if set, the dictionary will automatically save to this path' +
+            help='if set, the dictionary will automatically save to this path'
                  ' during shutdown')
         dictionary.add_argument(
             '--dict-initpath',
-            help='path to a saved dictionary to load tokens / counts from to ' +
+            help='path to a saved dictionary to load tokens / counts from to '
                  'seed the dictionary with initial tokens and/or frequencies')
         dictionary.add_argument(
             '--dict-language', default=DictionaryAgent.default_lang,
@@ -92,24 +91,25 @@ class DictionaryAgent(Agent):
         dictionary.add_argument(
             '--dict-max-ngram-size', type=int,
             default=DictionaryAgent.default_maxngram,
-            help='looks for ngrams of up to this size. this is ignored when ' +
-                 'building the dictionary. note: this takes approximate ' +
+            help='looks for ngrams of up to this size. this is ignored when '
+                 'building the dictionary. note: this takes approximate '
                  'runtime of len(sentence)^max_ngram_size')
         dictionary.add_argument(
-            '--dict-minfreq', default=DictionaryAgent.default_minfreq, type=int,
-            help='minimum frequency of words to include them in the dictionary')
+            '--dict-minfreq', default=DictionaryAgent.default_minfreq,
+            type=int,
+            help='minimum frequency of words to include them in sorted dict')
         dictionary.add_argument(
            '--dict-nulltoken', default=DictionaryAgent.default_null,
            help='empty token, can be used for padding or just empty values')
+        dictionary.add_argument(
+          '--dict-starttoken', default=DictionaryAgent.default_start,
+          help='token for starting sentence generation, if needed')
         dictionary.add_argument(
            '--dict-endtoken', default=DictionaryAgent.default_end,
            help='token for end of sentence markers, if needed')
         dictionary.add_argument(
             '--dict-unktoken', default=DictionaryAgent.default_unk,
             help='token to return for unavailable words')
-        dictionary.add_argument(
-           '--dict-starttoken', default=DictionaryAgent.default_start,
-           help='token for starting sentence generation, if needed')
         dictionary.add_argument(
             '--dict-maxexs', default=100000, type=int,
             help='max number of examples to build dict on')
@@ -137,6 +137,12 @@ class DictionaryAgent(Agent):
                 self.tok2ind[self.null_token] = 0
                 self.ind2tok[0] = self.null_token
 
+            if self.start_token:
+                # set special start of sentence word token
+                index = len(self.tok2ind)
+                self.tok2ind[self.start_token] = index
+                self.ind2tok[index] = self.start_token
+
             if self.end_token:
                 # set special end of sentence word token
                 index = len(self.tok2ind)
@@ -149,19 +155,12 @@ class DictionaryAgent(Agent):
                 self.tok2ind[self.unk_token] = index
                 self.ind2tok[index] = self.unk_token
 
-            if self.start_token:
-                # set special start of sentence word token
-                index = len(self.tok2ind)
-                self.tok2ind[self.start_token] = index
-                self.ind2tok[index] = self.start_token
-
             if opt.get('dict_file') and os.path.isfile(opt['dict_file']):
                 # load pre-existing dictionary
                 self.load(opt['dict_file'])
             elif opt.get('dict_initpath'):
                 # load seed dictionary
                 self.load(opt['dict_initpath'])
-
 
         # initialize tokenizers
         st_path = 'tokenizers/punkt/{0}.pickle'.format(opt['dict_language'])
@@ -175,13 +174,13 @@ class DictionaryAgent(Agent):
 
         if not shared:
 
-            if self.start_token:
-                # fix count for start of sentence token to one billion and three
-                self.freq[self.start_token] = 1000000003
-
             if self.null_token:
-                # fix count for null token to one billion and two
-                self.freq[self.null_token] = 1000000002
+                # fix count for null token to one billion and three
+                self.freq[self.null_token] = 1000000003
+
+            if self.start_token:
+                # fix count for start of sentence token to one billion and two
+                self.freq[self.start_token] = 1000000002
 
             if self.end_token:
                 # fix count for end of sentence token to one billion and one
@@ -236,7 +235,6 @@ class DictionaryAgent(Agent):
 
     def _sent_tokenize(self, text, building=False):
         """Uses nltk-trained PunktTokenizer for sentence tokenization"""
-        text = text.replace('|', ' ' if building else ' __pipe__ ')
         return self.sent_tok.tokenize(text)
 
     def _word_tokenize(self, text, building=False):

@@ -12,6 +12,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+.vector_cache/
 env/
 build/
 data/
@@ -109,3 +110,5 @@ tmp/
 *.pickle
 # Heroku things
 heroku-cli-*
+
+.idea

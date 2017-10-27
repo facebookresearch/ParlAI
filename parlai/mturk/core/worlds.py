@@ -4,7 +4,8 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.worlds import World, validate
+from parlai.core.worlds import World
+
 
 class MTurkOnboardWorld(World):
     """Generic world for onboarding a Turker and collecting
@@ -21,6 +22,7 @@ class MTurkOnboardWorld(World):
 
     def shutdown(self):
         pass
+
 
 class MTurkTaskWorld(World):
     """Generic world for MTurk tasks."""
