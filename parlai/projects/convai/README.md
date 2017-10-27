@@ -1,10 +1,12 @@
 # convai-testing-system integration example
 
-[Convai-testing-system](https://github.com/deepmipt/convai-testing-system) is service for some specific kind of Turing test.
-There is a code of example integration with this system in this directory.
+[ConvAI](http://convai.io) is a competition of chatbots, where people talking to chatbots or other people. The aim of this competition is to create ranking of bots from dummy bot to human and help researchers find way to human-level convesational intelligence.
 
-In order for your agent to work with the Convai-testing-system you need:
+[convai-testing-system](https://github.com/deepmipt/convai-testing-system) is software developed to provide backend for ConvAI challenge. Here you find code for integration of `convai-testing-system` with Parl.AI, so you can use Parl.AI for participation in ConvAI or connect to your own instance of testing system.
 
-- request a token by email on [valentin@ipavlov.ai](valentin@ipavlov.ai)
-- implement your own agent based on code from `convai_bot.py`
-- run your agent `some command <token>`
+For your agent to work with the `convai-testing-system` instance for ConvAI challenge you need:
+
+- request a token by email on [info@convai.io](info@convai.io)
+- implement your own agent basing on provided [`convai_bot.py`](./convai_bot.py)
+
+To run your agent with by default: `convai_bot.py <your_token>`
