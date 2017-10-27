@@ -6,7 +6,7 @@
 
 For your agent to work with the `convai-testing-system` instance for ConvAI challenge you need:
 
-- request a token by email on [info@convai.io](info@convai.io)
+- request a token by email from [info@convai.io](info@convai.io)
 - implement your own agent basing on provided [`convai_bot.py`](./convai_bot.py)
 
-To run your agent with by default: `convai_bot.py <your_token>`
+To run your agent for ConvAI challenge by default: `convai_bot.py <your_token>`
