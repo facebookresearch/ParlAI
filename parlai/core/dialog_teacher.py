@@ -126,7 +126,6 @@ class DialogTeacher(Teacher):
                 action['episode_done'] and not self.stream):
             # this is used for ordered data to check whether there's more data
             epoch_done = True
-
         return action, epoch_done
 
     def act(self):
@@ -386,8 +385,9 @@ class StreamDialogData(DialogData):
         while True:
             for episode in self._read_episode(data_loader(datafile)):
                 yield episode
+            yield -1
             while not self.cycle:
-                yield ((None,),)
+                yield -1
 
     def num_episodes(self):
         # unknown
@@ -413,7 +413,7 @@ class StreamDialogData(DialogData):
             self.entry_idx = 0
         else:
             self.entry_idx += 1
-        end_of_data = episode_done and self.next_episode[0][0] is None
+        end_of_data = episode_done and self.next_episode is -1
         if end_of_data and self.cycle:
             self.next_episode = next(self.data)
 

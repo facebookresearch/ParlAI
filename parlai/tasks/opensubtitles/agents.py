@@ -9,15 +9,6 @@ from .build import build
 
 import copy
 import os
-import re
-
-
-def _regularize(sent):
-    sent = sent.replace('i&gt;', '').replace('&lt;', '').replace('&gt;', '')
-    sent = re.sub(r'x[0-9|a-z][0-9]', ' ', sent)
-    sent = sent.replace('\\', '')
-    sent = ' '.join(re.findall(r"[\w']+|[.,!?:;]", sent))
-    return sent
 
 
 def _path(opt, filtered):
@@ -38,9 +29,6 @@ class DefaultTeacher(FbDialogTeacher):
     def setup_data(self, path):
         alternate = []
         for entry, new in super().setup_data(path):
-            entry[0] = _regularize(entry[0])
-            if len(entry) > 1 and entry[1]:  # labels
-                entry[1] = [_regularize(y) for y in entry[1]]
             if new:
                 for i, e in enumerate(alternate):
                     yield e, i == 0
@@ -51,6 +39,3 @@ class DefaultTeacher(FbDialogTeacher):
         if alternate:
             for i, e in enumerate(alternate):
                 yield e, i == 0
-
-    def load_cands(self, path):
-        return [r for r in (_regularize(c) for c in super().load_cands(path)) if r]

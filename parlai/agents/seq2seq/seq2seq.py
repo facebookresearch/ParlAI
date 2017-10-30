@@ -17,6 +17,11 @@ import os
 import random
 
 
+class SplitDictionaryAgent(DictionaryAgent):
+    def tokenize(self, text, **kwargs):
+        return text.split(' ')
+
+
 class Seq2seqAgent(Agent):
     """Agent which takes an input sequence and produces an output sequence.
 
@@ -43,9 +48,13 @@ class Seq2seqAgent(Agent):
     }
 
     @staticmethod
+    def dictionary_class():
+        return SplitDictionaryAgent
+
+    @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
-        DictionaryAgent.add_cmdline_args(argparser)
+        Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument('-hs', '--hiddensize', type=int, default=128,
                            help='size of the hidden layers')
@@ -511,8 +520,8 @@ class Seq2seqAgent(Agent):
                     self.answers[valid_inds[i]] = y
                 else:
                     self.answers[valid_inds[i]] = output_tokens
-                if self.NULL_IDX in self.answers[valid_inds[i]]:
-                    raise RuntimeError('This shouldnt happen but might.')
+            if labels is None and random.random() > 0.2:
+                print('prediction: ', curr_pred)
 
             if text_cand_inds is not None:
                 text_cand_inds = text_cand_inds.cpu().data

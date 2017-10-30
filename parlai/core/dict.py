@@ -118,6 +118,7 @@ class DictionaryAgent(Agent):
     def __init__(self, opt, shared=None):
         # initialize fields
         self.opt = copy.deepcopy(opt)
+        self.minfreq = opt['dict_minfreq']
         self.null_token = opt['dict_nulltoken']
         self.end_token = opt['dict_endtoken']
         self.unk_token = opt['dict_unktoken']
@@ -271,7 +272,7 @@ class DictionaryAgent(Agent):
                 # queue up removals since can't mutate dict during iteration
                 to_remove.append(token)
                 # other dicts can be modified as we go
-                idx = self.tok2idx.pop(token)
+                idx = self.tok2ind.pop(token)
                 del self.ind2tok[idx]
         for token in to_remove:
             del self.freq[token]
@@ -321,6 +322,7 @@ class DictionaryAgent(Agent):
         sorted frequencies, breaking ties alphabetically by token.
         """
         # sort first by count, then alphabetically
+        self.remove_tail(self.minfreq)
         sorted_pairs = sorted(self.freq.items(), key=lambda x: (-x[1], x[0]))
         new_tok2ind = {}
         new_ind2tok = {}
