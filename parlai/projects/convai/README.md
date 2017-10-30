@@ -9,4 +9,4 @@ For your agent to work with the `convai-testing-system` instance for ConvAI chal
 - request a token by email from [info@convai.io](info@convai.io)
 - implement your own agent basing on provided [`convai_bot.py`](./convai_bot.py)
 
-To run your agent for ConvAI challenge by default: `convai_bot.py <your_token>`
+To run your agent for ConvAI challenge by default: `python convai_bot.py -bi <BOT_TOKEN> -rbu https://ipavlov.mipt.ru/nipsrouter/`
