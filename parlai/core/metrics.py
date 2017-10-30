@@ -77,6 +77,7 @@ class Metrics(object):
         if opt.get('numthreads', 1) > 1:
             self.metrics = SharedTable(self.metrics)
         self.datatype = opt.get('datatype', 'train')
+        self.custom_keys = []
 
     def __enter__(self):
         return self
@@ -146,6 +147,17 @@ class Metrics(object):
         # Ranking metrics.
         self.update_ranking_metrics(observation, labels)
 
+        # User-reported metrics
+        if 'metrics' in observation:
+            for k, v in observation['metrics'].items():
+                if k not in ['correct', 'f1', 'hits@k']:
+                    with self._lock():
+                        if k not in self.metrics:
+                            self.custom_keys.append(k)
+                            self.metrics[k] = v
+                        else:
+                            self.metrics[k] += v
+
         # Return a dict containing the metrics for this specific example.
         # Metrics across all data is stored internally in the class, and
         # can be accessed with the report method.
@@ -156,16 +168,17 @@ class Metrics(object):
     def report(self):
         # Report the metrics over all data seen so far.
         m = {}
-        m['total'] = self.metrics['cnt']
-        if self.metrics['cnt'] > 0:
-            m['accuracy'] = round_sigfigs(
-                self.metrics['correct'] / self.metrics['cnt'], 4)
-            m['f1'] = round_sigfigs(
-                self.metrics['f1'] / self.metrics['cnt'], 4)
+        total = self.metrics['cnt']
+        m['total'] = total
+        if total > 0:
+            m['accuracy'] = round_sigfigs(self.metrics['correct'] / total, 4)
+            m['f1'] = round_sigfigs(self.metrics['f1'] / total, 4)
             m['hits@k'] = {}
             for k in self.eval_pr:
                 m['hits@k'][k] = round_sigfigs(
-                    self.metrics['hits@' + str(k)] / self.metrics['cnt'], 4)
+                    self.metrics['hits@' + str(k)] / total, 4)
+            for k in self.custom_keys:
+                m[k] = round_sigfigs(self.metrics[k] / total, 4)
         return m
 
     def clear(self):
@@ -175,3 +188,5 @@ class Metrics(object):
             self.metrics['f1'] = 0.0
             for k in self.eval_pr:
                 self.metrics['hits@' + str(k)] = 0
+            for k in self.custom_keys:
+                self.metrics.pop(k, None)  # safer then casting to zero

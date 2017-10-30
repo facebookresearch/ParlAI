@@ -8,11 +8,8 @@ from parlai.mturk.tasks.model_evaluator.worlds import \
     ModelEvaluatorWorld, ModelEvaluatorOnboardWorld
 from parlai.mturk.core.mturk_manager import MTurkManager
 from task_config import task_config
-import time
 import os
-import copy
-from itertools import product
-from joblib import Parallel, delayed
+
 
 def main():
     argparser = ParlaiParser(False, False)
@@ -35,7 +32,7 @@ def main():
     mturk_agent_id = 'Worker'
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_id]
+        mturk_agent_ids=[mturk_agent_id]
     )
     mturk_manager.setup_server()
 
@@ -59,7 +56,8 @@ def main():
             worker[0].id = mturk_agent_id
 
         global run_conversation
-        def run_conversation(opt, workers):
+
+        def run_conversation(mturk_manager, opt, workers):
             mturk_agent = workers[0]
 
             model_agent = IrBaselineAgent(opt=opt)
@@ -81,11 +79,12 @@ def main():
             assign_role_function=assign_worker_roles,
             task_function=run_conversation
         )
-    except:
+    except BaseException:
         raise
     finally:
         mturk_manager.expire_all_unassigned_hits()
         mturk_manager.shutdown()
+
 
 if __name__ == '__main__':
     main()

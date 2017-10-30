@@ -104,7 +104,7 @@ class Teacher(Agent):
 
     def __init__(self, opt, shared=None):
         if not hasattr(self, 'opt'):
-             self.opt = copy.deepcopy(opt)
+            self.opt = copy.deepcopy(opt)
         if not hasattr(self, 'id'):
             self.id = opt.get('task', 'teacher')
         if not hasattr(self, 'metrics'):
@@ -129,7 +129,7 @@ class Teacher(Agent):
     # return state/action dict based upon passed state
     def act(self):
         if self.observation is not None and 'text' in self.observation:
-            t = { 'text': 'Hello agent!' }
+            t = {'text': 'Hello agent!'}
         return t
 
     def epoch_done(self):
@@ -137,8 +137,7 @@ class Teacher(Agent):
 
     # Return transformed metrics showing total examples and accuracy if avail.
     def report(self):
-        report = self.metrics.report()
-        return report
+        return self.metrics.report()
 
     def reset(self):
         super().reset()

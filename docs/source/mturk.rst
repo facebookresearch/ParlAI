@@ -135,10 +135,19 @@ Additional flags can be used for more specific purposes.
 - ``--count-complete`` only counts completed assignments towards the num_conversations requested. This may lead to more conversations being had than requested (and thus higher costs for instances where one Turker disconnects and we pay the other) but it ensures that if you request 1,000 conversations you end up with at least 1,000 completed data points.
 
 
+Handling Turker Disconnects
+---------------------------
+Sometimes you may find that a task you have created is leading to a lot of workers disconnecting in the middle of a conversation, or that a few people are disconnecting repeatedly. ParlAI MTurk offers two kinds of blocks to stop these workers from doing your hits.
+
+- soft blocks can be created by using the ``--block-qualification <name>`` flag with a name that you want to associate to your ParlAI tasks. Any user that hits the disconnect cap for a HIT with this flag active will not be able to participate in any HITs using this flag.
+
+- hard blocks can be used by setting the ``--hard-block`` flag. Soft blocks in general are preferred, as Turkers can be block-averse (as it may affect their reputation) and sometimes the disconnects are out of their control. This will prevent any Turkers that hit the disconnect cap with this flag active from participating in any of your future HITs of any type.
+
+
 Reviewing Turker's Work
 -----------------------
 
-After all HITs are completed, you will be provided a webpage link to review them.
+After all HITs are completed, you can review the work through Amazon's online interface. You can also programmatically review work using the commands available in the `MTurkManager` class.
 
 If you don't take any action in 4 weeks, all HITs will be auto-approved and Turkers will be paid.
 
