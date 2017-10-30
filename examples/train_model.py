@@ -162,7 +162,7 @@ def main(parser):
 
                 # check if we should log amount of time remaining
                 time_left = None
-                if opt['num_epochs'] > 0:
+                if opt['num_epochs'] > 0 and total_exs > 0:
                     exs_per_sec = train_time.time() / total_exs
                     time_left = (max_exs - total_exs) * exs_per_sec
                 if opt['max_train_time'] > 0:
