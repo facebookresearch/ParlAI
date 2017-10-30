@@ -117,9 +117,19 @@ class ParlaiParser(argparse.ArgumentParser):
             '--verbose', dest='verbose', action='store_true',
             help='print all messages sent to and from Turkers')
         mturk.add_argument(
+            '--hard-block', dest='hard_block', action='store_true',
+            default=False,
+            help='Hard block disconnecting Turkers from all of your HITs')
+        mturk.add_argument(
             '--log-level', dest='log_level', type=int, default=20,
             help='importance level for what to put into the logs. the lower '
                  'the level the more that gets logged. values are 0-50')
+        mturk.add_argument(
+            '--block-qualification', dest='block_qualification', default='',
+            help='Qualification to use for soft blocking users. By default '
+                 'turkers are never blocked, though setting this will allow '
+                 'you to filter out turkers that have disconnected too many '
+                 'times on previous HITs where this qualification was set.')
         mturk.add_argument(
             '--count-complete', dest='count_complete',
             default=False, action='store_true',

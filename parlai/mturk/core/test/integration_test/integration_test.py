@@ -22,7 +22,7 @@ from parlai.mturk.core.test.integration_test.worlds import TestOnboardWorld, \
 from parlai.mturk.core.mturk_manager import MTurkManager, WORLD_START_TIMEOUT
 from parlai.mturk.core.server_utils import setup_server, delete_server
 from parlai.mturk.core.socket_manager import Packet, SocketManager
-from parlai.mturk.core.worker_state import WorkerState, AssignState
+from parlai.mturk.core.worker_state import AssignState
 from parlai.mturk.core.agents import MTURK_DISCONNECT_MESSAGE
 import parlai.mturk.core.data_model as data_model
 import parlai.mturk.core.mturk_utils as mturk_utils
@@ -30,12 +30,8 @@ from parlai.mturk.core.mturk_utils import create_hit_config
 from socketIO_client_nexus import SocketIO
 import time
 import os
-import importlib
-import copy
 import uuid
 import threading
-from itertools import product
-from joblib import Parallel, delayed
 
 TEST_TASK_DESCRIPTION = 'This is a test task description'
 MTURK_AGENT_IDS = ['TEST_USER_1', 'TEST_USER_2']
@@ -69,8 +65,10 @@ DISCONNECT_WAIT_TIME = SocketManager.DEF_SOCKET_TIMEOUT + 1.5
 completed_threads = {}
 start_times = {}
 
+
 def dummy(*args):
     pass
+
 
 class MockAgent(object):
     """Class that pretends to be an MTurk agent interacting through the
@@ -144,12 +142,16 @@ class MockAgent(object):
 
     def setup_socket(self, server_url, message_handler):
         """Sets up a socket for an agent"""
+
         def on_socket_open(*args):
             self.send_alive()
+
         def on_new_message(*args):
             message_handler(args[0])
+
         def on_disconnect(*args):
             self.disconnected = True
+
         self.socketIO = SocketIO(server_url, PORT)
         # Register Handlers
         self.socketIO.on(data_model.SOCKET_OPEN_STRING, on_socket_open)
@@ -167,7 +169,7 @@ class MockAgent(object):
             'id': str(uuid.uuid4()),
             'receiver_id': '[World_' + self.task_group_id + ']',
             'assignment_id': self.assignment_id,
-            'sender_id' : self.worker_id,
+            'sender_id': self.worker_id,
             'conversation_id': self.conversation_id,
             'type': Packet.TYPE_HEARTBEAT,
             'data': None
@@ -258,6 +260,7 @@ def run_solo_world(opt, mturk_manager, is_onboarded):
             workers[0].id = MTURK_SOLO_WORKER
 
         global run_conversation
+
         def run_conversation(mturk_manager, opt, workers):
             task = opt['task']
             mturk_agent = workers[0]
@@ -271,7 +274,7 @@ def run_solo_world(opt, mturk_manager, is_onboarded):
             assign_role_function=assign_worker_roles,
             task_function=run_conversation
         )
-    except:
+    except Exception:
         raise
     finally:
         pass
@@ -303,6 +306,7 @@ def run_duo_world(opt, mturk_manager, is_onboarded):
                 worker.id = MTURK_DUO_WORKER
 
         global run_conversation
+
         def run_conversation(mturk_manager, opt, workers):
             world = TestDuoWorld(opt=opt, agents=workers)
             while not world.episode_done():
@@ -314,7 +318,7 @@ def run_duo_world(opt, mturk_manager, is_onboarded):
             assign_role_function=assign_worker_roles,
             task_function=run_conversation
         )
-    except:
+    except Exception:
         raise
     finally:
         pass
@@ -411,33 +415,47 @@ def check_new_agent_setup(agent, mturk_manager,
 
 def test_sns_service(opt, server_url):
     global completed_threads
+    print('{} Starting'.format(AMAZON_SNS_TEST))
     task_name = AMAZON_SNS_TEST
     task_group_id = AMAZON_SNS_TEST
-    def world_on_alive(pkt):
-        print("Alive {}".format(pkt))
+    messages = 0
 
     def world_on_new_message(pkt):
-        print("Message {}".format(pkt))
-
-    def world_on_socket_dead(worker_id, assign_id):
-        print("Dead {}".format(pkt))
+        nonlocal messages  # noqa: E999 we don't support python2
+        messages += 1
 
     socket_manager = SocketManager(
         server_url,
         PORT,
-        world_on_alive,
+        dummy,
         world_on_new_message,
-        world_on_socket_dead,
+        dummy,
         task_group_id
     )
+
+    # Wait for manager to spin up
+    last_time = time.time()
+    while not socket_manager.alive:
+        time.sleep(0.2)
+        assert time.time() - last_time < 10, \
+            'Timed out wating for socket_manager to spin up'
 
     mturk_utils.setup_aws_credentials()
     arn = mturk_utils.setup_sns_topic(task_name, server_url, task_group_id)
     mturk_utils.send_test_notif(arn, 'AssignmentAbandoned')
     mturk_utils.send_test_notif(arn, 'AssignmentReturned')
     mturk_utils.send_test_notif(arn, 'AssignmentSubmitted')
+    last_time = time.time()
+    while messages != 3:
+        # Wait for manager to catch up
+        time.sleep(0.2)
+        assert time.time() - last_time < 30, \
+            'Timed out wating for amazon message'
+
     mturk_utils.delete_sns_topic(arn)
+
     completed_threads[AMAZON_SNS_TEST] = True
+
 
 def test_socket_manager(opt, server_url):
     global completed_threads
@@ -458,7 +476,7 @@ def test_socket_manager(opt, server_url):
         assign_id = pkt.data['assignment_id']
         assert assign_id == ASSIGN_1_ID, 'Assign id was {}'.format(assign_id)
         conversation_id = pkt.data['conversation_id']
-        assert conversation_id == None, \
+        assert conversation_id is None, \
             'Conversation id was {}'.format(conversation_id)
         # Start a channel
         socket_manager.open_channel(worker_id, assign_id)
@@ -630,7 +648,7 @@ def test_solo_with_onboarding(opt, server_url):
     mturk_agent_id = AGENT_1_ID
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_id]
+        mturk_agent_ids=[mturk_agent_id]
     )
     mturk_manager.server_url = server_url
     mturk_manager.start_new_run()
@@ -691,7 +709,7 @@ def test_solo_with_onboarding(opt, server_url):
         'Agent disconnected in onboarding didn\'t get inactive hit'
     assert assign_state.status == AssignState.STATUS_DISCONNECT, \
         'Disconnected agent not marked as so in state'
-    assert mturk_manager_assign.disconnected == True, \
+    assert mturk_manager_assign.disconnected is True, \
         'Disconnected agent not marked as so in agent'
 
     # Connect with a new agent and finish onboarding
@@ -754,7 +772,7 @@ def test_solo_with_onboarding(opt, server_url):
     check_status(assign_state.status, AssignState.STATUS_DONE)
     wait_for_state_time(DISCONNECT_WAIT_TIME, mturk_manager)
     check_status(assign_state.status, AssignState.STATUS_DONE)
-    assert mturk_manager_assign.disconnected == False, \
+    assert mturk_manager_assign.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
     assert not mturk_manager.socket_manager.socket_is_open(connection_id_1), \
         'The socket manager didn\'t close the socket upon failure of ' \
@@ -785,7 +803,7 @@ def test_solo_no_onboarding(opt, server_url):
     mturk_agent_id = AGENT_1_ID
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = [mturk_agent_id]
+        mturk_agent_ids=[mturk_agent_id]
     )
     mturk_manager.server_url = server_url
     mturk_manager.start_new_run()
@@ -818,7 +836,8 @@ def test_solo_no_onboarding(opt, server_url):
     wait_for_state_time(2, mturk_manager)
 
     # Assert that the state was properly set up
-    check_new_agent_setup(test_agent, mturk_manager, AssignState.STATUS_IN_TASK)
+    check_new_agent_setup(test_agent, mturk_manager,
+                          AssignState.STATUS_IN_TASK)
     mturk_manager_assign = \
         mturk_manager.mturk_workers[worker_id].agents[assign_id]
     assign_state = mturk_manager_assign.state
@@ -846,7 +865,7 @@ def test_solo_no_onboarding(opt, server_url):
     check_status(assign_state.status, AssignState.STATUS_DONE)
     assert len(assign_state.messages) == 0, \
         'Messages were not cleared upon completion of the task'
-    assert mturk_manager_assign.disconnected == False, \
+    assert mturk_manager_assign.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
     assert message_num == 2, 'Not all messages were successfully processed'
     completed_threads[SOLO_NO_ONBOARDING_TEST] = True
@@ -906,7 +925,8 @@ def test_solo_refresh_in_middle(opt, server_url):
     wait_for_state_time(2, mturk_manager)
 
     # Assert that the state was properly set up
-    check_new_agent_setup(test_agent, mturk_manager, AssignState.STATUS_IN_TASK)
+    check_new_agent_setup(test_agent, mturk_manager,
+                          AssignState.STATUS_IN_TASK)
     mturk_manager_assign = \
         mturk_manager.mturk_workers[worker_id].agents[assign_id]
     assign_state = mturk_manager_assign.state
@@ -958,7 +978,7 @@ def test_solo_refresh_in_middle(opt, server_url):
     check_status(assign_state.status, AssignState.STATUS_DONE)
     assert len(assign_state.messages) == 0, \
         'Messages were not cleared upon completion of the task'
-    assert mturk_manager_assign.disconnected == False, \
+    assert mturk_manager_assign.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
     completed_threads[SOLO_REFRESH_TEST] = True
 
@@ -1007,6 +1027,7 @@ def test_duo_with_onboarding(opt, server_url):
     # create and set up the two agents
     test_agent_1 = MockAgent(opt, hit_id, assign_id_1,
                              worker_id_1, task_group_id)
+
     def msg_callback_1(packet):
         nonlocal message_num
         nonlocal test_agent_1
@@ -1024,6 +1045,7 @@ def test_duo_with_onboarding(opt, server_url):
 
     test_agent_2 = MockAgent(opt, hit_id, assign_id_2,
                              worker_id_2, task_group_id)
+
     def msg_callback_2(packet):
         nonlocal message_num
         nonlocal test_agent_2
@@ -1163,14 +1185,17 @@ def test_duo_with_onboarding(opt, server_url):
     check_status(assign_state_2.status, AssignState.STATUS_DONE)
     assert mturk_manager.completed_conversations == 1, \
         'Complete conversation not marked as complete'
-    assert mturk_manager_assign_1.disconnected == False, \
+    assert mturk_manager_assign_1.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
-    assert mturk_manager_assign_2.disconnected == False, \
+    assert mturk_manager_assign_2.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
     assert not mturk_manager.socket_manager.socket_is_open(connection_id_1), \
         'The socket manager didn\'t close the socket upon completion of the ' \
         'task, though it should have'
     assert not mturk_manager.socket_manager.socket_is_open(connection_id_2), \
+        'The socket manager didn\'t close the socket upon completion of the ' \
+        'task, though it should have'
+    assert not mturk_manager.socket_manager.socket_is_open(connection_id_3), \
         'The socket manager didn\'t close the socket upon completion of the ' \
         'task, though it should have'
     completed_threads[DUO_ONBOARDING_TEST] = True
@@ -1223,6 +1248,7 @@ def test_duo_no_onboarding(opt, server_url):
     # create and set up an agent to disconnect when paired
     test_agent_3 = MockAgent(opt, hit_id, assign_id_3,
                              worker_id_3, task_group_id)
+
     def msg_callback_3(packet):
         nonlocal message_num
         nonlocal test_agent_3
@@ -1262,6 +1288,7 @@ def test_duo_no_onboarding(opt, server_url):
     # create and set up an agent to disconnect when returned to waiting
     test_agent_4 = MockAgent(opt, hit_id, assign_id_4,
                              worker_id_4, task_group_id)
+
     def msg_callback_4(packet):
         nonlocal message_num
         nonlocal test_agent_4
@@ -1312,6 +1339,7 @@ def test_duo_no_onboarding(opt, server_url):
     # create and set up the first successful agent
     test_agent_1 = MockAgent(opt, hit_id, assign_id_1,
                              worker_id_1, task_group_id)
+
     def msg_callback_1(packet):
         nonlocal message_num
         nonlocal test_agent_1
@@ -1353,6 +1381,7 @@ def test_duo_no_onboarding(opt, server_url):
     # Set up the second agent
     test_agent_2 = MockAgent(opt, hit_id, assign_id_2,
                              worker_id_2, task_group_id)
+
     def msg_callback_2(packet):
         nonlocal message_num
         nonlocal test_agent_2
@@ -1423,7 +1452,6 @@ def test_duo_no_onboarding(opt, server_url):
     test_agent_2.always_beat = False
     wait_for_state_time(3, mturk_manager)
 
-
     check_status(assign_state_1.status, AssignState.STATUS_DONE)
     check_status(assign_state_2.status, AssignState.STATUS_DONE)
     wait_for_state_time(DISCONNECT_WAIT_TIME, mturk_manager)
@@ -1431,14 +1459,20 @@ def test_duo_no_onboarding(opt, server_url):
     check_status(assign_state_2.status, AssignState.STATUS_DONE)
     assert mturk_manager.completed_conversations == 1, \
         'Complete conversation not marked as complete'
-    assert mturk_manager_assign_1.disconnected == False, \
+    assert mturk_manager_assign_1.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
-    assert mturk_manager_assign_2.disconnected == False, \
+    assert mturk_manager_assign_2.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
     assert not mturk_manager.socket_manager.socket_is_open(connection_id_1), \
         'The socket manager didn\'t close the socket upon completion of the ' \
         'task, though it should have'
     assert not mturk_manager.socket_manager.socket_is_open(connection_id_2), \
+        'The socket manager didn\'t close the socket upon completion of the ' \
+        'task, though it should have'
+    assert not mturk_manager.socket_manager.socket_is_open(connection_id_3), \
+        'The socket manager didn\'t close the socket upon completion of the ' \
+        'task, though it should have'
+    assert not mturk_manager.socket_manager.socket_is_open(connection_id_4), \
         'The socket manager didn\'t close the socket upon completion of the ' \
         'task, though it should have'
     completed_threads[DUO_NO_ONBOARDING_TEST] = True
@@ -1483,6 +1517,7 @@ def test_duo_valid_reconnects(opt, server_url):
     # create and set up the first agent
     test_agent_1 = MockAgent(opt, hit_id, assign_id_1,
                              worker_id_1, task_group_id)
+
     def msg_callback_1(packet):
         nonlocal message_num
         nonlocal test_agent_1
@@ -1539,6 +1574,7 @@ def test_duo_valid_reconnects(opt, server_url):
     # Set up the second agent
     test_agent_2 = MockAgent(opt, hit_id, assign_id_2,
                              worker_id_2, task_group_id)
+
     def msg_callback_2(packet):
         nonlocal message_num
         nonlocal test_agent_2
@@ -1638,9 +1674,9 @@ def test_duo_valid_reconnects(opt, server_url):
     check_status(assign_state_2.status, AssignState.STATUS_DONE)
     assert mturk_manager.completed_conversations == 1, \
         'Complete conversation not marked as complete'
-    assert mturk_manager_assign_1.disconnected == False, \
+    assert mturk_manager_assign_1.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
-    assert mturk_manager_assign_2.disconnected == False, \
+    assert mturk_manager_assign_2.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
     assert not mturk_manager.socket_manager.socket_is_open(connection_id_1), \
         'The socket manager didn\'t close the socket upon completion of the ' \
@@ -1692,6 +1728,7 @@ def test_duo_one_disconnect(opt, server_url):
     # create and set up the first agent
     test_agent_1 = MockAgent(opt, hit_id, assign_id_1,
                              worker_id_1, task_group_id)
+
     def msg_callback_1(packet):
         nonlocal message_num
         nonlocal test_agent_1
@@ -1740,6 +1777,7 @@ def test_duo_one_disconnect(opt, server_url):
     # Set up the second agent
     test_agent_2 = MockAgent(opt, hit_id, assign_id_2,
                              worker_id_2, task_group_id)
+
     def msg_callback_2(packet):
         nonlocal message_num
         nonlocal test_agent_2
@@ -1836,16 +1874,15 @@ def test_duo_one_disconnect(opt, server_url):
     second_agent.always_beat = False
     wait_for_state_time(DISCONNECT_WAIT_TIME, mturk_manager)
 
-
     check_status(mturk_second_agent.state.status,
-        AssignState.STATUS_PARTNER_DISCONNECT)
+                 AssignState.STATUS_PARTNER_DISCONNECT)
     check_status(mturk_first_agent.state.status,
-        AssignState.STATUS_DISCONNECT)
+                 AssignState.STATUS_DISCONNECT)
     assert mturk_manager.completed_conversations == 0, \
         'Incomplete conversation marked as complete'
-    assert mturk_second_agent.disconnected == False, \
+    assert mturk_second_agent.disconnected is False, \
         'MTurk manager improperly marked the connected agent as disconnected'
-    assert mturk_first_agent.disconnected == True, \
+    assert mturk_first_agent.disconnected is True, \
         'MTurk did not mark the disconnected agent as so'
     assert not mturk_manager.socket_manager.socket_is_open(connection_id_1), \
         'The socket manager didn\'t close the socket upon failure of the ' \
@@ -1998,9 +2035,9 @@ def test_count_complete(opt, server_url):
         'Messages were not cleared upon completion of the task'
     assert len(assign_state_2.messages) == 0, \
         'Messages were not cleared upon completion of the task'
-    assert mturk_manager_assign_1.disconnected == False, \
+    assert mturk_manager_assign_1.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
-    assert mturk_manager_assign_2.disconnected == False, \
+    assert mturk_manager_assign_2.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
     assert mturk_manager.started_conversations == 2, \
         'At least one conversation wasn\'t successfully logged'
@@ -2059,6 +2096,7 @@ def test_expire_hit(opt, server_url):
     # create and set up the two agents
     test_agent_1 = MockAgent(opt, hit_id, assign_id_1,
                              worker_id_1, task_group_id)
+
     def msg_callback_1(packet):
         nonlocal message_num
         nonlocal test_agent_1
@@ -2076,6 +2114,7 @@ def test_expire_hit(opt, server_url):
 
     test_agent_2 = MockAgent(opt, hit_id, assign_id_2,
                              worker_id_2, task_group_id)
+
     def msg_callback_2(packet):
         nonlocal message_num
         nonlocal test_agent_2
@@ -2098,7 +2137,6 @@ def test_expire_hit(opt, server_url):
         nonlocal last_command_3
         if packet.data['type'] == data_model.MESSAGE_TYPE_COMMAND:
             last_command_3 = packet
-
 
     test_agent_4 = MockAgent(opt, hit_id, assign_id_4,
                              worker_id_4, task_group_id)
@@ -2240,7 +2278,6 @@ def test_expire_hit(opt, server_url):
     test_agent_3.always_beat = False
     test_agent_4.always_beat = False
 
-
     check_status(assign_state_1.status, AssignState.STATUS_DONE)
     check_status(assign_state_2.status, AssignState.STATUS_DONE)
     wait_for_state_time(DISCONNECT_WAIT_TIME, mturk_manager)
@@ -2248,17 +2285,17 @@ def test_expire_hit(opt, server_url):
     check_status(assign_state_2.status, AssignState.STATUS_DONE)
     assert mturk_manager.completed_conversations == 1, \
         'Complete conversation not marked as complete'
-    assert mturk_manager_assign_1.disconnected == False, \
+    assert mturk_manager_assign_1.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
-    assert mturk_manager_assign_2.disconnected == False, \
+    assert mturk_manager_assign_2.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
-    assert mturk_manager_assign_3.disconnected == False, \
+    assert mturk_manager_assign_3.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
-    assert mturk_manager_assign_4.disconnected == False, \
+    assert mturk_manager_assign_4.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
-    assert mturk_manager_assign_3.hit_is_expired == True, \
+    assert mturk_manager_assign_3.hit_is_expired is True, \
         'MTurk manager failed to mark agent as expired'
-    assert mturk_manager_assign_4.hit_is_expired == True, \
+    assert mturk_manager_assign_4.hit_is_expired is True, \
         'MTurk manager failed to mark agent as expired'
     assert not mturk_manager.socket_manager.socket_is_open(connection_id_1), \
         'The socket manager didn\'t close the socket upon completion of the ' \
@@ -2332,7 +2369,8 @@ def test_allowed_conversations(opt, server_url):
     wait_for_state_time(2, mturk_manager)
 
     # Assert that the state was properly set up
-    check_new_agent_setup(test_agent, mturk_manager, AssignState.STATUS_IN_TASK)
+    check_new_agent_setup(test_agent, mturk_manager,
+                          AssignState.STATUS_IN_TASK)
     mturk_manager_assign = \
         mturk_manager.mturk_workers[worker_id].agents[assign_id]
     assign_state = mturk_manager_assign.state
@@ -2377,7 +2415,8 @@ def test_allowed_conversations(opt, server_url):
     wait_for_state_time(2, mturk_manager)
 
     # Assert that the state was properly set up
-    check_new_agent_setup(test_agent_2, mturk_manager, AssignState.STATUS_IN_TASK)
+    check_new_agent_setup(test_agent_2, mturk_manager,
+                          AssignState.STATUS_IN_TASK)
     mturk_manager_assign_2 = \
         mturk_manager.mturk_workers[worker_id].agents[assign_id_2]
     assign_state_2 = mturk_manager_assign_2.state
@@ -2401,12 +2440,11 @@ def test_allowed_conversations(opt, server_url):
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state_2.status, AssignState.STATUS_DONE)
 
-
     wait_for_state_time(DISCONNECT_WAIT_TIME, mturk_manager)
     check_status(assign_state.status, AssignState.STATUS_DONE)
     assert len(assign_state.messages) == 0, \
         'Messages were not cleared upon completion of the task'
-    assert mturk_manager_assign.disconnected == False, \
+    assert mturk_manager_assign.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
     assert message_num == 2, 'Not all messages were successfully processed'
     completed_threads[ALLOWED_CONVERSATION_TEST] = True
@@ -2454,6 +2492,7 @@ def test_unique_workers_in_conversation(opt, server_url):
     # create and set up the two agents for the one worker
     test_agent_1 = MockAgent(opt, hit_id, assign_id_1,
                              worker_id_1, task_group_id)
+
     def msg_callback_1(packet):
         nonlocal message_num
         nonlocal test_agent_1
@@ -2495,6 +2534,7 @@ def test_unique_workers_in_conversation(opt, server_url):
     # Set up the second agent
     test_agent_2 = MockAgent(opt, hit_id, assign_id_2,
                              worker_id_1, task_group_id)
+
     def msg_callback_2(packet):
         nonlocal message_num
         nonlocal test_agent_2
@@ -2533,6 +2573,7 @@ def test_unique_workers_in_conversation(opt, server_url):
     # Create third agent
     test_agent_3 = MockAgent(opt, hit_id, assign_id_3,
                              worker_id_2, task_group_id)
+
     def msg_callback_3(packet):
         nonlocal message_num
         nonlocal test_agent_3
@@ -2567,15 +2608,12 @@ def test_unique_workers_in_conversation(opt, server_url):
 
     in_agent = None
     in_assign = None
-    out_agent = None
     out_assign = None
     if assign_state_1.status == AssignState.STATUS_IN_TASK:
         in_agent = test_agent_1
         in_assign = mturk_manager_assign_1
-        out_agent = test_agent_2
         out_assign = mturk_manager_assign_2
     elif assign_state_2.status == AssignState.STATUS_IN_TASK:
-        out_agent = test_agent_1
         out_assign = mturk_manager_assign_1
         in_agent = test_agent_2
         in_assign = mturk_manager_assign_2
@@ -2622,11 +2660,11 @@ def test_unique_workers_in_conversation(opt, server_url):
     check_status(assign_state_3.status, AssignState.STATUS_DONE)
     assert mturk_manager.completed_conversations == 1, \
         'Complete conversation not marked as complete'
-    assert in_assign.disconnected == False, \
+    assert in_assign.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
-    assert out_assign.disconnected == False, \
+    assert out_assign.disconnected is False, \
         'MTurk manager improperly marked the agent as disconnected'
-    assert out_assign.hit_is_expired == True, \
+    assert out_assign.hit_is_expired is True, \
         'Expired HIT was not marked as such'
     assert not mturk_manager.socket_manager.socket_is_open(connection_id_1), \
         'The socket manager didn\'t close the socket upon completion of the ' \
@@ -2663,6 +2701,7 @@ TESTS = {
 # the expected times for updating state
 MAX_THREADS = 8
 RETEST_THREADS = 2
+
 
 def run_tests(tests_to_run, max_threads, base_opt, server_url):
     global start_time
@@ -2726,7 +2765,7 @@ def main():
     base_opt['num_conversations'] = 1
     base_opt['count_complete'] = False
     task_name, server_url = handle_setup(base_opt)
-    print ("Setup time: {} seconds".format(time.time() - start_time))
+    print("Setup time: {} seconds".format(time.time() - start_time))
     start_time = time.time()
     try:
         failed_tests = run_tests(TESTS, MAX_THREADS, base_opt, server_url)
@@ -2738,7 +2777,7 @@ def main():
             flakey_tests = {}
             for test_name in failed_tests:
                 flakey_tests[test_name] = TESTS[test_name]
-            failed_tests = run_tests(flakey_tests, RETEST_THREADS, \
+            failed_tests = run_tests(flakey_tests, RETEST_THREADS,
                                      base_opt, server_url)
             if len(failed_tests) == 0:
                 print("All tests passed, ParlAI MTurk is functioning")
@@ -2747,10 +2786,11 @@ def main():
 
         test_duration = time.time() - start_time
         print("Test duration: {} seconds".format(test_duration))
-    except:
+    except Exception:
         raise
     finally:
         handle_shutdown(task_name)
+
 
 if __name__ == '__main__':
     mturk_utils.setup_aws_credentials()
