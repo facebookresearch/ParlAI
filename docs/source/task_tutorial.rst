@@ -440,7 +440,7 @@ In the act method we need to return the ``Teacher``'s action, which will then be
         action = {
             'image': self.image_loader.load(img_path),
             'text': question,
-            'new_episode': True
+            'episode_done': True
         }
         # if not testing get annotations and set lastY
         if not self.datatype.startswith('test'):
