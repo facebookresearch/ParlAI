@@ -59,7 +59,9 @@ stopwords = { 'i', 'a', 'an', 'are', 'about', 'as', 'at', 'be', 'by',
               'but', 'does', 'really', 'have', 'into', 'more', 'also',
               'has', 'any', 'why', 'will'}
 
-def score_match(query_rep, text, length_penalty, debug=False, dictionary=None):
+def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
+    if text == "":
+        return 0
     if not dictionary:
        words = text.lower().split(' ')
     else:

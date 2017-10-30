@@ -1,5 +1,7 @@
 <h2>News</h2>
 
+2017-10-19: [ParlAI Request For Proposals: Winners Announced!](https://research.fb.com/announcing-the-winners-of-the-facebook-parlai-research-awards/)
+
 2017-10-13: [New model added: Fairseq-py](https://github.com/facebookresearch/fairseq-py)
 
 2017-10-12: [New task added: Stanford's MutualFriends](https://stanfordnlp.github.io/cocoa/)

@@ -14,6 +14,7 @@ from parlai.mturk.core.shared_utils import print_and_log
 import parlai.mturk.core.data_model as data_model
 import parlai.mturk.core.shared_utils as shared_utils
 
+
 class Packet():
     """Class for holding information sent over a socket"""
 
@@ -63,7 +64,6 @@ class Packet():
         self.ack_func = ack_func
         self.status = self.STATUS_INIT
         self.time = None
-        self.alive = False
 
     @staticmethod
     def from_dict(packet):
@@ -84,8 +84,8 @@ class Packet():
             conversation_id = packet['conversation_id']
 
             return Packet(packet_id, packet_type, sender_id, receiver_id,
-                assignment_id, data, conversation_id)
-        except:
+                          assignment_id, data, conversation_id)
+        except Exception:
             print_and_log(
                 logging.WARN,
                 'Could not create a valid packet out of the dictionary'
@@ -116,7 +116,8 @@ class Packet():
     def get_ack(self):
         """Return a new packet that can be used to acknowledge this packet"""
         return Packet(self.id, self.TYPE_ACK, self.receiver_id, self.sender_id,
-            self.assignment_id, '', self.conversation_id, False, False)
+                      self.assignment_id, '', self.conversation_id, False,
+                      False)
 
     def new_copy(self):
         """Return a new packet that is a copy of this packet with
@@ -179,7 +180,7 @@ class SocketManager():
         self.alive_callback = alive_callback
         self.message_callback = message_callback
         self.socket_dead_callback = socket_dead_callback
-        if socket_dead_timeout == None:
+        if socket_dead_timeout is None:
             self.socket_dead_timeout = self.DEF_SOCKET_TIMEOUT
         else:
             self.socket_dead_timeout = socket_dead_timeout
@@ -194,6 +195,7 @@ class SocketManager():
         self.run = {}
         self.last_heartbeat = {}
         self.packet_map = {}
+        self.alive = False
 
         # setup the socket
         self._setup_socket()
@@ -229,6 +231,7 @@ class SocketManager():
             logging.DEBUG,
             'Send packet: {}'.format(packet.data)
         )
+
         def set_status_to_sent(data):
             packet.status = Packet.STATUS_SENT
         self.socketIO.emit(
@@ -364,7 +367,7 @@ class SocketManager():
                         self.socket_dead_callback(worker_id, assignment_id)
 
                     # Make sure the queue still exists
-                    if not connection_id in self.queues:
+                    if connection_id not in self.queues:
                         self.run[connection_id] = False
                         break
 

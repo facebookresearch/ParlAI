@@ -1,0 +1,56 @@
+[
+  {
+    "context": "Some context",
+    "users": [
+      {
+        "userType": "Human",
+        "id": "Alice"
+      },
+      {
+        "userType": "Bot",
+        "id": "Bob"
+      }
+    ],
+    "evaluation": [
+      {
+        "breadth": 1,
+        "userId": "Bob",
+        "quality": 1,
+        "engagement": 1
+      },
+      {
+        "breadth": 0,
+        "userId": "Alice",
+        "quality": 0,
+        "engagement": 0
+      }
+    ],
+    "thread": [
+      {
+        "evaluation": 0,
+        "text": "Hello there!",
+        "userId": "Alice",
+        "time": 526000000
+      },
+      {
+        "evaluation": 1,
+        "text": "Hey, what's up?",
+        "userId": "Bob",
+        "time": 526000001
+      },
+      {
+        "evaluation": 2,
+        "text": "Nothing much. You?",
+        "userId": "Alice",
+        "time": 526000002
+      },
+      {
+        "evaluation": 5,
+        "text": "Same.",
+        "userId": "Bob",
+        "time": 526000003
+      }
+    ],
+    "dialogId": 11111111
+  }
+]

@@ -3,8 +3,6 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-import os
-import time
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.tasks.dealnodeal.worlds import \
@@ -12,20 +10,18 @@ from parlai.mturk.tasks.dealnodeal.worlds import \
 from parlai.agents.local_human.local_human import LocalHumanAgent
 from parlai.core.agents import create_agent
 from task_config import task_config
-import copy
-from itertools import product
-from joblib import Parallel, delayed
-import threading
 
-"""
-This task consists of one agent talking to an MTurk worker to negotiate a deal.
-"""
+
 def main():
+    """This task consists of one agent, model or MTurk worker, talking to an
+    MTurk worker to negotiate a deal.
+    """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
-    argparser.add_argument('--two_mturk_agents', dest='two_mturk_agents', action='store_true',
-                        help='data collection mode with converations between two MTurk agents')
+    argparser.add_argument('--two_mturk_agents', dest='two_mturk_agents',
+                           action='store_true', help='data collection mode '
+                           'with converations between two MTurk agents')
 
     opt = argparser.parse_args()
     opt['task'] = 'dealnodeal'
@@ -39,7 +35,7 @@ def main():
 
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = mturk_agent_ids
+        mturk_agent_ids=mturk_agent_ids
     )
 
     mturk_manager.setup_server()
@@ -89,11 +85,12 @@ def main():
             task_function=run_conversation
         )
 
-    except:
+    except BaseException:
         raise
     finally:
         mturk_manager.expire_all_unassigned_hits()
         mturk_manager.shutdown()
+
 
 if __name__ == '__main__':
     main()
