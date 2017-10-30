@@ -13,6 +13,7 @@ from fairseq.multiprocessing_trainer import MultiprocessingTrainer
 from fairseq import criterions
 from fairseq import dictionary
 from fairseq.sequence_generator import SequenceGenerator
+from fairseq import options
 
 from torch.autograd import Variable
 import torch
@@ -50,7 +51,6 @@ class FairseqAgent(Agent):
         """Add command-line arguments specifically for this agent."""
         DictionaryAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Fairseq Arguments')
-
         agent.add_argument(
             '--max-positions',
             default=1024,
@@ -63,112 +63,9 @@ class FairseqAgent(Agent):
             type=int,
             metavar='N',
             help='pseudo random number generator seed')
-        agent.add_argument(
-            '--lr',
-            '--learning-rate',
-            default=0.25,
-            type=float,
-            metavar='LR',
-            help='initial learning rate')
-        agent.add_argument(
-            '--momentum',
-            default=0.99,
-            type=float,
-            metavar='M',
-            help='momentum factor')
-        agent.add_argument(
-            '--weight-decay',
-            '--wd',
-            default=0.0,
-            type=float,
-            metavar='WD',
-            help='weight decay')
-        agent.add_argument(
-            '--force-anneal',
-            '--fa',
-            default=0,
-            type=int,
-            metavar='N',
-            help='force annealing at specified epoch')
-        agent.add_argument(
-            '--beam', default=5, type=int, metavar='N', help='beam size')
-        agent.add_argument(
-            '--no-early-stop',
-            action='store_true',
-            help=('continue searching even after finalizing k=beam '
-                  'hypotheses; this is more correct, but increases '
-                  'generation time by 50%%'))
-        agent.add_argument(
-            '--unnormalized',
-            action='store_true',
-            help='compare unnormalized hypothesis scores')
-
-        agent.add_argument(
-            '--lenpen',
-            default=1,
-            type=float,
-            help=
-            'length penalty: <1.0 favors shorter, >1.0 favors longer sentences')
-
-        agent.add_argument(
-            '--clip-norm',
-            default=25,
-            type=float,
-            metavar='NORM',
-            help='clip threshold of gradients')
-
-        agent.add_argument(
-            '--arch',
-            '-a',
-            default='fconv',
-            metavar='ARCH',
-            choices=models.arch_model_map.keys(),
-            help='model architecture ({})'.format(
-                ', '.join(models.arch_model_map.keys())))
-        agent.add_argument(
-            '--encoder-embed-dim',
-            type=int,
-            metavar='N',
-            help='encoder embedding dimension')
-        agent.add_argument(
-            '--encoder-layers',
-            type=str,
-            metavar='EXPR',
-            help='encoder layers [(dim, kernel_size), ...]')
-        agent.add_argument(
-            '--decoder-embed-dim',
-            type=int,
-            metavar='N',
-            help='decoder embedding dimension')
-        agent.add_argument(
-            '--decoder-layers',
-            type=str,
-            metavar='EXPR',
-            help='decoder layers [(dim, kernel_size), ...]')
-        agent.add_argument(
-            '--decoder-out-embed-dim',
-            type=int,
-            metavar='N',
-            help='decoder output embedding dimension')
-        agent.add_argument(
-            '--decoder-attention',
-            type=str,
-            metavar='EXPR',
-            help='decoder attention [True, ...]')
-
-        # These arguments have default values independent of the model:
-        agent.add_argument(
-            '--dropout',
-            default=0.1,
-            type=float,
-            metavar='D',
-            help='dropout probability')
-        agent.add_argument(
-            '--label-smoothing',
-            default=0,
-            type=float,
-            metavar='D',
-            help='epsilon for label smoothing, 0 means no label smoothing')
+        options.add_optimization_args(argparser)
+        options.add_generation_args(argparser)
+        options.add_model_args(argparser)
 
     def __init__(self, opt, shared=None):
         # initialize defaults first
@@ -176,12 +73,12 @@ class FairseqAgent(Agent):
         if not shared:
             # this is not a shared instance of this class, so do full
             # initialization. if shared is set, only set up shared members.
-
+            saved_state = None
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
                 print('Loading existing model params from ' +
                       opt['model_file'])
-                new_opt, self.saved_state = self.load(opt['model_file'])
+                new_opt, saved_state = self.load(opt['model_file'])
                 # override options with stored ones
                 opt = self._override_opt(new_opt)
 
@@ -193,22 +90,20 @@ class FairseqAgent(Agent):
             self.NULL_IDX = self.fairseq_dict.pad()
 
             encoder = fconv.Encoder(
-                len(self.fairseq_dict),
+                self.fairseq_dict,
                 embed_dim=self.args.encoder_embed_dim,
                 convolutions=eval(self.args.encoder_layers),
                 dropout=self.args.dropout,
-                padding_idx=self.NULL_IDX,
                 max_positions=self.args.max_positions)
             decoder = fconv.Decoder(
-                len(self.fairseq_dict),
+                self.fairseq_dict,
                 embed_dim=self.args.decoder_embed_dim,
                 convolutions=eval(self.args.decoder_layers),
                 out_embed_dim=self.args.decoder_out_embed_dim,
                 attention=eval(self.args.decoder_attention),
                 dropout=self.args.dropout,
-                padding_idx=self.NULL_IDX,
                 max_positions=self.args.max_positions)
-            self.model = fconv.FConvModel(encoder, decoder, self.NULL_IDX)
+            self.model = fconv.FConvModel(encoder, decoder)
 
             # from fairseq's build_criterion()
             if self.args.label_smoothing > 0:
@@ -218,9 +113,9 @@ class FairseqAgent(Agent):
                 self.criterion = criterions.CrossEntropyCriterion(
                     self.NULL_IDX)
 
-            self.trainer = MultiprocessingTrainer(self.args, self.model)
-            if hasattr(self, 'saved_state'):
-                self.set_states(self.saved_state)
+            self.trainer = MultiprocessingTrainer(self.args, self.model, self.criterion)
+            if saved_state is not None:
+                self.set_states(saved_state)
 
         self.reset()
 
@@ -295,8 +190,13 @@ class FairseqAgent(Agent):
             for i in range(len(predictions)):
                 # map the predictions back to non-empty examples in the batch
                 batch_reply[valid_inds[i]]['text'] = predictions[i]
+                if i == 0:
+                    print('prediction:', predictions[i])
         else:
-            self._train(xs, ys)
+            loss = self._train(xs, ys)
+            batch_reply[0]['metrics'] = {}
+            for k, v in loss.items():
+                batch_reply[0]['metrics'][k] = v * batchsize
 
         return batch_reply
 
@@ -361,16 +261,16 @@ class FairseqAgent(Agent):
         return result
 
     def _generate(self, opt, src_tokens):
-        translator = SequenceGenerator(
-            [self.trainer.get_model()],
-            self.fairseq_dict,
-            beam_size=opt.beam,
-            stop_early=(not opt.no_early_stop),
-            normalize_scores=(not opt.unnormalized),
-            len_penalty=opt.lenpen)
-        translator.cuda()
+        if not hasattr(self, 'translator'):
+            self.translator = SequenceGenerator(
+                [self.trainer.get_model()],
+                beam_size=opt.beam,
+                stop_early=(not opt.no_early_stop),
+                normalize_scores=(not opt.unnormalized),
+                len_penalty=opt.lenpen)
+            self.translator.cuda()
         tokens = src_tokens
-        translations = translator.generate(
+        translations = self.translator.generate(
             Variable(tokens), Variable(self._positions_for_tokens(tokens)))
         results = [t[0] for t in translations]
         output_lines = [[] for _ in range(len(results))]
@@ -395,7 +295,7 @@ class FairseqAgent(Agent):
                 sample['src_tokens'])
             sample['input_positions'] = self._positions_for_tokens(
                 sample['input_tokens'])
-            self.trainer.train_step([sample], self.criterion)
+            return self.trainer.train_step([sample])
 
     def save(self, path=None):
         path = self.opt.get('model_file', None) if path is None else path

@@ -192,7 +192,7 @@ def main(parser):
                         opt['validation_metric'], best_valid))
                     world.save_agents()
                     saved = True
-                    if opt['validation_metric'] == 'accuracy' and best_valid > 99.5:
+                    if opt['validation_metric'] == 'accuracy' and best_valid > 0.995:
                         print('[ task solved! stopping. ]')
                         break
                 else:
