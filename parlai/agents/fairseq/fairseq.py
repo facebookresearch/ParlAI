@@ -190,8 +190,13 @@ class FairseqAgent(Agent):
             for i in range(len(predictions)):
                 # map the predictions back to non-empty examples in the batch
                 batch_reply[valid_inds[i]]['text'] = predictions[i]
+                if i == 0:
+                    print('prediction:', predictions[i])
         else:
-            self._train(xs, ys)
+            loss = self._train(xs, ys)
+            batch_reply[0]['metrics'] = {}
+            for k, v in loss.items():
+                batch_reply[0]['metrics'][k] = v * batchsize
 
         return batch_reply
 
@@ -290,7 +295,7 @@ class FairseqAgent(Agent):
                 sample['src_tokens'])
             sample['input_positions'] = self._positions_for_tokens(
                 sample['input_tokens'])
-            self.trainer.train_step([sample])
+            return self.trainer.train_step([sample])
 
     def save(self, path=None):
         path = self.opt.get('model_file', None) if path is None else path
