@@ -679,10 +679,14 @@ class MTurkManager():
             )
         self.task_files_to_copy.append(
             os.path.join(task_directory_path, 'html', 'cover_page.html'))
-        for file_name in os.listdir(os.path.join(task_directory_path, 'html')):
-            self.task_files_to_copy.append(os.path.join(
-                task_directory_path, 'html', file_name
-            ))
+        try:
+            for file_name in os.listdir(os.path.join(task_directory_path, 'html')):
+                self.task_files_to_copy.append(os.path.join(
+                    task_directory_path, 'html', file_name
+                ))
+        except FileNotFoundError:  # noqa F821 we don't support python2 
+            # No html dir exists
+            pass
         for mturk_agent_id in self.mturk_agent_ids + ['onboarding']:
             self.task_files_to_copy.append(os.path.join(
                 task_directory_path,
