@@ -492,7 +492,7 @@ class Seq2seqAgent(Agent):
             predictions, text_cand_inds, loss = self.predict(xs, ys, cands, valid_cands)
             if loss is not None:
                 if 'metrics' in batch_reply[0]:
-                    for k, v in loss:
+                    for k, v in loss.items():
                         batch_reply[0]['metrics'][k] = v
                 else:
                     batch_reply[0]['metrics'] = loss
