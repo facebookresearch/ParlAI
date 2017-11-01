@@ -45,6 +45,7 @@ import copy
 import math
 import importlib
 import random
+from tqdm import tqdm
 
 from multiprocessing import Process, Value, Condition, Semaphore
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
@@ -217,6 +218,16 @@ class World(object):
     def shutdown(self):
         """Performs any cleanup, if appropriate."""
         pass
+
+    def auto_execute(self, use_tqdm=True, maxes=0):
+        with self:
+            cnt = 0
+            for _ in self:
+                if maxes:
+                    cnt += 1
+                    if cnt > maxes:
+                        break
+                self.parley()
 
 
 class DialogPartnerWorld(World):
@@ -662,7 +673,7 @@ class HogwildProcess(Process):
     Each ``HogwildProcess`` contain its own unique ``World``.
     """
 
-    def __init__(self, tid, world, opt, agents, sem, fin, term, cnt):
+    def __init__(self, tid, world, opt, agents, sem, fin, term, cnt, back_sem):
         self.threadId = tid
         self.world_type = world
         self.opt = opt
@@ -671,6 +682,7 @@ class HogwildProcess(Process):
         self.epochDone = fin
         self.terminate = term
         self.cnt = cnt
+        self.back_sem = back_sem
         super().__init__()
 
     def run(self):
@@ -679,19 +691,19 @@ class HogwildProcess(Process):
         """
         shared_agents = create_agents_from_shared(self.agent_shares)
         world = self.world_type(self.opt, shared_agents)
-
         with world:
             while True:
-                self.queued_items.acquire()
                 if self.terminate.value:
                     break  # time to close
-                world.parley()
-                with self.cnt.get_lock():
-                    self.cnt.value -= 1
-                    if self.cnt.value == 0:
-                        # let main thread know that all the examples are finished
-                        with self.epochDone:
-                            self.epochDone.notify_all()
+                self.queued_items.acquire()
+                if not world.epoch_done():
+                    world.parley()
+                    self.back_sem.release()
+                else:
+                    with self.epochDone.get_lock():
+                        self.epochDone.value += 1
+                    self.back_sem.release()
+                    break
 
 
 class HogwildWorld(World):
@@ -715,23 +727,36 @@ class HogwildWorld(World):
 
     def __init__(self, world_class, opt, agents):
         self.inner_world = world_class(opt, agents)
-
+        self.numthreads = opt['numthreads']
         self.queued_items = Semaphore(0)  # counts num exs to be processed
-        self.epochDone = Condition()  # notifies when exs are finished
+        self.epochDone = Value('i', 0)  # notifies when exs are finished
         self.terminate = Value('b', False)  # tells threads when to shut down
+        self.back_sem = Semaphore(self.numthreads)
         self.cnt = Value('i', 0)  # number of exs that remain to be processed
 
         self.threads = []
-        for i in range(opt['numthreads']):
+        for i in range(self.numthreads):
             self.threads.append(HogwildProcess(i, world_class, opt,
                                                agents, self.queued_items,
                                                self.epochDone, self.terminate,
-                                               self.cnt))
+                                               self.cnt, self.back_sem))
         for t in self.threads:
             t.start()
 
     def __iter__(self):
-        raise NotImplementedError('Iteration not available in hogwild.')
+        # prepare to iter
+        for agent in self.inner_world.agents:
+            agent.start_data_collection()
+        return self
+
+    def __next__(self):
+        self.back_sem.acquire()
+        with self.epochDone.get_lock():
+            if self.epochDone.value == self.numthreads:
+                raise StopIteration()
+
+    def __len__(self):
+        return len(self.inner_world)
 
     def display(self):
         self.shutdown()
@@ -743,8 +768,6 @@ class HogwildWorld(World):
 
     def parley(self):
         """Queue one item to be processed."""
-        with self.cnt.get_lock():
-            self.cnt.value += 1
         self.queued_items.release()
 
     def getID(self):
@@ -756,23 +779,13 @@ class HogwildWorld(World):
     def save_agents(self):
         self.inner_world.save_agents()
 
-    def synchronize(self):
-        """Sync barrier: will wait until all queued examples are processed."""
-        with self.epochDone:
-            self.epochDone.wait_for(lambda: self.cnt.value == 0)
-
     def shutdown(self):
         """Set shutdown flag and wake threads up to close themselves"""
-        # set shutdown flag
-        with self.terminate.get_lock():
-            self.terminate.value = True
-        # wake up each thread by queueing fake examples
-        for _ in self.threads:
-            self.queued_items.release()
+        for agent in self.inner_world.agents:
+            agent.shutdown()
         # wait for threads to close
         for t in self.threads:
             t.join()
-
 
 
 ### Functions for creating tasks/worlds given options.

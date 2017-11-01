@@ -39,13 +39,34 @@ class KBTeacher(FbDialogTeacher):
         elif len(kb) == 2:
             # default to 'kb' if 'kb', 'wiki', or 'ie' not specified
             kb = 'kb'
+        self.kb = kb
         kbs = {}
         kbs['kb'] = os.path.join('wiki_entities', 'wiki_entities_kb.txt')
         kbs['wiki'] = 'wiki.txt'
         kbs['ie'] = 'wiki_ie.txt'
         opt['datafile'] = os.path.join(opt['datapath'], 'WikiMovies', 'movieqa',
                                        'knowledge_source', kbs[kb])
+
         super().__init__(opt, shared)
+
+    def setup_data(self, path):
+        """See FbDialogTeacher.setup_data for output format"""
+        if self.kb == 'kb':
+            return self.setup_kb_data(path)
+        else:
+            return super().setup_data(path)
+
+    def setup_kb_data(self, path):
+        print("[loading KBTeacher data:" + path + "]")
+        with open(path) as read:
+            for line in read:
+                line = line.strip()
+                if not line:
+                    continue
+                space_idx = line.find(' ')
+                conv_id = line[:space_idx]
+                # conversation index -- '1' means start of episode
+                yield (line[space_idx+1:], None, None, None), conv_id == '1'
 
 
 class DefaultTeacher(FbDialogTeacher):

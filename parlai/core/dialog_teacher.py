@@ -7,6 +7,10 @@
 from .agents import Teacher
 
 from .image_featurizers import ImageLoader
+
+import logging
+from multiprocessing import Queue, Value
+import os
 import random
 import sys
 import time
@@ -345,27 +349,55 @@ class StreamDialogData(DialogData):
     DialogData but cannot fit entirely into memory.
 
     Additional keyword-argument cycle defines if the stream should restart from
-    the beginning after an epoch is finished (defaults to True).
+    the beginning after an epoch is finished (defaults to False).
     """
 
     def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
-        # super() call initiates stream in self.data by calling _load()
-        super().__init__(opt, data_loader, cands, shared, **kwargs)
-        self.cycle = kwargs['cycle'] if 'cycle' in kwargs else True
+        self.cycle = kwargs['cycle'] if 'cycle' in kwargs else False
+        self.data_loader = data_loader
         if shared:
             # auxiliary instances hold pointer to main datastream (in self.data)
             self.reset_data = shared['reset']
+            self.file_queue = shared['file_queue']
+            self.num_file_queue_left = shared['num_file_queue_left']
         else:
             # main instance holds the stream and shares pointer to it
-            self.data_loader = data_loader
             self.datafile = opt['datafile']
+            self.file_queue = Queue()
+            self.num_file_queue_left = Value('i', 0)
+            file_list = []
+            if os.path.isfile(self.datafile):
+                file_list.append((self.datafile, os.stat(self.datafile).st_size))
+            elif os.path.isdir(self.datafile):
+                for dirpath, _, filenames in os.walk(self.datafile):
+                    for f in filenames:
+                        full_path = os.path.join(dirpath, f)
+                        file_list.append((full_path, os.stat(full_path).st_size))
+            else:
+                raise RuntimeError("input file does not exist.")
+            with self.num_file_queue_left.get_lock():
+                self.num_file_queue_left.value += len(file_list)
+            file_list.sort(key=lambda x: -x[1])
+            for _filename, _size in file_list:
+                self.file_queue.put(_filename)
             self.reset_data = None
             self.is_reset = True
+        # super() call initiates stream in self.data by calling _load()
+        super().__init__(opt, data_loader, cands, shared, **kwargs)
         self.entry_idx = 0
         self.next_episode = None
+        self.cur_file = None
 
     def share(self):
         shared = super().share()
+        # put back the file
+        if self.cur_file:
+            self.file_queue.put(self.cur_file)
+            self.cur_file = None
+            with self.num_file_queue_left.get_lock():
+                self.num_file_queue_left += 1
+        shared['file_queue'] = self.file_queue
+        shared['num_file_queue_left'] = self.num_file_queue_left
         # also share reset method to allow datastream to be reset
         shared['reset'] = self.reset
         return shared
@@ -384,10 +416,19 @@ class StreamDialogData(DialogData):
         """
         self.is_reset = False
         while True:
-            for episode in self._read_episode(data_loader(datafile)):
-                yield episode
-            while not self.cycle:
-                yield ((None,),)
+            with self.num_file_queue_left.get_lock():
+                num_left = self.num_file_queue_left.value
+                self.num_file_queue_left.value -= 1
+            if num_left % 50 == 0:
+                logging.info("%d files left..." % num_left)
+            if num_left <= 0:
+                while True:
+                    yield ((None,),)
+            else:
+                datafile = self.file_queue.get()
+                self.cur_file = datafile
+                for episode in self._read_episode(data_loader(datafile)):
+                    yield episode
 
     def num_episodes(self):
         # unknown

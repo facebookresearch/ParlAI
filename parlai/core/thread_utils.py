@@ -14,6 +14,8 @@ except ImportError:
     from collections import MutableMapping
 import ctypes
 import sys
+import threading
+
 
 class SharedTable(MutableMapping):
     """Provides a simple shared-memory table of integers, floats, or strings.
@@ -148,3 +150,18 @@ class SharedTable(MutableMapping):
 
     def get_lock(self):
         return self.lock
+
+
+""" decorator for synchronized method for class instance"""
+def synchronized_with_attr(lock_name):
+
+    def decorator(method):
+
+        def synced_method(self, *args, **kws):
+            if not hasattr(self, lock_name):
+                return method(self, *args, **kws)
+            lock = getattr(self, lock_name)
+            with lock:
+                return method(self, *args, **kws)
+        return synced_method
+    return decorator
