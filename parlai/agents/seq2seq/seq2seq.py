@@ -310,8 +310,9 @@ class Seq2seqAgent(Agent):
                 observation['text'] = parsed_x
 
                 if not self.episode_done:
-                    # remember past dialog
-                    prev_dialog = self.observation['text']
+                    # don't remember past dialog
+                    # prev_dialog = self.observation['text']
+                    prev_dialog = []
                     # get last y
                     batch_idx = self.opt.get('batchindex', 0)
                     if self.answers[batch_idx] is not None:
