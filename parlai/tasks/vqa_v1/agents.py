@@ -51,7 +51,6 @@ class MasterLoader(Thread):
     def __init__(self, opt):
         Thread.__init__(self, daemon=True)
         num_masters = opt.get('batchsize', 1)
-        self.request_queues = {i: queue.Queue() for i in range(num_masters)}
         self.num_threads = opt.get('numthreads', 8)
         self.request_queue = queue.Queue()
 
