@@ -8,7 +8,16 @@
 import parlai.core.build_data as build_data
 import gzip
 import os
+import re
 
+
+def _regularize(sent):
+    sent = sent.replace('i&gt;', '').replace('&lt;', '').replace('&gt;', '')
+    sent = re.sub(r'x[0-9|a-f][0-9|a-f]', ' ', sent)
+    sent = sent.replace('\\', '').replace('-', '')
+    sent = ' '.join(re.findall(r"[\w']+|[.,!?:;]", sent))
+    sent = sent.replace('. . .', '...')
+    return sent
 
 def create_fb_format(inpath, outpath):
     print('[building fbformat]')
@@ -24,7 +33,6 @@ def create_fb_format(inpath, outpath):
                 dialog = ''
                 conv_id = conv_id + 1
                 with gzip.open(os.path.join(root, f), 'r') as f1:
-                    # print(str(conv_id) + ': ' + f)
                     words = ''
                     line_id = 1
                     turn_id = 1
@@ -33,6 +41,7 @@ def create_fb_format(inpath, outpath):
                         if line.find('<s id="') != -1:
                             # new sentence
                             if len(words) > 0:
+                                words = _regularize(words)
                                 if (turn_id % 2) == 0:
                                     dialog += str(line_id) + ' ' + words
                                 else:
@@ -60,7 +69,7 @@ def create_fb_format(inpath, outpath):
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'OpenSubtitles')
-    version = None
+    version = '1'
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')

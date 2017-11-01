@@ -30,15 +30,13 @@ def build_dict(opt):
     ordered_opt = copy.deepcopy(opt)
     cnt = 0
     # we use train set to build dictionary
-    ordered_opt['datatype'] = 'train:ordered'
-    if 'stream' in opt['datatype']:
-        ordered_opt['datatype'] += ':stream'
+    ordered_opt['datatype'] = 'train:ordered:stream'
     ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
     ordered_opt['image_mode'] = 'none'
     world_dict = create_task(ordered_opt, dictionary)
     # pass examples to dictionary
-    for _ in world_dict:
+    while not world_dict.epoch_done():
         cnt += 1
         if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] > 0:
             print('Processed {} exs, moving on.'.format(opt['dict_maxexs']))
@@ -47,7 +45,7 @@ def build_dict(opt):
         world_dict.parley()
     print('[ dictionary built. ]')
     dictionary.save(opt['dict_file'], sort=True)
-    # print('[ num words =  %d ]' % len(dictionary))
+
 
 def main():
     # Get command line arguments
@@ -55,6 +53,7 @@ def main():
     DictionaryAgent.add_cmdline_args(argparser)
     opt = argparser.parse_args()
     build_dict(opt)
+
 
 if __name__ == '__main__':
     main()

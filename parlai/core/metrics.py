@@ -71,7 +71,7 @@ class Metrics(object):
         self.metrics['cnt'] = 0
         self.metrics['correct'] = 0
         self.metrics['f1'] = 0.0
-        self.eval_pr = [1, 5, 10, 50, 100]
+        self.eval_pr = [1, 5, 10, 100]
         for k in self.eval_pr:
             self.metrics['hits@' + str(k)] = 0
         if opt.get('numthreads', 1) > 1:
@@ -176,9 +176,9 @@ class Metrics(object):
             m['hits@k'] = {}
             for k in self.eval_pr:
                 m['hits@k'][k] = round_sigfigs(
-                    self.metrics['hits@' + str(k)] / total, 4)
+                    self.metrics['hits@' + str(k)] / total, 3)
             for k in self.custom_keys:
-                m[k] = round_sigfigs(self.metrics[k] / total, 4)
+                m[k] = round_sigfigs(self.metrics[k] / total, 3)
         return m
 
     def clear(self):
