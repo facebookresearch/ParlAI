@@ -121,12 +121,13 @@ class Seq2seqAgent(Agent):
                                 'be used with default params except learning '
                                 'rate (as specified by -lr).')
         agent.add_argument('-emb', '--embedding-type', default='random',
-                           choices=['random', 'glove', 'glove-fixed'],
+                           choices=['random'],
                            help='Choose between different strategies '
                                 'for word embeddings. Default is random, '
                                 'but can also preinitialize from Glove.'
                                 'Preinitialized embeddings can also be fixed '
-                                'so they are not updated during training.')
+                                'so they are not updated during training. '
+                                'NOTE: glove init currently disabled.')
         agent.add_argument('-lm', '--language-model', default='none',
                            choices=['none', 'only', 'both'],
                            help='Enabled language modeling training on the '

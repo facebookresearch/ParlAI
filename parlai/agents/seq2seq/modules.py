@@ -17,8 +17,7 @@ class Seq2seq(nn.Module):
     RNN_OPTS = {'rnn': nn.RNN, 'gru': nn.GRU, 'lstm': nn.LSTM}
 
     def __init__(self, opt, num_features,
-                 padding_idx=0, start_idx=1, end_idx=2,
-                 longest_label=1):
+                 padding_idx=0, start_idx=1, end_idx=2, longest_label=1):
         super().__init__()
         self.opt = opt
 
