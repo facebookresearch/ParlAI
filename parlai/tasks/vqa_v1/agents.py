@@ -11,6 +11,9 @@ from .build import build, buildImage
 import json
 import random
 import os
+from threading import Thread
+import queue
+import concurrent.futures
 
 
 def _path(opt):
@@ -44,6 +47,25 @@ def _path(opt):
     return data_path, annotation_path, image_path
 
 
+class MasterLoader(Thread):
+    def __init__(self, opt):
+        Thread.__init__(self, daemon=True)
+        num_masters = opt.get('batchsize', 1)
+        self.request_queues = {i: queue.Queue() for i in range(num_masters)}
+        self.num_threads = opt.get('numthreads', 8)
+        self.request_queue = queue.Queue()
+
+    def __len__(self):
+        return len(self.ques['questions'])
+
+    def run(self):
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_threads) as executor:
+            while True:
+                teacher, load_fn, data_req = self.request_queue.get()
+                future = executor.submit(load_fn, data_req)
+                teacher.receive(future)
+
+
 class OeTeacher(Teacher):
     """
     VQA Open-Ended teacher, which loads the json vqa data and implements its
@@ -53,25 +75,50 @@ class OeTeacher(Teacher):
         super().__init__(opt, shared)
         self.datatype = opt['datatype']
         data_path, annotation_path, self.image_path = _path(opt)
+        self.image_mode = opt.get('image_mode', 'none')
 
         if shared and 'ques' in shared:
             self.ques = shared['ques']
             if 'annotation' in shared:
                 self.annotation = shared['annotation']
             self.image_loader = shared['image_loader']
+            self.master_loader = shared['master_loader']
         else:
             self._setup_data(data_path, annotation_path)
             self.image_loader = ImageLoader(opt)
+            self.master_loader = MasterLoader(opt)
+            self.master_loader.start()
 
         # for ordered data in batch mode (especially, for validation and
         # testing), each teacher in the batch gets a start index and a step
         # size so they all process disparate sets of the data
         self.step_size = opt.get('batchsize', 1)
         self.data_offset = opt.get('batchindex', 0)
+        self.example_queue = queue.Queue()
         self.reset()
+        if self.image_mode != 'none':
+            self.submit_example_request()
+
 
     def __len__(self):
         return len(self.ques['questions'])
+
+    def submit_example_request(self):
+        if self.datatype == 'train':
+            self.episode_idx = random.randrange(len(self))
+        else:
+            self.episode_idx = (self.episode_idx + self.step_size) % len(self)
+            if self.episode_idx == len(self) - self.step_size:
+                self.epochDone = True
+
+        image_id = self.ques['questions'][self.episode_idx]['image_id']
+        img_path = self.image_path + '%012d.jpg' % (image_id)
+        self.master_loader.request_queue.put(
+            (self, self.image_loader.load, img_path))
+
+    def receive(self, future):
+        data = future.result()
+        self.example_queue.put(data)
 
     def reset(self):
         # Reset the dialog so that it is at the start of the epoch,
@@ -79,6 +126,7 @@ class OeTeacher(Teacher):
         super().reset()
         self.lastY = None
         self.episode_idx = self.data_offset - self.step_size
+        self.example_queue = queue.Queue()
 
     def observe(self, observation):
         """Process observation for metrics."""
@@ -88,21 +136,13 @@ class OeTeacher(Teacher):
         return observation
 
     def act(self):
-        if self.datatype == 'train':
-            self.episode_idx = random.randrange(len(self))
-        else:
-            self.episode_idx = (self.episode_idx + self.step_size) % len(self)
-            if self.episode_idx == len(self) - self.step_size:
-                self.epochDone = True
-
         qa = self.ques['questions'][self.episode_idx]
         question = qa['question']
-        image_id = qa['image_id']
-
-        img_path = self.image_path + '%012d.jpg' % (image_id)
-
+        image = None
+        if self.image_mode != 'none':
+            image = self.example_queue.get()
         action = {
-            'image': self.image_loader.load(img_path),
+            'image': image,
             'text': question,
             'episode_done': True
         }
@@ -114,6 +154,8 @@ class OeTeacher(Teacher):
         if self.datatype.startswith('train'):
             action['labels'] = self.lastY
 
+        # Submit for next example before returning
+        self.submit_example_request()
         return action
 
     def share(self):
@@ -122,6 +164,7 @@ class OeTeacher(Teacher):
         if hasattr(self, 'annotation'):
             shared['annotation'] = self.annotation
         shared['image_loader'] = self.image_loader
+        shared['master_loader'] = self.master_loader
         return shared
 
     def _setup_data(self, data_path, annotation_path):
