@@ -551,6 +551,7 @@ class BatchWorld(World):
 
     def batch_observe(self, index, batch_actions, index_acting):
         batch_observations = []
+
         for i, w in enumerate(self.worlds):
             agents = w.get_agents()
             observation = None
@@ -562,10 +563,32 @@ class BatchWorld(World):
             else:
                 if index == index_acting: return None # don't observe yourself talking
                 observation = validate(batch_actions[i])
-            observation = agents[index].observe(observation)
-            if observation is None:
-                raise ValueError('Agents should return what they observed.')
             batch_observations.append(observation)
+
+        a = self.world.get_agents()[index]
+        if (batch_actions is not None and len(batch_actions) > 0 and
+                hasattr(a, 'batch_observe')):
+            batch_observations = a.batch_observe(batch_observations)
+        else:
+            # Reverts to running on each individually
+            needspacking = hasattr(a, 'batch_act')
+            # Set internal states from batched agent
+            if needspacking:
+                for attname in a.internal_states():
+                    if hasattr(a, 'batch_{}'.format(attname)):
+                        for w, att in zip(self.worlds, getattr(a, 'batch_{}'.format(attname))):
+                            setattr(w.get_agents()[index], attname, att)
+
+            batch_observations = [w.get_agents()[index].observe(o) for w, o in zip(self.worlds, batch_observations)]
+
+            # Get internal states and save in batched agent
+            if needspacking:
+                for attname in a.internal_states():
+                    setattr(a, 'batch_{}'.format(attname), [getattr(w.get_agents()[index], attname) for w in self.worlds])
+
+        if batch_observations is None or any([o is None for o in batch_observations]):
+            raise ValueError('Agents should return what they observed.')
+
         return batch_observations
 
     def batch_act(self, index, batch_observation):
@@ -581,12 +604,28 @@ class BatchWorld(World):
                 acts[index] = batch_actions[i]
         else:
             # Reverts to running on each individually.
+
+            needspacking = hasattr(a, 'batch_observe')
+
+            # Set internal states from batched agent
+            if needspacking:
+                for attname in a.internal_states():
+                    if hasattr(a, 'batch_{}'.format(attname)):
+                        for w, att in zip(self.worlds, getattr(a, 'batch_{}'.format(attname))):
+                            setattr(w.get_agents()[index], attname, att)
+
             batch_actions = []
             for w in self.worlds:
                 agents = w.get_agents()
                 acts = w.get_acts()
                 acts[index] = agents[index].act()
                 batch_actions.append(acts[index])
+
+            # Get internal states and save in batched agent
+            if needspacking:
+                for attname in a.internal_states():
+                    setattr(a, 'batch_{}'.format(attname), [getattr(w.get_agents()[index], attname, None) for w in self.worlds])
+
         return batch_actions
 
     def parley(self):

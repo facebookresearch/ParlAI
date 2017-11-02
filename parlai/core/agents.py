@@ -73,6 +73,10 @@ class Agent(object):
     def getID(self):
         return self.id
 
+    @classmethod
+    def internal_states(cls):
+        return ['observation']
+
     def reset(self):
         self.observation = None
 
