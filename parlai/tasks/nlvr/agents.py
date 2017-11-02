@@ -9,6 +9,7 @@ from .build import build
 
 import json
 import os
+import glob
 
 
 def _path(opt):
@@ -48,19 +49,20 @@ class DefaultTeacher(DialogTeacher):
     def setup_data(self, path):
         print('loading: ' + path)
 
-        image_file = os.path.join(self.images_path, '0', 'train-655-0-0.png')
         for line in open(path, 'r'):
             ques = json.loads(line)
             # episode done if first question or image changed
-            new_episode = ques['identifier'] != image_file
+            # new_episode = ques['identifier'] != image_file
+
+            image_path = os.path.join(self.images_path, ques['directory'])
+            image_file_names = glob.glob(image_path+'/'+ self.dt+'-'+ques['identifier']+'*')
 
             # only show image at beginning of episode
             # image_file = ques['image_filename']
-            img_path = image_file
-            if new_episode:
-                img_path = os.path.join(self.images_path, image_file)
-
+            # if new_episode:
+            #     image_path = os.path.join(self.images_path, ques['directory'])
+            #     image_file_names = glob.glob(image_path, self.dt+'-'+ques['identifier']+'*')
             question = ques['sentence']
             answer = [ques['label']] if self.dt != 'test' else None
             # print( answer)
-            yield (question, answer, None, None, img_path), new_episode
+            yield (question, answer, None, None, image_file_names[0]), True
