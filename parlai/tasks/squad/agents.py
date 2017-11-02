@@ -13,11 +13,14 @@ import random
 import os
 
 
-class HandwrittenTeacher(Teacher):
+class IndexTeacher(Teacher):
     """Hand-written SQuAD teacher, which loads the json squad data and
     implements its own `act()` method for interacting with student agent,
     rather than inheriting from the core Dialog Teacher. This code is here as
     an example of rolling your own without inheritance.
+
+    This teacher also provides access to the "answer_start" indices that
+    specify the location of the answer in the context.
     """
 
     def __init__(self, opt, shared=None):
@@ -132,8 +135,7 @@ class HandwrittenTeacher(Teacher):
 class DefaultTeacher(DialogTeacher):
     """This version of SQuAD inherits from the core Dialog Teacher, which just
     requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a default `act` function, and enables
-    Hogwild training with shared memory with no extra work.
+    inherit basic metrics, a default `act` function.
     For SQuAD, this does not efficiently store the paragraphs in memory.
     """
 

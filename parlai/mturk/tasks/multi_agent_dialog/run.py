@@ -4,26 +4,22 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 import os
-import time
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.tasks.multi_agent_dialog.worlds import \
     MTurkMultiAgentDialogWorld, MTurkMultiAgentDialogOnboardWorld
 from parlai.agents.local_human.local_human import LocalHumanAgent
 from task_config import task_config
-import copy
-from itertools import product
-from joblib import Parallel, delayed
-import threading
 
-"""
-This task consists of one local human agent and two MTurk agents,
-each MTurk agent will go through the onboarding step to provide
-information about themselves, before being put into a conversation.
-You can end the conversation by sending a message ending with
-`[DONE]` from human_1.
-"""
+
 def main():
+    """
+    This task consists of one local human agent and two MTurk agents,
+    each MTurk agent will go through the onboarding step to provide
+    information about themselves, before being put into a conversation.
+    You can end the conversation by sending a message ending with
+    `[DONE]` from human_1.
+    """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
@@ -37,7 +33,7 @@ def main():
     mturk_agent_ids = [mturk_agent_1_id, mturk_agent_2_id]
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids = mturk_agent_ids
+        mturk_agent_ids=mturk_agent_ids
     )
     mturk_manager.setup_server()
 
@@ -90,7 +86,7 @@ def main():
             task_function=run_conversation
         )
 
-    except:
+    except BaseException:
         raise
     finally:
         mturk_manager.expire_all_unassigned_hits()

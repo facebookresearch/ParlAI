@@ -12,6 +12,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+.vector_cache/
 env/
 build/
 data/
@@ -110,4 +111,6 @@ tmp/
 # Heroku things
 heroku-cli-*
 
+# IntelliJ IDEA
 .idea
+*.iml

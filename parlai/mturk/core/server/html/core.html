@@ -108,7 +108,8 @@
   var STATUS_ACK = 'ack';
   var STATUS_INIT = 'init';
   var STATUS_SENT = 'sent';
-  var SERVER_HEARTBEAT_TIMEOUT = 8000 // 8 Seconds before we assume we died
+  var SERVER_HEARTBEAT_TIMEOUT = 80000 // 80 Sec before we think manager died
+  var LOCAL_HEARTBEAT_TIMEOUT = 16000 // 16 Seconds before we assume we died
 
   /* ================= State variables ================= */
 
@@ -125,6 +126,7 @@
   var blocking_id = null;
   var blocking_sent_time = null;
   var last_server_heartbeat = null;
+  var last_local_heartbeat = null;
   var displayed_messages = [];
 
   var is_cover_page = ("{{is_cover_page}}" === 'true') ? true : false;
@@ -331,7 +333,7 @@
   /* ================= UI handlers ================= */
 
   // On window resize, ensure that the UI is properly displayed
-  $(window).resize(function() {
+  function window_resize() {
     log("The window was resized", 4);
     // Set the text input width to match the bottom width minus space
     // for the done button
@@ -342,7 +344,8 @@
     var left_height = $("div#left-pane").height();
     var text_height = $("div#right-bottom-pane").outerHeight()
     $("div#right-top-pane").height((left_height - text_height) - 20);
-  });
+  }
+  $(window).resize(window_resize);
 
   // Handling keypress event for enter detection
   $(document).keypress(function(e) {
@@ -630,6 +633,7 @@
     }
   }
 
+  {% block handle_new_message %}
   // Handles an incoming message
   function handle_new_message(new_message_id, message) {
     var agent_id = message.id;
@@ -648,6 +652,7 @@
       add_message_to_conversation(agent_id, message_text, true);
     }
   }
+  {% endblock %}
 
   // Handle submitting a message
   $("button#id_send_msg_button").on('click', function () {
@@ -752,11 +757,13 @@
       'data': null
     };
 
-    socket.emit(SOCKET_ROUTE_PACKET_STRING, hb);
+    socket.emit(SOCKET_ROUTE_PACKET_STRING, hb, function() {
+      last_local_heartbeat=Date.now();
+    });
 
     // Check to see if we've disconnected from the server
-    if (last_server_heartbeat != null &&
-        Date.now() - last_server_heartbeat > SERVER_HEARTBEAT_TIMEOUT) {
+    if (last_local_heartbeat != null &&
+        Date.now() - last_local_heartbeat > LOCAL_HEARTBEAT_TIMEOUT) {
       close_socket();
       set_inactive_text('You have disconnected from the server, \
         please return this HIT and take a new one if you want to keep \

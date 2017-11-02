@@ -223,7 +223,7 @@ We still need to implement this ``_path()`` method. The version for this example
         image_path = os.path.join(opt['datapath'], 'mnist', dt)
         return labels_path, image_path
 
-By creating ``MnistQATeacher`` as a subclass of ``DialogTeacher``, the job of creating a teacher for this task becomes much simpler: most of the work that needs to be done will limit itself to defining a ``setup_data`` method. This method is a generator that will take in a path to the data and yield a pair of elements for each call. The first element of the pair is a tuple containing the following information: ``(query, labels, reward, label_candidates, path_to_image)``. The second is a boolean flag ``episode_done?`` which indicates if the current query marks the end of an episode or not.
+By creating ``MnistQATeacher`` as a subclass of ``DialogTeacher``, the job of creating a teacher for this task becomes much simpler: most of the work that needs to be done will limit itself to defining a ``setup_data`` method. This method is a generator that will take in a path to the data and yield a pair of elements for each call. The first element of the pair is a tuple containing the following information: ``(query, labels, reward, label_candidates, path_to_image)``. The second is a boolean flag ``new_episode?`` which indicates if the current query starts the new episode or not.
 
 More information on this format can be found in the documentation on ``data_loader`` in `DialogData <http://parl.ai/static/docs/dialog.html#parlai.core.dialog_teacher.DialogData>`__ (``setup_data`` is provided as a data_loader to ``DialogData``).
 
@@ -242,7 +242,7 @@ The sample ``setup_data`` method for our task is presented below.
         # define standard question, since it doesn't change for this task
         self.question = 'Which number is in the image?'
         # every episode consists of only one query in this task
-        episode_done = True
+        new_episode = True
 
         # define iterator over all queries
         for i in range(len(self.labels)):
@@ -250,10 +250,10 @@ The sample ``setup_data`` method for our task is presented below.
             img_path = os.path.join(self.image_path, '%05d.bmp' % i)
             # get current label, both as a digit and as a text
             label = [self.labels[i], self.num_strs[int(self.labels[i])]]
-            # yield tuple with information and episode_done? flag
-            yield (self.question, label, None, None, img_path), episode_done
+            # yield tuple with information and new_episode? flag
+            yield (self.question, label, None, None, img_path), new_episode
 
-As we can see from the code above, for this specific task the question is always the same, and thus it is fixed. For different tasks, this might change at each iteration. Similarly, for this task, each episode consists of only one query, thus ``episode_done?`` is always true (*i.e.*, each query is the end of its episode). This could also vary depending on the task.
+As we can see from the code above, for this specific task the question is always the same, and thus it is fixed. For different tasks, this might change at each iteration. Similarly, for this task, each episode consists of only one query, thus ``new_episode?`` is always true (*i.e.*, each query is the end of its episode). This could also vary depending on the task.
 
 Looking at the tuple provided by the iterator at each yield, we can see that we defined a query, a label and an image path. When working with ``DialogTeacher`` in visual tasks, it is important to provide the path to the image in the ``setup_data`` tuple. This allows one to inherit functionality around the "image-mode" command line parameter, such as automatically returning ascii versions of images if -im ascii is set.
 
@@ -418,7 +418,7 @@ The final step is to define the important ``act()`` and ``observe()`` methods, w
             self.lastY = None
         return observation
 
-In the act method we need to return the ``Teacher``'s action, which will then be presented to the agent(s) performing the task. In this case, this includes an image and a question. We first select which example to use: randomly in the case of training or sequentially in the case of validation/testing. The ``OeTeacher`` then loads the appropriate question, which is placed in the ``text`` field of the dict. The image_path is also constructed and an image object (loaded utilizing the ``ImageLoader`` class) is passed in the ``image`` field. The ``episode_done`` flag is always set to true in this task specifically due to the fact that all episodes consist of only one example.
+In the act method we need to return the ``Teacher``'s action, which will then be presented to the agent(s) performing the task. In this case, this includes an image and a question. We first select which example to use: randomly in the case of training or sequentially in the case of validation/testing. The ``OeTeacher`` then loads the appropriate question, which is placed in the ``text`` field of the dict. The image_path is also constructed and an image object (loaded utilizing the ``ImageLoader`` class) is passed in the ``image`` field. The ``new_episode`` flag is always set to true in this task specifically due to the fact that all episodes consist of only one example.
 
 .. code-block:: python
 
