@@ -9,6 +9,7 @@ import os
 import copy
 import numpy as np
 from PIL import Image
+from functools import lru_cache
 
 _greyscale = '  .,:;crsA23hHG#98&@'
 
@@ -121,6 +122,7 @@ class ImageLoader():
             asc.append('\n')
         return ''.join(asc)
 
+    @lru_cache(maxsize=None)
     def load(self, path):
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
@@ -142,6 +144,7 @@ class ImageLoader():
             if not os.path.exists(dpath):
                 build_data.make_dir(dpath)
 
+            imagefn = imagefn.split('.')[0]
             imagefn = imagefn + '.npy'
             new_path = os.path.join(prepath, mode, imagefn)
 

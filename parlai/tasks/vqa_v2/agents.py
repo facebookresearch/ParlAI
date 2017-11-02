@@ -58,8 +58,11 @@ class OeTeacher(Teacher):
             self.ques = shared['ques']
             if 'annotation' in shared:
                 self.annotation = shared['annotation']
+            self.image_loader = shared['image_loader']
         else:
             self._setup_data(data_path, annotation_path)
+            self.image_loader = ImageLoader(opt)
+
         self.len = len(self.ques['questions'])
 
         # for ordered data in batch mode (especially, for validation and
@@ -67,7 +70,6 @@ class OeTeacher(Teacher):
         # size so they all process disparate sets of the data
         self.step_size = opt.get('batchsize', 1)
         self.data_offset = opt.get('batchindex', 0)
-        self.image_loader = ImageLoader(opt)
 
         self.reset()
 
@@ -122,6 +124,7 @@ class OeTeacher(Teacher):
         shared['ques'] = self.ques
         if hasattr(self, 'annotation'):
             shared['annotation'] = self.annotation
+        shared['image_loader'] = self.image_loader
         return shared
 
     def _setup_data(self, data_path, annotation_path):

@@ -1,5 +1,15 @@
 <h2>News</h2>
 
+2017-10-19: [ParlAI Request For Proposals: Winners Announced!](https://research.fb.com/announcing-the-winners-of-the-facebook-parlai-research-awards/)
+
+2017-10-13: [New model added: Fairseq-py](https://github.com/facebookresearch/fairseq-py)
+
+2017-10-12: [New task added: Stanford's MutualFriends](https://stanfordnlp.github.io/cocoa/)
+
+2017-09-22: [New task added: babi+](https://www.researchgate.net/publication/319128941_Challenging_Neural_Dialogue_Models_with_Natural_Data_Memory_Networks_Fail_on_Incremental_Phenomena)
+
+2017-09-21: [New task added: WMT En-De training set, with more WMT tasks on the way](https://nlp.stanford.edu/projects/nmt/)
+
 2017-08-25: [New task added: Deal or No Deal](https://github.com/facebookresearch/end-to-end-negotiator)
 
 2017-08-15: [New task added: CLEVR](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)

@@ -84,8 +84,15 @@ task_list = [
         "id": "DealNoDeal",
         "display_name": "Deal or No Deal",
         "task": "dealnodeal",
-        "tags": [ "All", "Negotiation" ],
+        "tags": ["All", "Negotiation"],
         "description": "End-to-end negotiation task which requires two agents to agree on how to divide a set of items, with each agent assigning different values to each item. From Lewis et al. '17. Link: https://arxiv.org/abs/1706.05125"
+    },
+    {
+        "id": "MutualFriends",
+        "display_name": "MutualFriends",
+        "task": "mutualfriends",
+        "tags": [ "All", "Negotiation"],
+        "description": "Task where two agents must discover which friend of theirs is mutual based on the friends's attributes. From He He et al. '17. Link: https://stanfordnlp.github.io/cocoa/'"
     },
     {
         "id": "MCTest",
@@ -139,14 +146,14 @@ task_list = [
     {
         "id": "personalized-dialog-full",
         "display_name": "Personalized Dialog Full Set",
-        "task": "personalized_dialog:full",
+        "task": "personalized_dialog:AllFull",
         "tags": [ "All",  "Goal", "Personalization" ],
         "description": "Simulated dataset of restaurant booking focused on personalization based on user profiles. From Joshi et al. '17. Link: https://arxiv.org/abs/1706.07503"
     },
     {
         "id": "personalized-dialog-small",
         "display_name": "Personalized Dialog Small Set",
-        "task": "personalized_dialog:small",
+        "task": "personalized_dialog:AllSmall",
         "tags": [ "All",  "Goal", "Personalization" ],
         "description": "Simulated dataset of restaurant booking focused on personalization based on user profiles. From Joshi et al. '17. Link: https://arxiv.org/abs/1706.07503"
     },
@@ -263,10 +270,24 @@ task_list = [
         "description": "A visual reasoning dataset that tests abilities such as attribute identification, counting, comparison, spatial relationships, and logical operations. From Johnson et al. '16. Link: https://arxiv.org/abs/1612.06890"
     },
     {
+        "id": "nlvr",
+        "display_name": "nlvr",
+        "task": "nlvr",
+        "tags": [ "All",  "Visual" ],
+        "description": "Cornell Natural Language Visual Reasoning (NLVR) is a language grounding dataset based on  pairs of natural language statements grounded in synthetic images. From Suhr et al. '17. Link: http://lic.nlp.cornell.edu/nlvr/"
+    },
+    {
         "id": "WMT",
         "display_name": "WMT",
         "task": "wmt",
         "tags": [ "All", "MT" ],
         "description": "Workshop on Machine Translation task, currently only includes en_de."
+    },
+    {
+        "id": "ConvAI_ChitChat",
+        "display_name": "ConvAI_ChitChat",
+        "task": "convai_chitchat",
+        "tags": [ "All", "ChitChat" ],
+        "description": "Human-bot dialogues containing free discussions of randomly chosen paragraphs from SQuAD. Link to dataset: http://convai.io/data/"
     }
 ]

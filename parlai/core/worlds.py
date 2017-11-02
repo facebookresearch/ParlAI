@@ -515,7 +515,7 @@ def override_opts_in_shared(table, overrides):
         if type(v) == dict and k != 'opt':
             override_opts_in_shared(v, overrides)
         elif type(v) == list:
-            for item in v:
+            for item in v[:1]:  # don't actually want to iterate over all items
                 if type(item) == dict:
                     override_opts_in_shared(item, overrides)
     return table
@@ -540,7 +540,7 @@ class BatchWorld(World):
             # which is needed for ordered data (esp valid/test sets)
             override_opts_in_shared(shared, {'batchindex': i})
             self.worlds.append(shared['world_class'](opt, None, shared))
-        self.batch_observations = [ None ] * len(self.world.get_agents())
+        self.batch_observations = [None] * len(self.world.get_agents())
 
     def __iter__(self):
         return self

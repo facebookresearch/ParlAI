@@ -25,3 +25,17 @@ class DefaultTeacher(FbDialogTeacher):
         opt['datafile'] = _path(opt, '')
         opt['cands_datafile'] = opt['datafile']
         super().__init__(opt, shared)
+
+    def setup_data(self, path):
+        alternate = []
+        for entry, new in super().setup_data(path):
+            if new:
+                for i, e in enumerate(alternate):
+                    yield e, i == 0
+                alternate.clear()
+            else:
+                alternate.append(entry)
+            yield entry, new
+        if alternate:
+            for i, e in enumerate(alternate):
+                yield e, i == 0
