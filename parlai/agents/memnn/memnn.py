@@ -129,6 +129,8 @@ class MemnnAgent(Agent):
         return observation
 
     def predict(self, xs, cands, ys=None):
+        # Subsample to reduce training time
+        cands = [list(set(random.sample(c, min(32, len(c))) + self.labels)) for c in cands]
         is_training = ys is not None
         self.model.train(mode=is_training)
         # Organize inputs for network (see contents of xs and ys in batchify method)
