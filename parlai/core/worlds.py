@@ -74,11 +74,11 @@ def display_messages(msgs):
             space = '   '
         if msg.get('reward', None) is not None:
             lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
+        if type(msg.get('image')) == str:
+            lines.append(msg['image'])
         if msg.get('text', ''):
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + msg['text'])
-        if type(msg.get('image')) == str:
-            lines.append(msg['image'])
         if msg.get('labels'):
             lines.append(space + ('[labels: {}]'.format(
                         '|'.join(msg['labels']))))
