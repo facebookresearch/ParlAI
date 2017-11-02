@@ -140,6 +140,7 @@ class OeTeacher(Teacher):
         image = None
         if self.image_mode != 'none':
             image = self.example_queue.get()
+
         action = {
             'image': image,
             'text': question,
@@ -148,10 +149,10 @@ class OeTeacher(Teacher):
 
         if not self.datatype.startswith('test'):
             anno = self.annotation['annotations'][self.episode_idx]
-            self.lastY = [ans['answer'] for ans in anno['answers']]
-
-        if self.datatype.startswith('train'):
-            action['labels'] = self.lastY
+            answers = [ans['answer'] for ans in anno['answers']]
+            self.lastY = answers
+            if self.datatype.startswith('train'):
+                action['labels'] = answers
 
         # Submit for next example before returning
         self.submit_example_request()
@@ -184,15 +185,18 @@ class McTeacher(OeTeacher):
     """
 
     def act(self):
+        # parent class increments episode_idx after getting ex, so need to
+        # cache the episode_idx first
+        episode_idx = self.episode_idx
         action = super().act()
 
-        qa = self.ques['questions'][self.episode_idx]
+        qa = self.ques['questions'][episode_idx]
         multiple_choices = qa['multiple_choices']
 
         action['label_candidates'] = multiple_choices
 
         if not self.datatype.startswith('test'):
-            anno = self.annotation['annotations'][self.episode_idx]
+            anno = self.annotation['annotations'][episode_idx]
             self.lastY = [anno['multiple_choice_answer']]
 
         if self.datatype.startswith('train'):
@@ -208,15 +212,18 @@ class AllTeacher(OeTeacher):
     """
 
     def act(self):
+        # parent class increments episode_idx after getting ex, so need to
+        # cache the episode_idx first
+        episode_idx = self.episode_idx
         action = super().act()
 
-        qa = self.ques['questions'][self.episode_idx]
+        qa = self.ques['questions'][episode_idx]
         multiple_choices = qa['multiple_choices']
 
         action['label_candidates'] = multiple_choices
 
         if not self.datatype.startswith('test'):
-            anno = self.annotation['annotations'][self.episode_idx]
+            anno = self.annotation['annotations'][episode_idx]
             self.mclabel = [anno['multiple_choice_answer']]
 
         if self.datatype.startswith('train'):
