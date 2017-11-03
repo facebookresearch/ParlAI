@@ -7,11 +7,50 @@ import parlai.core.build_data as build_data
 
 import os
 import copy
-import numpy as np
+import h5py
 from PIL import Image
-from functools import lru_cache
+from functools import wraps
+from threading import Lock, Condition
 
 _greyscale = '  .,:;crsA23hHG#98&@'
+_cache_size = 84000
+
+def first_n_cache(function):
+    cache = {}
+    cache_monitor = CacheMonitor()
+
+    @wraps(function)
+    def wrapper(*args):
+        path = args[1]
+        if path in cache:
+            return cache[path]
+        else:
+            img = function(*args)
+            if img is not None and len(cache) < _cache_size:
+                cache_monitor.waitForCache()
+                cache[path] = img
+                cache_monitor.doneWithCache()
+            return img
+    return wrapper
+
+
+class CacheMonitor():
+    def __init__(self):
+        self.cache_lock = Lock()
+        self.cache_available = Condition(self.cache_lock)
+        self.cache_busy = False
+
+    def waitForCache(self):
+        with self.cache_lock:
+            while self.cache_busy:
+                self.cache_available.wait()
+            self.cache_busy = True
+
+    def doneWithCache(self):
+        with self.cache_lock:
+            self.cache_busy = False
+            self.cache_available.notify_all()
+
 
 class ImageLoader():
     """Extract image feature using pretrained CNN network.
@@ -19,6 +58,9 @@ class ImageLoader():
     def __init__(self, opt):
         self.opt = copy.deepcopy(opt)
         self.netCNN = None
+        im = opt['image_mode']
+        if im is not None and im not in ['none', 'raw', 'ascii']:
+            self.init_cnn()
 
     def init_cnn(self):
         """Lazy initialization of preprocessor model in case we don't need any image preprocessing."""
@@ -37,12 +79,12 @@ class ImageLoader():
         self.datatype = opt['datatype']
         self.image_mode = opt['image_mode']
 
-        opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()
+        opt['cuda'] = not opt.get('no_cuda', False) and torch.cuda.is_available()
         self.use_cuda = opt['cuda']
 
         if self.use_cuda:
             print('[ Using CUDA ]')
-            torch.cuda.set_device(opt['gpu'])
+            torch.cuda.set_device(opt.get('gpu', 0))
 
         cnn_type, layer_num = self.image_mode_switcher()
 
@@ -75,7 +117,10 @@ class ImageLoader():
         self.netCNN.cuda()
 
     def save(self, feature, path):
-        np.save(path, feature)
+        with open(path, 'w'):
+            hdf5_file = h5py.File(path, 'w')
+            hdf5_file.create_dataset('feature', data=feature)
+            hdf5_file.close()
 
     def image_mode_switcher(self):
         switcher = {
@@ -122,7 +167,7 @@ class ImageLoader():
             asc.append('\n')
         return ''.join(asc)
 
-    @lru_cache(maxsize=None)
+    @first_n_cache
     def load(self, path):
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
@@ -145,10 +190,13 @@ class ImageLoader():
                 build_data.make_dir(dpath)
 
             imagefn = imagefn.split('.')[0]
-            imagefn = imagefn + '.npy'
+            imagefn = imagefn + '.hdf5'
             new_path = os.path.join(prepath, mode, imagefn)
 
             if not os.path.isfile(new_path):
                 return self.extract(Image.open(path).convert('RGB'), new_path)
             else:
-                return np.load(new_path)
+                with open(new_path):
+                    hdf5_file = h5py.File(new_path, 'r')
+                    feature = hdf5_file['feature'][0]
+                return feature
