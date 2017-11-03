@@ -51,11 +51,12 @@ class DefaultTeacher(DialogTeacher):
 
         for line in open(path, 'r'):
             ques = json.loads(line)
-            # episode done if first question or image changed
-            # new_episode = ques['identifier'] != image_file
 
             image_path = os.path.join(self.images_path, ques['directory'])
             image_file_names = glob.glob(image_path+'/'+ self.dt+'-'+ques['identifier']+'*')
+
+            # episode done if first question or image changed
+            # new_episode = ques['identifier'] != image_file
 
             # only show image at beginning of episode
             # image_file = ques['image_filename']
