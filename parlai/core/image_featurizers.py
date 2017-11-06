@@ -198,5 +198,5 @@ class ImageLoader():
             else:
                 with open(new_path):
                     hdf5_file = h5py.File(new_path, 'r')
-                    feature = hdf5_file['feature'][0]
+                    feature = hdf5_file['feature'].value
                 return feature
