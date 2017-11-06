@@ -55,14 +55,6 @@ class DefaultTeacher(DialogTeacher):
             image_path = os.path.join(self.images_path, ques['directory'])
             image_file_names = glob.glob(image_path+'/'+ self.dt+'-'+ques['identifier']+'*')
 
-            # episode done if first question or image changed
-            # new_episode = ques['identifier'] != image_file
-
-            # only show image at beginning of episode
-            # image_file = ques['image_filename']
-            # if new_episode:
-            #     image_path = os.path.join(self.images_path, ques['directory'])
-            #     image_file_names = glob.glob(image_path, self.dt+'-'+ques['identifier']+'*')
             question = ques['sentence']
             answer = [ques['label']] if self.dt != 'test' else None
             # print( answer)
