@@ -8,6 +8,7 @@ from .agents import Teacher
 
 import random
 
+
 class FixedDataTeacher(Teacher):
     """A teacher agent for all teachers invovled in tasks with fixed data.
 
@@ -15,7 +16,7 @@ class FixedDataTeacher(Teacher):
 
     - Resets a teacher
     - Provides an observe method
-    - Computes and retrieves the next action for a teacher
+    - Computes and retrieves the next episdoe index for a teacher
     - TODO Provides a threadpool option for loading data (especially useful for
       large examples, e.g. images)
 
@@ -30,7 +31,6 @@ class FixedDataTeacher(Teacher):
         # size so they all process disparate sets of the data
         self.step_size = opt.get('batchsize', 1)
         self.data_offset = opt.get('batchindex', 0)
-
 
     def __len__(self):
         return len(self.examples)
