@@ -4,15 +4,14 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from .agents import Teacher
+from .fixed_data_teacher import FixedDataTeacher
 
 from .image_featurizers import ImageLoader
-import random
 import sys
 import time
 
 
-class DialogTeacher(Teacher):
+class DialogTeacher(FixedDataTeacher):
     """A base teacher class for doing dialog with fixed chat logs.
 
     This class provides a set a basic functionality:
@@ -38,12 +37,10 @@ class DialogTeacher(Teacher):
 
         super().__init__(opt, shared)
 
-        self.datatype = opt['datatype']
         self.startTime = time.time()
         self.stream = 'stream' in opt['datatype'].split(':')
 
         # first initialize any shared objects
-        self.random = self.datatype == 'train'
         data_class = StreamDialogData if self.stream else DialogData
         kwargs = {'cycle': 'train' in self.datatype} if self.stream else {}
         if shared and shared.get('data'):
@@ -52,27 +49,15 @@ class DialogTeacher(Teacher):
             self.data = data_class(opt, data_loader=self.setup_data,
                     cands=self.label_candidates(), **kwargs)
 
-        # for ordered data in batch mode (especially, for validation and
-        # testing), each teacher in the batch gets a start index and a step
-        # size so they all process disparate sets of the data
-        self.step_size = opt.get('batchsize', 1)
-        self.data_offset = opt.get('batchindex', 0)
-
         self.reset()
 
     def reset(self):
         # Reset the dialog so that it is at the start of the epoch,
         # and all metrics are reset.
-        self.metrics.clear()
-        self.lastY = None
-        self.episode_idx = self.data_offset - self.step_size
+        super().reset()
         self.episode_done = True
-        self.epochDone = False
         if self.stream:
             self.data.reset()
-        elif not self.random and self.data_offset >= self.data.num_episodes():
-            # could have bigger batchsize then episodes... so nothing to do
-            self.epochDone = True
 
     def __len__(self):
         return len(self.data)
@@ -96,37 +81,21 @@ class DialogTeacher(Teacher):
         """
         return None
 
-    def observe(self, observation):
-        """Process observation for metrics."""
-        if self.lastY is not None:
-            self.metrics.update(observation, self.lastY)
-            self.lastY = None
-        return observation
-
     def next_example(self):
         num_eps = self.data.num_episodes()
         if not self.stream:
             if self.episode_done:
-                if self.random:
-                    # select random episode
-                    self.episode_idx = random.randrange(num_eps)
-                else:
-                    # select next episode
-                    self.episode_idx = (self.episode_idx + self.step_size) % num_eps
+                self.episode_idx, self.epochDone = self.next_episode_idx(num_eps=num_eps)
                 self.entry_idx = 0
             else:
                 self.entry_idx += 1
             action, epoch_done = self.data.get(self.episode_idx, self.entry_idx)
         else:
             action, epoch_done = self.data.get()
-
-        if self.random:
-            epoch_done = False
-        elif (self.episode_idx + self.step_size >= num_eps and
-                action['episode_done'] and not self.stream):
+        if not self.random and action['episode_done'] and not self.stream:
             # this is used for ordered data to check whether there's more data
             epoch_done = True
-        return action, epoch_done
+        return action, self.epochDone or epoch_done
 
     def act(self):
         """Send new dialog message."""
@@ -141,10 +110,6 @@ class DialogTeacher(Teacher):
             # but this way the model can use the labels for perplexity or loss
             action['eval_labels'] = action.pop('labels')
         return action
-
-    # Return transformed metrics showing total examples and accuracy if avail.
-    def report(self):
-        return self.metrics.report()
 
 
 class DialogData(object):

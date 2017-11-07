@@ -4,12 +4,11 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.agents import Teacher
+from parlai.core.fixed_data_teacher import FixedDataTeacher
 from parlai.core.image_featurizers import ImageLoader
 from .build import build, buildImage
 
 import json
-import random
 import os
 from threading import Thread
 import queue
@@ -50,7 +49,6 @@ def _path(opt):
 class MasterLoader(Thread):
     def __init__(self, opt):
         Thread.__init__(self, daemon=True)
-        num_masters = opt.get('batchsize', 1)
         self.num_threads = opt.get('numthreads', 8)
         self.request_queue = queue.Queue()
 
@@ -65,14 +63,13 @@ class MasterLoader(Thread):
                 teacher.receive(future)
 
 
-class OeTeacher(Teacher):
+class OeTeacher(FixedDataTeacher):
     """
     VQA Open-Ended teacher, which loads the json vqa data and implements its
     own `act` method for interacting with student agent.
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.datatype = opt['datatype']
         data_path, annotation_path, self.image_path = _path(opt)
         self.image_mode = opt.get('image_mode', 'none')
 
@@ -88,28 +85,16 @@ class OeTeacher(Teacher):
             self.master_loader = MasterLoader(opt)
             self.master_loader.start()
 
-        # for ordered data in batch mode (especially, for validation and
-        # testing), each teacher in the batch gets a start index and a step
-        # size so they all process disparate sets of the data
-        self.step_size = opt.get('batchsize', 1)
-        self.data_offset = opt.get('batchindex', 0)
         self.example_queue = queue.Queue()
         self.reset()
         if self.image_mode != 'none':
             self.submit_example_request()
 
-
     def __len__(self):
         return len(self.ques['questions'])
 
     def submit_example_request(self):
-        if self.datatype == 'train':
-            self.episode_idx = random.randrange(len(self))
-        else:
-            self.episode_idx = (self.episode_idx + self.step_size) % len(self)
-            if self.episode_idx == len(self) - self.step_size:
-                self.epochDone = True
-
+        self.episode_idx, self.epochDone = self.next_episode_idx()
         image_id = self.ques['questions'][self.episode_idx]['image_id']
         img_path = self.image_path + '%012d.jpg' % (image_id)
         self.master_loader.request_queue.put(
@@ -123,16 +108,7 @@ class OeTeacher(Teacher):
         # Reset the dialog so that it is at the start of the epoch,
         # and all metrics are reset.
         super().reset()
-        self.lastY = None
-        self.episode_idx = self.data_offset - self.step_size
         self.example_queue = queue.Queue()
-
-    def observe(self, observation):
-        """Process observation for metrics."""
-        if self.lastY is not None:
-            self.metrics.update(observation, self.lastY)
-            self.lastY = None
-        return observation
 
     def act(self):
         qa = self.ques['questions'][self.episode_idx]
