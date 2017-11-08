@@ -827,6 +827,8 @@ def create_task(opt, user_agents):
     # Single threaded or hogwild task creation (the latter creates multiple threads).
     # Check datatype for train, because we need to do single-threaded for
     # valid and test in order to guarantee exactly one epoch of training.
+    # If batchsize > 1, default to BatchWorld, as numthreads can be used for
+    # multithreading in batch mode, e.g. multithreaded data loading
     if opt.get('numthreads', 1) == 1 or 'train' not in opt['datatype'] or opt.get('batchsize', 1) > 1:
         if ',' not in opt['task']:
             # Single task

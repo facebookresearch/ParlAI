@@ -170,7 +170,9 @@ class ParlaiParser(argparse.ArgumentParser):
                  'to skip image loading.')
         parlai.add_argument(
             '-nt', '--numthreads', default=1, type=int,
-            help='number of threads, e.g. for hogwild')
+            help='number of threads. If batchsize set to 1, used for hogwild; '
+                 'otherwise, used for number of threads in threadpool loading, '
+                 'e.g. in vqa')
         parlai.add_argument(
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
