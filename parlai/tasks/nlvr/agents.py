@@ -40,6 +40,8 @@ class DefaultTeacher(DialogTeacher):
         opt['datafile'] = data_path
         self.id = 'nlvr'
         self.dt = opt['datatype'].split(':')[0]
+        if self.dt=='valid':
+            self.dt='dev'
 
         super().__init__(opt, shared)
 
