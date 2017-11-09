@@ -85,7 +85,7 @@ class DialogTeacher(FixedDataTeacher):
         num_eps = self.data.num_episodes()
         if not self.stream:
             if self.episode_done:
-                self.episode_idx, self.epochDone = self.next_episode_idx(num_eps=num_eps)
+                self.episode_idx, epoch_done = self.next_episode_idx(num_eps=num_eps)
                 self.entry_idx = 0
             else:
                 self.entry_idx += 1
@@ -95,7 +95,7 @@ class DialogTeacher(FixedDataTeacher):
         if not self.random and action['episode_done'] and not self.stream:
             # this is used for ordered data to check whether there's more data
             epoch_done = True
-        return action, self.epochDone or epoch_done
+        return action, epoch_done
 
     def act(self):
         """Send new dialog message."""
