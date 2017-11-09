@@ -43,6 +43,7 @@ class DialogTeacher(Teacher):
         self.stream = 'stream' in opt['datatype'].split(':')
 
         # first initialize any shared objects
+        self.training = self.datatype.startswith('train')
         self.random = self.datatype == 'train'
         data_class = StreamDialogData if self.stream else DialogData
         kwargs = {'cycle': 'train' in self.datatype} if self.stream else {}
@@ -130,7 +131,7 @@ class DialogTeacher(Teacher):
 
     def act(self):
         """Send new dialog message."""
-        if self.epochDone:
+        if self.epochDone and not self.training:
             return {'episode_done': True}
         action, self.epochDone = self.next_example()
         self.episode_done = action['episode_done']

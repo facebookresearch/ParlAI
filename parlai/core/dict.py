@@ -170,7 +170,6 @@ class DictionaryAgent(Agent):
         except LookupError:
             nltk.download('punkt')
             self.sent_tok = nltk.data.load(st_path)
-
         self.word_tok = nltk.tokenize.treebank.TreebankWordTokenizer()
 
         if not shared:
@@ -234,15 +233,31 @@ class DictionaryAgent(Agent):
     def freqs(self):
         return self.freq
 
-    def _sent_tokenize(self, text, building=False):
-        """Uses nltk-trained PunktTokenizer for sentence tokenization"""
-        return self.sent_tok.tokenize(text)
-
-    def _word_tokenize(self, text, building=False):
-        """Uses nltk Treebank Word Tokenizer for tokenizing words within
-        sentences.
+    def nltk_tokenize(self, text, building=False):
+        """Uses nltk-trained PunktTokenizer for sentence tokenization and
+        Treebank Word Tokenizer for tokenizing words within sentences.
         """
-        word_tokens = self.word_tok.tokenize(text)
+
+        return (token for sent in self.sent_tok.tokenize(text)
+                for token in self.word_tok.tokenize(sent))
+
+    def split_tokenize(self, text):
+        """Splits tokens based on whitespace after adding whitespace around
+        punctuation.
+        """
+        return (text.replace('.', ' . ').replace(',', ' , ')
+                .replace('!', ' ! ').replace('?', ' ? ')
+                .replace('. . .', '...').split())
+
+    def tokenize(self, text, tokenizer='split', building=False):
+        """Returns a sequence of tokens from the iterable."""
+        if tokenizer == 'split':
+            word_tokens = self.split_tokenize(text)
+        elif tokenizer == 'nltk':
+            word_tokens = self.nltk_tokenize(text)
+        else:
+            raise RuntimeError(
+                'tokenizer type {} not yet supported'.format(tokenizer))
 
         if not building and self.max_ngram_size > 1:
             # search for ngrams during parse-time
@@ -250,11 +265,6 @@ class DictionaryAgent(Agent):
             word_tokens = find_ngrams(self.tok2ind, word_tokens,
                                       self.max_ngram_size)
         return word_tokens
-
-    def tokenize(self, text, building=False):
-        """Returns a sequence of tokens from the iterable."""
-        return (token for sent in self._sent_tokenize(text, building)
-                for token in self._word_tokenize(sent, building))
 
     def add_to_dict(self, tokens):
         """ Builds dictionary from the list of provided tokens."""

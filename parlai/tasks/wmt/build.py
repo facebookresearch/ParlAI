@@ -21,10 +21,10 @@ def readFiles(dpath, rfnames):
     with open(os.path.join(dpath, en_fname), 'r') as f:
         # We replace '##AT##-##AT##' as a workaround in order to use the
         # nltk tokenizer specified by DictionaryAgent
-        en = [l[:-1].replace("##AT##-##AT##", "__AT__") for l in f]
+        en = [l[:-1].replace('##AT##-##AT##', '__AT__') for l in f]
 
     with open(os.path.join(dpath, de_fname), 'r') as f:
-        de = [l[:-1].replace("##AT##-##AT##", "__AT__") for l in f]
+        de = [l[:-1].replace('##AT##-##AT##', '__AT__') for l in f]
 
     return list(zip(de, en))
 
@@ -52,15 +52,15 @@ def build(opt):
         numpy.random.shuffle(train_zip)
         with open(os.path.join(dpath, valid_w_fname), 'w') as f:
             for de_sent, en_sent in train_zip[:30000]:
-                f.write("1 "+en_sent+"\t"+de_sent+"\n")
+                f.write('1 '+en_sent+'\t'+de_sent+'\n')
         with open(os.path.join(dpath, train_w_fname), 'w') as f:
             for de_sent, en_sent in train_zip[30000:]:
-                f.write("1 "+en_sent+"\t"+de_sent+"\n")
+                f.write('1 '+en_sent+'\t'+de_sent+'\n')
 
         test_zip = readFiles(dpath, test_r_fnames)
         with open(os.path.join(dpath, test_w_fname), 'w') as f:
             for de_sent, en_sent in test_zip:
-                f.write("1 "+en_sent+"\t"+de_sent+"\n")
+                f.write('1 '+en_sent+'\t'+de_sent+'\n')
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

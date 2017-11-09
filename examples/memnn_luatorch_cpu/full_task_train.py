@@ -17,10 +17,8 @@ from parlai.agents.remote_agent.remote_agent import ParsedRemoteAgent
 from parlai.core.worlds import create_task
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
-from parlai.core.worlds import DialogPartnerWorld, HogwildWorld
 
 import copy
-import math
 import os
 import sys
 import time
@@ -82,8 +80,8 @@ def main():
     opt['datatype'] = 'train'
     agent = ParsedRemoteAgent(opt, {'dictionary_shared': dictionary.share()})
     world_train = create_task(opt, agent)
-    opt['datatype'] = 'valid'
-    world_valid = create_task(opt, agent)
+    # opt['datatype'] = 'valid'
+    # world_valid = create_task(opt, agent)
 
     start = time.time()
     with world_train:
@@ -93,22 +91,22 @@ def main():
                 world_train.parley()
             world_train.synchronize()
 
-            print('[ validating ]')
-            world_valid.reset()
-            for _ in world_valid:  # check valid accuracy
-                world_valid.parley()
-
-            print('[ validation summary. ]')
-            report_valid = world_valid.report()
-            print(report_valid)
-            if report_valid['accuracy'] > 0.95:
-                break
+            # print('[ validating ]')
+            # world_valid.reset()
+            # for _ in world_valid:  # check valid accuracy
+            #     world_valid.parley()
+            #
+            # print('[ validation summary. ]')
+            # report_valid = world_valid.report()
+            # print(report_valid)
+            # if report_valid['accuracy'] > 0.95:
+            #     break
 
         # show some example dialogs after training:
-        world_valid = create_task(opt, agent)
-        for _k in range(3):
-            world_valid.parley()
-            print(world_valid.display())
+        # world_valid = create_task(opt, agent)
+        # for _k in range(3):
+        #     world_valid.parley()
+        #     print(world_valid.display())
 
     print('finished in {} s'.format(round(time.time() - start, 2)))
 

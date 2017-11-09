@@ -277,6 +277,13 @@ task_list = [
         "description": "Workshop on Machine Translation task, currently only includes en_de."
     },
     {
+        "id": "IWSLT14",
+        "display_name": "IWSLT14",
+        "task": "iwslt14",
+        "tags": ["All", "MT"],
+        "description": "2014 International Workshop on Spoken Language task, currently only includes en_de and de_en. From Cettolo et al. '12. Link: wit3.fbk.eu"
+    },
+    {
         "id": "ConvAI_ChitChat",
         "display_name": "ConvAI_ChitChat",
         "task": "convai_chitchat",
