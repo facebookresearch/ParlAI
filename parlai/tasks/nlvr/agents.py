@@ -57,7 +57,7 @@ class DefaultTeacher(DialogTeacher):
             image_path = os.path.join(self.images_path, ques['directory'])
             image_file_names = glob.glob(image_path+'/'+ self.dt+'-'+ques['identifier']+'*')
 
-            question = ques['sentence']
+            question = "True or False: " + ques['sentence']
             answer = [ques['label']] if self.dt != 'test' else None
             # print( answer)
             yield (question, answer, None, None, image_file_names[0]), True
