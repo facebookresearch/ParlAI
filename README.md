@@ -11,7 +11,7 @@ Its goal is to provide researchers:
 
 Over 20 [tasks](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) are currently supported, including popular datasets such as [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MS MARCO](http://www.msmarco.org/), [MCTest](https://www.microsoft.com/en-us/research/publication/mctest-challenge-dataset-open-domain-machine-comprehension-text/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [WebQuestions](http://www.aclweb.org/anthology/D13-1160), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialog tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialog](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html), [VQA-COCO2014](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/). See [here](http://www.parl.ai/static/docs/tasks.html#) for the current complete task list.
 
-Included are examples of training neural models with [PyTorch](http://pytorch.org/) and [Lua Torch](http://torch.ch/), with batch training on GPU or hogwild training on CPUs. Using [Theano](http://deeplearning.net/software/theano/) or [Tensorflow](https://www.tensorflow.org/) instead is also straightforward.
+Included are examples of training neural models with [PyTorch](http://pytorch.org/) and [Lua Torch](http://torch.ch/), with batch training on GPU or hogwild training on CPUs. Using [Tensorflow](https://www.tensorflow.org/) instead is also straightforward.
 
 Our aim is for the number of tasks and agents that train on them to grow in a community-based way.
 
@@ -21,8 +21,6 @@ ParlAI is described in the following paper:
 
 We are in an early-release Beta. Expect some adventures and rough edges.<br>
 See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates, and the website [http://parl.ai](http://parl.ai) for further docs.
-
-Please also note there is a [ParlAI Request For Proposals funding university teams, 7 awards are available - deadline Aug 25.](https://research.fb.com/programs/research-awards/proposals/parlai/)
 
 ## Goals
 
@@ -298,9 +296,9 @@ Please see [the MTurk tutorial](http://parl.ai/static/docs/mturk.html) to learn 
 If you have any questions, bug reports or feature requests, please don't hesitate to post on our [Github Issues page](https://github.com/facebookresearch/ParlAI/issues).
 
 ## The Team
-ParlAI is currently maintained by Alexander H. Miller, Jack Urbanek and Jason Weston.
+ParlAI is currently maintained by Alexander H. Miller, Kurt Shuster, Jack Urbanek and Jason Weston.
 A non-exhaustive list of other major contributors includes:
-Will Feng, Adam Fisch,  Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra,
+Will Feng, Adam Fisch, Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra,
 Filipe de Avila Belbute Peres and Chao Pan.
 
 ## Citation
