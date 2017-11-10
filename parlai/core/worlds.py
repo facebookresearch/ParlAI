@@ -541,6 +541,7 @@ class BatchWorld(World):
             override_opts_in_shared(shared, {'batchindex': i})
             self.worlds.append(shared['world_class'](opt, None, shared))
         self.batch_observations = [None] * len(self.world.get_agents())
+        self.first_batch = None
 
     def __iter__(self):
         return self
@@ -568,25 +569,25 @@ class BatchWorld(World):
             batch_observations.append(observation)
         return batch_observations
 
-    def batch_act(self, index, batch_observation):
+    def batch_act(self, agent_idx, batch_observation):
         # Given batch observation, do update for agents[index].
         # Call update on agent
-        a = self.world.get_agents()[index]
+        a = self.world.get_agents()[agent_idx]
         if (batch_observation is not None and len(batch_observation) > 0 and
                 hasattr(a, 'batch_act')):
             batch_actions = a.batch_act(batch_observation)
             # Store the actions locally in each world.
             for i, w in enumerate(self.worlds):
                 acts = w.get_acts()
-                acts[index] = batch_actions[i]
+                acts[agent_idx] = batch_actions[i]
         else:
             # Reverts to running on each individually.
             batch_actions = []
             for w in self.worlds:
                 agents = w.get_agents()
                 acts = w.get_acts()
-                acts[index] = agents[index].act()
-                batch_actions.append(acts[index])
+                acts[agent_idx] = agents[agent_idx].act()
+                batch_actions.append(acts[agent_idx])
         return batch_actions
 
     def parley(self):
@@ -599,16 +600,16 @@ class BatchWorld(World):
             if hasattr(w, 'parley_init'):
                 w.parley_init()
 
-        for index in range(num_agents):
+        for agent_idx in range(num_agents):
             # The agent acts.
-            batch_act = self.batch_act(index, batch_observations[index])
+            batch_act = self.batch_act(agent_idx, batch_observations[agent_idx])
             # We possibly execute this action in the world.
             for i, w in enumerate(self.worlds):
                 if hasattr(w, 'execute'):
                     w.execute(w.agents[i], batch_act[i])
             # All agents (might) observe the results.
             for other_index in range(num_agents):
-                obs = self.batch_observe(other_index, batch_act, index)
+                obs = self.batch_observe(other_index, batch_act, agent_idx)
                 if obs is not None:
                     batch_observations[other_index] = obs
 

@@ -7,7 +7,11 @@
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 
-from fairseq import models
+try:
+    from fairseq import models
+except ImportError:
+    raise RuntimeError('Please install fairseq from '
+                       'github.com/facebookresearch/fairseq-py/')
 from fairseq.models import fconv
 from fairseq.multiprocessing_trainer import MultiprocessingTrainer
 from fairseq import criterions
@@ -16,9 +20,12 @@ from fairseq.sequence_generator import SequenceGenerator
 from fairseq import options
 
 from torch.autograd import Variable
-import torch
-import random
+
+from collections import deque
 import argparse
+import numpy as np
+import random
+import torch
 import os
 
 
@@ -51,6 +58,13 @@ class FairseqAgent(Agent):
         """Add command-line arguments specifically for this agent."""
         DictionaryAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Fairseq Arguments')
+        agent.add_argument(
+            '-tr', '--truncate',
+            type=int, default=-1,
+            help='truncate input & output lengths to speed up training (may '
+                 'reduce accuracy). This fixes all input and output to have a '
+                 'maximum length. This reduces the total amount of padding in '
+                 'the batches.')
         agent.add_argument(
             '--max-positions',
             default=1024,
@@ -85,8 +99,11 @@ class FairseqAgent(Agent):
             self.args = OptWrapper(opt)
             self.fairseq_dict = _make_fairseq_dict(DictionaryAgent(opt))
             self.id = 'Fairseq'
+            self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
 
             self.EOS = self.fairseq_dict[self.fairseq_dict.eos()]
+            self.EOS_TENSOR = (torch.LongTensor(1, 1)
+                               .fill_(self.fairseq_dict.eos()))
             self.NULL_IDX = self.fairseq_dict.pad()
 
             encoder = fconv.Encoder(
@@ -116,7 +133,6 @@ class FairseqAgent(Agent):
             self.trainer = MultiprocessingTrainer(self.args, self.model, self.criterion)
             if saved_state is not None:
                 self.set_states(saved_state)
-
         self.reset()
 
     def _override_opt(self, new_opt):
@@ -177,23 +193,34 @@ class FairseqAgent(Agent):
         # valid_inds tells us the indices of all valid examples
         # e.g. for input [{}, {'text': 'hello'}, {}, {}], valid_inds is [1]
         # since the other three elements had no 'text' field
-        xs, ys, valid_inds = self.batchify(observations)
 
-        if len(xs) == 0:
+        # also, split observations into sub-batches based on number of gpus
+        obs_split = np.array_split(observations, self.trainer.num_replicas)
+        samples = [self.batchify(obs) for obs in obs_split]
+        samples = [s for s in samples if s[0] is not None]
+        any_valid = any(len(s[0]) > 0 for s in samples)
+
+        if not any_valid:
             # no valid examples, just return the empty responses we set up
             return batch_reply
 
         # produce predictions if testing; otherwise, train
+        has_targets = any(s[1] is not None for s in samples)
+        if not has_targets:
+            offset = 0
+            for s in samples:
+                xs = s[0]
+                valid_inds = s[2]
 
-        if ys is None:
-            predictions = self._generate(self.args, xs)
-            for i in range(len(predictions)):
-                # map the predictions back to non-empty examples in the batch
-                batch_reply[valid_inds[i]]['text'] = predictions[i]
-                if i == 0:
-                    print('prediction:', predictions[i])
+                predictions = self._generate(self.args, xs)
+                for i in range(len(predictions)):
+                    # map the predictions back to non-empty examples in the batch
+                    batch_reply[valid_inds[i] + offset]['text'] = predictions[i]
+                    if i == 0:
+                        print('prediction:', predictions[i])
+                offset += len(valid_inds)
         else:
-            loss = self._train(xs, ys)
+            loss = self._train(samples)
             batch_reply[0]['metrics'] = {}
             for k, v in loss.items():
                 batch_reply[0]['metrics'][k] = v * batchsize
@@ -212,47 +239,44 @@ class FairseqAgent(Agent):
 
         # set up the input tensors
         batchsize = len(exs)
+        if batchsize == 0:
+            return None, None, None
         # tokenize the text
-        parsed = [self.parse(ex['text']) for ex in exs]
-        max_x_len = max([len(x) for x in parsed])
-        xs = torch.LongTensor(batchsize,
-                              max_x_len).fill_(self.fairseq_dict.pad())
-        # pack the data to the right side of the tensor for this model
-        for i, x in enumerate(parsed):
-            offset = max_x_len - len(x)
-            for j, idx in enumerate(x):
-                xs[i][j + offset] = idx
-        xs = xs.cuda(async=True)
+        parsed_x = [deque(maxlen=self.truncate) for _ in exs]
+        for dq, ex in zip(parsed_x, exs):
+            dq += self.parse(ex['text'])
+        # parsed = [self.parse(ex['text']) for ex in exs]
+        max_x_len = max((len(x) for x in parsed_x))
+        for x in parsed_x:
+            # left pad with zeros
+            x.extendleft([self.fairseq_dict.pad()] * (max_x_len - len(x)))
+        xs = torch.LongTensor(parsed_x)
+
         # set up the target tensors
         ys = None
         if 'labels' in exs[0]:
             # randomly select one of the labels to update on, if multiple
+            labels = [random.choice(ex.get('labels', [''])) for ex in exs]
+            parsed_y = [deque(maxlen=self.truncate) for _ in labels]
+            for dq, y in zip(parsed_y, labels):
+                dq.extendleft(reversed(self.parse(y)))
+            for y in parsed_y:
+                y.append(self.fairseq_dict.eos())
             # append EOS to each label
-            labels = [
-                random.choice(ex['labels']) + ' ' + self.EOS for ex in exs
-            ]
-            parsed = [self.parse(y) for y in labels]
-            max_y_len = max(len(y) for y in parsed)
-            ys = torch.LongTensor(batchsize,
-                                  max_y_len).fill_(self.fairseq_dict.pad())
-            for i, y in enumerate(parsed):
-                for j, idx in enumerate(y):
-                    ys[i][j] = idx
-            ys = ys.cuda(async=True)
+            max_y_len = max(len(y) for y in parsed_y)
+            for y in parsed_y:
+                y += [self.fairseq_dict.pad()] * (max_y_len - len(y))
+            ys = torch.LongTensor(parsed_y)
         return xs, ys, valid_inds
 
     def _positions_for_tokens(self, tokens):
-        start = self.fairseq_dict.pad() + 1
         size = tokens.size()
-        positions = torch.LongTensor(size).fill_(self.fairseq_dict.pad())
-        for i in range(size[0]):
-            nonpad = 0
-            for j in range(size[1]):
-                if (tokens[i][j] != self.fairseq_dict.pad()):
-                    positions[i][j] = start + nonpad
-                    nonpad += 1
-        positions = positions.cuda(async=True)
-        return positions
+        not_pad = tokens.ne(self.fairseq_dict.pad()).long()
+        new_pos = tokens.new(size).fill_(self.fairseq_dict.pad())
+        new_pos += not_pad
+        for i in range(1, size[1]):
+            new_pos[:, i] += new_pos[:, i-1] - 1
+        return new_pos
 
     def _right_shifted_ys(self, ys):
         result = torch.LongTensor(ys.size())
@@ -269,9 +293,10 @@ class FairseqAgent(Agent):
                 normalize_scores=(not opt.unnormalized),
                 len_penalty=opt.lenpen)
             self.translator.cuda()
-        tokens = src_tokens
+        tokens = src_tokens.cuda(async=True)
+        token_pos = self._positions_for_tokens(tokens).cuda(async=True)
         translations = self.translator.generate(
-            Variable(tokens), Variable(self._positions_for_tokens(tokens)))
+            Variable(tokens), Variable(token_pos))
         results = [t[0] for t in translations]
         output_lines = [[] for _ in range(len(results))]
         for i in range(len(results)):
@@ -279,15 +304,14 @@ class FairseqAgent(Agent):
                                        for idx in results[i]['tokens'][:-1])
         return output_lines
 
-    def _train(self, xs, ys=None):
-        """Produce a prediction from our model. Update the model using the
-        targets if available.
-        """
-        if ys is not None:
+    def _train(self, samples):
+        """Update the model using the targets."""
+        for i, sample in enumerate(samples):
+            # add extra info to samples
             sample = {
-                'src_tokens': xs,
-                'input_tokens': self._right_shifted_ys(ys),
-                'target': ys,
+                'src_tokens': sample[0],
+                'input_tokens': self._right_shifted_ys(sample[1]),
+                'target': sample[1],
                 'id': None
             }
             sample['ntokens'] = sum(len(t) for t in sample['target'])
@@ -295,7 +319,8 @@ class FairseqAgent(Agent):
                 sample['src_tokens'])
             sample['input_positions'] = self._positions_for_tokens(
                 sample['input_tokens'])
-            return self.trainer.train_step([sample])
+            samples[i] = sample
+        return self.trainer.train_step(samples)
 
     def save(self, path=None):
         path = self.opt.get('model_file', None) if path is None else path
