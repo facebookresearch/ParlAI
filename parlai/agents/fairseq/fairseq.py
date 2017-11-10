@@ -20,6 +20,8 @@ from fairseq.sequence_generator import SequenceGenerator
 from fairseq import options
 
 from torch.autograd import Variable
+
+from collections import deque
 import argparse
 import numpy as np
 import random
@@ -57,6 +59,13 @@ class FairseqAgent(Agent):
         DictionaryAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Fairseq Arguments')
         agent.add_argument(
+            '-tr', '--truncate',
+            type=int, default=-1,
+            help='truncate input & output lengths to speed up training (may '
+                 'reduce accuracy). This fixes all input and output to have a '
+                 'maximum length. This reduces the total amount of padding in '
+                 'the batches.')
+        agent.add_argument(
             '--max-positions',
             default=1024,
             type=int,
@@ -90,6 +99,7 @@ class FairseqAgent(Agent):
             self.args = OptWrapper(opt)
             self.fairseq_dict = _make_fairseq_dict(DictionaryAgent(opt))
             self.id = 'Fairseq'
+            self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
 
             self.EOS = self.fairseq_dict[self.fairseq_dict.eos()]
             self.EOS_TENSOR = (torch.LongTensor(1, 1)
@@ -232,24 +242,31 @@ class FairseqAgent(Agent):
         if batchsize == 0:
             return None, None, None
         # tokenize the text
-        parsed = [self.parse(ex['text']) for ex in exs]
-        max_x_len = max((len(x) for x in parsed))
-        # left-pad with zeros
-        xs = torch.LongTensor(
-            [[self.fairseq_dict.pad()] * (max_x_len - len(x) + x)
-             for x in parsed])
+        parsed_x = [deque(maxlen=self.truncate) for _ in exs]
+        for dq, ex in zip(parsed_x, exs):
+            dq += self.parse(ex['text'])
+        # parsed = [self.parse(ex['text']) for ex in exs]
+        max_x_len = max((len(x) for x in parsed_x))
+        for x in parsed_x:
+            # left pad with zeros
+            x.extendleft([self.fairseq_dict.pad()] * (max_x_len - len(x)))
+        xs = torch.LongTensor(parsed_x)
 
         # set up the target tensors
         ys = None
         if 'labels' in exs[0]:
             # randomly select one of the labels to update on, if multiple
-            # append EOS to each label
             labels = [random.choice(ex.get('labels', [''])) for ex in exs]
-            parsed = [self.parse(y) + [self.fairseq_dict.eos()] for y in labels]
-            max_y_len = max(len(y) for y in parsed)
-            ys = torch.LongTensor(
-                [y + [self.fairseq_dict.pad()] * (max_y_len - len(y))
-                 for y in parsed])
+            parsed_y = [deque(maxlen=self.truncate) for _ in labels]
+            for dq, y in zip(parsed_y, labels):
+                dq.extendleft(reversed(self.parse(y)))
+            for y in parsed_y:
+                y.append(self.fairseq_dict.eos())
+            # append EOS to each label
+            max_y_len = max(len(y) for y in parsed_y)
+            for y in parsed_y:
+                y += [self.fairseq_dict.pad()] * (max_y_len - len(y))
+            ys = torch.LongTensor(parsed_y)
         return xs, ys, valid_inds
 
     def _positions_for_tokens(self, tokens):
