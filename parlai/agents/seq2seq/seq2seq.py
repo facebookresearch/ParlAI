@@ -128,7 +128,7 @@ class Seq2seqAgent(Agent):
                            choices=['none', 'only', 'both'],
                            help='Enabled language modeling training on the '
                                 'concatenated input and label data.')
-        agent.add_argument('-hist', '--history-length', default=None, type=int,
+        agent.add_argument('-hist', '--history-length', default=-1, type=int,
                            help='Number of past utterances to remember. '
                                 'These include self-utterances. Default '
                                 'remembers entire episode history.')
@@ -138,8 +138,9 @@ class Seq2seqAgent(Agent):
         super().__init__(opt, shared)
 
         # all instances needs truncate param
-        self.truncate = opt['truncate']
-        self.history = deque(maxlen=opt['history_length'])
+        self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
+        self.history = deque(maxlen=(
+            opt['history_length'] if opt['history_length'] > 0 else None))
         if shared:
             # set up shared properties
             self.dict = shared['dict']
@@ -298,13 +299,12 @@ class Seq2seqAgent(Agent):
         """
         # shallow copy observation (deep copy can be expensive)
         observation = observation.copy()
-        tr = self.truncate if self.truncate > 0 else None
 
         if 'text' in observation:
             if observation['text'] == '':
                 observation.pop('text')
             else:
-                dialog = deque(maxlen=tr)
+                dialog = deque(maxlen=self.truncate)
                 if self.episode_done:
                     self.history.clear()
                 else:
@@ -313,7 +313,7 @@ class Seq2seqAgent(Agent):
                     if self.answers[batch_idx] is not None:
                         # use our last answer, which is the label during train
                         lastY = self.answers[batch_idx]
-                        y_utt = deque([self.START_IDX], maxlen=tr)
+                        y_utt = deque([self.START_IDX], maxlen=self.truncate)
                         y_utt.extend(lastY)
                         y_utt.append(self.END_IDX)
                         self.history.append(y_utt)
@@ -322,7 +322,7 @@ class Seq2seqAgent(Agent):
                     dialog += (tok for utt in self.history for tok in utt)
 
                 # put START and END around text
-                parsed_x = deque([self.START_IDX], maxlen=tr)
+                parsed_x = deque([self.START_IDX], maxlen=self.truncate)
                 parsed_x.extend(self.parse(observation['text']))
                 parsed_x.append(self.END_IDX)
                 # add curr x to history
@@ -410,7 +410,6 @@ class Seq2seqAgent(Agent):
             else:
                 xs = Variable(xs)
 
-        tr = self.truncate if self.truncate > 0 else None
         # set up the target tensors
         ys = None
         labels = None
@@ -418,7 +417,7 @@ class Seq2seqAgent(Agent):
             # randomly select one of the labels to update on, if multiple
             labels = [random.choice(ex.get('labels', [''])) for ex in exs]
             # parse each label and append END
-            parsed_y = [deque(maxlen=tr) for _ in labels]
+            parsed_y = [deque(maxlen=self.truncate) for _ in labels]
             for dq, y in zip(parsed_y, labels):
                 dq.extendleft(reversed(self.parse(y)))
             for y in parsed_y:
@@ -453,7 +452,7 @@ class Seq2seqAgent(Agent):
                     # each candidate tuple is a pair of the parsed version and
                     # the original full string
                     cs = list(observations[v]['label_candidates'])
-                    curr_dqs = [deque(maxlen=tr) for _ in cs]
+                    curr_dqs = [deque(maxlen=self.truncate) for _ in cs]
                     for dq, c in zip(curr_dqs, cs):
                         dq.extendleft(reversed(self.parse(c)))
                     parsed_cs.append(curr_dqs)
