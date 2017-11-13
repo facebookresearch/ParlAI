@@ -270,6 +270,13 @@ task_list = [
         "description": "A visual reasoning dataset that tests abilities such as attribute identification, counting, comparison, spatial relationships, and logical operations. From Johnson et al. '16. Link: https://arxiv.org/abs/1612.06890"
     },
     {
+        "id": "nlvr",
+        "display_name": "nlvr",
+        "task": "nlvr",
+        "tags": [ "All",  "Visual" ],
+        "description": "Cornell Natural Language Visual Reasoning (NLVR) is a language grounding dataset based on  pairs of natural language statements grounded in synthetic images. From Suhr et al. '17. Link: http://lic.nlp.cornell.edu/nlvr/"
+    },
+    {
         "id": "WMT",
         "display_name": "WMT",
         "task": "wmt",
