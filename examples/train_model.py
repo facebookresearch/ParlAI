@@ -134,10 +134,11 @@ def main(parser):
             parleys += 1
 
             if opt['num_epochs'] > 0 and parleys >= max_parleys:
-                print('[ num_epochs completed: {} ]'.format(opt['num_epochs']))
+                print('[ num_epochs completed:{}  time elapsed:{}s ]'.format(
+                    opt['num_epochs'], train_time.time()))
                 break
             if opt['max_train_time'] > 0 and train_time.time() > opt['max_train_time']:
-                print('[ max_train_time elapsed: {} ]'.format(train_time.time()))
+                print('[ max_train_time elapsed:{}s ]'.format(train_time.time()))
                 break
             if opt['log_every_n_secs'] > 0 and log_time.time() > opt['log_every_n_secs']:
                 if opt['display_examples']:

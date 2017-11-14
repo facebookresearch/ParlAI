@@ -17,10 +17,8 @@ from parlai.agents.remote_agent.remote_agent import ParsedRemoteAgent
 from parlai.core.worlds import create_task
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
-from parlai.core.worlds import DialogPartnerWorld, HogwildWorld
 
 import copy
-import math
 import os
 import sys
 import time
@@ -104,7 +102,7 @@ def main():
             if report_valid['accuracy'] > 0.95:
                 break
 
-        # show some example dialogs after training:
+        #show some example dialogs after training:
         world_valid = create_task(opt, agent)
         for _k in range(3):
             world_valid.parley()

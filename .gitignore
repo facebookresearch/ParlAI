@@ -114,3 +114,7 @@ heroku-cli-*
 # IntelliJ IDEA
 .idea
 *.iml
+
+# VSCode
+
+*.vscode

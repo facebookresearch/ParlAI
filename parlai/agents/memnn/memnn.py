@@ -177,6 +177,7 @@ class MemnnAgent(Agent):
         return scores
 
     def ranked_predictions(self, cands, scores):
+        # return [' '] * len(self.answers)
         _, inds = scores.data.sort(descending=True, dim=1)
         return [[cands[i][j] for j in r if j < len(cands[i])]
                     for i, r in enumerate(inds)]

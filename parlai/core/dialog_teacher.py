@@ -99,7 +99,7 @@ class DialogTeacher(FixedDataTeacher):
 
     def act(self):
         """Send new dialog message."""
-        if self.epochDone:
+        if self.epochDone and not self.training:
             return {'episode_done': True}
         action, self.epochDone = self.next_example()
         self.episode_done = action['episode_done']
