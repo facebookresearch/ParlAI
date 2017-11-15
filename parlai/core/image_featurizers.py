@@ -149,7 +149,6 @@ class ImageLoader():
         self.xs.data.copy_(self.transform(image))
         # extract the image feature
         feature = self.netCNN(self.xs)
-
         cpu_feature = feature.cpu().data.numpy()
         # save the feature
         self.save(cpu_feature, path)
