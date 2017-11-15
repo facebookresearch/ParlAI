@@ -75,7 +75,6 @@ class IndexTeacher(FixedDataTeacher):
         return action
 
     def _setup_data(self, path):
-        print('loading: ' + path)
         with open(path) as data_file:
             self.squad = json.load(data_file)['data']
         self.examples = []

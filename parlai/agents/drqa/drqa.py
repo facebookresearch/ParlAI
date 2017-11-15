@@ -21,10 +21,11 @@ try:
 except ModuleNotFoundError:
     raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
 
+import bisect
 import os
 import numpy as np
-import logging
 import copy
+import random
 try:
     import spacy
 except ModuleNotFoundError:
@@ -76,8 +77,10 @@ class SimpleDictionaryAgent(DictionaryAgent):
         return [t.text for t in tokens]
 
     def span_tokenize(self, text):
+        """Returns tuple of tokens, spans."""
         tokens = NLP.tokenizer(text)
-        return [(t.idx, t.idx + len(t.text)) for t in tokens]
+        return ([t.text for t in tokens],
+                [(t.idx, t.idx + len(t.text)) for t in tokens])
 
     def add_to_dict(self, tokens):
         """Builds dictionary from the list of provided tokens.
@@ -190,9 +193,8 @@ class DrqaAgent(Agent):
         ex = self._build_ex(self.observation)
         if ex is None:
             return reply
-        batch = batchify(
-            [ex], null=self.word_dict[self.word_dict.null_token], cuda=self.opt['cuda']
-        )
+        batch = batchify([ex], null=self.word_dict[self.word_dict.null_token],
+                         cuda=self.opt['cuda'])
 
         # Either train or predict
         if 'labels' in self.observation:
@@ -201,6 +203,7 @@ class DrqaAgent(Agent):
         else:
             reply['text'] = self.model.predict(batch)[0]
 
+        reply['metrics'] = {'train_loss': self.model.train_loss.avg}
         return reply
 
     def batch_act(self, observations):
@@ -223,9 +226,9 @@ class DrqaAgent(Agent):
             return batch_reply
 
         # Else, use what we have (hopefully everything).
-        batch = batchify(
-            examples, null=self.word_dict[self.word_dict.null_token], cuda=self.opt['cuda']
-        )
+        batch = batchify(examples,
+                         null=self.word_dict[self.word_dict.null_token],
+                         cuda=self.opt['cuda'])
 
         # Either train or predict
         if 'labels' in observations[0]:
@@ -236,6 +239,8 @@ class DrqaAgent(Agent):
             for i in range(len(predictions)):
                 batch_reply[valid_inds[i]]['text'] = predictions[i]
 
+        batch_reply[0]['metrics'] = {
+            'train_loss': self.model.train_loss.avg * batchsize}
         return batch_reply
 
     def save(self, fname=None):
@@ -254,7 +259,7 @@ class DrqaAgent(Agent):
         If a token span cannot be found, return None. Otherwise, torchify.
         """
         # Check if empty input (end of epoch)
-        if not 'text' in ex:
+        if 'text' not in ex:
             return
 
         # Split out document + question
@@ -266,15 +271,28 @@ class DrqaAgent(Agent):
             raise RuntimeError('Invalid input. Is task a QA task?')
 
         document, question = ' '.join(fields[:-1]), fields[-1]
-        inputs['document'] = self.word_dict.tokenize(document)
+        inputs['document'], doc_spans = self.word_dict.span_tokenize(document)
         inputs['question'] = self.word_dict.tokenize(question)
         inputs['target'] = None
 
         # Find targets (if labels provided).
         # Return if we were unable to find an answer.
         if 'labels' in ex:
-            inputs['target'] = self._find_target(inputs['document'],
-                                                 ex['labels'])
+            if 'answer_starts' in ex:
+                # randomly sort labels and keep the first match
+                labels_with_inds = list(zip(ex['labels'], ex['answer_starts']))
+                random.shuffle(labels_with_inds)
+                for ans, ch_idx in labels_with_inds:
+                    # try to find an answer_start matching a tokenized answer
+                    start_idx = bisect.bisect_left(
+                        list(x[0] for x in doc_spans), ch_idx)
+                    end_idx = start_idx + len(self.word_dict.tokenize(ans)) - 1
+                    if end_idx < len(doc_spans):
+                        inputs['target'] = (start_idx, end_idx)
+                        break
+            else:
+                inputs['target'] = self._find_target(inputs['document'],
+                                                     ex['labels'])
             if inputs['target'] is None:
                 return
 
@@ -282,7 +300,7 @@ class DrqaAgent(Agent):
         inputs = vectorize(self.opt, inputs, self.word_dict, self.feature_dict)
 
         # Return inputs with original text + spans (keep for prediction)
-        return inputs + (document, self.word_dict.span_tokenize(document))
+        return inputs + (document, doc_spans)
 
     def _find_target(self, document, labels):
         """Find the start/end token span for all labels in document.
@@ -299,9 +317,3 @@ class DrqaAgent(Agent):
         if len(targets) == 0:
             return
         return targets[np.random.choice(len(targets))]
-
-    def report(self):
-        return (
-            '[train] updates = %d | train loss = %.2f | exs = %d' %
-            (self.model.updates, self.model.train_loss.avg, self.n_examples)
-            )
