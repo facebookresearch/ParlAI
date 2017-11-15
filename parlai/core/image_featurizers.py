@@ -11,6 +11,7 @@ import h5py
 from PIL import Image
 from functools import wraps
 from threading import Lock, Condition
+import torch
 
 _greyscale = '  .,:;crsA23hHG#98&@'
 _cache_size = 84000
@@ -57,6 +58,7 @@ class ImageLoader():
     """
     def __init__(self, opt):
         self.opt = copy.deepcopy(opt)
+        self.use_cuda = not opt.get('no_cuda', False) and torch.cuda.is_available()
         self.netCNN = None
         im = opt['image_mode']
         if im is not None and im not in ['none', 'raw', 'ascii']:
@@ -78,9 +80,6 @@ class ImageLoader():
         self.crop_size = opt['image_cropsize']
         self.datatype = opt['datatype']
         self.image_mode = opt['image_mode']
-
-        opt['cuda'] = not opt.get('no_cuda', False) and torch.cuda.is_available()
-        self.use_cuda = opt['cuda']
 
         if self.use_cuda:
             print('[ Using CUDA ]')
@@ -143,16 +142,21 @@ class ImageLoader():
         return switcher.get(self.image_mode)
 
     def extract(self, image, path):
-        # check whether initlize CNN network.
+        # check whether initialize CNN network.
         if not self.netCNN:
             self.init_cnn()
 
         self.xs.data.copy_(self.transform(image))
         # extract the image feature
         feature = self.netCNN(self.xs)
-        feature = feature.cpu().data.numpy()
+
+        cpu_feature = feature.cpu().data.numpy()
         # save the feature
-        self.save(feature, path)
+        self.save(cpu_feature, path)
+        if self.use_cuda:
+            feature = feature.data.cuda()
+        else:
+            feature = cpu_feature
         return feature
 
     def img_to_ascii(self, path):
@@ -167,7 +171,7 @@ class ImageLoader():
             asc.append('\n')
         return ''.join(asc)
 
-    @first_n_cache
+    # @first_n_cache
     def load(self, path):
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
@@ -199,4 +203,6 @@ class ImageLoader():
                 with open(new_path):
                     hdf5_file = h5py.File(new_path, 'r')
                     feature = hdf5_file['feature'].value
+                if self.use_cuda:
+                    feature = torch.from_numpy(feature).cuda(async=True)
                 return feature
