@@ -31,6 +31,7 @@ class FixedDataTeacher(Teacher):
         # size so they all process disparate sets of the data
         self.step_size = opt.get('batchsize', 1)
         self.data_offset = opt.get('batchindex', 0)
+        self.reset()
 
     def __len__(self):
         return len(self.examples)
@@ -45,8 +46,12 @@ class FixedDataTeacher(Teacher):
         self.episode_idx = self.data_offset - self.step_size
         self.episode_done = True
         self.epochDone = False
-        if (self.episode_idx + self.step_size > len(self) and not self.random):
-            self.epochDone = True
+        try:
+            if (self.episode_idx + self.step_size >= len(self) and not self.random):
+                self.epochDone = True
+        except AttributeError:
+            # The data has not been initalized, so len(self) fails
+            pass
 
     def observe(self, observation):
         """Process observation for metrics."""
@@ -60,9 +65,9 @@ class FixedDataTeacher(Teacher):
             num_eps = len(self)
         epoch_done = False
         if self.random:
-            episode_idx = random.randrange(num_eps)
+            self.episode_idx = random.randrange(num_eps)
         else:
-            episode_idx = (self.episode_idx + self.step_size) % num_eps
-            if episode_idx + self.step_size > num_eps:
+            self.episode_idx = (self.episode_idx + self.step_size) % num_eps
+            if self.episode_idx + self.step_size >= num_eps:
                 epoch_done = True
-        return episode_idx, epoch_done
+        return self.episode_idx, epoch_done
