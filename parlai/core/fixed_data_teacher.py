@@ -68,6 +68,6 @@ class FixedDataTeacher(Teacher):
             self.episode_idx = random.randrange(num_eps)
         else:
             self.episode_idx = (self.episode_idx + self.step_size) % num_eps
-            if self.episode_idx + self.step_size > num_eps:
+            if self.episode_idx + self.step_size >= num_eps:
                 epoch_done = True
         return self.episode_idx, epoch_done
