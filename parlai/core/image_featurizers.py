@@ -11,6 +11,7 @@ import h5py
 from PIL import Image
 from functools import wraps
 from threading import Lock, Condition
+import torch
 
 _greyscale = '  .,:;crsA23hHG#98&@'
 _cache_size = 84000
@@ -22,15 +23,18 @@ def first_n_cache(function):
     @wraps(function)
     def wrapper(*args):
         path = args[1]
+        loader = args[0]
         if path in cache:
-            return cache[path]
+            img = cache[path]
         else:
             img = function(*args)
             if img is not None and len(cache) < _cache_size:
                 cache_monitor.waitForCache()
                 cache[path] = img
                 cache_monitor.doneWithCache()
-            return img
+        if loader.use_cuda:
+            img = torch.from_numpy(img).cuda()
+        return img
     return wrapper
 
 
@@ -57,6 +61,7 @@ class ImageLoader():
     """
     def __init__(self, opt):
         self.opt = copy.deepcopy(opt)
+        self.use_cuda = not opt.get('no_cuda', False) and torch.cuda.is_available()
         self.netCNN = None
         im = opt['image_mode']
         if im is not None and im not in ['none', 'raw', 'ascii']:
@@ -78,9 +83,6 @@ class ImageLoader():
         self.crop_size = opt['image_cropsize']
         self.datatype = opt['datatype']
         self.image_mode = opt['image_mode']
-
-        opt['cuda'] = not opt.get('no_cuda', False) and torch.cuda.is_available()
-        self.use_cuda = opt['cuda']
 
         if self.use_cuda:
             print('[ Using CUDA ]')
@@ -143,7 +145,7 @@ class ImageLoader():
         return switcher.get(self.image_mode)
 
     def extract(self, image, path):
-        # check whether initlize CNN network.
+        # check whether initialize CNN network.
         if not self.netCNN:
             self.init_cnn()
 
