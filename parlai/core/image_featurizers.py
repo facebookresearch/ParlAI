@@ -23,15 +23,18 @@ def first_n_cache(function):
     @wraps(function)
     def wrapper(*args):
         path = args[1]
+        loader = args[0]
         if path in cache:
-            return cache[path]
+            img = cache[path]
         else:
             img = function(*args)
             if img is not None and len(cache) < _cache_size:
                 cache_monitor.waitForCache()
                 cache[path] = img
                 cache_monitor.doneWithCache()
-            return img
+        if loader.use_cuda:
+            img = torch.from_numpy(img).cuda()
+        return img
     return wrapper
 
 
@@ -149,13 +152,9 @@ class ImageLoader():
         self.xs.data.copy_(self.transform(image))
         # extract the image feature
         feature = self.netCNN(self.xs)
-        cpu_feature = feature.cpu().data.numpy()
+        feature = feature.cpu().data.numpy()
         # save the feature
-        self.save(cpu_feature, path)
-        if self.use_cuda:
-            feature = feature.data.cuda()
-        else:
-            feature = cpu_feature
+        self.save(feature, path)
         return feature
 
     def img_to_ascii(self, path):
@@ -170,7 +169,7 @@ class ImageLoader():
             asc.append('\n')
         return ''.join(asc)
 
-    # @first_n_cache
+    @first_n_cache
     def load(self, path):
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
@@ -202,6 +201,4 @@ class ImageLoader():
                 with open(new_path):
                     hdf5_file = h5py.File(new_path, 'r')
                     feature = hdf5_file['feature'].value
-                if self.use_cuda:
-                    feature = torch.from_numpy(feature).cuda()
                 return feature
