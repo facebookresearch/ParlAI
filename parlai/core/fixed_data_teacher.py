@@ -16,7 +16,7 @@ class FixedDataTeacher(Teacher):
 
     - Resets a teacher
     - Provides an observe method
-    - Computes and retrieves the next episdoe index for a teacher
+    - Computes and retrieves the next episode index for a teacher
     - TODO Provides a threadpool option for loading data (especially useful for
       large examples, e.g. images)
 
