@@ -10,7 +10,7 @@ import random
 
 
 class FixedDataTeacher(Teacher):
-    """A teacher agent for all teachers invovled in tasks with fixed data.
+    """A teacher agent for all teachers involved in tasks with fixed data.
 
     This class provides the following functionality for its subclasses:
 
