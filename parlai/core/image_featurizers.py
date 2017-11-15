@@ -203,5 +203,5 @@ class ImageLoader():
                     hdf5_file = h5py.File(new_path, 'r')
                     feature = hdf5_file['feature'].value
                 if self.use_cuda:
-                    feature = torch.from_numpy(feature).cuda(async=True)
+                    feature = torch.from_numpy(feature).cuda()
                 return feature
