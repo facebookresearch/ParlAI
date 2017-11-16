@@ -39,7 +39,7 @@ class IndexTeacher(FixedDataTeacher):
     # return state/action dict based upon passed state
     def act(self):
         """Send new dialog message."""
-        if self.epochDone:
+        if self.epochDone and self.training:
             return {'id': 'squad', 'episode_done': True}
 
         self.episode_idx, self.epochDone = self.next_episode_idx()
