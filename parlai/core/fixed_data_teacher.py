@@ -24,8 +24,12 @@ class FixedDataTeacher(Teacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
-        self.datatype = opt['datatype']
-        self.random = self.datatype == 'train'
+        if not hasattr(self, 'datatype'):
+            self.datatype = opt['datatype']
+        if not hasattr(self, 'random'):
+            self.random = self.datatype == 'train'
+        if not hasattr(self, 'training'):
+            self.training = self.datatype.startswith('train')
         # for ordered data in batch mode (especially, for validation and
         # testing), each teacher in the batch gets a start index and a step
         # size so they all process disparate sets of the data
