@@ -35,28 +35,26 @@ class DialogTeacher(FixedDataTeacher):
                                ' which implements it (e.g. FbDialogTeacher)' +
                                ' in order to use this class.')
 
-        super().__init__(opt, shared)
-
         self.startTime = time.time()
+        self.datatype = opt['datatype']
         self.training = self.datatype.startswith('train')
         self.stream = 'stream' in self.datatype.split(':')
 
         # first initialize any shared objects
         data_class = StreamDialogData if self.stream else DialogData
-        kwargs = {'cycle': 'train' in self.datatype} if self.stream else {}
+        kwargs = {'cycle': self.training} if self.stream else {}
         if shared and shared.get('data'):
             self.data = data_class(opt, shared=shared['data'], **kwargs)
         else:
             self.data = data_class(opt, data_loader=self.setup_data,
-                    cands=self.label_candidates(), **kwargs)
+                cands=self.label_candidates(), **kwargs)
 
-        self.reset()
+        super().__init__(opt, shared)
 
     def reset(self):
         # Reset the dialog so that it is at the start of the epoch,
         # and all metrics are reset.
         super().reset()
-        self.episode_done = True
         if self.stream:
             self.data.reset()
 
