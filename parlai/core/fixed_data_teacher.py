@@ -46,6 +46,7 @@ class FixedDataTeacher(Teacher):
         self.episode_idx = self.data_offset - self.step_size
         self.episode_done = True
         self.epochDone = False
+        self.stream = 'stream' in self.datatype.split(':')
         try:
             if (self.episode_idx + self.step_size >= len(self) and not self.random):
                 self.epochDone = True
