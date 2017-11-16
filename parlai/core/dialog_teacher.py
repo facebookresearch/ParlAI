@@ -38,7 +38,6 @@ class DialogTeacher(FixedDataTeacher):
         self.startTime = time.time()
         self.datatype = opt['datatype']
         self.training = self.datatype.startswith('train')
-        self.stream = 'stream' in self.datatype.split(':')
 
         # first initialize any shared objects
         data_class = StreamDialogData if self.stream else DialogData
