@@ -32,7 +32,7 @@ def first_n_cache(function):
                 cache_monitor.waitForCache()
                 cache[path] = img
                 cache_monitor.doneWithCache()
-        if loader.use_cuda:
+        if loader.use_cuda and loader.im not in [None, 'none', 'raw', 'ascii']:
             img = torch.from_numpy(img).cuda()
         return img
     return wrapper
@@ -63,8 +63,8 @@ class ImageLoader():
         self.opt = copy.deepcopy(opt)
         self.use_cuda = not opt.get('no_cuda', False) and torch.cuda.is_available()
         self.netCNN = None
-        im = opt['image_mode']
-        if im is not None and im not in ['none', 'raw', 'ascii']:
+        self.im = opt['image_mode']
+        if self.im is not None and self.im not in ['none', 'raw', 'ascii']:
             self.init_cnn()
 
     def init_cnn(self):
