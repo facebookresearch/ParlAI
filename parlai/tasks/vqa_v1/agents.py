@@ -87,52 +87,64 @@ class OeTeacher(FixedDataTeacher):
 
         self.example_queue = queue.Queue()
         self.reset()
-        if self.image_mode != 'none':
-            self.submit_example_request()
+
+    def reset(self):
+        super().reset()
+        self.example = None
+        self.example_queue = queue.Queue()
+        # call this once to get the cache moving
+        self.next_example()
 
     def __len__(self):
+        """Number of examples in VQA-v1."""
         return len(self.ques['questions'])
 
-    def submit_example_request(self):
-        self.episode_idx, self.epochDone = self.next_episode_idx()
-        image_id = self.ques['questions'][self.episode_idx]['image_id']
+    def num_episodes(self):
+        # same as number of examples since all episodes are of length one
+        return len(self)
+
+    def submit_example_request(self, image_id):
         img_path = self.image_path + '%012d.jpg' % (image_id)
         self.master_loader.request_queue.put(
             (self, self.image_loader.load, img_path))
 
-    def receive(self, future):
-        data = future.result()
-        self.example_queue.put(data)
-
-    def reset(self):
-        # Reset the dialog so that it is at the start of the epoch,
-        # and all metrics are reset.
-        super().reset()
-        self.example_queue = queue.Queue()
-
-    def act(self):
-        qa = self.ques['questions'][self.episode_idx]
+    def get(self, episode_idx, entry_idx=0):
+        # queue up the next one
+        qa = self.ques['questions'][episode_idx]
         question = qa['question']
-        image = None
-        if self.image_mode != 'none':
-            image = self.example_queue.get()
 
         action = {
-            'image': image,
             'text': question,
+            'image_id': qa['image_id'],
             'episode_done': True
         }
 
         if not self.datatype.startswith('test'):
-            anno = self.annotation['annotations'][self.episode_idx]
+            anno = self.annotation['annotations'][episode_idx]
             answers = [ans['answer'] for ans in anno['answers']]
             self.lastY = answers
-            if self.datatype.startswith('train'):
-                action['labels'] = answers
+            action['labels'] = answers
 
-        # Submit for next example before returning
-        self.submit_example_request()
         return action
+
+    def next_example(self):
+        # save the currently queued example
+        ready = None
+        if self.example is not None:
+            if self.image_mode != 'none':
+                image = self.example_queue.get()
+                self.example['image'] = image
+            ready = (self.example, self.epochDone)
+        # queue up the next example
+        self.example, self.epochDone = super().next_example()
+        image_id = self.example.pop('image_id')
+        if self.image_mode != 'none':
+            self.submit_example_request(image_id)
+        return ready
+
+    def receive(self, future):
+        data = future.result()
+        self.example_queue.put(data)
 
     def share(self):
         shared = super().share()
