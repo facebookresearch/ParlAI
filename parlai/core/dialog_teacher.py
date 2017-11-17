@@ -91,7 +91,8 @@ class DialogTeacher(FixedDataTeacher):
             action, epoch_done = self.data.get(self.episode_idx, self.entry_idx)
         else:
             action, epoch_done = self.data.get()
-        if not self.random and action['episode_done'] and not self.stream:
+        if (not self.random and self.episode_idx + self.step_size >= num_eps
+                and action['episode_done'] and not self.stream):
             # this is used for ordered data to check whether there's more data
             epoch_done = True
         return action, epoch_done
