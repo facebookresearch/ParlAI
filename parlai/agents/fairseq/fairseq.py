@@ -185,9 +185,9 @@ class FairseqAgent(Agent):
         return self.batch_act([self.observation])[0]
 
     def batch_act(self, observations):
-        batchsize = len(observations)
+        bsz = len(observations)
         # initialize a table of replies with this agent's id
-        batch_reply = [{'id': self.getID()} for _ in range(batchsize)]
+        batch_reply = [{'id': self.getID()} for _ in range(bsz)]
 
         # convert the observations into batches of inputs and targets
         # valid_inds tells us the indices of all valid examples
@@ -221,9 +221,12 @@ class FairseqAgent(Agent):
                 offset += len(valid_inds)
         else:
             loss = self._train(samples)
+
             batch_reply[0]['metrics'] = {}
             for k, v in loss.items():
-                batch_reply[0]['metrics'][k] = v * batchsize
+                batch_reply[0]['metrics'][k] = v * bsz
+                if k == 'loss':
+                    batch_reply[0]['metrics']['perplexity'] = 2 ** v * bsz
 
         return batch_reply
 
@@ -294,9 +297,8 @@ class FairseqAgent(Agent):
                 len_penalty=opt.lenpen)
             self.translator.cuda()
         tokens = src_tokens.cuda(async=True)
-        token_pos = self._positions_for_tokens(tokens).cuda(async=True)
-        translations = self.translator.generate(
-            Variable(tokens), Variable(token_pos))
+        token_pos = Variable(self._positions_for_tokens(tokens).cuda())
+        translations = self.translator.generate(Variable(tokens), token_pos)
         results = [t[0] for t in translations]
         output_lines = [[] for _ in range(len(results))]
         for i in range(len(results)):
