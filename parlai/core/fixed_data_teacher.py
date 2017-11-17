@@ -17,10 +17,11 @@ class DataLoader(Thread):
     A teacher may submit a request to the loader, which will return the
     appropriate data.
 
-    To submit a request, a teacher must provide the following:
-        - a receive function (for receiving the data)
-        - a load function (for loading the data), e.g. ImageLoader.load
-        - args for the load function, e.g. an image path for an image loader
+    To submit a request, a teacher should call ``request_load`` with the
+    following arguments:
+        - ``receive_fn`` - a receive function (for receiving the data)
+        - ``load_fn`` - a load function (for loading the data)
+        - ``args`` - arguments for the load function
             -> args can be either a dictionary of arguments for a function, or
                a list of positional arguments
     """
@@ -31,6 +32,9 @@ class DataLoader(Thread):
 
     def __len__(self):
         return len(self.ques['questions'])
+
+    def request_load(self, receive_fn, load_fn, args):
+        self.request_queue.put((receive_fn, load_fn, args))
 
     def run(self):
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_workers) as executor:
@@ -53,6 +57,33 @@ class FixedDataTeacher(Teacher):
     - Computes and retrieves the next episode index for a teacher
     - Provides a threadpool option for loading data (especially useful for
       large data, e.g. images)
+
+    To utilize the DataLoader for threadpool loading, a teacher should
+    implement the ``submit_load_request`` function to send a load request
+    to the DataLoader by calling ``self.data_loader.request_load`` with the
+    appropriate arguments (``receive_fn, load_fn, args``). The DataLoader then
+    returns the data to the teacher's ``data_queue``, which the teacher can
+    poll in its ``act`` method.
+
+    The following is an example of the DataLoader usage in the VQA-V1 teacher.
+
+        1. In the teacher's ``init`` function, the teacher calls its
+           ``submit_load_request`` function to preload an image.
+        2. The ``submit_load_request`` function gets the next ``episode_idx``,
+           and computes the image path for the load request.
+        3. At the end of ``submit_load_request``, the teacher calls
+           ``self.data_loader.request_load`` with three args:
+           - ``self.receive`` - the function that the DataLoader calls to
+               return the the loaded object
+           - ``self.image_loader.load`` - the function used to load the image
+               from the image path
+           - ``[img_path]`` - a list of arguments for the load function, which
+               in this case is the path of the image.
+         4. In the teacher's ``act`` function, the teacher loads the data from
+            its data queue.
+         5. At the end of the ``act`` function, the teacher calls
+            ``submit_load_request`` to preload an image for the next example.
+
 
     """
     def __init__(self, opt, shared=None):
@@ -119,10 +150,15 @@ class FixedDataTeacher(Teacher):
                 epoch_done = True
         return self.episode_idx, epoch_done
 
-    def submit_data_request(self, receive_fn, load_fn, args):
-        self.data_loader.request_queue.put((receive_fn, load_fn, args))
+    def submit_load_request(self):
+        """An agent should implement this method to submit requests to the
+        data loader. At the end of this method, the agent should call
+        ``self.data_loader.request_load()`` with the appropriate args.
+        """
+        pass
 
     def receive_data(self, future):
+        """Function for receiving data from the data loader"""
         data = future.result()
         self.data_queue.put(data)
 

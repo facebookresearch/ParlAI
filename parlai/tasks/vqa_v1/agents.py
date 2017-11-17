@@ -63,16 +63,16 @@ class OeTeacher(FixedDataTeacher):
 
         self.reset()
         if self.image_mode != 'none':
-            self.submit_image_load_request()
+            self.submit_load_request()
 
     def __len__(self):
         return len(self.ques['questions'])
 
-    def submit_image_load_request(self):
+    def submit_load_request(self):
         self.episode_idx, self.epochDone = self.next_episode_idx()
         image_id = self.ques['questions'][self.episode_idx]['image_id']
         img_path = self.image_path + '%012d.jpg' % (image_id)
-        self.submit_data_request(
+        self.data_loader.request_load(
             self.receive_data, self.image_loader.load, [img_path])
 
     def reset(self):
@@ -101,7 +101,7 @@ class OeTeacher(FixedDataTeacher):
                 action['labels'] = answers
 
         # Submit for next example before returning
-        self.submit_image_load_request()
+        self.submit_load_request()
         return action
 
     def share(self):
