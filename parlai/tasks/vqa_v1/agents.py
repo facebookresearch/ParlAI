@@ -10,10 +10,6 @@ from .build import build, buildImage
 
 import json
 import os
-from threading import Thread
-import queue
-import concurrent.futures
-
 
 def _path(opt):
     build(opt)
@@ -46,23 +42,6 @@ def _path(opt):
     return data_path, annotation_path, image_path
 
 
-class MasterLoader(Thread):
-    def __init__(self, opt):
-        Thread.__init__(self, daemon=True)
-        self.num_threads = opt.get('numthreads', 8)
-        self.request_queue = queue.Queue()
-
-    def __len__(self):
-        return len(self.ques['questions'])
-
-    def run(self):
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_threads) as executor:
-            while True:
-                teacher, load_fn, data_req = self.request_queue.get()
-                future = executor.submit(load_fn, data_req)
-                teacher.receive(future)
-
-
 class OeTeacher(FixedDataTeacher):
     """
     VQA Open-Ended teacher, which loads the json vqa data and implements its
@@ -78,44 +57,35 @@ class OeTeacher(FixedDataTeacher):
             if 'annotation' in shared:
                 self.annotation = shared['annotation']
             self.image_loader = shared['image_loader']
-            self.master_loader = shared['master_loader']
         else:
             self._setup_data(data_path, annotation_path)
             self.image_loader = ImageLoader(opt)
-            self.master_loader = MasterLoader(opt)
-            self.master_loader.start()
 
-        self.example_queue = queue.Queue()
         self.reset()
         if self.image_mode != 'none':
-            self.submit_example_request()
+            self.submit_load_request()
 
     def __len__(self):
         return len(self.ques['questions'])
 
-    def submit_example_request(self):
+    def submit_load_request(self):
         self.episode_idx, self.epochDone = self.next_episode_idx()
         image_id = self.ques['questions'][self.episode_idx]['image_id']
         img_path = self.image_path + '%012d.jpg' % (image_id)
-        self.master_loader.request_queue.put(
-            (self, self.image_loader.load, img_path))
-
-    def receive(self, future):
-        data = future.result()
-        self.example_queue.put(data)
+        self.data_loader.request_load(
+            self.receive_data, self.image_loader.load, [img_path])
 
     def reset(self):
         # Reset the dialog so that it is at the start of the epoch,
         # and all metrics are reset.
         super().reset()
-        self.example_queue = queue.Queue()
 
     def act(self):
         qa = self.ques['questions'][self.episode_idx]
         question = qa['question']
         image = None
         if self.image_mode != 'none':
-            image = self.example_queue.get()
+            image = self.data_queue.get()
 
         action = {
             'image': image,
@@ -131,7 +101,7 @@ class OeTeacher(FixedDataTeacher):
                 action['labels'] = answers
 
         # Submit for next example before returning
-        self.submit_example_request()
+        self.submit_load_request()
         return action
 
     def share(self):
@@ -140,7 +110,6 @@ class OeTeacher(FixedDataTeacher):
         if hasattr(self, 'annotation'):
             shared['annotation'] = self.annotation
         shared['image_loader'] = self.image_loader
-        shared['master_loader'] = self.master_loader
         return shared
 
     def _setup_data(self, data_path, annotation_path):
