@@ -35,10 +35,7 @@ class FixedDataTeacher(Teacher):
         # size so they all process disparate sets of the data
         self.step_size = opt.get('batchsize', 1)
         self.data_offset = opt.get('batchindex', 0)
-        self.reset()
-
-    def __len__(self):
-        return len(self.examples)
+        # self.reset()
 
     def reset(self):
         """Reset the dialog so that it is at the start of the epoch,
@@ -50,12 +47,8 @@ class FixedDataTeacher(Teacher):
         self.episode_idx = self.data_offset - self.step_size
         self.episode_done = True
         self.epochDone = False
-        try:
-            if (self.episode_idx + self.step_size >= len(self) and not self.random):
-                self.epochDone = True
-        except AttributeError:
-            # The data has not been initalized, so len(self) fails
-            pass
+        if (not self.random and self.data_offset >= self.num_episodes()):
+            self.epochDone = True
 
     def observe(self, observation):
         """Process observation for metrics."""
@@ -66,7 +59,7 @@ class FixedDataTeacher(Teacher):
 
     def next_episode_idx(self, num_eps=None):
         if not num_eps:
-            num_eps = len(self)
+            num_eps = self.num_episodes()
         epoch_done = False
         if self.random:
             self.episode_idx = random.randrange(num_eps)
@@ -75,3 +68,49 @@ class FixedDataTeacher(Teacher):
             if self.episode_idx + self.step_size >= num_eps:
                 epoch_done = True
         return self.episode_idx, epoch_done
+
+    def next_example(self):
+        if self.episode_done:
+            self.episode_idx, epoch_done = self.next_episode_idx()
+            self.entry_idx = 0
+        else:
+            self.entry_idx += 1
+
+        ex = self.get(self.episode_idx, self.entry_idx)
+
+        self.episode_done = ex['episode_done']
+        epoch_done = epoch_done and self.episode_done
+        return ex, epoch_done
+
+    def num_episodes(self):
+        """Get the number of episodes in this dataset."""
+        try:
+            return len(self.episodes)
+        except Exception:
+            raise RuntimeError('"num_episodes" must be overriden by children.')
+
+    def get(self, episode_idx, entry_idx=0):
+        """Get the specified episode and the specified entry in that episode.
+
+        Many datasets have only single-entry episodes, so entry_idx defaults to
+        zero. Children must override this method in order to inherit the
+        `next_example` method.
+        """
+        try:
+            return self.examples[episode_idx][entry_idx]
+        except Exception:
+            raise RuntimeError('"Get" method must be overriden by children.')
+
+    def act(self):
+        """Send new dialog message."""
+        if self.epochDone and not self.training:
+            # need to call "reset" to repeat valid or test examples
+            return {'episode_done': True, 'id': self.getID()}
+        action, self.epochDone = self.next_example()
+        action['id'] = self.getID()
+        self.lastY = action.get('labels', None)
+        if not self.datatype.startswith('train') and 'labels' in action:
+            # move labels to eval field so not used for training
+            # but this way the model can use the labels for perplexity or loss
+            action['eval_labels'] = action.pop('labels')
+        return action
