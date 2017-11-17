@@ -11,7 +11,6 @@ import h5py
 from PIL import Image
 from functools import wraps
 from threading import Lock, Condition
-import torch
 
 _greyscale = '  .,:;crsA23hHG#98&@'
 _cache_size = 84000
@@ -33,7 +32,7 @@ def first_n_cache(function):
                 cache[path] = img
                 cache_monitor.doneWithCache()
         if loader.use_cuda and loader.im not in [None, 'none', 'raw', 'ascii']:
-            img = torch.from_numpy(img).cuda()
+            img = loader.torch.from_numpy(img).cuda()
         return img
     return wrapper
 
@@ -71,6 +70,7 @@ class ImageLoader():
         """Lazy initialization of preprocessor model in case we don't need any image preprocessing."""
         try:
             import torch
+            self.torch = torch
         except ModuleNotFoundError:
             raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
         from torch.autograd import Variable
