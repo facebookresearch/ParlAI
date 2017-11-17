@@ -6,12 +6,10 @@
 import parlai.core.build_data as build_data
 
 import os
-import copy
 import h5py
 from PIL import Image
 from functools import wraps
 from threading import Lock, Condition
-import torch
 
 _greyscale = '  .,:;crsA23hHG#98&@'
 _cache_size = 84000
@@ -33,7 +31,7 @@ def first_n_cache(function):
                 cache[path] = img
                 cache_monitor.doneWithCache()
         if loader.use_cuda and loader.im not in [None, 'none', 'raw', 'ascii']:
-            img = torch.from_numpy(img).cuda()
+            img = loader.torch.from_numpy(img).cuda()
         return img
     return wrapper
 
@@ -60,17 +58,20 @@ class ImageLoader():
     """Extract image feature using pretrained CNN network.
     """
     def __init__(self, opt):
-        self.opt = copy.deepcopy(opt)
-        self.use_cuda = not opt.get('no_cuda', False) and torch.cuda.is_available()
+        self.opt = opt.copy()
+        self.use_cuda = False
         self.netCNN = None
         self.im = opt['image_mode']
         if self.im is not None and self.im not in ['none', 'raw', 'ascii']:
-            self.init_cnn()
+            self.init_cnn(self.opt)
 
-    def init_cnn(self):
+    def init_cnn(self, opt):
         """Lazy initialization of preprocessor model in case we don't need any image preprocessing."""
         try:
             import torch
+            self.use_cuda = (not opt.get('no_cuda', False)
+                             and torch.cuda.is_available())
+            self.torch = torch
         except ModuleNotFoundError:
             raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
         from torch.autograd import Variable
@@ -78,7 +79,6 @@ class ImageLoader():
         import torchvision.transforms as transforms
         import torch.nn as nn
 
-        opt = self.opt
         self.image_size = opt['image_size']
         self.crop_size = opt['image_cropsize']
         self.datatype = opt['datatype']
@@ -86,7 +86,7 @@ class ImageLoader():
 
         if self.use_cuda:
             print('[ Using CUDA ]')
-            torch.cuda.set_device(opt.get('gpu', 0))
+            torch.cuda.set_device(opt.get('gpu', opt.get('gpu', -1)))
 
         cnn_type, layer_num = self.image_mode_switcher()
 
@@ -98,25 +98,22 @@ class ImageLoader():
 
         # initialize the transform function using torch vision.
         self.transform = transforms.Compose([
-                            transforms.Scale(self.image_size),
-                            transforms.CenterCrop(self.crop_size),
-                            transforms.ToTensor(),
-                            transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                    std=[0.229, 0.224, 0.225])
-                            ])
+            transforms.Scale(self.image_size),
+            transforms.CenterCrop(self.crop_size),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
+        ])
 
         # container for single image
-        self.xs = torch.FloatTensor(1, 3, self.crop_size, self.crop_size).fill_(0)
+        self.xs = torch.zeros(1, 3, self.crop_size, self.crop_size)
 
         if self.use_cuda:
-            self.cuda()
+            self.netCNN.cuda()
             self.xs = self.xs.cuda()
 
         # make self.xs variable.
         self.xs = Variable(self.xs)
-
-    def cuda(self):
-        self.netCNN.cuda()
 
     def save(self, feature, path):
         with open(path, 'w'):
