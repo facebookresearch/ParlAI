@@ -85,16 +85,14 @@ class DialogTeacher(FixedDataTeacher):
     def num_episodes(self):
         return self.data.num_episodes()
 
+    def get(self, episode_idx, entry_idx=0):
+        return self.data.get(episode_idx, entry_idx)[0]
+
     def next_example(self):
-        if not self.stream:
-            if self.episode_done:
-                self.episode_idx, epoch_done = self.next_episode_idx()
-                self.entry_idx = 0
-            else:
-                self.entry_idx += 1
-            action, _ = self.data.get(self.episode_idx, self.entry_idx)
-        else:
+        if self.stream:
             action, epoch_done = self.data.get()
+        else:
+            action, epoch_done = super().next_example()
         return action, epoch_done
 
 

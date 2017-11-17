@@ -30,12 +30,12 @@ class FixedDataTeacher(Teacher):
             self.random = self.datatype == 'train'
         if not hasattr(self, 'training'):
             self.training = self.datatype.startswith('train')
+
         # for ordered data in batch mode (especially, for validation and
         # testing), each teacher in the batch gets a start index and a step
         # size so they all process disparate sets of the data
         self.step_size = opt.get('batchsize', 1)
         self.data_offset = opt.get('batchindex', 0)
-        # self.reset()
 
     def reset(self):
         """Reset the dialog so that it is at the start of the epoch,
@@ -52,7 +52,7 @@ class FixedDataTeacher(Teacher):
 
     def observe(self, observation):
         """Process observation for metrics."""
-        if self.lastY is not None:
+        if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.update(observation, self.lastY)
             self.lastY = None
         return observation
@@ -60,26 +60,27 @@ class FixedDataTeacher(Teacher):
     def next_episode_idx(self, num_eps=None):
         if not num_eps:
             num_eps = self.num_episodes()
-        epoch_done = False
         if self.random:
             self.episode_idx = random.randrange(num_eps)
         else:
             self.episode_idx = (self.episode_idx + self.step_size) % num_eps
-            if self.episode_idx + self.step_size >= num_eps:
-                epoch_done = True
-        return self.episode_idx, epoch_done
+        return self.episode_idx
 
     def next_example(self):
         if self.episode_done:
-            self.episode_idx, epoch_done = self.next_episode_idx()
+            self.episode_idx = self.next_episode_idx()
             self.entry_idx = 0
         else:
             self.entry_idx += 1
 
         ex = self.get(self.episode_idx, self.entry_idx)
-
         self.episode_done = ex['episode_done']
-        epoch_done = epoch_done and self.episode_done
+        epoch_done = False
+
+        if (not self.random and self.episode_done
+                and self.episode_idx + self.step_size >= self.num_episodes()):
+            epoch_done = True
+
         return ex, epoch_done
 
     def num_episodes(self):
@@ -103,6 +104,8 @@ class FixedDataTeacher(Teacher):
 
     def act(self):
         """Send new dialog message."""
+        if not hasattr(self, 'epochDone'):
+            self.reset()
         if self.epochDone and not self.training:
             # need to call "reset" to repeat valid or test examples
             return {'episode_done': True, 'id': self.getID()}
