@@ -121,9 +121,7 @@ class OeTeacher(FixedDataTeacher):
 
         if not self.datatype.startswith('test'):
             anno = self.annotation['annotations'][episode_idx]
-            answers = [ans['answer'] for ans in anno['answers']]
-            self.lastY = answers
-            action['labels'] = answers
+            action['labels'] = [ans['answer'] for ans in anno['answers']]
 
         return action
 
@@ -172,23 +170,15 @@ class McTeacher(OeTeacher):
     the label and label_candidates fields with multiple choice data.
     """
 
-    def act(self):
-        # parent class increments episode_idx after getting ex, so need to
-        # cache the episode_idx first
-        episode_idx = self.episode_idx
-        action = super().act()
-
+    def get(self, episode_idx, entry_idx=0):
+        action = super().get(episode_idx, entry_idx)
         qa = self.ques['questions'][episode_idx]
         multiple_choices = qa['multiple_choices']
-
         action['label_candidates'] = multiple_choices
 
         if not self.datatype.startswith('test'):
             anno = self.annotation['annotations'][episode_idx]
-            self.lastY = [anno['multiple_choice_answer']]
-
-        if self.datatype.startswith('train'):
-            action['labels'] = self.lastY
+            action['labels'] = [anno['multiple_choice_answer']]
 
         return action
 
