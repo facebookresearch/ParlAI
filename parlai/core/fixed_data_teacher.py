@@ -96,6 +96,7 @@ class FixedDataTeacher(Teacher):
             self.random = self.datatype == 'train'
         if not hasattr(self, 'training'):
             self.training = self.datatype.startswith('train')
+
         # for ordered data in batch mode (especially, for validation and
         # testing), each teacher in the batch gets a start index and a step
         # size so they all process disparate sets of the data
@@ -107,9 +108,6 @@ class FixedDataTeacher(Teacher):
         else:
             self.data_loader = DataLoader(opt)
             self.data_loader.start()
-
-    def __len__(self):
-        return len(self.examples)
 
     def reset(self):
         """Reset the dialog so that it is at the start of the epoch,
