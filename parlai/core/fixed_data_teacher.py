@@ -11,6 +11,7 @@ from threading import Thread
 import queue
 import random
 
+
 class DataLoader(Thread):
     """A worker thread that provides a threadpool for data loading.
 
@@ -100,15 +101,12 @@ class FixedDataTeacher(Teacher):
         # size so they all process disparate sets of the data
         self.step_size = opt.get('batchsize', 1)
         self.data_offset = opt.get('batchindex', 0)
-
         self.data_queue = queue.Queue()
         if shared:
             self.data_loader = shared['data_loader']
         else:
             self.data_loader = DataLoader(opt)
             self.data_loader.start()
-
-        self.reset()
 
     def __len__(self):
         return len(self.examples)
@@ -124,31 +122,15 @@ class FixedDataTeacher(Teacher):
         self.episode_done = True
         self.epochDone = False
         self.data_queue = queue.Queue()
-        try:
-            if (self.episode_idx + self.step_size >= len(self) and not self.random):
-                self.epochDone = True
-        except AttributeError:
-            # The data has not been initalized, so len(self) fails
-            pass
+        if (not self.random and self.data_offset >= self.num_episodes()):
+            self.epochDone = True
 
     def observe(self, observation):
         """Process observation for metrics."""
-        if self.lastY is not None:
+        if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.update(observation, self.lastY)
             self.lastY = None
         return observation
-
-    def next_episode_idx(self, num_eps=None):
-        if not num_eps:
-            num_eps = len(self)
-        epoch_done = False
-        if self.random:
-            self.episode_idx = random.randrange(num_eps)
-        else:
-            self.episode_idx = (self.episode_idx + self.step_size) % num_eps
-            if self.episode_idx + self.step_size >= num_eps:
-                epoch_done = True
-        return self.episode_idx, epoch_done
 
     def submit_load_request(self):
         """An agent should implement this method to submit requests to the
@@ -158,7 +140,7 @@ class FixedDataTeacher(Teacher):
         pass
 
     def receive_data(self, future):
-        """Function for receiving data from the data loader"""
+        """Function for receiving data from the data loader."""
         data = future.result()
         self.data_queue.put(data)
 
@@ -166,3 +148,64 @@ class FixedDataTeacher(Teacher):
         shared = super().share()
         shared['data_loader'] = self.data_loader
         return shared
+
+    def next_episode_idx(self, num_eps=None):
+        if not num_eps:
+            num_eps = self.num_episodes()
+        if self.random:
+            self.episode_idx = random.randrange(num_eps)
+        else:
+            self.episode_idx = (self.episode_idx + self.step_size) % num_eps
+        return self.episode_idx
+
+    def next_example(self):
+        if self.episode_done:
+            self.episode_idx = self.next_episode_idx()
+            self.entry_idx = 0
+        else:
+            self.entry_idx += 1
+
+        ex = self.get(self.episode_idx, self.entry_idx)
+        self.episode_done = ex['episode_done']
+        epoch_done = False
+
+        if (not self.random and self.episode_done
+                and self.episode_idx + self.step_size >= self.num_episodes()):
+            epoch_done = True
+
+        return ex, epoch_done
+
+    def num_episodes(self):
+        """Get the number of episodes in this dataset."""
+        try:
+            return len(self.episodes)
+        except Exception:
+            raise RuntimeError('"num_episodes" must be overriden by children.')
+
+    def get(self, episode_idx, entry_idx=0):
+        """Get the specified episode and the specified entry in that episode.
+
+        Many datasets have only single-entry episodes, so entry_idx defaults to
+        zero. Children must override this method in order to inherit the
+        `next_example` method.
+        """
+        try:
+            return self.examples[episode_idx][entry_idx]
+        except Exception:
+            raise RuntimeError('"Get" method must be overriden by children.')
+
+    def act(self):
+        """Send new dialog message."""
+        if not hasattr(self, 'epochDone'):
+            self.reset()
+        if self.epochDone and not self.training:
+            # need to call "reset" to repeat valid or test examples
+            return {'episode_done': True, 'id': self.getID()}
+        action, self.epochDone = self.next_example()
+        action['id'] = self.getID()
+        self.lastY = action.get('labels', None)
+        if not self.datatype.startswith('train') and 'labels' in action:
+            # move labels to eval field so not used for training
+            # but this way the model can use the labels for perplexity or loss
+            action['eval_labels'] = action.pop('labels')
+        return action
