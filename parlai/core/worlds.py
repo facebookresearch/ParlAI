@@ -520,6 +520,84 @@ def override_opts_in_shared(table, overrides):
                     override_opts_in_shared(item, overrides)
     return table
 
+from .fixed_data_teacher import FixedDataTeacher
+
+class FixedDataBatchTeacher(FixedDataTeacher):
+    def __init__(self, opt, shared=None):
+        pass
+
+    def act(self):
+        pass
+
+class FixedDataBatchWorld(World):
+    """Flattens all data so that we can serve up batches sorted by length.
+
+    This dramatically speeds up training by reducing the amount of padding
+    required per batch.
+    """
+
+    def __init__(self, opt, world):
+        self.opt = opt
+        dt = opt['datatype'].split(':')
+        if 'stream' in dt:
+            raise RuntimeError('streaming currently not supported')
+        if 'ordered' not in dt:
+            # make ordered copy of data
+            ordered_opt = opt.copy()
+            ordered_opt['datatype'] = ':'.join(dt[0], 'ordered')
+            from .agents import Agent
+            ordered_world = create_task(ordered_opt, Agent({}))
+            data = self.flatten(ordered_world)
+            print('WARNING: may not work')
+        else:
+            data = self.flatten(world)
+            world.reset()
+
+        self.batches = self.make_batches(data, opt['batchsize'])
+
+    def flatten(self, world):
+        data = []
+        current = []
+        episode_done = False
+        while not world.epoch_done():
+            while not episode_done:
+                world.parley()
+                acts = world.get_acts()
+                teacher_act = acts[0]
+                current.append(teacher_act)
+                episode_done = teacher_act['episode_done']
+
+            for i, ex in enumerate(current):
+                # TODO: allow custom history lengths (may not want full hist)
+                context = [prev['text'] for prev in current[:i]]
+                context.append(ex['text'])
+                ex['text'] = '\n'.join(context)
+                ex['episode_done'] = True
+                data.append(ex)
+            episode_done = False
+        return data
+
+    def make_batches(self, data, bsz, key='text_label', method='spaces'):
+        # TODO: support different keys and different methods
+        tpls = []
+        for ex in data:
+            fst = ex['text'].count(' ')
+            if 'labels' in ex['text']:
+                snd = sum(l.count(' ') for l in ex['labels']) / len(ex['labels'])
+            else:
+                snd = 0
+            tiebreaker = random.random()
+            tpls.append((fst, snd, tiebreaker, ex))
+        tpls.sort()
+        batches = [tpls[i:i + bsz] for i in range(0, len(tpls), bsz)]
+        random.shuffle(batches)
+        return batches
+
+    def parley(self):
+        pass
+
+
+
 
 class BatchWorld(World):
     """Creates a separate world for each item in the batch, sharing
@@ -736,7 +814,7 @@ class HogwildWorld(World):
 
     def display(self):
         self.shutdown()
-        raise NotImplementedError('Hogwild does not support displaying in-run' +
+        raise NotImplementedError('Hogwild does not support displaying in-run'
                                   ' task data. Use `--numthreads 1`.')
 
     def episode_done(self):
@@ -795,7 +873,7 @@ def _get_task_world(opt):
         try:
             my_module = importlib.import_module(module_name)
             world_class = getattr(my_module, world_name)
-        except:
+        except Exception:
             # Defaults to this if you did not specify a world for your task.
             world_class = DialogPartnerWorld
     task_agents = _create_task_agents(opt)
