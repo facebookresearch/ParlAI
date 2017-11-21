@@ -86,7 +86,7 @@ class ImageLoader():
 
         if self.use_cuda:
             print('[ Using CUDA ]')
-            torch.cuda.set_device(opt.get('gpu', opt.get('gpu', -1)))
+            torch.cuda.set_device(opt.get('gpu', -1))
 
         cnn_type, layer_num = self.image_mode_switcher()
 
