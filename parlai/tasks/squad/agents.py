@@ -39,6 +39,9 @@ class IndexTeacher(FixedDataTeacher):
     def __len__(self):
         return len(self.examples)
 
+    def num_episodes(self):
+        return len(self)
+
     def get(self, episode_idx, entry_idx=None):
         article_idx, paragraph_idx, qa_idx = self.examples[episode_idx]
         article = self.squad[article_idx]

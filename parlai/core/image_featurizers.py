@@ -144,7 +144,7 @@ class ImageLoader():
     def extract(self, image, path):
         # check whether initialize CNN network.
         if not self.netCNN:
-            self.init_cnn()
+            self.init_cnn(self.opt)
 
         self.xs.data.copy_(self.transform(image))
         # extract the image feature
