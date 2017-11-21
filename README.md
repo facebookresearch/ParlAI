@@ -123,7 +123,7 @@ All needed data will be downloaded to ~/ParlAI/data, and any non-data files (suc
 The main concepts (classes) in ParlAI:
 - world - defines the environment (can be very simple, just two agents talking to each other).
 - agent – an agent in the world, e.g. the learner. (There can be multiple learners.)
-- teacher – a type of agent that talks to the learner, implements one of the
+- teacher – a type of agent that talks to the learner, implements one of the 
 listed before.
 
 After defining a world and the agents in it, a main loop can be run for training, testing or displaying, which calls the function world.parley(). The skeleton of an example main is given in the left panel, and the actual code for parley() on the right.
