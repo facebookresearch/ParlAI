@@ -34,6 +34,7 @@ class DialogTeacher(FixedDataTeacher):
             raise RuntimeError('Must implement setup_data or subclass a class' +
                                ' which implements it (e.g. FbDialogTeacher)' +
                                ' in order to use this class.')
+        super().__init__(opt, shared)
 
         self.startTime = time.time()
         self.datatype = opt['datatype']
@@ -49,7 +50,7 @@ class DialogTeacher(FixedDataTeacher):
             self.data = data_class(opt, data_loader=self.setup_data,
                 cands=self.label_candidates(), **kwargs)
 
-        super().__init__(opt, shared)
+        self.reset()
 
     def reset(self):
         # Reset the dialog so that it is at the start of the epoch,
@@ -57,6 +58,7 @@ class DialogTeacher(FixedDataTeacher):
         super().reset()
         if self.stream:
             self.data.reset()
+            self.epochDone = False
 
     def __len__(self):
         return len(self.data)
@@ -80,36 +82,18 @@ class DialogTeacher(FixedDataTeacher):
         """
         return None
 
-    def next_example(self):
-        num_eps = self.data.num_episodes()
-        if not self.stream:
-            if self.episode_done:
-                self.episode_idx, epoch_done = self.next_episode_idx(num_eps=num_eps)
-                self.entry_idx = 0
-            else:
-                self.entry_idx += 1
-            action, epoch_done = self.data.get(self.episode_idx, self.entry_idx)
-        else:
-            action, epoch_done = self.data.get()
-        if (not self.random and self.episode_idx + self.step_size >= num_eps
-                and action['episode_done'] and not self.stream):
-            # this is used for ordered data to check whether there's more data
-            epoch_done = True
-        return action, epoch_done
+    def num_episodes(self):
+        return self.data.num_episodes()
 
-    def act(self):
-        """Send new dialog message."""
-        if self.epochDone and not self.training:
-            return {'episode_done': True}
-        action, self.epochDone = self.next_example()
-        self.episode_done = action['episode_done']
-        action['id'] = self.getID()
-        self.lastY = action.get('labels', None)
-        if not self.datatype.startswith('train') and 'labels' in action:
-            # move labels to eval field so not used for training
-            # but this way the model can use the labels for perplexity or loss
-            action['eval_labels'] = action.pop('labels')
-        return action
+    def get(self, episode_idx, entry_idx=0):
+        return self.data.get(episode_idx, entry_idx)[0]
+
+    def next_example(self):
+        if self.stream:
+            action, epoch_done = self.data.get()
+        else:
+            action, epoch_done = super().next_example()
+        return action, epoch_done
 
 
 class DialogData(object):

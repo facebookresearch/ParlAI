@@ -11,6 +11,7 @@ from .build import build, buildImage
 import json
 import os
 
+
 def _path(opt):
     build(opt)
     buildImage(opt)
@@ -62,47 +63,60 @@ class OeTeacher(FixedDataTeacher):
             self.image_loader = ImageLoader(opt)
 
         self.reset()
-        if self.image_mode != 'none':
-            self.submit_load_request()
-
-    def __len__(self):
-        return len(self.ques['questions'])
-
-    def submit_load_request(self):
-        self.episode_idx, self.epochDone = self.next_episode_idx()
-        image_id = self.ques['questions'][self.episode_idx]['image_id']
-        img_path = self.image_path + '%012d.jpg' % (image_id)
-        self.data_loader.request_load(
-            self.receive_data, self.image_loader.load, [img_path])
 
     def reset(self):
-        # Reset the dialog so that it is at the start of the epoch,
-        # and all metrics are reset.
         super().reset()
+        self.example = None
+        # call this once to get the cache moving
+        self.next_example()
 
-    def act(self):
-        qa = self.ques['questions'][self.episode_idx]
+    def __len__(self):
+        """Number of examples in VQA-v1."""
+        return len(self.ques['questions'])
+
+    def num_episodes(self):
+        # same as number of examples since all episodes are of length one
+        return len(self)
+
+    def submit_load_request(self, image_id):
+        img_path = self.image_path + '%012d.jpg' % (image_id)
+        self.data_loader.request_load(self.receive_data, self.image_loader.load, (img_path,))
+
+    def get(self, episode_idx, entry_idx=0):
+        # queue up the next one
+        qa = self.ques['questions'][episode_idx]
         question = qa['question']
-        image = None
-        if self.image_mode != 'none':
-            image = self.data_queue.get()
 
         action = {
-            'image': image,
             'text': question,
+            'image_id': qa['image_id'],
             'episode_done': True
         }
 
         if not self.datatype.startswith('test'):
-            anno = self.annotation['annotations'][self.episode_idx]
-            answers = [ans['answer'] for ans in anno['answers']]
-            self.lastY = answers
-            if self.datatype.startswith('train'):
-                action['labels'] = answers
+            anno = self.annotation['annotations'][episode_idx]
+            action['labels'] = [ans['answer'] for ans in anno['answers']]
 
-        # Submit for next example before returning
-        self.submit_load_request()
         return action
+
+    def next_example(self):
+        # save the currently queued example
+        ready = None
+        if self.example is not None:
+            if self.image_mode != 'none':
+                image = self.data_queue.get()
+                self.example['image'] = image
+            ready = (self.example, self.epochDone)
+        # queue up the next example
+        self.example, self.epochDone = super().next_example()
+        image_id = self.example.pop('image_id')
+        if self.image_mode != 'none':
+            self.submit_load_request(image_id)
+        return ready
+
+    # def receive(self, future):
+    #     data = future.result()
+    #     self.example_queue.put(data)
 
     def share(self):
         shared = super().share()
@@ -129,23 +143,15 @@ class McTeacher(OeTeacher):
     the label and label_candidates fields with multiple choice data.
     """
 
-    def act(self):
-        # parent class increments episode_idx after getting ex, so need to
-        # cache the episode_idx first
-        episode_idx = self.episode_idx
-        action = super().act()
-
+    def get(self, episode_idx, entry_idx=0):
+        action = super().get(episode_idx, entry_idx)
         qa = self.ques['questions'][episode_idx]
         multiple_choices = qa['multiple_choices']
-
         action['label_candidates'] = multiple_choices
 
         if not self.datatype.startswith('test'):
             anno = self.annotation['annotations'][episode_idx]
-            self.lastY = [anno['multiple_choice_answer']]
-
-        if self.datatype.startswith('train'):
-            action['labels'] = self.lastY
+            action['labels'] = [anno['multiple_choice_answer']]
 
         return action
 

@@ -86,7 +86,7 @@ class ImageLoader():
 
         if self.use_cuda:
             print('[ Using CUDA ]')
-            torch.cuda.set_device(opt.get('gpu', opt.get('gpu', -1)))
+            torch.cuda.set_device(opt.get('gpu', -1))
 
         cnn_type, layer_num = self.image_mode_switcher()
 
@@ -144,7 +144,7 @@ class ImageLoader():
     def extract(self, image, path):
         # check whether initialize CNN network.
         if not self.netCNN:
-            self.init_cnn()
+            self.init_cnn(self.opt)
 
         self.xs.data.copy_(self.transform(image))
         # extract the image feature

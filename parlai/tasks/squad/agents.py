@@ -36,15 +36,14 @@ class IndexTeacher(FixedDataTeacher):
         self.id = 'squad'
         self.reset()
 
-    # return state/action dict based upon passed state
-    def act(self):
-        """Send new dialog message."""
-        if self.epochDone and self.training:
-            return {'id': 'squad', 'episode_done': True}
+    def __len__(self):
+        return len(self.examples)
 
-        self.episode_idx, self.epochDone = self.next_episode_idx()
+    def num_episodes(self):
+        return len(self)
 
-        article_idx, paragraph_idx, qa_idx = self.examples[self.episode_idx]
+    def get(self, episode_idx, entry_idx=None):
+        article_idx, paragraph_idx, qa_idx = self.examples[episode_idx]
         article = self.squad[article_idx]
         paragraph = article['paragraphs'][paragraph_idx]
         qa = paragraph['qas'][qa_idx]
@@ -59,19 +58,10 @@ class IndexTeacher(FixedDataTeacher):
         action = {
             'id': 'squad',
             'text': context + '\n' + question,
+            'labels': answers,
             'episode_done': True,
             'answer_starts': answer_starts
         }
-        self.lastY = answers
-
-        if 'train' in self.datatype:
-            # include labels for training
-            action['labels'] = answers
-        else:
-            # put labels in separate field during eval so we don't accidentally
-            # use them during training
-            action['eval_labels'] = answers
-
         return action
 
     def _setup_data(self, path):
