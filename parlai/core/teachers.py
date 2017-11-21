@@ -1,0 +1,809 @@
+
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
+"""This module provides a set of teachers that deal with dialog:
+
+    ``FixedDialogTeacher(Teacher)``
+    Base class for teachers in tasks that have fixed dialog - i.e., dialog
+    that is not dynamically generated but rather is pulled from set examples.
+    However, the class can be extended to all tasks involved fixed data.
+    Implements much of the basic functionality of these teachers, including
+    ``observe()``, ``act()``, ``next_example()``
+
+    ``DialogTeacher(FixedDialogTeacher)``
+     Base teacher class for doing dialog specifically with fixed chat logs.
+
+     ``FbDialogTeacher(DialogTeacher)``
+     Teacher class that provides access to data in the Facebook Dialog format.
+     See the class description for more details.
+
+
+This module also includes ``DataLoader``, a threadpool data loader for ``FixedDialogTeacher``,
+and ``DialogData``/``StreamDialogData``, data structures for accessing textual
+dialog data and utilized by ``DialogTeacher``
+
+
+
+"""
+from .agents import Teacher
+from .image_featurizers import ImageLoader
+
+import concurrent.futures
+from threading import Thread
+import queue
+import random
+import sys
+import time
+
+class DataLoader(Thread):
+    """A worker thread that provides a threadpool for data loading.
+
+    A teacher may submit a request to the loader, which will return the
+    appropriate data.
+
+    To submit a request, a teacher should call ``request_load`` with the
+    following arguments:
+        - ``receive_fn`` - a receive function (for receiving the data)
+        - ``load_fn`` - a load function (for loading the data)
+        - ``args`` - arguments for the load function
+            -> args can be either a dictionary of arguments for a function, or
+               a list of positional arguments
+    """
+    def __init__(self, opt):
+        Thread.__init__(self, daemon=True)
+        self.num_workers = opt.get('numthreads', 1)
+        self.request_queue = queue.Queue()
+
+    def __len__(self):
+        return len(self.ques['questions'])
+
+    def request_load(self, receive_fn, load_fn, args):
+        self.request_queue.put((receive_fn, load_fn, args))
+
+    def run(self):
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_workers) as executor:
+            while True:
+                receive_fn, load_fn, args = self.request_queue.get()
+                if type(args) == dict:
+                    future = executor.submit(load_fn, **args)
+                else:
+                    future = executor.submit(load_fn, *args)
+                receive_fn(future)
+
+
+class FixedDialogTeacher(Teacher):
+    """A teacher agent for all teachers involved in tasks with fixed data.
+
+    This class provides the following functionality for its subclasses:
+
+    - Resets a teacher
+    - Provides an observe method
+    - Computes and retrieves the next episode index for a teacher
+    - Provides a threadpool option for loading data (especially useful for
+      large data, e.g. images)
+
+    To utilize the DataLoader for threadpool loading, a teacher should
+    implement the ``submit_load_request`` function to send a load request
+    to the DataLoader by calling ``self.data_loader.request_load`` with the
+    appropriate arguments (``receive_fn, load_fn, args``). The DataLoader then
+    returns the data to the teacher's ``data_queue``, which the teacher can
+    poll in its ``act`` method.
+
+    The following is an example of the DataLoader usage in the VQA-V1 teacher.
+
+        1. In the teacher's ``init`` function, the teacher calls its
+           ``submit_load_request`` function to preload an image.
+        2. The ``submit_load_request`` function gets the next ``episode_idx``,
+           and computes the image path for the load request.
+        3. At the end of ``submit_load_request``, the teacher calls
+           ``self.data_loader.request_load`` with three args:
+           - ``self.receive`` - the function that the DataLoader calls to
+               return the the loaded object
+           - ``self.image_loader.load`` - the function used to load the image
+               from the image path
+           - ``[img_path]`` - a list of arguments for the load function, which
+               in this case is the path of the image.
+         4. In the teacher's ``act`` function, the teacher loads the data from
+            its data queue.
+         5. At the end of the ``act`` function, the teacher calls
+            ``submit_load_request`` to preload an image for the next example.
+
+
+    """
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+
+        if not hasattr(self, 'datatype'):
+            self.datatype = opt['datatype']
+        if not hasattr(self, 'random'):
+            self.random = self.datatype == 'train'
+        if not hasattr(self, 'training'):
+            self.training = self.datatype.startswith('train')
+
+        # for ordered data in batch mode (especially, for validation and
+        # testing), each teacher in the batch gets a start index and a step
+        # size so they all process disparate sets of the data
+        self.step_size = opt.get('batchsize', 1)
+        self.data_offset = opt.get('batchindex', 0)
+        self.data_queue = queue.Queue()
+        if shared:
+            self.data_loader = shared['data_loader']
+        else:
+            self.data_loader = DataLoader(opt)
+            self.data_loader.start()
+
+    def reset(self):
+        """Reset the dialog so that it is at the start of the epoch,
+        and all metrics are reset.
+        """
+        super().reset()
+        self.metrics.clear()
+        self.lastY = None
+        self.episode_idx = self.data_offset - self.step_size
+        self.episode_done = True
+        self.epochDone = False
+        self.data_queue = queue.Queue()
+        if (not self.random and self.data_offset >= self.num_episodes()):
+            self.epochDone = True
+
+    def observe(self, observation):
+        """Process observation for metrics."""
+        if hasattr(self, 'lastY') and self.lastY is not None:
+            self.metrics.update(observation, self.lastY)
+            self.lastY = None
+        return observation
+
+    def submit_load_request(self):
+        """An agent should implement this method to submit requests to the
+        data loader. At the end of this method, the agent should call
+        ``self.data_loader.request_load()`` with the appropriate args.
+        """
+        pass
+
+    def receive_data(self, future):
+        """Function for receiving data from the data loader."""
+        data = future.result()
+        self.data_queue.put(data)
+
+    def share(self):
+        shared = super().share()
+        shared['data_loader'] = self.data_loader
+        return shared
+
+    def next_episode_idx(self, num_eps=None):
+        if not num_eps:
+            num_eps = self.num_episodes()
+        if self.random:
+            self.episode_idx = random.randrange(num_eps)
+        else:
+            self.episode_idx = (self.episode_idx + self.step_size) % num_eps
+        return self.episode_idx
+
+    def next_example(self):
+        if self.episode_done:
+            self.episode_idx = self.next_episode_idx()
+            self.entry_idx = 0
+        else:
+            self.entry_idx += 1
+
+        ex = self.get(self.episode_idx, self.entry_idx)
+        self.episode_done = ex['episode_done']
+        epoch_done = False
+
+        if (not self.random and self.episode_done
+                and self.episode_idx + self.step_size >= self.num_episodes()):
+            epoch_done = True
+
+        return ex, epoch_done
+
+    def num_episodes(self):
+        """Get the number of episodes in this dataset."""
+        try:
+            return len(self.episodes)
+        except Exception:
+            raise RuntimeError('"num_episodes" must be overriden by children.')
+
+    def get(self, episode_idx, entry_idx=0):
+        """Get the specified episode and the specified entry in that episode.
+
+        Many datasets have only single-entry episodes, so entry_idx defaults to
+        zero. Children must override this method in order to inherit the
+        `next_example` method.
+        """
+        try:
+            return self.examples[episode_idx][entry_idx]
+        except Exception:
+            raise RuntimeError('"Get" method must be overriden by children.')
+
+    def act(self):
+        """Send new dialog message."""
+        if not hasattr(self, 'epochDone'):
+            self.reset()
+        if self.epochDone and not self.training:
+            # need to call "reset" to repeat valid or test examples
+            return {'episode_done': True, 'id': self.getID()}
+        action, self.epochDone = self.next_example()
+        action['id'] = self.getID()
+        self.lastY = action.get('labels', None)
+        if not self.datatype.startswith('train') and 'labels' in action:
+            # move labels to eval field so not used for training
+            # but this way the model can use the labels for perplexity or loss
+            action['eval_labels'] = action.pop('labels')
+        return action
+
+class DialogTeacher(FixedDialogTeacher):
+    """A base teacher class for doing dialog with fixed chat logs.
+
+    This class provides a set a basic functionality:
+
+    - uses data class to store and query text data
+    - generates action tables to send to the student agent from the data
+    - metrics tracking count of sent vs correctly answered queries
+
+    If you have ``opt.numthreads > 1``, this also activates a shared memory
+    array for the data and lock-protected shared-memory metrics.
+
+    In order to subclass this class, you must implement ``setup_data()`` in your
+    class (or subclass another class which does, like ``FbDialogTeacher``), which
+    reads your data file as an iterator.
+    """
+
+    def __init__(self, opt, shared=None):
+        # Check for setup_data
+        if not hasattr(self, 'setup_data'):
+            raise RuntimeError('Must implement setup_data or subclass a class' +
+                               ' which implements it (e.g. FbDialogTeacher)' +
+                               ' in order to use this class.')
+        super().__init__(opt, shared)
+
+        self.startTime = time.time()
+        self.datatype = opt['datatype']
+        self.training = self.datatype.startswith('train')
+        self.stream = 'stream' in self.datatype.split(':')
+
+        # first initialize any shared objects
+        data_class = StreamDialogData if self.stream else DialogData
+        kwargs = {'cycle': self.training} if self.stream else {}
+        if shared and shared.get('data'):
+            self.data = data_class(opt, shared=shared['data'], **kwargs)
+        else:
+            self.data = data_class(opt, data_loader=self.setup_data,
+                cands=self.label_candidates(), **kwargs)
+
+        self.reset()
+
+    def reset(self):
+        # Reset the dialog so that it is at the start of the epoch,
+        # and all metrics are reset.
+        super().reset()
+        if self.stream:
+            self.data.reset()
+            self.epochDone = False
+
+    def __len__(self):
+        return len(self.data)
+
+    def __iter__(self):
+        self.epochDone = False
+        return self
+
+    def __next__(self):
+        if self.epochDone:
+            raise StopIteration()
+
+    def share(self):
+        shared = super().share()
+        shared['data'] = self.data.share()
+        return shared
+
+    def label_candidates(self):
+        """Returns ``None`` by default, but override this in children (such as
+        ``FbDialogTeacher``) to load up candidate labels for every example.
+        """
+        return None
+
+    def num_episodes(self):
+        return self.data.num_episodes()
+
+    def get(self, episode_idx, entry_idx=0):
+        return self.data.get(episode_idx, entry_idx)[0]
+
+    def next_example(self):
+        if self.stream:
+            action, epoch_done = self.data.get()
+        else:
+            action, epoch_done = super().next_example()
+        return action, epoch_done
+
+
+class DialogData(object):
+    """Provides a data structure for accessing textual dialog data.
+    This can be used whenever the dialog data is a fixed log of chats
+    (i.e not a simulator setting). The logs can include dialog text and possibly
+    supervised labels, candidate labels and rewards.
+
+    All these are stored in this internal data format which is used by the
+    ``DialogTeacher`` class.
+
+    ``data_loader`` is an iterable, with each call returning:
+
+        ``(x, ...), new_episode?``
+
+        Where
+
+        - ``x`` is a query and possibly context
+
+        ``...`` can contain additional fields, specifically
+
+        - ``y`` is an iterable of label(s) for that query
+        - ``r`` is the str reward for getting that query correct
+        - ``c`` is an iterable of label candidates that the student can choose from
+        - ``i`` is a str path to an image on disk, which will be loaded by the data
+          class at request-time. should always point to the raw image file.
+        - ``new_episode?`` is a boolean value specifying whether that example is the start of a new episode. If you don't use episodes set this to ``True`` every time.
+
+
+    ``cands`` can be set to provide a list of candidate labels for every example
+    in this dataset, which the agent can choose from (the correct answer
+    should be in this set).
+
+
+    ``random`` tells the data class whether or not to visit episodes sequentially
+    or randomly when returning examples to the caller.
+    """
+
+    def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
+        # self.data is a list of episodes
+        # each episode is a tuple of entries
+        # each entry is a tuple of values for the action/observation table
+        if shared:
+            self.image_loader = shared.get('image_loader', None)
+            self.data = shared.get('data', [])
+            self.cands = shared.get('cands', None)
+        else:
+            self.image_loader = ImageLoader(opt)
+            self.data = []
+            self._load(data_loader, opt['datafile'])
+            self.cands = None if cands == None else set(sys.intern(c) for c in cands)
+        self.addedCands = []
+        self.copied_cands = False
+
+    def share(self):
+        shared = {
+            'data': self.data,
+            'cands': self.cands,
+            'image_loader': self.image_loader
+        }
+        return shared
+
+    def __len__(self):
+        """Returns total number of entries available. Each episode has at least
+        one entry, but might have many more.
+        """
+        return sum(len(episode) for episode in self.data)
+
+    def _read_episode(self, data_generator):
+        """Reads one episode at a time from the provided iterator over entries.
+        """
+        episode = []
+        last_cands = None
+        for entry, new in data_generator:
+            if new and len(episode) > 0:
+                yield tuple(episode)
+                episode = []
+                last_cands = None
+
+            # intern all strings so we don't store them more than once
+            new_entry = []
+            if len(entry) > 0:
+                # process text if available
+                if entry[0] is not None:
+                    new_entry.append(sys.intern(entry[0]))
+                else:
+                    new_entry.append(None)
+                if len(entry) > 1:
+                    # process labels if available
+                    if entry[1] is None:
+                        new_entry.append(None)
+                    elif hasattr(entry[1], '__iter__') and type(entry[1]) is not str:
+                        # make sure iterable over labels, not single string
+                        new_entry.append(tuple(sys.intern(e) for e in entry[1]))
+                    else:
+                        raise TypeError('Must provide iterable over labels, not a single string.')
+                    if len(entry) > 2:
+                        # process reward if available
+                        if entry[2] is not None:
+                            new_entry.append(entry[2])
+                        else:
+                            new_entry.append(None)
+                        if len(entry) > 3:
+                            # process label candidates if available
+                            if entry[3] is None:
+                                new_entry.append(None)
+                            elif last_cands and entry[3] is last_cands:
+                                # if cands are shared, say "same" so we
+                                # don't store them again
+                                new_entry.append(
+                                    sys.intern('same as last time'))
+                            elif hasattr(entry[3], '__iter__') and type(entry[3]) is not str:
+                                # make sure iterable over candidates, not single string
+                                last_cands = entry[3]
+                                new_entry.append(tuple(
+                                    sys.intern(e) for e in entry[3]))
+                            else:
+                                raise TypeError('Must provide iterable over label candidates, not a single string.')
+                            if len(entry) > 4 and entry[4] is not None:
+                                new_entry.append(sys.intern(entry[4]))
+
+            episode.append(tuple(new_entry))
+
+        if len(episode) > 0:
+            yield tuple(episode)
+
+    def _load(self, data_loader, datafile):
+        """Loads up data from an iterator over tuples described in the class
+        docs.
+        """
+        for episode in self._read_episode(data_loader(datafile)):
+            self.data.append(episode)
+
+    def num_episodes(self):
+        """Return number of episodes in the dataset."""
+        return len(self.data)
+
+    def get(self, episode_idx, entry_idx=0):
+        """Returns a specific entry from the dataset."""
+        # first look up data
+        episode = self.data[episode_idx]
+        entry = episode[entry_idx]
+        episode_done = entry_idx == len(episode) - 1
+        end_of_data = episode_done and episode_idx == len(self.data) - 1
+
+        # now pack it in a action-observation dictionary
+        table = self.build_table(entry)
+
+        # last entry in this episode
+        table['episode_done'] = episode_done
+        return table, end_of_data
+
+    def build_table(self, entry):
+        """Packs an entry into an action-observation dictionary."""
+        table = {}
+        if entry[0] is not None:
+            table['text'] = entry[0]
+        if len(entry) > 1:
+            if entry[1] is not None:
+                table['labels'] = entry[1]
+            if len(entry) > 2:
+                if entry[2] is not None:
+                    table['reward'] = entry[2]
+                if len(entry) > 3:
+                    if entry[3] is not None:
+                        table['label_candidates'] = entry[3]
+                    if len(entry) > 4 and entry[4] is not None:
+                        img = self.image_loader.load(entry[4])
+                        if img is not None:
+                            table['image'] = img
+
+        if (table.get('labels', None) is not None
+                and self.cands is not None):
+            if self.addedCands:
+                # remove elements in addedCands
+                self.cands.difference_update(self.addedCands)
+                self.addedCands.clear()
+            for label in table['labels']:
+                if label not in self.cands:
+                    # add labels, queue them for removal next time
+                    if not self.copied_cands:
+                        self.cands = self.cands.copy()
+                        self.copied_cands = True
+                    self.cands.add(label)
+                    self.addedCands.append(label)
+            table['label_candidates'] = self.cands
+
+        if 'labels' in table and 'label_candidates' in table:
+            if table['labels'][0] not in table['label_candidates']:
+                raise RuntimeError('true label missing from candidate labels')
+        return table
+
+
+class StreamDialogData(DialogData):
+    """Provides a data structure for streaming textual dialog data.
+    This can be used whenever the dialog data follows the format described in
+    DialogData but cannot fit entirely into memory.
+
+    Additional keyword-argument cycle defines if the stream should restart from
+    the beginning after an epoch is finished (defaults to True).
+    """
+
+    def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
+        # super() call initiates stream in self.data by calling _load()
+        super().__init__(opt, data_loader, cands, shared, **kwargs)
+        self.cycle = kwargs['cycle'] if 'cycle' in kwargs else True
+        if shared:
+            # auxiliary instances hold pointer to main datastream (in self.data)
+            self.reset_data = shared['reset']
+        else:
+            # main instance holds the stream and shares pointer to it
+            self.data_loader = data_loader
+            self.datafile = opt['datafile']
+            self.reset_data = None
+            self.is_reset = True
+        self.entry_idx = 0
+        self.next_episode = None
+
+    def share(self):
+        shared = super().share()
+        # also share reset method to allow datastream to be reset
+        shared['reset'] = self.reset
+        return shared
+
+    def __len__(self):
+        # unknown
+        return 0
+
+    def _load(self, data_loader, datafile):
+        """Load data generator into data field."""
+        self.data = self._data_generator(data_loader, datafile)
+
+    def _data_generator(self, data_loader, datafile):
+        """Generates data using the iterator over tuples constructed
+        by data_loader.
+        """
+        self.is_reset = False
+        while True:
+            for episode in self._read_episode(data_loader(datafile)):
+                yield episode
+            yield -1
+            while not self.cycle:
+                yield -1
+
+    def num_episodes(self):
+        # unknown
+        return 0
+
+    def get(self):
+        """Returns a the next entry from the stream in the current episode for
+        this instance. When episode is done returns first entry of next episode.
+        """
+        # first look up data
+        if self.next_episode is None:
+            self.next_episode = next(self.data)
+        if self.entry_idx == 0:
+            self.cur_episode = self.next_episode
+            self.next_episode = next(self.data)
+        entry = self.cur_episode[self.entry_idx]
+
+        # now pack it in a action-observation dictionary
+        table = self.build_table(entry)
+
+        episode_done = self.entry_idx == len(self.cur_episode) - 1
+        if episode_done:
+            self.entry_idx = 0
+        else:
+            self.entry_idx += 1
+        end_of_data = episode_done and self.next_episode is -1
+        if end_of_data and self.cycle:
+            self.next_episode = next(self.data)
+
+        # last entry in this episode
+        table['episode_done'] = episode_done
+        return table, end_of_data
+
+    def reset(self):
+        """Reset the datastream to its beginning"""
+        if self.reset_data is not None:
+            # auxiliary instance, reset main datastream
+            self.data = self.reset_data()
+            self.next_episode = None
+        elif not self.is_reset:
+            # if main instance is not reset, reset datastream
+            self._load(self.data_loader, self.datafile)
+            self.is_reset = True
+            self.next_episode = None
+        self.entry_idx = 0
+        return self.data
+
+
+class FbDialogTeacher(DialogTeacher):
+    """This module provides access to data in the Facebook Dialog format.
+
+
+    Subclasses ``DialogTeacher`` for functionality and provides an implementation
+    of ``setup_data()`` which iterates over datasets in the "fbdialog" format.
+
+    The way FB Dialog data is set up is as follows:
+
+    ::
+
+        1 Sam went to the kitchen.
+        2 Pat gave Sam the milk.
+        3 Where is the milk?<TAB>kitchen<TAB>1<TAB>hallway|kitchen|bathroom
+        4 Sam went to the hallway
+        5 Pat went to the bathroom
+        6 Where is the milk?<TAB>hallway<TAB>1<TAB>hallway|kitchen|bathroom
+
+    Lines 1-6 represent a single episode, with two different examples: the first
+    example is lines 1-3, and the second is lines 4-6.
+
+    Lines 1,2,4, and 5 represent contextual information.
+
+    Lines 3 and 6 contain a query, a label, a reward for getting the question
+    correct, and three label candidates.
+
+    Since both of these examples are part of the same episode, the information
+    provided in the first example is relevant to the query in the second example
+    and therefore the agent must remember the first example in order to do well.
+
+    In general dialog in this format can be any speech, not just QA pairs:
+
+    ::
+
+        1 Hi how's it going?<TAB>It's going great. What's new?
+        2 Well I'm working on a new project at work.<TAB>Oh me too!
+        3 Oh cool!<TAB>Tell me about yours.
+
+    etc.
+    """
+
+    def __init__(self, opt, shared=None):
+        self.opt = opt
+        self.cloze = opt.get('cloze', False)
+        if shared and 'cands' in shared:
+            self.cands = shared['cands']
+        else:
+            self.cands = self.load_cands(opt.get('cands_datafile', None))
+        super().__init__(opt, shared)
+
+    def share(self):
+        shared = super().share()
+        shared['cands'] = self.cands
+        return shared
+
+    def label_candidates(self):
+        return self.cands
+
+    def load_cands(self, path):
+        """Load global fixed set of candidate labels that the teacher provides
+        every example (the true labels for a specific example are also added to
+        this set, so that it's possible to get the right answer).
+        """
+        if path is None:
+            return None
+        cands = []
+        lines_have_ids = False
+        cands_are_replies = False
+        cnt = 0
+        with open(path) as read:
+            for line in read:
+                line = line.strip().replace('\\n', '\n')
+                if len(line) > 0:
+                    cnt = cnt + 1
+                    # If lines are numbered we strip them of numbers.
+                    if cnt == 1 and line[0:2] == '1 ':
+                        lines_have_ids = True
+                    # If tabs then the label_candidates are all the replies.
+                    if '\t' in line and not cands_are_replies:
+                        cands_are_replies = True
+                        cands = []
+                    if lines_have_ids:
+                        space_idx = line.find(' ')
+                        line = line[space_idx + 1:]
+                        if cands_are_replies:
+                            sp = line.split('\t')
+                            if len(sp) > 1 and sp[1] != '':
+                                cands.append(sp[1])
+                        else:
+                            cands.append(line)
+                    else:
+                        cands.append(line)
+        return cands
+
+    def setup_data(self, path):
+        """Reads data in the fbdialog format.
+
+        Returns ``((x,y,r,c), new_episode?)`` tuples.
+
+        ``x`` represents a query, ``y`` represents the labels, ``r`` represents any reward,
+        and ``c`` represents any label_candidates.
+
+        The example above will be translated into the following tuples:
+
+        ::
+
+            x: 'Sam went to the kitchen\\nPat gave Sam the milk\\nWhere is the milk?'
+            y: ['kitchen']
+            r: '1'
+            c: ['hallway', 'kitchen', 'bathroom']
+            new_episode = True (this is the first example in the episode)
+
+
+        ::
+
+            x: 'Sam went to the hallway\\nPat went to the bathroom\\nWhere is the
+                milk?'
+            y: ['hallway']
+            r: '1'
+            c: ['hallway', 'kitchen', 'bathroom']
+            new_episode = False (this is the second example in the episode)
+        """
+        print("[loading fbdialog data:" + path + "]")
+        with open(path) as read:
+            start = True
+            x = ''
+            reward = 0
+            dialog_index = 0
+            for line in read:
+                line = line.strip().replace('\\n', '\n')
+                if len(line) == 0:
+                    continue
+
+                # first, get conversation index -- '1' means start of episode
+                space_idx = line.find(' ')
+                conv_id = line[:space_idx]
+
+                # split line into constituent parts, if available:
+                # x<tab>y<tab>reward<tab>label_candidates
+                # where y, reward, and label_candidates are optional
+                split = line[space_idx + 1:].split('\t')
+
+                # remove empty items and strip each one
+                for i in range(len(split)):
+                    word = split[i].strip()
+                    if len(word) == 0:
+                        split[i] = ''
+                    else:
+                        split[i] = word
+                # Empty reward string same as None
+                if len(split) > 2 and split[2] == '':
+                    split[2] = None
+
+                # now check if we're at a new episode
+                if conv_id == '1':
+                    dialog_index += 1
+                    x = x.strip()
+                    if x:
+                        yield [x, None, reward], start
+                    start = True
+                    reward = 0
+                    # start a new episode
+                    if self.cloze:
+                        x = 'Fill in the blank in the last sentence.\n{x}'.format(
+                            x=split[0]
+                        )
+                    else:
+                        x = split[0]
+                else:
+                    if x:
+                        # otherwise add current x to what we have so far
+                        x = '{x}\n{next_x}'.format(x=x, next_x=split[0])
+                    else:
+                        x = split[0]
+                if len(split) > 2 and split[2]:
+                    reward += float(split[2])
+
+                if len(split) > 1 and split[1]:
+                    # only generate an example if we have a y
+                    split[0] = x
+                    # split labels
+                    split[1] = split[1].split('|')
+                    if len(split) > 3:
+                        # split label_candidates
+                        split[3] = split[3].split('|')
+                    if len(split) > 2:
+                        split[2] = reward
+                    else:
+                        split.append(reward)
+                    if start:
+                        yield split, True
+                        start = False
+                    else:
+                        yield split, False
+                    # reset x in case there is unlabeled data still left
+                    x = ''
+                    reward = 0
+            if x:
+                yield [x, None, reward], start

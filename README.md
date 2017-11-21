@@ -123,7 +123,7 @@ All needed data will be downloaded to ~/ParlAI/data, and any non-data files (suc
 The main concepts (classes) in ParlAI:
 - world - defines the environment (can be very simple, just two agents talking to each other).
 - agent – an agent in the world, e.g. the learner. (There can be multiple learners.)
-- teacher – a type of agent that talks to the learner, implements one of the 
+- teacher – a type of agent that talks to the learner, implements one of the
 listed before.
 
 After defining a world and the agents in it, a main loop can be run for training, testing or displaying, which calls the function world.parley(). The skeleton of an example main is given in the left panel, and the actual code for parley() on the right.
@@ -192,12 +192,14 @@ The core library contains the following files:
   - **_MultiTaskTeacher_**: creates a set of teachers based on a "task string" passed to the Teacher, creating multiple teachers within it and alternating between them
   - create_task_teacher: instantiate a teacher from a given task string (e.g. 'babi:task:1' or 'squad')
 - **build_data.py**: basic utilities for setting up data for tasks. you can override if your filesystem needs different functionality.
-- **dialog_teacher.py**: contains a base teacher class for doing dialog with fixed chat logs, along with a data class for storing the data
 - **dict.py**: contains code for building general NLP-style dictionaries from observations
   - DictionaryAgent: agent which tracks the index and frequency of words in a dictionary, and can parse a sentence into indices into its dictionary or back
-- **fbdialog_teacher.py**: contains a teacher class which implements a function setup_data which parses data in the FB Dialog data format
 - **metrics.py**: computes evaluation metrics for dialog, e.g. ranking metrics, etc.
 - **params.py**: uses argparse to interpret command line arguments for ParlAI
+- **teachers.py**: contains teachers that deal with dialog-based tasks, as well as data classes for storing data
+  - **_FixedDialogTeacher_**: base class for a teacher that utilizes fixed data
+  - **_DialogTeacher_**: base class for a teacher doing dialog with fixed chat logs
+  - **_FbDialogTeacher_**: a teacher that implements a function setup_data that parses data in the FB Dialog data format
 - **thread_utils.py**: utility classes/functions for use in Hogwild multithreading (multiprocessing)
   - SharedTable: provides a lock-protected, shared-memory, dictionary-like interface for keeping track of metrics
 - **worlds.py**: contains a set of basic worlds for tasks to take place inside

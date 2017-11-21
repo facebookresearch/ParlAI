@@ -99,7 +99,7 @@ class SharedTable(MutableMapping):
         """
         val_type = type(value)
         if val_type not in self.types:
-            raise TypeError('SharedTable does not support type ' + type(value))
+            raise TypeError('SharedTable does not support type ' + str(type(value)))
         if val_type == str:
             value = sys.intern(value)
         if key in self.idx:

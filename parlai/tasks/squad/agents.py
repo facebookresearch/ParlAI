@@ -4,15 +4,14 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.fixed_data_teacher import FixedDataTeacher
-from parlai.core.dialog_teacher import DialogTeacher
+from parlai.core.teachers import FixedDialogTeacher, DialogTeacher
 from .build import build
 
 import json
 import os
 
 
-class IndexTeacher(FixedDataTeacher):
+class IndexTeacher(FixedDialogTeacher):
     """Hand-written SQuAD teacher, which loads the json squad data and
     implements its own `act()` method for interacting with student agent,
     rather than inheriting from the core Dialog Teacher. This code is here as

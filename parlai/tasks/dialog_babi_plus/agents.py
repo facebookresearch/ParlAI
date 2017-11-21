@@ -4,7 +4,7 @@
 
 import os
 
-from parlai.core.fbdialog_teacher import FbDialogTeacher
+from parlai.core.teachers import FbDialogTeacher
 from parlai.tasks.dialog_babi_plus.build import build
 
 tasks = {}

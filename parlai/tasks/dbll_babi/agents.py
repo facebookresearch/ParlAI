@@ -11,7 +11,7 @@
 # which specifies task 2, and policy with 0.5 answers correct, see the paper
 # for more details: https://arxiv.org/abs/1604.06045
 
-from parlai.core.fbdialog_teacher import FbDialogTeacher
+from parlai.core.teachers import FbDialogTeacher
 from .build import build
 
 import copy

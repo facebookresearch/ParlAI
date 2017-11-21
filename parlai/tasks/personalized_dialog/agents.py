@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.fbdialog_teacher import FbDialogTeacher
+from parlai.core.teachers import FbDialogTeacher
 from parlai.core.agents import MultiTaskTeacher
 from .build import build
 
@@ -30,7 +30,7 @@ def _path(exsz, task, opt):
     elif dt == 'valid':
         suffix = 'dev'
     return os.path.join(opt['datapath'], 'personalized-dialog', 'personalized-dialog-dataset',
-        '{exsz}'.format(exsz=exsz), 
+        '{exsz}'.format(exsz=exsz),
         '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix))
 
 
