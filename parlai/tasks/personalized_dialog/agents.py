@@ -30,7 +30,7 @@ def _path(exsz, task, opt):
     elif dt == 'valid':
         suffix = 'dev'
     return os.path.join(opt['datapath'], 'personalized-dialog', 'personalized-dialog-dataset',
-        '{exsz}'.format(exsz=exsz),
+        '{exsz}'.format(exsz=exsz), 
         '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix))
 
 

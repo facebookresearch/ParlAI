@@ -199,7 +199,7 @@ The core library contains the following files:
 - **teachers.py**: contains teachers that deal with dialog-based tasks, as well as data classes for storing data
   - **_FixedDialogTeacher_**: base class for a teacher that utilizes fixed data
   - **_DialogTeacher_**: base class for a teacher doing dialog with fixed chat logs
-  - **_FbDialogTeacher_**: a teacher that implements a function setup_data that parses data in the FB Dialog data format
+  - **_FbDialogTeacher_**: a teacher that implements a function `setup_data` that parses data in the FB Dialog data format
 - **thread_utils.py**: utility classes/functions for use in Hogwild multithreading (multiprocessing)
   - SharedTable: provides a lock-protected, shared-memory, dictionary-like interface for keeping track of metrics
 - **worlds.py**: contains a set of basic worlds for tasks to take place inside
