@@ -74,7 +74,7 @@ class FixedDataTeacher(Teacher):
            and computes the image path for the load request.
         3. At the end of ``submit_load_request``, the teacher calls
            ``self.data_loader.request_load`` with three args:
-           - ``self.receive`` - the function that the DataLoader calls to
+           - ``self.receive_data`` - the function that the DataLoader calls to
                return the the loaded object
            - ``self.image_loader.load`` - the function used to load the image
                from the image path
