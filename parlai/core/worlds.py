@@ -631,6 +631,8 @@ class BatchWorld(World):
         return False
 
     def epoch_done(self):
+        if not self.random:
+            return any([world.epoch_done() for world in self.worlds])
         for world in self.worlds:
             if not world.epoch_done():
                 return False
