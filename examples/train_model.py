@@ -24,7 +24,7 @@ TODO List:
 """
 
 from parlai.core.agents import create_agent
-from parlai.core.worlds import create_task
+from parlai.core.worlds import create_task, BatchWorld
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer
 import build_dict
@@ -128,12 +128,20 @@ def main(parser):
     impatience = 0
     saved = False
     valid_world = None
+    num_epochs = 0
+    random = opt.get('datatype', 'train') == 'train'
     with world:
         while True:
             world.parley()
             parleys += 1
 
-            if opt['num_epochs'] > 0 and parleys >= max_parleys:
+            if world.epoch_done():
+                num_epochs += 1
+            elif type(world) is BatchWorld:
+                if any([subworld.epoch_done() for subworld in world.worlds]):
+                    num_epochs += 1
+                    world.reset()
+            if (opt['num_epochs'] == num_epochs) or (random and parleys >= max_parleys):
                 print('[ num_epochs completed:{}  time elapsed:{}s ]'.format(
                     opt['num_epochs'], train_time.time()))
                 break
@@ -172,9 +180,10 @@ def main(parser):
                         time_left = min(time_left, other_time_left)
                     else:
                         time_left = other_time_left
-                if time_left is not None:
+                if time_left is not None and max_exs != 0:
                     logs.append('time_left:{}s'.format(math.floor(time_left)))
-
+                if opt['num_epochs'] > 0 and not random:
+                    logs.append('num_epochs:{}'.format(num_epochs))
                 # join log string and add full metrics report to end of log
                 log = '[ {} ] {}'.format(' '.join(logs), train_report)
 
