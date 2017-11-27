@@ -178,7 +178,8 @@ class Metrics(object):
                 m['hits@k'][k] = round_sigfigs(
                     self.metrics['hits@' + str(k)] / total, 3)
             for k in self.custom_keys:
-                m[k] = round_sigfigs(self.metrics[k] / total, 3)
+                if k in self.metrics:
+                    m[k] = round_sigfigs(self.metrics[k] / total, 3)
         return m
 
     def clear(self):
