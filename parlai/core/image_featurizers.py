@@ -61,8 +61,8 @@ class ImageLoader():
         self.opt = opt.copy()
         self.use_cuda = False
         self.netCNN = None
-        self.im = opt['image_mode']
-        if self.im is not None and self.im not in ['none', 'raw', 'ascii']:
+        self.im = opt.get('image_mode', 'none')
+        if self.im not in ['none', 'raw', 'ascii']:
             self.init_cnn(self.opt)
 
     def init_cnn(self, opt):
