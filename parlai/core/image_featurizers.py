@@ -61,12 +61,14 @@ class ImageLoader():
         self.opt = opt.copy()
         self.use_cuda = False
         self.netCNN = None
-        self.im = opt['image_mode']
-        if self.im is not None and self.im not in ['none', 'raw', 'ascii']:
+        self.im = opt.get('image_mode', 'none')
+        if self.im not in ['none', 'raw', 'ascii']:
             self.init_cnn(self.opt)
 
     def init_cnn(self, opt):
-        """Lazy initialization of preprocessor model in case we don't need any image preprocessing."""
+        """Lazy initialization of preprocessor model in case we don't need any
+        image preprocessing.
+        """
         try:
             import torch
             self.use_cuda = (not opt.get('no_cuda', False)
@@ -79,10 +81,13 @@ class ImageLoader():
         import torchvision.transforms as transforms
         import torch.nn as nn
 
+        if 'image_mode' not in opt or 'image_size' not in opt:
+            raise RuntimeError(
+                'Need to add image arguments to opt. See '
+                'parlai.core.params.ParlaiParser.add_image_args')
+        self.image_mode = opt['image_mode']
         self.image_size = opt['image_size']
         self.crop_size = opt['image_cropsize']
-        self.datatype = opt['datatype']
-        self.image_mode = opt['image_mode']
 
         if self.use_cuda:
             print('[ Using CUDA ]')
@@ -94,7 +99,8 @@ class ImageLoader():
         CNN = getattr(torchvision.models, cnn_type)
 
         # cut off the additional layer.
-        self.netCNN = nn.Sequential(*list(CNN(pretrained=True).children())[:layer_num])
+        self.netCNN = nn.Sequential(
+            *list(CNN(pretrained=True).children())[:layer_num])
 
         # initialize the transform function using torch vision.
         self.transform = transforms.Compose([
