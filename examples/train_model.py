@@ -128,17 +128,12 @@ def main(parser):
     impatience = 0
     saved = False
     valid_world = None
-    num_epochs = 0
-    sampling_data = opt.get('datatype', 'train') == 'train'
     with world:
         while True:
             world.parley()
             parleys += 1
 
-            if world.epoch_done():
-                num_epochs += 1
-                world.reset()
-            if (opt['num_epochs'] == num_epochs) or (sampling_data and parleys >= max_parleys):
+            if opt['num_epochs'] > 0 and parleys >= max_parleys:
                 print('[ num_epochs completed:{}  time elapsed:{}s ]'.format(
                     opt['num_epochs'], train_time.time()))
                 break
@@ -177,10 +172,10 @@ def main(parser):
                         time_left = min(time_left, other_time_left)
                     else:
                         time_left = other_time_left
-                if time_left is not None and max_exs != 0:
+                if time_left is not None:
                     logs.append('time_left:{}s'.format(math.floor(time_left)))
                 if opt['num_epochs'] > 0:
-                    display_epochs = int(total_exs / len(world)) if sampling_data else num_epochs
+                    display_epochs = int(total_exs / len(world))
                     logs.append('num_epochs:{}'.format(display_epochs))
                 # join log string and add full metrics report to end of log
                 log = '[ {} ] {}'.format(' '.join(logs), train_report)
