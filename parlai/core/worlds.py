@@ -523,25 +523,13 @@ def override_opts_in_shared(table, overrides):
 from .fixed_data_teacher import FixedDataTeacher
 
 class FixedDataBatchTeacher(FixedDataTeacher):
-    def __init__(self, opt, shared=None):
-        pass
 
-    def act(self):
-        pass
-
-class FixedDataBatchWorld(World):
-    """Flattens all data so that we can serve up batches sorted by length.
-
-    This dramatically speeds up training by reducing the amount of padding
-    required per batch.
-    """
-
-    def __init__(self, opt, world):
+    def __init__(self, opt, shared=None, world=None):
         self.opt = opt
         dt = opt['datatype'].split(':')
         if 'stream' in dt:
             raise RuntimeError('streaming currently not supported')
-        if 'ordered' not in dt:
+        if 'ordered' not in dt or world is None:
             # make ordered copy of data
             ordered_opt = opt.copy()
             ordered_opt['datatype'] = ':'.join(dt[0], 'ordered')
@@ -553,7 +541,9 @@ class FixedDataBatchWorld(World):
             data = self.flatten(world)
             world.reset()
 
-        self.batches = self.make_batches(data, opt['batchsize'])
+        self.sorted_data = self.sort_data(data)
+        self.episodes = self.sorted_data
+        # self.batches = self.make_batches(self.sorted_data, opt['batchsize'])
 
     def flatten(self, world):
         data = []
@@ -577,7 +567,7 @@ class FixedDataBatchWorld(World):
             episode_done = False
         return data
 
-    def make_batches(self, data, bsz, key='text_label', method='spaces'):
+    def sort_data(self, data, key='text_label', method='spaces'):
         # TODO: support different keys and different methods
         tpls = []
         for ex in data:
@@ -589,14 +579,35 @@ class FixedDataBatchWorld(World):
             tiebreaker = random.random()
             tpls.append((fst, snd, tiebreaker, ex))
         tpls.sort()
-        batches = [tpls[i:i + bsz] for i in range(0, len(tpls), bsz)]
+        return [e[-1] for e in tpls]
+
+    def make_batches(self, data, bsz, ):
+        batches = [data[i:i + bsz] for i in range(0, len(data), bsz)]
         random.shuffle(batches)
         return batches
 
+    # def batch_act(self, observations):
+
+
+class FixedDataBatchWorld(DialogPartnerWorld):
+    """Flattens all data so that we can serve up batches sorted by length.
+
+    This dramatically speeds up training by reducing the amount of padding
+    required per batch.
+    """
+
+    def __init__(self, opt, world):
+        self.new_teacher = FixedDataBatchTeacher(opt, world=world)
+        if not hasattr(world.agents[1], 'batch_act'):
+            raise RuntimeError('Agent must have batch_act for this world.')
+        self.agents = [self.new_teacher, world.agents[1]]
+        self.acts = [None, None]
+
     def parley(self):
-        pass
-
-
+        acts = self.acts
+        agents = self.agents
+        acts[0] = agents[0].batch_act(acts[1])
+        acts[1] = agents[1].batch_act(acts[0])
 
 
 class BatchWorld(World):
