@@ -322,9 +322,7 @@ class StreamDialogData(DialogData):
         length_file = self.datafile + ".length"
         if not os.path.isfile(length_file):
             length = 0
-            for episode in self.data:
-                if episode == -1:
-                    break
+            for episode in self._read_episode(self.data_loader(self.datafile)):
                 length += len(episode)
             with open(length_file, 'w') as f:
                 f.write(str(length))
