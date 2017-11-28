@@ -36,6 +36,7 @@ import queue
 import random
 import sys
 import time
+import os
 
 class DataLoader(Thread):
     """A worker thread that provides a threadpool for data loading.
@@ -541,8 +542,17 @@ class StreamDialogData(DialogData):
         return shared
 
     def __len__(self):
-        # unknown
-        return 0
+        length_file = self.datafile + ".length"
+        if not os.path.isfile(length_file):
+            length = 0
+            for episode in self._read_episode(self.data_loader(self.datafile)):
+                length += len(episode)
+            with open(length_file, 'w') as f:
+                f.write(str(length))
+        else:
+            with open(length_file, 'r') as f:
+                length = int(f.read())
+        return length
 
     def _load(self, data_loader, datafile):
         """Load data generator into data field."""
