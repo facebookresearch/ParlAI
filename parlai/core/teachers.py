@@ -15,7 +15,7 @@
     ``DialogTeacher(FixedDialogTeacher)``
      Base teacher class for doing dialog specifically with fixed chat logs.
 
-     ``FbDialogTeacher(DialogTeacher)``
+    ``FbDialogTeacher(DialogTeacher)``
      Teacher class that provides access to data in the Facebook Dialog format.
      See the class description for more details.
 
@@ -46,11 +46,11 @@ class DataLoader(Thread):
 
     To submit a request, a teacher should call ``request_load`` with the
     following arguments:
+
         - ``receive_fn`` - a receive function (for receiving the data)
         - ``load_fn`` - a load function (for loading the data)
-        - ``args`` - arguments for the load function
-            -> args can be either a dictionary of arguments for a function, or
-               a list of positional arguments
+        - ``args`` - arguments for the load function. args can be either a dictionary of arguments for a function, or a list of positional arguments
+
     """
     def __init__(self, opt):
         Thread.__init__(self, daemon=True)
@@ -94,22 +94,26 @@ class FixedDialogTeacher(Teacher):
 
     The following is an example of the DataLoader usage in the VQA-V1 teacher.
 
-        1. In the teacher's ``init`` function, the teacher calls its
-           ``submit_load_request`` function to preload an image.
-        2. The ``submit_load_request`` function gets the next ``episode_idx``,
-           and computes the image path for the load request.
-        3. At the end of ``submit_load_request``, the teacher calls
-           ``self.data_loader.request_load`` with three args:
+        1. In the teacher's ``init`` function, the teacher calls its \
+        ``submit_load_request`` function to preload an image.
+        2. The ``submit_load_request`` function gets the next ``episode_idx``, \
+        and computes the image path for the load request.
+        3. At the end of ``submit_load_request``, the teacher calls \
+        ``self.data_loader.request_load`` with three args:
+
            - ``self.receive_data`` - the function that the DataLoader calls to
-               return the the loaded object
+           return the the loaded object
+
            - ``self.image_loader.load`` - the function used to load the image
-               from the image path
+           from the image path
+
            - ``[img_path]`` - a list of arguments for the load function, which
-               in this case is the path of the image.
-         4. In the teacher's ``act`` function, the teacher loads the data from
-            its data queue.
-         5. At the end of the ``act`` function, the teacher calls
-            ``submit_load_request`` to preload an image for the next example.
+           in this case is the path of the image.
+
+        4. In the teacher's ``act`` function, the teacher loads the data from
+        its data queue.
+        5. At the end of the ``act`` function, the teacher calls
+        ``submit_load_request`` to preload an image for the next example.
 
 
     """

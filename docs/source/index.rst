@@ -32,11 +32,10 @@ ParlAI is a one-stop-shop for dialog research.
 
    agents
    build_data
-   dialog
    dict
-   fbdialog
    metrics
    params
+   teachers
    thread_utils
    worlds
 
