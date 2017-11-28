@@ -174,7 +174,9 @@ def main(parser):
                         time_left = other_time_left
                 if time_left is not None:
                     logs.append('time_left:{}s'.format(math.floor(time_left)))
-
+                if opt['num_epochs'] > 0:
+                    display_epochs = int(total_exs / len(world))
+                    logs.append('num_epochs:{}'.format(display_epochs))
                 # join log string and add full metrics report to end of log
                 log = '[ {} ] {}'.format(' '.join(logs), train_report)
 

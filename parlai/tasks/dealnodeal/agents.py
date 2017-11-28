@@ -64,6 +64,19 @@ class NegotiationTeacher(Teacher):
 
         self.reset()
 
+    def num_examples(self):
+        # 1 example for every expected learner text response (YOU), and 1
+        # example for the expected learner final negotiation output values
+        num_exs = 0
+        dialogues = [self._split_dialogue(get_tag(episode.strip().split(), DIALOGUE_TAG))
+                     for episode in self.episodes]
+        num_exs = sum(len([d for d in dialogue if YOU_TOKEN in d]) + 1
+                      for dialogue in dialogues)
+        return num_exs
+
+    def __len__(self):
+        return self.num_examples()
+
     def reset(self):
         super().reset()
         self.episode_idx = self.data_offset - self.step_size
@@ -80,14 +93,14 @@ class NegotiationTeacher(Teacher):
         print('loading: ' + data_path)
         with open(data_path) as data_file:
             self.episodes = data_file.readlines()
-    
+
     def observe(self, observation):
         """Process observation for metrics."""
         if self.expected_reponse is not None:
             self.metrics.update(observation, self.expected_reponse)
             self.expected_reponse = None
         return observation
-            
+
     def act(self):
         if self.dialogue_idx is not None:
             # continue existing conversation
@@ -104,7 +117,7 @@ class NegotiationTeacher(Teacher):
             # get next non-random example
             self.episode_idx = (self.episode_idx + self.step_size) % len(self.episodes)
             return self._start_dialogue()
-           
+
 
     def _split_dialogue(self, words, separator=EOS_TOKEN):
         sentences = []
