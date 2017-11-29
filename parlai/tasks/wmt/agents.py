@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.fbdialog_teacher import FbDialogTeacher
+from parlai.core.teachers import FbDialogTeacher
 from .build import build
 
 import copy

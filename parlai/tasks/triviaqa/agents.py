@@ -4,14 +4,13 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.dialog_teacher import DialogTeacher
+from parlai.core.teachers import DialogTeacher
 from parlai.core.agents import MultiTaskTeacher
 from .build import build
 
 import copy
 import json
 import os
-import random
 
 def _path(opt):
     build(opt)

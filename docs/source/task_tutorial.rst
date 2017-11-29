@@ -225,7 +225,7 @@ We still need to implement this ``_path()`` method. The version for this example
 
 By creating ``MnistQATeacher`` as a subclass of ``DialogTeacher``, the job of creating a teacher for this task becomes much simpler: most of the work that needs to be done will limit itself to defining a ``setup_data`` method. This method is a generator that will take in a path to the data and yield a pair of elements for each call. The first element of the pair is a tuple containing the following information: ``(query, labels, reward, label_candidates, path_to_image)``. The second is a boolean flag ``new_episode?`` which indicates if the current query starts the new episode or not.
 
-More information on this format can be found in the documentation on ``data_loader`` in `DialogData <http://parl.ai/static/docs/dialog.html#parlai.core.dialog_teacher.DialogData>`__ (``setup_data`` is provided as a data_loader to ``DialogData``).
+More information on this format can be found in the documentation on ``data_loader`` in `DialogData <http://parl.ai/static/docs/dialog.html#parlai.core.teachers.DialogData>`__ (``setup_data`` is provided as a data_loader to ``DialogData``).
 
 The sample ``setup_data`` method for our task is presented below.
 

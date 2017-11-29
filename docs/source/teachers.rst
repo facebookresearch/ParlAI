@@ -5,7 +5,8 @@
   LICENSE file in the root directory of this source tree. An additional grant
   of patent rights can be found in the PATENTS file in the same directory.
 
-core.fbdialog_teacher
+core.teachers
 ===================================
-.. automodule:: parlai.core.fbdialog_teacher
+.. automodule:: parlai.core.teachers
   :members:
+  :exclude-members: __dict__,__weakref__

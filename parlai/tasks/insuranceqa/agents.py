@@ -6,7 +6,7 @@
 import copy
 import os
 
-from parlai.core.fbdialog_teacher import FbDialogTeacher
+from parlai.core.teachers import FbDialogTeacher
 from .build import build
 
 

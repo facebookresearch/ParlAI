@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.fixed_data_teacher import FixedDataTeacher
+from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from .build import build, buildImage
 
@@ -43,7 +43,7 @@ def _path(opt):
     return data_path, annotation_path, image_path
 
 
-class OeTeacher(FixedDataTeacher):
+class OeTeacher(FixedDialogTeacher):
     """
     VQA Open-Ended teacher, which loads the json vqa data and implements its
     own `act` method for interacting with student agent.

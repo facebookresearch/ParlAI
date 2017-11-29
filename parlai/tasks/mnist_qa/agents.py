@@ -11,7 +11,7 @@ identify.
 Useful for debugging and checking that one's image model is up and running.
 """
 
-from parlai.core.dialog_teacher import DialogTeacher
+from parlai.core.teachers import DialogTeacher
 from .build import build
 
 import json

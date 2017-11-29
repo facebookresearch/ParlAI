@@ -7,10 +7,9 @@
 # This task simply loads the specified file: useful for quick tests without
 # setting up a new task.
 
-from parlai.core.fbdialog_teacher import FbDialogTeacher
+from parlai.core.teachers import FbDialogTeacher
 
 import copy
-import os
 
 class DefaultTeacher(FbDialogTeacher):
     """This task simply loads the specified file: useful for quick tests without
