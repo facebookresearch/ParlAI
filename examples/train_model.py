@@ -164,14 +164,14 @@ class TrainLoop():
             print(self.world.display() + '\n~~')
         logs = []
         # time elapsed
-        logs.append('time:{}s'.format(math.floor(train_time.time())))
+        logs.append('time:{}s'.format(math.floor(self.train_time.time())))
         logs.append('parleys:{}'.format(self.parleys))
         # get report and update total examples seen so far
-        if hasattr(agent, 'report'):
+        if hasattr(self.agent, 'report'):
             train_report = self.agent.report()
             self.agent.reset_metrics()
         else:
-            train_report = world.report()
+            train_report = self.world.report()
             self.world.reset_metrics()
         if hasattr(train_report, 'get') and train_report.get('total'):
             self.total_exs += train_report['total']
@@ -179,10 +179,10 @@ class TrainLoop():
         # check if we should log amount of time remaining
         time_left = None
         if opt['num_epochs'] > 0 and self.total_exs > 0 and self.max_exs > 0:
-            exs_per_sec = train_time.time() / total_exs
+            exs_per_sec = self.train_time.time() / total_exs
             time_left = (self.max_exs - total_exs) * exs_per_sec
         if opt['max_train_time'] > 0:
-            other_time_left = opt['max_train_time'] - train_time.time()
+            other_time_left = opt['max_train_time'] - self.train_time.time()
             if time_left is not None:
                 time_left = min(time_left, other_time_left)
             else:
@@ -190,7 +190,7 @@ class TrainLoop():
         if time_left is not None:
             logs.append('time_left:{}s'.format(math.floor(time_left)))
         if opt['num_epochs'] > 0:
-            if self.total_exs > 0:
+            if self.total_exs > 0 and len(self.world) > 0:
                 display_epochs = int(self.total_exs / len(self.world))
             else:
                 display_epochs = self.total_epochs
@@ -216,6 +216,7 @@ class TrainLoop():
                     or self.total_epochs >= opt['num_epochs']):
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(
                         opt['num_epochs'], self.train_time.time()))
+                    self.log()
                     break
                 if opt['max_train_time'] > 0 and self.train_time.time() > opt['max_train_time']:
                     print('[ max_train_time elapsed:{}s ]'.format(self.train_time.time()))
