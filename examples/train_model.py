@@ -225,7 +225,7 @@ class TrainLoop():
                     self.log()
                 if (opt['validation_every_n_secs'] > 0 and
                         self.validate_time.time() > opt['validation_every_n_secs']):
-                    stop_training = validate()
+                    stop_training = self.validate()
                     if stop_training:
                         break
 
