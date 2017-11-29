@@ -519,161 +519,19 @@ def override_opts_in_shared(table, overrides):
                     override_opts_in_shared(item, overrides)
     return table
 
-from .agents import create_task_agent_from_taskname
-from .fixed_data_teacher import FixedDataTeacher
-
-class FixedDataBatchTeacher(FixedDataTeacher):
-    """Flattens all data so that we can serve up batches sorted by length.
-
-    This dramatically speeds up training by reducing the amount of padding
-    required per batch.
-    """
-
-    def __init__(self, opt, shared=None, teacher=None):
-        super().__init__(opt, shared)
-
-        if teacher is not None and not issubclass(type(teacher), FixedDataTeacher):
-            raise RuntimeError('Only children of FixedDataTeacher supported.')
-
-        self.bsz = opt['batchsize']
-        if shared:
-            self.len = shared['len']
-            self.lastYs = shared['lastYs']
-        else:
-            dt = opt['datatype'].split(':')
-            if 'stream' in dt:
-                raise RuntimeError('streaming currently not supported')
-            ordered_opt = opt.copy()
-            ordered_opt['datatype'] = ':'.join((dt[0], 'ordered'))
-            ordered_opt['batchsize'] = 1
-            ordered_teacher = create_task_agent_from_taskname(ordered_opt)[0]
-            flatdata = self.flatten(ordered_teacher)
-
-            self.sorted_data = self.sort_data(flatdata)
-            self.len = len(self.sorted_data)
-            self.batches = self.make_batches(self.sorted_data, self.bsz)
-            self.lastYs = [None] * self.bsz
-
-        self.data_offset = 0
-        self.step_size = 1
-        self.reset()
-
-    def __len__(self):
-        return self.len
-
-    def num_episodes(self):
-        return self.len
-
-    def reset(self):
-        super().reset()
-        self.batch_idx = -1
-        if self.random and hasattr(self, 'batches'):
-            random.shuffle(self.batches)
-
-    def flatten(self, teacher):
-        data = []
-        episode_done = False
-        while not teacher.epoch_done():
-            current = []
-            while not episode_done:
-                action = teacher.act()
-                current.append(action)
-                episode_done = action['episode_done']
-
-            for i, ex in enumerate(current):
-                # TODO: allow custom history lengths (may not want full hist)
-                context = [prev['text'] for prev in current[:i]]
-                context.append(ex['text'])
-                ex['text'] = '\n'.join(context)
-                ex['episode_done'] = True
-                data.append(ex)
-            episode_done = False
-        return data
-
-    def sort_data(self, data, key='text_label', method='spaces'):
-        # TODO: support different keys and different methods
-        tpls = []
-        for ex in data:
-            fst = ex['text'].count(' ')
-            if 'labels' in ex['text']:
-                # use average label length (probably just one answer usually)
-                snd = (sum(l.count(' ') for l in ex['labels'])
-                       / len(ex['labels']))
-            else:
-                snd = 0
-            tiebreaker = random.random()
-            tpls.append((fst, snd, tiebreaker, ex))
-        tpls.sort()
-        return [e[-1] for e in tpls]
-
-    def make_batches(self, data, bsz):
-        return [data[i:i + bsz] for i in range(0, len(data), bsz)]
-
-    def share(self):
-        shared = super().share()
-        shared['lastYs'] = self.lastYs
-        shared['len'] = self.len
-        return shared
-
-    def observe(self, observation):
-        self.lastY = self.lastYs[self.opt.get('batchindex', 0)]
-        return super().observe(observation)
-
-    def batch_act(self, observations):
-        # we ignore observations
-        if not hasattr(self, 'epochDone'):
-            self.reset()
-        if self.epochDone and not self.training:
-            # need to call "reset" to repeat valid or test examples
-            return [{'episode_done': True, 'id': self.getID()}] * self.bsz
-
-        # get next batch
-        self.batch_idx += 1
-        batch = self.batches[self.batch_idx]
-
-        if self.batch_idx + 1 == len(self.batches):
-            self.batch_idx = -1
-            if self.random:
-                random.shuffle(self.batches)
-            else:
-                self.epochDone = True
-
-        # pad batch
-        if len(batch) < self.bsz:
-            batch += [{'episode_done': True, 'id': self.getID()}] * (self.bsz - len(batch))
-
-        # remember correct answer if available (for padding, None)
-        for i, ex in enumerate(batch):
-            self.lastYs[i] = ex.get('labels', ex.get('eval_labels'))
-
-        return batch
-
-    def act(self):
-        raise RuntimeError('Should only be using batch_act.')
-
-from .agents import Teacher
 
 class BatchWorld(World):
     """Creates a separate world for each item in the batch, sharing
     the parameters for each.
-    The underlying world(s) it is batching can be either ``DialogPartnerWorld``,
-    ``MultiAgentWorld``, ``ExecutableWorld`` or ``MultiWorld``.
+    The underlying world(s) it is batching can be either
+    ``DialogPartnerWorld``, ``MultiAgentWorld``, ``ExecutableWorld`` or
+    ``MultiWorld``.
     """
 
     def __init__(self, opt, world):
         self.opt = opt
         self.random = opt.get('datatype', None) == 'train'
         self.world = world
-        # if (all([not issubclass(type(a), Teacher)
-        #          or issubclass(type(a), FixedDataTeacher)
-        #          for a in world.agents])):
-        #     new_agents = []
-        #     for a in world.agents:
-        #         if issubclass(type(a), FixedDataTeacher):
-        #             new_agents.append(FixedDataBatchTeacher(opt, teacher=a))
-        #         else:
-        #             new_agents.append(a)
-        #     world.agents = new_agents
         shared = world.share()
         self.worlds = []
         for i in range(opt['batchsize']):

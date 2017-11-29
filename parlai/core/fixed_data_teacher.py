@@ -303,8 +303,6 @@ class FixedDataTeacher(Teacher):
         """Send new dialog message."""
         if not hasattr(self, 'epochDone'):
             self.reset()
-        if hasattr(self, 'batch_idx'):
-            raise RuntimeError('should be using batch act')
         if self.epochDone and not self.training:
             # need to call "reset" to repeat valid or test examples
             return {'episode_done': True, 'id': self.getID()}
