@@ -17,7 +17,11 @@ def flatten(teacher, context_length=None, include_label=True):
     """Return a flattened version of a teacher's data where all episodes only
     have length one but contain the desired amount of context.
 
-    If context_length is not None, will use the
+    If context_length is not None, will use only that many past utterances.
+    Default is None.
+
+    If include_label is True, will include a random label in past utterances.
+    Default is True.
     """
     data = []
     episode_done = False
@@ -33,7 +37,9 @@ def flatten(teacher, context_length=None, include_label=True):
             for prev in current[:i]:
                 context.append(prev['text'])
                 if include_label:
-                    context.append(random.choice(prev['labels']))
+                    labels = prev.get('labels', prev.get('eval_labels'))
+                    if labels is not None:
+                        context.append(random.choice(labels))
             context.append(ex['text'])
             ex['text'] = '\n'.join(context)
             ex['episode_done'] = True
@@ -188,7 +194,7 @@ class FixedDataTeacher(Teacher):
                 ordered_opt['batchsize'] = 1
                 ordered_teacher = create_task_agent_from_taskname(ordered_opt)[0]
 
-                flatdata = flatten(ordered_teacher)
+                flatdata = flatten(ordered_teacher, context_length=1)
                 self.sorted_data = sort_data(flatdata)
                 self.batches = make_batches(self.sorted_data, self.bsz)
 
