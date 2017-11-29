@@ -555,6 +555,8 @@ class FixedDataBatchTeacher(FixedDataTeacher):
             self.batches = self.make_batches(self.sorted_data, self.bsz)
             self.lastYs = [None] * self.bsz
 
+        self.data_offset = 0
+        self.step_size = 1
         self.reset()
 
     def __len__(self):
@@ -564,10 +566,10 @@ class FixedDataBatchTeacher(FixedDataTeacher):
         return self.len
 
     def reset(self):
-        self.data_offset = 0
-        self.step_size = 1
         super().reset()
         self.batch_idx = -1
+        if self.random and hasattr(self, 'batches'):
+            random.shuffle(self.batches)
 
     def flatten(self, teacher):
         data = []
@@ -605,10 +607,8 @@ class FixedDataBatchTeacher(FixedDataTeacher):
         tpls.sort()
         return [e[-1] for e in tpls]
 
-    def make_batches(self, data, bsz, ):
-        batches = [data[i:i + bsz] for i in range(0, len(data), bsz)]
-        random.shuffle(batches)
-        return batches
+    def make_batches(self, data, bsz):
+        return [data[i:i + bsz] for i in range(0, len(data), bsz)]
 
     def share(self):
         shared = super().share()
@@ -620,36 +620,37 @@ class FixedDataBatchTeacher(FixedDataTeacher):
         self.lastY = self.lastYs[self.opt.get('batchindex', 0)]
         return super().observe(observation)
 
-    def next_batch_idx(self, curr_batch_idx=-1):
-        num_batches = len(self.batches)
-        if self.random:
-            batch_idx = random.randrange(num_batches)
-        else:
-            batch_idx = (curr_batch_idx + 1) % num_batches
-        return batch_idx
-
     def batch_act(self, observations):
+        # we ignore observations
         if not hasattr(self, 'epochDone'):
             self.reset()
         if self.epochDone and not self.training:
             # need to call "reset" to repeat valid or test examples
             return [{'episode_done': True, 'id': self.getID()}] * self.bsz
 
-        # we ignore observations
-        self.batch_idx = self.next_batch_idx(self.batch_idx)
-        if not self.random:
-            self.epochDone = self.batch_idx + 1 == len(self.batches)
+        # get next batch
+        self.batch_idx += 1
         batch = self.batches[self.batch_idx]
-        for i, ex in enumerate(batch):
-            self.lastYs[i] = ex.get('labels', ex.get('eval_labels'))
+
+        if self.batch_idx + 1 == len(self.batches):
+            self.batch_idx = -1
+            if self.random:
+                random.shuffle(self.batches)
+            else:
+                self.epochDone = True
 
         # pad batch
         if len(batch) < self.bsz:
             batch += [{'episode_done': True, 'id': self.getID()}] * (self.bsz - len(batch))
+
+        # remember correct answer if available (for padding, None)
+        for i, ex in enumerate(batch):
+            self.lastYs[i] = ex.get('labels', ex.get('eval_labels'))
+
         return batch
 
     def act(self):
-        raise RuntimeError('Do not want to do this any more.')
+        raise RuntimeError('Should only be using batch_act.')
 
 from .agents import Teacher
 
@@ -664,8 +665,7 @@ class BatchWorld(World):
         self.opt = opt
         self.random = opt.get('datatype', None) == 'train'
         self.world = world
-        if ('train' in opt.get('datatype', 'train') and
-            all([not issubclass(type(a), Teacher)
+        if (all([not issubclass(type(a), Teacher)
                  or issubclass(type(a), FixedDataTeacher)
                  for a in world.agents])):
             new_agents = []
@@ -702,6 +702,9 @@ class BatchWorld(World):
                 # The world has its own observe function, which the action
                 # first goes through (agents receive messages via the world,
                 # not from each other).
+                if batch_actions[i] is None:
+                    # shouldn't send None, should send empty observations
+                    batch_actions[i] = [{}] * len(self.worlds)
                 observation = w.observe(agents[index], validate(batch_actions[i]))
             else:
                 if index == index_acting: return None # don't observe yourself talking
@@ -774,6 +777,10 @@ class BatchWorld(World):
         return False
 
     def epoch_done(self):
+        # first check parent world: if it says it's done, we're done
+        if self.world.epoch_done():
+            return True
+        # otherwise check if all shared worlds are done
         for world in self.worlds:
             if not world.epoch_done():
                 return False
@@ -783,6 +790,7 @@ class BatchWorld(World):
         return self.world.report()
 
     def reset(self):
+        self.world.reset()
         for w in self.worlds:
             w.reset()
 

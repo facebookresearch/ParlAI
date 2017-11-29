@@ -357,7 +357,7 @@ class Seq2seqAgent(Agent):
             loss.backward()
             self.update_params()
             losskey = 'loss' if not lm else 'lmloss'
-            loss_dict = {losskey: loss.mul_(len(xs)).data}
+            loss_dict = {losskey: loss.mul_(len(xs)).data[0]}
         else:
             self.model.eval()
             predictions, scores, text_cand_inds = self.model(xs, ys, cands,

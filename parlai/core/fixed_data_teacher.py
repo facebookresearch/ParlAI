@@ -123,13 +123,6 @@ class FixedDataTeacher(Teacher):
         if (not self.random and self.data_offset >= self.num_episodes()):
             self.epochDone = True
 
-    def observe(self, observation):
-        """Process observation for metrics."""
-        if hasattr(self, 'lastY') and self.lastY is not None:
-            self.metrics.update(observation, self.lastY)
-            self.lastY = None
-        return observation
-
     def submit_load_request(self):
         """An agent should implement this method to submit requests to the
         data loader. At the end of this method, the agent should call
@@ -191,6 +184,13 @@ class FixedDataTeacher(Teacher):
             return self.examples[episode_idx][entry_idx]
         except Exception:
             raise RuntimeError('"Get" method must be overriden by children.')
+
+    def observe(self, observation):
+        """Process observation for metrics."""
+        if hasattr(self, 'lastY') and self.lastY is not None:
+            self.metrics.update(observation, self.lastY)
+            self.lastY = None
+        return observation
 
     def act(self):
         """Send new dialog message."""
