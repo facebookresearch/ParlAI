@@ -122,6 +122,7 @@ def main(parser):
     print('[ training... ]')
     parleys = 0
     total_exs = 0
+    total_epochs = 0
     max_exs = opt['num_epochs'] * len(world)
     max_parleys = math.ceil(max_exs / opt['batchsize'])
     best_valid = 0
@@ -133,9 +134,12 @@ def main(parser):
             world.parley()
             parleys += 1
 
-            if opt['num_epochs'] > 0 and parleys >= max_parleys:
-                print('[ num_epochs completed:{}  time elapsed:{}s ]'.format(
-                    opt['num_epochs'], train_time.time()))
+            if world.epoch_done():
+                total_epochs += 1
+            if opt['num_epochs'] > 0 and (
+                (max_parleys > 0 and parleys >= max_parleys) or total_epochs >= opt['num_epochs']):
+                print('[ num_epochs completed:{} examples:{} time elapsed:{}s ]'.format(
+                    opt['num_epochs'], parleys, train_time.time()))
                 break
             if opt['max_train_time'] > 0 and train_time.time() > opt['max_train_time']:
                 print('[ max_train_time elapsed:{}s ]'.format(train_time.time()))
@@ -163,7 +167,7 @@ def main(parser):
 
                 # check if we should log amount of time remaining
                 time_left = None
-                if opt['num_epochs'] > 0 and total_exs > 0:
+                if opt['num_epochs'] > 0 and total_exs > 0 and max_exs > 0:
                     exs_per_sec = train_time.time() / total_exs
                     time_left = (max_exs - total_exs) * exs_per_sec
                 if opt['max_train_time'] > 0:
@@ -175,7 +179,10 @@ def main(parser):
                 if time_left is not None:
                     logs.append('time_left:{}s'.format(math.floor(time_left)))
                 if opt['num_epochs'] > 0:
-                    display_epochs = int(total_exs / len(world))
+                    if total_exs > 0:
+                        display_epochs = int(total_exs / len(world))
+                    else:
+                        display_epochs = total_epochs
                     logs.append('num_epochs:{}'.format(display_epochs))
                 # join log string and add full metrics report to end of log
                 log = '[ {} ] {}'.format(' '.join(logs), train_report)
