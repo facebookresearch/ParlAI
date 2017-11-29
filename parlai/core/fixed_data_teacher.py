@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from .agents import Teacher
+from .agents import Teacher, create_task_agent_from_taskname
 
 import concurrent.futures
 from threading import Thread
@@ -97,17 +97,42 @@ class FixedDataTeacher(Teacher):
         if not hasattr(self, 'training'):
             self.training = self.datatype.startswith('train')
 
-        # for ordered data in batch mode (especially, for validation and
-        # testing), each teacher in the batch gets a start index and a step
-        # size so they all process disparate sets of the data
-        self.step_size = opt.get('batchsize', 1)
-        self.data_offset = opt.get('batchindex', 0)
+        # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:
             self.data_loader = shared['data_loader']
         else:
             self.data_loader = DataLoader(opt)
             self.data_loader.start()
+
+        # set up batching
+        self.bsz = opt.get('batchsize', 1)
+        if self.bsz > 1:
+            if shared:
+                self.lastYs = shared['lastYs']
+            else:
+                self.lastYs = [None] * self.bsz
+                self.batchindex = opt.get('batchindex', 0)
+
+                dt = opt['datatype'].split(':')
+                if 'stream' in dt:
+                    raise RuntimeError('streaming currently not supported')
+                ordered_opt = opt.copy()
+                ordered_opt['datatype'] = ':'.join((dt[0], 'ordered'))
+                ordered_opt['batchsize'] = 1
+                ordered_teacher = create_task_agent_from_taskname(ordered_opt)[0]
+                flatdata = self.flatten(ordered_teacher)
+
+                self.sorted_data = self.sort_data(flatdata)
+                self.batches = self.make_batches(self.sorted_data, self.bsz)
+        else:
+            # NOTE: this currently is always at stepsz 1, batchindex 0
+
+            # for ordered data in batch mode (especially, for validation and
+            # testing), each teacher in the batch gets a start index and a step
+            # size so they all process disparate sets of the data
+            self.step_size = self.bsz
+            self.data_offset = opt.get('batchindex', 0)
 
     def reset(self):
         """Reset the dialog so that it is at the start of the epoch,
@@ -120,8 +145,53 @@ class FixedDataTeacher(Teacher):
         self.episode_done = True
         self.epochDone = False
         self.data_queue = queue.Queue()
-        if (not self.random and self.data_offset >= self.num_episodes()):
-            self.epochDone = True
+
+        if self.bsz > 1:
+            self.batch_idx = -1
+            if self.random and hasattr(self, 'batches'):
+                random.shuffle(self.batches)
+        else:
+            if (not self.random and self.data_offset >= self.num_episodes()):
+                self.epochDone = True
+
+    def flatten(self, teacher):
+        data = []
+        episode_done = False
+        while not teacher.epoch_done():
+            current = []
+            while not episode_done:
+                action = teacher.act()
+                current.append(action)
+                episode_done = action['episode_done']
+
+            for i, ex in enumerate(current):
+                # TODO: allow custom history lengths (may not want full hist)
+                context = [prev['text'] for prev in current[:i]]
+                context.append(ex['text'])
+                ex['text'] = '\n'.join(context)
+                ex['episode_done'] = True
+                data.append(ex)
+            episode_done = False
+        return data
+
+    def sort_data(self, data, key='text_label', method='spaces'):
+        # TODO: support different keys and different methods
+        tpls = []
+        for ex in data:
+            fst = ex['text'].count(' ')
+            if 'labels' in ex['text']:
+                # use average label length (probably just one answer usually)
+                snd = (sum(l.count(' ') for l in ex['labels'])
+                       / len(ex['labels']))
+            else:
+                snd = 0
+            tiebreaker = random.random()
+            tpls.append((fst, snd, tiebreaker, ex))
+        tpls.sort()
+        return [e[-1] for e in tpls]
+
+    def make_batches(self, data, bsz):
+        return [data[i:i + bsz] for i in range(0, len(data), bsz)]
 
     def submit_load_request(self):
         """An agent should implement this method to submit requests to the
@@ -138,6 +208,8 @@ class FixedDataTeacher(Teacher):
     def share(self):
         shared = super().share()
         shared['data_loader'] = self.data_loader
+        if hasattr(self, 'lastYs'):
+            shared['lastYs'] = self.lastYs
         return shared
 
     def next_episode_idx(self, num_eps=None):
@@ -187,15 +259,49 @@ class FixedDataTeacher(Teacher):
 
     def observe(self, observation):
         """Process observation for metrics."""
+        if hasattr(self, 'lastYs'):
+            self.lastY = self.lastYs[self.batchindex]
+
         if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.update(observation, self.lastY)
             self.lastY = None
         return observation
 
+    def batch_act(self, observations):
+        # we ignore observations
+        if not hasattr(self, 'epochDone'):
+            self.reset()
+        if self.epochDone and not self.training:
+            # need to call "reset" to repeat valid or test examples
+            return [{'episode_done': True, 'id': self.getID()}] * self.bsz
+
+        # get next batch
+        self.batch_idx += 1
+        batch = self.batches[self.batch_idx]
+
+        if self.batch_idx + 1 == len(self.batches):
+            self.batch_idx = -1
+            if self.random:
+                random.shuffle(self.batches)
+            else:
+                self.epochDone = True
+
+        # pad batch
+        if len(batch) < self.bsz:
+            batch += [{'episode_done': True, 'id': self.getID()}] * (self.bsz - len(batch))
+
+        # remember correct answer if available (for padding, None)
+        for i, ex in enumerate(batch):
+            self.lastYs[i] = ex.get('labels', ex.get('eval_labels'))
+
+        return batch
+
     def act(self):
         """Send new dialog message."""
         if not hasattr(self, 'epochDone'):
             self.reset()
+        if hasattr(self, 'batch_idx'):
+            raise RuntimeError('should be using batch act')
         if self.epochDone and not self.training:
             # need to call "reset" to repeat valid or test examples
             return {'episode_done': True, 'id': self.getID()}

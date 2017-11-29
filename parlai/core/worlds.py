@@ -42,7 +42,6 @@ All worlds are initialized with the following parameters:
 """
 
 import copy
-import math
 import importlib
 import random
 
@@ -665,16 +664,16 @@ class BatchWorld(World):
         self.opt = opt
         self.random = opt.get('datatype', None) == 'train'
         self.world = world
-        if (all([not issubclass(type(a), Teacher)
-                 or issubclass(type(a), FixedDataTeacher)
-                 for a in world.agents])):
-            new_agents = []
-            for a in world.agents:
-                if issubclass(type(a), FixedDataTeacher):
-                    new_agents.append(FixedDataBatchTeacher(opt, teacher=a))
-                else:
-                    new_agents.append(a)
-            world.agents = new_agents
+        # if (all([not issubclass(type(a), Teacher)
+        #          or issubclass(type(a), FixedDataTeacher)
+        #          for a in world.agents])):
+        #     new_agents = []
+        #     for a in world.agents:
+        #         if issubclass(type(a), FixedDataTeacher):
+        #             new_agents.append(FixedDataBatchTeacher(opt, teacher=a))
+        #         else:
+        #             new_agents.append(a)
+        #     world.agents = new_agents
         shared = world.share()
         self.worlds = []
         for i in range(opt['batchsize']):
