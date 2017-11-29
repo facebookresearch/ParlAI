@@ -160,6 +160,26 @@ class FixedDataTeacher(Teacher):
 
 
     """
+    @staticmethod
+    def add_cmdline_args(argparser):
+        args = argparser.add_argument_group('Batching Arguments')
+        args.add_argument('-bsrt', '--batch-sort', default=True, type='bool',
+                          help='If enabled (default True), create batches by '
+                               'flattening all episodes to have length one '
+                               'and then sorting all the examples according to'
+                               ' their length. This dramatically reduces the '
+                               'amount of padding present after examples have '
+                               'been parsed, speeding up training.')
+        args.add_argument('-clen', '--context-length', default=-1, type=int,
+                          help='Number of past utterances to remember when '
+                               'building flattened batches of data in multi-'
+                               'example episodes.')
+        args.add_argument('-incl', '--include-labels',
+                          default=True, type='bool',
+                          help='Specifies whether or not to include labels as '
+                               'past utterances when building flattened '
+                               'batches of data in multi-example episodes.')
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
@@ -180,7 +200,9 @@ class FixedDataTeacher(Teacher):
 
         # set up batching
         self.bsz = opt.get('batchsize', 1)
-        if self.bsz > 1:
+        self.batchindex = opt.get('batchindex', 0)
+        self.use_batchact = opt.get('batch_sort', False) and self.bsz > 1
+        if self.use_batchact:
             if shared:
                 self.lastYs = shared['lastYs']
             else:
@@ -194,21 +216,22 @@ class FixedDataTeacher(Teacher):
                 ordered_opt['batchsize'] = 1
                 ordered_teacher = create_task_agent_from_taskname(ordered_opt)[0]
 
-                flatdata = flatten(ordered_teacher, context_length=1)
+                flatdata = flatten(ordered_teacher,
+                                   context_length=None, include_label=True)
                 self.sorted_data = sort_data(flatdata)
                 self.batches = make_batches(self.sorted_data, self.bsz)
-
-            self.batchindex = opt.get('batchindex', 0)
-            self.step_size = 1
-            self.data_offset = 0
-        else:
-            # NOTE: this currently is always at stepsz 1, batchindex 0
-
+        elif self.bsz > 1:
             # for ordered data in batch mode (especially, for validation and
             # testing), each teacher in the batch gets a start index and a step
             # size so they all process disparate sets of the data
             self.step_size = self.bsz
-            self.data_offset = opt.get('batchindex', 0)
+            self.data_offset = self.batchindex
+            def fun(x):
+                raise KeyError
+            self.batch_act = fun
+        else:
+            self.step_size = 1
+            self.data_offset = 0
 
     def reset(self):
         """Reset the dialog so that it is at the start of the epoch,
@@ -217,16 +240,16 @@ class FixedDataTeacher(Teacher):
         super().reset()
         self.metrics.clear()
         self.lastY = None
-        self.episode_idx = self.data_offset - self.step_size
         self.episode_done = True
         self.epochDone = False
         self.data_queue = queue.Queue()
 
-        if self.bsz > 1:
+        if self.use_batchact:
             self.batch_idx = -1
             if self.random and hasattr(self, 'batches'):
                 random.shuffle(self.batches)
         else:
+            self.episode_idx = self.data_offset - self.step_size
             if (not self.random and self.data_offset >= self.num_episodes()):
                 self.epochDone = True
 
@@ -296,7 +319,7 @@ class FixedDataTeacher(Teacher):
 
     def observe(self, observation):
         """Process observation for metrics."""
-        if hasattr(self, 'lastYs'):
+        if self.use_batchact:
             self.lastY = self.lastYs[self.batchindex]
 
         if hasattr(self, 'lastY') and self.lastY is not None:
@@ -338,12 +361,18 @@ class FixedDataTeacher(Teacher):
     def act(self):
         """Send new dialog message."""
         if not hasattr(self, 'epochDone'):
+            # reset if haven't yet
             self.reset()
+
         if self.epochDone and not self.training:
-            # need to call "reset" to repeat valid or test examples
+            # only do one epoch if not training, user needs to call reset()
             return {'episode_done': True, 'id': self.getID()}
+
+        # get next example
         action, self.epochDone = self.next_example()
         action['id'] = self.getID()
+
+        # remember correct answer if available
         self.lastY = action.get('labels', None)
         if not self.datatype.startswith('train') and 'labels' in action:
             # move labels to eval field so not used for training
