@@ -187,10 +187,10 @@ class FixedDataTeacher(Teacher):
                 ordered_opt['datatype'] = ':'.join((dt[0], 'ordered'))
                 ordered_opt['batchsize'] = 1
                 ordered_teacher = create_task_agent_from_taskname(ordered_opt)[0]
-                flatdata = self.flatten(ordered_teacher)
 
-                self.sorted_data = self.sort_data(flatdata)
-                self.batches = self.make_batches(self.sorted_data, self.bsz)
+                flatdata = flatten(ordered_teacher)
+                self.sorted_data = sort_data(flatdata)
+                self.batches = make_batches(self.sorted_data, self.bsz)
 
             self.batchindex = opt.get('batchindex', 0)
             self.step_size = 1
