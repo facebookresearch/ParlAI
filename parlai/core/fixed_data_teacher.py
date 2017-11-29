@@ -6,10 +6,77 @@
 
 from .agents import Teacher, create_task_agent_from_taskname
 
+from collections import deque
 import concurrent.futures
 from threading import Thread
 import queue
 import random
+
+
+def flatten(teacher, context_length=None, include_label=True):
+    """Return a flattened version of a teacher's data where all episodes only
+    have length one but contain the desired amount of context.
+
+    If context_length is not None, will use the
+    """
+    data = []
+    episode_done = False
+    while not teacher.epoch_done():
+        current = []
+        while not episode_done:
+            action = teacher.act()
+            current.append(action)
+            episode_done = action['episode_done']
+
+        for i, ex in enumerate(current):
+            context = deque(maxlen=context_length)
+            for prev in current[:i]:
+                context.append(prev['text'])
+                if include_label:
+                    context.append(random.choice(prev['labels']))
+            context.append(ex['text'])
+            ex['text'] = '\n'.join(context)
+            ex['episode_done'] = True
+            data.append(ex)
+        episode_done = False
+    return data
+
+
+def sort_data(data, key='text_label', method='spaces'):
+    """Given a list of data, sort it according to the method and key.
+
+    Currently the only supported method is counting the number of spaces.
+    This appeared to be reliable enough and much faster than tokenizing.
+    It performs much better than just using the length of the string.
+
+    Currently the only supported key is sorting by first the text, then the
+    label.
+    See https://arxiv.org/abs/1706.05765 for an evaulation of alternative
+    approaches for machine translation.
+    Sorting by the source (text) gives a good improvement in speed over random
+    batching and is robust to different types of optimization.
+    Breaking ties by sorting by label length gives a further improvement in
+    speed but can reduce robustness with some optimization schemes.
+    """
+    # TODO: support different keys and different methods
+    tpls = []
+    for ex in data:
+        fst = ex['text'].count(' ')
+        if 'labels' in ex['text']:
+            # use average label length (probably just one answer usually)
+            snd = (sum(l.count(' ') for l in ex['labels'])
+                   / len(ex['labels']))
+        else:
+            snd = 0
+        tiebreaker = random.random()
+        tpls.append((fst, snd, tiebreaker, ex))
+    tpls.sort()
+    return [e[-1] for e in tpls]
+
+
+def make_batches(data, bsz):
+    """Return a list of lists of size bsz given a list of examples."""
+    return [data[i:i + bsz] for i in range(0, len(data), bsz)]
 
 
 class DataLoader(Thread):
@@ -157,45 +224,6 @@ class FixedDataTeacher(Teacher):
             if (not self.random and self.data_offset >= self.num_episodes()):
                 self.epochDone = True
 
-    def flatten(self, teacher):
-        data = []
-        episode_done = False
-        while not teacher.epoch_done():
-            current = []
-            while not episode_done:
-                action = teacher.act()
-                current.append(action)
-                episode_done = action['episode_done']
-
-            for i, ex in enumerate(current):
-                # TODO: allow custom history lengths (may not want full hist)
-                context = [prev['text'] for prev in current[:i]]
-                context.append(ex['text'])
-                ex['text'] = '\n'.join(context)
-                ex['episode_done'] = True
-                data.append(ex)
-            episode_done = False
-        return data
-
-    def sort_data(self, data, key='text_label', method='spaces'):
-        # TODO: support different keys and different methods
-        tpls = []
-        for ex in data:
-            fst = ex['text'].count(' ')
-            if 'labels' in ex['text']:
-                # use average label length (probably just one answer usually)
-                snd = (sum(l.count(' ') for l in ex['labels'])
-                       / len(ex['labels']))
-            else:
-                snd = 0
-            tiebreaker = random.random()
-            tpls.append((fst, snd, tiebreaker, ex))
-        tpls.sort()
-        return [e[-1] for e in tpls]
-
-    def make_batches(self, data, bsz):
-        return [data[i:i + bsz] for i in range(0, len(data), bsz)]
-
     def submit_load_request(self):
         """An agent should implement this method to submit requests to the
         data loader. At the end of this method, the agent should call
@@ -273,9 +301,11 @@ class FixedDataTeacher(Teacher):
     def batch_act(self, observations):
         # we ignore observations
         if not hasattr(self, 'epochDone'):
+            # reset if haven't yet
             self.reset()
+
         if self.epochDone and not self.training:
-            # need to call "reset" to repeat valid or test examples
+            # only do one epoch if not training, user needs to call reset()
             return [{'episode_done': True, 'id': self.getID()}] * self.bsz
 
         # get next batch
