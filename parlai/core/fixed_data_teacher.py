@@ -6,6 +6,7 @@
 
 from .agents import Teacher, create_task_agent_from_taskname
 
+import argparse
 from collections import deque
 import concurrent.futures
 from threading import Thread
@@ -162,23 +163,27 @@ class FixedDataTeacher(Teacher):
     """
     @staticmethod
     def add_cmdline_args(argparser):
-        args = argparser.add_argument_group('Batching Arguments')
-        args.add_argument('-bsrt', '--batch-sort', default=True, type='bool',
-                          help='If enabled (default True), create batches by '
-                               'flattening all episodes to have length one '
-                               'and then sorting all the examples according to'
-                               ' their length. This dramatically reduces the '
-                               'amount of padding present after examples have '
-                               'been parsed, speeding up training.')
-        args.add_argument('-clen', '--context-length', default=-1, type=int,
-                          help='Number of past utterances to remember when '
-                               'building flattened batches of data in multi-'
-                               'example episodes.')
-        args.add_argument('-incl', '--include-labels',
-                          default=True, type='bool',
-                          help='Specifies whether or not to include labels as '
-                               'past utterances when building flattened '
-                               'batches of data in multi-example episodes.')
+        try:
+            args = argparser.add_argument_group('Batching Arguments')
+            args.add_argument('-bsrt', '--batch-sort', default=True, type='bool',
+                              help='If enabled (default True), create batches by '
+                                   'flattening all episodes to have length one '
+                                   'and then sorting all the examples according to'
+                                   ' their length. This dramatically reduces the '
+                                   'amount of padding present after examples have '
+                                   'been parsed, speeding up training.')
+            args.add_argument('-clen', '--context-length', default=-1, type=int,
+                              help='Number of past utterances to remember when '
+                                   'building flattened batches of data in multi-'
+                                   'example episodes.')
+            args.add_argument('-incl', '--include-labels',
+                              default=True, type='bool',
+                              help='Specifies whether or not to include labels as '
+                                   'past utterances when building flattened '
+                                   'batches of data in multi-example episodes.')
+        except argparse.ArgumentError:
+            # we just accidentally tried to add these args twice
+            pass
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -201,7 +206,14 @@ class FixedDataTeacher(Teacher):
         # set up batching
         self.bsz = opt.get('batchsize', 1)
         self.batchindex = opt.get('batchindex', 0)
-        self.use_batchact = opt.get('batch_sort', False) and self.bsz > 1
+
+        if not opt.get('batch_sort', False):
+            print('Warning: batch_sort=False currently supported, overriding '
+                  'to true')
+        # TODO: allow batch_sort to influence choice
+        # self.use_batchact = opt.get('batch_sort', False) and self.bsz > 1
+        self.use_batchact = self.bsz > 1
+
         if self.use_batchact:
             if shared:
                 self.lastYs = shared['lastYs']
@@ -221,14 +233,15 @@ class FixedDataTeacher(Teacher):
                 self.sorted_data = sort_data(flatdata)
                 self.batches = make_batches(self.sorted_data, self.bsz)
         elif self.bsz > 1:
+            # TODO: this loop is never entered--I need to figure out how to
+            #   prevent batchworld from using batch_act
+            #   del self.batch_act does not work
+
             # for ordered data in batch mode (especially, for validation and
             # testing), each teacher in the batch gets a start index and a step
             # size so they all process disparate sets of the data
             self.step_size = self.bsz
             self.data_offset = self.batchindex
-            def fun(x):
-                raise KeyError
-            self.batch_act = fun
         else:
             self.step_size = 1
             self.data_offset = 0
