@@ -114,17 +114,17 @@ class Teacher(Agent):
                 self.metrics = Metrics(opt)
         self.epochDone = False
 
-    def __iter__(self):
-        """Teacher can be iterated over. Subclasses can specify a certain length
-        of iteration, such as e.g. one epoch.
-        """
-        self.epochDone = False
-        return self
+    # def __iter__(self):
+    #     """Teacher can be iterated over. Subclasses can specify a certain length
+    #     of iteration, such as e.g. one epoch.
+    #     """
+    #     self.epochDone = False
+    #     return self
 
-    def __next__(self):
-        """Raise ``StopIteration`` if epoch is done (never for default teacher)."""
-        if self.epochDone:
-            raise StopIteration()
+    # def __next__(self):
+    #     """Raise ``StopIteration`` if epoch is done (never for default teacher)."""
+    #     if self.epochDone:
+    #         raise StopIteration()
 
     # return state/action dict based upon passed state
     def act(self):

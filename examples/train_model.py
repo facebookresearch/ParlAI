@@ -82,7 +82,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
     else:
         valid_world.reset()
     cnt = 0
-    for _ in valid_world:
+    while not valid_world.epoch_done():
         valid_world.parley()
         if cnt == 0 and opt['display_examples']:
             print(valid_world.display() + '\n~~')
@@ -123,7 +123,7 @@ def main(parser):
     parleys = 0
     total_exs = 0
     total_epochs = 0
-    max_exs = opt['num_epochs'] * len(world)
+    max_exs = opt['num_epochs'] * world.num_examples()
     max_parleys = math.ceil(max_exs / opt['batchsize'])
     best_valid = 0
     impatience = 0
@@ -180,7 +180,7 @@ def main(parser):
                     logs.append('time_left:{}s'.format(math.floor(time_left)))
                 if opt['num_epochs'] > 0:
                     if total_exs > 0:
-                        display_epochs = int(total_exs / len(world))
+                        display_epochs = int(total_exs / world.num_examples())
                     else:
                         display_epochs = total_epochs
                     logs.append('num_epochs:{}'.format(display_epochs))

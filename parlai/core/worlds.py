@@ -189,10 +189,13 @@ class World(object):
         self.shutdown()
         return silent_exit
 
-    def __iter__(self):
-        raise NotImplementedError('Subclass did not implement this.')
+    # def __iter__(self):
+    #     raise NotImplementedError('Subclass did not implement this.')
 
-    def __len__(self):
+    # def __len__(self):
+    #     return 0
+
+    def num_examples(self):
         return 0
 
     def reset(self):
@@ -262,11 +265,14 @@ class DialogPartnerWorld(World):
         if hasattr(self.agents[0], 'report'):
             return self.agents[0].report()
 
-    def __len__(self):
-        return len(self.agents[0])
+    # def __len__(self):
+    #     return len(self.agents[0])
 
-    def __iter__(self):
-        return iter(self.agents[0])
+    def num_examples(self):
+        return self.agents[0].num_examples()
+
+    # def __iter__(self):
+    #     return iter(self.agents[0])
 
     def shutdown(self):
         """Shutdown each agent."""
@@ -399,20 +405,28 @@ class MultiWorld(World):
         self.parleys = -1
         self.random = opt.get('datatype', None) == 'train'
 
-    def __iter__(self):
-        return self
+    # def __iter__(self):
+    #     return self
 
-    def __next__(self):
-        if self.epoch_done():
-            raise StopIteration()
+    # def __next__(self):
+    #     if self.epoch_done():
+    #         raise StopIteration()
 
-    def __len__(self):
-        if not hasattr(self, 'len'):
-            self.len = 0
+    # def __len__(self):
+    #     if not hasattr(self, 'len'):
+    #         self.len = 0
+    #         # length is sum of all world lengths
+    #         for _ind, t in enumerate(self.worlds):
+    #             self.len += len(t)
+    #     return self.len
+
+    def num_examples(self):
+        if not hasattr(self, 'num_exs'):
+            self.num_exs = 0
             # length is sum of all world lengths
-            for _ind, t in enumerate(self.worlds):
-                self.len += len(t)
-        return self.len
+            for w in self.worlds:
+                self.num_exs += w.num_examples()
+        return self.num_exs
 
     def get_agents(self):
         return self.worlds[self.world_idx].get_agents()
@@ -543,12 +557,12 @@ class BatchWorld(World):
         self.batch_observations = [None] * len(self.world.get_agents())
         self.first_batch = None
 
-    def __iter__(self):
-        return self
+    # def __iter__(self):
+    #     return self
 
-    def __next__(self):
-        if self.epoch_done():
-            raise StopIteration()
+    # def __next__(self):
+    #     if self.epoch_done():
+    #         raise StopIteration()
 
     def batch_observe(self, index, batch_actions, index_acting):
         batch_observations = []
@@ -621,8 +635,11 @@ class BatchWorld(World):
         s += ("[--end of batch--]")
         return s
 
-    def __len__(self):
-        return math.ceil(sum(len(w) for w in self.worlds) / len(self.worlds))
+    # def __len__(self):
+    #     return math.ceil(sum(len(w) for w in self.worlds) / len(self.worlds))
+
+    def num_examples(self):
+        return math.ceil(sum(w.num_examples() for w in self.worlds) / len(self.worlds))
 
     def getID(self):
         return self.world.getID()
@@ -731,8 +748,8 @@ class HogwildWorld(World):
         for t in self.threads:
             t.start()
 
-    def __iter__(self):
-        raise NotImplementedError('Iteration not available in hogwild.')
+    # def __iter__(self):
+    #     raise NotImplementedError('Iteration not available in hogwild.')
 
     def display(self):
         self.shutdown()
