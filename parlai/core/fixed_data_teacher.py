@@ -112,7 +112,6 @@ class FixedDataTeacher(Teacher):
                 self.lastYs = shared['lastYs']
             else:
                 self.lastYs = [None] * self.bsz
-                self.batchindex = opt.get('batchindex', 0)
 
                 dt = opt['datatype'].split(':')
                 if 'stream' in dt:
@@ -125,6 +124,10 @@ class FixedDataTeacher(Teacher):
 
                 self.sorted_data = self.sort_data(flatdata)
                 self.batches = self.make_batches(self.sorted_data, self.bsz)
+
+            self.batchindex = opt.get('batchindex', 0)
+            self.step_size = 1
+            self.data_offset = 0
         else:
             # NOTE: this currently is always at stepsz 1, batchindex 0
 
