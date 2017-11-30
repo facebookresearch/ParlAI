@@ -56,6 +56,10 @@ def setup_args():
     train.add_argument('-vmt', '--validation-metric', default='accuracy',
                        help='key into report table for selecting best '
                             'validation')
+    train.add_argument('-vcut', '--validation-cutoff',
+                       type=float, default=1.0,
+                       help='value at which training will stop if exceeded by '
+                            'training metric')
     train.add_argument('-dbf', '--dict-build-first',
                        type='bool', default=True,
                        help='build dictionary first before training agent')
@@ -82,13 +86,13 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
     else:
         valid_world.reset()
     cnt = 0
-    for _ in valid_world:
+    while not valid_world.epoch_done():
         valid_world.parley()
         if cnt == 0 and opt['display_examples']:
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
         cnt += opt['batchsize']
-        if valid_world.epoch_done() or (max_exs > 0 and cnt >= max_exs):
+        if max_exs > 0 and cnt >= max_exs:
             # note this max_exs is approximate--some batches won't always be
             # full depending on the structure of the data
             break
@@ -103,6 +107,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
         f.close()
 
     return valid_report, valid_world
+
 
 class TrainLoop():
     def __init__(self, parser):
@@ -144,7 +149,7 @@ class TrainLoop():
                 opt['validation_metric'], self.best_valid))
             self.world.save_agents()
             self.saved = True
-            if opt['validation_metric'] == 'accuracy' and self.best_valid > 0.995:
+            if opt['validation_metric'] == 'accuracy' and self.best_valid > opt['validation_cutoff']:
                 print('[ task solved! stopping. ]')
                 return True
         else:

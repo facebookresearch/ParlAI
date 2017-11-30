@@ -42,7 +42,6 @@ All worlds are initialized with the following parameters:
 """
 
 import copy
-import math
 import importlib
 import random
 
@@ -524,8 +523,9 @@ def override_opts_in_shared(table, overrides):
 class BatchWorld(World):
     """Creates a separate world for each item in the batch, sharing
     the parameters for each.
-    The underlying world(s) it is batching can be either ``DialogPartnerWorld``,
-    ``MultiAgentWorld``, ``ExecutableWorld`` or ``MultiWorld``.
+    The underlying world(s) it is batching can be either
+    ``DialogPartnerWorld``, ``MultiAgentWorld``, ``ExecutableWorld`` or
+    ``MultiWorld``.
     """
 
     def __init__(self, opt, world):
@@ -555,6 +555,9 @@ class BatchWorld(World):
         for i, w in enumerate(self.worlds):
             agents = w.get_agents()
             observation = None
+            if batch_actions[i] is None:
+                # shouldn't send None, should send empty observations
+                batch_actions[i] = [{}] * len(self.worlds)
             if hasattr(w, 'observe'):
                 # The world has its own observe function, which the action
                 # first goes through (agents receive messages via the world,
@@ -573,8 +576,7 @@ class BatchWorld(World):
         # Given batch observation, do update for agents[index].
         # Call update on agent
         a = self.world.get_agents()[agent_idx]
-        if (batch_observation is not None and len(batch_observation) > 0 and
-                hasattr(a, 'batch_act')):
+        if hasattr(a, 'batch_act'):
             batch_actions = a.batch_act(batch_observation)
             # Store the actions locally in each world.
             for i, w in enumerate(self.worlds):
@@ -622,7 +624,7 @@ class BatchWorld(World):
         return s
 
     def __len__(self):
-        return math.ceil(sum(len(w) for w in self.worlds) / len(self.worlds))
+        return len(self.world)
 
     def getID(self):
         return self.world.getID()
@@ -631,6 +633,10 @@ class BatchWorld(World):
         return False
 
     def epoch_done(self):
+        # first check parent world: if it says it's done, we're done
+        if self.world.epoch_done():
+            return True
+        # otherwise check if all shared worlds are done
         for world in self.worlds:
             if not world.epoch_done():
                 return False
@@ -640,6 +646,7 @@ class BatchWorld(World):
         return self.world.report()
 
     def reset(self):
+        self.world.reset()
         for w in self.worlds:
             w.reset()
 
@@ -736,7 +743,7 @@ class HogwildWorld(World):
 
     def display(self):
         self.shutdown()
-        raise NotImplementedError('Hogwild does not support displaying in-run' +
+        raise NotImplementedError('Hogwild does not support displaying in-run'
                                   ' task data. Use `--numthreads 1`.')
 
     def episode_done(self):
@@ -795,7 +802,7 @@ def _get_task_world(opt):
         try:
             my_module = importlib.import_module(module_name)
             world_class = getattr(my_module, world_name)
-        except:
+        except Exception:
             # Defaults to this if you did not specify a world for your task.
             world_class = DialogPartnerWorld
     task_agents = _create_task_agents(opt)

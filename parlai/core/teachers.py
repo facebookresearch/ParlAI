@@ -27,9 +27,11 @@ dialog data and utilized by ``DialogTeacher``
 
 
 """
-from .agents import Teacher
+from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
 
+import argparse
+from collections import deque
 import concurrent.futures
 from threading import Thread
 import queue
@@ -37,6 +39,7 @@ import random
 import sys
 import time
 import os
+
 
 class DataLoader(Thread):
     """A worker thread that provides a threadpool for data loading.
@@ -46,11 +49,11 @@ class DataLoader(Thread):
 
     To submit a request, a teacher should call ``request_load`` with the
     following arguments:
-
         - ``receive_fn`` - a receive function (for receiving the data)
         - ``load_fn`` - a load function (for loading the data)
-        - ``args`` - arguments for the load function. args can be either a dictionary of arguments for a function, or a list of positional arguments
-
+        - ``args`` - arguments for the load function
+            -> args can be either a dictionary of arguments for a function, or
+               a list of positional arguments
     """
     def __init__(self, opt):
         Thread.__init__(self, daemon=True)
@@ -94,26 +97,22 @@ class FixedDialogTeacher(Teacher):
 
     The following is an example of the DataLoader usage in the VQA-V1 teacher.
 
-        1. In the teacher's ``init`` function, the teacher calls its \
-        ``submit_load_request`` function to preload an image.
-        2. The ``submit_load_request`` function gets the next ``episode_idx``, \
-        and computes the image path for the load request.
-        3. At the end of ``submit_load_request``, the teacher calls \
-        ``self.data_loader.request_load`` with three args:
-
+        1. In the teacher's ``init`` function, the teacher calls its
+           ``submit_load_request`` function to preload an image.
+        2. The ``submit_load_request`` function gets the next ``episode_idx``,
+           and computes the image path for the load request.
+        3. At the end of ``submit_load_request``, the teacher calls
+           ``self.data_loader.request_load`` with three args:
            - ``self.receive_data`` - the function that the DataLoader calls to
-           return the the loaded object
-
+               return the the loaded object
            - ``self.image_loader.load`` - the function used to load the image
-           from the image path
-
+               from the image path
            - ``[img_path]`` - a list of arguments for the load function, which
-           in this case is the path of the image.
-
-        4. In the teacher's ``act`` function, the teacher loads the data from
-        its data queue.
-        5. At the end of the ``act`` function, the teacher calls
-        ``submit_load_request`` to preload an image for the next example.
+               in this case is the path of the image.
+         4. In the teacher's ``act`` function, the teacher loads the data from
+            its data queue.
+         5. At the end of the ``act`` function, the teacher calls
+            ``submit_load_request`` to preload an image for the next example.
 
 
     """
@@ -127,17 +126,56 @@ class FixedDialogTeacher(Teacher):
         if not hasattr(self, 'training'):
             self.training = self.datatype.startswith('train')
 
-        # for ordered data in batch mode (especially, for validation and
-        # testing), each teacher in the batch gets a start index and a step
-        # size so they all process disparate sets of the data
-        self.step_size = opt.get('batchsize', 1)
-        self.data_offset = opt.get('batchindex', 0)
+        # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:
             self.data_loader = shared['data_loader']
         else:
             self.data_loader = DataLoader(opt)
             self.data_loader.start()
+
+        # set up batching
+        self.bsz = opt.get('batchsize', 1)
+        self.batchindex = opt.get('batchindex', 0)
+
+        if not opt.get('batch_sort', False):
+            print('Warning: batch_sort=False currently supported, overriding '
+                  'to true')
+        # TODO: allow batch_sort to influence choice
+        # self.use_batchact = opt.get('batch_sort', False) and self.bsz > 1
+        self.use_batchact = self.bsz > 1
+
+        if self.use_batchact:
+            if shared:
+                self.lastYs = shared['lastYs']
+            else:
+                self.lastYs = [None] * self.bsz
+
+                dt = opt['datatype'].split(':')
+                if 'stream' in dt:
+                    raise RuntimeError('streaming currently not supported')
+                ordered_opt = opt.copy()
+                ordered_opt['datatype'] = ':'.join((dt[0], 'ordered'))
+                ordered_opt['batchsize'] = 1
+                ordered_teacher = create_task_agent_from_taskname(ordered_opt)[0]
+
+                flatdata = flatten(ordered_teacher,
+                                   context_length=None, include_label=True)
+                self.sorted_data = sort_data(flatdata)
+                self.batches = make_batches(self.sorted_data, self.bsz)
+        elif self.bsz > 1:
+            # TODO: this loop is never entered--I need to figure out how to
+            #   prevent batchworld from using batch_act
+            #   del self.batch_act does not work
+
+            # for ordered data in batch mode (especially, for validation and
+            # testing), each teacher in the batch gets a start index and a step
+            # size so they all process disparate sets of the data
+            self.step_size = self.bsz
+            self.data_offset = self.batchindex
+        else:
+            self.step_size = 1
+            self.data_offset = 0
 
     def reset(self):
         """Reset the dialog so that it is at the start of the epoch,
@@ -146,19 +184,18 @@ class FixedDialogTeacher(Teacher):
         super().reset()
         self.metrics.clear()
         self.lastY = None
-        self.episode_idx = self.data_offset - self.step_size
         self.episode_done = True
         self.epochDone = False
         self.data_queue = queue.Queue()
-        if (not self.random and self.data_offset >= self.num_episodes()):
-            self.epochDone = True
 
-    def observe(self, observation):
-        """Process observation for metrics."""
-        if hasattr(self, 'lastY') and self.lastY is not None:
-            self.metrics.update(observation, self.lastY)
-            self.lastY = None
-        return observation
+        if self.use_batchact:
+            self.batch_idx = -1
+            if self.random and hasattr(self, 'batches'):
+                random.shuffle(self.batches)
+        else:
+            self.episode_idx = self.data_offset - self.step_size
+            if (not self.random and self.data_offset >= self.num_episodes()):
+                self.epochDone = True
 
     def submit_load_request(self):
         """An agent should implement this method to submit requests to the
@@ -175,6 +212,8 @@ class FixedDialogTeacher(Teacher):
     def share(self):
         shared = super().share()
         shared['data_loader'] = self.data_loader
+        if hasattr(self, 'lastYs'):
+            shared['lastYs'] = self.lastYs
         return shared
 
     def next_episode_idx(self, num_eps=None):
@@ -222,21 +261,69 @@ class FixedDialogTeacher(Teacher):
         except Exception:
             raise RuntimeError('"Get" method must be overriden by children.')
 
+    def observe(self, observation):
+        """Process observation for metrics."""
+        if self.use_batchact:
+            self.lastY = self.lastYs[self.batchindex]
+
+        if hasattr(self, 'lastY') and self.lastY is not None:
+            self.metrics.update(observation, self.lastY)
+            self.lastY = None
+        return observation
+
+    def batch_act(self, observations):
+        # we ignore observations
+        if not hasattr(self, 'epochDone'):
+            # reset if haven't yet
+            self.reset()
+
+        if self.epochDone and not self.training:
+            # only do one epoch if not training, user needs to call reset()
+            return [{'episode_done': True, 'id': self.getID()}] * self.bsz
+
+        # get next batch
+        self.batch_idx += 1
+        batch = self.batches[self.batch_idx]
+
+        if self.batch_idx + 1 == len(self.batches):
+            self.batch_idx = -1
+            if self.random:
+                random.shuffle(self.batches)
+            else:
+                self.epochDone = True
+
+        # pad batch
+        if len(batch) < self.bsz:
+            batch += [{'episode_done': True, 'id': self.getID()}] * (self.bsz - len(batch))
+
+        # remember correct answer if available (for padding, None)
+        for i, ex in enumerate(batch):
+            self.lastYs[i] = ex.get('labels', ex.get('eval_labels'))
+
+        return batch
+
     def act(self):
         """Send new dialog message."""
         if not hasattr(self, 'epochDone'):
+            # reset if haven't yet
             self.reset()
+
         if self.epochDone and not self.training:
-            # need to call "reset" to repeat valid or test examples
+            # only do one epoch if not training, user needs to call reset()
             return {'episode_done': True, 'id': self.getID()}
+
+        # get next example
         action, self.epochDone = self.next_example()
         action['id'] = self.getID()
+
+        # remember correct answer if available
         self.lastY = action.get('labels', None)
         if not self.datatype.startswith('train') and 'labels' in action:
             # move labels to eval field so not used for training
             # but this way the model can use the labels for perplexity or loss
             action['eval_labels'] = action.pop('labels')
         return action
+
 
 class DialogTeacher(FixedDialogTeacher):
     """A base teacher class for doing dialog with fixed chat logs.
@@ -820,3 +907,75 @@ class FbDialogTeacher(DialogTeacher):
                     reward = 0
             if x:
                 yield [x, None, reward], start
+
+
+def flatten(teacher, context_length=None, include_label=True):
+    """Return a flattened version of a teacher's data where all episodes only
+    have length one but contain the desired amount of context.
+
+    If context_length is not None, will use only that many past utterances.
+    Default is None.
+
+    If include_label is True, will include a random label in past utterances.
+    Default is True.
+    """
+    data = []
+    episode_done = False
+    while not teacher.epoch_done():
+        current = []
+        while not episode_done:
+            action = teacher.act()
+            current.append(action)
+            episode_done = action['episode_done']
+
+        for i, ex in enumerate(current):
+            context = deque(maxlen=context_length)
+            for prev in current[:i]:
+                context.append(prev['text'])
+                if include_label:
+                    labels = prev.get('labels', prev.get('eval_labels'))
+                    if labels is not None:
+                        context.append(random.choice(labels))
+            context.append(ex['text'])
+            ex['text'] = '\n'.join(context)
+            ex['episode_done'] = True
+            data.append(ex)
+        episode_done = False
+    return data
+
+
+def sort_data(data, key='text_label', method='spaces'):
+    """Given a list of data, sort it according to the method and key.
+
+    Currently the only supported method is counting the number of spaces.
+    This appeared to be reliable enough and much faster than tokenizing.
+    It performs much better than just using the length of the string.
+
+    Currently the only supported key is sorting by first the text, then the
+    label.
+    See https://arxiv.org/abs/1706.05765 for an evaulation of alternative
+    approaches for machine translation.
+    Sorting by the source (text) gives a good improvement in speed over random
+    batching and is robust to different types of optimization.
+    Breaking ties by sorting by label length gives a further improvement in
+    speed but can reduce robustness with some optimization schemes.
+    """
+    # TODO: support different keys and different methods
+    tpls = []
+    for ex in data:
+        fst = ex['text'].count(' ')
+        if 'labels' in ex['text']:
+            # use average label length (probably just one answer usually)
+            snd = (sum(l.count(' ') for l in ex['labels'])
+                   / len(ex['labels']))
+        else:
+            snd = 0
+        tiebreaker = random.random()
+        tpls.append((fst, snd, tiebreaker, ex))
+    tpls.sort()
+    return [e[-1] for e in tpls]
+
+
+def make_batches(data, bsz):
+    """Return a list of lists of size bsz given a list of examples."""
+    return [data[i:i + bsz] for i in range(0, len(data), bsz)]
