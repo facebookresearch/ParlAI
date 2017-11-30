@@ -123,6 +123,13 @@ class Teacher(Agent):
     def epoch_done(self):
         return self.epochDone
 
+    # Default unknown length
+    def num_examples(self):
+        return None
+
+    def num_episodes(self):
+        return None
+
     # Return transformed metrics showing total examples and accuracy if avail.
     def report(self):
         return self.metrics.report()
