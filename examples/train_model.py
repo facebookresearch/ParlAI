@@ -105,8 +105,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
     return valid_report, valid_world
 
 class TrainLoop():
-    def __init__(self):
-        parser = setup_args()
+    def __init__(self, parser):
         opt = parser.parse_args()
         # Possibly build a dictionary (not all models do this).
         if opt['dict_build_first'] and 'dict_file' in opt:
@@ -134,6 +133,7 @@ class TrainLoop():
         self.opt = opt
 
     def validate(self):
+        opt = self.opt
         valid_report, valid_world = run_eval(
             self.agent, opt, 'valid', opt['validation_max_exs'],
             valid_world=self.valid_world)
@@ -142,7 +142,7 @@ class TrainLoop():
             self.impatience = 0
             print('[ new best {}: {} ]'.format(
                 opt['validation_metric'], self.best_valid))
-            world.save_agents()
+            self.world.save_agents()
             self.saved = True
             if opt['validation_metric'] == 'accuracy' and self.best_valid > 0.995:
                 print('[ task solved! stopping. ]')
@@ -150,7 +150,7 @@ class TrainLoop():
         else:
             self.impatience += 1
             print('[ did not beat best {}: {} impatience: {} ]'.format(
-                    opt['validation_metric'], round(best_valid, 4),
+                    opt['validation_metric'], round(self.best_valid, 4),
                     self.impatience))
         self.validate_time.reset()
         if opt['validation_patience'] > 0 and self.impatience >= opt['validation_patience']:
@@ -179,8 +179,8 @@ class TrainLoop():
         # check if we should log amount of time remaining
         time_left = None
         if opt['num_epochs'] > 0 and self.total_exs > 0 and self.max_exs > 0:
-            exs_per_sec = self.train_time.time() / total_exs
-            time_left = (self.max_exs - total_exs) * exs_per_sec
+            exs_per_sec = self.train_time.time() / self.total_exs
+            time_left = (self.max_exs - self.total_exs) * exs_per_sec
         if opt['max_train_time'] > 0:
             other_time_left = opt['max_train_time'] - self.train_time.time()
             if time_left is not None:
@@ -204,15 +204,15 @@ class TrainLoop():
     def train(self):
         opt = self.opt
         world = self.world
-        with self.world:
+        with world:
             while True:
                 world.parley()
                 self.parleys += 1
                 if world.epoch_done():
                     self.total_epochs += 1
-                    
+
                 if opt['num_epochs'] > 0 and (
-                    (self.max_parleys > 0 and parleys >= self.max_parleys)
+                    (self.max_parleys > 0 and self.parleys >= self.max_parleys)
                     or self.total_epochs >= opt['num_epochs']):
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(
                         opt['num_epochs'], self.train_time.time()))
@@ -241,5 +241,4 @@ class TrainLoop():
 
 
 if __name__ == '__main__':
-    TrainLoop().train()
-
+    TrainLoop(setup_args()).train()
