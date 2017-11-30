@@ -41,6 +41,7 @@ class MnistQATeacher(DialogTeacher):
         self.id = 'mnist_qa'
         self.num_strs = ['zero', 'one', 'two', 'three', 'four', 'five',
                 'six', 'seven', 'eight', 'nine']
+
         super().__init__(opt, shared)
 
     def label_candidates(self):
