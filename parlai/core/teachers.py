@@ -57,9 +57,6 @@ class DataLoader(Thread):
         self.num_workers = opt.get('numthreads', 1)
         self.request_queue = queue.Queue()
 
-    def __len__(self):
-        return len(self.ques['questions'])
-
     def request_load(self, receive_fn, load_fn, args):
         self.request_queue.put((receive_fn, load_fn, args))
 
@@ -210,6 +207,13 @@ class FixedDialogTeacher(Teacher):
         except Exception:
             raise RuntimeError('"num_episodes" must be overriden by children.')
 
+    def num_examples(self):
+        """Get the total number of examples in this dataset."""
+        try:
+            return len(self.examples)
+        except Exception:
+            raise RuntimeError('"num_examples" must be overriden by children.')
+
     def get(self, episode_idx, entry_idx=0):
         """Get the specified episode and the specified entry in that episode.
 
@@ -287,16 +291,19 @@ class DialogTeacher(FixedDialogTeacher):
             self.data.reset()
             self.epochDone = False
 
-    def __len__(self):
-        return len(self.data)
+    # def __len__(self):
+    #     return len(self.data)
 
-    def __iter__(self):
-        self.epochDone = False
-        return self
+    def num_examples(self):
+        return self.data.num_examples()
 
-    def __next__(self):
-        if self.epochDone:
-            raise StopIteration()
+    # def __iter__(self):
+    #     self.epochDone = False
+    #     return self
+    #
+    # def __next__(self):
+    #     if self.epochDone:
+    #         raise StopIteration()
 
     def share(self):
         shared = super().share()
@@ -383,11 +390,11 @@ class DialogData(object):
         }
         return shared
 
-    def __len__(self):
-        """Returns total number of entries available. Each episode has at least
-        one entry, but might have many more.
-        """
-        return sum(len(episode) for episode in self.data)
+    # def __len__(self):
+    #     """Returns total number of entries available. Each episode has at least
+    #     one entry, but might have many more.
+    #     """
+    #     return sum(len(episode) for episode in self.data)
 
     def _read_episode(self, data_generator):
         """Reads one episode at a time from the provided iterator over entries.
@@ -457,6 +464,12 @@ class DialogData(object):
     def num_episodes(self):
         """Return number of episodes in the dataset."""
         return len(self.data)
+
+    def num_examples(self):
+        """Returns total number of entries available. Each episode has at least
+        one entry, but might have many more.
+        """
+        return sum(len(episode) for episode in self.data)
 
     def get(self, episode_idx, entry_idx=0):
         """Returns a specific entry from the dataset."""
@@ -530,6 +543,7 @@ class StreamDialogData(DialogData):
         if shared:
             # auxiliary instances hold pointer to main datastream (in self.data)
             self.reset_data = shared['reset']
+            self.datafile = shared['datafile']
         else:
             # main instance holds the stream and shares pointer to it
             self.data_loader = data_loader
@@ -538,25 +552,29 @@ class StreamDialogData(DialogData):
             self.is_reset = True
         self.entry_idx = 0
         self.next_episode = None
+        self.num_eps = None
+        self.num_exs = None
 
     def share(self):
         shared = super().share()
         # also share reset method to allow datastream to be reset
         shared['reset'] = self.reset
+        # share datafile for loading length if necessary
+        shared['datafile'] = self.datafile
         return shared
 
-    def __len__(self):
-        length_file = self.datafile + ".length"
-        if not os.path.isfile(length_file):
-            length = 0
-            for episode in self._read_episode(self.data_loader(self.datafile)):
-                length += len(episode)
-            with open(length_file, 'w') as f:
-                f.write(str(length))
-        else:
-            with open(length_file, 'r') as f:
-                length = int(f.read())
-        return length
+    # def __len__(self):
+    #     length_file = self.datafile + ".length"
+    #     if not os.path.isfile(length_file):
+    #         length = 0
+    #         for episode in self._read_episode(self.data_loader(self.datafile)):
+    #             length += len(episode)
+    #         with open(length_file, 'w') as f:
+    #             f.write(str(length))
+    #     else:
+    #         with open(length_file, 'r') as f:
+    #             length = int(f.read())
+    #     return length
 
     def _load(self, data_loader, datafile):
         """Load data generator into data field."""
@@ -574,9 +592,31 @@ class StreamDialogData(DialogData):
             while not self.cycle:
                 yield -1
 
+    def load_length(self):
+        datafiles = self.datafile if type(self.datafile) is tuple else [self.datafile]
+        length_file = datafiles[0] + ".lengths"
+        if not os.path.isfile(length_file):
+            num_eps = 0
+            num_exs = 0
+            for episode in self._read_episode(self.data_loader(self.datafile)):
+                num_eps += 1
+                num_exs += len(episode)
+            with open(length_file, 'w') as f:
+                f.write("{}\n{}".format(num_eps, num_exs))
+        else:
+            with open(length_file, 'r') as f:
+                num_eps, num_exs = f.readlines()
+        return int(num_eps), int(num_exs)
+
+    def num_examples(self):
+        if not self.num_exs:
+            self.num_eps, self.num_exs = self.load_length()
+        return self.num_exs
+
     def num_episodes(self):
-        # unknown
-        return 0
+        if not self.num_eps:
+            self.num_eps, self.num_exs = self.load_length()
+        return self.num_eps
 
     def get(self):
         """Returns a the next entry from the stream in the current episode for

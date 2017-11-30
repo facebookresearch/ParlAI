@@ -70,13 +70,17 @@ class OeTeacher(FixedDialogTeacher):
         # call this once to get the cache moving
         self.next_example()
 
-    def __len__(self):
+    # def __len__(self):
+    #     """Number of examples in VQA-v1."""
+    #     return len(self.ques['questions'])
+    #
+    def num_examples(self):
         """Number of examples in VQA-v1."""
         return len(self.ques['questions'])
 
     def num_episodes(self):
         # same as number of examples since all episodes are of length one
-        return len(self)
+        return self.num_examples()
 
     def submit_load_request(self, image_id):
         img_path = self.image_path + '%012d.jpg' % (image_id)
