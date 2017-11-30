@@ -70,10 +70,6 @@ class OeTeacher(FixedDialogTeacher):
         # call this once to get the cache moving
         self.next_example()
 
-    # def __len__(self):
-    #     """Number of examples in VQA-v1."""
-    #     return len(self.ques['questions'])
-    #
     def num_examples(self):
         """Number of examples in VQA-v1."""
         return len(self.ques['questions'])
@@ -117,10 +113,6 @@ class OeTeacher(FixedDialogTeacher):
         if self.image_mode != 'none':
             self.submit_load_request(image_id)
         return ready
-
-    # def receive(self, future):
-    #     data = future.result()
-    #     self.example_queue.put(data)
 
     def share(self):
         shared = super().share()

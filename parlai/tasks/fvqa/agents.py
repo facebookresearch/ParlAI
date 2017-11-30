@@ -69,7 +69,10 @@ class SplitTeacher(Teacher):
 
         self.reset()
 
-    def __len__(self):
+    def num_examples(self):
+        return self.len
+
+    def num_episodes(self):
         return self.len
 
     def report(self):
@@ -105,14 +108,14 @@ class SplitTeacher(Teacher):
             action = {'text': 'Which fact supports this answer?', 'episode_done': True}
             if self.datatype.startswith('train'):
                 action['labels'] = self.lastY[1]
-            if self.datatype != 'train' and self.episode_idx + self.step_size >= len(self):
+            if self.datatype != 'train' and self.episode_idx + self.step_size >= self.num_episodes():
                 self.epochDone = True
             return action
 
         if self.datatype == 'train':
             self.episode_idx = random.randrange(self.len)
         else:
-            self.episode_idx = (self.episode_idx + self.step_size) % len(self)
+            self.episode_idx = (self.episode_idx + self.step_size) % self.num_episodes()
 
         self.asked_question = True
         qa = self.ques[self.episode_idx]

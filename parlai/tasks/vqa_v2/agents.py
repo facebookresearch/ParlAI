@@ -4,12 +4,11 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.agents import Teacher
+from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from .build import build, buildImage
 
 import json
-import random
 import os
 
 
@@ -44,15 +43,15 @@ def _path(opt):
     return data_path, annotation_path, image_path
 
 
-class OeTeacher(Teacher):
+class OeTeacher(FixedDialogTeacher):
     """VQA v2.0 Open-Ended teacher, which loads the json VQA data and
     implements its own `act` method for interacting with student agent.
     agent.
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt)
-        self.datatype = opt['datatype']
         data_path, annotation_path, self.image_path = _path(opt)
+        self.image_mode = opt.get('image_mode', 'none')
 
         if shared and 'ques' in shared:
             self.ques = shared['ques']
@@ -63,61 +62,55 @@ class OeTeacher(Teacher):
             self._setup_data(data_path, annotation_path)
             self.image_loader = ImageLoader(opt)
 
-        self.len = len(self.ques['questions'])
-
-        # for ordered data in batch mode (especially, for validation and
-        # testing), each teacher in the batch gets a start index and a step
-        # size so they all process disparate sets of the data
-        self.step_size = opt.get('batchsize', 1)
-        self.data_offset = opt.get('batchindex', 0)
-
         self.reset()
 
-    def __len__(self):
-        return self.len
-
     def reset(self):
-        # Reset the dialog so that it is at the start of the epoch,
-        # and all metrics are reset.
         super().reset()
-        self.lastY = None
-        self.episode_idx = self.data_offset - self.step_size
+        self.example = None
+        # call this once to get the cache moving
+        self.next_example()
 
-    def observe(self, observation):
-        """Process observation for metrics."""
-        if self.lastY is not None:
-            self.metrics.update(observation, self.lastY)
-            self.lastY = None
-        return observation
+    def num_examples(self):
+        return len(self.ques['questions'])
 
-    def act(self):
-        if self.datatype == 'train':
-            self.episode_idx = random.randrange(self.len)
-        else:
-            self.episode_idx = (self.episode_idx + self.step_size) % len(self)
-            if self.episode_idx == len(self) - self.step_size:
-                self.epochDone = True
+    def num_episodes(self):
+        return self.num_examples()
 
-        qa = self.ques['questions'][self.episode_idx]
-        question = qa['question']
-        image_id = qa['image_id']
-
+    def submit_load_request(self, image_id):
         img_path = self.image_path + '%012d.jpg' % (image_id)
+        self.data_loader.request_load(self.receive_data, self.image_loader.load, (img_path,))
+
+    def get(self, episode_idx, entry_idx=0):
+        # queue up the next one
+        qa = self.ques['questions'][episode_idx]
+        question = qa['question']
 
         action = {
-            'image': self.image_loader.load(img_path),
             'text': question,
+            'image_id': qa['image_id'],
             'episode_done': True
         }
 
         if not self.datatype.startswith('test'):
-            anno = self.annotation['annotations'][self.episode_idx]
-            self.lastY = [ans['answer'] for ans in anno['answers']]
-
-        if self.datatype.startswith('train'):
-            action['labels'] = self.lastY
+            anno = self.annotation['annotations'][episode_idx]
+            action['labels'] = [ans['answer'] for ans in anno['answers']]
 
         return action
+
+    def next_example(self):
+        # save the currently queued example
+        ready = None
+        if self.example is not None:
+            if self.image_mode != 'none':
+                image = self.data_queue.get()
+                self.example['image'] = image
+            ready = (self.example, self.epochDone)
+        # queue up the next example
+        self.example, self.epochDone = super().next_example()
+        image_id = self.example.pop('image_id')
+        if self.image_mode != 'none':
+            self.submit_load_request(image_id)
+        return ready
 
     def share(self):
         shared = super().share()
@@ -140,11 +133,12 @@ class OeTeacher(Teacher):
 
 class AllTeacher(OeTeacher):
     """
-    VQA v2.0 Open-Ended teacher, which inherits from OeTeacher and 
+    VQA v2.0 Open-Ended teacher, which inherits from OeTeacher and
     gives access to the multiple choice answer.
     """
 
     def act(self):
+        episode_idx = self.episode_idx
         action = super().act()
 
         if not self.datatype.startswith('test'):

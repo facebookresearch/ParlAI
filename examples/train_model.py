@@ -190,7 +190,7 @@ class TrainLoop():
         if time_left is not None:
             logs.append('time_left:{}s'.format(math.floor(time_left)))
         if opt['num_epochs'] > 0:
-            if self.total_exs > 0 and len(self.world) > 0:
+            if self.total_exs > 0 and self.world.num_examples() > 0:
                 display_epochs = int(self.total_exs / self.world.num_examples())
             else:
                 display_epochs = self.total_epochs

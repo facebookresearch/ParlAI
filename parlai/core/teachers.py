@@ -291,19 +291,9 @@ class DialogTeacher(FixedDialogTeacher):
             self.data.reset()
             self.epochDone = False
 
-    # def __len__(self):
-    #     return len(self.data)
-
     def num_examples(self):
         return self.data.num_examples()
 
-    # def __iter__(self):
-    #     self.epochDone = False
-    #     return self
-    #
-    # def __next__(self):
-    #     if self.epochDone:
-    #         raise StopIteration()
 
     def share(self):
         shared = super().share()
@@ -389,12 +379,6 @@ class DialogData(object):
             'image_loader': self.image_loader
         }
         return shared
-
-    # def __len__(self):
-    #     """Returns total number of entries available. Each episode has at least
-    #     one entry, but might have many more.
-    #     """
-    #     return sum(len(episode) for episode in self.data)
 
     def _read_episode(self, data_generator):
         """Reads one episode at a time from the provided iterator over entries.
@@ -543,7 +527,9 @@ class StreamDialogData(DialogData):
         if shared:
             # auxiliary instances hold pointer to main datastream (in self.data)
             self.reset_data = shared['reset']
+            # Share datafile and data_loader for computing num_exs and num_eps
             self.datafile = shared['datafile']
+            self.data_loader = shared['data_loader']
         else:
             # main instance holds the stream and shares pointer to it
             self.data_loader = data_loader
@@ -559,22 +545,11 @@ class StreamDialogData(DialogData):
         shared = super().share()
         # also share reset method to allow datastream to be reset
         shared['reset'] = self.reset
-        # share datafile for loading length if necessary
+        # share datafile and data for loading length if necessary
         shared['datafile'] = self.datafile
-        return shared
+        shared['data_loader'] = self.data_loader
 
-    # def __len__(self):
-    #     length_file = self.datafile + ".length"
-    #     if not os.path.isfile(length_file):
-    #         length = 0
-    #         for episode in self._read_episode(self.data_loader(self.datafile)):
-    #             length += len(episode)
-    #         with open(length_file, 'w') as f:
-    #             f.write(str(length))
-    #     else:
-    #         with open(length_file, 'r') as f:
-    #             length = int(f.read())
-    #     return length
+        return shared
 
     def _load(self, data_loader, datafile):
         """Load data generator into data field."""
