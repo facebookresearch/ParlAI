@@ -27,7 +27,7 @@ dialog data and utilized by ``DialogTeacher``
 
 
 """
-from .agents import Teacher
+from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
 
 import argparse

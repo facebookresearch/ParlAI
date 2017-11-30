@@ -57,7 +57,7 @@ def setup_args():
                        help='key into report table for selecting best '
                             'validation')
     train.add_argument('-vcut', '--validation-cutoff',
-                       type=float, default=0.995,
+                       type=float, default=1.0,
                        help='value at which training will stop if exceeded by '
                             'training metric')
     train.add_argument('-dbf', '--dict-build-first',
