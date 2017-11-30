@@ -303,5 +303,12 @@ task_list = [
         "task": "dialogue_qe",
         "tags": [ "All" ],
         "description": "Human-bot dialogues labelled for quality at the level of dialogues. Can be used to train dialogue-level metric for dialogue systems. Link to dataset: http://convai.io/data/"
+    },
+    {
+        "id": "SCAN",
+        "display_name": "SCAN",
+        "task": "scan",
+        "tags": [ "Goal", "All" ],
+        "description": "SCAN is a set of simple language-driven navigation tasks for studying compositional learning and zero-shot generalization. The SCAN tasks were inspired by the CommAI environment, which is the origin of the acronym (Simplified versions of the CommAI Navigation tasks). See the paper: https://arxiv.org/abs/1711.00350 or data: https://github.com/brendenlake/SCAN"
     }
 ]
