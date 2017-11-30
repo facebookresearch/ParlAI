@@ -179,7 +179,7 @@ class MultiTaskTeacher(Teacher):
 
     def num_episodes(self):
         if not hasattr(self, 'num_eps'):
-            # num_examples is sum of all examples in all tasks
+            # num_episodes is sum of all num_episodes in all tasks
             self.num_eps = sum(t.num_episodes() for t in self.tasks)
         return self.num_eps
 

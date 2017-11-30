@@ -612,10 +612,10 @@ class BatchWorld(World):
         return s
 
     def num_examples(self):
-        return math.ceil(sum(w.num_examples() for w in self.worlds) / len(self.worlds))
+        return self.world.num_examples()
 
     def num_episodes(self):
-        return math.ceil(sum(w.num_episodes() for w in self.worlds) / len(self.worlds))
+        return self.world.num_episodes()
 
     def getID(self):
         return self.world.getID()
