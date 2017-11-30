@@ -1,5 +1,7 @@
 <h2>News</h2>
 
+2017-11-30: [New task added: SCAN](https://github.com/brendenlake/SCAN)
+
 2017-10-19: [ParlAI Request For Proposals: Winners Announced!](https://research.fb.com/announcing-the-winners-of-the-facebook-parlai-research-awards/)
 
 2017-10-13: [New model added: Fairseq-py](https://github.com/facebookresearch/fairseq-py)
