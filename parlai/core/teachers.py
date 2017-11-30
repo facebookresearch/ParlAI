@@ -138,22 +138,15 @@ class FixedDialogTeacher(Teacher):
         self.bsz = opt.get('batchsize', 1)
         self.batchindex = opt.get('batchindex', 0)
 
-        if not opt.get('batch_sort', False):
-            print('Warning: batch_sort=False currently supported, overriding '
-                  'to true')
-        # TODO: allow batch_sort to influence choice
-        # self.use_batchact = opt.get('batch_sort', False) and self.bsz > 1
-        self.use_batchact = self.bsz > 1
+        dt = opt.get('datatype', '').split(':')
+        self.use_batchact = (opt.get('batch_sort', False) and self.bsz > 1
+                             and 'stream' not in dt)
 
         if self.use_batchact:
             if shared:
                 self.lastYs = shared['lastYs']
             else:
                 self.lastYs = [None] * self.bsz
-
-                dt = opt['datatype'].split(':')
-                if 'stream' in dt:
-                    raise RuntimeError('streaming currently not supported')
                 ordered_opt = opt.copy()
                 ordered_opt['datatype'] = ':'.join((dt[0], 'ordered'))
                 ordered_opt['batchsize'] = 1
