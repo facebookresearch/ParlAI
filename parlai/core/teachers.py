@@ -139,10 +139,10 @@ class FixedDialogTeacher(Teacher):
         self.batchindex = opt.get('batchindex', 0)
 
         dt = opt.get('datatype', '').split(':')
-        self.use_batchact = (opt.get('batch_sort', False) and self.bsz > 1
-                             and 'stream' not in dt)
+        self.use_batch_act = (opt.get('batch_sort', False) and self.bsz > 1
+                              and 'stream' not in dt)
 
-        if self.use_batchact:
+        if self.use_batch_act:
             if shared:
                 self.lastYs = shared['lastYs']
             else:
@@ -181,7 +181,7 @@ class FixedDialogTeacher(Teacher):
         self.epochDone = False
         self.data_queue = queue.Queue()
 
-        if self.use_batchact:
+        if self.use_batch_act:
             self.batch_idx = -1
             if self.random and hasattr(self, 'batches'):
                 random.shuffle(self.batches)
@@ -256,7 +256,7 @@ class FixedDialogTeacher(Teacher):
 
     def observe(self, observation):
         """Process observation for metrics."""
-        if self.use_batchact:
+        if self.use_batch_act:
             self.lastY = self.lastYs[self.batchindex]
 
         if hasattr(self, 'lastY') and self.lastY is not None:
