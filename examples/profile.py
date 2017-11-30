@@ -16,7 +16,7 @@ import pdb
 import pstats
 import torch
 from train_model import setup_args as train_args
-from train_model import main as train
+from train_model import TrainLoop
 
 
 def setup_args():
@@ -35,7 +35,7 @@ def main(parser):
 
     if opt['torch']:
         with torch.autograd.profiler.profile() as prof:
-            train(parser)
+            TrainLoop(parser).train()
         print(prof.total_average())
 
         sort_cpu = sorted(prof.key_averages(), key=lambda k: k.cpu_time)
@@ -59,7 +59,7 @@ def main(parser):
     else:
         pr = cProfile.Profile()
         pr.enable()
-        train(parser)
+        TrainLoop(parser).train()
         pr.disable()
         s = io.StringIO()
         sortby = 'cumulative'

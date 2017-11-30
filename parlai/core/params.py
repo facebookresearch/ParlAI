@@ -14,6 +14,7 @@ import sys
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.tasks.tasks import ids_to_tasks
 
+
 def str2bool(value):
     v = value.lower()
     if v in ('yes', 'true', 't', '1', 'y'):
@@ -22,6 +23,7 @@ def str2bool(value):
         return False
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
+
 
 def str2class(value):
     """From import path string, returns the class specified. For example, the
@@ -34,11 +36,12 @@ def str2class(value):
     module = importlib.import_module(name[0])
     return getattr(module, name[1])
 
+
 def class2str(value):
     """Inverse of params.str2class()."""
     s = str(value)
-    s = s[s.find('\'') + 1 : s.rfind('\'')] # pull out import path
-    s = ':'.join(s.rsplit('.', 1)) # replace last period with ':'
+    s = s[s.find('\'') + 1:s.rfind('\'')]  # pull out import path
+    s = ':'.join(s.rsplit('.', 1))  # replace last period with ':'
     return s
 
 
@@ -158,8 +161,8 @@ class ParlaiParser(argparse.ArgumentParser):
         parlai.add_argument(
             '-dt', '--datatype', default='train',
             choices=['train', 'train:stream', 'train:ordered',
-                'train:ordered:stream', 'train:stream:ordered',
-                'valid', 'valid:stream', 'test', 'test:stream'],
+                     'train:ordered:stream', 'train:stream:ordered',
+                     'valid', 'valid:stream', 'test', 'test:stream'],
             help='choose from: train, train:ordered, valid, test. to stream '
                  'data add ":stream" to any option (e.g., train:stream). '
                  'by default: train is random with replacement, '
@@ -171,11 +174,29 @@ class ParlaiParser(argparse.ArgumentParser):
         parlai.add_argument(
             '-nt', '--numthreads', default=1, type=int,
             help='number of threads. If batchsize set to 1, used for hogwild; '
-                 'otherwise, used for number of threads in threadpool loading, '
-                 'e.g. in vqa')
-        parlai.add_argument(
+                 'otherwise, used for number of threads in threadpool loading,'
+                 ' e.g. in vqa')
+        batch = self.add_argument_group('Batching Arguments')
+        batch.add_argument(
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
+        batch.add_argument('-bsrt', '--batch-sort', default=True, type='bool',
+                           help='If enabled (default True), create batches by '
+                                'flattening all episodes to have exactly one '
+                                'utterance exchange and then sorting all the '
+                                'examples according to their length. This '
+                                'dramatically reduces the amount of padding '
+                                'present after examples have been parsed, '
+                                'speeding up training.')
+        batch.add_argument('-clen', '--context-length', default=-1, type=int,
+                           help='Number of past utterances to remember when '
+                                'building flattened batches of data in multi-'
+                                'example episodes.')
+        batch.add_argument('-incl', '--include-labels',
+                           default=True, type='bool',
+                           help='Specifies whether or not to include labels '
+                                'as past utterances when building flattened '
+                                'batches of data in multi-example episodes.')
         self.add_parlai_data_path(parlai)
         self.add_task_args(args)
 
@@ -229,9 +250,9 @@ class ParlaiParser(argparse.ArgumentParser):
             parlai = \
                 self.add_argument_group('ParlAI Image Preprocessing Arguments')
             parlai.add_argument('--image-size', type=int, default=256,
-                help='')
+                                help='resizing dimension for images')
             parlai.add_argument('--image-cropsize', type=int, default=224,
-                help='')
+                                help='crop dimension for images')
 
     def parse_args(self, args=None, namespace=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the
@@ -244,6 +265,11 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
+        if 'batchsize' in self.opt and self.opt['batchsize'] <= 1:
+            # hide batch options
+            self.opt.pop('batch_sort', None)
+            self.opt.pop('context_length', None)
+            self.opt.pop('include_labels', None)
 
         # set environment variables
         if self.opt.get('download_path'):
@@ -265,7 +291,7 @@ class ParlaiParser(argparse.ArgumentParser):
             values[str(key)] = str(value)
         for group in self._action_groups:
             group_dict = {
-                a.dest:getattr(self.args,a.dest,None)
+                a.dest: getattr(self.args, a.dest, None)
                 for a in group._group_actions
             }
             namespace = argparse.Namespace(**group_dict)

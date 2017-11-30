@@ -296,5 +296,12 @@ task_list = [
         "task": "convai_chitchat",
         "tags": [ "All", "ChitChat" ],
         "description": "Human-bot dialogues containing free discussions of randomly chosen paragraphs from SQuAD. Link to dataset: http://convai.io/data/"
+    },
+    {
+        "id": "Dialogue_QE",
+        "display_name": "Dialogue_QE",
+        "task": "dialogue_qe",
+        "tags": [ "All" ],
+        "description": "Human-bot dialogues labelled for quality at the level of dialogues. Can be used to train dialogue-level metric for dialogue systems. Link to dataset: http://convai.io/data/"
     }
 ]
