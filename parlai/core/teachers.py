@@ -30,6 +30,8 @@ dialog data and utilized by ``DialogTeacher``
 from .agents import Teacher
 from .image_featurizers import ImageLoader
 
+import argparse
+from collections import deque
 import concurrent.futures
 from threading import Thread
 import queue
@@ -37,77 +39,6 @@ import random
 import sys
 import time
 import os
-
-def flatten(teacher, context_length=None, include_label=True):
-    """Return a flattened version of a teacher's data where all episodes only
-    have length one but contain the desired amount of context.
-
-    If context_length is not None, will use only that many past utterances.
-    Default is None.
-
-    If include_label is True, will include a random label in past utterances.
-    Default is True.
-    """
-    data = []
-    episode_done = False
-    while not teacher.epoch_done():
-        current = []
-        while not episode_done:
-            action = teacher.act()
-            current.append(action)
-            episode_done = action['episode_done']
-
-        for i, ex in enumerate(current):
-            context = deque(maxlen=context_length)
-            for prev in current[:i]:
-                context.append(prev['text'])
-                if include_label:
-                    labels = prev.get('labels', prev.get('eval_labels'))
-                    if labels is not None:
-                        context.append(random.choice(labels))
-            context.append(ex['text'])
-            ex['text'] = '\n'.join(context)
-            ex['episode_done'] = True
-            data.append(ex)
-        episode_done = False
-    return data
-
-
-def sort_data(data, key='text_label', method='spaces'):
-    """Given a list of data, sort it according to the method and key.
-
-    Currently the only supported method is counting the number of spaces.
-    This appeared to be reliable enough and much faster than tokenizing.
-    It performs much better than just using the length of the string.
-
-    Currently the only supported key is sorting by first the text, then the
-    label.
-    See https://arxiv.org/abs/1706.05765 for an evaulation of alternative
-    approaches for machine translation.
-    Sorting by the source (text) gives a good improvement in speed over random
-    batching and is robust to different types of optimization.
-    Breaking ties by sorting by label length gives a further improvement in
-    speed but can reduce robustness with some optimization schemes.
-    """
-    # TODO: support different keys and different methods
-    tpls = []
-    for ex in data:
-        fst = ex['text'].count(' ')
-        if 'labels' in ex['text']:
-            # use average label length (probably just one answer usually)
-            snd = (sum(l.count(' ') for l in ex['labels'])
-                   / len(ex['labels']))
-        else:
-            snd = 0
-        tiebreaker = random.random()
-        tpls.append((fst, snd, tiebreaker, ex))
-    tpls.sort()
-    return [e[-1] for e in tpls]
-
-
-def make_batches(data, bsz):
-    """Return a list of lists of size bsz given a list of examples."""
-    return [data[i:i + bsz] for i in range(0, len(data), bsz)]
 
 
 class DataLoader(Thread):
@@ -146,7 +77,7 @@ class DataLoader(Thread):
                 receive_fn(future)
 
 
-class FixedDataTeacher(Teacher):
+class FixedDialogTeacher(Teacher):
     """A teacher agent for all teachers involved in tasks with fixed data.
 
     This class provides the following functionality for its subclasses:
@@ -1000,3 +931,75 @@ class FbDialogTeacher(DialogTeacher):
                     reward = 0
             if x:
                 yield [x, None, reward], start
+
+
+def flatten(teacher, context_length=None, include_label=True):
+    """Return a flattened version of a teacher's data where all episodes only
+    have length one but contain the desired amount of context.
+
+    If context_length is not None, will use only that many past utterances.
+    Default is None.
+
+    If include_label is True, will include a random label in past utterances.
+    Default is True.
+    """
+    data = []
+    episode_done = False
+    while not teacher.epoch_done():
+        current = []
+        while not episode_done:
+            action = teacher.act()
+            current.append(action)
+            episode_done = action['episode_done']
+
+        for i, ex in enumerate(current):
+            context = deque(maxlen=context_length)
+            for prev in current[:i]:
+                context.append(prev['text'])
+                if include_label:
+                    labels = prev.get('labels', prev.get('eval_labels'))
+                    if labels is not None:
+                        context.append(random.choice(labels))
+            context.append(ex['text'])
+            ex['text'] = '\n'.join(context)
+            ex['episode_done'] = True
+            data.append(ex)
+        episode_done = False
+    return data
+
+
+def sort_data(data, key='text_label', method='spaces'):
+    """Given a list of data, sort it according to the method and key.
+
+    Currently the only supported method is counting the number of spaces.
+    This appeared to be reliable enough and much faster than tokenizing.
+    It performs much better than just using the length of the string.
+
+    Currently the only supported key is sorting by first the text, then the
+    label.
+    See https://arxiv.org/abs/1706.05765 for an evaulation of alternative
+    approaches for machine translation.
+    Sorting by the source (text) gives a good improvement in speed over random
+    batching and is robust to different types of optimization.
+    Breaking ties by sorting by label length gives a further improvement in
+    speed but can reduce robustness with some optimization schemes.
+    """
+    # TODO: support different keys and different methods
+    tpls = []
+    for ex in data:
+        fst = ex['text'].count(' ')
+        if 'labels' in ex['text']:
+            # use average label length (probably just one answer usually)
+            snd = (sum(l.count(' ') for l in ex['labels'])
+                   / len(ex['labels']))
+        else:
+            snd = 0
+        tiebreaker = random.random()
+        tpls.append((fst, snd, tiebreaker, ex))
+    tpls.sort()
+    return [e[-1] for e in tpls]
+
+
+def make_batches(data, bsz):
+    """Return a list of lists of size bsz given a list of examples."""
+    return [data[i:i + bsz] for i in range(0, len(data), bsz)]
