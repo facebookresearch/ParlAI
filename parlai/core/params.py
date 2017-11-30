@@ -265,7 +265,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
-        if 'bs' in self.opt and self.opt['bs'] <= 1:
+        if 'batchsize' in self.opt and self.opt['batchsize'] <= 1:
             # hide batch options
             self.opt.pop('batch_sort', None)
             self.opt.pop('context_length', None)
