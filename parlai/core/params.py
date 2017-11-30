@@ -176,9 +176,27 @@ class ParlaiParser(argparse.ArgumentParser):
             help='number of threads. If batchsize set to 1, used for hogwild; '
                  'otherwise, used for number of threads in threadpool loading,'
                  ' e.g. in vqa')
-        parlai.add_argument(
+        batch = self.add_argument_group('Batching Arguments')
+        batch.add_argument(
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
+        batch.add_argument('-bsrt', '--batch-sort', default=True, type='bool',
+                           help='If enabled (default True), create batches by '
+                                'flattening all episodes to have exactly one '
+                                'utterance exchange and then sorting all the '
+                                'examples according to their length. This '
+                                'dramatically reduces the amount of padding '
+                                'present after examples have been parsed, '
+                                'speeding up training.')
+        batch.add_argument('-clen', '--context-length', default=-1, type=int,
+                           help='Number of past utterances to remember when '
+                                'building flattened batches of data in multi-'
+                                'example episodes.')
+        batch.add_argument('-incl', '--include-labels',
+                           default=True, type='bool',
+                           help='Specifies whether or not to include labels '
+                                'as past utterances when building flattened '
+                                'batches of data in multi-example episodes.')
         self.add_parlai_data_path(parlai)
         self.add_task_args(args)
 
