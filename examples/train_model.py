@@ -129,8 +129,12 @@ class TrainLoop():
         self.total_exs = 0
         self.total_episodes = 0
         self.total_epochs = 0
-        self.max_exs = opt['num_epochs'] * len(self.world)
-        self.max_parleys = math.ceil(self.max_exs / opt['batchsize'])
+        self.max_exs = None
+        self.max_parleys = None
+        self.world_num_exs = self.world.num_examples()
+        if self.world_num_exs is not None:
+            self.max_exs = opt['num_epochs'] * self.world_num_exs
+            self.max_parleys = math.ceil(self.max_exs / opt['batchsize'])
         self.best_valid = 0
         self.impatience = 0
         self.saved = False
@@ -183,7 +187,8 @@ class TrainLoop():
             logs.append('total_exs:{}'.format(self.total_exs))
         # check if we should log amount of time remaining
         time_left = None
-        if opt['num_epochs'] > 0 and self.total_exs > 0 and self.max_exs > 0:
+        if (opt['num_epochs'] > 0 and self.total_exs > 0 and
+                (self.max_exs is not None and self.max_exs > 0)):
             exs_per_sec = self.train_time.time() / self.total_exs
             time_left = (self.max_exs - self.total_exs) * exs_per_sec
         if opt['max_train_time'] > 0:
@@ -195,8 +200,9 @@ class TrainLoop():
         if time_left is not None:
             logs.append('time_left:{}s'.format(math.floor(time_left)))
         if opt['num_epochs'] > 0:
-            if self.total_exs > 0 and len(self.world) > 0:
-                display_epochs = int(self.total_exs / len(self.world))
+            if (self.total_exs > 0 and
+                    (self.world_num_exs is not None and self.world_num_exs > 0)):
+                display_epochs = int(self.total_exs / self.world_num_exs)
             else:
                 display_epochs = self.total_epochs
                 logs.append('num_epochs:{}'.format(display_epochs))
@@ -216,7 +222,7 @@ class TrainLoop():
                 if world.epoch_done():
                     self.total_epochs += 1
 
-                if opt['num_epochs'] > 0 and (
+                if opt['num_epochs'] > 0 and self.max_parleys is not None and (
                     (self.max_parleys > 0 and self.parleys >= self.max_parleys)
                     or self.total_epochs >= opt['num_epochs']):
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(

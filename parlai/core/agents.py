@@ -114,18 +114,6 @@ class Teacher(Agent):
                 self.metrics = Metrics(opt)
         self.epochDone = False
 
-    def __iter__(self):
-        """Teacher can be iterated over. Subclasses can specify a certain length
-        of iteration, such as e.g. one epoch.
-        """
-        self.epochDone = False
-        return self
-
-    def __next__(self):
-        """Raise ``StopIteration`` if epoch is done (never for default teacher)."""
-        if self.epochDone:
-            raise StopIteration()
-
     # return state/action dict based upon passed state
     def act(self):
         if self.observation is not None and 'text' in self.observation:
@@ -134,6 +122,13 @@ class Teacher(Agent):
 
     def epoch_done(self):
         return self.epochDone
+
+    # Default unknown length
+    def num_examples(self):
+        return None
+
+    def num_episodes(self):
+        return None
 
     # Return transformed metrics showing total examples and accuracy if avail.
     def report(self):
@@ -183,20 +178,25 @@ class MultiTaskTeacher(Teacher):
         self.new_task = True
         self.random = opt.get('datatype') == 'train'
 
-    def __len__(self):
-        if not hasattr(self, 'len'):
-            self.len = 0
-            # length is sum of all task lengths
-            for _ind, t in enumerate(self.tasks):
-                self.len += len(t)
-        return self.len
+    def num_examples(self):
+        if not hasattr(self, 'num_exs'):
+            # num_examples is sum of all examples in all tasks
+            tasks_num_exs = [t.num_examples() for t in self.tasks]
+            if any(num is None for num in tasks_num_exs):
+                self.num_exs = None
+            else:
+                self.num_exs = sum(tasks_num_exs)
+        return self.num_exs
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.epoch_done():
-            raise StopIteration()
+    def num_episodes(self):
+        if not hasattr(self, 'num_eps'):
+            # num_episodes is sum of all num_episodes in all tasks
+            tasks_num_eps = [t.num_episodes() for t in self.tasks]
+            if any(num is None for num in tasks_num_eps):
+                self.num_eps = None
+            else:
+                self.num_eps = sum(tasks_num_eps)
+        return self.num_eps
 
     def observe(self, observation):
         return self.tasks[self.task_idx].observe(observation)

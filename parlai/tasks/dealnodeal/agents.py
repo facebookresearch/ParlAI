@@ -74,9 +74,6 @@ class NegotiationTeacher(Teacher):
                       for dialogue in dialogues)
         return num_exs
 
-    def __len__(self):
-        return self.num_examples()
-
     def reset(self):
         super().reset()
         self.episode_idx = self.data_offset - self.step_size

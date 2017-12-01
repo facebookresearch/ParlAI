@@ -35,11 +35,8 @@ class IndexTeacher(FixedDialogTeacher):
         self.id = 'squad'
         self.reset()
 
-    def __len__(self):
-        return len(self.examples)
-
     def num_episodes(self):
-        return len(self)
+        return self.num_examples()
 
     def get(self, episode_idx, entry_idx=None):
         article_idx, paragraph_idx, qa_idx = self.examples[episode_idx]
