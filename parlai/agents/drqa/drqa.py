@@ -244,8 +244,6 @@ class DrqaAgent(Agent):
 
         batch_reply[0]['metrics'] = {
             'train_loss': self.model.train_loss.avg * batchsize,
-            'doc_zeros': batch[0].eq(0).sum() * batchsize,
-            'q_zeros': batch[3].eq(0).sum() * batchsize,
         }
         return batch_reply
 
