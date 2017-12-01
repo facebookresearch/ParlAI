@@ -181,13 +181,21 @@ class MultiTaskTeacher(Teacher):
     def num_examples(self):
         if not hasattr(self, 'num_exs'):
             # num_examples is sum of all examples in all tasks
-            self.num_exs = sum(t.num_examples() for t in self.tasks)
+            tasks_num_exs = [t.num_examples() for t in self.tasks]
+            if any(num is None for num in tasks_num_exs):
+                self.num_exs = None
+            else:
+                self.num_exs = sum(tasks_num_exs)
         return self.num_exs
 
     def num_episodes(self):
         if not hasattr(self, 'num_eps'):
             # num_episodes is sum of all num_episodes in all tasks
-            self.num_eps = sum(t.num_episodes() for t in self.tasks)
+            tasks_num_eps = [t.num_episodes() for t in self.tasks]
+            if any(num is None for num in tasks_num_eps):
+                self.num_eps = None
+            else:
+                self.num_eps = sum(tasks_num_eps)
         return self.num_eps
 
     def observe(self, observation):

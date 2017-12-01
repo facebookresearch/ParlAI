@@ -400,12 +400,20 @@ class MultiWorld(World):
 
     def num_examples(self):
         if not hasattr(self, 'num_exs'):
-            self.num_exs = sum(w.num_examples() for w in self.worlds)
+            worlds_num_exs = [w.num_examples() for w in self.worlds]
+            if any(num is None for num in worlds_num_exs):
+                self.num_exs = None
+            else:
+                self.num_exs = sum(worlds_num_exs)
         return self.num_exs
 
     def num_episodes(self):
         if not hasattr(self, 'num_eps'):
-            self.num_eps = sum(w.num_episodes() for w in self.worlds)
+            worlds_num_eps = [w.num_episodes() for w in self.worlds]
+            if any(num is None for num in worlds_num_eps):
+                self.num_eps = None
+            else:
+                self.num_eps = sum(worlds_num_eps)
         return self.num_eps
 
     def get_agents(self):
