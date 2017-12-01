@@ -30,7 +30,6 @@ dialog data and utilized by ``DialogTeacher``
 from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
 
-import argparse
 from collections import deque
 import concurrent.futures
 from threading import Thread
@@ -971,13 +970,16 @@ def sort_data(data, key='text_label', method='spaces'):
     # TODO: support different keys and different methods
     tpls = []
     for ex in data:
-        fst = ex['text'].count(' ')
-        if 'labels' in ex['text']:
+        # first sort by input length
+        fst = ex.get('text', '').count(' ')
+
+        # then sort by target length (don't sort by eval_labels, no need)
+        snd = 0
+        labels = ex.get('labels', None)
+        if labels is not None:
             # use average label length (probably just one answer usually)
-            snd = (sum(l.count(' ') for l in ex['labels'])
-                   / len(ex['labels']))
-        else:
-            snd = 0
+            snd = sum(l.count(' ') for l in labels) / len(labels)
+
         tiebreaker = random.random()
         tpls.append((fst, snd, tiebreaker, ex))
     tpls.sort()

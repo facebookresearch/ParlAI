@@ -572,7 +572,7 @@ class BatchWorld(World):
         # Given batch observation, do update for agents[index].
         # Call update on agent
         a = self.world.get_agents()[agent_idx]
-        if hasattr(a, 'batch_act') and not (hasattr(a, 'use_batchact') and not a.use_batchact):
+        if hasattr(a, 'batch_act') and not (hasattr(a, 'use_batch_act') and not a.use_batch_act):
             batch_actions = a.batch_act(batch_observation)
             # Store the actions locally in each world.
             for i, w in enumerate(self.worlds):
