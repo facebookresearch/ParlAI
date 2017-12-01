@@ -37,7 +37,7 @@ This module also provides a utility method:
 
 """
 
-from .metrics import Metrics
+from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
 import random
@@ -229,33 +229,16 @@ class MultiTaskTeacher(Teacher):
         return True
 
     # return transformed metrics showing total examples and accuracy if avail.
-    def report(self):
-        m = {}
-        m['tasks'] = {}
-        sum_accuracy = 0
-        sum_f1 = 0
-        num_tasks = 0
-        total = 0
-        for i in range(len(self.tasks)):
-            tid = self.tasks[i].getID()
-            mt = self.tasks[i].report()
-            while tid in m['tasks']:
-                # prevent name cloberring if using multiple tasks with same ID
-                tid += '_'
-            m['tasks'][tid] = mt
-            total += mt['total']
-            if 'accuracy' in mt:
-                sum_accuracy += mt['accuracy']
-                num_tasks += 1
-                if 'f1' in mt:
-                    sum_f1 += mt['f1']
-        m['total'] = total
-        m['accuracy'] = 0
-        if num_tasks > 0:
-            m['accuracy'] = sum_accuracy / num_tasks
-            if sum_f1 > 0:
-                m['f1'] = sum_f1 / num_tasks
-        return m
+    def report(self, report_opts=None):
+        opt = self.opt
+        
+        total_exs = opt.get('total_exs', None)
+        max_exs = opt.get('max_exs', None)
+        train_time = opt.get('train_time')
+        exs_per_epoch = opt['exs_per_epoch']
+        total_epochs = opt.get('total_epochs', None)
+        metrics = aggregate_metrics(self.tasks)
+        return metrics
 
     def reset(self):
         for t in self.tasks:

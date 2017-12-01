@@ -47,6 +47,7 @@ import random
 
 from multiprocessing import Process, Value, Condition, Semaphore
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
+from parlai.core.metrics import aggregate_metrics
 from parlai.tasks.tasks import ids_to_tasks
 
 
@@ -469,27 +470,8 @@ class MultiWorld(World):
             return ''
 
     def report(self):
-        # TODO: static method in metrics, "aggregate metrics"
-        m = {}
-        m['tasks'] = {}
-        sum_accuracy = 0
-        num_tasks = 0
-        total = 0
-        for i in range(len(self.worlds)):
-            wid = self.worlds[i].getID()
-            mt = self.worlds[i].report()
-            while wid in m['tasks']:
-                # prevent name cloberring if using multiple tasks with same ID
-                wid += '_'
-            m['tasks'][wid] = mt
-            total += mt['total']
-            if 'accuracy' in mt:
-                sum_accuracy += mt['accuracy']
-                num_tasks += 1
-        if num_tasks > 0:
-            m['accuracy'] = sum_accuracy / num_tasks
-            m['total'] = total
-        return m
+        metrics = aggregate_metrics(self.worlds)
+        return metrics
 
     def reset(self):
         for w in self.worlds:

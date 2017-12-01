@@ -13,6 +13,7 @@ from parlai.core.utils import round_sigfigs
 from collections import Counter
 
 import re
+import math
 
 re_art = re.compile(r'\b(a|an|the)\b')
 re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
@@ -61,6 +62,62 @@ def _f1_score(guess, answers):
     g_tokens = _normalize_answer(guess).split()
     scores = [_score(g_tokens, _normalize_answer(a).split()) for a in answers]
     return max(scores)
+
+def aggregate_metrics(reporters, opt):
+    m = {}
+    m['tasks'] = {}
+    sum_accuracy = 0
+    sum_f1 = 0
+    num_tasks = 0
+    total = 0
+    for i in range(len(reporters)):
+        tid = reporters[i].getID()
+        mt = reporters[i].report()
+        while tid in m['tasks']:
+            # prevent name cloberring if using multiple tasks with same ID
+            tid += '_'
+        m['tasks'][tid] = mt
+        total += mt['total']
+        if 'accuracy' in mt:
+            sum_accuracy += mt['accuracy']
+            num_tasks += 1
+            if 'f1' in mt:
+                sum_f1 += mt['f1']
+    m['total'] = total
+    m['accuracy'] = 0
+    if num_tasks > 0:
+        m['accuracy'] = sum_accuracy / num_tasks
+        if sum_f1 > 0:
+            m['f1'] = sum_f1 / num_tasks
+
+    # Determine time_left and num_epochs
+    time_left = None
+    total_exs = opt.get('total_exs', None)
+    max_exs = opt.get('max_exs', None)
+    train_time = opt.get('train_time')
+    exs_per_epoch = opt['exs_per_epoch']
+    total_epochs = opt.get('total_epochs', None)
+    if (opt['num_epochs'] > 0 and total_exs > 0 and
+            (max_exs is not None and max_exs > 0)):
+        exs_per_sec = train_time / total_exs
+        time_left = (max_exs - total_exs) * exs_per_sec
+    if opt['max_train_time'] > 0:
+        other_time_left = opt['max_train_time'] - train_time
+        if time_left is not None:
+            time_left = min(time_left, other_time_left)
+        else:
+            time_left = other_time_left
+    if time_left is not None:
+        m['time_left'] = math.floor(time_left)
+    if opt['num_epochs'] > 0:
+        if (total_exs > 0 and
+                (exs_per_epoch is not None and exs_per_epoch > 0)):
+            display_epochs = int(total_exs / exs_per_epoch)
+        else:
+            display_epochs = total_epochs
+        m['num_epochs'] = display_epochs
+    return m
+
 
 
 class Metrics(object):
