@@ -247,7 +247,9 @@ class DictionaryAgent(Agent):
         """
         return (text.replace('.', ' . ').replace(',', ' , ')
                 .replace('!', ' ! ').replace('?', ' ? ')
-                .replace('. . .', '...').split())
+                .replace(';', ' ; ').replace(':', ' : ')
+                .replace('. . .', '...')
+                .split())
 
     def tokenize(self, text, tokenizer='split', building=False):
         """Returns a sequence of tokens from the iterable."""

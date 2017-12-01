@@ -66,7 +66,10 @@ class MemnnAgent(Agent):
 
             self.model = MemNN(opt, len(self.dict))
             self.mem_size = opt['mem_size']
-            self.loss_fn = CrossEntropyLoss()
+
+            # get index of null token from dictionary (probably 0)
+            self.NULL_IDX = self.dict.txt2vec(self.dict.null_token)[0]
+            self.loss_fn = CrossEntropyLoss(ignore_index=self.NULL_IDX)
 
             self.decoder = None
             self.longest_label = 1
@@ -280,9 +283,10 @@ class MemnnAgent(Agent):
         xs = [memories, queries, memory_lengths, query_lengths]
 
         ys = None
-        self.labels = [random.choice(ex['labels']) for ex in exs if 'labels' in ex]
-        if len(self.labels) == len(exs):
+        if any(['labels' in ex for ex in exs]):
+            self.labels = [random.choice(ex.get('labels', [''])) for ex in exs]
             parsed = [self.dict.txt2vec(l) for l in self.labels]
+            parsed = [p if len(p) > 0 else [self.NULL_IDX] for p in parsed]
             parsed = [torch.LongTensor(p) for p in parsed]
             label_lengths = torch.LongTensor([len(p) for p in parsed]).unsqueeze(1)
             self.longest_label = max(self.longest_label, label_lengths.max())
