@@ -72,16 +72,14 @@ class SimpleDictionaryAgent(DictionaryAgent):
         else:
             self.embedding_words = None
 
-    def spacy_tokenize(self, text, **kwargs):
-        # note that we are currently not using this tokenizer but the default
-        # builtin split tokenizer
+    def tokenize(self, text, **kwargs):
+        # TODO: switch to split tokenizing? much faster
         tokens = NLP.tokenizer(text)
         return [t.text for t in tokens]
 
-    def spacy_span_tokenize(self, text):
+    def span_tokenize(self, text):
         """Returns tuple of tokens, spans."""
-        # note that we are currently not using this tokenizer but the default
-        # builtin span / split tokenizer
+        # TODO: switch to split tokenizing? much faster
         tokens = NLP.tokenizer(text)
         return ([t.text for t in tokens],
                 [(t.idx, t.idx + len(t.text)) for t in tokens])
