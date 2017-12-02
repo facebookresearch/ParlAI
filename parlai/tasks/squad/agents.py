@@ -35,6 +35,9 @@ class IndexTeacher(FixedDialogTeacher):
         self.id = 'squad'
         self.reset()
 
+    def num_examples(self):
+        return len(self.examples)
+
     def num_episodes(self):
         return self.num_examples()
 

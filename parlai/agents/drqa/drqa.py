@@ -73,11 +73,13 @@ class SimpleDictionaryAgent(DictionaryAgent):
             self.embedding_words = None
 
     def tokenize(self, text, **kwargs):
+        # TODO: switch to split tokenizing? much faster
         tokens = NLP.tokenizer(text)
         return [t.text for t in tokens]
 
     def span_tokenize(self, text):
         """Returns tuple of tokens, spans."""
+        # TODO: switch to split tokenizing? much faster
         tokens = NLP.tokenizer(text)
         return ([t.text for t in tokens],
                 [(t.idx, t.idx + len(t.text)) for t in tokens])
@@ -114,7 +116,7 @@ class DrqaAgent(Agent):
         return SimpleDictionaryAgent
 
     def __init__(self, opt, shared=None):
-        if opt['numthreads'] >1:
+        if opt['numthreads'] > 1:
             raise RuntimeError("numthreads > 1 not supported for this model.")
 
         # Load dict.
@@ -161,8 +163,7 @@ class DrqaAgent(Agent):
     def _init_from_saved(self, fname):
         print('[ Loading model %s ]' % fname)
         saved_params = torch.load(fname,
-            map_location=lambda storage, loc: storage
-        )
+            map_location=lambda storage, loc: storage)
 
         # TODO expand dict and embeddings for new data
         self.word_dict = saved_params['word_dict']
@@ -240,7 +241,8 @@ class DrqaAgent(Agent):
                 batch_reply[valid_inds[i]]['text'] = predictions[i]
 
         batch_reply[0]['metrics'] = {
-            'train_loss': self.model.train_loss.avg * batchsize}
+            'train_loss': self.model.train_loss.avg * batchsize,
+        }
         return batch_reply
 
     def save(self, fname=None):
