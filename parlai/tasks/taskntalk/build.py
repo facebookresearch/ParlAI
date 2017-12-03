@@ -22,7 +22,9 @@ def build(opt):
         # save training and validation data
         to_save = {
             'attributes': ['color', 'shape', 'style'],
-            'task_defn': [[0, 1], [1, 0], [0, 2], [2, 0], [1, 2], [2, 1]],
+            'task_defn': [['color', 'shape'], ['shape', 'color'],
+                          ['color', 'style'], ['style', 'color'],
+                          ['shape', 'style'], ['style', 'shape']]
         }
         split_data = {}
 
