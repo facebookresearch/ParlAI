@@ -91,6 +91,8 @@ def round_sigfigs(x, sigfigs=4):
     except RuntimeError:
         # handle 1D torch tensors
         x = x[0]
+    if x in [float('inf'), float('-inf'), float('NaN')]:
+        return x
     return round(x, -math.floor(math.log10(abs(x)) - sigfigs + 1))
 
 

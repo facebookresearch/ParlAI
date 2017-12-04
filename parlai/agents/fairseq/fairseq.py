@@ -8,16 +8,16 @@ from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 
 try:
-    from fairseq import models
+    from .fairseq_py.fairseq import models
 except ImportError:
-    raise RuntimeError('Please install fairseq from '
-                       'github.com/facebookresearch/fairseq-py/')
-from fairseq.models import fconv
-from fairseq.multiprocessing_trainer import MultiprocessingTrainer
-from fairseq import criterions
-from fairseq import dictionary
-from fairseq.sequence_generator import SequenceGenerator
-from fairseq import options
+    raise RuntimeError("Please run 'python setup.py build' and "
+                       "'python setup.py develop' from the fairseq_py directory")
+from .fairseq_py.fairseq.models import fconv
+from .fairseq_py.fairseq.multiprocessing_trainer import MultiprocessingTrainer
+from .fairseq_py.fairseq import criterions
+from .fairseq_py.fairseq import dictionary
+from .fairseq_py.fairseq.sequence_generator import SequenceGenerator
+from .fairseq_py.fairseq import options
 
 from torch.autograd import Variable
 
@@ -106,13 +106,13 @@ class FairseqAgent(Agent):
                                .fill_(self.fairseq_dict.eos()))
             self.NULL_IDX = self.fairseq_dict.pad()
 
-            encoder = fconv.Encoder(
+            encoder = fconv.FConvEncoder(
                 self.fairseq_dict,
                 embed_dim=self.args.encoder_embed_dim,
                 convolutions=eval(self.args.encoder_layers),
                 dropout=self.args.dropout,
                 max_positions=self.args.max_positions)
-            decoder = fconv.Decoder(
+            decoder = fconv.FConvDecoder(
                 self.fairseq_dict,
                 embed_dim=self.args.decoder_embed_dim,
                 convolutions=eval(self.args.decoder_layers),
@@ -128,7 +128,7 @@ class FairseqAgent(Agent):
                     self.args.label_smoothing, self.NULL_IDX)
             else:
                 self.criterion = criterions.CrossEntropyCriterion(
-                    self.NULL_IDX)
+                    self.args, self.fairseq_dict)
 
             self.trainer = MultiprocessingTrainer(self.args, self.model, self.criterion)
             if saved_state is not None:
@@ -226,7 +226,11 @@ class FairseqAgent(Agent):
             for k, v in loss.items():
                 batch_reply[0]['metrics'][k] = v * bsz
                 if k == 'loss':
-                    batch_reply[0]['metrics']['perplexity'] = 2 ** v * bsz
+                    try:
+                        perplexity = 2 ** v * bsz
+                    except OverflowError:
+                        perplexity = float('inf')
+                    batch_reply[0]['metrics']['perplexity'] = perplexity
 
         return batch_reply
 
@@ -297,8 +301,7 @@ class FairseqAgent(Agent):
                 len_penalty=opt.lenpen)
             self.translator.cuda()
         tokens = src_tokens.cuda(async=True)
-        token_pos = Variable(self._positions_for_tokens(tokens).cuda())
-        translations = self.translator.generate(Variable(tokens), token_pos)
+        translations = self.translator.generate(Variable(tokens))
         results = [t[0] for t in translations]
         output_lines = [[] for _ in range(len(results))]
         for i in range(len(results)):
