@@ -14,10 +14,14 @@ import parlai.core.build_data as build_data
 
 def build(opt):
     """Create train and validation data for synthetic shapes described by attributes."""
-    dpath = os.path.join(opt['datapath'], 'shapes_small')
+    dpath = os.path.join(opt['datapath'], 'taskntalk')
 
     if not build_data.built(dpath):
         print('[building data: ' + dpath + ']')
+        if build_data.built(dpath):
+            build_data.remove_dir(dpath)
+        build_data.make_dir(os.path.join(dpath, 'large'))
+        build_data.make_dir(os.path.join(dpath, 'small'))
 
         # save training and validation data
         to_save = {
@@ -40,33 +44,33 @@ def build(opt):
 
         # randomly select train and rest of it is valid
         split_data['valid'] = random.sample(data_verbose, int(0.8 * len(data_verbose)))
-        split_data['train'] = [s for s in data_verbose if s not in split_data['val']]
+        split_data['train'] = [s for s in data_verbose if s not in split_data['valid']]
 
         to_save['data'] = split_data['train']
-        with open(os.path.join(dpath, 'shapes_small', 'train.json'), 'w') as outfile:
+        with open(os.path.join(dpath, 'small', 'train.json'), 'w') as outfile:
             json.dump(to_save, outfile, indent=4, separators=(',', ': '), sort_keys=True)
 
         to_save['data'] = split_data['valid']
-        with open(os.path.join(dpath, 'shapes_small', 'valid.json'), 'w') as outfile:
+        with open(os.path.join(dpath, 'small', 'valid.json'), 'w') as outfile:
             json.dump(to_save, outfile, indent=4, separators=(',', ': '), sort_keys=True)
 
         # large dataset properties
         properties = {
             'color': ['red', 'green', 'blue', 'purple', 'yellow', 'cyan', 'orange', 'teal'],
-            'shape': ['square', 'triangle', 'circle', 'star', 'heart', 'pentagon', 'hexagon', 'ring'],
+            'shape': ['square', 'triangle', 'circle', 'star', 'heart', 'spade', 'club', 'diamond'],
             'style': ['dotted', 'solid', 'filled', 'dashed', 'hstripe', 'vstripe', 'hgrad', 'vgrad']
         }
         to_save['properties'] = properties
         data_verbose = list(itertools.product(*[properties[key] for key in to_save['attributes']]))
         split_data['valid'] = random.sample(data_verbose, int(0.8 * len(data_verbose)))
-        split_data['train'] = [s for s in data_verbose if s not in split_data['val']]
+        split_data['train'] = [s for s in data_verbose if s not in split_data['valid']]
 
         to_save['data'] = split_data['train']
-        with open(os.path.join(dpath, 'shapes_large', 'train.json'), 'w') as outfile:
+        with open(os.path.join(dpath, 'large', 'train.json'), 'w') as outfile:
             json.dump(to_save, outfile, indent=4, separators=(',', ': '), sort_keys=True)
 
         to_save['data'] = split_data['valid']
-        with open(os.path.join(dpath, 'shapes_large', 'valid.json'), 'w') as outfile:
+        with open(os.path.join(dpath, 'large', 'valid.json'), 'w') as outfile:
             json.dump(to_save, outfile, indent=4, separators=(',', ': '), sort_keys=True)
 
         # Mark the data as built.
