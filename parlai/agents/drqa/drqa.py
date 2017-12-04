@@ -275,8 +275,8 @@ class DrqaAgent(Agent):
             raise RuntimeError('Invalid input. Is task a QA task?')
 
         document, question = ' '.join(fields[:-1]), fields[-1]
-        inputs['document'], doc_spans = self.word_dict.span_tokenize(document)
-        inputs['question'] = self.word_dict.tokenize(question)
+        inputs['document'], doc_spans = self.word_dict.spacy_span_tokenize(document)
+        inputs['question'] = self.word_dict.spacy_tokenize(question)
         inputs['target'] = None
 
         # Find targets (if labels provided).
