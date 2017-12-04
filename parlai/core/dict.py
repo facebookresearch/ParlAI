@@ -252,15 +252,11 @@ class DictionaryAgent(Agent):
         return self.freq
 
     def spacy_tokenize(self, text, **kwargs):
-        # note that we are currently not using this tokenizer but the default
-        # builtin split tokenizer
         tokens = self.NLP.tokenizer(text)
         return [t.text for t in tokens]
 
     def spacy_span_tokenize(self, text):
         """Returns tuple of tokens, spans."""
-        # note that we are currently not using this tokenizer but the default
-        # builtin span / split tokenizer
         tokens = self.NLP.tokenizer(text)
         return ([t.text for t in tokens],
                 [(t.idx, t.idx + len(t.text)) for t in tokens])
@@ -282,11 +278,14 @@ class DictionaryAgent(Agent):
                 .replace('!', ' ! ').replace('?', ' ? ')
                 .split())
 
-    def span_tokenize(self, text, tokenizer='split'):
+    def span_tokenize(self, text):
         """Tokenizes, and then calculates the starting index of each token in
         the original string.
         """
-        tokens = self.tokenize(text, tokenizer)
+        if self.tokenizer == 'spacy':
+            # spacy has own
+            return self.spacy_span_tokenize(text)
+        tokens = self.tokenize(text)
         curr_idx = 0
         indices = []
         for t in tokens:
