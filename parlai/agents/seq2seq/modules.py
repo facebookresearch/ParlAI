@@ -186,7 +186,7 @@ class Decoder(nn.Module):
         super().__init__()
 
         if padding_idx != 0:
-            raise RuntimeError('This module\'s output layer needs to be '
+            raise RuntimeError('This module\'s output layer needs to be fixed '
                                'if you want a padding_idx other than zero.')
 
         self.dropout = dropout

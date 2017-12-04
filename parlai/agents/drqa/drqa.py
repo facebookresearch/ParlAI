@@ -55,6 +55,7 @@ class SimpleDictionaryAgent(DictionaryAgent):
             '--pretrained_words', type='bool', default=True,
             help='Use only words found in provided embedding_file'
         )
+        group.set_defaults(dict_tokenizer='spacy')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -71,20 +72,6 @@ class SimpleDictionaryAgent(DictionaryAgent):
                   len(self.embedding_words))
         else:
             self.embedding_words = None
-
-    def spacy_tokenize(self, text, **kwargs):
-        # note that we are currently not using this tokenizer but the default
-        # builtin split tokenizer
-        tokens = NLP.tokenizer(text)
-        return [t.text for t in tokens]
-
-    def spacy_span_tokenize(self, text):
-        """Returns tuple of tokens, spans."""
-        # note that we are currently not using this tokenizer but the default
-        # builtin span / split tokenizer
-        tokens = NLP.tokenizer(text)
-        return ([t.text for t in tokens],
-                [(t.idx, t.idx + len(t.text)) for t in tokens])
 
     def add_to_dict(self, tokens):
         """Builds dictionary from the list of provided tokens.
@@ -275,8 +262,8 @@ class DrqaAgent(Agent):
             raise RuntimeError('Invalid input. Is task a QA task?')
 
         document, question = ' '.join(fields[:-1]), fields[-1]
-        inputs['document'], doc_spans = self.word_dict.spacy_span_tokenize(document)
-        inputs['question'] = self.word_dict.spacy_tokenize(question)
+        inputs['document'], doc_spans = self.word_dict.span_tokenize(document)
+        inputs['question'] = self.word_dict.tokenize(question)
         inputs['target'] = None
 
         # Find targets (if labels provided).
