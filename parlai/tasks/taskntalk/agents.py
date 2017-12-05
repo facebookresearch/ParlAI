@@ -12,10 +12,13 @@ import random
 
 
 def _path(opt, task_size='small'):
+    """Return path to json file of dataset - it can be train/valid file
+    of small/large dataset. Validation data is used for test as well,
+    because labels are inferred from the image and task itself.
+    """
+    dt = opt['datatype'].split(':')[0]
     # ensure data is built
     build(opt)
-    dt = opt['datatype'].split(':')[0]
-
     if dt == 'train':
         file_name = 'train.json'
     elif dt == 'valid' or dt == 'test':
@@ -28,10 +31,12 @@ def _path(opt, task_size='small'):
 
 
 class TaskNTalkTeacher(Teacher):
+    """TaskNTalk basic teacher, it picks a random image and associates
+    a random task with it. Metric updates and observation are to be
+    implemented.
+    """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        # store datatype
-        self.datatype = opt['datatype']
         if not shared:
             self._setup_data(self.opt['datafile'])
         else:
@@ -40,7 +45,7 @@ class TaskNTalkTeacher(Teacher):
             self.task_index = shared['task_index']
 
     def _setup_data(self, data_path):
-        # loads data
+        """Read the json file and store images and task definitions."""
         print('loading: ' + data_path)
         with open(data_path) as data_file:
             json_data = json.load(data_file)
@@ -51,6 +56,7 @@ class TaskNTalkTeacher(Teacher):
         random.shuffle(self.data)
 
     def share(self):
+        """Share images and task definitions with other teachers."""
         shared = super().share()
         shared['data'] = self.data
         shared['task_defn'] = self.task_defn
@@ -67,10 +73,9 @@ class TaskNTalkTeacher(Teacher):
         return observation
 
     def act(self):
-        # TODO(kd): fetch all data for valid/test
-        # select random image and task
+        """Select random image and associate random task with it."""
         image = random.choice(self.data)
-        task  = random.choice(self.task_defn)
+        task = random.choice(self.task_defn)
         labels = [image[self.task_index[attr]] for attr in task]
         action = {
             'image': ' '.join(image),
@@ -78,20 +83,24 @@ class TaskNTalkTeacher(Teacher):
             'labels': [' '.join(labels)],
             'episode_done': True
         }
+        # TODO(kd): fetch all data for valid/test
         return action
 
 
 class SmallTeacher(TaskNTalkTeacher):
+    """Teacher for small dataset, invoked by ``taskntalk:small``."""
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path(opt, 'small')
         super().__init__(opt, shared)
 
 
 class LargeTeacher(TaskNTalkTeacher):
+    """Teacher for large dataset, invoked by ``taskntalk:large``."""
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path(opt, 'large')
         super().__init__(opt, shared)
 
 
 class DefaultTeacher(SmallTeacher):
+    """Default teacher for small dataset, invoked by ``taskntalk``."""
     pass

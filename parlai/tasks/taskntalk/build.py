@@ -18,8 +18,6 @@ def build(opt):
 
     if not build_data.built(dpath):
         print('[building data: ' + dpath + ']')
-        if build_data.built(dpath):
-            build_data.remove_dir(dpath)
         build_data.make_dir(os.path.join(dpath, 'large'))
         build_data.make_dir(os.path.join(dpath, 'small'))
 
