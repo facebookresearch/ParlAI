@@ -180,7 +180,7 @@ class Seq2seqAgent(Agent):
             # we use END markers to end our output
             self.END_IDX = self.dict[self.dict.end_token]
             # get index of null token from dictionary (probably 0)
-            self.NULL_IDX = self.dict.txt2vec(self.dict.null_token)[0]
+            self.NULL_IDX = self.dict[self.dict.null_token]
 
             self.model = Seq2seq(opt, len(self.dict),
                                  padding_idx=self.NULL_IDX,

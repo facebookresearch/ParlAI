@@ -97,7 +97,8 @@ class FairseqAgent(Agent):
                 opt = self._override_opt(new_opt)
 
             self.args = OptWrapper(opt)
-            self.fairseq_dict = _make_fairseq_dict(DictionaryAgent(opt))
+            self.parlai_dict = DictionaryAgent(opt)
+            self.fairseq_dict = _make_fairseq_dict(self.parlai_dict)
             self.id = 'Fairseq'
             self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
 
@@ -235,7 +236,8 @@ class FairseqAgent(Agent):
         return batch_reply
 
     def parse(self, string):
-        return [self.fairseq_dict.index(word) for word in string.split(' ')]
+        return [self.fairseq_dict.index(word)
+                for word in self.parlai_dict.tokenize(string)]
 
     def batchify(self, observations):
         """Convert a list of observations into input & target tensors."""

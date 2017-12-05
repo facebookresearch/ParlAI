@@ -1,5 +1,4 @@
 requests
-nltk
 numpy
 Pillow
 pyzmq

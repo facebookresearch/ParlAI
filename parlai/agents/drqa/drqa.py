@@ -55,6 +55,7 @@ class SimpleDictionaryAgent(DictionaryAgent):
             '--pretrained_words', type='bool', default=True,
             help='Use only words found in provided embedding_file'
         )
+        group.set_defaults(dict_tokenizer='spacy')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -71,18 +72,6 @@ class SimpleDictionaryAgent(DictionaryAgent):
                   len(self.embedding_words))
         else:
             self.embedding_words = None
-
-    def tokenize(self, text, **kwargs):
-        # TODO: switch to split tokenizing? much faster
-        tokens = NLP.tokenizer(text)
-        return [t.text for t in tokens]
-
-    def span_tokenize(self, text):
-        """Returns tuple of tokens, spans."""
-        # TODO: switch to split tokenizing? much faster
-        tokens = NLP.tokenizer(text)
-        return ([t.text for t in tokens],
-                [(t.idx, t.idx + len(t.text)) for t in tokens])
 
     def add_to_dict(self, tokens):
         """Builds dictionary from the list of provided tokens.
