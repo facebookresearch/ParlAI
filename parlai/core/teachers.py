@@ -151,6 +151,14 @@ class FixedDialogTeacher(Teacher):
                 clen = opt.get('context_length', -1)
                 incl = opt.get('include_labels', True)
 
+                if ordered_teacher.num_examples() > 1000000:  # one million
+                    print('WARNING: this dataset is large, and batch sorting '
+                          'may use too much RAM or take too long to set up. '
+                          'Consider disabling batch sorting, setting '
+                          'context-length to a small integer (if this dataset '
+                          'has episodes of multiple examples), or streaming '
+                          'the data using a streamed data mode if supported.')
+
                 flatdata = flatten(ordered_teacher,
                                    context_length=clen, include_labels=incl)
                 self.sorted_data = sort_data(flatdata)
@@ -232,17 +240,17 @@ class FixedDialogTeacher(Teacher):
 
     def num_episodes(self):
         """Get the number of episodes in this dataset."""
-        try:
-            return len(self.episodes)
-        except Exception:
-            raise RuntimeError('"num_episodes" must be overriden by children.')
+        if self.use_batch_act:
+            # when using batch_act, this is length of sorted data
+            return len(self.sorted_data)
+        raise RuntimeError('"num_episodes" must be overriden by children.')
 
     def num_examples(self):
         """Get the total number of examples in this dataset."""
-        try:
-            return len(self.examples)
-        except Exception:
-            raise RuntimeError('"num_examples" must be overriden by children.')
+        if self.use_batch_act:
+            # when using batch_act, this is length of sorted data
+            return len(self.sorted_data)
+        raise RuntimeError('"num_examples" must be overriden by children.')
 
     def get(self, episode_idx, entry_idx=0):
         """Get the specified episode and the specified entry in that episode.
@@ -352,14 +360,15 @@ class DialogTeacher(FixedDialogTeacher):
         self.training = self.datatype.startswith('train')
         self.stream = 'stream' in self.datatype.split(':')
 
-        # first initialize any shared objects
-        data_class = StreamDialogData if self.stream else DialogData
-        kwargs = {'cycle': self.training} if self.stream else {}
-        if shared and shared.get('data'):
-            self.data = data_class(opt, shared=shared['data'], **kwargs)
-        else:
-            self.data = data_class(opt, data_loader=self.setup_data,
-                cands=self.label_candidates(), **kwargs)
+        if not self.use_batch_act:
+            # first initialize any shared objects
+            data_class = StreamDialogData if self.stream else DialogData
+            kwargs = {'cycle': self.training} if self.stream else {}
+            if shared and shared.get('data'):
+                self.data = data_class(opt, shared=shared['data'], **kwargs)
+            else:
+                self.data = data_class(opt, data_loader=self.setup_data,
+                    cands=self.label_candidates(), **kwargs)
 
         self.reset()
 
@@ -371,13 +380,10 @@ class DialogTeacher(FixedDialogTeacher):
             self.data.reset()
             self.epochDone = False
 
-    def num_examples(self):
-        return self.data.num_examples()
-
-
     def share(self):
         shared = super().share()
-        shared['data'] = self.data.share()
+        if hasattr(self, 'data'):
+            shared['data'] = self.data.share()
         return shared
 
     def label_candidates(self):
@@ -387,7 +393,16 @@ class DialogTeacher(FixedDialogTeacher):
         return None
 
     def num_episodes(self):
-        return self.data.num_episodes()
+        try:
+            return self.data.num_episodes()
+        except AttributeError:
+            return super().num_episodes()
+
+    def num_examples(self):
+        try:
+            return self.data.num_examples()
+        except AttributeError:
+            return super().num_examples()
 
     def get(self, episode_idx, entry_idx=0):
         return self.data.get(episode_idx, entry_idx)[0]
