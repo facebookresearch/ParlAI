@@ -225,9 +225,9 @@ class TrainLoop():
                 if opt['num_epochs'] > 0 and self.max_parleys is not None and (
                     (self.max_parleys > 0 and self.parleys >= self.max_parleys)
                     or self.total_epochs >= opt['num_epochs']):
+                    self.log()
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(
                         opt['num_epochs'], self.train_time.time()))
-                    self.log()
                     break
                 if opt['max_train_time'] > 0 and self.train_time.time() > opt['max_train_time']:
                     print('[ max_train_time elapsed:{}s ]'.format(self.train_time.time()))
