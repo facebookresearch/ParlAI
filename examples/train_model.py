@@ -88,8 +88,6 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
         valid_world.reset()
     cnt = 0
     while not valid_world.epoch_done():
-        # import pdb; pdb.set_trace()
-
         valid_world.parley()
         if cnt == 0 and opt['display_examples']:
             print(valid_world.display() + '\n~~')
