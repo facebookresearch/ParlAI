@@ -142,7 +142,8 @@ def flatten(teacher, context_length=-1, include_labels=True):
                           'limit the length of each flattened example, '
                           'disabling batch sorting / flattening by setting '
                           '--batch-sort false, or switching to data streaming '
-                          'using --datatype {type}:stream to read from disk.')
+                          'using --datatype {type}:stream to read from disk '
+                          'if it is supported for your dataset.')
 
 
 def sort_data(data, key='text_label', method='spaces'):

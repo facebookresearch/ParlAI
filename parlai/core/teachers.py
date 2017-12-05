@@ -151,6 +151,14 @@ class FixedDialogTeacher(Teacher):
                 clen = opt.get('context_length', -1)
                 incl = opt.get('include_labels', True)
 
+                if ordered_teacher.num_examples() > 1000000:  # one million
+                    print('WARNING: this dataset is large, and batch sorting '
+                          'may use too much RAM or take too long to set up. '
+                          'Consider disabling batch sorting, setting '
+                          'context-length to a small integer (if this dataset '
+                          'has episodes of multiple examples), or streaming '
+                          'the data using a streamed data mode if supported.')
+
                 flatdata = flatten(ordered_teacher,
                                    context_length=clen, include_labels=incl)
                 self.sorted_data = sort_data(flatdata)
