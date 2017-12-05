@@ -27,6 +27,7 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer
+from parlai.core.metrics import compute_time_metrics
 import build_dict
 import math
 
@@ -90,9 +91,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
         # import pdb; pdb.set_trace()
 
         valid_world.parley()
-        if cnt % 1000 == 0 and opt['display_examples']:
-            import pdb; pdb.set_trace()
-
+        if cnt == 0 and opt['display_examples']:
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
         cnt += opt['batchsize']
@@ -188,6 +187,9 @@ class TrainLoop():
         }
         if hasattr(self.agent, 'report'):
             train_report = self.agent.report()
+            report_opts['total_exs'] += train_report['total']
+            time_metrics = compute_time_metrics(self.agent, dict(self.opt, **report_opts))
+            train_report.update(time_metrics)
             self.agent.reset_metrics()
         else:
             train_report = self.world.report(report_opts)
