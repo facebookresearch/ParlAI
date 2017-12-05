@@ -245,9 +245,24 @@ class DictionaryAgent(Agent):
         """Splits tokens based on whitespace after adding whitespace around
         punctuation.
         """
-        return (text.replace('.', ' . ').replace(',', ' , ')
+        return (text.replace('.', ' . ').replace('. . .', '...')
+                .replace(',', ' , ').replace(';', ' ; ').replace(':', ' : ')
                 .replace('!', ' ! ').replace('?', ' ? ')
-                .replace('. . .', '...').split())
+                .split())
+
+    def span_tokenize(self, text, tokenizer='split'):
+        """Tokenizes, and then calculates the starting index of each token in
+        the original string.
+        """
+        tokens = self.tokenize(text, tokenizer)
+        curr_idx = 0
+        indices = []
+        for t in tokens:
+            while text[curr_idx] != t[0]:
+                curr_idx += 1
+            indices.append((curr_idx, curr_idx + len(t)))
+            curr_idx += len(t)
+        return tokens, indices
 
     def tokenize(self, text, tokenizer='split', building=False):
         """Returns a sequence of tokens from the iterable."""
