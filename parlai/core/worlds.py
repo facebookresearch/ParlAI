@@ -258,7 +258,7 @@ class DialogPartnerWorld(World):
         return (self.agents[0].epoch_done()
                 if hasattr(self.agents[0], 'epoch_done') else False)
 
-    def report(self, report_opts):
+    def report(self, report_opts=None):
         if hasattr(self.agents[0], 'report'):
             metrics = self.agents[0].report()
             if report_opts:
