@@ -47,7 +47,7 @@ import random
 
 from multiprocessing import Process, Value, Condition, Semaphore
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
-from parlai.core.metrics import aggregate_metrics
+from parlai.core.metrics import aggregate_metrics, compute_time_metrics
 from parlai.tasks.tasks import ids_to_tasks
 
 
@@ -258,9 +258,14 @@ class DialogPartnerWorld(World):
         return (self.agents[0].epoch_done()
                 if hasattr(self.agents[0], 'epoch_done') else False)
 
-    def report(self):
+    def report(self, report_opts):
         if hasattr(self.agents[0], 'report'):
-            return self.agents[0].report()
+            metrics = self.agents[0].report()
+            if report_opts:
+                report_opts['total_exs'] += metrics['total']
+                time_metrics = compute_time_metrics(self, dict(self.opt, **report_opts))
+                metrics.update(time_metrics)
+            return metrics
 
     def num_examples(self):
         return self.agents[0].num_examples()
@@ -315,8 +320,13 @@ class MultiAgentDialogWorld(World):
                 done = True
         return done
 
-    def report(self):
-        return self.agents[0].report()
+    def report(self, report_opts=None):
+        metrics = self.agents[0].report()
+        if report_opts:
+            report_opts['total_exs'] += metrics['total']
+            time_metrics = compute_time_metrics(self, dict(self.opt, **report_opts))
+            metrics.update(time_metrics)
+        return metrics
 
     def shutdown(self):
         """Shutdown each agent."""
@@ -469,8 +479,12 @@ class MultiWorld(World):
         else:
             return ''
 
-    def report(self):
+    def report(self, report_opts=None):
         metrics = aggregate_metrics(self.worlds)
+        if report_opts:
+            report_opts['total_exs'] += metrics['total']
+            time_metrics = compute_time_metrics(self, dict(self.opt, **report_opts))
+            metrics.update(time_metrics)
         return metrics
 
     def reset(self):
@@ -623,8 +637,8 @@ class BatchWorld(World):
                 return False
         return True
 
-    def report(self):
-        return self.world.report()
+    def report(self, report_opts=None):
+        return self.world.report(report_opts)
 
     def reset(self):
         self.world.reset()
@@ -736,8 +750,8 @@ class HogwildWorld(World):
     def getID(self):
         return self.inner_world.getID()
 
-    def report(self):
-        return self.inner_world.report()
+    def report(self, report_opts=None):
+        return self.inner_world.report(report_opts)
 
     def save_agents(self):
         self.inner_world.save_agents()

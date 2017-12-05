@@ -63,7 +63,8 @@ def _f1_score(guess, answers):
     scores = [_score(g_tokens, _normalize_answer(a).split()) for a in answers]
     return max(scores)
 
-def aggregate_metrics(reporters, opt):
+
+def aggregate_metrics(reporters):
     m = {}
     m['tasks'] = {}
     sum_accuracy = 0
@@ -89,35 +90,43 @@ def aggregate_metrics(reporters, opt):
         m['accuracy'] = sum_accuracy / num_tasks
         if sum_f1 > 0:
             m['f1'] = sum_f1 / num_tasks
-
-    # Determine time_left and num_epochs
-    time_left = None
-    total_exs = opt.get('total_exs', None)
-    max_exs = opt.get('max_exs', None)
-    train_time = opt.get('train_time')
-    exs_per_epoch = opt['exs_per_epoch']
-    total_epochs = opt.get('total_epochs', None)
-    if (opt['num_epochs'] > 0 and total_exs > 0 and
-            (max_exs is not None and max_exs > 0)):
-        exs_per_sec = train_time / total_exs
-        time_left = (max_exs - total_exs) * exs_per_sec
-    if opt['max_train_time'] > 0:
-        other_time_left = opt['max_train_time'] - train_time
-        if time_left is not None:
-            time_left = min(time_left, other_time_left)
-        else:
-            time_left = other_time_left
-    if time_left is not None:
-        m['time_left'] = math.floor(time_left)
-    if opt['num_epochs'] > 0:
-        if (total_exs > 0 and
-                (exs_per_epoch is not None and exs_per_epoch > 0)):
-            display_epochs = int(total_exs / exs_per_epoch)
-        else:
-            display_epochs = total_epochs
-        m['num_epochs'] = display_epochs
     return m
 
+
+def compute_time_metrics(reporter, opt):
+    # Determine time_left and num_epochs
+    exs_per_epoch = reporter.num_examples()
+    num_epochs = opt.get('num_epochs')
+    max_exs = exs_per_epoch * num_epochs if exs_per_epoch else -1
+    total_exs = opt.get('total_exs', 0)
+
+    m = {}
+    if (max_exs > 0 and total_exs > 0) or opt['max_train_time'] > 0:
+        m = {}
+        time_left = None
+        train_time = opt.get('train_time')
+        total_epochs = opt['total_epochs']
+
+        if (num_epochs > 0 and total_exs > 0 and
+                (max_exs is not None and max_exs > 0)):
+            exs_per_sec = train_time / total_exs
+            time_left = (max_exs - total_exs) * exs_per_sec
+        if opt['max_train_time'] > 0:
+            other_time_left = opt['max_train_time'] - train_time
+            if time_left is not None:
+                time_left = min(time_left, other_time_left)
+            else:
+                time_left = other_time_left
+        if time_left is not None:
+            m['time_left'] = math.floor(time_left)
+        if num_epochs > 0:
+            if (total_exs > 0 and
+                    (exs_per_epoch is not None and exs_per_epoch > 0)):
+                display_epochs = int(total_exs / exs_per_epoch)
+            else:
+                display_epochs = total_epochs
+            m['num_epochs'] = display_epochs
+    return m
 
 
 class Metrics(object):

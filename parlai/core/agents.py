@@ -37,7 +37,7 @@ This module also provides a utility method:
 
 """
 
-from .metrics import Metrics, aggregate_metrics
+from .metrics import Metrics, aggregate_metrics, compute_time_metrics
 import copy
 import importlib
 import random
@@ -229,16 +229,8 @@ class MultiTaskTeacher(Teacher):
         return True
 
     # return transformed metrics showing total examples and accuracy if avail.
-    def report(self, report_opts=None):
-        opt = self.opt
-        
-        total_exs = opt.get('total_exs', None)
-        max_exs = opt.get('max_exs', None)
-        train_time = opt.get('train_time')
-        exs_per_epoch = opt['exs_per_epoch']
-        total_epochs = opt.get('total_epochs', None)
-        metrics = aggregate_metrics(self.tasks)
-        return metrics
+    def report(self):
+        return aggregate_metrics(self.tasks)
 
     def reset(self):
         for t in self.tasks:

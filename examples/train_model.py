@@ -87,8 +87,12 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
         valid_world.reset()
     cnt = 0
     while not valid_world.epoch_done():
+        # import pdb; pdb.set_trace()
+
         valid_world.parley()
-        if cnt == 0 and opt['display_examples']:
+        if cnt % 1000 == 0 and opt['display_examples']:
+            import pdb; pdb.set_trace()
+
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
         cnt += opt['batchsize']
@@ -176,59 +180,31 @@ class TrainLoop():
         logs.append('time:{}s'.format(math.floor(self.train_time.time())))
         logs.append('parleys:{}'.format(self.parleys))
         # get report and update total examples seen so far
-        import pdb; pdb.set_trace()
         report_opts = {
             'total_exs': self.total_exs,
-            'time': self.train_time.time()
+            'train_time': self.train_time.time(),
+            'max_exs': self.max_exs,
+            'total_epochs': self.total_epochs
         }
         if hasattr(self.agent, 'report'):
             train_report = self.agent.report()
             self.agent.reset_metrics()
         else:
-            train_report = self.world.report()
+            train_report = self.world.report(report_opts)
             self.world.reset_metrics()
 
-        # if hasattr(train_report, 'get') and train_report.get('total'):
-        #     self.total_exs += train_report['total']
-        #     logs.append('total_exs:{}'.format(self.total_exs))
-        total_exs = opt.get('total_exs', None)
-        max_exs = opt.get('max_exs', None)
-        train_time = opt.get('train_time')
-        exs_per_epoch = opt['exs_per_epoch']
-        total_epochs = opt.get('total_epochs', None)
         if 'total' in train_report:
             self.total_exs += train_report['total']
             logs.append('total_exs:{}'.format(self.total_exs))
         if 'time_left' in train_report:
-            logs.append('time_left:{}s'.format(math.floor(train_report.pop('time_left', ""))))
+            logs.append('time_left:{}s'.format(
+                         math.floor(train_report.pop('time_left', ""))))
         if 'num_epochs' in train_report:
-            logs.append('num_epochs:{}'.format(train_report.pop('num_epochs', '')))
-        # # check if we should log amount of time remaining
-        # time_left = None
-        # if (opt['num_epochs'] > 0 and self.total_exs > 0 and
-        #         (self.max_exs is not None and self.max_exs > 0)):
-        #     exs_per_sec = self.train_time.time() / self.total_exs
-        #     time_left = (self.max_exs - self.total_exs) * exs_per_sec
-        # if opt['max_train_time'] > 0:
-        #     other_time_left = opt['max_train_time'] - self.train_time.time()
-        #     if time_left is not None:
-        #         time_left = min(time_left, other_time_left)
-        #     else:
-        #         time_left = other_time_left
-        # if time_left is not None:
-        #     logs.append('time_left:{}s'.format(math.floor(time_left)))
-        # if opt['num_epochs'] > 0:
-        #     if (self.total_exs > 0 and
-        #             (self.world_num_exs is not None and self.world_num_exs > 0)):
-        #         display_epochs = int(self.total_exs / self.world_num_exs)
-        #     else:
-        #         display_epochs = self.total_epochs
-        #         logs.append('num_epochs:{}'.format(display_epochs))
-        # join log string and add full metrics report to end of log
+            logs.append('num_epochs:{}'.format(
+                         train_report.pop('num_epochs', '')))
         log = '[ {} ] {}'.format(' '.join(logs), train_report)
         print(log)
         self.log_time.reset()
-
 
     def train(self):
         opt = self.opt
