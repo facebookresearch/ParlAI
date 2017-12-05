@@ -96,40 +96,45 @@ def round_sigfigs(x, sigfigs=4):
     return round(x, -math.floor(math.log10(abs(x)) - sigfigs + 1))
 
 
-def flatten(teacher, context_length=None, include_label=True):
+def flatten(teacher, context_length=-1, include_labels=True):
     """Return a flattened version of a teacher's data where all episodes only
     have length one but contain the desired amount of context.
 
     If context_length is not None, will use only that many past utterances.
     Default is None. Setting it to one only uses the input text.
 
-    If include_label is True, will include a random label in past utterances.
+    If include_labels is True, will include a random label in past utterances.
     Default is True.
     """
+    data = []
+    current = []
+    episode_done = False
+    context_length = context_length if context_length >= 0 else None
+    context = deque(maxlen=context_length)
     try:
-        data = []
-        episode_done = False
         while not teacher.epoch_done():
-            current = []
+            # collect examples in episode
             while not episode_done:
                 action = teacher.act()
                 current.append(action)
                 episode_done = action['episode_done']
 
-            for i, ex in enumerate(current):
-                if context_length is not None and context_length > 1:
-                    context = deque(maxlen=context_length)
-                    for prev in current[:i]:
-                        context.append(prev['text'])
-                        if include_label:
-                            labels = prev.get('labels', prev.get('eval_labels'))
-                            if labels is not None:
-                                context.append(random.choice(labels))
-                    context.append(ex['text'])
+            # build separate episodes from each example
+            for ex in current:
+                context.append(ex.get('text', ''))
+                if len(context) > 1:
                     ex['text'] = '\n'.join(context)
                 ex['episode_done'] = True
+                if include_labels:
+                    # add labels to context
+                    labels = ex.get('labels', ex.get('eval_labels'))
+                    if labels is not None:
+                        context.append(random.choice(labels))
                 data.append(ex)
+            # reset flags and content
             episode_done = False
+            current.clear()
+            context.clear()
         return data
     except MemoryError as ex:
         raise MemoryError('Ran out of memory building flattened data batches. '

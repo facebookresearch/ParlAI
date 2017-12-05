@@ -148,15 +148,14 @@ class FixedDialogTeacher(Teacher):
                 ordered_opt['batchsize'] = 1
                 ordered_teacher = create_task_agent_from_taskname(ordered_opt)[0]
 
+                clen = opt.get('context_length', -1)
+                incl = opt.get('include_labels', True)
+
                 flatdata = flatten(ordered_teacher,
-                                   context_length=None, include_label=True)
+                                   context_length=clen, include_labels=incl)
                 self.sorted_data = sort_data(flatdata)
                 self.batches = make_batches(self.sorted_data, self.bsz)
         elif self.bsz > 1:
-            # TODO: this loop is never entered--I need to figure out how to
-            #   prevent batchworld from using batch_act
-            #   del self.batch_act does not work
-
             # for ordered data in batch mode (especially, for validation and
             # testing), each teacher in the batch gets a start index and a step
             # size so they all process disparate sets of the data
@@ -287,6 +286,8 @@ class FixedDialogTeacher(Teacher):
                 random.shuffle(self.batches)
             else:
                 self.epochDone = True
+        else:
+            self.epochDone = False
 
         # pad batch
         if len(batch) < self.bsz:
