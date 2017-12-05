@@ -95,9 +95,9 @@ def aggregate_metrics(reporters):
 
 def compute_time_metrics(reporter, opt):
     # Determine time_left and num_epochs
-    exs_per_epoch = reporter.num_examples()
-    num_epochs = opt.get('num_epochs')
-    max_exs = exs_per_epoch * num_epochs if exs_per_epoch else -1
+    exs_per_epoch = reporter.num_examples() if reporter.num_examples() else 0
+    num_epochs = opt.get('num_epochs', 0)
+    max_exs = opt['max_exs'] if opt['max_exs'] else 0
     total_exs = opt.get('total_exs', 0)
 
     m = {}
@@ -107,8 +107,7 @@ def compute_time_metrics(reporter, opt):
         train_time = opt.get('train_time')
         total_epochs = opt['total_epochs']
 
-        if (num_epochs > 0 and total_exs > 0 and
-                (max_exs is not None and max_exs > 0)):
+        if (num_epochs > 0 and total_exs > 0 and max_exs > 0):
             exs_per_sec = train_time / total_exs
             time_left = (max_exs - total_exs) * exs_per_sec
         if opt['max_train_time'] > 0:
@@ -120,8 +119,7 @@ def compute_time_metrics(reporter, opt):
         if time_left is not None:
             m['time_left'] = math.floor(time_left)
         if num_epochs > 0:
-            if (total_exs > 0 and
-                    (exs_per_epoch is not None and exs_per_epoch > 0)):
+            if (total_exs > 0 and exs_per_epoch > 0):
                 display_epochs = int(total_exs / exs_per_epoch)
             else:
                 display_epochs = total_epochs
