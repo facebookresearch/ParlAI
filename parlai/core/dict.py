@@ -187,7 +187,10 @@ class DictionaryAgent(Agent):
                 import spacy
             except ImportError:
                 raise ImportError('Please install spacy and spacy "en" model: '
-                                  'go to spacy.io')
+                                  '`pip install -U spacy && '
+                                  'python -m spacy download en` '
+                                  'or find alternative installation options '
+                                  'at spacy.io')
             self.NLP = spacy.load('en')
 
         if not shared:
