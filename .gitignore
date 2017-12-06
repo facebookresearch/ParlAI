@@ -28,6 +28,7 @@ parts/
 sdist/
 var/
 parlai_internal/
+parlai_external/
 *.egg-info/
 .installed.cfg
 *.egg
