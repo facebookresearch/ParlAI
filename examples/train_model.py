@@ -222,6 +222,9 @@ class TrainLoop():
                 if world.epoch_done():
                     self.total_epochs += 1
 
+                if (self.parleys)%100 == 0:
+                    world.synchronize()
+
                 if opt['num_epochs'] > 0 and self.max_parleys is not None and (
                     (self.max_parleys > 0 and self.parleys >= self.max_parleys)
                     or self.total_epochs >= opt['num_epochs']):
