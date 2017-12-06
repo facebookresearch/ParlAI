@@ -26,12 +26,6 @@ import os
 import numpy as np
 import copy
 import random
-try:
-    import spacy
-except ModuleNotFoundError:
-    raise ModuleNotFoundError(
-        "Please install spacy and spacy 'en' model: go to spacy.io"
-    )
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -42,8 +36,6 @@ from .model import DocReaderModel
 # ------------------------------------------------------------------------------
 # Dictionary.
 # ------------------------------------------------------------------------------
-
-NLP = spacy.load('en')
 
 class SimpleDictionaryAgent(DictionaryAgent):
     """Override DictionaryAgent to use spaCy tokenizer."""
