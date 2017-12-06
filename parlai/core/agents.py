@@ -320,7 +320,6 @@ def create_agent(opt):
 
 # Helper functions to create agent/agents given shared parameters
 # returned from agent.share(). Useful for parallelism, sharing params, etc.
-thid = 0
 def create_agent_from_shared(shared_agent, threadid=None):
     opt = copy.deepcopy(shared_agent['opt'])
     if threadid is not None:
