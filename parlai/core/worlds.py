@@ -45,7 +45,10 @@ import copy
 import importlib
 import random
 
-from multiprocessing import Process, Value, Condition, Semaphore
+try:
+    from torch.multiprocessing import Process, Value, Condition, Semaphore
+except ImportError:
+    from multiprocessing import Process, Value, Condition, Semaphore
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
 from parlai.tasks.tasks import ids_to_tasks
 
@@ -686,7 +689,7 @@ class HogwildProcess(Process):
         """Runs normal parley loop for as many examples as this thread can get
         ahold of via the semaphore ``queued_items``.
         """
-        shared_agents = create_agents_from_shared(self.agent_shares)
+        shared_agents = create_agents_from_shared(self.agent_shares, self.threadId)
         world = self.world_type(self.opt, shared_agents)
 
         with world:

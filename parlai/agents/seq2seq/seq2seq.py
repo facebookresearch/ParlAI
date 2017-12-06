@@ -136,6 +136,7 @@ class Seq2seqAgent(Agent):
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
+        opt = self.opt  # there is a deepcopy in the init
 
         # all instances needs truncate param
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
