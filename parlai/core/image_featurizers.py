@@ -6,7 +6,6 @@
 import parlai.core.build_data as build_data
 
 import os
-import h5py
 from PIL import Image
 from functools import wraps
 from threading import Lock, Condition
@@ -81,6 +80,12 @@ class ImageLoader():
         import torchvision.transforms as transforms
         import torch.nn as nn
 
+        try:
+            import h5py
+            self.h5py = h5py
+        except ModuleNotFoundError:
+            raise ModuleNotFoundError('Need to install h5py')
+
         if 'image_mode' not in opt or 'image_size' not in opt:
             raise RuntimeError(
                 'Need to add image arguments to opt. See '
@@ -123,7 +128,7 @@ class ImageLoader():
 
     def save(self, feature, path):
         with open(path, 'w'):
-            hdf5_file = h5py.File(path, 'w')
+            hdf5_file = self.h5py.File(path, 'w')
             hdf5_file.create_dataset('feature', data=feature)
             hdf5_file.close()
 
@@ -202,6 +207,6 @@ class ImageLoader():
                 return self.extract(Image.open(path).convert('RGB'), new_path)
             else:
                 with open(new_path):
-                    hdf5_file = h5py.File(new_path, 'r')
+                    hdf5_file = self.h5py.File(new_path, 'r')
                     feature = hdf5_file['feature'].value
                 return feature
