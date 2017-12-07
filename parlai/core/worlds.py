@@ -200,6 +200,8 @@ class World(object):
         max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
         if max_exs > 0:
             return int(self.total_parleys / self.num_examples())
+        else:
+            return self.total_epochs
 
     def get_total_parleys(self):
         """Return the amount of parleys the world has done"""
@@ -248,6 +250,7 @@ class World(object):
         self.train_time.reset()
         self.total_exs = 0
         self.total_epochs = 0
+        self.total_parleys = 0
 
     def reset_metrics(self):
         for a in self.agents:
