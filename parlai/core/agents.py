@@ -37,7 +37,7 @@ This module also provides a utility method:
 
 """
 
-from .metrics import Metrics, aggregate_metrics, compute_time_metrics
+from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
 import random

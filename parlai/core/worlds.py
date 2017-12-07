@@ -43,11 +43,13 @@ All worlds are initialized with the following parameters:
 
 import copy
 import importlib
+import math
 import random
 
 from multiprocessing import Process, Value, Condition, Semaphore
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
 from parlai.core.metrics import aggregate_metrics, compute_time_metrics
+from parlai.core.utils import Timer
 from parlai.tasks.tasks import ids_to_tasks
 
 
@@ -118,6 +120,10 @@ class World(object):
         else:
             # Add passed in agents to world directly.
             self.agents = agents
+        self.total_exs = 0
+        self.total_epochs = 0
+        self.total_parleys = 0
+        self.train_time = Timer()
 
     def parley(self):
         """ The main method, that does one step of actions for the agents
@@ -170,6 +176,44 @@ class World(object):
         """Return the last act of each agent."""
         return self.acts
 
+    def get_max_parleys(self):
+        """Return the max parleys for this world, if applicable"""
+        if self.num_examples() is not None:
+            self.max_exs = self.opt['num_epochs'] * self.num_examples()
+            return math.ceil(self.max_exs / self.opt['batchsize'])
+        else:
+            return float('inf')
+
+    def get_train_time(self):
+        """Return total training time"""
+        return self.train_time.time()
+
+    def get_total_exs(self):
+        """Return total amount of examples seen by world."""
+        return self.total_exs
+
+    def get_total_epochs(self):
+        """Return total amount of epochs on which the world has trained."""
+        max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+        if max_exs > 0:
+            return int(self.total_parleys / self.num_examples())
+
+    def get_total_parleys(self):
+        """Return the amount of parleys the world has done"""
+        return self.total_parleys
+
+    def get_world_metrics(self):
+        """Return metrics about the world"""
+        max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+        # max_parleys = math.ceil(self.max_exs / opt['batchsize'])
+        world_done = self.opt['num_epochs'] > 0 and max_exs > 0 and self.total_exs >= max_exs
+        return {
+            'train_time': self.get_train_time(),
+            'total_exs': self.total_exs,
+            'total_epochs': self.total_epochs,
+            'world_done': world_done
+        }
+
     def __enter__(self):
         """Empty enter provided for use with ``with`` statement.
 
@@ -198,6 +242,9 @@ class World(object):
     def reset(self):
         for a in self.agents:
             a.reset()
+        self.train_time.reset()
+        self.total_exs = 0
+        self.total_epochs = 0
 
     def reset_metrics(self):
         for a in self.agents:
@@ -245,6 +292,7 @@ class DialogPartnerWorld(World):
         agents[1].observe(validate(acts[0]))
         acts[1] = agents[1].act()
         agents[0].observe(validate(acts[1]))
+        self.total_parleys += 1
 
     def episode_done(self):
         """ Only the first agent indicates when the episode is done."""
@@ -258,12 +306,14 @@ class DialogPartnerWorld(World):
         return (self.agents[0].epoch_done()
                 if hasattr(self.agents[0], 'epoch_done') else False)
 
-    def report(self, report_opts=None):
+    def report(self, compute_time=False):
         if hasattr(self.agents[0], 'report'):
             metrics = self.agents[0].report()
-            if report_opts:
-                report_opts['total_exs'] += metrics['total']
-                time_metrics = compute_time_metrics(self, dict(self.opt, **report_opts))
+            if compute_time:
+                self.total_exs += metrics['total']
+                if self.num_examples() is not None and self.num_examples() > 0:
+                    self.total_epochs = int(self.total_exs / self.num_examples())
+                time_metrics = compute_time_metrics(self, self.opt)
                 metrics.update(time_metrics)
             return metrics
 
@@ -305,6 +355,7 @@ class MultiAgentDialogWorld(World):
             for other_agent in self.agents:
                 if other_agent != agent:
                     other_agent.observe(validate(acts[index]))
+        self.total_parleys += 1
 
     def epoch_done(self):
         done = False
@@ -320,11 +371,13 @@ class MultiAgentDialogWorld(World):
                 done = True
         return done
 
-    def report(self, report_opts=None):
+    def report(self, compute_time=False):
         metrics = self.agents[0].report()
-        if report_opts:
-            report_opts['total_exs'] += metrics['total']
-            time_metrics = compute_time_metrics(self, dict(self.opt, **report_opts))
+        if compute_time:
+            self.total_exs += metrics['total']
+            if self.num_examples() is not None and self.num_examples() > 0:
+                self.total_epochs = int(self.total_exs / self.num_examples())
+            time_metrics = compute_time_metrics(self, self.opt)
             metrics.update(time_metrics)
         return metrics
 
@@ -379,6 +432,7 @@ class ExecutableWorld(MultiAgentDialogWorld):
                 obs = self.observe(other_agent, acts[index])
                 if obs is not None:
                     other_agent.observe(obs)
+        self.total_parleys += 1
 
 
 class MultiWorld(World):
@@ -467,6 +521,7 @@ class MultiWorld(World):
     def parley(self):
         self.parley_init()
         self.worlds[self.world_idx].parley()
+        self.total_parleys += 1
 
     def display(self):
         if self.world_idx != -1:
@@ -479,11 +534,13 @@ class MultiWorld(World):
         else:
             return ''
 
-    def report(self, report_opts=None):
+    def report(self, compute_time=False):
         metrics = aggregate_metrics(self.worlds)
-        if report_opts:
-            report_opts['total_exs'] += metrics['total']
-            time_metrics = compute_time_metrics(self, dict(self.opt, **report_opts))
+        if compute_time:
+            self.total_exs += metrics['total']
+            if self.num_examples() is not None and self.num_examples() > 0:
+                self.total_epochs = int(self.total_exs / self.num_examples())
+            time_metrics = compute_time_metrics(self, self.opt)
             metrics.update(time_metrics)
         return metrics
 
@@ -528,6 +585,7 @@ class BatchWorld(World):
     """
 
     def __init__(self, opt, world):
+        super().__init__(opt)
         self.opt = opt
         self.random = opt.get('datatype', None) == 'train'
         self.world = world
@@ -606,6 +664,7 @@ class BatchWorld(World):
                 obs = self.batch_observe(other_index, batch_act, agent_idx)
                 if obs is not None:
                     batch_observations[other_index] = obs
+        self.total_parleys += 1
 
     def display(self):
         s = ("[--batchsize " + str(len(self.worlds)) + "--]\n")
@@ -637,8 +696,8 @@ class BatchWorld(World):
                 return False
         return True
 
-    def report(self, report_opts=None):
-        return self.world.report(report_opts)
+    def report(self, compute_time=False):
+        return self.world.report(compute_time)
 
     def reset(self):
         self.world.reset()
@@ -746,12 +805,13 @@ class HogwildWorld(World):
         with self.cnt.get_lock():
             self.cnt.value += 1
         self.queued_items.release()
+        self.total_parleys += 1
 
     def getID(self):
         return self.inner_world.getID()
 
-    def report(self, report_opts=None):
-        return self.inner_world.report(report_opts)
+    def report(self, compute_time=None):
+        return self.inner_world.report(compute_time)
 
     def save_agents(self):
         self.inner_world.save_agents()

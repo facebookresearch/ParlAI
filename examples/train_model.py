@@ -89,6 +89,9 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
     cnt = 0
     while not valid_world.epoch_done():
         valid_world.parley()
+        if valid_world.get_total_parleys() % 100 == 0:
+            print(valid_world.get_total_parleys())
+
         if cnt == 0 and opt['display_examples']:
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
@@ -122,20 +125,22 @@ class TrainLoop():
         # Create model and assign it to the specified task
         self.agent = create_agent(opt)
         self.world = create_task(opt, self.agent)
-        self.train_time = Timer()
         self.validate_time = Timer()
         self.log_time = Timer()
         print('[ training... ]')
         self.parleys = 0
-        self.total_exs = 0
         self.total_episodes = 0
         self.total_epochs = 0
-        self.max_exs = None
-        self.max_parleys = None
-        self.world_num_exs = self.world.num_examples()
-        if self.world_num_exs is not None:
-            self.max_exs = opt['num_epochs'] * self.world_num_exs
-            self.max_parleys = math.ceil(self.max_exs / opt['batchsize'])
+        # self.max_exs = None
+        # self.max_parleys = None
+        # self.world_num_exs = self.world.num_examples()
+        # if self.world_num_exs is not None:
+        #     self.max_exs = opt['num_epochs'] * self.world_num_exs
+        #     self.max_parleys = math.ceil(self.max_exs / opt['batchsize'])
+        self.num_epochs = opt['num_epochs'] if opt['num_epochs'] > 0 else float('inf')
+        self.max_train_time = opt['max_train_time'] if opt['max_train_time'] > 0 else float('inf')
+        self.log_every_n_secs = opt['log_every_n_secs'] if opt['log_every_n_secs'] > 0 else float('inf')
+        self.val_every_n_secs = opt['validation_every_n_secs'] if opt['validation_every_n_secs'] > 0 else float('inf')
         self.best_valid = 0
         self.impatience = 0
         self.saved = False
@@ -174,28 +179,18 @@ class TrainLoop():
             print(self.world.display() + '\n~~')
         logs = []
         # time elapsed
-        logs.append('time:{}s'.format(math.floor(self.train_time.time())))
+        logs.append('time:{}s'.format(math.floor(self.world.get_train_time())))
         logs.append('parleys:{}'.format(self.parleys))
         # get report and update total examples seen so far
-        report_opts = {
-            'total_exs': self.total_exs,
-            'train_time': self.train_time.time(),
-            'max_exs': self.max_exs,
-            'total_epochs': self.total_epochs
-        }
         if hasattr(self.agent, 'report'):
             train_report = self.agent.report()
-            report_opts['total_exs'] += train_report['total']
-            time_metrics = compute_time_metrics(self.agent, dict(self.opt, **report_opts))
-            train_report.update(time_metrics)
             self.agent.reset_metrics()
         else:
-            train_report = self.world.report(report_opts)
+            train_report = self.world.report(compute_time=True)
             self.world.reset_metrics()
 
-        if 'total' in train_report:
-            self.total_exs += train_report['total']
-            logs.append('total_exs:{}'.format(self.total_exs))
+        if 'total_exs' in train_report:
+            logs.append('total_exs:{}'.format(train_report.pop('total_exs')))
         if 'time_left' in train_report:
             logs.append('time_left:{}s'.format(
                          math.floor(train_report.pop('time_left', ""))))
@@ -216,20 +211,19 @@ class TrainLoop():
                 if world.epoch_done():
                     self.total_epochs += 1
 
-                if opt['num_epochs'] > 0 and self.max_parleys is not None and (
-                    (self.max_parleys > 0 and self.parleys >= self.max_parleys)
-                    or self.total_epochs >= opt['num_epochs']):
+                world_done = world.get_total_parleys() >= world.get_max_parleys()
+
+                if self.total_epochs > self.num_epochs or world_done:
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(
-                        opt['num_epochs'], self.train_time.time()))
+                        self.num_epochs, world.get_train_time()))
                     self.log()
                     break
-                if opt['max_train_time'] > 0 and self.train_time.time() > opt['max_train_time']:
-                    print('[ max_train_time elapsed:{}s ]'.format(self.train_time.time()))
+                if world.get_train_time() > self.max_train_time:
+                    print('[ max_train_time elapsed:{}s ]'.format(world.get_train_time()))
                     break
-                if opt['log_every_n_secs'] > 0 and self.log_time.time() > opt['log_every_n_secs']:
+                if self.log_time.time() > self.log_every_n_secs:
                     self.log()
-                if (opt['validation_every_n_secs'] > 0 and
-                        self.validate_time.time() > opt['validation_every_n_secs']):
+                if self.validate_time.time() > self.val_every_n_secs:
                     stop_training = self.validate()
                     if stop_training:
                         break

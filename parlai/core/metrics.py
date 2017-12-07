@@ -93,19 +93,19 @@ def aggregate_metrics(reporters):
     return m
 
 
-def compute_time_metrics(reporter, opt):
+def compute_time_metrics(world, opt):
     # Determine time_left and num_epochs
-    exs_per_epoch = reporter.num_examples() if reporter.num_examples() else 0
+    exs_per_epoch = world.num_examples() if world.num_examples() else 0
     num_epochs = opt.get('num_epochs', 0)
-    max_exs = opt['max_exs'] if opt['max_exs'] else 0
-    total_exs = opt.get('total_exs', 0)
+    max_exs = exs_per_epoch * num_epochs
+    total_exs = world.get_total_exs()
 
     m = {}
     if (max_exs > 0 and total_exs > 0) or opt['max_train_time'] > 0:
         m = {}
         time_left = None
-        train_time = opt.get('train_time')
-        total_epochs = opt['total_epochs']
+        train_time = world.get_train_time()
+        total_epochs = world.get_total_epochs()
 
         if (num_epochs > 0 and total_exs > 0 and max_exs > 0):
             exs_per_sec = train_time / total_exs
@@ -119,11 +119,11 @@ def compute_time_metrics(reporter, opt):
         if time_left is not None:
             m['time_left'] = math.floor(time_left)
         if num_epochs > 0:
-            if (total_exs > 0 and exs_per_epoch > 0):
-                display_epochs = int(total_exs / exs_per_epoch)
-            else:
-                display_epochs = total_epochs
-            m['num_epochs'] = display_epochs
+            # if (total_exs > 0 and exs_per_epoch > 0):
+            #     display_epochs = int(total_exs / exs_per_epoch)
+            # else:
+            #     display_epochs = total_epochs
+            m['num_epochs'] = total_epochs
     return m
 
 
