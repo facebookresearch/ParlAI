@@ -45,6 +45,8 @@ def setup_args():
                        type=float, default=2)
     train.add_argument('-vtim', '--validation-every-n-secs',
                        type=float, default=-1)
+    train.add_argument('-stim', '--save-every-n-secs',
+                       type=float, default=-1)
     train.add_argument('-vme', '--validation-max-exs',
                        type=int, default=-1,
                        help='max examples to use during validation (default '
@@ -124,6 +126,7 @@ class TrainLoop():
         self.train_time = Timer()
         self.validate_time = Timer()
         self.log_time = Timer()
+        self.save_time = Timer()
         print('[ training... ]')
         self.parleys = 0
         self.total_exs = 0
@@ -236,6 +239,10 @@ class TrainLoop():
                     break
                 if opt['log_every_n_secs'] > 0 and self.log_time.time() > opt['log_every_n_secs']:
                     self.log()
+                if opt['save_every_n_secs'] > 0 and self.save_time.time() > opt['save_every_n_secs']:
+                    print("[ saving model: " + opt['model_file'] + " ]")
+                    world.save_agents()
+                    self.save_time.reset()
                 if (opt['validation_every_n_secs'] > 0 and
                         self.validate_time.time() > opt['validation_every_n_secs']):
                     stop_training = self.validate()
