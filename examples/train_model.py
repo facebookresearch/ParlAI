@@ -122,12 +122,14 @@ class TrainLoop():
         # Create model and assign it to the specified task
         self.agent = create_agent(opt)
         self.world = create_task(opt, self.agent)
+        self.train_time = Timer()
         self.validate_time = Timer()
         self.log_time = Timer()
         print('[ training... ]')
+        self.parleys = 0
         self.total_episodes = 0
         self.total_epochs = 0
-        self.num_epochs = opt['num_epochs'] if opt['num_epochs'] > 0 else float('inf')
+        self.max_num_epochs = opt['num_epochs'] if opt['num_epochs'] > 0 else float('inf')
         self.max_train_time = opt['max_train_time'] if opt['max_train_time'] > 0 else float('inf')
         self.log_every_n_secs = opt['log_every_n_secs'] if opt['log_every_n_secs'] > 0 else float('inf')
         self.val_every_n_secs = opt['validation_every_n_secs'] if opt['validation_every_n_secs'] > 0 else float('inf')
@@ -177,11 +179,11 @@ class TrainLoop():
             self.world.reset_metrics()
 
         # time elapsed
-        logs.append('time:{}s'.format(math.floor(self.world.get_train_time())))
-        logs.append('parleys:{}'.format(self.world.get_total_parleys()))
-        
-        if 'total_exs' in train_report:
-            logs.append('total_exs:{}'.format(train_report.pop('total_exs')))
+        logs.append('time:{}s'.format(math.floor(self.train_time.time())))
+        logs.append('parleys:{}'.format(self.parleys))
+
+        if 'total' in train_report:
+            logs.append('total_exs:{}'.format(train_report.pop('total')))
         if 'time_left' in train_report:
             logs.append('time_left:{}s'.format(
                          math.floor(train_report.pop('time_left', ""))))
@@ -198,18 +200,20 @@ class TrainLoop():
         with world:
             while True:
                 world.parley()
-                world_done = ((world.get_total_parleys() >= world.get_max_parleys())
-                          or (world.get_total_epochs() > self.num_epochs))
+                self.parleys += 1
+                if world.epoch_done():
+                    self.total_epochs += 1
+                world_done = max(world.get_total_epochs(), self.total_epochs) >= self.max_num_epochs
 
-                if opt['numthreads'] > 1 and (world.get_total_parleys())%100 == 0:
+                if opt['numthreads'] > 1 and (self.parleys)%100 == 0:
                     world.synchronize()
                 if world_done:
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(
-                        self.num_epochs, world.get_train_time()))
+                        self.max_num_epochs, self.train_time.time()))
                     self.log()
                     break
-                if world.get_train_time() > self.max_train_time:
-                    print('[ max_train_time elapsed:{}s ]'.format(world.get_train_time()))
+                if self.train_time.time() > self.max_train_time:
+                    print('[ max_train_time elapsed:{}s ]'.format(self.train_time.time()))
                     break
                 if self.log_time.time() > self.log_every_n_secs:
                     self.log()

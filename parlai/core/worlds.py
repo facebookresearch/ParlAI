@@ -123,10 +123,11 @@ class World(object):
         else:
             # Add passed in agents to world directly.
             self.agents = agents
+        self.max_exs = None
         self.total_exs = 0
         self.total_epochs = 0
         self.total_parleys = 0
-        self.train_time = Timer()
+        self.time = Timer()
 
     def parley(self):
         """ The main method, that does one step of actions for the agents
@@ -179,17 +180,9 @@ class World(object):
         """Return the last act of each agent."""
         return self.acts
 
-    def get_max_parleys(self):
-        """Return the max parleys for this world, if applicable"""
-        if self.num_examples() is not None:
-            self.max_exs = self.opt['num_epochs'] * self.num_examples()
-            return math.ceil(self.max_exs / self.opt['batchsize'])
-        else:
-            return float('inf')
-
-    def get_train_time(self):
+    def get_time(self):
         """Return total training time"""
-        return self.train_time.time()
+        return self.time.time()
 
     def get_total_exs(self):
         """Return total amount of examples seen by world."""
@@ -197,27 +190,12 @@ class World(object):
 
     def get_total_epochs(self):
         """Return total amount of epochs on which the world has trained."""
-        max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
-        if max_exs > 0:
-            return int(self.total_parleys / self.num_examples())
+        if not self.max_exs:
+            self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+        if self.max_exs > 0:
+            return int(self.total_parleys * self.opt['batchsize'] / self.num_examples())
         else:
             return self.total_epochs
-
-    def get_total_parleys(self):
-        """Return the amount of parleys the world has done"""
-        return self.total_parleys
-
-    def get_world_metrics(self):
-        """Return metrics about the world"""
-        max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
-        # max_parleys = math.ceil(self.max_exs / opt['batchsize'])
-        world_done = self.opt['num_epochs'] > 0 and max_exs > 0 and self.total_exs >= max_exs
-        return {
-            'train_time': self.get_train_time(),
-            'total_exs': self.total_exs,
-            'total_epochs': self.total_epochs,
-            'world_done': world_done
-        }
 
     def __enter__(self):
         """Empty enter provided for use with ``with`` statement.
@@ -247,10 +225,11 @@ class World(object):
     def reset(self):
         for a in self.agents:
             a.reset()
-        self.train_time.reset()
+        self.max_exs = None
         self.total_exs = 0
         self.total_epochs = 0
         self.total_parleys = 0
+        self.time.reset()
 
     def reset_metrics(self):
         for a in self.agents:
@@ -818,7 +797,7 @@ class HogwildWorld(World):
     def getID(self):
         return self.inner_world.getID()
 
-    def report(self, compute_time=None):
+    def report(self, compute_time=False):
         return self.inner_world.report(compute_time)
 
     def save_agents(self):
