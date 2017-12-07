@@ -119,11 +119,11 @@ def compute_time_metrics(world, opt):
         if time_left is not None:
             m['time_left'] = math.floor(time_left)
         if num_epochs > 0:
-            # if (total_exs > 0 and exs_per_epoch > 0):
-            #     display_epochs = int(total_exs / exs_per_epoch)
-            # else:
-            #     display_epochs = total_epochs
-            m['num_epochs'] = total_epochs
+            if (total_exs > 0 and exs_per_epoch > 0):
+                display_epochs = int(total_exs / exs_per_epoch)
+            else:
+                display_epochs = total_epochs
+            m['num_epochs'] = display_epochs
     return m
 
 
