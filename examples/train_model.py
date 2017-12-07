@@ -212,7 +212,9 @@ class TrainLoop():
                     self.total_epochs += 1
 
                 world_done = world.get_total_parleys() >= world.get_max_parleys()
-
+                
+                if opt['numthreads'] > 1 and (self.parleys)%100 == 0:
+                    world.synchronize()
                 if self.total_epochs > self.num_epochs or world_done:
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(
                         self.num_epochs, world.get_train_time()))

@@ -40,8 +40,9 @@ This module also provides a utility method:
 from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
+import pickle
 import random
-
+import os
 
 class Agent(object):
     """Base class for all other agents."""
@@ -162,6 +163,10 @@ class MultiTaskTeacher(Teacher):
     def __init__(self, opt, shared=None):
         self.tasks = []
         self.opt = opt
+
+        opt['batch_sort'] = False
+        print('WARNING: batch_sort disabled for multitasking')
+
         self.id = opt['task']
         if shared and 'tasks' in shared:
             self.tasks = [create_agent_from_shared(t) for t in shared['tasks']]
@@ -265,6 +270,16 @@ def name_to_agent_class(name):
     class_name += 'Agent'
     return class_name
 
+def load_agent_module(opt):
+    optfile =  opt['model_file'] + '.opt'
+    if os.path.isfile(optfile):
+        with open(optfile, 'rb') as handle:
+           opt = pickle.load(handle)
+        model_class = get_agent_module(opt['model'])
+        return model_class(opt)
+    else:
+        return None
+        
 def get_agent_module(dir_name):
     if ':' in dir_name:
         s = dir_name.split(':')
@@ -286,7 +301,19 @@ def create_agent(opt):
     The input is either of the form ``parlai.agents.ir_baseline.agents:IrBaselineAgent``
     (i.e. the path followed by the class name) or else just ``ir_baseline`` which
     assumes the path above, and a class name suffixed with 'Agent'.
+
+    If ``model-file'' is available in the options this function can also attempt to load
+    the model from that location instead. This avoids having to specify all the other
+    options necessary to set up the model including its name as they are all loaded from
+    the options file if it exists (the file opt['model_file'] + '.opt' must exist and
+    contain a pickled dict containing the model's options).
     """
+    if opt.get('model_file'):
+        # Attempt to load the model from the model file first (this way we do not even
+        # have to specify the model name as a parameter.
+        model = load_agent_module(opt)
+        if model is not None:
+            return model
     if opt.get('model'):
         model_class = get_agent_module(opt['model'])
         return model_class(opt)
@@ -295,15 +322,18 @@ def create_agent(opt):
 
 # Helper functions to create agent/agents given shared parameters
 # returned from agent.share(). Useful for parallelism, sharing params, etc.
-def create_agent_from_shared(shared_agent):
-    a = shared_agent['class'](shared_agent['opt'], shared_agent)
+def create_agent_from_shared(shared_agent, threadid=None):
+    opt = copy.deepcopy(shared_agent['opt'])
+    if threadid is not None:
+        opt['threadindex'] = threadid
+    a = shared_agent['class'](opt, shared_agent)
     return a
 
-def create_agents_from_shared(shared):
+def create_agents_from_shared(shared, threadid=None):
     # create agents based on shared data.
     shared_agents = []
     for shared_agent in shared:
-        agent = create_agent_from_shared(shared_agent)
+        agent = create_agent_from_shared(shared_agent, threadid)
         shared_agents.append(agent)
     return shared_agents
 

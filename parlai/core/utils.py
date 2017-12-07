@@ -88,12 +88,13 @@ def round_sigfigs(x, sigfigs=4):
     try:
         if x == 0:
             return 0
-    except RuntimeError:
+        if x in [float('inf'), float('-inf'), float('NaN')]:
+            return x
+        return round(x, -math.floor(math.log10(abs(x)) - sigfigs + 1))
+    except TypeError:
         # handle 1D torch tensors
-        x = x[0]
-    if x in [float('inf'), float('-inf'), float('NaN')]:
-        return x
-    return round(x, -math.floor(math.log10(abs(x)) - sigfigs + 1))
+        # if anything else breaks here please file an issue on Github
+        return round_sigfigs(x[0], sigfigs)
 
 
 def flatten(teacher, context_length=-1, include_labels=True):
@@ -142,7 +143,8 @@ def flatten(teacher, context_length=-1, include_labels=True):
                           'limit the length of each flattened example, '
                           'disabling batch sorting / flattening by setting '
                           '--batch-sort false, or switching to data streaming '
-                          'using --datatype {type}:stream to read from disk.')
+                          'using --datatype {type}:stream to read from disk '
+                          'if it is supported for your dataset.')
 
 
 def sort_data(data, key='text_label', method='spaces'):

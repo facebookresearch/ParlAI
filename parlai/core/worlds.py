@@ -46,7 +46,10 @@ import importlib
 import math
 import random
 
-from multiprocessing import Process, Value, Condition, Semaphore
+try:
+    from torch.multiprocessing import Process, Value, Condition, Semaphore
+except ImportError:
+    from multiprocessing import Process, Value, Condition, Semaphore
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
 from parlai.core.metrics import aggregate_metrics, compute_time_metrics
 from parlai.core.utils import Timer
@@ -443,6 +446,8 @@ class MultiWorld(World):
     """
 
     def __init__(self, opt, agents=None, shared=None):
+        opt['batch_sort'] = False
+        print('WARNING: batch_sort disabled for multitasking')
         super().__init__(opt)
         self.worlds = []
         for index, k in enumerate(opt['task'].split(',')):
@@ -739,7 +744,7 @@ class HogwildProcess(Process):
         """Runs normal parley loop for as many examples as this thread can get
         ahold of via the semaphore ``queued_items``.
         """
-        shared_agents = create_agents_from_shared(self.agent_shares)
+        shared_agents = create_agents_from_shared(self.agent_shares, self.threadId)
         world = self.world_type(self.opt, shared_agents)
 
         with world:
