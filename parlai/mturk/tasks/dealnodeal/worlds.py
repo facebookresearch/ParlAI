@@ -80,6 +80,10 @@ class MTurkDealNoDealDialogWorld(MTurkTaskWorld):
                     if len(self.choices) == len(self.agents):
                         self.first_turn = True
                         self.episodeDone = True
+                elif act['episode_done']:
+                    # Action is not selection but episode ended due to disconnection or timeout or returned hit
+                    self.episodeDone = True
+
 
     def episode_done(self):
         return self.episodeDone
