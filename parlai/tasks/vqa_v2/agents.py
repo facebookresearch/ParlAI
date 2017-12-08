@@ -125,7 +125,7 @@ class OeTeacher(FixedDialogTeacher):
         with open(data_path) as data_file:
             self.ques = json.load(data_file)
 
-        if self.datatype != 'test':
+        if not self.datatype.startswith('test'):
             print('loading: ' + annotation_path)
             with open(annotation_path) as data_file:
                 self.annotation = json.load(data_file)
