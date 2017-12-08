@@ -44,7 +44,6 @@ All worlds are initialized with the following parameters:
 import copy
 import importlib
 import random
-from tqdm import tqdm
 
 try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore
@@ -220,16 +219,6 @@ class World(object):
     def shutdown(self):
         """Perform any cleanup, if appropriate."""
         pass
-
-    def auto_execute(self, use_tqdm=True, maxes=0):
-        with self:
-            cnt = 0
-            for _ in self:
-                if maxes:
-                    cnt += 1
-                    if cnt > maxes:
-                        break
-                self.parley()
 
 
 class DialogPartnerWorld(World):
