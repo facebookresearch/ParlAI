@@ -13,6 +13,7 @@ from parlai.core.utils import round_sigfigs
 from collections import Counter
 
 import re
+import math
 
 re_art = re.compile(r'\b(a|an|the)\b')
 re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
@@ -61,6 +62,70 @@ def _f1_score(guess, answers):
     g_tokens = _normalize_answer(guess).split()
     scores = [_score(g_tokens, _normalize_answer(a).split()) for a in answers]
     return max(scores)
+
+
+def aggregate_metrics(reporters):
+    #reporters is a list of teachers or worlds
+    m = {}
+    m['tasks'] = {}
+    sum_accuracy = 0
+    sum_f1 = 0
+    num_tasks = 0
+    total = 0
+    for i in range(len(reporters)):
+        tid = reporters[i].getID()
+        mt = reporters[i].report()
+        while tid in m['tasks']:
+            # prevent name cloberring if using multiple tasks with same ID
+            tid += '_'
+        m['tasks'][tid] = mt
+        total += mt['total']
+        if 'accuracy' in mt:
+            sum_accuracy += mt['accuracy']
+            num_tasks += 1
+            if 'f1' in mt:
+                sum_f1 += mt['f1']
+    m['total'] = total
+    m['accuracy'] = 0
+    if num_tasks > 0:
+        m['accuracy'] = sum_accuracy / num_tasks
+        if sum_f1 > 0:
+            m['f1'] = sum_f1 / num_tasks
+    return m
+
+
+def compute_time_metrics(world, max_time):
+    # Determine time_left and num_epochs
+    exs_per_epoch = world.num_examples() if world.num_examples() else 0
+    num_epochs = world.opt.get('num_epochs', 0)
+    max_exs = exs_per_epoch * num_epochs
+    total_exs = world.get_total_exs()
+
+    m = {}
+    if (max_exs > 0 and total_exs > 0) or max_time > 0:
+        m = {}
+        time_left = None
+        time = world.get_time()
+        total_epochs = world.get_total_epochs()
+
+        if (num_epochs > 0 and total_exs > 0 and max_exs > 0):
+            exs_per_sec = time / total_exs
+            time_left = (max_exs - total_exs) * exs_per_sec
+        if max_time > 0:
+            other_time_left = max_time - time
+            if time_left is not None:
+                time_left = min(time_left, other_time_left)
+            else:
+                time_left = other_time_left
+        if time_left is not None:
+            m['time_left'] = math.floor(time_left)
+        if num_epochs > 0:
+            if (total_exs > 0 and exs_per_epoch > 0):
+                display_epochs = int(total_exs / exs_per_epoch)
+            else:
+                display_epochs = total_epochs
+            m['num_epochs'] = display_epochs
+    return m
 
 
 class Metrics(object):

@@ -51,10 +51,4 @@ class RepeatLabelAgent(Agent):
         else:
             reply['text'] = "I don't know."
 
-        if 'label_candidates' in obs and len(obs['label_candidates']) > 0:
-            # Produce text_candidates by selecting random candidate labels.
-            reply['text_candidates'] = [reply['text']]
-            reply['text_candidates'].extend(random.sample(
-                obs['label_candidates'], min(len(obs['label_candidates']), 99)))
-
         return reply

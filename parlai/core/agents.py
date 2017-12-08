@@ -37,11 +37,12 @@ This module also provides a utility method:
 
 """
 
-from .metrics import Metrics
+from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
+import pickle
 import random
-
+import os
 
 class Agent(object):
     """Base class for all other agents."""
@@ -234,32 +235,7 @@ class MultiTaskTeacher(Teacher):
 
     # return transformed metrics showing total examples and accuracy if avail.
     def report(self):
-        m = {}
-        m['tasks'] = {}
-        sum_accuracy = 0
-        sum_f1 = 0
-        num_tasks = 0
-        total = 0
-        for i in range(len(self.tasks)):
-            tid = self.tasks[i].getID()
-            mt = self.tasks[i].report()
-            while tid in m['tasks']:
-                # prevent name cloberring if using multiple tasks with same ID
-                tid += '_'
-            m['tasks'][tid] = mt
-            total += mt['total']
-            if 'accuracy' in mt:
-                sum_accuracy += mt['accuracy']
-                num_tasks += 1
-                if 'f1' in mt:
-                    sum_f1 += mt['f1']
-        m['total'] = total
-        m['accuracy'] = 0
-        if num_tasks > 0:
-            m['accuracy'] = sum_accuracy / num_tasks
-            if sum_f1 > 0:
-                m['f1'] = sum_f1 / num_tasks
-        return m
+        return aggregate_metrics(self.tasks)
 
     def reset(self):
         for t in self.tasks:
@@ -294,6 +270,16 @@ def name_to_agent_class(name):
     class_name += 'Agent'
     return class_name
 
+def load_agent_module(opt):
+    optfile =  opt['model_file'] + '.opt'
+    if os.path.isfile(optfile):
+        with open(optfile, 'rb') as handle:
+           opt = pickle.load(handle)
+        model_class = get_agent_module(opt['model'])
+        return model_class(opt)
+    else:
+        return None
+        
 def get_agent_module(dir_name):
     if ':' in dir_name:
         s = dir_name.split(':')
@@ -315,7 +301,19 @@ def create_agent(opt):
     The input is either of the form ``parlai.agents.ir_baseline.agents:IrBaselineAgent``
     (i.e. the path followed by the class name) or else just ``ir_baseline`` which
     assumes the path above, and a class name suffixed with 'Agent'.
+
+    If ``model-file'' is available in the options this function can also attempt to load
+    the model from that location instead. This avoids having to specify all the other
+    options necessary to set up the model including its name as they are all loaded from
+    the options file if it exists (the file opt['model_file'] + '.opt' must exist and
+    contain a pickled dict containing the model's options).
     """
+    if opt.get('model_file'):
+        # Attempt to load the model from the model file first (this way we do not even
+        # have to specify the model name as a parameter.
+        model = load_agent_module(opt)
+        if model is not None:
+            return model
     if opt.get('model'):
         model_class = get_agent_module(opt['model'])
         return model_class(opt)
