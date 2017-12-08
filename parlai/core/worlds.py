@@ -298,7 +298,7 @@ class DialogPartnerWorld(World):
                 self.total_exs += metrics['total']
                 if self.num_examples() is not None and self.num_examples() > 0:
                     self.total_epochs = int(self.total_exs / self.num_examples())
-                time_metrics = compute_time_metrics(self, self.opt)
+                time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
                 metrics.update(time_metrics)
             return metrics
 
@@ -362,7 +362,7 @@ class MultiAgentDialogWorld(World):
             self.total_exs += metrics['total']
             if self.num_examples() is not None and self.num_examples() > 0:
                 self.total_epochs = int(self.total_exs / self.num_examples())
-            time_metrics = compute_time_metrics(self, self.opt)
+            time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
             metrics.update(time_metrics)
         return metrics
 
@@ -527,7 +527,7 @@ class MultiWorld(World):
             self.total_exs += metrics['total']
             if self.num_examples() is not None and self.num_examples() > 0:
                 self.total_epochs = int(self.total_exs / self.num_examples())
-            time_metrics = compute_time_metrics(self, self.opt)
+            time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
             metrics.update(time_metrics)
         return metrics
 

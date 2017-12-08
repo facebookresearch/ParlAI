@@ -94,15 +94,15 @@ def aggregate_metrics(reporters):
     return m
 
 
-def compute_time_metrics(world, opt):
+def compute_time_metrics(world, max_time):
     # Determine time_left and num_epochs
     exs_per_epoch = world.num_examples() if world.num_examples() else 0
-    num_epochs = opt.get('num_epochs', 0)
+    num_epochs = world.opt.get('num_epochs', 0)
     max_exs = exs_per_epoch * num_epochs
     total_exs = world.get_total_exs()
 
     m = {}
-    if (max_exs > 0 and total_exs > 0) or opt['max_train_time'] > 0:
+    if (max_exs > 0 and total_exs > 0) or max_time > 0:
         m = {}
         time_left = None
         time = world.get_time()
@@ -111,8 +111,8 @@ def compute_time_metrics(world, opt):
         if (num_epochs > 0 and total_exs > 0 and max_exs > 0):
             exs_per_sec = time / total_exs
             time_left = (max_exs - total_exs) * exs_per_sec
-        if opt['max_train_time'] > 0:
-            other_time_left = opt['max_train_time'] - time
+        if max_time > 0:
+            other_time_left = max_time - time
             if time_left is not None:
                 time_left = min(time_left, other_time_left)
             else:
