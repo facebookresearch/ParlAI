@@ -192,9 +192,13 @@ class World(object):
         """Return total amount of epochs on which the world has trained."""
         if not self.max_exs:
             self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+        # when we know the size of the data
         if self.max_exs > 0:
             return int(self.total_parleys * self.opt['batchsize'] / self.num_examples())
+        # when we do not know the size of the data
         else:
+            if self.epoch_done():
+                self.total_epochs += 1
             return self.total_epochs
 
     def __enter__(self):
