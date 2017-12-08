@@ -32,6 +32,8 @@ from .image_featurizers import ImageLoader
 from .utils import flatten, sort_data, make_batches
 
 import concurrent.futures
+import multiprocessing
+from multiprocessing import Value
 from threading import Thread
 import queue
 import random
@@ -112,6 +114,11 @@ class FixedDialogTeacher(Teacher):
 
 
     """
+    class AttrDict(dict):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.__dict__ = self
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
@@ -126,9 +133,11 @@ class FixedDialogTeacher(Teacher):
         self.data_queue = queue.Queue()
         if shared:
             self.data_loader = shared['data_loader']
+            self.index = shared['index']
         else:
             self.data_loader = DataLoader(opt)
             self.data_loader.start()
+            self.index = FixedDialogTeacher.AttrDict(value=-1)
 
         # set up batching
         self.bsz = opt.get('batchsize', 1)
@@ -146,6 +155,7 @@ class FixedDialogTeacher(Teacher):
                 ordered_opt = opt.copy()
                 ordered_opt['datatype'] = ':'.join((dt[0], 'ordered'))
                 ordered_opt['batchsize'] = 1
+                ordered_opt['numthreads'] = 1
                 ordered_teacher = create_task_agent_from_taskname(ordered_opt)[0]
 
                 clen = opt.get('context_length', -1)
@@ -163,15 +173,19 @@ class FixedDialogTeacher(Teacher):
                                    context_length=clen, include_labels=incl)
                 self.sorted_data = sort_data(flatdata)
                 self.batches = make_batches(self.sorted_data, self.bsz)
-        elif self.bsz > 1:
-            # for ordered data in batch mode (especially, for validation and
-            # testing), each teacher in the batch gets a start index and a step
-            # size so they all process disparate sets of the data
-            self.step_size = self.bsz
-            self.data_offset = self.batchindex
+
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        pass
+
+    def _lock(self):
+        if hasattr(self.index, 'get_lock'):
+            return self.index.get_lock()
         else:
-            self.step_size = 1
-            self.data_offset = 0
+            return self
 
     def reset(self):
         """Reset the dialog so that it is at the start of the epoch,
@@ -184,14 +198,11 @@ class FixedDialogTeacher(Teacher):
         self.epochDone = False
         self.data_queue = queue.Queue()
 
-        if self.use_batch_act:
-            self.batch_idx = -1
-            if self.random and hasattr(self, 'batches'):
-                random.shuffle(self.batches)
-        else:
-            self.episode_idx = self.data_offset - self.step_size
-            if (not self.random and self.data_offset >= self.num_episodes()):
-                self.epochDone = True
+        self.episode_idx = -1
+        with self._lock():
+            self.index.value = -1
+        if self.use_batch_act and self.random and hasattr(self, 'batches'):
+            random.shuffle(self.batches)
 
     def submit_load_request(self):
         """An agent should implement this method to submit requests to the
@@ -208,18 +219,33 @@ class FixedDialogTeacher(Teacher):
     def share(self):
         shared = super().share()
         shared['data_loader'] = self.data_loader
+
         if hasattr(self, 'lastYs'):
+            # share lastYs to communicate between batch_act and observe
             shared['lastYs'] = self.lastYs
+
+        if (self.opt.get('numthreads') > 1 and
+            type(self.index) is not multiprocessing.sharedctypes.Synchronized):
+            # for multithreading need to move index into shared / locked memory
+            self.index = Value('l', -1)
+        shared['index'] = self.index
+
         return shared
 
-    def next_episode_idx(self, num_eps=None):
-        if not num_eps:
+    def next_episode_idx(self, num_eps=None, loop=None):
+        if num_eps is None:
             num_eps = self.num_episodes()
+        if loop is None:
+            loop = self.training
         if self.random:
-            self.episode_idx = random.randrange(num_eps)
+            new_idx = random.randrange(num_eps)
         else:
-            self.episode_idx = (self.episode_idx + self.step_size) % num_eps
-        return self.episode_idx
+            with self._lock():
+                self.index.value += 1
+                if loop:
+                    self.index.value %= num_eps
+                new_idx = self.index.value
+        return new_idx
 
     def next_example(self):
         if self.episode_done:
@@ -228,13 +254,17 @@ class FixedDialogTeacher(Teacher):
         else:
             self.entry_idx += 1
 
+        if self.episode_idx >= self.num_episodes():
+            return {'episode_done': True}, True
+
         ex = self.get(self.episode_idx, self.entry_idx)
         self.episode_done = ex['episode_done']
-        epoch_done = False
 
         if (not self.random and self.episode_done
-                and self.episode_idx + self.step_size >= self.num_episodes()):
+                and self.episode_idx + 1 >= self.num_episodes()):
             epoch_done = True
+        else:
+            epoch_done = False
 
         return ex, epoch_done
 
@@ -259,10 +289,7 @@ class FixedDialogTeacher(Teacher):
         zero. Children must override this method in order to inherit the
         `next_example` method.
         """
-        try:
-            return self.examples[episode_idx][entry_idx]
-        except Exception:
-            raise RuntimeError('"Get" method must be overriden by children.')
+        raise RuntimeError('"Get" method must be overriden by children.')
 
     def observe(self, observation):
         """Process observation for metrics."""
@@ -280,22 +307,24 @@ class FixedDialogTeacher(Teacher):
             # reset if haven't yet
             self.reset()
 
-        if self.epochDone and not self.training:
-            # only do one epoch if not training, user needs to call reset()
+        # get next batch
+        with self._lock():
+            self.index.value += 1
+            if self.training:
+                self.index.value %= len(self.batches)
+            batch_idx = self.index.value
+
+            if batch_idx + 1 >= len(self.batches):
+                if self.random:
+                    random.shuffle(self.batches)
+                self.epochDone = True
+            else:
+                self.epochDone = False
+
+        if batch_idx >= len(self.batches):
             return [{'episode_done': True, 'id': self.getID()}] * self.bsz
 
-        # get next batch
-        self.batch_idx += 1
-        batch = self.batches[self.batch_idx]
-
-        if self.batch_idx + 1 == len(self.batches):
-            self.batch_idx = -1
-            if self.random:
-                random.shuffle(self.batches)
-            else:
-                self.epochDone = True
-        else:
-            self.epochDone = False
+        batch = self.batches[batch_idx]
 
         # pad batch
         if len(batch) < self.bsz:
@@ -313,11 +342,7 @@ class FixedDialogTeacher(Teacher):
             # reset if haven't yet
             self.reset()
 
-        if self.epochDone and not self.training:
-            # only do one epoch if not training, user needs to call reset()
-            return {'episode_done': True, 'id': self.getID()}
-
-        # get next example
+        # get next example, action is episode_done dict if already out of exs
         action, self.epochDone = self.next_example()
         action['id'] = self.getID()
 
@@ -327,6 +352,7 @@ class FixedDialogTeacher(Teacher):
             # move labels to eval field so not used for training
             # but this way the model can use the labels for perplexity or loss
             action['eval_labels'] = action.pop('labels')
+
         return action
 
 
