@@ -257,7 +257,6 @@ class DictionaryAgent(Agent):
         the current dictionary version.
         """
         for k, v in vars(dictionary).items():
-            import pdb; pdb.set_trace()
             setattr(self, k, v)
 
     def freqs(self):
