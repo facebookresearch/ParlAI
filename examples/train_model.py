@@ -136,7 +136,7 @@ class TrainLoop():
         self.max_train_time = opt['max_train_time'] if opt['max_train_time'] > 0 else float('inf')
         self.log_every_n_secs = opt['log_every_n_secs'] if opt['log_every_n_secs'] > 0 else float('inf')
         self.val_every_n_secs = opt['validation_every_n_secs'] if opt['validation_every_n_secs'] > 0 else float('inf')
-        self.save_every_n_secs = opt['saved_every_n_secs'] if opt['save_every_n_secs'] > 0 else float('inf')
+        self.save_every_n_secs = opt['save_every_n_secs'] if opt['save_every_n_secs'] > 0 else float('inf')
         self.best_valid = 0
         self.impatience = 0
         self.saved = False
