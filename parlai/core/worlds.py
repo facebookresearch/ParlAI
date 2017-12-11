@@ -738,6 +738,8 @@ class HogwildProcess(Process):
                 if not world.epoch_done():
                     # do one example if any available
                     world.parley()
+                    with self.sync['total_parleys'].get_lock():
+                        self.sync['total_parleys'].value += 1
                 else:
                     with self.sync['epoch_done_flag'].get_lock():
                         # increment the number of finished threads
@@ -782,6 +784,9 @@ class HogwildWorld(World):
             'epoch_done_flag': Value('b', False),  # epoch is done
             'reset_flag': Value('b', False),  # threads should reset
             'term_flag': Value('b', False),  # threads should terminate
+
+            # counters
+            'total_parleys': Value('l', 0),  # number of parleys in threads
         }
 
         # don't let threads create more threads!
@@ -818,10 +823,24 @@ class HogwildWorld(World):
         # keep main process from getting too far ahead of the threads
         # this way it can only queue up to numthreads unprocessed examples
         self.sync['threads_sem'].acquire()
-        self.total_parleys += 1
 
     def getID(self):
         return self.inner_world.getID()
+
+    def num_examples(self):
+        return self.inner_world.num_examples()
+
+    def num_episodes(self):
+        return self.inner_world.num_episodes()
+
+    def get_total_epochs(self):
+        """Return total amount of epochs on which the world has trained."""
+        if not self.max_exs:
+            self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+        if self.max_exs > 0:
+            return int(self.sync['total_parleys'].value * self.opt['batchsize'] / self.num_examples())
+        else:
+            return self.total_epochs
 
     def report(self, compute_time=False):
         return self.inner_world.report(compute_time)
