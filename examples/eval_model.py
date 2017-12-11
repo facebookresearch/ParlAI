@@ -29,6 +29,7 @@ def main():
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
+    # Show arguments after loading model
     parser.opt = agent.opt
     parser.print_args()
 
