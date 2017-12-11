@@ -1,5 +1,3 @@
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
@@ -37,6 +35,7 @@ class TaskNTalkTeacher(Teacher):
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
+        self.id = 'taskntalk'
         if not shared:
             self._setup_data(self.opt['datafile'])
         else:
