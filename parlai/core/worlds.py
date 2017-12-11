@@ -763,6 +763,7 @@ class HogwildWorld(World):
     """
 
     def __init__(self, world_class, opt, agents):
+        super().__init__(opt)
         self.inner_world = world_class(opt, agents)
 
         self.queued_items = Semaphore(0)  # counts num exs to be processed
@@ -771,9 +772,6 @@ class HogwildWorld(World):
         self.cnt = Value('i', 0)  # number of exs that remain to be processed
 
         self.threads = []
-        self.total_parleys = 0
-        self.max_exs = 0
-        self.total_epochs = 0
         for i in range(opt['numthreads']):
             self.threads.append(HogwildProcess(i, world_class, opt,
                                                agents, self.queued_items,
