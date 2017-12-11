@@ -720,7 +720,7 @@ class HogwildProcess(Process):
         self.opt = opt
         self.agent_shares = [a.share() for a in agents]
         self.sync = sync
-        super().__init__()
+        super().__init__(daemon=True)
 
     def run(self):
         """Runs normal parley loop for as many examples as this thread can get
