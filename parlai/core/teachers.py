@@ -29,7 +29,7 @@ dialog data and utilized by ``DialogTeacher``
 """
 from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
-from .utils import flatten, sort_data, make_batches
+from .utils import AttrDict, flatten, sort_data, make_batches
 
 import concurrent.futures
 import multiprocessing
@@ -114,11 +114,6 @@ class FixedDialogTeacher(Teacher):
 
 
     """
-    class AttrDict(dict):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.__dict__ = self
-
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
@@ -137,7 +132,7 @@ class FixedDialogTeacher(Teacher):
         else:
             self.data_loader = DataLoader(opt)
             self.data_loader.start()
-            self.index = FixedDialogTeacher.AttrDict(value=-1)
+            self.index = AttrDict(value=-1)
 
         # set up batching
         self.bsz = opt.get('batchsize', 1)
