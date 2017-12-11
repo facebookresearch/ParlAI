@@ -1,5 +1,3 @@
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
@@ -8,6 +6,7 @@ from .modules import ImgNet, ListenNet, StateNet, SpeakNet, PredictNet
 
 import torch
 from torch.autograd import Variable
+from torch import optim
 from torch.autograd import backward as autograd_backward
 
 
@@ -31,6 +30,18 @@ class _CooperativeGameAgent(Agent):
     Multi-Agent Dialog `(Kottur et al. 2017) <https://arxiv.org/abs/1706.08502>`_.
     """
 
+    @staticmethod
+    def add_cmdline_args(argparser):
+        """Add command-line arguments specifically for this agent."""
+        DictionaryAgent.add_cmdline_args(argparser)
+        group = argparser.add_argument_group('Cooperative Game Agent Arguments')
+        group.add_argument('--learning-rate', default=1e-2, type=float,
+                           help='Initial learning rate')
+        group.add_argument('--no-cuda', action='store_true', default=False,
+                           help='disable GPUs even if available')
+        group.add_argument('--gpuid', type=int, default=-1,
+                           help='which GPU device to use (defaults to cpu)')
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.id = 'CooperativeGameAgent'
@@ -39,6 +50,17 @@ class _CooperativeGameAgent(Agent):
         self.state_net = StateNet(opt['embed_size'], opt['state_size'])
         self.speak_net = SpeakNet(opt['state_size'], opt['out_vocab_size'])
         self.reset()
+
+        self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
+        if self.use_cuda:
+            print('[ Using CUDA for %s ]' % self.id)
+            torch.cuda.set_device(opt['gpuid'])
+            for module in self.modules:
+                module = module.cuda()
+
+        # TODO(kd): allow chosing optimizer through command line
+        self.optimizer = optim.Adam([module.parameters() for module in self.modules],
+                                    lr=opt['learning_rate'])
 
     def observe(self, observation):
         self.observation = observation
@@ -60,6 +82,9 @@ class _CooperativeGameAgent(Agent):
                 for module in self.modules:
                     for parameter in module.parameters():
                         parameter.grad.data.clamp_(min=-5, max=5)
+                optimizer.step()
+                optimizer.zero_grad()
+                self.reset()
 
     def act(self):
         out_distr = self.speak_net(self.h_state)
@@ -76,7 +101,7 @@ class _CooperativeGameAgent(Agent):
         # TODO(kd): share state across other instances during batch training
         self.h_state = Variable(torch.zeros(1, self.opt['hidden_size']))
         self.c_state = Variable(torch.zeros(1, self.opt['hidden_size']))
-        if self.opt.get('use_gpu', False):
+        if self.use_cuda:
             self.h_state, self.c_state = self.h_state.cuda(), self.c_state.cuda()
 
         if not retain_actions:
@@ -84,5 +109,4 @@ class _CooperativeGameAgent(Agent):
 
     @property
     def modules(self):
-        modules = [self.img_net, self.listen_net, self.state_net, self.speak_net, self.predict_net]
-        return [module for module in modules if module is not None]
+        return [self.listen_net, self.state_net, self.speak_net]
