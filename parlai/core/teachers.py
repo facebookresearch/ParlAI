@@ -29,11 +29,11 @@ dialog data and utilized by ``DialogTeacher``
 """
 from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
-from .utils import AttrDict, flatten, sort_data, make_batches
+from .utils import AttrDict, flatten, sort_data, make_batches, no_lock
 
 import concurrent.futures
 import multiprocessing
-from multiprocessing import Value
+from multiprocessing import Value, Lock
 from threading import Thread
 import queue
 import random
@@ -145,6 +145,8 @@ class FixedDialogTeacher(Teacher):
         if self.use_batch_act:
             if shared:
                 self.lastYs = shared['lastYs']
+                if 'batches' in shared:
+                    self.batches = shared['batches']
             else:
                 self.lastYs = [None] * self.bsz
                 ordered_opt = opt.copy()
@@ -169,18 +171,11 @@ class FixedDialogTeacher(Teacher):
                 self.sorted_data = sort_data(flatdata)
                 self.batches = make_batches(self.sorted_data, self.bsz)
 
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        pass
-
     def _lock(self):
         if hasattr(self.index, 'get_lock'):
             return self.index.get_lock()
         else:
-            return self
+            return no_lock()
 
     def reset(self):
         """Reset the dialog so that it is at the start of the epoch,
@@ -219,10 +214,12 @@ class FixedDialogTeacher(Teacher):
             # share lastYs to communicate between batch_act and observe
             shared['lastYs'] = self.lastYs
 
-        if (self.opt.get('numthreads') > 1 and
-            type(self.index) is not multiprocessing.sharedctypes.Synchronized):
-            # for multithreading need to move index into shared / locked memory
-            self.index = Value('l', -1)
+        if self.opt.get('numthreads', 1) > 1:
+            if type(self.index) is not multiprocessing.sharedctypes.Synchronized:
+                # for multithreading need to move index into shared / locked memory
+                self.index = Value('l', -1)
+            if hasattr(self, 'batches'):
+                shared['batches'] = self.batches
         shared['index'] = self.index
 
         return shared
@@ -290,6 +287,7 @@ class FixedDialogTeacher(Teacher):
         """Process observation for metrics."""
         if self.use_batch_act:
             self.lastY = self.lastYs[self.batchindex]
+            self.lastYs[self.batchindex] = None
 
         if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.update(observation, self.lastY)
@@ -646,12 +644,18 @@ class StreamDialogData(DialogData):
             # Share datafile and data_loader for computing num_exs and num_eps
             self.datafile = shared['datafile']
             self.data_loader = shared['data_loader']
+            if 'lock' in shared:
+                self.lock = shared['lock']
         else:
             # main instance holds the stream and shares pointer to it
             self.data_loader = data_loader
             self.datafile = opt['datafile']
             self.reset_data = None
             self.is_reset = True
+            if opt.get('numthreads', 1) > 1:
+                print('WARNING: multithreaded steaming will process every '
+                      'example numthreads times.')
+                self.lock = Lock()
         self.entry_idx = 0
         self.next_episode = None
         self.num_eps = None
@@ -664,6 +668,8 @@ class StreamDialogData(DialogData):
         # share datafile and data for loading length if necessary
         shared['datafile'] = self.datafile
         shared['data_loader'] = self.data_loader
+        if hasattr(self, 'lock'):
+            shared['lock'] = self.lock
 
         return shared
 
@@ -709,32 +715,44 @@ class StreamDialogData(DialogData):
             self.num_eps, self.num_exs = self.load_length()
         return self.num_eps
 
+    def _lock(self):
+        if hasattr(self, 'lock'):
+            return self.lock
+        else:
+            return no_lock()
+
     def get(self):
         """Returns a the next entry from the stream in the current episode for
         this instance. When episode is done returns first entry of next episode.
         """
         # first look up data
-        if self.next_episode is None:
-            self.next_episode = next(self.data)
-        if self.entry_idx == 0:
-            self.cur_episode = self.next_episode
-            self.next_episode = next(self.data)
-        entry = self.cur_episode[self.entry_idx]
+        if self.next_episode != -1 or self.entry_idx != 0:
+            with self._lock():
+                if self.next_episode is None:
+                    self.next_episode = next(self.data)
+                if self.entry_idx == 0:
+                    self.cur_episode = self.next_episode
+                    self.next_episode = next(self.data)
+                entry = self.cur_episode[self.entry_idx]
 
-        # now pack it in a action-observation dictionary
-        table = self.build_table(entry)
+                # now pack it in a action-observation dictionary
+                table = self.build_table(entry)
 
-        episode_done = self.entry_idx == len(self.cur_episode) - 1
-        if episode_done:
-            self.entry_idx = 0
+                episode_done = self.entry_idx == len(self.cur_episode) - 1
+                if episode_done:
+                    self.entry_idx = 0
+                else:
+                    self.entry_idx += 1
+                end_of_data = episode_done and self.next_episode is -1
+                if end_of_data and self.cycle:
+                    self.next_episode = next(self.data)
+
+                # last entry in this episode
+                table['episode_done'] = episode_done
         else:
-            self.entry_idx += 1
-        end_of_data = episode_done and self.next_episode is -1
-        if end_of_data and self.cycle:
-            self.next_episode = next(self.data)
+            table = {'episode_done': True}
+            end_of_data = True
 
-        # last entry in this episode
-        table['episode_done'] = episode_done
         return table, end_of_data
 
     def reset(self):

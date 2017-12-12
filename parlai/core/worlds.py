@@ -47,7 +47,9 @@ import math
 import random
 
 try:
-    from torch.multiprocessing import Process, Value, Condition, Semaphore
+    import torch.multiprocessing as mp
+    # mp.set_start_method('spawn')
+    from mp import Process, Value, Condition, Semaphore
 except ImportError:
     from multiprocessing import Process, Value, Condition, Semaphore
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
@@ -715,9 +717,11 @@ class HogwildProcess(Process):
 
 
     def __init__(self, tid, opt, world, sync):
-        self.threadId = tid
+        opt = copy.deepcopy(opt)
+        opt['numthreads'] = 1
         self.opt = opt
         self.shared = world.share()
+        self.shared['threadindex'] = tid
         self.sync = sync
         super().__init__(daemon=True)
 
@@ -737,7 +741,9 @@ class HogwildProcess(Process):
                 self.sync['threads_sem'].release()
                 if not world.epoch_done():
                     # do one example if any available
+                    # print('parley start')
                     world.parley()
+                    # print('parley done')
                     with self.sync['total_parleys'].get_lock():
                         self.sync['total_parleys'].value += 1
                 else:
@@ -790,8 +796,6 @@ class HogwildWorld(World):
         }
 
         # don't let threads create more threads!
-        opt = copy.deepcopy(opt)
-        opt['numthreads'] = 1
         self.threads = []
         for i in range(self.numthreads):
             self.threads.append(HogwildProcess(i, opt, world, self.sync))
@@ -922,11 +926,7 @@ def create_task(opt, user_agents):
     opt['task'] = ids_to_tasks(opt['task'])
     print('[creating task(s): ' + opt['task'] + ']')
 
-    # Single threaded or hogwild task creation (the latter creates multiple threads).
-    # Check datatype for train, because we need to do single-threaded for
-    # valid and test in order to guarantee exactly one epoch of training.
-    # If batchsize > 1, default to BatchWorld, as numthreads can be used for
-    # multithreading in batch mode, e.g. multithreaded data loading
+    # check if single or multithreaded, and single-example or batched examples
     if ',' not in opt['task']:
         # Single task
         world = create_task_world(opt, user_agents)
@@ -935,11 +935,12 @@ def create_task(opt, user_agents):
         # TODO: remove and replace with multiteachers only?
         world = MultiWorld(opt, user_agents)
 
-
-
     if opt.get('numthreads', 1) > 1:
+        # use hogwild world if more than one thread requested
+        # hogwild world will create sub batch worlds as well if bsz > 1
         world = HogwildWorld(opt, world)
     elif opt.get('batchsize', 1) > 1:
+        # otherwise check if should use batchworld
         world = BatchWorld(opt, world)
 
     return world
