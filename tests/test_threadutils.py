@@ -78,6 +78,26 @@ class TestSharedTable(unittest.TestCase):
             t.join()
         assert st['cnt'] == 250
 
+    def test_torch(self):
+        try:
+            import torch
+        except ImportError:
+            # pass by default if no torch available
+            return
+
+        st = SharedTable({'a': torch.FloatTensor([1])})
+        st['b'] = torch.LongTensor(2)
+        del st['b']
+        assert st['a'][0] == 1.0
+        assert 'b' not in st
+
+        if torch.cuda.is_available():
+            st = SharedTable({'a': torch.cuda.FloatTensor([1])})
+            st['b'] = torch.cuda.LongTensor(2)
+            del st['b']
+            assert st['a'][0] == 1.0
+            assert 'b' not in st
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -279,7 +279,7 @@ def load_agent_module(opt):
         return model_class(opt)
     else:
         return None
-        
+
 def get_agent_module(dir_name):
     if ':' in dir_name:
         s = dir_name.split(':')
