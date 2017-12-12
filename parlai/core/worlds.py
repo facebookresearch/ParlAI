@@ -722,6 +722,9 @@ class HogwildProcess(Process):
         self.opt = opt
         self.shared = world.share()
         self.shared['threadindex'] = tid
+        if 'agents' in self.shared:
+            for a in self.shared['agents']:
+                a['threadindex'] = tid
         self.sync = sync
         super().__init__(daemon=True)
 
