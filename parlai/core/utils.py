@@ -84,14 +84,6 @@ class Timer(object):
         return self.total
 
 
-class NoLock(object):
-    """Empty `lock`. Does nothing when you enter or exit."""
-    def __enter__(self):
-        return self
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        pass
-
-
 class AttrDict(dict):
     """Helper class to have a dict-like object with dot access.
 
@@ -210,6 +202,15 @@ def make_batches(data, bsz):
     """Return a list of lists of size bsz given a list of examples."""
     return [data[i:i + bsz] for i in range(0, len(data), bsz)]
 
+
+class NoLock(object):
+    """Empty `lock`. Does nothing when you enter or exit."""
+    def __enter__(self):
+        return self
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        pass
+
 single_nolock = NoLock()
 def no_lock():
+    """Builds a nolock for other classes to use for no-op locking."""
     return single_nolock

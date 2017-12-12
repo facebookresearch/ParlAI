@@ -199,7 +199,7 @@ class World(object):
         if not self.max_exs:
             self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
         if self.max_exs > 0:
-            return int(self.total_parleys * self.opt['batchsize'] / self.num_examples())
+            return self.total_parleys * self.opt['batchsize'] / self.num_examples()
         else:
             return self.total_epochs
 
@@ -841,7 +841,7 @@ class HogwildWorld(World):
         if not self.max_exs:
             self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
         if self.max_exs > 0:
-            return int(self.sync['total_parleys'].value * self.opt['batchsize'] / self.num_examples())
+            return self.sync['total_parleys'].value * self.opt['batchsize'] / self.num_examples()
         else:
             return self.total_epochs
 
