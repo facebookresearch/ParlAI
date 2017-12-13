@@ -311,8 +311,8 @@ class Seq2seqAgent(Agent):
             historyLength=self.opt['history_length'],
             useReplies=self.opt['history_replies'],
             dict=self.dict)
-        self.answers[batch_idx] = None
         self.observation = obs
+        self.answers[batch_idx] = None
         return obs
 
     def predict(self, xs, ys=None, cands=None, valid_cands=None, lm=False):
