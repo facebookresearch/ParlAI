@@ -2,7 +2,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.agents import Agent
-from .modules import ListenNet, StateNet, SpeakNet
+from .modules import ListenNet, StateNet, SpeakNet, PredictNet
 
 import torch
 from torch.autograd import Variable
@@ -163,3 +163,55 @@ class CooperativeGameAgent(Agent):
 
         if not retain_actions:
             self.actions = []
+
+
+class QuestionerAgent(CooperativeGameAgent):
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        """Add command-line arguments specifically for this agent."""
+        DictionaryAgent.add_cmdline_args(argparser)
+        group = argparser.add_argument_group('Questioner Agent Arguments')
+        parser.add_argument('--q-in-vocab', default=13, type=int,
+                            help='Input vocabulary for questioner. Usually includes total '
+                                 'distinct words spoken by answerer, questioner itself, '
+                                 'and words by which the goal is described.')
+        parser.add_argument('--q-embed-size', default=20, type=int,
+                            help='Size of word embeddings for questioner')
+        parser.add_argument('--q-state-size', default=100, type=int,
+                            help='Size of hidden state of questioner')
+        parser.add_argument('--q-out-vocab', default=3, type=int,
+                            help='Output vocabulary for questioner')
+        parser.add_argument('--q-num-pred', default=12, type=int,
+                            help='Size of output to be predicted (for goal).')
+        super().add_cmdline_args(argparser)
+
+    def __init__(self, opt, shared=None):
+        # transfer opt for super class to use
+        opt['in_vocab_size'] = opt['q_in_vocab']
+        opt['embed_size'] = opt['q_embed_size']
+        opt['state_size'] = opt['q_state_size']
+        opt['out_vocab_size'] = opt['q_out_vocab']
+
+        # add a module for prediction (override self.modules later)
+        self.predict_net = PredictNet(opt['embed_size'], opt['state_size'], opt['num_pred'])
+        super().__init__(opt, shared)
+        self.id = 'QuestionerAgent'
+
+    @property
+    def modules(self):
+        # override and include predict_net as well
+        return [self.listen_net, self.state_net, self.speak_net, self.predict_net]
+
+    def predict(self, tasks, num_tokens):
+        """Extra method to be executed at the end of episode to carry out goal
+        and decide reward on the basis of prediction.
+        """
+        guess_tokens = []
+        for _ in range(num_tokens):
+            # explicit task dependence
+            task_embeds = self.listen_net(tasks)
+            prediction = self.predict_net(task_embeds, (self.h_state, self.c_state))
+            guess_tokens.append(prediction)
+        return guess_tokens
+
