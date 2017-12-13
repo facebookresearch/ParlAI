@@ -312,11 +312,6 @@ class Seq2seqAgent(Agent):
             useReplies=self.opt['history_replies'],
             dict=self.dict)
         self.answers[batch_idx] = None
-        #print("======")
-        #print(obs['text'])
-        #print(self.v2t(obs['text']))
-        #print("------")
-        #import pdb; pdb.set_trace()
         self.observation = obs
         return obs
 
@@ -353,7 +348,7 @@ class Seq2seqAgent(Agent):
         """Convert a list of observations into input & target tensors."""
         def valid(obs):
             # check if this is an example our model should actually process
-            return 'text2vec' in obs
+            return 'text2vec' in obs and len(obs['text2vec']) > 0
         try:
             # valid examples and their indices
             valid_inds, exs = zip(*[(i, ex) for i, ex in
