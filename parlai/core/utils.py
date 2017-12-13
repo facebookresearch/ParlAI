@@ -188,8 +188,7 @@ def make_batches(data, bsz):
 
 def maintain_dialog_history(history, observation, reply='',
                             historyLength=1, useReplies="labels",
-                            truncate=1000000, dict=None,
-                            useStartEndIndices=True):
+                            dict=None, useStartEndIndices=True):
     """Keeps track of dialog history, up to a truncation length.
     Either includes replies from the labels, model, or not all using param 'replies'."""
 
