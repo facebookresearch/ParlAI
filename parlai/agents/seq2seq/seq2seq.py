@@ -6,6 +6,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
+from parlau.core.utils import maintain_dialog_history
 from .modules import Seq2seq
 
 import torch
@@ -47,7 +48,7 @@ class Seq2seqAgent(Agent):
     @staticmethod
     def dictionary_class():
         return DictionaryAgent
-
+    
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
@@ -132,7 +133,11 @@ class Seq2seqAgent(Agent):
                            help='Number of past utterances to remember. '
                                 'These include self-utterances. Default '
                                 'remembers entire episode history.')
-
+        agent.add_argument('-histr', '--history-replies',
+                           default='none', type=str,
+                           choices=['none', 'model', 'label'],
+                           help='Keep replies in the history, or not.')
+                           
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
@@ -140,8 +145,7 @@ class Seq2seqAgent(Agent):
 
         # all instances needs truncate param
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
-        self.history = deque(maxlen=(
-            opt['history_length'] if opt['history_length'] > 0 else None))
+        self.history = {}
         if shared:
             # set up shared properties
             self.dict = shared['dict']
@@ -293,49 +297,21 @@ class Seq2seqAgent(Agent):
         shared['START_IDX'] = self.START_IDX
         shared['END_IDX'] = self.END_IDX
         return shared
-
-    def observe(self, observation):
+                           
+                           def observe(self, observation):
         """Save observation for act.
         If multiple observations are from the same episode, concatenate them.
         """
         # shallow copy observation (deep copy can be expensive)
-        observation = observation.copy()
-
-        if 'text' in observation:
-            if observation['text'] == '':
-                observation.pop('text')
-            else:
-                dialog = deque(maxlen=self.truncate)
-                if self.episode_done:
-                    self.history.clear()
-                else:
-                    # get last y if avail and add to history
-                    batch_idx = self.opt.get('batchindex', 0)
-                    if self.answers[batch_idx] is not None:
-                        # use our last answer, which is the label during train
-                        lastY = self.answers[batch_idx]
-                        y_utt = deque([self.START_IDX], maxlen=self.truncate)
-                        y_utt.extend(lastY)
-                        y_utt.append(self.END_IDX)
-                        self.history.append(y_utt)
-                        self.answers[batch_idx] = None  # forget last y now
-                    # remember past dialog of history_length utterances
-                    dialog += (tok for utt in self.history for tok in utt)
-
-                # put START and END around text
-                parsed_x = deque([self.START_IDX], maxlen=self.truncate)
-                parsed_x.extend(self.parse(observation['text']))
-                parsed_x.append(self.END_IDX)
-                # add curr x to history
-                self.history.append(parsed_x)
-
-                dialog += parsed_x
-                observation['text'] = dialog
-
-        self.observation = observation
         self.episode_done = observation['episode_done']
-
-        return observation
+        obs = observation.copy()
+        obs['text'] = maintain_dialog_history(
+            self.history, obs,
+            reply=self.answers[batch_idx],
+            HistoryLength=self.opt['history_length'],
+            useReplies=self.opt['history_replies'])
+        self.answers[batch_idx] = None
+        return obs
 
     def predict(self, xs, ys=None, cands=None, valid_cands=None, lm=False):
         """Produce a prediction from our model.

@@ -185,3 +185,49 @@ def sort_data(data, key='text_label', method='spaces'):
 def make_batches(data, bsz):
     """Return a list of lists of size bsz given a list of examples."""
     return [data[i:i + bsz] for i in range(0, len(data), bsz)]
+
+def maintain_dialog_history(history, observation, reply='',
+                            historyLength=1, useReplies="labels",
+                            truncate=1000000):
+    """Keeps track of dialog history, up to a truncation length.
+    Either includes replies from the labels, model, or not all using param 'replies'."""
+
+    if 'dialog' not in history:
+        history.dialog = deque(maxlen=self.truncate)
+
+    if self.history.episode_done:
+        history.dialog.clear()
+        self.history.episode_done = False
+
+    if useReplies != 'none':
+        if useReplies == 'model':
+            if reply != '':
+                history.dialog.extend(reply)
+            r = reply
+        else:
+            if 'labels' in observation:
+                r = observation['labels'][0]
+                history.dialog.extend(r)
+
+    if 'text' in observation:
+        history.dialog.extend(observation['text'])
+
+    # remember past dialog of history_length utterances
+    dialog += (tok for utt in self.history for tok in utt)
+
+            # put START and END around text
+            parsed_x = deque([self.START_IDX], maxlen=self.truncate)
+            parsed_x.extend(self.parse(observation['text']))
+            parsed_x.append(self.END_IDX)
+            # add curr x to history
+            self.history.append(parsed_x)
+
+            dialog += parsed_x
+            observation['text'] = dialog
+    self.history.episode_done = observation['episode_done']
+
+
+deque(maxlen=(
+            opt['history_length'] if opt['history_length'] > 0 else None))        
+
+
