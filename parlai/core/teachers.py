@@ -127,12 +127,15 @@ class FixedDialogTeacher(Teacher):
         # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:
-            self.data_loader = shared['data_loader']
             self.index = shared['index']
+            if 'data_loader' in shared:
+                self.data_loader = shared['data_loader']
         else:
+            self.index = AttrDict(value=-1)
+
+        if not hasattr(self, 'data_loader'):
             self.data_loader = DataLoader(opt)
             self.data_loader.start()
-            self.index = AttrDict(value=-1)
 
         # set up batching
         self.bsz = opt.get('batchsize', 1)
@@ -208,7 +211,6 @@ class FixedDialogTeacher(Teacher):
 
     def share(self):
         shared = super().share()
-        shared['data_loader'] = self.data_loader
 
         if hasattr(self, 'lastYs'):
             # share lastYs to communicate between batch_act and observe
@@ -220,6 +222,8 @@ class FixedDialogTeacher(Teacher):
                 self.index = Value('l', -1)
             if hasattr(self, 'batches'):
                 shared['batches'] = self.batches
+        else:
+            shared['data_loader'] = self.data_loader
         shared['index'] = self.index
 
         return shared

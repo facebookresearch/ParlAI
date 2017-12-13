@@ -47,9 +47,7 @@ import math
 import random
 
 try:
-    import torch.multiprocessing as mp
-    # mp.set_start_method('spawn')
-    from mp import Process, Value, Condition, Semaphore
+    from torch.multiprocessing import Process, Value, Condition, Semaphore
 except ImportError:
     from multiprocessing import Process, Value, Condition, Semaphore
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
