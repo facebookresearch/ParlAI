@@ -6,7 +6,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlau.core.utils import maintain_dialog_history
+from parlai.core.utils import maintain_dialog_history
 from .modules import Seq2seq
 
 import torch
@@ -129,10 +129,9 @@ class Seq2seqAgent(Agent):
                            choices=['none', 'only', 'both'],
                            help='Enabled language modeling training on the '
                                 'concatenated input and label data.')
-        agent.add_argument('-hist', '--history-length', default=-1, type=int,
-                           help='Number of past utterances to remember. '
-                                'These include self-utterances. Default '
-                                'remembers entire episode history.')
+        agent.add_argument('-hist', '--history-length', default=100000, type=int,
+                           help='Number of past characters to remember. '
+                                'Default remembers 100000 characters.')
         agent.add_argument('-histr', '--history-replies',
                            default='none', type=str,
                            choices=['none', 'model', 'label'],
@@ -298,19 +297,27 @@ class Seq2seqAgent(Agent):
         shared['END_IDX'] = self.END_IDX
         return shared
                            
-                           def observe(self, observation):
+    def observe(self, observation):
         """Save observation for act.
         If multiple observations are from the same episode, concatenate them.
         """
         # shallow copy observation (deep copy can be expensive)
         self.episode_done = observation['episode_done']
         obs = observation.copy()
-        obs['text'] = maintain_dialog_history(
+        batch_idx = self.opt.get('batchindex', 0)
+        obs['text2vec'] = maintain_dialog_history(
             self.history, obs,
             reply=self.answers[batch_idx],
-            HistoryLength=self.opt['history_length'],
-            useReplies=self.opt['history_replies'])
+            historyLength=self.opt['history_length'],
+            useReplies=self.opt['history_replies'],
+            dict=self.dict)
         self.answers[batch_idx] = None
+        #print("======")
+        #print(obs['text'])
+        #print(self.v2t(obs['text']))
+        #print("------")
+        #import pdb; pdb.set_trace()
+        self.observation = obs
         return obs
 
     def predict(self, xs, ys=None, cands=None, valid_cands=None, lm=False):
@@ -346,7 +353,7 @@ class Seq2seqAgent(Agent):
         """Convert a list of observations into input & target tensors."""
         def valid(obs):
             # check if this is an example our model should actually process
-            return 'text' in obs
+            return 'text2vec' in obs
         try:
             # valid examples and their indices
             valid_inds, exs = zip(*[(i, ex) for i, ex in
@@ -360,7 +367,7 @@ class Seq2seqAgent(Agent):
 
         # `x` text is already tokenized and truncated
         # sort by length so we can use pack_padded
-        parsed_x = [ex['text'] for ex in exs]
+        parsed_x = [ex['text2vec'] for ex in exs]
         x_lens = [len(x) for x in parsed_x]
         ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
 
