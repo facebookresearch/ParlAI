@@ -121,7 +121,8 @@ class FixedDialogTeacher(Teacher):
             self.random = self.datatype == 'train'
         if not hasattr(self, 'training'):
             self.training = self.datatype.startswith('train')
-
+        if not hasattr(self, 'datafile'):
+            self.datafile = opt.get('datafile')
         # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:

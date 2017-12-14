@@ -23,16 +23,16 @@
         - If building the dictionary for the first time, please specify
           the `--buildteacher` so that the dictionary can be built appropriately
 
+    Briefly, to use the PytorchDataTeacher, specify `-t pytorch_data_teacher`
+    when training.
+
     The following is a more in-depth explanation for PytorchDataTeacher usage;
     i.e., to use the PytorchDataTeacher, one must do the following:
 
     1. Ensure that an appropriate teacher exists that can read the data
        currently saved and produce an action dict for an agent (this will be
        the `buildteacher`)
-    2. Subclass PytorchDataTeacher in a task agents file (one does not
-       necessarily need to implement any of the methods in PytorchDataTeacher,
-       it just should exist in the `agents.py` file).
-    3. Build the data so that it can be used by the PytorchDataTeacher
+    2. Build the data so that it can be used by the PytorchDataTeacher
         - This can be accomplished in 2 ways:
             1. Specify a `buildteacher`, `datafile` (where the data currently
                is, and what will be used to build the data), and `datatype`
@@ -44,7 +44,7 @@
                the datatype, and then specify the `buildteacher` when calling
                either `build_pytorch_data.py` or `train_model.py`
 
-    Additionally, if `preprocessed` is set to `True`, then the model specified
+    Additionally, if `preprocess` is set to `True`, then the model specified
     in the command line params will have its `observe` function called on the
     `buildteacher`'s action, and the data will be saved for that model
     specifically.
@@ -54,23 +54,21 @@
 
     1. Implement a normal `bAbI` teacher that can read the data in its current
        format and create an action dict (this currently exists as the
-       `Task1kTeacher`
-    2. Implement a `bAbI` teacher that subclasses PytorchDataTeacher, e.g.
-       `Task1kPyTeacher`
-    3. If `Task1kTeacher` saves the datafile in it's attributes, use one of the
+       `Task1kTeacher`)
+    2. If `Task1kTeacher` saves the datafile in it's attributes, use one of the
        following 2 commands:
-       - `python examples/train_model.py -t babi:task10kpy:1 --buildteacher
+       - `python examples/train_model.py -t pytorch_data_teacher --buildteacher \
          babi:task10k:1 -m seq2seq -mf /tmp/pytorch_data_build --preprocess 1`
             - if one would like to train the model after building the data
-       - `python examples/build_pytorch_data.py -m seq2seq
+       - `python examples/build_pytorch_data.py -m seq2seq \
          --buildteacher babi:task10k:1 --preprocess 1`
-    4. If you would like to specify a specific datafile to build, e.g. a
+    3. If you would like to specify a specific datafile to build, e.g. a
        validation file, you could do either of the following:
-       - `python examples/train_model.py -t babi:task10kpy:1 --buildteacher
-         babi:task10k:1 --datafile data/bAbI/tasks_1-20_v1-2/en-valid-10k-nosf/qa1_valid.txt
+       - `python examples/train_model.py -t pytorch_data_teacher --buildteacher \
+         babi:task10k:1 --datafile data/bAbI/tasks_1-20_v1-2/en-valid-10k-nosf/qa1_valid.txt \
          -dt valid -m seq2seq -mf /tmp/pytorch_data_build --preprocess 1`
-       - `python examples/build_pytorch_data.py -m seq2seq
-         --buildteacher babi:task10k:1 --preprocess 1
+       - `python examples/build_pytorch_data.py -m seq2seq \
+         --buildteacher babi:task10k:1 --preprocess 1 \
          --datafile data/bAbI/tasks_1-20_v1-2/en-valid-10k-nosf/qa1_valid.txt`
 
 """
@@ -303,3 +301,6 @@ class PytorchDataTeacher(Teacher):
             # but this way the model can use the labels for perplexity or loss
             action['eval_labels'] = action.pop('labels')
         return action
+
+class DefaultTeacher(PytorchDataTeacher):
+    pass

@@ -34,8 +34,9 @@ def build_dict(opt):
     ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
     ordered_opt['image_mode'] = 'none'
-    build_teacher_task = ordered_opt.get('buildteacher', '')
-    if build_teacher_task != '':
+    if ordered_opt['task'] == 'pytorch_data' and ordered_opt.get('preprocess', False):
+       build_teacher_task = ordered_opt.get('buildteacher', '')
+       if build_teacher_task != '':
         ordered_opt['task'] = build_teacher_task
     world_dict = create_task(ordered_opt, dictionary)
     # pass examples to dictionary
