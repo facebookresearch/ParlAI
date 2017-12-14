@@ -215,3 +215,49 @@ class QuestionerAgent(CooperativeGameAgent):
             guess_tokens.append(prediction)
         return guess_tokens
 
+
+class AnswererAgent(CooperativeGameAgent):
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        """Add command-line arguments specifically for this agent."""
+        DictionaryAgent.add_cmdline_args(argparser)
+        group = argparser.add_argument_group('Questioner Agent Arguments')
+        parser.add_argument('--a-in-vocab', default=13, type=int,
+                            help='Input vocabulary for questioner. Usually includes total '
+                                 'distinct words spoken by answerer, questioner itself, '
+                                 'and words by which the goal is described.')
+        parser.add_argument('--a-embed-size', default=20, type=int,
+                            help='Size of word embeddings for questioner')
+        parser.add_argument('--a-state-size', default=100, type=int,
+                            help='Size of hidden state of questioner')
+        parser.add_argument('--a-out-vocab', default=3, type=int,
+                            help='Output vocabulary for questioner')
+        parser.add_argument('--a-img-feat-size', default=12, type=int,
+                            help='Size of output to be predicted (for goal).')
+        super().add_cmdline_args(argparser)
+
+    def __init__(self, opt, shared=None):
+        # transfer opt for super class to use
+        opt['in_vocab_size'] = opt['a_in_vocab']
+        opt['embed_size'] = opt['a_embed_size']
+        opt['state_size'] = opt['a_state_size']
+        opt['out_vocab_size'] = opt['a_out_vocab']
+
+        # add a module for grounding visual content
+        # opt['a_img_input_size'] should be specified through custom arg or subclass, if needed
+        self.img_net = ImgNet(opt['a_img_feat_size'], opt.get('a_img_input_size', None))
+        super().__init__(opt, shared)
+        self.id = 'AnswererAgent'
+
+    @property
+    def modules(self):
+        # override and include img_net as well
+        return [self.img_net, self.listen_net, self.state_net, self.speak_net]
+
+    def img_embed(self, image):
+        """Extra method to be executed at the end of episode to carry out goal
+        and decide reward on the basis of prediction.
+        """
+        features = self.img_net(image)
+        return features

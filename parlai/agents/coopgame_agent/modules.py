@@ -30,9 +30,11 @@ class ImgNet(nn.Module):
     """Module to embed the visual information. Usually, QBot is blindfolded,
     so this exists only in ABot.
     """
-    def __init__(self, num_attrs, feature_size):
+    def __init__(self, feature_size, input_size=None):
         super().__init__()
-        self.net = nn.Embedding(num_attrs, feature_size)
+        # input_size is needed for modules which require input_size specification
+        # nn.Embedding requires input size to be specified, while nn.Conv2d doesn't
+        self.net = nn.Embedding(input_size, feature_size)
         xavier_init(self)
 
     def forward(self, image):
