@@ -60,17 +60,17 @@
     3. If `Task1kTeacher` saves the datafile in it's attributes, use one of the
        following 2 commands:
        - `python examples/train_model.py -t babi:task10kpy:1 --buildteacher
-         babi:task10k:1 -m seq2seq -mf /tmp/pytorch_data_build --preprocessed 1`
+         babi:task10k:1 -m seq2seq -mf /tmp/pytorch_data_build --preprocess 1`
             - if one would like to train the model after building the data
-       - `python examples/build_pytorch_data.py -m seq2seq -t babi:task10kpy:1
-         --buildteacher babi:task10k:1 --preprocessed 1`
+       - `python examples/build_pytorch_data.py -m seq2seq
+         --buildteacher babi:task10k:1 --preprocess 1`
     4. If you would like to specify a specific datafile to build, e.g. a
        validation file, you could do either of the following:
        - `python examples/train_model.py -t babi:task10kpy:1 --buildteacher
          babi:task10k:1 --datafile data/bAbI/tasks_1-20_v1-2/en-valid-10k-nosf/qa1_valid.txt
-         -dt valid -m seq2seq -mf /tmp/pytorch_data_build --preprocessed 1`
-       - `python examples/build_pytorch_data.py -m seq2seq -t babi:task10kpy:1
-         --buildteacher babi:task10k:1 --preprocessed 1
+         -dt valid -m seq2seq -mf /tmp/pytorch_data_build --preprocess 1`
+       - `python examples/build_pytorch_data.py -m seq2seq
+         --buildteacher babi:task10k:1 --preprocess 1
          --datafile data/bAbI/tasks_1-20_v1-2/en-valid-10k-nosf/qa1_valid.txt`
 
 """

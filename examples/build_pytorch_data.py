@@ -11,7 +11,7 @@
 
    One can set the `--context-len` flag to specify how many past utterances
    are used in a flattened episode
-   
+
 """
 from parlai.core.agents import create_agent, create_task_agent_from_taskname
 from parlai.core.params import ParlaiParser
@@ -67,7 +67,7 @@ def build_data(opt):
 
     datafile = teacher.datafile if hasattr(teacher, 'datafile') else opt.get('datafile')
     if not datafile:
-        raise Exception('Tried to build data but either `buildteacher` does not'
+        raise Exception('Tried to build data but either `buildteacher` does not '
                         'have a datafile or `--datafile` is not set')
 
     pytorch_datafile = datafile + ".pytorch"
@@ -131,6 +131,9 @@ def main():
                        help=('The file to be loaded, preprocessed, and saved'))
     build.add_argument('--buildteacher', type=str, default='',
         help='Which teacher to use when building the pytorch data')
+    build.add_argument('--preprocess', type=bool, default=True,
+        help='Whether the agent should preprocess the data while building'
+             'the pytorch data')
     opt = argparser.parse_args()
     build_data(opt)
 
