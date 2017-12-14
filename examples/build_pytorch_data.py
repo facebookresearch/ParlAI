@@ -6,11 +6,12 @@
 """Generates a pytorch data file from the training data; for use in the
    PytorchDataTeacher.
 
-   Note that with out given implementation of batch act, episodes are compressed
+   Note that with our given implementation of batch act, episodes are compressed
    such that each episode is one example for a model.
 
    One can set the `--context-len` flag to specify how many past utterances
    are used in a flattened episode
+   
 """
 from parlai.core.agents import create_agent, create_task_agent_from_taskname
 from parlai.core.params import ParlaiParser
