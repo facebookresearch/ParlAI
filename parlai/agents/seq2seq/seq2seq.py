@@ -301,7 +301,7 @@ class Seq2seqAgent(Agent):
         # shallow copy observation (deep copy can be expensive)
         observation = observation.copy()
 
-        if 'text' in observation and not observation.get('preprocessed', False):
+        if 'text' in observation:
             if observation['text'] == '':
                 observation.pop('text')
             else:
