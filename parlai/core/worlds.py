@@ -776,6 +776,7 @@ class HogwildWorld(World):
       once the processing is complete).
     """
 
+
     def __init__(self, opt, world):
         super().__init__(opt)
         self.inner_world = world

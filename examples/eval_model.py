@@ -25,10 +25,13 @@ def main():
     parser.add_argument('-n', '--num-examples', default=100000000)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.set_defaults(datatype='valid')
-    opt = parser.parse_args()
+    opt = parser.parse_args(print_args=False)
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
+    # Show arguments after loading model
+    parser.opt = agent.opt
+    parser.print_args()
 
     # Show some example dialogs:
     for k in range(int(opt['num_examples'])):

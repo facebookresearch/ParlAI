@@ -23,7 +23,8 @@ class DefaultTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, '')
-        opt['cands_datafile'] = opt['datafile']
+        if not opt['datatype'].startswith('train'):
+            opt['cands_datafile'] = opt['datafile']
         super().__init__(opt, shared)
 
     def setup_data(self, path):
