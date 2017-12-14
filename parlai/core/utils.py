@@ -217,11 +217,9 @@ def maintain_dialog_history(history, observation, reply='',
         if useReplies == 'model':
             if reply != '':
                 history['dialog'].extend(parse(reply))
-            r = reply
-        else:
-            if 'labels' in observation:
-                r = observation['labels'][0]
-                history['dialog'].extend(parse(r))
+        elif 'labels' in observation:
+            r = observation['labels'][0]
+            history['dialog'].extend(parse(r))
 
     if 'text' in observation:
         history['dialog'].extend(parse(observation['text']))
