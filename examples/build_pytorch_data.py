@@ -83,7 +83,7 @@ def build_data(opt):
     current = []
     episode_done = False
     include_labels = opt.get('include_labels', True)
-    context_length = opt.get('context_length', None)
+    context_length = opt.get('context_length', -1)
     context = deque(maxlen=context_length if context_length > 0 else None)
     preprocess = opt.get('preprocess', True)
     # pass examples to dictionary
