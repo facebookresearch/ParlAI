@@ -763,6 +763,7 @@ class HogwildWorld(World):
     """
 
     def __init__(self, world_class, opt, agents):
+        super().__init__(opt)
         self.inner_world = world_class(opt, agents)
 
         self.queued_items = Semaphore(0)  # counts num exs to be processed
