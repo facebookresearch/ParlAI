@@ -130,8 +130,8 @@ class Seq2seqAgent(Agent):
                            help='Enabled language modeling training on the '
                                 'concatenated input and label data.')
         agent.add_argument('-hist', '--history-length', default=100000, type=int,
-                           help='Number of past characters to remember. '
-                                'Default remembers 100000 characters.')
+                           help='Number of past tokens to remember. '
+                                'Default remembers 100000 tokens.')
         agent.add_argument('-histr', '--history-replies',
                            default='none', type=str,
                            choices=['none', 'model', 'label'],
@@ -301,8 +301,8 @@ class Seq2seqAgent(Agent):
         """Save observation for act.
         If multiple observations are from the same episode, concatenate them.
         """
-        # shallow copy observation (deep copy can be expensive)
         self.episode_done = observation['episode_done']
+        # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
         batch_idx = self.opt.get('batchindex', 0)
         obs['text2vec'] = maintain_dialog_history(

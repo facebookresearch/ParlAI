@@ -201,7 +201,7 @@ def maintain_dialog_history(history, observation, reply='',
                 parsed_x.append(dict[dict.end_token])
                 return parsed_x
             else:
-                return dict.txt2vec(vec)
+                return vec
         else:
             return [txt]
 
