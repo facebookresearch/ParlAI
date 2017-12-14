@@ -185,3 +185,48 @@ def sort_data(data, key='text_label', method='spaces'):
 def make_batches(data, bsz):
     """Return a list of lists of size bsz given a list of examples."""
     return [data[i:i + bsz] for i in range(0, len(data), bsz)]
+
+def maintain_dialog_history(history, observation, reply='',
+                            historyLength=1, useReplies="labels",
+                            dict=None, useStartEndIndices=True):
+    """Keeps track of dialog history, up to a truncation length.
+    Either includes replies from the labels, model, or not all using param 'replies'."""
+
+    def parse(txt):
+        if dict is not None:
+            vec =  dict.txt2vec(txt)
+            if useStartEndIndices:
+                parsed_x = deque([dict[dict.start_token]])
+                parsed_x.extend(vec)
+                parsed_x.append(dict[dict.end_token])
+                return parsed_x
+            else:
+                return vec
+        else:
+            return [txt]
+
+    if 'dialog' not in history:
+        history['dialog'] = deque(maxlen=historyLength)
+        history['episode_done'] = False
+
+    if history['episode_done']:
+        history['dialog'].clear()
+        history['episode_done'] = False
+
+    if useReplies != 'none':
+        if useReplies == 'model':
+            if reply != '':
+                history['dialog'].extend(parse(reply))
+        elif 'labels' in observation:
+            r = observation['labels'][0]
+            history['dialog'].extend(parse(r))
+
+    if 'text' in observation:
+        history['dialog'].extend(parse(observation['text']))
+
+    history['episode_done'] = observation['episode_done']
+    return history['dialog']
+
+
+
+
