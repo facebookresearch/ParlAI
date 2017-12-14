@@ -180,8 +180,6 @@ class TrainLoop():
         logs.append('time:{}s'.format(math.floor(self.train_time.time())))
         logs.append('parleys:{}'.format(self.parleys))
 
-        if 'total' in train_report:
-            logs.append('total_exs:{}'.format(train_report.pop('total')))
         if 'time_left' in train_report:
             logs.append('time_left:{}s'.format(
                          math.floor(train_report.pop('time_left', ""))))
