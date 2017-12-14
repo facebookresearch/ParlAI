@@ -20,6 +20,8 @@
                 or the data file used to build the pytorch data file
             - `--buildteacher` set to the task teacher that will be/was used
                 to build the pytorch data (by passing observations to the agent)
+        - If building the dictionary for the first time, please specify
+          the `--buildteacher` so that the dictionary can be built appropriately
 
 """
 from .agents import Teacher
@@ -64,17 +66,8 @@ class StreamDataset(Dataset):
 
     def _data_generator(self, datafile):
         while True:
-            # for episode in self._read_episode(self.datafile):
-            #     yield episode
-            read = open(datafile)
-            episode = []
-            for line in read:
-                example = json.loads(line)
-                episode.append(example)
-                if example['episode_done']:
-                    yield episode
-                    episode = []
-            read.close()
+            for episode in self._read_episode(self.datafile):
+                yield episode
 
     def _read_episode(self, datafile):
         read = open(datafile)
@@ -149,12 +142,15 @@ class PytorchDataTeacher(Teacher):
         """
         super().reset()
         self.metrics.clear()
+        self.reset_data()
+
+    def reset_data(self):
+        self.data = enumerate(self.dataloader)
         self.lastY = None
         self.epochDone = False
         self.episode = None
         self.episode_done = True
         self.episode_idx = 0
-        self.batch_index = 0
         self.data = enumerate(self.dataloader)
 
     def share(self):
@@ -224,7 +220,7 @@ class PytorchDataTeacher(Teacher):
             if not self.training:
                 return [{'episode_done': True, 'id': self.getID()}] * self.bsz
             else:
-                self.reset()
+                self.reset_data()
 
         # get next batch
         batch, self.epochDone = self.next_batch()
@@ -244,7 +240,7 @@ class PytorchDataTeacher(Teacher):
             if not self.training:
                 return {'episode_done': True, 'id': self.getID()}
             else:
-                self.reset()
+                self.reset_data()
 
         # get next example
         action, self.epochDone = self.next_example()

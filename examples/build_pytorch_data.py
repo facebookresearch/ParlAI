@@ -39,7 +39,7 @@ def make_serializable(obj):
 def build_data(opt):
     agent = create_agent(opt)
     #If build teacher not specified, we are simply looking for the file
-    if not ordered_opt.get('buildteacher', None):
+    if not opt.get('buildteacher', None):
         df = opt.get('datafile')
         # check if the user set a datafile
         if not df:
@@ -48,13 +48,13 @@ def build_data(opt):
         if 'pytorch' not in df:
             df += '.pytorch' + (agent.getID() if opt.get('preprocess', True) else '')
         if not os.path.isfile(df):
-            raise Exception('Tried to find data but it doesnt look like it is'
-                            'built, please specify `--buildteacher`')
+            raise Exception('Tried to find data but it is not built, please'
+                            'specify `--buildteacher`')
         else:
             return df
 
     ordered_opt = copy.deepcopy(opt)
-    # we use streaming to build dictionary
+    # we use streaming to build the data
     dt = opt['datatype'].split(':')[0]
     ordered_opt['datatype'] = dt + ':ordered:stream'
     ordered_opt['numthreads'] = 1
@@ -73,7 +73,7 @@ def build_data(opt):
     if opt.get('preprocess', True):
         pytorch_datafile += agent.getID()
     if os.path.isfile(pytorch_datafile):
-        # Dictionary already built
+        # Data already built
         print("[ pytorch data already built .]")
         return pytorch_datafile
     print('----------\n[ setting up pytorch data. ]\n----------')
