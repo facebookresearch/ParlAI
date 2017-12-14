@@ -115,7 +115,7 @@ class MemnnAgent(Agent):
 
     def observe(self, observation):
         observation = copy.copy(observation)
-        if not self.episode_done:
+        if not self.episode_done and not observation.get('preprocessed', False):
             # if the last example wasn't the end of an episode, then we need to
             # recall what was said in that example
             prev_dialogue = self.observation['text'] if self.observation is not None else ''

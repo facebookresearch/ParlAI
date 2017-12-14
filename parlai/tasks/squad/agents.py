@@ -5,6 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.teachers import FixedDialogTeacher, DialogTeacher
+from parlai.core.pytorch_data_teacher import PytorchDataTeacher
 from .build import build
 
 import json
@@ -29,8 +30,8 @@ class IndexTeacher(FixedDialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        datapath = os.path.join(opt['datapath'], 'SQuAD', suffix + '-v1.1.json')
-        self.data = self._setup_data(datapath)
+        self.datapath = os.path.join(opt['datapath'], 'SQuAD', suffix + '-v1.1.json')
+        self.data = self._setup_data(self.datapath)
 
         self.id = 'squad'
         self.reset()
