@@ -141,8 +141,9 @@ class Metrics(object):
             self.metrics['hits@' + str(k)] = 0
         if opt.get('numthreads', 1) > 1:
             self.metrics = SharedTable(self.metrics)
-        self.datatype = opt.get('datatype', 'train')
+
         self.custom_keys = []
+        self.datatype = opt.get('datatype', 'train')
 
     def __str__(self):
         return str(self.metrics)
@@ -210,7 +211,10 @@ class Metrics(object):
         if 'metrics' in observation:
             for k, v in observation['metrics'].items():
                 if k not in ['correct', 'f1', 'hits@k']:
-                    with self._lock():
+                    if type(self.metrics) is SharedTable:
+                        # can't share custom metrics during hogwild
+                        pass
+                    else:
                         if k not in self.metrics:
                             self.custom_keys.append(k)
                             self.metrics[k] = v
@@ -238,7 +242,9 @@ class Metrics(object):
                     self.metrics['hits@' + str(k)] / total, 3)
             for k in self.custom_keys:
                 if k in self.metrics:
-                    m[k] = round_sigfigs(self.metrics[k] / total, 3)
+                    v = self.metrics[k]
+                    if type(v) not in (int, float) or v != 0:
+                        m[k] = round_sigfigs(v / total, 3)
         return m
 
     def clear(self):
@@ -249,4 +255,12 @@ class Metrics(object):
             for k in self.eval_pr:
                 self.metrics['hits@' + str(k)] = 0
             for k in self.custom_keys:
-                self.metrics.pop(k, None)  # safer then casting to zero
+                if k in self.metrics:
+                    v = self.metrics[k]
+                    v_typ = type(v)
+                    if v_typ == float:
+                        self.metrics[k] = 0.0
+                    elif v_typ == int:
+                        self.metrics[k] = 0
+                    elif 'Tensor' in str(v_typ):
+                        self.metrics[k].zero_()

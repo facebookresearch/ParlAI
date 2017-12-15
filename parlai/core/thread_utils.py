@@ -25,9 +25,9 @@ class SharedTable(MutableMapping):
     """
 
     types = {
-        str: ctypes.c_wchar_p,
         int: ctypes.c_int,
         float: ctypes.c_float,
+        bool: ctypes.c_bool,
     }
 
     def __init__(self, init_dict=None):
@@ -44,6 +44,7 @@ class SharedTable(MutableMapping):
         # arrays is dict of {value_type: array_of_ctype}
         self.arrays = {}
         self.tensors = {}
+
         if init_dict:
             sizes = {typ: 0 for typ in self.types.keys()}
             for k, v in init_dict.items():
@@ -77,13 +78,13 @@ class SharedTable(MutableMapping):
         self.lock = Lock()
 
     def __len__(self):
-        return sum(len(a) for a in self.arrays.values())
+        return len(self.idx) + len(self.tensors)
 
     def __iter__(self):
-        return iter(self.idx)
+        return iter([k for k in self.idx] + [k for k in self.tensors])
 
     def __contains__(self, key):
-        return key in self.idx
+        return key in self.idx or key in self.tensors
 
     def __getitem__(self, key):
         """Returns shared value if key is available."""
@@ -120,27 +121,13 @@ class SharedTable(MutableMapping):
                                  ).format(key=key, v1=typ, v2=val_type))
             self.arrays[typ][idx] = value
         else:
-            # increase array size to make room for the new key
-            old_array = self.arrays[val_type]
-            ctyp = self.types[val_type]
-            new_array = RawArray(ctyp, len(old_array) + 1)
-            for i in range(len(old_array)):
-                new_array[i] = old_array[i]
-            new_array[-1] = value
-            self.arrays[val_type] = new_array
-            self.idx[key] = (len(new_array) - 1, val_type)
+            raise KeyError('Cannot add more keys to the shared table as '
+                           'they will not be synced across processes.')
 
     def __delitem__(self, key):
         if key in self.tensors:
             del self.tensors[key]
         elif key in self.idx:
-            # decrease array size now that item is gone
-            idx, typ = self.idx[key]
-            old_array = self.arrays[typ]
-            new_array = RawArray(self.types[typ], len(old_array) - 1)
-            for i in range(len(old_array) - 1):
-                new_array[i] = old_array[i]
-            self.arrays[typ] = new_array
             del self.idx[key]
         else:
             raise KeyError('Key "{}" not found in SharedTable'.format(key))
