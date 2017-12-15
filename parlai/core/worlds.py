@@ -194,12 +194,7 @@ class World(object):
 
     def get_total_epochs(self):
         """Return total amount of epochs on which the world has trained."""
-        if not self.max_exs:
-            self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
-        if self.max_exs > 0:
-            return self.total_parleys * self.opt['batchsize'] / self.num_examples()
-        else:
-            return self.total_epochs
+        return self.total_epochs
 
     def __enter__(self):
         """Empty enter provided for use with ``with`` statement.
@@ -250,6 +245,19 @@ class World(object):
         """Perform any cleanup, if appropriate."""
         pass
 
+    def update_counters(self):
+        """Update how many epochs have completed"""
+        self.total_parleys += 1
+        if not self.max_exs:
+            self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+        # when we know the size of the data
+        if self.max_exs > 0:
+            self.total_epochs = self.total_parleys * self.opt['batchsize'] / self.num_examples()
+        # when we do not know the size of the data
+        else:
+            if self.epoch_done():
+                self.total_epochs += 1
+
 
 class DialogPartnerWorld(World):
     """Simple world for two agents communicating synchronously.
@@ -279,7 +287,7 @@ class DialogPartnerWorld(World):
         agents[1].observe(validate(acts[0]))
         acts[1] = agents[1].act()
         agents[0].observe(validate(acts[1]))
-        self.total_parleys += 1
+        self.update_counters()
 
     def episode_done(self):
         """Only the first agent indicates when the episode is done."""
@@ -298,8 +306,6 @@ class DialogPartnerWorld(World):
             metrics = self.agents[0].report()
             if compute_time:
                 self.total_exs += metrics['total']
-                if self.num_examples() is not None and self.num_examples() > 0:
-                    self.total_epochs = int(self.total_exs / self.num_examples())
                 time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
                 metrics.update(time_metrics)
             return metrics
@@ -342,7 +348,7 @@ class MultiAgentDialogWorld(World):
             for other_agent in self.agents:
                 if other_agent != agent:
                     other_agent.observe(validate(acts[index]))
-        self.total_parleys += 1
+        self.update_counters()
 
     def epoch_done(self):
         done = False
@@ -362,8 +368,6 @@ class MultiAgentDialogWorld(World):
         metrics = self.agents[0].report()
         if compute_time:
             self.total_exs += metrics['total']
-            if self.num_examples() is not None and self.num_examples() > 0:
-                self.total_epochs = int(self.total_exs / self.num_examples())
             time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
             metrics.update(time_metrics)
         return metrics
@@ -419,7 +423,7 @@ class ExecutableWorld(MultiAgentDialogWorld):
                 obs = self.observe(other_agent, acts[index])
                 if obs is not None:
                     other_agent.observe(obs)
-        self.total_parleys += 1
+        self.update_counters()
 
 
 class MultiWorld(World):
@@ -510,7 +514,7 @@ class MultiWorld(World):
     def parley(self):
         self.parley_init()
         self.worlds[self.world_idx].parley()
-        self.total_parleys += 1
+        self.update_counters()
 
     def display(self):
         if self.world_idx != -1:
@@ -527,8 +531,6 @@ class MultiWorld(World):
         metrics = aggregate_metrics(self.worlds)
         if compute_time:
             self.total_exs += metrics['total']
-            if self.num_examples() is not None and self.num_examples() > 0:
-                self.total_epochs = int(self.total_exs / self.num_examples())
             time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
             metrics.update(time_metrics)
         return metrics
@@ -653,7 +655,7 @@ class BatchWorld(World):
                 obs = self.batch_observe(other_index, batch_act, agent_idx)
                 if obs is not None:
                     batch_observations[other_index] = obs
-        self.total_parleys += 1
+        self.update_counters()
 
     def display(self):
         s = ("[--batchsize " + str(len(self.worlds)) + "--]\n")
@@ -828,6 +830,7 @@ class HogwildWorld(World):
         # keep main process from getting too far ahead of the threads
         # this way it can only queue up to numthreads unprocessed examples
         self.sync['threads_sem'].acquire()
+        self.update_counters()
 
     def getID(self):
         return self.inner_world.getID()
