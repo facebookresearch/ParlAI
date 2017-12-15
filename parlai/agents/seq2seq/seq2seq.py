@@ -142,29 +142,37 @@ class Seq2seqAgent(Agent):
         super().__init__(opt, shared)
         opt = self.opt  # there is a deepcopy in the init
 
-        # all instances needs truncate param
+        # all instances may need some params
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
         self.history = {}
+        
+        # check for cuda
+        self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
+        
+
         if shared:
             # set up shared properties
             self.dict = shared['dict']
             self.START_IDX = shared['START_IDX']
             self.END_IDX = shared['END_IDX']
+            self.NULL_IDX = shared['NULL_IDX']
             # answers contains a batch_size list of the last answer produced
             self.answers = shared['answers']
+
+            if 'model' in shared:
+                # model is shared during hogwild
+                self.model = shared['model']
+                self.states = shared['states']
         else:
             # this is not a shared instance of this class, so do full init
-
             # answers contains a batch_size list of the last answer produced
             self.answers = [None] * opt['batchsize']
 
-            # check for cuda
-            self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
             if self.use_cuda:
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            states = {}
+            self.states = {}
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
                 print('Loading existing model params from ' + opt['model_file'])
@@ -190,9 +198,17 @@ class Seq2seqAgent(Agent):
                                  padding_idx=self.NULL_IDX,
                                  start_idx=self.START_IDX,
                                  end_idx=self.END_IDX,
-                                 longest_label=states.get('longest_label', 1))
+                                 longest_label=self.states.get('longest_label', 1))
 
-            # store important params in self
+            if self.states:
+                # set loaded states if applicable
+                self.model.load_state_dict(self.states['model'])
+
+            if self.use_cuda:
+                self.model.cuda()
+
+        if hasattr(self, 'model'):
+            # if model was built, do more setup
             self.rank = opt['rank_candidates']
             self.lm = opt['language_model']
 
@@ -202,15 +218,16 @@ class Seq2seqAgent(Agent):
             if self.rank:
                 self.cands = torch.LongTensor(1, 1, 1)
 
-            # set up modules
+            # set up criteria
             self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX)
 
-            if states:
-                # set loaded states if applicable
-                self.model.load_state_dict(states['model'])
-
             if self.use_cuda:
-                self.cuda()
+                # push to cuda
+                self.xs = self.xs.cuda(async=True)
+                self.ys = self.ys.cuda(async=True)
+                if self.rank:
+                    self.cands = self.cands.cuda(async=True)
+                self.criterion.cuda()
 
             # set up optimizer
             lr = opt['learningrate']
@@ -220,12 +237,12 @@ class Seq2seqAgent(Agent):
                 kwargs['momentum'] = 0.95
                 kwargs['nesterov'] = True
             self.optimizer = optim_class(self.model.parameters(), **kwargs)
-            if states:
-                if states['optimizer_type'] != opt['optimizer']:
+            if self.states:
+                if self.states['optimizer_type'] != opt['optimizer']:
                     print('WARNING: not loading optim state since optim class '
                           'changed.')
                 else:
-                    self.optimizer.load_state_dict(states['optimizer'])
+                    self.optimizer.load_state_dict(self.states['optimizer'])
 
         self.reset()
 
@@ -266,15 +283,6 @@ class Seq2seqAgent(Agent):
                 new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
-    def cuda(self):
-        """Push parameters to the GPU."""
-        self.xs = self.xs.cuda(async=True)
-        self.ys = self.ys.cuda(async=True)
-        if self.rank:
-            self.cands = self.cands.cuda(async=True)
-        self.criterion.cuda()
-        self.model.cuda()
-
     def zero_grad(self):
         """Zero out optimizer."""
         self.optimizer.zero_grad()
@@ -295,6 +303,11 @@ class Seq2seqAgent(Agent):
         shared['dict'] = self.dict
         shared['START_IDX'] = self.START_IDX
         shared['END_IDX'] = self.END_IDX
+        shared['NULL_IDX'] = self.NULL_IDX
+        if self.opt.get('numthreads', 1) > 1:
+            shared['model'] = self.model
+            self.model.share_memory()
+            shared['states'] = self.states
         return shared
                            
     def observe(self, observation):

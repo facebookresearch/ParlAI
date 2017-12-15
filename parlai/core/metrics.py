@@ -9,7 +9,7 @@ between processes.
 """
 
 from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import round_sigfigs
+from parlai.core.utils import round_sigfigs, no_lock
 from collections import Counter
 
 import re
@@ -144,12 +144,6 @@ class Metrics(object):
         self.datatype = opt.get('datatype', 'train')
         self.custom_keys = []
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        pass
-
     def __str__(self):
         return str(self.metrics)
 
@@ -162,7 +156,7 @@ class Metrics(object):
             return self.metrics.get_lock()
         else:
             # otherwise do nothing
-            return self
+            return no_lock()
 
     def update_ranking_metrics(self, observation, labels):
         text_cands = observation.get('text_candidates', None)

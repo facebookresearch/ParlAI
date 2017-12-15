@@ -29,9 +29,11 @@ dialog data and utilized by ``DialogTeacher``
 """
 from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
-from .utils import flatten, sort_data, make_batches
+from .utils import AttrDict, flatten, sort_data, make_batches, no_lock
 
 import concurrent.futures
+import multiprocessing
+from multiprocessing import Value, Lock
 from threading import Thread
 import queue
 import random
@@ -125,8 +127,13 @@ class FixedDialogTeacher(Teacher):
         # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:
-            self.data_loader = shared['data_loader']
+            self.index = shared['index']
+            if 'data_loader' in shared:
+                self.data_loader = shared['data_loader']
         else:
+            self.index = AttrDict(value=-1)
+
+        if not hasattr(self, 'data_loader'):
             self.data_loader = DataLoader(opt)
             self.data_loader.start()
 
@@ -141,11 +148,14 @@ class FixedDialogTeacher(Teacher):
         if self.use_batch_act:
             if shared:
                 self.lastYs = shared['lastYs']
+                if 'batches' in shared:
+                    self.batches = shared['batches']
             else:
                 self.lastYs = [None] * self.bsz
                 ordered_opt = opt.copy()
                 ordered_opt['datatype'] = ':'.join((dt[0], 'ordered'))
                 ordered_opt['batchsize'] = 1
+                ordered_opt['numthreads'] = 1
                 ordered_teacher = create_task_agent_from_taskname(ordered_opt)[0]
 
                 clen = opt.get('context_length', -1)
@@ -163,15 +173,12 @@ class FixedDialogTeacher(Teacher):
                                    context_length=clen, include_labels=incl)
                 self.sorted_data = sort_data(flatdata)
                 self.batches = make_batches(self.sorted_data, self.bsz)
-        elif self.bsz > 1:
-            # for ordered data in batch mode (especially, for validation and
-            # testing), each teacher in the batch gets a start index and a step
-            # size so they all process disparate sets of the data
-            self.step_size = self.bsz
-            self.data_offset = self.batchindex
+
+    def _lock(self):
+        if hasattr(self.index, 'get_lock'):
+            return self.index.get_lock()
         else:
-            self.step_size = 1
-            self.data_offset = 0
+            return no_lock()
 
     def reset(self):
         """Reset the dialog so that it is at the start of the epoch,
@@ -184,14 +191,11 @@ class FixedDialogTeacher(Teacher):
         self.epochDone = False
         self.data_queue = queue.Queue()
 
-        if self.use_batch_act:
-            self.batch_idx = -1
-            if self.random and hasattr(self, 'batches'):
-                random.shuffle(self.batches)
-        else:
-            self.episode_idx = self.data_offset - self.step_size
-            if (not self.random and self.data_offset >= self.num_episodes()):
-                self.epochDone = True
+        self.episode_idx = -1
+        with self._lock():
+            self.index.value = -1
+        if self.use_batch_act and self.random and hasattr(self, 'batches'):
+            random.shuffle(self.batches)
 
     def submit_load_request(self):
         """An agent should implement this method to submit requests to the
@@ -207,19 +211,37 @@ class FixedDialogTeacher(Teacher):
 
     def share(self):
         shared = super().share()
-        shared['data_loader'] = self.data_loader
+
         if hasattr(self, 'lastYs'):
+            # share lastYs to communicate between batch_act and observe
             shared['lastYs'] = self.lastYs
+
+        if self.opt.get('numthreads', 1) > 1:
+            if type(self.index) is not multiprocessing.sharedctypes.Synchronized:
+                # for multithreading need to move index into shared / locked memory
+                self.index = Value('l', -1)
+            if hasattr(self, 'batches'):
+                shared['batches'] = self.batches
+        else:
+            shared['data_loader'] = self.data_loader
+        shared['index'] = self.index
+
         return shared
 
-    def next_episode_idx(self, num_eps=None):
-        if not num_eps:
+    def next_episode_idx(self, num_eps=None, loop=None):
+        if num_eps is None:
             num_eps = self.num_episodes()
+        if loop is None:
+            loop = self.training
         if self.random:
-            self.episode_idx = random.randrange(num_eps)
+            new_idx = random.randrange(num_eps)
         else:
-            self.episode_idx = (self.episode_idx + self.step_size) % num_eps
-        return self.episode_idx
+            with self._lock():
+                self.index.value += 1
+                if loop:
+                    self.index.value %= num_eps
+                new_idx = self.index.value
+        return new_idx
 
     def next_example(self):
         if self.episode_done:
@@ -228,13 +250,17 @@ class FixedDialogTeacher(Teacher):
         else:
             self.entry_idx += 1
 
+        if self.episode_idx >= self.num_episodes():
+            return {'episode_done': True}, True
+
         ex = self.get(self.episode_idx, self.entry_idx)
         self.episode_done = ex['episode_done']
-        epoch_done = False
 
         if (not self.random and self.episode_done
-                and self.episode_idx + self.step_size >= self.num_episodes()):
+                and self.episode_idx + 1 >= self.num_episodes()):
             epoch_done = True
+        else:
+            epoch_done = False
 
         return ex, epoch_done
 
@@ -259,15 +285,13 @@ class FixedDialogTeacher(Teacher):
         zero. Children must override this method in order to inherit the
         `next_example` method.
         """
-        try:
-            return self.examples[episode_idx][entry_idx]
-        except Exception:
-            raise RuntimeError('"Get" method must be overriden by children.')
+        raise RuntimeError('"Get" method must be overriden by children.')
 
     def observe(self, observation):
         """Process observation for metrics."""
         if self.use_batch_act:
             self.lastY = self.lastYs[self.batchindex]
+            self.lastYs[self.batchindex] = None
 
         if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.update(observation, self.lastY)
@@ -280,22 +304,24 @@ class FixedDialogTeacher(Teacher):
             # reset if haven't yet
             self.reset()
 
-        if self.epochDone and not self.training:
-            # only do one epoch if not training, user needs to call reset()
+        # get next batch
+        with self._lock():
+            self.index.value += 1
+            if self.training:
+                self.index.value %= len(self.batches)
+            batch_idx = self.index.value
+
+            if batch_idx + 1 >= len(self.batches):
+                if self.random:
+                    random.shuffle(self.batches)
+                self.epochDone = True
+            else:
+                self.epochDone = False
+
+        if batch_idx >= len(self.batches):
             return [{'episode_done': True, 'id': self.getID()}] * self.bsz
 
-        # get next batch
-        self.batch_idx += 1
-        batch = self.batches[self.batch_idx]
-
-        if self.batch_idx + 1 == len(self.batches):
-            self.batch_idx = -1
-            if self.random:
-                random.shuffle(self.batches)
-            else:
-                self.epochDone = True
-        else:
-            self.epochDone = False
+        batch = self.batches[batch_idx]
 
         # pad batch
         if len(batch) < self.bsz:
@@ -313,11 +339,7 @@ class FixedDialogTeacher(Teacher):
             # reset if haven't yet
             self.reset()
 
-        if self.epochDone and not self.training:
-            # only do one epoch if not training, user needs to call reset()
-            return {'episode_done': True, 'id': self.getID()}
-
-        # get next example
+        # get next example, action is episode_done dict if already out of exs
         action, self.epochDone = self.next_example()
         action['id'] = self.getID()
 
@@ -327,6 +349,7 @@ class FixedDialogTeacher(Teacher):
             # move labels to eval field so not used for training
             # but this way the model can use the labels for perplexity or loss
             action['eval_labels'] = action.pop('labels')
+
         return action
 
 
@@ -625,12 +648,18 @@ class StreamDialogData(DialogData):
             # Share datafile and data_loader for computing num_exs and num_eps
             self.datafile = shared['datafile']
             self.data_loader = shared['data_loader']
+            if 'lock' in shared:
+                self.lock = shared['lock']
         else:
             # main instance holds the stream and shares pointer to it
             self.data_loader = data_loader
             self.datafile = opt['datafile']
             self.reset_data = None
             self.is_reset = True
+            if opt.get('numthreads', 1) > 1:
+                print('WARNING: multithreaded steaming will process every '
+                      'example numthreads times.')
+                self.lock = Lock()
         self.entry_idx = 0
         self.next_episode = None
         self.num_eps = None
@@ -643,6 +672,8 @@ class StreamDialogData(DialogData):
         # share datafile and data for loading length if necessary
         shared['datafile'] = self.datafile
         shared['data_loader'] = self.data_loader
+        if hasattr(self, 'lock'):
+            shared['lock'] = self.lock
 
         return shared
 
@@ -688,32 +719,44 @@ class StreamDialogData(DialogData):
             self.num_eps, self.num_exs = self.load_length()
         return self.num_eps
 
+    def _lock(self):
+        if hasattr(self, 'lock'):
+            return self.lock
+        else:
+            return no_lock()
+
     def get(self):
         """Returns a the next entry from the stream in the current episode for
         this instance. When episode is done returns first entry of next episode.
         """
         # first look up data
-        if self.next_episode is None:
-            self.next_episode = next(self.data)
-        if self.entry_idx == 0:
-            self.cur_episode = self.next_episode
-            self.next_episode = next(self.data)
-        entry = self.cur_episode[self.entry_idx]
+        if self.next_episode != -1 or self.entry_idx != 0:
+            with self._lock():
+                if self.next_episode is None:
+                    self.next_episode = next(self.data)
+                if self.entry_idx == 0:
+                    self.cur_episode = self.next_episode
+                    self.next_episode = next(self.data)
+                entry = self.cur_episode[self.entry_idx]
 
-        # now pack it in a action-observation dictionary
-        table = self.build_table(entry)
+                # now pack it in a action-observation dictionary
+                table = self.build_table(entry)
 
-        episode_done = self.entry_idx == len(self.cur_episode) - 1
-        if episode_done:
-            self.entry_idx = 0
+                episode_done = self.entry_idx == len(self.cur_episode) - 1
+                if episode_done:
+                    self.entry_idx = 0
+                else:
+                    self.entry_idx += 1
+                end_of_data = episode_done and self.next_episode is -1
+                if end_of_data and self.cycle:
+                    self.next_episode = next(self.data)
+
+                # last entry in this episode
+                table['episode_done'] = episode_done
         else:
-            self.entry_idx += 1
-        end_of_data = episode_done and self.next_episode is -1
-        if end_of_data and self.cycle:
-            self.next_episode = next(self.data)
+            table = {'episode_done': True}
+            end_of_data = True
 
-        # last entry in this episode
-        table['episode_done'] = episode_done
         return table, end_of_data
 
     def reset(self):
