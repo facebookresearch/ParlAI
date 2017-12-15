@@ -84,6 +84,22 @@ class Timer(object):
         return self.total
 
 
+class AttrDict(dict):
+    """Helper class to have a dict-like object with dot access.
+
+    For example, instead of `d = {'key': 'value'}` use
+    `d = AttrDict(key='value')`.
+    To access keys, instead of doing `d['key']` use `d.key`.
+
+    While this has some limitations on the possible keys (for example, do not
+    set the key `items` or you will lose access to the `items()` method), this
+    can make some code more clear.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__dict__ = self
+
+
 def round_sigfigs(x, sigfigs=4):
     try:
         if x == 0:
@@ -185,3 +201,59 @@ def sort_data(data, key='text_label', method='spaces'):
 def make_batches(data, bsz):
     """Return a list of lists of size bsz given a list of examples."""
     return [data[i:i + bsz] for i in range(0, len(data), bsz)]
+
+
+def maintain_dialog_history(history, observation, reply='',
+                            historyLength=1, useReplies="labels",
+                            dict=None, useStartEndIndices=True):
+    """Keeps track of dialog history, up to a truncation length.
+    Either includes replies from the labels, model, or not all using param 'replies'."""
+
+    def parse(txt):
+        if dict is not None:
+            vec =  dict.txt2vec(txt)
+            if useStartEndIndices:
+                parsed_x = deque([dict[dict.start_token]])
+                parsed_x.extend(vec)
+                parsed_x.append(dict[dict.end_token])
+                return parsed_x
+            else:
+                return vec
+        else:
+            return [txt]
+
+    if 'dialog' not in history:
+        history['dialog'] = deque(maxlen=historyLength)
+        history['episode_done'] = False
+
+    if history['episode_done']:
+        history['dialog'].clear()
+        history['episode_done'] = False
+
+    if useReplies != 'none':
+        if useReplies == 'model':
+            if reply != '':
+                history['dialog'].extend(parse(reply))
+        elif 'labels' in observation:
+            r = observation['labels'][0]
+            history['dialog'].extend(parse(r))
+
+    if 'text' in observation:
+        history['dialog'].extend(parse(observation['text']))
+
+    history['episode_done'] = observation['episode_done']
+    return history['dialog']
+
+  
+class NoLock(object):
+    """Empty `lock`. Does nothing when you enter or exit."""
+    def __enter__(self):
+        return self
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        pass
+
+
+single_nolock = NoLock()
+def no_lock():
+    """Builds a nolock for other classes to use for no-op locking."""
+    return single_nolock

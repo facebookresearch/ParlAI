@@ -46,6 +46,8 @@ def setup_args():
                        type=float, default=2)
     train.add_argument('-vtim', '--validation-every-n-secs',
                        type=float, default=-1)
+    train.add_argument('-stim', '--save-every-n-secs',
+                       type=float, default=-1)
     train.add_argument('-vme', '--validation-max-exs',
                        type=int, default=-1,
                        help='max examples to use during validation (default '
@@ -125,12 +127,14 @@ class TrainLoop():
         self.train_time = Timer()
         self.validate_time = Timer()
         self.log_time = Timer()
+        self.save_time = Timer()
         print('[ training... ]')
         self.parleys = 0
         self.max_num_epochs = opt['num_epochs'] if opt['num_epochs'] > 0 else float('inf')
         self.max_train_time = opt['max_train_time'] if opt['max_train_time'] > 0 else float('inf')
         self.log_every_n_secs = opt['log_every_n_secs'] if opt['log_every_n_secs'] > 0 else float('inf')
         self.val_every_n_secs = opt['validation_every_n_secs'] if opt['validation_every_n_secs'] > 0 else float('inf')
+        self.save_every_n_secs = opt['save_every_n_secs'] if opt['save_every_n_secs'] > 0 else float('inf')
         self.best_valid = 0
         self.impatience = 0
         self.saved = False
@@ -149,7 +153,7 @@ class TrainLoop():
                 opt['validation_metric'], self.best_valid))
             self.world.save_agents()
             self.saved = True
-            if opt['validation_metric'] == 'accuracy' and self.best_valid > opt['validation_cutoff']:
+            if opt['validation_metric'] == 'accuracy' and self.best_valid >= opt['validation_cutoff']:
                 print('[ task solved! stopping. ]')
                 return True
         else:
@@ -197,13 +201,11 @@ class TrainLoop():
             while True:
                 world.parley()
                 self.parleys += 1
-
-                if opt['numthreads'] > 1 and (self.parleys)%100 == 0:
-                    world.synchronize()
+                
                 if world.get_total_epochs() >= self.max_num_epochs:
+                    self.log()
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(
                         self.max_num_epochs, self.train_time.time()))
-                    self.log()
                     break
                 if self.train_time.time() > self.max_train_time:
                     print('[ max_train_time elapsed:{}s ]'.format(self.train_time.time()))
@@ -214,6 +216,10 @@ class TrainLoop():
                     stop_training = self.validate()
                     if stop_training:
                         break
+                if self.save_time.time() > self.save_every_n_secs:
+                    print("[ saving model: " + opt['model_file'] + " ]")
+                    world.save_agents()
+                    self.save_time.reset()
 
         if not self.saved:
             # save agent
@@ -222,9 +228,12 @@ class TrainLoop():
             # reload best validation model
             self.agent = create_agent(opt)
 
-        run_eval(self.agent, opt, 'valid', write_log=True)
-        run_eval(self.agent, opt, 'test', write_log=True)
+        _rep, wrld = run_eval(self.agent, opt, 'valid', write_log=True)
+        wrld.shutdown()  # may need to shut down threads, remote connections
+        _rep, wrld = run_eval(self.agent, opt, 'test', write_log=True)
+        wrld.shutdown()  # may need to shut down threads, remote connections
 
 
 if __name__ == '__main__':
     TrainLoop(setup_args()).train()
+    print()

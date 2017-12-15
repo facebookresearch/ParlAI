@@ -146,8 +146,6 @@ class DrqaAgent(Agent):
         saved_params = torch.load(fname,
             map_location=lambda storage, loc: storage)
 
-        # TODO expand dict and embeddings for new data
-        self.word_dict = saved_params['word_dict']
         self.feature_dict = saved_params['feature_dict']
         self.state_dict = saved_params['state_dict']
         config.override_args(self.opt, saved_params['config'])

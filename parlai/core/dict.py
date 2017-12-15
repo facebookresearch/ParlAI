@@ -251,6 +251,14 @@ class DictionaryAgent(Agent):
             self.tok2ind[key] = index
             self.ind2tok[index] = key
 
+    def copy_dict(self, dictionary):
+        """Overwrite own state with any state in the other dictionary.
+        This allows loading of the contents of another dictionary while keeping
+        the current dictionary version.
+        """
+        for k, v in vars(dictionary).items():
+            setattr(self, k, v)
+
     def freqs(self):
         return self.freq
 

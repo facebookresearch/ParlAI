@@ -179,7 +179,7 @@ class MemnnAgent(Agent):
                 if self.opt['cuda']:
                     candidate_embeddings = candidate_embeddings.cuda()
                 last_cand = cand_list
-            scores[i, :len(cand_list)] = self.model.score.one_to_many(output_embeddings[i].unsqueeze(0), candidate_embeddings)
+            scores[i, :len(cand_list)] = self.model.score.one_to_many(output_embeddings[i].unsqueeze(0), candidate_embeddings).squeeze()
         return scores
 
     def ranked_predictions(self, cands, scores):

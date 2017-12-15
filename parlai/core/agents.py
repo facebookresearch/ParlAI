@@ -279,7 +279,7 @@ def load_agent_module(opt):
         return model_class(opt)
     else:
         return None
-        
+
 def get_agent_module(dir_name):
     if ':' in dir_name:
         s = dir_name.split(':')
@@ -314,6 +314,8 @@ def create_agent(opt):
         model = load_agent_module(opt)
         if model is not None:
             return model
+        else:
+            print("[ no model yet at: " + opt.get('model_file') + " ]")
     if opt.get('model'):
         model_class = get_agent_module(opt['model'])
         return model_class(opt)
@@ -322,18 +324,16 @@ def create_agent(opt):
 
 # Helper functions to create agent/agents given shared parameters
 # returned from agent.share(). Useful for parallelism, sharing params, etc.
-def create_agent_from_shared(shared_agent, threadid=None):
+def create_agent_from_shared(shared_agent):
     opt = copy.deepcopy(shared_agent['opt'])
-    if threadid is not None:
-        opt['threadindex'] = threadid
     a = shared_agent['class'](opt, shared_agent)
     return a
 
-def create_agents_from_shared(shared, threadid=None):
+def create_agents_from_shared(shared):
     # create agents based on shared data.
     shared_agents = []
     for shared_agent in shared:
-        agent = create_agent_from_shared(shared_agent, threadid)
+        agent = create_agent_from_shared(shared_agent)
         shared_agents.append(agent)
     return shared_agents
 

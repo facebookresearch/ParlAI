@@ -6,6 +6,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
+from parlai.core.utils import maintain_dialog_history
 from .modules import Seq2seq
 
 import torch
@@ -47,7 +48,7 @@ class Seq2seqAgent(Agent):
     @staticmethod
     def dictionary_class():
         return DictionaryAgent
-
+    
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
@@ -128,40 +129,50 @@ class Seq2seqAgent(Agent):
                            choices=['none', 'only', 'both'],
                            help='Enabled language modeling training on the '
                                 'concatenated input and label data.')
-        agent.add_argument('-hist', '--history-length', default=-1, type=int,
-                           help='Number of past utterances to remember. '
-                                'These include self-utterances. Default '
-                                'remembers entire episode history.')
-
+        agent.add_argument('-hist', '--history-length', default=100000, type=int,
+                           help='Number of past tokens to remember. '
+                                'Default remembers 100000 tokens.')
+        agent.add_argument('-histr', '--history-replies',
+                           default='none', type=str,
+                           choices=['none', 'model', 'label'],
+                           help='Keep replies in the history, or not.')
+                           
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
         opt = self.opt  # there is a deepcopy in the init
 
-        # all instances needs truncate param
+        # all instances may need some params
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
-        self.history = deque(maxlen=(
-            opt['history_length'] if opt['history_length'] > 0 else None))
+        self.history = {}
+        
+        # check for cuda
+        self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
+        
+
         if shared:
             # set up shared properties
             self.dict = shared['dict']
             self.START_IDX = shared['START_IDX']
             self.END_IDX = shared['END_IDX']
+            self.NULL_IDX = shared['NULL_IDX']
             # answers contains a batch_size list of the last answer produced
             self.answers = shared['answers']
+
+            if 'model' in shared:
+                # model is shared during hogwild
+                self.model = shared['model']
+                self.states = shared['states']
         else:
             # this is not a shared instance of this class, so do full init
-
             # answers contains a batch_size list of the last answer produced
             self.answers = [None] * opt['batchsize']
 
-            # check for cuda
-            self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
             if self.use_cuda:
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            states = {}
+            self.states = {}
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
                 print('Loading existing model params from ' + opt['model_file'])
@@ -187,9 +198,17 @@ class Seq2seqAgent(Agent):
                                  padding_idx=self.NULL_IDX,
                                  start_idx=self.START_IDX,
                                  end_idx=self.END_IDX,
-                                 longest_label=states.get('longest_label', 1))
+                                 longest_label=self.states.get('longest_label', 1))
 
-            # store important params in self
+            if self.states:
+                # set loaded states if applicable
+                self.model.load_state_dict(self.states['model'])
+
+            if self.use_cuda:
+                self.model.cuda()
+
+        if hasattr(self, 'model'):
+            # if model was built, do more setup
             self.rank = opt['rank_candidates']
             self.lm = opt['language_model']
 
@@ -199,15 +218,16 @@ class Seq2seqAgent(Agent):
             if self.rank:
                 self.cands = torch.LongTensor(1, 1, 1)
 
-            # set up modules
+            # set up criteria
             self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX)
 
-            if states:
-                # set loaded states if applicable
-                self.model.load_state_dict(states['model'])
-
             if self.use_cuda:
-                self.cuda()
+                # push to cuda
+                self.xs = self.xs.cuda(async=True)
+                self.ys = self.ys.cuda(async=True)
+                if self.rank:
+                    self.cands = self.cands.cuda(async=True)
+                self.criterion.cuda()
 
             # set up optimizer
             lr = opt['learningrate']
@@ -217,12 +237,12 @@ class Seq2seqAgent(Agent):
                 kwargs['momentum'] = 0.95
                 kwargs['nesterov'] = True
             self.optimizer = optim_class(self.model.parameters(), **kwargs)
-            if states:
-                if states['optimizer_type'] != opt['optimizer']:
+            if self.states:
+                if self.states['optimizer_type'] != opt['optimizer']:
                     print('WARNING: not loading optim state since optim class '
                           'changed.')
                 else:
-                    self.optimizer.load_state_dict(states['optimizer'])
+                    self.optimizer.load_state_dict(self.states['optimizer'])
 
         self.reset()
 
@@ -263,15 +283,6 @@ class Seq2seqAgent(Agent):
                 new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
-    def cuda(self):
-        """Push parameters to the GPU."""
-        self.xs = self.xs.cuda(async=True)
-        self.ys = self.ys.cuda(async=True)
-        if self.rank:
-            self.cands = self.cands.cuda(async=True)
-        self.criterion.cuda()
-        self.model.cuda()
-
     def zero_grad(self):
         """Zero out optimizer."""
         self.optimizer.zero_grad()
@@ -292,50 +303,30 @@ class Seq2seqAgent(Agent):
         shared['dict'] = self.dict
         shared['START_IDX'] = self.START_IDX
         shared['END_IDX'] = self.END_IDX
+        shared['NULL_IDX'] = self.NULL_IDX
+        if self.opt.get('numthreads', 1) > 1:
+            shared['model'] = self.model
+            self.model.share_memory()
+            shared['states'] = self.states
         return shared
-
+                           
     def observe(self, observation):
         """Save observation for act.
         If multiple observations are from the same episode, concatenate them.
         """
-        # shallow copy observation (deep copy can be expensive)
-        observation = observation.copy()
-
-        if 'text' in observation:
-            if observation['text'] == '':
-                observation.pop('text')
-            else:
-                dialog = deque(maxlen=self.truncate)
-                if self.episode_done:
-                    self.history.clear()
-                else:
-                    # get last y if avail and add to history
-                    batch_idx = self.opt.get('batchindex', 0)
-                    if self.answers[batch_idx] is not None:
-                        # use our last answer, which is the label during train
-                        lastY = self.answers[batch_idx]
-                        y_utt = deque([self.START_IDX], maxlen=self.truncate)
-                        y_utt.extend(lastY)
-                        y_utt.append(self.END_IDX)
-                        self.history.append(y_utt)
-                        self.answers[batch_idx] = None  # forget last y now
-                    # remember past dialog of history_length utterances
-                    dialog += (tok for utt in self.history for tok in utt)
-
-                # put START and END around text
-                parsed_x = deque([self.START_IDX], maxlen=self.truncate)
-                parsed_x.extend(self.parse(observation['text']))
-                parsed_x.append(self.END_IDX)
-                # add curr x to history
-                self.history.append(parsed_x)
-
-                dialog += parsed_x
-                observation['text'] = dialog
-
-        self.observation = observation
         self.episode_done = observation['episode_done']
-
-        return observation
+        # shallow copy observation (deep copy can be expensive)
+        obs = observation.copy()
+        batch_idx = self.opt.get('batchindex', 0)
+        obs['text2vec'] = maintain_dialog_history(
+            self.history, obs,
+            reply=self.answers[batch_idx],
+            historyLength=self.opt['history_length'],
+            useReplies=self.opt['history_replies'],
+            dict=self.dict)
+        self.observation = obs
+        self.answers[batch_idx] = None
+        return obs
 
     def predict(self, xs, ys=None, cands=None, valid_cands=None, lm=False):
         """Produce a prediction from our model.
@@ -370,7 +361,7 @@ class Seq2seqAgent(Agent):
         """Convert a list of observations into input & target tensors."""
         def valid(obs):
             # check if this is an example our model should actually process
-            return 'text' in obs
+            return 'text2vec' in obs and len(obs['text2vec']) > 0
         try:
             # valid examples and their indices
             valid_inds, exs = zip(*[(i, ex) for i, ex in
@@ -384,7 +375,7 @@ class Seq2seqAgent(Agent):
 
         # `x` text is already tokenized and truncated
         # sort by length so we can use pack_padded
-        parsed_x = [ex['text'] for ex in exs]
+        parsed_x = [ex['text2vec'] for ex in exs]
         x_lens = [len(x) for x in parsed_x]
         ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
 
