@@ -155,7 +155,7 @@ class TrainLoop():
                 opt['validation_metric'], self.best_valid))
             self.world.save_agents()
             self.saved = True
-            if opt['validation_metric'] == 'accuracy' and self.best_valid > opt['validation_cutoff']:
+            if opt['validation_metric'] == 'accuracy' and self.best_valid >= opt['validation_cutoff']:
                 print('[ task solved! stopping. ]')
                 return True
         else:
