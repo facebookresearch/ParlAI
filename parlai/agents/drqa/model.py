@@ -162,7 +162,6 @@ class DocReaderModel(object):
             'state_dict': {
                 'network': self.network.state_dict(),
             },
-            'word_dict': self.word_dict,
             'feature_dict': self.feature_dict,
             'config': self.opt,
         }
