@@ -244,7 +244,7 @@ def maintain_dialog_history(history, observation, reply='',
     history['episode_done'] = observation['episode_done']
     return history['dialog']
 
-  
+
 class NoLock(object):
     """Empty `lock`. Does nothing when you enter or exit."""
     def __enter__(self):
