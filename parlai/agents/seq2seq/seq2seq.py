@@ -391,9 +391,9 @@ class Seq2seqAgent(Agent):
             xs = Variable(self.xs)
         else:
             max_x_len = max([len(x) for x in parsed_x])
-            parsed_x = [x if len(x) == max_x_len else x + deque((self.NULL_IDX,)) * (max_x_len - len(x)) for x in parsed_x]
-            # for x in parsed_x:
-            #     x += [self.NULL_IDX] * (max_x_len - len(x))
+            parsed_x = [x if len(x) == max_x_len else
+                        x + deque((self.NULL_IDX,)) * (max_x_len - len(x))
+                        for x in parsed_x]
             xs = torch.LongTensor(parsed_x)
             if self.use_cuda:
                 # copy to gpu
@@ -422,8 +422,9 @@ class Seq2seqAgent(Agent):
                     y.extendleft(reversed(x))
 
             max_y_len = max(len(y) for y in parsed_y)
-            for y in parsed_y:
-                y += [self.NULL_IDX] * (max_y_len - len(y))
+            parsed_y = [y if len(y) == max_y_len else
+                        y + deque((self.NULL_IDX,)) * (max_y_len - len(y))
+                        for y in parsed_y]
             ys = torch.LongTensor(parsed_y)
             if self.use_cuda:
                 # copy to gpu
