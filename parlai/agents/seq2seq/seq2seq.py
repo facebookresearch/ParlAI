@@ -391,6 +391,8 @@ class Seq2seqAgent(Agent):
             xs = Variable(self.xs)
         else:
             max_x_len = max([len(x) for x in parsed_x])
+
+            # TODO: move zero padding to utility function?
             parsed_x = [x if len(x) == max_x_len else
                         x + deque((self.NULL_IDX,)) * (max_x_len - len(x))
                         for x in parsed_x]
