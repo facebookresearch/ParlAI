@@ -62,7 +62,6 @@ class MemnnAgent(Agent):
             self.opt = opt
             self.id = 'MemNN'
             self.dict = DictionaryAgent(opt)
-            self.answers = [None] * opt['batchsize']
 
             self.model = MemNN(opt, len(self.dict))
             self.mem_size = opt['mem_size']
@@ -101,8 +100,6 @@ class MemnnAgent(Agent):
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 print('Loading existing model parameters from ' + opt['model_file'])
                 self.load(opt['model_file'])
-        else:
-            self.answers = shared['answers']
 
         self.episode_done = True
         self.last_cands, self.last_cands_list = None, None
@@ -110,7 +107,6 @@ class MemnnAgent(Agent):
 
     def share(self):
         shared = super().share()
-        shared['answers'] = self.answers
         return shared
 
     def observe(self, observation):
@@ -119,10 +115,13 @@ class MemnnAgent(Agent):
             # if the last example wasn't the end of an episode, then we need to
             # recall what was said in that example
             prev_dialogue = self.observation['text'] if self.observation is not None else ''
-            batch_idx = self.opt.get('batchindex', 0)
-            if self.answers[batch_idx] is not None:
-                prev_dialogue += '\n' + self.answers[batch_idx]
-                self.answers[batch_idx] = None
+
+            # append answer given in the previous example to the dialog 
+            if 'eval_labels' in self.observation:
+                prev_dialogue += '\n' + random.choice(self.observation['eval_labels'])
+            elif 'labels' in self.observation:
+                prev_dialogue += '\n' + random.choice(self.observation['labels'])
+
             observation['text'] = prev_dialogue + '\n' + observation['text']
         self.observation = observation
         self.episode_done = observation['episode_done']
@@ -315,7 +314,6 @@ class MemnnAgent(Agent):
         predictions = self.predict(xs, cands, ys)
 
         for i in range(len(valid_inds)):
-            self.answers[valid_inds[i]] = predictions[i][0]
             batch_reply[valid_inds[i]]['text'] = predictions[i][0]
             batch_reply[valid_inds[i]]['text_candidates'] = predictions[i]
         return batch_reply
