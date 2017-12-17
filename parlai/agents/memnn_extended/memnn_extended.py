@@ -21,6 +21,14 @@ from .modules import MemNN, Decoder, to_tensors
 
 class MemnnExtendedAgent(Agent):
     """ Memory Network agent.
+    With setting IM acts as a regular Imitation learning agent
+
+    For more details on IM_feedback, RBI, FP, RBI+FP settings that support 
+    reward-based and forward prediction: https://arxiv.org/abs/1604.06045
+    These models assume that feedback and reward for the current example  
+    immediatly follow the query. 
+    py examples/train_model.py -m memnn_extended -t dbll_babi:task:3_p0.5:f
+    --setting 'RBI' -bs 1 -nt 4 --single_embedder True
     """
 
     @staticmethod
@@ -93,7 +101,7 @@ class MemnnExtendedAgent(Agent):
                 self.load(opt['model_file'])
         else:
             if 'model' in shared:
-                # model is stared during hogwild
+                # model is shared during hogwild
                 self.model = shared['model']
                 self.dict = shared['dict']
                 self.decoder = shared['decoder']
@@ -220,11 +228,6 @@ class MemnnExtendedAgent(Agent):
         return cands_embeddings_with_beta
 
     def predict(self, xs, answer_cands, ys=None, feedback_cands=None):
-        # print ('before:', self.model.answer_embedder.weight)
-        # length = Variable(torch.LongTensor([1]))
-        # val = Variable(torch.LongTensor([5]))
-        # print('BEFORE:', self.model.answer_embedder(length, val))
-
         is_training = ys is not None
         if is_training and 'FP' not in self.model_setting:
             # Subsample to reduce training time
@@ -380,7 +383,6 @@ class MemnnExtendedAgent(Agent):
             cands = list of candidates for each example in batch
             valid_inds = list of indices for examples with valid observations
         """
-        # print ('\n', obs)
         exs = [ex for ex in obs if 'text' in ex]
         valid_inds = [i for i, ex in enumerate(obs) if 'text' in ex]
         if not exs:
