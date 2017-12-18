@@ -248,11 +248,14 @@ class World(object):
     def update_counters(self):
         """Update how many epochs have completed"""
         self.total_parleys += 1
-        if not self.max_exs:
-            self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+        if self.max_exs is None:
+            if ('num_epochs' in self.opt and self.opt['num_epochs'] > 0):
+                self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+            else:
+                self.max_exs = -1
         # when we know the size of the data
         if self.max_exs > 0:
-            self.total_epochs = self.total_parleys * self.opt['batchsize'] / self.num_examples()
+            self.total_epochs = self.total_parleys * self.opt.get('batchsize', 1) / self.num_examples()
         # when we do not know the size of the data
         else:
             if self.epoch_done():
@@ -843,10 +846,13 @@ class HogwildWorld(World):
 
     def get_total_epochs(self):
         """Return total amount of epochs on which the world has trained."""
-        if not self.max_exs:
-            self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+        if self.max_exs is None:
+            if ('num_epochs' in self.opt and self.opt['num_epochs'] > 0):
+                self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+            else:
+                self.max_exs = -1
         if self.max_exs > 0:
-            return self.sync['total_parleys'].value * self.opt['batchsize'] / self.num_examples()
+            return self.sync['total_parleys'].value * self.opt.get('batchsize', 1) / self.num_examples()
         else:
             return self.total_epochs
 
