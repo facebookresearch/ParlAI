@@ -222,7 +222,7 @@ class FixedDialogTeacher(Teacher):
                 # for multithreading need to move index into threadsafe memory
                 self.index = Value('l', -1)
             if hasattr(self, 'sorted_data'):
-                shared['sorted_data'] = [None] * len(self.sorted_data)
+                shared['sorted_data'] = self.sorted_data
                 shared['batches'] = self.batches
         else:
             shared['data_loader'] = self.data_loader
