@@ -745,11 +745,9 @@ class HogwildProcess(Process):
                     break  # time to close
                 self.sync['queued_sem'].acquire()
                 self.sync['threads_sem'].release()
-                if not world.epoch_done():
+                if not world.epoch_done() or self.opt.get('datatype').startswith('train', False):
                     # do one example if any available
-                    # print('parley start')
                     world.parley()
-                    # print('parley done')
                     with self.sync['total_parleys'].get_lock():
                         self.sync['total_parleys'].value += 1
                 else:

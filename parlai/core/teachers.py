@@ -222,7 +222,7 @@ class FixedDialogTeacher(Teacher):
                 # for multithreading need to move index into threadsafe memory
                 self.index = Value('l', -1)
             if hasattr(self, 'sorted_data'):
-                shared['sorted_data'] = self.sorted_data
+                shared['sorted_data'] = [None] * len(self.sorted_data)
                 shared['batches'] = self.batches
         else:
             shared['data_loader'] = self.data_loader
@@ -258,7 +258,7 @@ class FixedDialogTeacher(Teacher):
         ex = self.get(self.episode_idx, self.entry_idx)
         self.episode_done = ex['episode_done']
 
-        if (not self.training and self.episode_done
+        if (not self.random and self.episode_done
                 and self.episode_idx + 1 >= self.num_episodes()):
             epoch_done = True
         else:
@@ -316,7 +316,7 @@ class FixedDialogTeacher(Teacher):
             if batch_idx + 1 >= len(self.batches):
                 if self.random:
                     random.shuffle(self.batches)
-                elif not self.training:
+                else:
                     self.epochDone = True
             else:
                 self.epochDone = False
