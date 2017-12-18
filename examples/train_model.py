@@ -130,8 +130,6 @@ class TrainLoop():
         self.save_time = Timer()
         print('[ training... ]')
         self.parleys = 0
-        self.total_episodes = 0
-        self.total_epochs = 0
         self.max_num_epochs = opt['num_epochs'] if opt['num_epochs'] > 0 else float('inf')
         self.max_train_time = opt['max_train_time'] if opt['max_train_time'] > 0 else float('inf')
         self.log_every_n_secs = opt['log_every_n_secs'] if opt['log_every_n_secs'] > 0 else float('inf')
@@ -155,7 +153,7 @@ class TrainLoop():
                 opt['validation_metric'], self.best_valid))
             self.world.save_agents()
             self.saved = True
-            if opt['validation_metric'] == 'accuracy' and self.best_valid > opt['validation_cutoff']:
+            if opt['validation_metric'] == 'accuracy' and self.best_valid >= opt['validation_cutoff']:
                 print('[ task solved! stopping. ]')
                 return True
         else:
@@ -186,8 +184,6 @@ class TrainLoop():
         logs.append('time:{}s'.format(math.floor(self.train_time.time())))
         logs.append('parleys:{}'.format(self.parleys))
 
-        if 'total' in train_report:
-            logs.append('total_exs:{}'.format(train_report.pop('total')))
         if 'time_left' in train_report:
             logs.append('time_left:{}s'.format(
                          math.floor(train_report.pop('time_left', ""))))
@@ -205,16 +201,11 @@ class TrainLoop():
             while True:
                 world.parley()
                 self.parleys += 1
-                if world.epoch_done():
-                    self.total_epochs += 1
-                world_done = max(world.get_total_epochs(), self.total_epochs) >= self.max_num_epochs
-
-                if opt['numthreads'] > 1 and (self.parleys)%100 == 0:
-                    world.synchronize()
-                if world_done:
+                
+                if world.get_total_epochs() >= self.max_num_epochs:
+                    self.log()
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(
                         self.max_num_epochs, self.train_time.time()))
-                    self.log()
                     break
                 if self.train_time.time() > self.max_train_time:
                     print('[ max_train_time elapsed:{}s ]'.format(self.train_time.time()))
@@ -237,9 +228,12 @@ class TrainLoop():
             # reload best validation model
             self.agent = create_agent(opt)
 
-        run_eval(self.agent, opt, 'valid', write_log=True)
-        run_eval(self.agent, opt, 'test', write_log=True)
+        _rep, wrld = run_eval(self.agent, opt, 'valid', write_log=True)
+        wrld.shutdown()  # may need to shut down threads, remote connections
+        _rep, wrld = run_eval(self.agent, opt, 'test', write_log=True)
+        wrld.shutdown()  # may need to shut down threads, remote connections
 
 
 if __name__ == '__main__':
     TrainLoop(setup_args()).train()
+    print()

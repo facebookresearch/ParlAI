@@ -193,6 +193,13 @@ task_list = [
         "description": "Open-domain QA dataset with question-answer-evidence triples, from Joshi et al. '17. Link: https://arxiv.org/abs/1705.03551"
     },
     {
+        "id": "TaskNTalk",
+        "display_name": "Task N' Talk",
+        "task": "taskntalk",
+        "tags": [ "All",  "Goal" ],
+        "description": "Dataset of synthetic shapes described by attributes, for agents to play a cooperative QA game, from Kottur et al. '17. Link: https://arxiv.org/abs/1706.08502"
+    },
+    {
         "id": "Ubuntu",
         "display_name": "Ubuntu",
         "task": "ubuntu",

@@ -6,12 +6,7 @@
 """Provides utilities useful for multiprocessing."""
 
 from multiprocessing import Lock, RawArray
-try:
-    # python3
-    from collections.abc import MutableMapping
-except ImportError:
-    # python2
-    from collections import MutableMapping
+from collections.abc import MutableMapping
 import ctypes
 import sys
 
@@ -29,11 +24,10 @@ class SharedTable(MutableMapping):
                 tbl['cnt'] += 1
     """
 
-    # currently unused, here for todo below
     types = {
-        str: ctypes.c_wchar_p,
         int: ctypes.c_int,
-        float: ctypes.c_float
+        float: ctypes.c_float,
+        bool: ctypes.c_bool,
     }
 
     def __init__(self, init_dict=None):
@@ -49,15 +43,26 @@ class SharedTable(MutableMapping):
         self.idx = {}
         # arrays is dict of {value_type: array_of_ctype}
         self.arrays = {}
+        self.tensors = {}
+
         if init_dict:
             sizes = {typ: 0 for typ in self.types.keys()}
-            for v in init_dict.values():
-                if type(v) not in sizes:
+            for k, v in init_dict.items():
+                if 'Tensor' in str(type(v)):
+                    # add tensor to tensor dict--don't try to put in rawarray
+                    self.tensors[k] = v
+                    continue
+                elif type(v) not in sizes:
                     raise TypeError('SharedTable does not support values of ' +
                                     'type ' + str(type(v)))
                 sizes[type(v)] += 1
+            # pop tensors from init_dict
+            for k in self.tensors.keys():
+                init_dict.pop(k)
+            # create raw arrays for each type
             for typ, sz in sizes.items():
                 self.arrays[typ] = RawArray(self.types[typ], sz)
+            # track indices for each key, assign them to their typed rawarray
             idxs = {typ: 0 for typ in self.types.keys()}
             for k, v in init_dict.items():
                 val_type = type(v)
@@ -73,17 +78,19 @@ class SharedTable(MutableMapping):
         self.lock = Lock()
 
     def __len__(self):
-        return sum(len(a) for a in self.arrays.values())
+        return len(self.idx) + len(self.tensors)
 
     def __iter__(self):
-        return iter(self.idx)
+        return iter([k for k in self.idx] + [k for k in self.tensors])
 
     def __contains__(self, key):
-        return key in self.idx
+        return key in self.idx or key in self.tensors
 
     def __getitem__(self, key):
         """Returns shared value if key is available."""
-        if key in self.idx:
+        if key in self.tensors:
+            return self.tensors[key]
+        elif key in self.idx:
             idx, typ = self.idx[key]
             return self.arrays[typ][idx]
         else:
@@ -98,6 +105,9 @@ class SharedTable(MutableMapping):
         that key--if you need to do this, you must delete the key first.
         """
         val_type = type(value)
+        if 'Tensor' in str(val_type):
+            self.tensors[key] = value
+            return
         if val_type not in self.types:
             raise TypeError('SharedTable does not support type ' + str(type(value)))
         if val_type == str:
@@ -111,23 +121,13 @@ class SharedTable(MutableMapping):
                                  ).format(key=key, v1=typ, v2=val_type))
             self.arrays[typ][idx] = value
         else:
-            old_array = self.arrays[val_type]
-            ctyp = self.types[val_type]
-            new_array = RawArray(ctyp, len(old_array) + 1)
-            for i in range(len(old_array)):
-                new_array[i] = old_array[i]
-            new_array[-1] = value
-            self.arrays[val_type] = new_array
-            self.idx[key] = (len(new_array) - 1, val_type)
+            raise KeyError('Cannot add more keys to the shared table as '
+                           'they will not be synced across processes.')
 
     def __delitem__(self, key):
-        if key in self.idx:
-            idx, typ = self.idx[key]
-            old_array = self.arrays[typ]
-            new_array = RawArray(self.types[typ], len(old_array) - 1)
-            for i in range(len(old_array) - 1):
-                new_array[i] = old_array[i]
-            self.arrays[typ] = new_array
+        if key in self.tensors:
+            del self.tensors[key]
+        elif key in self.idx:
             del self.idx[key]
         else:
             raise KeyError('Key "{}" not found in SharedTable'.format(key))
@@ -136,8 +136,9 @@ class SharedTable(MutableMapping):
         """Returns simple dict representation of the mapping."""
         return '{{{}}}'.format(
             ', '.join(
-                '{k}: {v}'.format(k=key, v=self.arrays[typ][idx])
-                for key, (idx, typ) in self.idx.items()
+                ['{k}: {v}'.format(k=key, v=self.arrays[typ][idx])
+                for key, (idx, typ) in self.idx.items()] +
+                ['{k}: {v}'.format(k=k, v=v) for k, v in self.tensors.items()]
             )
         )
 

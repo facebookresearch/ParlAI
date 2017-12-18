@@ -84,6 +84,22 @@ class Timer(object):
         return self.total
 
 
+class AttrDict(dict):
+    """Helper class to have a dict-like object with dot access.
+
+    For example, instead of `d = {'key': 'value'}` use
+    `d = AttrDict(key='value')`.
+    To access keys, instead of doing `d['key']` use `d.key`.
+
+    While this has some limitations on the possible keys (for example, do not
+    set the key `items` or you will lose access to the `items()` method), this
+    can make some code more clear.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__dict__ = self
+
+
 def round_sigfigs(x, sigfigs=4):
     try:
         if x == 0:
@@ -186,6 +202,7 @@ def make_batches(data, bsz):
     """Return a list of lists of size bsz given a list of examples."""
     return [data[i:i + bsz] for i in range(0, len(data), bsz)]
 
+
 def maintain_dialog_history(history, observation, reply='',
                             historyLength=1, useReplies="labels",
                             dict=None, useStartEndIndices=True):
@@ -228,5 +245,15 @@ def maintain_dialog_history(history, observation, reply='',
     return history['dialog']
 
 
+class NoLock(object):
+    """Empty `lock`. Does nothing when you enter or exit."""
+    def __enter__(self):
+        return self
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        pass
 
 
+single_nolock = NoLock()
+def no_lock():
+    """Builds a nolock for other classes to use for no-op locking."""
+    return single_nolock
