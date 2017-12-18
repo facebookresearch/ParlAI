@@ -2,7 +2,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.agents import Agent
-from .modules import ListenNet, StateNet, SpeakNet, PredictNet
+from .modules import ImgNet, ListenNet, StateNet, SpeakNet, PredictNet
 
 import torch
 from torch.autograd import Variable
@@ -11,23 +11,11 @@ from torch.autograd import backward as autograd_backward
 
 
 class CooperativeGameAgent(Agent):
-    """An agent which can play a cooperative goal-based conversational game.
-    Usually these games shall have two agents - one would ask questions and
-    another would answer them.
-
-    There is usually an information asymmetry in such games - questioner agent
-    will be blind while answerer agent will have the visual information. These
-    games shall have a common goal, which can be prediction or image guessing.
-    To accomplish this goal, the questioner will perform prediction at the end
-    of dialog.
-
-    This class is a base class for both - the questioner and answerer. It has
+    """Base class for both, the questioner and answerer. It can be extended to
+    create custom players of games, other than questioner and answerer. It has
     separate modules to listen (observe), speak (act) and update its internal
-    state. Each module is a collection of one or more pytorch modules. It can
+    state. Each module is a collection of one or more pytorch modules, and can
     be extended and replaced in the agent as per task requirements.
-
-    For more information, see Natural Language Does Not Emerge 'Naturally' in
-    Multi-Agent Dialog `(Kottur et al. 2017) <https://arxiv.org/abs/1706.08502>`_.
     """
 
     OPTIM_OPTS = {
@@ -44,6 +32,9 @@ class CooperativeGameAgent(Agent):
 
     @staticmethod
     def dictionary_class():
+        """If different strategy for tokenization and de-tokenization of
+        actions is required, override this method to return custom subclass.
+        """
         return DictionaryAgent
 
     @staticmethod
@@ -68,14 +59,19 @@ class CooperativeGameAgent(Agent):
         self.id = 'CooperativeGameAgent'
         self.actions = []
 
+        # initialize short (h) and long (c) term states
+        self.reset()
+
         # basic modules for listening, state update and speaking
-        # questioner will have `PredictNet`, answerer will have `ImgNet` as extras
+        # questioner will have `PredictNet`, answerer will have `ImgNet`
         self.listen_net = ListenNet(opt['in_vocab_size'], opt['embed_size'])
         self.state_net = StateNet(opt['embed_size'], opt['state_size'])
         self.speak_net = SpeakNet(opt['state_size'], opt['out_vocab_size'])
 
-        # initialize short (h) and long (c) term states
-        self.reset()
+        # setup optimizer according to command-line arguments
+        self.optimizer = self.setup_optimizer()
+        # setup dictionary agent
+        self.dict_agent = dictionary_class()()
 
         # transfer agent to GPU if applicable
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
@@ -85,17 +81,19 @@ class CooperativeGameAgent(Agent):
             for module in self.modules:
                 module = module.cuda()
 
-        # setup dictionary agent
-        self.dict_agent = dictionary_class()()
-
-        # setup optimizer according to command-line arguments
-        self.optimizer = self.setup_optimizer()
-
     @property
     def modules(self):
+        """Property to return a list of pytorch modules. Override this method
+        while subclassing, if extra modules are added (for example, image
+        feature extractor in answerer).
+        """
         return [self.listen_net, self.state_net, self.speak_net]
 
     def setup_optimizer(self):
+        """Return a ``torch.nn.optim.optimizer`` according to command-line
+        argument ``--optimizer``. Override this method to setup optimizer with
+        non-default parameters or use custom optimizer not available as choice.
+        """
         optim_class = CooperativeGameAgent.OPTIM_OPTS[opt['optimizer']]
         kwargs = {'lr': self.opt['learning_rate']}
         if opt['optimizer'] == 'sgd':
@@ -105,34 +103,44 @@ class CooperativeGameAgent(Agent):
                             **kwargs)
 
     def tokenize(self, text):
+        """Convert text observaton (string) to a ``torch.autograd.Variable`` of
+        tokens using ``DictionaryAgent``.
+        """
         text_tokens = self.dict.txt2vec(text)
-        # TODO(kd): handle requires_grad=False for valid/test
-        return Variable(torch.Tensor(text_tokens), requires_grad=True)
+        token_vars = Variable(torch.Tensor(text_tokens))
+        if self.use_cuda:
+            token_vars = token_vars.cuda()
+        return token_vars
 
     def detokenize(self, vec):
+        """Convert a ``torch.autograd.Variable`` of tokens into a string."""
         text_tokens = vec
         if type(text_tokens) == Variable:
             text_tokens = list(text_tokens.data)
         return self.dict.vec2txt(text_tokens)
 
     def observe(self, observation):
+        """Update state, given a previous reply by other agent. In case of
+        questioner, it can be goal description at start of episode.
+        """
         self.observation = observation
+
+        # if episode not done, tokenize, embed and update state
+        # at the end of dialog episode, perform backward pass and step
         if not observation.get('episode_done', False):
             text_tokens = self.tokenize(observation['text'])
             token_embeds = self.listen_net(text_tokens)
             if 'image' in observation:
                 token_embeds = torch.cat((token_embeds, observation['image']), 1)
-                token_embeds.squeeze_(1)
+                token_embeds = token_embeds.squeeze(1)
             self.h_state, self.c_state = self.state_net(token_embeds,
                                                         (self.h_state, self.c_state))
         else:
             if observation.get('reward', None):
-                # end of dialog episode, perform backward pass and step
                 for action in self.actions:
-                    action.reinforce(observation['reward']):
+                    action.reinforce(observation['reward'])
                 autograd_backward(self.actions, [None for _ in self.actions],
                                   retain_graph=True)
-
                 # clamp all gradients between (-5, 5)
                 for module in self.modules:
                     for parameter in module.parameters():
@@ -144,17 +152,19 @@ class CooperativeGameAgent(Agent):
                 self.reset()
 
     def act(self):
+        """Based on current state, utter a reply (string) for next round."""
         out_distr = self.speak_net(self.h_state)
         if self.opt['datatype'] == 'train':
             action = out_distr.multinomial()
         else:
             _, action = out_distr.max(1)
-            action.unsqueeze_(1)
+            action = action.unsqueeze(1)
         self.actions.append(action)
         action_text = self.detokenize(action.squeeze(1))
         return {'text': action_text, 'id': self.id}
 
     def reset(self, retain_actions=False):
+        """Reset internal state (and actions, if specified)."""
         # TODO(kd): share state across other instances during batch training
         self.h_state = Variable(torch.zeros(1, self.opt['hidden_size']))
         self.c_state = Variable(torch.zeros(1, self.opt['hidden_size']))
@@ -166,10 +176,15 @@ class CooperativeGameAgent(Agent):
 
 
 class QuestionerAgent(CooperativeGameAgent):
+    """Base class for questioner agent. It is blindfolded, and has an extra
+    ``predict`` method, which performs action at the end of dialog episode
+    to accomplish the goal.
+    """
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command-line arguments specifically for this agent."""
+        """Add command-line arguments specifically for this agent. Default
+        values at according to (Kottur et al. 2017)."""
         DictionaryAgent.add_cmdline_args(argparser)
         group = argparser.add_argument_group('Questioner Agent Arguments')
         parser.add_argument('--q-in-vocab', default=13, type=int,
@@ -217,10 +232,14 @@ class QuestionerAgent(CooperativeGameAgent):
 
 
 class AnswererAgent(CooperativeGameAgent):
+    """Base class for answerer agent. It holds visual information, and has an
+    extra  ``img_embed`` method, which extracts features from visual content.
+    """
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command-line arguments specifically for this agent."""
+        """Add command-line arguments specifically for this agent. Default
+        values at according to (Kottur et al. 2017)."""
         DictionaryAgent.add_cmdline_args(argparser)
         group = argparser.add_argument_group('Questioner Agent Arguments')
         parser.add_argument('--a-in-vocab', default=13, type=int,
@@ -235,6 +254,8 @@ class AnswererAgent(CooperativeGameAgent):
                             help='Output vocabulary for questioner')
         parser.add_argument('--a-img-feat-size', default=12, type=int,
                             help='Size of output to be predicted (for goal).')
+        parser.add_argument('--a-memoryless', default=False, action='store_true',
+                            help='Whether to remember previous questions/answers encountered.')
         super().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
