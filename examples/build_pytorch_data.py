@@ -60,7 +60,6 @@ def build_data(opt):
     ordered_opt['datatype'] = dt + ':ordered:stream'
     ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
-    ordered_opt['image_mode'] = 'none'
     ordered_opt['task'] = ordered_opt['pytorch_buildteacher']
     world_data = create_task(ordered_opt, agent)
     teacher = world_data.agents[0]
@@ -75,7 +74,7 @@ def build_data(opt):
         pytorch_datafile += agent.getID()
     if os.path.isfile(pytorch_datafile):
         # Data already built
-        print("[ pytorch data already built .]")
+        print("[ pytorch data already built. ]")
         return pytorch_datafile
     print('----------\n[ setting up pytorch data. ]\n----------')
 

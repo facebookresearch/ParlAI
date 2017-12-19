@@ -72,7 +72,7 @@
          --datafile data/bAbI/tasks_1-20_v1-2/en-valid-10k-nosf/qa1_valid.txt`
 
 """
-from .agents import Teacher
+from .teachers import FixedDialogTeacher
 from examples.build_pytorch_data import build_data
 
 import json
@@ -135,7 +135,7 @@ class StreamDataset(Dataset):
         return self.num_exs
 
 
-class PytorchDataTeacher(Teacher):
+class PytorchDataTeacher(FixedDialogTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -151,21 +151,15 @@ class PytorchDataTeacher(Teacher):
                  'the pytorch data')
 
     def __init__(self, opt, shared=None):
+        opt['batch_sort'] = False
         super().__init__(opt, shared)
-        if not hasattr(self, 'datatype'):
-            self.datatype = opt['datatype']
-        if not hasattr(self, 'training'):
-            self.training = self.datatype.startswith('train')
-
-        self.bsz = opt['batchsize']
-        self.step_size = self.bsz
-        self.batchindex = opt.get('batchindex', 0)
+        self.use_batch_act = self.bsz > 1
         self.num_workers = opt['numworkers']
         # One can specify a collate function to use for preparing a batch
         collate_fn = opt.get('collate_fn', default_collate)
         if not shared:
             self.dataset = StreamDataset(opt)
-            self.dataloader = DataLoader(
+            self.pytorch_dataloader = DataLoader(
                 self.dataset,
                 batch_size=self.bsz,
                 shuffle=False,
@@ -178,7 +172,7 @@ class PytorchDataTeacher(Teacher):
             self.lastYs = [None] * self.bsz
         else:
             self.dataset = shared['dataset']
-            self.dataloader = shared['dataloader']
+            self.pytorch_dataloader = shared['pytorch_dataloader']
             self.lastYs = shared['lastYs']
 
         self.num_batches = math.ceil(self.dataset.num_examples()/self.bsz)
@@ -189,23 +183,20 @@ class PytorchDataTeacher(Teacher):
         and all metrics are reset.
         """
         super().reset()
-        self.metrics.clear()
         self.reset_data()
 
     def reset_data(self):
-        self.data = enumerate(self.dataloader)
+        self.data = enumerate(self.pytorch_dataloader)
         self.lastY = None
         self.epochDone = False
         self.episode = None
         self.episode_done = True
         self.episode_idx = 0
-        self.data = enumerate(self.dataloader)
 
     def share(self):
         shared = super().share()
-        shared['dataloader'] = self.dataloader
+        shared['pytorch_dataloader'] = self.pytorch_dataloader
         shared['dataset'] = self.dataset
-        shared['lastYs'] = self.lastYs
         return shared
 
     def next_example(self):
@@ -224,7 +215,7 @@ class PytorchDataTeacher(Teacher):
             ex = self.episode[self.entry_idx]
             self.episode_done = ex['episode_done']
             if (self.episode_done
-                    and self.episode_idx + self.step_size >= self.num_episodes()):
+                    and self.episode_idx + self.bsz >= self.num_episodes()):
                 epoch_done = True
 
         return ex, epoch_done
@@ -248,15 +239,6 @@ class PytorchDataTeacher(Teacher):
     def num_examples(self):
         """Get the total number of examples in this dataset."""
         return self.dataset.num_examples()
-
-    def observe(self, observation):
-        """Process observation for metrics."""
-        if self.bsz > 1:
-            self.lastY = self.lastYs[self.batchindex]
-        if self.lastY is not None:
-            self.metrics.update(observation, self.lastY)
-            self.lastY = None
-        return observation
 
     def batch_act(self, observations):
         # we ignore observations
@@ -284,6 +266,9 @@ class PytorchDataTeacher(Teacher):
 
     def act(self):
         """Send new dialog message."""
+        if not hasattr(self, 'epochDone'):
+            # reset if haven't yet
+            self.reset()
         if self.epochDone:
             if not self.training:
                 return {'episode_done': True, 'id': self.getID()}
