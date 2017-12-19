@@ -13,3 +13,5 @@ python3 test_dict.py
 python3 test_tasklist.py
 python3 test_threadutils.py
 python3 test_utils.py
+python3 test_display_data.py
+python3 test_eval_model.py
