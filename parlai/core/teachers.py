@@ -148,7 +148,8 @@ class FixedDialogTeacher(Teacher):
         if self.use_batch_act:
             if shared:
                 self.lastYs = shared['lastYs']
-                if 'batches' in shared:
+                if 'sorted_data' in shared:
+                    self.sorted_data = shared['sorted_data']
                     self.batches = shared['batches']
             else:
                 self.lastYs = [None] * self.bsz
@@ -218,9 +219,10 @@ class FixedDialogTeacher(Teacher):
 
         if self.opt.get('numthreads', 1) > 1:
             if type(self.index) is not multiprocessing.sharedctypes.Synchronized:
-                # for multithreading need to move index into shared / locked memory
+                # for multithreading need to move index into threadsafe memory
                 self.index = Value('l', -1)
-            if hasattr(self, 'batches'):
+            if hasattr(self, 'sorted_data'):
+                shared['sorted_data'] = self.sorted_data
                 shared['batches'] = self.batches
         else:
             shared['data_loader'] = self.data_loader
@@ -314,7 +316,8 @@ class FixedDialogTeacher(Teacher):
             if batch_idx + 1 >= len(self.batches):
                 if self.random:
                     random.shuffle(self.batches)
-                self.epochDone = True
+                else:
+                    self.epochDone = True
             else:
                 self.epochDone = False
 
