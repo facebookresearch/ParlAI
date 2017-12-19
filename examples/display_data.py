@@ -17,15 +17,7 @@ from parlai.core.worlds import create_task
 
 import random
 
-
-def main():
-    random.seed(42)
-
-    # Get command line arguments
-    parser = ParlaiParser()
-    parser.add_argument('-n', '--num-examples', default=10, type=int)
-    opt = parser.parse_args()
-
+def display_data(opt):
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
@@ -39,6 +31,16 @@ def main():
                 print('EPOCH DONE')
                 break
 
+
+def main():
+    random.seed(42)
+
+    # Get command line arguments
+    parser = ParlaiParser()
+    parser.add_argument('-n', '--num-examples', default=10, type=int)
+    opt = parser.parse_args()
+
+    display_data(opt)
 
 if __name__ == '__main__':
     main()
