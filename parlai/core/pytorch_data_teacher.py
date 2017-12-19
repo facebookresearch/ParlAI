@@ -4,7 +4,9 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """This module provides a teacher that utilizes a pytorch `DataLoader` for
-    data loading. It contains the following classes:
+    data loading. The class assumes training will be performed on streaming
+    data (i.e. it will not be loaded into memory).
+    It contains the following classes:
 
     ``StreamDataset`` - a pytorch dataset that provides streaming iteration
     through data. Requires that the dataset be built in the appropriate format
@@ -200,6 +202,12 @@ class PytorchDataTeacher(FixedDialogTeacher):
         return shared
 
     def next_example(self):
+        if self.epochDone:
+            if not self.training:
+                return {'episode_done': True, 'id': self.getID()}, True
+            else:
+                # Reset the data because it is streaming data
+                self.reset_data()
         if self.episode_done:
             try:
                 self.episode_idx, self.episode = next(self.data)
@@ -221,6 +229,12 @@ class PytorchDataTeacher(FixedDialogTeacher):
         return ex, epoch_done
 
     def next_batch(self):
+        if self.epochDone:
+            if not self.training:
+                return [{'episode_done': True, 'id': self.getID()}] * self.bsz
+            else:
+                # Reset the data because it is streaming data
+                self.reset_data()
         try:
             batch_idx, batch = next(self.data)
             epoch_done = False
@@ -230,7 +244,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
         if not epoch_done and batch_idx == self.num_batches:
             epoch_done = True
 
-        return batch, epoch_done
+        self.epochDone = epoch_done
+        return batch
 
     def num_episodes(self):
         """Get the number of episodes in this dataset."""
@@ -240,51 +255,10 @@ class PytorchDataTeacher(FixedDialogTeacher):
         """Get the total number of examples in this dataset."""
         return self.dataset.num_examples()
 
-    def batch_act(self, observations):
-        # we ignore observations
-        if not hasattr(self, 'epochDone'):
-            # reset if haven't yet
-            self.reset()
-
-        if self.epochDone:
-            if not self.training:
-                return [{'episode_done': True, 'id': self.getID()}] * self.bsz
-            else:
-                self.reset_data()
-
-        # get next batch
-        batch, self.epochDone = self.next_batch()
-
-        # pad batch
-        if len(batch) < self.bsz:
-            batch += [{'episode_done': True, 'id': self.getID()}] * (self.bsz - len(batch))
-
-        for i, ex in enumerate(batch):
-            self.lastYs[i] = ex.get('labels', ex.get('eval_labels'))
-
-        return batch
-
     def act(self):
         """Send new dialog message."""
-        if not hasattr(self, 'epochDone'):
-            # reset if haven't yet
-            self.reset()
-        if self.epochDone:
-            if not self.training:
-                return {'episode_done': True, 'id': self.getID()}
-            else:
-                self.reset_data()
-
-        # get next example
-        action, self.epochDone = self.next_example()
-        action['id'] = self.getID()
-
-        # remember correct answer if available
+        action = super().act()
         self.lastY = action.get('labels', action.get('eval_labels', None))
-        if not self.datatype.startswith('train') and 'labels' in action:
-            # move labels to eval field so not used for training
-            # but this way the model can use the labels for perplexity or loss
-            action['eval_labels'] = action.pop('labels')
         return action
 
 class DefaultTeacher(PytorchDataTeacher):

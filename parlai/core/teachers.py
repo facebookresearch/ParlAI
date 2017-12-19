@@ -265,6 +265,26 @@ class FixedDialogTeacher(Teacher):
 
         return ex, epoch_done
 
+    def next_batch(self):
+        # get next batch
+        with self._lock():
+            self.index.value += 1
+            if self.training:
+                self.index.value %= len(self.batches)
+            batch_idx = self.index.value
+
+            if batch_idx + 1 >= len(self.batches):
+                if self.random:
+                    random.shuffle(self.batches)
+                self.epochDone = True
+            else:
+                self.epochDone = False
+
+        if batch_idx >= len(self.batches):
+            return [{'episode_done': True, 'id': self.getID()}] * self.bsz
+
+        return self.batches[batch_idx]
+
     def num_episodes(self):
         """Get the number of episodes in this dataset."""
         if self.use_batch_act:
@@ -305,25 +325,7 @@ class FixedDialogTeacher(Teacher):
             # reset if haven't yet
             self.reset()
 
-        # get next batch
-        with self._lock():
-            self.index.value += 1
-            if self.training:
-                self.index.value %= len(self.batches)
-            batch_idx = self.index.value
-
-            if batch_idx + 1 >= len(self.batches):
-                if self.random:
-                    random.shuffle(self.batches)
-                self.epochDone = True
-            else:
-                self.epochDone = False
-
-        if batch_idx >= len(self.batches):
-            return [{'episode_done': True, 'id': self.getID()}] * self.bsz
-
-        batch = self.batches[batch_idx]
-
+        batch = self.next_batch()
         # pad batch
         if len(batch) < self.bsz:
             batch += [{'episode_done': True, 'id': self.getID()}] * (self.bsz - len(batch))
