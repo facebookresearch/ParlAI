@@ -39,7 +39,7 @@ def build(opt):
         data_verbose = list(itertools.product(*[properties[key] for key in to_save['attributes']]))
 
         # randomly select train and rest of it is valid
-        split_data['valid'] = random.sample(data_verbose, int(0.8 * len(data_verbose)))
+        split_data['valid'] = random.sample(data_verbose, int(0.2 * len(data_verbose)))
         split_data['train'] = [s for s in data_verbose if s not in split_data['valid']]
 
         to_save['data'] = split_data['train']
