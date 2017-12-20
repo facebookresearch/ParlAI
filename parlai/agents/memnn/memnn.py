@@ -6,6 +6,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
+from parlai.core.utils import maintain_dialog_history
 
 import torch
 from torch import optim
@@ -51,6 +52,12 @@ class MemnnAgent(Agent):
             help='disable GPUs even if available')
         arg_group.add_argument('--gpu', type=int, default=-1,
             help='which GPU device to use')
+        arg_group.add_argument('-hist', '--history-length', default=100000, type=int,
+                           help='Number of past tokens to remember. '
+                                'Default remembers 100000 tokens.')
+        arg_group.add_argument('-histr', '--history-replies', default='label', type=str,
+            choices=['none', 'model', 'label'],
+            help='Keep replies in the history, or not.')
 
     def __init__(self, opt, shared=None):
         opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()
@@ -62,6 +69,7 @@ class MemnnAgent(Agent):
             self.opt = opt
             self.id = 'MemNN'
             self.dict = DictionaryAgent(opt)
+            self.answers = [None] * opt['batchsize']
 
             self.model = MemNN(opt, len(self.dict))
             self.mem_size = opt['mem_size']
@@ -100,32 +108,38 @@ class MemnnAgent(Agent):
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 print('Loading existing model parameters from ' + opt['model_file'])
                 self.load(opt['model_file'])
+        else:       
+            self.answers = shared['answers']
 
+        self.history = {}
         self.episode_done = True
         self.last_cands, self.last_cands_list = None, None
         super().__init__(opt, shared)
 
     def share(self):
         shared = super().share()
+        shared['answers'] = self.answers
         return shared
 
     def observe(self, observation):
-        observation = copy.copy(observation)
-        if not self.episode_done:
-            # if the last example wasn't the end of an episode, then we need to
-            # recall what was said in that example
-            prev_dialogue = self.observation['text'] if self.observation is not None else ''
-
-            # append answer given in the previous example to the dialog 
-            if 'eval_labels' in self.observation:
-                prev_dialogue += '\n' + random.choice(self.observation['eval_labels'])
-            elif 'labels' in self.observation:
-                prev_dialogue += '\n' + random.choice(self.observation['labels'])
-
-            observation['text'] = prev_dialogue + '\n' + observation['text']
-        self.observation = observation
+        """Save observation for act.
+        If multiple observations are from the same episode, concatenate them.
+        """
         self.episode_done = observation['episode_done']
-        return observation
+        # shallow copy observation (deep copy can be expensive)
+        obs = observation.copy()
+        batch_idx = self.opt.get('batchindex', 0)
+        
+        obs['text'] = '\n'.join(maintain_dialog_history(
+            self.history, obs,
+            reply=self.answers[batch_idx] if self.answers[batch_idx] is not None else '',
+            historyLength=self.opt['history_length'],
+            useReplies=self.opt['history_replies'],
+            dict=None, useStartEndIndices=False))
+        
+        self.observation = obs
+        self.answers[batch_idx] = None
+        return obs
 
     def predict(self, xs, cands, ys=None):
         is_training = ys is not None
@@ -314,6 +328,7 @@ class MemnnAgent(Agent):
         predictions = self.predict(xs, cands, ys)
 
         for i in range(len(valid_inds)):
+            self.answers[valid_inds[i]] = predictions[i][0]
             batch_reply[valid_inds[i]]['text'] = predictions[i][0]
             batch_reply[valid_inds[i]]['text_candidates'] = predictions[i]
         return batch_reply
