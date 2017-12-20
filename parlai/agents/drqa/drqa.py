@@ -155,7 +155,7 @@ class DrqaAgent(Agent):
     def observe(self, observation):
         # shallow copy observation (deep copy can be expensive)
         observation = observation.copy()
-        if not self.episode_done:
+        if not self.episode_done and not observation.get('preprocessed', False):
             dialogue = self.observation['text'].split('\n')[:-1]
             dialogue.extend(observation['text'].split('\n'))
             observation['text'] = '\n'.join(dialogue)
