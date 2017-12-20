@@ -239,12 +239,14 @@ def maintain_dialog_history(history, observation, reply='',
         elif len(history['labels']) > 0:
             r = history['labels'][0]
             history['dialog'].extend(parse(r))
-
     if 'text' in observation:
         history['dialog'].extend(parse(observation['text']))
 
     history['episode_done'] = observation['episode_done']
-    history['labels'] = observation['labels']
+    if 'labels' in observation:
+        history['labels'] = observation['labels']
+    elif 'eval_labels' in observation:
+        history['labels'] = observation['eval_labels']
     return history['dialog']
 
 
