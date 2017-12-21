@@ -38,8 +38,8 @@ def eval_model(opt, parser, printargs=True):
             print("---")
             print(world.display() + "\n~~")
         if log_time.time() > log_every_n_secs:
-            tot_time += int(log_time.time())
-            print(str(tot_time) + "s elapsed: " + str(world.report()))
+            tot_time += log_time.time()
+            print(str(int(tot_time)) + "s elapsed: " + str(world.report()))
             log_time.reset()
         if world.epoch_done():
             print("EPOCH DONE")
