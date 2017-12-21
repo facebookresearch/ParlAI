@@ -85,6 +85,8 @@ try:
 except Exception as e:
     raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset, DataLoader, sampler
+from multiprocessing import Lock, RawArray
+import ctypes
 
 
 # Default collate function (for how to prepare a batch)
@@ -100,9 +102,10 @@ class StreamDataset(Dataset):
         self.data_gen = self._data_generator(self.datafile)
         self.length_datafile = self.datafile + ".length"
         self._load_lens()
+        self.indices_lock = None
+        self.indices_seen = None
 
     def __getitem__(self, index):
-        # (ignore index because it is streaming data)
         return next(self.data_gen)
 
     def __len__(self):
@@ -122,19 +125,30 @@ class StreamDataset(Dataset):
     def _read_episode(self, datafile):
         read = open(datafile)
         episode = []
-        for line in read:
+        for idx, line in enumerate(read):
+            with self.indices_lock:
+                if self.indices_seen[idx]:
+                    continue
+                self.indices_seen[idx] = True
             example = json.loads(line)
             episode.append(example)
             if example['episode_done']:
                 yield episode
                 episode = []
         read.close()
+        with self.indices_lock:
+            for idx in range(len(self.indices_seen)):
+                self.indices_seen[idx] = False
 
     def num_episodes(self):
         return self.num_eps
 
     def num_examples(self):
         return self.num_exs
+
+    def set_sync(self, indices_lock, indices_seen):
+        self.indices_lock = indices_lock
+        self.indices_seen = indices_seen
 
 
 class PytorchDataTeacher(FixedDialogTeacher):
@@ -166,6 +180,9 @@ class PytorchDataTeacher(FixedDialogTeacher):
         collate_fn = opt.get('collate_fn', default_collate)
         if not shared:
             self.dataset = StreamDataset(opt)
+            self.indices_lock = Lock()
+            self.indices_seen = RawArray(ctypes.c_bool, self.num_episodes())
+            self.dataset.set_sync(self.indices_lock, self.indices_seen)
             self.pytorch_dataloader = DataLoader(
                 self.dataset,
                 batch_size=self.bsz,
