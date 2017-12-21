@@ -139,7 +139,7 @@ class Metrics(object):
         self.custom_metrics = ['mean_rank', 'loss']
         for k in self.custom_metrics:
             self.metrics[k] = 0.0
-            self.metrics[k + '_cnt'] = 0.0
+            self.metrics[k + '_cnt'] = 0
         self.eval_pr = [1, 5, 10, 100]
         for k in self.eval_pr:
             self.metrics['hits@' + str(k)] = 0
@@ -215,20 +215,20 @@ class Metrics(object):
         if 'metrics' in observation:
             for k, v in observation['metrics'].items():
                 if k not in ['correct', 'f1', 'hits@k']:
-                    if type(self.metrics) is SharedTable:
-                        if k in self.custom_metrics:
-                            with self._lock():
-                                self.metrics[k] += v
-                                self.metrics[k + '_cnt'] += 1
-                        else:
+                    if k in self.custom_metrics:
+                        with self._lock():
+                            self.metrics[k] += v
+                            self.metrics[k + '_cnt'] += 1
+                    else:
+                        if type(self.metrics) is SharedTable:
                             # can't share custom metrics during hogwild
                             pass
-                    else:
-                        if k not in self.metrics:
-                            self.custom_keys.append(k)
-                            self.metrics[k] = v
                         else:
-                            self.metrics[k] += v
+                            if k not in self.metrics:
+                                self.custom_keys.append(k)
+                                self.metrics[k] = v
+                            else:
+                                self.metrics[k] += v
 
         # Return a dict containing the metrics for this specific example.
         # Metrics across all data is stored internally in the class, and
@@ -266,7 +266,7 @@ class Metrics(object):
             self.metrics['f1'] = 0.0
             for k in self.custom_metrics:
                 self.metrics[k] = 0.0
-                self.metrics[k + '_cnt'] = 0.0
+                self.metrics[k + '_cnt'] = 0
             for k in self.eval_pr:
                 self.metrics['hits@' + str(k)] = 0
             for k in self.custom_keys:
