@@ -30,13 +30,14 @@ def eval_model(opt, parser, printargs=True):
     # Show some example dialogs:
     for _ in range(int(opt['num_examples'])):
         world.parley()
-        print("---")
         if opt['display_examples']:
+            print("---")
             print(world.display() + "\n~~")
-        print(world.report())
+            print(world.report())
         if world.epoch_done():
             print("EPOCH DONE")
             break
+    print(world.report())
     world.shutdown()
 
 def main():
