@@ -14,6 +14,7 @@ or
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
+from parlai.core.utils import Timer
 
 import random
 
@@ -26,6 +27,9 @@ def eval_model(opt, parser, printargs=True):
     parser.opt = agent.opt
     if (printargs):
         parser.print_args()
+    log_every_n_secs = opt['log_every_n_secs'] if opt['log_every_n_secs'] > 0 else float('inf')
+    log_time = Timer()
+    tot_time = 0
 
     # Show some example dialogs:
     for _ in range(int(opt['num_examples'])):
@@ -33,7 +37,10 @@ def eval_model(opt, parser, printargs=True):
         if opt['display_examples']:
             print("---")
             print(world.display() + "\n~~")
-            print(world.report())
+        if log_time.time() > log_every_n_secs:
+            tot_time += int(log_time.time())
+            print(str(tot_time) + "s elapsed: " + str(world.report()))
+            log_time.reset()
         if world.epoch_done():
             print("EPOCH DONE")
             break
@@ -47,6 +54,7 @@ def main():
     parser = ParlaiParser(True, True)
     parser.add_argument('-n', '--num-examples', default=100000000)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
+    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.set_defaults(datatype='valid')
     opt = parser.parse_args(print_args=False)
 
