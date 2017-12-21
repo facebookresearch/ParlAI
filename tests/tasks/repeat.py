@@ -16,7 +16,7 @@ class RepeatTeacher(DialogTeacher):
         opt['datafile'] = 'unused_path'
         task = opt.get('task', 'tests.tasks.repeat:RepeatTeacher:50')
         self.data_length = int(task.split(':')[2])
-        super().__init__(opt)
+        super().__init__(opt, shared)
 
     def setup_data(self, unused_path):
         for i in range(self.data_length):
