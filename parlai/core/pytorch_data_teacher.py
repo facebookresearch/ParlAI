@@ -85,8 +85,6 @@ try:
 except Exception as e:
     raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset, DataLoader, sampler
-from multiprocessing import Lock, RawArray
-import ctypes
 
 
 # Default collate function (for how to prepare a batch)
@@ -106,7 +104,10 @@ class StreamDataset(Dataset):
         self.indices_seen = None
 
     def __getitem__(self, index):
-        return next(self.data_gen)
+        while True:
+            idx, ep = next(self.data_gen)
+            if idx == index:
+                return ep
 
     def __len__(self):
         return self.num_eps
@@ -119,36 +120,25 @@ class StreamDataset(Dataset):
 
     def _data_generator(self, datafile):
         while True:
-            for episode in self._read_episode(self.datafile):
-                yield episode
+            for idx, episode in self._read_episode(self.datafile):
+                yield idx, episode
 
     def _read_episode(self, datafile):
         read = open(datafile)
         episode = []
         for idx, line in enumerate(read):
-            with self.indices_lock:
-                if self.indices_seen[idx]:
-                    continue
-                self.indices_seen[idx] = True
             example = json.loads(line)
             episode.append(example)
             if example['episode_done']:
-                yield episode
+                yield idx, episode
                 episode = []
         read.close()
-        with self.indices_lock:
-            for idx in range(len(self.indices_seen)):
-                self.indices_seen[idx] = False
 
     def num_episodes(self):
         return self.num_eps
 
     def num_examples(self):
         return self.num_exs
-
-    def set_sync(self, indices_lock, indices_seen):
-        self.indices_lock = indices_lock
-        self.indices_seen = indices_seen
 
 
 class PytorchDataTeacher(FixedDialogTeacher):
@@ -180,9 +170,6 @@ class PytorchDataTeacher(FixedDialogTeacher):
         collate_fn = opt.get('collate_fn', default_collate)
         if not shared:
             self.dataset = StreamDataset(opt)
-            self.indices_lock = Lock()
-            self.indices_seen = RawArray(ctypes.c_bool, self.num_episodes())
-            self.dataset.set_sync(self.indices_lock, self.indices_seen)
             self.pytorch_dataloader = DataLoader(
                 self.dataset,
                 batch_size=self.bsz,
