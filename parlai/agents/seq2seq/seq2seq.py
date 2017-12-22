@@ -318,12 +318,15 @@ class Seq2seqAgent(Agent):
         # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
         batch_idx = self.opt.get('batchindex', 0)
-        obs['text2vec'] = maintain_dialog_history(
-            self.history, obs,
-            reply=self.answers[batch_idx],
-            historyLength=self.opt['history_length'],
-            useReplies=self.opt['history_replies'],
-            dict=self.dict)
+        if not obs.get('preprocessed', False):
+            obs['text2vec'] = maintain_dialog_history(
+                self.history, obs,
+                reply=self.answers[batch_idx],
+                historyLength=self.opt['history_length'],
+                useReplies=self.opt['history_replies'],
+                dict=self.dict)
+        else:
+            obs['text2vec'] = deque(obs['text2vec'], self.opt['history_length'])
         self.observation = obs
         self.answers[batch_idx] = None
         return obs

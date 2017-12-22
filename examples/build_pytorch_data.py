@@ -70,13 +70,14 @@ def build_data(opt):
                         'have a datafile or `--datafile` is not set')
 
     pytorch_datafile = datafile + ".pytorch"
-    if opt.get('preprocess', True):
+    preprocess = opt.get('pytorch_preprocess', True)
+    if preprocess:
         pytorch_datafile += agent.getID()
     if os.path.isfile(pytorch_datafile):
         # Data already built
         print("[ pytorch data already built. ]")
         return pytorch_datafile
-    print('----------\n[ setting up pytorch data. ]\n----------')
+    print('----------\n[ setting up pytorch data, saving to {}. ]\n----------'.format(pytorch_datafile))
 
     num_eps = 0
     num_exs = 0
@@ -85,7 +86,6 @@ def build_data(opt):
     include_labels = opt.get('include_labels', True)
     context_length = opt.get('context_length', -1)
     context = deque(maxlen=context_length if context_length > 0 else None)
-    preprocess = opt.get('pytorch_preprocess', True)
     # pass examples to dictionary
     with open(pytorch_datafile, 'w') as pytorch_data:
         while not world_data.epoch_done():
@@ -130,7 +130,7 @@ def main():
                        help=('The file to be loaded, preprocessed, and saved'))
     build.add_argument('--pytorch_buildteacher', type=str, default='',
         help='Which teacher to use when building the pytorch data')
-    build.add_argument('--pytorch_preprocess', type=bool, default=True,
+    build.add_argument('--pytorch_preprocess', type='bool', default=True,
         help='Whether the agent should preprocess the data while building'
              'the pytorch data')
     opt = argparser.parse_args()

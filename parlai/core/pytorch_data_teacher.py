@@ -102,8 +102,10 @@ class StreamDataset(Dataset):
         self._load_lens()
 
     def __getitem__(self, index):
-        # (ignore index because it is streaming data)
-        return next(self.data_gen)
+        while True:
+            idx, ep = next(self.data_gen)
+            if idx == index:
+                return ep
 
     def __len__(self):
         return self.num_eps
@@ -116,17 +118,17 @@ class StreamDataset(Dataset):
 
     def _data_generator(self, datafile):
         while True:
-            for episode in self._read_episode(self.datafile):
-                yield episode
+            for idx, episode in self._read_episode(self.datafile):
+                yield idx, episode
 
     def _read_episode(self, datafile):
         read = open(datafile)
         episode = []
-        for line in read:
+        for idx, line in enumerate(read):
             example = json.loads(line)
             episode.append(example)
             if example['episode_done']:
-                yield episode
+                yield idx, episode
                 episode = []
         read.close()
 
@@ -148,7 +150,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
             help='how many workers the Pytorch dataloader should use')
         arg_group.add_argument('--pytorch_buildteacher', type=str, default='',
             help='Which teacher to use when building the pytorch data')
-        arg_group.add_argument('--pytorch_preprocess', type=bool, default=True,
+        arg_group.add_argument('--pytorch_preprocess', type='bool', default=True,
             help='Whether the agent should preprocess the data while building'
                  'the pytorch data')
 
@@ -170,7 +172,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 collate_fn=collate_fn,
                 pin_memory=False,
                 drop_last=False,
-                timeout=0)
+                )
             self.lastYs = [None] * self.bsz
         else:
             self.dataset = shared['dataset']
