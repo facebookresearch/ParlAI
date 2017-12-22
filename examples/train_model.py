@@ -27,12 +27,11 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer
-from parlai.core.metrics import compute_time_metrics
-import build_dict
+from examples.build_dict import build_dict
 import math
 
-def setup_args():
-    parser = ParlaiParser(True, True)
+def setup_args(model_args=None):
+    parser = ParlaiParser(True, True, model_argv=model_args)
     train = parser.add_argument_group('Training Loop Arguments')
     train.add_argument('-et', '--evaltask',
                        help=('task to use for valid/test (defaults to the '
@@ -120,7 +119,7 @@ class TrainLoop():
             if opt['dict_file'] is None and opt.get('model_file'):
                 opt['dict_file'] = opt['model_file'] + '.dict'
             print("[ building dictionary first... ]")
-            build_dict.build_dict(opt)
+            build_dict(opt)
         # Create model and assign it to the specified task
         self.agent = create_agent(opt)
         self.world = create_task(opt, self.agent)
@@ -201,7 +200,7 @@ class TrainLoop():
             while True:
                 world.parley()
                 self.parleys += 1
-                
+
                 if world.get_total_epochs() >= self.max_num_epochs:
                     self.log()
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(
