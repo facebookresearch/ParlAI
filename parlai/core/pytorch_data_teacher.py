@@ -100,8 +100,6 @@ class StreamDataset(Dataset):
         self.data_gen = self._data_generator(self.datafile)
         self.length_datafile = self.datafile + ".length"
         self._load_lens()
-        self.indices_lock = None
-        self.indices_seen = None
 
     def __getitem__(self, index):
         while True:
@@ -179,7 +177,6 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 collate_fn=collate_fn,
                 pin_memory=False,
                 drop_last=False,
-                # timeout=0
                 )
             self.lastYs = [None] * self.bsz
         else:
