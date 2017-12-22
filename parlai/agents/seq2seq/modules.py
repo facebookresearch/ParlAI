@@ -70,14 +70,15 @@ class Seq2seq(nn.Module):
         if self.training:
             y_in = ys.narrow(1, 0, ys.size(1) - 1)
             xs = torch.cat([starts, y_in], 1)
+
             if self.attn_type == 'none':
-                preds, score = self.decoder(xs, hidden, enc_out, attn_mask)
+                preds, score, _h = self.decoder(xs, hidden, enc_out, attn_mask)
                 predictions.append(preds)
                 scores.append(score)
             else:
                 for i in range(ys.size(1)):
                     xi = xs.select(1, i)
-                    preds, score = self.decoder(xi, hidden, enc_out, attn_mask)
+                    preds, score, _h = self.decoder(xi, hidden, enc_out, attn_mask)
                     predictions.append(preds)
                     scores.append(score)
         else:
@@ -88,7 +89,8 @@ class Seq2seq(nn.Module):
 
             for _ in range(self.longest_label):
                 # generate at most longest_label tokens
-                preds, _score = self.decoder(xs, hidden, enc_out, attn_mask)
+                preds, score, hidden = self.decoder(xs, hidden, enc_out, attn_mask)
+                scores.append(score)
                 xs = preds
                 predictions.append(preds)
 
@@ -225,7 +227,8 @@ class Decoder(nn.Module):
         _max_score, idx = scores.narrow(2, 1, scores.size(2) - 1).max(2)
         preds = idx.add_(1)
 
-        return preds, scores
+        return preds, scores, hidden
+
 
 
 class Ranker(nn.Module):
@@ -297,7 +300,7 @@ class Ranker(nn.Module):
                 # feed in START + cands[:-2]
                 cands_in = cview.narrow(1, 0, cview.size(1) - 1)
                 starts = torch.cat([starts, self.dec_lt(cands_in)], 1)
-            _preds, score = self.decoder(starts, cands_hn, enc_out, attn_mask)
+            _preds, score, _h = self.decoder(starts, cands_hn, enc_out, attn_mask)
 
             for i in range(cview.size(1)):
                 # calculate score at each token
@@ -332,7 +335,7 @@ class Ranker(nn.Module):
             cs = starts
             for i in range(cview.size(1)):
                 # process one token at a time
-                _preds, score = self.decoder(cs, cands_hn, cands_enc_out,
+                _preds, score, _h = self.decoder(cs, cands_hn, cands_enc_out,
                                              cands_attn_mask)
                 cs = cview.select(1, i)
                 non_nulls = cs.ne(self.NULL_IDX)
