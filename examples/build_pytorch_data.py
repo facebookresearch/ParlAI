@@ -130,14 +130,9 @@ def main():
                        help=('The file to be loaded, preprocessed, and saved'))
     build.add_argument('--pytorch_buildteacher', type=str, default='',
         help='Which teacher to use when building the pytorch data')
-    preprocess = argparser.add_mutually_exclusive_group(required=False)
-    preprocess.add_argument('--pytorch_preprocess', dest='pytorch_preprocess', action='store_true',
-        help='Set if the agent should preprocess the data while building'
+    build.add_argument('--pytorch_preprocess', type='bool', default=True,
+        help='Whether the agent should preprocess the data while building'
              'the pytorch data')
-    preprocess.add_argument('--no_pytorch_preprocess', dest='pytorch_preprocess', action='store_false',
-        help='Set if the agent should NOT preprocess the data while building'
-             'the pytorch data')
-    argparser.set_defaults(pytorch_preprocess=True)
     opt = argparser.parse_args()
     build_data(opt)
 
