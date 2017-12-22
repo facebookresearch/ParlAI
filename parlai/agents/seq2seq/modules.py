@@ -70,7 +70,6 @@ class Seq2seq(nn.Module):
         if self.training:
             y_in = ys.narrow(1, 0, ys.size(1) - 1)
             xs = torch.cat([starts, y_in], 1)
-
             if self.attn_type == 'none':
                 preds, score, _h = self.decoder(xs, hidden, enc_out, attn_mask)
                 predictions.append(preds)
@@ -228,7 +227,6 @@ class Decoder(nn.Module):
         preds = idx.add_(1)
 
         return preds, scores, hidden
-
 
 
 class Ranker(nn.Module):

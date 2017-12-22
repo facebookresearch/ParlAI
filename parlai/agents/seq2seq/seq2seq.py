@@ -336,7 +336,6 @@ class Seq2seqAgent(Agent):
         """
         is_training = ys is not None
         text_cand_inds, loss_dict = None, None
-
         if is_training:
             self.model.train()
             self.zero_grad()
@@ -347,7 +346,6 @@ class Seq2seqAgent(Agent):
                 score = scores.select(1, i)
                 y = ys.select(1, i)
                 loss += self.criterion(score, y)
-
             loss.backward()
             self.update_params()
             losskey = 'loss' if not lm else 'lmloss'
