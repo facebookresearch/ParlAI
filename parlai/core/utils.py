@@ -225,23 +225,28 @@ def maintain_dialog_history(history, observation, reply='',
     if 'dialog' not in history:
         history['dialog'] = deque(maxlen=historyLength)
         history['episode_done'] = False
+        history['labels'] = []
 
     if history['episode_done']:
         history['dialog'].clear()
+        history['labels'] = []
         history['episode_done'] = False
-
+ 
     if useReplies != 'none':
         if useReplies == 'model':
             if reply != '':
                 history['dialog'].extend(parse(reply))
-        elif 'labels' in observation:
-            r = observation['labels'][0]
+        elif len(history['labels']) > 0:
+            r = history['labels'][0]
             history['dialog'].extend(parse(r))
-
     if 'text' in observation:
         history['dialog'].extend(parse(observation['text']))
 
     history['episode_done'] = observation['episode_done']
+    if 'labels' in observation:
+        history['labels'] = observation['labels']
+    elif 'eval_labels' in observation:
+        history['labels'] = observation['eval_labels']
     return history['dialog']
 
 
