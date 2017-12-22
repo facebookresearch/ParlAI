@@ -341,7 +341,7 @@ class Seq2seqAgent(Agent):
             self.zero_grad()
             loss = 0
             predictions, scores, _ = self.model(xs, ys)
-            for i in range(ys.size(1)):
+            for i in range(scores.size(1)):
                 # sum loss per-token
                 score = scores.select(1, i)
                 y = ys.select(1, i)
