@@ -356,8 +356,9 @@ class MultiAgentDialogWorld(World):
     def epoch_done(self):
         done = False
         for a in self.agents:
-            if a.epoch_done():
-                done = True
+            if hasattr(a, 'epoch_done'):
+                if a.epoch_done():
+                    done = True
         return done
 
     def episode_done(self):
@@ -888,7 +889,8 @@ class HogwildWorld(World):
 
 ### Functions for creating tasks/worlds given options.
 
-def _get_task_world(opt):
+def _get_task_world(opt, user_agents):
+    task_agents = _create_task_agents(opt)
     sp = opt['task'].strip().split(':')
     if '.' in sp[0]:
         # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
@@ -907,13 +909,15 @@ def _get_task_world(opt):
             world_class = getattr(my_module, world_name)
         except Exception:
             # Defaults to this if you did not specify a world for your task.
-            world_class = DialogPartnerWorld
-    task_agents = _create_task_agents(opt)
+            if len(task_agents + user_agents) == 2:
+                world_class = DialogPartnerWorld
+            else:
+                world_class = MultiAgentDialogWorld
     return world_class, task_agents
 
 
 def create_task_world(opt, user_agents):
-    world_class, task_agents = _get_task_world(opt)
+    world_class, task_agents = _get_task_world(opt, user_agents)
     return world_class(opt, task_agents + user_agents)
 
 def create_task(opt, user_agents):
