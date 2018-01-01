@@ -301,8 +301,7 @@ class DialogPartnerWorld(World):
 
     def epoch_done(self):
         """Only the first agent indicates when the epoch is done."""
-        return (self.agents[0].epoch_done()
-                if hasattr(self.agents[0], 'epoch_done') else False)
+        return self.agents[0].epoch_done()
 
     def report(self, compute_time=False):
         if hasattr(self.agents[0], 'report'):
@@ -356,9 +355,8 @@ class MultiAgentDialogWorld(World):
     def epoch_done(self):
         done = False
         for a in self.agents:
-            if hasattr(a, 'epoch_done'):
-                if a.epoch_done():
-                    done = True
+            if a.epoch_done():
+                done = True
         return done
 
     def episode_done(self):
@@ -895,7 +893,10 @@ def _get_task_world(opt, user_agents):
     if '.' in sp[0]:
         # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
         # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
-        world_class = DialogPartnerWorld
+        if len(task_agents + user_agents) == 2:
+            world_class = DialogPartnerWorld
+        else:
+            world_class = MultiAgentDialogWorld
     else:
         task = sp[0].lower()
         if len(sp) > 1:

@@ -74,6 +74,9 @@ class Agent(object):
     def getID(self):
         return self.id
 
+    def epoch_done(self):
+        return False
+
     def reset(self):
         self.observation = None
 
