@@ -12,39 +12,15 @@ see a few of them:
 """
 
 from parlai.core.params import ParlaiParser
-from parlai.core.agents import Agent
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 
 import random
 
-
-class RepeatTextAgent(Agent):
-    """Simple agent which repeats the text it receives."""
-    def __init__(self, opt, shared=None):
-        super().__init__(opt)
-        self.id = 'RepeatTextAgent'
-
-    def act(self):
-        obs = self.observation
-        if obs is None or 'text' not in obs:
-            return {'text': 'Nothing to repeat yet.'}
-        return {'id': self.getID(), 'text': obs['text']}
-
-
 def display_data(opt):
-    # create one repeat label agent and assign it to the specified task
-    agents = []
-    agents.append(RepeatLabelAgent(opt))
-
-    # since RepeatLabelAgent action has label in 'text', other agents
-    # should be `RepeatTextAgent`s
-    for _ in range(opt['num_agents'] - 1):
-        agents.append(RepeatTextAgent(opt))
-
-    # world will be `DialogPartnerWorld` for num_agents = 1
-    # (agent + task teacher), else it will be `MultiAgentDialogWorld`
-    world = create_task(opt, agents)
+    # create repeat label agent and assign it to the specified task
+    agent = RepeatLabelAgent(opt)
+    world = create_task(opt, agent)
 
     # Show some example dialogs.
     with world:
@@ -62,7 +38,6 @@ def main():
     # Get command line arguments
     parser = ParlaiParser()
     parser.add_argument('-n', '--num-examples', default=10, type=int)
-    parser.add_argument('-a', '--num-agents', default=1, type=int)
     opt = parser.parse_args()
 
     display_data(opt)
