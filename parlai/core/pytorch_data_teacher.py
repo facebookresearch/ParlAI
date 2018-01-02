@@ -80,12 +80,74 @@ from examples.build_pytorch_data import build_data
 import json
 import math
 import copy
+import random
+from functools import wraps
 try:
     import torch
 except Exception as e:
     raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset, DataLoader, sampler
+from torch.multiprocessing import Lock
 
+# printed = False
+
+def batch_cache(function):
+    length_to_ep = {}
+    batches = []
+    batches_lock = Lock()
+    cache_lock = Lock()
+    _cache_size = float('inf')
+    # _printed = False
+
+    @wraps(function)
+    def wrapper(*args):
+        teacher = args[0]
+        num_batches = teacher.num_batches
+        bsz = teacher.bsz
+        if len(batches) == num_batches:
+            # if not _printed:
+            # print("returning a batch!")
+            #     printed = True
+            batches_lock.acquire()
+            batch = random.choice(batches)
+            batches_lock.release()
+
+            return teacher.batch_idx + bsz, batch
+        if len(length_to_ep) != 0:
+            for idx in random.sample(length_to_ep.keys(), len(length_to_ep)):
+                ep_list = length_to_ep[idx]
+                if len(ep_list) >= bsz:
+
+                    cache_lock.acquire()
+                    batch = ep_list[:bsz]
+                    length_to_ep[idx] = ep_list[bsz:]
+                    cache_lock.release()
+
+                    batches_lock.acquire()
+                    batches.append(batch)
+                    batches_lock.release()
+                    # print('returning batch of size {}'.format(idx))
+                    # print('num_batches, {}'.format(len(batches)))
+                    return teacher.batch_idx + bsz, batch
+        # if teacher.batch_idx == 130:
+        #     for idx in length_to_ep:
+        #         print('ep_len: {}, num_ep: {}'.format(idx, len(length_to_ep[idx])))
+
+        idx, batch = function(*args)
+        cache_lock.acquire()
+        for b in batch:
+            len_idx = b['text'].count(' ')
+            flatten = lambda l: [item for sublist in l for item in sublist]
+            indices = [len_idx] + flatten([[len_idx + i, len_idx + i * -1] for i in range(1, 6)])
+            for l_idx in indices:
+                if l_idx in length_to_ep:
+                    length_to_ep[l_idx].append(b)
+            else:
+                length_to_ep[len_idx] = [b]
+
+        cache_lock.release()
+        return idx, batch
+    return wrapper
 
 # Default collate function (for how to prepare a batch)
 def default_collate(batch):
@@ -179,7 +241,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
             self.pytorch_dataloader = shared['pytorch_dataloader']
             self.lastYs = shared['lastYs']
 
-        self.num_batches = math.ceil(self.dataset.num_examples()/self.bsz)
+        self.num_batches = math.ceil(self.num_examples()/self.bsz)
+
         self.reset()
 
     def reset(self):
@@ -196,6 +259,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.episode = None
         self.episode_done = True
         self.episode_idx = 0
+        self.batch_idx = 0
 
     def share(self):
         shared = super().share()
@@ -230,6 +294,11 @@ class PytorchDataTeacher(FixedDialogTeacher):
 
         return ex, epoch_done
 
+    @batch_cache
+    def get_next_batch(self):
+        #employs a cache to see if there is a batch of equal size ready
+        return next(self.data)
+
     def next_batch(self):
         if self.epochDone:
             if not self.training:
@@ -238,14 +307,14 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 # Reset the data because it is streaming data
                 self.reset_data()
         try:
-            batch_idx, batch = next(self.data)
+            self.batch_idx, batch = self.get_next_batch()
             epoch_done = False
         except StopIteration:
             batch = [{'episode_done': True, 'id': self.getID()}] * self.bsz
             epoch_done = True
-        if not epoch_done and batch_idx == self.num_batches:
+        if not epoch_done and self.batch_idx == self.num_batches:
             epoch_done = True
-
+        # print(self.batch_idx)
         self.epochDone = epoch_done
         return batch
 
