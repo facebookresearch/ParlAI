@@ -1,5 +1,7 @@
 <h2>News</h2>
 
+2017-12-14: [New teacher added: PytorchDataTeacher](https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/pytorch_data_teacher.py)
+
 2017-11-30: Several new tasks added: [SCAN](https://github.com/brendenlake/SCAN), [ConvAI](http://convai.io/data/), [NVLR](http://lic.nlp.cornell.edu/nlvr/) and [ISWLT14](http://wit3.fbk.eu).
 
 2017-10-19: [ParlAI Request For Proposals: Winners Announced!](https://research.fb.com/announcing-the-winners-of-the-facebook-parlai-research-awards/)
