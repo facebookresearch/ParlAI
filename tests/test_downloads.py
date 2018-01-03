@@ -449,6 +449,29 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
+    def test_multinli(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.multinli.agents import DefaultTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+
+        for dt in ['train', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+            assert len(reply.get('label_candidates')) == 3
+            assert reply.get('text').find('Premise') != -1
+            assert reply.get('text').find('Hypothesis') != -1
+
+            if dt == 'train':
+                assert reply.get('labels')[0] in ['entailment',
+                                                  'contradiction',
+                                                  'neutral']
+
+        shutil.rmtree(self.TMP_PATH)
+
 
 if __name__ == '__main__':
     # clean out temp dir first

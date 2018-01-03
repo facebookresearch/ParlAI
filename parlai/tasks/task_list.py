@@ -39,6 +39,13 @@ task_list = [
         "description": "Sentence completion given a few sentences as context from a children's book. From Hill et al., '16. Link: https://arxiv.org/abs/1511.02301"
     },
     {
+        "id": "COPA",
+        "display_name": "Choice of Plausible Alternatives",
+        "task": "copa",
+        "tags": [ "All",  "Reasoning" ],
+        "description": "The Choice Of Plausible Alternatives (COPA) evaluation provides researchers with a tool for assessing progress in open-domain commonsense causal reasoning. COPA consists of 1000 questions, split equally into development and test sets of 500 questions each. See http://people.ict.usc.edu/~gordon/copa.html for more information"
+    },
+    {
         "id": "CornellMovie",
         "display_name": "Cornell Movie",
         "task": "cornell_movie",
@@ -135,6 +142,13 @@ task_list = [
         "task": "mturkwikimovies",
         "tags": [ "All",  "QA" ],
         "description": "Closed-domain QA dataset asking MTurk-derived questions about movies, answerable from Wikipedia. From Li et al. '16. Link: https://arxiv.org/abs/1611.09823"
+    },
+    {
+        "id": "MultiNLI",
+        "display_name": "MultiNLI",
+        "task": "multinli",
+        "tags": [ "All",  "Entailment" ],
+        "description": "A dataset designed for use in the development and evaluation of machine learning models for sentence understanding. Each example contains a premise and hypothesis. Model has to predict whether premise and hypothesis entail, contradict or are neutral to each other. From Williams et al. '17. Link: https://arxiv.org/abs/1704.05426"
     },
     {
         "id": "OpenSubtitles",
