@@ -25,10 +25,8 @@ def _path(opt):
 
     dt = opt['datatype'].split(':')[0]
 
-    if dt == 'train':
+    if dt == 'train' or dt == 'valid':
         suffix = 'dev'
-    elif dt == 'valid':
-        raise RuntimeError('No validation dataset for COPA')
     elif dt == 'test':
         suffix = 'test'
     else:
@@ -58,7 +56,6 @@ class DefaultTeacher(DialogTeacher):
         root = tree.getroot()
 
         for child in root:
-            id = child.attrib['id']
             asks_for = child.attrib['asks-for']
             answer = child.attrib['most-plausible-alternative']
 
