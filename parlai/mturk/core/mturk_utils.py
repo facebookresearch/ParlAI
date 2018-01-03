@@ -269,15 +269,16 @@ def give_worker_qualification(worker_id, qualification_id, value=None):
 
     if value is not None:
         client.associate_qualification_with_worker(
-            QualificationTypeId='string',
-            WorkerId='string',
+            QualificationTypeId=qualification_id,
+            WorkerId=worker_id,
             IntegerValue=value,
             SendNotification=False
         )
     else:
         client.associate_qualification_with_worker(
-            QualificationTypeId='string',
-            WorkerId='string',
+            QualificationTypeId=qualification_id,
+            WorkerId=worker_id,
+            IntegerValue=1,
             SendNotification=False
         )
 
