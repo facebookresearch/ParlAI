@@ -77,4 +77,4 @@ class DefaultTeacher(DialogTeacher):
                 answer = [alternative_two]
             answer_options = [alternative_one, alternative_two]
 
-            yield (premise, answer, None, answer_options), False
+            yield (premise, answer, None, answer_options), True
