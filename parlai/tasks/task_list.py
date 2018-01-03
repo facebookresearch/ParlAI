@@ -39,6 +39,13 @@ task_list = [
         "description": "Sentence completion given a few sentences as context from a children's book. From Hill et al., '16. Link: https://arxiv.org/abs/1511.02301"
     },
     {
+        "id": "COPA",
+        "display_name": "Choice of Plausible Alternatives",
+        "task": "copa",
+        "tags": [ "All",  "Reasoning" ],
+        "description": "The Choice Of Plausible Alternatives (COPA) evaluation provides researchers with a tool for assessing progress in open-domain commonsense causal reasoning. COPA consists of 1000 questions, split equally into development and test sets of 500 questions each. See http://people.ict.usc.edu/~gordon/copa.html for more information"
+    },
+    {
         "id": "CornellMovie",
         "display_name": "Cornell Movie",
         "task": "cornell_movie",
