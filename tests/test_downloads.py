@@ -466,7 +466,8 @@ class TestData(unittest.TestCase):
             assert reply.get('text').find('Hypothesis') != -1
 
             if dt == 'train':
-                assert reply.get('labels')[0] in ['entailment', 'contradict',
+                assert reply.get('labels')[0] in ['entailment',
+                                                  'contradiction',
                                                   'neutral']
 
         shutil.rmtree(self.TMP_PATH)
