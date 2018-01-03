@@ -144,6 +144,13 @@ task_list = [
         "description": "Closed-domain QA dataset asking MTurk-derived questions about movies, answerable from Wikipedia. From Li et al. '16. Link: https://arxiv.org/abs/1611.09823"
     },
     {
+        "id": "MultiNLI",
+        "display_name": "MultiNLI",
+        "task": "multinli",
+        "tags": [ "All",  "Entailment" ],
+        "description": "A dataset designed for use in the development and evaluation of machine learning models for sentence understanding. Each example contains a premise and hypothesis. Model has to predict whether premise and hypothesis entail, contradict or are neutral to each other. From Williams et al. '17. Link: https://arxiv.org/abs/1704.05426"
+    },
+    {
         "id": "OpenSubtitles",
         "display_name": "Open Subtitles",
         "task": "opensubtitles",
