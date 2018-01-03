@@ -70,4 +70,4 @@ class DefaultTeacher(DialogTeacher):
 
                 question = premise + '\n' + hypo
 
-            yield (question, answer, None, MULTINLI_LABELS), True
+                yield (question, answer, None, MULTINLI_LABELS), True
