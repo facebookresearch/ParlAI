@@ -53,7 +53,7 @@ class RetrieverAgent(Agent):
         # sets up db
         if not os.path.exists(opt['retriever_dbpath']):
             if not opt.get('retriever_task'):
-                raise RuntimeError('Retriever task param required to build db')
+                opt['retriever_task'] = opt['task']
             build_db(opt, opt['retriever_task'], opt['retriever_dbpath'],
                      context_length=opt.get('context_length', -1),
                      include_labels=opt.get('include_labels', True))
@@ -91,7 +91,22 @@ class RetrieverAgent(Agent):
 
         if 'text' in obs:
             doc_ids, doc_scores = self.ranker.closest_docs(obs['text'], k=30)
-            if len(doc_ids) == 0:
+
+            if obs.get('label_candidates'):
+                # these are better selection than stored facts
+                # rank these options instead
+                cands = obs['label_candidates']
+                cands_id = id(cands)
+                if cands_id not in self.cands_hash:
+                    # cache candidate set
+                    # will not update if cand set changes contents
+                    c_list = list(cands)
+                    self.cands_hash[cands_id] = (live_count_matrix(self.tfidf_args, c_list), c_list)
+                c_ids, c_scores = self.ranker.closest_docs(obs['text'], k=30, matrix=self.cands_hash[cands_id][0])
+                reply['text_candidates'] = [self.cands_hash[cands_id][1][cid] for cid in c_ids]
+                reply['text'] = reply['text_candidates'][0]
+            elif len(doc_ids) == 0:
+                # nothing found, return generic response
                 reply['text'] = choice([
                     'Can you say something more interesting?',
                     'Why are you being so short with me?',
@@ -102,20 +117,8 @@ class RetrieverAgent(Agent):
                 total = sum(doc_scores)
                 doc_probs = [d / total for d in doc_scores]
 
-                # rank candidates
-                if obs.get('label_candidates'):
-                    # these are better selection than stored facts
-                    cands = obs['label_candidates']
-                    cands_id = id(cands)
-                    if cands_id not in self.cands_hash:
-                        # cache candidate set
-                        # will not update if cand set changes contents
-                        c_list = list(cands)
-                        self.cands_hash[cands_id] = (live_count_matrix(self.tfidf_args, c_list), c_list)
-                    c_ids, c_scores = self.ranker.closest_docs(obs['text'], k=30, matrix=self.cands_hash[cands_id][0])
-                    picks = [self.cands_hash[cands_id][1][cid] for cid in c_ids]
-                else:
-                    picks = [self.db.get_doc_value(int(did)) for did in doc_ids]
+                # returned
+                picks = [self.db.get_doc_value(int(did)) for did in doc_ids]
                 reply['text_candidates'] = picks
 
                 # pick single choice
