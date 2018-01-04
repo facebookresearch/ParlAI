@@ -193,6 +193,13 @@ task_list = [
         "description": "Open-domain QA dataset based on Freebase triples from Bordes et al. '15. Link: https://arxiv.org/abs/1506.02075"
     },
     {
+        "id": "SNLI",
+        "display_name": "The Stanford Natural Language Inference (SNLI) Corpus",
+        "task": "snli",
+        "tags": [ "All",  "Entailment" ],
+        "description": "The SNLI corpus (version 1.0) is a collection of 570k human-written English sentence pairs manually labeled for balanced classification with the labels entailment, contradiction, and neutral, supporting the task of natural language inference (NLI), also known as recognizing textual entailment (RTE). See https://nlp.stanford.edu/projects/snli/"
+    },
+    {
         "id": "SQuAD",
         "display_name": "SQuAD",
         "task": "squad",

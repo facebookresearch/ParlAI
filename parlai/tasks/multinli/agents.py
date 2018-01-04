@@ -46,6 +46,24 @@ def _path(opt):
     return data_path
 
 
+def setup_data(path):
+    print('loading: ' + path)
+
+    with open(path, 'r') as data_file:
+        for pair_line in data_file:
+            pair = json.loads(pair_line)
+            premise = MULTINLI_PREMISE_PREFIX + pair[MULTINLI_PREMISE_KEY]
+            hypo = MULTINLI_HYPO_PREFIX + pair[MULTINLI_HYPO_KEY]
+            answer = [pair[MULTINLI_ANSWER_KEY]]
+
+            if answer == '-':
+                continue
+
+            question = premise + '\n' + hypo
+
+            yield (question, answer, None, MULTINLI_LABELS), True
+
+
 class DefaultTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
@@ -56,18 +74,4 @@ class DefaultTeacher(DialogTeacher):
         super().__init__(opt, shared)
 
     def setup_data(self, path):
-        print('loading: ' + path)
-
-        with open(path, 'r') as data_file:
-            for pair_line in data_file:
-                pair = json.loads(pair_line)
-                premise = MULTINLI_PREMISE_PREFIX + pair[MULTINLI_PREMISE_KEY]
-                hypo = MULTINLI_HYPO_PREFIX + pair[MULTINLI_HYPO_KEY]
-                answer = [pair[MULTINLI_ANSWER_KEY]]
-
-                if answer == '-':
-                    continue
-
-                question = premise + '\n' + hypo
-
-                yield (question, answer, None, MULTINLI_LABELS), True
+        return setup_data(path)
