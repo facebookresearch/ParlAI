@@ -449,6 +449,23 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
+    def test_copa(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.copa.agents import DefaultTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+
+        for dt in ['train', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+            assert len(reply.get('label_candidates')) == 2
+
+        shutil.rmtree(self.TMP_PATH)
+
     def test_multinli(self):
         from parlai.core.params import ParlaiParser
         from parlai.tasks.multinli.agents import DefaultTeacher
