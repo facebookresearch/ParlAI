@@ -57,6 +57,7 @@ class Task100kTeacher(HalfTeacher):
                 yield entry, new
             cnt += 1
 
+
 class Task10kTeacher(HalfTeacher):
     """This version of opensubtitles only includes 10,000 dialogs."""
     def setup_data(self, path):
