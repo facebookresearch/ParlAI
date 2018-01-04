@@ -14,6 +14,8 @@ import os
 import requests
 import shutil
 
+from parlai.core.utils import ProgressLogger
+
 
 def built(path, version_string=None):
     """Checks if '.built' flag has been set for that task.
@@ -40,20 +42,6 @@ def mark_done(path, version_string=None):
         if version_string:
             write.write('\n' + version_string)
 
-
-def log_progress(curr, total, width=40):
-    """Displays a bar showing the current progress."""
-    done = min(curr * width // total, width)
-    remain = width - done
-    progress = '[{}{}] {} / {}'.format(
-        ''.join(['|'] * done),
-        ''.join(['.'] * remain),
-        curr,
-        total
-    )
-    print(progress, end='\r')
-
-
 def download(url, path, fname, redownload=False):
     """Downloads file using `requests`. If ``redownload`` is set to false, then
     will not download tar file again if it is present (default ``True``)."""
@@ -62,6 +50,9 @@ def download(url, path, fname, redownload=False):
 
     retry = 5
     exp_backoff = [2 ** r for r in reversed(range(retry))]
+
+    logger = ProgressLogger()
+
     while download and retry >= 0:
         resume_file = outfile + '.part'
         resume = os.path.isfile(resume_file)
@@ -99,7 +90,7 @@ def download(url, path, fname, redownload=False):
                             if total_size < done:
                                 # don't freak out if content-length was too small
                                 total_size = done
-                            log_progress(done, total_size)
+                            logger.log(done, total_size)
                     break
             except requests.exceptions.ConnectionError:
                 retry -= 1
