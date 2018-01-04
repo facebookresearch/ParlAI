@@ -19,12 +19,20 @@ def _path(opt, filtered):
                         dt + filtered + '.txt')
 
 
-class DefaultTeacher(FbDialogTeacher):
+# Creates half of possible examples
+class HalfTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, '')
         if not opt['datatype'].startswith('train'):
             opt['cands_datafile'] = opt['datafile']
+        super().__init__(opt, shared)
+
+
+# Creates all possible examples
+class FullTeacher(HalfTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
         super().__init__(opt, shared)
 
     def setup_data(self, path):
@@ -40,3 +48,22 @@ class DefaultTeacher(FbDialogTeacher):
         if alternate:
             for i, e in enumerate(alternate):
                 yield e, i == 0
+
+
+# Cuts off after 100,000 examples
+class SmallTeacher(HalfTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        super().__init__(opt, shared)
+
+    def setup_data(self, path):
+        cnt = 0
+        for entry, new in super().setup_data(path):
+            if cnt < 100000:
+                yield entry, new
+            cnt += 1
+
+
+# Defaults to full teacher (all possible examples)
+class DefaultTeacher(FullTeacher):
+    pass
