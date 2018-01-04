@@ -21,7 +21,7 @@ def _path(opt, filtered):
 
 class HalfTeacher(FbDialogTeacher):
     """This version of opensubtitles creates half of all possible dialog
-       examples.
+    examples.
     """
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
