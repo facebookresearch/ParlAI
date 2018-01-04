@@ -19,7 +19,10 @@ def _path(opt, filtered):
                         dt + filtered + '.txt')
 
 
-class DefaultTeacher(FbDialogTeacher):
+class HalfTeacher(FbDialogTeacher):
+    """This version of opensubtitles creates half of all possible dialog
+    examples.
+    """
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, '')
@@ -27,6 +30,9 @@ class DefaultTeacher(FbDialogTeacher):
             opt['cands_datafile'] = opt['datafile']
         super().__init__(opt, shared)
 
+
+class FullTeacher(HalfTeacher):
+    """This version of opensubtitles creates all possible dialog examples."""
     def setup_data(self, path):
         alternate = []
         for entry, new in super().setup_data(path):
@@ -40,3 +46,18 @@ class DefaultTeacher(FbDialogTeacher):
         if alternate:
             for i, e in enumerate(alternate):
                 yield e, i == 0
+
+
+class SmallTeacher(HalfTeacher):
+    """This version of opensubtitles only includes 100,000 dialogs."""
+    def setup_data(self, path):
+        cnt = 0
+        for entry, new in super().setup_data(path):
+            if cnt < 100000:
+                yield entry, new
+            cnt += 1
+
+
+# Defaults to full teacher (all possible examples)
+class DefaultTeacher(FullTeacher):
+    pass
