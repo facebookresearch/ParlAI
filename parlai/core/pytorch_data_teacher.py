@@ -87,71 +87,139 @@ try:
 except Exception as e:
     raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset, DataLoader, sampler
-from torch.multiprocessing import Lock
+from torch.multiprocessing import Lock, Process
 
-# printed = False
+# def ep_cache(function):
+#     cache = {}
+#     cache_lock = Lock()
+#     _cache_size = float('inf')
+#
+#     @wraps(function)
+#     def wrapper(*args):
+#         idx = args[1]
+#         if idx in cache:
+#             ep = cache[idx]
+#         else:
+#             ep = function(*args)
+#             if ep is not None and len(cache) < _cache_size:
+#                 cache_lock.acquire()
+#                 cache[idx] = ep
+#                 cache_lock.release()
+#         # if len(cache) % 999 == 0:
+#         #     print(len(cache))
+#         return ep
+#     return wrapper
 
 def batch_cache(function):
-    length_to_ep = {}
-    batches = []
-    batches_lock = Lock()
-    cache_lock = Lock()
-    _cache_size = float('inf')
-    # _printed = False
+    length_to_eps = {}          # Maps episode length to list of episodes
+    length_to_idx = {}              # Maps episode length to index in bucket
+    batches = []                    # List of batches if popping batches
+    batches_lock = Lock()           # Lock to access batches
+    cache_lock = Lock()             # Lock to access length_to_eps
+    index_lock = Lock()             # Lock to access length_to_idx
+    pop_batches = False             # Whether to pop batches (otherwise do rolling index)
+    # rolling_index = False           # If not popping batches, whether to roll index
+    #                                 #   over when iterating over a bucket
+    indices_seen = set()            # To see whether episode is in cache yet
+
+    def put_in_cache(ep_idx, episode):
+        length = episode['text'].count(' ')
+        flatten = lambda l: [item for sublist in l for item in sublist]
+        lengths = [length] + flatten([[length + i, length + i * -1] for i in range(1, 6)])
+        lengths = [max(i, 1) for i in lengths]
+        found_idx = False
+        for l in lengths:
+            if l in length_to_eps:
+                found_idx = True
+                cache_lock.acquire()
+                length_to_eps[l].append((ep_idx, episode))
+                cache_lock.release()
+        if not found_idx:
+            cache_lock.acquire()
+            length_to_eps[length] = [(ep_idx, episode)]
+            cache_lock.release()
+            if not pop_batches:
+                index_lock.acquire()
+                if length not in length_to_idx:
+                    length_to_idx[length] = 0
+                index_lock.release()
 
     @wraps(function)
     def wrapper(*args):
-        teacher = args[0]
-        num_batches = teacher.num_batches
-        bsz = teacher.bsz
-        if len(batches) == num_batches:
-            # if not _printed:
-            # print("returning a batch!")
-            #     printed = True
-            batches_lock.acquire()
-            batch = random.choice(batches)
-            batches_lock.release()
-
-            return teacher.batch_idx + bsz, batch
-        if len(length_to_ep) != 0:
-            for idx in random.sample(length_to_ep.keys(), len(length_to_ep)):
-                ep_list = length_to_ep[idx]
-                if len(ep_list) >= bsz:
-
-                    cache_lock.acquire()
-                    batch = ep_list[:bsz]
-                    length_to_ep[idx] = ep_list[bsz:]
-                    cache_lock.release()
-
-                    batches_lock.acquire()
-                    batches.append(batch)
-                    batches_lock.release()
-                    # print('returning batch of size {}'.format(idx))
-                    # print('num_batches, {}'.format(len(batches)))
+        caller = args[0]
+        if isinstance(caller, LoaderProcess):
+            ep_idx = args[1]
+            if ep_idx not in indices_seen:
+                indices_seen.add(ep_idx)
+                ep_idx, ep = function(*args)
+                put_in_cache(ep_idx, ep[0])
+        else:
+            teacher = caller
+            num_batches = teacher.num_batches
+            bsz = teacher.bsz
+            if pop_batches:
+                if len(batches) == num_batches:
+                    batch = random.choice(batches)
                     return teacher.batch_idx + bsz, batch
-        # if teacher.batch_idx == 130:
-        #     for idx in length_to_ep:
-        #         print('ep_len: {}, num_ep: {}'.format(idx, len(length_to_ep[idx])))
 
-        idx, batch = function(*args)
-        cache_lock.acquire()
-        for b in batch:
-            len_idx = b['text'].count(' ')
-            flatten = lambda l: [item for sublist in l for item in sublist]
-            indices = [len_idx] + flatten([[len_idx + i, len_idx + i * -1] for i in range(1, 6)])
-            for l_idx in indices:
-                if l_idx in length_to_ep:
-                    length_to_ep[l_idx].append(b)
-            else:
-                length_to_ep[len_idx] = [b]
+            if len(length_to_eps) != 0:
+                # Pick length indices at random
+                for length in random.sample(length_to_eps.keys(), len(length_to_eps)):
+                    ep_list = length_to_eps[length]
+                    if len(ep_list) >= bsz:
+                        batch = None
+                        if pop_batches:
+                            cache_lock.acquire()
+                            batch = ep_list[:bsz]
+                            length_to_eps[length] = ep_list[bsz:]
+                            cache_lock.release()
 
-        cache_lock.release()
-        return idx, batch
+                            batches_lock.acquire()
+                            batches.append(batch)
+                            batches_lock.release()
+                        else:
+                            index_lock.acquire()
+                            ep_list_idx = length_to_idx[length]
+                            if not (len(ep_list) - ep_list_idx < bsz):
+                                batch = ep_list[ep_list_idx:ep_list_idx+bsz]
+                                length_to_idx[length] = (ep_list_idx + bsz) % len(ep_list)
+                            index_lock.release()
+
+                        if batch is not None:
+                            return teacher.batch_idx + bsz, batch
+                        else:
+                            continue
+
+            idx, batch = function(*args)
+            for index, ep in batch:
+                if index not in indices_seen:
+                    indices_seen.add(index)
+                    put_in_cache(index, ep)
+            return idx, batch
     return wrapper
+
+
+class LoaderProcess(Process):
+    """A background process that submits jobs to the DataLoader
+       to load examples into cache
+    """
+    def __init__(self, opt):
+        super().__init__(daemon=True)
+        self.dataset = StreamDataset(opt)
+
+    def run(self):
+        for i in range(self.dataset.num_episodes()):
+            self.load_ep(i)
+
+    @batch_cache
+    def load_ep(self, ep_idx):
+        return self.dataset[ep_idx]
+
 
 # Default collate function (for how to prepare a batch)
 def default_collate(batch):
-    return [b[0] for b in batch]
+    return [(b[0], b[1][0]) for b in batch]
+    # return batch
 
 
 class StreamDataset(Dataset):
@@ -163,11 +231,12 @@ class StreamDataset(Dataset):
         self.length_datafile = self.datafile + ".length"
         self._load_lens()
 
+    # @ep_cache
     def __getitem__(self, index):
         while True:
             idx, ep = next(self.data_gen)
             if idx == index:
-                return ep
+                return (index, ep)
 
     def __len__(self):
         return self.num_eps
@@ -236,6 +305,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 drop_last=False,
                 )
             self.lastYs = [None] * self.bsz
+            # self.loader_process = LoaderProcess(opt)
+            # self.loader_process.start()
         else:
             self.dataset = shared['dataset']
             self.pytorch_dataloader = shared['pytorch_dataloader']
@@ -286,7 +357,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
             self.entry_idx += 1
 
         if not epoch_done:
-            ex = self.episode[self.entry_idx]
+            ex = self.episode[self.entry_idx][1]
             self.episode_done = ex['episode_done']
             if (self.episode_done
                     and self.episode_idx + self.bsz >= self.num_episodes()):
@@ -308,6 +379,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 self.reset_data()
         try:
             self.batch_idx, batch = self.get_next_batch()
+            batch = [b[1] for b in batch]
             epoch_done = False
         except StopIteration:
             batch = [{'episode_done': True, 'id': self.getID()}] * self.bsz
