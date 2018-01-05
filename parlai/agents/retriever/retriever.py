@@ -43,6 +43,10 @@ class RetrieverAgent(Agent):
             '--retriever-tokenizer', type=str, default='simple',
             help='String option specifying tokenizer type to use '
                  '(e.g. "corenlp")')
+        parser.add_argument(
+            '--retriever-mode', choice=['keys', 'values'], default='values',
+            help='Whether to retrieve the stored key or the stored value.'
+        )
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
