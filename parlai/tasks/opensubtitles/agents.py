@@ -48,12 +48,22 @@ class FullTeacher(HalfTeacher):
                 yield e, i == 0
 
 
-class SmallTeacher(HalfTeacher):
+class Task100kTeacher(HalfTeacher):
     """This version of opensubtitles only includes 100,000 dialogs."""
     def setup_data(self, path):
         cnt = 0
         for entry, new in super().setup_data(path):
             if cnt < 100000:
+                yield entry, new
+            cnt += 1
+
+
+class Task10kTeacher(HalfTeacher):
+    """This version of opensubtitles only includes 10,000 dialogs."""
+    def setup_data(self, path):
+        cnt = 0
+        for entry, new in super().setup_data(path):
+            if cnt < 10000:
                 yield entry, new
             cnt += 1
 
