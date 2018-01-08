@@ -301,8 +301,7 @@ class DialogPartnerWorld(World):
 
     def epoch_done(self):
         """Only the first agent indicates when the epoch is done."""
-        return (self.agents[0].epoch_done()
-                if hasattr(self.agents[0], 'epoch_done') else False)
+        return self.agents[0].epoch_done()
 
     def report(self, compute_time=False):
         if hasattr(self.agents[0], 'report'):
@@ -888,12 +887,16 @@ class HogwildWorld(World):
 
 ### Functions for creating tasks/worlds given options.
 
-def _get_task_world(opt):
+def _get_task_world(opt, user_agents):
+    task_agents = _create_task_agents(opt)
     sp = opt['task'].strip().split(':')
     if '.' in sp[0]:
         # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
         # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
-        world_class = DialogPartnerWorld
+        if len(task_agents + user_agents) == 2:
+            world_class = DialogPartnerWorld
+        else:
+            world_class = MultiAgentDialogWorld
     else:
         task = sp[0].lower()
         if len(sp) > 1:
@@ -907,13 +910,15 @@ def _get_task_world(opt):
             world_class = getattr(my_module, world_name)
         except Exception:
             # Defaults to this if you did not specify a world for your task.
-            world_class = DialogPartnerWorld
-    task_agents = _create_task_agents(opt)
+            if len(task_agents + user_agents) == 2:
+                world_class = DialogPartnerWorld
+            else:
+                world_class = MultiAgentDialogWorld
     return world_class, task_agents
 
 
 def create_task_world(opt, user_agents):
-    world_class, task_agents = _get_task_world(opt)
+    world_class, task_agents = _get_task_world(opt, user_agents)
     return world_class(opt, task_agents + user_agents)
 
 def create_task(opt, user_agents):
