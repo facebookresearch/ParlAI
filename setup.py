@@ -11,7 +11,7 @@ import sys
 if sys.version_info < (3,):
     sys.exit('Sorry, Python3 is required for ParlAI.')
 
-with open('README.md') as f:
+with open('README.md', encoding="utf8") as f:
     readme = f.read()
 
 with open('LICENSE') as f:
