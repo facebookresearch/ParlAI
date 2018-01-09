@@ -74,6 +74,9 @@ class Agent(object):
     def getID(self):
         return self.id
 
+    def epoch_done(self):
+        return False
+
     def reset(self):
         self.observation = None
 
@@ -342,6 +345,8 @@ def get_task_module(taskname):
     sp = taskname.strip().split(':')
     if '.' in sp[0]:
         module_name = sp[0]
+    elif sp[0] == 'pytorch_teacher':
+        module_name = 'parlai.core.pytorch_data_teacher'
     else:
         task = sp[0].lower()
         module_name = "parlai.tasks.%s.agents" % (task)
@@ -402,6 +407,8 @@ def _create_task_agents(opt):
         # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
         # (i.e. specifying your own path directly)
         module_name = sp[0]
+    elif sp[0] == 'pytorch_teacher':
+        module_name = 'parlai.core.pytorch_data_teacher'
     else:
         task = sp[0].lower()
         module_name = "parlai.tasks.%s.agents" % (task)

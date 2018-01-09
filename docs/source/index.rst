@@ -51,6 +51,7 @@ ParlAI is a one-stop-shop for dialog research.
 
   remote_agent
   repeat_label
+  coopgame_agent
 
 
 Indices and tables

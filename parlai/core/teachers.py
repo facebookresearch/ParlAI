@@ -123,7 +123,8 @@ class FixedDialogTeacher(Teacher):
             self.random = self.datatype == 'train'
         if not hasattr(self, 'training'):
             self.training = self.datatype.startswith('train')
-
+        if not hasattr(self, 'datafile'):
+            self.datafile = opt.get('datafile')
         # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:
@@ -148,7 +149,8 @@ class FixedDialogTeacher(Teacher):
         if self.use_batch_act:
             if shared:
                 self.lastYs = shared['lastYs']
-                if 'batches' in shared:
+                if 'sorted_data' in shared:
+                    self.sorted_data = shared['sorted_data']
                     self.batches = shared['batches']
             else:
                 self.lastYs = [None] * self.bsz
@@ -218,9 +220,10 @@ class FixedDialogTeacher(Teacher):
 
         if self.opt.get('numthreads', 1) > 1:
             if type(self.index) is not multiprocessing.sharedctypes.Synchronized:
-                # for multithreading need to move index into shared / locked memory
+                # for multithreading need to move index into threadsafe memory
                 self.index = Value('l', -1)
-            if hasattr(self, 'batches'):
+            if hasattr(self, 'sorted_data'):
+                shared['sorted_data'] = self.sorted_data
                 shared['batches'] = self.batches
         else:
             shared['data_loader'] = self.data_loader
@@ -264,6 +267,26 @@ class FixedDialogTeacher(Teacher):
 
         return ex, epoch_done
 
+    def next_batch(self):
+        # get next batch
+        with self._lock():
+            self.index.value += 1
+            if self.training:
+                self.index.value %= len(self.batches)
+            batch_idx = self.index.value
+
+            if batch_idx + 1 >= len(self.batches):
+                if self.random:
+                    random.shuffle(self.batches)
+                self.epochDone = True
+            else:
+                self.epochDone = False
+
+        if batch_idx >= len(self.batches):
+            return [{'episode_done': True, 'id': self.getID()}] * self.bsz
+
+        return self.batches[batch_idx]
+
     def num_episodes(self):
         """Get the number of episodes in this dataset."""
         if self.use_batch_act:
@@ -304,25 +327,7 @@ class FixedDialogTeacher(Teacher):
             # reset if haven't yet
             self.reset()
 
-        # get next batch
-        with self._lock():
-            self.index.value += 1
-            if self.training:
-                self.index.value %= len(self.batches)
-            batch_idx = self.index.value
-
-            if batch_idx + 1 >= len(self.batches):
-                if self.random:
-                    random.shuffle(self.batches)
-                self.epochDone = True
-            else:
-                self.epochDone = False
-
-        if batch_idx >= len(self.batches):
-            return [{'episode_done': True, 'id': self.getID()}] * self.bsz
-
-        batch = self.batches[batch_idx]
-
+        batch = self.next_batch()
         # pad batch
         if len(batch) < self.bsz:
             batch += [{'episode_done': True, 'id': self.getID()}] * (self.bsz - len(batch))

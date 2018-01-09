@@ -248,11 +248,14 @@ class World(object):
     def update_counters(self):
         """Update how many epochs have completed"""
         self.total_parleys += 1
-        if not self.max_exs:
-            self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+        if self.max_exs is None:
+            if ('num_epochs' in self.opt and self.opt['num_epochs'] > 0):
+                self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+            else:
+                self.max_exs = -1
         # when we know the size of the data
         if self.max_exs > 0:
-            self.total_epochs = self.total_parleys * self.opt['batchsize'] / self.num_examples()
+            self.total_epochs = self.total_parleys * self.opt.get('batchsize', 1) / self.num_examples()
         # when we do not know the size of the data
         else:
             if self.epoch_done():
@@ -298,8 +301,7 @@ class DialogPartnerWorld(World):
 
     def epoch_done(self):
         """Only the first agent indicates when the epoch is done."""
-        return (self.agents[0].epoch_done()
-                if hasattr(self.agents[0], 'epoch_done') else False)
+        return self.agents[0].epoch_done()
 
     def report(self, compute_time=False):
         if hasattr(self.agents[0], 'report'):
@@ -742,11 +744,9 @@ class HogwildProcess(Process):
                     break  # time to close
                 self.sync['queued_sem'].acquire()
                 self.sync['threads_sem'].release()
-                if not world.epoch_done():
+                if not world.epoch_done() or self.opt.get('datatype').startswith('train', False):
                     # do one example if any available
-                    # print('parley start')
                     world.parley()
-                    # print('parley done')
                     with self.sync['total_parleys'].get_lock():
                         self.sync['total_parleys'].value += 1
                 else:
@@ -843,10 +843,13 @@ class HogwildWorld(World):
 
     def get_total_epochs(self):
         """Return total amount of epochs on which the world has trained."""
-        if not self.max_exs:
-            self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+        if self.max_exs is None:
+            if ('num_epochs' in self.opt and self.opt['num_epochs'] > 0):
+                self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+            else:
+                self.max_exs = -1
         if self.max_exs > 0:
-            return self.sync['total_parleys'].value * self.opt['batchsize'] / self.num_examples()
+            return self.sync['total_parleys'].value * self.opt.get('batchsize', 1) / self.num_examples()
         else:
             return self.total_epochs
 
@@ -884,12 +887,16 @@ class HogwildWorld(World):
 
 ### Functions for creating tasks/worlds given options.
 
-def _get_task_world(opt):
+def _get_task_world(opt, user_agents):
+    task_agents = _create_task_agents(opt)
     sp = opt['task'].strip().split(':')
     if '.' in sp[0]:
         # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
         # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
-        world_class = DialogPartnerWorld
+        if len(task_agents + user_agents) == 2:
+            world_class = DialogPartnerWorld
+        else:
+            world_class = MultiAgentDialogWorld
     else:
         task = sp[0].lower()
         if len(sp) > 1:
@@ -903,13 +910,15 @@ def _get_task_world(opt):
             world_class = getattr(my_module, world_name)
         except Exception:
             # Defaults to this if you did not specify a world for your task.
-            world_class = DialogPartnerWorld
-    task_agents = _create_task_agents(opt)
+            if len(task_agents + user_agents) == 2:
+                world_class = DialogPartnerWorld
+            else:
+                world_class = MultiAgentDialogWorld
     return world_class, task_agents
 
 
 def create_task_world(opt, user_agents):
-    world_class, task_agents = _get_task_world(opt)
+    world_class, task_agents = _get_task_world(opt, user_agents)
     return world_class(opt, task_agents + user_agents)
 
 def create_task(opt, user_agents):

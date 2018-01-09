@@ -145,6 +145,7 @@ class Seq2seqAgent(Agent):
         # all instances may need some params
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
         self.history = {}
+        self.states = {}
 
         # check for cuda
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
@@ -172,11 +173,10 @@ class Seq2seqAgent(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            self.states = {}
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
                 print('Loading existing model params from ' + opt['model_file'])
-                new_opt, states = self.load(opt['model_file'])
+                new_opt, self.states = self.load(opt['model_file'])
                 # override model-specific options with stored ones
                 opt = self.override_opt(new_opt)
 
@@ -318,12 +318,15 @@ class Seq2seqAgent(Agent):
         # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
         batch_idx = self.opt.get('batchindex', 0)
-        obs['text2vec'] = maintain_dialog_history(
-            self.history, obs,
-            reply=self.answers[batch_idx],
-            historyLength=self.opt['history_length'],
-            useReplies=self.opt['history_replies'],
-            dict=self.dict)
+        if not obs.get('preprocessed', False):
+            obs['text2vec'] = maintain_dialog_history(
+                self.history, obs,
+                reply=self.answers[batch_idx],
+                historyLength=self.opt['history_length'],
+                useReplies=self.opt['history_replies'],
+                dict=self.dict)
+        else:
+            obs['text2vec'] = deque(obs['text2vec'], self.opt['history_length'])
         self.observation = obs
         self.answers[batch_idx] = None
         return obs
@@ -341,7 +344,7 @@ class Seq2seqAgent(Agent):
             self.zero_grad()
             loss = 0
             predictions, scores, _ = self.model(xs, ys)
-            for i in range(ys.size(1)):
+            for i in range(scores.size(1)):
                 # sum loss per-token
                 score = scores.select(1, i)
                 y = ys.select(1, i)
@@ -573,6 +576,6 @@ class Seq2seqAgent(Agent):
     def load(self, path):
         """Return opt and model states."""
         with open(path, 'rb') as read:
-            model = torch.load(read)
+            states = torch.load(read)
 
-        return model['opt'], model
+        return states['opt'], states
