@@ -50,7 +50,7 @@ def build_data(opt):
             df += '.pytorch' + (agent.getID() if opt.get('pytorch_preprocess', True) else '')
         if not os.path.isfile(df):
             raise Exception('Tried to find data but it is not built, please'
-                            'specify `--pytorch_buildteacher`')
+                            'specify `--pytorch-buildteacher`')
         else:
             return df
 
@@ -66,7 +66,7 @@ def build_data(opt):
 
     datafile = teacher.datafile if hasattr(teacher, 'datafile') else opt.get('datafile')
     if not datafile:
-        raise Exception('Tried to build data but either `pytorch_buildteacher` does not '
+        raise Exception('Tried to build data but either `pytorch-buildteacher` does not '
                         'have a datafile or `--datafile` is not set')
 
     pytorch_datafile = datafile + ".pytorch"
@@ -128,9 +128,9 @@ def main():
     build = argparser.add_argument_group('Data Building Args')
     build.add_argument('--datafile',
                        help=('The file to be loaded, preprocessed, and saved'))
-    build.add_argument('--pytorch_buildteacher', type=str, default='',
+    build.add_argument('--pytorch-buildteacher', type=str, default='',
         help='Which teacher to use when building the pytorch data')
-    build.add_argument('--pytorch_preprocess', type='bool', default=True,
+    build.add_argument('--pytorch-preprocess', type='bool', default=True,
         help='Whether the agent should preprocess the data while building'
              'the pytorch data')
     opt = argparser.parse_args()
