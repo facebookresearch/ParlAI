@@ -44,7 +44,7 @@ class RetrieverAgent(Agent):
             help='String option specifying tokenizer type to use '
                  '(e.g. "corenlp")')
         parser.add_argument(
-            '--retriever-mode', choice=['keys', 'values'], default='values',
+            '--retriever-mode', choices=['keys', 'values'], default='values',
             help='Whether to retrieve the stored key or the stored value.'
         )
 
@@ -81,6 +81,7 @@ class RetrieverAgent(Agent):
         self.ranker = TfidfDocRanker(
             tfidf_path=opt['retriever_tfidfpath'] + '.npz', strict=False)
         self.cands_hash = {}
+        self.ret_mode = opt['retriever_mode']
 
     def train(mode=True):
         self.training = mode
@@ -88,12 +89,22 @@ class RetrieverAgent(Agent):
     def eval():
         self.training = False
 
+    def doc2txt(self, docid):
+        if self.ret_mode == 'keys':
+            return self.db.get_doc_text(docid)
+        elif self.ret_mode == 'values':
+            return self.db.get_doc_value(docid)
+        else:
+            raise RuntimeError('Retrieve mode {} not yet supported.'.format(
+                self.ret_mode))
+
     def act(self):
         obs = self.observation
         reply = {}
         reply['id'] = self.getID()
 
         if 'text' in obs:
+            # good--we should reply
             doc_ids, doc_scores = self.ranker.closest_docs(obs['text'], k=30)
 
             if obs.get('label_candidates'):
@@ -109,44 +120,27 @@ class RetrieverAgent(Agent):
                 c_ids, c_scores = self.ranker.closest_docs(obs['text'], k=30, matrix=self.cands_hash[cands_id][0])
                 reply['text_candidates'] = [self.cands_hash[cands_id][1][cid] for cid in c_ids]
                 reply['text'] = reply['text_candidates'][0]
-            elif len(doc_ids) == 0:
-                # nothing found, return generic response
+            elif len(doc_ids) > 0:
+                # return stored fact
+                total = sum(doc_scores)
+                doc_probs = [d / total for d in doc_scores]
+
+                # returned
+                picks = [self.doc2txt(int(did)) for did in doc_ids]
+                reply['text_candidates'] = picks
+
+                # could pick single choice based on probability scores?
+                # pick = int(choice(doc_ids, p=doc_probs))
+                pick = int(doc_ids[0])  # select best response
+                reply['text'] = self.doc2txt(pick)
+            else:
+                # no cands and nothing found, return generic response
                 reply['text'] = choice([
                     'Can you say something more interesting?',
                     'Why are you being so short with me?',
                     'What are you really thinking?',
                     'Can you expand on that?',
                 ])
-            else:
-                total = sum(doc_scores)
-                doc_probs = [d / total for d in doc_scores]
 
-                # returned
-                picks = [self.db.get_doc_value(int(did)) for did in doc_ids]
-                reply['text_candidates'] = picks
-
-                # pick single choice
-                pick = int(choice(doc_ids, p=doc_probs))
-                reply['text'] = self.db.get_doc_value(pick)
 
         return reply
-
-# def shorten_text(text):
-#     idx = text.rfind('.', 10, 125)
-#     if idx > 0:
-#         text = text[:idx + 1]
-#     else:
-#         idx = text.rfind('?', 10, 125)
-#         if idx > 0:
-#             text = text[:idx + 1]
-#         else:
-#             idx = text.rfind('!', 10, 125)
-#             if idx > 0:
-#                 text = text[:idx + 1]
-#             else:
-#                 idx = text.rfind(' ', 0, 75)
-#                 if idx > 0:
-#                     text = text[:idx]
-#                 else:
-#                     text = text[:50]
-#     return text
