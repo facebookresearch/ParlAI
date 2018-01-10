@@ -139,6 +139,7 @@ def get_count_matrix(args, db_opts):
     workers.join()
 
     logger.info('Creating sparse matrix...')
+    import pdb; pdb.set_trace()
     count_matrix = sp.csr_matrix(
         (data, (row, col)), shape=(args.hash_size, len(doc_ids) + 1)
     )
