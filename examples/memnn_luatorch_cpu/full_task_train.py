@@ -61,7 +61,7 @@ def main():
         print('Dictionary building on training data.')
         cnt = 0
         # pass examples to dictionary
-        for _ in world_dict:
+        while not world_dict.epoch_done():
             cnt += 1
             if cnt > opt['dict_max_exs'] and opt['dict_max_exs'] > 0:
                 print('Processed {} exs, moving on.'.format(
@@ -93,7 +93,7 @@ def main():
 
             print('[ validating ]')
             world_valid.reset()
-            for _ in world_valid:  # check valid accuracy
+            while not world_valid.epoch_done()  # check valid accuracy
                 world_valid.parley()
 
             print('[ validation summary. ]')
