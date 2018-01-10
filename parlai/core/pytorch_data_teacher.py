@@ -79,8 +79,6 @@ from examples.build_pytorch_data import build_data
 
 import json
 import math
-import copy
-import time
 import random
 from functools import wraps
 try:
@@ -414,8 +412,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
             self.pytorch_dataloader = shared['pytorch_dataloader']
             self.lastYs = shared['lastYs']
 
-        self.num_batches = math.ceil(self.num_examples()/self.bsz)
-
+        self.num_batches = math.ceil(self.dataset.num_episodes()/self.bsz)
         self.reset()
 
     def reset(self):
