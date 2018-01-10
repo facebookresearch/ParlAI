@@ -93,7 +93,7 @@ def main():
 
             print('[ validating ]')
             world_valid.reset()
-            while not world_valid.epoch_done()  # check valid accuracy
+            while not world_valid.epoch_done():  # check valid accuracy
                 world_valid.parley()
 
             print('[ validation summary. ]')
