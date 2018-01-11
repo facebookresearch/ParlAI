@@ -107,6 +107,7 @@ class Seq2seq(nn.Module):
             if self.rank and cands is not None:
                 text_cand_inds = self.ranker(cands, valid_cands, start,
                                              hidden, enc_out, attn_mask)
+            import pdb; pdb.set_trace()
 
         if predictions:
             predictions = torch.cat(predictions, 1)
@@ -158,8 +159,6 @@ class Encoder(nn.Module):
         xes = F.dropout(self.lt(xs), p=self.dropout, training=self.training)
         x_lens = [x for x in torch.sum((xs > 0).int(), dim=1).data]
         xes_packed = pack_padded_sequence(xes, x_lens, batch_first=True)
-        if not self.training:
-            import pdb; pdb.set_trace()
 
         zeros = self.zeros(xs)
         if zeros.size(1) != bsz:
