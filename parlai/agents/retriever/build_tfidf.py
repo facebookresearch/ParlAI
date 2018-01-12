@@ -139,7 +139,15 @@ def get_count_matrix(args, db_opts):
     workers.join()
 
     logger.info('Creating sparse matrix...')
-    import pdb; pdb.set_trace()
+    MAX = 2**31-1
+    if len(data) > MAX:
+        over = len(data) - MAX
+        pct = over / len(data)
+        logger.info('Data size is too large for scipy to index all of it. '
+                    'Throwing out {} entries ({}%% of data).'.format(over, pct))
+        data = data[:MAX]
+        row = row[:MAX]
+        col = col[:MAX]
     count_matrix = sp.csr_matrix(
         (data, (row, col)), shape=(args.hash_size, len(doc_ids) + 1)
     )
