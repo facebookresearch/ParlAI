@@ -11,6 +11,8 @@ import subprocess
 import shutil
 import csv
 import stat
+import time
+import gzip
 
 
 # TODO: Shift this back to deepmind's repo once PR #1 on it merges
@@ -72,6 +74,40 @@ def move_files(base_path, sets=['train', 'valid', 'test']):
                 shutil.move(f, os.path.join(base_path, s, final_name))
 
 
+def download_stories(path):
+    documents_csv = os.path.join(path, 'documents.csv')
+    tmp_dir = os.path.join(path, 'tmp')
+    build_data.make_dir(tmp_dir)
+
+    with open(documents_csv, 'r') as f:
+        reader = csv.DictReader(f, delimiter=',')
+        for row in reader:
+            document_id, kind, story_url, story_size = row['document_id'], \
+                row['kind'], row['story_url'], row['story_file_size']
+            story_path = os.path.join(tmp_dir, document_id + '.content')
+
+            actual_story_size = 0
+            if os.path.exists(story_path):
+                with open(story_path, 'rb') as f:
+                    actual_story_size = len(f.read())
+
+            if actual_story_size <= 19000:
+                if kind == 'gutenberg':
+                    time.sleep(2)
+
+                build_data.download(story_url, tmp_dir,
+                                    document_id + '.content')
+
+            file_type = subprocess.check_output(['file', '-b', story_path])
+            file_type = file_type.decode('utf-8')
+
+            if 'gzip compressed' in file_type:
+                gz_path = os.path.join(tmp_dir,
+                                       document_id + '.content.gz')
+                shutil.move(story_path, gz_path)
+                build_tools.untar(gz_path)
+
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'NarrativeQA')
     version = None
@@ -95,18 +131,11 @@ def build(opt):
 
         print('downloading stories now')
         base_path = os.path.join(dpath, 'narrativeqa-master')
-        # download all of the stories
-        story_script_path = os.path.join(base_path,
-                                         'download_stories.sh')
 
-        # add proper permissions
-        st = os.stat(story_script_path)
-        os.chmod(story_script_path, st.st_mode | stat.S_IEXEC)
+        download_stories(base_path)
 
-        try:
-            subprocess.check_output(story_script_path)
-        except subprocess.CalledProcessError:
-            raise RuntimeError('Error in downloading stories')
+        # Try again for small stories
+        download_stories(base_path)
 
         # move from tmp to stories
         tmp_stories_path = os.path.join(base_path,
