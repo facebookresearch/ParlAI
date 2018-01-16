@@ -107,6 +107,7 @@ def download(url, path, fname, redownload=False):
         raise RuntimeWarning('Connection broken too many times. Stopped retrying.')
 
     if download and retry > 0:
+        logger.log(done, total_size, force=True)
         print()
         if done < total_size:
             raise RuntimeWarning('Received less data than specified in ' +
