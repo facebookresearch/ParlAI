@@ -165,7 +165,7 @@ def batch_cache(function):
                 with batches_lock:
                     while len(batch) >= bsz:
                         batches.append(batch[:bsz])
-                    batch = batch[bsz:]
+                        batch = batch[bsz:]
                 if len(batch) > 0:
                     with batches_lock:
                         batches.append(batch)

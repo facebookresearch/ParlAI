@@ -69,6 +69,8 @@ def build_data(opt):
         raise Exception('Tried to build data but either `pytorch-buildteacher` does not '
                         'have a datafile or `--datafile` is not set')
 
+    if isinstance(datafile, collections.Sequence):
+        datafile = datafile[0] + "".join(["_".join(d.split("/")) for d in datafile[1:]])
     pytorch_datafile = datafile + ".pytorch"
     preprocess = opt.get('pytorch_preprocess', True)
     if preprocess:
