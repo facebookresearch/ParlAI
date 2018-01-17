@@ -59,24 +59,35 @@ def tokenize(text):
     return PROCESS_TOK.tokenize(text)
 
 
-# MAX_SZ = int(2**31 * 1.8)
+MAX_SZ = int(2**31 * 1.5)
 
 # ------------------------------------------------------------------------------
 # Build article --> word count sparse matrix.
 # ------------------------------------------------------------------------------
 
 
-# def truncate(data, row, col):
-#     global MAX_SZ
-#     if len(data) > MAX_SZ:
-#         over = len(data) - MAX_SZ
-#         pct = over / len(data)
-#         logger.info('Data size is too large for scipy to index all of it. '
-#                     'Throwing out {} entries ({}%% of data).'.format(over, pct))
-#         data = data[:MAX_SZ]
-#         row = row[:MAX_SZ]
-#         col = col[:MAX_SZ]
-#     return data, row, col
+def truncate(data, row, col):
+    global MAX_SZ
+    if len(data) > MAX_SZ:
+        over = len(data) - MAX_SZ
+        pct = over / len(data)
+        logger.info('Data size is too large for scipy to index all of it. '
+                    'Throwing out {} entries ({}%% of data).'.format(over, pct))
+        data = data[:MAX_SZ]
+        row = row[:MAX_SZ]
+        col = col[:MAX_SZ]
+    return data, row, col
+
+def sparse_nonzero(sparse_t):
+    return sparse_t.coalesce()._indices()
+
+def sparse_sum(sparse_t):
+    return sparse_t._values().sum()
+
+def sparse_log1p(sparse_t):
+    t = sparse_t.coalesce()
+    t._values().log1p_()
+    return t
 
 def live_count_matrix(args, cands):
     global PROCESS_TOK
@@ -94,6 +105,23 @@ def live_count_matrix(args, cands):
         (data, (row, col)), shape=(args.hash_size, len(cands))
     )
     count_matrix.sum_duplicates()
+    return count_matrix
+
+def live_count_matrix_t(args, cands):
+    global PROCESS_TOK
+    if PROCESS_TOK is None:
+        PROCESS_TOK = tokenizers.get_class(args.tokenizer)()
+    row, col, data = [], [], []
+    for i, c in enumerate(cands):
+        cur_row, cur_col, cur_data = count_text(args.ngram, args.hash_size, i, c)
+        row += cur_row
+        col += cur_col
+        data += cur_data
+
+    count_matrix = torch.sparse.FloatTensor(
+        torch.LongTensor([row, col]), torch.FloatTensor(data),
+        torch.Size([args.hash_size, len(cands)])
+    ).coalesce()
     return count_matrix
 
 
@@ -121,6 +149,46 @@ def count_text(ngram, hash_size, doc_id, text=None):
 def count(ngram, hash_size, doc_id):
     """Fetch the text of a document and compute hashed ngrams counts."""
     return count_text(ngram, hash_size, doc_id, text=fetch_text(doc_id))
+
+
+def get_count_matrix_t(args, db_opts):
+    """Form a sparse word to document count matrix (inverted index, torch ver).
+
+    M[i, j] = # times word i appears in document j.
+    """
+    global MAX_SZ
+    with DocDB(**db_opts) as doc_db:
+        doc_ids = doc_db.get_doc_ids()
+
+    # Setup worker pool
+    tok_class = tokenizers.get_class(args.tokenizer)
+    workers = ProcessPool(
+        args.num_workers,
+        initializer=init,
+        initargs=(tok_class, db_opts)
+    )
+
+    # Compute the count matrix in steps (to keep in memory)
+    logger.info('Mapping...')
+    row, col, data = [], [], []
+    step = max(int(len(doc_ids) / 10), 1)
+    batches = [doc_ids[i:i + step] for i in range(0, len(doc_ids), step)]
+    _count = partial(count, args.ngram, args.hash_size)
+    for i, batch in enumerate(batches):
+        logger.info('-' * 25 + 'Batch %d/%d' % (i + 1, len(batches)) + '-' * 25)
+        for b_row, b_col, b_data in workers.imap_unordered(_count, batch):
+            row.extend(b_row)
+            col.extend(b_col)
+            data.extend(b_data)
+    workers.close()
+    workers.join()
+
+    logger.info('Creating sparse matrix...')
+    count_matrix = torch.sparse.FloatTensor(
+        torch.LongTensor([row, col]), torch.FloatTensor(data),
+        torch.Size([args.hash_size, len(doc_ids) + 1])
+    ).coalesce()
+    return count_matrix
 
 
 def get_count_matrix(args, db_opts):
@@ -152,31 +220,46 @@ def get_count_matrix(args, db_opts):
             row.extend(b_row)
             col.extend(b_col)
             data.extend(b_data)
-        #     if len(data) > MAX_SZ:
-        #         break
-        # if len(data) > MAX_SZ:
-        #     logger.info('Reached max indexable size, breaking.')
-        #     break
+            if len(data) > MAX_SZ:
+                break
+        if len(data) > MAX_SZ:
+            logger.info('Reached max indexable size, breaking.')
+            break
     workers.close()
     workers.join()
 
     logger.info('Creating sparse matrix...')
-    # data, row, col = truncate(data, row, col)
+    data, row, col = truncate(data, row, col)
 
-    # count_matrix = torch.sparse.FloatTensor(
-    #     torch.LongTensor([row, col]), torch.FloatTensor(data), torch.Size([args.hash_size, len(doc_ids) + 1])
-    # ).coalesce()
     count_matrix = sp.csr_matrix(
         (data, (row, col)), shape=(args.hash_size, len(doc_ids) + 1)
     )
     count_matrix.sum_duplicates()
-    return count_matrix
+    return count_matrix, count_tensor
 
 
 # ------------------------------------------------------------------------------
 # Transform count matrix to different forms.
 # ------------------------------------------------------------------------------
 
+
+def get_tfidf_matrix_t(cnts):
+    """Convert the word count matrix into tfidf one (torch version).
+
+    tfidf = log(tf + 1) * log((N - Nt + 0.5) / (Nt + 0.5))
+    * tf = term frequency in document
+    * N = number of documents
+    * Nt = number of occurences of term in all documents
+    """
+    Nt = get_doc_freqs_t(cnts)
+    idft = ((cnts.size(1) - Nt + 0.5) / (Nt + 0.5)).log()
+    idft[idft < 0] = 0
+    tft = sparse_log1p(cnts)
+    inds, vals = tft._indices(), tft._values()
+    for i, ind in enumerate(inds[0]):
+        vals[i] *= idft[ind]
+    tfidft = tft
+    return tfidft
 
 def get_tfidf_matrix(cnts):
     """Convert the word count matrix into tfidf one.
@@ -186,15 +269,19 @@ def get_tfidf_matrix(cnts):
     * N = number of documents
     * Nt = number of occurences of term in all documents
     """
-    Ns = get_doc_freqs(cnts)
-    idfs = np.log((cnts.shape[1] - Ns + 0.5) / (Ns + 0.5))
+    Nt = get_doc_freqs(cnts)
+    idfs = np.log((cnts.shape[1] - Nt + 0.5) / (Nt + 0.5))
     idfs[idfs < 0] = 0
     idfs = sp.diags(idfs, 0)
     tfs = cnts.log1p()
     tfidfs = idfs.dot(tfs)
-    import pdb; pdb.set_trace()
+
     return tfidfs
 
+def get_doc_freqs_t(cnts):
+    """Return word --> # of docs it appears in (torch version)."""
+    return torch.histc(cnts._indices()[0].float(), bins=cnts.size(0),
+                       min=0, max=cnts.size(0))
 
 def get_doc_freqs(cnts):
     """Return word --> # of docs it appears in."""
@@ -211,24 +298,25 @@ def get_doc_freqs(cnts):
 def run(args):
     # ParlAI version of run method, modified slightly
     logging.info('Counting words...')
-    count_matrix = get_count_matrix(args, {'db_path': args.db_path})
+    count_matrix = get_count_matrix_t(args, {'db_path': args.db_path})
 
     logger.info('Making tfidf vectors...')
-    tfidf = get_tfidf_matrix(count_matrix)
+    tfidf = get_tfidf_matrix_t(count_matrix)
 
     logger.info('Getting word-doc frequencies...')
-    freqs = get_doc_freqs(count_matrix)
+    freqs = get_doc_freqs_t(count_matrix)
 
     filename = args.out_dir
 
-    logger.info('Saving to %s.npz' % filename)
+    logger.info('Saving to %s' % filename)
     metadata = {
         'doc_freqs': freqs,
         'tokenizer': args.tokenizer,
         'hash_size': args.hash_size,
         'ngram': args.ngram,
     }
-    utils.save_sparse_csr(filename, tfidf, metadata)
+
+    utils.save_sparse_tensor(filename, tfidf, metadata)
 
 
 if __name__ == '__main__':

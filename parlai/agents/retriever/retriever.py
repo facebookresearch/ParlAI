@@ -10,50 +10,50 @@ from .doc_db import DocDB
 from .tfidf_doc_ranker import TfidfDocRanker
 from .build_db import store_contents as build_db
 from .build_tfidf import run as build_tfidf
-from .build_tfidf import live_count_matrix, get_tfidf_matrix
+from .build_tfidf import live_count_matrix_t, get_tfidf_matrix_t
 from numpy.random import choice
 import math
 import os
 
 
-class RetrieverAgent(Agent):
+class SparseTfidfRetrieverAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('Retriever Arguments')
         parser.add_argument(
-            '--retriever-task', type=str, default=None,
+            '--sp-retriever-task', type=str, default=None,
             help='ParlAI task to use to "train" retriever')
         parser.add_argument(
-            '--retriever-dbpath', type=str, required=True,
+            '--sp-retriever-dbpath', type=str, required=True,
             help='/path/to/saved/db.db')
         parser.add_argument(
-            '--retriever-tfidfpath', type=str, required=True,
+            '--sp-retriever-tfidfpath', type=str, required=True,
             help='Directory for saving output files')
         parser.add_argument(
-            '--retriever-numworkers', type=int, default=None,
+            '--sp-retriever-numworkers', type=int, default=None,
             help='Number of CPU processes (for tokenizing, etc)')
         parser.add_argument(
-            '--retriever-ngram', type=int, default=2,
+            '--sp-retriever-ngram', type=int, default=2,
             help='Use up to N-size n-grams (e.g. 2 = unigrams + bigrams)')
         parser.add_argument(
-            '--retriever-hashsize', type=int, default=int(math.pow(2, 24)),
+            '--sp-retriever-hashsize', type=int, default=int(math.pow(2, 24)),
             help='Number of buckets to use for hashing ngrams')
         parser.add_argument(
-            '--retriever-tokenizer', type=str, default='simple',
+            '--sp-retriever-tokenizer', type=str, default='simple',
             help='String option specifying tokenizer type to use '
                  '(e.g. "corenlp")')
         parser.add_argument(
-            '--retriever-mode', choices=['keys', 'values'], default='values',
+            '--sp-retriever-mode', choices=['keys', 'values'], default='values',
             help='Whether to retrieve the stored key or the stored value.'
         )
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
-        self.id = 'RetrieverAgent'
+        self.id = 'SparseTfidfRetrieverAgent'
 
         # we'll need to build the tfid if it's not already
-        rebuild_tfidf = not os.path.exists(opt['retriever_tfidfpath'] + '.npz')
+        rebuild_tfidf = not os.path.exists(opt['retriever_tfidfpath'])
         # sets up db
         if not os.path.exists(opt['retriever_dbpath']):
             if not opt.get('retriever_task'):
@@ -79,7 +79,7 @@ class RetrieverAgent(Agent):
 
         self.db = DocDB(db_path=opt['retriever_dbpath'])
         self.ranker = TfidfDocRanker(
-            tfidf_path=opt['retriever_tfidfpath'] + '.npz', strict=False)
+            tfidf_path=opt['retriever_tfidfpath'], strict=False)
         self.cands_hash = {}
         self.ret_mode = opt['retriever_mode']
 
@@ -107,7 +107,7 @@ class RetrieverAgent(Agent):
             # good--we should reply
             doc_ids, doc_scores = self.ranker.closest_docs(obs['text'], k=30)
 
-            if obs.get('label_candidates'):
+            if obs.get('label_candidates') and False:
                 # these are better selection than stored facts
                 # rank these options instead
                 cands = obs['label_candidates']
@@ -116,7 +116,12 @@ class RetrieverAgent(Agent):
                     # cache candidate set
                     # will not update if cand set changes contents
                     c_list = list(cands)
-                    self.cands_hash[cands_id] = (get_tfidf_matrix(live_count_matrix(self.tfidf_args, c_list)), c_list)
+                    self.cands_hash[cands_id] = (
+                        get_tfidf_matrix_t(
+                            live_count_matrix_t(self.tfidf_args, c_list)
+                        ),
+                        c_list
+                    )
                 c_ids, c_scores = self.ranker.closest_docs(obs['text'], k=30, matrix=self.cands_hash[cands_id][0])
                 reply['text_candidates'] = [self.cands_hash[cands_id][1][cid] for cid in c_ids]
                 reply['text'] = reply['text_candidates'][0]
