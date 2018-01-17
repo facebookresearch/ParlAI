@@ -275,16 +275,21 @@ class ProgressLogger(object):
         self.should_humanize = should_humanize
 
     def humanize(self, num, suffix='B'):
-        for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+        if num < 0:
+            return num
+        for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
             if abs(num) < 1024.0:
                 return "%3.1f%s%s" % (num, unit, suffix)
             num /= 1024.0
         return "%.1f%s%s" % (num, 'Yi', suffix)
 
-    def log(self, curr, total, width=40):
+    def log(self, curr, total, width=40, force=False):
         """Displays a bar showing the current progress."""
+        if curr == 0 and total == -1:
+            print('[ no data received for this file ]', end='\r')
+            return
         curr_time = time.time()
-        if curr_time - self.latest < self.throttle_speed:
+        if not force and curr_time - self.latest < self.throttle_speed:
             return
         else:
             self.latest = curr_time
