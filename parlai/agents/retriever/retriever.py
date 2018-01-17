@@ -10,7 +10,7 @@ from .doc_db import DocDB
 from .tfidf_doc_ranker import TfidfDocRanker
 from .build_db import store_contents as build_db
 from .build_tfidf import run as build_tfidf
-from .build_tfidf import live_count_matrix
+from .build_tfidf import live_count_matrix, get_tfidf_matrix
 from numpy.random import choice
 import math
 import os
@@ -116,7 +116,7 @@ class RetrieverAgent(Agent):
                     # cache candidate set
                     # will not update if cand set changes contents
                     c_list = list(cands)
-                    self.cands_hash[cands_id] = (live_count_matrix(self.tfidf_args, c_list), c_list)
+                    self.cands_hash[cands_id] = (get_tfidf_matrix(live_count_matrix(self.tfidf_args, c_list)), c_list)
                 c_ids, c_scores = self.ranker.closest_docs(obs['text'], k=30, matrix=self.cands_hash[cands_id][0])
                 reply['text_candidates'] = [self.cands_hash[cands_id][1][cid] for cid in c_ids]
                 reply['text'] = reply['text_candidates'][0]

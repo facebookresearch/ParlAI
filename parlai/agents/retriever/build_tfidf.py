@@ -8,6 +8,7 @@
 Adapted from Adam Fisch's work at github.com/facebookresearch/DrQA/
 """
 
+import torch
 import numpy as np
 import scipy.sparse as sp
 import argparse
@@ -58,22 +59,24 @@ def tokenize(text):
     return PROCESS_TOK.tokenize(text)
 
 
+# MAX_SZ = int(2**31 * 1.8)
+
 # ------------------------------------------------------------------------------
 # Build article --> word count sparse matrix.
 # ------------------------------------------------------------------------------
 
 
-def truncate(data, row, col):
-    MAX = 2**31-1
-    if len(data) > MAX:
-        over = len(data) - MAX
-        pct = over / len(data)
-        logger.info('Data size is too large for scipy to index all of it. '
-                    'Throwing out {} entries ({}%% of data).'.format(over, pct))
-        data = data[:MAX]
-        row = row[:MAX]
-        col = col[:MAX]
-    return data, row, col
+# def truncate(data, row, col):
+#     global MAX_SZ
+#     if len(data) > MAX_SZ:
+#         over = len(data) - MAX_SZ
+#         pct = over / len(data)
+#         logger.info('Data size is too large for scipy to index all of it. '
+#                     'Throwing out {} entries ({}%% of data).'.format(over, pct))
+#         data = data[:MAX_SZ]
+#         row = row[:MAX_SZ]
+#         col = col[:MAX_SZ]
+#     return data, row, col
 
 def live_count_matrix(args, cands):
     global PROCESS_TOK
@@ -125,6 +128,7 @@ def get_count_matrix(args, db_opts):
 
     M[i, j] = # times word i appears in document j.
     """
+    global MAX_SZ
     with DocDB(**db_opts) as doc_db:
         doc_ids = doc_db.get_doc_ids()
 
@@ -148,11 +152,20 @@ def get_count_matrix(args, db_opts):
             row.extend(b_row)
             col.extend(b_col)
             data.extend(b_data)
+        #     if len(data) > MAX_SZ:
+        #         break
+        # if len(data) > MAX_SZ:
+        #     logger.info('Reached max indexable size, breaking.')
+        #     break
     workers.close()
     workers.join()
 
     logger.info('Creating sparse matrix...')
-    data, row, col = truncate(data, row, col)
+    # data, row, col = truncate(data, row, col)
+
+    # count_matrix = torch.sparse.FloatTensor(
+    #     torch.LongTensor([row, col]), torch.FloatTensor(data), torch.Size([args.hash_size, len(doc_ids) + 1])
+    # ).coalesce()
     count_matrix = sp.csr_matrix(
         (data, (row, col)), shape=(args.hash_size, len(doc_ids) + 1)
     )
@@ -179,6 +192,7 @@ def get_tfidf_matrix(cnts):
     idfs = sp.diags(idfs, 0)
     tfs = cnts.log1p()
     tfidfs = idfs.dot(tfs)
+    import pdb; pdb.set_trace()
     return tfidfs
 
 
