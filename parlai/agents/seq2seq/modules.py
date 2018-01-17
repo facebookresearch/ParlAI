@@ -199,7 +199,11 @@ class Decoder(nn.Module):
                              dropout=dropout, batch_first=True)
 
         # rnn output to embedding
-        self.o2e = nn.Linear(hidden_size, emb_size)
+        if hidden_size != emb_size:
+            self.o2e = nn.Linear(hidden_size, emb_size)
+        else:
+            # no need to learn the extra weights
+            self.o2e = lambda x: x
         # embedding to scores, use custom linear to possibly share weights
         shared_weight = self.lt.weight if share_output else None
         self.e2s = Linear(emb_size, num_features, bias=False,
