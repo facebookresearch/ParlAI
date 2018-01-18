@@ -324,7 +324,8 @@ class Seq2seqAgent(Agent):
                 reply=self.answers[batch_idx],
                 historyLength=self.opt['history_length'],
                 useReplies=self.opt['history_replies'],
-                dict=self.dict)
+                dict=self.dict,
+                useStartEndIndices=False)
         else:
             obs['text2vec'] = deque(obs['text2vec'], self.opt['history_length'])
         self.observation = obs

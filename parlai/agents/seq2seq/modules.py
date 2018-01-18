@@ -107,7 +107,6 @@ class Seq2seq(nn.Module):
             if self.rank and cands is not None:
                 text_cand_inds = self.ranker(cands, valid_cands, start,
                                              hidden, enc_out, attn_mask)
-            import pdb; pdb.set_trace()
 
         if predictions:
             predictions = torch.cat(predictions, 1)
