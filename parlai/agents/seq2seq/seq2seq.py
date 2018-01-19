@@ -64,6 +64,8 @@ class Seq2seqAgent(Agent):
                            help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
                            help='dropout rate')
+        agent.add_argument('-clip', '--gradient-clip', type=float, default=0.2,
+                           help='gradient clipping using l2 norm')
         agent.add_argument('-bi', '--bidirectional', type='bool',
                            default=False,
                            help='whether to encode the context with a '
@@ -209,6 +211,7 @@ class Seq2seqAgent(Agent):
 
         if hasattr(self, 'model'):
             # if model was built, do more setup
+            self.clip = opt.get('gradient_clip', 0.2)
             self.rank = opt['rank_candidates']
             self.lm = opt['language_model']
 
@@ -289,6 +292,7 @@ class Seq2seqAgent(Agent):
 
     def update_params(self):
         """Do one optimization step."""
+        torch.nn.utils.clip_grad_norm(self.model.parameters(), self.clip)
         self.optimizer.step()
 
     def reset(self):
@@ -345,15 +349,13 @@ class Seq2seqAgent(Agent):
             self.zero_grad()
             loss = 0
             predictions, scores, _ = self.model(xs, ys)
-            for i in range(scores.size(1)):
-                # sum loss per-token
-                score = scores.select(1, i)
-                y = ys.select(1, i)
-                loss += self.criterion(score, y)
+            loss += self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
             loss.backward()
             self.update_params()
             losskey = 'loss' if not lm else 'lmloss'
-            loss_dict = {losskey: loss.mul_(len(xs)).data}
+            loss_dict = {losskey: loss.mul(len(xs)).data}
+            perpkey = 'perplexity' if not lm else 'lm_perplexity'
+            loss_dict[perpkey] = (2**loss).mul(len(xs)).data
         else:
             self.model.eval()
             predictions, scores, text_cand_inds = self.model(xs, ys, cands,
