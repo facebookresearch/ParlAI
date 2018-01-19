@@ -10,6 +10,7 @@ import hashlib
 import netrc
 import os
 import platform
+import re
 import sh
 import shlex
 import shutil
@@ -26,8 +27,148 @@ task_directory_name = 'task'
 heroku_url = \
     'https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli'
 
+# TODO randomize this
+verify_token = 'TEMPORARY_TOKEN'
 
-def setup_heroku_server(task_name, task_files_to_copy=None):
+gcloud_url = (
+    'https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/'
+    'google-cloud-sdk-185.0.0')
+
+def get_gcloud_client():
+    print("GCloud: Getting client...")
+    # Install google-cloud-sdk-185 CLI
+    os_name = None
+    bit_architecture = None
+
+    # Get the platform we are working on
+    platform_info = platform.platform()
+    if 'Darwin' in platform_info:  # Mac OS X
+        os_name = 'darwin'
+    elif 'Linux' in platform_info:  # Linux
+        os_name = 'linux'
+    else:
+        os_name = 'windows'
+        raise Exception(
+            'ParlAI messenger is not yet supported on windows machines')
+
+    # Find our architecture
+    bit_architecture_info = platform.architecture()[0]
+    if '64bit' in bit_architecture_info:
+        bit_architecture = 'x86_64'
+    else:
+        bit_architecture = 'x86'
+
+    # Remove existing client files
+    existing_gcloud_directory_names = \
+        glob.glob(os.path.join(parent_dir, 'google-cloud-sdk'))
+    if len(existing_gcloud_directory_names) == 0:
+        if os.path.exists(os.path.join(parent_dir, 'gcloud.tar.gz')):
+            os.remove(os.path.join(parent_dir, 'gcloud.tar.gz'))
+
+        # Get the gcloud client and unzip
+        os.chdir(parent_dir)
+        sh.wget(shlex.split('{}-{}-{}.tar.gz -O gcloud.tar.gz'.format(
+            gcloud_url,
+            os_name,
+            bit_architecture
+        )))
+        sh.tar(shlex.split('-xvzf gcloud.tar.gz'))
+
+    gcloud_directory_path = os.path.join(parent_dir, 'google-cloud-sdk')
+    gcloud_executable_path = \
+        os.path.join(gcloud_directory_path, 'bin', 'gcloud')
+
+    # Ensure we have the beta features (required for gcloud functions)
+    subprocess.check_output(
+        shlex.split(gcloud_executable_path + ' components install beta -q')
+    )
+
+    return gcloud_executable_path
+
+
+def setup_gcloud_function(heroku_server_url):
+    gcloud_executable_path = get_gcloud_client()
+    # prepare the cloud function file to take the proper endpoint
+    sh.sed(
+        shlex.split(
+            '"s~##HEROKU_URL##~' + heroku_server_url +
+            '~" forward_message_template.js'
+        ),
+        _out='forward_message/index_tmp.js'
+    )
+    sh.sed(
+        shlex.split(
+            '"s~##VERIFY_TOKEN##~' + verify_token + '~" '
+            'forward_message/index_tmp.js'
+        ),
+        _out='forward_message/index.js'
+    )
+    sh.rm(shlex.split('forward_message/index_tmp.js'))
+
+    try:
+        print('Creating the google cloud function')
+        subprocess.check_output(
+            shlex.split(gcloud_executable_path + ' beta functions deploy ' +
+                        'forward_message --source=forward_message ' +
+                        '--trigger-http --verbosity debug ' +
+                        '--entry-point=forward_message')
+        )
+    except Exception:
+        # The stored setup was corrupted or something otherwise went wrong.
+        print(
+            'You need to be logged into google cloud to be able to recieve '
+            'messages from the messenger API without hosting your own endpoint'
+            '. When the process asks you to select a cloud project to use, '
+            'either select one you\'re using specifically for parlai-messenger'
+            ' or create a new one.')
+        input('Please press Enter to login to your google cloud account... ')
+        subprocess.check_output(
+            shlex.split(gcloud_executable_path + ' init')
+        )
+        # Actually submit the function
+        subprocess.check_output(
+            shlex.split(gcloud_executable_path + ' beta functions deploy ' +
+                        'forward_message --source=forward_message.js ' +
+                        '--trigger-http')
+        )
+
+    gcloud_config = bytes.decode(subprocess.check_output(
+        shlex.split(gcloud_executable_path + ' config list')
+    ))
+    project_extract_pat = re.compile(r'project = ([^\n]*)\n')
+    project_name = project_extract_pat.search(gcloud_config).group(1)
+    print('Extracted project name: ' + project_name)
+
+    # Determine if billing is enabled, which is required to transmit the
+    # messages to heroku from the function
+    billing_enabled = False
+    billing_pat = re.compile(r'\nbillingEnabled: true\n')
+    while not billing_enabled:
+        billing_details = bytes.decode(subprocess.check_output(
+            shlex.split(gcloud_executable_path +
+                        ' beta billing projects describe ' +
+                        project_name)
+        ))
+        if billing_pat.search(billing_details):
+            billing_enabled = True
+        else:
+            input('Please go to https://console.cloud.google.com/billing/ and '
+                  'activate billing for the current project ({}) in order to '
+                  'use ParlAI messenger. As long as your usage stays below '
+                  '5GB a month this service should remain free according to '
+                  'https://cloud.google.com/functions/pricing. Once finished '
+                  'press enter here.')
+
+    function_details = bytes.decode(subprocess.check_output(shlex.split(
+        gcloud_executable_path + ' beta functions describe forward_message'
+    )))
+    url_pat = re.compile(r'httpsTrigger:\n  url: ([^\n]*)\n')
+    webhook_url = url_pat.search(function_details).group(1)
+    print('Your validation id is ' + verify_token)
+    print('Your webhook url is ' + webhook_url)
+
+
+def setup_heroku_server(task_name):
     print("Heroku: Collecting files...")
     # Install Heroku CLI
     os_name = None
@@ -83,23 +224,6 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
 
     # Copy over a clean copy into the server directory
     shutil.copytree(server_source_directory_path, heroku_server_directory_path)
-
-    # Consolidate task files
-    task_directory_path = \
-        os.path.join(heroku_server_directory_path, task_directory_name)
-    sh.mv(
-        os.path.join(heroku_server_directory_path, 'html'),
-        task_directory_path
-    )
-
-    hit_config_file_path = os.path.join(parent_dir, 'hit_config.json')
-    sh.mv(hit_config_file_path, task_directory_path)
-
-    for file_path in task_files_to_copy:
-        try:
-            shutil.copy2(file_path, task_directory_path)
-        except FileNotFoundError:  # noqa: F821 we don't support python2
-            pass
 
     print("Heroku: Starting server...")
 
@@ -207,11 +331,8 @@ def delete_heroku_server(task_name):
     ))
 
 
-def setup_server(task_name, task_files_to_copy):
-    return setup_heroku_server(
-        task_name,
-        task_files_to_copy=task_files_to_copy
-    )
+def setup_server(task_name):
+    return setup_heroku_server(task_name)
 
 
 def delete_server(task_name):

@@ -22,7 +22,6 @@ class MessengerAgent(Agent):
         self.active = True
         self.message_request_time = None
         self.recieved_packets = {}
-
         self.msg_queue = Queue()
 
     def observe(self, msg):
