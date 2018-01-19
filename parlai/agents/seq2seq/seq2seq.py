@@ -298,7 +298,6 @@ class Seq2seqAgent(Agent):
     def reset(self):
         """Reset observation and episode_done."""
         self.observation = None
-        self.episode_done = True
 
     def share(self):
         """Share internal states between parent and child instances."""
@@ -318,7 +317,6 @@ class Seq2seqAgent(Agent):
         """Save observation for act.
         If multiple observations are from the same episode, concatenate them.
         """
-        self.episode_done = observation['episode_done']
         # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
         batch_idx = self.opt.get('batchindex', 0)
