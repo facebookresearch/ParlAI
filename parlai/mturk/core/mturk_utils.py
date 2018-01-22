@@ -14,6 +14,7 @@ from botocore.exceptions import ProfileNotFound
 
 region_name = 'us-east-1'
 aws_profile_name = 'parlai_mturk'
+client = None
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 mturk_hit_frame_height = 650
@@ -163,14 +164,17 @@ def create_hit_config(task_description, unique_worker, is_sandbox):
 
 def get_mturk_client(is_sandbox):
     """Returns the appropriate mturk client given sandbox option"""
-    client = boto3.client(
-        service_name='mturk',
-        region_name='us-east-1',
-        endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
-    )
-    # Region is always us-east-1
-    if not is_sandbox:
-        client = boto3.client(service_name='mturk', region_name='us-east-1')
+    global client
+    if client is None:
+        client = boto3.client(
+            service_name='mturk',
+            region_name='us-east-1',
+            endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+        )
+        # Region is always us-east-1
+        if not is_sandbox:
+            client = \
+                boto3.client(service_name='mturk', region_name='us-east-1')
     return client
 
 
