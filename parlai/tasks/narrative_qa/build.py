@@ -15,8 +15,7 @@ import time
 import gzip
 
 
-# TODO: Shift this back to deepmind's repo once PR #1 on it merges
-NARRATIVE_QA_DOWNLOAD_URL = 'https://github.com/apsdehal/narrativeqa/archive/master.zip'
+NARRATIVE_QA_DOWNLOAD_URL = 'https://github.com/deepmind/narrativeqa/archive/master.zip'
 
 
 def get_rows_for_set(reader, req_set):
@@ -74,6 +73,39 @@ def move_files(base_path, sets=['train', 'valid', 'test']):
                 shutil.move(f, os.path.join(base_path, s, final_name))
 
 
+# Returns false unless the story was already downloaded and
+# has appropriate size
+def try_downloading(directory, row):
+    document_id, kind, story_url, story_size = row['document_id'], \
+        row['kind'], row['story_url'], row['story_file_size']
+    story_path = os.path.join(directory, document_id + '.content')
+
+    actual_story_size = 0
+    if os.path.exists(story_path):
+        with open(story_path, 'rb') as f:
+            actual_story_size = len(f.read())
+
+    if actual_story_size <= 19000:
+        if kind == 'gutenberg':
+            time.sleep(2)
+
+        build_data.download(story_url, directory,
+                            document_id + '.content')
+    else:
+        return True
+
+    file_type = subprocess.check_output(['file', '-b', story_path])
+    file_type = file_type.decode('utf-8')
+
+    if 'gzip compressed' in file_type:
+        gz_path = os.path.join(directory,
+                               document_id + '.content.gz')
+        shutil.move(story_path, gz_path)
+        build_tools.untar(gz_path)
+
+    return False
+
+
 def download_stories(path):
     documents_csv = os.path.join(path, 'documents.csv')
     tmp_dir = os.path.join(path, 'tmp')
@@ -82,30 +114,15 @@ def download_stories(path):
     with open(documents_csv, 'r') as f:
         reader = csv.DictReader(f, delimiter=',')
         for row in reader:
-            document_id, kind, story_url, story_size = row['document_id'], \
-                row['kind'], row['story_url'], row['story_file_size']
-            story_path = os.path.join(tmp_dir, document_id + '.content')
-
-            actual_story_size = 0
-            if os.path.exists(story_path):
-                with open(story_path, 'rb') as f:
-                    actual_story_size = len(f.read())
-
-            if actual_story_size <= 19000:
-                if kind == 'gutenberg':
-                    time.sleep(2)
-
-                build_data.download(story_url, tmp_dir,
-                                    document_id + '.content')
-
-            file_type = subprocess.check_output(['file', '-b', story_path])
-            file_type = file_type.decode('utf-8')
-
-            if 'gzip compressed' in file_type:
-                gz_path = os.path.join(tmp_dir,
-                                       document_id + '.content.gz')
-                shutil.move(story_path, gz_path)
-                build_tools.untar(gz_path)
+            print("Downloading %s (%s)" % (row['wiki_title'],
+                  row['document_id']))
+            finished = try_downloading(tmp_dir, row)
+            count = 0
+            while not finished and count < 5:
+                if count != 0:
+                    print("Retrying (%d retries left)" % (5 - count - 1))
+                finished = try_downloading(tmp_dir, row)
+                count += 1
 
 
 def build(opt):
@@ -132,9 +149,6 @@ def build(opt):
         print('downloading stories now')
         base_path = os.path.join(dpath, 'narrativeqa-master')
 
-        download_stories(base_path)
-
-        # Try again for small stories
         download_stories(base_path)
 
         # move from tmp to stories
