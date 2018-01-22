@@ -6,10 +6,8 @@
 
 # Check 3rd-party dependencies
 try:
-    import boto3
-    import botocore
     import joblib
     import socketIO_client_nexus
     import sh
 except ModuleNotFoundError:
-    raise SystemExit("Please install 3rd-party dependencies by running: pip install boto3 joblib socketIO-client-nexus sh")
+    raise SystemExit("Please install 3rd-party dependencies by running: pip install joblib socketIO-client-nexus sh")

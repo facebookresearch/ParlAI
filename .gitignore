@@ -112,11 +112,6 @@ tmp/
 # Heroku things
 heroku-cli-*
 
-#ParlAI-messenger temp files
-messenger/core/forward_message/index.js
-#gcloud things
-google-cloud-sdk
-
 
 # IntelliJ IDEA
 .idea

@@ -58,26 +58,22 @@ io.on('connection', function (socket) {
     console.log('World disconnected');
   });
 
-  socket.on('agent_alive', function (data, ack) {
+  socket.on('world_alive', function (data, ack) {
     world_socket = socket;
     // Acknowledge that the message was recieved
     if(ack) {
-      ack('agent_alive');
+      ack('world_alive');
     }
   });
 
   socket.emit('socket_open', 'Socket is open!');
 });
 
-// Pass requests through the socket down to the python client
-app.post('/send_msg', async function (req, res, next) {
-  res.send('Successful POST');
-  _send_message('new packet', req.body);
-});
-
+// ----- Messenger routing functions -----
+// Verify webhook
 app.get('/webhook', async function (req, res) {
-  // Your verify token. Should be a random string.
-  let VERIFY_TOKEN = "TEMPORARY_TOKEN"
+  // webhook verification token
+  let VERIFY_TOKEN = "Messenger4ParlAI"
 
   // Parse the query params
   let mode = req.query['hub.mode'];
@@ -101,12 +97,14 @@ app.get('/webhook', async function (req, res) {
   }
 });
 
+// Send messages through webhook
 app.post('/webhook', async function (req, res, next) {
   let body = req.body;
   console.log(body);
   // Checks this is an event from a page subscription
   if (body.object === 'page') {
-    _send_message('new packet', req.body);
+    _send_message('new_packet', req.body);
+    // TODO handle v. rare cases of message drops - should send timeout status
     res.status(200).send('Successful POST');
   } else {
     res.sendStatus(404);

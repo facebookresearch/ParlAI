@@ -15,7 +15,7 @@ import uuid
 from botocore.exceptions import ClientError
 
 from parlai.messenger.core.agents import MessengerAgent
-from parlai.messenger.core.socket_manager import Packet, SocketManager
+from parlai.messenger.core.socket_manager import MessageSocket
 from parlai.messenger.core.worker_state import WorkerState, AssignState
 import parlai.messenger.core.data_model as data_model
 import parlai.messenger.core.messenger_utils as messenger_utils
@@ -36,7 +36,6 @@ class MessengerManager():
         self.opt = opt
         self.server_url = None
         self.port = 443
-        self.run_id = None
         self.agent_pool_change_condition = threading.Condition()
         self.overworld = None
         self.world_options = {}
@@ -45,13 +44,6 @@ class MessengerManager():
         self._init_logs()
 
     # Helpers and internal manager methods #
-
-    def _init_state(self):
-        """Initialize everything in the agent, task, and thread states"""
-        self.agent_pool = []
-        self.messenger_agent_states = {}
-        self.conv_to_agent = {}
-        self.assignment_to_agent_ids = {}
 
     def _init_logs(self):
         """Initialize logging settings from the opt"""
@@ -80,7 +72,11 @@ class MessengerManager():
 
     def _expire_all_conversations(self):
         """iterate through all sub-worlds and shut them down"""
-        # TODO implement this
+        # TODO implement this for active worlds
+
+        # Join when the kill commands have been sent
+        for assignment_id in self.assignment_to_onboard_thread:
+            self.assignment_to_onboard_thread[assignment_id].join()
         pass
 
     def _get_unique_pool(self):
@@ -89,18 +85,6 @@ class MessengerManager():
         """
         # TODO filter by psid -> agent id mappings for multi-page setup
         return self.agent_pool
-
-    def _setup_socket(self):
-        """Set up a socket_manager with defined callbacks"""
-        # TODO update this
-        self.socket_manager = SocketManager(
-            self.server_url,
-            self.port,
-            self._on_alive,
-            self._on_new_message,
-            self._on_socket_dead,
-            self.task_group_id
-        )
 
     def _on_first_message(self, pkt):
         """Handle a new incoming message from a psid that is not yet
@@ -113,7 +97,7 @@ class MessengerManager():
         # world_type = self.prepare_new_worker........
         pass
 
-    def _on_new_message(self, pkt):
+    def _on_new_message(self, message):
         """Put an incoming message onto the correct agent's message queue.
         """
         # TODO find the correct agent to put this message into based on the
@@ -199,25 +183,42 @@ class MessengerManager():
                                    'Setting up Messenger webhook...',
                                    should_print=True)
 
-        # Setup the server with a likely-unique app-name
-        task_name = '{}-{}'.format(str(uuid.uuid4())[:8], self.opt['task'])
+        # Setup the server with a task name related to the current task
+        task_name = '{}-{}'.format('ParlAI-Messenger', self.opt['task'])
         self.server_task_name = \
             ''.join(e for e in task_name.lower() if e.isalnum() or e == '-')
         self.server_url = server_utils.setup_server(self.server_task_name)
-        shared_utils.print_and_log(logging.INFO,
-                                   'Webhook address: {}/TODO/'.format(
-                                       self.server_url),
-                                   should_print=True)
+        shared_utils.print_and_log(
+            logging.INFO,
+            'Webhook address: {}/webhook'.format(self.server_url),
+            should_print=True
+        )
 
-    def ready_to_accept_workers(self):
+    def setup_socket(self):
         """Set up socket to start communicating to workers"""
         shared_utils.print_and_log(logging.INFO,
                                    'Local: Setting up SocketIO...',
-                                   not self.is_test)
-        self._setup_socket()
+                                   should_print=True)
+        self.app_token = input(
+            'Enter your page\'s access token from the developer page at'
+            'https://developers.facebook.com/apps/<YOUR APP ID>'
+            '/messenger/settings/ to continue setup:'
+        )
+        self.message_socket = MessageSocket(self.server_url, self.port,
+                                            self.app_token,
+                                            self._on_new_message)
+
+    def init_new_state(self):
+        """Initialize everything in the agent, task, and thread states
+        to prepare for a new run
+        """
+        self.agent_pool = []
+        self.messenger_agent_states = {}
+        self.conv_to_agent = {}
+        self.assignment_to_agent_ids = {}
+        self.assignment_to_onboard_thread = {}
 
     def start_new_run(self):
-        """Clear state to prepare for a new run"""
         self.run_id = str(int(time.time()))
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
         self._init_state()
@@ -285,9 +286,7 @@ class MessengerManager():
             self.is_running = False
             self._expire_onboarding_pool()
             self._expire_worker_pool()
-            for assignment_id in self.assignment_to_onboard_thread:
-                self.assignment_to_onboard_thread[assignment_id].join()
-            self.socket_manager.close_all_channels()
+            self._expire_all_conversations()
         except BaseException:
             pass
         finally:
