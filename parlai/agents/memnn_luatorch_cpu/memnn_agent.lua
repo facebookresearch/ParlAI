@@ -162,7 +162,7 @@ end
 
 function memnn_agent:_build_ex(query, label, mem, cands, prev_ex)
     local x = self:_prep(self.parser:parse_test_time(query, self.mlp.dict))
-    local y = self:_prep(self.parser:parse_test_time(label, self.mlp.dict))
+    local y = label and self:_prep(self.parser:parse_test_time(label, self.mlp.dict)) or self.NULL
     local ex = {}
     ex[1] = x
     ex[2] = y

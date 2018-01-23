@@ -3,11 +3,10 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-from parlai.core.agents import Agent, create_agent_from_shared
+from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 import argparse
 import copy
-import numpy as np
 import json
 import subprocess
 import zmq
@@ -174,6 +173,7 @@ class ParsedRemoteAgent(RemoteAgentAgent):
                 except TypeError:
                     # oops, it's not. just pass it on.
                     parsed[k] = v
+
         super().observe(parsed)
         reply = super().act()
         unparsed = {}
