@@ -123,7 +123,7 @@ All needed data will be downloaded to ~/ParlAI/data, and any non-data files (suc
 The main concepts (classes) in ParlAI:
 - world - defines the environment (can be very simple, just two agents talking to each other).
 - agent – an agent in the world, e.g. the learner. (There can be multiple learners.)
-- teacher – a type of agent that talks to the learner, implements one of the 
+- teacher – a type of agent that talks to the learner, implements one of the
 listed before.
 
 After defining a world and the agents in it, a main loop can be run for training, testing or displaying, which calls the function world.parley(). The skeleton of an example main is given in the left panel, and the actual code for parley() on the right.
@@ -231,7 +231,6 @@ This directory contains a few particular examples of basic loops.
 - display_model.py: _shows the predictions of a provided model on a particular task provided on the command-line_
 - eval_model.py: _uses the named agent to compute evaluation metrics data for a particular task provided on the command-line_
 - build_dict.py: _build a dictionary from a particular task provided on the command-line using core.dict.DictionaryAgent_
-- memnn_luatorch_cpu: _shows a few examples of training an end-to-end memory network on a few datasets_
 - drqa: _shows how to train the attentive LSTM DrQA model of [Chen et al.](https://arxiv.org/abs/1704.00051) on SQuAD._
 
 ### Tasks
