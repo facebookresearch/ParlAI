@@ -347,4 +347,11 @@ task_list = [
         "tags": [ "Goal", "All" ],
         "description": "SCAN is a set of simple language-driven navigation tasks for studying compositional learning and zero-shot generalization. The SCAN tasks were inspired by the CommAI environment, which is the origin of the acronym (Simplified versions of the CommAI Navigation tasks). See the paper: https://arxiv.org/abs/1711.00350 or data: https://github.com/brendenlake/SCAN"
     }
+    {
+        "id": "Persona-Chat",
+        "display_name": "Persona-Chat",
+        "task": "personachat",
+        "tags": [ "ChitChat", "All" ],
+        "description": "A chit-chat dataset where paired Turkers are given assigned personas and chat to try to get to know each other. See the paper: https://arxiv.org/abs/1801.07243"
+    }
 ]
