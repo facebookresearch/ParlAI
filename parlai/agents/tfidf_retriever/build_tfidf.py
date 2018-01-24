@@ -59,7 +59,7 @@ def tokenize(text):
     return PROCESS_TOK.tokenize(text)
 
 
-MAX_SZ = int(2**31 * 1.5)
+MAX_SZ = math.pow(2, 31)
 
 # ------------------------------------------------------------------------------
 # Build article --> word count sparse matrix.

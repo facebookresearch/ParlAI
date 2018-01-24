@@ -17,13 +17,32 @@ import os
 
 
 class TfidfRetrieverAgent(Agent):
+    """TFIDF-based retriever agent.
+
+    If given a task to specify, will first store entries of that task into
+    a SQLite database and then build a sparse tfidf matrix of those entries.
+    If not, will build it on-the-fly whenever it sees observations with labels.
+
+    This agent generates responses by building a sparse entry of the incoming
+    text observation, and then returning the highest-scoring documents
+    (calculated via sparse matrix multiplication) from the tfidf matrix.
+
+    By default, this will return the "value" (the response) of the closest
+    entries. For example, saying "What is your favorite movie?" will not return
+    the text "Which movie is your favorite?" (high match) but rather the reply
+    to that (e.g. "Jurassic Park"). To use this agent for retrieving texts
+    (e.g. Wikipedia Entries), you can store label-less examples with the
+    '--retriever-task' argument and switch '--retriever-mode' to 'keys'.
+    """
 
     @staticmethod
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('Retriever Arguments')
         parser.add_argument(
             '--retriever-task', type=str, default=None,
-            help='ParlAI task to use to "train" retriever')
+            help='ParlAI task to use to "train" retriever. If not given, no '
+                 'entries will initially populate the database / matrix.'
+                 'Calling observe/act with a labels will store them.')
         parser.add_argument(
             '--retriever-dbpath', type=str, required=True,
             help='/path/to/saved/db.db')
@@ -110,6 +129,9 @@ class TfidfRetrieverAgent(Agent):
             self.ranker = TfidfDocRanker(
                 tfidf_path=self.opt['retriever_tfidfpath'], strict=False)
 
+    def save(self):
+        self.rebuild()
+
     def act(self):
         obs = self.observation
         reply = {}
@@ -124,7 +146,7 @@ class TfidfRetrieverAgent(Agent):
                 self.rebuild()  # no-op if nothing has been queued to store
                 doc_ids, doc_scores = self.ranker.closest_docs(obs['text'], k=30)
 
-                if obs.get('label_candidates') and False:
+                if obs.get('label_candidates'):
                     # these are better selection than stored facts
                     # rank these options instead
                     cands = obs['label_candidates']
