@@ -50,7 +50,7 @@ task_list = [
         "display_name": "Cornell Movie",
         "task": "cornell_movie",
         "tags": [ "All",  "ChitChat" ],
-        "description": "Fictional conversations extracted from raw movie scripts. Link: https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html"
+        "description": "Fictional conversations extracted from raw movie scripts. Danescu-Niculescu-Mizil & Lee, '11. Link: https://arxiv.org/abs/1106.3077"
     },
     {
         "id": "DBLL-bAbI",
