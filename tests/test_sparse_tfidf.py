@@ -27,6 +27,7 @@ class TestSparseTfidf(unittest.TestCase):
             '--retriever-dbpath', DB_PATH,
             '--retriever-tfidfpath', TFIDF_PATH,
             '--retriever-numworkers', '4',
+            '--retriever-hashsize', str(2**8)
         ]
         try:
             parser = ParlaiParser(True, True)
