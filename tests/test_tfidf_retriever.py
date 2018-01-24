@@ -8,21 +8,20 @@ from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 
-from parlai.agents.sparse_tfidf_retriever.sparse_tfidf_retriever import (
-    SparseTfidfRetrieverAgent)
+from parlai.agents.tfidf_retriever.tfidf_retriever import TfidfRetrieverAgent
 
 import os
 import unittest
 
 
-class TestSparseTfidf(unittest.TestCase):
+class TestTfidfRetriever(unittest.TestCase):
     """Basic tests on the display_data.py example."""
 
     def test_sparse_tfidf_retriever(self):
         DB_PATH = '/tmp/tmp_test_babi.db'
         TFIDF_PATH = '/tmp/tmp_test_babi.tfidf'
         args = [
-            '--model', 'sparse_tfidf_retriever',
+            '--model', 'tfidf_retriever',
             '--retriever-task', 'babi:task1k:1',
             '--retriever-dbpath', DB_PATH,
             '--retriever-tfidfpath', TFIDF_PATH,
@@ -31,7 +30,7 @@ class TestSparseTfidf(unittest.TestCase):
         ]
         try:
             parser = ParlaiParser(True, True)
-            SparseTfidfRetrieverAgent.add_cmdline_args(parser)
+            TfidfRetrieverAgent.add_cmdline_args(parser)
             opt = parser.parse_args(args, print_args=False)
 
             agent = create_agent(opt)

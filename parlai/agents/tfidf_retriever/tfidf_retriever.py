@@ -16,7 +16,7 @@ import math
 import os
 
 
-class SparseTfidfRetrieverAgent(Agent):
+class TfidfRetrieverAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(parser):

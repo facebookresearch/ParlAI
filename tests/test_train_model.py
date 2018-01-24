@@ -38,7 +38,7 @@ class TestTrainModel(unittest.TestCase):
             parser = setup_args(model_args=['--model', 'memnn'])
             parser.set_defaults(
                 model='memnn',
-                task='tests.tasks.repeat:RepeatTeacher:10',
+                task='tasks.repeat:RepeatTeacher:10',
                 dict_file='/tmp/repeat',
                 batchsize='1',
                 validation_every_n_secs='5',
