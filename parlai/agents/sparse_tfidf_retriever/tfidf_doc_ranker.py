@@ -9,7 +9,6 @@ Adapted from Adam Fisch's work at github.com/facebookresearch/DrQA/
 """
 
 import logging
-import torch
 import numpy as np
 import scipy.sparse as sp
 
@@ -35,14 +34,13 @@ class TfidfDocRanker(object):
         """
         # Load from disk
         logger.info('Loading %s' % tfidf_path)
-        # matrix, metadata = utils.load_sparse_csr(tfidf_path)
-        matrix, metadata = utils.load_sparse_tensor(tfidf_path)
+        matrix, metadata = utils.load_sparse_csr(tfidf_path)
         self.doc_mat = matrix
         self.ngrams = metadata['ngram']
         self.hash_size = metadata['hash_size']
         self.tokenizer = tokenizers.get_class(metadata['tokenizer'])()
         self.doc_freqs = metadata['doc_freqs'].squeeze()
-        self.num_docs = self.doc_mat.size(1) - 1
+        self.num_docs = self.doc_mat.shape[1] - 1
         self.strict = strict
 
     def closest_docs(self, query, k=1, matrix=None):
@@ -100,8 +98,8 @@ class TfidfDocRanker(object):
         tfs = np.log1p(wids_counts)
 
         # Count IDF
-        Ns = self.doc_freqs[torch.LongTensor(wids_unique)]
-        idfs = ((self.num_docs - Ns + 0.5) / (Ns + 0.5)).log()
+        Ns = self.doc_freqs[wids_unique]
+        idfs = np.log((self.num_docs - Ns + 0.5) / (Ns + 0.5))
         idfs[idfs < 0] = 0
 
         # TF-IDF

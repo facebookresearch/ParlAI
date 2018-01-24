@@ -10,7 +10,7 @@ from .doc_db import DocDB
 from .tfidf_doc_ranker import TfidfDocRanker
 from .build_db import store_contents as build_db
 from .build_tfidf import run as build_tfidf
-from .build_tfidf import live_count_matrix_t, get_tfidf_matrix_t
+from .build_tfidf import live_count_matrix, get_tfidf_matrix
 from numpy.random import choice
 import math
 import os
@@ -22,29 +22,29 @@ class SparseTfidfRetrieverAgent(Agent):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('Retriever Arguments')
         parser.add_argument(
-            '--sp-retriever-task', type=str, default=None,
+            '--retriever-task', type=str, default=None,
             help='ParlAI task to use to "train" retriever')
         parser.add_argument(
-            '--sp-retriever-dbpath', type=str, required=True,
+            '--retriever-dbpath', type=str, required=True,
             help='/path/to/saved/db.db')
         parser.add_argument(
-            '--sp-retriever-tfidfpath', type=str, required=True,
+            '--retriever-tfidfpath', type=str, required=True,
             help='Directory for saving output files')
         parser.add_argument(
-            '--sp-retriever-numworkers', type=int, default=None,
+            '--retriever-numworkers', type=int, default=None,
             help='Number of CPU processes (for tokenizing, etc)')
         parser.add_argument(
-            '--sp-retriever-ngram', type=int, default=2,
+            '--retriever-ngram', type=int, default=2,
             help='Use up to N-size n-grams (e.g. 2 = unigrams + bigrams)')
         parser.add_argument(
-            '--sp-retriever-hashsize', type=int, default=int(math.pow(2, 24)),
+            '--retriever-hashsize', type=int, default=int(math.pow(2, 24)),
             help='Number of buckets to use for hashing ngrams')
         parser.add_argument(
-            '--sp-retriever-tokenizer', type=str, default='simple',
+            '--retriever-tokenizer', type=str, default='simple',
             help='String option specifying tokenizer type to use '
                  '(e.g. "corenlp")')
         parser.add_argument(
-            '--sp-retriever-mode', choices=['keys', 'values'], default='values',
+            '--retriever-mode', choices=['keys', 'values'], default='values',
             help='Whether to retrieve the stored key or the stored value.'
         )
 
@@ -53,7 +53,7 @@ class SparseTfidfRetrieverAgent(Agent):
         self.id = 'SparseTfidfRetrieverAgent'
 
         # we'll need to build the tfid if it's not already
-        rebuild_tfidf = not os.path.exists(opt['retriever_tfidfpath'])
+        rebuild_tfidf = not os.path.exists(opt['retriever_tfidfpath'] + '.npz')
         # sets up db
         if not os.path.exists(opt['retriever_dbpath']):
             if not opt.get('retriever_task'):
@@ -117,8 +117,8 @@ class SparseTfidfRetrieverAgent(Agent):
                     # will not update if cand set changes contents
                     c_list = list(cands)
                     self.cands_hash[cands_id] = (
-                        get_tfidf_matrix_t(
-                            live_count_matrix_t(self.tfidf_args, c_list)
+                        get_tfidf_matrix(
+                            live_count_matrix(self.tfidf_args, c_list)
                         ),
                         c_list
                     )

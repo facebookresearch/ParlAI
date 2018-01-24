@@ -235,7 +235,7 @@ def get_count_matrix(args, db_opts):
         (data, (row, col)), shape=(args.hash_size, len(doc_ids) + 1)
     )
     count_matrix.sum_duplicates()
-    return count_matrix, count_tensor
+    return count_matrix
 
 
 # ------------------------------------------------------------------------------
@@ -298,13 +298,13 @@ def get_doc_freqs(cnts):
 def run(args):
     # ParlAI version of run method, modified slightly
     logging.info('Counting words...')
-    count_matrix = get_count_matrix_t(args, {'db_path': args.db_path})
+    count_matrix = get_count_matrix(args, {'db_path': args.db_path})
 
     logger.info('Making tfidf vectors...')
-    tfidf = get_tfidf_matrix_t(count_matrix)
+    tfidf = get_tfidf_matrix(count_matrix)
 
     logger.info('Getting word-doc frequencies...')
-    freqs = get_doc_freqs_t(count_matrix)
+    freqs = get_doc_freqs(count_matrix)
 
     filename = args.out_dir
 
@@ -316,7 +316,7 @@ def run(args):
         'ngram': args.ngram,
     }
 
-    utils.save_sparse_tensor(filename, tfidf, metadata)
+    utils.save_sparse_csr(filename, tfidf, metadata)
 
 
 if __name__ == '__main__':
