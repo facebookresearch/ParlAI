@@ -49,16 +49,14 @@ class SparseTfidfRetrieverAgent(Agent):
         )
 
     def __init__(self, opt, shared=None):
-        super().__init__(opt)
+        super().__init__(opt, shared)
         self.id = 'SparseTfidfRetrieverAgent'
 
         # we'll need to build the tfid if it's not already
         rebuild_tfidf = not os.path.exists(opt['retriever_tfidfpath'] + '.npz')
         # sets up db
         if not os.path.exists(opt['retriever_dbpath']):
-            if not opt.get('retriever_task'):
-                opt['retriever_task'] = opt['task']
-            build_db(opt, opt['retriever_task'], opt['retriever_dbpath'],
+            build_db(opt, opt.get('retriever_task'), opt['retriever_dbpath'],
                      context_length=opt.get('context_length', -1),
                      include_labels=opt.get('include_labels', True))
             # we rebuilt the db, so need to force rebuilding of tfidf
@@ -80,8 +78,9 @@ class SparseTfidfRetrieverAgent(Agent):
         self.db = DocDB(db_path=opt['retriever_dbpath'])
         self.ranker = TfidfDocRanker(
             tfidf_path=opt['retriever_tfidfpath'], strict=False)
-        self.cands_hash = {}
         self.ret_mode = opt['retriever_mode']
+        self.cands_hash = {}  # cache for candidates
+        self.triples_to_add = []  # in case we want to add more entries
 
     def train(mode=True):
         self.training = mode
@@ -98,54 +97,72 @@ class SparseTfidfRetrieverAgent(Agent):
             raise RuntimeError('Retrieve mode {} not yet supported.'.format(
                 self.ret_mode))
 
+    def store(self, observation):
+        tpl = (None, observation['text'], choice(observation['labels']))
+        self.triples_to_add.append(tpl)
+
+    def rebuild(self):
+        if len(self.triples_to_add) > 0:
+            self.db.add(self.triples_to_add)
+            self.triples_to_add.clear()
+            # rebuild tfidf
+            build_tfidf(self.tfidf_args)
+            self.ranker = TfidfDocRanker(
+                tfidf_path=self.opt['retriever_tfidfpath'], strict=False)
+
     def act(self):
         obs = self.observation
         reply = {}
         reply['id'] = self.getID()
 
         if 'text' in obs:
-            # good--we should reply
-            doc_ids, doc_scores = self.ranker.closest_docs(obs['text'], k=30)
-
-            if obs.get('label_candidates') and False:
-                # these are better selection than stored facts
-                # rank these options instead
-                cands = obs['label_candidates']
-                cands_id = id(cands)
-                if cands_id not in self.cands_hash:
-                    # cache candidate set
-                    # will not update if cand set changes contents
-                    c_list = list(cands)
-                    self.cands_hash[cands_id] = (
-                        get_tfidf_matrix(
-                            live_count_matrix(self.tfidf_args, c_list)
-                        ),
-                        c_list
-                    )
-                c_ids, c_scores = self.ranker.closest_docs(obs['text'], k=30, matrix=self.cands_hash[cands_id][0])
-                reply['text_candidates'] = [self.cands_hash[cands_id][1][cid] for cid in c_ids]
-                reply['text'] = reply['text_candidates'][0]
-            elif len(doc_ids) > 0:
-                # return stored fact
-                total = sum(doc_scores)
-                doc_probs = [d / total for d in doc_scores]
-
-                # returned
-                picks = [self.doc2txt(int(did)) for did in doc_ids]
-                reply['text_candidates'] = picks
-
-                # could pick single choice based on probability scores?
-                # pick = int(choice(doc_ids, p=doc_probs))
-                pick = int(doc_ids[0])  # select best response
-                reply['text'] = self.doc2txt(pick)
+            # we should reply or add this as a stored example
+            if 'labels' in obs:
+                # save this to our retrieval matrix
+                self.store(obs)
             else:
-                # no cands and nothing found, return generic response
-                reply['text'] = choice([
-                    'Can you say something more interesting?',
-                    'Why are you being so short with me?',
-                    'What are you really thinking?',
-                    'Can you expand on that?',
-                ])
+                self.rebuild()  # no-op if nothing has been queued to store
+                doc_ids, doc_scores = self.ranker.closest_docs(obs['text'], k=30)
+
+                if obs.get('label_candidates') and False:
+                    # these are better selection than stored facts
+                    # rank these options instead
+                    cands = obs['label_candidates']
+                    cands_id = id(cands)
+                    if cands_id not in self.cands_hash:
+                        # cache candidate set
+                        # will not update if cand set changes contents
+                        c_list = list(cands)
+                        self.cands_hash[cands_id] = (
+                            get_tfidf_matrix(
+                                live_count_matrix(self.tfidf_args, c_list)
+                            ),
+                            c_list
+                        )
+                    c_ids, c_scores = self.ranker.closest_docs(obs['text'], k=30, matrix=self.cands_hash[cands_id][0])
+                    reply['text_candidates'] = [self.cands_hash[cands_id][1][cid] for cid in c_ids]
+                    reply['text'] = reply['text_candidates'][0]
+                elif len(doc_ids) > 0:
+                    # return stored fact
+                    total = sum(doc_scores)
+                    doc_probs = [d / total for d in doc_scores]
+
+                    # returned
+                    picks = [self.doc2txt(int(did)) for did in doc_ids]
+                    reply['text_candidates'] = picks
+
+                    # could pick single choice based on probability scores?
+                    # pick = int(choice(doc_ids, p=doc_probs))
+                    pick = int(doc_ids[0])  # select best response
+                    reply['text'] = self.doc2txt(pick)
+                else:
+                    # no cands and nothing found, return generic response
+                    reply['text'] = choice([
+                        'Can you say something more interesting?',
+                        'Why are you being so short with me?',
+                        'What are you really thinking?',
+                        'Can you expand on that?',
+                    ])
 
 
         return reply

@@ -33,7 +33,7 @@ class TestTrainModel(unittest.TestCase):
             try:
                 import torch
             except ImportError:
-                raise ImportError('Cannot import torch')
+                print('Cannot import torch, skipping test_train_model')
                 return
             parser = setup_args(model_args=['--model', 'memnn'])
             parser.set_defaults(

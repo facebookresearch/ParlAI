@@ -65,3 +65,10 @@ class DocDB(object):
         result = cursor.fetchone()
         cursor.close()
         return result if result is None else result[0]
+
+    def add(self, triples):
+        cursor = self.connection.cursor()
+        cursor.executemany('INSERT OR IGNORE INTO documents VALUES (?,?,?)',
+                           triples)
+        cursor.close()
+        self.connection.commit()

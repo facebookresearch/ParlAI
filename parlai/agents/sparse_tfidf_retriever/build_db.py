@@ -49,6 +49,13 @@ def store_contents(opt, task, save_path, context_length=-1, include_labels=True)
     conn = sqlite3.connect(save_path)
     c = conn.cursor()
     c.execute('CREATE TABLE documents (id INTEGER PRIMARY KEY, text, value);')
+    if not task:
+        logger.info('No data to initialize table: just creating table.')
+        logger.info('Add more data by passing observations to the agent.')
+        logger.info('Committing...')
+        conn.commit()
+        conn.close()
+        return
 
     ordered_opt = opt.copy()
     dt = opt.get('datatype', '').split(':')
