@@ -60,8 +60,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'cornell_movie_dialogs_corpus.zip'
-        url = 'http://www.mpi-sws.org/~cristian/data/' + fname
+        fname = 'cornell_movie_dialogs_corpus.tgz'
+        url = 'https://s3.amazonaws.com/fair-data/parlai/cornell_movie/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 
