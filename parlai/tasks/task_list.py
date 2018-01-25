@@ -353,5 +353,12 @@ task_list = [
         "task": "personachat",
         "tags": [ "ChitChat", "All" ],
         "description": "A chit-chat dataset where paired Turkers are given assigned personas and chat to try to get to know each other. See the paper: https://arxiv.org/abs/1801.07243"
+    },
+    {
+        "id": "Twitter",
+        "display_name": "Twitter",
+        "task": "twitter",
+        "tags": [ "All",  "ChitChat" ],
+        "description": "Twitter data from: https://github.com/Marsan-Ma/chat_corpus/. No train/valid/test split was provided so 10k for valid and 10k for test was chosen at random."
     }
 ]
