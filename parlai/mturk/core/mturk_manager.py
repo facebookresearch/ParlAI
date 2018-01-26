@@ -171,7 +171,7 @@ class MTurkManager():
         worker_id = pkt.sender_id
         assignment_id = pkt.assignment_id
         agent = self._get_agent(worker_id, assignment_id)
-        if agent is not None:
+        if agent is None:
             self._log_missing_agent(worker_id, assignment_id)
         return agent
 
@@ -194,14 +194,6 @@ class MTurkManager():
         agent = self._get_agent_from_pkt(pkt)
         if agent is not None:
             agent.state.status = AssignState.STATUS_WAITING
-
-            # Add the worker to pool
-            with self.worker_pool_change_condition:
-                shared_utils.print_and_log(
-                    logging.DEBUG,
-                    "Adding worker {} to pool...".format(agent.worker_id)
-                )
-                self.worker_pool.append(agent)
 
     def _move_workers_to_waiting(self, workers):
         """Put all workers into waiting worlds, expire them if no longer
@@ -382,15 +374,29 @@ class MTurkManager():
                 # Reconnecting before even being given a world. The retries
                 # for switching to the onboarding world should catch this
                 return
-            elif (agent.state.status == AssignState.STATUS_ONBOARDING or
-                  agent.state.status == AssignState.STATUS_WAITING):
-                # Reconnecting to the onboarding world or to a waiting world
-                # should either restore state or expire (if workers are no
-                # longer being accepted for this task)
+            elif agent.state.status == AssignState.STATUS_ONBOARDING:
+                # Reconnecting to the onboarding world should either restore
+                # state or expire (if workers are no longer being accepted
+                # for this task)
                 if not self.accepting_workers:
                     self.force_expire_hit(worker_id, assign_id)
                 elif not conversation_id:
                     self._restore_worker_state(worker_id, assign_id)
+            elif agent.state.status == AssignState.STATUS_WAITING:
+                # Reconnecting in waiting is either the first reconnect after
+                # being told to wait or a waiting reconnect. Restore state if
+                # no information is held, and add to the pool if not already in
+                # the pool
+                if not conversation_id:
+                    self._restore_worker_state(worker_id, assign_id)
+                if agent not in self.worker_pool:
+                    # Add the worker to pool
+                    with self.worker_pool_change_condition:
+                        shared_utils.print_and_log(
+                            logging.DEBUG,
+                            "Adding worker {} to pool.".format(agent.worker_id)
+                        )
+                        self.worker_pool.append(agent)
             elif agent.state.status == AssignState.STATUS_IN_TASK:
                 # Reconnecting to the onboarding world or to a task world
                 # should resend the messages already in the conversation
@@ -684,7 +690,7 @@ class MTurkManager():
                 self.task_files_to_copy.append(os.path.join(
                     task_directory_path, 'html', file_name
                 ))
-        except FileNotFoundError:  # noqa F821 we don't support python2 
+        except FileNotFoundError:  # noqa F821 we don't support python2
             # No html dir exists
             pass
         for mturk_agent_id in self.mturk_agent_ids + ['onboarding']:

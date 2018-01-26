@@ -211,6 +211,29 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
+    def test_narrative_qa(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.narrative_qa.agents import DefaultTeacher, SummariesTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+        for dt in ['train', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
+        for dt in ['train', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = SummariesTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
     def test_opensubtitles(self):
         from parlai.core.params import ParlaiParser
         from parlai.tasks.opensubtitles.agents import DefaultTeacher
@@ -446,6 +469,69 @@ class TestData(unittest.TestCase):
             teacher = PassageTeacher(opt)
             reply = teacher.act()
             check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
+    def test_copa(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.copa.agents import DefaultTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+
+        for dt in ['train', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+            assert len(reply.get('label_candidates')) == 2
+
+        shutil.rmtree(self.TMP_PATH)
+
+    def test_multinli(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.multinli.agents import DefaultTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+
+        for dt in ['train', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+            assert len(reply.get('label_candidates')) == 3
+            assert reply.get('text').find('Premise') != -1
+            assert reply.get('text').find('Hypothesis') != -1
+
+            if dt == 'train':
+                assert reply.get('labels')[0] in ['entailment',
+                                                  'contradiction',
+                                                  'neutral']
+
+        shutil.rmtree(self.TMP_PATH)
+
+    def test_snli(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.snli.agents import DefaultTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+
+        for dt in ['train', 'valid', 'test']:
+            opt['datatype'] = dt
+
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+            assert len(reply.get('label_candidates')) == 3
+            assert reply.get('text').find('Premise') != -1
+            assert reply.get('text').find('Hypothesis') != -1
+
+            if dt == 'train':
+                assert reply.get('labels')[0] in ['entailment',
+                                                  'contradiction',
+                                                  'neutral']
 
         shutil.rmtree(self.TMP_PATH)
 

@@ -24,22 +24,25 @@ import time
 def main():
     # Get command line arguments
     parser = ParlaiParser()
-    parser.add_argument('-n', '--num-examples', default=10)
+    parser.add_argument('-n', '--num-iters', default=10, type=int)
+    parser.add_argument('-a', '--num-agents', default=1, type=int)
     opt = parser.parse_args()
 
-    agent = Agent(opt)
+    agents = []
+    for _ in range(opt['num_agents']):
+        agents.append(Agent(opt))
 
     opt['datatype'] = 'train'
-    world_train = create_task(opt, agent)
+    world_train = create_task(opt, agents)
 
     opt['datatype'] = 'valid'
-    world_valid = create_task(opt, agent)
+    world_valid = create_task(opt, agents)
 
     start = time.time()
     # train / valid loop
     for _ in range(1):
         print('[ training ]')
-        for _ in range(10):  # train for a bit
+        for _ in range(opt['num_iters']):  # train for a bit
             world_train.parley()
 
         print('[ training summary. ]')
