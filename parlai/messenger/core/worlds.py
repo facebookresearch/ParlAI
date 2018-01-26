@@ -7,12 +7,31 @@
 from parlai.core.worlds import World
 
 
-class MessengerOnboardWorld(World):
-    """Generic world for onboarding a new person and collecting
-    information from them."""
-    def __init__(self, opt, messenger_agent):
-        self.messenger_agent = messenger_agent
+# ----- Baseline overworld that simply defers to the default world ----- #
+class SimpleMessengerOverworld(World):
+    """Passthrough world to spawn task worlds of only one type
+
+    Demos of more advanced overworld functionality exist in the overworld demo
+    """
+    def __init__(self, opt, agent):
+        self.agent = agent
+        self.opt = opt
+
+    def return_overworld(self):
+        pass
+
+    def parley(self):
+        return 'default'
+
+
+class OnboardWorld(World):
+    def __init__(self, opt, agent):
+        self.agent = agent
         self.episodeDone = False
+
+    @staticmethod
+    def run(agent, task_id):
+        pass
 
     def parley(self):
         self.episodeDone = True
@@ -22,33 +41,3 @@ class MessengerOnboardWorld(World):
 
     def shutdown(self):
         pass
-
-
-class MessengerTaskWorld(World):
-    """Generic world for Messenger tasks."""
-    def __init__(self, opt, messenger_agent):
-        self.messenger_agent = messenger_agent
-        self.episodeDone = False
-
-    def parley(self):
-        self.episodeDone = True
-
-    def episode_done(self):
-        return self.episodeDone
-
-    def report(self):
-        pass
-
-    def shutdown(self):
-        self.messenger_agent.shutdown()
-        """
-        Use the following code if there are multiple messenger agents:
-
-        global shutdown_agent
-        def shutdown_agent(messenger_agent):
-            messenger_agent.shutdown()
-        Parallel(
-            n_jobs=len(self.messenger_agents),
-            backend='threading'
-        )(delayed(shutdown_agent)(agent) for agent in self.messenger_agents)
-        """

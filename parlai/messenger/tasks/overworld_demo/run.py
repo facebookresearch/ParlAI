@@ -4,13 +4,10 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.params import ParlaiParser
-from parlai.messenger.tasks.qa_data_collection.worlds import \
-    QADataCollectionWorld
+from parlai.messenger.tasks.overworld_demo.worlds import MessengerOverworld
 from parlai.messenger.core.messenger_manager import MessengerManager
-from parlai.messenger.core.worlds import SimpleMessengerOverworld as \
-    MessengerOverworld
+
 import os
-import importlib
 
 
 def main():
@@ -19,15 +16,7 @@ def main():
     argparser.add_messenger_args()
     opt = argparser.parse_args()
     opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
-
-    # Initialize a SQuAD teacher agent, which we will get context from
-    module_name = 'parlai.tasks.squad.agents'
-    class_name = 'DefaultTeacher'
-    my_module = importlib.import_module(module_name)
-    task_class = getattr(my_module, class_name)
-    task_opt = {}
-    task_opt['datatype'] = 'train'
-    task_opt['datapath'] = opt['datapath']
+    opt['password'] = 'ParlAI'  # If password is none anyone can chat
 
     messenger_manager = MessengerManager(opt=opt)
     messenger_manager.setup_server()
@@ -36,26 +25,16 @@ def main():
     def get_overworld(agent):
         return MessengerOverworld(None, agent)
 
-    def assign_agent_role(agent):
-        agent[0].disp_id = 'Agent'
-
-    def run_conversation(manager, opt, agents, task_id):
-        task = task_class(task_opt)
-        agent = agents[0]
-        world = QADataCollectionWorld(
-            opt=opt,
-            task=task,
-            agent=agent
-        )
-        while not world.episode_done():
-            world.parley()
-        world.shutdown()
-
-    # World with no onboarding
-    messenger_manager.set_onboard_functions({'default': None})
-    task_functions = {'default': run_conversation}
-    assign_agent_roles = {'default': assign_agent_role}
-    messenger_manager.set_agents_required({'default': 1})
+    onboard_functions = {name: worlds[0].run for (name, worlds)
+                         in MessengerOverworld.DEMOS.items()}
+    messenger_manager.set_onboard_functions(onboard_functions)
+    task_functions = {name: worlds[1].run for (name, worlds)
+                      in MessengerOverworld.DEMOS.items()}
+    assign_agent_roles = {name: worlds[1].assign_roles for (name, worlds)
+                          in MessengerOverworld.DEMOS.items()}
+    agents_required = {name: worlds[1].MAX_AGENTS for (name, worlds)
+                       in MessengerOverworld.DEMOS.items()}
+    messenger_manager.set_agents_required(agents_required)
 
     messenger_manager.set_overworld_func(get_overworld)
     messenger_manager.setup_socket()

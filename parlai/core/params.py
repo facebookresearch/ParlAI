@@ -148,6 +148,28 @@ class ParlaiParser(argparse.ArgumentParser):
         mturk.set_defaults(is_debug=False)
         mturk.set_defaults(verbose=False)
 
+    def add_messenger_args(self):
+        messenger = self.add_argument_group('Facebook Messenger')
+        messenger.add_argument(
+            '--debug', dest='is_debug', action='store_true',
+            help='print and log all server interactions and messages')
+        messenger.add_argument(
+            '--verbose', dest='verbose', action='store_true',
+            help='print all messages sent to and from Turkers')
+        messenger.add_argument(
+            '--log-level', dest='log_level', type=int, default=20,
+            help='importance level for what to put into the logs. the lower '
+                 'the level the more that gets logged. values are 0-50')
+        messenger.add_argument(
+            '--force-page-token', dest='force_page_token', action='store_true',
+            help='override the page token stored in the cache for a new one')
+        messenger.add_argument(
+            '--password', dest='password', type=str, default=None,
+            help='Require a password for entry to the bot')
+
+        messenger.set_defaults(is_debug=False)
+        messenger.set_defaults(verbose=False)
+
     def add_parlai_args(self, args=None):
         default_downloads_path = os.path.join(self.parlai_home, 'downloads')
         parlai = self.add_argument_group('Main ParlAI Arguments')

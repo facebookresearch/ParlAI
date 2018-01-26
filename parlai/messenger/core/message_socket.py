@@ -17,6 +17,9 @@ MAX_QUICK_REPLY_TITLE_CHARS = 20
 MAX_POSTBACK_CHARS = 1000
 
 
+# Arbitrary attachments can be created as long as they adhere to the docs
+# developers.facebook.com/docs/messenger-platform/send-messages/templates
+
 # Message builders
 def create_attachment(attachment_type, url):
     """Create a simple url-based attachment"""
@@ -90,6 +93,33 @@ def create_attachment_message(attachment_item, quick_replies=None):
     return [payload]
 
 
+def create_list_element(element):
+    assert 'title' in element, 'List elems must have a title'
+    ret_elem = {
+        'title': element['title'],
+        'subtitle': '',
+        'default_action': {
+            'type': 'postback',
+            'title': element['title'],
+            'payload': element['title'],
+        }
+    }
+    if 'subtitle' in element:
+        ret_elem['subtitle'] = element['subtitle']
+    return ret_elem
+
+
+def create_compact_list_message(raw_elems):
+    elements = [create_list_element(elem) for elem in raw_elems]
+    return {
+        'type': 'template',
+        'payload': {
+            'template_type': 'list',
+            'top_element_style': 'COMPACT',
+            'elements': elements,
+        }
+    }
+
 # Socket handler
 class MessageSocket():
     """MessageSocket is a wrapper around socketIO to simplify message sends
@@ -122,11 +152,42 @@ class MessageSocket():
             'world_alive', {'id': 'WORLD_ALIVE', 'sender_id': 'world'}
         )
 
-    def _send_fb_message(self, receiver_id, message, is_response):
+    def send_fb_payload(self, receiver_id, payload):
+        """Sends a payload to messenger, processes it if we can"""
+        api_address = 'https://graph.facebook.com/v2.6/me/messages'
+        if payload['type'] == 'list':
+            data = create_compact_list_message(payload['data'])
+        else:
+            data = payload['data']
+        message = {
+            "messaging_type": 'RESPONSE',
+            "recipient": {
+                "id": receiver_id
+            },
+            "message": {
+                "attachment": data,
+            }
+        }
+        response = requests.post(
+            api_address,
+            params=self.auth_args,
+            json=message,
+        )
+        result = response.json()
+        shared_utils.print_and_log(
+            logging.INFO,
+            '"Facebook response from message send: {}"'.format(result)
+        )
+        return result
+
+    def send_fb_message(self, receiver_id, message, is_response,
+                        quick_replies=None):
         """Sends a message directly to messenger"""
         api_address = 'https://graph.facebook.com/v2.6/me/messages'
-        ms = create_text_message(message)
-        result = None
+        if quick_replies is not None:
+            quick_replies = [create_reply_option(x, x) for x in quick_replies]
+        ms = create_text_message(message, quick_replies)
+        results = []
         for m in ms:
             if m['text'] == '':
                 continue  # Skip blank messages
@@ -143,8 +204,12 @@ class MessageSocket():
                 json=payload
             )
             result = response.json()
-            print("Result:", result)
-        return result
+            shared_utils.print_and_log(
+                logging.INFO,
+                '"Facebook response from message send: {}"'.format(result)
+            )
+            results.append(result)
+        return results
 
     def _setup_socket(self):
         """Create socket handlers and registers the socket"""
@@ -176,7 +241,7 @@ class MessageSocket():
                 'Message data recieved: {}'.format(message_data)
             )
             for message_packet in message_data['entry']:
-                self.message_callback(message_packet['messaging'])
+                self.message_callback(message_packet['messaging'][0])
 
         # Register Handlers
         self.socketIO.on('socket_open', on_socket_open)
