@@ -15,10 +15,8 @@ Facebookers can be viewed as another type of agent in ParlAI, and hence person-t
 
 Facebook agents communicate in observation/action dict format, the same as all other agents in ParlAI. During the conversation, messages are delivered to a person's inbox from the page that you have set up for ParlAI.
 
-.. figure:: _static/img/mturk-small.png
+.. figure:: _static/img/messenger-example.png
    :align: center
-
-   *Example: TODO put image of a chat window here*
 
 Each messenger task has at least one messenger agent that connects to ParlAI using the Facebook messenger Send/Receive API, encapsulated as a ``MessengerAgent`` object.
 
