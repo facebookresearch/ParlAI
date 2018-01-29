@@ -160,9 +160,9 @@ class ImageLoader():
         self.xs.data.copy_(self.transform(image))
         # extract the image feature
         feature = self.netCNN(self.xs)
-        feature = feature.cpu().data.numpy()
+        save_feature = feature.cpu().data.numpy()
         # save the feature
-        self.save(feature, path)
+        self.save(save_feature, path)
         return feature
 
     def img_to_ascii(self, path):
