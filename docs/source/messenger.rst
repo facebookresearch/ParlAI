@@ -55,59 +55,51 @@ After two turns, the task is finished, and the person's work can be saved during
 Task 2: Exposing People to Multiple Tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-TODO: Describe this.
+ParlAI messenger can also be used to create a multi-function world that users can choose multiple tasks or variations for. This can be used to expose multiple versions of a chatbot you want to test, to allow users to choose what kinds of tasks they do, amongst other things.
+
+As an example, the `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/overworld_demo/>`__ displays three separate tasks connected together by an overworld.
+
+- The ``echo`` task is a simple example of an echo bot, and shows the functionality and flow of a simple single-person world.
+- The ``onboard data`` task is an example that shows how an onboarding world can collect information that is later exposed in the active task world.
+- The ``chat`` task is an example of a task that requires multiple users, and shows how many people can be connected together in an instance of a world and then returned to the overworld upon completion of a task.
 
 
 Creating Your Own Task
 ----------------------
 
-**TODO UPDATE ALL OF THIS**
-
-ParlAI provides a generic MTurk dialog interface that one can use to implement any kind of dialog tasks. To create your own task, start with reading the tutorials on the provided examples, and then copy and modify the example ``worlds.py``, ``run.py`` and ``task_config.py`` files to create your task.
+To create your own task, start with reading the tutorials on the provided examples, and then copy and modify the example ``worlds.py`` and ``run.py`` files to create your task.
 
 A few things to keep in mind:
 
-1. To end a conversation, you should send a message with ``episode_done = True`` from the first non-MTurk agent, and the conversation is ended after all MTurk agents respond.
-2. In ``run.py``, You can use ``hit_index`` and ``assignment_index`` to differentiate between different HITs and assignments, and change the content of the task accordingly.
-3. Make sure to test your dialog task using MTurk's sandbox mode before pushing it live, by using the ``--sandbox`` flag (enabled by default) when running ``run.py``.
-4. [Optional] If you want to show a custom webpage (instead of the default one) for any of your MTurk agents, you can create an ``html`` folder within your task directory, and then create the ``<mturk_agent_id>_cover_page.html`` and ``<mturk_agent_id>_index.html`` files within the ``html`` directory. In those files, you can extend from ``core.html`` and override any code blocks that you want to change. (Please look at `parlai/mturk/core/html/mturk_index.html <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/core/html/mturk_index.html>`__ as an example.) These agent-specific templates will automatically be shown to the Turkers in the next run.
+1. A conversation ends when a call between ``parley`` calls to ``episode_done`` returns True.
+2. Your world can utilize the complete set of ``Facebook Messenger Templates <https://developers.facebook.com/docs/messenger-platform/send-messages/templates>``__ by putting the formatted data in the 'payload' field of the observed action.
+3. Quick replies can be attached to any action, the ``MessengerOverworld`` of the `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/overworld_demo/>`__ displays this functionality.
+4. Tasks with an overworld should return the name of the world that they want to queue a user into from the ``parley`` call in which the user makes that selection to enter a world.
+5. Tasks with no overworld will immediately attempt to put a user into the queue for the default task onboarding world or actual task world (if no onboarding world exists), and will do so again following the completion of a world (via ``episode_done``).
+6. To collect the conversation, data should be collected during every ``parley`` and saved during the ``world.shutdown`` call. You must inform the user of the fact that the data is being collected as well as your intended use.
 
 
 Running a Task
 --------------
 
-**TODO UPDATE ALL OF THIS**
+- ParlAI's Messenger functionality requires a free heroku account which can be obtained `here <https://signup.heroku.com/>`__. Running any ParlAI Messenger operation will walk you through linking the two.
 
-If you have not used Mechanical Turk before, you will need an MTurk Requester Account and an AWS account (these are two separate accounts). Follow the steps below:
+- Running and testing a bot on the `Facebook Messenger Platform <https://developers.facebook.com/docs/messenger-platform>`__ for yourself will require following the guide to set up a `Facebook App <https://developers.facebook.com/docs/messenger-platform/getting-started/app-setup>`__ for messenger.
 
-- Sign up for an AWS account at `aws.amazon.com <https://aws.amazon.com/>`__
+- When the guide gets to the point of asking for a webhook URL, you're ready to run the task. This can be done by running the ``run.py`` file in with python.
 
-- Sign up for an MTurk account at `requester.mturk.com <https://requester.mturk.com/>`__
+- After the heroku server is setup, the script will print out your webhook URL to the console, this should be used to continue the tutorial. The default verify token is ``Messenger4ParlAI``.
 
-- Go to the developer tab (`https://requester.mturk.com/developer <https://requester.mturk.com/developer>`__) and link your AWS account to your MTurk account (Step 2 on that screen)
+- On the first run, the page will ask you for a "Page Access Token," which is also referred to on the messenger setup page. Paste this in to finish the setup. You should now be able to communicate with your ParlAI world by messaging your page.
 
-- MTurk also has a “Sandbox” which is a test version of the MTurk marketplace. You can use it to test publishing and completing tasks without paying any money. ParlAI supports the Sandbox. To use the Sandbox, you need to sign up for a `Sandbox account <http://requestersandbox.mturk.com/>`__. You will then also need to `link your AWS account <http://requestersandbox.mturk.com/developer>`__ to your Sandbox account. In order to test faster, you will also want to create a `Sandbox Worker account <http://workersandbox.mturk.com/>`__. You can then view tasks your publish from ParlAI and complete them yourself.
+- To open up your bot for the world to use, you'll need to submit your bot for approval from the developer dashboard.
 
-- ParlAI's MTurk functionality requires a free heroku account which can be obtained `here <https://signup.heroku.com/>`__. Running any ParlAI MTurk operation will walk you through linking the two.
+**Note:** When running a new task from a different directory, the webhook url will change. You will need to update this in the developer console from the webhook settings using "edit subscription." Your Page Access token should not need to be changed unless you want to use a different page.
 
-Then, to run an MTurk task, first ensure that the task directory is in `parlai/mturk/tasks/ <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/>`__. Then, run its ``run.py`` file with proper flags:
+Additional flags can be used:
 
-.. code-block:: console
+- ``--password <value>`` requires that a user sends the message contained in `value` to the bot in order to access the rest of the communications.
 
-    python run.py -nc <num_conversations> -r <reward> [--sandbox]/[--live]
+- ``--force-page-token `` forces the script to request a new page token from you, allowing you to switch what page you're running your bot on.
 
-E.g. to create 2 conversations for the `QA Data Collection <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/qa_data_collection/>`__ example with a reward of $0.05 per assignment in sandbox mode, first go into the task directory and then run:
-
-.. code-block:: console
-
-    python run.py -nc 2 -r 0.05 --sandbox
-
-Please make sure to test your task in MTurk sandbox mode first (``--sandbox``) before pushing it live (``--live``).
-
-Additional flags can be used for more specific purposes.
-
-- ``--unique`` ensures that an Turker is only able to complete one assignment, thus ensuring each assignment is completed by a unique person.
-
-- ``--allowed-conversations <num>`` prevents a Turker from entering more than <num> conversations at once (by using multiple windows/tabs). This defaults to 0, which is unlimited.
-
-- ``--count-complete`` only counts completed assignments towards the num_conversations requested. This may lead to more conversations being had than requested (and thus higher costs for instances where one Turker disconnects and we pay the other) but it ensures that if you request 1,000 conversations you end up with at least 1,000 completed data points.
+- ``--verbose`` and ``--debug`` should be used before reporting problems that arise that appear unrelated to your world, as they expose more of the internal state of the messenger manager.
