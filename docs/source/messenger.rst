@@ -30,7 +30,7 @@ Example Tasks
 We provide two examples of using Facebook Messenger with ParlAI:
 
 - `QA Data Collection <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/qa_data_collection/>`__: collect questions and answers from people, given a random Wikipedia paragraph from SQuAD.
-- `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/overworld_demo/>`__: let people select between three different subtasks, namely an echo bot, a demo of onboarding data collection, and a random chat.
+- `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/overworld_demo/>`__: let people select between three different subtasks, namely an echo bot, a demo of onboarding data collection, and a random chat.
 
 Task 1: Collecting Data
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -55,7 +55,7 @@ Task 2: Exposing People to Multiple Tasks
 
 ParlAI messenger can also be used to create a multi-function world that users can choose multiple tasks or variations for. This can be used to expose multiple versions of a chatbot you want to test, to allow users to choose what kinds of tasks they do, amongst other things.
 
-As an example, the `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/overworld_demo/>`__ displays three separate tasks connected together by an overworld.
+As an example, the `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/overworld_demo/>`__ displays three separate tasks connected together by an overworld.
 
 - The ``echo`` task is a simple example of an echo bot, and shows the functionality and flow of a simple single-person world.
 - The ``onboard data`` task is an example that shows how an onboarding world can collect information that is later exposed in the active task world.
@@ -70,8 +70,8 @@ To create your own task, start with reading the tutorials on the provided exampl
 A few things to keep in mind:
 
 1. A conversation ends when a call between ``parley`` calls to ``episode_done`` returns True.
-2. Your world can utilize the complete set of ``Facebook Messenger Templates <https://developers.facebook.com/docs/messenger-platform/send-messages/templates>``__ by putting the formatted data in the 'payload' field of the observed action.
-3. Quick replies can be attached to any action, the ``MessengerOverworld`` of the `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/overworld_demo/>`__ displays this functionality.
+2. Your world can utilize the complete set of `Facebook Messenger Templates <https://developers.facebook.com/docs/messenger-platform/send-messages/templates>`__ by putting the formatted data in the 'payload' field of the observed action.
+3. Quick replies can be attached to any action, the ``MessengerOverworld`` of the `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/overworld_demo/>`__ displays this functionality.
 4. Tasks with an overworld should return the name of the world that they want to queue a user into from the ``parley`` call in which the user makes that selection to enter a world.
 5. Tasks with no overworld will immediately attempt to put a user into the queue for the default task onboarding world or actual task world (if no onboarding world exists), and will do so again following the completion of a world (via ``episode_done``).
 6. To collect the conversation, data should be collected during every ``parley`` and saved during the ``world.shutdown`` call. You must inform the user of the fact that the data is being collected as well as your intended use.
@@ -98,6 +98,6 @@ Additional flags can be used:
 
 - ``--password <value>`` requires that a user sends the message contained in `value` to the bot in order to access the rest of the communications.
 
-- ``--force-page-token `` forces the script to request a new page token from you, allowing you to switch what page you're running your bot on.
+- ``--force-page-token`` forces the script to request a new page token from you, allowing you to switch what page you're running your bot on.
 
 - ``--verbose`` and ``--debug`` should be used before reporting problems that arise that appear unrelated to your world, as they expose more of the internal state of the messenger manager.
