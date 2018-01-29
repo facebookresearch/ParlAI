@@ -76,6 +76,7 @@
 """
 from .teachers import FixedDialogTeacher
 from examples.build_pytorch_data import build_data
+from .agents import get_agent_module
 import ujson as json
 import math
 import random
@@ -313,6 +314,7 @@ class StreamDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
     def __init__(self, opt):
         self.opt = opt
+        self.datatype = opt.get('datatype')
         self.datafile = build_data(self.opt)
         self.data_gen = self._data_generator(self.datafile)
         self.length_datafile = self.datafile + ".length"
@@ -325,7 +327,11 @@ class StreamDataset(Dataset):
                 return (index, ep)
 
     def __len__(self):
-        return int(self.num_episodes() * max(self.opt.get('num_epochs', 1), 1))
+        if self.datatype.startswith('train'):
+            num_iters = max(self.opt.get('num_epochs', 1), 1)
+        else:
+            num_iters = 1
+        return int(self.num_episodes() * num_iters)
 
     def _load_lens(self):
         with open(self.length_datafile) as length:
@@ -418,11 +424,25 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.reset()
 
     def get_dataset_class(self, opt):
+        """ To use a custom dataset (as opposed to the StreamDataset above),
+            you can subclass the pytorch Dataset class in a task's ``agents.py``
+            file, and then specify it in the command line.
+
+            For example, the VQA v1 task provides a custom dataset, which can
+            be specified on the command line as follows:
+            ``--dataset parlai.tasks.vqa_v1.agents:VQADataset``
+
+            Where VQADataset is the dataset defined in the vqa_v1 teacher
+            file.
+
+            Note that if the dataset is named ``DefaultDataset``, then you do
+            not need to specify it it's name following the colon; e.g., it
+            would just be:
+            ``--dataset parlai.tasks.vqa_v1.agents``
+        """
         dataset_name = opt.get('dataset')
         sp = dataset_name.strip().split(':')
-        agent = opt.get('model').split(':')
-        agent_module_name = importlib.import_module(agent[0])
-        agent_class = getattr(agent_module_name, agent[1])
+        agent_class = get_agent_module(opt.get('model'))
         if hasattr(agent_class, 'collate'):
             collate = agent_class.collate
         else:
