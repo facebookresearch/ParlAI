@@ -22,6 +22,14 @@ def display_data(opt):
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
 
+    try:
+        # print dataset size if available
+        print('[loaded {} episodes with a total of {} examples]'.format(
+            world.num_episodes(), world.num_examples()
+        ))
+    except:
+        pass
+
     # Show some example dialogs.
     with world:
         for _ in range(opt['num_examples']):

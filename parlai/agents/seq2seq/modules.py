@@ -200,9 +200,11 @@ class Decoder(nn.Module):
 
         # rnn output to embedding
         if hidden_size != emb_size:
-            self.o2e = nn.Linear(hidden_size, emb_size)
+            self.o2e = RandomProjection(hidden_size, emb_size)
+            # other option here is to learn these weights
+            # self.o2e = nn.Linear(hidden_size, emb_size, bias=False)
         else:
-            # no need to learn the extra weights
+            # no need for any transformation here
             self.o2e = lambda x: x
         # embedding to scores, use custom linear to possibly share weights
         shared_weight = self.lt.weight if share_output else None
@@ -404,6 +406,25 @@ class Linear(nn.Module):
         return self.__class__.__name__ + ' (' \
             + str(self.in_features) + ' -> ' \
             + str(self.out_features) + ')'
+
+
+class RandomProjection(nn.Module):
+    def __init__(self, in_features, out_features):
+        super().__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+        self.weight = Parameter(torch.Tensor(out_features, in_features),
+                                requires_grad=False)  # fix weights
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        # experimentally: std=1 appears to affect scale too much
+        self.weight.normal_(std=0.1)
+        # other init option: set randomly to 1 or -1
+        # self.weight.bernoulli_(self.weight.fill_(0.5)).mul_(2).sub_(1)
+
+    def forward(self, input):
+        return F.linear(input, self.weight)
 
 
 class AttentionLayer(nn.Module):

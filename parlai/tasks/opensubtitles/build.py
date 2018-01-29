@@ -16,7 +16,8 @@ def _regularize(sent):
     sent = re.sub(r'x[0-9|a-f][0-9|a-f]', ' ', sent)
     sent = sent.replace('\\', '').replace('-', '')
     sent = ' '.join(re.findall(r"[\w']+|[.,!?:;]", sent))
-    sent = sent.replace('. . .', '...')
+    sent = sent.replace('. .', '...')
+    sent = ' '.join(sent.split())
     return sent
 
 def create_fb_format(inpath, outpath):
@@ -30,10 +31,10 @@ def create_fb_format(inpath, outpath):
     for root, _subfolder, files in os.walk(inpath):
         for f in files:
             if f.endswith('.gz'):
-                dialog = ''
+                dialog = []
                 conv_id = conv_id + 1
                 with gzip.open(os.path.join(root, f), 'r') as f1:
-                    words = ''
+                    words = []
                     line_id = 1
                     turn_id = 1
                     for line in f1:
@@ -41,26 +42,32 @@ def create_fb_format(inpath, outpath):
                         if line.find('<s id="') != -1:
                             # new sentence
                             if len(words) > 0:
-                                words = _regularize(words)
+                                curr_words = _regularize(''.join(words))
                                 if (turn_id % 2) == 0:
-                                    dialog += str(line_id) + ' ' + words
+                                    dialog.append(str(line_id))
+                                    dialog.append(' ')
+                                    dialog.append(curr_words)
                                 else:
-                                    dialog += '\t' + words + '\n'
+                                    dialog.append('\t')
+                                    dialog.append(curr_words)
+                                    dialog.append('\n')
                                     line_id += 1
                             turn_id = turn_id + 1
-                            words = ''
+                            words.clear()
                         else:
                             i1 = line.find('<w id="')
                             if i1 >= 0:
                                 line = line[i1:]
                                 word = line[line.find('>')+1:line.find('</w')]
-                                words = words + ' ' + word.replace('\t', ' ')
+                                words.append(' ')
+                                words.append(word.replace('\t', ' '))
                 handle = ftrain
                 if (conv_id % 10) == 0:
                     handle = ftest
                 if (conv_id % 10) == 1:
                     handle = fvalid
-                handle.write(dialog + '\n')
+                dialog.append('\n')
+                handle.write(''.join(dialog))
 
     ftrain.close()
     fvalid.close()
