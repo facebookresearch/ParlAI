@@ -177,7 +177,7 @@ class ImageLoader():
             asc.append('\n')
         return ''.join(asc)
 
-    @first_n_cache
+    # @first_n_cache
     def load(self, path):
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
@@ -209,4 +209,5 @@ class ImageLoader():
                 with open(new_path):
                     hdf5_file = self.h5py.File(new_path, 'r')
                     feature = hdf5_file['feature'].value
+                feature = self.torch.from_numpy(feature)
                 return feature

@@ -76,11 +76,12 @@
 """
 from .teachers import FixedDialogTeacher
 from examples.build_pytorch_data import build_data
-
-import json
+import ujson as json
 import math
 import random
 from functools import wraps
+import importlib
+import copy
 try:
     import torch
 except Exception as e:
@@ -225,7 +226,6 @@ def batch_cache(function):
                 with cache_filled_cv:
                     while (not load_complete.value and
                         (get_cache_size() <= min_cache_size or len(get_available_buckets(bsz)) == 0)):
-
                         add_to_cache_cv.notify()
                         cache_filled_cv.wait()
                         available_buckets = get_available_buckets(bsz)
@@ -272,7 +272,7 @@ class LoaderProcess(Thread):
     """
     def __init__(self, opt):
         super().__init__(daemon=True)
-        self.dataset = StreamDataset(opt)
+        self.dataset = opt['dataset'](opt)
         self.bsz = opt.get('batchsize', 1)
         self.num_workers = opt.get('num_workers', 4)
         collate_fn = opt.get('collate_fn', default_collate)
@@ -304,7 +304,6 @@ class LoaderProcess(Thread):
         except StopIteration:
             return None
 
-
 # Default collate function (for how to prepare a batch)
 def default_collate(batch):
     return [(b[0], b[1][0]) for b in batch]
@@ -326,7 +325,7 @@ class StreamDataset(Dataset):
                 return (index, ep)
 
     def __len__(self):
-        return self.num_eps
+        return int(self.num_episodes() * max(self.opt.get('num_epochs', 1), 1))
 
     def _load_lens(self):
         with open(self.length_datafile) as length:
@@ -377,6 +376,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
             'to build up the cache')
         arg_group.add_argument('--batch-length-range', type=int, default=5,
             help='degree of variation of size allowed in batch')
+        arg_group.add_argument('--dataset', type=str, default='StreamDataset',
+            help='which dataset to use in dataloader')
 
     def __init__(self, opt, shared=None):
         opt['batch_sort'] = False
@@ -385,16 +386,20 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.num_workers = opt['numworkers']
         self.batch_cache_type = opt.get('batch_sort_cache')
         # One can specify a collate function to use for preparing a batch
-        collate_fn = opt.get('collate_fn', default_collate)
+        self.opt = copy.deepcopy(opt)
+        dataset_class, self.collate_fn = self.get_dataset_class(opt)
+        opt['dataset'] = dataset_class
+        opt['collate_fn'] = self.collate_fn
+
         if not shared:
-            self.dataset = StreamDataset(opt)
+            self.dataset = dataset_class(opt)
             self.pytorch_dataloader = DataLoader(
                 self.dataset,
                 batch_size=self.bsz,
                 shuffle=False,
                 sampler=sampler.SequentialSampler(self.dataset),
                 num_workers=self.num_workers,
-                collate_fn=collate_fn,
+                collate_fn=self.collate_fn,
                 pin_memory=False,
                 drop_last=False,
                 )
@@ -402,13 +407,35 @@ class PytorchDataTeacher(FixedDialogTeacher):
             if self.batch_cache_type != 'none':
                 self.loader_process = LoaderProcess(opt)
                 self.loader_process.start()
+            self.data = enumerate(self.pytorch_dataloader)
         else:
             self.dataset = shared['dataset']
             self.pytorch_dataloader = shared['pytorch_dataloader']
             self.lastYs = shared['lastYs']
+            self.data = shared['data']
 
         self.num_batches = math.ceil(self.dataset.num_episodes()/self.bsz)
         self.reset()
+
+    def get_dataset_class(self, opt):
+        dataset_name = opt.get('dataset')
+        sp = dataset_name.strip().split(':')
+        agent = opt.get('model').split(':')
+        agent_module_name = importlib.import_module(agent[0])
+        agent_class = getattr(agent_module_name, agent[1])
+        if hasattr(agent_class, 'collate'):
+            collate = agent_class.collate
+        else:
+            collate = default_collate
+        if sp[0] == 'StreamDataset':
+            return StreamDataset, collate
+        module_name = sp[0]
+        if len(sp) > 1:
+            dataset = sp[1]
+        else:
+            dataset = 'DefaultDataset'
+        my_module = importlib.import_module(module_name)
+        return getattr(my_module, dataset), collate
 
     def reset(self):
         """Reset the dialog so that it is at the start of the epoch,
@@ -418,7 +445,6 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.reset_data()
 
     def reset_data(self):
-        self.data = enumerate(self.pytorch_dataloader)
         self.lastY = None
         self.epochDone = False
         self.episode = None
@@ -430,6 +456,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
         shared = super().share()
         shared['pytorch_dataloader'] = self.pytorch_dataloader
         shared['dataset'] = self.dataset
+        shared['data'] = self.data
         return shared
 
     def next_example(self):
@@ -473,7 +500,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 self.reset_data()
         try:
             self.batch_idx, batch = self.get_next_batch()
-            batch = [b[1] for b in batch]
+            if self.collate_fn == default_collate:
+                batch = [b[1] for b in batch]
             epoch_done = False
         except StopIteration:
             batch = [{'episode_done': True, 'id': self.getID()}] * self.bsz

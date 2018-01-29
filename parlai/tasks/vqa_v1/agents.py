@@ -7,6 +7,12 @@
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from .build import build, buildImage
+try:
+    import torch
+except Exception as e:
+    raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
+from torch.utils.data import Dataset
+from parlai_external.agents.mlb.mlb import VqaDictionaryAgent
 
 import json
 import os
@@ -43,6 +49,72 @@ def _path(opt):
     return data_path, annotation_path, image_path
 
 
+class VQADataset(Dataset):
+    """A Pytorch Dataset utilizing streaming"""
+    def __init__(self, opt):
+        self.opt = opt
+        self.datatype = self.opt.get('datatype')
+        _, _, self.image_path = _path(opt)
+        self.image_loader = ImageLoader(opt)
+        data_path, annotation_path, self.image_path = _path(opt)
+        self._setup_data(data_path, annotation_path)
+        self.dict_agent = VqaDictionaryAgent(opt)
+
+    def __getitem__(self, index):
+        index %= self.num_episodes()
+        qa = self.ques['questions'][index]
+        im_path = self.image_path + '%012d.jpg' % (qa['image_id'])
+        ep = {
+            'text': qa['question'],
+            'image': self.image_loader.load(im_path),
+            'episode_done': True
+        }
+        if not self.datatype.startswith('test'):
+            anno = self.annotation['annotations'][index]
+            labels = [ans['answer'] for ans in anno['answers']]
+            ep['labels'] = [ans['answer'] for ans in anno['answers']]
+            ep['valid'] = True
+            if 'mc_label' in ep:
+                if not ep['mc_label'][0] in self.dict_agent.ans2ind:
+                    ep['valid'] = False
+            ep = self.dict_agent.encode_question([ep], True)
+            ep = self.dict_agent.encode_answer(ep)
+            ep[0]['labels'] = labels
+        else:
+            ep = self.dict_agent.encode_question([ep], False)
+        return (index, ep)
+
+    def __len__(self):
+        return int(self.num_episodes() * max(self.opt.get('num_epochs'), 1))
+
+    def _load_lens(self):
+        with open(self.length_datafile) as length:
+            lengths = json.load(length)
+            self.num_eps = lengths['num_eps']
+            self.num_exs = lengths['num_exs']
+
+    def _setup_data(self, data_path, annotation_path):
+        with open(data_path) as data_file:
+            self.ques = json.load(data_file)
+        if not self.datatype.startswith('test'):
+            with open(annotation_path) as data_file:
+                self.annotation = json.load(data_file)
+        self.image_paths = set()
+        for qa in self.ques['questions']:
+            self.image_paths.add(self.image_path + '%012d.jpg' % (qa['image_id']))
+
+
+    def num_episodes(self):
+        return len(self.ques['questions'])
+
+    def num_examples(self):
+        return self.num_episodes()
+
+
+class DefaultDataset(VQADataset):
+    pass
+
+
 class OeTeacher(FixedDialogTeacher):
     """
     VQA Open-Ended teacher, which loads the json vqa data and implements its
@@ -51,6 +123,7 @@ class OeTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         data_path, annotation_path, self.image_path = _path(opt)
+        self.datafile = data_path
         self.image_mode = opt.get('image_mode', 'none')
 
         if shared and 'ques' in shared:
@@ -61,7 +134,6 @@ class OeTeacher(FixedDialogTeacher):
         else:
             self._setup_data(data_path, annotation_path)
             self.image_loader = ImageLoader(opt)
-
         self.reset()
 
     def reset(self):
@@ -109,7 +181,7 @@ class OeTeacher(FixedDialogTeacher):
             ready = (self.example, self.epochDone)
         # queue up the next example
         self.example, self.epochDone = super().next_example()
-        image_id = self.example.pop('image_id')
+        image_id = self.example['image_id']
         if self.image_mode != 'none':
             self.submit_load_request(image_id)
         return ready

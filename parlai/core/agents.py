@@ -284,7 +284,10 @@ def load_agent_module(opt):
         return None
 
 def get_agent_module(dir_name):
-    if ':' in dir_name:
+    if '.' in dir_name:
+        module_name = dir_name.split(':')[0]
+        class_name = dir_name.split(':')[-1]
+    elif ':' in dir_name:
         s = dir_name.split(':')
         module_name = s[0]
         class_name = s[1]

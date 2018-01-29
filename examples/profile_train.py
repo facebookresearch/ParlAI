@@ -25,6 +25,9 @@ def setup_args():
     profile.add_argument('--torch', type='bool', default=False,
                          help='If true, use the torch profiler. Otherwise use '
                               'use cProfile.')
+    profile.add_argument('--torch-cuda', type='bool', default=False,
+                         help='If true, use the torch cuda profiler. Otherwise use '
+                              'use cProfile.')
     profile.add_argument('--debug', type='bool', default=False,
                          help='If true, enter debugger at end of run.')
     return parser
@@ -56,6 +59,10 @@ def main(parser):
                   '`cuda()` prints cuda-sorted list')
 
             pdb.set_trace()
+    elif opt['torch_cuda']:
+        with torch.cuda.profiler.profile() as prof:
+            TrainLoop(parser).train()
+        print(prof)
     else:
         pr = cProfile.Profile()
         pr.enable()
