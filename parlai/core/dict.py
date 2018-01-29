@@ -72,6 +72,8 @@ class DictionaryAgent(Agent):
     default_start = '__START__'
     default_end = '__END__'
     default_unk = '__UNK__'
+    default_tok = 'split'
+    default_lower = False
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -113,10 +115,13 @@ class DictionaryAgent(Agent):
             '--dict-maxexs', default=100000, type=int,
             help='max number of examples to build dict on')
         dictionary.add_argument(
-            '-tok', '--dict-tokenizer', default='split',
+            '-tok', '--dict-tokenizer', default=DictionaryAgent.default_tok,
             help='Which tokenizer to use. Defaults to "split", which splits '
                  'on whitespace as well as recognizing basic punctuation. '
-                 'Other options include ')
+                 'Other options include nltk and spacy.')
+        dictionary.add_argument(
+            '--dict-lower', default=DictionaryAgent.default_lower, type='bool',
+            help='Whether or not to lowercase all text seen.')
         return dictionary
 
     def __init__(self, opt, shared=None):
@@ -128,7 +133,8 @@ class DictionaryAgent(Agent):
         self.unk_token = opt['dict_unktoken']
         self.start_token = opt['dict_starttoken']
         self.max_ngram_size = opt['dict_max_ngram_size']
-        self.tokenizer = opt['dict_tokenizer']
+        self.tokenizer = opt.get('dict_tokenizer', DictionaryAgent.default_tok)
+        self.lower = opt.get('dict_lower', DictionaryAgent.default_lower)
 
         if shared:
             self.freq = shared.get('freq', {})
@@ -245,6 +251,8 @@ class DictionaryAgent(Agent):
         its frequency to value.
         """
         key = str(key)
+        if self.lower:
+            key = key.lower()
         self.freq[key] = int(value)
         if key not in self.tok2ind:
             index = len(self.tok2ind)
@@ -308,6 +316,8 @@ class DictionaryAgent(Agent):
 
     def tokenize(self, text, building=False):
         """Returns a sequence of tokens from the iterable."""
+        if self.lower:
+            text = text.lower()
         tokenizer = self.tokenizer
         if tokenizer == 'split':
             word_tokens = self.split_tokenize(text)
