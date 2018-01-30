@@ -64,10 +64,10 @@ class RNNModel(nn.Module):
         emb = self.drop(self.encoder(input))
         # if eval, pack padded sequence
         if not self.training and not no_pack:
-            emb_lens = [x for x in torch.sum((input > 0).int(), dim=1).data]
-            emb_packed = pack_padded_sequence(emb, emb_lens, batch_first=True)
+            emb_lens = [x for x in torch.sum((input > 0).int(), dim=0).data]
+            emb_packed = pack_padded_sequence(emb, emb_lens, batch_first=False)
             packed_output, hidden = self.rnn(emb_packed, hidden)
-            output, _ = pad_packed_sequence(packed_output, batch_first=True)
+            output, _ = pad_packed_sequence(packed_output, batch_first=False)
         else:
             output, hidden = self.rnn(emb, hidden)
         output = self.drop(output)

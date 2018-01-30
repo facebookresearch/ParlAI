@@ -439,6 +439,6 @@ class PaddingUtils(object):
 
 
             if random.random() > (1 - report_freq):
-                print('TEXT: ', observations[valid_inds[i]]['text'].replace('__END__',''), '\n~')
+                print('TEXT: ', observations[valid_inds[i]]['text'].replace('__END__', ''), '\n~')
                 print('PREDICTION: ', curr_pred, '\n~')
         return

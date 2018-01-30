@@ -235,8 +235,6 @@ class LanguageModelAgent(Agent):
         else:
             if 'text' in obs:
                 obs['text'] += ' __END__'
-            # if 'eval_labels' in obs:
-            #     obs['eval_labels'] = (obs['eval_labels'][0] + ' __END__',)
             self.observation = obs
             return obs
 
@@ -254,10 +252,10 @@ class LanguageModelAgent(Agent):
         """
         loss = 0.0
         bsz = data.size(0)
-        output, hidden = self.model(data, hidden)
+        output, hidden = self.model(data.transpose(0,1), hidden)
         self.hidden = self.repackage_hidden(hidden)
         # get only last predicted word
-        output = output.select(1,-1)
+        output = output.select(0,-1)
         output_flat = output.view(-1, len(self.dict))
         loss += self.criterion(output_flat, targets.select(1,0).view(-1)).data
 
@@ -281,11 +279,12 @@ class LanguageModelAgent(Agent):
             hidden = self.hidden
         else:
             hidden = self.model.init_hidden(bsz)
-        output, hidden = self.model(data, hidden)
+        output, hidden = self.model(data.transpose(0,1), hidden)
+        hidden = self.repackage_hidden(hidden)
         word_weights = output.squeeze().data.exp()
         # get last word of output
         if bsz > 1:
-            word_weights = word_weights.select(1, word_weights.size(1)-1)
+            word_weights = word_weights.select(0, word_weights.size(0)-1)
             value, word_idx = torch.max(word_weights, 1)
         else:
             word_weights = word_weights[-1]
@@ -299,6 +298,7 @@ class LanguageModelAgent(Agent):
         token_list.append(word_idx.view(bsz, 1))
 
         i = 1
+
         while total_done < bsz and i <= self.opt['truncate_pred']:
             new_col = word_idx.clone()
             new_col = Variable(new_col)
@@ -369,7 +369,8 @@ class LanguageModelAgent(Agent):
                     batch = self.next_batch[:((seq_len + 1) * self.batchsize)]
                     self.next_batch = self.next_batch[((seq_len + 1) * self.batchsize):]
 
-                    data = Variable(torch.LongTensor(batch[:(seq_len*self.batchsize)]).view(seq_len, self.batchsize))
+                    data = Variable(torch.LongTensor(batch[:(seq_len*self.batchsize)]).view(self.batchsize, seq_len))
+                    data = data.transpose(0,1)
                     targets = Variable(torch.LongTensor(batch[self.batchsize:]).view(-1))
 
                     if self.use_cuda:
@@ -380,7 +381,6 @@ class LanguageModelAgent(Agent):
                     targets_list.append(targets)
         else:
             # here we get valid examples and pad them with zeros
-            #import pdb; pdb.set_trace()
             xs, ys, labels, valid_inds = PaddingUtils.pad_text(
                 observations, self.dict, self.END_IDX, self.NULL_IDX)
             if self.use_cuda:
