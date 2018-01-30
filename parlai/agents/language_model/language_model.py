@@ -23,8 +23,7 @@ import random
 import re
 
 class LanguageModelAgent(Agent):
-    """ Agent which takes an input sequence and produces output one word at a
-    time.
+    """ Agent which trains an RNN on a language modeling task.
 
     It is adapted from the language model featured in Pytorch's examples repo
     here: <https://github.com/pytorch/examples/tree/master/word_language_model>.
@@ -37,6 +36,7 @@ class LanguageModelAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
+        argparser.set_defaults(batch_sort=False)
         LanguageModelAgent.dictionary_class().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Language Model Arguments')
         agent.add_argument('-hs', '--hiddensize', type=int, default=200,
@@ -92,7 +92,6 @@ class LanguageModelAgent(Agent):
 
         else:
             # this is not a shared instance of this class, so do full init
-            # answers contains a batch_size list of the last answer produced
             if self.use_cuda:
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
@@ -211,6 +210,7 @@ class LanguageModelAgent(Agent):
         if is_training:
             if 'text' in obs:
                 vec = self.parse(obs['text'])
+                vec.append(self.END_IDX)
                 self.next_observe += vec
             if 'labels' in obs:
                 vec = self.parse(obs['labels'][0])
@@ -233,8 +233,10 @@ class LanguageModelAgent(Agent):
                 self.observation = dict_to_return
                 return dict_to_return
         else:
-            if 'eval_labels' in obs:
-                obs['eval_labels'] = (obs['eval_labels'][0] + ' __END__',)
+            if 'text' in obs:
+                obs['text'] += ' __END__'
+            # if 'eval_labels' in obs:
+            #     obs['eval_labels'] = (obs['eval_labels'][0] + ' __END__',)
             self.observation = obs
             return obs
 
