@@ -167,6 +167,22 @@ class StarspaceAgent(Agent):
         if self.opt.get('fixed-candidates-file'):
             self.fixedCands = load_cands(self.opt.get('fixed-candidates-file'))
 
+    def reset(self):
+        """Reset observation and episode_done."""
+        self.observation = None
+        self.episode_done = True
+        # set up optimizer
+        lr = self.opt['learningrate']
+        optim_class = StarspaceAgent.OPTIM_OPTS[self.opt['optimizer']]
+        kwargs = {'lr': lr}
+        self.optimizer = optim_class(self.model.parameters(), **kwargs)
+
+    def share(self):
+        """Share internal states between parent and child instances."""
+        shared = super().share()
+        shared['dict'] = self.dict
+        shared['model'] = self.model
+        return shared
 
     def override_opt(self, new_opt):
         """Set overridable opts from loaded opt file.
@@ -197,7 +213,6 @@ class StarspaceAgent(Agent):
         p = self.dict.txt2vec(text)
         return Variable(torch.LongTensor(p).unsqueeze(1))
 
-
     def v2t(self, vec):
         """Convert token indices to string of tokens."""
         if type(vec) == Variable:
@@ -206,32 +221,6 @@ class StarspaceAgent(Agent):
         for i in vec:
             new_vec.append(i)
         return self.dict.vec2txt(new_vec)
-
-    def zero_grad(self):
-        """Zero out optimizer."""
-        self.optimizer.zero_grad()
-
-    def update_params(self):
-        """Do one optimization step."""
-        self.optimizer.step()
-
-    def reset(self):
-        """Reset observation and episode_done."""
-        self.observation = None
-        self.episode_done = True
-        # set up optimizer
-        lr = self.opt['learningrate']
-        optim_class = StarspaceAgent.OPTIM_OPTS[self.opt['optimizer']]
-        kwargs = {'lr': lr}
-        self.optimizer = optim_class(self.model.parameters(), **kwargs)
-
-
-    def share(self):
-        """Share internal states between parent and child instances."""
-        shared = super().share()
-        shared['dict'] = self.dict
-        shared['model'] = self.model
-        return shared
 
     def observe(self, observation):
         self.episode_done = observation['episode_done']
@@ -302,29 +291,26 @@ class StarspaceAgent(Agent):
         Update the model using the targets if available, otherwise rank
         candidates as well if they are available and param is set.
         """
-        self.start = time.time()
         is_training = ys is not None
         if is_training: #
             text_cand_inds, loss_dict = None, None
             negs = self.get_negs(xs, ys)
-            if is_training and len(negs) > 0: # and self.opt['learningrate'] > 0:
+            if is_training and len(negs) > 0:
                 self.model.train()
-                self.zero_grad()
+                self.optimizer.zero_grad()
                 xe, ye = self.model(xs, ys, negs)
-                if False:
+                if self.debugMode:
                     # print example
                     print("inp: " + self.v2t(xs.squeeze()))
                     print("pos: " + self.v2t(ys.squeeze()))
                     for c in negs:
                         print("neg: " + self.v2t(c.squeeze()))
                     print("---")
-                    #import pdb; pdb.set_trace()
                 y = Variable(-torch.ones(xe.size(0)))
                 y[0]= 1
                 loss = self.criterion(xe, ye, y)
                 loss.backward()
-                self.update_params()
-                rest = 0
+                self.optimizer.step()
                 pred = nn.CosineSimilarity().forward(xe,ye)
                 metrics = self.compute_metrics(loss.data[0], pred.data.squeeze())
                 return [{'metrics':metrics}]
