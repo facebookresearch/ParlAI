@@ -425,18 +425,15 @@ class PytorchDataTeacher(FixedDialogTeacher):
 
     def get_dataset_class(self, opt):
         """ To use a custom dataset (as opposed to the StreamDataset above),
-            you can subclass the pytorch Dataset class in a task's ``agents.py``
-            file, and then specify it in the command line.
+            you can subclass the pytorch Dataset class and specify its
+            location on the command line.
 
             For example, the VQA v1 task provides a custom dataset, which can
             be specified on the command line as follows:
             ``--dataset parlai.tasks.vqa_v1.agents:VQADataset``
 
-            Where VQADataset is the dataset defined in the vqa_v1 teacher
-            file.
-
             Note that if the dataset is named ``DefaultDataset``, then you do
-            not need to specify it it's name following the colon; e.g., it
+            not need to specify its name following the colon; e.g., it
             would just be:
             ``--dataset parlai.tasks.vqa_v1.agents``
         """
