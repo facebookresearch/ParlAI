@@ -136,7 +136,7 @@ class Metrics(object):
         self.metrics['cnt'] = 0
         self.metrics['correct'] = 0
         self.metrics['f1'] = 0.0
-        self.custom_metrics = ['mean_rank', 'loss']
+        self.custom_metrics = []
         for k in self.custom_metrics:
             self.metrics[k] = 0.0
             self.metrics[k + '_cnt'] = 0
@@ -146,8 +146,8 @@ class Metrics(object):
         if opt.get('numthreads', 1) > 1:
             self.metrics = SharedTable(self.metrics)
 
-        self.custom_keys = []
         self.datatype = opt.get('datatype', 'train')
+        self.print_prediction_metrics = False
 
     def __str__(self):
         return str(self.metrics)
@@ -198,15 +198,17 @@ class Metrics(object):
         # Exact match metric.
         correct = 0
         prediction = observation.get('text', None)
-        if _exact_match(prediction, labels):
-            correct = 1
-        with self._lock():
-            self.metrics['correct'] += correct
+        if prediction is not None:
+            self.print_prediction_metrics = True
+            if _exact_match(prediction, labels):
+                correct = 1
+            with self._lock():
+                self.metrics['correct'] += correct
 
-        # F1 metric.
-        f1 = _f1_score(prediction, labels)
-        with self._lock():
-            self.metrics['f1'] += f1
+            # F1 metric.
+            f1 = _f1_score(prediction, labels)
+            with self._lock():
+                self.metrics['f1'] += f1
 
         # Ranking metrics.
         self.update_ranking_metrics(observation, labels)
@@ -225,8 +227,9 @@ class Metrics(object):
                             pass
                         else:
                             if k not in self.metrics:
-                                self.custom_keys.append(k)
                                 self.metrics[k] = v
+                                self.custom_metrics.append(k)
+                                self.metrics[k + '_cnt'] = 1.0
                             else:
                                 self.metrics[k] += v
 
@@ -243,17 +246,13 @@ class Metrics(object):
         total = self.metrics['cnt']
         m['total'] = total
         if total > 0:
-            m['accuracy'] = round_sigfigs(self.metrics['correct'] / total, 4)
-            m['f1'] = round_sigfigs(self.metrics['f1'] / total, 4)
-            m['hits@k'] = {}
-            for k in self.eval_pr:
-                m['hits@k'][k] = round_sigfigs(
-                    self.metrics['hits@' + str(k)] / total, 3)
-            for k in self.custom_keys:
-                if k in self.metrics:
-                    v = self.metrics[k]
-                    if type(v) not in (int, float) or v != 0:
-                        m[k] = round_sigfigs(v / total, 3)
+            if self.print_prediction_metrics:
+                m['accuracy'] = round_sigfigs(self.metrics['correct'] / total, 4)
+                m['f1'] = round_sigfigs(self.metrics['f1'] / total, 4)
+                m['hits@k'] = {}
+                for k in self.eval_pr:
+                    m['hits@k'][k] = round_sigfigs(
+                        self.metrics['hits@' + str(k)] / total, 3)
             for k in self.custom_metrics:
                 if self.metrics[k + '_cnt'] > 0:
                     m[k] = round_sigfigs(self.metrics[k] / self.metrics[k + '_cnt'], 4)
@@ -265,17 +264,12 @@ class Metrics(object):
             self.metrics['correct'] = 0
             self.metrics['f1'] = 0.0
             for k in self.custom_metrics:
-                self.metrics[k] = 0.0
+                v = self.metrics[k]
+                v_typ = type(v)
+                if 'Tensor' in str(v_typ):
+                    self.metrics[k].zero_()
+                else:
+                    self.metrics[k] = 0.0
                 self.metrics[k + '_cnt'] = 0
             for k in self.eval_pr:
                 self.metrics['hits@' + str(k)] = 0
-            for k in self.custom_keys:
-                if k in self.metrics:
-                    v = self.metrics[k]
-                    v_typ = type(v)
-                    if v_typ == float:
-                        self.metrics[k] = 0.0
-                    elif v_typ == int:
-                        self.metrics[k] = 0
-                    elif 'Tensor' in str(v_typ):
-                        self.metrics[k].zero_()
