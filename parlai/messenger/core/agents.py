@@ -17,6 +17,7 @@ class MessengerAgent(Agent):
         super().__init__(opt)
         self.manager = manager
         self.id = messenger_psid
+        self.disp_id = 'NewUser'
         self.task_id = task_id
         self.active = True
         self.message_request_time = None
