@@ -23,7 +23,7 @@ from collections import Counter
 
 from . import utils
 from .doc_db import DocDB
-from drqa import tokenizers
+from . import tokenizers
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
