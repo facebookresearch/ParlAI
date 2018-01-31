@@ -358,7 +358,7 @@ class Seq2seqAgent(Agent):
     def batchify(self, observations):
         """Convert a list of observations into input & target tensors."""
         ys = None
-        xs, ys, labels, valid_inds = PaddingUtils.pad_text(
+        xs, ys, labels, valid_inds, _, _ = PaddingUtils.pad_text(
             observations, self.dict, self.END_IDX, self.NULL_IDX, dq=True,
             eval_labels=False, truncate=self.truncate)
         if xs is None:

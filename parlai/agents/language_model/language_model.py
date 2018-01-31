@@ -245,29 +245,38 @@ class LanguageModelAgent(Agent):
         else:
             return tuple(self.repackage_hidden(v) for v in h)
 
-    def get_target_loss(self, data, hidden, targets):
+    def get_target_loss(self, data, hidden, targets, y_lens):
         """Calculates the loss with respect to the targets, token by token,
            where each output token is conditioned on either the input or the
            previous target token.
         """
         loss = 0.0
         bsz = data.size(0)
+        # use y_lens to find out number of tokens in each loss calculation
+        y_lens_batch = [len(y_lens)]*targets.size(1)
+        for i in range(len(y_lens_batch)):
+            num_less = 0
+            for y_len in y_lens:
+                if (y_len) - 1 < i:
+                    num_less +=1
+            y_lens_batch[i] -= num_less
+
         output, hidden = self.model(data.transpose(0,1), hidden)
         self.hidden = self.repackage_hidden(hidden)
         # get only last predicted word
         output = output.select(0,-1)
         output_flat = output.view(-1, len(self.dict))
-        loss += self.criterion(output_flat, targets.select(1,0).view(-1)).data
+        loss += y_lens_batch[0]*self.criterion(output_flat, targets.select(1,0).view(-1)).data
 
         for i in range(1, targets.size(1)):
             output, hidden = self.model(targets.select(1,i-1).view(1, bsz), self.hidden, no_pack=True)
             self.hidden = self.repackage_hidden(hidden)
             output_flat = output.view(-1, len(self.dict))
-            loss += self.criterion(output_flat, targets.select(1,i).view(-1)).data
+            loss += y_lens_batch[i]*self.criterion(output_flat, targets.select(1,i).view(-1)).data
 
-        return loss
+        return loss/float(sum(y_lens_batch))
 
-    def get_predictions(self, data, hidden):
+    def get_predictions(self, data, end_idxs):
         """Generates predictions word by word until we either reach the end token
            or some max length (opt['truncate_pred']).
         """
@@ -275,17 +284,19 @@ class LanguageModelAgent(Agent):
         bsz = data.size(0)
         done = [False for _ in range(bsz)]
         total_done = 0
-        if bsz == self.batchsize:
-            hidden = self.hidden
-        else:
-            hidden = self.model.init_hidden(bsz)
+        hidden = self.model.init_hidden(bsz)
         output, hidden = self.model(data.transpose(0,1), hidden)
         hidden = self.repackage_hidden(hidden)
         word_weights = output.squeeze().data.exp()
         # get last word of output
         if bsz > 1:
-            word_weights = word_weights.select(0, word_weights.size(0)-1)
-            value, word_idx = torch.max(word_weights, 1)
+            value, word_idx = torch.max(word_weights, 2)
+            last_words = []
+            for j in range(len(end_idxs)):
+                last_words.append(word_idx[end_idxs[j]-1][j])
+            word_idx = torch.LongTensor(last_words)
+            if self.use_cuda:
+                word_idx = word_idx.cuda()
         else:
             word_weights = word_weights[-1]
             value, word_idx = torch.max(word_weights, 0)
@@ -322,7 +333,7 @@ class LanguageModelAgent(Agent):
 
         return torch.cat(token_list,1)
 
-    def predict(self, data, hidden, targets=None, is_training=True):
+    def predict(self, data, hidden, targets=None, is_training=True, end_idxs=None, y_lens=None):
         """Produce a prediction from our model.
         """
         loss_dict = None
@@ -339,12 +350,12 @@ class LanguageModelAgent(Agent):
             loss_dict['lmppl'] = math.exp(loss.data)
         else:
             self.model.eval()
-            predictions = self.get_predictions(data, self.hidden)
+            predictions = self.get_predictions(data, end_idxs)
             loss_dict = {}
             bsz = data.size(0)
             if bsz != self.batchsize:
                 self.hidden = self.model.init_hidden(bsz)
-            loss = self.get_target_loss(data, self.hidden, targets)
+            loss = self.get_target_loss(data, self.hidden, targets, y_lens)
             loss_dict['loss'] = loss
             loss_dict['ppl'] = math.exp(loss)
 
@@ -354,13 +365,15 @@ class LanguageModelAgent(Agent):
         """Convert a list of observations into input & target tensors."""
         labels = None
         valid_inds = None
+        end_idxs = None
+        y_lens = None
         if is_training:
             for obs in observations:
                 if obs:
                     if 'text2vec' in obs:
                         self.next_batch += obs['text2vec']
             if len(self.next_batch) <= (seq_len + 1) * self.batchsize:
-                return None, None, None, None
+                return None, None, None, None, None, None
             else:
                 data_list = []
                 targets_list = []
@@ -369,9 +382,9 @@ class LanguageModelAgent(Agent):
                     batch = self.next_batch[:((seq_len + 1) * self.batchsize)]
                     self.next_batch = self.next_batch[((seq_len + 1) * self.batchsize):]
 
-                    data = Variable(torch.LongTensor(batch[:(seq_len*self.batchsize)]).view(self.batchsize, seq_len))
-                    data = data.transpose(0,1)
-                    targets = Variable(torch.LongTensor(batch[self.batchsize:]).view(-1))
+                    source = torch.LongTensor(batch).view(self.batchsize, -1).t().contiguous()
+                    data = Variable(source[:seq_len])
+                    targets = Variable(source[1:].view(-1))
 
                     if self.use_cuda:
                         data = data.cuda()
@@ -381,7 +394,7 @@ class LanguageModelAgent(Agent):
                     targets_list.append(targets)
         else:
             # here we get valid examples and pad them with zeros
-            xs, ys, labels, valid_inds = PaddingUtils.pad_text(
+            xs, ys, labels, valid_inds, end_idxs, y_lens = PaddingUtils.pad_text(
                 observations, self.dict, self.END_IDX, self.NULL_IDX)
             if self.use_cuda:
                 xs = Variable(xs).cuda()
@@ -392,23 +405,22 @@ class LanguageModelAgent(Agent):
             data_list = [xs]
             targets_list = [ys]
 
-        return data_list, targets_list, labels, valid_inds
+        return data_list, targets_list, labels, valid_inds, end_idxs, y_lens
 
     def batch_act(self, observations):
+        batch_reply = [{'id': self.getID()} for _ in range(len(observations))]
         if 'labels' in observations[0]:
             # if we are starting a new training epoch, reinitialize hidden
             if self.is_training == False:
                 self.hidden = self.model.init_hidden(self.batchsize)
             self.is_training = True
-            data_list, targets_list, _, _ = self.batchify(observations, self.opt['seq_len'], self.is_training)
-            batch_reply = [{'id': self.getID()} for _ in range(self.batchsize)]
+            data_list, targets_list, _, _, end_idxs, y_lens = self.batchify(observations, self.opt['seq_len'], self.is_training)
         else:
             # if we just finished training, reinitialize hidden
             if self.is_training == True:
                 self.hidden = self.model.init_hidden(self.batchsize)
-            self.is_training = False
-            data_list, targets_list, labels, valid_inds = self.batchify(observations, self.opt['seq_len'], self.is_training)
-            batch_reply = [{'id': self.getID()}]
+                self.is_training = False
+            data_list, targets_list, labels, valid_inds, end_idxs, y_lens = self.batchify(observations, self.opt['seq_len'], self.is_training)
 
         if data_list is None:
             # not enough data to batch act yet, return empty responses
@@ -416,8 +428,8 @@ class LanguageModelAgent(Agent):
 
         batch_reply = []
         for i in range(len(data_list)):
-            temp_dicts = [{'id': self.getID()} for _ in range(self.batchsize)]
-            output, hidden, loss_dict, predictions = self.predict(data_list[i], self.hidden, targets_list[i], self.is_training)
+            temp_dicts = [{'id': self.getID()} for _ in range(len(observations))]
+            output, hidden, loss_dict, predictions = self.predict(data_list[i], self.hidden, targets_list[i], self.is_training, end_idxs, y_lens)
             self.hidden = self.repackage_hidden(hidden)
 
             if predictions is not None:

@@ -352,6 +352,7 @@ class PaddingUtils(object):
         exs = [exs[k] for k in ind_sorted]
         valid_inds = [valid_inds[k] for k in ind_sorted]
         parsed_x = [parsed_x[k] for k in ind_sorted]
+        end_idxs = [x_lens[k] for k in ind_sorted]
 
         eval_labels_avail = any(['eval_labels' in ex for ex in exs])
         labels_avail = any(['labels' in ex for ex in exs])
@@ -393,7 +394,8 @@ class PaddingUtils(object):
             for y in parsed_y:
                 y.append(end_idx)
 
-            max_y_len = max(len(y) for y in parsed_y)
+            y_lens = [len(y) for y in parsed_y]
+            max_y_len = max(y_lens)
             if dq:
                 parsed_y = [y if len(y) == max_y_len else
                             y + deque((null_idx,)) * (max_y_len - len(y))
@@ -404,7 +406,7 @@ class PaddingUtils(object):
                             for y in parsed_y]
             ys = torch.LongTensor(parsed_y)
 
-        return xs, ys, labels, valid_inds
+        return xs, ys, labels, valid_inds, end_idxs, y_lens
 
     @classmethod
     def map_predictions(cls, predictions, valid_inds, batch_reply, observations, dictionary, end_idx, report_freq=0.1, labels=None, answers=None, ys=None):
@@ -418,11 +420,13 @@ class PaddingUtils(object):
             # we join with spaces since we produce tokens one at a timelab
             curr = batch_reply[valid_inds[i]]
             output_tokens = []
+            j = 0
             for c in predictions[i]:
-                if c == end_idx:
+                if c == end_idx and j!=0:
                     break
                 else:
                     output_tokens.append(c)
+                j+=1
             curr_pred = dictionary.vec2txt(output_tokens)
             curr['text'] = curr_pred
 
