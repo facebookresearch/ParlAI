@@ -53,6 +53,7 @@ class VQADataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
     def __init__(self, opt):
         self.opt = opt
+        self.use_att = opt.get('attention', False)
         self.datatype = self.opt.get('datatype')
         _, _, self.image_path = _path(opt)
         self.image_loader = ImageLoader(opt)
@@ -67,7 +68,7 @@ class VQADataset(Dataset):
         ep = {
             'text': qa['question'],
             'image': self.image_loader.load(im_path),
-            'episode_done': True
+            'episode_done': True,
         }
         if not self.datatype.startswith('test'):
             anno = self.annotation['annotations'][index]
@@ -82,6 +83,7 @@ class VQADataset(Dataset):
             ep[0]['labels'] = labels
         else:
             ep = self.dict_agent.encode_question([ep], False)
+        ep[0]['use_att'] = self.use_att
         return (index, ep)
 
     def __len__(self):
