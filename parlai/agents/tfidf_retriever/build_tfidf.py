@@ -23,7 +23,7 @@ from collections import Counter
 
 from . import utils
 from .doc_db import DocDB
-from drqa import tokenizers
+from . import tokenizers
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -59,7 +59,7 @@ def tokenize(text):
     return PROCESS_TOK.tokenize(text)
 
 
-MAX_SZ = math.pow(2, 31)
+MAX_SZ = int(math.pow(2, 30) * 1.8)
 
 # ------------------------------------------------------------------------------
 # Build article --> word count sparse matrix.

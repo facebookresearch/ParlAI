@@ -16,7 +16,7 @@ from multiprocessing.pool import ThreadPool
 from functools import partial
 
 from . import utils
-from drqa import tokenizers
+from . import tokenizers
 
 logger = logging.getLogger(__name__)
 
