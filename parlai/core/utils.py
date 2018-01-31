@@ -335,7 +335,7 @@ class PaddingUtils(object):
                                     enumerate(observations) if valid(ex)])
         except ValueError:
             # zero examples to process in this batch, so zip failed to unpack
-            return None, None, None, None, None
+            return None, None, None, None, None, None
 
         # set up the input tensors
         bsz = len(exs)
@@ -378,6 +378,7 @@ class PaddingUtils(object):
         # set up the target tensors
         ys = None
         labels = None
+        y_lens = None
         if some_labels_avail:
             # randomly select one of the labels to update on (if multiple)
             if labels_avail:
@@ -396,6 +397,7 @@ class PaddingUtils(object):
 
             y_lens = [len(y) for y in parsed_y]
             max_y_len = max(y_lens)
+
             if dq:
                 parsed_y = [y if len(y) == max_y_len else
                             y + deque((null_idx,)) * (max_y_len - len(y))
