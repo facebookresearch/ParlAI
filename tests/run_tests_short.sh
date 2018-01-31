@@ -16,3 +16,4 @@ python3 test_utils.py
 python3 test_display_data.py
 python3 test_eval_model.py
 python3 test_train_model.py
+python3 test_tfidf_retriever.py

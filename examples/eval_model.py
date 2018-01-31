@@ -27,7 +27,9 @@ def eval_model(opt, parser, printargs=True):
     parser.opt = agent.opt
     if (printargs):
         parser.print_args()
-    log_every_n_secs = opt['log_every_n_secs'] if opt['log_every_n_secs'] > 0 else float('inf')
+    log_every_n_secs = opt.get('log_every_n_secs', -1)
+    if log_every_n_secs <= 0:
+        log_every_n_secs = float('inf')
     log_time = Timer()
     tot_time = 0
 

@@ -50,7 +50,7 @@ task_list = [
         "display_name": "Cornell Movie",
         "task": "cornell_movie",
         "tags": [ "All",  "ChitChat" ],
-        "description": "Fictional conversations extracted from raw movie scripts. Link: https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html"
+        "description": "Fictional conversations extracted from raw movie scripts. Danescu-Niculescu-Mizil & Lee, '11. Link: https://arxiv.org/abs/1106.3077"
     },
     {
         "id": "DBLL-bAbI",
@@ -346,5 +346,19 @@ task_list = [
         "task": "scan",
         "tags": [ "Goal", "All" ],
         "description": "SCAN is a set of simple language-driven navigation tasks for studying compositional learning and zero-shot generalization. The SCAN tasks were inspired by the CommAI environment, which is the origin of the acronym (Simplified versions of the CommAI Navigation tasks). See the paper: https://arxiv.org/abs/1711.00350 or data: https://github.com/brendenlake/SCAN"
+    },
+    {
+        "id": "Persona-Chat",
+        "display_name": "Persona-Chat",
+        "task": "personachat",
+        "tags": [ "ChitChat", "All" ],
+        "description": "A chit-chat dataset where paired Turkers are given assigned personas and chat to try to get to know each other. See the paper: https://arxiv.org/abs/1801.07243"
+    },
+    {
+        "id": "Twitter",
+        "display_name": "Twitter",
+        "task": "twitter",
+        "tags": [ "All",  "ChitChat" ],
+        "description": "Twitter data from: https://github.com/Marsan-Ma/chat_corpus/. No train/valid/test split was provided so 10k for valid and 10k for test was chosen at random."
     }
 ]
