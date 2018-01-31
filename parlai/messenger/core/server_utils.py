@@ -121,16 +121,51 @@ def setup_heroku_server(task_name):
     try:
         subprocess.check_output(shlex.split(
             '{} create {}'.format(heroku_executable_path, heroku_app_name)
-        ))
-    except subprocess.CalledProcessError:  # User has too many apps
-        sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
-        raise SystemExit(
-            'You have hit your limit on concurrent apps with heroku, which are'
-            ' required to run multiple concurrent tasks.\nPlease wait for some'
-            ' of your existing tasks to complete. If you have no tasks '
-            'running, login to heroku and delete some of the running apps or '
-            'verify your account to allow more concurrent apps'
-        )
+        ), stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        error_text = bytes.decode(e.output)
+        if "Name is already taken" in error_text:  # already running this app
+            do_continue = input(
+                'An app is already running with that name, do you want to '
+                'restart a new run with it? (y/N): '
+            )
+            if do_continue != 'y':
+                raise SystemExit('User chose not to re-run the app.')
+            else:
+                delete_heroku_server(task_name)
+                try:
+                    subprocess.check_output(shlex.split(
+                        '{} create {}'.format(heroku_executable_path,
+                                              heroku_app_name)
+                    ), stderr=subprocess.STDOUT)
+                except subprocess.CalledProcessError as e:
+                    error_text = bytes.decode(e.output)
+                    sh.rm(shlex.split('-rf {}'.format(
+                        heroku_server_directory_path)))
+                    print(error_text)
+                    raise SystemExit(
+                        'Something unexpected happened trying to set up the '
+                        'heroku server - please use the above printed error '
+                        'to debug the issue however necessary.'
+                    )
+        elif "Delete some apps" in error_text:  # too many apps running
+            sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
+            raise SystemExit(
+                'You have hit your limit on concurrent apps with heroku, '
+                'which are required to run multiple concurrent tasks.\nPlease '
+                'wait for some of your existing tasks to complete. If you '
+                'have no tasks running, login to heroku.com and delete some '
+                'of the running apps or verify your account to allow more '
+                'concurrent apps.'
+            )
+        else:
+            sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
+            print(error_text)
+            raise SystemExit(
+                'Something unexpected happened trying to set up the heroku '
+                'server - please use the above printed error to debug the '
+                'issue however necessary.'
+            )
 
     # Enable WebSockets
     try:
