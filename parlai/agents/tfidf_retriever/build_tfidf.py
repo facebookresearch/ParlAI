@@ -25,7 +25,7 @@ from . import utils
 from .doc_db import DocDB
 from . import tokenizers
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
 console = logging.StreamHandler()
