@@ -140,6 +140,7 @@ class StarspaceAgent(Agent):
         self.ys_cache_sz = opt['cache_size']
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
         self.history = {}
+        self.debugMode = False
         if shared:
             self.threadindex = shared['threadindex']
             print("[ creating Starspace thread " + str(self.threadindex)  + " ]")
