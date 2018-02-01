@@ -419,9 +419,9 @@ class RandomProjection(nn.Module):
 
     def reset_parameters(self):
         # experimentally: std=1 appears to affect scale too much
-        self.weight.normal_(std=0.1)
+        self.weight.data.normal_(std=0.1)
         # other init option: set randomly to 1 or -1
-        # self.weight.bernoulli_(self.weight.fill_(0.5)).mul_(2).sub_(1)
+        # self.weight.data.bernoulli_(self.weight.fill_(0.5)).mul_(2).sub_(1)
 
     def forward(self, input):
         return F.linear(input, self.weight)
