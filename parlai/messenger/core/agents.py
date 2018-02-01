@@ -33,9 +33,12 @@ class MessengerAgent(Agent):
                 act['payload'],
             )
         else:
+            if act['id'] != '':
+                msg = '{}: {}'.format(act['id'], act['text'])
+            else:
+                msg = act['text']
             resp = self.manager.observe_message(
-                self.id,
-                '{}: {}'.format(act['id'], act['text']),
+                self.id, msg,
                 act.get('quick_replies', None)
             )
         try:
