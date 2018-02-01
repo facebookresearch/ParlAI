@@ -7,10 +7,7 @@
 import math
 import torch
 import torch.nn as nn
-from torch.nn.parameter import Parameter
-from torch.autograd import Variable,Function
-from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
-import torch.nn.functional as F
+from torch.autograd import Variable
 
 class Starspace(nn.Module):
     def __init__(self, opt, num_features, dict):
@@ -30,27 +27,17 @@ class Starspace(nn.Module):
 
     def forward(self, xs, ys=None, cands=None):
         scores = None
+        xs_enc = []
+        ys_enc = []
+        xs_emb = self.encoder(xs)
         if ys is not None:
-            # training
-            xs_enc = []
-            ys_enc = []
-            xs_emb = self.encoder(xs)
+            # training includes the correct example first.
             xs_enc.append(xs_emb)
             ys_enc.append(self.encoder2(ys))
-            for c in cands:
-                xs_enc.append(xs_emb)
-                c_emb = self.encoder2(c)
-                ys_enc.append(c_emb)
-        else:
-            # testing
-            xs_enc = []
-            ys_enc = []
-            xs_emb = self.encoder(xs)
-            c_scores = []
-            for c in cands:
-                xs_enc.append(xs_emb)
-                c_emb = self.encoder2(c)
-                ys_enc.append(c_emb)
+        for c in cands:
+            xs_enc.append(xs_emb)
+            c_emb = self.encoder2(c)
+            ys_enc.append(c_emb)
         return torch.cat(xs_enc), torch.cat(ys_enc)
 
 class Encoder(nn.Module):

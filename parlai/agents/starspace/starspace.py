@@ -190,9 +190,7 @@ class StarspaceAgent(Agent):
         Print out each added key and each overriden key.
         Only override args specific to the model.
         """
-        model_args = {'hiddensize', 'embeddingsize', 'numlayers', 'optimizer',
-                      'encoder', 'decoder', 'lookuptable', 'attention',
-                      'attention_length'}
+        model_args = {'embeddingsize', 'optimizer'}
         for k, v in new_opt.items():
             if k not in model_args:
                 # skip non-model args
