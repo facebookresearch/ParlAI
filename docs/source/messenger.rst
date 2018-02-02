@@ -82,15 +82,15 @@ Running a Task
 
 - ParlAI's Messenger functionality requires a free heroku account which can be obtained `here <https://signup.heroku.com/>`__. Running any ParlAI Messenger operation will walk you through linking the two.
 
-- Running and testing a bot on the `Facebook Messenger Platform <https://developers.facebook.com/docs/messenger-platform>`__ for yourself will require following the guide to set up a `Facebook App <https://developers.facebook.com/docs/messenger-platform/getting-started/app-setup>`__ for messenger.
+- Running and testing a bot on the `Facebook Messenger Platform <https://developers.facebook.com/docs/messenger-platform>`__ for yourself will require following the guide to set up a `Facebook App <https://developers.facebook.com/docs/messenger-platform/getting-started/app-setup>`__ for messenger. Skip the set up your webhook step, as ParlAI will do it for you.
 
-- When the guide gets to the point of asking for a webhook URL, you're ready to run the task. This can be done by running the ``run.py`` file in with python.
+- When the guide asks you to configure your webhook URL, you're ready to run the task. This can be done by running the ``run.py`` file in with python.
 
 - After the heroku server is setup, the script will print out your webhook URL to the console, this should be used to continue the tutorial. The default verify token is ``Messenger4ParlAI``.
 
 - On the first run, the page will ask you for a "Page Access Token," which is also referred to on the messenger setup page. Paste this in to finish the setup. You should now be able to communicate with your ParlAI world by messaging your page.
 
-- To open up your bot for the world to use, you'll need to submit your bot for approval from the developer dashboard.
+- To open up your bot for the world to use, you'll need to submit your bot for approval from the `Developer Dashboard <https://developers.facebook.com/apps/>`__.
 
 **Note:** When running a new task from a different directory, the webhook url will change. You will need to update this in the developer console from the webhook settings using "edit subscription." Your Page Access token should not need to be changed unless you want to use a different page.
 
