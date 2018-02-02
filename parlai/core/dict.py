@@ -380,7 +380,7 @@ class DictionaryAgent(Agent):
                     self.ind2tok[index] = token
         print('[ num words =  %d ]' % len(self))
 
-    def save(self, filename=None, append=False, sort=True):
+    def save(self, filename=None, append=False, sort=True, freqs=True):
         """Save dictionary to file.
         Format is 'token<TAB>count' for every token in the dictionary, sorted
         by count with the most frequent words first.
@@ -389,6 +389,8 @@ class DictionaryAgent(Agent):
         overwriting.
 
         If ``sort`` (default ``True``), then first sort the dictionary before saving.
+
+        If ``freqs`` (default ``True``) is set to ``False``, omit frequencies.
         """
         filename = self.opt['dict_file'] if filename is None else filename
         print('Dictionary: saving dictionary to {}'.format(filename))
@@ -398,8 +400,11 @@ class DictionaryAgent(Agent):
         with open(filename, 'a' if append else 'w') as write:
             for i in range(len(self.ind2tok)):
                 tok = self.ind2tok[i]
-                cnt = self.freq[tok]
-                write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
+                if freqs:
+                    cnt = self.freq[tok]
+                    write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
+                else:
+                    write.write('{tok}\n'.format(tok=escape(tok)))
 
     def sort(self):
         """Sorts the dictionary, so that the elements with the lowest index have

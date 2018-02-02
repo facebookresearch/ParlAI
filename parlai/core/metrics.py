@@ -147,7 +147,6 @@ class Metrics(object):
             self.metrics = SharedTable(self.metrics)
 
         self.custom_keys = []
-        self.datatype = opt.get('datatype', 'train')
 
     def __str__(self):
         return str(self.metrics)
