@@ -76,14 +76,6 @@ if __name__ ==  '__main__':
         return os.path.join(output_dir,
             '_'.join([opt['task'], dt, 'texts.txt' if src else 'labels.txt']))
 
-    # os.environ['DATA_PATH'] = output_dir
-    # os.environ['VOCAB_SOURCE'] = os.path.join(output_dir, opt['task'] + '_dict.tsv')
-    # os.environ['VOCAB_TARGET'] = os.path.join(output_dir, opt['task'] + '_dict.tsv')
-    # os.environ['TRAIN_SOURCES'] = fn('train', True)
-    # os.environ['TRAIN_TARGETS'] = fn('train', False)
-    # os.environ['DEV_SOURCES'] = fn('valid', True)
-    # os.environ['DEV_TARGETS'] = fn('valid', False)
-    # os.environ['TRAIN_STEPS'] = '1000000'
     VOCAB_SOURCE = os.path.join(output_dir, opt['task'] + '_dict.tsv')
     VOCAB_TARGET = os.path.join(output_dir, opt['task'] + '_dict.tsv')
     TRAIN_SOURCES = fn('train', True)
@@ -95,7 +87,7 @@ if __name__ ==  '__main__':
     try:
         import seq2seq
     except:
-        print('Please install Tensorflow Seq2Seq from Google at'
+        print('Please install Tensorflow Seq2Seq from Google at '
               'https://github.com/google/seq2seq/')
     cmd = ['python']
     if opt['debug']:

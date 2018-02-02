@@ -1,0 +1,28 @@
+model: BasicSeq2Seq
+model_params:
+  embedding.dim: 128
+  encoder.class: seq2seq.encoders.UnidirectionalRNNEncoder
+  encoder.params:
+    rnn_cell:
+      cell_class: LSTMCell
+      cell_params:
+        num_units: 128
+      dropout_input_keep_prob: 0.9
+      dropout_output_keep_prob: 0.9
+      num_layers: 2
+  decoder.class: seq2seq.decoders.BasicDecoder
+  decoder.params:
+    rnn_cell:
+      cell_class: LSTMCell
+      cell_params:
+        num_units: 128
+      dropout_input_keep_prob: 0.9
+      dropout_output_keep_prob: 0.9
+      num_layers: 2
+  optimizer.name: Adam
+  optimizer.params:
+    epsilon: 0.0000008
+  optimizer.learning_rate: 0.005
+  source.max_seq_len: 100
+  source.reverse: false
+  target.max_seq_len: 2
