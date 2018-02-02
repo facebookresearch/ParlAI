@@ -79,7 +79,6 @@ def calculate_mturk_cost(payment_opt):
         'type': 'reward',
         'num_total_assignments': 1,
         'reward': 0.05  # in dollars
-        'unique': False # Unique workers requires multiple assignments to 1 HIT
     }
 
     Example payment_opt format for paying bonus:
@@ -91,8 +90,6 @@ def calculate_mturk_cost(payment_opt):
     total_cost = 0
     if payment_opt['type'] == 'reward':
         mult = 1.2
-        if payment_opt['unique'] and payment_opt['num_total_assignments'] > 10:
-            mult = 1.4
         total_cost = \
             payment_opt['num_total_assignments'] * payment_opt['reward'] * mult
     elif payment_opt['type'] == 'bonus':
