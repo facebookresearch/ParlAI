@@ -897,6 +897,7 @@ class MTurkManager():
         """Send a message through the socket manager,
         update conversation state
         """
+        data = data.copy()
         data['type'] = data_model.MESSAGE_TYPE_MESSAGE
         # Force messages to have a unique ID
         if 'message_id' not in data:
@@ -924,6 +925,7 @@ class MTurkManager():
         if agent is not None:
             agent.state.messages.append(packet.data)
         self.socket_manager.queue_packet(packet)
+        return data['message_id']
 
     def send_command(self, receiver_id, assignment_id, data, blocking=True,
                      ack_func=None):
