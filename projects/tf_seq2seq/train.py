@@ -54,7 +54,7 @@ class EvalThread(object):
                 pred = read.readline()
                 target = read.readline()
         print('***************************************************************')
-        print('Running ParlAI eval on training sample predictiosn at {}'.format(fn))
+        print('Running ParlAI eval on training sample predictions at {}'.format(fn))
         print(self.metrics.report())
         print('===============================================================')
         pass
@@ -111,7 +111,7 @@ if __name__ ==  '__main__':
                     - {s}
                 target_files:
                     - {t}'''.format(s=DEV_SOURCES, t=DEV_TARGETS),
-        '--batch_size', '32',
+        '--batch_size', str(opt.get('batchsize')),
         '--train_steps', TRAIN_STEPS,
         '--output_dir', output_dir]
 
