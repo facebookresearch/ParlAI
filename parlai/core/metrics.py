@@ -136,7 +136,7 @@ class Metrics(object):
         self.metrics['cnt'] = 0
         self.metrics['correct'] = 0
         self.metrics['f1'] = 0.0
-        self.custom_metrics = []
+        self.custom_metrics = ['mean_rank', 'loss']
         for k in self.custom_metrics:
             self.metrics[k] = 0.0
             self.metrics[k + '_cnt'] = 0

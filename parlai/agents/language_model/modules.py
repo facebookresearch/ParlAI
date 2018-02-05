@@ -48,21 +48,20 @@ class RNNModel(nn.Module):
                 raise ValueError('When using the tied flag, nhid must be equal to emsize')
             self.decoder.weight = self.encoder.weight
 
-        self.init_weights()
-
-        self.rnn_type = rnn_type
-        self.nhid = nhid
-        self.nlayers = nlayers
-
-    def init_weights(self):
+        # initialize the weights of the model
         initrange = 0.1
         self.encoder.weight.data.uniform_(-initrange, initrange)
         self.decoder.bias.data.fill_(0)
         self.decoder.weight.data.uniform_(-initrange, initrange)
 
+        self.rnn_type = rnn_type
+        self.nhid = nhid
+        self.nlayers = nlayers
+
     def forward(self, input, hidden, no_pack=False):
         emb = self.drop(self.encoder(input))
-        # if eval, pack padded sequence
+        # if eval, pack padded sequence (we don't pack during training because
+        # we have no padding in our input samples)
         if not self.training and not no_pack:
             emb_lens = [x for x in torch.sum((input > 0).int(), dim=0).data]
             emb_packed = pack_padded_sequence(emb, emb_lens, batch_first=False)

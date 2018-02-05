@@ -138,6 +138,13 @@ class LanguageModelAgent(Agent):
             if self.use_cuda:
                 # push to cuda
                 self.criterion.cuda()
+
+            # set up criterion for eval: we do not want to average over size
+            self.eval_criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, size_average=False)
+            if self.use_cuda:
+                # push to cuda
+                self.eval_criterion.cuda()
+
             self.hidden = self.model.init_hidden(self.batchsize)
             # set up optimizer
             self.lr = opt['learningrate']
@@ -218,7 +225,7 @@ class LanguageModelAgent(Agent):
                 self.next_observe += vec
             if len(self.next_observe) < (seq_len + 1):
                 # not enough to return to make a batch
-                # we handle this case in batchify
+                # we handle this case in vectorize
                 # labels indicates that we are training
                 self.observation = {'labels': ''}
                 return self.observation
@@ -228,13 +235,11 @@ class LanguageModelAgent(Agent):
                 for _ in range(total):
                     observe = self.next_observe[:(seq_len + 1)]
                     self.next_observe = self.next_observe[(seq_len + 1):]
-                    vecs_to_return += observe
+                    vecs_to_return.append(observe)
                 dict_to_return = {'text': '', 'labels': '', 'text2vec': vecs_to_return}
                 self.observation = dict_to_return
                 return dict_to_return
         else:
-            if 'text' in obs:
-                obs['text'] += ' __END__'
             self.observation = obs
             return obs
 
@@ -252,29 +257,26 @@ class LanguageModelAgent(Agent):
         """
         loss = 0.0
         bsz = data.size(0)
-        # use y_lens to find out number of tokens in each loss calculation
-        y_lens_batch = [len(y_lens)]*targets.size(1)
-        for i in range(len(y_lens_batch)):
-            num_less = 0
-            for y_len in y_lens:
-                if (y_len) - 1 < i:
-                    num_less +=1
-            y_lens_batch[i] -= num_less
 
+        # feed in inputs without end token
         output, hidden = self.model(data.transpose(0,1), hidden)
         self.hidden = self.repackage_hidden(hidden)
-        # get only last predicted word
-        output = output.select(0,-1)
+        # feed in end token
+        ends = Variable(torch.LongTensor([self.END_IDX for _ in range(bsz)]).view(1, bsz))
+        if self.use_cuda:
+            ends = ends.cuda()
+        output, hidden = self.model(ends, self.hidden)
+        self.hidden = self.repackage_hidden(hidden)
         output_flat = output.view(-1, len(self.dict))
-        loss += y_lens_batch[0]*self.criterion(output_flat, targets.select(1,0).view(-1)).data
+        loss += self.eval_criterion(output_flat, targets.select(1,0).view(-1)).data
 
         for i in range(1, targets.size(1)):
             output, hidden = self.model(targets.select(1,i-1).view(1, bsz), self.hidden, no_pack=True)
             self.hidden = self.repackage_hidden(hidden)
             output_flat = output.view(-1, len(self.dict))
-            loss += y_lens_batch[i]*self.criterion(output_flat, targets.select(1,i).view(-1)).data
+            loss += self.eval_criterion(output_flat, targets.select(1,i).view(-1)).data
 
-        return loss/float(sum(y_lens_batch))
+        return loss/float(sum(y_lens))
 
     def get_predictions(self, data, end_idxs):
         """Generates predictions word by word until we either reach the end token
@@ -285,20 +287,20 @@ class LanguageModelAgent(Agent):
         done = [False for _ in range(bsz)]
         total_done = 0
         hidden = self.model.init_hidden(bsz)
+        # feed in input without end tokens
         output, hidden = self.model(data.transpose(0,1), hidden)
+        hidden = self.repackage_hidden(hidden)
+        # feed in end tokens
+        ends = Variable(torch.LongTensor([self.END_IDX for _ in range(bsz)]).view(1, bsz))
+        if self.use_cuda:
+            ends = ends.cuda()
+        output, hidden = self.model(ends, hidden)
         hidden = self.repackage_hidden(hidden)
         word_weights = output.squeeze().data.exp()
         # get last word of output
         if bsz > 1:
-            value, word_idx = torch.max(word_weights, 2)
-            last_words = []
-            for j in range(len(end_idxs)):
-                last_words.append(word_idx[end_idxs[j]-1][j])
-            word_idx = torch.LongTensor(last_words)
-            if self.use_cuda:
-                word_idx = word_idx.cuda()
+            value, word_idx = torch.max(word_weights, 1)
         else:
-            word_weights = word_weights[-1]
             value, word_idx = torch.max(word_weights, 0)
         # mark end indices in batch
         for k in range(word_idx.size(0)):
@@ -309,13 +311,8 @@ class LanguageModelAgent(Agent):
         token_list.append(word_idx.view(bsz, 1))
 
         i = 1
-
         while total_done < bsz and i <= self.opt['truncate_pred']:
-            new_col = word_idx.clone()
-            new_col = Variable(new_col)
-            if self.use_cuda:
-                new_col = new_col.cuda()
-            output, hidden = self.model(new_col.view(1, bsz), hidden, no_pack=True)
+            output, hidden = self.model(Variable(word_idx.view(1, bsz)), hidden, no_pack=True)
             hidden = self.repackage_hidden(hidden)
             word_weights = output.squeeze().data.exp()
             if bsz > 1:
@@ -343,7 +340,7 @@ class LanguageModelAgent(Agent):
             self.model.train()
             self.zero_grad()
             output, hidden = self.model(data, hidden)
-            loss = self.criterion(output.view(-1, len(self.dict)), targets)
+            loss = self.criterion(output.view(-1, len(self.dict)), targets.view(-1))
             loss.backward(retain_graph=True)
             self.update_params()
             loss_dict = {'lmloss': loss.data}
@@ -361,7 +358,7 @@ class LanguageModelAgent(Agent):
 
         return output, hidden, loss_dict, predictions
 
-    def batchify(self, observations, seq_len, is_training):
+    def vectorize(self, observations, seq_len, is_training):
         """Convert a list of observations into input & target tensors."""
         labels = None
         valid_inds = None
@@ -371,20 +368,22 @@ class LanguageModelAgent(Agent):
             for obs in observations:
                 if obs:
                     if 'text2vec' in obs:
-                        self.next_batch += obs['text2vec']
-            if len(self.next_batch) <= (seq_len + 1) * self.batchsize:
+                        for vec in obs['text2vec']:
+                            self.next_batch.append(vec)
+            if len(self.next_batch) <= self.batchsize:
                 return None, None, None, None, None, None
             else:
                 data_list = []
                 targets_list = []
-                total = len(self.next_batch)//((seq_len + 1) * self.batchsize)
-                for _ in range(total):
-                    batch = self.next_batch[:((seq_len + 1) * self.batchsize)]
-                    self.next_batch = self.next_batch[((seq_len + 1) * self.batchsize):]
+                # total is the number of batches
+                total = len(self.next_batch)//self.batchsize
+                for i in range(total):
+                    batch = self.next_batch[:self.batchsize]
+                    self.next_batch = self.next_batch[self.batchsize:]
 
-                    source = torch.LongTensor(batch).view(self.batchsize, -1).t().contiguous()
+                    source = torch.LongTensor(batch).t().contiguous()
                     data = Variable(source[:seq_len])
-                    targets = Variable(source[1:].view(-1))
+                    targets = Variable(source[1:])
 
                     if self.use_cuda:
                         data = data.cuda()
@@ -409,24 +408,26 @@ class LanguageModelAgent(Agent):
 
     def batch_act(self, observations):
         batch_reply = [{'id': self.getID()} for _ in range(len(observations))]
-        if 'labels' in observations[0]:
+        if any(['labels' in obs for obs in observations]):
             # if we are starting a new training epoch, reinitialize hidden
             if self.is_training == False:
                 self.hidden = self.model.init_hidden(self.batchsize)
             self.is_training = True
-            data_list, targets_list, _, _, end_idxs, y_lens = self.batchify(observations, self.opt['seq_len'], self.is_training)
+            data_list, targets_list, _, _, end_idxs, y_lens = self.vectorize(observations, self.opt['seq_len'], self.is_training)
         else:
             # if we just finished training, reinitialize hidden
             if self.is_training == True:
                 self.hidden = self.model.init_hidden(self.batchsize)
                 self.is_training = False
-            data_list, targets_list, labels, valid_inds, end_idxs, y_lens = self.batchify(observations, self.opt['seq_len'], self.is_training)
+            data_list, targets_list, labels, valid_inds, end_idxs, y_lens = self.vectorize(observations, self.opt['seq_len'], self.is_training)
 
         if data_list is None:
             # not enough data to batch act yet, return empty responses
             return batch_reply
 
         batch_reply = []
+        # during evaluation, len(data_list) is always 1
+        # during training, len(dat_list) >= 0: vectorize returns a list containing all batches available at the time it is called
         for i in range(len(data_list)):
             temp_dicts = [{'id': self.getID()} for _ in range(len(observations))]
             output, hidden, loss_dict, predictions = self.predict(data_list[i], self.hidden, targets_list[i], self.is_training, end_idxs, y_lens)

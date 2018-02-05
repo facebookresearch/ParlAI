@@ -355,7 +355,7 @@ class Seq2seqAgent(Agent):
 
         return predictions, text_cand_inds, loss_dict
 
-    def batchify(self, observations):
+    def vectorize(self, observations):
         """Convert a list of observations into input & target tensors."""
         ys = None
         xs, ys, labels, valid_inds, _, _ = PaddingUtils.pad_text(
@@ -424,7 +424,7 @@ class Seq2seqAgent(Agent):
         # valid_inds tells us the indices of all valid examples
         # e.g. for input [{}, {'text': 'hello'}, {}, {}], valid_inds is [1]
         # since the other three elements had no 'text' field
-        xs, ys, labels, valid_inds, cands, valid_cands = self.batchify(observations)
+        xs, ys, labels, valid_inds, cands, valid_cands = self.vectorize(observations)
 
         if xs is None:
             # no valid examples, just return empty responses
