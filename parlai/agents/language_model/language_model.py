@@ -287,32 +287,20 @@ class LanguageModelAgent(Agent):
         done = [False for _ in range(bsz)]
         total_done = 0
         hidden = self.model.init_hidden(bsz)
-        # feed in input without end tokens
-        output, hidden = self.model(data.transpose(0,1), hidden)
-        hidden = self.repackage_hidden(hidden)
-        # feed in end tokens
-        ends = Variable(torch.LongTensor([self.END_IDX for _ in range(bsz)]).view(1, bsz))
-        if self.use_cuda:
-            ends = ends.cuda()
-        output, hidden = self.model(ends, hidden)
-        hidden = self.repackage_hidden(hidden)
-        word_weights = output.squeeze().data.exp()
-        # get last word of output
-        if bsz > 1:
-            value, word_idx = torch.max(word_weights, 1)
-        else:
-            value, word_idx = torch.max(word_weights, 0)
-        # mark end indices in batch
-        for k in range(word_idx.size(0)):
-            if not done[k]:
-                if int(word_idx[k]) == self.END_IDX:
-                    done[k] = True
-                    total_done +=1
-        token_list.append(word_idx.view(bsz, 1))
 
-        i = 1
+        i = 0
         while total_done < bsz and i <= self.opt['truncate_pred']:
-            output, hidden = self.model(Variable(word_idx.view(1, bsz)), hidden, no_pack=True)
+            if i == 0:
+                # feed in input without end tokens
+                output, hidden = self.model(data.transpose(0,1), hidden)
+                hidden = self.repackage_hidden(hidden)
+                # feed in end tokens
+                ends = Variable(torch.LongTensor([self.END_IDX for _ in range(bsz)]).view(1, bsz))
+                if self.use_cuda:
+                    ends = ends.cuda()
+                output, hidden = self.model(ends, hidden)
+            else:
+                output, hidden = self.model(Variable(word_idx.view(1, bsz)), hidden, no_pack=True)
             hidden = self.repackage_hidden(hidden)
             word_weights = output.squeeze().data.exp()
             if bsz > 1:
