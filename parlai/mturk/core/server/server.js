@@ -114,7 +114,9 @@ io.on('connection', function (socket) {
 
   // handles routing a packet to the desired recipient
   socket.on('route packet', function (data, ack) {
-    console.log('route packet', data);
+    if (data.type != 'heartbeat') {
+      console.log('route packet', data);
+    }
     var out_connection_id = _get_to_conn_id(data);
 
     _send_message(out_connection_id, 'new packet', data);
@@ -210,8 +212,10 @@ app.get('/chat_index', async function (req, res) {
       // Load custom pages by the mturk_agent_id if the custom pages exist
       var custom_index_page = mturk_agent_id + '_index.html';
       if (fs.existsSync(task_directory_name+'/'+custom_index_page)) {
+        console.log('Serving ' + custom_index_page);
         res.render(custom_index_page, template_context);
       } else {
+        console.log('Serving default index rather than ' + custom_index_page);
         res.render('mturk_index.html', template_context);
       }
     }

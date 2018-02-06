@@ -329,7 +329,7 @@ class MultiAgentDialogWorld(World):
     receiving as input the actions of all other agents since that agent last
     acted.
     """
-    def __init__(self, opt, agents=None, shared=None):
+    def __init__(self, opt, agents, shared=None):
         super().__init__(opt)
         if shared:
             # Create agents based on shared data.
@@ -337,8 +337,7 @@ class MultiAgentDialogWorld(World):
         else:
             # Add passed in agents directly.
             self.agents = agents
-            self.acts = [None] * len(agents)
-        super().__init__(opt, agents, shared)
+        self.acts = [None] * len(self.agents)
 
     def parley(self):
         """For each agent, get an observation of the last action each of the

@@ -200,9 +200,11 @@ class Decoder(nn.Module):
 
         # rnn output to embedding
         if hidden_size != emb_size:
-            self.o2e = nn.Linear(hidden_size, emb_size)
+            self.o2e = RandomProjection(hidden_size, emb_size)
+            # other option here is to learn these weights
+            # self.o2e = nn.Linear(hidden_size, emb_size, bias=False)
         else:
-            # no need to learn the extra weights
+            # no need for any transformation here
             self.o2e = lambda x: x
         # embedding to scores, use custom linear to possibly share weights
         shared_weight = self.lt.weight if share_output else None
@@ -220,9 +222,9 @@ class Decoder(nn.Module):
     def forward(self, xs, hidden, encoder_output, attn_mask=None):
         xes = F.dropout(self.lt(xs), p=self.dropout, training=self.training)
         xes = self.attention(xes, hidden, encoder_output, attn_mask)
-        output, hidden = self.rnn(xes, hidden)
+        output, new_hidden = self.rnn(xes, hidden)
         # TODO: add post-attention?
-        # output = self.attention(output, hidden, encoder_output, attn_mask)
+        # output = self.attention(output, new_hidden, encoder_output, attn_mask)
 
         e = F.dropout(self.o2e(output), p=self.dropout, training=self.training)
         scores = F.dropout(self.e2s(e), p=self.dropout, training=self.training)
@@ -230,7 +232,7 @@ class Decoder(nn.Module):
         _max_score, idx = scores.narrow(2, 1, scores.size(2) - 1).max(2)
         preds = idx.add_(1)
 
-        return preds, scores, hidden
+        return preds, scores, new_hidden
 
 
 class Ranker(nn.Module):
@@ -358,6 +360,9 @@ class Ranker(nn.Module):
 
 
 class Linear(nn.Module):
+    """Custom Linear layer which allows for sharing weights (e.g. with an
+    nn.Embedding layer).
+    """
     def __init__(self, in_features, out_features, bias=True,
                  shared_weight=None):
         super().__init__()
@@ -390,9 +395,10 @@ class Linear(nn.Module):
             self.bias.data.uniform_(-stdv, stdv)
 
     def forward(self, input):
-        # detach weight to prevent gradients from changing weight when shared
         weight = self.weight
         if self.shared:
+            # detach weight to prevent gradients from changing weight
+            # (but need to detach every time so weights are up to date)
             weight = weight.detach()
         return F.linear(input, weight, self.bias)
 
@@ -400,6 +406,25 @@ class Linear(nn.Module):
         return self.__class__.__name__ + ' (' \
             + str(self.in_features) + ' -> ' \
             + str(self.out_features) + ')'
+
+
+class RandomProjection(nn.Module):
+    def __init__(self, in_features, out_features):
+        super().__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+        self.weight = Parameter(torch.Tensor(out_features, in_features),
+                                requires_grad=False)  # fix weights
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        # experimentally: std=1 appears to affect scale too much
+        self.weight.data.normal_(std=0.1)
+        # other init option: set randomly to 1 or -1
+        # self.weight.data.bernoulli_(self.weight.fill_(0.5)).mul_(2).sub_(1)
+
+    def forward(self, input):
+        return F.linear(input, self.weight)
 
 
 class AttentionLayer(nn.Module):

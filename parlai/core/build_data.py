@@ -107,6 +107,7 @@ def download(url, path, fname, redownload=False):
         raise RuntimeWarning('Connection broken too many times. Stopped retrying.')
 
     if download and retry > 0:
+        logger.log(done, total_size, force=True)
         print()
         if done < total_size:
             raise RuntimeWarning('Received less data than specified in ' +
@@ -129,7 +130,6 @@ def remove_dir(path):
     """Removes the given directory, if it exists."""
     shutil.rmtree(path, ignore_errors=True)
 
-
 def untar(path, fname, deleteTar=True):
     """Unpacks the given archive file to the same directory, then (by default)
     deletes the archive file.
@@ -140,6 +140,15 @@ def untar(path, fname, deleteTar=True):
     if deleteTar:
         os.remove(fullpath)
 
+def cat(file1, file2, outfile, deleteFiles=True):
+    with open(outfile, 'wb') as wfd:
+        for f in [file1, file2]:
+            with open(f,'rb') as fd:
+                shutil.copyfileobj(fd, wfd, 1024*1024*10)
+                #10MB per writing chunk to avoid reading big file into memory.
+    if deleteFiles:
+        os.remove(file1)
+        os.remove(file2)
 
 def _get_confirm_token(response):
     for key, value in response.cookies.items():

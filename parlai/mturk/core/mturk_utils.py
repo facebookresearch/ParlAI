@@ -14,6 +14,7 @@ from botocore.exceptions import ProfileNotFound
 
 region_name = 'us-east-1'
 aws_profile_name = 'parlai_mturk'
+client = None
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 mturk_hit_frame_height = 650
@@ -78,7 +79,6 @@ def calculate_mturk_cost(payment_opt):
         'type': 'reward',
         'num_total_assignments': 1,
         'reward': 0.05  # in dollars
-        'unique': False # Unique workers requires multiple assignments to 1 HIT
     }
 
     Example payment_opt format for paying bonus:
@@ -90,8 +90,6 @@ def calculate_mturk_cost(payment_opt):
     total_cost = 0
     if payment_opt['type'] == 'reward':
         mult = 1.2
-        if payment_opt['unique'] and payment_opt['num_total_assignments'] > 10:
-            mult = 1.4
         total_cost = \
             payment_opt['num_total_assignments'] * payment_opt['reward'] * mult
     elif payment_opt['type'] == 'bonus':
@@ -163,14 +161,17 @@ def create_hit_config(task_description, unique_worker, is_sandbox):
 
 def get_mturk_client(is_sandbox):
     """Returns the appropriate mturk client given sandbox option"""
-    client = boto3.client(
-        service_name='mturk',
-        region_name='us-east-1',
-        endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
-    )
-    # Region is always us-east-1
-    if not is_sandbox:
-        client = boto3.client(service_name='mturk', region_name='us-east-1')
+    global client
+    if client is None:
+        client = boto3.client(
+            service_name='mturk',
+            region_name='us-east-1',
+            endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+        )
+        # Region is always us-east-1
+        if not is_sandbox:
+            client = \
+                boto3.client(service_name='mturk', region_name='us-east-1')
     return client
 
 

@@ -7,7 +7,7 @@
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import maintain_dialog_history
-from .modules import Seq2seq
+from .modules import Seq2seq, RandomProjection
 
 import torch
 from torch.autograd import Variable
@@ -64,6 +64,8 @@ class Seq2seqAgent(Agent):
                            help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
                            help='dropout rate')
+        agent.add_argument('-clip', '--gradient-clip', type=float, default=0.2,
+                           help='gradient clipping using l2 norm')
         agent.add_argument('-bi', '--bidirectional', type='bool',
                            default=False,
                            help='whether to encode the context with a '
@@ -118,13 +120,14 @@ class Seq2seqAgent(Agent):
                                 'be used with default params except learning '
                                 'rate (as specified by -lr).')
         agent.add_argument('-emb', '--embedding-type', default='random',
-                           choices=['random'],
+                           choices=['random', 'glove', 'glove-fixed',
+                                    'fasttext', 'fasttext-fixed'],
                            help='Choose between different strategies '
                                 'for word embeddings. Default is random, '
-                                'but can also preinitialize from Glove.'
+                                'but can also preinitialize from Glove or '
+                                'Fasttext.'
                                 'Preinitialized embeddings can also be fixed '
-                                'so they are not updated during training. '
-                                'NOTE: glove init currently disabled.')
+                                'so they are not updated during training.')
         agent.add_argument('-lm', '--language-model', default='none',
                            choices=['none', 'only', 'both'],
                            help='Enabled language modeling training on the '
@@ -200,6 +203,39 @@ class Seq2seqAgent(Agent):
                                  end_idx=self.END_IDX,
                                  longest_label=self.states.get('longest_label', 1))
 
+            if opt['embedding_type'] != 'random':
+                # set up preinitialized embeddings
+                try:
+                    import torchtext.vocab as vocab
+                except ModuleNotFoundError as ex:
+                    print('Please install torch text with `pip install torchtext`')
+                    raise ex
+                if opt['embedding_type'].startswith('glove'):
+                    init = 'glove'
+                    embs = vocab.GloVe(name='840B', dim=300)
+                elif opt['embedding_type'].startswith('fasttext'):
+                    init = 'fasttext'
+                    embs = vocab.FastText(language='en')
+                else:
+                    raise RuntimeError('embedding type not implemented')
+
+                if opt['embeddingsize'] != 300:
+                    rp = torch.Tensor(300, opt['embeddingsize']).normal_()
+                    t = lambda x: torch.mm(x.unsqueeze(0), rp)
+                else:
+                    t = lambda x: x
+                cnt = 0
+                for w, i in self.dict.tok2ind.items():
+                    if w in embs.stoi:
+                        vec = t(embs.vectors[embs.stoi[w]])
+                        self.model.decoder.lt.weight.data[i] = vec
+                        cnt += 1
+                        if opt['lookuptable'] in ['unique', 'dec_out']:
+                            # also set encoder lt, since it's not shared
+                            self.model.encoder.lt.weight.data[i] = vec
+                print('Seq2seq: initialized embeddings for {} tokens from {}.'
+                      ''.format(cnt, init))
+
             if self.states:
                 # set loaded states if applicable
                 self.model.load_state_dict(self.states['model'])
@@ -209,6 +245,7 @@ class Seq2seqAgent(Agent):
 
         if hasattr(self, 'model'):
             # if model was built, do more setup
+            self.clip = opt.get('gradient_clip', 0.2)
             self.rank = opt['rank_candidates']
             self.lm = opt['language_model']
 
@@ -236,7 +273,14 @@ class Seq2seqAgent(Agent):
             if opt['optimizer'] == 'sgd':
                 kwargs['momentum'] = 0.95
                 kwargs['nesterov'] = True
-            self.optimizer = optim_class(self.model.parameters(), **kwargs)
+
+            if opt['embedding_type'].endswith('fixed'):
+                print('Seq2seq: fixing embedding weights.')
+                self.model.decoder.lt.weight.requires_grad = False
+                self.model.encoder.lt.weight.requires_grad = False
+                if opt['lookuptable'] in ['dec_out', 'all']:
+                    self.model.decoder.e2s.weight.requires_grad = False
+            self.optimizer = optim_class([p for p in self.model.parameters() if p.requires_grad], **kwargs)
             if self.states:
                 if self.states['optimizer_type'] != opt['optimizer']:
                     print('WARNING: not loading optim state since optim class '
@@ -289,12 +333,12 @@ class Seq2seqAgent(Agent):
 
     def update_params(self):
         """Do one optimization step."""
+        torch.nn.utils.clip_grad_norm(self.model.parameters(), self.clip)
         self.optimizer.step()
 
     def reset(self):
         """Reset observation and episode_done."""
         self.observation = None
-        self.episode_done = True
 
     def share(self):
         """Share internal states between parent and child instances."""
@@ -314,7 +358,6 @@ class Seq2seqAgent(Agent):
         """Save observation for act.
         If multiple observations are from the same episode, concatenate them.
         """
-        self.episode_done = observation['episode_done']
         # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
         batch_idx = self.opt.get('batchindex', 0)
@@ -324,7 +367,8 @@ class Seq2seqAgent(Agent):
                 reply=self.answers[batch_idx],
                 historyLength=self.opt['history_length'],
                 useReplies=self.opt['history_replies'],
-                dict=self.dict)
+                dict=self.dict,
+                useStartEndIndices=False)
         else:
             obs['text2vec'] = deque(obs['text2vec'], self.opt['history_length'])
         self.observation = obs
@@ -344,15 +388,13 @@ class Seq2seqAgent(Agent):
             self.zero_grad()
             loss = 0
             predictions, scores, _ = self.model(xs, ys)
-            for i in range(scores.size(1)):
-                # sum loss per-token
-                score = scores.select(1, i)
-                y = ys.select(1, i)
-                loss += self.criterion(score, y)
+            loss += self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
             loss.backward()
             self.update_params()
             losskey = 'loss' if not lm else 'lmloss'
-            loss_dict = {losskey: loss.mul_(len(xs)).data}
+            loss_dict = {losskey: loss.data}
+            perpkey = 'ppl' if not lm else 'lmppl'
+            loss_dict[perpkey] = loss.exp().data
         else:
             self.model.eval()
             predictions, scores, text_cand_inds = self.model(xs, ys, cands,
