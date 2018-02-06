@@ -236,15 +236,11 @@ class MTurkManager():
         only listed a maximum of one time. In sandbox this is overridden for
         testing purposes, and the same worker can be returned more than once
         """
-        if callable(eligibility_function):
-            workers = [w for w in self.worker_pool
-                       if not w.hit_is_returned and eligibility_function(w)]
+        pool = [w for w in self.worker_pool if not w.hit_is_returned]
+        if eligibility_function['multiple'] is True:
+            workers = eligibility_function['func'](pool)
         else:
-            pool = [w for w in self.worker_pool if not w.hit_is_returned]
-            if eligibility_function['multiple'] is True:
-                workers = eligibility_function['func'](pool)
-            else:
-                workers = [w for w in pool if eligibility_function['func'](w)]
+            workers = [w for w in pool if eligibility_function['func'](w)]
 
         unique_workers = []
         unique_worker_ids = []
@@ -777,7 +773,7 @@ class MTurkManager():
                 )
             if 'multiple' not in eligibility_function:
                 eligibility_function['multiple'] = False
-        
+
         def _task_function(opt, workers, conversation_id):
             """Wait for workers to join the world, then run task function"""
             shared_utils.print_and_log(
