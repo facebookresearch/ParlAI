@@ -51,6 +51,10 @@ class MessengerAgent(Agent):
         """Put data into the message queue if it hasn't already been seen"""
         mid = message['message']['mid']
         seq = message['message']['seq']
+        if 'text' not in message['message']:
+            print('Msg: {} could not be extracted to text format'.format(
+                message['message']))
+            return
         text = message['message']['text']
         if text is None:
             text = message['message']['payload']
