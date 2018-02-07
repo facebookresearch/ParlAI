@@ -138,16 +138,13 @@ class LanguageModelAgent(Agent):
             if self.use_cuda:
                 # push to cuda
                 self.criterion.cuda()
-
             # set up criterion for eval: we do not want to average over size
             self.eval_criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, size_average=False)
             if self.use_cuda:
                 # push to cuda
                 self.eval_criterion.cuda()
-
             # init hidden state
             self.hidden = self.model.init_hidden(self.batchsize)
-
             # init tensor of end tokens
             self.ends = torch.LongTensor([self.END_IDX for _ in range(self.batchsize)])
             if self.use_cuda:
@@ -281,7 +278,7 @@ class LanguageModelAgent(Agent):
 
         return loss/float(sum(y_lens))
 
-    def get_predictions(self, data, end_idxs):
+    def get_predictions(self, data):
         """Generates predictions word by word until we either reach the end token
            or some max length (opt['truncate_pred']).
         """
@@ -318,7 +315,7 @@ class LanguageModelAgent(Agent):
 
         return torch.cat(token_list,1)
 
-    def predict(self, data, hidden, targets=None, is_training=True, end_idxs=None, y_lens=None):
+    def predict(self, data, hidden, targets=None, is_training=True, y_lens=None):
         """Produce a prediction from our model.
         """
         loss_dict = None
@@ -335,7 +332,7 @@ class LanguageModelAgent(Agent):
             loss_dict['lmppl'] = math.exp(loss.data)
         else:
             self.model.eval()
-            predictions = self.get_predictions(data, end_idxs)
+            predictions = self.get_predictions(data)
             loss_dict = {}
             bsz = data.size(0)
             if bsz != self.batchsize:
@@ -350,7 +347,6 @@ class LanguageModelAgent(Agent):
         """Convert a list of observations into input & target tensors."""
         labels = None
         valid_inds = None
-        end_idxs = None
         y_lens = None
         if is_training:
             for obs in observations:
@@ -358,7 +354,7 @@ class LanguageModelAgent(Agent):
                     if 'text2vec' in obs:
                         self.next_batch += obs['text2vec']
             if len(self.next_batch) <= self.batchsize:
-                return None, None, None, None, None, None
+                return None, None, None, None, None
             else:
                 data_list = []
                 targets_list = []
@@ -380,7 +376,7 @@ class LanguageModelAgent(Agent):
                     targets_list.append(targets)
         else:
             # here we get valid examples and pad them with zeros
-            xs, ys, labels, valid_inds, end_idxs, y_lens = PaddingUtils.pad_text(
+            xs, ys, labels, valid_inds, _, y_lens = PaddingUtils.pad_text(
                 observations, self.dict, self.END_IDX, self.NULL_IDX)
             if self.use_cuda:
                 xs = Variable(xs).cuda()
@@ -391,7 +387,7 @@ class LanguageModelAgent(Agent):
             data_list = [xs]
             targets_list = [ys]
 
-        return data_list, targets_list, labels, valid_inds, end_idxs, y_lens
+        return data_list, targets_list, labels, valid_inds, y_lens
 
     def batch_act(self, observations):
         batch_reply = [{'id': self.getID()} for _ in range(len(observations))]
@@ -400,13 +396,13 @@ class LanguageModelAgent(Agent):
             if self.is_training == False:
                 self.hidden = self.model.init_hidden(self.batchsize)
             self.is_training = True
-            data_list, targets_list, _, _, end_idxs, y_lens = self.vectorize(observations, self.opt['seq_len'], self.is_training)
+            data_list, targets_list, _, _, y_lens = self.vectorize(observations, self.opt['seq_len'], self.is_training)
         else:
             # if we just finished training, reinitialize hidden
             if self.is_training == True:
                 self.hidden = self.model.init_hidden(self.batchsize)
                 self.is_training = False
-            data_list, targets_list, labels, valid_inds, end_idxs, y_lens = self.vectorize(observations, self.opt['seq_len'], self.is_training)
+            data_list, targets_list, labels, valid_inds, y_lens = self.vectorize(observations, self.opt['seq_len'], self.is_training)
 
         if data_list is None:
             # not enough data to batch act yet, return empty responses
@@ -417,7 +413,7 @@ class LanguageModelAgent(Agent):
         # during training, len(dat_list) >= 0: vectorize returns a list containing all batches available at the time it is called
         for i in range(len(data_list)):
             temp_dicts = [{'id': self.getID()} for _ in range(len(observations))]
-            output, hidden, loss_dict, predictions = self.predict(data_list[i], self.hidden, targets_list[i], self.is_training, end_idxs, y_lens)
+            output, hidden, loss_dict, predictions = self.predict(data_list[i], self.hidden, targets_list[i], self.is_training, y_lens)
             self.hidden = self.repackage_hidden(hidden)
 
             if predictions is not None:
