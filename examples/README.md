@@ -69,8 +69,3 @@ Interactive session on an already trained SQuAD model:
 wget https://s3.amazonaws.com/fair-data/parlai/_models/drqa/squad.mdl
 python interactive.py -m drqa -mf squad.mdl
 ```
-
-Train a simple cpu-based memory network on the "10k training examples" bAbI task 1 with 8 threads (python processes) using Hogwild (requires zmq and Lua Torch):
-```bash
-python memnn_luatorch_cpu/full_task_train.py -t babi:task10k:1 -nt 8
-```

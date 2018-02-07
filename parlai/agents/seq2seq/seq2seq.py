@@ -7,7 +7,7 @@
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import maintain_dialog_history, PaddingUtils
-from .modules import Seq2seq
+from .modules import Seq2seq, RandomProjection
 
 import torch
 from torch.autograd import Variable
@@ -121,13 +121,14 @@ class Seq2seqAgent(Agent):
                                 'be used with default params except learning '
                                 'rate (as specified by -lr).')
         agent.add_argument('-emb', '--embedding-type', default='random',
-                           choices=['random'],
+                           choices=['random', 'glove', 'glove-fixed',
+                                    'fasttext', 'fasttext-fixed'],
                            help='Choose between different strategies '
                                 'for word embeddings. Default is random, '
-                                'but can also preinitialize from Glove.'
+                                'but can also preinitialize from Glove or '
+                                'Fasttext.'
                                 'Preinitialized embeddings can also be fixed '
-                                'so they are not updated during training. '
-                                'NOTE: glove init currently disabled.')
+                                'so they are not updated during training.')
         agent.add_argument('-hist', '--history-length', default=100000, type=int,
                            help='Number of past tokens to remember. '
                                 'Default remembers 100000 tokens.')
@@ -199,6 +200,39 @@ class Seq2seqAgent(Agent):
                                  end_idx=self.END_IDX,
                                  longest_label=self.states.get('longest_label', 1))
 
+            if opt['embedding_type'] != 'random':
+                # set up preinitialized embeddings
+                try:
+                    import torchtext.vocab as vocab
+                except ModuleNotFoundError as ex:
+                    print('Please install torch text with `pip install torchtext`')
+                    raise ex
+                if opt['embedding_type'].startswith('glove'):
+                    init = 'glove'
+                    embs = vocab.GloVe(name='840B', dim=300)
+                elif opt['embedding_type'].startswith('fasttext'):
+                    init = 'fasttext'
+                    embs = vocab.FastText(language='en')
+                else:
+                    raise RuntimeError('embedding type not implemented')
+
+                if opt['embeddingsize'] != 300:
+                    rp = torch.Tensor(300, opt['embeddingsize']).normal_()
+                    t = lambda x: torch.mm(x.unsqueeze(0), rp)
+                else:
+                    t = lambda x: x
+                cnt = 0
+                for w, i in self.dict.tok2ind.items():
+                    if w in embs.stoi:
+                        vec = t(embs.vectors[embs.stoi[w]])
+                        self.model.decoder.lt.weight.data[i] = vec
+                        cnt += 1
+                        if opt['lookuptable'] in ['unique', 'dec_out']:
+                            # also set encoder lt, since it's not shared
+                            self.model.encoder.lt.weight.data[i] = vec
+                print('Seq2seq: initialized embeddings for {} tokens from {}.'
+                      ''.format(cnt, init))
+
             if self.states:
                 # set loaded states if applicable
                 self.model.load_state_dict(self.states['model'])
@@ -235,7 +269,14 @@ class Seq2seqAgent(Agent):
             if opt['optimizer'] == 'sgd':
                 kwargs['momentum'] = 0.95
                 kwargs['nesterov'] = True
-            self.optimizer = optim_class(self.model.parameters(), **kwargs)
+
+            if opt['embedding_type'].endswith('fixed'):
+                print('Seq2seq: fixing embedding weights.')
+                self.model.decoder.lt.weight.requires_grad = False
+                self.model.encoder.lt.weight.requires_grad = False
+                if opt['lookuptable'] in ['dec_out', 'all']:
+                    self.model.decoder.e2s.weight.requires_grad = False
+            self.optimizer = optim_class([p for p in self.model.parameters() if p.requires_grad], **kwargs)
             if self.states:
                 if self.states['optimizer_type'] != opt['optimizer']:
                     print('WARNING: not loading optim state since optim class '

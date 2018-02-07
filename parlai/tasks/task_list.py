@@ -50,7 +50,7 @@ task_list = [
         "display_name": "Cornell Movie",
         "task": "cornell_movie",
         "tags": [ "All",  "ChitChat" ],
-        "description": "Fictional conversations extracted from raw movie scripts. Link: https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html"
+        "description": "Fictional conversations extracted from raw movie scripts. Danescu-Niculescu-Mizil & Lee, '11. Link: https://arxiv.org/abs/1106.3077"
     },
     {
         "id": "DBLL-bAbI",
@@ -149,6 +149,14 @@ task_list = [
         "task": "multinli",
         "tags": [ "All",  "Entailment" ],
         "description": "A dataset designed for use in the development and evaluation of machine learning models for sentence understanding. Each example contains a premise and hypothesis. Model has to predict whether premise and hypothesis entail, contradict or are neutral to each other. From Williams et al. '17. Link: https://arxiv.org/abs/1704.05426"
+    },
+    {
+        "id": "NarrativeQA",
+        "display_name": "NarrativeQA",
+        "task": "narrative_qa",
+        "tags": [ "All",  "QA" ],
+        "description": "A dataset and set of tasks in which the reader must answer questions about stories by reading entire books or movie scripts. From Kočiský et. al. '17. Link: https://arxiv.org/abs/1712.07040'",
+        "notes": "You can access summaries only task for NarrativeQA by using task 'narrative_qa:summaries'. By default, only stories are provided."
     },
     {
         "id": "OpenSubtitles",
@@ -338,5 +346,19 @@ task_list = [
         "task": "scan",
         "tags": [ "Goal", "All" ],
         "description": "SCAN is a set of simple language-driven navigation tasks for studying compositional learning and zero-shot generalization. The SCAN tasks were inspired by the CommAI environment, which is the origin of the acronym (Simplified versions of the CommAI Navigation tasks). See the paper: https://arxiv.org/abs/1711.00350 or data: https://github.com/brendenlake/SCAN"
+    },
+    {
+        "id": "Persona-Chat",
+        "display_name": "Persona-Chat",
+        "task": "personachat",
+        "tags": [ "ChitChat", "All" ],
+        "description": "A chit-chat dataset where paired Turkers are given assigned personas and chat to try to get to know each other. See the paper: https://arxiv.org/abs/1801.07243"
+    },
+    {
+        "id": "Twitter",
+        "display_name": "Twitter",
+        "task": "twitter",
+        "tags": [ "All",  "ChitChat" ],
+        "description": "Twitter data from: https://github.com/Marsan-Ma/chat_corpus/. No train/valid/test split was provided so 10k for valid and 10k for test was chosen at random."
     }
 ]

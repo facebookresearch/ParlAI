@@ -633,7 +633,6 @@ class MTurkManager():
             'type': 'reward',
             'num_total_assignments': num_assignments,
             'reward': self.opt['reward'],  # in dollars
-            'unique': self.opt['unique_worker']
         }
         total_cost = mturk_utils.calculate_mturk_cost(payment_opt=payment_opt)
         if not mturk_utils.check_mturk_balance(
@@ -855,6 +854,8 @@ class MTurkManager():
         finally:
             server_utils.delete_server(self.server_task_name)
             mturk_utils.delete_sns_topic(self.topic_arn)
+            if self.opt['unique_worker']:
+                mturk_utils.delete_qualification(self.unique_qual_id)
             self._save_disconnects()
 
     # MTurk Agent Interaction Functions #
@@ -897,6 +898,7 @@ class MTurkManager():
         """Send a message through the socket manager,
         update conversation state
         """
+        data = data.copy()  # Ensure data packet is sent in current state
         data['type'] = data_model.MESSAGE_TYPE_MESSAGE
         # Force messages to have a unique ID
         if 'message_id' not in data:
@@ -924,6 +926,7 @@ class MTurkManager():
         if agent is not None:
             agent.state.messages.append(packet.data)
         self.socket_manager.queue_packet(packet)
+        return data['message_id']
 
     def send_command(self, receiver_id, assignment_id, data, blocking=True,
                      ack_func=None):
@@ -955,6 +958,11 @@ class MTurkManager():
     def mark_workers_done(self, workers):
         """Mark a group of workers as done to keep state consistent"""
         for worker in workers:
+            if self.opt['unique_worker']:
+                self.give_worker_qualification(
+                    worker.worker_id,
+                    self.unique_qual_name
+                )
             if not worker.state.is_final():
                 worker.state.status = AssignState.STATUS_DONE
 
@@ -1005,6 +1013,18 @@ class MTurkManager():
                 'RequiredToPreview': True
             })
 
+        if self.opt['unique_worker']:
+            self.unique_qual_name = self.task_group_id + '_max_submissions'
+            self.unique_qual_id = mturk_utils.find_or_create_qualification(
+                self.unique_qual_name,
+                'Prevents workers from completing a task too frequently'
+            )
+            qualifications.append({
+                'QualificationTypeId': self.unique_qual_id,
+                'Comparator': 'DoesNotExist',
+                'RequiredToPreview': True
+            })
+
         hit_type_id = mturk_utils.create_hit_type(
             hit_title=self.opt['hit_title'],
             hit_description='{} (ID: {})'.format(self.opt['hit_description'],
@@ -1030,27 +1050,14 @@ class MTurkManager():
             self.topic_arn
         )
 
-        if self.opt['unique_worker'] is True:
-            # Use a single hit with many assignments to allow
-            # workers to only work on the task once
+        for _i in range(num_hits):
             mturk_page_url, hit_id = mturk_utils.create_hit_with_hit_type(
                 page_url=mturk_chat_url,
                 hit_type_id=hit_type_id,
-                num_assignments=num_hits,
+                num_assignments=1,
                 is_sandbox=self.is_sandbox
             )
             self.hit_id_list.append(hit_id)
-        else:
-            # Create unique hits, allowing one worker to be able to handle many
-            # tasks without needing to be unique
-            for _i in range(num_hits):
-                mturk_page_url, hit_id = mturk_utils.create_hit_with_hit_type(
-                    page_url=mturk_chat_url,
-                    hit_type_id=hit_type_id,
-                    num_assignments=1,
-                    is_sandbox=self.is_sandbox
-                )
-                self.hit_id_list.append(hit_id)
         return mturk_page_url
 
     def create_hits(self, qualifications=None):

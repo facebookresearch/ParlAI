@@ -80,8 +80,11 @@ def main():
     opt['datatype'] = 'train'
     agent = ParsedRemoteAgent(opt, {'dictionary_shared': dictionary.share()})
     world_train = create_task(opt, agent)
-    opt['datatype'] = 'valid'
-    world_valid = create_task(opt, agent)
+
+    valid_opt = copy.deepcopy(opt)
+    valid_opt['datatype'] = 'valid'
+    valid_opt['numthreads'] = 1  # switch to 1 thread, the memnn code will handle it better
+    world_valid = create_task(valid_opt, agent)
 
     start = time.time()
     with world_train:
@@ -89,7 +92,6 @@ def main():
             print('[ training ]')
             for _ in range(opt['num_examples'] * opt.get('numthreads', 1)):
                 world_train.parley()
-            world_train.synchronize()
 
             print('[ validating ]')
             world_valid.reset()
@@ -103,7 +105,7 @@ def main():
                 break
 
         #show some example dialogs after training:
-        world_valid = create_task(opt, agent)
+        world_valid = create_task(valid_opt, agent)
         for _k in range(3):
             world_valid.parley()
             print(world_valid.display())

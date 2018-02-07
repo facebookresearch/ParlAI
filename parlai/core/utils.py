@@ -105,13 +105,16 @@ def round_sigfigs(x, sigfigs=4):
     try:
         if x == 0:
             return 0
-        if x in [float('inf'), float('-inf'), float('NaN')]:
-            return x
         return round(x, -math.floor(math.log10(abs(x)) - sigfigs + 1))
     except (RuntimeError, TypeError):
         # handle 1D torch tensors
         # if anything else breaks here please file an issue on Github
         return round_sigfigs(x[0], sigfigs)
+    except (ValueError, OverflowError) as ex:
+        if x in [float('inf'), float('-inf')] or x != x:  # inf or nan
+            return x
+        else:
+            raise ex
 
 
 def flatten(teacher, context_length=-1, include_labels=True):
