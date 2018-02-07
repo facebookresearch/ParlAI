@@ -36,8 +36,8 @@ def setup_args():
 def main(parser):
     opt = parser.parse_args()
 
-    if opt['torch']:
-        with torch.autograd.profiler.profile() as prof:
+    if opt['torch'] or opt['torch_cuda']:
+        with torch.autograd.profiler.profile(use_cuda=opt['torch_cuda']) as prof:
             TrainLoop(parser).train()
         print(prof.total_average())
 
@@ -59,10 +59,6 @@ def main(parser):
                   '`cuda()` prints cuda-sorted list')
 
             pdb.set_trace()
-    elif opt['torch_cuda']:
-        with torch.cuda.profiler.profile() as prof:
-            TrainLoop(parser).train()
-        print(prof)
     else:
         pr = cProfile.Profile()
         pr.enable()

@@ -273,7 +273,7 @@ class LoaderProcess(Thread):
     """
     def __init__(self, opt):
         super().__init__(daemon=True)
-        self.dataset = opt['dataset'](opt)
+        self.dataset = opt['dataset_class'](opt)
         self.bsz = opt.get('batchsize', 1)
         self.num_workers = opt.get('num_workers', 4)
         collate_fn = opt.get('collate_fn', default_collate)
@@ -394,19 +394,24 @@ class PytorchDataTeacher(FixedDialogTeacher):
         # One can specify a collate function to use for preparing a batch
         self.opt = copy.deepcopy(opt)
         dataset_class, self.collate_fn = self.get_dataset_class(opt)
-        opt['dataset'] = dataset_class
+        opt['dataset_class'] = dataset_class
         opt['collate_fn'] = self.collate_fn
 
         if not shared:
             self.dataset = dataset_class(opt)
+            if self.datatype == 'train':
+                data_sampler = sampler.RandomSampler(self.dataset)
+            else:
+                data_sampler = sampler.SequentialSampler(self.dataset)
+
             self.pytorch_dataloader = DataLoader(
                 self.dataset,
                 batch_size=self.bsz,
                 shuffle=False,
-                sampler=sampler.SequentialSampler(self.dataset),
+                sampler=data_sampler,
                 num_workers=self.num_workers,
                 collate_fn=self.collate_fn,
-                pin_memory=False,
+                pin_memory=True,
                 drop_last=False,
                 )
             self.lastYs = [None] * self.bsz
