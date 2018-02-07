@@ -246,8 +246,6 @@ class LanguageModelAgent(Agent):
                 self.observation = dict_to_return
                 return dict_to_return
         else:
-            if 'text' in obs:
-                obs['text'] += '  __END__'
             self.observation = obs
             return obs
 
@@ -283,43 +281,6 @@ class LanguageModelAgent(Agent):
 
         return loss/float(sum(y_lens))
 
-    # def get_predictions(self, data, end_idxs):
-    #     """Generates predictions word by word until we either reach the end token
-    #        or some max length (opt['truncate_pred']).
-    #     """
-    #     token_list = []
-    #     bsz = data.size(0)
-    #     done = [False for _ in range(bsz)]
-    #     total_done = 0
-    #     hidden = self.model.init_hidden(bsz)
-    #
-    #     i = 0
-    #     while total_done < bsz and i <= self.opt['truncate_pred']:
-    #         if i == 0:
-    #             # feed in input without end tokens
-    #             output, hidden = self.model(data.transpose(0,1), hidden)
-    #             hidden = self.repackage_hidden(hidden)
-    #             # feed in end tokens
-    #             output, hidden = self.model(Variable(self.ends[:bsz].view(1,bsz)), hidden)
-    #         else:
-    #             output, hidden = self.model(Variable(word_idx.view(1, bsz)), hidden, no_pack=True)
-    #         hidden = self.repackage_hidden(hidden)
-    #         word_weights = output.squeeze().data.exp()
-    #         if bsz > 1:
-    #             value, word_idx = torch.max(word_weights, 1)
-    #         else:
-    #             value, word_idx = torch.max(word_weights, 0)
-    #         # mark end indices for items in batch
-    #         for k in range(word_idx.size(0)):
-    #             if not done[k]:
-    #                 if int(word_idx[k]) == self.END_IDX:
-    #                     done[k] = True
-    #                     total_done += 1
-    #         token_list.append(word_idx.view(bsz, 1))
-    #         i += 1
-    #
-    #     return torch.cat(token_list,1)
-
     def get_predictions(self, data, end_idxs):
         """Generates predictions word by word until we either reach the end token
            or some max length (opt['truncate_pred']).
@@ -329,37 +290,17 @@ class LanguageModelAgent(Agent):
         done = [False for _ in range(bsz)]
         total_done = 0
         hidden = self.model.init_hidden(bsz)
-        output, hidden = self.model(data.transpose(0,1), hidden)
-        hidden = self.repackage_hidden(hidden)
-        word_weights = output.squeeze().data.exp()
-        # get last word of output
-        if bsz > 1:
-            value, word_idx = torch.max(word_weights, 2)
-            last_words = []
-            for j in range(len(end_idxs)):
-                last_words.append(word_idx[end_idxs[j]-1][j])
-            word_idx = torch.LongTensor(last_words)
-            if self.use_cuda:
-                word_idx = word_idx.cuda()
-        else:
-            word_weights = word_weights[-1]
-            value, word_idx = torch.max(word_weights, 0)
-        # mark end indices in batch
-        for k in range(word_idx.size(0)):
-            if not done[k]:
-                if int(word_idx[k]) == self.END_IDX:
-                    done[k] = True
-                    total_done +=1
-        token_list.append(word_idx.view(bsz, 1))
 
-        i = 1
-
+        i = 0
         while total_done < bsz and i <= self.opt['truncate_pred']:
-            new_col = word_idx.clone()
-            new_col = Variable(new_col)
-            if self.use_cuda:
-                new_col = new_col.cuda()
-            output, hidden = self.model(new_col.view(1, bsz), hidden, no_pack=True)
+            if i == 0:
+                # feed in input without end tokens
+                output, hidden = self.model(data.transpose(0,1), hidden)
+                hidden = self.repackage_hidden(hidden)
+                # feed in end tokens
+                output, hidden = self.model(Variable(self.ends[:bsz].view(1,bsz)), hidden)
+            else:
+                output, hidden = self.model(Variable(word_idx.view(1, bsz)), hidden, no_pack=True)
             hidden = self.repackage_hidden(hidden)
             word_weights = output.squeeze().data.exp()
             if bsz > 1:
@@ -415,9 +356,7 @@ class LanguageModelAgent(Agent):
             for obs in observations:
                 if obs:
                     if 'text2vec' in obs:
-                        # self.next_batch += obs['text2vec']
-                        for vec in obs['text2vec']:
-                            self.next_batch.append(vec)
+                        self.next_batch += obs['text2vec']
             if len(self.next_batch) <= self.batchsize:
                 return None, None, None, None, None, None
             else:
