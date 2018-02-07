@@ -175,19 +175,15 @@ def get_mturk_client(is_sandbox):
     return client
 
 
-def delete_qualification(qualification_id):
+def delete_qualification(qualification_id, is_sandbox):
     """Deletes a qualification by id"""
-    client = boto3.client(
-        service_name='mturk',
-        region_name='us-east-1',
-        endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
-    )
+    client = get_mturk_client(is_sandbox)
     client.delete_qualification_type(
         QualificationTypeId=qualification_id
     )
 
 
-def find_qualification(qualification_name, must_be_owned=True):
+def find_qualification(qualification_name, is_sandbox, must_be_owned=True):
     """Query amazon to find the existing qualification name, return the Id,
     otherwise return none.
     If must_be_owned is true, it only returns qualifications owned by the user.
@@ -230,7 +226,7 @@ def find_qualification(qualification_name, must_be_owned=True):
     return None
 
 
-def find_or_create_qualification(qualification_name, description,
+def find_or_create_qualification(qualification_name, description, is_sandbox,
                                  must_be_owned=True):
     """Query amazon to find the existing qualification name, return the Id. If
     it exists and must_be_owned is true but we don't own it, this prints an
@@ -238,6 +234,7 @@ def find_or_create_qualification(qualification_name, description,
     """
     qual_id = find_qualification(
         qualification_name,
+        is_sandbox,
         must_be_owned=must_be_owned
     )
 
@@ -247,11 +244,7 @@ def find_or_create_qualification(qualification_name, description,
         return qual_id
 
     # Create the qualification, as it doesn't exist yet
-    client = boto3.client(
-        service_name='mturk',
-        region_name='us-east-1',
-        endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
-    )
+    client = get_mturk_client(is_sandbox)
     response = client.create_qualification_type(
         Name=qualification_name,
         Description=description,
@@ -260,13 +253,10 @@ def find_or_create_qualification(qualification_name, description,
     return response['QualificationType']['QualificationTypeId']
 
 
-def give_worker_qualification(worker_id, qualification_id, value=None):
+def give_worker_qualification(worker_id, qualification_id, value=None,
+                              is_sandbox=True):
     """Give a qualification to the given worker"""
-    client = boto3.client(
-        service_name='mturk',
-        region_name='us-east-1',
-        endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
-    )
+    client = get_mturk_client(is_sandbox)
 
     if value is not None:
         client.associate_qualification_with_worker(

@@ -869,7 +869,8 @@ class MTurkManager():
             server_utils.delete_server(self.server_task_name)
             mturk_utils.delete_sns_topic(self.topic_arn)
             if self.opt['unique_worker']:
-                mturk_utils.delete_qualification(self.unique_qual_id)
+                mturk_utils.delete_qualification(self.unique_qual_id,
+                                                 self.is_sandbox)
             self._save_disconnects()
 
     # MTurk Agent Interaction Functions #
@@ -975,7 +976,7 @@ class MTurkManager():
             if self.is_unique:
                 self.give_worker_qualification(
                     worker.worker_id,
-                    self.unique_qual_name
+                    self.unique_qual_name,
                 )
             if not worker.state.is_final():
                 worker.state.status = AssignState.STATUS_DONE
@@ -1015,7 +1016,8 @@ class MTurkManager():
                 self.opt['block_qualification'],
                 'A soft ban from using a ParlAI-created HIT due to frequent '
                 'disconnects from conversations, leading to negative '
-                'experiences for other Turkers and for the requester.'
+                'experiences for other Turkers and for the requester.',
+                self.is_sandbox,
             )
             assert block_qual_id is not None, (
                 'Hits could not be created as block qualification could not be'
@@ -1033,7 +1035,8 @@ class MTurkManager():
                 self.unique_qual_name = self.task_group_id + '_max_submissions'
             self.unique_qual_id = mturk_utils.find_or_create_qualification(
                 self.unique_qual_name,
-                'Prevents workers from completing a task too frequently'
+                'Prevents workers from completing a task too frequently',
+                self.is_sandbox,
             )
             qualifications.append({
                 'QualificationTypeId': self.unique_qual_id,
@@ -1140,11 +1143,12 @@ class MTurkManager():
         """Soft block a worker by giving the worker the block qualification"""
         qual_name = self.opt['block_qualification']
         assert qual_name != '', ('No block qualification has been specified')
-        self.give_worker_qualification(worker_id, qual_name)
+        self.give_worker_qualification(worker_id, qual_name,
+                                       is_sandbox=self.is_sandbox)
 
     def give_worker_qualification(self, worker_id, qual_name, qual_value=None):
         """Give a worker a particular qualification"""
-        qual_id = mturk_utils.find_qualification(qual_name)
+        qual_id = mturk_utils.find_qualification(qual_name, self.is_sandbox)
         if qual_id is False or qual_id is None:
             shared_utils.print_and_log(
                 logging.WARN,
@@ -1154,7 +1158,8 @@ class MTurkManager():
                 should_print=True
             )
             return
-        mturk_utils.give_worker_qualification(worker_id, qual_id, qual_value)
+        mturk_utils.give_worker_qualification(worker_id, qual_id, qual_value,
+                                              self.is_sandbox)
         shared_utils.print_and_log(
             logging.INFO,
             'gave {} qualification {}'.format(worker_id, qual_name),
@@ -1167,7 +1172,8 @@ class MTurkManager():
         the ID of the existing qualification rather than throw an error
         """
         if not can_exist:
-            qual_id = mturk_utils.find_qualification(qualification_name)
+            qual_id = mturk_utils.find_qualification(qualification_name,
+                                                     self.is_sandbox)
             if qual_id is not None:
                 shared_utils.print_and_log(
                     logging.WARN,
@@ -1178,7 +1184,8 @@ class MTurkManager():
                 return None
         return mturk_utils.find_or_create_qualification(
             qualification_name,
-            description
+            description,
+            self.is_sandbox
         )
 
     def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason,
