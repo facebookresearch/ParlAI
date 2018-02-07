@@ -66,12 +66,31 @@ class MemnnAgent(Agent):
             torch.cuda.device(opt['gpu'])
 
         if not shared:
-            self.opt = opt
             self.id = 'MemNN'
             self.dict = DictionaryAgent(opt)
             self.answers = [None] * opt['batchsize']
-
             self.model = MemNN(opt, len(self.dict))
+
+            if opt['cuda']:
+                self.model.share_memory()
+                if self.decoder is not None:
+                    self.decoder.cuda()
+
+            if opt.get('model_file') and os.path.isfile(opt['model_file']):
+                print('Loading existing model parameters from ' + opt['model_file'])
+                self.load(opt['model_file'])
+        else:    
+            # model is shared during hogwild  
+            if 'threadindex' in shared: 
+                self.model = shared['model']
+                self.dict = shared['dict']
+                self.decoder = shared['decoder']
+                self.answers = [None] * opt['batchsize']
+            else: 
+                self.answers = shared['answers']
+
+        if hasattr(self, 'model'):
+            self.opt = opt
             self.mem_size = opt['mem_size']
             self.loss_fn = CrossEntropyLoss()
 
@@ -100,17 +119,6 @@ class MemnnAgent(Agent):
             else:
                 raise NotImplementedError('Optimizer not supported.')
 
-            if opt['cuda']:
-                self.model.share_memory()
-                if self.decoder is not None:
-                    self.decoder.cuda()
-
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
-                print('Loading existing model parameters from ' + opt['model_file'])
-                self.load(opt['model_file'])
-        else:       
-            self.answers = shared['answers']
-
         self.history = {}
         self.episode_done = True
         self.last_cands, self.last_cands_list = None, None
@@ -119,6 +127,11 @@ class MemnnAgent(Agent):
     def share(self):
         shared = super().share()
         shared['answers'] = self.answers
+        if self.opt.get('numthreads', 1) > 1:
+            shared['model'] = self.model
+            self.model.share_memory()
+            shared['dict'] = self.dict
+            shared['decoder'] = self.decoder
         return shared
 
     def observe(self, observation):
