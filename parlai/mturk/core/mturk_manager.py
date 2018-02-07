@@ -348,6 +348,18 @@ class MTurkManager():
                 'Agent ({}) with no assign_id called alive'.format(worker_id)
             )
         elif assign_id not in curr_worker_state.agents:
+            # Ensure that this connection isn't violating our uniqueness
+            # constraints
+            if self.is_unique:
+                for agent in curr_worker_state.agents.values():
+                    if agent.state.status == AssignState.STATUS_DONE:
+                        text = (
+                            'You have already participated in this HIT the '
+                            'maximum number of times. This HIT is now expired.'
+                            ' Please return the HIT.'
+                        )
+                        self.force_expire_hit(worker_id, assign_id, text)
+                        return
             # First time this worker has connected under this assignment, init
             # new agent if we are still accepting workers
             if self.accepting_workers:
@@ -666,9 +678,11 @@ class MTurkManager():
 
         shared_utils.print_and_log(logging.INFO, 'Setting up MTurk server...',
                                    should_print=True)
+        self.is_unique = self.opt['unique_worker'] or \
+            (self.opt['unique_qual_name'] is not None)
         mturk_utils.create_hit_config(
             task_description=self.opt['task_description'],
-            unique_worker=self.opt['unique_worker'],
+            unique_worker=self.is_unique,
             is_sandbox=self.opt['is_sandbox']
         )
         # Poplulate files to copy over to the server
@@ -958,7 +972,7 @@ class MTurkManager():
     def mark_workers_done(self, workers):
         """Mark a group of workers as done to keep state consistent"""
         for worker in workers:
-            if self.opt['unique_worker']:
+            if self.is_unique:
                 self.give_worker_qualification(
                     worker.worker_id,
                     self.unique_qual_name
@@ -1013,8 +1027,10 @@ class MTurkManager():
                 'RequiredToPreview': True
             })
 
-        if self.opt['unique_worker']:
-            self.unique_qual_name = self.task_group_id + '_max_submissions'
+        if self.is_unique:
+            self.unique_qual_name = self.opt.get('unique_qual_name')
+            if self.unique_qual_name is None:
+                self.unique_qual_name = self.task_group_id + '_max_submissions'
             self.unique_qual_id = mturk_utils.find_or_create_qualification(
                 self.unique_qual_name,
                 'Prevents workers from completing a task too frequently'
@@ -1139,6 +1155,11 @@ class MTurkManager():
             )
             return
         mturk_utils.give_worker_qualification(worker_id, qual_id, qual_value)
+        shared_utils.print_and_log(
+            logging.INFO,
+            'gave {} qualification {}'.format(worker_id, qual_name),
+            should_print=True
+        )
 
     def create_qualification(self, qualification_name, description,
                              can_exist=True):

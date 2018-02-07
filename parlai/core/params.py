@@ -104,6 +104,10 @@ class ParlaiParser(argparse.ArgumentParser):
             action='store_true',
             help='enforce that no worker can work on your task twice')
         mturk.add_argument(
+            '--unique-qual-name', dest='unique_qual_name',
+            default=None, type=str,
+            help='qualification name to use for uniqueness between HITs')
+        mturk.add_argument(
             '-r', '--reward', default=0.05, type=float,
             help='reward for each worker for finishing the conversation, '
                  'in US dollars')
