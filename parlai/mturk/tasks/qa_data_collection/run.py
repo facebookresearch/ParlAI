@@ -50,8 +50,13 @@ def main():
 
         mturk_manager.ready_to_accept_workers()
 
-        def check_worker_eligibility(worker):
-            return True
+        def check_workers_eligibility(workers):
+            return workers
+
+        eligibility_function = {
+            'func': check_workers_eligibility,
+            'multiple': True,
+        }
 
         def assign_worker_roles(worker):
             worker[0].id = mturk_agent_id
@@ -72,7 +77,7 @@ def main():
             world.review_work()
 
         mturk_manager.start_task(
-            eligibility_function=check_worker_eligibility,
+            eligibility_function=eligibility_function,
             assign_role_function=assign_worker_roles,
             task_function=run_conversation
         )
