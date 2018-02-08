@@ -7,30 +7,16 @@
 # py parlai/messenger/tasks/overworld_demo/run.py --debug --verbose
 
 from parlai.core.worlds import World
-from parlai.messenger.core.worlds import OnboardWorld
-from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_agent
-from parlai.core.worlds import create_task
 
 class MessengerBotChatTaskWorld(World):
     """Example one person world that talks to a provided agent (bot)."""
 
     MAX_AGENTS = 1
 
-    def __init__(self, opt, agent):
+    def __init__(self, opt, agent, bot):
         self.agent = agent
         self.episodeDone = False
-        # create model
-        opt = {}
-        opt["datapath"]="/Users/jase/src/ParlAI/data"
-        opt["model"]="/Users/jase/src/ParlAI/parlai_external.projects.personachat.memnn1hop.memnn1hop:Memnn1hopAgent"
-        opt["model_file"]="/Users/jase/src/ParlAI/parlai_external/data/personachat/memnn2hop_sweep/persona-none_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops0_lins0/model"
-        opt['fixed_candidates_file'] = "/Users/jase/src/ParlAI/data/personachat/cands.txt"
-        #----
-        opt['model_file'] = None
-        opt['model'] = 'repeat_label'
-        print(opt)
-        self.model = create_agent(opt)
+        self.model = bot 
 
     @staticmethod
     def run(messenger_manager, opt, agents, task_id):
@@ -62,7 +48,6 @@ class MessengerBotChatTaskWorld(World):
                 print(response)
                 print("~~~~~~~~~~~")
                 response['id'] = ''
-                # response['text'] = "lol"
                 self.agent.observe(response)
 
     def episode_done(self):

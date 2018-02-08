@@ -9,25 +9,21 @@ from parlai.messenger.tasks.chatbot.worlds import \
 from parlai.messenger.core.messenger_manager import MessengerManager
 from parlai.messenger.core.worlds import SimpleMessengerOverworld as \
     MessengerOverworld
+from parlai.core.agents import create_agent, create_agent_from_shared
 import os
 import importlib
 
 
 def main():
-    argparser = ParlaiParser(False, False)
-    argparser.add_parlai_data_path()
+    argparser = ParlaiParser(True, True)
     argparser.add_messenger_args()
     opt = argparser.parse_args()
-    opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
-
-    # Initialize a SQuAD teacher agent, which we will get context from
-    module_name = 'parlai.tasks.squad.agents'
-    class_name = 'DefaultTeacher'
-    my_module = importlib.import_module(module_name)
-    task_class = getattr(my_module, class_name)
-    task_opt = {}
-    task_opt['datatype'] = 'train'
-    task_opt['datapath'] = opt['datapath']
+    print(opt)
+    if opt['model'] == None and opt['model_file'] == None:
+        print("Model must be specified")
+        return
+    bot = create_agent(opt)
+    shared_bot_params = bot.share()
 
     messenger_manager = MessengerManager(opt=opt)
     messenger_manager.setup_server()
@@ -40,11 +36,13 @@ def main():
         agent[0].disp_id = 'Agent'
 
     def run_conversation(manager, opt, agents, task_id):
-        task = task_class(task_opt)
         agent = agents[0]
+        this_bot = create_agent_from_shared(shared_bot_params)
+
         world = MessengerBotChatTaskWorld(
             opt=opt,
-            agent=agent
+            agent=agent,
+            bot=this_bot
         )
         while not world.episode_done():
             world.parley()
