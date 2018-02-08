@@ -16,7 +16,7 @@ def main():
     argparser.add_messenger_args()
     opt = argparser.parse_args()
     opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
-    opt['password'] = None #'ParlAI'  # If password is none anyone can chat
+    opt['password'] = 'ParlAI'  # If password is none anyone can chat
 
     messenger_manager = MessengerManager(opt=opt)
     messenger_manager.setup_server()
