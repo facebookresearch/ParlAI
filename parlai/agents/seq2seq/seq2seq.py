@@ -6,7 +6,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import maintain_dialog_history
+from parlai.core.utils import maintain_dialog_history, PaddingUtils
 from .modules import Seq2seq, RandomProjection
 
 import torch
@@ -17,6 +17,7 @@ import torch.nn as nn
 from collections import deque
 
 import os
+import math
 import random
 
 
@@ -128,10 +129,6 @@ class Seq2seqAgent(Agent):
                                 'Fasttext.'
                                 'Preinitialized embeddings can also be fixed '
                                 'so they are not updated during training.')
-        agent.add_argument('-lm', '--language-model', default='none',
-                           choices=['none', 'only', 'both'],
-                           help='Enabled language modeling training on the '
-                                'concatenated input and label data.')
         agent.add_argument('-hist', '--history-length', default=100000, type=int,
                            help='Number of past tokens to remember. '
                                 'Default remembers 100000 tokens.')
@@ -247,7 +244,6 @@ class Seq2seqAgent(Agent):
             # if model was built, do more setup
             self.clip = opt.get('gradient_clip', 0.2)
             self.rank = opt['rank_candidates']
-            self.lm = opt['language_model']
 
             # set up tensors once
             self.xs = torch.LongTensor(1, 1)
@@ -375,7 +371,7 @@ class Seq2seqAgent(Agent):
         self.answers[batch_idx] = None
         return obs
 
-    def predict(self, xs, ys=None, cands=None, valid_cands=None, lm=False):
+    def predict(self, xs, ys=None, cands=None, valid_cands=None):
         """Produce a prediction from our model.
 
         Update the model using the targets if available, otherwise rank
@@ -391,10 +387,8 @@ class Seq2seqAgent(Agent):
             loss += self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
             loss.backward()
             self.update_params()
-            losskey = 'loss' if not lm else 'lmloss'
-            loss_dict = {losskey: loss.data}
-            perpkey = 'ppl' if not lm else 'lmppl'
-            loss_dict[perpkey] = loss.exp().data
+            loss_dict = {'loss': loss.mul(len(xs)).data[0]}
+            loss_dict['ppl'] = (math.e**loss).mul(len(xs)).data[0]
         else:
             self.model.eval()
             predictions, scores, text_cand_inds = self.model(xs, ys, cands,
@@ -402,83 +396,26 @@ class Seq2seqAgent(Agent):
 
         return predictions, text_cand_inds, loss_dict
 
-    def batchify(self, observations, lm=False):
+    def vectorize(self, observations):
         """Convert a list of observations into input & target tensors."""
-        def valid(obs):
-            # check if this is an example our model should actually process
-            return 'text2vec' in obs and len(obs['text2vec']) > 0
-        try:
-            # valid examples and their indices
-            valid_inds, exs = zip(*[(i, ex) for i, ex in
-                                    enumerate(observations) if valid(ex)])
-        except ValueError:
-            # zero examples to process in this batch, so zip failed to unpack
-            return None, None, None, None, None, None
-
-        # set up the input tensors
-        bsz = len(exs)
-
-        # `x` text is already tokenized and truncated
-        # sort by length so we can use pack_padded
-        parsed_x = [ex['text2vec'] for ex in exs]
-        x_lens = [len(x) for x in parsed_x]
-        ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
-
-        exs = [exs[k] for k in ind_sorted]
-        valid_inds = [valid_inds[k] for k in ind_sorted]
-        parsed_x = [parsed_x[k] for k in ind_sorted]
-
-        labels_avail = any(['labels' in ex for ex in exs])
-
-        if lm:
-            self.xs.resize_(bsz, 1)
-            self.xs.fill_(self.START_IDX)
-            xs = Variable(self.xs)
-        else:
-            max_x_len = max([len(x) for x in parsed_x])
-
-            # TODO: move zero padding to utility function?
-            parsed_x = [x if len(x) == max_x_len else
-                        x + deque((self.NULL_IDX,)) * (max_x_len - len(x))
-                        for x in parsed_x]
-            xs = torch.LongTensor(parsed_x)
-            if self.use_cuda:
-                # copy to gpu
-                self.xs.resize_(xs.size())
-                self.xs.copy_(xs, async=True)
-                xs = Variable(self.xs)
-            else:
-                xs = Variable(xs)
-
-        # set up the target tensors
         ys = None
-        labels = None
-        if labels_avail:
-            # randomly select one of the labels to update on, if multiple
-            labels = [random.choice(ex.get('labels', [''])) for ex in exs]
-            # parse each label and append END
-            parsed_y = [deque(maxlen=self.truncate) for _ in labels]
-            for dq, y in zip(parsed_y, labels):
-                dq.extendleft(reversed(self.parse(y)))
-            for y in parsed_y:
-                y.append(self.END_IDX)
-            if lm:
-                for x, y in zip(parsed_x, parsed_y):
-                    if y.maxlen is not None:
-                        y = deque(y, maxlen=y.maxlen * 2)
-                    y.extendleft(reversed(x))
-
-            max_y_len = max(len(y) for y in parsed_y)
-            parsed_y = [y if len(y) == max_y_len else
-                        y + deque((self.NULL_IDX,)) * (max_y_len - len(y))
-                        for y in parsed_y]
-            ys = torch.LongTensor(parsed_y)
-            if self.use_cuda:
-                # copy to gpu
+        xs, ys, labels, valid_inds, _, _ = PaddingUtils.pad_text(
+            observations, self.dict, self.END_IDX, self.NULL_IDX, dq=True,
+            eval_labels=False, truncate=self.truncate)
+        if xs is None:
+            return None, None, None, None, None, None
+        if self.use_cuda:
+            # copy to gpu
+            self.xs.resize_(xs.size())
+            self.xs.copy_(xs, async=True)
+            xs = Variable(self.xs)
+            if ys is not None:
                 self.ys.resize_(ys.size())
                 self.ys.copy_(ys, async=True)
                 ys = Variable(self.ys)
-            else:
+        else:
+            xs = Variable(xs)
+            if ys is not None:
                 ys = Variable(ys)
 
         # set up candidates
@@ -528,64 +465,39 @@ class Seq2seqAgent(Agent):
         # valid_inds tells us the indices of all valid examples
         # e.g. for input [{}, {'text': 'hello'}, {}, {}], valid_inds is [1]
         # since the other three elements had no 'text' field
-        xs, ys, labels, valid_inds, cands, valid_cands = self.batchify(observations)
+        xs, ys, labels, valid_inds, cands, valid_cands = self.vectorize(observations)
 
         if xs is None:
             # no valid examples, just return empty responses
             return batch_reply
 
-        if self.lm != 'none' and ys is not None:
-            # train on lm task: given [START], predict [x y]
-            # (regular task is given [x START] produce [y])
-            xs, ys, _, _, _, _ = self.batchify(observations, lm=True)
-            _, _, loss = self.predict(xs, ys, lm=True)
-            if loss is not None:
+        # produce predictions, train on targets if availables
+        predictions, text_cand_inds, loss = self.predict(xs, ys, cands, valid_cands)
+        if loss is not None:
+            if 'metrics' in batch_reply[0]:
+                for k, v in loss.items():
+                    batch_reply[0]['metrics'][k] = v
+            else:
                 batch_reply[0]['metrics'] = loss
 
-        if self.lm != 'only' or ys is None:
-            # produce predictions, train on targets if availables
-            predictions, text_cand_inds, loss = self.predict(xs, ys, cands, valid_cands)
-            if loss is not None:
-                if 'metrics' in batch_reply[0]:
-                    for k, v in loss.items():
-                        batch_reply[0]['metrics'][k] = v
-                else:
-                    batch_reply[0]['metrics'] = loss
 
-            predictions = predictions.cpu()
-            for i in range(len(predictions)):
-                # map the predictions back to non-empty examples in the batch
-                # we join with spaces since we produce tokens one at a time
-                curr = batch_reply[valid_inds[i]]
-                output_tokens = []
-                for c in predictions.data[i]:
-                    if c == self.END_IDX:
-                        break
-                    else:
-                        output_tokens.append(c)
-                curr_pred = self.v2t(output_tokens)
-                curr['text'] = curr_pred
-                if labels is not None:
-                    y = []
-                    for c in ys.data[i]:
-                        if c == self.END_IDX:
-                            break
-                        else:
-                            y.append(c)
-                    self.answers[valid_inds[i]] = y
-                else:
-                    self.answers[valid_inds[i]] = output_tokens
-            if labels is None and random.random() > 0.2:
-                print('prediction: ', curr_pred)
+        if ys is not None:
+            report_freq = 0
+        else:
+            report_freq = 0.1
+        PaddingUtils.map_predictions(
+            predictions, valid_inds, batch_reply, observations, self.dict,
+            self.END_IDX, report_freq=report_freq, labels=labels,
+            answers=self.answers, ys=ys)
 
-            if text_cand_inds is not None:
-                text_cand_inds = text_cand_inds.cpu().data
-                for i in range(len(valid_cands)):
-                    order = text_cand_inds[i]
-                    _, batch_idx, curr_cands = valid_cands[i]
-                    curr = batch_reply[batch_idx]
-                    curr['text_candidates'] = [curr_cands[idx] for idx in order
-                                               if idx < len(curr_cands)]
+        if text_cand_inds is not None:
+            text_cand_inds = text_cand_inds.cpu().data
+            for i in range(len(valid_cands)):
+                order = text_cand_inds[i]
+                _, batch_idx, curr_cands = valid_cands[i]
+                curr = batch_reply[batch_idx]
+                curr['text_candidates'] = [curr_cands[idx] for idx in order
+                                           if idx < len(curr_cands)]
 
         return batch_reply
 

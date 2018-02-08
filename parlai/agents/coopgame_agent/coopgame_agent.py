@@ -2,6 +2,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.agents import Agent
+from parlai.core.dict import DictionaryAgent
 from .modules import ImgNet, ListenNet, StateNet, SpeakNet, PredictNet
 
 import torch
