@@ -4,8 +4,9 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.params import ParlaiParser
-from parlai.messenger.tasks.overworld_demo.worlds import MessengerOverworld
-from parlai.messenger.core.messenger_manager import MessengerManager
+from parlai.messenger.core.worlds import SimpleMessengerOverworld as \
+    MessengerOverworld
+from parlai.messenger.tasks.chatbot.worlds import MessengerOverworld
 
 import os
 
@@ -16,7 +17,7 @@ def main():
     argparser.add_messenger_args()
     opt = argparser.parse_args()
     opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
-    opt['password'] = None #'ParlAI'  # If password is none anyone can chat
+    opt['password'] = None
 
     messenger_manager = MessengerManager(opt=opt)
     messenger_manager.setup_server()
