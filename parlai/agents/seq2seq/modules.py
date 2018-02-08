@@ -22,7 +22,6 @@ class Seq2seq(nn.Module):
         self.opt = opt
 
         self.rank = opt['rank_candidates']
-        self.lm = opt['language_model']
         self.attn_type = opt['attention']
 
         self.NULL_IDX = padding_idx
