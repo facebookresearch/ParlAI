@@ -188,18 +188,18 @@ class QuestionerAgent(CooperativeGameAgent):
         values at according to (Kottur et al. 2017)."""
         DictionaryAgent.add_cmdline_args(argparser)
         group = argparser.add_argument_group('Questioner Agent Arguments')
-        parser.add_argument('--q-in-vocab', default=13, type=int,
-                            help='Input vocabulary for questioner. Usually includes total '
-                                 'distinct words spoken by answerer, questioner itself, '
-                                 'and words by which the goal is described.')
-        parser.add_argument('--q-embed-size', default=20, type=int,
-                            help='Size of word embeddings for questioner')
-        parser.add_argument('--q-state-size', default=100, type=int,
-                            help='Size of hidden state of questioner')
-        parser.add_argument('--q-out-vocab', default=3, type=int,
-                            help='Output vocabulary for questioner')
-        parser.add_argument('--q-num-pred', default=12, type=int,
-                            help='Size of output to be predicted (for goal).')
+        argparser.add_argument('--q-in-vocab', default=13, type=int,
+                               help='Input vocabulary for questioner. Usually includes total '
+                                    'distinct words spoken by answerer, questioner itself, '
+                                    'and words by which the goal is described.')
+        argparser.add_argument('--q-embed-size', default=20, type=int,
+                               help='Size of word embeddings for questioner')
+        argparser.add_argument('--q-state-size', default=100, type=int,
+                               help='Size of hidden state of questioner')
+        argparser.add_argument('--q-out-vocab', default=3, type=int,
+                               help='Output vocabulary for questioner')
+        argparser.add_argument('--q-num-pred', default=12, type=int,
+                               help='Size of output to be predicted (for goal).')
         super().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
