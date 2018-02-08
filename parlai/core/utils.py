@@ -234,6 +234,7 @@ def maintain_dialog_history(history, observation, reply='',
     if history['episode_done']:
         history['dialog'].clear()
         history['labels'] = []
+        useReplies = 'none'
         history['episode_done'] = False
 
     if useReplies != 'none':
