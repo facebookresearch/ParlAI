@@ -147,6 +147,12 @@ class ParlaiParser(argparse.ArgumentParser):
             default=0, type=int,
             help='number of concurrent conversations that one mturk worker '
                  'is able to be involved in, 0 is unlimited')
+        mturk.add_argument(
+            '--max-connections', dest='max_connections',
+            default=30, type=int,
+            help='number of HITs that can be launched at the same time, 0 is '
+                 'unlimited.'
+        )
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)

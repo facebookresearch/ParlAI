@@ -57,6 +57,9 @@ class MTurkManager():
         agent_ids that will participate in each conversation
         """
         self.opt = opt
+        if self.opt['unique_worker'] or \
+                self.opt['unique_qual_name'] is not None:
+            self.opt['allowed_conversations'] = 1
         self.server_url = None
         self.topic_arn = None
         self.port = 443
@@ -91,6 +94,7 @@ class MTurkManager():
         self.accepting_workers = True
         self._load_disconnects()
         self.assignment_to_worker_id = {}
+        self.qualifications = None
 
     def _init_logs(self):
         """Initialize logging settings from the opt"""
@@ -633,11 +637,27 @@ class MTurkManager():
             '\nYou are going to allow workers from Amazon Mechanical Turk to '
             'be an agent in ParlAI.\nDuring this process, Internet connection '
             'is required, and you should turn off your computer\'s auto-sleep '
-            'feature.\nEnough HITs will be created to fulfill {} times the '
-            'number of conversations requested, extra HITs will be expired '
-            'once the desired conversations {}.'.format(HIT_MULT, fin_word),
-            should_print=True
+            'feature.',
+            should_print=True,
         )
+        if self.opt['max_connections'] == 0:
+            shared_utils.print_and_log(
+                logging.INFO,
+                'Enough HITs will be created to fulfill {} times the '
+                'number of conversations requested, extra HITs will be expired'
+                ' once the desired conversations {}.'
+                ''.format(HIT_MULT, fin_word),
+                should_print=True,
+            )
+        else:
+            shared_utils.print_and_log(
+                logging.INFO,
+                'Enough HITs will be launched over time '
+                'up to a max of {} times the amount requested until the '
+                'desired number of conversations {}.'
+                ''.format(HIT_MULT, fin_word),
+                should_print=True,
+            )
         input('Please press Enter to continue... ')
         shared_utils.print_and_log(logging.NOTSET, '', True)
 
@@ -836,6 +856,12 @@ class MTurkManager():
             # Count if it's a completed conversation
             if self._no_workers_incomplete(workers):
                 self.completed_conversations += 1
+            if self.opt['max_connections'] != 0:  # If using a conv cap
+                for w in workers:
+                    if w.state.status in [
+                            AssignState.STATUS_DONE,
+                            AssignState.STATUS_PARTNER_DISCONNECT]:
+                        self.create_additional_hits(1)
 
         while True:
             # Loop forever starting task worlds until desired convos are had
@@ -1037,12 +1063,10 @@ class MTurkManager():
             if not_done_message in e.response['Error']['Message']:
                 return MTurkAgent.ASSIGNMENT_NOT_DONE
 
-    def create_additional_hits(self, num_hits, qualifications=None):
-        """Handle creation for a specific number of hits/assignments
-        Put created HIT ids into the hit_id_list
-        """
-        shared_utils.print_and_log(logging.INFO,
-                                   'Creating {} hits...'.format(num_hits))
+    def get_qualification_list(self, qualifications=None):
+        if self.qualifications is not None:
+            return self.qualifications
+
         if qualifications is None:
             qualifications = []
 
@@ -1079,6 +1103,18 @@ class MTurkManager():
                 'Comparator': 'DoesNotExist',
                 'RequiredToPreview': True
             })
+
+        self.qualifications = qualifications
+        return qualifications
+
+    def create_additional_hits(self, num_hits, qualifications=None):
+        """Handle creation for a specific number of hits/assignments
+        Put created HIT ids into the hit_id_list
+        """
+        shared_utils.print_and_log(logging.INFO,
+                                   'Creating {} hits...'.format(num_hits))
+
+        qualifications = self.get_qualification_list(qualifications)
 
         hit_type_id = mturk_utils.create_hit_type(
             hit_title=self.opt['hit_title'],
@@ -1119,10 +1155,16 @@ class MTurkManager():
         """Create hits based on the managers current config, return hit url"""
         shared_utils.print_and_log(logging.INFO, 'Creating HITs...', True)
 
-        mturk_page_url = self.create_additional_hits(
-            num_hits=self.required_hits,
-            qualifications=qualifications,
-        )
+        if self.opt['max_connections'] == 0:
+            mturk_page_url = self.create_additional_hits(
+                num_hits=self.required_hits,
+                qualifications=qualifications,
+            )
+        else:
+            mturk_page_url = self.create_additional_hits(
+                num_hits=self.opt['max_connections'],
+                qualifications=qualifications,
+            )
 
         shared_utils.print_and_log(logging.INFO,
                                    'Link to HIT: {}\n'.format(mturk_page_url),
