@@ -36,7 +36,8 @@ class Seq2seq(nn.Module):
             emb_size=opt['embeddingsize'], hidden_size=opt['hiddensize'],
             num_layers=opt['numlayers'], dropout=opt['dropout'],
             share_output=opt['lookuptable'] in ['dec_out', 'all'],
-            attn_type=opt['attention'], attn_length=opt['attention_length'])
+            attn_type=opt['attention'], attn_length=opt['attention_length'],
+            bidir_input=opt['bidirectional'])
 
         shared_lt = (self.decoder.lt
                      if opt['lookuptable'] in ['enc_dec', 'all'] else None)
@@ -482,6 +483,9 @@ class AttentionLayer(nn.Module):
                 active = F.tanh(self.attn(h_merged))
                 attn_w_premask = self.attn_v(active).squeeze(2)
             elif self.attention == 'dot':
+                if hid.size(2) != enc_out.size(2):
+                    # enc_out has two directions, so double hid
+                    hid = torch.cat([hid, hid], 2)
                 attn_w_premask = (
                     torch.bmm(hid, enc_out.transpose(1, 2)).squeeze(1))
             elif self.attention == 'general':
