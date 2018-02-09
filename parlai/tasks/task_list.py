@@ -367,6 +367,6 @@ task_list = [
         "task": 'wikipedia',
         "tags": [ "All" ],
         "description": "Dump of Wikipedia articles",
-        "notes": "You can just get the first paragraphs of wikipedia articles by specifying ':summary', i.e. 'wikipedia:summary'; this will save you a lot of time when building the data (note this is the default option)"
+        "notes": "Specify ':full' for the full articles to be returned, otherwise defaults to ':summary', which provides the first paragraphs"
     },
 ]
