@@ -7,7 +7,7 @@
 from parlai.core.teachers import DialogTeacher
 from .build import build
 
-import ujson as json
+import json
 import os
 
 
