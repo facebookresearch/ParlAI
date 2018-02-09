@@ -166,14 +166,16 @@ class Encoder(nn.Module):
 
         if type(self.rnn) == nn.LSTM:
             encoder_output_packed, hidden = self.rnn(xes_packed, (h0, h0))
-            # take elementwise max between forward and backward hidden states
-            hidden = (hidden[0].view(-1, self.dirs, bsz, self.hsz).max(1)[0],
-                      hidden[1].view(-1, self.dirs, bsz, self.hsz).max(1)[0])
+            if self.dirs > 1:
+                # take elementwise max between forward and backward hidden states
+                hidden = (hidden[0].view(-1, self.dirs, bsz, self.hsz).max(1)[0],
+                          hidden[1].view(-1, self.dirs, bsz, self.hsz).max(1)[0])
         else:
             encoder_output_packed, hidden = self.rnn(xes_packed, h0)
 
-            # take elementwise max between forward and backward hidden states
-            hidden = hidden.view(-1, self.dirs, bsz, self.hsz).max(1)[0]
+            if self.dirs > 1:
+                # take elementwise max between forward and backward hidden states
+                hidden = hidden.view(-1, self.dirs, bsz, self.hsz).max(1)[0]
         encoder_output, _ = pad_packed_sequence(encoder_output_packed,
                                                 batch_first=True)
         return encoder_output, hidden
