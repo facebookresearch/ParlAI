@@ -360,5 +360,13 @@ task_list = [
         "task": "twitter",
         "tags": [ "All",  "ChitChat" ],
         "description": "Twitter data from: https://github.com/Marsan-Ma/chat_corpus/. No train/valid/test split was provided so 10k for valid and 10k for test was chosen at random."
-    }
+    },
+    {
+        "id": "Wikipedia",
+        "display_name": "Wikipedia",
+        "task": 'wikipedia',
+        "tags": [ "All" ],
+        "description": "Dump of Wikipedia articles",
+        "notes": "You can just get the first paragraphs of wikipedia articles by specifying ':summary', i.e. 'wikipedia:summary'; this will save you a lot of time when building the data (note this is the default option)"
+    },
 ]
