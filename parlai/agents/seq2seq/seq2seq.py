@@ -104,7 +104,7 @@ class Seq2seqAgent(Agent):
                                 'while "shared" also uses the same weights. '
                                 'Note that shared disabled some encoder '
                                 'options--in particular, bidirectionality.')
-        agent.add_argument('-lt', '--lookuptable', default='all',
+        agent.add_argument('-lt', '--lookuptable', default='unique',
                            choices=['unique', 'enc_dec', 'dec_out', 'all'],
                            help='The encoder, decoder, and output modules can '
                                 'share weights, or not. '
