@@ -31,7 +31,7 @@ class MessengerBotChatTaskWorld(World):
 
     @staticmethod
     def assign_roles(agents):
-        agents[0].disp_id = 'EchoAgent'
+        agents[0].disp_id = 'ChatbotAgent'
 
     def parley(self):
         a = self.agent.act()
