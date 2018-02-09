@@ -101,10 +101,10 @@ class TfidfRetrieverAgent(Agent):
         self.cands_hash = {}  # cache for candidates
         self.triples_to_add = []  # in case we want to add more entries
 
-    def train(mode=True):
+    def train(self, mode=True):
         self.training = mode
 
-    def eval():
+    def eval(self):
         self.training = False
 
     def doc2txt(self, docid):
