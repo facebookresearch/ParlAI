@@ -5,7 +5,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 import parlai.core.build_data as build_data
 import os
-from .wikiextractor import main as wikiextract
 
 
 def build(opt):
@@ -29,25 +28,14 @@ def build(opt):
             fname = 'enwiki-latest-pages-articles.xml.bz2'
             url = 'https://dumps.wikimedia.org/enwiki/latest/' + fname
             build_data.download(url, dpath, fname)
-
-            # uncompress it
-
-
-            # args = {}
-            # args['input'] = dpath + '/' + fname
-            # args['filter_disambig_pages'] = True
-            # args['processes'] = max(1, os.cpu_count() - 1)
-            # args['output'] = dpath + '/' + 'wiki_extracted'
-            # args['json'] = True
-            #
-            # wikiextract(args)
             # # mark the data as built
             build_data.mark_done(dpath)
             return False
         else:
-            fname = "TBD for Our stuff"
-            url = "url_tbd" + fname
+            fname = "summaries.tgz"
+            url = "https://s3.amazonaws.com/fair-data/parlai/wikipedia/" + fname
             build_data.download(url, dpath, fname)
+            build_data.untar(dpath, fname)
             build_data.mark_done(dpath)
             return True
     return True

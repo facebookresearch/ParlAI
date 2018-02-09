@@ -21,43 +21,52 @@ class AllTeacher(DialogTeacher):
         if not success:
             '''Need to extract the rest of the data'''
             raise RuntimeError(self.get_instructions())
-        opt['datafile'] = os.path.join(opt['datapath'], 'wiki_full_extracted')
+        opt['datafile'] = os.path.join(
+            opt['datapath'],
+            'wikipedia/full/wiki_full_extracted')
         self.id = 'wikipedia'
         super().__init__(opt, shared)
 
     def setup_data(self, path):
         print('loading: ' + path)
-        if not os.path.isfile(path):
+        if not os.path.exists(path):
             '''Need to extract the rest of the data'''
             raise RuntimeError(self.get_instructions())
         for subdir in os.listdir(path):
-            for wiki_file in os.listdir(subdir):
-                with open(wiki_file) as wf:
+            subdir_path = os.path.join(path, subdir)
+            for wiki_file in os.listdir(subdir_path):
+                wiki_file_path = os.path.join(subdir_path, wiki_file)
+                with open(wiki_file_path) as wf:
                     for article_json in wf:
-                        article = json.load(article_json)
+                        article = json.loads(article_json)
                         title = article['title']
                         text = article['text']
-                        yield (title + '\n' + text), True
+                        yield (title + '\n' + text, None), True
 
     def get_instructions(self):
         dpath = os.path.join(self.opt['datapath'], 'wikipedia', 'full')
         fname = 'enwiki-latest-pages-articles.xml.bz2'
         instructions = """
-        To complete the data extraction, please do the following:
+        To complete the data extraction, please run the following:
         \n
-            1. (wherever you would like) git clone https://github.com/attardi/wikiextractor
-            2. cd wikiextractor
-            3. python WikiExtractor.py {} --filter_disambig_pages -o {} --json
-        """.format(dpath + '/' + fname, dpath + '/' + 'wiki_extracted')
+        mkdir -p {download}  && git clone https://github.com/attardi/wikiextractor  {download}/wikiextract && cd {download}/wikiextract && python WikiExtractor.py {wikifile} --filter_disambig_pages -o {output} --json
+        """.format(
+            download=self.opt['download_path'],
+            wikifile=dpath + '/' + fname,
+            output=dpath + '/' + 'wiki_extracted'
+            )
 
         return instructions
+
 
 class SummaryTeacher(DialogTeacher):
     """Reads Wikipedia pages one at a time, only uses summaries
     """
     def __init__(self, opt, shared=None):
         build(opt)
-        opt['datafile'] = os.path.join(opt['datapath'], 'wiki_summary')
+        opt['datafile'] = os.path.join(
+            opt['datapath'],
+            'wikipedia/summary/summaries.json')
         self.id = 'wikipedia'
         super().__init__(opt, shared)
 
@@ -65,11 +74,11 @@ class SummaryTeacher(DialogTeacher):
         print('loading: ' + path)
         with open(path) as wf:
             for article_json in wf:
-                article = json.load(article_json)
+                article = json.loads(article_json)
                 title = article['title']
                 text = article['text']
-                yield (title + '\n' + text), True
+                yield (title + '\n' + text, None), True
 
 
-class DefaultTeacher(AllTeacher):
+class DefaultTeacher(SummaryTeacher):
     pass
