@@ -119,7 +119,8 @@ class Seq2seq(nn.Module):
 class Encoder(nn.Module):
     def __init__(self, num_features, padding_idx=0, rnn_class='lstm',
                  emb_size=128, hidden_size=128, num_layers=2, dropout=0.1,
-                 bidirectional=False, shared_lt=None, shared_rnn=None):
+                 bidirectional=False, shared_lt=None, shared_rnn=None,
+                 sparse=False):
         super().__init__()
 
         self.dropout = dropout
@@ -132,7 +133,8 @@ class Encoder(nn.Module):
 
         if shared_lt is None:
             self.lt = nn.Embedding(num_features, emb_size,
-                                   padding_idx=padding_idx)
+                                   padding_idx=padding_idx,
+                                   sparse=sparse)
         else:
             self.lt = shared_lt
 
@@ -186,7 +188,7 @@ class Decoder(nn.Module):
     def __init__(self, num_features, padding_idx=0, rnn_class='lstm',
                  emb_size=128, hidden_size=128, num_layers=2, dropout=0.1,
                  bidir_input=False, share_output=True,
-                 attn_type='none', attn_length=-1):
+                 attn_type='none', attn_length=-1, sparse=False):
         super().__init__()
 
         if padding_idx != 0:
@@ -197,7 +199,8 @@ class Decoder(nn.Module):
         self.layers = num_layers
         self.hsz = hidden_size
 
-        self.lt = nn.Embedding(num_features, emb_size, padding_idx=padding_idx)
+        self.lt = nn.Embedding(num_features, emb_size, padding_idx=padding_idx,
+                               sparse=sparse)
         self.rnn = rnn_class(emb_size, hidden_size, num_layers,
                              dropout=dropout, batch_first=True)
 

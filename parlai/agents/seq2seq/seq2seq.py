@@ -260,10 +260,10 @@ class Seq2seqAgent(Agent):
 
             if self.use_cuda:
                 # push to cuda
-                self.xs = self.xs.cuda(async=True)
-                self.ys = self.ys.cuda(async=True)
+                self.xs = self.xs.cuda()
+                self.ys = self.ys.cuda()
                 if self.rank:
-                    self.cands = self.cands.cuda(async=True)
+                    self.cands = self.cands.cuda()
                 self.criterion.cuda()
 
             # set up optimizer
@@ -445,7 +445,7 @@ class Seq2seqAgent(Agent):
             if self.use_cuda:
                 # copy to gpu
                 self.xs.resize_(xs.size())
-                self.xs.copy_(xs, async=True)
+                self.xs.copy_(xs)
                 xs = Variable(self.xs)
             else:
                 xs = Variable(xs)
@@ -476,7 +476,7 @@ class Seq2seqAgent(Agent):
             if self.use_cuda:
                 # copy to gpu
                 self.ys.resize_(ys.size())
-                self.ys.copy_(ys, async=True)
+                self.ys.copy_(ys)
                 ys = Variable(self.ys)
             else:
                 ys = Variable(ys)
@@ -512,7 +512,7 @@ class Seq2seqAgent(Agent):
                 if self.use_cuda:
                     # copy to gpu
                     self.cands.resize_(cands.size())
-                    self.cands.copy_(cands, async=True)
+                    self.cands.copy_(cands)
                     cands = Variable(self.cands)
                 else:
                     cands = Variable(cands)
