@@ -302,7 +302,6 @@ def build(opt):
         build_data.download(url, dpath, 'OpenSubtitles2016.tar.gz')
         untar_path = os.path.join(dpath, 'OpenSubtitles2016', 'xml', 'en')
         if len(glob.glob(untar_path + '/*/*/*.xml.gz')) != NUM_SUBTITLES_FILES:
-            import pdb; pdb.set_trace()
             build_data.untar(dpath, 'OpenSubtitles2016.tar.gz')
 
         create_fb_format(untar_path, dpath)
