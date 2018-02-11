@@ -166,6 +166,13 @@ task_list = [
         "description": "Dataset of dialogs from movie scripts: http://opus.lingfil.uu.se/OpenSubtitles.php. A variant of the dataset used in Vinyals & Le '15, https://arxiv.org/abs/1506.05869."
     },
     {
+        "id": "OpenSubtitles2016",
+        "display_name": "Open Subtitles 2016",
+        "task": "opensubtitles_2016",
+        "tags": [ "All",  "ChitChat" ],
+        "description": "Dataset of dialogs from movie scripts: http://opus.lingfil.uu.se/OpenSubtitles2016.php. A variant of the dataset used in Vinyals & Le '15, https://arxiv.org/abs/1506.05869."
+    },
+    {
         "id": "personalized-dialog-full",
         "display_name": "Personalized Dialog Full Set",
         "task": "personalized_dialog:AllFull",
