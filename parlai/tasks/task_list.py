@@ -360,5 +360,13 @@ task_list = [
         "task": "twitter",
         "tags": [ "All",  "ChitChat" ],
         "description": "Twitter data from: https://github.com/Marsan-Ma/chat_corpus/. No train/valid/test split was provided so 10k for valid and 10k for test was chosen at random."
-    }
+    },
+    {
+        "id": "Wikipedia",
+        "display_name": "Wikipedia",
+        "task": 'wikipedia',
+        "tags": [ "All" ],
+        "description": "Dump of Wikipedia articles",
+        "notes": "Specify ':full' for the full articles to be returned, otherwise defaults to ':summary', which provides the first paragraphs. To put the article in the labels and the title in the text, specify ':key-value' at the end (for a title/content key-value association)"
+    },
 ]
