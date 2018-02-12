@@ -57,6 +57,11 @@ def main():
         def check_worker_eligibility(worker):
             return True
 
+        eligibility_function = {
+            'func': check_worker_eligibility,
+            'multiple': False,
+        }
+
         def assign_worker_roles(workers):
             for index, worker in enumerate(workers):
                 worker.id = mturk_agent_ids[index % len(mturk_agent_ids)]
@@ -81,7 +86,7 @@ def main():
             world.shutdown()
 
         mturk_manager.start_task(
-            eligibility_function=check_worker_eligibility,
+            eligibility_function=eligibility_function,
             assign_role_function=assign_worker_roles,
             task_function=run_conversation
         )
