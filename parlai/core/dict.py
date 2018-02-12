@@ -112,7 +112,7 @@ class DictionaryAgent(Agent):
             '--dict-unktoken', default=DictionaryAgent.default_unk,
             help='token to return for unavailable words')
         dictionary.add_argument(
-            '--dict-maxexs', default=100000, type=int,
+            '--dict-maxexs', default=-1, type=int,
             help='max number of examples to build dict on')
         dictionary.add_argument(
             '-tok', '--dict-tokenizer', default=DictionaryAgent.default_tok,
