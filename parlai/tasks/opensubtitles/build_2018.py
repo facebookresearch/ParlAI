@@ -21,6 +21,7 @@ from parlai.core.utils import ProgressLogger
 
 word_tokenizer = TreebankWordTokenizer()
 
+# TODO: modify these for OpenSubtitles2018
 NUM_MOVIE_FOLDERS = 106248
 NUM_SUBTITLES_FILES = 323905
 
@@ -268,6 +269,7 @@ def create_fb_format(inpath, outpath):
     with multiprocessing.Pool(processes=os.cpu_count()) as pool:
         for i, s in enumerate(pool.imap(extract_data_from_file, files.items())):
             handle = ftrain
+            # TODO: Shall we use smaller valid/test sets? Even 10% is A LOT here
             if i % 10 == 0:
                 handle = ftest
             if i % 10 == 1:
@@ -286,8 +288,8 @@ def create_fb_format(inpath, outpath):
     )
 
 
-def build(opt):
-    dpath = os.path.join(opt['datapath'], 'OpenSubtitles2016')
+def build(datapath):
+    dpath = os.path.join(datapath, 'OpenSubtitles2016')
     version = '1'
 
     if not build_data.built(dpath, version_string=version):
@@ -298,13 +300,13 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        url = ('http://opus.lingfil.uu.se/download.php?f=OpenSubtitles2016/en.tar.gz')
-        build_data.download(url, dpath, 'OpenSubtitles2016.tar.gz')
-        untar_path = os.path.join(dpath, 'OpenSubtitles2016', 'xml', 'en')
+        url = ('http://opus.lingfil.uu.se/download.php?f=OpenSubtitles2018/en.tar.gz')
+        build_data.download(url, dpath, 'OpenSubtitles2018.tar.gz')
+        untar_path = os.path.join(dpath, 'OpenSubtitles2018', 'xml', 'en')
         if len(glob.glob(untar_path + '/*/*/*.xml.gz')) != NUM_SUBTITLES_FILES:
-            build_data.untar(dpath, 'OpenSubtitles2016.tar.gz')
-
+            build_data.untar(dpath, 'OpenSubtitles2018.tar.gz')
         create_fb_format(untar_path, dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
+    return dpath

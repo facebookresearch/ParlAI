@@ -5,34 +5,42 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.teachers import FbDialogTeacher
-from .build import build
+from .build_2009 import build as build_2009
+from .build_2018 import build as build_2018
 
 import copy
 import os
 
 
-def _path(opt, filtered):
+def _path(opt, version):
     # Build the data if it doesn't exist.
-    build(opt)
-    dt = opt['datatype'].split(':')[0]
-    return os.path.join(opt['datapath'], 'OpenSubtitles',
-                        dt + filtered + '.txt')
+    if version == '2009':
+        datapath = build_2009(opt['datapath'])
+    elif version == '2018':
+        datapath = build_2018(opt['datapath'])
+    else:
+        raise Exception('Unknown version for OpenSubtitles: %s' % version)
+    return os.path.join(datapath, opt['datatype'].split(':')[0] + '.txt')
 
 
-class HalfTeacher(FbDialogTeacher):
+class DefaultTeacher(FbDialogTeacher):
     """This version of opensubtitles creates half of all possible dialog
     examples.
     """
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt, shared=None, version='2018'):
         opt = copy.deepcopy(opt)
-        opt['datafile'] = _path(opt, '')
+        opt['datafile'] = _path(opt, version)
         if not opt['datatype'].startswith('train'):
             opt['cands_datafile'] = opt['datafile']
         super().__init__(opt, shared)
 
 
-class FullTeacher(HalfTeacher):
+class V2009Teacher(DefaultTeacher):
     """This version of opensubtitles creates all possible dialog examples."""
+
+    def __init__(self, opt, shared=None):
+        super(V2009Teacher, self).__init__(opt, shared, '2009')
+
     def setup_data(self, path):
         alternate = []
         for entry, new in super().setup_data(path):
@@ -48,7 +56,7 @@ class FullTeacher(HalfTeacher):
                 yield e, i == 0
 
 
-class Task100kTeacher(HalfTeacher):
+class Task100kTeacher(DefaultTeacher):
     """This version of opensubtitles only includes 100,000 dialogs."""
     def setup_data(self, path):
         cnt = 0
@@ -58,7 +66,7 @@ class Task100kTeacher(HalfTeacher):
             cnt += 1
 
 
-class Task10kTeacher(HalfTeacher):
+class Task10kTeacher(DefaultTeacher):
     """This version of opensubtitles only includes 10,000 dialogs."""
     def setup_data(self, path):
         cnt = 0
@@ -66,8 +74,3 @@ class Task10kTeacher(HalfTeacher):
             if cnt < 10000:
                 yield entry, new
             cnt += 1
-
-
-# Defaults to full teacher (all possible examples)
-class DefaultTeacher(FullTeacher):
-    pass
