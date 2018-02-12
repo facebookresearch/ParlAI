@@ -15,7 +15,7 @@ class AllTeacher(DialogTeacher):
     """Reads Wikipedia pages one at a time
     """
     def __init__(self, opt, shared=None):
-        self.title_in_label = ':label' in opt['task']
+        self.key_value = ':key-value' in opt['task']
         opt['task'] = 'wikipedia:all'
         success = build(opt)
         self.opt = opt
@@ -42,8 +42,8 @@ class AllTeacher(DialogTeacher):
                         article = json.loads(article_json)
                         title = article['title']
                         text = article['text']
-                        if self.title_in_label:
-                            yield (text, [title]), True
+                        if self.key_value:
+                            yield (title, [text]), True
                         else:
                             yield (title + '\n' + text, None), True
 
@@ -67,7 +67,7 @@ class SummaryTeacher(DialogTeacher):
     """Reads Wikipedia pages one at a time, only uses summaries
     """
     def __init__(self, opt, shared=None):
-        self.title_in_label = ':label' in opt['task']
+        self.key_value = ':key-value' in opt['task']
         opt['task'] = 'wikipedia:summary'
         build(opt)
         opt['datafile'] = os.path.join(
@@ -83,8 +83,8 @@ class SummaryTeacher(DialogTeacher):
                 article = json.loads(article_json)
                 title = article['title']
                 text = article['text']
-                if self.title_in_label:
-                    yield (text, [title]), True
+                if self.key_value:
+                    yield (title, [text]), True
                 else:
                     yield (title + '\n' + text, None), True
 
