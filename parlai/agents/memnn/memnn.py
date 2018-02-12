@@ -52,9 +52,6 @@ class MemnnAgent(Agent):
             help='disable GPUs even if available')
         arg_group.add_argument('--gpu', type=int, default=-1,
             help='which GPU device to use')
-        arg_group.add_argument('-hist', '--history-length', default=100000, type=int,
-                           help='Number of past tokens to remember. '
-                                'Default remembers 100000 tokens.')
         arg_group.add_argument('-histr', '--history-replies', default='label', type=str,
             choices=['none', 'model', 'label'],
             help='Keep replies in the history, or not.')
@@ -80,10 +77,10 @@ class MemnnAgent(Agent):
                 print('Loading existing model parameters from ' + opt['model_file'])
                 self.load(opt['model_file'])
         else:    
+            self.dict = shared['dict']
             # model is shared during hogwild  
             if 'threadindex' in shared: 
                 self.model = shared['model']
-                self.dict = shared['dict']
                 self.decoder = shared['decoder']
                 self.answers = [None] * opt['batchsize']
             else: 
@@ -127,10 +124,10 @@ class MemnnAgent(Agent):
     def share(self):
         shared = super().share()
         shared['answers'] = self.answers
+        shared['dict'] = self.dict
         if self.opt.get('numthreads', 1) > 1:
             shared['model'] = self.model
             self.model.share_memory()
-            shared['dict'] = self.dict
             shared['decoder'] = self.decoder
         return shared
 
@@ -143,13 +140,13 @@ class MemnnAgent(Agent):
         obs = observation.copy()
         batch_idx = self.opt.get('batchindex', 0)
         
-        obs['text'] = '\n'.join(maintain_dialog_history(
-            self.history, obs,
-            reply=self.answers[batch_idx] if self.answers[batch_idx] is not None else '',
-            historyLength=self.opt['history_length'],
-            useReplies=self.opt['history_replies'],
-            dict=None, useStartEndIndices=False))
-        
+        obs['text'] = (maintain_dialog_history(
+        self.history, obs,
+        reply=self.answers[batch_idx] if self.answers[batch_idx] is not None else '',
+        historyLength=self.opt['mem_size'] + 1,
+        useReplies=self.opt['history_replies'],
+        dict=self.dict, useStartEndIndices=False, splitSentences=True))
+
         self.observation = obs
         self.answers[batch_idx] = None
         return obs
@@ -255,29 +252,20 @@ class MemnnAgent(Agent):
         return [[' '.join(c for c in o if c != self.END
                         and c != self.dict.null_token)] for o in output_lines]
 
-    def parse(self, text):
+    def parse(self, memory):
         """Returns:
             query = tensor (vector) of token indices for query
             query_length = length of query
             memory = tensor (matrix) where each row contains token indices for a memory
             memory_lengths = tensor (vector) with lengths of each memory
         """
-        sp = text.split('\n')
-        query_sentence = sp[-1]
-        query = self.dict.txt2vec(query_sentence)
+        query = memory.pop()
         query = torch.LongTensor(query)
         query_length = torch.LongTensor([len(query)])
 
-        sp = sp[:-1]
-        sentences = []
-        for s in sp:
-            sentences.extend(s.split('\t'))
-        if len(sentences) == 0:
-            sentences.append(self.dict.null_token)
+        if len(memory) == 0:
+            memory.append(self.dict.null_token)
 
-        num_mems = min(self.mem_size, len(sentences))
-        memory_sentences = sentences[-num_mems:]
-        memory = [self.dict.txt2vec(s) for s in memory_sentences]
         memory = [torch.LongTensor(m) for m in memory]
         memory_lengths = torch.LongTensor([len(m) for m in memory])
         memory = torch.cat(memory)
@@ -290,8 +278,8 @@ class MemnnAgent(Agent):
             cands = list of candidates for each example in batch
             valid_inds = list of indices for examples with valid observations
         """
-        exs = [ex for ex in obs if 'text' in ex]
-        valid_inds = [i for i, ex in enumerate(obs) if 'text' in ex]
+        exs = [ex for ex in obs if 'text' in ex and len(ex['text']) > 0]
+        valid_inds = [i for i, ex in enumerate(obs) if 'text' in ex and len(ex['text']) > 0]
         if not exs:
             return [None] * 4
 
