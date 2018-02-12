@@ -358,7 +358,7 @@ class Seq2seqAgent(Agent):
                 dict=self.dict,
                 useStartEndIndices=False)
         else:
-            obs['text2vec'] = deque(obs['text2vec'], self.opt['truncate'])
+            obs['text2vec'] = deque(obs['text2vec'], maxlen=self.truncate)
         self.observation = obs
         self.answers[batch_idx] = None
         return obs
