@@ -9,7 +9,6 @@ import parlai.core.build_data as build_data
 import glob
 import gzip
 import multiprocessing
-from nltk.tokenize.treebank import TreebankWordTokenizer
 import os
 import re
 import sys
@@ -17,9 +16,6 @@ import time
 import xml.etree.ElementTree as ET
 
 from parlai.core.utils import ProgressLogger
-
-
-word_tokenizer = TreebankWordTokenizer()
 
 # TODO: modify these for OpenSubtitles2018
 NUM_MOVIE_FOLDERS = 106248
@@ -139,7 +135,7 @@ def clean_text(words):
     for (pattern, replacement) in CLEANUP_REPLACE_RULES:
         sentence = sentence.replace(pattern, replacement)
 
-    words = word_tokenizer.tokenize(sentence)
+    words = normalize_whitespaces(sentence).split()
 
     if (
         len(words) > 0
@@ -289,7 +285,7 @@ def create_fb_format(inpath, outpath):
 
 
 def build(datapath):
-    dpath = os.path.join(datapath, 'OpenSubtitles2016')
+    dpath = os.path.join(datapath, 'OpenSubtitles2018')
     version = '1'
 
     if not build_data.built(dpath, version_string=version):
