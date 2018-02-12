@@ -87,6 +87,7 @@ def store_contents(opt, task, save_path, context_length=-1, include_labels=True)
 
                 # add labels to context
                 labels = ex.get('labels', ex.get('eval_labels'))
+                label = None
                 if labels is not None:
                     label = random.choice(labels)
                     if include_labels:
