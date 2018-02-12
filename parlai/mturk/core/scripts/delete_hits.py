@@ -13,20 +13,28 @@ import parlai.mturk.core.mturk_utils as mturk_utils
 def main():
     """This script should be used after some error occurs that leaves HITs live
     while the ParlAI MTurk server down. This will search through live HITs and
-    list them by task ID, letting you close down HITs that do not link to 
+    list them by task ID, letting you close down HITs that do not link to
     any server and are thus irrecoverable.
     """
     parser = argparse.ArgumentParser(description='Delete HITs by expiring')
     parser.add_argument('--sandbox', dest='sandbox', default=False,
                         action='store_true', help='Delete HITs from sandbox')
+    parser.add_argument(
+        '--ignore-assigned',
+        dest='ignore',
+        default=False,
+        action='store_true',
+        help='Ignore HITs that may already be completed or assigned',
+    )
     opt = parser.parse_args()
     sandbox = opt.sandbox
+    ignore = opt.ignore
     task_group_ids = []
     group_to_hit = {}
     hits = []
     processed = 0
     found = 0
-    spinner_vals = ['-','\\','|','/']
+    spinner_vals = ['-', '\\', '|', '/']
     if sandbox:
         print(
             'About to query the SANDBOX server, these HITs will be active HITs'
@@ -38,46 +46,54 @@ def main():
             'potentially being worked on by real Turkers right now'
         )
 
-    print('Getting HITs from amazon MTurk server, please wait...\n')
+    print('Getting HITs from amazon MTurk server, please wait...\n'
+          'or use CTRL-C to skip to expiring some of what is found.\n')
     mturk_utils.setup_aws_credentials()
     client = mturk_utils.get_mturk_client(sandbox)
     response = client.list_hits(MaxResults=100)
-    while (True):
-        processed += response['NumResults']
-        for hit in response['HITs']:
-            if hit['NumberOfAssignmentsAvailable'] == 0:
-                # Ignore hits with no assignable assignments
-                continue
-            if hit['HITStatus'] != 'Assignable' and \
-                    hit['HITStatus'] != 'Unassignable':
-                # Ignore completed hits
-                continue
-            question = hit['Question']
-            if 'ExternalURL' in question:
-                url = question.split('ExternalURL')[1]
-                group_id = url.split('task_group_id=')[1]
-                group_id = group_id.split('&')[0]
-                group_id = group_id.split('<')[0]
-                if group_id not in task_group_ids:
-                    group_to_hit[group_id] = []
-                    task_group_ids.append(group_id)
-                group_to_hit[group_id].append(hit['HITId'])
-                found += 1
-        sys.stdout.write(
-            '\r{} HITs processed, {} active hits found amongst {} tasks. {}   '
-            .format(
-                processed,
-                found,
-                len(task_group_ids),
-                spinner_vals[((int) (processed / 100)) % 4]
+    try:
+        while (True):
+            processed += response['NumResults']
+            for hit in response['HITs']:
+                if ignore:
+                    if hit['NumberOfAssignmentsAvailable'] == 0:
+                        # Ignore hits with no assignable assignments
+                        continue
+                    if hit['HITStatus'] != 'Assignable' and \
+                            hit['HITStatus'] != 'Unassignable':
+                        # Ignore completed hits
+                        continue
+                question = hit['Question']
+                if 'ExternalURL' in question:
+                    url = question.split('ExternalURL')[1]
+                    group_id = url.split('task_group_id=')[1]
+                    group_id = group_id.split('&')[0]
+                    group_id = group_id.split('<')[0]
+                    if group_id not in task_group_ids:
+                        group_to_hit[group_id] = []
+                        task_group_ids.append(group_id)
+                    group_to_hit[group_id].append(hit['HITId'])
+                    found += 1
+
+            sys.stdout.write(
+                '\r{} HITs processed, {} active hits'
+                ' found amongst {} tasks. {}        '
+                .format(
+                    processed,
+                    found,
+                    len(task_group_ids),
+                    spinner_vals[((int)(processed / 100)) % 4]
+                )
             )
-        )
-        if 'NextToken' not in response:
-            break
-        response = client.list_hits(
-            NextToken=response['NextToken'],
-            MaxResults=100
-        )
+            if 'NextToken' not in response:
+                break
+            response = client.list_hits(
+                NextToken=response['NextToken'],
+                MaxResults=100
+            )
+
+    except BaseException:
+        pass
 
     print('\n\nTask group id - Active HITs')
     for group_id in task_group_ids:
@@ -110,7 +126,7 @@ def main():
             else:
                 print(
                     'You entered {} but there are {} HITs to expire, please '
-                    'try again to confirm you are ending the right task'.format(
+                    "try again to confirm you're ending the right task".format(
                         num_hits,
                         len(group_to_hit[task_group_id])
                     )

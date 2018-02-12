@@ -101,7 +101,7 @@ def try_downloading(directory, row):
         gz_path = os.path.join(directory,
                                document_id + '.content.gz')
         shutil.move(story_path, gz_path)
-        build_tools.untar(gz_path)
+        build_data.untar(gz_path)
 
     return False
 
