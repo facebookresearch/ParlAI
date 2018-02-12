@@ -358,12 +358,12 @@ class Seq2seqAgent(Agent):
             obs['text2vec'] = maintain_dialog_history(
                 self.history, obs,
                 reply=self.answers[batch_idx],
-                historyLength=self.opt['truncate'],
+                historyLength=self.truncate,
                 useReplies=self.opt['include_labels'],
                 dict=self.dict,
                 useStartEndIndices=False)
         else:
-            obs['text2vec'] = deque(obs['text2vec'], self.opt['truncate'])
+            obs['text2vec'] = deque(obs['text2vec'], maxlen=self.truncate)
         self.observation = obs
         self.answers[batch_idx] = None
         return obs
