@@ -247,7 +247,7 @@ def maintain_dialog_history(history, observation, reply='',
                 history['dialog'].extend(parse(reply))
         elif len(history['labels']) > 0:
             r = history['labels'][0]
-            history['dialog'].extend(parse(r, True))
+            history['dialog'].extend(parse(r, splitSentences))
     if 'text' in observation:
         history['dialog'].extend(parse(observation['text'], splitSentences))
 
