@@ -367,6 +367,6 @@ task_list = [
         "task": 'wikipedia',
         "tags": [ "All" ],
         "description": "Dump of Wikipedia articles",
-        "notes": "Specify ':full' for the full articles to be returned, otherwise defaults to ':summary', which provides the first paragraphs"
+        "notes": "Specify ':full' for the full articles to be returned, otherwise defaults to ':summary', which provides the first paragraphs. To have the article title show up in the labels rather than the text, specify ':label' at the end"
     },
 ]
