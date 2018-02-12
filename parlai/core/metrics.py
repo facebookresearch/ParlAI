@@ -246,7 +246,7 @@ class Metrics(object):
         total = self.metrics['cnt']
         m['total'] = total
         if total > 0:
-            if self.print_prediction_metrics:
+            if self.print_prediction_metrics or self.metrics['f1'] > 0:
                 m['accuracy'] = round_sigfigs(self.metrics['correct'] / total, 4)
                 m['f1'] = round_sigfigs(self.metrics['f1'] / total, 4)
                 m['hits@k'] = {}
