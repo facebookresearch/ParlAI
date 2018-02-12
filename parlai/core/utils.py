@@ -209,7 +209,7 @@ def make_batches(data, bsz):
 
 def maintain_dialog_history(history, observation, reply='',
                             historyLength=1, useReplies="labels",
-                            dict=None, useStartEndIndices=True, 
+                            dict=None, useStartEndIndices=True,
                             splitSentences=False):
     """Keeps track of dialog history, up to a truncation length.
     Either includes replies from the labels, model, or not all using param 'replies'."""
@@ -453,6 +453,6 @@ class PaddingUtils(object):
 
 
             if random.random() > (1 - report_freq):
-                print('TEXT: ', observations[valid_inds[i]]['text'].replace('__END__', ''), '\n~')
+                print('TEXT: ', observations[valid_inds[i]]['text'].replace('__END__', ''))
                 print('PREDICTION: ', curr_pred, '\n~')
         return
