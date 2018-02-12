@@ -132,13 +132,6 @@ class Seq2seqAgent(Agent):
                            choices=['none', 'only', 'both'],
                            help='Enabled language modeling training on the '
                                 'concatenated input and label data.')
-        agent.add_argument('-hist', '--history-length', default=100000, type=int,
-                           help='Number of past tokens to remember. '
-                                'Default remembers 100000 tokens.')
-        agent.add_argument('-histr', '--history-replies',
-                           default='none', type=str,
-                           choices=['none', 'model', 'label'],
-                           help='Keep replies in the history, or not.')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -365,12 +358,12 @@ class Seq2seqAgent(Agent):
             obs['text2vec'] = maintain_dialog_history(
                 self.history, obs,
                 reply=self.answers[batch_idx],
-                historyLength=self.opt['history_length'],
-                useReplies=self.opt['history_replies'],
+                historyLength=self.opt['truncate'],
+                useReplies=self.opt['include_labels'],
                 dict=self.dict,
                 useStartEndIndices=False)
         else:
-            obs['text2vec'] = deque(obs['text2vec'], self.opt['history_length'])
+            obs['text2vec'] = deque(obs['text2vec'], self.opt['truncate'])
         self.observation = obs
         self.answers[batch_idx] = None
         return obs
