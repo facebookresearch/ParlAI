@@ -68,7 +68,7 @@ class DictionaryAgent(Agent):
     default_lang = 'english'
     default_maxngram = -1
     default_minfreq = 0
-    default_maxsortedsize = -1
+    default_maxtokens = -1
     default_null = '__NULL__'
     default_start = '__START__'
     default_end = '__END__'
@@ -101,7 +101,7 @@ class DictionaryAgent(Agent):
             type=int,
             help='minimum frequency of words to include them in sorted dict')
         dictionary.add_argument(
-            '--dict-maxsortedsize', default=DictionaryAgent.default_maxsortedsize,
+            '--dict-maxtokens', default=DictionaryAgent.default_maxtokens,
             type=int,
             help='max number of tokens to include in sorted dict')
         dictionary.add_argument(
@@ -133,7 +133,7 @@ class DictionaryAgent(Agent):
         # initialize fields
         self.opt = copy.deepcopy(opt)
         self.minfreq = opt['dict_minfreq']
-        self.max_sorted_size = opt['dict_maxsortedsize']
+        self.maxtokens = opt['dict_maxtokens']
         self.null_token = opt['dict_nulltoken']
         self.end_token = opt['dict_endtoken']
         self.unk_token = opt['dict_unktoken']
@@ -368,10 +368,10 @@ class DictionaryAgent(Agent):
         for token in to_remove:
             del self.freq[token]
 
-    def resize_to_max(self, max_sorted_size):
+    def resize_to_max(self, maxtokens):
         # defaults to -1, only trim dict if >= 0
-        if max_sorted_size >= 0 and len(self.tok2ind) > max_sorted_size:
-            for k in range(max_sorted_size, len(self.ind2tok)):
+        if maxtokens >= 0 and len(self.tok2ind) > maxtokens:
+            for k in range(maxtokens, len(self.ind2tok)):
                 v = self.ind2tok[k]
                 del self.ind2tok[k]
                 del self.tok2ind[v]
@@ -431,7 +431,7 @@ class DictionaryAgent(Agent):
             new_ind2tok[i] = tok
         self.tok2ind = new_tok2ind
         self.ind2tok = new_ind2tok
-        self.resize_to_max(self.max_sorted_size)
+        self.resize_to_max(self.maxtokens)
         return sorted_pairs
 
     def parse(self, txt_or_vec, vec_type=list):
