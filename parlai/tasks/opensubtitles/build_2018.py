@@ -17,9 +17,8 @@ import xml.etree.ElementTree as ET
 
 from parlai.core.utils import ProgressLogger
 
-# TODO: modify these for OpenSubtitles2018
-NUM_MOVIE_FOLDERS = 106248
-NUM_SUBTITLES_FILES = 323905
+NUM_MOVIE_FOLDERS = 140044
+NUM_SUBTITLES_FILES = 446612
 
 MAX_TIME_DIFFERENCE_S = 2
 MIN_WORD_LENGTH = 2
@@ -246,24 +245,25 @@ def create_fb_format(inpath, outpath):
     fvalid = open(os.path.join(outpath, 'valid.txt'), 'w')
     ftest = open(os.path.join(outpath, 'test.txt'), 'w')
 
-    files = get_list_of_files(inpath)
-    total_files = len(files)
+    movie_dirs = get_list_of_files(inpath)
+    total_movie_dirs = len(movie_dirs)
+    total_files = sum([len(l) for l in movie_dirs.values()])
     print(
-        '[Found %d *.xml.gz movies within %s in %d seconds]' % (
+        '[Found %d movie folders and %d subtitles within %s in %d seconds]' % (
+            total_movie_dirs,
             total_files,
             inpath,
             time.time() - start_time,
         )
     )
 
-    assert total_files == NUM_MOVIE_FOLDERS, 'Incorrect number of movies'
-    assert sum([len(l) for l in files.values()]) == NUM_SUBTITLES_FILES, \
-        'Incorrect number of files'
+    assert total_movie_dirs == NUM_MOVIE_FOLDERS, 'Incorrect number of movies'
+    assert total_files == NUM_SUBTITLES_FILES, 'Incorrect number of files'
 
     logger = ProgressLogger()
 
     with multiprocessing.Pool(processes=os.cpu_count()) as pool:
-        for i, s in enumerate(pool.imap(extract_data_from_file, files.items())):
+        for i, s in enumerate(pool.imap(extract_data_from_file, movie_dirs.items())):
             handle = ftrain
             # TODO: Shall we use smaller valid/test sets? Even 10% is A LOT here
             if i % 10 == 0:
@@ -295,12 +295,14 @@ def build(datapath):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # Download the data.
-        url = ('http://opus.lingfil.uu.se/download.php?f=OpenSubtitles2018/en.tar.gz')
-        build_data.download(url, dpath, 'OpenSubtitles2018.tar.gz')
         untar_path = os.path.join(dpath, 'OpenSubtitles2018', 'xml', 'en')
+
         if len(glob.glob(untar_path + '/*/*/*.xml.gz')) != NUM_SUBTITLES_FILES:
+            # Download the data.
+            url = ('http://opus.lingfil.uu.se/download.php?f=OpenSubtitles2018/en.tar.gz')
+            build_data.download(url, dpath, 'OpenSubtitles2018.tar.gz')
             build_data.untar(dpath, 'OpenSubtitles2018.tar.gz')
+
         create_fb_format(untar_path, dpath)
 
         # Mark the data as built.
