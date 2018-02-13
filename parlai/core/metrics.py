@@ -134,19 +134,19 @@ class Metrics(object):
     def __init__(self, opt):
         self.metrics = {}
         self.metrics['cnt'] = 0
-        self.metrics['correct'] = 0
-        self.metrics['f1'] = 0.0
-        self.custom_metrics = ['mean_rank', 'loss', 'lmloss', 'ppl']
-        for k in self.custom_metrics:
+        self.metrics_list = ['mean_rank', 'loss', 'correct', 'f1']
+        for k in self.metrics_list:
             self.metrics[k] = 0.0
             self.metrics[k + '_cnt'] = 0
         self.eval_pr = [1, 5, 10, 100]
         for k in self.eval_pr:
             self.metrics['hits@' + str(k)] = 0
+        self.metrics['hits@_cnt'] = 0
         if opt.get('numthreads', 1) > 1:
             self.metrics = SharedTable(self.metrics)
 
         self.datatype = opt.get('datatype', 'train')
+        self.has_text_cands = False
         self.print_prediction_metrics = False
 
     def __str__(self):
@@ -166,30 +166,31 @@ class Metrics(object):
     def update_ranking_metrics(self, observation, labels):
         text_cands = observation.get('text_candidates', None)
         if text_cands is None:
+            return
+        else:
+            self.has_text_cands = True
             text = observation.get('text', None)
-            if text is None:
-                return
-            else:
-                text_cands = [text]
-        # Now loop through text candidates, assuming they are sorted.
-        # If any of them is a label then score a point.
-        # maintain hits@1, 5, 10, 50, 100,  etc.
-        label_set = set(_normalize_answer(l) for l in labels)
-        cnts = {k: 0 for k in self.eval_pr}
-        cnt = 0
-        for c in text_cands:
-            cnt += 1
-            if _normalize_answer(c) in label_set:
+
+            # Now loop through text candidates, assuming they are sorted.
+            # If any of them is a label then score a point.
+            # maintain hits@1, 5, 10, 50, 100,  etc.
+            label_set = set(_normalize_answer(l) for l in labels)
+            cnts = {k: 0 for k in self.eval_pr}
+            cnt = 0
+            for c in text_cands:
+                cnt += 1
+                if _normalize_answer(c) in label_set:
+                    for k in self.eval_pr:
+                        if cnt <= k:
+                            cnts[k] += 1
+            # hits metric is 1 if cnts[k] > 0.
+            # (other metrics such as p@k and r@k take
+            # the value of cnt into account.)
+            with self._lock():
                 for k in self.eval_pr:
-                    if cnt <= k:
-                        cnts[k] += 1
-        # hits metric is 1 if cnts[k] > 0.
-        # (other metrics such as p@k and r@k take
-        # the value of cnt into account.)
-        with self._lock():
-            for k in self.eval_pr:
-                if cnts[k] > 0:
-                    self.metrics['hits@' + str(k)] += 1
+                    if cnts[k] > 0:
+                        self.metrics['hits@' + str(k)] += 1
+                self.metrics['hits@_cnt'] += 1
 
     def update(self, observation, labels):
         with self._lock():
@@ -204,11 +205,13 @@ class Metrics(object):
                 correct = 1
             with self._lock():
                 self.metrics['correct'] += correct
+                self.metrics['correct_cnt'] += 1
 
             # F1 metric.
             f1 = _f1_score(prediction, labels)
             with self._lock():
                 self.metrics['f1'] += f1
+                self.metrics['f1_cnt'] += 1
 
         # Ranking metrics.
         self.update_ranking_metrics(observation, labels)
@@ -217,7 +220,7 @@ class Metrics(object):
         if 'metrics' in observation:
             for k, v in observation['metrics'].items():
                 if k not in ['correct', 'f1', 'hits@k']:
-                    if k in self.custom_metrics:
+                    if k in self.metrics_list:
                         with self._lock():
                             self.metrics[k] += v
                             self.metrics[k + '_cnt'] += 1
@@ -228,7 +231,7 @@ class Metrics(object):
                         else:
                             if k not in self.metrics:
                                 self.metrics[k] = v
-                                self.custom_metrics.append(k)
+                                self.metrics_list.append(k)
                                 self.metrics[k + '_cnt'] = 1.0
                             else:
                                 self.metrics[k] += v
@@ -247,23 +250,22 @@ class Metrics(object):
         m['total'] = total
         if total > 0:
             if self.print_prediction_metrics or self.metrics['f1'] > 0:
-                m['accuracy'] = round_sigfigs(self.metrics['correct'] / total, 4)
-                m['f1'] = round_sigfigs(self.metrics['f1'] / total, 4)
-                m['hits@k'] = {}
-                for k in self.eval_pr:
-                    m['hits@k'][k] = round_sigfigs(
-                        self.metrics['hits@' + str(k)] / total, 3)
-            for k in self.custom_metrics:
-                if self.metrics[k + '_cnt'] > 0:
+                m['accuracy'] = round_sigfigs(self.metrics['correct'] / self.metrics['correct_cnt'], 4)
+                m['f1'] = round_sigfigs(self.metrics['f1'] /self.metrics['f1_cnt'], 4)
+                if self.has_text_cands:
+                    m['hits@k'] = {}
+                    for k in self.eval_pr:
+                        m['hits@k'][k] = round_sigfigs(
+                            self.metrics['hits@' + str(k)] / self.metrics['hits@_cnt'], 3)
+            for k in self.metrics_list:
+                if self.metrics[k + '_cnt'] > 0 and k != 'correct':
                     m[k] = round_sigfigs(self.metrics[k] / self.metrics[k + '_cnt'], 4)
         return m
 
     def clear(self):
         with self._lock():
             self.metrics['cnt'] = 0
-            self.metrics['correct'] = 0
-            self.metrics['f1'] = 0.0
-            for k in self.custom_metrics:
+            for k in self.metrics_list:
                 v = self.metrics[k]
                 v_typ = type(v)
                 if 'Tensor' in str(v_typ):
@@ -273,3 +275,4 @@ class Metrics(object):
                 self.metrics[k + '_cnt'] = 0
             for k in self.eval_pr:
                 self.metrics['hits@' + str(k)] = 0
+            self.metrics['hits@_cnt'] = 0
