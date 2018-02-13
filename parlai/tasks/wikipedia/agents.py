@@ -3,7 +3,17 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
+'''
+    Provides a dump of Wikipedia articles from 2/3/18.
 
+    One can either load full articles, using 'wikipedia:full',
+    or simply load the first paragraphs of the articles,
+    using 'wikipedia:summary'
+
+    To put the article in the labels and the title in the text, specify
+    ':key-value' at the end (for a title/content key-value association)
+
+'''
 from parlai.core.teachers import DialogTeacher
 from .build import build
 
@@ -11,17 +21,14 @@ import json
 import os
 
 
-class AllTeacher(DialogTeacher):
+class FullTeacher(DialogTeacher):
     """Reads Wikipedia pages one at a time
     """
     def __init__(self, opt, shared=None):
         self.key_value = ':key-value' in opt['task']
         opt['task'] = 'wikipedia:all'
-        success = build(opt)
+        build(opt)
         self.opt = opt
-        if not success:
-            '''Need to extract the rest of the data'''
-            raise RuntimeError(self.get_instructions())
         opt['datafile'] = os.path.join(
             opt['datapath'],
             'wikipedia/full/wiki_full_extracted')
@@ -30,10 +37,9 @@ class AllTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        if not os.path.exists(path):
-            '''Need to extract the rest of the data'''
-            raise RuntimeError(self.get_instructions())
         for subdir in os.listdir(path):
+            if subdir == 'README.md':
+                continue
             subdir_path = os.path.join(path, subdir)
             for wiki_file in os.listdir(subdir_path):
                 wiki_file_path = os.path.join(subdir_path, wiki_file)
@@ -47,7 +53,8 @@ class AllTeacher(DialogTeacher):
                         else:
                             yield (title + '\n' + text, None), True
 
-    def get_instructions(self):
+    def get_extraction_instructions(self):
+        '''If one wants to run extraction themselves on a raw wikipedia dump'''
         dpath = os.path.join(self.opt['datapath'], 'wikipedia', 'full')
         fname = 'enwiki-latest-pages-articles.xml.bz2'
         instructions = """
