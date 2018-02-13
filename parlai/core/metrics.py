@@ -258,7 +258,7 @@ class Metrics(object):
                         m['hits@k'][k] = round_sigfigs(
                             self.metrics['hits@' + str(k)] / self.metrics['hits@_cnt'], 3)
             for k in self.metrics_list:
-                if self.metrics[k + '_cnt'] > 0 and k != 'correct':
+                if self.metrics[k + '_cnt'] > 0 and k != 'correct' and k != 'f1':
                     m[k] = round_sigfigs(self.metrics[k] / self.metrics[k + '_cnt'], 4)
         return m
 
