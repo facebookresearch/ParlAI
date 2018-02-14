@@ -169,7 +169,7 @@ def parse_time_str(time_value_str):
 def extract_data_from_xml(xml_object):
     max_time_difference = 1
     previous_end_time = -1000
-    previous_sentence = None
+    conversation = []
     for sentence_node in xml_object.getroot():
         if sentence_node.tag != 's':
             continue
@@ -201,43 +201,78 @@ def extract_data_from_xml(xml_object):
                 pass
 
         sentence = clean_text(words)
-        if sentence is None:
-            continue
 
         start_time = start_time or previous_end_time
         end_time = end_time or previous_end_time
+        # add to the conversation
+        # flush and start new conversation
         if (
-            previous_sentence is not None
+            sentence is not None
             and start_time - previous_end_time <= MAX_TIME_DIFFERENCE_S
         ):
-            yield (previous_sentence + '\t' + sentence)
-        previous_sentence = sentence
+            conversation.append(sentence)
+        else:
+            if len(conversation) > 1:
+                yield conversation
+            conversation = []
+            if sentence is not None:
+                conversation.append(sentence)
+
         previous_end_time = max(start_time, end_time)
 
 
-def extract_data_from_file(movie_id_with_files):
-    movie_id, files = movie_id_with_files
-    data = set()
-    for filepath in files:
-        try:
-            xml_object = parse_xml(filepath)
-            for conversation in extract_data_from_xml(xml_object):
-                data.add(conversation)
-        except ET.ParseError as e:
-            # TODO: We possibly can log these errors,
-            # but I'm not sure how it would intervene with the PrograssLogger
-            pass
-        except:
-            print(
-                'Unexpected error for file %s:\n%s' % (filepath, sys.exc_info()[0]),
-                file=sys.stderr,
-            )
-            raise
-    data_str = '\n'.join(data) + ('\n' if len(data) > 0 else '')
-    return data_str
+def conversation_to_fb_format(conversation):
+    assert len(conversation) > 1
+    lines = []
+    for i in range(0, len(conversation), 2):
+        if i + 1 < len(conversation):
+            lines.append('%d %s\t%s' % (
+                i / 2 + 1, conversation[i], conversation[i + 1]
+            ))
+        else:
+            lines.append('%d %s' % (i / 2 + 1, conversation[i]))
+    return '\n'.join(lines)
 
 
-def create_fb_format(inpath, outpath):
+def conversation_to_basic_format(conversation):
+    assert len(conversation) > 1
+    lines = []
+    for i in range(len(conversation)):
+        if i + 1 < len(conversation):
+            lines.append('1 %s\t%s' % (conversation[i], conversation[i + 1]))
+    return '\n'.join(lines)
+
+
+class DataProcessor(object):
+    def __init__(self, use_history):
+        self.use_history = use_history
+
+    def __call__(self, movie_id_with_files):
+        movie_id, files = movie_id_with_files
+        data = set()
+        for filepath in files:
+            try:
+                xml_object = parse_xml(filepath)
+                for conversation in extract_data_from_xml(xml_object):
+                    if self.use_history:
+                        data.add(conversation_to_fb_format(conversation))
+                    else:
+                        data.add(conversation_to_basic_format(conversation))
+            except ET.ParseError as e:
+                # TODO: We possibly can log these errors,
+                # but I'm not sure how it would intervene with the PrograssLogger
+                pass
+            except:
+                print(
+                    'Unexpected error for file %s:\n%s' % (filepath, sys.exc_info()[0]),
+                    file=sys.stderr,
+                )
+                raise
+        data_str = '\n'.join(data) + ('\n' if len(data) > 0 else '')
+        return data_str
+
+
+def create_fb_format(inpath, outpath, use_history):
     print('[building fbformat]')
     start_time = time.time()
 
@@ -260,10 +295,12 @@ def create_fb_format(inpath, outpath):
     assert total_movie_dirs == NUM_MOVIE_FOLDERS, 'Incorrect number of movies'
     assert total_files == NUM_SUBTITLES_FILES, 'Incorrect number of files'
 
+    processor = DataProcessor(use_history)
+
     logger = ProgressLogger()
 
     with multiprocessing.Pool(processes=os.cpu_count()) as pool:
-        for i, s in enumerate(pool.imap(extract_data_from_file, movie_dirs.items())):
+        for i, s in enumerate(pool.imap(processor, movie_dirs.items())):
             handle = ftrain
             # TODO: Shall we use smaller valid/test sets? Even 10% is A LOT here
             if i % 10 == 0:
@@ -284,8 +321,10 @@ def create_fb_format(inpath, outpath):
     )
 
 
-def build(datapath):
+def build(datapath, use_history):
     dpath = os.path.join(datapath, 'OpenSubtitles2018')
+    if not use_history:
+        dpath += '_no_history'
     version = '1'
 
     if not build_data.built(dpath, version_string=version):
@@ -303,7 +342,7 @@ def build(datapath):
             build_data.download(url, dpath, 'OpenSubtitles2018.tar.gz')
             build_data.untar(dpath, 'OpenSubtitles2018.tar.gz')
 
-        create_fb_format(untar_path, dpath)
+        create_fb_format(untar_path, dpath, use_history)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
