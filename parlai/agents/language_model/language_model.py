@@ -67,6 +67,8 @@ class LanguageModelAgent(Agent):
                            help='truncate predictions')
         agent.add_argument('-rf', '--report-freq', type=float, default=0.1,
                            help='report frequency of prediction during eval')
+        agent.add_argument('-pt', '--person-tokens', type=bool, default=True,
+                           help='append person1 and person2 tokens to text')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -76,6 +78,7 @@ class LanguageModelAgent(Agent):
         # check for cuda
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
         self.batchsize = opt.get('batchsize', 1)
+        self.use_person_tokens = opt.get('person_tokens', True)
 
         if shared:
             # set up shared properties
@@ -89,6 +92,11 @@ class LanguageModelAgent(Agent):
             # get NULL token and END token
             self.NULL_IDX = self.dict[self.dict.null_token]
             self.END_IDX = self.dict[self.dict.end_token]
+
+            if self.use_person_tokens:
+                # add person1 and person2 tokens
+                self.dict.add_to_dict(self.dict.tokenize("PERSON1"))
+                self.dict.add_to_dict(self.dict.tokenize("PERSON2"))
 
         else:
             # this is not a shared instance of this class, so do full init
@@ -114,6 +122,11 @@ class LanguageModelAgent(Agent):
             # get NULL token and END token
             self.NULL_IDX = self.dict[self.dict.null_token]
             self.END_IDX = self.dict[self.dict.end_token]
+
+            if self.use_person_tokens:
+                # add person1 and person2 tokens
+                self.dict.add_to_dict(self.dict.tokenize("PERSON1"))
+                self.dict.add_to_dict(self.dict.tokenize("PERSON2"))
 
             # set model
             self.model = RNNModel(opt, len(self.dict))
@@ -219,10 +232,15 @@ class LanguageModelAgent(Agent):
 
         if is_training:
             if 'text' in obs:
+                if self.use_person_tokens:
+                    obs['text'] = 'PERSON1 ' + obs['text']
                 vec = self.parse(obs['text'])
                 vec.append(self.END_IDX)
                 self.next_observe += vec
             if 'labels' in obs:
+                if self.use_person_tokens:
+                    labels = ['PERSON2 ' + label for label in obs['labels'] if label != '']
+                    obs['labels'] = tuple(labels)
                 vec = self.parse(obs['labels'][0])
                 vec.append(self.END_IDX)
                 self.next_observe += vec
@@ -243,6 +261,13 @@ class LanguageModelAgent(Agent):
                 self.observation = dict_to_return
                 return dict_to_return
         else:
+            if 'text' in obs:
+                if self.use_person_tokens:
+                    obs['text'] = 'PERSON1 ' + obs['text']
+            if 'eval_labels' in obs:
+                if self.use_person_tokens:
+                    eval_labels = ['PERSON2 ' + label for label in obs['eval_labels'] if label != '']
+                    obs['eval_labels'] = tuple(eval_labels)
             self.observation = obs
             return obs
 
