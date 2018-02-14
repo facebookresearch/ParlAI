@@ -209,7 +209,7 @@ def make_batches(data, bsz):
 
 def maintain_dialog_history(history, observation, reply='',
                             historyLength=1, useReplies="labels",
-                            dict=None, useStartEndIndices=True, 
+                            dict=None, useStartEndIndices=True,
                             splitSentences=False):
     """Keeps track of dialog history, up to a truncation length.
     Either includes replies from the labels, model, or not all using param 'replies'."""
@@ -424,7 +424,7 @@ class PaddingUtils(object):
            using valid_inds.
            report_freq -- how often we report predictions
         """
-        predictions = predictions.cpu()
+        predictions = predictions.cpu().data
         for i in range(len(predictions)):
             # map the predictions back to non-empty examples in the batch
             # we join with spaces since we produce tokens one at a timelab
