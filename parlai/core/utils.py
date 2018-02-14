@@ -424,7 +424,10 @@ class PaddingUtils(object):
            using valid_inds.
            report_freq -- how often we report predictions
         """
-        predictions = predictions.cpu().data
+        if 'Variable' in str(type(predictions)):
+            predictions = predictions.cpu().data
+        else:
+            predictions = predictions.cpu()
         for i in range(len(predictions)):
             # map the predictions back to non-empty examples in the batch
             # we join with spaces since we produce tokens one at a timelab
