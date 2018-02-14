@@ -373,7 +373,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
             help='how many workers the Pytorch dataloader should use')
         arg_group.add_argument('--pytorch-buildteacher', type=str, default='',
             help='Which teacher to use when building the pytorch data')
-        arg_group.add_argument('--pytorch-preprocess', type='bool', default=True,
+        arg_group.add_argument('--pytorch-preprocess', type='bool', default=False,
             help='Whether the agent should preprocess the data while building'
                  'the pytorch data')
         arg_group.add_argument('--batch-sort-cache', type=str,
