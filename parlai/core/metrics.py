@@ -142,12 +142,10 @@ class Metrics(object):
         for k in self.eval_pr:
             self.metrics['hits@' + str(k)] = 0
         self.metrics['hits@_cnt'] = 0
+        self.flags = {'has_text_cands': False, 'print_prediction_metrics': False}
         if opt.get('numthreads', 1) > 1:
             self.metrics = SharedTable(self.metrics)
-
-        self.datatype = opt.get('datatype', 'train')
-        self.has_text_cands = False
-        self.print_prediction_metrics = False
+            self.flags = SharedTable(self.flags)
 
     def __str__(self):
         return str(self.metrics)
@@ -168,7 +166,6 @@ class Metrics(object):
         if text_cands is None:
             return
         else:
-            self.has_text_cands = True
             text = observation.get('text', None)
 
             # Now loop through text candidates, assuming they are sorted.
@@ -187,6 +184,7 @@ class Metrics(object):
             # (other metrics such as p@k and r@k take
             # the value of cnt into account.)
             with self._lock():
+                self.flags['has_text_cands'] = True
                 for k in self.eval_pr:
                     if cnts[k] > 0:
                         self.metrics['hits@' + str(k)] += 1
@@ -200,10 +198,10 @@ class Metrics(object):
         correct = 0
         prediction = observation.get('text', None)
         if prediction is not None:
-            self.print_prediction_metrics = True
             if _exact_match(prediction, labels):
                 correct = 1
             with self._lock():
+                self.flags['print_prediction_metrics'] = True
                 self.metrics['correct'] += correct
                 self.metrics['correct_cnt'] += 1
 
@@ -249,10 +247,10 @@ class Metrics(object):
         total = self.metrics['cnt']
         m['total'] = total
         if total > 0:
-            if self.print_prediction_metrics or self.metrics['f1'] > 0:
+            if self.flags['print_prediction_metrics']:
                 m['accuracy'] = round_sigfigs(self.metrics['correct'] / self.metrics['correct_cnt'], 4)
                 m['f1'] = round_sigfigs(self.metrics['f1'] /self.metrics['f1_cnt'], 4)
-                if self.has_text_cands:
+                if self.flags['has_text_cands']:
                     m['hits@k'] = {}
                     for k in self.eval_pr:
                         m['hits@k'][k] = round_sigfigs(
