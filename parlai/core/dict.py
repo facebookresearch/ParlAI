@@ -68,6 +68,7 @@ class DictionaryAgent(Agent):
     default_lang = 'english'
     default_maxngram = -1
     default_minfreq = 0
+    default_maxtokens = -1
     default_null = '__NULL__'
     default_start = '__START__'
     default_end = '__END__'
@@ -100,6 +101,10 @@ class DictionaryAgent(Agent):
             type=int,
             help='minimum frequency of words to include them in sorted dict')
         dictionary.add_argument(
+            '--dict-maxtokens', default=DictionaryAgent.default_maxtokens,
+            type=int,
+            help='max number of tokens to include in sorted dict')
+        dictionary.add_argument(
            '--dict-nulltoken', default=DictionaryAgent.default_null,
            help='empty token, can be used for padding or just empty values')
         dictionary.add_argument(
@@ -128,6 +133,7 @@ class DictionaryAgent(Agent):
         # initialize fields
         self.opt = copy.deepcopy(opt)
         self.minfreq = opt['dict_minfreq']
+        self.maxtokens = opt['dict_maxtokens']
         self.null_token = opt['dict_nulltoken']
         self.end_token = opt['dict_endtoken']
         self.unk_token = opt['dict_unktoken']
@@ -362,6 +368,15 @@ class DictionaryAgent(Agent):
         for token in to_remove:
             del self.freq[token]
 
+    def resize_to_max(self, maxtokens):
+        # defaults to -1, only trim dict if >= 0
+        if maxtokens >= 0 and len(self.tok2ind) > maxtokens:
+            for k in range(maxtokens, len(self.ind2tok)):
+                v = self.ind2tok[k]
+                del self.ind2tok[k]
+                del self.tok2ind[v]
+                del self.freq[v]
+
     def load(self, filename):
         """Load pre-existing dictionary in 'token[<TAB>count]' format.
         Initialize counts from other dictionary, or 0 if they aren't included.
@@ -416,6 +431,7 @@ class DictionaryAgent(Agent):
             new_ind2tok[i] = tok
         self.tok2ind = new_tok2ind
         self.ind2tok = new_ind2tok
+        self.resize_to_max(self.maxtokens)
         return sorted_pairs
 
     def parse(self, txt_or_vec, vec_type=list):
