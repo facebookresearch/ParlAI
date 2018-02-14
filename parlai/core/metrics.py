@@ -249,7 +249,7 @@ class Metrics(object):
         if total > 0:
             if self.flags['print_prediction_metrics']:
                 m['accuracy'] = round_sigfigs(self.metrics['correct'] / self.metrics['correct_cnt'], 4)
-                m['f1'] = round_sigfigs(self.metrics['f1'] /self.metrics['f1_cnt'], 4)
+                m['f1'] = round_sigfigs(self.metrics['f1'] / self.metrics['f1_cnt'], 4)
                 if self.flags['has_text_cands']:
                     m['hits@k'] = {}
                     for k in self.eval_pr:
