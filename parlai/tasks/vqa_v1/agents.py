@@ -55,8 +55,9 @@ class VQADataset(Dataset):
     def __init__(self, opt):
         self.opt = opt
         self.use_att = opt.get('attention', False)
-        self.use_hdf5 = opt.get('hdf5', False)
+        self.use_hdf5 = not opt.get('no_hdf5', False)
         self.datatype = self.opt.get('datatype')
+        self.training = self.datatype.startswith('train')
         _, _, self.image_path = _path(opt)
         self.image_loader = ImageLoader(opt)
         data_path, annotation_path, self.image_path = _path(opt)
@@ -90,7 +91,7 @@ class VQADataset(Dataset):
             if 'mc_label' in ep:
                 if not ep['mc_label'][0] in self.dict_agent.ans2ind:
                     ep['valid'] = False
-            ep = self.dict_agent.encode_question([ep], True)
+            ep = self.dict_agent.encode_question([ep], self.training)
             ep = self.dict_agent.encode_answer(ep)
             ep[0]['labels'] = labels
         else:

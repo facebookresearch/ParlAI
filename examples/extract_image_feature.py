@@ -49,7 +49,7 @@ def main(opt):
     opt['no_cuda'] = False
     opt['gpu'] = 0
     opt['num_epochs'] = 1
-    opt['hdf5'] = False
+    opt['no_hdf5'] = True
     logger = ProgressLogger(should_humanize=False, throttle=0.1)
     print("\n---Beginning image extraction---\n")
 
