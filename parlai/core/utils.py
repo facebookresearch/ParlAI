@@ -424,7 +424,7 @@ class PaddingUtils(object):
            using valid_inds.
            report_freq -- how often we report predictions
         """
-        if 'Variable' in str(type(predictions)):
+        if isinstance(predictions, torch.autograd.Variable):
             predictions = predictions.cpu().data
         else:
             predictions = predictions.cpu()
