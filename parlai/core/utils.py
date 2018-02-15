@@ -8,7 +8,11 @@ from collections import deque
 import math
 import random
 import time
-import torch
+
+try:
+    import torch
+except ImportError:
+    pass
 
 
 class Predictor(object):
