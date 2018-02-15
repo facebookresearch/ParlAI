@@ -6,7 +6,8 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import maintain_dialog_history, PaddingUtils
+from parlai.core.padding_utils import PaddingUtils
+from parlai.core.utils import maintain_dialog_history
 from .modules import Seq2seq, RandomProjection
 
 import torch

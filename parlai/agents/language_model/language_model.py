@@ -6,7 +6,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import PaddingUtils
+from parlai.core.padding_utils import PaddingUtils
 from .modules import RNNModel
 
 import torch
