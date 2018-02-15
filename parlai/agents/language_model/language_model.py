@@ -286,6 +286,10 @@ class LanguageModelAgent(Agent):
         loss = 0.0
         bsz = data.size(0)
 
+        # during interactive mode, when no targets exist, we return 0
+        if targets is None:
+            return loss
+
         # feed in inputs without end token
         output, hidden = self.model(data.transpose(0,1), hidden)
         self.hidden = self.repackage_hidden(hidden)
@@ -405,10 +409,12 @@ class LanguageModelAgent(Agent):
                 observations, self.dict, self.END_IDX, self.NULL_IDX)
             if self.use_cuda:
                 xs = Variable(xs).cuda()
-                ys = Variable(ys).cuda()
+                if ys is not None:
+                    ys = Variable(ys).cuda()
             else:
                 xs = Variable(xs)
-                ys = Variable(ys)
+                if ys is not None:
+                    ys = Variable(ys)
             data_list = [xs]
             targets_list = [ys]
 
