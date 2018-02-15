@@ -409,10 +409,12 @@ class LanguageModelAgent(Agent):
                 observations, self.dict, self.END_IDX, self.NULL_IDX)
             if self.use_cuda:
                 xs = Variable(xs).cuda()
-                ys = Variable(ys).cuda()
+                if ys is not None:
+                    ys = Variable(ys).cuda()
             else:
                 xs = Variable(xs)
-                ys = Variable(ys)
+                if ys is not None:
+                    ys = Variable(ys)
             data_list = [xs]
             targets_list = [ys]
 
