@@ -286,6 +286,10 @@ class LanguageModelAgent(Agent):
         loss = 0.0
         bsz = data.size(0)
 
+        # during interactive mode, when no targets exist, we return 0
+        if targets is None:
+            return loss
+
         # feed in inputs without end token
         output, hidden = self.model(data.transpose(0,1), hidden)
         self.hidden = self.repackage_hidden(hidden)
