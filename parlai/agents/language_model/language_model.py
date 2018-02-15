@@ -227,7 +227,7 @@ class LanguageModelAgent(Agent):
         obs = observation.copy()
         seq_len = self.opt['seq_len']
         is_training = True
-        if 'eval_labels' in obs:
+        if 'labels' not in obs:
             is_training = False
 
         if is_training:
