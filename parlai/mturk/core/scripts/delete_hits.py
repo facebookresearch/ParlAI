@@ -26,9 +26,25 @@ def main():
         action='store_true',
         help='Ignore HITs that may already be completed or assigned',
     )
+    parser.add_argument(
+        '--approve',
+        dest='approve',
+        default=False,
+        action='store_true',
+        help='Approve HITs that have been completed on deletion',
+    )
+    parser.add_argument(
+        '--verbose',
+        dest='verbose',
+        default=False,
+        action='store_true',
+        help='List actions to individual HITs',
+    )
     opt = parser.parse_args()
     sandbox = opt.sandbox
     ignore = opt.ignore
+    approve = opt.approve
+    verbose = opt.verbose
     task_group_ids = []
     group_to_hit = {}
     hits = []
@@ -64,16 +80,24 @@ def main():
                         # Ignore completed hits
                         continue
                 question = hit['Question']
-                if 'ExternalURL' in question:
-                    url = question.split('ExternalURL')[1]
-                    group_id = url.split('task_group_id=')[1]
-                    group_id = group_id.split('&')[0]
-                    group_id = group_id.split('<')[0]
-                    if group_id not in task_group_ids:
-                        group_to_hit[group_id] = []
-                        task_group_ids.append(group_id)
-                    group_to_hit[group_id].append(hit['HITId'])
-                    found += 1
+                try:
+                    if 'ExternalURL' in question:
+                        url = question.split('ExternalURL')[1]
+                        group_id = url.split('task_group_id=')[1]
+                        group_id = group_id.split('&')[0]
+                        group_id = group_id.split('<')[0]
+                        if group_id not in task_group_ids:
+                            sys.stdout.write(
+                                '\rFound group {}                         '
+                                '                                         '
+                                '\n'.format(group_id)
+                            )
+                            group_to_hit[group_id] = {}
+                            task_group_ids.append(group_id)
+                        group_to_hit[group_id][hit['HITId']] = hit['HITStatus']
+                        found += 1
+                except IndexError:
+                    pass # This wasn't the right HIT
 
             sys.stdout.write(
                 '\r{} HITs processed, {} active hits'
@@ -92,12 +116,23 @@ def main():
                 MaxResults=100
             )
 
-    except BaseException:
+    except BaseException as e:
+        print(e)
         pass
 
-    print('\n\nTask group id - Active HITs')
-    for group_id in task_group_ids:
-        print('{} - {}'.format(group_id, len(group_to_hit[group_id])))
+    if not approve:
+        print('\n\nTask group id - Active HITs')
+        for group_id in task_group_ids:
+            print('{} - {}'.format(group_id, len(group_to_hit[group_id])))
+    else:
+        print('\n\nTask group id - Active HITs - Reviewable')
+        for group_id in task_group_ids:
+            print('{} - {} - {}'.format(
+                group_id,
+                len(group_to_hit[group_id]),
+                len([s for s in group_to_hit[group_id].values()
+                     if s == 'Reviewable']),
+            ))
 
     print(
         'To clear a task, please enter the task group id of the task that you '
@@ -116,8 +151,26 @@ def main():
             )
             if '{}'.format(len(group_to_hit[task_group_id])) == num_hits:
                 hits_expired = 0
-                for hit_id in group_to_hit[task_group_id]:
+                for hit_id, status in group_to_hit[task_group_id].items():
+                    if approve:
+                        response = client.list_assignments_for_hit(
+                            HITId=hit_id,
+                        )
+                        if response['NumResults'] == 0:
+                            if verbose:
+                                print('No results for hit {} with status {}\n'
+                                      ''.format(hit_id, status))
+                        else:
+                            assignment = response['Assignments'][0]
+                            assignment_id = assignment['AssignmentId']
+                            client.approve_assignment(
+                                AssignmentId=assignment_id)
+                            if verbose:
+                                print('Approved assignment {}'.format(
+                                    assignment_id))
                     mturk_utils.expire_hit(sandbox, hit_id)
+                    if verbose:
+                        print('Expired hit {}'.format(hit_id))
                     hits_expired += 1
                     sys.stdout.write('\rExpired hits {}'.format(hits_expired))
                 print('\nAll hits for group {} have been expired.'.format(
