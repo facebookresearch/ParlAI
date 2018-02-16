@@ -83,6 +83,7 @@ import random
 from functools import wraps
 import importlib
 import copy
+import sys
 try:
     import torch
 except Exception as e:
@@ -318,6 +319,8 @@ class StreamDataset(Dataset):
         self.datafile = build_data(self.opt)
         self.data_gen = self._data_generator(self.datafile)
         self.length_datafile = self.datafile + ".length"
+        self.num_epochs = self.opt.get('num_epochs')
+        self.training = self.datatype.startswith('train')
         self._load_lens()
 
     def __getitem__(self, index):
@@ -327,11 +330,9 @@ class StreamDataset(Dataset):
                 return (index, ep)
 
     def __len__(self):
-        if self.datatype.startswith('train'):
-            num_iters = max(self.opt.get('num_epochs', 1), 1)
-        else:
-            num_iters = 1
-        return int(self.num_episodes() * num_iters)
+        num_epochs = self.num_epochs if self.num_epochs > 0 else 100
+        num_iters = num_epochs if self.training else 1
+        return int(num_iters * self.num_episodes())
 
     def _load_lens(self):
         with open(self.length_datafile) as length:

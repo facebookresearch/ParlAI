@@ -2,8 +2,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""Basic example which iterates through the tasks specified and load/extract the
-image features.
+"""Basic example which iterates through the tasks specified and load/extract
+the image features.
 
 For example, to extract the image feature of COCO images:
 `python examples/extract_image_feature.py -t vqa_v1 -im resnet152`.
@@ -15,11 +15,13 @@ import h5py
 import copy
 import os
 import json
+import datetime
 
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.core.utils import ProgressLogger
+
 
 def get_dataset_class(opt):
     """ To use a custom Pytorch Dataset, specify it on the command line:
@@ -44,15 +46,15 @@ def get_dataset_class(opt):
 def main(opt):
     # Get command line arguments
     opt = copy.deepcopy(opt)
-    opt['datatype'] = 'train:ordered'
+    dt = opt['datatype'].split(':')[0] + ':ordered'
+    opt['datatype'] = dt
     bsz = opt.get('batchsize', 1)
     opt['no_cuda'] = False
     opt['gpu'] = 0
     opt['num_epochs'] = 1
     opt['no_hdf5'] = True
     logger = ProgressLogger(should_humanize=False, throttle=0.1)
-    print("\n---Beginning image extraction---\n")
-
+    print("[ Loading Images ]")
     # create repeat label agent and assign it to the specified task
     if opt.get('dataset') is None:
         agent = RepeatLabelAgent(opt)
@@ -73,11 +75,32 @@ def main(opt):
         bsz = 1
         try:
             import torch
-        except Exception as e:
+            from torch.utils.data import DataLoader
+        except ModuleNotFoundError:
             raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
-        from torch.utils.data import Dataset, DataLoader, sampler
 
         dataset = get_dataset_class(opt)(opt)
+        pre_image_path, _ = os.path.split(dataset.image_path)
+        image_path = os.path.join(pre_image_path, opt.get('image_mode'))
+        images_built_file = image_path + '.built'
+
+        if not os.path.exists(image_path) or not os.path.isfile(images_built_file):
+            '''Image features have not been computed yet'''
+            opt['num_load_threads'] = 20
+            agent = RepeatLabelAgent(opt)
+            if opt['task'] == 'pytorch_teacher':
+                opt['task'] = opt['pytorch_buildteacher']
+            world = create_task(opt, agent)
+            exs_seen = 0
+            total_exs = world.num_examples()
+            print('[ Computing and Saving Image Features ]')
+            while exs_seen < total_exs:
+                world.parley()
+                exs_seen += bsz
+                logger.log(exs_seen, total_exs)
+            print('[ Feature Computation Done ]')
+            with open(images_built_file, 'w') as write:
+                write.write(str(datetime.datetime.today()))
 
         dataloader = DataLoader(
             dataset,
@@ -92,14 +115,16 @@ def main(opt):
         num_images = dataset.num_images()
         attention = opt.get('attention', False)
         if attention:
-            hdf5_path = dataset.image_path + 'mode_{}.hdf5'.format(im)
+            hdf5_path = '{}mode_{}.hdf5'.format(dataset.image_path, im)
         else:
-            hdf5_path = dataset.image_path + 'mode_{}_noatt.hdf5'.format(im)
-        image_id_to_idx_path = dataset.image_path + 'mode_{}_id_to_idx.txt'.format(im)
-        if os.path.isfile(hdf5_path):
+            hdf5_path = '{}mode_{}_noatt.hdf5'.format(dataset.image_path, im)
+        image_id_to_idx_path = '{}mode_{}_id_to_idx.txt'.format(dataset.image_path, im)
+        hdf5_built_file = hdf5_path + '.built'
+        if os.path.isfile(hdf5_path) and os.path.isfile(hdf5_built_file):
             print('[ Images already extracted at: {} ]'.format(hdf5_path))
             return
 
+        print("[ Beginning image extraction for {} images ]".format(dt.split(':')[0]))
         hdf5_file = h5py.File(hdf5_path, 'w')
         idx = 0
         for ex in iter(dataloader):
@@ -109,6 +134,9 @@ def main(opt):
                 image_id_to_index[ex['image_id']] = idx
 
             img = ex['image']
+            if isinstance(img, torch.autograd.Variable):
+                img = img.cpu().data
+
             if not attention:
                 nb_regions = img.size(2) * img.size(3)
                 img = img.sum(3).sum(2).div(nb_regions).view(-1, 2048)
@@ -125,14 +153,16 @@ def main(opt):
 
             hdf5_dataset[idx] = img
             logger.log(idx, num_images)
-            idx+=1
+            idx += 1
 
         hdf5_file.close()
         if not os.path.exists(image_id_to_idx_path):
             with open(image_id_to_idx_path, 'w') as f:
                 json.dump(image_id_to_index, f)
+        with open(hdf5_built_file, 'w') as write:
+            write.write(str(datetime.datetime.today()))
 
-    print("\n---Finished extracting images---\n")
+    print("[ Finished extracting images ]")
 
 
 if __name__ == '__main__':

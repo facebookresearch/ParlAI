@@ -17,6 +17,7 @@ from parlai_external.agents.mlb.mlb import VqaDictionaryAgent
 
 import json
 import os
+import sys
 
 
 def _path(opt):
@@ -58,6 +59,7 @@ class VQADataset(Dataset):
         self.use_hdf5 = not opt.get('no_hdf5', False)
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
+        self.num_epochs = self.opt.get('num_epochs')
         _, _, self.image_path = _path(opt)
         self.image_loader = ImageLoader(opt)
         data_path, annotation_path, self.image_path = _path(opt)
@@ -66,7 +68,7 @@ class VQADataset(Dataset):
             try:
                 import h5py
                 self.h5py = h5py
-            except Exception as e:
+            except ModuleNotFoundError:
                 raise ModuleNotFoundError('Need to install h5py - `pip install h5py`')
             self._setup_image_data()
         self.dict_agent = VqaDictionaryAgent(opt)
@@ -74,7 +76,6 @@ class VQADataset(Dataset):
     def __getitem__(self, index):
         index %= self.num_episodes()
         qa = self.ques['questions'][index]
-        im_path = self.image_path + '%012d.jpg' % (qa['image_id'])
         ep = {
             'text': qa['question'],
             'image': self.get_image(qa['image_id']),
@@ -101,7 +102,9 @@ class VQADataset(Dataset):
         return (index, ep)
 
     def __len__(self):
-        return int(self.num_episodes() * max(self.opt.get('num_epochs'), 1))
+        num_epochs = self.num_epochs if self.num_epochs > 0 else 100
+        num_iters = num_epochs if self.training else 1
+        return int(num_iters * self.num_episodes())
 
     def _load_lens(self):
         with open(self.length_datafile) as length:
