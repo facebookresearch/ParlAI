@@ -1162,7 +1162,7 @@ class MTurkManager():
             )
         else:
             mturk_page_url = self.create_additional_hits(
-                num_hits=self.opt['max_connections'],
+                num_hits=min(self.required_hits, self.opt['max_connections']),
                 qualifications=qualifications,
             )
 
