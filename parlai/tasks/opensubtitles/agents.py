@@ -29,7 +29,7 @@ class HalfTeacher(FbDialogTeacher):
     """This version of opensubtitles creates half of all possible dialog
     examples.
     """
-    def __init__(self, opt, version, use_history, shared=None):
+    def __init__(self, opt, version='2018', use_history=True, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, version, use_history)
         if not opt['datatype'].startswith('train'):
