@@ -387,8 +387,9 @@ class Seq2seqAgent(Agent):
             loss += self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
             loss.backward()
             self.update_params()
-            loss_dict = {'loss': loss.mul(len(xs)).data[0]}
-            loss_dict['ppl'] = (math.e**loss).mul(len(xs)).data[0]
+            loss_dict = {'loss': loss.data[0]}
+            loss_dict['ppl'] = (math.e**loss).data[0]
+            #loss_dict['ppl'] = (math.e**loss).mul(len(xs)).data[0]
         else:
             self.model.eval()
             predictions, scores, text_cand_inds = self.model(xs, ys, cands,
