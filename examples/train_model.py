@@ -62,6 +62,9 @@ def setup_args(model_args=None):
                        type=float, default=1.0,
                        help='value at which training will stop if exceeded by '
                             'training metric')
+    train.add_argument('--save-last-valid', type='bool', default=False
+                       help='Saves the model to model_file.last_valid after '
+                            'every validation (overwriting previous saves).')
     train.add_argument('-dbf', '--dict-build-first',
                        type='bool', default=True,
                        help='build dictionary first before training agent')
@@ -145,7 +148,7 @@ class TrainLoop():
         valid_report, self.valid_world = run_eval(
             self.agent, opt, 'valid', opt['validation_max_exs'],
             valid_world=self.valid_world)
-        if opt.get('model_file'):
+        if opt.get('model_file') and opt.get('save_last_valid'):
             self.agent.save(opt['model_file'] + '.last_valid')
         if valid_report[opt['validation_metric']] > self.best_valid:
             self.best_valid = valid_report[opt['validation_metric']]
