@@ -61,7 +61,11 @@ function _send_message(connection_id, event_name, event_data) {
     content: event_data,
   }
   // Send the message through
-  socket.send(JSON.stringify(packet));
+  try {
+    socket.send(JSON.stringify(packet));
+  } catch (e) {
+    console.log('Ran into error trying to send:', e);
+  }
 }
 
 

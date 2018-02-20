@@ -288,7 +288,7 @@ class SocketManager():
             else:
                 shared_utils.print_and_log(
                     logging.WARN,
-                    error,
+                    'Socket logged error: {}'.format(error),
                 )
 
         def on_disconnect(*args):
