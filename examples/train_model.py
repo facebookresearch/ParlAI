@@ -145,6 +145,8 @@ class TrainLoop():
         valid_report, self.valid_world = run_eval(
             self.agent, opt, 'valid', opt['validation_max_exs'],
             valid_world=self.valid_world)
+        if opt.get('model_file'):
+            self.agent.save(opt['model_file'] + '.last_valid')
         if valid_report[opt['validation_metric']] > self.best_valid:
             self.best_valid = valid_report[opt['validation_metric']]
             self.impatience = 0
