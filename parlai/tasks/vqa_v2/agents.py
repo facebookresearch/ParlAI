@@ -112,8 +112,8 @@ class OeTeacher(FixedDialogTeacher):
             ready = (self.example, self.epochDone)
         # queue up the next example
         self.example, self.epochDone = super().next_example()
-        image_id = self.example.pop('image_id')
-        if self.image_mode != 'none':
+        if self.image_mode != 'none' and 'image_id' in self.example:
+            image_id = self.example['image_id']
             self.submit_load_request(image_id)
         return ready
 

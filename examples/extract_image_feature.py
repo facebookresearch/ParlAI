@@ -170,5 +170,7 @@ if __name__ == '__main__':
     arg_group = parser.add_argument_group('Image Extraction')
     arg_group.add_argument('--dataset', type=str, default=None,
                            help='Pytorch Dataset')
+    arg_group.add_argument('-at', '--attention', action='store_true',
+                           help='Whether to extract image features with attention')
     opt = parser.parse_args()
     main(opt)

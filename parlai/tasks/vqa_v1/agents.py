@@ -59,7 +59,7 @@ class VQADataset(Dataset):
         self.use_hdf5 = not opt.get('no_hdf5', False)
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
-        self.num_epochs = self.opt.get('num_epochs')
+        self.num_epochs = self.opt.get('num_epochs', 0)
         _, _, self.image_path = _path(opt)
         self.image_loader = ImageLoader(opt)
         data_path, annotation_path, self.image_path = _path(opt)
@@ -227,8 +227,8 @@ class OeTeacher(FixedDialogTeacher):
             ready = (self.example, self.epochDone)
         # queue up the next example
         self.example, self.epochDone = super().next_example()
-        image_id = self.example['image_id']
-        if self.image_mode != 'none':
+        if self.image_mode != 'none' and 'image_id' in self.example:
+            image_id = self.example['image_id']
             self.submit_load_request(image_id)
         return ready
 

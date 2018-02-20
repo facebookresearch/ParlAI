@@ -319,7 +319,7 @@ class StreamDataset(Dataset):
         self.datafile = build_data(self.opt)
         self.data_gen = self._data_generator(self.datafile)
         self.length_datafile = self.datafile + ".length"
-        self.num_epochs = self.opt.get('num_epochs')
+        self.num_epochs = self.opt.get('num_epochs', 0)
         self.training = self.datatype.startswith('train')
         self._load_lens()
 
