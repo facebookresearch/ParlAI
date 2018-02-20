@@ -42,7 +42,6 @@ const wss = new WebSocket.Server(
 var connection_id_to_socket = {};
 var room_id_to_connection_id = {};
 var NOTIF_ID = 'MTURK_NOTIFICATIONS'
-var global_socket = null;
 
 // Handles sending a message through the socket
 function _send_message(connection_id, event_name, event_data) {

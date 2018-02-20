@@ -3,13 +3,15 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
+import errno
+import json
 import logging
 import requests
 import threading
-from socketIO_client_nexus import SocketIO
+import time
+import websocket
 
 import parlai.mturk.core.shared_utils as shared_utils
-
 
 MAX_QUICK_REPLIES = 10
 MAX_TEXT_CHARS = 640
@@ -120,9 +122,10 @@ def create_compact_list_message(raw_elems):
         }
     }
 
+
 # Socket handler
 class MessageSocket():
-    """MessageSocket is a wrapper around socketIO to simplify message sends
+    """MessageSocket is a wrapper around websocket to simplify message sends
     and recieves into parlai from FB messenger.
     """
 
@@ -137,20 +140,22 @@ class MessageSocket():
         self.port = port
         self.message_callback = message_callback
 
-        self.socketIO = None
+        self.ws = None
         self.auth_args = {'access_token': secret_token}
 
         # initialize the state
         self.listen_thread = None
 
         # setup the socket
+        self.keep_running = True
         self._setup_socket()
 
     def _send_world_alive(self):
         """Registers world with the passthrough server"""
-        self.socketIO.emit(
-            'world_alive', {'id': 'WORLD_ALIVE', 'sender_id': 'world'}
-        )
+        self.ws.send(json.dumps({
+            'type': 'world_alive',
+            'content': {'id': 'WORLD_ALIVE', 'sender_id': 'world'},
+        }))
 
     def send_fb_payload(self, receiver_id, payload):
         """Sends a payload to messenger, processes it if we can"""
@@ -213,8 +218,6 @@ class MessageSocket():
 
     def _setup_socket(self):
         """Create socket handlers and registers the socket"""
-        self.socketIO = SocketIO(self.server_url, self.port)
-
         def on_socket_open(*args):
             shared_utils.print_and_log(
                 logging.DEBUG,
@@ -222,6 +225,24 @@ class MessageSocket():
             )
             self._send_world_alive()
             self.alive = True
+
+        def on_error(ws, error):
+            try:
+                if error.errno == errno.ECONNREFUSED:
+                    ws.close()
+                    self.use_socket = False
+                    raise Exception("Socket refused connection, cancelling")
+                else:
+                    shared_utils.print_and_log(
+                        logging.WARN,
+                        'Socket logged error: {}'.format(error),
+                    )
+            except BaseException:
+                shared_utils.print_and_log(
+                    logging.WARN,
+                    'Socket logged string error: {} Restarting'.format(error),
+                )
+                ws.close()
 
         def on_disconnect(*args):
             """Disconnect event is a no-op for us, as the server reconnects
@@ -231,11 +252,14 @@ class MessageSocket():
                 'World server disconnected: {}'.format(args)
             )
             self.alive = False
+            self.ws.close()
 
         def on_message(*args):
-            """Incoming message handler for ACKs, ALIVEs, HEARTBEATs,
-            and MESSAGEs"""
-            message_data = args[0]
+            """Incoming message handler for messages from the FB user"""
+            packet_dict = json.loads(args[1])
+            if packet_dict['type'] == 'conn_success':
+                return  # No action for successful connection
+            message_data = packet_dict['content']
             shared_utils.print_and_log(
                 logging.DEBUG,
                 'Message data recieved: {}'.format(message_data)
@@ -243,14 +267,30 @@ class MessageSocket():
             for message_packet in message_data['entry']:
                 self.message_callback(message_packet['messaging'][0])
 
-        # Register Handlers
-        self.socketIO.on('socket_open', on_socket_open)
-        self.socketIO.on('disconnect', on_disconnect)
-        self.socketIO.on('new_packet', on_message)
+        def run_socket(*args):
+            url_base_name = self.server_url.split('https://')[1]
+            while self.keep_running:
+                try:
+                    sock_addr = "ws://{}/".format(
+                        url_base_name)
+                    self.ws = websocket.WebSocketApp(
+                        sock_addr,
+                        on_message=on_message,
+                        on_error=on_error,
+                        on_close=on_disconnect,
+                    )
+                    self.ws.on_open = on_socket_open
+                    self.ws.run_forever()
+                except Exception as e:
+                    shared_utils.print_and_log(
+                        logging.WARN,
+                        'Socket had error {}, attempting restart'.format(e)
+                    )
+                time.sleep(3)
 
         # Start listening thread
         self.listen_thread = threading.Thread(
-            target=self.socketIO.wait,
+            target=run_socket,
             name='Main-Socket-Thread'
         )
         self.listen_thread.daemon = True
