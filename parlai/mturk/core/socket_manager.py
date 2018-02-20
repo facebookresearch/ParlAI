@@ -281,15 +281,22 @@ class SocketManager():
             self.alive = True
 
         def on_error(ws, error):
-            if error.errno == errno.ECONNREFUSED:
-                ws.close()
-                self.use_socket = False
-                raise Exception("Socket refused connection, cancelling")
-            else:
+            try:
+                if error.errno == errno.ECONNREFUSED:
+                    ws.close()
+                    self.use_socket = False
+                    raise Exception("Socket refused connection, cancelling")
+                else:
+                    shared_utils.print_and_log(
+                        logging.WARN,
+                        'Socket logged error: {}'.format(error),
+                    )
+            except BaseException:
                 shared_utils.print_and_log(
                     logging.WARN,
-                    'Socket logged error: {}'.format(error),
+                    'Socket logged string error: {} Restarting'.format(error),
                 )
+                ws.close()
 
         def on_disconnect(*args):
             """Disconnect event is a no-op for us, as the server reconnects
