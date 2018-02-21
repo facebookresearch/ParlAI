@@ -96,6 +96,7 @@ class VQADataset(Dataset):
             ep = self.dict_agent.encode_answer(ep)
             ep[0]['labels'] = labels
         else:
+            ep['valid'] = True
             ep = self.dict_agent.encode_question([ep], False)
         ep[0]['use_att'] = self.use_att
         ep[0]['use_hdf5'] = self.use_hdf5
