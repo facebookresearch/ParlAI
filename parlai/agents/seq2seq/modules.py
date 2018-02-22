@@ -302,7 +302,7 @@ class Ranker(nn.Module):
             if cview.size(1) > 1:
                 # feed in START + cands[:-2]
                 cands_in = cview.narrow(1, 0, cview.size(1) - 1)
-                starts = torch.cat([starts, self.dec_lt(cands_in)], 1)
+                starts = torch.cat([starts, cands_in], 1)
             _preds, score, _h = self.decoder(starts, cands_hn, enc_out, attn_mask)
 
             for i in range(cview.size(1)):
