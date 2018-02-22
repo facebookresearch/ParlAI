@@ -53,6 +53,7 @@ class Agent(object):
         if not hasattr(self, 'opt'):
             self.opt = copy.deepcopy(opt)
         self.observation = None
+        self.metrics_dict = None
 
     def observe(self, observation):
         """Receive an observation/action dict."""
@@ -99,6 +100,13 @@ class Agent(object):
 
     def shutdown(self):
         """Perform any final cleanup if needed."""
+        pass
+
+    def receive_metrics(self, metrics_dict):
+        """Send the agent a metrics dict.
+        This can be used, for example, to anneal the learning rate after the
+        validation loss has plateaued.
+        """
         pass
 
 

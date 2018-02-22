@@ -79,6 +79,7 @@ class LanguageModelAgent(Agent):
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
         self.batchsize = opt.get('batchsize', 1)
         self.use_person_tokens = opt.get('person_tokens', True)
+        self.valid_metrics = None
 
         if shared:
             # set up shared properties
@@ -486,6 +487,14 @@ class LanguageModelAgent(Agent):
         if path is not None:
             self.save(path + '.shutdown_state')
         super().shutdown()
+
+    def receive_metrics(self, metrics_dict):
+        if self.valid_metrics is None:
+            self.valid_metrics = metrics_dict
+        else:
+            if 'loss' in self.valid_metrics:
+
+            pass
 
     def load(self, path):
         """Return opt and model states."""
