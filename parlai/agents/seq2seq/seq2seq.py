@@ -399,7 +399,7 @@ class Seq2seqAgent(Agent):
         if self.use_cuda:
             # copy to gpu
             self.xs.resize_(xs.size())
-            self.xs.copy_(xs, async=True)
+            self.xs.copy_(xs)
             xs = Variable(self.xs)
             if ys is not None:
                 self.ys.resize_(ys.size())
