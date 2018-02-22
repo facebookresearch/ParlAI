@@ -69,6 +69,9 @@ class LanguageModelAgent(Agent):
                            help='report frequency of prediction during eval')
         agent.add_argument('-pt', '--person-tokens', type=bool, default=True,
                            help='append person1 and person2 tokens to text')
+        agent.add_argument('-lrf', '--lr-factor', type=float, default=0.5,
+                           help='mutliply learning rate by this factor when the \
+                           validation loss does not decrease')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -164,7 +167,8 @@ class LanguageModelAgent(Agent):
                 self.ends = self.ends.cuda()
             # set up optimizer
             self.lr = opt['learningrate']
-            best_val_loss = None
+            self.lr_factor = opt['lr_factor']
+            self.best_val_loss = None
 
         self.reset()
 
@@ -342,7 +346,10 @@ class LanguageModelAgent(Agent):
             token_list.append(word_idx.view(bsz, 1))
             i += 1
 
-        return torch.cat(token_list,1)
+        if token_list:
+            return torch.cat(token_list,1)
+        else:
+            return None
 
     def predict(self, data, hidden, targets=None, is_training=True, y_lens=None):
         """Produce a prediction from our model.
@@ -486,6 +493,15 @@ class LanguageModelAgent(Agent):
         if path is not None:
             self.save(path + '.shutdown_state')
         super().shutdown()
+
+    def receive_metrics(self, metrics_dict):
+        if 'loss' in metrics_dict:
+            if self.best_val_loss is None:
+                self.best_val_loss = metrics_dict['loss']
+            else:
+                if metrics_dict['loss'] > self.best_val_loss:
+                    self.lr *= self.lr_factor
+                    print("Updating learning rate: lr =", self.lr)
 
     def load(self, path):
         """Return opt and model states."""

@@ -157,6 +157,8 @@ class TrainLoop():
         if opt.get('model_file') and opt.get('save_after_valid'):
             print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
             self.agent.save(opt['model_file'] + '.checkpoint')
+        if hasattr(self.agent, 'receive_metrics'):
+            self.agent.receive_metrics(valid_report)
         if valid_report[opt['validation_metric']] > self.best_valid:
             self.best_valid = valid_report[opt['validation_metric']]
             self.impatience = 0

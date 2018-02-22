@@ -159,7 +159,7 @@ class SocketManager():
                 Packet.TYPE_MESSAGE: 2}
 
     # Default time before socket deemed dead
-    DEF_SOCKET_TIMEOUT = 8
+    DEF_SOCKET_TIMEOUT = 12
 
     def __init__(self, server_url, port, alive_callback, message_callback,
                  socket_dead_callback, task_group_id,
