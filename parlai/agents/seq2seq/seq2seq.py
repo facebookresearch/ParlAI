@@ -104,7 +104,7 @@ class Seq2seqAgent(Agent):
                                 'while "shared" also uses the same weights. '
                                 'Note that shared disabled some encoder '
                                 'options--in particular, bidirectionality.')
-        agent.add_argument('-lt', '--lookuptable', default='all',
+        agent.add_argument('-lt', '--lookuptable', default='unique',
                            choices=['unique', 'enc_dec', 'dec_out', 'all'],
                            help='The encoder, decoder, and output modules can '
                                 'share weights, or not. '
@@ -129,13 +129,6 @@ class Seq2seqAgent(Agent):
                                 'Fasttext.'
                                 'Preinitialized embeddings can also be fixed '
                                 'so they are not updated during training.')
-        agent.add_argument('-hist', '--history-length', default=100000, type=int,
-                           help='Number of past tokens to remember. '
-                                'Default remembers 100000 tokens.')
-        agent.add_argument('-histr', '--history-replies',
-                           default='none', type=str,
-                           choices=['none', 'model', 'label'],
-                           help='Keep replies in the history, or not.')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -149,7 +142,6 @@ class Seq2seqAgent(Agent):
 
         # check for cuda
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
-
 
         if shared:
             # set up shared properties
@@ -256,10 +248,10 @@ class Seq2seqAgent(Agent):
 
             if self.use_cuda:
                 # push to cuda
-                self.xs = self.xs.cuda(async=True)
-                self.ys = self.ys.cuda(async=True)
+                self.xs = self.xs.cuda()
+                self.ys = self.ys.cuda()
                 if self.rank:
-                    self.cands = self.cands.cuda(async=True)
+                    self.cands = self.cands.cuda()
                 self.criterion.cuda()
 
             # set up optimizer
@@ -361,12 +353,12 @@ class Seq2seqAgent(Agent):
             obs['text2vec'] = maintain_dialog_history(
                 self.history, obs,
                 reply=self.answers[batch_idx],
-                historyLength=self.opt['history_length'],
-                useReplies=self.opt['history_replies'],
+                historyLength=self.truncate,
+                useReplies=self.opt['include_labels'],
                 dict=self.dict,
                 useStartEndIndices=False)
         else:
-            obs['text2vec'] = deque(obs['text2vec'], self.opt['history_length'])
+            obs['text2vec'] = deque(obs['text2vec'], maxlen=self.truncate)
         self.observation = obs
         self.answers[batch_idx] = None
         return obs
@@ -407,11 +399,11 @@ class Seq2seqAgent(Agent):
         if self.use_cuda:
             # copy to gpu
             self.xs.resize_(xs.size())
-            self.xs.copy_(xs, async=True)
+            self.xs.copy_(xs)
             xs = Variable(self.xs)
             if ys is not None:
                 self.ys.resize_(ys.size())
-                self.ys.copy_(ys, async=True)
+                self.ys.copy_(ys)
                 ys = Variable(self.ys)
         else:
             xs = Variable(xs)
@@ -449,7 +441,7 @@ class Seq2seqAgent(Agent):
                 if self.use_cuda:
                     # copy to gpu
                     self.cands.resize_(cands.size())
-                    self.cands.copy_(cands, async=True)
+                    self.cands.copy_(cands)
                     cands = Variable(self.cands)
                 else:
                     cands = Variable(cands)

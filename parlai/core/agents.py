@@ -320,7 +320,7 @@ def create_agent(opt):
         if model is not None:
             return model
         else:
-            print("[ no model yet at: " + opt.get('model_file') + " ]")
+            print("[ no model with opt yet at: " + opt.get('model_file') + "(.opt) ]")
     if opt.get('model'):
         model_class = get_agent_module(opt['model'])
         return model_class(opt)

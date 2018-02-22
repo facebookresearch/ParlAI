@@ -439,11 +439,11 @@ class PaddingUtils(object):
             output_tokens = []
             j = 0
             for c in predictions[i]:
-                if c == end_idx and j!=0:
+                if c == end_idx and j != 0:
                     break
                 else:
                     output_tokens.append(c)
-                j+=1
+                j += 1
             curr_pred = dictionary.vec2txt(output_tokens)
             curr['text'] = curr_pred
 
@@ -458,8 +458,8 @@ class PaddingUtils(object):
             elif answers is not None:
                 answers[valid_inds[i]] = output_tokens
 
-
             if random.random() > (1 - report_freq):
-                print('TEXT: ', observations[valid_inds[i]]['text'].replace('__END__', ''), '\n~')
+                # log sometimes
+                print('TEXT: ', observations[valid_inds[i]]['text'].replace('__END__', ''))
                 print('PREDICTION: ', curr_pred, '\n~')
         return
