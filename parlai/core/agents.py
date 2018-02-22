@@ -53,7 +53,6 @@ class Agent(object):
         if not hasattr(self, 'opt'):
             self.opt = copy.deepcopy(opt)
         self.observation = None
-        self.metrics_dict = None
 
     def observe(self, observation):
         """Receive an observation/action dict."""
