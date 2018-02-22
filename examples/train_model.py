@@ -164,7 +164,8 @@ class TrainLoop():
             self.impatience = 0
             print('[ new best {}: {} ]'.format(
                 opt['validation_metric'], self.best_valid))
-            print("[ saving best valid model: " + opt['model_file'] + " ]")
+            if 'model_filel' in opt:
+                print("[ saving best valid model: " + opt['model_file'] + " ]")
             self.world.save_agents()
             self.saved = True
             if opt['validation_metric'] == 'accuracy' and self.best_valid >= opt['validation_cutoff']:
