@@ -101,13 +101,6 @@ class Agent(object):
         """Perform any final cleanup if needed."""
         pass
 
-    def receive_metrics(self, metrics_dict):
-        """Send the agent a metrics dict.
-        This can be used, for example, to anneal the learning rate after the
-        validation loss has plateaued.
-        """
-        pass
-
 
 class Teacher(Agent):
     """Basic Teacher agent which keeps track of how many times it's received
