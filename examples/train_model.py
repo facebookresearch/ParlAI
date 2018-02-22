@@ -155,7 +155,7 @@ class TrainLoop():
             self.agent, opt, 'valid', opt['validation_max_exs'],
             valid_world=self.valid_world)
         if opt.get('model_file') and opt.get('save_after_valid'):
-            print("[ saving model: " + opt['model_file'] + ".checkpoint ]")
+            print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
             self.agent.save(opt['model_file'] + '.checkpoint')
         if valid_report[opt['validation_metric']] > self.best_valid:
             self.best_valid = valid_report[opt['validation_metric']]
@@ -229,7 +229,7 @@ class TrainLoop():
                     if stop_training:
                         break
                 if self.save_time.time() > self.save_every_n_secs and opt.get('model_file'):
-                    print("[ saving model: " + opt['model_file'] + ".checkpoint ]")
+                    print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
                     self.agent.save(opt['model_file'] + '.checkpoint')
                     self.save_time.reset()
 
