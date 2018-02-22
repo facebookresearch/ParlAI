@@ -532,6 +532,7 @@
 
     socket.onerror = socket.onclose = () => {
       log('Server disconnected.', 2);
+      setup_socket();
     }
   }
 
@@ -783,7 +784,7 @@
         future, check your connection if you see this message often.');
       update_UI_for_response_type('inactive');
     } else {
-      setTimeout(_heartbeat_thread, 1000);
+      setTimeout(_heartbeat_thread, 2000);
     }
   }
 

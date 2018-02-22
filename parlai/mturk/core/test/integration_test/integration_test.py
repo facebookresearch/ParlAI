@@ -18,7 +18,7 @@ HIT status and things of the sort are not yet supported in this testing.
 """
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.test.integration_test.worlds import TestOnboardWorld, \
-    TestSoloWorld, TestDuoWorld
+    TestSoloWorld, TestDuoWorld, StressWorld
 from parlai.mturk.core.mturk_manager import MTurkManager, WORLD_START_TIMEOUT
 from parlai.mturk.core.server_utils import setup_server, delete_server
 from parlai.mturk.core.socket_manager import Packet, SocketManager
@@ -57,11 +57,14 @@ EXPIRE_HIT_TEST = 'EXPIRE_HIT_TEST'
 ALLOWED_CONVERSATION_TEST = 'ALLOWED_CONVERSATION_TEST'
 UNIQUE_CONVERSATION_TEST = 'UNIQUE_CONVERSATION_TEST'
 AMAZON_SNS_TEST = 'AMAZON_SNS_TEST'
+STRESS_TEST = 'STRESS_TEST'
 
 FAKE_ASSIGNMENT_ID = 'FAKE_ASSIGNMENT_ID_{}_{}'
 FAKE_WORKER_ID = 'FAKE_WORKER_ID_{}_{}'
 
 DISCONNECT_WAIT_TIME = SocketManager.DEF_SOCKET_TIMEOUT + 1.5
+
+STRESS_TEST_AMOUNT = 50
 
 completed_threads = {}
 start_times = {}
@@ -364,7 +367,7 @@ def make_packet_handler_cant_task(agent, on_ack, on_hb, on_msg):
         elif pkt['type'] == Packet.TYPE_HEARTBEAT:
             packet = Packet.from_dict(pkt)
             on_hb(packet)
-            time.sleep(1)
+            time.sleep(2)
             if agent.always_beat:
                 agent.send_heartbeat()
         elif pkt['type'] == Packet.TYPE_MESSAGE:
@@ -400,7 +403,7 @@ def make_packet_handler(agent, on_ack, on_hb, on_msg):
         elif pkt['type'] == Packet.TYPE_HEARTBEAT:
             packet = Packet.from_dict(pkt)
             on_hb(packet)
-            time.sleep(1)
+            time.sleep(2)
             if agent.always_beat:
                 agent.send_heartbeat()
         elif pkt['type'] == Packet.TYPE_MESSAGE:
@@ -2503,6 +2506,130 @@ def test_allowed_conversations(opt, server_url):
     completed_threads[ALLOWED_CONVERSATION_TEST] = True
 
 
+def run_solo_stress_world(opt, mturk_manager):
+    MTURK_SOLO_WORKER = 'MTURK_SOLO_WORKER'
+
+    mturk_manager.set_onboard_function(onboard_function=None)
+
+    try:
+        mturk_manager.ready_to_accept_workers()
+
+        def check_worker_eligibility(worker):
+            return True
+
+        def assign_worker_roles(workers):
+            workers[0].id = MTURK_SOLO_WORKER
+
+        global run_conversation
+
+        def run_conversation(mturk_manager, opt, workers):
+            task = opt['task']
+            mturk_agent = workers[0]
+            world = StressWorld(opt=opt, task=task, mturk_agent=mturk_agent)
+            while not world.episode_done():
+                world.parley()
+            world.shutdown()
+
+        mturk_manager.start_task(
+            eligibility_function=check_worker_eligibility,
+            assign_role_function=assign_worker_roles,
+            task_function=run_conversation
+        )
+    except Exception:
+        raise
+    finally:
+        pass
+
+
+stress_threads = {}
+
+
+def stress_test_instance(opt, mturk_manager, test_num):
+    global stress_threads
+    hit_id = (FAKE_HIT_ID + '_{}').format(STRESS_TEST, test_num)
+    assign_id = (FAKE_ASSIGNMENT_ID + '_{}').format(STRESS_TEST, 1, test_num)
+    worker_id = (FAKE_WORKER_ID + '_{}').format(STRESS_TEST, 1, test_num)
+    task_group_id = mturk_manager.task_group_id
+    server_url = mturk_manager.server_url
+    message_count = 0
+    do_send = False
+
+    # Create an agent and set it up to connect
+    def msg_callback(packet):
+        nonlocal message_count
+        nonlocal do_send
+        if packet.data['type'] == data_model.MESSAGE_TYPE_COMMAND:
+            do_send = True
+        else:
+            message_count += 1
+
+    test_agent = MockAgent(opt, hit_id, assign_id, worker_id, task_group_id)
+    message_handler = \
+        make_packet_handler(test_agent, dummy, dummy, msg_callback)
+    test_agent.setup_socket(server_url, message_handler)
+    test_agent.wait_for_alive()
+    wait_for_state_time(10, mturk_manager)
+    # Assert that the state was properly set up
+    check_new_agent_setup(test_agent, mturk_manager,
+                          AssignState.STATUS_IN_TASK)
+    test_agent.always_beat = True
+    test_agent.send_heartbeat()
+    wait_for_state_time(3, mturk_manager)
+
+    # Run through task
+    assert test_agent.conversation_id.startswith('t_'), \
+        'Mock agent didn\'t make it to task world'
+    for _i in range(20):
+        while not do_send:
+            time.sleep(0.5)
+        do_send = False
+        test_agent.send_message('Ping{}'.format(_i))
+        time.sleep(2)
+    wait_for_state_time(15, mturk_manager)
+    assert message_count > 19, \
+        'Not all messages for test {} went through'.format(test_num)
+    stress_threads[test_num] = True
+
+
+def stress_test(opt, server_url):
+    global stress_threads
+    print('{} Starting'.format(STRESS_TEST))
+    opt['task'] = STRESS_TEST
+    opt['num_conversations'] = STRESS_TEST_AMOUNT
+
+    mturk_agent_id = AGENT_1_ID
+    mturk_manager = MTurkManager(
+        opt=opt,
+        mturk_agent_ids=[mturk_agent_id],
+        is_test=True
+    )
+    mturk_manager.server_url = server_url
+    mturk_manager.start_new_run()
+    world_thread = threading.Thread(target=run_solo_stress_world,
+                                    args=(opt, mturk_manager))
+    world_thread.daemon = True
+    world_thread.start()
+    wait_for_socket_manager(mturk_manager)
+    threads = {}
+    for test_num in range(STRESS_TEST_AMOUNT):
+        new_thread = threading.Thread(target=stress_test_instance,
+                                      args=(opt, mturk_manager, test_num))
+        new_thread.start()
+        threads[test_num] = new_thread
+        time.sleep(0.4)
+    while len(threads) > 0:
+        new_threads = {}
+        for n in threads:
+            if threads[n].isAlive():
+                new_threads[n] = threads[n]
+            else:
+                if n not in stress_threads:
+                    raise Exception('At least one thread failed to complete')
+        threads = new_threads
+        time.sleep(0.04)
+    completed_threads[STRESS_TEST] = True
+
+
 def test_unique_workers_in_conversation(opt, server_url):
     """Ensures that a worker cannot start a conversation with themselves
     when not in the sandbox
@@ -2749,6 +2876,11 @@ TESTS = {
     AMAZON_SNS_TEST: test_sns_service,
 }
 
+ALL_TESTS = {
+    STRESS_TEST: stress_test,
+}
+ALL_TESTS.update(TESTS)
+
 # Runtime threads, MAX_THREADS is used on initial pass, RETEST_THREADS is used
 # with flakey tests that failed under heavy load and thus may not have met
 # the expected times for updating state
@@ -2780,7 +2912,7 @@ def run_tests(tests_to_run, max_threads, base_opt, server_url):
                         failed_tests.append(n)
             threads = new_threads
             time.sleep(1)
-        new_thread = threading.Thread(target=TESTS[test_name],
+        new_thread = threading.Thread(target=ALL_TESTS[test_name],
                                       args=(base_opt.copy(), server_url))
         new_thread.start()
         start_times[test_name] = time.time()
@@ -2823,6 +2955,7 @@ def main():
     start_time = time.time()
     try:
         failed_tests = run_tests(TESTS, MAX_THREADS, base_opt, server_url)
+        failed_tests += run_tests([STRESS_TEST], 1, base_opt, server_url)
         if len(failed_tests) == 0:
             print("All tests passed, ParlAI MTurk is functioning")
         else:

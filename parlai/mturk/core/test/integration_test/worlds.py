@@ -80,6 +80,55 @@ class TestSoloWorld(MTurkTaskWorld):
         pass
 
 
+class StressWorld(MTurkTaskWorld):
+    """World that takes 20 rounds to complete"""
+    TEST_ID = 'SYSTEM'
+    TEST_TEXT_1 = 'Pong{}'
+
+    def __init__(self, opt, task, mturk_agent):
+        self.task = task
+        self.mturk_agent = mturk_agent
+        self.episodeDone = False
+        self.turn_index = -1
+
+    def parley(self):
+        self.turn_index = (self.turn_index + 1)
+        ad = {'episode_done': False}
+        ad['id'] = self.__class__.TEST_ID
+
+        if self.turn_index < 19:
+            # Take a first turn
+            ad['text'] = self.TEST_TEXT_1.format(self.turn_index)
+
+            self.response1 = self.mturk_agent.act()
+            self.mturk_agent.observe(validate(ad))
+
+        if self.turn_index >= 19:
+            # Complete after second turn
+            ad['text'] = self.TEST_TEXT_1.format(self.turn_index)
+
+            ad['episode_done'] = True  # end of episode
+
+            self.response2 = self.mturk_agent.act()
+            self.mturk_agent.observe(validate(ad))
+
+            time.sleep(1)
+            self.episodeDone = True
+
+    def episode_done(self):
+        return self.episodeDone
+
+    def report(self):
+        pass
+
+    def shutdown(self):
+        self.mturk_agent.shutdown(timeout=-1)
+        pass
+
+    def review_work(self):
+        pass
+
+
 class TestDuoWorld(MTurkTaskWorld):
     """World where 2 participants send messages in a circle for 2 rounds"""
 
