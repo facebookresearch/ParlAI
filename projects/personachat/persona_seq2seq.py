@@ -13,7 +13,6 @@ Agents: I have a dog, do you have pets too? `(Zhang et al. 2018)
 import os
 import pickle
 import copy
-import pdb
 import random
 import argparse
 import time
@@ -441,10 +440,6 @@ class Seq2seqAgent(Agent):
                 hidden = (hidden, h0)
         encoder_output = encoder_output.transpose(0, 1)
 
-        if hasattr(self, 'check_hidden') and self.check_hidden == True:
-            pdb.set_trace()
-            self.check_hidden = False
-
         if not self.attention:
             pass
         elif self.attention.startswith('local'):
@@ -844,9 +839,6 @@ class Seq2seqAgent(Agent):
         if self.opt['datatype'] in ['valid', 'test'] and self.opt['personachat_interact']:
             print('MODEL:' + ' '.join(predictions[0]))
             symbol_words = ['_s{}_'.format(i) for i in range(20)]
-            for s in symbol_words:
-                if (s in ' '.join(predictions[0])) and (s in observations[0]['text']):
-                    pdb.set_trace()
 
             print('TRUE :' + observations[0]['eval_labels'][0])
 
@@ -1630,10 +1622,6 @@ class PersonachatSeqseqAgentSplit(Agent):
                 hidden = (hidden, h0)
         encoder_output = encoder_output.transpose(0, 1)
 
-        if hasattr(self, 'check_hidden') and self.check_hidden == True:
-            pdb.set_trace()
-            self.check_hidden = False
-
         if not self.attention:
             pass
         elif self.attention.startswith('local'):
@@ -1670,10 +1658,6 @@ class PersonachatSeqseqAgentSplit(Agent):
             if type(self.decoder) == nn.LSTM:
                 hidden = (hidden, h0)
         encoder_output = encoder_output.transpose(0, 1)
-
-        if hasattr(self, 'check_hidden') and self.check_hidden == True:
-            pdb.set_trace()
-            self.check_hidden = False
 
         if not self.attention:
             pass
@@ -2199,19 +2183,6 @@ class PersonachatSeqseqAgentSplit(Agent):
                 else:
                     cands = Variable(cands)
 
-        if False:
-            for i in range(batchsize):
-                print('OBV: ' + ' '.join([self.dict[w] for w in xs[i].data if w != self.NULL_IDX]))
-                if self.opt['personachat_attnsentlevel']:
-                    print('PERSONA: ' + ' '.join([self.dict[w] for per in xs_persona[i] for w in per.data if w != self.NULL_IDX]))
-                else:
-                    print('PERSONA: ' + ' '.join([self.dict[w] for w in xs_persona[i].data if w != self.NULL_IDX]))
-                print('LABEL: ' + ' '.join([self.dict[w] for w in ys[i].data if w != self.NULL_IDX]))
-                if cands is not None:
-                    for k in range(len(cands[i])):
-                        print('CANDS: ' + ' '.join([self.dict[w] for w in cands[i][k].data if w != self.NULL_IDX]))
-                pdb.set_trace()
-
         return xs, xs_persona, ys, labels, valid_inds, cands, valid_cands, zs, eval_labels
 
 
@@ -2238,8 +2209,6 @@ class PersonachatSeqseqAgentSplit(Agent):
             return batch_reply
 
         x_lens = [x for x in torch.sum((xs>0).int(), dim=1).data]
-        if 0 in x_lens:
-            pdb.set_trace()
 
         # produce predictions either way, but use the targets if available
 
@@ -2248,9 +2217,6 @@ class PersonachatSeqseqAgentSplit(Agent):
         if self.opt['datatype'] in ['valid', 'test'] and self.opt['personachat_interact']:
             print('MODEL:' + ' '.join(predictions[0]))
             symbol_words = ['_s{}_'.format(i) for i in range(20)]
-            for s in symbol_words:
-                if (s in ' '.join(predictions[0])) and (s in observations[0]['text']):
-                    pdb.set_trace()
             f1_best = 0
             msg_best = ''
             for msg in self.teacher.data_dialogs['train']['messages']:
