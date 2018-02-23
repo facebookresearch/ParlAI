@@ -497,14 +497,11 @@ class LanguageModelAgent(Agent):
 
     def receive_metrics(self, metrics_dict):
         if 'loss' in metrics_dict:
-            if self.best_val_loss is None:
+            if self.best_val_loss is None or self.best_val_loss > metrics_dict['loss']:
                 self.best_val_loss = metrics_dict['loss']
             else:
-                if metrics_dict['loss'] > self.best_val_loss:
-                    self.lr *= self.lr_factor
-                    print("Updating learning rate: lr =", self.lr)
-                else:
-                    self.best_val_loss = metrics_dict['loss']
+                self.lr *= self.lr_factor
+                print("Updating learning rate: lr =", self.lr)
 
     def load(self, path):
         """Return opt and model states."""
