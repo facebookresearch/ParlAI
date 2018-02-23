@@ -2261,6 +2261,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                     text = text.replace('__UNK__', '')
                     text = text.replace('__NULL__', '')
                     reply['text'] = text
+
         return batch_reply
 
     def act(self):
