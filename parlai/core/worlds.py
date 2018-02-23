@@ -45,6 +45,7 @@ import copy
 import importlib
 import math
 import random
+import prettytable
 
 try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore
@@ -110,21 +111,34 @@ def display_messages(msgs):
                         )))
         if msg.get('text_candidates'):
             cand_len = len(msg['text_candidates'])
-            cands = msg['text_candidates']
+            cands = [c for c in msg['text_candidates'] if c is not None]
             if msg.get('candidate_scores') is not None:
+
+                table = prettytable.PrettyTable(['Text', 'Score'])
                 scores = msg.get('candidate_scores')
-                cands = ['{}, {}'.format(s, p) for s, p in zip(cands, scores)]
+                # cands = ['{}, {}'.format(s, p) for s, p in zip(scores, cands)]
+                # cands = zip(scores, cands)
+            else:
+                table = prettytable.PrettyTable(['Text'])
+            table.align = 'l'
+            table.hrules = 1
             display_cands = []
             num_cands = 0
-            for cand in msg['text_candidates']:
-                display_cands.append(cand[:(min(250, len(cand)))])
+            for cand in cands:
+                # display_cands.append(cand[:(min(250, len(cand)))])
+                if scores is not None:
+                    table.add_row([scores[num_cands], cand[:(min(150, len(cand)))]])
+                else:
+                    table.add_row([cand[:(min(250, len(cand)))]])
                 num_cands += 1
                 if num_cands > 5:
                     break
-            lines.append(space + ('[cands: \n{}{}]'.format(
-                    '\n\n\n\n\n------------------------\n'.join(display_cands),
-                    '\n-------------\n...and {} more\n\n\n'.format(cand_len - 5)
-                    )))
+
+            # lines.append(space + ('[cands: \n{}{}]'.format(
+            #         '\n\n\n\n\n------------------------\n'.join(display_cands),
+            #         '\n-------------\n...and {} more\n\n\n'.format(cand_len - 5)
+            #         )))
+            lines.append(space + table.get_string())
 
     if episode_done:
         lines.append('- - - - - - - - - - - - - - - - - - - - -')
