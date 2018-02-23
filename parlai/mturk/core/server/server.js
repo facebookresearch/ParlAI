@@ -245,4 +245,6 @@ app.get('/get_timestamp', function (req, res) {
   res.json({'timestamp': Date.now()}); // in milliseconds
 });
 
+app.use(express.static('task'))
+
 // ======================= </Routing> =======================
