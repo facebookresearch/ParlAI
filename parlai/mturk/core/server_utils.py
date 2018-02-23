@@ -98,6 +98,10 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
     for file_path in task_files_to_copy:
         try:
             shutil.copy2(file_path, task_directory_path)
+        except IsADirectoryError:  # noqa: F821 we don't support python2
+            dir_name = os.path.basename(os.path.normpath(file_path))
+            shutil.copytree(
+                file_path, os.path.join(task_directory_path, dir_name))
         except FileNotFoundError:  # noqa: F821 we don't support python2
             pass
 
