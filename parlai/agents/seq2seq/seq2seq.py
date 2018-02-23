@@ -382,9 +382,12 @@ class Seq2seqAgent(Agent):
             loss_dict = {'loss': loss.data[0], 'ppl': (math.e**loss).data[0]}
         else:
             self.model.eval()
-            predictions, scores, text_cand_inds = self.model(xs, ys, cands,
-                                                             valid_cands)
+            predictions, _scores, text_cand_inds = self.model(
+                xs, ys=None, cands=cands, valid_cands=valid_cands)
+
             if ys is not None:
+                # calculate loss on targets
+                _, scores, _ = self.model(xs, ys)
                 loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
                 loss_dict = {'loss': loss.data[0], 'ppl': (math.e**loss).data[0]}
 
@@ -475,7 +478,7 @@ class Seq2seqAgent(Agent):
                 batch_reply[0]['metrics'] = loss
 
 
-        if ys is not None:
+        if is_training:
             report_freq = 0
         else:
             report_freq = 0.1
