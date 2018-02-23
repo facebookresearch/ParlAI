@@ -68,7 +68,7 @@ def setup_args(model_args=None):
     train.add_argument('-vmt', '--validation-metric', default='accuracy',
                        help='key into report table for selecting best '
                             'validation')
-    train.add_argument('-vopt', '--validation-metric-optim', default='max',
+    train.add_argument('-vmm', '--validation-metric-mode', default='max',
                        type=str, choices=['max', 'min'],
                        help='how to optimize validation metric (max or min)')
     train.add_argument('-vcut', '--validation-cutoff',
@@ -152,7 +152,7 @@ class TrainLoop():
         self.log_every_n_secs = opt['log_every_n_secs'] if opt['log_every_n_secs'] > 0 else float('inf')
         self.val_every_n_secs = opt['validation_every_n_secs'] if opt['validation_every_n_secs'] > 0 else float('inf')
         self.save_every_n_secs = opt['save_every_n_secs'] if opt['save_every_n_secs'] > 0 else float('inf')
-        self.valid_optim = 1 if opt['validation_metric_optim'] == 'max' else -1
+        self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
         self.best_valid = None
         if opt.get('model_file') and os.path.isfile(opt['model_file'] + ".best_valid"):
             with open(opt['model_file'] + ".best_valid", 'r') as f:
@@ -172,10 +172,6 @@ class TrainLoop():
         if opt.get('model_file') and opt.get('save_after_valid'):
             print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
             self.agent.save(opt['model_file'] + '.checkpoint')
-            self.world.save_agents()
-            if self.best_valid is not None:
-                print("[ saving best valid metric: " + opt['model_file'] + ".checkpoint.best_valid ]")
-                save_best_valid(opt['model_file'] + '.checkpoint', self.best_valid)
         if hasattr(self.agent, 'receive_metrics'):
             self.agent.receive_metrics(valid_report)
         if self.best_valid is None or self.valid_optim * valid_report[opt['validation_metric']] > self.valid_optim * self.best_valid:
@@ -254,9 +250,6 @@ class TrainLoop():
                 if self.save_time.time() > self.save_every_n_secs and opt.get('model_file'):
                     print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
                     self.agent.save(opt['model_file'] + '.checkpoint')
-                    if self.best_valid is not None:
-                        print("[ saving best valid metric: " + opt['model_file'] + ".checkpoint.best_valid ]")
-                        save_best_valid(opt['model_file'] + '.checkpoint', self.best_valid)
                     self.save_time.reset()
 
         if not self.saved:
