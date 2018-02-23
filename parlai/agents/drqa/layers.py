@@ -47,7 +47,7 @@ class StackedBRNN(nn.Module):
     def _forward_unpadded(self, x, x_mask):
         """Faster encoding that ignores any padding."""
         # Transpose batch and sequence dims
-        x = x.transpose(0, 1)
+        x = x.transpose(0, 1).contiguous()
 
         # Encode all layers
         outputs = [x]
@@ -70,7 +70,7 @@ class StackedBRNN(nn.Module):
             output = outputs[-1]
 
         # Transpose back
-        output = output.transpose(0, 1)
+        output = output.transpose(0, 1).contiguous()
 
         # Dropout on output layer
         if self.dropout_output and self.dropout_rate > 0:
@@ -95,7 +95,7 @@ class StackedBRNN(nn.Module):
         x = x.index_select(0, idx_sort)
 
         # Transpose batch and sequence dims
-        x = x.transpose(0, 1)
+        x = x.transpose(0, 1).contiguous()
 
         # Pack it up
         rnn_input = nn.utils.rnn.pack_padded_sequence(x, lengths)
@@ -125,7 +125,7 @@ class StackedBRNN(nn.Module):
             output = outputs[-1]
 
         # Transpose and unsort
-        output = output.transpose(0, 1)
+        output = output.transpose(0, 1).contiguous()
         output = output.index_select(0, idx_unsort)
 
         # Dropout on output layer
