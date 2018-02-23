@@ -168,7 +168,7 @@ class LanguageModelAgent(Agent):
             # set up optimizer
             self.lr = opt['learningrate']
             self.lr_factor = opt['lr_factor']
-            self.best_val_loss = None
+            self.best_val_loss = self.states.get('best_val_loss', None)
 
         self.reset()
 
@@ -483,6 +483,7 @@ class LanguageModelAgent(Agent):
             model = {}
             model['model'] = self.model.state_dict()
             model['opt'] = self.opt
+            model['best_val_loss'] = self.best_val_loss
 
             with open(path, 'wb') as write:
                 torch.save(model, write)
@@ -502,6 +503,8 @@ class LanguageModelAgent(Agent):
                 if metrics_dict['loss'] > self.best_val_loss:
                     self.lr *= self.lr_factor
                     print("Updating learning rate: lr =", self.lr)
+                else:
+                    self.best_val_loss = metrics_dict['loss']
 
     def load(self, path):
         """Return opt and model states."""
