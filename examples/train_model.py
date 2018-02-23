@@ -78,9 +78,12 @@ def setup_args(model_args=None):
     train.add_argument('-dbf', '--dict-build-first',
                        type='bool', default=True,
                        help='build dictionary first before training agent')
+    train.add_argument('-lfc', '--load-from-checkpoint',
+                       type='bool', default=False,
+                       help='load model from checkpoint if available')
     return parser
 
-def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None):
+def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None, save_path=None):
     """Eval on validation/test data.
     - Agent is the agent to use for the evaluation.
     - opt is the options that specific the task, eval_task, etc
@@ -89,6 +92,8 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
     - max_exs limits the number of examples if max_exs > 0
     - valid_world can be an existing world which will be reset instead of reinitialized
     """
+    if save_path is None and opt.get('model_file'):
+        save_path = opt['model_file']
     print('[ running eval: ' + datatype + ' ]')
     if 'stream' in opt['datatype']:
         datatype += ':stream'
@@ -115,9 +120,9 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
 
     metrics = datatype + ':' + str(valid_report)
     print(metrics)
-    if write_log and opt['model_file']:
+    if write_log and save_path is not None:
         # Write out metrics
-        f = open(opt['model_file'] + '.' + datatype, 'a+')
+        f = open(save_path + '.' + datatype, 'a+')
         f.write(metrics + '\n')
         f.close()
 
@@ -132,10 +137,14 @@ def save_best_valid(model_file, best_valid):
 class TrainLoop():
     def __init__(self, parser):
         opt = parser.parse_args()
+        self.model_save_path = opt.get('model_file', None)
+        # Possibly load from checkpoint
+        if opt['load_from_checkpoint'] and opt.get('model_file') and os.path.isfile(opt['model_file'] + '.checkpoint'):
+            opt['model_file'] = opt['model_file'] + '.checkpoint'
         # Possibly build a dictionary (not all models do this).
         if opt['dict_build_first'] and 'dict_file' in opt:
             if opt['dict_file'] is None and opt.get('model_file'):
-                opt['dict_file'] = opt['model_file'] + '.dict'
+                opt['dict_file'] = self.model_save_path + '.dict'
             print("[ building dictionary first... ]")
             build_dict(opt)
         # Create model and assign it to the specified task
@@ -154,8 +163,8 @@ class TrainLoop():
         self.save_every_n_secs = opt['save_every_n_secs'] if opt['save_every_n_secs'] > 0 else float('inf')
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
         self.best_valid = None
-        if opt.get('model_file') and os.path.isfile(opt['model_file'] + '.best_valid'):
-            with open(opt['model_file'] + ".best_valid", 'r') as f:
+        if opt.get('model_file') and os.path.isfile(self.model_save_path + '.best_valid'):
+            with open(self.model_save_path + ".best_valid", 'r') as f:
                 x = f.readline()
                 self.best_valid = float(x)
                 f.close()
@@ -168,10 +177,10 @@ class TrainLoop():
         opt = self.opt
         valid_report, self.valid_world = run_eval(
             self.agent, opt, 'valid', opt['validation_max_exs'],
-            valid_world=self.valid_world)
+            valid_world=self.valid_world, save_path=self.model_save_path)
         if opt.get('model_file') and opt.get('save_after_valid'):
-            print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
-            self.agent.save(opt['model_file'] + '.checkpoint')
+            print("[ saving model checkpoint: " + self.model_save_path + ".checkpoint ]")
+            self.agent.save(self.model_save_path + '.checkpoint')
         if hasattr(self.agent, 'receive_metrics'):
             self.agent.receive_metrics(valid_report)
         if self.best_valid is None or self.valid_optim * valid_report[opt['validation_metric']] > self.valid_optim * self.best_valid:
@@ -179,10 +188,10 @@ class TrainLoop():
             self.impatience = 0
             print('[ new best {}: {} ]'.format(
                 opt['validation_metric'], self.best_valid))
-            print("[ saving best valid model: " + opt['model_file'] + " ]")
-            self.world.save_agents()
-            print("[ saving best valid metric: " + opt['model_file'] + ".best_valid ]")
-            save_best_valid(opt['model_file'], self.best_valid)
+            print("[ saving best valid model: " + self.model_save_path + " ]")
+            self.agent.save(self.model_save_path)
+            print("[ saving best valid metric: " + self.model_save_path + ".best_valid ]")
+            save_best_valid(self.model_save_path, self.best_valid)
             self.saved = True
             if opt['validation_metric'] == 'accuracy' and self.best_valid >= opt['validation_cutoff']:
                 print('[ task solved! stopping. ]')
@@ -248,20 +257,24 @@ class TrainLoop():
                     if stop_training:
                         break
                 if self.save_time.time() > self.save_every_n_secs and opt.get('model_file'):
-                    print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
-                    self.agent.save(opt['model_file'] + '.checkpoint')
+                    print("[ saving model checkpoint: " + self.model_save_path + ".checkpoint ]")
+                    self.agent.save(self.model_save_path + '.checkpoint')
                     self.save_time.reset()
 
         if not self.saved:
             # save agent
-            world.save_agents()
+            self.agent.save(self.model_save_path)
         elif opt.get('model_file'):
             # reload best validation model
             self.agent = create_agent(opt)
 
-        _rep, wrld = run_eval(self.agent, opt, 'valid', write_log=True)
+        _rep, wrld = run_eval(
+            self.agent, opt, 'valid', write_log=True,
+            save_path=self.model_save_path)
         wrld.shutdown()  # may need to shut down threads, remote connections
-        _rep, wrld = run_eval(self.agent, opt, 'test', write_log=True)
+        _rep, wrld = run_eval(
+            self.agent, opt, 'test', write_log=True,
+            save_path=self.model_save_path)
         wrld.shutdown()  # may need to shut down threads, remote connections
 
 

@@ -234,13 +234,6 @@ class World(object):
         for a in self.agents:
             a.reset_metrics()
 
-    def save_agents(self):
-        """Saves all of the agents in the world by calling their respective
-        save() methods.
-        """
-        for a in self.agents:
-            a.save()
-
     def shutdown(self):
         """Perform any cleanup, if appropriate."""
         pass
