@@ -59,9 +59,12 @@ class Task100kTeacher(HalfTeacher):
     def setup_data(self, path):
         cnt = 0
         for entry, new in super().setup_data(path):
-            if cnt < 100000:
+            if len(entry) > 1 and entry[1]:
+                # focus on examples with targets for small set
                 yield entry, new
             cnt += 1
+            if cnt >= 100000:
+                break
 
 
 class Task10kTeacher(HalfTeacher):
@@ -69,9 +72,12 @@ class Task10kTeacher(HalfTeacher):
     def setup_data(self, path):
         cnt = 0
         for entry, new in super().setup_data(path):
-            if cnt < 10000:
+            if len(entry) > 1 and entry[1]:
+                # focus on examples with targets for small set
                 yield entry, new
             cnt += 1
+            if cnt >= 10000:
+                break
 
 
 class V2009Teacher(FullTeacher):
