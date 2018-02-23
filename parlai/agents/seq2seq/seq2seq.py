@@ -276,7 +276,7 @@ class Seq2seqAgent(Agent):
                 else:
                     self.optimizer.load_state_dict(self.states['optimizer'])
             self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-                self.optimizer, 'min', factor=0.5, patience=3)
+                self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
 
         self.reset()
 
