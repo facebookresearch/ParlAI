@@ -68,8 +68,7 @@ def aggregate_metrics(reporters):
     #reporters is a list of teachers or worlds
     m = {}
     m['tasks'] = {}
-    sum_accuracy = 0
-    sum_f1 = 0
+    sums = {'accuracy': 0, 'f1': 0, 'loss': 0, 'ppl': 0}
     num_tasks = 0
     total = 0
     for i in range(len(reporters)):
@@ -80,17 +79,18 @@ def aggregate_metrics(reporters):
             tid += '_'
         m['tasks'][tid] = mt
         total += mt['total']
-        if 'accuracy' in mt:
-            sum_accuracy += mt['accuracy']
+        found_any = False
+        for k in sums.keys():
+            if k in mt:
+                sums[k] += mt[k]
+                found_any = True
+        if found_any:
             num_tasks += 1
-            if 'f1' in mt:
-                sum_f1 += mt['f1']
     m['total'] = total
     m['accuracy'] = 0
     if num_tasks > 0:
-        m['accuracy'] = sum_accuracy / num_tasks
-        if sum_f1 > 0:
-            m['f1'] = sum_f1 / num_tasks
+        for k in sums.keys():
+            m[k] = round_sigfigs(sums[k] / num_tasks, 4)
     return m
 
 
@@ -134,7 +134,7 @@ class Metrics(object):
     def __init__(self, opt):
         self.metrics = {}
         self.metrics['cnt'] = 0
-        self.metrics_list = ['mean_rank', 'loss', 'correct', 'f1']
+        self.metrics_list = ['mean_rank', 'loss', 'correct', 'f1', 'ppl']
         for k in self.metrics_list:
             self.metrics[k] = 0.0
             self.metrics[k + '_cnt'] = 0

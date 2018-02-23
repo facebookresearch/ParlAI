@@ -29,7 +29,7 @@ class HalfTeacher(FbDialogTeacher):
     """This version of opensubtitles creates half of all possible dialog
     examples.
     """
-    def __init__(self, opt, version='2018', use_history=True, shared=None):
+    def __init__(self, opt, shared=None, version='2018', use_history=True):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, version, use_history)
         if not opt['datatype'].startswith('train'):
@@ -59,9 +59,12 @@ class Task100kTeacher(HalfTeacher):
     def setup_data(self, path):
         cnt = 0
         for entry, new in super().setup_data(path):
-            if cnt < 100000:
+            if len(entry) > 1 and entry[1]:
+                # focus on examples with targets for small set
                 yield entry, new
             cnt += 1
+            if cnt >= 100000:
+                break
 
 
 class Task10kTeacher(HalfTeacher):
@@ -69,55 +72,58 @@ class Task10kTeacher(HalfTeacher):
     def setup_data(self, path):
         cnt = 0
         for entry, new in super().setup_data(path):
-            if cnt < 10000:
+            if len(entry) > 1 and entry[1]:
+                # focus on examples with targets for small set
                 yield entry, new
             cnt += 1
+            if cnt >= 10000:
+                break
 
 
 class V2009Teacher(FullTeacher):
     def __init__(self, opt, shared=None):
-        super(V2009Teacher, self).__init__(opt, '2009', True, shared)
+        super(V2009Teacher, self).__init__(opt, shared, '2009', True)
 
 
 class V2009HalfTeacher(HalfTeacher):
     def __init__(self, opt, shared=None):
-        super(V2009HalfTeacher, self).__init__(opt, '2009', True, shared)
+        super(V2009HalfTeacher, self).__init__(opt, shared, '2009', True)
 
 
 class V2009Task100kTeacher(Task100kTeacher):
     def __init__(self, opt, shared=None):
-        super(V2009Task100kTeacher, self).__init__(opt, '2009', True, shared)
+        super(V2009Task100kTeacher, self).__init__(opt, shared, '2009', True)
 
 
 class V2009Task10kTeacher(Task10kTeacher):
     def __init__(self, opt, shared=None):
-        super(V2009Task10kTeacher, self).__init__(opt, '2009', True, shared)
+        super(V2009Task10kTeacher, self).__init__(opt, shared, '2009', True)
 
 
 class V2018Teacher(FullTeacher):
     def __init__(self, opt, shared=None):
-        super(V2018Teacher, self).__init__(opt, '2018', True, shared)
+        super(V2018Teacher, self).__init__(opt, shared, '2018', True)
 
 
 class V2018HalfTeacher(HalfTeacher):
     def __init__(self, opt, shared=None):
-        super(V2018HalfTeacher, self).__init__(opt, '2018', True, shared)
+        super(V2018HalfTeacher, self).__init__(opt, shared, '2018', True)
 
 
 class V2018Task100kTeacher(Task100kTeacher):
     def __init__(self, opt, shared=None):
-        super(V2018Task100kTeacher, self).__init__(opt, '2018', True, shared)
+        super(V2018Task100kTeacher, self).__init__(opt, shared, '2018', True)
 
 
 class V2018Task10kTeacher(Task10kTeacher):
     def __init__(self, opt, shared=None):
-        super(V2018Task10kTeacher, self).__init__(opt, '2018', True, shared)
+        super(V2018Task10kTeacher, self).__init__(opt, shared, '2018', True)
 
 
 class V2018NoHistoryTeacher(FullTeacher):
     def __init__(self, opt, shared=None):
         super(V2018NoHistoryTeacher, self).__init__(
-            opt, '2018', False, shared)
+            opt, shared, '2018', False)
 
 
 class V2018NoHistoryTask100kTeacher(Task100kTeacher):
@@ -126,13 +132,13 @@ class V2018NoHistoryTask100kTeacher(Task100kTeacher):
     """
     def __init__(self, opt, shared=None):
         super(V2018NoHistoryTask100kTeacher, self).__init__(
-            opt, '2018', False, shared)
+            opt, shared, '2018', False)
 
 
 class V2018NoHistoryTask10kTeacher(Task10kTeacher):
     def __init__(self, opt, shared=None):
         super(V2018NoHistoryTask10kTeacher, self).__init__(
-            opt, '2018', False, shared)
+            opt, shared, '2018', False)
 
 # Defaults to full teacher (all possible examples)
 class DefaultTeacher(V2018Teacher):
