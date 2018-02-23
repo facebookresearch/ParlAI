@@ -158,6 +158,7 @@ class TrainLoop():
             with open(opt['model_file'] + ".best_valid", 'r') as f:
                 x = f.readline()
                 self.best_valid = float(x)
+                f.close()
         self.impatience = 0
         self.saved = False
         self.valid_world = None
