@@ -121,8 +121,8 @@ class DrqaAgent(Agent):
         if self.opt.get('model_file') and os.path.isfile(opt['model_file']):
             self._init_from_saved(opt['model_file'])
         else:
-            if self.opt.get('pretrained_model'):
-                self._init_from_saved(opt['pretrained_model'])
+            if self.opt.get('init_model'):
+                self._init_from_saved(opt['init_model'])
             else:
                 self._init_from_scratch()
         self.opt['cuda'] = not self.opt['no_cuda'] and torch.cuda.is_available()
@@ -145,10 +145,6 @@ class DrqaAgent(Agent):
         print('[ Loading model %s ]' % fname)
         saved_params = torch.load(fname,
             map_location=lambda storage, loc: storage)
-
-        if 'word_dict' in saved_params:
-            # for compatibility with old saves
-            self.word_dict.copy_dict(saved_params['word_dict'])
 
         self.feature_dict = saved_params['feature_dict']
         self.state_dict = saved_params['state_dict']

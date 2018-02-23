@@ -16,7 +16,7 @@ def add_cmdline_args(parser):
     # Basics
     agent.add_argument('--embedding_file', type=str, default=None,
                         help='File of space separated embeddings: w e1 ... ed')
-    agent.add_argument('--pretrained_model', type=str, default=None,
+    agent.add_argument('--init_model', type=str, default=None,
                         help='Load dict/features/weights/opts from this file')
     agent.add_argument('--log_file', type=str, default=None)
 
