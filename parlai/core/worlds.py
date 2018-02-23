@@ -82,8 +82,11 @@ def display_messages(msgs):
         if type(msg.get('image')) == str:
             lines.append(msg['image'])
         if msg.get('text', ''):
+            text = msg['text']
+            if len(text) > 250:
+                text = text[:250] + '...'
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
-            lines.append(space + ID + msg['text'])
+            lines.append(space + ID + text)
         if msg.get('labels'):
             lines.append(space + ('[labels: {}]'.format(
                         '|'.join(msg['labels']))))
@@ -105,6 +108,24 @@ def display_messages(msgs):
                         '|'.join(display_cands),
                         '| ...and {} more'.format(cand_len - 5)
                         )))
+        if msg.get('text_candidates'):
+            cand_len = len(msg['text_candidates'])
+            cands = msg['text_candidates']
+            if msg.get('candidate_scores') is not None:
+                scores = msg.get('candidate_scores')
+                cands = ['{}, {}'.format(s, p) for s, p in zip(cands, scores)]
+            display_cands = []
+            num_cands = 0
+            for cand in msg['text_candidates']:
+                display_cands.append(cand[:(min(250, len(cand)))])
+                num_cands += 1
+                if num_cands > 5:
+                    break
+            lines.append(space + ('[cands: \n{}{}]'.format(
+                    '\n\n\n\n\n------------------------\n'.join(display_cands),
+                    '\n-------------\n...and {} more\n\n\n'.format(cand_len - 5)
+                    )))
+
     if episode_done:
         lines.append('- - - - - - - - - - - - - - - - - - - - -')
     return '\n'.join(lines)

@@ -172,6 +172,7 @@ class TfidfRetrieverAgent(Agent):
                     # returned
                     picks = [self.doc2txt(int(did)) for did in doc_ids]
                     reply['text_candidates'] = picks
+                    reply['candidate_scores'] = doc_scores
 
                     # could pick single choice based on probability scores?
                     # pick = int(choice(doc_ids, p=doc_probs))
