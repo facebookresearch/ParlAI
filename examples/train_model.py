@@ -78,6 +78,9 @@ def setup_args(model_args=None):
     train.add_argument('-dbf', '--dict-build-first',
                        type='bool', default=True,
                        help='build dictionary first before training agent')
+    train.add_argument('-lfc', '--load-from-checkpoint',
+                       type=bool, default=False,
+                       help='load from checkpoint if available')
     return parser
 
 def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None):
@@ -140,6 +143,8 @@ class TrainLoop():
             build_dict(opt)
         # Create model and assign it to the specified task
         self.agent = create_agent(opt)
+        if opt['load_from_checkpoint'] and opt.get('model_file') and os.path.is_file(opt['model_file'] + '.checkpoint'):
+            self.agent.load(opt['model_file'] + '.checkpoint')
         self.world = create_task(opt, self.agent)
         self.train_time = Timer()
         self.validate_time = Timer()
@@ -154,7 +159,7 @@ class TrainLoop():
         self.save_every_n_secs = opt['save_every_n_secs'] if opt['save_every_n_secs'] > 0 else float('inf')
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
         self.best_valid = None
-        if opt.get('model_file') and os.path.isfile(opt['model_file'] + ".best_valid"):
+        if opt.get('model_file') and os.path.isfile(opt['model_file'] + '.best_valid'):
             with open(opt['model_file'] + ".best_valid", 'r') as f:
                 x = f.readline()
                 self.best_valid = float(x)
