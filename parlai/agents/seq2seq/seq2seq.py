@@ -485,7 +485,7 @@ class Seq2seqAgent(Agent):
         if is_training:
             report_freq = 0
         else:
-            report_freq = 0.05
+            report_freq = 0.01
         PaddingUtils.map_predictions(
             predictions, valid_inds, batch_reply, observations, self.dict,
             self.END_IDX, report_freq=report_freq, labels=labels,

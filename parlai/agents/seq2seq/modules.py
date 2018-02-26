@@ -231,6 +231,9 @@ class Decoder(nn.Module):
         xes = F.dropout(self.lt(xs), p=self.dropout, training=self.training)
         if self.attn_time == 'pre':
             xes = self.attention(xes, hidden, encoder_output, attn_mask)
+        if xes.dim() == 2:
+            # if only one token inputted, sometimes needs unsquezing
+            xes.unsqueeze_(1)
         output, new_hidden = self.rnn(xes, hidden)
         if self.attn_time == 'post':
             output = self.attention(output, new_hidden, encoder_output, attn_mask)
