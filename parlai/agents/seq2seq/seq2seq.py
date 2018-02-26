@@ -400,7 +400,7 @@ class Seq2seqAgent(Agent):
             observations, self.dict, self.END_IDX, self.NULL_IDX, dq=True,
             eval_labels=True, truncate=self.truncate)
         if xs is None:
-            return None, None, None, None, None, None
+            return None, None, None, None, None, None, None
         if self.use_cuda:
             # copy to gpu
             self.xs.resize_(xs.size())

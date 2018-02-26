@@ -77,7 +77,7 @@ class Seq2seq(nn.Module):
             else:
                 for i in range(ys.size(1)):
                     xi = xs.select(1, i)
-                    preds, score, _h = self.decoder(xi, hidden, enc_out, attn_mask)
+                    preds, score, hidden = self.decoder(xi, hidden, enc_out, attn_mask)
                     predictions.append(preds)
                     scores.append(score)
         else:
