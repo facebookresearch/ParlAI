@@ -225,7 +225,8 @@ class Decoder(nn.Module):
                                         hidden_size=hidden_size,
                                         emb_size=emb_size,
                                         bidirectional=bidir_input,
-                                        attn_length=attn_length)
+                                        attn_length=attn_length,
+                                        attn_time=attn_time)
 
     def forward(self, xs, hidden, encoder_output, attn_mask=None):
         xes = F.dropout(self.lt(xs), p=self.dropout, training=self.training)
@@ -441,7 +442,7 @@ class RandomProjection(nn.Module):
 
 class AttentionLayer(nn.Module):
     def __init__(self, attn_type, hidden_size, emb_size, bidirectional=False,
-                 attn_length=-1):
+                 attn_length=-1, attn_time='pre'):
         super().__init__()
         self.attention = attn_type
 
@@ -449,7 +450,15 @@ class AttentionLayer(nn.Module):
             hsz = hidden_size
             num_dirs = 2 if bidirectional else 1
             hszXdirs = hsz * num_dirs
-            self.attn_combine = nn.Linear(hszXdirs + emb_size, emb_size,
+            if attn_time == 'pre':
+                # attention happens on the input embeddings
+                input_dim = emb_size
+            elif attn_time == 'post':
+                # attention happens on the output of the rnn
+                input_dim = hsz
+            else:
+                raise RuntimeError('unsupported attention time')
+            self.attn_combine = nn.Linear(hszXdirs + input_dim, input_dim,
                                           bias=False)
 
             if self.attention == 'local':

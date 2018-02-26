@@ -76,10 +76,10 @@ class Seq2seqAgent(Agent):
                            help='Choices: none, concat, general, local. '
                                 'If set local, also set attention-length. '
                                 'For more details see: '
-                                'https://arxiv.org/pdf/1508.04025.pdf')
+                                'https://arxiv.org/abs/1508.04025')
         agent.add_argument('-attl', '--attention-length', default=48, type=int,
                            help='Length of local attention.')
-        agent.add_argument('--attention-time', default='pre',
+        agent.add_argument('--attention-time', default='post',
                            choices=['pre', 'post'],
                            help='Whether to apply attention before or after '
                                 'decoding.')
