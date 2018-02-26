@@ -79,6 +79,10 @@ class Seq2seqAgent(Agent):
                                 'https://arxiv.org/pdf/1508.04025.pdf')
         agent.add_argument('-attl', '--attention-length', default=48, type=int,
                            help='Length of local attention.')
+        agent.add_argument('--attention-time', default='pre',
+                           choices=['pre', 'post'],
+                           help='Whether to apply attention before or after '
+                                'decoding.')
         agent.add_argument('--no-cuda', action='store_true', default=False,
                            help='disable GPUs even if available')
         agent.add_argument('--gpu', type=int, default=-1,
@@ -481,7 +485,7 @@ class Seq2seqAgent(Agent):
         if is_training:
             report_freq = 0
         else:
-            report_freq = 0.1
+            report_freq = 0.05
         PaddingUtils.map_predictions(
             predictions, valid_inds, batch_reply, observations, self.dict,
             self.END_IDX, report_freq=report_freq, labels=labels,

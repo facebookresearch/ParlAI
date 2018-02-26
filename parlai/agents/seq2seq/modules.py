@@ -36,6 +36,7 @@ class Seq2seq(nn.Module):
             num_layers=opt['numlayers'], dropout=opt['dropout'],
             share_output=opt['lookuptable'] in ['dec_out', 'all'],
             attn_type=opt['attention'], attn_length=opt['attention_length'],
+            attn_time=opt.get('attention_time'),
             bidir_input=opt['bidirectional'])
 
         shared_lt = (self.decoder.lt
@@ -187,7 +188,8 @@ class Decoder(nn.Module):
     def __init__(self, num_features, padding_idx=0, rnn_class='lstm',
                  emb_size=128, hidden_size=128, num_layers=2, dropout=0.1,
                  bidir_input=False, share_output=True,
-                 attn_type='none', attn_length=-1, sparse=False):
+                 attn_type='none', attn_length=-1, attn_time='pre',
+                 sparse=False):
         super().__init__()
 
         if padding_idx != 0:
@@ -218,6 +220,7 @@ class Decoder(nn.Module):
         self.shared = shared_weight is not None
 
         self.attn_type = attn_type
+        self.attn_time = attn_time
         self.attention = AttentionLayer(attn_type=attn_type,
                                         hidden_size=hidden_size,
                                         emb_size=emb_size,
@@ -226,10 +229,11 @@ class Decoder(nn.Module):
 
     def forward(self, xs, hidden, encoder_output, attn_mask=None):
         xes = F.dropout(self.lt(xs), p=self.dropout, training=self.training)
-        xes = self.attention(xes, hidden, encoder_output, attn_mask)
+        if self.attn_time == 'pre':
+            xes = self.attention(xes, hidden, encoder_output, attn_mask)
         output, new_hidden = self.rnn(xes, hidden)
-        # TODO: add post-attention?
-        # output = self.attention(output, new_hidden, encoder_output, attn_mask)
+        if self.attn_time == 'post':
+            output = self.attention(output, new_hidden, encoder_output, attn_mask)
 
         e = F.dropout(self.o2e(output), p=self.dropout, training=self.training)
         scores = F.dropout(self.e2s(e), p=self.dropout, training=self.training)
