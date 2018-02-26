@@ -181,6 +181,7 @@ class TrainLoop():
                 opt['validation_metric'], self.best_valid))
             if opt.get('model_file'):
                 print("[ saving best valid model: " + opt['model_file'] + " ]")
+                print("[ saving best valid metric: " + opt['model_file'] + ".best_valid ]")
                 save_best_valid(opt['model_file'], self.best_valid)
             self.world.save_agents()
             self.saved = True
