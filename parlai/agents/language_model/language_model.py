@@ -39,6 +39,8 @@ class LanguageModelAgent(Agent):
         argparser.set_defaults(batch_sort=False)
         LanguageModelAgent.dictionary_class().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Language Model Arguments')
+        agent.add_argument('--init-model', type=str, default=None,
+                           help='load dict/features/weights/opts from this file')
         agent.add_argument('-hs', '--hiddensize', type=int, default=200,
                            help='size of the hidden layers')
         agent.add_argument('-esz', '--embeddingsize', type=int, default=200,
@@ -112,16 +114,29 @@ class LanguageModelAgent(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
+            # check first for 'init_model' for loading model from file
+            if opt.get('init_model') and os.path.isfile(opt['init_model']):
+                init_model = opt['init_model']
+            # next check for 'model_file'
+            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
+                init_model = opt['model_file']
+            else:
+                init_model = None
+
+            if init_model is not None:
                 # load model parameters if available
-                print('Loading existing model params from ' + opt['model_file'])
-                new_opt, self.states = self.load(opt['model_file'])
+                print('Loading existing model params from ' + init_model)
+                new_opt, self.states = self.load(init_model)
                 # override model-specific options with stored ones
                 opt = self.override_opt(new_opt)
 
-            if opt['dict_file'] is None and opt.get('model_file'):
-                # set default dict-file if not set
-                opt['dict_file'] = opt['model_file'] + '.dict'
+            if opt['dict_file'] is None:
+                if init_model is not None and os.path.isfile(init_model + '.dict'):
+                    # check first to see if a dictionary exists
+                    opt['dict_file'] = init_model + '.dict'
+                elif opt.get('model_file'):
+                    # otherwise, set default dict-file if it is not set
+                    opt['dict_file'] = opt['model_file'] + '.dict'
 
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)

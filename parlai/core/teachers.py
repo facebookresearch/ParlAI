@@ -58,7 +58,7 @@ class DataLoader(Thread):
     """
     def __init__(self, opt):
         Thread.__init__(self, daemon=True)
-        self.num_workers = opt.get('numthreads', 1)
+        self.num_workers = opt.get('num_load_threads', 1)
         self.request_queue = queue.Queue()
 
     def request_load(self, receive_fn, load_fn, args):

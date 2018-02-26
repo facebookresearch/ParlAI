@@ -36,6 +36,7 @@ class Seq2seq(nn.Module):
             num_layers=opt['numlayers'], dropout=opt['dropout'],
             share_output=opt['lookuptable'] in ['dec_out', 'all'],
             attn_type=opt['attention'], attn_length=opt['attention_length'],
+            attn_time=opt.get('attention_time'),
             bidir_input=opt['bidirectional'])
 
         shared_lt = (self.decoder.lt
@@ -67,7 +68,7 @@ class Seq2seq(nn.Module):
         predictions = []
         scores = []
         text_cand_inds = None
-        if self.training:
+        if ys is not None:
             y_in = ys.narrow(1, 0, ys.size(1) - 1)
             xs = torch.cat([starts, y_in], 1)
             if self.attn_type == 'none':
@@ -77,7 +78,7 @@ class Seq2seq(nn.Module):
             else:
                 for i in range(ys.size(1)):
                     xi = xs.select(1, i)
-                    preds, score, _h = self.decoder(xi, hidden, enc_out, attn_mask)
+                    preds, score, hidden = self.decoder(xi, hidden, enc_out, attn_mask)
                     predictions.append(preds)
                     scores.append(score)
         else:
@@ -187,7 +188,8 @@ class Decoder(nn.Module):
     def __init__(self, num_features, padding_idx=0, rnn_class='lstm',
                  emb_size=128, hidden_size=128, num_layers=2, dropout=0.1,
                  bidir_input=False, share_output=True,
-                 attn_type='none', attn_length=-1, sparse=False):
+                 attn_type='none', attn_length=-1, attn_time='pre',
+                 sparse=False):
         super().__init__()
 
         if padding_idx != 0:
@@ -218,18 +220,24 @@ class Decoder(nn.Module):
         self.shared = shared_weight is not None
 
         self.attn_type = attn_type
+        self.attn_time = attn_time
         self.attention = AttentionLayer(attn_type=attn_type,
                                         hidden_size=hidden_size,
                                         emb_size=emb_size,
                                         bidirectional=bidir_input,
-                                        attn_length=attn_length)
+                                        attn_length=attn_length,
+                                        attn_time=attn_time)
 
     def forward(self, xs, hidden, encoder_output, attn_mask=None):
         xes = F.dropout(self.lt(xs), p=self.dropout, training=self.training)
-        xes = self.attention(xes, hidden, encoder_output, attn_mask)
+        if self.attn_time == 'pre':
+            xes = self.attention(xes, hidden, encoder_output, attn_mask)
+        if xes.dim() == 2:
+            # if only one token inputted, sometimes needs unsquezing
+            xes.unsqueeze_(1)
         output, new_hidden = self.rnn(xes, hidden)
-        # TODO: add post-attention?
-        # output = self.attention(output, new_hidden, encoder_output, attn_mask)
+        if self.attn_time == 'post':
+            output = self.attention(output, new_hidden, encoder_output, attn_mask)
 
         e = F.dropout(self.o2e(output), p=self.dropout, training=self.training)
         scores = F.dropout(self.e2s(e), p=self.dropout, training=self.training)
@@ -434,7 +442,7 @@ class RandomProjection(nn.Module):
 
 class AttentionLayer(nn.Module):
     def __init__(self, attn_type, hidden_size, emb_size, bidirectional=False,
-                 attn_length=-1):
+                 attn_length=-1, attn_time='pre'):
         super().__init__()
         self.attention = attn_type
 
@@ -442,7 +450,15 @@ class AttentionLayer(nn.Module):
             hsz = hidden_size
             num_dirs = 2 if bidirectional else 1
             hszXdirs = hsz * num_dirs
-            self.attn_combine = nn.Linear(hszXdirs + emb_size, emb_size,
+            if attn_time == 'pre':
+                # attention happens on the input embeddings
+                input_dim = emb_size
+            elif attn_time == 'post':
+                # attention happens on the output of the rnn
+                input_dim = hsz
+            else:
+                raise RuntimeError('unsupported attention time')
+            self.attn_combine = nn.Linear(hszXdirs + input_dim, input_dim,
                                           bias=False)
 
             if self.attention == 'local':

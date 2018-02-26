@@ -78,6 +78,9 @@ def setup_args(model_args=None):
     train.add_argument('-dbf', '--dict-build-first',
                        type='bool', default=True,
                        help='build dictionary first before training agent')
+    train.add_argument('-lfc', '--load-from-checkpoint',
+                       type='bool', default=False,
+                       help='load model from checkpoint if available')
     return parser
 
 def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None):
@@ -115,7 +118,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
 
     metrics = datatype + ':' + str(valid_report)
     print(metrics)
-    if write_log and opt['model_file']:
+    if write_log and opt.get('model_file'):
         # Write out metrics
         f = open(opt['model_file'] + '.' + datatype, 'a+')
         f.write(metrics + '\n')
@@ -132,6 +135,9 @@ def save_best_valid(model_file, best_valid):
 class TrainLoop():
     def __init__(self, parser):
         opt = parser.parse_args()
+        # Possibly load from checkpoint
+        if opt['load_from_checkpoint'] and opt.get('model_file') and os.path.isfile(opt['model_file'] + '.checkpoint'):
+            opt['init_model'] = opt['model_file'] + '.checkpoint'
         # Possibly build a dictionary (not all models do this).
         if opt['dict_build_first'] and 'dict_file' in opt:
             if opt['dict_file'] is None and opt.get('model_file'):
@@ -179,11 +185,12 @@ class TrainLoop():
             self.impatience = 0
             print('[ new best {}: {} ]'.format(
                 opt['validation_metric'], self.best_valid))
-            print("[ saving best valid model: " + opt['model_file'] + " ]")
-            self.world.save_agents()
-            print("[ saving best valid metric: " + opt['model_file'] + ".best_valid ]")
-            save_best_valid(opt['model_file'], self.best_valid)
-            self.saved = True
+            if opt.get('model_file'):
+                print("[ saving best valid model: " + opt['model_file'] + " ]")
+                self.agent.save(opt['model_file'])
+                print("[ saving best valid metric: " + opt['model_file'] + ".best_valid ]")
+                save_best_valid(opt['model_file'], self.best_valid)
+                self.saved = True
             if opt['validation_metric'] == 'accuracy' and self.best_valid >= opt['validation_cutoff']:
                 print('[ task solved! stopping. ]')
                 return True
@@ -254,7 +261,7 @@ class TrainLoop():
 
         if not self.saved:
             # save agent
-            world.save_agents()
+            self.agent.save(opt['model_file'])
         elif opt.get('model_file'):
             # reload best validation model
             self.agent = create_agent(opt)
