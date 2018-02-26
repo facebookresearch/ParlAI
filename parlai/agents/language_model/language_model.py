@@ -170,7 +170,7 @@ class LanguageModelAgent(Agent):
             self.ends = torch.LongTensor([self.END_IDX for _ in range(self.batchsize)])
             if self.use_cuda:
                 self.ends = self.ends.cuda()
-            # set up model and learning rate schedulerparameters
+            # set up model and learning rate scheduler parameters
             self.lr = opt['learningrate']
             self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
             self.best_val_loss = self.states.get('best_val_loss', None)
