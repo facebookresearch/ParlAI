@@ -190,7 +190,7 @@ class TrainLoop():
                 self.agent.save(opt['model_file'])
                 print("[ saving best valid metric: " + opt['model_file'] + ".best_valid ]")
                 save_best_valid(opt['model_file'], self.best_valid)
-            self.saved = True
+                self.saved = True
             if opt['validation_metric'] == 'accuracy' and self.best_valid >= opt['validation_cutoff']:
                 print('[ task solved! stopping. ]')
                 return True
