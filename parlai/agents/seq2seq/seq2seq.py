@@ -78,9 +78,13 @@ class Seq2seqAgent(Agent):
                            help='Choices: none, concat, general, local. '
                                 'If set local, also set attention-length. '
                                 'For more details see: '
-                                'https://arxiv.org/pdf/1508.04025.pdf')
+                                'https://arxiv.org/abs/1508.04025')
         agent.add_argument('-attl', '--attention-length', default=48, type=int,
                            help='Length of local attention.')
+        agent.add_argument('--attention-time', default='post',
+                           choices=['pre', 'post'],
+                           help='Whether to apply attention before or after '
+                                'decoding.')
         agent.add_argument('--no-cuda', action='store_true', default=False,
                            help='disable GPUs even if available')
         agent.add_argument('--gpu', type=int, default=-1,
@@ -415,7 +419,7 @@ class Seq2seqAgent(Agent):
             observations, self.dict, self.END_IDX, self.NULL_IDX, dq=True,
             eval_labels=True, truncate=self.truncate)
         if xs is None:
-            return None, None, None, None, None, None
+            return None, None, None, None, None, None, None
         if self.use_cuda:
             # copy to gpu
             self.xs.resize_(xs.size())
@@ -496,7 +500,7 @@ class Seq2seqAgent(Agent):
         if is_training:
             report_freq = 0
         else:
-            report_freq = 0.1
+            report_freq = 0.01
         PaddingUtils.map_predictions(
             predictions, valid_inds, batch_reply, observations, self.dict,
             self.END_IDX, report_freq=report_freq, labels=labels,
