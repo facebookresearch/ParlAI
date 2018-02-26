@@ -6,7 +6,14 @@
 
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
+from examples.extract_image_feature import main as extract_main
 from .build import build, buildImage
+try:
+    import torch
+except Exception as e:
+    raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
+from torch.utils.data import Dataset
+from parlai_external.agents.mlb.mlb import VqaDictionaryAgent
 
 import json
 import os
@@ -43,6 +50,117 @@ def _path(opt):
     return data_path, annotation_path, image_path
 
 
+class VQADataset(Dataset):
+    """A Pytorch Dataset utilizing streaming"""
+    def __init__(self, opt):
+        self.opt = opt
+        self.use_att = opt.get('attention', False)
+        self.use_hdf5 = not opt.get('no_hdf5', False)
+        self.datatype = self.opt.get('datatype')
+        self.training = self.datatype.startswith('train')
+        self.num_epochs = self.opt.get('num_epochs', 0)
+        _, _, self.image_path = _path(opt)
+        self.image_loader = ImageLoader(opt)
+        data_path, annotation_path, self.image_path = _path(opt)
+        self._setup_data(data_path, annotation_path)
+        if self.use_hdf5:
+            try:
+                import h5py
+                self.h5py = h5py
+            except ModuleNotFoundError:
+                raise ModuleNotFoundError('Need to install h5py - `pip install h5py`')
+            self._setup_image_data()
+        self.dict_agent = VqaDictionaryAgent(opt)
+
+    def __getitem__(self, index):
+        index %= self.num_episodes()
+        qa = self.ques['questions'][index]
+        ep = {
+            'text': qa['question'],
+            'image': self.get_image(qa['image_id']),
+            'episode_done': True,
+        }
+        if self.opt.get('extract_image', False):
+            ep['image_id'] = qa['image_id']
+            return ep
+        if not self.datatype.startswith('test'):
+            anno = self.annotation['annotations'][index]
+            labels = [ans['answer'] for ans in anno['answers']]
+            ep['labels'] = [ans['answer'] for ans in anno['answers']]
+            ep['valid'] = True
+            if 'mc_label' in ep:
+                if not ep['mc_label'][0] in self.dict_agent.ans2ind:
+                    ep['valid'] = False
+            ep = self.dict_agent.encode_question([ep], self.training)
+            ep = self.dict_agent.encode_answer(ep)
+            ep[0]['labels'] = labels
+        else:
+            ep['valid'] = True
+            ep = self.dict_agent.encode_question([ep], False)
+        ep[0]['use_att'] = self.use_att
+        ep[0]['use_hdf5'] = self.use_hdf5
+        return (index, ep)
+
+    def __len__(self):
+        num_epochs = self.num_epochs if self.num_epochs > 0 else 100
+        num_iters = num_epochs if self.training else 1
+        return int(num_iters * self.num_episodes())
+
+    def _load_lens(self):
+        with open(self.length_datafile) as length:
+            lengths = json.load(length)
+            self.num_eps = lengths['num_eps']
+            self.num_exs = lengths['num_exs']
+
+    def _setup_data(self, data_path, annotation_path):
+        with open(data_path) as data_file:
+            self.ques = json.load(data_file)
+        if not self.datatype.startswith('test'):
+            with open(annotation_path) as data_file:
+                self.annotation = json.load(data_file)
+        self.image_paths = set()
+        for qa in self.ques['questions']:
+            self.image_paths.add(self.image_path + '%012d.jpg' % (qa['image_id']))
+
+    def _setup_image_data(self):
+        '''hdf5 image dataset'''
+        extract_main(self.opt)
+        im = self.opt.get('image_mode')
+        if self.opt.get('attention', False):
+            hdf5_path = self.image_path + 'mode_{}.hdf5'.format(im)
+        else:
+            hdf5_path = self.image_path + 'mode_{}_noatt.hdf5'.format(im)
+        hdf5_file = self.h5py.File(hdf5_path, 'r')
+        self.image_dataset = hdf5_file['images']
+
+        image_id_to_idx_path = self.image_path + 'mode_{}_id_to_idx.txt'.format(im)
+        with open(image_id_to_idx_path, 'r') as f:
+            self.image_id_to_idx = json.load(f)
+
+    def get_image(self, image_id):
+        if not self.use_hdf5:
+            im_path = self.image_path + '%012d.jpg' % (image_id)
+            return self.image_loader.load(im_path)
+        else:
+            img_idx = self.image_id_to_idx[str(image_id)]
+            return torch.Tensor(self.image_dataset[img_idx])
+
+    def num_episodes(self):
+        return len(self.ques['questions'])
+
+    def num_examples(self):
+        return self.num_episodes()
+
+    def num_images(self):
+        if not hasattr(self, 'num_imgs'):
+            self.num_imgs = len({q['image_id'] for q in self.ques['questions']})
+        return self.num_imgs
+
+
+class DefaultDataset(VQADataset):
+    pass
+
+
 class OeTeacher(FixedDialogTeacher):
     """
     VQA Open-Ended teacher, which loads the json vqa data and implements its
@@ -51,6 +169,7 @@ class OeTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         data_path, annotation_path, self.image_path = _path(opt)
+        self.datafile = data_path
         self.image_mode = opt.get('image_mode', 'none')
 
         if shared and 'ques' in shared:
@@ -61,7 +180,6 @@ class OeTeacher(FixedDialogTeacher):
         else:
             self._setup_data(data_path, annotation_path)
             self.image_loader = ImageLoader(opt)
-
         self.reset()
 
     def reset(self):
@@ -109,8 +227,8 @@ class OeTeacher(FixedDialogTeacher):
             ready = (self.example, self.epochDone)
         # queue up the next example
         self.example, self.epochDone = super().next_example()
-        image_id = self.example.pop('image_id')
-        if self.image_mode != 'none':
+        if self.image_mode != 'none' and 'image_id' in self.example:
+            image_id = self.example['image_id']
             self.submit_load_request(image_id)
         return ready
 

@@ -67,7 +67,7 @@ class Seq2seq(nn.Module):
         predictions = []
         scores = []
         text_cand_inds = None
-        if self.training:
+        if ys is not None:
             y_in = ys.narrow(1, 0, ys.size(1) - 1)
             xs = torch.cat([starts, y_in], 1)
             if self.attn_type == 'none':
