@@ -170,13 +170,22 @@ class LanguageModelAgent(Agent):
             self.ends = torch.LongTensor([self.END_IDX for _ in range(self.batchsize)])
             if self.use_cuda:
                 self.ends = self.ends.cuda()
-            # set up learning rate parameters
+            # set up model and learning rate schedulerparameters
             self.lr = opt['learningrate']
-            self.lr_factor = opt['lr_factor']
-            self.lr_patience = opt['lr_patience']
-            self.curr_patience = 0
-            self.lr_min = opt['lr_minimum']
+            self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
             self.best_val_loss = self.states.get('best_val_loss', None)
+            self.lr_factor = opt['lr_factor']
+            if self.lr_factor < 1.0:
+                self.lr_patience = opt['lr_patience']
+                self.lr_min = opt['lr_minimum']
+                self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                    self.optimizer, factor=self.lr_factor, verbose=True,
+                    patience=self.lr_patience, min_lr=self.lr_min)
+                # initial step for scheduler if self.best_val_loss is initialized
+                if self.best_val_loss is not None:
+                    self.scheduler.step(self.best_val_loss)
+            else:
+                self.scheduler = None
 
         self.reset()
 
@@ -207,13 +216,12 @@ class LanguageModelAgent(Agent):
 
     def zero_grad(self):
         """Zero out optimizer."""
-        self.model.zero_grad()
+        self.optimizer.zero_grad()
 
     def update_params(self):
         """Do one optimization step."""
         torch.nn.utils.clip_grad_norm(self.model.parameters(), self.clip)
-        for p in self.model.parameters():
-            p.data.add_(-self.lr, p.grad.data)
+        self.optimizer.step()
 
     def reset(self):
         """Reset observation and episode_done."""
@@ -504,18 +512,8 @@ class LanguageModelAgent(Agent):
         super().shutdown()
 
     def receive_metrics(self, metrics_dict):
-        if 'loss' in metrics_dict:
-            if self.best_val_loss is None or self.best_val_loss > metrics_dict['loss']:
-                self.best_val_loss = metrics_dict['loss']
-                self.curr_patience = 0
-            elif self.lr_min < self.lr:     # only update if we have not reached minimum lr
-                if self.curr_patience < self.lr_patience:
-                    self.curr_patience += 1
-                    print("[ learning rate impatience:", self.curr_patience, "]")
-                else:
-                    self.lr *= self.lr_factor
-                    self.curr_patience = 0
-                    print("[ updating learning rate: lr =", self.lr, "]")
+        if 'loss' in metrics_dict and self.scheduler is not None:
+            self.scheduler.step(metrics_dict['loss'])
 
     def load(self, path):
         """Return opt and model states."""
