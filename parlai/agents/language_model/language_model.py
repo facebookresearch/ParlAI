@@ -47,8 +47,6 @@ class LanguageModelAgent(Agent):
                            help='size of the token embeddings')
         agent.add_argument('-nl', '--numlayers', type=int, default=2,
                            help='number of hidden layers')
-        agent.add_argument('-lr', '--learningrate', type=float, default=20,
-                           help='initial learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.2,
                            help='dropout rate')
         agent.add_argument('-clip', '--gradient-clip', type=float, default=0.25,
@@ -71,9 +69,16 @@ class LanguageModelAgent(Agent):
                            help='report frequency of prediction during eval')
         agent.add_argument('-pt', '--person-tokens', type=bool, default=True,
                            help='append person1 and person2 tokens to text')
-        agent.add_argument('-lrf', '--lr-factor', type=float, default=0.5,
+        # learning rate parameters
+        agent.add_argument('-lr', '--learningrate', type=float, default=20,
+                           help='initial learning rate')
+        agent.add_argument('-lrf', '--lr-factor', type=float, default=1.0,
                            help='mutliply learning rate by this factor when the \
                            validation loss does not decrease')
+        agent.add_argument('-lrp', '--lr-patience', type=int, default=10,
+                           help='wait before decreasing learning rate')
+        agent.add_argument('-lrm', '--lr-minimum', type=float, default=0.1,
+                           help='minimum learning rate')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -180,10 +185,22 @@ class LanguageModelAgent(Agent):
             self.ends = torch.LongTensor([self.END_IDX for _ in range(self.batchsize)])
             if self.use_cuda:
                 self.ends = self.ends.cuda()
-            # set up learning rate parameters
+            # set up model and learning rate scheduler parameters
             self.lr = opt['learningrate']
-            self.lr_factor = opt['lr_factor']
+            self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
             self.best_val_loss = self.states.get('best_val_loss', None)
+            self.lr_factor = opt['lr_factor']
+            if self.lr_factor < 1.0:
+                self.lr_patience = opt['lr_patience']
+                self.lr_min = opt['lr_minimum']
+                self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                    self.optimizer, factor=self.lr_factor, verbose=True,
+                    patience=self.lr_patience, min_lr=self.lr_min)
+                # initial step for scheduler if self.best_val_loss is initialized
+                if self.best_val_loss is not None:
+                    self.scheduler.step(self.best_val_loss)
+            else:
+                self.scheduler = None
 
         self.reset()
 
@@ -214,13 +231,12 @@ class LanguageModelAgent(Agent):
 
     def zero_grad(self):
         """Zero out optimizer."""
-        self.model.zero_grad()
+        self.optimizer.zero_grad()
 
     def update_params(self):
         """Do one optimization step."""
         torch.nn.utils.clip_grad_norm(self.model.parameters(), self.clip)
-        for p in self.model.parameters():
-            p.data.add_(-self.lr, p.grad.data)
+        self.optimizer.step()
 
     def reset(self):
         """Reset observation and episode_done."""
@@ -511,12 +527,8 @@ class LanguageModelAgent(Agent):
         super().shutdown()
 
     def receive_metrics(self, metrics_dict):
-        if 'loss' in metrics_dict:
-            if self.best_val_loss is None or self.best_val_loss > metrics_dict['loss']:
-                self.best_val_loss = metrics_dict['loss']
-            else:
-                self.lr *= self.lr_factor
-                print("Updating learning rate: lr =", self.lr)
+        if 'loss' in metrics_dict and self.scheduler is not None:
+            self.scheduler.step(metrics_dict['loss'])
 
     def load(self, path):
         """Return opt and model states."""
