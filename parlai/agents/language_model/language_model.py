@@ -47,6 +47,8 @@ class LanguageModelAgent(Agent):
                            help='size of the token embeddings')
         agent.add_argument('-nl', '--numlayers', type=int, default=2,
                            help='number of hidden layers')
+        agent.add_argument('-lr', '--learningrate', type=float, default=20,
+                           help='initial learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.2,
                            help='dropout rate')
         agent.add_argument('-clip', '--gradient-clip', type=float, default=0.25,
@@ -69,16 +71,6 @@ class LanguageModelAgent(Agent):
                            help='report frequency of prediction during eval')
         agent.add_argument('-pt', '--person-tokens', type=bool, default=True,
                            help='append person1 and person2 tokens to text')
-        # learning rate parameters
-        agent.add_argument('-lr', '--learningrate', type=float, default=20,
-                           help='initial learning rate')
-        agent.add_argument('-lrf', '--lr-factor', type=float, default=1.0,
-                           help='mutliply learning rate by this factor when the \
-                           validation loss does not decrease')
-        agent.add_argument('-lrp', '--lr-patience', type=int, default=10,
-                           help='wait before decreasing learning rate')
-        agent.add_argument('-lrm', '--lr-minimum', type=float, default=0.1,
-                           help='minimum learning rate')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -114,26 +106,16 @@ class LanguageModelAgent(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            # check first for 'init_model' for loading model file
-            if opt.get('init_model') and os.path.isfile(opt['init_model']):
-                init_model = opt['init_model']
-            # next check for model_file
-            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
-                init_model = opt['model_file']
-            else:
-                init_model = None
-            if init_model is not None:
+            if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
-                print('Loading existing model params from ' + init_model)
-                new_opt, self.states = self.load(init_model)
+                print('Loading existing model params from ' + opt['model_file'])
+                new_opt, self.states = self.load(opt['model_file'])
                 # override model-specific options with stored ones
                 opt = self.override_opt(new_opt)
 
-            if opt['dict_file'] is None:
-                if init_model is not None and os.path.isfile(init_model + '.dict'):
-                    opt['dict_file'] = init_model + '.dict'
-                elif opt.get('model_file'):
-                    opt['dict_file'] = opt['model_file'] + '.dict'
+            if opt['dict_file'] is None and opt.get('model_file'):
+                # set default dict-file if not set
+                opt['dict_file'] = opt['model_file'] + '.dict'
 
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
@@ -185,10 +167,6 @@ class LanguageModelAgent(Agent):
             # set up learning rate parameters
             self.lr = opt['learningrate']
             self.lr_factor = opt['lr_factor']
-            self.lr_patience = opt['lr_patience']
-            self.curr_patience = 0
-            self.lr_min = opt['lr_minimum']
-            self.best_val_loss = self.states.get('best_val_loss', None)
 
         self.reset()
 
@@ -519,15 +497,9 @@ class LanguageModelAgent(Agent):
         if 'loss' in metrics_dict:
             if self.best_val_loss is None or self.best_val_loss > metrics_dict['loss']:
                 self.best_val_loss = metrics_dict['loss']
-                self.curr_patience = 0
-            elif self.lr_min < self.lr:     # only update if we have not reached minimum lr
-                if self.curr_patience < self.lr_patience:
-                    self.curr_patience += 1
-                    print("[ learning rate impatience:", self.curr_patience, "]")
-                else:
-                    self.lr *= self.lr_factor
-                    self.curr_patience = 0
-                    print("[ updating learning rate: lr =", self.lr, "]")
+            else:
+                self.lr *= self.lr_factor
+                print("Updating learning rate: lr =", self.lr)
 
     def load(self, path):
         """Return opt and model states."""
