@@ -28,6 +28,8 @@ class MemnnAgent(Agent):
     def add_cmdline_args(argparser):
         DictionaryAgent.add_cmdline_args(argparser)
         arg_group = argparser.add_argument_group('MemNN Arguments')
+        arg_group.add_argument('--init-model', type=str, default=None,
+            help='load dict/features/weights/opts from this file')
         arg_group.add_argument('-lr', '--learning-rate', type=float, default=0.01,
             help='learning rate')
         arg_group.add_argument('--embedding-size', type=int, default=128,
@@ -68,22 +70,14 @@ class MemnnAgent(Agent):
             self.answers = [None] * opt['batchsize']
             self.model = MemNN(opt, len(self.dict))
 
-            if opt['cuda']:
-                self.model.share_memory()
-                if self.decoder is not None:
-                    self.decoder.cuda()
-
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
-                print('Loading existing model parameters from ' + opt['model_file'])
-                self.load(opt['model_file'])
-        else:    
+        else:
             self.dict = shared['dict']
-            # model is shared during hogwild  
-            if 'threadindex' in shared: 
+            # model is shared during hogwild
+            if 'threadindex' in shared:
                 self.model = shared['model']
                 self.decoder = shared['decoder']
                 self.answers = [None] * opt['batchsize']
-            else: 
+            else:
                 self.answers = shared['answers']
 
         if hasattr(self, 'model'):
@@ -97,9 +91,15 @@ class MemnnAgent(Agent):
             self.END_TENSOR = torch.LongTensor(self.dict.parse(self.END))
             self.START = self.dict.start_token
             self.START_TENSOR = torch.LongTensor(self.dict.parse(self.START))
+
             if opt['output'] == 'generate' or opt['output'] == 'g':
                 self.decoder = Decoder(opt['embedding_size'], opt['embedding_size'],
                                         opt['rnn_layers'], opt, self.dict)
+            if opt['cuda'] and not shared:
+                self.model.share_memory()
+                if self.decoder is not None:
+                    self.decoder.cuda()
+
             elif opt['output'] != 'rank' and opt['output'] != 'r':
                 raise NotImplementedError('Output type not supported.')
 
@@ -115,6 +115,18 @@ class MemnnAgent(Agent):
                     self.optimizers['decoder'] = optim.Adam(self.decoder.parameters(), lr=lr)
             else:
                 raise NotImplementedError('Optimizer not supported.')
+
+            # check first for 'init_model' for loading model from file
+            if opt.get('init_model') and os.path.isfile(opt['init_model']):
+                init_model = opt['init_model']
+            # next check for 'model_file'
+            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
+                init_model = opt['model_file']
+            else:
+                init_model = None
+            if init_model is not None:
+                print('Loading existing model parameters from ' + init_model)
+                self.load(init_model)
 
         self.history = {}
         self.episode_done = True
@@ -139,7 +151,7 @@ class MemnnAgent(Agent):
         # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
         batch_idx = self.opt.get('batchindex', 0)
-        
+
         obs['text'] = (maintain_dialog_history(
         self.history, obs,
         reply=self.answers[batch_idx] if self.answers[batch_idx] is not None else '',
