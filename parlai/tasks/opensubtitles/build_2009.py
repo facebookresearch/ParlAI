@@ -74,8 +74,8 @@ def create_fb_format(inpath, outpath):
     ftest.close()
 
 
-def build(opt):
-    dpath = os.path.join(opt['datapath'], 'OpenSubtitles')
+def build(datapath):
+    dpath = os.path.join(datapath, 'OpenSubtitles')
     version = '1'
 
     if not build_data.built(dpath, version_string=version):
@@ -94,3 +94,4 @@ def build(opt):
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
+    return dpath

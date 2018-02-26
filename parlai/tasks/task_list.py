@@ -163,7 +163,7 @@ task_list = [
         "display_name": "Open Subtitles",
         "task": "opensubtitles",
         "tags": [ "All",  "ChitChat" ],
-        "description": "Dataset of dialogs from movie scripts: http://opus.lingfil.uu.se/OpenSubtitles.php. A variant of the dataset used in Vinyals & Le '15, https://arxiv.org/abs/1506.05869."
+        "description": "Dataset of dialogs from movie scripts. Version 2018: http://opus.lingfil.uu.se/OpenSubtitles2018.php, version 2009: http://opus.lingfil.uu.se/OpenSubtitles.php. A variant of the dataset used in Vinyals & Le '15, https://arxiv.org/abs/1506.05869."
     },
     {
         "id": "personalized-dialog-full",
@@ -360,5 +360,13 @@ task_list = [
         "task": "twitter",
         "tags": [ "All",  "ChitChat" ],
         "description": "Twitter data from: https://github.com/Marsan-Ma/chat_corpus/. No train/valid/test split was provided so 10k for valid and 10k for test was chosen at random."
-    }
+    },
+    {
+        "id": "Wikipedia",
+        "display_name": "Wikipedia",
+        "task": 'wikipedia',
+        "tags": [ "All" ],
+        "description": "Dump of Wikipedia articles from 2/3/18",
+        "notes": "Specify ':full' for the full articles to be returned, otherwise defaults to ':summary', which provides the first paragraphs. To put the article in the labels and the title in the text, specify ':key-value' at the end (for a title/content key-value association)"
+    },
 ]

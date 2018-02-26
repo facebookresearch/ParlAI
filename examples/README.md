@@ -30,7 +30,7 @@ python display_data.py -t babi:task1k:1,squad -n 100
 
 Evaluate on the bAbI test set with a human agent (using the local keyboard as input):
 ```bash
-python examples/eval_model.py -m local_human -t babi:Task1k:1 -dt valid
+python eval_model.py -m local_human -t babi:Task1k:1 -dt valid
 ```
 
 Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:

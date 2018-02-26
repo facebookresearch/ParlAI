@@ -562,9 +562,13 @@ def override_opts_in_shared(table, overrides):
         if type(v) == dict and k != 'opt':
             override_opts_in_shared(v, overrides)
         elif type(v) == list:
-            for item in v[:1]:  # don't actually want to iterate over all items
+            for item in v:
                 if type(item) == dict:
+                    # if this is a list of agent shared dicts, we want to iterate
                     override_opts_in_shared(item, overrides)
+                else:
+                    # if this is e.g. list of candidate strings, stop right away
+                    break
     return table
 
 

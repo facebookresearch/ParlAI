@@ -104,6 +104,10 @@ class ParlaiParser(argparse.ArgumentParser):
             action='store_true',
             help='enforce that no worker can work on your task twice')
         mturk.add_argument(
+            '--unique-qual-name', dest='unique_qual_name',
+            default=None, type=str,
+            help='qualification name to use for uniqueness between HITs')
+        mturk.add_argument(
             '-r', '--reward', default=0.05, type=float,
             help='reward for each worker for finishing the conversation, '
                  'in US dollars')
@@ -143,6 +147,12 @@ class ParlaiParser(argparse.ArgumentParser):
             default=0, type=int,
             help='number of concurrent conversations that one mturk worker '
                  'is able to be involved in, 0 is unlimited')
+        mturk.add_argument(
+            '--max-connections', dest='max_connections',
+            default=30, type=int,
+            help='number of HITs that can be launched at the same time, 0 is '
+                 'unlimited.'
+        )
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)
@@ -291,7 +301,6 @@ class ParlaiParser(argparse.ArgumentParser):
             # hide batch options
             self.opt.pop('batch_sort', None)
             self.opt.pop('context_length', None)
-            self.opt.pop('include_labels', None)
 
         # set environment variables
         if self.opt.get('download_path'):

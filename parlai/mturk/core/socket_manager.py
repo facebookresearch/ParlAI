@@ -4,11 +4,13 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+import errno
 import logging
+import json
 import threading
 import time
 from queue import PriorityQueue, Empty
-from socketIO_client_nexus import SocketIO
+import websocket
 
 from parlai.mturk.core.shared_utils import print_and_log
 import parlai.mturk.core.data_model as data_model
@@ -147,7 +149,7 @@ class Packet():
 
 
 class SocketManager():
-    """SocketManager is a wrapper around socketIO to stabilize its packet
+    """SocketManager is a wrapper around websocket to stabilize its packet
     passing. The manager handles resending packet, as well as maintaining
     alive status for all the connections it forms
     """
@@ -157,7 +159,7 @@ class SocketManager():
                 Packet.TYPE_MESSAGE: 2}
 
     # Default time before socket deemed dead
-    DEF_SOCKET_TIMEOUT = 8
+    DEF_SOCKET_TIMEOUT = 12
 
     def __init__(self, server_url, port, alive_callback, message_callback,
                  socket_dead_callback, task_group_id,
@@ -186,7 +188,8 @@ class SocketManager():
             self.socket_dead_timeout = socket_dead_timeout
         self.task_group_id = task_group_id
 
-        self.socketIO = None
+        self.ws = None
+        self.keep_running = True
 
         # initialize the state
         self.listen_thread = None
@@ -206,22 +209,26 @@ class SocketManager():
 
     def _send_world_alive(self):
         """Registers world with the passthrough server"""
-        self.socketIO.emit(
-            data_model.SOCKET_AGENT_ALIVE_STRING,
-            {'id': 'WORLD_ALIVE', 'sender_id': self.get_my_sender_id()}
-        )
+        self.ws.send(json.dumps({
+            'type': data_model.SOCKET_AGENT_ALIVE_STRING,
+            'content':
+                {'id': 'WORLD_ALIVE', 'sender_id': self.get_my_sender_id()},
+        }))
 
     def _send_response_heartbeat(self, packet):
         """Sends a response heartbeat to an incoming heartbeat packet"""
-        self.socketIO.emit(
-            data_model.SOCKET_ROUTE_PACKET_STRING,
-            packet.swap_sender().set_data('').as_dict()
-        )
+        self.ws.send(json.dumps({
+            'type': data_model.SOCKET_ROUTE_PACKET_STRING,
+            'content': packet.swap_sender().set_data('').as_dict()
+        }))
 
     def _send_ack(self, packet):
         """Sends an ack to a given packet"""
         ack = packet.get_ack().as_dict()
-        self.socketIO.emit(data_model.SOCKET_ROUTE_PACKET_STRING, ack, None)
+        self.ws.send(json.dumps({
+            'type': data_model.SOCKET_ROUTE_PACKET_STRING,
+            'content': ack,
+        }))
 
     def _send_packet(self, packet, connection_id, send_time):
         """Sends a packet, blocks if the packet is blocking"""
@@ -232,13 +239,11 @@ class SocketManager():
             'Send packet: {}'.format(packet.data)
         )
 
-        def set_status_to_sent(data):
-            packet.status = Packet.STATUS_SENT
-        self.socketIO.emit(
-            data_model.SOCKET_ROUTE_PACKET_STRING,
-            pkt,
-            set_status_to_sent
-        )
+        self.ws.send(json.dumps({
+            'type': data_model.SOCKET_ROUTE_PACKET_STRING,
+            'content': pkt,
+        }))
+        packet.status = Packet.STATUS_SENT
 
         # Handles acks and blocking
         if packet.requires_ack:
@@ -267,8 +272,6 @@ class SocketManager():
 
     def _setup_socket(self):
         """Create socket handlers and registers the socket"""
-        self.socketIO = SocketIO(self.server_url, self.port)
-
         def on_socket_open(*args):
             shared_utils.print_and_log(
                 logging.DEBUG,
@@ -276,6 +279,24 @@ class SocketManager():
             )
             self._send_world_alive()
             self.alive = True
+
+        def on_error(ws, error):
+            try:
+                if error.errno == errno.ECONNREFUSED:
+                    ws.close()
+                    self.use_socket = False
+                    raise Exception("Socket refused connection, cancelling")
+                else:
+                    shared_utils.print_and_log(
+                        logging.WARN,
+                        'Socket logged error: {}'.format(error),
+                    )
+            except BaseException:
+                shared_utils.print_and_log(
+                    logging.WARN,
+                    'Socket logged string error: {} Restarting'.format(error),
+                )
+                ws.close()
 
         def on_disconnect(*args):
             """Disconnect event is a no-op for us, as the server reconnects
@@ -285,11 +306,15 @@ class SocketManager():
                 'World server disconnected: {}'.format(args)
             )
             self.alive = False
+            self.ws.close()
 
         def on_message(*args):
             """Incoming message handler for ACKs, ALIVEs, HEARTBEATs,
             and MESSAGEs"""
-            packet = Packet.from_dict(args[0])
+            packet_dict = json.loads(args[1])
+            if packet_dict['type'] == 'conn_success':
+                return  # No action for successful connection
+            packet = Packet.from_dict(packet_dict['content'])
             if packet is None:
                 return
             packet_id = packet.id
@@ -328,14 +353,30 @@ class SocketManager():
                 elif packet_type == Packet.TYPE_MESSAGE:
                     self.message_callback(packet)
 
-        # Register Handlers
-        self.socketIO.on(data_model.SOCKET_OPEN_STRING, on_socket_open)
-        self.socketIO.on(data_model.SOCKET_DISCONNECT_STRING, on_disconnect)
-        self.socketIO.on(data_model.SOCKET_NEW_PACKET_STRING, on_message)
+        def run_socket(*args):
+            url_base_name = self.server_url.split('https://')[1]
+            while self.keep_running:
+                try:
+                    sock_addr = "ws://{}/".format(
+                        url_base_name)
+                    self.ws = websocket.WebSocketApp(
+                        sock_addr,
+                        on_message=on_message,
+                        on_error=on_error,
+                        on_close=on_disconnect,
+                    )
+                    self.ws.on_open = on_socket_open
+                    self.ws.run_forever()
+                except Exception as e:
+                    shared_utils.print_and_log(
+                        logging.WARN,
+                        'Socket had error {}, attempting restart'.format(e)
+                    )
+                time.sleep(3)
 
         # Start listening thread
         self.listen_thread = threading.Thread(
-            target=self.socketIO.wait,
+            target=run_socket,
             name='Main-Socket-Thread'
         )
         self.listen_thread.daemon = True

@@ -277,9 +277,11 @@ def load_agent_module(opt):
     optfile =  opt['model_file'] + '.opt'
     if os.path.isfile(optfile):
         with open(optfile, 'rb') as handle:
-           opt = pickle.load(handle)
-        model_class = get_agent_module(opt['model'])
-        return model_class(opt)
+           new_opt = pickle.load(handle)
+        # override in case the file has been moved.
+        new_opt['model_file'] = opt['model_file']
+        model_class = get_agent_module(new_opt['model'])
+        return model_class(new_opt)
     else:
         return None
 
@@ -318,7 +320,7 @@ def create_agent(opt):
         if model is not None:
             return model
         else:
-            print("[ no model yet at: " + opt.get('model_file') + " ]")
+            print("[ no model with opt yet at: " + opt.get('model_file') + "(.opt) ]")
     if opt.get('model'):
         model_class = get_agent_module(opt['model'])
         return model_class(opt)

@@ -146,6 +146,10 @@ class DrqaAgent(Agent):
         saved_params = torch.load(fname,
             map_location=lambda storage, loc: storage)
 
+        if 'word_dict' in saved_params:
+            # for compatibility with old saves
+            self.word_dict.copy_dict(saved_params['word_dict'])
+
         self.feature_dict = saved_params['feature_dict']
         self.state_dict = saved_params['state_dict']
         config.override_args(self.opt, saved_params['config'])

@@ -57,6 +57,9 @@ class MTurkManager():
         agent_ids that will participate in each conversation
         """
         self.opt = opt
+        if self.opt['unique_worker'] or \
+                self.opt['unique_qual_name'] is not None:
+            self.opt['allowed_conversations'] = 1
         self.server_url = None
         self.topic_arn = None
         self.port = 443
@@ -73,6 +76,7 @@ class MTurkManager():
         )
         self.socket_manager = None
         self.is_test = is_test
+        self.is_unique = False
         self._init_logs()
 
     # Helpers and internal manager methods #
@@ -91,6 +95,7 @@ class MTurkManager():
         self.accepting_workers = True
         self._load_disconnects()
         self.assignment_to_worker_id = {}
+        self.qualifications = None
 
     def _init_logs(self):
         """Initialize logging settings from the opt"""
@@ -236,8 +241,12 @@ class MTurkManager():
         only listed a maximum of one time. In sandbox this is overridden for
         testing purposes, and the same worker can be returned more than once
         """
-        workers = [w for w in self.worker_pool
-                   if not w.hit_is_returned and eligibility_function(w)]
+        pool = [w for w in self.worker_pool if not w.hit_is_returned]
+        if eligibility_function['multiple'] is True:
+            workers = eligibility_function['func'](pool)
+        else:
+            workers = [w for w in pool if eligibility_function['func'](w)]
+
         unique_workers = []
         unique_worker_ids = []
         for w in workers:
@@ -348,6 +357,18 @@ class MTurkManager():
                 'Agent ({}) with no assign_id called alive'.format(worker_id)
             )
         elif assign_id not in curr_worker_state.agents:
+            # Ensure that this connection isn't violating our uniqueness
+            # constraints
+            if self.is_unique:
+                for agent in curr_worker_state.agents.values():
+                    if agent.state.status == AssignState.STATUS_DONE:
+                        text = (
+                            'You have already participated in this HIT the '
+                            'maximum number of times. This HIT is now expired.'
+                            ' Please return the HIT.'
+                        )
+                        self.force_expire_hit(worker_id, assign_id, text)
+                        return
             # First time this worker has connected under this assignment, init
             # new agent if we are still accepting workers
             if self.accepting_workers:
@@ -617,11 +638,27 @@ class MTurkManager():
             '\nYou are going to allow workers from Amazon Mechanical Turk to '
             'be an agent in ParlAI.\nDuring this process, Internet connection '
             'is required, and you should turn off your computer\'s auto-sleep '
-            'feature.\nEnough HITs will be created to fulfill {} times the '
-            'number of conversations requested, extra HITs will be expired '
-            'once the desired conversations {}.'.format(HIT_MULT, fin_word),
-            should_print=True
+            'feature.',
+            should_print=True,
         )
+        if self.opt['max_connections'] == 0:
+            shared_utils.print_and_log(
+                logging.INFO,
+                'Enough HITs will be created to fulfill {} times the '
+                'number of conversations requested, extra HITs will be expired'
+                ' once the desired conversations {}.'
+                ''.format(HIT_MULT, fin_word),
+                should_print=True,
+            )
+        else:
+            shared_utils.print_and_log(
+                logging.INFO,
+                'Enough HITs will be launched over time '
+                'up to a max of {} times the amount requested until the '
+                'desired number of conversations {}.'
+                ''.format(HIT_MULT, fin_word),
+                should_print=True,
+            )
         input('Please press Enter to continue... ')
         shared_utils.print_and_log(logging.NOTSET, '', True)
 
@@ -666,9 +703,11 @@ class MTurkManager():
 
         shared_utils.print_and_log(logging.INFO, 'Setting up MTurk server...',
                                    should_print=True)
+        self.is_unique = self.opt['unique_worker'] or \
+            (self.opt['unique_qual_name'] is not None)
         mturk_utils.create_hit_config(
             task_description=self.opt['task_description'],
-            unique_worker=self.opt['unique_worker'],
+            unique_worker=self.is_unique,
             is_sandbox=self.opt['is_sandbox']
         )
         # Poplulate files to copy over to the server
@@ -713,7 +752,7 @@ class MTurkManager():
     def ready_to_accept_workers(self):
         """Set up socket to start communicating to workers"""
         shared_utils.print_and_log(logging.INFO,
-                                   'Local: Setting up SocketIO...',
+                                   'Local: Setting up WebSocket...',
                                    not self.is_test)
         self._setup_socket()
 
@@ -737,6 +776,38 @@ class MTurkManager():
         in the pool to start an instance of the task. Continue doing this
         until the desired number of conversations is had.
         """
+        if callable(eligibility_function):
+            # Convert legacy eligibility_functions to the new format
+            eligibility_function = {
+                'multiple': False,
+                'func': eligibility_function,
+            }
+        else:
+            # Ensure the eligibility function is valid
+            if 'func' not in eligibility_function:
+                shared_utils.print_and_log(
+                    logging.CRITICAL,
+                    "eligibility_function has no 'func'. Cancelling."
+                )
+                raise Exception(
+                    'eligibility_function dict must contain a `func` field '
+                    'containing the actual function.'
+                )
+            elif not callable(eligibility_function['func']):
+                shared_utils.print_and_log(
+                    logging.CRITICAL,
+                    "eligibility_function['func'] not a function. Cancelling."
+                )
+                raise Exception(
+                    "eligibility_function['func'] must contain a function. "
+                    "If eligibility_function['multiple'] is set, it should "
+                    "filter through the list of workers and only return those "
+                    "that are currently eligible to participate. If it is not "
+                    "set, it should take in a single worker and return whether"
+                    " or not they are eligible."
+                )
+            if 'multiple' not in eligibility_function:
+                eligibility_function['multiple'] = False
 
         def _task_function(opt, workers, conversation_id):
             """Wait for workers to join the world, then run task function"""
@@ -786,6 +857,12 @@ class MTurkManager():
             # Count if it's a completed conversation
             if self._no_workers_incomplete(workers):
                 self.completed_conversations += 1
+            if self.opt['max_connections'] != 0:  # If using a conv cap
+                for w in workers:
+                    if w.state.status in [
+                            AssignState.STATUS_DONE,
+                            AssignState.STATUS_PARTNER_DISCONNECT]:
+                        self.create_additional_hits(1)
 
         while True:
             # Loop forever starting task worlds until desired convos are had
@@ -855,7 +932,8 @@ class MTurkManager():
             server_utils.delete_server(self.server_task_name)
             mturk_utils.delete_sns_topic(self.topic_arn)
             if self.opt['unique_worker']:
-                mturk_utils.delete_qualification(self.unique_qual_id)
+                mturk_utils.delete_qualification(self.unique_qual_id,
+                                                 self.is_sandbox)
             self._save_disconnects()
 
     # MTurk Agent Interaction Functions #
@@ -871,6 +949,10 @@ class MTurkManager():
                 agent.state.status = AssignState.STATUS_EXPIRED
                 agent.hit_is_expired = True
 
+        if ack_func is None:
+            def ack_func(*args):
+                self.socket_manager.close_channel(
+                    '{}_{}'.format(worker_id, assign_id))
         # Send the expiration command
         if text is None:
             text = ('This HIT is expired, please return and take a new '
@@ -958,10 +1040,10 @@ class MTurkManager():
     def mark_workers_done(self, workers):
         """Mark a group of workers as done to keep state consistent"""
         for worker in workers:
-            if self.opt['unique_worker']:
+            if self.is_unique:
                 self.give_worker_qualification(
                     worker.worker_id,
-                    self.unique_qual_name
+                    self.unique_qual_name,
                 )
             if not worker.state.is_final():
                 worker.state.status = AssignState.STATUS_DONE
@@ -986,12 +1068,10 @@ class MTurkManager():
             if not_done_message in e.response['Error']['Message']:
                 return MTurkAgent.ASSIGNMENT_NOT_DONE
 
-    def create_additional_hits(self, num_hits, qualifications=None):
-        """Handle creation for a specific number of hits/assignments
-        Put created HIT ids into the hit_id_list
-        """
-        shared_utils.print_and_log(logging.INFO,
-                                   'Creating {} hits...'.format(num_hits))
+    def get_qualification_list(self, qualifications=None):
+        if self.qualifications is not None:
+            return self.qualifications
+
         if qualifications is None:
             qualifications = []
 
@@ -1001,7 +1081,8 @@ class MTurkManager():
                 self.opt['block_qualification'],
                 'A soft ban from using a ParlAI-created HIT due to frequent '
                 'disconnects from conversations, leading to negative '
-                'experiences for other Turkers and for the requester.'
+                'experiences for other Turkers and for the requester.',
+                self.is_sandbox,
             )
             assert block_qual_id is not None, (
                 'Hits could not be created as block qualification could not be'
@@ -1013,17 +1094,32 @@ class MTurkManager():
                 'RequiredToPreview': True
             })
 
-        if self.opt['unique_worker']:
-            self.unique_qual_name = self.task_group_id + '_max_submissions'
+        if self.is_unique:
+            self.unique_qual_name = self.opt.get('unique_qual_name')
+            if self.unique_qual_name is None:
+                self.unique_qual_name = self.task_group_id + '_max_submissions'
             self.unique_qual_id = mturk_utils.find_or_create_qualification(
                 self.unique_qual_name,
-                'Prevents workers from completing a task too frequently'
+                'Prevents workers from completing a task too frequently',
+                self.is_sandbox,
             )
             qualifications.append({
                 'QualificationTypeId': self.unique_qual_id,
                 'Comparator': 'DoesNotExist',
                 'RequiredToPreview': True
             })
+
+        self.qualifications = qualifications
+        return qualifications
+
+    def create_additional_hits(self, num_hits, qualifications=None):
+        """Handle creation for a specific number of hits/assignments
+        Put created HIT ids into the hit_id_list
+        """
+        shared_utils.print_and_log(logging.INFO,
+                                   'Creating {} hits...'.format(num_hits))
+
+        qualifications = self.get_qualification_list(qualifications)
 
         hit_type_id = mturk_utils.create_hit_type(
             hit_title=self.opt['hit_title'],
@@ -1064,10 +1160,16 @@ class MTurkManager():
         """Create hits based on the managers current config, return hit url"""
         shared_utils.print_and_log(logging.INFO, 'Creating HITs...', True)
 
-        mturk_page_url = self.create_additional_hits(
-            num_hits=self.required_hits,
-            qualifications=qualifications,
-        )
+        if self.opt['max_connections'] == 0:
+            mturk_page_url = self.create_additional_hits(
+                num_hits=self.required_hits,
+                qualifications=qualifications,
+            )
+        else:
+            mturk_page_url = self.create_additional_hits(
+                num_hits=min(self.required_hits, self.opt['max_connections']),
+                qualifications=qualifications,
+            )
 
         shared_utils.print_and_log(logging.INFO,
                                    'Link to HIT: {}\n'.format(mturk_page_url),
@@ -1124,11 +1226,12 @@ class MTurkManager():
         """Soft block a worker by giving the worker the block qualification"""
         qual_name = self.opt['block_qualification']
         assert qual_name != '', ('No block qualification has been specified')
-        self.give_worker_qualification(worker_id, qual_name)
+        self.give_worker_qualification(worker_id, qual_name,
+                                       is_sandbox=self.is_sandbox)
 
     def give_worker_qualification(self, worker_id, qual_name, qual_value=None):
         """Give a worker a particular qualification"""
-        qual_id = mturk_utils.find_qualification(qual_name)
+        qual_id = mturk_utils.find_qualification(qual_name, self.is_sandbox)
         if qual_id is False or qual_id is None:
             shared_utils.print_and_log(
                 logging.WARN,
@@ -1138,7 +1241,13 @@ class MTurkManager():
                 should_print=True
             )
             return
-        mturk_utils.give_worker_qualification(worker_id, qual_id, qual_value)
+        mturk_utils.give_worker_qualification(worker_id, qual_id, qual_value,
+                                              self.is_sandbox)
+        shared_utils.print_and_log(
+            logging.INFO,
+            'gave {} qualification {}'.format(worker_id, qual_name),
+            should_print=True
+        )
 
     def create_qualification(self, qualification_name, description,
                              can_exist=True):
@@ -1146,7 +1255,8 @@ class MTurkManager():
         the ID of the existing qualification rather than throw an error
         """
         if not can_exist:
-            qual_id = mturk_utils.find_qualification(qualification_name)
+            qual_id = mturk_utils.find_qualification(qualification_name,
+                                                     self.is_sandbox)
             if qual_id is not None:
                 shared_utils.print_and_log(
                     logging.WARN,
@@ -1157,7 +1267,8 @@ class MTurkManager():
                 return None
         return mturk_utils.find_or_create_qualification(
             qualification_name,
-            description
+            description,
+            self.is_sandbox
         )
 
     def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason,

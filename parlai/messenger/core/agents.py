@@ -33,9 +33,12 @@ class MessengerAgent(Agent):
                 act['payload'],
             )
         else:
+            if act['id'] != '':
+                msg = '{}: {}'.format(act['id'], act['text'])
+            else:
+                msg = act['text']
             resp = self.manager.observe_message(
-                self.id,
-                '{}: {}'.format(act['id'], act['text']),
+                self.id, msg,
                 act.get('quick_replies', None)
             )
         try:
@@ -51,6 +54,10 @@ class MessengerAgent(Agent):
         """Put data into the message queue if it hasn't already been seen"""
         mid = message['message']['mid']
         seq = message['message']['seq']
+        if 'text' not in message['message']:
+            print('Msg: {} could not be extracted to text format'.format(
+                message['message']))
+            return
         text = message['message']['text']
         if text is None:
             text = message['message']['payload']

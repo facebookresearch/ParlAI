@@ -18,7 +18,7 @@ HIT status and things of the sort are not yet supported in this testing.
 """
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.test.integration_test.worlds import TestOnboardWorld, \
-    TestSoloWorld, TestDuoWorld
+    TestSoloWorld, TestDuoWorld, StressWorld
 from parlai.mturk.core.mturk_manager import MTurkManager, WORLD_START_TIMEOUT
 from parlai.mturk.core.server_utils import setup_server, delete_server
 from parlai.mturk.core.socket_manager import Packet, SocketManager
@@ -27,11 +27,12 @@ from parlai.mturk.core.agents import MTURK_DISCONNECT_MESSAGE
 import parlai.mturk.core.data_model as data_model
 import parlai.mturk.core.mturk_utils as mturk_utils
 from parlai.mturk.core.mturk_utils import create_hit_config
-from socketIO_client_nexus import SocketIO
-import time
+import json
 import os
+import time
 import uuid
 import threading
+import websocket
 
 TEST_TASK_DESCRIPTION = 'This is a test task description'
 MTURK_AGENT_IDS = ['TEST_USER_1', 'TEST_USER_2']
@@ -56,11 +57,14 @@ EXPIRE_HIT_TEST = 'EXPIRE_HIT_TEST'
 ALLOWED_CONVERSATION_TEST = 'ALLOWED_CONVERSATION_TEST'
 UNIQUE_CONVERSATION_TEST = 'UNIQUE_CONVERSATION_TEST'
 AMAZON_SNS_TEST = 'AMAZON_SNS_TEST'
+STRESS_TEST = 'STRESS_TEST'
 
 FAKE_ASSIGNMENT_ID = 'FAKE_ASSIGNMENT_ID_{}_{}'
 FAKE_WORKER_ID = 'FAKE_WORKER_ID_{}_{}'
 
 DISCONNECT_WAIT_TIME = SocketManager.DEF_SOCKET_TIMEOUT + 1.5
+
+STRESS_TEST_AMOUNT = 50
 
 completed_threads = {}
 start_times = {}
@@ -84,7 +88,8 @@ class MockAgent(object):
         self.some_agent_disconnected = False
         self.disconnected = False
         self.task_group_id = task_group_id
-        self.socketIO = None
+        self.ws = None
+        self.ws_open = False
         self.always_beat = False
         self.ready = False
         self.wants_to_send = False
@@ -93,13 +98,12 @@ class MockAgent(object):
         def callback(*args):
             pass
         event_name = data_model.SOCKET_ROUTE_PACKET_STRING
-        self.socketIO.emit(event_name, packet.as_dict())
+        self.ws.send(json.dumps({
+            'type': event_name,
+            'content': packet.as_dict(),
+        }))
 
-    def build_and_send_packet(self, packet_type, data, callback):
-        if not callback:
-            def callback(*args):
-                pass
-
+    def build_and_send_packet(self, packet_type, data):
         msg = {
           'id': str(uuid.uuid4()),
           'type': packet_type,
@@ -113,14 +117,12 @@ class MockAgent(object):
         event_name = data_model.SOCKET_ROUTE_PACKET_STRING
         if (packet_type == Packet.TYPE_ALIVE):
             event_name = data_model.SOCKET_AGENT_ALIVE_STRING
+        self.ws.send(json.dumps({
+            'type': event_name,
+            'content': msg,
+        }))
 
-        self.socketIO.emit(event_name, msg, callback)
-
-    def send_message(self, text, callback=dummy):
-        if not callback:
-            def callback(*args):
-                pass
-
+    def send_message(self, text):
         data = {
             'text': text,
             'id': self.id,
@@ -129,37 +131,53 @@ class MockAgent(object):
         }
 
         self.wants_to_send = False
-        self.build_and_send_packet(Packet.TYPE_MESSAGE, data, callback)
+        self.build_and_send_packet(Packet.TYPE_MESSAGE, data)
 
     def send_alive(self):
+        while not self.ws_open:
+            time.sleep(0.1)
         data = {
             'hit_id': self.hit_id,
             'assignment_id': self.assignment_id,
             'worker_id': self.worker_id,
             'conversation_id': self.conversation_id
         }
-        self.build_and_send_packet(Packet.TYPE_ALIVE, data, None)
+        self.build_and_send_packet(Packet.TYPE_ALIVE, data)
 
     def setup_socket(self, server_url, message_handler):
         """Sets up a socket for an agent"""
 
         def on_socket_open(*args):
+            self.ws_open = True
             self.send_alive()
 
         def on_new_message(*args):
-            message_handler(args[0])
+            packet_dict = json.loads(args[1])
+            if packet_dict['type'] == 'conn_success':
+                return  # No action for successful connection
+            message_handler(packet_dict['content'])
 
         def on_disconnect(*args):
             self.disconnected = True
 
-        self.socketIO = SocketIO(server_url, PORT)
-        # Register Handlers
-        self.socketIO.on(data_model.SOCKET_OPEN_STRING, on_socket_open)
-        self.socketIO.on(data_model.SOCKET_DISCONNECT_STRING, on_disconnect)
-        self.socketIO.on(data_model.SOCKET_NEW_PACKET_STRING, on_new_message)
+        def run_socket(*args):
+            url_base_name = server_url.split('https://')[1]
+            sock_addr = "ws://{}/".format(
+                url_base_name)
+            self.ws = websocket.WebSocketApp(
+                sock_addr,
+                on_message=on_new_message,
+                on_error=dummy,
+                on_close=on_disconnect,
+            )
+            self.ws.on_open = on_socket_open
+            self.ws.run_forever()
 
         # Start listening thread
-        self.listen_thread = threading.Thread(target=self.socketIO.wait)
+        self.listen_thread = threading.Thread(
+            target=run_socket,
+            name='agent-{}-socket'.format(self.assignment_id)
+        )
         self.listen_thread.daemon = True
         self.listen_thread.start()
 
@@ -174,7 +192,10 @@ class MockAgent(object):
             'type': Packet.TYPE_HEARTBEAT,
             'data': None
         }
-        self.socketIO.emit(data_model.SOCKET_ROUTE_PACKET_STRING, hb)
+        self.ws.send(json.dumps({
+            'type': data_model.SOCKET_ROUTE_PACKET_STRING,
+            'content': hb,
+        }))
 
     def wait_for_alive(self):
         last_time = time.time()
@@ -225,6 +246,18 @@ def handle_setup(opt):
 
 def handle_shutdown(server_task_name):
     delete_server(server_task_name)
+
+
+def wait_for_socket_manager(mturk_manager):
+    seconds_done = 0
+    seconds = 10
+    time.sleep(0.5)
+    while (seconds_done < seconds):
+        if mturk_manager.socket_manager is None:
+            seconds_done += 0.1
+        else:
+            break
+        time.sleep(0.1)
 
 
 def wait_for_state_time(seconds, mturk_manager):
@@ -334,7 +367,7 @@ def make_packet_handler_cant_task(agent, on_ack, on_hb, on_msg):
         elif pkt['type'] == Packet.TYPE_HEARTBEAT:
             packet = Packet.from_dict(pkt)
             on_hb(packet)
-            time.sleep(1)
+            time.sleep(2)
             if agent.always_beat:
                 agent.send_heartbeat()
         elif pkt['type'] == Packet.TYPE_MESSAGE:
@@ -370,7 +403,7 @@ def make_packet_handler(agent, on_ack, on_hb, on_msg):
         elif pkt['type'] == Packet.TYPE_HEARTBEAT:
             packet = Packet.from_dict(pkt)
             on_hb(packet)
-            time.sleep(1)
+            time.sleep(2)
             if agent.always_beat:
                 agent.send_heartbeat()
         elif pkt['type'] == Packet.TYPE_MESSAGE:
@@ -398,9 +431,22 @@ def check_status(input_status, desired_status):
 
 def check_new_agent_setup(agent, mturk_manager,
                           status=AssignState.STATUS_ONBOARDING):
+    seconds = 5
+    while seconds > 0:
+        if agent.worker_id in mturk_manager.mturk_workers:
+            break
+        time.sleep(0.1)
+        seconds -= 0.1
+    assert seconds != 0, 'MTurkManager never registered agent {}'.format(agent)
     mturk_agent = mturk_manager.mturk_workers[agent.worker_id]
     assert mturk_agent is not None, \
         'MTurk manager did not make a worker state on alive'
+    while seconds > 0:
+        if agent.assignment_id in mturk_agent.agents:
+            break
+        time.sleep(0.1)
+        seconds -= 0.1
+    assert seconds != 0, 'Agent never created for assignment {}'.format(agent)
     mturk_assign = mturk_agent.agents[agent.assignment_id]
     assert mturk_assign is not None, \
         'MTurk manager did not make an assignment state on alive'
@@ -540,7 +586,7 @@ def test_socket_manager(opt, server_url):
     time.sleep(1)
     agent.send_heartbeat()
     time.sleep(1)
-    agent.send_message(TEST_MESSAGE, None)
+    agent.send_message(TEST_MESSAGE)
     time.sleep(1)
 
     # Send some content from the socket manager, don't ack the first
@@ -657,6 +703,7 @@ def test_solo_with_onboarding(opt, server_url):
                                     args=(opt, mturk_manager, True))
     world_thread.daemon = True
     world_thread.start()
+    wait_for_socket_manager(mturk_manager)
 
     # Create an agent and set it up to connect
     def msg_callback(packet):
@@ -697,7 +744,7 @@ def test_solo_with_onboarding(opt, server_url):
     assert last_command.data['text'] == data_model.COMMAND_SEND_MESSAGE, \
         'Agent was not asked to send message {}'.format(message_num)
     wait_for_state_time(2, mturk_manager)
-    test_agent_fail.send_message('Hello1', dummy)
+    test_agent_fail.send_message('Hello1')
     test_agent_fail.always_beat = False
     wait_for_state_time(DISCONNECT_WAIT_TIME, mturk_manager)
 
@@ -738,11 +785,11 @@ def test_solo_with_onboarding(opt, server_url):
     assert last_command.data['text'] == data_model.COMMAND_SEND_MESSAGE, \
         'Agent was not asked to send message {}'.format(message_num)
     wait_for_state_time(2, mturk_manager)
-    test_agent.send_message('Hello1', dummy)
+    test_agent.send_message('Hello1')
 
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state.status, AssignState.STATUS_ONBOARDING)
-    test_agent.send_message('Hello2', dummy)
+    test_agent.send_message('Hello2')
     wait_for_state_time(4, mturk_manager)
 
     # Run through task
@@ -758,7 +805,7 @@ def test_solo_with_onboarding(opt, server_url):
     wait_for_state_time(2, mturk_manager)
     assert last_command.data['text'] == data_model.COMMAND_SEND_MESSAGE, \
         'Agent was not asked to send message {}'.format(message_num)
-    test_agent.send_message('Hello3', dummy)
+    test_agent.send_message('Hello3')
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state.status, AssignState.STATUS_IN_TASK)
     assert mturk_manager_assign.is_in_task(), 'Manager\'s copy of agent is ' \
@@ -766,7 +813,7 @@ def test_solo_with_onboarding(opt, server_url):
     assert len(assign_state.messages) == 3, \
         'Not all of the messages have been stored into the state, found {}' \
         'when expecting 3'.format(len(assign_state.messages))
-    test_agent.send_message('Hello4', dummy)
+    test_agent.send_message('Hello4')
     test_agent.always_beat = False
     wait_for_state_time(3, mturk_manager)
     check_status(assign_state.status, AssignState.STATUS_DONE)
@@ -812,6 +859,7 @@ def test_solo_no_onboarding(opt, server_url):
                                     args=(opt, mturk_manager, False))
     world_thread.daemon = True
     world_thread.start()
+    wait_for_socket_manager(mturk_manager)
 
     # Create an agent and set it up to connect
     def msg_callback(packet):
@@ -851,13 +899,13 @@ def test_solo_no_onboarding(opt, server_url):
         'Mock agent didn\'t make it to task world'
     assert last_command.data['text'] == data_model.COMMAND_SEND_MESSAGE, \
         'Agent was not asked to send message {}'.format(message_num)
-    test_agent.send_message('Hello1', dummy)
+    test_agent.send_message('Hello1')
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state.status, AssignState.STATUS_IN_TASK)
     assert len(assign_state.messages) == 3, \
         'Not all of the messages have been stored into the state, found {}' \
         'when expecting 3'.format(len(assign_state.messages))
-    test_agent.send_message('Hello2', dummy)
+    test_agent.send_message('Hello2')
     wait_for_state_time(3, mturk_manager)
     test_agent.always_beat = False
     check_status(assign_state.status, AssignState.STATUS_DONE)
@@ -900,6 +948,7 @@ def test_solo_refresh_in_middle(opt, server_url):
                                     args=(opt, mturk_manager, False))
     world_thread.daemon = True
     world_thread.start()
+    wait_for_socket_manager(mturk_manager)
 
     # Create an agent and set it up to connect
     def msg_callback(packet):
@@ -963,14 +1012,14 @@ def test_solo_refresh_in_middle(opt, server_url):
     assert last_command.data['messages'][0]['text'] == expected_messages[0], \
         'Message sent in restore state packet wasn\'t correct'
 
-    test_agent.send_message('Hello1', dummy)
+    test_agent.send_message('Hello1')
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state.status, AssignState.STATUS_IN_TASK)
     assert len(assign_state.messages) == 3, \
         'Not all of the messages have been stored into the state, found {}' \
         'when expecting 1'.format(len(assign_state.messages))
 
-    test_agent.send_message('Hello2', dummy)
+    test_agent.send_message('Hello2')
     test_agent.always_beat = False
     wait_for_state_time(3, mturk_manager)
     check_status(assign_state.status, AssignState.STATUS_DONE)
@@ -1023,6 +1072,7 @@ def test_duo_with_onboarding(opt, server_url):
                                     args=(opt, mturk_manager, True))
     world_thread.daemon = True
     world_thread.start()
+    wait_for_socket_manager(mturk_manager)
 
     # create and set up the two agents
     test_agent_1 = MockAgent(opt, hit_id, assign_id_1,
@@ -1109,10 +1159,10 @@ def test_duo_with_onboarding(opt, server_url):
     # Run agent_1 through onboarding
     assert test_agent_1.conversation_id.startswith('o_'), \
         'Mock agent didn\'t make it to onboarding'
-    test_agent_1.send_message('Onboard1', dummy)
+    test_agent_1.send_message('Onboard1')
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state_1.status, AssignState.STATUS_ONBOARDING)
-    test_agent_1.send_message('Onboard2', dummy)
+    test_agent_1.send_message('Onboard2')
     wait_for_state_time(2, mturk_manager)
 
     # Ensure agent 1 is sitting in a waiting world now
@@ -1123,10 +1173,10 @@ def test_duo_with_onboarding(opt, server_url):
     # Run agent_2 through onboarding
     assert test_agent_2.conversation_id.startswith('o_'), \
         'Mock agent didn\'t make it to onboarding'
-    test_agent_2.send_message('Onboard1', dummy)
+    test_agent_2.send_message('Onboard1')
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state_2.status, AssignState.STATUS_ONBOARDING)
-    test_agent_2.send_message('Onboard2', dummy)
+    test_agent_2.send_message('Onboard2')
     wait_for_state_time(4, mturk_manager)
 
     # Ensure both agents are in a task world
@@ -1244,6 +1294,7 @@ def test_duo_no_onboarding(opt, server_url):
                                     args=(opt, mturk_manager, False))
     world_thread.daemon = True
     world_thread.start()
+    wait_for_socket_manager(mturk_manager)
 
     # create and set up an agent to disconnect when paired
     test_agent_3 = MockAgent(opt, hit_id, assign_id_3,
@@ -1513,6 +1564,7 @@ def test_duo_valid_reconnects(opt, server_url):
                                     args=(opt, mturk_manager, False))
     world_thread.daemon = True
     world_thread.start()
+    wait_for_socket_manager(mturk_manager)
 
     # create and set up the first agent
     test_agent_1 = MockAgent(opt, hit_id, assign_id_1,
@@ -1724,6 +1776,7 @@ def test_duo_one_disconnect(opt, server_url):
                                     args=(opt, mturk_manager, False))
     world_thread.daemon = True
     world_thread.start()
+    wait_for_socket_manager(mturk_manager)
 
     # create and set up the first agent
     test_agent_1 = MockAgent(opt, hit_id, assign_id_1,
@@ -1923,6 +1976,7 @@ def test_count_complete(opt, server_url):
                                     args=(opt, mturk_manager, False))
     world_thread.daemon = True
     world_thread.start()
+    wait_for_socket_manager(mturk_manager)
 
     # Create an agent and set it up to connect
     def msg_callback_1(packet):
@@ -1964,7 +2018,7 @@ def test_count_complete(opt, server_url):
         'Mock agent didn\'t make it to task world'
     assert last_command.data['text'] == data_model.COMMAND_SEND_MESSAGE, \
         'Agent was not asked to send message {}'.format(message_num)
-    test_agent_1.send_message('Hello1', dummy)
+    test_agent_1.send_message('Hello1')
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state_1.status, AssignState.STATUS_IN_TASK)
     assert len(assign_state_1.messages) == 3, \
@@ -2011,17 +2065,17 @@ def test_count_complete(opt, server_url):
         'Mock agent didn\'t make it to task world'
     assert last_command.data['text'] == data_model.COMMAND_SEND_MESSAGE, \
         'Agent was not asked to send message {}'.format(message_num)
-    test_agent_2.send_message('Hello1', dummy)
+    test_agent_2.send_message('Hello1')
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state_2.status, AssignState.STATUS_IN_TASK)
     assert len(assign_state_2.messages) == 3, \
         'Not all of the messages have been stored into the state, found {}' \
         'when expecting 3'.format(len(assign_state_2.messages))
-    test_agent_2.send_message('Hello2', dummy)
+    test_agent_2.send_message('Hello2')
     test_agent_2.always_beat = False
 
     # Finish agent 1's task
-    test_agent_1.send_message('Hello2', dummy)
+    test_agent_1.send_message('Hello2')
     test_agent_1.always_beat = False
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state_1.status, AssignState.STATUS_DONE)
@@ -2092,6 +2146,7 @@ def test_expire_hit(opt, server_url):
                                     args=(opt, mturk_manager, True))
     world_thread.daemon = True
     world_thread.start()
+    wait_for_socket_manager(mturk_manager)
 
     # create and set up the two agents
     test_agent_1 = MockAgent(opt, hit_id, assign_id_1,
@@ -2196,10 +2251,10 @@ def test_expire_hit(opt, server_url):
     # Run agent_1 through onboarding
     assert test_agent_1.conversation_id.startswith('o_'), \
         'Mock agent didn\'t make it to onboarding'
-    test_agent_1.send_message('Onboard1', dummy)
+    test_agent_1.send_message('Onboard1')
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state_1.status, AssignState.STATUS_ONBOARDING)
-    test_agent_1.send_message('Onboard2', dummy)
+    test_agent_1.send_message('Onboard2')
     wait_for_state_time(3, mturk_manager)
 
     # Ensure agent 1 is sitting in a waiting world now
@@ -2210,10 +2265,10 @@ def test_expire_hit(opt, server_url):
     # Run agent_2 through onboarding
     assert test_agent_2.conversation_id.startswith('o_'), \
         'Mock agent didn\'t make it to onboarding'
-    test_agent_2.send_message('Onboard1', dummy)
+    test_agent_2.send_message('Onboard1')
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state_2.status, AssignState.STATUS_ONBOARDING)
-    test_agent_2.send_message('Onboard2', dummy)
+    test_agent_2.send_message('Onboard2')
     wait_for_state_time(3, mturk_manager)
 
     # Ensure both agents are in a task world
@@ -2227,10 +2282,10 @@ def test_expire_hit(opt, server_url):
     # Run agent_3 through onboarding
     assert test_agent_3.conversation_id.startswith('o_'), \
         'Mock agent didn\'t make it to onboarding'
-    test_agent_3.send_message('Onboard1', dummy)
+    test_agent_3.send_message('Onboard1')
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state_3.status, AssignState.STATUS_ONBOARDING)
-    test_agent_3.send_message('Onboard2', dummy)
+    test_agent_3.send_message('Onboard2')
     wait_for_state_time(2, mturk_manager)
 
     # Ensure agent 3 is sitting in a waiting world now
@@ -2345,6 +2400,7 @@ def test_allowed_conversations(opt, server_url):
                                     args=(opt, mturk_manager, False))
     world_thread.daemon = True
     world_thread.start()
+    wait_for_socket_manager(mturk_manager)
 
     # Create an agent and set it up to connect
     def msg_callback(packet):
@@ -2383,7 +2439,7 @@ def test_allowed_conversations(opt, server_url):
         'Mock agent didn\'t make it to task world'
     assert last_command.data['text'] == data_model.COMMAND_SEND_MESSAGE, \
         'Agent was not asked to send message {}'.format(message_num)
-    test_agent.send_message('Hello1', dummy)
+    test_agent.send_message('Hello1')
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state.status, AssignState.STATUS_IN_TASK)
     assert len(assign_state.messages) == 3, \
@@ -2402,7 +2458,7 @@ def test_allowed_conversations(opt, server_url):
         'HIT was not immediately expired when connected'
 
     # Finish first conversation
-    test_agent.send_message('Hello2', dummy)
+    test_agent.send_message('Hello2')
     test_agent.always_beat = False
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state.status, AssignState.STATUS_DONE)
@@ -2429,13 +2485,13 @@ def test_allowed_conversations(opt, server_url):
         'Mock agent didn\'t make it to task world'
     assert last_command.data['text'] == data_model.COMMAND_SEND_MESSAGE, \
         'Agent was not asked to send message {}'.format(message_num)
-    test_agent_2.send_message('Hello1', dummy)
+    test_agent_2.send_message('Hello1')
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state_2.status, AssignState.STATUS_IN_TASK)
     assert len(assign_state_2.messages) == 3, \
         'Not all of the messages have been stored into the state, found {}' \
         'when expecting 3'.format(len(assign_state_2.messages))
-    test_agent_2.send_message('Hello2', dummy)
+    test_agent_2.send_message('Hello2')
     test_agent_2.always_beat = False
     wait_for_state_time(2, mturk_manager)
     check_status(assign_state_2.status, AssignState.STATUS_DONE)
@@ -2448,6 +2504,130 @@ def test_allowed_conversations(opt, server_url):
         'MTurk manager improperly marked the agent as disconnected'
     assert message_num == 2, 'Not all messages were successfully processed'
     completed_threads[ALLOWED_CONVERSATION_TEST] = True
+
+
+def run_solo_stress_world(opt, mturk_manager):
+    MTURK_SOLO_WORKER = 'MTURK_SOLO_WORKER'
+
+    mturk_manager.set_onboard_function(onboard_function=None)
+
+    try:
+        mturk_manager.ready_to_accept_workers()
+
+        def check_worker_eligibility(worker):
+            return True
+
+        def assign_worker_roles(workers):
+            workers[0].id = MTURK_SOLO_WORKER
+
+        global run_conversation
+
+        def run_conversation(mturk_manager, opt, workers):
+            task = opt['task']
+            mturk_agent = workers[0]
+            world = StressWorld(opt=opt, task=task, mturk_agent=mturk_agent)
+            while not world.episode_done():
+                world.parley()
+            world.shutdown()
+
+        mturk_manager.start_task(
+            eligibility_function=check_worker_eligibility,
+            assign_role_function=assign_worker_roles,
+            task_function=run_conversation
+        )
+    except Exception:
+        raise
+    finally:
+        pass
+
+
+stress_threads = {}
+
+
+def stress_test_instance(opt, mturk_manager, test_num):
+    global stress_threads
+    hit_id = (FAKE_HIT_ID + '_{}').format(STRESS_TEST, test_num)
+    assign_id = (FAKE_ASSIGNMENT_ID + '_{}').format(STRESS_TEST, 1, test_num)
+    worker_id = (FAKE_WORKER_ID + '_{}').format(STRESS_TEST, 1, test_num)
+    task_group_id = mturk_manager.task_group_id
+    server_url = mturk_manager.server_url
+    message_count = 0
+    do_send = False
+
+    # Create an agent and set it up to connect
+    def msg_callback(packet):
+        nonlocal message_count
+        nonlocal do_send
+        if packet.data['type'] == data_model.MESSAGE_TYPE_COMMAND:
+            do_send = True
+        else:
+            message_count += 1
+
+    test_agent = MockAgent(opt, hit_id, assign_id, worker_id, task_group_id)
+    message_handler = \
+        make_packet_handler(test_agent, dummy, dummy, msg_callback)
+    test_agent.setup_socket(server_url, message_handler)
+    test_agent.wait_for_alive()
+    wait_for_state_time(10, mturk_manager)
+    # Assert that the state was properly set up
+    check_new_agent_setup(test_agent, mturk_manager,
+                          AssignState.STATUS_IN_TASK)
+    test_agent.always_beat = True
+    test_agent.send_heartbeat()
+    wait_for_state_time(3, mturk_manager)
+
+    # Run through task
+    assert test_agent.conversation_id.startswith('t_'), \
+        'Mock agent didn\'t make it to task world'
+    for _i in range(20):
+        while not do_send:
+            time.sleep(0.5)
+        do_send = False
+        test_agent.send_message('Ping{}'.format(_i))
+        time.sleep(2)
+    wait_for_state_time(15, mturk_manager)
+    assert message_count > 19, \
+        'Not all messages for test {} went through'.format(test_num)
+    stress_threads[test_num] = True
+
+
+def stress_test(opt, server_url):
+    global stress_threads
+    print('{} Starting'.format(STRESS_TEST))
+    opt['task'] = STRESS_TEST
+    opt['num_conversations'] = STRESS_TEST_AMOUNT
+
+    mturk_agent_id = AGENT_1_ID
+    mturk_manager = MTurkManager(
+        opt=opt,
+        mturk_agent_ids=[mturk_agent_id],
+        is_test=True
+    )
+    mturk_manager.server_url = server_url
+    mturk_manager.start_new_run()
+    world_thread = threading.Thread(target=run_solo_stress_world,
+                                    args=(opt, mturk_manager))
+    world_thread.daemon = True
+    world_thread.start()
+    wait_for_socket_manager(mturk_manager)
+    threads = {}
+    for test_num in range(STRESS_TEST_AMOUNT):
+        new_thread = threading.Thread(target=stress_test_instance,
+                                      args=(opt, mturk_manager, test_num))
+        new_thread.start()
+        threads[test_num] = new_thread
+        time.sleep(0.4)
+    while len(threads) > 0:
+        new_threads = {}
+        for n in threads:
+            if threads[n].isAlive():
+                new_threads[n] = threads[n]
+            else:
+                if n not in stress_threads:
+                    raise Exception('At least one thread failed to complete')
+        threads = new_threads
+        time.sleep(0.04)
+    completed_threads[STRESS_TEST] = True
 
 
 def test_unique_workers_in_conversation(opt, server_url):
@@ -2696,6 +2876,11 @@ TESTS = {
     AMAZON_SNS_TEST: test_sns_service,
 }
 
+ALL_TESTS = {
+    STRESS_TEST: stress_test,
+}
+ALL_TESTS.update(TESTS)
+
 # Runtime threads, MAX_THREADS is used on initial pass, RETEST_THREADS is used
 # with flakey tests that failed under heavy load and thus may not have met
 # the expected times for updating state
@@ -2727,7 +2912,7 @@ def run_tests(tests_to_run, max_threads, base_opt, server_url):
                         failed_tests.append(n)
             threads = new_threads
             time.sleep(1)
-        new_thread = threading.Thread(target=TESTS[test_name],
+        new_thread = threading.Thread(target=ALL_TESTS[test_name],
                                       args=(base_opt.copy(), server_url))
         new_thread.start()
         start_times[test_name] = time.time()
@@ -2764,11 +2949,13 @@ def main():
     base_opt['is_sandbox'] = True
     base_opt['num_conversations'] = 1
     base_opt['count_complete'] = False
+    base_opt['max_connections'] = 0
     task_name, server_url = handle_setup(base_opt)
     print("Setup time: {} seconds".format(time.time() - start_time))
     start_time = time.time()
     try:
         failed_tests = run_tests(TESTS, MAX_THREADS, base_opt, server_url)
+        failed_tests += run_tests([STRESS_TEST], 1, base_opt, server_url)
         if len(failed_tests) == 0:
             print("All tests passed, ParlAI MTurk is functioning")
         else:

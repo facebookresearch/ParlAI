@@ -6,7 +6,7 @@
 ## of patent rights can be found in the PATENTS file in the same directory.
 ##
 from parlai.core.worlds import World, ExecutableWorld, validate
-from projects.mastering_the_dungeon..tasks.graph_world2.graph import construct_graph
+from projects.mastering_the_dungeon.tasks.graph_world2.graph import construct_graph
 
 class GraphWorld2(ExecutableWorld):
 
