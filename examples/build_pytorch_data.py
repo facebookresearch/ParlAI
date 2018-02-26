@@ -61,15 +61,17 @@ def build_data(opt):
     ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
     ordered_opt['task'] = ordered_opt['pytorch_buildteacher']
+    ordered_opt['no_cuda'] = True
     world_data = create_task(ordered_opt, agent)
     teacher = world_data.agents[0]
+    agent = world_data.agents[1]
 
     datafile = teacher.datafile if hasattr(teacher, 'datafile') else opt.get('datafile')
     if not datafile:
         raise Exception('Tried to build data but either `pytorch-buildteacher` does not '
                         'have a datafile or `--datafile` is not set')
 
-    if isinstance(datafile, collections.Sequence):
+    if isinstance(datafile, collections.Sequence) and not type(datafile) == str:
         datafile = datafile[0] + "".join(["_".join(d.split("/")) for d in datafile[1:]])
     pytorch_datafile = datafile + ".pytorch"
     preprocess = opt.get('pytorch_preprocess', True)
