@@ -18,8 +18,8 @@ from .mlb_modules import MlbAtt, MlbNoAtt
 
 '''
     An implementation of the Multimodal Low-rank Bilinear Attention Network
-    with attention outlined in https://arxiv.org/abs/1610.04325, that can
-    be used with the VQA V1 and VQA V2 datasets.
+    outlined in https://arxiv.org/abs/1610.04325, that can be used with the
+    VQA V1 and VQA V2 datasets.
 
     The model currently only supports `image_mode = resnet152_spatial`,
     `image_size = 448`, and `image_cropsize = 448`
