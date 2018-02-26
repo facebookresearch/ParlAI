@@ -77,13 +77,12 @@
 from .teachers import FixedDialogTeacher
 from examples.build_pytorch_data import build_data
 from .agents import get_agent_module
-import ujson as json
+import json
 import math
 import random
 from functools import wraps
 import importlib
 import copy
-import sys
 try:
     import torch
 except Exception as e:
@@ -325,12 +324,13 @@ class StreamDataset(Dataset):
 
     def __getitem__(self, index):
         while True:
+            index %= self.num_episodes()
             idx, ep = next(self.data_gen)
             if idx == index:
                 return (index, ep)
 
     def __len__(self):
-        num_epochs = self.num_epochs if self.num_epochs > 0 else 100
+        num_epochs = self.num_epochs if self.num_epochs > 0 else 1000
         num_iters = num_epochs if self.training else 1
         return int(num_iters * self.num_episodes())
 
@@ -400,11 +400,11 @@ class PytorchDataTeacher(FixedDialogTeacher):
 
         if not shared:
             self.dataset = dataset_class(opt)
-            if self.datatype == 'train':
+            if self.datatype == 'train' and not isinstance(self.dataset, StreamDataset):
                 data_sampler = sampler.RandomSampler(self.dataset)
             else:
                 data_sampler = sampler.SequentialSampler(self.dataset)
-
+            pin_memory = not isinstance(self.dataset, StreamDataset)
             self.pytorch_dataloader = DataLoader(
                 self.dataset,
                 batch_size=self.bsz,
@@ -412,7 +412,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 sampler=data_sampler,
                 num_workers=self.num_workers,
                 collate_fn=self.collate_fn,
-                pin_memory=True,
+                pin_memory=pin_memory,
                 drop_last=False,
                 )
             self.lastYs = [None] * self.bsz
@@ -508,12 +508,11 @@ class PytorchDataTeacher(FixedDialogTeacher):
             if (self.episode_done
                     and self.episode_idx + self.bsz >= self.num_episodes()):
                 epoch_done = True
-
         return ex, epoch_done
 
     @batch_cache
     def get_next_batch(self):
-        #employs a cache to see if there is a batch of equal size ready
+        # employs a cache to see if there is a batch of equal size ready
         return next(self.data)
 
     def next_batch(self):

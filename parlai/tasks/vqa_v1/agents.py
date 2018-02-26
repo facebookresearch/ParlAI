@@ -17,7 +17,6 @@ from parlai_external.agents.mlb.mlb import VqaDictionaryAgent
 
 import json
 import os
-import sys
 
 
 def _path(opt):
