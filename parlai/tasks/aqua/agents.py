@@ -16,6 +16,8 @@ AQUA = 'AQuA'
 AQUA_QUESTION_KEY = 'question'
 AQUA_ANSWER_KEY = 'correct'
 AQUA_OPTIONS_KEY = 'options'
+AQUA_RATIONALE_KEY = 'rationale'
+RATIONALE_QUESTION_TEXT = 'Can you provide a rationale for your answer?'
 
 
 def _path(opt):
@@ -48,9 +50,12 @@ def setup_data(path):
             question_text = question[AQUA_QUESTION_KEY]
             answer = ord(question[AQUA_ANSWER_KEY]) - ord('A')
             labels = question[AQUA_OPTIONS_KEY]
-            answer = [labels[answer], question['rationale']]
+            answer = [labels[answer]]
             yield (question_text, answer, None, labels), True
 
+            # Ask for a rationale now
+            rationale = [question[AQUA_RATIONALE_KEY]]
+            yield (RATIONALE_QUESTION_TEXT, rationale, None, rationale), False
 
 class DefaultTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
