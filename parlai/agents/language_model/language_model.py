@@ -71,6 +71,9 @@ class LanguageModelAgent(Agent):
                            help='report frequency of prediction during eval')
         agent.add_argument('-pt', '--person-tokens', type=bool, default=True,
                            help='append person1 and person2 tokens to text')
+        agent.add_argument('-lrf', '--lr-factor', type=float, default=0.5,
+                           help='mutliply learning rate by this factor when the \
+                           validation loss does not decrease')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -167,6 +170,7 @@ class LanguageModelAgent(Agent):
             # set up learning rate parameters
             self.lr = opt['learningrate']
             self.lr_factor = opt['lr_factor']
+            self.best_val_loss = self.states.get('best_val_loss', None)
 
         self.reset()
 
