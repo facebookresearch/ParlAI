@@ -202,7 +202,7 @@ class IbmSeq2seqAgent(Agent):
             self.ys = torch.LongTensor(1, 1)
 
             # set up criteria
-            self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX)
+            self.criterion = nn.NLLLoss(ignore_index=self.NULL_IDX)
 
             if self.use_cuda:
                 # push to cuda
