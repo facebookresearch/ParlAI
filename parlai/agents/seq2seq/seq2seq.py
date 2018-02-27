@@ -421,7 +421,8 @@ class Seq2seqAgent(Agent):
         if xs is None:
             return None, None, None, None, None, None, None
         xs = torch.LongTensor(xs)
-        ys = torch.LongTensor(ys)
+        if ys is not None:
+            ys = torch.LongTensor(ys)
         if self.use_cuda:
             # copy to gpu
             self.xs.resize_(xs.size())
