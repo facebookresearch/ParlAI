@@ -55,7 +55,7 @@ class IbmSeq2seqAgent(Agent):
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
         IbmSeq2seqAgent.dictionary_class().add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('Seq2Seq Arguments')
+        agent = argparser.add_argument_group('IBM Seq2Seq Arguments')
         agent.add_argument('--init-model', type=str, default=None,
                            help='load dict/features/weights/opts from this file')
         agent.add_argument('-hs', '--hiddensize', type=int, default=128,
