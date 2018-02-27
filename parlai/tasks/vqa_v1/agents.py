@@ -13,7 +13,7 @@ try:
 except Exception as e:
     raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset
-from parlai_external.agents.mlb.mlb import VqaDictionaryAgent
+from parlai.agents.mlb.mlb import VqaDictionaryAgent
 
 import json
 import os

@@ -89,10 +89,9 @@ class VqaDictionaryAgent(Agent):
             help='max number of examples to build dict on')
         dictionary.add_argument('-smp', '--samplingans', type='bool', default=True)
         dictionary.add_argument('--nans', type=int, default=2000)
-        dictionary.add_argument('--maxlength', type=int, default=26)
+        dictionary.add_argument('--maxlength', type=int, default=16)
         dictionary.add_argument('--minwcount', type=int, default=0)
         dictionary.add_argument('--nlp', default='mcb')
-        dictionary.add_argument('--pad', default='right')
 
     def __init__(self, opt, shared=None):
         super(VqaDictionaryAgent, self).__init__(opt)
@@ -192,7 +191,6 @@ class VqaDictionaryAgent(Agent):
     def encode_question(self, examples, training):
         minwcount = self.opt['minwcount']
         maxlength = self.opt['maxlength']
-        pad = self.opt['pad']
         for ex in examples:
             words = self.tokenize_mcb(ex['text'])
             if training:
@@ -202,11 +200,7 @@ class VqaDictionaryAgent(Agent):
             ex['question_wids'] = [self.tok2ind[self.null_token]]*maxlength
             for k, w in enumerate(words_unk):
                 if k < maxlength:
-                    if pad == 'right':
-                        ex['question_wids'][k] = self.tok2ind[w]
-                    else:   # ['pad'] == 'left'
-                        new_k = k + maxlength - len(words_unk)
-                        ex['question_wids'][new_k] = self.tok2ind[w]
+                    ex['question_wids'][k] = self.tok2ind[w]
         return examples
 
     def encode_answer(self, examples):
@@ -335,6 +329,7 @@ class MlbAgent(Agent):
         agent.add_argument('-at', '--attention', action='store_true')
         agent.add_argument('--use-bayesian', type='bool', default=True)
         agent.add_argument('--num_glimpses', type=int, default=4)
+        agent.add_argument('--old_glimpse', action='store_true')
         agent.add_argument('--lr', type=float, default=0.0001)
         agent.add_argument('--no-cuda', action='store_true',
                            help='disable GPUs even if available')

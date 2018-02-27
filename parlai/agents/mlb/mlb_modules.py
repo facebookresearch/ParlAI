@@ -88,6 +88,10 @@ class Mlb(nn.Module):
                     'list_linear_v_fusion': self.list_linear_v_fusion.state_dict(),
                     'linear_q_fusion': self.linear_q_fusion.state_dict(),
                     })
+                if self.opt['old_glimpse']:
+                    model['list_linear_v_fusion'] = self.list_linear_v_fusion.state_dict()
+                else:
+                    model['linear_v_fusion'] = self.linear_v_fusion.state_dict()
             else:
                 model.update({
                     'linear_v': self.linear_v.state_dict(),
@@ -199,15 +203,24 @@ class MlbAtt(Mlb):
         self.conv_att = nn.Conv2d(self.opt['dim_att_h'],
                                   self.opt['num_glimpses'],
                                   1, 1)
-        self.list_linear_v_fusion = nn.ModuleList(
-                            [nn.Linear(self.opt['dim_v'], self.opt['dim_h'])
-                                for i in range(self.opt['num_glimpses'])])
-        self.linear_q_fusion = nn.Linear(self.opt['dim_q'],
-                                         self.opt['dim_h'] *
-                                         self.opt['num_glimpses'])
-        self.linear_classif = nn.Linear(
-                                self.opt['dim_h'] * self.opt['num_glimpses'],
-                                self.num_classes)
+        if self.opt['old_glimpse']:
+            self.list_linear_v_fusion = nn.ModuleList(
+                                [nn.Linear(self.opt['dim_v'], self.opt['dim_h'])
+                                    for i in range(self.opt['num_glimpses'])])
+            self.linear_q_fusion = nn.Linear(self.opt['dim_q'],
+                                             self.opt['dim_h'] *
+                                             self.opt['num_glimpses'])
+            self.linear_classif = nn.Linear(
+                                    self.opt['dim_h'] * self.opt['num_glimpses'],
+                                    self.num_classes)
+        else:
+            self.linear_v_fusion = nn.Linear(self.opt['dim_v'] * \
+                                             self.opt['num_glimpses'],
+                                             self.opt['dim_h'])
+            self.linear_q_fusion = nn.Linear(self.opt['dim_q'],
+                                             self.opt['dim_h'])
+            self.linear_classif = nn.Linear(self.opt['dim_h'],
+                                            self.num_classes)
         self.states = states
         if self.states:
             # set loaded states if applicable
@@ -286,14 +299,22 @@ class MlbAtt(Mlb):
     def forward_glimpses(self, list_v_att, x_q_vec):
         # Process visual for each glimpses
         list_v = []
-        for glimpse_id, x_v_att in enumerate(list_v_att):
-            x_v = F.dropout(x_v_att,
+        if self.opt['old_glimpse']:
+            for glimpse_id, x_v_att in enumerate(list_v_att):
+                x_v = F.dropout(x_v_att,
+                                p=self.opt['dropout_v'],
+                                training=self.training)
+                x_v = self.list_linear_v_fusion[glimpse_id](x_v)
+                x_v = getattr(F, self.opt['activation_v'])(x_v)
+                list_v.append(x_v)
+            x_v = torch.cat(list_v, 1)
+        else:
+            x_v = torch.cat(list_v_att, 1)
+            x_v = F.dropout(x_v,
                             p=self.opt['dropout_v'],
                             training=self.training)
-            x_v = self.list_linear_v_fusion[glimpse_id](x_v)
+            x_v = self.linear_v_fusion(x_v)
             x_v = getattr(F, self.opt['activation_v'])(x_v)
-            list_v.append(x_v)
-        x_v = torch.cat(list_v, 1)
 
         # Process question
         x_q = F.dropout(x_q_vec,
@@ -321,8 +342,13 @@ class MlbAtt(Mlb):
         self.conv_v_att.load_state_dict(states['conv_v_att'])
         self.conv_att.load_state_dict(states['conv_att'])
         self.linear_q_att.load_state_dict(states['linear_q_att'])
-        self.list_linear_v_fusion.load_state_dict(
-                                                states['list_linear_v_fusion'])
+        if self.opt['old_glimpse']:
+            self.list_linear_v_fusion.load_state_dict(
+                                                    states['list_linear_v_fusion'])
+        else:
+            self.linear_v_fusion.load_state_dict(
+                states['linear_v_fusion']
+            )
         self.linear_q_fusion.load_state_dict(states['linear_q_fusion'])
 
     def get_optims(self):
@@ -339,12 +365,17 @@ class MlbAtt(Mlb):
                                     lr=self.opt['lr']),
             'linear_q_att': optim_class(self.linear_q_att.parameters(),
                                         lr=self.opt['lr']),
-            'list_linear_v_fusion': optim_class(
-                                        self.list_linear_v_fusion.parameters(),
-                                        lr=self.opt['lr']),
             'linear_q_fusion': optim_class(self.linear_q_fusion.parameters(),
                                            lr=self.opt['lr']),
         }
+        if self.opt['old_glimpse']:
+            self.optims['list_linear_v_fusion'] = optim_class(
+                                        self.list_linear_v_fusion.parameters(),
+                                        lr=self.opt['lr'])
+        else:
+            self.optims['linear_v_fusion'] = optim_class(
+                                        self.linear_v_fusion.parameters(),
+                                        lr=self.opt['lr'])
 
         if self.states:
             # set loaded states if applicable
