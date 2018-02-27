@@ -324,7 +324,7 @@ class PaddingUtils(object):
     Class that contains functions that help with padding input and target tensors.
     """
     @classmethod
-    def pad_text(cls, observations, dictionary, end_idx, null_idx, dq=False, eval_labels=True, truncate=None):
+    def pad_text(cls, observations, dictionary, end_idx=None, null_idx=0, dq=False, eval_labels=True, truncate=None):
         """We check that examples are valid, pad with zeros, and sort by length
            so that we can use the pack_padded function. The list valid_inds
            keeps track of which indices are valid and the order in which we sort
@@ -399,8 +399,9 @@ class PaddingUtils(object):
                     dq.extendleft(reversed(dictionary.txt2vec(y)))
             else:
                 parsed_y = [dictionary.txt2vec(label) for label in labels]
-            for y in parsed_y:
-                y.append(end_idx)
+            if end_idx is not None:
+                for y in parsed_y:
+                    y.append(end_idx)
 
             y_lens = [len(y) for y in parsed_y]
             max_y_len = max(y_lens)
