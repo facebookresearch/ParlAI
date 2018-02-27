@@ -445,14 +445,15 @@ class LanguageModelAgent(Agent):
             # here we get valid examples and pad them with zeros
             xs, ys, labels, valid_inds, _, y_lens = PaddingUtils.pad_text(
                 observations, self.dict, self.END_IDX, self.NULL_IDX)
+
             if self.use_cuda:
-                xs = Variable(xs).cuda()
+                xs = Variable(torch.LongTensor(xs)).cuda()
                 if ys is not None:
-                    ys = Variable(ys).cuda()
+                    ys = Variable(torch.LongTensor(ys)).cuda()
             else:
-                xs = Variable(xs)
+                xs = Variable(torch.LongTensor(xs))
                 if ys is not None:
-                    ys = Variable(ys)
+                    ys = Variable(torch.LongTensor(ys))
             data_list = [xs]
             targets_list = [ys]
 
@@ -488,7 +489,7 @@ class LanguageModelAgent(Agent):
             if predictions is not None:
                 # map predictions back to the right order
                 PaddingUtils.map_predictions(
-                    predictions, valid_inds, temp_dicts, observations,
+                    predictions.cpu(), valid_inds, temp_dicts, observations,
                     self.dict, self.END_IDX, report_freq=self.opt['report_freq'])
 
             if loss_dict is not None:
