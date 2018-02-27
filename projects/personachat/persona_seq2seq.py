@@ -185,6 +185,14 @@ class Seq2seqAgent(Agent):
             # get index of null token from dictionary (probably 0)
             self.NULL_IDX = self.dict.txt2vec(self.dict.null_token)[0]
 
+            # reorder dictionary tokens
+            self.dict.ind2tok[1] = '__END__'
+            self.dict.tok2ind['__END__'] = 1
+            self.dict.ind2tok[2] = '__UNK__'
+            self.dict.tok2ind['__UNK__'] = 2
+            self.dict.ind2tok[3] = '__START__'
+            self.dict.tok2ind['__START__'] = 3
+
             # store important params directly
             hsz = opt['hiddensize']
             emb = opt['embeddingsize']
@@ -861,17 +869,6 @@ class Seq2seqAgent(Agent):
                 curr['text_candidates'] = [curr_cands[idx] for idx in order
                                            if idx < len(curr_cands)]
 
-        # in interactive mode, we want to make the text more readable for humans
-        if self.interactive_mode:
-            for reply in batch_reply:
-                if 'text' in reply:
-                    text = reply['text']
-                    text = text.replace('__START__', '')
-                    text = text.replace('__END__', '')
-                    text = text.replace('__UNK__', '')
-                    text = text.replace('__NULL__', '')
-                    reply['text'] = text
-
         return batch_reply
 
     def act(self):
@@ -1163,6 +1160,14 @@ class PersonachatSeqseqAgentSplit(Agent):
             self.END_TENSOR = torch.LongTensor(self.dict.parse(self.END))
             # get index of null token from dictionary (probably 0)
             self.NULL_IDX = self.dict.txt2vec(self.dict.null_token)[0]
+
+            # reorder dictionary tokens
+            self.dict.ind2tok[1] = '__END__'
+            self.dict.tok2ind['__END__'] = 1
+            self.dict.ind2tok[2] = '__UNK__'
+            self.dict.tok2ind['__UNK__'] = 2
+            self.dict.ind2tok[3] = '__START__'
+            self.dict.tok2ind['__START__'] = 3
 
             # store important params directly
             hsz = opt['hiddensize']
@@ -2211,7 +2216,6 @@ class PersonachatSeqseqAgentSplit(Agent):
         x_lens = [x for x in torch.sum((xs>0).int(), dim=1).data]
 
         # produce predictions either way, but use the targets if available
-
         predictions, text_cand_inds = self.predict(xs, xs_persona, ys, cands, zs)
 
         if self.opt['datatype'] in ['valid', 'test'] and self.opt['personachat_interact']:
@@ -2250,17 +2254,6 @@ class PersonachatSeqseqAgentSplit(Agent):
                 cands = [[w for w in self.dict.tokenize(s.lower())] for s in cands_origin]
                 pred_origin = batch_reply[ind]['text'].lower()
                 pred = [w for w in self.dict.tokenize(pred_origin)]
-
-        # in interactive mode, we want to make the text more readable for humans
-        if self.interactive_mode:
-            for reply in batch_reply:
-                if 'text' in reply:
-                    text = reply['text']
-                    text = text.replace('__START__', '')
-                    text = text.replace('__END__', '')
-                    text = text.replace('__UNK__', '')
-                    text = text.replace('__NULL__', '')
-                    reply['text'] = text
 
         return batch_reply
 
