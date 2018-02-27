@@ -69,7 +69,6 @@
 </form>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.rawgit.com/yf225/jquery-ajax-retry/master/dist/jquery.ajax-retry.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 <script src="https://github.com/lancedikson/bowser/releases/download/1.6.0/bowser.min.js"></script>
 
 <script type="text/javascript">
@@ -476,65 +475,65 @@
     );
   }
 
+  function parse_socket_message(event) {
+    msg = JSON.parse(event.data)['content']
+    if (msg.type === TYPE_HEARTBEAT) {
+      // Heartbeats ensure we're not disconnected from the server
+      log('received heartbeat: ' + msg.id, 4);
+      last_server_heartbeat = Date.now();
+    } else if (msg.type === TYPE_ACK) {
+      // Acks update messages so that we don't resend them
+      log('received ack: ' + msg.id, 3);
+      packet_map[msg.id].status = STATUS_ACK;
+      if (msg.id === blocking_id) {
+        // release lock when ack arrives
+        blocking_id = null;
+        blocking_sent_time = null;
+        // execute ack callback if it exists
+        if (packet_callback[msg.id]) {
+          packet_callback[msg.id](packet_map[msg.id]);
+        }
+      }
+    } else if (msg.type === TYPE_MESSAGE) {
+      // Acknowledge the message, then act on it when the ack sends
+      socket.send(JSON.stringify({
+        type: SOCKET_ROUTE_PACKET_STRING,
+        content: {
+          id: msg.id,
+          sender_id: msg.receiver_id,
+          receiver_id: msg.sender_id,
+          assignment_id: assignment_id,
+          conversation_id: conversation_id,
+          type: TYPE_ACK,
+          data: null
+        }
+      }));
+      log(msg, 3);
+      if (msg.data.type === MESSAGE_TYPE_COMMAND){
+        handle_command(msg.data);
+      } else if (msg.data.type === MESSAGE_TYPE_MESSAGE) {
+        handle_new_message(msg.id, msg.data);
+      }
+    }
+  }
+
   // Sets up and registers the socket and the callbacks
   function setup_socket() {
-    var host = window.location.hostname;
-    socket = io(host);
+    var url = window.location;
+    socket = new WebSocket('wss://' + url.host);
 
-    // When the socket opens, we must tell it that we're alive
-    socket.on(SOCKET_OPEN_STRING, function() {
+    socket.onmessage = parse_socket_message;
+
+    socket.onopen = () => {
       log('Server connected.', 2);
       send_alive();
-    });
+      _heartbeat_thread();
+    }
 
-    // Log disconnect
-    socket.on(SOCKET_DISCONNECT_STRING, function() {
+    socket.onerror = socket.onclose = () => {
       log('Server disconnected.', 2);
-    });
-
-    // Incoming messages must be handled
-    socket.on(SOCKET_NEW_PACKET_STRING, function(msg) {
-      if (msg.type === TYPE_HEARTBEAT) {
-        // Heartbeats ensure we're not disconnected from the server
-        log('received heartbeat: ' + msg.id, 4);
-        last_server_heartbeat = Date.now();
-      } else if (msg.type === TYPE_ACK) {
-        // Acks update messages so that we don't resend them
-        log('received ack: ' + msg.id, 3);
-        packet_map[msg.id].status = STATUS_ACK;
-        if (msg.id === blocking_id) {
-          // release lock when ack arrives
-          blocking_id = null;
-          blocking_sent_time = null;
-          // execute ack callback if it exists
-          if (packet_callback[msg.id]) {
-            packet_callback[msg.id](packet_map[msg.id]);
-          }
-        }
-      } else if (msg.type === TYPE_MESSAGE) {
-        // Acknowledge the message, then act on it when the ack sends
-        socket.emit(
-          SOCKET_ROUTE_PACKET_STRING,
-          {
-            id: msg.id,
-            sender_id: msg.receiver_id,
-            receiver_id: msg.sender_id,
-            assignment_id: assignment_id,
-            conversation_id: conversation_id,
-            type: TYPE_ACK,
-            data: null
-          },
-          function(data) {
-            log(msg, 3);
-            if (msg.data.type === MESSAGE_TYPE_COMMAND){
-              handle_command(msg.data);
-            } else if (msg.data.type === MESSAGE_TYPE_MESSAGE) {
-              handle_new_message(msg.id, msg.data);
-            }
-          }
-        );
-      }
-    });
+      setup_socket();
+    }
   }
 
   // Closes the socket
@@ -718,7 +717,7 @@
             if (msg.type === TYPE_ALIVE) {
               event_name = SOCKET_AGENT_ALIVE_STRING;
             }
-            socket.emit(event_name, msg);
+            socket.send(JSON.stringify({type: event_name, content: msg}));
 
             if (msg.require_ack) {
               if (msg.blocking) {
@@ -746,7 +745,10 @@
         blocking_id = null;
       }
     }
-    setTimeout(_sending_thread, SEND_THREAD_REFRESH);
+
+    if (!socket_closed) {
+      setTimeout(_sending_thread, SEND_THREAD_REFRESH);
+    }
   }
 
   // Thread sends heartbeats through the socket for as long we are connected
@@ -766,9 +768,10 @@
       'data': null
     };
 
-    socket.emit(SOCKET_ROUTE_PACKET_STRING, hb, function() {
-      last_local_heartbeat=Date.now();
-    });
+    socket.send(JSON.stringify(
+      {type: SOCKET_ROUTE_PACKET_STRING, content: hb}
+    ));
+    last_local_heartbeat=Date.now();
 
     // Check to see if we've disconnected from the server
     if (last_local_heartbeat != null &&
@@ -781,7 +784,7 @@
         future, check your connection if you see this message often.');
       update_UI_for_response_type('inactive');
     } else {
-      setTimeout(_heartbeat_thread, 1000);
+      setTimeout(_heartbeat_thread, 2000);
     }
   }
 
@@ -805,7 +808,6 @@
     }
     setup_socket();
     _sending_thread();
-    _heartbeat_thread();
   }
 
   // Starts everything once the document is ready

@@ -160,9 +160,9 @@ class ImageLoader():
         self.xs.data.copy_(self.transform(image))
         # extract the image feature
         feature = self.netCNN(self.xs)
-        feature = feature.cpu().data.numpy()
+        save_feature = feature.cpu().data.numpy()
         # save the feature
-        self.save(feature, path)
+        self.save(save_feature, path)
         return feature
 
     def img_to_ascii(self, path):
@@ -177,7 +177,7 @@ class ImageLoader():
             asc.append('\n')
         return ''.join(asc)
 
-    @first_n_cache
+    # @first_n_cache
     def load(self, path):
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
@@ -209,4 +209,5 @@ class ImageLoader():
                 with open(new_path):
                     hdf5_file = self.h5py.File(new_path, 'r')
                     feature = hdf5_file['feature'].value
+                feature = self.torch.from_numpy(feature)
                 return feature

@@ -21,7 +21,7 @@
     "pg": "7.0.2",
     "pg-hstore": "2.3.2",
     "sequelize": "4.4.2",
-    "socket.io": "2.0.3",
+    "ws": "4.0.0",
     "wait-until": "0.0.2",
     "request": "2.82.0"
   }

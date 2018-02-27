@@ -9,9 +9,10 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const fs = require("fs");
+const http = require("http");
 const nunjucks = require('nunjucks');
-const socketIO = require('socket.io');
 var request = require('request');
+const WebSocket = require('ws');
 
 const task_directory_name = 'task'
 
@@ -32,17 +33,15 @@ nunjucks.configure(task_directory_name, {
 
 // ======================= <Socket> =======================
 
-// Start a socket
-const io = socketIO(
-  app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
+const server = http.createServer(app)
+const wss = new WebSocket.Server(
+  {server}
 );
 
 // Track connections
-var connection_id_to_room_id = {};
 var connection_id_to_socket = {};
 var room_id_to_connection_id = {};
 var NOTIF_ID = 'MTURK_NOTIFICATIONS'
-var global_socket = null;
 
 // Handles sending a message through the socket
 function _send_message(connection_id, event_name, event_data) {
@@ -55,8 +54,17 @@ function _send_message(connection_id, event_name, event_data) {
       ' doesn\'t exist! Skipping message.')
     return;
   }
+
+  var packet = {
+    type: event_name,
+    content: event_data,
+  }
   // Send the message through
-  socket.emit(event_name, event_data);
+  try {
+    socket.send(JSON.stringify(packet));
+  } catch (e) {
+    console.log('Ran into error trying to send, retrying');
+  }
 }
 
 
@@ -80,54 +88,59 @@ function _get_from_conn_id(data) {
   }
 }
 
+function handle_route(data) {
+  if (data.type != 'heartbeat') {
+    console.log('route packet', data);
+  }
+  var out_connection_id = _get_to_conn_id(data);
+
+  _send_message(out_connection_id, 'new packet', data);
+}
+
+// Agent alive events are handled by registering the agent to a connection_id
+// and then forwarding the alive to the world if it came from a client
+function handle_alive(socket, data) {
+  var sender_id = data['sender_id'];
+  var in_connection_id = _get_from_conn_id(data);
+  var out_connection_id = _get_to_conn_id(data);
+  connection_id_to_socket[in_connection_id] = socket;
+  room_id_to_connection_id[socket.id] = in_connection_id;
+  console.log('connection_id ' + in_connection_id + ' registered');
+
+  // Send alive packets to the world, but not from the world
+  if (!(sender_id && sender_id.startsWith('[World'))) {
+    _send_message(out_connection_id, 'new packet', data);
+  }
+}
+
 // Register handlers
-io.on('connection', function (socket) {
+wss.on('connection', function (socket) {
   console.log('Client connected');
-  console.log(socket.id)
   // Disconnects are logged
   socket.on('disconnect', function () {
     var connection_id = room_id_to_connection_id[socket.id];
     console.log('Client disconnected: ' + connection_id);
   });
 
-  // Agent alive events are handled by registering the agent to a connection_id
-  // and then forwarding the alive to the world if it came from a client
-  socket.on('agent alive', function (data, ack) {
-    var sender_id = data['sender_id'];
-    var in_connection_id = _get_from_conn_id(data);
-    var out_connection_id = _get_to_conn_id(data);
-    console.log('agent alive', data);
-    connection_id_to_room_id[in_connection_id] = socket.id;
-    connection_id_to_socket[in_connection_id] = socket;
-    room_id_to_connection_id[socket.id] = in_connection_id;
-    console.log('connection_id ' + in_connection_id + ' registered');
-
-    // Send alive packets to the world, but not from the world
-    if (!(sender_id && sender_id.startsWith('[World'))) {
-      _send_message(out_connection_id, 'new packet', data);
-    }
-    // Acknowledge that the message was recieved
-    if(ack) {
-      ack('agent_alive');
-    }
-  });
-
   // handles routing a packet to the desired recipient
-  socket.on('route packet', function (data, ack) {
-    if (data.type != 'heartbeat') {
-      console.log('route packet', data);
-    }
-    var out_connection_id = _get_to_conn_id(data);
-
-    _send_message(out_connection_id, 'new packet', data);
-    // Acknowledge if required
-    if(ack) {
-      ack('route packet');
+  socket.on('message', function (data) {
+    data = JSON.parse(data)
+    if (data['type'] == 'agent alive') {
+      console.log('handling alive')
+      handle_alive(socket, data['content']);
+    } else if (data['type'] == 'route packet'){
+      handle_route(data['content']);
     }
   });
 
-  socket.emit('socket_open', 'Socket is open!');
+  socket.send(JSON.stringify(
+    {'type': 'conn_success', 'content': 'Socket is open!'}
+  ));
 });
+
+server.listen(PORT, function() {
+  console.log('Listening on %d', server.address().port);
+})
 
 // ======================= </Socket> =======================
 
@@ -231,5 +244,7 @@ app.get('/get_hit_config', function (req, res) {
 app.get('/get_timestamp', function (req, res) {
   res.json({'timestamp': Date.now()}); // in milliseconds
 });
+
+app.use(express.static('task'))
 
 // ======================= </Routing> =======================

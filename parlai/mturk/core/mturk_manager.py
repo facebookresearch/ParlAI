@@ -76,6 +76,7 @@ class MTurkManager():
         )
         self.socket_manager = None
         self.is_test = is_test
+        self.is_unique = False
         self._init_logs()
 
     # Helpers and internal manager methods #
@@ -751,7 +752,7 @@ class MTurkManager():
     def ready_to_accept_workers(self):
         """Set up socket to start communicating to workers"""
         shared_utils.print_and_log(logging.INFO,
-                                   'Local: Setting up SocketIO...',
+                                   'Local: Setting up WebSocket...',
                                    not self.is_test)
         self._setup_socket()
 
@@ -948,6 +949,10 @@ class MTurkManager():
                 agent.state.status = AssignState.STATUS_EXPIRED
                 agent.hit_is_expired = True
 
+        if ack_func is None:
+            def ack_func(*args):
+                self.socket_manager.close_channel(
+                    '{}_{}'.format(worker_id, assign_id))
         # Send the expiration command
         if text is None:
             text = ('This HIT is expired, please return and take a new '
@@ -1162,7 +1167,7 @@ class MTurkManager():
             )
         else:
             mturk_page_url = self.create_additional_hits(
-                num_hits=self.opt['max_connections'],
+                num_hits=min(self.required_hits, self.opt['max_connections']),
                 qualifications=qualifications,
             )
 

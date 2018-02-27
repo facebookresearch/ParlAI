@@ -301,7 +301,6 @@ class ParlaiParser(argparse.ArgumentParser):
             # hide batch options
             self.opt.pop('batch_sort', None)
             self.opt.pop('context_length', None)
-            self.opt.pop('include_labels', None)
 
         # set environment variables
         if self.opt.get('download_path'):

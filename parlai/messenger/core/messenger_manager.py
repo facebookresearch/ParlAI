@@ -286,7 +286,7 @@ class MessengerManager():
     def setup_socket(self):
         """Set up socket to start communicating to workers"""
         shared_utils.print_and_log(logging.INFO,
-                                   'Local: Setting up SocketIO...',
+                                   'Local: Setting up WebSocket...',
                                    should_print=True)
         self.app_token = None
         if self.opt.get('force_page_token'):
@@ -413,6 +413,7 @@ class MessengerManager():
         # Ensure all threads are cleaned and conversations are handled
         try:
             self.is_running = False
+            self.message_socket.keep_running = False
             self._expire_all_conversations()
         except BaseException:
             pass

@@ -9,8 +9,9 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const fs = require("fs");
+const http = require("http");
 const nunjucks = require('nunjucks');
-const socketIO = require('socket.io');
+const WebSocket = require('ws');
 
 const task_directory_name = 'task'
 
@@ -32,8 +33,9 @@ nunjucks.configure(task_directory_name, {
 // ======================= <Socket> =======================
 
 // Start a socket to make a connection between the world and
-const io = socketIO(
-  app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
+const server = http.createServer(app)
+const wss = new WebSocket.Server(
+  {server}
 );
 
 // Socket used for speaking to the world
@@ -42,7 +44,10 @@ var world_socket = null;
 // Handles sending a message through the socket
 function _send_message(event_name, event_data) {
   if (world_socket) {
-    world_socket.emit(event_name, event_data);
+    world_socket.send(JSON.stringify({
+      type: event_name,
+      content: event_data
+    }));
   } else {
     console.log('Message recieved without world connected');
     console.log(event_data);
@@ -50,24 +55,28 @@ function _send_message(event_name, event_data) {
 }
 
 // Register handlers
-io.on('connection', function (socket) {
+wss.on('connection', function (socket) {
   console.log('Client connected');
-  console.log(socket.id)
   // Disconnects are logged
   socket.on('disconnect', function () {
     console.log('World disconnected');
   });
 
-  socket.on('world_alive', function (data, ack) {
-    world_socket = socket;
-    // Acknowledge that the message was recieved
-    if(ack) {
-      ack('world_alive');
+  socket.on('message', function (data) {
+    data = JSON.parse(data)
+    if (data['type'] == 'world_alive') {
+      world_socket = socket;
     }
   });
 
-  socket.emit('socket_open', 'Socket is open!');
+  socket.send(JSON.stringify(
+    {'type': 'conn_success', 'content': 'Socket is open!'}
+  ));
 });
+
+server.listen(PORT, function() {
+  console.log('Listening on %d', server.address().port);
+})
 
 // ----- Messenger routing functions -----
 // Verify webhook

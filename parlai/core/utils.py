@@ -9,11 +9,6 @@ import math
 import random
 import time
 
-try:
-    import torch
-except ImportError:
-    pass
-
 
 class Predictor(object):
     """Provides functionality for setting up a running version of a model and
@@ -384,7 +379,7 @@ class PaddingUtils(object):
             parsed_x = [x if len(x) == max_x_len else
                         x + [null_idx] * (max_x_len - len(x))
                         for x in parsed_x]
-        xs = torch.LongTensor(parsed_x)
+        xs = parsed_x
 
 
         # set up the target tensors
@@ -418,7 +413,7 @@ class PaddingUtils(object):
                 parsed_y = [y if len(y) == max_y_len else
                             y + [null_idx] * (max_y_len - len(y))
                             for y in parsed_y]
-            ys = torch.LongTensor(parsed_y)
+            ys = parsed_y
 
         return xs, ys, labels, valid_inds, end_idxs, y_lens
 
@@ -428,10 +423,6 @@ class PaddingUtils(object):
            using valid_inds.
            report_freq -- how often we report predictions
         """
-        if isinstance(predictions, torch.autograd.Variable):
-            predictions = predictions.cpu().data
-        else:
-            predictions = predictions.cpu()
         for i in range(len(predictions)):
             # map the predictions back to non-empty examples in the batch
             # we join with spaces since we produce tokens one at a timelab
@@ -439,17 +430,17 @@ class PaddingUtils(object):
             output_tokens = []
             j = 0
             for c in predictions[i]:
-                if c == end_idx and j!=0:
+                if c == end_idx and j != 0:
                     break
                 else:
                     output_tokens.append(c)
-                j+=1
+                j += 1
             curr_pred = dictionary.vec2txt(output_tokens)
             curr['text'] = curr_pred
 
-            if labels is not None and answers is not None:
+            if labels is not None and answers is not None and ys is not None:
                 y = []
-                for c in ys.data[i]:
+                for c in ys[i]:
                     if c == end_idx:
                         break
                     else:
@@ -458,8 +449,8 @@ class PaddingUtils(object):
             elif answers is not None:
                 answers[valid_inds[i]] = output_tokens
 
-
             if random.random() > (1 - report_freq):
-                print('TEXT: ', observations[valid_inds[i]]['text'].replace('__END__', ''), '\n~')
+                # log sometimes
+                print('TEXT: ', observations[valid_inds[i]]['text'].replace('__END__', ''))
                 print('PREDICTION: ', curr_pred, '\n~')
         return
