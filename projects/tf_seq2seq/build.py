@@ -70,6 +70,8 @@ def build_parallel_data(parser):
     if opt.get('output_dir') is None:
         opt['output_dir'] = tempfile.mkdtemp()
     opt['image_mode'] = 'none'
+    opt['batchsize'] = 1
+    opt['numthreads'] = 1
     for datatype in 'train', 'valid', 'test':
         opt['datatype'] = datatype + ':ordered:stream'
         writer = ToFileAgent(opt)

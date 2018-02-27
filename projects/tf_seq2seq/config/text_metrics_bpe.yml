@@ -1,0 +1,37 @@
+default_params: &default_params
+  - separator: " "
+  - postproc_fn: "seq2seq.data.postproc.strip_bpe"
+
+metrics:
+  - class: LogPerplexityMetricSpec
+  - class: BleuMetricSpec
+    params:
+      <<: *default_params
+  - class: RougeMetricSpec
+    params:
+      <<: *default_params
+      rouge_type: rouge_1/f_score
+  - class: RougeMetricSpec
+    params:
+      <<: *default_params
+      rouge_type: rouge_1/r_score
+  - class: RougeMetricSpec
+    params:
+      <<: *default_params
+      rouge_type: rouge_1/p_score
+  - class: RougeMetricSpec
+    params:
+      <<: *default_params
+      rouge_type: rouge_2/f_score
+  - class: RougeMetricSpec
+    params:
+      <<: *default_params
+      rouge_type: rouge_2/r_score
+  - class: RougeMetricSpec
+    params:
+      <<: *default_params
+      rouge_type: rouge_2/p_score
+  - class: RougeMetricSpec
+    params:
+      <<: *default_params
+      rouge_type: rouge_l/f_score
