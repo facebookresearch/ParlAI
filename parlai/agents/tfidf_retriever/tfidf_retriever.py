@@ -188,7 +188,7 @@ class TfidfRetrieverAgent(Agent):
                     base_cands, base_scores = rank_candidates(query_rep, ir_baseline_cands, self.ir_agent.length_penalty)
                     baseline_total = sum(base_scores)
                     base_scores = [base_scores[base_cands.index(p)] for p in picks]
-                    baseline_doc_probs = [s / baseline_total for s in base_scores]
+                    baseline_doc_probs = [s / baseline_total if baseline_total > 0 else 0 for s in base_scores]
                     base_wt = 1 - self.tfidf_wt
                     combined_probs = [a*self.tfidf_wt+b*base_wt for a, b in zip(doc_probs, baseline_doc_probs)]
                     best_of_both = [i[0] for i in sorted(enumerate(combined_probs), key=lambda x:x[1], reverse=True)]
