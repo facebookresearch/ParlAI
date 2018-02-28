@@ -31,7 +31,7 @@ from .mlb_modules import MlbAtt, MlbNoAtt
     To train the model using the `PytorchDataTeacher` on VQA V1, use the
     following command:
 
-        `python examples/train_model.py -m mlb -t pytorch_teacher \
+        `python examples/train_model.py -m mlb_vqa -t pytorch_teacher \
         --pytorch-buildteacher vqa_v1 -mf <model_file> \
         --dataset parlai.tasks.vqa_v1.agents -bs <batchsize> \
         -im resnet152_spatial --image-size 448 --image-cropsize 448`
@@ -39,7 +39,7 @@ from .mlb_modules import MlbAtt, MlbNoAtt
     Where you fill in `<model_file>` and `<batchsize>` with
     your own values; e.g.:
 
-        `python examples/train_model.py -m mlb -t pytorch_teacher \
+        `python examples/train_model.py -m mlb_vqa -t pytorch_teacher \
         --pytorch-buildteacher vqa_v1 -mf mlb \
         --dataset parlai.tasks.vqa_v1.agents -bs 512 \
         -im resnet152_spatial --image-size 448 --image-cropsize 448`
@@ -303,7 +303,7 @@ class VqaDictionaryAgent(Agent):
             self.save(self.save_path)
 
 
-class MlbAgent(Agent):
+class MlbVqaAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -343,14 +343,14 @@ class MlbAgent(Agent):
         agent.add_argument('--no-metrics', action='store_true',
                            help='specify to not compute f1 or accuracy during \
                            training (speeds up training)')
-        MlbAgent.dictionary_class().add_cmdline_args(argparser)
+        MlbVqaAgent.dictionary_class().add_cmdline_args(argparser)
 
     @staticmethod
     def dictionary_class():
         return VqaDictionaryAgent
 
     def __init__(self, opt, shared=None):
-        super(MlbAgent, self).__init__(opt, shared)
+        super(MlbVqaAgent, self).__init__(opt, shared)
         if not shared:
             # check for cuda
             self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
@@ -371,7 +371,7 @@ class MlbAgent(Agent):
 
             self.id = 'Mlb'
 
-            self.dict = MlbAgent.dictionary_class()(opt)
+            self.dict = MlbVqaAgent.dictionary_class()(opt)
             self.vocab = len(self.dict.tok2ind)
             self.num_classes = len(self.dict.ans2ind)
             self.training = self.opt.get('datatype').startswith('train')
@@ -477,7 +477,7 @@ class MlbAgent(Agent):
             ep_dones.append(ex['episode_done'])
 
         data = {
-            'input_v': MlbAgent.static_vis_noatt(input_v, use_att, use_hdf5=use_hdf5),
+            'input_v': MlbVqaAgent.static_vis_noatt(input_v, use_att, use_hdf5=use_hdf5),
             'input_q': input_q,
             'valid_inds': valid_inds,
             'batchsize': batchsize,
@@ -546,7 +546,7 @@ class MlbAgent(Agent):
                 answer = torch.LongTensor([ex['answer_aid'] for ex in new_obs])
 
         return {
-            'input_v': MlbAgent.static_vis_noatt(input_v, self.opt['attention']),
+            'input_v': MlbVqaAgent.static_vis_noatt(input_v, self.opt['attention']),
             'input_q': input_q,
             'answer': answer,
             'valid_inds': valid_inds,
@@ -657,7 +657,7 @@ class MlbAgent(Agent):
 
     def save(self, path=None):
         if hasattr(self, 'model'):
-            if self.use_data_parallel:
+            if self.use_cuda and self.use_data_parallel:
                 self.model.module.save(path)
             else:
                 self.model.save(path)
