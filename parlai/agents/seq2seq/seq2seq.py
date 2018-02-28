@@ -55,6 +55,8 @@ class Seq2seqAgent(Agent):
         """Add command-line arguments specifically for this agent."""
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Seq2Seq Arguments')
+        agent.add_argument('--init-model', type=str, default=None,
+                           help='load dict/features/weights/opts from this file')
         agent.add_argument('-hs', '--hiddensize', type=int, default=128,
                            help='size of the hidden layers')
         agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
@@ -76,9 +78,13 @@ class Seq2seqAgent(Agent):
                            help='Choices: none, concat, general, local. '
                                 'If set local, also set attention-length. '
                                 'For more details see: '
-                                'https://arxiv.org/pdf/1508.04025.pdf')
+                                'https://arxiv.org/abs/1508.04025')
         agent.add_argument('-attl', '--attention-length', default=48, type=int,
                            help='Length of local attention.')
+        agent.add_argument('--attention-time', default='post',
+                           choices=['pre', 'post'],
+                           help='Whether to apply attention before or after '
+                                'decoding.')
         agent.add_argument('--no-cuda', action='store_true', default=False,
                            help='disable GPUs even if available')
         agent.add_argument('--gpu', type=int, default=-1,
@@ -165,16 +171,29 @@ class Seq2seqAgent(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
+            # check first for 'init_model' for loading model from file
+            if opt.get('init_model') and os.path.isfile(opt['init_model']):
+                init_model = opt['init_model']
+            # next check for 'model_file'
+            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
+                init_model = opt['model_file']
+            else:
+                init_model = None
+
+            if init_model is not None:
                 # load model parameters if available
-                print('Loading existing model params from ' + opt['model_file'])
-                new_opt, self.states = self.load(opt['model_file'])
+                print('Loading existing model params from ' + init_model)
+                new_opt, self.states = self.load(init_model)
                 # override model-specific options with stored ones
                 opt = self.override_opt(new_opt)
 
-            if opt['dict_file'] is None and opt.get('model_file'):
-                # set default dict-file if not set
-                opt['dict_file'] = opt['model_file'] + '.dict'
+            if opt['dict_file'] is None:
+                if init_model is not None and os.path.isfile(init_model + '.dict'):
+                    # check first to see if a dictionary exists
+                    opt['dict_file'] = init_model + '.dict'
+                elif opt.get('model_file'):
+                    # otherwise, set default dict-file if it is not set
+                    opt['dict_file'] = opt['model_file'] + '.dict'
 
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
@@ -400,7 +419,10 @@ class Seq2seqAgent(Agent):
             observations, self.dict, self.END_IDX, self.NULL_IDX, dq=True,
             eval_labels=True, truncate=self.truncate)
         if xs is None:
-            return None, None, None, None, None, None
+            return None, None, None, None, None, None, None
+        xs = torch.LongTensor(xs)
+        if ys is not None:
+            ys = torch.LongTensor(ys)
         if self.use_cuda:
             # copy to gpu
             self.xs.resize_(xs.size())
@@ -481,11 +503,11 @@ class Seq2seqAgent(Agent):
         if is_training:
             report_freq = 0
         else:
-            report_freq = 0.1
+            report_freq = 0.01
         PaddingUtils.map_predictions(
-            predictions, valid_inds, batch_reply, observations, self.dict,
-            self.END_IDX, report_freq=report_freq, labels=labels,
-            answers=self.answers, ys=ys)
+            predictions.cpu().data, valid_inds, batch_reply, observations,
+            self.dict, self.END_IDX, report_freq=report_freq, labels=labels,
+            answers=self.answers, ys=ys.data)
 
         if text_cand_inds is not None:
             text_cand_inds = text_cand_inds.cpu().data
