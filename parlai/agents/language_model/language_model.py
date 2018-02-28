@@ -377,10 +377,8 @@ class LanguageModelAgent(Agent):
             token_list.append(word_idx.view(bsz, 1))
             i += 1
 
-        if token_list:
-            return torch.cat(token_list,1)
-        else:
-            return None
+        return torch.cat(token_list,1)
+
 
     def predict(self, data, hidden, targets=None, is_training=True, y_lens=None):
         """Produce a prediction from our model.
@@ -447,11 +445,13 @@ class LanguageModelAgent(Agent):
                 observations, self.dict, self.END_IDX, self.NULL_IDX)
 
             if self.use_cuda:
-                xs = Variable(torch.LongTensor(xs)).cuda()
+                if xs is not None:
+                    xs = Variable(torch.LongTensor(xs)).cuda()
                 if ys is not None:
                     ys = Variable(torch.LongTensor(ys)).cuda()
             else:
-                xs = Variable(torch.LongTensor(xs))
+                if xs is not None:
+                    xs = Variable(torch.LongTensor(xs))
                 if ys is not None:
                     ys = Variable(torch.LongTensor(ys))
             data_list = [xs]
@@ -483,23 +483,32 @@ class LanguageModelAgent(Agent):
         # during training, len(dat_list) >= 0: vectorize returns a list containing all batches available at the time it is called
         for i in range(len(data_list)):
             temp_dicts = [{'id': self.getID()} for _ in range(len(observations))]
-            output, hidden, loss_dict, predictions = self.predict(data_list[i], self.hidden, targets_list[i], self.is_training, y_lens)
-            self.hidden = self.repackage_hidden(hidden)
+            # ignore case when we do not return any valid indices
+            if data_list[i] is not None:
+                output, hidden, loss_dict, predictions = self.predict(data_list[i], self.hidden, targets_list[i], self.is_training, y_lens)
+                self.hidden = self.repackage_hidden(hidden)
 
-            if predictions is not None:
-                # map predictions back to the right order
-                PaddingUtils.map_predictions(
-                    predictions.cpu(), valid_inds, temp_dicts, observations,
-                    self.dict, self.END_IDX, report_freq=self.opt['report_freq'])
+                if predictions is not None:
+                    # map predictions back to the right order
+                    PaddingUtils.map_predictions(
+                        predictions.cpu(), valid_inds, temp_dicts, observations,
+                        self.dict, self.END_IDX, report_freq=self.opt['report_freq'])
 
-            if loss_dict is not None:
-                if 'metrics' in temp_dicts[0]:
-                    for k, v in loss_dict.items():
-                        temp_dicts[0]['metrics'][k] = v
-                else:
-                    temp_dicts[0]['metrics'] = loss_dict
+                if loss_dict is not None:
+                    if 'metrics' in temp_dicts[0]:
+                        for k, v in loss_dict.items():
+                            temp_dicts[0]['metrics'][k] = v
+                    else:
+                        temp_dicts[0]['metrics'] = loss_dict
 
             batch_reply += temp_dicts
+
+        # for prediction metrics computations, we get rid of PERSON1 and PERSON2 tokens
+        if not self.is_training:
+            for reply in batch_reply:
+                if 'text' in reply:
+                    reply['text'] = reply['text'].replace('PERSON1 ', '')
+                    reply['text'] = reply['text'].replace('PERSON2 ', '')
 
         return batch_reply
 
