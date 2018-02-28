@@ -1,4 +1,4 @@
-# Interact with pre-trained model
+# Evaluate pre-trained model trained for hits@1 metric
 # Profile memory model trained on personachat using persona 'self'
 # Run from ParlAI directory
 
