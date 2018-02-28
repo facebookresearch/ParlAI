@@ -9,6 +9,13 @@ and the tags associated with them.
 
 task_list = [
     {
+        "id": "AQuA",
+        "display_name": "AQuA",
+        "task": "aqua",
+        "tags": [ "All",  "QA" ],
+        "description": "Dataset containing algebraic word problems with rationales for their answers. From Ling et. al. 2017, Link: https://arxiv.org/pdf/1705.04146.pdf"
+    },
+    {
         "id": "bAbI-1k",
         "display_name": "bAbI 1k",
         "task": "babi:All1k",
