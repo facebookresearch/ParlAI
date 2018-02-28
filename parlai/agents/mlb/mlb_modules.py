@@ -85,7 +85,6 @@ class Mlb(nn.Module):
                     'conv_v_att': self.conv_v_att.state_dict(),
                     'conv_att': self.conv_att.state_dict(),
                     'linear_q_att': self.linear_q_att.state_dict(),
-                    'list_linear_v_fusion': self.list_linear_v_fusion.state_dict(),
                     'linear_q_fusion': self.linear_q_fusion.state_dict(),
                     })
                 if self.opt['old_glimpse']:
