@@ -114,7 +114,7 @@ def display_messages(msgs):
             cands = [c for c in msg['text_candidates'] if c is not None]
             if msg.get('candidate_scores') is not None:
 
-                table = prettytable.PrettyTable(['Text', 'Score'])
+                table = prettytable.PrettyTable(['Score', 'Text'])
                 scores = msg.get('candidate_scores')
                 # cands = ['{}, {}'.format(s, p) for s, p in zip(scores, cands)]
                 # cands = zip(scores, cands)
@@ -127,7 +127,7 @@ def display_messages(msgs):
             for cand in cands:
                 # display_cands.append(cand[:(min(250, len(cand)))])
                 if scores is not None:
-                    table.add_row([scores[num_cands], cand[:(min(150, len(cand)))]])
+                    table.add_row([scores[num_cands], cand[:(min(100, len(cand)))]])
                 else:
                     table.add_row([cand[:(min(250, len(cand)))]])
                 num_cands += 1
