@@ -420,6 +420,9 @@ class Seq2seqAgent(Agent):
             eval_labels=True, truncate=self.truncate)
         if xs is None:
             return None, None, None, None, None, None, None
+        xs = torch.LongTensor(xs)
+        if ys is not None:
+            ys = torch.LongTensor(ys)
         if self.use_cuda:
             # copy to gpu
             self.xs.resize_(xs.size())
@@ -502,9 +505,9 @@ class Seq2seqAgent(Agent):
         else:
             report_freq = 0.01
         PaddingUtils.map_predictions(
-            predictions, valid_inds, batch_reply, observations, self.dict,
-            self.END_IDX, report_freq=report_freq, labels=labels,
-            answers=self.answers, ys=ys)
+            predictions.cpu().data, valid_inds, batch_reply, observations,
+            self.dict, self.END_IDX, report_freq=report_freq, labels=labels,
+            answers=self.answers, ys=ys.data)
 
         if text_cand_inds is not None:
             text_cand_inds = text_cand_inds.cpu().data
