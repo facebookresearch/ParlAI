@@ -28,7 +28,7 @@ class AgentState():
         self.task_id_to_agent = {}
         self.onboard_data = None
         self.return_data = None
-        self.time_in_pool = None
+        self.time_in_pool = {}
 
     def get_active_agent(self):
         return self.active_agent
@@ -91,13 +91,13 @@ class MessengerManager():
                 logging.DEBUG,
                 "Adding agent {} to pool...".format(agent.messenger_id)
             )
+            # time agent entered agent_pool
+            agent.time_in_pool.setdefault(world_type, time.time())
             if world_type not in self.agent_pool:
                 self.agent_pool[world_type] = []
-            # time agent entered agent_pool
-            agent.time_in_pool = time.time()
             self.agent_pool[world_type].append(agent)
 
-    def remove_agent_from_pool(self, agent, world_type='default'):
+    def remove_agent_from_pool(self, agent, world_type='default', mark_removed=True):
         """Remove agent from the pool"""
         with self.agent_pool_change_condition:
             shared_utils.print_and_log(
@@ -107,13 +107,14 @@ class MessengerManager():
             if world_type in self.agent_pool and agent in self.agent_pool[world_type]:
                 self.agent_pool[world_type].remove(agent)
                 # reset agent's time_in_pool
-                agent.time_in_pool = None
-                # mark agent as removed
-                if agent.return_data is None:
-                    agent.return_data = {'removed': True}
-                else:
-                    agent.return_data.setdefault('removed', True)
-                print(agent.return_data)
+                if world_type in agent.time_in_pool:
+                    del agent.time_in_pool[world_type]
+                # maybe mark agent as removed
+                if mark_removed:
+                    if agent.return_data is None:
+                        agent.return_data = {'removed': True}
+                    else:
+                        agent.return_data.setdefault('removed', True)
 
     def _expire_all_conversations(self):
         """iterate through all sub-worlds and shut them down"""
@@ -206,10 +207,23 @@ class MessengerManager():
             return
         agent_state = self._get_agent_state(agent_id)
         if agent_state.get_active_agent() is None:
-            self.observe_message(
-                agent_id,
-                "We are trying to pair you with another person, please wait."
-            )
+            # return agent to overworld
+            if 'text' in message['message'] and message['message']['text']=='[EXIT]':
+                # remove agent from agent_pool
+                to_remove = []
+                for world_type, time in agent_state.time_in_pool.items():
+                    to_remove.append(world_type)
+                for world_type in to_remove:
+                    self.remove_agent_from_pool(agent_state, world_type, mark_removed=False)
+                # put agent back in overworld
+                agent_state.set_active_agent(agent_state.get_overworld_agent())
+            else:
+                self.observe_message(
+                    agent_id,
+                    "We are trying to pair you with another person, please wait. "
+                    "If you wish to return to the Overworld, click *[EXIT]*",
+                    quick_replies=['[EXIT]']
+                )
         else:
             agent_state.get_active_agent().put_data(message)
 
@@ -404,11 +418,12 @@ class MessengerManager():
                     # check if agent has exceeded max time in pool
                     if max_time_in_pool is not None and max_time_in_pool[world_type] is not None:
                         for agent_state in agent_pool:
-                            if time.time() - agent_state.time_in_pool > max_time_in_pool[world_type]:
-                                # remove agent from agent_pool
-                                self.remove_agent_from_pool(agent_state, world_type)
-                                # put agent back in overworld
-                                agent_state.set_active_agent(agent_state.get_overworld_agent())
+                            if agent_state.time_in_pool.get(world_type):
+                                if time.time() - agent_state.time_in_pool[world_type] > max_time_in_pool[world_type]:
+                                    # remove agent from agent_pool
+                                    self.remove_agent_from_pool(agent_state, world_type)
+                                    # put agent back in overworld
+                                    agent_state.set_active_agent(agent_state.get_overworld_agent())
 
                     needed_agents = self.max_agents_for[world_type]
                     if len(agent_pool) >= needed_agents:
