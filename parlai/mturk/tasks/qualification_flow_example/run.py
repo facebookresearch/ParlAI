@@ -35,7 +35,8 @@ def main():
         'first iteration of a task. Used to filter to different task pools.'
     )
     qualification_id = \
-        mturk_utils.find_or_create_qualification(qual_name, qual_desc)
+        mturk_utils.find_or_create_qualification(qual_name, qual_desc,
+                                                 opt['is_sandbox'])
     print('Created qualification: ', qualification_id)
 
     def run_onboard(worker):
@@ -87,7 +88,7 @@ def main():
     except BaseException:
         raise
     finally:
-        mturk_utils.delete_qualification(qualification_id)
+        mturk_utils.delete_qualification(qualification_id, opt['is_sandbox'])
         mturk_manager.expire_all_unassigned_hits()
         mturk_manager.shutdown()
 
