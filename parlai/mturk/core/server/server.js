@@ -121,6 +121,11 @@ function handle_alive(socket, data) {
   // Send alive packets to the world, but not from the world
   if (!(sender_id && sender_id.startsWith('[World'))) {
     _send_message(out_connection_id, 'new packet', data);
+  } else {
+    console.log("sending success");
+    socket.send(JSON.stringify(
+      {'type': 'conn_success', 'content': 'Socket is open!'}
+    ));
   }
 }
 
@@ -143,10 +148,6 @@ wss.on('connection', function (socket) {
       handle_route(data['content']);
     }
   });
-
-  socket.send(JSON.stringify(
-    {'type': 'conn_success', 'content': 'Socket is open!'}
-  ));
 });
 
 server.listen(PORT, function() {
