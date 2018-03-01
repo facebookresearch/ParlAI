@@ -27,6 +27,8 @@ class AgentState():
         self.active_agent = overworld_agent
         self.task_id_to_agent = {}
         self.onboard_data = None
+        self.return_data = None
+        self.time_in_pool = None
 
     def get_active_agent(self):
         return self.active_agent
@@ -91,7 +93,27 @@ class MessengerManager():
             )
             if world_type not in self.agent_pool:
                 self.agent_pool[world_type] = []
+            # time agent entered agent_pool
+            agent.time_in_pool = time.time()
             self.agent_pool[world_type].append(agent)
+
+    def remove_agent_from_pool(self, agent, world_type='default'):
+        """Remove agent from the pool"""
+        with self.agent_pool_change_condition:
+            shared_utils.print_and_log(
+                logging.DEBUG,
+                "Removing agent {} from pool...".format(agent.messenger_id)
+            )
+            if world_type in self.agent_pool and agent in self.agent_pool[world_type]:
+                self.agent_pool[world_type].remove(agent)
+                # reset agent's time_in_pool
+                agent.time_in_pool = None
+                # mark agent as removed
+                if agent.return_data is None:
+                    agent.return_data = {'removed': True}
+                else:
+                    agent.return_data.setdefault('removed', True)
+                print(agent.return_data)
 
     def _expire_all_conversations(self):
         """iterate through all sub-worlds and shut them down"""
@@ -253,6 +275,12 @@ class MessengerManager():
             )
         )
 
+    def get_agent_state(self, agent_id):
+        """Get a worker by agent_id"""
+        if agent_id in self.messenger_agent_states:
+            return self.messenger_agent_states[agent_id]
+        return None
+
     # Manager Lifecycle Functions #
 
     def setup_server(self):
@@ -338,7 +366,7 @@ class MessengerManager():
     def set_agents_required(self, max_agents_for):
         self.max_agents_for = max_agents_for
 
-    def start_task(self, assign_role_functions, task_functions):
+    def start_task(self, assign_role_functions, task_functions, max_time_in_pool=None):
         """Handle running a task by checking to see when enough agents are
         in the pool to start an instance of the task. Continue doing this
         until the desired number of conversations is had.
@@ -373,6 +401,15 @@ class MessengerManager():
             with self.agent_pool_change_condition:
                 valid_pools = self._get_unique_pool()
                 for world_type, agent_pool in valid_pools.items():
+                    # check if agent has exceeded max time in pool
+                    if max_time_in_pool is not None and max_time_in_pool[world_type] is not None:
+                        for agent_state in agent_pool:
+                            if time.time() - agent_state.time_in_pool > max_time_in_pool[world_type]:
+                                # remove agent from agent_pool
+                                self.remove_agent_from_pool(agent_state, world_type)
+                                # put agent back in overworld
+                                agent_state.set_active_agent(agent_state.get_overworld_agent())
+
                     needed_agents = self.max_agents_for[world_type]
                     if len(agent_pool) >= needed_agents:
                         # enough agents in pool to start new conversation
