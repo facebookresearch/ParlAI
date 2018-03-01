@@ -93,9 +93,8 @@ class MessengerManager():
             )
             # time agent entered agent_pool
             agent.time_in_pool.setdefault(world_type, time.time())
-            if world_type not in self.agent_pool:
-                self.agent_pool[world_type] = []
-            self.agent_pool[world_type].append(agent)
+            # add agent to pool
+            self.agent_pool.setdefault(world_type, []).append(agent)
 
     def remove_agent_from_pool(self, agent, world_type='default', mark_removed=True):
         """Remove agent from the pool"""
