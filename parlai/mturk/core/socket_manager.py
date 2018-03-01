@@ -301,7 +301,6 @@ class SocketManager():
                 logging.DEBUG,
                 'Socket open: {}'.format(args)
             )
-            attempts = 0
             self._send_world_alive()
 
         def on_error(ws, error):
