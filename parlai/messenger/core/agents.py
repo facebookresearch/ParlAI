@@ -24,7 +24,9 @@ class MessengerAgent(Agent):
         self.acted_packets = {}
         self.observed_packets = {}
         self.msg_queue = Queue()
-        self.return_data = None
+        self.stored_data = {}
+        # initialize stored data
+        self.set_stored_data()
 
     def observe(self, act):
         """Send an agent a message through the mturk manager"""
@@ -75,11 +77,11 @@ class MessengerAgent(Agent):
             }
             self.msg_queue.put(action)
 
-    def set_state_data(self):
+    def set_stored_data(self):
         """Gets agent state data from manager"""
         agent_state = self.manager.get_agent_state(self.id)
         if agent_state is not None:
-            self.return_data = agent_state.return_data
+            self.stored_data = agent_state.stored_data
 
     def get_new_act_message(self):
         """Get a new act message if one exists, return None otherwise"""

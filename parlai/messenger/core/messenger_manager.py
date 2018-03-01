@@ -27,7 +27,7 @@ class AgentState():
         self.active_agent = overworld_agent
         self.task_id_to_agent = {}
         self.onboard_data = None
-        self.return_data = None
+        self.stored_data = {}
         self.time_in_pool = {}
 
     def get_active_agent(self):
@@ -110,10 +110,7 @@ class MessengerManager():
                     del agent.time_in_pool[world_type]
                 # maybe mark agent as removed
                 if mark_removed:
-                    if agent.return_data is None:
-                        agent.return_data = {'removed': True}
-                    else:
-                        agent.return_data.setdefault('removed', True)
+                    agent.stored_data['removed_from_pool']=True
 
     def _expire_all_conversations(self):
         """iterate through all sub-worlds and shut them down"""
