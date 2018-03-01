@@ -30,6 +30,20 @@ class TestData(unittest.TestCase):
         '--datapath', TMP_PATH
     ]
 
+    def test_aqua(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.aqua.agents import DefaultTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+
+        for dt in ['train', 'valid', 'test']:
+            opt['datatype'] = dt
+            teacher = DefaultTeacher(opt)
+            reply = teacher.act()
+            check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
     def test_babi(self):
         from parlai.core.params import ParlaiParser
         from parlai.tasks.babi.agents import Task1kTeacher, Task10kTeacher

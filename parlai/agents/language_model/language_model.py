@@ -39,14 +39,14 @@ class LanguageModelAgent(Agent):
         argparser.set_defaults(batch_sort=False)
         LanguageModelAgent.dictionary_class().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Language Model Arguments')
+        agent.add_argument('--init-model', type=str, default=None,
+                           help='load dict/features/weights/opts from this file')
         agent.add_argument('-hs', '--hiddensize', type=int, default=200,
                            help='size of the hidden layers')
         agent.add_argument('-esz', '--embeddingsize', type=int, default=200,
                            help='size of the token embeddings')
         agent.add_argument('-nl', '--numlayers', type=int, default=2,
                            help='number of hidden layers')
-        agent.add_argument('-lr', '--learningrate', type=float, default=20,
-                           help='initial learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.2,
                            help='dropout rate')
         agent.add_argument('-clip', '--gradient-clip', type=float, default=0.25,
@@ -69,6 +69,16 @@ class LanguageModelAgent(Agent):
                            help='report frequency of prediction during eval')
         agent.add_argument('-pt', '--person-tokens', type=bool, default=True,
                            help='append person1 and person2 tokens to text')
+        # learning rate parameters
+        agent.add_argument('-lr', '--learningrate', type=float, default=20,
+                           help='initial learning rate')
+        agent.add_argument('-lrf', '--lr-factor', type=float, default=1.0,
+                           help='mutliply learning rate by this factor when the \
+                           validation loss does not decrease')
+        agent.add_argument('-lrp', '--lr-patience', type=int, default=10,
+                           help='wait before decreasing learning rate')
+        agent.add_argument('-lrm', '--lr-minimum', type=float, default=0.1,
+                           help='minimum learning rate')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -104,16 +114,29 @@ class LanguageModelAgent(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
+            # check first for 'init_model' for loading model from file
+            if opt.get('init_model') and os.path.isfile(opt['init_model']):
+                init_model = opt['init_model']
+            # next check for 'model_file'
+            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
+                init_model = opt['model_file']
+            else:
+                init_model = None
+
+            if init_model is not None:
                 # load model parameters if available
-                print('Loading existing model params from ' + opt['model_file'])
-                new_opt, self.states = self.load(opt['model_file'])
+                print('Loading existing model params from ' + init_model)
+                new_opt, self.states = self.load(init_model)
                 # override model-specific options with stored ones
                 opt = self.override_opt(new_opt)
 
-            if opt['dict_file'] is None and opt.get('model_file'):
-                # set default dict-file if not set
-                opt['dict_file'] = opt['model_file'] + '.dict'
+            if opt['dict_file'] is None:
+                if init_model is not None and os.path.isfile(init_model + '.dict'):
+                    # check first to see if a dictionary exists
+                    opt['dict_file'] = init_model + '.dict'
+                elif opt.get('model_file'):
+                    # otherwise, set default dict-file if it is not set
+                    opt['dict_file'] = opt['model_file'] + '.dict'
 
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
@@ -162,9 +185,22 @@ class LanguageModelAgent(Agent):
             self.ends = torch.LongTensor([self.END_IDX for _ in range(self.batchsize)])
             if self.use_cuda:
                 self.ends = self.ends.cuda()
-            # set up optimizer
+            # set up model and learning rate scheduler parameters
             self.lr = opt['learningrate']
-            best_val_loss = None
+            self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
+            self.best_val_loss = self.states.get('best_val_loss', None)
+            self.lr_factor = opt['lr_factor']
+            if self.lr_factor < 1.0:
+                self.lr_patience = opt['lr_patience']
+                self.lr_min = opt['lr_minimum']
+                self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                    self.optimizer, factor=self.lr_factor, verbose=True,
+                    patience=self.lr_patience, min_lr=self.lr_min)
+                # initial step for scheduler if self.best_val_loss is initialized
+                if self.best_val_loss is not None:
+                    self.scheduler.step(self.best_val_loss)
+            else:
+                self.scheduler = None
 
         self.reset()
 
@@ -195,13 +231,12 @@ class LanguageModelAgent(Agent):
 
     def zero_grad(self):
         """Zero out optimizer."""
-        self.model.zero_grad()
+        self.optimizer.zero_grad()
 
     def update_params(self):
         """Do one optimization step."""
         torch.nn.utils.clip_grad_norm(self.model.parameters(), self.clip)
-        for p in self.model.parameters():
-            p.data.add_(-self.lr, p.grad.data)
+        self.optimizer.step()
 
     def reset(self):
         """Reset observation and episode_done."""
@@ -344,6 +379,7 @@ class LanguageModelAgent(Agent):
 
         return torch.cat(token_list,1)
 
+
     def predict(self, data, hidden, targets=None, is_training=True, y_lens=None):
         """Produce a prediction from our model.
         """
@@ -407,14 +443,17 @@ class LanguageModelAgent(Agent):
             # here we get valid examples and pad them with zeros
             xs, ys, labels, valid_inds, _, y_lens = PaddingUtils.pad_text(
                 observations, self.dict, self.END_IDX, self.NULL_IDX)
+
             if self.use_cuda:
-                xs = Variable(xs).cuda()
+                if xs is not None:
+                    xs = Variable(torch.LongTensor(xs)).cuda()
                 if ys is not None:
-                    ys = Variable(ys).cuda()
+                    ys = Variable(torch.LongTensor(ys)).cuda()
             else:
-                xs = Variable(xs)
+                if xs is not None:
+                    xs = Variable(torch.LongTensor(xs))
                 if ys is not None:
-                    ys = Variable(ys)
+                    ys = Variable(torch.LongTensor(ys))
             data_list = [xs]
             targets_list = [ys]
 
@@ -444,23 +483,32 @@ class LanguageModelAgent(Agent):
         # during training, len(dat_list) >= 0: vectorize returns a list containing all batches available at the time it is called
         for i in range(len(data_list)):
             temp_dicts = [{'id': self.getID()} for _ in range(len(observations))]
-            output, hidden, loss_dict, predictions = self.predict(data_list[i], self.hidden, targets_list[i], self.is_training, y_lens)
-            self.hidden = self.repackage_hidden(hidden)
+            # ignore case when we do not return any valid indices
+            if data_list[i] is not None:
+                output, hidden, loss_dict, predictions = self.predict(data_list[i], self.hidden, targets_list[i], self.is_training, y_lens)
+                self.hidden = self.repackage_hidden(hidden)
 
-            if predictions is not None:
-                # map predictions back to the right order
-                PaddingUtils.map_predictions(
-                    predictions, valid_inds, temp_dicts, observations,
-                    self.dict, self.END_IDX, report_freq=self.opt['report_freq'])
+                if predictions is not None:
+                    # map predictions back to the right order
+                    PaddingUtils.map_predictions(
+                        predictions.cpu(), valid_inds, temp_dicts, observations,
+                        self.dict, self.END_IDX, report_freq=self.opt['report_freq'])
 
-            if loss_dict is not None:
-                if 'metrics' in temp_dicts[0]:
-                    for k, v in loss_dict.items():
-                        temp_dicts[0]['metrics'][k] = v
-                else:
-                    temp_dicts[0]['metrics'] = loss_dict
+                if loss_dict is not None:
+                    if 'metrics' in temp_dicts[0]:
+                        for k, v in loss_dict.items():
+                            temp_dicts[0]['metrics'][k] = v
+                    else:
+                        temp_dicts[0]['metrics'] = loss_dict
 
             batch_reply += temp_dicts
+
+        # for prediction metrics computations, we get rid of PERSON1 and PERSON2 tokens
+        if not self.is_training:
+            for reply in batch_reply:
+                if 'text' in reply:
+                    reply['text'] = reply['text'].replace('PERSON1 ', '')
+                    reply['text'] = reply['text'].replace('PERSON2 ', '')
 
         return batch_reply
 
@@ -476,6 +524,7 @@ class LanguageModelAgent(Agent):
             model = {}
             model['model'] = self.model.state_dict()
             model['opt'] = self.opt
+            model['best_val_loss'] = self.best_val_loss
 
             with open(path, 'wb') as write:
                 torch.save(model, write)
@@ -486,6 +535,10 @@ class LanguageModelAgent(Agent):
         if path is not None:
             self.save(path + '.shutdown_state')
         super().shutdown()
+
+    def receive_metrics(self, metrics_dict):
+        if 'loss' in metrics_dict and self.scheduler is not None:
+            self.scheduler.step(metrics_dict['loss'])
 
     def load(self, path):
         """Return opt and model states."""

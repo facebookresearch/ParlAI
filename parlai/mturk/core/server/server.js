@@ -60,11 +60,22 @@ function _send_message(connection_id, event_name, event_data) {
     content: event_data,
   }
   // Send the message through
-  try {
-    socket.send(JSON.stringify(packet));
-  } catch (e) {
+  socket.send(JSON.stringify(packet), function ack(error) {
+    if (error === undefined) {
+      return;
+    }
     console.log('Ran into error trying to send, retrying');
-  }
+    setTimeout(function () {
+      socket.send(JSON.stringify(packet), function ack2(error2) {
+        if (error2 === undefined) {
+          return;
+        }
+        console.log("Repeat send of packet failed");
+        console.log(packet)
+        console.log(error2)
+      });
+    }, 500);
+  });
 }
 
 
@@ -244,5 +255,7 @@ app.get('/get_hit_config', function (req, res) {
 app.get('/get_timestamp', function (req, res) {
   res.json({'timestamp': Date.now()}); // in milliseconds
 });
+
+app.use(express.static('task'))
 
 // ======================= </Routing> =======================

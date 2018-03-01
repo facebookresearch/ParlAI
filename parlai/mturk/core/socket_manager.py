@@ -239,10 +239,25 @@ class SocketManager():
             'Send packet: {}'.format(packet.data)
         )
 
-        self.ws.send(json.dumps({
-            'type': data_model.SOCKET_ROUTE_PACKET_STRING,
-            'content': pkt,
-        }))
+        if not self.alive:
+            # Try to wait a second to send a packet
+            timeout = 1
+            while timeout > 0 and not self.alive:
+                time.sleep(0.1)
+                timeout -= 0.1
+            if not self.alive:
+                # don't try to send a packet if we're still dead
+                self._safe_put(connection_id, (send_time, packet))
+                return
+        try:
+            self.ws.send(json.dumps({
+                'type': data_model.SOCKET_ROUTE_PACKET_STRING,
+                'content': pkt,
+            }))
+        except websocket._exceptions.WebSocketConnectionClosedException:
+            # The channel died mid-send, wait for it to come back up
+            self._safe_put(connection_id, (send_time, packet))
+            return
         packet.status = Packet.STATUS_SENT
 
         # Handles acks and blocking
@@ -372,7 +387,7 @@ class SocketManager():
                         logging.WARN,
                         'Socket had error {}, attempting restart'.format(e)
                     )
-                time.sleep(3)
+                time.sleep(0.2)
 
         # Start listening thread
         self.listen_thread = threading.Thread(
