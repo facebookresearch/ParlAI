@@ -19,16 +19,19 @@ import random
 from .modules import MemNN, Decoder, to_tensors
 
 
-class MemnnExtendedAgent(Agent):
-    """ Memory Network agent.
-    With setting IM acts as a regular Imitation learning agent
+class MemnnFeedbackAgent(Agent):
+    """ Memory Network agent for question answering that supports 
+    reward-based learning (RBI), forward prediction (FP), and imitation learning (IM).
 
-    For more details on IM_feedback, RBI, FP, RBI+FP settings that support 
-    reward-based and forward prediction: https://arxiv.org/abs/1604.06045
-    These models assume that feedback and reward for the current example  
-    immediatly follow the query. 
-    py examples/train_model.py -m memnn_extended -t dbll_babi:task:3_p0.5:f
-    --setting 'RBI' -bs 1 -nt 4 --single_embedder True
+    For more details on settings see: https://arxiv.org/abs/1604.06045.
+    
+    Models settings 'FP', 'RBI', 'RBI+FP', and 'IM_feedback' assume that 
+    feedback and reward for the current example immediatly follow the query
+    (add ':feedback' argument when specifying task name). 
+
+    python examples/train_model.py --setting 'FP' 
+    -m "projects.memnn_feedback.agent.memnn_feedback:MemnnFeedbackAgent" 
+    -t "projects.memnn_feedback.tasks.dbll_babi.agents:taskTeacher:3_p0.5:feedback"
     """
 
     @staticmethod
@@ -47,6 +50,8 @@ class MemnnExtendedAgent(Agent):
             help='use time features for memory embeddings')
         arg_group.add_argument('--position-encoding', type='bool', default=False,
             help='use position encoding instead of bag of words embedding')
+        arg_group.add_argument('-clip', '--gradient-clip', type=float, default=0.2,
+                           help='gradient clipping using l2 norm')
         arg_group.add_argument('--output', type=str, default='rank',
             help='type of output (rank|generate)')
         arg_group.add_argument('--rnn-layers', type=int, default=2,
@@ -91,6 +96,19 @@ class MemnnExtendedAgent(Agent):
             
             self.model = MemNN(opt, self.dict)
 
+            optim_params = [p for p in self.model.parameters() if p.requires_grad]
+            lr = opt['learning_rate']
+            if opt['optimizer'] == 'sgd':
+                self.optimizers = {'memnn': optim.SGD(optim_params, lr=lr)}
+                if self.decoder is not None:
+                    self.optimizers['decoder'] = optim.SGD(self.decoder.parameters(), lr=lr)
+            elif opt['optimizer'] == 'adam':
+                self.optimizers = {'memnn': optim.Adam(optim_params, lr=lr)}
+                if self.decoder is not None:
+                    self.optimizers['decoder'] = optim.Adam(self.decoder.parameters(), lr=lr)
+            else:
+                raise NotImplementedError('Optimizer not supported.')
+
             if opt['cuda']:
                 self.model.share_memory()
                 if self.decoder is not None:
@@ -105,6 +123,7 @@ class MemnnExtendedAgent(Agent):
                 self.model = shared['model']
                 self.dict = shared['dict']
                 self.decoder = shared['decoder']
+                self.optimizers = shared['optimizer']
                 if 'FP' in opt['setting']:
                     self.beta_word = shared['betaword']
 
@@ -112,6 +131,7 @@ class MemnnExtendedAgent(Agent):
             self.opt = opt
             self.mem_size = opt['mem_size']
             self.loss_fn = CrossEntropyLoss()
+            self.gradient_clip = opt.get('gradient_clip', 0.2)
             
             self.model_setting = opt['setting']
             if 'FP' in opt['setting']:
@@ -124,19 +144,6 @@ class MemnnExtendedAgent(Agent):
             self.START = self.dict.start_token
             self.START_TENSOR = torch.LongTensor(self.dict.parse(self.START))
 
-            optim_params = [p for p in self.model.parameters() if p.requires_grad]
-            lr = opt['learning_rate']
-            if opt['optimizer'] == 'sgd':
-                self.optimizers = {'memnn': optim.SGD(optim_params, lr=lr)}
-                if self.decoder is not None:
-                    self.optimizers['decoder'] = optim.SGD(self.decoder.parameters(), lr=lr)
-            elif opt['optimizer'] == 'adam':
-                self.optimizers = {'memnn': optim.Adam(optim_params, lr=lr)}
-                if self.decoder is not None:
-                    self.optimizers['decoder'] = optim.Adam(self.decoder.parameters(), lr=lr)
-            else:
-                raise NotImplementedError('Optimizer not supported.')
-
         self.reset()
         self.last_cands, self.last_cands_list = None, None
 
@@ -147,6 +154,7 @@ class MemnnExtendedAgent(Agent):
         if self.opt.get('numthreads', 1) > 1:
             shared['model'] = self.model
             self.model.share_memory()
+            shared['optimizer'] = self.optimizers
             shared['dict'] = self.dict
             shared['decoder'] = self.decoder
             if 'FP' in self.model_setting:
@@ -194,6 +202,8 @@ class MemnnExtendedAgent(Agent):
         for o in self.optimizers.values():
             o.zero_grad()
         loss.backward(retain_graph=retain_graph)
+
+        torch.nn.utils.clip_grad_norm(self.model.parameters(), self.gradient_clip)
         for o in self.optimizers.values():
             o.step()
 
@@ -267,6 +277,8 @@ class MemnnExtendedAgent(Agent):
                     else:
                         feedback_label_inds = Variable(torch.LongTensor(feedback_label_inds))
                     loss_fp = self.loss_fn(fp_scores, feedback_label_inds)
+                    if loss_fp.data[0] > 100000:
+                        raise Exception("Loss might be diverging. Loss:", loss_fp.data[0])
                     self.backward(loss_fp, retain_graph = True)
 
             if self.opt['cuda']:
