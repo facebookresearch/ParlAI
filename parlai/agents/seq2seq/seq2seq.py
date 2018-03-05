@@ -100,7 +100,7 @@ class Seq2seqAgent(Agent):
                            'input and output to have a maximum length. This '
                            'reduces the total amount '
                            'of padding in the batches.')
-        agent.add_argument('-rnn', '--rnn-class', default='gru',
+        agent.add_argument('-rnn', '--rnn-class', default='lstm',
                            choices=Seq2seq.RNN_OPTS.keys(),
                            help='Choose between different types of RNNs.')
         agent.add_argument('-dec', '--decoder', default='same',
