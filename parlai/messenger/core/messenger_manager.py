@@ -204,7 +204,7 @@ class MessengerManager():
         agent_state = self._get_agent_state(agent_id)
         if agent_state.get_active_agent() is None:
             # return agent to overworld
-            if 'text' in message['message'] and message['message']['text']=='[EXIT]':
+            if 'text' in message['message'] and message['message']['text']=='EXIT':
                 # remove agent from agent_pool
                 to_remove = []
                 for world_type, time in agent_state.time_in_pool.items():
@@ -217,8 +217,8 @@ class MessengerManager():
                 self.observe_message(
                     agent_id,
                     "We are trying to pair you with another person, please wait. "
-                    "If you wish to return to the Overworld, click *[EXIT]*",
-                    quick_replies=['[EXIT]']
+                    "If you wish to return to the Overworld, click *EXIT*",
+                    quick_replies=['EXIT']
                 )
         else:
             agent_state.get_active_agent().put_data(message)
