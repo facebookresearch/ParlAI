@@ -1614,9 +1614,10 @@ class PersonachatSeqseqAgentSplit(Agent):
             self.zeros.resize_(self.num_layers * self.num_dirs, batchsize, self.hidden_size).fill_(0)
         h0 = Variable(self.zeros)
         xes_packed = pack_padded_sequence(xes.transpose(0, 1), x_lens)
+        xes = xes.transpose(0,1)
 
         if type(self.encoder_persona) == nn.LSTM:
-            encoder_output_packed, hidden = self.encoder_persona(xes_packed, (h0, h0))
+            encoder_output_packed, hidden = self.encoder_persona(xes, (h0, h0))
             encoder_output, _ = pad_packed_sequence(encoder_output_packed)
             if type(self.decoder) != nn.LSTM:
                 hidden = hidden[0]
