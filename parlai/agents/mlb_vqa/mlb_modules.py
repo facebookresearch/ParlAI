@@ -87,7 +87,7 @@ class Mlb(nn.Module):
                     'linear_q_att': self.linear_q_att.state_dict(),
                     'linear_q_fusion': self.linear_q_fusion.state_dict(),
                     })
-                if self.opt['new_glimpse']:
+                if self.opt['original_att']:
                     model['linear_v_fusion'] = self.linear_v_fusion.state_dict()
                 else:
                     model['list_linear_v_fusion'] = self.list_linear_v_fusion.state_dict()
@@ -202,7 +202,7 @@ class MlbAtt(Mlb):
         self.conv_att = nn.Conv2d(self.opt['dim_att_h'],
                                   self.opt['num_glimpses'],
                                   1, 1)
-        if self.opt['new_glimpse']:
+        if self.opt['original_att']:
             self.linear_v_fusion = nn.Linear(self.opt['dim_v'] * \
                                              self.opt['num_glimpses'],
                                              self.opt['dim_h'])
@@ -299,7 +299,7 @@ class MlbAtt(Mlb):
     def forward_glimpses(self, list_v_att, x_q_vec):
         # Process visual for each glimpses
         list_v = []
-        if self.opt['new_glimpse']:
+        if self.opt['original_att']:
             x_v = torch.cat(list_v_att, 1)
             x_v = F.dropout(x_v,
                             p=self.opt['dropout_v'],
@@ -342,7 +342,7 @@ class MlbAtt(Mlb):
         self.conv_v_att.load_state_dict(states['conv_v_att'])
         self.conv_att.load_state_dict(states['conv_att'])
         self.linear_q_att.load_state_dict(states['linear_q_att'])
-        if self.opt['new_glimpse']:
+        if self.opt['original_att']:
             self.linear_v_fusion.load_state_dict(
                 states['linear_v_fusion']
             )
@@ -368,7 +368,7 @@ class MlbAtt(Mlb):
             'linear_q_fusion': optim_class(self.linear_q_fusion.parameters(),
                                            lr=self.opt['lr']),
         }
-        if self.opt['new_glimpse']:
+        if self.opt['original_att']:
             self.optims['linear_v_fusion'] = optim_class(
                                         self.linear_v_fusion.parameters(),
                                         lr=self.opt['lr'])

@@ -54,6 +54,11 @@ from .mlb_modules import MlbAtt, MlbNoAtt
 
     For faster training, specify '--no-metrics,' which prevents computation
     of f1 score and accuracy
+
+    Finally, it should be noted that the default attention strategy in this
+    implementation uses less parameters than the original model (though it
+    has performed better) - to use the original attention method, specify
+    '--original_att' on the command line.
 '''
 
 
@@ -329,7 +334,7 @@ class MlbVqaAgent(Agent):
         agent.add_argument('-at', '--attention', action='store_true')
         agent.add_argument('--use-bayesian', type='bool', default=True)
         agent.add_argument('--num_glimpses', type=int, default=4)
-        agent.add_argument('--new_glimpse', action='store_true')
+        agent.add_argument('--original_att', action='store_true')
         agent.add_argument('--lr', type=float, default=0.0001)
         agent.add_argument('--no-cuda', action='store_true',
                            help='disable GPUs even if available')
