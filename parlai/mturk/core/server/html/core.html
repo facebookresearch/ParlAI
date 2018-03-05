@@ -107,12 +107,13 @@
   var STATUS_ACK = 'ack';
   var STATUS_INIT = 'init';
   var STATUS_SENT = 'sent';
-  var SERVER_HEARTBEAT_TIMEOUT = 80000 // 80 Sec before we think manager died
+  var SERVER_HEARTBEAT_TIMEOUT = 60000 // 60 Sec before we think manager died
+  var SOCKET_MAYBE_DEAD_TIMEOUT = 8000
   var LOCAL_HEARTBEAT_TIMEOUT = 16000 // 16 Seconds before we assume we died
 
   /* ================= State variables ================= */
 
-  var verbosity = 4;
+  var verbosity = 2;
 
   var q = new PriorityQueue();
   var mturk_submit_url = null;
@@ -120,6 +121,7 @@
 
   var socket = null;
   var socket_closed = false;
+  var heartbeat_id = null;
   var packet_map = {};
   var packet_callback = {};
   var blocking_id = null;
@@ -127,6 +129,7 @@
   var last_server_heartbeat = null;
   var last_local_heartbeat = null;
   var displayed_messages = [];
+  var setting_socket = false;
 
   var is_cover_page = ("{{is_cover_page}}" === 'true') ? true : false;
   var is_init_page = ("{{is_init_page}}" === 'true') ? true : false;
@@ -459,19 +462,42 @@
 
   /* ================= Socket handling ================= */
 
+  function safe_packet_send(packet) {
+    if (socket.readyState == 0) {
+      return;
+    }
+    if (socket.readyState > 1) {
+      log("Socket not in ready state, restarting if possible", 2);
+      try {
+        socket.close();
+      } catch(e) {/* Socket already terminated */}
+      setup_socket();
+      return;
+    }
+    try {
+      socket.send(JSON.stringify(packet));
+    } catch(e) {
+      log("Had error " + e + " sending message, trying to restart", 2);
+      try {
+        socket.close();
+      } catch(e) {/* Socket already terminated */}
+      setup_socket();
+    }
+  }
+
   // way to send alive packets when expected to
   function send_alive() {
     send_packet(
-        TYPE_ALIVE,
-        {
-          hit_id: hit_id,
-          assignment_id: assignment_id,
-          worker_id: worker_id,
-          conversation_id: conversation_id
-        },
-        true,
-        true,
-        null
+      TYPE_ALIVE,
+      {
+        hit_id: hit_id,
+        assignment_id: assignment_id,
+        worker_id: worker_id,
+        conversation_id: conversation_id
+      },
+      true,
+      true,
+      null
     );
   }
 
@@ -496,7 +522,7 @@
       }
     } else if (msg.type === TYPE_MESSAGE) {
       // Acknowledge the message, then act on it when the ack sends
-      socket.send(JSON.stringify({
+      safe_packet_send({
         type: SOCKET_ROUTE_PACKET_STRING,
         content: {
           id: msg.id,
@@ -507,7 +533,7 @@
           type: TYPE_ACK,
           data: null
         }
-      }));
+      });
       log(msg, 3);
       if (msg.data.type === MESSAGE_TYPE_COMMAND){
         handle_command(msg.data);
@@ -519,6 +545,11 @@
 
   // Sets up and registers the socket and the callbacks
   function setup_socket() {
+    if (setting_socket || socket_closed) {
+      return;
+    }
+    setting_socket = true
+    window.setTimeout(function() {setting_socket = false;}, 4000);
     var url = window.location;
     socket = new WebSocket('wss://' + url.host);
 
@@ -526,13 +557,25 @@
 
     socket.onopen = () => {
       log('Server connected.', 2);
-      send_alive();
-      _heartbeat_thread();
+      setting_socket = false
+      window.setTimeout(send_alive, 100);
+      if (heartbeat_id == null) {
+        heartbeat_id = window.setInterval(_heartbeat_thread, 2000);
+      }
     }
 
-    socket.onerror = socket.onclose = () => {
-      log('Server disconnected.', 2);
-      setup_socket();
+    socket.onerror = () => {
+      log('Server disconnected.', 3);
+      try {
+        socket.close();
+      } catch(e) {
+        log('Server had error ' + e + ' when closing after an error', 1);
+      }
+      window.setTimeout(setup_socket, 500);
+    }
+
+    socket.onclose = () => {
+      log('Server closing.', 3);
     }
   }
 
@@ -717,7 +760,7 @@
             if (msg.type === TYPE_ALIVE) {
               event_name = SOCKET_AGENT_ALIVE_STRING;
             }
-            socket.send(JSON.stringify({type: event_name, content: msg}));
+            safe_packet_send({type: event_name, content: msg});
 
             if (msg.require_ack) {
               if (msg.blocking) {
@@ -745,16 +788,14 @@
         blocking_id = null;
       }
     }
-
-    if (!socket_closed) {
-      setTimeout(_sending_thread, SEND_THREAD_REFRESH);
-    }
   }
 
   // Thread sends heartbeats through the socket for as long we are connected
   function _heartbeat_thread() {
     if (socket_closed) {
       // No reason to keep a heartbeat if the socket is closed
+      window.clearInterval(heartbeat_id)
+      heartbeat_id = null;
       return;
     }
 
@@ -768,23 +809,27 @@
       'data': null
     };
 
-    socket.send(JSON.stringify(
-      {type: SOCKET_ROUTE_PACKET_STRING, content: hb}
-    ));
-    last_local_heartbeat=Date.now();
+    safe_packet_send({type: SOCKET_ROUTE_PACKET_STRING, content: hb});
+
+    if (last_server_heartbeat != null &&
+          Date.now() - last_server_heartbeat > SOCKET_MAYBE_DEAD_TIMEOUT) {
+      try {
+        socket.close();
+      } catch(e) {/* Socket already terminated */}
+      setup_socket();
+    }
 
     // Check to see if we've disconnected from the server
-    if (last_local_heartbeat != null &&
-        Date.now() - last_local_heartbeat > LOCAL_HEARTBEAT_TIMEOUT) {
+    if (last_server_heartbeat != null &&
+        Date.now() - last_server_heartbeat > SERVER_HEARTBEAT_TIMEOUT) {
       close_socket();
-      set_inactive_text('You have disconnected from the server, \
-        please return this HIT and take a new one if you want to keep \
-        working on these tasks. After too many \
-        disconnects you will not be able to work on these HITs in the \
-        future, check your connection if you see this message often.');
+      set_inactive_text('Our server appears to have gone down during the \
+        duration of this HIT. Please send us a message if you\'ve done \
+        substantial work and we can find out if the hit is complete enough to \
+        compensate.');
       update_UI_for_response_type('inactive');
-    } else {
-      setTimeout(_heartbeat_thread, 2000);
+      window.clearInterval(heartbeat_id)
+      heartbeat_id = null;
     }
   }
 
@@ -807,7 +852,7 @@
       init_chat_panel();
     }
     setup_socket();
-    _sending_thread();
+    window.setInterval(_sending_thread, SEND_THREAD_REFRESH);
   }
 
   // Starts everything once the document is ready

@@ -17,7 +17,7 @@ MAX_QUICK_REPLIES = 10
 MAX_TEXT_CHARS = 640
 MAX_QUICK_REPLY_TITLE_CHARS = 20
 MAX_POSTBACK_CHARS = 1000
-
+SOCKET_TIMEOUT = 6
 
 # Arbitrary attachments can be created as long as they adhere to the docs
 # developers.facebook.com/docs/messenger-platform/send-messages/templates
@@ -141,6 +141,8 @@ class MessageSocket():
         self.message_callback = message_callback
 
         self.ws = None
+        self.last_pong = None
+        self.alive = False
         self.auth_args = {'access_token': secret_token}
 
         # initialize the state
@@ -150,12 +152,29 @@ class MessageSocket():
         self.keep_running = True
         self._setup_socket()
 
+    def _safe_send(self, data, force=False):
+        if not self.alive and not force:
+            # Try to wait a second to send a packet
+            timeout = 1
+            while timeout > 0 and not self.alive:
+                time.sleep(0.1)
+                timeout -= 0.1
+            if not self.alive:
+                # don't try to send a packet if we're still dead
+                return False
+        try:
+            self.ws.send(data)
+        except websocket._exceptions.WebSocketConnectionClosedException:
+            # The channel died mid-send, wait for it to come back up
+            return False
+        return True
+
     def _send_world_alive(self):
         """Registers world with the passthrough server"""
-        self.ws.send(json.dumps({
+        self._safe_send(json.dumps({
             'type': 'world_alive',
             'content': {'id': 'WORLD_ALIVE', 'sender_id': 'world'},
-        }))
+        }), force=True)
 
     def send_fb_payload(self, receiver_id, payload):
         """Sends a payload to messenger, processes it if we can"""
@@ -224,7 +243,6 @@ class MessageSocket():
                 'Socket open: {}'.format(args)
             )
             self._send_world_alive()
-            self.alive = True
 
         def on_error(ws, error):
             try:
@@ -258,7 +276,11 @@ class MessageSocket():
             """Incoming message handler for messages from the FB user"""
             packet_dict = json.loads(args[1])
             if packet_dict['type'] == 'conn_success':
+                self.alive = True
                 return  # No action for successful connection
+            if packet_dict['type'] == 'pong':
+                self.last_pong = time.time()
+                return  # No further action for pongs
             message_data = packet_dict['content']
             shared_utils.print_and_log(
                 logging.DEBUG,
@@ -286,6 +308,22 @@ class MessageSocket():
                         logging.WARN,
                         'Socket had error {}, attempting restart'.format(e)
                     )
+                time.sleep(0.1)
+
+        def heartbeat_thread(*args):
+            while self.keep_running:
+                self._safe_send(json.dumps({
+                    'type': 'ping',
+                    'content': 'ping',
+                }))
+                if self.last_pong is None:
+                    pass
+                elif time.time() - self.last_pong > SOCKET_TIMEOUT:
+                    # Something's up, restart socket
+                    try:
+                        self.ws.close()
+                    except Exception:
+                        pass  # socket already closed
                 time.sleep(3)
 
         # Start listening thread
@@ -295,3 +333,19 @@ class MessageSocket():
         )
         self.listen_thread.daemon = True
         self.listen_thread.start()
+        time.sleep(0.2)
+
+        while not self.alive:
+            try:
+                self._send_world_alive()
+            except Exception:
+                pass
+            time.sleep(0.8)
+
+        # Start listening thread
+        self.heartbeat_thread = threading.Thread(
+            target=heartbeat_thread,
+            name='Socket-Heartbeat-Thread'
+        )
+        self.heartbeat_thread.daemon = True
+        self.heartbeat_thread.start()

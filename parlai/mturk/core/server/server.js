@@ -60,11 +60,22 @@ function _send_message(connection_id, event_name, event_data) {
     content: event_data,
   }
   // Send the message through
-  try {
-    socket.send(JSON.stringify(packet));
-  } catch (e) {
+  socket.send(JSON.stringify(packet), function ack(error) {
+    if (error === undefined) {
+      return;
+    }
     console.log('Ran into error trying to send, retrying');
-  }
+    setTimeout(function () {
+      socket.send(JSON.stringify(packet), function ack2(error2) {
+        if (error2 === undefined) {
+          return;
+        }
+        console.log("Repeat send of packet failed");
+        console.log(packet)
+        console.log(error2)
+      });
+    }, 500);
+  });
 }
 
 
@@ -110,6 +121,11 @@ function handle_alive(socket, data) {
   // Send alive packets to the world, but not from the world
   if (!(sender_id && sender_id.startsWith('[World'))) {
     _send_message(out_connection_id, 'new packet', data);
+  } else {
+    console.log("sending success");
+    socket.send(JSON.stringify(
+      {'type': 'conn_success', 'content': 'Socket is open!'}
+    ));
   }
 }
 
@@ -132,10 +148,6 @@ wss.on('connection', function (socket) {
       handle_route(data['content']);
     }
   });
-
-  socket.send(JSON.stringify(
-    {'type': 'conn_success', 'content': 'Socket is open!'}
-  ));
 });
 
 server.listen(PORT, function() {

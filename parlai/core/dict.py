@@ -133,7 +133,6 @@ class DictionaryAgent(Agent):
         # initialize fields
         self.opt = copy.deepcopy(opt)
         self.minfreq = opt['dict_minfreq']
-        self.maxtokens = opt['dict_maxtokens']
         self.null_token = opt['dict_nulltoken']
         self.end_token = opt['dict_endtoken']
         self.unk_token = opt['dict_unktoken']
@@ -141,6 +140,7 @@ class DictionaryAgent(Agent):
         self.max_ngram_size = opt['dict_max_ngram_size']
         self.tokenizer = opt.get('dict_tokenizer', DictionaryAgent.default_tok)
         self.lower = opt.get('dict_lower', DictionaryAgent.default_lower)
+        self.maxtokens = opt.get('dict_maxtokens', DictionaryAgent.default_maxtokens)
 
         if shared:
             self.freq = shared.get('freq', {})

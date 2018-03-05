@@ -63,6 +63,7 @@ class QualificationFlowSoloWorld(MTurkTaskWorld):
         self.correct = 0
         self.curr_question = 0
         self.qualification_id = qualification_id
+        self.opt = opt
 
     def generate_questions(self, num):
         questions = []
@@ -111,7 +112,8 @@ class QualificationFlowSoloWorld(MTurkTaskWorld):
         if self.firstTime and self.correct != len(self.questions):
                 mturk_utils.give_worker_qualification(
                     self.mturk_agent.worker_id,
-                    self.qualification_id
+                    self.qualification_id,
+                    is_sandbox=self.opt['is_sandbox'],
                 )
         self.mturk_agent.shutdown()
 
