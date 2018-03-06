@@ -48,9 +48,11 @@ function _send_message(event_name, event_data) {
       type: event_name,
       content: event_data
     }));
+    return true;
   } else {
     console.log('Message recieved without world connected');
     console.log(event_data);
+    return false;
   }
 }
 
@@ -66,6 +68,10 @@ wss.on('connection', function (socket) {
     data = JSON.parse(data)
     if (data['type'] == 'world_alive') {
       world_socket = socket;
+    } else if (data['type'] == 'ping') {
+      socket.send(JSON.stringify(
+        {'type': 'pong', 'content': 'pong'}
+      ))
     }
   });
 
@@ -112,9 +118,13 @@ app.post('/webhook', async function (req, res, next) {
   console.log(body);
   // Checks this is an event from a page subscription
   if (body.object === 'page') {
-    _send_message('new_packet', req.body);
+    let result = _send_message('new_packet', req.body);
     // TODO handle v. rare cases of message drops - should send timeout status
-    res.status(200).send('Successful POST');
+    if (result) {
+      res.status(200).send('Successful POST');
+    } else {
+      res.status(504).send('Timeout');
+    }
   } else {
     res.sendStatus(404);
   }

@@ -27,6 +27,8 @@ class AgentState():
         self.active_agent = overworld_agent
         self.task_id_to_agent = {}
         self.onboard_data = None
+        self.stored_data = {}
+        self.time_in_pool = {}
 
     def get_active_agent(self):
         return self.active_agent
@@ -89,9 +91,26 @@ class MessengerManager():
                 logging.DEBUG,
                 "Adding agent {} to pool...".format(agent.messenger_id)
             )
-            if world_type not in self.agent_pool:
-                self.agent_pool[world_type] = []
-            self.agent_pool[world_type].append(agent)
+            # time agent entered agent_pool
+            agent.time_in_pool.setdefault(world_type, time.time())
+            # add agent to pool
+            self.agent_pool.setdefault(world_type, []).append(agent)
+
+    def remove_agent_from_pool(self, agent, world_type='default', mark_removed=True):
+        """Remove agent from the pool"""
+        with self.agent_pool_change_condition:
+            shared_utils.print_and_log(
+                logging.DEBUG,
+                "Removing agent {} from pool...".format(agent.messenger_id)
+            )
+            if world_type in self.agent_pool and agent in self.agent_pool[world_type]:
+                self.agent_pool[world_type].remove(agent)
+                # reset agent's time_in_pool
+                if world_type in agent.time_in_pool:
+                    del agent.time_in_pool[world_type]
+                # maybe mark agent as removed
+                if mark_removed:
+                    agent.stored_data['removed_from_pool']=True
 
     def _expire_all_conversations(self):
         """iterate through all sub-worlds and shut them down"""
@@ -184,10 +203,23 @@ class MessengerManager():
             return
         agent_state = self._get_agent_state(agent_id)
         if agent_state.get_active_agent() is None:
-            self.observe_message(
-                agent_id,
-                "We are trying to pair you with another person, please wait."
-            )
+            # return agent to overworld
+            if 'text' in message['message'] and message['message']['text']=='EXIT':
+                # remove agent from agent_pool
+                to_remove = []
+                for world_type, time in agent_state.time_in_pool.items():
+                    to_remove.append(world_type)
+                for world_type in to_remove:
+                    self.remove_agent_from_pool(agent_state, world_type, mark_removed=False)
+                # put agent back in overworld
+                agent_state.set_active_agent(agent_state.get_overworld_agent())
+            else:
+                self.observe_message(
+                    agent_id,
+                    "We are trying to pair you with another person, please wait. "
+                    "If you wish to return to the Overworld, click *EXIT*",
+                    quick_replies=['EXIT']
+                )
         else:
             agent_state.get_active_agent().put_data(message)
 
@@ -252,6 +284,12 @@ class MessengerManager():
                 assignment_id
             )
         )
+
+    def get_agent_state(self, agent_id):
+        """Get a worker by agent_id"""
+        if agent_id in self.messenger_agent_states:
+            return self.messenger_agent_states[agent_id]
+        return None
 
     # Manager Lifecycle Functions #
 
@@ -338,7 +376,7 @@ class MessengerManager():
     def set_agents_required(self, max_agents_for):
         self.max_agents_for = max_agents_for
 
-    def start_task(self, assign_role_functions, task_functions):
+    def start_task(self, assign_role_functions, task_functions, max_time_in_pool=None):
         """Handle running a task by checking to see when enough agents are
         in the pool to start an instance of the task. Continue doing this
         until the desired number of conversations is had.
@@ -373,6 +411,16 @@ class MessengerManager():
             with self.agent_pool_change_condition:
                 valid_pools = self._get_unique_pool()
                 for world_type, agent_pool in valid_pools.items():
+                    # check if agent has exceeded max time in pool
+                    if max_time_in_pool is not None and max_time_in_pool[world_type] is not None:
+                        for agent_state in agent_pool:
+                            if agent_state.time_in_pool.get(world_type):
+                                if time.time() - agent_state.time_in_pool[world_type] > max_time_in_pool[world_type]:
+                                    # remove agent from agent_pool
+                                    self.remove_agent_from_pool(agent_state, world_type)
+                                    # put agent back in overworld
+                                    agent_state.set_active_agent(agent_state.get_overworld_agent())
+
                     needed_agents = self.max_agents_for[world_type]
                     if len(agent_pool) >= needed_agents:
                         # enough agents in pool to start new conversation

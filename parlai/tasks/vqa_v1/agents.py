@@ -13,7 +13,7 @@ try:
 except Exception as e:
     raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset
-from parlai_external.agents.mlb.mlb import VqaDictionaryAgent
+from parlai.agents.mlb_vqa.mlb_vqa import VqaDictionaryAgent
 
 import json
 import os
@@ -62,7 +62,7 @@ class VQADataset(Dataset):
         _, _, self.image_path = _path(opt)
         self.image_loader = ImageLoader(opt)
         data_path, annotation_path, self.image_path = _path(opt)
-        self._setup_data(data_path, annotation_path)
+        self._setup_data(data_path, annotation_path, opt.get('unittest', False))
         if self.use_hdf5:
             try:
                 import h5py
@@ -112,12 +112,16 @@ class VQADataset(Dataset):
             self.num_eps = lengths['num_eps']
             self.num_exs = lengths['num_exs']
 
-    def _setup_data(self, data_path, annotation_path):
+    def _setup_data(self, data_path, annotation_path, unittest):
         with open(data_path) as data_file:
             self.ques = json.load(data_file)
         if not self.datatype.startswith('test'):
             with open(annotation_path) as data_file:
                 self.annotation = json.load(data_file)
+        if unittest:
+            self.ques['questions'] = self.ques['questions'][:10]
+            if not self.datatype.startswith('test'):
+                self.annotation['annotations'] = self.annotation['annotations'][:10]
         self.image_paths = set()
         for qa in self.ques['questions']:
             self.image_paths.add(self.image_path + '%012d.jpg' % (qa['image_id']))
