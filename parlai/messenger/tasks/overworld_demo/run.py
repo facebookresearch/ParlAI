@@ -22,8 +22,8 @@ def main():
     messenger_manager.setup_server()
     messenger_manager.init_new_state()
 
-    def get_overworld(agent):
-        return MessengerOverworld(None, agent)
+    def get_overworld(opt, agent):
+        return MessengerOverworld(opt, agent)
 
     onboard_functions = {name: worlds[0].run for (name, worlds)
                          in MessengerOverworld.DEMOS.items()}
