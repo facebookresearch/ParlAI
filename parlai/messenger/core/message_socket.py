@@ -169,6 +169,12 @@ class MessageSocket():
             return False
         return True
 
+    def _ensure_closed(self):
+        try:
+            self.ws.close()
+        except websocket.WebSocketConnectionClosedException():
+            pass
+
     def _send_world_alive(self):
         """Registers world with the passthrough server"""
         self._safe_send(json.dumps({
@@ -270,7 +276,7 @@ class MessageSocket():
                 'World server disconnected: {}'.format(args)
             )
             self.alive = False
-            self.ws.close()
+            self._ensure_closed()
 
         def on_message(*args):
             """Incoming message handler for messages from the FB user"""
@@ -306,7 +312,7 @@ class MessageSocket():
                 except Exception as e:
                     shared_utils.print_and_log(
                         logging.WARN,
-                        'Socket had error {}, attempting restart'.format(e)
+                        'Socket error {}, attempting restart'.format(repr(e))
                     )
                 time.sleep(0.1)
 
@@ -319,11 +325,7 @@ class MessageSocket():
                 if self.last_pong is None:
                     pass
                 elif time.time() - self.last_pong > SOCKET_TIMEOUT:
-                    # Something's up, restart socket
-                    try:
-                        self.ws.close()
-                    except Exception:
-                        pass  # socket already closed
+                    self._ensure_closed()
                 time.sleep(3)
 
         # Start listening thread
