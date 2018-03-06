@@ -162,11 +162,11 @@ class MessengerManager():
                 )
                 return
 
-        def _overworld_function(agent_id, task_id):
+        def _overworld_function(opt, agent_id, task_id):
             """Wrapper function for maintaining an overworld"""
             agent_state = self._get_agent_state(agent_id)
             agent = agent_state.get_overworld_agent()
-            overworld = self.overworld_func(agent)
+            overworld = self.overworld_func(opt, agent)
 
             while self.running:
                 world_type = overworld.parley()
@@ -185,7 +185,7 @@ class MessengerManager():
         # Start the onboarding thread and run it
         overworld_thread = threading.Thread(
             target=_overworld_function,
-            args=(agent_id, task_id),
+            args=(self.opt, agent_id, task_id),
             name=task_id
         )
         overworld_thread.daemon = True
@@ -204,7 +204,7 @@ class MessengerManager():
         agent_state = self._get_agent_state(agent_id)
         if agent_state.get_active_agent() is None:
             # return agent to overworld
-            if 'text' in message['message'] and message['message']['text']=='[EXIT]':
+            if 'text' in message['message'] and message['message']['text']=='EXIT':
                 # remove agent from agent_pool
                 to_remove = []
                 for world_type, time in agent_state.time_in_pool.items():
@@ -217,8 +217,8 @@ class MessengerManager():
                 self.observe_message(
                     agent_id,
                     "We are trying to pair you with another person, please wait. "
-                    "If you wish to return to the Overworld, click *[EXIT]*",
-                    quick_replies=['[EXIT]']
+                    "If you wish to return to the Overworld, click *EXIT*",
+                    quick_replies=['EXIT']
                 )
         else:
             agent_state.get_active_agent().put_data(message)
@@ -231,7 +231,7 @@ class MessengerManager():
         """Handle creating an onboarding thread and moving an agent through
         the onboarding process
         """
-        def _onboard_function(agent_id, world_type, task_id):
+        def _onboard_function(opt, agent_id, world_type, task_id):
             """Onboarding wrapper to set state to onboarding properly"""
             agent_state = self._get_agent_state(agent_id)
             data = None
@@ -241,7 +241,7 @@ class MessengerManager():
                 agent = self._create_agent(task_id, agent_id)
                 agent_state.set_active_agent(agent)
                 agent_state.assign_agent_to_task(agent, task_id)
-                data = self.onboard_functions[world_type](agent, task_id)
+                data = self.onboard_functions[world_type](opt, agent, task_id)
                 agent_state.onboard_data = data
                 agent_state.set_active_agent(None)
 
@@ -252,7 +252,7 @@ class MessengerManager():
         # Start the onboarding thread and run it
         onboard_thread = threading.Thread(
             target=_onboard_function,
-            args=(agent_id, world_type, task_id),
+            args=(self.opt, agent_id, world_type, task_id),
             name=task_id
         )
         onboard_thread.daemon = True

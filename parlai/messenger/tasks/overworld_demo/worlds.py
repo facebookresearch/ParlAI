@@ -14,8 +14,8 @@ class MessengerEchoOnboardWorld(OnboardWorld):
     onboarding worlds that only exist to send an introduction message.
     """
     @staticmethod
-    def run(agent, task_id):
-        world = MessengerEchoOnboardWorld(opt=None, agent=agent)
+    def run(opt, agent, task_id):
+        world = MessengerEchoOnboardWorld(opt=opt, agent=agent)
         while not world.episode_done():
             world.parley()
         world.shutdown()
@@ -81,10 +81,10 @@ class MessengerOnboardDataOnboardWorld(OnboardWorld):
         self.turn = 0
 
     @staticmethod
-    def run(agent, task_id):
+    def run(opt, agent, task_id):
         '''Runs an instance of the onboarding world. Data returned from
         here will be made available in the agent.onboard_data field'''
-        world = MessengerOnboardDataOnboardWorld(opt=None, agent=agent)
+        world = MessengerOnboardDataOnboardWorld(opt=opt, agent=agent)
         while not world.episode_done():
             world.parley()
         world.shutdown()
@@ -166,8 +166,8 @@ class MessengerChatOnboardWorld(OnboardWorld):
         self.turn = 0
 
     @staticmethod
-    def run(agent, task_id):
-        world = MessengerChatOnboardWorld(opt=None, agent=agent)
+    def run(opt, agent, task_id):
+        world = MessengerChatOnboardWorld(opt=opt, agent=agent)
         while not world.episode_done():
             world.parley()
         world.shutdown()
