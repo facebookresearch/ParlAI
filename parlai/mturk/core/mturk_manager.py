@@ -316,7 +316,7 @@ class MTurkManager():
                 change_callback=_push_worker_state
             )
 
-    def _setup_socket(self):
+    def _setup_socket(self, timeout_seconds=None):
         """Set up a socket_manager with defined callbacks"""
         self.socket_manager = SocketManager(
             self.server_url,
@@ -324,7 +324,8 @@ class MTurkManager():
             self._on_alive,
             self._on_new_message,
             self._on_socket_dead,
-            self.task_group_id
+            self.task_group_id,
+            socket_dead_timeout=timeout_seconds,
         )
 
     def _on_alive(self, pkt):
@@ -749,12 +750,12 @@ class MTurkManager():
         shared_utils.print_and_log(logging.INFO, "MTurk server setup done.\n",
                                    should_print=True)
 
-    def ready_to_accept_workers(self):
+    def ready_to_accept_workers(self, timeout_seconds=None):
         """Set up socket to start communicating to workers"""
         shared_utils.print_and_log(logging.INFO,
                                    'Local: Setting up WebSocket...',
                                    not self.is_test)
-        self._setup_socket()
+        self._setup_socket(timeout_seconds=timeout_seconds)
 
     def start_new_run(self):
         """Clear state to prepare for a new run"""
