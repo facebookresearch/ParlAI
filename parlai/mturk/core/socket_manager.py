@@ -219,10 +219,16 @@ class SocketManager():
                 return False
         try:
             self.ws.send(data)
-        except websocket._exceptions.WebSocketConnectionClosedException:
+        except websocket.WebSocketConnectionClosedException:
             # The channel died mid-send, wait for it to come back up
             return False
         return True
+
+    def _ensure_closed(self):
+        try:
+            self.ws.close()
+        except websocket.WebSocketConnectionClosedException:
+            pass
 
     def _send_world_alive(self):
         """Registers world with the passthrough server"""
@@ -306,7 +312,7 @@ class SocketManager():
         def on_error(ws, error):
             try:
                 if error.errno == errno.ECONNREFUSED:
-                    ws.close()
+                    self._ensure_closed()
                     self.use_socket = False
                     raise Exception("Socket refused connection, cancelling")
                 else:
@@ -315,11 +321,13 @@ class SocketManager():
                         'Socket logged error: {}'.format(error),
                     )
             except BaseException:
+                if type(error) is websocket.WebSocketConnectionClosedException:
+                    return  # Connection closed is noop
                 shared_utils.print_and_log(
                     logging.WARN,
-                    'Socket logged string error: {} Restarting'.format(error),
+                    'Socket logged error: {} Restarting'.format(repr(error)),
                 )
-                ws.close()
+                self._ensure_closed()
 
         def on_disconnect(*args):
             """Disconnect event is a no-op for us, as the server reconnects
@@ -329,7 +337,7 @@ class SocketManager():
                 'World server disconnected: {}'.format(args)
             )
             self.alive = False
-            self.ws.close()
+            self._ensure_closed()
 
         def on_message(*args):
             """Incoming message handler for ACKs, ALIVEs, HEARTBEATs,
@@ -390,11 +398,11 @@ class SocketManager():
                         on_close=on_disconnect,
                     )
                     self.ws.on_open = on_socket_open
-                    self.ws.run_forever()
+                    self.ws.run_forever(ping_interval=1, ping_timeout=0.9)
                 except Exception as e:
                     shared_utils.print_and_log(
                         logging.WARN,
-                        'Socket had error {}, attempting restart'.format(e)
+                        'Socket error {}, attempting restart'.format(repr(e))
                     )
                 time.sleep(0.2)
 
@@ -405,7 +413,7 @@ class SocketManager():
         )
         self.listen_thread.daemon = True
         self.listen_thread.start()
-        time.sleep(0.2)
+        time.sleep(1.2)
         while not self.alive:
             try:
                 self._send_world_alive()

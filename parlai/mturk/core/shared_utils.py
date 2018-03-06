@@ -41,7 +41,7 @@ def set_is_debug(is_debug):
 
 
 def print_and_log(level, message, should_print=False):
-    if logging_enabled and level >= log_level:
+    if (logging_enabled and level >= log_level) or debug:
         logger.log(level, message)
     if should_print or debug:  # Always print message in debug mode
         print(message)
