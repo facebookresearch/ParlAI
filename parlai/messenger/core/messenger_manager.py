@@ -162,11 +162,11 @@ class MessengerManager():
                 )
                 return
 
-        def _overworld_function(agent_id, task_id):
+        def _overworld_function(opt, agent_id, task_id):
             """Wrapper function for maintaining an overworld"""
             agent_state = self._get_agent_state(agent_id)
             agent = agent_state.get_overworld_agent()
-            overworld = self.overworld_func(agent)
+            overworld = self.overworld_func(opt, agent)
 
             while self.running:
                 world_type = overworld.parley()
@@ -185,7 +185,7 @@ class MessengerManager():
         # Start the onboarding thread and run it
         overworld_thread = threading.Thread(
             target=_overworld_function,
-            args=(agent_id, task_id),
+            args=(self.opt, agent_id, task_id),
             name=task_id
         )
         overworld_thread.daemon = True

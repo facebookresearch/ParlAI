@@ -33,8 +33,8 @@ def main():
     messenger_manager.setup_server()
     messenger_manager.init_new_state()
 
-    def get_overworld(agent):
-        return MessengerOverworld(None, agent)
+    def get_overworld(opt, agent):
+        return MessengerOverworld(opt, agent)
 
     def assign_agent_role(agent):
         agent[0].disp_id = 'Agent'
