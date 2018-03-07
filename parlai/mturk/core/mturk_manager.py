@@ -1061,7 +1061,12 @@ class MTurkManager():
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         try:
             response = client.get_assignment(AssignmentId=assignment_id)
-            return response['Assignment']['AssignmentStatus']
+            status = response['Assignment']['AssignmentStatus']
+            worker_id = self.assignment_to_worker_id[assignment_id]
+            agent = self._get_agent(worker_id, assignment_id)
+            if agent is not None and status == MTurkAgent.ASSIGNMENT_DONE:
+                agent.hit_is_complete = True
+            return status
         except ClientError as e:
             # If the assignment isn't done, asking for the assignment will fail
             not_done_message = ('This operation can be called with a status '
