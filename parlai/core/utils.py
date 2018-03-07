@@ -108,7 +108,10 @@ def round_sigfigs(x, sigfigs=4):
     except (RuntimeError, TypeError):
         # handle 1D torch tensors
         # if anything else breaks here please file an issue on Github
-        return round_sigfigs(x[0], sigfigs)
+        if hasattr(x, 'item'):
+            return round_sigfigs(x.item(), sigfigs)
+        else:
+            return round_sigfigs(x[0], sigfigs)
     except (ValueError, OverflowError) as ex:
         if x in [float('inf'), float('-inf')] or x != x:  # inf or nan
             return x

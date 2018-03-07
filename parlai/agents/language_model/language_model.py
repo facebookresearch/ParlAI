@@ -444,8 +444,6 @@ class LanguageModelAgent(Agent):
             xs, ys, labels, valid_inds, _, y_lens = PaddingUtils.pad_text(
                 observations, self.dict, end_idx=self.END_IDX,
                 null_idx=self.NULL_IDX)
-            if xs is None:
-                return None, None, None, None, None
 
             if self.use_cuda:
                 if xs is not None:
