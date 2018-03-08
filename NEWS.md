@@ -1,5 +1,7 @@
 <h2>News</h2>
 
+2018-03-07: Added [IBM's sequence to sequence](https://github.com/IBM/pytorch-seq2seq) model to parlai/agents. To use it, just set --model ibm_seq2seq.
+
 2018-01-23: Several new tasks added: [SNLI](https://nlp.stanford.edu/projects/snli/), [MultiNLI](https://arxiv.org/abs/1704.05426), [COPA](http://people.ict.usc.edu/~gordon/copa.html), [NarrativeQA](https://github.com/deepmind/narrativeqa), Twitter and [Persona-Chat](https://arxiv.org/abs/1801.07243).
 
 2017-12-14: Fast, multiprocessed data loading supported with [Pytorch data loader](https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/pytorch_data_teacher.py)
