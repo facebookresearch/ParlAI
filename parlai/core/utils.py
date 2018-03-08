@@ -261,6 +261,7 @@ def maintain_dialog_history(history, observation, reply='',
         history['labels'] = observation['eval_labels']
     return history['dialog']
 
+
 class NoLock(object):
     """Empty `lock`. Does nothing when you enter or exit."""
     def __enter__(self):
@@ -459,12 +460,12 @@ class PaddingUtils(object):
                 print('PREDICTION: ', curr_pred, '\n~')
         return
 
+
 class OffensiveLanguageDetector(object):
     '''Detects offensive language using a list of offensive language and phrases
     from https://github.com/LDNOOBW.
     '''
     def __init__(self):
-        #check if file built
         import parlai.core.build_data as build_data
         from parlai.core.params import ParlaiParser
         parser = ParlaiParser(False, False)
