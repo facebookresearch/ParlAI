@@ -507,6 +507,8 @@ class OffensiveLanguageDetector(object):
 
     def contains_offensive_language(self, text):
         '''Determines if text contains any offensive words from the list.'''
+        # TODO : make this faster so we can support removing offensive words
+        # when creating a dictionary
         lower_text = text.lower()
         for word in self.offensive_words:
             if word in lower_text:
