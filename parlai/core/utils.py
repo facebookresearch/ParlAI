@@ -6,6 +6,7 @@
 
 from collections import deque
 import math
+import os
 import random
 import time
 
@@ -458,3 +459,58 @@ class PaddingUtils(object):
                 print('TEXT: ', observations[valid_inds[i]]['text'].replace('__END__', ''))
                 print('PREDICTION: ', curr_pred, '\n~')
         return
+
+
+class OffensiveLanguageDetector(object):
+    '''Detects offensive language using a list of offensive language and phrases
+    from https://github.com/LDNOOBW.
+    '''
+    def __init__(self):
+        import parlai.core.build_data as build_data
+        from parlai.core.params import ParlaiParser
+        parser = ParlaiParser(False, False)
+
+        def _path():
+            # Build the data if it doesn't exist.
+            build()
+            return os.path.join(self.datapath, 'OffensiveLanguage', 'OffensiveLanguage.txt')
+
+        def build():
+            version = 'v1.0'
+            dpath = os.path.join(self.datapath, 'OffensiveLanguage')
+            if not build_data.built(dpath, version):
+                print('[building data: ' + dpath + ']')
+                if build_data.built(dpath):
+                    # An older version exists, so remove these outdated files.
+                    build_data.remove_dir(dpath)
+                build_data.make_dir(dpath)
+
+                # Download the data.
+                fname = 'OffensiveLanguage.txt'
+                url = 'https://s3.amazonaws.com/fair-data/parlai/offensive_language/' + fname
+                build_data.download(url, dpath, fname)
+
+                # Mark the data as built.
+                build_data.mark_done(dpath, version)
+
+        self.datapath = os.path.join(parser.parlai_home, 'data')
+        self.datafile = _path()
+
+        # read text file to generate list of offensive words
+        self.offensive_words = []
+        with open(self.datafile, 'r') as f:
+            self.offensive_words += f.read().splitlines()
+
+    def add_words(self, word_list):
+        '''Add custom words to screen.'''
+        self.offensive_words += word_list
+
+    def contains_offensive_language(self, text):
+        '''Determines if text contains any offensive words from the list.'''
+        # TODO : make this faster so we can support removing offensive words
+        # when creating a dictionary
+        lower_text = text.lower()
+        for word in self.offensive_words:
+            if word in lower_text:
+                return True
+        return False
