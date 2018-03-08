@@ -503,8 +503,7 @@ class OffensiveLanguageDetector(object):
 
     def add_words(self, word_list):
         '''Add custom words to screen.'''
-        for word in word_list:
-            self.offensive_words.append(word)
+        self.offensive_words += word_list
 
     def contains_offensive_language(self, text):
         '''Determines if text contains any offensive words from the list.'''
