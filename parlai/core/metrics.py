@@ -258,9 +258,6 @@ class Metrics(object):
             for k in self.metrics_list:
                 if self.metrics[k + '_cnt'] > 0 and k != 'correct' and k != 'f1':
                     m[k] = round_sigfigs(self.metrics[k] / self.metrics[k + '_cnt'], 4)
-        # if 'loss' in m and 'ppl' not in m:
-        if 'loss' in m:
-            m['ppl'] = round_sigfigs(math.exp(m['loss']), 4)
         return m
 
     def clear(self):

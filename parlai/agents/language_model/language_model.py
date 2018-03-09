@@ -6,7 +6,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import PaddingUtils
+from parlai.core.utils import PaddingUtils, round_sigfigs
 from .modules import RNNModel
 
 import torch
@@ -84,6 +84,7 @@ class LanguageModelAgent(Agent):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
         opt = self.opt  # there is a deepcopy in the init
+        self.metrics = {'loss': 0, 'num_tokens': 0, 'lmloss': 0, 'lm_num_tokens': 0}
         self.states = {}
         # check for cuda
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
@@ -170,15 +171,11 @@ class LanguageModelAgent(Agent):
             # if model was built, do more setup
             self.clip = opt.get('gradient_clip', 0.25)
             # set up criteria
-            self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX)
+            self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX,
+                                                 size_average=False)
             if self.use_cuda:
                 # push to cuda
                 self.criterion.cuda()
-            # set up criterion for eval: we do not want to average over size
-            self.eval_criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, size_average=False)
-            if self.use_cuda:
-                # push to cuda
-                self.eval_criterion.cuda()
             # init hidden state
             self.hidden = self.model.init_hidden(self.batchsize)
             # init tensor of end tokens
@@ -241,6 +238,27 @@ class LanguageModelAgent(Agent):
     def reset(self):
         """Reset observation and episode_done."""
         self.observation = None
+        self.reset_metrics()
+
+    def reset_metrics(self):
+        self.metrics.clear()
+        self.metrics['loss'] = 0
+        self.metrics['lmloss'] = 0
+        self.metrics['num_tokens'] = 0
+        self.metrics['lm_num_tokens'] = 0
+
+    def report(self):
+        m = {}
+        if self.metrics['num_tokens'] > 0:
+            m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
+            m['ppl'] = math.exp(m['loss'])
+        if self.metrics['lm_num_tokens'] > 0:
+            m['lmloss'] = self.metrics['lmloss'] / self.metrics['lm_num_tokens']
+            m['lmppl'] = math.exp(m['lmloss'])
+        for k, v in m.items():
+            # clean up: rounds to sigfigs and converts tensors to floats
+            m[k] = round_sigfigs(v, 4)
+        return m
 
     def share(self):
         """Share internal states between parent and child instances."""
@@ -332,13 +350,13 @@ class LanguageModelAgent(Agent):
         output, hidden = self.model(Variable(self.ends[:bsz].view(1,bsz)), self.hidden)
         self.hidden = self.repackage_hidden(hidden)
         output_flat = output.view(-1, len(self.dict))
-        loss += self.eval_criterion(output_flat, targets.select(1,0).view(-1)).data
+        loss += self.criterion(output_flat, targets.select(1,0).view(-1)).data
 
         for i in range(1, targets.size(1)):
             output, hidden = self.model(targets.select(1,i-1).view(1, bsz), self.hidden, no_pack=True)
             self.hidden = self.repackage_hidden(hidden)
             output_flat = output.view(-1, len(self.dict))
-            loss += self.eval_criterion(output_flat, targets.select(1,i).view(-1)).data
+            loss += self.criterion(output_flat, targets.select(1,i).view(-1)).data
 
         return loss/float(sum(y_lens))
 
@@ -391,10 +409,14 @@ class LanguageModelAgent(Agent):
             self.zero_grad()
             output, hidden = self.model(data, hidden)
             loss = self.criterion(output.view(-1, len(self.dict)), targets.view(-1))
+            # save loss to metrics
+            target_tokens = targets.ne(self.NULL_IDX).long().sum().data[0]
+            self.metrics['lmloss'] += loss.double().data[0]
+            self.metrics['lm_num_tokens'] += target_tokens
+            # average loss per token
+            loss /= target_tokens
             loss.backward(retain_graph=True)
             self.update_params()
-            loss_dict = {'lmloss': loss.data}
-            loss_dict['lmppl'] = math.exp(loss.data)
         else:
             self.model.eval()
             predictions = self.get_predictions(data)
@@ -403,7 +425,8 @@ class LanguageModelAgent(Agent):
             if bsz != self.batchsize:
                 self.hidden = self.model.init_hidden(bsz)
             loss = self.get_target_loss(data, self.hidden, targets, y_lens)
-            loss_dict['loss'] = loss
+            self.metrics['loss'] += loss
+            self.metrics['num_tokens'] += sum(y_lens)
 
         return output, hidden, loss_dict, predictions
 
