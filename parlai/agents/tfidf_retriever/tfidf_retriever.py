@@ -129,7 +129,7 @@ class TfidfRetrieverAgent(Agent):
             self.ranker = TfidfDocRanker(
                 tfidf_path=self.opt['retriever_tfidfpath'], strict=False)
 
-    def save(self):
+    def save(self, path=None):
         self.rebuild()
 
     def act(self):
@@ -166,8 +166,8 @@ class TfidfRetrieverAgent(Agent):
                     reply['text'] = reply['text_candidates'][0]
                 elif len(doc_ids) > 0:
                     # return stored fact
-                    total = sum(doc_scores)
-                    doc_probs = [d / total for d in doc_scores]
+                    # total = sum(doc_scores)
+                    # doc_probs = [d / total for d in doc_scores]
 
                     # returned
                     picks = [self.doc2txt(int(did)) for did in doc_ids]
