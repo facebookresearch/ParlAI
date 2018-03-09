@@ -187,6 +187,8 @@ class MessageSocket():
         api_address = 'https://graph.facebook.com/v2.6/me/messages'
         if payload['type'] == 'list':
             data = create_compact_list_message(payload['data'])
+        elif payload['type'] in ['image', 'video', 'file', 'audio']:
+            data = create_attachment(payload['type'], payload['url'])    
         else:
             data = payload['data']
         message = {
