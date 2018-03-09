@@ -399,9 +399,7 @@ class LanguageModelAgent(Agent):
 
 
     def predict(self, data, hidden, targets=None, is_training=True, y_lens=None):
-        """Produce a prediction from our model.
-        """
-        loss_dict = None
+        """Produce a prediction from our model."""
         output = None
         predictions = None
         if is_training:
@@ -420,7 +418,6 @@ class LanguageModelAgent(Agent):
         else:
             self.model.eval()
             predictions = self.get_predictions(data)
-            loss_dict = {}
             bsz = data.size(0)
             if bsz != self.batchsize:
                 self.hidden = self.model.init_hidden(bsz)
@@ -428,7 +425,7 @@ class LanguageModelAgent(Agent):
             self.metrics['loss'] += loss
             self.metrics['num_tokens'] += sum(y_lens)
 
-        return output, hidden, loss_dict, predictions
+        return output, hidden, predictions
 
     def vectorize(self, observations, seq_len, is_training):
         """Convert a list of observations into input & target tensors."""
@@ -508,7 +505,7 @@ class LanguageModelAgent(Agent):
             temp_dicts = [{'id': self.getID()} for _ in range(len(observations))]
             # ignore case when we do not return any valid indices
             if data_list[i] is not None:
-                output, hidden, loss_dict, predictions = self.predict(data_list[i], self.hidden, targets_list[i], self.is_training, y_lens)
+                output, hidden, predictions = self.predict(data_list[i], self.hidden, targets_list[i], self.is_training, y_lens)
                 self.hidden = self.repackage_hidden(hidden)
 
                 if predictions is not None:
@@ -516,13 +513,6 @@ class LanguageModelAgent(Agent):
                     PaddingUtils.map_predictions(
                         predictions.cpu(), valid_inds, temp_dicts, observations,
                         self.dict, self.END_IDX, report_freq=self.opt['report_freq'])
-
-                if loss_dict is not None:
-                    if 'metrics' in temp_dicts[0]:
-                        for k, v in loss_dict.items():
-                            temp_dicts[0]['metrics'][k] = v
-                    else:
-                        temp_dicts[0]['metrics'] = loss_dict
 
             batch_reply += temp_dicts
 
