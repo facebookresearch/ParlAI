@@ -404,7 +404,6 @@ class LanguageModelAgent(Agent):
                 self.hidden = self.model.init_hidden(bsz)
             loss = self.get_target_loss(data, self.hidden, targets, y_lens)
             loss_dict['loss'] = loss
-            loss_dict['ppl'] = math.exp(loss)
 
         return output, hidden, loss_dict, predictions
 

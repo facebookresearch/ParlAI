@@ -338,7 +338,7 @@ class IbmSeq2seqAgent(Agent):
             loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
             loss.backward()
             self.update_params()
-            loss_dict = {'loss': loss.data[0], 'ppl': (math.e**loss).data[0]}
+            loss_dict = {'loss': loss.data[0]}
         else:
             self.model.eval()
             out, hid, result = self.model(xs, x_lens)
@@ -349,7 +349,7 @@ class IbmSeq2seqAgent(Agent):
                 out, hid, result = self.model(xs, x_lens, y_in, teacher_forcing_ratio=False)
                 scores = torch.cat(out)
                 loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
-                loss_dict = {'loss': loss.data[0], 'ppl': (math.e**loss).data[0]}
+                loss_dict = {'loss': loss.data[0]}
 
         predictions = torch.cat(result['sequence'], 1)
         return predictions, loss_dict

@@ -399,7 +399,7 @@ class Seq2seqAgent(Agent):
             loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
             loss.backward()
             self.update_params()
-            loss_dict = {'loss': loss.data[0], 'ppl': (math.e**loss).data[0]}
+            loss_dict = {'loss': loss.data[0]}
         else:
             self.model.eval()
             predictions, _scores, text_cand_inds = self.model(
@@ -409,7 +409,7 @@ class Seq2seqAgent(Agent):
                 # calculate loss on targets
                 _, scores, _ = self.model(xs, ys)
                 loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
-                loss_dict = {'loss': loss.data[0], 'ppl': (math.e**loss).data[0]}
+                loss_dict = {'loss': loss.data[0]}
 
         return predictions, text_cand_inds, loss_dict
 

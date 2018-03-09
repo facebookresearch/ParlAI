@@ -180,11 +180,14 @@ class TrainLoop():
             self.agent.save(opt['model_file'] + '.checkpoint')
         if hasattr(self.agent, 'receive_metrics'):
             self.agent.receive_metrics(valid_report)
-        if self.best_valid is None or self.valid_optim * valid_report[opt['validation_metric']] > self.valid_optim * self.best_valid:
-            self.best_valid = valid_report[opt['validation_metric']]
+        new_valid = valid_report[opt['validation_metric']]
+        if self.best_valid is None or self.valid_optim * new_valid > self.valid_optim * self.best_valid:
+            print('[ new best {}: {}{} ]'.format(
+                opt['validation_metric'], new_valid,
+                ' (previous best was {})'.format(self.best_valid)
+                    if self.best_valid is not None else ''))
+            self.best_valid = new_valid
             self.impatience = 0
-            print('[ new best {}: {} ]'.format(
-                opt['validation_metric'], self.best_valid))
             if opt.get('model_file'):
                 print("[ saving best valid model: " + opt['model_file'] + " ]")
                 self.agent.save(opt['model_file'])
