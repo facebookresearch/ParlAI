@@ -10,7 +10,7 @@ task_config = {}
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,
 and everywhere the HIT is mentioned.
 """
-task_config['hit_title'] = 'Play a character and chat![BUGGY COPY DETECTION FIXED][You can keep accepting new HITs]'
+task_config['hit_title'] = 'Play a character and chat! [You can keep accepting new HITs]'
 
 
 """A description includes detailed information about the kind of task the HIT contains.

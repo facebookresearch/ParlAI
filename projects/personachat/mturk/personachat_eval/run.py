@@ -5,7 +5,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
-import word_language_model.data as data
 from worlds import \
     PersonaChatEvalWorld, PersonaProfileWorld, PersonasGenerator
 from task_config import task_config
