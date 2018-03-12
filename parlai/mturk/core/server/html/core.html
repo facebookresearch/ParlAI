@@ -816,6 +816,9 @@
       try {
         socket.close();
       } catch(e) {/* Socket already terminated */}
+      window.clearInterval(heartbeat_id);
+      heartbeat_id = null;
+      last_server_heartbeat = null;
       setup_socket();
     }
 

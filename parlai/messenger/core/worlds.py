@@ -30,7 +30,7 @@ class OnboardWorld(World):
         self.episodeDone = False
 
     @staticmethod
-    def run(agent, task_id):
+    def run(opt, agent, task_id):
         pass
 
     def parley(self):

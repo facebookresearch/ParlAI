@@ -164,7 +164,7 @@ class MessageSocket():
                 return False
         try:
             self.ws.send(data)
-        except websocket._exceptions.WebSocketConnectionClosedException:
+        except websocket.WebSocketConnectionClosedException:
             # The channel died mid-send, wait for it to come back up
             return False
         return True
@@ -172,7 +172,7 @@ class MessageSocket():
     def _ensure_closed(self):
         try:
             self.ws.close()
-        except websocket.WebSocketConnectionClosedException():
+        except websocket.WebSocketConnectionClosedException:
             pass
 
     def _send_world_alive(self):
@@ -187,6 +187,8 @@ class MessageSocket():
         api_address = 'https://graph.facebook.com/v2.6/me/messages'
         if payload['type'] == 'list':
             data = create_compact_list_message(payload['data'])
+        elif payload['type'] in ['image', 'video', 'file', 'audio']:
+            data = create_attachment(payload['type'], payload['url'])    
         else:
             data = payload['data']
         message = {
@@ -253,20 +255,22 @@ class MessageSocket():
         def on_error(ws, error):
             try:
                 if error.errno == errno.ECONNREFUSED:
-                    ws.close()
+                    self._ensure_closed()
                     self.use_socket = False
                     raise Exception("Socket refused connection, cancelling")
                 else:
                     shared_utils.print_and_log(
                         logging.WARN,
-                        'Socket logged error: {}'.format(error),
+                        'Socket logged error: {}'.format(repr(error)),
                     )
             except BaseException:
+                if type(error) is websocket.WebSocketConnectionClosedException:
+                    return  # Connection closed is noop
                 shared_utils.print_and_log(
                     logging.WARN,
-                    'Socket logged string error: {} Restarting'.format(error),
+                    'Socket logged error: {} Restarting'.format(repr(error)),
                 )
-                ws.close()
+                self._ensure_closed()
 
         def on_disconnect(*args):
             """Disconnect event is a no-op for us, as the server reconnects
@@ -308,25 +312,13 @@ class MessageSocket():
                         on_close=on_disconnect,
                     )
                     self.ws.on_open = on_socket_open
-                    self.ws.run_forever()
+                    self.ws.run_forever(ping_interval=1, ping_timeout=0.9)
                 except Exception as e:
                     shared_utils.print_and_log(
                         logging.WARN,
                         'Socket error {}, attempting restart'.format(repr(e))
                     )
-                time.sleep(0.1)
-
-        def heartbeat_thread(*args):
-            while self.keep_running:
-                self._safe_send(json.dumps({
-                    'type': 'ping',
-                    'content': 'ping',
-                }))
-                if self.last_pong is None:
-                    pass
-                elif time.time() - self.last_pong > SOCKET_TIMEOUT:
-                    self._ensure_closed()
-                time.sleep(3)
+                time.sleep(0.2)
 
         # Start listening thread
         self.listen_thread = threading.Thread(
@@ -335,19 +327,10 @@ class MessageSocket():
         )
         self.listen_thread.daemon = True
         self.listen_thread.start()
-        time.sleep(0.2)
-
+        time.sleep(1.2)
         while not self.alive:
             try:
                 self._send_world_alive()
             except Exception:
                 pass
             time.sleep(0.8)
-
-        # Start listening thread
-        self.heartbeat_thread = threading.Thread(
-            target=heartbeat_thread,
-            name='Socket-Heartbeat-Thread'
-        )
-        self.heartbeat_thread.daemon = True
-        self.heartbeat_thread.start()
