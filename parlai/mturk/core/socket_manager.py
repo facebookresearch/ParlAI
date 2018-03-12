@@ -261,7 +261,7 @@ class SocketManager():
         pkt = packet.as_dict()
         shared_utils.print_and_log(
             logging.DEBUG,
-            'Send packet: {}'.format(packet.data)
+            'Send packet: {}'.format(packet)
         )
 
         result = self._safe_send(json.dumps({

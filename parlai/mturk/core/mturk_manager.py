@@ -393,8 +393,10 @@ class MTurkManager():
             agent = curr_worker_state.agents[assign_id]
             agent.log_reconnect()
             if agent.state.status == AssignState.STATUS_NONE:
-                # Reconnecting before even being given a world. The retries
-                # for switching to the onboarding world should catch this
+                # Reconnecting before even being given a world. Kill the hit
+                # so that on a reconnect they can get a new one assigned and
+                # the resources of the first one are cleaned.
+                self.force_expire_hit(worker_id, assign_id)
                 return
             elif agent.state.status == AssignState.STATUS_ONBOARDING:
                 # Reconnecting to the onboarding world should either restore
@@ -502,7 +504,7 @@ class MTurkManager():
             logging.DEBUG,
             'Worker {} disconnected from {} in status {}'.format(
                 worker_id,
-                assignment_id,
+                agent.conversation_id,
                 agent.state.status
             )
         )
@@ -986,6 +988,10 @@ class MTurkManager():
         # Force messages to have a unique ID
         if 'message_id' not in data:
             data['message_id'] = str(uuid.uuid4())
+        conversation_id = None
+        agent = self._get_agent(receiver_id, assignment_id)
+        if agent is not None:
+            conversation_id = agent.conversation_id
         event_id = shared_utils.generate_event_id(receiver_id)
         packet = Packet(
             event_id,
@@ -994,6 +1000,7 @@ class MTurkManager():
             receiver_id,
             assignment_id,
             data,
+            conversation_id=conversation_id,
             blocking=blocking,
             ack_func=ack_func
         )
@@ -1005,7 +1012,6 @@ class MTurkManager():
         )
         # Push outgoing message to the message thread to be able to resend
         # on a reconnect event
-        agent = self._get_agent(receiver_id, assignment_id)
         if agent is not None:
             agent.state.messages.append(packet.data)
         self.socket_manager.queue_packet(packet)
