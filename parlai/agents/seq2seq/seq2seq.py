@@ -7,6 +7,7 @@
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import maintain_dialog_history, PaddingUtils, round_sigfigs
+from parlai.core.thread_utils import SharedTable
 from .modules import Seq2seq, RandomProjection
 
 import torch
@@ -143,7 +144,6 @@ class Seq2seqAgent(Agent):
 
         # all instances may need some params
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
-        self.metrics = {'loss': [], 'num_tokens': 0}
         self.history = {}
         states = {}
 
@@ -152,6 +152,8 @@ class Seq2seqAgent(Agent):
 
         if shared:
             # set up shared properties
+            self.opt = shared['opt']
+            opt = self.opt
             self.dict = shared['dict']
             self.START_IDX = shared['START_IDX']
             self.END_IDX = shared['END_IDX']
@@ -162,11 +164,13 @@ class Seq2seqAgent(Agent):
             if 'model' in shared:
                 # model is shared during hogwild
                 self.model = shared['model']
+                self.metrics = shared['metrics']
                 states = shared['states']
         else:
             # this is not a shared instance of this class, so do full init
             # answers contains a batch_size list of the last answer produced
             self.answers = [None] * opt['batchsize']
+            self.metrics = {'loss': 0.0, 'num_tokens': 0}
 
             if self.use_cuda:
                 print('[ Using CUDA ]')
@@ -360,16 +364,13 @@ class Seq2seqAgent(Agent):
         self.reset_metrics()
 
     def reset_metrics(self):
-        self.metrics.clear()
-        self.metrics['loss'] = []
+        self.metrics['loss'] = 0.0
         self.metrics['num_tokens'] = 0
 
     def report(self):
         m = {}
         if self.metrics['num_tokens'] > 0:
-            loss_sum = sum(sorted(self.metrics['loss'], reverse=True))
-            # m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
-            m['loss'] = loss_sum / self.metrics['num_tokens']
+            m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
             m['ppl'] = math.exp(m['loss'])
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
@@ -379,16 +380,22 @@ class Seq2seqAgent(Agent):
     def share(self):
         """Share internal states between parent and child instances."""
         shared = super().share()
-        # shared['metrics'] = self.metrics
+        shared['opt'] = self.opt
         shared['answers'] = self.answers
         shared['dict'] = self.dict
         shared['START_IDX'] = self.START_IDX
         shared['END_IDX'] = self.END_IDX
         shared['NULL_IDX'] = self.NULL_IDX
         if self.opt.get('numthreads', 1) > 1:
+            if type(self.metrics) == dict:
+                self.metrics = SharedTable(self.metrics)
+            shared['metrics'] = self.metrics
             shared['model'] = self.model
             self.model.share_memory()
-            shared['states'] = self.states
+            shared['states'] = { # only need to pass optimizer states
+                'optimizer': self.optimizer.state_dict(),
+                'optimizer_type': self.opt['optimizer'],
+            }
         return shared
 
     def observe(self, observation):
@@ -426,7 +433,7 @@ class Seq2seqAgent(Agent):
             loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
             # save loss to metrics
             target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
-            self.metrics['loss'] += [loss.double().data[0]]
+            self.metrics['loss'] += loss.double().data[0]
             self.metrics['num_tokens'] += target_tokens
             # average loss per token
             loss /= target_tokens
@@ -442,7 +449,7 @@ class Seq2seqAgent(Agent):
                 _, scores, _ = self.model(xs, ys)
                 loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
                 target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
-                self.metrics['loss'] += [loss.double().data[0]]
+                self.metrics['loss'] += loss.double().data[0]
                 self.metrics['num_tokens'] += target_tokens
 
         return predictions, text_cand_inds
