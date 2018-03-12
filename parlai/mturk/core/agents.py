@@ -352,9 +352,18 @@ class MTurkAgent(Agent):
         while not self.hit_is_complete and i < iters:
             time.sleep(shared_utils.THREAD_SHORT_SLEEP)
             i += 1
+        sync_attempts = 0
         while not self.hit_is_complete and \
                 self.manager.get_agent_work_status(self.assignment_id) != \
                 self.ASSIGNMENT_DONE:
+            if sync_attempts < 8:
+                # Scaling on how frequently to poll, doubles time waited on
+                # every failure
+                iters *= 2
+                sync_attempts += 1
+            else:
+                # Okay we've waited for almost 2 hours the HIT isn't still up
+                self.disconnected = True
             # Check if the Turker already returned/disconnected
             if self.hit_is_returned or self.disconnected:
                 self.manager.free_workers([self])
