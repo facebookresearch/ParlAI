@@ -561,6 +561,7 @@ class Seq2seqAgent(Agent):
             model['model'] = self.model.state_dict()
             for k, v in model['model'].items():
                 if hasattr(v, 'cpu'):
+                    # pull back cuda tensors
                     model['model'][k] = v.cpu()
             model['longest_label'] = self.model.longest_label
             model['optimizer'] = self.optimizer.state_dict()
