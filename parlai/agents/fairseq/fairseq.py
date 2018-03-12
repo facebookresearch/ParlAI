@@ -226,12 +226,6 @@ class FairseqAgent(Agent):
             batch_reply[0]['metrics'] = {}
             for k, v in loss.items():
                 batch_reply[0]['metrics'][k] = v * bsz
-                if k == 'loss':
-                    try:
-                        perplexity = 2 ** v * bsz
-                    except OverflowError:
-                        perplexity = float('inf')
-                    batch_reply[0]['metrics']['perplexity'] = perplexity
 
         return batch_reply
 

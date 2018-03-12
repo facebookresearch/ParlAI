@@ -14,7 +14,7 @@ except ModuleNotFoundError:
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import maintain_dialog_history, PaddingUtils
+from parlai.core.utils import maintain_dialog_history, PaddingUtils, round_sigfigs
 
 import torch
 from torch.autograd import Variable
@@ -106,6 +106,7 @@ class IbmSeq2seqAgent(Agent):
 
         # all instances may need some params
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
+        self.metrics = {'loss': 0, 'num_tokens': 0}
         self.history = {}
         self.states = {}
 
@@ -202,7 +203,8 @@ class IbmSeq2seqAgent(Agent):
             self.ys = torch.LongTensor(1, 1)
 
             # set up criteria
-            self.criterion = nn.NLLLoss(ignore_index=self.NULL_IDX)
+            self.criterion = nn.NLLLoss(ignore_index=self.NULL_IDX,
+                                        size_average=False)
 
             if self.use_cuda:
                 # push to cuda
@@ -280,6 +282,23 @@ class IbmSeq2seqAgent(Agent):
     def reset(self):
         """Reset observation and episode_done."""
         self.observation = None
+        self.history.clear()
+        self.reset_metrics()
+
+    def reset_metrics(self):
+        self.metrics.clear()
+        self.metrics['loss'] = 0
+        self.metrics['num_tokens'] = 0
+
+    def report(self):
+        m = {}
+        if self.metrics['num_tokens'] > 0:
+            m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
+            m['ppl'] = math.exp(m['loss'])
+        for k, v in m.items():
+            # clean up: rounds to sigfigs and converts tensors to floats
+            m[k] = round_sigfigs(v, 4)
+        return m
 
     def share(self):
         """Share internal states between parent and child instances."""
@@ -336,9 +355,14 @@ class IbmSeq2seqAgent(Agent):
             out, hid, result = self.model(xs, x_lens, y_in, teacher_forcing_ratio=True)
             scores = torch.cat(out)
             loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
+            # save loss to metrics
+            target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
+            self.metrics['loss'] += loss.double().data[0]
+            self.metrics['num_tokens'] += target_tokens
+            # average loss per token
+            loss /= target_tokens
             loss.backward()
             self.update_params()
-            loss_dict = {'loss': loss.data[0], 'ppl': (math.e**loss).data[0]}
         else:
             self.model.eval()
             out, hid, result = self.model(xs, x_lens)
@@ -349,10 +373,12 @@ class IbmSeq2seqAgent(Agent):
                 out, hid, result = self.model(xs, x_lens, y_in, teacher_forcing_ratio=False)
                 scores = torch.cat(out)
                 loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
-                loss_dict = {'loss': loss.data[0], 'ppl': (math.e**loss).data[0]}
+                target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
+                self.metrics['loss'] += loss.double().data[0]
+                self.metrics['num_tokens'] += target_tokens
 
         predictions = torch.cat(result['sequence'], 1)
-        return predictions, loss_dict
+        return predictions
 
     def vectorize(self, observations):
         """Convert a list of observations into input & target tensors."""
@@ -396,14 +422,7 @@ class IbmSeq2seqAgent(Agent):
             return batch_reply
 
         # produce predictions, train on targets if availables
-        predictions, loss = self.predict(xs, ys, is_training)
-        if loss is not None:
-            if 'metrics' in batch_reply[0]:
-                for k, v in loss.items():
-                    batch_reply[0]['metrics'][k] = v
-            else:
-                batch_reply[0]['metrics'] = loss
-
+        predictions = self.predict(xs, ys, is_training)
 
         if is_training:
             report_freq = 0

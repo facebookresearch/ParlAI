@@ -87,10 +87,11 @@ class MemnnAgent(Agent):
 
             self.decoder = None
             self.longest_label = 1
+            self.NULL_IDX = self.dict[self.dict.null_token]
             self.END = self.dict.end_token
-            self.END_TENSOR = torch.LongTensor(self.dict.parse(self.END))
+            self.END_TENSOR = torch.LongTensor(self.dict[self.END])
             self.START = self.dict.start_token
-            self.START_TENSOR = torch.LongTensor(self.dict.parse(self.START))
+            self.START_TENSOR = torch.LongTensor(self.dict[self.START])
 
             if opt['output'] == 'generate' or opt['output'] == 'g':
                 self.decoder = Decoder(opt['embedding_size'], opt['embedding_size'],
@@ -276,7 +277,7 @@ class MemnnAgent(Agent):
         query_length = torch.LongTensor([len(query)])
 
         if len(memory) == 0:
-            memory.append(self.dict.null_token)
+            memory.append([self.NULL_IDX])
 
         memory = [torch.LongTensor(m) for m in memory]
         memory_lengths = torch.LongTensor([len(m) for m in memory])

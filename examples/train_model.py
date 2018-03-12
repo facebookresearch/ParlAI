@@ -101,8 +101,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
 
     if valid_world is None:
         valid_world = create_task(opt, agent)
-    else:
-        valid_world.reset()
+    valid_world.reset()
     cnt = 0
     while not valid_world.epoch_done():
         valid_world.parley()
@@ -115,6 +114,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
             # full depending on the structure of the data
             break
     valid_report = valid_world.report()
+    valid_world.reset()  # this makes sure agent doesn't remember valid data
 
     metrics = datatype + ':' + str(valid_report)
     print(metrics)
@@ -180,11 +180,14 @@ class TrainLoop():
             self.agent.save(opt['model_file'] + '.checkpoint')
         if hasattr(self.agent, 'receive_metrics'):
             self.agent.receive_metrics(valid_report)
-        if self.best_valid is None or self.valid_optim * valid_report[opt['validation_metric']] > self.valid_optim * self.best_valid:
-            self.best_valid = valid_report[opt['validation_metric']]
+        new_valid = valid_report[opt['validation_metric']]
+        if self.best_valid is None or self.valid_optim * new_valid > self.valid_optim * self.best_valid:
+            print('[ new best {}: {}{} ]'.format(
+                opt['validation_metric'], new_valid,
+                ' (previous best was {})'.format(self.best_valid)
+                    if self.best_valid is not None else ''))
+            self.best_valid = new_valid
             self.impatience = 0
-            print('[ new best {}: {} ]'.format(
-                opt['validation_metric'], self.best_valid))
             if opt.get('model_file'):
                 print("[ saving best valid model: " + opt['model_file'] + " ]")
                 self.agent.save(opt['model_file'])
@@ -211,12 +214,8 @@ class TrainLoop():
             print(self.world.display() + '\n~~')
         logs = []
         # get report
-        if hasattr(self.agent, 'report'):
-            train_report = self.agent.report()
-            self.agent.reset_metrics()
-        else:
-            train_report = self.world.report(compute_time=True)
-            self.world.reset_metrics()
+        train_report = self.world.report(compute_time=True)
+        self.world.reset_metrics()
 
         # time elapsed
         logs.append('time:{}s'.format(math.floor(self.train_time.time())))

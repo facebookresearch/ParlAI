@@ -6,7 +6,8 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import maintain_dialog_history, PaddingUtils
+from parlai.core.utils import maintain_dialog_history, PaddingUtils, round_sigfigs
+from parlai.core.thread_utils import SharedTable
 from .modules import Seq2seq, RandomProjection
 
 import torch
@@ -143,14 +144,17 @@ class Seq2seqAgent(Agent):
 
         # all instances may need some params
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
+        self.metrics = {'loss': 0.0, 'num_tokens': 0}
         self.history = {}
-        self.states = {}
+        states = {}
 
         # check for cuda
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
 
         if shared:
             # set up shared properties
+            self.opt = shared['opt']
+            opt = self.opt
             self.dict = shared['dict']
             self.START_IDX = shared['START_IDX']
             self.END_IDX = shared['END_IDX']
@@ -161,7 +165,8 @@ class Seq2seqAgent(Agent):
             if 'model' in shared:
                 # model is shared during hogwild
                 self.model = shared['model']
-                self.states = shared['states']
+                self.metrics = shared['metrics']
+                states = shared['states']
         else:
             # this is not a shared instance of this class, so do full init
             # answers contains a batch_size list of the last answer produced
@@ -182,10 +187,11 @@ class Seq2seqAgent(Agent):
 
             if init_model is not None:
                 # load model parameters if available
-                print('Loading existing model params from ' + init_model)
-                new_opt, self.states = self.load(init_model)
+                print('[ Loading existing model params from {} ]'.format(init_model))
+                new_opt, states = self.load(init_model)
                 # override model-specific options with stored ones
                 opt = self.override_opt(new_opt)
+                self.opt = opt
 
             if opt['dict_file'] is None:
                 if init_model is not None and os.path.isfile(init_model + '.dict'):
@@ -209,7 +215,7 @@ class Seq2seqAgent(Agent):
                                  padding_idx=self.NULL_IDX,
                                  start_idx=self.START_IDX,
                                  end_idx=self.END_IDX,
-                                 longest_label=self.states.get('longest_label', 1))
+                                 longest_label=states.get('longest_label', 1))
 
             if opt['embedding_type'] != 'random':
                 # set up preinitialized embeddings
@@ -244,9 +250,9 @@ class Seq2seqAgent(Agent):
                 print('Seq2seq: initialized embeddings for {} tokens from {}.'
                       ''.format(cnt, init))
 
-            if self.states:
+            if states:
                 # set loaded states if applicable
-                self.model.load_state_dict(self.states['model'])
+                self.model.load_state_dict(states['model'])
 
             if self.use_cuda:
                 self.model.cuda()
@@ -263,7 +269,8 @@ class Seq2seqAgent(Agent):
                 self.cands = torch.LongTensor(1, 1, 1)
 
             # set up criteria
-            self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX)
+            self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX,
+                                                 size_average=False)
 
             if self.use_cuda:
                 # push to cuda
@@ -288,12 +295,12 @@ class Seq2seqAgent(Agent):
                 if opt['lookuptable'] in ['dec_out', 'all']:
                     self.model.decoder.e2s.weight.requires_grad = False
             self.optimizer = optim_class([p for p in self.model.parameters() if p.requires_grad], **kwargs)
-            if self.states:
-                if self.states['optimizer_type'] != opt['optimizer']:
+            if states.get('optimizer'):
+                if states['optimizer_type'] != opt['optimizer']:
                     print('WARNING: not loading optim state since optim class '
                           'changed.')
                 else:
-                    self.optimizer.load_state_dict(self.states['optimizer'])
+                    self.optimizer.load_state_dict(states['optimizer'])
             self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
                 self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
 
@@ -313,11 +320,15 @@ class Seq2seqAgent(Agent):
                 # skip non-model args
                 continue
             if k not in self.opt:
-                print('Adding new option [ {k}: {v} ]'.format(k=k, v=v))
+                print('[ Adding new option: | {k}: {v} | ]'.format(k=k, v=v))
             elif self.opt[k] != v:
-                print('Overriding option [ {k}: {old} => {v}]'.format(
+                print('[ Overriding option: | {k}: {old} => {v} | ]'.format(
                       k=k, old=self.opt[k], v=v))
             self.opt[k] = v
+        if 'dict_file' in new_opt and not self.opt.get('dict_file'):
+            print('[ No dictionary path detected, trying to load previous '
+                  'path {} ]'.format(new_opt['dict_file']))
+            self.opt['dict_file'] = new_opt['dict_file']
         return self.opt
 
     def parse(self, text):
@@ -349,19 +360,42 @@ class Seq2seqAgent(Agent):
     def reset(self):
         """Reset observation and episode_done."""
         self.observation = None
+        self.history.clear()
+        self.reset_metrics()
+
+    def reset_metrics(self):
+        self.metrics['loss'] = 0.0
+        self.metrics['num_tokens'] = 0
+
+    def report(self):
+        m = {}
+        if self.metrics['num_tokens'] > 0:
+            m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
+            m['ppl'] = math.exp(m['loss'])
+        for k, v in m.items():
+            # clean up: rounds to sigfigs and converts tensors to floats
+            m[k] = round_sigfigs(v, 4)
+        return m
 
     def share(self):
         """Share internal states between parent and child instances."""
         shared = super().share()
+        shared['opt'] = self.opt
         shared['answers'] = self.answers
         shared['dict'] = self.dict
         shared['START_IDX'] = self.START_IDX
         shared['END_IDX'] = self.END_IDX
         shared['NULL_IDX'] = self.NULL_IDX
         if self.opt.get('numthreads', 1) > 1:
+            if type(self.metrics) == dict:
+                self.metrics = SharedTable(self.metrics)
+            shared['metrics'] = self.metrics
             shared['model'] = self.model
             self.model.share_memory()
-            shared['states'] = self.states
+            shared['states'] = { # only need to pass optimizer states
+                'optimizer': self.optimizer.state_dict(),
+                'optimizer_type': self.opt['optimizer'],
+            }
         return shared
 
     def observe(self, observation):
@@ -397,9 +431,14 @@ class Seq2seqAgent(Agent):
             self.zero_grad()
             predictions, scores, _ = self.model(xs, ys)
             loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
+            # save loss to metrics
+            target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
+            self.metrics['loss'] += loss.double().data[0]
+            self.metrics['num_tokens'] += target_tokens
+            # average loss per token
+            loss /= target_tokens
             loss.backward()
             self.update_params()
-            loss_dict = {'loss': loss.data[0], 'ppl': (math.e**loss).data[0]}
         else:
             self.model.eval()
             predictions, _scores, text_cand_inds = self.model(
@@ -409,9 +448,11 @@ class Seq2seqAgent(Agent):
                 # calculate loss on targets
                 _, scores, _ = self.model(xs, ys)
                 loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
-                loss_dict = {'loss': loss.data[0], 'ppl': (math.e**loss).data[0]}
+                target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
+                self.metrics['loss'] += loss.double().data[0]
+                self.metrics['num_tokens'] += target_tokens
 
-        return predictions, text_cand_inds, loss_dict
+        return predictions, text_cand_inds
 
     def vectorize(self, observations):
         """Convert a list of observations into input & target tensors."""
@@ -492,14 +533,7 @@ class Seq2seqAgent(Agent):
             return batch_reply
 
         # produce predictions, train on targets if availables
-        predictions, text_cand_inds, loss = self.predict(xs, ys, cands, valid_cands, is_training)
-        if loss is not None:
-            if 'metrics' in batch_reply[0]:
-                for k, v in loss.items():
-                    batch_reply[0]['metrics'][k] = v
-            else:
-                batch_reply[0]['metrics'] = loss
-
+        predictions, text_cand_inds = self.predict(xs, ys, cands, valid_cands, is_training)
 
         if is_training:
             report_freq = 0
@@ -532,8 +566,15 @@ class Seq2seqAgent(Agent):
         if path and hasattr(self, 'model'):
             model = {}
             model['model'] = self.model.state_dict()
+            for k, v in model['model'].items():
+                if hasattr(v, 'cpu'):
+                    # pull back cuda tensors
+                    model['model'][k] = v.cpu()
             model['longest_label'] = self.model.longest_label
             model['optimizer'] = self.optimizer.state_dict()
+            for k, v in model['optimizer'].items():
+                if hasattr(v, 'cpu'):
+                    model['optimizer'][k] = v.cpu()
             model['optimizer_type'] = self.opt['optimizer']
             model['opt'] = self.opt
 

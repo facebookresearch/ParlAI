@@ -297,9 +297,17 @@ class DialogPartnerWorld(World):
         return self.agents[0].epoch_done()
 
     def report(self, compute_time=False):
-        if hasattr(self.agents[0], 'report'):
-            metrics = self.agents[0].report()
-            if compute_time:
+        metrics = {}
+        for a in self.agents:
+            if hasattr(a, 'report'):
+                m = a.report()
+                for k, v in m.items():
+                    if k not in metrics:
+                        # first agent gets priority in settings values for keys
+                        # this way model can't e.g. override accuracy to 100%
+                        metrics[k] = v
+        if metrics:
+            if compute_time and 'total' in metrics:
                 self.total_exs += metrics['total']
                 time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
                 metrics.update(time_metrics)
@@ -359,12 +367,21 @@ class MultiAgentDialogWorld(World):
         return done
 
     def report(self, compute_time=False):
-        metrics = self.agents[0].report()
-        if compute_time:
-            self.total_exs += metrics['total']
-            time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
-            metrics.update(time_metrics)
-        return metrics
+        metrics = {}
+        for a in self.agents:
+            if hasattr(a, 'report'):
+                m = a.report()
+                for k, v in m.items():
+                    if k not in metrics:
+                        # first agent gets priority in settings values for keys
+                        # this way model can't e.g. override accuracy to 100%
+                        metrics[k] = v
+        if metrics:
+            if compute_time and 'total' in metrics:
+                self.total_exs += metrics['total']
+                time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
+                metrics.update(time_metrics)
+            return metrics
 
     def shutdown(self):
         """Shutdown each agent."""
