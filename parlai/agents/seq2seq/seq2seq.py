@@ -144,6 +144,7 @@ class Seq2seqAgent(Agent):
 
         # all instances may need some params
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
+        self.metrics = {'loss': 0.0, 'num_tokens': 0}
         self.history = {}
         states = {}
 
@@ -170,7 +171,6 @@ class Seq2seqAgent(Agent):
             # this is not a shared instance of this class, so do full init
             # answers contains a batch_size list of the last answer produced
             self.answers = [None] * opt['batchsize']
-            self.metrics = {'loss': 0.0, 'num_tokens': 0}
 
             if self.use_cuda:
                 print('[ Using CUDA ]')
