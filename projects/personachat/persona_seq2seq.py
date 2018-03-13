@@ -9,6 +9,9 @@
 Agents: I have a dog, do you have pets too? `(Zhang et al. 2018)
 <https://arxiv.org/pdf/1801.07243.pdf>`_.
 '''
+# Might need to do these:
+# pip install torchtext
+# pip install stop-words
 
 import os
 import pickle
@@ -34,7 +37,6 @@ Glove = vocab.GloVe(name='840B', dim=300)
 
 import operator
 cos = torch.nn.CosineSimilarity(dim=0, eps=1e-6)
-from autocorrect import spell
 
 
 stopwords_customized = []
