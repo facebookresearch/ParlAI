@@ -126,7 +126,7 @@ def create_compact_list_message(raw_elems):
 # Socket handler
 class MessageSocket():
     """MessageSocket is a wrapper around websocket to simplify message sends
-    and recieves into parlai from FB messenger.
+    and receives into parlai from FB messenger.
     """
 
     def __init__(self, server_url, port, secret_token, message_callback):
@@ -182,13 +182,33 @@ class MessageSocket():
             'content': {'id': 'WORLD_ALIVE', 'sender_id': 'world'},
         }), force=True)
 
+    def send_sender_action(self, receiver_id, action):
+        api_address = 'https://graph.facebook.com/v2.6/me/messages'
+        message = {
+            'recipient': {
+                'id': receiver_id
+            },
+            "sender_action": action,
+        }
+        requests.post(
+            api_address,
+            params=self.auth_args,
+            json=message,
+        )
+
+    def send_read(self, receiver_id):
+        self.send_sender_action(receiver_id, "mark_seen")
+
+    def typing_on(self, receiver_id):
+        self.send_sender_action(receiver_id, "typing_on")
+
     def send_fb_payload(self, receiver_id, payload):
         """Sends a payload to messenger, processes it if we can"""
         api_address = 'https://graph.facebook.com/v2.6/me/messages'
         if payload['type'] == 'list':
             data = create_compact_list_message(payload['data'])
         elif payload['type'] in ['image', 'video', 'file', 'audio']:
-            data = create_attachment(payload['type'], payload['url'])    
+            data = create_attachment(payload['type'], payload['url'])
         else:
             data = payload['data']
         message = {
@@ -294,10 +314,11 @@ class MessageSocket():
             message_data = packet_dict['content']
             shared_utils.print_and_log(
                 logging.DEBUG,
-                'Message data recieved: {}'.format(message_data)
+                'Message data received: {}'.format(message_data)
             )
             for message_packet in message_data['entry']:
-                self.message_callback(message_packet['messaging'][0])
+                for message in message_packet['messaging']:
+                    self.message_callback(message)
 
         def run_socket(*args):
             url_base_name = self.server_url.split('https://')[1]
