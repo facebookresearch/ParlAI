@@ -116,7 +116,8 @@ class PersonaChatWorld(MultiAgentDialogWorld):
         '''Otherwise, we proceed accordingly'''
         acts = [None, None]
         for idx, agent in enumerate(self.agents):
-            acts[idx] = agent.act(timeout=self.max_resp_time)
+            if not self.chat_done:
+                acts[idx] = agent.act(timeout=self.max_resp_time)
             if self.check_timeout(acts[idx]):
                 return
 
@@ -127,6 +128,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                     if ag != agent and ag.some_agent_disconnected:
                         control_msg['text'] = 'The other worker unexpectedly diconnected. \
                             Please click "Done with this HIT" button below to finish this HIT.'
+                        control_msg['episode_done'] = True
                         ag.observe(validate(control_msg))
                         return
                 # agent ends chat after exceeding minimum number of turns
@@ -134,6 +136,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                     for ag in self.agents:
                         ag.observe(validate(acts[idx]))
                         control_msg['text'] = 'One of you ended the chat. Thanks for your time! Please click "Done with this HIT" button below to finish this HIT.'
+                        control_msg['episode_done'] = True
                         ag.observe(validate(control_msg))
                 return
 
@@ -190,6 +193,15 @@ class PersonaChatWorld(MultiAgentDialogWorld):
             return True
         else:
             return False
+
+    def shutdown(self):
+        global shutdown_agent
+        def shutdown_agent(mturk_agent):
+            mturk_agent.shutdown()
+        Parallel(
+            n_jobs=len(self.agents),
+            backend='threading'
+        )(delayed(shutdown_agent)(agent) for agent in self.agents)
 
     def review_work(self):
         global review_agent
