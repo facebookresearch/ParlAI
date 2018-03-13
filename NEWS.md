@@ -4,7 +4,7 @@
 
 2018-03-05: Added [Multimodal Low-Rank Bilinear Attention Network (MLB)](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/mlb_vqa/mlb_vqa.py) model for VQA V1 and V2 tasks, adapted from an implementation [here](https://github.com/Cadene/vqa.pytorch) based on [this paper](https://arxiv.org/abs/1610.04325). To use it, please follow the instructions [in the agent file](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/mlb_vqa/mlb_vqa.py).
 
-2018-02-12: Added a [Wikipedia task](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/wikipedia/agents.py), which provides a dump of Wikipedia articles from 2/3/2018. One can load the full articles or just the summaries; see the [agents file](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/wikipedia/agents.py) for more information.
+2018-02-12: Added a [Wikipedia task](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/wikipedia/agents.py), which provides a dump of Wikipedia articles from 2/3/2018.
 
 2018-02-07: Added a [language model](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/language_model/language_model.py) adapted from [this](https://github.com/pytorch/examples/tree/master/word_language_model) Pytorch model to parlai/agents.
 
