@@ -15,7 +15,7 @@ def _path(opt, persona):
     build(opt)
     datatype =  opt['datatype'].split(':')[0]
     if datatype == 'test':
-        print("Test set not included. Setting to valid.")
+        print("WARNING: Test set not included. Setting datatype to valid.")
         datatype = 'valid'
     dt = datatype + '_' + persona
     return os.path.join(opt['datapath'], 'ConvAI2', dt + '.txt')
