@@ -77,6 +77,13 @@ class MessengerManager():
         self.conversation_index = 0
         self.shutting_down = True
 
+        # Messaging interaction functions that determine what to do when
+        # messages are confirmed as delivered, marked as read by a user, and
+        # noted as read by the bot.
+        self.confirm_message_delivery = self._confirm_message_delivery
+        self.handle_message_read = self._handle_message_read
+        self.handle_bot_read = self._handle_bot_read
+
     # Helpers and internal manager methods #
 
     def _init_logs(self):
@@ -96,21 +103,23 @@ class MessengerManager():
             # add agent to pool
             self.agent_pool.setdefault(world_type, []).append(agent)
 
-    def remove_agent_from_pool(self, agent, world_type='default', mark_removed=True):
+    def remove_agent_from_pool(self, agent, world_type='default',
+                               mark_removed=True):
         """Remove agent from the pool"""
         with self.agent_pool_change_condition:
             shared_utils.print_and_log(
                 logging.DEBUG,
                 "Removing agent {} from pool...".format(agent.messenger_id)
             )
-            if world_type in self.agent_pool and agent in self.agent_pool[world_type]:
+            if world_type in self.agent_pool and \
+                    agent in self.agent_pool[world_type]:
                 self.agent_pool[world_type].remove(agent)
                 # reset agent's time_in_pool
                 if world_type in agent.time_in_pool:
                     del agent.time_in_pool[world_type]
                 # maybe mark agent as removed
                 if mark_removed:
-                    agent.stored_data['removed_from_pool']=True
+                    agent.stored_data['removed_from_pool'] = True
 
     def _expire_all_conversations(self):
         """iterate through all sub-worlds and shut them down"""
@@ -145,6 +154,44 @@ class MessengerManager():
         """
         # TODO filter by psid -> agent id mappings for multi-page setup
         return self.agent_pool
+
+    def _handle_bot_read(self, agent_id):
+        self.message_socket.send_read(agent_id)
+        self.message_socket.typing_on(agent_id)
+
+    def _confirm_message_delivery(self, event):
+        # By default we don't actually do anything when messages are marked as
+        # being delivered, but we expose the ability for others to
+        shared_utils.print_and_log(
+            logging.DEBUG,
+            "Messages {} marked as recieved.".format(event['delivery']['mids'])
+        )
+
+    def _handle_message_read(self, event):
+        # If the message was sent by another user (as in during a conversation)
+        # then we need to propogate the read back to that user.
+        shared_utils.print_and_log(
+            logging.DEBUG,
+            "Messages {} marked as read.".format(event['read'])
+        )
+        reader = event['sender']['id']
+        agent_state = self._get_agent_state(reader)
+        if agent_state is None:
+            return
+        agent = agent_state.get_active_agent()
+        if agent is not None:
+            for partner in agent.message_partners:
+                # We don't know who sent the message that was seen, but we can
+                # send a message observed event to everyone else in the chat
+                self.message_socket.send_read(partner.id)
+
+    def _handle_webhook_event(self, event):
+        if 'message' in event:
+            self._on_new_message(event)
+        elif 'delivery' in event:
+            self.confirm_message_delivery(event)
+        elif 'read' in event:
+            self.handle_message_read(event)
 
     def _on_first_message(self, message):
         """Handle a new incoming message from a psid that is not yet
@@ -204,24 +251,31 @@ class MessengerManager():
         agent_state = self._get_agent_state(agent_id)
         if agent_state.get_active_agent() is None:
             # return agent to overworld
-            if 'text' in message['message'] and message['message']['text'].upper()=='EXIT':
+            if 'text' in message['message'] and \
+                    message['message']['text'].upper() == 'EXIT':
                 # remove agent from agent_pool
                 to_remove = []
-                for world_type, time in agent_state.time_in_pool.items():
+                for world_type, _time in agent_state.time_in_pool.items():
                     to_remove.append(world_type)
                 for world_type in to_remove:
-                    self.remove_agent_from_pool(agent_state, world_type, mark_removed=False)
+                    self.remove_agent_from_pool(agent_state, world_type,
+                                                mark_removed=False)
                 # put agent back in overworld
                 agent_state.set_active_agent(agent_state.get_overworld_agent())
             else:
                 self.observe_message(
                     agent_id,
-                    "We are trying to pair you with another person, please wait. "
+                    "Please wait while we pair you with another person. "
                     "If you wish to return to the Overworld, click *EXIT*",
                     quick_replies=['EXIT']
                 )
         else:
-            agent_state.get_active_agent().put_data(message)
+            # If an agent is in a solo world, we can put a typing indicator
+            # and mark the message as read
+            agent = agent_state.get_active_agent()
+            if len(agent.message_partners) == 0:
+                self.handle_bot_read(agent.id)
+            agent.put_data(message)
 
     def _create_agent(self, task_id, agent_id):
         """Initialize an agent and return it"""
@@ -351,7 +405,7 @@ class MessengerManager():
                 access_token_file.write(self.app_token)
         self.message_socket = MessageSocket(self.server_url, self.port,
                                             self.app_token,
-                                            self._on_new_message)
+                                            self._handle_webhook_event)
 
     def init_new_state(self):
         """Initialize everything in the agent, task, and thread states
@@ -376,7 +430,8 @@ class MessengerManager():
     def set_agents_required(self, max_agents_for):
         self.max_agents_for = max_agents_for
 
-    def start_task(self, assign_role_functions, task_functions, max_time_in_pool=None):
+    def start_task(self, assign_role_functions, task_functions,
+                   max_time_in_pool=None):
         """Handle running a task by checking to see when enough agents are
         in the pool to start an instance of the task. Continue doing this
         until the desired number of conversations is had.
@@ -412,14 +467,19 @@ class MessengerManager():
                 valid_pools = self._get_unique_pool()
                 for world_type, agent_pool in valid_pools.items():
                     # check if agent has exceeded max time in pool
-                    if max_time_in_pool is not None and max_time_in_pool[world_type] is not None:
+                    if max_time_in_pool is not None and \
+                            max_time_in_pool[world_type] is not None:
                         for agent_state in agent_pool:
-                            if agent_state.time_in_pool.get(world_type):
-                                if time.time() - agent_state.time_in_pool[world_type] > max_time_in_pool[world_type]:
-                                    # remove agent from agent_pool
-                                    self.remove_agent_from_pool(agent_state, world_type)
-                                    # put agent back in overworld
-                                    agent_state.set_active_agent(agent_state.get_overworld_agent())
+                            time_in_pool = \
+                                agent_state.time_in_pool.get(world_type)
+                            if time_in_pool and time.time() - time_in_pool \
+                                    > max_time_in_pool:
+                                # remove agent from agent_pool
+                                self.remove_agent_from_pool(
+                                    agent_state, world_type)
+                                # put agent back in overworld
+                                agent_state.set_active_agent(
+                                    agent_state.get_overworld_agent())
 
                     needed_agents = self.max_agents_for[world_type]
                     if len(agent_pool) >= needed_agents:
@@ -443,7 +503,10 @@ class MessengerManager():
                         for a in agents:
                             # Remove selected workers from the pool
                             agent_pool.remove(self._get_agent_state(a.id))
-
+                        for a in agents:
+                            partner_list = agents.copy()
+                            partner_list.remove(a)
+                            a.message_partners = partner_list
                         # Start a new thread for this task world
                         task_thread = threading.Thread(
                             target=_task_function,

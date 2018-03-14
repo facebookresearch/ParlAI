@@ -77,7 +77,8 @@ def display_messages(msgs):
         space = ''
         if len(msgs) == 2 and index == 1:
             space = '   '
-        if msg.get('reward', None) is not None:
+        # Only display rewards !=0 as they are confusing in non-RL tasks.
+        if msg.get('reward', 0) != 0:
             lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
         if type(msg.get('image')) == str:
             lines.append(msg['image'])
