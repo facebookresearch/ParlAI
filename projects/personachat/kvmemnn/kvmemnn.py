@@ -438,7 +438,6 @@ class KvmemnnAgent(Agent):
                 query = Variable(torch.LongTensor(utt).unsqueeze(0))
                 #print(self.v2t(query.squeeze(0)))
                 negs.append(query)
-                #import pdb; pdb.set_trace()
         return negs
 
     def dict_neighbors(self, word, useRHS=False):
@@ -486,7 +485,7 @@ class KvmemnnAgent(Agent):
             self.take_next_utt=True
             self.twohoputt=True
             self.tricks=True
-            self.interactiveMode=True
+            self.interactiveMode=False
             if cands is None or cands[0] is None or self.take_next_utt:
                 # cannot predict without candidates.
                 if self.fixedCands or self.take_next_utt:
@@ -504,15 +503,11 @@ class KvmemnnAgent(Agent):
                     xs = Variable(torch.LongTensor([self.parse('nothing')]))
                 xs = xs.clone()
                 if self.tricks:
-                    if not self.interactiveMode:
-                        xsq = cands[0][20]
+                    vv=self.history['last_utterance']
+                    if len(vv) == 0:
+                        xsq = Variable(torch.LongTensor([self.parse('nothing')]))
                     else:
-                        vv=self.history['last_utterance']
-                        if len(vv) == 0:
-                            xsq = Variable(torch.LongTensor([self.parse('nothing')]))
-                            #xsq = Variable(torch.LongTensor([[0]]))
-                        else:
-                            xsq = Variable(torch.LongTensor([vv]))
+                        xsq = Variable(torch.LongTensor([vv]))
 
                 else:
                     xsq = xs
@@ -595,11 +590,17 @@ class KvmemnnAgent(Agent):
                     pred = nn.CosineSimilarity().forward(xe, ye)
                     xe, ye = self.model(xs, obs[0]['mem'], ys, cands[0])
                     origpred = nn.CosineSimilarity().forward(xe,ye)
-                    pred = 0.6*pred + 1*origpred # ~0.12 or 0.13
+                    if 'alpha' not in self.opt:
+                        alpha=0.1
+                    else:
+                        alpha=self.opt['alpha']
+                    pred = alpha*pred + 1*origpred
                     val,ind=pred.sort(descending=True)
                     # predict the highest scoring candidate, and return it.
                     ypred = cands_txt[0][ind.data[0]] # match
                     tc = []
+                    for i in range(len(ind)):
+                        tc.append(cands_txt[0][ind.data[i]])
             else:
                 xe, ye = self.model(xs, obs[0]['mem'], ys, cands[0])
                 pred = nn.CosineSimilarity().forward(xe,ye)

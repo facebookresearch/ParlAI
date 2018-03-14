@@ -275,9 +275,9 @@ def name_to_agent_class(name):
 
 def load_agent_module(opt):
     model_file = opt['model_file']
-    if model_file.startswith('model:'):
+    if model_file.startswith('models:'):
         # load model from the ParlAI model zoo directory
-        model_file = os.path.join(opt['datapath'], 'models', model_file[6:])
+        model_file = os.path.join(opt['datapath'], 'models', model_file[7:])
     optfile =  model_file + '.opt'
     if os.path.isfile(optfile):
         with open(optfile, 'rb') as handle:
