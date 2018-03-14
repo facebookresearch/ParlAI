@@ -438,6 +438,10 @@ class SocketManager():
         def channel_thread():
             """Handler thread for monitoring a single channel"""
             # while the thread is still alive
+            shared_utils.print_and_log(
+                logging.DEBUG,
+                'Channel ({}) opened'.format(connection_id)
+            )
             while self.run[connection_id]:
                 try:
                     # Check if client is still alive
