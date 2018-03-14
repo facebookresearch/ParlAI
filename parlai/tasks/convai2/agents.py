@@ -13,7 +13,11 @@ import os
 def _path(opt, persona):
     # Build the data if it doesn't exist.
     build(opt)
-    dt = opt['datatype'].split(':')[0] + '_' + persona
+    datatype =  opt['datatype'].split(':')[0]
+    if datatype == 'test':
+        print("Test set not included. Setting to valid.")
+        datatype = 'valid'
+    dt = datatype + '_' + persona
     return os.path.join(opt['datapath'], 'ConvAI2', dt + '.txt')
 
 class NoneTeacher(FbDialogTeacher):
