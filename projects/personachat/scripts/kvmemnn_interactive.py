@@ -13,7 +13,7 @@ if __name__ == '__main__':
     parser.set_defaults(
         task='parlai.agents.local_human.local_human:LocalHumanAgent',
         model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
-        model_file='data/models/personachat/kvmemnn/kvmemnn/persona-self_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops1_lins0_model',
+        model_file='model:personachat/kvmemnn/kvmemnn/persona-self_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops1_lins0_model',
     )
     opt = parser.parse_args()
     opt['model_type'] = 'kvmemnn' # for builder
