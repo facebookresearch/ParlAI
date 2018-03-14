@@ -1,6 +1,6 @@
 <h2>News</h2>
 
-2018-03-13: Added [ParlAI-Messenger](http://parl.ai/static/docs/messenger.html), a method for connecting agents in ParlAI using Facebook Messenger.
+2018-03-13: Added [ParlAI-Messenger](http://parl.ai/static/docs/messenger.html), a new method for connecting human agents to a world in ParlAI using Facebook Messenger. Host your bots on Facebook Messenger to expose them to a broad audience!
 
 2018-03-07: Added [IBM's sequence to sequence](https://github.com/IBM/pytorch-seq2seq) model to parlai/agents. To use it, just set --model ibm_seq2seq.
 
