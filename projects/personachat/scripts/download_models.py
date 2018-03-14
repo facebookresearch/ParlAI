@@ -28,6 +28,7 @@ def build(opt, fnames):
         for fname in fnames:
             url = 'https://s3.amazonaws.com/fair-data/parlai/_models/personachat/' + fname
             build_data.download(url, dpath, fname)
-
+            if '.tgz' in fname or '.gz' in fname:
+                build_data.untar(dpath, fname)                
         # Mark the data as built.
         build_data.mark_done(dpath, version)
