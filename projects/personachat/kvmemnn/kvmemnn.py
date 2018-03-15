@@ -192,6 +192,9 @@ class KvmemnnAgent(Agent):
                            default='label', type=str,
                            choices=['none', 'model', 'label'],
                            help='Keep replies in the history, or not.')
+        agent.add_argument('--interactive-mode',
+                           default=False, type='bool',
+                           choices=[True, False])
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -237,7 +240,6 @@ class KvmemnnAgent(Agent):
                 opt['dict_file'] = opt['model_file'] + '.dict'
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
-
             self.model = Kvmemnn(opt, len(self.dict), self.dict)
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 self.load(opt['model_file'])
@@ -275,6 +277,10 @@ class KvmemnnAgent(Agent):
         # self.dict_neighbors('coffee')
         self.take_next_utt = True
         self.cands_done = []
+        if 'interactive_mode' in opt:
+            self.interactiveMode = self.opt['interactive_mode']
+        else:
+            self.interactiveMode = False
 
     def override_opt(self, new_opt):
         """Set overridable opts from loaded opt file.
@@ -485,7 +491,6 @@ class KvmemnnAgent(Agent):
             self.take_next_utt=True
             self.twohoputt=True
             self.tricks=True
-            self.interactiveMode=False
             if cands is None or cands[0] is None or self.take_next_utt:
                 # cannot predict without candidates.
                 if self.fixedCands or self.take_next_utt:
