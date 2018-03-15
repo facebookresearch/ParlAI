@@ -274,7 +274,11 @@ def name_to_agent_class(name):
     return class_name
 
 def load_agent_module(opt):
-    optfile =  opt['model_file'] + '.opt'
+    model_file = opt['model_file']
+    if model_file.startswith('model:'):
+        # load model from the ParlAI model zoo directory
+        model_file = os.path.join(opt['datapath'], 'models', model_file[6:])
+    optfile =  model_file + '.opt'
     if os.path.isfile(optfile):
         with open(optfile, 'rb') as handle:
            new_opt = pickle.load(handle)
