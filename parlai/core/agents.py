@@ -278,12 +278,17 @@ def load_agent_module(opt):
     if os.path.isfile(optfile):
         with open(optfile, 'rb') as handle:
            new_opt = pickle.load(handle)
-        # only override opts specified in 'override' dict
         if new_opt.get('override'):
+            # override opts specified in 'override' dict
             for k, v in new_opt['override']:
                 opt[k] = v
-        model_class = get_agent_module(opt['model'])
-        return model_class(opt)
+            model_class = get_agent_module(opt['model'])
+            return model_class(opt)
+        else:
+            # if 'override' not present, override all opts
+            new_opt['model_file'] = opt['model_file']
+            model_class = get_agent_module(new_opt['model'])
+            return model_class(new_opt)
     else:
         return None
 
