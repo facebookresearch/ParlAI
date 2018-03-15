@@ -1237,6 +1237,9 @@ class MTurkManager():
         )
 
     def approve_assignments_for_hit(self, hit_id, override_rejection=False):
+        """Approve work for assignments associated with a given hit, through
+        mturk client
+        """
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         assignments = self.get_assignments_for_hit(hit_id)
         for assignment in assignments:
