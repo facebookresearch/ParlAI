@@ -17,6 +17,7 @@ import os
 import pickle
 import copy
 import random
+import re
 import argparse
 import time
 import math
