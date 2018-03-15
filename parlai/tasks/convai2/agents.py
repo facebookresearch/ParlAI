@@ -10,7 +10,16 @@ from .build import build
 import copy
 import os
 
-def _path(opt, persona):
+'''All teachers have a version with and without label candidates. Each teacher
+defaults to using a dataset with label candidates. To use a dataset without
+label candidates, specify this using the task flag:
+
+--task convai2:{TEACHER_NAME}:no_cands
+
+where TEACHER_NAME is None, SelfOriginal (Self), or SelfRevised.
+'''
+
+def _path(opt, persona, use_cands):
     # Build the data if it doesn't exist.
     build(opt)
     datatype =  opt['datatype'].split(':')[0]
@@ -18,18 +27,29 @@ def _path(opt, persona):
         print("WARNING: Test set not included. Setting datatype to valid.")
         datatype = 'valid'
     dt = datatype + '_' + persona
-    return os.path.join(opt['datapath'], 'ConvAI2', dt + '.txt')
+    cands = '' if use_cands else '_no_cands'
+    return os.path.join(opt['datapath'], 'ConvAI2', dt + cands + '.txt')
 
 class NoneTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['datafile'] = _path(opt, 'none_original')
+        try:
+            cands = opt['task'].split(":")[2]
+            use_cands = False if cands == 'no_cands' else True
+        except:
+            use_cands = True
+        opt['datafile'] = _path(opt, 'none_original', use_cands)
         super().__init__(opt, shared)
 
 class SelfOriginalTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['datafile'] = _path(opt, 'self_original')
+        try:
+            cands = opt['task'].split(":")[2]
+            use_cands = False if cands == 'no_cands' else True
+        except:
+            use_cands = True
+        opt['datafile'] = _path(opt, 'self_original', use_cands)
         super().__init__(opt, shared)
 
 class SelfTeacher(SelfOriginalTeacher):
@@ -38,7 +58,12 @@ class SelfTeacher(SelfOriginalTeacher):
 class SelfRevisedTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['datafile'] = _path(opt, 'self_revised')
+        try:
+            cands = opt['task'].split(":")[2]
+            use_cands = False if cands == 'no_cands' else True
+        except:
+            use_cands = True
+        opt['datafile'] = _path(opt, 'self_revised', use_cands)
         super().__init__(opt, shared)
 
 class DefaultTeacher(SelfOriginalTeacher):
