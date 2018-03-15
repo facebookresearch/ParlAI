@@ -1207,6 +1207,12 @@ class MTurkManager():
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         return client.get_assignment(AssignmentId=assignment_id)
 
+    def get_assignments_for_hit(self, hit_id):
+        """Get completed assignments for a hit"""
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
+        assignments_info = client.list_assignments_for_hit(HITId=hit_id)
+        return assignments_info.get('Assignments', [])
+
     def expire_all_unassigned_hits(self):
         """Move through the whole hit_id list and attempt to expire the
         HITs, though this only immediately expires those that aren't assigned.
@@ -1229,6 +1235,17 @@ class MTurkManager():
             AssignmentId=assignment_id,
             RequesterFeedback=reason
         )
+
+    def approve_assignments_for_hit(self, hit_id, override_rejection=False):
+        """Approve work for assignments associated with a given hit, through
+        mturk client
+        """
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
+        assignments = self.get_assignments_for_hit(hit_id)
+        for assignment in assignments:
+            assignmend_id = assignment['AssignmentId']
+            client.approve_assignment(AssignmentId=assignment_id,
+                                      OverrideRejection=override_rejection)
 
     def block_worker(self, worker_id, reason):
         """Block a worker by id using the mturk client, passes reason along"""
