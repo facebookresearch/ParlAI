@@ -267,18 +267,17 @@ class MTurkManager():
             agent.state.status = AssignState.STATUS_DISCONNECT
             # in conversation, inform others about disconnect
             conversation_id = agent.conversation_id
-            if conversation_id in self.conv_to_agent:
-                if agent in self.conv_to_agent[conversation_id]:
-                    for other_agent in self.conv_to_agent[conversation_id]:
-                        if agent.assignment_id != other_agent.assignment_id:
-                            self._handle_partner_disconnect(
-                                other_agent.worker_id,
-                                other_agent.assignment_id
-                            )
-                if len(self.mturk_agent_ids) > 1:
-                    # The user disconnected from inside a conversation with
-                    # another turker, record this as bad behavoir
-                    self._handle_bad_disconnect(worker_id)
+            if agent in self.conv_to_agent[conversation_id]:
+                for other_agent in self.conv_to_agent[conversation_id]:
+                    if agent.assignment_id != other_agent.assignment_id:
+                        self._handle_partner_disconnect(
+                            other_agent.worker_id,
+                            other_agent.assignment_id
+                        )
+            if len(self.mturk_agent_ids) > 1:
+                # The user disconnected from inside a conversation with
+                # another turker, record this as bad behavoir
+                self._handle_bad_disconnect(worker_id)
 
     def _handle_partner_disconnect(self, worker_id, assignment_id):
         """Send a message to a worker notifying them that a partner has
@@ -1207,6 +1206,12 @@ class MTurkManager():
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         return client.get_assignment(AssignmentId=assignment_id)
 
+    def get_assignments_for_hit(self, hit_id):
+        """Get completed assignments for a hit"""
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
+        assignments_info = client.list_assignments_for_hit(HITId=hit_id)
+        return assignments_info.get('Assignments', [])
+
     def expire_all_unassigned_hits(self):
         """Move through the whole hit_id list and attempt to expire the
         HITs, though this only immediately expires those that aren't assigned.
@@ -1229,6 +1234,14 @@ class MTurkManager():
             AssignmentId=assignment_id,
             RequesterFeedback=reason
         )
+
+    def approve_assignments_for_hit(self, hit_id, override_rejection=False):
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
+        assignments = self.get_assignments_for_hit(hit_id)
+        for assignment in assignments:
+            assignmend_id = assignment['AssignmentId']
+            client.approve_assignment(AssignmentId=assignment_id,
+                                      OverrideRejection=override_rejection)
 
     def block_worker(self, worker_id, reason):
         """Block a worker by id using the mturk client, passes reason along"""
