@@ -22,6 +22,7 @@ if __name__ == '__main__':
     build(opt, fnames)
 
     # add additional model args
+    opt['override'] = ['interactive_mode']
     opt['interactive_mode'] = True
 
     interactive(opt)

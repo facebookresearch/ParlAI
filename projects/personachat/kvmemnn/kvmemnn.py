@@ -281,6 +281,9 @@ class KvmemnnAgent(Agent):
             self.interactiveMode = self.opt['interactive_mode']
         else:
             self.interactiveMode = False
+        if self.interactiveMode:
+            print("[ Interactive mode ]")
+
 
     def override_opt(self, new_opt):
         """Set overridable opts from loaded opt file.
