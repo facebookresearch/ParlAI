@@ -473,7 +473,7 @@ class MessengerManager():
                             time_in_pool = \
                                 agent_state.time_in_pool.get(world_type)
                             if time_in_pool and time.time() - time_in_pool \
-                                    > max_time_in_pool:
+                                    > max_time_in_pool[world_type]:
                                 # remove agent from agent_pool
                                 self.remove_agent_from_pool(
                                     agent_state, world_type)
