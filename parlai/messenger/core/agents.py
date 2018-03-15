@@ -25,6 +25,7 @@ class MessengerAgent(Agent):
         self.observed_packets = {}
         self.msg_queue = Queue()
         self.stored_data = {}
+        self.message_partners = []
         # initialize stored data
         self.set_stored_data()
 

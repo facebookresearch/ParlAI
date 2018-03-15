@@ -20,15 +20,7 @@ from parlai.core.worlds import create_task
 
 import random
 
-def main():
-    random.seed(42)
-
-    # Get command line arguments
-    parser = ParlaiParser(True, True)
-    parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    opt = parser.parse_args()
-    opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
-    print(opt)
+def interactive(opt):
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
@@ -42,6 +34,17 @@ def main():
         if world.epoch_done():
             print("EPOCH DONE")
             break
+
+def main():
+    random.seed(42)
+
+    # Get command line arguments
+    parser = ParlaiParser(True, True)
+    parser.add_argument('-d', '--display-examples', type='bool', default=False)
+    opt = parser.parse_args()
+    opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
+    print(opt)
+    interactive(opt)
 
 if __name__ == '__main__':
     main()

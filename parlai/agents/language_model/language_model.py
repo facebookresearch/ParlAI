@@ -79,6 +79,9 @@ class LanguageModelAgent(Agent):
                            help='wait before decreasing learning rate')
         agent.add_argument('-lrm', '--lr-minimum', type=float, default=0.1,
                            help='minimum learning rate')
+        agent.add_argument('-sm', '--sampling-mode', type=bool, default=False,
+                           help='sample when generating tokens instead of taking \
+                           the max and do not produce UNK token (when bs=1)')
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -90,6 +93,7 @@ class LanguageModelAgent(Agent):
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
         self.batchsize = opt.get('batchsize', 1)
         self.use_person_tokens = opt.get('person_tokens', True)
+        self.sampling_mode = opt.get('sampling_mode', False)
 
         if shared:
             # set up shared properties
@@ -385,7 +389,17 @@ class LanguageModelAgent(Agent):
             if bsz > 1:
                 value, word_idx = torch.max(word_weights, 1)
             else:
-                value, word_idx = torch.max(word_weights, 0)
+                if self.sampling_mode:
+                    unk_idx = self.dict[self.dict.unk_token]
+                    # square distribution
+                    word_weights = torch.mul(word_weights, word_weights)
+                    # sample distribution
+                    word_idx = torch.multinomial(word_weights, 1)
+                    # do not produce UNK token
+                    while word_idx == unk_idx:
+                        word_idx = torch.multinomial(word_weights, 1)
+                else:
+                    value, word_idx = torch.max(word_weights, 0)
             # mark end indices for items in batch
             for k in range(word_idx.size(0)):
                 if not done[k]:
