@@ -11,11 +11,8 @@ from .tfidf_doc_ranker import TfidfDocRanker
 from .build_db import store_contents as build_db
 from .build_tfidf import run as build_tfidf
 from .build_tfidf import live_count_matrix, get_tfidf_matrix
-from parlai_internal.mturk.tasks.wizard_of_perZOna.ir_baseline \
-    import rank_candidates, IrBaselineAgent
 from numpy.random import choice
 import math
-import copy
 import os
 
 
@@ -69,11 +66,6 @@ class TfidfRetrieverAgent(Agent):
             '--retriever-mode', choices=['keys', 'values'], default='values',
             help='Whether to retrieve the stored key or the stored value.'
         )
-        parser.add_argument(
-            '--tfidf-weight', type=float, default=0.5,
-            help='how much weight to ascribe to tfidf doc prob'
-        )
-        IrBaselineAgent.add_cmdline_args(parser)
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -101,16 +93,12 @@ class TfidfRetrieverAgent(Agent):
         if rebuild_tfidf:
             # build tfidf if we built the db or if it doesn't exist
             build_tfidf(self.tfidf_args)
-        agent_opt = copy.deepcopy(opt)
-        self.ir_agent = IrBaselineAgent(agent_opt)
-        self.tfidf_wt = opt['tfidf_weight']
         self.db = DocDB(db_path=opt['retriever_dbpath'])
         self.ranker = TfidfDocRanker(
             tfidf_path=opt['retriever_tfidfpath'], strict=False)
         self.ret_mode = opt['retriever_mode']
         self.cands_hash = {}  # cache for candidates
         self.triples_to_add = []  # in case we want to add more entries
-
 
     def train(self, mode=True):
         self.training = mode
@@ -182,22 +170,7 @@ class TfidfRetrieverAgent(Agent):
 
                     # returned
                     picks = [self.doc2txt(int(did)) for did in doc_ids]
-                    # Check score match from ir baseline
-                    query_rep = self.ir_agent.build_query_representation(obs['text'])
-                    ir_baseline_cands = [{'msg': p} for p in picks]
-                    base_cands, base_scores = rank_candidates(query_rep, ir_baseline_cands, self.ir_agent.length_penalty)
-                    baseline_total = sum(base_scores)
-                    base_scores = [base_scores[base_cands.index(p)] for p in picks]
-                    baseline_doc_probs = [s / baseline_total if baseline_total > 0 else 0 for s in base_scores]
-                    base_wt = 1 - self.tfidf_wt
-                    combined_probs = [a*self.tfidf_wt+b*base_wt for a, b in zip(doc_probs, baseline_doc_probs)]
-                    best_of_both = [i[0] for i in sorted(enumerate(combined_probs), key=lambda x:x[1], reverse=True)]
-                    sorted_combined_probs = sorted(combined_probs, reverse=True)
-                    picks = [picks[i] for i in best_of_both]
-                    #
                     reply['text_candidates'] = picks
-                    reply['candidate_scores'] = sorted_combined_probs
-                    # reply['candidate_scores'] = ["{:.2f}, {:.2f}".format(d1, d2) for d1,d2 in zip(doc_probs, baseline_doc_probs)]
 
                     # could pick single choice based on probability scores?
                     # pick = int(choice(doc_ids, p=doc_probs))
