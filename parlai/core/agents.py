@@ -278,10 +278,12 @@ def load_agent_module(opt):
     if os.path.isfile(optfile):
         with open(optfile, 'rb') as handle:
            new_opt = pickle.load(handle)
-        # override in case the file has been moved.
-        new_opt['model_file'] = opt['model_file']
-        model_class = get_agent_module(new_opt['model'])
-        return model_class(new_opt)
+        # only override opts specified in 'override' dict
+        if new_opt.get('override'):
+            for k, v in new_opt['override']:
+                opt[k] = v
+        model_class = get_agent_module(opt['model'])
+        return model_class(opt)
     else:
         return None
 

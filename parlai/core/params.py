@@ -73,6 +73,9 @@ class ParlaiParser(argparse.ArgumentParser):
 
         self.add_arg = self.add_argument
 
+        # remember which args were specified on the command line
+        self.cli_args = sys.argv
+
         if add_parlai_args:
             self.add_parlai_args(model_argv)
             self.add_image_args()
@@ -307,6 +310,13 @@ class ParlaiParser(argparse.ArgumentParser):
             os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']
         if self.opt.get('datapath'):
             os.environ['PARLAI_DATAPATH'] = self.opt['datapath']
+
+        # set all arguments specified in commandline as overridable
+        override = {}
+        for k, v in self.opt.items():
+            if v in self.cli_args:
+                override[k] = v
+        self.opt['override'] = override
 
         if print_args:
             self.print_args()
