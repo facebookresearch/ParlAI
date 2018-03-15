@@ -93,6 +93,7 @@ class TfidfRetrieverAgent(Agent):
         if rebuild_tfidf:
             # build tfidf if we built the db or if it doesn't exist
             build_tfidf(self.tfidf_args)
+
         self.db = DocDB(db_path=opt['retriever_dbpath'])
         self.ranker = TfidfDocRanker(
             tfidf_path=opt['retriever_tfidfpath'], strict=False)
