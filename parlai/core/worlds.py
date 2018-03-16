@@ -84,8 +84,8 @@ def display_messages(msgs):
             lines.append(msg['image'])
         if msg.get('text', ''):
             text = msg['text']
-            if len(text) > 250:
-                text = text[:250] + '...'
+            if len(text) > 1000:
+                text = text[:1000] + '...'
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + text)
         if msg.get('labels'):
@@ -127,10 +127,15 @@ def display_messages(msgs):
             display_cands = []
             num_cands = 0
             for cand in cands:
+                cand_max_length = 250 if scores is None else 100
+                if len(cand) > cand_max_length:
+                    # Show beginning and end
+                    split = [cand[:cand_max_length], cand[cand_max_length:]]
+                    cand = split[0] + '\n...\n' + split[1][-(min(50, len(split[1]))):]
                 if scores is not None:
-                    table.add_row([scores[num_cands], cand[:(min(100, len(cand)))]])
+                    table.add_row([scores[num_cands], cand])
                 else:
-                    table.add_row([cand[:(min(250, len(cand)))]])
+                    table.add_row([cand])
                 num_cands += 1
                 if num_cands > 5:
                     break
