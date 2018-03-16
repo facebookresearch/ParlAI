@@ -1246,7 +1246,6 @@ class MTurkManager():
         """
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         assignments = self.get_assignments_for_hit(hit_id)
-        results = []
         for assignment in assignments:
             assignment_id = assignment['AssignmentId']
             client.approve_assignment(AssignmentId=assignment_id,
