@@ -435,8 +435,8 @@ class Seq2seqAgent(Agent):
             target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
             self.metrics['loss'] += loss.double().data[0]
             self.metrics['num_tokens'] += target_tokens
-            # average loss per token
-            loss /= target_tokens
+            loss /= target_tokens  # average loss per token
+            # loss /= xs.size(0)  # average loss per sentence
             loss.backward()
             self.update_params()
         else:
