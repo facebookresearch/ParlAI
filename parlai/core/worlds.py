@@ -132,7 +132,7 @@ def display_messages(msgs):
                 if len(cand) > cand_max_length:
                     # Show beginning and end
                     split = [cand[:cand_max_length], cand[cand_max_length:]]
-                    cand = split[0] + '\n...\n' + split[1][-(min(50, len(split[1]))):]
+                    cand = split[0] + '\n\n. . .\n\n' + split[1][-(min(50, len(split[1]))):]
                 if scores is not None:
                     table.add_row([scores[num_cands], cand])
                 else:
