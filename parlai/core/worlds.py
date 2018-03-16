@@ -117,6 +117,7 @@ def display_messages(msgs):
             except ModuleNotFoundError:
                 raise ModuleNotFoundError('Please install prettytable to \
                 display text candidates: `pip install prettytable`')
+            scores = None
             if msg.get('candidate_scores') is not None:
                 table = prettytable.PrettyTable(['Score', 'Text'])
                 scores = msg.get('candidate_scores')
