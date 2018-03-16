@@ -499,30 +499,37 @@ class OffensiveLanguageDetector(object):
         self.datapath = os.path.join(parser.parlai_home, 'data')
         self.datafile = _path()
 
-        # read text file to generate list of offensive words
-        self.offensive_words = []
-        with open(self.datafile, 'r') as f:
-            self.offensive_words += f.read().splitlines()
-
+        # store a token trie: e.g.
+        # {'2': {'girls': {'1': {'cup': {'__END__': True}}}}
         self.END = '__END__'
         self.offensive_trie = {}
         self.max_len = 1
         with open(self.datafile, 'r') as f:
             for p in f.read().splitlines():
-                toks = self.tokenize(p)
-                curr = self.offensive_trie
-                for t in toks:
-                    if t not in curr:
-                        curr[t] = {}
-                    curr = curr[t]
-                curr[self.END] = True
-                self.max_len = max(self.max_len, len(toks))
+                self.add_phrase(p)
 
-    def add_words(self, word_list):
-        """Add custom words to screen."""
-        self.offensive_words += word_list
+    def add_phrase(self, phrase):
+        """Adds a single phrase to the trie."""
+        toks = self.tokenize(phrase)
+        curr = self.offensive_trie
+        for t in toks:
+            if t not in curr:
+                curr[t] = {}
+            curr = curr[t]
+        curr[self.END] = True
+        self.max_len = max(self.max_len, len(toks))
+
+    def add_words(self, phrase_list):
+        """Add list of custom phrases to the filter."""
+        for phrase in phrase_list:
+            self.add_phrase(phrase)
 
     def check_sequence(self, toks, idx, node):
+        """Check if words from the sequence are in the trie.
+
+        This checks phrases made from
+        toks[i], toks[i:i+2] ... toks[i:i + self.max_len]
+        """
         right = min(idx + self.max_len, len(toks))
         for i in range(idx, right):
             if toks[i] in node:
