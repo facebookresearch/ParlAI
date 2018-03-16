@@ -6,7 +6,6 @@
 import errno
 import json
 import logging
-import os
 import requests
 import threading
 import time
