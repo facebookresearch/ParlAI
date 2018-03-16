@@ -291,7 +291,8 @@ class MTurkManager():
         elif not agent.state.is_final():
             # Update the assignment state
             agent.some_agent_disconnected = True
-            if len(agent.state.messages) < self.minimum_messages:
+            agent_messages = [m for m in agent.state.messages if m['id'] == agent.id]
+            if len(agent_messages) < self.minimum_messages:
                 agent.state.status = AssignState.STATUS_PARTNER_DISCONNECT_EARLY
             else:
                 agent.state.status = AssignState.STATUS_PARTNER_DISCONNECT

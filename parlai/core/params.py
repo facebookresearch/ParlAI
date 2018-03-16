@@ -157,7 +157,7 @@ class ParlaiParser(argparse.ArgumentParser):
                  'unlimited.'
         )
         mturk.add_argument(
-            '--min-messages', dest='min-messages',
+            '--min-messages', dest='min_messages',
             default=0, type=int,
             help='number of messages required to be sent by MTurk agent when '
                  'considering whether to approve a HIT in the event of a '
