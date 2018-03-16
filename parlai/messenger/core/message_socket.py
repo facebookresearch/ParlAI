@@ -270,7 +270,7 @@ class MessageSocket():
             results.append(result)
         return results
 
-    def upload_attachment(self, payload):
+    def upload_fb_attachment(self, payload):
         """Uploads an attachment using the Attachment Upload API and returns
         an attachment ID.
         """
@@ -313,7 +313,7 @@ class MessageSocket():
         result = response.json()
         shared_utils.print_and_log(
             logging.INFO,
-            '"Facebook response from message send: {}"'.format(result)
+            '"Facebook response from attachment upload: {}"'.format(result)
         )
         return result
 

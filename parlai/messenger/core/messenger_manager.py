@@ -542,7 +542,7 @@ class MessengerManager():
         """Send a payload through the message manager"""
         return self.message_socket.send_fb_payload(receiver_id, data)
 
-    def get_attachment_upload(self, payload):
+    def upload_attachment(self, payload):
         """Uploads an attachment and returns an attachment ID
         `payload` should be a dict of the format
         {'type': <TYPE>, 'url': <URL>} or
@@ -550,4 +550,4 @@ class MessengerManager():
         For example,
         {'type': 'image', 'filename': 'test.png', 'format': 'png'}
         """
-        return self.message_socket.upload_attachment(payload)
+        return self.message_socket.upload_fb_attachment(payload)
