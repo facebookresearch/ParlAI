@@ -1249,10 +1249,8 @@ class MTurkManager():
         results = []
         for assignment in assignments:
             assignment_id = assignment['AssignmentId']
-            res = client.approve_assignment(AssignmentId=assignment_id,
+            client.approve_assignment(AssignmentId=assignment_id,
                                       OverrideRejection=override_rejection)
-            results.append(res)
-        return results
 
     def block_worker(self, worker_id, reason):
         """Block a worker by id using the mturk client, passes reason along"""

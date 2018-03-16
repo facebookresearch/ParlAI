@@ -82,9 +82,10 @@ class AssignState():
         elif self.status == self.STATUS_PARTNER_DISCONNECT_EARLY:
             command = data_model.COMMAND_INACTIVE_HIT
             text = ('One of your partners disconnected in the middle of the '
-                    'HIT. Unfortunately, you did not complete enough of the '
-                    'task to submit the HIT. Please return this HIT and '
-                    'accept a new one.')
+                    'HIT. We won\'t penalize you for their disconnect, but you '
+                    'did not complete enough of the task to submit the HIT. '
+                    'Please return this HIT and accept a new one if you would '
+                    'like to try again.')
         elif self.status == self.STATUS_RETURNED:
             text = ('You disconnected from this HIT and then returned '
                     'it. As we have marked the HIT as returned, it is no '

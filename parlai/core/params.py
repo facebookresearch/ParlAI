@@ -159,8 +159,9 @@ class ParlaiParser(argparse.ArgumentParser):
         mturk.add_argument(
             '--min-messages', dest='min-messages',
             default=0, type=int,
-            help='number of messages required to be sent by MTurk agent in the '
-                 'event of a partner disconnect. If the number of messages '
+            help='number of messages required to be sent by MTurk agent when '
+                 'considering whether to approve a HIT in the event of a '
+                 'partner disconnect. I.e. if the number of messages '
                  'exceeds this number, the turker can submit the HIT.'
         )
 
