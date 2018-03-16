@@ -8,7 +8,6 @@ import json
 import logging
 import os
 import requests
-from requests_toolbelt import MultipartEncoder
 import threading
 import time
 import websocket
