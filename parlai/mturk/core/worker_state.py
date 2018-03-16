@@ -21,6 +21,7 @@ class AssignState():
     STATUS_DONE = 'done'
     STATUS_DISCONNECT = 'disconnect'
     STATUS_PARTNER_DISCONNECT = 'partner disconnect'
+    STATUS_PARTNER_DISCONNECT_EARLY = 'partner disconnect early'
     STATUS_EXPIRED = 'expired'
     STATUS_RETURNED = 'returned'
 
@@ -45,6 +46,7 @@ class AssignState():
         return (self.status == self.STATUS_DISCONNECT or
                 self.status == self.STATUS_DONE or
                 self.status == self.STATUS_PARTNER_DISCONNECT or
+                self.status == self.STATUS_PARTNER_DISCONNECT_EARLY or
                 self.status == self.STATUS_RETURNED or
                 self.status == self.STATUS_EXPIRED)
 
@@ -77,6 +79,13 @@ class AssignState():
             text = ('One of your partners disconnected in the middle of the '
                     'HIT. We won\'t penalize you for their disconnect, so '
                     'please use the button below to mark the HIT as complete.')
+        elif self.status == self.STATUS_PARTNER_DISCONNECT_EARLY:
+            command = data_model.COMMAND_INACTIVE_HIT
+            text = ('One of your partners disconnected in the middle of the '
+                    'HIT. We won\'t penalize you for their disconnect, but you '
+                    'did not complete enough of the task to submit the HIT. '
+                    'Please return this HIT and accept a new one if you would '
+                    'like to try again.')
         elif self.status == self.STATUS_RETURNED:
             text = ('You disconnected from this HIT and then returned '
                     'it. As we have marked the HIT as returned, it is no '

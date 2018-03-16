@@ -156,6 +156,14 @@ class ParlaiParser(argparse.ArgumentParser):
             help='number of HITs that can be launched at the same time, 0 is '
                  'unlimited.'
         )
+        mturk.add_argument(
+            '--min-messages', dest='min_messages',
+            default=0, type=int,
+            help='number of messages required to be sent by MTurk agent when '
+                 'considering whether to approve a HIT in the event of a '
+                 'partner disconnect. I.e. if the number of messages '
+                 'exceeds this number, the turker can submit the HIT.'
+        )
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)

@@ -74,6 +74,7 @@ class MTurkManager():
         self.required_hits = math.ceil(
             self.num_conversations * len(self.mturk_agent_ids) * HIT_MULT
         )
+        self.minimum_messages = opt.get('min_messages', 0)
         self.socket_manager = None
         self.is_test = is_test
         self.is_unique = False
@@ -290,7 +291,11 @@ class MTurkManager():
         elif not agent.state.is_final():
             # Update the assignment state
             agent.some_agent_disconnected = True
-            agent.state.status = AssignState.STATUS_PARTNER_DISCONNECT
+            agent_messages = [m for m in agent.state.messages if m['id'] == agent.id]
+            if len(agent_messages) < self.minimum_messages:
+                agent.state.status = AssignState.STATUS_PARTNER_DISCONNECT_EARLY
+            else:
+                agent.state.status = AssignState.STATUS_PARTNER_DISCONNECT
 
             # Create and send the command
             data = agent.get_inactive_command_data()
@@ -1243,7 +1248,7 @@ class MTurkManager():
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         assignments = self.get_assignments_for_hit(hit_id)
         for assignment in assignments:
-            assignmend_id = assignment['AssignmentId']
+            assignment_id = assignment['AssignmentId']
             client.approve_assignment(AssignmentId=assignment_id,
                                       OverrideRejection=override_rejection)
 
