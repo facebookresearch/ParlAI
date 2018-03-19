@@ -294,7 +294,8 @@ class DictionaryAgent(Agent):
         return (token for sent in self.sent_tok.tokenize(text)
                 for token in self.word_tok.tokenize(sent))
 
-    def split_tokenize(self, text):
+    @staticmethod
+    def split_tokenize(text):
         """Splits tokens based on whitespace after adding whitespace around
         punctuation.
         """
