@@ -62,6 +62,7 @@ class Seq2seq(nn.Module):
 
         enc_out, hidden = self.encoder(xs)
         attn_mask = xs.ne(0).float() if self.attn_type != 'none' else None
+        # set up input to decoder
         start = Variable(self.START, requires_grad=False)
         starts = start.expand(bsz, 1)
 
@@ -106,8 +107,8 @@ class Seq2seq(nn.Module):
                     # no need to generate any more
                     break
             if self.rank and cands is not None:
-                text_cand_inds = self.ranker(cands, valid_cands, start,
-                                             hidden, enc_out, attn_mask)
+                text_cand_inds = self.ranker.forward(cands, valid_cands, start,
+                                                     hidden, enc_out, attn_mask)
 
         if predictions:
             predictions = torch.cat(predictions, 1)
@@ -207,9 +208,9 @@ class Decoder(nn.Module):
 
         # rnn output to embedding
         if hidden_size != emb_size:
-            self.o2e = RandomProjection(hidden_size, emb_size)
+            # self.o2e = RandomProjection(hidden_size, emb_size)
             # other option here is to learn these weights
-            # self.o2e = nn.Linear(hidden_size, emb_size, bias=False)
+            self.o2e = nn.Linear(hidden_size, emb_size, bias=False)
         else:
             # no need for any transformation here
             self.o2e = lambda x: x
@@ -248,7 +249,7 @@ class Decoder(nn.Module):
         return preds, scores, new_hidden
 
 
-class Ranker(nn.Module):
+class Ranker(object):
     def __init__(self, decoder, padding_idx=0, attn_type='none'):
         super().__init__()
         self.decoder = decoder
@@ -448,8 +449,7 @@ class AttentionLayer(nn.Module):
 
         if self.attention != 'none':
             hsz = hidden_size
-            num_dirs = 2 if bidirectional else 1
-            hszXdirs = hsz * num_dirs
+            hszXdirs = hsz * (2 if bidirectional else 1)
             if attn_time == 'pre':
                 # attention happens on the input embeddings
                 input_dim = emb_size
