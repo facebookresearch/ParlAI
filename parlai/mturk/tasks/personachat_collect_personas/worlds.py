@@ -14,7 +14,7 @@ import random
 
 
 class PersonaProfileWorld(MTurkOnboardWorld):
-    '''A world that provides a persona to the MTurkAgent'''
+    """A world that provides a persona to the MTurkAgent"""
     def __init__(self, opt, mturk_agent):
         self.opt = opt
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'

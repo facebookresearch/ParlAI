@@ -76,7 +76,7 @@ class PersonasGenerator(object):
 
 
 class PersonaProfileWorld(MTurkOnboardWorld):
-    '''A world that provides a persona to the MTurkAgent'''
+    """A world that provides a persona to the MTurkAgent"""
     def __init__(self, opt, mturk_agent):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.max_persona_time = opt['max_persona_time']
@@ -147,7 +147,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
 
         print(self.world_tag + ' is at turn {}...'.format(self.turn_idx))
 
-        '''If at first turn, we need to give each agent their persona'''
+        """If at first turn, we need to give each agent their persona"""
         if self.turn_idx == 1:
             for idx, agent in enumerate(self.agents):
                 persona_text = ''
@@ -162,16 +162,16 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                 if idx == 0:
                     time.sleep(3)
 
-        '''If we get to the min turns, inform turker that they can end if they
+        """If we get to the min turns, inform turker that they can end if they
            want
-        '''
+        """
         if self.turn_idx == self.n_turn + 1:
             for idx, agent in enumerate(self.agents):
                 control_msg['text'] = self.get_instruction(idx, tag='exceed_min_turns')
                 control_msg['exceed_min_turns'] = True
                 agent.observe(validate(control_msg))
 
-        '''Otherwise, we proceed accordingly'''
+        """Otherwise, we proceed accordingly"""
         acts = [None, None]
         for idx, agent in enumerate(self.agents):
             if not self.chat_done:
