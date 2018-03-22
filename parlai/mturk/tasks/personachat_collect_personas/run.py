@@ -59,7 +59,7 @@ def main():
 
         def run_onboard(worker):
             pass
-            
+
         mturk_manager.set_onboard_function(onboard_function=run_onboard)
         mturk_manager.ready_to_accept_workers()
 

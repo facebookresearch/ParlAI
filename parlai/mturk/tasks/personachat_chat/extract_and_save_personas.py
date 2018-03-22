@@ -51,10 +51,8 @@ def main(opt):
     teacher_name = 'personachat:{}'.format(opt.get('persona_type'))
     teacher_name += 'Revised' if opt.get('revised') else 'Original'
     opt['task'] = teacher_name
-    if 'personas_path' not in opt:
-        personas_path = '/Users/edinan/ParlAI/parlai_internal/mturk/tasks\
-    /personachat_eval/data/personas-{}/'.format(opt['task'])
-        opt['personas_path'] = personas_path
+    assert 'personas_path' in opt, 'Must specify personas path'
+    opt['personas_path'] = personas_path
     opt['datatype'] = 'train:ordered:stream'
     opt['numthreads'] = 1
     opt['batchsize'] = 1

@@ -40,8 +40,13 @@ def main():
                            help='Whether to use revised personas')
     argparser.add_argument('-rt', '--range_turn', default='5,7',
                            help='sample range of number of turns')
+    argparser.add_argument('--personas-path', default=None,
+                           help='specify path for personas data')
     opt = argparser.parse_args()
     opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
+    if not opt.get('personas_path'):
+        opt['personas_path'] = argparser.parlai_home + '/parlai/mturk/personachat_chat/data'
+
     if 'data_path' not in opt:
         opt['data_path'] = os.getcwd() + '/data/' + opt['task']
     opt.update(task_config)
