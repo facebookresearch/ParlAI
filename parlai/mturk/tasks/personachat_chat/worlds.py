@@ -84,11 +84,8 @@ class PersonaProfileWorld(MTurkOnboardWorld):
 
     def parley(self):
         persona_idx, data = self.mturk_agent.persona_generator.pop_persona()
-        model_persona_idx, model_data = self.mturk_agent.persona_generator.pop_persona()
         self.mturk_agent.persona_idx = persona_idx
         self.mturk_agent.persona_data = data
-        self.mturk_agent.model_persona = [model_persona_idx, model_data]
-        self.mturk_agent.persona_pair = [(persona_idx, data), (model_persona_idx, model_data)]
         persona_text = ''
         for s in data:
             persona_text += '<b><span style="color:blue">' \
