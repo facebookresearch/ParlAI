@@ -179,8 +179,13 @@ class PersonaChatWorld(MultiAgentDialogWorld):
             if self.check_timeout(acts[idx]):
                 return
 
-            while self.is_msg_tooshortlong(acts[idx], agent) or self.is_exact_match(acts[idx], agent):
-                acts[idx] = agent.act()
+            if self.turn_idx > 1:
+                # only check if message is too short on first message
+                while self.is_msg_tooshortlong(acts[idx], agent) or self.is_exact_match(acts[idx], agent):
+                    acts[idx] = agent.act()
+            else:
+                while self.is_exact_match(acts[idx], agent):
+                    acts[idx] = agent.act()
 
             if acts[idx]['episode_done'] == True:
                 self.chat_done = True
