@@ -161,7 +161,12 @@ class Encoder(nn.Module):
         # embed input tokens
         xes = F.dropout(self.lt(xs), p=self.dropout, training=self.training)
         x_lens = [x for x in torch.sum((xs > 0).int(), dim=1).data]
-        xes_packed = pack_padded_sequence(xes, x_lens, batch_first=True)
+        try:
+            xes_packed = pack_padded_sequence(xes, x_lens, batch_first=True)
+            packed = True
+        except AttributeError:
+            # packing failed, don't pack then
+            pass
 
         zeros = self.zeros(xs)
         if zeros.size(1) != bsz:
@@ -180,8 +185,9 @@ class Encoder(nn.Module):
             if self.dirs > 1:
                 # take elementwise max between forward and backward hidden states
                 hidden = hidden.view(-1, self.dirs, bsz, self.hsz).max(1)[0]
-        encoder_output, _ = pad_packed_sequence(encoder_output_packed,
-                                                batch_first=True)
+        if packed:
+            encoder_output, _ = pad_packed_sequence(encoder_output_packed,
+                                                    batch_first=True)
         return encoder_output, hidden
 
 

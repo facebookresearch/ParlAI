@@ -65,13 +65,19 @@ class PersonaSeq2seq(Seq2seq):
                 for row in ps:
                     personas = []
                     if len(row) > 0:
-                        for p in row:
-                            # we represent each persona by the max of its bidirectional encoded states
-                            p_encout, ps_hid = self.persona_encoder(p.unsqueeze(0))
-                            if self.persona_encoding == 'separate':
-                                personas.append(p_encout.squeeze(0))
-                            elif self.persona_encoding in ['max', 'maxsum']:
-                                personas.append(p_encout.max(1)[0])
+                        if False:
+                            for p in row:
+                                p_encout, ps_hid = self.persona_encoder(p.unsqueeze(0))
+                                if self.persona_encoding == 'separate':
+                                    personas.append(p_encout.squeeze(0))
+                                elif self.persona_encoding in ['max', 'maxsum']:
+                                    personas.append(p_encout.max(1)[0])
+                        else:
+                            row.sort(key=lambda x: len(x), reverse=True)
+                            packed = torch.nn.utils.rnn.pack_sequence(row)
+                            personas.append(self.persona_encoder(packed))
+                            import pdb; pdb.set_trace()
+
                     else:
                         personas.append(enc_out.new().resize_(1, self.hszXdirs).fill_(0))
                     # now add persona encoding to the batch

@@ -18,7 +18,7 @@ from collections import deque
 import os
 import math
 
-class NewPersonaSeq2seqAgent(Seq2seqAgent):
+class PersonaSeq2seqAgent(Seq2seqAgent):
     """Same as the Seq2seqAgent, except extracts the personas from the input
     and uses them for attention.
     """
