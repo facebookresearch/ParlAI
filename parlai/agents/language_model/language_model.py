@@ -335,7 +335,7 @@ class LanguageModelAgent(Agent):
         else:
             return tuple(self.repackage_hidden(v) for v in h)
 
-    def get_target_loss(self, data, hidden, targets, y_lens):
+    def get_target_loss(self, data, hidden, targets):
         """Calculates the loss with respect to the targets, token by token,
            where each output token is conditioned on either the input or the
            previous target token.
@@ -362,7 +362,7 @@ class LanguageModelAgent(Agent):
             output_flat = output.view(-1, len(self.dict))
             loss += self.criterion(output_flat, targets.select(1,i).view(-1)).data
 
-        return loss/float(sum(y_lens))
+        return loss
 
     def get_predictions(self, data):
         """Generates predictions word by word until we either reach the end token
@@ -435,7 +435,7 @@ class LanguageModelAgent(Agent):
             bsz = data.size(0)
             if bsz != self.batchsize:
                 self.hidden = self.model.init_hidden(bsz)
-            loss = self.get_target_loss(data, self.hidden, targets, y_lens)
+            loss = self.get_target_loss(data, self.hidden, targets)
             self.metrics['loss'] += loss
             self.metrics['num_tokens'] += sum(y_lens)
 
