@@ -334,6 +334,13 @@ task_list = [
         "description": "2014 International Workshop on Spoken Language task, currently only includes en_de and de_en. From Cettolo et al. '12. Link: wit3.fbk.eu"
     },
     {
+        "id": "ConvAI2",
+        "display_name": "ConvAI2",
+        "task": "convai2",
+        "tags": [ "All", "ChitChat" ],
+        "description": "A chit-chat dataset based on PersonaChat (https://arxiv.org/abs/1801.07243) for a NIPS 2018 competition. Link: http://convai.io/."
+    },
+    {
         "id": "ConvAI_ChitChat",
         "display_name": "ConvAI_ChitChat",
         "task": "convai_chitchat",
