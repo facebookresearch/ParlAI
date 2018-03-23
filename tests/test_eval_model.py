@@ -15,8 +15,7 @@ class TestEvalModel(unittest.TestCase):
     """Basic tests on the eval_model.py example."""
 
     args = [
-        '--task', '#moviedd-reddit',
-        '--datatype', 'valid',
+        '--task', 'tasks.repeat:RepeatTeacher:10',
     ]
 
     parser = ParlaiParser()
