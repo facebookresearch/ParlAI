@@ -26,24 +26,38 @@ class PersonaSeq2seq(Seq2seq):
             # do nothign
             pass
         elif self.persona_attention == 'persona':
-            self.decoder.attention = AttentionLayer(
-                attn_type=opt['attention'],
-                hidden_size=opt['hiddensize'],
-                emb_size=opt['embeddingsize'],
-                bidirectional=opt['persona_bidirectional'],
-                attn_length=opt['attention_length'],
-                attn_time=opt['attention_time'])
-            self.hszXdirs = opt['hiddensize'] * (2 if opt['persona_bidirectional'] else 1)
+
+            if self.persona_encoding == 'bow':
+                self.hszXdirs = opt['hiddensize']
+                self.persona_encoder = nn.EmbeddingBag(num_features,
+                    opt['embeddingsize'], scale_grad_by_freq=True)
+                self.bow2hsz = nn.Linear(opt['embeddingsize'], opt['hiddensize'])
+                self.decoder.attention = AttentionLayer(
+                    attn_type=opt['attention'],
+                    hidden_size=opt['hiddensize'],
+                    emb_size=opt['embeddingsize'],
+                    bidirectional=False,
+                    attn_length=opt['attention_length'],
+                    attn_time=opt['attention_time'])
+            else:
+                self.hszXdirs = opt['hiddensize'] * (2 if opt['persona_bidirectional'] else 1)
+                self.decoder.attention = AttentionLayer(
+                    attn_type=opt['attention'],
+                    hidden_size=opt['hiddensize'],
+                    emb_size=opt['embeddingsize'],
+                    bidirectional=opt['persona_bidirectional'],
+                    attn_length=opt['attention_length'],
+                    attn_time=opt['attention_time'])
+
+                # separate encoder for personas
+                self.persona_encoder = Encoder(
+                    num_features, padding_idx=self.NULL_IDX, rnn_class=rnn_class,
+                    emb_size=opt['embeddingsize'], hidden_size=opt['hiddensize'],
+                    num_layers=opt['persona_numlayers'], dropout=opt['dropout'],
+                    bidirectional=opt['persona_bidirectional'],
+                    shared_lt=self.encoder.lt)
         else:
             raise RuntimeError('Unsupported attention target: ' + self.persona_attention)
-
-        # separate encoder for personas
-        self.persona_encoder = Encoder(
-            num_features, padding_idx=self.NULL_IDX, rnn_class=rnn_class,
-            emb_size=opt['embeddingsize'], hidden_size=opt['hiddensize'],
-            num_layers=opt['persona_numlayers'], dropout=opt['dropout'],
-            bidirectional=opt['persona_bidirectional'],
-            shared_lt=self.encoder.lt)
 
     def forward(self, xs, ys=None, cands=None, valid_cands=None, ps=None):
         bsz = len(xs)
@@ -65,24 +79,26 @@ class PersonaSeq2seq(Seq2seq):
                 for row in ps:
                     personas = []
                     if len(row) > 0:
-                        if False:
+                        if self.persona_encoding == 'bow':
+                            bow = self.persona_encoder(torch.cat(row).unsqueeze(0))
+                            personas.append(self.bow2hsz(bow))
+                        elif self.persona_encoding == 'concat':
+                            p_encout, _ps_hid = self.persona_encoder(torch.cat(row).unsqueeze(0))
+                            personas.append(p_encout.squeeze(0))
+                        else:
                             for p in row:
-                                p_encout, ps_hid = self.persona_encoder(p.unsqueeze(0))
+                                p_encout, _ps_hid = self.persona_encoder(p.unsqueeze(0))
                                 if self.persona_encoding == 'separate':
                                     personas.append(p_encout.squeeze(0))
                                 elif self.persona_encoding in ['max', 'maxsum']:
                                     personas.append(p_encout.max(1)[0])
-                        else:
-                            row.sort(key=lambda x: len(x), reverse=True)
-                            packed = torch.nn.utils.rnn.pack_sequence(row)
-                            personas.append(self.persona_encoder(packed))
-                            import pdb; pdb.set_trace()
-
+                                else:
+                                    raise RuntimeError()
                     else:
                         personas.append(enc_out.new().resize_(1, self.hszXdirs).fill_(0))
                     # now add persona encoding to the batch
                     if self.persona_encoding == 'maxsum':
-                        batch.append(sum(personas))
+                        batch.append(sum(personas)) # 1 x hsz
                     else:
                         batch.append(torch.cat(personas, dim=0))  # num_personas x hsz
                 # add padding so same number of personas per batch row

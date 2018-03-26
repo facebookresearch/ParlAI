@@ -251,9 +251,8 @@ class Metrics(object):
                 m['accuracy'] = round_sigfigs(self.metrics['correct'] / self.metrics['correct_cnt'], 4)
                 m['f1'] = round_sigfigs(self.metrics['f1'] / self.metrics['f1_cnt'], 4)
                 if self.flags['has_text_cands']:
-                    m['hits@k'] = {}
                     for k in self.eval_pr:
-                        m['hits@k'][k] = round_sigfigs(
+                        m['hits@' + str(k)] = round_sigfigs(
                             self.metrics['hits@' + str(k)] / self.metrics['hits@_cnt'], 3)
             for k in self.metrics_list:
                 if self.metrics[k + '_cnt'] > 0 and k != 'correct' and k != 'f1':

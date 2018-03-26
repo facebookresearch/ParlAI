@@ -36,7 +36,7 @@ class PersonaSeq2seqAgent(Seq2seqAgent):
             help='Whether to use the persona or the context for attention, '
                  'or how to combine them if you want to use both.')
         agent.add_argument('-penc', '--persona-encoding', default='separate',
-            choices=['separate', 'max', 'maxsum'],
+            choices=['concat', 'separate', 'max', 'maxsum', 'bow'],
             help='How to encode the personas before doing attention over them. '
                  'TODO: elaborate')
 

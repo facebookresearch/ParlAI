@@ -164,7 +164,7 @@ class Encoder(nn.Module):
         try:
             xes_packed = pack_padded_sequence(xes, x_lens, batch_first=True)
             packed = True
-        except AttributeError:
+        except ValueError:
             # packing failed, don't pack then
             pass
 
