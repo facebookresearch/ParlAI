@@ -575,15 +575,8 @@ class Seq2seqAgent(Agent):
         if path and hasattr(self, 'model'):
             model = {}
             model['model'] = self.model.state_dict()
-            for k, v in model['model'].items():
-                if hasattr(v, 'cpu'):
-                    # pull back cuda tensors
-                    model['model'][k] = v.cpu()
             model['longest_label'] = self.model.longest_label
             model['optimizer'] = self.optimizer.state_dict()
-            for k, v in model['optimizer'].items():
-                if hasattr(v, 'cpu'):
-                    model['optimizer'][k] = v.cpu()
             model['optimizer_type'] = self.opt['optimizer']
             model['opt'] = self.opt
 
@@ -600,7 +593,7 @@ class Seq2seqAgent(Agent):
     def load(self, path):
         """Return opt and model states."""
         with open(path, 'rb') as read:
-            states = torch.load(read)
+            states = torch.load(read, map_location='cpu')
 
         return states['opt'], states
 
