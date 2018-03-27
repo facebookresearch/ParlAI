@@ -266,7 +266,7 @@ class MessengerManager():
                 self.observe_message(
                     agent_id,
                     "Please wait while we pair you with another person. "
-                    "If you wish to exit, click *EXIT*",
+                    "If you wish to exit, click *EXIT*.",
                     quick_replies=['EXIT']
                 )
                 self.message_socket.typing_on(agent_id)
@@ -492,7 +492,7 @@ class MessengerManager():
                                     self.observe_message(
                                         agent_state.messenger_id,
                                         "Pairing is taking longer than expected. "
-                                        "If you wish to exit, click *EXIT*",
+                                        "If you wish to exit, click *EXIT*.",
                                         quick_replies=['EXIT']
                                     )
                                     self.message_socket.typing_on(agent_state.messenger_id)

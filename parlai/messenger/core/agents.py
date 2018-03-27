@@ -55,7 +55,7 @@ class MessengerAgent(Agent):
             )
 
     def observe_typing_on(self):
-        """Allow agent to typing indicator"""
+        """Allow agent to observe typing indicator"""
         self.manager.message_socket.typing_on(self.id)
 
     def put_data(self, message):
