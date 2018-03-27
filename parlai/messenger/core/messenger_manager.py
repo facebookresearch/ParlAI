@@ -6,8 +6,10 @@
 
 import logging
 import os
+import sys
 import threading
 import time
+import traceback
 
 from parlai.messenger.core.agents import MessengerAgent
 from parlai.messenger.core.message_socket import MessageSocket
@@ -295,9 +297,25 @@ class MessengerManager():
                 agent = self._create_agent(task_id, agent_id)
                 agent_state.set_active_agent(agent)
                 agent_state.assign_agent_to_task(agent, task_id)
-                data = self.onboard_functions[world_type](opt, agent, task_id)
-                agent_state.onboard_data = data
-                agent_state.set_active_agent(None)
+                try:
+                    data = \
+                        self.onboard_functions[world_type](opt, agent, task_id)
+                    agent_state.onboard_data = data
+                    agent_state.set_active_agent(None)
+                except Exception as e:
+                    shared_utils.print_and_log(
+                        logging.ERROR,
+                        'Onboard {} had error {}'.format(world_type, repr(e)),
+                        should_print=True
+                    )
+                    traceback.print_exc(file=sys.stderr)
+                    self.observe_message(
+                        agent.id,
+                        "Sorry, this world closed. Returning to overworld."
+                    )
+                    agent_state.set_active_agent(
+                        agent_state.get_overworld_agent())
+                    return
 
             # once onboarding is done, move into a waiting world
             self.add_agent_to_pool(agent_state, world_type)
@@ -368,7 +386,8 @@ class MessengerManager():
         task_name = '{}-{}'.format('ParlAI-Messenger', self.opt['task'])
         self.server_task_name = \
             ''.join(e for e in task_name.lower() if e.isalnum() or e == '-')
-        self.server_url = server_utils.setup_server(self.server_task_name)
+        self.server_url = server_utils.setup_server(
+            self.server_task_name, local=self.opt['local_server'])
         shared_utils.print_and_log(
             logging.INFO,
             'Webhook address: {}/webhook'.format(self.server_url),
@@ -448,8 +467,11 @@ class MessengerManager():
             except Exception as e:
                 shared_utils.print_and_log(
                     logging.ERROR,
-                    'Starting world {} had error {}'.format(world_type, e),
+                    'World {} had error {}'.format(world_type, repr(e)),
+                    should_print=True,
                 )
+                print("Exception in user code:")
+                traceback.print_exc(file=sys.stdout)
                 for agent in agents:
                     self.observe_message(
                         agent.id,

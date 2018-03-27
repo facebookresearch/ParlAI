@@ -225,7 +225,9 @@ def delete_heroku_server(task_name):
     ))
 
 
-def setup_server(task_name):
+def setup_server(task_name, local=False):
+    if local:
+        return setup_local_server(task_name)
     return setup_heroku_server(task_name)
 
 
