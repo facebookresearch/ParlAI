@@ -1,0 +1,34 @@
+from download_models import build
+from parlai.core.params import ParlaiParser
+from examples.eval_model import eval_model
+
+'''Train a (Key-Value) Memory Net model trained on personachat using persona 'self'
+   (original, not rephrased)
+'''
+
+if __name__ == '__main__':
+    parser = ParlaiParser(add_model_args=True)
+    parser.add_argument('-n', '--num-examples', default=100000000)
+    parser.add_argument('-d', '--display-examples', type='bool', default=False)
+    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser.add_argument('-vtim', '--validate-every-n-secs', type=float, default=900)
+    parser.set_defaults(
+        task='personachat:self',
+        model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
+        model_file='/tmp/persona-self_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops1_lins0_model'
+        numthreads=40
+        dict_file="parlai_internal/projects/personachat/all.dict"
+
+
+        -ltim 60 -vtim 900 -vme 10000 --hops 1 --lins 0 -vp -1 -vmt accuracy -ttim 28800 -shareEmb True -bs 1 -lr 0.1 -esz 500 --margin 0.1 --tfidf False --numthreads 40
+    )
+    opt = parser.parse_args()
+    # build all profile memory models
+    fnames = ['kvmemnn.tgz']
+    opt['model_type'] = 'kvmemnn' # for builder
+    build(opt, fnames)
+
+    # add additional model args
+    opt['interactive_mode'] = False
+
+    eval_model(opt, parser)
