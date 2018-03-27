@@ -16,9 +16,3 @@ Persona-Chat using persona 'self':
 ```bash
 python projects/personachat/scripts/profilememory_eval_f1.py
 ```
-
-Train a sequence to sequence model on personachat data without using the
-persona data:
-```bash
-bash projects/personachat/scripts/seq2seq_noprofile_train.sh
-```
