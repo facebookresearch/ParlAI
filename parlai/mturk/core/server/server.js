@@ -138,6 +138,11 @@ wss.on('connection', function (socket) {
     console.log('Client disconnected: ' + connection_id);
   });
 
+  socket.on('error', (err) => {
+    console.log('Caught socket error')
+    console.log(err)
+  });
+
   // handles routing a packet to the desired recipient
   socket.on('message', function (data) {
     data = JSON.parse(data)

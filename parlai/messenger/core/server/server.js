@@ -91,6 +91,11 @@ wss.on('connection', function (socket) {
     }
   });
 
+  socket.on('error', (err) => {
+    console.log('Caught socket error')
+    console.log(err)
+  });
+
   socket.send(JSON.stringify(
     {'type': 'conn_success', 'content': 'Socket is open!'}
   ), function ack(error) {return;});
