@@ -291,9 +291,11 @@ class MTurkManager():
         elif not agent.state.is_final():
             # Update the assignment state
             agent.some_agent_disconnected = True
-            agent_messages = [m for m in agent.state.messages if m['id'] == agent.id]
+            agent_messages = [m for m in agent.state.messages
+                              if 'id' in m and m['id'] == agent.id]
             if len(agent_messages) < self.minimum_messages:
-                agent.state.status = AssignState.STATUS_PARTNER_DISCONNECT_EARLY
+                agent.state.status = \
+                    AssignState.STATUS_PARTNER_DISCONNECT_EARLY
             else:
                 agent.state.status = AssignState.STATUS_PARTNER_DISCONNECT
 
@@ -867,11 +869,12 @@ class MTurkManager():
             if self._no_workers_incomplete(workers):
                 self.completed_conversations += 1
             if self.opt['max_connections'] != 0:  # If using a conv cap
-                for w in workers:
-                    if w.state.status in [
-                            AssignState.STATUS_DONE,
-                            AssignState.STATUS_PARTNER_DISCONNECT]:
-                        self.create_additional_hits(1)
+                if self.accepting_workers:  # if still looking for new workers
+                    for w in workers:
+                        if w.state.status in [
+                                AssignState.STATUS_DONE,
+                                AssignState.STATUS_PARTNER_DISCONNECT]:
+                            self.create_additional_hits(1)
 
         while True:
             # Loop forever starting task worlds until desired convos are had
@@ -1232,6 +1235,11 @@ class MTurkManager():
         """approve work for a given assignment through the mturk client"""
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         client.approve_assignment(AssignmentId=assignment_id)
+        shared_utils.print_and_log(
+            logging.INFO,
+            'Assignment {} approved.'
+            ''.format(assignment_id),
+        )
 
     def reject_work(self, assignment_id, reason):
         """reject work for a given assignment through the mturk client"""
@@ -1239,6 +1247,11 @@ class MTurkManager():
         client.reject_assignment(
             AssignmentId=assignment_id,
             RequesterFeedback=reason
+        )
+        shared_utils.print_and_log(
+            logging.INFO,
+            'Assignment {} rejected for reason {}.'
+            ''.format(assignment_id, reason),
         )
 
     def approve_assignments_for_hit(self, hit_id, override_rejection=False):
@@ -1256,6 +1269,11 @@ class MTurkManager():
         """Block a worker by id using the mturk client, passes reason along"""
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         client.create_worker_block(WorkerId=worker_id, Reason=reason)
+        shared_utils.print_and_log(
+            logging.INFO,
+            'Worker {} blocked for reason {}.'
+            ''.format(worker_id, reason),
+        )
 
     def soft_block_worker(self, worker_id):
         """Soft block a worker by giving the worker the block qualification"""
