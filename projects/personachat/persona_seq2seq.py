@@ -27,6 +27,7 @@ from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.metrics import _f1_score
 from torch.autograd import Variable
+from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 from torch import optim
 import torch.nn as nn
 import torch.nn.functional as F
@@ -166,25 +167,14 @@ class Seq2seqAgent(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            def check_in_model_zoo(filename):
-                if filename.startswith('models:'):
-                    filename = os.path.join(opt['datapath'], 'models', filename[7:])
-                return filename
-
-            if opt.get('model_file'):
-                opt['model_file'] = check_in_model_zoo(opt['model_file'])
-
-            if opt.get('dict_file'):
-                opt['dict_file'] = check_in_model_zoo(opt['dict_file'])
-
-            self.dict = DictionaryAgent(opt)
-
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
                 print('Loading existing model params from ' + opt['model_file'])
                 new_opt, self.states = self.load(opt['model_file'])
                 # override options with stored ones
                 opt = self.override_opt(new_opt)
+
+            self.dict = DictionaryAgent(opt)
 
             if opt.get('personachat_symbol_words', None):
                 for w in opt['personachat_symbol_words']:
@@ -448,13 +438,16 @@ class Seq2seqAgent(Agent):
         if self.zeros.size(1) != batchsize:
             self.zeros.resize_(self.num_layers, batchsize, self.hidden_size).fill_(0)
         h0 = Variable(self.zeros)
+        xes_packed = pack_padded_sequence(xes.transpose(0, 1), x_lens)
 
         if type(self.encoder) == nn.LSTM:
-            encoder_output, hidden = self.encoder(xes, (h0, h0))
+            encoder_output_packed, hidden = self.encoder(xes_packed, (h0, h0))
+            encoder_output, _ = pad_packed_sequence(encoder_output_packed)
             if type(self.decoder) != nn.LSTM:
                 hidden = hidden[0]
         else:
-            encoder_output, hidden = self.encoder(xes, h0)
+            encoder_output_packed, hidden = self.encoder(xes_packed, h0)
+            encoder_output, _ = pad_packed_sequence(encoder_output_packed)
             if type(self.decoder) == nn.LSTM:
                 hidden = (hidden, h0)
         encoder_output = encoder_output.transpose(0, 1)
@@ -1144,19 +1137,6 @@ class PersonachatSeqseqAgentSplit(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            def check_in_model_zoo(filename):
-                if filename.startswith('models:'):
-                    filename = os.path.join(opt['datapath'], 'models', filename[7:])
-                return filename
-
-            if opt.get('model_file'):
-                opt['model_file'] = check_in_model_zoo(opt['model_file'])
-
-            if opt.get('dict_file'):
-                opt['dict_file'] = check_in_model_zoo(opt['dict_file'])
-
-            self.dict = DictionaryAgent(opt)
-
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
                 opt['model_file'] = opt['model_file']
@@ -1171,6 +1151,8 @@ class PersonachatSeqseqAgentSplit(Agent):
                 self.newsetting = opt['personachat_newsetting']
                 self.embshareonly_pm_dec = opt['personachat_embshareonly_pm_dec']
                 self.s2sinit = opt['personachat_s2sinit']
+
+            self.dict = DictionaryAgent(opt)
 
 
             if opt.get('personachat_symbol_words', None):
