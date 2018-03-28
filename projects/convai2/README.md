@@ -15,7 +15,7 @@ python ~/ParlAI/examples/display_data.py -t convai2 -dt train
 
 You can run examples of training on this task in the `baselines` folder in this directory.
 
-For example, you can download and evaluate a pre-trained seq2seq model (based on ParlAI's implementation in parlai/agents/seq2seq) using `baselines/seq2seq/eval.sh`, or train your own with the same parameters using the `train.sh` file in that directory.
+For example, you can download and evaluate a pre-trained seq2seq model (based on ParlAI's implementation in parlai/agents/seq2seq) using `baselines/seq2seq/eval.py`, or train your own with the same parameters using the `train.py` file in that directory.
 
 
 ## Contributing for the final evaluation

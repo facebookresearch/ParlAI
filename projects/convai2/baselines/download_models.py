@@ -13,7 +13,7 @@ def download(opt, fname, version='1.0'):
     dpath = os.path.join(opt['datapath'], 'models', fshort)
 
     if not build_data.built(dpath, version):
-        print('[download model: ' + dpath + '/' + fname + ']')
+        print('[downloading: ' + dpath + '/' + fname + ']')
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)

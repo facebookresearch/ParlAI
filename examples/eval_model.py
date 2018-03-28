@@ -57,7 +57,7 @@ def eval_model(parser, printargs=True):
             print("EPOCH DONE")
             break
     print(world.report())
-    world.shutdown()
+
 
 def main():
     eval_model(setup_args())
