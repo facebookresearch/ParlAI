@@ -16,3 +16,8 @@ Persona-Chat using persona 'self':
 ```bash
 python projects/personachat/scripts/profilememory_eval_f1.py
 ```
+
+Train a profile memory model on Persona-Chat using persona 'self':
+```bash
+bash projects/personachat/scripts/profilememory_train.sh
+```

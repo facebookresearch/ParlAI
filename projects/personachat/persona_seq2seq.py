@@ -167,19 +167,6 @@ class Seq2seqAgent(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            def check_in_model_zoo(filename):
-                if filename.startswith('models:'):
-                    filename = os.path.join(opt['datapath'], 'models', filename[7:])
-                return filename
-
-            if opt.get('model_file'):
-                opt['model_file'] = check_in_model_zoo(opt['model_file'])
-
-            if opt.get('dict_file'):
-                opt['dict_file'] = check_in_model_zoo(opt['dict_file'])
-
-            self.dict = DictionaryAgent(opt)
-
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
                 print('Loading existing model params from ' + opt['model_file'])
@@ -187,6 +174,7 @@ class Seq2seqAgent(Agent):
                 # override options with stored ones
                 opt = self.override_opt(new_opt)
 
+            self.dict = DictionaryAgent(opt)
             if opt.get('personachat_symbol_words', None):
                 for w in opt['personachat_symbol_words']:
                     self.dict.add_to_dict([w])
@@ -1148,19 +1136,6 @@ class PersonachatSeqseqAgentSplit(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            def check_in_model_zoo(filename):
-                if filename.startswith('models:'):
-                    filename = os.path.join(opt['datapath'], 'models', filename[7:])
-                return filename
-
-            if opt.get('model_file'):
-                opt['model_file'] = check_in_model_zoo(opt['model_file'])
-
-            if opt.get('dict_file'):
-                opt['dict_file'] = check_in_model_zoo(opt['dict_file'])
-
-            self.dict = DictionaryAgent(opt)
-
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
                 opt['model_file'] = opt['model_file']
@@ -1176,6 +1151,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                 self.embshareonly_pm_dec = opt['personachat_embshareonly_pm_dec']
                 self.s2sinit = opt['personachat_s2sinit']
 
+            self.dict = DictionaryAgent(opt)
 
             if opt.get('personachat_symbol_words', None):
                 for w in opt['personachat_symbol_words']:

@@ -24,7 +24,6 @@ import re
 
 class LanguageModelAgent(Agent):
     """ Agent which trains an RNN on a language modeling task.
-
     It is adapted from the language model featured in Pytorch's examples repo
     here: <https://github.com/pytorch/examples/tree/master/word_language_model>.
     """
@@ -119,17 +118,12 @@ class LanguageModelAgent(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            def check_in_model_zoo(filename):
-                if filename.startswith('models:'):
-                    filename = os.path.join(opt['datapath'], 'models', filename[7:])
-                return filename
-
             # check first for 'init_model' for loading model from file
-            if opt.get('init_model') and os.path.isfile(check_in_model_zoo(opt['init_model'])):
-                init_model = check_in_model_zoo(opt['init_model'])
+            if opt.get('init_model') and os.path.isfile(opt['init_model']):
+                init_model = opt['init_model']
             # next check for 'model_file'
-            elif opt.get('model_file') and os.path.isfile(check_in_model_zoo(opt['model_file'])):
-                init_model = check_in_model_zoo(opt['model_file'])
+            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
+                init_model = opt['model_file']
             else:
                 init_model = None
 
@@ -146,8 +140,8 @@ class LanguageModelAgent(Agent):
                     opt['dict_file'] = init_model + '.dict'
                 elif opt.get('model_file'):
                     # otherwise, set default dict-file if it is not set
-                    opt['dict_file'] = check_in_model_zoo(opt['model_file']) + '.dict'
-            opt['dict_file'] = check_in_model_zoo(opt['dict_file'])
+                    opt['dict_file'] = opt['model_file'] + '.dict'
+
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
             self.id = 'LanguageModel'
@@ -213,7 +207,6 @@ class LanguageModelAgent(Agent):
 
     def override_opt(self, new_opt):
         """Set overridable opts from loaded opt file.
-
         Print out each added key and each overriden key.
         Only override args specific to the model.
         """
@@ -396,6 +389,14 @@ class LanguageModelAgent(Agent):
             else:
                 if self.sampling_mode:
                     unk_idx = self.dict[self.dict.unk_token]
+                    # make word_weights have smaller norm so that calculated
+                    # norm does not blow up
+                    word_weights = word_weights.div(1e10)
+                    # make word_weights have L2 norm 1
+                    ww_norm = torch.norm(word_weights, p=2)
+                    word_weights = word_weights.div(ww_norm)
+                    # square distribution
+                    word_weights = torch.mul(word_weights, word_weights)
                     # sample distribution
                     word_idx = torch.multinomial(word_weights, 1)
                     # do not produce UNK token

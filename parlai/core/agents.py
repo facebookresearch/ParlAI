@@ -275,9 +275,6 @@ def name_to_agent_class(name):
 
 def load_agent_module(opt):
     model_file = opt['model_file']
-    if model_file.startswith('models:'):
-        # load model from the ParlAI model zoo directory
-        model_file = os.path.join(opt['datapath'], 'models', model_file[7:])
     optfile =  model_file + '.opt'
     if os.path.isfile(optfile):
         with open(optfile, 'rb') as handle:
@@ -326,6 +323,14 @@ def create_agent(opt):
     if opt.get('model_file'):
         # Attempt to load the model from the model file first (this way we do not even
         # have to specify the model name as a parameter.
+        if opt['model_file'].startswith('models:'):
+            # load model from the ParlAI model zoo directory
+            opt['model_file'] = os.path.join(opt['datapath'], 'models', opt['model_file'][7:])
+        # also check for dict file
+        if opt.get('dict_file'):
+            if opt['dict_file'].startswith('models:'):
+                # load model from the ParlAI model zoo directory
+                opt['dict_file'] = os.path.join(opt['datapath'], 'models', opt['dict_file'][7:])
         model = load_agent_module(opt)
         if model is not None:
             return model
