@@ -18,9 +18,9 @@ You can run examples of training on this task in the `baselines` folder in this 
 For example, you can download and evaluate a pre-trained seq2seq model (based on ParlAI's implementation in parlai/agents/seq2seq) using `baselines/seq2seq/eval.py`, or train your own with the same parameters using the `train.py` file in that directory.
 
 
-## Contributing for the final evaluation
+## Submitting models for evaluation
 
-Submission guidelines will be released further into the competition.
+Submission guidelines will be released soon
 
 
 ## Remarks on dataset versions
