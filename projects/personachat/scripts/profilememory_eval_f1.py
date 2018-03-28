@@ -33,4 +33,4 @@ if __name__ == '__main__':
     opt['dict_file'] = 'models:personachat/profile_memory/fulldict.dict'
     opt['rank_candidates'] = True
 
-    eval_model(opt, parser)
+    eval_model(parser)

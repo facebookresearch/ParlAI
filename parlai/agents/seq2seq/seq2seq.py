@@ -64,7 +64,7 @@ class Seq2seqAgent(Agent):
                            help='size of the token embeddings')
         agent.add_argument('-nl', '--numlayers', type=int, default=2,
                            help='number of hidden layers')
-        agent.add_argument('-lr', '--learningrate', type=float, default=0.005,
+        agent.add_argument('-lr', '--learningrate', type=float, default=1,
                            help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
                            help='dropout rate')
@@ -121,12 +121,15 @@ class Seq2seqAgent(Agent):
                                 'Dec_out shares decoder embedding and output '
                                 'weights. '
                                 'All shares all three weights.')
-        agent.add_argument('-opt', '--optimizer', default='adam',
+        agent.add_argument('-opt', '--optimizer', default='sgd',
                            choices=Seq2seqAgent.OPTIM_OPTS.keys(),
                            help='Choose between pytorch optimizers. '
                                 'Any member of torch.optim is valid and will '
                                 'be used with default params except learning '
                                 'rate (as specified by -lr).')
+        agent.add_argument('-mom', '--momentum', default=-1, type=float,
+                           help='if applicable, momentum value for optimizer. '
+                                'if > 0, sgd uses nesterov momentum.')
         agent.add_argument('-emb', '--embedding-type', default='random',
                            choices=['random', 'glove', 'glove-fixed',
                                     'fasttext', 'fasttext-fixed'],
@@ -136,6 +139,7 @@ class Seq2seqAgent(Agent):
                                 'Fasttext.'
                                 'Preinitialized embeddings can also be fixed '
                                 'so they are not updated during training.')
+        return agent
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -211,11 +215,13 @@ class Seq2seqAgent(Agent):
             # get index of null token from dictionary (probably 0)
             self.NULL_IDX = self.dict[self.dict.null_token]
 
-            self.model = Seq2seq(opt, len(self.dict),
-                                 padding_idx=self.NULL_IDX,
-                                 start_idx=self.START_IDX,
-                                 end_idx=self.END_IDX,
-                                 longest_label=states.get('longest_label', 1))
+            if not hasattr(self, 'model_class'):
+                # this allows child classes to override this but inherit init
+                self.model_class = Seq2seq
+            self.model = self.model_class(
+                opt, len(self.dict), padding_idx=self.NULL_IDX,
+                start_idx=self.START_IDX, end_idx=self.END_IDX,
+                longest_label=states.get('longest_label', 1))
 
             if opt['embedding_type'] != 'random':
                 # set up preinitialized embeddings
@@ -226,10 +232,12 @@ class Seq2seqAgent(Agent):
                     raise ex
                 if opt['embedding_type'].startswith('glove'):
                     init = 'glove'
-                    embs = vocab.GloVe(name='840B', dim=300)
+                    embs = vocab.GloVe(name='840B', dim=300,
+                        cache=os.path.join(opt['parlai_home'], '.vector_cache'))
                 elif opt['embedding_type'].startswith('fasttext'):
                     init = 'fasttext'
-                    embs = vocab.FastText(language='en')
+                    embs = vocab.FastText(language='en',
+                        cache=os.path.join(opt['parlai_home'], '.vector_cache'))
                 else:
                     raise RuntimeError('embedding type not implemented')
 
@@ -284,9 +292,10 @@ class Seq2seqAgent(Agent):
             lr = opt['learningrate']
             optim_class = Seq2seqAgent.OPTIM_OPTS[opt['optimizer']]
             kwargs = {'lr': lr}
-            if opt['optimizer'] == 'sgd':
-                kwargs['momentum'] = 0.95
-                kwargs['nesterov'] = True
+            if opt.get('momentum') > 0 and opt['optimizer'] in ['sgd', 'rmsprop']:
+                kwargs['momentum'] = opt['momentum']
+                if opt['optimizer'] == 'sgd':
+                    kwargs['nesterov'] = True
 
             if opt['embedding_type'].endswith('fixed'):
                 print('Seq2seq: fixing embedding weights.')
@@ -314,7 +323,7 @@ class Seq2seqAgent(Agent):
         """
         model_args = {'hiddensize', 'embeddingsize', 'numlayers', 'optimizer',
                       'encoder', 'decoder', 'lookuptable', 'attention',
-                      'attention_length'}
+                      'attention_length', 'rnn_class'}
         for k, v in new_opt.items():
             if k not in model_args:
                 # skip non-model args
@@ -435,8 +444,8 @@ class Seq2seqAgent(Agent):
             target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
             self.metrics['loss'] += loss.double().data[0]
             self.metrics['num_tokens'] += target_tokens
-            # average loss per token
-            loss /= target_tokens
+            loss /= target_tokens  # average loss per token
+            # loss /= xs.size(0)  # average loss per sentence
             loss.backward()
             self.update_params()
         else:
@@ -538,7 +547,7 @@ class Seq2seqAgent(Agent):
         if is_training:
             report_freq = 0
         else:
-            report_freq = 0.01
+            report_freq = 0.001
         PaddingUtils.map_predictions(
             predictions.cpu().data, valid_inds, batch_reply, observations,
             self.dict, self.END_IDX, report_freq=report_freq, labels=labels,
@@ -566,15 +575,8 @@ class Seq2seqAgent(Agent):
         if path and hasattr(self, 'model'):
             model = {}
             model['model'] = self.model.state_dict()
-            for k, v in model['model'].items():
-                if hasattr(v, 'cpu'):
-                    # pull back cuda tensors
-                    model['model'][k] = v.cpu()
             model['longest_label'] = self.model.longest_label
             model['optimizer'] = self.optimizer.state_dict()
-            for k, v in model['optimizer'].items():
-                if hasattr(v, 'cpu'):
-                    model['optimizer'][k] = v.cpu()
             model['optimizer_type'] = self.opt['optimizer']
             model['opt'] = self.opt
 
@@ -591,7 +593,7 @@ class Seq2seqAgent(Agent):
     def load(self, path):
         """Return opt and model states."""
         with open(path, 'rb') as read:
-            states = torch.load(read)
+            states = torch.load(read, map_location='cpu')
 
         return states['opt'], states
 

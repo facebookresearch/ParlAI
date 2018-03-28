@@ -27,4 +27,4 @@ if __name__ == '__main__':
     # add additional model args
     opt['interactive_mode'] = False
 
-    eval_model(opt, parser)
+    eval_model(parser)
