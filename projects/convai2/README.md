@@ -20,14 +20,7 @@ For example, you can download and evaluate a pre-trained seq2seq model (based on
 
 ## Contributing for the final evaluation
 
-You can submit your model by creating a PR with a folder for your model in the `submissions` folder in this directory.
-You do not have to submit your competition model before the evaluation deadlines, but feel free to submit additional simple baselines for others to compare to or use to get started.
-While you don't *have* to train your model in ParlAI, we encourage you to provide full model code and a similar `train.sh` file so that others can reproduce your results.
-
-In order to have your trained model evaluated for the competition, however, you will have to submit code similar to the `eval.sh` script in the `baselines/seq2seq` folder.
-We will use the eval_model command in the same way, using the `valid` datatype for the validation leaderboard and a hidden test set for final evaluation (you don't need to support batching or CUDA with your model, though).
-This will require at least writing an inference-time wrapper according to the ParlAI format.
-If you need help hosting your trained model file, contact @alexholdenmiller (email `ahm at fb`).
+Submission guidelines will be released further into the competition.
 
 
 ## Remarks on dataset versions
