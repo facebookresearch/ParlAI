@@ -3,12 +3,17 @@
 This directory contains code and examples for the ConvAI2 competition.
 
 The ConvAI2 dataset is already in ParlAI in parlai/agents/tasks/convai2 and is accesible by using the command line parameter `--task convai2`.
-The several versions of the dataset can be access with `convai2:none`, `convai2:self`, and `convai2:self_revised`.
+The several versions of the dataset can be accessed with `convai2:none`, `convai2:self`, and `convai2:self_revised`.
 
 These correspond to "no persona", "original self persona", and "revised self persona" in the original [PersonaChat](https://arxiv.org/pdf/1801.07243.pdf) paper.
-However, in contrast to that dataset, we have modified the preprocessing, merged the valid and test set, and are generating a new hidden test set.
+However, in contrast to that dataset, we have modified the preprocessing, merged the valid and test set, and are generating a new hidden test set. We have also added training examples from the perspective of both speakers and additional candidates to support training / evaluating using a ranking loss.
 
-We have also generated a version of the dataset with candidates available from the perspective of each speaker. This supports training / evaluating using a ranking loss to a greater degree.
+You can use the `none` mode to contrast your model's ability to take advantage of its persona with `self`, but `self` is the default setting for the task.
+
+To see this data, try:
+```
+python ~/ParlAI/examples/display_data.py -t convai -dt train
+```
 
 
 ## Examples
