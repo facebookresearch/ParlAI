@@ -71,8 +71,8 @@ function _send_message(connection_id, event_name, event_data) {
           return;
         }
         console.log("Repeat send of packet failed");
-        console.log(packet)
-        console.log(error2)
+        console.log(packet);
+        console.log(error2);
       });
     }, 500);
   });
@@ -139,8 +139,8 @@ wss.on('connection', function (socket) {
   });
 
   socket.on('error', (err) => {
-    console.log('Caught socket error')
-    console.log(err)
+    console.log('Caught socket error');
+    console.log(err);
   });
 
   // handles routing a packet to the desired recipient
