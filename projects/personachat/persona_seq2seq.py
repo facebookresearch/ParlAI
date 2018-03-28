@@ -26,8 +26,8 @@ import numpy as np
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.metrics import _f1_score
-from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 from torch.autograd import Variable
+from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 from torch import optim
 import torch.nn as nn
 import torch.nn.functional as F
@@ -175,6 +175,7 @@ class Seq2seqAgent(Agent):
                 opt = self.override_opt(new_opt)
 
             self.dict = DictionaryAgent(opt)
+
             if opt.get('personachat_symbol_words', None):
                 for w in opt['personachat_symbol_words']:
                     self.dict.add_to_dict([w])
@@ -518,7 +519,7 @@ class Seq2seqAgent(Agent):
         loss.backward()
         self.update_params()
 
-        if random.random() < 0.1 and not self.interactive_mode:
+        if random.random() < 0.01 and not self.interactive_mode:
             # sometimes output a prediction for debugging
             print('prediction:', ' '.join(output_lines[0]),
                   '\nlabel:', self.dict.vec2txt(ys.data[0]))
@@ -582,7 +583,7 @@ class Seq2seqAgent(Agent):
                     else:
                         output_lines[b].append(token)
 
-        if random.random() < 0.1 and not self.interactive_mode:
+        if random.random() < 0.01 and not self.interactive_mode:
             # sometimes output a prediction for debugging
             print('prediction:', ' '.join(output_lines[0]))
 
@@ -1138,6 +1139,7 @@ class PersonachatSeqseqAgentSplit(Agent):
 
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
+                opt['model_file'] = opt['model_file']
                 print('Loading existing model params from ' + opt['model_file'])
                 new_opt, self.states = self.load(opt['model_file'])
                 # override options with stored ones
@@ -1151,6 +1153,8 @@ class PersonachatSeqseqAgentSplit(Agent):
                 self.s2sinit = opt['personachat_s2sinit']
 
             self.dict = DictionaryAgent(opt)
+
+
             if opt.get('personachat_symbol_words', None):
                 for w in opt['personachat_symbol_words']:
                     self.dict.add_to_dict([w])
@@ -1517,7 +1521,7 @@ class PersonachatSeqseqAgentSplit(Agent):
            self.observation = observation
            self.episode_done = observation['episode_done']
            return observation
-        else:
+        elif 'text' in observation:
             if self.episode_done == True:
                 self.prev_dialog = ''
                 self.last_obs = ''
@@ -1544,6 +1548,9 @@ class PersonachatSeqseqAgentSplit(Agent):
 
             if len(observation['persona']) == 0:
                 observation['persona'] = '__START__'
+            self.observation = observation
+            return observation
+        else:
             self.observation = observation
             return observation
 
@@ -1616,17 +1623,14 @@ class PersonachatSeqseqAgentSplit(Agent):
         if self.zeros.size(1) != batchsize:
             self.zeros.resize_(self.num_layers * self.num_dirs, batchsize, self.hidden_size).fill_(0)
         h0 = Variable(self.zeros)
-        xes_packed = pack_padded_sequence(xes.transpose(0, 1), x_lens)
         xes = xes.transpose(0,1)
 
         if type(self.encoder_persona) == nn.LSTM:
-            encoder_output_packed, hidden = self.encoder_persona(xes, (h0, h0))
-            encoder_output, _ = pad_packed_sequence(encoder_output_packed)
+            encoder_output, hidden = self.encoder_persona(xes, (h0, h0))
             if type(self.decoder) != nn.LSTM:
                 hidden = hidden[0]
         else:
-            encoder_output_packed, hidden = self.encoder(xes_packed, h0)
-            encoder_output, _ = pad_packed_sequence(encoder_output_packed)
+            encoder_output, hidden = self.encoder(xes, h0)
             if type(self.decoder) == nn.LSTM:
                 hidden = (hidden, h0)
         encoder_output = encoder_output.transpose(0, 1)
@@ -1652,7 +1656,6 @@ class PersonachatSeqseqAgentSplit(Agent):
         else:
             xes = self.lt(xs)
         xes = F.dropout(xes, p=2*self.dropout, training=is_training)
-        xes_packed = pack_padded_sequence(xes.transpose(0, 1), x_lens)
 
         if self.zeros.size(1) != batchsize:
             self.zeros.resize_(self.num_layers, batchsize, self.hidden_size).fill_(0)
@@ -1664,7 +1667,7 @@ class PersonachatSeqseqAgentSplit(Agent):
             if type(self.decoder) != nn.LSTM:
                 hidden = hidden[0]
         else:
-            encoder_output, hidden = self.encoder(xes_packed, h0)
+            encoder_output, hidden = self.encoder(xes, h0)
             if type(self.decoder) == nn.LSTM:
                 hidden = (hidden, h0)
         encoder_output = encoder_output.transpose(0, 1)
@@ -1784,7 +1787,7 @@ class PersonachatSeqseqAgentSplit(Agent):
         loss.backward()
         self.update_params()
 
-        if random.random() < 0.1 and not self.interactive_mode:
+        if random.random() < 0.01 and not self.interactive_mode:
             # sometimes output a prediction for debugging
             print('prediction:', ' '.join(output_lines[0]),
                   '\nlabel:', self.dict.vec2txt(ys.data[0]))
@@ -1890,7 +1893,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                     else:
                         output_lines[b].append(token)
 
-        if random.random() < 0.1 and not self.interactive_mode:
+        if random.random() < 0.01 and not self.interactive_mode:
             # sometimes output a prediction for debugging
             print('prediction:', ' '.join(output_lines[0]))
 

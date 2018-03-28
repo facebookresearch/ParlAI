@@ -14,7 +14,7 @@ if __name__ == '__main__':
     parser.set_defaults(
         task='parlai.agents.local_human.local_human:LocalHumanAgent',
         model='projects.personachat.persona_seq2seq:PersonachatSeqseqAgentBasic',
-        model_file='data/models/personachat/seq2seq_personachat/seq2seq_no_dropout0.2_lstm_1024_1e-3'
+        model_file='models:personachat/seq2seq_personachat/seq2seq_no_dropout0.2_lstm_1024_1e-3'
     )
     PersonachatSeqseqAgentBasic.add_cmdline_args(parser)
 
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     build(opt, fnames)
 
     # add additional model args
-    opt['dict_file'] = 'data/models/personachat/profile_memory/fulldict.dict'
+    opt['dict_file'] = 'models:personachat/profile_memory/fulldict.dict'
     opt['interactive_mode'] = True
 
     interactive(opt)

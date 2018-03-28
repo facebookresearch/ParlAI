@@ -24,7 +24,6 @@ import re
 
 class LanguageModelAgent(Agent):
     """ Agent which trains an RNN on a language modeling task.
-
     It is adapted from the language model featured in Pytorch's examples repo
     here: <https://github.com/pytorch/examples/tree/master/word_language_model>.
     """
@@ -208,7 +207,6 @@ class LanguageModelAgent(Agent):
 
     def override_opt(self, new_opt):
         """Set overridable opts from loaded opt file.
-
         Print out each added key and each overriden key.
         Only override args specific to the model.
         """
@@ -391,6 +389,12 @@ class LanguageModelAgent(Agent):
             else:
                 if self.sampling_mode:
                     unk_idx = self.dict[self.dict.unk_token]
+                    # make word_weights have smaller norm so that calculated
+                    # norm does not blow up
+                    word_weights = word_weights.div(1e10)
+                    # make word_weights have L2 norm 1
+                    ww_norm = torch.norm(word_weights, p=2)
+                    word_weights = word_weights.div(ww_norm)
                     # square distribution
                     word_weights = torch.mul(word_weights, word_weights)
                     # sample distribution
@@ -435,9 +439,10 @@ class LanguageModelAgent(Agent):
             bsz = data.size(0)
             if bsz != self.batchsize:
                 self.hidden = self.model.init_hidden(bsz)
-            loss = self.get_target_loss(data, self.hidden, targets)
-            self.metrics['loss'] += loss
-            self.metrics['num_tokens'] += sum(y_lens)
+            if targets is not None:
+                loss = self.get_target_loss(data, self.hidden, targets)
+                self.metrics['loss'] += loss
+                self.metrics['num_tokens'] += sum(y_lens)
 
         return output, hidden, predictions
 
@@ -570,6 +575,5 @@ class LanguageModelAgent(Agent):
     def load(self, path):
         """Return opt and model states."""
         with open(path, 'rb') as read:
-            states = torch.load(read)
-
+            states = torch.load(read, map_location='cpu')
         return states['opt'], states
