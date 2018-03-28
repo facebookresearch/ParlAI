@@ -491,9 +491,14 @@ class KvmemnnAgent(Agent):
                 return [{'metrics':metrics}]
         else:
             fixed = False
-            self.take_next_utt=True
-            self.twohoputt=True
-            self.tricks=True
+            if hasattr(self, 'fixedCands') and self.fixedCands:
+                self.take_next_utt=True
+                self.twohoputt=True
+                self.tricks=True
+            else:
+                self.take_next_utt = False
+                self.twohoputt=False
+                self.tricks=False
             if cands is None or cands[0] is None or self.take_next_utt:
                 # cannot predict without candidates.
                 if self.fixedCands or self.take_next_utt:
