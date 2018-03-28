@@ -59,8 +59,8 @@ function _send_message(event_name, event_data) {
             return true;
           }
           console.log("Repeat send of packet failed");
-          console.log(packet)
-          console.log(error2)
+          console.log(packet);
+          console.log(error2);
         });
       }, 500);
     });
@@ -89,6 +89,11 @@ wss.on('connection', function (socket) {
         {'type': 'pong', 'content': 'pong'}
       ))
     }
+  });
+
+  socket.on('error', (err) => {
+    console.log('Caught socket error');
+    console.log(err);
   });
 
   socket.send(JSON.stringify(
