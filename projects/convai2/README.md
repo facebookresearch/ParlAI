@@ -3,9 +3,9 @@
 This directory contains code and examples for the ConvAI2 competition.
 See the [website](http://convai.io/) for more details.
 
-The ConvAI2 dataset is already in ParlAI in parlai/agents/tasks/convai2 and is accessible by using the command line parameter `--task convai2`.
+The ConvAI2 dataset is in ParlAI in parlai/agents/tasks/convai2 and is accessible by using the command line parameter `--task convai2`.
 
-To see this data, try:
+For example, to see the training data, try:
 ```
 python ~/ParlAI/examples/display_data.py -t convai2 -dt train
 ```
