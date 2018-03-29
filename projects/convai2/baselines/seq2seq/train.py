@@ -16,7 +16,6 @@ from parlai.agents.seq2seq.seq2seq import Seq2seqAgent
 
 if __name__ == '__main__':
     parser = setup_args()
-    Seq2seqAgent.add_cmdline_args(parser)
     parser.set_defaults(
         task='convai2:self',
         model='seq2seq',

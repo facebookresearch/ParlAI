@@ -54,15 +54,12 @@ class ParlaiParser(argparse.ArgumentParser):
     For example, see ``parlai.core.dict.DictionaryAgent.add_cmdline_args``.
     """
 
-    def __init__(self, add_parlai_args=True, add_model_args=False,
-                 model_argv=None):
+    def __init__(self, add_parlai_args=True, add_model_args=False):
         """Initializes the ParlAI argparser.
         - add_parlai_args (default True) initializes the default arguments for
         ParlAI package, including the data download paths and task arguments.
         - add_model_args (default False) initializes the default arguments for
         loading models, including initializing arguments from that model.
-        - model_argv (default None uses sys.argv) specifies the list of
-        arguments which includes the model name (e.g. `-m drqa`).
         """
         super().__init__(description='ParlAI parser.')
         self.register('type', 'bool', str2bool)
@@ -77,10 +74,9 @@ class ParlaiParser(argparse.ArgumentParser):
         self.cli_args = sys.argv
 
         if add_parlai_args:
-            self.add_parlai_args(model_argv)
-            self.add_image_args()
+            self.add_parlai_args()
         if add_model_args:
-            self.add_model_args(model_argv)
+            self.add_model_args()
 
     def add_parlai_data_path(self, argument_group=None):
         if argument_group is None:
@@ -241,22 +237,8 @@ class ParlaiParser(argparse.ArgumentParser):
                                 'as past utterances when building flattened '
                                 'batches of data in multi-example episodes.')
         self.add_parlai_data_path(parlai)
-        self.add_task_args(args)
 
-    def add_task_args(self, args):
-        # Find which task specified, and add its specific arguments.
-        args = sys.argv if args is None else args
-        task = None
-        for index, item in enumerate(args):
-            if item == '-t' or item == '--task':
-                task = args[index + 1]
-        if task:
-            for t in ids_to_tasks(task).split(','):
-                agent = get_task_module(t)
-                if hasattr(agent, 'add_cmdline_args'):
-                    agent.add_cmdline_args(self)
-
-    def add_model_args(self, args=None):
+    def add_model_args(self):
         model_args = self.add_argument_group('ParlAI Model Arguments')
         model_args.add_argument(
             '-m', '--model', default=None,
@@ -267,35 +249,65 @@ class ParlaiParser(argparse.ArgumentParser):
         model_args.add_argument(
             '--dict-class',
             help='the class of the dictionary agent uses')
-        # Find which model specified, and add its specific arguments.
-        if args is None:
-            args = sys.argv
-        model = None
-        for index, item in enumerate(args):
-            if item == '-m' or item == '--model':
-                model = args[index + 1]
-        if model:
-            agent = get_agent_module(model)
+
+    def add_model_subargs(self, model):
+        agent = get_agent_module(model)
+        try:
             if hasattr(agent, 'add_cmdline_args'):
                 agent.add_cmdline_args(self)
+        except argparse.ArgumentError:
+            # already added
+            pass
+        try:
             if hasattr(agent, 'dictionary_class'):
                 s = class2str(agent.dictionary_class())
-                model_args.set_defaults(dict_class=s)
+                self.set_defaults(dict_class=s)
+        except argparse.ArgumentError:
+            # already added
+            pass
 
-    def add_image_args(self, args=None):
-        # Find which image mode specified, add its specific arguments if needed.
-        args = sys.argv if args is None else args
-        image_mode = None
-        for index, item in enumerate(args):
-            if item == '-im' or item == '--image-mode':
-                image_mode = args[index + 1]
-        if image_mode and image_mode != 'none':
-            parlai = \
-                self.add_argument_group('ParlAI Image Preprocessing Arguments')
+    def add_task_args(self, task):
+        for t in ids_to_tasks(task).split(','):
+            agent = get_task_module(t)
+            try:
+                if hasattr(agent, 'add_cmdline_args'):
+                    agent.add_cmdline_args(self)
+            except argparse.ArgumentError:
+                # already added
+                pass
+
+    def add_image_args(self, image_mode):
+        try:
+            parlai = self.add_argument_group('ParlAI Image Preprocessing Arguments')
             parlai.add_argument('--image-size', type=int, default=256,
                                 help='resizing dimension for images')
             parlai.add_argument('--image-cropsize', type=int, default=224,
                                 help='crop dimension for images')
+        except argparse.ArgumentError:
+            # already added
+            pass
+
+    def add_extra_args(self, args=None):
+        """Add more args depending on how known args are set."""
+        args = sys.argv if args is None else args
+        args = [a for a in args if a != '-h' and a != '--help']  # ignore help
+        parsed = vars(self.parse_known_args(args)[0])
+
+        # find which image mode specified if any, and add additional arguments
+        image_mode = parsed.get('image_mode', None)
+        if image_mode is not None and image_mode != 'none':
+            self.add_image_args(image_mode)
+
+        # find which task specified if any, and add its specific arguments
+        task = parsed.get('task', None)
+        if task is not None:
+            self.add_task_args(task)
+
+        # find which model specified if any, and add its specific arguments
+        model = parsed.get('model', None)
+        if model is not None:
+            self.add_model_subargs(model)
+
 
     def parse_args(self, args=None, namespace=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the
@@ -303,6 +315,8 @@ class ParlaiParser(argparse.ArgumentParser):
         to support the style ``opt.get(key, default)``, which would otherwise
         return ``None``.
         """
+        self.add_extra_args(args)
+
         self.args = super().parse_args(args=args)
         self.opt = vars(self.args)
 
