@@ -19,12 +19,12 @@ if __name__ == '__main__':
     parser.set_defaults(
         task='convai2:self',
         model='seq2seq',
-        model_file='models:convai2_self_seq2seq_model/convai2_self_seq2seq_model',
-        dict_file='models:dict_convai2_self/dict_convai2_self',
+        model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
+        dict_file='models:convai2/seq2seq/dict_convai2_self/dict_convai2_self',
         datatype='valid',
         batchsize=128,
     )
     opt = parser.parse_args()
-    download(opt, 'convai2_self_seq2seq_model.tgz')
-    download(opt, 'dict_convai2_self')
+    download(opt, 'convai2/seq2seq', 'convai2_self_seq2seq_model.tgz')
+    download(opt, 'convai2/seq2seq', 'dict_convai2_self')
     eval_model(parser, printargs=False)

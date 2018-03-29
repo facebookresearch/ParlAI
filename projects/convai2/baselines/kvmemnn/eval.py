@@ -1,4 +1,4 @@
-#from download_models import build
+from projects.convai2.baselines.download_models import download
 from parlai.core.params import ParlaiParser
 from examples.eval_model import eval_model
 
@@ -14,15 +14,15 @@ if __name__ == '__main__':
     parser.set_defaults(
         task='convai2',
         model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
-        model_file='models:convai2/baselines/kvmemnn/model',
+        model_file='models:convai2/kvmemnn/model',
         datatype='valid',
         numthreads=8
     )
     opt = parser.parse_args()
     # build all profile memory models
-#    fnames = ['kvmemnn.tgz']
-#    opt['model_type'] = 'kvmemnn' # for builder
-#    build(opt, fnames)
+    fnames = 'kvmemnn.tgz'
+    opt['model_type'] = 'kvmemnn' # for builder
+    download(opt, 'convai2', fnames)
 
     # add additional model args
     opt['interactive_mode'] = False
