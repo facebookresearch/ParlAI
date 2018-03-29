@@ -8,9 +8,9 @@
 import parlai.core.build_data as build_data
 import os
 
-def download(opt, fname, version='1.0'):
+def download(opt, path, fname, version='1.0'):
     fshort = fname[:fname.find('.')] if '.' in fname else fname
-    dpath = os.path.join(opt['datapath'], 'models', fshort)
+    dpath = os.path.join(opt['datapath'], 'models', path, fshort)
 
     if not build_data.built(dpath, version):
         print('[downloading: ' + dpath + '/' + fname + ']')
