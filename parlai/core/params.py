@@ -287,7 +287,7 @@ class ParlaiParser(argparse.ArgumentParser):
             # already added
             pass
 
-    def add_unknown_args(self, args=None):
+    def add_extra_args(self, args=None):
         """Add more args depending on how known args are set."""
         args = sys.argv if args is None else args
         args = [a for a in args if a != '-h' and a != '--help']  # ignore help
@@ -315,7 +315,7 @@ class ParlaiParser(argparse.ArgumentParser):
         to support the style ``opt.get(key, default)``, which would otherwise
         return ``None``.
         """
-        self.add_unknown_args(args)
+        self.add_extra_args(args)
 
         self.args = super().parse_args(args=args)
         self.opt = vars(self.args)
