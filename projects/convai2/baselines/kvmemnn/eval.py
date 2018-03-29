@@ -1,16 +1,13 @@
 from projects.convai2.baselines.download_models import download
 from parlai.core.params import ParlaiParser
-from examples.eval_model import eval_model
+from examples.eval_model import setup_args, eval_model
 
 '''Evaluate pre-trained model trained for hits@1 metric
 Key-Value Memory Net model trained on personachat using persona 'self'
 '''
 
 if __name__ == '__main__':
-    parser = ParlaiParser(add_model_args=True)
-    parser.add_argument('-n', '--num-examples', default=100000000)
-    parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser = setup_args()
     parser.set_defaults(
         task='convai2',
         model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',

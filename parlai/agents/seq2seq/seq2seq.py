@@ -595,7 +595,7 @@ class Seq2seqAgent(Agent):
         with open(path, 'rb') as read:
             try:
                 states = torch.load(read, map_location='cpu')
-            except:
+            except TypeError:
                 states = torch.load(read)
 
         return states['opt'], states
