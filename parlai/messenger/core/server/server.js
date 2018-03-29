@@ -44,10 +44,26 @@ var world_socket = null;
 // Handles sending a message through the socket
 function _send_message(event_name, event_data) {
   if (world_socket) {
-    world_socket.send(JSON.stringify({
+    var packet = {
       type: event_name,
       content: event_data
-    }));
+    };
+    world_socket.send(JSON.stringify(packet), function ack(error) {
+      if (error === undefined) {
+        return true;
+      }
+      console.log('Ran into error trying to send, retrying');
+      setTimeout(function () {
+        world_socket.send(JSON.stringify(packet), function ack2(error2) {
+          if (error2 === undefined) {
+            return true;
+          }
+          console.log("Repeat send of packet failed");
+          console.log(packet);
+          console.log(error2);
+        });
+      }, 500);
+    });
     return true;
   } else {
     console.log('Message recieved without world connected');
@@ -75,9 +91,14 @@ wss.on('connection', function (socket) {
     }
   });
 
+  socket.on('error', (err) => {
+    console.log('Caught socket error');
+    console.log(err);
+  });
+
   socket.send(JSON.stringify(
     {'type': 'conn_success', 'content': 'Socket is open!'}
-  ));
+  ), function ack(error) {return;});
 });
 
 server.listen(PORT, function() {
@@ -118,11 +139,18 @@ app.post('/webhook', async function (req, res, next) {
   console.log(body);
   // Checks this is an event from a page subscription
   if (body.object === 'page') {
-    let result = _send_message('new_packet', req.body);
-    // TODO handle v. rare cases of message drops - should send timeout status
-    if (result) {
-      res.status(200).send('Successful POST');
-    } else {
+    try {
+      let result = _send_message('new_packet', req.body);
+      // TODO handle v. rare cases of message drops - should send timeout status
+      if (result) {
+        res.status(200).send('Successful POST');
+      } else {
+        res.status(504).send('Timeout');
+      }
+    } catch(error) {
+      console.log("Transient error on message");
+      console.log(error);
+      console.log(req.body);
       res.status(504).send('Timeout');
     }
   } else {

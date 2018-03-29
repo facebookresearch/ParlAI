@@ -907,6 +907,7 @@ class FbDialogTeacher(DialogTeacher):
             x = ''
             reward = 0
             dialog_index = 0
+            last_conv_id = None
             for line in read:
                 line = line.strip().replace('\\n', '\n')
                 if len(line) == 0:
@@ -914,7 +915,7 @@ class FbDialogTeacher(DialogTeacher):
 
                 # first, get conversation index -- '1' means start of episode
                 space_idx = line.find(' ')
-                conv_id = line[:space_idx]
+                conv_id = int(line[:space_idx])
 
                 # split line into constituent parts, if available:
                 # x<tab>y<tab>reward<tab>label_candidates
@@ -933,7 +934,7 @@ class FbDialogTeacher(DialogTeacher):
                     split[2] = None
 
                 # now check if we're at a new episode
-                if conv_id == '1':
+                if last_conv_id is None or conv_id < last_conv_id:
                     dialog_index += 1
                     x = x.strip()
                     if x:
@@ -953,6 +954,7 @@ class FbDialogTeacher(DialogTeacher):
                         x = '{x}\n{next_x}'.format(x=x, next_x=split[0])
                     else:
                         x = split[0]
+                last_conv_id = conv_id
                 if len(split) > 2 and split[2]:
                     reward += float(split[2])
 

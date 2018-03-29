@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
-from worlds import PersonaChatWorld, PersonaProfileWorld
+from worlds import PersonaProfileWorld
 from task_config import task_config
 
 import os
@@ -30,8 +30,6 @@ def main():
     argparser.add_argument('--ag_shutdown_time', default=120,
                            type=int,
                            help='time limit for entering a dialog message')
-    argparser.add_argument('-rt', '--range_turn', default='5,7',
-                           help='sample range of number of turns')
     argparser.add_argument('-rp', '--range_persona', default='4,6',
                            help='sample range of number of persona sentences')
     opt = argparser.parse_args()
@@ -40,7 +38,7 @@ def main():
         opt['data_path'] = os.getcwd() + '/data/' + opt['task']
     opt.update(task_config)
 
-    mturk_agent_ids = ['PERSON_1', 'PERSON_2']
+    mturk_agent_ids = ['PERSON_1']
 
     mturk_manager = MTurkManager(
         opt=opt,
@@ -60,11 +58,8 @@ def main():
                 mturk_manager.block_worker(w, 'We found that you have unexpected behaviors in our previous HITs. For more questions please email us.')
 
         def run_onboard(worker):
-            world = PersonaProfileWorld(opt, worker)
-            while not world.episode_done():
-                world.parley()
-            world.save_data()
-            world.shutdown()
+            pass
+
         mturk_manager.set_onboard_function(onboard_function=run_onboard)
         mturk_manager.ready_to_accept_workers()
 
@@ -76,22 +71,12 @@ def main():
                 worker.id = mturk_agent_ids[index % len(mturk_agent_ids)]
 
         def run_conversation(mturk_manager, opt, workers):
-            conv_idx = mturk_manager.conversation_index
-            world = PersonaChatWorld(
-                opt=opt,
-                agents=[workers[0], workers[1]],
-                range_turn=[int(s) for s in opt['range_turn'].split(',')],
-                max_turn=opt['max_turns'],
-                max_resp_time=opt['max_resp_time'],
-                world_tag='conversation t_{}'.format(conv_idx)
-            )
-            world.reset_random()
+            worker = workers[0]
+            world = PersonaProfileWorld(opt, worker)
             while not world.episode_done():
                 world.parley()
             world.save_data()
-
             world.shutdown()
-            world.review_work()
 
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,

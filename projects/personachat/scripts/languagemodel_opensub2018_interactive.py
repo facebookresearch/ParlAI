@@ -14,7 +14,7 @@ if __name__ == '__main__':
     parser.set_defaults(
         task='parlai.agents.local_human.local_human:LocalHumanAgent',
         model='language_model',
-        model_file='data/models/personachat/language_model/languagemodel_esz512_hid1024_nl2.pt'
+        model_file='models:personachat/language_model/languagemodel_esz512_hid1024_nl2.pt'
     )
     LanguageModelAgent.add_cmdline_args(parser)
 
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     build(opt, fnames)
 
     # add additional model args
-    opt['dict_file'] = 'data/models/personachat/language_model/opensubtitles2018.dict'
+    opt['dict_file'] = 'models:personachat/language_model/opensubtitles2018.dict'
     opt['sampling_mode'] = True
 
     interactive(opt)

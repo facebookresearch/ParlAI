@@ -266,9 +266,9 @@ class MessengerManager():
                 self.observe_message(
                     agent_id,
                     "Please wait while we pair you with another person. "
-                    "If you wish to return to the Overworld, click *EXIT*",
-                    quick_replies=['EXIT']
+                    "If you wish to exit, type *EXIT*."
                 )
+                self.message_socket.typing_on(agent_id)
         else:
             # If an agent is in a solo world, we can put a typing indicator
             # and mark the message as read
@@ -473,13 +473,28 @@ class MessengerManager():
                             time_in_pool = \
                                 agent_state.time_in_pool.get(world_type)
                             if time_in_pool and time.time() - time_in_pool \
-                                    > max_time_in_pool:
+                                    > max_time_in_pool[world_type]:
                                 # remove agent from agent_pool
                                 self.remove_agent_from_pool(
                                     agent_state, world_type)
                                 # put agent back in overworld
                                 agent_state.set_active_agent(
                                     agent_state.get_overworld_agent())
+                                # reset wait message state
+                                agent_state.stored_data['seen_wait_message'] = False
+                            elif time_in_pool and time.time() - time_in_pool \
+                                    > 30:
+                                # tell agent that a match is taking longer than
+                                # expected
+                                if not agent_state.stored_data.get('seen_wait_message') \
+                                        or not agent_state.stored_data['seen_wait_message']:
+                                    self.observe_message(
+                                        agent_state.messenger_id,
+                                        "Pairing is taking longer than expected. "
+                                        "If you wish to exit, type *EXIT*.",
+                                    )
+                                    self.message_socket.typing_on(agent_state.messenger_id)
+                                    agent_state.stored_data['seen_wait_message'] = True
 
                     needed_agents = self.max_agents_for[world_type]
                     if len(agent_pool) >= needed_agents:
@@ -496,6 +511,8 @@ class MessengerManager():
                             state.assign_agent_to_task(agent, task_id)
                             state.set_active_agent(agent)
                             agents.append(agent)
+                            # reset wait message state
+                            state.stored_data['seen_wait_message'] = False
                         assign_role_functions[world_type](agents)
                         # Allow task creator to filter out workers and run
                         # versions of the task that require fewer agents
@@ -541,3 +558,13 @@ class MessengerManager():
     def observe_payload(self, receiver_id, data):
         """Send a payload through the message manager"""
         return self.message_socket.send_fb_payload(receiver_id, data)
+
+    def upload_attachment(self, payload):
+        """Uploads an attachment and returns an attachment ID
+        `payload` should be a dict of the format
+        {'type': <TYPE>, 'url': <URL>} or
+        {'type': <TYPE>, 'filename': <FILENAME>, 'format': <FILEFORMAT>}.
+        For example,
+        {'type': 'image', 'filename': 'test.png', 'format': 'png'}
+        """
+        return self.message_socket.upload_fb_attachment(payload)

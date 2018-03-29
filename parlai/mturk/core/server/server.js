@@ -71,8 +71,8 @@ function _send_message(connection_id, event_name, event_data) {
           return;
         }
         console.log("Repeat send of packet failed");
-        console.log(packet)
-        console.log(error2)
+        console.log(packet);
+        console.log(error2);
       });
     }, 500);
   });
@@ -138,14 +138,25 @@ wss.on('connection', function (socket) {
     console.log('Client disconnected: ' + connection_id);
   });
 
+  socket.on('error', (err) => {
+    console.log('Caught socket error');
+    console.log(err);
+  });
+
   // handles routing a packet to the desired recipient
   socket.on('message', function (data) {
     data = JSON.parse(data)
-    if (data['type'] == 'agent alive') {
-      console.log('handling alive')
-      handle_alive(socket, data['content']);
-    } else if (data['type'] == 'route packet'){
-      handle_route(data['content']);
+    try {
+      if (data['type'] == 'agent alive') {
+        console.log('handling alive')
+        handle_alive(socket, data['content']);
+      } else if (data['type'] == 'route packet') {
+        handle_route(data['content']);
+      }
+    } catch(error) {
+      console.log("Transient error on message");
+      console.log(error);
+      console.log(data);
     }
   });
 });

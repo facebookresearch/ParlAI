@@ -21,6 +21,7 @@ class Packet():
     """Class for holding information sent over a socket"""
 
     # Possible Packet Status
+    STATUS_NONE = -1
     STATUS_INIT = 0
     STATUS_SENT = 1
     STATUS_ACK = 2
@@ -539,6 +540,8 @@ class SocketManager():
 
     def get_status(self, packet_id):
         """Returns the status of a particular packet by id"""
+        if packet_id not in self.packet_map:
+            return Packet.STATUS_NONE
         return self.packet_map[packet_id].status
 
     def _safe_put(self, connection_id, item):

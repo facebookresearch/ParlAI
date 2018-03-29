@@ -18,8 +18,18 @@ from parlai.core.utils import Timer
 
 import random
 
+def setup_args():
+    # Get command line arguments
+    parser = ParlaiParser(True, True)
+    parser.add_argument('-n', '--num-examples', default=100000000)
+    parser.add_argument('-d', '--display-examples', type='bool', default=False)
+    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser.set_defaults(datatype='valid')
+    return parser
 
-def eval_model(opt, parser, printargs=True):
+def eval_model(parser, printargs=True):
+    random.seed(42)
+    opt = parser.parse_args(print_args=False)
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
@@ -47,20 +57,10 @@ def eval_model(opt, parser, printargs=True):
             print("EPOCH DONE")
             break
     print(world.report())
-    world.shutdown()
+
 
 def main():
-    random.seed(42)
-
-    # Get command line arguments
-    parser = ParlaiParser(True, True)
-    parser.add_argument('-n', '--num-examples', default=100000000)
-    parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    parser.set_defaults(datatype='valid')
-    opt = parser.parse_args(print_args=False)
-
-    eval_model(opt, parser)
+    eval_model(setup_args())
 
 if __name__ == '__main__':
     main()

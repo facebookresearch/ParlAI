@@ -16,7 +16,7 @@ if __name__ == '__main__':
     parser.set_defaults(
         task='personachat:self',
         model='projects.personachat.persona_seq2seq:PersonachatSeqseqAgentSplit',
-        model_file='data/models/personachat/profile_memory/profilememory_mem2_reweight_sharelt_encdropout0.2_selfpersona_useall_attn_general_lstm_1024_1_1e-3_0.1',
+        model_file='models:personachat/profile_memory/profilememory_mem2_reweight_sharelt_encdropout0.2_selfpersona_useall_attn_general_lstm_1024_1_1e-3_0.1',
         datatype='test'
     )
     PersonachatSeqseqAgentSplit.add_cmdline_args(parser)
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     build(opt, fnames)
 
     # add additional model args
-    opt['dict_file'] = 'data/models/personachat/profile_memory/fulldict.dict'
+    opt['dict_file'] = 'models:personachat/profile_memory/fulldict.dict'
     opt['rank_candidates'] = True
 
-    eval_model(opt, parser)
+    eval_model(parser)

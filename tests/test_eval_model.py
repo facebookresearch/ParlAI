@@ -3,7 +3,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-from examples.eval_model import eval_model
+from examples.eval_model import eval_model, setup_args
 from parlai.core.params import ParlaiParser
 
 import ast
@@ -13,18 +13,6 @@ import sys
 
 class TestEvalModel(unittest.TestCase):
     """Basic tests on the eval_model.py example."""
-
-    args = [
-        '--task', '#moviedd-reddit',
-        '--datatype', 'valid',
-    ]
-
-    parser = ParlaiParser()
-    parser.set_defaults(datatype='valid')
-    opt = parser.parse_args(args, print_args=False)
-    opt['model'] = 'repeat_label'
-    opt['num_examples'] = 5
-    opt['display_examples'] = False
 
     def test_output(self):
         """Test output of running eval_model"""
@@ -38,11 +26,20 @@ class TestEvalModel(unittest.TestCase):
             def __str__(self):
                 return "".join(self.data)
 
+        parser = setup_args()
+        parser.set_defaults(
+            task='tasks.repeat:RepeatTeacher:10',
+            model='repeat_label',
+            datatype='valid',
+            num_examples=5,
+            display_examples=False,
+        )
+
         old_out = sys.stdout
         output = display_output()
         try:
             sys.stdout = output
-            eval_model(self.opt, self.parser, printargs=False)
+            eval_model(parser, printargs=False)
         finally:
             # restore sys.stdout
             sys.stdout = old_out

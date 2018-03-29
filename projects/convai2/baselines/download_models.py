@@ -8,25 +8,21 @@
 import parlai.core.build_data as build_data
 import os
 
-def build_fb_format():
-    pass
-
-def build(opt):
-    version = 'v4.0'
-    dpath = os.path.join(opt['datapath'], 'ConvAI2')
+def download(opt, fname, version='1.0'):
+    fshort = fname[:fname.find('.')] if '.' in fname else fname
+    dpath = os.path.join(opt['datapath'], 'models', fshort)
 
     if not build_data.built(dpath, version):
-        print('[building data: ' + dpath + ']')
+        print('[downloading: ' + dpath + '/' + fname + ']')
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'convai2.tar.gz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/convai2/' + fname
+        url = 'https://s3.amazonaws.com/fair-data/parlai/_models/convai2/' + fname
         build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
-
+        if '.tgz' in fname or '.gz' in fname:
+            build_data.untar(dpath, fname)
         # Mark the data as built.
         build_data.mark_done(dpath, version)

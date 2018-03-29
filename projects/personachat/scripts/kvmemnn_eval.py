@@ -1,11 +1,9 @@
 from download_models import build
 from parlai.core.params import ParlaiParser
 from examples.eval_model import eval_model
-from projects.personachat.persona_seq2seq import PersonachatSeqseqAgentBasic
 
 '''Evaluate pre-trained model trained for hits@1 metric
-Generative model trained on personachat using persona 'self'
-Run from ParlAI directory
+Key-Value Memory Net model trained on personachat using persona 'self'
 '''
 
 if __name__ == '__main__':
@@ -15,21 +13,18 @@ if __name__ == '__main__':
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.set_defaults(
         task='personachat:self',
-        model='projects.personachat.persona_seq2seq:PersonachatSeqseqAgentBasic',
-        model_file='models:personachat/seq2seq_personachat/seq2seq_no_dropout0.2_lstm_1024_1e-3',
-        datatype='test'
+        model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
+        model_file='models:personachat/kvmemnn/kvmemnn/persona-self_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops1_lins0_model',
+        datatype='test',
+        numthreads=8
     )
-    PersonachatSeqseqAgentBasic.add_cmdline_args(parser)
-
     opt = parser.parse_args()
-    opt['model_type'] = 'seq2seq_personachat' # for builder
     # build all profile memory models
-    fnames = ['seq2seq_no_dropout0.2_lstm_1024_1e-3',
-              'fulldict.dict']
+    fnames = ['kvmemnn.tgz']
+    opt['model_type'] = 'kvmemnn' # for builder
     build(opt, fnames)
 
     # add additional model args
-    opt['dict_file'] = 'models:personachat/seq2seq_personachat/fulldict.dict'
-    opt['rank_candidates'] = True
+    opt['interactive_mode'] = False
 
     eval_model(parser)

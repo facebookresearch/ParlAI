@@ -23,12 +23,19 @@ SOCKET_TIMEOUT = 6
 # developers.facebook.com/docs/messenger-platform/send-messages/templates
 
 # Message builders
-def create_attachment(attachment_type, url):
+def create_attachment(payload):
     """Create a simple url-based attachment"""
     # TODO support data-based attachments?
-    assert attachment_type in ['image', 'video', 'file', 'audio'], \
+    assert payload['type'] in ['image', 'video', 'file', 'audio'], \
         'unsupported attachment type'
-    return {'type': attachment_type, 'payload': {'url': url}}
+    assert ('url' in payload or 'attachment_id' in payload), \
+        'unsupported attachment method: must contain url or attachment_id'
+    if 'url' in payload:
+        return {'type': payload['type'],
+                'payload': {'url': payload['url']}}
+    elif 'attachment_id' in payload:
+        return {'type': payload['type'],
+                'payload': {'attachment_id': payload['attachment_id']}}
 
 
 def create_reply_option(title, payload=''):
@@ -208,7 +215,7 @@ class MessageSocket():
         if payload['type'] == 'list':
             data = create_compact_list_message(payload['data'])
         elif payload['type'] in ['image', 'video', 'file', 'audio']:
-            data = create_attachment(payload['type'], payload['url'])
+            data = create_attachment(payload)
         else:
             data = payload['data']
         message = {
@@ -262,6 +269,54 @@ class MessageSocket():
             )
             results.append(result)
         return results
+
+    def upload_fb_attachment(self, payload):
+        """Uploads an attachment using the Attachment Upload API and returns
+        an attachment ID.
+        """
+        api_address = 'https://graph.facebook.com/v2.6/me/message_attachments'
+        assert payload['type'] in ['image', 'video', 'file', 'audio'], \
+            'unsupported attachment type'
+        if 'url' in payload:
+            message = {
+                "message": {
+                    "attachment": {
+                        "type": payload['type'],
+                        "payload": {
+                            "is_reusable": "true",
+                            "url": payload['url']
+                        }
+                    }
+                }
+            }
+            response = requests.post(
+                api_address,
+                params=self.auth_args,
+                json=message,
+            )
+        elif 'filename' in payload:
+            message = {
+                "attachment": {
+                    "type": payload['type'],
+                    "payload": {
+                        "is_reusable": "true",
+                    }
+                }
+            }
+            filedata= {"filedata": (payload['filename'], open(payload['filename'], 'rb'), payload['type']+'/'+payload['format'])}
+            response = requests.post(
+                api_address,
+                params=self.auth_args,
+                data={"message": json.dumps(message)},
+                files=filedata
+            )
+        result = response.json()
+        shared_utils.print_and_log(
+            logging.INFO,
+            '"Facebook response from attachment upload: {}"'.format(result)
+        )
+        return result
+
 
     def _setup_socket(self):
         """Create socket handlers and registers the socket"""

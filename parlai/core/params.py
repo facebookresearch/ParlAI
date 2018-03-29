@@ -73,6 +73,9 @@ class ParlaiParser(argparse.ArgumentParser):
 
         self.add_arg = self.add_argument
 
+        # remember which args were specified on the command line
+        self.cli_args = sys.argv
+
         if add_parlai_args:
             self.add_parlai_args(model_argv)
             self.add_image_args()
@@ -152,6 +155,14 @@ class ParlaiParser(argparse.ArgumentParser):
             default=30, type=int,
             help='number of HITs that can be launched at the same time, 0 is '
                  'unlimited.'
+        )
+        mturk.add_argument(
+            '--min-messages', dest='min_messages',
+            default=0, type=int,
+            help='number of messages required to be sent by MTurk agent when '
+                 'considering whether to approve a HIT in the event of a '
+                 'partner disconnect. I.e. if the number of messages '
+                 'exceeds this number, the turker can submit the HIT.'
         )
 
         mturk.set_defaults(is_sandbox=True)
@@ -307,6 +318,13 @@ class ParlaiParser(argparse.ArgumentParser):
             os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']
         if self.opt.get('datapath'):
             os.environ['PARLAI_DATAPATH'] = self.opt['datapath']
+
+        # set all arguments specified in commandline as overridable
+        override = {}
+        for k, v in self.opt.items():
+            if v in self.cli_args:
+                override[k] = v
+        self.opt['override'] = override
 
         if print_args:
             self.print_args()

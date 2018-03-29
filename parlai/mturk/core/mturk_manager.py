@@ -74,6 +74,7 @@ class MTurkManager():
         self.required_hits = math.ceil(
             self.num_conversations * len(self.mturk_agent_ids) * HIT_MULT
         )
+        self.minimum_messages = opt.get('min_messages', 0)
         self.socket_manager = None
         self.is_test = is_test
         self.is_unique = False
@@ -290,7 +291,13 @@ class MTurkManager():
         elif not agent.state.is_final():
             # Update the assignment state
             agent.some_agent_disconnected = True
-            agent.state.status = AssignState.STATUS_PARTNER_DISCONNECT
+            agent_messages = [m for m in agent.state.messages
+                              if 'id' in m and m['id'] == agent.id]
+            if len(agent_messages) < self.minimum_messages:
+                agent.state.status = \
+                    AssignState.STATUS_PARTNER_DISCONNECT_EARLY
+            else:
+                agent.state.status = AssignState.STATUS_PARTNER_DISCONNECT
 
             # Create and send the command
             data = agent.get_inactive_command_data()
@@ -862,11 +869,12 @@ class MTurkManager():
             if self._no_workers_incomplete(workers):
                 self.completed_conversations += 1
             if self.opt['max_connections'] != 0:  # If using a conv cap
-                for w in workers:
-                    if w.state.status in [
-                            AssignState.STATUS_DONE,
-                            AssignState.STATUS_PARTNER_DISCONNECT]:
-                        self.create_additional_hits(1)
+                if self.accepting_workers:  # if still looking for new workers
+                    for w in workers:
+                        if w.state.status in [
+                                AssignState.STATUS_DONE,
+                                AssignState.STATUS_PARTNER_DISCONNECT]:
+                            self.create_additional_hits(1)
 
         while True:
             # Loop forever starting task worlds until desired convos are had
@@ -1207,6 +1215,12 @@ class MTurkManager():
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         return client.get_assignment(AssignmentId=assignment_id)
 
+    def get_assignments_for_hit(self, hit_id):
+        """Get completed assignments for a hit"""
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
+        assignments_info = client.list_assignments_for_hit(HITId=hit_id)
+        return assignments_info.get('Assignments', [])
+
     def expire_all_unassigned_hits(self):
         """Move through the whole hit_id list and attempt to expire the
         HITs, though this only immediately expires those that aren't assigned.
@@ -1221,6 +1235,11 @@ class MTurkManager():
         """approve work for a given assignment through the mturk client"""
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         client.approve_assignment(AssignmentId=assignment_id)
+        shared_utils.print_and_log(
+            logging.INFO,
+            'Assignment {} approved.'
+            ''.format(assignment_id),
+        )
 
     def reject_work(self, assignment_id, reason):
         """reject work for a given assignment through the mturk client"""
@@ -1229,11 +1248,32 @@ class MTurkManager():
             AssignmentId=assignment_id,
             RequesterFeedback=reason
         )
+        shared_utils.print_and_log(
+            logging.INFO,
+            'Assignment {} rejected for reason {}.'
+            ''.format(assignment_id, reason),
+        )
+
+    def approve_assignments_for_hit(self, hit_id, override_rejection=False):
+        """Approve work for assignments associated with a given hit, through
+        mturk client
+        """
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
+        assignments = self.get_assignments_for_hit(hit_id)
+        for assignment in assignments:
+            assignment_id = assignment['AssignmentId']
+            client.approve_assignment(AssignmentId=assignment_id,
+                                      OverrideRejection=override_rejection)
 
     def block_worker(self, worker_id, reason):
         """Block a worker by id using the mturk client, passes reason along"""
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         client.create_worker_block(WorkerId=worker_id, Reason=reason)
+        shared_utils.print_and_log(
+            logging.INFO,
+            'Worker {} blocked for reason {}.'
+            ''.format(worker_id, reason),
+        )
 
     def soft_block_worker(self, worker_id):
         """Soft block a worker by giving the worker the block qualification"""
