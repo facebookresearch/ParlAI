@@ -250,6 +250,43 @@ class ParlaiParser(argparse.ArgumentParser):
             '--dict-class',
             help='the class of the dictionary agent uses')
 
+    def add_model_subargs(self, model):
+        agent = get_agent_module(model)
+        try:
+            if hasattr(agent, 'add_cmdline_args'):
+                agent.add_cmdline_args(self)
+        except argparse.ArgumentError:
+            # already added
+            pass
+        try:
+            if hasattr(agent, 'dictionary_class'):
+                s = class2str(agent.dictionary_class())
+                self.set_defaults(dict_class=s)
+        except argparse.ArgumentError:
+            # already added
+            pass
+
+    def add_task_args(self, task):
+        for t in ids_to_tasks(task).split(','):
+            agent = get_task_module(t)
+            try:
+                if hasattr(agent, 'add_cmdline_args'):
+                    agent.add_cmdline_args(self)
+            except argparse.ArgumentError:
+                # already added
+                pass
+
+    def add_image_args(self, image_mode):
+        try:
+            parlai = self.add_argument_group('ParlAI Image Preprocessing Arguments')
+            parlai.add_argument('--image-size', type=int, default=256,
+                                help='resizing dimension for images')
+            parlai.add_argument('--image-cropsize', type=int, default=224,
+                                help='crop dimension for images')
+        except argparse.ArgumentError:
+            # already added
+            pass
+
     def add_unknown_args(self, args=None):
         """Add more args depending on how known args are set."""
         args = sys.argv if args is None else args
@@ -259,45 +296,18 @@ class ParlaiParser(argparse.ArgumentParser):
         # find which image mode specified if any, and add additional arguments
         image_mode = parsed.get('image_mode', None)
         if image_mode is not None and image_mode != 'none':
-            try:
-                parlai = self.add_argument_group('ParlAI Image Preprocessing Arguments')
-                parlai.add_argument('--image-size', type=int, default=256,
-                                    help='resizing dimension for images')
-                parlai.add_argument('--image-cropsize', type=int, default=224,
-                                    help='crop dimension for images')
-            except argparse.ArgumentError:
-                # already added
-                pass
+            self.add_image_args(image_mode)
 
         # find which task specified if any, and add its specific arguments
         task = parsed.get('task', None)
         if task is not None:
-            for t in ids_to_tasks(task).split(','):
-                agent = get_task_module(t)
-                try:
-                    if hasattr(agent, 'add_cmdline_args'):
-                        agent.add_cmdline_args(self)
-                except argparse.ArgumentError:
-                    # already added
-                    pass
+            self.add_task_args(task)
 
         # find which model specified if any, and add its specific arguments
         model = parsed.get('model', None)
         if model is not None:
-            agent = get_agent_module(model)
-            try:
-                if hasattr(agent, 'add_cmdline_args'):
-                    agent.add_cmdline_args(self)
-            except argparse.ArgumentError:
-                # already added
-                pass
-            try:
-                if hasattr(agent, 'dictionary_class'):
-                    s = class2str(agent.dictionary_class())
-                    self.set_defaults(dict_class=s)
-            except argparse.ArgumentError:
-                # already added
-                pass
+            self.add_model_subargs(model)
+
 
     def parse_args(self, args=None, namespace=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the
