@@ -31,15 +31,14 @@ from examples.build_dict import build_dict
 import math
 import os
 
-def setup_args(model_args=None):
-    parser = ParlaiParser(True, True, model_argv=model_args)
+def setup_args():
+    parser = ParlaiParser(True, True)
     train = parser.add_argument_group('Training Loop Arguments')
     train.add_argument('-et', '--evaltask',
                        help=('task to use for valid/test (defaults to the '
                              'one used for training if not set)'))
-    train.add_argument('-d', '--display-examples',
-                       type='bool', default=False)
-    train.add_argument('-e', '--num-epochs', type=float, default=-1)
+    train.add_argument('--display-examples', type='bool', default=False)
+    train.add_argument('-eps', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time',
                        type=float, default=-1)
     train.add_argument('-ltim', '--log-every-n-secs',

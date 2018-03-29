@@ -39,7 +39,7 @@ class Predictor(object):
         for k, v in kwargs.items():
             args.append('--' + str(k).replace('_', '-'))
             args.append(str(v))
-        parser = ParlaiParser(True, True, model_argv=args)
+        parser = ParlaiParser(True, True)
         self.opt = parser.parse_args(args)
         self.agent = create_agent(self.opt)
 
