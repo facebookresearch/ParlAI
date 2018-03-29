@@ -10,6 +10,7 @@ import os
 
 def download(opt, fname, version='1.0'):
     fshort = fname[:fname.find('.')] if '.' in fname else fname
+    #dpath = os.path.join(opt['datapath'], 'models', 'convai2', fshort)
     dpath = os.path.join(opt['datapath'], 'models', fshort)
 
     if not build_data.built(dpath, version):
