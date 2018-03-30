@@ -19,7 +19,7 @@ if __name__ == '__main__':
     # build all profile memory models
     fnames = ['kvmemnn.tgz']
     opt['model_type'] = 'kvmemnn' # for builder
-    build(opt, fnames)
+    build(opt, fnames, 'personachat')
 
     # add additional model args
     opt['override'] = ['interactive_mode']
