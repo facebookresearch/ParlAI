@@ -1,4 +1,4 @@
-from download_models import build
+from parlai.core.build_data import download_models_from_aws
 from parlai.core.params import ParlaiParser
 from examples.eval_model import eval_model
 
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # build all profile memory models
     fnames = ['kvmemnn.tgz']
     opt['model_type'] = 'kvmemnn' # for builder
-    build(opt, fnames, 'personachat')
+    download_models_from_aws(opt, fnames, 'personachat')
 
     # add additional model args
     opt['interactive_mode'] = False

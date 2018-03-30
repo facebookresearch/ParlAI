@@ -1,4 +1,4 @@
-from download_models import build
+from parlai.core.build_data import download_models_from_aws
 from parlai.core.params import ParlaiParser
 from examples.interactive import interactive
 from parlai.agents.language_model.language_model import LanguageModelAgent
@@ -26,6 +26,6 @@ if __name__ == '__main__':
     # build all profile memory models
     fnames = ['languagemodel_esz512_hid1024_nl2.pt',
               'opensubtitles2018.dict']
-    build(opt, fnames, 'personachat')
+    download_models_from_aws(opt, fnames, 'personachat')
 
     interactive(opt)

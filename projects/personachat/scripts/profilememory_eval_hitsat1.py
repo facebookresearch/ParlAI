@@ -1,4 +1,4 @@
-from download_models import build
+from parlai.core.build_data import download_models_from_aws
 from parlai.core.params import ParlaiParser
 from examples.eval_model import eval_model
 from projects.personachat.persona_seq2seq import PersonachatSeqseqAgentSplit
@@ -29,6 +29,6 @@ if __name__ == '__main__':
     fnames = ['profilememory_mem2_reweight_sharelt_encdropout0.2_selfpersona_useall_attn_general_lstm_1024_1_1e-3_0.1',
               'profilememory_learnreweight_sharelt_encdropout0.4_s2s_usepersona_self_useall_attn_general_lstm_1024_1_1e-3_0.1',
               'fulldict.dict']
-    build(opt, fnames, 'personachat')
+    download_models_from_aws(opt, fnames, 'personachat')
 
     eval_model(parser)

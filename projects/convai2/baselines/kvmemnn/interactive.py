@@ -1,4 +1,4 @@
-from projects.convai2.baselines.download_models import download
+from parlai.core.build_data import download_models_from_aws
 from parlai.core.params import ParlaiParser
 from examples.interactive import interactive
 
@@ -17,9 +17,9 @@ if __name__ == '__main__':
     )
     opt = parser.parse_args()
     # build all profile memory models
-    fnames = 'kvmemnn.tgz'
+    fnames = ['kvmemnn.tgz']
     opt['model_type'] = 'kvmemnn' # for builder
-    download(opt, 'convai2', fnames)
+    download_models_from_aws(opt, fnames, 'convai2')
 
     # add additional model args
     opt['override'] = ['interactive_mode']
