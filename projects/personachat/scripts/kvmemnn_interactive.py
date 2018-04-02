@@ -1,4 +1,4 @@
-from download_models import build
+from parlai.core.build_data import download_models
 from parlai.core.params import ParlaiParser
 from examples.interactive import interactive
 
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     # build all profile memory models
     fnames = ['kvmemnn.tgz']
     opt['model_type'] = 'kvmemnn' # for builder
-    build(opt, fnames)
+    download_models(opt, fnames, 'personachat')
 
     # add additional model args
     opt['override'] = ['interactive_mode']

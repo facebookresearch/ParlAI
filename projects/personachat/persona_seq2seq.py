@@ -167,14 +167,14 @@ class Seq2seqAgent(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
+            self.dict = DictionaryAgent(opt)
+
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
                 print('Loading existing model params from ' + opt['model_file'])
                 new_opt, self.states = self.load(opt['model_file'])
                 # override options with stored ones
                 opt = self.override_opt(new_opt)
-
-            self.dict = DictionaryAgent(opt)
 
             if opt.get('personachat_symbol_words', None):
                 for w in opt['personachat_symbol_words']:
@@ -1137,6 +1137,8 @@ class PersonachatSeqseqAgentSplit(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
+            self.dict = DictionaryAgent(opt)
+
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
                 opt['model_file'] = opt['model_file']
@@ -1151,9 +1153,6 @@ class PersonachatSeqseqAgentSplit(Agent):
                 self.newsetting = opt['personachat_newsetting']
                 self.embshareonly_pm_dec = opt['personachat_embshareonly_pm_dec']
                 self.s2sinit = opt['personachat_s2sinit']
-
-            self.dict = DictionaryAgent(opt)
-
 
             if opt.get('personachat_symbol_words', None):
                 for w in opt['personachat_symbol_words']:

@@ -176,3 +176,40 @@ def download_from_google_drive(gd_id, destination):
                 if chunk:  # filter out keep-alive new chunks
                     f.write(chunk)
         response.close()
+
+def download_models(opt, fnames, model_folder, version='v1.0', path='aws', use_model_type=False):
+    """Download models into the ParlAI model zoo from a url.
+       fnames -- list of filenames to download
+       model_folder -- models will be downloaded into models/model_folder/model_type
+       path -- url for downloading models; defaults to downloading from AWS
+       use_model_type -- whether models are categorized by type in AWS
+    """
+
+    model_type = opt.get('model_type', None)
+    if model_type is not None:
+        dpath = os.path.join(opt['datapath'], 'models', model_folder, model_type)
+    else:
+        dpath = os.path.join(opt['datapath'], 'models', model_folder)
+
+    if not built(dpath, version):
+        for fname in fnames:
+            print('[building data: ' + dpath + '/' + fname + ']')
+        if built(dpath):
+            # An older version exists, so remove these outdated files.
+            remove_dir(dpath)
+        make_dir(dpath)
+
+        # Download the data.
+        for fname in fnames:
+            if path == 'aws':
+                if use_model_type:
+                    url = 'https://s3.amazonaws.com/fair-data/parlai/_models/' + os.path.join(model_folder, model_type, fname)
+                else:
+                    url = 'https://s3.amazonaws.com/fair-data/parlai/_models/' + os.path.join(model_folder, fname)
+            else:
+                url = path + '/' + fname
+            download(url, dpath, fname)
+            if '.tgz' in fname or '.gz' in fname:
+                untar(dpath, fname)
+        # Mark the data as built.
+        mark_done(dpath, version)
