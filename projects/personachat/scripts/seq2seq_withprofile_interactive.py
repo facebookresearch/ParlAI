@@ -1,4 +1,4 @@
-from parlai.core.build_data import download_models_from_aws
+from parlai.core.build_data import download_models
 from parlai.core.params import ParlaiParser
 from examples.interactive import interactive
 from projects.personachat.persona_seq2seq import PersonachatSeqseqAgentBasic
@@ -25,6 +25,6 @@ if __name__ == '__main__':
     # build all profile memory models
     fnames = ['seq2seq_no_dropout0.2_lstm_1024_1e-3',
               'fulldict.dict']
-    download_models_from_aws(opt, fnames, 'personachat')
+    download_models(opt, fnames, 'personachat')
 
     interactive(opt)

@@ -7,7 +7,7 @@
 This seq2seq model was trained on convai2:self.
 """
 
-from parlai.core.build_data import download_models_from_aws
+from parlai.core.build_data import download_models
 from parlai.core.params import ParlaiParser
 from examples.eval_model import setup_args, eval_model
 from parlai.agents.seq2seq.seq2seq import Seq2seqAgent
@@ -26,5 +26,5 @@ if __name__ == '__main__':
     opt = parser.parse_args()
     opt['model_type'] = 'seq2seq'
     fnames = ['convai2_self_seq2seq_model.tgz', 'dict_convai2_self']
-    download_models_from_aws(opt, fnames, 'convai2')
+    download_models(opt, fnames, 'convai2')
     eval_model(parser, printargs=False)

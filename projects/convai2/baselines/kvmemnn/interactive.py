@@ -1,4 +1,4 @@
-from parlai.core.build_data import download_models_from_aws
+from parlai.core.build_data import download_models
 from parlai.core.params import ParlaiParser
 from examples.interactive import interactive
 
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     # build all profile memory models
     fnames = ['kvmemnn.tgz']
     opt['model_type'] = 'kvmemnn' # for builder
-    download_models_from_aws(opt, fnames, 'convai2')
+    download_models(opt, fnames, 'convai2')
 
     # add additional model args
     opt['override'] = ['interactive_mode']

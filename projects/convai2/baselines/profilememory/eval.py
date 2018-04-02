@@ -1,4 +1,4 @@
-from parlai.core.build_data import download_models_from_aws
+from parlai.core.build_data import download_models
 from parlai.core.params import ParlaiParser
 from examples.eval_model import eval_model
 from projects.personachat.persona_seq2seq import PersonachatSeqseqAgentSplit
@@ -26,6 +26,6 @@ if __name__ == '__main__':
     # build profile memory models
     fnames = ['profilememory_convai2_model',
               'profilememory_convai2.dict']
-    download_models_from_aws(opt, fnames, 'convai2', use_model_type=True)
+    download_models(opt, fnames, 'convai2', use_model_type=True)
 
     eval_model(parser)

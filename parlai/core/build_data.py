@@ -177,10 +177,11 @@ def download_from_google_drive(gd_id, destination):
                     f.write(chunk)
         response.close()
 
-def download_models_from_aws(opt, fnames, model_folder, version='v1.0', use_model_type=False):
+def download_models(opt, fnames, model_folder, version='v1.0', path='aws', use_model_type=False):
     """Download models into the ParlAI model zoo from AWS.
        fnames -- list of filenames to download
        model_folder -- models will be downloaded into models/model_folder/model_type
+       path -- url for downloading models
        use_model_type -- whether models are categorized by type in AWS
     """
 
@@ -200,10 +201,13 @@ def download_models_from_aws(opt, fnames, model_folder, version='v1.0', use_mode
 
         # Download the data.
         for fname in fnames:
-            if use_model_type:
-                url = 'https://s3.amazonaws.com/fair-data/parlai/_models/' + os.path.join(model_folder, model_type, fname)
+            if path == 'aws':
+                if use_model_type:
+                    url = 'https://s3.amazonaws.com/fair-data/parlai/_models/' + os.path.join(model_folder, model_type, fname)
+                else:
+                    url = 'https://s3.amazonaws.com/fair-data/parlai/_models/' + os.path.join(model_folder, fname)
             else:
-                url = 'https://s3.amazonaws.com/fair-data/parlai/_models/' + os.path.join(model_folder, fname)
+                url = path + '/' + fname
             download(url, dpath, fname)
             if '.tgz' in fname or '.gz' in fname:
                 untar(dpath, fname)
