@@ -341,8 +341,7 @@ class FairseqAgent(Agent):
 
     def load(self, path):
         """Return opt and model states."""
-        with open(path, 'rb') as read:
-            model = torch.load(read)
+        model = torch.load(path, map_location=lambda cpu, _: cpu)
         return model['opt'], model['state_dict']
 
     def set_states(self, state_dict):

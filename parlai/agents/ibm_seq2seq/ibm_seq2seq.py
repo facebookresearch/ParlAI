@@ -462,9 +462,7 @@ class IbmSeq2seqAgent(Agent):
 
     def load(self, path):
         """Return opt and model states."""
-        with open(path, 'rb') as read:
-            states = torch.load(read)
-
+        states = torch.load(path, map_location=lambda cpu, _: cpu)
         return states['opt'], states
 
     def receive_metrics(self, metrics_dict):

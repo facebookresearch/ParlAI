@@ -449,10 +449,9 @@ class StarspaceAgent(Agent):
 
     def load(self, path):
         """Return opt and model states."""
-        with open(path, 'rb') as read:
-            print('Loading existing model params from ' + path)
-            data = torch.load(read)
-            self.model.load_state_dict(data['model'])
-            self.reset()
-            self.optimizer.load_state_dict(data['optimizer'])
-            self.opt = self.override_opt(data['opt'])
+        print('Loading existing model params from ' + path)
+        data = torch.load(path, map_location=lambda cpu, _: cpu)
+        self.model.load_state_dict(data['model'])
+        self.reset()
+        self.optimizer.load_state_dict(data['optimizer'])
+        self.opt = self.override_opt(data['opt'])

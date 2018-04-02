@@ -574,6 +574,5 @@ class LanguageModelAgent(Agent):
 
     def load(self, path):
         """Return opt and model states."""
-        with open(path, 'rb') as read:
-            states = torch.load(read, map_location='cpu')
+        states = torch.load(path, map_location=lambda cpu, _: cpu)
         return states['opt'], states
