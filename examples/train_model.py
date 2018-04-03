@@ -113,6 +113,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
             # full depending on the structure of the data
             break
     valid_report = valid_world.report()
+    print(valid_report); import pdb; pdb.set_trace()
     valid_world.reset()  # this makes sure agent doesn't remember valid data
 
     metrics = datatype + ':' + str(valid_report)

@@ -45,6 +45,7 @@ import copy
 import importlib
 import math
 import random
+import time
 
 try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore
@@ -212,9 +213,10 @@ class World(object):
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """After ``with`` statement, call shutdown."""
-        silent_exit = isinstance(exc_value, KeyboardInterrupt)
-        self.shutdown()
-        return silent_exit
+        # silent_exit = isinstance(exc_value, KeyboardInterrupt)
+        # self.shutdown()
+        # return silent_exit
+        pass
 
     def num_examples(self):
         return 0
@@ -732,11 +734,12 @@ class HogwildProcess(Process):
     """
 
 
-    def __init__(self, tid, opt, world, sync):
+    def __init__(self, tid, opt, shared, sync):
         opt = copy.deepcopy(opt)
+        # don't let threads create more threads!
         opt['numthreads'] = 1
         self.opt = opt
-        self.shared = world.share()
+        self.shared = shared
         self.shared['threadindex'] = tid
         if 'agents' in self.shared:
             for a in self.shared['agents']:
@@ -753,6 +756,7 @@ class HogwildProcess(Process):
             world = BatchWorld(self.opt, world)
         self.sync['threads_sem'].release()
         with world:
+            print('[ thread {} initialized ]'.format(self.shared['threadindex']))
             while True:
                 if self.sync['term_flag'].value:
                     break  # time to close
@@ -813,15 +817,17 @@ class HogwildWorld(World):
             'total_parleys': Value('l', 0),  # number of parleys in threads
         }
 
-        # don't let threads create more threads!
         self.threads = []
         for i in range(self.numthreads):
-            self.threads.append(HogwildProcess(i, opt, world, self.sync))
+            self.threads.append(HogwildProcess(i, opt, world.share(), self.sync))
+            time.sleep(0.05) # delay can help prevent deadlock in thread launches
         for t in self.threads:
             t.start()
 
-        for _ in self.threads:
-            self.sync['threads_sem'].acquire()
+        # for _ in self.threads:
+            # wait for threads to launch
+            # (why? do we wants threads_sem at 0 or numthreads?)
+            # self.sync['threads_sem'].acquire()
 
 
     def display(self):

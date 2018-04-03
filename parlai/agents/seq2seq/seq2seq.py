@@ -168,6 +168,7 @@ class Seq2seqAgent(Agent):
 
             if 'model' in shared:
                 # model is shared during hogwild
+                torch.set_num_threads(1)
                 self.model = shared['model']
                 self.metrics = shared['metrics']
                 states = shared['states']
@@ -398,9 +399,9 @@ class Seq2seqAgent(Agent):
         if self.opt.get('numthreads', 1) > 1:
             if type(self.metrics) == dict:
                 self.metrics = SharedTable(self.metrics)
+                self.model.share_memory()
             shared['metrics'] = self.metrics
             shared['model'] = self.model
-            self.model.share_memory()
             shared['states'] = { # only need to pass optimizer states
                 'optimizer': self.optimizer.state_dict(),
                 'optimizer_type': self.opt['optimizer'],

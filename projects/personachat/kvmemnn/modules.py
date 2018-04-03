@@ -17,7 +17,7 @@ class Kvmemnn(nn.Module):
         super().__init__()
         self.lt = nn.Embedding(num_features, opt['embeddingsize'], 0,
                                sparse=True, max_norm=opt['embeddingnorm'])
-        if not opt['tfidf']: 
+        if not opt['tfidf']:
             dict = None
         self.encoder = Encoder(self.lt, dict)
         if not opt['share_embeddings']:
@@ -34,17 +34,17 @@ class Kvmemnn(nn.Module):
         self.lin2 = nn.Linear(opt['embeddingsize'], opt['embeddingsize'], bias=False)
         self.hops = 1
         self.lins = 0
-        if 'hops' in opt: 
+        if 'hops' in opt:
             self.hops = opt['hops']
-        if 'lins' in opt: 
+        if 'lins' in opt:
             self.lins = opt['lins']
-            
+
     def forward(self, xs, mems, ys=None, cands=None):
         scores = None
 
         xs_enc = []
         xs_emb = self.encoder(xs)
-        
+
         if len(mems) > 0 and self.hops > 0:
             mem_enc = []
             for m in mems:
@@ -85,7 +85,6 @@ class Kvmemnn(nn.Module):
                 xs_enc.append(lhs_emb)
                 c_emb = self.encoder2(c)
                 ys_enc.append(c_emb)
-            #import pdb; pdb.set_trace()
         return torch.cat(xs_enc), torch.cat(ys_enc)
 
 class Encoder(nn.Module):

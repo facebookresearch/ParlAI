@@ -131,6 +131,8 @@ class FixedDialogTeacher(Teacher):
             self.index = shared['index']
             if 'data_loader' in shared:
                 self.data_loader = shared['data_loader']
+            if 'threadindex' in shared:
+                self.threadindex = shared['threadindex']
         else:
             self.index = AttrDict(value=-1)
 

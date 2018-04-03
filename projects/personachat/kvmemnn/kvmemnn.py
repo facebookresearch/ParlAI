@@ -52,7 +52,7 @@ def maintain_dialog_history(history, observation, reply='',
         history['persona'] = []
         history['episode_done'] = False
         history['labels'] = []
- 
+
     if history['episode_done']:
         history['dialog'].clear()
         history['persona'] = []
@@ -212,15 +212,14 @@ class KvmemnnAgent(Agent):
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
         self.history = {}
         if shared:
+            torch.set_num_threads(1)
             if 'threadindex' in shared:
                 self.threadindex = shared['threadindex']
             else:
                 self.threadindex = 1
-            print("[ creating Kvmemnn thread " + str(self.threadindex)  + " ]")
             # set up shared properties
             self.dict = shared['dict']
             # answers contains a batch_size list of the last answer produced
-            self.answers = shared['answers']
             self.model = shared['model'] #Kvmemnn(opt, len(self.dict))
             if 'fixedX' in shared:
                 self.fixedX = shared['fixedX']
@@ -231,10 +230,9 @@ class KvmemnnAgent(Agent):
         else:
             print("[ creating KvmemnnAgent ]")
             # this is not a shared instance of this class, so do full init
-            # answers contains a batch_size list of the last answer produced
-            self.answers = [None] * 1
+            self.threadindex = -1
 
-            if ((opt['dict_file'] is None and opt.get('model_file')) or 
+            if ((opt['dict_file'] is None and opt.get('model_file')) or
                 os.path.isfile(opt['model_file'] + '.dict')):
                 # set default dict-file if not set
                 opt['dict_file'] = opt['model_file'] + '.dict'
@@ -349,7 +347,6 @@ class KvmemnnAgent(Agent):
     def share(self):
         """Share internal states between parent and child instances."""
         shared = super().share()
-        shared['answers'] = self.answers
         shared['dict'] = self.dict
         shared['model'] = self.model
         if self.fixedX is not None:
@@ -445,7 +442,6 @@ class KvmemnnAgent(Agent):
             utt = self.history['last_utterance']
             if len(utt) > 2:
                 query = Variable(torch.LongTensor(utt).unsqueeze(0))
-                #print(self.v2t(query.squeeze(0)))
                 negs.append(query)
         return negs
 
@@ -472,7 +468,7 @@ class KvmemnnAgent(Agent):
         if is_training: #
             text_cand_inds, loss_dict = None, None
             negs = self.get_negs(xs, ys)
-            if is_training and len(negs) > 0: # and self.opt['learningrate'] > 0:
+            if len(negs) > 0:
                 self.model.train()
                 self.zero_grad()
                 xe, ye = self.model(xs, obs[0]['mem'], ys, negs)
@@ -751,4 +747,3 @@ class KvmemnnAgent(Agent):
             self.reset()
             self.optimizer.load_state_dict(data['optimizer'])
             self.opt = self.override_opt(data['opt'])
-            
