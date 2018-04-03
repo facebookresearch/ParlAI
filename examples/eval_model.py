@@ -31,17 +31,21 @@ def setup_args():
 def eval_model(parser, printargs=True):
     random.seed(42)
     opt = parser.parse_args(print_args=False)
+
+    nomodel = False
     # check to make sure the model file exists
-    nomodel = Flase
-    if opt.get('model_file') is None or not os.path.isfile(opt['model_file']):
-        print('WARNING: Model file does not exist, check to make sure it '
-              'is correct: {}'.format(opt['model_file']))
+    if opt.get('model_file') is None:
         nomodel = True
+    elif not os.path.isfile(opt['model_file']):
+        raise RuntimeError('WARNING: Model file does not exist, check to make '
+                           'sure it is correct: {}'.format(opt['model_file']))
+
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     if nomodel and hasattr(agent, 'load'):
-        raise RuntimeError('Stopping evaluation because no model file detected '
-                           'yet model has a `load` function.')
+        # double check that we didn't forget to set model_file on loadable model
+        raise RuntimeError('Stopping evaluation because model_file unset but '
+                           'model has a `load` function.')
     world = create_task(opt, agent)
     # Show arguments after loading model
     parser.opt = agent.opt

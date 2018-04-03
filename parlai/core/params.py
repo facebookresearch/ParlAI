@@ -348,8 +348,7 @@ class ParlaiParser(argparse.ArgumentParser):
         if self.opt.get('datapath'):
             os.environ['PARLAI_DATAPATH'] = self.opt['datapath']
 
-        # nothing changes if model_file does not start with 'models:'
-        # if it is, then remaps 'models:' to the actual system path
+        # map filenames that start with 'models:' to point to the model zoo dir
         if self.opt.get('model_file') is not None:
             self.opt['model_file'] = modelzoo_path(self.opt.get('datapath'),
                                                    self.opt['model_file'])
