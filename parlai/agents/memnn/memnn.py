@@ -74,6 +74,7 @@ class MemnnAgent(Agent):
             self.dict = shared['dict']
             # model is shared during hogwild
             if 'threadindex' in shared:
+                torch.set_num_threads(1)
                 self.model = shared['model']
                 self.decoder = shared['decoder']
                 self.answers = [None] * opt['batchsize']
@@ -140,7 +141,6 @@ class MemnnAgent(Agent):
         shared['dict'] = self.dict
         if self.opt.get('numthreads', 1) > 1:
             shared['model'] = self.model
-            self.model.share_memory()
             shared['decoder'] = self.decoder
         return shared
 
