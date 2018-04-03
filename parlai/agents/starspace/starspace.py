@@ -214,7 +214,7 @@ class StarspaceAgent(Agent):
 
     def v2t(self, vec):
         """Convert token indices to string of tokens."""
-        if type(vec) == Variable:
+        if isinstance(vec, Variable):
             vec = vec.data
         new_vec = []
         for i in vec:

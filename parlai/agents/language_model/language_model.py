@@ -328,7 +328,7 @@ class LanguageModelAgent(Agent):
 
     def repackage_hidden(self, h):
         """Wraps hidden states in new Variables, to detach them from their history."""
-        if type(h) == Variable:
+        if isinstance(h, Variable):
             return Variable(h.data)
         else:
             return tuple(self.repackage_hidden(v) for v in h)
