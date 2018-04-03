@@ -200,6 +200,9 @@ class KvmemnnAgent(Agent):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
         opt = self.opt
+        if opt.get('batchsize', 1) > 1:
+            raise RuntimeError('Kvmemnn model does not support batchsize > 1, '
+                               'try training with numthreads > 1 instead.')
         self.reset_metrics()
         # all instances needs truncate param
         self.id = 'Kvmemnn'
@@ -227,9 +230,6 @@ class KvmemnnAgent(Agent):
                 self.fixedCands_txt = shared['fixedCands_txt']
                 self.fixedCands2 = shared['fixedCands2']
                 self.fixedCands_txt2 = shared['fixedCands_txt2']
-            else:
-                self.fixedX = None
-                self.fixedCands = False
         else:
             print("[ creating KvmemnnAgent ]")
             # this is not a shared instance of this class, so do full init
@@ -421,6 +421,7 @@ class KvmemnnAgent(Agent):
         return metrics
 
     def same(self, y1, y2):
+        """Check if two tensors are the same, within small margin of error."""
         if len(y1) != len(y2):
             return False
         if abs((y1 - y2).sum().data.sum()) > 0.00001:
@@ -437,7 +438,7 @@ class KvmemnnAgent(Agent):
         for i in range(1, k * 3):
             index =  random.randint(0, cache_sz)
             neg = self.ys_cache[index]
-            if all([not self.same(ys[j], neg) for j in range(ys.size(0))]):
+            if not self.same(ys.squeeze(), neg.squeeze()):
                 negs.append(neg)
                 if len(negs) >= k:
                     break
