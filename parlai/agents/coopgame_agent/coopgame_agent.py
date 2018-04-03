@@ -116,7 +116,7 @@ class CooperativeGameAgent(Agent):
     def detokenize(self, vec):
         """Convert a ``torch.autograd.Variable`` of tokens into a string."""
         text_tokens = vec
-        if type(text_tokens) == Variable:
+        if isinstance(text_tokens, Variable):
             text_tokens = list(text_tokens.data)
         return self.dict.vec2txt(text_tokens)
 

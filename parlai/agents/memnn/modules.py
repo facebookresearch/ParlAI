@@ -49,7 +49,7 @@ class MemNN(nn.Module):
         memory_lengths = memory_lengths.data
         memories = memories.data
         if self.extra_features_slots > 0:
-            num_nonempty_memories = memory_lengths.ne(0).sum()
+            num_nonempty_memories = int(memory_lengths.ne(0).long().sum())
             updated_memories = memories.new(memories.numel() + num_nonempty_memories * self.extra_features_slots)
             src_offset = 0
             dst_offset = 0
@@ -96,6 +96,9 @@ class Embed(nn.Embedding):
         indices = indices.data
         if lengths.dim() == 1 or lengths.size(1) == 1:
             lengths_mat = lengths_mat.squeeze().unsqueeze(0)
+
+        if lengths_mat.dim() == 1:
+            raise RuntimeError(lengths.shape)
 
         input = torch.LongTensor(lengths_mat.size(0), lengths_mat.size(1), torch.max(lengths_mat))
         pad = self.padding_idx if self.padding_idx is not None else 0
