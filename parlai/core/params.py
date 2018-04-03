@@ -46,6 +46,9 @@ def class2str(value):
 
 
 def modelzoo_path(datapath, path):
+    """If path starts with 'models', then we remap it to the model zoo path
+    within the data directory (default is ParlAI/data/models).
+    ."""
     if path is None:
         return None
     if not path.startswith('models:'):
@@ -276,6 +279,7 @@ class ParlaiParser(argparse.ArgumentParser):
             pass
 
     def add_task_args(self, task):
+        """Add arguments specific to the specified task."""
         for t in ids_to_tasks(task).split(','):
             agent = get_task_module(t)
             try:
@@ -286,6 +290,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 pass
 
     def add_image_args(self, image_mode):
+        """Add additional arguments for handling images."""
         try:
             parlai = self.add_argument_group('ParlAI Image Preprocessing Arguments')
             parlai.add_argument('--image-size', type=int, default=256,
@@ -343,7 +348,8 @@ class ParlaiParser(argparse.ArgumentParser):
         if self.opt.get('datapath'):
             os.environ['PARLAI_DATAPATH'] = self.opt['datapath']
 
-        # nothing changes if model_file
+        # nothing changes if model_file does not start with 'models:'
+        # if it is, then remaps 'models:' to the actual system path
         if self.opt.get('model_file') is not None:
             self.opt['model_file'] = modelzoo_path(self.opt.get('datapath'),
                                                    self.opt['model_file'])
