@@ -105,7 +105,7 @@ task_list = [
         "id": "MutualFriends",
         "display_name": "MutualFriends",
         "task": "mutualfriends",
-        "tags": [ "All", "Negotiation"],
+        "tags": [ "All", "Goal"],
         "description": "Task where two agents must discover which friend of theirs is mutual based on the friends's attributes. From He He et al. '17. Link: https://stanfordnlp.github.io/cocoa/'"
     },
     {
