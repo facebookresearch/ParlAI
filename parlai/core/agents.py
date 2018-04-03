@@ -83,9 +83,10 @@ class Agent(object):
     def reset_metrics(self):
         pass
 
-    def save(self):
+    def save(self, path=None):
         """If applicable, save any parameters needed to recreate this agent from
-        loaded parameters."""
+        loaded parameters.
+        """
         pass
 
     def share(self):

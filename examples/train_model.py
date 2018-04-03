@@ -113,7 +113,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
             # full depending on the structure of the data
             break
     valid_report = valid_world.report()
-    print(valid_report); import pdb; pdb.set_trace()
+    # print(valid_report); import pdb; pdb.set_trace()
     valid_world.reset()  # this makes sure agent doesn't remember valid data
 
     metrics = datatype + ':' + str(valid_report)
@@ -265,10 +265,11 @@ class TrainLoop():
             # reload best validation model
             self.agent = create_agent(opt)
 
-        _rep, wrld = run_eval(self.agent, opt, 'valid', write_log=True)
-        wrld.shutdown()  # may need to shut down threads, remote connections
-        _rep, wrld = run_eval(self.agent, opt, 'test', write_log=True)
-        wrld.shutdown()  # may need to shut down threads, remote connections
+        v_report, v_world = run_eval(self.agent, opt, 'valid', write_log=True)
+        t_report, t_world = run_eval(self.agent, opt, 'test', write_log=True)
+        v_world.shutdown()
+        t_world.shutdown()
+        return v_report, t_report
 
 
 if __name__ == '__main__':

@@ -194,7 +194,6 @@ class Metrics(object):
     def update(self, observation, labels):
         with self._lock():
             self.metrics['cnt'] += 1
-            print(self.metrics['cnt'])
 
         # Exact match metric.
         correct = 0

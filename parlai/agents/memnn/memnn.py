@@ -176,7 +176,7 @@ class MemnnAgent(Agent):
 
         self.model.train(mode=is_training)
         # Organize inputs for network (see contents of xs and ys in batchify method)
-        inputs = [Variable(x, volatile=is_training) for x in xs]
+        inputs = [Variable(x) for x in xs]
         output_embeddings = self.model(*inputs)
 
         if self.decoder is None:
