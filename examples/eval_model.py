@@ -21,7 +21,7 @@ import random
 def setup_args():
     # Get command line arguments
     parser = ParlaiParser(True, True)
-    parser.add_argument('-n', '--num-examples', default=100000000)
+    parser.add_argument('-n', '--num-examples', default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.set_defaults(datatype='valid')
@@ -44,7 +44,9 @@ def eval_model(parser, printargs=True):
     tot_time = 0
 
     # Show some example dialogs:
-    for _ in range(int(opt['num_examples'])):
+    cnt = 0
+    while not world.epoch_done():
+        cnt += 1
         world.parley()
         if opt['display_examples']:
             print("---")
@@ -53,10 +55,13 @@ def eval_model(parser, printargs=True):
             tot_time += log_time.time()
             print(str(int(tot_time)) + "s elapsed: " + str(world.report()))
             log_time.reset()
-        if world.epoch_done():
-            print("EPOCH DONE")
+        if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
             break
-    print(world.report())
+    if world.epoch_done():
+        print("EPOCH DONE")
+    report = world.report()
+    print(report)
+    return report
 
 
 def main():

@@ -227,6 +227,9 @@ class KvmemnnAgent(Agent):
                 self.fixedCands_txt = shared['fixedCands_txt']
                 self.fixedCands2 = shared['fixedCands2']
                 self.fixedCands_txt2 = shared['fixedCands_txt2']
+            else:
+                self.fixedX = None
+                self.fixedCands = False
         else:
             print("[ creating KvmemnnAgent ]")
             # this is not a shared instance of this class, so do full init
@@ -418,9 +421,9 @@ class KvmemnnAgent(Agent):
         return metrics
 
     def same(self, y1, y2):
-        if len(y1.squeeze()) != len(y2.squeeze()):
+        if len(y1) != len(y2):
             return False
-        if abs((y1.squeeze()-y2.squeeze()).sum().data.sum()) > 0.00001:
+        if abs((y1 - y2).sum().data.sum()) > 0.00001:
             return False
         return True
 
@@ -434,7 +437,7 @@ class KvmemnnAgent(Agent):
         for i in range(1, k * 3):
             index =  random.randint(0, cache_sz)
             neg = self.ys_cache[index]
-            if not self.same(ys, neg):
+            if all([not self.same(ys[j], neg) for j in range(ys.size(0))]):
                 negs.append(neg)
                 if len(negs) >= k:
                     break
@@ -620,7 +623,7 @@ class KvmemnnAgent(Agent):
                     tc.append(cands_txt[0][ind.data[i]])
             ret = [{'text': ypred, 'text_candidates': tc }]
             return ret
-        return [{}]
+        return [{}] * xs.size(0)
 
     def batchify(self, observations):
         """Convert a list of observations into input & target tensors."""
@@ -652,7 +655,7 @@ class KvmemnnAgent(Agent):
 
         max_x_len = max([len(x) for x in parsed_x])
         for x in parsed_x:
-            x += [[self.NULL_IDX]] * (max_x_len - len(x))
+            x += [self.NULL_IDX] * (max_x_len - len(x))
         xs = torch.LongTensor(parsed_x)
         xs = Variable(xs)
 
