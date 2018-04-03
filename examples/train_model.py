@@ -108,12 +108,11 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
         cnt += opt['batchsize']
-        if max_exs > 0 and cnt >= max_exs:
+        if max_exs > 0 and cnt > max_exs + opt.get('numthreads', 1):
             # note this max_exs is approximate--some batches won't always be
             # full depending on the structure of the data
             break
     valid_report = valid_world.report()
-    # print(valid_report); import pdb; pdb.set_trace()
     valid_world.reset()  # this makes sure agent doesn't remember valid data
 
     metrics = datatype + ':' + str(valid_report)

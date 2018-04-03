@@ -213,10 +213,9 @@ class World(object):
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """After ``with`` statement, call shutdown."""
-        # silent_exit = isinstance(exc_value, KeyboardInterrupt)
-        # self.shutdown()
-        # return silent_exit
-        pass
+        silent_exit = isinstance(exc_value, KeyboardInterrupt)
+        self.shutdown()
+        return silent_exit
 
     def num_examples(self):
         return 0
@@ -737,8 +736,7 @@ class HogwildProcess(Process):
     def __init__(self, tid, opt, shared, sync):
         self.numthreads = opt['numthreads']
         opt = copy.deepcopy(opt)
-        # don't let threads create more threads!
-        opt['numthreads'] = 1
+        opt['numthreads'] = 1  # don't let threads create more threads!
         self.opt = opt
         self.shared = shared
         self.shared['threadindex'] = tid
