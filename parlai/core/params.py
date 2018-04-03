@@ -45,6 +45,18 @@ def class2str(value):
     return s
 
 
+def modelzoo_path(datapath, path):
+    """If path starts with 'models', then we remap it to the model zoo path
+    within the data directory (default is ParlAI/data/models).
+    ."""
+    if path is None:
+        return None
+    if not path.startswith('models:'):
+        return path
+    else:
+        return os.path.join(datapath, 'models', path[7:])
+
+
 class ParlaiParser(argparse.ArgumentParser):
     """Pseudo-extension of ``argparse`` which sets a number of parameters
     for the ParlAI framework. More options can be added specific to other
@@ -267,6 +279,7 @@ class ParlaiParser(argparse.ArgumentParser):
             pass
 
     def add_task_args(self, task):
+        """Add arguments specific to the specified task."""
         for t in ids_to_tasks(task).split(','):
             agent = get_task_module(t)
             try:
@@ -277,6 +290,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 pass
 
     def add_image_args(self, image_mode):
+        """Add additional arguments for handling images."""
         try:
             parlai = self.add_argument_group('ParlAI Image Preprocessing Arguments')
             parlai.add_argument('--image-size', type=int, default=256,
@@ -320,6 +334,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.args = super().parse_args(args=args)
         self.opt = vars(self.args)
 
+
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
         if 'batchsize' in self.opt and self.opt['batchsize'] <= 1:
@@ -332,6 +347,14 @@ class ParlaiParser(argparse.ArgumentParser):
             os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']
         if self.opt.get('datapath'):
             os.environ['PARLAI_DATAPATH'] = self.opt['datapath']
+
+        # map filenames that start with 'models:' to point to the model zoo dir
+        if self.opt.get('model_file') is not None:
+            self.opt['model_file'] = modelzoo_path(self.opt.get('datapath'),
+                                                   self.opt['model_file'])
+        if self.opt.get('dict_file') is not None:
+            self.opt['dict_file'] = modelzoo_path(self.opt.get('datapath'),
+                                                  self.opt['dict_file'])
 
         # set all arguments specified in commandline as overridable
         override = {}

@@ -308,6 +308,7 @@ def get_agent_module(dir_name):
     model_class = getattr(my_module, class_name)
     return model_class
 
+
 def create_agent(opt):
     """Create an agent from the options ``model``, ``model_params`` and ``model_file``.
     The input is either of the form ``parlai.agents.ir_baseline.agents:IrBaselineAgent``
@@ -323,14 +324,6 @@ def create_agent(opt):
     if opt.get('model_file'):
         # Attempt to load the model from the model file first (this way we do not even
         # have to specify the model name as a parameter.
-        if opt['model_file'].startswith('models:'):
-            # load model from the ParlAI model zoo directory
-            opt['model_file'] = os.path.join(opt['datapath'], 'models', opt['model_file'][7:])
-        # also check for dict file
-        if opt.get('dict_file'):
-            if opt['dict_file'].startswith('models:'):
-                # load model from the ParlAI model zoo directory
-                opt['dict_file'] = os.path.join(opt['datapath'], 'models', opt['dict_file'][7:])
         model = load_agent_module(opt)
         if model is not None:
             return model

@@ -365,8 +365,7 @@ class MemnnAgent(Agent):
                 torch.save(checkpoint, write)
 
     def load(self, path):
-        with open(path, 'rb') as read:
-            checkpoint = torch.load(read)
+        checkpoint = torch.load(path, map_location=lambda cpu, _: cpu)
         self.model.load_state_dict(checkpoint['memnn'])
         self.optimizers['memnn'].load_state_dict(checkpoint['memnn_optim'])
         if self.decoder is not None:
