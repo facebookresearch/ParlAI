@@ -74,6 +74,7 @@ class MemnnAgent(Agent):
             self.dict = shared['dict']
             # model is shared during hogwild
             if 'threadindex' in shared:
+                torch.set_num_threads(1)
                 self.model = shared['model']
                 self.decoder = shared['decoder']
                 self.answers = [None] * opt['batchsize']
@@ -140,7 +141,6 @@ class MemnnAgent(Agent):
         shared['dict'] = self.dict
         if self.opt.get('numthreads', 1) > 1:
             shared['model'] = self.model
-            self.model.share_memory()
             shared['decoder'] = self.decoder
         return shared
 
@@ -176,7 +176,7 @@ class MemnnAgent(Agent):
 
         self.model.train(mode=is_training)
         # Organize inputs for network (see contents of xs and ys in batchify method)
-        inputs = [Variable(x, volatile=is_training) for x in xs]
+        inputs = [Variable(x) for x in xs]
         output_embeddings = self.model(*inputs)
 
         if self.decoder is None:

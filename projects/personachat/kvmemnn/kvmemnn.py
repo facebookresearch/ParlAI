@@ -52,7 +52,7 @@ def maintain_dialog_history(history, observation, reply='',
         history['persona'] = []
         history['episode_done'] = False
         history['labels'] = []
- 
+
     if history['episode_done']:
         history['dialog'].clear()
         history['persona'] = []
@@ -200,6 +200,9 @@ class KvmemnnAgent(Agent):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
         opt = self.opt
+        if opt.get('batchsize', 1) > 1:
+            raise RuntimeError('Kvmemnn model does not support batchsize > 1, '
+                               'try training with numthreads > 1 instead.')
         self.reset_metrics()
         # all instances needs truncate param
         self.id = 'Kvmemnn'
@@ -212,15 +215,14 @@ class KvmemnnAgent(Agent):
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
         self.history = {}
         if shared:
+            torch.set_num_threads(1)
             if 'threadindex' in shared:
                 self.threadindex = shared['threadindex']
             else:
                 self.threadindex = 1
-            print("[ creating Kvmemnn thread " + str(self.threadindex)  + " ]")
             # set up shared properties
             self.dict = shared['dict']
             # answers contains a batch_size list of the last answer produced
-            self.answers = shared['answers']
             self.model = shared['model'] #Kvmemnn(opt, len(self.dict))
             if 'fixedX' in shared:
                 self.fixedX = shared['fixedX']
@@ -231,10 +233,9 @@ class KvmemnnAgent(Agent):
         else:
             print("[ creating KvmemnnAgent ]")
             # this is not a shared instance of this class, so do full init
-            # answers contains a batch_size list of the last answer produced
-            self.answers = [None] * 1
+            self.threadindex = -1
 
-            if ((opt['dict_file'] is None and opt.get('model_file')) or 
+            if ((opt['dict_file'] is None and opt.get('model_file')) or
                 os.path.isfile(opt['model_file'] + '.dict')):
                 # set default dict-file if not set
                 opt['dict_file'] = opt['model_file'] + '.dict'
@@ -349,7 +350,6 @@ class KvmemnnAgent(Agent):
     def share(self):
         """Share internal states between parent and child instances."""
         shared = super().share()
-        shared['answers'] = self.answers
         shared['dict'] = self.dict
         shared['model'] = self.model
         if self.fixedX is not None:
@@ -421,9 +421,10 @@ class KvmemnnAgent(Agent):
         return metrics
 
     def same(self, y1, y2):
-        if len(y1.squeeze()) != len(y2.squeeze()):
+        """Check if two tensors are the same, within small margin of error."""
+        if len(y1) != len(y2):
             return False
-        if abs((y1.squeeze()-y2.squeeze()).sum().data.sum()) > 0.00001:
+        if abs((y1 - y2).sum().data.sum()) > 0.00001:
             return False
         return True
 
@@ -437,7 +438,7 @@ class KvmemnnAgent(Agent):
         for i in range(1, k * 3):
             index =  random.randint(0, cache_sz)
             neg = self.ys_cache[index]
-            if not self.same(ys, neg):
+            if not self.same(ys.squeeze(), neg.squeeze()):
                 negs.append(neg)
                 if len(negs) >= k:
                     break
@@ -445,7 +446,6 @@ class KvmemnnAgent(Agent):
             utt = self.history['last_utterance']
             if len(utt) > 2:
                 query = Variable(torch.LongTensor(utt).unsqueeze(0))
-                #print(self.v2t(query.squeeze(0)))
                 negs.append(query)
         return negs
 
@@ -472,7 +472,7 @@ class KvmemnnAgent(Agent):
         if is_training: #
             text_cand_inds, loss_dict = None, None
             negs = self.get_negs(xs, ys)
-            if is_training and len(negs) > 0: # and self.opt['learningrate'] > 0:
+            if len(negs) > 0:
                 self.model.train()
                 self.zero_grad()
                 xe, ye = self.model(xs, obs[0]['mem'], ys, negs)
@@ -624,7 +624,7 @@ class KvmemnnAgent(Agent):
                     tc.append(cands_txt[0][ind.data[i]])
             ret = [{'text': ypred, 'text_candidates': tc }]
             return ret
-        return [{}]
+        return [{}] * xs.size(0)
 
     def batchify(self, observations):
         """Convert a list of observations into input & target tensors."""
@@ -656,7 +656,7 @@ class KvmemnnAgent(Agent):
 
         max_x_len = max([len(x) for x in parsed_x])
         for x in parsed_x:
-            x += [[self.NULL_IDX]] * (max_x_len - len(x))
+            x += [self.NULL_IDX] * (max_x_len - len(x))
         xs = torch.LongTensor(parsed_x)
         xs = Variable(xs)
 
@@ -751,4 +751,3 @@ class KvmemnnAgent(Agent):
             self.reset()
             self.optimizer.load_state_dict(data['optimizer'])
             self.opt = self.override_opt(data['opt'])
-            

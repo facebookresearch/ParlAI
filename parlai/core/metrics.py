@@ -151,7 +151,8 @@ class Metrics(object):
         return str(self.metrics)
 
     def __repr__(self):
-        return repr(self.metrics)
+        representation = super().__repr__()
+        return representation.replace('>', ': {}>'.format(repr(self.metrics)))
 
     def _lock(self):
         if hasattr(self.metrics, 'get_lock'):
@@ -227,6 +228,7 @@ class Metrics(object):
                             # can't share custom metrics during hogwild
                             pass
                         else:
+                            # no need to lock because not SharedTable
                             if k not in self.metrics:
                                 self.metrics[k] = v
                                 self.metrics_list.append(k)

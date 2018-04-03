@@ -108,7 +108,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
         cnt += opt['batchsize']
-        if max_exs > 0 and cnt >= max_exs:
+        if max_exs > 0 and cnt > max_exs + opt.get('numthreads', 1):
             # note this max_exs is approximate--some batches won't always be
             # full depending on the structure of the data
             break
@@ -264,10 +264,11 @@ class TrainLoop():
             # reload best validation model
             self.agent = create_agent(opt)
 
-        _rep, wrld = run_eval(self.agent, opt, 'valid', write_log=True)
-        wrld.shutdown()  # may need to shut down threads, remote connections
-        _rep, wrld = run_eval(self.agent, opt, 'test', write_log=True)
-        wrld.shutdown()  # may need to shut down threads, remote connections
+        v_report, v_world = run_eval(self.agent, opt, 'valid', write_log=True)
+        t_report, t_world = run_eval(self.agent, opt, 'test', write_log=True)
+        v_world.shutdown()
+        t_world.shutdown()
+        return v_report, t_report
 
 
 if __name__ == '__main__':

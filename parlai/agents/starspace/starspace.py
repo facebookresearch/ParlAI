@@ -142,6 +142,7 @@ class StarspaceAgent(Agent):
         self.history = {}
         self.debugMode = False
         if shared:
+            torch.set_num_threads(1)
             self.threadindex = shared['threadindex']
             print("[ creating Starspace thread " + str(self.threadindex)  + " ]")
             # set up shared properties

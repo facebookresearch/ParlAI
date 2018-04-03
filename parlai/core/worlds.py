@@ -45,6 +45,7 @@ import copy
 import importlib
 import math
 import random
+import time
 
 try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore
@@ -732,11 +733,12 @@ class HogwildProcess(Process):
     """
 
 
-    def __init__(self, tid, opt, world, sync):
+    def __init__(self, tid, opt, shared, sync):
+        self.numthreads = opt['numthreads']
         opt = copy.deepcopy(opt)
-        opt['numthreads'] = 1
+        opt['numthreads'] = 1  # don't let threads create more threads!
         self.opt = opt
-        self.shared = world.share()
+        self.shared = shared
         self.shared['threadindex'] = tid
         if 'agents' in self.shared:
             for a in self.shared['agents']:
@@ -753,24 +755,42 @@ class HogwildProcess(Process):
             world = BatchWorld(self.opt, world)
         self.sync['threads_sem'].release()
         with world:
+            print('[ thread {} initialized ]'.format(self.shared['threadindex']))
             while True:
                 if self.sync['term_flag'].value:
                     break  # time to close
                 self.sync['queued_sem'].acquire()
                 self.sync['threads_sem'].release()
+
+                # check if you need to reset before moving on
+                if self.sync['epoch_done_ctr'].value < 0:
+                    with self.sync['epoch_done_ctr'].get_lock():
+                        # increment the number of finished threads
+                        self.sync['epoch_done_ctr'].value += 1
+                        if self.sync['epoch_done_ctr'].value == 0:
+                            # make sure reset sem is clean
+                            for _ in range(self.numthreads):
+                                self.sync['reset_sem'].acquire(block=False)
+                        world.reset() # keep lock for this!
+
+                while self.sync['epoch_done_ctr'].value < 0:
+                    # only move forward once other threads have finished reset
+                    time.sleep(0.1)
+
+                # process an example or wait for reset
                 if not world.epoch_done() or self.opt.get('datatype').startswith('train', False):
                     # do one example if any available
                     world.parley()
                     with self.sync['total_parleys'].get_lock():
                         self.sync['total_parleys'].value += 1
                 else:
+                    # during valid/test, we stop parleying once at end of epoch
                     with self.sync['epoch_done_ctr'].get_lock():
                         # increment the number of finished threads
                         self.sync['epoch_done_ctr'].value += 1
                     self.sync['threads_sem'].release()  # send control back to main thread
                     self.sync['queued_sem'].release()  # we didn't process anything
-                    self.sync['reset_sem'].acquire()
-                    world.reset()
+                    self.sync['reset_sem'].acquire()  # wait for reset signal
 
 
 class HogwildWorld(World):
@@ -813,14 +833,17 @@ class HogwildWorld(World):
             'total_parleys': Value('l', 0),  # number of parleys in threads
         }
 
-        # don't let threads create more threads!
         self.threads = []
         for i in range(self.numthreads):
-            self.threads.append(HogwildProcess(i, opt, world, self.sync))
+            self.threads.append(HogwildProcess(i, opt, world.share(), self.sync))
+            time.sleep(0.05) # delay can help prevent deadlock in thread launches
         for t in self.threads:
             t.start()
 
         for _ in self.threads:
+            # wait for threads to launch
+            # this makes sure that no threads get examples before all are set up
+            # otherwise they might reset one another after processing some exs
             self.sync['threads_sem'].acquire()
 
 
@@ -874,12 +897,15 @@ class HogwildWorld(World):
         self.inner_world.save_agents()
 
     def reset(self):
-        # set epoch done counter to 0
+        # set epoch done counter negative so all threads know to reset
         with self.sync['epoch_done_ctr'].get_lock():
-            self.sync['epoch_done_ctr'].value = 0
-        # release reset semaphore
-        for _ in self.threads:
-            self.sync['reset_sem'].release()
+            threads_asleep = self.sync['epoch_done_ctr'].value > 0
+            self.sync['epoch_done_ctr'].value = -len(self.threads)
+        if threads_asleep:
+            # release reset semaphore only if threads had reached epoch_done
+            for _ in self.threads:
+                self.sync['reset_sem'].release()
+
 
     def reset_metrics(self):
         self.inner_world.reset_metrics()
@@ -889,10 +915,16 @@ class HogwildWorld(World):
         # set shutdown flag
         with self.sync['term_flag'].get_lock():
             self.sync['term_flag'].value = True
+
         # wake up each thread by queueing fake examples or setting reset flag
         for _ in self.threads:
             self.sync['queued_sem'].release()
             self.sync['reset_sem'].release()
+
+        # make sure epoch counter is reset so threads aren't waiting for it
+        with self.sync['epoch_done_ctr'].get_lock():
+            self.sync['epoch_done_ctr'].value = 0
+
         # wait for threads to close
         for t in self.threads:
             t.join()
