@@ -4,8 +4,17 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+from parlai.core.agents import create_agent, create_agents_from_shared
+from parlai.core.build_data import download_models
+from parlai.core.dict import DictionaryAgent
+from parlai.core.params import ParlaiParser
+from parlai.core.thread_utils import SharedTable
+from parlai.core.utils import Timer, round_sigfigs, no_lock
+from parlai.core.worlds import World, create_task
 from parlai.agents.seq2seq.seq2seq import Seq2seqAgent
 import torch.nn.functional as F
+import math
+
 
 class Seq2seqEntry(Seq2seqAgent):
     def next_word_probability(self, observation, partial_out):
@@ -38,12 +47,82 @@ class Seq2seqEntry(Seq2seqAgent):
         return dist
 
 
-from parlai.core.agents import create_agent, create_task_agent_from_taskname
-from parlai.core.build_data import download_models
-from parlai.core.params import ParlaiParser
-from parlai.core.utils import Timer, round_sigfigs
+class PerplexityWorld(World):
+    def __init__(self, opt, agents, shared=None, tokenizer=None):
+        super().__init__(opt)
+        if shared:
+            # Create agents based on shared data.
+            self.task, self.agent = create_agents_from_shared(shared['agents'])
+            self.metrics = shared['metrics']
+        else:
+            if len(agents) != 2:
+                raise RuntimeError('There must be exactly two agents.')
+            self.task, self.agent = agents
+            self.metrics = {'total': 0, 'loss': 0.0, 'num_tokens': 0}
+            if opt.get('numthreads', 1) > 1:
+                self.metrics = SharedTable(self.metrics)
+        self.agents = [self.task, self.agent]
+        self.acts = [None, None]
 
-import math
+        if tokenizer is not None:
+            self.tokenize = tokenizer
+        else:
+            self.tokenize = DictionaryAgent.split_tokenize
+        if opt.get('dict_lower'):
+            self.tokenize = lambda t: self.tokenize(t.lower())
+
+
+    def _lock(self):
+        if hasattr(self.metrics, 'get_lock'):
+            # use the shared_table's lock
+            return self.metrics.get_lock()
+        else:
+            # otherwise do nothing
+            return no_lock()
+
+    def parley(self):
+        action = self.task.act()
+        self.acts[0] = action
+        parsed = self.tokenize(action.get('eval_labels', action.get('labels'))[0])
+        loss = 0
+        for i in range(len(parsed) - 1):
+            probs = self.agent.next_word_probability(action, parsed[:i])
+            prob_true = probs.get(parsed[i], 0)
+            loss -= prob_true
+        with self._lock():
+            self.metrics['total'] += 1
+            self.metrics['loss'] += loss
+            self.metrics['num_tokens'] += len(parsed)
+
+    def epoch_done(self):
+        return self.task.epoch_done()
+
+    def num_examples(self):
+        return self.task.num_examples()
+
+    def num_episodes(self):
+        return self.task.num_episodes()
+
+    def share(self):
+        shared = super().share()
+        shared['metrics'] = self.metrics
+        return shared
+
+    def reset_metrics(self):
+        with self._lock():
+            self.metrics['total'] = 0
+            self.metrics['loss'] = 0
+            self.metrics['num_tokens'] = 0
+
+    def report(self, compute_time=None):
+        m = {}
+        with self._lock():
+            m['total'] = self.metrics['total']
+            if m['total'] > 0:
+                m['loss'] = round_sigfigs(self.metrics['loss'] / self.metrics['num_tokens'], 3)
+                m['ppl'] = round_sigfigs(math.exp(self.metrics['loss'] / self.metrics['num_tokens']), 4)
+        return m
+
 
 if __name__ == '__main__':
     parser = ParlaiParser(True, True)
@@ -55,7 +134,9 @@ if __name__ == '__main__':
         dict_file='models:convai2/seq2seq/dict_convai2_self',
         dict_lower=True,
         datatype='valid',
-        batchsize=1,  # important for non-batch act below
+        batchsize=1,
+        numthreads=2,
+        no_cuda=True,
     )
     opt = parser.parse_args()
     fnames = ['convai2_self_seq2seq_model.tgz', 'dict_convai2_self']
@@ -63,9 +144,9 @@ if __name__ == '__main__':
 
     # create agents
     agent = create_agent(opt)
-    task = create_task_agent_from_taskname(opt)[0]
+    world = create_task(opt, agent, default_world=PerplexityWorld)
 
-    # set up loggin
+    # set up logging
     log_every_n_secs = opt.get('log_every_n_secs', -1)
     if log_every_n_secs <= 0:
         log_every_n_secs = float('inf')
@@ -73,24 +154,16 @@ if __name__ == '__main__':
     tot_time = 0
 
     # Show some example dialogs:
-    cnt = 0
-    num_tokens = 0
-    loss = 0
-    while not task.epoch_done():
-        cnt += 1
-        action = task.act()
-        parsed = agent.dict.tokenize(action['eval_labels'][0])
-        for i in range(len(parsed) - 1):
-            probs = agent.next_word_probability(action, parsed[:i])
-            prob_true = probs.get(parsed[i], 0)
-            loss -= prob_true
-        num_tokens += len(parsed)
+    while not world.epoch_done():
+        world.parley()
 
         if log_time.time() > log_every_n_secs:
             tot_time += log_time.time()
-            print('{}s elapsed: {}%% complete, {} loss, {} ppl'.format(
+            report = world.report()
+            print('{}s elapsed, {}%% complete, {}'.format(
                 int(tot_time),
-                round_sigfigs(cnt / task.num_examples(), 2),
-                round_sigfigs(loss / num_tokens, 3),
-                round_sigfigs(math.exp(loss / num_tokens), 4)))
+                round_sigfigs(report['total'] / world.num_examples(), 2),
+                report))
             log_time.reset()
+    print('EPOCH DONE')
+    print(world.report)

@@ -154,6 +154,8 @@ class Seq2seqAgent(Agent):
 
         # check for cuda
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
+        if opt.get('numthreads') > 1:
+            torch.set_num_threads(1)
 
         if shared:
             # set up shared properties
@@ -168,7 +170,6 @@ class Seq2seqAgent(Agent):
 
             if 'model' in shared:
                 # model is shared during hogwild
-                torch.set_num_threads(1)
                 self.model = shared['model']
                 self.metrics = shared['metrics']
                 states = shared['states']
