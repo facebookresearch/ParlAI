@@ -8,9 +8,7 @@ This seq2seq model was trained on convai2:self.
 """
 
 from parlai.core.build_data import download_models
-from parlai.core.params import ParlaiParser
 from examples.eval_model import setup_args, eval_model
-from parlai.agents.seq2seq.seq2seq import Seq2seqAgent
 
 
 if __name__ == '__main__':
@@ -20,6 +18,7 @@ if __name__ == '__main__':
         model='seq2seq',
         model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
         dict_file='models:convai2/seq2seq/dict_convai2_self',
+        dict_lower=True,
         datatype='valid',
         batchsize=128,
     )
