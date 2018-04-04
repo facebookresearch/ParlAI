@@ -48,6 +48,9 @@ class Seq2seqEntry(Seq2seqAgent):
 
 
 class PerplexityWorld(World):
+    """Instead of calling act/observe on each agent, this world just calls
+    act on the teacher and then calls `next_word_probability` on the agent.
+    """
     def __init__(self, opt, agents, shared=None, tokenizer=None):
         super().__init__(opt)
         if shared:
@@ -57,7 +60,13 @@ class PerplexityWorld(World):
         else:
             if len(agents) != 2:
                 raise RuntimeError('There must be exactly two agents.')
+            if opt.get('batchsize', 1) > 1:
+                raise RuntimeError('This world only works with bs=1. Try '
+                                   'using multiple threads instead, nt>1.')
             self.task, self.agent = agents
+            if not hasattr(self.agent, 'next_word_probability'):
+                raise RuntimeError('Agent must implement function '
+                                   '`next_word_probability`.')
             self.metrics = {'total': 0, 'loss': 0.0, 'num_tokens': 0}
             if opt.get('numthreads', 1) > 1:
                 self.metrics = SharedTable(self.metrics)
@@ -135,7 +144,7 @@ if __name__ == '__main__':
         dict_lower=True,
         datatype='valid',
         batchsize=1,
-        numthreads=2,
+        numthreads=60,
         no_cuda=True,
     )
     opt = parser.parse_args()
