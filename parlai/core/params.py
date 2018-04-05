@@ -322,6 +322,13 @@ class ParlaiParser(argparse.ArgumentParser):
         if model is not None:
             self.add_model_subargs(model)
 
+        try:
+            # reset parser-level defaults over any model-level defaults
+            self.set_defaults(**self._defaults)
+        except AttributeError:
+            raise RuntimeError('Please file an issue on github that argparse '
+                               'got an attribute error when parsing.')
+
 
     def parse_args(self, args=None, namespace=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the
