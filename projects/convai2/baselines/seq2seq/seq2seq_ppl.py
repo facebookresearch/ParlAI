@@ -78,8 +78,8 @@ class PerplexityWorld(World):
         else:
             self.tokenize = DictionaryAgent.split_tokenize
         if opt.get('dict_lower'):
-            self.tokenize = lambda t: self.tokenize(t.lower())
-
+            self._tokenize = self.tokenize
+            self.tokenize = lambda t: self._tokenize(t.lower())
 
     def _lock(self):
         if hasattr(self.metrics, 'get_lock'):
@@ -92,12 +92,15 @@ class PerplexityWorld(World):
     def parley(self):
         action = self.task.act()
         self.acts[0] = action
-        parsed = self.tokenize(action.get('eval_labels', action.get('labels'))[0])
+        labels = action.get('eval_labels', action.get('labels'))
+        if labels is None:
+            return
+        parsed = self.tokenize(labels[0])
         loss = 0
         for i in range(len(parsed) - 1):
             probs = self.agent.next_word_probability(action, parsed[:i])
             prob_true = probs.get(parsed[i], 0)
-            loss -= prob_true
+            loss -= prob_true  # add the negative log likelihood
         with self._lock():
             self.metrics['total'] += 1
             self.metrics['loss'] += loss
@@ -135,7 +138,7 @@ class PerplexityWorld(World):
 
 if __name__ == '__main__':
     parser = ParlaiParser(True, True)
-    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=1)
+    parser.add_argument('-vme', '--validation-max-exs', type=int, default=-1)
     parser.set_defaults(
         task='convai2:self',
         model='projects.convai2.baselines.seq2seq.seq2seq_ppl:Seq2seqEntry',
@@ -148,6 +151,7 @@ if __name__ == '__main__':
         no_cuda=True,
     )
     opt = parser.parse_args()
+    opt['model_type'] = 'seq2seq'
     fnames = ['convai2_self_seq2seq_model.tgz', 'dict_convai2_self']
     download_models(opt, fnames, 'convai2')
 
@@ -156,9 +160,6 @@ if __name__ == '__main__':
     world = create_task(opt, agent, default_world=PerplexityWorld)
 
     # set up logging
-    log_every_n_secs = opt.get('log_every_n_secs', -1)
-    if log_every_n_secs <= 0:
-        log_every_n_secs = float('inf')
     log_time = Timer()
     tot_time = 0
 
@@ -166,13 +167,18 @@ if __name__ == '__main__':
     while not world.epoch_done():
         world.parley()
 
-        if log_time.time() > log_every_n_secs:
+        if log_time.time() > 1:  # log every 1 sec
             tot_time += log_time.time()
             report = world.report()
             print('{}s elapsed, {}%% complete, {}'.format(
                 int(tot_time),
-                round_sigfigs(report['total'] / world.num_examples(), 2),
+                round_sigfigs(report['total'] / world.num_examples() * 100, 2),
                 report))
             log_time.reset()
-    print('EPOCH DONE')
-    print(world.report)
+            if opt['validation_max_exs'] > 0 and report['total'] >= opt['validation_max_exs']:
+                break
+    if world.epoch_done():
+        print('EPOCH DONE')
+    tot_time += log_time.time()
+    final_report = world.report()
+    print('{}s elapsed: {}'.format(int(tot_time), final_report))
