@@ -15,7 +15,7 @@ if __name__ == '__main__':
     parser.set_defaults(
         dict_file='models:convai2/profilememory/profilememory_convai2.dict',
         rank_candidates=True,
-        task='convai2:self',
+        task='parlai_internal.tasks.convai2_hiddentest.agents',
         model='projects.personachat.persona_seq2seq:PersonachatSeqseqAgentSplit',
         model_file='models:convai2/profilememory/profilememory_convai2_model',
         datatype='test'

@@ -26,6 +26,7 @@ import numpy as np
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.metrics import _f1_score
+from parlai.core.utils import round_sigfigs
 from torch.autograd import Variable
 from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 from torch import optim
@@ -1099,7 +1100,8 @@ class PersonachatSeqseqAgentSplit(Agent):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
         self.interactive_mode = opt['interactive_mode']
-        self.usepersona = opt['task'].split(':', 1)[1]
+        #self.usepersona = opt['task'].split(':', 1)[1]
+        self.usepersona = 'self'
         self.usepreviousdialog = opt['personachat_useprevdialog']
         self.attnsentlevel = opt['personachat_attnsentlevel']
         self.sharelt = opt['personachat_sharelt']
@@ -1107,6 +1109,7 @@ class PersonachatSeqseqAgentSplit(Agent):
         self.newsetting = opt['personachat_newsetting']
         self.embshareonly_pm_dec = opt['personachat_embshareonly_pm_dec']
         self.s2sinit = opt['personachat_s2sinit']
+        self.metrics = {'loss': 0, 'num_tokens': 0}
 
         if shared:
             self.answers = shared['answers']
@@ -1808,7 +1811,9 @@ class PersonachatSeqseqAgentSplit(Agent):
 
             output, hidden = self.decoder(output, hidden)
             preds, scores = self.hidden_to_idx(output, is_training=False)
+            print(self.dict.ind2tok[preds.data[0]])
             y = zs.select(1, i)
+            print("y:", self.dict.ind2tok[y.data[0]])
             if self.opt['personachat_tfidfperp']:
                 log_perp += self.lt_rescaleperp(y)[:, 0]*scores[[i for i in range(len(y))], [int(k) for k in ((y-1)*y.ne(self.NULL_IDX).long()).cpu().data.numpy()]]*y.ne(self.NULL_IDX).float()
             else:
@@ -1826,6 +1831,11 @@ class PersonachatSeqseqAgentSplit(Agent):
         log_perp = (-log_perp).sum()
         self.log_perp += log_perp.cpu().data.numpy()[0]
         self.n_log_perp += n_zs.cpu().data.numpy()[0]
+        self.metrics['loss'] += log_perp.cpu().data.numpy()[0]
+        self.metrics['num_tokens'] += n_zs.cpu().data.numpy()[0]
+        print("LOG PERP", self.log_perp)
+        print("N LOG PERP", self.n_log_perp)
+        print("divided", self.log_perp/self.n_log_perp)
 
 
     def _decode_only(self, batchsize, xes, ys, encoder_output_persona, hidden_persona, hidden, attn_mask, zs):
@@ -2035,6 +2045,7 @@ class PersonachatSeqseqAgentSplit(Agent):
 
 
     def batchify(self, observations):
+        print(observations)
         """Convert a list of observations into input & target tensors."""
         def valid(obs):
             # check if this is an example our model should actually process
@@ -2139,7 +2150,11 @@ class PersonachatSeqseqAgentSplit(Agent):
         # set up the target tensors for validation and test
         zs = None
         eval_labels = None
-        if any(['eval_labels' in ex for ex in exs]):
+        if len(exs) == 1 and 'eval_labels' in exs[0] and exs[0]['eval_labels']==['']:
+            special_case = False
+        else:
+            special_case = True
+        if any(['eval_labels' in ex for ex in exs]) and special_case:
             # randomly select one of the labels to update on, if multiple
             # append END to each label
             eval_labels = [random.choice(ex.get('eval_labels', [''])) for ex in exs]
@@ -2199,6 +2214,8 @@ class PersonachatSeqseqAgentSplit(Agent):
 
 
     def batch_act(self, observations):
+        if 'eval_labels' in observations[0]:
+            print(observations[0]['eval_labels'])
         batchsize = len(observations)
         # initialize a table of replies with this agent's id
         batch_reply = [{'id': self.getID()} for _ in range(batchsize)]
@@ -2340,6 +2357,16 @@ class PersonachatSeqseqAgentSplit(Agent):
             else:
                 self.optims[k].load_state_dict(v)
         self.longest_label = states['longest_label']
+
+    def report(self):
+        m = {}
+        if self.metrics['num_tokens'] > 0:
+            m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
+            m['ppl'] = math.exp(m['loss'])
+        for k, v in m.items():
+            # clean up: rounds to sigfigs and converts tensors to floats
+            m[k] = round_sigfigs(v, 4)
+        return m
 
     def report_loss(self):
         if hasattr(self, 'loss_guide'):
