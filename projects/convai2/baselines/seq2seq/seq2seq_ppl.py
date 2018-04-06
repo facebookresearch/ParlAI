@@ -31,19 +31,37 @@ class Seq2seqEntry(Seq2seqAgent):
         e.g.
         {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
         """
-        # observe input
-        observation['eval_labels'] = [' '.join(partial_out)]
-        obs = self.observe(observation)
+        if not hasattr(self, 'prev_enc'):
+            self.prev_enc = None
+            self.last_text = None
+        if observation['text'] != self.last_text:
+            self.prev_enc = None
+            self.last_text = observation.get('text')
+            self.observe(observation)
+
+        obs = self.observation
+        obs['eval_labels'] = [' '.join(partial_out)]
         batch = self.vectorize([obs])
         self.model.eval()
-        _1, scores, _ = self.model(batch[0], batch[1] if len(partial_out) > 0 else None)
-        probs = F.log_softmax(scores.squeeze()[-1].cpu(), dim=0)
+        self.model.longest_label = 1  # no need to predict farther ahead
+        out = self.model(
+            batch[0], # xs
+            ys=(batch[1] if len(partial_out) > 0 else None),
+            prev_enc=self.prev_enc)
+        scores, self.prev_enc = out[1], out[3]
+        # scores is bsz x seqlen x num_words, so select probs of current index
+        assert len(partial_out) == scores.size(1) - 1
+        # probs = F.softmax(scores.select(1, len(partial_out)), dim=1).squeeze().cpu()
+        probs = F.log_softmax(scores.select(1, len(partial_out)), dim=1).squeeze().cpu()
         dist = {}
         for i in range(len(probs)):
-            if hasattr(probs, 'item'):
-                dist[self.dict[i]] = probs[i].item()
-            else:
-                dist[self.dict[i]] = probs[i][0]
+            try:
+                val = probs[i].item()
+            except AttributeError:
+                val = probs[i][0]
+            # if val > 0:
+            #     dist[self.dict[i]] = val
+            dist[self.dict[i]] = val
         return dist
 
 
@@ -96,15 +114,24 @@ class PerplexityWorld(World):
         if labels is None:
             return
         parsed = self.tokenize(labels[0])
+        parsed.append('__END__')
         loss = 0
-        for i in range(len(parsed) - 1):
+        for i in range(len(parsed)):
             probs = self.agent.next_word_probability(action, parsed[:i])
+            # get probability of correct answer, divide by total prob mass
             prob_true = probs.get(parsed[i], 0)
-            loss -= prob_true  # add the negative log likelihood
+            # if prob_true > 0:
+            #     prob_true /= sum(probs.values())
+            #     loss -= math.log(prob_true)
+            loss -= prob_true
         with self._lock():
             self.metrics['total'] += 1
             self.metrics['loss'] += loss
             self.metrics['num_tokens'] += len(parsed)
+        # if round_sigfigs(loss, 3) == 25.5:
+        #     import pdb; pdb.set_trace()
+        # with open('tmp_ppl_1', 'a') as write:
+        #     write.write(str(round_sigfigs(loss, 3)) + '\n')
 
     def epoch_done(self):
         return self.task.epoch_done()
@@ -133,6 +160,7 @@ class PerplexityWorld(World):
             if m['total'] > 0:
                 m['loss'] = round_sigfigs(self.metrics['loss'] / self.metrics['num_tokens'], 3)
                 m['ppl'] = round_sigfigs(math.exp(self.metrics['loss'] / self.metrics['num_tokens']), 4)
+                m['num_tokens'] = self.metrics['num_tokens']
         return m
 
 
