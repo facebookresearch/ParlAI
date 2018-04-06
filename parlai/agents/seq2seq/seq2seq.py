@@ -465,12 +465,6 @@ class Seq2seqAgent(Agent):
                 target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
                 self.metrics['loss'] += loss.double().data[0]
                 self.metrics['num_tokens'] += target_tokens
-                # print(loss.double().data[0])
-                # print(target_tokens)
-                # print(self.metrics)
-                # import pdb; pdb.set_trace()
-                with open('tmp_ppl_2', 'a') as write:
-                    write.write(str(round_sigfigs(loss.double().data[0], 3)) + '\n')
 
         return predictions, text_cand_inds
 
