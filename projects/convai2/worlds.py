@@ -14,7 +14,7 @@ import math
 
 
 class PerplexityWorld(World):
-    """Instead of calling act/observe on each agent, this world just calls
+    """Instead of just calling act/observe on each agent, this world just calls
     act on the teacher and then calls `next_word_probability` on the agent.
 
     The label for each example is parsed by the provided tokenizer, and then
@@ -66,10 +66,18 @@ class PerplexityWorld(World):
 
     def parley(self):
         action = self.task.act()
-        self.acts[0] = action
-        labels = action.get('eval_labels', action.get('labels'))
+        self.acts[0] = action.copy()
+
+        labels = action.pop('eval_labels', action.pop('labels', None)) # hide labels
         if labels is None:
             return
+
+        # do regular parley for standard metrics
+        self.agent.observe(action)
+        reply = self.agent.act()
+        self.acts[1] = reply
+        self.task.observe(reply)
+
         parsed = self.tokenize(labels[0])
         loss = 0
         losses = []
@@ -115,4 +123,10 @@ class PerplexityWorld(World):
             if m['total'] > 0:
                 m['loss'] = round_sigfigs(self.metrics['loss'] / self.metrics['num_tokens'], 3)
                 m['ppl'] = round_sigfigs(math.exp(self.metrics['loss'] / self.metrics['num_tokens']), 4)
+
+            for k, v in self.task.report().items():
+                if k not in m:
+                    m[k] = v
+                else:
+                    m[k + '_task'] = v
         return m

@@ -12,6 +12,9 @@ from .worlds import PerplexityWorld
 
 
 def eval_ppl(parser):
+    """Evaluates the the perplexity and f1 of a model (and hits@1 if model has
+    ranking enabled.
+    """
     opt = parser.parse_args()
 
     # create agents
