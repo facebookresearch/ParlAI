@@ -311,6 +311,12 @@ class Seq2seqAgent(Agent):
                           'changed.')
                 else:
                     self.optimizer.load_state_dict(states['optimizer'])
+                    if self.use_cuda:
+                        for state in self.optimizer.state.values():
+                            for k, v in state.items():
+                                if isinstance(v, torch.Tensor):
+                                    state[k] = v.cuda()
+
             self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
                 self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
 
