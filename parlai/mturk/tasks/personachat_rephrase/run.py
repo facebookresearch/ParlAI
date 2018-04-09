@@ -27,10 +27,12 @@ def main():
     argparser.add_argument('--ag_shutdown_time', default=120,
                            type=int,
                            help='time limit for entering a dialog message')
+    argparser.add_argument('--persona-type', default='both', type=str,
+                           choices=['both', 'self', 'other'],
+                           help='Which personas to load from personachat')
     opt = argparser.parse_args()
     opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
-    if 'data_path' not in opt:
-        opt['data_path'] = os.getcwd() + '/data/' + opt['task']
+    opt['extract_personas_path'] = opt['datapath'] + opt['task']
     opt.update(task_config)
 
     mturk_agent_ids = ['PERSON_1']

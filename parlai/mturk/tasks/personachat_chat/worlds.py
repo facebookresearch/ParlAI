@@ -28,13 +28,14 @@ WAITING_MSG = 'Please wait while we match you with another worker...'
 
 class PersonasGenerator(object):
     def __init__(self, opt):
-        self.personas_idx_stack_path = os.path.join(os.getcwd(),
+        self.personas_idx_stack_path = os.path.join(opt['extract_personas_path'],
                                                     './personas_idx_stack.pkl')
 
-        self.personas_path = '{}/data/personas-{}'.format(
-                             os.getcwd(),
+        self.personas_path = '{}/personas-{}'.format(
+                             opt['extract_personas_path'],
                              opt['persona_type'] +
                                 'Revised' if opt['revised'] else 'Original')
+
         if not os.path.exists(self.personas_path):
             opt['personas_path'] = self.personas_path
             main_extract(opt)
