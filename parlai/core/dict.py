@@ -117,9 +117,6 @@ class DictionaryAgent(Agent):
             '--dict-unktoken', default=DictionaryAgent.default_unk,
             help='token to return for unavailable words')
         dictionary.add_argument(
-            '--dict-maxexs', default=-1, type=int,
-            help='max number of examples to build dict on')
-        dictionary.add_argument(
             '-tok', '--dict-tokenizer', default=DictionaryAgent.default_tok,
             help='Which tokenizer to use. Defaults to "split", which splits '
                  'on whitespace as well as recognizing basic punctuation. '
@@ -264,6 +261,9 @@ class DictionaryAgent(Agent):
             index = len(self.tok2ind)
             self.tok2ind[key] = index
             self.ind2tok[index] = key
+
+    def keys(self):
+        return self.tok2ind.keys()
 
     def copy_dict(self, dictionary):
         """Overwrite own state with any state in the other dictionary.

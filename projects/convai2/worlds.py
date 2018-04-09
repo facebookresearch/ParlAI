@@ -5,7 +5,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.agents import create_agents_from_shared
-from parlai.core.dict import DictionaryAgent
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, no_lock
 from parlai.core.worlds import World
@@ -25,36 +24,46 @@ class PerplexityWorld(World):
     the form of a dict mapping words to scores. If the scores do not sum to 1,
     they are normalized to do so. If the correct word is not present or has a
     probablity of zero, it will be assigned a probability of 1e-8.
+
+    The API of the next_word_probability function which agents must implement
+    is below.
+
+
+    def next_word_probability(observation, partial_out):
+        Return probability distribution over next words given an input and
+        partial true output. This is used to calculate the per-word perplexity.
+
+        Arguments:
+        observation -- input observation dict
+        partial_out -- list of previous "true" words
+
+        Returns a dict, where each key is a word and each value is a probability
+        score for that word. Unset keys assume a probability of zero.
+
+        e.g.
+        {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
     """
-    def __init__(self, opt, agents, shared=None, tokenizer=None):
+    def __init__(self, opt, agents, shared=None):
         super().__init__(opt)
         if shared:
             # Create agents based on shared data.
-            self.task, self.agent = create_agents_from_shared(shared['agents'])
+            self.task, self.agent, self.dict = create_agents_from_shared(shared['agents'])
             self.metrics = shared['metrics']
         else:
-            if len(agents) != 2:
-                raise RuntimeError('There must be exactly two agents.')
+            if len(agents) != 3:
+                raise RuntimeError('There must be exactly three agents.')
             if opt.get('batchsize', 1) > 1:
                 raise RuntimeError('This world only works with bs=1. Try '
                                    'using multiple threads instead, nt>1.')
-            self.task, self.agent = agents
+            self.task, self.agent, self.dict = agents
             if not hasattr(self.agent, 'next_word_probability'):
                 raise RuntimeError('Agent must implement function '
                                    '`next_word_probability`.')
             self.metrics = {'total': 0, 'loss': 0.0, 'num_tokens': 0}
             if opt.get('numthreads', 1) > 1:
                 self.metrics = SharedTable(self.metrics)
-        self.agents = [self.task, self.agent]
+        self.agents = [self.task, self.agent, self.dict]
         self.acts = [None, None]
-
-        if tokenizer is not None:
-            self.tokenize = tokenizer
-        else:
-            self.tokenize = DictionaryAgent.split_tokenize
-        if opt.get('dict_lower'):
-            self._tokenize = self.tokenize
-            self.tokenize = lambda t: self._tokenize(t.lower())
 
     def _lock(self):
         if hasattr(self.metrics, 'get_lock'):
@@ -68,29 +77,25 @@ class PerplexityWorld(World):
         action = self.task.act()
         self.acts[0] = action.copy()
 
-        labels = action.pop('eval_labels', action.pop('labels', None)) # hide labels
+        # hide labels from model
+        labels = action.pop('eval_labels', action.pop('labels', None))
         if labels is None:
+            # empty example, move on
             return
 
-        # do regular parley for standard metrics
-        self.agent.observe(action)
-        reply = self.agent.act()
-        self.acts[1] = reply
-        self.task.observe(reply)
-
-        parsed = self.tokenize(labels[0])
+        parsed = self.dict.tokenize(labels[0])
         loss = 0
-        losses = []
         for i in range(len(parsed)):
-            probs = self.agent.next_word_probability(action, parsed[:i])
-            # get probability of correct answer, divide by total prob mass
-            prob_true = probs.get(parsed[i], 0)
-            if prob_true > 0:
-                prob_true /= sum(probs.values())
-            else:
-                prob_true = 1e-8  # for stability
-            loss -= math.log(prob_true)
-            losses.append(prob_true)
+            if parsed[i] in self.dict:
+                # only score words which are in the dictionary
+                probs = self.agent.next_word_probability(action, parsed[:i])
+                # get probability of correct answer, divide by total prob mass
+                prob_true = probs.get(parsed[i], 0)
+                if prob_true > 0:
+                    prob_true /= sum(probs.values())
+                    loss -= math.log(prob_true)
+                else:
+                    loss = float('inf')
         with self._lock():
             self.metrics['total'] += 1
             self.metrics['loss'] += loss
@@ -123,10 +128,4 @@ class PerplexityWorld(World):
             if m['total'] > 0:
                 m['loss'] = round_sigfigs(self.metrics['loss'] / self.metrics['num_tokens'], 3)
                 m['ppl'] = round_sigfigs(math.exp(self.metrics['loss'] / self.metrics['num_tokens']), 4)
-
-            for k, v in self.task.report().items():
-                if k not in m:
-                    m[k] = v
-                else:
-                    m[k + '_task'] = v
         return m

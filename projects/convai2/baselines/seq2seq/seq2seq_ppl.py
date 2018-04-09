@@ -5,20 +5,35 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.build_data import download_models
-from parlai.core.params import ParlaiParser
+from parlai.core.dict import DictionaryAgent
+from parlai.core.params import ParlaiParser, modelzoo_path
 from parlai.agents.seq2seq.seq2seq import Seq2seqAgent
+from projects.convai2.build_dict import build_dict
 from projects.convai2.eval_ppl import eval_ppl
 import torch.nn.functional as F
 
 
 class Seq2seqEntry(Seq2seqAgent):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        if shared:
+            self.probs[shared['probs']]
+        else:
+            # default minimum probability mass for all tokens
+            self.probs = {k: 1e-7 for k in build_dict().keys()}
+
+    def share(self):
+        shared = super().share()
+        shared['probs'] = self.probs.copy()
+        return shared
+
     def next_word_probability(self, observation, partial_out):
         """Return probability distribution over next words given an input and
         partial true output. This is used to calculate the per-word perplexity.
 
         Arguments:
         observation -- input observation dict
-        partial_out -- previous "true" words
+        partial_out -- list of previous "true" words
 
         Returns a dict, where each key is a word and each value is a probability
         score for that word. Unset keys assume a probability of zero.
@@ -47,14 +62,13 @@ class Seq2seqEntry(Seq2seqAgent):
         # scores is bsz x seqlen x num_words, so select probs of current index
         assert len(partial_out) == scores.size(1) - 1
         probs = F.softmax(scores.select(1, len(partial_out)), dim=1).squeeze().cpu()
-        dist = {}
+        dist = self.probs
         for i in range(len(probs)):
             try:
                 val = probs[i].item()
             except AttributeError:
                 val = probs[i][0]
-            if val > 0:
-                dist[self.dict[i]] = val
+            dist[self.dict[i]] = val
         self.batch = batch
         return dist
 
