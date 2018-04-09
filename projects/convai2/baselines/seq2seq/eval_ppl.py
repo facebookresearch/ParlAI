@@ -9,7 +9,7 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser, modelzoo_path
 from parlai.agents.seq2seq.seq2seq import Seq2seqAgent
 from projects.convai2.build_dict import build_dict
-from projects.convai2.eval_ppl import eval_ppl
+from projects.convai2.eval_ppl import setup_args, eval_ppl
 import torch.nn.functional as F
 
 
@@ -74,9 +74,8 @@ class Seq2seqEntry(Seq2seqAgent):
 
 
 if __name__ == '__main__':
-    parser = ParlaiParser(True, True)
+    parser = setup_args()
     parser.set_defaults(
-        task='convai2:self',
         model='projects.convai2.baselines.seq2seq.seq2seq_ppl:Seq2seqEntry',
         model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
         dict_file='models:convai2/seq2seq/dict_convai2_self',

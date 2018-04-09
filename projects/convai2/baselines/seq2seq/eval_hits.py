@@ -8,18 +8,17 @@ This seq2seq model was trained on convai2:self.
 """
 
 from parlai.core.build_data import download_models
+from projects.convai2.eval_hits import setup_args, eval_model
 from examples.eval_model import setup_args, eval_model
 
 
 if __name__ == '__main__':
     parser = setup_args()
     parser.set_defaults(
-        task='convai2:self',
         model='seq2seq',
         model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
         dict_file='models:convai2/seq2seq/dict_convai2_self',
         dict_lower=True,
-        datatype='valid',
         rank_candidates=True,
         batchsize=64,
     )

@@ -5,6 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 """Builds the official dictionary for the ConvAI2 competition using the
 training and validation sets for the 'convai2:self' task.
+The dictionary should contain 19304 tokens after building.
 
 All words in this dictionary should receive probability mass during perplexity
 evaluation, or you will likely receive 'inf' perplexity.
