@@ -266,6 +266,7 @@ class ParlaiParser(argparse.ArgumentParser):
         agent = get_agent_module(model)
         try:
             if hasattr(agent, 'add_cmdline_args'):
+                print('adding commandline args')
                 agent.add_cmdline_args(self)
         except argparse.ArgumentError:
             # already added
