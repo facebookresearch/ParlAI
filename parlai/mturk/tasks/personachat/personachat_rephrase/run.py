@@ -35,7 +35,7 @@ def main():
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)
 
-    opt['extract_personas_path'] = opt['datapath'] + opt['task']
+    opt['extract_personas_path'] = os.path.join(opt['datapath'], opt['task'])
     opt.update(task_config)
 
     mturk_agent_ids = ['PERSON_1']
