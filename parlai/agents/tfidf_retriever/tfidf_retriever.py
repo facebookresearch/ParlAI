@@ -163,7 +163,10 @@ class TfidfRetrieverAgent(Agent):
                         )
                     c_ids, c_scores = self.ranker.closest_docs(obs['text'], k=30, matrix=self.cands_hash[cands_id][0])
                     reply['text_candidates'] = [self.cands_hash[cands_id][1][cid] for cid in c_ids]
-                    reply['text'] = reply['text_candidates'][0]
+                    if len(reply['text_candidates']) > 0:
+                        reply['text'] = reply['text_candidates'][0]
+                    else:
+                        reply['text'] = ''
                 elif len(doc_ids) > 0:
                     # return stored fact
                     # total = sum(doc_scores)
