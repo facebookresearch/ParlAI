@@ -113,6 +113,7 @@ class PerplexityWorld(World):
 
         parsed = self.dict.tokenize(labels[0])
         loss = 0
+        num_tokens = 0
         for i in range(len(parsed)):
             if parsed[i] in self.dict:
                 # only score words which are in the dictionary
@@ -124,10 +125,11 @@ class PerplexityWorld(World):
                     loss -= math.log(prob_true)
                 else:
                     loss = float('inf')
+                num_tokens += 1
         with self._lock():
             self.metrics['total'] += 1
             self.metrics['loss'] += loss
-            self.metrics['num_tokens'] += len(parsed)
+            self.metrics['num_tokens'] += num_tokens
 
     def epoch_done(self):
         return self.task.epoch_done()
