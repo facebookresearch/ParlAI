@@ -140,7 +140,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
             return
 
     def save_data(self):
-        data_path = self.opt['data_path'] + '/rephrased_personas'
+        data_path = self.opt['extract_personas_path'] + '/rephrased_personas'
         if not os.path.exists(data_path):
             os.makedirs(data_path)
         if len(self.rephrased_persona) == len(self.persona):
