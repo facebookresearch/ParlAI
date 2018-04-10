@@ -355,7 +355,9 @@ class FixedDialogTeacher(Teacher):
         if not self.datatype.startswith('train') and 'labels' in action:
             # move labels to eval field so not used for training
             # but this way the model can use the labels for perplexity or loss
-            action['eval_labels'] = action.pop('labels')
+            labels = action.pop('labels')
+            if not self.opt.get('hide_labels', False):
+                action['eval_labels'] = labels
 
         return action
 

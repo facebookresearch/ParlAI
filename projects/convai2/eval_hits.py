@@ -15,6 +15,7 @@ def eval_model(parser):
     parser.set_defaults(
         task='convai2:self',
         datatype='valid',
+        hide_labels=True,
     )
     return main_eval_model(parser)
 
