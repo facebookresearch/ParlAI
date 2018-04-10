@@ -551,7 +551,11 @@
     setting_socket = true
     window.setTimeout(function() {setting_socket = false;}, 4000);
     var url = window.location;
-    socket = new WebSocket('wss://' + url.host);
+    if (url.hostname == 'localhost') {
+      socket = new WebSocket('ws://' + url.hostname + ':' + url.port);
+    } else {
+      socket = new WebSocket('wss://' + url.hostname + ':' + url.port);
+    }
 
     socket.onmessage = parse_socket_message;
 

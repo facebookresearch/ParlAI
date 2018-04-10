@@ -324,6 +324,8 @@ class MTurkManager():
 
     def _setup_socket(self, timeout_seconds=None):
         """Set up a socket_manager with defined callbacks"""
+        if (self.opt['local']):  # skip some hops for local stuff
+            self.server_url = "https://localhost"
         self.socket_manager = SocketManager(
             self.server_url,
             self.port,
@@ -752,7 +754,8 @@ class MTurkManager():
         self.server_task_name = \
             ''.join(e for e in task_name.lower() if e.isalnum() or e == '-')
         self.server_url = server_utils.setup_server(self.server_task_name,
-                                                    self.task_files_to_copy)
+                                                    self.task_files_to_copy,
+                                                    self.opt['local'])
         shared_utils.print_and_log(logging.INFO, self.server_url)
 
         shared_utils.print_and_log(logging.INFO, "MTurk server setup done.\n",
@@ -770,11 +773,20 @@ class MTurkManager():
         self.run_id = str(int(time.time()))
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
         self._init_state()
-        self.topic_arn = mturk_utils.setup_sns_topic(
-            self.opt['task'],
-            self.server_url,
-            self.task_group_id
-        )
+        try:
+            self.topic_arn = mturk_utils.setup_sns_topic(
+                self.opt['task'],
+                self.server_url,
+                self.task_group_id
+            )
+        except Exception:
+            self.topic_arn = None
+            shared_utils.print_and_log(
+                logging.WARN,
+                'Botocore couldn\'t subscribe to HIT events, '
+                'perhaps you tried to register to localhost?',
+                should_print=True
+            )
 
     def set_onboard_function(self, onboard_function):
         self.onboard_function = onboard_function
@@ -938,8 +950,10 @@ class MTurkManager():
         except BaseException:
             pass
         finally:
-            server_utils.delete_server(self.server_task_name)
-            mturk_utils.delete_sns_topic(self.topic_arn)
+            server_utils.delete_server(self.server_task_name,
+                                       self.opt['local'])
+            if self.topic_arn is not None:
+                mturk_utils.delete_sns_topic(self.topic_arn)
             if self.opt['unique_worker']:
                 mturk_utils.delete_qualification(self.unique_qual_id,
                                                  self.is_sandbox)
@@ -1158,11 +1172,12 @@ class MTurkManager():
         shared_utils.print_and_log(logging.INFO, mturk_chat_url)
         mturk_page_url = None
 
-        mturk_utils.subscribe_to_hits(
-            hit_type_id,
-            self.is_sandbox,
-            self.topic_arn
-        )
+        if self.topic_arn is not None:
+            mturk_utils.subscribe_to_hits(
+                hit_type_id,
+                self.is_sandbox,
+                self.topic_arn
+            )
 
         for _i in range(num_hits):
             mturk_page_url, hit_id = mturk_utils.create_hit_with_hit_type(

@@ -387,7 +387,7 @@ class MessengerManager():
         self.server_task_name = \
             ''.join(e for e in task_name.lower() if e.isalnum() or e == '-')
         self.server_url = server_utils.setup_server(
-            self.server_task_name, local=self.opt['local_server'])
+            self.server_task_name, local=self.opt['local'])
         shared_utils.print_and_log(
             logging.INFO,
             'Webhook address: {}/webhook'.format(self.server_url),
@@ -422,6 +422,8 @@ class MessengerManager():
             expanded_file_path = os.path.expanduser(access_token_file_path)
             with open(expanded_file_path, 'w+') as access_token_file:
                 access_token_file.write(self.app_token)
+        if (self.opt['local']):  # skip some hops for local stuff
+            self.server_url = "https://localhost"
         self.message_socket = MessageSocket(self.server_url, self.port,
                                             self.app_token,
                                             self._handle_webhook_event)
@@ -568,7 +570,8 @@ class MessengerManager():
         except BaseException:
             pass
         finally:
-            server_utils.delete_server(self.server_task_name)
+            server_utils.delete_server(self.server_task_name,
+                                       self.opt['local'])
 
     # Agent Interaction Functions #
 
