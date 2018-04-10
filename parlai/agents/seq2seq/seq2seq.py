@@ -54,7 +54,6 @@ class Seq2seqAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
-        Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument('--init-model', type=str, default=None,
                            help='load dict/features/weights/opts from this file')
@@ -139,6 +138,7 @@ class Seq2seqAgent(Agent):
                                 'Fasttext.'
                                 'Preinitialized embeddings can also be fixed '
                                 'so they are not updated during training.')
+        Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
     def __init__(self, opt, shared=None):
@@ -154,6 +154,8 @@ class Seq2seqAgent(Agent):
 
         # check for cuda
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
+        if opt.get('numthreads') > 1:
+            torch.set_num_threads(1)
 
         if shared:
             # set up shared properties
@@ -168,7 +170,6 @@ class Seq2seqAgent(Agent):
 
             if 'model' in shared:
                 # model is shared during hogwild
-                torch.set_num_threads(1)
                 self.model = shared['model']
                 self.metrics = shared['metrics']
                 states = shared['states']
@@ -316,7 +317,6 @@ class Seq2seqAgent(Agent):
                             for k, v in state.items():
                                 if isinstance(v, torch.Tensor):
                                     state[k] = v.cuda()
-
             self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
                 self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
 
@@ -391,6 +391,7 @@ class Seq2seqAgent(Agent):
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)
+        m['num_tokens'] = self.metrics['num_tokens']
         return m
 
     def share(self):
@@ -421,7 +422,7 @@ class Seq2seqAgent(Agent):
         # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
         batch_idx = self.opt.get('batchindex', 0)
-        if not obs.get('preprocessed', False):
+        if not obs.get('preprocessed', False) or 'text2vec' not in obs:
             obs['text2vec'] = maintain_dialog_history(
                 self.history, obs,
                 reply=self.answers[batch_idx],
@@ -445,7 +446,8 @@ class Seq2seqAgent(Agent):
         if is_training:
             self.model.train()
             self.zero_grad()
-            predictions, scores, _ = self.model(xs, ys)
+            out = self.model(xs, ys)
+            predictions, scores = out[0], out[1]
             loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
             # save loss to metrics
             target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
@@ -457,12 +459,13 @@ class Seq2seqAgent(Agent):
             self.update_params()
         else:
             self.model.eval()
-            predictions, _scores, text_cand_inds = self.model(
-                xs, ys=None, cands=cands, valid_cands=valid_cands)
+            out = self.model(xs, ys=None, cands=cands, valid_cands=valid_cands)
+            predictions, text_cand_inds = out[0], out[2]
 
             if ys is not None:
                 # calculate loss on targets
-                _, scores, _ = self.model(xs, ys)
+                out = self.model(xs, ys)
+                scores = out[1]
                 loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
                 target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
                 self.metrics['loss'] += loss.double().data[0]
@@ -521,7 +524,7 @@ class Seq2seqAgent(Agent):
                 for cs in parsed_cs:
                     for c in cs:
                         c += [self.NULL_IDX] * (max_c_len - len(c))
-                    cs += [self.NULL_IDX] * (max_c_cnt - len(cs))
+                    cs += [[self.NULL_IDX] * max_c_len] * (max_c_cnt - len(cs))
                 cands = torch.LongTensor(parsed_cs)
                 if self.use_cuda:
                     # copy to gpu

@@ -53,27 +53,45 @@ class Seq2seq(nn.Module):
             self.ranker = Ranker(self.decoder, padding_idx=self.NULL_IDX,
                                  attn_type=opt['attention'])
 
-    def forward(self, xs, ys=None, cands=None, valid_cands=None):
+    def forward(self, xs, ys=None, cands=None, valid_cands=None, prev_enc=None):
+        """Get output predictions from the model.
+
+        Arguments:
+        xs -- input to the encoder
+        ys -- expected output from the decoder
+        cands -- set of candidates to rank, if applicable
+        valid_cands -- indices to match candidates with their appropriate xs
+        prev_enc -- if you know you'll pass in the same xs multiple times and
+            the model is in eval mode, you can pass in the encoder output from
+            the last forward pass to skip recalcuating the same encoder output
+        """
         bsz = len(xs)
         if ys is not None:
             # keep track of longest label we've ever seen
             # we'll never produce longer ones than that during prediction
             self.longest_label = max(self.longest_label, ys.size(1))
 
-        enc_out, hidden = self.encoder(xs)
+        if prev_enc is not None:
+            enc_out, hidden = prev_enc
+        else:
+            enc_out, hidden = self.encoder(xs)
+        encoder_states = (enc_out, hidden)
         attn_mask = xs.ne(0).float() if self.attn_type != 'none' else None
-        # set up input to decoder
         start = Variable(self.START, requires_grad=False)
         starts = start.expand(bsz, 1)
 
         predictions = []
         scores = []
         text_cand_inds = None
+        if self.rank and cands is not None:
+            text_cand_inds = self.ranker.forward(cands, valid_cands, start,
+                                                 hidden, enc_out, attn_mask)
+
         if ys is not None:
             y_in = ys.narrow(1, 0, ys.size(1) - 1)
             xs = torch.cat([starts, y_in], 1)
             if self.attn_type == 'none':
-                preds, score, _h = self.decoder(xs, hidden, enc_out, attn_mask)
+                preds, score, hidden = self.decoder(xs, hidden, enc_out, attn_mask)
                 predictions.append(preds)
                 scores.append(score)
             else:
@@ -106,15 +124,12 @@ class Seq2seq(nn.Module):
                 if total_done == bsz:
                     # no need to generate any more
                     break
-            if self.rank and cands is not None:
-                text_cand_inds = self.ranker.forward(cands, valid_cands, start,
-                                                     hidden, enc_out, attn_mask)
 
         if predictions:
             predictions = torch.cat(predictions, 1)
         if scores:
             scores = torch.cat(scores, 1)
-        return predictions, scores, text_cand_inds
+        return predictions, scores, text_cand_inds, encoder_states
 
 
 class Encoder(nn.Module):

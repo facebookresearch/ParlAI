@@ -27,12 +27,13 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer
-from examples.build_dict import build_dict
+from examples.build_dict import build_dict, setup_args as setup_dict_args
 import math
 import os
 
-def setup_args():
-    parser = ParlaiParser(True, True)
+def setup_args(parser=None):
+    if parser is None:
+        parser = ParlaiParser(True, True)
     train = parser.add_argument_group('Training Loop Arguments')
     train.add_argument('-et', '--evaltask',
                        help=('task to use for valid/test (defaults to the '
@@ -80,6 +81,7 @@ def setup_args():
     train.add_argument('-lfc', '--load-from-checkpoint',
                        type='bool', default=False,
                        help='load model from checkpoint if available')
+    parser = setup_dict_args(parser)
     return parser
 
 def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None):

@@ -227,6 +227,10 @@ class ParlaiParser(argparse.ArgumentParser):
             help='number of threads. If batchsize set to 1, used for hogwild; '
                  'otherwise, used for number of threads in threadpool loading,'
                  ' e.g. in vqa')
+        parlai.add_argument(
+            '--hide-labels', default=False, type='bool',
+            help='default (False) moves labels in valid and test sets to the '
+                 'eval_labels field. If True, they are hidden completely.')
         batch = self.add_argument_group('Batching Arguments')
         batch.add_argument(
             '-bs', '--batchsize', default=1, type=int,
@@ -322,8 +326,8 @@ class ParlaiParser(argparse.ArgumentParser):
         if model is not None:
             self.add_model_subargs(model)
 
+        # reset parser-level defaults over any model-level defaults
         try:
-            # reset parser-level defaults over any model-level defaults
             self.set_defaults(**self._defaults)
         except AttributeError:
             raise RuntimeError('Please file an issue on github that argparse '
@@ -337,7 +341,6 @@ class ParlaiParser(argparse.ArgumentParser):
         return ``None``.
         """
         self.add_extra_args(args)
-
         self.args = super().parse_args(args=args)
         self.opt = vars(self.args)
 

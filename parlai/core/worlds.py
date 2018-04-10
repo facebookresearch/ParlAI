@@ -446,7 +446,7 @@ class MultiWorld(World):
     that world represents.
     """
 
-    def __init__(self, opt, agents=None, shared=None):
+    def __init__(self, opt, agents=None, shared=None, default_world=None):
         opt['batch_sort'] = False
         print('WARNING: batch_sort disabled for multitasking')
         super().__init__(opt)
@@ -463,7 +463,8 @@ class MultiWorld(World):
                     self.worlds.append(s['world_class'](s['opt'], None, s))
                 else:
                     # Agents are already specified.
-                    self.worlds.append(create_task_world(opt_singletask, agents))
+                    self.worlds.append(create_task_world(
+                        opt_singletask, agents, default_world=default_world))
         self.world_idx = -1
         self.new_world = True
         self.parleys = -1
@@ -933,13 +934,15 @@ class HogwildWorld(World):
 
 ### Functions for creating tasks/worlds given options.
 
-def _get_task_world(opt, user_agents):
+def _get_task_world(opt, user_agents, default_world=None):
     task_agents = _create_task_agents(opt)
     sp = opt['task'].strip().split(':')
     if '.' in sp[0]:
         # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
         # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
-        if len(task_agents + user_agents) == 2:
+        if default_world is not None:
+            world_class = default_world
+        elif len(task_agents + user_agents) == 2:
             world_class = DialogPartnerWorld
         else:
             world_class = MultiAgentDialogWorld
@@ -956,18 +959,21 @@ def _get_task_world(opt, user_agents):
             world_class = getattr(my_module, world_name)
         except Exception:
             # Defaults to this if you did not specify a world for your task.
-            if len(task_agents + user_agents) == 2:
+            if default_world is not None:
+                world_class = default_world
+            elif len(task_agents + user_agents) == 2:
                 world_class = DialogPartnerWorld
             else:
                 world_class = MultiAgentDialogWorld
     return world_class, task_agents
 
 
-def create_task_world(opt, user_agents):
-    world_class, task_agents = _get_task_world(opt, user_agents)
+def create_task_world(opt, user_agents, default_world=None):
+    world_class, task_agents = _get_task_world(
+        opt, user_agents, default_world=default_world)
     return world_class(opt, task_agents + user_agents)
 
-def create_task(opt, user_agents):
+def create_task(opt, user_agents, default_world=None):
     """Creates a world + task_agents (aka a task)
     assuming ``opt['task']="task_dir:teacher_class:options"``
     e.g. ``"babi:Task1k:1"`` or ``"#babi-1k"`` or ``"#QA"``,
@@ -989,11 +995,11 @@ def create_task(opt, user_agents):
     # check if single or multithreaded, and single-example or batched examples
     if ',' not in opt['task']:
         # Single task
-        world = create_task_world(opt, user_agents)
+        world = create_task_world(opt, user_agents, default_world=default_world)
     else:
         # Multitask teacher/agent
         # TODO: remove and replace with multiteachers only?
-        world = MultiWorld(opt, user_agents)
+        world = MultiWorld(opt, user_agents, default_world=default_world)
 
     if opt.get('numthreads', 1) > 1:
         # use hogwild world if more than one thread requested

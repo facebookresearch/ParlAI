@@ -41,7 +41,6 @@ class CooperativeGameAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
-        DictionaryAgent.add_cmdline_args(argparser)
         group = argparser.add_argument_group('Cooperative Game Agent Arguments')
         agent.add_argument('--optimizer', default='adam',
                            choices=CooperativeGameAgent.OPTIM_OPTS.keys(),
@@ -54,6 +53,7 @@ class CooperativeGameAgent(Agent):
                            help='disable GPUs even if available')
         group.add_argument('--gpuid', type=int, default=-1,
                            help='which GPU device to use (defaults to cpu)')
+        DictionaryAgent.add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)

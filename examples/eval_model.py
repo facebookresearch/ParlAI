@@ -19,10 +19,11 @@ from parlai.core.utils import Timer
 import random
 import os
 
-def setup_args():
+def setup_args(parser=None):
+    if parser is None:
+        parser = ParlaiParser(True, True)
     # Get command line arguments
-    parser = ParlaiParser(True, True)
-    parser.add_argument('-n', '--num-examples', default=-1)
+    parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.set_defaults(datatype='valid')
