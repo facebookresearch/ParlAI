@@ -195,4 +195,4 @@ def eval_ppl(parser):
     print('{}s elapsed: {}'.format(int(tot_time), final_report))
 
 if __name__ == '__main__':
-    eval_ppl(setup_args())
+    eval_ppl(ParlaiParser(True, True))
