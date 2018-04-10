@@ -36,7 +36,7 @@ def main():
     argparser.add_argument('--persona-type', default='both', type=str,
                            choices=['both', 'self', 'other'],
                            help='Which personas to load from personachat')
-    argparser.add_argument('--revised', default=True, type='bool',
+    argparser.add_argument('--revised', default=False, type='bool',
                            help='Whether to use revised personas')
     argparser.add_argument('-rt', '--range_turn', default='5,7',
                            help='sample range of number of turns')

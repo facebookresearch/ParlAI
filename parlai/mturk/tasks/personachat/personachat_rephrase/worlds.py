@@ -27,6 +27,13 @@ class PersonasGenerator(object):
 
         self.personas_name_list = []
 
+        # list of personas completed from a previous task
+        self.completed_personas = []
+        # mark which ones are done
+        self.done_personas = []
+        # list of recently popped personas 
+        self.recently_popped = []
+
         for f_name in os.listdir(self.personas_path):
             if f_name.endswith('.pkl'):
                 self.personas_name_list.append(f_name)
