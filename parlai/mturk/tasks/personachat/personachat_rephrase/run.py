@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
-from worlds import PersonaProfileWorld
+from worlds import RephrasePersonaWorld, PersonasGenerator
 from task_config import task_config
 
 import os
@@ -24,18 +24,18 @@ def main():
     argparser.add_argument('-mx_rsp_time', '--max_resp_time', default=150,
                            type=int,
                            help='time limit for entering a dialog message')
-    argparser.add_argument('-mx_psn_time', '--max_persona_time', type=int,
-                           default=300, help='time limit for turker'
-                           'entering the persona')
     argparser.add_argument('--ag_shutdown_time', default=120,
                            type=int,
                            help='time limit for entering a dialog message')
-    argparser.add_argument('-rp', '--range_persona', default='4,6',
-                           help='sample range of number of persona sentences')
+    argparser.add_argument('--persona-type', default='both', type=str,
+                           choices=['both', 'self', 'other'],
+                           help='Which personas to load from personachat')
     opt = argparser.parse_args()
-    opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
-    if 'data_path' not in opt:
-        opt['data_path'] = os.getcwd() + '/data/' + opt['task']
+
+    directory_path = os.path.dirname(os.path.abspath(__file__))
+    opt['task'] = os.path.basename(directory_path)
+
+    opt['extract_personas_path'] = opt['datapath'] + opt['task']
     opt.update(task_config)
 
     mturk_agent_ids = ['PERSON_1']
@@ -45,7 +45,10 @@ def main():
         mturk_agent_ids=mturk_agent_ids
     )
 
-    mturk_manager.setup_server()
+    mturk_manager.setup_server(task_directory_path=directory_path)
+
+    personas_generator = PersonasGenerator(opt)
+    opt['personas_generator'] = personas_generator
 
     try:
         mturk_manager.start_new_run()
@@ -72,7 +75,7 @@ def main():
 
         def run_conversation(mturk_manager, opt, workers):
             worker = workers[0]
-            world = PersonaProfileWorld(opt, worker)
+            world = RephrasePersonaWorld(opt, worker)
             while not world.episode_done():
                 world.parley()
             world.save_data()

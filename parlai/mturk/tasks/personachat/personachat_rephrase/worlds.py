@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.core.worlds import validate, MultiAgentDialogWorld
-from parlai.mturk.tasks.personachat_chat.extract_and_save_personas import main as main_extract
+from parlai.mturk.tasks.personachat.personachat_chat.extract_and_save_personas import main as main_extract
 from joblib import Parallel, delayed
 import numpy as np
 import time
@@ -26,6 +26,13 @@ class PersonasGenerator(object):
             main_extract(opt)
 
         self.personas_name_list = []
+
+        # list of personas completed from a previous task
+        self.completed_personas = []
+        # mark which ones are done
+        self.done_personas = []
+        # list of recently popped personas 
+        self.recently_popped = []
 
         for f_name in os.listdir(self.personas_path):
             if f_name.endswith('.pkl'):
@@ -140,7 +147,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
             return
 
     def save_data(self):
-        data_path = self.opt['data_path'] + '/rephrased_personas'
+        data_path = self.opt['extract_personas_path'] + '/rephrased_personas'
         if not os.path.exists(data_path):
             os.makedirs(data_path)
         if len(self.rephrased_persona) == len(self.persona):

@@ -260,7 +260,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                 ag.persona_generator.push_persona(ag.persona_idx)
                 print ("\n******* Push persona {} back to stack. *******\n".format(ag.persona_idx))
 
-        data_path = self.opt['data_path']
+        data_path = self.opt['extract_personas_path']
         if not os.path.exists(data_path):
             os.makedirs(data_path)
         if convo_finished:
