@@ -23,6 +23,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
         self.n_persona = np.random.randint(self.range_persona[0], self.range_persona[1]+1)
         self.episodeDone = False
         self.persona = []
+        self.persone_done = False
         super().__init__(opt, mturk_agent)
 
     def parley(self):
@@ -31,8 +32,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
             'id': 'SYSTEM',
             'text': 'Please create your character by entering <b><span style="color:blue">{} sentences</span></b> below in the input-box. \n \
                      You have <b><span style="color:blue">{} mins</span></b> to finish the persona creation.'.format(self.n_persona, int(self.max_persona_time/60))})
-        persona_done = False
-        while not persona_done:
+        while not self.persona_done:
             act = self.mturk_agent.act(timeout=self.max_persona_time)
             # Check timeout
             if act['episode_done'] == True:
@@ -61,7 +61,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
             self.persona += candidate_persona
 
             if len(self.persona) >= self.n_persona:
-                persona_done = True
+                self.persona_done = True
                 control_msg = {'id': 'SYSTEM',
                                'text': 'Thank you for creating the character! \n \
                                         <b><span style="color:blue">Please click "Done with this HIT" below to submit the HIT.</span></b>',
@@ -69,7 +69,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
                 self.mturk_agent.observe(validate(control_msg))
                 self.episodeDone = True
 
-            if not persona_done:
+            if not self.persona_done:
                 control_msg = {'id': 'SYSTEM',
                                'text': 'Please enter at least *{}* more sentence(s) to finish. '.format(str(self.n_persona-len(self.persona)))}
                 self.mturk_agent.observe(validate(control_msg))
@@ -94,6 +94,10 @@ class PersonaProfileWorld(MTurkOnboardWorld):
             n_jobs=1,
             backend='threading'
         )(delayed(shutdown_agent)(agent) for agent in [self.mturk_agent])
+
+    def review_work(self):
+        if self.persona_done:
+            self.mturk_agent.approve_work()
 
     def episode_done(self):
         return self.episodeDone

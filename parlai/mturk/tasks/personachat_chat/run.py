@@ -47,9 +47,9 @@ def main():
     if not opt.get('personas_path'):
         opt['personas_path'] = argparser.parlai_home + '/parlai/mturk/personachat_chat/data'
 
-    if 'data_path' not in opt:
-        opt['data_path'] = os.getcwd() + '/data/' + opt['task']
     opt.update(task_config)
+
+    opt['extract_personas_path'] = os.path.join(opt['datapath'], 'personachat_chat') 
 
     mturk_agent_ids = ['PERSON_1', 'PERSON_2']
 
