@@ -26,7 +26,6 @@ class MemnnAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        DictionaryAgent.add_cmdline_args(argparser)
         arg_group = argparser.add_argument_group('MemNN Arguments')
         arg_group.add_argument('--init-model', type=str, default=None,
             help='load dict/features/weights/opts from this file')
@@ -57,6 +56,8 @@ class MemnnAgent(Agent):
         arg_group.add_argument('-histr', '--history-replies', default='label', type=str,
             choices=['none', 'model', 'label'],
             help='Keep replies in the history, or not.')
+        DictionaryAgent.add_cmdline_args(argparser)
+        return arg_group
 
     def __init__(self, opt, shared=None):
         opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()

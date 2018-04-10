@@ -36,7 +36,6 @@ class LanguageModelAgent(Agent):
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
         argparser.set_defaults(batch_sort=False)
-        LanguageModelAgent.dictionary_class().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Language Model Arguments')
         agent.add_argument('--init-model', type=str, default=None,
                            help='load dict/features/weights/opts from this file')
@@ -81,6 +80,8 @@ class LanguageModelAgent(Agent):
         agent.add_argument('-sm', '--sampling-mode', type=bool, default=False,
                            help='sample when generating tokens instead of taking \
                            the max and do not produce UNK token (when bs=1)')
+        LanguageModelAgent.dictionary_class().add_cmdline_args(argparser)
+        return agent
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""

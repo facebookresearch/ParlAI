@@ -8,10 +8,7 @@ These parameters have some variance in their final perplexity, but a run with
 these parameters was able to reach 29.54 ppl.
 """
 
-from projects.convai2.baselines.download_models import download
-from parlai.core.params import ParlaiParser
 from examples.train_model import setup_args, TrainLoop
-from parlai.agents.seq2seq.seq2seq import Seq2seqAgent
 
 
 if __name__ == '__main__':
@@ -22,6 +19,7 @@ if __name__ == '__main__':
         model_file='/tmp/convai2_self_seq2seq_model',
         dict_file='/tmp/dict_convai2_self',
         dict_lower=True,
+        dict_include_valid=True,
         dict_maxexs=-1,
         datatype='train',
         batchsize=128,

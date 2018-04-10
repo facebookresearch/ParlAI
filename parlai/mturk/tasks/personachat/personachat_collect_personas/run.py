@@ -5,13 +5,10 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
-from worlds import \
-    PersonaChatWorld, PersonaProfileWorld, PersonasGenerator
+from worlds import PersonaProfileWorld
 from task_config import task_config
 
-import torch
 import os
-
 
 def main():
     """This task consists of one agent, model or MTurk worker, talking to an
@@ -33,49 +30,38 @@ def main():
     argparser.add_argument('--ag_shutdown_time', default=120,
                            type=int,
                            help='time limit for entering a dialog message')
-    argparser.add_argument('--persona-type', default='both', type=str,
-                           choices=['both', 'self', 'other'],
-                           help='Which personas to load from personachat')
-    argparser.add_argument('--revised', default=True, type='bool',
-                           help='Whether to use revised personas')
-    argparser.add_argument('-rt', '--range_turn', default='5,7',
-                           help='sample range of number of turns')
-    argparser.add_argument('--personas-path', default=None,
-                           help='specify path for personas data')
+    argparser.add_argument('-rp', '--range_persona', default='4,6',
+                           help='sample range of number of persona sentences')
     opt = argparser.parse_args()
-    opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
-    if not opt.get('personas_path'):
-        opt['personas_path'] = argparser.parlai_home + '/parlai/mturk/personachat_chat/data'
+    directory_path = os.path.dirname(os.path.abspath(__file__))
+    opt['task'] = os.path.basename(directory_path)
 
+    if 'data_path' not in opt:
+        opt['data_path'] = os.getcwd() + '/data/' + opt['task']
     opt.update(task_config)
 
-    opt['extract_personas_path'] = os.path.join(opt['datapath'], 'personachat_chat') 
-
-    mturk_agent_ids = ['PERSON_1', 'PERSON_2']
+    mturk_agent_ids = ['PERSON_1']
 
     mturk_manager = MTurkManager(
         opt=opt,
         mturk_agent_ids=mturk_agent_ids
     )
 
-    persona_generator = PersonasGenerator(opt)
-    mturk_manager.setup_server()
-
+    mturk_manager.setup_server(task_directory_path=directory_path)
 
     try:
         mturk_manager.start_new_run()
         mturk_manager.create_hits()
 
         if not opt['is_sandbox']:
+            # ADD BLOCKED WORKERS HERE
             blocked_worker_list = []
             for w in blocked_worker_list:
                 mturk_manager.block_worker(w, 'We found that you have unexpected behaviors in our previous HITs. For more questions please email us.')
 
         def run_onboard(worker):
-            worker.persona_generator = persona_generator
-            world = PersonaProfileWorld(opt, worker)
-            world.parley()
-            world.shutdown()
+            pass
+
         mturk_manager.set_onboard_function(onboard_function=run_onboard)
         mturk_manager.ready_to_accept_workers()
 
@@ -87,21 +73,11 @@ def main():
                 worker.id = mturk_agent_ids[index % len(mturk_agent_ids)]
 
         def run_conversation(mturk_manager, opt, workers):
-            agents = [workers[0], workers[1]]
-            conv_idx = mturk_manager.conversation_index
-            world = PersonaChatWorld(
-                opt=opt,
-                agents=agents,
-                range_turn=[int(s) for s in opt['range_turn'].split(',')],
-                max_turn=opt['max_turns'],
-                max_resp_time=opt['max_resp_time'],
-                world_tag='conversation t_{}'.format(conv_idx)
-            )
-            world.reset_random()
+            worker = workers[0]
+            world = PersonaProfileWorld(opt, worker)
             while not world.episode_done():
                 world.parley()
             world.save_data()
-
             world.shutdown()
             world.review_work()
 

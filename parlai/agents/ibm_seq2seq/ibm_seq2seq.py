@@ -54,7 +54,6 @@ class IbmSeq2seqAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
-        IbmSeq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('IBM Seq2Seq Arguments')
         agent.add_argument('--init-model', type=str, default=None,
                            help='load dict/features/weights/opts from this file')
@@ -98,6 +97,8 @@ class IbmSeq2seqAgent(Agent):
                                 'Any member of torch.optim is valid and will '
                                 'be used with default params except learning '
                                 'rate (as specified by -lr).')
+        IbmSeq2seqAgent.dictionary_class().add_cmdline_args(argparser)
+        return agent
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""

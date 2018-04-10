@@ -88,7 +88,6 @@ class StarspaceAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
-        StarspaceAgent.dictionary_class().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('StarSpace Arguments')
         agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
                            help='size of the token embeddings')
@@ -127,6 +126,7 @@ class StarspaceAgent(Agent):
         agent.add_argument('-fixedCands', '--fixed-candidates-file',
                            default=None, type=str,
                            help='File of cands to use for prediction')
+        StarspaceAgent.dictionary_class().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
