@@ -259,7 +259,8 @@ def setup_local_server(task_name):
 
     time.sleep(1)
     print('Server running locally with pid {}.'.format(server_process.pid))
-    host = input('Please enter the server addr, like https://hostname.com: ')
+    host = input(
+        'Please enter the public server address, like https://hostname.com: ')
     port = input('Please enter the port given above, likely 3000: ')
     return '{}:{}'.format(host, port)
 

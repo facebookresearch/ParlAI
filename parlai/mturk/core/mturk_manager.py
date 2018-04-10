@@ -324,10 +324,11 @@ class MTurkManager():
 
     def _setup_socket(self, timeout_seconds=None):
         """Set up a socket_manager with defined callbacks"""
+        socket_server_url = self.server_url
         if (self.opt['local']):  # skip some hops for local stuff
-            self.server_url = "https://localhost"
+            socket_server_url = "https://localhost"
         self.socket_manager = SocketManager(
-            self.server_url,
+            socket_server_url,
             self.port,
             self._on_alive,
             self._on_new_message,
@@ -672,6 +673,19 @@ class MTurkManager():
             )
         input('Please press Enter to continue... ')
         shared_utils.print_and_log(logging.NOTSET, '', True)
+
+        if self.opt['local'] is True:
+            shared_utils.print_and_log(
+                logging.INFO,
+                "In order to run the server locally, you will need "
+                "to have a public HTTPS endpoint (SSL signed) running on "
+                "the server you are currently excecuting ParlAI on. Enter "
+                "that public URL hostname when prompted and ensure that the "
+                "port being used by ParlAI (usually 3000) has external "
+                "traffic routed to it.",
+                should_print=True,
+            )
+            input('Please press Enter to continue... ')
 
         mturk_utils.setup_aws_credentials()
 
