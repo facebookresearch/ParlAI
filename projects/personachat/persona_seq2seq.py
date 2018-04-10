@@ -5,14 +5,14 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 # Author: Saizheng Zhang, work at Facebook AI Research, NYC
-''' Contains generative models described in the paper Personalizing Dialogue
+"""Contains generative models described in the paper Personalizing Dialogue
 Agents: I have a dog, do you have pets too? `(Zhang et al. 2018)
 <https://arxiv.org/pdf/1801.07243.pdf>`_.
-'''
-# Might need to do these:
-# pip install torchtext
-# pip install stop-words
 
+Might need to do these:
+pip install torchtext
+pip install stop-words
+"""
 import os
 import pickle
 import copy
@@ -32,8 +32,15 @@ from torch import optim
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
-import torchtext.vocab as vocab
-Glove = vocab.GloVe(name='840B', dim=300)
+try:
+    import torchtext.vocab as vocab
+except ModuleNotFoundError:
+    raise ModuleNotFoundError('Please `pip install torchtext`')
+
+from parlai.core.params import ParlaiParser
+ParlaiParser()  # instantiate to set PARLAI_HOME environment var
+
+Glove = vocab.GloVe(name='840B', dim=300, cache=os.path.join(os.environ['PARLAI_HOME'], '.vector_cache'))
 
 
 import operator
@@ -41,7 +48,7 @@ cos = torch.nn.CosineSimilarity(dim=0, eps=1e-6)
 
 
 stopwords_customized = []
-with open('projects/personachat/stopwords.txt', 'r') as handle:
+with open(os.path.join(os.environ['PARLAI_HOME'], 'projects', 'personachat', 'stopwords.txt'), 'r') as handle:
     stopwords_customized = []
     for line in handle:
         if line == '\n':
@@ -49,7 +56,11 @@ with open('projects/personachat/stopwords.txt', 'r') as handle:
         else:
            stopwords_customized.append(line.replace('\n', ''))
 
-from stop_words import get_stop_words
+try:
+    from stop_words import get_stop_words
+except ModuleNotFoundError:
+    raise ModuleNotFoundError('Please `pip install stop-words`')
+
 STOP_WORDS = get_stop_words('en') + [',', '.', '!', '?']
 STOP_WORDS.remove('not')
 STOP_WORDS = STOP_WORDS + stopwords_customized
@@ -329,15 +340,15 @@ class Seq2seqAgent(Agent):
 
     def cuda(self):
         """Push parameters to the GPU."""
-        self.START_TENSOR = self.START_TENSOR.cuda(async=True)
-        self.END_TENSOR = self.END_TENSOR.cuda(async=True)
-        self.zeros = self.zeros.cuda(async=True)
-        self.xs = self.xs.cuda(async=True)
-        self.ys = self.ys.cuda(async=True)
-        self.zs = self.zs.cuda(async=True)
-        self.cands = self.cands.cuda(async=True)
-        self.cand_scores = self.cand_scores.cuda(async=True)
-        self.cand_lengths = self.cand_lengths.cuda(async=True)
+        self.START_TENSOR = self.START_TENSOR.cuda()
+        self.END_TENSOR = self.END_TENSOR.cuda()
+        self.zeros = self.zeros.cuda()
+        self.xs = self.xs.cuda()
+        self.ys = self.ys.cuda()
+        self.zs = self.zs.cuda()
+        self.cands = self.cands.cuda()
+        self.cand_scores = self.cand_scores.cuda()
+        self.cand_lengths = self.cand_lengths.cuda()
         self.criterion.cuda()
         self.lt.cuda()
         self.encoder.cuda()
@@ -736,7 +747,7 @@ class Seq2seqAgent(Agent):
         if self.use_cuda:
             # copy to gpu
             self.xs.resize_(xs.size())
-            self.xs.copy_(xs, async=True)
+            self.xs.copy_(xs, )
             xs = Variable(self.xs)
         else:
             xs = Variable(xs)
@@ -760,7 +771,7 @@ class Seq2seqAgent(Agent):
             if self.use_cuda:
                 # copy to gpu
                 self.ys.resize_(ys.size())
-                self.ys.copy_(ys, async=True)
+                self.ys.copy_(ys, )
                 ys = Variable(self.ys)
             else:
                 ys = Variable(ys)
@@ -785,7 +796,7 @@ class Seq2seqAgent(Agent):
             if self.use_cuda:
                 # copy to gpu
                 self.zs.resize_(zs.size())
-                self.zs.copy_(zs, async=True)
+                self.zs.copy_(zs, )
                 zs = Variable(self.zs)
             else:
                 zs = Variable(zs)
@@ -819,7 +830,7 @@ class Seq2seqAgent(Agent):
                 if self.use_cuda:
                     # copy to gpu
                     self.cands.resize_(cands.size())
-                    self.cands.copy_(cands, async=True)
+                    self.cands.copy_(cands, )
                     cands = Variable(self.cands)
                 else:
                     cands = Variable(cands)
@@ -1389,16 +1400,16 @@ class PersonachatSeqseqAgentSplit(Agent):
 
     def cuda(self):
         """Push parameters to the GPU."""
-        self.START_TENSOR = self.START_TENSOR.cuda(async=True)
-        self.END_TENSOR = self.END_TENSOR.cuda(async=True)
-        self.zeros = self.zeros.cuda(async=True)
-        self.xs = self.xs.cuda(async=True)
-        self.xs_persona = self.xs_persona.cuda(async=True)
-        self.ys = self.ys.cuda(async=True)
-        self.zs = self.zs.cuda(async=True)
-        self.cands = self.cands.cuda(async=True)
-        self.cand_scores = self.cand_scores.cuda(async=True)
-        self.cand_lengths = self.cand_lengths.cuda(async=True)
+        self.START_TENSOR = self.START_TENSOR.cuda()
+        self.END_TENSOR = self.END_TENSOR.cuda()
+        self.zeros = self.zeros.cuda()
+        self.xs = self.xs.cuda()
+        self.xs_persona = self.xs_persona.cuda()
+        self.ys = self.ys.cuda()
+        self.zs = self.zs.cuda()
+        self.cands = self.cands.cuda()
+        self.cand_scores = self.cand_scores.cuda()
+        self.cand_lengths = self.cand_lengths.cuda()
         self.persona_gate.cuda()
         self.persona_gate_m.cuda()
         self.criterion.cuda()
@@ -2075,7 +2086,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                     xs_persona[i][j][:len(p)] = torch.LongTensor(p)
             if self.use_cuda:
                 self.xs_persona.resize_(xs_persona.size())
-                self.xs_persona.copy_(xs_persona, async=True)
+                self.xs_persona.copy_(xs_persona, )
                 xs_persona = Variable(self.xs_persona)
             else:
                 xs_persona = parsed_persona
@@ -2089,7 +2100,7 @@ class PersonachatSeqseqAgentSplit(Agent):
             if self.use_cuda:
                 # copy to gpu
                 self.xs_persona.resize_(xs_persona.size())
-                self.xs_persona.copy_(xs_persona, async=True)
+                self.xs_persona.copy_(xs_persona, )
                 xs_persona = Variable(self.xs_persona)
             else:
                 xs_persona = Variable(xs_persona)
@@ -2106,7 +2117,7 @@ class PersonachatSeqseqAgentSplit(Agent):
         if self.use_cuda:
             # copy to gpu
             self.xs.resize_(xs.size())
-            self.xs.copy_(xs, async=True)
+            self.xs.copy_(xs, )
             xs = Variable(self.xs)
         else:
             xs = Variable(xs)
@@ -2130,7 +2141,7 @@ class PersonachatSeqseqAgentSplit(Agent):
             if self.use_cuda:
                 # copy to gpu
                 self.ys.resize_(ys.size())
-                self.ys.copy_(ys, async=True)
+                self.ys.copy_(ys, )
                 ys = Variable(self.ys)
             else:
                 ys = Variable(ys)
@@ -2155,7 +2166,7 @@ class PersonachatSeqseqAgentSplit(Agent):
             if self.use_cuda:
                 # copy to gpu
                 self.zs.resize_(zs.size())
-                self.zs.copy_(zs, async=True)
+                self.zs.copy_(zs, )
                 zs = Variable(self.zs)
             else:
                 zs = Variable(zs)
@@ -2190,7 +2201,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                 if self.use_cuda:
                     # copy to gpu
                     self.cands.resize_(cands.size())
-                    self.cands.copy_(cands, async=True)
+                    self.cands.copy_(cands, )
                     cands = Variable(self.cands)
                 else:
                     cands = Variable(cands)

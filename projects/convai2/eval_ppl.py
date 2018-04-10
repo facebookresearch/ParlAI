@@ -45,7 +45,7 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer, round_sigfigs
 from parlai.core.worlds import create_task
-from .build_dict import build_dict
+from projects.convai2.build_dict import build_dict
 
 from parlai.core.agents import create_agents_from_shared
 from parlai.core.thread_utils import SharedTable

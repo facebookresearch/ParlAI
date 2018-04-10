@@ -1,19 +1,22 @@
-from parlai.core.build_data import download_models
-from parlai.core.params import ParlaiParser
-from examples.eval_model import setup_args, eval_model
-
-'''Evaluate pre-trained model trained for hits@1 metric
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
+"""Evaluate pre-trained model trained for hits@1 metric
 Key-Value Memory Net model trained on personachat using persona 'self'
-'''
+"""
+
+from parlai.core.build_data import download_models
+from projects.convai2.eval_hits import setup_args, eval_model
+
 
 if __name__ == '__main__':
     parser = setup_args()
     parser.set_defaults(
-        task='convai2',
         model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
         model_file='models:convai2/kvmemnn/model',
-        datatype='valid',
-        numthreads=8
+        numthreads=8,
     )
     opt = parser.parse_args()
     # build all profile memory models
@@ -23,5 +26,4 @@ if __name__ == '__main__':
 
     # add additional model args
     opt['interactive_mode'] = False
-
     eval_model(parser)
