@@ -15,7 +15,7 @@ if __name__ == '__main__':
     parser.set_defaults(
         model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
         model_file='models:convai2/kvmemnn/model',
-        numthreads=40,
+        numthreads=80,
     )
     # build all profile memory models
     fnames = ['kvmemnn.tgz']
