@@ -563,7 +563,8 @@ class KvmemnnAgent(Agent):
                             newwords[w.data[0]] = True
                     xs2 = torch.cat(zq, 1)
 
-                if self.interactiveMode and self.twohoputt:
+                if ((self.interactiveMode and self.twohoputt)
+                    or cands[0] is None):
                     # used for nextutt alg in demo mode, get 2nd hop
                     blah = Variable(torch.LongTensor([1]))
                     if self.tricks:
@@ -579,13 +580,13 @@ class KvmemnnAgent(Agent):
                                 pred[i] = -1000
                     val,ind=pred.sort(descending=True)
                     # predict the highest scoring candidate, and return it.
-                    print("   [query:          " + self.v2t(xsq) + "]")
+                    #print("   [query:          " + self.v2t(xsq) + "]")
                     ps = []
                     for c in obs[0]['mem']:
                         ps.append(self.v2t(c))
-                    print("   [persona:        " + '|'.join(ps) + "]")
-                    print("   [1st hop qmatch: " + ypredorig + "]")
-                    print("   [1st hop nextut: " + ypred + "]")
+                    #print("   [persona:        " + '|'.join(ps) + "]")
+                    #print("   [1st hop qmatch: " + ypredorig + "]")
+                    #print("   [1st hop nextut: " + ypred + "]")
                     if self.tricks:
                         ypred = ztxt[ind.data[0]] # match
                         self.cands_done.append(ypred)
@@ -593,9 +594,10 @@ class KvmemnnAgent(Agent):
                         ypred = self.fixedCands_txt[ind.data[0]] # match
                         ypred2 = cands_txt2[0][ind.data[0]] # reply to match
                         self.cands_done.append(ind.data[0])
-                        print("   [2nd hop nextut: " + ypred2 + "]")
+                        #print("   [2nd hop nextut: " + ypred2 + "]")
                     tc = [ypred]
                     self.history['labels'] = [ypred]
+                    #print("   [final pred: " + ypred + "]")
                     ret = [{'text': ypred, 'text_candidates': tc }]
                     return ret
                 elif self.take_next_utt and not self.interactiveMode:
