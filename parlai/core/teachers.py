@@ -160,6 +160,7 @@ class FixedDialogTeacher(Teacher):
                 ordered_opt['datatype'] = ':'.join((dt[0], 'ordered'))
                 ordered_opt['batchsize'] = 1
                 ordered_opt['numthreads'] = 1
+                ordered_opt['hide_labels'] = False
                 ordered_teacher = create_task_agent_from_taskname(ordered_opt)[0]
 
                 clen = opt.get('context_length', -1)
