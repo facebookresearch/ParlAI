@@ -110,9 +110,7 @@ if __name__ == '__main__':
         batchsize=1,
     )
     opt = parser.parse_args()
-
     opt['model_type'] = 'language_model'
     fnames = ['model', 'model.dict']
     download_models(opt, fnames, 'convai2', use_model_type=True)
-
     eval_ppl(parser)
