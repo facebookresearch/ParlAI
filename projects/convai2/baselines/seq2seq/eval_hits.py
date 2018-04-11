@@ -3,7 +3,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""Evaluate pre-trained model trained for ppl metric.
+"""Evaluate pre-trained model trained for hits@1 metric.
 This seq2seq model was trained on convai2:self.
 """
 
