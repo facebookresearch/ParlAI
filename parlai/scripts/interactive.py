@@ -40,7 +40,7 @@ def interactive(opt):
     # Show some example dialogs:
     while True:
         world.parley()
-        if opt['display_examples']:
+        if opt.get('display_examples'):
             print("---")
             print(world.display() + "\n~~")
         if world.epoch_done():
