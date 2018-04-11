@@ -1094,14 +1094,19 @@ class PersonachatSeqseqAgentSplit(Agent):
             help='init use s2s model')
         agent.add_argument('--interactive-mode', type=bool, default=False,
             help='helps print nicer text during interactive mode')
+        agent.add_argument('--use-persona', type=str, default='self',
+            choices=['self', 'none', 'other', 'both'],
+            help='if task does not specify persona, specify here')
 
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
         self.interactive_mode = opt['interactive_mode']
-        #self.usepersona = opt['task'].split(':', 1)[1]
-        self.usepersona = 'self'
+        try:
+            self.usepersona = opt['task'].split(':', 1)[1]
+        except:
+            self.usepersona = opt['use_persona']
         self.usepreviousdialog = opt['personachat_useprevdialog']
         self.attnsentlevel = opt['personachat_attnsentlevel']
         self.sharelt = opt['personachat_sharelt']
@@ -2144,30 +2149,28 @@ class PersonachatSeqseqAgentSplit(Agent):
         # set up the target tensors for validation and test
         zs = None
         eval_labels = None
-        if len(exs) == 1 and 'eval_labels' in exs[0] and exs[0]['eval_labels']==['']:
-            special_case = False
-        else:
-            special_case = True
-        if any(['eval_labels' in ex for ex in exs]) and special_case:
-            # randomly select one of the labels to update on, if multiple
-            # append END to each label
-            eval_labels = [random.choice(ex.get('eval_labels', [''])) for ex in exs]
-            parsed = [self.parse(y + ' ' + self.END) for y in eval_labels if y]
-            max_y_len = max(len(y) for y in parsed)
-            if self.truncate > 0 and max_y_len > self.truncate:
-                parsed = [y[:self.truncate] for y in parsed]
-                max_y_len = self.truncate
-            zs = torch.LongTensor(batchsize, max_y_len).fill_(self.NULL_IDX)
-            for i, y in enumerate(parsed):
-                for j, idx in enumerate(y):
-                    zs[i][j] = idx
-            if self.use_cuda:
-                # copy to gpu
-                self.zs.resize_(zs.size())
-                self.zs.copy_(zs, async=True)
-                zs = Variable(self.zs)
-            else:
-                zs = Variable(zs)
+
+        if any(['eval_labels' in ex for ex in exs]):
+            if not (len(exs) == 1 and 'eval_labels' in exs[0] and exs[0]['eval_labels']==['']):
+                # randomly select one of the labels to update on, if multiple
+                # append END to each label
+                eval_labels = [random.choice(ex.get('eval_labels', [''])) for ex in exs]
+                parsed = [self.parse(y + ' ' + self.END) for y in eval_labels if y]
+                max_y_len = max(len(y) for y in parsed)
+                if self.truncate > 0 and max_y_len > self.truncate:
+                    parsed = [y[:self.truncate] for y in parsed]
+                    max_y_len = self.truncate
+                zs = torch.LongTensor(batchsize, max_y_len).fill_(self.NULL_IDX)
+                for i, y in enumerate(parsed):
+                    for j, idx in enumerate(y):
+                        zs[i][j] = idx
+                if self.use_cuda:
+                    # copy to gpu
+                    self.zs.resize_(zs.size())
+                    self.zs.copy_(zs, async=True)
+                    zs = Variable(self.zs)
+                else:
+                    zs = Variable(zs)
 
 
 

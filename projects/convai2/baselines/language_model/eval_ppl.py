@@ -103,7 +103,7 @@ if __name__ == '__main__':
     parser = ParlaiParser(True, True)
     parser.add_argument('-vme', '--validation-max-exs', type=int, default=-1)
     parser.set_defaults(
-        model='projects.convai2.baselines.language_model.language_model_ppl:LanguageModelEntry',
+        model='projects.convai2.baselines.language_model.eval_ppl:LanguageModelEntry',
         model_file='models:convai2/language_model/model',
         dict_file='models:convai2/language_model/model.dict',
         datatype='test',
