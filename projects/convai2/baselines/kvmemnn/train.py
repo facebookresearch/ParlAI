@@ -8,7 +8,7 @@ These parameters have some variance in their final perplexity, but they were
 used to achieve the pre-trained model.
 """
 
-from examples.train_model import setup_args, TrainLoop
+from parlai.scripts.train_model import setup_args, TrainLoop
 
 
 if __name__ == '__main__':
@@ -38,4 +38,4 @@ if __name__ == '__main__':
         log_every_n_secs=10,
         numthreads=40,
     )
-    TrainLoop(parser).train()
+    TrainLoop(parser.parse_args()).train()

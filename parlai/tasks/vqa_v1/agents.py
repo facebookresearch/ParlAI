@@ -6,7 +6,7 @@
 
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
-from examples.extract_image_feature import main as extract_main
+from parlai.scripts.extract_image_feature import extract_feats
 from .build import build, buildImage
 try:
     import torch
@@ -128,7 +128,7 @@ class VQADataset(Dataset):
 
     def _setup_image_data(self):
         '''hdf5 image dataset'''
-        extract_main(self.opt)
+        extract_feats(self.opt)
         im = self.opt.get('image_mode')
         if self.opt.get('attention', False):
             hdf5_path = self.image_path + 'mode_{}.hdf5'.format(im)

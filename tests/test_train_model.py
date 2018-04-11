@@ -46,7 +46,8 @@ class TestTrainModel(unittest.TestCase):
                 embedding_size='8',
                 no_cuda=True
             )
-            TrainLoop(parser).train()
+            opt = parser.parse_args()
+            TrainLoop(opt).train()
         finally:
             # restore sys.stdout
             sys.stdout = old_out

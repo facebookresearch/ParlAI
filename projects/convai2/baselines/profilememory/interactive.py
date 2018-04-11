@@ -9,7 +9,7 @@ Profile Memory model trained on ConvAI2 using persona 'self'.
 
 from parlai.core.build_data import download_models
 from parlai.core.params import ParlaiParser
-from examples.interactive import interactive
+from parlai.scripts.interactive import interactive
 from projects.personachat.persona_seq2seq import PersonachatSeqseqAgentSplit
 
 
