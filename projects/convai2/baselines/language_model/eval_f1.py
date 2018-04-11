@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """Evaluate pre-trained model trained for ppl metric.
-This seq2seq model was trained on convai2:self.
+This language model model was trained on convai2:self.
 """
 
 from parlai.core.build_data import download_models
