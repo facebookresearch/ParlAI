@@ -6,8 +6,10 @@
 
 import logging
 import os
+import sys
 import threading
 import time
+import traceback
 
 from parlai.messenger.core.agents import MessengerAgent
 from parlai.messenger.core.message_socket import MessageSocket
@@ -295,9 +297,25 @@ class MessengerManager():
                 agent = self._create_agent(task_id, agent_id)
                 agent_state.set_active_agent(agent)
                 agent_state.assign_agent_to_task(agent, task_id)
-                data = self.onboard_functions[world_type](opt, agent, task_id)
-                agent_state.onboard_data = data
-                agent_state.set_active_agent(None)
+                try:
+                    data = \
+                        self.onboard_functions[world_type](opt, agent, task_id)
+                    agent_state.onboard_data = data
+                    agent_state.set_active_agent(None)
+                except Exception as e:
+                    shared_utils.print_and_log(
+                        logging.ERROR,
+                        'Onboard {} had error {}'.format(world_type, repr(e)),
+                        should_print=True
+                    )
+                    traceback.print_exc(file=sys.stderr)
+                    self.observe_message(
+                        agent.id,
+                        "Sorry, this world closed. Returning to overworld."
+                    )
+                    agent_state.set_active_agent(
+                        agent_state.get_overworld_agent())
+                    return
 
             # once onboarding is done, move into a waiting world
             self.add_agent_to_pool(agent_state, world_type)
@@ -360,6 +378,19 @@ class MessengerManager():
         input('Please press Enter to continue... ')
         shared_utils.print_and_log(logging.NOTSET, '', True)
 
+        if self.opt['local'] is True:
+            shared_utils.print_and_log(
+                logging.INFO,
+                "In order to run the server locally, you will need "
+                "to have a public HTTPS endpoint (SSL signed) running on "
+                "the server you are currently excecuting ParlAI on. Enter "
+                "that public URL hostname when prompted and ensure that the "
+                "port being used by ParlAI (usually 3000) has external "
+                "traffic routed to it.",
+                should_print=True,
+            )
+            input('Please press Enter to continue... ')
+
         shared_utils.print_and_log(logging.INFO,
                                    'Setting up Messenger webhook...',
                                    should_print=True)
@@ -368,7 +399,8 @@ class MessengerManager():
         task_name = '{}-{}'.format('ParlAI-Messenger', self.opt['task'])
         self.server_task_name = \
             ''.join(e for e in task_name.lower() if e.isalnum() or e == '-')
-        self.server_url = server_utils.setup_server(self.server_task_name)
+        self.server_url = server_utils.setup_server(
+            self.server_task_name, local=self.opt['local'])
         shared_utils.print_and_log(
             logging.INFO,
             'Webhook address: {}/webhook'.format(self.server_url),
@@ -403,7 +435,10 @@ class MessengerManager():
             expanded_file_path = os.path.expanduser(access_token_file_path)
             with open(expanded_file_path, 'w+') as access_token_file:
                 access_token_file.write(self.app_token)
-        self.message_socket = MessageSocket(self.server_url, self.port,
+        socket_use_url = self.server_url
+        if (self.opt['local']):  # skip some hops for local stuff
+            socket_use_url = "https://localhost"
+        self.message_socket = MessageSocket(socket_use_url, self.port,
                                             self.app_token,
                                             self._handle_webhook_event)
 
@@ -448,8 +483,11 @@ class MessengerManager():
             except Exception as e:
                 shared_utils.print_and_log(
                     logging.ERROR,
-                    'Starting world {} had error {}'.format(world_type, e),
+                    'World {} had error {}'.format(world_type, repr(e)),
+                    should_print=True,
                 )
+                print("Exception in user code:")
+                traceback.print_exc(file=sys.stdout)
                 for agent in agents:
                     self.observe_message(
                         agent.id,
@@ -546,7 +584,8 @@ class MessengerManager():
         except BaseException:
             pass
         finally:
-            server_utils.delete_server(self.server_task_name)
+            server_utils.delete_server(self.server_task_name,
+                                       self.opt['local'])
 
     # Agent Interaction Functions #
 

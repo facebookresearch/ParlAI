@@ -172,6 +172,11 @@ class ParlaiParser(argparse.ArgumentParser):
                  'partner disconnect. I.e. if the number of messages '
                  'exceeds this number, the turker can submit the HIT.'
         )
+        mturk.add_argument(
+            '--local', dest='local', default=False, action='store_true',
+            help='Run the server locally on this server rather than setting up'
+                 ' a heroku server.'
+        )
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)
@@ -195,6 +200,11 @@ class ParlaiParser(argparse.ArgumentParser):
         messenger.add_argument(
             '--password', dest='password', type=str, default=None,
             help='Require a password for entry to the bot')
+        messenger.add_argument(
+            '--local', dest='local', action='store_true', default=False,
+            help='Run the server locally on this server rather than setting up'
+                 ' a heroku server.'
+        )
 
         messenger.set_defaults(is_debug=False)
         messenger.set_defaults(verbose=False)
