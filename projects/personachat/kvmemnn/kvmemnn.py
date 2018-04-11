@@ -563,12 +563,10 @@ class KvmemnnAgent(Agent):
                             newwords[w.data[0]] = True
                     xs2 = torch.cat(zq, 1)
 
-#               import pdb; pdb.set_trace()
                 if ((self.interactiveMode and self.twohoputt)
                     or cands[0] is None):
                     # used for nextutt alg in demo mode, get 2nd hop
                     blah = Variable(torch.LongTensor([1]))
-                    self.tricks = False
                     if self.tricks:
                         xe, ye = self.model(xs2, obs[0]['mem'], ys, z)
                     else:
