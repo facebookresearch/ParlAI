@@ -1811,9 +1811,7 @@ class PersonachatSeqseqAgentSplit(Agent):
 
             output, hidden = self.decoder(output, hidden)
             preds, scores = self.hidden_to_idx(output, is_training=False)
-            print(self.dict.ind2tok[preds.data[0]])
             y = zs.select(1, i)
-            print("y:", self.dict.ind2tok[y.data[0]])
             if self.opt['personachat_tfidfperp']:
                 log_perp += self.lt_rescaleperp(y)[:, 0]*scores[[i for i in range(len(y))], [int(k) for k in ((y-1)*y.ne(self.NULL_IDX).long()).cpu().data.numpy()]]*y.ne(self.NULL_IDX).float()
             else:
@@ -1833,9 +1831,6 @@ class PersonachatSeqseqAgentSplit(Agent):
         self.n_log_perp += n_zs.cpu().data.numpy()[0]
         self.metrics['loss'] += log_perp.cpu().data.numpy()[0]
         self.metrics['num_tokens'] += n_zs.cpu().data.numpy()[0]
-        print("LOG PERP", self.log_perp)
-        print("N LOG PERP", self.n_log_perp)
-        print("divided", self.log_perp/self.n_log_perp)
 
 
     def _decode_only(self, batchsize, xes, ys, encoder_output_persona, hidden_persona, hidden, attn_mask, zs):
@@ -2045,7 +2040,6 @@ class PersonachatSeqseqAgentSplit(Agent):
 
 
     def batchify(self, observations):
-        print(observations)
         """Convert a list of observations into input & target tensors."""
         def valid(obs):
             # check if this is an example our model should actually process
@@ -2214,8 +2208,6 @@ class PersonachatSeqseqAgentSplit(Agent):
 
 
     def batch_act(self, observations):
-        if 'eval_labels' in observations[0]:
-            print(observations[0]['eval_labels'])
         batchsize = len(observations)
         # initialize a table of replies with this agent's id
         batch_reply = [{'id': self.getID()} for _ in range(batchsize)]
