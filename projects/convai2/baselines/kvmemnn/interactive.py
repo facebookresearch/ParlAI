@@ -10,7 +10,7 @@ Key-Value Memory Net model trained on personachat using persona 'self'
 
 from parlai.core.build_data import download_models
 from parlai.core.params import ParlaiParser
-from examples.interactive import interactive
+from parlai.scripts.interactive import interactive
 
 if __name__ == '__main__':
     parser = ParlaiParser(add_model_args=True)

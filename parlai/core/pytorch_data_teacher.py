@@ -16,7 +16,7 @@
     ``PytorchDataTeacher`` - a teacher that utilizes a pytorch DataLoader
     for quick batch loading.
         - In order to use the PytorchDataTeacher, the data must be built
-          using build_data from examples/build_pytorch_data. This process
+          using build_data from parlai.scripts.build_pytorch_data. This process
           happens automatically, and requires one of the following:
             - `--datafile` set to the either the built .pytorch data file
                 or the data file used to build the pytorch data file
@@ -75,7 +75,7 @@
 
 """
 from .teachers import FixedDialogTeacher
-from examples.build_pytorch_data import build_data
+from parlai.scripts.build_pytorch_data import build_data
 from .agents import get_agent_module
 import json
 import math

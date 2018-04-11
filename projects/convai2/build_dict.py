@@ -16,7 +16,7 @@ potential unknown words. See the evaluation script for more information.
 """
 
 
-from examples.build_dict import setup_args, build_dict as main_build_dict
+from parlai.scripts.build_dict import setup_args, build_dict as main_build_dict
 
 def build_dict():
     DICT_FINAL = 'models:convai2/dict_self'

@@ -27,7 +27,7 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer
-from examples.build_dict import build_dict, setup_args as setup_dict_args
+from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 import math
 import os
 

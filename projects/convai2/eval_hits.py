@@ -8,8 +8,7 @@ This uses a the version of the dataset which contains candidates.
 Leaderboard scores will be run in the same form but on a hidden test set.
 """
 
-
-from examples.eval_model import eval_model, setup_args as base_setup_args
+from parlai.scripts.eval_model import eval_model, setup_args as base_setup_args
 
 def setup_args(parser=None):
     parser = base_setup_args(parser)

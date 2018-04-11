@@ -9,7 +9,7 @@ This seq2seq model was trained on convai2:self.
 
 from parlai.core.build_data import download_models
 from parlai.core.params import ParlaiParser
-from examples.interactive import interactive
+from parlai.scripts.interactive import interactive
 
 if __name__ == '__main__':
     parser = ParlaiParser(add_model_args=True)
