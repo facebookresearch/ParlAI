@@ -55,6 +55,9 @@ def get_dataset_class(opt):
 
 
 def extract_feats(opt):
+    if isinstance(opt, ParlaiParser):
+        print('[ Deprecated Warning: extract_feats should be passed opt not Parser ]')
+        opt = opt.parse_args()
     # Get command line arguments
     opt = copy.deepcopy(opt)
     dt = opt['datatype'].split(':')[0] + ':ordered'

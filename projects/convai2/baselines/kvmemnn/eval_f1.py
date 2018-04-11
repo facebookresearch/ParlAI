@@ -19,8 +19,8 @@ if __name__ == '__main__':
     )
     # build all profile memory models
     fnames = ['kvmemnn.tgz']
-    opt = parser.parse_args()
+    opt = parser.parse_args(print_args=False)
     opt['model_type'] = 'kvmemnn' # for builder
     download_models(opt, fnames, 'convai2')
 
-    eval_model(parser)
+    eval_model(parser, print_parser=parser)

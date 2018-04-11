@@ -135,6 +135,9 @@ def save_best_valid(model_file, best_valid):
 
 class TrainLoop():
     def __init__(self, opt):
+        if isinstance(opt, ParlaiParser):
+            print('[ Deprecated Warning: TrainLoop should be passed opt not Parser ]')
+            opt = opt.parse_args()
         # Possibly load from checkpoint
         if opt['load_from_checkpoint'] and opt.get('model_file') and os.path.isfile(opt['model_file'] + '.checkpoint'):
             opt['init_model'] = opt['model_file'] + '.checkpoint'

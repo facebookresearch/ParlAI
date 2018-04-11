@@ -29,6 +29,9 @@ def setup_args(parser=None):
 
 
 def interactive(opt):
+    if isinstance(opt, ParlaiParser):
+        print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
+        opt = opt.parse_args()
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
     # Create model and assign it to the specified task
     agent = create_agent(opt)

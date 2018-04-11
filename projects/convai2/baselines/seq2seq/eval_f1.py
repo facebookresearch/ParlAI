@@ -20,8 +20,8 @@ if __name__ == '__main__':
         dict_lower=True,
         batchsize=128,
     )
-    opt = parser.parse_args()
+    opt = parser.parse_args(print_args=False)
     opt['model_type'] = 'seq2seq'
     fnames = ['convai2_self_seq2seq_model.tgz', 'dict_convai2_self']
     download_models(opt, fnames, 'convai2')
-    eval_model(parser)
+    eval_model(opt, print_parser=parser)

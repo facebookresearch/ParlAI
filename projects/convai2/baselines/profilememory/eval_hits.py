@@ -18,11 +18,11 @@ if __name__ == '__main__':
         rank_candidates=True,
     )
 
-    opt = parser.parse_args()
+    opt = parser.parse_args(print_args=False)
     opt['model_type'] = 'profilememory'
     # build profile memory models
     fnames = ['profilememory_convai2_model',
               'profilememory_convai2.dict']
     download_models(opt, fnames, 'convai2', use_model_type=True)
 
-    eval_model(parser)
+    eval_model(opt, print_parser=parser)

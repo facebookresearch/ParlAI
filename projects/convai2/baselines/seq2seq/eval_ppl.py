@@ -3,13 +3,15 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-
+"""Evaluate pre-trained model trained for ppl metric.
+This seq2seq model was trained on convai2:self.
+"""
 from parlai.core.build_data import download_models
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser, modelzoo_path
 from parlai.agents.seq2seq.seq2seq import Seq2seqAgent
 from projects.convai2.build_dict import build_dict
-from projects.convai2.eval_ppl import eval_ppl
+from projects.convai2.eval_ppl import setup_args, eval_ppl
 import torch.nn.functional as F
 
 
@@ -74,13 +76,12 @@ class Seq2seqEntry(Seq2seqAgent):
 
 
 if __name__ == '__main__':
-    parser = ParlaiParser(True, True)
+    parser = setup_args()
     parser.set_defaults(
         model='projects.convai2.baselines.seq2seq.eval_ppl:Seq2seqEntry',
         model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
         dict_file='models:convai2/seq2seq/dict_convai2_self',
         dict_lower=True,
-        datatype='valid',
         batchsize=1,
         numthreads=60,
         no_cuda=True,
@@ -89,4 +90,4 @@ if __name__ == '__main__':
     opt['model_type'] = 'seq2seq'
     fnames = ['convai2_self_seq2seq_model.tgz', 'dict_convai2_self']
     download_models(opt, fnames, 'convai2')
-    eval_ppl(parser)
+    eval_ppl(opt)

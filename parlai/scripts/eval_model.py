@@ -37,6 +37,15 @@ def eval_model(opt, print_parser=None):
     print_parser -- if provided, prints the options that are set within the
         model after loading the model
     """
+    if print_parser is not None:
+        if print_parser is True and isinstance(opt, ParlaiParser):
+            print_parser = opt
+        else:
+            print_parser = None
+    if isinstance(opt, ParlaiParser):
+        print('[ Deprecated Warning: eval_model should be passed opt not Parser ]')
+        opt = opt.parse_args()
+
     random.seed(42)
 
     nomodel = False

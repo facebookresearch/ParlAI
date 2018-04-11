@@ -39,7 +39,8 @@ class TestEvalModel(unittest.TestCase):
         output = display_output()
         try:
             sys.stdout = output
-            eval_model(parser, printargs=False)
+            opt = parser.parse_args(print_args=False)
+            eval_model(opt, print_parser=parser)
         finally:
             # restore sys.stdout
             sys.stdout = old_out

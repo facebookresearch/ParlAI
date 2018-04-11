@@ -40,4 +40,4 @@ if __name__ == '__main__':
         validation_patience=10,
         log_every_n_secs=10,
     )
-    TrainLoop(parser).train()
+    TrainLoop(parser.parse_args()).train()

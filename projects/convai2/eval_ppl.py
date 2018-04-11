@@ -55,6 +55,17 @@ from parlai.core.worlds import World
 import math
 
 
+def setup_args(parser=None):
+    if parser is None:
+        parser = ParlaiParser(True, True)
+    parser.set_defaults(
+        task='convai2:self',
+        datatype='valid',
+        hide_labels=False,
+    )
+    return parser
+
+
 class PerplexityWorld(World):
     """Instead of just calling act/observe on each agent, this world just calls
     act on the teacher and then calls `next_word_probability` on the agent.
@@ -161,14 +172,11 @@ class PerplexityWorld(World):
         return m
 
 
-def eval_ppl(parser):
+def eval_ppl(opt):
     """Evaluates the the perplexity and f1 of a model (and hits@1 if model has
     ranking enabled.
     """
     dict_agent = build_dict()
-
-    parser.set_defaults(task='convai2:self:no_cands', hide_labels=False)
-    opt = parser.parse_args()
 
     # create agents
     agent = create_agent(opt)
@@ -197,4 +205,4 @@ def eval_ppl(parser):
     print('{}s elapsed: {}'.format(int(tot_time), final_report))
 
 if __name__ == '__main__':
-    eval_ppl(ParlaiParser(True, True))
+    eval_ppl(ParlaiParser(True, True).parse_args())

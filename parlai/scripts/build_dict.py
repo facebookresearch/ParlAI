@@ -30,6 +30,9 @@ def setup_args(parser=None):
     return parser
 
 def build_dict(opt):
+    if isinstance(opt, ParlaiParser):
+        print('[ Deprecated Warning: should be passed opt not Parser ]')
+        opt = opt.parse_args()
     if not opt.get('dict_file'):
         print('Tried to build dictionary but `--dict-file` is not set. Set ' +
               'this param so the dictionary can be saved.')
