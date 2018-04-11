@@ -45,7 +45,7 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer, round_sigfigs
 from parlai.core.worlds import create_task
-from .build_dict import build_dict
+from projects.convai2.build_dict import build_dict
 
 from parlai.core.agents import create_agents_from_shared
 from parlai.core.thread_utils import SharedTable
@@ -113,6 +113,7 @@ class PerplexityWorld(World):
 
         parsed = self.dict.tokenize(labels[0])
         loss = 0
+        num_tokens = 0
         for i in range(len(parsed)):
             if parsed[i] in self.dict:
                 # only score words which are in the dictionary
@@ -124,10 +125,11 @@ class PerplexityWorld(World):
                     loss -= math.log(prob_true)
                 else:
                     loss = float('inf')
+                num_tokens += 1
         with self._lock():
             self.metrics['total'] += 1
             self.metrics['loss'] += loss
-            self.metrics['num_tokens'] += len(parsed)
+            self.metrics['num_tokens'] += num_tokens
 
     def epoch_done(self):
         return self.task.epoch_done()

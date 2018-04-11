@@ -9,7 +9,6 @@ This seq2seq model was trained on convai2:self.
 
 from parlai.core.build_data import download_models
 from projects.convai2.eval_hits import setup_args, eval_model
-from examples.eval_model import setup_args, eval_model
 
 
 if __name__ == '__main__':

@@ -22,13 +22,15 @@ import random
 
 def interactive(opt):
     # Create model and assign it to the specified task
+    opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
+
     agent = create_agent(opt)
     world = create_task(opt, agent)
 
     # Show some example dialogs:
     while True:
         world.parley()
-        if opt['display_examples']:
+        if opt.get('display_examples'):
             print("---")
             print(world.display() + "\n~~")
         if world.epoch_done():
@@ -42,7 +44,6 @@ def main():
     parser = ParlaiParser(True, True)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     opt = parser.parse_args()
-    opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
     print(opt)
     interactive(opt)
 
