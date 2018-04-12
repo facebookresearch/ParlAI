@@ -4,8 +4,8 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from examples.train_model import TrainLoop, run_eval, setup_args
-from examples.eval_model import eval_model
+from parlai.scripts.train_model import TrainLoop, run_eval, setup_args
+from parlai.scripts.eval_model import eval_model
 
 import ast
 import unittest

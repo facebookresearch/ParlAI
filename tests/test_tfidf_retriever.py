@@ -8,8 +8,6 @@ from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 
-from parlai.agents.tfidf_retriever.tfidf_retriever import TfidfRetrieverAgent
-
 import os
 import unittest
 
@@ -20,18 +18,17 @@ class TestTfidfRetriever(unittest.TestCase):
     def test_sparse_tfidf_retriever(self):
         DB_PATH = '/tmp/tmp_test_babi.db'
         TFIDF_PATH = '/tmp/tmp_test_babi.tfidf'
-        args = [
-            '--model', 'tfidf_retriever',
-            '--retriever-task', 'babi:task1k:1',
-            '--retriever-dbpath', DB_PATH,
-            '--retriever-tfidfpath', TFIDF_PATH,
-            '--retriever-numworkers', '4',
-            '--retriever-hashsize', str(2**8)
-        ]
         try:
             parser = ParlaiParser(True, True)
-            TfidfRetrieverAgent.add_cmdline_args(parser)
-            opt = parser.parse_args(args, print_args=False)
+            parser.set_defaults(
+                model='tfidf_retriever',
+                retriever_task='babi:task1k:1',
+                retriever_dbpath=DB_PATH,
+                retriever_tfidfpath=TFIDF_PATH,
+                retriever_numworkers=4,
+                retriever_hashsize=2**8,
+            )
+            opt = parser.parse_args(print_args=False)
 
             agent = create_agent(opt)
 
