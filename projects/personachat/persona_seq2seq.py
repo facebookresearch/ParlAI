@@ -110,7 +110,7 @@ class Seq2seqAgent(Agent):
                            help='rank candidates if available. this is done by'
                                 ' computing the mean score per token for each '
                                 'candidate and selecting the highest scoring.')
-        agent.add_argument('-tr', '--truncate', type=int, default=24,
+        agent.add_argument('-tr', '--truncate', type=int, default=100,
                            help='truncate input & output lengths to speed up '
                            'training (may reduce accuracy). This fixes all '
                            'input and output to have a maximum length and to '
@@ -1045,7 +1045,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                            help='rank candidates if available. this is done by'
                                 ' computing the mean score per token for each '
                                 'candidate and selecting the highest scoring.')
-        agent.add_argument('-tr', '--truncate', type=int, default=24,
+        agent.add_argument('-tr', '--truncate', type=int, default=100,
                            help='truncate input & output lengths to speed up '
                            'training (may reduce accuracy). This fixes all '
                            'input and output to have a maximum length and to '
@@ -1902,7 +1902,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                     else:
                         output_lines[b].append(token)
 
-        if random.random() < 0.01 and not self.interactive_mode:
+        if random.random() < 1 and not self.interactive_mode:
             # sometimes output a prediction for debugging
             print('prediction:', ' '.join(output_lines[0]))
 
