@@ -43,7 +43,7 @@ def eval_model(opt, print_args=None, print_parser=None):
     if print_parser is not None:
         if print_parser is True and isinstance(opt, ParlaiParser):
             print_parser = opt
-        else:
+        elif print_parser is False:
             print_parser = None
     if isinstance(opt, ParlaiParser):
         print('[ Deprecated Warning: eval_model should be passed opt not Parser ]')
