@@ -911,7 +911,6 @@ class FbDialogTeacher(DialogTeacher):
             start = True
             x = ''
             reward = 0
-            dialog_index = 0
             last_conv_id = None
             for line in read:
                 line = line.strip().replace('\\n', '\n')
@@ -939,8 +938,7 @@ class FbDialogTeacher(DialogTeacher):
                     split[2] = None
 
                 # now check if we're at a new episode
-                if last_conv_id is None or conv_id < last_conv_id:
-                    dialog_index += 1
+                if last_conv_id is None or conv_id <= last_conv_id:
                     x = x.strip()
                     if x:
                         yield [x, None, reward], start
