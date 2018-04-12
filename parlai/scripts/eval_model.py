@@ -63,8 +63,7 @@ def eval_model(opt, print_args=None, print_parser=None):
     agent = create_agent(opt)
     if nomodel and hasattr(agent, 'load'):
         # double check that we didn't forget to set model_file on loadable model
-        raise RuntimeError('Stopping evaluation because model_file unset but '
-                           'model has a `load` function.')
+        print('WARNING: model_file unset but model has a `load` function.')
     world = create_task(opt, agent)
 
     if (print_parser):
