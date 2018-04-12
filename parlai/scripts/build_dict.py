@@ -22,7 +22,7 @@ def setup_args(parser=None):
         help='Include validation set in dictionary building for task.')
     dict_loop.add_argument('--dict-include-test', default=False, type='bool',
         help='Include test set in dictionary building for task.')
-    partial, _ = parser.parse_known_args()
+    partial, _ = parser.parse_known_args(nohelp=True)
     if vars(partial).get('dict_class'):
         str2class(opt['dict_class']).add_cmdline_args(parser)
     else:
