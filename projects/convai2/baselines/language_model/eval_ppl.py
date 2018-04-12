@@ -7,7 +7,7 @@
 from parlai.core.agents import create_agent, create_agents_from_shared
 from parlai.core.build_data import download_models
 from projects.convai2.build_dict import build_dict
-from projects.convai2.eval_ppl import eval_ppl
+from projects.convai2.eval_ppl import setup_args, eval_ppl
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.thread_utils import SharedTable
@@ -100,7 +100,7 @@ class LanguageModelEntry(LanguageModelAgent):
 
 
 if __name__ == '__main__':
-    parser = ParlaiParser(True, True)
+    parser = setup_args()
     parser.add_argument('-vme', '--validation-max-exs', type=int, default=-1)
     parser.set_defaults(
         model='projects.convai2.baselines.language_model.eval_ppl:LanguageModelEntry',
@@ -113,4 +113,4 @@ if __name__ == '__main__':
     opt['model_type'] = 'language_model'
     fnames = ['model', 'model.dict']
     download_models(opt, fnames, 'convai2', use_model_type=True)
-    eval_ppl(parser)
+    eval_ppl(opt)
