@@ -15,12 +15,18 @@ python ~/ParlAI/examples/display_data.py -t convai2 -dt train
 
 You can run examples of training on this task in the `baselines` folder in this directory.
 
-For example, you can download and evaluate a pre-trained seq2seq model (based on ParlAI's implementation in parlai/agents/seq2seq) using `baselines/seq2seq/eval.py`, or train your own with the same parameters using the `train.py` file in that directory.
+For example, you can download and interact with a pre-trained seq2seq model (based on ParlAI's implementation in parlai/agents/seq2seq) using `baselines/seq2seq/interact.py`, or train your own with the same parameters using the `train.py` file in that directory.
 
 
 ## Submitting models for evaluation
 
-Submission guidelines will be released soon
+To submit an entry, create a private repo with your model that works with our evaluation code, and share it with the following github accounts: edinan@fb.com, jaseweston@gmail.com, jju@fb.com, kshuster@fb.com.
+
+More specifically, create a repo with a directory similar to the baseline models directory, with a `eval_XXX.py` file with each metric you would like to be evaluated against. These files should import the appropriate eval function from this directory. For example, the `eval_f1.py` file in `baselines/seq2seq/` sets up the right parameters for the model and then imports the evaluation function from the base `eval_f1.py` file in this directory and runs it.
+
+We will then run the automatic evaluations against the hidden test set (which is in the same format as the validation set you can access) and update the leaderboard.
+You can submit a maximum of once per month.
+We will use the same submitted code for the top performing models for computing human evaluations when the submission system is locked on September 30th.
 
 
 ## Remarks on dataset versions

@@ -391,7 +391,6 @@ class Seq2seqAgent(Agent):
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)
-        m['num_tokens'] = self.metrics['num_tokens']
         return m
 
     def share(self):

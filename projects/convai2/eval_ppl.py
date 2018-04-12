@@ -45,7 +45,7 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer, round_sigfigs
 from parlai.core.worlds import create_task
-from .build_dict import build_dict
+from projects.convai2.build_dict import build_dict
 
 from parlai.core.agents import create_agents_from_shared
 from parlai.core.thread_utils import SharedTable
@@ -53,6 +53,17 @@ from parlai.core.utils import round_sigfigs, no_lock
 from parlai.core.worlds import World
 
 import math
+
+
+def setup_args(parser=None):
+    if parser is None:
+        parser = ParlaiParser(True, True)
+    parser.set_defaults(
+        task='convai2:self',
+        datatype='valid',
+        hide_labels=False,
+    )
+    return parser
 
 
 class PerplexityWorld(World):
@@ -113,6 +124,7 @@ class PerplexityWorld(World):
 
         parsed = self.dict.tokenize(labels[0])
         loss = 0
+        num_tokens = 0
         for i in range(len(parsed)):
             if parsed[i] in self.dict:
                 # only score words which are in the dictionary
@@ -124,10 +136,11 @@ class PerplexityWorld(World):
                     loss -= math.log(prob_true)
                 else:
                     loss = float('inf')
+                num_tokens += 1
         with self._lock():
             self.metrics['total'] += 1
             self.metrics['loss'] += loss
-            self.metrics['num_tokens'] += len(parsed)
+            self.metrics['num_tokens'] += num_tokens
 
     def epoch_done(self):
         return self.task.epoch_done()
@@ -159,14 +172,11 @@ class PerplexityWorld(World):
         return m
 
 
-def eval_ppl(parser):
+def eval_ppl(opt):
     """Evaluates the the perplexity and f1 of a model (and hits@1 if model has
     ranking enabled.
     """
     dict_agent = build_dict()
-
-    parser.set_defaults(task='convai2:self:no_cands', hide_labels=False)
-    opt = parser.parse_args()
 
     # create agents
     agent = create_agent(opt)
@@ -195,4 +205,4 @@ def eval_ppl(parser):
     print('{}s elapsed: {}'.format(int(tot_time), final_report))
 
 if __name__ == '__main__':
-    eval_ppl(ParlaiParser(True, True))
+    eval_ppl(ParlaiParser(True, True).parse_args())
