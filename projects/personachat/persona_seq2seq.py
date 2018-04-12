@@ -26,6 +26,7 @@ import numpy as np
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.metrics import _f1_score
+from parlai.core.utils import round_sigfigs
 from torch.autograd import Variable
 from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 from torch import optim
@@ -120,7 +121,7 @@ class Seq2seqAgent(Agent):
                            help='rank candidates if available. this is done by'
                                 ' computing the mean score per token for each '
                                 'candidate and selecting the highest scoring.')
-        agent.add_argument('-tr', '--truncate', type=int, default=24,
+        agent.add_argument('-tr', '--truncate', type=int, default=100,
                            help='truncate input & output lengths to speed up '
                            'training (may reduce accuracy). This fixes all '
                            'input and output to have a maximum length and to '
@@ -1055,7 +1056,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                            help='rank candidates if available. this is done by'
                                 ' computing the mean score per token for each '
                                 'candidate and selecting the highest scoring.')
-        agent.add_argument('-tr', '--truncate', type=int, default=24,
+        agent.add_argument('-tr', '--truncate', type=int, default=100,
                            help='truncate input & output lengths to speed up '
                            'training (may reduce accuracy). This fixes all '
                            'input and output to have a maximum length and to '
@@ -1104,13 +1105,19 @@ class PersonachatSeqseqAgentSplit(Agent):
             help='init use s2s model')
         agent.add_argument('--interactive-mode', type=bool, default=False,
             help='helps print nicer text during interactive mode')
+        agent.add_argument('--use-persona', type=str, default='self',
+            choices=['self', 'none', 'other', 'both'],
+            help='if task does not specify persona, specify here')
 
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
         self.interactive_mode = opt['interactive_mode']
-        self.usepersona = opt['task'].split(':', 1)[1]
+        try:
+            self.usepersona = opt['task'].split(':', 1)[1]
+        except:
+            self.usepersona = opt['use_persona']
         self.usepreviousdialog = opt['personachat_useprevdialog']
         self.attnsentlevel = opt['personachat_attnsentlevel']
         self.sharelt = opt['personachat_sharelt']
@@ -1118,6 +1125,7 @@ class PersonachatSeqseqAgentSplit(Agent):
         self.newsetting = opt['personachat_newsetting']
         self.embshareonly_pm_dec = opt['personachat_embshareonly_pm_dec']
         self.s2sinit = opt['personachat_s2sinit']
+        self.metrics = {'loss': 0, 'num_tokens': 0}
 
         if shared:
             self.answers = shared['answers']
@@ -1837,6 +1845,8 @@ class PersonachatSeqseqAgentSplit(Agent):
         log_perp = (-log_perp).sum()
         self.log_perp += log_perp.cpu().data.numpy()[0]
         self.n_log_perp += n_zs.cpu().data.numpy()[0]
+        self.metrics['loss'] += log_perp.cpu().data.numpy()[0]
+        self.metrics['num_tokens'] += n_zs.cpu().data.numpy()[0]
 
 
     def _decode_only(self, batchsize, xes, ys, encoder_output_persona, hidden_persona, hidden, attn_mask, zs):
@@ -1903,7 +1913,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                     else:
                         output_lines[b].append(token)
 
-        if random.random() < 0.01 and not self.interactive_mode:
+        if random.random() < 1 and not self.interactive_mode:
             # sometimes output a prediction for debugging
             print('prediction:', ' '.join(output_lines[0]))
 
@@ -2150,28 +2160,28 @@ class PersonachatSeqseqAgentSplit(Agent):
         # set up the target tensors for validation and test
         zs = None
         eval_labels = None
+
         if any(['eval_labels' in ex for ex in exs]):
-            # randomly select one of the labels to update on, if multiple
-            # append END to each label
-            eval_labels = [random.choice(ex.get('eval_labels', [''])) for ex in exs]
-            parsed = [self.parse(y + ' ' + self.END) for y in eval_labels if y]
-            max_y_len = max(len(y) for y in parsed)
-            if self.truncate > 0 and max_y_len > self.truncate:
-                parsed = [y[:self.truncate] for y in parsed]
-                max_y_len = self.truncate
-            zs = torch.LongTensor(batchsize, max_y_len).fill_(self.NULL_IDX)
-            for i, y in enumerate(parsed):
-                for j, idx in enumerate(y):
-                    zs[i][j] = idx
-            if self.use_cuda:
-                # copy to gpu
-                self.zs.resize_(zs.size())
-                self.zs.copy_(zs, )
-                zs = Variable(self.zs)
-            else:
-                zs = Variable(zs)
-
-
+            if not (len(exs) == 1 and 'eval_labels' in exs[0] and exs[0]['eval_labels']==['']):
+                # randomly select one of the labels to update on, if multiple
+                # append END to each label
+                eval_labels = [random.choice(ex.get('eval_labels', [''])) for ex in exs]
+                parsed = [self.parse(y + ' ' + self.END) for y in eval_labels if y]
+                max_y_len = max(len(y) for y in parsed)
+                if self.truncate > 0 and max_y_len > self.truncate:
+                    parsed = [y[:self.truncate] for y in parsed]
+                    max_y_len = self.truncate
+                zs = torch.LongTensor(batchsize, max_y_len).fill_(self.NULL_IDX)
+                for i, y in enumerate(parsed):
+                    for j, idx in enumerate(y):
+                        zs[i][j] = idx
+                if self.use_cuda:
+                    # copy to gpu
+                    self.zs.resize_(zs.size())
+                    self.zs.copy_(zs, async=True)
+                    zs = Variable(self.zs)
+                else:
+                    zs = Variable(zs)
 
         # set up candidates
         cands = None
@@ -2351,6 +2361,16 @@ class PersonachatSeqseqAgentSplit(Agent):
             else:
                 self.optims[k].load_state_dict(v)
         self.longest_label = states['longest_label']
+
+    def report(self):
+        m = {}
+        if self.metrics['num_tokens'] > 0:
+            m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
+            m['ppl'] = math.exp(m['loss'])
+        for k, v in m.items():
+            # clean up: rounds to sigfigs and converts tensors to floats
+            m[k] = round_sigfigs(v, 4)
+        return m
 
     def report_loss(self):
         if hasattr(self, 'loss_guide'):
