@@ -13,8 +13,8 @@ It's a python-based platform for enabling dialog AI research.
 
 Its goal is to provide researchers:
 
-- a unified framework for training and testing dialog models
-- multi-task training over many datasets at once
+- a unified framework for sharing, training and testing dialog models
+- many popular datasets available all in one place, with the ability to multi-task over them
 - seamless integration of Amazon Mechanical Turk for data collection and human evaluation
 
 Install
