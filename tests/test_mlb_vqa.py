@@ -22,7 +22,7 @@ class TestTrainModel(unittest.TestCase):
             except ImportError:
                 print('Cannot import torch, skipping test_train_model')
                 return
-            parser = setup_args(model_args=['--model', 'mlb_vqa'])
+            parser = setup_args()
             parser.set_defaults(
                 model='mlb_vqa',
                 task='pytorch_teacher',
@@ -32,7 +32,7 @@ class TestTrainModel(unittest.TestCase):
                 image_size=448,
                 image_cropsize=448,
                 dict_file='/tmp/vqa_v1',
-                batchsize='1',
+                batchsize=1,
                 num_epochs=1,
                 no_cuda=True,
                 no_hdf5=True,

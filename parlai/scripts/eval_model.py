@@ -29,7 +29,7 @@ def setup_args(parser=None):
     parser.set_defaults(datatype='valid')
     return parser
 
-def eval_model(opt, print_args=None, print_parser=None):
+def eval_model(opt, printargs=None, print_parser=None):
     """Evaluates a model.
 
     Arguments:
@@ -37,9 +37,9 @@ def eval_model(opt, print_args=None, print_parser=None):
     print_parser -- if provided, prints the options that are set within the
         model after loading the model
     """
-    if print_args is not None:
-        print('[ Deprecated Warning: eval_model no longer uses `print_args` ]')
-        print_parser = print_args
+    if printargs is not None:
+        print('[ Deprecated Warning: eval_model no longer uses `printargs` ]')
+        print_parser = printargs
     if print_parser is not None:
         if print_parser is True and isinstance(opt, ParlaiParser):
             print_parser = opt
