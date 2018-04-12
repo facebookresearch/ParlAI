@@ -66,7 +66,7 @@ def eval_model(opt, print_args=None, print_parser=None):
         print('WARNING: model_file unset but model has a `load` function.')
     world = create_task(opt, agent)
 
-    if (print_parser):
+    if print_parser:
         # Show arguments after loading model
         print_parser.opt = agent.opt
         print_parser.print_args()
