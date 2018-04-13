@@ -7,7 +7,7 @@
 
 Creating a New Task
 ===================
-**Author**: Filipe de Avila Belbute Peres
+**Authors**: Alexander Holden Miller & Filipe de Avila Belbute Peres
 
 Adding new tasks to ParlAI is a simple process.
 In this tutorial we will go over the different ways a new task can be created.
@@ -577,8 +577,24 @@ Further speedups can be accomplished with the Pytorch dataloader, adding another
 Task from Scratch
 ~~~~~~~~~~~~~~~~~
 
-As most tasks can be defined by extending the above ones, this section is
-currently under construction.
+In this case, one would inherit from the Teacher class.
+For this class, at least the ``act()`` method and probably the ``observe()``
+method must be overriden. Quite a bit of functinoality will not be built in,
+such as a support for hogwild and batching, but metrics will be set up and
+can be used to track stats like the number of correctly answered examples.
+
+In general, extending Teacher directly is not recommended unless the above
+classes definitely do not fit your task. We still have a few remnants which
+do this in our code base instead of using FixedDialogTeacher, but this will
+require one to do extra work to support batching and hogwild if desired.
+
+However, extending teacher directly is necessary for non-fixed data.
+For example, one might have a like the full negotiation version of the
+``dealnodeal`` task, where episodes are variable-length (it continues until one
+player ends the discussion).
+
+In this case, just implement the ``observe()`` function to handle seeing the
+text from the other agent, and the ``act()`` function to take an action.
 
 
 Part 3: Add Task to Task List

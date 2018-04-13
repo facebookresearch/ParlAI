@@ -179,7 +179,7 @@ def sort_data(data, key='text_label', method='spaces'):
 
     Currently the only supported key is sorting by first the text, then the
     label.
-    See https://arxiv.org/abs/1706.05765 for an evaulation of alternative
+    See https://arxiv.org/abs/1706.05765 for an evaluation of alternative
     approaches for machine translation.
     Sorting by the source (text) gives a good improvement in speed over random
     batching and is robust to different types of optimization.
