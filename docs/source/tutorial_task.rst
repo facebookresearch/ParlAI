@@ -594,7 +594,8 @@ For example, one might have a like the full negotiation version of the
 player ends the discussion).
 
 In this case, just implement the ``observe()`` function to handle seeing the
-text from the other agent, and the ``act()`` function to take an action.
+text from the other agent, and the ``act()`` function to take an action
+(such as sending text or other fields such as reward to the other agent).
 
 
 Part 3: Add Task to Task List
