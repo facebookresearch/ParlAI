@@ -849,7 +849,6 @@ class HogwildWorld(World):
 
 
     def display(self):
-        return ''
         self.shutdown()
         raise NotImplementedError('Hogwild does not support displaying in-run'
                                   ' task data. Use `--numthreads 1`.')

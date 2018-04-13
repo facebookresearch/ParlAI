@@ -2,7 +2,7 @@
 
 First install the theme we use:
 ```
-pip install sphinx_rtd_theme
+pip install -r requirements.txt
 ```
 
 Then use make to build the html:

@@ -21,11 +21,12 @@ ParlAI is a one-stop-shop for dialog research.
    :maxdepth: 1
    :caption: Tutorials
 
-   basic_tutorial
-   task_tutorial
-   seq2seq_tutorial
-   mturk
-   messenger
+   tutorial_basic
+   tutorial_task
+   tutorial_worlds
+   tutorial_seq2seq
+   tutorial_mturk
+   tutorial_messenger
 
 .. toctree::
    :maxdepth: 1

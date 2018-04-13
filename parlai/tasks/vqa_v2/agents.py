@@ -50,30 +50,30 @@ class DefaultDataset(VQADataset):
 
 class OeTeacher(FixedDialogTeacher):
     """VQA v2.0 Open-Ended teacher, which loads the json VQA data and
-    implements its own `act` method for interacting with student agent.
-    agent.
+    implements the ``get`` method to return additional metadata.
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt)
-        data_path, annotation_path, self.image_path = _path(opt)
         self.image_mode = opt.get('image_mode', 'none')
 
         if shared and 'ques' in shared:
+            # another instance was set up already, just reference its data
             self.ques = shared['ques']
             if 'annotation' in shared:
                 self.annotation = shared['annotation']
             self.image_loader = shared['image_loader']
         else:
+            # need to set up data from scratch
+            data_path, annotation_path, self.image_path = _path(opt)
             self._setup_data(data_path, annotation_path)
             self.image_loader = ImageLoader(opt)
 
         self.reset()
 
     def reset(self):
-        super().reset()
-        self.example = None
-        # call this once to get the cache moving
-        self.next_example()
+        super().reset()  # call parent reset so other fields can be set up
+        self.example = None  # set up caching fields
+        self.next_example()  # call this once to get the cache moving
 
     def num_examples(self):
         return len(self.ques['questions'])
@@ -86,7 +86,6 @@ class OeTeacher(FixedDialogTeacher):
         self.data_loader.request_load(self.receive_data, self.image_loader.load, (img_path,))
 
     def get(self, episode_idx, entry_idx=0):
-        # queue up the next one
         qa = self.ques['questions'][episode_idx]
         question = qa['question']
 
@@ -97,24 +96,31 @@ class OeTeacher(FixedDialogTeacher):
         }
 
         if not self.datatype.startswith('test'):
+            # test set annotations are not available for this dataset
             anno = self.annotation['annotations'][episode_idx]
             action['labels'] = [ans['answer'] for ans in anno['answers']]
 
         return action
 
     def next_example(self):
-        # save the currently queued example
+        """Returns the next example from this dataset after starting to queue
+        up the next example.
+        """
         ready = None
+        # pull up the currently queued example
         if self.example is not None:
             if self.image_mode != 'none':
+                # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
             ready = (self.example, self.epochDone)
-        # queue up the next example
+        # get the next base example: super().next_example() calls self.get()
         self.example, self.epochDone = super().next_example()
         if self.image_mode != 'none' and 'image_id' in self.example:
+            # load the next image in the background
             image_id = self.example['image_id']
             self.submit_load_request(image_id)
+        # return the previously cached example
         return ready
 
     def share(self):
@@ -143,7 +149,6 @@ class AllTeacher(OeTeacher):
     """
 
     def act(self):
-        episode_idx = self.episode_idx
         action = super().act()
 
         if not self.datatype.startswith('test'):

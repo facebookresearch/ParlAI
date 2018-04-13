@@ -50,11 +50,10 @@ class DataLoader(Thread):
 
     To submit a request, a teacher should call ``request_load`` with the
     following arguments:
-        - ``receive_fn`` - a receive function (for receiving the data)
-        - ``load_fn`` - a load function (for loading the data)
-        - ``args`` - arguments for the load function
-            -> args can be either a dictionary of arguments for a function, or
-               a list of positional arguments
+
+    :param receive_fn: a receive function (for receiving the data)
+    :param load_fn: a load function (for loading the data)
+    :param args: arguments for the load function. args can be either a dictionary of arguments for a function, or a list of positional arguments
     """
     def __init__(self, opt):
         Thread.__init__(self, daemon=True)
@@ -86,6 +85,10 @@ class FixedDialogTeacher(Teacher):
     - Provides a threadpool option for loading data (especially useful for
       large data, e.g. images)
 
+    In order to take advantage of the first few features, all a subclass has to
+    implement is three functions: ``num_episodes``, ``num_examples``, and
+    ``get`` (which returns a specific example from a specific episode).
+
     To utilize the DataLoader for threadpool loading, a teacher should
     implement the ``submit_load_request`` function to send a load request
     to the DataLoader by calling ``self.data_loader.request_load`` with the
@@ -95,24 +98,26 @@ class FixedDialogTeacher(Teacher):
 
     The following is an example of the DataLoader usage in the VQA-V1 teacher.
 
-        1. In the teacher's ``init`` function, the teacher calls its
-           ``submit_load_request`` function to preload an image.
-        2. The ``submit_load_request`` function gets the next ``episode_idx``,
-           and computes the image path for the load request.
-        3. At the end of ``submit_load_request``, the teacher calls
-           ``self.data_loader.request_load`` with three args:
-           - ``self.receive_data`` - the function that the DataLoader calls to
-               return the the loaded object
-           - ``self.image_loader.load`` - the function used to load the image
-               from the image path
-           - ``[img_path]`` - a list of arguments for the load function, which
-               in this case is the path of the image.
-         4. In the teacher's ``act`` function, the teacher loads the data from
-            its data queue.
-         5. At the end of the ``act`` function, the teacher calls
-            ``submit_load_request`` to preload an image for the next example.
+    1. In the teacher's ``init`` function, the teacher calls its
+       ``submit_load_request`` function to preload an image.
+    2. The ``submit_load_request`` function gets the next ``episode_idx``,
+       and computes the image path for the load request.
+    3. At the end of ``submit_load_request``, the teacher calls
+       ``self.data_loader.request_load`` with three args:
 
+        - ``self.receive_data`` - the function that the DataLoader calls to
+          return the the loaded object
+        - ``self.image_loader.load`` - the function used to load the image
+          from the image path
+        - ``[img_path]`` - a list of arguments for the load function, which
+          in this case is the path of the image.
 
+    4. In the teacher's ``act`` function, the teacher loads the data from
+       its data queue.
+    5. At the end of the ``act`` function, the teacher calls
+       ``submit_load_request`` to preload an image for the next example.
+
+    To see this in action, take a look at this teacher in ``tasks.vqa_v1.agents``.
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -206,15 +211,23 @@ class FixedDialogTeacher(Teacher):
         """An agent should implement this method to submit requests to the
         data loader. At the end of this method, the agent should call
         ``self.data_loader.request_load()`` with the appropriate args.
+
+        By default, this method does nothing.
         """
         pass
 
     def receive_data(self, future):
-        """Function for receiving data from the data loader."""
+        """Function for receiving data from the data loader.
+
+        :param future: result from the load request.
+        """
         data = future.result()
         self.data_queue.put(data)
 
     def share(self):
+        """Shares data structures between other instances created for batching
+        or hogwild.
+        """
         shared = super().share()
 
         if hasattr(self, 'lastYs'):
@@ -235,6 +248,11 @@ class FixedDialogTeacher(Teacher):
         return shared
 
     def next_episode_idx(self, num_eps=None, loop=None):
+        """Returns the next episode index.
+
+        :param num_eps: default None uses ``num_episodes`` value.
+        :param loop: default None loops during training but not evaluation.
+        """
         if num_eps is None:
             num_eps = self.num_episodes()
         if loop is None:
@@ -250,6 +268,11 @@ class FixedDialogTeacher(Teacher):
         return new_idx
 
     def next_example(self):
+        """Returns the next example.
+        If there are multiple examples in the same episode, returns the next
+        one in that episode. If that episode is over, gets a new episode index
+        and returns the first example of that episode.
+        """
         if self.episode_done:
             self.episode_idx = self.next_episode_idx()
             self.entry_idx = 0
@@ -271,6 +294,7 @@ class FixedDialogTeacher(Teacher):
         return ex, epoch_done
 
     def next_batch(self):
+        """Returns the next batch of examples."""
         # get next batch
         with self._lock():
             self.index.value += 1
@@ -306,10 +330,13 @@ class FixedDialogTeacher(Teacher):
 
     def get(self, episode_idx, entry_idx=0):
         """Get the specified episode and the specified entry in that episode.
-
-        Many datasets have only single-entry episodes, so entry_idx defaults to
-        zero. Children must override this method in order to inherit the
+        Children must override this method in order to inherit the
         `next_example` method.
+
+        :param episode_idx: which episode to return examples from
+        :param entry_idx: which example to return from the episode.
+                          Many datasets have only single-entry episodes,
+                          so this defaults tozero.
         """
         raise RuntimeError('"Get" method must be overriden by children.')
 
@@ -325,6 +352,7 @@ class FixedDialogTeacher(Teacher):
         return observation
 
     def batch_act(self, observations):
+        """Returns an entire batch of examples instead of just one."""
         # we ignore observations
         if not hasattr(self, 'epochDone'):
             # reset if haven't yet
@@ -370,22 +398,21 @@ class DialogTeacher(FixedDialogTeacher):
 
     - uses data class to store and query text data
     - generates action tables to send to the student agent from the data
-    - metrics tracking count of sent vs correctly answered queries
 
     If you have ``opt.numthreads > 1``, this also activates a shared memory
     array for the data and lock-protected shared-memory metrics.
 
-    In order to subclass this class, you must implement ``setup_data()`` in your
-    class (or subclass another class which does, like ``FbDialogTeacher``), which
-    reads your data file as an iterator.
+    In order to subclass this class, you must implement ``setup_data()`` in
+    your class (or subclass another class which does, like
+    ``FbDialogTeacher``), which reads your data file as an iterator.
     """
 
     def __init__(self, opt, shared=None):
         # Check for setup_data
         if not hasattr(self, 'setup_data'):
-            raise RuntimeError('Must implement setup_data or subclass a class' +
-                               ' which implements it (e.g. FbDialogTeacher)' +
-                               ' in order to use this class.')
+            raise RuntimeError('Must implement setup_data or subclass a class '
+                               'which implements it (e.g. FbDialogTeacher) '
+                               'in order to use this class.')
         super().__init__(opt, shared)
 
         self.startTime = time.time()
@@ -401,7 +428,7 @@ class DialogTeacher(FixedDialogTeacher):
                 self.data = data_class(opt, shared=shared['data'], **kwargs)
             else:
                 self.data = data_class(opt, data_loader=self.setup_data,
-                    cands=self.label_candidates(), **kwargs)
+                                       cands=self.label_candidates(), **kwargs)
 
         self.reset()
 
@@ -457,31 +484,33 @@ class DialogData(object):
     All these are stored in this internal data format which is used by the
     ``DialogTeacher`` class.
 
-    ``data_loader`` is an iterable, with each call returning:
+    :param opt: options to initialize the class
 
-        ``(x, ...), new_episode?``
+    :param data_loader: an iterable with each call returning a tuple in the
+                        form ``((x, y, r, c, i), new_episode?)`` where
+                        the ``x`` and ``new_episode`` fields are mandatory and
+                        other fields may be omitted or ``None``.
 
-        Where
+    :param cands: can be set to provide a list of candidate labels for every
+                  example in this dataset, which the agent can choose from (the
+                  correct answer should be in this set).
 
-        - ``x`` is a query and possibly context
+    :param random: tells the data class whether or not to visit episodes
+                   sequentially or randomly when returning examples to the
+                   caller.
 
-        ``...`` can contain additional fields, specifically
+    The contents of the ``((x, y, r, c, i), new_episode?)`` tuples returned by
+    the data loader is the following:
 
-        - ``y`` is an iterable of label(s) for that query
-        - ``r`` is the str reward for getting that query correct
-        - ``c`` is an iterable of label candidates that the student can choose from
-        - ``i`` is a str path to an image on disk, which will be loaded by the data
-          class at request-time. should always point to the raw image file.
-        - ``new_episode?`` is a boolean value specifying whether that example is the start of a new episode. If you don't use episodes set this to ``True`` every time.
-
-
-    ``cands`` can be set to provide a list of candidate labels for every example
-    in this dataset, which the agent can choose from (the correct answer
-    should be in this set).
-
-
-    ``random`` tells the data class whether or not to visit episodes sequentially
-    or randomly when returning examples to the caller.
+    - ``x`` (str) is a query and possibly context
+    - ``y`` (iter) is an iterable of label(s) for that query
+    - ``r`` (str) is the str reward for getting that query correct
+    - ``c`` (iter) is an iterable of label candidates that the student can choose from
+    - ``i`` (str) is a str path to an image on disk, which will be loaded by the
+      data class at request-time. should always point to the raw image file.
+    - ``new_episode?`` (bool) is a boolean value specifying whether that example
+      is the start of a new episode. If you don't use episodes set this
+      to ``True`` every time.
     """
 
     def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
@@ -508,12 +537,15 @@ class DialogData(object):
         }
         return shared
 
-    def _read_episode(self, data_generator):
-        """Reads one episode at a time from the provided iterator over entries.
+    def _read_episode(self, data_loader):
+        """Reads one episode at a time from the provided iterable over entries.
+
+        :param data_loader: an iterable which returns tuples in the format
+                            described in the class docstring.
         """
         episode = []
         last_cands = None
-        for entry, new in data_generator:
+        for entry, new in data_loader:
             if new and len(episode) > 0:
                 yield tuple(episode)
                 episode = []
@@ -567,8 +599,12 @@ class DialogData(object):
             yield tuple(episode)
 
     def _load(self, data_loader, datafile):
-        """Loads up data from an iterator over tuples described in the class
+        """Loads up data from an iterable over tuples described in the class
         docs.
+
+        :param data_loader: (iter) an iterator which returns tuples in the
+                            format described in the class docstring.
+        :param datafile: (str)
         """
         for episode in self._read_episode(data_loader(datafile)):
             self.data.append(episode)
@@ -584,7 +620,13 @@ class DialogData(object):
         return sum(len(episode) for episode in self.data)
 
     def get(self, episode_idx, entry_idx=0):
-        """Returns a specific entry from the dataset."""
+        """Get the specified episode and the specified entry in that episode.
+
+        :param episode_idx: which episode to return examples from
+        :param entry_idx: which example to return from the episode.
+                          Many datasets have only single-entry episodes,
+                          so this defaults tozero.
+        """
         # first look up data
         episode = self.data[episode_idx]
         entry = episode[entry_idx]
@@ -599,7 +641,10 @@ class DialogData(object):
         return table, end_of_data
 
     def build_table(self, entry):
-        """Packs an entry into an action-observation dictionary."""
+        """Packs an entry into an action-observation dictionary.
+
+        :param entry: a tuple in the form described in the class docstring.
+        """
         table = {}
         if entry[0] is not None:
             table['text'] = entry[0]
@@ -646,6 +691,24 @@ class StreamDialogData(DialogData):
 
     Additional keyword-argument cycle defines if the stream should restart from
     the beginning after an epoch is finished (defaults to True).
+
+    :param opt: options to initialize the class
+
+    :param data_loader: an iterable with each call returning a tuple in the
+                        form ``((x, y, r, c, i), new_episode?)`` where
+                        the ``x`` and ``new_episode`` fields are mandatory and
+                        other fields may be omitted or ``None``.
+
+    :param cands: can be set to provide a list of candidate labels for every
+                  example in this dataset, which the agent can choose from (the
+                  correct answer should be in this set).
+
+    :param random: tells the data class whether or not to visit episodes
+                   sequentially or randomly when returning examples to the
+                   caller.
+
+    :param cycle: (default True) whether to restart at beginning when end of
+                  stream reached without reset being called.
     """
 
     def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
@@ -653,7 +716,7 @@ class StreamDialogData(DialogData):
         super().__init__(opt, data_loader, cands, shared, **kwargs)
         self.cycle = kwargs['cycle'] if 'cycle' in kwargs else True
         if shared:
-            # auxiliary instances hold pointer to main datastream (in self.data)
+            # auxiliary instances hold pointer to main datastream in self.data
             self.reset_data = shared['reset']
             # Share datafile and data_loader for computing num_exs and num_eps
             self.datafile = shared['datafile']
@@ -667,7 +730,7 @@ class StreamDialogData(DialogData):
             self.reset_data = None
             self.is_reset = True
             if opt.get('numthreads', 1) > 1:
-                print('WARNING: multithreaded steaming will process every '
+                print('WARNING: multithreaded streaming will process every '
                       'example numthreads times.')
                 self.lock = Lock()
         self.entry_idx = 0
@@ -704,6 +767,10 @@ class StreamDialogData(DialogData):
                 yield -1
 
     def load_length(self):
+        """Calculates the length of the dataset and caches it in a file.
+        Note that this can take some time for large datasets. Episode and entry
+        indexes cannot be specified during streaming.
+        """
         datafiles = self.datafile if type(self.datafile) is tuple else [self.datafile]
         length_file = datafiles[0] + ".lengths"
         if not os.path.isfile(length_file):
@@ -737,7 +804,8 @@ class StreamDialogData(DialogData):
 
     def get(self):
         """Returns a the next entry from the stream in the current episode for
-        this instance. When episode is done returns first entry of next episode.
+        this instance. When episode is done returns first entry of next
+        episode.
         """
         # first look up data
         if self.next_episode != -1 or self.entry_idx != 0:
@@ -770,7 +838,7 @@ class StreamDialogData(DialogData):
         return table, end_of_data
 
     def reset(self):
-        """Reset the datastream to its beginning"""
+        """Reset the datastream to its beginning."""
         if self.reset_data is not None:
             # auxiliary instance, reset main datastream
             self.data = self.reset_data()
@@ -788,8 +856,10 @@ class FbDialogTeacher(DialogTeacher):
     """This module provides access to data in the Facebook Dialog format.
 
 
-    Subclasses ``DialogTeacher`` for functionality and provides an implementation
-    of ``setup_data()`` which iterates over datasets in the "fbdialog" format.
+    Subclasses ``DialogTeacher`` for functionality and provides an
+    implementation of ``setup_data()`` which iterates over datasets in the
+    "fbdialog" format. If your data is in the format below, use this class to
+    handle file parsing for you.
 
     The way FB Dialog data is set up is as follows:
 
@@ -798,12 +868,12 @@ class FbDialogTeacher(DialogTeacher):
         1 Sam went to the kitchen.
         2 Pat gave Sam the milk.
         3 Where is the milk?<TAB>kitchen<TAB>1<TAB>hallway|kitchen|bathroom
-        4 Sam went to the hallway
-        5 Pat went to the bathroom
+        4 Sam went to the hallway.
+        5 Pat went to the bathroom.
         6 Where is the milk?<TAB>hallway<TAB>1<TAB>hallway|kitchen|bathroom
 
-    Lines 1-6 represent a single episode, with two different examples: the first
-    example is lines 1-3, and the second is lines 4-6.
+    Lines 1-6 represent a single episode, with two different examples: the
+    first example is lines 1-3, and the second is lines 4-6.
 
     Lines 1,2,4, and 5 represent contextual information.
 
@@ -811,8 +881,9 @@ class FbDialogTeacher(DialogTeacher):
     correct, and three label candidates.
 
     Since both of these examples are part of the same episode, the information
-    provided in the first example is relevant to the query in the second example
-    and therefore the agent must remember the first example in order to do well.
+    provided in the first example is relevant to the query in the second
+    example and therefore the agent must remember the first example in order to
+    do well.
 
     In general dialog in this format can be any speech, not just QA pairs:
 
@@ -823,6 +894,22 @@ class FbDialogTeacher(DialogTeacher):
         3 Oh cool!<TAB>Tell me about yours.
 
     etc.
+
+    Note that dialogs are interpreted as being one-way. For example, consider
+    this dialog:
+
+    ::
+
+        1 X1    Y1
+        2 X2    Y2
+        3 X3    Y3
+
+    A set of examples X1 => Y1, X2 => Y2, and X3 => Y3 will be generated.
+    However, Y1 => X2 and Y2 => X3 are not created as separate examples by
+    default. This makes sense for some data (we don't need to train on the idea
+    that "kitchen" should be followed by "Sam went to the hallway..." above),
+    but for other datasets it may be helpful to add additional examples in the
+    reverse direction ("Oh cool!" is a response to "Oh me too!" above).
     """
 
     def __init__(self, opt, shared=None):
@@ -883,8 +970,8 @@ class FbDialogTeacher(DialogTeacher):
 
         Returns ``((x,y,r,c), new_episode?)`` tuples.
 
-        ``x`` represents a query, ``y`` represents the labels, ``r`` represents any reward,
-        and ``c`` represents any label_candidates.
+        ``x`` represents a query, ``y`` represents the labels, ``r`` represents
+        any reward, and ``c`` represents any label_candidates.
 
         The example above will be translated into the following tuples:
 
