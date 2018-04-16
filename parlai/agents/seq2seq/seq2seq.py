@@ -138,6 +138,8 @@ class Seq2seqAgent(Agent):
                                 'Fasttext.'
                                 'Preinitialized embeddings can also be fixed '
                                 'so they are not updated during training.')
+        agent.add_argument('-rf', '--report-freq', type=float, default=0.001,
+                   help='Report frequency of prediction during eval.')
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
@@ -150,6 +152,7 @@ class Seq2seqAgent(Agent):
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
         self.metrics = {'loss': 0.0, 'num_tokens': 0}
         self.history = {}
+        self.report_freq = opt.get('report_freq', 0.001)
         states = {}
 
         # check for cuda
@@ -556,7 +559,7 @@ class Seq2seqAgent(Agent):
         if is_training:
             report_freq = 0
         else:
-            report_freq = 0.001
+            report_freq = self.report_freq
         PaddingUtils.map_predictions(
             predictions.cpu().data, valid_inds, batch_reply, observations,
             self.dict, self.END_IDX, report_freq=report_freq, labels=labels,
