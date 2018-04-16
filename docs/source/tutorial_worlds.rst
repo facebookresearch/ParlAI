@@ -40,7 +40,9 @@ one of its threads to do a parley with its copy of the original base world.
 
 There's some added complexity in the implementation of the class to manage
 synchronization primitives, but the Hogwild world should generally behave just
-like a regular World, so you shouldn't need to worry about it.
+like a regular World, so you shouldn't need to worry about it. If you do want
+to check out the implementation, look for HogwildWorld in the `core/worlds.py file
+<https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/worlds.py>`_.
 
 Sharing needs to be implemented properly within all these agents and worlds so
 all the proper information is shared and synced between the threads. We'll take
