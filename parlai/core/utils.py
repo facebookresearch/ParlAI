@@ -553,4 +553,4 @@ class OffensiveLanguageDetector(object):
             if res:
                 return res
 
-        return False
+        return None
