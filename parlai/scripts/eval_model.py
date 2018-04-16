@@ -19,6 +19,7 @@ from parlai.core.utils import Timer
 import random
 import os
 
+
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True)
@@ -28,6 +29,7 @@ def setup_args(parser=None):
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.set_defaults(datatype='valid')
     return parser
+
 
 def eval_model(opt, printargs=None, print_parser=None):
     """Evaluates a model.

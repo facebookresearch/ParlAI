@@ -15,7 +15,8 @@ Its goal is to provide researchers:
 
 - a unified framework for sharing, training and testing dialog models
 - many popular datasets available all in one place, with the ability to multi-task over them
-- seamless integration of Amazon Mechanical Turk for data collection and human evaluation
+- seamless integration of `Amazon Mechanical Turk <http://parl.ai/static/docs/tutorial_mturk.html>`_ for data collection and human evaluation
+- integration with `Facebook Messenger <http://parl.ai/static/docs/tutorial_messenger.html>`_ to connect agents with humans in a chat interface
 
 Install
 -------
@@ -66,16 +67,17 @@ Observations are structured as a python `dict` with the following fields:
     :width: 60 %
 
 
+**Note**: during validation and testing, the ``labels`` field is renamed
+``eval_labels``--this way, the model won't accidentally train on the labels,
+but they are still available for calculating model-side loss
+
+
 All of these fields are technically optional, and each task should use them
 according to what kind of information is available in that task (for example,
 not all tasks contain explicit rewards, or a set of candidate labels to choose from).
 
-During validation and testing, we move the labels to a different field called
-'eval_labels'--this way, the model won't accidentally train on the labels, but
-they are still available for calculating model-side loss.
-
 Dataset-specific fields are available in some cases in order to support
-reproducing paper results. For example, SQuAD has an "answer_starts" field,
+reproducing paper results. For example, SQuAD has an ``answer_starts`` field,
 which is available in the "squad:index" task.
 
 Teachers
@@ -149,7 +151,7 @@ BatchWorld and a HogwildWorld. These worlds are automatically used when either
 the ``numthreads`` parameter or the ``batchsize`` parameter are set to greater
 than one. Some extra functionality is needed to get these to work on the side
 of both the teacher and the learner, but we'll cover that in a different
-tutorial.
+tutorial (see: `Batching and Hogwild Tutorial <http://parl.ai/static/docs/tutorial_worlds.html>`__. ).
 
 Simple Display Loop
 ^^^^^^^^^^^^^^^^^^^
@@ -178,20 +180,14 @@ available or else says "I don't know."
 .. code-block:: python
 
     class RepeatLabelAgent(Agent):
-        # #
         # initialize by setting id
-        # #
         def __init__(self, opt):
             self.id = 'LabelAgent'
-        # #
         # store observation for later, return it unmodified
-        # #
         def observe(self, observation):
             self.observation = observation
             return observation
-        # #
         # return label from before if available
-        # #
         def act(self):
             reply = {'id': self.id}
             if 'labels' in self.observation:
@@ -230,7 +226,7 @@ Tasks are specified in the following format:
   you to specify specific settings for certain tasks. For bAbI, this refers to the setting
   where there are only 1000 unique training examples per task.
 
-* '-t babi:task1k:1' sends 1 as a parameter to ``Task1kTeacher``, which is interpreted
+* '-t babi:task1k:1' provides 1 as a parameter to ``Task1kTeacher``, which is interpreted
   by the Task1kTeacher to mean "I want task 1" (as opposed to the 19 other bAbI tasks).
 
 * '-t babi,squad' sets up the ``DefaultTeacher`` for both babi and squad. Any number

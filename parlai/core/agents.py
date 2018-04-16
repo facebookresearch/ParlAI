@@ -15,7 +15,7 @@
     the ``Teacher`` class.
 
     ``MultiTaskTeacher(Teacher)``
-    creates a set of teachers based on a "task string" passed to the ``Teacher``,
+    creates a set of teachers based on a task string passed to the ``Teacher``,
     creating multiple teachers within it and alternating between them.
 
 All agents are initialized with the following parameters:
@@ -316,7 +316,7 @@ def create_agent(opt):
     (i.e. the path followed by the class name) or else just ``ir_baseline`` which
     assumes the path above, and a class name suffixed with 'Agent'.
 
-    If ``model-file'' is available in the options this function can also attempt to load
+    If ``model-file`` is available in the options this function can also attempt to load
     the model from that location instead. This avoids having to specify all the other
     options necessary to set up the model including its name as they are all loaded from
     the options file if it exists (the file opt['model_file'] + '.opt' must exist and

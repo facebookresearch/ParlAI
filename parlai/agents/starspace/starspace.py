@@ -147,7 +147,7 @@ class StarspaceAgent(Agent):
             print("[ creating Starspace thread " + str(self.threadindex)  + " ]")
             # set up shared properties
             self.dict = shared['dict']
-            self.model = shared['model'] #Starspace(opt, len(self.dict))
+            self.model = shared['model']
         else:
             print("[ creating StarspaceAgent ]")
             # this is not a shared instance of this class, so do full init
