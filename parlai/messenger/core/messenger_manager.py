@@ -568,7 +568,8 @@ class MessengerManager():
                         agents = [a for a in agents if a.disp_id is not None]
                         for a in agents:
                             # Remove selected workers from the agent pool
-                            self.remove_agent_from_pool(self._get_agent_state(a.id), world_type=world_type)
+                            self.remove_agent_from_pool(self._get_agent_state(a.id), \
+                                    world_type=world_type, mark_removed=False)
                         for a in agents:
                             partner_list = agents.copy()
                             partner_list.remove(a)
