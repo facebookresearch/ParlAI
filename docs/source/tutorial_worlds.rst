@@ -39,7 +39,8 @@ Now that this world is set up, every time we call parley on it, it will release
 one of its threads to do a parley with its copy of the original base world.
 
 There's some added complexity in the implementation of the class to manage
-synchronization primitives, but the Hogwild world should generally behave just like a regular World.
+synchronization primitives, but the Hogwild world should generally behave just
+like a regular World, so you shouldn't need to worry about it.
 
 Sharing needs to be implemented properly within all these agents and worlds so
 all the proper information is shared and synced between the threads. We'll take
@@ -74,6 +75,27 @@ http://pytorch.org/docs/master/notes/multiprocessing.html
 The primary things to remember are
 1. call ``model.share_memory()`` and include your model in the ``share()`` function
 2. make sure to switch the multiprocessing start method if CUDA is enabled
+
+You can see an example of this in the `Starspace model
+<https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/starspace/starspace.py>`_.
+This model uses multiple CPU threads for faster training, and does not use GPUs at all.
+
+Showing only the code relevant to model sharing, we see:
+
+.. code-block:: python
+
+    def __init__(self, opt, shared=None):
+        if shared:
+            torch.set_num_threads(1)  # otherwise torch uses multiple cores for computation
+            self.model = shared['model']  # don't set up model again yourself
+        else:
+            self.model = Starspace(opt, len(self.dict), self.dict)
+            self.model.share_memory()
+
+    def share(self):
+        shared = super().share()
+        shared['model'] = self.model
+        return shared
 
 
 Batching

@@ -15,9 +15,8 @@ Its goal is to provide researchers:
 
 - a unified framework for sharing, training and testing dialog models
 - many popular datasets available all in one place, with the ability to multi-task over them
-- seamless integration of Amazon Mechanical Turk for data collection and human evaluation
-
-    - *new:* integration with Facebook Messenger for an alternative UI for connecting agents
+- seamless integration of `Amazon Mechanical Turk <http://parl.ai/static/docs/tutorial_mturk.html>`_ for data collection and human evaluation
+- integration with `Facebook Messenger <http://parl.ai/static/docs/tutorial_messenger.html>`_ to connect agents with humans in a chat interface
 
 Install
 -------
@@ -152,7 +151,7 @@ BatchWorld and a HogwildWorld. These worlds are automatically used when either
 the ``numthreads`` parameter or the ``batchsize`` parameter are set to greater
 than one. Some extra functionality is needed to get these to work on the side
 of both the teacher and the learner, but we'll cover that in a different
-tutorial (see: `Batchign and Hogwild Tutorial <http://parl.ai/static/docs/tutorial_worlds.html>`__. ).
+tutorial (see: `Batching and Hogwild Tutorial <http://parl.ai/static/docs/tutorial_worlds.html>`__. ).
 
 Simple Display Loop
 ^^^^^^^^^^^^^^^^^^^
@@ -243,7 +242,7 @@ Validation and Testing
 During validation and testing, the 'labels' field is removed from the observation dict.
 This tells the agent not to use these labels for training--however, the labels are
 still available via the 'eval_labels' field in case you need to compute model-side
-metrics such as loss or perplexity.
+metrics such as perplexity.
 These modes can be set from the command line with '-dt valid' / '-dt test'.
 
 Now, the agent no longer has anything to say. For datasets which provide a set

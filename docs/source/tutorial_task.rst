@@ -7,7 +7,7 @@
 
 Creating a New Task
 ===================
-**Authors**: Alexander Holden Miller & Filipe de Avila Belbute Peres
+**Authors**: Alexander Holden Miller, Filipe de Avila Belbute Peres
 
 Adding new tasks to ParlAI is a simple process.
 In this tutorial we will go over the different ways a new task can be created.
