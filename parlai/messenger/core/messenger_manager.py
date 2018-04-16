@@ -150,12 +150,23 @@ class MessengerManager():
         # agents will refer to this value
         self.shutting_down = True
 
-    def _get_unique_pool(self):
+    def _get_unique_pool(self, eligibility_functions):
         """Return a filtered version of the agent pool where each agent is
         only listed a maximum of one time.
         """
         # TODO filter by psid -> agent id mappings for multi-page setup
-        return self.agent_pool
+        if eligibility_functions is None:
+            return self.agent_pool
+
+        valid_pools = {}
+        for world_type, agent_pool in self.agent_pool.items():
+            if world_type in eligibility_functions and \
+                    eligibility_functions[world_type] is not None:
+                valid_pools[world_type] = [w for w in agent_pool \
+                        if eligibility_functions[world_type](w)]
+            else:
+                valid_pools[world_type] = self.agent_pool[world_type]
+        return valid_pools
 
     def _handle_bot_read(self, agent_id):
         self.message_socket.send_read(agent_id)
@@ -466,7 +477,7 @@ class MessengerManager():
         self.max_agents_for = max_agents_for
 
     def start_task(self, assign_role_functions, task_functions,
-                   max_time_in_pool=None):
+                   max_time_in_pool=None, eligibility_functions=None):
         """Handle running a task by checking to see when enough agents are
         in the pool to start an instance of the task. Continue doing this
         until the desired number of conversations is had.
@@ -502,7 +513,7 @@ class MessengerManager():
         while self.running:
             # Loop forever until the server is shut down
             with self.agent_pool_change_condition:
-                valid_pools = self._get_unique_pool()
+                valid_pools = self._get_unique_pool(eligibility_functions)
                 for world_type, agent_pool in valid_pools.items():
                     # check if agent has exceeded max time in pool
                     if max_time_in_pool is not None and \
@@ -556,8 +567,8 @@ class MessengerManager():
                         # versions of the task that require fewer agents
                         agents = [a for a in agents if a.disp_id is not None]
                         for a in agents:
-                            # Remove selected workers from the pool
-                            agent_pool.remove(self._get_agent_state(a.id))
+                            # Remove selected workers from the agent pool
+                            self.remove_agent_from_pool(self._get_agent_state(a.id), world_type=world_type)
                         for a in agents:
                             partner_list = agents.copy()
                             partner_list.remove(a)
