@@ -152,7 +152,7 @@ class Seq2seqAgent(Agent):
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
         self.metrics = {'loss': 0.0, 'num_tokens': 0}
         self.history = {}
-        self.report_freq = opt['report_freq']
+        self.report_freq = opt.get('report_freq', 0.001)
         states = {}
 
         # check for cuda
