@@ -465,6 +465,7 @@ class OffensiveLanguageDetector(object):
     """Detects offensive language using a list of offensive language and phrases
     from https://github.com/LDNOOBW.
     """
+
     def __init__(self):
         import parlai.core.build_data as build_data
         from parlai.core.params import ParlaiParser
@@ -535,11 +536,10 @@ class OffensiveLanguageDetector(object):
             if toks[i] in node:
                 node = node[toks[i]]
                 if self.END in node:
-                    return True
+                    return ' '.join(toks[j] for j in range(idx, i + 1))
             else:
                 break
         return False
-
 
     def contains_offensive_language(self, text):
         """Determines if text contains any offensive words from the list."""
@@ -551,6 +551,6 @@ class OffensiveLanguageDetector(object):
         for i in range(len(toks)):
             res = self.check_sequence(toks, i, self.offensive_trie)
             if res:
-                return True
+                return res
 
-        return False
+        return None
