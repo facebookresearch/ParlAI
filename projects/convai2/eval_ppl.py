@@ -263,3 +263,6 @@ if __name__ == '__main__':
     # try with --numthreads N to go fast
     opt = parser.parse_args()
     eval_ppl(opt)
+    if opt['model'] == 'projects.convai2.eval_ppl:RepeatLabelEntry':
+        print('This run just used the example filler model. To get better '
+              'results, try implementing your own!')
