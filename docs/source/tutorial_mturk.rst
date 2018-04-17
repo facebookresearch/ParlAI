@@ -50,7 +50,7 @@ In ``QADataCollectionWorld``, there are two agents: one is the human Turker (``M
 
 The ``QADataCollectionWorld`` uses ``turn_index`` to denote what stage the conversation is at. One *turn* means that ``world.parley()`` has been called once.
 
-After two turns, the task is finished, and the Turker's work is submitted for your review.
+After two turns, the task is finished, and the Turker's work is submitted for review.
 
 
 Task 2: Evaluating a Dialog Model
@@ -66,7 +66,7 @@ In ``ModelEvaluatorWorld``, there are two main components: one is the ``task_wor
 
 Note that since the human Turker speaks only once to provide the rating, the ``ModelEvaluatorWorld`` doesn't need to use ``turn_index`` to keep track of the turns.
 
-After one turn, the task is finished, and the Turker's work is submitted for your review.
+After one turn, the task is finished, and the Turker's work is submitted for review.
 
 
 Task 3: Multi-Agent Dialog
@@ -158,7 +158,7 @@ Sometimes you may find that a task you have created is leading to a lot of worke
 Reviewing Turker's Work
 -----------------------
 
-After all HITs are completed, you can review the work through Amazon's online interface. You can also programmatically review work using the commands available in the `MTurkManager` class. See, for example, the  `review_work function <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/personachat/personachat_collect_personas/worlds.py/>`__ in the ``personachat_collect_personas`` task. In this task, HITs are automatically approved if they are deemed completed by the world.
+You can programmatically review work using the commands available in the `MTurkManager` class. See, for example, the  `review_work function <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/personachat/personachat_collect_personas/worlds.py/>`__ in the ``personachat_collect_personas`` task. In this task, HITs are automatically approved if they are deemed completed by the world.
 
 If you don't take any action in 4 weeks, all HITs will be auto-approved and Turkers will be paid.
 
