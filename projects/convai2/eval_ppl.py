@@ -39,8 +39,7 @@ def next_word_probability(self, observation, partial_out):
     {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
 """
 
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
-from parlai.core.agents import create_agent, create_agents_from_shared
+from parlai.core.agents import Agent, create_agent, create_agents_from_shared
 from parlai.core.build_data import download_models
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
@@ -63,7 +62,7 @@ def setup_args(parser=None):
     return parser
 
 
-class RepeatLabelEntry(RepeatLabelAgent):
+class WordFrequencyEntry(Agent):
     """This is an example entry which tries to use the RepeatLabelAgent.
     Since no labels are given to the model, it will guess something useless.
 
@@ -73,38 +72,32 @@ class RepeatLabelEntry(RepeatLabelAgent):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         if not shared:
-            # build official eval dictioanry
-            self.parse_dict = build_dict()
+            # build official eval dictionary
+            self.dict = build_dict()
         else:
-            self.parse_dict = shared['parse_dict']
+            # only build dict once
+            self.dict = shared['dict']
+        max_freq = self.dict.max_freq()
+        # set probability of each word, skipping the invalid words like __NULL__
+        # (which have frequency more than max_freq)
+        self.freqs = {k: f for k, f in self.dict.freqs().items() if f <= max_freq}
 
     def share(self):
         shared = super().share()
-        # share parse_dict with other threads instead of rebuilding every time
-        shared['parse_dict'] = self.parse_dict
+        # share dict with other threads instead of rebuilding in each
+        shared['dict'] = self.dict
         return shared
 
     def next_word_probability(self, observation, partial_out):
         """Example implementation of next word probability."""
+        # initialize probabilities with inverse word frequency
+        freqs = self.freqs.copy()
 
-        # first, retrieve what the agent would say to this input
-        super().observe(observation)
-        answer = super().act().get('text', '')
-
-        # assign minimum prob to every token in the eval dict (so no `inf` ppl)
-        probs = {k: 1e-6 for k in self.parse_dict.keys()}
-        if answer == '':
-            return probs
-
-
-        # parse the answers
-        parsed_ans = self.parse_dict.tokenize(answer)
-        # pick all words in answer
-        for token in parsed_ans:
-            probs[token] = 1 / len(parsed_ans)
-
-        # probs values will be normalized automatically to sum to one
-        return probs
+        # increase likelihood of predicting input words
+        tokens = self.dict.tokenize(observation.get('text', ''))
+        for t in tokens:
+            freqs[t] += 10000
+        return freqs
 
 class PerplexityWorld(World):
     """Instead of just calling act/observe on each agent, this world just calls
@@ -258,11 +251,11 @@ def eval_ppl(opt):
 
 if __name__ == '__main__':
     parser = setup_args()
-    # example model, it does bad
-    parser.set_defaults(model='projects.convai2.eval_ppl:RepeatLabelEntry')
+    # example model just uses word frequencies
+    parser.set_defaults(model='projects.convai2.eval_ppl:WordFrequencyEntry')
     # try with --numthreads N to go fast
     opt = parser.parse_args()
     eval_ppl(opt)
-    if opt['model'] == 'projects.convai2.eval_ppl:RepeatLabelEntry':
+    if opt['model'] == 'projects.convai2.eval_ppl:WordFrequencyEntry':
         print('This run just used the example filler model. To get better '
               'results, try implementing your own!')
