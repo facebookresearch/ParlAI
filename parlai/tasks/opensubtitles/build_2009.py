@@ -22,56 +22,53 @@ def _regularize(sent):
 
 def create_fb_format(inpath, outpath):
     print('[building fbformat]')
-    ftrain = open(os.path.join(outpath, 'train.txt'), 'w')
-    fvalid = open(os.path.join(outpath, 'valid.txt'), 'w')
-    ftest = open(os.path.join(outpath, 'test.txt'), 'w')
+    with open(os.path.join(outpath, 'train.txt'), 'w') as ftrain, \
+            open(os.path.join(outpath, 'valid.txt'), 'w') as fvalid, \
+            open(os.path.join(outpath, 'test.txt'), 'w') as ftest:
 
-    conv_id = 0
-    # find all the files.
-    for root, _subfolder, files in os.walk(inpath):
-        for f in files:
-            if f.endswith('.gz'):
-                dialog = []
-                conv_id = conv_id + 1
-                with gzip.open(os.path.join(root, f), 'r') as f1:
-                    words = []
-                    line_id = 1
-                    turn_id = 1
-                    for line in f1:
-                        line = str(line)
-                        if line.find('<s id="') != -1:
-                            # new sentence
-                            if len(words) > 0:
-                                curr_words = _regularize(''.join(words))
-                                if (turn_id % 2) == 0:
-                                    dialog.append(str(line_id))
-                                    dialog.append(' ')
-                                    dialog.append(curr_words)
-                                else:
-                                    dialog.append('\t')
-                                    dialog.append(curr_words)
-                                    dialog.append('\n')
-                                    line_id += 1
-                            turn_id = turn_id + 1
-                            words.clear()
-                        else:
-                            i1 = line.find('<w id="')
-                            if i1 >= 0:
-                                line = line[i1:]
-                                word = line[line.find('>')+1:line.find('</w')]
-                                words.append(' ')
-                                words.append(word.replace('\t', ' '))
-                handle = ftrain
-                if (conv_id % 10) == 0:
-                    handle = ftest
-                if (conv_id % 10) == 1:
-                    handle = fvalid
-                dialog.append('\n')
-                handle.write(''.join(dialog))
-
-    ftrain.close()
-    fvalid.close()
-    ftest.close()
+        conv_id = 0
+        # find all the files.
+        for root, _subfolder, files in os.walk(inpath):
+            for f in files:
+                if f.endswith('.gz'):
+                    dialog = []
+                    conv_id = conv_id + 1
+                    with gzip.open(os.path.join(root, f), 'r') as f1:
+                        words = []
+                        line_id = 1
+                        turn_id = 0
+                        for line in f1:
+                            line = str(line)
+                            if line.find('<s id="') != -1:
+                                # new sentence
+                                if len(words) > 0:
+                                    curr_words = _regularize(''.join(words))
+                                    if len(curr_words) > 0:
+                                        if (turn_id % 2) == 0:
+                                            dialog.append(str(line_id))
+                                            dialog.append(' ')
+                                            dialog.append(curr_words)
+                                        else:
+                                            dialog.append('\t')
+                                            dialog.append(curr_words)
+                                            dialog.append('\n')
+                                            line_id += 1
+                                        turn_id += + 1
+                                words.clear()
+                            else:
+                                i1 = line.find('<w id="')
+                                if i1 >= 0:
+                                    line = line[i1:]
+                                    word = line[line.find('>')+1:line.find('</w')]
+                                    words.append(' ')
+                                    words.append(word.replace('\t', ' '))
+                    handle = ftrain
+                    if (conv_id % 10) == 0:
+                        handle = ftest
+                    if (conv_id % 10) == 1:
+                        handle = fvalid
+                    dialog.append('\n')
+                    handle.write(''.join(dialog))
 
 
 def build(datapath):

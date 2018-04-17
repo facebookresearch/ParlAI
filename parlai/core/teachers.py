@@ -1002,11 +1002,16 @@ class FbDialogTeacher(DialogTeacher):
             for line in read:
                 line = line.strip().replace('\\n', '\n')
                 if len(line) == 0:
+                    # empty response
                     continue
 
                 # first, get conversation index -- '1' means start of episode
                 space_idx = line.find(' ')
-                conv_id = int(line[:space_idx])
+                if space_idx == -1:
+                    # empty line, both individuals are saying whitespace
+                    conv_id = int(line)
+                else:
+                    conv_id = int(line[:space_idx])
 
                 # split line into constituent parts, if available:
                 # x<tab>y<tab>reward<tab>label_candidates
