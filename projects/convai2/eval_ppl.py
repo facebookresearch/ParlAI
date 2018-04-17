@@ -257,9 +257,9 @@ def eval_ppl(opt):
               'vocabulary, you get inf probability immediately.')
 
 if __name__ == '__main__':
-    parser = ParlaiParser(True, True)
+    parser = setup_args()
     # example model, it does bad
     parser.set_defaults(model='projects.convai2.eval_ppl:RepeatLabelEntry')
-    # try with --numthreads 40 to go fast
+    # try with --numthreads N to go fast
     opt = parser.parse_args()
     eval_ppl(opt)
