@@ -279,6 +279,9 @@ class DictionaryAgent(Agent):
         for k, v in vars(dictionary).items():
             setattr(self, k, v)
 
+    def max_freq(self):
+        return max(self.freq[k] for k in self.freq.keys() if k not in [self.null_token, self.end_token, self.start_token, self.unk_token])
+
     def freqs(self):
         return self.freq
 
