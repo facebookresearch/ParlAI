@@ -97,15 +97,11 @@ class RepeatLabelEntry(RepeatLabelAgent):
             return probs
 
 
-        # look at word in specific index if there are enough tokens predicted
+        # parse the answers
         parsed_ans = self.parse_dict.tokenize(answer)
-        if len(partial_out) < len(parsed_ans):
-            # pick word at the right index
-            probs[parsed_ans[len(partial_out)]] = 1
-        else:
-            # pick all words in answer
-            for token in parsed_ans:
-                probs[token] = 1 / len(parsed_ans)
+        # pick all words in answer
+        for token in parsed_ans:
+            probs[token] = 1 / len(parsed_ans)
 
         # probs values will be normalized automatically to sum to one
         return probs
@@ -216,8 +212,8 @@ class PerplexityWorld(World):
         with self._lock():
             m['total'] = self.metrics['total']
             if m['total'] > 0:
-                m['num_unk'] = self.metrics['num_unk']
-                m['num_tokens'] = self.metrics['num_tokens']
+                # m['num_unk'] = self.metrics['num_unk']
+                # m['num_tokens'] = self.metrics['num_tokens']
                 m['loss'] = round_sigfigs(self.metrics['loss'] / self.metrics['num_tokens'], 3)
                 m['ppl'] = round_sigfigs(math.exp(self.metrics['loss'] / self.metrics['num_tokens']), 4)
         return m
