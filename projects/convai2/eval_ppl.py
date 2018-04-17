@@ -85,7 +85,7 @@ class RepeatLabelEntry(RepeatLabelAgent):
         return shared
 
     def next_word_probability(self, observation, partial_out):
-        # example implementation of next word probability.
+        """Example implementation of next word probability."""
 
         # first, retrieve what the agent would say to this input
         super().observe(observation)
@@ -257,4 +257,9 @@ def eval_ppl(opt):
               'vocabulary, you get inf probability immediately.')
 
 if __name__ == '__main__':
-    eval_ppl(ParlaiParser(True, True).parse_args())
+    parser = ParlaiParser(True, True)
+    # example model, it does bad
+    parser.set_defaults(model='projects.convai2.eval_ppl:RepeatLabelEntry')
+    # try with --numthreads 40 to go fast
+    opt = parser.parse_args()
+    eval_ppl(opt)
