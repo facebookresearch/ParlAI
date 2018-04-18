@@ -250,15 +250,15 @@ class Metrics(object):
         m['total'] = total
         if total > 0:
             if self.flags['print_prediction_metrics']:
-                m['accuracy'] = round_sigfigs(self.metrics['correct'] / self.metrics['correct_cnt'], 4)
-                m['f1'] = round_sigfigs(self.metrics['f1'] / self.metrics['f1_cnt'], 4)
+                m['accuracy'] = round_sigfigs(self.metrics['correct'] / max(1, self.metrics['correct_cnt']), 4)
+                m['f1'] = round_sigfigs(self.metrics['f1'] / max(1, self.metrics['f1_cnt']), 4)
                 if self.flags['has_text_cands']:
                     for k in self.eval_pr:
                         m['hits@' + str(k)] = round_sigfigs(
-                            self.metrics['hits@' + str(k)] / self.metrics['hits@_cnt'], 3)
+                            self.metrics['hits@' + str(k)] / max(1, self.metrics['hits@_cnt']), 3)
             for k in self.metrics_list:
                 if self.metrics[k + '_cnt'] > 0 and k != 'correct' and k != 'f1':
-                    m[k] = round_sigfigs(self.metrics[k] / self.metrics[k + '_cnt'], 4)
+                    m[k] = round_sigfigs(self.metrics[k] / max(1, self.metrics[k + '_cnt']), 4)
         return m
 
     def clear(self):
