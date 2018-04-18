@@ -24,7 +24,7 @@ tokenizer's parsing of the text.
 
 This requires agents to implement the following function:
 
-def next_word_probability(observation, partial_out):
+def next_word_probability(self, observation, partial_out):
     Return probability distribution over next words given an input and
     partial true output. This is used to calculate the per-word perplexity.
 
@@ -39,18 +39,14 @@ def next_word_probability(observation, partial_out):
     {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
 """
 
-from parlai.core.agents import create_agent
+from parlai.core.agents import Agent, create_agent, create_agents_from_shared
 from parlai.core.build_data import download_models
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import Timer, round_sigfigs
-from parlai.core.worlds import create_task
-from projects.convai2.build_dict import build_dict
-
-from parlai.core.agents import create_agents_from_shared
+from parlai.core.utils import Timer, round_sigfigs, no_lock
 from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import round_sigfigs, no_lock
-from parlai.core.worlds import World
+from parlai.core.worlds import create_task, World
+from projects.convai2.build_dict import build_dict
 
 import math
 
@@ -59,12 +55,49 @@ def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True)
     parser.set_defaults(
-        task='convai2:self',
+        task='convai2:self:no_cands',
         datatype='valid',
-        hide_labels=False,
+        hide_labels=False,  # will be shown to model partially in steps
     )
     return parser
 
+
+class WordFrequencyEntry(Agent):
+    """This is an example entry which tries to use the RepeatLabelAgent.
+    Since no labels are given to the model, it will guess something useless.
+
+    It builds the official dictionary first, so that it can provide a minimum
+    probablity for each word as well as use the official tokenizer.
+    """
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        if not shared:
+            # build official eval dictionary
+            self.dict = build_dict()
+        else:
+            # only build dict once
+            self.dict = shared['dict']
+        max_freq = self.dict.max_freq()
+        # set probability of each word, skipping the invalid words like __NULL__
+        # (which have frequency more than max_freq)
+        self.freqs = {k: f for k, f in self.dict.freqs().items() if f <= max_freq}
+
+    def share(self):
+        shared = super().share()
+        # share dict with other threads instead of rebuilding in each
+        shared['dict'] = self.dict
+        return shared
+
+    def next_word_probability(self, observation, partial_out):
+        """Example implementation of next word probability."""
+        # initialize probabilities with inverse word frequency
+        freqs = self.freqs.copy()
+
+        # increase likelihood of predicting input words
+        tokens = self.dict.tokenize(observation.get('text', ''))
+        for t in tokens:
+            freqs[t] += 10000
+        return freqs
 
 class PerplexityWorld(World):
     """Instead of just calling act/observe on each agent, this world just calls
@@ -98,7 +131,7 @@ class PerplexityWorld(World):
             if not hasattr(self.agent, 'next_word_probability'):
                 raise RuntimeError('Agent must implement function '
                                    '`next_word_probability`.')
-            self.metrics = {'total': 0, 'loss': 0.0, 'num_tokens': 0}
+            self.metrics = {'total': 0, 'loss': 0.0, 'num_tokens': 0, 'num_unk': 0}
             if opt.get('numthreads', 1) > 1:
                 self.metrics = SharedTable(self.metrics)
         self.agents = [self.task, self.agent, self.dict]
@@ -125,6 +158,7 @@ class PerplexityWorld(World):
         parsed = self.dict.tokenize(labels[0])
         loss = 0
         num_tokens = 0
+        num_unk = 0
         for i in range(len(parsed)):
             if parsed[i] in self.dict:
                 # only score words which are in the dictionary
@@ -137,10 +171,13 @@ class PerplexityWorld(World):
                 else:
                     loss = float('inf')
                 num_tokens += 1
+            else:
+                num_unk += 1
         with self._lock():
             self.metrics['total'] += 1
             self.metrics['loss'] += loss
             self.metrics['num_tokens'] += num_tokens
+            self.metrics['num_unk'] += num_unk
 
     def epoch_done(self):
         return self.task.epoch_done()
@@ -161,12 +198,15 @@ class PerplexityWorld(World):
             self.metrics['total'] = 0
             self.metrics['loss'] = 0
             self.metrics['num_tokens'] = 0
+            self.metrics['num_unk'] = 0
 
     def report(self, compute_time=None):
         m = {}
         with self._lock():
             m['total'] = self.metrics['total']
             if m['total'] > 0:
+                # m['num_unk'] = self.metrics['num_unk']
+                # m['num_tokens'] = self.metrics['num_tokens']
                 m['loss'] = round_sigfigs(self.metrics['loss'] / self.metrics['num_tokens'], 3)
                 m['ppl'] = round_sigfigs(math.exp(self.metrics['loss'] / self.metrics['num_tokens']), 4)
         return m
@@ -203,6 +243,21 @@ def eval_ppl(opt):
     tot_time += log_time.time()
     final_report = world.report()
     print('{}s elapsed: {}'.format(int(tot_time), final_report))
+    print("============================")
+    print("FINAL PPL: " +str(final_report['ppl']))    
+    if final_report.get('ppl', 0) == float('inf'):
+        print('Note: you got inf perplexity. Consider adding (or raising) the '
+              'minimum probability you assign to each possible word. If you '
+              'assign zero probability to the correct token in the evaluation '
+              'vocabulary, you get inf probability immediately.')
 
 if __name__ == '__main__':
-    eval_ppl(ParlaiParser(True, True).parse_args())
+    parser = setup_args()
+    # example model just uses word frequencies
+    parser.set_defaults(model='projects.convai2.eval_ppl:WordFrequencyEntry')
+    # try with --numthreads N to go fast
+    opt = parser.parse_args()
+    eval_ppl(opt)
+    if opt['model'] == 'projects.convai2.eval_ppl:WordFrequencyEntry':
+        print('This run just used the example filler model. To get better '
+              'results, try implementing your own!')

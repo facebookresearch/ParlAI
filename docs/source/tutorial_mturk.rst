@@ -7,13 +7,13 @@
 
 Using Mechanical Turk
 =====================
-**Authors**: Will Feng, Jack Urbanek
+**Authors**: Will Feng, Jack Urbanek, Emily Dinan
 
-In ParlAI, you can use Amazon Mechanical Turk for **data collection**, **training** and **evaluation** of your dialog model.
+In ParlAI, you can use Amazon Mechanical Turk for **data collection**, **training**, or **evaluation** of your dialog model.
 
-Human Turkers are viewed as just another type of agent in ParlAI, and hence person-to-person, person-to-bot, or multiple people and bots in group chat can all talk to each other within the same framework.
+Human Turkers are viewed as just another type of agent in ParlAI; hence, agents in a group chat consisting of any number of humans and/or bots can communicate with each other within the same framework.
 
-The human Turkers communicate in observation/action dict format, the same as all other agents in ParlAI. During the conversation, the message that human Turkers receive is rendered on the live chat webpage in a pretty printed format, similar to the following:
+The human Turkers communicate in observation/action dict format, the same as all other agents in ParlAI. During the conversation, human Turkers receive a message that is rendered on the live chat webpage, such as the following:
 
 .. figure:: _static/img/mturk-small.png
    :align: center
@@ -50,7 +50,7 @@ In ``QADataCollectionWorld``, there are two agents: one is the human Turker (``M
 
 The ``QADataCollectionWorld`` uses ``turn_index`` to denote what stage the conversation is at. One *turn* means that ``world.parley()`` has been called once.
 
-After two turns, the task is finished, and the Turker's work is submitted for your review.
+After two turns, the task is finished, and the Turker's work is submitted for review.
 
 
 Task 2: Evaluating a Dialog Model
@@ -66,7 +66,7 @@ In ``ModelEvaluatorWorld``, there are two main components: one is the ``task_wor
 
 Note that since the human Turker speaks only once to provide the rating, the ``ModelEvaluatorWorld`` doesn't need to use ``turn_index`` to keep track of the turns.
 
-After one turn, the task is finished, and the Turker's work is submitted for your review.
+After one turn, the task is finished, and the Turker's work is submitted for review.
 
 
 Task 3: Multi-Agent Dialog
@@ -117,7 +117,7 @@ If you have not used Mechanical Turk before, you will need an MTurk Requester Ac
 
 - MTurk also has a “Sandbox” which is a test version of the MTurk marketplace. You can use it to test publishing and completing tasks without paying any money. ParlAI supports the Sandbox. To use the Sandbox, you need to sign up for a `Sandbox account <http://requestersandbox.mturk.com/>`__. You will then also need to `link your AWS account <http://requestersandbox.mturk.com/developer>`__ to your Sandbox account. In order to test faster, you will also want to create a `Sandbox Worker account <http://workersandbox.mturk.com/>`__. You can then view tasks your publish from ParlAI and complete them yourself.
 
-- ParlAI's MTurk functionality requires a free heroku account which can be obtained `here <https://signup.heroku.com/>`__. Running any ParlAI MTurk operation will walk you through linking the two.
+- ParlAI's MTurk default functionality requires a free heroku account which can be obtained `here <https://signup.heroku.com/>`__. Running any ParlAI MTurk operation will walk you through linking the two. If, instead, you wish to run ParlAI MTurk's node server on the same machine you are running ParlAI from, use the flag ``--local``. Note that if you specify this flag, you will need to set up SSL for your server.
 
 Then, to run an MTurk task, first ensure that the task directory is in `parlai/mturk/tasks/ <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/>`__. Then, run its ``run.py`` file with proper flags:
 
@@ -143,6 +143,8 @@ Additional flags can be used for more specific purposes.
 
 - ``--count-complete`` only counts completed assignments towards the num_conversations requested. This may lead to more conversations being had than requested (and thus higher costs for instances where one Turker disconnects and we pay the other) but it ensures that if you request 1,000 conversations you end up with at least 1,000 completed data points.
 
+- ``--max-connections`` controls the number of HITs can be launched at the same time. If not specified, it defaults to 30; 0 is unlimited.
+
 
 Handling Turker Disconnects
 ---------------------------
@@ -156,7 +158,7 @@ Sometimes you may find that a task you have created is leading to a lot of worke
 Reviewing Turker's Work
 -----------------------
 
-After all HITs are completed, you can review the work through Amazon's online interface. You can also programmatically review work using the commands available in the `MTurkManager` class.
+You can programmatically review work using the commands available in the `MTurkManager` class. See, for example, the  `review_work function <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/personachat/personachat_collect_personas/worlds.py/>`__ in the ``personachat_collect_personas`` task. In this task, HITs are automatically approved if they are deemed completed by the world.
 
 If you don't take any action in 4 weeks, all HITs will be auto-approved and Turkers will be paid.
 

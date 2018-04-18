@@ -13,14 +13,20 @@ from parlai.scripts.eval_model import eval_model, setup_args as base_setup_args
 def setup_args(parser=None):
     parser = base_setup_args(parser)
     parser.set_defaults(
-        task='convai2:self',
+        task='convai2:self:no_cands',
         datatype='valid',
         hide_labels=True,
     )
     return parser
 
+def eval_f1(opt, print_parser):
+    report = eval_model(opt, print_parser)
+    print("============================")
+    print("FINAL F1: " +str(report['f1']))
 
 if __name__ == '__main__':
     parser = setup_args()
     opt = parser.parse_args()
-    eval_model(opt, print_parser=parser)
+    report = eval_f1(opt, parser)
+
+    
