@@ -55,7 +55,7 @@ def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True)
     parser.set_defaults(
-        task='convai2:self',
+        task='convai2:self:no_cands',
         datatype='valid',
         hide_labels=False,  # will be shown to model partially in steps
     )
@@ -243,6 +243,8 @@ def eval_ppl(opt):
     tot_time += log_time.time()
     final_report = world.report()
     print('{}s elapsed: {}'.format(int(tot_time), final_report))
+    print("============================")
+    print("FINAL PPL: " +str(final_report['ppl']))    
     if final_report.get('ppl', 0) == float('inf'):
         print('Note: you got inf perplexity. Consider adding (or raising) the '
               'minimum probability you assign to each possible word. If you '

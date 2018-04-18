@@ -19,8 +19,12 @@ def setup_args(parser=None):
     )
     return parser
 
+def eval_hits(opt, print_parser):
+    report = eval_model(opt, print_parser)
+    print("============================")
+    print("FINAL Hits@1: " +str(report['hits@1']))
 
 if __name__ == '__main__':
     parser = setup_args()
     opt = parser.parse_args()
-    eval_model(opt, print_parser=parser)
+    eval_hits(opt, parser)
