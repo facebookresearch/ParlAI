@@ -35,12 +35,15 @@ We provide three examples of using Facebook Messenger with ParlAI:
 
 Task 1: Testing a Model
 ^^^^^^^^^^^^^^^^^^^^^^^
-Oftentimes it's important to test a created model against humans to evaluate how well it is performing on a number of metrics. This generic ChatBot world allows you to attach a model to a page, and then users who interact with that page will be paired into a conversation with that bot.
+Oftentimes it's important to host a created model against humans to evaluate how well it is performing on a number of metrics. This generic ChatBot world allows you to attach a model to a page, and then users who interact with that page will be paired into a conversation with that bot.
 
-As it is currently implemented, the collected conversations can be observed and rated, though it's possible to imagine requesting that the human participant rate their conversational partner at the end of the conversation as another way to evaluate the model.
+As it is currently implemented, the collected conversations can be observed and rated manually by the ParlAI user. It's possible to imagine requesting that the human participant rate their conversational partner at the end of the conversation as another way to evaluate the model.
 
 To run a bot with this world, you'll need to provide the `run.py` command with the same model opts you would use elsewhere in a ParlAI environment.
-
+For instance, after downloading the personachat models you can run:
+```
+python run.py --model projects.personachat.kvmemnn.kvmemnn:Kvmemnn --model_file models:personachat/kvmemnn/kvmemnn/persona-self_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops1_lins0_model
+```
 
 Task 2: Collecting Training Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
