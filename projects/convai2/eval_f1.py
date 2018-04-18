@@ -19,8 +19,8 @@ def setup_args(parser=None):
     )
     return parser
 
-def eval_f1(opt, parser):
-    report = eval_model(opt, print_parser=parser)
+def eval_f1(opt, print_parser):
+    report = eval_model(opt, print_parser)
     print("============================")
     print("FINAL F1: " +str(report['f1']))
 
