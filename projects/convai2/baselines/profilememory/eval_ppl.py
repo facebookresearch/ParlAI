@@ -4,21 +4,13 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.agents import create_agent, create_agents_from_shared
 from parlai.core.build_data import download_models
 from projects.convai2.build_dict import build_dict
 from projects.convai2.eval_ppl import setup_args, eval_ppl
-from parlai.core.dict import DictionaryAgent
-from parlai.core.params import ParlaiParser
-from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import Timer, round_sigfigs, no_lock
-from parlai.core.worlds import World, create_task
 from projects.personachat.persona_seq2seq import PersonachatSeqseqAgentSplit
 import torch.nn.functional as F
 from torch.autograd import Variable
-from torch.autograd import Variable
 import torch
-import math
 import random
 
 
@@ -63,9 +55,9 @@ class ProfileMemoryEntry(PersonachatSeqseqAgentSplit):
 
         xs, xs_persona, ys, labels, valid_inds, cands, valid_cands, zs, eval_labels = self.batchify(obs)
 
-        self.encoder.train(mode=False)
-        self.encoder_persona.train(mode=False)
-        self.decoder.train(mode=False)
+        self.encoder.eval()
+        self.encoder_persona.eval()
+        self.decoder.eval()
 
         encoder_output_persona, hidden_persona, guide_indices = self._encode_persona(xs_persona, ys, False)
         encoder_output, hidden = self._encode(xs, False)
@@ -133,19 +125,12 @@ class ProfileMemoryEntry(PersonachatSeqseqAgentSplit):
         probs = probs.tolist()
         dist = self.probs
         for i in range(0, len(probs[0])):
-            if hasattr(probs, 'item'):
-                dist[self.dict[i+1]] = probs[i].item()
-            else:
-                dist[self.dict[i+1]] = probs[0][i]
+            dist[self.dict[i+1]] = probs[0][i]
         return dist
 
 
 if __name__ == '__main__':
     parser = setup_args()
-    parser.add_argument('-n', '--num-examples', default=100000000)
-    parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    PersonachatSeqseqAgentSplit.add_cmdline_args(parser)
 
     parser.set_defaults(
         dict_file='models:convai2/profilememory/profilememory_convai2.dict',
