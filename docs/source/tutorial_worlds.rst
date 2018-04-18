@@ -249,3 +249,14 @@ for GPU-based models, which prefer to process more examples at a time.
 
 Tip: if you implement ``batch_act()``, your ``act()`` method can just call ``batchact()``
 and pass the observation it is supposed to process in a list of length 1.
+
+Multiprocessed Data Loading
+~~~~~~~~~~~~~~
+For large datasets, where it is best to stream from disk during training
+rather than load initially into memory, we provide a teacher that utilizes pytorch data loading
+(http://pytorch.org/tutorials/beginner/data_loading_tutorial.html).
+The teacher allows for multiprocessed dataloading, and even provides a way of
+performing the same batch tricks described above (that is, sorting the data
+and constructing batches of roughly equal size to avoid excess
+padding), all in real time. You can find instructions on how to use the
+teacher at https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/pytorch_data_teacher.py.
