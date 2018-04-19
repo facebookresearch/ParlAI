@@ -34,19 +34,8 @@ def interactive(opt):
         opt = opt.parse_args()
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
 
-    nomodel = False
-    # check to make sure the model file exists
-    if opt.get('model_file') is None:
-        nomodel = True
-    elif not os.path.isfile(opt['model_file']):
-        raise RuntimeError('WARNING: Model file does not exist, check to make '
-                           'sure it is correct: {}'.format(opt['model_file']))
-
     # Create model and assign it to the specified task
-    agent = create_agent(opt)
-    if nomodel and hasattr(agent, 'load'):
-        # double check that we didn't forget to set model_file on loadable model
-        print('WARNING: model_file unset but model has a `load` function.')
+    agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
 
     # Show some example dialogs:
