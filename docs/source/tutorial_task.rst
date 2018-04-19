@@ -141,7 +141,7 @@ In this section we will illustrate the process of using the ``FbDialogTeacher``
 class by adding the MTurk WikiMovies question-answering task.
 This task has data in textual form and has been formatted to follow the Facebook Dialog format.
 It is thus very simple to implement it using ``FbDialogTeacher``.
-More information on this class and the dialog format can be found `here <http://parl.ai/static/docs/teachers.html#FbDialogTeacher>`__.
+More information on this class and the dialog format can be found in the :doc:`teachers documentation <teachers>`.
 
 In this task, the agent is presented with questions about movies that are answerable from Wikipedia.
 A sample dialog is demonstrated below.
@@ -317,8 +317,8 @@ The first element of the pair is a tuple containing the following information:
 The second is a boolean flag ``new_episode?`` which indicates if the current
 query starts a new episode or not.
 
-More information on this format can be found in the documentation on
-``data_loader`` in `DialogData <http://parl.ai/static/docs/teachers.html#DialogData>`__
+More information on this format can be found in the documentation under ``DialogData``
+in the :doc:`teachers documentation <teachers>`
 (``setup_data`` is provided as a data_loader to ``DialogData``).
 
 The sample ``setup_data`` method for our task is presented below.
