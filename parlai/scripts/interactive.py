@@ -19,7 +19,7 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 
 import random
-
+import os
 
 def setup_args(parser=None):
     if parser is None:
@@ -33,8 +33,20 @@ def interactive(opt):
         print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
         opt = opt.parse_args()
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
+
+    nomodel = False
+    # check to make sure the model file exists
+    if opt.get('model_file') is None:
+        nomodel = True
+    elif not os.path.isfile(opt['model_file']):
+        raise RuntimeError('WARNING: Model file does not exist, check to make '
+                           'sure it is correct: {}'.format(opt['model_file']))
+
     # Create model and assign it to the specified task
     agent = create_agent(opt)
+    if nomodel and hasattr(agent, 'load'):
+        # double check that we didn't forget to set model_file on loadable model
+        print('WARNING: model_file unset but model has a `load` function.')
     world = create_task(opt, agent)
 
     # Show some example dialogs:
