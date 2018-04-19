@@ -19,7 +19,6 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 
 import random
-import os
 
 def setup_args(parser=None):
     if parser is None:
