@@ -22,6 +22,9 @@ if __name__ == '__main__':
     opt['model_type'] = 'profilememory'
     # build profile memory models
     fnames = ['profilememory_convai2_model',
+              'profilememory_convai2_ppl_model',
               'profilememory_convai2.dict']
-    download_models(opt, fnames, 'convai2', use_model_type=True)
-    eval_hits(opt, print_parser=parser)
+
+    download_models(opt, fnames, 'convai2', version='v2.0', use_model_type=True)
+
+    eval_model(opt, print_parser=parser)
