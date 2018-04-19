@@ -310,7 +310,7 @@ def get_agent_module(dir_name):
     return model_class
 
 
-def create_agent(opt):
+def create_agent(opt, requireModelExists=False):
     """Create an agent from the options ``model``, ``model_params`` and ``model_file``.
     The input is either of the form ``parlai.agents.ir_baseline.agents:IrBaselineAgent``
     (i.e. the path followed by the class name) or else just ``ir_baseline`` which
@@ -323,6 +323,9 @@ def create_agent(opt):
     contain a pickled dict containing the model's options).
     """
     if opt.get('model_file'):
+        if requireModelExists and not os.path.isfile(opt['model_file']):
+            raise RuntimeError('WARNING: Model file does not exist, check to make '
+                               'sure it is correct: {}'.format(opt['model_file']))
         # Attempt to load the model from the model file first (this way we do not even
         # have to specify the model name as a parameter.
         model = load_agent_module(opt)
@@ -330,9 +333,14 @@ def create_agent(opt):
             return model
         else:
             print("[ no model with opt yet at: " + opt.get('model_file') + "(.opt) ]")
+    
     if opt.get('model'):
         model_class = get_agent_module(opt['model'])
-        return model_class(opt)
+        model = model_class(opt) 
+        if requireFileExists and hasattr(model, 'load'):
+            # double check that we didn't forget to set model_file on loadable model
+            print('WARNING: model_file unset but model has a `load` function.')            
+        return model
     else:
         raise RuntimeError('Need to set `model` argument to use create_agent.')
 

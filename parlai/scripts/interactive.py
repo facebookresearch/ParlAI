@@ -20,7 +20,6 @@ from parlai.core.worlds import create_task
 
 import random
 
-
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True)
@@ -33,8 +32,9 @@ def interactive(opt):
         print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
         opt = opt.parse_args()
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
+
     # Create model and assign it to the specified task
-    agent = create_agent(opt)
+    agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
 
     # Show some example dialogs:
