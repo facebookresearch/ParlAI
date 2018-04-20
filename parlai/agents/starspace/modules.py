@@ -24,6 +24,7 @@ class Starspace(nn.Module):
         else:
             self.encoder2 = self.encoder
         self.opt = opt
+        self.lin = nn.Linear(opt['embeddingsize'], opt['embeddingsize'], bias=False)
         self.lins = 0
         if 'lins' in opt: 
             self.lins = opt['lins']
