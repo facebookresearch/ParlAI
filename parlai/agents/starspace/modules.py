@@ -24,12 +24,17 @@ class Starspace(nn.Module):
         else:
             self.encoder2 = self.encoder
         self.opt = opt
-
+        self.lins = 0
+        if 'lins' in opt: 
+            self.lins = opt['lins']
+            
     def forward(self, xs, ys=None, cands=None):
         scores = None
         xs_enc = []
         ys_enc = []
         xs_emb = self.encoder(xs)
+        if self.lins > 0:
+            xs_emb = self.lin(xs_emb)
         if ys is not None:
             # training includes the correct example first.
             xs_enc.append(xs_emb)
