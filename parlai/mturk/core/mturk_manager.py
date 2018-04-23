@@ -75,6 +75,7 @@ class MTurkManager():
             self.num_conversations * len(self.mturk_agent_ids) * HIT_MULT
         )
         self.minimum_messages = opt.get('min_messages', 0)
+        self.auto_approve_delay = opt.get('auto_approve_delay', 4*7*24*3600)
         self.socket_manager = None
         self.is_test = is_test
         self.is_unique = False
@@ -1181,6 +1182,7 @@ class MTurkManager():
                 'assignment_duration_in_seconds', 30 * 60),
             is_sandbox=self.opt['is_sandbox'],
             qualifications=qualifications,
+            auto_approve_delay=self.auto_approve_delay,
         )
         mturk_chat_url = '{}/chat_index?task_group_id={}'.format(
             self.server_url,
