@@ -27,13 +27,25 @@ Messenger tasks can be grouped together within an ``Overworld`` which can spawn 
 Example Tasks
 -------------
 
-We provide two examples of using Facebook Messenger with ParlAI:
+We provide three examples of using Facebook Messenger with ParlAI:
 
+- `Generic Chatbot <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/chatbot/>`__: Allow messenger conversations with any ParlAI models, for instance the `PersonaChat <https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat>`__ model.
 - `QA Data Collection <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/qa_data_collection/>`__: collect questions and answers from people, given a random Wikipedia paragraph from SQuAD.
 - `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/overworld_demo/>`__: let people select between three different subtasks, namely an echo bot, a demo of onboarding data collection, and a random chat.
 
-Task 1: Collecting Data
+Task 1: Testing a Model
 ^^^^^^^^^^^^^^^^^^^^^^^
+Oftentimes it's important to host a created model against humans to evaluate how well it is performing on a number of metrics. This generic ChatBot world allows you to attach a model to a page, and then users who interact with that page will be paired into a conversation with that bot.
+
+As it is currently implemented, the collected conversations can be observed and rated manually by the ParlAI user. It's possible to imagine requesting that the human participant rate their conversational partner at the end of the conversation as another way to evaluate the model.
+
+To run a bot with this world, you'll need to provide the `run.py` command with the same model opts you would use elsewhere in a ParlAI environment.
+For instance, after downloading the personachat models you can run:
+
+``python run.py --model projects.personachat.kvmemnn.kvmemnn:Kvmemnn --model_file models:personachat/kvmemnn/kvmemnn/persona-self_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops1_lins0_model``
+
+Task 2: Collecting Training Data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 One of the biggest use cases of Messenger in ParlAI is to connect people and collect natural language data.
 
@@ -50,7 +62,7 @@ The ``QADataCollectionWorld`` uses ``turn_index`` to denote what stage the conve
 After two turns, the task is finished, and the person's work can be saved during the ``World.shutdown()`` call.
 
 
-Task 2: Exposing People to Multiple Tasks
+Task 3: Exposing People to Multiple Tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ParlAI messenger can also be used to create a multi-function world that users can choose multiple tasks or variations for. This can be used to expose multiple versions of a chatbot you want to test, to allow users to choose what kinds of tasks they do, amongst other things.
