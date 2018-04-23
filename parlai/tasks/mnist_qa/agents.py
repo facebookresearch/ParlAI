@@ -39,8 +39,8 @@ class MnistQATeacher(DialogTeacher):
         labels_path, self.image_path = _path(opt)
         opt['datafile'] = labels_path
         self.id = 'mnist_qa'
-        self.num_strs = ['zero', 'one', 'two', 'three', 'four', 'five',
-                'six', 'seven', 'eight', 'nine']
+        self.num_strs = ['zero', 'one', 'two', 'three', 'four',
+                         'five', 'six', 'seven', 'eight', 'nine']
 
         super().__init__(opt, shared)
 
