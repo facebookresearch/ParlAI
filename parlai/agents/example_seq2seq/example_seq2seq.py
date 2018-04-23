@@ -238,7 +238,7 @@ class ExampleSeq2seqAgent(Agent):
             total_done = 0
             decoder_input = starts
 
-            for _ in range(self.longest_label - 1):  # -1: don't return ends
+            for _ in range(self.longest_label):
                 # generate at most longest_label tokens
                 decoder_output, decoder_hidden = self.decoder(decoder_input,
                                                               decoder_hidden)

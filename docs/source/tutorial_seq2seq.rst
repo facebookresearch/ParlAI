@@ -541,7 +541,7 @@ okay with that--it just improves training F1 scores.
             total_done = 0
             decoder_input = starts
 
-            for _ in range(self.longest_label - 1):  # -1: don't return ends
+            for _ in range(self.longest_label):
                 # generate at most longest_label tokens
                 decoder_output, decoder_hidden = self.decoder(decoder_input,
                                                               decoder_hidden)
@@ -569,8 +569,18 @@ For other utility functions like loading from file, or to see any new features
 that we may have added to the model such as attention over the input or ranking
 candidates, check out the source code at parlai/agents/seq2seq.
 
-Full Implementation
--------------------
+Full Implementation & running this model
+----------------------------------------
 
 You can see the full code for this `here
 <https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/example_seq2seq/example_seq2seq.py>`_.
+
+You can try this model now with a command like the following:
+
+.. code-block:: bash
+
+    # batchsize 32, numthreads 1
+    python examples/train_model.py -t babi:task10k:1 --dict-file /tmp/dict_babi:task10k:1 -bs 32 -vtim 30 -vcut 0.95 -m example_seq2seq
+
+    # batchsize 1, numthreads 40, no cuda
+    python examples/train_model.py -t babi:task10k:1 --dict-file /tmp/dict_babi:task10k:1 -bs 32 -vtim 30 -vcut 0.95 -m example_seq2seq --no-cuda
