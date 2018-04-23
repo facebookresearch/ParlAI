@@ -73,7 +73,8 @@ class ParlaiParser(argparse.ArgumentParser):
         - add_model_args (default False) initializes the default arguments for
         loading models, including initializing arguments from that model.
         """
-        super().__init__(description='ParlAI parser.', allow_abbrev=False)
+        super().__init__(description='ParlAI parser.', allow_abbrev=False,
+                         conflict_handler='resolve')
         self.register('type', 'bool', str2bool)
         self.register('type', 'class', str2class)
         self.parlai_home = (os.path.dirname(os.path.dirname(os.path.dirname(

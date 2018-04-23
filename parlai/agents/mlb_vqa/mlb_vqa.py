@@ -80,7 +80,7 @@ class VqaDictionaryAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        dictionary = argparser.add_argument_group('Dictionary Arguments')
+        dictionary = argparser.add_argument_group('VQA DICT Arguments')
         dictionary.add_argument(
             '--dict-file',
             help='if set, the dictionary will automatically save to this path' +
@@ -145,6 +145,9 @@ class VqaDictionaryAgent(Agent):
 
             if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
+
+    def __len__(self):
+        return len(self.tok2ind)
 
     def add_to_ques_dict(self, tokens):
         """Builds dictionary from the list of provided tokens.
@@ -622,7 +625,7 @@ class MlbVqaAgent(Agent):
             else:
                 _, predictions = predictions.data.max(1)
             predictions.squeeze_()
-            tpreds = self.dict.decode_answer(predictions)
+            tpreds = self.dict.decode_answer(predictions.tolist())
             for i in range(len(tpreds)):
                 # map the predictions back to non-empty examples in the batch
                 curr = batch_reply[valid_inds[i]]
