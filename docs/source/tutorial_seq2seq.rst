@@ -14,7 +14,8 @@ sees to produce the right answers.
 
 For this agent, we'll be implementing a simple GRU Seq2Seq agent based on
 Sequence to Sequence Learning with Neural Networks (Sutskever et al. 2014) and
-Sean Robertson's `Seq2Seq PyTorch tutorial <http://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html>`_.
+Sean Robertson's `Seq2Seq PyTorch tutorial
+<http://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html>`_.
 
 
 Part 1: Naming Things
@@ -62,7 +63,7 @@ A loose version of that implementation is this:
 
 .. code-block:: python
 
-    class Seq2seqAgent(Agent):
+    class ExampleSeq2seqAgent(Agent):
 
         def __init__(self, opt, shared=None):
             # initialize defaults first
@@ -199,14 +200,15 @@ We'll follow this loose format:
             # no valid examples, just return empty responses
             return batch_reply
 
-        predictions, text_cand_inds = self.predict(xs, ys, is_training)
+        predictions = self.predict(xs, ys, is_training)
 
         # maps returns predictions back to the right `valid_inds`
         # in the example above, a prediction `world` should reply to `hello`
         PaddingUtils.map_predictions(
-            predictions.cpu().data, valid_inds, batch_reply, observations,
+            predictions.cpu(), valid_inds, batch_reply, observations,
             self.dict, self.END_IDX, labels=labels,
-            answers=self.answers, ys=ys.data if ys is not None else None)
+            answers=labels, ys=ys.data if ys is not None else None,
+            report_freq=self.opt.get('report_freq', 0))
 
         return batch_reply
 
@@ -256,12 +258,8 @@ Most of the implementation is shown here:
 
         if self.opt.get('numthreads', 1) > 1:
             # we're doing hogwild so share the model too
-            if type(self.metrics) == dict:
-                # move metrics and model to shared memory
-                self.metrics = SharedTable(self.metrics)
-                self.model.share_memory()
-            shared['metrics'] = self.metrics
-            shared['model'] = self.model
+            shared['encoder'] = self.encoder
+            shared['decoder'] = self.decoder
 
         return shared
 
@@ -282,7 +280,43 @@ Most models won't need to do anything in particular here.
 Part 4: Finishing the Seq2Seq model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Here we'll take a look at the full details of ``__init__``, ``vectorize``, ``predict``, and more.
+Here we'll see how to add commandline arguments to the command line parser,
+and then we'll take a look at the full details of
+``__init__``, ``vectorize``, ``predict``, and more.
+
+add_cmdline_args()
+------------------
+
+We use this static method to add commandline arguments to the program.
+
+.. code-block:: python
+
+    @staticmethod
+    def dictionary_class():
+        return DictionaryAgent
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        """Add command-line arguments specifically for this agent."""
+        agent = argparser.add_argument_group('Seq2Seq Arguments')
+        agent.add_argument('-hs', '--hiddensize', type=int, default=128,
+                           help='size of the hidden layers')
+        agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
+                           help='size of the token embeddings')
+        agent.add_argument('-nl', '--numlayers', type=int, default=2,
+                           help='number of hidden layers')
+        agent.add_argument('-lr', '--learningrate', type=float, default=1,
+                           help='learning rate')
+        agent.add_argument('-dr', '--dropout', type=float, default=0.1,
+                           help='dropout rate')
+        agent.add_argument('--no-cuda', action='store_true', default=False,
+                           help='disable GPUs even if available')
+        agent.add_argument('--gpu', type=int, default=-1,
+                           help='which GPU device to use')
+        agent.add_argument('-rf', '--report-freq', type=float, default=0.001,
+                           help='Report frequency of prediction during eval.')
+        ExampleSeq2seqAgent.dictionary_class().add_cmdline_args(argparser)
+        return agent
 
 Full __init__()
 ---------------
@@ -293,76 +327,63 @@ We recommend storing model modules in a separate class and importing them
 We'll show a version which defines its modules in the same file, since it's a simple model.
 
 Note that we're showing the simple version from the PyTorch tutorial below.
-The current seq2seq implementation in ParlAI adds a lot more bells and whistles.
+The full seq2seq implementation in ParlAI adds a lot more bells and whistles.
 
 .. code-block:: python
 
+    from parlai.core.agents import Agent
+    from parlai.core.dict import DictionaryAgent
+    from parlai.core.utils import PaddingUtils
+    from parlai.core.thread_utils import SharedTable
+
     import torch
+    from torch.autograd import Variable
+    from torch import optim
     import torch.nn as nn
     import torch.nn.functional as F
-    from torch import optim
-    from torch.autograd import Variable
 
-    from parlai.core.dict import DictionaryAgent
-    from parlai.core.utils import maintain_dialog_history, PaddingUtils, round_sigfigs
-    from parlai.core.thread_utils import SharedTable
+    import copy
 
 
     class EncoderRNN(nn.Module):
-        def __init__(self, input_size, hidden_size):
-            super(EncoderRNN, self).__init__()
+        def __init__(self, input_size, hidden_size, numlayers):
+            super().__init__()
             self.hidden_size = hidden_size
 
             self.embedding = nn.Embedding(input_size, hidden_size)
-            self.gru = nn.GRU(hidden_size, hidden_size)
+            self.gru = nn.GRU(hidden_size, hidden_size, num_layers=numlayers,
+                              batch_first=True)
 
         def forward(self, input, hidden):
-            embedded = self.embedding(input).view(1, 1, -1)
-            output = embedded
-            output, hidden = self.gru(output, hidden)
+            embedded = self.embedding(input)
+            output, hidden = self.gru(embedded, hidden)
             return output, hidden
 
-        def initHidden(self):
-            result = Variable(torch.zeros(1, 1, self.hidden_size))
-            if use_cuda:
-                return result.cuda()
-            else:
-                return result
 
     class DecoderRNN(nn.Module):
-        def __init__(self, hidden_size, output_size):
-            super(DecoderRNN, self).__init__()
+        def __init__(self, output_size, hidden_size, numlayers):
+            super().__init__()
             self.hidden_size = hidden_size
 
             self.embedding = nn.Embedding(output_size, hidden_size)
-            self.gru = nn.GRU(hidden_size, hidden_size)
+            self.gru = nn.GRU(hidden_size, hidden_size, num_layers=numlayers,
+                              batch_first=True)
             self.out = nn.Linear(hidden_size, output_size)
             self.softmax = nn.LogSoftmax(dim=1)
 
         def forward(self, input, hidden):
-            output = self.embedding(input).view(1, 1, -1)
+            output = self.embedding(input)
             output = F.relu(output)
             output, hidden = self.gru(output, hidden)
-            output = self.softmax(self.out(output[0]))
+            output = self.softmax(self.out(output))
             return output, hidden
 
-        def initHidden(self):
-            result = Variable(torch.zeros(1, 1, self.hidden_size))
-            if use_cuda:
-                return result.cuda()
-            else:
-                return result
 
-    class Seq2seqAgent(Agent):
+    class ExampleSeq2seqAgent(Agent):
 
         def __init__(self, opt, shared=None):
             # initialize defaults first
             super().__init__(opt, shared)
-
-            # ... some setup for both shared and original instances
-            self.metrics = {'loss': 0.0, 'num_tokens': 0}
-            self.history = {}
-            states = {}
 
             # check for cuda
             self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
@@ -381,7 +402,8 @@ The current seq2seq implementation in ParlAI adds a lot more bells and whistles.
                 self.criterion = nn.NLLLoss()
 
                 hsz = opt['hiddensize']
-                nl = opt['num_layers']
+                nl = opt['numlayers']
+
                 # encoder captures the input text
                 self.encoder = EncoderRNN(len(self.dict), hsz, nl)
                 # decoder produces our output states
@@ -402,23 +424,29 @@ The current seq2seq implementation in ParlAI adds a lot more bells and whistles.
                 self.opt = shared['opt']
                 self.dict = shared['dict']
 
-                if 'model' in shared:
+                if 'encoder' in shared:
                     # hogwild shares model as well
-                    self.model = shared['model']
-                    self.metrics = shared['metrics']
+                    self.encoder = shared['encoder']
+                    self.decoder = shared['decoder']
 
-            # we use START markers to start our output
-            self.START_IDX = self.dict[self.dict.start_token]
+            self.hiddensize = opt['hiddensize']
+            self.numlayers = opt['numlayers']
             # we use END markers to end our output
             self.END_IDX = self.dict[self.dict.end_token]
             # get index of null token from dictionary (probably 0)
             self.NULL_IDX = self.dict[self.dict.null_token]
+            # we use START markers to start our output
+            self.START_IDX = self.dict[self.dict.start_token]
+            self.START = torch.LongTensor([self.START_IDX])
+            if self.use_cuda:
+                self.START = self.START.cuda()
+
+            self.reset()
 
         def reset(self):
             """Reset observation and episode_done."""
             self.observation = None
-            self.history.clear()
-            self.reset_metrics()
+            self.episode_done = True
 
 vectorize()
 -----------
@@ -427,33 +455,28 @@ tensors to use with our model.
 
 .. code-block:: python
 
-    def batchify(self, observations):
+    def vectorize(self, observations):
         """Convert a list of observations into input & target tensors."""
-        is_training = any(['labels' in obs for obs in observations])
+        is_training = any(('labels' in obs for obs in observations))
         # utility function for padding text and returning lists of indices
         # parsed using the provided dictionary
         xs, ys, labels, valid_inds, _, _ = PaddingUtils.pad_text(
             observations, self.dict, end_idx=self.END_IDX,
-            null_idx=self.NULL_IDX, dq=True, eval_labels=True,
-            truncate=self.truncate)
+            null_idx=self.NULL_IDX, dq=False, eval_labels=True)
         if xs is None:
             return None, None, None, None, None
+
+        # move lists of indices returned above into tensors
         xs = torch.LongTensor(xs)
+        if self.use_cuda:
+            xs = xs.cuda()
+        xs = Variable(xs)
+
         if ys is not None:
             ys = torch.LongTensor(ys)
-        if self.use_cuda:
-            # copy to gpu
-            self.xs.resize_(xs.size())
-            self.xs.copy_(xs)
-            xs = Variable(self.xs)
-            if ys is not None:
-                self.ys.resize_(ys.size())
-                self.ys.copy_(ys)
-                ys = Variable(self.ys)
-        else:
-            xs = Variable(xs)
-            if ys is not None:
-                ys = Variable(ys)
+            if self.use_cuda:
+                ys = ys.cuda()
+            ys = Variable(ys)
 
         return xs, ys, labels, valid_inds, is_training
 
@@ -467,95 +490,84 @@ okay with that--it just improves training F1 scores.
 
 .. code-block:: python
 
-    def predict(self, xs, ys=None):
-        """Produce a prediction from our model. Update the model using the
-        targets if available.
+    def predict(self, xs, ys=None, is_training=False):
+        """Produce a prediction from our model.
+        Update the model using the targets if available.
         """
-        batchsize = len(xs)
-
-        # first encode context
-        xes = self.lt(xs).t()
-        h0 = torch.zeros(self.num_layers, bsz, self.hidden_size)
+        bsz = xs.size(0)
+        zeros = Variable(torch.zeros(self.numlayers, bsz, self.hiddensize))
         if self.use_cuda:
-            h0 = h0.cuda(async=True)
-        h0 = Variable(h0)
-        _output, hn = self.encoder(xes, h0)
+            zeros = zeros.cuda()
+        starts = Variable(self.START)
+        starts = starts.expand(bsz, 1)  # expand to batch size
 
-        # next we use EOS as an input to kick off our decoder
-        x = Variable(self.EOS_TENSOR)
-        xe = self.lt(x).unsqueeze(1)
-        xes = xe.expand(xe.size(0), batchsize, xe.size(2))
-
-        # list of output tokens for each example in the batch
-        output_lines = [[] for _ in range(batchsize)]
-
-        if ys is not None:
-            # update the model based on the labels
-            self.zero_grad()
+        if is_training:
             loss = 0
-            # keep track of longest label we've ever seen
-            self.longest_label = max(self.longest_label, ys.size(1))
-            for i in range(ys.size(1)):
-                output, hn = self.decoder(xes, hn)
-                preds, scores = self.hidden_to_idx(output, drop=True)
-                y = ys.select(1, i)
-                loss += self.criterion(scores, y)
-                # use the true token as the next input instead of predicted
-                # this produces a biased prediction but better training
-                xes = self.lt(y).unsqueeze(0)
-                for b in range(batchsize):
-                    # convert the output scores to tokens
-                    token = self.v2t([preds.data[b][0]])
-                    output_lines[b].append(token)
+            self.zero_grad()
+            self.encoder.train()
+            self.decoder.train()
+            target_length = ys.size(1)
+            # save largest seen label for later
+            self.longest_label = max(target_length, self.longest_label)
 
+            encoder_outputs, encoder_hidden = self.encoder(xs, zeros)
+
+            # Teacher forcing: Feed the target as the next input
+            y_in = ys.narrow(1, 0, ys.size(1) - 1)
+            decoder_input = torch.cat([starts, y_in], 1)
+            decoder_output, decoder_hidden = self.decoder(decoder_input,
+                                                          encoder_hidden)
+
+            scores = decoder_output.view(-1, decoder_output.size(-1))
+            loss = self.criterion(scores, ys.view(-1))
             loss.backward()
             self.update_params()
-        else:
-            # just produce a prediction without training the model
-            done = [False for _ in range(batchsize)]
-            total_done = 0
-            max_len = 0
 
-            while(total_done < batchsize) and max_len < self.longest_label:
-                # keep producing tokens until we hit EOS or max length for each
-                # example in the batch
-                output, hn = self.decoder(xes, hn)
-                preds, scores = self.hidden_to_idx(output, drop=False)
-                xes = self.lt(preds.t())
-                max_len += 1
-                for b in range(batchsize):
+            topv, topi = decoder_output.select(1, -1).data.topk(1)
+            predictions = topi
+        else:
+            # just predict
+            self.encoder.eval()
+            self.decoder.eval()
+            encoder_output, encoder_hidden = self.encoder(xs, zeros)
+            decoder_hidden = encoder_hidden
+
+            predictions = []
+            scores = []
+            done = [False for _ in range(bsz)]
+            total_done = 0
+            decoder_input = starts
+
+            for _ in range(self.longest_label - 1):  # -1: don't return ends
+                # generate at most longest_label tokens
+                decoder_output, decoder_hidden = self.decoder(decoder_input,
+                                                              decoder_hidden)
+                topv, topi = decoder_output.data.topk(1)
+                preds = topi.select(1, 0)
+                decoder_input = Variable(preds)
+                predictions.append(preds)
+
+                # check if we've produced the end token
+                for b in range(bsz):
                     if not done[b]:
-                        # only add more tokens for examples that aren't done yet
-                        token = self.v2t(preds.data[b])
-                        if token == self.EOS:
-                            # if we produced EOS, we're done
+                        # only add more tokens for examples that aren't done
+                        if preds[b][0] == self.END_IDX:
+                            # if we produced END, we're done
                             done[b] = True
                             total_done += 1
-                        else:
-                            output_lines[b].append(token)
+                if total_done == bsz:
+                    # no need to generate any more
+                    break
+            predictions = torch.cat(predictions, 1)
 
-        return output_lines
-
-hidden_to_idx()
----------------
-
-Finally, this function converts our hidden state (from the decoder) to specific
-indices into our dictionary, allowing us to return tokens from the dictionary.
-
-.. code-block:: python
-
-    def hidden_to_idx(self, hidden, drop=False):
-        """Converts hidden state vectors into indices into the dictionary."""
-        if hidden.size(0) > 1:
-            raise RuntimeError('bad dimensions of tensor:', hidden)
-        hidden = hidden.squeeze(0)
-        scores = self.d2o(hidden)
-        if drop:
-            scores = self.dropout(scores)
-        scores = self.softmax(scores)
-        _max_score, idx = scores.max(1)
-        return idx, scores
+        return predictions
 
 For other utility functions like loading from file, or to see any new features
 that we may have added to the model such as attention over the input or ranking
 candidates, check out the source code at parlai/agents/seq2seq.
+
+Full Implementation
+-------------------
+
+You can see the full code for this `here
+<https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/example_seq2seq/example_seq2seq.py>`_.
