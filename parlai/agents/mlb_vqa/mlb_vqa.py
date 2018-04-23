@@ -80,7 +80,7 @@ class VqaDictionaryAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        dictionary = argparser.add_argument_group('VQA DICT Arguments')
+        dictionary = argparser.add_argument_group('Dictionary Arguments')
         dictionary.add_argument(
             '--dict-file',
             help='if set, the dictionary will automatically save to this path' +
