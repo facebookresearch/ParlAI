@@ -143,6 +143,8 @@ The fields are as follows:
 
 Each of these fields are technically optional, depending on your dataset, though the 'text' field will most likely be used in nearly all exchanges.
 
+Note: during validation and testing, the labels field is renamed eval_labels – this way, the model won’t accidentally train on the labels, but they are still available for calculating model-side loss. 
+
 For a fixed supervised learning dataset like bAbI, a typical exchange from the training set might be as follows (the test set would not include labels):
 
 ```python
