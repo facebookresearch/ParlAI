@@ -42,14 +42,14 @@ class DecoderRNN(nn.Module):
         self.gru = nn.GRU(hidden_size, hidden_size, num_layers=numlayers,
                           batch_first=True)
         self.out = nn.Linear(hidden_size, output_size)
-        self.softmax = nn.LogSoftmax(dim=1)
+        self.softmax = nn.LogSoftmax(dim=2)
 
     def forward(self, input, hidden):
-        output = self.embedding(input)
-        output = F.relu(output)
-        output, hidden = self.gru(output, hidden)
-        output = self.softmax(self.out(output))
-        return output, hidden
+        emb = self.embedding(input)
+        rel = F.relu(emb)
+        output, hidden = self.gru(rel, hidden)
+        scores = self.softmax(self.out(output))
+        return scores, hidden
 
 
 class ExampleSeq2seqAgent(Agent):
@@ -223,8 +223,8 @@ class ExampleSeq2seqAgent(Agent):
             loss.backward()
             self.update_params()
 
-            topv, topi = decoder_output.select(1, -1).data.topk(1)
-            predictions = topi
+            _max_score, idx = decoder_output.max(2)
+            predictions = idx
         else:
             # just predict
             self.encoder.eval()
@@ -242,16 +242,16 @@ class ExampleSeq2seqAgent(Agent):
                 # generate at most longest_label tokens
                 decoder_output, decoder_hidden = self.decoder(decoder_input,
                                                               decoder_hidden)
-                topv, topi = decoder_output.data.topk(1)
-                preds = topi.select(1, 0)
-                decoder_input = Variable(preds)
+                _max_score, idx = decoder_output.max(2)
+                preds = idx
+                decoder_input = preds
                 predictions.append(preds)
 
                 # check if we've produced the end token
                 for b in range(bsz):
                     if not done[b]:
                         # only add more tokens for examples that aren't done
-                        if preds[b][0] == self.END_IDX:
+                        if preds.data[b][0] == self.END_IDX:
                             # if we produced END, we're done
                             done[b] = True
                             total_done += 1
@@ -308,7 +308,7 @@ class ExampleSeq2seqAgent(Agent):
         # maps returns predictions back to the right `valid_inds`
         # in the example above, a prediction `world` should reply to `hello`
         PaddingUtils.map_predictions(
-            predictions.cpu(), valid_inds, batch_reply, observations,
+            predictions.cpu().data, valid_inds, batch_reply, observations,
             self.dict, self.END_IDX, labels=labels,
             answers=labels, ys=ys.data if ys is not None else None,
             report_freq=self.opt.get('report_freq', 0))

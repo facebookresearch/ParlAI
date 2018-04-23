@@ -205,7 +205,7 @@ We'll follow this loose format:
         # maps returns predictions back to the right `valid_inds`
         # in the example above, a prediction `world` should reply to `hello`
         PaddingUtils.map_predictions(
-            predictions.cpu(), valid_inds, batch_reply, observations,
+            predictions.cpu().data, valid_inds, batch_reply, observations,
             self.dict, self.END_IDX, labels=labels,
             answers=labels, ys=ys.data if ys is not None else None,
             report_freq=self.opt.get('report_freq', 0))
@@ -270,7 +270,8 @@ This function allows your model to do any final wrapup, such as writing any last
 logging info, saving an end-state version of the model if desired, or closing
 any open connections.
 
-Our seq2seq model saves the model parameters to opt['model_file'] + '.shutdown_state'.
+The standard ParlAI seq2seq model saves the model parameters to
+opt['model_file'] + '.shutdown_state'.
 In contrast, the agents in parlai/agents/remote_agent use this to close their
 open TCP connection after sending a shutdown signal through.
 
@@ -369,14 +370,14 @@ The full seq2seq implementation in ParlAI adds a lot more bells and whistles.
             self.gru = nn.GRU(hidden_size, hidden_size, num_layers=numlayers,
                               batch_first=True)
             self.out = nn.Linear(hidden_size, output_size)
-            self.softmax = nn.LogSoftmax(dim=1)
+            self.softmax = nn.LogSoftmax(dim=2)
 
         def forward(self, input, hidden):
-            output = self.embedding(input)
-            output = F.relu(output)
-            output, hidden = self.gru(output, hidden)
-            output = self.softmax(self.out(output))
-            return output, hidden
+            emb = self.embedding(input)
+            rel = F.relu(emb)
+            output, hidden = self.gru(rel, hidden)
+            scores = self.softmax(self.out(output))
+            return scores, hidden
 
 
     class ExampleSeq2seqAgent(Agent):
@@ -387,20 +388,13 @@ The full seq2seq implementation in ParlAI adds a lot more bells and whistles.
 
             # check for cuda
             self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
-            if opt.get('numthreads') > 1:
+            if opt.get('numthreads', 1) > 1:
                 torch.set_num_threads(1)
+            self.id = 'Seq2Seq'
 
             if not shared:
                 # set up model from scratch
                 self.dict = DictionaryAgent(opt)
-                self.id = 'Seq2Seq'
-
-                # store important params directly
-                self.longest_label = 1
-
-                # set up modules
-                self.criterion = nn.NLLLoss()
-
                 hsz = opt['hiddensize']
                 nl = opt['numlayers']
 
@@ -413,12 +407,9 @@ The full seq2seq implementation in ParlAI adds a lot more bells and whistles.
                     self.encoder.cuda()
                     self.decoder.cuda()
 
-                # set up optims for each module
-                lr = opt['learningrate']
-                self.optims = {
-                    'encoder': optim.SGD(self.encoder.parameters(), lr=lr),
-                    'decoder': optim.SGD(self.decoder.parameters(), lr=lr),
-                }
+                if opt.get('numthreads', 1) > 1:
+                    self.encoder.share_memory()
+                    self.decoder.share_memory()
             else:
                 # ... copy initialized data from shared table
                 self.opt = shared['opt']
@@ -429,17 +420,29 @@ The full seq2seq implementation in ParlAI adds a lot more bells and whistles.
                     self.encoder = shared['encoder']
                     self.decoder = shared['decoder']
 
-            self.hiddensize = opt['hiddensize']
-            self.numlayers = opt['numlayers']
-            # we use END markers to end our output
-            self.END_IDX = self.dict[self.dict.end_token]
-            # get index of null token from dictionary (probably 0)
-            self.NULL_IDX = self.dict[self.dict.null_token]
-            # we use START markers to start our output
-            self.START_IDX = self.dict[self.dict.start_token]
-            self.START = torch.LongTensor([self.START_IDX])
-            if self.use_cuda:
-                self.START = self.START.cuda()
+            if hasattr(self, 'encoder'):
+                # we set up a model for original instance and multithreaded ones
+                self.criterion = nn.NLLLoss()
+
+                # set up optims for each module
+                lr = opt['learningrate']
+                self.optims = {
+                    'encoder': optim.SGD(self.encoder.parameters(), lr=lr),
+                    'decoder': optim.SGD(self.decoder.parameters(), lr=lr),
+                }
+
+                self.longest_label = 1
+                self.hiddensize = opt['hiddensize']
+                self.numlayers = opt['numlayers']
+                # we use END markers to end our output
+                self.END_IDX = self.dict[self.dict.end_token]
+                # get index of null token from dictionary (probably 0)
+                self.NULL_IDX = self.dict[self.dict.null_token]
+                # we use START markers to start our output
+                self.START_IDX = self.dict[self.dict.start_token]
+                self.START = torch.LongTensor([self.START_IDX])
+                if self.use_cuda:
+                    self.START = self.START.cuda()
 
             self.reset()
 
@@ -523,8 +526,8 @@ okay with that--it just improves training F1 scores.
             loss.backward()
             self.update_params()
 
-            topv, topi = decoder_output.select(1, -1).data.topk(1)
-            predictions = topi
+            _max_score, idx = decoder_output.max(2)
+            predictions = idx
         else:
             # just predict
             self.encoder.eval()
@@ -542,16 +545,16 @@ okay with that--it just improves training F1 scores.
                 # generate at most longest_label tokens
                 decoder_output, decoder_hidden = self.decoder(decoder_input,
                                                               decoder_hidden)
-                topv, topi = decoder_output.data.topk(1)
-                preds = topi.select(1, 0)
-                decoder_input = Variable(preds)
+                _max_score, idx = decoder_output.max(2)
+                preds = idx
+                decoder_input = preds
                 predictions.append(preds)
 
                 # check if we've produced the end token
                 for b in range(bsz):
                     if not done[b]:
                         # only add more tokens for examples that aren't done
-                        if preds[b][0] == self.END_IDX:
+                        if preds.data[b][0] == self.END_IDX:
                             # if we produced END, we're done
                             done[b] = True
                             total_done += 1
