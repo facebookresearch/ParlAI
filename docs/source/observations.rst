@@ -8,8 +8,8 @@
 observations
 ============
 
-The primary medium for information flow in ParlAI is a python ``dict``
-containing the actions of an agent (to be observed by a different agent).
+The primary medium for messages and other information flow in ParlAI is a python ``dict``
+containing the actions of an agent (observable by other agents or the environment).
 
 We generally refer to this as an observation dict.
 One should be created by an agent's ``act()`` function, and it will be passed
@@ -18,7 +18,9 @@ to another agent's ``observe()`` function as the sole argument.
 In general, fields are optional when creating your own task.
 However, there are a number of standard fields that are common and should be
 used when the appropriate type of data is being sent to the model.
+
 Teachers can include other data in this dict whenever is useful using other field names.
+See `extended fields`_ below.
 
 text
 ----
@@ -39,6 +41,15 @@ When available (ie when doing supervised learning), this field will contain
 any appropriate labels. For many tasks, this will be only a single response.
 However, some datasets do support multiple correct answers, so this field
 should be an ``iterable`` (e.g. a list, a tuple).
+
+
+eval_labels
+-----------
+During validation and testing, the "labels" field is moved to "eval_labels" in
+order to help prevent accidentaly training on evaluation data.
+
+However, by providing this field, models can still compute model-side metrics
+such as perplexity.
 
 
 label_candidates
@@ -125,15 +136,17 @@ On the other hand, the bAbI tasks have multiple exchanges per conversation:
 
 reward
 ------
-This field can be used by reinforcement-learning tasks to send rewards to
-other agents.
+This field can be used by reinforcement-learning tasks to send rewards in the
+observation dict, such as sending negative reward for poor replies or positive
+reward for good replies.
 
 
 image
 -----
-Some datasets may include images. For example, the VQA_v2 dataset contains
-questions about images. The "image" field will contain the image data in
-whichever format the image mode parameters are set to.
+Observation dicts may also include images.
+For example, the VQA_v2 dataset contains questions about images.
+The "image" field will contain the image data in whichever format the
+image mode parameters are set to.
 
 By default, images are returned as their raw RBG pixels.
 They can also be processed by a pre-trained image model and just features of
