@@ -362,7 +362,6 @@ class ParlaiParser(argparse.ArgumentParser):
         self.args = super().parse_args(args=args)
         self.opt = vars(self.args)
 
-
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
         if 'batchsize' in self.opt and self.opt['batchsize'] <= 1:
@@ -385,10 +384,17 @@ class ParlaiParser(argparse.ArgumentParser):
                                                   self.opt['dict_file'])
 
         # set all arguments specified in commandline as overridable
+        option_strings_dict = {}
+        for group in self._action_groups:
+            for a in group._group_actions:
+                if hasattr(a, 'option_strings'):
+                    for option in a.option_strings:
+                        option_strings_dict[option] = a.dest
         override = {}
-        for k, v in self.opt.items():
-            if v in self.cli_args:
-                override[k] = v
+        for i in range(len(self.cli_args)):
+            if self.cli_args[i] in option_strings_dict:
+                override[option_strings_dict[self.cli_args[i]]] = \
+                    self.cli_args[i+1]
         self.opt['override'] = override
 
         if print_args:
