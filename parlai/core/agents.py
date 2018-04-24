@@ -333,13 +333,13 @@ def create_agent(opt, requireModelExists=False):
             return model
         else:
             print("[ no model with opt yet at: " + opt.get('model_file') + "(.opt) ]")
-    
+
     if opt.get('model'):
         model_class = get_agent_module(opt['model'])
-        model = model_class(opt) 
+        model = model_class(opt)
         if requireModelExists and hasattr(model, 'load'):
             # double check that we didn't forget to set model_file on loadable model
-            print('WARNING: model_file unset but model has a `load` function.')            
+            print('WARNING: model_file unset but model has a `load` function.')
         return model
     else:
         raise RuntimeError('Need to set `model` argument to use create_agent.')

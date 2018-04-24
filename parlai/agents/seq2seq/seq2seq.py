@@ -8,7 +8,7 @@ from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import maintain_dialog_history, PaddingUtils, round_sigfigs
 from parlai.core.thread_utils import SharedTable
-from .modules import Seq2seq, RandomProjection
+from .modules import Seq2seq
 
 import torch
 from torch.autograd import Variable
@@ -19,7 +19,6 @@ from collections import deque
 
 import os
 import math
-import random
 
 
 class Seq2seqAgent(Agent):
@@ -139,7 +138,7 @@ class Seq2seqAgent(Agent):
                                 'Preinitialized embeddings can also be fixed '
                                 'so they are not updated during training.')
         agent.add_argument('-rf', '--report-freq', type=float, default=0.001,
-                   help='Report frequency of prediction during eval.')
+                           help='Report frequency of prediction during eval.')
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
@@ -157,7 +156,7 @@ class Seq2seqAgent(Agent):
 
         # check for cuda
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
-        if opt.get('numthreads') > 1:
+        if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
 
         if shared:
@@ -383,10 +382,16 @@ class Seq2seqAgent(Agent):
         self.reset_metrics()
 
     def reset_metrics(self):
+        """Reset metrics for reporting loss and perplexity."""
         self.metrics['loss'] = 0.0
         self.metrics['num_tokens'] = 0
 
     def report(self):
+        """Report loss and perplexity from model's perspective.
+
+        Note that this includes predicting __END__ and __UNK__ tokens and may
+        differ from a truly independent measurement.
+        """
         m = {}
         if self.metrics['num_tokens'] > 0:
             m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
@@ -406,12 +411,14 @@ class Seq2seqAgent(Agent):
         shared['END_IDX'] = self.END_IDX
         shared['NULL_IDX'] = self.NULL_IDX
         if self.opt.get('numthreads', 1) > 1:
+            # we're doing hogwild so share the model too
             if type(self.metrics) == dict:
+                # move metrics and model to shared memory
                 self.metrics = SharedTable(self.metrics)
                 self.model.share_memory()
             shared['metrics'] = self.metrics
             shared['model'] = self.model
-            shared['states'] = { # only need to pass optimizer states
+            shared['states'] = {  # only need to pass optimizer states
                 'optimizer': self.optimizer.state_dict(),
                 'optimizer_type': self.opt['optimizer'],
             }
@@ -444,13 +451,14 @@ class Seq2seqAgent(Agent):
         Update the model using the targets if available, otherwise rank
         candidates as well if they are available and param is set.
         """
-        text_cand_inds, loss_dict = None, None
+        text_cand_inds = None
         if is_training:
             self.model.train()
             self.zero_grad()
             out = self.model(xs, ys)
             predictions, scores = out[0], out[1]
-            loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
+            score_view = scores.view(-1, scores.size(-1))
+            loss = self.criterion(score_view, ys.view(-1))
             # save loss to metrics
             target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
             self.metrics['loss'] += loss.double().data[0]
@@ -468,7 +476,8 @@ class Seq2seqAgent(Agent):
                 # calculate loss on targets
                 out = self.model(xs, ys)
                 scores = out[1]
-                loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
+                score_view = scores.view(-1, scores.size(-1))
+                loss = self.criterion(score_view, ys.view(-1))
                 target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
                 self.metrics['loss'] += loss.double().data[0]
                 self.metrics['num_tokens'] += target_tokens
@@ -479,8 +488,9 @@ class Seq2seqAgent(Agent):
         """Convert a list of observations into input & target tensors."""
         is_training = any(['labels' in obs for obs in observations])
         xs, ys, labels, valid_inds, _, _ = PaddingUtils.pad_text(
-            observations, self.dict, end_idx=self.END_IDX, null_idx=self.NULL_IDX,
-            dq=True, eval_labels=True, truncate=self.truncate)
+            observations, self.dict, end_idx=self.END_IDX,
+            null_idx=self.NULL_IDX, dq=True, eval_labels=True,
+            truncate=self.truncate)
         if xs is None:
             return None, None, None, None, None, None, None
         xs = torch.LongTensor(xs)
