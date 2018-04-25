@@ -181,7 +181,7 @@ class MessengerManager():
         # being delivered, but we expose the ability for others to
         shared_utils.print_and_log(
             logging.DEBUG,
-            "Messages {} marked as recieved.".format(event['delivery']['mids'])
+            "Messages {} marked as received.".format(event['delivery']['mids'])
         )
 
     def _handle_message_read(self, event):
@@ -453,7 +453,7 @@ class MessengerManager():
 
         self.message_sender = MessageSender(self.app_token)
 
-        # Set up recieve
+        # Set up receive
         socket_use_url = self.server_url
         if (self.opt['local']):  # skip some hops for local stuff
             socket_use_url = "https://localhost"
