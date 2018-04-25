@@ -385,16 +385,29 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # set all arguments specified in commandline as overridable
         option_strings_dict = {}
+        store_true = []
+        store_false = []
         for group in self._action_groups:
             for a in group._group_actions:
                 if hasattr(a, 'option_strings'):
                     for option in a.option_strings:
                         option_strings_dict[option] = a.dest
+                        if '_StoreTrueAction' in str(type(a)):
+                            store_true.append(option)
+                        elif '_StoreFalseAction' in str(type(a)):
+                            store_false.append(option)
         override = {}
         for i in range(len(self.cli_args)):
             if self.cli_args[i] in option_strings_dict:
-                override[option_strings_dict[self.cli_args[i]]] = \
-                    self.cli_args[i+1]
+                if self.cli_args[i] in store_true:
+                    override[option_strings_dict[self.cli_args[i]]] = True
+                elif self.cli_args[i] in store_false:
+                    override[option_strings_dict[self.cli_args[i]]] = False
+                else:
+                    if i < (len(self.cli_args) - 1) and \
+                            self.cli_args[i+1][0] != '-':
+                        override[option_strings_dict[self.cli_args[i]]] = \
+                            self.cli_args[i+1]
         self.opt['override'] = override
 
         if print_args:
