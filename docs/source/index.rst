@@ -32,6 +32,7 @@ ParlAI is a one-stop-shop for dialog research.
    :maxdepth: 1
    :caption: Core Library
 
+   observations
    agents
    build_data
    dict

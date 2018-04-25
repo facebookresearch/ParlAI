@@ -130,6 +130,9 @@ Observing and Acting
 Let's take a look at the ``observe`` function. Here, we can modify the
 observation dict if necessary, and then return it to be queued for batching.
 
+Check out again the :doc:`observations <observations>` documentation for more
+details about all of the fields contained the observations.
+
 In this version, we first make a deep copy of the observation. Then, if this is
 not the first entry in an episode (some datasets like SQuAD have only one entry
 for every episode, but others like bAbI have multiple), then we prepend the

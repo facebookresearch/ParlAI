@@ -40,6 +40,61 @@ Follow the step by step guide on how to download and install ParlAI.
 Getting Started
 ---------------
 
+Observations
+^^^^^^^^^^^^
+Python dictionaries containing different types of information are the primary
+way messages are passed between agents and the environment in ParlAI.
+
+The :doc:`observations <observations>` documentation goes into more detail about
+each field, but the following table shows the basics.
+
+
+.. role:: db
+.. role:: dr
+.. role:: dg
+
++------------------------+-------------------------------------------------------+
+|    :db:`Observation / action message dict`                                     |
++------------------------+-------------------------------------------------------+
+|    Field name          |    Contents of field                                  |
++========================+=======================================================+
+| :dr:`text`             | :dg:`text of speaker(s)`                              |
++------------------------+-------------------------------------------------------+
+| :dr:`id`               | :dg:`id of speaker(s)`                                |
++------------------------+-------------------------------------------------------+
+| :dr:`reward`           | :dg:`for reinforcement learning`                      |
++------------------------+-------------------------------------------------------+
+| :dr:`episode_done`     | :dg:`signals end of episode`                          |
++------------------------+-------------------------------------------------------+
+| :dr:`labels`           | :dg:`for supervised learning during training`         |
++------------------------+-------------------------------------------------------+
+| :dr:`eval_labels`      | :dg:`contains supervised labels during evaluation`    |
++------------------------+-------------------------------------------------------+
+| :dr:`label_candidates` | :dg:`for "multiple choice" problems`                  |
++------------------------+-------------------------------------------------------+
+| :dr:`text_candidates`  | :dg:`ranked candidate responses (e.g. order choices)` |
++------------------------+-------------------------------------------------------+
+| :dr:`image`            | :dg:`for VQA, Visual Dialog, etc`                     |
++------------------------+-------------------------------------------------------+
+
+All of these fields are technically optional, and each task should use them
+according to what kind of information is available in that task (for example,
+not all tasks contain explicit rewards, or a set of candidate labels to choose from).
+
+Dataset-specific fields are available in some cases in order to support
+reproducing paper results. For example, SQuAD has an ``answer_starts`` field,
+which is available in the "squad:index" task.
+
+**Note**: during validation and testing, the ``labels`` field is renamed
+``eval_labels``--this way, the model won't accidentally train on the labels,
+but they are still available for calculating model-side loss.
+Models can check if they are training on a supervised task in the following manner:
+
+.. code-block:: python
+
+    is_training = 'labels' in observation
+
+
 Agents
 ^^^^^^
 
@@ -52,33 +107,13 @@ Agents have two primary methods they need to define:
 
 .. code-block:: python
 
-    def observe(self, observation)
-    def act(self)
+    def observe(self, observation): # update internal state with observation
+    def act(self): # produce action based on internal state
 
+``observe()`` notifies the agent of an action taken by another agent.
 
-``observe`` notifies the agent of an action taken by another agent.
+``act()`` produces an action from the agent.
 
-``act`` produces an action from the agent.
-
-Observations are structured as a python `dict` with the following fields:
-
-
-.. image:: _static/img/act-obs-dict.png
-    :width: 60 %
-
-
-**Note**: during validation and testing, the ``labels`` field is renamed
-``eval_labels``--this way, the model won't accidentally train on the labels,
-but they are still available for calculating model-side loss
-
-
-All of these fields are technically optional, and each task should use them
-according to what kind of information is available in that task (for example,
-not all tasks contain explicit rewards, or a set of candidate labels to choose from).
-
-Dataset-specific fields are available in some cases in order to support
-reproducing paper results. For example, SQuAD has an ``answer_starts`` field,
-which is available in the "squad:index" task.
 
 Teachers
 ^^^^^^^^

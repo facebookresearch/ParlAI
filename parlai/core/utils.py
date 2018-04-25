@@ -348,9 +348,6 @@ class PaddingUtils(object):
             # zero examples to process in this batch, so zip failed to unpack
             return None, None, None, None, None, None
 
-        # set up the input tensors
-        bsz = len(exs)
-
         # `x` text is already tokenized and truncated
         # sort by length so we can use pack_padded
         if any(['text2vec' in ex for ex in exs]):
