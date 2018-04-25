@@ -131,10 +131,6 @@ class MessageSender():
     simplifies the process of sending content.
     """
 
-    """MessageSocket is a wrapper around websocket to simplify message sends
-    and receives into parlai from FB messenger.
-    """
-
     def __init__(self, secret_token):
         """
         server_url:           url at which the server is to be run
