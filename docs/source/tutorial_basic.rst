@@ -45,7 +45,7 @@ Observations
 Python dictionaries containing different types of information are the primary
 way messages are passed between agents and the environment in ParlAI.
 
-The :doc:`observations <observations>` tutorial goes into more detail about
+The :doc:`observations <observations>` documentation goes into more detail about
 each field, but the following table shows the basics.
 
 
