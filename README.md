@@ -126,8 +126,9 @@ The main concepts (classes) in ParlAI:
 - teacher – a type of agent that talks to the learner, implements one of the
 listed before.
 
-After defining a world and the agents in it, a main loop can be run for training, testing or displaying, which calls the function world.parley().
-The skeleton of an example main is given in the left panel, and the actual code for parley() on the right.
+After defining a world and the agents in it, a main loop can be run for training, testing or displaying, which calls the function world.parley(). The skeleton of an example main is given in the left panel, and the actual code for parley() on the right.
+
+<p align=center><img width="100%" src="docs/source/\_static/img/main.png" /></p>
 
 ## Actions and Observations
 
