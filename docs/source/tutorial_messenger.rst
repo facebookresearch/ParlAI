@@ -42,7 +42,9 @@ As it is currently implemented, the collected conversations can be observed and 
 To run a bot with this world, you'll need to provide the `run.py` command with the same model opts you would use elsewhere in a ParlAI environment.
 For instance, after downloading the personachat models you can run:
 
-``python run.py --model projects.personachat.kvmemnn.kvmemnn:Kvmemnn --model_file models:personachat/kvmemnn/kvmemnn/persona-self_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops1_lins0_model``
+.. code-block:: bash
+
+    python run.py --model projects.personachat.kvmemnn.kvmemnn:Kvmemnn --model_file models:personachat/kvmemnn/kvmemnn/persona-self_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops1_lins0_model
 
 Task 2: Collecting Training Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

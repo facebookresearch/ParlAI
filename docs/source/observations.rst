@@ -8,8 +8,9 @@
 observations
 ============
 
-The primary medium for messages and other information flow in ParlAI is a python ``dict``
-containing the actions of an agent (observable by other agents or the environment).
+The primary medium for information flow (messages between agents and the environment)
+in ParlAI is a python ``dict`` containing the actions of an agent
+(observable by other agents or the environment).
 
 We generally refer to this as an observation dict.
 One should be created by an agent's ``act()`` function, and it will be passed
@@ -137,8 +138,7 @@ On the other hand, the bAbI tasks have multiple exchanges per conversation:
 reward
 ------
 This field can be used by reinforcement-learning tasks to send rewards in the
-observation dict, such as sending negative reward for poor replies or positive
-reward for good replies.
+observation dict.
 
 
 image
@@ -153,11 +153,50 @@ They can also be processed by a pre-trained image model and just features of
 from the model will be in the image field, or even converted into a text
 representation for quick debugging.
 
-For example, check out the following:
+Here is an example of using the ascii image mode:
 
 .. code-block:: bash
 
     python examples/display_data.py -t mnist_qa --image-mode ascii
+
+.. code-block:: python
+
+    {
+        'text': 'Which number is in the image?',
+        'labels': ['4', 'four'],
+        'label_candidates': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                             'zero', 'one', 'two', 'three', 'four',
+                             'five', 'six', 'seven', 'eight', 'nine'],
+        'episode_done': True,
+        'image': '''@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    @@@@@@@@@@@@@@@@@@@@@@;;@@@@
+                    @@@@@@@@@@@@@@@@@@@@@s s@@@@
+                    @@@@@@@@@@@@@@@@@@@@A  H@@@@
+                    @@@@@@@@@@@@@@@@@@@@; ;@@@@@
+                    @@@@@@@@@@@@#;&@@@@H ,9@@@@@
+                    @@@@@@@@@@@@, #@@@@, H@@@@@@
+                    @@@@@@@@@@@@, G@@@9  H@@@@@@
+                    @@@@@@@@@@@A ,&@@@c :@@@@@@@
+                    @@@@@@@@@@8  #@@@s .@@@@@@@@
+                    @@@@@@@@@9. s@@@2  3@@@@@@@@
+                    @@@@@@@@h   :2@&: r@@@@@@@@@
+                    @@@@@@@h   ,  :.  @@@@@@@@@@
+                    @@@@@@H   G9;     .8@@@@@@@@
+                    @@@@@@;.h@@@9:    r@@@@@@@@@
+                    @@@@@@38@@@@#  H99&@@@@@@@@@
+                    @@@@@@@@@@@&s .@@@@@@@@@@@@@
+                    @@@@@@@@@@@2  8@@@@@@@@@@@@@
+                    @@@@@@@@@@8. A@@@@@@@@@@@@@@
+                    @@@@@@@@@@. r@@@@@@@@@@@@@@@
+                    @@@@@@@@@@2 H@@@@@@@@@@@@@@@
+                    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    @@@@@@@@@@@@@@@@@@@@@@@@@@@@'''
+    }
 
 
 extended fields
