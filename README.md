@@ -130,20 +130,19 @@ After defining a world and the agents in it, a main loop can be run for training
 
 <p align=center><img width="100%" src="docs/source/\_static/img/main.png" /></p>
 
-
 ## Actions and Observations
 
 All agents (including teachers) speak to each other with a single format -- the observation/action object (a python dict).
-This is used to pass text, labels and rewards between agents.
-It’s the same object type when talking (acting) or listening (observing), but a different view (with different values in the fields).
-The fields are as follows:
+This is used to pass text, labels, rewards, and more between agents.
+It’s the same object type when talking (acting) or listening (observing), but a different view (i.e. with different values in the fields).
+
+The observation/action dict fields are as follows (or see [the documentation](http://parl.ai/static/docs/observations.html)):
 
 <p align=center><img width="33%" src="docs/source/\_static/img/act-obs-dict.png" /></p>
 
-
 Each of these fields are technically optional, depending on your dataset, though the 'text' field will most likely be used in nearly all exchanges.
 
-Note: during validation and testing, the labels field is renamed eval_labels – this way, the model won’t accidentally train on the labels, but they are still available for calculating model-side loss. 
+Note: during validation and testing, the labels field is renamed eval_labels – this way, the model won’t accidentally train on the labels, but they are still available for calculating model-side loss.
 
 For a fixed supervised learning dataset like bAbI, a typical exchange from the training set might be as follows (the test set would not include labels):
 
