@@ -3,75 +3,9 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""This module provides a teacher that utilizes a pytorch `DataLoader` for
-    data loading. The class assumes training will be performed on streaming
-    data (i.e. it will not be loaded into memory).
-    It contains the following classes:
-
-    ``StreamDataset`` - a pytorch dataset that provides streaming iteration
-    through data. Requires that the dataset be built in the appropriate format
-    (as observation dicts serialized in JSON format). If not built yet, the
-    dataset builds the data and loads it.
-
-    ``PytorchDataTeacher`` - a teacher that utilizes a pytorch DataLoader
-    for quick batch loading.
-        - In order to use the PytorchDataTeacher, the data must be built
-          using build_data from parlai.scripts.build_pytorch_data. This process
-          happens automatically, and requires one of the following:
-            - `--datafile` set to the either the built .pytorch data file
-                or the data file used to build the pytorch data file
-            - `--pytorch-buildteacher` set to the task teacher that will be/was used
-                to build the pytorch data (by passing observations to the agent)
-        - If building the dictionary for the first time, please specify
-          the `--pytorch-buildteacher` so that the dictionary can be built appropriately
-
-    Briefly, to use the PytorchDataTeacher, specify `-t pytorch_teacher`
-    when training.
-
-    The following is a more in-depth explanation for PytorchDataTeacher usage;
-    i.e., to use the PytorchDataTeacher, one must do the following:
-
-    1. Ensure that an appropriate teacher exists that can read the data
-       currently saved and produce an action dict for an agent (this will be
-       the `pytorch-buildteacher`)
-    2. Build the data so that it can be used by the PytorchDataTeacher
-        - This can be accomplished in 2 ways:
-            1. Specify a `pytorch-buildteacher`, `datafile` (where the data currently
-               is, and what will be used to build the data), and `datatype`
-               (e.g. train, valid, etc) when calling either `build_pytorch_data`
-               or calling `train_model.py`. If one is training a model, the data
-                will be built automatically in `train_model.py`.
-            2. Implement the `pytorch-buildteacher` such that it saves the appropriate
-               datafile in its `datafile` attribute (i.e. `self.datafile`) given
-               the datatype, and then specify the `pytorch-buildteacher` when calling
-               either `build_pytorch_data.py` or `train_model.py`
-
-    Additionally, if `pytorch-preprocess` is set to `True`, then the model specified
-    in the command line params will have its `observe` function called on the
-    `pytorch-buildteacher`'s action, and the data will be saved for that model
-    specifically.
-
-    Here's an example of what would need to be done for `bAbI` 10k task 1,
-    with preprocessed data from the `seq2seq` model.
-
-    1. Implement a normal `bAbI` teacher that can read the data in its current
-       format and create an action dict (this currently exists as the
-       `Task1kTeacher`)
-    2. If `Task1kTeacher` saves the datafile in it's attributes, use one of the
-       following 2 commands:
-       - `python examples/train_model.py -t pytorch_teacher --pytorch-buildteacher \
-         babi:task10k:1 -m seq2seq -mf /tmp/pytorch_data_build --pytorch-preprocess 1`
-            - if one would like to train the model after building the data
-       - `python examples/build_pytorch_data.py -m seq2seq \
-         --pytorch-buildteacher babi:task10k:1 --pytorch-preprocess 1`
-    3. If you would like to specify a specific datafile to build, e.g. a
-       validation file, you could do either of the following:
-       - `python examples/train_model.py -t pytorch_teacher --pytorch-buildteacher \
-         babi:task10k:1 --datafile data/bAbI/tasks_1-20_v1-2/en-valid-10k-nosf/qa1_valid.txt \
-         -dt valid -m seq2seq -mf /tmp/pytorch_data_build --pytorch-preprocess 1`
-       - `python examples/build_pytorch_data.py -m seq2seq \
-         --pytorch-buildteacher babi:task10k:1 --pytorch-preprocess 1 \
-         --datafile data/bAbI/tasks_1-20_v1-2/en-valid-10k-nosf/qa1_valid.txt`
+"""
+    (NOTE: To use this class, please follow the tutorial here:
+    http://parl.ai/static/docs/tutorial_worlds.html#multiprocessed-pytorch-dataloader)
 
 """
 from .teachers import FixedDialogTeacher
