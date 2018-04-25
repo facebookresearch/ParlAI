@@ -13,6 +13,7 @@ import traceback
 
 from parlai.messenger.core.agents import MessengerAgent
 from parlai.messenger.core.message_socket import MessageSocket
+from parlai.messenger.core.message_sender import MessageSender
 import parlai.messenger.core.server_utils as server_utils
 import parlai.messenger.core.shared_utils as shared_utils
 
@@ -73,6 +74,7 @@ class MessengerManager():
         self.overworld_threads = {}
         self.active_worlds = {}
         self.message_socket = None
+        self.message_sender = None
         self.page_id = None
         self._init_logs()
         self.running = True
@@ -162,22 +164,24 @@ class MessengerManager():
         for world_type, agent_pool in self.agent_pool.items():
             if world_type in eligibility_functions and \
                     eligibility_functions[world_type] is not None:
-                valid_pools[world_type] = [w for w in agent_pool \
-                        if eligibility_functions[world_type](w)]
+                valid_pools[world_type] = [
+                    w for w in agent_pool
+                    if eligibility_functions[world_type](w)
+                ]
             else:
                 valid_pools[world_type] = self.agent_pool[world_type]
         return valid_pools
 
     def _handle_bot_read(self, agent_id):
-        self.message_socket.send_read(agent_id)
-        self.message_socket.typing_on(agent_id)
+        self.message_sender.send_read(agent_id)
+        self.message_sender.typing_on(agent_id)
 
     def _confirm_message_delivery(self, event):
         # By default we don't actually do anything when messages are marked as
         # being delivered, but we expose the ability for others to
         shared_utils.print_and_log(
             logging.DEBUG,
-            "Messages {} marked as recieved.".format(event['delivery']['mids'])
+            "Messages {} marked as received.".format(event['delivery']['mids'])
         )
 
     def _handle_message_read(self, event):
@@ -196,7 +200,7 @@ class MessengerManager():
             for partner in agent.message_partners:
                 # We don't know who sent the message that was seen, but we can
                 # send a message observed event to everyone else in the chat
-                self.message_socket.send_read(partner.id)
+                self.message_sender.send_read(partner.id)
 
     def _handle_webhook_event(self, event):
         if 'message' in event:
@@ -281,7 +285,7 @@ class MessengerManager():
                     "Please wait while we pair you with another person. "
                     "If you wish to exit, type *EXIT*."
                 )
-                self.message_socket.typing_on(agent_id)
+                self.message_sender.typing_on(agent_id)
         else:
             # If an agent is in a solo world, we can put a typing indicator
             # and mark the message as read
@@ -446,11 +450,14 @@ class MessengerManager():
             expanded_file_path = os.path.expanduser(access_token_file_path)
             with open(expanded_file_path, 'w+') as access_token_file:
                 access_token_file.write(self.app_token)
+
+        self.message_sender = MessageSender(self.app_token)
+
+        # Set up receive
         socket_use_url = self.server_url
         if (self.opt['local']):  # skip some hops for local stuff
             socket_use_url = "https://localhost"
         self.message_socket = MessageSocket(socket_use_url, self.port,
-                                            self.app_token,
                                             self._handle_webhook_event)
 
     def init_new_state(self):
@@ -475,6 +482,32 @@ class MessengerManager():
 
     def set_agents_required(self, max_agents_for):
         self.max_agents_for = max_agents_for
+
+    def check_timeout_in_pool(self, world_type, agent_pool, max_time_in_pool):
+        for agent_state in agent_pool:
+            time_in_pool = agent_state.time_in_pool.get(world_type)
+            if time_in_pool and time.time() - time_in_pool \
+                    > max_time_in_pool[world_type]:
+                # remove agent from agent_pool
+                self.remove_agent_from_pool(
+                    agent_state, world_type)
+                # put agent back in overworld
+                agent_state.set_active_agent(
+                    agent_state.get_overworld_agent())
+                # reset wait message state
+                agent_state.stored_data['seen_wait_message'] = False
+            elif time_in_pool and time.time() - time_in_pool > 30:
+                # tell agent that a match is taking longer than
+                # expected
+                if not agent_state.stored_data.get('seen_wait_message') \
+                        or not agent_state.stored_data['seen_wait_message']:
+                    self.observe_message(
+                        agent_state.messenger_id,
+                        "Pairing is taking longer than expected. "
+                        "If you wish to exit, type *EXIT*.",
+                    )
+                    self.message_sender.typing_on(agent_state.messenger_id)
+                    agent_state.stored_data['seen_wait_message'] = True
 
     def start_task(self, assign_role_functions, task_functions,
                    max_time_in_pool=None, eligibility_functions=None):
@@ -518,32 +551,8 @@ class MessengerManager():
                     # check if agent has exceeded max time in pool
                     if max_time_in_pool is not None and \
                             max_time_in_pool[world_type] is not None:
-                        for agent_state in agent_pool:
-                            time_in_pool = \
-                                agent_state.time_in_pool.get(world_type)
-                            if time_in_pool and time.time() - time_in_pool \
-                                    > max_time_in_pool[world_type]:
-                                # remove agent from agent_pool
-                                self.remove_agent_from_pool(
-                                    agent_state, world_type)
-                                # put agent back in overworld
-                                agent_state.set_active_agent(
-                                    agent_state.get_overworld_agent())
-                                # reset wait message state
-                                agent_state.stored_data['seen_wait_message'] = False
-                            elif time_in_pool and time.time() - time_in_pool \
-                                    > 30:
-                                # tell agent that a match is taking longer than
-                                # expected
-                                if not agent_state.stored_data.get('seen_wait_message') \
-                                        or not agent_state.stored_data['seen_wait_message']:
-                                    self.observe_message(
-                                        agent_state.messenger_id,
-                                        "Pairing is taking longer than expected. "
-                                        "If you wish to exit, type *EXIT*.",
-                                    )
-                                    self.message_socket.typing_on(agent_state.messenger_id)
-                                    agent_state.stored_data['seen_wait_message'] = True
+                        self.check_timeout_in_pool(world_type, agent_pool,
+                                                   max_time_in_pool)
 
                     needed_agents = self.max_agents_for[world_type]
                     if len(agent_pool) >= needed_agents:
@@ -568,8 +577,11 @@ class MessengerManager():
                         agents = [a for a in agents if a.disp_id is not None]
                         for a in agents:
                             # Remove selected workers from the agent pool
-                            self.remove_agent_from_pool(self._get_agent_state(a.id), \
-                                    world_type=world_type, mark_removed=False)
+                            self.remove_agent_from_pool(
+                                self._get_agent_state(a.id),
+                                world_type=world_type,
+                                mark_removed=False
+                            )
                         for a in agents:
                             partner_list = agents.copy()
                             partner_list.remove(a)
@@ -603,12 +615,12 @@ class MessengerManager():
 
     def observe_message(self, receiver_id, text, quick_replies=None):
         """Send a message through the message manager"""
-        return self.message_socket.send_fb_message(receiver_id, text, True,
+        return self.message_sender.send_fb_message(receiver_id, text, True,
                                                    quick_replies=quick_replies)
 
     def observe_payload(self, receiver_id, data):
         """Send a payload through the message manager"""
-        return self.message_socket.send_fb_payload(receiver_id, data)
+        return self.message_sender.send_fb_payload(receiver_id, data)
 
     def upload_attachment(self, payload):
         """Uploads an attachment and returns an attachment ID
@@ -618,4 +630,4 @@ class MessengerManager():
         For example,
         {'type': 'image', 'filename': 'test.png', 'format': 'png'}
         """
-        return self.message_socket.upload_fb_attachment(payload)
+        return self.message_sender.upload_fb_attachment(payload)
