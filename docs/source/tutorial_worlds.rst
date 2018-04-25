@@ -5,12 +5,20 @@
   LICENSE file in the root directory of this source tree. An additional grant
   of patent rights can be found in the PATENTS file in the same directory.
 
-Batching and Hogwild
-====================
+Data Handling, Batching, and Hogwild
+====================================
 **Authors**: Alexander Holden Miller, Kurt Shuster
 
 Summary
 ^^^^^^^
+`Data Handling <http://parl.ai/static/docs/tutorial_worlds.html#multiprocessed-pytorch-dataloader>`_
+
+When a dataset is very large, or requires a lot of preprocessing before a model
+can use it, you can use our ``PytorchDataTeacher``, which utilizes multiprocessed
+dataloading for streaming data from disk (rather than loading it into memory).
+
+`Batching <http://parl.ai/static/docs/tutorial_worlds.html#batching>`_ and `Hogwild <http://parl.ai/static/docs/tutorial_worlds.html#hogwild-multiprocessing>`_
+
 There's one function we need to support for both hogwild and batching: ``share()``.
 
 This function should provide whatever is needed to set up a "copy" of the original
@@ -427,6 +435,6 @@ arguments:
 this simply controls the method used for returning batches from a cache (either is fine)
 
 2. ``--batch-length-range`` - this indicates the degree of variation allowed in
-a batch; e.g., by how many characters each example in a cache will, at most, deviate. 
+a batch; e.g., by how many characters each example in a cache will, at most, deviate.
 A ``--batch-length-range`` of 5 would mean that each example in the batch
 would differ by no more than 5 characters (in a text-based dataset).
