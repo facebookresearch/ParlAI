@@ -11,13 +11,13 @@ Data Handling, Batching, and Hogwild
 
 Summary
 ^^^^^^^
-`Data Handling <http://parl.ai/static/docs/tutorial_worlds.html#multiprocessed-pytorch-dataloader>`_
+`Data Handling <#multiprocessed-pytorch-dataloader>`_
 
 When a dataset is very large, or requires a lot of preprocessing before a model
 can use it, you can use our ``PytorchDataTeacher``, which utilizes multiprocessed
 dataloading for streaming data from disk (rather than loading it into memory).
 
-`Batching <http://parl.ai/static/docs/tutorial_worlds.html#batching>`_ and `Hogwild <http://parl.ai/static/docs/tutorial_worlds.html#hogwild-multiprocessing>`_
+`Batching <#batching>`_ and `Hogwild <#hogwild-multiprocessing>`_
 
 There's one function we need to support for both hogwild and batching: ``share()``.
 
