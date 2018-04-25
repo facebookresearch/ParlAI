@@ -236,7 +236,7 @@ See the [directory](https://github.com/facebookresearch/ParlAI/tree/master/parla
 
 ### Examples
 
-This directory contains a few particular examples of basic loops.
+[This directory](https://github.com/facebookresearch/ParlAI/tree/master/examples) contains a few particular examples of basic loops.
 
 - base_train.py: _very simple example shows the outline of a training/validation loop using the default Agent parent class_
 - display_data.py: _uses agent.repeat_label to display data from a particular task provided on the command-line_
@@ -263,7 +263,7 @@ Each task folder contains:
 - **agents.py** file which contains default or special teacher classes used by core.create_task to instantiate these classes from command-line arguments (if desired).
 - **worlds.py** file can optionally be added for tasks that need to define new/complex environments.
 
-To add your own task:
+To add your own task (see the [tutorial](http://www.parl.ai/static/docs/tutorial_task.html) for far more details):
 - (optional) implement build.py to download any needed data
 - implement agents.py, with at least a DefaultTeacher (extending Teacher or one of its children)
     - if your data is in [FB Dialog format](https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/fbdialog_teacher.py), subclass FbDialogTeacher
