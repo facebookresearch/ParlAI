@@ -8,6 +8,9 @@
 observations
 ============
 
+.. image:: _static/img/act-obs-dict.png
+    :width: 60 %
+
 The primary medium for information flow (messages between agents and the environment)
 in ParlAI is a python ``dict`` containing the actions of an agent
 (observable by other agents or the environment).
@@ -19,8 +22,10 @@ to another agent's ``observe()`` function as the sole argument.
 In general, fields are optional when creating your own task.
 However, there are a number of standard fields that are common and should be
 used when the appropriate type of data is being sent to the model.
+This allows models trained on one dataset to easily train on a different task
+or even to multi-task.
 
-Teachers can include other data in this dict whenever is useful using other field names.
+If necessary, teachers can include other data in this dict using other field names.
 See `extended fields`_ below.
 
 
@@ -230,12 +235,15 @@ answer in the text (in characters).
     }
 
 You can add additional fields to provide task-specific metadata.
-However, wherever possible, it can be good to stick to using the base fields to
-enable greater ease of multi-tasking between datasets.
+However, note that
+
+    - models trained on specific fields won't easily transfer to other tasks
+    - none of the existing models will take advantage of that field
+    - multitasking on different tasks will be more difficult to implement
 
 For example, the default SQuAD task for ParlAI does not include the "answer_starts",
 and we include a model (DrQA) which has the functionality to find the index
-of the labels on its own when the index is not provided.
+of the labels on its own.
 This allows that agent to also be trained on different tasks which contain the
 answer in the introductory text (such as some bAbI tasks) which do not provide
 "answer_starts".

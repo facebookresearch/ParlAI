@@ -49,33 +49,8 @@ The :doc:`observations <observations>` documentation goes into more detail about
 each field, but the following table shows the basics.
 
 
-.. role:: db
-.. role:: dr
-.. role:: dg
-
-+------------------------+-------------------------------------------------------+
-|    :db:`Observation / action message dict`                                     |
-+------------------------+-------------------------------------------------------+
-|    Field name          |    Contents of field                                  |
-+========================+=======================================================+
-| :dr:`text`             | :dg:`text of speaker(s)`                              |
-+------------------------+-------------------------------------------------------+
-| :dr:`id`               | :dg:`id of speaker(s)`                                |
-+------------------------+-------------------------------------------------------+
-| :dr:`reward`           | :dg:`for reinforcement learning`                      |
-+------------------------+-------------------------------------------------------+
-| :dr:`episode_done`     | :dg:`signals end of episode`                          |
-+------------------------+-------------------------------------------------------+
-| :dr:`labels`           | :dg:`for supervised learning during training`         |
-+------------------------+-------------------------------------------------------+
-| :dr:`eval_labels`      | :dg:`contains supervised labels during evaluation`    |
-+------------------------+-------------------------------------------------------+
-| :dr:`label_candidates` | :dg:`for "multiple choice" problems`                  |
-+------------------------+-------------------------------------------------------+
-| :dr:`text_candidates`  | :dg:`ranked candidate responses (e.g. order choices)` |
-+------------------------+-------------------------------------------------------+
-| :dr:`image`            | :dg:`for VQA, Visual Dialog, etc`                     |
-+------------------------+-------------------------------------------------------+
+.. image:: _static/img/act-obs-dict.png
+    :width: 60 %
 
 All of these fields are technically optional, and each task should use them
 according to what kind of information is available in that task (for example,
