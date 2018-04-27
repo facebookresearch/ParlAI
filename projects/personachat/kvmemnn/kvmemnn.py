@@ -243,6 +243,8 @@ class KvmemnnAgent(Agent):
                 opt['dict_file'] = opt['model_file'] + '.dict'
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
+            if 'loss' not in opt:
+                opt['loss'] = 'cosine'
             self.model = Kvmemnn(opt, len(self.dict), self.dict)
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 self.load(opt['model_file'])
