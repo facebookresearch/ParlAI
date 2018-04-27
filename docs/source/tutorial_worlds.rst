@@ -5,12 +5,20 @@
   LICENSE file in the root directory of this source tree. An additional grant
   of patent rights can be found in the PATENTS file in the same directory.
 
-Batching and Hogwild
-====================
-**Author**: Alexander Holden Miller
+Data Handling, Batching, and Hogwild
+====================================
+**Authors**: Alexander Holden Miller, Kurt Shuster
 
 Summary
 ^^^^^^^
+`Data Handling <#multiprocessed-pytorch-dataloader>`_
+
+When a dataset is very large, or requires a lot of preprocessing before a model
+can use it, you can use our ``PytorchDataTeacher``, which utilizes multiprocessed
+dataloading for streaming data from disk (rather than loading it into memory).
+
+`Batching <#batching>`_ and `Hogwild <#hogwild-multiprocessing>`_
+
 There's one function we need to support for both hogwild and batching: ``share()``.
 
 This function should provide whatever is needed to set up a "copy" of the original
@@ -251,12 +259,182 @@ Tip: if you implement ``batch_act()``, your ``act()`` method can just call ``bat
 and pass the observation it is supposed to process in a list of length 1.
 
 Multiprocessed Pytorch Dataloader
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 For large datasets, where it is best to stream from disk during training
-rather than load initially into memory, we provide a teacher that utilizes pytorch data loading
-(as described `here <http://pytorch.org/tutorials/beginner/data_loading_tutorial.html>`_).
-The teacher allows for multiprocessed dataloading, and even provides a way of
-performing the same batch tricks described above (that is, sorting the data
-and constructing batches of roughly equal size to avoid excess
-padding), all in real time. You can find instructions on how to use the
-teacher `here <https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/pytorch_data_teacher.py>`_.
+rather than load initially into memory, we provide a teacher that utilizes pytorch data loading.
+
+(Note: the module `here <https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/pytorch_data_teacher.py>`_
+contains all of the code discussed in this tutorial)
+
+Pytorch Dataloading Intro
+~~~~~~~~~~~~~~~~~~~~~~~~~
+A Pytorch ``DataLoader`` is a dataloading mechanism that provides multiprocessed
+loading of data from disk (as described `here <http://pytorch.org/tutorials/beginner/data_loading_tutorial.html>`_).
+A ``DataLoader`` can be initialized with a variety of different options; the only
+ones that concern us are ``dataset`` and ``collate_fn``.
+
+The ``dataset`` is a
+Pytorch ``Dataset`` (as described `here <http://pytorch.org/tutorials/beginner/data_loading_tutorial.html>`_),
+which is a class that implements two functions: ``__getitem__(self, idx)`` and ``__len__(self)``.
+As is readily apparent, the ``__getitem__`` method is given an ``idx`` and returns the
+data item at that ``idx``, while the ``__len__`` method returns the length of the underlying dataset.
+With a ``dataset``, the ``DataLoader`` then takes care of everything else.
+
+The ``collate_fn`` is simply a way of formatting a batch of returned data items;
+Pytorch provides a default ``collate_fn`` that turns data into tensors, but there
+are many ways that one could want to batch data from the ``Dataset``.
+
+Pytorch Dataloading in ParlAI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Implementation
+++++++++++++++
+The `PytorchDataTeacher <https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/pytorch_data_teacher.py>`_
+provides an implementation of both the ``dataset`` and ``collate_fn`` as specified above.
+
+1. ``StreamDataset`` - this is the default ``dataset`` that we provide to the
+``DataLoader``. The dataset is meant for streaming data - that is, data that
+does not need to (or cannot) be loaded into memory before starting training, e.g.
+datasets with millions of text examples, or datasets with thousands of images.
+
+    a) ``__getitem__(self, idx)`` returns ``(index, ep)``, where ``index`` is the
+        ``idx`` argument, and ``ep`` is the episode at that index in the dataset.
+    b) ``__len__(self)``. returns the length of the dataset, multiplied by the
+        number of iterations that we will go through the dataset. For non-training (i.e. validation
+        and testing), the number of iterations is set to 1; otherwise, it is set to
+        the number of epochs specified, or 1000 if the number of epochs is not
+        specified.
+
+2. ``default_collate`` - this function simply returns a list of ``(index, ep)``
+pairs as they are returned from the ``__getitem__`` function above.
+
+How to Use
+++++++++++
+The ``PytorchDataTeacher`` can be used with any dataset/task currently provided
+on the ParlAI platform. There are two ways you can utilize the ``PytorchDataTeacher``
+for your specific task. One involves using the ``StreamDataset`` that we have
+provided; the other involves writing your own dataset. Each will be covered
+step by step below.
+
+StreamDataset
+*************
+1. Ensure that there is an appropriate teacher that already exists, which
+can read the data saved on disk and produce an action/observation dict for any
+agent.
+
+2. Build the data such that it can be used by the ``StreamDataset``. There
+are two ways of doing this:
+
+  a) Run the following command::
+
+      python examples/build_pytorch_data.py --pytorch-buildteacher <TEACHER> --datafile <DATAFILE> --datatype <DATATYPE>
+
+  b) The following are the parameters to specify:
+
+      1) ``--pytorch-buildteacher`` - This is simply the teacher of the task that you
+          are using with the ``PytorchDataTeacher``
+
+      2) ``--datafile`` - This is the path to the file that has the data
+          you would like to be loading. **(Recommended)** Alternatively, in
+          the teacher specified in the first argument, you can simply
+          set the ``self.datafile`` attribute to the datafile, allowing you
+          to not need to specify this command line argument
+
+      3) ``--datatype`` - This is one of ``train, valid, test``, depending on
+            what data you would like to use
+
+  c) **(Recommended)** Simply run ``examples/train_model.py`` with the same
+     arguments listed above; this will build the data first before running
+     the training loop.
+
+3. (*Preprocessing*) Sometimes, the preprocessing for the agent takes a considerable
+amount of time in itself, and you want the data to simply be loaded preprocessed.
+If you specify the ``--preprocess`` command line argument to be ``true``, then
+the model/agent specified in the command line parameters will have its ``observe``
+function called on each example; the data will then be saved for use specifically
+with that model (setting this flag to ``true`` and then using another agent
+will result in the data needing to be rebuilt).
+
+4. Finally, when specifying the ``-t`` flag (i.e. "teacher" or "task"), simply
+type ``-t pytorch_teacher``.
+
+**Example**
+
+The following is an example of how the above steps could be applied to
+use this teacher with the ``bAbI`` dataset:
+
+1. The ``bAbI`` teacher (``Task1kTeacher``) is implemented such that it can
+read the ``bAbI`` data, and provide an action/observation dict to send to the agent.
+
+2. Suppose the ``Task1kTeacher`` teacher sets its ``self.datafile`` to the
+appropriate datafile. Also, suppose we want the ``seq2seq`` model to preprocess the data before we save it.
+Then, you can build the pytorch data with one of the following commands:
+
+    a) (Build before training)::
+
+        python examples/build_pytorch_data.py -m seq2seq --pytorch-buildteacher
+        babi:task10k:1 --pytorch-preprocess true
+
+    b) **Recommended**::
+
+        python examples/train_model.py -t pytorch_teacher
+        --pytorch-buildteacher babi:task10k:1 -m seq2seq --pytorch-preprocess true
+
+3. To specify a datafile rather than using the ``self.datafile`` attribute,
+e.g. the validation set file, simply add the following:
+``--datafile data/bAbI/tasks_1-20_v1-2/en-valid-10k-nosf/qa1_valid.txt``
+
+Your Own Dataset
+****************
+1. To use your own method of retrieving data (rather than the streaming data option),
+you can simply subclass the Pytorch ``Dataset`` class (as specified `here <http://pytorch.org/tutorials/beginner/data_loading_tutorial.html>`_).
+You can add this class anywhere you would like; a good place would be in the
+``agents.py`` file for the task you are writing a ``Dataset`` for.
+
+2. Then, in the **agent** to which you will be providing the data,
+implement a static method ``collate`` that takes one argument, ``batch``, which
+is a list of data items returned by your custom ``Dataset``.
+
+3. Finally, you would need to specify the ``Dataset`` location on the command line
+in the following fashion: ``--dataset path.to.dataset:DatasetClassName``. If you
+name your custom dataset ``DefaultDataset``, then you do not need to specify the
+``DatasetClassName``.
+
+**Example**
+
+An example of the above method is used for the VQA V1 task, with the
+``mlb_vqa`` agent. Here is how it works in this example:
+
+1. In the `VQA V1 agents file <https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/vqa_v1/agents.py>`_,
+there exists a ``VQADataset``, which subclasses ``Dataset`` (with the appropriate ``__len__`` and ``__getitem__`` methods).
+
+2. In the `MLB VQA model file <https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/mlb_vqa/mlb_vqa.py>`_,
+there is an implementation of ``collate`` that returns a processed batch of examples from the
+list of examples provided by the ``VQADataset``.
+
+3. Finally, to use the ``PytorchDataTeacher`` with the custom ``Dataset`` and
+``collate``, run the following command::
+
+  python examples/train_model.py -m mlb_vqa -t pytorch_teacher --pytorch-buildteacher vqa_v1 --dataset parlai.tasks.vqa_v1.agents -im resnet152_spatial --image-size 448 --image-cropsize 448
+
+Batch Sorting and Squashing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+One of the benefits of using the ``StreamDataset`` described above when
+using the ``PytorchDataTeacher`` is that you can achieve the benefits of
+batch sorting and squashing (that is, reducing padding in batches by
+providing the models with similarly sized batches) without having
+to load the whole dataset into memory. We provide an on-the-fly
+batch sorter that uses aggressive caching to create and provide
+batches of similarly sized examples to modles nearly as quickly (if not as quickly) as
+can be provided without sorting.
+
+To use the batch sorting method, just specify the following two command line
+arguments:
+
+1. ``--batch-sort-cache`` - set this parameter to either ``pop`` or ``index``;
+this simply controls the method used for returning batches from a cache (either is fine)
+
+2. ``--batch-length-range`` - this indicates the degree of variation allowed in
+a batch; e.g., by how many characters each example in a cache will, at most, deviate.
+A ``--batch-length-range`` of 5 would mean that each example in the batch
+would differ by no more than 5 characters (in a text-based dataset).
