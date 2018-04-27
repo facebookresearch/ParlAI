@@ -38,7 +38,10 @@ class Kvmemnn(nn.Module):
             self.hops = opt['hops']
         if 'lins' in opt:
             self.lins = opt['lins']
-
+        self.cosineEmbedding = True
+        if opt['loss'] == 'nll':
+            self.cosineEmbedding = False
+            
     def forward(self, xs, mems, ys=None, cands=None):
         scores = None
 
@@ -70,23 +73,38 @@ class Kvmemnn(nn.Module):
                 lhs_emb = xs_emb
         if ys is not None:
             # training
-            ys_enc = []
-            xs_enc.append(lhs_emb)
-            ys_enc.append(self.encoder2(ys))
-            for c in cands:
+            if self.cosineEmbedding:
+                ys_enc = []
                 xs_enc.append(lhs_emb)
-                c_emb = self.encoder2(c)
-                ys_enc.append(c_emb)
+                ys_enc.append(self.encoder2(ys))
+                for c in cands:
+                    xs_enc.append(lhs_emb)
+                    c_emb = self.encoder2(c)
+                    ys_enc.append(c_emb)
+            else:
+                xs_enc.append(lhs_emb.dot(self.encoder2(ys)))
+                for c in cands:
+                    c_emb = self.encoder2(c)
+                    xs_enc.append(lhs_emb.dot(c_emb))
         else:
             # test
-            ys_enc = []
-            c_scores = []
-            for c in cands:
-                xs_enc.append(lhs_emb)
-                c_emb = self.encoder2(c)
-                ys_enc.append(c_emb)
-        return torch.cat(xs_enc), torch.cat(ys_enc)
+            if self.cosineEmbedding:
+                ys_enc = []
+                c_scores = []
+                for c in cands:
+                    xs_enc.append(lhs_emb)
+                    c_emb = self.encoder2(c)
+                    ys_enc.append(c_emb)
+            else:
+                for c in cands:
+                    c_emb = self.encoder2(c)
+                    xs_enc.append(lhs_emb.dot(c_emb))
+        if self.cosineEmbedding:
+            return torch.cat(xs_enc), torch.cat(ys_enc)
+        else:
+            return torch.cat(xs_enc)
 
+        
 class Encoder(nn.Module):
     def __init__(self, shared_lt, dict):
         super().__init__()
