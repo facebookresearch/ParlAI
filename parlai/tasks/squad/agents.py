@@ -29,7 +29,11 @@ class IndexTeacher(FixedDialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        datapath = os.path.join(opt['datapath'], 'SQuAD', suffix + '-v1.1.json')
+        datapath = os.path.join(
+            opt['datapath'],
+            'SQuAD',
+            suffix + '-v1.1.json'
+        )
         self.data = self._setup_data(datapath)
 
         self.id = 'squad'
@@ -109,3 +113,37 @@ class DefaultTeacher(DialogTeacher):
                     answers = (a['text'] for a in qa['answers'])
                     context = paragraph['context']
                     yield (context + '\n' + question, answers), True
+
+
+class TitleTeacher(DefaultTeacher):
+    """This version of SquAD inherits from the Default Teacher. The only
+    difference is that the 'text' field of an observation will contain
+    the title of the article separated by a newline from the paragraph and the
+    query.
+    Note: The title will contain underscores, as it is the part of the link for
+    the Wikipedia page; i.e., the article is at the site:
+    https://en.wikipedia.org/wiki/{TITLE}
+    Depending on your task, you may wish to remove underscores.
+    """
+
+    def __init__(self, opt, shared=None):
+        self.id = 'squad_title'
+        super().__init__(opt, shared)
+
+    def setup_data(self, path):
+        print('loading: ' + path)
+        with open(path) as data_file:
+            self.squad = json.load(data_file)['data']
+        for article in self.squad:
+            title = article['title']
+            # each paragraph is a context for the attached questions
+            for paragraph in article['paragraphs']:
+                # each question is an example
+                for qa in paragraph['qas']:
+                    question = qa['question']
+                    answers = (a['text'] for a in qa['answers'])
+                    context = paragraph['context']
+                    yield (
+                        '\n'.join([title, context, question]),
+                        answers
+                    ), True
