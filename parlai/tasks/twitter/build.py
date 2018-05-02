@@ -21,11 +21,13 @@ def create_fb_format(data, dpath):
         use = True
         x = data[i].rstrip(' ').lstrip(' ').replace('\t', ' ')
         y = data[i + 1].rstrip(' ').lstrip(' ').replace('\t', ' ')
+        x = x.replace('|', ' __PIPE__ ')
+        y = y.replace('|', ' __PIPE__ ')
         if len(x) < 1 or len(y) < 1:
             use = False
         if use:
             s = '1 ' + x + '\t' + y
-            fout.write(s + '\n')
+            fout.write('{} \n'.format(s))
     fw1.close()
     fw2.close()
     fw3.close()
