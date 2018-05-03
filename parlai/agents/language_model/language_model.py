@@ -65,7 +65,7 @@ class LanguageModelAgent(Agent):
                            help='truncate predictions')
         agent.add_argument('-rf', '--report-freq', type=float, default=0.1,
                            help='report frequency of prediction during eval')
-        agent.add_argument('-pt', '--person-tokens', type=bool, default=True,
+        agent.add_argument('-pt', '--person-tokens', type='bool', default=True,
                            help='append person1 and person2 tokens to text')
         # learning rate parameters
         agent.add_argument('-lr', '--learningrate', type=float, default=20,
@@ -77,7 +77,7 @@ class LanguageModelAgent(Agent):
                            help='wait before decreasing learning rate')
         agent.add_argument('-lrm', '--lr-minimum', type=float, default=0.1,
                            help='minimum learning rate')
-        agent.add_argument('-sm', '--sampling-mode', type=bool, default=False,
+        agent.add_argument('-sm', '--sampling-mode', type='bool', default=False,
                            help='sample when generating tokens instead of taking \
                            the max and do not produce UNK token (when bs=1)')
         LanguageModelAgent.dictionary_class().add_cmdline_args(argparser)
