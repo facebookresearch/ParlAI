@@ -394,7 +394,7 @@ class Seq2seqAgent(Agent):
         """
         m = {}
         if self.metrics['num_tokens'] > 0:
-            m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
+            m['loss'] = self.metrics['loss'] / float(self.metrics['num_tokens'])
             m['ppl'] = math.exp(m['loss'])
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
