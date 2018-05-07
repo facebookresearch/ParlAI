@@ -394,7 +394,7 @@ class Seq2seqAgent(Agent):
         """
         m = {}
         if self.metrics['num_tokens'] > 0:
-            m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
+            m['loss'] = self.metrics['loss'] / float(self.metrics['num_tokens'])
             m['ppl'] = math.exp(m['loss'])
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
@@ -458,9 +458,9 @@ class Seq2seqAgent(Agent):
             out = self.model(xs, ys)
             predictions, scores = out[0], out[1]
             score_view = scores.view(-1, scores.size(-1))
-            loss = self.criterion(score_view, ys.view(-1))
+            loss = self.criterion(score_view, ys.view(-1)).double()
             # save loss to metrics
-            target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
+            target_tokens = ys.ne(self.NULL_IDX).double().sum().data[0]
             self.metrics['loss'] += loss.double().data[0]
             self.metrics['num_tokens'] += target_tokens
             loss /= target_tokens  # average loss per token
