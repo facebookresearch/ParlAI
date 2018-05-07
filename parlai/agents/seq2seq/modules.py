@@ -273,7 +273,7 @@ class Decoder(nn.Module):
 
         if self.numsoftmax > 1:
             bsz = xs.size(0)
-            seqlen = xs.size(1)
+            seqlen = xs.size(1) if xs.dim() > 1 else 1
             latent = self.latent(output)
             active = self.dropout(self.activation(latent))
             logit = self.e2s(active.view(-1, self.esz))
