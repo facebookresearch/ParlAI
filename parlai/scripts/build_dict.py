@@ -77,8 +77,8 @@ def build_dict(opt):
                 # don't wait too long...
                 break
             world_dict.parley()
-    print('[ dictionary built with {} tokens ]'.format(len(dictionary)))
     dictionary.save(opt['dict_file'], sort=True)
+    print('[ dictionary built with {} tokens ]'.format(len(dictionary)))
     return dictionary
 
 

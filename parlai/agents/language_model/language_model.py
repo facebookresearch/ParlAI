@@ -235,7 +235,7 @@ class LanguageModelAgent(Agent):
 
     def update_params(self):
         """Do one optimization step."""
-        torch.nn.utils.clip_grad_norm(self.model.parameters(), self.clip)
+        torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
         self.optimizer.step()
 
     def reset(self):
@@ -386,7 +386,7 @@ class LanguageModelAgent(Agent):
             hidden = self.repackage_hidden(hidden)
             word_weights = output.squeeze().data.exp()
             if bsz > 1:
-                value, word_idx = torch.max(word_weights, 1)
+                _, word_idx = torch.max(word_weights, 1)
             else:
                 if self.sampling_mode:
                     unk_idx = self.dict[self.dict.unk_token]
@@ -404,8 +404,9 @@ class LanguageModelAgent(Agent):
                     while word_idx == unk_idx:
                         word_idx = torch.multinomial(word_weights, 1)
                 else:
-                    value, word_idx = torch.max(word_weights, 0)
+                    _, word_idx = torch.max(word_weights, 0)
             # mark end indices for items in batch
+            word_idx = word_idx.view(-1)
             for k in range(word_idx.size(0)):
                 if not done[k]:
                     if int(word_idx[k]) == self.END_IDX:
@@ -427,8 +428,8 @@ class LanguageModelAgent(Agent):
             output, hidden = self.model(data, hidden)
             loss = self.criterion(output.view(-1, len(self.dict)), targets.view(-1))
             # save loss to metrics
-            target_tokens = targets.ne(self.NULL_IDX).long().sum().data[0]
-            self.metrics['lmloss'] += loss.double().data[0]
+            target_tokens = targets.ne(self.NULL_IDX).float().sum().item()
+            self.metrics['lmloss'] += loss.double().item()
             self.metrics['lm_num_tokens'] += target_tokens
             # average loss per token
             loss /= target_tokens
