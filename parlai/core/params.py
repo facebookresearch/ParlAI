@@ -335,6 +335,9 @@ class ParlaiParser(argparse.ArgumentParser):
         task = parsed.get('task', None)
         if task is not None:
             self.add_task_args(task)
+        evaltask = parsed.get('evaltask', None)
+        if evaltask is not None:
+            self.add_task_args(evaltask)
 
         # find which model specified if any, and add its specific arguments
         model = parsed.get('model', None)
