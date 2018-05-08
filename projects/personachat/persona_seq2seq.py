@@ -41,7 +41,17 @@ except ModuleNotFoundError:
 from parlai.core.params import ParlaiParser
 ParlaiParser()  # instantiate to set PARLAI_HOME environment var
 
-Glove = vocab.GloVe(name='840B', dim=300, cache=os.path.join(os.environ['PARLAI_HOME'], '.vector_cache'))
+
+Glove = vocab.GloVe(
+    name='840B',
+    dim=300,
+    cache=os.path.join(
+        os.environ['PARLAI_HOME'],
+        'data',
+        'models',
+        'glove_vectors'
+    )
+)
 
 
 import operator

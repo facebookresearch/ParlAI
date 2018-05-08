@@ -236,12 +236,27 @@ class Seq2seqAgent(Agent):
                     raise ex
                 if opt['embedding_type'].startswith('glove'):
                     init = 'glove'
-                    embs = vocab.GloVe(name='840B', dim=300,
-                        cache=os.path.join(opt['parlai_home'], '.vector_cache'))
+                    embs = vocab.GloVe(
+                        name='840B',
+                        dim=300,
+                        cache=os.path.join(
+                            opt['parlai_home'],
+                            'data',
+                            'models',
+                            'glove_vectors'
+                        )
+                    )
                 elif opt['embedding_type'].startswith('fasttext'):
                     init = 'fasttext'
-                    embs = vocab.FastText(language='en',
-                        cache=os.path.join(opt['parlai_home'], '.vector_cache'))
+                    embs = vocab.FastText(
+                        language='en',
+                        cache=os.path.join(
+                            opt['parlai_home'],
+                            'data',
+                            'models',
+                            'fasttext_vectors'
+                        )
+                    )
                 else:
                     raise RuntimeError('embedding type not implemented')
 
