@@ -337,7 +337,7 @@ def create_agent(opt, requireModelExists=False):
     if opt.get('model'):
         model_class = get_agent_module(opt['model'])
         model = model_class(opt)
-        if requireModelExists and hasattr(model, 'load'):
+        if requireModelExists and hasattr(model, 'load') and not opt.get('model_file'):
             # double check that we didn't forget to set model_file on loadable model
             print('WARNING: model_file unset but model has a `load` function.')
         return model
