@@ -19,7 +19,7 @@ from collections import deque
 
 import os
 import math
-
+import pickle
 
 class Seq2seqAgent(Agent):
     """Agent which takes an input sequence and produces an output sequence.
@@ -187,8 +187,8 @@ class Seq2seqAgent(Agent):
             # check first for 'init_model' for loading model from file
             if opt.get('init_model') and os.path.isfile(opt['init_model']):
                 init_model = opt['init_model']
-            # next check for 'model_file'
-            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
+            # next check for 'model_file', this would override init_model
+            if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 init_model = opt['model_file']
             else:
                 init_model = None
@@ -197,8 +197,10 @@ class Seq2seqAgent(Agent):
                 # load model parameters if available
                 print('[ Loading existing model params from {} ]'.format(init_model))
                 new_opt, states = self.load(init_model)
-                # override model-specific options with stored ones
-                opt = self.override_opt(new_opt)
+                # override model-specific options with stored ones if not
+                # already overriden with .opt file
+                if not os.path.isfile(init_model + '.opt'):
+                    opt = self.override_opt(new_opt)
                 self.opt = opt
 
             if opt['dict_file'] is None:
@@ -620,6 +622,10 @@ class Seq2seqAgent(Agent):
             with open(path, 'wb') as write:
                 torch.save(model, write)
 
+            # save opt file
+            with open(path + ".opt", 'wb') as handle:
+                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                
     def shutdown(self):
         """Save the state of the model when shutdown."""
         path = self.opt.get('model_file', None)
