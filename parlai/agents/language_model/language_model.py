@@ -555,7 +555,6 @@ class LanguageModelAgent(Agent):
         return self.batch_act([self.observation])[0]
 
     def save(self, path=None):
-        print("SAVING!!!!")
         """Save model parameters if model_file is set."""
         path = self.opt.get('model_file', None) if path is None else path
 
