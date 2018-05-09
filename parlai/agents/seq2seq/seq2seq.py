@@ -625,7 +625,9 @@ class Seq2seqAgent(Agent):
     def load(self, path):
         """Return opt and model states."""
         states = torch.load(path, map_location=lambda cpu, _: cpu)
-        self.opt = self.override_opt(states['opt'])
+        if not os.path.isfile(path + '.opt'):
+            # backwards compatible to old models
+            self.opt = self.override_opt(states['opt'])
         return states
 
     def receive_metrics(self, metrics_dict):
