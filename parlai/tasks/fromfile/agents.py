@@ -19,7 +19,7 @@ class DefaultTeacher(FbDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('FromFile Task Arguments')
-        agent.add_argument('--fromfile_datapath', type=str,
+        agent.add_argument('--fromfile-datapath', type=str,
                            help="Data file in FbDialogFormat")
 
     def __init__(self, opt, shared=None):
