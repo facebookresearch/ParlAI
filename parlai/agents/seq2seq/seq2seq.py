@@ -184,14 +184,13 @@ class Seq2seqAgent(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
+            init_model = None
             # check first for 'init_model' for loading model from file
             if opt.get('init_model') and os.path.isfile(opt['init_model']):
                 init_model = opt['init_model']
             # next check for 'model_file', this would override init_model
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 init_model = opt['model_file']
-            else:
-                init_model = None
 
             if init_model is not None:
                 # load model parameters if available
