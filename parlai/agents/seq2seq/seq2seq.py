@@ -196,21 +196,11 @@ class Seq2seqAgent(Agent):
             if init_model is not None:
                 # load model parameters if available
                 print('[ Loading existing model params from {} ]'.format(init_model))
-                new_opt, states = self.load(init_model)
-                # override model-specific options with stored ones if not
-                # already overriden with .opt file
-                if not os.path.isfile(init_model + '.opt'):
-                    opt = self.override_opt(new_opt)
-                self.opt = opt
-
-            if opt['dict_file'] is None:
-                if init_model is not None and os.path.isfile(init_model + '.dict'):
-                    # check first to see if a dictionary exists
-                    opt['dict_file'] = init_model + '.dict'
-                elif opt.get('model_file'):
-                    # otherwise, set default dict-file if it is not set
-                    opt['dict_file'] = opt['model_file'] + '.dict'
-
+                    states = self.load(opt['model_file'])
+                    
+            if ((init_model is not None and os.path.isfile(init_model + '.dict'))
+                or opt['dict_file'] is None):
+                opt['dict_file'] = init_model + '.dict'
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
             self.id = 'Seq2Seq'
@@ -636,7 +626,8 @@ class Seq2seqAgent(Agent):
     def load(self, path):
         """Return opt and model states."""
         states = torch.load(path, map_location=lambda cpu, _: cpu)
-        return states['opt'], states
+        self.opt = self.override_opt(states['opt'])
+        return states
 
     def receive_metrics(self, metrics_dict):
         """Use the metrics to decide when to adjust LR schedule."""
