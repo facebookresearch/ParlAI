@@ -14,13 +14,11 @@ from torch.autograd import Variable
 from torch import optim
 import torch.nn as nn
 
-from collections import deque
-
 import copy
 import os
 import math
-import random
-import re
+import pickle
+
 
 class LanguageModelAgent(Agent):
     """ Agent which trains an RNN on a language modeling task.
@@ -87,7 +85,12 @@ class LanguageModelAgent(Agent):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
         opt = self.opt  # there is a deepcopy in the init
-        self.metrics = {'loss': 0, 'num_tokens': 0, 'lmloss': 0, 'lm_num_tokens': 0}
+        self.metrics = {
+            'loss': 0,
+            'num_tokens': 0,
+            'lmloss': 0,
+            'lm_num_tokens': 0
+        }
         self.states = {}
         # check for cuda
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
@@ -132,8 +135,10 @@ class LanguageModelAgent(Agent):
                 # load model parameters if available
                 print('Loading existing model params from ' + init_model)
                 new_opt, self.states = self.load(init_model)
-                # override model-specific options with stored ones
-                opt = self.override_opt(new_opt)
+                # override model-specific options with stored ones if not
+                # already overriden with .opt file
+                if not os.path.isfile(init_model + '.opt'):
+                    opt = self.override_opt(new_opt)
 
             if opt['dict_file'] is None:
                 if init_model is not None and os.path.isfile(init_model + '.dict'):
@@ -205,14 +210,14 @@ class LanguageModelAgent(Agent):
 
         self.reset()
 
-
     def override_opt(self, new_opt):
         """Set overridable opts from loaded opt file.
         Print out each added key and each overriden key.
         Only override args specific to the model.
         """
         model_args = {'hiddensize', 'embeddingsize', 'numlayers', 'dropout',
-                      'seq_len', 'emb_tied'}
+                      'seq_len', 'emb_tied', 'truncate_pred', 'report_freq',
+                      'person_tokens', 'learningrate'}
         for k, v in new_opt.items():
             if k not in model_args:
                 # skip non-model args
@@ -417,7 +422,6 @@ class LanguageModelAgent(Agent):
 
         return torch.cat(token_list,1)
 
-
     def predict(self, data, hidden, targets=None, is_training=True, y_lens=None):
         """Produce a prediction from our model."""
         output = None
@@ -551,6 +555,7 @@ class LanguageModelAgent(Agent):
         return self.batch_act([self.observation])[0]
 
     def save(self, path=None):
+        print("SAVING!!!!")
         """Save model parameters if model_file is set."""
         path = self.opt.get('model_file', None) if path is None else path
 
@@ -562,6 +567,9 @@ class LanguageModelAgent(Agent):
 
             with open(path, 'wb') as write:
                 torch.save(model, write)
+            # save opt file
+            with open(path + ".opt", 'wb') as handle:
+                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def shutdown(self):
         """Save the state of the model when shutdown."""
