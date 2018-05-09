@@ -381,7 +381,7 @@ class Seq2seqAgent(Agent):
     def update_params(self):
         """Do one optimization step."""
         if self.clip > 0:
-            torch.nn.utils.clip_grad_norm(self.model.parameters(), self.clip)
+            torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
         self.optimizer.step()
 
     def reset(self):
@@ -404,7 +404,10 @@ class Seq2seqAgent(Agent):
         m = {}
         if self.metrics['num_tokens'] > 0:
             m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
-            m['ppl'] = math.exp(m['loss'])
+            try:
+                m['ppl'] = math.exp(m['loss'])
+            except OverflowError:
+                m['ppl'] = float('inf')
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)
