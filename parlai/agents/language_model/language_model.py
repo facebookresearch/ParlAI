@@ -597,7 +597,4 @@ class LanguageModelAgent(Agent):
             # load model parameters if available
             print('[ Loading existing model params from {} ]'.format(path))
             self.states = torch.load(path, map_location=lambda cpu, _: cpu)
-
-        if self.states:
-            # set loaded states if applicable
             self.model.load_state_dict(self.states['model'])
