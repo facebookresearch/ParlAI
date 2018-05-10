@@ -5,9 +5,13 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 # Download and build the data if it does not exist.
 
+try:
+    from emoji.unicode_codes import UNICODE_EMOJI
+    import unidecode
+except ModuleNotFound:
+    raise ModuleNotFound('Please `pip install emoji unidecode` for the twitter task.')
+
 import parlai.core.build_data as build_data
-from emoji.unicode_codes import UNICODE_EMOJI
-import unidecode
 import os
 
 def replace_emoji(x):

@@ -183,6 +183,9 @@ class FixedDialogTeacher(Teacher):
                                    context_length=clen, include_labels=incl)
                 self.sorted_data = sort_data(flatdata)
                 self.batches = make_batches(self.sorted_data, self.bsz)
+                # one fixed-seed shuffle keeps determinism but makes sure that
+                # examples aren't presented in sorted order (bad for `-vme`)
+                random.Random(42).shuffle(self.batches)
 
     def _lock(self):
         if hasattr(self.index, 'get_lock'):
