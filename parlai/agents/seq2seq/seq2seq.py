@@ -30,8 +30,13 @@ class Seq2seqAgent(Agent):
     output tokens. This model currently uses greedy decoding, selecting the
     highest probability token at each time step.
 
-    For more information, see Sequence to Sequence Learning with Neural
-    Networks `(Sutskever et al. 2014) <https://arxiv.org/abs/1409.3215>`_.
+    For more information, see the following papers:
+    - Neural Machine Translation by Jointly Learning to Align and Translate
+      `(Bahdanau et al. 2014) <arxiv.org/abs/1409.0473>`_
+    - Sequence to Sequence Learning with Neural Networks
+      `(Sutskever et al. 2014) <arxiv.org/abs/1409.3215>`_
+    - Effective Approaches to Attention-based Neural Machine Translation
+      `(Luong et al. 2015) <arxiv.org/abs/1508.04025>`_
     """
 
     OPTIM_OPTS = {
@@ -76,8 +81,7 @@ class Seq2seqAgent(Agent):
                            choices=['none', 'concat', 'general', 'dot', 'local'],
                            help='Choices: none, concat, general, local. '
                                 'If set local, also set attention-length. '
-                                'For more details see: '
-                                'https://arxiv.org/abs/1508.04025')
+                                '(see arxiv.org/abs/1508.04025)')
         agent.add_argument('-attl', '--attention-length', default=48, type=int,
                            help='Length of local attention.')
         agent.add_argument('--attention-time', default='post',
@@ -137,6 +141,9 @@ class Seq2seqAgent(Agent):
                                 'Fasttext.'
                                 'Preinitialized embeddings can also be fixed '
                                 'so they are not updated during training.')
+        agent.add_argument('-soft', '--numsoftmax', default=1, type=int,
+                           help='default 1, if greater then uses mixture of '
+                                'softmax (see arxiv.org/abs/1711.03953).')
         agent.add_argument('-rf', '--report-freq', type=float, default=0.001,
                            help='Report frequency of prediction during eval.')
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
@@ -287,8 +294,12 @@ class Seq2seqAgent(Agent):
                 self.cands = torch.LongTensor(1, 1, 1)
 
             # set up criteria
-            self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX,
-                                                 size_average=False)
+            if opt.get('numsoftmax', 1) > 1:
+                self.criterion = nn.NLLLoss(
+                    ignore_index=self.NULL_IDX, size_average=False)
+            else:
+                self.criterion = nn.CrossEntropyLoss(
+                    ignore_index=self.NULL_IDX, size_average=False)
 
             if self.use_cuda:
                 # push to cuda
@@ -306,6 +317,9 @@ class Seq2seqAgent(Agent):
                 kwargs['momentum'] = opt['momentum']
                 if opt['optimizer'] == 'sgd':
                     kwargs['nesterov'] = True
+            if opt['optimizer'] == 'adam':
+                # https://openreview.net/forum?id=ryQu7f-RZ
+                kwargs['amsgrad'] = True
 
             if opt['embedding_type'].endswith('fixed'):
                 print('Seq2seq: fixing embedding weights.')
@@ -378,7 +392,7 @@ class Seq2seqAgent(Agent):
     def update_params(self):
         """Do one optimization step."""
         if self.clip > 0:
-            torch.nn.utils.clip_grad_norm(self.model.parameters(), self.clip)
+            torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
         self.optimizer.step()
 
     def reset(self):
@@ -400,8 +414,11 @@ class Seq2seqAgent(Agent):
         """
         m = {}
         if self.metrics['num_tokens'] > 0:
-            m['loss'] = self.metrics['loss'] / float(self.metrics['num_tokens'])
-            m['ppl'] = math.exp(m['loss'])
+            m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
+            try:
+                m['ppl'] = math.exp(m['loss'])
+            except OverflowError:
+                m['ppl'] = float('inf')
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)
@@ -464,10 +481,10 @@ class Seq2seqAgent(Agent):
             out = self.model(xs, ys)
             predictions, scores = out[0], out[1]
             score_view = scores.view(-1, scores.size(-1))
-            loss = self.criterion(score_view, ys.view(-1)).double()
+            loss = self.criterion(score_view, ys.view(-1))
             # save loss to metrics
-            target_tokens = ys.ne(self.NULL_IDX).double().sum().data[0]
-            self.metrics['loss'] += loss.double().data[0]
+            target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
+            self.metrics['loss'] += loss.item()
             self.metrics['num_tokens'] += target_tokens
             loss /= target_tokens  # average loss per token
             # loss /= xs.size(0)  # average loss per sentence
@@ -484,8 +501,8 @@ class Seq2seqAgent(Agent):
                 scores = out[1]
                 score_view = scores.view(-1, scores.size(-1))
                 loss = self.criterion(score_view, ys.view(-1))
-                target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
-                self.metrics['loss'] += loss.double().data[0]
+                target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
+                self.metrics['loss'] += loss.item()
                 self.metrics['num_tokens'] += target_tokens
 
         return predictions, text_cand_inds
