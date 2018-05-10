@@ -13,7 +13,7 @@ from projects.convai2.eval_f1 import setup_args, eval_f1
 
 if __name__ == '__main__':
     parser = setup_args()
-    parser.set_defaults(
+    parser.set_params(
         model='language_model',
         model_file='models:convai2/language_model/model',
         dict_file='models:convai2/language_model/model.dict',
@@ -21,7 +21,6 @@ if __name__ == '__main__':
     )
     opt = parser.parse_args()
     opt['model_type'] = 'language_model'
-    opt['override'] = ['dict_file', 'batchsize']
     fnames = ['model', 'model.dict', 'model.opt']
     download_models(opt, fnames, 'convai2', version='v2.0',
                     use_model_type=True)

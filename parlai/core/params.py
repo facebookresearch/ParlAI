@@ -85,6 +85,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # remember which args were specified on the command line
         self.cli_args = sys.argv
+        self.overridable = {}
 
         if add_parlai_args:
             self.add_parlai_args()
@@ -405,19 +406,21 @@ class ParlaiParser(argparse.ArgumentParser):
                             store_true.append(option)
                         elif '_StoreFalseAction' in str(type(a)):
                             store_false.append(option)
-        override = {}
+
         for i in range(len(self.cli_args)):
             if self.cli_args[i] in option_strings_dict:
                 if self.cli_args[i] in store_true:
-                    override[option_strings_dict[self.cli_args[i]]] = True
+                    self.overridable[option_strings_dict[self.cli_args[i]]] = \
+                        True
                 elif self.cli_args[i] in store_false:
-                    override[option_strings_dict[self.cli_args[i]]] = False
+                    self.overridable[option_strings_dict[self.cli_args[i]]] = \
+                        False
                 else:
                     if i < (len(self.cli_args) - 1) and \
                             self.cli_args[i+1][0] != '-':
-                        override[option_strings_dict[self.cli_args[i]]] = \
+                        self.overridable[option_strings_dict[self.cli_args[i]]] = \
                             self.cli_args[i+1]
-        self.opt['override'] = override
+        self.opt['override'] = self.overridable
 
         if print_args:
             self.print_args()
@@ -444,3 +447,9 @@ class ParlaiParser(argparse.ArgumentParser):
                         print('[ ' + group.title + ': ] ')
                     count += 1
                     print('[  ' + key + ': ' + values[key] + ' ]')
+
+    def set_params(self, **kwargs):
+        """Set overridable kwargs."""
+        self.set_defaults(**kwargs)
+        for k, v in kwargs.items():
+            self.overridable[k] = v

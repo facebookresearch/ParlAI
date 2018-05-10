@@ -102,14 +102,13 @@ class LanguageModelEntry(LanguageModelAgent):
 if __name__ == '__main__':
     parser = setup_args()
     parser.add_argument('-vme', '--validation-max-exs', type=int, default=-1)
-    parser.set_defaults(
+    parser.set_params(
         model='projects.convai2.baselines.language_model.eval_ppl:LanguageModelEntry',
         model_file='models:convai2/language_model/model',
         dict_file='models:convai2/language_model/model.dict',
         batchsize=1,
     )
     opt = parser.parse_args()
-    opt['override'] = ['model', 'batchsize']
     opt['model_type'] = 'language_model'
     fnames = ['model', 'model.dict', 'model.opt']
     download_models(opt, fnames, 'convai2', version='v2.0',
