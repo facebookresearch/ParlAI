@@ -13,7 +13,7 @@ from projects.convai2.eval_f1 import setup_args, eval_f1
 
 if __name__ == '__main__':
     parser = setup_args()
-    parser.set_defaults(
+    parser.set_params(
         model='seq2seq',
         model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
         dict_file='models:convai2/seq2seq/dict_convai2_self',
@@ -22,6 +22,7 @@ if __name__ == '__main__':
     )
     opt = parser.parse_args(print_args=False)
     opt['model_type'] = 'seq2seq'
-    fnames = ['convai2_self_seq2seq_model.tgz', 'dict_convai2_self']
-    download_models(opt, fnames, 'convai2')
+    fnames = ['convai2_self_seq2seq_model.tgz', 'dict_convai2_self',
+              'convai2_self_seq2seq_model.opt']
+    download_models(opt, fnames, 'convai2', version='v2.0')
     eval_f1(opt, print_parser=parser)

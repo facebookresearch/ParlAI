@@ -203,7 +203,7 @@ class Seq2seqAgent(Agent):
                 # load model parameters if available
                 print('[ Loading existing model params from {} ]'.format(init_model))
                 states = self.load(opt['model_file'])
-                    
+
             if ((init_model is not None and os.path.isfile(init_model + '.dict'))
                 or opt['dict_file'] is None):
                 opt['dict_file'] = init_model + '.dict'
@@ -631,7 +631,7 @@ class Seq2seqAgent(Agent):
             # save opt file
             with open(path + ".opt", 'wb') as handle:
                 pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
-                
+
     def shutdown(self):
         """Save the state of the model when shutdown."""
         path = self.opt.get('model_file', None)
@@ -645,6 +645,9 @@ class Seq2seqAgent(Agent):
         if not os.path.isfile(path + '.opt'):
             # backwards compatible to old models
             self.opt = self.override_opt(states['opt'])
+            # save .opt file to make compatible
+            with open(path + ".opt", 'wb') as handle:
+                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
         return states
 
     def receive_metrics(self, metrics_dict):
