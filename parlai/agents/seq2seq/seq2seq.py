@@ -23,11 +23,13 @@ import pickle
 
 class Seq2seqAgent(Agent):
     """Agent which takes an input sequence and produces an output sequence.
+
     This model supports encoding the input and decoding the output via one of
     several flavors of RNN. It then uses a linear layer (whose weights can
     be shared with the embedding layer) to convert RNN output states into
     output tokens. This model currently uses greedy decoding, selecting the
     highest probability token at each time step.
+
     For more information, see the following papers:
     - Neural Machine Translation by Jointly Learning to Align and Translate
       `(Bahdanau et al. 2014) <arxiv.org/abs/1409.0473>`_
@@ -344,6 +346,7 @@ class Seq2seqAgent(Agent):
 
     def override_opt(self, new_opt):
         """Set overridable opts from loaded opt file.
+
         Print out each added key and each overriden key.
         Only override args specific to the model.
         """
@@ -405,6 +408,7 @@ class Seq2seqAgent(Agent):
 
     def report(self):
         """Report loss and perplexity from model's perspective.
+
         Note that this includes predicting __END__ and __UNK__ tokens and may
         differ from a truly independent measurement.
         """
@@ -466,6 +470,7 @@ class Seq2seqAgent(Agent):
 
     def predict(self, xs, ys=None, cands=None, valid_cands=None, is_training=False):
         """Produce a prediction from our model.
+
         Update the model using the targets if available, otherwise rank
         candidates as well if they are available and param is set.
         """
