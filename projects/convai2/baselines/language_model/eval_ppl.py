@@ -33,36 +33,36 @@ class LanguageModelEntry(LanguageModelAgent):
         shared['probs'] = self.probs.copy()
         return shared
 
-    def next_word_probability(self, observation, partial_out):
-        """Return probability distribution over next words given an input and
-        partial true output. This is used to calculate the per-word perplexity.
+    def next_word_probability(self, partial_out):
+        """Return probability distribution over next words given an partial
+        true output. This is used to calculate the per-word perplexity.
         Arguments:
-        observation -- input observation dict
         partial_out -- previous "true" words
         Returns a dict, where each key is a word and each value is a probability
         score for that word. Unset keys assume a probability of zero.
         e.g.
         {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
         """
-        self.model.eval()
+        obs = self.observation
         if not hasattr(self, 'last_text'):
             self.last_text = None
             self.reset_next = False
-        if observation['text'] != self.last_text:
+        if obs['text'] != self.last_text:
             if self.reset_next:
                 # reset hidden state for new episodes
                 self.hidden = self.model.init_hidden(1)
                 self.reset_next = False
             self.seen = False
-            self.last_text = observation.get('text')
-            self.observe(observation)
+            self.last_text = obs.get('text')
 
-        if observation['episode_done'] == True:
+        self.model.eval()
+
+        if obs['episode_done'] == True:
             self.reset_next = True
         else:
             self.reset_next = False
 
-        obs = self.observation
+
         if len(partial_out) == 0:
             # first observe 'PERSON2' token
             obs['eval_labels'] = ('PERSON2',)
@@ -102,15 +102,15 @@ class LanguageModelEntry(LanguageModelAgent):
 if __name__ == '__main__':
     parser = setup_args()
     parser.add_argument('-vme', '--validation-max-exs', type=int, default=-1)
-    parser.set_defaults(
+    parser.set_params(
         model='projects.convai2.baselines.language_model.eval_ppl:LanguageModelEntry',
         model_file='models:convai2/language_model/model',
         dict_file='models:convai2/language_model/model.dict',
-        datatype='test',
         batchsize=1,
     )
     opt = parser.parse_args()
     opt['model_type'] = 'language_model'
-    fnames = ['model', 'model.dict']
-    download_models(opt, fnames, 'convai2', use_model_type=True)
+    fnames = ['model', 'model.dict', 'model.opt']
+    download_models(opt, fnames, 'convai2', version='v2.0',
+                    use_model_type=True)
     eval_ppl(opt)

@@ -14,13 +14,11 @@ from torch.autograd import Variable
 from torch import optim
 import torch.nn as nn
 
-from collections import deque
-
 import copy
 import os
 import math
-import random
-import re
+import pickle
+
 
 class LanguageModelAgent(Agent):
     """ Agent which trains an RNN on a language modeling task.
@@ -87,7 +85,12 @@ class LanguageModelAgent(Agent):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
         opt = self.opt  # there is a deepcopy in the init
-        self.metrics = {'loss': 0, 'num_tokens': 0, 'lmloss': 0, 'lm_num_tokens': 0}
+        self.metrics = {
+            'loss': 0,
+            'num_tokens': 0,
+            'lmloss': 0,
+            'lm_num_tokens': 0
+        }
         self.states = {}
         # check for cuda
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
@@ -119,29 +122,37 @@ class LanguageModelAgent(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
+            init_model = None
             # check first for 'init_model' for loading model from file
             if opt.get('init_model') and os.path.isfile(opt['init_model']):
                 init_model = opt['init_model']
-            # next check for 'model_file'
-            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
+            # next check for 'model_file', this would override init_model
+            if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 init_model = opt['model_file']
-            else:
-                init_model = None
 
-            if init_model is not None:
+            # for backwards compatibility: will only be called for older models
+            # for which .opt file does not exist
+            if (init_model is not None and
+                    not os.path.isfile(init_model + '.opt')):
+                new_opt = self.load_opt(init_model)
                 # load model parameters if available
-                print('Loading existing model params from ' + init_model)
-                new_opt, self.states = self.load(init_model)
-                # override model-specific options with stored ones
+                print('[ Setting opt from {} ]'.format(
+                    init_model
+                ))
+                # since .opt file does not exist, save one for future use
+                print("Saving opt file at:", init_model + ".opt")
+                with open(init_model + ".opt", 'wb') as handle:
+                    pickle.dump(
+                        new_opt,
+                        handle,
+                        protocol=pickle.HIGHEST_PROTOCOL
+                    )
                 opt = self.override_opt(new_opt)
 
-            if opt['dict_file'] is None:
-                if init_model is not None and os.path.isfile(init_model + '.dict'):
-                    # check first to see if a dictionary exists
-                    opt['dict_file'] = init_model + '.dict'
-                elif opt.get('model_file'):
-                    # otherwise, set default dict-file if it is not set
-                    opt['dict_file'] = opt['model_file'] + '.dict'
+            if ((init_model is not None and
+                    os.path.isfile(init_model + '.dict')) or
+                    opt['dict_file'] is None):
+                opt['dict_file'] = init_model + '.dict'
 
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
@@ -159,9 +170,8 @@ class LanguageModelAgent(Agent):
             # set model
             self.model = RNNModel(opt, len(self.dict))
 
-            if self.states:
-                # set loaded states if applicable
-                self.model.load_state_dict(self.states['model'])
+            if init_model is not None:
+                self.load(init_model)
 
             if self.use_cuda:
                 self.model.cuda()
@@ -205,14 +215,14 @@ class LanguageModelAgent(Agent):
 
         self.reset()
 
-
     def override_opt(self, new_opt):
         """Set overridable opts from loaded opt file.
         Print out each added key and each overriden key.
         Only override args specific to the model.
         """
         model_args = {'hiddensize', 'embeddingsize', 'numlayers', 'dropout',
-                      'seq_len', 'emb_tied'}
+                      'seq_len', 'emb_tied', 'truncate_pred', 'report_freq',
+                      'person_tokens', 'learningrate'}
         for k, v in new_opt.items():
             if k not in model_args:
                 # skip non-model args
@@ -417,7 +427,6 @@ class LanguageModelAgent(Agent):
 
         return torch.cat(token_list,1)
 
-
     def predict(self, data, hidden, targets=None, is_training=True, y_lens=None):
         """Produce a prediction from our model."""
         output = None
@@ -562,6 +571,9 @@ class LanguageModelAgent(Agent):
 
             with open(path, 'wb') as write:
                 torch.save(model, write)
+            # save opt file
+            with open(path + ".opt", 'wb') as handle:
+                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def shutdown(self):
         """Save the state of the model when shutdown."""
@@ -574,7 +586,15 @@ class LanguageModelAgent(Agent):
         if 'loss' in metrics_dict and self.scheduler is not None:
             self.scheduler.step(metrics_dict['loss'])
 
-    def load(self, path):
-        """Return opt and model states."""
+    def load_opt(self, path):
+        """Return opt, states."""
         states = torch.load(path, map_location=lambda cpu, _: cpu)
-        return states['opt'], states
+        return states['opt']
+
+    def load(self, path):
+        """Load model states."""
+        if os.path.isfile(path):
+            # load model parameters if available
+            print('[ Loading existing model params from {} ]'.format(path))
+            self.states = torch.load(path, map_location=lambda cpu, _: cpu)
+            self.model.load_state_dict(self.states['model'])

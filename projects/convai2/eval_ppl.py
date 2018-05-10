@@ -24,12 +24,11 @@ tokenizer's parsing of the text.
 
 This requires agents to implement the following function:
 
-def next_word_probability(self, observation, partial_out):
-    Return probability distribution over next words given an input and
-    partial true output. This is used to calculate the per-word perplexity.
+def next_word_probability(self, partial_out):
+    Return probability distribution over next words given a partial true output.
+    This is used to calculate the per-word perplexity.
 
     Arguments:
-    observation -- input observation dict
     partial_out -- list of previous "true" words
 
     Returns a dict, where each key is a word and each value is a probability
@@ -88,13 +87,14 @@ class WordFrequencyEntry(Agent):
         shared['dict'] = self.dict
         return shared
 
-    def next_word_probability(self, observation, partial_out):
+    def next_word_probability(self, partial_out):
         """Example implementation of next word probability."""
+        obs = self.observation
         # initialize probabilities with inverse word frequency
         freqs = self.freqs.copy()
 
         # increase likelihood of predicting input words
-        tokens = self.dict.tokenize(observation.get('text', ''))
+        tokens = self.dict.tokenize(obs.get('text', ''))
         for t in tokens:
             freqs[t] += 10000
         return freqs
@@ -159,10 +159,11 @@ class PerplexityWorld(World):
         loss = 0
         num_tokens = 0
         num_unk = 0
+        self.agent.observe(action)
         for i in range(len(parsed)):
             if parsed[i] in self.dict:
                 # only score words which are in the dictionary
-                probs = self.agent.next_word_probability(action, parsed[:i])
+                probs = self.agent.next_word_probability(parsed[:i])
                 # get probability of correct answer, divide by total prob mass
                 prob_true = probs.get(parsed[i], 0)
                 if prob_true > 0:
@@ -235,7 +236,7 @@ def eval_ppl(opt):
             report = world.report()
             print('{}s elapsed, {}%% complete, {}'.format(
                 int(tot_time),
-                round_sigfigs(report['total'] / world.num_examples() * 100, 2),
+                round_sigfigs(report['total'] / world.num_examples() * 100, 3),
                 report))
             log_time.reset()
     if world.epoch_done():
@@ -244,7 +245,7 @@ def eval_ppl(opt):
     final_report = world.report()
     print('{}s elapsed: {}'.format(int(tot_time), final_report))
     print("============================")
-    print("FINAL PPL: " +str(final_report['ppl']))    
+    print("FINAL PPL: " +str(final_report['ppl']))
     if final_report.get('ppl', 0) == float('inf'):
         print('Note: you got inf perplexity. Consider adding (or raising) the '
               'minimum probability you assign to each possible word. If you '
