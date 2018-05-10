@@ -130,10 +130,10 @@ class LanguageModelAgent(Agent):
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 init_model = opt['model_file']
 
-            if init_model is not None and \
-                    not os.path.isfile(init_model + '.opt'):
-                # this will only be called for loading older models before
-                # .opt file is saved
+            # for backwards compatibility: will only be called for older models
+            # for which .opt file does not exist
+            if (init_model is not None and
+                    not os.path.isfile(init_model + '.opt')):
                 new_opt = self.load_opt(init_model)
                 # load model parameters if available
                 print('[ Setting opt from {} ]'.format(
@@ -149,9 +149,9 @@ class LanguageModelAgent(Agent):
                     )
                 opt = self.override_opt(new_opt)
 
-            if (init_model is not None and
-                    os.path.isfile(init_model + '.dict')) or \
-                    opt['dict_file'] is None:
+            if ((init_model is not None and
+                    os.path.isfile(init_model + '.dict')) or
+                    opt['dict_file'] is None):
                 opt['dict_file'] = init_model + '.dict'
 
             # load dictionary and basic tokens & vectors
