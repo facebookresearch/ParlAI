@@ -25,10 +25,10 @@ if __name__ == '__main__':
         model_file='models:personachat/language_model/languagemodel_esz512_hid1024_nl2.pt'
     )
 
-
     opt = parser.parse_args()
     opt['model_type'] = 'language_model' # for builder
     # build all profile memory models
+    opt['override'] = ['dict_file', 'sampling_mode']
     fnames = ['languagemodel_esz512_hid1024_nl2.pt',
               'languagemodel_esz512_hid1024_nl2.pt.opt',
               'opensubtitles2018.dict']
