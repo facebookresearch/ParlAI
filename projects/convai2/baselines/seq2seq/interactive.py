@@ -21,6 +21,7 @@ if __name__ == '__main__':
     )
     opt = parser.parse_args()
     opt['model_type'] = 'seq2seq'
+    opt['override'] = ['dict_file', 'dict_lower']
     fnames = ['convai2_self_seq2seq_model.tgz', 'dict_convai2_self',
               'convai2_self_seq2seq_model.opt']
     download_models(opt, fnames, 'convai2', version='v2.0')
