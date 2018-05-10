@@ -30,8 +30,13 @@ class Seq2seqAgent(Agent):
     output tokens. This model currently uses greedy decoding, selecting the
     highest probability token at each time step.
 
-    For more information, see Sequence to Sequence Learning with Neural
-    Networks `(Sutskever et al. 2014) <arxiv.org/abs/1409.3215>`_.
+    For more information, see the following papers:
+    - Neural Machine Translation by Jointly Learning to Align and Translate
+      `(Bahdanau et al. 2014) <arxiv.org/abs/1409.0473>`_
+    - Sequence to Sequence Learning with Neural Networks
+      `(Sutskever et al. 2014) <arxiv.org/abs/1409.3215>`_
+    - Effective Approaches to Attention-based Neural Machine Translation
+      `(Luong et al. 2015) <arxiv.org/abs/1508.04025>`_
     """
 
     OPTIM_OPTS = {
