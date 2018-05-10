@@ -48,11 +48,15 @@ class Seq2seqEntry(Seq2seqAgent):
         obs = self.observation
         obs['eval_labels'] = [' '.join(partial_out)]
         batch = self.vectorize([obs])
+        if self.prev_enc is not None and batch[0].shape[1] != self.prev_enc[0].shape[1]:
+            self.prev_enc = None  # reset prev_enc
+
         self.model.eval()
         self.model.longest_label = 1  # no need to predict farther ahead
         out = self.model(
             batch[0], # xs
-            ys=(batch[1] if len(partial_out) > 0 else None))
+            ys=(batch[1] if len(partial_out) > 0 else None),
+            prev_enc=self.prev_enc)
         scores, self.prev_enc = out[1], out[3]
         # scores is bsz x seqlen x num_words, so select probs of current index
         assert len(partial_out) == scores.size(1) - 1

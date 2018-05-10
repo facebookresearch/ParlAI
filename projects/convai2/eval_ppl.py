@@ -236,7 +236,7 @@ def eval_ppl(opt):
             report = world.report()
             print('{}s elapsed, {}%% complete, {}'.format(
                 int(tot_time),
-                round_sigfigs(report['total'] / world.num_examples() * 100, 2),
+                round_sigfigs(report['total'] / world.num_examples() * 100, 3),
                 report))
             log_time.reset()
     if world.epoch_done():
