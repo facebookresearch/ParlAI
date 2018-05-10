@@ -139,6 +139,13 @@ class LanguageModelAgent(Agent):
                 print('[ Setting opt from {} ]'.format(
                     init_model
                 ))
+                # since .opt file does not exist, save one for future use
+                with open(init_model + ".opt", 'wb') as handle:
+                    pickle.dump(
+                        new_opt,
+                        handle,
+                        protocol=pickle.HIGHEST_PROTOCOL
+                    )
                 opt = self.override_opt(new_opt)
 
             if (init_model is not None and
