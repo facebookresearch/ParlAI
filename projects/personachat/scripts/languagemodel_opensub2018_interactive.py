@@ -30,7 +30,8 @@ if __name__ == '__main__':
     opt['model_type'] = 'language_model' # for builder
     # build all profile memory models
     fnames = ['languagemodel_esz512_hid1024_nl2.pt',
+              'languagemodel_esz512_hid1024_nl2.pt.opt',
               'opensubtitles2018.dict']
-    download_models(opt, fnames, 'personachat')
+    download_models(opt, fnames, 'personachat', version='v2.0')
 
     interactive(opt)

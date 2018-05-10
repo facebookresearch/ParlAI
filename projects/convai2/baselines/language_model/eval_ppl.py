@@ -106,11 +106,12 @@ if __name__ == '__main__':
         model='projects.convai2.baselines.language_model.eval_ppl:LanguageModelEntry',
         model_file='models:convai2/language_model/model',
         dict_file='models:convai2/language_model/model.dict',
-        datatype='test',
         batchsize=1,
     )
     opt = parser.parse_args()
+    opt['override'] = ['model', 'batchsize']
     opt['model_type'] = 'language_model'
-    fnames = ['model', 'model.dict']
-    download_models(opt, fnames, 'convai2', use_model_type=True)
+    fnames = ['model', 'model.dict', 'model.opt']
+    download_models(opt, fnames, 'convai2', version='v2.0',
+                    use_model_type=True)
     eval_ppl(opt)

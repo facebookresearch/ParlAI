@@ -140,6 +140,7 @@ class LanguageModelAgent(Agent):
                     init_model
                 ))
                 # since .opt file does not exist, save one for future use
+                print("Saving opt file at:", init_model + ".opt")
                 with open(init_model + ".opt", 'wb') as handle:
                     pickle.dump(
                         new_opt,
