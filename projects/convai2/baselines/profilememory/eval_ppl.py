@@ -28,32 +28,28 @@ class ProfileMemoryEntry(PersonachatSeqseqAgentSplit):
         shared['probs'] = self.probs.copy()
         return shared
 
-    def next_word_probability(self, observation, partial_out):
-        """Return probability distribution over next words given an input and
-        partial true output. This is used to calculate the per-word perplexity.
+    def next_word_probability(self, partial_out):
+        """Return probability distribution over next words given a partial
+        true output. This is used to calculate the per-word perplexity.
         Arguments:
-        observation -- input observation dict
         partial_out -- previous "true" words
         Returns a dict, where each key is a word and each value is a probability
         score for that word. Unset keys assume a probability of zero.
         e.g.
         {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
         """
+        obs = self.observation
         if not hasattr(self, 'last_text'):
             self.last_text = None
-
-        if observation['text'] != self.last_text:
-            self.last_text = observation.get('text')
-            self.observe(observation)
-
-        obs = [self.observation]
+        if obs['text'] != self.last_text:
+            self.last_text = obs.get('text')
 
         if len(partial_out) > 0:
-            obs[0]['eval_labels'] = (' '.join(partial_out),)
+            obs['eval_labels'] = (' '.join(partial_out),)
         else:
-            obs[0]['eval_labels'] = ['']
+            obs['eval_labels'] = ['']
 
-        xs, xs_persona, ys, labels, valid_inds, cands, valid_cands, zs, eval_labels = self.batchify(obs)
+        xs, xs_persona, ys, labels, valid_inds, cands, valid_cands, zs, eval_labels = self.batchify([obs])
 
         self.encoder.eval()
         self.encoder_persona.eval()
