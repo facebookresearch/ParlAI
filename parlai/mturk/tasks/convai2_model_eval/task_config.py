@@ -17,7 +17,7 @@ task_config['hit_title'] = 'Play a character and chat!'
 On the Amazon Mechanical Turk web site, the HIT description appears in the expanded
 view of search results, and in the HIT and assignment screens.
 """
-task_config['hit_description'] = 'You will chat to another user while adopting a specific persona.'
+task_config['hit_description'] = 'You will chat to another user while adopting a specific persona and then evaluate that user.'
 
 
 """One or more words or phrases that describe the HIT, separated by commas.
@@ -48,7 +48,9 @@ at the same time sticking to your own characters<span style="color:blue"></b>.
 <b><span style="color:blue">You will get bonus for high quality dialogs.</span></b>
 <b>Send short messages, <span style="color:red">max 20 words</span>.</b>
 <b>Do not trivially copy the character descriptions into the message.</b>
-After a given number of turns, click “DONE" to finish the chat.
+<br>
+After a given number of turns, you will be asked to <b>briefly</b> rate your partner on metrics like <b>fluency, engagingness, and consistency</b>.
+<br>
 There is a <b>2 min</b> time limit for each turn.
 <br>
 <br>

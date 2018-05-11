@@ -222,7 +222,6 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         self.personas = [(ag.persona_data if hasattr(ag, 'persona_data')
                           else None) for ag in self.agents]
 
-
     def parley(self):
         self.turn_idx += 1
 
@@ -278,14 +277,14 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                 acts[idx] = agent.act()
 
             if acts[idx]['episode_done']:
-                self.chat_done = True
+                print("Finished chat")
                 self.check_timeout(acts[idx])
                 for ag in self.agents:
                     if ag != agent and ag.some_agent_disconnected:
                         control_msg['text'] = UNEXPECTED_DISCONNECTION_MSG
                         ag.observe(validate(control_msg))
                         return
-                if self.turn_idx > self.n_turn:
+                if self.turn_idx >= self.n_turn:
                     acts = [None]
 
                     # Fluency Check
@@ -372,6 +371,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             self.persona_picked[idx] = \
                                 cand_text[int(acts[idx]['text'])-1][0]
 
+                    # reached the end of the chat
+                    self.chat_done = True
                     for ag in self.agents:
                         ag.observe(validate(acts[idx]))
                         control_msg['text'] = CHAT_ENDED_MSG
@@ -437,6 +438,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                 print("\n*** Push persona {} back to stack. ****\n".format(
                     ag.persona_idx
                 ))
+            convo_finished = False
 
         data_path = self.opt['data_path']
         if not os.path.exists(data_path):
