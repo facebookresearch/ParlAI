@@ -40,7 +40,7 @@ task_config['task_description'] = \
 For example, your given character could be: <br><br> I am a vegetarian. I like swimming. My father used to work for Ford. My favorite band is Maroon5. I got a new job last month, which is about advertising design.
 <br>
 <br>
-Chat with the other person naturally and <b><span style="color:blue">try to get to know each other, i.e.
+Chat with the other user naturally and <b><span style="color:blue">try to get to know each other, i.e.
 both ask questions and answer questions of your chat partner
 at the same time sticking to your own characters<span style="color:blue"></b>.
 <br>
