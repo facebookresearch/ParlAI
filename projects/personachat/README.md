@@ -9,6 +9,12 @@ we are computing new baselines for that competition. See the baselines for that 
 [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2).
 
 ## Examples
+
+Look at the PersonaChat data:
+```bash
+python examples/display_data.py --task personachat --datatype train
+```
+
 Interact with a pre-trained Key-Value Memory Net model trained on Persona-Chat
 using persona 'self':
 ```bash
