@@ -58,7 +58,7 @@ def build_dict(opt):
     if ordered_opt['task'] == 'pytorch_teacher':
        pytorch_buildteacher_task = ordered_opt.get('pytorch_buildteacher', '')
        if pytorch_buildteacher_task != '':
-        ordered_opt['task'] = pytorch_buildteacher_task
+           ordered_opt['task'] = pytorch_buildteacher_task
 
     datatypes = ['train:ordered:stream']
     if opt.get('dict_include_valid'):
