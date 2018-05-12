@@ -76,7 +76,7 @@ if __name__ == '__main__':
     parser.set_params(
         model='projects.convai2.baselines.seq2seq.eval_ppl:Seq2seqEntry',
         model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
-        dict_file='models:convai2/seq2seq/dict_convai2_self',
+        dict_file='models:convai2/seq2seq/convai2_self_seq2seq_model.dict',
         dict_lower=True,
         batchsize=1,
         numthreads=60,
@@ -84,7 +84,8 @@ if __name__ == '__main__':
     )
     opt = parser.parse_args()
     opt['model_type'] = 'seq2seq'
-    fnames = ['convai2_self_seq2seq_model.tgz', 'dict_convai2_self',
+    fnames = ['convai2_self_seq2seq_model.tgz',
+              'convai2_self_seq2seq_model.dict',
               'convai2_self_seq2seq_model.opt']
-    download_models(opt, fnames, 'convai2', version='v2.0')
+    download_models(opt, fnames, 'convai2', version='v3.0')
     eval_ppl(opt)
