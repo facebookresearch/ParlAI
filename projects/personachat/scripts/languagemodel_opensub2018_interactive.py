@@ -18,7 +18,7 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     LanguageModelAgent.add_cmdline_args(parser)
     parser.set_params(
-        dict_file='models:personachat/language_model/opensubtitles2018.dict',
+        dict_file='models:personachat/language_model/languagemodel_esz512_hid1024_nl2.pt.dict',
         sampling_mode=True,
         task='parlai.agents.local_human.local_human:LocalHumanAgent',
         model='language_model',
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     # build all profile memory models
     fnames = ['languagemodel_esz512_hid1024_nl2.pt',
               'languagemodel_esz512_hid1024_nl2.pt.opt',
-              'opensubtitles2018.dict']
-    download_models(opt, fnames, 'personachat', version='v2.0')
+              'languagemodel_esz512_hid1024_nl2.pt.dict']
+    download_models(opt, fnames, 'personachat', version='v3.0')
 
     interactive(opt)
