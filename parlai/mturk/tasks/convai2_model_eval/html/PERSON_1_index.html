@@ -79,6 +79,9 @@
         $("input#id_text_input").css("width", "40%");
         $(window).resize(window_resize);
       }
+      if ("evaluation" in message && message.evaluation){
+        $("button#id_done_button").hide()
+      }
     }
     $("button#id_done_button").on('click', function () {
         var text = "I am done with the chat and clicked the 'Done' button, thank you!";

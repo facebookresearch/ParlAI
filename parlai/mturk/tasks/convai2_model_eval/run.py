@@ -23,7 +23,7 @@ def main():
     argparser.add_mturk_args()
     argparser.add_argument('-mt', '--max-turns', default=10, type=int,
                            help='maximal number of chat turns')
-    argparser.add_argument('--max-resp-time', default=150,
+    argparser.add_argument('--max-resp-time', default=180,
                            type=int,
                            help='time limit for entering a dialog message')
     argparser.add_argument('--max-persona-time', type=int,
@@ -39,6 +39,9 @@ def main():
                            help='Whether to use revised personas')
     argparser.add_argument('-rt', '--range-turn', default='5,6',
                            help='sample range of number of turns')
+    argparser.add_argument('--auto-approve-delay', type=int,
+                           default=3600*24*1, help='how long to wait for  \
+                           auto approval')
 
     # ADD MODEL ARGS HERE (KVMEMNN ADDED AS AN EXAMPLE)
     argparser.set_defaults(
