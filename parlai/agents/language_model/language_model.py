@@ -100,12 +100,15 @@ class LanguageModelAgent(Agent):
 
         if shared:
             # set up shared properties
+            self.opt = shared['opt']
+            opt = self.opt
             self.dict = shared['dict']
 
             if 'model' in shared:
                 # model is shared during hogwild
                 self.model = shared['model']
                 self.states = shared['states']
+                self.metrics = shared['metrics']
 
             # get NULL token and END token
             self.NULL_IDX = self.dict[self.dict.null_token]
@@ -276,13 +279,16 @@ class LanguageModelAgent(Agent):
     def share(self):
         """Share internal states between parent and child instances."""
         shared = super().share()
+        shared['opt'] = self.opt
         shared['dict'] = self.dict
         shared['NULL_IDX'] = self.NULL_IDX
         shared['END_IDX'] = self.END_IDX
-        if self.opt.get('numthreads', 1) > 1:
-            shared['model'] = self.model
-            self.model.share_memory()
-            shared['states'] = self.states
+        shared['metrics'] = self.metrics
+        shared['model'] = self.model
+        self.model.share_memory()
+        shared['states'] = {  # only need to pass optimizer states
+            'optimizer': self.optimizer.state_dict(),
+        }
         return shared
 
     def observe(self, observation):
