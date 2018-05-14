@@ -46,8 +46,7 @@ CHAT_ENDED_MSG = 'One of you ended the chat. Thanks for your time! \n\
         Please click <span style="color:blue"><b>Done with this HIT</b>\
         </span> button below to finish this HIT.'
 WAITING_MSG = 'Please wait while we match you with another worker...'
-NAN_MSG = 'The score you entered must be in [1, 2, 3, 4, 5]. Remember to \
-        click the <b>SEND</b> button and not the <b>DONE</b> button. Please \
+NAN_MSG = 'The score you entered must be in [1, 2, 3, 4, 5]. Please \
         try again:'
 NAN_PERSONA_MSG = 'The score you entered must be in [1, 2]. Remember to \
         click the <b>SEND</b> button and not the <b>DONE</b> button. Please \
@@ -67,20 +66,35 @@ FLUENCY_MSG = 'Now the conversation is completed! \n Please evaluate the \
         below, <span style="color:blue">fluency reflects whether the other \
         people\'s words are accurate, and whether you can read it quickly and \
         with ease.</span> (1 means "not fluent at all" and 5 means "extremely \
-        fluent", e.g., You can enter 3 for an OK fluency)'
+        fluent", e.g., You can enter 3 for an OK fluency) \
+        <span style="color:red"><b>NOTE: following this you will \
+        be asked to give a reason for the score you choose.</b></span>'
+FLUENCY_REASON_MSG = 'Please give a <b>reason for the fluency score</b> \
+        you gave above. If you gave a score that indicated the user was not \
+        very fluent or only somewhat fluent, please try to give a \
+        concrete example showing that they are not fluent.'
 ENGAGINGNESS_MSG = 'Now please evaluate the other people\'s \
         <span style="color:blue"><b>engagingness DISREGARDING the \
         fluency</b></span> during this conversation by <b>entering a score \
         from [1, 2, 3, 4, 5]</b> below: (1 means "not engaging at all" and 5 \
-        means "extremely engaging", e.g., You can enter 3 for an OK dialog)'
+        means "extremely engaging", e.g., You can enter 3 for an OK dialog) \
+        <span style="color:red"><b>NOTE: following this you will \
+        be asked to give a reason for the score you choose.</b></span>'
+ENGAGINGNESS_REASON_MSG = 'Please give a <b>reason for the engagingness \
+        score</b> you gave above. Please try to give concrete examples.'
 CONSISTENCY_MSG = 'Now please evaluate the other people\'s \
         <span style="color:blue"><b>consistency of persona</b></span> \
         (e.g., "I have a dog" followed by "I have no pets" is not consistent)\
         during this conversation by <b>entering a score from \
         [1, 2, 3, 4, 5]</b> below: (1 means "not consistent at all" and 5 \
         means "extremely consistent", e.g., You can enter 3 for an OK \
-        consistency)'
-PERSONA_CHOICE_MSG = 'Now we show you two personas below, please select the \
+        consistency). <span style="color:red"><b>NOTE: following this you will \
+        be asked to give a reason for the score you choose.</b></span>'
+CONSISTENCY_REASON_MSG = 'Please give a <b>reason for the consistency score</b> \
+        you gave above. If you gave a score that indicated the user was not \
+        very consistent or only somewhat consistent, please try to give a \
+        concrete example showing their inconsistency.'
+PERSONA_CHOICE_MSG = 'Lastly, we show you two personas below, please select the \
         one that is more likely to match with the person you just talked to, \
         by entering 1 or 2: \n 1.<br> {} <br> 2.<br> {}'
 
@@ -200,8 +214,11 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         self.chat_done = False
         self.n_personas = []
         self.fluency_score = len(agents) * [-1]
+        self.fluency_reason = len(agents) * [None]
         self.eng_score = len(agents) * [-1]
+        self.eng_reason = len(agents) * [None]
         self.consistent_score = len(agents) * [-1]
+        self.consistent_reason = len(agents) * [None]
         self.persona_picked = len(agents) * [None]
         self.world_tag = world_tag
         self.ratings = ['1', '2', '3', '4', '5']
@@ -290,6 +307,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                     # Fluency Check
                     for idx, agent in enumerate(self.agents):
                         control_msg['text'] = FLUENCY_MSG
+                        control_msg['evaluation'] = True
                         agent.observe(validate(control_msg))
                         acts[idx] = agent.act(timeout=self.max_resp_time)
                         while acts[idx]['text'] not in self.ratings:
@@ -299,6 +317,19 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                         if 'text' in acts[idx] and \
                                 acts[idx]['text'] in self.ratings:
                             self.fluency_score[idx] = int(acts[idx]['text'])
+
+                    # Fluency reason
+                    for idx, agent in enumerate(self.agents):
+                        control_msg['text'] = FLUENCY_REASON_MSG
+                        agent.observe(validate(control_msg))
+                        acts[idx] = agent.act(timeout=self.max_resp_time)
+                        while acts[idx]['text'] == '':
+                            control_msg['text'] = 'Please try again.'
+                            agent.observe(validate(control_msg))
+                            acts[idx] = agent.act(timeout=self.max_resp_time)
+                        if 'text' in acts[idx] and \
+                                acts[idx]['text'] != '':
+                            self.fluency_reason[idx] = acts[idx]['text']
 
                     # Engagingness Check
                     for idx, agent in enumerate(self.agents):
@@ -313,6 +344,19 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                                 acts[idx]['text'] in self.ratings:
                             self.eng_score[idx] = int(acts[idx]['text'])
 
+                    # Engagingness reason
+                    for idx, agent in enumerate(self.agents):
+                        control_msg['text'] = ENGAGINGNESS_REASON_MSG
+                        agent.observe(validate(control_msg))
+                        acts[idx] = agent.act(timeout=self.max_resp_time)
+                        while acts[idx]['text'] == '':
+                            control_msg['text'] = 'Please try again.'
+                            agent.observe(validate(control_msg))
+                            acts[idx] = agent.act(timeout=self.max_resp_time)
+                        if 'text' in acts[idx] and \
+                                acts[idx]['text'] != '':
+                            self.eng_reason[idx] = acts[idx]['text']
+
                     # Check Consistency
                     for idx, agent in enumerate(self.agents):
                         control_msg['text'] = CONSISTENCY_MSG
@@ -325,6 +369,19 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                         if 'text' in acts[idx] and \
                                 acts[idx]['text'] in self.ratings:
                             self.consistent_score[idx] = int(acts[idx]['text'])
+
+                    # Consistency reasoning
+                    for idx, agent in enumerate(self.agents):
+                        control_msg['text'] = CONSISTENCY_REASON_MSG
+                        agent.observe(validate(control_msg))
+                        acts[idx] = agent.act(timeout=self.max_resp_time)
+                        while acts[idx]['text'] == '':
+                            control_msg['text'] = 'Please try again.'
+                            agent.observe(validate(control_msg))
+                            acts[idx] = agent.act(timeout=self.max_resp_time)
+                        if 'text' in acts[idx] and \
+                                acts[idx]['text'] != '':
+                            self.consistent_reason[idx] = acts[idx]['text']
 
                     # Persona Selection
                     for idx, agent in enumerate(self.agents):
@@ -445,7 +502,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             os.makedirs(data_path)
         if convo_finished:
             filename = os.path.join(
-                data_path, '{}_{}_{}.pkl'.format(
+                data_path, '{}_{}_{}_withreasons.pkl'.format(
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
                     self.task_type
@@ -454,7 +511,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         else:
             filename = os.path.join(
                 data_path,
-                '{}_{}_{}_incomplete.pkl'.format(
+                '{}_{}_{}_incomplete_withreasons.pkl'.format(
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
                     self.task_type
@@ -471,8 +528,11 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                      'bad_workers': bad_workers,
                      'n_turn': self.n_turn,
                      'fluency_score': self.fluency_score,
+                     'fluency_reason': self.fluency_reason,
                      'eng_score': self.eng_score,
+                     'eng_reason': self.eng_reason,
                      'consistent_score': self.consistent_score,
+                     'consistent_reason': self.consistent_reason,
                      'persona_picked': self.persona_picked,
                      'n_personas': self.n_personas}, open(filename, 'wb'))
 
