@@ -209,6 +209,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             self.range_turn[0],
             self.range_turn[1]
         ) + 1
+        self.model_name = opt.get('model_name')
         self.dialog = []
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.chat_done = False
@@ -502,7 +503,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             os.makedirs(data_path)
         if convo_finished:
             filename = os.path.join(
-                data_path, '{}_{}_{}_withreasons.pkl'.format(
+                data_path, '{}_{}_{}_{}_withreasons.pkl'.format(
+                    self.model_name,
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
                     self.task_type
@@ -511,7 +513,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         else:
             filename = os.path.join(
                 data_path,
-                '{}_{}_{}_incomplete_withreasons.pkl'.format(
+                '{}_{}_{}_{}_incomplete_withreasons.pkl'.format(
+                    self.model_name,
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
                     self.task_type

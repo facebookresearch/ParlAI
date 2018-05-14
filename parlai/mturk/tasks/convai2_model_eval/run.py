@@ -54,6 +54,7 @@ def main():
     opt['no_cuda'] = True
     opt['override'] = ['interactive_mode']
     opt['interactive_mode'] = True
+    opt['model_name'] = 'kvmemnn_convai2'
 
     bot = create_agent(opt)
     shared_bot_params = bot.share()
