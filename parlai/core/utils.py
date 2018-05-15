@@ -222,7 +222,7 @@ def maintain_dialog_history(history, observation, reply='',
             if splitSentences:
                 vec = [dict.txt2vec(t) for t in txt.split('\n')]
             else:
-                vec =  dict.txt2vec(txt)
+                vec = dict.txt2vec(txt)
             if useStartEndIndices:
                 parsed_x = deque([dict[dict.start_token]])
                 parsed_x.extend(vec)
@@ -246,7 +246,8 @@ def maintain_dialog_history(history, observation, reply='',
 
     if useReplies != 'none':
         if useReplies == 'model' or (useReplies == 'label_else_model' and
-                                     'labels' not in observation):
+                                     'labels' not in observation and
+                                     'eval_labels' not in observation):
             if reply != '':
                 history['dialog'].extend(parse(reply))
         elif len(history['labels']) > 0:
