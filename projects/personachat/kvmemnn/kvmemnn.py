@@ -330,10 +330,12 @@ class KvmemnnAgent(Agent):
             vec = vec.data
         if type(vec) == torch.LongTensor and vec.dim() == 2:
             vec = vec.squeeze(0)
+        if type(vec) == torch.Tensor and vec.dim() == 2:
+            vec = vec.squeeze(0)
         new_vec = []
         for i in vec:
             new_vec.append(i)
-        return self.dict.vec2txt(new_vec[0])
+        return self.dict.vec2txt(new_vec)
 
     def zero_grad(self):
         """Zero out optimizer."""
@@ -347,6 +349,8 @@ class KvmemnnAgent(Agent):
         """Reset observation and episode_done."""
         self.observation = None
         self.episode_done = True
+        self.cands_done = []
+        self.history = {}
         # set up optimizer
         lr = self.opt['learningrate']
         optim_class = KvmemnnAgent.OPTIM_OPTS[self.opt['optimizer']]
