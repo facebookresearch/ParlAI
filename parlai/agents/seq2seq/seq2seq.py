@@ -439,12 +439,12 @@ class Seq2seqAgent(Agent):
                 # move metrics and model to shared memory
                 self.metrics = SharedTable(self.metrics)
                 self.model.share_memory()
-            shared['metrics'] = self.metrics
-            shared['model'] = self.model
-            shared['states'] = {  # only need to pass optimizer states
-                'optimizer': self.optimizer.state_dict(),
-                'optimizer_type': self.opt['optimizer'],
-            }
+        shared['metrics'] = self.metrics
+        shared['model'] = self.model
+        shared['states'] = {  # only need to pass optimizer states
+            'optimizer': self.optimizer.state_dict(),
+            'optimizer_type': self.opt['optimizer'],
+        }
         return shared
 
     def observe(self, observation):
