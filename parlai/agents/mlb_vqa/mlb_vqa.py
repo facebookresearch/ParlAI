@@ -214,7 +214,7 @@ class VqaDictionaryAgent(Agent):
     def encode_answer(self, examples):
         for ex in examples:
             if self.opt['samplingans']:
-                ans_count = Counter(ex['labels']).most_common()
+                ans_count = Counter(ex.get('labels', ex.get('eval_labels'))).most_common()
                 valid_ans = []
                 valid_count = []
                 for ans in ans_count:
@@ -398,21 +398,11 @@ class MlbVqaAgent(Agent):
                     self.model.cuda()
                 self.criterion.cuda()
             if self.use_cuda and self.use_data_parallel:
-                self.optims = self.model.module.get_optims()
+                self.optim = self.model.module.get_optim()
             else:
-                self.optims = self.model.get_optims()
+                self.optim = self.model.get_optim()
 
         self.reset()
-
-    def zero_grad(self):
-        """Zero out optimizers."""
-        for optimizer in self.optims.values():
-            optimizer.zero_grad()
-
-    def update_params(self):
-        """Do one optimization step."""
-        for optimizer in self.optims.values():
-            optimizer.step()
 
     def reset(self):
         """Reset observation and episode_done."""
@@ -509,49 +499,33 @@ class MlbVqaAgent(Agent):
             return None
         new_obs = []
         valid_inds = []
-        gotshape = False
+        mc = False
         for i, ex in enumerate(observations):
-            if not self.use_cuda and not gotshape:
-                img_var = ex['image']
-                height = img_var.size(2)
-                width = img_var.size(3)
-                gotshape = True
-            elif self.use_cuda:
+            if self.use_cuda:
                 ex['image'] = ex['image'].cuda(async=True)
             if 'mc_label' in ex:
                 self.training = True
                 if ex['mc_label'][0] in self.dict.ans2ind:
+                    mc = True
                     new_obs.append(ex)
                     valid_inds.append(i)
 
-        if not self.training:
+        if not self.training or not mc:
             new_obs = observations.copy()
             valid_inds = range(len(new_obs))
-        batchsize = len(new_obs)
 
         if not self.testing:
             new_obs = self.dict.encode_question(new_obs, self.training)
-            new_obs = self.dict.encode_answer(new_obs)
-            if not self.use_cuda:
-                answer = torch.LongTensor(batchsize).fill_(0)
+            if self.training:
+                new_obs = self.dict.encode_answer(new_obs)
         else:
             new_obs = self.dict.encode_question(new_obs, False)
             answer = None
 
-        if not self.use_cuda:
-            input_v = torch.FloatTensor(batchsize, self.opt['dim_v'], height, width).fill_(0)
-            input_q = torch.LongTensor(batchsize, self.opt['maxlength']).fill_(0)
-
-            for i, ex in enumerate(new_obs):
-                input_v[i] = ex['image']
-                input_q[i] = torch.LongTensor(ex['question_wids'])
-                if not self.testing:
-                    answer[i] = ex['answer_aid']
-        else:
-            input_v = torch.stack([ex['image'][0] for ex in new_obs])
-            input_q = torch.stack([torch.LongTensor(ex['question_wids']) for ex in new_obs])
-            if not self.testing:
-                answer = torch.LongTensor([ex['answer_aid'] for ex in new_obs])
+        input_v = torch.stack([ex['image'][0] for ex in new_obs])
+        input_q = torch.stack([torch.LongTensor(ex['question_wids']) for ex in new_obs])
+        if not self.testing:
+            answer = torch.LongTensor([ex['answer_aid'] for ex in new_obs])
 
         return {
             'input_v': MlbVqaAgent.static_vis_noatt(input_v, self.opt['attention']),
@@ -600,10 +574,10 @@ class MlbVqaAgent(Agent):
         if label is not None:
             torch.cuda.synchronize()
             loss = self.criterion(out, label)
-            self.zero_grad()
+            self.optim.zero_grad()
             loss.backward()
             torch.cuda.synchronize()
-            self.update_params()
+            self.optim.step()
             torch.cuda.synchronize()
 
         return loss, out
