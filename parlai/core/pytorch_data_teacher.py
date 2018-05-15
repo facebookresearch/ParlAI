@@ -328,6 +328,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.batch_cache_type = opt.get('batch_sort_cache')
         # One can specify a collate function to use for preparing a batch
         self.opt = copy.deepcopy(opt)
+        self.is_shared = shared is not None
         dataset_class, self.collate_fn = self.get_dataset_class(opt)
         opt['dataset_class'] = dataset_class
         opt['collate_fn'] = self.collate_fn
@@ -402,7 +403,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.reset_data()
 
     def reset_data(self):
-        if not self.training:
+        if not self.training and not self.is_shared:
             self.data = enumerate(self.pytorch_dataloader)
         self.lastY = None
         self.epochDone = False
