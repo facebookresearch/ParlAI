@@ -259,7 +259,7 @@ class VqaDictionaryAgent(Agent):
                 split = line.strip().split('\t')
                 token = unescape(split[0])
                 cnt = int(split[1]) if len(split) > 1 else 0
-                self.ansfreq = cnt
+                self.ansfreq[token] = cnt
                 if token not in self.ans2ind:
                     index = len(self.ans2ind)
                     self.ans2ind[token] = index
@@ -286,7 +286,7 @@ class VqaDictionaryAgent(Agent):
             if ans in final_list:
                 for que in ques:
                     self.add_to_ques_dict(que)
-                    self.add_to_ans_dict(ans)
+                self.add_to_ans_dict(ans)
 
         filename = self.opt['dict_file'] if filename is None else filename
         print('Dictionary: saving dictionary to {}'.format(filename))
@@ -681,3 +681,4 @@ class MlbVqaAgent(Agent):
         if path is not None:
             self.save(path + '.shutdown_state')
         super().shutdown()
+
