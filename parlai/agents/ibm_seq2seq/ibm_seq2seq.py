@@ -97,6 +97,11 @@ class IbmSeq2seqAgent(Agent):
                                 'Any member of torch.optim is valid and will '
                                 'be used with default params except learning '
                                 'rate (as specified by -lr).')
+        agent.add_argument('-histr', '--history-replies',
+                           default='label_else_model', type=str,
+                           choices=['none', 'model', 'label',
+                                    'label_else_model'],
+                           help='Keep replies in the history, or not.')
         IbmSeq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
@@ -327,7 +332,7 @@ class IbmSeq2seqAgent(Agent):
                 self.history, obs,
                 reply=self.answers[batch_idx],
                 historyLength=self.truncate,
-                useReplies='label_else_model',
+                useReplies=self.opt.get('history_replies', 'label_else_model'),
                 dict=self.dict,
                 useStartEndIndices=False)
         else:
