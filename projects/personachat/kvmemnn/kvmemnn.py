@@ -333,7 +333,7 @@ class KvmemnnAgent(Agent):
         new_vec = []
         for i in vec:
             new_vec.append(i)
-        return self.dict.vec2txt(new_vec)
+        return self.dict.vec2txt(new_vec[0])
 
     def zero_grad(self):
         """Zero out optimizer."""
@@ -352,7 +352,6 @@ class KvmemnnAgent(Agent):
         optim_class = KvmemnnAgent.OPTIM_OPTS[self.opt['optimizer']]
         kwargs = {'lr': lr}
         self.optimizer = optim_class(self.model.parameters(), **kwargs)
-
 
     def share(self):
         """Share internal states between parent and child instances."""

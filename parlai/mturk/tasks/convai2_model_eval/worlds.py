@@ -209,6 +209,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             self.range_turn[0],
             self.range_turn[1]
         ) + 1
+        self.model_name = opt.get('model_name')
         self.dialog = []
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.chat_done = False
@@ -238,6 +239,10 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         # set up personas
         self.personas = [(ag.persona_data if hasattr(ag, 'persona_data')
                           else None) for ag in self.agents]
+        self.model_persona_text = '\n'.join([
+            'your persona:' + pers for pers in self.agents[0].model_persona[1]
+        ])
+        print(self.model_persona_text)
 
     def parley(self):
         self.turn_idx += 1
@@ -437,6 +442,10 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                 return
 
             self.dialog.append((idx, acts[idx]['text']))
+            if self.turn_idx == 1:
+                acts[idx]['text'] = self.model_persona_text + '\n' + \
+                    acts[idx]['text']
+            print(acts[idx])
             acts[idx]['eval_labels'] = ['__NULL__']
             self.model_agent.observe(acts[idx])
 
@@ -502,7 +511,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             os.makedirs(data_path)
         if convo_finished:
             filename = os.path.join(
-                data_path, '{}_{}_{}_withreasons.pkl'.format(
+                data_path, '{}_{}_{}_{}_withreasons.pkl'.format(
+                    self.model_name,
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
                     self.task_type
@@ -511,7 +521,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         else:
             filename = os.path.join(
                 data_path,
-                '{}_{}_{}_incomplete_withreasons.pkl'.format(
+                '{}_{}_{}_{}_incomplete_withreasons.pkl'.format(
+                    self.model_name,
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
                     self.task_type
