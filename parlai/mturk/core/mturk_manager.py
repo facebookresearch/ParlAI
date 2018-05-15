@@ -1006,8 +1006,8 @@ class MTurkManager():
         within the expected window.
         """
         # Expire the hit for the disconnected user
-        text = ('You haven\'t entered a message in too long, leaving the other'
-                ' participant unable to complete the HIT. Thus this hit has '
+        text = ('You haven\'t entered a message in too long. As these HITs '
+                ' often require real-time interaction, this hit has '
                 'been expired and you have been considered disconnected. '
                 'Disconnect too frequently and you will be blocked from '
                 'working on these HITs in the future.')
@@ -1310,8 +1310,7 @@ class MTurkManager():
         """Soft block a worker by giving the worker the block qualification"""
         qual_name = self.opt['block_qualification']
         assert qual_name != '', ('No block qualification has been specified')
-        self.give_worker_qualification(worker_id, qual_name,
-                                       is_sandbox=self.is_sandbox)
+        self.give_worker_qualification(worker_id, qual_name)
 
     def give_worker_qualification(self, worker_id, qual_name, qual_value=None):
         """Give a worker a particular qualification"""
