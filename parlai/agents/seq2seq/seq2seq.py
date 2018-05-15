@@ -464,7 +464,7 @@ class Seq2seqAgent(Agent):
                 self.history, obs,
                 reply=self.answers[batch_idx],
                 historyLength=self.truncate,
-                useReplies=self.opt.get('history_replies', 'label_else_model'),
+                useReplies=self.opt.get('history_replies'),
                 dict=self.dict,
                 useStartEndIndices=False)
         else:
