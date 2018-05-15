@@ -146,6 +146,9 @@ class VqaDictionaryAgent(Agent):
             if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
 
+    def __len__(self):
+        return len(self.tok2ind)
+
     def add_to_ques_dict(self, tokens):
         """Builds dictionary from the list of provided tokens.
         Only adds words contained in self.embedding_words, if not None.
@@ -622,7 +625,7 @@ class MlbVqaAgent(Agent):
             else:
                 _, predictions = predictions.data.max(1)
             predictions.squeeze_()
-            tpreds = self.dict.decode_answer(predictions)
+            tpreds = self.dict.decode_answer(predictions.tolist())
             for i in range(len(tpreds)):
                 # map the predictions back to non-empty examples in the batch
                 curr = batch_reply[valid_inds[i]]
@@ -669,8 +672,7 @@ class MlbVqaAgent(Agent):
 
     def load(self, path):
         """Return opt and model states."""
-        with open(path, 'rb') as read:
-            model = torch.load(read)
+        model = torch.load(path, map_location=lambda cpu, _: cpu)
         return model
 
     def shutdown(self):

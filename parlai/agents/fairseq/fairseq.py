@@ -56,7 +56,6 @@ class FairseqAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
-        DictionaryAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Fairseq Arguments')
         agent.add_argument(
             '-tr', '--truncate',
@@ -80,6 +79,7 @@ class FairseqAgent(Agent):
         options.add_optimization_args(argparser)
         options.add_generation_args(argparser)
         options.add_model_args(argparser)
+        DictionaryAgent.add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
         # initialize defaults first
@@ -341,8 +341,7 @@ class FairseqAgent(Agent):
 
     def load(self, path):
         """Return opt and model states."""
-        with open(path, 'rb') as read:
-            model = torch.load(read)
+        model = torch.load(path, map_location=lambda cpu, _: cpu)
         return model['opt'], model['state_dict']
 
     def set_states(self, state_dict):

@@ -45,6 +45,18 @@ def class2str(value):
     return s
 
 
+def modelzoo_path(datapath, path):
+    """If path starts with 'models', then we remap it to the model zoo path
+    within the data directory (default is ParlAI/data/models).
+    ."""
+    if path is None:
+        return None
+    if not path.startswith('models:'):
+        return path
+    else:
+        return os.path.join(datapath, 'models', path[7:])
+
+
 class ParlaiParser(argparse.ArgumentParser):
     """Pseudo-extension of ``argparse`` which sets a number of parameters
     for the ParlAI framework. More options can be added specific to other
@@ -54,17 +66,15 @@ class ParlaiParser(argparse.ArgumentParser):
     For example, see ``parlai.core.dict.DictionaryAgent.add_cmdline_args``.
     """
 
-    def __init__(self, add_parlai_args=True, add_model_args=False,
-                 model_argv=None):
+    def __init__(self, add_parlai_args=True, add_model_args=False):
         """Initializes the ParlAI argparser.
         - add_parlai_args (default True) initializes the default arguments for
         ParlAI package, including the data download paths and task arguments.
         - add_model_args (default False) initializes the default arguments for
         loading models, including initializing arguments from that model.
-        - model_argv (default None uses sys.argv) specifies the list of
-        arguments which includes the model name (e.g. `-m drqa`).
         """
-        super().__init__(description='ParlAI parser.')
+        super().__init__(description='ParlAI parser.', allow_abbrev=False,
+                         conflict_handler='resolve')
         self.register('type', 'bool', str2bool)
         self.register('type', 'class', str2class)
         self.parlai_home = (os.path.dirname(os.path.dirname(os.path.dirname(
@@ -75,12 +85,12 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # remember which args were specified on the command line
         self.cli_args = sys.argv
+        self.overridable = {}
 
         if add_parlai_args:
-            self.add_parlai_args(model_argv)
-            self.add_image_args()
+            self.add_parlai_args()
         if add_model_args:
-            self.add_model_args(model_argv)
+            self.add_model_args()
 
     def add_parlai_data_path(self, argument_group=None):
         if argument_group is None:
@@ -164,6 +174,11 @@ class ParlaiParser(argparse.ArgumentParser):
                  'partner disconnect. I.e. if the number of messages '
                  'exceeds this number, the turker can submit the HIT.'
         )
+        mturk.add_argument(
+            '--local', dest='local', default=False, action='store_true',
+            help='Run the server locally on this server rather than setting up'
+                 ' a heroku server.'
+        )
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)
@@ -187,6 +202,11 @@ class ParlaiParser(argparse.ArgumentParser):
         messenger.add_argument(
             '--password', dest='password', type=str, default=None,
             help='Require a password for entry to the bot')
+        messenger.add_argument(
+            '--local', dest='local', action='store_true', default=False,
+            help='Run the server locally on this server rather than setting up'
+                 ' a heroku server.'
+        )
 
         messenger.set_defaults(is_debug=False)
         messenger.set_defaults(verbose=False)
@@ -219,6 +239,10 @@ class ParlaiParser(argparse.ArgumentParser):
             help='number of threads. If batchsize set to 1, used for hogwild; '
                  'otherwise, used for number of threads in threadpool loading,'
                  ' e.g. in vqa')
+        parlai.add_argument(
+            '--hide-labels', default=False, type='bool',
+            help='default (False) moves labels in valid and test sets to the '
+                 'eval_labels field. If True, they are hidden completely.')
         batch = self.add_argument_group('Batching Arguments')
         batch.add_argument(
             '-bs', '--batchsize', default=1, type=int,
@@ -241,61 +265,102 @@ class ParlaiParser(argparse.ArgumentParser):
                                 'as past utterances when building flattened '
                                 'batches of data in multi-example episodes.')
         self.add_parlai_data_path(parlai)
-        self.add_task_args(args)
 
-    def add_task_args(self, args):
-        # Find which task specified, and add its specific arguments.
-        args = sys.argv if args is None else args
-        task = None
-        for index, item in enumerate(args):
-            if item == '-t' or item == '--task':
-                task = args[index + 1]
-        if task:
-            for t in ids_to_tasks(task).split(','):
-                agent = get_task_module(t)
-                if hasattr(agent, 'add_cmdline_args'):
-                    agent.add_cmdline_args(self)
-
-    def add_model_args(self, args=None):
+    def add_model_args(self):
+        """Add arguments related to models such as model files."""
         model_args = self.add_argument_group('ParlAI Model Arguments')
         model_args.add_argument(
             '-m', '--model', default=None,
-            help='the model class name, should match parlai/agents/<model>')
+            help='the model class name. can match parlai/agents/<model> for '
+                 'agents in that directory, or can provide a fully specified '
+                 'module for `from X import Y` via `-m X:Y` '
+                 '(e.g. `-m parlai.agents.seq2seq.seq2seq:Seq2SeqAgent`)')
         model_args.add_argument(
             '-mf', '--model-file', default=None,
             help='model file name for loading and saving models')
         model_args.add_argument(
             '--dict-class',
             help='the class of the dictionary agent uses')
-        # Find which model specified, and add its specific arguments.
-        if args is None:
-            args = sys.argv
-        model = None
-        for index, item in enumerate(args):
-            if item == '-m' or item == '--model':
-                model = args[index + 1]
-        if model:
-            agent = get_agent_module(model)
+
+    def add_model_subargs(self, model):
+        """Add arguments specific to a particular model."""
+        agent = get_agent_module(model)
+        try:
             if hasattr(agent, 'add_cmdline_args'):
                 agent.add_cmdline_args(self)
+        except argparse.ArgumentError:
+            # already added
+            pass
+        try:
             if hasattr(agent, 'dictionary_class'):
                 s = class2str(agent.dictionary_class())
-                model_args.set_defaults(dict_class=s)
+                self.set_defaults(dict_class=s)
+        except argparse.ArgumentError:
+            # already added
+            pass
 
-    def add_image_args(self, args=None):
-        # Find which image mode specified, add its specific arguments if needed.
-        args = sys.argv if args is None else args
-        image_mode = None
-        for index, item in enumerate(args):
-            if item == '-im' or item == '--image-mode':
-                image_mode = args[index + 1]
-        if image_mode and image_mode != 'none':
-            parlai = \
-                self.add_argument_group('ParlAI Image Preprocessing Arguments')
+    def add_task_args(self, task):
+        """Add arguments specific to the specified task."""
+        for t in ids_to_tasks(task).split(','):
+            agent = get_task_module(t)
+            try:
+                if hasattr(agent, 'add_cmdline_args'):
+                    agent.add_cmdline_args(self)
+            except argparse.ArgumentError:
+                # already added
+                pass
+
+    def add_image_args(self, image_mode):
+        """Add additional arguments for handling images."""
+        try:
+            parlai = self.add_argument_group('ParlAI Image Preprocessing Arguments')
             parlai.add_argument('--image-size', type=int, default=256,
                                 help='resizing dimension for images')
             parlai.add_argument('--image-cropsize', type=int, default=224,
                                 help='crop dimension for images')
+        except argparse.ArgumentError:
+            # already added
+            pass
+
+
+    def add_extra_args(self, args=None):
+        """Add more args depending on how known args are set."""
+        parsed = vars(self.parse_known_args(nohelp=True)[0])
+
+        # find which image mode specified if any, and add additional arguments
+        image_mode = parsed.get('image_mode', None)
+        if image_mode is not None and image_mode != 'none':
+            self.add_image_args(image_mode)
+
+        # find which task specified if any, and add its specific arguments
+        task = parsed.get('task', None)
+        if task is not None:
+            self.add_task_args(task)
+        evaltask = parsed.get('evaltask', None)
+        if evaltask is not None:
+            self.add_task_args(evaltask)
+
+        # find which model specified if any, and add its specific arguments
+        model = parsed.get('model', None)
+        if model is not None:
+            self.add_model_subargs(model)
+
+        # reset parser-level defaults over any model-level defaults
+        try:
+            self.set_defaults(**self._defaults)
+        except AttributeError:
+            raise RuntimeError('Please file an issue on github that argparse '
+                               'got an attribute error when parsing.')
+
+
+    def parse_known_args(self, args=None, namespace=None, nohelp=False):
+        """Custom parse known args to ignore help flag."""
+        if nohelp:
+            # ignore help
+            args = sys.argv[1:] if args is None else args
+            args = [a for a in args if a != '-h' and a != '--help']
+        return super().parse_known_args(args, namespace)
+
 
     def parse_args(self, args=None, namespace=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the
@@ -303,6 +368,7 @@ class ParlaiParser(argparse.ArgumentParser):
         to support the style ``opt.get(key, default)``, which would otherwise
         return ``None``.
         """
+        self.add_extra_args(args)
         self.args = super().parse_args(args=args)
         self.opt = vars(self.args)
 
@@ -319,12 +385,42 @@ class ParlaiParser(argparse.ArgumentParser):
         if self.opt.get('datapath'):
             os.environ['PARLAI_DATAPATH'] = self.opt['datapath']
 
+        # map filenames that start with 'models:' to point to the model zoo dir
+        if self.opt.get('model_file') is not None:
+            self.opt['model_file'] = modelzoo_path(self.opt.get('datapath'),
+                                                   self.opt['model_file'])
+        if self.opt.get('dict_file') is not None:
+            self.opt['dict_file'] = modelzoo_path(self.opt.get('datapath'),
+                                                  self.opt['dict_file'])
+
         # set all arguments specified in commandline as overridable
-        override = {}
-        for k, v in self.opt.items():
-            if v in self.cli_args:
-                override[k] = v
-        self.opt['override'] = override
+        option_strings_dict = {}
+        store_true = []
+        store_false = []
+        for group in self._action_groups:
+            for a in group._group_actions:
+                if hasattr(a, 'option_strings'):
+                    for option in a.option_strings:
+                        option_strings_dict[option] = a.dest
+                        if '_StoreTrueAction' in str(type(a)):
+                            store_true.append(option)
+                        elif '_StoreFalseAction' in str(type(a)):
+                            store_false.append(option)
+
+        for i in range(len(self.cli_args)):
+            if self.cli_args[i] in option_strings_dict:
+                if self.cli_args[i] in store_true:
+                    self.overridable[option_strings_dict[self.cli_args[i]]] = \
+                        True
+                elif self.cli_args[i] in store_false:
+                    self.overridable[option_strings_dict[self.cli_args[i]]] = \
+                        False
+                else:
+                    if i < (len(self.cli_args) - 1) and \
+                            self.cli_args[i+1][0] != '-':
+                        self.overridable[option_strings_dict[self.cli_args[i]]] = \
+                            self.cli_args[i+1]
+        self.opt['override'] = self.overridable
 
         if print_args:
             self.print_args()
@@ -351,3 +447,9 @@ class ParlaiParser(argparse.ArgumentParser):
                         print('[ ' + group.title + ': ] ')
                     count += 1
                     print('[  ' + key + ': ' + values[key] + ' ]')
+
+    def set_params(self, **kwargs):
+        """Set overridable kwargs."""
+        self.set_defaults(**kwargs)
+        for k, v in kwargs.items():
+            self.overridable[k] = v

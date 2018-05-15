@@ -45,6 +45,7 @@ import copy
 import importlib
 import math
 import random
+import time
 
 try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore
@@ -482,7 +483,7 @@ class MultiWorld(World):
     that world represents.
     """
 
-    def __init__(self, opt, agents=None, shared=None):
+    def __init__(self, opt, agents=None, shared=None, default_world=None):
         opt['batch_sort'] = False
         print('WARNING: batch_sort disabled for multitasking')
         super().__init__(opt)
@@ -499,7 +500,8 @@ class MultiWorld(World):
                     self.worlds.append(s['world_class'](s['opt'], None, s))
                 else:
                     # Agents are already specified.
-                    self.worlds.append(create_task_world(opt_singletask, agents))
+                    self.worlds.append(create_task_world(
+                        opt_singletask, agents, default_world=default_world))
         self.world_idx = -1
         self.new_world = True
         self.parleys = -1
@@ -658,7 +660,7 @@ class BatchWorld(World):
                 # not from each other).
                 observation = w.observe(agents[index], validate(batch_actions[i]))
             else:
-                if index == index_acting: return None # don't observe yourself talking
+                if index == index_acting: return None  # don't observe yourself talking
                 observation = validate(batch_actions[i])
             observation = agents[index].observe(observation)
             if observation is None:
@@ -769,11 +771,12 @@ class HogwildProcess(Process):
     """
 
 
-    def __init__(self, tid, opt, world, sync):
+    def __init__(self, tid, opt, shared, sync):
+        self.numthreads = opt['numthreads']
         opt = copy.deepcopy(opt)
-        opt['numthreads'] = 1
+        opt['numthreads'] = 1  # don't let threads create more threads!
         self.opt = opt
-        self.shared = world.share()
+        self.shared = shared
         self.shared['threadindex'] = tid
         if 'agents' in self.shared:
             for a in self.shared['agents']:
@@ -790,24 +793,42 @@ class HogwildProcess(Process):
             world = BatchWorld(self.opt, world)
         self.sync['threads_sem'].release()
         with world:
+            print('[ thread {} initialized ]'.format(self.shared['threadindex']))
             while True:
                 if self.sync['term_flag'].value:
                     break  # time to close
                 self.sync['queued_sem'].acquire()
                 self.sync['threads_sem'].release()
+
+                # check if you need to reset before moving on
+                if self.sync['epoch_done_ctr'].value < 0:
+                    with self.sync['epoch_done_ctr'].get_lock():
+                        # increment the number of finished threads
+                        self.sync['epoch_done_ctr'].value += 1
+                        if self.sync['epoch_done_ctr'].value == 0:
+                            # make sure reset sem is clean
+                            for _ in range(self.numthreads):
+                                self.sync['reset_sem'].acquire(block=False)
+                        world.reset() # keep lock for this!
+
+                while self.sync['epoch_done_ctr'].value < 0:
+                    # only move forward once other threads have finished reset
+                    time.sleep(0.1)
+
+                # process an example or wait for reset
                 if not world.epoch_done() or self.opt.get('datatype').startswith('train', False):
                     # do one example if any available
                     world.parley()
                     with self.sync['total_parleys'].get_lock():
                         self.sync['total_parleys'].value += 1
                 else:
+                    # during valid/test, we stop parleying once at end of epoch
                     with self.sync['epoch_done_ctr'].get_lock():
                         # increment the number of finished threads
                         self.sync['epoch_done_ctr'].value += 1
                     self.sync['threads_sem'].release()  # send control back to main thread
                     self.sync['queued_sem'].release()  # we didn't process anything
-                    self.sync['reset_sem'].acquire()
-                    world.reset()
+                    self.sync['reset_sem'].acquire()  # wait for reset signal
 
 
 class HogwildWorld(World):
@@ -850,19 +871,21 @@ class HogwildWorld(World):
             'total_parleys': Value('l', 0),  # number of parleys in threads
         }
 
-        # don't let threads create more threads!
         self.threads = []
         for i in range(self.numthreads):
-            self.threads.append(HogwildProcess(i, opt, world, self.sync))
+            self.threads.append(HogwildProcess(i, opt, world.share(), self.sync))
+            time.sleep(0.05) # delay can help prevent deadlock in thread launches
         for t in self.threads:
             t.start()
 
         for _ in self.threads:
+            # wait for threads to launch
+            # this makes sure that no threads get examples before all are set up
+            # otherwise they might reset one another after processing some exs
             self.sync['threads_sem'].acquire()
 
 
     def display(self):
-        return ''
         self.shutdown()
         raise NotImplementedError('Hogwild does not support displaying in-run'
                                   ' task data. Use `--numthreads 1`.')
@@ -911,12 +934,15 @@ class HogwildWorld(World):
         self.inner_world.save_agents()
 
     def reset(self):
-        # set epoch done counter to 0
+        # set epoch done counter negative so all threads know to reset
         with self.sync['epoch_done_ctr'].get_lock():
-            self.sync['epoch_done_ctr'].value = 0
-        # release reset semaphore
-        for _ in self.threads:
-            self.sync['reset_sem'].release()
+            threads_asleep = self.sync['epoch_done_ctr'].value > 0
+            self.sync['epoch_done_ctr'].value = -len(self.threads)
+        if threads_asleep:
+            # release reset semaphore only if threads had reached epoch_done
+            for _ in self.threads:
+                self.sync['reset_sem'].release()
+
 
     def reset_metrics(self):
         self.inner_world.reset_metrics()
@@ -926,10 +952,16 @@ class HogwildWorld(World):
         # set shutdown flag
         with self.sync['term_flag'].get_lock():
             self.sync['term_flag'].value = True
+
         # wake up each thread by queueing fake examples or setting reset flag
         for _ in self.threads:
             self.sync['queued_sem'].release()
             self.sync['reset_sem'].release()
+
+        # make sure epoch counter is reset so threads aren't waiting for it
+        with self.sync['epoch_done_ctr'].get_lock():
+            self.sync['epoch_done_ctr'].value = 0
+
         # wait for threads to close
         for t in self.threads:
             t.join()
@@ -938,13 +970,15 @@ class HogwildWorld(World):
 
 ### Functions for creating tasks/worlds given options.
 
-def _get_task_world(opt, user_agents):
+def _get_task_world(opt, user_agents, default_world=None):
     task_agents = _create_task_agents(opt)
     sp = opt['task'].strip().split(':')
     if '.' in sp[0]:
         # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
         # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
-        if len(task_agents + user_agents) == 2:
+        if default_world is not None:
+            world_class = default_world
+        elif len(task_agents + user_agents) == 2:
             world_class = DialogPartnerWorld
         else:
             world_class = MultiAgentDialogWorld
@@ -961,18 +995,21 @@ def _get_task_world(opt, user_agents):
             world_class = getattr(my_module, world_name)
         except Exception:
             # Defaults to this if you did not specify a world for your task.
-            if len(task_agents + user_agents) == 2:
+            if default_world is not None:
+                world_class = default_world
+            elif len(task_agents + user_agents) == 2:
                 world_class = DialogPartnerWorld
             else:
                 world_class = MultiAgentDialogWorld
     return world_class, task_agents
 
 
-def create_task_world(opt, user_agents):
-    world_class, task_agents = _get_task_world(opt, user_agents)
+def create_task_world(opt, user_agents, default_world=None):
+    world_class, task_agents = _get_task_world(
+        opt, user_agents, default_world=default_world)
     return world_class(opt, task_agents + user_agents)
 
-def create_task(opt, user_agents):
+def create_task(opt, user_agents, default_world=None):
     """Creates a world + task_agents (aka a task)
     assuming ``opt['task']="task_dir:teacher_class:options"``
     e.g. ``"babi:Task1k:1"`` or ``"#babi-1k"`` or ``"#QA"``,
@@ -994,11 +1031,11 @@ def create_task(opt, user_agents):
     # check if single or multithreaded, and single-example or batched examples
     if ',' not in opt['task']:
         # Single task
-        world = create_task_world(opt, user_agents)
+        world = create_task_world(opt, user_agents, default_world=default_world)
     else:
         # Multitask teacher/agent
         # TODO: remove and replace with multiteachers only?
-        world = MultiWorld(opt, user_agents)
+        world = MultiWorld(opt, user_agents, default_world=default_world)
 
     if opt.get('numthreads', 1) > 1:
         # use hogwild world if more than one thread requested

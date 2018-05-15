@@ -130,18 +130,19 @@ After defining a world and the agents in it, a main loop can be run for training
 
 <p align=center><img width="100%" src="docs/source/\_static/img/main.png" /></p>
 
-
 ## Actions and Observations
 
 All agents (including teachers) speak to each other with a single format -- the observation/action object (a python dict).
-This is used to pass text, labels and rewards between agents.
-It’s the same object type when talking (acting) or listening (observing), but a different view (with different values in the fields).
-The fields are as follows:
+This is used to pass text, labels, rewards, and more between agents.
+It’s the same object type when talking (acting) or listening (observing), but a different view (i.e. with different values in the fields).
+
+The observation/action dict fields are as follows (or see [the documentation](http://parl.ai/static/docs/observations.html)):
 
 <p align=center><img width="33%" src="docs/source/\_static/img/act-obs-dict.png" /></p>
 
-
 Each of these fields are technically optional, depending on your dataset, though the 'text' field will most likely be used in nearly all exchanges.
+
+Note: during validation and testing, the labels field is renamed eval_labels – this way, the model won’t accidentally train on the labels, but they are still available for calculating model-side loss.
 
 For a fixed supervised learning dataset like bAbI, a typical exchange from the training set might be as follows (the test set would not include labels):
 
@@ -213,18 +214,28 @@ The core library contains the following files:
 
 The agents directory contains agents that have been approved into the ParlAI framework for shared use.
 We encourage you to contribute new ones!
-Currently available within this directory:
+Currently available within [this directory](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents):
 
 - **drqa**: an attentive [LSTM model DrQA](https://arxiv.org/abs/1704.00051) implemented in PyTorch that has competitive results on the SQuAD dataset amongst others.
+- **fairseq**: [an attentive sequence to sequence model using convolutions](https://arxiv.org/abs/1705.03122)
+- **seq2seq** a generic seq2seq model with various options
+- **ibm_seq2seq** IBM sequence to sequence model
 - **memnn**: code for an end-to-end memory network in Lua Torch
-- **remote_agent**: basic class for any agent connecting over ZMQ (memnn_luatorch_cpu uses this)
+- **mlb_vqa**: a visual question answering model based on [this paper](https://arxiv.org/abs/1610.04325)
+- **starspace**: a simple supervised embedding approach which is a strong baseline based on [this paper](https://arxiv.org/abs/1709.03856).
+- **tfidf_retriever** a simple retrieval based model, also useful as a first step for retrieving information as input to another model.
 - **ir_baseline**: simple information retrieval baseline that scores candidate responses with [TFIDF-weighted](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) matching
 - **repeat_label**: basic class for merely repeating all data sent to it (e.g. for piping to a file, debugging)
+- **remote_agent**: basic class for any agent connecting over ZMQ (memnn_luatorch_cpu uses this)
 - **local_human**: takes input from the keyboard as the act() function of the agent, so a human can act in the environment
+
+See the [directory](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents) for the complete list.
+
+	
 
 ### Examples
 
-This directory contains a few particular examples of basic loops.
+[This directory](https://github.com/facebookresearch/ParlAI/tree/master/examples) contains a few particular examples of basic loops.
 
 - base_train.py: _very simple example shows the outline of a training/validation loop using the default Agent parent class_
 - display_data.py: _uses agent.repeat_label to display data from a particular task provided on the command-line_
@@ -251,7 +262,7 @@ Each task folder contains:
 - **agents.py** file which contains default or special teacher classes used by core.create_task to instantiate these classes from command-line arguments (if desired).
 - **worlds.py** file can optionally be added for tasks that need to define new/complex environments.
 
-To add your own task:
+To add your own task (see the [tutorial](http://www.parl.ai/static/docs/tutorial_task.html) for far more details):
 - (optional) implement build.py to download any needed data
 - implement agents.py, with at least a DefaultTeacher (extending Teacher or one of its children)
     - if your data is in [FB Dialog format](https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/fbdialog_teacher.py), subclass FbDialogTeacher

@@ -35,7 +35,7 @@ class TestTrainModel(unittest.TestCase):
             except ImportError:
                 print('Cannot import torch, skipping test_train_model')
                 return
-            parser = setup_args(model_args=['--model', 'memnn'])
+            parser = setup_args()
             parser.set_defaults(
                 model='memnn',
                 task='tasks.repeat:RepeatTeacher:10',
@@ -46,7 +46,8 @@ class TestTrainModel(unittest.TestCase):
                 embedding_size='8',
                 no_cuda=True
             )
-            TrainLoop(parser).train()
+            opt = parser.parse_args()
+            TrainLoop(opt).train()
         finally:
             # restore sys.stdout
             sys.stdout = old_out
@@ -70,7 +71,7 @@ class TestTrainModel(unittest.TestCase):
             if "test:{" in line:
                 score = ast.literal_eval(line.split("test:", 1)[1])
                 self.assertTrue(score['accuracy'] == 1,
-                                "Accuracy did not reach 1")
+                                "Accuracy did not reach 1, was " + str(score['accuracy']))
 
 if __name__ == '__main__':
     unittest.main()

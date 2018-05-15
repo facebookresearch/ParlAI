@@ -37,7 +37,8 @@ class Seq2seq(nn.Module):
             share_output=opt['lookuptable'] in ['dec_out', 'all'],
             attn_type=opt['attention'], attn_length=opt['attention_length'],
             attn_time=opt.get('attention_time'),
-            bidir_input=opt['bidirectional'])
+            bidir_input=opt['bidirectional'],
+            numsoftmax=opt.get('numsoftmax', 1))
 
         shared_lt = (self.decoder.lt
                      if opt['lookuptable'] in ['enc_dec', 'all'] else None)
@@ -53,27 +54,45 @@ class Seq2seq(nn.Module):
             self.ranker = Ranker(self.decoder, padding_idx=self.NULL_IDX,
                                  attn_type=opt['attention'])
 
-    def forward(self, xs, ys=None, cands=None, valid_cands=None):
+    def forward(self, xs, ys=None, cands=None, valid_cands=None, prev_enc=None):
+        """Get output predictions from the model.
+
+        Arguments:
+        xs -- input to the encoder
+        ys -- expected output from the decoder
+        cands -- set of candidates to rank, if applicable
+        valid_cands -- indices to match candidates with their appropriate xs
+        prev_enc -- if you know you'll pass in the same xs multiple times and
+            the model is in eval mode, you can pass in the encoder output from
+            the last forward pass to skip recalcuating the same encoder output
+        """
         bsz = len(xs)
         if ys is not None:
             # keep track of longest label we've ever seen
             # we'll never produce longer ones than that during prediction
             self.longest_label = max(self.longest_label, ys.size(1))
 
-        enc_out, hidden = self.encoder(xs)
+        if prev_enc is not None:
+            enc_out, hidden = prev_enc
+        else:
+            enc_out, hidden = self.encoder(xs)
+        encoder_states = (enc_out, hidden)
         attn_mask = xs.ne(0).float() if self.attn_type != 'none' else None
-        # set up input to decoder
         start = Variable(self.START, requires_grad=False)
         starts = start.expand(bsz, 1)
 
         predictions = []
         scores = []
         text_cand_inds = None
+        if self.rank and cands is not None:
+            text_cand_inds = self.ranker.forward(cands, valid_cands, start,
+                                                 hidden, enc_out, attn_mask)
+
         if ys is not None:
             y_in = ys.narrow(1, 0, ys.size(1) - 1)
             xs = torch.cat([starts, y_in], 1)
             if self.attn_type == 'none':
-                preds, score, _h = self.decoder(xs, hidden, enc_out, attn_mask)
+                preds, score, hidden = self.decoder(xs, hidden, enc_out, attn_mask)
                 predictions.append(preds)
                 scores.append(score)
             else:
@@ -106,15 +125,12 @@ class Seq2seq(nn.Module):
                 if total_done == bsz:
                     # no need to generate any more
                     break
-            if self.rank and cands is not None:
-                text_cand_inds = self.ranker.forward(cands, valid_cands, start,
-                                                     hidden, enc_out, attn_mask)
 
         if predictions:
             predictions = torch.cat(predictions, 1)
         if scores:
             scores = torch.cat(scores, 1)
-        return predictions, scores, text_cand_inds
+        return predictions, scores, text_cand_inds, encoder_states
 
 
 class Encoder(nn.Module):
@@ -124,7 +140,7 @@ class Encoder(nn.Module):
                  sparse=False):
         super().__init__()
 
-        self.dropout = dropout
+        self.dropout = nn.Dropout(p=dropout)
         self.layers = num_layers
         self.dirs = 2 if bidirectional else 1
         self.hsz = hidden_size
@@ -159,7 +175,7 @@ class Encoder(nn.Module):
         bsz = len(xs)
 
         # embed input tokens
-        xes = F.dropout(self.lt(xs), p=self.dropout, training=self.training)
+        xes = self.dropout(self.lt(xs))
         try:
             x_lens = [x for x in torch.sum((xs > 0).int(), dim=1).data]
             xes = pack_padded_sequence(xes, x_lens, batch_first=True)
@@ -196,16 +212,17 @@ class Decoder(nn.Module):
                  emb_size=128, hidden_size=128, num_layers=2, dropout=0.1,
                  bidir_input=False, share_output=True,
                  attn_type='none', attn_length=-1, attn_time='pre',
-                 sparse=False):
+                 sparse=False, numsoftmax=1):
         super().__init__()
 
         if padding_idx != 0:
             raise RuntimeError('This module\'s output layer needs to be fixed '
                                'if you want a padding_idx other than zero.')
 
-        self.dropout = dropout
+        self.dropout = nn.Dropout(p=dropout)
         self.layers = num_layers
         self.hsz = hidden_size
+        self.esz = emb_size
 
         self.lt = nn.Embedding(num_features, emb_size, padding_idx=padding_idx,
                                sparse=sparse)
@@ -235,8 +252,16 @@ class Decoder(nn.Module):
                                         attn_length=attn_length,
                                         attn_time=attn_time)
 
+        self.numsoftmax = numsoftmax
+        if numsoftmax > 1:
+            self.softmax = nn.Softmax(dim=1)
+            self.prior = nn.Linear(hidden_size, numsoftmax, bias=False)
+            # self.latent = nn.Linear(emb_size, numsoftmax * hidden_size)
+            self.latent = nn.Linear(hidden_size, numsoftmax * emb_size)
+            self.activation = nn.Tanh()
+
     def forward(self, xs, hidden, encoder_output, attn_mask=None):
-        xes = F.dropout(self.lt(xs), p=self.dropout, training=self.training)
+        xes = self.dropout(self.lt(xs))
         if self.attn_time == 'pre':
             xes = self.attention(xes, hidden, encoder_output, attn_mask)
         if xes.dim() == 2:
@@ -246,8 +271,22 @@ class Decoder(nn.Module):
         if self.attn_time == 'post':
             output = self.attention(output, new_hidden, encoder_output, attn_mask)
 
-        e = self.o2e(output)
-        scores = F.dropout(self.e2s(e), p=self.dropout, training=self.training)
+        if self.numsoftmax > 1:
+            bsz = xs.size(0)
+            seqlen = xs.size(1) if xs.dim() > 1 else 1
+            latent = self.latent(output)
+            active = self.dropout(self.activation(latent))
+            logit = self.e2s(active.view(-1, self.esz))
+
+            prior_logit = self.prior(output).view(-1, self.numsoftmax)
+            prior = self.softmax(prior_logit)  # softmax over numsoftmax's
+
+            prob = self.softmax(logit).view(bsz * seqlen, self.numsoftmax, -1)
+            probs = (prob * prior.unsqueeze(2)).sum(1).view(bsz, seqlen, -1)
+            scores = probs.log()
+        else:
+            e = self.o2e(output)
+            scores = self.dropout(self.e2s(e))
         # select top scoring index, excluding the padding symbol (at idx zero)
         _max_score, idx = scores.narrow(2, 1, scores.size(2) - 1).max(2)
         preds = idx.add_(1)

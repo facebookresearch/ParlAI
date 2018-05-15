@@ -54,7 +54,6 @@ class IbmSeq2seqAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
-        IbmSeq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('IBM Seq2Seq Arguments')
         agent.add_argument('--init-model', type=str, default=None,
                            help='load dict/features/weights/opts from this file')
@@ -98,6 +97,8 @@ class IbmSeq2seqAgent(Agent):
                                 'Any member of torch.optim is valid and will '
                                 'be used with default params except learning '
                                 'rate (as specified by -lr).')
+        IbmSeq2seqAgent.dictionary_class().add_cmdline_args(argparser)
+        return agent
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -259,7 +260,7 @@ class IbmSeq2seqAgent(Agent):
 
     def v2t(self, vec):
         """Convert token indices to string of tokens."""
-        if type(vec) == Variable:
+        if isinstance(vec, Variable):
             vec = vec.data
         new_vec = []
         for i in vec:
@@ -462,9 +463,7 @@ class IbmSeq2seqAgent(Agent):
 
     def load(self, path):
         """Return opt and model states."""
-        with open(path, 'rb') as read:
-            states = torch.load(read)
-
+        states = torch.load(path, map_location=lambda cpu, _: cpu)
         return states['opt'], states
 
     def receive_metrics(self, metrics_dict):

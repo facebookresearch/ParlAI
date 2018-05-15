@@ -22,22 +22,21 @@ def display_data(opt):
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
 
+    # Show some example dialogs.
+    for _ in range(opt['num_examples']):
+        world.parley()
+        print(world.display() + '\n~~')
+        if world.epoch_done():
+            print('EPOCH DONE')
+            break
+
     try:
         # print dataset size if available
-        print('[loaded {} episodes with a total of {} examples]'.format(
+        print('[ loaded {} episodes with a total of {} examples ]'.format(
             world.num_episodes(), world.num_examples()
         ))
     except:
         pass
-
-    # Show some example dialogs.
-    with world:
-        for _ in range(opt['num_examples']):
-            world.parley()
-            print(world.display() + '\n~~')
-            if world.epoch_done():
-                print('EPOCH DONE')
-                break
 
 
 def main():
@@ -46,6 +45,7 @@ def main():
     # Get command line arguments
     parser = ParlaiParser()
     parser.add_argument('-n', '--num-examples', default=10, type=int)
+    parser.set_defaults(datatype='train:stream')
     opt = parser.parse_args()
 
     display_data(opt)

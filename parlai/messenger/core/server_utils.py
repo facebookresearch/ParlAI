@@ -14,6 +14,7 @@ import sh
 import shlex
 import shutil
 import subprocess
+import time
 
 region_name = 'us-east-1'
 user_name = getpass.getuser()
@@ -21,7 +22,10 @@ user_name = getpass.getuser()
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 server_source_directory_name = 'server'
 heroku_server_directory_name = 'heroku_server'
+local_server_directory_name = 'local_server'
 task_directory_name = 'task'
+
+server_process = None
 
 heroku_url = \
     'https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli'
@@ -225,9 +229,63 @@ def delete_heroku_server(task_name):
     ))
 
 
-def setup_server(task_name):
+def setup_local_server(task_name):
+    global server_process
+    print("Local Server: Collecting files...")
+
+    server_source_directory_path = \
+        os.path.join(parent_dir, server_source_directory_name)
+    local_server_directory_path = os.path.join(parent_dir, '{}_{}'.format(
+        local_server_directory_name,
+        task_name
+    ))
+
+    # Delete old server files
+    sh.rm(shlex.split('-rf ' + local_server_directory_path))
+
+    # Copy over a clean copy into the server directory
+    shutil.copytree(server_source_directory_path, local_server_directory_path)
+
+    print("Local: Starting server...")
+
+    os.chdir(local_server_directory_path)
+
+    packages_installed = subprocess.call(['npm', 'install'])
+    if packages_installed != 0:
+        raise Exception('please make sure npm is installed, otherwise view '
+                        'the above error for more info.')
+
+    server_process = subprocess.Popen(['node', 'server.js'])
+
+    time.sleep(1)
+    print('Server running locally with pid {}.'.format(server_process.pid))
+    host = input(
+        'Please enter the public server address, like https://hostname.com: ')
+    port = input('Please enter the port given above, likely 3000: ')
+    return '{}:{}'.format(host, port)
+
+
+def delete_local_server(task_name):
+    global server_process
+    print('Terminating server')
+    server_process.terminate()
+    server_process.wait()
+    print('Cleaning temp directory')
+    local_server_directory_path = os.path.join(parent_dir, '{}_{}'.format(
+        local_server_directory_name,
+        task_name
+    ))
+    sh.rm(shlex.split('-rf ' + local_server_directory_path))
+
+
+def setup_server(task_name, local=False):
+    if local:
+        return setup_local_server(task_name)
     return setup_heroku_server(task_name)
 
 
-def delete_server(task_name):
-    delete_heroku_server(task_name)
+def delete_server(task_name, local=False):
+    if local:
+        delete_local_server(task_name)
+    else:
+        delete_heroku_server(task_name)

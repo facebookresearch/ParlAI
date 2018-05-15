@@ -26,7 +26,6 @@ class MemnnAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        DictionaryAgent.add_cmdline_args(argparser)
         arg_group = argparser.add_argument_group('MemNN Arguments')
         arg_group.add_argument('--init-model', type=str, default=None,
             help='load dict/features/weights/opts from this file')
@@ -57,6 +56,8 @@ class MemnnAgent(Agent):
         arg_group.add_argument('-histr', '--history-replies', default='label', type=str,
             choices=['none', 'model', 'label'],
             help='Keep replies in the history, or not.')
+        DictionaryAgent.add_cmdline_args(argparser)
+        return arg_group
 
     def __init__(self, opt, shared=None):
         opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()
@@ -74,6 +75,7 @@ class MemnnAgent(Agent):
             self.dict = shared['dict']
             # model is shared during hogwild
             if 'threadindex' in shared:
+                torch.set_num_threads(1)
                 self.model = shared['model']
                 self.decoder = shared['decoder']
                 self.answers = [None] * opt['batchsize']
@@ -140,7 +142,6 @@ class MemnnAgent(Agent):
         shared['dict'] = self.dict
         if self.opt.get('numthreads', 1) > 1:
             shared['model'] = self.model
-            self.model.share_memory()
             shared['decoder'] = self.decoder
         return shared
 
@@ -176,7 +177,7 @@ class MemnnAgent(Agent):
 
         self.model.train(mode=is_training)
         # Organize inputs for network (see contents of xs and ys in batchify method)
-        inputs = [Variable(x, volatile=is_training) for x in xs]
+        inputs = [Variable(x) for x in xs]
         output_embeddings = self.model(*inputs)
 
         if self.decoder is None:
@@ -365,8 +366,7 @@ class MemnnAgent(Agent):
                 torch.save(checkpoint, write)
 
     def load(self, path):
-        with open(path, 'rb') as read:
-            checkpoint = torch.load(read)
+        checkpoint = torch.load(path, map_location=lambda cpu, _: cpu)
         self.model.load_state_dict(checkpoint['memnn'])
         self.optimizers['memnn'].load_state_dict(checkpoint['memnn_optim'])
         if self.decoder is not None:

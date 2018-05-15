@@ -4,25 +4,22 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """Train model for ppl metric with pre-selected parameters.
-These parameters have some variance in their final perplexity, but a run with
-these parameters was able to reach 29.54 ppl.
+These parameters have some variance in their final perplexity, but they were
+used to achieve the pre-trained model.
 """
 
-from projects.convai2.baselines.download_models import download
-from parlai.core.params import ParlaiParser
-from examples.train_model import setup_args, TrainLoop
-from parlai.agents.seq2seq.seq2seq import Seq2seqAgent
+from parlai.scripts.train_model import setup_args, TrainLoop
 
 
 if __name__ == '__main__':
     parser = setup_args()
-    Seq2seqAgent.add_cmdline_args(parser)
     parser.set_defaults(
         task='convai2:self',
         model='seq2seq',
         model_file='/tmp/convai2_self_seq2seq_model',
         dict_file='/tmp/dict_convai2_self',
         dict_lower=True,
+        dict_include_valid=True,
         dict_maxexs=-1,
         datatype='train',
         batchsize=128,

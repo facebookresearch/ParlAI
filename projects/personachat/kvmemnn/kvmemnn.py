@@ -52,7 +52,7 @@ def maintain_dialog_history(history, observation, reply='',
         history['persona'] = []
         history['episode_done'] = False
         history['labels'] = []
- 
+
     if history['episode_done']:
         history['dialog'].clear()
         history['persona'] = []
@@ -166,6 +166,8 @@ class KvmemnnAgent(Agent):
                            help='learning rate')
         agent.add_argument('-margin', '--margin', type=float, default=0.3,
                            help='margin')
+        agent.add_argument('-loss', '--loss', default='cosine',
+                           choices={'cosine', 'nll'})
         agent.add_argument('-opt', '--optimizer', default='sgd',
                            choices=KvmemnnAgent.OPTIM_OPTS.keys(),
                            help='Choose between pytorch optimizers. '
@@ -200,6 +202,9 @@ class KvmemnnAgent(Agent):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
         opt = self.opt
+        if opt.get('batchsize', 1) > 1:
+            raise RuntimeError('Kvmemnn model does not support batchsize > 1, '
+                               'try training with numthreads > 1 instead.')
         self.reset_metrics()
         # all instances needs truncate param
         self.id = 'Kvmemnn'
@@ -212,15 +217,14 @@ class KvmemnnAgent(Agent):
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
         self.history = {}
         if shared:
+            torch.set_num_threads(1)
             if 'threadindex' in shared:
                 self.threadindex = shared['threadindex']
             else:
                 self.threadindex = 1
-            print("[ creating Kvmemnn thread " + str(self.threadindex)  + " ]")
             # set up shared properties
             self.dict = shared['dict']
             # answers contains a batch_size list of the last answer produced
-            self.answers = shared['answers']
             self.model = shared['model'] #Kvmemnn(opt, len(self.dict))
             if 'fixedX' in shared:
                 self.fixedX = shared['fixedX']
@@ -231,15 +235,16 @@ class KvmemnnAgent(Agent):
         else:
             print("[ creating KvmemnnAgent ]")
             # this is not a shared instance of this class, so do full init
-            # answers contains a batch_size list of the last answer produced
-            self.answers = [None] * 1
+            self.threadindex = -1
 
-            if ((opt['dict_file'] is None and opt.get('model_file')) or 
+            if ((opt['dict_file'] is None and opt.get('model_file')) or
                 os.path.isfile(opt['model_file'] + '.dict')):
                 # set default dict-file if not set
                 opt['dict_file'] = opt['model_file'] + '.dict'
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
+            if 'loss' not in opt:
+                opt['loss'] = 'cosine'
             self.model = Kvmemnn(opt, len(self.dict), self.dict)
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 self.load(opt['model_file'])
@@ -268,9 +273,12 @@ class KvmemnnAgent(Agent):
                 self.fixedX = ye
             print("=init done=")
 
-        self.criterion = torch.nn.CosineEmbeddingLoss(margin=opt['margin'], size_average=False)
-        # other options:
-        # self.criterion = nn.CrossEntropyLoss(ignore_index=-100)
+        if self.opt['loss'] == 'cosine':
+            self.criterion = torch.nn.CosineEmbeddingLoss(margin=opt['margin'], size_average=False)
+        elif self.opt['loss'] == 'nll':
+            self.criterion = nn.CrossEntropyLoss(ignore_index=-100)
+        else:
+            raise RuntimeError('unspecified loss')
         # self.criterion = torch.nn.MultiMarginLoss(p=1, margin=0.1)
         self.reset()
         # can be used to look at embeddings:
@@ -349,7 +357,6 @@ class KvmemnnAgent(Agent):
     def share(self):
         """Share internal states between parent and child instances."""
         shared = super().share()
-        shared['answers'] = self.answers
         shared['dict'] = self.dict
         shared['model'] = self.model
         if self.fixedX is not None:
@@ -421,9 +428,10 @@ class KvmemnnAgent(Agent):
         return metrics
 
     def same(self, y1, y2):
-        if len(y1.squeeze()) != len(y2.squeeze()):
+        """Check if two tensors are the same, within small margin of error."""
+        if len(y1) != len(y2):
             return False
-        if abs((y1.squeeze()-y2.squeeze()).sum().data.sum()) > 0.00001:
+        if abs((y1 - y2).sum().data.sum()) > 0.00001:
             return False
         return True
 
@@ -437,7 +445,7 @@ class KvmemnnAgent(Agent):
         for i in range(1, k * 3):
             index =  random.randint(0, cache_sz)
             neg = self.ys_cache[index]
-            if not self.same(ys, neg):
+            if not self.same(ys.squeeze(), neg.squeeze()):
                 negs.append(neg)
                 if len(negs) >= k:
                     break
@@ -445,7 +453,6 @@ class KvmemnnAgent(Agent):
             utt = self.history['last_utterance']
             if len(utt) > 2:
                 query = Variable(torch.LongTensor(utt).unsqueeze(0))
-                #print(self.v2t(query.squeeze(0)))
                 negs.append(query)
         return negs
 
@@ -468,26 +475,36 @@ class KvmemnnAgent(Agent):
         candidates as well if they are available and param is set.
         """
         self.start = time.time()
+        if xs is None:
+            return [{}]
         is_training = ys is not None
         if is_training: #
             text_cand_inds, loss_dict = None, None
             negs = self.get_negs(xs, ys)
-            if is_training and len(negs) > 0: # and self.opt['learningrate'] > 0:
+            if len(negs) > 0:
                 self.model.train()
                 self.zero_grad()
-                xe, ye = self.model(xs, obs[0]['mem'], ys, negs)
-                y = Variable(-torch.ones(xe.size(0)))
-                y[0]= 1
-                loss = self.criterion(xe, ye, y)
+                if self.opt['loss'] == 'cosine':
+                    xe, ye = self.model(xs, obs[0]['mem'], ys, negs)
+                    y = Variable(-torch.ones(xe.size(0)))
+                    y[0]= 1
+                    loss = self.criterion(xe, ye, y)
+                else:
+                    x = self.model(xs, obs[0]['mem'], ys, negs)
+                    y = Variable(torch.LongTensor([0]))
+                    loss = self.criterion(x.unsqueeze(0), y)
                 loss.backward()
                 self.update_params()
                 rest = 0
                 if self.start2 != 99:
                     rest = self.start-self.start2
                 self.start2 = time.time()
-                pred = nn.CosineSimilarity().forward(xe,ye)
+                if self.opt['loss'] == 'cosine':
+                    pred = nn.CosineSimilarity().forward(xe,ye)
+                else:
+                    pred = x
                 metrics = self.compute_metrics(loss.data[0],
-                    pred.data.squeeze(), self.start2-self.start, rest)
+                pred.data.squeeze(), self.start2-self.start, rest)
                 return [{'metrics':metrics}]
         else:
             fixed = False
@@ -563,7 +580,8 @@ class KvmemnnAgent(Agent):
                             newwords[w.data[0]] = True
                     xs2 = torch.cat(zq, 1)
 
-                if self.interactiveMode and self.twohoputt:
+                if ((self.interactiveMode and self.twohoputt)
+                    or cands[0] is None):
                     # used for nextutt alg in demo mode, get 2nd hop
                     blah = Variable(torch.LongTensor([1]))
                     if self.tricks:
@@ -579,13 +597,13 @@ class KvmemnnAgent(Agent):
                                 pred[i] = -1000
                     val,ind=pred.sort(descending=True)
                     # predict the highest scoring candidate, and return it.
-                    print("   [query:          " + self.v2t(xsq) + "]")
+                    #print("   [query:          " + self.v2t(xsq) + "]")
                     ps = []
                     for c in obs[0]['mem']:
                         ps.append(self.v2t(c))
-                    print("   [persona:        " + '|'.join(ps) + "]")
-                    print("   [1st hop qmatch: " + ypredorig + "]")
-                    print("   [1st hop nextut: " + ypred + "]")
+                    #print("   [persona:        " + '|'.join(ps) + "]")
+                    #print("   [1st hop qmatch: " + ypredorig + "]")
+                    #print("   [1st hop nextut: " + ypred + "]")
                     if self.tricks:
                         ypred = ztxt[ind.data[0]] # match
                         self.cands_done.append(ypred)
@@ -593,9 +611,10 @@ class KvmemnnAgent(Agent):
                         ypred = self.fixedCands_txt[ind.data[0]] # match
                         ypred2 = cands_txt2[0][ind.data[0]] # reply to match
                         self.cands_done.append(ind.data[0])
-                        print("   [2nd hop nextut: " + ypred2 + "]")
+                        #print("   [2nd hop nextut: " + ypred2 + "]")
                     tc = [ypred]
                     self.history['labels'] = [ypred]
+                    #print("   [final pred: " + ypred + "]")
                     ret = [{'text': ypred, 'text_candidates': tc }]
                     return ret
                 elif self.take_next_utt and not self.interactiveMode:
@@ -615,8 +634,12 @@ class KvmemnnAgent(Agent):
                     for i in range(len(ind)):
                         tc.append(cands_txt[0][ind.data[i]])
             else:
-                xe, ye = self.model(xs, obs[0]['mem'], ys, cands[0])
-                pred = nn.CosineSimilarity().forward(xe,ye)
+                if self.opt['loss'] == 'cosine':
+                    xe, ye = self.model(xs, obs[0]['mem'], ys, cands[0])
+                    pred = nn.CosineSimilarity().forward(xe,ye)
+                else:
+                    x = self.model(xs, obs[0]['mem'], ys, cands[0])
+                    pred = x #.squeeze()
                 val,ind=pred.sort(descending=True)
                 ypred = cands_txt[0][ind.data[0]] # match
                 tc = []
@@ -624,7 +647,7 @@ class KvmemnnAgent(Agent):
                     tc.append(cands_txt[0][ind.data[i]])
             ret = [{'text': ypred, 'text_candidates': tc }]
             return ret
-        return [{}]
+        return [{}] * xs.size(0)
 
     def batchify(self, observations):
         """Convert a list of observations into input & target tensors."""
@@ -656,7 +679,7 @@ class KvmemnnAgent(Agent):
 
         max_x_len = max([len(x) for x in parsed_x])
         for x in parsed_x:
-            x += [[self.NULL_IDX]] * (max_x_len - len(x))
+            x += [self.NULL_IDX] * (max_x_len - len(x))
         xs = torch.LongTensor(parsed_x)
         xs = Variable(xs)
 
@@ -673,8 +696,11 @@ class KvmemnnAgent(Agent):
             max_y_len = max(len(y) for y in parsed_y)
             for y in parsed_y:
                 y += [self.NULL_IDX] * (max_y_len - len(y))
-            ys = torch.LongTensor(parsed_y)
-            ys = Variable(ys)
+            if len(parsed_y[0]) == 0:
+                return None, None, None, None
+            else:
+                ys = torch.LongTensor(parsed_y)
+                ys = Variable(ys)
 
         cands = []
         cands_txt = []
@@ -751,4 +777,3 @@ class KvmemnnAgent(Agent):
             self.reset()
             self.optimizer.load_state_dict(data['optimizer'])
             self.opt = self.override_opt(data['opt'])
-            

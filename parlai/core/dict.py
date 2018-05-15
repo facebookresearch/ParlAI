@@ -7,6 +7,7 @@
 
 from .agents import Agent
 from collections import defaultdict
+import argparse
 import copy
 import numpy as np
 import os
@@ -78,56 +79,58 @@ class DictionaryAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        dictionary = argparser.add_argument_group('Dictionary Arguments')
-        dictionary.add_argument(
-            '--dict-file',
-            help='if set, the dictionary will automatically save to this path'
-                 ' during shutdown')
-        dictionary.add_argument(
-            '--dict-initpath',
-            help='path to a saved dictionary to load tokens / counts from to '
-                 'seed the dictionary with initial tokens and/or frequencies')
-        dictionary.add_argument(
-            '--dict-language', default=DictionaryAgent.default_lang,
-            help='sets language for the punkt sentence tokenizer')
-        dictionary.add_argument(
-            '--dict-max-ngram-size', type=int,
-            default=DictionaryAgent.default_maxngram,
-            help='looks for ngrams of up to this size. this is ignored when '
-                 'building the dictionary. note: this takes approximate '
-                 'runtime of len(sentence)^max_ngram_size')
-        dictionary.add_argument(
-            '--dict-minfreq', default=DictionaryAgent.default_minfreq,
-            type=int,
-            help='minimum frequency of words to include them in sorted dict')
-        dictionary.add_argument(
-            '--dict-maxtokens', default=DictionaryAgent.default_maxtokens,
-            type=int,
-            help='max number of tokens to include in sorted dict')
-        dictionary.add_argument(
-           '--dict-nulltoken', default=DictionaryAgent.default_null,
-           help='empty token, can be used for padding or just empty values')
-        dictionary.add_argument(
-          '--dict-starttoken', default=DictionaryAgent.default_start,
-          help='token for starting sentence generation, if needed')
-        dictionary.add_argument(
-           '--dict-endtoken', default=DictionaryAgent.default_end,
-           help='token for end of sentence markers, if needed')
-        dictionary.add_argument(
-            '--dict-unktoken', default=DictionaryAgent.default_unk,
-            help='token to return for unavailable words')
-        dictionary.add_argument(
-            '--dict-maxexs', default=-1, type=int,
-            help='max number of examples to build dict on')
-        dictionary.add_argument(
-            '-tok', '--dict-tokenizer', default=DictionaryAgent.default_tok,
-            help='Which tokenizer to use. Defaults to "split", which splits '
-                 'on whitespace as well as recognizing basic punctuation. '
-                 'Other options include nltk and spacy.')
-        dictionary.add_argument(
-            '--dict-lower', default=DictionaryAgent.default_lower, type='bool',
-            help='Whether or not to lowercase all text seen.')
+        try:
+            dictionary = argparser.add_argument_group('Dictionary Arguments')
+            dictionary.add_argument(
+                '--dict-file',
+                help='if set, the dictionary will automatically save to this path'
+                     ' during shutdown')
+            dictionary.add_argument(
+                '--dict-initpath',
+                help='path to a saved dictionary to load tokens / counts from to '
+                     'seed the dictionary with initial tokens and/or frequencies')
+            dictionary.add_argument(
+                '--dict-language', default=DictionaryAgent.default_lang,
+                help='sets language for the punkt sentence tokenizer')
+            dictionary.add_argument(
+                '--dict-max-ngram-size', type=int,
+                default=DictionaryAgent.default_maxngram,
+                help='looks for ngrams of up to this size. this is ignored when '
+                     'building the dictionary. note: this takes approximate '
+                     'runtime of len(sentence)^max_ngram_size')
+            dictionary.add_argument(
+                '--dict-minfreq', default=DictionaryAgent.default_minfreq,
+                type=int,
+                help='minimum frequency of words to include them in sorted dict')
+            dictionary.add_argument(
+                '--dict-maxtokens', default=DictionaryAgent.default_maxtokens,
+                type=int,
+                help='max number of tokens to include in sorted dict')
+            dictionary.add_argument(
+               '--dict-nulltoken', default=DictionaryAgent.default_null,
+               help='empty token, can be used for padding or just empty values')
+            dictionary.add_argument(
+              '--dict-starttoken', default=DictionaryAgent.default_start,
+              help='token for starting sentence generation, if needed')
+            dictionary.add_argument(
+               '--dict-endtoken', default=DictionaryAgent.default_end,
+               help='token for end of sentence markers, if needed')
+            dictionary.add_argument(
+                '--dict-unktoken', default=DictionaryAgent.default_unk,
+                help='token to return for unavailable words')
+            dictionary.add_argument(
+                '-tok', '--dict-tokenizer', default=DictionaryAgent.default_tok,
+                help='Which tokenizer to use. Defaults to "split", which splits '
+                     'on whitespace as well as recognizing basic punctuation. '
+                     'Other options include nltk and spacy.')
+            dictionary.add_argument(
+                '--dict-lower', default=DictionaryAgent.default_lower, type='bool',
+                help='Whether or not to lowercase all text seen.')
+        except argparse.ArgumentError:
+            # already added
+            pass
         return dictionary
+
 
     def __init__(self, opt, shared=None):
         # initialize fields
@@ -265,6 +268,9 @@ class DictionaryAgent(Agent):
             self.tok2ind[key] = index
             self.ind2tok[index] = key
 
+    def keys(self):
+        return self.tok2ind.keys()
+
     def copy_dict(self, dictionary):
         """Overwrite own state with any state in the other dictionary.
         This allows loading of the contents of another dictionary while keeping
@@ -272,6 +278,9 @@ class DictionaryAgent(Agent):
         """
         for k, v in vars(dictionary).items():
             setattr(self, k, v)
+
+    def max_freq(self):
+        return max(self.freq[k] for k in self.freq.keys() if k not in [self.null_token, self.end_token, self.start_token, self.unk_token])
 
     def freqs(self):
         return self.freq

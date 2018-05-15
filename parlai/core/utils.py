@@ -39,7 +39,7 @@ class Predictor(object):
         for k, v in kwargs.items():
             args.append('--' + str(k).replace('_', '-'))
             args.append(str(v))
-        parser = ParlaiParser(True, True, model_argv=args)
+        parser = ParlaiParser(True, True)
         self.opt = parser.parse_args(args)
         self.agent = create_agent(self.opt)
 
@@ -179,7 +179,7 @@ def sort_data(data, key='text_label', method='spaces'):
 
     Currently the only supported key is sorting by first the text, then the
     label.
-    See https://arxiv.org/abs/1706.05765 for an evaulation of alternative
+    See https://arxiv.org/abs/1706.05765 for an evaluation of alternative
     approaches for machine translation.
     Sorting by the source (text) gives a good improvement in speed over random
     batching and is robust to different types of optimization.
@@ -348,9 +348,6 @@ class PaddingUtils(object):
             # zero examples to process in this batch, so zip failed to unpack
             return None, None, None, None, None, None
 
-        # set up the input tensors
-        bsz = len(exs)
-
         # `x` text is already tokenized and truncated
         # sort by length so we can use pack_padded
         if any(['text2vec' in ex for ex in exs]):
@@ -465,6 +462,7 @@ class OffensiveLanguageDetector(object):
     """Detects offensive language using a list of offensive language and phrases
     from https://github.com/LDNOOBW.
     """
+
     def __init__(self):
         import parlai.core.build_data as build_data
         from parlai.core.params import ParlaiParser
@@ -535,11 +533,10 @@ class OffensiveLanguageDetector(object):
             if toks[i] in node:
                 node = node[toks[i]]
                 if self.END in node:
-                    return True
+                    return ' '.join(toks[j] for j in range(idx, i + 1))
             else:
                 break
         return False
-
 
     def contains_offensive_language(self, text):
         """Determines if text contains any offensive words from the list."""
@@ -551,6 +548,6 @@ class OffensiveLanguageDetector(object):
         for i in range(len(toks)):
             res = self.check_sequence(toks, i, self.offensive_trie)
             if res:
-                return True
+                return res
 
-        return False
+        return None

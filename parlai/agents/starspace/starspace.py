@@ -28,7 +28,7 @@ import random
 import math
 import pickle
 
-def load_cands(self, path):
+def load_cands(path):
     """Load global fixed set of candidate labels that the teacher provides
     every example (the true labels for a specific example are also added to
     this set, so that it's possible to get the right answer).
@@ -64,7 +64,6 @@ def load_cands(self, path):
                     cands.append(line)
     return cands
 
-
 class StarspaceAgent(Agent):
     """Simple implementation of the starspace algorithm: https://arxiv.org/abs/1709.03856
     """
@@ -88,7 +87,6 @@ class StarspaceAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
-        StarspaceAgent.dictionary_class().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('StarSpace Arguments')
         agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
                            help='size of the token embeddings')
@@ -96,6 +94,8 @@ class StarspaceAgent(Agent):
                            help='max norm of word embeddings')
         agent.add_argument('-shareEmb', '--share-embeddings', type='bool', default=True,
                            help='whether LHS and RHS share embeddings')
+        agent.add_argument('--lins', default=1, type=int,
+                           help='If set to 1, add a linear layer between lhs and rhs.')
         agent.add_argument('-lr', '--learningrate', type=float, default=0.1,
                            help='learning rate')
         agent.add_argument('-margin', '--margin', type=float, default=0.1,
@@ -127,6 +127,7 @@ class StarspaceAgent(Agent):
         agent.add_argument('-fixedCands', '--fixed-candidates-file',
                            default=None, type=str,
                            help='File of cands to use for prediction')
+        StarspaceAgent.dictionary_class().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -142,11 +143,12 @@ class StarspaceAgent(Agent):
         self.history = {}
         self.debugMode = False
         if shared:
+            torch.set_num_threads(1)
             self.threadindex = shared['threadindex']
             print("[ creating Starspace thread " + str(self.threadindex)  + " ]")
             # set up shared properties
             self.dict = shared['dict']
-            self.model = shared['model'] #Starspace(opt, len(self.dict))
+            self.model = shared['model']
         else:
             print("[ creating StarspaceAgent ]")
             # this is not a shared instance of this class, so do full init
@@ -165,9 +167,15 @@ class StarspaceAgent(Agent):
         self.criterion = torch.nn.CosineEmbeddingLoss(margin=opt['margin'], size_average=False)
         self.reset()
         self.fixedCands = False
-        if self.opt.get('fixed-candidates-file'):
-            self.fixedCands = load_cands(self.opt.get('fixed-candidates-file'))
-
+        self.fixedX = None
+        if self.opt.get('fixed_candidates_file'):
+            self.fixedCands_txt = load_cands(self.opt.get('fixed_candidates_file'))
+            fcs = []
+            for c in self.fixedCands_txt:
+                fcs.append(Variable(torch.LongTensor(self.parse(c)).unsqueeze(0)))
+            self.fixedCands = fcs
+            print("[loaded candidates]")
+            
     def reset(self):
         """Reset observation and episode_done."""
         self.observation = None
@@ -214,7 +222,7 @@ class StarspaceAgent(Agent):
 
     def v2t(self, vec):
         """Convert token indices to string of tokens."""
-        if type(vec) == Variable:
+        if isinstance(vec, Variable):
             vec = vec.data
         new_vec = []
         for i in vec:
@@ -314,15 +322,26 @@ class StarspaceAgent(Agent):
                 metrics = self.compute_metrics(loss.data[0], pred.data.squeeze())
                 return [{'metrics':metrics}]
         else:
+            self.model.eval()
             if cands is None or cands[0] is None:
                 # cannot predict without candidates.
                 if self.fixedCands:
-                    cands = [self.fixedCands]
+                    cands = self.fixedCands
+                    cands_txt = self.fixedCands_txt
                 else:
-                    return [{}]
-            # test set prediction uses candidates
-            self.model.eval()
-            xe, ye = self.model(xs, ys, cands[0])
+                    return [{ 'text':'I dunno.'}]
+                # test set prediction uses fixed candidates
+                if self.fixedX is None:
+                    xe, ye = self.model(xs, ys, self.fixedCands)
+                    self.fixedX = ye
+                else:
+                    # fixed candidate embed vectors are cached, dont't recompute
+                    blah = Variable(torch.LongTensor([1]))
+                    xe, ye = self.model(xs, ys, [blah])
+                    ye = self.fixedX
+            else:
+                # test set prediction uses candidates
+                xe, ye = self.model(xs, ys, cands[0])
             pred = nn.CosineSimilarity().forward(xe,ye)
             # This is somewhat costly which we could avoid if we do not evalute ranking.
             # i.e. by only doing: val,ind = pred.max(0)
@@ -449,10 +468,9 @@ class StarspaceAgent(Agent):
 
     def load(self, path):
         """Return opt and model states."""
-        with open(path, 'rb') as read:
-            print('Loading existing model params from ' + path)
-            data = torch.load(read)
-            self.model.load_state_dict(data['model'])
-            self.reset()
-            self.optimizer.load_state_dict(data['optimizer'])
-            self.opt = self.override_opt(data['opt'])
+        print('Loading existing model params from ' + path)
+        data = torch.load(path, map_location=lambda cpu, _: cpu)
+        self.model.load_state_dict(data['model'])
+        self.reset()
+        self.optimizer.load_state_dict(data['optimizer'])
+        self.opt = self.override_opt(data['opt'])

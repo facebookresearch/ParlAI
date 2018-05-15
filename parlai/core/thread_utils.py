@@ -48,7 +48,7 @@ class SharedTable(MutableMapping):
         if init_dict:
             sizes = {typ: 0 for typ in self.types.keys()}
             for k, v in init_dict.items():
-                if 'Tensor' in str(type(v)):
+                if is_tensor(v):
                     # add tensor to tensor dict--don't try to put in rawarray
                     self.tensors[k] = v
                     continue
@@ -149,3 +149,10 @@ class SharedTable(MutableMapping):
 
     def get_lock(self):
         return self.lock
+
+
+def is_tensor(v):
+    if type(v).__module__.startswith('torch'):
+        import torch
+        return torch.is_tensor(v)
+    return False

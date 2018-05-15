@@ -44,10 +44,10 @@ class TfidfRetrieverAgent(Agent):
                  'entries will initially populate the database / matrix.'
                  'Calling observe/act with a labels will store them.')
         parser.add_argument(
-            '--retriever-dbpath', type=str, required=True,
+            '--retriever-dbpath', type=str,
             help='/path/to/saved/db.db')
         parser.add_argument(
-            '--retriever-tfidfpath', type=str, required=True,
+            '--retriever-tfidfpath', type=str,
             help='Directory for saving output files')
         parser.add_argument(
             '--retriever-numworkers', type=int, default=None,
@@ -70,6 +70,9 @@ class TfidfRetrieverAgent(Agent):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.id = 'SparseTfidfRetrieverAgent'
+
+        if not opt.get('retriever_dbpath') or not opt.get('retriever_tfidfpath'):
+            raise RuntimeError('Must set both --retriever-dbpath and --retriever-tfidfpath')
 
         # we'll need to build the tfid if it's not already
         rebuild_tfidf = not os.path.exists(opt['retriever_tfidfpath'] + '.npz')
@@ -164,7 +167,10 @@ class TfidfRetrieverAgent(Agent):
                     c_ids, c_scores = self.ranker.closest_docs(obs['text'], k=30, matrix=self.cands_hash[cands_id][0])
                     reply['text_candidates'] = [self.cands_hash[cands_id][1][cid] for cid in c_ids]
                     reply['candidate_scores'] = c_scores
-                    reply['text'] = reply['text_candidates'][0]
+                    if len(reply['text_candidates']) > 0:
+                        reply['text'] = reply['text_candidates'][0]
+                    else:
+                        reply['text'] = ''
                 elif len(doc_ids) > 0:
                     # return stored fact
                     # total = sum(doc_scores)
