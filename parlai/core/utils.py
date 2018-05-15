@@ -246,8 +246,7 @@ def maintain_dialog_history(history, observation, reply='',
 
     if useReplies != 'none':
         if useReplies == 'model' or (useReplies == 'label_else_model' and
-                                     'labels' not in observation and
-                                     'eval_labels' not in observation):
+                                     len(history['labels']) == 0):
             if reply != '':
                 history['dialog'].extend(parse(reply))
         elif len(history['labels']) > 0:
