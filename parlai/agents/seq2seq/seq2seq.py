@@ -146,6 +146,11 @@ class Seq2seqAgent(Agent):
                                 'softmax (see arxiv.org/abs/1711.03953).')
         agent.add_argument('-rf', '--report-freq', type=float, default=0.001,
                            help='Report frequency of prediction during eval.')
+        agent.add_argument('-histr', '--history-replies',
+                           default='label_else_model', type=str,
+                           choices=['none', 'model', 'label',
+                                    'label_else_model'],
+                           help='Keep replies in the history, or not.')
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
@@ -459,7 +464,7 @@ class Seq2seqAgent(Agent):
                 self.history, obs,
                 reply=self.answers[batch_idx],
                 historyLength=self.truncate,
-                useReplies=self.opt['include_labels'],
+                useReplies=self.opt.get('history_replies'),
                 dict=self.dict,
                 useStartEndIndices=False)
         else:

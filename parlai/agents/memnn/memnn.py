@@ -53,8 +53,9 @@ class MemnnAgent(Agent):
             help='disable GPUs even if available')
         arg_group.add_argument('--gpu', type=int, default=-1,
             help='which GPU device to use')
-        arg_group.add_argument('-histr', '--history-replies', default='label', type=str,
-            choices=['none', 'model', 'label'],
+        arg_group.add_argument('-histr', '--history-replies',
+            default='label_else_model', type=str,
+            choices=['none', 'model', 'label', 'label_else_model'],
             help='Keep replies in the history, or not.')
         DictionaryAgent.add_cmdline_args(argparser)
         return arg_group

@@ -211,7 +211,7 @@ def make_batches(data, bsz):
 
 
 def maintain_dialog_history(history, observation, reply='',
-                            historyLength=1, useReplies="labels",
+                            historyLength=1, useReplies='label_else_model',
                             dict=None, useStartEndIndices=True,
                             splitSentences=False):
     """Keeps track of dialog history, up to a truncation length.
@@ -222,7 +222,7 @@ def maintain_dialog_history(history, observation, reply='',
             if splitSentences:
                 vec = [dict.txt2vec(t) for t in txt.split('\n')]
             else:
-                vec =  dict.txt2vec(txt)
+                vec = dict.txt2vec(txt)
             if useStartEndIndices:
                 parsed_x = deque([dict[dict.start_token]])
                 parsed_x.extend(vec)
@@ -245,7 +245,8 @@ def maintain_dialog_history(history, observation, reply='',
         history['episode_done'] = False
 
     if useReplies != 'none':
-        if useReplies == 'model':
+        if useReplies == 'model' or (useReplies == 'label_else_model' and
+                                     len(history['labels']) == 0):
             if reply != '':
                 history['dialog'].extend(parse(reply))
         elif len(history['labels']) > 0:
