@@ -65,7 +65,7 @@ def validate(observation):
         raise RuntimeError('Must return dictionary from act().')
 
 
-def display_messages(msgs):
+def display_messages(msgs, prettify=False):
     """Returns a string describing the set of messages provided"""
     lines = []
     episode_done = False
@@ -111,38 +111,54 @@ def display_messages(msgs):
                         '| ...and {} more'.format(cand_len - 5)
                         )))
         if msg.get('text_candidates'):
-            cand_len = len(msg['text_candidates'])
-            cands = [c for c in msg['text_candidates'] if c is not None]
-            try:
-                import prettytable
-            except ModuleNotFoundError:
-                raise ModuleNotFoundError('Please install prettytable to \
-                display text candidates: `pip install prettytable`')
-            scores = None
-            if msg.get('candidate_scores') is not None:
-                table = prettytable.PrettyTable(['Score', 'Text'])
-                scores = msg.get('candidate_scores')
-            else:
-                table = prettytable.PrettyTable(['Text'])
-            table.align = 'l'
-            table.hrules = 1
-            display_cands = []
-            num_cands = 0
-            for cand in cands:
-                cand_max_length = 250 if scores is None else 100
-                if len(cand) > cand_max_length:
-                    # Show beginning and end
-                    split = [cand[:cand_max_length], cand[cand_max_length:]]
-                    cand = split[0] + '\n\n. . .\n\n' + split[1][-(min(50, len(split[1]))):]
-                if scores is not None:
-                    table.add_row([scores[num_cands], cand])
+            if prettify:
+                cand_len = len(msg['text_candidates'])
+                cands = [c for c in msg['text_candidates'] if c is not None]
+                try:
+                    import prettytable
+                except ModuleNotFoundError:
+                    raise ModuleNotFoundError('Please install prettytable to \
+                    display text candidates: `pip install prettytable`')
+                scores = None
+                if msg.get('candidate_scores') is not None:
+                    table = prettytable.PrettyTable(['Score', 'Text'])
+                    scores = msg.get('candidate_scores')
                 else:
-                    table.add_row([cand])
-                num_cands += 1
-                if num_cands > 5:
-                    break
+                    table = prettytable.PrettyTable(['Text'])
+                table.align = 'l'
+                table.hrules = 1
+                display_cands = []
+                num_cands = 0
+                for cand in cands:
+                    cand_max_length = 250 if scores is None else 100
+                    if len(cand) > cand_max_length:
+                        # Show beginning and end
+                        split = [cand[:cand_max_length], cand[cand_max_length:]]
+                        cand = split[0] + '\n\n. . .\n\n' + split[1][-(min(50, len(split[1]))):]
+                    if scores is not None:
+                        table.add_row([scores[num_cands], cand])
+                    else:
+                        table.add_row([cand])
+                    num_cands += 1
+                    if num_cands > 5:
+                        break
 
-            lines.append(space + table.get_string())
+                lines.append(space + table.get_string())
+            else:
+                cand_len = len(msg['text_candidates'])
+                if cand_len <= 10:
+                    lines.append(space + ('[cands: {}]'.format(
+                            '|'.join(msg['text_candidates']))))
+                else:
+                    # select five label_candidates from the candidate set,
+                    # can't slice in because it's a set
+                    cand_iter = iter(msg['text_candidates'])
+                    display_cands = (next(cand_iter) for _ in range(5))
+                    # print those cands plus how many cands remain
+                    lines.append(space + ('[text cands: {}{}]'.format(
+                            '|'.join(display_cands),
+                            '| ...and {} more'.format(cand_len - 5)
+                            )))
 
     if episode_done:
         lines.append('- - - - - - - - - - - - - - - - - - - - -')
@@ -185,7 +201,8 @@ class World(object):
         By default, display the messages between the agents."""
         if not hasattr(self, 'acts'):
             return ''
-        return display_messages(self.acts)
+        return display_messages(self.acts,
+                                prettify=self.opt.get('prettify', False))
 
     def episode_done(self):
         """Whether the episode is done or not."""
