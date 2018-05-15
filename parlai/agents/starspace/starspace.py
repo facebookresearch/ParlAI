@@ -121,8 +121,9 @@ class StarspaceAgent(Agent):
         agent.add_argument('-hist', '--history-length', default=10000, type=int,
                            help='Number of past tokens to remember. ')
         agent.add_argument('-histr', '--history-replies',
-                           default='label', type=str,
-                           choices=['none', 'model', 'label'],
+                           default='label_else_model', type=str,
+                           choices=['none', 'model', 'label',
+                                    'label_else_model'],
                            help='Keep replies in the history, or not.')
         agent.add_argument('-fixedCands', '--fixed-candidates-file',
                            default=None, type=str,
@@ -175,7 +176,7 @@ class StarspaceAgent(Agent):
                 fcs.append(Variable(torch.LongTensor(self.parse(c)).unsqueeze(0)))
             self.fixedCands = fcs
             print("[loaded candidates]")
-            
+
     def reset(self):
         """Reset observation and episode_done."""
         self.observation = None

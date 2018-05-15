@@ -327,7 +327,7 @@ class IbmSeq2seqAgent(Agent):
                 self.history, obs,
                 reply=self.answers[batch_idx],
                 historyLength=self.truncate,
-                useReplies=self.opt['include_labels'],
+                useReplies='label_else_model',
                 dict=self.dict,
                 useStartEndIndices=False)
         else:

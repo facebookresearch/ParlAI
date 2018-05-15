@@ -191,8 +191,9 @@ class KvmemnnAgent(Agent):
         agent.add_argument('-hist', '--history-length', default=100, type=int,
                            help='Number of past tokens to remember. ')
         agent.add_argument('-histr', '--history-replies',
-                           default='label', type=str,
-                           choices=['none', 'model', 'label'],
+                           default='label_else_model', type=str,
+                           choices=['none', 'model', 'label',
+                                    'label_else_model'],
                            help='Keep replies in the history, or not.')
         agent.add_argument('--interactive-mode',
                            default=False, type='bool',
