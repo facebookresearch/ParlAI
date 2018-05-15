@@ -239,6 +239,10 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         # set up personas
         self.personas = [(ag.persona_data if hasattr(ag, 'persona_data')
                           else None) for ag in self.agents]
+        self.model_persona_text = '\n'.join([
+            'your persona:' + pers for pers in self.agents[0].model_persona[1]
+        ])
+        print(self.model_persona_text)
 
     def parley(self):
         self.turn_idx += 1
@@ -438,6 +442,10 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                 return
 
             self.dialog.append((idx, acts[idx]['text']))
+            if self.turn_idx == 1:
+                acts[idx]['text'] = self.model_persona_text + '\n' + \
+                    acts[idx]['text']
+            print(acts[idx])
             acts[idx]['eval_labels'] = ['__NULL__']
             self.model_agent.observe(acts[idx])
 
