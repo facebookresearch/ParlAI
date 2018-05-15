@@ -402,6 +402,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.reset_data()
 
     def reset_data(self):
+        if not self.training:
+            self.data = enumerate(self.pytorch_dataloader)
         self.lastY = None
         self.epochDone = False
         self.episode = None
