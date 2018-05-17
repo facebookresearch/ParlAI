@@ -512,7 +512,7 @@ class AttentionLayer(nn.Module):
                     raise RuntimeError('Set attention length to > 0.')
                 self.max_length = attn_length
                 # combines input and previous hidden output layer
-                self.attn = nn.Linear(hsz + emb_size, attn_length, bias=False)
+                self.attn = nn.Linear(hsz + input_dim, attn_length, bias=False)
                 # combines attention weights with encoder outputs
             elif self.attention == 'concat':
                 self.attn = nn.Linear(hsz + hszXdirs, hsz, bias=False)
