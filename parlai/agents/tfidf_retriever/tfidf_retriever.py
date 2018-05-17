@@ -166,6 +166,7 @@ class TfidfRetrieverAgent(Agent):
                         )
                     c_ids, c_scores = self.ranker.closest_docs(obs['text'], k=30, matrix=self.cands_hash[cands_id][0])
                     reply['text_candidates'] = [self.cands_hash[cands_id][1][cid] for cid in c_ids]
+                    reply['candidate_scores'] = c_scores
                     if len(reply['text_candidates']) > 0:
                         reply['text'] = reply['text_candidates'][0]
                     else:
@@ -178,6 +179,7 @@ class TfidfRetrieverAgent(Agent):
                     # returned
                     picks = [self.doc2txt(int(did)) for did in doc_ids]
                     reply['text_candidates'] = picks
+                    reply['candidate_scores'] = doc_scores
 
                     # could pick single choice based on probability scores?
                     # pick = int(choice(doc_ids, p=doc_probs))

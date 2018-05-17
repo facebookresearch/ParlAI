@@ -51,7 +51,7 @@ class FullTeacher(DialogTeacher):
                         if self.key_value:
                             yield (title, [text]), True
                         else:
-                            yield (title + '\n' + text, None), True
+                            yield (text, None), True
 
     def get_extraction_instructions(self):
         '''If one wants to run extraction themselves on a raw wikipedia dump'''
