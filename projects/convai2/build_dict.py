@@ -29,7 +29,7 @@ def build_dict():
         dict_file=DICT_FINAL,
         dict_include_valid=True,
     )
-    opt = parser.parse_args()
+    opt = parser.parse_args(args="")
     return main_build_dict(opt)
 
 
