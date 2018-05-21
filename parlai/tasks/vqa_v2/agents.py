@@ -44,8 +44,8 @@ def _path(opt):
     return data_path, annotation_path, image_path
 
 
-# class DefaultDataset(VQADataset):
-#     pass
+class DefaultDataset(VQADataset):
+    pass
 
 
 class OeTeacher(FixedDialogTeacher):
