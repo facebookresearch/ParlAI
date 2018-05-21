@@ -44,8 +44,8 @@ def _path(opt):
     return data_path, annotation_path, image_path
 
 
-class DefaultDataset(VQADataset):
-    pass
+# class DefaultDataset(VQADataset):
+#     pass
 
 
 class OeTeacher(FixedDialogTeacher):
@@ -53,7 +53,6 @@ class OeTeacher(FixedDialogTeacher):
     implements the ``get`` method to return additional metadata.
     """
     def __init__(self, opt, shared=None):
-        print("WOW")
         super().__init__(opt)
         self.image_mode = opt.get('image_mode', 'none')
 
@@ -163,5 +162,4 @@ class AllTeacher(OeTeacher):
 
 
 class DefaultTeacher(OeTeacher):
-    print("what is HAPPENING")
     pass

@@ -21,6 +21,8 @@ from parlai.agents.mlb_vqa.mlb_vqa import VqaDictionaryAgent
 import os
 import json
 
+# There is no real dialog in this task, so for the purposes of display_data, we
+# include a generic question that applies to all images.
 QUESTION = "Describe the above picture in a sentence."
 
 
@@ -66,7 +68,7 @@ def _path(opt, version):
     return test_info_path, annotation_path, image_path
 
 
-class VQADataset(Dataset):
+class COCODataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
     def __init__(self, opt):
         self.opt = opt
@@ -146,6 +148,8 @@ class VQADataset(Dataset):
                 self.test_info['images'] = self.test_info['images'][:10]
 
         self.image_paths = set()
+        # Depending on whether we are using the train/val/test set, we need to
+        # find the image IDs in annotations or test image info
         if not self.datatype.startswith('test'):
             for anno in self.annotation['annotations']:
                 self.image_paths.add(self.image_path + '%012d.jpg' % (anno['image_id']))
@@ -192,7 +196,7 @@ class VQADataset(Dataset):
         return self.num_imgs
 
 
-class DefaultDataset(VQADataset):
+class DefaultDataset(COCODataset):
     pass
 
 
@@ -223,6 +227,8 @@ class OeTeacher(FixedDialogTeacher):
         self.next_example()  # call this once to get the cache moving
 
     def num_examples(self):
+        # We only have annotations for the train and val sets, so for the test
+        # set we need to determine how many images we have.
         if not self.datatype.startswith('test'):
             return len(self.annotation['annotations'])
         else:
