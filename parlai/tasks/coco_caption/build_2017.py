@@ -21,58 +21,51 @@ def buildImage(opt):
         build_data.make_dir(dpath)
 
         # Download the image data.
-        fname1 = 'train2014.zip'
-        fname2 = 'val2014.zip'
-        fname3 = 'test2015.zip'
-        fname4 = 'test2014.zip'
+        fname1 = 'train2017.zip'
+        fname2 = 'val2017.zip'
+        fname3 = 'test2017.zip'
 
         url = 'https://s3.amazonaws.com/fair-data/parlai/COCO-IMG/'
 
         build_data.download(url + fname1, dpath, fname1)
         build_data.download(url + fname2, dpath, fname2)
         build_data.download(url + fname3, dpath, fname3)
-        build_data.download(url + fname4, dpath, fname4)
 
         build_data.untar(dpath, fname1)
         build_data.untar(dpath, fname2)
         build_data.untar(dpath, fname3)
-        build_data.untar(dpath, fname4)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
 
 
 def build(opt):
-    dpath = os.path.join(opt['datapath'], 'VQA-v1')
+    dpath = os.path.join(opt['datapath'], 'COCO_2017_Caption')
     version = None
 
+    # check if data had been previously built
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
+
+        # make a clean directory if needed
         if build_data.built(dpath):
-            # An older version exists, so remove these outdated files.
+            # an older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # Download the data.
-        fname1 = 'Questions_Train_mscoco.zip'
-        fname2 = 'Questions_Val_mscoco.zip'
-        fname3 = 'Questions_Test_mscoco.zip'
+        # download the data.
 
-        fname4 = 'Annotations_Val_mscoco.zip'
-        fname5 = 'Annotations_Train_mscoco.zip'
+        fname1 = 'annotations_trainval2017.zip'
+        fname2 = 'image_info_test2017.zip'
+        # dataset URL
+        url = 'http://images.cocodataset.org/annotations/'
 
-        url = 'http://visualqa.org/data/mscoco/vqa/'
         build_data.download(url + fname1, dpath, fname1)
         build_data.download(url + fname2, dpath, fname2)
-        build_data.download(url + fname3, dpath, fname3)
-        build_data.download(url + fname4, dpath, fname4)
-        build_data.download(url + fname5, dpath, fname5)
 
+        # uncompress it
         build_data.untar(dpath, fname1)
         build_data.untar(dpath, fname2)
-        build_data.untar(dpath, fname3)
-        build_data.untar(dpath, fname4)
-        build_data.untar(dpath, fname5)
 
-        # Mark the data as built.
+        # mark the data as built
         build_data.mark_done(dpath, version_string=version)

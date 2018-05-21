@@ -7,7 +7,10 @@
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from parlai.scripts.extract_image_feature import extract_feats
-from .build import build, buildImage
+from .build_2014 import build as build_2014
+from .build_2014 import buildImage as buildImage_2014
+from .build_2017 import build as build_2017
+from .build_2017 import buildImage as buildImage_2017
 try:
     import torch
 except Exception as e:
@@ -15,39 +18,52 @@ except Exception as e:
 from torch.utils.data import Dataset
 from parlai.agents.mlb_vqa.mlb_vqa import VqaDictionaryAgent
 
-import json
 import os
+import json
+
+QUESTION = "Describe the above picture in a sentence."
 
 
-def _path(opt):
-    build(opt)
-    buildImage(opt)
+def _path(opt, version):
+    if version == '2014':
+        build_2014(opt)
+        buildImage_2014(opt)
+    elif version == '2017':
+        build_2017(opt)
+        buildImage_2017(opt)
+    else:
+        raise Exception('Unknown version for COCO Captions: %s' % version)
+
     dt = opt['datatype'].split(':')[0]
 
     if dt == 'train':
-        ques_suffix = 'MultipleChoice_mscoco_train2014'
-        annotation_suffix = 'mscoco_train2014'
-        img_suffix = os.path.join('train2014', 'COCO_train2014_')
+        annotation_suffix = 'train{}'.format(version)
+        img_suffix = os.path.join('train{}'.format(version),
+                                  'COCO_train{}_'.format(version))
     elif dt == 'valid':
-        ques_suffix = 'MultipleChoice_mscoco_val2014'
-        annotation_suffix = 'mscoco_val2014'
-        img_suffix = os.path.join('val2014', 'COCO_val2014_')
+        annotation_suffix = 'val{}'.format(version)
+        img_suffix = os.path.join('val{}'.format(version),
+                                  'COCO_val{}_'.format(version))
     elif dt == 'test':
-        ques_suffix = 'MultipleChoice_mscoco_test2015'
         annotation_suffix = 'None'
-        img_suffix = os.path.join('test2015', 'COCO_test2015_')
+        img_suffix = os.path.join('test{}'.format(version),
+                                  'COCO_test{}_'.format(version))
     else:
         raise RuntimeError('Not valid datatype.')
 
-    data_path = os.path.join(opt['datapath'], 'VQA-v1',
-                             ques_suffix + '_questions.json')
+    test_info_path = os.path.join(opt['datapath'],
+                                  'COCO_{}_Caption'.format(version),
+                                  'annotations',
+                                  'image_info_test{}.json'.format(version))
 
-    annotation_path = os.path.join(opt['datapath'], 'VQA-v1',
-                                   annotation_suffix + '_annotations.json')
+    annotation_path = os.path.join(opt['datapath'],
+                                   'COCO_{}_Caption'.format(version),
+                                   'annotations',
+                                   'captions_' + annotation_suffix + '.json')
 
     image_path = os.path.join(opt['datapath'], 'COCO-IMG', img_suffix)
 
-    return data_path, annotation_path, image_path
+    return test_info_path, annotation_path, image_path
 
 
 class VQADataset(Dataset):
@@ -60,8 +76,8 @@ class VQADataset(Dataset):
         self.training = self.datatype.startswith('train')
         self.num_epochs = self.opt.get('num_epochs', 0)
         self.image_loader = ImageLoader(opt)
-        data_path, annotation_path, self.image_path = _path(opt)
-        self._setup_data(data_path, annotation_path, opt.get('unittest', False))
+        test_info_path, annotation_path, self.image_path = _path(opt)
+        self._setup_data(test_info_path, annotation_path, opt.get('unittest', False))
         if self.use_hdf5:
             try:
                 import h5py
@@ -73,26 +89,30 @@ class VQADataset(Dataset):
 
     def __getitem__(self, index):
         index %= self.num_episodes()
-        qa = self.ques['questions'][index]
+        image_id = None
+        if not self.datatype.startswith('test'):
+            anno = self.annotation['annotations'][index]
+            image_id = anno['image_id']
+        else:
+            image_id = self.test_info['images'][index]['id']
         ep = {
-            'text': qa['question'],
-            'image': self.get_image(qa['image_id']),
+            'text': QUESTION,
+            'image': self.get_image(image_id),
             'episode_done': True,
         }
         if self.opt.get('extract_image', False):
-            ep['image_id'] = qa['image_id']
+            ep['image_id'] = image_id
             return ep
         if not self.datatype.startswith('test'):
             anno = self.annotation['annotations'][index]
-            labels = [ans['answer'] for ans in anno['answers']]
-            ep['labels'] = [ans['answer'] for ans in anno['answers']]
+            ep['labels'] = [anno['caption']]
             ep['valid'] = True
             if 'mc_label' in ep:
                 if not ep['mc_label'][0] in self.dict_agent.ans2ind:
                     ep['valid'] = False
             ep = self.dict_agent.encode_question([ep], self.training)
             ep = self.dict_agent.encode_answer(ep)
-            ep[0]['labels'] = labels
+            ep[0]['labels'] = [anno['caption']]
         else:
             ep['valid'] = True
             ep = self.dict_agent.encode_question([ep], False)
@@ -111,19 +131,28 @@ class VQADataset(Dataset):
             self.num_eps = lengths['num_eps']
             self.num_exs = lengths['num_exs']
 
-    def _setup_data(self, data_path, annotation_path, unittest):
-        with open(data_path) as data_file:
-            self.ques = json.load(data_file)
+    def _setup_data(self, test_info_path, annotation_path, unittest):
         if not self.datatype.startswith('test'):
             with open(annotation_path) as data_file:
                 self.annotation = json.load(data_file)
+        else:
+            with open(test_info_path) as data_file:
+                self.test_info = json.load(data_file)
+
         if unittest:
-            self.ques['questions'] = self.ques['questions'][:10]
             if not self.datatype.startswith('test'):
                 self.annotation['annotations'] = self.annotation['annotations'][:10]
+            else:
+                self.test_info['images'] = self.test_info['images'][:10]
+
         self.image_paths = set()
-        for qa in self.ques['questions']:
-            self.image_paths.add(self.image_path + '%012d.jpg' % (qa['image_id']))
+        if not self.datatype.startswith('test'):
+            for anno in self.annotation['annotations']:
+                self.image_paths.add(self.image_path + '%012d.jpg' % (anno['image_id']))
+        else:
+            for info in self.test_info['images']:
+                self.image_paths.add(self.image_path + '%012d.jpg' % (info['id']))
+
 
     def _setup_image_data(self):
         '''hdf5 image dataset'''
@@ -148,15 +177,18 @@ class VQADataset(Dataset):
             img_idx = self.image_id_to_idx[str(image_id)]
             return torch.Tensor(self.image_dataset[img_idx])
 
-    def num_episodes(self):
-        return len(self.ques['questions'])
-
     def num_examples(self):
-        return self.num_episodes()
+        if not self.datatype.startswith('test'):
+            return len(self.annotation['annotations'])
+        else:
+            return len(self.test_info['images'])
+
+    def num_episodes(self):
+        return self.num_examples()
 
     def num_images(self):
         if not hasattr(self, 'num_imgs'):
-            self.num_imgs = len({q['image_id'] for q in self.ques['questions']})
+            return self.num_examples()
         return self.num_imgs
 
 
@@ -165,38 +197,38 @@ class DefaultDataset(VQADataset):
 
 
 class OeTeacher(FixedDialogTeacher):
+    """COCO Open-ended teacher
     """
-    VQA Open-Ended teacher, which loads the json vqa data and implements its
-    own `act` method for interacting with student agent.
-    """
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        data_path, annotation_path, self.image_path = _path(opt)
-        self.datafile = data_path
+    def __init__(self, opt, shared=None, version='2017'):
+        super().__init__(opt)
         self.image_mode = opt.get('image_mode', 'none')
+        self.ques = QUESTION
 
         if shared and 'ques' in shared:
-            self.ques = shared['ques']
+            # another instance was set up already, just reference its data
             if 'annotation' in shared:
                 self.annotation = shared['annotation']
             self.image_loader = shared['image_loader']
         else:
-            self._setup_data(data_path, annotation_path)
+            # need to set up data from scratch
+            test_info_path, annotation_path, self.image_path = _path(opt, version)
+            self._setup_data(test_info_path, annotation_path)
             self.image_loader = ImageLoader(opt)
+
         self.reset()
 
     def reset(self):
-        super().reset()
-        self.example = None
-        # call this once to get the cache moving
-        self.next_example()
+        super().reset()  # call parent reset so other fields can be set up
+        self.example = None  # set up caching fields
+        self.next_example()  # call this once to get the cache moving
 
     def num_examples(self):
-        """Number of examples in VQA-v1."""
-        return len(self.ques['questions'])
+        if not self.datatype.startswith('test'):
+            return len(self.annotation['annotations'])
+        else:
+            return len(self.test_info['images'])
 
     def num_episodes(self):
-        # same as number of examples since all episodes are of length one
         return self.num_examples()
 
     def submit_load_request(self, image_id):
@@ -204,102 +236,60 @@ class OeTeacher(FixedDialogTeacher):
         self.data_loader.request_load(self.receive_data, self.image_loader.load, (img_path,))
 
     def get(self, episode_idx, entry_idx=0):
-        # queue up the next one
-        qa = self.ques['questions'][episode_idx]
-        question = qa['question']
-
         action = {
-            'text': question,
-            'image_id': qa['image_id'],
+            'text': self.ques,
             'episode_done': True
         }
 
         if not self.datatype.startswith('test'):
+            # test set annotations are not available for this dataset
             anno = self.annotation['annotations'][episode_idx]
-            action['labels'] = [ans['answer'] for ans in anno['answers']]
+            action['labels'] = [anno['caption']]
+            action['image_id'] = anno['image_id']
+        else:
+            action['image_id'] = self.test_info['images'][episode_idx]['id']
 
         return action
 
     def next_example(self):
-        # save the currently queued example
+        """Returns the next example from this dataset after starting to queue
+        up the next example.
+        """
         ready = None
+        # pull up the currently queued example
         if self.example is not None:
             if self.image_mode != 'none':
+                # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
             ready = (self.example, self.epochDone)
-        # queue up the next example
+        # get the next base example: super().next_example() calls self.get()
         self.example, self.epochDone = super().next_example()
         if self.image_mode != 'none' and 'image_id' in self.example:
+            # load the next image in the background
             image_id = self.example['image_id']
             self.submit_load_request(image_id)
+        # return the previously cached example
         return ready
 
     def share(self):
         shared = super().share()
-        shared['ques'] = self.ques
+        shared['ques'] = QUESTION
         if hasattr(self, 'annotation'):
             shared['annotation'] = self.annotation
         shared['image_loader'] = self.image_loader
         return shared
 
-    def _setup_data(self, data_path, annotation_path):
-        print('loading: ' + data_path)
-        with open(data_path) as data_file:
-            self.ques = json.load(data_file)
-
+    def _setup_data(self, test_info_path, annotation_path):
         if not self.datatype.startswith('test'):
             print('loading: ' + annotation_path)
             with open(annotation_path) as data_file:
                 self.annotation = json.load(data_file)
+        else:
+            print('loading: ' + test_info_path)
+            with open(test_info_path) as data_file:
+                self.test_info = json.load(data_file)
 
 
-class McTeacher(OeTeacher):
-    """
-    VQA Multiple-Choice teacher, which inherits from OeTeacher but overrides
-    the label and label_candidates fields with multiple choice data.
-    """
-
-    def get(self, episode_idx, entry_idx=0):
-        action = super().get(episode_idx, entry_idx)
-        qa = self.ques['questions'][episode_idx]
-        multiple_choices = qa['multiple_choices']
-        action['label_candidates'] = multiple_choices
-
-        if not self.datatype.startswith('test'):
-            anno = self.annotation['annotations'][episode_idx]
-            action['labels'] = [anno['multiple_choice_answer']]
-
-        return action
-
-
-class AllTeacher(OeTeacher):
-    """
-    VQA Teacher, which inherits from OeTeacher and gives access to
-    the multiple choices and the multiple choice answer.
-    """
-
-    def act(self):
-        # parent class increments episode_idx after getting ex, so need to
-        # cache the episode_idx first
-        episode_idx = self.episode_idx
-        action = super().act()
-
-        qa = self.ques['questions'][episode_idx]
-        multiple_choices = qa['multiple_choices']
-
-        action['label_candidates'] = multiple_choices
-
-        if not self.datatype.startswith('test'):
-            anno = self.annotation['annotations'][episode_idx]
-            self.mclabel = [anno['multiple_choice_answer']]
-
-        if self.datatype.startswith('train'):
-            action['mc_label'] = self.mclabel
-
-        return action
-
-
-class DefaultTeacher(McTeacher):
-    # default to Multiple-Choice Teacher
+class DefaultTeacher(OeTeacher):
     pass
