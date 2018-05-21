@@ -383,4 +383,11 @@ task_list = [
         "description": "Dump of Wikipedia articles from 2/3/18",
         "notes": "Specify ':full' for the full articles to be returned, otherwise defaults to ':summary', which provides the first paragraphs. To put the article in the labels and the title in the text, specify ':key-value' at the end (for a title/content key-value association)"
     },
+    {
+        "id": "Flickr30k",
+        "display_name": "Flickr30k",
+        "task": "flickr30k",
+        "tags": ["All", "Visual"],
+        "description": "30k captioned images pulled from Flickr compiled by UIUC: http://web.engr.illinois.edu/~bplumme2/Flickr30kEntities/"
+    },
 ]
