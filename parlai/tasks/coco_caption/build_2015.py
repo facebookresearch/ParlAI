@@ -10,7 +10,7 @@ import os
 
 
 def buildImage(opt):
-    dpath = os.path.join(opt['datapath'], 'COCO-IMG-2017')
+    dpath = os.path.join(opt['datapath'], 'COCO-IMG-2015')
     version = '1'
 
     if not build_data.built(dpath, version_string=version):
@@ -21,26 +21,20 @@ def buildImage(opt):
         build_data.make_dir(dpath)
 
         # Download the image data.
-        fname1 = 'train2017.zip'
-        fname2 = 'val2017.zip'
-        fname3 = 'test2017.zip'
+        fname = 'test2015.zip'
 
         url = 'https://s3.amazonaws.com/fair-data/parlai/COCO-IMG/'
 
-        build_data.download(url + fname1, dpath, fname1)
-        build_data.download(url + fname2, dpath, fname2)
-        build_data.download(url + fname3, dpath, fname3)
+        build_data.download(url + fname, dpath, fname)
 
-        build_data.untar(dpath, fname1)
-        build_data.untar(dpath, fname2)
-        build_data.untar(dpath, fname3)
+        build_data.untar(dpath, fname)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
 
 
 def build(opt):
-    dpath = os.path.join(opt['datapath'], 'COCO_2017_Caption')
+    dpath = os.path.join(opt['datapath'], 'COCO_2015_Caption')
     version = None
 
     # check if data had been previously built
@@ -55,17 +49,14 @@ def build(opt):
 
         # download the data.
 
-        fname1 = 'annotations_trainval2017.zip'
-        fname2 = 'image_info_test2017.zip'
+        fname = 'image_info_test2015.zip'
         # dataset URL
         url = 'http://images.cocodataset.org/annotations/'
 
-        build_data.download(url + fname1, dpath, fname1)
-        build_data.download(url + fname2, dpath, fname2)
+        build_data.download(url + fname, dpath, fname)
 
         # uncompress it
-        build_data.untar(dpath, fname1)
-        build_data.untar(dpath, fname2)
+        build_data.untar(dpath, fname)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)

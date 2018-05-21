@@ -16,7 +16,7 @@ try:
 except Exception as e:
     raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset
-from parlai.agents.mlb_vqa.mlb_vqa import VqaDictionaryAgent
+from parlai.core.dict import DictionaryAgent
 
 import os
 import json
@@ -29,7 +29,7 @@ QUESTION = "Describe the above picture in a sentence."
 def _path(opt, version):
     if version == '2014':
         build_2014(opt)
-        buildImage_2014(opt)
+        # buildImage_2014(opt)
     elif version == '2017':
         build_2017(opt)
         buildImage_2017(opt)
@@ -63,14 +63,15 @@ def _path(opt, version):
                                    'annotations',
                                    'captions_' + annotation_suffix + '.json')
 
-    image_path = os.path.join(opt['datapath'], 'COCO-IMG', img_suffix)
+    image_path = os.path.join(opt['datapath'], 'COCO-IMG-{}'.format(version),
+                              img_suffix)
 
     return test_info_path, annotation_path, image_path
 
 
-class COCODataset(Dataset):
+class DefaultDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
-    def __init__(self, opt):
+    def __init__(self, opt, version='2014'):
         self.opt = opt
         self.use_att = opt.get('attention', False)
         self.use_hdf5 = not opt.get('no_hdf5', False)
@@ -78,7 +79,7 @@ class COCODataset(Dataset):
         self.training = self.datatype.startswith('train')
         self.num_epochs = self.opt.get('num_epochs', 0)
         self.image_loader = ImageLoader(opt)
-        test_info_path, annotation_path, self.image_path = _path(opt)
+        test_info_path, annotation_path, self.image_path = _path(opt, version)
         self._setup_data(test_info_path, annotation_path, opt.get('unittest', False))
         if self.use_hdf5:
             try:
@@ -87,7 +88,7 @@ class COCODataset(Dataset):
             except ModuleNotFoundError:
                 raise ModuleNotFoundError('Need to install h5py - `pip install h5py`')
             self._setup_image_data()
-        self.dict_agent = VqaDictionaryAgent(opt)
+        self.dict_agent = DictionaryAgent(opt)
 
     def __getitem__(self, index):
         index %= self.num_episodes()
@@ -98,7 +99,7 @@ class COCODataset(Dataset):
         else:
             image_id = self.test_info['images'][index]['id']
         ep = {
-            'text': QUESTION,
+            'text': self.dict_agent.txt2vec(QUESTION),
             'image': self.get_image(image_id),
             'episode_done': True,
         }
@@ -107,20 +108,13 @@ class COCODataset(Dataset):
             return ep
         if not self.datatype.startswith('test'):
             anno = self.annotation['annotations'][index]
-            ep['labels'] = [anno['caption']]
+            ep['labels'] = [self.dict_agent.txt2vec(anno['caption'])]
             ep['valid'] = True
-            if 'mc_label' in ep:
-                if not ep['mc_label'][0] in self.dict_agent.ans2ind:
-                    ep['valid'] = False
-            ep = self.dict_agent.encode_question([ep], self.training)
-            ep = self.dict_agent.encode_answer(ep)
-            ep[0]['labels'] = [anno['caption']]
         else:
             ep['valid'] = True
-            ep = self.dict_agent.encode_question([ep], False)
-        ep[0]['use_att'] = self.use_att
-        ep[0]['use_hdf5'] = self.use_hdf5
-        return (index, ep)
+        ep['use_att'] = self.use_att
+        ep['use_hdf5'] = self.use_hdf5
+        return (index, [ep])
 
     def __len__(self):
         num_epochs = self.num_epochs if self.num_epochs > 0 else 100
@@ -196,19 +190,25 @@ class COCODataset(Dataset):
         return self.num_imgs
 
 
-class DefaultDataset(COCODataset):
-    pass
+class V2014Dataset(DefaultDataset):
+    def __init__(self, opt, shared=None):
+        super(V2014Dataset, self).__init__(opt, shared, '2014')
 
 
-class OeTeacher(FixedDialogTeacher):
-    """COCO Open-ended teacher
+class V2017Dataset(DefaultDataset):
+    def __init__(self, opt, shared=None):
+        super(V2017Dataset, self).__init__(opt, shared, '2017')
+
+
+class DefaultTeacher(FixedDialogTeacher):
+    """
+    COCO default teacher that expects open-ended descriptions of images
     """
     def __init__(self, opt, shared=None, version='2017'):
-        super().__init__(opt)
+        super().__init__(opt, shared)
         self.image_mode = opt.get('image_mode', 'none')
-        self.ques = QUESTION
 
-        if shared and 'ques' in shared:
+        if shared:
             # another instance was set up already, just reference its data
             if 'annotation' in shared:
                 self.annotation = shared['annotation']
@@ -243,7 +243,7 @@ class OeTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         action = {
-            'text': self.ques,
+            'text': QUESTION,
             'episode_done': True
         }
 
@@ -280,7 +280,6 @@ class OeTeacher(FixedDialogTeacher):
 
     def share(self):
         shared = super().share()
-        shared['ques'] = QUESTION
         if hasattr(self, 'annotation'):
             shared['annotation'] = self.annotation
         shared['image_loader'] = self.image_loader
@@ -297,5 +296,11 @@ class OeTeacher(FixedDialogTeacher):
                 self.test_info = json.load(data_file)
 
 
-class DefaultTeacher(OeTeacher):
-    pass
+class V2014Teacher(DefaultTeacher):
+    def __init__(self, opt, shared=None):
+        super(V2014Teacher, self).__init__(opt, shared, '2014')
+
+
+class V2017Teacher(DefaultTeacher):
+    def __init__(self, opt, shared=None):
+        super(V2017Teacher, self).__init__(opt, shared, '2017')
