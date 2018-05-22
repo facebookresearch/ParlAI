@@ -246,6 +246,7 @@ def maintain_dialog_history(history, observation, reply='',
         elif len(history['labels']) > 0:
             r = history['labels'][0]
             history['dialog'].extend(parse(r, splitSentences))
+
     obs = observation
     if 'text' in obs:
         if useStartEndIndices:
