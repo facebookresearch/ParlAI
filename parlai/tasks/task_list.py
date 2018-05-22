@@ -388,6 +388,6 @@ task_list = [
         "display_name": "Flickr30k",
         "task": "flickr30k",
         "tags": ["All", "Visual"],
-        "description": "30k captioned images pulled from Flickr compiled by UIUC: http://web.engr.illinois.edu/~bplumme2/Flickr30kEntities/"
+        "description": "30k captioned images pulled from Flickr compiled by UIUC: http://web.engr.illinois.edu/~bplumme2/Flickr30kEntities/. Based off of these papers: https://arxiv.org/abs/1505.04870v2, http://aclweb.org/anthology/Q14-1006"
     },
 ]
