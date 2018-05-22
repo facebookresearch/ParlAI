@@ -150,7 +150,7 @@ class PerplexityWorld(World):
         self.acts[0] = action.copy()
 
         # hide labels from model
-        labels = action.pop('eval_labels', action.pop('labels', None))
+        labels = action.get('eval_labels', action.pop('labels', None))
         if 'label_candidates' in action:
             action.pop('label_candidates')
         if labels is None:
