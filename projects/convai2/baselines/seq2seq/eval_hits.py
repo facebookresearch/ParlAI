@@ -19,7 +19,7 @@ if __name__ == '__main__':
         dict_file='models:convai2/seq2seq/convai2_self_seq2seq_model.dict',
         dict_lower=True,
         rank_candidates=True,
-        batchsize=64,
+        batchsize=32,
     )
     opt = parser.parse_args(print_args=False)
     opt['model_type'] = 'seq2seq'
