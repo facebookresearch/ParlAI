@@ -15,7 +15,7 @@ def setup_args(parser=None):
     parser.set_defaults(
         task='convai2:self:no_cands',
         datatype='valid',
-        hide_labels=True,
+        hide_labels=False,
     )
     return parser
 
