@@ -29,7 +29,7 @@ QUESTION = "Describe the above picture in a sentence."
 def _path(opt, version):
     if version == '2014':
         build_2014(opt)
-        # buildImage_2014(opt)
+        buildImage_2014(opt)
     elif version == '2017':
         build_2017(opt)
         buildImage_2017(opt)
@@ -73,7 +73,6 @@ class DefaultDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
     def __init__(self, opt, version='2014'):
         self.opt = opt
-        self.use_att = opt.get('attention', False)
         self.use_hdf5 = not opt.get('no_hdf5', False)
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
@@ -112,9 +111,8 @@ class DefaultDataset(Dataset):
             ep['valid'] = True
         else:
             ep['valid'] = True
-        ep['use_att'] = self.use_att
         ep['use_hdf5'] = self.use_hdf5
-        return (index, [ep])
+        return (index, ep)
 
     def __len__(self):
         num_epochs = self.num_epochs if self.num_epochs > 0 else 100
@@ -156,10 +154,7 @@ class DefaultDataset(Dataset):
         '''hdf5 image dataset'''
         extract_feats(self.opt)
         im = self.opt.get('image_mode')
-        if self.opt.get('attention', False):
-            hdf5_path = self.image_path + 'mode_{}.hdf5'.format(im)
-        else:
-            hdf5_path = self.image_path + 'mode_{}_noatt.hdf5'.format(im)
+        hdf5_path = self.image_path + 'mode_{}_noatt.hdf5'.format(im)
         hdf5_file = self.h5py.File(hdf5_path, 'r')
         self.image_dataset = hdf5_file['images']
 
