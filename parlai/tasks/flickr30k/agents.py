@@ -13,7 +13,7 @@ try:
 except Exception as e:
     raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset
-from parlai.agents.mlb_vqa.mlb_vqa import VqaDictionaryAgent
+from parlai.core.dict import DictionaryAgent
 
 import os
 import json
@@ -37,7 +37,6 @@ class FlickrDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
     def __init__(self, opt):
         self.opt = opt
-        self.use_att = opt.get('attention', False)
         self.use_hdf5 = not opt.get('no_hdf5', False)
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
@@ -52,13 +51,13 @@ class FlickrDataset(Dataset):
             except ModuleNotFoundError:
                 raise ModuleNotFoundError('Need to install h5py - `pip install h5py`')
             self._setup_image_data()
-        self.dict_agent = VqaDictionaryAgent(opt)
+        self.dict_agent = DictionaryAgent(opt)
 
     def __getitem__(self, index):
         index %= self.num_episodes()
         cap = self.caption[index]
         ep = {
-            'text': QUESTION,
+            'text': self.dict_agent.txt2vec(QUESTION),
             'image': self.get_image(cap['image_id']),
             'episode_done': True,
         }
@@ -66,16 +65,9 @@ class FlickrDataset(Dataset):
             ep['image_id'] = cap['image_id']
             return ep
 
-        ep['labels'] = cap['captions']
+        ep['labels'] = [self.dict_agent.txt2vec(cc) for cc in cap['captions']]
         ep['valid'] = True
-        if 'mc_label' in ep:
-            if not ep['mc_label'][0] in self.dict_agent.ans2ind:
-                ep['valid'] = False
-        ep = self.dict_agent.encode_question([ep], self.training)
-        ep = self.dict_agent.encode_answer(ep)
-        ep[0]['labels'] = cap['caption']
-        ep[0]['use_att'] = self.use_att
-        ep[0]['use_hdf5'] = self.use_hdf5
+        ep['use_hdf5'] = self.use_hdf5
         return (index, ep)
 
     def __len__(self):
@@ -115,10 +107,7 @@ class FlickrDataset(Dataset):
         '''hdf5 image dataset'''
         extract_feats(self.opt)
         im = self.opt.get('image_mode')
-        if self.opt.get('attention', False):
-            hdf5_path = self.image_path + 'mode_{}.hdf5'.format(im)
-        else:
-            hdf5_path = self.image_path + 'mode_{}_noatt.hdf5'.format(im)
+        hdf5_path = self.image_path + 'mode_{}_noatt.hdf5'.format(im)
         hdf5_file = self.h5py.File(hdf5_path, 'r')
         self.image_dataset = hdf5_file['images']
 
@@ -148,14 +137,15 @@ class DefaultDataset(FlickrDataset):
     pass
 
 
-class OeTeacher(FixedDialogTeacher):
-    """Open-Ended teacher
+class DefaultTeacher(FixedDialogTeacher):
+    """
+    Flickr default teacher that expects open-ended descriptions of images
     """
     def __init__(self, opt, shared=None):
-        super().__init__(opt)
+        super().__init__(opt, shared)
         self.image_mode = opt.get('image_mode', 'none')
 
-        if shared and 'ques' in shared:
+        if shared:
             # another instance was set up already, just reference its data
             self.caption = shared['caption']
             self.image_loader = shared['image_loader']
@@ -180,7 +170,9 @@ class OeTeacher(FixedDialogTeacher):
 
     def submit_load_request(self, image_id):
         img_path = os.path.join(self.image_path, '%d.jpg' % (image_id))
-        self.data_loader.request_load(self.receive_data, self.image_loader.load, (img_path,))
+        self.data_loader.request_load(self.receive_data,
+                                      self.image_loader.load,
+                                      (img_path,))
 
     def get(self, episode_idx, entry_idx=0):
         cap = self.caption[episode_idx]
@@ -217,7 +209,6 @@ class OeTeacher(FixedDialogTeacher):
 
     def share(self):
         shared = super().share()
-        shared['ques'] = QUESTION
         shared['caption'] = self.caption
         shared['image_loader'] = self.image_loader
         return shared
@@ -238,7 +229,3 @@ class OeTeacher(FixedDialogTeacher):
                     self.caption.append(to_add)
                 else:
                     self.caption[-1]['captions'].append(caption)
-
-
-class DefaultTeacher(OeTeacher):
-    pass
