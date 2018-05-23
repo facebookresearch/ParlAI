@@ -345,8 +345,8 @@ class MlbVqaAgent(Agent):
                            help='which GPU device to use')
         agent.add_argument('--no-data-parallel', action='store_true',
                            help='disable pytorch parallel data processing')
-        agent.add_argument('--no-hdf5', action='store_true',
-                           help='specify to not use a single hdf5 file to load \
+        agent.add_argument('--use-hdf5', type='bool', default=False,
+                           help='specify whether to use a single hdf5 file to load \
                            images')
         agent.add_argument('--no-metrics', action='store_true',
                            help='specify to not compute f1 or accuracy during \
@@ -655,4 +655,3 @@ class MlbVqaAgent(Agent):
         if path is not None:
             self.save(path + '.shutdown_state')
         super().shutdown()
-
