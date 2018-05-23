@@ -72,7 +72,7 @@ def extract_feats(opt):
     opt['no_cuda'] = False
     opt['gpu'] = 0
     opt['num_epochs'] = 1
-    opt['no_hdf5'] = True
+    opt['use_hdf5'] = False
     opt['num_load_threads'] = 20
     logger = ProgressLogger(should_humanize=False, throttle=0.1)
     print("[ Loading Images ]")
