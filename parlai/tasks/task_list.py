@@ -384,6 +384,13 @@ task_list = [
         "notes": "Specify ':full' for the full articles to be returned, otherwise defaults to ':summary', which provides the first paragraphs. To put the article in the labels and the title in the text, specify ':key-value' at the end (for a title/content key-value association)"
     },
     {
+        "id": "Flickr30k",
+        "display_name": "Flickr30k",
+        "task": "flickr30k",
+        "tags": ["All", "Visual"],
+        "description": "30k captioned images pulled from Flickr compiled by UIUC: http://web.engr.illinois.edu/~bplumme2/Flickr30kEntities/. Based off of these papers: https://arxiv.org/abs/1505.04870v2, http://aclweb.org/anthology/Q14-1006"
+    },
+    {
         "id": "COCO_Captions",
         "display_name": "COCO_Captions",
         "task": "coco_caption",
