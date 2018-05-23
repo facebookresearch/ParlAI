@@ -380,11 +380,11 @@ class PytorchDataTeacher(FixedDialogTeacher):
         """
         dataset_name = opt.get('dataset')
         sp = dataset_name.strip().split(':')
-        agent_class = get_agent_module(opt.get('model'))
-        if hasattr(agent_class, 'collate'):
-            collate = agent_class.collate
-        else:
-            collate = default_collate
+        collate = default_collate
+        if opt.get('model', False):
+            agent_class = get_agent_module(opt.get('model'))
+            if hasattr(agent_class, 'collate'):
+                collate = agent_class.collate
         if sp[0] == 'StreamDataset':
             return StreamDataset, collate
         module_name = sp[0]

@@ -56,6 +56,7 @@ class VQADataset(Dataset):
         self.opt = opt
         self.use_att = opt.get('attention', False)
         self.use_hdf5 = not opt.get('no_hdf5', False)
+        self.opt['use_hdf5_extraction'] = self.use_hdf5
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
         self.num_epochs = self.opt.get('num_epochs', 0)
