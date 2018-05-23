@@ -262,6 +262,17 @@ def give_worker_qualification(worker_id, qualification_id, value=None,
         )
 
 
+def remove_worker_qualification(worker_id, qualification_id,
+                                is_sandbox=True, reason=''):
+    """Give a qualification to the given worker"""
+    client = get_mturk_client(is_sandbox)
+    client.disassociate_qualification_from_worker(
+        QualificationTypeId=qualification_id,
+        WorkerId=worker_id,
+        Reason=reason
+    )
+
+
 def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward,
                     assignment_duration_in_seconds, is_sandbox,
                     qualifications=None,

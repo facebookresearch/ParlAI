@@ -1312,6 +1312,13 @@ class MTurkManager():
         assert qual_name != '', ('No block qualification has been specified')
         self.give_worker_qualification(worker_id, qual_name)
 
+    def un_soft_block_worker(self, worker_id):
+        """Remove a soft block from a worker by removing a block qualification
+            from the worker"""
+        qual_name = self.opt['block_qualification']
+        assert qual_name != '', ('No block qualification has been specified')
+        self.remove_worker_qualification(worker_id, qual_name)
+
     def give_worker_qualification(self, worker_id, qual_name, qual_value=None):
         """Give a worker a particular qualification"""
         qual_id = mturk_utils.find_qualification(qual_name, self.is_sandbox)
@@ -1329,6 +1336,26 @@ class MTurkManager():
         shared_utils.print_and_log(
             logging.INFO,
             'gave {} qualification {}'.format(worker_id, qual_name),
+            should_print=True
+        )
+
+    def remove_worker_qualification(self, worker_id, qual_name, reason=''):
+        """Remove a qualification from a worker"""
+        qual_id = mturk_utils.find_qualification(qual_name, self.is_sandbox)
+        if qual_id is False or qual_id is None:
+            shared_utils.print_and_log(
+                logging.WARN,
+                'Could not remove from worker {} qualification {}, as the '
+                'qualification could not be found to exist.'
+                ''.format(worker_id, qual_name),
+                should_print=True
+            )
+            return
+        mturk_utils.remove_worker_qualification(worker_id, qual_id,
+                                                self.is_sandbox, reason)
+        shared_utils.print_and_log(
+            logging.INFO,
+            'removed from {} qualification {}'.format(worker_id, qual_name),
             should_print=True
         )
 
