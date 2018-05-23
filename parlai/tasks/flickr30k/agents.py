@@ -37,7 +37,7 @@ class FlickrDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
     def __init__(self, opt):
         self.opt = opt
-        self.use_hdf5 = not opt.get('no_hdf5', False)
+        self.use_hdf5 = opt.get('use_hdf5', False)
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
         self.num_epochs = self.opt.get('num_epochs', 0)
