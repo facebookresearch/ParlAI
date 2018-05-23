@@ -74,36 +74,16 @@ class Mlb(nn.Module):
             print("[ saving model: " + path + " ]")
 
             model = {
-                'embedding': self.embedding.state_dict(),
-                'rnn': self.rnn.state_dict(),
-                'linear_classif': self.linear_classif.state_dict(),
-                'opt': self.opt,
-                'optims': {k: v.state_dict() for k, v in self.optims.items()},
+                'model': self.state_dict(),
+                'optim': self.optim.state_dict(),
+                'opt': self.opt
             }
-            if self.opt['attention']:
-                model.update({
-                    'conv_v_att': self.conv_v_att.state_dict(),
-                    'conv_att': self.conv_att.state_dict(),
-                    'linear_q_att': self.linear_q_att.state_dict(),
-                    'linear_q_fusion': self.linear_q_fusion.state_dict(),
-                    })
-                if self.opt['original_att']:
-                    model['linear_v_fusion'] = self.linear_v_fusion.state_dict()
-                else:
-                    model['list_linear_v_fusion'] = self.list_linear_v_fusion.state_dict()
-            else:
-                model.update({
-                    'linear_v': self.linear_v.state_dict(),
-                    'linear_q': self.linear_q.state_dict(),
-                    })
-
             with open(path, 'wb') as write:
                 torch.save(model, write)
 
     def set_states(self, states):
         """Set the state dicts of the modules from saved states."""
-        self.embedding.load_state_dict(states['embedding'])
-        self.rnn.load_state_dict(states['rnn'])
+        self.load_state_dict(states['model'])
 
     def set_init_states(self):
         """Set the initial state dicts of the modules from saved states."""
@@ -121,9 +101,15 @@ class Mlb(nn.Module):
         self.rnn.load_state_dict(state_dict)
         return self.rnn
 
-    def set_optim_states(self, states):
-        for k, v in states['optims'].items():
-            self.optims[k].load_state_dict(v)
+    def get_optim(self):
+        optim_class = torch.optim.Adam
+        self.optim = optim_class(filter(lambda p: p.requires_grad,
+                                        self.parameters()),
+                                 lr=self.opt['lr'])
+        if self.states:
+            self.optim.load_state_dict(self.states['optim'])
+
+        return self.optim
 
 
 class MlbNoAtt(Mlb):
@@ -162,34 +148,6 @@ class MlbNoAtt(Mlb):
         # hadamard product
         x_mm = torch.mul(x_q, x_v)
         return x_mm
-
-    def set_states(self, states):
-        """Set the state dicts of the modules from saved states."""
-        super().set_states(states)
-        self.linear_classif.load_state_dict(states['linear_classif'])
-        self.linear_v.load_state_dict(states['linear_v'])
-        self.linear_q.load_state_dict(states['linear_q'])
-
-    def get_optims(self):
-        optim_class = torch.optim.Adam
-        self.optims = {
-            'embedding': optim_class(filter(lambda p: p.requires_grad, self.embedding.parameters()),
-                                     lr=self.opt['lr']),
-            'rnn': optim_class(filter(lambda p: p.requires_grad, self.rnn.parameters()),
-                               lr=self.opt['lr']),
-            'linear_classif': optim_class(filter(lambda p: p.requires_grad, self.linear_classif.parameters()),
-                                          lr=self.opt['lr']),
-            'linear_v': optim_class(filter(lambda p: p.requires_grad, self.linear_v.parameters()),
-                                    lr=self.opt['lr']),
-            'linear_q': optim_class(filter(lambda p: p.requires_grad, self.linear_q.parameters()),
-                                    lr=self.opt['lr']),
-        }
-
-        if self.states:
-            # set loaded states if applicable
-            self.set_optim_states(self.states)
-
-        return self.optims
 
 
 class MlbAtt(Mlb):
@@ -334,51 +292,3 @@ class MlbAtt(Mlb):
     def forward_fusion_cls(self, input_v, input_q):
         x_att = torch.mul(input_v, input_q)
         return x_att
-
-    def set_states(self, states):
-        """Set the state dicts of the modules from saved states."""
-        super().set_states(states)
-        self.linear_classif.load_state_dict(states['linear_classif'])
-        self.conv_v_att.load_state_dict(states['conv_v_att'])
-        self.conv_att.load_state_dict(states['conv_att'])
-        self.linear_q_att.load_state_dict(states['linear_q_att'])
-        if self.opt['original_att']:
-            self.linear_v_fusion.load_state_dict(
-                states['linear_v_fusion']
-            )
-        else:
-            self.list_linear_v_fusion.load_state_dict(
-                states['list_linear_v_fusion'])
-        self.linear_q_fusion.load_state_dict(states['linear_q_fusion'])
-
-    def get_optims(self):
-        optim_class = torch.optim.Adam
-        self.optims = {
-            'embedding': optim_class(self.embedding.parameters(),
-                                     lr=self.opt['lr']),
-            'rnn': optim_class(self.rnn.parameters(), lr=self.opt['lr']),
-            'linear_classif': optim_class(self.linear_classif.parameters(),
-                                          lr=self.opt['lr']),
-            'conv_v_att': optim_class(self.conv_v_att.parameters(),
-                                      lr=self.opt['lr']),
-            'conv_att': optim_class(self.conv_att.parameters(),
-                                    lr=self.opt['lr']),
-            'linear_q_att': optim_class(self.linear_q_att.parameters(),
-                                        lr=self.opt['lr']),
-            'linear_q_fusion': optim_class(self.linear_q_fusion.parameters(),
-                                           lr=self.opt['lr']),
-        }
-        if self.opt['original_att']:
-            self.optims['linear_v_fusion'] = optim_class(
-                                        self.linear_v_fusion.parameters(),
-                                        lr=self.opt['lr'])
-        else:
-            self.optims['list_linear_v_fusion'] = optim_class(
-                                        self.list_linear_v_fusion.parameters(),
-                                        lr=self.opt['lr'])
-
-        if self.states:
-            # set loaded states if applicable
-            self.set_optim_states(self.states)
-
-        return self.optims

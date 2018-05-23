@@ -54,8 +54,11 @@ class Kvmemnn(nn.Module):
                 mem_enc.append(self.encoder(m))
             mem_enc.append(xs_emb)
             mems_enc = torch.cat(mem_enc)
+            self.layer_mems = mems
             layer2 = self.cosine(xs_emb, mems_enc).unsqueeze(0)
+            self.layer2 = layer2
             layer3 = self.softmax(layer2)
+            self.layer3 = layer3
             lhs_emb = torch.mm(layer3, mems_enc)
 
             if self.lins > 0:
@@ -63,6 +66,7 @@ class Kvmemnn(nn.Module):
             if self.hops > 1:
                 layer4 = self.cosine(lhs_emb, mems_enc).unsqueeze(0)
                 layer5 = self.softmax(layer4)
+                self.layer5 = layer5
                 lhs_emb = torch.mm(layer5, mems_enc)
                 if self.lins > 1:
                     lhs_emb = self.lin2(lhs_emb)

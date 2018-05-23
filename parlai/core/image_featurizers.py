@@ -7,6 +7,7 @@ import parlai.core.build_data as build_data
 
 import os
 from PIL import Image
+from zipfile import ZipFile
 from functools import wraps
 from threading import Lock, Condition
 
@@ -181,10 +182,20 @@ class ImageLoader():
     def load(self, path):
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
+        is_zip = False
         if mode is None or mode == 'none':
             # don't need to load images
             return None
-        elif mode == 'raw':
+        elif '.zip' in path:
+            # assume format path/to/file.zip/image_name.jpg
+            is_zip = True
+            sep = path.index('.zip')+4
+            zipname = path[:sep]
+            file_name = path[sep+1:]
+            path = ZipFile(zipname, 'r').open(file_name)
+            prepath = os.path.join(opt['datapath'], opt['task'])
+            imagefn = ''.join(zipname.strip('.zip').split('/')[-2:]) + path.name
+        if mode == 'raw':
             # raw just returns RGB values
             return Image.open(path).convert('RGB')
         elif mode == 'ascii':
@@ -192,7 +203,8 @@ class ImageLoader():
             return self.img_to_ascii(path)
         else:
             # otherwise, looks for preprocessed version under 'mode' directory
-            prepath, imagefn = os.path.split(path)
+            if not is_zip:
+                prepath, imagefn = os.path.split(path)
 
             dpath = os.path.join(prepath, mode)
 

@@ -7,7 +7,7 @@
 from parlai.projects.convai.convai_world import ConvAIWorld
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import Agent
-from parlai.core.worlds import display_messages
+from parlai.core.utils import display_messages
 
 import random
 

@@ -7,7 +7,9 @@
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from parlai.scripts.extract_image_feature import extract_feats
-from .build import build, buildImage
+from .build import build
+from parlai.tasks.coco_caption.build_2014 import buildImage as buildImage_2014
+from parlai.tasks.coco_caption.build_2015 import buildImage as buildImage_2015
 try:
     import torch
 except Exception as e:
@@ -21,21 +23,25 @@ import os
 
 def _path(opt):
     build(opt)
-    buildImage(opt)
+    buildImage_2014(opt)
+    buildImage_2015(opt)
     dt = opt['datatype'].split(':')[0]
 
     if dt == 'train':
         ques_suffix = 'MultipleChoice_mscoco_train2014'
         annotation_suffix = 'mscoco_train2014'
         img_suffix = os.path.join('train2014', 'COCO_train2014_')
+        img_version = '2014'
     elif dt == 'valid':
         ques_suffix = 'MultipleChoice_mscoco_val2014'
         annotation_suffix = 'mscoco_val2014'
         img_suffix = os.path.join('val2014', 'COCO_val2014_')
+        img_version = '2014'
     elif dt == 'test':
         ques_suffix = 'MultipleChoice_mscoco_test2015'
         annotation_suffix = 'None'
         img_suffix = os.path.join('test2015', 'COCO_test2015_')
+        img_version = '2015'
     else:
         raise RuntimeError('Not valid datatype.')
 
@@ -45,7 +51,8 @@ def _path(opt):
     annotation_path = os.path.join(opt['datapath'], 'VQA-v1',
                                    annotation_suffix + '_annotations.json')
 
-    image_path = os.path.join(opt['datapath'], 'COCO-IMG', img_suffix)
+    image_path = os.path.join(opt['datapath'],
+                              'COCO-IMG-{}'.format(img_version), img_suffix)
 
     return data_path, annotation_path, image_path
 
@@ -59,7 +66,6 @@ class VQADataset(Dataset):
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
         self.num_epochs = self.opt.get('num_epochs', 0)
-        _, _, self.image_path = _path(opt)
         self.image_loader = ImageLoader(opt)
         data_path, annotation_path, self.image_path = _path(opt)
         self._setup_data(data_path, annotation_path, opt.get('unittest', False))

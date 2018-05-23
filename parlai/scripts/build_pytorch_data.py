@@ -52,9 +52,7 @@ def make_serializable(obj):
     return new_obj
 
 
-def build_data(parser):
-    opt = parser.parse_args()
-
+def build_data(opt):
     agent = create_agent(opt)
     #If build teacher not specified, we are simply looking for the file
     if not opt.get('pytorch_buildteacher', None):

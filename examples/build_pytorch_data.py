@@ -17,5 +17,5 @@ from parlai.scripts.build_pytorch_data import setup_args, build_data
 
 
 if __name__ == '__main__':
-    parser = setup_args()
-    build_data(parser)
+    opt = setup_args().parse_args()
+    build_data(opt)
