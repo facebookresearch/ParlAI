@@ -383,4 +383,11 @@ task_list = [
         "description": "Dump of Wikipedia articles from 2/3/18",
         "notes": "Specify ':full' for the full articles to be returned, otherwise defaults to ':summary', which provides the first paragraphs. To put the article in the labels and the title in the text, specify ':key-value' at the end (for a title/content key-value association)"
     },
+    {
+        "id": "COCO_Captions",
+        "display_name": "COCO_Captions",
+        "task": "coco_caption",
+        "tags": ["All", "Visual"],
+        "description": "COCO annotations derived from the 2015 COCO Caption Competition. Link to dataset: http://cocodataset.org/#download",
+    },
 ]
