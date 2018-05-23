@@ -448,7 +448,7 @@ class KvmemnnAgent(Agent):
         for i in range(1, k * 3):
             index =  random.randint(0, cache_sz)
             neg = self.ys_cache[index]
-            if not self.same(ys.squeeze(), neg.squeeze()):
+            if not self.same(ys.squeeze(0), neg.squeeze(0)):
                 negs.append(neg)
                 if len(negs) >= k:
                     break
@@ -506,8 +506,8 @@ class KvmemnnAgent(Agent):
                     pred = nn.CosineSimilarity().forward(xe,ye)
                 else:
                     pred = x
-                metrics = self.compute_metrics(loss.data[0],
-                pred.data.squeeze(), self.start2-self.start, rest)
+                metrics = self.compute_metrics(loss.item(),
+                pred.data.squeeze(0), self.start2-self.start, rest)
                 return [{'metrics':metrics}]
         else:
             fixed = False
