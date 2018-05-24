@@ -239,9 +239,18 @@ class LoaderProcess(Thread):
         except StopIteration:
             return None
 
+
 # Default collate function (for how to prepare a batch)
 def default_collate(batch):
-    return [(b[0], b[1][0]) for b in batch]
+    new_batch = []
+    for b in batch:
+        idx = b[0]
+        if type(b[1]) is list:
+            ep = b[1][0]
+        else:
+            ep = b[1]
+        new_batch.append((idx, ep))
+    return new_batch
 
 
 class StreamDataset(Dataset):
