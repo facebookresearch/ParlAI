@@ -46,6 +46,7 @@ class TestUtils(unittest.TestCase):
 
     def test_timer(self):
         t = Timer()
+        time.sleep(1e-6)
         elapsed = t.stop().time()
         assert elapsed > 0
 
@@ -53,14 +54,16 @@ class TestUtils(unittest.TestCase):
         assert elapsed == same
 
         t.resume()
-        time.sleep(0.1)
+        time.sleep(1e-6)
         more = t.time()
         assert more > elapsed
 
-        other = Timer()
-        less = other.reset().time()
-        assert less > 0
-        assert less < t.time()
+        rabbit = Timer()
+        time.sleep(1e-6)
+        turtle = Timer()
+        time.sleep(1e-6)
+        assert turtle.time() > 0
+        assert turtle.time() < rabbit.time()
 
 
 if __name__ == '__main__':

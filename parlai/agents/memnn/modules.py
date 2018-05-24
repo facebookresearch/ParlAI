@@ -93,7 +93,7 @@ class Embed(nn.Embedding):
     def forward(self, lengths, indices):
         lengths_mat = lengths.data
         if lengths.dim() == 1 or lengths.size(1) == 1:
-            lengths_mat = lengths_mat.squeeze().unsqueeze(0)
+            lengths_mat = lengths_mat.unsqueeze(0)
 
         if lengths_mat.dim() == 1:
             raise RuntimeError(lengths.shape)
