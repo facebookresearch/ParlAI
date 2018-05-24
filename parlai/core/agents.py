@@ -279,13 +279,15 @@ def load_agent_module(opt):
     optfile = model_file + '.opt'
     if os.path.isfile(optfile):
         with open(optfile, 'rb') as handle:
-           new_opt = pickle.load(handle)
+            new_opt = pickle.load(handle)
         # only override opts specified in 'override' dict
         if opt.get('override'):
             for k in opt['override']:
                 v = opt[k]
-                print("[ warning: overriding opt['" + str(k) + "'] to " + str(v) +
-                      " (previously:" + str(str(new_opt.get(k, None))) + ") ]")
+                if str(v) != str(str(new_opt.get(k, None))):
+                    print("[ warning: overriding opt['" + str(k) + "'] to " +
+                          str(v) + " (previously:" +
+                          str(str(new_opt.get(k, None))) + ") ]")
                 new_opt[k] = v
         for k, v in opt.items():
             if k not in new_opt:
