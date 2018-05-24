@@ -217,7 +217,7 @@ def maintain_dialog_history(history, observation, reply='',
     """Keeps track of dialog history, up to a truncation length.
     Either includes replies from the labels, model, or not all using param 'replies'."""
 
-    def parse(txt, splitSentences=False):
+    def parse(txt, splitSentences):
         if dict is not None:
             if splitSentences:
                 vec = [dict.txt2vec(t) for t in txt.split('\n')]
@@ -248,7 +248,7 @@ def maintain_dialog_history(history, observation, reply='',
         if useReplies == 'model' or (useReplies == 'label_else_model' and
                                      len(history['labels']) == 0):
             if reply != '':
-                history['dialog'].extend(parse(reply))
+                history['dialog'].extend(parse(reply, splitSentences))
         elif len(history['labels']) > 0:
             r = history['labels'][0]
             history['dialog'].extend(parse(r, splitSentences))

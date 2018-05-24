@@ -6,7 +6,6 @@
 
 import torch
 import torch.nn as nn
-from torch.autograd import Variable
 from torch.nn.functional import softmax
 
 from functools import lru_cache
@@ -72,7 +71,7 @@ class MemNN(nn.Module):
         in_memory_embeddings = self.in_memory_embedder(memory_lengths, memories)
         out_memory_embeddings = self.out_memory_embedder(memory_lengths, memories)
         query_embeddings = self.query_embedder(query_lengths, queries)
-        attention_mask = Variable(memory_lengths.data.ne(0), requires_grad=False)
+        attention_mask = memory_lengths.data.ne(0).detach()
 
         if self.opt['cuda']:
             in_memory_embeddings = in_memory_embeddings.cuda()
@@ -93,7 +92,6 @@ class Embed(nn.Embedding):
 
     def forward(self, lengths, indices):
         lengths_mat = lengths.data
-        indices = indices.data
         if lengths.dim() == 1 or lengths.size(1) == 1:
             lengths_mat = lengths_mat.squeeze().unsqueeze(0)
 
@@ -107,17 +105,18 @@ class Embed(nn.Embedding):
         offset = 0
         for i, row in enumerate(lengths_mat):
             for j, length in enumerate(row):
+                length = length.item()
                 if length > 0:
                     input[i, j, :length] = indices[offset:offset+length]
                 offset += length
-        input = Variable(input)
 
         for i, row in enumerate(lengths_mat):
             emb = super().forward(input[i, :, :])
             if self.position_encoding:
-                emb = emb * Variable(self.position_tensor(row, emb))
+                emb = emb * self.position_tensor(row, emb)
             emb = torch.sum(emb, dim=1).squeeze(1)
             for j, length in enumerate(row):
+                length = length.item()
                 if length > 0:
                     emb[j] /= length
             emb_list.append(emb)
@@ -159,7 +158,7 @@ class Hop(nn.Module):
         if attention_mask is not None:
             # exclude masked elements from the softmax
             attention = attention_mask.float() * attention + (1 - attention_mask.float()) * -1e20
-        probs = softmax(attention).unsqueeze(1)
+        probs = softmax(attention, dim=1).unsqueeze(1)
         memory_output = torch.bmm(probs, out_memory_embeddings).squeeze(1)
         query_embeddings = self.linear(query_embeddings)
         output = memory_output + query_embeddings

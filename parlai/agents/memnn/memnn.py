@@ -10,7 +10,6 @@ from parlai.core.utils import maintain_dialog_history
 
 import torch
 from torch import optim
-from torch.autograd import Variable
 from torch.nn import CrossEntropyLoss
 
 import os
@@ -156,15 +155,21 @@ class MemnnAgent(Agent):
         batch_idx = self.opt.get('batchindex', 0)
 
         obs['text'] = (maintain_dialog_history(
-        self.history, obs,
-        reply=self.answers[batch_idx] if self.answers[batch_idx] is not None else '',
-        historyLength=self.opt['mem_size'] + 1,
-        useReplies=self.opt['history_replies'],
-        dict=self.dict, useStartEndIndices=False, splitSentences=True))
+            self.history, obs,
+            reply=self.answers[batch_idx] if self.answers[batch_idx] is not None else '',
+            historyLength=self.opt['mem_size'] + 1,
+            useReplies=self.opt['history_replies'],
+            dict=self.dict, useStartEndIndices=False, splitSentences=True))
 
         self.observation = obs
         self.answers[batch_idx] = None
         return obs
+
+    def reset(self):
+        self.observation = None
+        self.history.clear()
+        for i in range(len(self.answers)):
+            self.answers[i] = None
 
     def predict(self, xs, cands, ys=None):
         is_training = ys is not None
@@ -178,17 +183,16 @@ class MemnnAgent(Agent):
 
         self.model.train(mode=is_training)
         # Organize inputs for network (see contents of xs and ys in batchify method)
-        inputs = [Variable(x) for x in xs]
-        output_embeddings = self.model(*inputs)
+        output_embeddings = self.model(*xs)
 
         if self.decoder is None:
             scores = self.score(cands, output_embeddings)
             if is_training:
                 label_inds = [cand_list.index(self.labels[i]) for i, cand_list in enumerate(cands)]
                 if self.opt['cuda']:
-                    label_inds = Variable(torch.cuda.LongTensor(label_inds))
+                    label_inds = torch.cuda.LongTensor(label_inds)
                 else:
-                    label_inds = Variable(torch.LongTensor(label_inds))
+                    label_inds = torch.LongTensor(label_inds)
                 loss = self.loss_fn(scores, label_inds)
             predictions = self.ranked_predictions(cands, scores)
         else:
@@ -208,11 +212,10 @@ class MemnnAgent(Agent):
     def score(self, cands, output_embeddings):
         last_cand = None
         max_len = max([len(c) for c in cands])
-        scores = Variable(output_embeddings.data.new(len(cands), max_len))
+        scores = output_embeddings.data.new(len(cands), max_len)
         for i, cand_list in enumerate(cands):
             if last_cand != cand_list:
                 candidate_lengths, candidate_indices = to_tensors(cand_list, self.dict)
-                candidate_lengths, candidate_indices = Variable(candidate_lengths), Variable(candidate_indices)
                 candidate_embeddings = self.model.answer_embedder(candidate_lengths, candidate_indices)
                 if self.opt['cuda']:
                     candidate_embeddings = candidate_embeddings.cuda()
@@ -222,14 +225,14 @@ class MemnnAgent(Agent):
 
     def ranked_predictions(self, cands, scores):
         # return [' '] * len(self.answers)
-        _, inds = scores.data.sort(descending=True, dim=1)
+        _, inds = scores.sort(descending=True, dim=1)
         return [[cands[i][j] for j in r if j < len(cands[i])]
                     for i, r in enumerate(inds)]
 
     def decode(self, output_embeddings, ys=None):
         batchsize = output_embeddings.size(0)
         hn = output_embeddings.unsqueeze(0).expand(self.opt['rnn_layers'], batchsize, output_embeddings.size(1))
-        x = self.model.answer_embedder(Variable(torch.LongTensor([1])), Variable(self.START_TENSOR))
+        x = self.model.answer_embedder(torch.LongTensor([1]), self.START_TENSOR)
         xes = x.unsqueeze(1).expand(x.size(0), batchsize, x.size(1))
 
         loss = 0
@@ -244,17 +247,17 @@ class MemnnAgent(Agent):
                 hn = hn.contiguous()
             preds, scores = self.decoder(xes, hn)
             if ys is not None:
-                y = Variable(ys[0][:, idx])
+                y = ys[0][:, idx]
                 temp_y = y.cuda() if self.opt['cuda'] else y
                 loss += self.loss_fn(scores, temp_y)
             else:
                 y = preds
             # use the true token as the next input for better training
-            xes = self.model.answer_embedder(Variable(torch.LongTensor(preds.numel()).fill_(1)), y).unsqueeze(0)
+            xes = self.model.answer_embedder(torch.LongTensor(preds.numel()).fill_(1), y).unsqueeze(0)
 
             for b in range(batchsize):
                 if not done[b]:
-                    token = self.dict.vec2txt(preds.data[b])
+                    token = self.dict.vec2txt(preds[b])
                     if token == self.END:
                         done[b] = True
                         total_done += 1
@@ -284,6 +287,7 @@ class MemnnAgent(Agent):
         memory = [torch.LongTensor(m) for m in memory]
         memory_lengths = torch.LongTensor([len(m) for m in memory])
         memory = torch.cat(memory)
+
         return (query, memory, query_length, memory_lengths)
 
     def batchify(self, obs):
