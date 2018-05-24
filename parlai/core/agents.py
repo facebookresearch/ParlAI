@@ -302,9 +302,6 @@ def get_agent_module(dir_name):
         sp = dir_name.split('/')
         module_name = "parlai.agents.%s.%s" % (sp[0], sp[1])
         class_name = name_to_agent_class(sp[1])
-    elif '.' in dir_name:
-        module_name = dir_name
-        class_name = name_to_agent_class(dir_name.split('.')[-1])
     else:
         module_name = "parlai.agents.%s.%s" % (dir_name, dir_name)
         class_name = name_to_agent_class(dir_name)
