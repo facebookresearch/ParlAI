@@ -404,6 +404,8 @@ class Seq2seqAgent(Agent):
         """Reset observation and episode_done."""
         self.observation = None
         self.history.clear()
+        for i in range(len(self.answers)):
+            self.answers[i] = None
         self.reset_metrics()
 
     def reset_metrics(self):

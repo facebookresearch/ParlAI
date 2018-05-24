@@ -165,6 +165,10 @@ class MemnnAgent(Agent):
         self.answers[batch_idx] = None
         return obs
 
+    def reset(self):
+        for i in range(len(self.answers)):
+            self.answers[i] = None
+
     def predict(self, xs, cands, ys=None):
         is_training = ys is not None
         if is_training:
@@ -281,7 +285,7 @@ class MemnnAgent(Agent):
         memory = [torch.LongTensor(m) for m in memory]
         memory_lengths = torch.LongTensor([len(m) for m in memory])
         memory = torch.cat(memory)
-        
+
         return (query, memory, query_length, memory_lengths)
 
     def batchify(self, obs):
