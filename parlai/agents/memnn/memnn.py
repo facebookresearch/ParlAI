@@ -166,6 +166,8 @@ class MemnnAgent(Agent):
         return obs
 
     def reset(self):
+        self.observation = None
+        self.history.clear()
         for i in range(len(self.answers)):
             self.answers[i] = None
 
