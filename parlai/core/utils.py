@@ -211,18 +211,18 @@ def make_batches(data, bsz):
 
 
 def maintain_dialog_history(history, observation, reply='',
-                            historyLength=1, useReplies="labels",
+                            historyLength=1, useReplies='label_else_model',
                             dict=None, useStartEndIndices=True,
                             splitSentences=False):
     """Keeps track of dialog history, up to a truncation length.
     Either includes replies from the labels, model, or not all using param 'replies'."""
 
-    def parse(txt, splitSentences=False):
+    def parse(txt, splitSentences):
         if dict is not None:
             if splitSentences:
                 vec = [dict.txt2vec(t) for t in txt.split('\n')]
             else:
-                vec =  dict.txt2vec(txt)
+                vec = dict.txt2vec(txt)
             if useStartEndIndices:
                 parsed_x = deque([dict[dict.start_token]])
                 parsed_x.extend(vec)
@@ -245,9 +245,10 @@ def maintain_dialog_history(history, observation, reply='',
         history['episode_done'] = False
 
     if useReplies != 'none':
-        if useReplies == 'model':
+        if useReplies == 'model' or (useReplies == 'label_else_model' and
+                                     len(history['labels']) == 0):
             if reply != '':
-                history['dialog'].extend(parse(reply))
+                history['dialog'].extend(parse(reply, splitSentences))
         elif len(history['labels']) > 0:
             r = history['labels'][0]
             history['dialog'].extend(parse(r, splitSentences))
@@ -551,3 +552,103 @@ class OffensiveLanguageDetector(object):
                 return res
 
         return None
+
+
+def display_messages(msgs, prettify=False):
+    """Returns a string describing the set of messages provided"""
+    lines = []
+    episode_done = False
+    for index, msg in enumerate(msgs):
+        if msg is None:
+            continue
+        if msg.get('episode_done'):
+            episode_done = True
+        # Possibly indent the text (for the second speaker, if two).
+        space = ''
+        if len(msgs) == 2 and index == 1:
+            space = '   '
+        # Only display rewards !=0 as they are confusing in non-RL tasks.
+        if msg.get('reward', 0) != 0:
+            lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
+        if type(msg.get('image')) == str:
+            lines.append(msg['image'])
+        if msg.get('text', ''):
+            text = msg['text']
+            if len(text) > 1000:
+                text = text[:1000] + '...'
+            ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
+            lines.append(space + ID + text)
+        if msg.get('labels'):
+            lines.append(space + ('[labels: {}]'.format(
+                        '|'.join(msg['labels']))))
+        if msg.get('eval_labels'):
+            lines.append(space + ('[eval_labels: {}]'.format(
+                        '|'.join(msg['eval_labels']))))
+        if msg.get('label_candidates'):
+            cand_len = len(msg['label_candidates'])
+            if cand_len <= 10:
+                lines.append(space + ('[cands: {}]'.format(
+                        '|'.join(msg['label_candidates']))))
+            else:
+                # select five label_candidates from the candidate set,
+                # can't slice in because it's a set
+                cand_iter = iter(msg['label_candidates'])
+                display_cands = (next(cand_iter) for _ in range(5))
+                # print those cands plus how many cands remain
+                lines.append(space + ('[cands: {}{}]'.format(
+                        '|'.join(display_cands),
+                        '| ...and {} more'.format(cand_len - 5)
+                        )))
+        if msg.get('text_candidates'):
+            if prettify:
+                cand_len = len(msg['text_candidates'])
+                cands = [c for c in msg['text_candidates'] if c is not None]
+                try:
+                    import prettytable
+                except ModuleNotFoundError:
+                    raise ModuleNotFoundError('Please install prettytable to \
+                    display text candidates: `pip install prettytable`')
+                scores = None
+                if msg.get('candidate_scores') is not None:
+                    table = prettytable.PrettyTable(['Score', 'Text'])
+                    scores = msg.get('candidate_scores')
+                else:
+                    table = prettytable.PrettyTable(['Text'])
+                table.align = 'l'
+                table.hrules = 1
+                display_cands = []
+                num_cands = 0
+                for cand in cands:
+                    cand_max_length = 250 if scores is None else 100
+                    if len(cand) > cand_max_length:
+                        # Show beginning and end
+                        split = [cand[:cand_max_length], cand[cand_max_length:]]
+                        cand = split[0] + '\n\n. . .\n\n' + split[1][-(min(50, len(split[1]))):]
+                    if scores is not None:
+                        table.add_row([scores[num_cands], cand])
+                    else:
+                        table.add_row([cand])
+                    num_cands += 1
+                    if num_cands > 5:
+                        break
+
+                lines.append(space + table.get_string())
+            else:
+                cand_len = len(msg['text_candidates'])
+                if cand_len <= 10:
+                    lines.append(space + ('[cands: {}]'.format(
+                            '|'.join(msg['text_candidates']))))
+                else:
+                    # select five label_candidates from the candidate set,
+                    # can't slice in because it's a set
+                    cand_iter = iter(msg['text_candidates'])
+                    display_cands = (next(cand_iter) for _ in range(5))
+                    # print those cands plus how many cands remain
+                    lines.append(space + ('[text cands: {}{}]'.format(
+                            '|'.join(display_cands),
+                            '| ...and {} more'.format(cand_len - 5)
+                            )))
+
+    if episode_done:
+        lines.append('- - - - - - - - - - - - - - - - - - - - -')
+    return '\n'.join(lines)

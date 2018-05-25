@@ -73,7 +73,7 @@ def create_fb_format(inpath, outpath):
 
 def build(datapath):
     dpath = os.path.join(datapath, 'OpenSubtitles')
-    version = '1'
+    version = '2'
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')

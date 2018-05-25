@@ -7,11 +7,13 @@ import parlai.core.build_data as build_data
 
 import os
 from PIL import Image
+from zipfile import ZipFile
 from functools import wraps
 from threading import Lock, Condition
 
 _greyscale = '  .,:;crsA23hHG#98&@'
 _cache_size = 84000
+
 
 def first_n_cache(function):
     cache = {}
@@ -80,12 +82,6 @@ class ImageLoader():
         import torchvision.transforms as transforms
         import torch.nn as nn
 
-        try:
-            import h5py
-            self.h5py = h5py
-        except ModuleNotFoundError:
-            raise ModuleNotFoundError('Need to install h5py')
-
         if 'image_mode' not in opt or 'image_size' not in opt:
             raise RuntimeError(
                 'Need to add image arguments to opt. See '
@@ -115,22 +111,9 @@ class ImageLoader():
             transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
         ])
-
-        # container for single image
-        self.xs = torch.zeros(1, 3, self.crop_size, self.crop_size)
-
         if self.use_cuda:
             self.netCNN.cuda()
-            self.xs = self.xs.cuda()
 
-        # make self.xs variable.
-        self.xs = Variable(self.xs)
-
-    def save(self, feature, path):
-        with open(path, 'w'):
-            hdf5_file = self.h5py.File(path, 'w')
-            hdf5_file.create_dataset('feature', data=feature)
-            hdf5_file.close()
 
     def image_mode_switcher(self):
         switcher = {
@@ -156,13 +139,13 @@ class ImageLoader():
         # check whether initialize CNN network.
         if not self.netCNN:
             self.init_cnn(self.opt)
-
-        self.xs.data.copy_(self.transform(image))
         # extract the image feature
-        feature = self.netCNN(self.xs)
-        save_feature = feature.cpu().data.numpy()
+        transform = self.transform(image).unsqueeze(0)
+        if self.use_cuda:
+            transform = transform.cuda()
+        feature = self.netCNN(transform)
         # save the feature
-        self.save(save_feature, path)
+        self.torch.save(feature.cpu(), path)
         return feature
 
     def img_to_ascii(self, path):
@@ -181,10 +164,20 @@ class ImageLoader():
     def load(self, path):
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
+        is_zip = False
         if mode is None or mode == 'none':
             # don't need to load images
             return None
-        elif mode == 'raw':
+        elif '.zip' in path:
+            # assume format path/to/file.zip/image_name.jpg
+            is_zip = True
+            sep = path.index('.zip')+4
+            zipname = path[:sep]
+            file_name = path[sep+1:]
+            path = ZipFile(zipname, 'r').open(file_name)
+            prepath = os.path.join(opt['datapath'], opt['task'])
+            imagefn = ''.join(zipname.strip('.zip').split('/')[-2:]) + path.name
+        if mode == 'raw':
             # raw just returns RGB values
             return Image.open(path).convert('RGB')
         elif mode == 'ascii':
@@ -192,22 +185,14 @@ class ImageLoader():
             return self.img_to_ascii(path)
         else:
             # otherwise, looks for preprocessed version under 'mode' directory
-            prepath, imagefn = os.path.split(path)
-
+            if not is_zip:
+                prepath, imagefn = os.path.split(path)
             dpath = os.path.join(prepath, mode)
-
             if not os.path.exists(dpath):
                 build_data.make_dir(dpath)
-
             imagefn = imagefn.split('.')[0]
-            imagefn = imagefn + '.hdf5'
             new_path = os.path.join(prepath, mode, imagefn)
-
             if not os.path.isfile(new_path):
                 return self.extract(Image.open(path).convert('RGB'), new_path)
             else:
-                with open(new_path):
-                    hdf5_file = self.h5py.File(new_path, 'r')
-                    feature = hdf5_file['feature'].value
-                feature = self.torch.from_numpy(feature)
-                return feature
+                return self.torch.load(new_path)

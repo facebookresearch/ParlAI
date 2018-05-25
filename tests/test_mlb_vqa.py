@@ -35,7 +35,7 @@ class TestTrainModel(unittest.TestCase):
                 batchsize=1,
                 num_epochs=1,
                 no_cuda=True,
-                no_hdf5=True,
+                use_hdf5=False,
                 pytorch_preprocess=False,
                 batch_sort_cache='none',
                 numworkers=1,

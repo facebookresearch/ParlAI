@@ -17,20 +17,20 @@ if __name__ == '__main__':
     parser = ParlaiParser(add_model_args=True)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     LanguageModelAgent.add_cmdline_args(parser)
-    parser.set_defaults(
-        dict_file='models:personachat/language_model/opensubtitles2018.dict',
+    parser.set_params(
+        dict_file='models:personachat/language_model/languagemodel_esz512_hid1024_nl2.pt.dict',
         sampling_mode=True,
         task='parlai.agents.local_human.local_human:LocalHumanAgent',
         model='language_model',
         model_file='models:personachat/language_model/languagemodel_esz512_hid1024_nl2.pt'
     )
 
-
     opt = parser.parse_args()
     opt['model_type'] = 'language_model' # for builder
     # build all profile memory models
     fnames = ['languagemodel_esz512_hid1024_nl2.pt',
-              'opensubtitles2018.dict']
-    download_models(opt, fnames, 'personachat')
+              'languagemodel_esz512_hid1024_nl2.pt.opt',
+              'languagemodel_esz512_hid1024_nl2.pt.dict']
+    download_models(opt, fnames, 'personachat', version='v3.0')
 
     interactive(opt)

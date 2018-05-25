@@ -19,7 +19,7 @@ from collections import deque
 
 import os
 import math
-
+import pickle
 
 class Seq2seqAgent(Agent):
     """Agent which takes an input sequence and produces an output sequence.
@@ -30,8 +30,13 @@ class Seq2seqAgent(Agent):
     output tokens. This model currently uses greedy decoding, selecting the
     highest probability token at each time step.
 
-    For more information, see Sequence to Sequence Learning with Neural
-    Networks `(Sutskever et al. 2014) <https://arxiv.org/abs/1409.3215>`_.
+    For more information, see the following papers:
+    - Neural Machine Translation by Jointly Learning to Align and Translate
+      `(Bahdanau et al. 2014) <arxiv.org/abs/1409.0473>`_
+    - Sequence to Sequence Learning with Neural Networks
+      `(Sutskever et al. 2014) <arxiv.org/abs/1409.3215>`_
+    - Effective Approaches to Attention-based Neural Machine Translation
+      `(Luong et al. 2015) <arxiv.org/abs/1508.04025>`_
     """
 
     OPTIM_OPTS = {
@@ -76,8 +81,7 @@ class Seq2seqAgent(Agent):
                            choices=['none', 'concat', 'general', 'dot', 'local'],
                            help='Choices: none, concat, general, local. '
                                 'If set local, also set attention-length. '
-                                'For more details see: '
-                                'https://arxiv.org/abs/1508.04025')
+                                '(see arxiv.org/abs/1508.04025)')
         agent.add_argument('-attl', '--attention-length', default=48, type=int,
                            help='Length of local attention.')
         agent.add_argument('--attention-time', default='post',
@@ -137,8 +141,16 @@ class Seq2seqAgent(Agent):
                                 'Fasttext.'
                                 'Preinitialized embeddings can also be fixed '
                                 'so they are not updated during training.')
+        agent.add_argument('-soft', '--numsoftmax', default=1, type=int,
+                           help='default 1, if greater then uses mixture of '
+                                'softmax (see arxiv.org/abs/1711.03953).')
         agent.add_argument('-rf', '--report-freq', type=float, default=0.001,
                            help='Report frequency of prediction during eval.')
+        agent.add_argument('-histr', '--history-replies',
+                           default='label_else_model', type=str,
+                           choices=['none', 'model', 'label',
+                                    'label_else_model'],
+                           help='Keep replies in the history, or not.')
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
@@ -184,31 +196,22 @@ class Seq2seqAgent(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
+            init_model = None
             # check first for 'init_model' for loading model from file
             if opt.get('init_model') and os.path.isfile(opt['init_model']):
                 init_model = opt['init_model']
-            # next check for 'model_file'
-            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
+            # next check for 'model_file', this would override init_model
+            if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 init_model = opt['model_file']
-            else:
-                init_model = None
 
             if init_model is not None:
                 # load model parameters if available
                 print('[ Loading existing model params from {} ]'.format(init_model))
-                new_opt, states = self.load(init_model)
-                # override model-specific options with stored ones
-                opt = self.override_opt(new_opt)
-                self.opt = opt
+                states = self.load(opt['model_file'])
 
-            if opt['dict_file'] is None:
-                if init_model is not None and os.path.isfile(init_model + '.dict'):
-                    # check first to see if a dictionary exists
-                    opt['dict_file'] = init_model + '.dict'
-                elif opt.get('model_file'):
-                    # otherwise, set default dict-file if it is not set
-                    opt['dict_file'] = opt['model_file'] + '.dict'
-
+            if ((init_model is not None and os.path.isfile(init_model + '.dict'))
+                or opt['dict_file'] is None):
+                opt['dict_file'] = init_model + '.dict'
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
             self.id = 'Seq2Seq'
@@ -236,12 +239,27 @@ class Seq2seqAgent(Agent):
                     raise ex
                 if opt['embedding_type'].startswith('glove'):
                     init = 'glove'
-                    embs = vocab.GloVe(name='840B', dim=300,
-                        cache=os.path.join(opt['parlai_home'], '.vector_cache'))
+                    embs = vocab.GloVe(
+                        name='840B',
+                        dim=300,
+                        cache=os.path.join(
+                            opt['parlai_home'],
+                            'data',
+                            'models',
+                            'glove_vectors'
+                        )
+                    )
                 elif opt['embedding_type'].startswith('fasttext'):
                     init = 'fasttext'
-                    embs = vocab.FastText(language='en',
-                        cache=os.path.join(opt['parlai_home'], '.vector_cache'))
+                    embs = vocab.FastText(
+                        language='en',
+                        cache=os.path.join(
+                            opt['parlai_home'],
+                            'data',
+                            'models',
+                            'fasttext_vectors'
+                        )
+                    )
                 else:
                     raise RuntimeError('embedding type not implemented')
 
@@ -281,8 +299,12 @@ class Seq2seqAgent(Agent):
                 self.cands = torch.LongTensor(1, 1, 1)
 
             # set up criteria
-            self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX,
-                                                 size_average=False)
+            if opt.get('numsoftmax', 1) > 1:
+                self.criterion = nn.NLLLoss(
+                    ignore_index=self.NULL_IDX, size_average=False)
+            else:
+                self.criterion = nn.CrossEntropyLoss(
+                    ignore_index=self.NULL_IDX, size_average=False)
 
             if self.use_cuda:
                 # push to cuda
@@ -300,6 +322,9 @@ class Seq2seqAgent(Agent):
                 kwargs['momentum'] = opt['momentum']
                 if opt['optimizer'] == 'sgd':
                     kwargs['nesterov'] = True
+            if opt['optimizer'] == 'adam':
+                # https://openreview.net/forum?id=ryQu7f-RZ
+                kwargs['amsgrad'] = True
 
             if opt['embedding_type'].endswith('fixed'):
                 print('Seq2seq: fixing embedding weights.')
@@ -372,13 +397,15 @@ class Seq2seqAgent(Agent):
     def update_params(self):
         """Do one optimization step."""
         if self.clip > 0:
-            torch.nn.utils.clip_grad_norm(self.model.parameters(), self.clip)
+            torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
         self.optimizer.step()
 
     def reset(self):
         """Reset observation and episode_done."""
         self.observation = None
         self.history.clear()
+        for i in range(len(self.answers)):
+            self.answers[i] = None
         self.reset_metrics()
 
     def reset_metrics(self):
@@ -395,7 +422,10 @@ class Seq2seqAgent(Agent):
         m = {}
         if self.metrics['num_tokens'] > 0:
             m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
-            m['ppl'] = math.exp(m['loss'])
+            try:
+                m['ppl'] = math.exp(m['loss'])
+            except OverflowError:
+                m['ppl'] = float('inf')
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)
@@ -416,12 +446,12 @@ class Seq2seqAgent(Agent):
                 # move metrics and model to shared memory
                 self.metrics = SharedTable(self.metrics)
                 self.model.share_memory()
-            shared['metrics'] = self.metrics
-            shared['model'] = self.model
-            shared['states'] = {  # only need to pass optimizer states
-                'optimizer': self.optimizer.state_dict(),
-                'optimizer_type': self.opt['optimizer'],
-            }
+        shared['metrics'] = self.metrics
+        shared['model'] = self.model
+        shared['states'] = {  # only need to pass optimizer states
+            'optimizer': self.optimizer.state_dict(),
+            'optimizer_type': self.opt['optimizer'],
+        }
         return shared
 
     def observe(self, observation):
@@ -436,7 +466,7 @@ class Seq2seqAgent(Agent):
                 self.history, obs,
                 reply=self.answers[batch_idx],
                 historyLength=self.truncate,
-                useReplies=self.opt['include_labels'],
+                useReplies=self.opt.get('history_replies'),
                 dict=self.dict,
                 useStartEndIndices=False)
         else:
@@ -460,8 +490,8 @@ class Seq2seqAgent(Agent):
             score_view = scores.view(-1, scores.size(-1))
             loss = self.criterion(score_view, ys.view(-1))
             # save loss to metrics
-            target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
-            self.metrics['loss'] += loss.double().data[0]
+            target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
+            self.metrics['loss'] += loss.item()
             self.metrics['num_tokens'] += target_tokens
             loss /= target_tokens  # average loss per token
             # loss /= xs.size(0)  # average loss per sentence
@@ -478,8 +508,8 @@ class Seq2seqAgent(Agent):
                 scores = out[1]
                 score_view = scores.view(-1, scores.size(-1))
                 loss = self.criterion(score_view, ys.view(-1))
-                target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
-                self.metrics['loss'] += loss.double().data[0]
+                target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
+                self.metrics['loss'] += loss.item()
                 self.metrics['num_tokens'] += target_tokens
 
         return predictions, text_cand_inds
@@ -605,6 +635,10 @@ class Seq2seqAgent(Agent):
             with open(path, 'wb') as write:
                 torch.save(model, write)
 
+            # save opt file
+            with open(path + ".opt", 'wb') as handle:
+                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
     def shutdown(self):
         """Save the state of the model when shutdown."""
         path = self.opt.get('model_file', None)
@@ -615,7 +649,13 @@ class Seq2seqAgent(Agent):
     def load(self, path):
         """Return opt and model states."""
         states = torch.load(path, map_location=lambda cpu, _: cpu)
-        return states['opt'], states
+        if not os.path.isfile(path + '.opt'):
+            # backwards compatible to old models
+            self.opt = self.override_opt(states['opt'])
+            # save .opt file to make compatible
+            with open(path + ".opt", 'wb') as handle:
+                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        return states
 
     def receive_metrics(self, metrics_dict):
         """Use the metrics to decide when to adjust LR schedule."""

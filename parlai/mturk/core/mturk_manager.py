@@ -1006,8 +1006,8 @@ class MTurkManager():
         within the expected window.
         """
         # Expire the hit for the disconnected user
-        text = ('You haven\'t entered a message in too long, leaving the other'
-                ' participant unable to complete the HIT. Thus this hit has '
+        text = ('You haven\'t entered a message in too long. As these HITs '
+                ' often require real-time interaction, this hit has '
                 'been expired and you have been considered disconnected. '
                 'Disconnect too frequently and you will be blocked from '
                 'working on these HITs in the future.')
@@ -1310,8 +1310,14 @@ class MTurkManager():
         """Soft block a worker by giving the worker the block qualification"""
         qual_name = self.opt['block_qualification']
         assert qual_name != '', ('No block qualification has been specified')
-        self.give_worker_qualification(worker_id, qual_name,
-                                       is_sandbox=self.is_sandbox)
+        self.give_worker_qualification(worker_id, qual_name)
+
+    def un_soft_block_worker(self, worker_id):
+        """Remove a soft block from a worker by removing a block qualification
+            from the worker"""
+        qual_name = self.opt['block_qualification']
+        assert qual_name != '', ('No block qualification has been specified')
+        self.remove_worker_qualification(worker_id, qual_name)
 
     def give_worker_qualification(self, worker_id, qual_name, qual_value=None):
         """Give a worker a particular qualification"""
@@ -1330,6 +1336,26 @@ class MTurkManager():
         shared_utils.print_and_log(
             logging.INFO,
             'gave {} qualification {}'.format(worker_id, qual_name),
+            should_print=True
+        )
+
+    def remove_worker_qualification(self, worker_id, qual_name, reason=''):
+        """Remove a qualification from a worker"""
+        qual_id = mturk_utils.find_qualification(qual_name, self.is_sandbox)
+        if qual_id is False or qual_id is None:
+            shared_utils.print_and_log(
+                logging.WARN,
+                'Could not remove from worker {} qualification {}, as the '
+                'qualification could not be found to exist.'
+                ''.format(worker_id, qual_name),
+                should_print=True
+            )
+            return
+        mturk_utils.remove_worker_qualification(worker_id, qual_id,
+                                                self.is_sandbox, reason)
+        shared_utils.print_and_log(
+            logging.INFO,
+            'removed from {} qualification {}'.format(worker_id, qual_name),
             should_print=True
         )
 

@@ -166,6 +166,8 @@ class KvmemnnAgent(Agent):
                            help='learning rate')
         agent.add_argument('-margin', '--margin', type=float, default=0.3,
                            help='margin')
+        agent.add_argument('-loss', '--loss', default='cosine',
+                           choices={'cosine', 'nll'})
         agent.add_argument('-opt', '--optimizer', default='sgd',
                            choices=KvmemnnAgent.OPTIM_OPTS.keys(),
                            help='Choose between pytorch optimizers. '
@@ -241,6 +243,8 @@ class KvmemnnAgent(Agent):
                 opt['dict_file'] = opt['model_file'] + '.dict'
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
+            if 'loss' not in opt:
+                opt['loss'] = 'cosine'
             self.model = Kvmemnn(opt, len(self.dict), self.dict)
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 self.load(opt['model_file'])
@@ -269,9 +273,12 @@ class KvmemnnAgent(Agent):
                 self.fixedX = ye
             print("=init done=")
 
-        self.criterion = torch.nn.CosineEmbeddingLoss(margin=opt['margin'], size_average=False)
-        # other options:
-        # self.criterion = nn.CrossEntropyLoss(ignore_index=-100)
+        if self.opt['loss'] == 'cosine':
+            self.criterion = torch.nn.CosineEmbeddingLoss(margin=opt['margin'], size_average=False)
+        elif self.opt['loss'] == 'nll':
+            self.criterion = nn.CrossEntropyLoss(ignore_index=-100)
+        else:
+            raise RuntimeError('unspecified loss')
         # self.criterion = torch.nn.MultiMarginLoss(p=1, margin=0.1)
         self.reset()
         # can be used to look at embeddings:
@@ -323,6 +330,8 @@ class KvmemnnAgent(Agent):
             vec = vec.data
         if type(vec) == torch.LongTensor and vec.dim() == 2:
             vec = vec.squeeze(0)
+        if type(vec) == torch.Tensor and vec.dim() == 2:
+            vec = vec.squeeze(0)
         new_vec = []
         for i in vec:
             new_vec.append(i)
@@ -340,12 +349,13 @@ class KvmemnnAgent(Agent):
         """Reset observation and episode_done."""
         self.observation = None
         self.episode_done = True
+        self.cands_done = []
+        self.history = {}
         # set up optimizer
         lr = self.opt['learningrate']
         optim_class = KvmemnnAgent.OPTIM_OPTS[self.opt['optimizer']]
         kwargs = {'lr': lr}
         self.optimizer = optim_class(self.model.parameters(), **kwargs)
-
 
     def share(self):
         """Share internal states between parent and child instances."""
@@ -438,7 +448,7 @@ class KvmemnnAgent(Agent):
         for i in range(1, k * 3):
             index =  random.randint(0, cache_sz)
             neg = self.ys_cache[index]
-            if not self.same(ys.squeeze(), neg.squeeze()):
+            if not self.same(ys.squeeze(0), neg.squeeze(0)):
                 negs.append(neg)
                 if len(negs) >= k:
                     break
@@ -468,6 +478,8 @@ class KvmemnnAgent(Agent):
         candidates as well if they are available and param is set.
         """
         self.start = time.time()
+        if xs is None:
+            return [{}]
         is_training = ys is not None
         if is_training: #
             text_cand_inds, loss_dict = None, None
@@ -475,19 +487,27 @@ class KvmemnnAgent(Agent):
             if len(negs) > 0:
                 self.model.train()
                 self.zero_grad()
-                xe, ye = self.model(xs, obs[0]['mem'], ys, negs)
-                y = Variable(-torch.ones(xe.size(0)))
-                y[0]= 1
-                loss = self.criterion(xe, ye, y)
+                if self.opt['loss'] == 'cosine':
+                    xe, ye = self.model(xs, obs[0]['mem'], ys, negs)
+                    y = Variable(-torch.ones(xe.size(0)))
+                    y[0]= 1
+                    loss = self.criterion(xe, ye, y)
+                else:
+                    x = self.model(xs, obs[0]['mem'], ys, negs)
+                    y = Variable(torch.LongTensor([0]))
+                    loss = self.criterion(x.unsqueeze(0), y)
                 loss.backward()
                 self.update_params()
                 rest = 0
                 if self.start2 != 99:
                     rest = self.start-self.start2
                 self.start2 = time.time()
-                pred = nn.CosineSimilarity().forward(xe,ye)
-                metrics = self.compute_metrics(loss.data[0],
-                    pred.data.squeeze(), self.start2-self.start, rest)
+                if self.opt['loss'] == 'cosine':
+                    pred = nn.CosineSimilarity().forward(xe,ye)
+                else:
+                    pred = x
+                metrics = self.compute_metrics(loss.item(),
+                pred.data.squeeze(0), self.start2-self.start, rest)
                 return [{'metrics':metrics}]
         else:
             fixed = False
@@ -617,8 +637,12 @@ class KvmemnnAgent(Agent):
                     for i in range(len(ind)):
                         tc.append(cands_txt[0][ind.data[i]])
             else:
-                xe, ye = self.model(xs, obs[0]['mem'], ys, cands[0])
-                pred = nn.CosineSimilarity().forward(xe,ye)
+                if self.opt['loss'] == 'cosine':
+                    xe, ye = self.model(xs, obs[0]['mem'], ys, cands[0])
+                    pred = nn.CosineSimilarity().forward(xe,ye)
+                else:
+                    x = self.model(xs, obs[0]['mem'], ys, cands[0])
+                    pred = x #.squeeze()
                 val,ind=pred.sort(descending=True)
                 ypred = cands_txt[0][ind.data[0]] # match
                 tc = []
@@ -675,8 +699,11 @@ class KvmemnnAgent(Agent):
             max_y_len = max(len(y) for y in parsed_y)
             for y in parsed_y:
                 y += [self.NULL_IDX] * (max_y_len - len(y))
-            ys = torch.LongTensor(parsed_y)
-            ys = Variable(ys)
+            if len(parsed_y[0]) == 0:
+                return None, None, None, None
+            else:
+                ys = torch.LongTensor(parsed_y)
+                ys = Variable(ys)
 
         cands = []
         cands_txt = []

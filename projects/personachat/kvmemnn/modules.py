@@ -38,7 +38,10 @@ class Kvmemnn(nn.Module):
             self.hops = opt['hops']
         if 'lins' in opt:
             self.lins = opt['lins']
-
+        self.cosineEmbedding = True
+        if opt['loss'] == 'nll':
+            self.cosineEmbedding = False
+            
     def forward(self, xs, mems, ys=None, cands=None):
         scores = None
 
@@ -51,8 +54,11 @@ class Kvmemnn(nn.Module):
                 mem_enc.append(self.encoder(m))
             mem_enc.append(xs_emb)
             mems_enc = torch.cat(mem_enc)
+            self.layer_mems = mems
             layer2 = self.cosine(xs_emb, mems_enc).unsqueeze(0)
+            self.layer2 = layer2
             layer3 = self.softmax(layer2)
+            self.layer3 = layer3
             lhs_emb = torch.mm(layer3, mems_enc)
 
             if self.lins > 0:
@@ -60,6 +66,7 @@ class Kvmemnn(nn.Module):
             if self.hops > 1:
                 layer4 = self.cosine(lhs_emb, mems_enc).unsqueeze(0)
                 layer5 = self.softmax(layer4)
+                self.layer5 = layer5
                 lhs_emb = torch.mm(layer5, mems_enc)
                 if self.lins > 1:
                     lhs_emb = self.lin2(lhs_emb)
@@ -70,23 +77,38 @@ class Kvmemnn(nn.Module):
                 lhs_emb = xs_emb
         if ys is not None:
             # training
-            ys_enc = []
-            xs_enc.append(lhs_emb)
-            ys_enc.append(self.encoder2(ys))
-            for c in cands:
+            if self.cosineEmbedding:
+                ys_enc = []
                 xs_enc.append(lhs_emb)
-                c_emb = self.encoder2(c)
-                ys_enc.append(c_emb)
+                ys_enc.append(self.encoder2(ys))
+                for c in cands:
+                    xs_enc.append(lhs_emb)
+                    c_emb = self.encoder2(c)
+                    ys_enc.append(c_emb)
+            else:
+                xs_enc.append(lhs_emb.dot(self.encoder2(ys)))
+                for c in cands:
+                    c_emb = self.encoder2(c)
+                    xs_enc.append(lhs_emb.dot(c_emb))
         else:
             # test
-            ys_enc = []
-            c_scores = []
-            for c in cands:
-                xs_enc.append(lhs_emb)
-                c_emb = self.encoder2(c)
-                ys_enc.append(c_emb)
-        return torch.cat(xs_enc), torch.cat(ys_enc)
+            if self.cosineEmbedding:
+                ys_enc = []
+                c_scores = []
+                for c in cands:
+                    xs_enc.append(lhs_emb)
+                    c_emb = self.encoder2(c)
+                    ys_enc.append(c_emb)
+            else:
+                for c in cands:
+                    c_emb = self.encoder2(c)
+                    xs_enc.append(lhs_emb.dot(c_emb))
+        if self.cosineEmbedding:
+            return torch.cat(xs_enc), torch.cat(ys_enc)
+        else:
+            return torch.cat(xs_enc)
 
+        
 class Encoder(nn.Module):
     def __init__(self, shared_lt, dict):
         super().__init__()

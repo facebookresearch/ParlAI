@@ -276,16 +276,21 @@ def name_to_agent_class(name):
 
 def load_agent_module(opt):
     model_file = opt['model_file']
-    optfile =  model_file + '.opt'
+    optfile = model_file + '.opt'
     if os.path.isfile(optfile):
         with open(optfile, 'rb') as handle:
-           new_opt = pickle.load(handle)
+            new_opt = pickle.load(handle)
         # only override opts specified in 'override' dict
         if opt.get('override'):
             for k in opt['override']:
                 v = opt[k]
-                print("[ warning: overriding opt['" + str(k) + "'] to " + str(v) +
-                      " (previously:" + str(str(new_opt.get(k, None))) + ") ]")
+                if str(v) != str(str(new_opt.get(k, None))):
+                    print("[ warning: overriding opt['" + str(k) + "'] to " +
+                          str(v) + " (previously:" +
+                          str(str(new_opt.get(k, None))) + ") ]")
+                new_opt[k] = v
+        for k, v in opt.items():
+            if k not in new_opt:
                 new_opt[k] = v
         new_opt['model_file'] = model_file
         model_class = get_agent_module(new_opt['model'])
@@ -337,7 +342,7 @@ def create_agent(opt, requireModelExists=False):
     if opt.get('model'):
         model_class = get_agent_module(opt['model'])
         model = model_class(opt)
-        if requireModelExists and hasattr(model, 'load'):
+        if requireModelExists and hasattr(model, 'load') and not opt.get('model_file'):
             # double check that we didn't forget to set model_file on loadable model
             print('WARNING: model_file unset but model has a `load` function.')
         return model

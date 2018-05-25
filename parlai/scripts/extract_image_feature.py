@@ -28,9 +28,15 @@ def setup_args(parser=None):
         parser = ParlaiParser(True, False)
     arg_group = parser.add_argument_group('Image Extraction')
     arg_group.add_argument('--dataset', type=str, default=None,
-                           help='Pytorch Dataset')
+                           help='Pytorch Dataset; if specified, will save \
+                           the images in one hdf5 file according to how \
+                           they are returned by the specified dataset')
     arg_group.add_argument('-at', '--attention', action='store_true',
-                           help='Whether to extract image features with attention')
+                           help='Whether to extract image features with attention \
+                           (Note - this is specifically for the mlb_vqa model)')
+    arg_group.add_argument('--use-hdf5-extraction', type='bool', default=False,
+                           help='Whether to extract images into an hdf5 dataset')
+
     return parser
 
 
@@ -66,7 +72,8 @@ def extract_feats(opt):
     opt['no_cuda'] = False
     opt['gpu'] = 0
     opt['num_epochs'] = 1
-    opt['no_hdf5'] = True
+    opt['use_hdf5'] = False
+    opt['num_load_threads'] = 20
     logger = ProgressLogger(should_humanize=False, throttle=0.1)
     print("[ Loading Images ]")
     # create repeat label agent and assign it to the specified task
@@ -80,7 +87,7 @@ def extract_feats(opt):
             world.parley()
             exs_seen += bsz
             logger.log(exs_seen, total_exs)
-    else:
+    elif opt.get('use_hdf5_extraction', False):
         '''One can specify a Pytorch Dataset for custom image loading'''
         nw = opt.get('numworkers', 1)
         im = opt.get('image_mode', 'raw')

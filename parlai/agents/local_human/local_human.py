@@ -8,7 +8,7 @@
 """
 
 from parlai.core.agents import Agent
-from parlai.core.worlds import display_messages
+from parlai.core.utils import display_messages
 
 class LocalHumanAgent(Agent):
 
@@ -18,7 +18,7 @@ class LocalHumanAgent(Agent):
         self.episodeDone = False
 
     def observe(self, msg):
-        print(display_messages([msg]))
+        print(display_messages([msg], prettify=self.opt.get('display_prettify', False)))
 
     def act(self):
         obs = self.observation

@@ -53,7 +53,7 @@ except ImportError:
     from multiprocessing import Process, Value, Condition, Semaphore
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
 from parlai.core.metrics import aggregate_metrics, compute_time_metrics
-from parlai.core.utils import Timer
+from parlai.core.utils import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
 
 
@@ -63,53 +63,6 @@ def validate(observation):
         return observation
     else:
         raise RuntimeError('Must return dictionary from act().')
-
-
-def display_messages(msgs):
-    """Returns a string describing the set of messages provided"""
-    lines = []
-    episode_done = False
-    for index, msg in enumerate(msgs):
-        if msg is None:
-            continue
-        if msg.get('episode_done'):
-            episode_done = True
-        # Possibly indent the text (for the second speaker, if two).
-        space = ''
-        if len(msgs) == 2 and index == 1:
-            space = '   '
-        # Only display rewards !=0 as they are confusing in non-RL tasks.
-        if msg.get('reward', 0) != 0:
-            lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
-        if type(msg.get('image')) == str:
-            lines.append(msg['image'])
-        if msg.get('text', ''):
-            ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
-            lines.append(space + ID + msg['text'])
-        if msg.get('labels'):
-            lines.append(space + ('[labels: {}]'.format(
-                        '|'.join(msg['labels']))))
-        if msg.get('eval_labels'):
-            lines.append(space + ('[eval_labels: {}]'.format(
-                        '|'.join(msg['eval_labels']))))
-        if msg.get('label_candidates'):
-            cand_len = len(msg['label_candidates'])
-            if cand_len <= 10:
-                lines.append(space + ('[cands: {}]'.format(
-                        '|'.join(msg['label_candidates']))))
-            else:
-                # select five label_candidates from the candidate set,
-                # can't slice in because it's a set
-                cand_iter = iter(msg['label_candidates'])
-                display_cands = (next(cand_iter) for _ in range(5))
-                # print those cands plus how many cands remain
-                lines.append(space + ('[cands: {}{}]'.format(
-                        '|'.join(display_cands),
-                        '| ...and {} more'.format(cand_len - 5)
-                        )))
-    if episode_done:
-        lines.append('- - - - - - - - - - - - - - - - - - - - -')
-    return '\n'.join(lines)
 
 
 class World(object):
@@ -148,7 +101,8 @@ class World(object):
         By default, display the messages between the agents."""
         if not hasattr(self, 'acts'):
             return ''
-        return display_messages(self.acts)
+        return display_messages(self.acts,
+                                prettify=self.opt.get('display_prettify', False))
 
     def episode_done(self):
         """Whether the episode is done or not."""

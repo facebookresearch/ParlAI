@@ -58,7 +58,7 @@ def build_dict(opt):
     if ordered_opt['task'] == 'pytorch_teacher':
        pytorch_buildteacher_task = ordered_opt.get('pytorch_buildteacher', '')
        if pytorch_buildteacher_task != '':
-        ordered_opt['task'] = pytorch_buildteacher_task
+           ordered_opt['task'] = pytorch_buildteacher_task
 
     datatypes = ['train:ordered:stream']
     if opt.get('dict_include_valid'):
@@ -77,8 +77,8 @@ def build_dict(opt):
                 # don't wait too long...
                 break
             world_dict.parley()
-    print('[ dictionary built with {} tokens ]'.format(len(dictionary)))
     dictionary.save(opt['dict_file'], sort=True)
+    print('[ dictionary built with {} tokens ]'.format(len(dictionary)))
     return dictionary
 
 

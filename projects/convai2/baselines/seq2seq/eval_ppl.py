@@ -23,13 +23,15 @@ class Seq2seqEntry(Seq2seqAgent):
         else:
             # default minimum probability mass for all tokens
             self.probs = {k: 1e-7 for k in build_dict().keys()}
+        self.prev_enc = None
+        self.prev_vec = None
 
     def share(self):
         shared = super().share()
         shared['probs'] = self.probs.copy()
         return shared
 
-    def next_word_probability(self, observation, partial_out):
+    def next_word_probability(self, partial_out):
         """Return probability distribution over next words given an input and
         partial true output. This is used to calculate the per-word perplexity.
 
@@ -43,17 +45,12 @@ class Seq2seqEntry(Seq2seqAgent):
         e.g.
         {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
         """
-        if not hasattr(self, 'prev_enc'):
-            self.prev_enc = None
-            self.last_text = None
-        if observation['text'] != self.last_text:
-            self.prev_enc = None
-            self.last_text = observation.get('text')
-            self.observe(observation)
-
         obs = self.observation
         obs['eval_labels'] = [' '.join(partial_out)]
         batch = self.vectorize([obs])
+        if self.prev_enc is not None and batch[0].shape[1] != self.prev_enc[0].shape[1]:
+            self.prev_enc = None  # reset prev_enc
+
         self.model.eval()
         self.model.longest_label = 1  # no need to predict farther ahead
         out = self.model(
@@ -71,16 +68,15 @@ class Seq2seqEntry(Seq2seqAgent):
             except AttributeError:
                 val = probs[i][0]
             dist[self.dict[i]] = val
-        self.batch = batch
         return dist
 
 
 if __name__ == '__main__':
     parser = setup_args()
-    parser.set_defaults(
+    parser.set_params(
         model='projects.convai2.baselines.seq2seq.eval_ppl:Seq2seqEntry',
         model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
-        dict_file='models:convai2/seq2seq/dict_convai2_self',
+        dict_file='models:convai2/seq2seq/convai2_self_seq2seq_model.dict',
         dict_lower=True,
         batchsize=1,
         numthreads=60,
@@ -88,6 +84,8 @@ if __name__ == '__main__':
     )
     opt = parser.parse_args()
     opt['model_type'] = 'seq2seq'
-    fnames = ['convai2_self_seq2seq_model.tgz', 'dict_convai2_self']
-    download_models(opt, fnames, 'convai2')
+    fnames = ['convai2_self_seq2seq_model.tgz',
+              'convai2_self_seq2seq_model.dict',
+              'convai2_self_seq2seq_model.opt']
+    download_models(opt, fnames, 'convai2', version='v3.0')
     eval_ppl(opt)

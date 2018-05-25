@@ -217,7 +217,6 @@ We encourage you to contribute new ones!
 Currently available within [this directory](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents):
 
 - **drqa**: an attentive [LSTM model DrQA](https://arxiv.org/abs/1704.00051) implemented in PyTorch that has competitive results on the SQuAD dataset amongst others.
-fairseq
 - **fairseq**: [an attentive sequence to sequence model using convolutions](https://arxiv.org/abs/1705.03122)
 - **seq2seq** a generic seq2seq model with various options
 - **ibm_seq2seq** IBM sequence to sequence model
