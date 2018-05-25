@@ -287,7 +287,7 @@ class ExampleSeq2seqAgent(Agent):
 
         return xs, ys, labels, valid_inds, is_training
 
-    def batch_act(self, observations):
+    def batch_act_deprecated(self, observations):
         batchsize = len(observations)
         # initialize a table of replies with this agent's id
         batch_reply = [{'id': self.getID()} for _ in range(batchsize)]
@@ -312,6 +312,41 @@ class ExampleSeq2seqAgent(Agent):
             self.dict, self.END_IDX, labels=labels,
             answers=labels, ys=ys.data if ys is not None else None,
             report_freq=self.opt.get('report_freq', 0))
+
+        return batch_reply
+
+    def batch_act(self, observations):
+        batch_size = len(observations)
+        # initialize a table of replies with this agent's id
+        batch_reply = [{'id': self.getID()} for _ in range(batch_size)]
+
+        is_training = any(['labels' in obs for obs in observations])
+
+        mode = 'train' if is_training else 'eval'
+
+        vec_obs = [self.dict.vectorize(obs, mode, self.use_cuda)
+                   for obs in observations]
+
+        xs, ys, labels, valid_inds, _, _ = self.dict.permute(vec_obs, use_cuda=self.use_cuda)
+
+        if xs is None:
+            return batch_reply
+
+        predictions = self.predict(xs, ys, is_training)
+
+        unpermute_pred = self.dict.unpermute(predictions.cpu().data,
+                                             valid_inds, batch_size)
+        # Format the predictions into reply format
+        for rep, pred in zip(batch_reply, unpermute_pred):
+            if pred is not None:
+                output_tokens = []
+                # Remove the final END_TOKEN that is appended to predictions
+                for i, token in enumerate(pred):
+                    if token == self.END_IDX and i != 0:
+                        break
+                    else:
+                        output_tokens.append(token)
+                rep['text'] = self.dict.vec2txt(output_tokens)
 
         return batch_reply
 
