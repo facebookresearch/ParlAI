@@ -22,7 +22,7 @@ if __name__ == '__main__':
         dict_include_valid=True,
         dict_maxexs=-1,
         datatype='train',
-        batchsize=128,
+        batchsize=64,
         hiddensize=1024,
         embeddingsize=256,
         attention='general',
