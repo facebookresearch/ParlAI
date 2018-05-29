@@ -253,9 +253,7 @@ class ExampleSeq2seqAgent(TorchAgent):
 
         is_training = any(['labels' in obs for obs in observations])
 
-        mode = 'train' if is_training else 'eval'
-
-        vec_obs = [self.vectorize(obs, mode, self.use_cuda)
+        vec_obs = [self.vectorize(obs, self.use_cuda)
                    for obs in observations]
 
         xs, ys, labels, valid_inds, _, _ = self.permute(vec_obs, use_cuda=self.use_cuda)

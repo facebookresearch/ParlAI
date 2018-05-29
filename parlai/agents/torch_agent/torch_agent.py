@@ -52,7 +52,7 @@ class TorchAgent(Agent):
         shared['dict'] = self.dict
         return shared
 
-    def vectorize(self, obs, mode='train', use_cuda=True):
+    def vectorize(self, obs, use_cuda=True):
         """
         Converts 'text' and 'label'/'eval_label' field to vectors
         kwargs:
@@ -66,8 +66,7 @@ class TorchAgent(Agent):
         if use_cuda:
             obs['text'] = obs['text'].cuda()
 
-        if mode == 'train':
-            assert 'labels' in obs
+        if 'labels' in obs:
             new_labels = []
             for label in obs['labels']:
                 vec_label = self.dict.txt2vec(label)
@@ -77,22 +76,16 @@ class TorchAgent(Agent):
                     new_label = new_label.cuda()
                 new_labels.append(new_label)
             obs['labels'] = new_labels
-            # remove the evaluation label if included
-            obs.pop('eval_labels', None)
-        elif mode == 'eval' or mode == 'test':
-            if 'eval_labels' in obs:
-                new_labels = []
-                for label in obs['eval_labels']:
-                    vec_label = self.dict.txt2vec(label)
-                    vec_label.append(self.END_IDX)
-                    new_label = torch.LongTensor(vec_label)
-                    if use_cuda:
-                        new_label = new_label.cuda()
-                    new_labels.append(new_label)
-                obs['eval_labels'] = new_labels
-            obs.pop('labels', None)
-        else:
-            raise RuntimeError('Mode {} not supported. Mode must be \'train\', \'eval\', or \'test\'.'.format(mode))
+        elif 'eval_labels' in obs:
+            new_labels = []
+            for label in obs['eval_labels']:
+                vec_label = self.dict.txt2vec(label)
+                vec_label.append(self.END_IDX)
+                new_label = torch.LongTensor(vec_label)
+                if use_cuda:
+                    new_label = new_label.cuda()
+                new_labels.append(new_label)
+            obs['eval_labels'] = new_labels
 
         return obs
 
