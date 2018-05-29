@@ -33,8 +33,8 @@ HIT_MULT = 1.5
 MAX_DISCONNECTS = 30
 
 # Time to persist a disconnect before forgetting about it. Combined with the
-# above this will block workers that disconnect at least 25 times in a week
-DISCONNECT_PERSIST_LENGTH = 60 * 60 * 24 * 7
+# above this will block workers that disconnect at least 30 times in a day
+DISCONNECT_PERSIST_LENGTH = 60 * 60 * 24
 
 DISCONNECT_FILE_NAME = 'disconnects.pickle'
 
