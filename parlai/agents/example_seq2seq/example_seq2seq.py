@@ -63,6 +63,7 @@ class ExampleSeq2seqAgent(TorchAgent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
+        super(ExampleSeq2seqAgent, ExampleSeq2seqAgent).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument('-hs', '--hiddensize', type=int, default=128,
                            help='size of the hidden layers')
@@ -253,10 +254,10 @@ class ExampleSeq2seqAgent(TorchAgent):
 
         is_training = any(['labels' in obs for obs in observations])
 
-        vec_obs = [self.vectorize(obs, self.use_cuda)
+        vec_obs = [self.vectorize(obs)
                    for obs in observations]
 
-        xs, ys, labels, valid_inds, _, _ = self.permute(vec_obs, use_cuda=self.use_cuda)
+        xs, ys, labels, valid_inds, _, _ = self.permute(vec_obs)
 
         if xs is None:
             return batch_reply

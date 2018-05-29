@@ -12,6 +12,7 @@ try:
 except Exception as e:
     raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
 
+from collections import deque
 import random
 
 
@@ -25,6 +26,17 @@ class TorchAgent(Agent):
     @staticmethod
     def dictionary_class():
         return DictionaryAgent
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        agent = argparser.add_argument_group('TorchAgent Arguments')
+        agent.add_argument('-hist', '--history-length', default=10, type=int,
+                           help='Number of past tokens to remember. ')
+        agent.add_argument('-histr', '--history-replies',
+                           default='label_else_model', type=str,
+                           choices=['none', 'model', 'label',
+                                    'label_else_model'],
+                           help='Keep replies in the history, or not.')
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -46,50 +58,48 @@ class TorchAgent(Agent):
         self.END_IDX = self.dict[self.dict.end_token]
         self.START_IDX = self.dict[self.dict.start_token]
 
+        self.history = {}
+        self.history_length = opt['history_length']
+        self.history_replies = opt['history_replies']
+
     def share(self):
         shared = super().share()
         shared['opt'] = self.opt
         shared['dict'] = self.dict
         return shared
 
-    def vectorize(self, obs, use_cuda=True):
+    def vectorize(self, obs, addEndIdx=True):
         """
         Converts 'text' and 'label'/'eval_label' field to vectors
-        kwargs:
-        -mode: which label should be passed through, is either train, eval or test
-        -use_cuda: whether to use cuda
         """
         if 'text' not in obs:
             return obs
         # convert 'text' field to vector using self.txt2vec and then a tensor
         obs['text'] = torch.LongTensor(self.dict.txt2vec(obs['text']))
-        if use_cuda:
+        if self.use_cuda:
             obs['text'] = obs['text'].cuda()
 
+        label_type = None
         if 'labels' in obs:
-            new_labels = []
-            for label in obs['labels']:
-                vec_label = self.dict.txt2vec(label)
-                vec_label.append(self.END_IDX)
-                new_label = torch.LongTensor(vec_label)
-                if use_cuda:
-                    new_label = new_label.cuda()
-                new_labels.append(new_label)
-            obs['labels'] = new_labels
+            label_type = 'labels'
         elif 'eval_labels' in obs:
+            label_type = 'eval_labels'
+
+        if label_type is not None:
             new_labels = []
-            for label in obs['eval_labels']:
+            for label in obs[label_type]:
                 vec_label = self.dict.txt2vec(label)
-                vec_label.append(self.END_IDX)
+                if addEndIdx:
+                    vec_label.append(self.END_IDX)
                 new_label = torch.LongTensor(vec_label)
-                if use_cuda:
+                if self.use_cuda:
                     new_label = new_label.cuda()
                 new_labels.append(new_label)
-            obs['eval_labels'] = new_labels
+            obs[label_type] = new_labels
 
         return obs
 
-    def permute(self, obs_batch, sort=True, is_valid=lambda obs: 'text' in obs, use_cuda=True):
+    def permute(self, obs_batch, sort=True, is_valid=lambda obs: 'text' in obs):
         """Creates a batch of valid observations from an unchecked batch.
         Assumes each observation has been vectorized by vectorize function.
         """
@@ -113,7 +123,7 @@ class TorchAgent(Agent):
 
         padded_xs = torch.LongTensor(len(exs),
                                      max(x_lens)).fill_(self.NULL_IDX)
-        if use_cuda:
+        if self.use_cuda:
             padded_xs = padded_xs.cuda()
 
         for i, ex in enumerate(x_text):
@@ -138,7 +148,7 @@ class TorchAgent(Agent):
             y_lens = [y.shape[0] for y in labels]
             padded_ys = torch.LongTensor(len(exs),
                                          max(y_lens)).fill_(self.NULL_IDX)
-            if use_cuda:
+            if self.use_cuda:
                 padded_ys = padded_ys.cuda()
             for i, y in enumerate(labels):
                 padded_ys[i, :y.shape[0]] = y
@@ -152,3 +162,57 @@ class TorchAgent(Agent):
         for pred, idx in zip(predictions, valid_inds):
             unpermuted[idx] = pred
         return unpermuted
+
+    def maintain_dialog_history(self, observation, reply='',
+                                useStartEndIndices=True,
+                                splitSentences=False):
+        """Keeps track of dialog history, up to a truncation length.
+        Either includes replies from the labels, model, or not all using param 'replies'."""
+
+        def parse(txt, splitSentences=False):
+            if dict is not None:
+                if splitSentences:
+                    vec = [self.dict.txt2vec(t) for t in txt.split('\n')]
+                else:
+                    vec = self.dict.txt2vec(txt)
+                if useStartEndIndices:
+                    parsed_x = deque([self.START_IDX])
+                    parsed_x.extend(vec)
+                    parsed_x.append(self.END_IDX)
+                    return parsed_x
+                else:
+                    return vec
+            else:
+                return [txt]
+
+        allow_reply = True
+
+        if 'dialog' not in self.history:
+            self.history['dialog'] = deque(maxlen=self.history_length)
+            self.history['episode_done'] = False
+            self.history['labels'] = []
+
+        if self.history['episode_done']:
+            self.history['dialog'].clear()
+            self.history['labels'] = []
+            allow_reply = False
+            self.history['episode_done'] = False
+
+        if self.history_replies != 'none' and allow_reply:
+            if self.history_replies == 'model' or \
+               (self.history_replies == 'label_else_model' and len(
+                                                self.history['labels']) == 0):
+                if reply != '':
+                    self.history['dialog'].extend(parse(reply))
+            elif len(self.history['labels']) > 0:
+                r = self.history['labels'][0]
+                self.history['dialog'].extend(parse(r, splitSentences))
+        if 'text' in observation:
+            self.history['dialog'].extend(parse(observation['text'], splitSentences))
+
+        self.history['episode_done'] = observation['episode_done']
+        if 'labels' in observation:
+            self.history['labels'] = observation['labels']
+        elif 'eval_labels' in observation:
+            self.history['labels'] = observation['eval_labels']
+        return self.history['dialog']
