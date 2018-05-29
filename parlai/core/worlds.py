@@ -611,16 +611,16 @@ class BatchWorld(World):
         num_agents = len(self.world.get_agents())
         batch_observations = self.batch_observations
 
-        for w in self.worlds:
-            if hasattr(w, 'parley_init'):
+        if hasattr(self.world, 'parley_init'):
+            for w in self.worlds:
                 w.parley_init()
 
         for agent_idx in range(num_agents):
             # The agent acts.
             batch_act = self.batch_act(agent_idx, batch_observations[agent_idx])
             # We possibly execute this action in the world.
-            for i, w in enumerate(self.worlds):
-                if hasattr(w, 'execute'):
+            if hasattr(self.world, 'execute'):
+                for i, w in enumerate(self.worlds):
                     w.execute(w.agents[i], batch_act[i])
             # All agents (might) observe the results.
             for other_index in range(num_agents):
