@@ -53,7 +53,8 @@ class SimpleDictionaryAgent(DictionaryAgent):
         super().__init__(*args, **kwargs)
 
         # Index words in embedding file
-        if self.opt['pretrained_words'] and self.opt.get('embedding_file'):
+        if (self.opt['pretrained_words'] and self.opt.get('embedding_file')
+                and not self.opt.get('trained', False)):
             print('[ Indexing words with embeddings... ]')
             self.embedding_words = set()
             with open(self.opt['embedding_file']) as f:
@@ -116,7 +117,6 @@ class DrqaAgent(Agent):
         self.id = self.__class__.__name__
         self.word_dict = word_dict
         self.opt = copy.deepcopy(opt)
-        config.set_defaults(self.opt)
 
         if self.opt.get('model_file') and os.path.isfile(opt['model_file']):
             self._init_from_saved(opt['model_file'])
@@ -152,7 +152,6 @@ class DrqaAgent(Agent):
 
         self.feature_dict = saved_params['feature_dict']
         self.state_dict = saved_params['state_dict']
-        config.override_args(self.opt, saved_params['config'])
         self.model = DocReaderModel(self.opt, self.word_dict,
                                     self.feature_dict, self.state_dict)
 
@@ -185,7 +184,11 @@ class DrqaAgent(Agent):
             self.n_examples += 1
             self.model.update(batch)
         else:
-            reply['text'] = self.model.predict(batch)[0]
+            prediction, score = self.model.predict(batch)
+            reply['text'] = prediction[0]
+            reply['text_candidates'] = [prediction[0]]
+            reply['candidate_scores'] = [score[0]]
+
 
         reply['metrics'] = {'train_loss': self.model.train_loss.avg}
         return reply
@@ -219,9 +222,11 @@ class DrqaAgent(Agent):
             self.n_examples += len(examples)
             self.model.update(batch)
         else:
-            predictions = self.model.predict(batch)
+            predictions, scores = self.model.predict(batch)
             for i in range(len(predictions)):
                 batch_reply[valid_inds[i]]['text'] = predictions[i]
+                batch_reply[valid_inds[i]]['text_candidates'] = [predictions[i]]
+                batch_reply[valid_inds[i]]['candidate_scores'] = [scores[i]]
 
         batch_reply[0]['metrics'] = {
             'train_loss': self.model.train_loss.avg * batchsize,

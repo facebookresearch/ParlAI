@@ -115,6 +115,39 @@ class DefaultTeacher(DialogTeacher):
                     yield (context + '\n' + question, answers), True
 
 
+class OpenSquadTeacher(DialogTeacher):
+    """This version of SQuAD inherits from the core Dialog Teacher, which just
+    requires it to define an iterator over its data `setup_data` in order to
+    inherit basic metrics, a default `act` function.
+    For SQuAD, this does not efficiently store the paragraphs in memory.
+    """
+
+    def __init__(self, opt, shared=None):
+        self.datatype = opt['datatype']
+        build(opt)
+        if opt['datatype'].startswith('train'):
+            suffix = 'train'
+        else:
+            suffix = 'dev'
+        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD',
+                                       suffix + '-v1.1.json')
+        self.id = 'squad'
+        super().__init__(opt, shared)
+
+    def setup_data(self, path):
+        print('loading: ' + path)
+        with open(path) as data_file:
+            self.squad = json.load(data_file)['data']
+        for article in self.squad:
+            # each paragraph is a context for the attached questions
+            for paragraph in article['paragraphs']:
+                # each question is an example
+                for qa in paragraph['qas']:
+                    question = qa['question']
+                    answers = (a['text'] for a in qa['answers'])
+                    yield (question, answers), True
+
+
 class TitleTeacher(DefaultTeacher):
     """This version of SquAD inherits from the Default Teacher. The only
     difference is that the 'text' field of an observation will contain
