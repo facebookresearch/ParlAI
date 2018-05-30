@@ -16,24 +16,30 @@ class TestTfidfRetriever(unittest.TestCase):
     """Basic tests on the display_data.py example."""
 
     def test_sparse_tfidf_retriever(self):
+        MODEL_FILE = '/tmp/tmp_test_babi'
         DB_PATH = '/tmp/tmp_test_babi.db'
         TFIDF_PATH = '/tmp/tmp_test_babi.tfidf'
         try:
             parser = ParlaiParser(True, True)
             parser.set_defaults(
                 model='tfidf_retriever',
-                retriever_task='babi:task1k:1',
-                retriever_dbpath=DB_PATH,
-                retriever_tfidfpath=TFIDF_PATH,
+                task='babi:task1k:1',
+                model_file=MODEL_FILE,
                 retriever_numworkers=4,
                 retriever_hashsize=2**8,
+                datatype='train:ordered',
+                num_epochs=1
             )
             opt = parser.parse_args(print_args=False)
-
             agent = create_agent(opt)
+            train_world = create_task(opt, agent)
+            # pass examples to dictionary
+            while not train_world.epoch_done():
+                train_world.parley()
 
             obs = {
                 'text': 'Mary moved to the bathroom. John went to the hallway. Where is Mary?',
+                'episode_done': True
             }
             agent.observe(obs)
             reply = agent.act()
@@ -43,10 +49,11 @@ class TestTfidfRetriever(unittest.TestCase):
             new_example = {
                 'text': 'A bunch of new words that are not in the other task, which the model should be able to use to identify this label.',
                 'labels': [ANS],
+                'episode_done': True
             }
             agent.observe(new_example)
             reply = agent.act()
-            assert 'text' not in reply
+            assert 'text' in reply and reply['text'] == ANS
 
             new_example.pop('labels')
             agent.observe(new_example)

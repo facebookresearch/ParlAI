@@ -57,10 +57,10 @@ class Seq2seqEntry(Seq2seqAgent):
             batch[0], # xs
             ys=(batch[1] if len(partial_out) > 0 else None),
             prev_enc=self.prev_enc)
-        scores, self.prev_enc = out[1], out[3]
+        scores, self.prev_enc = out[1], out[-1]
         # scores is bsz x seqlen x num_words, so select probs of current index
         assert len(partial_out) == scores.size(1) - 1
-        probs = F.softmax(scores.select(1, len(partial_out)), dim=1).squeeze().cpu()
+        probs = F.softmax(scores.select(1, len(partial_out)), dim=1).squeeze()
         dist = self.probs
         for i in range(len(probs)):
             try:
@@ -83,9 +83,10 @@ if __name__ == '__main__':
         no_cuda=True,
     )
     opt = parser.parse_args()
-    opt['model_type'] = 'seq2seq'
-    fnames = ['convai2_self_seq2seq_model.tgz',
-              'convai2_self_seq2seq_model.dict',
-              'convai2_self_seq2seq_model.opt']
-    download_models(opt, fnames, 'convai2', version='v3.0')
+    if opt.get('model_file', '').startswith('models:convai2'):
+        opt['model_type'] = 'seq2seq'
+        fnames = ['convai2_self_seq2seq_model.tgz',
+                  'convai2_self_seq2seq_model.dict',
+                  'convai2_self_seq2seq_model.opt']
+        download_models(opt, fnames, 'convai2', version='v3.0')
     eval_ppl(opt)

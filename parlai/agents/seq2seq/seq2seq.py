@@ -21,6 +21,7 @@ import os
 import math
 import pickle
 
+
 class Seq2seqAgent(Agent):
     """Agent which takes an input sequence and produces an output sequence.
 
@@ -90,12 +91,13 @@ class Seq2seqAgent(Agent):
                                 'decoding.')
         agent.add_argument('--no-cuda', action='store_true', default=False,
                            help='disable GPUs even if available')
-        agent.add_argument('--gpu', type=int, default=-1,
+        agent.add_argument('-gpu', '--gpu', type=int, default=-1,
                            help='which GPU device to use')
+        # ranking arguments
         agent.add_argument('-rc', '--rank-candidates', type='bool',
                            default=False,
                            help='rank candidates if available. this is done by'
-                                ' computing the mean score per token for each '
+                                ' computing the prob score per token for each '
                                 'candidate and selecting the highest scoring.')
         agent.add_argument('-tr', '--truncate', type=int, default=-1,
                            help='truncate input & output lengths to speed up '
@@ -151,11 +153,13 @@ class Seq2seqAgent(Agent):
                            choices=['none', 'model', 'label',
                                     'label_else_model'],
                            help='Keep replies in the history, or not.')
+        agent.add_argument('-pt', '--person-tokens', type='bool', default=False,
+                           help='use special tokens before each speaker')
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
     def __init__(self, opt, shared=None):
-        """Set up model if shared params not set, otherwise no work to do."""
+        """Set up model."""
         super().__init__(opt, shared)
         opt = self.opt  # there is a deepcopy in the init
 
@@ -164,6 +168,7 @@ class Seq2seqAgent(Agent):
         self.metrics = {'loss': 0.0, 'num_tokens': 0}
         self.history = {}
         self.report_freq = opt.get('report_freq', 0.001)
+        self.use_person_tokens = opt.get('person_tokens', False)
         states = {}
 
         # check for cuda
@@ -209,9 +214,10 @@ class Seq2seqAgent(Agent):
                 print('[ Loading existing model params from {} ]'.format(init_model))
                 states = self.load(opt['model_file'])
 
-            if ((init_model is not None and os.path.isfile(init_model + '.dict'))
-                or opt['dict_file'] is None):
-                opt['dict_file'] = init_model + '.dict'
+            if init_model is not None:
+                if os.path.isfile(init_model + '.dict') or opt['dict_file'] is None:
+                    opt['dict_file'] = init_model + '.dict'
+
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
             self.id = 'Seq2Seq'
@@ -230,7 +236,7 @@ class Seq2seqAgent(Agent):
                 start_idx=self.START_IDX, end_idx=self.END_IDX,
                 longest_label=states.get('longest_label', 1))
 
-            if opt['embedding_type'] != 'random':
+            if not states and opt['embedding_type'] != 'random':
                 # set up preinitialized embeddings
                 try:
                     import torchtext.vocab as vocab
@@ -295,8 +301,6 @@ class Seq2seqAgent(Agent):
             # set up tensors once
             self.xs = torch.LongTensor(1, 1)
             self.ys = torch.LongTensor(1, 1)
-            if self.rank:
-                self.cands = torch.LongTensor(1, 1, 1)
 
             # set up criteria
             if opt.get('numsoftmax', 1) > 1:
@@ -310,8 +314,6 @@ class Seq2seqAgent(Agent):
                 # push to cuda
                 self.xs = self.xs.cuda()
                 self.ys = self.ys.cuda()
-                if self.rank:
-                    self.cands = self.cands.cuda()
                 self.criterion.cuda()
 
             # set up optimizer
@@ -338,7 +340,11 @@ class Seq2seqAgent(Agent):
                     print('WARNING: not loading optim state since optim class '
                           'changed.')
                 else:
-                    self.optimizer.load_state_dict(states['optimizer'])
+                    try:
+                        self.optimizer.load_state_dict(states['optimizer'])
+                    except ValueError:
+                        print('WARNING: not loading optim state since model '
+                              'params changed.')
                     if self.use_cuda:
                         for state in self.optimizer.state.values():
                             for k, v in state.items():
@@ -461,6 +467,7 @@ class Seq2seqAgent(Agent):
         # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
         batch_idx = self.opt.get('batchindex', 0)
+
         if not obs.get('preprocessed', False) or 'text2vec' not in obs:
             obs['text2vec'] = maintain_dialog_history(
                 self.history, obs,
@@ -468,7 +475,7 @@ class Seq2seqAgent(Agent):
                 historyLength=self.truncate,
                 useReplies=self.opt.get('history_replies'),
                 dict=self.dict,
-                useStartEndIndices=False)
+                useStartEndIndices=self.use_person_tokens)
         else:
             obs['text2vec'] = deque(obs['text2vec'], maxlen=self.truncate)
         self.observation = obs
@@ -481,12 +488,13 @@ class Seq2seqAgent(Agent):
         Update the model using the targets if available, otherwise rank
         candidates as well if they are available and param is set.
         """
-        text_cand_inds = None
+        cand_preds = None
         if is_training:
             self.model.train()
             self.zero_grad()
-            out = self.model(xs, ys)
-            predictions, scores = out[0], out[1]
+            out = self.model(xs, ys, rank_during_training=cands is not None)
+            # generated response
+            predictions, scores, cand_preds = out[0], out[1], out[2]
             score_view = scores.view(-1, scores.size(-1))
             loss = self.criterion(score_view, ys.view(-1))
             # save loss to metrics
@@ -494,13 +502,12 @@ class Seq2seqAgent(Agent):
             self.metrics['loss'] += loss.item()
             self.metrics['num_tokens'] += target_tokens
             loss /= target_tokens  # average loss per token
-            # loss /= xs.size(0)  # average loss per sentence
             loss.backward()
             self.update_params()
         else:
             self.model.eval()
             out = self.model(xs, ys=None, cands=cands, valid_cands=valid_cands)
-            predictions, text_cand_inds = out[0], out[2]
+            predictions, cand_preds = out[0], out[2]
 
             if ys is not None:
                 # calculate loss on targets
@@ -512,7 +519,7 @@ class Seq2seqAgent(Agent):
                 self.metrics['loss'] += loss.item()
                 self.metrics['num_tokens'] += target_tokens
 
-        return predictions, text_cand_inds
+        return predictions, cand_preds
 
     def vectorize(self, observations):
         """Convert a list of observations into input & target tensors."""
@@ -540,41 +547,22 @@ class Seq2seqAgent(Agent):
             if ys is not None:
                 ys = Variable(ys)
 
-        # set up candidates
         cands = None
         valid_cands = None
         if not is_training and self.rank:
-            # only do ranking when no targets available and ranking flag set
-            parsed_cs = []
+            # set up candidates
+            cands = []
             valid_cands = []
             for i, v in enumerate(valid_inds):
                 if 'label_candidates' in observations[v]:
-                    # each candidate tuple is a pair of the parsed version and
-                    # the original full string
-                    cs = list(observations[v]['label_candidates'])
-                    curr_dqs = [deque(maxlen=self.truncate) for _ in cs]
-                    for dq, c in zip(curr_dqs, cs):
-                        dq.extendleft(reversed(self.parse(c)))
-                    parsed_cs.append(curr_dqs)
-                    valid_cands.append((i, v, cs))
-            if len(parsed_cs) > 0:
-                # TODO: store lengths of cands separately, so don't have zero
-                #       padding for varying number of cands per example
-                # found cands, pack them into tensor
-                max_c_len = max(max(len(c) for c in cs) for cs in parsed_cs)
-                max_c_cnt = max(len(cs) for cs in parsed_cs)
-                for cs in parsed_cs:
-                    for c in cs:
-                        c += [self.NULL_IDX] * (max_c_len - len(c))
-                    cs += [[self.NULL_IDX] * max_c_len] * (max_c_cnt - len(cs))
-                cands = torch.LongTensor(parsed_cs)
-                if self.use_cuda:
-                    # copy to gpu
-                    self.cands.resize_(cands.size())
-                    self.cands.copy_(cands)
-                    cands = Variable(self.cands)
-                else:
-                    cands = Variable(cands)
+                    curr_lcs = list(observations[v]['label_candidates'])
+                    curr_cands = [{'text': c} for c in curr_lcs]
+                    cs, _, _, valid_c_inds, *_ = PaddingUtils.pad_text(curr_cands, self.dict, null_idx=self.NULL_IDX, dq=True, truncate=self.truncate)
+                    valid_cands.append((i, v, [curr_lcs[j] for j in valid_c_inds]))
+                    cs = torch.LongTensor(cs)
+                    if self.use_cuda:
+                        cs = cs.cuda()
+                    cands.append(cs)
 
         return xs, ys, labels, valid_inds, cands, valid_cands, is_training
 
@@ -594,21 +582,23 @@ class Seq2seqAgent(Agent):
             return batch_reply
 
         # produce predictions, train on targets if availables
-        predictions, text_cand_inds = self.predict(xs, ys, cands, valid_cands, is_training)
+        cand_inds = [i[0] for i in valid_cands] if valid_cands is not None else None
+        predictions, cand_preds = self.predict(xs, ys, cands, cand_inds, is_training)
 
         if is_training:
             report_freq = 0
         else:
             report_freq = self.report_freq
         PaddingUtils.map_predictions(
-            predictions.cpu().data, valid_inds, batch_reply, observations,
+            predictions, valid_inds, batch_reply, observations,
             self.dict, self.END_IDX, report_freq=report_freq, labels=labels,
             answers=self.answers, ys=ys.data if ys is not None else None)
 
-        if text_cand_inds is not None:
-            text_cand_inds = text_cand_inds.cpu().data
+        if cand_preds is not None:
+            if valid_cands is None:
+                valid_cands = [(None, i, labels) for i in valid_inds]
             for i in range(len(valid_cands)):
-                order = text_cand_inds[i]
+                order = cand_preds[i]
                 _, batch_idx, curr_cands = valid_cands[i]
                 curr = batch_reply[batch_idx]
                 curr['text_candidates'] = [curr_cands[idx] for idx in order

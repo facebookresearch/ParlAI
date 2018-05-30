@@ -8,9 +8,19 @@ import math
 import torch
 import torch.nn as nn
 from torch.nn.parameter import Parameter
-from torch.autograd import Variable
 from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 import torch.nn.functional as F
+
+
+def pad(tensor, length, dim=0):
+    if tensor.size(dim) < length:
+        return torch.cat(
+            [tensor, tensor.new(*tensor.size()[:dim],
+                                length - tensor.size(dim),
+                                *tensor.size()[dim+1:]).zero_()],
+            dim=dim)
+    else:
+        return tensor
 
 
 class Seq2seq(nn.Module):
@@ -51,10 +61,13 @@ class Seq2seq(nn.Module):
             shared_lt=shared_lt, shared_rnn=shared_rnn)
 
         if self.rank:
-            self.ranker = Ranker(self.decoder, padding_idx=self.NULL_IDX,
-                                 attn_type=opt['attention'])
+            self.ranker = Ranker(
+                self.decoder,
+                padding_idx=self.NULL_IDX,
+                attn_type=opt['attention'])
 
-    def forward(self, xs, ys=None, cands=None, valid_cands=None, prev_enc=None):
+    def forward(self, xs, ys=None, cands=None, valid_cands=None, prev_enc=None,
+                rank_during_training=False):
         """Get output predictions from the model.
 
         Arguments:
@@ -65,6 +78,8 @@ class Seq2seq(nn.Module):
         prev_enc -- if you know you'll pass in the same xs multiple times and
             the model is in eval mode, you can pass in the encoder output from
             the last forward pass to skip recalcuating the same encoder output
+        rank_during_training -- (default False) if set, ranks any available
+            cands during training as well
         """
         bsz = len(xs)
         if ys is not None:
@@ -78,15 +93,19 @@ class Seq2seq(nn.Module):
             enc_out, hidden = self.encoder(xs)
         encoder_states = (enc_out, hidden)
         attn_mask = xs.ne(0).float() if self.attn_type != 'none' else None
-        start = Variable(self.START, requires_grad=False)
+        start = self.START.detach()
         starts = start.expand(bsz, 1)
 
         predictions = []
         scores = []
-        text_cand_inds = None
+        cand_preds, cand_scores = None, None
         if self.rank and cands is not None:
-            text_cand_inds = self.ranker.forward(cands, valid_cands, start,
-                                                 hidden, enc_out, attn_mask)
+            decode_params = (start, hidden, enc_out, attn_mask)
+            if self.training:
+                if rank_during_training:
+                    cand_preds, cand_scores = self.ranker.forward(cands, valid_cands, decode_params=decode_params)
+            else:
+                cand_preds, cand_scores = self.ranker.forward(cands, valid_cands, decode_params=decode_params)
 
         if ys is not None:
             y_in = ys.narrow(1, 0, ys.size(1) - 1)
@@ -130,7 +149,7 @@ class Seq2seq(nn.Module):
             predictions = torch.cat(predictions, 1)
         if scores:
             scores = torch.cat(scores, 1)
-        return predictions, scores, text_cand_inds, encoder_states
+        return predictions, scores, cand_preds, cand_scores, encoder_states
 
 
 class Encoder(nn.Module):
@@ -187,7 +206,7 @@ class Encoder(nn.Module):
         zeros = self.zeros(xs)
         if zeros.size(1) != bsz:
             zeros.resize_(self.layers * self.dirs, bsz, self.hsz).fill_(0)
-        h0 = Variable(zeros, requires_grad=False)
+        h0 = zeros.detach()
 
         if type(self.rnn) == nn.LSTM:
             encoder_output, hidden = self.rnn(xes, (h0, h0))
@@ -298,124 +317,79 @@ class Ranker(object):
     def __init__(self, decoder, padding_idx=0, attn_type='none'):
         super().__init__()
         self.decoder = decoder
-        # put intermediate states in these tensors
-        self.buffers = {}
         self.NULL_IDX = padding_idx
         self.attn_type = attn_type
 
-    def buffer(self, typeof, name, sz):
-        key = name + '_' + typeof.data.type()
-        if key not in self.buffers:
-            self.buffers[key] = typeof.data.new(sz)
-        return self.buffers[key].resize_(sz).fill_(0)
+    def forward(self, cands, cand_inds, decode_params):
+        start, hidden, enc_out, attn_mask = decode_params
 
-    def forward(self, cands, cand_inds, start, hidden, enc_out, attn_mask):
-        cell = None
-        if type(hidden) == tuple:
-            # for lstms, split hidden state into parts
-            hidden, cell = hidden
-
-        num_hid = hidden.size(0)
-        bsz = hidden.size(1)
-        esz = hidden.size(2)
-        cands_per_ex = cands.size(1)
-        words_per_cand = cands.size(2)
-
-        # score each candidate separately
-        # cands are exs_with_cands x cands_per_ex x words_per_cand
-        # cview is total_cands x words_per_cand
-        cview = cands.view(-1, words_per_cand)
-        total_cands = cview.size(0)
-        starts = start.expand(total_cands).unsqueeze(1)
-
-        if len(cand_inds) != hidden.size(1):
-            # select hidden states which have associated cands
-            cand_indices = Variable(start.data.new([i[0] for i in cand_inds]))
-            hidden = hidden.index_select(1, cand_indices)
-
-        h_exp = (
-            # expand hidden states so each cand has an initial hidden state
-            # cands for the same input have the same initial hidden state
-            hidden.unsqueeze(2)
-            .expand(num_hid, bsz, cands_per_ex, esz)
-            .contiguous()
-            .view(num_hid, -1, esz))
-
-        if cell is None:
-            cands_hn = h_exp
-        if cell is not None:
-            if len(cand_inds) != cell.size(1):
-                # only use cell state from inputs with associated candidates
+        hid, cell = (hidden, None) if isinstance(hidden, torch.Tensor) else hidden
+        if len(cand_inds) != hid.size(1):
+            cand_indices = start.detach().new(cand_inds)
+            hid = hid.index_select(1, cand_indices)
+            if cell is None:
+                hidden = hid
+            else:
                 cell = cell.index_select(1, cand_indices)
-            c_exp = (
-                cell.unsqueeze(2)
-                .expand(num_hid, bsz, cands_per_ex, esz)
-                .contiguous()
-                .view(num_hid, -1, esz))
-            cands_hn = (h_exp, c_exp)
+                hidden = (hid, cell)
+            enc_out = enc_out.index_select(0, cand_indices)
+            attn_mask = attn_mask.index_select(0, cand_indices)
 
-        cand_scores = Variable(self.buffer(hidden, 'cand_scores', total_cands))
-        cand_lens = Variable(self.buffer(start, 'cand_lens', total_cands))
+        cand_scores = []
 
-        if self.attn_type == 'none':
-            # process entire sequence at once
-            if cview.size(1) > 1:
-                # feed in START + cands[:-2]
-                cands_in = cview.narrow(1, 0, cview.size(1) - 1)
-                starts = torch.cat([starts, cands_in], 1)
-            _preds, score, _h = self.decoder(starts, cands_hn, enc_out, attn_mask)
+        for i in range(len(cands)):
+            curr_cs = cands[i]
 
-            for i in range(cview.size(1)):
-                # calculate score at each token
-                cs = cview.select(1, i)
-                non_nulls = cs.ne(self.NULL_IDX)
-                cand_lens += non_nulls.long()
-                score_per_cand = torch.gather(score.select(1, i), 1,
-                                              cs.unsqueeze(1))
-                cand_scores += score_per_cand.squeeze() * non_nulls.float()
-        else:
-            # using attention
-            if len(cand_inds) != len(enc_out):
-                # select only encoder output matching xs we want
-                indices = Variable(start.data.new([i[0] for i in cand_inds]))
-                enc_out = enc_out.index_select(0, indices)
-                attn_mask = attn_mask.index_select(0, indices)
+            n_cs = curr_cs.size(0)
+            starts = start.expand(n_cs).unsqueeze(1)
+            scores = 0
+            seqlens = 0
+            # select just the one hidden state
+            if isinstance(hidden, torch.Tensor):
+                nl = hidden.size(0)
+                hsz = hidden.size(-1)
+                cur_hid = hidden.select(1, i).unsqueeze(1).expand(nl, n_cs, hsz)
+            else:
+                nl = hidden[0].size(0)
+                hsz = hidden[0].size(-1)
+                cur_hid = (hidden[0].select(1, i).unsqueeze(1).expand(nl, n_cs, hsz).contiguous(),
+                           hidden[1].select(1, i).unsqueeze(1).expand(nl, n_cs, hsz).contiguous())
 
-            seq_len = enc_out.size(1)
-            cands_enc_out = (
-                enc_out.unsqueeze(1)
-                .expand(bsz, cands_per_ex, seq_len, esz)
-                .contiguous()
-                .view(-1, seq_len, esz)
-            )
-            cands_attn_mask = (
-                attn_mask.unsqueeze(1)
-                .expand(bsz, cands_per_ex, seq_len)
-                .contiguous()
-                .view(-1, seq_len)
-            )
+            cur_enc, cur_mask = None, None
+            if attn_mask is not None:
+                cur_mask = attn_mask[i].unsqueeze(0).expand(n_cs, attn_mask.size(-1))
+                cur_enc = enc_out[i].unsqueeze(0).expand(n_cs, enc_out.size(1), hsz)
+            # this is pretty much copied from the training forward above
+            if curr_cs.size(1) > 1:
+                c_in = curr_cs.narrow(1, 0, curr_cs.size(1) - 1)
+                xs = torch.cat([starts, c_in], 1)
+            else:
+                xs, c_in = starts, curr_cs
+            if self.attn_type == 'none':
+                preds, score, cur_hid = self.decoder(xs, cur_hid, cur_enc, cur_mask)
+                true_score = F.log_softmax(score, dim=2).gather(
+                    2, curr_cs.unsqueeze(2))
+                nonzero = curr_cs.ne(0).float()
+                scores = (true_score.squeeze(2) * nonzero).sum(1)
+                seqlens = nonzero.sum(1)
+            else:
+                for i in range(curr_cs.size(1)):
+                    xi = xs.select(1, i)
+                    ci = curr_cs.select(1, i)
+                    preds, score, cur_hid = self.decoder(xi, cur_hid, cur_enc, cur_mask)
+                    true_score = F.log_softmax(score, dim=2).gather(
+                        2, ci.unsqueeze(1).unsqueeze(2))
+                    nonzero = ci.ne(0).float()
+                    scores += true_score.squeeze(2).squeeze(1) * nonzero
+                    seqlens += nonzero
 
-            cs = starts
-            for i in range(cview.size(1)):
-                # process one token at a time
-                _preds, score, _h = self.decoder(cs, cands_hn, cands_enc_out,
-                                             cands_attn_mask)
-                cs = cview.select(1, i)
-                non_nulls = cs.ne(self.NULL_IDX)
-                cand_lens += non_nulls.long()
-                score_per_cand = torch.gather(score.squeeze(), 1,
-                                              cs.unsqueeze(1))
-                cand_scores += score_per_cand.squeeze() * non_nulls.float()
+            scores /= seqlens  # **len_penalty?
+            cand_scores.append(scores)
 
-        # set empty scores to -1, so when divided by 0 they become -inf
-        cand_scores -= cand_lens.eq(0).float()
-        # average the scores per token
-        cand_scores /= cand_lens.float()
-
-        cand_scores = cand_scores.view(cands.size(0), cands.size(1))
-        _srtd_scores, text_cand_inds = cand_scores.sort(1, True)
-
-        return text_cand_inds
+        max_len = max(len(c) for c in cand_scores)
+        cand_scores = torch.cat([pad(c, max_len).unsqueeze(0) for c in cand_scores], 0)
+        preds = cand_scores.sort(1, True)[1]
+        return preds, cand_scores
 
 
 class Linear(nn.Module):
@@ -468,6 +442,7 @@ class Linear(nn.Module):
 
 
 class RandomProjection(nn.Module):
+    """Randomly project input to different dimensionality."""
     def __init__(self, in_features, out_features):
         super().__init__()
         self.in_features = in_features
@@ -477,7 +452,7 @@ class RandomProjection(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        # experimentally: std=1 appears to affect scale too much
+        # experimentally: std=1 appears to affect scale too much, so using 0.1
         self.weight.data.normal_(std=0.1)
         # other init option: set randomly to 1 or -1
         # self.weight.data.bernoulli_(self.weight.fill_(0.5)).mul_(2).sub_(1)
@@ -566,5 +541,4 @@ class AttentionLayer(nn.Module):
         attn_applied = torch.bmm(attn_weights.unsqueeze(1), enc_out)
         merged = torch.cat((xes.squeeze(1), attn_applied.squeeze(1)), 1)
         output = F.tanh(self.attn_combine(merged).unsqueeze(1))
-
         return output
