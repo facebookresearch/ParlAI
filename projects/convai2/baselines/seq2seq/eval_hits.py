@@ -22,9 +22,10 @@ if __name__ == '__main__':
         batchsize=32,
     )
     opt = parser.parse_args(print_args=False)
-    opt['model_type'] = 'seq2seq'
-    fnames = ['convai2_self_seq2seq_model.tgz',
-              'convai2_self_seq2seq_model.dict',
-              'convai2_self_seq2seq_model.opt']
-    download_models(opt, fnames, 'convai2', version='v3.0')
+    if opt.get('model_file', '').startswith('models:convai2'):
+        opt['model_type'] = 'seq2seq'
+        fnames = ['convai2_self_seq2seq_model.tgz',
+                  'convai2_self_seq2seq_model.dict',
+                  'convai2_self_seq2seq_model.opt']
+        download_models(opt, fnames, 'convai2', version='v3.0')
     eval_hits(opt, print_parser=parser)

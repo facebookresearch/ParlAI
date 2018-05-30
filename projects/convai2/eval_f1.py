@@ -28,5 +28,3 @@ if __name__ == '__main__':
     parser = setup_args()
     opt = parser.parse_args()
     report = eval_f1(opt, parser)
-
-    
