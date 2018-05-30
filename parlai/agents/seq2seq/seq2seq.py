@@ -96,9 +96,9 @@ class Seq2seqAgent(Agent):
         # ranking arguments
         agent.add_argument('-rc', '--rank-candidates', type='bool',
                            default=False,
-                           help='rank candidates if available, training to '
-                                'rank the minibatch labels and evaluating '
-                                'on the cand set if available')
+                           help='rank candidates if available. this is done by'
+                                ' computing the prob score per token for each '
+                                'candidate and selecting the highest scoring.')
         agent.add_argument('-tr', '--truncate', type=int, default=-1,
                            help='truncate input & output lengths to speed up '
                            'training (may reduce accuracy). This fixes all '
@@ -473,7 +473,6 @@ class Seq2seqAgent(Agent):
         # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
         batch_idx = self.opt.get('batchindex', 0)
-        batch_idx = 0
 
         if not obs.get('preprocessed', False) or 'text2vec' not in obs:
             obs['text2vec'] = maintain_dialog_history(

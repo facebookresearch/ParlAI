@@ -57,8 +57,8 @@ class Seq2seq(nn.Module):
 
         if self.rank:
             self.ranker = Ranker(
+                self.decoder,
                 padding_idx=self.NULL_IDX,
-                decoder=self.decoder,
                 attn_type=opt['attention'])
 
     def forward(self, xs, ys=None, cands=None, valid_cands=None, prev_enc=None,
@@ -309,7 +309,7 @@ class Decoder(nn.Module):
 
 
 class Ranker(object):
-    def __init__(self, padding_idx=0, decoder=None, attn_type='none'):
+    def __init__(self, decoder, padding_idx=0, attn_type='none'):
         super().__init__()
         self.decoder = decoder
         self.NULL_IDX = padding_idx

@@ -154,7 +154,7 @@ class PerplexityWorld(World):
         if 'label_candidates' in action:
             action.pop('label_candidates')
         if labels is None:
-            # no ppl to compute, move on
+            # empty example, move on
             return
 
         parsed = self.dict.tokenize(labels[0])
