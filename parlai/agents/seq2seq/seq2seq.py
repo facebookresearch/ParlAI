@@ -90,7 +90,7 @@ class Seq2seqAgent(Agent):
                                 'decoding.')
         agent.add_argument('--no-cuda', action='store_true', default=False,
                            help='disable GPUs even if available')
-        agent.add_argument('--gpu', type=int, default=-1,
+        agent.add_argument('-gpu', '--gpu', type=int, default=-1,
                            help='which GPU device to use')
         agent.add_argument('-rc', '--rank-candidates', type='bool',
                            default=False,
@@ -151,6 +151,8 @@ class Seq2seqAgent(Agent):
                            choices=['none', 'model', 'label',
                                     'label_else_model'],
                            help='Keep replies in the history, or not.')
+        agent.add_argument('-pt', '--person-tokens', type='bool', default=False,
+                           help='use special tokens before each speaker')
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
@@ -164,6 +166,7 @@ class Seq2seqAgent(Agent):
         self.metrics = {'loss': 0.0, 'num_tokens': 0}
         self.history = {}
         self.report_freq = opt.get('report_freq', 0.001)
+        self.use_person_tokens = opt.get('person_tokens', False)
         states = {}
 
         # check for cuda
@@ -209,9 +212,10 @@ class Seq2seqAgent(Agent):
                 print('[ Loading existing model params from {} ]'.format(init_model))
                 states = self.load(opt['model_file'])
 
-            if ((init_model is not None and os.path.isfile(init_model + '.dict'))
-                or opt['dict_file'] is None):
-                opt['dict_file'] = init_model + '.dict'
+            if init_model is not None:
+                if os.path.isfile(init_model + '.dict') or opt['dict_file'] is None:
+                    opt['dict_file'] = init_model + '.dict'
+
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
             self.id = 'Seq2Seq'
@@ -230,7 +234,7 @@ class Seq2seqAgent(Agent):
                 start_idx=self.START_IDX, end_idx=self.END_IDX,
                 longest_label=states.get('longest_label', 1))
 
-            if opt['embedding_type'] != 'random':
+            if not states and opt['embedding_type'] != 'random':
                 # set up preinitialized embeddings
                 try:
                     import torchtext.vocab as vocab
@@ -338,7 +342,11 @@ class Seq2seqAgent(Agent):
                     print('WARNING: not loading optim state since optim class '
                           'changed.')
                 else:
-                    self.optimizer.load_state_dict(states['optimizer'])
+                    try:
+                        self.optimizer.load_state_dict(states['optimizer'])
+                    except ValueError:
+                        print('WARNING: not loading optim state since model '
+                              'params changed.')
                     if self.use_cuda:
                         for state in self.optimizer.state.values():
                             for k, v in state.items():
@@ -468,7 +476,7 @@ class Seq2seqAgent(Agent):
                 historyLength=self.truncate,
                 useReplies=self.opt.get('history_replies'),
                 dict=self.dict,
-                useStartEndIndices=False)
+                useStartEndIndices=self.use_person_tokens)
         else:
             obs['text2vec'] = deque(obs['text2vec'], maxlen=self.truncate)
         self.observation = obs

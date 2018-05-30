@@ -223,13 +223,7 @@ def maintain_dialog_history(history, observation, reply='',
                 vec = [dict.txt2vec(t) for t in txt.split('\n')]
             else:
                 vec = dict.txt2vec(txt)
-            if useStartEndIndices:
-                parsed_x = deque([dict[dict.start_token]])
-                parsed_x.extend(vec)
-                parsed_x.append(dict[dict.end_token])
-                return parsed_x
-            else:
-                return vec
+            return vec
         else:
             return [txt]
 
@@ -252,14 +246,21 @@ def maintain_dialog_history(history, observation, reply='',
         elif len(history['labels']) > 0:
             r = history['labels'][0]
             history['dialog'].extend(parse(r, splitSentences))
-    if 'text' in observation:
-        history['dialog'].extend(parse(observation['text'], splitSentences))
+    obs = observation
+    if 'text' in obs:
+        if useStartEndIndices:
+            obs['text'] = dict.end_token + ' ' + obs['text']
+        history['dialog'].extend(parse(obs['text'], splitSentences))
 
-    history['episode_done'] = observation['episode_done']
-    if 'labels' in observation:
-        history['labels'] = observation['labels']
-    elif 'eval_labels' in observation:
-        history['labels'] = observation['eval_labels']
+    history['episode_done'] = obs['episode_done']
+
+    labels = obs.get('labels', obs.get('eval_labels', None))
+    if labels is not None:
+        if useStartEndIndices:
+            history['labels'] = [dict.start_token + ' ' + l for l in labels]
+        else:
+            history['labels'] = labels
+
     return history['dialog']
 
 
@@ -355,6 +356,12 @@ class PaddingUtils(object):
             parsed_x = [ex['text2vec'] for ex in exs]
         else:
             parsed_x = [dictionary.txt2vec(ex['text']) for ex in exs]
+
+        if dq and not isinstance(parsed_x[0], deque):
+            parsed_x = [deque(x, maxlen=truncate) for x in parsed_x]
+        elif truncate is not None and truncate > 0:
+            parsed_x = [x[-truncate:] for x in parsed_x]
+
         x_lens = [len(x) for x in parsed_x]
         ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
 

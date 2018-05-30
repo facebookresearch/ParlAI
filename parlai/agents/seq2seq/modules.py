@@ -8,7 +8,6 @@ import math
 import torch
 import torch.nn as nn
 from torch.nn.parameter import Parameter
-from torch.autograd import Variable
 from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 import torch.nn.functional as F
 
@@ -78,7 +77,7 @@ class Seq2seq(nn.Module):
             enc_out, hidden = self.encoder(xs)
         encoder_states = (enc_out, hidden)
         attn_mask = xs.ne(0).float() if self.attn_type != 'none' else None
-        start = Variable(self.START, requires_grad=False)
+        start = self.START.detach()
         starts = start.expand(bsz, 1)
 
         predictions = []
@@ -187,7 +186,7 @@ class Encoder(nn.Module):
         zeros = self.zeros(xs)
         if zeros.size(1) != bsz:
             zeros.resize_(self.layers * self.dirs, bsz, self.hsz).fill_(0)
-        h0 = Variable(zeros, requires_grad=False)
+        h0 = zeros.detach()
 
         if type(self.rnn) == nn.LSTM:
             encoder_output, hidden = self.rnn(xes, (h0, h0))
