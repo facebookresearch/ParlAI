@@ -12,10 +12,12 @@ from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 import torch.nn.functional as F
 
 
-def pad(tensor, length):
+def pad(tensor, length, dim=0):
     return torch.cat(
-        [tensor.data, tensor.data.new(
-            length - tensor.size(0), *tensor.size()[1:]).zero_()])
+        [tensor, tensor.new(*tensor.size()[:dim],
+                            length - tensor.size(dim),
+                            *tensor.size()[dim:]).zero_()],
+        dim=dim)
 
 
 class Seq2seq(nn.Module):
