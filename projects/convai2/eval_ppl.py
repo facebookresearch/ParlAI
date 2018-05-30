@@ -38,25 +38,19 @@ def next_word_probability(self, partial_out):
     {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
 """
 
-from parlai.core.agents import Agent, create_agent, create_agents_from_shared
-from parlai.core.build_data import download_models
-from parlai.core.dict import DictionaryAgent
-from parlai.core.params import ParlaiParser
-from parlai.core.utils import Timer, round_sigfigs, no_lock
-from parlai.core.thread_utils import SharedTable
-from parlai.core.worlds import create_task, World
+from parlai.core.agents import Agent
+
+from parlai.scripts.eval_ppl import eval_ppl as run_eval_ppl, setup_args as setup_ppl_args
 from projects.convai2.build_dict import build_dict
 
 import math
 
 
 def setup_args(parser=None):
-    if parser is None:
-        parser = ParlaiParser(True, True)
+    parser = setup_ppl_args(parser)
     parser.set_defaults(
         task='convai2:self:no_cands',
         datatype='valid',
-        hide_labels=False,  # will be shown to model partially in steps
     )
     return parser
 
@@ -99,160 +93,10 @@ class WordFrequencyEntry(Agent):
             freqs[t] += 10000
         return freqs
 
-class PerplexityWorld(World):
-    """Instead of just calling act/observe on each agent, this world just calls
-    act on the teacher and then calls `next_word_probability` on the agent.
-
-    The label for each example is parsed by the provided tokenizer, and then
-    for each word in the parsed label the model is given the input and all of
-    the tokens up to the current word and asked to predict the current word.
-
-    The model must return a probability of any words it thinks are likely in
-    the form of a dict mapping words to scores. If the scores do not sum to 1,
-    they are normalized to do so. If the correct word is not present or has a
-    probablity of zero, it will be assigned a probability of 1e-8.
-
-    The API of the next_word_probability function which agents must implement
-    is mentioned in the documentation for this file.
-    """
-    def __init__(self, opt, agents, shared=None):
-        super().__init__(opt)
-        if shared:
-            # Create agents based on shared data.
-            self.task, self.agent, self.dict = create_agents_from_shared(shared['agents'])
-            self.metrics = shared['metrics']
-        else:
-            if len(agents) != 3:
-                raise RuntimeError('There must be exactly three agents.')
-            if opt.get('batchsize', 1) > 1:
-                raise RuntimeError('This world only works with bs=1. Try '
-                                   'using multiple threads instead, nt>1.')
-            self.task, self.agent, self.dict = agents
-            if not hasattr(self.agent, 'next_word_probability'):
-                raise RuntimeError('Agent must implement function '
-                                   '`next_word_probability`.')
-            self.metrics = {'total': 0, 'loss': 0.0, 'num_tokens': 0, 'num_unk': 0}
-            if opt.get('numthreads', 1) > 1:
-                self.metrics = SharedTable(self.metrics)
-        self.agents = [self.task, self.agent, self.dict]
-        self.acts = [None, None]
-
-    def _lock(self):
-        if hasattr(self.metrics, 'get_lock'):
-            # use the shared_table's lock
-            return self.metrics.get_lock()
-        else:
-            # otherwise do nothing
-            return no_lock()
-
-    def parley(self):
-        action = self.task.act()
-        self.acts[0] = action.copy()
-
-        # hide labels from model
-        labels = action.get('eval_labels', action.get('labels', None))
-        if 'label_candidates' in action:
-            action.pop('label_candidates')
-        if labels is None:
-            # empty example, move on
-            return
-
-        parsed = self.dict.tokenize(labels[0])
-        loss = 0
-        num_tokens = 0
-        num_unk = 0
-        self.agent.observe(action)
-        for i in range(len(parsed)):
-            if parsed[i] in self.dict:
-                # only score words which are in the dictionary
-                probs = self.agent.next_word_probability(parsed[:i])
-                # get probability of correct answer, divide by total prob mass
-                prob_true = probs.get(parsed[i], 0)
-                if prob_true > 0:
-                    prob_true /= sum(probs.values())
-                    loss -= math.log(prob_true)
-                else:
-                    loss = float('inf')
-                num_tokens += 1
-            else:
-                num_unk += 1
-        with self._lock():
-            self.metrics['total'] += 1
-            self.metrics['loss'] += loss
-            self.metrics['num_tokens'] += num_tokens
-            self.metrics['num_unk'] += num_unk
-
-    def epoch_done(self):
-        return self.task.epoch_done()
-
-    def num_examples(self):
-        return self.task.num_examples()
-
-    def num_episodes(self):
-        return self.task.num_episodes()
-
-    def share(self):
-        shared = super().share()
-        shared['metrics'] = self.metrics
-        return shared
-
-    def reset_metrics(self):
-        with self._lock():
-            self.metrics['total'] = 0
-            self.metrics['loss'] = 0
-            self.metrics['num_tokens'] = 0
-            self.metrics['num_unk'] = 0
-
-    def report(self, compute_time=None):
-        m = {}
-        with self._lock():
-            m['total'] = self.metrics['total']
-            if m['total'] > 0:
-                # m['num_unk'] = self.metrics['num_unk']
-                # m['num_tokens'] = self.metrics['num_tokens']
-                m['loss'] = round_sigfigs(self.metrics['loss'] / self.metrics['num_tokens'], 3)
-                m['ppl'] = round_sigfigs(math.exp(self.metrics['loss'] / self.metrics['num_tokens']), 4)
-        return m
-
 
 def eval_ppl(opt):
-    """Evaluates the the perplexity and f1 of a model (and hits@1 if model has
-    ranking enabled.
-    """
-    dict_agent = build_dict()
+    return run_eval_ppl(opt, build_dict)
 
-    # create agents
-    agent = create_agent(opt)
-    world = create_task(opt, [agent, dict_agent], default_world=PerplexityWorld)
-    world.dict = dict_agent
-
-    # set up logging
-    log_time = Timer()
-    tot_time = 0
-
-    while not world.epoch_done():
-        world.parley()  # process an example
-
-        if log_time.time() > 1:  # log every 1 sec
-            tot_time += log_time.time()
-            report = world.report()
-            print('{}s elapsed, {}%% complete, {}'.format(
-                int(tot_time),
-                round_sigfigs(report['total'] / world.num_examples() * 100, 3),
-                report))
-            log_time.reset()
-    if world.epoch_done():
-        print('EPOCH DONE')
-    tot_time += log_time.time()
-    final_report = world.report()
-    print('{}s elapsed: {}'.format(int(tot_time), final_report))
-    print("============================")
-    print("FINAL PPL: " +str(final_report['ppl']))
-    if final_report.get('ppl', 0) == float('inf'):
-        print('Note: you got inf perplexity. Consider adding (or raising) the '
-              'minimum probability you assign to each possible word. If you '
-              'assign zero probability to the correct token in the evaluation '
-              'vocabulary, you get inf probability immediately.')
 
 if __name__ == '__main__':
     parser = setup_args()
