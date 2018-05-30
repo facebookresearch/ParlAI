@@ -32,10 +32,10 @@ class TestTfidfRetriever(unittest.TestCase):
             )
             opt = parser.parse_args(print_args=False)
             agent = create_agent(opt)
-            world_dict = create_task(opt, agent)
+            train_world = create_task(opt, agent)
             # pass examples to dictionary
-            while not world_dict.epoch_done():
-                world_dict.parley()
+            while not train_world.epoch_done():
+                train_world.parley()
 
             obs = {
                 'text': 'Mary moved to the bathroom. John went to the hallway. Where is Mary?',
