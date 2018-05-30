@@ -420,8 +420,6 @@ class Seq2seqAgent(Agent):
         """Reset metrics for reporting loss and perplexity."""
         self.metrics['loss'] = 0.0
         self.metrics['num_tokens'] = 0
-        if 'rank_loss' in self.metrics:
-            self.metrics['rank_loss'] = 0.0
 
     def report(self):
         """Report loss and perplexity from model's perspective.
@@ -436,8 +434,6 @@ class Seq2seqAgent(Agent):
                 m['ppl'] = math.exp(m['loss'])
             except OverflowError:
                 m['ppl'] = float('inf')
-            if 'rank_loss' in self.metrics and self.metrics['rank_loss'] > 0:
-                m['rank_loss'] = self.metrics['rank_loss']
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)

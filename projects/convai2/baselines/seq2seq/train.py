@@ -42,7 +42,5 @@ if __name__ == '__main__':
         validation_metric_mode='min',
         validation_patience=12,
         log_every_n_secs=10,
-        person_tokens=True,
-        batch_sort=False,
     )
     TrainLoop(parser).train()
