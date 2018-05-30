@@ -57,7 +57,7 @@ class Seq2seqEntry(Seq2seqAgent):
             batch[0], # xs
             ys=(batch[1] if len(partial_out) > 0 else None),
             prev_enc=self.prev_enc)
-        scores, self.prev_enc = out[1], out[3]
+        scores, self.prev_enc = out[1], out[-1]
         # scores is bsz x seqlen x num_words, so select probs of current index
         assert len(partial_out) == scores.size(1) - 1
         probs = F.softmax(scores.select(1, len(partial_out)), dim=1).squeeze()
