@@ -13,11 +13,14 @@ import torch.nn.functional as F
 
 
 def pad(tensor, length, dim=0):
-    return torch.cat(
-        [tensor, tensor.new(*tensor.size()[:dim],
-                            length - tensor.size(dim),
-                            *tensor.size()[dim:]).zero_()],
-        dim=dim)
+    if tensor.size(dim) < length:
+        return torch.cat(
+            [tensor, tensor.new(*tensor.size()[:dim],
+                                length - tensor.size(dim),
+                                *tensor.size()[dim+1:]).zero_()],
+            dim=dim)
+    else:
+        return tensor
 
 
 class Seq2seq(nn.Module):
