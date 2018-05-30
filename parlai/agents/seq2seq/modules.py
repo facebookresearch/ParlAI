@@ -318,27 +318,22 @@ class Ranker(object):
     def forward(self, cands, cand_inds, decode_params):
         start, hidden, enc_out, attn_mask = decode_params
 
-        if not self.training:
-            hid, cell = (hidden, None) if isinstance(hidden, torch.Tensor) else hidden
-            if len(cand_inds) != hid.size(1):
-                cand_indices = start.detach().new(cand_inds)
-                hid = hid.index_select(1, cand_indices)
-                if cell is None:
-                    hidden = hid
-                else:
-                    cell = cell.index_select(1, cand_indices)
-                    hidden = (hid, cell)
-                enc_out = enc_out.index_select(0, cand_indices)
-                attn_mask = attn_mask.index_select(0, cand_indices)
+        hid, cell = (hidden, None) if isinstance(hidden, torch.Tensor) else hidden
+        if len(cand_inds) != hid.size(1):
+            cand_indices = start.detach().new(cand_inds)
+            hid = hid.index_select(1, cand_indices)
+            if cell is None:
+                hidden = hid
+            else:
+                cell = cell.index_select(1, cand_indices)
+                hidden = (hid, cell)
+            enc_out = enc_out.index_select(0, cand_indices)
+            attn_mask = attn_mask.index_select(0, cand_indices)
 
         cand_scores = []
 
         for i in range(len(cands)):
-            if self.training:
-                # same cands for each example
-                curr_cs = cands
-            else:
-                curr_cs = cands[i]
+            curr_cs = cands[i]
 
             n_cs = curr_cs.size(0)
             starts = start.expand(n_cs).unsqueeze(1)
@@ -354,18 +349,24 @@ class Ranker(object):
                 hsz = hidden[0].size(-1)
                 cur_hid = (hidden[0].select(1, i).unsqueeze(1).expand(nl, n_cs, hsz).contiguous(),
                            hidden[1].select(1, i).unsqueeze(1).expand(nl, n_cs, hsz).contiguous())
-            cur_enc = enc_out[i].unsqueeze(0).expand(n_cs, enc_out.size(1), hsz)
+
+            cur_enc, cur_mask = None, None
             if attn_mask is not None:
                 cur_mask = attn_mask[i].unsqueeze(0).expand(n_cs, attn_mask.size(-1))
+                cur_enc = enc_out[i].unsqueeze(0).expand(n_cs, enc_out.size(1), hsz)
             # this is pretty much copied from the training forward above
-            c_in = curr_cs.narrow(1, 0, curr_cs.size(1) - 1)
-            xs = torch.cat([starts, c_in], 1)
+            if curr_cs.size(1) > 1:
+                c_in = curr_cs.narrow(1, 0, curr_cs.size(1) - 1)
+                xs = torch.cat([starts, c_in], 1)
+            else:
+                xs, c_in = starts, curr_cs
             if self.attn_type == 'none':
                 preds, score, cur_hid = self.decoder(xs, cur_hid, cur_enc, cur_mask)
-                import pdb; pdb.set_trace()  # need true score
                 true_score = F.log_softmax(score, dim=2).gather(
-                    2, ci.unsqueeze(1))
-                scores += true_score.squeeze(1)
+                    2, curr_cs.unsqueeze(2))
+                nonzero = curr_cs.ne(0).float()
+                scores = (true_score.squeeze(2) * nonzero).sum(1)
+                seqlens = nonzero.sum(1)
             else:
                 for i in range(curr_cs.size(1)):
                     xi = xs.select(1, i)
@@ -380,11 +381,8 @@ class Ranker(object):
             scores /= seqlens  # **len_penalty?
             cand_scores.append(scores)
 
-        if not self.training:
-            max_len = max(len(c) for c in cand_scores)
-            cand_scores = [pad(c, max_len) for c in cand_scores]
-
-        cand_scores = torch.cat([c.unsqueeze(0) for c in cand_scores], 0)
+        max_len = max(len(c) for c in cand_scores)
+        cand_scores = torch.cat([pad(c, max_len).unsqueeze(0) for c in cand_scores], 0)
         preds = cand_scores.sort(1, True)[1]
         return preds, cand_scores
 

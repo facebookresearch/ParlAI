@@ -314,8 +314,6 @@ class Seq2seqAgent(Agent):
                 # push to cuda
                 self.xs = self.xs.cuda()
                 self.ys = self.ys.cuda()
-                if self.rank:
-                    self.cands = self.cands.cuda()
                 self.criterion.cuda()
 
             # set up optimizer
