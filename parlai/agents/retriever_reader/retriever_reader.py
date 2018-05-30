@@ -9,6 +9,8 @@ NOTE: this model only works for eval, it assumes all training is already done.
 """
 
 from parlai.core.agents import Agent
+from parlai.core.agents import create_agent
+
 
 class RetrieverReaderAgent(Agent):
 
@@ -31,7 +33,7 @@ class RetrieverReaderAgent(Agent):
         agent.add_argument('--retriever-model-file', type=str, default=None)
         agent.add_argument('--reader-model-file', type=str, default=None)
         return agent
-        
+
     def observe(self, obs):
         self.retriever.observe(obs)
         self.observation = obs

@@ -327,13 +327,13 @@ def create_agent(opt, requireModelExists=False):
     the options file if it exists (the file opt['model_file'] + '.opt' must exist and
     contain a pickled dict containing the model's options).
     """
-    if opt.get(datapath, None) is None:
+    if opt.get('datapath', None) is None:
         # add datapath, it is missing
         from parlai.core.params import ParlaiParser
         parser = ParlaiParser(add_model_args=True)
         opt_parser = parser.parse_args("")
         opt['datapath'] = opt_parser['datapath']
-        
+
     if opt.get('model_file'):
         if requireModelExists and not os.path.isfile(opt['model_file']):
             raise RuntimeError('WARNING: Model file does not exist, check to make '
