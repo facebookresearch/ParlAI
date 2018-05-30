@@ -98,7 +98,7 @@ class DrqaAgent(Agent):
         return SimpleDictionaryAgent
 
     def __init__(self, opt, shared=None):
-        if opt['numthreads'] > 1:
+        if opt.get('numthreads', 1) > 1:
             raise RuntimeError("numthreads > 1 not supported for this model.")
 
         # Load dict.
@@ -117,6 +117,7 @@ class DrqaAgent(Agent):
         self.id = self.__class__.__name__
         self.word_dict = word_dict
         self.opt = copy.deepcopy(opt)
+        config.set_defaults(self.opt)
 
         if self.opt.get('model_file') and os.path.isfile(opt['model_file']):
             self._init_from_saved(opt['model_file'])
@@ -145,13 +146,12 @@ class DrqaAgent(Agent):
         print('[ Loading model %s ]' % fname)
         saved_params = torch.load(fname,
             map_location=lambda storage, loc: storage)
-
         if 'word_dict' in saved_params:
             # for compatibility with old saves
             self.word_dict.copy_dict(saved_params['word_dict'])
-
         self.feature_dict = saved_params['feature_dict']
         self.state_dict = saved_params['state_dict']
+        config.override_args(self.opt, saved_params['config'])
         self.model = DocReaderModel(self.opt, self.word_dict,
                                     self.feature_dict, self.state_dict)
 
