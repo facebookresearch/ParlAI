@@ -5,9 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 # from parlai.core.agents import Agent
-from parlai.agents.torch_agent.torch_agent import TorchAgent
-from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import PaddingUtils
+from parlai.agents.torch.torch import TorchAgent
 from parlai.core.thread_utils import SharedTable
 
 import torch
@@ -63,7 +61,7 @@ class ExampleSeq2seqAgent(TorchAgent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
-        super(ExampleSeq2seqAgent, ExampleSeq2seqAgent).add_cmdline_args(argparser)
+        TorchAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument('-hs', '--hiddensize', type=int, default=128,
                            help='size of the hidden layers')
@@ -75,8 +73,6 @@ class ExampleSeq2seqAgent(TorchAgent):
                            help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
                            help='dropout rate')
-        agent.add_argument('--no-cuda', action='store_true', default=False,
-                           help='disable GPUs even if available')
         agent.add_argument('--gpu', type=int, default=-1,
                            help='which GPU device to use')
         agent.add_argument('-rf', '--report-freq', type=float, default=0.001,
@@ -257,15 +253,15 @@ class ExampleSeq2seqAgent(TorchAgent):
         vec_obs = [self.vectorize(obs)
                    for obs in observations]
 
-        xs, ys, labels, valid_inds, _, _ = self.permute(vec_obs)
+        xs, ys, labels, valid_inds = self.map_valid(vec_obs)
 
         if xs is None:
             return batch_reply
 
         predictions = self.predict(xs, ys, is_training)
 
-        unpermute_pred = self.unpermute(predictions.cpu().data,
-                                        valid_inds, batch_size)
+        unpermute_pred = self.unmap_valid(predictions.cpu().data,
+                                          valid_inds, batch_size)
         # Format the predictions into reply format
         for rep, pred in zip(batch_reply, unpermute_pred):
             if pred is not None:

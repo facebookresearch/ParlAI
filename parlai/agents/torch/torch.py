@@ -12,8 +12,11 @@ try:
 except Exception as e:
     raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
 
-from collections import deque
+from collections import deque, namedtuple
 import random
+
+Batch = namedtuple("Batch", ["text_vecs", "label_vecs", "labels",
+                             "valid_inds"])
 
 
 class TorchAgent(Agent):
@@ -37,14 +40,11 @@ class TorchAgent(Agent):
                            choices=['none', 'model', 'label',
                                     'label_else_model'],
                            help='Keep replies in the history, or not.')
+        agent.add_argument('--no-cuda', action='store_true', default=False,
+                           help='disable GPUs even if available')
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-
-        self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
-        if self.use_cuda:
-            print('[ Using CUDA ]')
-            torch.cuda.device(opt['gpu'])
 
         if not shared:
             # Need to set up the model from scratch
@@ -53,6 +53,11 @@ class TorchAgent(Agent):
             # ... copy initialized data from shared table
             self.opt = shared['opt']
             self.dict = shared['dict']
+
+        self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
+        if self.use_cuda:
+            print('[ Using CUDA ]')
+            torch.cuda.device(opt['gpu'])
 
         self.NULL_IDX = self.dict[self.dict.null_token]
         self.END_IDX = self.dict[self.dict.end_token]
@@ -70,24 +75,27 @@ class TorchAgent(Agent):
 
     def vectorize(self, obs, addEndIdx=True):
         """
-        Converts 'text' and 'label'/'eval_label' field to vectors
+        Converts 'text' and 'label'/'eval_label' field to vectors.
+
+        :param obs: single observation from observe function
+        :param addEndIdx: default True, adds the end token to each label
         """
         if 'text' not in obs:
             return obs
         # convert 'text' field to vector using self.txt2vec and then a tensor
-        obs['text'] = torch.LongTensor(self.dict.txt2vec(obs['text']))
+        obs['text_vec'] = torch.LongTensor(self.dict.txt2vec(obs['text']))
         if self.use_cuda:
             obs['text'] = obs['text'].cuda()
 
         label_type = None
         if 'labels' in obs:
-            label_type = 'labels'
+            label_type = 'labels_vec'
         elif 'eval_labels' in obs:
-            label_type = 'eval_labels'
+            label_type = 'eval_labels_vec'
 
         if label_type is not None:
             new_labels = []
-            for label in obs[label_type]:
+            for label in obs[label_type[:-4]]: # leave off the _vec portion
                 vec_label = self.dict.txt2vec(label)
                 if addEndIdx:
                     vec_label.append(self.END_IDX)
@@ -96,30 +104,39 @@ class TorchAgent(Agent):
                     new_label = new_label.cuda()
                 new_labels.append(new_label)
             obs[label_type] = new_labels
-
         return obs
 
-    def permute(self, obs_batch, sort=True, is_valid=lambda obs: 'text' in obs):
+    def map_valid(self, obs_batch, sort=True, is_valid=lambda obs: 'text_vec' in obs):
         """Creates a batch of valid observations from an unchecked batch.
         Assumes each observation has been vectorized by vectorize function.
+
+        Returns a namedtuple Batch that contains, in order, batched text
+        vectors, batched label vectors, batched labels, indices of valid
+        observations, and lengths of label vectors.
+
+        :param obs_batch: list of vectorized observations
+        :param sort: default True, orders the observations by length of vector
+        :param is_valid: default lambda, determines if an observation is valid
         """
-        try:
-            # valid examples and their indices
-            valid_inds, exs = zip(*[(i, ex) for i, ex in
-                                    enumerate(obs_batch) if is_valid(ex)])
-        except ValueError:
-            # zero examples to process in this batch, so zip failed to unpack
-            return None, None, None, None, None, None
-        x_text = [ex['text'] for ex in exs]
+        if len(obs_batch) == 0:
+            return Batch()
+
+        valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
+
+        if len(valid_obs) == 0:
+            return Batch()
+
+        valid_inds, exs = zip(*valid_obs)
+
+        x_text = [ex['text_vec'] for ex in exs]
         x_lens = [ex.shape[0] for ex in x_text]
 
-        if sorted:
+        if sort:
             ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
 
             exs = [exs[k] for k in ind_sorted]
             valid_inds = [valid_inds[k] for k in ind_sorted]
             x_text = [x_text[k] for k in ind_sorted]
-            end_idxs = [x_lens[k] for k in ind_sorted]
 
         padded_xs = torch.LongTensor(len(exs),
                                      max(x_lens)).fill_(self.NULL_IDX)
@@ -131,32 +148,54 @@ class TorchAgent(Agent):
 
         xs = padded_xs
 
-        eval_labels_avail = any(['eval_labels' in ex for ex in exs])
-        labels_avail = any(['labels' in ex for ex in exs])
+        eval_labels_avail = any(['eval_labels_vec' in ex for ex in exs])
+        labels_avail = any(['labels_vec' in ex for ex in exs])
         some_labels_avail = eval_labels_avail or labels_avail
 
         # set up the target tensors
         ys = None
         labels = None
-        y_lens = None
         if some_labels_avail:
             # randomly select one of the labels to update on (if multiple)
             if labels_avail:
-                labels = [random.choice(ex.get('labels', [''])) for ex in exs]
+                num_choices = [len(ex.get('labels_vec', [])) for ex in exs]
+                choices = [random.choice(range(num)) if num != 0 else -1
+                           for num in num_choices]
+                label_vecs = [ex['labels_vec'][choices[i]]
+                              if choices[i] != -1 else torch.LongTensor([])
+                              for i, ex in enumerate(exs)]
+                labels = [ex['labels'][choices[i]]
+                          if choices[i] != -1 else ''
+                          for i, ex in enumerate(exs)]
             else:
-                labels = [random.choice(ex.get('eval_labels', [''])) for ex in exs]
-            y_lens = [y.shape[0] for y in labels]
+                num_choices = [len(ex.get('eval_labels_vec', [])) for ex in exs]
+                choices = [random.choice(range(num)) if num != 0 else -1
+                           for num in num_choices]
+                label_vecs = [ex['eval_labels_vec'][choices[i]]
+                              if choices[i] != -1 else torch.LongTensor([])
+                              for i, ex in enumerate(exs)]
+                labels = [ex['eval_labels'][choices[i]]
+                          if choices[i] != -1 else ''
+                          for i, ex in enumerate(exs)]
+            y_lens = [y.shape[0] for y in label_vecs]
             padded_ys = torch.LongTensor(len(exs),
                                          max(y_lens)).fill_(self.NULL_IDX)
             if self.use_cuda:
                 padded_ys = padded_ys.cuda()
-            for i, y in enumerate(labels):
-                padded_ys[i, :y.shape[0]] = y
+            for i, y in enumerate(label_vecs):
+                if y.shape[0] != 0:
+                    padded_ys[i, :y.shape[0]] = y
             ys = padded_ys
-        return xs, ys, labels, valid_inds, end_idxs, y_lens
 
-    def unpermute(self, predictions, valid_inds, batch_size):
-        """Re-order permuted predictions to the initial ordering.
+        return Batch(xs, ys, labels, valid_inds)
+
+    def unmap_valid(self, predictions, valid_inds, batch_size):
+        """Re-order permuted predictions to the initial ordering, includes the
+        empty observations.
+
+        :param predictions: output of module's predict function
+        :param valid_inds: original indices of the predictions
+        :param batch_size: overall original size of batch
         """
         unpermuted = [None]*batch_size
         for pred, idx in zip(predictions, valid_inds):
