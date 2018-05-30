@@ -250,12 +250,7 @@ def maintain_dialog_history(history, observation, reply='',
     obs = observation
     if 'text' in obs:
         if useStartEndIndices:
-            if '\n' in obs['text']:
-                split = obs['text'].split('\n')
-                split[-1] = dict.end_token + ' ' + split[-1]
-                obs['text'] = '\n'.join(split)
-            else:
-                obs['text'] = dict.end_token + ' ' + obs['text']
+            obs['text'] = dict.end_token + ' ' + obs['text']
         history['dialog'].extend(parse(obs['text'], splitSentences))
 
     history['episode_done'] = obs['episode_done']
