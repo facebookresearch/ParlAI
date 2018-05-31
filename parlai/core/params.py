@@ -63,6 +63,8 @@ def modelzoo_path(datapath, path):
             download(datapath)
         except ModuleNotFoundError:
             pass
+        except AttributeError:
+            pass
         return os.path.join(datapath, 'models', path[7:])
 
 
