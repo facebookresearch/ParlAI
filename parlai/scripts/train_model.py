@@ -86,6 +86,8 @@ def setup_args(parser=None):
                        help="Tensorboard logging of metrics")
     train.add_argument('-tbtag', '--tensorboard-tag', type=str, default=None,
                        help='Specify all opt keys which you want to be presented in in TB name')
+    train.add_argument('-tbmetric', '--tensorboard-metric', type=str, default=None,
+                       help="Specify metrics which you want to track, it will be extracrted from report dict.")
     parser = setup_dict_args(parser)
     return parser
 
@@ -190,6 +192,10 @@ class TrainLoop():
             if not os.path.exists(tbpath):
                 os.makedirs(tbpath)
             self.writer = SummaryWriter(log_dir='{}/{}'.format(tbpath, tensorboard_tag))
+            if opt['tensorboard_metrics'] is None:
+                self.tbmetrics = ['ppl', 'loss']
+            else:
+                self.tbmetrics = opt['tensorboard_metrics'].split(',')
 
     def validate(self):
         opt = self.opt
@@ -197,8 +203,9 @@ class TrainLoop():
             self.agent, opt, 'valid', opt['validation_max_exs'],
             valid_world=self.valid_world)
         if self.writer:
-            self.writer.add_scalar('valid/ppl', valid_report['ppl'], global_step=math.floor(self.train_time.time()))
-            self.writer.add_scalar('valid/loss', valid_report['loss'], global_step=math.floor(self.train_time.time()))
+            for met in self.tbmetrics:
+                if met in valid_report.keys():
+                    self.writer.add_scalar("valid/{}".format(met), valid_report[met], global_step=int(math.floor(self.train_time.time())))
         if opt.get('model_file') and opt.get('save_after_valid'):
             print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
             self.agent.save(opt['model_file'] + '.checkpoint')
@@ -256,8 +263,9 @@ class TrainLoop():
         self.log_time.reset()
 
         if self.writer:
-            self.writer.add_scalar("training/ppl", train_report['ppl'], global_step=logs[1].split(":")[1])
-            self.writer.add_scalar('training/loss', train_report['loss'], global_step=logs[1].split(":")[1])
+            for met in self.tbmetrics:
+                if met in train_report.keys():
+                    self.writer.add_scalar("training/{}".format(met), train_report[met], global_step=int(logs[1].split(":")[1]))
 
     def train(self):
         opt = self.opt
