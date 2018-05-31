@@ -94,6 +94,11 @@ Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 exam
 python examples/train_model.py -m drqa -t squad -bs 32 -mf /tmp/model_drqa
 ```
 
+Tests an existing attentive LSTM model (DrQA reader) on the SQuAD dataset from our model zoo:
+```bash
+python examples/eval_model.py -t squad -mf "models:drqa/squad/model"
+```
+
 ## Requirements
 
 ParlAI currently requires Python3.
