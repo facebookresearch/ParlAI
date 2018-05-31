@@ -259,10 +259,9 @@ class ExampleSeq2seqAgent(TorchAgent):
 
         predictions = self.predict(xs, ys, is_training)
 
-        unpermute_pred = self.unmap_valid(predictions.cpu().data,
-                                          valid_inds, batch_size)
+        unmap_pred = self.unmap_valid(predictions, valid_inds, batch_size)
         # Format the predictions into reply format
-        for rep, pred in zip(batch_reply, unpermute_pred):
+        for rep, pred in zip(batch_reply, unmap_pred):
             if pred is not None:
                 output_tokens = []
                 # Remove the final END_TOKEN that is appended to predictions

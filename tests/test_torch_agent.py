@@ -12,11 +12,20 @@ import unittest
 
 
 class MockDict(object):
-    null_token = 0
-    start_token = 1
-    end_token = 2
+    null_token = '__NULL__'
+    NULL_IDX = 0
+    start_token = '__START__'
+    START_IDX = 1
+    end_token = '__END__'
+    END_IDX = 2
 
     def __getitem__(self, key):
+        if key == self.null_token:
+            return self.NULL_IDX
+        elif key == self.start_token:
+            return self.START_IDX
+        elif key == self.end_token:
+            return self.END_IDX
         return key
 
     def txt2vec(self, txt):
@@ -40,14 +49,13 @@ class TestTorchAgent(unittest.TestCase):
         observation["labels"] = ["The dog jumps over the cat."]
 
         obs_vec = agent.vectorize(observation)
-
         self.assertTrue('text_vec' in obs_vec,
                         "Field \'text_vec\' missing from vectorized observation")
         self.assertTrue(obs_vec['text_vec'].numpy().tolist() == [1, 3, 5],
                         "Vectorized text is incorrect.")
         self.assertTrue('labels_vec' in obs_vec,
                         "Field \'labels_vec\' missing from vectorized observation")
-        self.assertTrue(obs_vec['labels_vec'][0].numpy().tolist() == [1, 3, 5, dict.end_token],
+        self.assertTrue(obs_vec['labels_vec'][0].numpy().tolist() == [1, 3, 5, dict.END_IDX],
                         "Vectorized label is incorrect.")
 
         observation = {}
@@ -58,7 +66,7 @@ class TestTorchAgent(unittest.TestCase):
 
         self.assertTrue('eval_labels_vec' in obs_vec,
                         "Field \'eval_labels_vec\' missing from vectorized observation")
-        self.assertTrue(obs_vec['eval_labels_vec'][0].numpy().tolist() == [1, 3, 5, dict.end_token],
+        self.assertTrue(obs_vec['eval_labels_vec'][0].numpy().tolist() == [1, 3, 5, dict.END_IDX],
                         "Vectorized label is incorrect.")
 
     def test_map_unmap(self):
@@ -121,10 +129,9 @@ class TestTorchAgent(unittest.TestCase):
                         "Unmapped predictions do not match expected results.")
 
     def test_maintain_dialog_history(self):
-        MAX_DEQUE_LEN = 8
         opt = {}
         opt['no_cuda'] = True
-        opt['history_tokens'] = MAX_DEQUE_LEN
+        opt['history_tokens'] = 5
         opt['history_dialog'] = 10
         opt['history_replies'] = 'label_else_model'
         dict = MockDict()
@@ -141,7 +148,7 @@ class TestTorchAgent(unittest.TestCase):
         self.assertTrue('dialog' in agent.history, "Failed initializing self.history.")
         self.assertTrue('episode_done' in agent.history, "Failed initializing self.history.")
         self.assertTrue('labels' in agent.history, "Failed initializing self.history.")
-        self.assertTrue(list(agent.history['dialog']) == [1, 1, 3, 5, 2],
+        self.assertTrue(list(agent.history['dialog']) == [1, 3, 5],
                         "Failed adding vectorized text to dialog.")
         self.assertTrue(not agent.history['episode_done'],
                         "Failed to properly store episode_done field.")
@@ -149,7 +156,7 @@ class TestTorchAgent(unittest.TestCase):
                         "Failed saving labels.")
 
         observation['text_vec'] = agent.maintain_dialog_history(observation)
-        self.assertTrue(list(agent.history['dialog']) == [3, 5, 2, 1, 1, 3, 5, 2],
+        self.assertTrue(list(agent.history['dialog']) == [3, 5, 1, 3, 5],
                         "Failed adding vectorized text to dialog.")
 
 
