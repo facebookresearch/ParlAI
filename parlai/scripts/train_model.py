@@ -27,10 +27,10 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer
+from parlai.core.logs import TensorboardLogger
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 import math
 import os
-import datetime
 
 def setup_args(parser=None):
     if parser is None:
@@ -180,32 +180,15 @@ class TrainLoop():
         self.valid_world = None
         self.opt = opt
         if opt['tensorboard_log'] is True:
-            try:
-                from tensorboardX import SummaryWriter
-            except ModuleNotFoundError:
-                raise ModuleNotFoundError('Please `pip install emoji tensorboardX` for logs with TB.')
-            if opt['tensorboard_tag'] == None:
-                tensorboard_tag = datetime.datetime.today().strftime('%b%d_%H-%M')
-            else:
-                tensorboard_tag = datetime.datetime.today().strftime('%b%d_%H-%M') + '_' + '_'.join([i + '-' + str(opt[i]) for i in opt['tensorboard_tag'].split(',')])
-            tbpath = os.path.join(opt['datapath'],'tensorboard')
-            if not os.path.exists(tbpath):
-                os.makedirs(tbpath)
-            self.writer = SummaryWriter(log_dir='{}/{}'.format(tbpath, tensorboard_tag))
-            if opt['tensorboard_metrics'] is None:
-                self.tbmetrics = ['ppl', 'loss']
-            else:
-                self.tbmetrics = opt['tensorboard_metrics'].split(',')
+            self.writer = TensorboardLogger(opt)
 
     def validate(self):
         opt = self.opt
         valid_report, self.valid_world = run_eval(
             self.agent, opt, 'valid', opt['validation_max_exs'],
             valid_world=self.valid_world)
-        if self.writer:
-            for met in self.tbmetrics:
-                if met in valid_report.keys():
-                    self.writer.add_scalar("valid/{}".format(met), valid_report[met], global_step=int(math.floor(self.train_time.time())))
+        if opt['tensorboard_log'] is True:
+            self.writer.add_metrics('valid', int(math.floor(self.train_time.time())), valid_report)
         if opt.get('model_file') and opt.get('save_after_valid'):
             print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
             self.agent.save(opt['model_file'] + '.checkpoint')
@@ -262,10 +245,8 @@ class TrainLoop():
         print(log)
         self.log_time.reset()
 
-        if self.writer:
-            for met in self.tbmetrics:
-                if met in train_report.keys():
-                    self.writer.add_scalar("training/{}".format(met), train_report[met], global_step=int(logs[1].split(":")[1]))
+        if opt['tensorboard_log'] is True:
+            self.writer.add_metrics('train', int(logs[1].split(":")[1]), train_report)
 
     def train(self):
         opt = self.opt
