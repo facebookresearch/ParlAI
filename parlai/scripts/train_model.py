@@ -30,6 +30,7 @@ from parlai.core.utils import Timer
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 import math
 import os
+import datetime
 
 def setup_args(parser=None):
     if parser is None:
@@ -81,6 +82,10 @@ def setup_args(parser=None):
     train.add_argument('-lfc', '--load-from-checkpoint',
                        type='bool', default=False,
                        help='load model from checkpoint if available')
+    train.add_argument('-tblog', '--tensorboard-log', type=bool, default=False,
+                       help="Tensorboard logging of metrics")
+    train.add_argument('-tbtag', '--tensorboard-tag', type=str, default=None,
+                       help='Specify all opt keys which you want to be presented in in TB name')
     parser = setup_dict_args(parser)
     return parser
 
@@ -172,12 +177,28 @@ class TrainLoop():
         self.saved = False
         self.valid_world = None
         self.opt = opt
+        if opt['tensorboard_log'] is True:
+            try:
+                from tensorboardX import SummaryWriter
+            except ModuleNotFound:
+                raise ModuleNotFound('Please `pip install emoji tensorboardX` for logs with TB.')
+            if opt['tensorboard_tag'] == None:
+                tensorboard_tag = datetime.datetime.today().strftime('%b%d_%H-%M')
+            else:
+                tensorboard_tag = datetime.datetime.today().strftime('%b%d_%H-%M') + '_' + '_'.join([i + '-' + str(opt[i]) for i in opt['tensorboard_tag'].split(',')])
+            tbpath = os.path.join(opt['datapath'],'tensorboard')
+            if not os.path.exists(tbpath):
+                os.makedirs(tbpath)
+            self.writer = SummaryWriter(log_dir='{}/{}'.format(tbpath, tensorboard_tag))
 
     def validate(self):
         opt = self.opt
         valid_report, self.valid_world = run_eval(
             self.agent, opt, 'valid', opt['validation_max_exs'],
             valid_world=self.valid_world)
+        if self.writer:
+            self.writer.add_scalar('valid/ppl', valid_report['ppl'], global_step=math.floor(self.train_time.time()))
+            self.writer.add_scalar('valid/loss', valid_report['loss'], global_step=math.floor(self.train_time.time()))
         if opt.get('model_file') and opt.get('save_after_valid'):
             print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
             self.agent.save(opt['model_file'] + '.checkpoint')
@@ -233,6 +254,10 @@ class TrainLoop():
         log = '[ {} ] {}'.format(' '.join(logs), train_report)
         print(log)
         self.log_time.reset()
+
+        if self.writer:
+            self.writer.add_scalar("training/ppl", train_report['ppl'], global_step=logs[1].split(":")[1])
+            self.writer.add_scalar('training/loss', train_report['loss'], global_step=logs[1].split(":")[1])
 
     def train(self):
         opt = self.opt
