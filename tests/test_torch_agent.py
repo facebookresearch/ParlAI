@@ -120,6 +120,39 @@ class TestTorchAgent(unittest.TestCase):
         self.assertTrue(agent.unmap_valid(predictions, valid_inds, 6) == expected_unmapped,
                         "Unmapped predictions do not match expected results.")
 
+    def test_maintain_dialog_history(self):
+        MAX_DEQUE_LEN = 8
+        opt = {}
+        opt['no_cuda'] = True
+        opt['history_tokens'] = MAX_DEQUE_LEN
+        opt['history_dialog'] = 10
+        opt['history_replies'] = 'label_else_model'
+        dict = MockDict()
+
+        shared = {'opt': opt, 'dict': dict}
+        agent = TorchAgent(opt, shared)
+
+        observation = {"text": "What is a painting?",
+                       "labels": ["Paint on a canvas."],
+                       "episode_done": False}
+
+        agent.maintain_dialog_history(observation)
+
+        self.assertTrue('dialog' in agent.history, "Failed initializing self.history.")
+        self.assertTrue('episode_done' in agent.history, "Failed initializing self.history.")
+        self.assertTrue('labels' in agent.history, "Failed initializing self.history.")
+        self.assertTrue(list(agent.history['dialog']) == [1, 1, 3, 5, 2],
+                        "Failed adding vectorized text to dialog.")
+        self.assertTrue(not agent.history['episode_done'],
+                        "Failed to properly store episode_done field.")
+        self.assertTrue(agent.history['labels'] == observation['labels'],
+                        "Failed saving labels.")
+
+        observation['text_vec'] = agent.maintain_dialog_history(observation)
+        self.assertTrue(list(agent.history['dialog']) == [3, 5, 2, 1, 1, 3, 5, 2],
+                        "Failed adding vectorized text to dialog.")
+
+
 
 if __name__ == '__main__':
     unittest.main()
