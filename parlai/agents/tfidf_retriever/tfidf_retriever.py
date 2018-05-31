@@ -59,6 +59,8 @@ class TfidfRetrieverAgent(Agent):
             '--retriever-mode', choices=['keys', 'values'], default='values',
             help='Whether to retrieve the stored key or the stored value.'
         )
+        parser.add_argument('--remove-title', type='bool', default=False,
+            help='Whether to remove the title from the retrieved passage')
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -216,13 +218,17 @@ class TfidfRetrieverAgent(Agent):
 
                 # returned
                 picks = [self.doc2txt(int(did)) for did in doc_ids]
+                pick = self.doc2txt(int(doc_ids[0]))  # select best response
+
+                if self.opt.get('remove_title', False):
+                    picks = ['\n'.join(p.split('\n')[1:]) for p in picks]
+                    pick = '\n'.join(pick.split('\n')[1:])
                 reply['text_candidates'] = picks
                 reply['candidate_scores'] = doc_scores
 
                 # could pick single choice based on probability scores?
                 # pick = int(choice(doc_ids, p=doc_probs))
-                pick = int(doc_ids[0])  # select best response
-                reply['text'] = self.doc2txt(pick)
+                reply['text'] = pick
             else:
                 # no cands and nothing found, return generic response
                 reply['text'] = choice([
