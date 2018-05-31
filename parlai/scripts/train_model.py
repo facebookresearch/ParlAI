@@ -182,8 +182,8 @@ class TrainLoop():
         if opt['tensorboard_log'] is True:
             try:
                 from tensorboardX import SummaryWriter
-            except ModuleNotFound:
-                raise ModuleNotFound('Please `pip install emoji tensorboardX` for logs with TB.')
+            except ModuleNotFoundError:
+                raise ModuleNotFoundError('Please `pip install emoji tensorboardX` for logs with TB.')
             if opt['tensorboard_tag'] == None:
                 tensorboard_tag = datetime.datetime.today().strftime('%b%d_%H-%M')
             else:
