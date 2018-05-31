@@ -4,8 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-# from parlai.core.agents import Agent
-from parlai.agents.torch.torch import TorchAgent
+from parlai.core.torch_agent import TorchAgent
 from parlai.core.thread_utils import SharedTable
 
 import torch

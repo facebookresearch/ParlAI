@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.agents.torch.torch import TorchAgent
+from parlai.core.torch_agent import TorchAgent
 
 
 import os
@@ -28,7 +28,8 @@ class TestTorchAgent(unittest.TestCase):
     def test_vectorize(self):
         opt = {}
         opt['no_cuda'] = True
-        opt['history_length'] = 10
+        opt['history_tokens'] = 10000
+        opt['history_dialog'] = 10
         opt['history_replies'] = 'label_else_model'
         dict = MockDict()
 
@@ -71,7 +72,8 @@ class TestTorchAgent(unittest.TestCase):
 
         opt = {}
         opt['no_cuda'] = True
-        opt['history_length'] = 10
+        opt['history_tokens'] = 10000
+        opt['history_dialog'] = 10
         opt['history_replies'] = 'label_else_model'
         dict = MockDict()
 

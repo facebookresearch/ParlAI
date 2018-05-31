@@ -12,6 +12,7 @@ import copy
 import numpy as np
 import os
 
+
 def escape(s):
     """Replace potential special characters with escaped version.
     For example, newline => \\n and tab => \\t
