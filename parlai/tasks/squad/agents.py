@@ -119,7 +119,7 @@ class OpenSquadTeacher(DialogTeacher):
     """This version of SQuAD inherits from the core Dialog Teacher, which just
     requires it to define an iterator over its data `setup_data` in order to
     inherit basic metrics, a default `act` function.
-    Note: This teacher omits the context
+    Note: This teacher omits the context paragraph
     """
 
     def __init__(self, opt, shared=None):
