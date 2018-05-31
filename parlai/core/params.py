@@ -57,11 +57,11 @@ def modelzoo_path(datapath, path):
         # Check if we need to download the model
         animal = path[7:path.rfind('/')].replace('/', '.')
         module_name = "parlai.zoo.%s" % (animal)  
-        my_module = importlib.import_module(module_name)
         try:
+            my_module = importlib.import_module(module_name)
             download = getattr(my_module, 'download')
             download(datapath)
-        except AttributeError:
+        except ModuleNotFoundError:
             pass
         return os.path.join(datapath, 'models', path[7:])
 
