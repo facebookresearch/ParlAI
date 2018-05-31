@@ -211,6 +211,9 @@ class BilinearSeqAttn(nn.Module):
         else:
             # ...Otherwise 0-1 probabilities
             # alpha = F.softmax(xWy)
+
+            # Note: We found better eval performance with unnormalized weights
+            #       here
             alpha = xWy.exp()
         return alpha
 

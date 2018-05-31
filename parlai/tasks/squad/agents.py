@@ -119,7 +119,6 @@ class OpenSquadTeacher(DialogTeacher):
     """This version of SQuAD inherits from the core Dialog Teacher, which just
     requires it to define an iterator over its data `setup_data` in order to
     inherit basic metrics, a default `act` function.
-    For SQuAD, this does not efficiently store the paragraphs in memory.
     Note: This teacher omits the context
     """
 

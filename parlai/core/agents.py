@@ -330,7 +330,8 @@ def create_agent(opt, requireModelExists=False):
     if opt.get('datapath', None) is None:
         # add datapath, it is missing
         from parlai.core.params import ParlaiParser
-        parser = ParlaiParser(add_model_args=True)
+        parser = ParlaiParser(add_parlai_args=False)
+        parser.add_parlai_datapath()
         opt_parser = parser.parse_args("", print_args=False)
         opt['datapath'] = opt_parser['datapath']
 
