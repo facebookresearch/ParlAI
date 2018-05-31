@@ -210,8 +210,8 @@ class BilinearSeqAttn(nn.Module):
             alpha = F.log_softmax(xWy)
         else:
             # ...Otherwise 0-1 probabilities
-            alpha = F.softmax(xWy)
-            # alpha = xWy.exp()
+            # alpha = F.softmax(xWy)
+            alpha = xWy.exp()
         return alpha
 
 
