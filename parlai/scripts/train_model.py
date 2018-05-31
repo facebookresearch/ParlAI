@@ -82,12 +82,7 @@ def setup_args(parser=None):
     train.add_argument('-lfc', '--load-from-checkpoint',
                        type='bool', default=False,
                        help='load model from checkpoint if available')
-    train.add_argument('-tblog', '--tensorboard-log', type=bool, default=False,
-                       help="Tensorboard logging of metrics")
-    train.add_argument('-tbtag', '--tensorboard-tag', type=str, default=None,
-                       help='Specify all opt keys which you want to be presented in in TB name')
-    train.add_argument('-tbmetric', '--tensorboard-metric', type=str, default=None,
-                       help="Specify metrics which you want to track, it will be extracrted from report dict.")
+    TensorboardLogger.add_cmdline_args(parser)
     parser = setup_dict_args(parser)
     return parser
 

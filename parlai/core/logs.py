@@ -5,6 +5,9 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 """
 This file provides interface to log any metrics in tensorboard, could be extended to any other tool like visdom
+Tensorboard:
+    If you use tensorboard logging, all event folders will be stored in PARLAI_DATA/tensorboard folder. In order to
+    open it with TB, launch tensorboard as : tensorboard --logdir <PARLAI_DATA/tensorboard> --port 8888.
 """
 import datetime
 from parlai.core.params import ParlaiParser
@@ -19,13 +22,17 @@ class Shared(object):
 
 
 class TensorboardLogger(Shared):
+    @staticmethod
+    def add_cmdline_args(argparser):
+        logger = argparser.add_argument_group('Tensorboard Arguments')
+        logger.add_argument('-tblog', '--tensorboard-log', type=bool, default=False,
+                           help="Tensorboard logging of metrics")
+        logger.add_argument('-tbtag', '--tensorboard-tag', type=str, default=None,
+                           help='Specify all opt keys which you want to be presented in in TB name')
+        logger.add_argument('-tbmetric', '--tensorboard-metric', type=str, default=None,
+                           help="Specify metrics which you want to track, it will be extracrted from report dict.")
     def __init__(self, opt):
         Shared.__init__(self)
-
-        if isinstance(opt, ParlaiParser):
-            print('[ Deprecated Warning: TrainLoop should be passed opt not Parser ]')
-            opt = opt.parse_args()
-        assert opt['tensorboard_log'] is True, 'TensorboardLogger class requires tensorboard_log to be True'
         try:
             from tensorboardX import SummaryWriter
         except ModuleNotFoundError:
@@ -47,7 +54,7 @@ class TensorboardLogger(Shared):
 
     def add_metrics(self, setting, step, report):
         """
-        setting - ['train', 'valid']
+        setting - whatever setting is used, train valid or test, it will be just the title of the graph
         step - num of parleys (x axis in graph), in train - parleys, in valid - wall time
         report - from TrainingLoop
         this method adds all metrics from tensorboard_metrics opt key
