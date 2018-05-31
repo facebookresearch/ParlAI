@@ -60,12 +60,10 @@ python train_model.py -m drqa -t squad -bs 32 -mf /tmp/model_drqa
 
 Evaluates on an already trained SQuAD model:
 ```bash
-wget https://s3.amazonaws.com/fair-data/parlai/_models/drqa/squad.mdl
-python eval_model.py -m drqa -t squad -mf squad.mdl -dt valid
+python examples/eval_model.py -t squad -mf "models:drqa/squad/model"
 ```
 
 Interactive session on an already trained SQuAD model:
 ```bash
-wget https://s3.amazonaws.com/fair-data/parlai/_models/drqa/squad.mdl
-python interactive.py -m drqa -mf squad.mdl
+python examples/interactive.py -mf "models:drqa/squad/model"
 ```
