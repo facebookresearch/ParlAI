@@ -183,7 +183,15 @@ class TrainLoop():
             self.agent.save(opt['model_file'] + '.checkpoint')
         if hasattr(self.agent, 'receive_metrics'):
             self.agent.receive_metrics(valid_report)
-        new_valid = valid_report[opt['validation_metric']]
+        if '/' in opt['validation_metric']:
+            # if you are multitasking and want your validation metric to be
+            # a metric specific to a subtask, specify your validation metric
+            # as -vmt subtask/metric
+            subtask = opt['validation_metric'].split('/')[0]
+            validation_metric = opt['validation_metric'].split('/')[1]
+            new_valid = valid_report['tasks'][subtask][validation_metric]
+        else:
+            new_valid = valid_report[opt['validation_metric']]
         if self.best_valid is None or self.valid_optim * new_valid > self.valid_optim * self.best_valid:
             print('[ new best {}: {}{} ]'.format(
                 opt['validation_metric'], new_valid,
