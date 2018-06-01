@@ -29,9 +29,11 @@ import random
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
+from parlai.core.build_data import modelzoo_path
 from . import config
 from .utils import build_feature_dict, vectorize, batchify, normalize_text
 from .model import DocReaderModel
+
 
 # ------------------------------------------------------------------------------
 # Dictionary.
@@ -57,6 +59,8 @@ class SimpleDictionaryAgent(DictionaryAgent):
                 and not self.opt.get('trained', False)):
             print('[ Indexing words with embeddings... ]')
             self.embedding_words = set()
+            self.opt['embedding_file'] = modelzoo_path(
+                self.opt.get('datapath'), self.opt['embedding_file'])
             with open(self.opt['embedding_file']) as f:
                 for line in f:
                     w = normalize_text(line.rstrip().split(' ')[0])

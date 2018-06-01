@@ -567,6 +567,7 @@ def display_messages(msgs, prettify=False):
     lines = []
     episode_done = False
     for index, msg in enumerate(msgs):
+        import pdb; pdb.set_trace()
         if msg is None:
             continue
         if msg.get('episode_done'):
@@ -656,7 +657,6 @@ def display_messages(msgs, prettify=False):
                             '|'.join(display_cands),
                             '| ...and {} more'.format(cand_len - 5)
                             )))
-
     if episode_done:
         lines.append('- - - - - - - - - - - - - - - - - - - - -')
     return '\n'.join(lines)

@@ -8,6 +8,7 @@ Utilities for downloading and building data.
 These can be replaced if your particular file system does not support them.
 """
 
+import importlib
 import time
 import datetime
 import os
@@ -190,7 +191,7 @@ def download_models(opt, fnames, model_folder, version='v1.0', path='aws', use_m
         dpath = os.path.join(opt['datapath'], 'models', model_folder, model_type)
     else:
         dpath = os.path.join(opt['datapath'], 'models', model_folder)
-
+    
     if not built(dpath, version):
         for fname in fnames:
             print('[building data: ' + dpath + '/' + fname + ']')
@@ -209,7 +210,30 @@ def download_models(opt, fnames, model_folder, version='v1.0', path='aws', use_m
             else:
                 url = path + '/' + fname
             download(url, dpath, fname)
-            if '.tgz' in fname or '.gz' in fname:
+            if '.tgz' in fname or '.gz' in fname or '.zip' in fname:
                 untar(dpath, fname)
         # Mark the data as built.
         mark_done(dpath, version)
+
+def modelzoo_path(datapath, path):
+    """If path starts with 'models', then we remap it to the model zoo path
+    within the data directory (default is ParlAI/data/models).
+    We download models from the model zoo if they are not here yet.
+    ."""
+    if path is None:
+        return None
+    if not path.startswith('models:'):
+        return path
+    else:
+        # Check if we need to download the model
+        animal = path[7:path.rfind('/')].replace('/', '.')
+        if '.' not in animal:
+            animal += '.build'
+        module_name = f"parlai.zoo.{animal}"
+        try:
+            my_module = importlib.import_module(module_name)
+            download = getattr(my_module, 'download')
+            download(datapath)
+        except (ModuleNotFoundError, AttributeError):
+            pass
+        return os.path.join(datapath, 'models', path[7:])
