@@ -37,6 +37,7 @@ This module also provides a utility method:
 
 """
 
+from parlai.core.build_data import modelzoo_path
 from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
@@ -337,11 +338,12 @@ def create_agent(opt, requireModelExists=False):
         # add datapath, it is missing
         from parlai.core.params import ParlaiParser
         parser = ParlaiParser(add_parlai_args=False)
-        parser.add_parlai_datapath()
+        parser.add_parlai_data_path()
         opt_parser = parser.parse_args("", print_args=False)
         opt['datapath'] = opt_parser['datapath']
 
     if opt.get('model_file'):
+        opt['model_file'] = modelzoo_path(opt.get('datapath'), opt['model_file'])
         if requireModelExists and not os.path.isfile(opt['model_file']):
             raise RuntimeError('WARNING: Model file does not exist, check to make '
                                'sure it is correct: {}'.format(opt['model_file']))
