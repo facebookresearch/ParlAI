@@ -11,7 +11,7 @@ E.g.:
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
-from parlai.core.utils import message_to_string
+from parlai.core.utils import msg_to_str
 
 import random
 
@@ -25,7 +25,7 @@ def dump_data(opt):
     fw = open(opt['outfile'], 'w')
     for _ in range(opt['num_examples']):
         world.parley()
-        txt = message_to_string(world.acts[0], ignore_fields=ignorefields)
+        txt = msg_to_str(world.acts[0], ignore_fields=ignorefields)
         fw.write(txt + "\n")
         if world.acts[0].get('episode_done', False):
             fw.write("\n")

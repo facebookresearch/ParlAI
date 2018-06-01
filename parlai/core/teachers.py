@@ -29,7 +29,7 @@ dialog data and utilized by ``DialogTeacher``
 """
 from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
-from .utils import AttrDict, flatten, sort_data, make_batches, no_lock
+from .utils import AttrDict, flatten, sort_data, make_batches, no_lock, str_to_msg
 
 import concurrent.futures
 import multiprocessing
@@ -286,7 +286,7 @@ class FixedDialogTeacher(Teacher):
             return {'episode_done': True}, True
 
         ex = self.get(self.episode_idx, self.entry_idx)
-        self.episode_done = ex['episode_done']
+        self.episode_done = ex.get('episode_done', False)
 
         if (not self.random and self.episode_done
                 and self.episode_idx + 1 >= self.num_episodes()):

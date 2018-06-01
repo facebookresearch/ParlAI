@@ -660,22 +660,56 @@ def display_messages(msgs, prettify=False):
         lines.append('- - - - - - - - - - - - - - - - - - - - -')
     return '\n'.join(lines)
 
-def message_to_string(msg, ignore_fields=[]):
+
+def str_to_msg(txt, ignore_fields=[]):
+    def tostr(txt):
+        txt = str(txt)
+        txt = txt.replace('\\t', '\t')
+        txt = txt.replace('\\n', '\n')
+        txt = txt.replace('\PIPE', '|')
+        return txt
+    
+    def tolist(txt):
+        vals = txt.split('|')
+        for v in vals:
+            v = tostr(v)
+        return vals
+            
+    def convert(key, value):
+        if key == 'text' or key == 'id':
+            return tostr(value)
+        elif key == 'label_candidates' or key == 'labels' or key == 'text_candidates':
+            return tolist(value)
+        elif key == 'episode_done':
+            return bool(value)
+        else:
+            return tostr(value)
+
+    if txt == '' or txt == None:
+        return None
+    msg = {}
+    for t in txt.split('\t'):
+        ind = t.find(':')
+        key = t[:ind]
+        value = t[ind+1:]
+        if key not in ignore_fields:
+            msg[key] = convert(key, value)
+    return msg
+
+def msg_to_str(msg, ignore_fields=[]):
     def filter(txt):
         txt = str(txt)
         txt = txt.replace('\t', '\\t')
         txt = txt.replace('\n', '\\n')
         txt = txt.replace('|', '\PIPE')
         return txt
-        
+    
     def add_field(name, data):
         if name == 'reward' and data == 0:
             return ''
         if name == 'episode_done' and data == False:
             return ''
         txt = ''
-        #print(name)
-        #import pdb; pdb.set_trace()
         if type(data) == tuple or type(data) == set or type(data) == list:
             # list entries
             for c in data:
@@ -694,5 +728,4 @@ def message_to_string(msg, ignore_fields=[]):
     for f in msg.keys():
         if f not in default_fields and f not in ignore_fields:
             txt += add_field(f, msg[f])
-            
     return txt.rstrip('\t')
