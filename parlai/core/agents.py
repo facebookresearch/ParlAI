@@ -299,16 +299,22 @@ def load_agent_module(opt):
         return None
 
 def get_agent_module(dir_name):
+    repo = 'parlai'
+    if dir_name.startswith('internal:'):
+        # To switch to local repo, useful for non-public projects
+        # (make a directory called 'parlai_internal' with your private agents)
+        repo = 'parlai_internal'
+        dir_name = dir_name[9:]
     if ':' in dir_name:
         s = dir_name.split(':')
         module_name = s[0]
         class_name = s[1]
     elif '/' in dir_name:
         sp = dir_name.split('/')
-        module_name = "parlai.agents.%s.%s" % (sp[0], sp[1])
+        module_name = "%s.agents.%s.%s" % (repo, sp[0], sp[1])
         class_name = name_to_agent_class(sp[1])
     else:
-        module_name = "parlai.agents.%s.%s" % (dir_name, dir_name)
+        module_name = "%s.agents.%s.%s" % (repo, dir_name, dir_name)
         class_name = name_to_agent_class(dir_name)
     my_module = importlib.import_module(module_name)
     model_class = getattr(my_module, class_name)
@@ -374,14 +380,21 @@ def create_agents_from_shared(shared):
 
 def get_task_module(taskname):
     # get the module of the task agent
-    sp = taskname.strip().split(':')
+    sp = taskname.strip()
+    repo = 'parlai'
+    if sp.startswith('internal:'):
+        # To switch to local repo, useful for non-public projects
+        # (make a directory called 'parlai_internal' with your private agents)
+        repo = 'parlai_internal'
+        sp = sp[9:]
+    sp = sp.split(':')
     if '.' in sp[0]:
         module_name = sp[0]
     elif sp[0] == 'pytorch_teacher':
         module_name = 'parlai.core.pytorch_data_teacher'
     else:
         task = sp[0].lower()
-        module_name = "parlai.tasks.%s.agents" % (task)
+        module_name = "%s.tasks.%s.agents" % (repo, task)
     if len(sp) > 1:
         sp[1] = sp[1][0].upper() + sp[1][1:]
         teacher = sp[1]
@@ -434,7 +447,14 @@ def _create_task_agents(opt):
     (This saves the task creator bothering to define the
     create_agents function when it is not needed.)
     """
-    sp = opt['task'].strip().split(':')
+    sp = opt['task'].strip()
+    repo = 'parlai'
+    if sp.startswith('internal:'):
+        # To switch to local repo, useful for non-public projects
+        # (make a directory called 'parlai_internal' with your private agents)
+        repo = 'parlai_internal'
+        sp = sp[9:]
+    sp = sp.split(':')
     if '.' in sp[0]:
         # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
         # (i.e. specifying your own path directly)
@@ -443,7 +463,7 @@ def _create_task_agents(opt):
         module_name = 'parlai.core.pytorch_data_teacher'
     else:
         task = sp[0].lower()
-        module_name = "parlai.tasks.%s.agents" % (task)
+        module_name = "%s.tasks.%s.agents" % (repo, task)
     my_module = importlib.import_module(module_name)
     try:
         # Tries to call the create_agent function in agents.py
