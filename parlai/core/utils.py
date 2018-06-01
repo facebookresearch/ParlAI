@@ -10,122 +10,6 @@ import os
 import random
 import time
 
-                ex['episode_done'] = True
-                if include_labels:
-                    # add labels to context
-                    labels = ex.get('labels', ex.get('eval_labels'))
-                    if labels is not None:
-                        context.append(random.choice(labels))
-                data.append(ex)
-            # reset flags and content
-            episode_done = False
-            current.clear()
-            context.clear()
-        return data
-    except MemoryError as ex:
-        raise MemoryError('Ran out of memory building flattened data batches. '
-                          'Try using --context-length set to a small value to '
-                          'limit the length of each flattened example, '
-                          'disabling batch sorting / flattening by setting '
-                          '--batch-sort false, or switching to data streaming '
-                          'using --datatype {type}:stream to read from disk '
-                          'if it is supported for your dataset.')
-
-
-def sort_data(data, key='text_label', method='spaces'):
-    """Given a list of data, sort it according to the method and key.
-
-    Currently the only supported method is counting the number of spaces.
-    This appeared to be reliable enough and much faster than tokenizing.
-    It performs much better than just using the length of the string.
-
-    Currently the only supported key is sorting by first the text, then the
-    label.
-    See https://arxiv.org/abs/1706.05765 for an evaluation of alternative
-    approaches for machine translation.
-    Sorting by the source (text) gives a good improvement in speed over random
-    batching and is robust to different types of optimization.
-    Breaking ties by sorting by label length gives a further improvement in
-    speed but can reduce robustness with some optimization schemes.
-    """
-    # TODO: support different keys and different methods
-    tpls = []
-    for ex in data:
-        # first sort by input length
-        fst = ex.get('text', '').count(' ')
-
-        # then sort by target length (don't sort by eval_labels, no need)
-        snd = 0
-        labels = ex.get('labels', None)
-        if labels is not None:
-            # use average label length (probably just one answer usually)
-            snd = sum(l.count(' ') for l in labels) / len(labels)
-
-        tiebreaker = random.random()
-        tpls.append((fst, snd, tiebreaker, ex))
-    tpls.sort()
-    return [e[-1] for e in tpls]
-
-
-def make_batches(data, bsz):
-    """Return a list of lists of size bsz given a list of examples."""
-    return [data[i:i + bsz] for i in range(0, len(data), bsz)]
-
-
-def maintain_dialog_history(history, observation, reply='',
-                            historyLength=1, useReplies='label_else_model',
-                            dict=None, useStartEndIndices=True,
-                            splitSentences=False):
-    """Keeps track of dialog history, up to a truncation length.
-    Either includes replies from the labels, model, or not all using param 'replies'."""
-
-    def parse(txt, splitSentences):
-        if dict is not None:
-            if splitSentences:
-                vec = [dict.txt2vec(t) for t in txt.split('\n')]
-            else:
-                vec = dict.txt2vec(txt)
-            return vec
-        else:
-            return [txt]
-
-    if 'dialog' not in history:
-        history['dialog'] = deque(maxlen=historyLength)
-        history['episode_done'] = False
-        history['labels'] = []
-
-    if history['episode_done']:
-        history['dialog'].clear()
-        history['labels'] = []
-        useReplies = 'none'
-        history['episode_done'] = False
-
-    if useReplies != 'none':
-        if useReplies == 'model' or (useReplies == 'label_else_model' and
-                                     len(history['labels']) == 0):
-            if reply != '':
-                history['dialog'].extend(parse(reply, splitSentences))
-        elif len(history['labels']) > 0:
-            r = history['labels'][0]
-            history['dialog'].extend(parse(r, splitSentences))
-
-    obs = observation
-    if 'text' in obs:
-        if useStartEndIndices:
-            obs['text'] = dict.end_token + ' ' + obs['text']
-        history['dialog'].extend(parse(obs['text'], splitSentences))
-
-    history['episode_done'] = obs['episode_done']
-
-    labels = obs.get('labels', obs.get('eval_labels', None))
-    if labels is not None:
-        if useStartEndIndices:
-            history['labels'] = [dict.start_token + ' ' + l for l in labels]
-        else:
-            history['labels'] = labels
-
-    return history['dialog']
-
 
 class Predictor(object):
     """Provides functionality for setting up a running version of a model and
@@ -264,6 +148,121 @@ def flatten(teacher, context_length=-1, include_labels=True):
                 context.append(ex.get('text', ''))
                 if len(context) > 1:
                     ex['text'] = '\n'.join(context)
+                ex['episode_done'] = True
+                if include_labels:
+                    # add labels to context
+                    labels = ex.get('labels', ex.get('eval_labels'))
+                    if labels is not None:
+                        context.append(random.choice(labels))
+                data.append(ex)
+            # reset flags and content
+            episode_done = False
+            current.clear()
+            context.clear()
+        return data
+    except MemoryError as ex:
+        raise MemoryError('Ran out of memory building flattened data batches. '
+                          'Try using --context-length set to a small value to '
+                          'limit the length of each flattened example, '
+                          'disabling batch sorting / flattening by setting '
+                          '--batch-sort false, or switching to data streaming '
+                          'using --datatype {type}:stream to read from disk '
+                          'if it is supported for your dataset.')
+
+
+def sort_data(data, key='text_label', method='spaces'):
+    """Given a list of data, sort it according to the method and key.
+
+    Currently the only supported method is counting the number of spaces.
+    This appeared to be reliable enough and much faster than tokenizing.
+    It performs much better than just using the length of the string.
+
+    Currently the only supported key is sorting by first the text, then the
+    label.
+    See https://arxiv.org/abs/1706.05765 for an evaluation of alternative
+    approaches for machine translation.
+    Sorting by the source (text) gives a good improvement in speed over random
+    batching and is robust to different types of optimization.
+    Breaking ties by sorting by label length gives a further improvement in
+    speed but can reduce robustness with some optimization schemes.
+    """
+    # TODO: support different keys and different methods
+    tpls = []
+    for ex in data:
+        # first sort by input length
+        fst = ex.get('text', '').count(' ')
+
+        # then sort by target length (don't sort by eval_labels, no need)
+        snd = 0
+        labels = ex.get('labels', None)
+        if labels is not None:
+            # use average label length (probably just one answer usually)
+            snd = sum(l.count(' ') for l in labels) / len(labels)
+
+        tiebreaker = random.random()
+        tpls.append((fst, snd, tiebreaker, ex))
+    tpls.sort()
+    return [e[-1] for e in tpls]
+
+
+def make_batches(data, bsz):
+    """Return a list of lists of size bsz given a list of examples."""
+    return [data[i:i + bsz] for i in range(0, len(data), bsz)]
+
+
+def maintain_dialog_history(history, observation, reply='',
+                            historyLength=1, useReplies='label_else_model',
+                            dict=None, useStartEndIndices=True,
+                            splitSentences=False):
+    """Keeps track of dialog history, up to a truncation length.
+    Either includes replies from the labels, model, or not all using param 'replies'."""
+
+    def parse(txt, splitSentences):
+        if dict is not None:
+            if splitSentences:
+                vec = [dict.txt2vec(t) for t in txt.split('\n')]
+            else:
+                vec = dict.txt2vec(txt)
+            return vec
+        else:
+            return [txt]
+
+    if 'dialog' not in history:
+        history['dialog'] = deque(maxlen=historyLength)
+        history['episode_done'] = False
+        history['labels'] = []
+
+    if history['episode_done']:
+        history['dialog'].clear()
+        history['labels'] = []
+        useReplies = 'none'
+        history['episode_done'] = False
+
+    if useReplies != 'none':
+        if useReplies == 'model' or (useReplies == 'label_else_model' and
+                                     len(history['labels']) == 0):
+            if reply != '':
+                history['dialog'].extend(parse(reply, splitSentences))
+        elif len(history['labels']) > 0:
+            r = history['labels'][0]
+            history['dialog'].extend(parse(r, splitSentences))
+
+    obs = observation
+    if 'text' in obs:
+        if useStartEndIndices:
+            obs['text'] = dict.end_token + ' ' + obs['text']
+        history['dialog'].extend(parse(obs['text'], splitSentences))
+
+    history['episode_done'] = obs['episode_done']
+
+    labels = obs.get('labels', obs.get('eval_labels', None))
+    if labels is not None:
+        if useStartEndIndices:
+            history['labels'] = [dict.start_token + ' ' + l for l in labels]
+        else:
+            history['labels'] = labels
+
+    return history['dialog']
 
 
 class NoLock(object):
@@ -661,14 +660,33 @@ def display_messages(msgs, prettify=False):
         lines.append('- - - - - - - - - - - - - - - - - - - - -')
     return '\n'.join(lines)
 
-def message_to_string(msg, ignore_fields):
+def message_to_string(msg, ignore_fields=[]):
+    def filter(txt):
+        txt = str(txt)
+        txt = txt.replace('\t', '\\t')
+        txt = txt.replace('\n', '\\n')
+        txt = txt.replace('|', '\PIPE')
+        return txt
+        
     def add_field(name, data):
-        txt = str(data)
-        txt.replace('\t', '\\t')
-        txt.replace('\n', '\\n')
+        if name == 'reward' and data == 0:
+            return ''
+        if name == 'episode_done' and data == False:
+            return ''
+        txt = ''
+        #print(name)
+        #import pdb; pdb.set_trace()
+        if type(data) == tuple or type(data) == set or type(data) == list:
+            # list entries
+            for c in data:
+                txt += filter(c) + "|"
+            txt = txt[:-1]
+        else:
+            # single fields
+            txt = filter(data)
         return name + ":" + txt + '\t'
-    
-    default_fields = {'id', 'text', 'labels', 'label_candidates', 'episode_done', 'reward'}
+
+    default_fields = ['id', 'text', 'labels', 'label_candidates', 'episode_done', 'reward']
     txt = ""
     for f in default_fields:
         if f in msg and f not in ignore_fields:
@@ -677,4 +695,4 @@ def message_to_string(msg, ignore_fields):
         if f not in default_fields and f not in ignore_fields:
             txt += add_field(f, msg[f])
             
-    return txt
+    return txt.rstrip('\t')

@@ -25,10 +25,11 @@ def display_data(opt):
     # Show some example dialogs.
     for _ in range(opt['num_examples']):
         world.parley()
-        print(world.display() + '\n~~')
-        import pdb; pdb.set_trace()
+
         # NOTE: If you want to look at the data from here rather than calling
         # world.display() you could access world.acts[0] directly
+        print(world.display() + '\n~~')
+
         if world.epoch_done():
             print('EPOCH DONE')
             break
