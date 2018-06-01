@@ -26,6 +26,9 @@ def display_data(opt):
     for _ in range(opt['num_examples']):
         world.parley()
         print(world.display() + '\n~~')
+        import pdb; pdb.set_trace()
+        # NOTE: If you want to look at the data from here rather than calling
+        # world.display() you could access world.acts[0] directly
         if world.epoch_done():
             print('EPOCH DONE')
             break
@@ -49,6 +52,10 @@ def main():
     opt = parser.parse_args()
 
     display_data(opt)
-
+    
 if __name__ == '__main__':
     main()
+    if isinstance(opt, ParlaiParser):
+        print('[ Deprecated Warning: convert_data should be passed opt not Parser ]')
+        opt = opt.parse_args()
+
