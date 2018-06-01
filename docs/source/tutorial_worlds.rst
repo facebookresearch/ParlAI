@@ -263,18 +263,18 @@ Multiprocessed Pytorch Dataloader
 For large datasets, where it is best to stream from disk during training
 rather than load initially into memory, we provide a teacher that utilizes pytorch data loading.
 
-(Note: the module `here <https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/pytorch_data_teacher.py>`_
+(Note: the module `here <https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/pytorch_data_teacher.py>`__
 contains all of the code discussed in this tutorial)
 
 Pytorch Dataloading Intro
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 A Pytorch ``DataLoader`` is a dataloading mechanism that provides multiprocessed
-loading of data from disk (as described `here <http://pytorch.org/tutorials/beginner/data_loading_tutorial.html>`_).
+loading of data from disk (as described `here <http://pytorch.org/tutorials/beginner/data_loading_tutorial.html>`__).
 A ``DataLoader`` can be initialized with a variety of different options; the only
 ones that concern us are ``dataset`` and ``collate_fn``.
 
 The ``dataset`` is a
-Pytorch ``Dataset`` (as described `here <http://pytorch.org/tutorials/beginner/data_loading_tutorial.html>`_),
+Pytorch ``Dataset`` (as described `here <http://pytorch.org/tutorials/beginner/data_loading_tutorial.html>`__),
 which is a class that implements two functions: ``__getitem__(self, idx)`` and ``__len__(self)``.
 As is readily apparent, the ``__getitem__`` method is given an ``idx`` and returns the
 data item at that ``idx``, while the ``__len__`` method returns the length of the underlying dataset.

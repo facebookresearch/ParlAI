@@ -27,6 +27,7 @@ ParlAI is a one-stop-shop for dialog research.
    tutorial_seq2seq
    tutorial_mturk
    tutorial_messenger
+   tutorial_tensorboard
 
 .. toctree::
    :maxdepth: 1
