@@ -335,7 +335,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def add_extra_args(self, args=None):
         """Add more args depending on how known args are set."""
-        parsed = vars(self.parse_known_args(nohelp=True)[0])
+        parsed = vars(self.parse_known_args(args, nohelp=True)[0])
 
         # find which image mode specified if any, and add additional arguments
         image_mode = parsed.get('image_mode', None)
