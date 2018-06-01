@@ -245,7 +245,7 @@ class DrqaAgent(Agent):
             self.opt['trained'] = True
             self.model.save(fname)
             # save opt file
-            with open(path + ".opt", 'wb') as handle:
+            with open(fname + ".opt", 'wb') as handle:
                 pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
                 
     # --------------------------------------------------------------------------
