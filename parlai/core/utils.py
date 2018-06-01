@@ -567,7 +567,6 @@ def display_messages(msgs, prettify=False):
     lines = []
     episode_done = False
     for index, msg in enumerate(msgs):
-        import pdb; pdb.set_trace()
         if msg is None:
             continue
         if msg.get('episode_done'):
