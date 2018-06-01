@@ -185,6 +185,8 @@ The code is set up into several main directories:
 - **examples**: contains a few basic examples of different loops (building dictionary, train/eval, displaying data)
 - **tasks**: contains code for the different tasks available from within ParlAI
 - **mturk**: contains code for setting up Mechanical Turk, as well as sample MTurk tasks
+- **messenger**: contains code for interfacing with Facebook Messenger
+- **zoo**: contains code to directly download and use pretrained models from our model zoo
 
 Each directory is described in more detail below, ordered by dependencies.
 
@@ -247,7 +249,6 @@ See the [directory](https://github.com/facebookresearch/ParlAI/tree/master/parla
 - display_model.py: _shows the predictions of a provided model on a particular task provided on the command-line_
 - eval_model.py: _uses the named agent to compute evaluation metrics data for a particular task provided on the command-line_
 - build_dict.py: _build a dictionary from a particular task provided on the command-line using core.dict.DictionaryAgent_
-- drqa: _shows how to train the attentive LSTM DrQA model of [Chen et al.](https://arxiv.org/abs/1704.00051) on SQuAD._
 
 ### Tasks
 
