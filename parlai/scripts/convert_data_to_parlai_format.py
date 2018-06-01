@@ -25,6 +25,8 @@ def dump_data(opt):
     fw = open(opt['outfile'], 'w')
     for _ in range(opt['num_examples']):
         world.parley()
+        world.acts[0]['labels'] = world.acts[0].get(
+            'labels', world.acts[0].pop('eval_labels', None))
         txt = msg_to_str(world.acts[0], ignore_fields=ignorefields)
         fw.write(txt + "\n")
         if world.acts[0].get('episode_done', False):

@@ -678,7 +678,8 @@ def str_to_msg(txt, ignore_fields=[]):
     def convert(key, value):
         if key == 'text' or key == 'id':
             return tostr(value)
-        elif key == 'label_candidates' or key == 'labels' or key == 'text_candidates':
+        elif (key == 'label_candidates' or key == 'labels' or
+              key == 'eval_labels' or key == 'text_candidates'):
             return tolist(value)
         elif key == 'episode_done':
             return bool(value)
