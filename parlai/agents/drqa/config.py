@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 import os
-
+from parlai.core.build_data import modelzoo_path
 
 def add_cmdline_args(parser):
     # Runtime environment
@@ -78,6 +78,8 @@ def add_cmdline_args(parser):
 
 def set_defaults(opt):
     # Embeddings options
+    opt['embedding_file'] = modelzoo_path(
+        opt.get('datapath'), opt['embedding_file'])
     if opt.get('embedding_file'):
         if not os.path.isfile(opt['embedding_file']):
             raise IOError('No such file: %s' % opt['embedding_file'])

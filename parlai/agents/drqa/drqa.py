@@ -25,13 +25,16 @@ import bisect
 import os
 import numpy as np
 import copy
+import pickle
 import random
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
+from parlai.core.build_data import modelzoo_path
 from . import config
 from .utils import build_feature_dict, vectorize, batchify, normalize_text
 from .model import DocReaderModel
+
 
 # ------------------------------------------------------------------------------
 # Dictionary.
@@ -57,6 +60,8 @@ class SimpleDictionaryAgent(DictionaryAgent):
                 and not self.opt.get('trained', False)):
             print('[ Indexing words with embeddings... ]')
             self.embedding_words = set()
+            self.opt['embedding_file'] = modelzoo_path(
+                self.opt.get('datapath'), self.opt['embedding_file'])
             with open(self.opt['embedding_file']) as f:
                 for line in f:
                     w = normalize_text(line.rstrip().split(' ')[0])
@@ -238,8 +243,12 @@ class DrqaAgent(Agent):
         fname = self.opt.get('model_file', None) if fname is None else fname
         if fname:
             print("[ saving model: " + fname + " ]")
+            self.opt['trained'] = True
             self.model.save(fname)
-
+            # save opt file
+            with open(fname + ".opt", 'wb') as handle:
+                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                
     # --------------------------------------------------------------------------
     # Helper functions.
     # --------------------------------------------------------------------------

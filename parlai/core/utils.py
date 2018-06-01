@@ -656,7 +656,6 @@ def display_messages(msgs, prettify=False):
                             '|'.join(display_cands),
                             '| ...and {} more'.format(cand_len - 5)
                             )))
-
     if episode_done:
         lines.append('- - - - - - - - - - - - - - - - - - - - -')
     return '\n'.join(lines)
