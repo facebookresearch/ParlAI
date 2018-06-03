@@ -229,7 +229,7 @@ def modelzoo_path(datapath, path):
         animal = path[7:path.rfind('/')].replace('/', '.')
         if '.' not in animal:
             animal += '.build'
-        module_name = f"parlai.zoo.{animal}"
+        module_name = "parlai.zoo.{}".format(animal)
         try:
             my_module = importlib.import_module(module_name)
             download = getattr(my_module, 'download')
