@@ -29,7 +29,7 @@ class TensorboardLogger(Shared):
                            help="Tensorboard logging of metrics")
         logger.add_argument('-tbtag', '--tensorboard-tag', type=str, default=None,
                            help='Specify all opt keys which you want to be presented in in TB name')
-        logger.add_argument('-tbmetric', '--tensorboard-metric', type=str, default=None,
+        logger.add_argument('-tbmetrics', '--tensorboard-metrics', type=str, default=None,
                            help="Specify metrics which you want to track, it will be extracrted from report dict.")
     def __init__(self, opt):
         Shared.__init__(self)
@@ -47,7 +47,7 @@ class TensorboardLogger(Shared):
         if not os.path.exists(tbpath):
             os.makedirs(tbpath)
         self.writer = SummaryWriter(log_dir='{}/{}'.format(tbpath, tensorboard_tag))
-        if opt['tensorboard_metrics'] is None:
+        if opt['tensorboard_metrics'] == None:
             self.tbmetrics = ['ppl', 'loss']
         else:
             self.tbmetrics = opt['tensorboard_metrics'].split(',')
