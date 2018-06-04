@@ -29,7 +29,7 @@ def setup_args(parser=None):
         DictionaryAgent.add_cmdline_args(parser)
     return parser
 
-def build_dict(opt):
+def build_dict(opt, skip_if_built=False):
     if isinstance(opt, ParlaiParser):
         print('[ Deprecated Warning: should be passed opt not Parser ]')
         opt = opt.parse_args()
@@ -38,16 +38,24 @@ def build_dict(opt):
               'this param so the dictionary can be saved.')
         return
     print('[ setting up dictionary. ]')
+
+    if skip_if_built and os.path.isfile(opt['dict_file']):
+        # Dictionary already built, skip all loading or setup
+        print("[ dictionary already built .]")
+        return None
+
     if opt.get('dict_class'):
         # Custom dictionary class
         dictionary = str2class(opt['dict_class'])(opt)
     else:
         # Default dictionary class
         dictionary = DictionaryAgent(opt)
+
     if os.path.isfile(opt['dict_file']):
-        # Dictionary already built
+        # Dictionary already built, return loaded dictionary agent
         print("[ dictionary already built .]")
         return dictionary
+
     ordered_opt = copy.deepcopy(opt)
     cnt = 0
     # we use train set to build dictionary

@@ -148,7 +148,7 @@ class TrainLoop():
             if opt['dict_file'] is None and opt.get('model_file'):
                 opt['dict_file'] = opt['model_file'] + '.dict'
             print("[ building dictionary first... ]")
-            build_dict(opt)
+            build_dict(opt, skip_if_built=True)
         # Create model and assign it to the specified task
         self.agent = create_agent(opt)
         self.world = create_task(opt, self.agent)
