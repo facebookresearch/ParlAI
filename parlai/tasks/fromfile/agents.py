@@ -122,7 +122,8 @@ class ParlaiformatTeacher(FixedDialogTeacher):
         if not opt.get('fromfile_datapath'):
             raise RuntimeError('fromfile_datapath not specified')
         datafile = opt['fromfile_datapath']
-        self.data = self._setup_data(datafile)
+        if shared is None:
+            self._setup_data(datafile)
         self.id = datafile
         self.reset()
         
@@ -157,7 +158,8 @@ class Parlaiformat2Teacher(FixedDialogTeacher):
         if not opt.get('fromfile_datapath2'):
             raise RuntimeError('fromfile_datapath2 not specified')
         datafile = opt['fromfile_datapath2']
-        self.data = self._setup_data(datafile)
+        if shared is None:
+            self._setup_data(datafile)
         self.id = datafile
         self.reset()
         
