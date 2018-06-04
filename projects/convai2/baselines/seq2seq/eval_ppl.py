@@ -83,7 +83,7 @@ if __name__ == '__main__':
         no_cuda=True,
     )
     opt = parser.parse_args()
-    if opt.get('model_file', '').startswith('models:convai2'):
+    if opt.get('model_file', '').find('convai2/seq2seq/convai2_self_seq2seq_model') != -1:
         opt['model_type'] = 'seq2seq'
         fnames = ['convai2_self_seq2seq_model.tgz',
                   'convai2_self_seq2seq_model.dict',
