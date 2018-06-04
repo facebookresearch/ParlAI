@@ -343,8 +343,21 @@ def create_agent(opt, requireModelExists=False):
         from parlai.core.params import ParlaiParser
         parser = ParlaiParser(add_parlai_args=False)
         parser.add_parlai_data_path()
+        # add model args if they are missing
+        model = opt.get('model', None)
+        if model is None and 'model_file' in opt:
+            optfile = opt['model_file'] + '.opt'
+            if os.path.isfile(optfile):
+                with open(optfile, 'rb') as handle:
+                    new_opt = pickle.load(handle)
+                    if 'model' in new_opt:
+                        model = new_opt['model']
+        if model is not None:
+            parser.add_model_subargs(model)
         opt_parser = parser.parse_args("", print_args=False)
-        opt['datapath'] = opt_parser['datapath']
+        for k, v in opt_parser.items():
+            if k not in opt:
+                opt[k] = opt_parser[k]
 
     if opt.get('model_file'):
         opt['model_file'] = modelzoo_path(opt.get('datapath'), opt['model_file'])
