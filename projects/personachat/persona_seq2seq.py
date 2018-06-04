@@ -381,6 +381,11 @@ class Seq2seqAgent(Agent):
         elif self.attention == 'general':
             self.attn.cuda()
             self.attn_combine.cuda()
+        for optimizer in self.optims.values():
+            for state in optimizer.state.values():
+                for k, v in state.items():
+                    if isinstance(v, torch.Tensor):
+                        state[k] = v.cuda()
 
     def hidden_to_idx(self, hidden, is_training=False):
         """Convert hidden state vectors into indices into the dictionary."""
@@ -1461,6 +1466,11 @@ class PersonachatSeqseqAgentSplit(Agent):
             if self.opt['personachat_attnsentlevel']:
                 self.attn_h2attn.cuda()
             self.attn_combine.cuda()
+        for optimizer in self.optims.values():
+            for state in optimizer.state.values():
+                for k, v in state.items():
+                    if isinstance(v, torch.Tensor):
+                        state[k] = v.cuda()
 
     def hidden_to_idx(self, hidden, is_training=False, topk=False):
         """Convert hidden state vectors into indices into the dictionary."""
