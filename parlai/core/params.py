@@ -17,6 +17,20 @@ from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.build_data import modelzoo_path
 
 
+def get_model_name(opt):
+    model = opt.get('model', None)
+    if model is None:
+        # try to get model name from model opt file
+        model_file = opt.get('model_file', None)
+        if model_file is not None:
+            optfile = model_file + '.opt'
+            if os.path.isfile(optfile):
+                with open(optfile, 'rb') as handle:
+                    new_opt = pickle.load(handle)
+                    model = new_opt.get('model', None)
+    return model
+
+
 def str2bool(value):
     v = value.lower()
     if v in ('yes', 'true', 't', '1', 'y'):
@@ -330,19 +344,9 @@ class ParlaiParser(argparse.ArgumentParser):
             self.add_task_args(evaltask)
 
         # find which model specified if any, and add its specific arguments
-        model = parsed.get('model', None)
+        model = get_model_name(parsed)
         if model is not None:
             self.add_model_subargs(model)
-        else:
-            # try to get model name from model opt file
-            model_file = parsed.get('model_file', None)
-            if model_file is not None:
-                optfile = model_file + '.opt'
-                if os.path.isfile(optfile):
-                    with open(optfile, 'rb') as handle:
-                        new_opt = pickle.load(handle)
-                        if 'model' in new_opt:
-                            self.add_model_subargs(new_opt['model'])
 
         # reset parser-level defaults over any model-level defaults
         try:
