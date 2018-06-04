@@ -48,7 +48,7 @@ def download(url, path, fname, redownload=False):
     will not download tar file again if it is present (default ``True``)."""
     outfile = os.path.join(path, fname)
     download = not os.path.isfile(outfile) or redownload
-
+    print("[ downloading: " + url + " to " + outfile + " ]")
     retry = 5
     exp_backoff = [2 ** r for r in reversed(range(retry))]
 

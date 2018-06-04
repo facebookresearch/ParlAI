@@ -659,3 +659,74 @@ def display_messages(msgs, prettify=False):
     if episode_done:
         lines.append('- - - - - - - - - - - - - - - - - - - - -')
     return '\n'.join(lines)
+
+
+def str_to_msg(txt, ignore_fields=[]):
+    def tostr(txt):
+        txt = str(txt)
+        txt = txt.replace('\\t', '\t')
+        txt = txt.replace('\\n', '\n')
+        txt = txt.replace('\PIPE', '|')
+        return txt
+    
+    def tolist(txt):
+        vals = txt.split('|')
+        for v in vals:
+            v = tostr(v)
+        return vals
+            
+    def convert(key, value):
+        if key == 'text' or key == 'id':
+            return tostr(value)
+        elif (key == 'label_candidates' or key == 'labels' or
+              key == 'eval_labels' or key == 'text_candidates'):
+            return tolist(value)
+        elif key == 'episode_done':
+            return bool(value)
+        else:
+            return tostr(value)
+
+    if txt == '' or txt == None:
+        return None
+    msg = {}
+    for t in txt.split('\t'):
+        ind = t.find(':')
+        key = t[:ind]
+        value = t[ind+1:]
+        if key not in ignore_fields:
+            msg[key] = convert(key, value)
+    return msg
+
+def msg_to_str(msg, ignore_fields=[]):
+    def filter(txt):
+        txt = str(txt)
+        txt = txt.replace('\t', '\\t')
+        txt = txt.replace('\n', '\\n')
+        txt = txt.replace('|', '\PIPE')
+        return txt
+    
+    def add_field(name, data):
+        if name == 'reward' and data == 0:
+            return ''
+        if name == 'episode_done' and data == False:
+            return ''
+        txt = ''
+        if type(data) == tuple or type(data) == set or type(data) == list:
+            # list entries
+            for c in data:
+                txt += filter(c) + "|"
+            txt = txt[:-1]
+        else:
+            # single fields
+            txt = filter(data)
+        return name + ":" + txt + '\t'
+
+    default_fields = ['id', 'text', 'labels', 'label_candidates', 'episode_done', 'reward']
+    txt = ""
+    for f in default_fields:
+        if f in msg and f not in ignore_fields:
+            txt += add_field(f, msg[f])
+    for f in msg.keys():
+        if f not in default_fields and f not in ignore_fields:
+            txt += add_field(f, msg[f])
+    return txt.rstrip('\t')
