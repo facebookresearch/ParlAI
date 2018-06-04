@@ -11,6 +11,7 @@ import argparse
 import importlib
 import os
 import sys
+import datetime
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.build_data import modelzoo_path
@@ -409,6 +410,9 @@ class ParlaiParser(argparse.ArgumentParser):
                         self.overridable[option_strings_dict[self.cli_args[i]]] = \
                             self.cli_args[i+1]
         self.opt['override'] = self.overridable
+
+        # add start time of an experiment
+        self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')
 
         if print_args:
             self.print_args()
