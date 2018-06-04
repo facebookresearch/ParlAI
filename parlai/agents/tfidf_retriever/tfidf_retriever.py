@@ -56,9 +56,8 @@ class TfidfRetrieverAgent(Agent):
             help='String option specifying tokenizer type to use '
                  '(e.g. "corenlp")')
         parser.add_argument(
-            '--retriever-mode', choices=['keys', 'values'], default='values',
-            help='Whether to retrieve the stored key or the stored value.'
-        )
+            '--retriever-num-retrieved', default=5, type=int,
+            help='How many docs to retrieve.')
         parser.add_argument('--remove-title', type='bool', default=False,
             help='Whether to remove the title from the retrieved passage')
 
@@ -187,7 +186,8 @@ class TfidfRetrieverAgent(Agent):
             return self.train_act()
         if 'text' in obs:
             self.rebuild()  # no-op if nothing has been queued to store
-            doc_ids, doc_scores = self.ranker.closest_docs(obs['text'], k=30)
+            doc_ids, doc_scores = self.ranker.closest_docs(obs['text'],
+                                                           self.opt.get('retriever_num_retrieved', 5))
 
             if False and obs.get('label_candidates'): #TODO: Alex (doesn't work)
                 # these are better selection than stored facts
@@ -204,7 +204,9 @@ class TfidfRetrieverAgent(Agent):
                         ),
                         c_list
                     )
-                c_ids, c_scores = self.ranker.closest_docs(obs['text'], k=30, matrix=self.cands_hash[cands_id][0])
+                c_ids, c_scores = self.ranker.closest_docs(obs['text'],
+                                                           self.opt.get('retriever_num_retrieved', 5),
+                                                           matrix=self.cands_hash[cands_id][0])
                 reply['text_candidates'] = [self.cands_hash[cands_id][1][cid] for cid in c_ids]
                 reply['candidate_scores'] = c_scores
                 if len(reply['text_candidates']) > 0:

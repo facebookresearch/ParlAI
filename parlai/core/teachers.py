@@ -138,6 +138,8 @@ class FixedDialogTeacher(Teacher):
                 self.data_loader = shared['data_loader']
             if 'threadindex' in shared:
                 self.threadindex = shared['threadindex']
+            if 'examples' in shared:
+                self.examples = shared['examples']
         else:
             self.index = AttrDict(value=-1)
 
@@ -237,6 +239,9 @@ class FixedDialogTeacher(Teacher):
             # share lastYs to communicate between batch_act and observe
             shared['lastYs'] = self.lastYs
 
+        if hasattr(self, 'examples'):
+            shared['examples'] = self.examples
+            
         if self.opt.get('numthreads', 1) > 1:
             if type(self.index) is not multiprocessing.sharedctypes.Synchronized:
                 # for multithreading need to move index into threadsafe memory
@@ -286,7 +291,7 @@ class FixedDialogTeacher(Teacher):
             return {'episode_done': True}, True
 
         ex = self.get(self.episode_idx, self.entry_idx)
-        self.episode_done = ex['episode_done']
+        self.episode_done = ex.get('episode_done', False)
 
         if (not self.random and self.episode_done
                 and self.episode_idx + 1 >= self.num_episodes()):

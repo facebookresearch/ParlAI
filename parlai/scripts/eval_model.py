@@ -19,7 +19,6 @@ from parlai.core.utils import Timer
 import random
 import os
 
-
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True)

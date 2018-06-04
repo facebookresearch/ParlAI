@@ -48,7 +48,7 @@ def download(url, path, fname, redownload=False):
     will not download tar file again if it is present (default ``True``)."""
     outfile = os.path.join(path, fname)
     download = not os.path.isfile(outfile) or redownload
-
+    print("[ downloading: " + url + " to " + outfile + " ]")
     retry = 5
     exp_backoff = [2 ** r for r in reversed(range(retry))]
 
@@ -229,7 +229,7 @@ def modelzoo_path(datapath, path):
         animal = path[7:path.rfind('/')].replace('/', '.')
         if '.' not in animal:
             animal += '.build'
-        module_name = f"parlai.zoo.{animal}"
+        module_name = "parlai.zoo.{}".format(animal)
         try:
             my_module = importlib.import_module(module_name)
             download = getattr(my_module, 'download')

@@ -381,6 +381,11 @@ class Seq2seqAgent(Agent):
         elif self.attention == 'general':
             self.attn.cuda()
             self.attn_combine.cuda()
+        for optimizer in self.optims.values():
+            for state in optimizer.state.values():
+                for k, v in state.items():
+                    if isinstance(v, torch.Tensor):
+                        state[k] = v.cuda()
 
     def hidden_to_idx(self, hidden, is_training=False):
         """Convert hidden state vectors into indices into the dictionary."""
@@ -536,7 +541,7 @@ class Seq2seqAgent(Agent):
                 token = self.v2t([(preds+1).data[b]])
                 output_lines[b].append(token)
 
-        self.loss += loss.data.cpu().numpy()[0]
+        self.loss += loss.cpu().item()
         self.loss_c += 1
         loss.backward()
         self.update_params()
@@ -569,8 +574,8 @@ class Seq2seqAgent(Agent):
             xes = self.lt(y).unsqueeze(0)
         n_zs = zs.ne(self.NULL_IDX).float().sum()
         log_perp = (-log_perp).sum()
-        self.log_perp += log_perp.cpu().data.numpy()[0]
-        self.n_log_perp += n_zs.cpu().data.numpy()[0]
+        self.log_perp += log_perp.cpu().item()
+        self.n_log_perp += n_zs.cpu().item()
 
 
     def _decode_only(self, batchsize, xes, ys, encoder_output, hidden, attn_mask, zs):
@@ -1461,6 +1466,11 @@ class PersonachatSeqseqAgentSplit(Agent):
             if self.opt['personachat_attnsentlevel']:
                 self.attn_h2attn.cuda()
             self.attn_combine.cuda()
+        for optimizer in self.optims.values():
+            for state in optimizer.state.values():
+                for k, v in state.items():
+                    if isinstance(v, torch.Tensor):
+                        state[k] = v.cuda()
 
     def hidden_to_idx(self, hidden, is_training=False, topk=False):
         """Convert hidden state vectors into indices into the dictionary."""
@@ -1782,12 +1792,12 @@ class PersonachatSeqseqAgentSplit(Agent):
                 loss_guide += loss_guidesoftmax
 
             if self.opt['personachat_printattn']:
-                attn_weights = [n for n in attn_weights.cpu().data.numpy()[0]]
+                attn_weights = [n for n in attn_weights.cpu().item()]
                 if self.opt['personachat_attnsentlevel']:
                     attn_words = [' '.join([w for w in self.dict.tokenize(self.dict.vec2txt(per))]) for per in self.parsed[0]]
                 else:
                     attn_words = [w for w in self.dict.tokenize(self.dict.vec2txt(self.parsed[0]))]
-                word_pred = self.dict[int(y.cpu().data.numpy()[0])]
+                word_pred = self.dict[int(y.cpu().item())]
                 attn_w_visual_tmp.append((word_pred, attn_weights, attn_words))
 
             # use the true token as the next input instead of predicted
@@ -1808,9 +1818,9 @@ class PersonachatSeqseqAgentSplit(Agent):
                 pickle.dump(self.attn_w_visual_list, handle)
             self.printattn_time = time.time()
 
-        self.loss += loss.data.cpu().numpy()[0]
+        self.loss += loss.cpu().item()
         if hasattr(self, 'loss_guide'):
-            self.loss_guide += loss_guide.data.cpu().numpy()[0]
+            self.loss_guide += loss_guide.cpu().item()
         self.loss_c += 1
         loss.backward()
         self.update_params()
@@ -1853,10 +1863,10 @@ class PersonachatSeqseqAgentSplit(Agent):
         else:
             n_zs = zs.ne(self.NULL_IDX).float().sum()
         log_perp = (-log_perp).sum()
-        self.log_perp += log_perp.cpu().data.numpy()[0]
-        self.n_log_perp += n_zs.cpu().data.numpy()[0]
-        self.metrics['loss'] += log_perp.cpu().data.numpy()[0]
-        self.metrics['num_tokens'] += n_zs.cpu().data.numpy()[0]
+        self.log_perp += log_perp.cpu().item()
+        self.n_log_perp += n_zs.cpu().item()
+        self.metrics['loss'] += log_perp.cpu().item()
+        self.metrics['num_tokens'] += n_zs.cpu().item()
 
 
     def _decode_only(self, batchsize, xes, ys, encoder_output_persona, hidden_persona, hidden, attn_mask, zs):

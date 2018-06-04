@@ -25,7 +25,7 @@ class EnDeTeacher(FbDialogTeacher):
         opt = copy.deepcopy(opt)
         task = opt.get('task', 'wmt:en_de')
         self.task_name = task.split(':')[1] if ':' in task else 'en_de'
-        opt['datafile'] = _path(self.task_name, opt, 'train')
+        opt['datafile'] = _path(self.task_name, opt,  opt['datatype'])
         super().__init__(opt, shared)
 
 class DefaultTeacher(EnDeTeacher):
