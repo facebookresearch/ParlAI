@@ -342,7 +342,6 @@ class ParlaiParser(argparse.ArgumentParser):
                     with open(optfile, 'rb') as handle:
                         new_opt = pickle.load(handle)
                         if 'model' in new_opt:
-                            print("Adding model subargs")
                             self.add_model_subargs(new_opt['model'])
 
         # reset parser-level defaults over any model-level defaults
