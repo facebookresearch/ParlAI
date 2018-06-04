@@ -23,7 +23,9 @@ Batch = namedtuple("Batch", [
 ])
 
 class TorchAgent(Agent):
-    """Base Agent for all models which use Torch.
+    """A provided base agent for any model that wants to use Torch. Exists to
+    make it easier to implement a new agent. Not necessary, but reduces
+    duplicated code.
 
     This agent serves as a common framework for all ParlAI models which want
     to use PyTorch.
@@ -61,7 +63,8 @@ class TorchAgent(Agent):
 
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
         if self.use_cuda:
-            print('[ Using CUDA ]')
+            if not shared:
+                print('[ Using CUDA ]')
             torch.cuda.device(opt['gpu'])
 
         self.NULL_IDX = self.dict[self.dict.null_token]
@@ -113,7 +116,8 @@ class TorchAgent(Agent):
         return obs
 
     def map_valid(self, obs_batch, sort=True, is_valid=lambda obs: 'text_vec' in obs):
-        """Creates a batch of valid observations from an unchecked batch.
+        """Creates a batch of valid observations from an unchecked batch, where
+        a valid observation is one that passes the lambda provided to the function.
         Assumes each observation has been vectorized by vectorize function.
 
         Returns a namedtuple Batch. See original definition for in-depth
@@ -206,7 +210,18 @@ class TorchAgent(Agent):
                                 useStartEndIndices=False,
                                 splitSentences=False):
         """Keeps track of dialog history, up to a truncation length.
-        Either includes replies from the labels, model, or not all using param 'replies'."""
+
+        :param observation: a single observation that will be added to existing
+                            dialog history
+        :param reply: default empty string, allows for the addition of replies
+                      into the dialog history
+        :param useStartEndIndices: default False, flag to determine if START
+                                   and END indices should be appended to the
+                                   observation
+        :param splitSentences: default False, flag to determine if the
+                               observation dialog is one sentence or needs to
+                               be split
+        """
 
         def parse(txt, splitSentences):
             if dict is not None:
