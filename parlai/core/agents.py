@@ -45,6 +45,7 @@ import pickle
 import random
 import os
 
+
 class Agent(object):
     """Base class for all other agents."""
 
@@ -275,6 +276,7 @@ def name_to_agent_class(name):
     class_name += 'Agent'
     return class_name
 
+
 def load_agent_module(opt):
     model_file = opt['model_file']
     optfile = model_file + '.opt'
@@ -290,6 +292,7 @@ def load_agent_module(opt):
                           str(v) + " (previously:" +
                           str(str(new_opt.get(k, None))) + ") ]")
                 new_opt[k] = v
+        # add model arguments to new_opt if they aren't in new_opt already
         for k, v in opt.items():
             if k not in new_opt:
                 new_opt[k] = v
@@ -298,6 +301,7 @@ def load_agent_module(opt):
         return model_class(new_opt)
     else:
         return None
+
 
 def get_agent_module(dir_name):
     repo = 'parlai'

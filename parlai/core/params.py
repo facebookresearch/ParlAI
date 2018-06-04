@@ -10,6 +10,7 @@ using the ParlAI package.
 import argparse
 import importlib
 import os
+import pickle
 import sys
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.tasks.tasks import ids_to_tasks
@@ -332,6 +333,17 @@ class ParlaiParser(argparse.ArgumentParser):
         model = parsed.get('model', None)
         if model is not None:
             self.add_model_subargs(model)
+        else:
+            # try to get model name from model opt file
+            model_file = parsed.get('model_file', None)
+            if model_file is not None:
+                optfile = model_file + '.opt'
+                if os.path.isfile(optfile):
+                    with open(optfile, 'rb') as handle:
+                        new_opt = pickle.load(handle)
+                        if 'model' in new_opt:
+                            print("Adding model subargs")
+                            self.add_model_subargs(new_opt['model'])
 
         # reset parser-level defaults over any model-level defaults
         try:
