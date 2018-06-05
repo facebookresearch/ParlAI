@@ -40,8 +40,17 @@ class TfidfDocRanker(object):
         self.hash_size = metadata['hash_size']
         self.tokenizer = tokenizers.get_class(metadata['tokenizer'])()
         self.doc_freqs = metadata['doc_freqs'].squeeze()
+        self.doc_dict = metadata.get('doc_dict', None)
         self.num_docs = self.doc_mat.shape[1] - 1
         self.strict = strict
+
+    def get_doc_index(self, doc_id):
+        """Convert doc_id --> doc_index"""
+        return self.doc_dict[0][doc_id] if self.doc_dict else doc_id
+
+    def get_doc_id(self, doc_index):
+        """Convert doc_index --> doc_id"""
+        return self.doc_dict[1][doc_index] if self.doc_dict else doc_index
 
     def closest_docs(self, query, k=1, matrix=None):
         """Closest docs by dot product between query and documents

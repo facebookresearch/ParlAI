@@ -58,8 +58,15 @@ class TfidfRetrieverAgent(Agent):
         parser.add_argument(
             '--retriever-num-retrieved', default=5, type=int,
             help='How many docs to retrieve.')
-        parser.add_argument('--remove-title', type='bool', default=False,
+        parser.add_argument(
+            '--remove-title', type='bool', default=False,
             help='Whether to remove the title from the retrieved passage')
+        parser.add_argument(
+            '--index-by-int-id', type='bool', default=True,
+            help='Whether to index into database by doc id as an integer. This \
+                  defaults to true for DBs built using ParlAI; for the DrQA \
+                  wiki dump, it is necessary to set this to False to \
+                  index into the DB appropriately')
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -116,6 +123,8 @@ class TfidfRetrieverAgent(Agent):
         self.training = False
 
     def doc2txt(self, docid):
+        if not self.opt.get('index_by_int_id', True):
+            docid = self.ranker.get_doc_id(docid)
         if self.ret_mode == 'keys':
             return self.db.get_doc_text(docid)
         elif self.ret_mode == 'values':
@@ -123,7 +132,6 @@ class TfidfRetrieverAgent(Agent):
         else:
             raise RuntimeError('Retrieve mode {} not yet supported.'.format(
                 self.ret_mode))
-
 
     def rebuild(self):
         if len(self.triples_to_add) > 0:
