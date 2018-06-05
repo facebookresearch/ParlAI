@@ -421,11 +421,11 @@ class PaddingUtils(object):
         else:
             parsed_x = [dictionary.txt2vec(ex['text']) for ex in exs]
 
-        if dq:
-            if not isinstance(parsed_x[0], deque):
+        if len(parsed_x) > 0 and not isinstance(parsed_x[0], deque):
+            if dq:
                 parsed_x = [deque(x, maxlen=truncate) for x in parsed_x]
-        elif truncate is not None and truncate > 0:
-            parsed_x = [x[-truncate:] for x in parsed_x]
+            elif truncate is not None and truncate > 0:
+                parsed_x = [x[-truncate:] for x in parsed_x]
 
         x_lens = [len(x) for x in parsed_x]
         ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
