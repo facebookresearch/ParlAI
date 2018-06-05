@@ -63,7 +63,9 @@ class TfidfRetrieverAgent(Agent):
             help='Whether to remove the title from the retrieved passage')
         parser.add_argument(
             '--retriever-mode', choices=['keys', 'values'], default='values',
-            help='Whether to retrieve the stored key or the stored value.'
+            help='Whether to retrieve the stored key or the stored value. For '
+                 'example, if you want to return the text of an example, use '
+                 'keys here; if you want to return the label, use values here.'
         )
         parser.add_argument(
             '--index-by-int-id', type='bool', default=True,
