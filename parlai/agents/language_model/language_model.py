@@ -390,6 +390,7 @@ class LanguageModelAgent(Agent):
         hidden = self.model.init_hidden(bsz)
 
         i = 0
+        word_idx = None
         while total_done < bsz and i <= self.opt['truncate_pred']:
             if i == 0:
                 # feed in input without end tokens
@@ -480,7 +481,7 @@ class LanguageModelAgent(Agent):
                 targets_list = []
                 # total is the number of batches
                 total = len(self.next_batch)//self.batchsize
-                for i in range(total):
+                for _ in range(total):
                     batch = self.next_batch[:self.batchsize]
                     self.next_batch = self.next_batch[self.batchsize:]
 
@@ -522,7 +523,7 @@ class LanguageModelAgent(Agent):
             if self.is_training == False:
                 self.hidden = self.model.init_hidden(self.batchsize)
             self.is_training = True
-            data_list, targets_list, _, _, y_lens = self.vectorize(observations, self.opt['seq_len'], self.is_training)
+            data_list, targets_list, _c, _v, y_lens = self.vectorize(observations, self.opt['seq_len'], self.is_training)
         else:
             # if we just finished training, reinitialize hidden
             if self.is_training == True:

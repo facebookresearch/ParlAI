@@ -27,4 +27,4 @@ if __name__ == '__main__':
 
     download_models(opt, fnames, 'convai2', version='v2.0', use_model_type=True)
 
-    eval_model(opt, print_parser=parser)
+    eval_hits(opt, print_parser=parser)
