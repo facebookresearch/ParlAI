@@ -10,11 +10,26 @@ using the ParlAI package.
 import argparse
 import importlib
 import os
+import pickle
 import sys
 import datetime
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.build_data import modelzoo_path
+
+
+def get_model_name(opt):
+    model = opt.get('model', None)
+    if model is None:
+        # try to get model name from model opt file
+        model_file = opt.get('model_file', None)
+        if model_file is not None:
+            optfile = model_file + '.opt'
+            if os.path.isfile(optfile):
+                with open(optfile, 'rb') as handle:
+                    new_opt = pickle.load(handle)
+                    model = new_opt.get('model', None)
+    return model
 
 
 def str2bool(value):
@@ -330,7 +345,7 @@ class ParlaiParser(argparse.ArgumentParser):
             self.add_task_args(evaltask)
 
         # find which model specified if any, and add its specific arguments
-        model = parsed.get('model', None)
+        model = get_model_name(parsed)
         if model is not None:
             self.add_model_subargs(model)
 

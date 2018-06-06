@@ -45,6 +45,7 @@ import pickle
 import random
 import os
 
+
 class Agent(object):
     """Base class for all other agents."""
 
@@ -275,6 +276,7 @@ def name_to_agent_class(name):
     class_name += 'Agent'
     return class_name
 
+
 def load_agent_module(opt):
     model_file = opt['model_file']
     optfile = model_file + '.opt'
@@ -290,6 +292,7 @@ def load_agent_module(opt):
                           str(v) + " (previously:" +
                           str(str(new_opt.get(k, None))) + ") ]")
                 new_opt[k] = v
+        # add model arguments to new_opt if they aren't in new_opt already
         for k, v in opt.items():
             if k not in new_opt:
                 new_opt[k] = v
@@ -298,6 +301,7 @@ def load_agent_module(opt):
         return model_class(new_opt)
     else:
         return None
+
 
 def get_agent_module(dir_name):
     repo = 'parlai'
@@ -336,11 +340,17 @@ def create_agent(opt, requireModelExists=False):
     """
     if opt.get('datapath', None) is None:
         # add datapath, it is missing
-        from parlai.core.params import ParlaiParser
+        from parlai.core.params import ParlaiParser, get_model_name
         parser = ParlaiParser(add_parlai_args=False)
         parser.add_parlai_data_path()
+        # add model args if they are missing
+        model = get_model_name(opt)
+        if model is not None:
+            parser.add_model_subargs(model)
         opt_parser = parser.parse_args("", print_args=False)
-        opt['datapath'] = opt_parser['datapath']
+        for k, v in opt_parser.items():
+            if k not in opt:
+                opt[k] = opt_parser[k]
 
     if opt.get('model_file'):
         opt['model_file'] = modelzoo_path(opt.get('datapath'), opt['model_file'])
