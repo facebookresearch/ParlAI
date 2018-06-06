@@ -11,6 +11,7 @@ from task_config import task_config
 
 import os
 
+
 def main():
     """This task consists of one agent, model or MTurk worker, talking to an
     MTurk worker to negotiate a deal.
@@ -87,7 +88,6 @@ def main():
             world = PersonaChatEvalWorld(
                 opt=opt,
                 agents=[agents],
-                corpus=corpus,
                 range_turn=[int(s) for s in opt['range_turn'].split(',')],
                 max_turn=opt['max_turns'],
                 max_resp_time=opt['max_resp_time'],

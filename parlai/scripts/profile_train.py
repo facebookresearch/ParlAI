@@ -44,7 +44,7 @@ def profile(opt):
         opt = opt.parse_args()
     if opt['torch'] or opt['torch_cuda']:
         with torch.autograd.profiler.profile(use_cuda=opt['torch_cuda']) as prof:
-            TrainLoop(parser).train()
+            TrainLoop(opt).train()
         print(prof.total_average())
 
         sort_cpu = sorted(prof.key_averages(), key=lambda k: k.cpu_time)
@@ -68,7 +68,7 @@ def profile(opt):
     else:
         pr = cProfile.Profile()
         pr.enable()
-        TrainLoop(parser).train()
+        TrainLoop(opt).train()
         pr.disable()
         s = io.StringIO()
         sortby = 'cumulative'

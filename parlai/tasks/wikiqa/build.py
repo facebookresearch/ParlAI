@@ -14,7 +14,7 @@ def create_fb_format(outpath, dtype, inpath):
     fout = open(os.path.join(outpath, dtype + '.txt'), 'w')
     with open(inpath) as f:
         lines = [line.strip('\n') for line in f]
-    lastqid = None
+    lastqid, lq, ans, cands = None, None, None, None
     for i in range(2, len(lines)):
         l = lines[i].split('\t')
         lqid = l[0]  # question id

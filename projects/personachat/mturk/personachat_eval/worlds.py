@@ -6,17 +6,14 @@
 from parlai.core.agents import create_agent
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
-from parlai.core.agents import create_agent
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from joblib import Parallel, delayed
 from extract_and_save_personas import main as main_extract
-from lmagent import PersonachatDemoAgent
 import numpy as np
 import time
 import os
 import pickle
 import random
-import math
 
 ONBOARD_MSG = '\nWelcome! Below is your persona \
         (you can find it on the left side of the chat)\n \
@@ -51,7 +48,9 @@ RETRIEVED_PASSAGES_MSG = '<span style="color:blue"> - {}\
         </span>'
 WAITING_MSG = 'Please wait while we match you with another worker...'
 
+
 class PersonasGenerator(object):
+
     def __init__(self, opt):
         self.personas_idx_stack_path = os.path.join(os.getcwd(),
                                                     './personas_idx_stack.pkl')
@@ -102,7 +101,8 @@ class PersonasGenerator(object):
 
 
 class PersonaProfileWorld(MTurkOnboardWorld):
-    '''A world that provides a persona to the MTurkAgent'''
+    """A world that provides a persona to the MTurkAgent"""
+
     def __init__(self, opt, mturk_agent):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.max_persona_time = opt['max_persona_time']
@@ -144,8 +144,9 @@ class PersonaProfileWorld(MTurkOnboardWorld):
             self.episodeDone = True
 
 class PersonaChatEvalWorld(MultiAgentDialogWorld):
-    def __init__(self, opt, agents=None, corpus=None, shared=None,
-                 range_turn=[4, 7], max_turn=10,
+
+    def __init__(self, opt, agents=None, shared=None,
+                 range_turn=(4, 7), max_turn=10,
                  max_resp_time=120,
                  model_agent_opt=None,
                  world_tag='NONE',
@@ -168,7 +169,7 @@ class PersonaChatEvalWorld(MultiAgentDialogWorld):
         self.model_agent = create_agent(model_agent_opt)
 
         # below are timeout protocols
-        self.max_resp_time = max_resp_time # in secs
+        self.max_resp_time = max_resp_time  # in secs
         self.agent_timeout_shutdown = agent_timeout_shutdown
         super().__init__(opt, agents, shared)
         self.personas = [(ag.persona_data if hasattr(ag, 'persona_data') else None) for ag in self.agents]
@@ -211,7 +212,7 @@ class PersonaChatEvalWorld(MultiAgentDialogWorld):
         idx = 0
         agent = self.agents[0] # Mturk agent
         acts.append(agent.act(timeout=self.max_resp_time))
-        if acts[idx] != None:
+        if acts[idx] is not None:
             if acts[idx]['text'] == 'PERSONA':
                 _text = ''
                 for s in agent.model_persona[1]['persona']:
@@ -222,7 +223,7 @@ class PersonaChatEvalWorld(MultiAgentDialogWorld):
             while self.is_msg_tooshortlong(acts[idx], agent) or self.is_exact_match(acts[idx], agent):
                 acts[idx] = agent.act()
 
-            if acts[idx]['episode_done'] == True:
+            if acts[idx]['episode_done']:
                 self.chat_done = True
                 self.check_timeout(acts[idx])
                 for ag in self.agents:
@@ -403,7 +404,7 @@ class PersonaChatEvalWorld(MultiAgentDialogWorld):
 
 
     def is_exact_match(self, act, ag, tolerance=0):
-        if act['episode_done'] == True:
+        if act['episode_done']:
            return False
 
         control_msg = {'episode_done': False}
@@ -418,12 +419,12 @@ class PersonaChatEvalWorld(MultiAgentDialogWorld):
                 for r_w in regular_words:
                     if r_w in per_parse:
                         per_parse.remove(r_w)
-                per_subseq = [' '.join(per_parse[i:i+len(per_parse)-tolerance]) for i in range(tolerance+1)]
+                per_subseq = [' '.join(per_parse[i:i+len(per_parse)-tolerance]) for i in range(tolerance + 1)]
                 for pp in per_subseq:
                     if pp in ['', ' ', '  ', '   ']:
                         per_subseq.remove(pp)
                 n_word_match += sum([(paa in text) for paa in per_subseq])
-            if n_word_match >0:
+            if n_word_match > 0:
                 control_msg['text'] = 'We found that you <b><span style="color:red">trivially copied character descriptions</span></b>. Please rephrase your message again.'
                 ag.observe(validate(control_msg))
                 return True
@@ -431,7 +432,7 @@ class PersonaChatEvalWorld(MultiAgentDialogWorld):
                 return False
 
     def is_msg_tooshortlong(self, act, ag, th_min=5, th_max=17):
-        if act['episode_done'] == True:
+        if act['episode_done']:
             return False
 
         control_msg = {'episode_done': False}
@@ -452,7 +453,7 @@ class PersonaChatEvalWorld(MultiAgentDialogWorld):
         self.n_turn = np.random.randint(self.range_turn[0], self.range_turn[1]) + 1
 
     def check_timeout(self, act):
-        if act['text'] == '[TIMEOUT]' and act['episode_done'] == True:
+        if act['text'] == '[TIMEOUT]' and act['episode_done']:
             control_msg = {'episode_done': True}
             control_msg['id'] = 'SYSTEM'
             control_msg['text'] = self.get_instruction(agent_id=act['id'], tag='timeout')

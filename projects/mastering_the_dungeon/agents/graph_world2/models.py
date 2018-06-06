@@ -1,23 +1,23 @@
-##
-## Copyright (c) 2017-present, Facebook, Inc.
-## All rights reserved.
-## This source code is licensed under the BSD-style license found in the
-## LICENSE file in the root directory of this source tree. An additional grant
-## of patent rights can be found in the PATENTS file in the same directory.
-##
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 
 from torch import nn
 import torch
 from torch.autograd import Variable
 from torch.nn import functional as F
 from copy import deepcopy
-import numpy as np
+
 
 def mask_out(data, mask):
     return data.index_select(0, mask.nonzero().squeeze())
 
+
 def normalize(data, p=2, dim=1, eps=1e-12):
     return data / torch.norm(data, p, dim).clamp(min=eps).expand_as(data)
+
 
 class ObjectChecklistModel(nn.Module):
 
@@ -173,7 +173,7 @@ class ObjectChecklistModel(nn.Module):
         action_type_out = action_type_out_ori.unsqueeze(0).expand(batch_size, y_dim, opt['action_type_emb_dim'])
         action_type_emb_dim = action_type_out.size(2)
 
-        
+
         counter_feat = Variable(torch.zeros(batch_size, y_dim).long())
         if opt['cuda']:
             counter_feat = counter_feat.cuda()
@@ -182,6 +182,7 @@ class ObjectChecklistModel(nn.Module):
 
         hidden = self.merge(hidden.view(batch_size, -1)).unsqueeze(1).expand(batch_size, y_dim, opt['rnn_h']).contiguous().view(1, batch_size * y_dim, -1)
 
+        y_onehot = None
         for i in range(seq_out):
             room_in = torch.zeros(batch_size).long()
             for j in range(batch_size):
@@ -228,7 +229,7 @@ class ObjectChecklistModel(nn.Module):
             dec_out = dec_out.squeeze(1) # [batch * y_dim, h]
 
             dec_out = self.decoder(dec_out).view(batch_size, y_dim)
-            
+
             if constrain_:
                 dec_out = dec_out * y_mask + -1e7 * (1 - y_mask)
             y_out = torch.max(dec_out, 1, keepdim=True)[1].data
@@ -253,6 +254,7 @@ class ObjectChecklistModel(nn.Module):
                     counter_feat.data.clamp_(max=opt['counter_max'])
 
         return text_out
+
 
 class Seq2SeqModel(nn.Module):
 
@@ -320,6 +322,7 @@ class Seq2SeqModel(nn.Module):
 
         enc_out, hidden = self.encoder(self.input_emb(x), h_0) # [batch, seq_in, h], [layer, batch, h]
         text_out = [[] for _ in range(batch_size)]
+        y_onehot = None
         for i in range(opt['max_seq_out']):
             if i == 0:
                 y_in = Variable(torch.zeros(batch_size, 1, self.y_dim))
