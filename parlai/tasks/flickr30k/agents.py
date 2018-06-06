@@ -160,7 +160,6 @@ class DefaultTeacher(FixedDialogTeacher):
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
         self.example = None  # set up caching fields
-        self.next_example()  # call this once to get the cache moving
 
     def num_examples(self):
         return len(self.caption)
@@ -204,8 +203,11 @@ class DefaultTeacher(FixedDialogTeacher):
             # load the next image in the background
             image_id = self.example['image_id']
             self.submit_load_request(image_id)
-        # return the previously cached example
-        return ready
+        # Try to return the previously cached example
+        if ready is None:
+            return self.next_example()
+        else:
+            return ready
 
     def share(self):
         shared = super().share()
