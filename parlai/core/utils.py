@@ -563,10 +563,11 @@ class OffensiveLanguageDetector(object):
         return None
 
 
-def display_messages(msgs, prettify=False):
+def display_messages(msgs, prettify=False,ignore_fields=''):
     """Returns a string describing the set of messages provided"""
     lines = []
     episode_done = False
+    ignore_fields = ignore_fields.split(',')
     for index, msg in enumerate(msgs):
         if msg is None:
             continue
@@ -587,16 +588,17 @@ def display_messages(msgs, prettify=False):
                 text = text[:1000] + '...'
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + text)
-        if msg.get('labels'):
+        if msg.get('labels') and 'labels' not in ignore_fields:
             lines.append(space + ('[labels: {}]'.format(
                         '|'.join(msg['labels']))))
-        if msg.get('eval_labels'):
+        if msg.get('eval_labels') and 'eval_labels' not in ignore_fields:
             lines.append(space + ('[eval_labels: {}]'.format(
                         '|'.join(msg['eval_labels']))))
-        if msg.get('label_candidates'):
+
+        if msg.get('label_candidates') and 'label_candidates' not in ignore_fields:
             cand_len = len(msg['label_candidates'])
             if cand_len <= 10:
-                lines.append(space + ('[cands: {}]'.format(
+                lines.append(space + ('[label_candidates: {}]'.format(
                         '|'.join(msg['label_candidates']))))
             else:
                 # select five label_candidates from the candidate set,
@@ -604,11 +606,11 @@ def display_messages(msgs, prettify=False):
                 cand_iter = iter(msg['label_candidates'])
                 display_cands = (next(cand_iter) for _ in range(5))
                 # print those cands plus how many cands remain
-                lines.append(space + ('[cands: {}{}]'.format(
+                lines.append(space + ('[label_candidates: {}{}]'.format(
                         '|'.join(display_cands),
                         '| ...and {} more'.format(cand_len - 5)
                         )))
-        if msg.get('text_candidates'):
+        if msg.get('text_candidates') and 'text_candidates' not in ignore_fields:
             if prettify:
                 cand_len = len(msg['text_candidates'])
                 cands = [c for c in msg['text_candidates'] if c is not None]
@@ -645,7 +647,7 @@ def display_messages(msgs, prettify=False):
             else:
                 cand_len = len(msg['text_candidates'])
                 if cand_len <= 10:
-                    lines.append(space + ('[cands: {}]'.format(
+                    lines.append(space + ('[text_candidates: {}]'.format(
                             '|'.join(msg['text_candidates']))))
                 else:
                     # select five label_candidates from the candidate set,
@@ -653,7 +655,7 @@ def display_messages(msgs, prettify=False):
                     cand_iter = iter(msg['text_candidates'])
                     display_cands = (next(cand_iter) for _ in range(5))
                     # print those cands plus how many cands remain
-                    lines.append(space + ('[text cands: {}{}]'.format(
+                    lines.append(space + ('[text_candidates: {}{}]'.format(
                             '|'.join(display_cands),
                             '| ...and {} more'.format(cand_len - 5)
                             )))

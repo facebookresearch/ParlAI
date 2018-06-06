@@ -6,8 +6,7 @@
 """Basic example which allows local human keyboard input to talk to a trained model.
 
 For example:
-`wget https://s3.amazonaws.com/fair-data/parlai/_models/drqa/squad.mdl`
-`python examples/interactive.py -m drqa -mf squad.mdl`
+`python examples/interactive.py -m drqa -mf "models:drqa/squad/model"`
 
 Then enter something like:
 "Bob is Blue.\nWhat is Bob?"

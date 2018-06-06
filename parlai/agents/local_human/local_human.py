@@ -18,7 +18,9 @@ class LocalHumanAgent(Agent):
         self.episodeDone = False
 
     def observe(self, msg):
-        print(display_messages([msg], prettify=self.opt.get('display_prettify', False)))
+        print(display_messages([msg],
+                               ignore_fields=self.opt.get('display_ignore_fields', ''),
+                               prettify=self.opt.get('display_prettify', False)))
 
     def act(self):
         obs = self.observation
