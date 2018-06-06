@@ -196,8 +196,6 @@ class OeTeacher(FixedDialogTeacher):
     def reset(self):
         super().reset()
         self.example = None
-        # call this once to get the cache moving
-        self.next_example()
 
     def num_examples(self):
         """Number of examples in VQA-v1."""

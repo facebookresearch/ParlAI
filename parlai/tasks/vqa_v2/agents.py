@@ -81,7 +81,6 @@ class OeTeacher(FixedDialogTeacher):
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
         self.example = None  # set up caching fields
-        self.next_example()  # call this once to get the cache moving
 
     def num_examples(self):
         return len(self.ques['questions'])
