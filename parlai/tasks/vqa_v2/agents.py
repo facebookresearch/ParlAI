@@ -128,8 +128,11 @@ class OeTeacher(FixedDialogTeacher):
             # load the next image in the background
             image_id = self.example['image_id']
             self.submit_load_request(image_id)
-        # return the previously cached example
-        return ready
+        # Try to return the previously cached example
+        if ready is None:
+            return self.next_example()
+        else:
+            return ready
 
     def share(self):
         shared = super().share()

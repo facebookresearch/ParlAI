@@ -241,7 +241,11 @@ class OeTeacher(FixedDialogTeacher):
         if self.image_mode != 'none' and 'image_id' in self.example:
             image_id = self.example['image_id']
             self.submit_load_request(image_id)
-        return ready
+        # Try to return the previously cached example
+        if ready is None:
+            return self.next_example()
+        else:
+            return ready
 
     def share(self):
         shared = super().share()
