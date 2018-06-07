@@ -395,9 +395,10 @@ You can add this class anywhere you would like; a good place would be in the
 
 2. **(Optional)** The default ``collate_fn`` that will be used is the one
 specified above in the ``PytorchDataTeacher``. If you would like to specify your
-own ``collate_fn``, you can implement a static method ``collate``, in the **agent**
-to which you will be providing the data, that takes one argument, ``batch``, which
-is a list of data items returned by your custom ``Dataset``.
+own ``collate_fn``, you can implement a static method ``collate`` in the **agent**
+to which you will be providing the data. This function takes one argument, ``batch``, which
+is a list of data items returned by your custom ``Dataset``, and returns a
+collated batch.
 
 3. Finally, you would need to specify the ``Dataset`` location on the command line
 in the following fashion: ``--dataset path.to.dataset:DatasetClassName``. If you
