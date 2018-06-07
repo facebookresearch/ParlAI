@@ -281,6 +281,9 @@ def load_agent_module(opt):
     if os.path.isfile(optfile):
         with open(optfile, 'rb') as handle:
             new_opt = pickle.load(handle)
+        if 'batchindex' in new_opt:
+            # This saved variable can cause trouble if we switch to BS=1 at test time
+            del new_opt['batchindex']
         # only override opts specified in 'override' dict
         if opt.get('override'):
             for k in opt['override']:
