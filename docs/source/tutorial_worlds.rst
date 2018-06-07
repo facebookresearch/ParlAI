@@ -314,7 +314,9 @@ The ``PytorchDataTeacher`` can be used with any dataset/task currently provided
 on the ParlAI platform. There are two ways you can utilize the ``PytorchDataTeacher``
 for your specific task. One involves using the ``StreamDataset`` that we have
 provided; the other involves writing your own dataset. Each will be covered
-step by step below.
+step by step below. The important thing to know is that in the first case you **only**
+need to write a teacher; in the second case, you **only** need to write a ``Dataset``.
+
 
 StreamDataset
 *************
@@ -391,8 +393,10 @@ you can simply subclass the Pytorch ``Dataset`` class (as specified `here <http:
 You can add this class anywhere you would like; a good place would be in the
 ``agents.py`` file for the task you are writing a ``Dataset`` for.
 
-2. Then, in the **agent** to which you will be providing the data,
-implement a static method ``collate`` that takes one argument, ``batch``, which
+2. **(Optional)** The default ``collate_fn`` that will be used is the one
+specified above in the ``PytorchDataTeacher``. If you would like to specify your
+own ``collate_fn``, you can implement a static method ``collate``, in the **agent**
+to which you will be providing the data, that takes one argument, ``batch``, which
 is a list of data items returned by your custom ``Dataset``.
 
 3. Finally, you would need to specify the ``Dataset`` location on the command line
@@ -415,7 +419,7 @@ list of examples provided by the ``VQADataset``.
 3. Finally, to use the ``PytorchDataTeacher`` with the custom ``Dataset`` and
 ``collate``, run the following command::
 
-  python examples/train_model.py -m mlb_vqa -t pytorch_teacher --pytorch-buildteacher vqa_v1 --dataset parlai.tasks.vqa_v1.agents -im resnet152_spatial --image-size 448 --image-cropsize 448
+  python examples/train_model.py -m mlb_vqa -t pytorch_teacher --dataset parlai.tasks.vqa_v1.agents
 
 Batch Sorting and Squashing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -425,7 +429,7 @@ batch sorting and squashing (that is, reducing padding in batches by
 providing the models with similarly sized batches) without having
 to load the whole dataset into memory. We provide an on-the-fly
 batch sorter that uses aggressive caching to create and provide
-batches of similarly sized examples to modles nearly as quickly (if not as quickly) as
+batches of similarly sized examples to models nearly as quickly (if not as quickly) as
 can be provided without sorting.
 
 To use the batch sorting method, just specify the following two command line
