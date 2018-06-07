@@ -81,3 +81,6 @@ class TensorboardLogger(Shared):
         :return:
         """
         self.writer.add_histogram(name, vector, step)
+
+    def add_text(self, name, text, step=None):
+        self.writer.add_text(name, text, step)

@@ -106,7 +106,6 @@ class Seq2seq(nn.Module):
                     cand_preds, cand_scores = self.ranker.forward(cands, valid_cands, decode_params=decode_params)
             else:
                 cand_preds, cand_scores = self.ranker.forward(cands, valid_cands, decode_params=decode_params)
-
         if ys is not None:
             y_in = ys.narrow(1, 0, ys.size(1) - 1)
             xs = torch.cat([starts, y_in], 1)
