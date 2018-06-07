@@ -9,7 +9,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import round_sigfigs, maintain_dialog_history
+from parlai.core.utils import round_sigfigs, maintain_dialog_history, load_cands
 from parlai.core.thread_utils import SharedTable
 
 from .modules import Starspace
@@ -26,42 +26,6 @@ import os
 import random
 import math
 import pickle
-
-def load_cands(path):
-    """Load global fixed set of candidate labels that the teacher provides
-    every example (the true labels for a specific example are also added to
-    this set, so that it's possible to get the right answer).
-    """
-    if path is None:
-        return None
-    cands = []
-    lines_have_ids = False
-    cands_are_replies = False
-    cnt = 0
-    with open(path) as read:
-        for line in read:
-            line = line.strip().replace('\\n', '\n')
-            if len(line) > 0:
-                cnt = cnt + 1
-                # If lines are numbered we strip them of numbers.
-                if cnt == 1 and line[0:2] == '1 ':
-                    lines_have_ids = True
-                # If tabs then the label_candidates are all the replies.
-                if '\t' in line and not cands_are_replies:
-                    cands_are_replies = True
-                    cands = []
-                if lines_have_ids:
-                    space_idx = line.find(' ')
-                    line = line[space_idx + 1:]
-                    if cands_are_replies:
-                        sp = line.split('\t')
-                        if len(sp) > 1 and sp[1] != '':
-                            cands.append(sp[1])
-                    else:
-                        cands.append(line)
-                else:
-                    cands.append(line)
-    return cands
 
 class StarspaceAgent(Agent):
     """Simple implementation of the starspace algorithm: https://arxiv.org/abs/1709.03856

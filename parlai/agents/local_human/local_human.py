@@ -8,17 +8,27 @@
 """
 
 from parlai.core.agents import Agent
-from parlai.core.utils import display_messages
+from parlai.core.utils import display_messages, load_cands
 
 class LocalHumanAgent(Agent):
 
+    def add_cmdline_args(argparser):
+        """Add command-line arguments specifically for this agent."""
+        agent = argparser.add_argument_group('Local Human Arguments')
+        agent.add_argument('-fixedCands', '--local-human-candidates-file',
+                           default=None, type=str,
+                           help='File of label_candidates to send to other agent')
+    
     def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.id = 'localHuman'
         self.episodeDone = False
-
+        self.fixedCands_txt = load_cands(self.opt.get('local_human_candidates_file'))
+            
     def observe(self, msg):
-        print(display_messages([msg], prettify=self.opt.get('display_prettify', False)))
+        print(display_messages([msg],
+                               ignore_fields=self.opt.get('display_ignore_fields', ''),
+                               prettify=self.opt.get('display_prettify', False)))
 
     def act(self):
         obs = self.observation
@@ -27,6 +37,7 @@ class LocalHumanAgent(Agent):
         reply_text = input("Enter Your Message: ")
         reply_text = reply_text.replace('\\n', '\n')
         reply['episode_done'] = False
+        reply['label_candidates'] = self.fixedCands_txt
         if '[DONE]' in reply_text:
             reply['episode_done'] = True
             self.episodeDone = True
