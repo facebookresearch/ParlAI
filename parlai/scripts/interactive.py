@@ -16,6 +16,7 @@ a context followed by '\n' followed by a question all as a single input.)
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
+from parlai.agents.local_human.local_human import LocalHumanAgent
 
 import random
 
@@ -29,6 +30,7 @@ def setup_args(parser=None):
     parser.add_argument('--display-ignore-fields',type=str,
                         default='label_candidates,text_candidates',
                         help='Do not display these fields')
+    LocalHumanAgent.add_cmdline_args(parser)
     return parser
 
 

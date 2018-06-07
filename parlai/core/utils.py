@@ -11,6 +11,96 @@ import random
 import time
 
 
+def maintain_dialog_history(history, observation, reply='',
+                            historyLength=1, useReplies='label_else_model',
+                            dict=None, useStartEndIndices=True,
+                            splitSentences=False):
+    """Keeps track of dialog history, up to a truncation length.
+    Either includes replies from the labels, model, or not all using param 'replies'."""
+
+    def parse(txt, splitSentences):
+        if dict is not None:
+            if splitSentences:
+                vec = [dict.txt2vec(t) for t in txt.split('\n')]
+            else:
+                vec = dict.txt2vec(txt)
+            return vec
+        else:
+            return [txt]
+
+    if 'dialog' not in history:
+        history['dialog'] = deque(maxlen=historyLength)
+        history['episode_done'] = False
+        history['labels'] = []
+
+    if history['episode_done']:
+        history['dialog'].clear()
+        history['labels'] = []
+        useReplies = 'none'
+        history['episode_done'] = False
+
+    if useReplies != 'none':
+        if useReplies == 'model' or (useReplies == 'label_else_model' and
+                                     len(history['labels']) == 0):
+            if reply != '':
+                history['dialog'].extend(parse(reply, splitSentences))
+        elif len(history['labels']) > 0:
+            r = history['labels'][0]
+            history['dialog'].extend(parse(r, splitSentences))
+
+    obs = observation
+    if 'text' in obs:
+        if useStartEndIndices:
+            obs['text'] = dict.end_token + ' ' + obs['text']
+        history['dialog'].extend(parse(obs['text'], splitSentences))
+
+    history['episode_done'] = obs['episode_done']
+
+    labels = obs.get('labels', obs.get('eval_labels', None))
+    if labels is not None:
+        if useStartEndIndices:
+            history['labels'] = [dict.start_token + ' ' + l for l in labels]
+        else:
+            history['labels'] = labels
+
+    return history['dialog']
+
+
+def load_cands(path, lines_have_ids = False, cands_are_replies = False):
+    """Load global fixed set of candidate labels that the teacher provides
+    every example (the true labels for a specific example are also added to
+    this set, so that it's possible to get the right answer).
+    """
+    if path is None:
+        return None
+    cands = []
+    cnt = 0
+    with open(path) as read:
+        for line in read:
+            line = line.strip().replace('\\n', '\n')
+            if len(line) > 0:
+                cnt = cnt + 1
+                # If lines are numbered we strip them of numbers.
+                if cnt == 1 and line[0:2] == '1 ':
+                    lines_have_ids = True
+                # If tabs then the label_candidates are all the replies.
+                if '\t' in line and not cands_are_replies:
+                    cands_are_replies = True
+                    cands = []
+                if lines_have_ids:
+                    space_idx = line.find(' ')
+                    line = line[space_idx + 1:]
+                    if cands_are_replies:
+                        sp = line.split('\t')
+                        if len(sp) > 1 and sp[1] != '':
+                            cands.append(sp[1])
+                    else:
+                        cands.append(line)
+                else:
+                    cands.append(line)
+    return cands
+
+
 class Predictor(object):
     """Provides functionality for setting up a running version of a model and
     requesting predictions from that model on live data.
@@ -208,61 +298,6 @@ def sort_data(data, key='text_label', method='spaces'):
 def make_batches(data, bsz):
     """Return a list of lists of size bsz given a list of examples."""
     return [data[i:i + bsz] for i in range(0, len(data), bsz)]
-
-
-def maintain_dialog_history(history, observation, reply='',
-                            historyLength=1, useReplies='label_else_model',
-                            dict=None, useStartEndIndices=True,
-                            splitSentences=False):
-    """Keeps track of dialog history, up to a truncation length.
-    Either includes replies from the labels, model, or not all using param 'replies'."""
-
-    def parse(txt, splitSentences):
-        if dict is not None:
-            if splitSentences:
-                vec = [dict.txt2vec(t) for t in txt.split('\n')]
-            else:
-                vec = dict.txt2vec(txt)
-            return vec
-        else:
-            return [txt]
-
-    if 'dialog' not in history:
-        history['dialog'] = deque(maxlen=historyLength)
-        history['episode_done'] = False
-        history['labels'] = []
-
-    if history['episode_done']:
-        history['dialog'].clear()
-        history['labels'] = []
-        useReplies = 'none'
-        history['episode_done'] = False
-
-    if useReplies != 'none':
-        if useReplies == 'model' or (useReplies == 'label_else_model' and
-                                     len(history['labels']) == 0):
-            if reply != '':
-                history['dialog'].extend(parse(reply, splitSentences))
-        elif len(history['labels']) > 0:
-            r = history['labels'][0]
-            history['dialog'].extend(parse(r, splitSentences))
-
-    obs = observation
-    if 'text' in obs:
-        if useStartEndIndices:
-            obs['text'] = dict.end_token + ' ' + obs['text']
-        history['dialog'].extend(parse(obs['text'], splitSentences))
-
-    history['episode_done'] = obs['episode_done']
-
-    labels = obs.get('labels', obs.get('eval_labels', None))
-    if labels is not None:
-        if useStartEndIndices:
-            history['labels'] = [dict.start_token + ' ' + l for l in labels]
-        else:
-            history['labels'] = labels
-
-    return history['dialog']
 
 
 class NoLock(object):
@@ -564,7 +599,10 @@ class OffensiveLanguageDetector(object):
 
 
 def display_messages(msgs, prettify=False,ignore_fields=''):
-    """Returns a string describing the set of messages provided"""
+    """Returns a string describing the set of messages provided
+    If prettify is true, candidates are displayed using prettytable.
+    ignore_fields provides a list of fields in the msgs which should not be displayed.
+    """
     lines = []
     episode_done = False
     ignore_fields = ignore_fields.split(',')
