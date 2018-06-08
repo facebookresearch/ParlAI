@@ -7,7 +7,7 @@
 checks them for offensive language.
 
 For example:
-`python parlai/scripts/detect_offensive_language.py -t "convai_chitchat" --display-examples True -dt train`
+`python parlai/scripts/detect_offensive_language.py -t "convai_chitchat" --display-examples True -dt train:ordered`
 """
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
@@ -57,7 +57,10 @@ def detect(opt, printargs=None, print_parser=None):
     cnt = 0
     while not world.epoch_done():
         world.parley()
-        if bad.contains_offensive_language(world.acts[0]['text']):
+        offensive_text = bad.contains_offensive_language(world.acts[0].get('text', ''))
+        offensive_label = bad.contains_offensive_language(
+            world.acts[0].get('labels', world.acts[0].get('eval_labels', '')))
+        if offensive_text or offensive_label:
             if opt['display_examples']:
                 print(world.display() + "\n~~")
             cnt += 1
@@ -74,7 +77,8 @@ def detect(opt, printargs=None, print_parser=None):
             log_time.reset()
     if world.epoch_done():
         print("EPOCH DONE")
-    print(str(cnt) + " offensive messages found.")
+    print(str(cnt) + " offensive messages found out of " +
+          str(world.num_examples()) + " messages.")
     return world.report()
 
 
