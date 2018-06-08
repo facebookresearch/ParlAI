@@ -13,6 +13,7 @@ except Exception as e:
     raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
 
 from collections import deque, namedtuple
+import pickle
 import random
 
 Batch = namedtuple("Batch", [
@@ -77,8 +78,6 @@ class TorchAgent(Agent):
         self.history_tokens = opt['history_tokens']
         self.history_dialog = opt['history_dialog']
         self.history_replies = opt['history_replies']
-        self.model = None
-        self.optimizer = None
 
     def share(self):
         shared = super().share()
@@ -276,33 +275,36 @@ class TorchAgent(Agent):
 
         return self.history['dialog']
 
-        def save(self, path):
-            """Save model parameters if model_file is set.
+    def save(self, path):
+        """Save model parameters if model_file is set.
 
-            Override this method for more specific saving.
-            """
-            path = self.opt.get('model_file', None) if path is None else path
+        Override this method for more specific saving.
+        """
+        path = self.opt.get('model_file', None) if path is None else path
 
-            if path and hasattr(self, 'model'):
-                model = {}
-                model['model'] = self.model.state_dict()
-                model['optimizer'] = self.optimizer.state_dict()
-                model['opt'] = self.opt
+        if path and hasattr(self, 'model') and hasattr(self, 'optimizer'):
+            model = {}
+            model['model'] = self.model.state_dict()
+            model['optimizer'] = self.optimizer.state_dict()
 
-                with open(path, 'wb') as write:
-                    torch.save(model, write)
+            with open(path, 'wb') as write:
+                torch.save(model, write)
 
-        def load(self, path):
-            """Return opt and model states.
+            # save opt file
+            with open(path + ".opt", 'wb') as handle:
+                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-            Override this method for more specific loading.
-            """
-            states = torch.load(path, map_location=lambda cpu, _: cpu)
-            return states
+    def load(self, path):
+        """Return opt and model states.
 
-        def shutdown(self):
-            """Save the state of the model when shutdown."""
-            path = self.opt.get('model_file', None)
-            if path is not None:
-                self.save(path + '.shutdown_state')
-            super().shutdown()
+        Override this method for more specific loading.
+        """
+        states = torch.load(path, map_location=lambda cpu, _: cpu)
+        return states
+
+    def shutdown(self):
+        """Save the state of the model when shutdown."""
+        path = self.opt.get('model_file', None)
+        if path is not None:
+            self.save(path + '.shutdown_state')
+        super().shutdown()
