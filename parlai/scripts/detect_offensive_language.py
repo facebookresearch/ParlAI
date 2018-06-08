@@ -16,7 +16,6 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.utils import Timer, OffensiveLanguageDetector
 
 import random
-import os
 
 def setup_args(parser=None):
     if parser is None:
@@ -24,7 +23,8 @@ def setup_args(parser=None):
     # Get command line arguments
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.set_defaults(datatype='valid')
+    parser.set_defaults(datatype='train:ordered')
+    parser.set_defaults(model='repeat_label')
     return parser
 
 
@@ -39,7 +39,7 @@ def detect(opt, printargs=None, print_parser=None):
     random.seed(42)
 
     # Create model and assign it to the specified task
-    agent = RepeatLabelAgent(opt)
+    agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
     bad = OffensiveLanguageDetector()
 
@@ -57,10 +57,13 @@ def detect(opt, printargs=None, print_parser=None):
     cnt = 0
     while not world.epoch_done():
         world.parley()
-        offensive_text = bad.contains_offensive_language(world.acts[0].get('text', ''))
-        offensive_label = bad.contains_offensive_language(
-            world.acts[0].get('labels', world.acts[0].get('eval_labels', '')))
-        if offensive_text or offensive_label:
+        offensive = False
+        for a in world.acts:
+            if bad.contains_offensive_language(a.get('text', '')):
+                offensive = True
+            if bad.contains_offensive_language(a.get('labels', a.get('eval_labels', ''))):
+                offensive= True
+        if offensive:
             if opt['display_examples']:
                 print(world.display() + "\n~~")
             cnt += 1
