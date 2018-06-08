@@ -24,7 +24,7 @@ def setup_args(parser=None):
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.set_defaults(datatype='train:ordered')
-    parser.set_defaults(model='repeat_label')
+    parser.set_defaults(model='repeat_query')
     return parser
 
 
