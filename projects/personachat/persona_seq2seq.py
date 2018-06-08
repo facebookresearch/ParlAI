@@ -760,6 +760,7 @@ class Seq2seqAgent(Agent):
         for i, x in enumerate(parsed):
             for j, idx in enumerate(x):
                 xs[i][j] = idx
+
         if self.use_cuda:
             # copy to gpu
             self.xs.resize_(xs.size())
@@ -940,7 +941,7 @@ class Seq2seqAgent(Agent):
     def load(self, path):
         """Return opt and model states."""
         with open(path, 'rb') as read:
-            model = torch.load(read)
+            model = torch.load(read, map_location=lambda cpu, _: cpu)
 
         return model['opt'], model
 
@@ -2119,7 +2120,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                 self.xs_persona.copy_(xs_persona, )
                 xs_persona = Variable(self.xs_persona)
             else:
-                xs_persona = parsed_persona
+                xs_persona = Variable(xs_persona)
         else:
             max_x_len = max([len(x) for x in parsed_persona])
             xs_persona = torch.LongTensor(batchsize, max_x_len).fill_(self.NULL_IDX)
@@ -2350,7 +2351,7 @@ class PersonachatSeqseqAgentSplit(Agent):
     def load(self, path):
         """Return opt and model states."""
         with open(path, 'rb') as read:
-            model = torch.load(read)
+            model = torch.load(read, map_location=lambda cpu, _: cpu)
 
         return model['opt'], model
 
