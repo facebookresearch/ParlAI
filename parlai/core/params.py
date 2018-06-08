@@ -229,6 +229,8 @@ class ParlaiParser(argparse.ArgumentParser):
             '-dt', '--datatype', default='train',
             choices=['train', 'train:stream', 'train:ordered',
                      'train:ordered:stream', 'train:stream:ordered',
+                     'train:evalmode', 'train:evalmode:stream', 'train:evalmode:ordered',
+                     'train:evalmode:ordered:stream', 'train:evalmode:stream:ordered',
                      'valid', 'valid:stream', 'test', 'test:stream'],
             help='choose from: train, train:ordered, valid, test. to stream '
                  'data add ":stream" to any option (e.g., train:stream). '
