@@ -49,6 +49,8 @@ class TorchAgent(Agent):
                            help='Keep replies in the history, or not.')
         agent.add_argument('--no-cuda', action='store_true', default=False,
                            help='disable GPUs even if available')
+        agent.add_argument('--gpu', type=int, default=-1,
+                           help='which GPU device to use')
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -75,6 +77,8 @@ class TorchAgent(Agent):
         self.history_tokens = opt['history_tokens']
         self.history_dialog = opt['history_dialog']
         self.history_replies = opt['history_replies']
+        self.model = None
+        self.optimizer = None
 
     def share(self):
         shared = super().share()
@@ -271,3 +275,34 @@ class TorchAgent(Agent):
                 self.history['labels'] = labels
 
         return self.history['dialog']
+
+        def save(self, path):
+            """Save model parameters if model_file is set.
+
+            Override this method for more specific saving.
+            """
+            path = self.opt.get('model_file', None) if path is None else path
+
+            if path and hasattr(self, 'model'):
+                model = {}
+                model['model'] = self.model.state_dict()
+                model['optimizer'] = self.optimizer.state_dict()
+                model['opt'] = self.opt
+
+                with open(path, 'wb') as write:
+                    torch.save(model, write)
+
+        def load(self, path):
+            """Return opt and model states.
+
+            Override this method for more specific loading.
+            """
+            states = torch.load(path, map_location=lambda cpu, _: cpu)
+            return states
+
+        def shutdown(self):
+            """Save the state of the model when shutdown."""
+            path = self.opt.get('model_file', None)
+            if path is not None:
+                self.save(path + '.shutdown_state')
+            super().shutdown()
