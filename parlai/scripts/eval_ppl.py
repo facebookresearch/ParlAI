@@ -123,7 +123,7 @@ class PerplexityWorld(World):
                 # get probability of correct answer, divide by total prob mass
                 prob_true = probs.get(parsed[i], 0)
                 if prob_true > 0:
-                    prob_true /= sum(probs.values())
+                    prob_true /= sum((probs.get(k, 0) for k in self.dict.keys()))
                     loss -= math.log(prob_true)
                 else:
                     loss = float('inf')
