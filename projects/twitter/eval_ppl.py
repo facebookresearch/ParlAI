@@ -57,7 +57,8 @@ class WordFrequencyEntry(Agent):
         # increase likelihood of predicting input words
         tokens = self.dict.tokenize(obs.get('text', ''))
         for t in tokens:
-            freqs[t] += 10000
+            if t in freqs:
+                freqs[t] += 10000
         return freqs
 
 

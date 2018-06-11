@@ -17,22 +17,21 @@ potential unknown words. See the evaluation script for more information.
 
 
 from parlai.scripts.build_dict import setup_args, build_dict as main_build_dict
+DICT_FILE = 'models:twitter/dict_30k'
 
 def build_dict():
     # default is 30k
     return build_dict_30k()
 
 def build_dict_30k():
-    DICT_FINAL = 'models:twitter/dict_30k'
-
     parser = setup_args()
     # first build on standard train and validation
     parser.set_defaults(
         task='twitter',
         dict_lower=True,
-        dict_file=DICT_FINAL,
+        dict_file=DICT_FILE,
         dict_include_valid=True,
-        dict_maxtokens=30000
+        dict_maxtokens=30000,
     )
     opt = parser.parse_args(args='')
     return main_build_dict(opt)

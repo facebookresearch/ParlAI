@@ -9,23 +9,24 @@ used to achieve the pre-trained model.
 """
 
 from parlai.scripts.train_model import setup_args, TrainLoop
+from projects.twitter.build_dict import build_dict, DICT_FILE
 
 
 if __name__ == '__main__':
+    build_dict()
+
     parser = setup_args()
     parser.set_defaults(
-        task='convai2:self',
+        task='twitter',
         model='seq2seq',
-        model_file='/tmp/convai2_self_seq2seq_model',
-        dict_file='/tmp/dict_convai2_self',
+        model_file='/tmp/twitter_seq2seq_model',
+        dict_file=DICT_FILE,
         dict_lower=True,
-        dict_include_valid=True,
-        dict_maxexs=-1,
         datatype='train',
-        batchsize=64,
+        batchsize=32,
         hiddensize=1024,
-        embeddingsize=256,
-        attention='general',
+        embeddingsize=300,
+        attention='none',
         numlayers=2,
         rnn_class='lstm',
         learningrate=3,
@@ -36,11 +37,13 @@ if __name__ == '__main__':
         embedding_type='glove',
         momentum=0.9,
         bidirectional=False,
-        context_length=-1,
-        validation_every_n_secs=90,
+        batch_sort=True,
+        validation_every_n_secs=600,
         validation_metric='ppl',
         validation_metric_mode='min',
-        validation_patience=12,
-        log_every_n_secs=10,
+        validation_patience=15,
+        log_every_n_secs=1,
+        numsoftmax=3,
+        truncate=40,
     )
     TrainLoop(parser).train()

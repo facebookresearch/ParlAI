@@ -1,0 +1,2 @@
+valid:{'total': 10405, 'accuracy': 0.001346, 'f1': 0.07616, 'loss': 4.237, 'ppl': 69.18}
+[ did not beat best ppl: 69.15 impatience: 15 ]

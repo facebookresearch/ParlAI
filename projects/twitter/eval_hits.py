@@ -13,18 +13,18 @@ from parlai.scripts.eval_model import eval_model, setup_args as base_setup_args
 def setup_args(parser=None):
     parser = base_setup_args(parser)
     parser.set_defaults(
-        task='convai2:self',
+        task='twitter',
         datatype='valid',
-        hide_labels=False,
     )
     return parser
 
-def eval_hits(opt, print_parser):
-    report = eval_model(opt, print_parser)
+def eval_hits(opt, print_parser=None):
+    report = eval_model(opt, print_parser=print_parser)
     print("============================")
-    print("FINAL Hits@1: " +str(report['hits@1']))
+    hits_at_1 = report.get('hits@1', 0.0)
+    print("FINAL Hits@1: " + str(hits_at_1))
 
 if __name__ == '__main__':
     parser = setup_args()
     opt = parser.parse_args()
-    eval_hits(opt, parser)
+    eval_hits(opt, print_parser=parser)
