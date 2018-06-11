@@ -5,6 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.agents import Agent
+from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import maintain_dialog_history, PaddingUtils, round_sigfigs
 from parlai.core.thread_utils import SharedTable
@@ -165,7 +166,7 @@ class Seq2seqAgent(Agent):
 
         # all instances may need some params
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
-        self.metrics = {'loss': 0.0, 'num_tokens': 0}
+        self.metrics = {'loss': 0.0, 'num_tokens': 0, 'total_skipped_batches': 0}
         self.history = {}
         self.report_freq = opt.get('report_freq', 0.001)
         self.use_person_tokens = opt.get('person_tokens', False)
@@ -248,23 +249,15 @@ class Seq2seqAgent(Agent):
                     embs = vocab.GloVe(
                         name='840B',
                         dim=300,
-                        cache=os.path.join(
-                            opt['parlai_home'],
-                            'data',
-                            'models',
-                            'glove_vectors'
-                        )
+                        cache=modelzoo_path(self.opt.get('datapath'),
+                                            'models:glove_vectors')
                     )
                 elif opt['embedding_type'].startswith('fasttext'):
                     init = 'fasttext'
                     embs = vocab.FastText(
                         language='en',
-                        cache=os.path.join(
-                            opt['parlai_home'],
-                            'data',
-                            'models',
-                            'fasttext_vectors'
-                        )
+                        cache=modelzoo_path(self.opt.get('datapath'),
+                                            'models:fasttext_vectors')
                     )
                 else:
                     raise RuntimeError('embedding type not implemented')
@@ -418,6 +411,7 @@ class Seq2seqAgent(Agent):
         """Reset metrics for reporting loss and perplexity."""
         self.metrics['loss'] = 0.0
         self.metrics['num_tokens'] = 0
+        self.metrics['total_skipped_batches'] = 0
 
     def report(self):
         """Report loss and perplexity from model's perspective.
@@ -432,6 +426,8 @@ class Seq2seqAgent(Agent):
                 m['ppl'] = math.exp(m['loss'])
             except OverflowError:
                 m['ppl'] = float('inf')
+        if self.metrics['total_skipped_batches'] > 0:
+            m['total_skipped_batches'] = self.metrics['total_skipped_batches']
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)
@@ -488,22 +484,34 @@ class Seq2seqAgent(Agent):
         Update the model using the targets if available, otherwise rank
         candidates as well if they are available and param is set.
         """
-        cand_preds = None
+        predictions, cand_preds = None, None
         if is_training:
             self.model.train()
             self.zero_grad()
-            out = self.model(xs, ys, rank_during_training=cands is not None)
-            # generated response
-            predictions, scores, cand_preds = out[0], out[1], out[2]
-            score_view = scores.view(-1, scores.size(-1))
-            loss = self.criterion(score_view, ys.view(-1))
-            # save loss to metrics
-            target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
-            self.metrics['loss'] += loss.item()
-            self.metrics['num_tokens'] += target_tokens
-            loss /= target_tokens  # average loss per token
-            loss.backward()
-            self.update_params()
+            out = None
+            try:
+                out = self.model(xs, ys, rank_during_training=cands is not None)
+                # generated response
+                predictions, scores, cand_preds = out[0], out[1], out[2]
+                score_view = scores.view(-1, scores.size(-1))
+                loss = self.criterion(score_view, ys.view(-1))
+                # save loss to metrics
+                target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
+                self.metrics['loss'] += loss.item()
+                self.metrics['num_tokens'] += target_tokens
+                loss /= target_tokens  # average loss per token
+                loss.backward()
+            except RuntimeError as e:
+                # catch out of memory exceptions during fwd/bck (skip batch)
+                if 'out of memory' in str(e):
+                    print('| WARNING: ran out of memory, skipping batch. '
+                          'if this happens frequently, decrease batchsize or '
+                          'truncate the inputs to the model.')
+                    self.metrics['total_skipped_batches'] += 1
+                    self.zero_grad()
+                    return predictions, cand_preds
+                else:
+                    raise e
         else:
             self.model.eval()
             out = self.model(xs, ys=None, cands=cands, valid_cands=valid_cands)
@@ -589,10 +597,11 @@ class Seq2seqAgent(Agent):
             report_freq = 0
         else:
             report_freq = self.report_freq
-        PaddingUtils.map_predictions(
-            predictions, valid_inds, batch_reply, observations,
-            self.dict, self.END_IDX, report_freq=report_freq, labels=labels,
-            answers=self.answers, ys=ys.data if ys is not None else None)
+        if predictions is not None:
+            PaddingUtils.map_predictions(
+                predictions, valid_inds, batch_reply, observations,
+                self.dict, self.END_IDX, report_freq=report_freq, labels=labels,
+                answers=self.answers, ys=ys.data if ys is not None else None)
 
         if cand_preds is not None:
             if valid_cands is None:
