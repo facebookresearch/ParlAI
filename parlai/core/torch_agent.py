@@ -282,17 +282,20 @@ class TorchAgent(Agent):
         """
         path = self.opt.get('model_file', None) if path is None else path
 
-        if path and hasattr(self, 'model') and hasattr(self, 'optimizer'):
-            model = {}
-            model['model'] = self.model.state_dict()
-            model['optimizer'] = self.optimizer.state_dict()
+        if path:
+            states = {}
+            if hasattr(self, 'model'):  # save model params
+                states['model'] = self.model.state_dict()
+            if hasattr(self, 'optimizer'):  # save optimizer params
+                states['optimizer'] = self.optimizer.state_dict()
 
-            with open(path, 'wb') as write:
-                torch.save(model, write)
+            if states:  # anything found to save?
+                with open(path, 'wb') as write:
+                    torch.save(states, write)
 
-            # save opt file
-            with open(path + ".opt", 'wb') as handle:
-                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                # save opt file
+                with open(path + ".opt", 'wb') as handle:
+                    pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def load(self, path):
         """Return opt and model states.
