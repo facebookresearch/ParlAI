@@ -511,6 +511,7 @@ class Seq2seqAgent(Agent):
                     return predictions, cand_preds
                 else:
                     raise e
+            self.update_params()
         else:
             self.model.eval()
             out = self.model(xs, ys=None, cands=cands, valid_cands=valid_cands)
