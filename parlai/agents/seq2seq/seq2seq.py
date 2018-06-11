@@ -411,7 +411,6 @@ class Seq2seqAgent(Agent):
         """Reset metrics for reporting loss and perplexity."""
         self.metrics['loss'] = 0.0
         self.metrics['num_tokens'] = 0
-        self.metrics['total_skipped_batches'] = 0
 
     def report(self):
         """Report loss and perplexity from model's perspective.
