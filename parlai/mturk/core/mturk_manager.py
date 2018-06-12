@@ -118,12 +118,13 @@ class MTurkManager():
         try:
             open(file_lock, 'a').close()
             if os.path.exists(file_path):
-                with open(file_path, 'rb+') as time_log_file:
-                    existing_times = pickle.load(time_log_file)
-                    if time.time() - existing_times['last_reset'] < 360:
-                        # no need to reset, another thread did recently
-                        os.remove(file_lock)
-                        return
+                if not force:
+                    with open(file_path, 'rb+') as time_log_file:
+                        existing_times = pickle.load(time_log_file)
+                        if time.time() - existing_times['last_reset'] < 360:
+                            # no need to reset, another thread did recently
+                            os.remove(file_lock)
+                            return
 
                 # Reset the time logs
                 os.remove(file_path)
