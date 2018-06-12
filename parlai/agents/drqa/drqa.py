@@ -12,8 +12,10 @@ In Association for Computational Linguistics (ACL).
 Link: https://arxiv.org/abs/1704.00051
 
 Note:
-To use pretrained word embeddings, set the --embeddings_file path argument.
+To use pretrained word embeddings, set the --embedding_file path argument.
 GloVe is recommended, see http://nlp.stanford.edu/data/glove.840B.300d.zip.
+To automatically download glove, use:
+--embedding_file models:glove_vectors/glove.840B.300d.txt
 """
 
 try:
@@ -248,7 +250,7 @@ class DrqaAgent(Agent):
             # save opt file
             with open(fname + ".opt", 'wb') as handle:
                 pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
-                
+
     # --------------------------------------------------------------------------
     # Helper functions.
     # --------------------------------------------------------------------------

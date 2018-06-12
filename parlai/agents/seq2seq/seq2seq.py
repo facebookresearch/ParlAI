@@ -5,6 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.agents import Agent
+from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import maintain_dialog_history, PaddingUtils, round_sigfigs
 from parlai.core.thread_utils import SharedTable
@@ -165,7 +166,7 @@ class Seq2seqAgent(Agent):
 
         # all instances may need some params
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
-        self.metrics = {'loss': 0.0, 'num_tokens': 0}
+        self.metrics = {'loss': 0.0, 'num_tokens': 0, 'total_skipped_batches': 0}
         self.history = {}
         self.report_freq = opt.get('report_freq', 0.001)
         self.use_person_tokens = opt.get('person_tokens', False)
@@ -245,26 +246,15 @@ class Seq2seqAgent(Agent):
                     raise ex
                 if opt['embedding_type'].startswith('glove'):
                     init = 'glove'
-                    embs = vocab.GloVe(
-                        name='840B',
-                        dim=300,
-                        cache=os.path.join(
-                            opt['parlai_home'],
-                            'data',
-                            'models',
-                            'glove_vectors'
-                        )
+                    embs = vocab.GloVe(name='840B', dim=300,
+                        cache=modelzoo_path(self.opt.get('datapath'),
+                                            'models:glove_vectors')
                     )
                 elif opt['embedding_type'].startswith('fasttext'):
                     init = 'fasttext'
-                    embs = vocab.FastText(
-                        language='en',
-                        cache=os.path.join(
-                            opt['parlai_home'],
-                            'data',
-                            'models',
-                            'fasttext_vectors'
-                        )
+                    embs = vocab.FastText(language='en',
+                        cache=modelzoo_path(self.opt.get('datapath'),
+                                            'models:fasttext_vectors')
                     )
                 else:
                     raise RuntimeError('embedding type not implemented')
@@ -298,10 +288,6 @@ class Seq2seqAgent(Agent):
             self.clip = opt.get('gradient_clip', -1)
             self.rank = opt['rank_candidates']
 
-            # set up tensors once
-            self.xs = torch.LongTensor(1, 1)
-            self.ys = torch.LongTensor(1, 1)
-
             # set up criteria
             if opt.get('numsoftmax', 1) > 1:
                 self.criterion = nn.NLLLoss(
@@ -311,9 +297,6 @@ class Seq2seqAgent(Agent):
                     ignore_index=self.NULL_IDX, size_average=False)
 
             if self.use_cuda:
-                # push to cuda
-                self.xs = self.xs.cuda()
-                self.ys = self.ys.cuda()
                 self.criterion.cuda()
 
             # set up optimizer
@@ -432,6 +415,8 @@ class Seq2seqAgent(Agent):
                 m['ppl'] = math.exp(m['loss'])
             except OverflowError:
                 m['ppl'] = float('inf')
+        if self.metrics['total_skipped_batches'] > 0:
+            m['total_skipped_batches'] = self.metrics['total_skipped_batches']
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)
@@ -452,12 +437,11 @@ class Seq2seqAgent(Agent):
                 # move metrics and model to shared memory
                 self.metrics = SharedTable(self.metrics)
                 self.model.share_memory()
-        shared['metrics'] = self.metrics
-        shared['model'] = self.model
-        shared['states'] = {  # only need to pass optimizer states
-            'optimizer': self.optimizer.state_dict(),
-            'optimizer_type': self.opt['optimizer'],
-        }
+            shared['model'] = self.model
+            shared['metrics'] = self.metrics
+            shared['states'] = {  # don't share optimizer states
+                'optimizer_type': self.opt['optimizer'],
+            }
         return shared
 
     def observe(self, observation):
@@ -488,21 +472,34 @@ class Seq2seqAgent(Agent):
         Update the model using the targets if available, otherwise rank
         candidates as well if they are available and param is set.
         """
-        cand_preds = None
+        predictions, cand_preds = None, None
         if is_training:
             self.model.train()
             self.zero_grad()
-            out = self.model(xs, ys, rank_during_training=cands is not None)
-            # generated response
-            predictions, scores, cand_preds = out[0], out[1], out[2]
-            score_view = scores.view(-1, scores.size(-1))
-            loss = self.criterion(score_view, ys.view(-1))
-            # save loss to metrics
-            target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
-            self.metrics['loss'] += loss.item()
-            self.metrics['num_tokens'] += target_tokens
-            loss /= target_tokens  # average loss per token
-            loss.backward()
+            out = None
+            try:
+                out = self.model(xs, ys, rank_during_training=cands is not None)
+                # generated response
+                predictions, scores, cand_preds = out[0], out[1], out[2]
+                score_view = scores.view(-1, scores.size(-1))
+                loss = self.criterion(score_view, ys.view(-1))
+                # save loss to metrics
+                target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
+                self.metrics['loss'] += loss.item()
+                self.metrics['num_tokens'] += target_tokens
+                loss /= target_tokens  # average loss per token
+                loss.backward()
+            except RuntimeError as e:
+                # catch out of memory exceptions during fwd/bck (skip batch)
+                if 'out of memory' in str(e):
+                    print('| WARNING: ran out of memory, skipping batch. '
+                          'if this happens frequently, decrease batchsize or '
+                          'truncate the inputs to the model.')
+                    self.metrics['total_skipped_batches'] += 1
+                    self.zero_grad()
+                    return predictions, cand_preds
+                else:
+                    raise e
             self.update_params()
         else:
             self.model.eval()
@@ -535,17 +532,9 @@ class Seq2seqAgent(Agent):
             ys = torch.LongTensor(ys)
         if self.use_cuda:
             # copy to gpu
-            self.xs.resize_(xs.size())
-            self.xs.copy_(xs)
-            xs = Variable(self.xs)
+            xs = xs.cuda()
             if ys is not None:
-                self.ys.resize_(ys.size())
-                self.ys.copy_(ys)
-                ys = Variable(self.ys)
-        else:
-            xs = Variable(xs)
-            if ys is not None:
-                ys = Variable(ys)
+                ys = ys.cuda()
 
         cands = None
         valid_cands = None
@@ -566,8 +555,26 @@ class Seq2seqAgent(Agent):
 
         return xs, ys, labels, valid_inds, cands, valid_cands, is_training
 
+    def init_cuda_buffer(self, batchsize):
+        if self.use_cuda and not hasattr(self, 'buffer_initialized'):
+            try:
+                print('preinitializing pytorch cuda buffer')
+                bsz = self.opt.get('batchsize', batchsize)
+                maxlen = self.truncate or 180
+                dummy = torch.ones(bsz, maxlen).long().cuda()
+                sc = self.model(dummy, dummy)[1]
+                loss = self.criterion(sc.view(-1, sc.size(-1)), dummy.view(-1))
+                loss.backward()
+                self.buffer_initialized = True
+            except RuntimeError as e:
+                if 'out of memory' in str(e):
+                    m = ('CUDA OOM: Lower batch size (-bs) from {} or lower max'
+                         ' sequence length (-tr) from {}'.format(bsz, maxlen))
+                    raise RuntimeError(m)
+
     def batch_act(self, observations):
         batchsize = len(observations)
+        self.init_cuda_buffer(batchsize)
         # initialize a table of replies with this agent's id
         batch_reply = [{'id': self.getID()} for _ in range(batchsize)]
 
@@ -589,10 +596,11 @@ class Seq2seqAgent(Agent):
             report_freq = 0
         else:
             report_freq = self.report_freq
-        PaddingUtils.map_predictions(
-            predictions, valid_inds, batch_reply, observations,
-            self.dict, self.END_IDX, report_freq=report_freq, labels=labels,
-            answers=self.answers, ys=ys.data if ys is not None else None)
+        if predictions is not None:
+            PaddingUtils.map_predictions(
+                predictions, valid_inds, batch_reply, observations,
+                self.dict, self.END_IDX, report_freq=report_freq, labels=labels,
+                answers=self.answers, ys=ys.data if ys is not None else None)
 
         if cand_preds is not None:
             if valid_cands is None:
