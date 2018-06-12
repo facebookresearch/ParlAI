@@ -246,16 +246,13 @@ class Seq2seqAgent(Agent):
                     raise ex
                 if opt['embedding_type'].startswith('glove'):
                     init = 'glove'
-                    embs = vocab.GloVe(
-                        name='840B',
-                        dim=300,
+                    embs = vocab.GloVe(name='840B', dim=300,
                         cache=modelzoo_path(self.opt.get('datapath'),
                                             'models:glove_vectors')
                     )
                 elif opt['embedding_type'].startswith('fasttext'):
                     init = 'fasttext'
-                    embs = vocab.FastText(
-                        language='en',
+                    embs = vocab.FastText(language='en',
                         cache=modelzoo_path(self.opt.get('datapath'),
                                             'models:fasttext_vectors')
                     )
@@ -291,10 +288,6 @@ class Seq2seqAgent(Agent):
             self.clip = opt.get('gradient_clip', -1)
             self.rank = opt['rank_candidates']
 
-            # set up tensors once
-            self.xs = torch.LongTensor(1, 1)
-            self.ys = torch.LongTensor(1, 1)
-
             # set up criteria
             if opt.get('numsoftmax', 1) > 1:
                 self.criterion = nn.NLLLoss(
@@ -304,9 +297,6 @@ class Seq2seqAgent(Agent):
                     ignore_index=self.NULL_IDX, size_average=False)
 
             if self.use_cuda:
-                # push to cuda
-                self.xs = self.xs.cuda()
-                self.ys = self.ys.cuda()
                 self.criterion.cuda()
 
             # set up optimizer
@@ -447,12 +437,11 @@ class Seq2seqAgent(Agent):
                 # move metrics and model to shared memory
                 self.metrics = SharedTable(self.metrics)
                 self.model.share_memory()
-        shared['metrics'] = self.metrics
-        shared['model'] = self.model
-        shared['states'] = {  # only need to pass optimizer states
-            'optimizer': self.optimizer.state_dict(),
-            'optimizer_type': self.opt['optimizer'],
-        }
+            shared['model'] = self.model
+            shared['metrics'] = self.metrics
+            shared['states'] = {  # don't share optimizer states
+                'optimizer_type': self.opt['optimizer'],
+            }
         return shared
 
     def observe(self, observation):
@@ -543,17 +532,9 @@ class Seq2seqAgent(Agent):
             ys = torch.LongTensor(ys)
         if self.use_cuda:
             # copy to gpu
-            self.xs.resize_(xs.size())
-            self.xs.copy_(xs)
-            xs = Variable(self.xs)
+            xs = xs.cuda()
             if ys is not None:
-                self.ys.resize_(ys.size())
-                self.ys.copy_(ys)
-                ys = Variable(self.ys)
-        else:
-            xs = Variable(xs)
-            if ys is not None:
-                ys = Variable(ys)
+                ys = ys.cuda()
 
         cands = None
         valid_cands = None
@@ -574,8 +555,26 @@ class Seq2seqAgent(Agent):
 
         return xs, ys, labels, valid_inds, cands, valid_cands, is_training
 
+    def init_cuda_buffer(self, batchsize):
+        if self.use_cuda and not hasattr(self, 'buffer_initialized'):
+            try:
+                print('preinitializing pytorch cuda buffer')
+                bsz = self.opt.get('batchsize', batchsize)
+                maxlen = self.truncate or 180
+                dummy = torch.ones(bsz, maxlen).long().cuda()
+                sc = self.model(dummy, dummy)[1]
+                loss = self.criterion(sc.view(-1, sc.size(-1)), dummy.view(-1))
+                loss.backward()
+                self.buffer_initialized = True
+            except RuntimeError as e:
+                if 'out of memory' in str(e):
+                    m = ('CUDA OOM: Lower batch size (-bs) from {} or lower max'
+                         ' sequence length (-tr) from {}'.format(bsz, maxlen))
+                    raise RuntimeError(m)
+
     def batch_act(self, observations):
         batchsize = len(observations)
+        self.init_cuda_buffer(batchsize)
         # initialize a table of replies with this agent's id
         batch_reply = [{'id': self.getID()} for _ in range(batchsize)]
 
