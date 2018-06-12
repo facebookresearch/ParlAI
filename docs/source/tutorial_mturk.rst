@@ -145,6 +145,9 @@ Additional flags can be used for more specific purposes.
 
 - ``--max-connections`` controls the number of HITs can be launched at the same time. If not specified, it defaults to 30; 0 is unlimited.
 
+- ``--max-time`` sets a maximum limit in seconds for how many seconds per day a specific worker can work on your task. Data is logged to ``working_time.pickle``, so all runs on the same machine will share the daily work logs.
+
+- ``--max-time-qual`` sets the specific qualification name for the max-time soft block. Using this can allow you to limit worker time between separate machines where ``working_time.pickle`` isn't shared
 
 Handling Turker Disconnects
 ---------------------------
