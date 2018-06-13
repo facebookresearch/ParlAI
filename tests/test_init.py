@@ -19,9 +19,6 @@ class TestInit(unittest.TestCase):
                 if os.path.basename(root) == 'html':
                     # skip mturk core's html folder--not a python module
                     continue
-                if 'fairseq_py' in root:
-                    # skip fairseq_py folder
-                    continue
                 assert '__init__.py' in files, 'Dir {} is missing __init__.py'.format(root)
 
 

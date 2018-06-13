@@ -4,87 +4,177 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 
 try:
-    from .fairseq_py.fairseq import models
+    from fairseq import models
 except ImportError:
-    raise RuntimeError("Please run 'python setup.py build' and "
-                       "'python setup.py develop' from the fairseq_py directory")
-from .fairseq_py.fairseq.models import fconv
-from .fairseq_py.fairseq.multiprocessing_trainer import MultiprocessingTrainer
-from .fairseq_py.fairseq import criterions
-from .fairseq_py.fairseq import dictionary
-from .fairseq_py.fairseq.sequence_generator import SequenceGenerator
-from .fairseq_py.fairseq import options
+    raise RuntimeError(
+        "Please run \"pip install 'git+https://github.com/pytorch/"
+        "fairseq.git@v0.5.0#egg=fairseq'\""
+    )
+from fairseq import trainer
+from fairseq.criterions.cross_entropy import CrossEntropyCriterion
+from fairseq.sequence_generator import SequenceGenerator
+from fairseq import options
+from fairseq.tasks.fairseq_task import FairseqTask
+from fairseq.utils import convert_padding_direction
 
-from torch.autograd import Variable
+from parlai.core.torch_agent import TorchAgent
 
-from collections import deque
 import argparse
-import numpy as np
-import random
 import torch
 import os
 
 
-def OptWrapper(opt):
+# these are the fairseq metrics we want to pass up along through ParlAI
+# Key is FairSeq metric, value is ParlAI name
+METRIC_MAPPER = {
+    # train loss
+    "train_loss": "tloss",
+    # updates per second
+    "ups": "ups",
+    # words per second
+    "wps": "wps",
+}
+
+
+def _fairseq_opt_wrapper(opt):
+    """
+    Marshalls from a dict to a argparse.Namespace object for API compatibility.
+    Also does some necessary post-processing needed for fairseq-py.
+
+    :param opt: dict. ParlAI options passed around from everywhere.
+    :return: an argparse.Namespace object for use in fairseq-py.
+    """
     args = argparse.Namespace()
+
+    # set default options for the given opt
+    models.ARCH_CONFIG_REGISTRY[opt["arch"]](args)
+
+    # post processing of args. See
+    # https://github.com/pytorch/fairseq/blob/v0.5.0/fairseq/options.py#L95
+    if "lr" in opt:
+        opt["lr"] = options.eval_str_list(opt["lr"], type=float)
+    if "update_freq" in opt:
+        opt["update_freq"] = options.eval_str_list(opt["update_freq"], int)
+    if opt.get("max_sentences_valid") is not None:
+        opt["max_sentences_valid"] = opt["max_sentences"]
+
+    # hardcode turn off distributed training. May need to revisit this later
+    opt["distributed_world_size"] = 1
+
     for key in opt:
-        if opt[key] is not None:
-            setattr(args, key, opt[key])
-    args.model = models.arch_model_map[args.arch]
-    getattr(models, args.model).parse_arch(args)
+        if opt[key] is None:
+            continue
+        setattr(args, key, opt[key])
+
     return args
 
 
-def _make_fairseq_dict(parlai_dict):
-    fairseq_dict = dictionary.Dictionary()
-    for i in range(len(parlai_dict)):
-        fairseq_dict.add_symbol(parlai_dict[i])
-    return fairseq_dict
+class _FairseqDictionary(DictionaryAgent):
+    """Skeleton dictionary class needed for interaction with fairseq-py"""
+
+    def pad(self):
+        return self.pad_index
+
+    def eos(self):
+        return self[self.end_token]
+
+    def unk(self):
+        return self[self.unk_token]
+
+    @property
+    def pad_index(self):
+        return self[self.null_token]
+
+    @property
+    def eos_index(self):
+        return self[self.end_token]
+
+    @property
+    def unk_index(self):
+        return self[self.unk_token]
+
+    def add_symbol(self):
+        raise NotImplementedError("This is a fake class")
 
 
-class FairseqAgent(Agent):
-    """Agent which takes an input sequence and produces an output sequence.
+class _ParlaiTask(FairseqTask):
+    """Skeleton task class needed for interaction with fairseq-py."""
 
-    For more information, see Convolutional Sequence to Sequence Learning
-     `(Gehring et al. 2017) <https://arxiv.org/abs/1705.03122>`_.
-    """
+    def __init__(self, dictionary):
+        self.dict = dictionary
 
+    @property
+    def target_dictionary(self):
+        return self.dict
+
+    @property
+    def source_dictionary(self):
+        return self.dict
+
+
+class FairseqAgent(TorchAgent):
+    """Generic wrapper around fairseq for use in ParlAI"""
+
+    metrics = {}
+
+    # TODO: merge with TorchAgent.add_cmdline_args
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
+        # first we need to add the general torch agent operations
+        TorchAgent.add_cmdline_args(argparser)
+
         agent = argparser.add_argument_group('Fairseq Arguments')
+        # TODO maybe drop these?
         agent.add_argument(
-            '-tr', '--truncate',
-            type=int, default=-1,
-            help='truncate input & output lengths to speed up training (may '
-                 'reduce accuracy). This fixes all input and output to have a '
-                 'maximum length. This reduces the total amount of padding in '
-                 'the batches.')
-        agent.add_argument(
-            '--max-positions',
+            '--max-source-positions',
             default=1024,
             type=int,
             metavar='N',
-            help='max number of tokens in the sequence')
+            help='max number of tokens in the sequence'
+        )
+        agent.add_argument(
+            '--max-target-positions',
+            default=1024,
+            type=int,
+            metavar='N',
+            help='max number of tokens in the sequence'
+        )
         agent.add_argument(
             '--seed',
             default=1,
             type=int,
             metavar='N',
-            help='pseudo random number generator seed')
+            help='pseudo random number generator seed'
+        )
+
+        # TODO: is this necessary?
+        _FairseqDictionary.add_cmdline_args(argparser)
+
+        # TODO: opt suboptions isn't set up yet
         options.add_optimization_args(argparser)
+        # TODO: check for generation sub-args
         options.add_generation_args(argparser)
         options.add_model_args(argparser)
-        DictionaryAgent.add_cmdline_args(argparser)
+
+        # We need to find out the fairseq model-specific options, so grab the
+        # architecture stuff and look up its options
+        known_args = argparser.parse_known_args(nohelp=True)[0]
+        if hasattr(known_args, "arch"):
+            arch = known_args.arch
+            arch_group = argparser.add_argument_group(
+                "{} specific Arguments".format(arch)
+            )
+            models.ARCH_MODEL_REGISTRY[arch].add_args(arch_group)
 
     def __init__(self, opt, shared=None):
-        # initialize defaults first
+        # In general use a basic TorchAgent wherever possible
         super().__init__(opt, shared)
         if not shared:
+            # TODO: should this block come from TorchAgent?
             # this is not a shared instance of this class, so do full
             # initialization. if shared is set, only set up shared members.
             saved_state = None
@@ -96,46 +186,44 @@ class FairseqAgent(Agent):
                 # override options with stored ones
                 opt = self._override_opt(new_opt)
 
-            self.args = OptWrapper(opt)
-            self.parlai_dict = DictionaryAgent(opt)
-            self.fairseq_dict = _make_fairseq_dict(self.parlai_dict)
-            self.id = 'Fairseq'
-            self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
+            # Begin real fairseq stuff
+            # copy over all the args we can
+            self.args = _fairseq_opt_wrapper(opt)
+            # Just some identifying info
+            self.id = "fairseq:{}".format(self.args.arch)
+            # construct dictionaries for parlai frontend and fairseq backend
+            self.dict = _FairseqDictionary(opt)
 
-            self.EOS = self.fairseq_dict[self.fairseq_dict.eos()]
-            self.EOS_TENSOR = (torch.LongTensor(1, 1)
-                               .fill_(self.fairseq_dict.eos()))
-            self.NULL_IDX = self.fairseq_dict.pad()
+            # We need a placeholder task for fairseq
+            self.task = _ParlaiTask(self.dict)
 
-            encoder = fconv.FConvEncoder(
-                self.fairseq_dict,
-                embed_dim=self.args.encoder_embed_dim,
-                convolutions=eval(self.args.encoder_layers),
-                dropout=self.args.dropout,
-                max_positions=self.args.max_positions)
-            decoder = fconv.FConvDecoder(
-                self.fairseq_dict,
-                embed_dim=self.args.decoder_embed_dim,
-                convolutions=eval(self.args.decoder_layers),
-                out_embed_dim=self.args.decoder_out_embed_dim,
-                attention=eval(self.args.decoder_attention),
-                dropout=self.args.dropout,
-                max_positions=self.args.max_positions)
-            self.model = fconv.FConvModel(encoder, decoder)
+            # actually construct the model and generator
+            model_class = models.ARCH_MODEL_REGISTRY[self.args.arch]
+            self.model = model_class.build_model(self.args, self.task)
+            self.generator = SequenceGenerator(
+                [self.model],
+                tgt_dict=self.dict,
+                beam_size=self.args.beam,
+                stop_early=(not self.args.no_early_stop),
+                normalize_scores=(not self.args.unnormalized),
+                len_penalty=self.args.lenpen,
+            )
+            # set up the grader and the trainer
+            # TODO: maybe support label smoothing here
+            self.criterion = CrossEntropyCriterion(self.args, self.task)
+            self.trainer = trainer.Trainer(
+                self.args, self.task, self.model, self.criterion
+            )
 
-            # from fairseq's build_criterion()
-            if self.args.label_smoothing > 0:
-                self.criterion = criterions.LabelSmoothedCrossEntropyCriterion(
-                    self.args.label_smoothing, self.NULL_IDX)
-            else:
-                self.criterion = criterions.CrossEntropyCriterion(
-                    self.args, self.fairseq_dict)
+            # move things to the GPU if possible
+            if self.use_cuda:
+                self.model = self.model.cuda()
+                self.generator = self.generator.cuda()
 
-            self.trainer = MultiprocessingTrainer(self.args, self.model, self.criterion)
-            if saved_state is not None:
-                self.set_states(saved_state)
+        # Start things off clean
         self.reset()
 
+    # TODO: verify this is needed
     def _override_opt(self, new_opt):
         """Set overridable opts from loaded opt file.
 
@@ -166,184 +254,85 @@ class FairseqAgent(Agent):
 
     def reset(self):
         """Reset observation and episode_done."""
-        self.observation = None
-        self.episode_done = True
-
-    def observe(self, observation):
-        # shallow copy observation (deep copy can be expensive)
-        observation = observation.copy()
-        if not self.episode_done and not observation.get('preprocessed', False):
-            # if the last example wasn't the end of an episode, then we need to
-            # recall what was said in that example
-            prev_dialogue = self.observation['text']
-            observation['text'] = prev_dialogue + '\n' + observation['text']
-        self.observation = observation
-        self.episode_done = observation['episode_done']
-        return observation
-
-    def act(self):
-        # call batch_act with this batch of one
-        return self.batch_act([self.observation])[0]
+        super().reset()
+        self.reset_metrics()
 
     def batch_act(self, observations):
         bsz = len(observations)
         # initialize a table of replies with this agent's id
-        batch_reply = [{'id': self.getID()} for _ in range(bsz)]
+        batch_reply = [{"id": self.getID()} for _ in range(bsz)]
 
-        # convert the observations into batches of inputs and targets
-        # valid_inds tells us the indices of all valid examples
-        # e.g. for input [{}, {'text': 'hello'}, {}, {}], valid_inds is [1]
-        # since the other three elements had no 'text' field
-
-        # also, split observations into sub-batches based on number of gpus
-        obs_split = np.array_split(observations, self.trainer.num_replicas)
-        samples = [self.batchify(obs) for obs in obs_split]
-        samples = [s for s in samples if s[0] is not None]
-        any_valid = any(len(s[0]) > 0 for s in samples)
-
-        if not any_valid:
-            # no valid examples, just return the empty responses we set up
+        # torchagent boilerplate
+        # TODO: is this really the right way to check is_training?
+        is_training = any(["labels" in obs for obs in observations])
+        vec_obs = [self.vectorize(obs) for obs in observations]
+        xs, _, ys, _, valid_inds = self.map_valid(vec_obs)
+        if xs is None:
             return batch_reply
 
-        # produce predictions if testing; otherwise, train
-        has_targets = any(s[1] is not None for s in samples)
-        if not has_targets:
-            offset = 0
-            for s in samples:
-                xs = s[0]
-                valid_inds = s[2]
-
-                predictions = self._generate(self.args, xs)
-                for i in range(len(predictions)):
-                    # map the predictions back to non-empty examples in the batch
-                    batch_reply[valid_inds[i] + offset]['text'] = predictions[i]
-                    if i == 0:
-                        print('prediction:', predictions[i])
-                offset += len(valid_inds)
+        # here begins fairseq specific stuff
+        if is_training:
+            self._train(xs, ys)
         else:
-            loss = self._train(samples)
-
-            batch_reply[0]['metrics'] = {}
-            for k, v in loss.items():
-                batch_reply[0]['metrics'][k] = v * bsz
+            samples = self._make_sample(xs, ys)
+            src_tokens = samples["net_input"]["src_tokens"]
+            src_lengths = samples["net_input"]["src_lengths"]
+            # TODO: make this into a separate function?
+            gens = self.generator.generate(src_tokens, src_lengths, maxlen=64)
+            for i in range(len(xs)):
+                beams = gens[i]
+                selected = max(beams, key=lambda x: x["score"])
+                # TODO: we can get the attention here actually :)
+                response = []
+                for t in selected["tokens"]:
+                    t = t.item()
+                    if t == self.dict.eos:
+                        break
+                    response.append(self.dict[t])
+                batch_reply[i]["text"] = " ".join(response)
 
         return batch_reply
 
-    def parse(self, string):
-        return [self.fairseq_dict.index(word)
-                for word in self.parlai_dict.tokenize(string)]
+    def report(self):
+        return {k: v.avg for k, v in self.trainer.meters.items()}
 
-    def batchify(self, observations):
-        """Convert a list of observations into input & target tensors."""
-        # valid examples
-        exs = [ex for ex in observations if 'text' in ex]
-        # the indices of the valid (non-empty) tensors
-        valid_inds = [i for i, ex in enumerate(observations) if 'text' in ex]
+    # TODO: document
+    # TODO: make sure we're only passing along some metrics
+    # TODO: put in PPL
+    def reset_metrics(self):
+        if not hasattr(self, "trainer"):
+            # We haven't initialized the trainer yet, so we don't have any metrics
+            return
+        for k in self.trainer.meters:
+            self.trainer.meters[k].reset()
 
-        # set up the input tensors
-        batchsize = len(exs)
-        if batchsize == 0:
-            return None, None, None
-        # tokenize the text
-        parsed_x = [deque(maxlen=self.truncate) for _ in exs]
-        for dq, ex in zip(parsed_x, exs):
-            dq += self.parse(ex['text'])
-        # parsed = [self.parse(ex['text']) for ex in exs]
-        max_x_len = max((len(x) for x in parsed_x))
-        for x in parsed_x:
-            # left pad with zeros
-            x.extendleft([self.fairseq_dict.pad()] * (max_x_len - len(x)))
-        xs = torch.LongTensor(parsed_x)
-
-        # set up the target tensors
-        ys = None
-        if 'labels' in exs[0]:
-            # randomly select one of the labels to update on, if multiple
-            labels = [random.choice(ex.get('labels', [''])) for ex in exs]
-            parsed_y = [deque(maxlen=self.truncate) for _ in labels]
-            for dq, y in zip(parsed_y, labels):
-                dq.extendleft(reversed(self.parse(y)))
-            for y in parsed_y:
-                y.append(self.fairseq_dict.eos())
-            # append EOS to each label
-            max_y_len = max(len(y) for y in parsed_y)
-            for y in parsed_y:
-                y += [self.fairseq_dict.pad()] * (max_y_len - len(y))
-            ys = torch.LongTensor(parsed_y)
-        return xs, ys, valid_inds
-
-    def _positions_for_tokens(self, tokens):
-        size = tokens.size()
-        not_pad = tokens.ne(self.fairseq_dict.pad()).long()
-        new_pos = tokens.new(size).fill_(self.fairseq_dict.pad())
-        new_pos += not_pad
-        for i in range(1, size[1]):
-            new_pos[:, i] += new_pos[:, i-1] - 1
-        return new_pos
+    # Helper functions
+    def _seq_length(self, xs):
+        """Computes length of the sequence (non-padded size)"""
+        return xs.ne(self.dict.pad_index).long().sum(dim=-1)
 
     def _right_shifted_ys(self, ys):
+        """Replaces first token with EOS and shifts the remaining tokens right one."""
         result = torch.LongTensor(ys.size())
-        result[:, 0] = self.fairseq_dict.index(self.EOS)
+        result[:, 0] = self.dict.eos_index
         result[:, 1:] = ys[:, :-1]
         return result
 
-    def _generate(self, opt, src_tokens):
-        if not hasattr(self, 'translator'):
-            self.translator = SequenceGenerator(
-                [self.trainer.get_model()],
-                beam_size=opt.beam,
-                stop_early=(not opt.no_early_stop),
-                normalize_scores=(not opt.unnormalized),
-                len_penalty=opt.lenpen)
-            self.translator.cuda()
-        tokens = src_tokens.cuda(async=True)
-        translations = self.translator.generate(Variable(tokens))
-        results = [t[0] for t in translations]
-        output_lines = [[] for _ in range(len(results))]
-        for i in range(len(results)):
-            output_lines[i] = ' '.join(self.fairseq_dict[idx]
-                                       for idx in results[i]['tokens'][:-1])
-        return output_lines
+    def _make_sample(self, xs, ys):
+        """Generates a sample object that Fairseq expects."""
+        # add extra info to samples
+        # TODO: should the right/left padding thing be in torch agent?
+        repadded = convert_padding_direction(xs, self.dict.pad(), right_to_left=True)
+        sample = {"target": ys, "ntokens": sum(self._seq_length(ys)).item()}
+        sample["net_input"] = {
+            "src_tokens": repadded,
+            "src_lengths": self._seq_length(xs),
+            "prev_output_tokens": self._right_shifted_ys(ys),
+        }
+        return sample
 
-    def _train(self, samples):
+    def _train(self, xs, ys):
         """Update the model using the targets."""
-        for i, sample in enumerate(samples):
-            # add extra info to samples
-            sample = {
-                'src_tokens': sample[0],
-                'input_tokens': self._right_shifted_ys(sample[1]),
-                'target': sample[1],
-                'id': None
-            }
-            sample['ntokens'] = sum(len(t) for t in sample['target'])
-            sample['src_positions'] = self._positions_for_tokens(
-                sample['src_tokens'])
-            sample['input_positions'] = self._positions_for_tokens(
-                sample['input_tokens'])
-            samples[i] = sample
-        return self.trainer.train_step(samples)
-
-    def save(self, path=None):
-        path = self.opt.get('model_file', None) if path is None else path
-        if path and hasattr(self, 'trainer'):
-            model = {}
-            model['state_dict'] = self.trainer.get_model().state_dict()
-            model['opt'] = self.opt
-            with open(path, 'wb') as write:
-                torch.save(model, write)
-
-    def shutdown(self):
-        """Save the state of the model when shutdown."""
-        path = self.opt.get('model_file', None)
-        if path is not None:
-            self.save(path + '.shutdown_state')
-        super().shutdown()
-
-    def load(self, path):
-        """Return opt and model states."""
-        model = torch.load(path, map_location=lambda cpu, _: cpu)
-        return model['opt'], model['state_dict']
-
-    def set_states(self, state_dict):
-        """Set the state dict of the model from saved states."""
-        self.trainer.get_model().load_state_dict(state_dict)
+        # this method mostly just marshalls the data into the format that
+        # fairseq is hoping to see
+        return self.trainer.train_step(self._make_sample(xs, ys))
