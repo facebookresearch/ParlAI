@@ -495,7 +495,6 @@ class Seq2seqAgent(Agent):
                           'if this happens frequently, decrease batchsize or '
                           'truncate the inputs to the model.')
                     self.metrics['total_skipped_batches'] += 1
-                    self.zero_grad()
                     return predictions, cand_preds
                 else:
                     raise e
