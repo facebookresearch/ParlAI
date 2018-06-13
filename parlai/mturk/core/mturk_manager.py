@@ -36,6 +36,10 @@ MAX_DISCONNECTS = 30
 # above this will block workers that disconnect at least 30 times in a day
 DISCONNECT_PERSIST_LENGTH = 60 * 60 * 24
 
+# 6 minute timeout to ensure only one thread updates the time logs.
+# Those update once daily in a 3 minute window
+RESET_TIME_LOG_TIMEOUT = 360
+
 DISCONNECT_FILE_NAME = 'disconnects.pickle'
 TIME_LOGS_FILE_NAME = 'working_time.pickle'
 TIME_LOGS_FILE_LOCK = 'working_time.lock'
@@ -78,7 +82,7 @@ class MTurkManager():
         )
         self.minimum_messages = opt.get('min_messages', 0)
         self.auto_approve_delay = opt.get('auto_approve_delay', 4*7*24*3600)
-        self.has_time_limit = opt.get('max_time', 0) != 0
+        self.has_time_limit = opt.get('max_time', 0) > 0
         self.socket_manager = None
         self.is_test = is_test
         self.is_unique = False
@@ -121,7 +125,8 @@ class MTurkManager():
                 if not force:
                     with open(file_path, 'rb+') as time_log_file:
                         existing_times = pickle.load(time_log_file)
-                        if time.time() - existing_times['last_reset'] < 360:
+                        if time.time() - existing_times['last_reset'] < \
+                                RESET_TIME_LOG_TIMEOUT:
                             # no need to reset, another thread did recently
                             os.remove(file_lock)
                             return
@@ -713,7 +718,7 @@ class MTurkManager():
                 worker_id, self.max_time_qual, 'Daily time limit reset.')
 
     def _check_time_limit(self):
-        if time.time() - self.time_limit_checked < 360:  # less than an hour
+        if time.time() - self.time_limit_checked < RESET_TIME_LOG_TIMEOUT:
             return
         if int(time.time()) % (60*60*24) > 180:
             # sync the time resets to ONCE DAILY in a 3 minute window
@@ -976,7 +981,7 @@ class MTurkManager():
             # Count if it's a completed conversation
             if self._no_workers_incomplete(workers):
                 self.completed_conversations += 1
-            if self.opt['max_connections'] != 0:  # If using a conv cap
+            if self.opt['max_connections'] > 0:  # If using a conv cap
                 if self.accepting_workers:  # if still looking for new workers
                     for w in workers:
                         if w.state.status in [
