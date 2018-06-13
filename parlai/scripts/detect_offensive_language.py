@@ -61,8 +61,11 @@ def detect(opt, printargs=None, print_parser=None):
         for a in world.acts:
             if bad.contains_offensive_language(a.get('text', '')):
                 offensive = True
-            if bad.contains_offensive_language(a.get('labels', a.get('eval_labels', ''))):
-                offensive= True
+            labels = a.get('labels', a.get('eval_labels', ''))
+            for l in labels:
+                if bad.contains_offensive_language(l):
+                    offensive= True
+
         if offensive:
             if opt['display_examples']:
                 print(world.display() + "\n~~")
@@ -72,7 +75,8 @@ def detect(opt, printargs=None, print_parser=None):
             report = world.report()
             log = {'total': report['total']}
             log['done'] = report['total'] / world.num_examples()
-            log['eta'] = int(tot_time / log['done'] - tot_time)
+            if log['done'] > 0:
+                log['eta'] = int(tot_time / log['done'] - tot_time)
             z = '%.2f' % ( 100*log['done'])
             log['done'] = str(z) + '%'
             log['offenses'] = cnt
