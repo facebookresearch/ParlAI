@@ -213,9 +213,8 @@ class Seq2seqAgent(Agent):
             if init_model is not None:
                 # load model parameters if available
                 print('[ Loading existing model params from {} ]'.format(init_model))
-                states = self.load(opt['model_file'])
+                states = self.load(init_model)
 
-            if init_model is not None:
                 if os.path.isfile(init_model + '.dict') or opt['dict_file'] is None:
                     opt['dict_file'] = init_model + '.dict'
 
