@@ -11,6 +11,7 @@ import pickle
 import threading
 import time
 import uuid
+import errno
 
 from botocore.exceptions import ClientError
 
@@ -51,6 +52,28 @@ SNS_ASSIGN_RETURNED = 'AssignmentReturned'
 
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
+
+
+class LockFile():
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
+
+    def __init__(self, filename):
+        self.filename = filename
+        self.fd = None
+
+    def __enter__(self):
+        while self.fd is None:
+            try:
+                self.fd = os.open(self.filename, self.flags)
+            except OSError as e:
+                if e.errno == errno.EEXIST:  # Failed as the file exists.
+                    pass
+            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+        return self
+
+    def __exit__(self, *args):
+        os.close(self.fd)
+        os.remove(self.filename)
 
 
 class MTurkManager():
@@ -103,6 +126,7 @@ class MTurkManager():
         self.conv_to_agent = {}
         self.accepting_workers = True
         self._load_disconnects()
+        self._reset_time_logs()
         self.assignment_to_worker_id = {}
         self.qualifications = None
         self.time_limit_checked = time.time()
@@ -117,45 +141,37 @@ class MTurkManager():
         # Uses a weak lock file to try to prevent clobbering between threads
         file_path = os.path.join(parent_dir, TIME_LOGS_FILE_NAME)
         file_lock = os.path.join(parent_dir, TIME_LOGS_FILE_LOCK)
-        while os.path.exists(file_lock):
-            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
-        try:
-            open(file_lock, 'a').close()
+        with LockFile(file_lock) as _lock_file:
+            assert _lock_file is not None
             if os.path.exists(file_path):
                 if not force:
                     with open(file_path, 'rb+') as time_log_file:
                         existing_times = pickle.load(time_log_file)
-                        if time.time() - existing_times['last_reset'] < \
+                        if time.time() - existing_times['last_reset'] > \
+                                24 * 60 * 60:  # Reset if more than a day old
+                            pass
+                        elif time.time() - existing_times['last_reset'] < \
                                 RESET_TIME_LOG_TIMEOUT:
                             # no need to reset, another thread did recently
-                            os.remove(file_lock)
                             return
 
                 # Reset the time logs
                 os.remove(file_path)
-
             # new time logs
             with open(file_path, 'wb+') as time_log_file:
                 time_logs = {'last_reset': time.time()}
-                pickle.dump(time_logs, time_log_file, pickle.HIGHEST_PROTOCOL)
-
-            os.remove(file_lock)
-        except Exception as e:
-            if os.path.exists(file_lock):
-                os.remove(file_lock)
-            raise e
+                pickle.dump(time_logs, time_log_file,
+                            pickle.HIGHEST_PROTOCOL)
 
     def _log_working_time(self, mturk_worker):
         additional_time = time.time() - mturk_worker.creation_time
         worker_id = mturk_worker.worker_id
         file_path = os.path.join(parent_dir, TIME_LOGS_FILE_NAME)
         file_lock = os.path.join(parent_dir, TIME_LOGS_FILE_LOCK)
-        if not os.path.exists(file_path):
-            self._reset_time_logs()
-        while os.path.exists(file_lock):
-            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
-        try:
-            open(file_lock, 'a').close()
+        with LockFile(file_lock) as _lock_file:
+            assert _lock_file is not None
+            if not os.path.exists(file_path):
+                self._reset_time_logs()
             with open(file_path, 'rb+') as time_log_file:
                 existing_times = pickle.load(time_log_file)
                 total_work_time = existing_times.get(worker_id, 0)
@@ -165,11 +181,6 @@ class MTurkManager():
             with open(file_path, 'wb+') as time_log_file:
                 pickle.dump(existing_times, time_log_file,
                             pickle.HIGHEST_PROTOCOL)
-            os.remove(file_lock)
-        except Exception as e:
-            if os.path.exists(file_lock):
-                os.remove(file_lock)
-            raise e
 
         if total_work_time > int(self.opt.get('max_time')):
             self.give_worker_qualification(worker_id,
