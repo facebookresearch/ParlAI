@@ -7,9 +7,9 @@
 evaluates the given model on them.
 
 For example:
-`python examples/eval_model.py -t "babi:Task1k:2" -m "repeat_label"`
+`python eval_model.py -t "babi:Task1k:2" -m "repeat_label"`
 or
-`python examples/eval_model.py -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"`
+`python eval_model.py -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"`
 """
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
