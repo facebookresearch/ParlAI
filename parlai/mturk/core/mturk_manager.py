@@ -36,7 +36,13 @@ MAX_DISCONNECTS = 30
 # above this will block workers that disconnect at least 30 times in a day
 DISCONNECT_PERSIST_LENGTH = 60 * 60 * 24
 
+# 6 minute timeout to ensure only one thread updates the time logs.
+# Those update once daily in a 3 minute window
+RESET_TIME_LOG_TIMEOUT = 360
+
 DISCONNECT_FILE_NAME = 'disconnects.pickle'
+TIME_LOGS_FILE_NAME = 'working_time.pickle'
+TIME_LOGS_FILE_LOCK = 'working_time.lock'
 
 AMAZON_SNS_NAME = 'AmazonMTurk'
 SNS_ASSIGN_ABANDONDED = 'AssignmentAbandoned'
@@ -76,6 +82,7 @@ class MTurkManager():
         )
         self.minimum_messages = opt.get('min_messages', 0)
         self.auto_approve_delay = opt.get('auto_approve_delay', 4*7*24*3600)
+        self.has_time_limit = opt.get('max_time', 0) > 0
         self.socket_manager = None
         self.is_test = is_test
         self.is_unique = False
@@ -98,11 +105,75 @@ class MTurkManager():
         self._load_disconnects()
         self.assignment_to_worker_id = {}
         self.qualifications = None
+        self.time_limit_checked = time.time()
+        self.time_blocked_workers = []
 
     def _init_logs(self):
         """Initialize logging settings from the opt"""
         shared_utils.set_is_debug(self.opt['is_debug'])
         shared_utils.set_log_level(self.opt['log_level'])
+
+    def _reset_time_logs(self, force=False):
+        # Uses a weak lock file to try to prevent clobbering between threads
+        file_path = os.path.join(parent_dir, TIME_LOGS_FILE_NAME)
+        file_lock = os.path.join(parent_dir, TIME_LOGS_FILE_LOCK)
+        while os.path.exists(file_lock):
+            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+        try:
+            open(file_lock, 'a').close()
+            if os.path.exists(file_path):
+                if not force:
+                    with open(file_path, 'rb+') as time_log_file:
+                        existing_times = pickle.load(time_log_file)
+                        if time.time() - existing_times['last_reset'] < \
+                                RESET_TIME_LOG_TIMEOUT:
+                            # no need to reset, another thread did recently
+                            os.remove(file_lock)
+                            return
+
+                # Reset the time logs
+                os.remove(file_path)
+
+            # new time logs
+            with open(file_path, 'wb+') as time_log_file:
+                time_logs = {'last_reset': time.time()}
+                pickle.dump(time_logs, time_log_file, pickle.HIGHEST_PROTOCOL)
+
+            os.remove(file_lock)
+        except Exception as e:
+            if os.path.exists(file_lock):
+                os.remove(file_lock)
+            raise e
+
+    def _log_working_time(self, mturk_worker):
+        additional_time = time.time() - mturk_worker.creation_time
+        worker_id = mturk_worker.worker_id
+        file_path = os.path.join(parent_dir, TIME_LOGS_FILE_NAME)
+        file_lock = os.path.join(parent_dir, TIME_LOGS_FILE_LOCK)
+        if not os.path.exists(file_path):
+            self._reset_time_logs()
+        while os.path.exists(file_lock):
+            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+        try:
+            open(file_lock, 'a').close()
+            with open(file_path, 'rb+') as time_log_file:
+                existing_times = pickle.load(time_log_file)
+                total_work_time = existing_times.get(worker_id, 0)
+                total_work_time += additional_time
+                existing_times[worker_id] = total_work_time
+            os.remove(file_path)
+            with open(file_path, 'wb+') as time_log_file:
+                pickle.dump(existing_times, time_log_file,
+                            pickle.HIGHEST_PROTOCOL)
+            os.remove(file_lock)
+        except Exception as e:
+            if os.path.exists(file_lock):
+                os.remove(file_lock)
+            raise e
+
+        if total_work_time > int(self.opt.get('max_time')):
+            self.give_worker_qualification(worker_id,
+                                           self.max_time_qual, 0)
 
     def _load_disconnects(self):
         """Load disconnects from file, populate the disconnects field for any
@@ -641,6 +712,21 @@ class MTurkManager():
             )
         )
 
+    def _free_time_blocked_workers(self):
+        for worker_id in self.time_blocked_workers:
+            self.remove_worker_qualification(
+                worker_id, self.max_time_qual, 'Daily time limit reset.')
+
+    def _check_time_limit(self):
+        if time.time() - self.time_limit_checked < RESET_TIME_LOG_TIMEOUT:
+            return
+        if int(time.time()) % (60*60*24) > 180:
+            # sync the time resets to ONCE DAILY in a 3 minute window
+            return
+        self.time_limit_checked = time.time()
+        self._reset_time_logs()
+        self._free_time_blocked_workers()
+
     # Manager Lifecycle Functions #
 
     def setup_server(self, task_directory_path=None):
@@ -895,7 +981,7 @@ class MTurkManager():
             # Count if it's a completed conversation
             if self._no_workers_incomplete(workers):
                 self.completed_conversations += 1
-            if self.opt['max_connections'] != 0:  # If using a conv cap
+            if self.opt['max_connections'] > 0:  # If using a conv cap
                 if self.accepting_workers:  # if still looking for new workers
                     for w in workers:
                         if w.state.status in [
@@ -904,6 +990,8 @@ class MTurkManager():
                             self.create_additional_hits(1)
 
         while True:
+            if self.has_time_limit:
+                self._check_time_limit()
             # Loop forever starting task worlds until desired convos are had
             with self.worker_pool_change_condition:
                 valid_workers = self._get_unique_pool(eligibility_function)
@@ -975,6 +1063,7 @@ class MTurkManager():
             if self.opt['unique_worker']:
                 mturk_utils.delete_qualification(self.unique_qual_id,
                                                  self.is_sandbox)
+            self._free_time_blocked_workers()
             self._save_disconnects()
 
     # MTurk Agent Interaction Functions #
@@ -1092,6 +1181,8 @@ class MTurkManager():
                 )
             if not worker.state.is_final():
                 worker.state.status = AssignState.STATUS_DONE
+            if self.has_time_limit:
+                self._log_working_time(worker)
 
     def free_workers(self, workers):
         """End completed worker threads"""
@@ -1137,6 +1228,28 @@ class MTurkManager():
             assert block_qual_id is not None, (
                 'Hits could not be created as block qualification could not be'
                 ' acquired. Shutting down server.'
+            )
+            qualifications.append({
+                'QualificationTypeId': block_qual_id,
+                'Comparator': 'DoesNotExist',
+                'RequiredToPreview': True
+            })
+
+        if self.has_time_limit:
+            block_qual_name = '{}-max-daily-time'.format(self.task_group_id)
+            if self.opt.get('max_time_qual') != '':
+                block_qual_name = self.opt.get('max_time_qual')
+            self.max_time_qual = block_qual_name
+            block_qual_id = mturk_utils.find_or_create_qualification(
+                block_qual_name,
+                'A soft ban from working on this HIT or HITs by this '
+                'requester based on a maximum amount of daily work time set '
+                'by the requester.',
+                self.is_sandbox,
+            )
+            assert block_qual_id is not None, (
+                'Hits could not be created as a time block qualification could'
+                ' not be acquired. Shutting down server.'
             )
             qualifications.append({
                 'QualificationTypeId': block_qual_id,

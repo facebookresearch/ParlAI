@@ -48,6 +48,7 @@ class MTurkAgent(Agent):
         self.task_group_id = manager.task_group_id
         self.message_request_time = None
         self.recieved_packets = {}
+        self.creation_time = time.time()
 
         self.msg_queue = Queue()
 

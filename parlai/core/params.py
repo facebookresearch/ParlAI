@@ -183,6 +183,16 @@ class ParlaiParser(argparse.ArgumentParser):
             help='Run the server locally on this server rather than setting up'
                  ' a heroku server.'
         )
+        mturk.add_argument(
+            '--max-time', dest='max_time', default=0,
+            help='Maximum number of seconds per day that a worker is allowed '
+                 'to work on this assignment'
+        )
+        mturk.add_argument(
+            '--max-time-qual', dest='max_time_qual', default='',
+            help='Qualification to use to share the maximum time requirement '
+                 'with other runs from other machines.'
+        )
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)
