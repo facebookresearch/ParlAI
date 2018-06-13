@@ -8,6 +8,7 @@ Its goal is to provide researchers:
 - a unified framework for sharing, training and testing dialog models
 - many popular datasets available all in one place, with the ability to multi-task over them
 - seamless integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome) for data collection and human evaluation
+- integration with [Facebook Messenger](http://www.parl.ai/static/docs/tutorial_messenger.html) to connect agents with humans in a chat interface
 
 Many [tasks](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) are supported, including popular datasets such as [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MS MARCO](http://www.msmarco.org/), [MCTest](https://www.microsoft.com/en-us/research/publication/mctest-challenge-dataset-open-domain-machine-comprehension-text/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [WebQuestions](http://www.aclweb.org/anthology/D13-1160), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialog tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialog](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html), [VQA-COCO2014](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/). See [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) for the current complete task list.
 
@@ -309,6 +310,11 @@ To add your own MTurk task:
 - (Optional) implement __worlds.py__, with a world class that extends from `World`.
 
 Please see [the MTurk tutorial](http://parl.ai/static/docs/mturk.html) to learn more about the MTurk examples and how to create and run your own task.
+
+### Messenger
+
+Please see [the Facebook Messenger tutorial](http://parl.ai/static/docs/tutorial_messenger.html) to learn more about how to use ParlAI with Facebook Messenger.
+
 
 ## Support
 If you have any questions, bug reports or feature requests, please don't hesitate to post on our [Github Issues page](https://github.com/facebookresearch/ParlAI/issues).
