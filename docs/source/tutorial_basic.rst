@@ -18,6 +18,9 @@ Its goal is to provide researchers:
 - seamless integration of :doc:`Amazon Mechanical Turk <tutorial_mturk>` for data collection and human evaluation
 - integration with :doc:`Facebook Messenger <tutorial_messenger>` to connect agents with humans in a chat interface
 
+You can also see the `README <https://github.com/facebookresearch/ParlAI/blob/master/README.md>`_ for more basic info on ParlAI, or continue reading this document.
+
+
 Install
 -------
 Follow the step by step guide on how to download and install ParlAI.
@@ -166,7 +169,7 @@ tutorial (see: :doc:`tutorial_worlds`).
 Simple Display Loop
 ^^^^^^^^^^^^^^^^^^^
 
-Now that we understand the basic, let's set up a simple loop which displays
+Now that we understand the basics, let's set up a simple loop which displays
 whichever task we specify. A complete version of this for utility is included
 in the ``examples`` directory (in ``display_data.py``), but we'll do this one from scratch.
 
@@ -225,7 +228,29 @@ Now that we have our our agent, we'll set up the display loop.
             break
 
 And that's it! The world.display() automatically cycles through each of the
-world's agents and displays their last action. If you run this on the command
+world's agents and displays their last action.  NOTE, if you want to get at and
+look at the data from here rather than calling 
+world.display() you could access world.acts directly:
+
+.. code-block:: python
+
+    parser = ParlaiParser()
+    opt = parser.parse_args()
+
+    agent = RepeatLabelAgent(opt)
+    world = create_task(opt, agent)
+
+    for _ in range(10):
+        world.parley()
+	for a in world.acts:
+	    # print the actions from each agent
+	    print(a)
+        if world.epoch_done():
+            print('EPOCH DONE')
+            break
+
+
+If you run this on the command
 line, you can specify which task to show by setting '-t {task}'.
 
 Tasks are specified in the following format:
@@ -254,8 +279,10 @@ This tells the agent not to use these labels for training--however, the labels a
 still available via the 'eval_labels' field in case you need to compute model-side
 metrics such as perplexity.
 These modes can be set from the command line with '-dt valid' / '-dt test'.
+You can also set 'train:evalmode' if you want to look at the train data in the same way
+as the test data (with labels hidden).
 
-Now, the agent no longer has anything to say. For datasets which provide a set
+Now, our RepeatLabel agent no longer has anything to say. For datasets which provide a set
 of candidates to choose from ('label_candidates' in the observation dict), we
 can give our agent a chance of getting the answer correct by replying with one
 of those.
