@@ -184,7 +184,7 @@ class ParlaiParser(argparse.ArgumentParser):
                  ' a heroku server.'
         )
         mturk.add_argument(
-            '--max-time', dest='max_time', default=0,
+            '--max-time', dest='max_time', default=0, type=int,
             help='Maximum number of seconds per day that a worker is allowed '
                  'to work on this assignment'
         )
