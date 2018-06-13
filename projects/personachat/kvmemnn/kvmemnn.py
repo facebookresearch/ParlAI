@@ -713,7 +713,7 @@ class KvmemnnAgent(Agent):
                 if 'label_candidates' in o:
                     cs = []
                     ct = []
-                    for c in o['label_candidates']:
+                    for c in o['label_candidates'] and o['label_candidates'] is not None:
                         cs.append(Variable(torch.LongTensor(self.parse(c)).unsqueeze(0)))
                         ct.append(c)
                     cands.append(cs)
