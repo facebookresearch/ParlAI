@@ -59,7 +59,12 @@ class Seq2seqEntry(Seq2seqAgent):
             prev_enc=self.prev_enc)
         scores, self.prev_enc = out[1], out[-1]
         # scores is bsz x seqlen x num_words, so select probs of current index
-        assert len(partial_out) == scores.size(1) - 1
+        if len(partial_out) != scores.size(1) - 1:
+            m = ('Length of partial_out should be exactly one less than the '
+                 'score output. Here are the values to compare:\n'
+                 'partial_out: {}\npredictions: {}\npredictions text: {}'
+                 ''.format(partial_out, out[0], self.v2t(out[0][0])))
+            raise RuntimeError(m)
         probs = F.softmax(scores.select(1, len(partial_out)), dim=1).squeeze()
         dist = self.probs
         for i in range(len(probs)):

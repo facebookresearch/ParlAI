@@ -9,18 +9,19 @@ used to achieve the pre-trained model.
 """
 
 from parlai.scripts.train_model import setup_args, TrainLoop
-from projects.twitter.build_dict import build_dict, DICT_FILE
+from projects.twitter.build_dict import build_dict_30k, DICT_FILE_30K
 
 
 if __name__ == '__main__':
-    build_dict()
+    # build dictionary
+    build_dict_30k()
 
     parser = setup_args()
     parser.set_defaults(
         task='twitter',
         model='seq2seq',
         model_file='/tmp/twitter_seq2seq_model',
-        dict_file=DICT_FILE,
+        dict_file=DICT_FILE_30K,
         dict_lower=True,
         datatype='train',
         batchsize=32,

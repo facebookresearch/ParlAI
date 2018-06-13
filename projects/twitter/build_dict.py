@@ -3,21 +3,17 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""Builds the official dictionary for the ConvAI2 competition using the
-training and validation sets for the 'convai2:self' task.
-The dictionary should contain 19304 tokens after building.
+"""Builds default dictionaries for twitter training and evaluation.
+This provides a uniform setup for comparison between different models.
 
-All words in this dictionary should receive probability mass during perplexity
-evaluation, or you will likely receive 'inf' perplexity.
-
-Any tokens in the hidden test set which are not in this dictionary will not be
-scored, so you do not have to try any schemes to assign probability to these
-potential unknown words. See the evaluation script for more information.
+The eval_ppl script will use the dictionary returned by this build_dict()
+function to conduct the perplexity evaluation, scoring only words that appear
+in this dictionary.
 """
 
 
 from parlai.scripts.build_dict import setup_args, build_dict as main_build_dict
-DICT_FILE = 'models:twitter/dict_30k'
+DICT_FILE_30K = 'models:twitter/dict_30k'
 
 def build_dict():
     # default is 30k
@@ -29,7 +25,7 @@ def build_dict_30k():
     parser.set_defaults(
         task='twitter',
         dict_lower=True,
-        dict_file=DICT_FILE,
+        dict_file=DICT_FILE_30K,
         dict_include_valid=True,
         dict_maxtokens=30000,
     )
