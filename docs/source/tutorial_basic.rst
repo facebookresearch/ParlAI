@@ -90,7 +90,7 @@ Agents have two primary methods they need to define:
 
 ``observe()`` notifies the agent of an action taken by another agent.
 
-``act()`` produces an action from the agent. 
+``act()`` produces an action from the agent.
 
 
 Teachers
