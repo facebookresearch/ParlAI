@@ -53,9 +53,9 @@ def setup_args(parser=None):
 def get_word_stats(sequence, agent_dict, bins=[0, 100, 1000, 100000]):
     """
     Function which takes text sequence and dict, returns word freq and length statistics
-    :param sequence:
-    :param agent_dict:
-    :param bins:
+    :param sequence: text sequence
+    :param agent_dict: can be external dict or dict from the model
+    :param bins: list with range boundaries
     :return: freqs dictionary, num words, avg word length, avg char length
     """
     pred_list = sequence.split()
