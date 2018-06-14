@@ -188,16 +188,23 @@ class TimeLogger():
     def time(self):
         return self.timer.time()
 
-    def log(self, done, total):
+    def log(self, done, total, report={}):
         self.tot_time += self.timer.time()
         self.timer.reset()
-        log = {'done': done}
+        log = {}
+        log['total'] = done
         log['%done'] = done / total
         if log["%done"] > 0:
             log['eta'] = int(self.tot_time / log['%done'] - self.tot_time)
         z = '%.2f' % ( 100*log['%done'])
-        log['%done'] = str(z) + '%'        
+        log['%done'] = str(z) + '%'  
+        for k, v in report.items():
+            if k not in log:
+                log[k] = v
         return log
+
+    def display(self, report):
+        return str(int(self.tot_time)) + "s elapsed: " + str(report)
 
 
 class AttrDict(dict):
