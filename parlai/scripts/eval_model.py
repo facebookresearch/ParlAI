@@ -14,7 +14,7 @@ or
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.core.utils import Timer, TimeLogger
+from parlai.core.utils import TimeLogger
 
 import random
 import os
