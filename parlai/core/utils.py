@@ -202,11 +202,8 @@ class TimeLogger():
         for k, v in report.items():
             if k not in log:
                 log[k] = v
-        return log
-
-    def display(self, report):
-        return str(int(self.tot_time)) + "s elapsed: " + str(report)
-
+        text = str(int(self.tot_time)) + "s elapsed: " + str(log)
+        return text, log
 
 class AttrDict(dict):
     """Helper class to have a dict-like object with dot access.
