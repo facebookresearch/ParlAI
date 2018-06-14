@@ -101,6 +101,8 @@ def load_cands(path, lines_have_ids = False, cands_are_replies = False):
     return cands
 
 
+
+
 class Predictor(object):
     """Provides functionality for setting up a running version of a model and
     requesting predictions from that model on live data.
@@ -173,6 +175,29 @@ class Timer(object):
         if self.running:
             return self.total + time.time() - self.start
         return self.total
+
+
+class TimeLogger():
+    def __init__(self):
+        self.timer = Timer()
+        self.tot_time = 0
+
+    def total_time(self):
+        return self.tot_time
+
+    def time(self):
+        return self.timer.time()
+
+    def log(self, done, total):
+        self.tot_time += self.timer.time()
+        self.timer.reset()
+        log = {'done': done}
+        log['%done'] = done / total
+        if log["%done"] > 0:
+            log['eta'] = int(self.tot_time / log['%done'] - self.tot_time)
+        z = '%.2f' % ( 100*log['%done'])
+        log['%done'] = str(z) + '%'        
+        return log
 
 
 class AttrDict(dict):
