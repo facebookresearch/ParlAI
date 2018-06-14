@@ -9,18 +9,27 @@ Data Handling, Batching, and Hogwild
 ====================================
 **Authors**: Alexander Holden Miller, Kurt Shuster
 
-Summary
-^^^^^^^
-`Data Handling <#multiprocessed-pytorch-dataloader>`_
 
-When a dataset is very large, or requires a lot of preprocessing before a model
-can use it, you can use our ``PytorchDataTeacher``, which utilizes multiprocessed
-dataloading for streaming data from disk (rather than loading it into memory).
+Overview
+^^^^^^^^
 
-`Batching <#batching>`_ and `Hogwild <#hogwild-multiprocessing>`_
+If you are unfamiliar with the basics of displaying data or
+calling train or evaluate on a model, please first see
+the `getting started <tutorial_basic.html>`_ section.
+If you are interested in creating a task, please see 
+`that section <tutorial_task.html>`_.
 
-There's one function we need to support for both hogwild and batching: ``share()``.
+This section will cover the details of:
 
+1) `hogwild (multiprocessing) <#id1>`_;
+
+2) `batched data <#batching>`_; and
+
+3) `handling large datasets using PyTorch Data Loaders <#multiprocessed-pytorch-dataloader>`_
+
+
+For all tasks one might make,
+there's one function we need to support for both hogwild and batching: ``share()``. 
 This function should provide whatever is needed to set up a "copy" of the original
 instance of the agent for either each row of a batch or each thread in hogwild.
 
@@ -29,6 +38,15 @@ use one or the other. However, an agent may check the ``numthreads`` and/or
 ``batchsize`` options to adjust its behavior if it wants to support both, and
 we do support doing both batching and hogwild at the same time if the agent
 desires.
+
+When a dataset is very large, or requires a lot of preprocessing before a model
+can use it, you can use our ``PytorchDataTeacher``, which utilizes multiprocessed
+dataloading for streaming data from disk (rather than loading it into memory).
+That system can take your task as input, and make it fast to load, or you can roll your own specific
+setups if you speed or space issues are really at a premium.
+
+
+
 
 
 Hogwild (multiprocessing)
@@ -149,6 +167,7 @@ There's a few more complex steps to actually completing a parley in this world.
 
 Next, we'll look at how teachers and models can take advantage of the setup
 above to improve performance.
+
 
 
 Batched Teachers
@@ -318,8 +337,8 @@ step by step below. The important thing to know is that in the first case you **
 need to write a teacher; in the second case, you **only** need to write a ``Dataset``.
 
 
-StreamDataset
-*************
+PyTorch StreamDataset
+*********************
 1. Ensure that there is an appropriate teacher that already exists, which
 can read the data saved on disk and produce an action/observation dict for any
 agent.
@@ -386,8 +405,8 @@ Then, you can build the pytorch data with one of the following commands:
 e.g. the validation set file, simply add the following:
 ``--datafile data/bAbI/tasks_1-20_v1-2/en-valid-10k-nosf/qa1_valid.txt``
 
-Your Own Dataset
-****************
+Your Own PyTorch Dataset
+************************
 1. To use your own method of retrieving data (rather than the streaming data option),
 you can simply subclass the Pytorch ``Dataset`` class (as specified `here <http://pytorch.org/tutorials/beginner/data_loading_tutorial.html>`_).
 You can add this class anywhere you would like; a good place would be in the
@@ -422,8 +441,8 @@ list of examples provided by the ``VQADataset``.
 
   python examples/train_model.py -m mlb_vqa -t pytorch_teacher --dataset parlai.tasks.vqa_v1.agents
 
-Batch Sorting and Squashing
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+PyTorch Batch Sorting and Squashing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 One of the benefits of using the ``StreamDataset`` described above when
 using the ``PytorchDataTeacher`` is that you can achieve the benefits of
 batch sorting and squashing (that is, reducing padding in batches by
