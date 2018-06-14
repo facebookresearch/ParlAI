@@ -166,8 +166,8 @@ than one. Some extra functionality is needed to get these to work on the side
 of both the teacher and the learner, but we'll cover that in a different
 tutorial (see: :doc:`tutorial_worlds`).
 
-Simple Display Loop
-^^^^^^^^^^^^^^^^^^^
+Simple Display Data Loop
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 Now that we understand the basics, let's set up a simple loop which displays
 whichever task we specify. A complete version of this for utility is included
@@ -284,9 +284,11 @@ displaying data with the existing script
    python examples/display_data.py -t babi:task1k:1,squad -n 100
 
 
-The `--task`flag (`-t`  for short) specifies the task and `--datatype` (`-dt`) specifies 
+The `--task` flag (`-t`  for short) specifies the task and `--datatype` (`-dt`) specifies 
 train, valid or test. Note that `train:stream` or `valid:stream` can be specified
-to denote that you want the data to stream online if possible, rather than loading into memory.
+to denote that you want the data to stream online if possible, rather than loading into memory,
+and `train:ordered` can be specified, otherwise data from the train set comes in a random order by
+default (whereas valid and test data is ordered by default).
 
 
 Validation and Testing
@@ -377,7 +379,7 @@ Of course every model has various parameters and hyperparameters to set in gener
 
 A new feature in ParlAI is that it also now maintains a *model zoo* of existing model files of agents that have been trained on tasks. See `here for details <https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py>`_. 
 
-The set of agents and models in the model zoo ParlAI is continually growing from contributors.
+The set of agents and models in the model zoo in ParlAI is continually growing from contributors.
 
 
 Tasks
