@@ -193,11 +193,12 @@ class TimeLogger():
         self.timer.reset()
         log = {}
         log['total'] = done
-        log['%done'] = done / total
-        if log["%done"] > 0:
-            log['eta'] = int(self.tot_time / log['%done'] - self.tot_time)
-        z = '%.2f' % ( 100*log['%done'])
-        log['%done'] = str(z) + '%'  
+        if total > 0:
+            log['%done'] = done / total
+            if log["%done"] > 0:
+                log['eta'] = int(self.tot_time / log['%done'] - self.tot_time)
+            z = '%.2f' % ( 100*log['%done'])
+            log['%done'] = str(z) + '%'  
         for k, v in report.items():
             if k not in log:
                 log[k] = v
