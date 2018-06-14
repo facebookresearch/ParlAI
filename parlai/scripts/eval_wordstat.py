@@ -25,6 +25,7 @@ then you can call this function like this:
 """
 
 from parlai.core.params import ParlaiParser
+from parlai.core.dict import DictionaryAgent
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.utils import Timer
@@ -39,19 +40,20 @@ def setup_args(parser=None):
         parser = ParlaiParser(True, True)
     # Get command line arguments
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
-    parser.add_argument('-d', '--display-freq', type='bool', default=True)
+    parser.add_argument('-df', '--display-freq', type='bool', default=True)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser.add_argument('-ed', '--external-dict', type=str, default=None, help='External dictionary for stat computation')
     parser.add_argument(
         '-fb',
         '--freq-bins',
         type=str,
-        default='100,1000',
+        default='0,100,1000,10000',
         help='Bins boundaries for rare words stat')
     parser.set_defaults(datatype='valid')
     return parser
 
 
-def get_word_stats(sequence, agent_dict, bins=[100,1000,100000]):
+def get_word_stats(sequence, agent_dict, bins=[0,100,1000,100000]):
     """
 
     :param sequence: input sequence to analyze
@@ -62,8 +64,7 @@ def get_word_stats(sequence, agent_dict, bins=[100,1000,100000]):
     if any(isinstance(i, list) for i in sequence):
         lengths = [len(l) for l in sequence]
         sequence = [item for sublist in sequence for item in sublist]
-    pred_str = agent_dict.vec2txt(sequence)
-    pred_list = pred_str.split()
+    pred_list = sequence.split()
     pred_freq = [agent_dict.freq[word] for word in pred_list]
     freqs = {i: 0 for i in bins}
     for f in pred_freq:
@@ -106,6 +107,16 @@ def eval_model(opt, printargs=None, print_parser=None):
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
 
+    if opt['external_dict'] is not None:
+        print(
+            '[ Using external dictionary from: {} ]'.format(opt['external_dict'])
+        )
+        dictionary = DictionaryAgent(opt)
+        dictionary.load(opt['external_dict'])
+    else:
+        print('[ Using model bundled dictionary ]')
+        dictionary = agent.dict
+
     if print_parser:
         # Show arguments after loading model
         print_parser.opt = agent.opt
@@ -125,10 +136,8 @@ def eval_model(opt, printargs=None, print_parser=None):
     while not world.epoch_done():
         cnt += 1
         world.parley()
-        prediction = world.display().split('\n')[-1].split(':')[-1]
-        pred_vec = agent.dict.txt2vec(prediction)
-
-        freqs, _cnt, length = get_word_stats(pred_vec, agent.dict, bins=bins)
+        prediction = world.acts[-1]['text']
+        freqs, _cnt, length = get_word_stats(prediction, dictionary, bins=bins)
         word_cnt += _cnt
 
         mean_length.append(length)
@@ -158,4 +167,5 @@ def eval_model(opt, printargs=None, print_parser=None):
 
 if __name__ == '__main__':
     parser = setup_args()
+    DictionaryAgent.add_cmdline_args(parser)
     eval_model(parser.parse_args(print_args=False), print_parser=parser)
