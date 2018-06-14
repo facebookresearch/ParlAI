@@ -49,11 +49,11 @@ class TestTrainModel(unittest.TestCase):
                         "Did not reach training step")
         self.assertTrue("[ running eval: valid ]" in str_output,
                         "Did not reach validation step")
-        self.assertTrue("valid:{'total': 10," in str_output,
+        self.assertTrue("valid:{'exs': 10," in str_output,
                         "Did not complete validation")
         self.assertTrue("[ running eval: test ]" in str_output,
                         "Did not reach evaluation step")
-        self.assertTrue("test:{'total': 0}" in str_output,
+        self.assertTrue("test:{'exs': 0}" in str_output,
                         "Did not complete evaluation")
 
 if __name__ == '__main__':

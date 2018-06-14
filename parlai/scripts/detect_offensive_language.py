@@ -72,7 +72,7 @@ def detect(opt, printargs=None, print_parser=None):
         if log_time.time() > log_every_n_secs:
             report = world.report()
             log = { 'offenses': cnt }
-            text, log = log_time.log(report['total'], world.num_examples(), log)
+            text, log = log_time.log(report['exs'], world.num_examples(), log)
             print(text)
 
     if world.epoch_done():

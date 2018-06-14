@@ -53,7 +53,7 @@ class TestEvalModel(unittest.TestCase):
         for i in range(1, len(scores)):
             score = ast.literal_eval(scores[i])
             # check totals
-            self.assertTrue(score['total'] == i,
+            self.assertTrue(score['exs'] == i,
                             "Total is incorrect")
             # accuracy should be one
             self.assertTrue(score['accuracy'] == 1,

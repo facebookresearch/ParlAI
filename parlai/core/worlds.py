@@ -264,8 +264,8 @@ class DialogPartnerWorld(World):
                         # this way model can't e.g. override accuracy to 100%
                         metrics[k] = v
         if metrics:
-            if compute_time and 'total' in metrics:
-                self.total_exs += metrics['total']
+            if compute_time and 'exs' in metrics:
+                self.total_exs += metrics['exs']
                 time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
                 metrics.update(time_metrics)
             return metrics
@@ -334,8 +334,8 @@ class MultiAgentDialogWorld(World):
                         # this way model can't e.g. override accuracy to 100%
                         metrics[k] = v
         if metrics:
-            if compute_time and 'total' in metrics:
-                self.total_exs += metrics['total']
+            if compute_time and 'exs' in metrics:
+                self.total_exs += metrics['exs']
                 time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
                 metrics.update(time_metrics)
             return metrics
@@ -499,7 +499,7 @@ class MultiWorld(World):
     def report(self, compute_time=False):
         metrics = aggregate_metrics(self.worlds)
         if compute_time:
-            self.total_exs += metrics['total']
+            self.total_exs += metrics['exs']
             time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
             metrics.update(time_metrics)
         return metrics

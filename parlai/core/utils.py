@@ -190,7 +190,7 @@ class TimeLogger():
         self.tot_time += self.timer.time()
         self.timer.reset()
         log = {}
-        log['total'] = done
+        log['exs'] = done
         if total > 0:
             log['%done'] = done / total
             if log["%done"] > 0:

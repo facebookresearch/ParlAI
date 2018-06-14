@@ -387,7 +387,7 @@ class KvmemnnAgent(Agent):
             return round_sigfigs(f)
 
         metrics = self.metrics
-        if metrics['total'] == 0:
+        if metrics['exs'] == 0:
             report = { 'mean_rank': self.opt['neg_samples'] }
         else:
             maxn = 0
@@ -397,23 +397,23 @@ class KvmemnnAgent(Agent):
                 if n > maxn:
                     maxn = n
 
-            report = { 'total': clip(metrics['total_total']),
-                       'loss': clip(metrics['loss'] / metrics['total']),
-                       'mean_rank': clip(metrics['mean_rank'] / metrics['total']),
-                       'mlp_time': clip(metrics['mlp_time'] / metrics['total']),
-                       'tot_time': clip(metrics['tot_time'] / metrics['total']),
+            report = { 'exs': clip(metrics['total_total']),
+                       'loss': clip(metrics['loss'] / metrics['exs']),
+                       'mean_rank': clip(metrics['mean_rank'] / metrics['exs']),
+                       'mlp_time': clip(metrics['mlp_time'] / metrics['exs']),
+                       'tot_time': clip(metrics['tot_time'] / metrics['exs']),
                        'max_norm': clip(n),
                        }
         return report
 
     def reset_metrics(self, keep_total=False):
         if keep_total:
-            self.metrics = { 'total':0, 'mean_rank':0, 'loss':0,
+            self.metrics = { 'exs':0, 'mean_rank':0, 'loss':0,
                              'total_total':self.metrics['total_total'],
                              'mlp_time':0, 'tot_time':0,
                              'max_weight':0, 'mean_weight':0}
         else:
-            self.metrics = { 'total_total':0, 'mean_rank':0, 'total':0,
+            self.metrics = { 'total_total':0, 'mean_rank':0, 'exs':0,
                              'mlp_time':0, 'tot_time':0, 'loss':0,
                              'max_weight':0, 'mean_weight':0}
 

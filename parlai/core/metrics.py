@@ -78,7 +78,7 @@ def aggregate_metrics(reporters):
             # prevent name cloberring if using multiple tasks with same ID
             tid += '_'
         m['tasks'][tid] = mt
-        total += mt['total']
+        total += mt['exs']
         found_any = False
         for k in sums.keys():
             if k in mt:
@@ -86,7 +86,7 @@ def aggregate_metrics(reporters):
                 found_any = True
         if found_any:
             num_tasks += 1
-    m['total'] = total
+    m['exs'] = total
     m['accuracy'] = 0
     if num_tasks > 0:
         for k in sums.keys():
@@ -247,7 +247,7 @@ class Metrics(object):
         # Report the metrics over all data seen so far.
         m = {}
         total = self.metrics['cnt']
-        m['total'] = total
+        m['exs'] = total
         if total > 0:
             if self.flags['print_prediction_metrics']:
                 m['accuracy'] = round_sigfigs(self.metrics['correct'] / max(1, self.metrics['correct_cnt']), 4)
