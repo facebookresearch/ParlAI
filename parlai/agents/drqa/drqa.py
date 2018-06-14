@@ -338,37 +338,6 @@ class DrqaAgent(Agent):
             return
         return targets[np.random.choice(len(targets))]
 
-        inputs['question'] = self.word_dict.tokenize(question)
-        inputs['target'] = None
-
-        # Find targets (if labels provided).
-        # Return if we were unable to find an answer.
-        if 'labels' in ex:
-            if 'answer_starts' in ex:
-                # randomly sort labels and keep the first match
-                labels_with_inds = list(zip(ex['labels'], ex['answer_starts']))
-                random.shuffle(labels_with_inds)
-                for ans, ch_idx in labels_with_inds:
-                    # try to find an answer_start matching a tokenized answer
-                    start_idx = bisect.bisect_left(
-                        list(x[0] for x in doc_spans), ch_idx)
-                    end_idx = start_idx + len(self.word_dict.tokenize(ans)) - 1
-                    if end_idx < len(doc_spans):
-                        inputs['target'] = (start_idx, end_idx)
-                        break
-            else:
-                inputs['target'] = self._find_target(inputs['document'],
-                                                     ex['labels'])
-            import pdb; pdb.set_trace()
-            if inputs['target'] is None:
-                return
-
-        # Vectorize.
-        inputs = vectorize(self.opt, inputs, self.word_dict, self.feature_dict)
-
-        # Return inputs with original text + spans (keep for prediction)
-        return inputs + (document, doc_spans)
-
     def _subsample_doc(self, paras, labels, subsample):
         """Subsample paragraphs from the document (mostly for training speed).
         """
