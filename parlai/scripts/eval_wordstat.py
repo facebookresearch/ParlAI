@@ -72,7 +72,7 @@ def get_word_stats(sequence, agent_dict, bins=[100,1000,100000]):
                 freqs[b] += 1
                 break
     if lengths:
-        length = numpy.ndarray(lengths).mean()
+        length = numpy.array(lengths).mean()
     else:
         length = len(pred_list)
     return freqs, len(pred_freq), length
@@ -117,7 +117,7 @@ def eval_model(opt, printargs=None, print_parser=None):
     tot_time = 0
 
     cnt = 0
-    mean_length = 0
+    mean_length = []
     freqs_cnt = Counter()
     bins = [int(i) for i in opt['freq_bins'].split(',')]
 
@@ -129,10 +129,9 @@ def eval_model(opt, printargs=None, print_parser=None):
 
         freqs, _cnt, length = get_word_stats(pred_vec, agent.dict, bins=bins)
         cnt += _cnt
-        if mean_length == 0:
-            mean_length = length
-        else:
-            mean_length = (mean_length + length) / 2
+
+        mean_length.append(length)
+
         freqs_cnt += Counter(freqs)
 
         if log_time.time() > log_every_n_secs:
@@ -146,7 +145,7 @@ def eval_model(opt, printargs=None, print_parser=None):
                         freqs_cnt.get(b, 0), (freqs_cnt.get(b, 0) / cnt) * 100,
                         prec=2) for b in bins
                 ])
-                print("Word statistics: {}, avg.length: {:.{prec}f}wrd".format(stat_str, mean_length, prec=2))
+                print("Word statistics: {}, avg.length: {:.{prec}f}wrd".format(stat_str, numpy.array(mean_length).mean(), prec=2))
         if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
             break
     if world.epoch_done():
