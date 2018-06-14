@@ -142,6 +142,11 @@
   var cur_agent_id = "{{cur_agent_id}}" || null;
   var task_description = null;
 
+  var is_mobile = false;
+  var block_mobile = true;
+  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+    is_mobile = true;
+  }
 
   /* ============== Priority Queue Data Structure ============== */
 
@@ -439,7 +444,16 @@
   function init_cover_page() {
     $("div#ui-placeholder").css("display", "none");
     $("div#ui-content").css("display", "");
-    $("span#task-description").html(task_description);
+    if (is_mobile && block_mobile) {
+      full_task_desc = (
+        "<h1>Sorry, this task cannot be completed on mobile devices. " +
+        "Please use a computer.</h1><br>Task Description follows:<br>" +
+        task_description
+      );
+      $("span#task-description").html(full_task_desc);
+    } else {
+      $("span#task-description").html(task_description);
+    }
   }
 
   // Renders the chat panel
@@ -880,7 +894,15 @@
         if (is_cover_page) {
           init_cover_page();
         } else {
-          init_chat_page();
+          if (block_mobile && is_mobile) {
+            $("div#ui-placeholder").html(
+              "As noted in the task description, this task doesn't work " +
+              "on mobile yet. Please return it and only work on it from a " +
+              "full-screen device."
+            );
+          } else {
+            init_chat_page();
+          }
         }
       });
     } else {
