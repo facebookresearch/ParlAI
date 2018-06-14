@@ -644,6 +644,9 @@ class BatchWorld(World):
     def num_episodes(self):
         return self.world.num_episodes()
 
+    def get_total_exs(self):
+        return self.world.get_total_exs()
+
     def getID(self):
         return self.world.getID()
 
@@ -832,6 +835,9 @@ class HogwildWorld(World):
 
     def num_episodes(self):
         return self.inner_world.num_episodes()
+
+    def get_total_exs(self):
+        return self.inner_world.get_total_exs()
 
     def get_total_epochs(self):
         """Return total amount of epochs on which the world has trained."""

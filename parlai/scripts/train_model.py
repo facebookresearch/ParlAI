@@ -236,7 +236,7 @@ class TrainLoop():
 
         # time elapsed
         logs.append('time:{}s'.format(math.floor(self.train_time.time())))
-        logs.append('parleys:{}'.format(self.parleys))
+        logs.append('total_exs:{}'.format(self.world.get_total_exs()))
 
         if 'time_left' in train_report:
             logs.append('time_left:{}s'.format(
