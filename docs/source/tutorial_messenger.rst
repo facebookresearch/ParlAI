@@ -17,6 +17,7 @@ Facebook agents communicate in observation/action dict format, the same as all o
 
 .. figure:: _static/img/personachat_example.png
    :align: center
+   *Sample chat with a PersonaChat model over messenger*
 
 Each messenger task has at least one messenger agent that connects to ParlAI using the Facebook messenger Send/Receive API, encapsulated as a ``MessengerAgent`` object.
 
