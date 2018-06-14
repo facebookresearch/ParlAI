@@ -15,8 +15,10 @@ Facebookers can be viewed as another type of agent in ParlAI, and hence person-t
 
 Facebook agents communicate in observation/action dict format, the same as all other agents in ParlAI. During the conversation, messages are delivered to a person's inbox from the page that you have set up for ParlAI.
 
-.. figure:: _static/img/messenger-example.png
+.. figure:: _static/img/personachat_example.png
    :align: center
+   
+   *Sample chat with a PersonaChat model over messenger*
 
 Each messenger task has at least one messenger agent that connects to ParlAI using the Facebook messenger Send/Receive API, encapsulated as a ``MessengerAgent`` object.
 
@@ -46,6 +48,8 @@ For instance, after downloading the personachat models you can run:
 
     python run.py --model projects.personachat.kvmemnn.kvmemnn:Kvmemnn --model_file models:personachat/kvmemnn/kvmemnn/persona-self_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops1_lins0_model
 
+This code will allow users to talk with a bot in conversations like the one displayed above.
+
 Task 2: Collecting Training Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -70,6 +74,9 @@ Task 3: Exposing People to Multiple Tasks
 ParlAI messenger can also be used to create a multi-function world that users can choose multiple tasks or variations for. This can be used to expose multiple versions of a chatbot you want to test, to allow users to choose what kinds of tasks they do, amongst other things.
 
 As an example, the `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/overworld_demo/>`__ displays three separate tasks connected together by an overworld.
+
+.. figure:: _static/img/messenger-example.png
+   :align: center
 
 - The ``echo`` task is a simple example of an echo bot, and shows the functionality and flow of a simple single-person world.
 - The ``onboard data`` task is an example that shows how an onboarding world can collect information that is later exposed in the active task world.
