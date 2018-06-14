@@ -209,7 +209,6 @@ def download_models(opt, fnames, model_folder, version='v1.0', path='aws', use_m
                     url = 'https://s3.amazonaws.com/fair-data/parlai/_models/' + os.path.join(model_folder, fname)
             else:
                 url = path + '/' + fname
-            # print('[ attempting to download {} ]'.format(url))
             download(url, dpath, fname)
             if '.tgz' in fname or '.gz' in fname or '.zip' in fname:
                 untar(dpath, fname)
