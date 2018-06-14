@@ -62,6 +62,9 @@ def add_cmdline_args(parser):
                         help='Weight decay (default 0)')
     agent.add_argument('--momentum', type=float, default=0,
                         help='Momentum (default 0)')
+    agent.add_argument('--subsample-docs', type=int, default=0,
+                       help='When given paragraphs (separated by \n) will take '
+                       'only a subset of them, including the one with the answer for training.')
 
     # Model-specific
     agent.add_argument('--concat_rnn_layers', type='bool', default=True)
