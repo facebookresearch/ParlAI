@@ -85,7 +85,7 @@ class PerplexityWorld(World):
             if not hasattr(self.agent, 'next_word_probability'):
                 raise RuntimeError('Agent must implement function '
                                    '`next_word_probability`.')
-            self.metrics = {'total': 0, 'loss': 0.0, 'num_tokens': 0, 'num_unk': 0}
+            self.metrics = {'exs': 0, 'loss': 0.0, 'num_tokens': 0, 'num_unk': 0}
             if opt.get('numthreads', 1) > 1:
                 self.metrics = SharedTable(self.metrics)
         self.agents = [self.task, self.agent, self.dict]
@@ -131,7 +131,7 @@ class PerplexityWorld(World):
             else:
                 num_unk += 1
         with self._lock():
-            self.metrics['total'] += 1
+            self.metrics['exs'] += 1
             self.metrics['loss'] += loss
             self.metrics['num_tokens'] += num_tokens
             self.metrics['num_unk'] += num_unk
@@ -152,7 +152,7 @@ class PerplexityWorld(World):
 
     def reset_metrics(self):
         with self._lock():
-            self.metrics['total'] = 0
+            self.metrics['exs'] = 0
             self.metrics['loss'] = 0
             self.metrics['num_tokens'] = 0
             self.metrics['num_unk'] = 0
@@ -160,8 +160,8 @@ class PerplexityWorld(World):
     def report(self, compute_time=None):
         m = {}
         with self._lock():
-            m['total'] = self.metrics['total']
-            if m['total'] > 0:
+            m['exs'] = self.metrics['exs']
+            if m['exs'] > 0:
                 # m['num_unk'] = self.metrics['num_unk']
                 # m['num_tokens'] = self.metrics['num_tokens']
                 m['loss'] = round_sigfigs(self.metrics['loss'] / self.metrics['num_tokens'], 3)
@@ -198,7 +198,7 @@ def eval_ppl(opt, build_dict):
             report = world.report()
             print('{}s elapsed, {}%% complete, {}'.format(
                 int(tot_time),
-                round_sigfigs(report['total'] / world.num_examples() * 100, 3),
+                round_sigfigs(report['exs'] / world.num_examples() * 100, 3),
                 report))
             log_time.reset()
     print('EPOCH DONE')

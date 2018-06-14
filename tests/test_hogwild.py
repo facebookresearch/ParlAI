@@ -54,15 +54,15 @@ class TestHogwild(unittest.TestCase):
                     tl = TrainLoop(parser)
                     report_valid, report_test = tl.train()
                     # test final valid and test evals
-                    self.assertEqual(report_valid['total'], NUM_EXS)
-                    self.assertEqual(report_test['total'], NUM_EXS)
+                    self.assertEqual(report_valid['exs'], NUM_EXS)
+                    self.assertEqual(report_test['exs'], NUM_EXS)
 
                     report_full, _world = run_eval(tl.agent, tl.opt, 'valid',
                         max_exs=-1, valid_world=tl.valid_world)
-                    self.assertEqual(report_full['total'], NUM_EXS)
+                    self.assertEqual(report_full['exs'], NUM_EXS)
                     report_part, _world = run_eval(tl.agent, tl.opt, 'valid',
                         max_exs=NUM_EXS / 5, valid_world=tl.valid_world)
-                    self.assertTrue(report_part['total'] < NUM_EXS)
+                    self.assertTrue(report_part['exs'] < NUM_EXS)
         finally:
             # restore sys.stdout
             sys.stdout = old_out
@@ -89,7 +89,7 @@ class TestHogwild(unittest.TestCase):
                     parser.set_defaults(batchsize=bs)
                     parser.set_defaults(batch_sort=(bs % 2 == 0))
                     report = eval_model(parser, printargs=False)
-                    self.assertEqual(report['total'], NUM_EXS)
+                    self.assertEqual(report['exs'], NUM_EXS)
         finally:
             # restore sys.stdout
             sys.stdout = old_out

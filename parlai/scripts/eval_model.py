@@ -74,7 +74,7 @@ def eval_model(opt, printargs=None, print_parser=None):
             print(world.display() + "\n~~")
         if log_time.time() > log_every_n_secs:
             report = world.report()
-            text, report = log_time.log(report['total'], world.num_examples(), report)
+            text, report = log_time.log(report['exs'], world.num_examples(), report)
             print(text)
         if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
             break
