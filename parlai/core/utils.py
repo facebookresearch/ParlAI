@@ -101,8 +101,6 @@ def load_cands(path, lines_have_ids = False, cands_are_replies = False):
     return cands
 
 
-
-
 class Predictor(object):
     """Provides functionality for setting up a running version of a model and
     requesting predictions from that model on live data.
