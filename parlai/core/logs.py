@@ -25,35 +25,14 @@ class TensorboardLogger(Shared):
     @staticmethod
     def add_cmdline_args(argparser):
         logger = argparser.add_argument_group('Tensorboard Arguments')
-        logger.add_argument(
-            '-tblog',
-            '--tensorboard-log',
-            type=bool,
-            default=False,
-            help="Tensorboard logging of metrics")
-        logger.add_argument(
-            '-tbtag',
-            '--tensorboard-tag',
-            type=str,
-            default=None,
-            help=
-            'Specify all opt keys which you want to be presented in in TB name'
-        )
-        logger.add_argument(
-            '-tbmetrics',
-            '--tensorboard-metrics',
-            type=str,
-            default=None,
-            help=
-            "Specify metrics which you want to track, it will be extracrted from report dict."
-        )
-        logger.add_argument(
-            '-tgcomment',
-            '--tensorboard-comment',
-            type=str,
-            default='',
-            help='Add any line here to distinguish your TB event file, optional'
-        )
+        logger.add_argument('-tblog', '--tensorboard-log', type=bool, default=False,
+                            help="Tensorboard logging of metrics")
+        logger.add_argument('-tbtag', '--tensorboard-tag', type=str, default=None,
+                            help='Specify all opt keys which you want to be presented in in TB name')
+        logger.add_argument('-tbmetrics', '--tensorboard-metrics', type=str, default=None,
+                            help="Specify metrics which you want to track, it will be extracrted from report dict.")
+        logger.add_argument('-tgcomment', '--tensorboard-comment', type=str, default='',
+                            help='Add any line here to distinguish your TB event file, optional')
 
     def __init__(self, opt):
         Shared.__init__(self)

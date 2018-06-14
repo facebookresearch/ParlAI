@@ -42,28 +42,22 @@ def setup_args(parser=None):
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-df', '--display-freq', type='bool', default=True)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    parser.add_argument('-ed', '--external-dict', type=str, default=None, help='External dictionary for stat computation')
-    parser.add_argument(
-        '-fb',
-        '--freq-bins',
-        type=str,
-        default='0,100,1000,10000',
-        help='Bins boundaries for rare words stat')
+    parser.add_argument('-ed', '--external-dict', type=str, default=None,
+                        help='External dictionary for stat computation')
+    parser.add_argument('-fb', '--freq-bins', type=str, default='0,100,1000,10000',
+                        help='Bins boundaries for rare words stat')
     parser.set_defaults(datatype='valid')
     return parser
 
 
-def get_word_stats(sequence, agent_dict, bins=[0,100,1000,100000]):
+def get_word_stats(sequence, agent_dict, bins=[0, 100, 1000, 100000]):
     """
-
-    :param sequence: input sequence to analyze
-    :param agent_dict: dictionary where we take freqs from
-    :return:
+    Function which takes text sequence and dict, returns word freq and length statistics
+    :param sequence:
+    :param agent_dict:
+    :param bins:
+    :return: freqs dictionary, num words, avg word length, avg char length
     """
-    lengths = None
-    if any(isinstance(i, list) for i in sequence):
-        lengths = [len(l) for l in sequence]
-        sequence = [item for sublist in sequence for item in sublist]
     pred_list = sequence.split()
     pred_freq = [agent_dict.freq[word] for word in pred_list]
     freqs = {i: 0 for i in bins}
@@ -72,14 +66,13 @@ def get_word_stats(sequence, agent_dict, bins=[0,100,1000,100000]):
             if f <= b:
                 freqs[b] += 1
                 break
-    if lengths:
-        length = numpy.array(lengths).mean()
-    else:
-        length = len(pred_list)
-    return freqs, len(pred_freq), length
+
+    wlength = len(pred_list)
+    clength = len(sequence)  # including spaces
+    return freqs, len(pred_freq), wlength, clength
 
 
-def eval_model(opt, printargs=None, print_parser=None):
+def eval_model(opt, print_parser=None):
     """Evaluates a model.
 
     Arguments:
@@ -87,18 +80,13 @@ def eval_model(opt, printargs=None, print_parser=None):
     print_parser -- if provided, prints the options that are set within the
         model after loading the model
     """
-    if printargs is not None:
-        print('[ Deprecated Warning: eval_model no longer uses `printargs` ]')
-        print_parser = printargs
     if print_parser is not None:
         if print_parser is True and isinstance(opt, ParlaiParser):
             print_parser = opt
         elif print_parser is False:
             print_parser = None
     if isinstance(opt, ParlaiParser):
-        print(
-            '[ Deprecated Warning: eval_model should be passed opt not Parser ]'
-        )
+        print('[ Deprecated Warning: eval_model should be passed opt not Parser ]')
         opt = opt.parse_args()
 
     random.seed(42)
@@ -108,9 +96,8 @@ def eval_model(opt, printargs=None, print_parser=None):
     world = create_task(opt, agent)
 
     if opt['external_dict'] is not None:
-        print(
-            '[ Using external dictionary from: {} ]'.format(opt['external_dict'])
-        )
+        print('[ Using external dictionary from: {} ]'.format(
+            opt['external_dict']))
         dictionary = DictionaryAgent(opt)
         dictionary.load(opt['external_dict'])
     else:
@@ -128,7 +115,8 @@ def eval_model(opt, printargs=None, print_parser=None):
     tot_time = 0
 
     cnt = 0
-    mean_length = []
+    mean_wlength = []
+    mean_clength = []
     freqs_cnt = Counter()
     word_cnt = 0
     bins = [int(i) for i in opt['freq_bins'].split(',')]
@@ -137,10 +125,11 @@ def eval_model(opt, printargs=None, print_parser=None):
         cnt += 1
         world.parley()
         prediction = world.acts[-1]['text']
-        freqs, _cnt, length = get_word_stats(prediction, dictionary, bins=bins)
+        freqs, _cnt, wlength, clength = get_word_stats(prediction, dictionary, bins=bins)
         word_cnt += _cnt
 
-        mean_length.append(length)
+        mean_wlength.append(wlength)
+        mean_clength.append(clength)
 
         freqs_cnt += Counter(freqs)
 
@@ -149,13 +138,15 @@ def eval_model(opt, printargs=None, print_parser=None):
             print(str(int(tot_time)) + "s elapsed: " + str(world.report()))
             log_time.reset()
             if opt['display_freq'] is True:
-                stat_str = 'w: {}, '.format(word_cnt) + ', '.join([
+                stat_str = 'total_words: {}, '.format(word_cnt) + ', '.join([
                     '<{}:{} ({:.{prec}f}%)'.format(
                         b,
-                        freqs_cnt.get(b, 0), (freqs_cnt.get(b, 0) / word_cnt) * 100,
+                        freqs_cnt.get(b, 0),
+                        (freqs_cnt.get(b, 0) / word_cnt) * 100,
                         prec=2) for b in bins
                 ])
-                print("Word statistics: {}, avg.length: {:.{prec}f}wrd".format(stat_str, numpy.array(mean_length).mean(), prec=2))
+                print("Word statistics: {}, avg_word_length: {:.{prec}f}, avg_char_length: {:.{prec}f}".format(
+                    stat_str, numpy.array(mean_wlength).mean(), numpy.array(mean_clength).mean(), prec=2))
         if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
             break
     if world.epoch_done():
