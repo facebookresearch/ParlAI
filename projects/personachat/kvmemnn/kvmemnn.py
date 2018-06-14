@@ -710,10 +710,10 @@ class KvmemnnAgent(Agent):
         if ys is None:
             # only build candidates in eval mode.
             for o in observations:
-                if 'label_candidates' in o:
+                if 'label_candidates' in o and o['label_candidates'] is not None:
                     cs = []
                     ct = []
-                    for c in o['label_candidates'] and o['label_candidates'] is not None:
+                    for c in o['label_candidates']:
                         cs.append(Variable(torch.LongTensor(self.parse(c)).unsqueeze(0)))
                         ct.append(c)
                     cands.append(cs)
