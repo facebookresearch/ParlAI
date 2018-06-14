@@ -13,7 +13,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
-from parlai.core.utils import Timer, OffensiveLanguageDetector
+from parlai.core.utils import OffensiveLanguageDetector, TimeLogger
 
 import random
 
@@ -50,8 +50,7 @@ def detect(opt, printargs=None, print_parser=None):
     log_every_n_secs = opt.get('log_every_n_secs', -1)
     if log_every_n_secs <= 0:
         log_every_n_secs = float('inf')
-    log_time = Timer()
-    tot_time = 0
+    log_time = TimeLogger()
 
     # Show some example dialogs:
     cnt = 0
@@ -71,17 +70,11 @@ def detect(opt, printargs=None, print_parser=None):
                 print(world.display() + "\n~~")
             cnt += 1
         if log_time.time() > log_every_n_secs:
-            tot_time += log_time.time()
             report = world.report()
-            log = {'total': report['total']}
-            log['done'] = report['total'] / world.num_examples()
-            if log['done'] > 0:
-                log['eta'] = int(tot_time / log['done'] - tot_time)
-            z = '%.2f' % ( 100*log['done'])
-            log['done'] = str(z) + '%'
-            log['offenses'] = cnt
-            print(str(int(tot_time)) + "s elapsed: " + str(log))
-            log_time.reset()
+            log = { 'offenses': cnt }
+            text, log = log_time.log(report['total'], world.num_examples(), log)
+            print(text)
+
     if world.epoch_done():
         print("EPOCH DONE")
     print(str(cnt) + " offensive messages found out of " +

@@ -14,7 +14,7 @@ or
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.core.utils import Timer
+from parlai.core.utils import TimeLogger
 
 import random
 import os
@@ -63,8 +63,7 @@ def eval_model(opt, printargs=None, print_parser=None):
     log_every_n_secs = opt.get('log_every_n_secs', -1)
     if log_every_n_secs <= 0:
         log_every_n_secs = float('inf')
-    log_time = Timer()
-    tot_time = 0
+    log_time = TimeLogger()
 
     # Show some example dialogs:
     cnt = 0
@@ -74,9 +73,9 @@ def eval_model(opt, printargs=None, print_parser=None):
         if opt['display_examples']:
             print(world.display() + "\n~~")
         if log_time.time() > log_every_n_secs:
-            tot_time += log_time.time()
-            print(str(int(tot_time)) + "s elapsed: " + str(world.report()))
-            log_time.reset()
+            report = world.report()
+            text, report = log_time.log(report['total'], world.num_examples(), report)
+            print(text)
         if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
             break
     if world.epoch_done():

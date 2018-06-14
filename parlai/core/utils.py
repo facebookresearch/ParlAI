@@ -175,6 +175,34 @@ class Timer(object):
         return self.total
 
 
+class TimeLogger():
+    def __init__(self):
+        self.timer = Timer()
+        self.tot_time = 0
+
+    def total_time(self):
+        return self.tot_time
+
+    def time(self):
+        return self.timer.time()
+
+    def log(self, done, total, report={}):
+        self.tot_time += self.timer.time()
+        self.timer.reset()
+        log = {}
+        log['total'] = done
+        if total > 0:
+            log['%done'] = done / total
+            if log["%done"] > 0:
+                log['time_left'] = str(int(self.tot_time / log['%done'] - self.tot_time)) + 's'
+            z = '%.2f' % ( 100*log['%done'])
+            log['%done'] = str(z) + '%'  
+        for k, v in report.items():
+            if k not in log:
+                log[k] = v
+        text = str(int(self.tot_time)) + "s elapsed: " + str(log)
+        return text, log
+
 class AttrDict(dict):
     """Helper class to have a dict-like object with dot access.
 
