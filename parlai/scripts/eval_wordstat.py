@@ -119,6 +119,7 @@ def eval_model(opt, printargs=None, print_parser=None):
     cnt = 0
     mean_length = []
     freqs_cnt = Counter()
+    word_cnt = 0
     bins = [int(i) for i in opt['freq_bins'].split(',')]
 
     while not world.epoch_done():
@@ -128,7 +129,7 @@ def eval_model(opt, printargs=None, print_parser=None):
         pred_vec = agent.dict.txt2vec(prediction)
 
         freqs, _cnt, length = get_word_stats(pred_vec, agent.dict, bins=bins)
-        cnt += _cnt
+        word_cnt += _cnt
 
         mean_length.append(length)
 
@@ -139,10 +140,10 @@ def eval_model(opt, printargs=None, print_parser=None):
             print(str(int(tot_time)) + "s elapsed: " + str(world.report()))
             log_time.reset()
             if opt['display_freq'] is True:
-                stat_str = 'w: {}, '.format(cnt) + ', '.join([
+                stat_str = 'w: {}, '.format(word_cnt) + ', '.join([
                     '<{}:{} ({:.{prec}f}%)'.format(
                         b,
-                        freqs_cnt.get(b, 0), (freqs_cnt.get(b, 0) / cnt) * 100,
+                        freqs_cnt.get(b, 0), (freqs_cnt.get(b, 0) / word_cnt) * 100,
                         prec=2) for b in bins
                 ])
                 print("Word statistics: {}, avg.length: {:.{prec}f}wrd".format(stat_str, numpy.array(mean_length).mean(), prec=2))
