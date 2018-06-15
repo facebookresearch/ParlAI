@@ -240,39 +240,6 @@ class LoaderProcess(Thread):
             return None
 
 
-def get_dataset_module(datasetname):
-    # get the module of the dataset
-    sp = datasetname.strip()
-    repo = 'parlai'
-    if sp.startswith('internal:'):
-        # To switch to local repo, useful for non-public projects
-        # (make a directory called 'parlai_internal' with your private agents)
-        repo = 'parlai_internal'
-        sp = sp[9:]
-    sp = sp.split(':')
-    if '.' in sp[0]:
-        module_name = sp[0]
-    else:
-        dataset = sp[0].lower()
-        module_name = "%s.tasks.%s.agents" % (repo, dataset)
-    if len(sp) > 1:
-        sp[1] = sp[1][0].upper() + sp[1][1:]
-        dataset = sp[1]
-        if '.' not in sp[0] and 'Dataset' not in dataset:
-            # Reformat from underscore to CamelCase and append "Dataset" to
-            # class name by default if a complete path is not given.
-            words = dataset.split('_')
-            teacher_name = ''
-            for w in words:
-                teacher_name += (w[0].upper() + w[1:])
-            dataset = teacher_name + "Dataset"
-    else:
-        dataset = "DefaultDataset"
-    my_module = importlib.import_module(module_name)
-    dataset_class = getattr(my_module, dataset)
-    return dataset_class
-
-
 # Default collate function (for how to prepare a batch)
 def default_collate(batch):
     new_batch = []
