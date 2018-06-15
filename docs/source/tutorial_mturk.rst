@@ -166,6 +166,48 @@ You can programmatically review work using the commands available in the `MTurkM
 If you don't take any action in 4 weeks, all HITs will be auto-approved and Turkers will be paid.
 
 
+ParlAI-MTurk Tips and Tricks
+----------------------------
+
+Approving Work
+^^^^^^^^^^^^^^
+
+- Unless you explicitly set the flag `—auto-approve-delay` or approve the agents work by calling `mturk_agent.approve_work()`, work will be auto approved after 30 days; workers generally like getting paid sooner than this so set the `auto_approve_delay` to be shorter when possible.
+- Occasionally Turkers will take advantage of getting paid immediately without review if you auto approve their work by calling `mturk_agent.approve_work()` at the close of the task. If you aren't using any kind of validation before you `approve_work` or if you don't intend to review the work manually, consider setting the `—auto-approve-delay` flag rather than approving immediately.
+
+Rejecting Work
+^^^^^^^^^^^^^^
+
+- Most Turkers take their work very seriously, so if you find yourself with many different workers making similar mistakes on your task, it's possible the task itself is unclear. You **shouldn't** be rejecting work in this case, rather you should update your instructions and see if the problem resolves.
+- Reject sparingly at first and give clear reasons for rejection/how to improve. Rejections with no context are a violation of Amazon's TOS.
+
+Soft-blocking vs. Hard-blocking
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Hard block sparingly; it's possible workers that aren't doing well on a particular task are perfectly good at others. Hard blocking reduces your possible worker pool.
+- Soft blocking workers that are clearly trying on a task but not **quite** getting it allows those workers to work on other tasks for you in the future. You can soft block workers by calling `mturk_manager.soft_block_worker(<worker id>)` after setting `—block-qualification`. That worker will not be able to work on any tasks that use the same `—block-qualification`.
+
+Preventing and Handling Crashes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Set the `-—max-connections` flag sufficiently low for your task; this controls the number of people who can work on your task at any given time. Leaving this too high might leave your heroku server running into issues depending on how many messages per second it's trying to process, and on how much data is being sent in those messages (such as picture or video data).
+- If you're using a model on your local machine, try to share the model parameters whenever possible. Needing new parameters for each of your conversations might run your machine out of memory, causing the data collection to crash in an manner that ParlAI can't handle
+- If your task crashes, you'll need to run the `delete_hits` script and find the task that had crashed to remove the orphan tasks.
+- If workers email you about task crashes with sufficient evidence that they were working on the task, offer to compensate by sending them a bonus for the failed task on one of their other completed tasks, then bonus that `HITId` with the `bonus_workers` script.
+
+Task Design
+^^^^^^^^^^^
+
+- Design and test your task using the developer sandbox feature (used by default when calling a `run.py`), only launch `--live` after you've tested your flow entirely.
+- Launch a few small pilot hits `--live` before your main data collection, and manually review every response to see how well the workers are understanding your task. Use this time to tweak your task instructions until you're satisfied with the results, as this will improve the quality of the received data.
+
+Other Tips
+^^^^^^^^^^
+
+- Check your MTurk-associated email frequently when running a task, and be responsive to the workers working on your tasks. This is important to keep a good reputation in the MTurk community.
+- If you notice that certain workers are doing a really good job on the task, send them bonuses, as this will encourage them to work on your HITs more in the future. It will also be a visible way for you to acknowledge their good work.
+
+
 -------
 
 \* Turker icon credit: `Amazon Mechanical Turk <https://requester.mturk.com/>`__. Robot icon credit: `Icons8 <https://icons8.com/>`__.
