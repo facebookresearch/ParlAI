@@ -38,6 +38,7 @@ import numpy
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True)
+    DictionaryAgent.add_cmdline_args(parser)
     # Get command line arguments
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
@@ -49,7 +50,7 @@ def setup_args(parser=None):
     return parser
 
 
-def get_word_stats(sequence, agent_dict, bins=[0, 100, 1000, 100000]):
+def get_word_stats(text, agent_dict, bins=[0, 100, 1000, 100000]):
     """
     Function which takes text sequence and dict, returns word freq and length statistics
     :param sequence: text sequence
@@ -57,7 +58,7 @@ def get_word_stats(sequence, agent_dict, bins=[0, 100, 1000, 100000]):
     :param bins: list with range boundaries
     :return: freqs dictionary, num words, avg word length, avg char length
     """
-    pred_list = sequence.split()
+    pred_list = agent_dict.tokenize(text)
     pred_freq = [agent_dict.freq[word] for word in pred_list]
     freqs = {i: 0 for i in bins}
     for f in pred_freq:
@@ -67,11 +68,11 @@ def get_word_stats(sequence, agent_dict, bins=[0, 100, 1000, 100000]):
                 break
 
     wlength = len(pred_list)
-    clength = len(sequence)  # including spaces
+    clength = len(text)  # including spaces
     return freqs, len(pred_freq), wlength, clength
 
 
-def eval_model(opt, print_parser=None):
+def eval_wordstat(opt, print_parser=None):
     """Evaluates a model.
 
     Arguments:
@@ -79,15 +80,6 @@ def eval_model(opt, print_parser=None):
     print_parser -- if provided, prints the options that are set within the
         model after loading the model
     """
-    if print_parser is not None:
-        if print_parser is True and isinstance(opt, ParlaiParser):
-            print_parser = opt
-        elif print_parser is False:
-            print_parser = None
-    if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: eval_model should be passed opt not Parser ]')
-        opt = opt.parse_args()
-
     random.seed(42)
 
     # Create model and assign it to the specified task
@@ -151,5 +143,4 @@ def eval_model(opt, print_parser=None):
 
 if __name__ == '__main__':
     parser = setup_args()
-    DictionaryAgent.add_cmdline_args(parser)
-    eval_model(parser.parse_args(print_args=False), print_parser=parser)
+    eval_wordstat(parser.parse_args(print_args=False), print_parser=parser)
