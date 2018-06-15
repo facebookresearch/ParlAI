@@ -13,7 +13,7 @@ import numpy as np
 import os
 import re
 
-RETOK = re.compile(r'[\w\n]+|[^\w\s]', re.UNICODE)
+RETOK = re.compile(r'\w+|[^\w\s]|\n', re.UNICODE)
 
 def escape(s):
     """Replace potential special characters with escaped version.
