@@ -26,27 +26,34 @@ class TensorboardLogger(Shared):
     def add_cmdline_args(argparser):
         logger = argparser.add_argument_group('Tensorboard Arguments')
         logger.add_argument('-tblog', '--tensorboard-log', type=bool, default=False,
-                           help="Tensorboard logging of metrics")
+                            help="Tensorboard logging of metrics")
         logger.add_argument('-tbtag', '--tensorboard-tag', type=str, default=None,
-                           help='Specify all opt keys which you want to be presented in in TB name')
+                            help='Specify all opt keys which you want to be presented in in TB name')
         logger.add_argument('-tbmetrics', '--tensorboard-metrics', type=str, default=None,
-                           help="Specify metrics which you want to track, it will be extracrted from report dict.")
+                            help="Specify metrics which you want to track, it will be extracrted from report dict.")
+        logger.add_argument('-tgcomment', '--tensorboard-comment', type=str, default='',
+                            help='Add any line here to distinguish your TB event file, optional')
+
     def __init__(self, opt):
         Shared.__init__(self)
         try:
             from tensorboardX import SummaryWriter
         except ModuleNotFoundError:
-            raise ModuleNotFoundError('Please `pip install tensorboardX` for logs with TB.')
+            raise ModuleNotFoundError(
+                'Please `pip install tensorboardX` for logs with TB.')
         if opt['tensorboard_tag'] == None:
             tensorboard_tag = opt['starttime']
         else:
-            tensorboard_tag = opt['starttime'] + '_'.join(
-                [i + '-' + str(opt[i]) for i in opt['tensorboard_tag'].split(',')])
+            tensorboard_tag = opt['starttime'] + '_'.join([
+                i + '-' + str(opt[i])
+                for i in opt['tensorboard_tag'].split(',')
+            ]) + '_' + opt['tensorboard_comment']
 
         tbpath = os.path.join(opt['datapath'], 'tensorboard')
         if not os.path.exists(tbpath):
             os.makedirs(tbpath)
-        self.writer = SummaryWriter(log_dir='{}/{}'.format(tbpath, tensorboard_tag))
+        self.writer = SummaryWriter(
+            log_dir='{}/{}'.format(tbpath, tensorboard_tag))
         if opt['tensorboard_metrics'] == None:
             self.tbmetrics = ['ppl', 'loss']
         else:
@@ -62,8 +69,7 @@ class TensorboardLogger(Shared):
         """
         for met in self.tbmetrics:
             if met in report.keys():
-                self.writer.add_scalar("{}/{}".format(setting, met), report[met],
-                                       global_step=step)
+                self.writer.add_scalar("{}/{}".format(setting, met), report[met], global_step=step)
 
     def add_scalar(self, name, y, step=None):
         """
@@ -81,3 +87,6 @@ class TensorboardLogger(Shared):
         :return:
         """
         self.writer.add_histogram(name, vector, step)
+
+    def add_text(self, name, text, step=None):
+        self.writer.add_text(name, text, step)
