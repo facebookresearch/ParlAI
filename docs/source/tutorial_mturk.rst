@@ -153,7 +153,7 @@ Handling Turker Disconnects
 ---------------------------
 Sometimes you may find that a task you have created is leading to a lot of workers disconnecting in the middle of a conversation, or that a few people are disconnecting repeatedly. ParlAI MTurk offers two kinds of blocks to stop these workers from doing your hits.
 
-- soft blocks can be created by using the ``--block-qualification <name>`` flag with a name that you want to associate to your ParlAI tasks. Any user that hits the disconnect cap for a HIT with this flag active will not be able to participate in any HITs using this flag.
+- soft blocks can be created by using the ``--disconnect-qualification <name>`` flag with a name that you want to associate to your ParlAI tasks. Any user that hits the disconnect cap for a HIT with this flag active will not be able to participate in any HITs using this flag.
 
 - hard blocks can be used by setting the ``--hard-block`` flag. Soft blocks in general are preferred, as Turkers can be block-averse (as it may affect their reputation) and sometimes the disconnects are out of their control. This will prevent any Turkers that hit the disconnect cap with this flag active from participating in any of your future HITs of any type.
 
@@ -173,7 +173,7 @@ Approving Work
 ^^^^^^^^^^^^^^
 
 - Unless you explicitly set the flag `—auto-approve-delay` or approve the agents work by calling `mturk_agent.approve_work()`, work will be auto approved after 30 days; workers generally like getting paid sooner than this so set the `auto_approve_delay` to be shorter when possible.
-- Occasionally Turkers will take advantage of getting paid immediately without review if you auto approve their work by calling `mturk_agent.approve_work()` at the close of the task. If you aren't using any kind of validation before you `approve_work` or if you don't intend to review the work manually, consider setting the `—auto-approve-delay` flag rather than approving immediately.
+- Occasionally Turkers will take advantage of getting paid immediately without review if you auto approve their work by calling `mturk_agent.approve_work()` at the close of the task. If you aren't using any kind of validation before you `approve_work` or if you don't intend to review the work manually, consider setting the `—-auto-approve-delay` flag rather than approving immediately.
 
 Rejecting Work
 ^^^^^^^^^^^^^^
@@ -185,12 +185,12 @@ Soft-blocking vs. Hard-blocking
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - Hard block sparingly; it's possible workers that aren't doing well on a particular task are perfectly good at others. Hard blocking reduces your possible worker pool.
-- Soft blocking workers that are clearly trying on a task but not **quite** getting it allows those workers to work on other tasks for you in the future. You can soft block workers by calling `mturk_manager.soft_block_worker(<worker id>)` after setting `—block-qualification`. That worker will not be able to work on any tasks that use the same `—block-qualification`.
+- Soft blocking workers that are clearly trying on a task but not **quite** getting it allows those workers to work on other tasks for you in the future. You can soft block workers by calling `mturk_manager.soft_block_worker(<worker id>)` after setting `—-block-qualification`. That worker will not be able to work on any tasks that use the same `—-block-qualification`.
 
 Preventing and Handling Crashes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- Set the `-—max-connections` flag sufficiently low for your task; this controls the number of people who can work on your task at any given time. Leaving this too high might leave your heroku server running into issues depending on how many messages per second it's trying to process, and on how much data is being sent in those messages (such as picture or video data).
+- Set the `--max-connections` flag sufficiently low for your task; this controls the number of people who can work on your task at any given time. Leaving this too high might leave your heroku server running into issues depending on how many messages per second it's trying to process, and on how much data is being sent in those messages (such as picture or video data).
 - If you're using a model on your local machine, try to share the model parameters whenever possible. Needing new parameters for each of your conversations might run your machine out of memory, causing the data collection to crash in an manner that ParlAI can't handle
 - If your task crashes, you'll need to run the `delete_hits` script and find the task that had crashed to remove the orphan tasks.
 - If workers email you about task crashes with sufficient evidence that they were working on the task, offer to compensate by sending them a bonus for the failed task on one of their other completed tasks, then bonus that `HITId` with the `bonus_workers` script.

@@ -245,8 +245,9 @@ class MTurkManager():
                         ),
                         True
                     )
-                elif self.opt['block_qualification'] != '':
-                    self.soft_block_worker(worker_id)
+                elif self.opt['disconnect_qualification'] != '':
+                    self.soft_block_worker(worker_id,
+                                           'disconnect_qualification')
                     shared_utils.print_and_log(
                         logging.INFO,
                         'Worker {} soft blocked - too many disconnects'.format(
@@ -1227,13 +1228,31 @@ class MTurkManager():
         if qualifications is None:
             qualifications = []
 
+        if self.opt['disconnect_qualification'] != '':
+            block_qual_id = mturk_utils.find_or_create_qualification(
+                self.opt['disconnect_qualification'],
+                'A soft ban from using a ParlAI-created HIT due to frequent '
+                'disconnects from conversations, leading to negative '
+                'experiences for other Turkers and for the requester.',
+                self.is_sandbox,
+            )
+            assert block_qual_id is not None, (
+                'Hits could not be created as disconnect qualification could '
+                'not be acquired. Shutting down server.'
+            )
+            qualifications.append({
+                'QualificationTypeId': block_qual_id,
+                'Comparator': 'DoesNotExist',
+                'RequiredToPreview': True
+            })
+
         # Add the soft block qualification if it has been specified
         if self.opt['block_qualification'] != '':
             block_qual_id = mturk_utils.find_or_create_qualification(
                 self.opt['block_qualification'],
-                'A soft ban from using a ParlAI-created HIT due to frequent '
-                'disconnects from conversations, leading to negative '
-                'experiences for other Turkers and for the requester.',
+                'A soft ban from this ParlAI-created HIT at the requesters '
+                'discretion. Generally used to restrict how frequently a '
+                'particular worker can work on a particular task.',
                 self.is_sandbox,
             )
             assert block_qual_id is not None, (
@@ -1430,17 +1449,19 @@ class MTurkManager():
             ''.format(worker_id, reason),
         )
 
-    def soft_block_worker(self, worker_id):
+    def soft_block_worker(self, worker_id, qual='block_qualification'):
         """Soft block a worker by giving the worker the block qualification"""
-        qual_name = self.opt['block_qualification']
-        assert qual_name != '', ('No block qualification has been specified')
+        qual_name = self.opt[qual]
+        assert qual_name != '', ('No qualification {} has been specified'
+                                 ''.format(qual))
         self.give_worker_qualification(worker_id, qual_name)
 
-    def un_soft_block_worker(self, worker_id):
+    def un_soft_block_worker(self, worker_id, qual='block_qualification'):
         """Remove a soft block from a worker by removing a block qualification
             from the worker"""
-        qual_name = self.opt['block_qualification']
-        assert qual_name != '', ('No block qualification has been specified')
+        qual_name = self.opt[qual]
+        assert qual_name != '', ('No qualification {} has been specified'
+                                 ''.format(qual))
         self.remove_worker_qualification(worker_id, qual_name)
 
     def give_worker_qualification(self, worker_id, qual_name, qual_value=None):
