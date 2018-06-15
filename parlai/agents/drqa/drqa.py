@@ -226,8 +226,22 @@ class DrqaAgent(Agent):
 
         # Either train or predict
         if 'labels' in observations[0]:
-            self.n_examples += len(examples)
-            self.model.update(batch)
+            try:
+                self.n_examples += len(examples)
+                self.model.update(batch)
+            except RuntimeError as e:
+                # catch out of memory exceptions during fwd/bck (skip batch)
+                if 'out of memory' in str(e):
+                    print('| WARNING: ran out of memory, skipping batch. '
+                          'if this happens frequently, decrease batchsize or '
+                          'truncate the inputs to the model.')
+                    batch_reply[0]['metrics'] = {
+                        'skipped_batches': 1,
+                    }
+                    return batch_reply
+                else:
+                    raise e
+
         else:
             predictions, scores = self.model.predict(batch)
             for i in range(len(predictions)):
@@ -271,7 +285,12 @@ class DrqaAgent(Agent):
         if len(fields) < 2:
             raise RuntimeError('Invalid input. Is task a QA task?')
 
-        document, question = ' '.join(fields[:-1]), fields[-1]
+        paragraphs, question = fields[:-1], fields[-1]
+        
+        if len(fields) > 2 and self.opt.get('subsample_docs', 0) > 0 and 'labels' in ex:
+            paragraphs = self. _subsample_doc(paragraphs, ex['labels'], self.opt.get('subsample_docs', 0))
+        
+        document = ' '.join(paragraphs)
         inputs['document'], doc_spans = self.word_dict.span_tokenize(document)
         inputs['question'] = self.word_dict.tokenize(question)
         inputs['target'] = None
@@ -318,3 +337,28 @@ class DrqaAgent(Agent):
         if len(targets) == 0:
             return
         return targets[np.random.choice(len(targets))]
+
+    def _subsample_doc(self, paras, labels, subsample):
+        """Subsample paragraphs from the document (mostly for training speed).
+        """
+        # first find a valid paragraph (with a label)
+        pi = -1
+        for ind, p in enumerate(paras):
+            for l in labels:
+                if p.find(l):
+                    pi = ind
+                    break
+        if pi == -1:
+            # failed
+            return paras[0:1]
+        new_paras = []
+        if pi > 0:
+            for i in range(min(subsample, pi - 1)):
+                ind = random.randint(0, pi - 1)
+                new_paras.append(paras[ind])
+        new_paras.append(paras[pi])
+        if pi < len(paras) - 1:
+            for i in range(min(subsample, len(paras) - 1 - pi)):
+                ind = random.randint(pi + 1, len(paras) - 1)
+                new_paras.append(paras[ind])                         
+        return new_paras

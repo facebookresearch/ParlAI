@@ -28,11 +28,12 @@ def load_embeddings(opt, word_dict):
     with open(opt['embedding_file']) as f:
         for line in f:
             parsed = line.rstrip().split(' ')
-            assert(len(parsed) == opt['embedding_dim'] + 1)
-            w = normalize_text(parsed[0])
-            if w in word_dict:
-                vec = torch.Tensor([float(i) for i in parsed[1:]])
-                embeddings[word_dict[w]].copy_(vec)
+            if len(parsed) > 2:
+                assert(len(parsed) == opt['embedding_dim'] + 1)
+                w = normalize_text(parsed[0])
+                if w in word_dict:
+                    vec = torch.Tensor([float(i) for i in parsed[1:]])
+                    embeddings[word_dict[w]].copy_(vec)
 
     # Zero NULL token
     embeddings[word_dict['__NULL__']].fill_(0)
