@@ -16,7 +16,7 @@ Overview
 If you are unfamiliar with the basics of displaying data or
 calling train or evaluate on a model, please first see
 the `getting started <tutorial_basic.html>`_ section.
-If you are interested in creating a task, please see 
+If you are interested in creating a task, please see
 `that section <tutorial_task.html>`_.
 
 This section will cover the details of:
@@ -29,7 +29,7 @@ This section will cover the details of:
 
 
 For all tasks one might make,
-there's one function we need to support for both hogwild and batching: ``share()``. 
+there's one function we need to support for both hogwild and batching: ``share()``.
 This function should provide whatever is needed to set up a "copy" of the original
 instance of the agent for either each row of a batch or each thread in hogwild.
 
@@ -417,10 +417,11 @@ specified above in the ``PytorchDataTeacher``. If you would like to specify your
 own ``collate_fn``, you can implement a static method ``collate`` in the **agent**
 to which you will be providing the data. This function takes one argument, ``batch``, which
 is a list of data items returned by your custom ``Dataset``, and returns a
-collated batch.
+collated batch. Alternatively, you can also implement the method in the **dataset**.
 
-3. Finally, you would need to specify the ``Dataset`` location on the command line
-in the following fashion: ``--dataset path.to.dataset:DatasetClassName``. If you
+3. Finally, you would need to specify the ``Dataset`` on the command line
+in the following fashion: ``--dataset dataset_task:DatasetClassName``, where
+``dataset_class`` is the agents file where your ``Dataset`` is written. If you
 name your custom dataset ``DefaultDataset``, then you do not need to specify the
 ``DatasetClassName``.
 
@@ -439,7 +440,7 @@ list of examples provided by the ``VQADataset``.
 3. Finally, to use the ``PytorchDataTeacher`` with the custom ``Dataset`` and
 ``collate``, run the following command::
 
-  python examples/train_model.py -m mlb_vqa -t pytorch_teacher --dataset parlai.tasks.vqa_v1.agents
+  python examples/train_model.py -m mlb_vqa -t pytorch_teacher --dataset vqa_v1
 
 PyTorch Batch Sorting and Squashing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

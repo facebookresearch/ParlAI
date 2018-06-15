@@ -240,6 +240,39 @@ class LoaderProcess(Thread):
             return None
 
 
+def get_dataset_module(datasetname):
+    # get the module of the dataset
+    sp = datasetname.strip()
+    repo = 'parlai'
+    if sp.startswith('internal:'):
+        # To switch to local repo, useful for non-public projects
+        # (make a directory called 'parlai_internal' with your private agents)
+        repo = 'parlai_internal'
+        sp = sp[9:]
+    sp = sp.split(':')
+    if '.' in sp[0]:
+        module_name = sp[0]
+    else:
+        dataset = sp[0].lower()
+        module_name = "%s.tasks.%s.agents" % (repo, dataset)
+    if len(sp) > 1:
+        sp[1] = sp[1][0].upper() + sp[1][1:]
+        dataset = sp[1]
+        if '.' not in sp[0] and 'Dataset' not in dataset:
+            # Reformat from underscore to CamelCase and append "Dataset" to
+            # class name by default if a complete path is not given.
+            words = dataset.split('_')
+            teacher_name = ''
+            for w in words:
+                teacher_name += (w[0].upper() + w[1:])
+            dataset = teacher_name + "Dataset"
+    else:
+        dataset = "DefaultDataset"
+    my_module = importlib.import_module(module_name)
+    dataset_class = getattr(my_module, dataset)
+    return dataset_class
+
+
 # Default collate function (for how to prepare a batch)
 def default_collate(batch):
     new_batch = []
@@ -380,29 +413,54 @@ class PytorchDataTeacher(FixedDialogTeacher):
 
             For example, the VQA v1 task provides a custom dataset, which can
             be specified on the command line as follows:
-            ``--dataset parlai.tasks.vqa_v1.agents:VQADataset``
+            ``--dataset vqa_v1:VQADataset``
 
             Note that if the dataset is named ``DefaultDataset``, then you do
             not need to specify its name following the colon; e.g., it
             would just be:
-            ``--dataset parlai.tasks.vqa_v1.agents``
+            ``--dataset vqa_v1``
         """
         dataset_name = opt.get('dataset')
-        sp = dataset_name.strip().split(':')
+        if dataset_name == 'StreamDataset':
+            return StreamDataset, default_collate
+
+        sp = dataset_name.strip()
+        repo = 'parlai'
+        if sp.startswith('internal:'):
+            # To switch to local repo, useful for non-public projects
+            # (make a directory called 'parlai_internal' with your private agents)
+            repo = 'parlai_internal'
+            sp = sp[9:]
+        sp = sp.split(':')
+        if '.' in sp[0]:
+            module_name = sp[0]
+        else:
+            dataset = sp[0].lower()
+            module_name = "%s.tasks.%s.agents" % (repo, dataset)
+        if len(sp) > 1:
+            sp[1] = sp[1][0].upper() + sp[1][1:]
+            dataset = sp[1]
+            if '.' not in sp[0] and 'Dataset' not in dataset:
+                # Reformat from underscore to CamelCase and append "Dataset" to
+                # class name by default if a complete path is not given.
+                words = dataset.split('_')
+                teacher_name = ''
+                for w in words:
+                    teacher_name += (w[0].upper() + w[1:])
+                dataset = teacher_name + "Dataset"
+        else:
+            dataset = "DefaultDataset"
+        my_module = importlib.import_module(module_name)
+        dataset_class = getattr(my_module, dataset)
+
         collate = default_collate
-        if opt.get('model', False):
+        if hasattr(dataset_class, 'collate'):
+            collate = dataset_class.collate
+        elif opt.get('model', False):
             agent_class = get_agent_module(opt.get('model'))
             if hasattr(agent_class, 'collate'):
                 collate = agent_class.collate
-        if sp[0] == 'StreamDataset':
-            return StreamDataset, collate
-        module_name = sp[0]
-        if len(sp) > 1:
-            dataset = sp[1]
-        else:
-            dataset = 'DefaultDataset'
-        my_module = importlib.import_module(module_name)
-        return getattr(my_module, dataset), collate
+        return dataset_class, collate
 
     def reset(self):
         """Reset the dialog so that it is at the start of the epoch,
