@@ -172,14 +172,14 @@ ParlAI-MTurk Tips and Tricks
 Approving Work
 ^^^^^^^^^^^^^^
 
-- Unless you explicitly set the flag `—auto-approve-delay` or approve the agents work by calling `mturk_agent.approve_work()`, work will be auto approved after 30 days; workers generally like getting paid sooner than this so set the `auto_approve_delay` to be shorter when possible
+- Unless you explicitly set the flag `—auto-approve-delay` or approve the agents work by calling `mturk_agent.approve_work()`, work will be auto approved after 30 days; workers generally like getting paid sooner than this so set the `auto_approve_delay` to be shorter when possible.
 - Occasionally Turkers will take advantage of getting paid immediately without review if you auto approve their work by calling `mturk_agent.approve_work()` at the close of the task. If you aren't using any kind of validation before you `approve_work` or if you don't intend to review the work manually, consider setting the `—auto-approve-delay` flag rather than approving immediately.
 
 Rejecting Work
 ^^^^^^^^^^^^^^
 
 - Most Turkers take their work very seriously, so if you find yourself with many different workers making similar mistakes on your task, it's possible the task itself is unclear. You **shouldn't** be rejecting work in this case, rather you should update your instructions and see if the problem resolves.
-- Reject sparingly at first and give clear reasons for rejection/how to improve. Rejections with no context are a violation of Amazon's TOS
+- Reject sparingly at first and give clear reasons for rejection/how to improve. Rejections with no context are a violation of Amazon's TOS.
 
 Soft-blocking vs. Hard-blocking
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
