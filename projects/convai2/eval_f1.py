@@ -16,6 +16,7 @@ def setup_args(parser=None):
         task='convai2:self:no_cands',
         datatype='valid',
         hide_labels=False,
+        dict_tokenizer='split',
     )
     return parser
 
