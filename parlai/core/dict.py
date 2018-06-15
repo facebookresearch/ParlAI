@@ -11,7 +11,9 @@ import argparse
 import copy
 import numpy as np
 import os
+import re
 
+RETOK = re.compile(r'[\w\n]+|[^\w\s]', re.UNICODE)
 
 def escape(s):
     """Replace potential special characters with escaped version.
@@ -56,7 +58,6 @@ def find_ngrams(token_dict, text, n):
     saved_tokens.extend(find_ngrams(token_dict, remainder, sub_n))
     return saved_tokens
 
-
 class DictionaryAgent(Agent):
     """Builds and/or loads a dictionary.
 
@@ -74,7 +75,7 @@ class DictionaryAgent(Agent):
     default_start = '__START__'
     default_end = '__END__'
     default_unk = '__UNK__'
-    default_tok = 'split'
+    default_tok = 're'
     default_lower = False
 
     @staticmethod
@@ -304,11 +305,23 @@ class DictionaryAgent(Agent):
                 for token in self.word_tok.tokenize(sent))
 
     @staticmethod
+    def re_tokenize(text):
+        """Find boundaries between word characters, newlines, and non-word
+        non-whitespace tokens (r'[\w\n]+ | [^\w\s]').
+
+        This splits along whitespace and punctuation and keeps the newline as
+        a token in the returned list.
+        """
+        return RETOK.findall(text)
+
+    @staticmethod
     def split_tokenize(text):
         """Splits tokens based on whitespace after adding whitespace around
         punctuation.
+        This is old deprecated version which covers less punctuation but should
+        run faster.
         """
-        return (text.replace('.', ' . ').replace('. . .', '...')
+        return (text.replace('.', ' . ')
                 .replace(',', ' , ').replace(';', ' ; ').replace(':', ' : ')
                 .replace('!', ' ! ').replace('?', ' ? ')
                 .split())
@@ -465,7 +478,7 @@ class DictionaryAgent(Agent):
         """
         if vec_type == np.ndarray:
             res = np.fromiter(
-                (self[token] for token in self.tokenize(str(text))),
+                (self[token] for token in self.tokenize(text)),
                 np.int
             )
         elif vec_type == list or vec_type == tuple or vec_type == set:
