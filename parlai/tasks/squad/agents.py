@@ -5,8 +5,10 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.teachers import FixedDialogTeacher, DialogTeacher
+from parlai.core.utils import str_to_msg
 from .build import build
 
+import copy
 import json
 import os
 
@@ -161,6 +163,7 @@ class TitleTeacher(DefaultTeacher):
 
     def __init__(self, opt, shared=None):
         self.id = 'squad_title'
+        build(opt)
         super().__init__(opt, shared)
 
     def setup_data(self, path):
@@ -180,3 +183,40 @@ class TitleTeacher(DefaultTeacher):
                         '\n'.join([title, context, question]),
                         answers
                     ), True
+
+class FulldocTeacher(FixedDialogTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        build(opt)
+        opt = copy.deepcopy(opt)
+        if self.datatype.startswith('train'):
+            suffix = 'train'
+        else:
+            suffix = 'dev'
+        datafile = os.path.join(opt['datapath'],
+                                'SQuAD-fulldoc',
+                                "squad_fulldocs." + suffix + ":ordered"
+        )
+        if shared is None:
+            self._setup_data(datafile)
+        self.id = 'squad-fulldoc'
+        self.reset()
+        
+    def num_examples(self):
+        return len(self.examples)
+
+    def num_episodes(self):
+        return self.num_examples()
+
+    def get(self, episode_idx, entry_idx=None):
+        return self.examples[episode_idx]
+
+    def _setup_data(self, path):
+        print("[loading parlAI text data:" + path + "]")
+        self.examples = []
+        with open(path) as read:
+            for line in read:
+                msg = str_to_msg(line.rstrip('\n'))
+                if msg:
+                    self.examples.append(msg)
+                    
