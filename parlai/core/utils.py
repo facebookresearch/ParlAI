@@ -42,7 +42,7 @@ def maintain_dialog_history(history, observation, reply='',
     if useReplies != 'none':
         if useReplies == 'model' or (useReplies == 'label_else_model' and
                                      len(history['labels']) == 0):
-            if reply != '':
+            if reply:
                 history['dialog'].extend(parse(reply, splitSentences))
         elif len(history['labels']) > 0:
             r = history['labels'][0]
@@ -196,7 +196,7 @@ class TimeLogger():
             if log["%done"] > 0:
                 log['time_left'] = str(int(self.tot_time / log['%done'] - self.tot_time)) + 's'
             z = '%.2f' % ( 100*log['%done'])
-            log['%done'] = str(z) + '%'  
+            log['%done'] = str(z) + '%'
         for k, v in report.items():
             if k not in log:
                 log[k] = v
@@ -737,13 +737,13 @@ def str_to_msg(txt, ignore_fields=[]):
         txt = txt.replace('\\n', '\n')
         txt = txt.replace('\PIPE', '|')
         return txt
-    
+
     def tolist(txt):
         vals = txt.split('|')
         for v in vals:
             v = tostr(v)
         return vals
-            
+
     def convert(key, value):
         if key == 'text' or key == 'id':
             return tostr(value)
@@ -773,7 +773,7 @@ def msg_to_str(msg, ignore_fields=[]):
         txt = txt.replace('\n', '\\n')
         txt = txt.replace('|', '\PIPE')
         return txt
-    
+
     def add_field(name, data):
         if name == 'reward' and data == 0:
             return ''

@@ -28,6 +28,7 @@ def build_dict():
         dict_lower=True,
         dict_file=DICT_FINAL,
         dict_include_valid=True,
+        dict_tokenizer='split',
     )
     opt = parser.parse_args(args="")
     return main_build_dict(opt)
