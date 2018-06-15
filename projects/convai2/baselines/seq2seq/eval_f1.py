@@ -15,8 +15,8 @@ if __name__ == '__main__':
     parser = setup_args()
     parser.set_params(
         model='seq2seq',
-        model_file='models:twitter/seq2seq/twitter_seq2seq_model',
-        dict_file='models:twitter/seq2seq/convai2_self_seq2seq_model.dict',
+        model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
+        dict_file='models:convai2/seq2seq/convai2_self_seq2seq_model.dict',
         dict_lower=True,
         batchsize=32,
     )
