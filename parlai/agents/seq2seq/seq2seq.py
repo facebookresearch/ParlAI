@@ -137,7 +137,8 @@ class Seq2seqAgent(Agent):
                                 'if > 0, sgd uses nesterov momentum.')
         agent.add_argument('-emb', '--embedding-type', default='random',
                            choices=['random', 'glove', 'glove-fixed',
-                                    'fasttext', 'fasttext-fixed'],
+                                    'fasttext', 'fasttext-fixed',
+                                    'glove-twitter'],
                            help='Choose between different strategies '
                                 'for word embeddings. Default is random, '
                                 'but can also preinitialize from Glove or '
@@ -243,9 +244,16 @@ class Seq2seqAgent(Agent):
                 except ModuleNotFoundError as ex:
                     print('Please install torch text with `pip install torchtext`')
                     raise ex
+                pretrained_dim = 300
                 if opt['embedding_type'].startswith('glove'):
-                    init = 'glove'
-                    embs = vocab.GloVe(name='840B', dim=300,
+                    if 'twitter' in opt['embedding_type']:
+                        init = 'glove-twitter'
+                        name = 'twitter.27B'
+                        pretrained_dim = 200
+                    else:
+                        init = 'glove'
+                        name = '840B'
+                    embs = vocab.GloVe(name=name, dim=pretrained_dim,
                         cache=modelzoo_path(self.opt.get('datapath'),
                                             'models:glove_vectors')
                     )
@@ -258,8 +266,8 @@ class Seq2seqAgent(Agent):
                 else:
                     raise RuntimeError('embedding type not implemented')
 
-                if opt['embeddingsize'] != 300:
-                    rp = torch.Tensor(300, opt['embeddingsize']).normal_()
+                if opt['embeddingsize'] != pretrained_dim:
+                    rp = torch.Tensor(pretrained_dim, opt['embeddingsize']).normal_()
                     t = lambda x: torch.mm(x.unsqueeze(0), rp)
                 else:
                     t = lambda x: x
