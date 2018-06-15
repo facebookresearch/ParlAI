@@ -304,8 +304,8 @@ class Decoder(nn.Module):
             probs = (prob * prior.unsqueeze(2)).sum(1).view(bsz, seqlen, -1)
             scores = probs.log()
         else:
-            e = self.o2e(output)
-            scores = self.dropout(self.e2s(e))
+            e = self.dropout(self.o2e(output))
+            scores = self.e2s(e)
         # select top scoring index, excluding the padding symbol (at idx zero)
         _max_score, idx = scores.narrow(2, 1, scores.size(2) - 1).max(2)
         preds = idx.add_(1)
