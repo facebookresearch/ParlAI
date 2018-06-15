@@ -897,7 +897,7 @@ class FbDialogTeacher(DialogTeacher):
     example and therefore the agent must remember the first example in order to
     do well.
 
-    In general dialog in this format can be any speech, not just QA pairs:
+    In general dialog in this format can contain any speech, not just QA pairs:
 
     ::
 
@@ -1093,7 +1093,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
     """This module provides access to data in the ParlAI Text Dialog format.
 
 
-    Subclasses ``DialogTeacher`` for functionality and provides an
+    Subclasses ``FixedDialogTeacher`` for functionality and provides an
     implementation of ``setup_data()`` which iterates over datasets in the
     "ParlAI text" format. If your data is in the format below, use this class to
     handle file parsing for you.
@@ -1102,19 +1102,11 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
 
     ::
 
-        text:Sam went to the kitchen.
-        text:Pat gave Sam the milk.
-        text:Where is the milk?<TAB>labels:kitchen<TAB>reward:1<TAB>label_candidates:hallway|kitchen|bathroom
-        text:Sam went to the hallway.
-        text:Pat went to the bathroom.
-        text:Where is the milk?<TAB>labels:hallway<TAB>reward:1<TAB>label_candidateshallway|kitchen|bathroom<TAB>episode_done:True
+        text:Sam went to the kitchen.\nPat gave Sam the milk.\nWhere is the milk?<TAB>labels:kitchen<TAB>reward:1<TAB>label_candidates:hallway|kitchen|bathroom
+        text:Sam went to the hallway.\nPat went to the bathroom.\nWhere is the milk?<TAB>labels:hallway<TAB>reward:1<TAB>label_candidateshallway|kitchen|bathroom<TAB>episode_done:True
 
-    Lines 1-6 represent a single episode, with two different examples: the
-    first example is lines 1-3, and the second is lines 4-6.
-
-    Lines 1,2,4, and 5 represent contextual information.
-
-    Lines 3 and 6 contain a query, a label, a reward for getting the question
+    Lines 1-2 represent a single episode, with a different example on each line.
+    The lines contain a query and a label for getting the question
     correct, and three label candidates.
 
     Since both of these examples are part of the same episode, the information
@@ -1122,7 +1114,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
     example and therefore the agent must remember the first example in order to
     do well.
 
-    In general dialog in this format can be any speech, not just QA pairs:
+    In general dialog this format can contain any speech, not just QA pairs:
 
     ::
 
@@ -1159,7 +1151,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         return len(self.examples)
 
     def num_episodes(self):
-        return self.num_examples()
+        return self.episodes
 
     def get(self, episode_idx, entry_idx=None):
         return self.examples[episode_idx]
@@ -1167,10 +1159,12 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
     def _setup_data(self, path):
         print("[loading parlAI text data:" + path + "]")
         self.examples = []
+        self.episodes = 0
         with open(path) as read:
             for line in read:
                 msg = str_to_msg(line.rstrip('\n'))
                 if msg:
                     self.examples.append(msg)
-                    
+                    if msg.get('episode_done', True):
+                        self.episodes += 1
                 
