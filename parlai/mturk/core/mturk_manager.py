@@ -1250,9 +1250,9 @@ class MTurkManager():
         if self.opt['block_qualification'] != '':
             block_qual_id = mturk_utils.find_or_create_qualification(
                 self.opt['block_qualification'],
-                'A soft ban from using a ParlAI-created HIT due to frequent '
-                'disconnects from conversations, leading to negative '
-                'experiences for other Turkers and for the requester.',
+                'A soft ban from this ParlAI-created HIT at the requesters '
+                'discretion. Generally used to restrict how frequently a '
+                'particular worker can work on a particular task.',
                 self.is_sandbox,
             )
             assert block_qual_id is not None, (
