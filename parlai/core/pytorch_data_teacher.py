@@ -390,7 +390,6 @@ class PytorchDataTeacher(FixedDialogTeacher):
         dataset_name = opt.get('dataset')
         if dataset_name == 'StreamDataset':
             return StreamDataset, default_collate
-
         sp = dataset_name.strip()
         repo = 'parlai'
         if sp.startswith('internal:'):
@@ -403,7 +402,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
             module_name = sp[0]
         else:
             dataset = sp[0].lower()
-            module_name = "%s.tasks.%s.agents" % (repo, dataset)
+            module_name = '{}.tasks.{}.agents'.format(repo, dataset)
         if len(sp) > 1:
             sp[1] = sp[1][0].upper() + sp[1][1:]
             dataset = sp[1]
@@ -414,9 +413,9 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 teacher_name = ''
                 for w in words:
                     teacher_name += (w[0].upper() + w[1:])
-                dataset = teacher_name + "Dataset"
+                dataset = teacher_name + 'Dataset'
         else:
-            dataset = "DefaultDataset"
+            dataset = 'DefaultDataset'
         my_module = importlib.import_module(module_name)
         dataset_class = getattr(my_module, dataset)
 
