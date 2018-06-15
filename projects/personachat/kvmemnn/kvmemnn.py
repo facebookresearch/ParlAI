@@ -184,7 +184,7 @@ class KvmemnnAgent(Agent):
                            help='take next utt')
         agent.add_argument('--twohop-range', type=int, default=100,
                            help='2 hop range constraint for num rescored utterances')
-        agent.add_argument('--twohop-blend', type=int, default=0,
+        agent.add_argument('--twohop-blend', type=float, default=0,
                            help='2 hop blend in the first hop scores if > 0')
         agent.add_argument('--kvmemnn-debug', type='bool', default=False,
                            help='print debug information')
@@ -599,7 +599,7 @@ class KvmemnnAgent(Agent):
                     else:
                         xe, ye = self.model(xs2, obs[0]['mem'], ys, [blah])
                         ye = self.fixedX
-                    blend = self.opt.get('twohop-blend', 0)
+                    blend = self.opt.get('twohop_blend', 0)
                     if blend > 0:
                         xe = (1-blend)*xe + blend*origxe
                     pred = nn.CosineSimilarity().forward(xe,ye)
