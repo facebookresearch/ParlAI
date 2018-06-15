@@ -152,8 +152,6 @@ class KvmemnnAgent(Agent):
         agent = argparser.add_argument_group('Kvmemnn Arguments')
         agent.add_argument('--hops', type=int, default=1,
                            help='num hops')
-        agent.add_argument('--twohop_range', type=int, default=100,
-                           help='2 hop range constraint')
         agent.add_argument('--lins', type=int, default=0,
                            help='num lins projecting after hops')
         agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
@@ -184,6 +182,10 @@ class KvmemnnAgent(Agent):
                            help='include query as a negative')
         agent.add_argument('--take-next-utt', type='bool', default=False,
                            help='take next utt')
+        agent.add_argument('--twohop-range', type=int, default=100,
+                           help='2 hop range constraint for num rescored utterances')
+        agent.add_argument('--kvmemnn-debug', type='bool', default=False,
+                           help='print debug information')
         agent.add_argument('--tfidf', type='bool', default=False,
                            help='Use frequency based normalization for embeddings.')
         agent.add_argument('-cs', '--cache-size', type=int, default=1000,
@@ -561,6 +563,12 @@ class KvmemnnAgent(Agent):
                 origind = ind
                 ypredorig = self.fixedCands_txt[ind.data[0]] # match
                 ypred = cands_txt2[0][ind.data[0]] # reply to match
+                if self.opt.get('kvmemnn_debug', False):
+                    print("twohop-range:", self.opt.get('twohop_range', 100))
+                    for i in range(10):
+                        txt1= self.fixedCands_txt[ind.data[i]]
+                        txt2= cands_txt2[0][ind.data[i]]
+                        print(i, txt1,'\n    ', txt2)
                 tc = [ypred]
                 if self.twohoputt:
                     # now we rerank original cands against this prediction
@@ -568,10 +576,7 @@ class KvmemnnAgent(Agent):
                     z = []
                     ztxt = []
                     newwords = {}
-                    if 'twohop-range' not in self.opt:
-                        r=100
-                    else:
-                        r=self.opt['twohop-range']
+                    r = self.opt.get('twohop_range', 100)
                     for i in range(r):
                         c = self.fixedCands2[ind.data[i]]
                         ctxt = self.fixedCands_txt2[ind.data[i]]
