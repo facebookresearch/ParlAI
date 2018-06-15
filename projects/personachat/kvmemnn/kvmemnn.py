@@ -184,6 +184,8 @@ class KvmemnnAgent(Agent):
                            help='take next utt')
         agent.add_argument('--twohop-range', type=int, default=100,
                            help='2 hop range constraint for num rescored utterances')
+        agent.add_argument('--twohop-blend', type=int, default=0,
+                           help='2 hop blend in the first hop scores if > 0')
         agent.add_argument('--kvmemnn-debug', type='bool', default=False,
                            help='print debug information')
         agent.add_argument('--tfidf', type='bool', default=False,
@@ -543,7 +545,6 @@ class KvmemnnAgent(Agent):
                         xsq = Variable(torch.LongTensor([self.parse('nothing')]))
                     else:
                         xsq = Variable(torch.LongTensor([vv]))
-
                 else:
                     xsq = xs
                 mems= obs[0]['mem']
@@ -558,6 +559,7 @@ class KvmemnnAgent(Agent):
                     xe, ye = self.model(xsq, mems, ys, [blah])
                     ye = self.fixedX
                 pred = nn.CosineSimilarity().forward(xe,ye)
+                origxe = xe
                 origpred = pred
                 val,ind=pred.sort(descending=True)
                 origind = ind
@@ -597,6 +599,9 @@ class KvmemnnAgent(Agent):
                     else:
                         xe, ye = self.model(xs2, obs[0]['mem'], ys, [blah])
                         ye = self.fixedX
+                    blend = self.opt.get('twohop-blend', 0)
+                    if blend > 0:
+                        xe = (1-blend)*xe + blend*origxe
                     pred = nn.CosineSimilarity().forward(xe,ye)
                     for c in self.cands_done:
                         for i in range(len(ztxt)):
