@@ -307,7 +307,7 @@ class DictionaryAgent(Agent):
     @staticmethod
     def re_tokenize(text):
         """Find boundaries between word characters, newlines, and non-word
-        non-whitespace tokens (r'[\w\n]+ | [^\w\s]').
+        non-whitespace tokens (r'[\w\n]+ | [^\w\s] | \n').
 
         This splits along whitespace and punctuation and keeps the newline as
         a token in the returned list.
@@ -318,8 +318,7 @@ class DictionaryAgent(Agent):
     def split_tokenize(text):
         """Splits tokens based on whitespace after adding whitespace around
         punctuation.
-        This is old deprecated version which covers less punctuation but should
-        run faster.
+        Use re_tokenize if you want more robust handling of punctuation.
         """
         return (text.replace('.', ' . ')
                 .replace(',', ' , ').replace(';', ' ; ').replace(':', ' : ')
