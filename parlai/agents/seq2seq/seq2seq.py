@@ -718,9 +718,7 @@ class Seq2seqPerplexityAgent(Seq2seqAgent):
         scores, self.prev_enc = out[1], out[-1]
         # scores is bsz x seqlen x num_words, so select probs of current index
         probs = F.softmax(scores.select(1, -1), dim=1).squeeze()
-        dist = mydefaultdict(lambda: 1e-7)  # minimum probability for any guess
+        dist = mydefaultdict(lambda: 1e-7)  # default probability for any token
         for i in range(len(probs)):
-            val = probs[i].item()
-            import pdb; pdb.set_trace()
-            dist[self.dict[i]] = val
+            dist[self.dict[i]] = probs[i].item()
         return dist
