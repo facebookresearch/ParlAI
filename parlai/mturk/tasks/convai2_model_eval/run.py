@@ -52,7 +52,7 @@ def main():
 
     # add additional model args
     opt['no_cuda'] = True
-    opt['override'] = ['interactive_mode']
+    opt['override'] = {'interactive_mode': True}
     opt['interactive_mode'] = True
     opt['model_name'] = 'kvmemnn_convai2'
 

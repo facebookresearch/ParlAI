@@ -397,7 +397,7 @@ class KvmemnnAgent(Agent):
             maxn = 0
             for i in range(100):
                 index =  random.randint(0, self.model.lt.weight.size(0)-1)
-                n = self.model.lt.weight[5].norm(2).data[0]
+                n = self.model.lt.weight[5].norm(2)[0].item()
                 if n > maxn:
                     maxn = n
 
@@ -466,12 +466,12 @@ class KvmemnnAgent(Agent):
     def dict_neighbors(self, word, useRHS=False):
         input = self.t2v(word)
         W = self.model.encoder.lt.weight
-        q = W[input.data[0][0]]
+        q = W[input[0].item()]
         if useRHS:
             W = self.model.encoder2.lt.weight
         score = torch.Tensor(W.size(0))
         for i in range(W.size(0)):
-            score[i] = torch.nn.functional.cosine_similarity(q, W[i], dim=0).data[0]
+            score[i] = torch.nn.functional.cosine_similarity(q, W[i], dim=0)[0].item()
         val,ind=score.sort(descending=True)
         for i in range(20):
             print(str(ind[i]) + " [" + str(val[i]) + "]: " + self.v2t(torch.Tensor([ind[i]])))
@@ -511,7 +511,7 @@ class KvmemnnAgent(Agent):
                 else:
                     pred = x
                 metrics = self.compute_metrics(loss.item(),
-                pred.data.squeeze(0), self.start2-self.start, rest)
+                pred.squeeze(0), self.start2-self.start, rest)
                 return [{'metrics':metrics}]
         else:
             fixed = False
@@ -563,13 +563,13 @@ class KvmemnnAgent(Agent):
                 origpred = pred
                 val,ind=pred.sort(descending=True)
                 origind = ind
-                ypredorig = self.fixedCands_txt[ind.data[0]] # match
-                ypred = cands_txt2[0][ind.data[0]] # reply to match
+                ypredorig = self.fixedCands_txt[ind[0].item()] # match
+                ypred = cands_txt2[0][ind[0].item()] # reply to match
                 if self.opt.get('kvmemnn_debug', False):
                     print("twohop-range:", self.opt.get('twohop_range', 100))
                     for i in range(10):
-                        txt1= self.fixedCands_txt[ind.data[i]]
-                        txt2= cands_txt2[0][ind.data[i]]
+                        txt1= self.fixedCands_txt[ind[i].item()]
+                        txt2= cands_txt2[0][ind[i].item()]
                         print(i, txt1,'\n    ', txt2)
                 tc = [ypred]
                 if self.twohoputt:
@@ -580,14 +580,14 @@ class KvmemnnAgent(Agent):
                     newwords = {}
                     r = self.opt.get('twohop_range', 100)
                     for i in range(r):
-                        c = self.fixedCands2[ind.data[i]]
-                        ctxt = self.fixedCands_txt2[ind.data[i]]
+                        c = self.fixedCands2[ind[i].item()]
+                        ctxt = self.fixedCands_txt2[ind[i].item()]
                         if i < 10:
                             zq.append(c)
                         z.append(c)
                         ztxt.append(ctxt)
                         for w in c[0]:
-                            newwords[w.data[0]] = True
+                            newwords[w.item()] = True
                     xs2 = torch.cat(zq, 1)
 
                 if ((self.interactiveMode and self.twohoputt)
@@ -618,12 +618,12 @@ class KvmemnnAgent(Agent):
                     #print("   [1st hop qmatch: " + ypredorig + "]")
                     #print("   [1st hop nextut: " + ypred + "]")
                     if self.tricks:
-                        ypred = ztxt[ind.data[0]] # match
+                        ypred = ztxt[ind[0].item()] # match
                         self.cands_done.append(ypred)
                     else:
-                        ypred = self.fixedCands_txt[ind.data[0]] # match
-                        ypred2 = cands_txt2[0][ind.data[0]] # reply to match
-                        self.cands_done.append(ind.data[0])
+                        ypred = self.fixedCands_txt[ind[0].item()] # match
+                        ypred2 = cands_txt2[0][ind[0].item()] # reply to match
+                        self.cands_done.append(ind[0].item())
                         #print("   [2nd hop nextut: " + ypred2 + "]")
                     tc = [ypred]
                     self.history['labels'] = [ypred]
@@ -642,10 +642,10 @@ class KvmemnnAgent(Agent):
                     pred = alpha*pred + 1*origpred
                     val,ind=pred.sort(descending=True)
                     # predict the highest scoring candidate, and return it.
-                    ypred = cands_txt[0][ind.data[0]] # match
+                    ypred = cands_txt[0][ind[0].item()] # match
                     tc = []
                     for i in range(len(ind)):
-                        tc.append(cands_txt[0][ind.data[i]])
+                        tc.append(cands_txt[0][ind[i].item()])
             else:
                 if self.opt['loss'] == 'cosine':
                     xe, ye = self.model(xs, obs[0]['mem'], ys, cands[0])
@@ -654,10 +654,10 @@ class KvmemnnAgent(Agent):
                     x = self.model(xs, obs[0]['mem'], ys, cands[0])
                     pred = x #.squeeze()
                 val,ind=pred.sort(descending=True)
-                ypred = cands_txt[0][ind.data[0]] # match
+                ypred = cands_txt[0][ind[0].item()] # match
                 tc = []
                 for i in range(min(100, ind.size(0))):
-                    tc.append(cands_txt[0][ind.data[i]])
+                    tc.append(cands_txt[0][ind[i].item()])
             ret = [{'text': ypred, 'text_candidates': tc }]
             return ret
         return [{}] * xs.size(0)
