@@ -8,6 +8,7 @@
 from .agents import Agent
 from collections import defaultdict
 import argparse
+import codecs
 import copy
 import numpy as np
 import os
@@ -393,7 +394,6 @@ class DictionaryAgent(Agent):
         """
         print('Dictionary: loading dictionary from {}'.format(
               filename))
-        import codecs
         with codecs.open(filename, "r",encoding='utf-8', errors='ignore') as read:
             for line in read:
                 split = line.strip().split('\t')
