@@ -28,9 +28,9 @@ if __name__ == '__main__':
         hiddensize=1024,
         embeddingsize=300,
         attention='none',
-        numlayers=2,
+        numlayers=3,
         rnn_class='lstm',
-        learningrate=3,
+        learningrate=1,
         dropout=0.1,
         gradient_clip=0.1,
         lookuptable='enc_dec',
@@ -44,7 +44,7 @@ if __name__ == '__main__':
         validation_metric_mode='min',
         validation_patience=15,
         log_every_n_secs=1,
-        numsoftmax=3,
-        truncate=40,
+        numsoftmax=1,
+        truncate=150,
     )
     TrainLoop(parser).train()
