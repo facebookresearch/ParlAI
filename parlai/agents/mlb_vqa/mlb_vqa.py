@@ -31,26 +31,23 @@ from .mlb_modules import MlbAtt, MlbNoAtt
     To train the model using the `PytorchDataTeacher` on VQA V1, use the
     following command:
 
-        `python examples/train_model.py -m mlb_vqa -t pytorch_teacher \
-        --pytorch-buildteacher vqa_v1 -mf <model_file> \
-        --dataset parlai.tasks.vqa_v1.agents -bs <batchsize> \
+        `python examples/train_model.py -m mlb_vqa -pytd vqa_v1  \
+        -mf <model_file> -bs <batchsize> \
         -im resnet152_spatial --image-size 448 --image-cropsize 448`
 
     Where you fill in `<model_file>` and `<batchsize>` with
     your own values; e.g.:
 
-        `python examples/train_model.py -m mlb_vqa -t pytorch_teacher \
-        --pytorch-buildteacher vqa_v1 -mf mlb \
-        --dataset parlai.tasks.vqa_v1.agents -bs 512 \
-        -im resnet152_spatial --image-size 448 --image-cropsize 448`
+        `python examples/train_model.py -m mlb_vqa -pytd vqa_v1 -mf mlb \
+        -bs 512 -im resnet152_spatial --image-size 448 --image-cropsize 448`
 
     This will also download and extract the image features on the fly.
 
     If you would like to extract the image features prior to training, run the
     following command (where `-dt` can be either 'train', 'valid', or 'test'):
-        `python examples/extract_image_feature.py -t vqa_v1 \
+        `python examples/extract_image_feature.py -pytd vqa_v1\
         -im resnet152_spatial --image-size 448 --image-cropsize 448 \
-        --dataset parlai.tasks.vqa_v1.agents -dt <datatype>`
+        -dt <datatype>`
 
     For faster training, specify '--no-metrics,' which prevents computation
     of f1 score and accuracy

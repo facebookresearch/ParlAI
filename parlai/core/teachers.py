@@ -132,7 +132,7 @@ class FixedDialogTeacher(Teacher):
         if not hasattr(self, 'training'):
             self.training = self.datatype.startswith('train')
         if not hasattr(self, 'datafile'):
-            self.datafile = opt.get('datafile')
+            self.datafile = opt.get('datafile', opt.get('pytorch_datafile'))
         # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:
@@ -244,7 +244,7 @@ class FixedDialogTeacher(Teacher):
 
         if hasattr(self, 'examples'):
             shared['examples'] = self.examples
-            
+
         if self.opt.get('numthreads', 1) > 1:
             if type(self.index) is not multiprocessing.sharedctypes.Synchronized:
                 # for multithreading need to move index into threadsafe memory
@@ -1146,7 +1146,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
             self._setup_data(opt.get('parlaidialogteacher_datafile'))
         self.id = opt.get('parlaidialogteacher_datafile', 'teacher')
         self.reset()
-        
+
     def num_examples(self):
         return self.num_examples
 
@@ -1170,5 +1170,3 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
                     if msg.get('episode_done', True):
                         self.episodes.append(eps)
                         eps = []
-                                            
-                

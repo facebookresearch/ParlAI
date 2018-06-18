@@ -240,6 +240,16 @@ class ParlaiParser(argparse.ArgumentParser):
             '-t', '--task',
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
         parlai.add_argument(
+            '-pyt', '--pytorch-teacher-task',
+            help='Specify to use the PytorchDataTeacher for multiprocessed '
+                 'data loading with a standard ParlAI task, e.g. "babi:Task1k"'
+        )
+        parlai.add_argument(
+            '-pytd', '--pytorch-teacher-dataset',
+            help='Specify to use the PytorchDataTeacher for multiprocessed '
+                 'data loading with a pytorch Dataset, e.g. "vqa_1" or "flickr30k"'
+        )
+        parlai.add_argument(
             '--download-path', default=default_downloads_path,
             help='path for non-data dependencies to store any needed files.'
                  'defaults to {parlai_dir}/downloads')
@@ -288,6 +298,25 @@ class ParlaiParser(argparse.ArgumentParser):
                            help='Specifies whether or not to include labels '
                                 'as past utterances when building flattened '
                                 'batches of data in multi-example episodes.')
+        pytorch = self.add_argument_group('PytorchData Arguments')
+        pytorch.add_argument(
+            '--pytorch-datafile', type=str, default='',
+            help='datafile for pytorch data loader')
+        pytorch.add_argument(
+            '-nw', '--numworkers', type=int, default=4,
+            help='how many workers the Pytorch dataloader should use')
+        pytorch.add_argument(
+            '--pytorch-preprocess', type='bool', default=False,
+            help='Whether the agent should preprocess the data while building'
+                 'the pytorch data')
+        pytorch.add_argument(
+            '--batch-sort-cache', type=str,
+            choices=['pop', 'index', 'none'], default='none',
+            help='Whether to have batches of similarly sized episodes, and how'
+            'to build up the cache')
+        pytorch.add_argument(
+            '--batch-length-range', type=int, default=5,
+            help='degree of variation of size allowed in batch')
         self.add_parlai_data_path(parlai)
 
     def add_model_args(self):
