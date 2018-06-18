@@ -6,12 +6,15 @@
 """Evaluate pre-trained model trained for f1 metric."""
 
 from parlai.core.build_data import download_models
-from projects.twitter.eval_f1 import setup_args, eval_f1
+from parlai.scripts.eval_model import eval_model, setup_args
 
 
 if __name__ == '__main__':
     parser = setup_args()
     parser.set_params(
+        task='twitter',
+        datatype='valid',
+        metrics='f1',
         model='seq2seq',
         model_file='models:twitter/seq2seq/twitter_seq2seq_model',
         dict_lower=True,
@@ -23,4 +26,4 @@ if __name__ == '__main__':
         fnames = ['twitter_seq2seq_model.tgz']
         download_models(opt, fnames, 'twitter', version='v1.0', use_model_type=True)
 
-    eval_f1(opt, print_parser=parser)
+    eval_model(opt, print_parser=parser)
