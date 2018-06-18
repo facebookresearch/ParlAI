@@ -62,6 +62,12 @@ def class2str(value):
     return s
 
 def fix_underscores(args):
+    """Converts underscores to hyphens in args.
+
+    For example, converts '--gradient_clip' to '--gradient-clip'.
+
+    :param args: iterable, possibly containing args strings with underscores.
+    """
     if args:
         new_args = []
         for a in args:
