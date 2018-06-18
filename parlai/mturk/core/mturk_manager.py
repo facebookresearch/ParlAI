@@ -183,6 +183,7 @@ class MTurkManager():
                             pickle.HIGHEST_PROTOCOL)
 
         if total_work_time > int(self.opt.get('max_time')):
+            self.time_blocked_workers.append(worker_id)
             self.give_worker_qualification(worker_id,
                                            self.max_time_qual, 0)
 
