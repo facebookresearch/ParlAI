@@ -1148,7 +1148,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         self.reset()
         
     def num_examples(self):
-        return self.examples
+        return self.num_examples
 
     def num_episodes(self):
         return len(self.episodes)
@@ -1159,13 +1159,13 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
     def _setup_data(self, path):
         print("[loading parlAI text data:" + path + "]")
         self.episodes = []
-        self.examples = 0
+        self.num_examples = 0
         eps = []
         with open(path) as read:
             for line in read:
                 msg = str_to_msg(line.rstrip('\n'))
                 if msg:
-                    self.examples += 1
+                    self.num_examples += 1
                     eps.append(msg)
                     if msg.get('episode_done', True):
                         self.episodes.append(eps)
