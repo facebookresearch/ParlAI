@@ -18,7 +18,6 @@ if __name__ == '__main__':
         model_file='models:convai2/language_model/model',
         dict_file='models:convai2/language_model/model.dict',
         batchsize=20,
-        metrics='f1',
     )
     opt = parser.parse_args()
     opt['model_type'] = 'language_model'

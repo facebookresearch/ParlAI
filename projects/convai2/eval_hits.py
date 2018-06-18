@@ -17,6 +17,7 @@ def setup_args(parser=None):
         datatype='valid',
         hide_labels=False,
         dict_tokenizer='split',
+        metrics="hits@1",
     )
     return parser
 

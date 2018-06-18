@@ -16,7 +16,6 @@ if __name__ == '__main__':
         model='projects.personachat.persona_seq2seq:PersonachatSeqseqAgentSplit',
         model_file='models:convai2/profilememory/profilememory_convai2_model',
         rank_candidates=False,
-        metrics='f1',
     )
 
     opt = parser.parse_args(print_args=False)
