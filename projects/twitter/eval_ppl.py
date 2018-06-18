@@ -18,6 +18,7 @@ def setup_args(parser=None):
     parser.set_defaults(
         task='twitter',
         datatype='valid',
+        metrics='ppl',
     )
     return parser
 
