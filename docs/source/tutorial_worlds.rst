@@ -348,11 +348,11 @@ are two ways of doing this:
 
   a) Run the following command::
 
-      python examples/build_pytorch_data.py --pytorch-buildteacher <TEACHER> --datafile <DATAFILE> --datatype <DATATYPE>
+      python examples/build_pytorch_data.py -pyt <TEACHER> --datafile <DATAFILE> --datatype <DATATYPE>
 
   b) The following are the parameters to specify:
 
-      1) ``--pytorch-buildteacher`` - This is simply the teacher of the task that you
+      1) ``-pyt/--pytorch-buildteacher`` - This is simply the teacher of the task that you
           are using with the ``PytorchDataTeacher``
 
       2) ``--datafile`` - This is the path to the file that has the data
@@ -393,13 +393,13 @@ Then, you can build the pytorch data with one of the following commands:
 
     a) (Build before training)::
 
-        python examples/build_pytorch_data.py -m seq2seq --pytorch-buildteacher
+        python examples/build_pytorch_data.py -m seq2seq -pyt
         babi:task10k:1 --pytorch-preprocess true
 
     b) **Recommended**::
 
         python examples/train_model.py -t pytorch_teacher
-        --pytorch-buildteacher babi:task10k:1 -m seq2seq --pytorch-preprocess true
+        -pyt babi:task10k:1 -m seq2seq --pytorch-preprocess true
 
 3. To specify a datafile rather than using the ``self.datafile`` attribute,
 e.g. the validation set file, simply add the following:

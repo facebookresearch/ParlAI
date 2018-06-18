@@ -315,7 +315,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
             help='datafile for pytorch data loader')
         arg_group.add_argument('-nw', '--numworkers', type=int, default=4,
             help='how many workers the Pytorch dataloader should use')
-        arg_group.add_argument('--pytorch-buildteacher', type=str, default='',
+        arg_group.add_argument('-pyt', '--pytorch-buildteacher', type=str, default='',
             help='Which teacher to use when building the pytorch data')
         arg_group.add_argument('--pytorch-preprocess', type='bool', default=False,
             help='Whether the agent should preprocess the data while building'
