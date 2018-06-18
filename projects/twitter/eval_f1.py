@@ -3,10 +3,6 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""Base script for running official ConvAI2 validation eval for f1.
-This uses a the version of the dataset which does not contain candidates.
-Leaderboard scores will be run in the same form but on a hidden test set.
-"""
 
 from parlai.scripts.eval_model import eval_model, setup_args as base_setup_args
 
@@ -15,6 +11,7 @@ def setup_args(parser=None):
     parser.set_defaults(
         task='twitter',
         datatype='valid',
+        metrics='f1',
     )
     return parser
 

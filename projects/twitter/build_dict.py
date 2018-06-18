@@ -26,7 +26,6 @@ def build_dict_30k():
         task='twitter',
         dict_lower=True,
         dict_file=DICT_FILE_30K,
-        dict_include_valid=True,
         dict_maxtokens=30000,
     )
     opt = parser.parse_args(args='')
