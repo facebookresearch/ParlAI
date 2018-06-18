@@ -720,9 +720,7 @@ class Seq2seqPerplexityAgent(Seq2seqAgent):
         probs = F.softmax(scores.select(1, -1), dim=1).squeeze()
         dist = mydefaultdict(lambda: 1e-7)  # minimum probability for any guess
         for i in range(len(probs)):
-            try:
-                val = probs[i].item()
-            except AttributeError:
-                val = probs[i][0]
+            val = probs[i].item()
+            import pdb; pdb.set_trace()
             dist[self.dict[i]] = val
         return dist
