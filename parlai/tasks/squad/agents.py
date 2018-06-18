@@ -4,9 +4,10 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.teachers import FixedDialogTeacher, DialogTeacher
+from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, ParlAIDialogTeacher
 from .build import build
 
+import copy
 import json
 import os
 
@@ -161,6 +162,7 @@ class TitleTeacher(DefaultTeacher):
 
     def __init__(self, opt, shared=None):
         self.id = 'squad_title'
+        build(opt)
         super().__init__(opt, shared)
 
     def setup_data(self, path):
@@ -180,3 +182,20 @@ class TitleTeacher(DefaultTeacher):
                         '\n'.join([title, context, question]),
                         answers
                     ), True
+
+class FulldocTeacher(ParlAIDialogTeacher):
+    def __init__(self, opt, shared=None):
+        build(opt)
+        opt = copy.deepcopy(opt)
+        if opt['datatype'].startswith('train'):
+            suffix = 'train'
+        else:
+            suffix = 'valid'
+        datafile = os.path.join(opt['datapath'],
+                                'SQuAD-fulldoc',
+                                "squad_fulldocs." + suffix + ":ordered"
+        )
+        opt['parlaidialogteacher_datafile'] = datafile
+        super().__init__(opt, shared)
+        self.id = 'squad-fulldoc'
+        self.reset()
