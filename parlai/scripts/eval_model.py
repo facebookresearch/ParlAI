@@ -26,6 +26,7 @@ def setup_args(parser=None):
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser.add_argument('--metrics', type=str, default="f1,loss,ppl,hits")
     parser.set_defaults(datatype='valid')
     return parser
 
