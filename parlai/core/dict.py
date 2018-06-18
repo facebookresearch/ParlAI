@@ -396,17 +396,14 @@ class DictionaryAgent(Agent):
         import codecs
         with codecs.open(filename, "r",encoding='utf-8', errors='ignore') as read:
             for line in read:
-                try:
-                    split = line.strip().split('\t')
-                    token = unescape(split[0])
-                    cnt = int(split[1]) if len(split) > 1 else 0
-                    self.freq[token] = cnt
-                    if token not in self.tok2ind:
-                        index = len(self.tok2ind)
-                        self.tok2ind[token] = index
-                        self.ind2tok[index] = token
-                except:
-                    pass
+                split = line.strip().split('\t')
+                token = unescape(split[0])
+                cnt = int(split[1]) if len(split) > 1 else 0
+                self.freq[token] = cnt
+                if token not in self.tok2ind:
+                    index = len(self.tok2ind)
+                    self.tok2ind[token] = index
+                    self.ind2tok[index] = token
         print('[ num words =  %d ]' % len(self))
 
     def save(self, filename=None, append=False, sort=True):
