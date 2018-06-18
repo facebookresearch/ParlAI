@@ -242,7 +242,7 @@ class Metrics(object):
         loss = {}
         loss['correct'] = correct
         return loss
-
+    
     def report(self):
         # Report the metrics over all data seen so far.
         m = {}

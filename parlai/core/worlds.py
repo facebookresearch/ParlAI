@@ -254,6 +254,12 @@ class DialogPartnerWorld(World):
         return self.agents[0].epoch_done()
 
     def report(self, compute_time=False):
+        def show(metric):
+            if 'all' in self.show_metrics or metric in self.show_metrics or metric=='exs':
+                return True
+            return False
+        show_metrics = self.opt.get('metrics', "all")
+        self.show_metrics = show_metrics.split(',')
         metrics = {}
         for a in self.agents:
             if hasattr(a, 'report'):
@@ -262,7 +268,8 @@ class DialogPartnerWorld(World):
                     if k not in metrics:
                         # first agent gets priority in settings values for keys
                         # this way model can't e.g. override accuracy to 100%
-                        metrics[k] = v
+                        if show(k):
+                            metrics[k] = v
         if metrics:
             if compute_time and 'exs' in metrics:
                 self.total_exs += metrics['exs']
