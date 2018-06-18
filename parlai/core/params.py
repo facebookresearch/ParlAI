@@ -149,11 +149,19 @@ class ParlaiParser(argparse.ArgumentParser):
             help='importance level for what to put into the logs. the lower '
                  'the level the more that gets logged. values are 0-50')
         mturk.add_argument(
-            '--block-qualification', dest='block_qualification', default='',
-            help='Qualification to use for soft blocking users. By default '
+            '--disconnect-qualification', dest='disconnect_qualification',
+            default='',
+            help='Qualification to use for soft blocking users for '
+                 'disconnects. By default '
                  'turkers are never blocked, though setting this will allow '
                  'you to filter out turkers that have disconnected too many '
                  'times on previous HITs where this qualification was set.')
+        mturk.add_argument(
+            '--block-qualification', dest='block_qualification', default='',
+            help='Qualification to use for soft blocking users. This '
+                 'qualification is granted whenever soft_block_worker is '
+                 'called, and can thus be used to filter workers out from a '
+                 'single task or group of tasks by noted performance.')
         mturk.add_argument(
             '--count-complete', dest='count_complete',
             default=False, action='store_true',
