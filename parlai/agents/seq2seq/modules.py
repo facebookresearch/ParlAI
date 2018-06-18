@@ -275,7 +275,6 @@ class Decoder(nn.Module):
         if numsoftmax > 1:
             self.softmax = nn.Softmax(dim=1)
             self.prior = nn.Linear(hidden_size, numsoftmax, bias=False)
-            # self.latent = nn.Linear(emb_size, numsoftmax * hidden_size)
             self.latent = nn.Linear(hidden_size, numsoftmax * emb_size)
             self.activation = nn.Tanh()
 

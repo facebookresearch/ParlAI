@@ -73,7 +73,7 @@ class Seq2seqAgent(Agent):
                            help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
                            help='dropout rate')
-        agent.add_argument('-clip', '--gradient-clip', type=float, default=-1,
+        agent.add_argument('-clip', '--gradient-clip', type=float, default=0.1,
                            help='gradient clipping using l2 norm')
         agent.add_argument('-bi', '--bidirectional', type='bool',
                            default=False,
