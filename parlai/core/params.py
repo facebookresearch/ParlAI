@@ -99,7 +99,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.add_arg = self.add_argument
 
         # remember which args were specified on the command line
-        self.cli_args = _sys.argv
+        self.cli_args = _sys.argv[1:]
         self.overridable = {}
 
         if add_parlai_args:
