@@ -244,7 +244,7 @@ class FixedDialogTeacher(Teacher):
 
         if hasattr(self, 'examples'):
             shared['examples'] = self.examples
-            
+
         if self.opt.get('numthreads', 1) > 1:
             if type(self.index) is not multiprocessing.sharedctypes.Synchronized:
                 # for multithreading need to move index into threadsafe memory
@@ -1146,9 +1146,9 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
             self._setup_data(opt.get('parlaidialogteacher_datafile'))
         self.id = opt.get('parlaidialogteacher_datafile', 'teacher')
         self.reset()
-        
+
     def num_examples(self):
-        return self.num_examples
+        return self.num_exs
 
     def num_episodes(self):
         return len(self.episodes)
@@ -1159,16 +1159,14 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
     def _setup_data(self, path):
         print("[loading parlAI text data:" + path + "]")
         self.episodes = []
-        self.num_examples = 0
+        self.num_exs = 0
         eps = []
         with open(path) as read:
             for line in read:
                 msg = str_to_msg(line.rstrip('\n'))
                 if msg:
-                    self.num_examples += 1
+                    self.num_exs += 1
                     eps.append(msg)
                     if msg.get('episode_done', True):
                         self.episodes.append(eps)
                         eps = []
-                                            
-                
