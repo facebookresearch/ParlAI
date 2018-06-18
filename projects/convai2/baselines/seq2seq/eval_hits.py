@@ -20,6 +20,7 @@ if __name__ == '__main__':
         dict_lower=True,
         rank_candidates=True,
         batchsize=32,
+        metrics="hits@1",
     )
     opt = parser.parse_args(print_args=False)
     if opt.get('model_file', '').find('convai2/seq2seq/convai2_self_seq2seq_model') != -1:
