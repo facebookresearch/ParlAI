@@ -28,5 +28,5 @@ if __name__ == '__main__':
     # build profile memory models
     fnames = ['profilememory_convai2_model',
               'profilememory_convai2.dict']
-    download_models(opt, fnames, 'convai2', use_model_type=True)
+    download_models(opt, fnames, 'convai2', version='v2.0', use_model_type=True)
     interactive(opt)
