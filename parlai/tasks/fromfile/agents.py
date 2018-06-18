@@ -7,7 +7,7 @@
 # This task simply loads the specified file: useful for quick tests without
 # setting up a new task.
 
-from parlai.core.teachers import FbDialogTeacher, FixedDialogTeacher
+from parlai.core.teachers import FbDialogTeacher, ParlAIDialogTeacher
 from parlai.core.utils import str_to_msg
 
 import copy
@@ -51,7 +51,7 @@ class Fbformat2Teacher(FbDialogTeacher):
         
 
         
-class ParlaiformatTeacher(FixedDialogTeacher):
+class ParlaiformatTeacher(ParlAIDialogTeacher):
     """This module provides access to data in the ParlAI Text Dialog format.
     See core/teachers.py for more info about the format.
     """
@@ -71,26 +71,8 @@ class ParlaiformatTeacher(FixedDialogTeacher):
             self._setup_data(datafile)
         self.id = datafile
         self.reset()
-        
-    def num_examples(self):
-        return len(self.examples)
 
-    def num_episodes(self):
-        return self.num_examples()
-
-    def get(self, episode_idx, entry_idx=None):
-        return self.examples[episode_idx]
-
-    def _setup_data(self, path):
-        print("[loading parlAI text data:" + path + "]")
-        self.examples = []
-        with open(path) as read:
-            for line in read:
-                msg = str_to_msg(line.rstrip('\n'))
-                if msg:
-                    self.examples.append(msg)
-
-class Parlaiformat2Teacher(FixedDialogTeacher):
+class Parlaiformat2Teacher(ParlAIDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('FromFile Task Arguments')
@@ -107,25 +89,7 @@ class Parlaiformat2Teacher(FixedDialogTeacher):
             self._setup_data(datafile)
         self.id = datafile
         self.reset()
-        
-    def num_examples(self):
-        return len(self.examples)
 
-    def num_episodes(self):
-        return self.num_examples()
-
-    def get(self, episode_idx, entry_idx=None):
-        return self.examples[episode_idx]
-
-    def _setup_data(self, path):
-        print("[loading parlAI text data:" + path + "]")
-        self.examples = []
-        with open(path) as read:
-            for line in read:
-                msg = str_to_msg(line.rstrip('\n'))
-                if msg:
-                    self.examples.append(msg)
-                    
 class DefaultTeacher(FbformatTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
