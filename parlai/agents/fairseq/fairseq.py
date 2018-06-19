@@ -25,13 +25,15 @@ from parlai.core.torch_agent import TorchAgent
 import argparse
 import torch
 import os
+import numpy as np
 
 
 # these are the fairseq metrics we want to pass up along through ParlAI
 # Key is FairSeq metric, value is ParlAI name
 METRIC_MAPPER = {
     # train loss
-    "train_loss": "tloss",
+    "train_loss": "loss",
+    "valid_loss": "loss",
     # updates per second
     "ups": "ups",
     # words per second
@@ -98,6 +100,10 @@ class _FairseqDictionary(DictionaryAgent):
 
     def add_symbol(self):
         raise NotImplementedError("This is a fake class")
+
+    @property
+    def symbols(self):
+        return self.tok2ind.keys()
 
 
 class _ParlaiTask(FairseqTask):
@@ -264,34 +270,49 @@ class FairseqAgent(TorchAgent):
 
         # torchagent boilerplate
         # TODO: is this really the right way to check is_training?
-        is_training = any(["labels" in obs for obs in observations])
+        self.is_training = any(["labels" in obs for obs in observations])
         vec_obs = [self.vectorize(obs) for obs in observations]
         xs, _, ys, _, valid_inds = self.map_valid(vec_obs)
         if xs is None:
             return batch_reply
 
         # here begins fairseq specific stuff
-        if is_training:
-            self._train(xs, ys)
+        samples = self._make_sample(xs, ys)
+
+        if self.is_training:
+            self.model.train()
+            self.trainer.train_step(samples)
         else:
-            samples = self._make_sample(xs, ys)
-            src_tokens = samples["net_input"]["src_tokens"]
-            src_lengths = samples["net_input"]["src_lengths"]
-            # TODO: make this into a separate function?
-            gens = self.generator.generate(src_tokens, src_lengths, maxlen=64)
-            for i in range(len(xs)):
-                beams = gens[i]
-                selected = max(beams, key=lambda x: x["score"])
-                # TODO: we can get the attention here actually :)
-                response = []
-                for t in selected["tokens"]:
-                    t = t.item()
-                    if t == self.dict.eos:
-                        break
-                    response.append(self.dict[t])
-                batch_reply[i]["text"] = " ".join(response)
+            # grade the evaluation label
+            self.model.eval()
+            self.trainer.valid_step(samples)
+
+            # Grade each of the candidate sequences
+            # TODO: grade everything in observations[i]['label_candidates']
+
+            # Next generate freely to create our response
+            for i, response in zip(valid_inds, self._generate(samples)):
+                batch_reply[i]["text"] = response
 
         return batch_reply
+
+    def _generate(self, samples):
+        src_tokens = samples["net_input"]["src_tokens"]
+        src_lengths = samples["net_input"]["src_lengths"]
+        gens = self.generator.generate(src_tokens, src_lengths, maxlen=64)
+        responses = []
+        for i in range(len(src_tokens)):
+            beams = gens[i]
+            selected = max(beams, key=lambda x: x["score"])
+            # TODO: we can get the attention here actually :)
+            response = []
+            for t in selected["tokens"]:
+                t = t.item()
+                if t == self.dict.eos:
+                    break
+                response.append(self.dict[t])
+            responses.append(" ".join(response))
+        return responses
 
     def report(self):
         return {k: v.avg for k, v in self.trainer.meters.items()}
@@ -330,9 +351,3 @@ class FairseqAgent(TorchAgent):
             "prev_output_tokens": self._right_shifted_ys(ys),
         }
         return sample
-
-    def _train(self, xs, ys):
-        """Update the model using the targets."""
-        # this method mostly just marshalls the data into the format that
-        # fairseq is hoping to see
-        return self.trainer.train_step(self._make_sample(xs, ys))
