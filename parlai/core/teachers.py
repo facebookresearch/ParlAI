@@ -132,7 +132,7 @@ class FixedDialogTeacher(Teacher):
         if not hasattr(self, 'training'):
             self.training = self.datatype.startswith('train')
         if not hasattr(self, 'datafile'):
-            self.datafile = opt.get('datafile')
+            self.datafile = opt.get('datafile', opt.get('pytorch_datafile'))
         # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:

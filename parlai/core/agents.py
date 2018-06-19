@@ -434,9 +434,11 @@ def create_task_agent_from_taskname(opt):
     which essentially performs ``from parlai.tasks.babi import Task1kTeacher``
     with the parameter ``1`` in ``opt['task']`` to be used by the class ``Task1kTeacher``.
     """
-    if not opt.get('task'):
+    if not (opt.get('task') or opt.get('pytorch_teacher_task') or opt.get('pytorch_teacher_dataset')):
         raise RuntimeError('No task specified. Please select a task with ' +
                            '--task {task_name}.')
+    if not opt.get('task'):
+        opt['task'] = 'pytorch_teacher'
     if ',' not in opt['task']:
         # Single task
         teacher_class = get_task_module(opt['task'])

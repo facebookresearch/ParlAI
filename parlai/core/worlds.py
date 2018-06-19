@@ -947,9 +947,11 @@ def create_task(opt, user_agents, default_world=None):
     see ``parlai/tasks/tasks.py`` and see ``parlai/tasks/task_list.py``
     for list of tasks.
     """
-    if not opt.get('task'):
+    if not (opt.get('task') or opt.get('pytorch_teacher_task') or opt.get('pytorch_teacher_dataset')):
         raise RuntimeError('No task specified. Please select a task with ' +
                            '--task {task_name}.')
+    if not opt.get('task'):
+        opt['task'] = 'pytorch_teacher'
     if type(user_agents) != list:
         user_agents = [user_agents]
 
