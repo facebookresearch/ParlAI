@@ -229,7 +229,6 @@ class FairseqAgent(TorchAgent):
         # Start things off clean
         self.reset()
 
-    # TODO: verify this is needed
     def _override_opt(self, new_opt):
         """Set overridable opts from loaded opt file.
 
@@ -269,7 +268,6 @@ class FairseqAgent(TorchAgent):
         batch_reply = [{"id": self.getID()} for _ in range(bsz)]
 
         # torchagent boilerplate
-        # TODO: is this really the right way to check is_training?
         self.is_training = any(["labels" in obs for obs in observations])
         vec_obs = [self.vectorize(obs) for obs in observations]
         xs, _, ys, _, valid_inds = self.map_valid(vec_obs)
@@ -304,7 +302,6 @@ class FairseqAgent(TorchAgent):
         for i in range(len(src_tokens)):
             beams = gens[i]
             selected = max(beams, key=lambda x: x["score"])
-            # TODO: we can get the attention here actually :)
             response = []
             for t in selected["tokens"]:
                 t = t.item()
@@ -317,13 +314,11 @@ class FairseqAgent(TorchAgent):
     def report(self):
         return {k: v.avg for k, v in self.trainer.meters.items()}
 
-    # TODO: document
-    # TODO: make sure we're only passing along some metrics
-    # TODO: put in PPL
     def reset_metrics(self):
         if not hasattr(self, "trainer"):
             # We haven't initialized the trainer yet, so we don't have any metrics
             return
+        # We need to reset everything
         for k in self.trainer.meters:
             self.trainer.meters[k].reset()
 
