@@ -21,24 +21,12 @@ from fairseq.tasks.fairseq_task import FairseqTask
 from fairseq.utils import convert_padding_direction
 
 from parlai.core.torch_agent import TorchAgent
+from parlai.core.build_data import modelzoo_path
 
 import argparse
 import torch
 import os
 import numpy as np
-
-
-# these are the fairseq metrics we want to pass up along through ParlAI
-# Key is FairSeq metric, value is ParlAI name
-METRIC_MAPPER = {
-    # train loss
-    "train_loss": "loss",
-    "valid_loss": "loss",
-    # updates per second
-    "ups": "ups",
-    # words per second
-    "wps": "wps",
-}
 
 
 def _fairseq_opt_wrapper(opt):
@@ -62,6 +50,13 @@ def _fairseq_opt_wrapper(opt):
         opt["update_freq"] = options.eval_str_list(opt["update_freq"], int)
     if opt.get("max_sentences_valid") is not None:
         opt["max_sentences_valid"] = opt["max_sentences"]
+
+    # handle modelzoo if possible
+    for k in ("encoder_embed_path", "decoder_embed_path"):
+        if k in opt and opt[k] is not None:
+            opt[k] = modelzoo_path(opt.get("datapath"), opt[k])
+        else:
+            opt[k] = ""
 
     # hardcode turn off distributed training. May need to revisit this later
     opt["distributed_world_size"] = 1
@@ -312,7 +307,25 @@ class FairseqAgent(TorchAgent):
         return responses
 
     def report(self):
-        return {k: v.avg for k, v in self.trainer.meters.items()}
+        # if we haven't initialized yet, just return a dummy object
+        if not hasattr(self, "trainer"):
+            return {}
+
+        # These are the metrics we'll pass up the way, and their new names
+        train_metrics = {"train_loss", "ups", "wps", "gnorm", "clip"}
+        valid_metrics = {"valid_loss", "wps"}
+
+        metrics = train_metrics if self.is_training else valid_metrics
+
+        output = {k: self.trainer.meters[k].avg for k in metrics}
+
+        # additionally output perplexity
+        if "train_loss" in output:
+            output["train_ppl"] = np.exp2(output["train_loss"])
+        if "valid_loss" in output:
+            output["ppl"] = np.exp2(output["valid_loss"])
+
+        return output
 
     def reset_metrics(self):
         if not hasattr(self, "trainer"):
@@ -321,6 +334,15 @@ class FairseqAgent(TorchAgent):
         # We need to reset everything
         for k in self.trainer.meters:
             self.trainer.meters[k].reset()
+
+    def receive_metrics(self, metrics_dict):
+        """Used to update lr scheduler."""
+        # receive metrics is supposed to be used in order to provide signals to the
+        # lr scheduler. We need to prepend everything with a "valid_" key that
+        # fairseq should be expecting
+        for k in list(metrics_dict.keys()):
+            metrics_dict["valid_" + k] = metrics_dict[k]
+        self.trainer.lr_step(metrics_dict)
 
     # Helper functions
     def _seq_length(self, xs):
