@@ -7,13 +7,13 @@
 from parlai.core.dict import DictionaryAgent
 
 try:
-    from fairseq import models
+    from fairseq import models, optim
 except ImportError:
     raise RuntimeError(
         "Please run \"pip install 'git+https://github.com/pytorch/"
         "fairseq.git@v0.5.0#egg=fairseq'\""
     )
-from fairseq import trainer
+from fairseq import trainer, fp16_trainer
 from fairseq.criterions.cross_entropy import CrossEntropyCriterion
 from fairseq.sequence_generator import SequenceGenerator
 from fairseq import options
@@ -129,21 +129,6 @@ class FairseqAgent(TorchAgent):
         TorchAgent.add_cmdline_args(argparser)
 
         agent = argparser.add_argument_group('Fairseq Arguments')
-        # TODO maybe drop these?
-        agent.add_argument(
-            '--max-source-positions',
-            default=1024,
-            type=int,
-            metavar='N',
-            help='max number of tokens in the sequence'
-        )
-        agent.add_argument(
-            '--max-target-positions',
-            default=1024,
-            type=int,
-            metavar='N',
-            help='max number of tokens in the sequence'
-        )
         agent.add_argument(
             '--seed',
             default=1,
@@ -152,24 +137,41 @@ class FairseqAgent(TorchAgent):
             help='pseudo random number generator seed'
         )
 
-        # TODO: is this necessary?
+        # Dictionary construction stuff. Using the subclass in case we end up
+        # needing any fairseq specific things
         _FairseqDictionary.add_cmdline_args(argparser)
 
-        # TODO: opt suboptions isn't set up yet
+        # Optimization and learning rate schedule specific arguments
         options.add_optimization_args(argparser)
-        # TODO: check for generation sub-args
+        known_args = argparser.parse_known_args(nohelp=True)[0]
+        if hasattr(known_args, "optimizer"):
+            optimizer = known_args.optimizer
+            opt_group = argparser.add_argument_group(
+                '{} optimizer arguments'.format(optimizer)
+            )
+            optim.OPTIMIZER_REGISTRY[optimizer].add_args(opt_group)
+        if hasattr(known_args, "lr_scheduler"):
+            lr_scheduler = known_args.lr_scheduler
+            lr_group = argparser.add_argument_group(
+                '{} scheduler arguments'.format(lr_scheduler)
+            )
+            optim.lr_scheduler.LR_SCHEDULER_REGISTRY[lr_scheduler].add_args(lr_group)
+
+        # Generation arguments
         options.add_generation_args(argparser)
-        options.add_model_args(argparser)
 
         # We need to find out the fairseq model-specific options, so grab the
         # architecture stuff and look up its options
+        options.add_model_args(argparser)
         known_args = argparser.parse_known_args(nohelp=True)[0]
         if hasattr(known_args, "arch"):
             arch = known_args.arch
             arch_group = argparser.add_argument_group(
-                "{} specific Arguments".format(arch)
+                "{} architecture arguments".format(arch)
             )
             models.ARCH_MODEL_REGISTRY[arch].add_args(arch_group)
+
+        # TODO: we should set up some better defaults here
 
     def __init__(self, opt, shared=None):
         # In general use a basic TorchAgent wherever possible
@@ -190,6 +192,7 @@ class FairseqAgent(TorchAgent):
             # Begin real fairseq stuff
             # copy over all the args we can
             self.args = _fairseq_opt_wrapper(opt)
+            torch.manual_seed(self.args.seed)
             # Just some identifying info
             self.id = "fairseq:{}".format(self.args.arch)
             # construct dictionaries for parlai frontend and fairseq backend
@@ -212,9 +215,16 @@ class FairseqAgent(TorchAgent):
             # set up the grader and the trainer
             # TODO: maybe support label smoothing here
             self.criterion = CrossEntropyCriterion(self.args, self.task)
-            self.trainer = trainer.Trainer(
-                self.args, self.task, self.model, self.criterion
-            )
+            if opt.get('fp16'):
+                self.trainer = fp16_trainer.FP16Trainer(
+                    self.args, self.task, self.model, self.criterion
+                )
+            else:
+                if torch.cuda.get_device_capability(0)[0] >= 7:
+                    print("Heads up: using --fp16 could be a lot faster!")
+                self.trainer = trainer.Trainer(
+                    self.args, self.task, self.model, self.criterion
+                )
 
             # move things to the GPU if possible
             if self.use_cuda:
