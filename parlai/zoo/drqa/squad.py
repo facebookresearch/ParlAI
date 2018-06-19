@@ -7,10 +7,10 @@
 """
 
 from parlai.core.build_data import download_models
-import copy
+
 
 def download(datapath):
-    opt  = { 'datapath': datapath }
-    fnames = ['squad_drqa.tgz']
+    opt = {'datapath': datapath}
+    fnames = ['squad_fasttextcc.tgz']
     opt['model_type'] = 'squad' # for builder
-    download_models(opt, fnames, 'drqa', use_model_type=True)
+    download_models(opt, fnames, 'drqa', use_model_type=True, version='v2.0')
