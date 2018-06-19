@@ -5,7 +5,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.autograd import Variable
 from .dropout import SequentialDropout
 
 
@@ -40,7 +39,7 @@ class GRUCell(AbstractGRUCell):
 
     def forward(self, x, hx=None):
         if hx is None:
-            hx = Variable(x.data.new().resize_((x.size(0), self.hidden_size)).fill_(0))
+            hx = x.new().resize_((x.size(0), self.hidden_size).fill_(0))
         r = F.sigmoid(self.weight_ir(x) + self.weight_hr(hx))
         i = F.sigmoid(self.weight_ii(x) + self.weight_hi(hx))
         n = F.tanh(self.weight_in(x) + r * self.weight_hn(hx))
@@ -75,7 +74,7 @@ class BayesianGRUCell(AbstractGRUCell):
 
     def forward(self, x, hx=None):
         if hx is None:
-            hx = Variable(x.data.new().resize_((x.size(0), self.hidden_size)).fill_(0))
+            hx = x.new().resize_((x.size(0), self.hidden_size)).fill_(0)
         x_ir = self.drop_ir(x)
         x_ii = self.drop_ii(x)
         x_in = self.drop_in(x)

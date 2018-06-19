@@ -6,7 +6,6 @@
 
 from parlai.core.agents import Agent
 
-from torch.autograd import Variable
 import torch.nn as nn
 import torch
 import os
@@ -427,6 +426,16 @@ class MlbVqaAgent(Agent):
         # Get appropriate dims
         first_ex = batch[0][1][0]
 
+        #If we are building the dictionary
+        if 'image' not in first_ex or first_ex['image'] is None:
+            new_batch = []
+            for b in batch:
+                if type(b[1]) is list:
+                    ep = b[1][0]
+                else:
+                    ep = b[1]
+                new_batch.append(ep)
+            return new_batch
         img_var = torch.FloatTensor(first_ex['image'])
         use_att = first_ex['use_att']
         use_hdf5 = first_ex['use_hdf5']
@@ -550,18 +559,10 @@ class MlbVqaAgent(Agent):
 
         if self.use_cuda:
             if not self.use_data_parallel:
-                input_v = Variable(input_v.cuda(async=True))
-                input_q = Variable(input_q.cuda(async=True))
-            else:
-                input_v = Variable(input_v)
-                input_q = Variable(input_q)
+                input_v = input_v.cuda(async=True)
+                input_q = input_q.cuda(async=True)
             if not self.testing:
-                answer = Variable(answer.cuda(async=True))
-        else:
-            input_v = Variable(input_v)
-            input_q = Variable(input_q)
-            if not self.testing:
-                answer = Variable(answer)
+                answer = answer.cuda(async=True)
 
         return input_v, input_q, answer, valid_inds
 
@@ -589,13 +590,14 @@ class MlbVqaAgent(Agent):
 
         loss, predictions = self.predict(input_v, input_q, answer)
         if loss is not None:
-            batch_reply[0]['metrics'] = {'loss': loss.data[0]}
+            batch_reply[0]['metrics'] = {'loss': loss.item()}
         if not self.training or self.compute_metrics:
             if not self.use_cuda:
-                _, predictions = predictions.data.cpu().max(1)
+                _, predictions = predictions.cpu().max(1)
             else:
-                _, predictions = predictions.data.max(1)
-            predictions.squeeze_()
+                _, predictions = predictions.max(1)
+            if predictions.size(0) > 1:
+                predictions.squeeze_(0)
             tpreds = self.dict.decode_answer(predictions.tolist())
             for i in range(len(tpreds)):
                 # map the predictions back to non-empty examples in the batch
