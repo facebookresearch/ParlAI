@@ -11,7 +11,7 @@ import argparse
 import importlib
 import os
 import pickle
-import sys
+import sys as _sys
 import datetime
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.tasks.tasks import ids_to_tasks
@@ -61,6 +61,23 @@ def class2str(value):
     s = ':'.join(s.rsplit('.', 1))  # replace last period with ':'
     return s
 
+def fix_underscores(args):
+    """Converts underscores to hyphens in args.
+
+    For example, converts '--gradient_clip' to '--gradient-clip'.
+
+    :param args: iterable, possibly containing args strings with underscores.
+    """
+    if args:
+        new_args = []
+        for a in args:
+            if type(a) is str and a.startswith('-'):
+                a = a.replace('_', '-')
+            new_args.append(a)
+        args = new_args
+    return args
+
+
 class ParlaiParser(argparse.ArgumentParser):
     """Pseudo-extension of ``argparse`` which sets a number of parameters
     for the ParlAI framework. More options can be added specific to other
@@ -88,7 +105,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.add_arg = self.add_argument
 
         # remember which args were specified on the command line
-        self.cli_args = sys.argv
+        self.cli_args = _sys.argv[1:]
         self.overridable = {}
 
         if add_parlai_args:
@@ -379,9 +396,13 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def parse_known_args(self, args=None, namespace=None, nohelp=False):
         """Custom parse known args to ignore help flag."""
+        if args is None:
+            # args default to the system args
+            args = _sys.argv[1:]
+        args = fix_underscores(args)
+
         if nohelp:
             # ignore help
-            args = sys.argv[1:] if args is None else args
             args = [a for a in args if a != '-h' and a != '--help']
         return super().parse_known_args(args, namespace)
 
@@ -480,3 +501,13 @@ class ParlaiParser(argparse.ArgumentParser):
         self.set_defaults(**kwargs)
         for k, v in kwargs.items():
             self.overridable[k] = v
+
+    def add_argument(self, *args, **kwargs):
+        """Override to convert underscores to hyphens for consistency."""
+        return super().add_argument(*fix_underscores(args), **kwargs)
+
+    def add_argument_group(self, *args, **kwargs):
+        """Override to make arg groups also convert underscores to hyphens."""
+        arg_group = super().add_argument_group(*args, **kwargs)
+        arg_group.add_argument = self.add_argument  # override _ => -
+        return arg_group
