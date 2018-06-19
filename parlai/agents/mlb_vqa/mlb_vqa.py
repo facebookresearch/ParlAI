@@ -193,8 +193,8 @@ class VqaDictionaryAgent(Agent):
         return {'id': 'Dictionary'}
 
     def encode_question(self, examples, training):
-        minwcount = self.opt['minwcount']
-        maxlength = self.opt['maxlength']
+        minwcount = self.opt.get('minwcount', 0)
+        maxlength = self.opt.get('maxlength', 16)
         for ex in examples:
             words = self.tokenize_mcb(ex['text'])
             if training:
@@ -209,7 +209,7 @@ class VqaDictionaryAgent(Agent):
 
     def encode_answer(self, examples):
         for ex in examples:
-            if self.opt['samplingans']:
+            if self.opt.get('samplingans', True):
                 ans_count = Counter(ex.get('labels', ex.get('eval_labels'))).most_common()
                 valid_ans = []
                 valid_count = []
@@ -275,7 +275,7 @@ class VqaDictionaryAgent(Agent):
         saving.
         """
         cw = sorted([(count,w) for w,count in self.ansfreq.items()], reverse=True)
-        final_exs = cw[:self.opt['nans']]
+        final_exs = cw[:self.opt.get('nans', 2000)]
         final_list = dict([(w,c) for c,w in final_exs])
         self.ansfreq = defaultdict(int)
         for ans,ques in self.ans2ques.items():
@@ -508,7 +508,7 @@ class MlbVqaAgent(Agent):
         mc = False
         for i, ex in enumerate(observations):
             if self.use_cuda:
-                ex['image'] = ex['image'].cuda(async=True)
+                ex['image'] = ex['image'].cuda()
             if 'mc_label' in ex:
                 self.training = True
                 if ex['mc_label'][0] in self.dict.ans2ind:
@@ -559,10 +559,10 @@ class MlbVqaAgent(Agent):
 
         if self.use_cuda:
             if not self.use_data_parallel:
-                input_v = input_v.cuda(async=True)
-                input_q = input_q.cuda(async=True)
+                input_v = input_v.cuda()
+                input_q = input_q.cuda()
             if not self.testing:
-                answer = answer.cuda(async=True)
+                answer = answer.cuda()
 
         return input_v, input_q, answer, valid_inds
 
@@ -592,10 +592,7 @@ class MlbVqaAgent(Agent):
         if loss is not None:
             batch_reply[0]['metrics'] = {'loss': loss.item()}
         if not self.training or self.compute_metrics:
-            if not self.use_cuda:
-                _, predictions = predictions.cpu().max(1)
-            else:
-                _, predictions = predictions.max(1)
+            _, predictions = predictions.max(1)
             if predictions.size(0) > 1:
                 predictions.squeeze_(0)
             tpreds = self.dict.decode_answer(predictions.tolist())
