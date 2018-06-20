@@ -27,6 +27,20 @@ import argparse
 import torch
 import os
 import numpy as np
+import pickle
+
+
+# If a model file is loaded, these arguments may NOT be overridden in the
+# command line:
+NON_OVERRIDABLE_ARGS = {
+    'arch',
+    'encoder_embed_dim',
+    'encoder_layers',
+    'decoder_embed_dim',
+    'decoder_layers',
+    'decoder_out_embed_dim',
+    'decoder_attention',
+}
 
 
 def _fairseq_opt_wrapper(opt):
@@ -39,34 +53,34 @@ def _fairseq_opt_wrapper(opt):
     """
     args = argparse.Namespace()
 
-    # set default options for the given opt
+    # first set args according to ParlAI options
+    for key in opt:
+        if opt[key] is not None:
+            setattr(args, key, opt[key])
+
+    # fill in default options from the model
     models.ARCH_CONFIG_REGISTRY[opt["arch"]](args)
 
     # post processing of args. See
     # https://github.com/pytorch/fairseq/blob/v0.5.0/fairseq/options.py#L95
-    if "lr" in opt:
-        opt["lr"] = options.eval_str_list(opt["lr"], type=float)
-    if "update_freq" in opt:
-        opt["update_freq"] = options.eval_str_list(opt["update_freq"], int)
-    if opt.get("max_sentences_valid") is not None:
-        opt["max_sentences_valid"] = opt["max_sentences"]
+    if hasattr(args, "lr"):
+        args.lr = options.eval_str_list(args.lr, type=float)
+    if hasattr(args, "update_freq"):
+        args.update_freq = options.eval_str_list(args.update_freq, int)
+    if hasattr(args, "max_sentences_valid"):
+        args.max_sentences_valid = args.max_sentences
 
     # handle modelzoo if possible
     for k in ("encoder_embed_path", "decoder_embed_path"):
-        if k in opt and opt[k] is not None:
-            opt[k] = modelzoo_path(opt.get("datapath"), opt[k])
-        else:
-            opt[k] = ""
+        if hasattr(args, k) and getattr(args, k) is not None:
+            setattr(args, k, modelzoo_path(opt.get("datapath"), getattr(args, k)))
 
-    # hardcode turn off distributed training. May need to revisit this later
-    opt["distributed_world_size"] = 1
+    # Here we hardcode a few options that we currently do not support
+    # turn off distributed training
+    args.distributed_world_size = 1
+    args.distributed_rank = 0
 
-    for key in opt:
-        if opt[key] is None:
-            continue
-        setattr(args, key, opt[key])
-
-    return args
+    return args, vars(args)
 
 
 class _FairseqDictionary(DictionaryAgent):
@@ -171,32 +185,27 @@ class FairseqAgent(TorchAgent):
             )
             models.ARCH_MODEL_REGISTRY[arch].add_args(arch_group)
 
-        # TODO: we should set up some better defaults here
+        # Override a few defaults from within fairseq to more sensible defaults
+        argparser.set_defaults(clip_norm=0.1)
 
     def __init__(self, opt, shared=None):
         # In general use a basic TorchAgent wherever possible
         super().__init__(opt, shared)
         if not shared:
-            # TODO: should this block come from TorchAgent?
-            # this is not a shared instance of this class, so do full
-            # initialization. if shared is set, only set up shared members.
-            saved_state = None
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
-                # load model parameters if available
-                print('Loading existing model params from ' +
-                      opt['model_file'])
-                new_opt, saved_state = self.load(opt['model_file'])
-                # override options with stored ones
-                opt = self._override_opt(new_opt)
+            # this is not a shared instance of this class, so do full initialization
 
-            # Begin real fairseq stuff
-            # copy over all the args we can
-            self.args = _fairseq_opt_wrapper(opt)
+            # fairseq expects options to be in argparse format, instead of a dict
+            # We also need to do some argument postprocessing and whatnot
+            self.args, self.opt = _fairseq_opt_wrapper(opt)
+
+            # seed the RNG
             torch.manual_seed(self.args.seed)
+
             # Just some identifying info
             self.id = "fairseq:{}".format(self.args.arch)
+
             # construct dictionaries for parlai frontend and fairseq backend
-            self.dict = _FairseqDictionary(opt)
+            self.dict = _FairseqDictionary(self.opt)
 
             # We need a placeholder task for fairseq
             self.task = _ParlaiTask(self.dict)
@@ -215,16 +224,24 @@ class FairseqAgent(TorchAgent):
             # set up the grader and the trainer
             # TODO: maybe support label smoothing here
             self.criterion = CrossEntropyCriterion(self.args, self.task)
-            if opt.get('fp16'):
+
+            if self.args.fp16:
                 self.trainer = fp16_trainer.FP16Trainer(
                     self.args, self.task, self.model, self.criterion
                 )
             else:
+                # TODO: we might choose to add a --no-fp16 opt in the future to
+                # explicitly disable fp16 instead
                 if torch.cuda.get_device_capability(0)[0] >= 7:
                     print("Heads up: using --fp16 could be a lot faster!")
                 self.trainer = trainer.Trainer(
                     self.args, self.task, self.model, self.criterion
                 )
+
+            # if the model already existed, let's preload it and the trainer
+            if self.opt.get('model_file') and os.path.isfile(self.opt['model_file']):
+                print('Loading existing model params from ' + self.opt['model_file'])
+                self.load(self.opt.get('model_file'))
 
             # move things to the GPU if possible
             if self.use_cuda:
@@ -234,33 +251,31 @@ class FairseqAgent(TorchAgent):
         # Start things off clean
         self.reset()
 
-    def _override_opt(self, new_opt):
-        """Set overridable opts from loaded opt file.
-
-        Print out each added key and each overriden key.
-        Only override args specific to the model.
-        """
-        model_args = {
-            'arch',
-            'encoder-embed-dim',
-            'encoder-layers',
-            'decoder-embed-dim',
-            'decoder-layers',
-            'decoder-out-embed-dim',
-            'decoder-attention',
-        }
-
-        for k, v in new_opt.items():
-            if k not in model_args:
-                # skip non-model args
+    def _check_opts_unchanged(self, saved_opts, current_opts):
+        """Verify that critical options do not differ in command line vs saved model"""
+        for k in NON_OVERRIDABLE_ARGS:
+            if k not in saved_opts or k not in current_opts:
+                # if it's not an option needed by this fairseq model, don't stress
                 continue
-            if k not in self.opt:
-                print('Adding new option [ {k}: {v} ]'.format(k=k, v=v))
-            elif self.opt[k] != v:
-                print('Overriding option [ {k}: {old} => {v}]'.format(
-                    k=k, old=self.opt[k], v=v))
-            self.opt[k] = v
-        return self.opt
+            if saved_opts[k] != current_opts[k]:
+                raise ValueError(
+                    '{} cannot be overridden when --model-file is specified'.format(k)
+                )
+
+    def save(self, path):
+        """Save using fairseq's checkpointing."""
+        self.trainer.save_checkpoint(path, {'opt': self.opt, 'epoch': 0})
+        # Parlai expects options to also be saved
+        with open(path + ".opt", 'wb') as handle:
+            # overridden options shouldn't be stored, only the main ones
+            if 'override' in self.opt:
+                del self.opt['override']
+            pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    def load(self, path):
+        """Load using fairseq's checkpointing."""
+        old_options = self.trainer.load_checkpoint(path)
+        self._check_opts_unchanged(old_options, self.opt)
 
     def reset(self):
         """Reset observation and episode_done."""
