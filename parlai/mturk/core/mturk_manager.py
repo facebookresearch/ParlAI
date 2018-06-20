@@ -153,12 +153,11 @@ class MTurkManager():
             if os.path.exists(file_path):
                 with open(file_path, 'rb+') as time_log_file:
                     existing_times = pickle.load(time_log_file)
-                    if time.time() - existing_times['last_reset'] > \
-                            24 * 60 * 60:  # Reset if more than a day old
-                        pass
-                    elif time.time() - existing_times['last_reset'] < \
-                            RESET_TIME_LOG_TIMEOUT and not force:
-                        # no need to reset, another thread did recently
+                    if time.time() - existing_times['last_reset'] < \
+                            24 * 60 * 60:
+                        return  # do nothing if it's been less than a day
+                    elif not force:
+                        # do nothing if we're not really forcing it to happen
                         return
                     reset_workers = list(existing_times.keys())
                     reset_workers.remove('last_reset')
