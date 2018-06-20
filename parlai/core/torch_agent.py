@@ -41,8 +41,8 @@ class TorchAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('TorchAgent Arguments')
-        agent.add_argument('-histk', '--history-tokens', default=-1, type=int,
-                           help='Number of past tokens to remember.')
+        agent.add_argument('-tr', '--truncate', default=-1, type=int,
+                           help='Truncate input lengths to speed up training.')
         agent.add_argument('-histd', '--history-dialog', default=-1, type=int,
                            help='Number of past dialog examples to remember.')
         agent.add_argument('-histr', '--history-replies',
@@ -77,7 +77,7 @@ class TorchAgent(Agent):
         self.START_IDX = self.dict[self.dict.start_token]
 
         self.history = {}
-        self.history_tokens = opt['history_tokens']
+        self.truncate = opt['truncate']
         self.history_dialog = opt['history_dialog']
         self.history_replies = opt['history_replies']
 
@@ -246,7 +246,9 @@ class TorchAgent(Agent):
         allow_reply = True
 
         if 'dialog' not in self.history:
-            self.history['dialog'] = deque(maxlen=self.history_tokens)
+            self.history['dialog'] = deque(
+                maxlen=self.truncate if self.truncate >= 0 else None
+            )
             self.history['episode_done'] = False
             self.history['labels'] = []
 

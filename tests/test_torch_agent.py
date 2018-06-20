@@ -45,7 +45,7 @@ class TestTorchAgent(unittest.TestCase):
 
         opt = {}
         opt['no_cuda'] = True
-        opt['history_tokens'] = 10000
+        opt['truncate'] = 10000
         opt['history_dialog'] = 10
         opt['history_replies'] = 'label_else_model'
         mdict = MockDict()
@@ -114,7 +114,7 @@ class TestTorchAgent(unittest.TestCase):
 
         opt = {}
         opt['no_cuda'] = True
-        opt['history_tokens'] = 10000
+        opt['truncate'] = 10000
         opt['history_dialog'] = 10
         opt['history_replies'] = 'label_else_model'
         mdict = MockDict()
@@ -180,7 +180,7 @@ class TestTorchAgent(unittest.TestCase):
 
         opt = {}
         opt['no_cuda'] = True
-        opt['history_tokens'] = 5
+        opt['truncate'] = 5
         opt['history_dialog'] = 10
         opt['history_replies'] = 'label_else_model'
         mdict = MockDict()
