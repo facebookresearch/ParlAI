@@ -4,6 +4,15 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+try:
+    import regex
+    import scipy
+    import sklearn
+    import unicodedata
+except ModuleNotFoundError:
+    raise ModuleNotFoundError('Please `pip install regex scipy sklearn`'
+                              ' to use the tfidf_retriever agent.')
+
 from parlai.core.agents import Agent
 from parlai.core.utils import AttrDict
 from .doc_db import DocDB
@@ -16,8 +25,8 @@ from collections import deque
 import math
 import random
 import os
-import sqlite3
 import pickle
+import sqlite3
 
 
 class TfidfRetrieverAgent(Agent):
@@ -58,8 +67,8 @@ class TfidfRetrieverAgent(Agent):
         parser.add_argument(
             '--retriever-num-retrieved', default=5, type=int,
             help='How many docs to retrieve.')
-        parser.add_argument(	       
-            '--retriever-mode', choices=['keys', 'values'], default='values',	
+        parser.add_argument(
+            '--retriever-mode', choices=['keys', 'values'], default='values',
              help='Whether to retrieve the stored key or the stored value.'
         )
         parser.add_argument(

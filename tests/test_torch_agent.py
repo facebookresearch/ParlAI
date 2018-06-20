@@ -4,10 +4,6 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.torch_agent import TorchAgent
-
-
-import os
 import unittest
 
 
@@ -31,10 +27,18 @@ class MockDict(object):
     def txt2vec(self, txt):
         return [1, 3, 5]
 
+
 class TestTorchAgent(unittest.TestCase):
     """Basic tests on the util functions in TorchAgent."""
 
     def test_vectorize(self):
+        try:
+            from parlai.core.torch_agent import TorchAgent
+        except ModuleNotFoundError as e:
+            if 'pytorch' in e.msg:
+                print('Skipping TestTorchAgent.test_vectorize, no pytorch.')
+                return
+
         opt = {}
         opt['no_cuda'] = True
         opt['history_tokens'] = 10000
@@ -70,11 +74,20 @@ class TestTorchAgent(unittest.TestCase):
                         "Vectorized label is incorrect.")
 
     def test_map_unmap(self):
+        try:
+            from parlai.core.torch_agent import TorchAgent
+        except ModuleNotFoundError as e:
+            if 'pytorch' in e.msg:
+                print('Skipping TestTorchAgent.test_map_unmap, no pytorch.')
+                return
+
         observations = []
-        observations.append({"text": "What is a painting?", "labels": ["Paint on a canvas."]})
+        observations.append({"text": "What is a painting?",
+                             "labels": ["Paint on a canvas."]})
         observations.append({})
         observations.append({})
-        observations.append({"text": "What is a painting?", "labels": ["Paint on a canvas."]})
+        observations.append({"text": "What is a painting?",
+                             "labels": ["Paint on a canvas."]})
         observations.append({})
         observations.append({})
 
@@ -106,10 +119,12 @@ class TestTorchAgent(unittest.TestCase):
                         "Returns incorrect indices of valid observations.")
 
         observations = []
-        observations.append({"text": "What is a painting?", "eval_labels": ["Paint on a canvas."]})
+        observations.append({"text": "What is a painting?",
+                             "eval_labels": ["Paint on a canvas."]})
         observations.append({})
         observations.append({})
-        observations.append({"text": "What is a painting?", "eval_labels": ["Paint on a canvas."]})
+        observations.append({"text": "What is a painting?",
+                             "eval_labels": ["Paint on a canvas."]})
         observations.append({})
         observations.append({})
 
@@ -129,6 +144,13 @@ class TestTorchAgent(unittest.TestCase):
                         "Unmapped predictions do not match expected results.")
 
     def test_maintain_dialog_history(self):
+        try:
+            from parlai.core.torch_agent import TorchAgent
+        except ModuleNotFoundError as e:
+            if 'pytorch' in e.msg:
+                print('Skipping TestTorchAgent.test_maintain_dialog_history, no pytorch.')
+                return
+
         opt = {}
         opt['no_cuda'] = True
         opt['history_tokens'] = 5
@@ -158,7 +180,6 @@ class TestTorchAgent(unittest.TestCase):
         observation['text_vec'] = agent.maintain_dialog_history(observation)
         self.assertTrue(list(agent.history['dialog']) == [3, 5, 1, 3, 5],
                         "Failed adding vectorized text to dialog.")
-
 
 
 if __name__ == '__main__':
