@@ -38,8 +38,8 @@ class TensorboardLogger(Shared):
         Shared.__init__(self)
         try:
             from tensorboardX import SummaryWriter
-        except ModuleNotFoundError:
-            raise ModuleNotFoundError(
+        except ImportError:
+            raise ImportError(
                 'Please `pip install tensorboardX` for logs with TB.')
         if opt['tensorboard_tag'] == None:
             tensorboard_tag = opt['starttime']

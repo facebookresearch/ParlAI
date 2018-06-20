@@ -8,8 +8,8 @@
 try:
     from emoji.unicode_codes import UNICODE_EMOJI
     import unidecode
-except ModuleNotFoundError:
-    raise ModuleNotFoundError('Please `pip install emoji unidecode` for the twitter task.')
+except ImportError:
+    raise ImportError('Please `pip install emoji unidecode` for the twitter task.')
 
 import parlai.core.build_data as build_data
 import os

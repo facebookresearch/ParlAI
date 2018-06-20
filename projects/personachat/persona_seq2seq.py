@@ -33,8 +33,8 @@ import torch.nn.functional as F
 import torch
 try:
     import torchtext.vocab as vocab
-except ModuleNotFoundError:
-    raise ModuleNotFoundError('Please `pip install torchtext`')
+except ImportError:
+    raise ImportError('Please `pip install torchtext`')
 
 cos = torch.nn.CosineSimilarity(dim=0, eps=1e-6)
 
@@ -52,8 +52,8 @@ with open(os.path.join(os.environ['PARLAI_HOME'], 'projects', 'personachat', 'st
 
 try:
     from stop_words import get_stop_words
-except ModuleNotFoundError:
-    raise ModuleNotFoundError('Please `pip install stop-words`')
+except ImportError:
+    raise ImportError('Please `pip install stop-words`')
 
 STOP_WORDS = get_stop_words('en') + [',', '.', '!', '?']
 STOP_WORDS.remove('not')

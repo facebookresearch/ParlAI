@@ -682,8 +682,8 @@ def display_messages(msgs, prettify=False, ignore_fields=''):
                 cands = [c for c in msg['text_candidates'] if c is not None]
                 try:
                     import prettytable
-                except ModuleNotFoundError:
-                    raise ModuleNotFoundError('Please install prettytable to \
+                except ImportError:
+                    raise ImportError('Please install prettytable to \
                     display text candidates: `pip install prettytable`')
                 scores = None
                 if msg.get('candidate_scores') is not None:

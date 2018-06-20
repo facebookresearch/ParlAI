@@ -97,8 +97,8 @@ def extract_feats(opt):
         try:
             import torch
             from torch.utils.data import DataLoader
-        except ModuleNotFoundError:
-            raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
+        except ImportError:
+            raise ImportError('Need to install Pytorch: go to pytorch.org')
 
         dataset = get_dataset_class(opt)(opt)
         pre_image_path, _ = os.path.split(dataset.image_path)

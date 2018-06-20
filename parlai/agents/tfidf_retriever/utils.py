@@ -13,8 +13,8 @@ import scipy.sparse as sp
 from sklearn.utils import murmurhash3_32
 try:
     import torch
-except ModuleNotFoundError as e:
-    raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
+except ImportError as e:
+    raise ImportError('Need to install Pytorch: go to pytorch.org')
 
 
 # ------------------------------------------------------------------------------
