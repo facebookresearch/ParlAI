@@ -5,7 +5,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.torch_agent import TorchAgent
-from parlai.core.thread_utils import SharedTable
 
 import torch
 from torch.autograd import Variable
@@ -51,8 +50,8 @@ class DecoderRNN(nn.Module):
 class ExampleSeq2seqAgent(TorchAgent):
     """Agent which takes an input sequence and produces an output sequence.
 
-    This model is based of Sean Robertson's seq2seq tutorial
-    `here <http://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html>`_.
+    This model is based of Sean Robertson's `seq2seq tutorial
+    <http://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html>`_.
     """
 
     @staticmethod

@@ -18,12 +18,23 @@ import random
 import copy
 
 Batch = namedtuple("Batch", [
-    "text_vec",  # bsz x seqlen tensor containing the parsed text data
-    "text_lengths", # bsz x 1 tensor containing the lengths of the text in same order as text_vec; necessary for pack_padded_sequence
-    "label_vec", # bsz x seqlen tensor containing the parsed label (one per batch row)
-    "labels", # list of length bsz containing the selected label for each batch row (some datasets have multiple labels per input example)
-    "valid_indices",  # list of length bsz containing the original indices of each example in the batch. we use these to map predictions back to their proper row, since e.g. we may sort examples by their length or some examples may be invalid.
+    # bsz x seqlen tensor containing the parsed text data
+    "text_vec",
+    # bsz x 1 tensor containing the lengths of the text in same order as
+    # text_vec; necessary for pack_padded_sequence
+    "text_lengths",
+    # bsz x seqlen tensor containing the parsed label (one per batch row)
+    "label_vec",
+    # list of length bsz containing the selected label for each batch row (some
+    # datasets have multiple labels per input example)
+    "labels",
+    # list of length bsz containing the original indices of each example in the
+    # batch. we use these to map predictions back to their proper row, since
+    # e.g. we may sort examples by their length or some examples may be
+    # invalid.
+    "valid_indices",
 ])
+
 
 class TorchAgent(Agent):
     """A provided base agent for any model that wants to use Torch. Exists to
@@ -275,7 +286,9 @@ class TorchAgent(Agent):
         labels = obs.get('labels', obs.get('eval_labels', None))
         if labels is not None:
             if useStartEndIndices:
-                self.history['labels'] = [self.dict.start_token + ' ' + l for l in labels]
+                self.history['labels'] = [
+                    self.dict.start_token + ' ' + l for l in labels
+                ]
             else:
                 self.history['labels'] = labels
 
