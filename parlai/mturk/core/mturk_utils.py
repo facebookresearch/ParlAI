@@ -288,7 +288,7 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward,
     if qualifications is not None:
         for q in qualifications:
             if q['QualificationTypeId'] == '00000000000000000071':
-                has_locale_qual
+                has_locale_qual = True
         locale_requirements += qualifications
 
     if not has_locale_qual:
