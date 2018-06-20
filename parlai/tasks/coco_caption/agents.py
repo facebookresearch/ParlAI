@@ -71,7 +71,7 @@ def _path(opt, version):
 
 class DefaultDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
-    def __init__(self, opt, version='2014'):
+    def __init__(self, opt, shared=None, version='2014'):
         self.opt = opt
         self.use_hdf5 = opt.get('use_hdf5', False)
         self.datatype = self.opt.get('datatype')
@@ -107,7 +107,7 @@ class DefaultDataset(Dataset):
             return ep
         if not self.datatype.startswith('test'):
             anno = self.annotation['annotations'][index]
-            ep['labels'] = [self.dict_agent.txt2vec(anno['caption'])]
+            ep['labels'] = [anno['caption']]
             ep['valid'] = True
         else:
             ep['valid'] = True
@@ -208,6 +208,7 @@ class DefaultTeacher(FixedDialogTeacher):
             if 'annotation' in shared:
                 self.annotation = shared['annotation']
             self.image_loader = shared['image_loader']
+            self.image_path = shared['image_path']
         else:
             # need to set up data from scratch
             test_info_path, annotation_path, self.image_path = _path(opt, version)
@@ -219,6 +220,7 @@ class DefaultTeacher(FixedDialogTeacher):
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
         self.example = None  # set up caching fields
+        self.imageEpochDone = False
 
     def num_examples(self):
         # We only have annotations for the train and val sets, so for the test
@@ -237,7 +239,7 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         action = {
-            'text': QUESTION,
+            'text': "",
             'episode_done': True
         }
 
@@ -258,13 +260,13 @@ class DefaultTeacher(FixedDialogTeacher):
         ready = None
         # pull up the currently queued example
         if self.example is not None:
-            if self.image_mode != 'none':
+            if self.image_mode != 'none' and 'image_id' in self.example:
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
-            ready = (self.example, self.epochDone)
+            ready = (self.example, self.imageEpochDone)
         # get the next base example: super().next_example() calls self.get()
-        self.example, self.epochDone = super().next_example()
+        self.example, self.imageEpochDone = super().next_example()
         if self.image_mode != 'none' and 'image_id' in self.example:
             # load the next image in the background
             image_id = self.example['image_id']
@@ -280,6 +282,7 @@ class DefaultTeacher(FixedDialogTeacher):
         if hasattr(self, 'annotation'):
             shared['annotation'] = self.annotation
         shared['image_loader'] = self.image_loader
+        shared['image_path'] = self.image_path
         return shared
 
     def _setup_data(self, test_info_path, annotation_path):
