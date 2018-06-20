@@ -283,16 +283,16 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward,
 
     # If the user hasn't specified a location qualification, we assume to
     # restrict the HIT to some english-speaking countries.
-    local_requirements = []
+    locale_requirements = []
     has_locale_qual = False
     if qualifications is not None:
         for q in qualifications:
             if q['QualificationTypeId'] == '00000000000000000071':
                 has_locale_qual
-        local_requirements += qualifications
+        locale_requirements += qualifications
 
     if not has_locale_qual:
-        local_requirements.append({
+        locale_requirements.append({
             'QualificationTypeId': '00000000000000000071',
             'Comparator': 'In',
             'LocaleValues': [
@@ -313,7 +313,7 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward,
         Title=hit_title,
         Keywords=hit_keywords,
         Description=hit_description,
-        QualificationRequirements=local_requirements,
+        QualificationRequirements=locale_requirements,
     )
     hit_type_id = response['HITTypeId']
     return hit_type_id
