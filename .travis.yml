@@ -11,7 +11,18 @@ before_script:
     # exit-zero treats all errors as warnings.  The GitHub editor is 127 chars wide
     - time flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 script:
-    - true  # add other tests here
+    - python tests/test_import.py
+    - python tests/test_init.py
+    - python tests/test_tasklist.py
+    - python tests/test_dict.py
+    - python tests/test_display_data.py
+    - python tests/test_utils.py
+    - python tests/test_threadutils.py
+    - python tests/test_torch_agent.py
+    - python tests/test_eval_model.py
+    - python tests/test_hogwild.py
+    - python tests/test_train_model.py
+    - python tests/test_tfidf_retriever.py
 notifications:
     on_success: change
     on_failure: always
