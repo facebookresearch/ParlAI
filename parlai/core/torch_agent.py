@@ -155,9 +155,11 @@ class TorchAgent(Agent):
             x_text = [x_text[k] for k in ind_sorted]
             x_lens = [x_lens[k] for k in ind_sorted]
 
+        x_lens = torch.LongTensor(x_lens)
         padded_xs = torch.LongTensor(len(exs),
                                      max(x_lens)).fill_(self.NULL_IDX)
         if self.use_cuda:
+            x_lens = x_lens.cuda()
             padded_xs = padded_xs.cuda()
 
         for i, ex in enumerate(x_text):
@@ -172,7 +174,6 @@ class TorchAgent(Agent):
         # set up the target tensors
         ys = None
         labels = None
-        y_lens = None
         if some_labels_avail:
             # randomly select one of the labels to update on (if multiple)
             if labels_avail:
@@ -199,7 +200,7 @@ class TorchAgent(Agent):
                     padded_ys[i, :y.shape[0]] = y
             ys = padded_ys
 
-        return Batch(xs, torch.LongTensor(x_lens), ys, labels, valid_inds)
+        return Batch(xs, x_lens, ys, labels, valid_inds)
 
     def unmap_valid(self, predictions, valid_inds, batch_size):
         """Re-order permuted predictions to the initial ordering, includes the
