@@ -71,7 +71,7 @@ def _path(opt, version):
 
 class DefaultDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
-    def __init__(self, opt, shared=None, version='2014'):
+    def __init__(self, opt, version='2014'):
         self.opt = opt
         self.use_hdf5 = opt.get('use_hdf5', False)
         self.datatype = self.opt.get('datatype')
@@ -186,13 +186,13 @@ class DefaultDataset(Dataset):
 
 
 class V2014Dataset(DefaultDataset):
-    def __init__(self, opt, shared=None):
-        super(V2014Dataset, self).__init__(opt, shared, '2014')
+    def __init__(self, opt):
+        super(V2014Dataset, self).__init__(opt, '2014')
 
 
 class V2017Dataset(DefaultDataset):
-    def __init__(self, opt, shared=None):
-        super(V2017Dataset, self).__init__(opt, shared, '2017')
+    def __init__(self, opt):
+        super(V2017Dataset, self).__init__(opt, '2017')
 
 
 class DefaultTeacher(FixedDialogTeacher):
