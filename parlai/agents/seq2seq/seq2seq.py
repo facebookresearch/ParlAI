@@ -677,7 +677,7 @@ class mydefaultdict(defaultdict):
         return super().get(key, self.default_factory())
 
 
-class Seq2seqPerplexityAgent(Seq2seqAgent):
+class PerplexityEvaluatorAgent(Seq2seqAgent):
     """Subclass for doing standardized perplexity evaluation.
 
     This is designed to be used in conjunction with the PerplexityWorld at
