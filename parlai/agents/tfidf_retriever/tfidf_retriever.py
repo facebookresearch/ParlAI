@@ -9,15 +9,15 @@ try:
     import scipy
     import sklearn
     import unicodedata
+    import pexpect
 except ImportError:
-    raise ImportError('Please `pip install regex scipy sklearn`'
-                              ' to use the tfidf_retriever agent.')
+    raise ImportError('Please `pip install regex scipy sklearn pexpect`'
+                      ' to use the tfidf_retriever agent.')
 
 from parlai.core.agents import Agent
 from parlai.core.utils import AttrDict
 from .doc_db import DocDB
 from .tfidf_doc_ranker import TfidfDocRanker
-from .build_db import store_contents as build_db
 from .build_tfidf import run as build_tfidf
 from .build_tfidf import live_count_matrix, get_tfidf_matrix
 from numpy.random import choice
