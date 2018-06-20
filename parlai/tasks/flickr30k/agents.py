@@ -35,7 +35,7 @@ def _path(opt):
 
 class FlickrDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
-    def __init__(self, opt):
+    def __init__(self, opt, shared=None):
         self.opt = opt
         self.use_hdf5 = opt.get('use_hdf5', False)
         self.datatype = self.opt.get('datatype')
@@ -65,7 +65,7 @@ class FlickrDataset(Dataset):
             ep['image_id'] = cap['image_id']
             return ep
 
-        ep['labels'] = [self.dict_agent.txt2vec(cc) for cc in cap['captions']]
+        ep['labels'] = cap['captions']
         ep['valid'] = True
         ep['use_hdf5'] = self.use_hdf5
         return (index, ep)
@@ -149,6 +149,7 @@ class DefaultTeacher(FixedDialogTeacher):
             # another instance was set up already, just reference its data
             self.caption = shared['caption']
             self.image_loader = shared['image_loader']
+            self.image_path = shared['image_path']
         else:
             # need to set up data from scratch
             caption_path, self.image_path = _path(opt)
@@ -160,6 +161,7 @@ class DefaultTeacher(FixedDialogTeacher):
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
         self.example = None  # set up caching fields
+        self.imageEpochDone = False
 
     def num_examples(self):
         return len(self.caption)
@@ -177,7 +179,7 @@ class DefaultTeacher(FixedDialogTeacher):
         cap = self.caption[episode_idx]
 
         action = {
-            'text': QUESTION,
+            'text': "",
             'image_id': cap['image_id'],
             'episode_done': True,
             'labels': cap['captions']
@@ -192,13 +194,13 @@ class DefaultTeacher(FixedDialogTeacher):
         ready = None
         # pull up the currently queued example
         if self.example is not None:
-            if self.image_mode != 'none':
+            if self.image_mode != 'none' and 'image_id' in self.example:
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
-            ready = (self.example, self.epochDone)
+            ready = (self.example, self.imageEpochDone)
         # get the next base example: super().next_example() calls self.get()
-        self.example, self.epochDone = super().next_example()
+        self.example, self.imageEpochDone = super().next_example()
         if self.image_mode != 'none' and 'image_id' in self.example:
             # load the next image in the background
             image_id = self.example['image_id']
@@ -213,6 +215,7 @@ class DefaultTeacher(FixedDialogTeacher):
         shared = super().share()
         shared['caption'] = self.caption
         shared['image_loader'] = self.image_loader
+        shared['image_path'] = self.image_path
         return shared
 
     def _setup_data(self, caption_path):

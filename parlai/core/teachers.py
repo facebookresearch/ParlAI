@@ -297,7 +297,7 @@ class FixedDialogTeacher(Teacher):
         self.episode_done = ex.get('episode_done', False)
 
         if (not self.random and self.episode_done
-                and self.episode_idx + 1 >= self.num_episodes()):
+                and self.episode_idx + self.opt.get("batchsize", 1) >= self.num_episodes()):
             epoch_done = True
         else:
             epoch_done = False
