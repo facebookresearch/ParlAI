@@ -151,16 +151,14 @@ class MTurkManager():
         with LockFile(file_lock) as _lock_file:
             assert _lock_file is not None
             if os.path.exists(file_path):
-                if not force:
-                    with open(file_path, 'rb+') as time_log_file:
-                        existing_times = pickle.load(time_log_file)
-                        if time.time() - existing_times['last_reset'] > \
-                                24 * 60 * 60:  # Reset if more than a day old
-                            pass
-                        elif time.time() - existing_times['last_reset'] < \
-                                RESET_TIME_LOG_TIMEOUT:
-                            # no need to reset, another thread did recently
-                            return
+                with open(file_path, 'rb+') as time_log_file:
+                    existing_times = pickle.load(time_log_file)
+                    if time.time() - existing_times['last_reset'] < \
+                            24 * 60 * 60 and not force:
+                        return  # do nothing if it's been less than a day
+                    reset_workers = list(existing_times.keys())
+                    reset_workers.remove('last_reset')
+                    self._free_time_blocked_workers(reset_workers)
 
                 # Reset the time logs
                 os.remove(file_path)
@@ -191,8 +189,7 @@ class MTurkManager():
 
         if total_work_time > int(self.opt.get('max_time')):
             self.time_blocked_workers.append(worker_id)
-            self.give_worker_qualification(worker_id,
-                                           self.max_time_qual, 0)
+            self.soft_block_worker(worker_id, 'max_time_qual')
 
     def _load_disconnects(self):
         """Load disconnects from file, populate the disconnects field for any
@@ -732,10 +729,12 @@ class MTurkManager():
             )
         )
 
-    def _free_time_blocked_workers(self):
-        for worker_id in self.time_blocked_workers:
-            self.remove_worker_qualification(
-                worker_id, self.max_time_qual, 'Daily time limit reset.')
+    def _free_time_blocked_workers(self, workers=None):
+        if workers is None:
+            workers = self.time_blocked_workers
+            self.time_blocked_workers = []
+        for worker_id in workers:
+            self.un_soft_block_worker(worker_id, 'max_time_qual')
 
     def _check_time_limit(self):
         if time.time() - self.time_limit_checked < RESET_TIME_LOG_TIMEOUT:
@@ -1513,13 +1512,23 @@ class MTurkManager():
                 should_print=True
             )
             return
-        mturk_utils.remove_worker_qualification(worker_id, qual_id,
-                                                self.is_sandbox, reason)
-        shared_utils.print_and_log(
-            logging.INFO,
-            'removed from {} qualification {}'.format(worker_id, qual_name),
-            should_print=True
-        )
+        try:
+            mturk_utils.remove_worker_qualification(worker_id, qual_id,
+                                                    self.is_sandbox, reason)
+            shared_utils.print_and_log(
+                logging.INFO,
+                'removed {}\'s qualification {}'.format(worker_id, qual_name),
+                should_print=True
+            )
+        except Exception as e:
+            shared_utils.print_and_log(
+                logging.WARN if not self.has_time_limit else logging.INFO,
+                'removing {}\'s qualification {} failed with error {}. This '
+                'can be because the worker didn\'t have that qualification.'
+                ''.format(worker_id, qual_name, repr(e)),
+                should_print=True
+            )
+
 
     def create_qualification(self, qualification_name, description,
                              can_exist=True):
