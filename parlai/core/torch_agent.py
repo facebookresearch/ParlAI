@@ -15,14 +15,26 @@ except ImportError as e:
 from collections import deque, namedtuple
 import pickle
 import random
+import copy
 
 Batch = namedtuple("Batch", [
-    "text_vec",  # bsz x seqlen tensor containing the parsed text data
-    "text_lengths", # bsz x 1 tensor containing the lengths of the text in same order as text_vec; necessary for pack_padded_sequence
-    "label_vec", # bsz x seqlen tensor containing the parsed label (one per batch row)
-    "labels", # list of length bsz containing the selected label for each batch row (some datasets have multiple labels per input example)
-    "valid_indices",  # list of length bsz containing the original indices of each example in the batch. we use these to map predictions back to their proper row, since e.g. we may sort examples by their length or some examples may be invalid.
+    # bsz x seqlen tensor containing the parsed text data
+    "text_vec",
+    # bsz x 1 tensor containing the lengths of the text in same order as
+    # text_vec; necessary for pack_padded_sequence
+    "text_lengths",
+    # bsz x seqlen tensor containing the parsed label (one per batch row)
+    "label_vec",
+    # list of length bsz containing the selected label for each batch row (some
+    # datasets have multiple labels per input example)
+    "labels",
+    # list of length bsz containing the original indices of each example in the
+    # batch. we use these to map predictions back to their proper row, since
+    # e.g. we may sort examples by their length or some examples may be
+    # invalid.
+    "valid_indices",
 ])
+
 
 class TorchAgent(Agent):
     """A provided base agent for any model that wants to use Torch. Exists to
@@ -40,8 +52,8 @@ class TorchAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('TorchAgent Arguments')
-        agent.add_argument('-histk', '--history-tokens', default=-1, type=int,
-                           help='Number of past tokens to remember.')
+        agent.add_argument('-tr', '--truncate', default=-1, type=int,
+                           help='Truncate input lengths to speed up training.')
         agent.add_argument('-histd', '--history-dialog', default=-1, type=int,
                            help='Number of past dialog examples to remember.')
         agent.add_argument('-histr', '--history-replies',
@@ -76,7 +88,7 @@ class TorchAgent(Agent):
         self.START_IDX = self.dict[self.dict.start_token]
 
         self.history = {}
-        self.history_tokens = opt['history_tokens']
+        self.truncate = opt['truncate']
         self.history_dialog = opt['history_dialog']
         self.history_replies = opt['history_replies']
 
@@ -233,19 +245,18 @@ class TorchAgent(Agent):
         """
 
         def parse(txt, splitSentences):
-            if dict is not None:
-                if splitSentences:
-                    vec = [self.dict.txt2vec(t) for t in txt.split('\n')]
-                else:
-                    vec = self.dict.txt2vec(txt)
-                return vec
+            if splitSentences:
+                vec = [self.dict.txt2vec(t) for t in txt.split('\n')]
             else:
-                return [txt]
+                vec = self.dict.txt2vec(txt)
+            return vec
 
         allow_reply = True
 
         if 'dialog' not in self.history:
-            self.history['dialog'] = deque(maxlen=self.history_tokens)
+            self.history['dialog'] = deque(
+                maxlen=self.truncate if self.truncate >= 0 else None
+            )
             self.history['episode_done'] = False
             self.history['labels'] = []
 
@@ -275,7 +286,9 @@ class TorchAgent(Agent):
         labels = obs.get('labels', obs.get('eval_labels', None))
         if labels is not None:
             if useStartEndIndices:
-                self.history['labels'] = [self.dict.start_token + ' ' + l for l in labels]
+                self.history['labels'] = [
+                    self.dict.start_token + ' ' + l for l in labels
+                ]
             else:
                 self.history['labels'] = labels
 
@@ -317,3 +330,26 @@ class TorchAgent(Agent):
         if path is not None:
             self.save(path + '.shutdown_state')
         super().shutdown()
+
+    def reset(self):
+        """Reset observation and episode_done."""
+        self.observation = None
+        self.episode_done = True
+
+    def observe(self, observation):
+        observation = copy.deepcopy(observation)
+        if not self.episode_done:
+            # if the last example wasn't the end of an episode, then we need to
+            # recall what was said in that example
+            prev_dialogue = self.observation['text']
+            observation['text'] = prev_dialogue + '\n' + observation['text']
+        self.observation = observation
+        self.episode_done = observation['episode_done']
+        return observation
+
+    def act(self):
+        """Calls batch_act with the singleton batch"""
+        return self.batch_act([self.observation])[0]
+
+    def batch_act(self):
+        raise NotImplementedError("Abstract class: user must implement batch_act")

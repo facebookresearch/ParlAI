@@ -5,15 +5,12 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.torch_agent import TorchAgent
-from parlai.core.thread_utils import SharedTable
 
 import torch
 from torch.autograd import Variable
 from torch import optim
 import torch.nn as nn
 import torch.nn.functional as F
-
-import copy
 
 
 class EncoderRNN(nn.Module):
@@ -53,8 +50,8 @@ class DecoderRNN(nn.Module):
 class ExampleSeq2seqAgent(TorchAgent):
     """Agent which takes an input sequence and produces an output sequence.
 
-    This model is based of Sean Robertson's seq2seq tutorial
-    `here <http://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html>`_.
+    This model is based of Sean Robertson's `seq2seq tutorial
+    <http://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html>`_.
     """
 
     @staticmethod
@@ -132,11 +129,6 @@ class ExampleSeq2seqAgent(TorchAgent):
 
         self.reset()
 
-    def reset(self):
-        """Reset observation and episode_done."""
-        self.observation = None
-        self.episode_done = True
-
     def zero_grad(self):
         """Zero out optimizer."""
         for optimizer in self.optims.values():
@@ -157,17 +149,6 @@ class ExampleSeq2seqAgent(TorchAgent):
             shared['decoder'] = self.decoder
 
         return shared
-
-    def observe(self, observation):
-        observation = copy.deepcopy(observation)
-        if not self.episode_done:
-            # if the last example wasn't the end of an episode, then we need to
-            # recall what was said in that example
-            prev_dialogue = self.observation['text']
-            observation['text'] = prev_dialogue + '\n' + observation['text']
-        self.observation = observation
-        self.episode_done = observation['episode_done']
-        return observation
 
     def predict(self, xs, ys=None, is_training=False):
         """Produce a prediction from our model.
@@ -273,7 +254,3 @@ class ExampleSeq2seqAgent(TorchAgent):
                 rep['text'] = self.dict.vec2txt(output_tokens)
 
         return batch_reply
-
-    def act(self):
-        # call batch_act with this batch of one
-        return self.batch_act([self.observation])[0]
