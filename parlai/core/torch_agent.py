@@ -234,14 +234,11 @@ class TorchAgent(Agent):
         """
 
         def parse(txt, splitSentences):
-            if dict is not None:
-                if splitSentences:
-                    vec = [self.dict.txt2vec(t) for t in txt.split('\n')]
-                else:
-                    vec = self.dict.txt2vec(txt)
-                return vec
+            if splitSentences:
+                vec = [self.dict.txt2vec(t) for t in txt.split('\n')]
             else:
-                return [txt]
+                vec = self.dict.txt2vec(txt)
+            return vec
 
         allow_reply = True
 
