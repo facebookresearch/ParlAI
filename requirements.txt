@@ -3,5 +3,3 @@ numpy
 Pillow
 pyzmq
 h5py
-regex
-scipy

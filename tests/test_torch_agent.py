@@ -37,6 +37,7 @@ class TestTorchAgent(unittest.TestCase):
         except ModuleNotFoundError as e:
             if 'pytorch' in e.msg:
                 print('Skipping TestTorchAgent.test_vectorize, no pytorch.')
+                return
 
         opt = {}
         opt['no_cuda'] = True
@@ -77,7 +78,9 @@ class TestTorchAgent(unittest.TestCase):
             from parlai.core.torch_agent import TorchAgent
         except ModuleNotFoundError as e:
             if 'pytorch' in e.msg:
-                print('Skipping TestTorchAgent.test_vectorize, no pytorch.')
+                print('Skipping TestTorchAgent.test_map_unmap, no pytorch.')
+                return
+
         observations = []
         observations.append({"text": "What is a painting?",
                              "labels": ["Paint on a canvas."]})
@@ -145,7 +148,8 @@ class TestTorchAgent(unittest.TestCase):
             from parlai.core.torch_agent import TorchAgent
         except ModuleNotFoundError as e:
             if 'pytorch' in e.msg:
-                print('Skipping TestTorchAgent.test_vectorize, no pytorch.')
+                print('Skipping TestTorchAgent.test_maintain_dialog_history, no pytorch.')
+                return
 
         opt = {}
         opt['no_cuda'] = True
