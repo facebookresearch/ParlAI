@@ -65,9 +65,9 @@ def build_dict(opt, skip_if_built=False):
     ordered_opt['batchsize'] = 1
     ordered_opt['image_mode'] = 'none'
     if ordered_opt['task'] == 'pytorch_teacher':
-       pytorch_buildteacher_task = ordered_opt.get('pytorch_buildteacher', '')
-       if pytorch_buildteacher_task != '':
-           ordered_opt['task'] = pytorch_buildteacher_task
+        pytorch_teacher_task = ordered_opt.get('pytorch_teacher_task', '')
+        if pytorch_teacher_task != '':
+            ordered_opt['task'] = pytorch_teacher_task
 
     datatypes = ['train:ordered:stream']
     if opt.get('dict_include_valid'):
