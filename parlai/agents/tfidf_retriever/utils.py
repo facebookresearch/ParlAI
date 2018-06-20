@@ -6,7 +6,7 @@
 # LICENSE file in the root directory of this source tree.
 """Various retriever utilities."""
 
-import re
+import regex
 import unicodedata
 import numpy as np
 import scipy.sparse as sp
@@ -97,7 +97,7 @@ def normalize(text):
 def filter_word(text):
     """Take out english stopwords, punctuation, and compound endings."""
     text = normalize(text)
-    if re.match(r'^\p{P}+$', text):
+    if regex.match(r'^\p{P}+$', text):
         return True
     if text.lower() in STOPWORDS:
         return True
