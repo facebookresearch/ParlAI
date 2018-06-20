@@ -6,7 +6,7 @@ install:
     - pip install flake8
     - python setup.py develop
     - pip install regex scipy sklearn  # tfidf-retriever dependencies
-    # pip install torch?
+    # install pytorch non-cuda version
     - pip install http://download.pytorch.org/whl/cpu/torch-0.4.0-cp36-cp36m-linux_x86_64.whl 
 before_script:
     # stop the build if there are Python syntax errors or undefined names
