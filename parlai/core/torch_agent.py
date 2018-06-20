@@ -15,6 +15,7 @@ except ImportError as e:
 from collections import deque, namedtuple
 import pickle
 import random
+import copy
 
 Batch = namedtuple("Batch", [
     "text_vec",  # bsz x seqlen tensor containing the parsed text data
@@ -317,3 +318,26 @@ class TorchAgent(Agent):
         if path is not None:
             self.save(path + '.shutdown_state')
         super().shutdown()
+
+    def reset(self):
+        """Reset observation and episode_done."""
+        self.observation = None
+        self.episode_done = True
+
+    def observe(self, observation):
+        observation = copy.deepcopy(observation)
+        if not self.episode_done:
+            # if the last example wasn't the end of an episode, then we need to
+            # recall what was said in that example
+            prev_dialogue = self.observation['text']
+            observation['text'] = prev_dialogue + '\n' + observation['text']
+        self.observation = observation
+        self.episode_done = observation['episode_done']
+        return observation
+
+    def act(self):
+        """Calls batch_act with the singleton batch"""
+        return self.batch_act([self.observation])[0]
+
+    def batch_act(self):
+        raise NotImplementedError("Abstract class: user must implement batch_act")
