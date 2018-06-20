@@ -2,7 +2,6 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
@@ -38,15 +37,15 @@ class Mlb(nn.Module):
 
     def process_lengths(self, input):
         max_length = input.size(1)
-        lengths = list(max_length - input.data.eq(0).sum(1).squeeze())
+        sub = input.eq(0).sum(1).squeeze(0) if input.size(0) != 1 else input.eq(0).sum(1)
+        lengths = list(max_length - sub)
         return lengths
 
     def select_last(self, x, lengths):
         batch_size = x.size(0)
-        mask = x.data.new().resize_as_(x.data).fill_(0)
+        mask = x.new().resize_as_(x).fill_(0)
         for i in range(batch_size):
             mask[i][lengths[i]-1].fill_(1)
-        mask = Variable(mask)
         x = x.mul(mask)
         x = x.sum(1).view(batch_size, self.opt['dim_q'])
         return x

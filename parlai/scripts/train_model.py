@@ -179,16 +179,24 @@ class TrainLoop():
 
     def validate(self):
         opt = self.opt
+        # run evaluation on valid set
         valid_report, self.valid_world = run_eval(
             self.agent, opt, 'valid', opt['validation_max_exs'],
             valid_world=self.valid_world)
+
+        # logging
         if opt['tensorboard_log'] is True:
             self.writer.add_metrics('valid', int(math.floor(self.train_time.time())), valid_report)
+        # saving
         if opt.get('model_file') and opt.get('save_after_valid'):
             print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
             self.agent.save(opt['model_file'] + '.checkpoint')
+
+        # send valid metrics to agent if the agent wants them
         if hasattr(self.agent, 'receive_metrics'):
             self.agent.receive_metrics(valid_report)
+
+        # check which metric to look at
         if '/' in opt['validation_metric']:
             # if you are multitasking and want your validation metric to be
             # a metric specific to a subtask, specify your validation metric
@@ -198,6 +206,8 @@ class TrainLoop():
             new_valid = valid_report['tasks'][subtask][validation_metric]
         else:
             new_valid = valid_report[opt['validation_metric']]
+
+        # check if this is the best validation so far
         if self.best_valid is None or self.valid_optim * new_valid > self.valid_optim * self.best_valid:
             print('[ new best {}: {}{} ]'.format(
                 opt['validation_metric'], new_valid,
@@ -220,6 +230,8 @@ class TrainLoop():
                     opt['validation_metric'], round(self.best_valid, 4),
                     self.impatience))
         self.validate_time.reset()
+
+        # check if we are out of patience
         if opt['validation_patience'] > 0 and self.impatience >= opt['validation_patience']:
             print('[ ran out of patience! stopping training. ]')
             return True
@@ -256,9 +268,11 @@ class TrainLoop():
         world = self.world
         with world:
             while True:
+                # do one example / batch of examples
                 world.parley()
                 self.parleys += 1
 
+                # check counters and timers
                 if world.get_total_epochs() >= self.max_num_epochs:
                     self.log()
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(
