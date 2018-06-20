@@ -91,7 +91,7 @@ class MTurkManager():
         except Exception:
             # not all users will be drawing configs from internal settings
             pass
-        print(opt)
+
         self.opt = opt
         if self.opt['unique_worker'] or \
                 self.opt['unique_qual_name'] is not None:
