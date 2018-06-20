@@ -347,12 +347,7 @@ class FairseqAgent(TorchAgent):
 
     def receive_metrics(self, metrics_dict):
         """Used to update lr scheduler."""
-        # receive metrics is supposed to be used in order to provide signals to the
-        # lr scheduler. We need to prepend everything with a "valid_" key that
-        # fairseq should be expecting
-        for k in list(metrics_dict.keys()):
-            metrics_dict["valid_" + k] = metrics_dict[k]
-        self.trainer.lr_step(metrics_dict)
+        self.trainer.lr_step(-1, metrics_dict["valid_loss"])
 
     # Helper functions
     def _seq_length(self, xs):
