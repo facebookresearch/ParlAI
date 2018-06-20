@@ -5,7 +5,7 @@ python:
 install:
     - pip install flake8
     - python setup.py develop
-    - pip install regex scipy sklearn sqlite3  # tfidf-retriever dependencies
+    - pip install regex scipy sklearn  # tfidf-retriever dependencies
     # pip install torch?
 before_script:
     # stop the build if there are Python syntax errors or undefined names

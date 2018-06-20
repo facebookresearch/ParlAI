@@ -8,10 +8,9 @@ try:
     import regex
     import scipy
     import sklearn
-    import sqlite3
     import unicodedata
 except ModuleNotFoundError:
-    raise ModuleNotFoundError('Please `pip install regex scipy sklearn sqlite3`'
+    raise ModuleNotFoundError('Please `pip install regex scipy sklearn`'
                               ' to use the tfidf_retriever agent.')
 
 from parlai.core.agents import Agent
@@ -27,6 +26,7 @@ import math
 import random
 import os
 import pickle
+import sqlite3
 
 
 class TfidfRetrieverAgent(Agent):
