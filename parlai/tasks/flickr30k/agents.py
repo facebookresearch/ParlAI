@@ -65,7 +65,7 @@ class FlickrDataset(Dataset):
             ep['image_id'] = cap['image_id']
             return ep
 
-        ep['labels'] = [cap['captions']
+        ep['labels'] = cap['captions']
         ep['valid'] = True
         ep['use_hdf5'] = self.use_hdf5
         return (index, ep)
