@@ -308,27 +308,6 @@ class StreamDataset(Dataset):
 
 class PytorchDataTeacher(FixedDialogTeacher):
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        arg_group = argparser.add_argument_group('PytorchData Arguments')
-        arg_group.add_argument('--datafile', type=str, default='',
-            help='datafile for pytorch data loader')
-        arg_group.add_argument('-nw', '--numworkers', type=int, default=4,
-            help='how many workers the Pytorch dataloader should use')
-        arg_group.add_argument('--pytorch-buildteacher', type=str, default='',
-            help='Which teacher to use when building the pytorch data')
-        arg_group.add_argument('--pytorch-preprocess', type='bool', default=False,
-            help='Whether the agent should preprocess the data while building'
-                 'the pytorch data')
-        arg_group.add_argument('--batch-sort-cache', type=str,
-            choices=['pop', 'index', 'none'], default='none',
-            help='Whether to have batches of similarly sized episodes, and how'
-            'to build up the cache')
-        arg_group.add_argument('--batch-length-range', type=int, default=5,
-            help='degree of variation of size allowed in batch')
-        arg_group.add_argument('--dataset', type=str, default='StreamDataset',
-            help='which dataset to use in dataloader')
-
     def __init__(self, opt, shared=None):
         opt['batch_sort'] = False
         super().__init__(opt, shared)
@@ -380,15 +359,15 @@ class PytorchDataTeacher(FixedDialogTeacher):
 
             For example, the VQA v1 task provides a custom dataset, which can
             be specified on the command line as follows:
-            ``--dataset vqa_v1:VQADataset``
+            ``-pytd vqa_v1:VQADataset``
 
             Note that if the dataset is named ``DefaultDataset``, then you do
             not need to specify its name following the colon; e.g., it
             would just be:
-            ``--dataset vqa_v1``
+            ``-pytd vqa_v1``
         """
-        dataset_name = opt.get('dataset')
-        if dataset_name == 'StreamDataset':
+        dataset_name = opt.get('pytorch_teacher_dataset')
+        if not dataset_name:
             return StreamDataset, default_collate
         sp = dataset_name.strip()
         repo = 'parlai'
