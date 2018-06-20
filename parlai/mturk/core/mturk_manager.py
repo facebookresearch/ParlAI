@@ -154,11 +154,8 @@ class MTurkManager():
                 with open(file_path, 'rb+') as time_log_file:
                     existing_times = pickle.load(time_log_file)
                     if time.time() - existing_times['last_reset'] < \
-                            24 * 60 * 60:
+                            24 * 60 * 60 and not force:
                         return  # do nothing if it's been less than a day
-                    elif not force:
-                        # do nothing if we're not really forcing it to happen
-                        return
                     reset_workers = list(existing_times.keys())
                     reset_workers.remove('last_reset')
                     self._free_time_blocked_workers(reset_workers)
