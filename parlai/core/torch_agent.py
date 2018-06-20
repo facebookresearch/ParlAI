@@ -116,6 +116,19 @@ class TorchAgent(Agent):
                     new_label = new_label.cuda()
                 new_labels.append(new_label)
             obs[label_type + "_vec"] = new_labels
+
+        if 'candidate_labels' in obs:
+            candidate_labels_vec = []
+            for label in obs['candidate_labels']:
+                vec_label = self.dict.txt2vec(label)
+                if addEndIdx:
+                    vec_label.append(self.END_IDX)
+                new_label = torch.LongTensor(vec_label)
+                if self.use_cuda:
+                    new_label = new_label.cuda()
+                candidate_labels_vec.append(new_label)
+            obs['candidate_labels_vec'] = candidate_labels_vec
+
         return obs
 
     def map_valid(self, obs_batch, sort=True, is_valid=lambda obs: 'text_vec' in obs):
