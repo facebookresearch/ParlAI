@@ -6,6 +6,7 @@
 """Contains code for parsing and building a dictionary from text."""
 
 from .agents import Agent
+from .build_data import make_dir
 from collections import defaultdict
 import argparse
 import codecs
@@ -433,6 +434,7 @@ class DictionaryAgent(Agent):
         if sort:
             self.sort()
 
+        make_dir(os.path.dirname(filename))
         with open(filename, 'a' if append else 'w') as write:
             for i in range(len(self.ind2tok)):
                 tok = self.ind2tok[i]

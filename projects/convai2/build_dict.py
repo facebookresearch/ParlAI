@@ -18,15 +18,15 @@ potential unknown words. See the evaluation script for more information.
 
 from parlai.scripts.build_dict import setup_args, build_dict as main_build_dict
 
-def build_dict():
-    DICT_FINAL = 'models:convai2/dict_self'
+DICT_FILE = 'models:convai2/dict_self'
 
+def build_dict():
     parser = setup_args()
     # first build on standard train and validation
     parser.set_defaults(
         task='convai2:self',
         dict_lower=True,
-        dict_file=DICT_FINAL,
+        dict_file=DICT_FILE,
         dict_include_valid=True,
         dict_tokenizer='split',
     )
