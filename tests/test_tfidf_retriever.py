@@ -19,8 +19,8 @@ class TestTfidfRetriever(unittest.TestCase):
         try:
             from parlai.agents.tfidf_retriever.tfidf_retriever import TfidfRetrieverAgent
         except ModuleNotFoundError as e:
-            if 'pip install' in e.msg:
-                print('Skipping TestTfidfRetriever, missing optional pip packages.')
+            if 'pip install' in e.msg or 'pytorch' in e.msg:
+                print('Skipping TestTfidfRetriever, missing optional pip packages or pytorch.')
 
         MODEL_FILE = '/tmp/tmp_test_babi'
         DB_PATH = '/tmp/tmp_test_babi.db'

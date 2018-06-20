@@ -11,7 +11,10 @@ import unicodedata
 import numpy as np
 import scipy.sparse as sp
 from sklearn.utils import murmurhash3_32
-import torch
+try:
+    import torch
+except ModuleNotFoundError as e:
+    raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
 
 
 # ------------------------------------------------------------------------------
