@@ -30,6 +30,7 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
+from parlai.core.metrics import normalize_answer
 from collections import Counter
 
 import random
@@ -121,7 +122,7 @@ def eval_wordstat(opt, print_parser=None):
         cnt += 1
         world.parley()
         prediction = world.acts[-1]['text']
-        pred_list.append(prediction)
+        pred_list.append(normalize_answer(prediction))
         freqs, _cnt, wlength, clength = get_word_stats(prediction, dictionary, bins=bins)
         word_cnt += _cnt
 
