@@ -85,6 +85,13 @@ class MTurkManager():
         """Create an MTurkManager using the given setup opts and a list of
         agent_ids that will participate in each conversation
         """
+        try:
+            import parlai_internal.mturk.configs as local_configs
+            opt = local_configs.apply_default_opts(opt)
+        except Exception:
+            # not all users will be drawing configs from internal settings
+            pass
+
         self.opt = opt
         if self.opt['unique_worker'] or \
                 self.opt['unique_qual_name'] is not None:
@@ -246,7 +253,7 @@ class MTurkManager():
                         ),
                         True
                     )
-                elif self.opt['disconnect_qualification'] != '':
+                elif self.opt['disconnect_qualification'] is not None:
                     self.soft_block_worker(worker_id,
                                            'disconnect_qualification')
                     shared_utils.print_and_log(
@@ -1229,7 +1236,16 @@ class MTurkManager():
         if qualifications is None:
             qualifications = []
 
-        if self.opt['disconnect_qualification'] != '':
+        if not self.is_sandbox:
+            try:
+                import parlai_internal.mturk.configs as local_configs
+                qualifications = \
+                    local_configs.set_default_qualifications(qualifications)
+            except Exception:
+                # not all users will be drawing configs from internal settings
+                pass
+
+        if self.opt['disconnect_qualification'] is not None:
             block_qual_id = mturk_utils.find_or_create_qualification(
                 self.opt['disconnect_qualification'],
                 'A soft ban from using a ParlAI-created HIT due to frequent '
@@ -1248,7 +1264,7 @@ class MTurkManager():
             })
 
         # Add the soft block qualification if it has been specified
-        if self.opt['block_qualification'] != '':
+        if self.opt['block_qualification'] is not None:
             block_qual_id = mturk_utils.find_or_create_qualification(
                 self.opt['block_qualification'],
                 'A soft ban from this ParlAI-created HIT at the requesters '
@@ -1268,8 +1284,8 @@ class MTurkManager():
 
         if self.has_time_limit:
             block_qual_name = '{}-max-daily-time'.format(self.task_group_id)
-            if self.opt.get('max_time_qual') != '':
-                block_qual_name = self.opt.get('max_time_qual')
+            if self.opt['max_time_qual'] is not None:
+                block_qual_name = self.opt['max_time_qual']
             self.max_time_qual = block_qual_name
             block_qual_id = mturk_utils.find_or_create_qualification(
                 block_qual_name,
@@ -1452,17 +1468,17 @@ class MTurkManager():
 
     def soft_block_worker(self, worker_id, qual='block_qualification'):
         """Soft block a worker by giving the worker the block qualification"""
-        qual_name = self.opt[qual]
-        assert qual_name != '', ('No qualification {} has been specified'
-                                 ''.format(qual))
+        qual_name = self.opt.get(qual, None)
+        assert qual_name is not None, ('No qualification {} has been specified'
+                                       ''.format(qual))
         self.give_worker_qualification(worker_id, qual_name)
 
     def un_soft_block_worker(self, worker_id, qual='block_qualification'):
         """Remove a soft block from a worker by removing a block qualification
             from the worker"""
-        qual_name = self.opt[qual]
-        assert qual_name != '', ('No qualification {} has been specified'
-                                 ''.format(qual))
+        qual_name = self.opt.get(qual, None)
+        assert qual_name is not None, ('No qualification {} has been specified'
+                                       ''.format(qual))
         self.remove_worker_qualification(worker_id, qual_name)
 
     def give_worker_qualification(self, worker_id, qual_name, qual_value=None):

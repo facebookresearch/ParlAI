@@ -9,7 +9,7 @@ from parlai.core.dict import DictionaryAgent
 
 try:
     import torch
-except Exception as e:
+except ModuleNotFoundError as e:
     raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
 
 from collections import deque, namedtuple

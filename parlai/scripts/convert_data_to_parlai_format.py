@@ -15,27 +15,29 @@ from parlai.core.utils import msg_to_str
 
 import random
 
+
 def dump_data(opt):
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
-    ignorefields = opt['ignore_fields'].split(',')
-    
-    print("[ starting to convert.. ]")
+    ignorefields = opt.get('ignore_fields', '')
+
+    print('[ starting to convert.. ]')
     fw = open(opt['outfile'], 'w')
     for _ in range(opt['num_examples']):
         world.parley()
         world.acts[0]['labels'] = world.acts[0].get(
             'labels', world.acts[0].pop('eval_labels', None))
         txt = msg_to_str(world.acts[0], ignore_fields=ignorefields)
-        fw.write(txt + "\n")
+        fw.write(txt + '\n')
         if world.acts[0].get('episode_done', False):
-            fw.write("\n")
-        
+            fw.write('\n')
+
         if world.epoch_done():
             print('EPOCH DONE')
             break
     fw.close()
+
 
 def main():
     random.seed(42)
@@ -47,6 +49,7 @@ def main():
     parser.set_defaults(datatype='train:stream')
     opt = parser.parse_args()
     dump_data(opt)
-    
+
+
 if __name__ == '__main__':
     main()

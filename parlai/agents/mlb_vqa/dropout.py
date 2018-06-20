@@ -5,7 +5,6 @@
 import torch
 import numpy as np
 from torch import nn
-from torch.autograd import Variable
 
 
 class EmbeddingDropout():
@@ -53,15 +52,15 @@ class SequentialDropout(nn.Module):
         self.restart = True
 
     def _make_noise(self, input):
-        return Variable(input.data.new().resize_as_(input.data))
+        return input.new().resize_as_(input)
 
     def forward(self, input):
         if self.p > 0 and self.training:
             if self.restart:
                 self.noise = self._make_noise(input)
-                self.noise.data.bernoulli_(1 - self.p).div_(1 - self.p)
+                self.noise.bernoulli_(1 - self.p).div_(1 - self.p)
                 if self.p == 1:
-                    self.noise.data.fill_(0)
+                    self.noise.fill_(0)
                 self.noise = self.noise.expand_as(input)
                 self.restart = False
             return input.mul(self.noise)
@@ -85,13 +84,13 @@ class SequentialDropout(nn.Module):
 if __name__ == '__main__':
 
     dp = SequentialDropout(p=0.5)
-    input = Variable(torch.ones(1, 10), volatile=True)
+    input = torch.ones(1, 10)
 
     dist_total = torch.zeros(1)
     output_last = dp(input)
     for _ in range(50):
         output_new = dp(input)
-        dist_total += torch.dist(output_new, output_last).data
+        dist_total += torch.dist(output_new, output_last)
         output_last = output_new
 
     if not torch.equal(dist_total, torch.zeros(1)):
@@ -102,7 +101,7 @@ if __name__ == '__main__':
 
     dist_total = torch.zeros(1)
     for _ in range(50):
-        dist_total += torch.dist(output_last, dp(input)).data
+        dist_total += torch.dist(output_last, dp(input))
         dp.end_of_sequence()
 
     if torch.equal(dist_total, torch.zeros(1)):

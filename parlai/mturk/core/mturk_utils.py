@@ -276,26 +276,34 @@ def remove_worker_qualification(worker_id, qualification_id,
 def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward,
                     assignment_duration_in_seconds, is_sandbox,
                     qualifications=None,
-                    auto_approve_delay=4*7*24*3600, # default 4 weeks
+                    auto_approve_delay=7*24*3600,  # default 1 week
                     ):
     """Create a HIT type to be used to generate HITs of the requested params"""
     client = get_mturk_client(is_sandbox)
 
-    # Create a qualification with Locale In('US', 'CA') requirement attached
-    localRequirements = [{
-        'QualificationTypeId': '00000000000000000071',
-        'Comparator': 'In',
-        'LocaleValues': [
-            {'Country': 'US'},
-            {'Country': 'CA'},
-            {'Country': 'GB'},
-            {'Country': 'AU'},
-            {'Country': 'NZ'}
-        ],
-        'RequiredToPreview': True
-    }]
+    # If the user hasn't specified a location qualification, we assume to
+    # restrict the HIT to some english-speaking countries.
+    locale_requirements = []
+    has_locale_qual = False
     if qualifications is not None:
-        localRequirements += qualifications
+        for q in qualifications:
+            if q['QualificationTypeId'] == '00000000000000000071':
+                has_locale_qual = True
+        locale_requirements += qualifications
+
+    if not has_locale_qual:
+        locale_requirements.append({
+            'QualificationTypeId': '00000000000000000071',
+            'Comparator': 'In',
+            'LocaleValues': [
+                {'Country': 'US'},
+                {'Country': 'CA'},
+                {'Country': 'GB'},
+                {'Country': 'AU'},
+                {'Country': 'NZ'}
+            ],
+            'RequiredToPreview': True
+        })
 
     # Create the HIT type
     response = client.create_hit_type(
@@ -305,7 +313,7 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward,
         Title=hit_title,
         Keywords=hit_keywords,
         Description=hit_description,
-        QualificationRequirements=localRequirements
+        QualificationRequirements=locale_requirements,
     )
     hit_type_id = response['HITTypeId']
     return hit_type_id

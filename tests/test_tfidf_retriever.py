@@ -16,6 +16,13 @@ class TestTfidfRetriever(unittest.TestCase):
     """Basic tests on the display_data.py example."""
 
     def test_sparse_tfidf_retriever(self):
+        try:
+            from parlai.agents.tfidf_retriever.tfidf_retriever import TfidfRetrieverAgent
+        except ModuleNotFoundError as e:
+            if 'pip install' in e.msg or 'pytorch' in e.msg:
+                print('Skipping TestTfidfRetriever, missing optional pip packages or pytorch.')
+                return
+
         MODEL_FILE = '/tmp/tmp_test_babi'
         DB_PATH = '/tmp/tmp_test_babi.db'
         TFIDF_PATH = '/tmp/tmp_test_babi.tfidf'
