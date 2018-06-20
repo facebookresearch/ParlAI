@@ -20,7 +20,7 @@ import copy
 try:
     import torch
 except Exception as e:
-    raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
+    raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset, DataLoader, sampler
 from torch.multiprocessing import Lock, Value
 import ctypes

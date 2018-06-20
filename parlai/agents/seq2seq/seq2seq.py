@@ -242,7 +242,7 @@ class Seq2seqAgent(Agent):
                 # set up preinitialized embeddings
                 try:
                     import torchtext.vocab as vocab
-                except ModuleNotFoundError as ex:
+                except ImportError as ex:
                     print('Please install torch text with `pip install torchtext`')
                     raise ex
                 pretrained_dim = 300

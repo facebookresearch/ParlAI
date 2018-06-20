@@ -9,7 +9,7 @@ Script for auto-completing HITs. Please change the test flow according to your t
 try:
     from selenium import webdriver
     import chromedriver_installer
-except ModuleNotFoundError:
+except ImportError:
     raise SystemExit("Please make sure your computer has Chrome installed, and then install selenium and chromedriver by running: pip install selenium chromedriver_installer")
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC

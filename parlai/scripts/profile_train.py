@@ -20,7 +20,7 @@ import pdb
 import pstats
 try:
     import torch
-except ModuleNotFoundError:
+except ImportError:
     print('Torch not found--only cProfile allowed with this tool.')
 
 

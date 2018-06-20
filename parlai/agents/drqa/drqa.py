@@ -20,8 +20,8 @@ To automatically download glove, use:
 
 try:
     import torch
-except ModuleNotFoundError:
-    raise ModuleNotFoundError('Need to install pytorch: go to pytorch.org')
+except ImportError:
+    raise ImportError('Need to install pytorch: go to pytorch.org')
 
 import bisect
 import os

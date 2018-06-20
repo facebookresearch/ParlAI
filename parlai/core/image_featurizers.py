@@ -75,8 +75,8 @@ class ImageLoader():
             self.use_cuda = (not opt.get('no_cuda', False)
                              and torch.cuda.is_available())
             self.torch = torch
-        except ModuleNotFoundError:
-            raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
+        except ImportError:
+            raise ImportError('Need to install Pytorch: go to pytorch.org')
         from torch.autograd import Variable
         import torchvision
         import torchvision.transforms as transforms

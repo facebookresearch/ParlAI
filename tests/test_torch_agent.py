@@ -34,7 +34,7 @@ class TestTorchAgent(unittest.TestCase):
     def test_vectorize(self):
         try:
             from parlai.core.torch_agent import TorchAgent
-        except ModuleNotFoundError as e:
+        except ImportError as e:
             if 'pytorch' in e.msg:
                 print('Skipping TestTorchAgent.test_vectorize, no pytorch.')
                 return
@@ -76,7 +76,7 @@ class TestTorchAgent(unittest.TestCase):
     def test_map_unmap(self):
         try:
             from parlai.core.torch_agent import TorchAgent
-        except ModuleNotFoundError as e:
+        except ImportError as e:
             if 'pytorch' in e.msg:
                 print('Skipping TestTorchAgent.test_map_unmap, no pytorch.')
                 return
@@ -146,7 +146,7 @@ class TestTorchAgent(unittest.TestCase):
     def test_maintain_dialog_history(self):
         try:
             from parlai.core.torch_agent import TorchAgent
-        except ModuleNotFoundError as e:
+        except ImportError as e:
             if 'pytorch' in e.msg:
                 print('Skipping TestTorchAgent.test_maintain_dialog_history, no pytorch.')
                 return

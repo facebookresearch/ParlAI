@@ -11,7 +11,7 @@ from .build import build
 try:
     import torch
 except Exception as e:
-    raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
+    raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset
 from parlai.core.dict import DictionaryAgent
 
@@ -48,8 +48,8 @@ class FlickrDataset(Dataset):
             try:
                 import h5py
                 self.h5py = h5py
-            except ModuleNotFoundError:
-                raise ModuleNotFoundError('Need to install h5py - `pip install h5py`')
+            except ImportError:
+                raise ImportError('Need to install h5py - `pip install h5py`')
             self._setup_image_data()
         self.dict_agent = DictionaryAgent(opt)
 

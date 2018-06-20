@@ -9,8 +9,8 @@ try:
     import scipy
     import sklearn
     import unicodedata
-except ModuleNotFoundError:
-    raise ModuleNotFoundError('Please `pip install regex scipy sklearn`'
+except ImportError:
+    raise ImportError('Please `pip install regex scipy sklearn`'
                               ' to use the tfidf_retriever agent.')
 
 from parlai.core.agents import Agent

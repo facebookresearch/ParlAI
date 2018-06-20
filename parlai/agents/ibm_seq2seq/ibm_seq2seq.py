@@ -8,8 +8,8 @@ try:
     from seq2seq.models.seq2seq import Seq2seq
     from seq2seq.models.EncoderRNN import EncoderRNN
     from seq2seq.models.DecoderRNN import DecoderRNN
-except ModuleNotFoundError:
-    raise ModuleNotFoundError('Please install IBM\'s seq2seq package at '
+except ImportError:
+    raise ImportError('Please install IBM\'s seq2seq package at '
                               'https://github.com/IBM/pytorch-seq2seq')
 
 from parlai.core.agents import Agent
