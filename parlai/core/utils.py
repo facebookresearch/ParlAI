@@ -264,7 +264,7 @@ def flatten(teacher, context_length=-1, include_labels=True):
             # build separate episodes from each example
             for ex in current:
                 context.append(ex.get('text', ''))
-                if len(context) > 1:
+                if len(context) != 1:
                     ex['text'] = '\n'.join(context)
                 ex['episode_done'] = True
                 if include_labels:
