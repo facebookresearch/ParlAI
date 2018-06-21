@@ -578,6 +578,8 @@ class Seq2seqAgent(Agent):
                     m = ('CUDA OOM: Lower batch size (-bs) from {} or lower max'
                          ' sequence length (-tr) from {}'.format(bsz, maxlen))
                     raise RuntimeError(m)
+                else:
+                    raise e
 
     def batch_act(self, observations):
         batchsize = len(observations)

@@ -31,8 +31,9 @@ from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
 from collections import Counter
 
-import random
+import copy
 import numpy
+import random
 
 
 def setup_args(parser=None):
@@ -86,11 +87,12 @@ def eval_wordstat(opt, print_parser=None):
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
 
-    if opt['external_dict'] is not None:
+    if opt.get('external_dict'):
         print('[ Using external dictionary from: {} ]'.format(
             opt['external_dict']))
-        dictionary = DictionaryAgent(opt)
-        dictionary.load(opt['external_dict'])
+        dict_opt = copy.deepcopy(opt)
+        dict_opt['dict_file'] = opt['external_dict']
+        dictionary = DictionaryAgent(dict_opt)
     else:
         print('[ Using model bundled dictionary ]')
         dictionary = agent.dict

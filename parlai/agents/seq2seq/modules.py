@@ -164,9 +164,6 @@ class Encoder(nn.Module):
         self.dirs = 2 if bidirectional else 1
         self.hsz = hidden_size
 
-        # we put zeros in here
-        self.buffers = {}
-
         if shared_lt is None:
             self.lt = nn.Embedding(num_features, emb_size,
                                    padding_idx=padding_idx,
@@ -183,13 +180,6 @@ class Encoder(nn.Module):
         else:
             self.rnn = shared_rnn
 
-    def zeros(self, typeof):
-        cur_type = typeof.data.type()
-        if cur_type not in self.buffers:
-            self.buffers[cur_type] = typeof.data.new(
-                self.layers * self.dirs, 1, self.hsz).float().fill_(0)
-        return self.buffers[cur_type]
-
     def forward(self, xs):
         bsz = len(xs)
 
@@ -203,26 +193,19 @@ class Encoder(nn.Module):
             # packing failed, don't pack then
             pass
 
-        zeros = self.zeros(xs)
-        if zeros.size(1) != bsz:
-            zeros.resize_(self.layers * self.dirs, bsz, self.hsz).fill_(0)
-        h0 = zeros.detach()
-
-        if type(self.rnn) == nn.LSTM:
-            encoder_output, hidden = self.rnn(xes, (h0, h0))
-            if self.dirs > 1:
-                # take elementwise max between forward and backward hidden states
-                hidden = (hidden[0].view(-1, self.dirs, bsz, self.hsz).max(1)[0],
-                          hidden[1].view(-1, self.dirs, bsz, self.hsz).max(1)[0])
-        else:
-            encoder_output, hidden = self.rnn(xes, h0)
-
-            if self.dirs > 1:
-                # take elementwise max between forward and backward hidden states
-                hidden = hidden.view(-1, self.dirs, bsz, self.hsz).max(1)[0]
+        encoder_output, hidden = self.rnn(xes)
         if packed:
             encoder_output, _ = pad_packed_sequence(encoder_output,
                                                     batch_first=True)
+        if self.dirs > 1:
+            # take elementwise max between forward and backward hidden states
+            # NOTE: currently using max, but maybe should use Linear
+            if isinstance(self.rnn, nn.LSTM):
+                hidden = (hidden[0].view(-1, self.dirs, bsz, self.hsz).max(1)[0],
+                          hidden[1].view(-1, self.dirs, bsz, self.hsz).max(1)[0])
+            else:
+                hidden = hidden.view(-1, self.dirs, bsz, self.hsz).max(1)[0]
+
         return encoder_output, hidden
 
 
