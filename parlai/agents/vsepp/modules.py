@@ -36,13 +36,12 @@ class VSEpp(nn.Module):
             self.txt_enc.cuda()
 
         # Loss and Optimizer
-        self.criterion = ContrastiveLoss(margin=opt.margin,
-                                         measure=opt.measure,
-                                         max_violation=opt.max_violation)
+        self.criterion = ContrastiveLoss(use_cuda=use_cuda,
+                                         margin=opt['margin'])
 
     def forward(self, images, captions, lengths):
-        img_emb = self.img_enc(images)
-        cap_emb = self.txt_enc(captions, lengths)
+        img_emb = self.img_enc(images) if images is not None else None
+        cap_emb = self.txt_enc(captions, lengths) if captions is not None else None
         return img_emb, cap_emb
 
     def get_optim(self):
@@ -52,7 +51,7 @@ class VSEpp(nn.Module):
         params += list(self.img_enc.fc.parameters())
         if self.opt['finetune']:
             params += list(self.img_enc.cnn.parameters())
-        optimizer = optim.Adam(params, kwargs)
+        optimizer = optim.Adam(params, **kwargs)
         return optimizer
 
 
@@ -80,7 +79,7 @@ class ContrastiveLoss(nn.Module):
         self.margin = margin
         self.sim = cosine_sim
 
-    def forward(self, im, caps):
+    def forward(self, im, caps, offset=0):
         # Compute the similarity of each image/caption pair
         scores = self.sim(im, caps)
         diagonal = scores.diag().view(im.shape[0], 1)
@@ -102,7 +101,7 @@ class ContrastiveLoss(nn.Module):
         top1 = sorted[:,0]
         ranks = []
         for idx in range(im.shape[0]):
-            ranks.append(np.where(sorted[idx,:]==idx_[0][0]))
+            ranks.append(np.where(sorted[idx,:]==(idx + offset))[0][0])
 
         return cost_cap.sum() + cost_im.sum(), ranks, top1
 

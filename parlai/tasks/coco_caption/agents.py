@@ -279,9 +279,9 @@ class DefaultTeacher(FixedDialogTeacher):
             action['image_id'] = anno['image_id']
             if self.datatype.startswith('eval'):
                 # Can only randomly select from validation set
-                candidate_labels = random.choices(self.val_cands, 150)
+                candidate_labels = random.choices(self.val_cands, k=150)
             else:
-                candidate_labels = random.choices(self.cands, 150)
+                candidate_labels = random.choices(self.cands, k=150)
 
             if anno['caption'] not in candidate_labels:
                 candidate_labels.pop(0)
@@ -289,7 +289,7 @@ class DefaultTeacher(FixedDialogTeacher):
             random.shuffle(candidate_labels)
             action['candidate_labels'] = candidate_labels
         else:
-            action['candidate_labels'] = random.choices(self.cands, 150)
+            action['candidate_labels'] = random.choices(self.cands, k=150)
             action['image_id'] = self.test_info['images'][episode_idx]['id']
 
         return action
