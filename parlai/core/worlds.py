@@ -534,11 +534,11 @@ def override_opts_in_shared(table, overrides):
             table['opt'][k] = v
     for k, v in table.items():
         # look for sub-dictionaries which also might contain an 'opt' dict
-        if type(v) == dict and k != 'opt':
+        if type(v) == dict and k != 'opt' and 'opt' in v:
             override_opts_in_shared(v, overrides)
         elif type(v) == list:
             for item in v:
-                if type(item) == dict:
+                if type(item) == dict and 'opt' in item:
                     # if this is a list of agent shared dicts, we want to iterate
                     override_opts_in_shared(item, overrides)
                 else:
