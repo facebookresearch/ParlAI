@@ -23,20 +23,8 @@ import collections
 import torch
 from collections import deque
 
-
-def setup_args(parser=None):
-    if parser is None:
-        parser = ParlaiParser(True, True)
-    build = parser.add_argument_group('Data Building Args')
-    build.add_argument('--datafile',
-                       help=('The file to be loaded, preprocessed, and saved'))
-    build.add_argument('--pytorch-buildteacher', type=str, default='',
-        help='Which teacher to use when building the pytorch data')
-    build.add_argument('--pytorch-preprocess', type='bool', default=True,
-        help='Whether the agent should preprocess the data while building'
-             'the pytorch data')
-    return parser
-
+def setup_args():
+    return ParlaiParser(True, True)
 
 def make_serializable(obj):
     new_obj = {}
@@ -57,17 +45,17 @@ def build_data(opt):
         opt['model'] = 'repeat_label'
     agent = create_agent(opt)
     #If build teacher not specified, we are simply looking for the file
-    if not opt.get('pytorch_buildteacher', None):
-        df = opt.get('datafile')
+    if not opt.get('pytorch_teacher_task', None):
+        df = opt.get('pytorch_datafile')
         # check if the user set a datafile
         if not df:
-            raise Exception('Tried to find data but `--datafile` is not set')
+            raise Exception('Tried to find data but `--pytorch-datafile` is not set')
         # check if the user provided the already built file
         if 'pytorch' not in df:
             df += '.pytorch' + (agent.getID() if opt.get('pytorch_preprocess', True) else '')
         if not os.path.isfile(df):
             raise Exception('Tried to find data but it is not built, please'
-                            'specify `--pytorch-buildteacher`')
+                            'specify `--pytorch-teacher-task`')
         else:
             return df
 
@@ -77,16 +65,16 @@ def build_data(opt):
     ordered_opt['datatype'] = dt + ':ordered:stream'
     ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
-    ordered_opt['task'] = ordered_opt['pytorch_buildteacher']
+    ordered_opt['task'] = ordered_opt['pytorch_teacher_task']
     ordered_opt['no_cuda'] = True
     world_data = create_task(ordered_opt, agent)
     teacher = world_data.agents[0]
     agent = world_data.agents[1]
 
-    datafile = teacher.datafile if hasattr(teacher, 'datafile') else opt.get('datafile')
+    datafile = teacher.datafile if hasattr(teacher, 'datafile') else opt.get('pytorch_datafile')
     if not datafile:
-        raise Exception('Tried to build data but either `pytorch-buildteacher` does not '
-                        'have a datafile or `--datafile` is not set')
+        raise Exception('Tried to build data but either `pytorch-teacher-task` does not '
+                        'have a datafile or `--pytorch-datafile` is not set')
 
     if isinstance(datafile, collections.Sequence) and not type(datafile) == str:
         datafile = datafile[0] + "".join(["_".join(d.split("/")) for d in datafile[1:]])
@@ -145,4 +133,4 @@ def build_data(opt):
 
 
 if __name__ == '__main__':
-    build_data(setup_args())
+    build_data(setup_args().parse_args())

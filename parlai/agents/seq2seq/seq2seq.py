@@ -15,8 +15,9 @@ import torch
 from torch.autograd import Variable
 from torch import optim
 import torch.nn as nn
+import torch.nn.functional as F
 
-from collections import deque
+from collections import deque, defaultdict
 
 import os
 import math
@@ -73,7 +74,7 @@ class Seq2seqAgent(Agent):
                            help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
                            help='dropout rate')
-        agent.add_argument('-clip', '--gradient-clip', type=float, default=-1,
+        agent.add_argument('-clip', '--gradient-clip', type=float, default=0.1,
                            help='gradient clipping using l2 norm')
         agent.add_argument('-bi', '--bidirectional', type='bool',
                            default=False,
@@ -137,7 +138,8 @@ class Seq2seqAgent(Agent):
                                 'if > 0, sgd uses nesterov momentum.')
         agent.add_argument('-emb', '--embedding-type', default='random',
                            choices=['random', 'glove', 'glove-fixed',
-                                    'fasttext', 'fasttext-fixed'],
+                                    'fasttext', 'fasttext-fixed',
+                                    'glove-twitter'],
                            help='Choose between different strategies '
                                 'for word embeddings. Default is random, '
                                 'but can also preinitialize from Glove or '
@@ -240,12 +242,19 @@ class Seq2seqAgent(Agent):
                 # set up preinitialized embeddings
                 try:
                     import torchtext.vocab as vocab
-                except ModuleNotFoundError as ex:
+                except ImportError as ex:
                     print('Please install torch text with `pip install torchtext`')
                     raise ex
+                pretrained_dim = 300
                 if opt['embedding_type'].startswith('glove'):
-                    init = 'glove'
-                    embs = vocab.GloVe(name='840B', dim=300,
+                    if 'twitter' in opt['embedding_type']:
+                        init = 'glove-twitter'
+                        name = 'twitter.27B'
+                        pretrained_dim = 200
+                    else:
+                        init = 'glove'
+                        name = '840B'
+                    embs = vocab.GloVe(name=name, dim=pretrained_dim,
                         cache=modelzoo_path(self.opt.get('datapath'),
                                             'models:glove_vectors')
                     )
@@ -258,8 +267,8 @@ class Seq2seqAgent(Agent):
                 else:
                     raise RuntimeError('embedding type not implemented')
 
-                if opt['embeddingsize'] != 300:
-                    rp = torch.Tensor(300, opt['embeddingsize']).normal_()
+                if opt['embeddingsize'] != pretrained_dim:
+                    rp = torch.Tensor(pretrained_dim, opt['embeddingsize']).normal_()
                     t = lambda x: torch.mm(x.unsqueeze(0), rp)
                 else:
                     t = lambda x: x
@@ -657,3 +666,59 @@ class Seq2seqAgent(Agent):
         """Use the metrics to decide when to adjust LR schedule."""
         if 'loss' in metrics_dict:
             self.scheduler.step(metrics_dict['loss'])
+
+
+class mydefaultdict(defaultdict):
+    """Custom defaultdict which overrides defaults requested by the get
+    function with the default factory.
+    """
+    def get(self, key, default=None):
+        # override default from "get" (like "__getitem__" already is)
+        return super().get(key, self.default_factory())
+
+
+class PerplexityEvaluatorAgent(Seq2seqAgent):
+    """Subclass for doing standardized perplexity evaluation.
+
+    This is designed to be used in conjunction with the PerplexityWorld at
+    parlai/scripts/eval_ppl.py. It uses the `next_word_probability` function
+    to calculate the probability of tokens one token at a time.
+    """
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.prev_enc = None
+
+    def next_word_probability(self, partial_out):
+        """Return probability distribution over next words given an input and
+        partial true output. This is used to calculate the per-word perplexity.
+
+        Arguments:
+        observation -- input observation dict
+        partial_out -- list of previous "true" words
+
+        Returns a dict, where each key is a word and each value is a probability
+        score for that word. Unset keys assume a probability of zero.
+
+        e.g.
+        {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
+        """
+        obs = self.observation
+        obs['eval_labels'] = [' '.join(partial_out)]
+        batch = self.vectorize([obs])
+        if self.prev_enc is not None and batch[0].shape[1] != self.prev_enc[0].shape[1]:
+            self.prev_enc = None  # reset prev_enc
+
+        self.model.eval()
+        self.model.longest_label = 1  # no need to predict farther ahead
+        out = self.model(
+            batch[0], # xs
+            ys=(batch[1] if len(partial_out) > 0 else None),
+            prev_enc=self.prev_enc)
+        scores, self.prev_enc = out[1], out[-1]
+        # scores is bsz x seqlen x num_words, so select probs of current index
+        probs = F.softmax(scores.select(1, -1), dim=1).squeeze()
+        dist = mydefaultdict(lambda: 1e-7)  # default probability for any token
+        for i in range(len(probs)):
+            dist[self.dict[i]] = probs[i].item()
+        return dist

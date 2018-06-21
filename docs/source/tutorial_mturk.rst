@@ -163,7 +163,7 @@ Reviewing Turker's Work
 
 You can programmatically review work using the commands available in the `MTurkManager` class. See, for example, the  `review_work function <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/personachat/personachat_collect_personas/worlds.py/>`__ in the ``personachat_collect_personas`` task. In this task, HITs are automatically approved if they are deemed completed by the world.
 
-If you don't take any action in 4 weeks, all HITs will be auto-approved and Turkers will be paid.
+If you don't take any action in 1 week, all HITs will be auto-approved and Turkers will be paid.
 
 
 ParlAI-MTurk Tips and Tricks

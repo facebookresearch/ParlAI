@@ -6,7 +6,6 @@
 
 from parlai.core.agents import Agent
 
-from torch.autograd import Variable
 import torch.nn as nn
 import torch
 import os
@@ -31,26 +30,23 @@ from .mlb_modules import MlbAtt, MlbNoAtt
     To train the model using the `PytorchDataTeacher` on VQA V1, use the
     following command:
 
-        `python examples/train_model.py -m mlb_vqa -t pytorch_teacher \
-        --pytorch-buildteacher vqa_v1 -mf <model_file> \
-        --dataset parlai.tasks.vqa_v1.agents -bs <batchsize> \
+        `python examples/train_model.py -m mlb_vqa -pytd vqa_v1  \
+        -mf <model_file> -bs <batchsize> \
         -im resnet152_spatial --image-size 448 --image-cropsize 448`
 
     Where you fill in `<model_file>` and `<batchsize>` with
     your own values; e.g.:
 
-        `python examples/train_model.py -m mlb_vqa -t pytorch_teacher \
-        --pytorch-buildteacher vqa_v1 -mf mlb \
-        --dataset parlai.tasks.vqa_v1.agents -bs 512 \
-        -im resnet152_spatial --image-size 448 --image-cropsize 448`
+        `python examples/train_model.py -m mlb_vqa -pytd vqa_v1 -mf mlb \
+        -bs 512 -im resnet152_spatial --image-size 448 --image-cropsize 448`
 
     This will also download and extract the image features on the fly.
 
     If you would like to extract the image features prior to training, run the
     following command (where `-dt` can be either 'train', 'valid', or 'test'):
-        `python examples/extract_image_feature.py -t vqa_v1 \
+        `python examples/extract_image_feature.py -pytd vqa_v1\
         -im resnet152_spatial --image-size 448 --image-cropsize 448 \
-        --dataset parlai.tasks.vqa_v1.agents -dt <datatype>`
+        -dt <datatype>`
 
     For faster training, specify '--no-metrics,' which prevents computation
     of f1 score and accuracy
@@ -197,8 +193,8 @@ class VqaDictionaryAgent(Agent):
         return {'id': 'Dictionary'}
 
     def encode_question(self, examples, training):
-        minwcount = self.opt['minwcount']
-        maxlength = self.opt['maxlength']
+        minwcount = self.opt.get('minwcount', 0)
+        maxlength = self.opt.get('maxlength', 16)
         for ex in examples:
             words = self.tokenize_mcb(ex['text'])
             if training:
@@ -213,7 +209,7 @@ class VqaDictionaryAgent(Agent):
 
     def encode_answer(self, examples):
         for ex in examples:
-            if self.opt['samplingans']:
+            if self.opt.get('samplingans', True):
                 ans_count = Counter(ex.get('labels', ex.get('eval_labels'))).most_common()
                 valid_ans = []
                 valid_count = []
@@ -279,7 +275,7 @@ class VqaDictionaryAgent(Agent):
         saving.
         """
         cw = sorted([(count,w) for w,count in self.ansfreq.items()], reverse=True)
-        final_exs = cw[:self.opt['nans']]
+        final_exs = cw[:self.opt.get('nans', 2000)]
         final_list = dict([(w,c) for c,w in final_exs])
         self.ansfreq = defaultdict(int)
         for ans,ques in self.ans2ques.items():
@@ -430,6 +426,16 @@ class MlbVqaAgent(Agent):
         # Get appropriate dims
         first_ex = batch[0][1][0]
 
+        #If we are building the dictionary
+        if 'image' not in first_ex or first_ex['image'] is None:
+            new_batch = []
+            for b in batch:
+                if type(b[1]) is list:
+                    ep = b[1][0]
+                else:
+                    ep = b[1]
+                new_batch.append(ep)
+            return new_batch
         img_var = torch.FloatTensor(first_ex['image'])
         use_att = first_ex['use_att']
         use_hdf5 = first_ex['use_hdf5']
@@ -502,7 +508,7 @@ class MlbVqaAgent(Agent):
         mc = False
         for i, ex in enumerate(observations):
             if self.use_cuda:
-                ex['image'] = ex['image'].cuda(async=True)
+                ex['image'] = ex['image'].cuda()
             if 'mc_label' in ex:
                 self.training = True
                 if ex['mc_label'][0] in self.dict.ans2ind:
@@ -553,18 +559,10 @@ class MlbVqaAgent(Agent):
 
         if self.use_cuda:
             if not self.use_data_parallel:
-                input_v = Variable(input_v.cuda(async=True))
-                input_q = Variable(input_q.cuda(async=True))
-            else:
-                input_v = Variable(input_v)
-                input_q = Variable(input_q)
+                input_v = input_v.cuda()
+                input_q = input_q.cuda()
             if not self.testing:
-                answer = Variable(answer.cuda(async=True))
-        else:
-            input_v = Variable(input_v)
-            input_q = Variable(input_q)
-            if not self.testing:
-                answer = Variable(answer)
+                answer = answer.cuda()
 
         return input_v, input_q, answer, valid_inds
 
@@ -592,13 +590,11 @@ class MlbVqaAgent(Agent):
 
         loss, predictions = self.predict(input_v, input_q, answer)
         if loss is not None:
-            batch_reply[0]['metrics'] = {'loss': loss.data[0]}
+            batch_reply[0]['metrics'] = {'loss': loss.item()}
         if not self.training or self.compute_metrics:
-            if not self.use_cuda:
-                _, predictions = predictions.data.cpu().max(1)
-            else:
-                _, predictions = predictions.data.max(1)
-            predictions.squeeze_()
+            _, predictions = predictions.max(1)
+            if predictions.size(0) > 1:
+                predictions.squeeze_(0)
             tpreds = self.dict.decode_answer(predictions.tolist())
             for i in range(len(tpreds)):
                 # map the predictions back to non-empty examples in the batch

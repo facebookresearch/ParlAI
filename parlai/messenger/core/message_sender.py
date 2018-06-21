@@ -75,12 +75,12 @@ def create_text_message(text, quick_replies=None):
     for i in range(len(tokens)):
         if tokens[i] == '[*SPLIT*]':
             if ' '.join(tokens[cutoff:i-1]).strip() != '':
-                splits.append(_message(' '.join(tokens[cutoff:i-1]), None))
+                splits.append(_message(' '.join(tokens[cutoff:i]), None))
                 cutoff = i + 1
                 curr_length = 0
         if (curr_length + len(tokens[i]) > MAX_TEXT_CHARS):
             splits.append(_message(' '.join(tokens[cutoff:i]), None))
-            cutoff = i + 1
+            cutoff = i
             curr_length = 0
         curr_length += len(tokens[i]) + 1
     if cutoff < len(tokens):

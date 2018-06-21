@@ -254,6 +254,12 @@ class DialogPartnerWorld(World):
         return self.agents[0].epoch_done()
 
     def report(self, compute_time=False):
+        def show(metric):
+            if 'all' in self.show_metrics or metric in self.show_metrics or metric=='exs':
+                return True
+            return False
+        show_metrics = self.opt.get('metrics', "all")
+        self.show_metrics = show_metrics.split(',')
         metrics = {}
         for a in self.agents:
             if hasattr(a, 'report'):
@@ -262,7 +268,8 @@ class DialogPartnerWorld(World):
                     if k not in metrics:
                         # first agent gets priority in settings values for keys
                         # this way model can't e.g. override accuracy to 100%
-                        metrics[k] = v
+                        if show(k):
+                            metrics[k] = v
         if metrics:
             if compute_time and 'exs' in metrics:
                 self.total_exs += metrics['exs']
@@ -940,9 +947,11 @@ def create_task(opt, user_agents, default_world=None):
     see ``parlai/tasks/tasks.py`` and see ``parlai/tasks/task_list.py``
     for list of tasks.
     """
-    if not opt.get('task'):
+    if not (opt.get('task') or opt.get('pytorch_teacher_task') or opt.get('pytorch_teacher_dataset')):
         raise RuntimeError('No task specified. Please select a task with ' +
                            '--task {task_name}.')
+    if not opt.get('task'):
+        opt['task'] = 'pytorch_teacher'
     if type(user_agents) != list:
         user_agents = [user_agents]
 

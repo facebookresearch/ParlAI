@@ -25,9 +25,7 @@ class TestTrainModel(unittest.TestCase):
             parser = setup_args()
             parser.set_defaults(
                 model='mlb_vqa',
-                task='pytorch_teacher',
-                pytorch_buildteacher='vqa_v1',
-                dataset='parlai.tasks.vqa_v1.agents',
+                pytorch_teacher_dataset='vqa_v1',
                 image_mode='resnet152_spatial',
                 image_size=448,
                 image_cropsize=448,

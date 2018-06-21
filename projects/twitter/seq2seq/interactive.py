@@ -4,8 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """Interact with a pre-trained model.
-Key-Value Memory Net model trained on personachat using persona 'self'
-[Note: no persona in this example code is actually given to the model.]
+This seq2seq model was trained on convai2:self.
 """
 
 from parlai.core.build_data import download_models
@@ -14,15 +13,17 @@ from parlai.scripts.interactive import interactive
 
 if __name__ == '__main__':
     parser = ParlaiParser(add_model_args=True)
-    parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.set_params(
-        model='projects.personachat.kvmemnn.kvmemnn:KvmemnnAgent',
-        model_file='models:convai2/kvmemnn/model',
-        interactive_mode=True,
+        model='seq2seq',
+        model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
+        dict_file='models:convai2/seq2seq/convai2_self_seq2seq_model.dict',
+        dict_lower=True,
     )
     opt = parser.parse_args()
-    # build all profile memory models
-    fnames = ['kvmemnn.tgz']
-    opt['model_type'] = 'kvmemnn'  # for builder
-    download_models(opt, fnames, 'convai2')
+    if opt.get('model_file', '').startswith('models:convai2'):
+        opt['model_type'] = 'seq2seq'
+        fnames = ['convai2_self_seq2seq_model.tgz',
+                  'convai2_self_seq2seq_model.dict',
+                  'convai2_self_seq2seq_model.opt']
+        download_models(opt, fnames, 'convai2', version='v3.0')
     interactive(opt)

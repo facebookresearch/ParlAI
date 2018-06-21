@@ -19,6 +19,9 @@
      Teacher class that provides access to data in the Facebook Dialog format.
      See the class description for more details.
 
+    ``ParlAIDialogTeacher(DialogTeacher)``
+     Teacher class that provides access to data in the ParlAI Dialog format.
+     See the class description for more details.
 
 This module also includes ``DataLoader``, a threadpool data loader for ``FixedDialogTeacher``,
 and ``DialogData``/``StreamDialogData``, data structures for accessing textual
@@ -29,7 +32,7 @@ dialog data and utilized by ``DialogTeacher``
 """
 from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
-from .utils import AttrDict, flatten, sort_data, make_batches, no_lock
+from .utils import AttrDict, flatten, sort_data, make_batches, no_lock, str_to_msg
 
 import concurrent.futures
 import multiprocessing
@@ -129,7 +132,7 @@ class FixedDialogTeacher(Teacher):
         if not hasattr(self, 'training'):
             self.training = self.datatype.startswith('train')
         if not hasattr(self, 'datafile'):
-            self.datafile = opt.get('datafile')
+            self.datafile = opt.get('datafile', opt.get('pytorch_datafile'))
         # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:
@@ -241,7 +244,7 @@ class FixedDialogTeacher(Teacher):
 
         if hasattr(self, 'examples'):
             shared['examples'] = self.examples
-            
+
         if self.opt.get('numthreads', 1) > 1:
             if type(self.index) is not multiprocessing.sharedctypes.Synchronized:
                 # for multithreading need to move index into threadsafe memory
@@ -294,7 +297,7 @@ class FixedDialogTeacher(Teacher):
         self.episode_done = ex.get('episode_done', False)
 
         if (not self.random and self.episode_done
-                and self.episode_idx + 1 >= self.num_episodes()):
+                and self.episode_idx + self.opt.get("batchsize", 1) >= self.num_episodes()):
             epoch_done = True
         else:
             epoch_done = False
@@ -894,7 +897,7 @@ class FbDialogTeacher(DialogTeacher):
     example and therefore the agent must remember the first example in order to
     do well.
 
-    In general dialog in this format can be any speech, not just QA pairs:
+    In general dialog in this format can contain any speech, not just QA pairs:
 
     ::
 
@@ -1084,3 +1087,86 @@ class FbDialogTeacher(DialogTeacher):
                     reward = 0
             if x:
                 yield [x, None, reward], start
+
+
+class ParlAIDialogTeacher(FixedDialogTeacher):
+    """This module provides access to data in the ParlAI Text Dialog format.
+
+
+    Subclasses ``FixedDialogTeacher`` for functionality and provides an
+    implementation of ``setup_data()`` which iterates over datasets in the
+    "ParlAI text" format. If your data is in the format below, use this class to
+    handle file parsing for you.
+
+    The way the data is set up is as follows:
+
+    ::
+
+        text:Sam went to the kitchen.\nPat gave Sam the milk.\nWhere is the milk?<TAB>labels:kitchen<TAB>reward:1<TAB>label_candidates:hallway|kitchen|bathroom
+        text:Sam went to the hallway.\nPat went to the bathroom.\nWhere is the milk?<TAB>labels:hallway<TAB>reward:1<TAB>label_candidateshallway|kitchen|bathroom<TAB>episode_done:True
+
+    Lines 1-2 represent a single episode, with a different example on each line.
+    The lines contain a query and a label for getting the question
+    correct, and three label candidates.
+
+    Since both of these examples are part of the same episode, the information
+    provided in the first example is relevant to the query in the second
+    example and therefore the agent must remember the first example in order to
+    do well.
+
+    In general dialog this format can contain any speech, not just QA pairs:
+
+    ::
+
+        text:Hi how's it going?<TAB>labels:It's going great. What's new?
+        text:Well I'm working on a new project at work.<TAB>labels:Oh me too!
+        text:Oh cool!<TAB>labels:Tell me about yours.
+
+    etc.
+
+    Note that dialogs are interpreted as being one-way. For example, consider
+    this dialog:
+
+    ::
+
+        1 X1    Y1
+        2 X2    Y2
+        3 X3    Y3
+
+    A set of examples X1 => Y1, X2 => Y2, and X3 => Y3 will be generated.
+    However, Y1 => X2 and Y2 => X3 are not created as separate examples by
+    default. This makes sense for some data (we don't need to train on the idea
+    that "kitchen" should be followed by "Sam went to the hallway..." above),
+    but for other datasets it may be helpful to add additional examples in the
+    reverse direction ("Oh cool!" is a response to "Oh me too!" above).
+    """
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        if shared is None and opt.get('parlaidialogteacher_datafile') is not None:
+            self._setup_data(opt.get('parlaidialogteacher_datafile'))
+        self.id = opt.get('parlaidialogteacher_datafile', 'teacher')
+        self.reset()
+
+    def num_examples(self):
+        return self.num_exs
+
+    def num_episodes(self):
+        return len(self.episodes)
+
+    def get(self, episode_idx, entry_idx=None):
+        return self.episodes[episode_idx][entry_idx]
+
+    def _setup_data(self, path):
+        print("[loading parlAI text data:" + path + "]")
+        self.episodes = []
+        self.num_exs = 0
+        eps = []
+        with open(path) as read:
+            for line in read:
+                msg = str_to_msg(line.rstrip('\n'))
+                if msg:
+                    self.num_exs += 1
+                    eps.append(msg)
+                    if msg.get('episode_done', True):
+                        self.episodes.append(eps)
+                        eps = []

@@ -20,7 +20,7 @@ import copy
 try:
     import torch
 except Exception as e:
-    raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
+    raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset, DataLoader, sampler
 from torch.multiprocessing import Lock, Value
 import ctypes
@@ -308,27 +308,6 @@ class StreamDataset(Dataset):
 
 class PytorchDataTeacher(FixedDialogTeacher):
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        arg_group = argparser.add_argument_group('PytorchData Arguments')
-        arg_group.add_argument('--datafile', type=str, default='',
-            help='datafile for pytorch data loader')
-        arg_group.add_argument('-nw', '--numworkers', type=int, default=4,
-            help='how many workers the Pytorch dataloader should use')
-        arg_group.add_argument('--pytorch-buildteacher', type=str, default='',
-            help='Which teacher to use when building the pytorch data')
-        arg_group.add_argument('--pytorch-preprocess', type='bool', default=False,
-            help='Whether the agent should preprocess the data while building'
-                 'the pytorch data')
-        arg_group.add_argument('--batch-sort-cache', type=str,
-            choices=['pop', 'index', 'none'], default='none',
-            help='Whether to have batches of similarly sized episodes, and how'
-            'to build up the cache')
-        arg_group.add_argument('--batch-length-range', type=int, default=5,
-            help='degree of variation of size allowed in batch')
-        arg_group.add_argument('--dataset', type=str, default='StreamDataset',
-            help='which dataset to use in dataloader')
-
     def __init__(self, opt, shared=None):
         opt['batch_sort'] = False
         super().__init__(opt, shared)
@@ -380,29 +359,53 @@ class PytorchDataTeacher(FixedDialogTeacher):
 
             For example, the VQA v1 task provides a custom dataset, which can
             be specified on the command line as follows:
-            ``--dataset parlai.tasks.vqa_v1.agents:VQADataset``
+            ``-pytd vqa_v1:VQADataset``
 
             Note that if the dataset is named ``DefaultDataset``, then you do
             not need to specify its name following the colon; e.g., it
             would just be:
-            ``--dataset parlai.tasks.vqa_v1.agents``
+            ``-pytd vqa_v1``
         """
-        dataset_name = opt.get('dataset')
-        sp = dataset_name.strip().split(':')
-        collate = default_collate
-        if opt.get('model', False):
-            agent_class = get_agent_module(opt.get('model'))
-            if hasattr(agent_class, 'collate'):
-                collate = agent_class.collate
-        if sp[0] == 'StreamDataset':
-            return StreamDataset, collate
-        module_name = sp[0]
+        dataset_name = opt.get('pytorch_teacher_dataset')
+        if not dataset_name:
+            return StreamDataset, default_collate
+        sp = dataset_name.strip()
+        repo = 'parlai'
+        if sp.startswith('internal:'):
+            # To switch to local repo, useful for non-public projects
+            # (make a directory called 'parlai_internal' with your private agents)
+            repo = 'parlai_internal'
+            sp = sp[9:]
+        sp = sp.split(':')
+        if '.' in sp[0]:
+            module_name = sp[0]
+        else:
+            dataset = sp[0].lower()
+            module_name = '{}.tasks.{}.agents'.format(repo, dataset)
         if len(sp) > 1:
+            sp[1] = sp[1][0].upper() + sp[1][1:]
             dataset = sp[1]
+            if '.' not in sp[0] and 'Dataset' not in dataset:
+                # Reformat from underscore to CamelCase and append "Dataset" to
+                # class name by default if a complete path is not given.
+                words = dataset.split('_')
+                teacher_name = ''
+                for w in words:
+                    teacher_name += (w[0].upper() + w[1:])
+                dataset = teacher_name + 'Dataset'
         else:
             dataset = 'DefaultDataset'
         my_module = importlib.import_module(module_name)
-        return getattr(my_module, dataset), collate
+        dataset_class = getattr(my_module, dataset)
+
+        collate = default_collate
+        if hasattr(dataset_class, 'collate'):
+            collate = dataset_class.collate
+        elif opt.get('model', False):
+            agent_class = get_agent_module(opt.get('model'))
+            if hasattr(agent_class, 'collate'):
+                collate = agent_class.collate
+        return dataset_class, collate
 
     def reset(self):
         """Reset the dialog so that it is at the start of the epoch,

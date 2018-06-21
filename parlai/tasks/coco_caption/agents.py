@@ -14,7 +14,7 @@ from .build_2017 import buildImage as buildImage_2017
 try:
     import torch
 except Exception as e:
-    raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
+    raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset
 from parlai.core.dict import DictionaryAgent
 
@@ -110,8 +110,8 @@ class DefaultDataset(Dataset):
             try:
                 import h5py
                 self.h5py = h5py
-            except ModuleNotFoundError:
-                raise ModuleNotFoundError('Need to install h5py - `pip install h5py`')
+            except ImportError:
+                raise ImportError('Need to install h5py - `pip install h5py`')
             self._setup_image_data()
         self.dict_agent = DictionaryAgent(opt)
 
@@ -212,13 +212,13 @@ class DefaultDataset(Dataset):
 
 
 class V2014Dataset(DefaultDataset):
-    def __init__(self, opt, shared=None):
-        super(V2014Dataset, self).__init__(opt, shared, '2014')
+    def __init__(self, opt):
+        super(V2014Dataset, self).__init__(opt, '2014')
 
 
 class V2017Dataset(DefaultDataset):
-    def __init__(self, opt, shared=None):
-        super(V2017Dataset, self).__init__(opt, shared, '2017')
+    def __init__(self, opt):
+        super(V2017Dataset, self).__init__(opt, '2017')
 
 
 class DefaultTeacher(FixedDialogTeacher):

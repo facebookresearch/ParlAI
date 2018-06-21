@@ -249,7 +249,7 @@ class Decoder(nn.Module):
                              dropout=dropout, batch_first=True)
 
         # rnn output to embedding
-        if hidden_size != emb_size:
+        if hidden_size != emb_size and numsoftmax == 1:
             # self.o2e = RandomProjection(hidden_size, emb_size)
             # other option here is to learn these weights
             self.o2e = nn.Linear(hidden_size, emb_size, bias=False)
@@ -275,7 +275,6 @@ class Decoder(nn.Module):
         if numsoftmax > 1:
             self.softmax = nn.Softmax(dim=1)
             self.prior = nn.Linear(hidden_size, numsoftmax, bias=False)
-            # self.latent = nn.Linear(emb_size, numsoftmax * hidden_size)
             self.latent = nn.Linear(hidden_size, numsoftmax * emb_size)
             self.activation = nn.Tanh()
 
@@ -306,6 +305,7 @@ class Decoder(nn.Module):
         else:
             e = self.dropout(self.o2e(output))
             scores = self.e2s(e)
+
         # select top scoring index, excluding the padding symbol (at idx zero)
         _max_score, idx = scores.narrow(2, 1, scores.size(2) - 1).max(2)
         preds = idx.add_(1)

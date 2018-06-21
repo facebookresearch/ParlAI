@@ -421,11 +421,11 @@ class PaddingUtils(object):
         else:
             parsed_x = [dictionary.txt2vec(ex['text']) for ex in exs]
 
-        if dq:
-            if not isinstance(parsed_x[0], deque):
+        if len(parsed_x) > 0 and not isinstance(parsed_x[0], deque):
+            if dq:
                 parsed_x = [deque(x, maxlen=truncate) for x in parsed_x]
-        elif truncate is not None and truncate > 0:
-            parsed_x = [x[-truncate:] for x in parsed_x]
+            elif truncate is not None and truncate > 0:
+                parsed_x = [x[-truncate:] for x in parsed_x]
 
         x_lens = [len(x) for x in parsed_x]
         ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
@@ -626,7 +626,7 @@ class OffensiveLanguageDetector(object):
         return None
 
 
-def display_messages(msgs, prettify=False,ignore_fields=''):
+def display_messages(msgs, prettify=False, ignore_fields=''):
     """Returns a string describing the set of messages provided
     If prettify is true, candidates are displayed using prettytable.
     ignore_fields provides a list of fields in the msgs which should not be displayed.
@@ -682,8 +682,8 @@ def display_messages(msgs, prettify=False,ignore_fields=''):
                 cands = [c for c in msg['text_candidates'] if c is not None]
                 try:
                     import prettytable
-                except ModuleNotFoundError:
-                    raise ModuleNotFoundError('Please install prettytable to \
+                except ImportError:
+                    raise ImportError('Please install prettytable to \
                     display text candidates: `pip install prettytable`')
                 scores = None
                 if msg.get('candidate_scores') is not None:
@@ -730,12 +730,19 @@ def display_messages(msgs, prettify=False,ignore_fields=''):
     return '\n'.join(lines)
 
 
-def str_to_msg(txt, ignore_fields=[]):
+def str_to_msg(txt, ignore_fields=''):
+    """Convert formatted string to ParlAI message dict.
+
+    :param txt: formatted string to convert. String format is tab-separated
+        fields, with colon separating field name and contents.
+    :param ignore_fields: (default '') comma-separated field names to not
+        include in the msg dict even if they're in the string.
+    """
     def tostr(txt):
         txt = str(txt)
         txt = txt.replace('\\t', '\t')
         txt = txt.replace('\\n', '\n')
-        txt = txt.replace('\PIPE', '|')
+        txt = txt.replace('__PIPE__', '|')
         return txt
 
     def tolist(txt):
@@ -755,29 +762,37 @@ def str_to_msg(txt, ignore_fields=[]):
         else:
             return tostr(value)
 
-    if txt == '' or txt == None:
+    if txt == '' or txt is None:
         return None
+
     msg = {}
     for t in txt.split('\t'):
         ind = t.find(':')
         key = t[:ind]
         value = t[ind+1:]
-        if key not in ignore_fields:
+        if key not in ignore_fields.split(','):
             msg[key] = convert(key, value)
     return msg
 
-def msg_to_str(msg, ignore_fields=[]):
+
+def msg_to_str(msg, ignore_fields=''):
+    """Convert ParlAI message dict to string.
+
+    :param msg: dict to convert into a string.
+    :param ignore_fields: (default '') comma-separated field names to not
+        include in the string even if they're in the msg dict.
+    """
     def filter(txt):
         txt = str(txt)
         txt = txt.replace('\t', '\\t')
         txt = txt.replace('\n', '\\n')
-        txt = txt.replace('|', '\PIPE')
+        txt = txt.replace('|', '__PIPE__')
         return txt
 
     def add_field(name, data):
         if name == 'reward' and data == 0:
             return ''
-        if name == 'episode_done' and data == False:
+        if name == 'episode_done' and data is False:
             return ''
         txt = ''
         if type(data) == tuple or type(data) == set or type(data) == list:
@@ -790,8 +805,10 @@ def msg_to_str(msg, ignore_fields=[]):
             txt = filter(data)
         return name + ":" + txt + '\t'
 
-    default_fields = ['id', 'text', 'labels', 'label_candidates', 'episode_done', 'reward']
+    default_fields = ['id', 'text', 'labels', 'label_candidates',
+                      'episode_done', 'reward']
     txt = ""
+    ignore_fields = ignore_fields.split(',')
     for f in default_fields:
         if f in msg and f not in ignore_fields:
             txt += add_field(f, msg[f])

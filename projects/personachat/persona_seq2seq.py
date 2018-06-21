@@ -18,10 +18,8 @@ import pickle
 import copy
 import random
 import re
-import argparse
 import time
 import math
-import numpy as np
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -35,46 +33,32 @@ import torch.nn.functional as F
 import torch
 try:
     import torchtext.vocab as vocab
-except ModuleNotFoundError:
-    raise ModuleNotFoundError('Please `pip install torchtext`')
+except ImportError:
+    raise ImportError('Please `pip install torchtext`')
 
-from parlai.core.params import ParlaiParser
-ParlaiParser()  # instantiate to set PARLAI_HOME environment var
-
-
-Glove = vocab.GloVe(
-    name='840B',
-    dim=300,
-    cache=os.path.join(
-        os.environ['PARLAI_HOME'],
-        'data',
-        'models',
-        'glove_vectors'
-    )
-)
-
-
-import operator
 cos = torch.nn.CosineSimilarity(dim=0, eps=1e-6)
 
+from parlai.core.params import ParlaiParser
+ParlaiParser()  # instantiate unused parser to set PARLAI_HOME
 
 stopwords_customized = []
 with open(os.path.join(os.environ['PARLAI_HOME'], 'projects', 'personachat', 'stopwords.txt'), 'r') as handle:
     stopwords_customized = []
     for line in handle:
         if line == '\n':
-           pass
+            pass
         else:
-           stopwords_customized.append(line.replace('\n', ''))
+            stopwords_customized.append(line.replace('\n', ''))
 
 try:
     from stop_words import get_stop_words
-except ModuleNotFoundError:
-    raise ModuleNotFoundError('Please `pip install stop-words`')
+except ImportError:
+    raise ImportError('Please `pip install stop-words`')
 
 STOP_WORDS = get_stop_words('en') + [',', '.', '!', '?']
 STOP_WORDS.remove('not')
 STOP_WORDS = STOP_WORDS + stopwords_customized
+
 
 def tokenize(self, sent):
     words = [w.lower() for w in re.findall(r"[\w']+|[.,!?;:\']", sent)]
@@ -191,10 +175,11 @@ class Seq2seqAgent(Agent):
 
             self.dict = DictionaryAgent(opt)
 
+            states = None
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
                 print('Loading existing model params from ' + opt['model_file'])
-                new_opt, self.states = self.load(opt['model_file'])
+                new_opt, states = self.load(opt['model_file'])
                 # override options with stored ones
                 opt = self.override_opt(new_opt)
 
@@ -248,9 +233,23 @@ class Seq2seqAgent(Agent):
                                    padding_idx=self.NULL_IDX,
                                    scale_grad_by_freq=False)
             self.lt.weight[1:].data.normal_(0, 0.1)
-            for w in self.dict.freq:
-                if w in Glove.stoi:
-                    self.lt.weight.data[self.dict[w]] = Glove.vectors[Glove.stoi[w]]
+
+            if not states:
+                # initializing model from scratch, load glove vectors
+                Glove = vocab.GloVe(
+                    name='840B',
+                    dim=300,
+                    cache=os.path.join(
+                        os.environ['PARLAI_HOME'],
+                        'data',
+                        'models',
+                        'glove_vectors'
+                    )
+                )
+                for w in self.dict.freq:
+                    if w in Glove.stoi:
+                        self.lt.weight.data[self.dict[w]] = Glove.vectors[Glove.stoi[w]]
+
             # encoder captures the input text
             enc_class = Seq2seqAgent.ENC_OPTS[opt['encoder']]
             self.encoder = enc_class(emb, hsz, opt['numlayers'], dropout=self.dropout)
@@ -308,9 +307,9 @@ class Seq2seqAgent(Agent):
                 if hasattr(self, attn_name):
                     self.optims[attn_name] = optim_class(getattr(self, attn_name).parameters(), lr=lr)
 
-            if hasattr(self, 'states'):
+            if states:
                 # set loaded states if applicable
-                self.set_states(self.states)
+                self.set_states(states)
 
             if self.use_cuda:
                 self.cuda()
@@ -1174,11 +1173,12 @@ class PersonachatSeqseqAgentSplit(Agent):
 
             self.dict = DictionaryAgent(opt)
 
+            states = None
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # load model parameters if available
                 opt['model_file'] = opt['model_file']
                 print('Loading existing model params from ' + opt['model_file'])
-                new_opt, self.states = self.load(opt['model_file'])
+                new_opt, states = self.load(opt['model_file'])
                 # override options with stored ones
                 opt = self.override_opt(new_opt)
                 self.usepreviousdialog = opt['personachat_useprevdialog']
@@ -1245,18 +1245,12 @@ class PersonachatSeqseqAgentSplit(Agent):
                                    padding_idx=self.NULL_IDX,
                                    scale_grad_by_freq=False)
             self.lt.weight[1:].data.normal_(0, 0.1)
-            for w in self.dict.freq:
-                if w in Glove.stoi:
-                    self.lt.weight.data[self.dict[w]] = Glove.vectors[Glove.stoi[w]]
 
             # lookup table for persona embedding
             self.lt_per = nn.Embedding(len(self.dict), emb,
                                        padding_idx=self.NULL_IDX,
                                        scale_grad_by_freq=False)
             self.lt_per.weight[1:].data.uniform_(0, 1)
-            for w in self.dict.freq:
-                if w in Glove.stoi:
-                    self.lt_per.weight.data[self.dict[w]] = Glove.vectors[Glove.stoi[w]]
             if self.sharelt:
                 self.lt_per.weight = self.lt.weight
 
@@ -1266,30 +1260,54 @@ class PersonachatSeqseqAgentSplit(Agent):
                                            padding_idx=self.NULL_IDX,
                                            scale_grad_by_freq=False)
                 self.lt_enc.weight[1:].data.uniform_(0, 1)
-                for w in self.dict.freq:
-                    if w in Glove.stoi:
-                        self.lt_enc.weight.data[self.dict[w]] = Glove.vectors[Glove.stoi[w]]
-
-            self.lt_meta = copy.deepcopy(self.lt_per)
-            self.lt_meta.weight.requires_grad = False
-
-            #lookup table for reweight
-            self.lt_reweight = nn.Embedding(len(self.dict), 1,
-                                            padding_idx=self.NULL_IDX,
-                                            scale_grad_by_freq=False)
-            for w in self.dict.freq:
-                self.lt_reweight.weight.data[self.dict[w]] = self.f_word(w)
-
-            self.lt_reweight_meta = copy.deepcopy(self.lt_reweight)
-            self.lt_reweight_meta.weight.requires_grad = False
 
             #lookup table for rescale perplexity
             self.lt_rescaleperp = nn.Embedding(len(self.dict), 1,
                                                padding_idx=self.NULL_IDX,
                                                scale_grad_by_freq=False)
-            for w in self.dict.freq:
-                self.lt_rescaleperp.weight.data[self.dict[w]] = self.f_word_2(w, usetop=True, th=3000)
 
+            #lookup table for reweight
+            self.lt_reweight = nn.Embedding(len(self.dict), 1,
+                                            padding_idx=self.NULL_IDX,
+                                            scale_grad_by_freq=False)
+
+            if not states:
+                # initializing model from scratch, load glove vectors
+                Glove = vocab.GloVe(
+                    name='840B',
+                    dim=300,
+                    cache=os.path.join(
+                        os.environ['PARLAI_HOME'],
+                        'data',
+                        'models',
+                        'glove_vectors'
+                    )
+                )
+                for w in self.dict.freq:
+                    if w in Glove.stoi:
+                        self.lt.weight.data[self.dict[w]] = Glove.vectors[Glove.stoi[w]]
+
+                if not self.sharelt:
+                    for w in self.dict.freq:
+                        if w in Glove.stoi:
+                            self.lt_per.weight.data[self.dict[w]] = Glove.vectors[Glove.stoi[w]]
+
+                if self.embshareonly_pm_dec:
+                    for w in self.dict.freq:
+                        if w in Glove.stoi:
+                            self.lt_enc.weight.data[self.dict[w]] = Glove.vectors[Glove.stoi[w]]
+
+                for w in self.dict.freq:
+                    self.lt_reweight.weight.data[self.dict[w]] = self.f_word(Glove, w)
+
+                for w in self.dict.freq:
+                    self.lt_rescaleperp.weight.data[self.dict[w]] = self.f_word_2(Glove, w, usetop=True, th=3000)
+
+            self.lt_meta = copy.deepcopy(self.lt_per)
+            self.lt_meta.weight.requires_grad = False
+
+            self.lt_reweight_meta = copy.deepcopy(self.lt_reweight)
+            self.lt_reweight_meta.weight.requires_grad = False
 
             # encoder captures the input text
             enc_class = Seq2seqAgent.ENC_OPTS[opt['encoder']]
@@ -1372,9 +1390,9 @@ class PersonachatSeqseqAgentSplit(Agent):
                 if hasattr(self, attn_name):
                     self.optims[attn_name] = optim_class(getattr(self, attn_name).parameters(), lr=lr)
 
-            if hasattr(self, 'states'):
+            if states:
                 # set loaded states if applicable
-                self.set_states(self.states)
+                self.set_states(states)
 
             if self.s2sinit and self.sharelt:
                 with open('s2s_opt.pkl', 'rb') as handle:
@@ -1520,7 +1538,7 @@ class PersonachatSeqseqAgentSplit(Agent):
         shared['dictionary'] = self.dict
         return shared
 
-    def f_word(self, word, ifvector=True):
+    def f_word(self, Glove, word, ifvector=True):
         stop_words = STOP_WORDS + ['__END__', '__NULL__', '__START__', '__UNK__']
         w = word
         if w in stop_words:
@@ -1533,7 +1551,7 @@ class PersonachatSeqseqAgentSplit(Agent):
         value = 1.0 / (1.0 + math.log(1.0 + f_w))
         return value
 
-    def f_word_2(self, word, usetop=True, th=500):
+    def f_word_2(self, Glove, word, usetop=True, th=500):
         stop_words = ['__END__', '__NULL__', '__START__', '__UNK__']
         w = word
         if w in stop_words:

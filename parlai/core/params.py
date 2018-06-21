@@ -11,7 +11,7 @@ import argparse
 import importlib
 import os
 import pickle
-import sys
+import sys as _sys
 import datetime
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.tasks.tasks import ids_to_tasks
@@ -61,6 +61,23 @@ def class2str(value):
     s = ':'.join(s.rsplit('.', 1))  # replace last period with ':'
     return s
 
+def fix_underscores(args):
+    """Converts underscores to hyphens in args.
+
+    For example, converts '--gradient_clip' to '--gradient-clip'.
+
+    :param args: iterable, possibly containing args strings with underscores.
+    """
+    if args:
+        new_args = []
+        for a in args:
+            if type(a) is str and a.startswith('-'):
+                a = a.replace('_', '-')
+            new_args.append(a)
+        args = new_args
+    return args
+
+
 class ParlaiParser(argparse.ArgumentParser):
     """Pseudo-extension of ``argparse`` which sets a number of parameters
     for the ParlAI framework. More options can be added specific to other
@@ -88,7 +105,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.add_arg = self.add_argument
 
         # remember which args were specified on the command line
-        self.cli_args = sys.argv
+        self.cli_args = _sys.argv[1:]
         self.overridable = {}
 
         if add_parlai_args:
@@ -150,14 +167,14 @@ class ParlaiParser(argparse.ArgumentParser):
                  'the level the more that gets logged. values are 0-50')
         mturk.add_argument(
             '--disconnect-qualification', dest='disconnect_qualification',
-            default='',
+            default=None,
             help='Qualification to use for soft blocking users for '
                  'disconnects. By default '
                  'turkers are never blocked, though setting this will allow '
                  'you to filter out turkers that have disconnected too many '
                  'times on previous HITs where this qualification was set.')
         mturk.add_argument(
-            '--block-qualification', dest='block_qualification', default='',
+            '--block-qualification', dest='block_qualification', default=None,
             help='Qualification to use for soft blocking users. This '
                  'qualification is granted whenever soft_block_worker is '
                  'called, and can thus be used to filter workers out from a '
@@ -197,7 +214,7 @@ class ParlaiParser(argparse.ArgumentParser):
                  'to work on this assignment'
         )
         mturk.add_argument(
-            '--max-time-qual', dest='max_time_qual', default='',
+            '--max-time-qual', dest='max_time_qual', default=None,
             help='Qualification to use to share the maximum time requirement '
                  'with other runs from other machines.'
         )
@@ -239,6 +256,16 @@ class ParlaiParser(argparse.ArgumentParser):
         parlai.add_argument(
             '-t', '--task',
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
+        parlai.add_argument(
+            '-pyt', '--pytorch-teacher-task',
+            help='Specify to use the PytorchDataTeacher for multiprocessed '
+                 'data loading with a standard ParlAI task, e.g. "babi:Task1k"'
+        )
+        parlai.add_argument(
+            '-pytd', '--pytorch-teacher-dataset',
+            help='Specify to use the PytorchDataTeacher for multiprocessed '
+                 'data loading with a pytorch Dataset, e.g. "vqa_1" or "flickr30k"'
+        )
         parlai.add_argument(
             '--download-path', default=default_downloads_path,
             help='path for non-data dependencies to store any needed files.'
@@ -288,6 +315,25 @@ class ParlaiParser(argparse.ArgumentParser):
                            help='Specifies whether or not to include labels '
                                 'as past utterances when building flattened '
                                 'batches of data in multi-example episodes.')
+        pytorch = self.add_argument_group('PytorchData Arguments')
+        pytorch.add_argument(
+            '--pytorch-datafile', type=str, default='',
+            help='datafile for pytorch data loader')
+        pytorch.add_argument(
+            '-nw', '--numworkers', type=int, default=4,
+            help='how many workers the Pytorch dataloader should use')
+        pytorch.add_argument(
+            '--pytorch-preprocess', type='bool', default=False,
+            help='Whether the agent should preprocess the data while building'
+                 'the pytorch data')
+        pytorch.add_argument(
+            '--batch-sort-cache', type=str,
+            choices=['pop', 'index', 'none'], default='none',
+            help='Whether to have batches of similarly sized episodes, and how'
+            'to build up the cache')
+        pytorch.add_argument(
+            '--batch-length-range', type=int, default=5,
+            help='degree of variation of size allowed in batch')
         self.add_parlai_data_path(parlai)
 
     def add_model_args(self):
@@ -379,9 +425,13 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def parse_known_args(self, args=None, namespace=None, nohelp=False):
         """Custom parse known args to ignore help flag."""
+        if args is None:
+            # args default to the system args
+            args = _sys.argv[1:]
+        args = fix_underscores(args)
+
         if nohelp:
             # ignore help
-            args = sys.argv[1:] if args is None else args
             args = [a for a in args if a != '-h' and a != '--help']
         return super().parse_known_args(args, namespace)
 
@@ -480,3 +530,13 @@ class ParlaiParser(argparse.ArgumentParser):
         self.set_defaults(**kwargs)
         for k, v in kwargs.items():
             self.overridable[k] = v
+
+    def add_argument(self, *args, **kwargs):
+        """Override to convert underscores to hyphens for consistency."""
+        return super().add_argument(*fix_underscores(args), **kwargs)
+
+    def add_argument_group(self, *args, **kwargs):
+        """Override to make arg groups also convert underscores to hyphens."""
+        arg_group = super().add_argument_group(*args, **kwargs)
+        arg_group.add_argument = self.add_argument  # override _ => -
+        return arg_group
