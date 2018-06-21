@@ -96,12 +96,14 @@ class ContrastiveLoss(nn.Module):
             mask = mask.cuda()
         cost_cap = cost_cap.masked_fill(mask, 0)
         cost_im = cost_im.masked_fill(mask, 0)
-
-        sorted_ranks = np.flip(np.argsort(scores.numpy()), 1)
-        top1 = sorted[:,0]
+        if self.use_cuda:
+            sorted_ranks = np.flip(np.argsort(scores.detach().cpu().numpy()), 1)
+        else:
+            sorted_ranks = np.flip(np.argsort(scores.detach().numpy()), 1)
+        top1 = sorted_ranks[:,0]
         ranks = []
         for idx in range(im.shape[0]):
-            ranks.append(np.where(sorted[idx,:]==(idx + offset))[0][0])
+            ranks.append(np.where(sorted_ranks[idx,:]==(idx + offset))[0][0])
 
         return cost_cap.sum() + cost_im.sum(), ranks, top1
 
@@ -211,7 +213,7 @@ class EncoderText(nn.Module):
 
         # Reshape *final* output to (batch_size, hidden_size)
         padded = pad_packed_sequence(out, batch_first=True)
-        I = torch.LongTensor(lengths).view(-1, 1, 1)
+        I = lengths.view(-1, 1, 1)
         I = I.expand(x.size(0), 1, self.embed_size) - 1
         if self.use_cuda:
             I = I.cuda()

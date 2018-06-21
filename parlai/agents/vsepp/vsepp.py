@@ -55,7 +55,7 @@ class VseppAgent(TorchAgent):
         #                    help='number of layers in lstm')
         # agent.add_argument('--max_pred_length', type=int, default=20,
         #                    help='maximum length of predicted caption in eval mode')
-        agent.add_argument('-lr', '--learning_rate', type=float, default=0.001,
+        agent.add_argument('-lr', '--learning_rate', type=float, default=0.0002,
                            help='learning rate')
         # agent.add_argument('-opt', '--optimizer', default='adam',
         #                    choices=['sgd', 'adam'],
@@ -154,14 +154,16 @@ class VseppAgent(TorchAgent):
         cand_lens = [c.shape[0] for c in candidate_vecs]
         ind_sorted = sorted(range(len(cand_lens)), key=lambda k: -cand_lens[k])
         truth_idx = ind_sorted.index(0)
-
+        # import pdb; pdb.set_trace()
         cand_vecs = [candidate_vecs[k] for k in ind_sorted]
         cands = [candidates[k] for k in ind_sorted]
         cand_lens = [cand_lens[k] for k in ind_sorted]
+        cand_lens = torch.LongTensor(cand_lens)
 
         padded_cands = torch.LongTensor(len(cands),
                                      max(cand_lens)).fill_(self.NULL_IDX)
         if self.use_cuda:
+            cand_lens = cand_lens.cuda()
             padded_cands = padded_cands.cuda()
 
         for i, cand in enumerate(cand_vecs):
@@ -196,8 +198,8 @@ class VseppAgent(TorchAgent):
         xs, x_lens, _, labels, valid_inds = self.map_valid(vec_obs)
 
 
-        images = [self.transform(observations[idx]['image'])
-                  for idx in valid_inds]
+        images = torch.stack([self.transform(observations[idx]['image'])
+                              for idx in valid_inds])
         if self.use_cuda:
             images = images.cuda(async=True)
 
@@ -213,24 +215,25 @@ class VseppAgent(TorchAgent):
             for score_idx in top1:
                 predictions.append(labels[score_idx])
 
-            unmap_pred = self.unmap_valid(top1, valid_inds, batch_size)
+            # unmap_pred = self.unmap_valid(top1, valid_inds, batch_size)
         else:
             # NEed some way to determine if we are on test
             # Need to collate then sort the captions by length
-            cands = [candidate_helper(vec_obs[idx]['candidate_labels_vec'],
-                                      vec_obs[idx]['candidate_labels'])
+            cands = [self.candidate_helper(vec_obs[idx]['candidate_labels_vec'],
+                                           vec_obs[idx]['candidate_labels'])
                      for idx in valid_inds]
             _, top1 = self.predict(images, None, None, cands, is_training)
-
             predictions = []
             for i, score_idx in enumerate(top1):
                 predictions.append(cands[i][1][score_idx])
 
-        unmap_pred = self.unmap_valid(top1, valid_inds, batch_size)
+        unmap_pred = self.unmap_valid(predictions, valid_inds, batch_size)
 
         for rep, pred in zip(batch_reply, unmap_pred):
             if pred is not None:
                 rep['text'] = pred
+        # print(batch_reply)
+        return batch_reply
 
 
     def predict(self, xs, ys=None, y_lens=None, cands=None, is_training=False):
@@ -256,9 +259,9 @@ class VseppAgent(TorchAgent):
                 _, embs = self.model(None, cap, lens)
                 # Now we can compare the
                 offset = truth_idx if truth_idx is not None else 0
-                _, rank, top = self.criterion(img_embs[i, :], embs, offset)
-                ranks.append(rank)
-                top1.append(top)
+                _, rank, top = self.criterion(img_embs[i, :].unsqueeze(0), embs, offset)
+                ranks += rank
+                top1 += top
             self.metrics['r@'] += ranks
 
         return loss, top1
@@ -267,8 +270,8 @@ class VseppAgent(TorchAgent):
         m = {}
         m['loss'] = self.metrics['loss']
         ranks = np.asarray(self.metrics['r@'])
-        m['r@1'] = len(np.where(ranks < 2)[0]) / len(ranks)*1.0
-        m['r@5'] = len(np.where(ranks < 6)[0]) / len(ranks)*1.0
+        m['r@1'] = len(np.where(ranks < 1)[0]) / len(ranks)*1.0
+        m['r@5'] = len(np.where(ranks < 5)[0]) / len(ranks)*1.0
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)
