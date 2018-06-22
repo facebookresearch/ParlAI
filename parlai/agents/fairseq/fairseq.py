@@ -58,8 +58,11 @@ def _fairseq_opt_wrapper(opt):
         if opt[key] is not None:
             setattr(args, key, opt[key])
 
+    # at this point the user *must* have specified an arch
+    if not hasattr(args, "arch"):
+        raise ValueError("--arch/-a must be specified")
     # fill in default options from the model
-    models.ARCH_CONFIG_REGISTRY[opt["arch"]](args)
+    models.ARCH_CONFIG_REGISTRY[args.arch](args)
 
     # post processing of args. See
     # https://github.com/pytorch/fairseq/blob/v0.5.0/fairseq/options.py#L95
@@ -176,10 +179,16 @@ class FairseqAgent(TorchAgent):
 
         # We need to find out the fairseq model-specific options, so grab the
         # architecture stuff and look up its options
-        # TODO: find a way to make --arch optional here
-        options.add_model_args(argparser)
+        arch_group = options.add_model_args(argparser)
+        # Fairseq marks the arch flag as required, but it may be specified
+        # by a saved model cache, so we do some weird stuff to undo that
+        for a in arch_group._actions:
+            if a.dest == "arch":
+                a.required = False
+                a.default = None
+                break
         known_args = argparser.parse_known_args(nohelp=True)[0]
-        if hasattr(known_args, "arch"):
+        if hasattr(known_args, "arch") and known_args.arch is not None:
             arch = known_args.arch
             arch_group = argparser.add_argument_group(
                 "{} architecture arguments".format(arch)
