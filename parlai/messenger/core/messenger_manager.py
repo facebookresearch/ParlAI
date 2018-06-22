@@ -618,9 +618,10 @@ class MessengerManager():
         return self.message_sender.send_fb_message(receiver_id, text, True,
                                                    quick_replies=quick_replies)
 
-    def observe_payload(self, receiver_id, data):
+    def observe_payload(self, receiver_id, data, quick_replies=None):
         """Send a payload through the message manager"""
-        return self.message_sender.send_fb_payload(receiver_id, data)
+        return self.message_sender.send_fb_payload(receiver_id, data,
+                                                   quick_replies=None)
 
     def upload_attachment(self, payload):
         """Uploads an attachment and returns an attachment ID
