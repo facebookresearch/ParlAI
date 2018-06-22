@@ -176,6 +176,7 @@ class FairseqAgent(TorchAgent):
 
         # We need to find out the fairseq model-specific options, so grab the
         # architecture stuff and look up its options
+        # TODO: find a way to make --arch optional here
         options.add_model_args(argparser)
         known_args = argparser.parse_known_args(nohelp=True)[0]
         if hasattr(known_args, "arch"):
@@ -291,7 +292,8 @@ class FairseqAgent(TorchAgent):
         self.is_training = any(["labels" in obs for obs in observations])
         vec_obs = [self.vectorize(obs) for obs in observations]
         xs, _, ys, _, valid_inds = self.map_valid(vec_obs)
-        if xs is None:
+        if xs is None or ys is None:
+            print("WARNING: skipping this batch")
             return batch_reply
 
         # here begins fairseq specific stuff
@@ -338,13 +340,15 @@ class FairseqAgent(TorchAgent):
 
         # These are the metrics we'll pass up the way, and their new names
         train_metrics = {"train_loss", "ups", "wps", "gnorm", "clip"}
-        valid_metrics = {"valid_loss", "wps"}
+        valid_metrics = {"valid_loss"}
 
         metrics = train_metrics if self.is_training else valid_metrics
 
         output = {k: self.trainer.meters[k].avg for k in metrics}
 
-        # additionally output perplexity
+        # additionally output perplexity. note that fairseq models use base 2
+        # in cross_entropy:
+        # github.com/pytorch/fairseq/blob/master/fairseq/criterions/cross_entropy.py#L55
         if "train_loss" in output:
             output["train_ppl"] = np.exp2(output["train_loss"])
         if "valid_loss" in output:
