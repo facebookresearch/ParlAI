@@ -278,6 +278,13 @@ class FairseqAgent(TorchAgent):
         old_options = self.trainer.load_checkpoint(path)
         self._check_opts_unchanged(old_options, self.opt)
 
+    def shutdown(self):
+        if not hasattr(self, 'trainer'):
+            # looks like this is a "fake" model that isn't actually used for batch_act.
+            # we don't need to save this one.
+            return
+        super().shutdown()
+
     def reset(self):
         """Reset observation and episode_done."""
         super().reset()
