@@ -17,7 +17,7 @@ import math
 
 re_art = re.compile(r'\b(a|an|the)\b')
 re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
-def _normalize_answer(s):
+def normalize_answer(s):
     """Lower text and remove punctuation, articles and extra whitespace."""
     def remove_articles(text):
         return re_art.sub(' ', text)
@@ -38,9 +38,9 @@ def _exact_match(guess, answers):
     """Check if guess is a (normalized) exact match with any answer."""
     if guess is None or answers is None:
         return False
-    guess = _normalize_answer(guess)
+    guess = normalize_answer(guess)
     for a in answers:
-        if guess == _normalize_answer(a):
+        if guess == normalize_answer(a):
             return True
     return False
 
@@ -59,8 +59,8 @@ def _f1_score(guess, answers):
 
     if guess is None or answers is None:
         return 0
-    g_tokens = _normalize_answer(guess).split()
-    scores = [_score(g_tokens, _normalize_answer(a).split()) for a in answers]
+    g_tokens = normalize_answer(guess).split()
+    scores = [_score(g_tokens, normalize_answer(a).split()) for a in answers]
     return max(scores)
 
 
@@ -172,12 +172,12 @@ class Metrics(object):
             # Now loop through text candidates, assuming they are sorted.
             # If any of them is a label then score a point.
             # maintain hits@1, 5, 10, 50, 100,  etc.
-            label_set = set(_normalize_answer(l) for l in labels)
+            label_set = set(normalize_answer(l) for l in labels)
             cnts = {k: 0 for k in self.eval_pr}
             cnt = 0
             for c in text_cands:
                 cnt += 1
-                if _normalize_answer(c) in label_set:
+                if normalize_answer(c) in label_set:
                     for k in self.eval_pr:
                         if cnt <= k:
                             cnts[k] += 1

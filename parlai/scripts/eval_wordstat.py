@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
@@ -29,6 +30,7 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
+from parlai.core.metrics import normalize_answer
 from collections import Counter
 
 import copy
@@ -47,6 +49,10 @@ def setup_args(parser=None):
                         help='External dictionary for stat computation')
     parser.add_argument('-fb', '--freq-bins', type=str, default='0,100,1000,10000',
                         help='Bins boundaries for rare words stat')
+    parser.add_argument('-dup', '--dump-predictions-path', type=str, default=None,
+                        help='Dump predictions into file')
+    parser.add_argument('-cun', '--compute-unique', type=bool, default=True,
+                        help='Compute % of unique responses from the model')
     parser.set_defaults(datatype='valid')
     return parser
 
@@ -112,11 +118,13 @@ def eval_wordstat(opt, print_parser=None):
     freqs_cnt = Counter()
     word_cnt = 0
     bins = [int(i) for i in opt['freq_bins'].split(',')]
+    pred_list = []
 
     while not world.epoch_done():
         cnt += 1
         world.parley()
         prediction = world.acts[-1]['text']
+        pred_list.append(normalize_answer(prediction))
         freqs, _cnt, wlength, clength = get_word_stats(prediction, dictionary, bins=bins)
         word_cnt += _cnt
 
@@ -138,6 +146,22 @@ def eval_wordstat(opt, print_parser=None):
             break
     if world.epoch_done():
         print("EPOCH DONE")
+
+    if opt['compute_unique'] is True:
+        unique_list = []
+        cntr = Counter(pred_list)
+        for k,v in cntr.items():
+            if v == 1:
+                unique_list.append(k)
+        print("Unique responses: {:.{prec}f}%".format(len(unique_list) / len(pred_list) * 100, prec=2))
+
+    if opt['dump_predictions_path'] is not None:
+        with open(opt['dump_predictions_path'], 'w') as f:
+            f.writelines(['{}\n'.format(i) for i in pred_list])
+        if opt['compute_unique'] is True:
+            with open(opt['dump_predictions_path']+'_unique', 'w') as f:
+                f.writelines(['{}\n'.format(i) for i in unique_list])
+
     report = world.report()
     print(report)
     return report
