@@ -322,6 +322,10 @@ class TorchAgent(Agent):
         Override this method for more specific loading.
         """
         states = torch.load(path, map_location=lambda cpu, _: cpu)
+        if 'model' in states:
+            self.model.load_state_dict(states['model'])
+        if 'optimizer' in states:
+            self.optimizer.load_state_dict(states['optimizer'])
         return states
 
     def shutdown(self):
