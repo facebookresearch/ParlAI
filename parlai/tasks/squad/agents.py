@@ -235,7 +235,28 @@ class SentenceTeacher(DefaultTeacher):
                     question = qa['question']
                     answers = [a['text'] for a in qa['answers']]
                     context = paragraph['context']
-                    sentences = self.sent_tok.tokenize(context)
+                    # temporarily remove '.', '?', '!' from answers for proper
+                    # sentence tokenization
+                    edited_answers = []
+                    for answer in answers:
+                        new_answer = answer.replace(
+                            '.', '').replace('?', '').replace('!', '')
+                        context = context.replace(answer, new_answer)
+                        edited_answers.append(new_answer)
+
+                    edited_sentences = self.sent_tok.tokenize(context)
+                    sentences = []
+
+                    for sentence in edited_sentences:
+                        for i in range(len(edited_answers)):
+                            sentence = sentence.replace(edited_answers[i],
+                                                        answers[i])
+                            sentences.append(sentence)
+
+                    for i in range(len(edited_answers)):
+                        context = context.replace(edited_answers[i],
+                                                  answers[i])
+
                     labels = []
                     for sentence in sentences:
                         for answer in answers:
@@ -274,8 +295,28 @@ class SentenceIndexTeacher(IndexTeacher):
         qa = paragraph['qas'][qa_idx]
         context = paragraph['context']
         question = qa['question']
-        sentences = self.sent_tok.tokenize(context)
+
         answers = [a['text'] for a in qa['answers']]
+
+        # temporarily remove '.', '?', '!' from answers for proper sentence
+        # tokenization
+        edited_answers = []
+        for answer in answers:
+            new_answer = answer.replace(
+                '.', '').replace('?', '').replace('!', '')
+            context = context.replace(answer, new_answer)
+            edited_answers.append(new_answer)
+
+        edited_sentences = self.sent_tok.tokenize(context)
+        sentences = []
+
+        for sentence in edited_sentences:
+            for i in range(len(edited_answers)):
+                sentence = sentence.replace(edited_answers[i], answers[i])
+                sentences.append(sentence)
+
+        for i in range(len(edited_answers)):
+            context = context.replace(edited_answers[i], answers[i])
 
         labels = []
         label_starts = []
