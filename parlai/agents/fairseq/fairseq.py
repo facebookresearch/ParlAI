@@ -196,7 +196,10 @@ class FairseqAgent(TorchAgent):
             models.ARCH_MODEL_REGISTRY[arch].add_args(arch_group)
 
         # Override a few defaults from within fairseq to more sensible defaults
-        argparser.set_defaults(clip_norm=0.1)
+        argparser.set_defaults(
+            clip_norm=0.1,
+            adam_betas="(0.9,0.98)"
+        )
 
     def __init__(self, opt, shared=None):
         # In general use a basic TorchAgent wherever possible
