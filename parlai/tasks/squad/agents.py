@@ -260,7 +260,7 @@ class SentenceTeacher(DefaultTeacher):
                     labels = []
                     for sentence in sentences:
                         for answer in answers:
-                            if answer in sentence:
+                            if answer in sentence and sentence not in labels:
                                 labels.append(sentence)
                                 break
                     yield (
@@ -322,7 +322,7 @@ class SentenceIndexTeacher(IndexTeacher):
         label_starts = []
         for sentence in sentences:
             for answer in answers:
-                if answer in sentence:
+                if answer in sentence and sentence not in labels:
                     labels.append(sentence)
                     label_starts.append(context.index(sentence))
                     break
