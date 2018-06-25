@@ -277,6 +277,8 @@ class FairseqAgent(TorchAgent):
 
     def save(self, path):
         """Save using fairseq's checkpointing."""
+        if not path:
+            return
         self.trainer.save_checkpoint(path, {'opt': self.opt, 'epoch': 0})
         # Parlai expects options to also be saved
         with open(path + ".opt", 'wb') as handle:
