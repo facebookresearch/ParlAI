@@ -35,6 +35,7 @@ class MessengerAgent(Agent):
             resp = self.manager.observe_payload(
                 self.id,
                 act['payload'],
+                act.get('quick_replies', None),
             )
         else:
             if act['id'] != '':
@@ -43,7 +44,7 @@ class MessengerAgent(Agent):
                 msg = act['text']
             resp = self.manager.observe_message(
                 self.id, msg,
-                act.get('quick_replies', None)
+                act.get('quick_replies', None),
             )
         try:
             mid = resp[0]['message_id']
