@@ -329,8 +329,7 @@ class FairseqAgent(TorchAgent):
         self.is_training = any(["labels" in obs for obs in observations])
         vec_obs = [self.vectorize(obs) for obs in observations]
         xs, _, ys, _, valid_inds = self.map_valid(vec_obs)
-        if xs is None or ys is None:
-            print("WARNING: skipping this batch")
+        if xs is None:
             return batch_reply
 
         # here begins fairseq specific stuff
@@ -342,7 +341,9 @@ class FairseqAgent(TorchAgent):
         else:
             # grade the evaluation label
             self.model.eval()
-            self.trainer.valid_step(samples)
+            if ys is not None:
+                # Interactive mode won't have a gold label
+                self.trainer.valid_step(samples)
 
             # Grade each of the candidate sequences
             # TODO: grade everything in observations[i]['label_candidates']
@@ -428,10 +429,13 @@ class FairseqAgent(TorchAgent):
         # add extra info to samples
         # TODO: should the right/left padding thing be in torch agent?
         repadded = convert_padding_direction(xs, self.dict.pad(), right_to_left=True)
-        sample = {"target": ys, "ntokens": sum(self._seq_length(ys)).item()}
+        sample = {}
         sample["net_input"] = {
             "src_tokens": repadded,
             "src_lengths": self._seq_length(xs),
-            "prev_output_tokens": self._right_shifted_ys(ys),
         }
+        if ys is not None:
+            sample["target"] = ys
+            sample["ntokens"] = sum(self._seq_length(ys)).item()
+            sample["net_input"]["prev_output_tokens"] = self._right_shifted_ys(ys)
         return sample
