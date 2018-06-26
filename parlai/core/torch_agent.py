@@ -309,6 +309,8 @@ class TorchAgent(Agent):
                 states['optimizer'] = self.optimizer.state_dict()
 
             if states:  # anything found to save?
+                # also store the options with the file for good measure
+                states['opt'] = self.opt
                 with open(path, 'wb') as write:
                     torch.save(states, write)
 
