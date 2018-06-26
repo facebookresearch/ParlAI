@@ -10,7 +10,7 @@ try:
     from fairseq import models, optim
 except ImportError:
     raise RuntimeError(
-        "Please run \"pip install 'git+https://github.com/pytorch/"
+        "Please run \"pip install -U 'git+https://github.com/pytorch/"
         "fairseq.git@v0.5.0#egg=fairseq'\""
     )
 from fairseq import trainer, fp16_trainer
