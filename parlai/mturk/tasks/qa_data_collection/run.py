@@ -25,7 +25,7 @@ def main():
     class_name = 'DefaultTeacher'
     my_module = importlib.import_module(module_name)
     task_class = getattr(my_module, class_name)
-    task_opt = {}
+    task_opt = opt.copy()
     task_opt['datatype'] = 'train'
     task_opt['datapath'] = opt['datapath']
 
