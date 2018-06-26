@@ -84,9 +84,9 @@ def eval_model(opt, printargs=None, print_parser=None):
             break
     if world.epoch_done():
         print("EPOCH DONE")
-    report = world.report()
     print('finished evaluating task {} using datatype {}'.format(
           opt['task'], opt.get('datatype', 'N/A')))
+    report = world.report()
     print(report)
     return report
 
