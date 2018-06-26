@@ -162,6 +162,13 @@ class FairseqAgent(TorchAgent):
             metavar='N',
             help='pseudo random number generator seed'
         )
+        agent.add_argument(
+            '--skip-generation',
+            default=False,
+            type=bool,
+            metavar='BOOL',
+            help='Skips test time beam search. Much faster if you only need PPL',
+        )
 
         # Dictionary construction stuff. Using the subclass in case we end up
         # needing any fairseq specific things
@@ -341,8 +348,14 @@ class FairseqAgent(TorchAgent):
             # TODO: grade everything in observations[i]['label_candidates']
 
             # Next generate freely to create our response
-            for i, response in zip(valid_inds, self._generate(samples)):
-                batch_reply[i]["text"] = response
+            if self.args.skip_generation:
+                # skip the generation step
+                for i in valid_inds:
+                    batch_reply[i]["text"] = ""
+            else:
+                # actually do the generation
+                for i, response in zip(valid_inds, self._generate(samples)):
+                    batch_reply[i]["text"] = response
 
         return batch_reply
 
