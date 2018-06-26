@@ -58,7 +58,7 @@ def eval_model(opt, printargs=None, print_parser=None):
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
-  
+
     if print_parser:
         # Show arguments after loading model
         print_parser.opt = agent.opt
@@ -77,12 +77,15 @@ def eval_model(opt, printargs=None, print_parser=None):
             print(world.display() + "\n~~")
         if log_time.time() > log_every_n_secs:
             report = world.report()
-            text, report = log_time.log(report['exs'], world.num_examples(), report)
+            text, report = log_time.log(report['exs'], world.num_examples(),
+                                        report)
             print(text)
         if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
             break
     if world.epoch_done():
         print("EPOCH DONE")
+    print('finished evaluating task {} using datatype {}'.format(
+          opt['task'], opt.get('datatype', 'N/A')))
     report = world.report()
     print(report)
     return report
