@@ -157,7 +157,7 @@ class SocketManager():
 
     # Time to acknowledge different message types
     ACK_TIME = {Packet.TYPE_ALIVE: 2,
-                Packet.TYPE_MESSAGE: 2}
+                Packet.TYPE_MESSAGE: 0.5}
 
     # Default time before socket deemed dead
     DEF_SOCKET_TIMEOUT = 30
@@ -367,7 +367,10 @@ class SocketManager():
                 if self.packet_map[packet_id].ack_func:
                     self.packet_map[packet_id].ack_func(packet)
                 # clear the stored packet data for memory reasons
-                self.packet_map[packet_id].data = None
+                try:
+                    self.packet_map[packet_id].data = None
+                except Exception:
+                    pass  # state already reduced, perhaps by ack_func
             elif packet_type == Packet.TYPE_HEARTBEAT:
                 # Heartbeats update the last heartbeat time and respond in kind
                 self.last_heartbeat[connection_id] = time.time()
