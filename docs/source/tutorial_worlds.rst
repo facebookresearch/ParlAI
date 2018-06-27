@@ -56,6 +56,16 @@ use one or the other. However, an agent may check the ``numthreads`` and/or
 we do support doing both batching and hogwild at the same time if the agent
 desires.
 
+We create shared agents by instantiating them in the following way:
+
+.. code-block:: python
+
+    Agent0 = Agent(opt)
+    ...
+    Agent1 = Agent(opt, Agent0.share())
+    Agent2 = Agent(opt, Agent0.share())
+    Agent3 = Agent(opt, Agent0.share())
+
 .. image:: _static/img/world_share.png
 
 
