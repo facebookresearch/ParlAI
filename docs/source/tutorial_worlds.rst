@@ -43,7 +43,7 @@ The agent generates a reply, which is seen by the teacher.
 
 
 Expanding to batching / hogwild using share()
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For all tasks one might make,
 there's one function we need to support for both hogwild and batching: ``share()``.
