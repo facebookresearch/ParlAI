@@ -242,6 +242,10 @@ class ParlaiParser(argparse.ArgumentParser):
             '--password', dest='password', type=str, default=None,
             help='Require a password for entry to the bot')
         messenger.add_argument(
+            '--bypass-server-setup', dest='bypass_server_setup',
+            action='store_true', default=False,
+            help='should bypass traditional server and socket setup')
+        messenger.add_argument(
             '--local', dest='local', action='store_true', default=False,
             help='Run the server locally on this server rather than setting up'
                  ' a heroku server.'
