@@ -116,6 +116,10 @@ class _FairseqDictionary(DictionaryAgent):
         return self[self.end_token]
 
     @property
+    def bos_index(self):
+        return self[self.start_token]
+
+    @property
     def unk_index(self):
         return self[self.unk_token]
 
@@ -371,7 +375,11 @@ class FairseqAgent(TorchAgent):
             response = []
             for t in selected["tokens"]:
                 t = t.item()
-                if t == self.dict.eos:
+                if t == self.dict.bos_index:
+                    # don't include <s> token
+                    continue
+                if t == self.dict.eos_index:
+                    # stop (and don't include) </s> token
                     break
                 response.append(self.dict[t])
             responses.append(" ".join(response))
