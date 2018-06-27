@@ -10,16 +10,17 @@ Data Handling, Batching, and Hogwild
 **Authors**: Alexander Holden Miller, Kurt Shuster
 
 
+.. note::
+    If you are unfamiliar with the basics of displaying data or
+    calling train or evaluate on a model, please first see
+    the `getting started <tutorial_basic.html>`_ section.
+    If you are interested in creating a task, please see
+    `that section <tutorial_task.html>`_.
+
 Introduction
 ^^^^^^^^^^^^
 
-If you are unfamiliar with the basics of displaying data or
-calling train or evaluate on a model, please first see
-the `getting started <tutorial_basic.html>`_ section.
-If you are interested in creating a task, please see
-`that section <tutorial_task.html>`_.
-
-This section will cover the details of:
+This tutorial will cover the details of:
 
 1) `hogwild (multiprocessing) <#id1>`_;
 
@@ -27,12 +28,10 @@ This section will cover the details of:
 
 3) `handling large datasets using PyTorch Data Loaders <#multiprocessed-pytorch-dataloader>`_
 
-.. note::
-    When a dataset is very large, or requires a lot of preprocessing before a model
-    can use it, you can use our ``PytorchDataTeacher``, which utilizes multiprocessed
-    dataloading for streaming data from disk (rather than loading it into memory).
-    That system can take your task as input, and make it fast to load, or you can
-    roll your own specific setups if you speed or space issues are really at a premium.
+With relatively small modifications to a basic agent, it will be able to support
+multithreading and batching. If you need extra speed or are using a very large
+dataset which does not fit in memory, we can use a multiprocessed pytorch
+dataloader for improved performance.
 
 First, let's consider a diagram of the basic flow of DialogPartnerWorld,
 a simple world with two conversing agents.
@@ -309,6 +308,12 @@ agent code:
 
 Multiprocessed Pytorch Dataloader
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+When a dataset is very large, or requires a lot of preprocessing before a model
+can use it, you can use our ``PytorchDataTeacher``, which utilizes multiprocessed
+dataloading for streaming data from disk (rather than loading it into memory).
+That system can take your task as input, and make it fast to load, or you can
+roll your own specific setups if you need more control.
+
 For large datasets, where it is best to stream from disk during training
 rather than load initially into memory, we provide a teacher that utilizes pytorch data loading.
 
