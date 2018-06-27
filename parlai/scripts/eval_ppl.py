@@ -41,6 +41,7 @@ from parlai.core.utils import Timer, round_sigfigs, no_lock
 from parlai.core.thread_utils import SharedTable
 from parlai.core.worlds import create_task, World
 
+import copy
 import math
 
 
@@ -169,7 +170,7 @@ class PerplexityWorld(World):
         return m
 
 
-def eval_ppl(opt, build_dict):
+def eval_ppl(opt, build_dict=None, dict_file=None):
     """Evaluates the the perplexity of a model.
 
     See the documentation for this file for more info.
@@ -180,7 +181,19 @@ def eval_ppl(opt, build_dict):
         but rather should have hardcoded settings for its dictionary.
 
     """
-    dict_agent = build_dict()
+    if not build_dict and not dict_file:
+        raise RuntimeError('eval_ppl script either needs a dictionary build '
+                           'function or a dictionary file.')
+
+    if build_dict:
+        dict_agent = build_dict()
+    else:
+        dict_opt = copy.deepcopy(opt)
+        dict_opt['model'] = dict_opt.get('dictionary_class', 'parlai.core.dict:DictionaryAgent')
+        dict_opt['model_file'] = dict_file
+        if 'override' in dict_opt:
+            del dict_opt['override']
+        dict_agent = create_agent(dict_opt, requireModelExists=True)
 
     # create agents
     agent = create_agent(opt)

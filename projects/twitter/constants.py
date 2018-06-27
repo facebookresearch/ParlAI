@@ -11,26 +11,4 @@ function to conduct the perplexity evaluation, scoring only words that appear
 in this dictionary.
 """
 
-
-from parlai.scripts.build_dict import setup_args, build_dict as main_build_dict
-DICT_FILE_30K = 'models:twitter/dict_30k'
-
-def build_dict():
-    # default is 30k
-    return build_dict_30k()
-
-def build_dict_30k():
-    parser = setup_args()
-    # first build on standard train and validation
-    parser.set_defaults(
-        task='twitter',
-        dict_lower=True,
-        dict_file=DICT_FILE_30K,
-        dict_maxtokens=30000,
-    )
-    opt = parser.parse_args(args='')
-    return main_build_dict(opt)
-
-
-if __name__ == '__main__':
-    build_dict()
+DICT_FILE_30K = 'models:twitter/dict/dict_30k'

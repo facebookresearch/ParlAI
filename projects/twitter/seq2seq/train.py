@@ -9,13 +9,10 @@ used to achieve the pre-trained model.
 """
 
 from parlai.scripts.train_model import setup_args, TrainLoop
-from projects.twitter.build_dict import build_dict_30k, DICT_FILE_30K
+from projects.twitter.constants import DICT_FILE_30K
 
 
 if __name__ == '__main__':
-    # build dictionary
-    build_dict_30k()
-
     parser = setup_args()
     parser.set_defaults(
         task='twitter',
