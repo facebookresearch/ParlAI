@@ -80,7 +80,7 @@ class MessengerManager():
         self.running = True
         self.conversation_index = 0
         self.shutting_down = True
-        self.need_server_setup = True  # is server/setup socket needed
+        self.bypass_server_setup = self.opt.get('bypass_server_setup')
 
         # Messaging interaction functions that determine what to do when
         # messages are confirmed as delivered, marked as read by a user, and
@@ -266,7 +266,7 @@ class MessengerManager():
 
     # override if extra bookkeeping must be done when removing agent
     def after_agent_removed(self, agent_id):
-        ''' Perform any changes to metadata on agent removal'''
+        """ Perform any changes to metadata on agent removal"""
         pass
 
     def _on_new_message(self, message):
@@ -386,7 +386,7 @@ class MessengerManager():
     # Manager Lifecycle Functions #
     def setup_server(self):
         """Prepare the Messenger server for handling messages"""
-        if not self.need_server_setup:
+        if self.bypass_server_setup:
             return
 
         shared_utils.print_and_log(
@@ -431,7 +431,7 @@ class MessengerManager():
 
     # override if permission needed externally
     def get_app_token(self):
-        token = None
+        """Find and return an app access token"""
         if not self.opt.get('force_page_token'):
             if not os.path.exists(os.path.expanduser('~/.parlai/')):
                 os.makedirs(os.path.expanduser('~/.parlai/'))
@@ -439,33 +439,31 @@ class MessengerManager():
             expanded_file_path = os.path.expanduser(access_token_file_path)
             if os.path.exists(expanded_file_path):
                 with open(expanded_file_path, 'r') as access_token_file:
-                    token = access_token_file.read()
+                    return access_token_file.read()
+
+        token = input(
+            'Enter your page\'s access token from the developer page at'
+            'https://developers.facebook.com/apps/<YOUR APP ID>'
+            '/messenger/settings/ to continue setup:'
+        )
+        access_token_file_path = '~/.parlai/messenger_token'
+        expanded_file_path = os.path.expanduser(access_token_file_path)
+        with open(expanded_file_path, 'w+') as access_token_file:
+            access_token_file.write(token)
         return token
 
     def setup_socket(self):
         """Set up socket to start communicating to workers"""
-        if self.need_server_setup:
+        if not self.bypass_server_setup:
             shared_utils.print_and_log(logging.INFO,
                                        'Local: Setting up WebSocket...',
                                        should_print=True)
 
         self.app_token = self.get_app_token()
-        # cache the app token
-        if self.app_token is None:
-            self.app_token = input(
-                'Enter your page\'s access token from the developer page at'
-                'https://developers.facebook.com/apps/<YOUR APP ID>'
-                '/messenger/settings/ to continue setup:'
-            )
-            access_token_file_path = '~/.parlai/messenger_token'
-            expanded_file_path = os.path.expanduser(access_token_file_path)
-            with open(expanded_file_path, 'w+') as access_token_file:
-                access_token_file.write(self.app_token)
-
         self.message_sender = MessageSender(self.app_token)
 
         # Set up receive
-        if self.need_server_setup:
+        if not self.bypass_server_setup:
             socket_use_url = self.server_url
             if (self.opt['local']):  # skip some hops for local stuff
                 socket_use_url = "https://localhost"
@@ -621,13 +619,13 @@ class MessengerManager():
         # Ensure all threads are cleaned and conversations are handled
         try:
             self.is_running = False
-            if self.need_server_setup:
+            if not self.bypass_server_setup:
                 self.message_socket.keep_running = False
             self._expire_all_conversations()
         except BaseException:
             pass
         finally:
-            if self.need_server_setup:
+            if not self.bypass_server_setup:
                 server_utils.delete_server(self.server_task_name,
                                            self.opt['local'])
 
@@ -638,9 +636,10 @@ class MessengerManager():
         return self.message_sender.send_fb_message(receiver_id, text, True,
                                                    quick_replies=quick_replies)
 
-    def observe_payload(self, receiver_id, data):
+    def observe_payload(self, receiver_id, data, quick_replies=None):
         """Send a payload through the message manager"""
-        return self.message_sender.send_fb_payload(receiver_id, data)
+        return self.message_sender.send_fb_payload(receiver_id, data,
+                                                   quick_replies=None)
 
     def upload_attachment(self, payload):
         """Uploads an attachment and returns an attachment ID
