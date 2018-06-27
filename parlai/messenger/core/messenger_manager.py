@@ -264,9 +264,9 @@ class MessengerManager():
         self.agent_id_to_overworld_thread[agent_id] = overworld_thread
         pass
 
-    # override if extra bookkeeping must be done when removing agent
     def after_agent_removed(self, agent_id):
-        """ Perform any changes to metadata on agent removal"""
+        """ Perform any changes to metadata on agent removal
+        override if extra bookkeeping must be done when removing agent"""
         pass
 
     def _on_new_message(self, message):
