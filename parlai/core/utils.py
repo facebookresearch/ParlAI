@@ -264,7 +264,7 @@ def flatten(teacher, context_length=-1, include_labels=True):
             # build separate episodes from each example
             for ex in current:
                 context.append(ex.get('text', ''))
-                if len(context) > 1:
+                if len(context) != 1:
                     ex['text'] = '\n'.join(context)
                 ex['episode_done'] = True
                 if include_labels:
@@ -772,6 +772,7 @@ def str_to_msg(txt, ignore_fields=''):
         value = t[ind+1:]
         if key not in ignore_fields.split(','):
             msg[key] = convert(key, value)
+    msg['episode_done'] = msg.get('episode_done', False)
     return msg
 
 

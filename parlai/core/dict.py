@@ -148,6 +148,12 @@ class DictionaryAgent(Agent):
         self.lower = opt.get('dict_lower', DictionaryAgent.default_lower)
         self.maxtokens = opt.get('dict_maxtokens', DictionaryAgent.default_maxtokens)
 
+        try:
+            self.tokenizer_fun = getattr(self, self.tokenizer + '_tokenize')
+        except AttributeError:
+            raise AttributeError(
+                'tokenizer type {} not yet supported'.format(self.tokenizer))
+
         if shared:
             self.freq = shared.get('freq', {})
             self.tok2ind = shared.get('tok2ind', {})
@@ -348,21 +354,9 @@ class DictionaryAgent(Agent):
         """Returns a sequence of tokens from the iterable."""
         if self.lower:
             text = text.lower()
-        tokenizer = self.tokenizer
-        if tokenizer == 'split':
-            word_tokens = self.split_tokenize(text)
-        elif tokenizer == 'nltk':
-            word_tokens = self.nltk_tokenize(text)
-        elif tokenizer == 'spacy':
-            word_tokens = self.spacy_tokenize(text)
-        else:
-            method_name = str(tokenizer) + '_tokenize'
-            if hasattr(self, method_name):
-                fun = getattr(self, method_name)
-                word_tokens = fun(text)
-            else:
-                raise RuntimeError(
-                    'tokenizer type {} not yet supported'.format(tokenizer))
+
+        # calls the selected tokenizer function e.g. 're' => re_tokenize(text)
+        word_tokens = self.tokenizer_fun(text)
 
         if not building and self.max_ngram_size > 1:
             # search for ngrams during parse-time
@@ -465,9 +459,7 @@ class DictionaryAgent(Agent):
         ``vec_type`` is the type of the returned vector if the input is a string.
         """
         if type(txt_or_vec) == str:
-            res = self.txt2vec(txt_or_vec, vec_type)
-            assert type(res) == vec_type
-            return res
+            return self.txt2vec(txt_or_vec, vec_type)
         else:
             return self.vec2txt(txt_or_vec)
 
@@ -478,16 +470,15 @@ class DictionaryAgent(Agent):
 
         ``vec_type`` is the type of the returned vector if the input is a string.
         """
-        if vec_type == np.ndarray:
+        if vec_type == list or vec_type == tuple or vec_type == set:
+            res = vec_type((self[token] for token in self.tokenize(str(text))))
+        elif vec_type == np.ndarray:
             res = np.fromiter(
                 (self[token] for token in self.tokenize(text)),
                 np.int
             )
-        elif vec_type == list or vec_type == tuple or vec_type == set:
-            res = vec_type((self[token] for token in self.tokenize(str(text))))
         else:
             raise RuntimeError('Type {} not supported by dict'.format(vec_type))
-        assert type(res) == vec_type
         return res
 
     def vec2txt(self, vector, delimiter=' '):

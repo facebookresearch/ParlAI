@@ -103,7 +103,7 @@
   /* ================= Local Constants ================= */
 
   var SEND_THREAD_REFRESH = 100;
-  var ACK_WAIT_TIME = 2000; // Check for acknowledge every 2 seconds
+  var ACK_WAIT_TIME = 300; // Check for acknowledge every 0.3 seconds
   var STATUS_ACK = 'ack';
   var STATUS_INIT = 'init';
   var STATUS_SENT = 'sent';
@@ -126,6 +126,7 @@
   var packet_callback = {};
   var blocking_id = null;
   var blocking_sent_time = null;
+  var blocking_intend_send_time = null;
   var last_server_heartbeat = null;
   var last_local_heartbeat = null;
   var displayed_messages = [];
@@ -524,7 +525,6 @@
     } else if (msg.type === TYPE_ACK) {
       // Acks update messages so that we don't resend them
       log('received ack: ' + msg.id, 3);
-      packet_map[msg.id].status = STATUS_ACK;
       if (msg.id === blocking_id) {
         // release lock when ack arrives
         blocking_id = null;
@@ -534,8 +534,11 @@
           packet_callback[msg.id](packet_map[msg.id]);
         }
       }
+      packet_map[msg.id].status = STATUS_ACK;
+    } else if (blocking_id !== null) {
+      return;  // shouldn't recieve messages while trying to send to world
     } else if (msg.type === TYPE_MESSAGE) {
-      // Acknowledge the message, then act on it when the ack sends
+      // Acknowledge the message, then act on it
       safe_packet_send({
         type: SOCKET_ROUTE_PACKET_STRING,
         content: {
@@ -758,6 +761,30 @@
 
   /* =================== 'Threads'=================== */
 
+  function _send_helper(msg, queue_time) {
+    // Don't act on acknowledged packets
+    if (msg.status !== STATUS_ACK) {
+      // Find the event to send to
+      var event_name = SOCKET_ROUTE_PACKET_STRING;
+      if (msg.type === TYPE_ALIVE) {
+        event_name = SOCKET_AGENT_ALIVE_STRING;
+      }
+      safe_packet_send({type: event_name, content: msg});
+
+      if (msg.require_ack) {
+        if (msg.blocking) {
+          // Block the thread
+          blocking_id = msg.id;
+          blocking_sent_time = Date.now();
+          blocking_intend_send_time = queue_time
+        } else {
+          // Check to see if the packet is acknowledged in the future
+          q.push(msg, queue_time + ACK_WAIT_TIME);
+        }
+      }
+    }
+  }
+
   // Thread checks the message queue and handles pushing out new messages
   // as they are added to the queue
   function _sending_thread() {
@@ -771,26 +798,7 @@
           var item = q.pop();
           var msg = item[0];
           var t = item[1];
-          // Don't act on acknowledged packets
-          if (msg.status !== STATUS_ACK) {
-            // Find the event to send to
-            var event_name = SOCKET_ROUTE_PACKET_STRING;
-            if (msg.type === TYPE_ALIVE) {
-              event_name = SOCKET_AGENT_ALIVE_STRING;
-            }
-            safe_packet_send({type: event_name, content: msg});
-
-            if (msg.require_ack) {
-              if (msg.blocking) {
-                // Block the thread
-                blocking_id = msg.id;
-                blocking_sent_time = Date.now();
-              } else {
-                // Check to see if the packet is acknowledged in the future
-                q.push(msg, t + ACK_WAIT_TIME);
-              }
-            }
-          }
+          _send_helper(msg, t)
         }
       }
     } else {
@@ -798,12 +806,11 @@
       // See if we've waited too long for the packet to be acknowledged
       if ((Date.now() - blocking_sent_time) > ACK_WAIT_TIME) {
         log('Timeout: ' + blocking_id, 1);
-
-        // Push the packet to be sent again, use the last send time to move
-        // to the front of the queue
+        // Send the packet again now
         var m = packet_map[blocking_id];
-        q.push(m, blocking_sent_time);
-        blocking_id = null;
+        // Ensure that the send retries, we wouldn't be here if the ACK worked
+        m.status = STATUS_SENT;
+        _send_helper(packet_map[blocking_id], blocking_intend_send_time)
       }
     }
   }
