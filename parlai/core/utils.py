@@ -772,6 +772,7 @@ def str_to_msg(txt, ignore_fields=''):
         value = t[ind+1:]
         if key not in ignore_fields.split(','):
             msg[key] = convert(key, value)
+    msg['episode_done'] = msg.get('episode_done', False)
     return msg
 
 

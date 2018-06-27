@@ -1167,6 +1167,6 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
                 if msg:
                     self.num_exs += 1
                     eps.append(msg)
-                    if msg.get('episode_done', True):
+                    if msg.get('episode_done', False):
                         self.episodes.append(eps)
                         eps = []
