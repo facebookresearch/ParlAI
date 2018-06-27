@@ -560,12 +560,16 @@ class BatchWorld(World):
         self.opt = opt
         self.random = opt.get('datatype', None) == 'train'
         self.world = world
-        shared = world.share()
         self.worlds = []
         for i in range(opt['batchsize']):
             # make sure that any opt dicts in shared have batchindex set to i
             # this lets all shared agents know which batchindex they have,
             # which is needed for ordered data (esp valid/test sets)
+            shared = world.share()
+            shared['batchindex'] = i
+            for agent_shared in shared.get('agents', ''):
+                agent_shared['batchindex'] = i
+            # TODO: deprecate override_opts
             override_opts_in_shared(shared, {'batchindex': i})
             self.worlds.append(shared['world_class'](opt, None, shared))
         self.batch_observations = [None] * len(self.world.get_agents())

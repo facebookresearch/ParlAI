@@ -20,7 +20,7 @@ class DefaultTeacher(Teacher):
         self.terminate = opt['terminate']
         self.random = not self.terminate
         self.step_size = opt.get('batchsize', 1)
-        self.episode_index = opt.get('batchindex', 0)
+        self.episode_index = shared and shared.get('batchindex') or 0
         self.opt = deepcopy(opt)
 
         if not shared:
@@ -37,7 +37,7 @@ class DefaultTeacher(Teacher):
         self.len = len(self.data)
         super().__init__(opt, shared)
 
-        self.iter = opt.get('batchindex', 0)
+        self.iter = shared and shared.get('batchindex') or 0
 
     def __len__(self):
         return self.len

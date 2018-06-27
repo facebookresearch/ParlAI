@@ -172,6 +172,7 @@ class Seq2seqAgent(Agent):
         self.history = {}
         self.report_freq = opt.get('report_freq', 0.001)
         self.use_person_tokens = opt.get('person_tokens', False)
+        self.batch_idx = shared and shared.get('batchindex') or 0
         states = {}
 
         # check for cuda
@@ -458,12 +459,12 @@ class Seq2seqAgent(Agent):
         """
         # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
-        batch_idx = self.opt.get('batchindex', 0)
+
 
         if not obs.get('preprocessed', False) or 'text2vec' not in obs:
             obs['text2vec'] = maintain_dialog_history(
                 self.history, obs,
-                reply=self.answers[batch_idx],
+                reply=self.answers[self.batch_idx],
                 historyLength=self.truncate,
                 useReplies=self.opt.get('history_replies'),
                 dict=self.dict,
@@ -471,7 +472,7 @@ class Seq2seqAgent(Agent):
         else:
             obs['text2vec'] = deque(obs['text2vec'], maxlen=self.truncate)
         self.observation = obs
-        self.answers[batch_idx] = None
+        self.answers[self.batch_idx] = None
         return obs
 
     def predict(self, xs, ys=None, cands=None, valid_cands=None, is_training=False):
