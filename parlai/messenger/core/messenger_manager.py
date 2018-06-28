@@ -108,10 +108,14 @@ class MessengerManager():
             # add agent to pool
             self.agent_pool.setdefault(world_type, []).append(agent)
 
+    def mark_removed(self, agent_id, pageid):
+        """Mark the agent as removed from the pool. Can be overriden to change
+        other metadata linked to agent removal."""
+        pass
+
     def remove_agent_from_pool(self, agent, world_type='default',
                                mark_removed=True):
-        """Remove agent from the pool. Returns whether the agent needed to be
-           removed"""
+        """Remove agent from the pool."""
         with self.agent_pool_change_condition:
             shared_utils.print_and_log(
                 logging.DEBUG,
@@ -126,8 +130,9 @@ class MessengerManager():
                 # maybe mark agent as removed
                 if mark_removed:
                     agent.stored_data['removed_from_pool'] = True
-                return True
-        return False
+                    if self.page_id is not None:
+                        self.mark_removed(
+                            int(agent.messenger_id), int(self.page_id))
 
     def _expire_all_conversations(self):
         """iterate through all sub-worlds and shut them down"""
@@ -265,7 +270,7 @@ class MessengerManager():
         pass
 
     def after_agent_removed(self, agent_id):
-        """ Perform any changes to metadata on agent removal
+        """Perform any changes to metadata on agent removal
         override if extra bookkeeping must be done when removing agent"""
         pass
 
