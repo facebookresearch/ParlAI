@@ -22,6 +22,7 @@ from fairseq.utils import convert_padding_direction
 
 from parlai.core.torch_agent import TorchAgent
 from parlai.core.build_data import modelzoo_path
+from parlai.core.utils import round_sigfigs
 
 import argparse
 import torch
@@ -396,17 +397,21 @@ class FairseqAgent(TorchAgent):
 
         metrics = train_metrics if self.is_training else valid_metrics
 
-        output = {k: self.trainer.meters[k].avg for k in metrics}
+        m = {k: self.trainer.meters[k].avg for k in metrics}
 
         # additionally output perplexity. note that fairseq models use base 2
         # in cross_entropy:
         # github.com/pytorch/fairseq/blob/master/fairseq/criterions/cross_entropy.py#L55
-        if "train_loss" in output:
-            output["train_ppl"] = np.exp2(output["train_loss"])
-        if "valid_loss" in output:
-            output["ppl"] = np.exp2(output["valid_loss"])
+        if "train_loss" in m:
+            m["train_ppl"] = np.exp2(m["train_loss"])
+        if "valid_loss" in m:
+            m["ppl"] = np.exp2(m["valid_loss"])
 
-        return output
+        for k, v in m.items():
+            # clean up: rounds to sigfigs and converts tensors to floats
+            m[k] = round_sigfigs(v, 4)
+
+        return m
 
     def reset_metrics(self):
         if not hasattr(self, "trainer"):
