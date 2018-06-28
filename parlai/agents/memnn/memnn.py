@@ -132,6 +132,7 @@ class MemnnAgent(Agent):
                 self.load(init_model)
 
         self.history = {}
+        self.batch_idx = shared and shared.get('batchindex') or 0
         self.episode_done = True
         self.last_cands, self.last_cands_list = None, None
         super().__init__(opt, shared)
@@ -147,22 +148,22 @@ class MemnnAgent(Agent):
 
     def observe(self, observation):
         """Save observation for act.
+
         If multiple observations are from the same episode, concatenate them.
         """
         self.episode_done = observation['episode_done']
         # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
-        batch_idx = self.opt.get('batchindex', 0)
 
-        obs['text'] = (maintain_dialog_history(
+        obs['text'] = maintain_dialog_history(
             self.history, obs,
-            reply=self.answers[batch_idx] if self.answers[batch_idx] is not None else '',
+            reply=self.answers[self.batch_idx],
             historyLength=self.opt['mem_size'] + 1,
             useReplies=self.opt['history_replies'],
-            dict=self.dict, useStartEndIndices=False, splitSentences=True))
+            dict=self.dict, useStartEndIndices=False, splitSentences=True)
 
         self.observation = obs
-        self.answers[batch_idx] = None
+        self.answers[self.batch_idx] = None
         return obs
 
     def reset(self):
