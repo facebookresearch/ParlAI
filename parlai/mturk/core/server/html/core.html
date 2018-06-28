@@ -98,6 +98,7 @@
   var TYPE_ACK = 'ack';
   var TYPE_MESSAGE = 'message';
   var TYPE_HEARTBEAT = 'heartbeat';
+  var TYPE_PONG = 'pong';  // For messages back from the router on heartbeat
   var TYPE_ALIVE = 'alive';
 
   /* ================= Local Constants ================= */
@@ -107,13 +108,13 @@
   var STATUS_ACK = 'ack';
   var STATUS_INIT = 'init';
   var STATUS_SENT = 'sent';
-  var SERVER_HEARTBEAT_TIMEOUT = 60000 // 60 Sec before we think manager died
-  var SOCKET_MAYBE_DEAD_TIMEOUT = 16000
-  var LOCAL_HEARTBEAT_TIMEOUT = 30000 // 30 Seconds before we assume we died
+  var CONNECTION_DEAD_MISSING_PONGS = 15;
+  var REFRESH_SOCKET_MISSING_PONGS = 5;
+  var HEARTBEAT_TIME = 2000;  // One heartbeat every 2 seconds
 
   /* ================= State variables ================= */
 
-  var verbosity = 2;
+  var verbosity = 4;
 
   var q = new PriorityQueue();
   var mturk_submit_url = null;
@@ -127,10 +128,10 @@
   var blocking_id = null;
   var blocking_sent_time = null;
   var blocking_intend_send_time = null;
-  var last_server_heartbeat = null;
   var last_local_heartbeat = null;
   var displayed_messages = [];
   var setting_socket = false;
+  var pongs_without_heartbeat = 0;
 
   var is_cover_page = ("{{is_cover_page}}" === 'true') ? true : false;
   var is_init_page = ("{{is_init_page}}" === 'true') ? true : false;
@@ -145,7 +146,7 @@
 
   var is_mobile = false;
   var block_mobile = true;
-  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
     is_mobile = true;
   }
 
@@ -521,7 +522,11 @@
     if (msg.type === TYPE_HEARTBEAT) {
       // Heartbeats ensure we're not disconnected from the server
       log('received heartbeat: ' + msg.id, 4);
-      last_server_heartbeat = Date.now();
+      pongs_without_heartbeat = 0;
+    } else if (msg.type === TYPE_PONG) {
+      // Messages incoming from the router, ensuring that we're at least
+      // connected to it.
+      pongs_without_heartbeat += 1;
     } else if (msg.type === TYPE_ACK) {
       // Acks update messages so that we don't resend them
       log('received ack: ' + msg.id, 3);
@@ -573,6 +578,9 @@
     } else {
       socket = new WebSocket('wss://' + url.hostname + ':' + url.port);
     }
+    // TODO if socket setup fails here, see if 404 or timeout, then check
+    // other reasonable domain. If that succeeds, assume the heroku server
+    // died.
 
     socket.onmessage = parse_socket_message;
 
@@ -581,7 +589,7 @@
       setting_socket = false
       window.setTimeout(send_alive, 100);
       if (heartbeat_id == null) {
-        heartbeat_id = window.setInterval(_heartbeat_thread, 2000);
+        heartbeat_id = window.setInterval(_heartbeat_thread, HEARTBEAT_TIME);
       }
     }
 
@@ -788,6 +796,10 @@
   // Thread checks the message queue and handles pushing out new messages
   // as they are added to the queue
   function _sending_thread() {
+    if (socket_closed) {
+      return
+    }
+
     // Can't act if something is currently blocking
     if (blocking_id === null) {
       // Can't act on an empty queue
@@ -824,6 +836,29 @@
       return;
     }
 
+    if (pongs_without_heartbeat == REFRESH_SOCKET_MISSING_PONGS) {
+      // Treat a connection attempt as a pong.
+      pongs_without_heartbeat += 1;
+      try {
+        socket.close();
+      } catch(e) {/* Socket already terminated */}
+      window.clearInterval(heartbeat_id);
+      heartbeat_id = null;
+      setup_socket();
+    }
+
+    // Check to see if we've disconnected from the server
+    if (pongs_without_heartbeat > CONNECTION_DEAD_MISSING_PONGS) {
+      close_socket();
+      set_inactive_text('Our server appears to have gone down during the \
+        duration of this HIT. Please send us a message if you\'ve done \
+        substantial work and we can find out if the hit is complete enough to \
+        compensate.');
+      update_UI_for_response_type('inactive');
+      window.clearInterval(heartbeat_id)
+      heartbeat_id = null;
+    }
+
     var hb = {
       'id': uuidv4(),
       'receiver_id': '[World_' + task_group_id + ']',
@@ -835,30 +870,6 @@
     };
 
     safe_packet_send({type: SOCKET_ROUTE_PACKET_STRING, content: hb});
-
-    if (last_server_heartbeat != null &&
-          Date.now() - last_server_heartbeat > SOCKET_MAYBE_DEAD_TIMEOUT) {
-      try {
-        socket.close();
-      } catch(e) {/* Socket already terminated */}
-      window.clearInterval(heartbeat_id);
-      heartbeat_id = null;
-      last_server_heartbeat = null;
-      setup_socket();
-    }
-
-    // Check to see if we've disconnected from the server
-    if (last_server_heartbeat != null &&
-        Date.now() - last_server_heartbeat > SERVER_HEARTBEAT_TIMEOUT) {
-      close_socket();
-      set_inactive_text('Our server appears to have gone down during the \
-        duration of this HIT. Please send us a message if you\'ve done \
-        substantial work and we can find out if the hit is complete enough to \
-        compensate.');
-      update_UI_for_response_type('inactive');
-      window.clearInterval(heartbeat_id)
-      heartbeat_id = null;
-    }
   }
 
   /* =================== Initialization =================== */

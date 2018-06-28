@@ -25,7 +25,6 @@ import parlai.mturk.core.shared_utils as shared_utils
 
 # Timeout before cancelling a world start
 WORLD_START_TIMEOUT = 11
-HEARTBEAT_DELAY_TIME = WORLD_START_TIMEOUT - SocketManager.DEF_SOCKET_TIMEOUT
 
 # Multiplier to apply when creating hits to ensure worker availibility
 HIT_MULT = 1.5
@@ -689,10 +688,6 @@ class MTurkManager():
         if agent.state.status != AssignState.STATUS_IN_TASK:
             # Avoid on a second ack if alive already came through
             agent.state.status = AssignState.STATUS_ASSIGNED
-            self.socket_manager.delay_heartbeat_until(
-                agent.get_connection_id(),
-                time.time() + HEARTBEAT_DELAY_TIME
-            )
 
         agent.conversation_id = conv_id
         if conv_id not in self.conv_to_agent:
