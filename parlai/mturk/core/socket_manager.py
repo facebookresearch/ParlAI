@@ -200,7 +200,7 @@ class SocketManager():
         self.threads = {}
         self.run = {}
         self.last_sent_heartbeat = {}  # time of last heartbeat sent
-        self.last_gotten_heartbeat = {}  # actual last received heartbeat
+        self.last_received_heartbeat = {}  # actual last received heartbeat
         self.pongs_without_heartbeat = {}
         self.packet_map = {}
         self.alive = False
@@ -245,12 +245,12 @@ class SocketManager():
 
     def _send_needed_heartbeat(self, connection_id):
         """Sends a heartbeat to a connection if needed"""
-        if self.last_gotten_heartbeat[connection_id] is None:
+        if self.last_received_heartbeat[connection_id] is None:
             return
         if (time.time() - self.last_sent_heartbeat[connection_id]
                 < self.HEARTBEAT_RATE):
             return
-        packet = self.last_gotten_heartbeat[connection_id]
+        packet = self.last_received_heartbeat[connection_id]
         self._safe_send(json.dumps({
             'type': data_model.SOCKET_ROUTE_PACKET_STRING,
             'content': packet.new_copy().swap_sender().set_data('').as_dict()
@@ -384,13 +384,13 @@ class SocketManager():
                     pass  # state already reduced, perhaps by ack_func
             elif packet_type == Packet.TYPE_HEARTBEAT:
                 # Heartbeats update the last heartbeat, clears pongs w/o beat
-                self.last_gotten_heartbeat[connection_id] = packet
+                self.last_received_heartbeat[connection_id] = packet
                 self.pongs_without_heartbeat[connection_id] = 0
             elif packet_type == Packet.TYPE_PONG:
                 # Message in response from the router, ensuring we're connected
                 # to it. Redundant but useful for metering from web client.
                 pong_connection_id = packet.get_receiver_connection_id()
-                if self.last_gotten_heartbeat[pong_connection_id] is not None:
+                if self.last_received_heartbeat[pong_connection_id] is not None:
                     self.pongs_without_heartbeat[pong_connection_id] += 1
             else:
                 # Remaining packet types need to be acknowledged
@@ -464,7 +464,7 @@ class SocketManager():
             )
             self.last_sent_heartbeat[connection_id] = 0
             self.pongs_without_heartbeat[connection_id] = 0
-            self.last_gotten_heartbeat[connection_id] = None
+            self.last_received_heartbeat[connection_id] = None
             while self.run[connection_id]:
                 try:
                     # Send a heartbeat if needed
