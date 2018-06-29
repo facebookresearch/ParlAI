@@ -10,16 +10,17 @@ Data Handling, Batching, and Hogwild
 **Authors**: Alexander Holden Miller, Kurt Shuster
 
 
-Overview
-^^^^^^^^
+.. note::
+    If you are unfamiliar with the basics of displaying data or
+    calling train or evaluate on a model, please first see
+    the `getting started <tutorial_basic.html>`_ section.
+    If you are interested in creating a task, please see
+    `that section <tutorial_task.html>`_.
 
-If you are unfamiliar with the basics of displaying data or
-calling train or evaluate on a model, please first see
-the `getting started <tutorial_basic.html>`_ section.
-If you are interested in creating a task, please see
-`that section <tutorial_task.html>`_.
+Introduction
+^^^^^^^^^^^^
 
-This section will cover the details of:
+This tutorial will cover the details of:
 
 1) `hogwild (multiprocessing) <#id1>`_;
 
@@ -27,6 +28,22 @@ This section will cover the details of:
 
 3) `handling large datasets using PyTorch Data Loaders <#multiprocessed-pytorch-dataloader>`_
 
+With relatively small modifications to a basic agent, it will be able to support
+multithreading and batching. If you need extra speed or are using a very large
+dataset which does not fit in memory, we can use a multiprocessed pytorch
+dataloader for improved performance.
+
+First, let's consider a diagram of the basic flow of DialogPartnerWorld,
+a simple world with two conversing agents.
+
+.. image:: _static/img/world_basic.png
+
+The teacher generates a message, which is shown to the agent.
+The agent generates a reply, which is seen by the teacher.
+
+
+Expanding to batching / hogwild using share()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For all tasks one might make,
 there's one function we need to support for both hogwild and batching: ``share()``.
@@ -39,14 +56,17 @@ use one or the other. However, an agent may check the ``numthreads`` and/or
 we do support doing both batching and hogwild at the same time if the agent
 desires.
 
-When a dataset is very large, or requires a lot of preprocessing before a model
-can use it, you can use our ``PytorchDataTeacher``, which utilizes multiprocessed
-dataloading for streaming data from disk (rather than loading it into memory).
-That system can take your task as input, and make it fast to load, or you can roll your own specific
-setups if you speed or space issues are really at a premium.
+We create shared agents by instantiating them in the following way:
 
+.. code-block:: python
 
+    Agent0 = Agent(opt)
+    ...
+    Agent1 = Agent(opt, Agent0.share())
+    Agent2 = Agent(opt, Agent0.share())
+    Agent3 = Agent(opt, Agent0.share())
 
+.. image:: _static/img/world_share.png
 
 
 Hogwild (multiprocessing)
@@ -60,6 +80,8 @@ Hogwild is initialized in the following way:
 3. We launch ``numthreads`` threads, each initialized from a ``share()``'d
    version of the world and the agents therein.
 4. Once these threads and their world copies are all launched, we return control back
+
+.. image:: _static/img/world_hogwild.png
 
 Now that this world is set up, every time we call parley on it, it will release
 one of its threads to do a parley with its copy of the original base world.
@@ -140,6 +162,14 @@ Now, every time we call ``parley`` on this BatchWorld, we will complete ``batchs
 Note that this is different than the behavior of HogwildWorld, where only a
 single example is executed for each call to parley.
 
+.. image::  _static/img/world_batchbasic.png
+
+.. note::
+    So far, our diagram is exactly the same as Hogwild. We'll see how it can
+    change below when agents implement the ``batch_act`` function
+    (as GPU-based models will).
+
+
 There's a few more complex steps to actually completing a parley in this world.
 
 1. Call ``parley_init`` on each shared world, if the world has it implemented.
@@ -184,6 +214,8 @@ See `this paper <https://arxiv.org/abs/1706.05765>`__ for an analysis of the
 impact of different strategies on speed and convergence.
 
 As before, the FixedDialogTeacher handles all of this for you.
+
+.. image::  _static/img/world_batchteacher.png
 
 In order to reduce the zero-padding in examples, the FixedDialogTeacher first
 processes the entire base dataset, squashing episodes into a single example
@@ -271,14 +303,27 @@ its copies.
 The ``observe()`` method returns a (possibly modified) version of the observation
 it sees, which are collected into a list for the agent's ``batch_act()`` method.
 
+.. image::  _static/img/world_batchagent.png
+
 Now, the agent can process the entire batch at once. This is especially helpful
 for GPU-based models, which prefer to process more examples at a time.
 
 Tip: if you implement ``batch_act()``, your ``act()`` method can just call ``batchact()``
 and pass the observation it is supposed to process in a list of length 1.
 
+Of course, this also means that we can use batch_act in both the task and the
+agent code:
+
+.. image::  _static/img/world_batchboth.png
+
 Multiprocessed Pytorch Dataloader
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+When a dataset is very large, or requires a lot of preprocessing before a model
+can use it, you can use our ``PytorchDataTeacher``, which utilizes multiprocessed
+dataloading for streaming data from disk (rather than loading it into memory).
+That system can take your task as input, and make it fast to load, or you can
+roll your own specific setups if you need more control.
+
 For large datasets, where it is best to stream from disk during training
 rather than load initially into memory, we provide a teacher that utilizes pytorch data loading.
 
