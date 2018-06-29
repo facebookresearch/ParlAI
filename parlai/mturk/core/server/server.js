@@ -55,6 +55,11 @@ function _send_message(connection_id, event_name, event_data) {
     return;
   }
 
+  if (socket.readyState == 3) {
+    console.log('Socket for ' + connection_id + ' is already closed.')
+    return;
+  }
+
   var packet = {
     type: event_name,
     content: event_data,
@@ -108,6 +113,13 @@ function handle_route(data) {
   _send_message(out_connection_id, 'new packet', data);
 }
 
+function handle_pong(data) {
+  data['type'] = 'pong';
+  var out_connection_id = _get_from_conn_id(data);
+
+  _send_message(out_connection_id, 'new packet', data);
+}
+
 // Agent alive events are handled by registering the agent to a connection_id
 // and then forwarding the alive to the world if it came from a client
 function handle_alive(socket, data) {
@@ -152,6 +164,9 @@ wss.on('connection', function (socket) {
         handle_alive(socket, data['content']);
       } else if (data['type'] == 'route packet') {
         handle_route(data['content']);
+        if (data['content']['type'] == 'heartbeat') {
+          handle_pong(data['content']);
+        }
       }
     } catch(error) {
       console.log("Transient error on message");

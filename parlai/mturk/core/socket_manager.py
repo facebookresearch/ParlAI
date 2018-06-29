@@ -32,6 +32,7 @@ class Packet():
     TYPE_ALIVE = 'alive'
     TYPE_MESSAGE = 'message'
     TYPE_HEARTBEAT = 'heartbeat'
+    TYPE_PONG = 'pong'
 
     def __init__(self, id, type, sender_id, receiver_id, assignment_id, data,
                  conversation_id=None, requires_ack=True, blocking=True,
@@ -159,8 +160,9 @@ class SocketManager():
     ACK_TIME = {Packet.TYPE_ALIVE: 2,
                 Packet.TYPE_MESSAGE: 0.5}
 
-    # Default time before socket deemed dead
-    DEF_SOCKET_TIMEOUT = 30
+    # Default pongs without heartbeat before socket considered dead
+    DEF_MISSED_PONGS = 10
+    HEARTBEAT_RATE = 2
 
     def __init__(self, server_url, port, alive_callback, message_callback,
                  socket_dead_callback, task_group_id,
@@ -183,10 +185,10 @@ class SocketManager():
         self.alive_callback = alive_callback
         self.message_callback = message_callback
         self.socket_dead_callback = socket_dead_callback
-        if socket_dead_timeout is None:
-            self.socket_dead_timeout = self.DEF_SOCKET_TIMEOUT
+        if socket_dead_timeout is not None:
+            self.missed_pongs = socket_dead_timeout / self.HEARTBEAT_RATE
         else:
-            self.socket_dead_timeout = socket_dead_timeout
+            self.missed_pongs = self.DEF_MISSED_PONGS
         self.task_group_id = task_group_id
 
         self.ws = None
@@ -197,7 +199,9 @@ class SocketManager():
         self.queues = {}
         self.threads = {}
         self.run = {}
-        self.last_heartbeat = {}
+        self.last_sent_heartbeat = {}  # time of last heartbeat sent
+        self.last_received_heartbeat = {}  # actual last received heartbeat
+        self.pongs_without_heartbeat = {}
         self.packet_map = {}
         self.alive = False
 
@@ -239,12 +243,19 @@ class SocketManager():
                 {'id': 'WORLD_ALIVE', 'sender_id': self.get_my_sender_id()},
         }), force=True)
 
-    def _send_response_heartbeat(self, packet):
-        """Sends a response heartbeat to an incoming heartbeat packet"""
+    def _send_needed_heartbeat(self, connection_id):
+        """Sends a heartbeat to a connection if needed"""
+        if self.last_received_heartbeat[connection_id] is None:
+            return
+        if (time.time() - self.last_sent_heartbeat[connection_id]
+                < self.HEARTBEAT_RATE):
+            return
+        packet = self.last_received_heartbeat[connection_id]
         self._safe_send(json.dumps({
             'type': data_model.SOCKET_ROUTE_PACKET_STRING,
-            'content': packet.swap_sender().set_data('').as_dict()
+            'content': packet.new_copy().swap_sender().set_data('').as_dict()
         }))
+        self.last_sent_heartbeat[connection_id] = time.time()
 
     def _send_ack(self, packet):
         """Sends an ack to a given packet"""
@@ -342,7 +353,7 @@ class SocketManager():
 
         def on_message(*args):
             """Incoming message handler for ACKs, ALIVEs, HEARTBEATs,
-            and MESSAGEs"""
+            PONGs, and MESSAGEs"""
             packet_dict = json.loads(args[1])
             if packet_dict['type'] == 'conn_success':
                 self.alive = True
@@ -372,9 +383,15 @@ class SocketManager():
                 except Exception:
                     pass  # state already reduced, perhaps by ack_func
             elif packet_type == Packet.TYPE_HEARTBEAT:
-                # Heartbeats update the last heartbeat time and respond in kind
-                self.last_heartbeat[connection_id] = time.time()
-                self._send_response_heartbeat(packet)
+                # Heartbeats update the last heartbeat, clears pongs w/o beat
+                self.last_received_heartbeat[connection_id] = packet
+                self.pongs_without_heartbeat[connection_id] = 0
+            elif packet_type == Packet.TYPE_PONG:
+                # Message in response from the router, ensuring we're connected
+                # to it. Redundant but useful for metering from web client.
+                pong_connection_id = packet.get_receiver_connection_id()
+                if self.last_received_heartbeat[pong_connection_id] is not None:
+                    self.pongs_without_heartbeat[pong_connection_id] += 1
             else:
                 # Remaining packet types need to be acknowledged
                 shared_utils.print_and_log(
@@ -384,7 +401,6 @@ class SocketManager():
                 self._send_ack(packet)
                 # Call the appropriate callback
                 if packet_type == Packet.TYPE_ALIVE:
-                    self.last_heartbeat[connection_id] = time.time()
                     self.alive_callback(packet)
                 elif packet_type == Packet.TYPE_MESSAGE:
                     self.message_callback(packet)
@@ -446,11 +462,16 @@ class SocketManager():
                 logging.DEBUG,
                 'Channel ({}) opened'.format(connection_id)
             )
+            self.last_sent_heartbeat[connection_id] = 0
+            self.pongs_without_heartbeat[connection_id] = 0
+            self.last_received_heartbeat[connection_id] = None
             while self.run[connection_id]:
                 try:
+                    # Send a heartbeat if needed
+                    self._send_needed_heartbeat(connection_id)
                     # Check if client is still alive
-                    if (time.time() - self.last_heartbeat[connection_id]
-                            > self.socket_dead_timeout):
+                    if (self.pongs_without_heartbeat[connection_id] >
+                            self.missed_pongs):
                         self.run[connection_id] = False
                         self.socket_dead_callback(worker_id, assignment_id)
 
@@ -506,10 +527,6 @@ class SocketManager():
             # Clean up other resources
             del self.queues[connection_id]
             del self.threads[connection_id]
-
-    def delay_heartbeat_until(self, connection_id, delayed_time):
-        """Delay a heartbeat prolong a disconnect until delayed_time"""
-        self.last_heartbeat[connection_id] = delayed_time
 
     def close_all_channels(self):
         """Closes a channel by clearing the list of channels"""
