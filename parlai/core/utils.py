@@ -626,7 +626,7 @@ class OffensiveLanguageDetector(object):
         return None
 
 
-def display_messages(msgs, prettify=False, ignore_fields=''):
+def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
     """Returns a string describing the set of messages provided
     If prettify is true, candidates are displayed using prettytable.
     ignore_fields provides a list of fields in the msgs which should not be displayed.
@@ -650,8 +650,8 @@ def display_messages(msgs, prettify=False, ignore_fields=''):
             lines.append(msg['image'])
         if msg.get('text', ''):
             text = msg['text']
-            if len(text) > 1000:
-                text = text[:1000] + '...'
+            if len(text) > max_len:
+                text = text[:max_len] + '...'
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + text)
         if msg.get('labels') and 'labels' not in ignore_fields:

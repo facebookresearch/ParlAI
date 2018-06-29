@@ -103,7 +103,8 @@ class World(object):
             return ''
         return display_messages(self.acts,
                                 ignore_fields=self.opt.get('display_ignore_fields', ''),
-                                prettify=self.opt.get('display_prettify', False))
+                                prettify=self.opt.get('display_prettify', False),
+                                max_len=self.opt.get('max_display_len', 1000))
 
     def episode_done(self):
         """Whether the episode is done or not."""

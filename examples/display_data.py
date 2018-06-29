@@ -11,48 +11,14 @@ see a few of them:
 `python examples/display_data.py -t babi:task1k:1`
 """
 
-from parlai.core.params import ParlaiParser
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
-from parlai.core.worlds import create_task
-
+from parlai.scripts.display_data import display_data, setup_args
 import random
 
-def display_data(opt):
-    # create repeat label agent and assign it to the specified task
-    agent = RepeatLabelAgent(opt)
-    world = create_task(opt, agent)
 
-    # Show some example dialogs.
-    for _ in range(opt['num_examples']):
-        world.parley()
-
-        # NOTE: If you want to look at the data from here rather than calling
-        # world.display() you could access world.acts[0] directly
-        print(world.display() + '\n~~')
-
-        if world.epoch_done():
-            print('EPOCH DONE')
-            break
-
-    try:
-        # print dataset size if available
-        print('[ loaded {} episodes with a total of {} examples ]'.format(
-            world.num_episodes(), world.num_examples()
-        ))
-    except:
-        pass
-
-
-def main():
+if __name__ == '__main__':
     random.seed(42)
 
     # Get command line arguments
-    parser = ParlaiParser()
-    parser.add_argument('-n', '--num-examples', default=10, type=int)
-    parser.set_defaults(datatype='train:stream')
+    parser = setup_args()
     opt = parser.parse_args()
-
     display_data(opt)
-    
-if __name__ == '__main__':
-    main()
