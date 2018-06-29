@@ -525,7 +525,11 @@ class Seq2seqAgent(Agent):
                 scores = out[1]
                 score_view = scores.view(-1, scores.size(-1))
                 loss = self.criterion(score_view, ys.view(-1))
-                target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
+                # save loss to metrics
+                y_ne = ys.ne(self.NULL_IDX)
+                target_tokens = y_ne.long().sum().item()
+                correct = ((ys == _preds) * y_ne).sum().item()
+                self.metrics['correct_tokens'] += correct
                 self.metrics['loss'] += loss.item()
                 self.metrics['num_tokens'] += target_tokens
 
