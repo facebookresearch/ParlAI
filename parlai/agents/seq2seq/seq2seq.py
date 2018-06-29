@@ -418,9 +418,11 @@ class Seq2seqAgent(Agent):
         differ from a truly independent measurement.
         """
         m = {}
-        if self.metrics['num_tokens'] > 0:
-            m['token_acc'] = self.metrics['correct_tokens'] / self.metrics['num_tokens']
-            m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
+        num_tok = self.metrics['num_tokens']
+        if num_tok > 0:
+            if self.metrics['correct_tokens'] > 0:
+                m['token_acc'] = self.metrics['correct_tokens'] / num_tok
+            m['loss'] = self.metrics['loss'] / num_tok
             try:
                 m['ppl'] = math.exp(m['loss'])
             except OverflowError:
@@ -526,10 +528,7 @@ class Seq2seqAgent(Agent):
                 score_view = scores.view(-1, scores.size(-1))
                 loss = self.criterion(score_view, ys.view(-1))
                 # save loss to metrics
-                y_ne = ys.ne(self.NULL_IDX)
-                target_tokens = y_ne.long().sum().item()
-                correct = ((ys == _preds) * y_ne).sum().item()
-                self.metrics['correct_tokens'] += correct
+                target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
                 self.metrics['loss'] += loss.item()
                 self.metrics['num_tokens'] += target_tokens
 
