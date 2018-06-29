@@ -318,7 +318,6 @@ class SentenceEditTeacher(SentenceTeacher):
 class SentenceIndexTeacher(IndexTeacher):
     """Index teacher with the sentences that contain the answers as the labels.
     """
-
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
