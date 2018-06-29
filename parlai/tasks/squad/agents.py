@@ -269,6 +269,52 @@ class SentenceTeacher(DefaultTeacher):
                     ), True
 
 
+class SentenceEditTeacher(SentenceTeacher):
+    """This version of SquAD inherits from the Default Teacher. The label
+    field of an observation will contain the sentence that contains the
+    answer instead of the actual answer.
+
+    Some punctuation may be removed from the context and the answer for
+    tokenization purposes.
+    """
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+
+    def setup_data(self, path):
+        print('loading: ' + path)
+        with open(path) as data_file:
+            self.squad = json.load(data_file)['data']
+        for article in self.squad:
+            # each paragraph is a context for the attached questions
+            for paragraph in article['paragraphs']:
+                # each question is an example
+                for qa in paragraph['qas']:
+                    question = qa['question']
+                    answers = [a['text'] for a in qa['answers']]
+                    context = paragraph['context']
+                    # remove '.', '?', '!' from answers for proper
+                    # sentence tokenization
+                    edited_answers = []
+                    for answer in answers:
+                        new_answer = answer.replace(
+                            '.', '').replace('?', '').replace('!', '')
+                        context = context.replace(answer, new_answer)
+                        edited_answers.append(new_answer)
+
+                    edited_sentences = self.sent_tok.tokenize(context)
+
+                    labels = []
+                    for sentence in edited_sentences:
+                        for answer in edited_answers:
+                            if answer in sentence and sentence not in labels:
+                                labels.append(sentence)
+                                break
+                    yield (
+                        '\n'.join([context, question]),
+                        (label for label in labels)
+                    ), True
+
+
 class SentenceIndexTeacher(IndexTeacher):
     """Index teacher with the sentences that contain the answers as the labels.
     """
@@ -322,6 +368,55 @@ class SentenceIndexTeacher(IndexTeacher):
         label_starts = []
         for sentence in sentences:
             for answer in answers:
+                if answer in sentence and sentence not in labels:
+                    labels.append(sentence)
+                    label_starts.append(context.index(sentence))
+                    break
+
+        action = {
+            'id': 'squad',
+            'text': context + '\n' + question,
+            'labels': labels,
+            'episode_done': True,
+            'answer_starts': label_starts
+        }
+        return action
+
+
+class SentenceIndexEditTeacher(SentenceIndexTeacher):
+    """Index teacher with the sentences that contain the answers as the labels.
+
+    Some punctuation may be removed from the context and the answer for
+    tokenization purposes.
+    """
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+
+    def get(self, episode_idx, entry_idx=None):
+        article_idx, paragraph_idx, qa_idx = self.examples[episode_idx]
+        article = self.squad[article_idx]
+        paragraph = article['paragraphs'][paragraph_idx]
+        qa = paragraph['qas'][qa_idx]
+        context = paragraph['context']
+        question = qa['question']
+
+        answers = [a['text'] for a in qa['answers']]
+
+        # temporarily remove '.', '?', '!' from answers for proper sentence
+        # tokenization
+        edited_answers = []
+        for answer in answers:
+            new_answer = answer.replace(
+                '.', '').replace('?', '').replace('!', '')
+            context = context.replace(answer, new_answer)
+            edited_answers.append(new_answer)
+
+        edited_sentences = self.sent_tok.tokenize(context)
+
+        labels = []
+        label_starts = []
+        for sentence in edited_sentences:
+            for answer in edited_answers:
                 if answer in sentence and sentence not in labels:
                     labels.append(sentence)
                     label_starts.append(context.index(sentence))
