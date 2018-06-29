@@ -191,7 +191,7 @@ class Encoder(nn.Module):
             packed = True
         except ValueError:
             # packing failed, don't pack then
-            pass
+            packed = False
 
         encoder_output, hidden = self.rnn(xes)
         if packed:
