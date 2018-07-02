@@ -60,7 +60,7 @@ def setup_args(parser=None):
                             'every validation (default True).')
     train.add_argument('-veps', '--validation-every-n-epochs',
                        type=int, default=-1,
-                       help='Validate every n seconds. Whenever the the best '
+                       help='Validate every n epochs. Whenever the the best '
                             'validation metric is found, saves the model to '
                             'the model_file path if set.')
     train.add_argument('-vme', '--validation-max-exs',
