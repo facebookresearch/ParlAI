@@ -205,7 +205,7 @@ class World(object):
             else:
                 self.max_exs = -1
         # when we know the size of the data
-        if self.max_exs > 0:
+        if self.max_exs > 0 or self.num_examples():
             self.total_epochs = self.total_parleys * self.opt.get('batchsize', 1) / self.num_examples()
         # when we do not know the size of the data
         else:
