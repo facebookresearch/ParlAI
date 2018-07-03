@@ -235,9 +235,9 @@ class DictionaryAgent(Agent):
                     raise RuntimeError('--bpe-codecs-file or --dict-file is mandatory.')
                 opt['bpe_codecs_file'] = opt.get('dict_file') + '.codecs'
             self.bpehelper = _BPEHelper(
-                    num_symbols=opt.get('bpe_num_symbols'),
-                    codecs_filename=opt.get('bpe_codecs_file'),
-                )
+                opt.get('bpe_codecs_file'),
+                num_symbols=opt.get('bpe_num_symbols'),
+            )
 
         if not shared:
 
@@ -404,7 +404,10 @@ class DictionaryAgent(Agent):
             # only BPE needs the second pass
             return
 
-        # Now that we have a second pass,
+        # Let the BPE model learn its codecs, then use the encodings to
+        # populate the DictionaryAgent. This could be moved to inside the
+        # _BPEHelper, but would require careful accounting to ensure vocabulary
+        # counts are correct.
         if self.bpehelper.finalize():
             for line in self.bpehelper.training_data:
                 self.add_to_dict(self.bpehelper.tokenize(line))
@@ -570,11 +573,25 @@ class DictionaryAgent(Agent):
 
 class _BPEHelper(object):
     """
-    Performs BPE subword tokenization. For technical details, please refer to
-    https://arxiv.org/abs/1508.07909.
+    Helper class for performing BPE subword tokenization.
+    For technical details, please refer to https://arxiv.org/abs/1508.07909.
+    This class just wraps around the official subword-nmt repository.
+
+    This API expects the user to call tokenize() onto the training data,
+    then call finalize() to learn the encodings, and then iterate over the data
+    in a second pass, calling tokenize() again to get processed output.
     """
 
-    def __init__(self, num_symbols=30000, minfreq=2, codecs_filename=None):
+    def __init__(self, codecs_filename, num_symbols=30000, minfreq=2):
+        """
+        Initialize the BPE module.
+        If `codecs_filename` already exists, loads the pretrained codecs.
+        If it does not, codecs will be saved there after a call to `finalize()`.
+
+        :param codecs_filename: place to save/load codecs.
+        :param num_symbols: Number of BPE symbols. Recommend 30000-40000.
+        :param minfreq: Minimum frequency of a token before forced BPE decomposition.
+        """
         if not BPE_INSTALLED:
             raise RuntimeError(
                 "Please run \"pip install 'git+https://github.com/rsennrich"
@@ -598,6 +615,8 @@ class _BPEHelper(object):
     def _add_to_train(self, tokens):
         """
         Queues up all the data to learn the BPE tokenizer.
+
+        :param tokens: list[str]. Initial tokenization approximation.
         """
         if self.built:
             raise RuntimeError("BPE dictionary has been finalized.")
@@ -605,13 +624,20 @@ class _BPEHelper(object):
         return []
 
     def tokenize(self, text):
+        """
+        Tokenizes the text if codecs are already finalized.
+        Otherwise, stores data for learning codecs.
+
+        :param text: str. Raw text to tokenize.
+        :return: a list of tokens. List will be empty if not tokenized.
+        """
         tokens = DictionaryAgent.re_tokenize(text)
         if self.built:
-            return self.apply(tokens)
+            return self._apply(tokens)
         else:
             return self._add_to_train(tokens)
 
-    def apply(self, tokens):
+    def _apply(self, tokens):
         return self.bpe.segment_tokens(tokens)
 
     def finalize(self):
@@ -622,8 +648,10 @@ class _BPEHelper(object):
         self.built = True
 
         with open(self.codecs, 'w') as outstream:
-            # There's a potentially cleaner way to do this, with the is_dict
-            # method able to handle <word> \t <count> format.
+            # There's a potentially more memory efficient way to do this, with
+            # the is_dict method able to handle <word> \t <count> format.
+            # It will require more sophisticated marshalling of data back and
+            # forth
             learn_bpe.learn_bpe(
                 self.training_data,
                 outstream,
