@@ -161,6 +161,12 @@ class FairseqAgent(TorchAgent):
 
         agent = argparser.add_argument_group('Fairseq Arguments')
         agent.add_argument(
+            '--fp16',
+            default=False,
+            type=bool,
+            help='Use fp16 training'
+        )
+        agent.add_argument(
             '--seed',
             default=1,
             type=int,
@@ -259,7 +265,7 @@ class FairseqAgent(TorchAgent):
             # TODO: maybe support label smoothing here
             self.criterion = CrossEntropyCriterion(self.args, self.task)
 
-            if self.args.fp16:
+            if getattr(self.args, 'fp16', None):
                 self.trainer = fp16_trainer.FP16Trainer(
                     self.args, self.task, self.model, self.criterion
                 )
