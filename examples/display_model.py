@@ -24,6 +24,8 @@ def main():
     # Get command line arguments
     parser = ParlaiParser(True, True)
     parser.add_argument('-n', '--num-examples', default=10)
+    # by default we want to display info about the validation set
+    parser.set_defaults(datatype='valid')
     opt = parser.parse_args()
 
     # Create model and assign it to the specified task
