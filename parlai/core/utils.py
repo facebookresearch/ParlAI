@@ -651,7 +651,16 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
         if msg.get('text', ''):
             text = msg['text']
             if len(text) > max_len:
-                text = text[:max_len] + '...'
+                begin_text = ' '.join(
+                    text[:math.floor(0.8 * max_len)].split(' ')[:-1]
+                )
+                end_text = ' '.join(
+                    text[(len(text) - math.floor(0.2 * max_len)):].split(' ')[1:]
+                )
+                if len(end_text) > 0:
+                    text = begin_text + ' ...\n' + end_text
+                else:
+                    text = begin_text + ' ...'
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + text)
         if msg.get('labels') and 'labels' not in ignore_fields:
