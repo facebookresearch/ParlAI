@@ -43,12 +43,16 @@ NON_OVERRIDABLE_ARGS = {
 }
 
 
-def _fairseq_opt_wrapper(opt):
+def _fairseq_opt_wrapper(opt, skip_pretrained_embedding_loading=False):
     """
     Marshalls from a dict to a argparse.Namespace object for API compatibility.
-    Also does some necessary post-processing needed for fairseq-py.
+
+    Also does some necessary post-processing needed for fairseq. Optionally can
+    override pretrained embedding options, which is useful if we're just loading
+    a model from a checkpoint.
 
     :param opt: dict. ParlAI options passed around from everywhere.
+    :param skip_pretrained_embedding_loading: bool. Don't preload word embeddings.
     :return: an argparse.Namespace object for use in fairseq-py.
     """
     args = argparse.Namespace()
@@ -84,7 +88,14 @@ def _fairseq_opt_wrapper(opt):
 
     # handle modelzoo if possible
     for k in ("encoder_embed_path", "decoder_embed_path"):
-        if hasattr(args, k) and getattr(args, k) is not None:
+        if getattr(args, k, None) is None:
+            # not an argument for this model, pretrained embeddings don't matter
+            continue
+        elif skip_pretrained_embedding_loading:
+            # if we want to skip pretrained, then hide the option from fairseq
+            setattr(args, k, None)
+        else:
+            # otherwise we may need to modelzoo adjust the path for fairseq
             setattr(args, k, modelzoo_path(opt.get("datapath"), getattr(args, k)))
 
     # Here we hardcode a few options that we currently do not support
@@ -237,9 +248,16 @@ class FairseqAgent(TorchAgent):
         if not shared:
             # this is not a shared instance of this class, so do full initialization
 
+            # check early if we're going to be loading the model from a checkpoint
+            model_file_exists = (
+                self.opt.get('model_file') and os.path.isfile(self.opt['model_file'])
+            )
+
             # fairseq expects options to be in argparse format, instead of a dict
             # We also need to do some argument postprocessing and whatnot
-            self.args, self.opt = _fairseq_opt_wrapper(opt)
+            # We'll skip pretrained embeddings if we're going to override them with
+            # a model checkpoint anyway
+            self.args, self.opt = _fairseq_opt_wrapper(opt, model_file_exists)
 
             # seed the RNG
             torch.manual_seed(self.args.seed)
@@ -281,7 +299,7 @@ class FairseqAgent(TorchAgent):
                 )
 
             # if the model already existed, let's preload it and the trainer
-            if self.opt.get('model_file') and os.path.isfile(self.opt['model_file']):
+            if model_file_exists:
                 print('Loading existing model params from ' + self.opt['model_file'])
                 self.load(self.opt.get('model_file'))
 
