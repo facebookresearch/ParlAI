@@ -60,10 +60,10 @@ python train_model.py -m drqa -t squad -bs 32 -mf /tmp/model_drqa
 
 Evaluates on an already trained SQuAD model:
 ```bash
-python examples/eval_model.py -t squad -mf "models:drqa/squad/model"
+python eval_model.py -t squad -mf "models:drqa/squad/model"
 ```
 
 Interactive session on an already trained SQuAD model:
 ```bash
-python examples/interactive.py -mf "models:drqa/squad/model"
+python interactive.py -mf "models:drqa/squad/model"
 ```
