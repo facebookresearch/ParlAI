@@ -1,5 +1,7 @@
 import torch
 import math
+from collections import namedtuple
+from operator import attrgetter
 
 class Beam(object):
     def __init__(self, beam_size, min_length=3, padding_token=0, bos_token=1, eos_token=2, min_n_best=3, cuda=False):
@@ -27,6 +29,7 @@ class Beam(object):
         self.bookkeep = []  # backtracking id to hypothesis at previous time step
         self.outputs = [torch.Tensor(self.beam_size).long().fill_(padding_token).to(self.device)]  # output tokens at each time step
         self.finished = []  # keeps tuples (score, time_step, hyp_id)
+        self.HypothesisTail = namedtuple('HypothesisTail', ['timestep', 'hypid', 'score', 'tokenid'])
         self.eos_top = False
         self.eos_top_ts = None
         self.n_best_counter = 0
@@ -60,17 +63,19 @@ class Beam(object):
 
         self.scores = best_scores
         self.all_scores.append(self.scores)
-        hyp_id = best_idxs / voc_size
-        tok_id = best_idxs % voc_size
+        hyp_ids = best_idxs / voc_size
+        tok_ids = best_idxs % voc_size
 
-        self.outputs.append(tok_id)
-        self.bookkeep.append(hyp_id)
+        self.outputs.append(tok_ids)
+        self.bookkeep.append(hyp_ids)
 
         #  check new hypos for eos label, if we have some, add to finished
-        for i in range(self.beam_size):
-            if self.outputs[-1][i] == self.eos:
+        for hypid in range(self.beam_size):
+            if self.outputs[-1][hypid] == self.eos:
                 #  this is finished hypo, adding to finished
-                self.finished.append((self.scores[i], len(self.outputs)-1, i))
+                eostail = self.HypothesisTail(timestep=len(self.outputs)-1, hypid=hypid, score=self.scores[hypid], tokenid=self.eos)
+                self.finished.append(eostail)
+                #self.finished.append((self.scores[i], len(self.outputs)-1, i))
                 self.n_best_counter += 1
 
         if self.outputs[-1][0] == self.eos:
@@ -86,30 +91,42 @@ class Beam(object):
         Helper function to get single best hypothesis
         :return: hypothesis sequence represented as t{}-w{}-sc{:.{prec}f}
         """
-        top_endtok = self.get_rescored_finished(n_best=1)[0]
-        return self.get_hyp_from_finished(top_endtok[1], top_endtok[2]), top_endtok[0]
+        top_hypothesis_tail = self.get_rescored_finished(n_best=1)[0]
+        return self.get_hyp_from_finished(top_hypothesis_tail), top_hypothesis_tail.score
 
-    def get_hyp_from_finished(self, timestep, hyp_id):
+    def get_hyp_from_finished(self, hypothesis_tail):
         """
         Extract hypothesis ending with EOS at timestep with hyp_id
         :param timestep: timestep with range up to len(self.outputs)-1
         :param hyp_id: id with range up to beam_size-1
         :return: hypothesis sequence represented as t{}-w{}-sc{:.{prec}f}
         """
-        hypo_exist = False
-        for finished_item in self.finished:
-            if timestep == finished_item[1] and hyp_id == finished_item[2]:
-                hypo_exist = True
-        if hypo_exist == False:
-            raise RuntimeError("There is no requested hypo in self.finished: tstep:{}, hypid:{}".format(timestep, hyp_id
-                                                                                                        ))
+        #hypo_exist = False
+        # for finished_item in self.finished:
+        #     if timestep == finished_item[1] and hyp_id == finished_item[2]:
+        #         hypo_exist = True
+        # if hypo_exist == False:
+        #     raise RuntimeError("There is no requested hypo in self.finished: tstep:{}, hypid:{}".format(timestep, hyp_id
+        #
+
+        assert hypothesis_tail in self.finished, 'Provided hypothesis tail is not in self.finished!'
         hyp_idx = []
-        endback = hyp_id
-        for i in range(timestep, -1, -1):
-            hyp_idx.append('t{}-w{}-sc{:.{prec}f}'.format(i, self.outputs[i][endback], self.all_scores[i][endback], prec=3))
+        endback = hypothesis_tail.hypid
+        for i in range(hypothesis_tail.timestep, -1, -1):
+            hyp_idx.append(self.HypothesisTail(timestep=i, hypid=endback, score=self.all_scores[i][endback], tokenid=self.outputs[i][endback]))
+            #hyp_idx.append('t{}-w{}-sc{:.{prec}f}'.format(i, self.outputs[i][endback], self.all_scores[i][endback], prec=3))
             endback = self.bookkeep[i-1][endback]
 
         return hyp_idx
+
+    def get_pretty_hypothesis(self, list_of_hypotails):
+        hypothesis = []
+        for i in list_of_hypotails[0]:
+            hypothesis.append(i.tokenid)
+
+        hypothesis = torch.stack(list(reversed(hypothesis)))
+
+        return hypothesis
 
     def get_rescored_finished(self, n_best=None):
         """
@@ -119,11 +136,13 @@ class Beam(object):
         """
         rescored_finished = []
         for finished_item in self.finished:
-            current_length = finished_item[1] + 1  # timestep + 1
+            #current_length = finished_item[1] + 1  # timestep + 1
+            current_length = finished_item.timestep + 1
             length_penalty = math.pow((1 + current_length)/6, 0.65)
-            rescored_finished.append((finished_item[0]/length_penalty, finished_item[1], finished_item[2]))
+            #rescored_finished.append((finished_item[0]/length_penalty, finished_item[1], finished_item[2]))
+            rescored_finished.append(self.HypothesisTail(timestep=finished_item.timestep, hypid=finished_item.hypid, score=finished_item.score, tokenid=finished_item.tokenid))
 
-        srted = sorted(rescored_finished, reverse=True)
+        srted = sorted(rescored_finished, key=attrgetter('score'), reverse=True)
 
         if n_best is not None:
             srted = srted[:n_best]
@@ -150,32 +169,35 @@ class Beam(object):
         # get top nbest hyp
         top_hyp_idx_n_best = []
         n_best_colors = ['aquamarine', 'chocolate1', 'deepskyblue', 'green2', 'tan']
+        end_color='yellow'
         sorted_finished = self.get_rescored_finished(n_best=n_best)
-        for endtok in sorted_finished:
-            top_hyp_idx_n_best.append(self.get_hyp_from_finished(endtok[1], endtok[2]))
+        for hyptail in sorted_finished:
+            top_hyp_idx_n_best.append(self.get_hyp_from_finished(hyptail)[1:])  # do not include EOS since it has rescored score not from original self.all_scores, we color EOS with black
 
         # create nodes
         for tstep, lis in enumerate(outputs):
             for hypid, token in enumerate(lis):
-                idx = 't{}-w{}-sc{:.{prec}f}'.format(tstep, token, all_scores[tstep][hypid], prec=3)
+                node_tail = self.HypothesisTail(timestep=tstep, hypid=hypid, score=all_scores[tstep][hypid], tokenid=token)
+                #idx = 't{}-w{}-sc{:.{prec}f}'.format(tstep, token, all_scores[tstep][hypid], prec=3)
                 color = 'white'
                 rank = None
+                if node_tail in sorted_finished:
+                    color = end_color
                 for i,hypseq in enumerate(top_hyp_idx_n_best):
-                    if idx in hypseq:
+                    if node_tail in hypseq:
                         if n_best <= 5:  # color nodes only if <=5
                             color = n_best_colors[i]
                         rank = i
                         break
                 label = "<{}".format(dictionary.vec2txt([token]) if dictionary is not None else token) + " : " + "{:.{prec}f}>".format(all_scores[tstep][hypid], prec=3)
-                graph.add_node(pydot.Node(idx, label=label, fillcolor=color, style='filled', xlabel='{}'.format(rank) if rank is not None else '' ))
-
+                graph.add_node(pydot.Node(node_tail.__repr__(), label=label, fillcolor=color, style='filled', xlabel='{}'.format(rank) if rank is not None else '' ))
         # create edges
         for revtstep, lis in reversed(list(enumerate(bookkeep))):
             for i,prev_id in enumerate(lis):
-                to_idx = '"t{}-w{}-sc{:.{prec}f}"'.format(revtstep+1, outputs[revtstep+1][i], all_scores[revtstep+1][i], prec=3)
-                from_idx = '"t{}-w{}-sc{:.{prec}f}"'.format(revtstep, outputs[revtstep][prev_id], all_scores[revtstep][prev_id], prec=3)
-                from_node = graph.get_node(from_idx)[0]
-                to_node = graph.get_node(to_idx)[0]
+                #to_idx = '"t{}-w{}-sc{:.{prec}f}"'.format(revtstep+1, outputs[revtstep+1][i], all_scores[revtstep+1][i], prec=3)
+                #from_idx = '"t{}-w{}-sc{:.{prec}f}"'.format(revtstep, outputs[revtstep][prev_id], all_scores[revtstep][prev_id], prec=3)
+                from_node = graph.get_node('"{}"'.format(self.HypothesisTail(timestep=revtstep, hypid=prev_id, score=all_scores[revtstep][prev_id], tokenid=outputs[revtstep][prev_id]).__repr__()))[0]
+                to_node = graph.get_node('"{}"'.format(self.HypothesisTail(timestep=revtstep+1, hypid=i, score=all_scores[revtstep+1][i], tokenid=outputs[revtstep+1][i]).__repr__()))[0]
                 newedge = pydot.Edge(from_node.get_name(), to_node.get_name())
                 graph.add_edge(newedge)
 
