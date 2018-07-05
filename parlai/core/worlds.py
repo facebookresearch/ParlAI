@@ -279,10 +279,14 @@ class DialogPartnerWorld(World):
             return metrics
 
     def num_examples(self):
-        return self.agents[0].num_examples()
+        if hasattr(self.agents[0], 'num_examples'):
+            return self.agents[0].num_examples()
+        return None
 
     def num_episodes(self):
-        return self.agents[0].num_episodes()
+        if hasattr(self.agents[0], 'num_episodes'):
+            return self.agents[0].num_episodes()
+        return None
 
     def shutdown(self):
         """Shutdown each agent."""
