@@ -41,6 +41,7 @@ from parlai.core.utils import Timer, round_sigfigs, no_lock
 from parlai.core.thread_utils import SharedTable
 from parlai.core.worlds import create_task, World
 
+import copy
 import math
 
 
@@ -169,18 +170,37 @@ class PerplexityWorld(World):
         return m
 
 
-def eval_ppl(opt, build_dict):
+def eval_ppl(opt, build_dict=None, dict_file=None):
     """Evaluates the the perplexity of a model.
 
-    See the documentation for this file for more info.
+    This uses a dictionary which implements the following functions:
+    - tokenize(text): splits string up into list of tokens
+    - __in__(text): checks whether dictionary contains a token
+    - keys(): returns an iterator over all tokens in the dictionary
 
     :param opt: option dict
-    :param build_dict: function for building official dictionary.
-        note that this function does not use the opt passed into eval_ppl,
-        but rather should have hardcoded settings for its dictionary.
+    :param build_dict: function which returns a dictionary class implementing
+        the functions above.
+    :param dict_file: file used when loading the dictionary class set via the
+        "dictionary_class" argument (defaults to
+        parlai.core.dict:DictionaryAgent).
 
+    Either build_dict or dict_file must be set (both default to None) to
+    determine the dictionary used for the evaluation.
     """
-    dict_agent = build_dict()
+    if not build_dict and not dict_file:
+        raise RuntimeError('eval_ppl script either needs a dictionary build '
+                           'function or a dictionary file.')
+
+    if build_dict:
+        dict_agent = build_dict()
+    else:
+        dict_opt = copy.deepcopy(opt)
+        dict_opt['model'] = dict_opt.get('dictionary_class', 'parlai.core.dict:DictionaryAgent')
+        dict_opt['model_file'] = dict_file
+        if 'override' in dict_opt:
+            del dict_opt['override']
+        dict_agent = create_agent(dict_opt, requireModelExists=True)
 
     # create agents
     agent = create_agent(opt)

@@ -13,6 +13,7 @@ import codecs
 import copy
 import numpy as np
 import os
+import pickle
 import re
 
 try:
@@ -481,6 +482,10 @@ class DictionaryAgent(Agent):
                 tok = self.ind2tok[i]
                 cnt = self.freq[tok]
                 write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
+
+        # save opt file
+        with open(filename + '.opt', 'wb') as handle:
+            pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def sort(self):
         """Sorts the dictionary, so that the elements with the lowest index have
