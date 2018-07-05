@@ -373,17 +373,20 @@ class FairseqAgent(TorchAgent):
         for i in range(len(src_tokens)):
             beams = gens[i]
             selected = max(beams, key=lambda x: x["score"])
-            response = []
-            for t in selected["tokens"]:
+            tokens = selected["tokens"]
+            start = 0
+            end = -1
+            for i, t in enumerate(tokens):
                 t = t.item()
                 if t == self.dict.bos_index:
                     # don't include <s> token
+                    start = i + 1
                     continue
                 if t == self.dict.eos_index:
                     # stop (and don't include) </s> token
+                    end = i
                     break
-                response.append(self.dict[t])
-            responses.append(" ".join(response))
+            responses.append(self.dict.vec2txt(tokens[start:end]))
         return responses
 
     def report(self):
