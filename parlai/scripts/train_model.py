@@ -257,6 +257,11 @@ class TrainLoop():
         logs.append('time:{}s'.format(math.floor(self.train_time.time())))
         logs.append('total_exs:{}'.format(self.world.get_total_exs()))
 
+        exs_per_ep = self.world.num_examples()
+        if exs_per_ep:
+            logs.append('total_eps:{}'.format(
+                round(self.world.get_total_exs() / exs_per_ep, 2)))
+
         if 'time_left' in train_report:
             logs.append('time_left:{}s'.format(
                          math.floor(train_report.pop('time_left', ""))))
