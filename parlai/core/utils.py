@@ -493,7 +493,7 @@ class PaddingUtils(object):
         return xs, ys, labels, valid_inds, end_idxs, y_lens
 
     @classmethod
-    def map_predictions(cls, predictions, valid_inds, batch_reply, observations, dictionary, end_idx, report_freq=0.1, labels=None, answers=None, ys=None, beam_preds=None):
+    def map_predictions(cls, predictions, valid_inds, batch_reply, observations, dictionary, end_idx, report_freq=0.1, labels=None, answers=None, ys=None):
         """Predictions are mapped back to appropriate indices in the batch_reply
            using valid_inds.
            report_freq -- how often we report predictions
@@ -524,27 +524,10 @@ class PaddingUtils(object):
             elif answers is not None:
                 answers[valid_inds[i]] = output_tokens
 
-            beam_pred_text = None
-            if beam_preds is not None:
-                beam_pred_length = 0
-                beam_pred_cleaned = []
-                assert len(beam_preds) == len(predictions)
-                beam_pred = beam_preds[i]
-                for token in beam_pred:
-                    if token == end_idx and beam_pred_length != 0:
-                        break
-                    else:
-                        beam_pred_cleaned.append(token)
-                    beam_pred_length += 1
-                beam_pred_text = dictionary.vec2txt(beam_pred_cleaned)
-
-
             if random.random() > (1 - report_freq):
                 # log sometimes
                 print('TEXT: ', observations[valid_inds[i]]['text'])
                 print('PREDICTION: ', curr_pred, '\n~')
-                if beam_pred_text is not None:
-                    print('BEAM PREDICTION: {} \n~'.format(beam_pred_text))
         return
 
 
