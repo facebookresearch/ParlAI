@@ -259,7 +259,7 @@ class TrainLoop():
 
         exs_per_ep = self.world.num_examples()
         if exs_per_ep:
-            logs.append('total_epochs:{}'.format(
+            logs.append('total_eps:{}'.format(
                 round(self.world.get_total_exs() / exs_per_ep, 2)))
 
         if 'time_left' in train_report:
