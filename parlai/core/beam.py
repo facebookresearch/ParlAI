@@ -90,7 +90,7 @@ class Beam(object):
     def get_top_hyp(self):
         """
         Helper function to get single best hypothesis
-        :return: hypothesis sequence represented as t{}-w{}-sc{:.{prec}f}
+        :return: hypothesis sequence and the final score
         """
         top_hypothesis_tail = self.get_rescored_finished(n_best=1)[0]
         return self.get_hyp_from_finished(top_hypothesis_tail), top_hypothesis_tail.score
@@ -100,7 +100,7 @@ class Beam(object):
         Extract hypothesis ending with EOS at timestep with hyp_id
         :param timestep: timestep with range up to len(self.outputs)-1
         :param hyp_id: id with range up to beam_size-1
-        :return: hypothesis sequence represented as t{}-w{}-sc{:.{prec}f}
+        :return: hypothesis sequence
         """
 
         assert hypothesis_tail.tokenid == self.eos, 'Check that hyptail, its tokenid is not EOS'
