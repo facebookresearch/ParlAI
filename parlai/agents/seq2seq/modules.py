@@ -10,6 +10,9 @@ import torch.nn as nn
 from torch.nn.parameter import Parameter
 from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 import torch.nn.functional as F
+from parlai.core.beam import Beam
+from parlai.core.dict import DictionaryAgent
+import os
 
 
 def pad(tensor, length, dim=0):
@@ -66,8 +69,51 @@ class Seq2seq(nn.Module):
                 padding_idx=self.NULL_IDX,
                 attn_type=opt['attention'])
 
+        self.beam_dump = opt['beam_dump']
+        if self.beam_dump > 0.0:
+            self.dict = DictionaryAgent(opt)
+            self.beam_dump_filecnt = 0
+            self.beam_dump_path = os.path.join(os.path.dirname(opt['model_file']), 'beam_dump')
+            if not os.path.exists(self.beam_dump_path):
+                os.makedirs(self.beam_dump_path)
+
+        if opt['no_cuda'] is True:
+            self.beam_device = 'cpu'
+        else:
+            self.beam_device = 'cuda'
+
+    def beamize_hidden(self, hidden, beam_size, batch_size):
+        if isinstance(hidden, tuple):
+            num_layers = hidden[0].size(0)
+            hidden_size = hidden[0].size(-1)
+            return (hidden[0].view(num_layers, batch_size, beam_size, hidden_size),
+                hidden[1].view(num_layers, batch_size, beam_size, hidden_size))
+        else:  # GRU
+            num_layers = hidden.size(0)
+            hidden_size = hidden.size(-1)
+            return hidden.view(num_layers, batch_size, beam_size, hidden_size)
+
+    def unbeamize_hidden(self, hidden, beam_size, batch_size):
+        if isinstance(hidden, tuple):
+            num_layers = hidden[0].size(0)
+            hidden_size = hidden[0].size(-1)
+            return (hidden[0].view(num_layers, batch_size * beam_size, hidden_size),
+                hidden[1].view(num_layers, batch_size * beam_size, hidden_size))
+        else:  # GRU
+            num_layers = hidden.size(0)
+            hidden_size = hidden.size(-1)
+            return hidden.view(num_layers, batch_size * beam_size, hidden_size)
+
+    def beamize_enc_out(self, enc_out, beam_size, batch_size):
+        hidden_size = enc_out.size(-1)
+        return enc_out.view(batch_size, beam_size, -1, hidden_size)
+
+    def unbeamize_enc_out(self, enc_out, beam_size, batch_size):
+        hidden_size = enc_out.size(-1)
+        return enc_out.view(batch_size * beam_size, -1, hidden_size)
+
     def forward(self, xs, ys=None, cands=None, valid_cands=None, prev_enc=None,
-                rank_during_training=False):
+                rank_during_training=False, search='greedy', beam_size=None):
         """Get output predictions from the model.
 
         Arguments:
@@ -81,6 +127,7 @@ class Seq2seq(nn.Module):
         rank_during_training -- (default False) if set, ranks any available
             cands during training as well
         """
+        input_xs = xs
         bsz = len(xs)
         if ys is not None:
             # keep track of longest label we've ever seen
@@ -121,34 +168,93 @@ class Seq2seq(nn.Module):
                     predictions.append(preds)
                     scores.append(score)
         else:
-            # just predict
-            done = [False for _ in range(bsz)]
-            total_done = 0
-            xs = starts
+            # here we do search: supported search types: greedy, beam search
+            assert search in ['greedy', 'beam'], "search argument should be greedy or beam"
+            if search == 'greedy':
+                done = [False for _ in range(bsz)]
+                total_done = 0
+                xs = starts
 
-            for _ in range(self.longest_label):
-                # generate at most longest_label tokens
-                preds, score, hidden = self.decoder(xs, hidden, enc_out, attn_mask)
-                scores.append(score)
-                xs = preds
-                predictions.append(preds)
+                for _ in range(self.longest_label):
+                    # generate at most longest_label tokens
+                    preds, score, hidden = self.decoder(xs, hidden, enc_out, attn_mask)
+                    scores.append(score)
+                    xs = preds
+                    predictions.append(preds)
 
-                # check if we've produced the end token
-                for b in range(bsz):
-                    if not done[b]:
-                        # only add more tokens for examples that aren't done
-                        if preds.data[b][0] == self.END_IDX:
-                            # if we produced END, we're done
-                            done[b] = True
-                            total_done += 1
-                if total_done == bsz:
-                    # no need to generate any more
-                    break
+                    # check if we've produced the end token
+                    for b in range(bsz):
+                        if not done[b]:
+                            # only add more tokens for examples that aren't done
+                            if preds.data[b][0] == self.END_IDX:
+                                # if we produced END, we're done
+                                done[b] = True
+                                total_done += 1
+                    if total_done == bsz:
+                        # no need to generate any more
+                        break
 
-        if predictions:
+            if search == 'beam':
+                enc_out, hidden = encoder_states[0], encoder_states[1]  # take it from encoder
+                enc_out = enc_out.unsqueeze(1).repeat(1, beam_size, 1, 1)
+                # create batch size num of beams
+                beams = [Beam(beam_size, 3, 0, 1, 2, min_n_best=beam_size/2, cuda=self.beam_device) for i in range(bsz)]
+                # init the input with start token
+                xs = starts
+                # repeat tensors to support batched beam
+                xs = xs.repeat(1, beam_size)
+                attn_mask = input_xs.ne(0).float()
+                attn_mask = attn_mask.unsqueeze(1).repeat(1, beam_size, 1)
+                repeated_hidden = []
+
+                if isinstance(hidden, tuple):
+                    for i in range(hidden[0].size(0)):
+                        repeated_hidden.append(hidden[i].unsqueeze(2).repeat(1, 1, beam_size, 1))
+                    hidden = self.unbeamize_hidden(tuple(repeated_hidden), beam_size, bsz)
+                else:  # GRU
+                    repeated_hidden = hidden.unsqueeze(2).repeat(1, 1, beam_size, 1)
+                    hidden = self.unbeamize_hidden(repeated_hidden, beam_size, bsz)
+                enc_out = self.unbeamize_enc_out(enc_out, beam_size, bsz)
+                xs = xs.view(bsz * beam_size, -1)
+                for step in range(self.longest_label):
+                    if all((b.done() for b in beams)):
+                        break
+                    out = self.decoder(xs, hidden, enc_out)
+                    scores = out[1]
+                    scores = scores.view(bsz, beam_size, -1)  # -1 is a vocab size
+                    for i, b in enumerate(beams):
+                        b.advance(F.log_softmax(scores[i, :], dim=-1))
+                    xs = torch.cat([b.get_output_from_current_step() for b in beams]).unsqueeze(-1)
+                    permute_hidden_idx = torch.cat(
+                        [beam_size * i + b.get_backtrack_from_current_step() for i, b in enumerate(beams)])
+                    new_hidden = out[2]
+                    if isinstance(hidden, tuple):
+                        for i in range(len(hidden)):
+                            hidden[i].data.copy_(new_hidden[i].data.index_select(dim=1, index=permute_hidden_idx))
+                    else:  # GRU
+                        hidden.data.copy_(new_hidden.data.index_select(dim=1, index=permute_hidden_idx))
+
+                beam_pred = [ b.get_pretty_hypothesis(b.get_top_hyp())[1:] for b in beams ]
+                # these beam scores are rescored with length penalty!
+                beam_scores = torch.stack([b.get_top_hyp()[1] for b in beams])
+                pad_length = max([t.size(0) for t in beam_pred])
+                beam_pred = torch.stack([pad(t, length=pad_length, dim=0) for t in beam_pred], dim=0)
+
+                if self.beam_dump > 0.0:
+                    num_dump = round(bsz * self.beam_dump)
+                    for i in range(num_dump):
+                        dot_graph = beams[i].get_beam_dot(dictionary=self.dict)
+                        dot_graph.write_png(os.path.join(self.beam_dump_path, "{}.png".format(self.beam_dump_filecnt)))
+                        self.beam_dump_filecnt += 1
+
+                predictions = beam_pred
+                scores = beam_scores
+
+        if isinstance(predictions, list):
             predictions = torch.cat(predictions, 1)
-        if scores:
+        if isinstance(scores, list):
             scores = torch.cat(scores, 1)
+
         return predictions, scores, cand_preds, cand_scores, encoder_states
 
 

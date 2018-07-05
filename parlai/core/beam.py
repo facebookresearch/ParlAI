@@ -5,7 +5,7 @@ from operator import attrgetter
 
 
 class Beam(object):
-    def __init__(self, beam_size, min_length=3, padding_token=0, bos_token=1, eos_token=2, min_n_best=3, cuda=False):
+    def __init__(self, beam_size, min_length=3, padding_token=0, bos_token=1, eos_token=2, min_n_best=3, cuda='cpu'):
         """
         Generic beam class. It keeps information about beam_size hypothesis.
         :param beam_size: number of hypothesis in the beam
@@ -21,10 +21,7 @@ class Beam(object):
         self.eos = eos_token
         self.bos = bos_token
         self.pad = padding_token
-        if cuda is True:
-            self.device = 'cuda'
-        else:
-            self.device = 'cpu'
+        self.device = cuda
         self.scores = torch.Tensor(self.beam_size).float().zero_().to(
             self.device)  # recent score for each hypo in the beam
         self.all_scores = [torch.Tensor([0.0] * beam_size).to(self.device)]  # self.scores values per each time step
