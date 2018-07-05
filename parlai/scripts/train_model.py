@@ -57,7 +57,7 @@ def setup_args(parser=None):
     train.add_argument('-sval', '--save-after-valid', type='bool',
                        default=False,
                        help='Saves the model to model_file.checkpoint after '
-                            'every validation (default False).')
+                            'every validation (default %(default)s).')
     train.add_argument('-vme', '--validation-max-exs',
                        type=int, default=-1,
                        help='max examples to use during validation (default '
