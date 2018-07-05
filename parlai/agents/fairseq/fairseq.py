@@ -333,7 +333,7 @@ class FairseqAgent(TorchAgent):
         # torchagent boilerplate
         self.is_training = any(["labels" in obs for obs in observations])
         vec_obs = [self.vectorize(obs) for obs in observations]
-        xs, _, ys, _, valid_inds = self.map_valid(vec_obs)
+        xs, _, ys, _, valid_inds = self.batchify(vec_obs)
         if xs is None:
             return batch_reply
 

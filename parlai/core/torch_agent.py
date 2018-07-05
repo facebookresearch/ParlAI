@@ -20,9 +20,6 @@ import copy
 Batch = namedtuple("Batch", [
     # bsz x seqlen tensor containing the parsed text data
     "text_vec",
-    # bsz x 1 tensor containing the lengths of the text in same order as
-    # text_vec; necessary for pack_padded_sequence
-    "text_lengths",
     # bsz x seqlen tensor containing the parsed label (one per batch row)
     "label_vec",
     # list of length bsz containing the selected label for each batch row (some
@@ -33,6 +30,9 @@ Batch = namedtuple("Batch", [
     # e.g. we may sort examples by their length or some examples may be
     # invalid.
     "valid_indices",
+    # list of lists of tensors. outer list has size bsz, inner lists vary in
+    # size based on the number of candidates for each row in the batch.
+    "candidates",
 ])
 
 
@@ -52,19 +52,22 @@ class TorchAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('TorchAgent Arguments')
-        agent.add_argument('-tr', '--truncate', default=-1, type=int,
-                           help='Truncate input lengths to speed up training.')
-        agent.add_argument('-histd', '--history-dialog', default=-1, type=int,
-                           help='Number of past dialog examples to remember.')
-        agent.add_argument('-histr', '--history-replies',
-                           default='label_else_model', type=str,
-                           choices=['none', 'model', 'label',
-                                    'label_else_model'],
-                           help='Keep replies in the history, or not.')
-        agent.add_argument('--no-cuda', action='store_true', default=False,
-                           help='disable GPUs even if available')
-        agent.add_argument('--gpu', type=int, default=-1,
-                           help='which GPU device to use')
+        agent.add_argument(
+            '-tr', '--truncate', default=-1, type=int,
+            help='Truncate input lengths to increase speed / use less memory.')
+        agent.add_argument(
+            '-histd', '--history-dialog', default=-1, type=int,
+            help='Number of past dialog utterances to remember.')
+        agent.add_argument(
+            '-histr', '--history-replies', default='label_else_model', type=str,
+            choices=['none', 'model', 'label', 'label_else_model'],
+            help='Keep replies in the history, or not.')
+        agent.add_argument(
+            '--no-cuda', type='bool', default=False,
+            help='disable GPUs even if available. otherwise, will use GPUs if '
+                 'available on the device.')
+        agent.add_argument(
+            '--gpu', type=int, default=-1, help='which GPU device to use')
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -77,6 +80,10 @@ class TorchAgent(Agent):
             self.opt = shared['opt']
             self.dict = shared['dict']
 
+        if opt.get('numthreads', 1) > 1:
+            torch.set_num_threads(1)
+
+        # check for cuda
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
         if self.use_cuda:
             if not shared:
@@ -98,17 +105,19 @@ class TorchAgent(Agent):
         shared['dict'] = self.dict
         return shared
 
-    def vectorize(self, obs, addStartIdx=True, addEndIdx=True):
+    def vectorize(self, obs, add_start=True, add_end=True, truncate=None):
         """
         Converts 'text' and 'label'/'eval_label' field to vectors.
 
         :param obs: single observation from observe function
-        :param addEndIdx: default True, adds the end token to each label
+        :param add_start: default True, adds the end token to each label
+        :param add_end: default True, adds the end token to each label
         """
         if 'text' not in obs:
             return obs
-        # convert 'text' field to vector using self.txt2vec and then a tensor
-        obs['text_vec'] = torch.LongTensor(self.dict.txt2vec(obs['text']))
+        # convert 'text' into tensor of dictionary indices
+        vec_text = deque(self.dict.txt2vec(obs['text']), maxlen=truncate)
+        obs['text_vec'] = torch.LongTensor(vec_text)
         if self.use_cuda:
             obs['text_vec'] = obs['text_vec'].cuda()
 
@@ -119,21 +128,21 @@ class TorchAgent(Agent):
             label_type = 'eval_labels'
 
         if label_type is not None:
-            new_labels = []
-            for label in obs[label_type]:
-                vec_label = self.dict.txt2vec(label)
-                if addStartIdx:
-                    vec_label.insert(0, self.START_IDX)
-                if addEndIdx:
-                    vec_label.append(self.END_IDX)
-                new_label = torch.LongTensor(vec_label)
-                if self.use_cuda:
-                    new_label = new_label.cuda()
-                new_labels.append(new_label)
-            obs[label_type + "_vec"] = new_labels
+            label = random.choice(obs[label_type])
+            vec_label = deque(maxlen=truncate)
+            if add_start:
+                vec_label.append(self.START_IDX)
+            vec_label += self.dict.txt2vec(label)
+            if add_end:
+                vec_label.append(self.END_IDX)
+            new_label = torch.LongTensor(vec_label)
+            if self.use_cuda:
+                new_label = new_label.cuda()
+            obs[label_type + '_vec'] = new_label
+            obs[label_type]
         return obs
 
-    def map_valid(self, obs_batch, sort=True, is_valid=lambda obs: 'text_vec' in obs):
+    def batchify(self, obs_batch, sort=False, is_valid=lambda obs: 'text_vec' in obs):
         """Creates a batch of valid observations from an unchecked batch, where
         a valid observation is one that passes the lambda provided to the function.
         Assumes each observation has been vectorized by vectorize function.
@@ -142,17 +151,17 @@ class TorchAgent(Agent):
         explanation of each field.
 
         :param obs_batch: list of vectorized observations
-        :param sort:      default True, orders the observations by length of vector
+        :param sort:      default False, orders the observations by length of vector
         :param is_valid:  default function that checks if 'text_vec' is in the
                           observation, determines if an observation is valid
         """
         if len(obs_batch) == 0:
-            return Batch(None, None, None, None, None)
+            return Batch(None, None, None, None, None, None)
 
         valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
 
         if len(valid_obs) == 0:
-            return Batch(None, None, None, None, None)
+            return Batch(None, None, None, None, None, None)
 
         valid_inds, exs = zip(*valid_obs)
 
@@ -165,13 +174,10 @@ class TorchAgent(Agent):
             exs = [exs[k] for k in ind_sorted]
             valid_inds = [valid_inds[k] for k in ind_sorted]
             x_text = [x_text[k] for k in ind_sorted]
-            x_lens = [x_lens[k] for k in ind_sorted]
 
-        x_lens = torch.LongTensor(x_lens)
         padded_xs = torch.LongTensor(len(exs),
                                      max(x_lens)).fill_(self.NULL_IDX)
         if self.use_cuda:
-            x_lens = x_lens.cuda()
             padded_xs = padded_xs.cuda()
 
         for i, ex in enumerate(x_text):
@@ -187,21 +193,10 @@ class TorchAgent(Agent):
         ys = None
         labels = None
         if some_labels_avail:
-            # randomly select one of the labels to update on (if multiple)
-            if labels_avail:
-                field = 'labels'
-            else:
-                field = 'eval_labels'
+            field = 'labels' if labels_avail else 'eval_labels'
 
-            num_choices = [len(ex.get(field + "_vec", [])) for ex in exs]
-            choices = [random.choice(range(num)) if num != 0 else -1
-                       for num in num_choices]
-            label_vecs = [ex[field + "_vec"][choices[i]]
-                          if choices[i] != -1 else torch.LongTensor([])
-                          for i, ex in enumerate(exs)]
-            labels = [ex[field][choices[i]]
-                      if choices[i] != -1 else ''
-                      for i, ex in enumerate(exs)]
+            label_vecs = [ex[field + "_vec"] for i, ex in enumerate(exs)]
+            labels = [ex[field] for i, ex in enumerate(exs)]
             y_lens = [y.shape[0] for y in label_vecs]
             padded_ys = torch.LongTensor(len(exs),
                                          max(y_lens)).fill_(self.NULL_IDX)
@@ -212,20 +207,34 @@ class TorchAgent(Agent):
                     padded_ys[i, :y.shape[0]] = y
             ys = padded_ys
 
-        return Batch(xs, x_lens, ys, labels, valid_inds)
+        cands = None
+        return Batch(xs, ys, labels, valid_inds, cands)
 
-    def unmap_valid(self, predictions, valid_inds, batch_size):
-        """Re-order permuted predictions to the initial ordering, includes the
-        empty observations.
+    def match_batch(self, batch_reply, valid_inds, predictions=None,
+                    candidate_preds=None):
+        """Match sub-batch of predictions to the original batch indices.
 
-        :param predictions: output of module's predict function
+        Batches may be only partially filled (e.g. when completing the remainder
+        at the end of the validation or test set), or we may want to sort by
+        e.g. the length of the input sequences if using pack_padded_sequence.
+        This matches rows back with their original row in the batch for
+        calculating metrics like accuracy.
+
+        :param batch_reply: full-batchsize list of message dictionaries to put
+            responses into
+        :param predictions: sub-batchsize list of text outputs from model. may
+            be None (default) if model chooses to not answer.
         :param valid_inds: original indices of the predictions
-        :param batch_size: overall original size of batch
+        :param candidate_preds: sub-batchsize list of lists of text outputs
+            ranked by the model. may be None (default) if model isn't ranking.
         """
-        unpermuted = [None]*batch_size
-        for pred, idx in zip(predictions, valid_inds):
-            unpermuted[idx] = pred
-        return unpermuted
+        if predictions is not None:
+            for i, response in zip(valid_inds, predictions):
+                batch_reply[i]['text'] = response
+        if candidate_preds is not None:
+            for i, cands in zip(valid_inds, candidate_preds):
+                batch_reply[i]['text_candidates'] = cands
+        return batch_reply
 
     def maintain_dialog_history(self, observation, reply='',
                                 useStartEndIndices=False,
@@ -354,8 +363,46 @@ class TorchAgent(Agent):
         return observation
 
     def act(self):
-        """Calls batch_act with the singleton batch"""
+        """Calls batch_act with the singleton batch."""
         return self.batch_act([self.observation])[0]
 
-    def batch_act(self):
-        raise NotImplementedError("Abstract class: user must implement batch_act")
+    def batch_act(self, observations):
+        batch_size = len(observations)
+        # initialize a table of replies with this agent's id
+        batch_reply = [{'id': self.getID()} for _ in range(batch_size)]
+
+        is_training = any(['labels' in obs for obs in observations])
+
+        vec_obs = [self.vectorize(obs) for obs in observations]
+
+        batch = self.batchify(vec_obs)
+
+        if batch.text_vec is None:
+            return batch_reply
+
+        if is_training:
+            output = self.train_step(batch.text_vec, batch.label_vec,
+                                     batch.candidates)
+        else:
+            output = self.eval_step(batch.text_vec, batch.label_vec,
+                                    batch.candidates)
+
+        if isinstance(output, tuple):
+            predictions = output[0]
+            candidate_preds = output[1]
+        else:
+            predictions = output
+            candidate_preds = None
+
+
+        self.match_batch(batch_reply, batch.valid_indices,
+                         predictions=predictions,
+                         candidate_preds=candidate_preds)
+
+        return batch_reply
+
+    def train_step(self, xs, ys=None, cands=None, *args, **kwargs):
+        raise NotImplementedError('Abstract class: user must implement batch_act')
+
+    def eval_step(self, xs, ys=None, cands=None, *args, **kwargs):
+        raise NotImplementedError('Abstract class: user must implement batch_act')

@@ -390,8 +390,6 @@ class DictionaryAgent(Agent):
 
     def bpe_tokenize(self, text):
         """Returns a sequence of BPE-tokens from the text."""
-        if self.lower:
-            text = text.lower()
         return self.bpehelper.tokenize(text)
 
     def finalize(self):
