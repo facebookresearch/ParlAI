@@ -80,9 +80,9 @@ def _bleu(guess, answers):
     # Warning: BLEU calculation *should* include proper tokenization and
     # punctuation etc. We're using the normalize_answer for everything though,
     # so we're over-estimating our BLEU scores.  Also note that NLTK's bleu is
-    # going to be slower than fairseq's (which is written in C), but requires
-    # that everything be in arrays of ints (i.e. torchified). NLTK's works with
-    # strings, which is better suited for this module.
+    # going to be slower than fairseq's (which is written in C), but fairseq's
+    # requires that everything be in arrays of ints (i.e. as tensors). NLTK's
+    # works with strings, which is better suited for this module.
     return nltkbleu.sentence_bleu(
         [normalize_answer(a).split(" ") for a in answers],
         normalize_answer(guess).split(" ")
