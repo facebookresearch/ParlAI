@@ -57,7 +57,7 @@ def setup_args(parser=None):
     train.add_argument('-sval', '--save-after-valid', type='bool',
                        default=False,
                        help='Saves the model to model_file.checkpoint after '
-                            'every validation (default True).')
+                            'every validation (default %(default)s).')
     train.add_argument('-veps', '--validation-every-n-epochs',
                        type=int, default=-1,
                        help='Validate every n epochs. Whenever the the best '
