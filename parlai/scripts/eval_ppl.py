@@ -173,13 +173,20 @@ class PerplexityWorld(World):
 def eval_ppl(opt, build_dict=None, dict_file=None):
     """Evaluates the the perplexity of a model.
 
-    See the documentation for this file for more info.
+    This uses a dictionary which implements the following functions:
+    - tokenize(text): splits string up into list of tokens
+    - __in__(text): checks whether dictionary contains a token
+    - keys(): returns an iterator over all tokens in the dictionary
 
     :param opt: option dict
-    :param build_dict: function for building official dictionary.
-        note that this function does not use the opt passed into eval_ppl,
-        but rather should have hardcoded settings for its dictionary.
+    :param build_dict: function which returns a dictionary class implementing
+        the functions above.
+    :param dict_file: file used when loading the dictionary class set via the
+        "dictionary_class" argument (defaults to
+        parlai.core.dict:DictionaryAgent).
 
+    Either build_dict or dict_file must be set (both default to None) to
+    determine the dictionary used for the evaluation.
     """
     if not build_dict and not dict_file:
         raise RuntimeError('eval_ppl script either needs a dictionary build '
