@@ -103,6 +103,8 @@ def eval_wordstat(opt, print_parser=None):
         print('[ Using model bundled dictionary ]')
         dictionary = agent.dict
 
+    batch_size = opt['batchsize']
+
     if print_parser:
         # Show arguments after loading model
         print_parser.opt = agent.opt
@@ -121,17 +123,29 @@ def eval_wordstat(opt, print_parser=None):
     pred_list = []
 
     while not world.epoch_done():
-        cnt += 1
         world.parley()
-        prediction = world.acts[-1]['text']
-        pred_list.append(normalize_answer(prediction))
-        freqs, _cnt, wlength, clength = get_word_stats(prediction, dictionary, bins=bins)
-        word_cnt += _cnt
-
-        mean_wlength.append(wlength)
-        mean_clength.append(clength)
-
-        freqs_cnt += Counter(freqs)
+        if batch_size == 1:
+            cnt += 1
+            prediction = world.acts[-1]['text']
+            pred_list.append(normalize_answer(prediction))
+            freqs, _cnt, wlength, clength = get_word_stats(prediction, dictionary, bins=bins)
+            word_cnt += _cnt
+            mean_wlength.append(wlength)
+            mean_clength.append(clength)
+            freqs_cnt += Counter(freqs)
+        else:
+            for w in world.worlds:
+                try:
+                    prediction = w.acts[-1]['text']
+                except:
+                    continue
+                cnt += 1
+                pred_list.append(normalize_answer(prediction))
+                freqs, _cnt, wlength, clength = get_word_stats(prediction, dictionary, bins=bins)
+                word_cnt += _cnt
+                mean_wlength.append(wlength)
+                mean_clength.append(clength)
+                freqs_cnt += Counter(freqs)
 
         if log_time.time() > log_every_n_secs:
             report = world.report()
