@@ -100,7 +100,6 @@ class Beam(object):
         :return: hypothesis sequence
         """
 
-        assert hypothesis_tail.tokenid == self.eos, 'Check that hyptail, its tokenid is not EOS'
         hyp_idx = []
         endback = hypothesis_tail.hypid
         for i in range(hypothesis_tail.timestep, -1, -1):
@@ -139,6 +138,18 @@ class Beam(object):
             srted = srted[:n_best]
 
         return srted
+
+    def check_finished(self):
+        """
+        this function checks if self.finished is empty and adds hyptail
+        in that case (this will be suboptimal hypothesis since
+        the model did not get any EOS)
+        :return: None
+        """
+        if len(self.finished) == 0:
+            hyptail = self.HypothesisTail(timestep=len(self.outputs) - 1, hypid=0, score=self.all_scores[-1][0],
+                                              tokenid=self.outputs[-1][0])
+            self.finished.append(hyptail)
 
     def get_beam_dot(self, dictionary=None, n_best=None):
         """

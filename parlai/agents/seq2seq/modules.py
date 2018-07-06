@@ -234,6 +234,8 @@ class Seq2seq(nn.Module):
                     else:  # GRU
                         hidden.data.copy_(new_hidden.data.index_select(dim=1, index=permute_hidden_idx))
 
+                for b in beams:
+                    b.check_finished()
                 beam_pred = [ b.get_pretty_hypothesis(b.get_top_hyp())[1:] for b in beams ]
                 # these beam scores are rescored with length penalty!
                 beam_scores = torch.stack([b.get_top_hyp()[1] for b in beams])
