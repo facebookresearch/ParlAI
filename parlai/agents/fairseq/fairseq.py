@@ -7,14 +7,13 @@
 from parlai.core.dict import DictionaryAgent
 
 try:
-    from fairseq import models, optim
+    from fairseq import models, optim, criterions
 except ImportError:
     raise RuntimeError(
         "Please run \"pip install -U 'git+https://github.com/pytorch/"
         "fairseq.git@v0.5.0#egg=fairseq'\""
     )
 from fairseq import trainer, fp16_trainer
-from fairseq.criterions.cross_entropy import CrossEntropyCriterion
 from fairseq.sequence_generator import SequenceGenerator
 from fairseq import options
 from fairseq.tasks.fairseq_task import FairseqTask
@@ -185,7 +184,9 @@ class FairseqAgent(TorchAgent):
         # needing any fairseq specific things
         _FairseqDictionary.add_cmdline_args(argparser)
 
-        # Optimization and learning rate schedule specific arguments
+        # Generation arguments
+        options.add_generation_args(argparser)
+        # Check subargs for optimizers, criterions, archs, etc
         options.add_optimization_args(argparser)
         known_args = argparser.parse_known_args(nohelp=True)[0]
         if hasattr(known_args, "optimizer"):
@@ -200,10 +201,6 @@ class FairseqAgent(TorchAgent):
                 '{} scheduler arguments'.format(lr_scheduler)
             )
             optim.lr_scheduler.LR_SCHEDULER_REGISTRY[lr_scheduler].add_args(lr_group)
-
-        # Generation arguments
-        options.add_generation_args(argparser)
-
         # We need to find out the fairseq model-specific options, so grab the
         # architecture stuff and look up its options
         arch_group = options.add_model_args(argparser)
@@ -221,6 +218,12 @@ class FairseqAgent(TorchAgent):
                 "{} architecture arguments".format(arch)
             )
             models.ARCH_MODEL_REGISTRY[arch].add_args(arch_group)
+
+        if hasattr(known_args, "criterion"):
+            crit_group = argparser.add_argument_group(
+                '{} criterion arguments'.format(known_args.criterion)
+            )
+            criterions.CRITERION_REGISTRY[known_args.criterion].add_args(crit_group)
 
         # Override a few defaults from within fairseq to more sensible defaults
         argparser.set_defaults(
@@ -262,8 +265,7 @@ class FairseqAgent(TorchAgent):
                 len_penalty=self.args.lenpen,
             )
             # set up the grader and the trainer
-            # TODO: maybe support label smoothing here
-            self.criterion = CrossEntropyCriterion(self.args, self.task)
+            self.criterion = criterions.build_criterion(self.args, self.task)
 
             if getattr(self.args, 'fp16', None):
                 self.trainer = fp16_trainer.FP16Trainer(
