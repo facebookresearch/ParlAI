@@ -158,12 +158,9 @@ class Seq2seqAgent(Agent):
                            help='Keep replies in the history, or not.')
         agent.add_argument('-pt', '--person-tokens', type='bool', default=False,
                            help='use special tokens before each speaker')
-        agent.add_argument('-ede', '--eval-decode', type=str, default='greedy',
-                           choices=['greedy', 'beam'],
-                           help='Type of search for the best sequence during eval phase')
-        agent.add_argument('--beam-size', type=int, default=-1, help='Beam size if --eval-decode is beam')
-        agent.add_argument('--beam-dump', type=float, default=0.0,
-                           help='The portion of beams to dump from minibatch into <model_file_folder>/beam_dump')
+        agent.add_argument('--beam-size', type=int, default=1, help='Beam size, if 1 then greedy search')
+        agent.add_argument('--beam-log-freq', type=float, default=0.0,
+                           help='The portion of beams to dump from minibatch into model_name.beam_dump folder')
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
@@ -238,10 +235,7 @@ class Seq2seqAgent(Agent):
             self.NULL_IDX = self.dict[self.dict.null_token]
 
             # search
-            self.eval_decode_type = opt['eval_decode']
-            self.beam_size = opt['beam_size']
-            if self.eval_decode_type == 'beam':
-                assert self.beam_size > 1, 'Specify --beam-size to be > 1'
+            self.beam_size = opt.get('beam_size', 1)
 
             if not hasattr(self, 'model_class'):
                 # this allows child classes to override this but inherit init
@@ -531,7 +525,7 @@ class Seq2seqAgent(Agent):
             self.update_params()
         else:
             self.model.eval()
-            out = self.model(xs, ys=None, cands=cands, valid_cands=valid_cands, search=self.eval_decode_type, beam_size=self.beam_size)
+            out = self.model(xs, ys=None, cands=cands, valid_cands=valid_cands, beam_size=self.beam_size)
             predictions, cand_preds = out[0], out[2]
 
             if ys is not None:

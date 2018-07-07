@@ -99,7 +99,8 @@ class Beam(object):
         :param hyp_id: id with range up to beam_size-1
         :return: hypothesis sequence
         """
-
+        assert self.outputs[hypothesis_tail.timestep][hypothesis_tail.hypid] == self.eos
+        assert hypothesis_tail.tokenid == self.eos
         hyp_idx = []
         endback = hypothesis_tail.hypid
         for i in range(hypothesis_tail.timestep, -1, -1):
@@ -111,7 +112,7 @@ class Beam(object):
 
     def get_pretty_hypothesis(self, list_of_hypotails):
         hypothesis = []
-        for i in list_of_hypotails[0]:
+        for i in list_of_hypotails:
             hypothesis.append(i.tokenid)
 
         hypothesis = torch.stack(list(reversed(hypothesis)))
@@ -147,8 +148,11 @@ class Beam(object):
         :return: None
         """
         if len(self.finished) == 0:
+            # we change output because we want outputs to have this eos to pass assert in L102, it is ok since empty self.finished means junk prediction anyway
+            self.outputs[-1][0] = self.eos
             hyptail = self.HypothesisTail(timestep=len(self.outputs) - 1, hypid=0, score=self.all_scores[-1][0],
                                               tokenid=self.outputs[-1][0])
+
             self.finished.append(hyptail)
 
     def get_beam_dot(self, dictionary=None, n_best=None):

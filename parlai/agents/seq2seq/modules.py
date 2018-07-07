@@ -69,31 +69,23 @@ class Seq2seq(nn.Module):
                 padding_idx=self.NULL_IDX,
                 attn_type=opt['attention'])
 
-        self.beam_dump = opt['beam_dump']
-        if self.beam_dump > 0.0:
+        self.beam_log_freq = opt.get('beam_log_freq', 0.0)
+        if self.beam_log_freq > 0.0:
             self.dict = DictionaryAgent(opt)
             self.beam_dump_filecnt = 0
-            self.beam_dump_path = os.path.join(os.path.dirname(opt['model_file']), 'beam_dump')
+            self.beam_dump_path = opt['model_file'] + '.beam_dump'
             if not os.path.exists(self.beam_dump_path):
                 os.makedirs(self.beam_dump_path)
 
-        if opt['no_cuda'] is True:
-            self.beam_device = 'cpu'
-        else:
-            self.beam_device = 'cuda'
-
-    def beamize_hidden(self, hidden, beam_size, batch_size):
-        if isinstance(hidden, tuple):
-            num_layers = hidden[0].size(0)
-            hidden_size = hidden[0].size(-1)
-            return (hidden[0].view(num_layers, batch_size, beam_size, hidden_size),
-                hidden[1].view(num_layers, batch_size, beam_size, hidden_size))
-        else:  # GRU
-            num_layers = hidden.size(0)
-            hidden_size = hidden.size(-1)
-            return hidden.view(num_layers, batch_size, beam_size, hidden_size)
-
     def unbeamize_hidden(self, hidden, beam_size, batch_size):
+        """
+        Creates a view of the hidden where batch axis is collapsed with beam axis,
+        we need to do this for batched beam search, i.e. we emulate bigger mini-batch
+        :param hidden: hidden state of the decoder
+        :param beam_size: beam size, i.e. num of hypothesis
+        :param batch_size: number of samples in the mini batch
+        :return: view of the hidden
+        """
         if isinstance(hidden, tuple):
             num_layers = hidden[0].size(0)
             hidden_size = hidden[0].size(-1)
@@ -104,16 +96,12 @@ class Seq2seq(nn.Module):
             hidden_size = hidden.size(-1)
             return hidden.view(num_layers, batch_size * beam_size, hidden_size)
 
-    def beamize_enc_out(self, enc_out, beam_size, batch_size):
-        hidden_size = enc_out.size(-1)
-        return enc_out.view(batch_size, beam_size, -1, hidden_size)
-
     def unbeamize_enc_out(self, enc_out, beam_size, batch_size):
         hidden_size = enc_out.size(-1)
         return enc_out.view(batch_size * beam_size, -1, hidden_size)
 
     def forward(self, xs, ys=None, cands=None, valid_cands=None, prev_enc=None,
-                rank_during_training=False, search='greedy', beam_size=None):
+                rank_during_training=False, beam_size=1):
         """Get output predictions from the model.
 
         Arguments:
@@ -128,6 +116,7 @@ class Seq2seq(nn.Module):
             cands during training as well
         """
         input_xs = xs
+        nbest_beam_preds, nbest_beam_scores = None, None
         bsz = len(xs)
         if ys is not None:
             # keep track of longest label we've ever seen
@@ -169,8 +158,7 @@ class Seq2seq(nn.Module):
                     scores.append(score)
         else:
             # here we do search: supported search types: greedy, beam search
-            assert search in ['greedy', 'beam'], "search argument should be greedy or beam"
-            if search == 'greedy':
+            if beam_size == 1:
                 done = [False for _ in range(bsz)]
                 total_done = 0
                 xs = starts
@@ -194,11 +182,12 @@ class Seq2seq(nn.Module):
                         # no need to generate any more
                         break
 
-            if search == 'beam':
+            elif beam_size > 1:
                 enc_out, hidden = encoder_states[0], encoder_states[1]  # take it from encoder
                 enc_out = enc_out.unsqueeze(1).repeat(1, beam_size, 1, 1)
                 # create batch size num of beams
-                beams = [Beam(beam_size, 3, 0, 1, 2, min_n_best=beam_size/2, cuda=self.beam_device) for i in range(bsz)]
+                data_device = enc_out.device
+                beams = [Beam(beam_size, 3, 0, 1, 2, min_n_best=beam_size/2, cuda=data_device) for _ in range(bsz)]
                 # init the input with start token
                 xs = starts
                 # repeat tensors to support batched beam
@@ -236,14 +225,27 @@ class Seq2seq(nn.Module):
 
                 for b in beams:
                     b.check_finished()
-                beam_pred = [ b.get_pretty_hypothesis(b.get_top_hyp())[1:] for b in beams ]
+                beam_pred = [ b.get_pretty_hypothesis(b.get_top_hyp()[0])[1:] for b in beams ]
                 # these beam scores are rescored with length penalty!
                 beam_scores = torch.stack([b.get_top_hyp()[1] for b in beams])
                 pad_length = max([t.size(0) for t in beam_pred])
                 beam_pred = torch.stack([pad(t, length=pad_length, dim=0) for t in beam_pred], dim=0)
 
-                if self.beam_dump > 0.0:
-                    num_dump = round(bsz * self.beam_dump)
+                #  prepare n best list for each beam
+                n_best_beam_tails = [ b.get_rescored_finished(n_best=len(b.finished)) for b in beams ]
+                nbest_beam_scores = []
+                nbest_beam_preds = []
+                for i, beamtails in enumerate(n_best_beam_tails):
+                    perbeam_preds = []
+                    perbeam_scores = []
+                    for tail in beamtails:
+                        perbeam_preds.append(beams[i].get_pretty_hypothesis(beams[i].get_hyp_from_finished(tail)))
+                        perbeam_scores.append(tail.score)
+                    nbest_beam_scores.append(perbeam_scores)
+                    nbest_beam_preds.append(perbeam_preds)
+
+                if self.beam_log_freq > 0.0:
+                    num_dump = round(bsz * self.beam_log_freq)
                     for i in range(num_dump):
                         dot_graph = beams[i].get_beam_dot(dictionary=self.dict)
                         dot_graph.write_png(os.path.join(self.beam_dump_path, "{}.png".format(self.beam_dump_filecnt)))
@@ -257,7 +259,7 @@ class Seq2seq(nn.Module):
         if isinstance(scores, list):
             scores = torch.cat(scores, 1)
 
-        return predictions, scores, cand_preds, cand_scores, encoder_states
+        return predictions, scores, cand_preds, cand_scores, encoder_states, nbest_beam_preds, nbest_beam_scores
 
 
 class Encoder(nn.Module):
