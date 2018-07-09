@@ -39,5 +39,6 @@ if __name__ == '__main__':
         validation_metric_mode='max',
         validation_patience=10,
         log_every_n_secs=10,
+        dict_tokenizer='split',
     )
     TrainLoop(parser.parse_args()).train()
