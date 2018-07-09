@@ -302,8 +302,7 @@ class Seq2seqAgent(Agent):
         if self.use_cuda:
             self.criterion.cuda()
 
-        if 'train' in opt.get('datatype', '') and (
-                shared is None or opt.get('numthreads', 1) > 1):
+        if 'train' in opt.get('datatype', ''):
             # we only set up optimizers when training
             # we only set this up for the original instance or hogwild ones
             self.clip = opt.get('gradient_clip', -1)
