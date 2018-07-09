@@ -37,5 +37,6 @@ if __name__ == '__main__':
         validation_max_examples=100000,
         log_every_n_secs=10,
         numthreads=40,
+        dict_tokenizer='split',
     )
     TrainLoop(parser.parse_args()).train()
