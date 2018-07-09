@@ -7,7 +7,7 @@
 
 from parlai.core.build_data import download_models
 from parlai.scripts.eval_ppl import eval_ppl, setup_args
-from projects.twitter.build_dict import build_dict
+from projects.twitter.constants import DICT_FILE_30K
 
 
 if __name__ == '__main__':
@@ -25,9 +25,4 @@ if __name__ == '__main__':
         batchindex=0,
     )
     opt = parser.parse_args()
-    if 'twitter/seq2seq/twitter_seq2seq_model' in opt.get('model_file', ''):
-        opt['model_type'] = 'seq2seq'
-        fnames = ['twitter_seq2seq_model.tgz']
-        download_models(opt, fnames, 'twitter', version='v1.0', use_model_type=True)
-
-    eval_ppl(opt, build_dict)
+    eval_ppl(opt, dict_file=DICT_FILE_30K)

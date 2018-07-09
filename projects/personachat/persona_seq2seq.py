@@ -983,6 +983,7 @@ class PersonachatSeqseqAgentBasic(Seq2seqAgent):
     def __init__(self, opt, shared=None):
         self.usepersona = opt['task'].split(':', 1)[1]
         self.usepreviousdialog = opt['personachat_useprevdialog']
+        self.batch_idx = shared and shared.get('batchindex') or 0
         super().__init__(opt, shared)
 
     def observe(self, obs):
@@ -1005,12 +1006,11 @@ class PersonachatSeqseqAgentBasic(Seq2seqAgent):
                         t = t.replace('your persona: ', '').replace('their persona: ', '')
                         self.persona_given += t +'\n'
             else:
-                batch_idx = self.opt.get('batchindex', 0)
                 if self.usepreviousdialog:
                     self.prev_dialog += self.last_obs if self.last_obs == '' else self.last_obs + '\n'
-                    if self.answers[batch_idx] is not None and self.prev_dialog != '':
-                        self.prev_dialog += self.answers[batch_idx] + '\n'
-                    self.answers[batch_idx] = None
+                    if self.answers[self.batch_idx] is not None and self.prev_dialog != '':
+                        self.prev_dialog += self.answers[self.batch_idx] + '\n'
+                    self.answers[self.batch_idx] = None
             observation['text'] = text_split[-1]
             self.last_obs = observation['text']
             self.episode_done = observation['episode_done']
@@ -1140,6 +1140,7 @@ class PersonachatSeqseqAgentSplit(Agent):
         self.newsetting = opt['personachat_newsetting']
         self.embshareonly_pm_dec = opt['personachat_embshareonly_pm_dec']
         self.s2sinit = opt['personachat_s2sinit']
+        self.batch_idx = shared and shared.get('batchindex') or 0
         self.metrics = {'loss': 0, 'num_tokens': 0}
 
         if shared:
@@ -1591,12 +1592,11 @@ class PersonachatSeqseqAgentSplit(Agent):
                         t = t.replace('your persona: ', '').replace('their persona: ', '')
                         self.persona_given += t +'\n'
             else:
-                batch_idx = self.opt.get('batchindex', 0)
                 if self.usepreviousdialog:
                     self.prev_dialog += self.last_obs if self.last_obs == '' else self.last_obs + '\n'
-                    if self.answers[batch_idx] is not None and self.prev_dialog != '':
-                        self.prev_dialog += self.answers[batch_idx] + '\n'
-                    self.answers[batch_idx] = None
+                    if self.answers[self.batch_idx] is not None and self.prev_dialog != '':
+                        self.prev_dialog += self.answers[self.batch_idx] + '\n'
+                    self.answers[self.batch_idx] = None
             observation['text'] = text_split[-1]
             self.last_obs = observation['text']
             self.episode_done = observation['episode_done']

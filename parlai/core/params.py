@@ -242,6 +242,10 @@ class ParlaiParser(argparse.ArgumentParser):
             '--password', dest='password', type=str, default=None,
             help='Require a password for entry to the bot')
         messenger.add_argument(
+            '--bypass-server-setup', dest='bypass_server_setup',
+            action='store_true', default=False,
+            help='should bypass traditional server and socket setup')
+        messenger.add_argument(
             '--local', dest='local', action='store_true', default=False,
             help='Run the server locally on this server rather than setting up'
                  ' a heroku server.'
@@ -489,11 +493,9 @@ class ParlaiParser(argparse.ArgumentParser):
                 elif self.cli_args[i] in store_false:
                     self.overridable[option_strings_dict[self.cli_args[i]]] = \
                         False
-                else:
-                    if i < (len(self.cli_args) - 1) and \
-                            self.cli_args[i+1][0] != '-':
-                        self.overridable[option_strings_dict[self.cli_args[i]]] = \
-                            self.cli_args[i+1]
+                elif i < len(self.cli_args) - 1 and self.cli_args[i+1][:1] != '-':
+                    key = option_strings_dict[self.cli_args[i]]
+                    self.overridable[key] = self.opt[key]
         self.opt['override'] = self.overridable
 
         # add start time of an experiment

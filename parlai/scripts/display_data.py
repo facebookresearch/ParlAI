@@ -17,13 +17,16 @@ from parlai.core.worlds import create_task
 
 import random
 
+
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True)
     # Get command line arguments
     parser.add_argument('-ne', '--num-examples', type=int, default=10)
+    parser.add_argument('-mdl', '--max-display-len', type=int, default=1000)
     parser.set_defaults(datatype='train:stream')
     return parser
+
 
 def display_data(opt):
     # create repeat label agent and assign it to the specified task
@@ -52,6 +55,8 @@ def display_data(opt):
 
 
 if __name__ == '__main__':
+    random.seed(42)
+
     # Get command line arguments
     parser = setup_args()
     opt = parser.parse_args()

@@ -103,7 +103,8 @@ class World(object):
             return ''
         return display_messages(self.acts,
                                 ignore_fields=self.opt.get('display_ignore_fields', ''),
-                                prettify=self.opt.get('display_prettify', False))
+                                prettify=self.opt.get('display_prettify', False),
+                                max_len=self.opt.get('max_display_len', 1000))
 
     def episode_done(self):
         """Whether the episode is done or not."""
@@ -204,7 +205,7 @@ class World(object):
             else:
                 self.max_exs = -1
         # when we know the size of the data
-        if self.max_exs > 0:
+        if self.max_exs > 0 or self.num_examples():
             self.total_epochs = self.total_parleys * self.opt.get('batchsize', 1) / self.num_examples()
         # when we do not know the size of the data
         else:
@@ -278,10 +279,14 @@ class DialogPartnerWorld(World):
             return metrics
 
     def num_examples(self):
-        return self.agents[0].num_examples()
+        if hasattr(self.agents[0], 'num_examples'):
+            return self.agents[0].num_examples()
+        return 0
 
     def num_episodes(self):
-        return self.agents[0].num_episodes()
+        if hasattr(self.agents[0], 'num_episodes'):
+            return self.agents[0].num_episodes()
+        return 0
 
     def shutdown(self):
         """Shutdown each agent."""
@@ -534,11 +539,11 @@ def override_opts_in_shared(table, overrides):
             table['opt'][k] = v
     for k, v in table.items():
         # look for sub-dictionaries which also might contain an 'opt' dict
-        if type(v) == dict and k != 'opt':
+        if type(v) == dict and k != 'opt' and 'opt' in v:
             override_opts_in_shared(v, overrides)
         elif type(v) == list:
             for item in v:
-                if type(item) == dict:
+                if type(item) == dict and 'opt' in item:
                     # if this is a list of agent shared dicts, we want to iterate
                     override_opts_in_shared(item, overrides)
                 else:
@@ -560,12 +565,16 @@ class BatchWorld(World):
         self.opt = opt
         self.random = opt.get('datatype', None) == 'train'
         self.world = world
-        shared = world.share()
         self.worlds = []
         for i in range(opt['batchsize']):
             # make sure that any opt dicts in shared have batchindex set to i
             # this lets all shared agents know which batchindex they have,
             # which is needed for ordered data (esp valid/test sets)
+            shared = world.share()
+            shared['batchindex'] = i
+            for agent_shared in shared.get('agents', ''):
+                agent_shared['batchindex'] = i
+            # TODO: deprecate override_opts
             override_opts_in_shared(shared, {'batchindex': i})
             self.worlds.append(shared['world_class'](opt, None, shared))
         self.batch_observations = [None] * len(self.world.get_agents())

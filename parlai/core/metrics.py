@@ -15,9 +15,18 @@ from collections import Counter
 import re
 import math
 
+try:
+    from nltk.translate import bleu_score as nltkbleu
+except ImportError:
+    # User doesn't have nltk installed, so we can't use it for bleu
+    # We'll just turn off things, but we might want to warn the user
+    nltkbleu = None
+
 re_art = re.compile(r'\b(a|an|the)\b')
 re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
-def _normalize_answer(s):
+
+
+def normalize_answer(s):
     """Lower text and remove punctuation, articles and extra whitespace."""
     def remove_articles(text):
         return re_art.sub(' ', text)
@@ -38,9 +47,9 @@ def _exact_match(guess, answers):
     """Check if guess is a (normalized) exact match with any answer."""
     if guess is None or answers is None:
         return False
-    guess = _normalize_answer(guess)
+    guess = normalize_answer(guess)
     for a in answers:
-        if guess == _normalize_answer(a):
+        if guess == normalize_answer(a):
             return True
     return False
 
@@ -59,9 +68,25 @@ def _f1_score(guess, answers):
 
     if guess is None or answers is None:
         return 0
-    g_tokens = _normalize_answer(guess).split()
-    scores = [_score(g_tokens, _normalize_answer(a).split()) for a in answers]
+    g_tokens = normalize_answer(guess).split()
+    scores = [_score(g_tokens, normalize_answer(a).split()) for a in answers]
     return max(scores)
+
+
+def _bleu(guess, answers):
+    if nltkbleu is None:
+        # bleu library not installed, just return a default value
+        return None
+    # Warning: BLEU calculation *should* include proper tokenization and
+    # punctuation etc. We're using the normalize_answer for everything though,
+    # so we're over-estimating our BLEU scores.  Also note that NLTK's bleu is
+    # going to be slower than fairseq's (which is written in C), but fairseq's
+    # requires that everything be in arrays of ints (i.e. as tensors). NLTK's
+    # works with strings, which is better suited for this module.
+    return nltkbleu.sentence_bleu(
+        [normalize_answer(a).split(" ") for a in answers],
+        normalize_answer(guess).split(" ")
+    )
 
 
 def aggregate_metrics(reporters):
@@ -69,6 +94,8 @@ def aggregate_metrics(reporters):
     m = {}
     m['tasks'] = {}
     sums = {'accuracy': 0, 'f1': 0, 'loss': 0, 'ppl': 0}
+    if nltkbleu is not None:
+        sums['bleu'] = 0
     num_tasks = 0
     total = 0
     for i in range(len(reporters)):
@@ -135,6 +162,9 @@ class Metrics(object):
         self.metrics = {}
         self.metrics['cnt'] = 0
         self.metrics_list = ['mean_rank', 'loss', 'correct', 'f1', 'ppl']
+        if nltkbleu is not None:
+            # only compute bleu if we can
+            self.metrics_list.append('bleu')
         for k in self.metrics_list:
             self.metrics[k] = 0.0
             self.metrics[k + '_cnt'] = 0
@@ -172,12 +202,12 @@ class Metrics(object):
             # Now loop through text candidates, assuming they are sorted.
             # If any of them is a label then score a point.
             # maintain hits@1, 5, 10, 50, 100,  etc.
-            label_set = set(_normalize_answer(l) for l in labels)
+            label_set = set(normalize_answer(l) for l in labels)
             cnts = {k: 0 for k in self.eval_pr}
             cnt = 0
             for c in text_cands:
                 cnt += 1
-                if _normalize_answer(c) in label_set:
+                if normalize_answer(c) in label_set:
                     for k in self.eval_pr:
                         if cnt <= k:
                             cnts[k] += 1
@@ -206,11 +236,15 @@ class Metrics(object):
                 self.metrics['correct'] += correct
                 self.metrics['correct_cnt'] += 1
 
-            # F1 metric.
+            # F1 and BLEU metrics.
             f1 = _f1_score(prediction, labels)
+            bleu = _bleu(prediction, labels)
             with self._lock():
                 self.metrics['f1'] += f1
                 self.metrics['f1_cnt'] += 1
+                if bleu is not None:
+                    self.metrics['bleu'] += bleu
+                    self.metrics['bleu_cnt'] += 1
 
         # Ranking metrics.
         self.update_ranking_metrics(observation, labels)
@@ -218,7 +252,7 @@ class Metrics(object):
         # User-reported metrics
         if 'metrics' in observation:
             for k, v in observation['metrics'].items():
-                if k not in ['correct', 'f1', 'hits@k']:
+                if k not in ['correct', 'f1', 'hits@k', 'bleu']:
                     if k in self.metrics_list:
                         with self._lock():
                             self.metrics[k] += v

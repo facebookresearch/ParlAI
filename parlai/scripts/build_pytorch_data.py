@@ -15,6 +15,7 @@ are used in a flattened episode.
 from parlai.core.agents import create_agent, create_task_agent_from_taskname
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
+from parlai.core.utils import ProgressLogger
 import copy
 import os
 import json
@@ -95,9 +96,11 @@ def build_data(opt):
     include_labels = opt.get('include_labels', True)
     context_length = opt.get('context_length', -1)
     context = deque(maxlen=context_length if context_length > 0 else None)
+    logger = ProgressLogger(should_humanize=False, throttle=0.1)
+    total_exs = world_data.num_examples()
     # pass examples to dictionary
     with open(pytorch_datafile, 'w') as pytorch_data:
-        while not world_data.epoch_done():
+        while num_exs < total_exs:
             while not episode_done:
                 action = teacher.act()
                 current.append(action)
@@ -119,6 +122,7 @@ def build_data(opt):
                     ex['preprocessed'] = True
                 num_eps += 1
                 num_exs += 1
+                logger.log(num_exs, total_exs)
                 pytorch_data.write(json.dumps(make_serializable(ex)) + "\n")
             #reset
             episode_done = False

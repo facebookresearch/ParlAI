@@ -13,7 +13,15 @@ import codecs
 import copy
 import numpy as np
 import os
+import pickle
 import re
+
+try:
+    from subword_nmt import learn_bpe, apply_bpe
+    # Don't explicitly throw the runtime error unless the user needs it
+    BPE_INSTALLED = True
+except ImportError:
+    BPE_INSTALLED = False
 
 RETOK = re.compile(r'\w+|[^\w\s]|\n', re.UNICODE)
 
@@ -129,6 +137,12 @@ class DictionaryAgent(Agent):
             dictionary.add_argument(
                 '--dict-lower', default=DictionaryAgent.default_lower, type='bool',
                 help='Whether or not to lowercase all text seen.')
+            dictionary.add_argument(
+                '--bpe-num-symbols', default=30000, type=int,
+                help='Number of BPE symbols. Recommended between 30000 and 40000')
+            dictionary.add_argument(
+                '--bpe-codecs-file',
+                help='Filename for the BPE codecs. Defaults to dictfile.codecs.')
         except argparse.ArgumentError:
             # already added
             pass
@@ -147,6 +161,12 @@ class DictionaryAgent(Agent):
         self.tokenizer = opt.get('dict_tokenizer', DictionaryAgent.default_tok)
         self.lower = opt.get('dict_lower', DictionaryAgent.default_lower)
         self.maxtokens = opt.get('dict_maxtokens', DictionaryAgent.default_maxtokens)
+
+        try:
+            self.tokenizer_fun = getattr(self, self.tokenizer + '_tokenize')
+        except AttributeError:
+            raise AttributeError(
+                'tokenizer type {} not yet supported'.format(self.tokenizer))
 
         if shared:
             self.freq = shared.get('freq', {})
@@ -210,6 +230,15 @@ class DictionaryAgent(Agent):
                                   'or find alternative installation options '
                                   'at spacy.io')
             self.NLP = spacy.load('en')
+        elif self.tokenizer == 'bpe':
+            if not opt.get('bpe_codecs_file'):
+                if not opt.get('dict_file'):
+                    raise RuntimeError('--bpe-codecs-file or --dict-file is mandatory.')
+                opt['bpe_codecs_file'] = opt.get('dict_file') + '.codecs'
+            self.bpehelper = _BPEHelper(
+                opt.get('bpe_codecs_file'),
+                num_symbols=opt.get('bpe_num_symbols'),
+            )
 
         if not shared:
 
@@ -348,21 +377,9 @@ class DictionaryAgent(Agent):
         """Returns a sequence of tokens from the iterable."""
         if self.lower:
             text = text.lower()
-        tokenizer = self.tokenizer
-        if tokenizer == 'split':
-            word_tokens = self.split_tokenize(text)
-        elif tokenizer == 'nltk':
-            word_tokens = self.nltk_tokenize(text)
-        elif tokenizer == 'spacy':
-            word_tokens = self.spacy_tokenize(text)
-        else:
-            method_name = str(tokenizer) + '_tokenize'
-            if hasattr(self, method_name):
-                fun = getattr(self, method_name)
-                word_tokens = fun(text)
-            else:
-                raise RuntimeError(
-                    'tokenizer type {} not yet supported'.format(tokenizer))
+
+        # calls the selected tokenizer function e.g. 're' => re_tokenize(text)
+        word_tokens = self.tokenizer_fun(text)
 
         if not building and self.max_ngram_size > 1:
             # search for ngrams during parse-time
@@ -370,6 +387,31 @@ class DictionaryAgent(Agent):
             word_tokens = find_ngrams(self.tok2ind, word_tokens,
                                       self.max_ngram_size)
         return word_tokens
+
+    def bpe_tokenize(self, text):
+        """Returns a sequence of BPE-tokens from the text."""
+        if self.lower:
+            text = text.lower()
+        return self.bpehelper.tokenize(text)
+
+    def finalize(self):
+        """
+        Finalize and freeze the dictionary.
+
+        If using BPE tokenization, performs the codec learning.
+        """
+
+        if self.tokenizer != 'bpe':
+            # only BPE needs the second pass
+            return
+
+        # Let the BPE model learn its codecs, then use the encodings to
+        # populate the DictionaryAgent. This could be moved to inside the
+        # _BPEHelper, but would require careful accounting to ensure vocabulary
+        # counts are correct.
+        if self.bpehelper.finalize():
+            for line in self.bpehelper.training_data:
+                self.add_to_dict(self.bpehelper.tokenize(line))
 
     def add_to_dict(self, tokens):
         """ Builds dictionary from the list of provided tokens."""
@@ -441,6 +483,10 @@ class DictionaryAgent(Agent):
                 cnt = self.freq[tok]
                 write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
 
+        # save opt file
+        with open(filename + '.opt', 'wb') as handle:
+            pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
     def sort(self):
         """Sorts the dictionary, so that the elements with the lowest index have
         the highest counts. This reindexes the dictionary according to the
@@ -465,9 +511,7 @@ class DictionaryAgent(Agent):
         ``vec_type`` is the type of the returned vector if the input is a string.
         """
         if type(txt_or_vec) == str:
-            res = self.txt2vec(txt_or_vec, vec_type)
-            assert type(res) == vec_type
-            return res
+            return self.txt2vec(txt_or_vec, vec_type)
         else:
             return self.vec2txt(txt_or_vec)
 
@@ -478,23 +522,29 @@ class DictionaryAgent(Agent):
 
         ``vec_type`` is the type of the returned vector if the input is a string.
         """
-        if vec_type == np.ndarray:
+        if vec_type == list or vec_type == tuple or vec_type == set:
+            res = vec_type((self[token] for token in self.tokenize(str(text))))
+        elif vec_type == np.ndarray:
             res = np.fromiter(
                 (self[token] for token in self.tokenize(text)),
                 np.int
             )
-        elif vec_type == list or vec_type == tuple or vec_type == set:
-            res = vec_type((self[token] for token in self.tokenize(str(text))))
         else:
             raise RuntimeError('Type {} not supported by dict'.format(vec_type))
-        assert type(res) == vec_type
         return res
 
     def vec2txt(self, vector, delimiter=' '):
         """Converts a vector (iterable of ints) into a string, with each token
         separated by the delimiter (default ``' '``).
         """
-        return delimiter.join(self[int(idx)] for idx in vector)
+        text = delimiter.join(self[int(idx)] for idx in vector)
+        # if we used a BPE tokenizer we need to rejoin the encodings
+        if self.tokenizer == 'bpe':
+            text = text.replace('@@ ', '')
+            # It's also possible that we get a BPE encoding on the end of the word
+            if text.endswith('@@'):
+                text = text[:-2]
+        return text
 
     def act(self):
         """Add any words passed in the 'text' field of the observation to this
@@ -524,3 +574,96 @@ class DictionaryAgent(Agent):
 
     def __str__(self):
         return str(self.freq)
+
+
+class _BPEHelper(object):
+    """
+    Helper class for performing BPE subword tokenization.
+    For technical details, please refer to https://arxiv.org/abs/1508.07909.
+    This class just wraps around the official subword-nmt repository.
+
+    This API expects the user to call tokenize() onto the training data,
+    then call finalize() to learn the encodings, and then iterate over the data
+    in a second pass, calling tokenize() again to get processed output.
+    """
+
+    def __init__(self, codecs_filename, num_symbols=30000, minfreq=2):
+        """
+        Initialize the BPE module.
+        If `codecs_filename` already exists, loads the pretrained codecs.
+        If it does not, codecs will be saved there after a call to `finalize()`.
+
+        :param codecs_filename: place to save/load codecs.
+        :param num_symbols: Number of BPE symbols. Recommend 30000-40000.
+        :param minfreq: Minimum frequency of a token before forced BPE decomposition.
+        """
+        if not BPE_INSTALLED:
+            raise RuntimeError(
+                "Please run \"pip install 'git+https://github.com/rsennrich"
+                "/subword-nmt.git#egg=subword-nmt'\""
+            )
+
+        self.codecs = codecs_filename
+        if os.path.exists(self.codecs):
+            self.built = True
+            self._load_from_codecs()
+        else:
+            self.num_symbols = num_symbols
+            self.minfreq = minfreq
+            self.training_data = []
+            self.built = False
+
+    def _load_from_codecs(self):
+        with open(self.codecs, 'r') as codecs_file:
+            self.bpe = apply_bpe.BPE(codecs_file)
+
+    def _add_to_train(self, tokens):
+        """
+        Queues up all the data to learn the BPE tokenizer.
+
+        :param tokens: list[str]. Initial tokenization approximation.
+        """
+        if self.built:
+            raise RuntimeError("BPE dictionary has been finalized.")
+        self.training_data.append(" ".join(tokens) + "\n")
+        return []
+
+    def tokenize(self, text):
+        """
+        Tokenizes the text if codecs are already finalized.
+        Otherwise, stores data for learning codecs.
+
+        :param text: str. Raw text to tokenize.
+        :return: a list of tokens. List will be empty if not tokenized.
+        """
+        tokens = DictionaryAgent.re_tokenize(text)
+        if self.built:
+            return self._apply(tokens)
+        else:
+            return self._add_to_train(tokens)
+
+    def _apply(self, tokens):
+        return self.bpe.segment_tokens(tokens)
+
+    def finalize(self):
+        """Build the codecs"""
+        if self.built:
+            return False
+
+        self.built = True
+
+        with open(self.codecs, 'w') as outstream:
+            # There's a potentially more memory efficient way to do this, with
+            # the is_dict method able to handle <word> \t <count> format.
+            # It will require more sophisticated marshalling of data back and
+            # forth
+            learn_bpe.learn_bpe(
+                self.training_data,
+                outstream,
+                num_symbols=self.num_symbols,
+                min_frequency=self.minfreq,
+                is_dict=False,
+            )
+
+        self._load_from_codecs()
+        return True

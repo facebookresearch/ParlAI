@@ -168,10 +168,11 @@ class Seq2seqAgent(Agent):
 
         # all instances may need some params
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
-        self.metrics = {'loss': 0.0, 'num_tokens': 0, 'total_skipped_batches': 0}
+        self.metrics = {'loss': 0.0, 'num_tokens': 0, 'correct_tokens': 0, 'total_skipped_batches': 0}
         self.history = {}
         self.report_freq = opt.get('report_freq', 0.001)
         self.use_person_tokens = opt.get('person_tokens', False)
+        self.batch_idx = shared and shared.get('batchindex') or 0
         states = {}
 
         # check for cuda
@@ -409,6 +410,7 @@ class Seq2seqAgent(Agent):
         """Reset metrics for reporting loss and perplexity."""
         self.metrics['loss'] = 0.0
         self.metrics['num_tokens'] = 0
+        self.metrics['correct_tokens'] = 0
 
     def report(self):
         """Report loss and perplexity from model's perspective.
@@ -417,8 +419,11 @@ class Seq2seqAgent(Agent):
         differ from a truly independent measurement.
         """
         m = {}
-        if self.metrics['num_tokens'] > 0:
-            m['loss'] = self.metrics['loss'] / self.metrics['num_tokens']
+        num_tok = self.metrics['num_tokens']
+        if num_tok > 0:
+            if self.metrics['correct_tokens'] > 0:
+                m['token_acc'] = self.metrics['correct_tokens'] / num_tok
+            m['loss'] = self.metrics['loss'] / num_tok
             try:
                 m['ppl'] = math.exp(m['loss'])
             except OverflowError:
@@ -458,12 +463,12 @@ class Seq2seqAgent(Agent):
         """
         # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
-        batch_idx = self.opt.get('batchindex', 0)
+
 
         if not obs.get('preprocessed', False) or 'text2vec' not in obs:
             obs['text2vec'] = maintain_dialog_history(
                 self.history, obs,
-                reply=self.answers[batch_idx],
+                reply=self.answers[self.batch_idx],
                 historyLength=self.truncate,
                 useReplies=self.opt.get('history_replies'),
                 dict=self.dict,
@@ -471,7 +476,7 @@ class Seq2seqAgent(Agent):
         else:
             obs['text2vec'] = deque(obs['text2vec'], maxlen=self.truncate)
         self.observation = obs
-        self.answers[batch_idx] = None
+        self.answers[self.batch_idx] = None
         return obs
 
     def predict(self, xs, ys=None, cands=None, valid_cands=None, is_training=False):
@@ -488,11 +493,15 @@ class Seq2seqAgent(Agent):
             try:
                 out = self.model(xs, ys, rank_during_training=cands is not None)
                 # generated response
-                predictions, scores, cand_preds = out[0], out[1], out[2]
+                _preds, scores, cand_preds = out[0], out[1], out[2]
+
                 score_view = scores.view(-1, scores.size(-1))
                 loss = self.criterion(score_view, ys.view(-1))
                 # save loss to metrics
-                target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
+                y_ne = ys.ne(self.NULL_IDX)
+                target_tokens = y_ne.long().sum().item()
+                correct = ((ys == _preds) * y_ne).sum().item()
+                self.metrics['correct_tokens'] += correct
                 self.metrics['loss'] += loss.item()
                 self.metrics['num_tokens'] += target_tokens
                 loss /= target_tokens  # average loss per token
@@ -519,6 +528,7 @@ class Seq2seqAgent(Agent):
                 scores = out[1]
                 score_view = scores.view(-1, scores.size(-1))
                 loss = self.criterion(score_view, ys.view(-1))
+                # save loss to metrics
                 target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
                 self.metrics['loss'] += loss.item()
                 self.metrics['num_tokens'] += target_tokens
@@ -578,6 +588,8 @@ class Seq2seqAgent(Agent):
                     m = ('CUDA OOM: Lower batch size (-bs) from {} or lower max'
                          ' sequence length (-tr) from {}'.format(bsz, maxlen))
                     raise RuntimeError(m)
+                else:
+                    raise e
 
     def batch_act(self, observations):
         batchsize = len(observations)

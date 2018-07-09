@@ -264,7 +264,7 @@ def flatten(teacher, context_length=-1, include_labels=True):
             # build separate episodes from each example
             for ex in current:
                 context.append(ex.get('text', ''))
-                if len(context) > 1:
+                if len(context) != 1:
                     ex['text'] = '\n'.join(context)
                 ex['episode_done'] = True
                 if include_labels:
@@ -626,7 +626,7 @@ class OffensiveLanguageDetector(object):
         return None
 
 
-def display_messages(msgs, prettify=False, ignore_fields=''):
+def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
     """Returns a string describing the set of messages provided
     If prettify is true, candidates are displayed using prettytable.
     ignore_fields provides a list of fields in the msgs which should not be displayed.
@@ -650,8 +650,17 @@ def display_messages(msgs, prettify=False, ignore_fields=''):
             lines.append(msg['image'])
         if msg.get('text', ''):
             text = msg['text']
-            if len(text) > 1000:
-                text = text[:1000] + '...'
+            if len(text) > max_len:
+                begin_text = ' '.join(
+                    text[:math.floor(0.8 * max_len)].split(' ')[:-1]
+                )
+                end_text = ' '.join(
+                    text[(len(text) - math.floor(0.2 * max_len)):].split(' ')[1:]
+                )
+                if len(end_text) > 0:
+                    text = begin_text + ' ...\n' + end_text
+                else:
+                    text = begin_text + ' ...'
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + text)
         if msg.get('labels') and 'labels' not in ignore_fields:
@@ -772,6 +781,7 @@ def str_to_msg(txt, ignore_fields=''):
         value = t[ind+1:]
         if key not in ignore_fields.split(','):
             msg[key] = convert(key, value)
+    msg['episode_done'] = msg.get('episode_done', False)
     return msg
 
 

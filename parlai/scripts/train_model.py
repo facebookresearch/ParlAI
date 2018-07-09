@@ -57,7 +57,12 @@ def setup_args(parser=None):
     train.add_argument('-sval', '--save-after-valid', type='bool',
                        default=False,
                        help='Saves the model to model_file.checkpoint after '
-                            'every validation (default True).')
+                            'every validation (default %(default)s).')
+    train.add_argument('-veps', '--validation-every-n-epochs',
+                       type=int, default=-1,
+                       help='Validate every n epochs. Whenever the the best '
+                            'validation metric is found, saves the model to '
+                            'the model_file path if set.')
     train.add_argument('-vme', '--validation-max-exs',
                        type=int, default=-1,
                        help='max examples to use during validation (default '
@@ -163,6 +168,8 @@ class TrainLoop():
         self.log_every_n_secs = opt['log_every_n_secs'] if opt['log_every_n_secs'] > 0 else float('inf')
         self.val_every_n_secs = opt['validation_every_n_secs'] if opt['validation_every_n_secs'] > 0 else float('inf')
         self.save_every_n_secs = opt['save_every_n_secs'] if opt['save_every_n_secs'] > 0 else float('inf')
+        self.val_every_n_epochs = opt['validation_every_n_epochs'] if opt['validation_every_n_epochs'] > 0 else float('inf')
+        self.last_valid_epoch = 0
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
         self.best_valid = None
         if opt.get('model_file') and os.path.isfile(opt['model_file'] + '.best_valid'):
@@ -250,6 +257,11 @@ class TrainLoop():
         logs.append('time:{}s'.format(math.floor(self.train_time.time())))
         logs.append('total_exs:{}'.format(self.world.get_total_exs()))
 
+        exs_per_ep = self.world.num_examples()
+        if exs_per_ep:
+            logs.append('total_eps:{}'.format(
+                round(self.world.get_total_exs() / exs_per_ep, 2)))
+
         if 'time_left' in train_report:
             logs.append('time_left:{}s'.format(
                          math.floor(train_report.pop('time_left', ""))))
@@ -285,6 +297,11 @@ class TrainLoop():
                     self.log()
                 if self.validate_time.time() > self.val_every_n_secs:
                     stop_training = self.validate()
+                    if stop_training:
+                        break
+                if world.get_total_epochs() - self.last_valid_epoch >= self.val_every_n_epochs:
+                    stop_training = self.validate()
+                    self.last_valid_epoch = world.get_total_epochs()
                     if stop_training:
                         break
                 if self.save_time.time() > self.save_every_n_secs and opt.get('model_file'):

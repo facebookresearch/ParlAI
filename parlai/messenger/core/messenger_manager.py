@@ -80,6 +80,7 @@ class MessengerManager():
         self.running = True
         self.conversation_index = 0
         self.shutting_down = True
+        self.bypass_server_setup = self.opt.get('bypass_server_setup')
 
         # Messaging interaction functions that determine what to do when
         # messages are confirmed as delivered, marked as read by a user, and
@@ -107,9 +108,14 @@ class MessengerManager():
             # add agent to pool
             self.agent_pool.setdefault(world_type, []).append(agent)
 
+    def mark_removed(self, agent_id, pageid):
+        """Mark the agent as removed from the pool. Can be overriden to change
+        other metadata linked to agent removal."""
+        pass
+
     def remove_agent_from_pool(self, agent, world_type='default',
                                mark_removed=True):
-        """Remove agent from the pool"""
+        """Remove agent from the pool."""
         with self.agent_pool_change_condition:
             shared_utils.print_and_log(
                 logging.DEBUG,
@@ -124,6 +130,9 @@ class MessengerManager():
                 # maybe mark agent as removed
                 if mark_removed:
                     agent.stored_data['removed_from_pool'] = True
+                    if self.page_id is not None:
+                        self.mark_removed(
+                            int(agent.messenger_id), int(self.page_id))
 
     def _expire_all_conversations(self):
         """iterate through all sub-worlds and shut them down"""
@@ -192,7 +201,7 @@ class MessengerManager():
             "Messages {} marked as read.".format(event['read'])
         )
         reader = event['sender']['id']
-        agent_state = self._get_agent_state(reader)
+        agent_state = self.get_agent_state(reader)
         if agent_state is None:
             return
         agent = agent_state.get_active_agent()
@@ -228,7 +237,9 @@ class MessengerManager():
 
         def _overworld_function(opt, agent_id, task_id):
             """Wrapper function for maintaining an overworld"""
-            agent_state = self._get_agent_state(agent_id)
+            agent_state = self.get_agent_state(agent_id)
+            if self.opt['password'] is None:
+                agent_state.stored_data['first_message'] = message
             agent = agent_state.get_overworld_agent()
             overworld = self.overworld_func(opt, agent)
 
@@ -258,6 +269,11 @@ class MessengerManager():
         self.agent_id_to_overworld_thread[agent_id] = overworld_thread
         pass
 
+    def after_agent_removed(self, agent_id):
+        """Perform any changes to metadata on agent removal
+        override if extra bookkeeping must be done when removing agent"""
+        pass
+
     def _on_new_message(self, message):
         """Put an incoming message onto the correct agent's message queue.
         """
@@ -265,7 +281,7 @@ class MessengerManager():
         if agent_id not in self.messenger_agent_states:
             self._on_first_message(message)
             return
-        agent_state = self._get_agent_state(agent_id)
+        agent_state = self.get_agent_state(agent_id)
         if agent_state.get_active_agent() is None:
             # return agent to overworld
             if 'text' in message['message'] and \
@@ -277,7 +293,7 @@ class MessengerManager():
                 for world_type in to_remove:
                     self.remove_agent_from_pool(agent_state, world_type,
                                                 mark_removed=False)
-                # put agent back in overworld
+                self.after_agent_removed(agent_state.get_id())
                 agent_state.set_active_agent(agent_state.get_overworld_agent())
             else:
                 self.observe_message(
@@ -304,7 +320,7 @@ class MessengerManager():
         """
         def _onboard_function(opt, agent_id, world_type, task_id):
             """Onboarding wrapper to set state to onboarding properly"""
-            agent_state = self._get_agent_state(agent_id)
+            agent_state = self.get_agent_state(agent_id)
             data = None
             if (world_type in self.onboard_functions and
                     self.onboard_functions[world_type] is not None):
@@ -347,7 +363,7 @@ class MessengerManager():
 
         self.agent_id_to_onboard_thread[agent_id] = onboard_thread
 
-    def _get_agent_state(self, agent_id):
+    def get_agent_state(self, agent_id):
         """A safe way to get a worker by agent_id"""
         if agent_id in self.messenger_agent_states:
             return self.messenger_agent_states[agent_id]
@@ -355,7 +371,7 @@ class MessengerManager():
 
     def _get_agent(self, agent_id, task_id):
         """A safe way to get an agent by agent_id and task_id"""
-        agent_state = self._get_agent_state(agent_id)
+        agent_state = self.get_agent_state(agent_id)
         if agent_state is not None:
             if agent_state.has_task(task_id):
                 return agent_state.get_agent_for_task(task_id)
@@ -372,16 +388,12 @@ class MessengerManager():
             )
         )
 
-    def get_agent_state(self, agent_id):
-        """Get a worker by agent_id"""
-        if agent_id in self.messenger_agent_states:
-            return self.messenger_agent_states[agent_id]
-        return None
-
     # Manager Lifecycle Functions #
-
     def setup_server(self):
         """Prepare the Messenger server for handling messages"""
+        if self.bypass_server_setup:
+            return
+
         shared_utils.print_and_log(
             logging.INFO,
             '\nYou are going to allow people on Facebook to be agents in '
@@ -422,43 +434,46 @@ class MessengerManager():
             should_print=True
         )
 
-    def setup_socket(self):
-        """Set up socket to start communicating to workers"""
-        shared_utils.print_and_log(logging.INFO,
-                                   'Local: Setting up WebSocket...',
-                                   should_print=True)
-        self.app_token = None
-        if self.opt.get('force_page_token'):
-            pass
-        else:
+    # override if permission needed externally
+    def get_app_token(self):
+        """Find and return an app access token"""
+        if not self.opt.get('force_page_token'):
             if not os.path.exists(os.path.expanduser('~/.parlai/')):
                 os.makedirs(os.path.expanduser('~/.parlai/'))
             access_token_file_path = '~/.parlai/messenger_token'
             expanded_file_path = os.path.expanduser(access_token_file_path)
             if os.path.exists(expanded_file_path):
                 with open(expanded_file_path, 'r') as access_token_file:
-                    self.app_token = access_token_file.read()
+                    return access_token_file.read()
 
-        # cache the app token
-        if self.app_token is None:
-            self.app_token = input(
-                'Enter your page\'s access token from the developer page at'
-                'https://developers.facebook.com/apps/<YOUR APP ID>'
-                '/messenger/settings/ to continue setup:'
-            )
-            access_token_file_path = '~/.parlai/messenger_token'
-            expanded_file_path = os.path.expanduser(access_token_file_path)
-            with open(expanded_file_path, 'w+') as access_token_file:
-                access_token_file.write(self.app_token)
+        token = input(
+            'Enter your page\'s access token from the developer page at'
+            'https://developers.facebook.com/apps/<YOUR APP ID>'
+            '/messenger/settings/ to continue setup:'
+        )
+        access_token_file_path = '~/.parlai/messenger_token'
+        expanded_file_path = os.path.expanduser(access_token_file_path)
+        with open(expanded_file_path, 'w+') as access_token_file:
+            access_token_file.write(token)
+        return token
 
+    def setup_socket(self):
+        """Set up socket to start communicating to workers"""
+        if not self.bypass_server_setup:
+            shared_utils.print_and_log(logging.INFO,
+                                       'Local: Setting up WebSocket...',
+                                       should_print=True)
+
+        self.app_token = self.get_app_token()
         self.message_sender = MessageSender(self.app_token)
 
         # Set up receive
-        socket_use_url = self.server_url
-        if (self.opt['local']):  # skip some hops for local stuff
-            socket_use_url = "https://localhost"
-        self.message_socket = MessageSocket(socket_use_url, self.port,
-                                            self._handle_webhook_event)
+        if not self.bypass_server_setup:
+            socket_use_url = self.server_url
+            if (self.opt['local']):  # skip some hops for local stuff
+                socket_use_url = "https://localhost"
+            self.message_socket = MessageSocket(socket_use_url, self.port,
+                                                self._handle_webhook_event)
 
     def init_new_state(self):
         """Initialize everything in the agent, task, and thread states
@@ -494,8 +509,13 @@ class MessengerManager():
                 # put agent back in overworld
                 agent_state.set_active_agent(
                     agent_state.get_overworld_agent())
+
+                agent_state.stored_data['removed_after_timeout'] = True
+                self.after_agent_removed(agent_state.messenger_id)
+
                 # reset wait message state
                 agent_state.stored_data['seen_wait_message'] = False
+
             elif time_in_pool and time.time() - time_in_pool > 30:
                 # tell agent that a match is taking longer than
                 # expected
@@ -539,7 +559,8 @@ class MessengerManager():
                     )
             self.active_worlds[task_id] = None
             for agent in agents:
-                agent_state = self._get_agent_state(agent.id)
+                self.after_agent_removed(agent.id)
+                agent_state = self.get_agent_state(agent.id)
                 agent_state.set_active_agent(agent_state.get_overworld_agent())
 
         self.running = True
@@ -578,7 +599,7 @@ class MessengerManager():
                         for a in agents:
                             # Remove selected workers from the agent pool
                             self.remove_agent_from_pool(
-                                self._get_agent_state(a.id),
+                                self.get_agent_state(a.id),
                                 world_type=world_type,
                                 mark_removed=False
                             )
@@ -603,13 +624,15 @@ class MessengerManager():
         # Ensure all threads are cleaned and conversations are handled
         try:
             self.is_running = False
-            self.message_socket.keep_running = False
+            if not self.bypass_server_setup:
+                self.message_socket.keep_running = False
             self._expire_all_conversations()
         except BaseException:
             pass
         finally:
-            server_utils.delete_server(self.server_task_name,
-                                       self.opt['local'])
+            if not self.bypass_server_setup:
+                server_utils.delete_server(self.server_task_name,
+                                           self.opt['local'])
 
     # Agent Interaction Functions #
 
@@ -618,9 +641,10 @@ class MessengerManager():
         return self.message_sender.send_fb_message(receiver_id, text, True,
                                                    quick_replies=quick_replies)
 
-    def observe_payload(self, receiver_id, data):
+    def observe_payload(self, receiver_id, data, quick_replies=None):
         """Send a payload through the message manager"""
-        return self.message_sender.send_fb_payload(receiver_id, data)
+        return self.message_sender.send_fb_payload(receiver_id, data,
+                                                   quick_replies=None)
 
     def upload_attachment(self, payload):
         """Uploads an attachment and returns an attachment ID

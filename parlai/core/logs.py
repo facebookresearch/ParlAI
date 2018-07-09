@@ -44,12 +44,12 @@ class TensorboardLogger(Shared):
         if opt['tensorboard_tag'] == None:
             tensorboard_tag = opt['starttime']
         else:
-            tensorboard_tag = opt['starttime'] + '_'.join([
+            tensorboard_tag = opt['starttime'] + '__'.join([
                 i + '-' + str(opt[i])
                 for i in opt['tensorboard_tag'].split(',')
-            ]) + '_' + opt['tensorboard_comment']
-
-        tbpath = os.path.join(opt['datapath'], 'tensorboard')
+            ]) + '__' + opt['tensorboard_comment']
+        tbpath = os.path.join(os.path.dirname(opt['model_file']), 'tensorboard')
+        print('[ Saving tensorboard logs here: {} ]'.format(tbpath))
         if not os.path.exists(tbpath):
             os.makedirs(tbpath)
         self.writer = SummaryWriter(

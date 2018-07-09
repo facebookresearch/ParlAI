@@ -25,7 +25,6 @@ import parlai.mturk.core.shared_utils as shared_utils
 
 # Timeout before cancelling a world start
 WORLD_START_TIMEOUT = 11
-HEARTBEAT_DELAY_TIME = WORLD_START_TIMEOUT - SocketManager.DEF_SOCKET_TIMEOUT
 
 # Multiplier to apply when creating hits to ensure worker availibility
 HIT_MULT = 1.5
@@ -133,7 +132,7 @@ class MTurkManager():
         self.conv_to_agent = {}
         self.accepting_workers = True
         self._load_disconnects()
-        self._reset_time_logs()
+        self._reset_time_logs(init_load=True)
         self.assignment_to_worker_id = {}
         self.qualifications = None
         self.time_limit_checked = time.time()
@@ -144,7 +143,7 @@ class MTurkManager():
         shared_utils.set_is_debug(self.opt['is_debug'])
         shared_utils.set_log_level(self.opt['log_level'])
 
-    def _reset_time_logs(self, force=False):
+    def _reset_time_logs(self, init_load=False, force=False):
         # Uses a weak lock file to try to prevent clobbering between threads
         file_path = os.path.join(parent_dir, TIME_LOGS_FILE_NAME)
         file_lock = os.path.join(parent_dir, TIME_LOGS_FILE_LOCK)
@@ -153,6 +152,9 @@ class MTurkManager():
             if os.path.exists(file_path):
                 with open(file_path, 'rb+') as time_log_file:
                     existing_times = pickle.load(time_log_file)
+                    # Initial loads should only reset if it's been a day,
+                    # otherwise only need to check an hour for safety
+                    compare_time = 24 * 60 * 60 if init_load else 60 * 60
                     if time.time() - existing_times['last_reset'] < \
                             24 * 60 * 60 and not force:
                         return  # do nothing if it's been less than a day
@@ -686,10 +688,6 @@ class MTurkManager():
         if agent.state.status != AssignState.STATUS_IN_TASK:
             # Avoid on a second ack if alive already came through
             agent.state.status = AssignState.STATUS_ASSIGNED
-            self.socket_manager.delay_heartbeat_until(
-                agent.get_connection_id(),
-                time.time() + HEARTBEAT_DELAY_TIME
-            )
 
         agent.conversation_id = conv_id
         if conv_id not in self.conv_to_agent:

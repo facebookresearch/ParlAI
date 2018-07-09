@@ -28,5 +28,6 @@ def eval_hits(opt, print_parser):
 
 if __name__ == '__main__':
     parser = setup_args()
+    parser.set_defaults(model='repeat_label')
     opt = parser.parse_args()
     eval_hits(opt, parser)
