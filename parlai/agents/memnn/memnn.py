@@ -13,15 +13,13 @@ from torch import optim
 from torch.nn import CrossEntropyLoss
 
 import os
-import copy
 import random
 
 from .modules import MemNN, Decoder
 
 
 class MemnnAgent(Agent):
-    """ Memory Network agent.
-    """
+    """Memory Network agent."""
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -71,54 +69,6 @@ class MemnnAgent(Agent):
             self.answers = [None] * opt['batchsize']
             self.model = MemNN(opt, len(self.dict))
 
-        else:
-            self.dict = shared['dict']
-            # model is shared during hogwild
-            if 'threadindex' in shared:
-                torch.set_num_threads(1)
-                self.model = shared['model']
-                self.decoder = shared['decoder']
-                self.answers = [None] * opt['batchsize']
-            else:
-                self.answers = shared['answers']
-
-        if hasattr(self, 'model'):
-            self.opt = opt
-            self.mem_size = opt['mem_size']
-            self.loss_fn = CrossEntropyLoss()
-
-            self.decoder = None
-            self.longest_label = 1
-            self.NULL_IDX = self.dict[self.dict.null_token]
-            self.END = self.dict.end_token
-            self.END_TENSOR = torch.LongTensor(self.dict[self.END])
-            self.START = self.dict.start_token
-            self.START_TENSOR = torch.LongTensor(self.dict[self.START])
-
-            if opt['output'] == 'generate' or opt['output'] == 'g':
-                self.decoder = Decoder(opt['embedding_size'], opt['embedding_size'],
-                                        opt['rnn_layers'], opt, self.dict)
-            if opt['cuda'] and not shared:
-                self.model.share_memory()
-                if self.decoder is not None:
-                    self.decoder.cuda()
-
-            elif opt['output'] != 'rank' and opt['output'] != 'r':
-                raise NotImplementedError('Output type not supported.')
-
-            optim_params = [p for p in self.model.parameters() if p.requires_grad]
-            lr = opt['learning_rate']
-            if opt['optimizer'] == 'sgd':
-                self.optimizers = {'memnn': optim.SGD(optim_params, lr=lr)}
-                if self.decoder is not None:
-                    self.optimizers['decoder'] = optim.SGD(self.decoder.parameters(), lr=lr)
-            elif opt['optimizer'] == 'adam':
-                self.optimizers = {'memnn': optim.Adam(optim_params, lr=lr)}
-                if self.decoder is not None:
-                    self.optimizers['decoder'] = optim.Adam(self.decoder.parameters(), lr=lr)
-            else:
-                raise NotImplementedError('Optimizer not supported.')
-
             # check first for 'init_model' for loading model from file
             if opt.get('init_model') and os.path.isfile(opt['init_model']):
                 init_model = opt['init_model']
@@ -130,6 +80,50 @@ class MemnnAgent(Agent):
             if init_model is not None:
                 print('Loading existing model parameters from ' + init_model)
                 self.load(init_model)
+        else:
+            self.dict = shared['dict']
+            self.model = shared['model']
+            self.decoder = shared['decoder']
+            if 'threadindex' in shared:
+                torch.set_num_threads(1)
+                self.answers = [None] * opt['batchsize']
+            else:
+                self.answers = shared['answers']
+
+        self.opt = opt
+        self.mem_size = opt['mem_size']
+        self.loss_fn = CrossEntropyLoss()
+
+        self.decoder = None
+        self.longest_label = 1
+        self.NULL_IDX = self.dict[self.dict.null_token]
+        self.END = self.dict.end_token
+        self.END_TENSOR = torch.LongTensor([self.dict[self.END]])
+        self.START = self.dict.start_token
+        self.START_TENSOR = torch.LongTensor([self.dict[self.START]])
+
+        if opt['cuda'] and not shared:
+            self.model.share_memory()
+            if self.decoder is not None:
+                self.decoder.cuda()
+        if opt['output'] == 'generate' or opt['output'] == 'g':
+            self.decoder = Decoder(opt['embedding_size'], opt['embedding_size'],
+                                    opt['rnn_layers'], opt, self.dict)
+        elif opt['output'] != 'rank' and opt['output'] != 'r':
+            raise NotImplementedError('Output type not supported.')
+
+        optim_params = [p for p in self.model.parameters() if p.requires_grad]
+        lr = opt['learning_rate']
+        if opt['optimizer'] == 'sgd':
+            self.optimizers = {'memnn': optim.SGD(optim_params, lr=lr)}
+            if self.decoder is not None:
+                self.optimizers['decoder'] = optim.SGD(self.decoder.parameters(), lr=lr)
+        elif opt['optimizer'] == 'adam':
+            self.optimizers = {'memnn': optim.Adam(optim_params, lr=lr)}
+            if self.decoder is not None:
+                self.optimizers['decoder'] = optim.Adam(self.decoder.parameters(), lr=lr)
+        else:
+            raise NotImplementedError('Optimizer not supported.')
 
         self.history = {}
         self.batch_idx = shared and shared.get('batchindex') or 0
@@ -141,9 +135,8 @@ class MemnnAgent(Agent):
         shared = super().share()
         shared['answers'] = self.answers
         shared['dict'] = self.dict
-        if self.opt.get('numthreads', 1) > 1:
-            shared['model'] = self.model
-            shared['decoder'] = self.decoder
+        shared['model'] = self.model
+        shared['decoder'] = self.decoder
         return shared
 
     def observe(self, observation):

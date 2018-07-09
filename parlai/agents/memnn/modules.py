@@ -182,6 +182,7 @@ class Decoder(nn.Module):
         if dropout:
             scores = self.dropout(scores)
         _, idx = scores.max(1)
+        idx.unsqueeze_(1)
         return idx, scores
 
     def forward(self, input, state):

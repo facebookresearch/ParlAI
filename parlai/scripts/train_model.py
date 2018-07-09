@@ -23,7 +23,7 @@ TODO List:
 - More logging (e.g. to files), make things prettier.
 """
 
-from parlai.core.agents import create_agent
+from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer
@@ -103,12 +103,14 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
     print('[ running eval: ' + datatype + ' ]')
     if 'stream' in opt['datatype']:
         datatype += ':stream'
-    opt['datatype'] = datatype
-    if opt.get('evaltask'):
-        opt['task'] = opt['evaltask']
 
     if valid_world is None:
-        valid_world = create_task(opt, agent)
+        opt = opt.copy()
+        opt['datatype'] = datatype
+        if opt.get('evaltask'):
+            opt['task'] = opt['evaltask']
+        valid_agent = create_agent_from_shared(agent.share())
+        valid_world = create_task(opt, valid_agent)
     valid_world.reset()
     cnt = 0
     while not valid_world.epoch_done():
@@ -255,7 +257,13 @@ class TrainLoop():
 
         # time elapsed
         logs.append('time:{}s'.format(math.floor(self.train_time.time())))
-        logs.append('total_exs:{}'.format(self.world.get_total_exs()))
+        total_exs = self.world.get_total_exs()
+        logs.append('total_exs:{}'.format(total_exs))
+
+        exs_per_ep = self.world.num_examples()
+        if exs_per_ep:
+            logs.append('total_epochs:{}'.format(
+                round(total_exs / exs_per_ep, 2)))
 
         exs_per_ep = self.world.num_examples()
         if exs_per_ep:
