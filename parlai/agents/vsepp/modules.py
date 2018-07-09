@@ -45,7 +45,7 @@ class VSEpp(nn.Module):
         return img_emb, cap_emb
 
     def get_optim(self):
-        kwargs = {'lr': self.opt['learning_rate'],
+        kwargs = {'lr': float(self.opt['learning_rate']),
                   'amsgrad': True}
         params = list(self.txt_enc.parameters())
         params += list(self.img_enc.fc.parameters())
@@ -73,11 +73,12 @@ class ContrastiveLoss(nn.Module):
     """
     Compute contrastive loss.
     """
-    def __init__(self, use_cuda, margin=0):
+    def __init__(self, use_cuda, margin=0, max_violation=True):
         super().__init__()
         self.use_cuda = use_cuda
         self.margin = margin
         self.sim = cosine_sim
+        self.max_violation = max_violation
 
     def forward(self, im, caps, offset=0):
         # Compute the similarity of each image/caption pair
@@ -104,6 +105,11 @@ class ContrastiveLoss(nn.Module):
         ranks = []
         for idx in range(im.shape[0]):
             ranks.append(np.where(sorted_ranks[idx,:]==(idx + offset))[0][0])
+
+        # keep the maximum violating negative for each query
+        if self.max_violation:
+            cost_cap = cost_cap.max(1)[0]
+            cost_im = cost_im.max(0)[0]
 
         return cost_cap.sum() + cost_im.sum(), ranks, top1
 

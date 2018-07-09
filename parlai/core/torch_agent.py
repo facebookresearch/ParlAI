@@ -187,8 +187,10 @@ class TorchAgent(Agent):
             x_lens = x_lens.cuda()
             padded_xs = padded_xs.cuda()
 
-        for i, ex in enumerate(x_text):
-            padded_xs[i, :ex.shape[0]] = ex
+        # Handle cases when nothing is passed thru the text field
+        if max(x_lens) > 0:
+            for i, ex in enumerate(x_text):
+                padded_xs[i, :ex.shape[0]] = ex
 
         xs = padded_xs
 

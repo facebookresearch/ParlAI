@@ -257,7 +257,7 @@ class DefaultTeacher(FixedDialogTeacher):
         if not self.datatype.startswith('test'):
             return len(self.annotation['annotations'])
         else:
-            return len(self.annotation['images'])
+            return len(self.test_info['images'])
 
     def num_episodes(self):
         return self.num_examples()

@@ -46,7 +46,8 @@ class VseppAgent(TorchAgent):
                            help='Do not normalize the image embeddings.')
         agent.add_argument('--margin', default=0.2, type=float,
                            help='Rank loss margin.')
-
+        agent.add_argument('--max_violation', type='bool', default=True,
+                           help='Use max instead of sum in the rank loss.')
         # agent.add_argument('--embed_size', type=int , default=256,
         #                    help='dimension of word embedding vectors')
         # agent.add_argument('--hidden_size', type=int , default=512,
@@ -179,6 +180,7 @@ class VseppAgent(TorchAgent):
         batch_reply = [{'id': self.getID()} for _ in range(batch_size)]
 
         is_training = any(['labels' in obs for obs in observations])
+        is_testing = not (is_training or any(['eval_labels' in obs for obs in observations]))
 
         vec_obs = [self.vectorize(obs)
                    for obs in observations]
@@ -194,7 +196,7 @@ class VseppAgent(TorchAgent):
                 if 'eval_labels' in item:
                     item['text'] = item['eval_labels'][0]
                     item['text_vec'] = item['eval_labels_vec'][0]
-
+        # import pdb; pdb.set_trace()
         xs, x_lens, _, labels, valid_inds = self.map_valid(vec_obs)
 
 
@@ -205,7 +207,7 @@ class VseppAgent(TorchAgent):
 
         # Need 2 different flows for training and for eval/test
         if is_training:
-            loss, top1 = self.predict(images, xs, x_lens, cands=None,
+            loss, top1, ranks = self.predict(images, xs, x_lens, cands=None,
                                       is_training=is_training)
 
             if loss is not None:
@@ -222,16 +224,18 @@ class VseppAgent(TorchAgent):
             cands = [self.candidate_helper(vec_obs[idx]['candidate_labels_vec'],
                                            vec_obs[idx]['candidate_labels'])
                      for idx in valid_inds]
-            _, top1 = self.predict(images, None, None, cands, is_training)
+            _, top1, ranks = self.predict(images, None, None, cands, is_training)
             predictions = []
             for i, score_idx in enumerate(top1):
                 predictions.append(cands[i][1][score_idx])
-
+        unmap_ranks = self.unmap_valid(ranks, valid_inds, batch_size)
         unmap_pred = self.unmap_valid(predictions, valid_inds, batch_size)
 
-        for rep, pred in zip(batch_reply, unmap_pred):
+        for i, (rep, pred) in enumerate(zip(batch_reply, unmap_pred)):
             if pred is not None:
                 rep['text'] = pred
+                if not is_testing:
+                    rep['truth_rank'] = unmap_ranks[i]
         # print(batch_reply)
         return batch_reply
 
@@ -261,10 +265,10 @@ class VseppAgent(TorchAgent):
                 offset = truth_idx if truth_idx is not None else 0
                 _, rank, top = self.criterion(img_embs[i, :].unsqueeze(0), embs, offset)
                 ranks += rank
-                top1 += top
+                top1.append(top[0])
             self.metrics['r@'] += ranks
 
-        return loss, top1
+        return loss, top1, ranks
 
     def report(self):
         m = {}
@@ -272,6 +276,7 @@ class VseppAgent(TorchAgent):
         ranks = np.asarray(self.metrics['r@'])
         m['r@1'] = len(np.where(ranks < 1)[0]) / len(ranks)*1.0
         m['r@5'] = len(np.where(ranks < 5)[0]) / len(ranks)*1.0
+        m['r@10'] = len(np.where(ranks < 10)[0]) / len(ranks)*1.0
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)
