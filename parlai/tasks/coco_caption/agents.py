@@ -14,7 +14,7 @@ from .build_2017 import buildImage as buildImage_2017
 try:
     import torch
 except Exception as e:
-    raise ModuleNotFoundError('Need to install Pytorch: go to pytorch.org')
+    raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset
 from parlai.core.dict import DictionaryAgent
 
@@ -96,7 +96,7 @@ def _path(opt, version):
 
 class DefaultDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
-    def __init__(self, opt, shared=None, version='2014'):
+    def __init__(self, opt, version='2014'):
         self.opt = opt
         self.use_hdf5 = opt.get('use_hdf5', False)
         self.datatype = self.opt.get('datatype')
@@ -110,8 +110,8 @@ class DefaultDataset(Dataset):
             try:
                 import h5py
                 self.h5py = h5py
-            except ModuleNotFoundError:
-                raise ModuleNotFoundError('Need to install h5py - `pip install h5py`')
+            except ImportError:
+                raise ImportError('Need to install h5py - `pip install h5py`')
             self._setup_image_data()
         self.dict_agent = DictionaryAgent(opt)
 
@@ -212,13 +212,13 @@ class DefaultDataset(Dataset):
 
 
 class V2014Dataset(DefaultDataset):
-    def __init__(self, opt, shared=None):
-        super(V2014Dataset, self).__init__(opt, shared, '2014')
+    def __init__(self, opt):
+        super(V2014Dataset, self).__init__(opt, '2014')
 
 
 class V2017Dataset(DefaultDataset):
-    def __init__(self, opt, shared=None):
-        super(V2017Dataset, self).__init__(opt, shared, '2017')
+    def __init__(self, opt):
+        super(V2017Dataset, self).__init__(opt, '2017')
 
 
 class DefaultTeacher(FixedDialogTeacher):
@@ -264,7 +264,6 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def submit_load_request(self, image_id):
         img_path = self.image_path + '%012d.jpg' % (image_id)
-
         self.data_loader.request_load(self.receive_data, self.image_loader.load, (img_path,))
 
     def get(self, episode_idx, entry_idx=0):
@@ -276,7 +275,6 @@ class DefaultTeacher(FixedDialogTeacher):
         if not self.datatype.startswith('test'):
             # test set annotations are not available for this dataset
             anno = self.annotation['annotations'][episode_idx]
-            # print(anno)
             action['labels'] = [anno['caption']]
             action['image_id'] = anno['image_id']
             if self.datatype.startswith('eval'):
@@ -317,11 +315,10 @@ class DefaultTeacher(FixedDialogTeacher):
             # load the next image in the background
             image_id = self.example['image_id']
             self.submit_load_request(image_id)
-
+        # Try to return the previously cached example
         if ready is None:
             return self.next_example()
         else:
-            # return the previously cached example
             return ready
 
     def share(self):

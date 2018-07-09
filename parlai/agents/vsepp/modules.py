@@ -16,6 +16,8 @@ import numpy as np
 
 class VSEpp(nn.Module):
     """
+    Implementation of Visual Semantic Embedding++ model borrowed heavily from
+    here: <https://github.com/fartashf/vsepp>
     """
 
     def __init__(self, opt, dict, use_cuda):
@@ -56,13 +58,15 @@ class VSEpp(nn.Module):
 
 
 def cosine_sim(im, s):
-    """Cosine similarity between all the image and sentence pairs
+    """
+    Cosine similarity between all the image and sentence pairs
     """
     return im.mm(s.t())
 
 
 def l2norm(X):
-    """L2-normalize columns of X
+    """
+    L2-normalize columns of X
     """
     norm = torch.pow(X, 2).sum(dim=1, keepdim=True).sqrt()
     X = torch.div(X, norm)
@@ -97,14 +101,16 @@ class ContrastiveLoss(nn.Module):
             mask = mask.cuda()
         cost_cap = cost_cap.masked_fill(mask, 0)
         cost_im = cost_im.masked_fill(mask, 0)
+
+        # Compute the metrics (ranks, top1)
         if self.use_cuda:
             sorted_ranks = np.flip(np.argsort(scores.detach().cpu().numpy()), 1)
         else:
             sorted_ranks = np.flip(np.argsort(scores.detach().numpy()), 1)
-        top1 = sorted_ranks[:,0]
+        top1 = sorted_ranks[:, 0]
         ranks = []
         for idx in range(im.shape[0]):
-            ranks.append(np.where(sorted_ranks[idx,:]==(idx + offset))[0][0])
+            ranks.append(np.where(sorted_ranks[idx, :]==(idx + offset))[0][0])
 
         # keep the maximum violating negative for each query
         if self.max_violation:
@@ -115,8 +121,6 @@ class ContrastiveLoss(nn.Module):
 
 
 class EncoderImage(nn.Module):
-    """
-    """
     def __init__(self, embed_size, finetune=False, cnn_type='resnet152',
                  no_imgnorm=False):
         """Load pretrained CNN and replace top fc layer."""
@@ -172,13 +176,10 @@ class EncoderImage(nn.Module):
     def forward(self, images):
         """Extract image feature vectors."""
         features = self.cnn(images)
-
         # normalization in the image embedding space
         features = l2norm(features)
-
         # linear projection to the joint embedding space
         features = self.fc(features)
-
         # normalization in the joint embedding space
         if not self.no_imgnorm:
             features = l2norm(features)
@@ -186,22 +187,16 @@ class EncoderImage(nn.Module):
         return features
 
 
-# tutorials/08 - Language Model
-# RNN Based Language Model
 class EncoderText(nn.Module):
-
     def __init__(self, vocab_size, word_dim, embed_size, num_layers,
                  use_cuda):
         super(EncoderText, self).__init__()
         self.embed_size = embed_size
         self.use_cuda = use_cuda
-
         # word embedding
         self.embed = nn.Embedding(vocab_size, word_dim)
-
         # caption embedding
         self.rnn = nn.GRU(word_dim, embed_size, num_layers, batch_first=True)
-
         self.init_weights()
 
     def init_weights(self):
@@ -213,10 +208,8 @@ class EncoderText(nn.Module):
         # Embed word ids to vectors
         x = self.embed(x)
         packed = pack_padded_sequence(x, lengths, batch_first=True)
-
         # Forward propagate RNN
         out, _ = self.rnn(packed)
-
         # Reshape *final* output to (batch_size, hidden_size)
         padded = pad_packed_sequence(out, batch_first=True)
         I = lengths.view(-1, 1, 1)
@@ -224,7 +217,6 @@ class EncoderText(nn.Module):
         if self.use_cuda:
             I = I.cuda()
         out = torch.gather(padded[0], 1, I).squeeze(1)
-
         # normalization in the joint embedding space
         out = l2norm(out)
 
