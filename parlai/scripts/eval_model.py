@@ -13,6 +13,7 @@ or
 """
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
+from parlai.core.logs import TensorboardLogger
 from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
 
@@ -29,6 +30,7 @@ def setup_args(parser=None):
     parser.add_argument('--metrics', type=str, default="all",
                         help="list of metrics to show/compute, e.g. ppl,f1,accuracy,hits@1."
                         "If 'all' is specified [default] all are shown.")
+    TensorboardLogger.add_cmdline_args(parser)
     parser.set_defaults(datatype='valid')
     return parser
 

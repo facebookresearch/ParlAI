@@ -196,7 +196,7 @@ class Seq2seqAgent(Agent):
             self.answers = shared['answers']
             self.model = shared['model']
             self.metrics = shared['metrics']
-            states = shared.get('states', None)
+            states = shared.get('states', {})
 
         else:
             # this is not a shared instance of this class, so do full init
