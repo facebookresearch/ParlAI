@@ -131,14 +131,12 @@ class _FairseqDictionary(DictionaryAgent):
         # this to be the best way.
 
         # add the token to the dictionary
-        self.add_token(self._LUA)
-        self.freq[self._LUA] = self.freq[self.null_token] + 1
-        # Sort the list. Note that sort() calls remove_tail, so we need to
-        # ensure we don't throw anything away
-        tmp = self.minfreq
-        self.minfreq = -1
-        self.sort()
-        self.minfreq = tmp
+        self.add_token(_FairseqDictionary._LUA)
+        # force it to be the "most frequent" token
+        self.freq[_FairseqDictionary._LUA] = self.freq[self.null_token] + 1
+        # sort the list to ensure the lua token is placed first. trim=False to
+        # ensure shuffle is non-destructive.
+        self.sort(trim=False)
 
     def pad(self):
         return self.pad_index

@@ -479,13 +479,17 @@ class DictionaryAgent(Agent):
         with open(filename + '.opt', 'wb') as handle:
             pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def sort(self):
+    def sort(self, trim=True):
         """Sorts the dictionary, so that the elements with the lowest index have
         the highest counts. This reindexes the dictionary according to the
         sorted frequencies, breaking ties alphabetically by token.
+
+        :param bool trim: If True, truncate the dictionary based on minfreq and
+            maxtokens.
         """
         # sort first by count, then alphabetically
-        self.remove_tail(self.minfreq)
+        if trim:
+            self.remove_tail(self.minfreq)
         sorted_pairs = sorted(self.freq.items(), key=lambda x: (-x[1], x[0]))
         new_tok2ind = {}
         new_ind2tok = {}
@@ -494,7 +498,8 @@ class DictionaryAgent(Agent):
             new_ind2tok[i] = tok
         self.tok2ind = new_tok2ind
         self.ind2tok = new_ind2tok
-        self.resize_to_max(self.maxtokens)
+        if trim:
+            self.resize_to_max(self.maxtokens)
         return sorted_pairs
 
     def parse(self, txt_or_vec, vec_type=list):
