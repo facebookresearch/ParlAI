@@ -143,6 +143,9 @@ class DictionaryAgent(Agent):
             dictionary.add_argument(
                 '--bpe-codecs-file',
                 help='Filename for the BPE codecs. Defaults to dictfile.codecs.')
+            dictionary.add_argument(
+                '--bpe-debug', action='store_true',
+                help='Leave BPE tokens untouched in output. Useful for debugging.')
         except argparse.ArgumentError:
             # already added
             pass
@@ -539,7 +542,7 @@ class DictionaryAgent(Agent):
         """
         text = delimiter.join(self[int(idx)] for idx in vector)
         # if we used a BPE tokenizer we need to rejoin the encodings
-        if self.tokenizer == 'bpe':
+        if self.tokenizer == 'bpe' and not self.opt.get('bpe_debug', False):
             text = text.replace('@@ ', '')
             # It's also possible that we get a BPE encoding on the end of the word
             if text.endswith('@@'):
