@@ -7,14 +7,13 @@
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import PaddingUtils, round_sigfigs
+from parlai.core.thread_utils import SharedTable
 from .modules import RNNModel
 
 import torch
 from torch.autograd import Variable
-from torch import optim
 import torch.nn as nn
 
-import copy
 import os
 import math
 import pickle
@@ -104,15 +103,15 @@ class LanguageModelAgent(Agent):
             opt = self.opt
             self.dict = shared['dict']
 
-            if 'model' in shared:
-                # model is shared during hogwild
-                self.model = shared['model']
-                self.states = shared['states']
-                self.metrics = shared['metrics']
+            self.model = shared['model']
+            self.metrics = shared['metrics']
 
             # get NULL token and END token
             self.NULL_IDX = self.dict[self.dict.null_token]
             self.END_IDX = self.dict[self.dict.end_token]
+
+            if 'states' in shared:
+                self.states = shared['states']
 
             if self.use_person_tokens:
                 # add person1 and person2 tokens
@@ -184,37 +183,35 @@ class LanguageModelAgent(Agent):
 
         self.is_training = True
 
-        if hasattr(self, 'model'):
-            # if model was built, do more setup
-            self.clip = opt.get('gradient_clip', 0.25)
-            # set up criteria
-            self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX,
-                                                 size_average=False)
-            if self.use_cuda:
-                # push to cuda
-                self.criterion.cuda()
-            # init hidden state
-            self.hidden = self.model.init_hidden(self.batchsize)
-            # init tensor of end tokens
-            self.ends = torch.LongTensor([self.END_IDX for _ in range(self.batchsize)])
-            if self.use_cuda:
-                self.ends = self.ends.cuda()
-            # set up model and learning rate scheduler parameters
-            self.lr = opt['learningrate']
-            self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
-            self.best_val_loss = self.states.get('best_val_loss', None)
-            self.lr_factor = opt['lr_factor']
-            if self.lr_factor < 1.0:
-                self.lr_patience = opt['lr_patience']
-                self.lr_min = opt['lr_minimum']
-                self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-                    self.optimizer, factor=self.lr_factor, verbose=True,
-                    patience=self.lr_patience, min_lr=self.lr_min)
-                # initial step for scheduler if self.best_val_loss is initialized
-                if self.best_val_loss is not None:
-                    self.scheduler.step(self.best_val_loss)
-            else:
-                self.scheduler = None
+        self.clip = opt.get('gradient_clip', 0.25)
+        # set up criteria
+        self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX,
+                                             size_average=False)
+        if self.use_cuda:
+            # push to cuda
+            self.criterion.cuda()
+        # init hidden state
+        self.hidden = self.model.init_hidden(self.batchsize)
+        # init tensor of end tokens
+        self.ends = torch.LongTensor([self.END_IDX for _ in range(self.batchsize)])
+        if self.use_cuda:
+            self.ends = self.ends.cuda()
+        # set up model and learning rate scheduler parameters
+        self.lr = opt['learningrate']
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
+        self.best_val_loss = self.states.get('best_val_loss', None)
+        self.lr_factor = opt['lr_factor']
+        if self.lr_factor < 1.0:
+            self.lr_patience = opt['lr_patience']
+            self.lr_min = opt['lr_minimum']
+            self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                self.optimizer, factor=self.lr_factor, verbose=True,
+                patience=self.lr_patience, min_lr=self.lr_min)
+            # initial step for scheduler if self.best_val_loss is initialized
+            if self.best_val_loss is not None:
+                self.scheduler.step(self.best_val_loss)
+        else:
+            self.scheduler = None
 
         self.reset()
 
@@ -283,12 +280,16 @@ class LanguageModelAgent(Agent):
         shared['dict'] = self.dict
         shared['NULL_IDX'] = self.NULL_IDX
         shared['END_IDX'] = self.END_IDX
-        shared['metrics'] = self.metrics
         shared['model'] = self.model
-        self.model.share_memory()
-        shared['states'] = {  # only need to pass optimizer states
-            'optimizer': self.optimizer.state_dict(),
-        }
+        if self.opt.get('numthreads', 1) > 1:
+            if type(self.metrics) == dict:
+                # move metrics and model to shared memory
+                self.metrics = SharedTable(self.metrics)
+                self.model.share_memory()
+            shared['states'] = {  # only need to pass optimizer states
+                'optimizer': self.optimizer.state_dict(),
+            }
+        shared['metrics'] = self.metrics
         return shared
 
     def observe(self, observation):
