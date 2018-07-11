@@ -112,7 +112,7 @@ class TorchAgent(Agent):
         Converts 'text' and 'label'/'eval_label' field to vectors.
 
         :param obs: single observation from observe function
-        :param add_start: default True, adds the end token to each label
+        :param add_start: default True, adds the start token to each label
         :param add_end: default True, adds the end token to each label
         """
         if 'text' not in obs:
@@ -141,7 +141,7 @@ class TorchAgent(Agent):
             if self.use_cuda:
                 new_label = new_label.cuda()
             obs[label_type + '_vec'] = new_label
-            obs[label_type]
+            obs[label_type + '_choice'] = label
         return obs
 
     def batchify(self, obs_batch, sort=False, is_valid=lambda obs: 'text_vec' in obs):
@@ -197,8 +197,8 @@ class TorchAgent(Agent):
         if some_labels_avail:
             field = 'labels' if labels_avail else 'eval_labels'
 
-            label_vecs = [ex[field + "_vec"] for i, ex in enumerate(exs)]
-            labels = [ex[field] for i, ex in enumerate(exs)]
+            label_vecs = [ex[field + '_vec'] for i, ex in enumerate(exs)]
+            labels = [ex[field + '_choice'] for i, ex in enumerate(exs)]
             y_lens = [y.shape[0] for y in label_vecs]
             padded_ys = torch.LongTensor(len(exs),
                                          max(y_lens)).fill_(self.NULL_IDX)
