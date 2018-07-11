@@ -302,8 +302,8 @@ class ParlaiParser(argparse.ArgumentParser):
         batch.add_argument(
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
-        batch.add_argument('-bsrt', '--batch-sort', default=True, type='bool',
-                           help='If enabled (default True), create batches by '
+        batch.add_argument('-bsrt', '--batch-sort', default=False, type='bool',
+                           help='If enabled (default False), create batches by '
                                 'flattening all episodes to have exactly one '
                                 'utterance exchange and then sorting all the '
                                 'examples according to their length. This '
