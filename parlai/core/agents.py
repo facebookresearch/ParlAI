@@ -300,6 +300,8 @@ def load_agent_module(opt):
                 new_opt[k] = v
         new_opt['model_file'] = model_file
         model_class = get_agent_module(new_opt['model'])
+        if 'batch_sort' in new_opt:
+            opt['batch_sort'] = new_opt['batch_sort']
         return model_class(new_opt)
     else:
         return None
