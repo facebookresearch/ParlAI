@@ -5,7 +5,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.torch_agent import TorchAgent
-from parlai.core.dict import DictionaryAgent
 from .modules import VSEpp, ContrastiveLoss
 from parlai.core.utils import round_sigfigs
 
@@ -14,9 +13,10 @@ import torchvision.transforms as transforms
 
 import os
 import numpy as np
+import random
 
 
-class VseppAgent(TorchAgent):
+class VseppCaptionAgent(TorchAgent):
     """
     Agent which takes an image and retrieves a caption.
 
@@ -54,16 +54,12 @@ class VseppAgent(TorchAgent):
         agent.add_argument('--max_violation', type='bool', default=True,
                            help='Use max instead of sum in the rank loss.')
         agent.add_argument('-lr', '--learning_rate', type=float,
-                           default=0.0002, help='learning rate')
-        VseppAgent.dictionary_class().add_cmdline_args(argparser)
-
-    @staticmethod
-    def dictionary_class():
-        return DictionaryAgent
+                           default=0.001, help='learning rate')
+        VseppCaptionAgent.dictionary_class().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.id = 'VSEpp Image Caption'
+        self.id = 'VSEppImageCaption'
         if not shared:
             self.image_size = opt['image_size']
             self.crop_size = opt['image_cropsize']
@@ -79,6 +75,7 @@ class VseppAgent(TorchAgent):
             self.model = VSEpp(opt, self.dict, self.use_cuda)
             self.metrics = {'loss': 0.0, 'r@': []}
 
+            self.optimizer = self.model.get_optim()
             load_model = None
             states = {}
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
@@ -88,8 +85,6 @@ class VseppAgent(TorchAgent):
                 print('[ Loading existing model params from {} ]'.format(load_model))
                 states = self.load(opt['model_file'])
 
-            if states:
-                self.model.load_state_dict(states['model'])
 
             self.criterion = ContrastiveLoss(self.use_cuda)
 
@@ -97,7 +92,6 @@ class VseppAgent(TorchAgent):
                 self.model.cuda()
                 self.criterion.cuda()
 
-            self.optimizer = self.model.get_optim()
             if 'optimizer' in states:
                 try:
                     self.optimizer.load_state_dict(states['optimizer'])
@@ -198,12 +192,14 @@ class VseppAgent(TorchAgent):
             if loss is not None:
                 batch_reply[0]['metrics'] = {'loss': loss.item()}
             predictions = []
+            if random.random() < 0.25:
+                print(top1)
             for score_idx in top1:
                 predictions.append(labels[score_idx])
         else:
             # Need to collate then sort the captions by length
-            cands = [self.candidate_helper(vec_obs[idx]['candidate_labels_vec'],
-                                           vec_obs[idx]['candidate_labels'],
+            cands = [self.candidate_helper(vec_obs[idx]['label_candidates_vec'],
+                                           vec_obs[idx]['label_candidates'],
                                            is_testing)
                      for idx in valid_inds]
             _, top1, ranks = self.predict(images, None, None, cands,
@@ -259,9 +255,9 @@ class VseppAgent(TorchAgent):
         m = {}
         m['loss'] = self.metrics['loss']
         ranks = np.asarray(self.metrics['r@'])
-        m['r@1'] = len(np.where(ranks < 1)[0]) / len(ranks)*1.0
-        m['r@5'] = len(np.where(ranks < 5)[0]) / len(ranks)*1.0
-        m['r@10'] = len(np.where(ranks < 10)[0]) / len(ranks)*1.0
+        m['r@1'] = len(np.where(ranks < 1)[0]) / len(ranks)
+        m['r@5'] = len(np.where(ranks < 5)[0]) / len(ranks)
+        m['r@10'] = len(np.where(ranks < 10)[0]) / len(ranks)
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)

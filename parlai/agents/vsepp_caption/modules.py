@@ -37,10 +37,6 @@ class VSEpp(nn.Module):
             self.img_enc.cuda()
             self.txt_enc.cuda()
 
-        # Loss and Optimizer
-        self.criterion = ContrastiveLoss(use_cuda=use_cuda,
-                                         margin=opt['margin'])
-
     def forward(self, images, captions, lengths):
         img_emb = self.img_enc(images) if images is not None else None
         cap_emb = self.txt_enc(captions, lengths) if captions is not None else None
@@ -129,7 +125,7 @@ class EncoderImage(nn.Module):
         self.no_imgnorm = no_imgnorm
 
         # Load a pre-trained model
-        self.cnn = self.get_cnn(cnn_type, True)
+        self.cnn = self.get_cnn(cnn_type)
 
         # For efficient memory usage.
         for param in self.cnn.parameters():
@@ -147,15 +143,11 @@ class EncoderImage(nn.Module):
 
         self.init_weights()
 
-    def get_cnn(self, arch, pretrained):
+    def get_cnn(self, arch):
         """Load a pretrained CNN and parallelize over GPUs
         """
-        if pretrained:
-            print("=> using pre-trained model '{}'".format(arch))
-            model = models.__dict__[arch](pretrained=True)
-        else:
-            print("=> creating model '{}'".format(arch))
-            model = models.__dict__[arch]()
+        print("=> using pre-trained model '{}'".format(arch))
+        model = models.__dict__[arch](pretrained=True)
 
         if arch.startswith('alexnet') or arch.startswith('vgg'):
             model.features = nn.DataParallel(model.features)
@@ -190,7 +182,7 @@ class EncoderImage(nn.Module):
 class EncoderText(nn.Module):
     def __init__(self, vocab_size, word_dim, embed_size, num_layers,
                  use_cuda):
-        super(EncoderText, self).__init__()
+        super().__init__()
         self.embed_size = embed_size
         self.use_cuda = use_cuda
         # word embedding

@@ -132,9 +132,9 @@ class TorchAgent(Agent):
                 new_labels.append(new_label)
             obs[label_type + "_vec"] = new_labels
 
-        if 'candidate_labels' in obs:
+        if 'label_candidates' in obs:
             candidate_labels_vec = []
-            for label in obs['candidate_labels']:
+            for label in obs['label_candidates']:
                 vec_label = self.dict.txt2vec(label)
                 if addEndIdx:
                     vec_label.append(self.END_IDX)
@@ -142,7 +142,7 @@ class TorchAgent(Agent):
                 if self.use_cuda:
                     new_label = new_label.cuda()
                 candidate_labels_vec.append(new_label)
-            obs['candidate_labels_vec'] = candidate_labels_vec
+            obs['label_candidates_vec'] = candidate_labels_vec
 
         return obs
 

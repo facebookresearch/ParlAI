@@ -104,7 +104,7 @@ class DefaultDataset(Dataset):
         self.num_epochs = self.opt.get('num_epochs', 0)
         self.image_loader = ImageLoader(opt)
         test_info_path, annotation_path, self.image_path = _path(opt, version)
-        self.candidates = load_candidates(opt['datapath'], version)
+        self.cands, self.val_cands = load_candidates(opt['datapath'], version)
         self._setup_data(test_info_path, annotation_path, opt.get('unittest', False))
         if self.use_hdf5:
             try:
@@ -124,7 +124,7 @@ class DefaultDataset(Dataset):
         else:
             image_id = self.test_info['images'][index]['id']
         ep = {
-            'text': self.dict_agent.txt2vec(QUESTION),
+            'text': '',
             'image': self.get_image(image_id),
             'episode_done': True,
         }
@@ -135,8 +135,24 @@ class DefaultDataset(Dataset):
             anno = self.annotation['annotations'][index]
             ep['labels'] = [anno['caption']]
             ep['valid'] = True
+            if self.datatype.startswith('eval'):
+                # Can only randomly select from validation set
+                candidate_labels = random.choices(self.val_cands, k=150)
+            else:
+                candidate_labels = random.choices(self.cands, k=150)
+
+            if anno['caption'] not in candidate_labels:
+                candidate_labels.pop(0)
+            else:
+                candidate_labels.remove(anno['caption'])
+
+            candidate_labels.insert(0, anno['caption'])
+
+            ep['label_candidates'] = candidate_labels
         else:
+            ep['label_candidates'] = random.choices(self.cands, k=150)
             ep['valid'] = True
+
         ep['use_hdf5'] = self.use_hdf5
         return (index, ep)
 
@@ -290,9 +306,9 @@ class DefaultTeacher(FixedDialogTeacher):
 
             candidate_labels.insert(0, anno['caption'])
 
-            action['candidate_labels'] = candidate_labels
+            action['label_candidates'] = candidate_labels
         else:
-            action['candidate_labels'] = random.choices(self.cands, k=150)
+            action['label_candidates'] = random.choices(self.cands, k=150)
             action['image_id'] = self.test_info['images'][episode_idx]['id']
 
         return action
