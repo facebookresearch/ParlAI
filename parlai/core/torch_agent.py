@@ -404,12 +404,12 @@ class TorchAgent(Agent):
         return batch_reply
 
     def train_step(self, xs, ys=None, cands=None, *args, **kwargs):
-        raise NotImplementedError('Abstract class: user must implement batch_act')
+        raise NotImplementedError('Abstract class: user must implement train_step')
 
     def eval_step(self, xs, ys=None, cands=None, *args, **kwargs):
-        raise NotImplementedError('Abstract class: user must implement batch_act')
+        raise NotImplementedError('Abstract class: user must implement eval_step')
 
-        
+
 class Beam(object):
     def __init__(self, beam_size, min_length=3, padding_token=0, bos_token=1, eos_token=2, min_n_best=3, cuda='cpu'):
         """
