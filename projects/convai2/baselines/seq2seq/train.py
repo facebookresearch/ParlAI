@@ -17,7 +17,6 @@ if __name__ == '__main__':
         task='convai2:self',
         model='seq2seq',
         model_file='/tmp/convai2_self_seq2seq_model',
-        dict_file='/tmp/dict_convai2_self',
         dict_lower=True,
         dict_include_valid=True,
         dict_maxexs=-1,
