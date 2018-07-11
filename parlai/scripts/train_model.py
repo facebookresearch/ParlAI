@@ -87,6 +87,10 @@ def setup_args(parser=None):
     train.add_argument('-lfc', '--load-from-checkpoint',
                        type='bool', default=False,
                        help='load model from checkpoint if available')
+    train.add_argument('-vshare', '--validation-share-agent', default=False,
+                       help='use a shared copy of the agent for validation. '
+                            'this will eventually default to True, but '
+                            'currently defaults to False.')
     TensorboardLogger.add_cmdline_args(parser)
     parser = setup_dict_args(parser)
     return parser
@@ -109,7 +113,10 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
         opt['datatype'] = datatype
         if opt.get('evaltask'):
             opt['task'] = opt['evaltask']
-        valid_agent = create_agent_from_shared(agent.share())
+        if opt.get('validation_share_agent', False):
+            valid_agent = create_agent_from_shared(agent.share())
+        else:
+            valid_agent = agent
         valid_world = create_task(opt, valid_agent)
     valid_world.reset()
     cnt = 0
