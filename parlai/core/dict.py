@@ -181,26 +181,19 @@ class DictionaryAgent(Agent):
             self.ind2tok = {}
 
             if self.null_token:
-                self.tok2ind[self.null_token] = 0
-                self.ind2tok[0] = self.null_token
+                self.add_token(self.null_token)
 
             if self.start_token:
                 # set special start of sentence word token
-                index = len(self.tok2ind)
-                self.tok2ind[self.start_token] = index
-                self.ind2tok[index] = self.start_token
+                self.add_token(self.start_token)
 
             if self.end_token:
                 # set special end of sentence word token
-                index = len(self.tok2ind)
-                self.tok2ind[self.end_token] = index
-                self.ind2tok[index] = self.end_token
+                self.add_token(self.end_token)
 
             if self.unk_token:
                 # set special unknown word token
-                index = len(self.tok2ind)
-                self.tok2ind[self.unk_token] = index
-                self.ind2tok[index] = self.unk_token
+                self.add_token(self.unk_token)
 
             if opt.get('dict_file') and os.path.isfile(opt['dict_file']):
                 # load pre-existing dictionary
@@ -244,7 +237,6 @@ class DictionaryAgent(Agent):
             )
 
         if not shared:
-
             if self.null_token:
                 # fix count for null token to one billion and three
                 self.freq[self.null_token] = 1000000003
@@ -263,6 +255,12 @@ class DictionaryAgent(Agent):
 
             if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
+
+    def add_token(self, word):
+        if word not in self.tok2ind:
+            index = len(self.tok2ind)
+            self.tok2ind[word] = index
+            self.ind2tok[index] = word
 
     def __contains__(self, key):
         """If key is an int, returns whether the key is in the indices.
@@ -298,10 +296,7 @@ class DictionaryAgent(Agent):
         if self.lower:
             key = key.lower()
         self.freq[key] = int(value)
-        if key not in self.tok2ind:
-            index = len(self.tok2ind)
-            self.tok2ind[key] = index
-            self.ind2tok[index] = key
+        self.add_token(key)
 
     def keys(self):
         return self.tok2ind.keys()
@@ -419,11 +414,8 @@ class DictionaryAgent(Agent):
     def add_to_dict(self, tokens):
         """ Builds dictionary from the list of provided tokens."""
         for token in tokens:
+            self.add_token(token)
             self.freq[token] += 1
-            if token not in self.tok2ind:
-                index = len(self.tok2ind)
-                self.tok2ind[token] = index
-                self.ind2tok[index] = token
 
     def remove_tail(self, min_freq):
         to_remove = []
@@ -458,10 +450,7 @@ class DictionaryAgent(Agent):
                 token = unescape(split[0])
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
-                if token not in self.tok2ind:
-                    index = len(self.tok2ind)
-                    self.tok2ind[token] = index
-                    self.ind2tok[index] = token
+                self.add_token(token)
         print('[ num words =  %d ]' % len(self))
 
     def save(self, filename=None, append=False, sort=True):

@@ -73,7 +73,7 @@ class TorchAgent(Agent):
 
         if not shared:
             # Need to set up the model from scratch
-            self.dict = DictionaryAgent(opt)
+            self.dict = self.dictionary_class()(opt)
         else:
             # ... copy initialized data from shared table
             self.opt = shared['opt']
