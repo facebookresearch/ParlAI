@@ -7,14 +7,13 @@
 from parlai.core.dict import DictionaryAgent
 
 try:
-    from fairseq import models, optim
+    from fairseq import models, optim, criterions
 except ImportError:
     raise RuntimeError(
         "Please run \"pip install -U 'git+https://github.com/pytorch/"
         "fairseq.git@v0.5.0#egg=fairseq'\""
     )
 from fairseq import trainer, fp16_trainer
-from fairseq.criterions.cross_entropy import CrossEntropyCriterion
 from fairseq.sequence_generator import SequenceGenerator
 from fairseq import options
 from fairseq.tasks.fairseq_task import FairseqTask
@@ -44,12 +43,16 @@ NON_OVERRIDABLE_ARGS = {
 }
 
 
-def _fairseq_opt_wrapper(opt):
+def _fairseq_opt_wrapper(opt, skip_pretrained_embedding_loading=False):
     """
     Marshalls from a dict to a argparse.Namespace object for API compatibility.
-    Also does some necessary post-processing needed for fairseq-py.
+
+    Also does some necessary post-processing needed for fairseq. Optionally can
+    override pretrained embedding options, which is useful if we're just loading
+    a model from a checkpoint.
 
     :param opt: dict. ParlAI options passed around from everywhere.
+    :param skip_pretrained_embedding_loading: bool. Don't preload word embeddings.
     :return: an argparse.Namespace object for use in fairseq-py.
     """
     args = argparse.Namespace()
@@ -85,7 +88,14 @@ def _fairseq_opt_wrapper(opt):
 
     # handle modelzoo if possible
     for k in ("encoder_embed_path", "decoder_embed_path"):
-        if hasattr(args, k) and getattr(args, k) is not None:
+        if getattr(args, k, None) is None:
+            # not an argument for this model, pretrained embeddings don't matter
+            continue
+        elif skip_pretrained_embedding_loading:
+            # if we want to skip pretrained, then hide the option from fairseq
+            setattr(args, k, None)
+        else:
+            # otherwise we may need to modelzoo adjust the path for fairseq
             setattr(args, k, modelzoo_path(opt.get("datapath"), getattr(args, k)))
 
     # Here we hardcode a few options that we currently do not support
@@ -161,6 +171,12 @@ class FairseqAgent(TorchAgent):
 
         agent = argparser.add_argument_group('Fairseq Arguments')
         agent.add_argument(
+            '--fp16',
+            default=False,
+            type=bool,
+            help='Use fp16 training'
+        )
+        agent.add_argument(
             '--seed',
             default=1,
             type=int,
@@ -179,7 +195,9 @@ class FairseqAgent(TorchAgent):
         # needing any fairseq specific things
         _FairseqDictionary.add_cmdline_args(argparser)
 
-        # Optimization and learning rate schedule specific arguments
+        # Generation arguments
+        options.add_generation_args(argparser)
+        # Check subargs for optimizers, criterions, archs, etc
         options.add_optimization_args(argparser)
         known_args = argparser.parse_known_args(nohelp=True)[0]
         if hasattr(known_args, "optimizer"):
@@ -194,10 +212,6 @@ class FairseqAgent(TorchAgent):
                 '{} scheduler arguments'.format(lr_scheduler)
             )
             optim.lr_scheduler.LR_SCHEDULER_REGISTRY[lr_scheduler].add_args(lr_group)
-
-        # Generation arguments
-        options.add_generation_args(argparser)
-
         # We need to find out the fairseq model-specific options, so grab the
         # architecture stuff and look up its options
         arch_group = options.add_model_args(argparser)
@@ -216,6 +230,12 @@ class FairseqAgent(TorchAgent):
             )
             models.ARCH_MODEL_REGISTRY[arch].add_args(arch_group)
 
+        if hasattr(known_args, "criterion"):
+            crit_group = argparser.add_argument_group(
+                '{} criterion arguments'.format(known_args.criterion)
+            )
+            criterions.CRITERION_REGISTRY[known_args.criterion].add_args(crit_group)
+
         # Override a few defaults from within fairseq to more sensible defaults
         argparser.set_defaults(
             clip_norm=0.1,
@@ -228,9 +248,16 @@ class FairseqAgent(TorchAgent):
         if not shared:
             # this is not a shared instance of this class, so do full initialization
 
+            # check early if we're going to be loading the model from a checkpoint
+            model_file_exists = (
+                self.opt.get('model_file') and os.path.isfile(self.opt['model_file'])
+            )
+
             # fairseq expects options to be in argparse format, instead of a dict
             # We also need to do some argument postprocessing and whatnot
-            self.args, self.opt = _fairseq_opt_wrapper(opt)
+            # We'll skip pretrained embeddings if we're going to override them with
+            # a model checkpoint anyway
+            self.args, self.opt = _fairseq_opt_wrapper(opt, model_file_exists)
 
             # seed the RNG
             torch.manual_seed(self.args.seed)
@@ -256,10 +283,9 @@ class FairseqAgent(TorchAgent):
                 len_penalty=self.args.lenpen,
             )
             # set up the grader and the trainer
-            # TODO: maybe support label smoothing here
-            self.criterion = CrossEntropyCriterion(self.args, self.task)
+            self.criterion = criterions.build_criterion(self.args, self.task)
 
-            if self.args.fp16:
+            if getattr(self.args, 'fp16', None):
                 self.trainer = fp16_trainer.FP16Trainer(
                     self.args, self.task, self.model, self.criterion
                 )
@@ -273,7 +299,7 @@ class FairseqAgent(TorchAgent):
                 )
 
             # if the model already existed, let's preload it and the trainer
-            if self.opt.get('model_file') and os.path.isfile(self.opt['model_file']):
+            if model_file_exists:
                 print('Loading existing model params from ' + self.opt['model_file'])
                 self.load(self.opt.get('model_file'))
 

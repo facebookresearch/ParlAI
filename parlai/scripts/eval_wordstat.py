@@ -53,7 +53,7 @@ def setup_args(parser=None):
                         help='Dump predictions into file')
     parser.add_argument('-cun', '--compute-unique', type=bool, default=True,
                         help='Compute % of unique responses from the model')
-    parser.set_defaults(datatype='valid')
+    parser.set_defaults(datatype='valid', model='repeat_label')
     return parser
 
 
@@ -133,7 +133,7 @@ def eval_wordstat(opt, print_parser=None):
 
         freqs_cnt += Counter(freqs)
 
-        if log_time.time() > log_every_n_secs:
+        if log_time.time() > log_every_n_secs or (opt['num_examples'] > 0 and cnt >= opt['num_examples']) or world.epoch_done():
             report = world.report()
             text, report = log_time.log(report['exs'], world.num_examples(), report)
             print(text)
