@@ -141,9 +141,6 @@ class DictionaryAgent(Agent):
                 '--bpe-num-symbols', default=30000, type=int,
                 help='Number of BPE symbols. Recommended between 30000 and 40000')
             dictionary.add_argument(
-                '--bpe-codecs-file',
-                help='Filename for the BPE codecs. Defaults to dictfile.codecs.')
-            dictionary.add_argument(
                 '--bpe-debug', action='store_true',
                 help='Leave BPE tokens untouched in output. Useful for debugging.')
         except argparse.ArgumentError:
@@ -234,12 +231,10 @@ class DictionaryAgent(Agent):
                                   'at spacy.io')
             self.NLP = spacy.load('en')
         elif self.tokenizer == 'bpe':
-            if not opt.get('bpe_codecs_file'):
-                if not opt.get('dict_file'):
-                    raise RuntimeError('--bpe-codecs-file or --dict-file is mandatory.')
-                opt['bpe_codecs_file'] = opt.get('dict_file') + '.codecs'
+            if not opt.get('dict_file'):
+                raise RuntimeError('--dict-file is mandatory.')
             self.bpehelper = _BPEHelper(
-                opt.get('bpe_codecs_file'),
+                opt.get('dict_file') + '.codecs',
                 num_symbols=opt.get('bpe_num_symbols'),
             )
 
