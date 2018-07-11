@@ -1948,8 +1948,8 @@ class PersonachatSeqseqAgentSplit(Agent):
                     if pred_idx == self.dict[self.END]:
                         done[b] = True
                         total_done += 1
-                    elif pred_idx != self.dict(self.START):
-                        output_lines[b].append(self.dict[token])
+                    elif pred_idx != self.dict[self.START]:
+                        output_lines[b].append(self.dict[pred_idx])
 
         if random.random() < 1 and not self.interactive_mode:
             # sometimes output a prediction for debugging
