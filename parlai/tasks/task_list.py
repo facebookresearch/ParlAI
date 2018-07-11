@@ -215,6 +215,13 @@ task_list = [
         "description": "The SNLI corpus (version 1.0) is a collection of 570k human-written English sentence pairs manually labeled for balanced classification with the labels entailment, contradiction, and neutral, supporting the task of natural language inference (NLI), also known as recognizing textual entailment (RTE). See https://nlp.stanford.edu/projects/snli/"
     },
     {
+        "id": "SQuAD2",
+        "display_name": "SQuAD2",
+        "task": "squad2",
+        "tags": [ "All",  "QA" ],
+        "description": "Open-domain QA dataset answerable from a given paragraph from Wikipedia, from Rajpurkar & Jia et al. '18. Link: http://arxiv.org/abs/1806.03822"
+    },
+    {
         "id": "SQuAD",
         "display_name": "SQuAD",
         "task": "squad",
