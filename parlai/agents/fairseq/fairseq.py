@@ -107,7 +107,36 @@ def _fairseq_opt_wrapper(opt, skip_pretrained_embedding_loading=False):
 
 
 class _FairseqDictionary(DictionaryAgent):
-    """Skeleton dictionary class needed for interaction with fairseq-py"""
+    """
+    Skeleton dictionary class needed for interaction with fairseq-py.
+
+    This class mostly just adds some basic API behavior that Fairseq internally
+    expects from dictionaries.
+
+    It also inserts a fake token at the 0th index of the dictionary, as
+    fairseq-py maintains backwards compatibility with fairseq-lua, which uses
+    1 indexing.
+    """
+    # Name of our fake lua compatibility token
+    _LUA = '__LUACOMPAT__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # insert the fairseq-lua compatibility token to emulate 1-indexing.
+        # This 1-indexing assumption is baked into a couple of places in fairseq-py,
+        # and is unavoidable at the moment.
+        #
+        # Because of the structure of DictionaryAgent, it's difficult to force
+        # a token in the 0th position without breaking load()ing. I've found
+        # this to be the best way.
+
+        # add the token to the dictionary
+        self.add_token(_FairseqDictionary._LUA)
+        # force it to be the "most frequent" token
+        self.freq[_FairseqDictionary._LUA] = self.freq[self.null_token] + 1
+        # sort the list to ensure the lua token is placed first. trim=False to
+        # ensure shuffle is non-destructive.
+        self.sort(trim=False)
 
     def pad(self):
         return self.pad_index
@@ -242,6 +271,11 @@ class FairseqAgent(TorchAgent):
             adam_betas="(0.9,0.98)"
         )
 
+    @staticmethod
+    def dictionary_class():
+        # Force use of the Fairseq Dictionary
+        return _FairseqDictionary
+
     def __init__(self, opt, shared=None):
         # In general use a basic TorchAgent wherever possible
         super().__init__(opt, shared)
@@ -265,9 +299,6 @@ class FairseqAgent(TorchAgent):
             # Just some identifying info
             self.id = "fairseq:{}".format(self.args.arch)
 
-            # construct dictionaries for parlai frontend and fairseq backend
-            self.dict = _FairseqDictionary(self.opt)
-
             # We need a placeholder task for fairseq
             self.task = _ParlaiTask(self.dict)
 
@@ -281,6 +312,10 @@ class FairseqAgent(TorchAgent):
                 stop_early=(not self.args.no_early_stop),
                 normalize_scores=(not self.args.unnormalized),
                 len_penalty=self.args.lenpen,
+                unk_penalty=self.args.unkpen,
+                sampling=self.args.sampling,
+                sampling_topk=self.args.sampling_topk,
+                sampling_temperature=self.args.sampling_temperature,
             )
             # set up the grader and the trainer
             self.criterion = criterions.build_criterion(self.args, self.task)
