@@ -1,0 +1,8 @@
+[
+  {"x": 0, "y": 2, "orientation": "NW", "type": "Shop", "name": "AT&T"},
+  {"x": 0, "y": 2, "orientation": "NE", "type": "Bank", "name": "Cellar 53 Wine & Spirits"},
+  {"x": 0, "y": 2, "orientation": "SE", "type": "Shop", "name": "..."},
+  {"x": 0, "y": 2, "orientation": "SW", "type": "Shop", "name": "..."},
+  {"x": 0, "y": 3, "orientation": "SW", "type": "Bar", "name": "..."},
+  {"x": 0, "y": 3, "orientation": "NW", "type": "Shop", "name": "..."}
+]
