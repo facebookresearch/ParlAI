@@ -325,45 +325,29 @@ class FairseqAgent(TorchAgent):
         super().reset()
         self.reset_metrics()
 
-    def batch_act(self, observations):
-        bsz = len(observations)
-        # initialize a table of replies with this agent's id
-        batch_reply = [{"id": self.getID()} for _ in range(bsz)]
+    def batchify(self, *args, **kwargs):
+        kwargs['sort'] = True
+        return super().batchify(*args, **kwargs)
 
-        # torchagent boilerplate
-        self.is_training = any(["labels" in obs for obs in observations])
-        vec_obs = [self.vectorize(obs) for obs in observations]
-        xs, _, ys, _, valid_inds = self.batchify(vec_obs)
-        if xs is None:
-            return batch_reply
-
-        # here begins fairseq specific stuff
+    def train_step(self, xs, ys, *args, **kwargs):
+        self.is_training = True
         samples = self._make_sample(xs, ys)
+        self.model.train()
+        self.trainer.train_step(samples)
 
-        if self.is_training:
-            self.model.train()
-            self.trainer.train_step(samples)
-        else:
-            # grade the evaluation label
-            self.model.eval()
-            if ys is not None:
-                # Interactive mode won't have a gold label
-                self.trainer.valid_step(samples)
+    def eval_step(self, xs, ys, cands=None, *args, **kwargs):
+        self.is_training = False
+        samples = self._make_sample(xs, ys)
+        self.model.eval()
+        if ys is not None:
+            # Interactive mode won't have a gold label
+            self.trainer.valid_step(samples)
+        # Grade each of the candidate sequences
+        # TODO: grade everything in observations[i]['label_candidates']
 
-            # Grade each of the candidate sequences
-            # TODO: grade everything in observations[i]['label_candidates']
-
+        if not self.args.skip_generation:
             # Next generate freely to create our response
-            if self.args.skip_generation:
-                # skip the generation step
-                for i in valid_inds:
-                    batch_reply[i]["text"] = ""
-            else:
-                # actually do the generation
-                for i, response in zip(valid_inds, self._generate(samples)):
-                    batch_reply[i]["text"] = response
-
-        return batch_reply
+            return self._generate(samples)
 
     def _generate(self, samples):
         src_tokens = samples["net_input"]["src_tokens"]

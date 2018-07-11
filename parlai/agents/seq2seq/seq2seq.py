@@ -648,7 +648,6 @@ class Seq2seqAgent(Agent):
             model['longest_label'] = self.model.longest_label
             model['optimizer'] = self.optimizer.state_dict()
             model['optimizer_type'] = self.opt['optimizer']
-            model['opt'] = self.opt
 
             with open(path, 'wb') as write:
                 torch.save(model, write)
@@ -667,12 +666,6 @@ class Seq2seqAgent(Agent):
     def load(self, path):
         """Return opt and model states."""
         states = torch.load(path, map_location=lambda cpu, _: cpu)
-        if not os.path.isfile(path + '.opt'):
-            # backwards compatible to old models
-            self.opt = self.override_opt(states['opt'])
-            # save .opt file to make compatible
-            with open(path + ".opt", 'wb') as handle:
-                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
         return states
 
     def receive_metrics(self, metrics_dict):

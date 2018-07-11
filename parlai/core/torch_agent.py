@@ -74,7 +74,7 @@ class TorchAgent(Agent):
 
         if not shared:
             # Need to set up the model from scratch
-            self.dict = DictionaryAgent(opt)
+            self.dict = TorchAgent.dictionary_class()(opt)
         else:
             # ... copy initialized data from shared table
             self.opt = shared['opt']
@@ -208,6 +208,7 @@ class TorchAgent(Agent):
             ys = padded_ys
 
         cands = None
+        # TODO: return candidates
         return Batch(xs, ys, labels, valid_inds, cands)
 
     def match_batch(self, batch_reply, valid_inds, predictions=None,
@@ -303,8 +304,8 @@ class TorchAgent(Agent):
 
         return self.history['dialog']
 
-    def save(self, path):
-        """Save model parameters if model_file is set.
+    def save(self, path=None):
+        """Save model parameters to path (or default to model_file arg).
 
         Override this method for more specific saving.
         """
@@ -393,7 +394,6 @@ class TorchAgent(Agent):
         else:
             predictions = output
             candidate_preds = None
-
 
         self.match_batch(batch_reply, batch.valid_indices,
                          predictions=predictions,
