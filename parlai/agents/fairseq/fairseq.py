@@ -342,6 +342,12 @@ class FairseqAgent(TorchAgent):
             if self.use_cuda:
                 self.model = self.model.cuda()
                 self.generator = self.generator.cuda()
+        else:
+            self.model = shared['model']
+            self.trainer = shared['trainer']
+            self.generator = shared['generator']
+            self.dict = shared['dict']
+            self.args = shared['args']
 
         # Start things off clean
         self.reset()
@@ -356,6 +362,15 @@ class FairseqAgent(TorchAgent):
                 raise ValueError(
                     '{} cannot be overridden when --model-file is specified'.format(k)
                 )
+
+    def share(self):
+        shared = super().share()
+        shared['model'] = self.model
+        shared['trainer'] = self.trainer
+        shared['generator'] = self.generator
+        shared['dict'] = self.dict
+        shared['args'] = self.args
+        return shared
 
     def save(self, path):
         """Save using fairseq's checkpointing."""

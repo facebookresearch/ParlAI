@@ -176,6 +176,7 @@ class Seq2seqAgent(Agent):
         self.report_freq = opt.get('report_freq', 0.001)
         self.use_person_tokens = opt.get('person_tokens', False)
         self.batch_idx = shared and shared.get('batchindex') or 0
+        self.rank = opt['rank_candidates']
         states = {}
 
         # check for cuda
@@ -193,12 +194,10 @@ class Seq2seqAgent(Agent):
             self.NULL_IDX = shared['NULL_IDX']
             # answers contains a batch_size list of the last answer produced
             self.answers = shared['answers']
+            self.model = shared['model']
+            self.metrics = shared['metrics']
+            states = shared.get('states', None)
 
-            if 'model' in shared:
-                # model is shared during hogwild
-                self.model = shared['model']
-                self.metrics = shared['metrics']
-                states = shared['states']
         else:
             # this is not a shared instance of this class, so do full init
             # answers contains a batch_size list of the last answer produced
@@ -298,21 +297,21 @@ class Seq2seqAgent(Agent):
             if self.use_cuda:
                 self.model.cuda()
 
-        if hasattr(self, 'model'):
-            # if model was built, do more setup
+        # set up criteria
+        if opt.get('numsoftmax', 1) > 1:
+            self.criterion = nn.NLLLoss(
+                ignore_index=self.NULL_IDX, size_average=False)
+        else:
+            self.criterion = nn.CrossEntropyLoss(
+                ignore_index=self.NULL_IDX, size_average=False)
+
+        if self.use_cuda:
+            self.criterion.cuda()
+
+        if 'train' in opt.get('datatype', ''):
+            # we only set up optimizers when training
+            # we only set this up for the original instance or hogwild ones
             self.clip = opt.get('gradient_clip', -1)
-            self.rank = opt['rank_candidates']
-
-            # set up criteria
-            if opt.get('numsoftmax', 1) > 1:
-                self.criterion = nn.NLLLoss(
-                    ignore_index=self.NULL_IDX, size_average=False)
-            else:
-                self.criterion = nn.CrossEntropyLoss(
-                    ignore_index=self.NULL_IDX, size_average=False)
-
-            if self.use_cuda:
-                self.criterion.cuda()
 
             # set up optimizer
             lr = opt['learningrate']
@@ -450,17 +449,17 @@ class Seq2seqAgent(Agent):
         shared['START_IDX'] = self.START_IDX
         shared['END_IDX'] = self.END_IDX
         shared['NULL_IDX'] = self.NULL_IDX
+        shared['model'] = self.model
         if self.opt.get('numthreads', 1) > 1:
             # we're doing hogwild so share the model too
             if type(self.metrics) == dict:
                 # move metrics and model to shared memory
                 self.metrics = SharedTable(self.metrics)
                 self.model.share_memory()
-            shared['model'] = self.model
-            shared['metrics'] = self.metrics
             shared['states'] = {  # don't share optimizer states
                 'optimizer_type': self.opt['optimizer'],
             }
+        shared['metrics'] = self.metrics  # do after numthreads check
         return shared
 
     def observe(self, observation):

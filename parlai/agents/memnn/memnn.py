@@ -13,15 +13,13 @@ from torch import optim
 from torch.nn import CrossEntropyLoss
 
 import os
-import copy
 import random
 
 from .modules import MemNN, Decoder
 
 
 class MemnnAgent(Agent):
-    """ Memory Network agent.
-    """
+    """Memory Network agent."""
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -60,52 +58,67 @@ class MemnnAgent(Agent):
         return arg_group
 
     def __init__(self, opt, shared=None):
-        opt['cuda'] = not opt['no_cuda'] and torch.cuda.is_available()
-        if opt['cuda']:
-            print('[ Using CUDA ]')
+        self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
+        if self.use_cuda:
             torch.cuda.device(opt['gpu'])
 
         if not shared:
             self.id = 'MemNN'
             self.dict = DictionaryAgent(opt)
             self.answers = [None] * opt['batchsize']
-            self.model = MemNN(opt, len(self.dict))
+            self.model = MemNN(opt, len(self.dict), use_cuda=self.use_cuda)
 
+            self.decoder = None
+            if opt['output'] == 'generate' or opt['output'] == 'g':
+                self.decoder = Decoder(opt['embedding_size'], opt['embedding_size'],
+                                        opt['rnn_layers'], opt, self.dict)
+            elif opt['output'] != 'rank' and opt['output'] != 'r':
+                raise NotImplementedError('Output type not supported.')
+
+            if self.use_cuda and self.decoder is not None:
+                # don't call cuda on self.model, it is split cuda and cpu
+                self.decoder.cuda()
+            if opt['numthreads'] > 1:
+                self.model.share_memory()
+                if self.decoder is not None:
+                    self.decoder.share_memory()
+
+            # check first for 'init_model' for loading model from file
+            if opt.get('init_model') and os.path.isfile(opt['init_model']):
+                init_model = opt['init_model']
+            # next check for 'model_file'
+            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
+                init_model = opt['model_file']
+            else:
+                init_model = None
+            if init_model is not None:
+                print('Loading existing model parameters from ' + init_model)
+                self.load(init_model)
         else:
             self.dict = shared['dict']
-            # model is shared during hogwild
+            self.model = shared['model']
+            self.decoder = shared['decoder']
             if 'threadindex' in shared:
                 torch.set_num_threads(1)
-                self.model = shared['model']
-                self.decoder = shared['decoder']
                 self.answers = [None] * opt['batchsize']
             else:
                 self.answers = shared['answers']
 
-        if hasattr(self, 'model'):
-            self.opt = opt
-            self.mem_size = opt['mem_size']
-            self.loss_fn = CrossEntropyLoss()
+        self.opt = opt
+        self.mem_size = opt['mem_size']
 
-            self.decoder = None
-            self.longest_label = 1
-            self.NULL_IDX = self.dict[self.dict.null_token]
-            self.END = self.dict.end_token
-            self.END_TENSOR = torch.LongTensor(self.dict[self.END])
-            self.START = self.dict.start_token
-            self.START_TENSOR = torch.LongTensor(self.dict[self.START])
+        self.longest_label = 1
+        self.NULL_IDX = self.dict[self.dict.null_token]
+        self.END = self.dict.end_token
+        self.END_TENSOR = torch.LongTensor([self.dict[self.END]])
+        self.START = self.dict.start_token
+        self.START_TENSOR = torch.LongTensor([self.dict[self.START]])
 
-            if opt['output'] == 'generate' or opt['output'] == 'g':
-                self.decoder = Decoder(opt['embedding_size'], opt['embedding_size'],
-                                        opt['rnn_layers'], opt, self.dict)
-            if opt['cuda'] and not shared:
-                self.model.share_memory()
-                if self.decoder is not None:
-                    self.decoder.cuda()
+        self.loss_fn = CrossEntropyLoss(ignore_index=self.NULL_IDX)
+        if self.use_cuda:
+            self.loss_fn.cuda()
 
-            elif opt['output'] != 'rank' and opt['output'] != 'r':
-                raise NotImplementedError('Output type not supported.')
-
+        if 'train' in self.opt.get('datatype', ''):
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             lr = opt['learning_rate']
             if opt['optimizer'] == 'sgd':
@@ -119,18 +132,6 @@ class MemnnAgent(Agent):
             else:
                 raise NotImplementedError('Optimizer not supported.')
 
-            # check first for 'init_model' for loading model from file
-            if opt.get('init_model') and os.path.isfile(opt['init_model']):
-                init_model = opt['init_model']
-            # next check for 'model_file'
-            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
-                init_model = opt['model_file']
-            else:
-                init_model = None
-            if init_model is not None:
-                print('Loading existing model parameters from ' + init_model)
-                self.load(init_model)
-
         self.history = {}
         self.batch_idx = shared and shared.get('batchindex') or 0
         self.episode_done = True
@@ -141,9 +142,8 @@ class MemnnAgent(Agent):
         shared = super().share()
         shared['answers'] = self.answers
         shared['dict'] = self.dict
-        if self.opt.get('numthreads', 1) > 1:
-            shared['model'] = self.model
-            shared['decoder'] = self.decoder
+        shared['model'] = self.model
+        shared['decoder'] = self.decoder
         return shared
 
     def observe(self, observation):
@@ -190,7 +190,7 @@ class MemnnAgent(Agent):
             scores = self.score(cands, output_embeddings)
             if is_training:
                 label_inds = [cand_list.index(self.labels[i]) for i, cand_list in enumerate(cands)]
-                if self.opt['cuda']:
+                if self.use_cuda:
                     label_inds = torch.cuda.LongTensor(label_inds)
                 else:
                     label_inds = torch.LongTensor(label_inds)
@@ -218,7 +218,7 @@ class MemnnAgent(Agent):
             if last_cand != cand_list:
                 candidate_lengths, candidate_indices = to_tensors(cand_list, self.dict)
                 candidate_embeddings = self.model.answer_embedder(candidate_lengths, candidate_indices)
-                if self.opt['cuda']:
+                if self.use_cuda:
                     candidate_embeddings = candidate_embeddings.cuda()
                 last_cand = cand_list
             scores[i, :len(cand_list)] = self.model.score.one_to_many(output_embeddings[i].unsqueeze(0), candidate_embeddings).squeeze(0)
@@ -243,13 +243,13 @@ class MemnnAgent(Agent):
         idx = 0
         while(total_done < batchsize) and idx < self.longest_label:
             # keep producing tokens until we hit END or max length for each ex
-            if self.opt['cuda']:
+            if self.use_cuda:
                 xes = xes.cuda()
                 hn = hn.contiguous()
             preds, scores = self.decoder(xes, hn)
             if ys is not None:
                 y = ys[0][:, idx]
-                temp_y = y.cuda() if self.opt['cuda'] else y
+                temp_y = y.cuda() if self.use_cuda else y
                 loss += self.loss_fn(scores, temp_y)
             else:
                 y = preds
