@@ -21,7 +21,7 @@ def build(opt):
 
         # Download the data.
         fname = 'dialog-babi-feedback.zip'
-        url = ' https://s3.amazonaws.com/fair-data/parlai/dialog-babi-feedback/' + fname
+        url = ' http://parl.ai/downloads/dialog-babi-feedback/' + fname
 
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)

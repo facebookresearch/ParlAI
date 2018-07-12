@@ -23,7 +23,7 @@ def build(opt):
 
         # Download the data.
         fname = 'mnist.tar.gz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/mnist/' + fname
+        url = 'http://parl.ai/downloads/mnist/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 

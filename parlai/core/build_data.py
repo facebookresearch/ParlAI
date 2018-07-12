@@ -204,9 +204,9 @@ def download_models(opt, fnames, model_folder, version='v1.0', path='aws', use_m
         for fname in fnames:
             if path == 'aws':
                 if use_model_type:
-                    url = 'https://s3.amazonaws.com/fair-data/parlai/_models/' + os.path.join(model_folder, model_type, fname)
+                    url = 'http://parl.ai/downloads/_models/' + os.path.join(model_folder, model_type, fname)
                 else:
-                    url = 'https://s3.amazonaws.com/fair-data/parlai/_models/' + os.path.join(model_folder, fname)
+                    url = 'http://parl.ai/downloads/_models/' + os.path.join(model_folder, fname)
             else:
                 url = path + '/' + fname
             download(url, dpath, fname)

@@ -20,7 +20,7 @@ def build(opt):
     if not build_data.built(dpath):
         print('[building data: ' + dpath + ']')
         build_data.make_dir(dpath)
-        url = 'https://s3.amazonaws.com/fair-data/parlai/wikipedia/' + fname
+        url = 'http://parl.ai/downloads/wikipedia/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
         build_data.mark_done(dpath)

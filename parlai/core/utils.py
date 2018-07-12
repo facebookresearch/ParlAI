@@ -561,7 +561,7 @@ class OffensiveLanguageDetector(object):
 
                 # Download the data.
                 fname = 'OffensiveLanguage.txt'
-                url = 'https://s3.amazonaws.com/fair-data/parlai/offensive_language/' + fname
+                url = 'http://parl.ai/downloads/offensive_language/' + fname
                 build_data.download(url, dpath, fname)
 
                 # Mark the data as built.
