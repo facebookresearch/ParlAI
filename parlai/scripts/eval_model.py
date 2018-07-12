@@ -73,7 +73,7 @@ def eval_model(opt, printargs=None, print_parser=None):
     # Show some example dialogs:
     cnt = 0
     while not world.epoch_done():
-        cnt += 1
+        cnt += opt.get('batchsize', 1)
         world.parley()
         if opt['display_examples']:
             print(world.display() + "\n~~")
