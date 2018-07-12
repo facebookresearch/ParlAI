@@ -24,7 +24,7 @@ def build(opt):
 
         # Download the data.
         fname = 'convai2.tar.gz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/convai2/' + fname
+        url = 'http://parl.ai/downloads/convai2/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 

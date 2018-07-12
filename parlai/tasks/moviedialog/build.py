@@ -22,7 +22,7 @@ def build(opt):
 
         # Download the data.
         fname = 'moviedialog.tar.gz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/moviedialog/' + fname
+        url = 'http://parl.ai/downloads/moviedialog/' + fname
         build_data.download(url, dpath, fname)
 
         dpath2 = os.path.join(dpath, 'movie_dialog_dataset', 'task4_reddit')

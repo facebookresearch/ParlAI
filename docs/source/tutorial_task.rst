@@ -74,7 +74,7 @@ true from now on. Below is an example of setting up the MNIST dataset.
 
             # download the data.
             fname = 'mnist.tar.gz'
-            url = 'https://s3.amazonaws.com/fair-data/parlai/mnist/' + fname # dataset URL
+            url = 'http://parl.ai/downloads/mnist/' + fname # dataset URL
             build_data.download(url, dpath, fname)
 
             # uncompress it

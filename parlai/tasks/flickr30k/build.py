@@ -23,7 +23,7 @@ def build(opt):
         # Download the image data.
         fname = 'flickr30k_images.tar.gz'
 
-        url = 'https://s3.amazonaws.com/fair-data/parlai/flickr30k/'
+        url = 'http://parl.ai/downloads/flickr30k/'
 
         build_data.download(url + fname, dpath, fname)
 

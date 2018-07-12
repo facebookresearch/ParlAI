@@ -61,7 +61,7 @@ def build(opt):
 
         # Download the data.
         fname = 'cornell_movie_dialogs_corpus.tgz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/cornell_movie/' + fname
+        url = 'http://parl.ai/downloads/cornell_movie/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 

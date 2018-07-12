@@ -50,7 +50,7 @@ def build(opt):
 
         # Download the data.
         fname = 'wikiqa.tar.gz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/wikiqa/' + fname
+        url = 'http://parl.ai/downloads/wikiqa/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 

@@ -39,7 +39,7 @@ def build(opt):
 
         # Download the data.
         fname = 'scan.tgz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/scan/' + fname
+        url = 'http://parl.ai/downloads/scan/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 

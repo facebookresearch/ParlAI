@@ -23,7 +23,7 @@ def buildImage(opt):
         # Download the image data.
         fname = 'test2015.zip'
 
-        url = 'https://s3.amazonaws.com/fair-data/parlai/COCO-IMG/'
+        url = 'http://parl.ai/downloads/COCO-IMG/'
 
         build_data.download(url + fname, dpath, fname)
 
