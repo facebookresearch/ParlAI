@@ -1142,10 +1142,19 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        if shared is None and opt.get('parlaidialogteacher_datafile') is not None:
-            self._setup_data(opt.get('parlaidialogteacher_datafile'))
+        if not shared:
+            if opt.get('parlaidialogteacher_datafile') is not None:
+                self._setup_data(opt.get('parlaidialogteacher_datafile'))
+        else:
+            self.episodes = shared['episodes']
+            self.num_exs = sum(len(e) for e in self.episodes)
         self.id = opt.get('parlaidialogteacher_datafile', 'teacher')
         self.reset()
+
+    def share(self):
+        shared = super().share()
+        shared['episodes'] = self.episodes
+        return shared
 
     def num_examples(self):
         return self.num_exs
