@@ -10,7 +10,6 @@ from queue import Queue
 import uuid
 
 from parlai.core.agents import Agent
-from parlai.mturk.core.worker_state import AssignState
 import parlai.mturk.core.data_model as data_model
 import parlai.mturk.core.shared_utils as shared_utils
 
@@ -21,6 +20,101 @@ RETURN_MESSAGE = '[RETURNED]'  # the Turker returned the HIT
 
 # TODO move time management into another class, this way we can handle it
 # relative to heartbeats. This will come with more thorough testing.
+
+class AssignState():
+    """Class for holding state information about an assignment currently
+    claimed by an agent
+    """
+
+    # Possible Assignment Status Values
+    STATUS_NONE = 'none'
+    STATUS_ONBOARDING = 'onboarding'
+    STATUS_WAITING = 'waiting'
+    STATUS_ASSIGNED = 'assigned'
+    STATUS_IN_TASK = 'in task'
+    STATUS_DONE = 'done'
+    STATUS_DISCONNECT = 'disconnect'
+    STATUS_PARTNER_DISCONNECT = 'partner disconnect'
+    STATUS_PARTNER_DISCONNECT_EARLY = 'partner disconnect early'
+    STATUS_EXPIRED = 'expired'
+    STATUS_RETURNED = 'returned'
+
+    def __init__(self, status=None, conversation_id=None):
+        """Create an AssignState with the given assignment_id. status and
+        conversation_id are optional
+        """
+        if status is None:
+            status = self.STATUS_NONE
+        self.status = status
+        self.messages = []
+        self.last_command = None
+
+    def clear_messages(self):
+        self.messages = []
+        self.last_command = None
+
+    def is_final(self):
+        """Return True if the assignment is in a final status that
+        can no longer be acted on.
+        """
+        return (self.status == self.STATUS_DISCONNECT or
+                self.status == self.STATUS_DONE or
+                self.status == self.STATUS_PARTNER_DISCONNECT or
+                self.status == self.STATUS_PARTNER_DISCONNECT_EARLY or
+                self.status == self.STATUS_RETURNED or
+                self.status == self.STATUS_EXPIRED)
+
+    def get_inactive_command_text(self):
+        """Get appropriate inactive command and text to respond to a reconnect
+        given the current assignment state
+
+        returns text, command
+        """
+        command = data_model.COMMAND_INACTIVE_HIT
+        text = None
+        if self.status == self.STATUS_DISCONNECT:
+            text = ('You disconnected in the middle of this HIT and were '
+                    'marked as inactive. As these HITs often require real-'
+                    'time interaction, it is no longer available for '
+                    'completion. Please return this HIT and accept a new one '
+                    'if you would like to try again.')
+        elif self.status == self.STATUS_DONE:
+            command = data_model.COMMAND_INACTIVE_DONE
+            text = ('You disconnected after completing this HIT without '
+                    'marking it as completed. Please press the done button '
+                    'below to finish the HIT.')
+        elif self.status == self.STATUS_EXPIRED:
+            text = ('You disconnected in the middle of this HIT and the '
+                    'HIT expired before you reconnected. It is no longer '
+                    'available for completion. Please return this HIT and '
+                    'accept a new one if you would like to try again.')
+        elif self.status == self.STATUS_PARTNER_DISCONNECT:
+            command = data_model.COMMAND_INACTIVE_DONE
+            text = ('One of your partners disconnected in the middle of the '
+                    'HIT. We won\'t penalize you for their disconnect, so '
+                    'please use the button below to mark the HIT as complete.')
+        elif self.status == self.STATUS_PARTNER_DISCONNECT_EARLY:
+            command = data_model.COMMAND_INACTIVE_HIT
+            text = ('One of your partners disconnected in the middle of the '
+                    'HIT. We won\'t penalize you for their disconnect, but you '
+                    'did not complete enough of the task to submit the HIT. '
+                    'Please return this HIT and accept a new one if you would '
+                    'like to try again.')
+        elif self.status == self.STATUS_RETURNED:
+            text = ('You disconnected from this HIT and then returned '
+                    'it. As we have marked the HIT as returned, it is no '
+                    'longer available for completion. Please accept a new '
+                    'HIT if you would like to try again')
+        else:
+            # We shouldn't be getting an inactive command for the other
+            # states so consider this a server error
+            text = ('Our server was unable to handle your reconnect properly '
+                    'and thus this HIT no longer seems available for '
+                    'completion. Please try to connect again or return this '
+                    'HIT and accept a new one.')
+
+        return text, command
+
 
 class MTurkAgent(Agent):
     """Base class for an MTurkAgent that can act in a ParlAI world"""
@@ -53,6 +147,40 @@ class MTurkAgent(Agent):
         self.creation_time = time.time()
 
         self.msg_queue = Queue()
+
+    def set_status(self, status):
+        '''Set the status of this agent on the task'''
+        # TODO log to db
+        self.state.status = status
+
+    def get_status(self):
+        '''Get the status of this agent on its task'''
+        # TODO retrieve from db if not set
+        return self.state.status
+
+    def is_final(self):
+        '''Determine if this agent is in a final state'''
+        return self.state.is_final()
+
+    def append_packet(self, packet):
+        '''Add a received packet to the state'''
+        self.state.messages.append(packet)
+
+    def set_last_command(self, command):
+        '''Changes the last command recorded as sent to the agent'''
+        self.state.last_command = command
+
+    def get_last_command(self, command):
+        '''Returns the last command to be sent to this agent'''
+        return self.state.last_command
+
+    def clear_messages(self):
+        '''Clears the message history for this agent'''
+        self.state.clear_messages()
+
+    def get_messages(self):
+        '''Returns all the messages stored in the state'''
+        return self.state.messages
 
     def get_connection_id(self):
         """Returns an appropriate connection_id for this agent"""
