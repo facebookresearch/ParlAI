@@ -351,7 +351,7 @@ class Decoder(nn.Module):
             self.o2e = lambda x: x
         # embedding to scores, use custom linear to possibly share weights
         shared_weight = self.lt.weight if share_output else None
-        self.e2s = Linear(emb_size, num_features, bias=False,
+        self.e2s = Linear(emb_size, num_features, bias=True,
                           shared_weight=shared_weight)
         self.shared = shared_weight is not None
 
