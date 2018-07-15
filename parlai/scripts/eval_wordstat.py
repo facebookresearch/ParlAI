@@ -115,7 +115,7 @@ def eval_wordstat(opt, print_parser=None):
     log_time = TimeLogger()
 
     cnt = 0
-    word_statistics = {'mean_wlength': [], 'mean_clength': [], 'freqs_cnt': Counter(), 'word_cnt': 0, 'pred_list': []}
+    word_statistics = {'mean_wlength': [], 'mean_clength': [], 'freqs_cnt': Counter(), 'word_cnt': 0, 'pred_list': [], 'pure_pred_list': [], 'context_list': []}
     bins = [int(i) for i in opt['freq_bins'].split(',')]
     
     def process_prediction(prediction, word_statistics):
@@ -132,11 +132,15 @@ def eval_wordstat(opt, print_parser=None):
         if batch_size == 1:
             cnt += 1
             prediction = world.acts[-1]['text']
+            word_statistics['context_list'].append(world.acts[0]['text'])
+            word_statistics['pure_pred_list'].append(prediction)
             word_statistics = process_prediction(prediction, word_statistics)
         else:
             for w in world.worlds:
                 try:
                     prediction = w.acts[-1]['text']
+                    word_statistics['context_list'].append(w.acts[0]['text'])
+                    word_statistics['pure_pred_list'].append(prediction)
                 except:
                     continue
                 cnt += 1
@@ -166,7 +170,7 @@ def eval_wordstat(opt, print_parser=None):
 
     if opt['dump_predictions_path'] is not None:
         with open(opt['dump_predictions_path'], 'w') as f:
-            f.writelines(['{}\n'.format(i) for i in word_statistics['pred_list']])
+            f.writelines(['CONTEXT: {}\nPREDICTION:{}\n\n'.format(c,p) for c,p in zip(word_statistics['context_list'],word_statistics['pure_pred_list'])])
         if opt['compute_unique'] is True:
             with open(opt['dump_predictions_path']+'_unique', 'w') as f:
                 f.writelines(['{}\n'.format(i) for i in unique_list])
