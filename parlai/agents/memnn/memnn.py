@@ -82,18 +82,6 @@ class MemnnAgent(Agent):
                 self.model.share_memory()
                 if self.decoder is not None:
                     self.decoder.share_memory()
-
-            # check first for 'init_model' for loading model from file
-            if opt.get('init_model') and os.path.isfile(opt['init_model']):
-                init_model = opt['init_model']
-            # next check for 'model_file'
-            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
-                init_model = opt['model_file']
-            else:
-                init_model = None
-            if init_model is not None:
-                print('Loading existing model parameters from ' + init_model)
-                self.load(init_model)
         else:
             self.dict = shared['dict']
             self.model = shared['model']
@@ -108,15 +96,18 @@ class MemnnAgent(Agent):
         self.mem_size = opt['mem_size']
 
         self.longest_label = 1
-        self.NULL_IDX = self.dict[self.dict.null_token]
+        self.NULL = self.dict.null_token
+        self.NULL_IDX = self.dict[self.NULL]
         self.END = self.dict.end_token
         self.END_TENSOR = torch.LongTensor([self.dict[self.END]])
         self.START = self.dict.start_token
         self.START_TENSOR = torch.LongTensor([self.dict[self.START]])
 
-        self.loss_fn = CrossEntropyLoss(ignore_index=self.NULL_IDX)
+        self.rank_loss = CrossEntropyLoss()
+        self.gen_loss = CrossEntropyLoss(ignore_index=self.NULL_IDX)
         if self.use_cuda:
-            self.loss_fn.cuda()
+            self.rank_loss.cuda()
+            self.gen_loss.cuda()
 
         if 'train' in self.opt.get('datatype', ''):
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
@@ -131,6 +122,20 @@ class MemnnAgent(Agent):
                     self.optimizers['decoder'] = optim.Adam(self.decoder.parameters(), lr=lr)
             else:
                 raise NotImplementedError('Optimizer not supported.')
+
+        if not shared:
+            # load model
+            # check first for 'init_model' for loading model from file
+            if opt.get('init_model') and os.path.isfile(opt['init_model']):
+                init_model = opt['init_model']
+            # next check for 'model_file'
+            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
+                init_model = opt['model_file']
+            else:
+                init_model = None
+            if init_model is not None:
+                print('Loading existing model parameters from ' + init_model)
+                self.load(init_model)
 
         self.history = {}
         self.batch_idx = shared and shared.get('batchindex') or 0
@@ -194,7 +199,7 @@ class MemnnAgent(Agent):
                     label_inds = torch.cuda.LongTensor(label_inds)
                 else:
                     label_inds = torch.LongTensor(label_inds)
-                loss = self.loss_fn(scores, label_inds)
+                loss = self.rank_loss(scores, label_inds)
             predictions = self.ranked_predictions(cands, scores)
         else:
             self.decoder.train(mode=is_training)
@@ -250,7 +255,7 @@ class MemnnAgent(Agent):
             if ys is not None:
                 y = ys[0][:, idx]
                 temp_y = y.cuda() if self.use_cuda else y
-                loss += self.loss_fn(scores, temp_y)
+                loss += self.gen_loss(scores, temp_y)
             else:
                 y = preds
             # use the true token as the next input for better training
@@ -394,7 +399,7 @@ def to_tensors(sentences, dictionary):
 
 
 def build_cands(exs, dict):
-    dict_list = list(dict.tok2ind.keys())
+    dict_list = list(dict.tok2ind.keys())[1:] # skip NULL
     cands = []
     for ex in exs:
         if 'label_candidates' in ex:
