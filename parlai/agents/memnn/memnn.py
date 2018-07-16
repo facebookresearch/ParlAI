@@ -103,8 +103,7 @@ class MemnnAgent(Agent):
         self.START = self.dict.start_token
         self.START_TENSOR = torch.LongTensor([self.dict[self.START]])
 
-        # self.loss_fn = CrossEntropyLoss(ignore_index=self.NULL_IDX)
-        self.loss_fn = CrossEntropyLoss()
+        self.loss_fn = CrossEntropyLoss(ignore_index=self.NULL_IDX)
         if self.use_cuda:
             self.loss_fn.cuda()
 
