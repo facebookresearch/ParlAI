@@ -161,7 +161,7 @@ class Seq2seqAgent(Agent):
         agent.add_argument('--beam-size', type=int, default=1, help='Beam size, if 1 then greedy search')
         agent.add_argument('--beam-log-freq', type=float, default=0.0,
                            help='The portion of beams to dump from minibatch into model_name.beam_dump folder')
-        agent.add_argument('--topk', type=int, default=1, help='Top k sampling from renormalized softmax, default 1 means simple greedy max output')
+        agent.add_argument('--topk', type=int, default=1, help='Top k sampling from renormalized softmax in test/valid time, default 1 means simple greedy max output')
         agent.add_argument('--softmax-layer-bias', type='bool', default=False, help='Put True if you want to include the bias in decoder.e2s layer')
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
