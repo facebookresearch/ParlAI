@@ -101,7 +101,7 @@ class Seq2seq(nn.Module):
         return enc_out.view(batch_size * beam_size, -1, hidden_size)
 
     def forward(self, xs, ys=None, cands=None, valid_cands=None, prev_enc=None,
-                rank_during_training=False, beam_size=1):
+                rank_during_training=False, beam_size=1, topk=1):
         """Get output predictions from the model.
 
         Arguments:
@@ -153,7 +153,7 @@ class Seq2seq(nn.Module):
             else:
                 for i in range(ys.size(1)):
                     xi = xs.select(1, i)
-                    preds, score, hidden = self.decoder(xi, hidden, enc_out, attn_mask)
+                    preds, score, hidden = self.decoder(xs, hidden, enc_out, attn_mask)
                     predictions.append(preds)
                     scores.append(score)
         else:
@@ -165,7 +165,7 @@ class Seq2seq(nn.Module):
 
                 for _ in range(self.longest_label):
                     # generate at most longest_label tokens
-                    preds, score, hidden = self.decoder(xs, hidden, enc_out, attn_mask)
+                    preds, score, hidden = self.decoder(xs, hidden, enc_out, attn_mask, topk)
                     scores.append(score)
                     xs = preds
                     predictions.append(preds)
@@ -371,7 +371,7 @@ class Decoder(nn.Module):
             self.latent = nn.Linear(hidden_size, numsoftmax * emb_size)
             self.activation = nn.Tanh()
 
-    def forward(self, xs, hidden, encoder_output, attn_mask=None):
+    def forward(self, xs, hidden, encoder_output, attn_mask=None, topk=1):
         xes = self.dropout(self.lt(xs))
         if self.attn_time == 'pre':
             xes = self.attention(xes, hidden, encoder_output, attn_mask)
@@ -400,7 +400,15 @@ class Decoder(nn.Module):
             scores = self.e2s(e)
 
         # select top scoring index, excluding the padding symbol (at idx zero)
-        _max_score, idx = scores.narrow(2, 1, scores.size(2) - 1).max(2)
+        # we can do topk sampling from renoramlized softmax here, default topk=1 is greedy
+        if topk == 1:
+            _max_score, idx = scores.narrow(2, 1, scores.size(2) - 1).max(2)
+        elif topk > 1:
+            max_score, idx = torch.topk(F.softmax(scores.narrow(2, 1, scores.size(2) - 1), 2), topk, dim=2, sorted=False)
+            probs = F.softmax( scores.narrow(2, 1, scores.size(2) - 1).gather(2, idx), 2 ).squeeze(1)
+            dist = torch.distributions.categorical.Categorical(probs)
+            samples = dist.sample()
+            idx = idx.gather(-1, samples.unsqueeze(1).unsqueeze(-1)).squeeze(-1)
         preds = idx.add_(1)
 
         return preds, scores, new_hidden
