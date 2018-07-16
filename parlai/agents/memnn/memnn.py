@@ -82,18 +82,6 @@ class MemnnAgent(Agent):
                 self.model.share_memory()
                 if self.decoder is not None:
                     self.decoder.share_memory()
-
-            # check first for 'init_model' for loading model from file
-            if opt.get('init_model') and os.path.isfile(opt['init_model']):
-                init_model = opt['init_model']
-            # next check for 'model_file'
-            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
-                init_model = opt['model_file']
-            else:
-                init_model = None
-            if init_model is not None:
-                print('Loading existing model parameters from ' + init_model)
-                self.load(init_model)
         else:
             self.dict = shared['dict']
             self.model = shared['model']
@@ -108,13 +96,15 @@ class MemnnAgent(Agent):
         self.mem_size = opt['mem_size']
 
         self.longest_label = 1
-        self.NULL_IDX = self.dict[self.dict.null_token]
+        self.NULL = self.dict.null_token
+        self.NULL_IDX = self.dict[self.NULL]
         self.END = self.dict.end_token
         self.END_TENSOR = torch.LongTensor([self.dict[self.END]])
         self.START = self.dict.start_token
         self.START_TENSOR = torch.LongTensor([self.dict[self.START]])
 
-        self.loss_fn = CrossEntropyLoss(ignore_index=self.NULL_IDX)
+        # self.loss_fn = CrossEntropyLoss(ignore_index=self.NULL_IDX)
+        self.loss_fn = CrossEntropyLoss()
         if self.use_cuda:
             self.loss_fn.cuda()
 
@@ -131,6 +121,20 @@ class MemnnAgent(Agent):
                     self.optimizers['decoder'] = optim.Adam(self.decoder.parameters(), lr=lr)
             else:
                 raise NotImplementedError('Optimizer not supported.')
+
+        if not shared:
+            # load model
+            # check first for 'init_model' for loading model from file
+            if opt.get('init_model') and os.path.isfile(opt['init_model']):
+                init_model = opt['init_model']
+            # next check for 'model_file'
+            elif opt.get('model_file') and os.path.isfile(opt['model_file']):
+                init_model = opt['model_file']
+            else:
+                init_model = None
+            if init_model is not None:
+                print('Loading existing model parameters from ' + init_model)
+                self.load(init_model)
 
         self.history = {}
         self.batch_idx = shared and shared.get('batchindex') or 0
@@ -326,6 +330,9 @@ class MemnnAgent(Agent):
             ys = [labels, label_lengths]
 
         cands = [ex['label_candidates'] for ex in exs if 'label_candidates' in ex]
+        # add NULL to each one
+        for i in range(len(cands)):
+            cands[i] = [self.NULL] + list(cands[i])
         # Use words in dict as candidates if no candidates are provided
         if len(cands) < len(exs):
             cands = build_cands(exs, self.dict)
@@ -398,7 +405,7 @@ def build_cands(exs, dict):
     cands = []
     for ex in exs:
         if 'label_candidates' in ex:
-            cands.append(ex['label_candidates'])
+            cands.append([self.NULL] + list(ex['label_candidates']))
         else:
             cands.append(dict_list)
             if 'labels' in ex:
