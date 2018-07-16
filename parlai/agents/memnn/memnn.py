@@ -103,9 +103,11 @@ class MemnnAgent(Agent):
         self.START = self.dict.start_token
         self.START_TENSOR = torch.LongTensor([self.dict[self.START]])
 
-        self.loss_fn = CrossEntropyLoss(ignore_index=self.NULL_IDX)
+        self.rank_loss = CrossEntropyLoss()
+        self.gen_loss = CrossEntropyLoss(ignore_index=self.NULL_IDX)
         if self.use_cuda:
-            self.loss_fn.cuda()
+            self.rank_loss.cuda()
+            self.gen_loss.cuda()
 
         if 'train' in self.opt.get('datatype', ''):
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
@@ -197,7 +199,7 @@ class MemnnAgent(Agent):
                     label_inds = torch.cuda.LongTensor(label_inds)
                 else:
                     label_inds = torch.LongTensor(label_inds)
-                loss = self.loss_fn(scores, label_inds)
+                loss = self.rank_loss(scores, label_inds)
             predictions = self.ranked_predictions(cands, scores)
         else:
             self.decoder.train(mode=is_training)
@@ -253,7 +255,7 @@ class MemnnAgent(Agent):
             if ys is not None:
                 y = ys[0][:, idx]
                 temp_y = y.cuda() if self.use_cuda else y
-                loss += self.loss_fn(scores, temp_y)
+                loss += self.gen_loss(scores, temp_y)
             else:
                 y = preds
             # use the true token as the next input for better training
@@ -329,9 +331,6 @@ class MemnnAgent(Agent):
             ys = [labels, label_lengths]
 
         cands = [ex['label_candidates'] for ex in exs if 'label_candidates' in ex]
-        # add NULL to each one
-        for i in range(len(cands)):
-            cands[i] = [self.NULL] + list(cands[i])
         # Use words in dict as candidates if no candidates are provided
         if len(cands) < len(exs):
             cands = build_cands(exs, self.dict)
@@ -400,11 +399,11 @@ def to_tensors(sentences, dictionary):
 
 
 def build_cands(exs, dict):
-    dict_list = list(dict.tok2ind.keys())
+    dict_list = list(dict.tok2ind.keys())[1:] # skip NULL
     cands = []
     for ex in exs:
         if 'label_candidates' in ex:
-            cands.append([dict.null_token] + list(ex['label_candidates']))
+            cands.append(ex['label_candidates'])
         else:
             cands.append(dict_list)
             if 'labels' in ex:
