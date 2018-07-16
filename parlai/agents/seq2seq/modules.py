@@ -51,7 +51,8 @@ class Seq2seq(nn.Module):
             attn_type=opt['attention'], attn_length=opt['attention_length'],
             attn_time=opt.get('attention_time'),
             bidir_input=opt['bidirectional'],
-            numsoftmax=opt.get('numsoftmax', 1))
+            numsoftmax=opt.get('numsoftmax', 1),
+            softmax_layer_bias=opt.get('softmax_layer_bias', False))
 
         shared_lt = (self.decoder.lt
                      if opt['lookuptable'] in ['enc_dec', 'all'] else None)
@@ -324,7 +325,7 @@ class Decoder(nn.Module):
                  emb_size=128, hidden_size=128, num_layers=2, dropout=0.1,
                  bidir_input=False, share_output=True,
                  attn_type='none', attn_length=-1, attn_time='pre',
-                 sparse=False, numsoftmax=1):
+                 sparse=False, numsoftmax=1, softmax_layer_bias=False):
         super().__init__()
 
         if padding_idx != 0:
@@ -345,13 +346,13 @@ class Decoder(nn.Module):
         if hidden_size != emb_size and numsoftmax == 1:
             # self.o2e = RandomProjection(hidden_size, emb_size)
             # other option here is to learn these weights
-            self.o2e = nn.Linear(hidden_size, emb_size, bias=True)
+            self.o2e = nn.Linear(hidden_size, emb_size, bias=False)
         else:
             # no need for any transformation here
             self.o2e = lambda x: x
         # embedding to scores, use custom linear to possibly share weights
         shared_weight = self.lt.weight if share_output else None
-        self.e2s = Linear(emb_size, num_features, bias=True,
+        self.e2s = Linear(emb_size, num_features, bias=softmax_layer_bias,
                           shared_weight=shared_weight)
         self.shared = shared_weight is not None
 
