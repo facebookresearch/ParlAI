@@ -404,7 +404,7 @@ def build_cands(exs, dict):
     cands = []
     for ex in exs:
         if 'label_candidates' in ex:
-            cands.append([self.NULL] + list(ex['label_candidates']))
+            cands.append([dict.null_token] + list(ex['label_candidates']))
         else:
             cands.append(dict_list)
             if 'labels' in ex:
