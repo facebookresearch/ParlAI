@@ -345,7 +345,7 @@ class Decoder(nn.Module):
         if hidden_size != emb_size and numsoftmax == 1:
             # self.o2e = RandomProjection(hidden_size, emb_size)
             # other option here is to learn these weights
-            self.o2e = nn.Linear(hidden_size, emb_size, bias=False)
+            self.o2e = nn.Linear(hidden_size, emb_size, bias=True)
         else:
             # no need for any transformation here
             self.o2e = lambda x: x
