@@ -161,6 +161,8 @@ class Seq2seqAgent(Agent):
         agent.add_argument('--beam-size', type=int, default=1, help='Beam size, if 1 then greedy search')
         agent.add_argument('--beam-log-freq', type=float, default=0.0,
                            help='The portion of beams to dump from minibatch into model_name.beam_dump folder')
+        agent.add_argument('--topk', type=int, default=1, help='Top k sampling from renormalized softmax in test/valid time, default 1 means simple greedy max output')
+        agent.add_argument('--softmax-layer-bias', type='bool', default=False, help='Put True if you want to include the bias in decoder.e2s layer')
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
@@ -235,6 +237,7 @@ class Seq2seqAgent(Agent):
 
             # search
             self.beam_size = opt.get('beam_size', 1)
+            self.topk = opt.get('topk', 1)
 
             if not hasattr(self, 'model_class'):
                 # this allows child classes to override this but inherit init
@@ -293,7 +296,7 @@ class Seq2seqAgent(Agent):
             if states:
                 # set loaded states if applicable
                 self.model.load_state_dict(states['model'])
-
+                    
             if self.use_cuda:
                 self.model.cuda()
 
@@ -524,7 +527,7 @@ class Seq2seqAgent(Agent):
             self.update_params()
         else:
             self.model.eval()
-            out = self.model(xs, ys=None, cands=cands, valid_cands=valid_cands, beam_size=self.beam_size)
+            out = self.model(xs, ys=None, cands=cands, valid_cands=valid_cands, beam_size=self.beam_size, topk=self.topk)
             predictions, cand_preds = out[0], out[2]
 
             if ys is not None:
