@@ -10,19 +10,20 @@ from .build import build
 import json
 import os
 
-class IndexTeacher(FixedDialogTeacher):
+
+class DefaultTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
-        datapath = self._path(opt)
         super().__init__(opt, shared)
-        self.data = self._setup_data(datapath)
+        # Build the data if it doesn't exist.
+        build(opt)
+        datapath = self._path(opt)
+        self._setup_data(datapath)
         self.id = 'qangaroo'
         self.reset()
 
     def _path(self, opt):
-        # Build the data if it doesn't exist.
-        build(opt)
         dt = opt['datatype'].split(':')
-        datatype = 'dev' if dt[0] == 'valid' else 'train'
+        datatype = 'train' if dt[0] == 'train' else 'dev'
         return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
                             'wikihop', datatype + '.json')
 
@@ -51,53 +52,33 @@ class IndexTeacher(FixedDialogTeacher):
             self.examples = json.load(data_file)
 
 
-class WikiHopTeacher(IndexTeacher):
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-
+class WikiHopTeacher(DefaultTeacher):
     def _path(self, opt):
-        # Build the data if it doesn't exist.
-        build(opt)
         dt = opt['datatype'].split(':')
-        datatype = 'dev' if dt[0] == 'valid' else 'train'
+        datatype = 'train' if dt[0] == 'train' else 'dev'
         return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
                             'wikihop', datatype + '.json')
 
 
-class MaskedWikiHopTeacher(IndexTeacher):
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-
+class MaskedWikiHopTeacher(DefaultTeacher):
     def _path(self, opt):
-        # Build the data if it doesn't exist.
-        build(opt)
         dt = opt['datatype'].split(':')
-        datatype = 'dev.masked' if dt[0] == 'valid' else 'train.masked'
+        datatype = 'train.masked' if dt[0] == 'train' else 'dev.masked'
         return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
                             'wikihop', datatype + '.json')
 
 
-class MedHopTeacher(IndexTeacher):
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-
+class MedHopTeacher(DefaultTeacher):
     def _path(self, opt):
-        # Build the data if it doesn't exist.
-        build(opt)
         dt = opt['datatype'].split(':')
-        datatype = 'dev' if dt[0] == 'valid' else dt[0]
+        datatype = 'train' if dt[0] == 'train' else 'dev'
         return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
                             'medhop', datatype + '.json')
 
 
-class MaskedMedHopTeacher(IndexTeacher):
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-
+class MaskedMedHopTeacher(DefaultTeacher):
     def _path(self, opt):
-        # Build the data if it doesn't exist.
-        build(opt)
         dt = opt['datatype'].split(':')
-        datatype = 'dev.masked' if dt[0] == 'valid' else 'train.masked'
+        datatype = 'train.masked' if dt[0] == 'train' else 'dev.masked'
         return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
                             'medhop', datatype + '.json')

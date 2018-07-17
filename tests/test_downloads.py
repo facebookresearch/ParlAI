@@ -290,11 +290,11 @@ class TestData(unittest.TestCase):
 
     def test_qangaroo(self):
         from parlai.core.params import ParlaiParser
-        from parlai.tasks.qangaroo.agents import IndexTeacher
+        from parlai.tasks.qangaroo.agents import DefaultTeacher
 
         opt = ParlaiParser().parse_args(args=self.args)
         opt['datatype'] = 'train'
-        teacher = IndexTeacher(opt)
+        teacher = DefaultTeacher(opt)
         reply = teacher.act()
         check(opt, reply)
 
