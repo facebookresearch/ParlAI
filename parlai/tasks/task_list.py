@@ -355,6 +355,13 @@ task_list = [
         "description": "Human-bot dialogues labelled for quality at the level of dialogues. Can be used to train dialogue-level metric for dialogue systems. Link to dataset: http://convai.io/data/"
     },
     {
+        "id": "QAngaroo",
+        "display_name": "QAngaroo",
+        "task": "qangaroo",
+        "tags": ["All", "QA"],
+        "description": "Reading Comprehension with Multiple Hop. Including two datasets: WIKIHOP built on on wikipedia, MEDHOP built on paper abstracts from PubMed. Link to dataset: http://qangaroo.cs.ucl.ac.uk/",
+    },
+    {
         "id": "SCAN",
         "display_name": "SCAN",
         "task": "scan",
