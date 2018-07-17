@@ -432,12 +432,15 @@ class DictionaryAgent(Agent):
         """
         print('Dictionary: loading dictionary from {}'.format(
               filename))
+
+        lower_special = self.null_token == self.null_token.lower()
         with codecs.open(filename, 'r', encoding='utf-8', errors='ignore') as read:
             for line in read:
                 split = line.strip().split('\t')
                 token = unescape(split[0])
-                if token in ['__NULL__', '__START__', '__END__', '__UNK__']:
+                if lower_special and token.startswith('__') and token == token.upper():
                     token = token.lower()
+                    print(token)
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
                 self.add_token(token)
