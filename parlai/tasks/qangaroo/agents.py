@@ -22,10 +22,7 @@ class IndexTeacher(FixedDialogTeacher):
         # Build the data if it doesn't exist.
         build(opt)
         dt = opt['datatype'].split(':')
-        if dt[0] == 'train':
-            datatype = 'train'
-        elif dt[0] == 'valid':
-            datatype = 'dev'
+        datatype = 'dev' if dt[0] == 'valid' else 'train'
         return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
                             'wikihop', datatype + '.json')
 
@@ -41,8 +38,8 @@ class IndexTeacher(FixedDialogTeacher):
             'id': 'qangaroo',
             'text': '\n'.join(item['supports']),
             'query': item['query'],
-            'candidates': item['candidates'],
-            'answer': item['answer'],
+            'label_candidates': item['candidates'],
+            'label': item['answer'],
             'supports': item['supports'],
             'episode_done': True,
         }
@@ -62,10 +59,7 @@ class WikiHopTeacher(IndexTeacher):
         # Build the data if it doesn't exist.
         build(opt)
         dt = opt['datatype'].split(':')
-        if dt[0] == 'train':
-            datatype = 'train'
-        elif dt[0] == 'valid':
-            datatype = 'dev'
+        datatype = 'dev' if dt[0] == 'valid' else 'train'
         return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
                             'wikihop', datatype + '.json')
 
@@ -78,10 +72,7 @@ class MaskedWikiHopTeacher(IndexTeacher):
         # Build the data if it doesn't exist.
         build(opt)
         dt = opt['datatype'].split(':')
-        if dt[0] == 'train':
-            datatype = 'train.masked'
-        elif dt[0] == 'valid':
-            datatype = 'dev.masked'
+        datatype = 'dev.masked' if dt[0] == 'valid' else 'train.masked'
         return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
                             'wikihop', datatype + '.json')
 
@@ -94,10 +85,7 @@ class MedHopTeacher(IndexTeacher):
         # Build the data if it doesn't exist.
         build(opt)
         dt = opt['datatype'].split(':')
-        if dt[0] == 'train':
-            datatype = 'train'
-        elif dt[0] == 'valid':
-            datatype = 'dev'
+        datatype = 'dev' if dt[0] == 'valid' else dt[0]
         return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
                             'medhop', datatype + '.json')
 
@@ -110,9 +98,6 @@ class MaskedMedHopTeacher(IndexTeacher):
         # Build the data if it doesn't exist.
         build(opt)
         dt = opt['datatype'].split(':')
-        if dt[0] == 'train':
-            datatype = 'train.masked'
-        elif dt[0] == 'valid':
-            datatype = 'dev.masked'
+        datatype = 'dev.masked' if dt[0] == 'valid' else 'train.masked'
         return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
                             'medhop', datatype + '.json')
