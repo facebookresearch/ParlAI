@@ -98,7 +98,6 @@ def build_dict(opt, skip_if_built=False):
                 sys.stdout.write(text)
                 sys.stdout.flush()
 
-    dictionary.finalize()
     dictionary.save(opt['dict_file'], sort=True)
     print('[ dictionary built with {} tokens ]'.format(len(dictionary)))
     return dictionary

@@ -81,10 +81,10 @@ class DictionaryAgent(Agent):
     default_maxngram = -1
     default_minfreq = 0
     default_maxtokens = -1
-    default_null = '__NULL__'
-    default_start = '__START__'
-    default_end = '__END__'
-    default_unk = '__UNK__'
+    default_null = '__null__'
+    default_start = '__start__'
+    default_end = '__end__'
+    default_unk = '__unk__'
     default_tok = 're'
     default_lower = False
 
@@ -116,7 +116,7 @@ class DictionaryAgent(Agent):
             dictionary.add_argument(
                 '--dict-maxtokens', default=DictionaryAgent.default_maxtokens,
                 type=int,
-                help='max number of tokens to include in sorted dict')
+                help='max number of tokens to include in dictionary or bpe codecs.')
             dictionary.add_argument(
                '--dict-nulltoken', default=DictionaryAgent.default_null,
                help='empty token, can be used for padding or just empty values')
@@ -137,9 +137,6 @@ class DictionaryAgent(Agent):
             dictionary.add_argument(
                 '--dict-lower', default=DictionaryAgent.default_lower, type='bool',
                 help='Whether or not to lowercase all text seen.')
-            dictionary.add_argument(
-                '--bpe-num-symbols', default=30000, type=int,
-                help='Number of BPE symbols. Recommended between 30000 and 40000')
             dictionary.add_argument(
                 '--bpe-debug', action='store_true',
                 help='Leave BPE tokens untouched in output. Useful for debugging.')
@@ -226,10 +223,7 @@ class DictionaryAgent(Agent):
         elif self.tokenizer == 'bpe':
             if not opt.get('dict_file'):
                 raise RuntimeError('--dict-file is mandatory.')
-            self.bpehelper = _BPEHelper(
-                opt.get('dict_file') + '.codecs',
-                num_symbols=opt.get('bpe_num_symbols'),
-            )
+            self.bpehelper = _BPEHelper(opt.get('dict_file') + '.codecs')
 
         if not shared:
             if self.null_token:
@@ -383,46 +377,45 @@ class DictionaryAgent(Agent):
 
     def bpe_tokenize(self, text):
         """Returns a sequence of BPE-tokens from the text."""
-        if self.lower:
-            text = text.lower()
         return self.bpehelper.tokenize(text)
-
-    def finalize(self):
-        """
-        Finalize and freeze the dictionary.
-
-        If using BPE tokenization, performs the codec learning.
-        """
-
-        if self.tokenizer != 'bpe':
-            # only BPE needs the second pass
-            return
-
-        # Let the BPE model learn its codecs, then use the encodings to
-        # populate the DictionaryAgent. This could be moved to inside the
-        # _BPEHelper, but would require careful accounting to ensure vocabulary
-        # counts are correct.
-        if self.bpehelper.finalize():
-            for line in self.bpehelper.training_data:
-                self.add_to_dict(self.bpehelper.tokenize(line))
 
     def add_to_dict(self, tokens):
         """ Builds dictionary from the list of provided tokens."""
+        self.built = False
         for token in tokens:
             self.add_token(token)
             self.freq[token] += 1
 
     def remove_tail(self, min_freq):
+        """Removes elements below the frequency cutoff from the dictionary."""
         to_remove = []
         for token, freq in self.freq.items():
             if freq < min_freq:
                 # queue up removals since can't mutate dict during iteration
                 to_remove.append(token)
-                # other dicts can be modified as we go
-                idx = self.tok2ind.pop(token)
-                del self.ind2tok[idx]
+
         for token in to_remove:
             del self.freq[token]
+            idx = self.tok2ind.pop(token)
+            del self.ind2tok[idx]
+
+    def remove_non_bpe(self):
+        """Sets the dictionary vocab to the bpe vocab, merging counts."""
+        to_remove = []
+        to_add = []
+        for token, freq in self.freq.items():
+            tokens = self.bpe_tokenize(token)
+            if len(tokens) != 1:
+                for t in tokens:
+                    to_add.append((t, freq))
+                to_remove.append(token)
+        for token in to_remove:
+            del self.freq[token]
+            idx = self.tok2ind.pop(token)
+            del self.ind2tok[idx]
+        for token, freq in to_add:
+            self.add_token(token)
+            self.freq[token] += freq
 
     def resize_to_max(self, maxtokens):
         # defaults to -1, only trim dict if >= 0
@@ -439,13 +432,16 @@ class DictionaryAgent(Agent):
         """
         print('Dictionary: loading dictionary from {}'.format(
               filename))
-        with codecs.open(filename, "r",encoding='utf-8', errors='ignore') as read:
+        with codecs.open(filename, 'r', encoding='utf-8', errors='ignore') as read:
             for line in read:
                 split = line.strip().split('\t')
                 token = unescape(split[0])
+                if token in ['__NULL__', '__START__', '__END__', '__UNK__']:
+                    token = token.lower()
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
                 self.add_token(token)
+        # note that bpe will print its own size, it's different
         print('[ num words =  %d ]' % len(self))
 
     def save(self, filename=None, append=False, sort=True):
@@ -460,8 +456,15 @@ class DictionaryAgent(Agent):
         """
         filename = self.opt['dict_file'] if filename is None else filename
         print('Dictionary: saving dictionary to {}'.format(filename))
-        if sort:
-            self.sort()
+
+        if self.tokenizer == 'bpe':
+            self.bpehelper.finalize((f'{k} {v}' for k, v in self.freq.items()),
+                                    num_symbols=self.maxtokens,
+                                    minfreq=self.minfreq)
+            self.remove_non_bpe()
+            self.sort(trim=False)
+        elif sort:
+            self.sort(trim=True)
 
         make_dir(os.path.dirname(filename))
         with open(filename, 'a' if append else 'w') as write:
@@ -495,6 +498,7 @@ class DictionaryAgent(Agent):
         self.ind2tok = new_ind2tok
         if trim:
             self.resize_to_max(self.maxtokens)
+        assert len(self.freq) == len(self.ind2tok) == len(self.tok2ind)
         return sorted_pairs
 
     def parse(self, txt_or_vec, vec_type=list):
@@ -579,15 +583,13 @@ class _BPEHelper(object):
     in a second pass, calling tokenize() again to get processed output.
     """
 
-    def __init__(self, codecs_filename, num_symbols=30000, minfreq=2):
+    def __init__(self, codecs_filename):
         """
         Initialize the BPE module.
         If `codecs_filename` already exists, loads the pretrained codecs.
         If it does not, codecs will be saved there after a call to `finalize()`.
 
         :param codecs_filename: place to save/load codecs.
-        :param num_symbols: Number of BPE symbols. Recommend 30000-40000.
-        :param minfreq: Minimum frequency of a token before forced BPE decomposition.
         """
         if not BPE_INSTALLED:
             raise RuntimeError(
@@ -595,66 +597,55 @@ class _BPEHelper(object):
                 "/subword-nmt.git#egg=subword-nmt'\""
             )
 
+        self.splitter = re.compile(r'\w+|[^\w\s]', re.UNICODE)
+
         self.codecs = codecs_filename
         if os.path.exists(self.codecs):
-            self.built = True
             self._load_from_codecs()
-        else:
-            self.num_symbols = num_symbols
-            self.minfreq = minfreq
-            self.training_data = []
-            self.built = False
 
     def _load_from_codecs(self):
         with open(self.codecs, 'r') as codecs_file:
             self.bpe = apply_bpe.BPE(codecs_file)
 
-    def _add_to_train(self, tokens):
-        """
-        Queues up all the data to learn the BPE tokenizer.
-
-        :param tokens: list[str]. Initial tokenization approximation.
-        """
-        if self.built:
-            raise RuntimeError("BPE dictionary has been finalized.")
-        self.training_data.append(" ".join(tokens) + "\n")
-        return []
-
     def tokenize(self, text):
         """
-        Tokenizes the text if codecs are already finalized.
-        Otherwise, stores data for learning codecs.
+        Tokenizes the text with bpe if codecs are already finalized.
+        Otherwise, returns the regularly split tokens that will train the bpe.
 
         :param text: str. Raw text to tokenize.
-        :return: a list of tokens. List will be empty if not tokenized.
+        :return: a list of tokens. Will use BPE once finalized.
         """
-        tokens = DictionaryAgent.re_tokenize(text)
-        if self.built:
-            return self._apply(tokens)
+        text = text.replace('\n', ' __newln__ ')
+        tokens = self.splitter.findall(text)
+
+        if hasattr(self, 'bpe'):
+            return self.bpe.segment_tokens(tokens)
         else:
-            return self._add_to_train(tokens)
+            return tokens
 
-    def _apply(self, tokens):
-        return self.bpe.segment_tokens(tokens)
+    def finalize(self, dictionary, num_symbols=30000, minfreq=2):
+        """Build the codecs.
 
-    def finalize(self):
-        """Build the codecs"""
-        if self.built:
-            return False
-
+        :param: iterable of '{token} {count}' pairs, e.g. generated by summing
+            over this class's pre-build tokenizer
+        :param num_symbols: Number of BPE symbols. Recommend 30000-40000.
+            If <= 0, default 30000 will be used.
+        :param minfreq: Minimum frequency of a token before forced BPE
+            decomposition. If <= 0 will use subword-nmt default of 2.
+        """
         self.built = True
 
+        if num_symbols <= 0:
+            num_symbols = 30000
+        if minfreq <= 0:
+            minfreq = 2
         with open(self.codecs, 'w') as outstream:
-            # There's a potentially more memory efficient way to do this, with
-            # the is_dict method able to handle <word> \t <count> format.
-            # It will require more sophisticated marshalling of data back and
-            # forth
             learn_bpe.learn_bpe(
-                self.training_data,
+                dictionary,
                 outstream,
-                num_symbols=self.num_symbols,
-                min_frequency=self.minfreq,
-                is_dict=False,
+                num_symbols=num_symbols,
+                min_frequency=minfreq,
+                is_dict=True,
             )
 
         self._load_from_codecs()

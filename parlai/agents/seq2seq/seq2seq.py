@@ -247,7 +247,9 @@ class Seq2seqAgent(Agent):
                 start_idx=self.START_IDX, end_idx=self.END_IDX,
                 longest_label=states.get('longest_label', 1))
 
-            if not states and opt['embedding_type'] != 'random':
+            if opt.get('dict_tokenizer') == 'bpe' and opt['embedding_type'] != 'random':
+                print('skipping preinitialization of embeddings for bpe')
+            elif not states and opt['embedding_type'] != 'random':
                 # set up preinitialized embeddings
                 try:
                     import torchtext.vocab as vocab
@@ -296,7 +298,7 @@ class Seq2seqAgent(Agent):
             if states:
                 # set loaded states if applicable
                 self.model.load_state_dict(states['model'])
-                    
+
             if self.use_cuda:
                 self.model.cuda()
 
@@ -550,6 +552,7 @@ class Seq2seqAgent(Agent):
             observations, self.dict, end_idx=self.END_IDX,
             null_idx=self.NULL_IDX, dq=True, eval_labels=True,
             truncate=self.truncate)
+
         if xs is None:
             return None, None, None, None, None, None, None
         xs = torch.LongTensor(xs)
