@@ -5,23 +5,75 @@
   LICENSE file in the root directory of this source tree. An additional grant
   of patent rights can be found in the PATENTS file in the same directory.
 
-Creating a New Task
-===================
-**Authors**: Alexander Holden Miller, Filipe de Avila Belbute Peres
+Tasks and Datasets in ParlAI
+============================
+**Authors**: Alexander Holden Miller, Filipe de Avila Belbute Peres, Jason Weston
 
-Adding new tasks to ParlAI is a simple process.
-In this tutorial we will go over the different ways a new task can be created.
+ParlAI can support fixed dialogue data for supervised learning (which we call a dataset) or even dynamic tasks involving an environment, agents and possibly rewards (we refer to the general case  as a task).
+
+In this tutorial we will go over the different ways a new task (or dataset) can be created.
+
+All setups are handled in pretty much the same way, with the same API, but there are less steps of course to make a basic dataset.
+
+
+Getting a New Dataset Into ParlAI: *the simplest way*
+=====================================================
+
+Let's look at the easiest way of getting a new dataset into ParlAI first.
+
+If you have a dialogue, QA or other text-only dataset that you can put
+in a text file in the format we will now describe, you can just load it directly from
+there, with no extra code!
+
+Here's an example dataset with a single episode with 2 examples:
+
+::
+
+	text:hello how are you today?	label:i'm great thanks! what are you doing?
+	text:i've just been biking.	label:oh nice, i haven't got on a bike in years!	episode_done:True
+
+Suppose that data is in the file /tmp/data.txt
+
+We could look at that data using the usual display data script:
+
+::
+
+	python parlai/scripts/display_data.py -t fromfile:parlaiformat --fromfile_datapath /tmp/data.txt
+	<.. snip ..>
+	[creating task(s): fromfile:parlaiformat]
+	[loading parlAI text data:/tmp/data.txt]
+	[/tmp/data.txt]: hello how are you today?
+	[labels: i'm great thanks! what are you doing?]
+	   [RepeatLabelAgent]: i'm great thanks! what are you doing?
+	~~
+	[/tmp/data.txt]: i've just been biking.
+	[labels: oh nice, i haven't got on a bike in years!]
+	   [RepeatLabelAgent]: oh nice, i haven't got on a bike in years!
+	- - - - - - - - - - - - - - - - - - - - -
+	~~
+	EPOCH DONE
+	[ loaded 1 episodes with a total of 2 examples ]
+
+The text file data format is called ParlAI format, and is described in the `core/teachers.py file <https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/teachers.py#L1098>`_.
+Essentially, there is one training example every line, and each field in a 
+ParlAI message is tab separated with the name of the field, followed by a colon.
+E.g. the usual fields like 'text', 'labels', 'label_candidates' etc. can all
+be used, or you can add your own fields too if you have a special use for them.
+
+
+Creating a New Task: *the more complete way*
+============================================
+
+
+Of course after your first hacking around you may want to actually check this code in so that you can share it with others!
 
 Tasks code is located in the ``parlai/tasks`` directory.
+
 You will need to create a directory for your new task there.
 
-The code for the tasks in this tutorial can also be found in this directory.
+If your data is in the ParlAI format, you effectively only need a tiny bit of boilerplate to load it, see e.g. the code for the `fromfile task agent we just used <https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/fromfile>`_.
 
-
-Summary
-^^^^^^^
-
-In brief, to add your own task you need to:
+But right now, let's go through all the steps. You will need to:
 
 0. Add an ``__init__.py`` file to make sure imports work correctly.
 1. Implement ``build.py`` to download and build any needed data (see `Part 1: Building the Data`_).
