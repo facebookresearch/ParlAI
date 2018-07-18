@@ -222,7 +222,7 @@ class SentenceIndexTeacher(IndexTeacher):
         context = paragraph['context']
         question = qa['question']
 
-        answers = ['']
+        answers = []
         if not qa['is_impossible']:
             answers = [a['text'] for a in qa['answers']]
 
@@ -254,6 +254,8 @@ class SentenceIndexTeacher(IndexTeacher):
                     labels.append(sentence)
                     label_starts.append(context.index(sentence))
                     break
+        if len(labels) == 0:
+            labels.append('')
 
         plausible = []
         if qa['is_impossible']:
