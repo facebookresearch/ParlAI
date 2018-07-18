@@ -34,6 +34,8 @@ from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
 from .utils import AttrDict, flatten, sort_data, make_batches, no_lock, str_to_msg
 
+from functools import lru_cache
+
 import concurrent.futures
 import multiprocessing
 from multiprocessing import Value, Lock
@@ -332,6 +334,7 @@ class FixedDialogTeacher(Teacher):
             return len(self.sorted_data)
         raise RuntimeError('"num_episodes" must be overriden by children.')
 
+    @lru_cache(maxsize=1)
     def num_examples(self):
         """Get the total number of examples in this dataset."""
         if self.use_batch_act:
@@ -470,6 +473,7 @@ class DialogTeacher(FixedDialogTeacher):
         except AttributeError:
             return super().num_episodes()
 
+    @lru_cache(maxsize=1)
     def num_examples(self):
         try:
             return self.data.num_examples()
@@ -625,9 +629,11 @@ class DialogData(object):
         """Return number of episodes in the dataset."""
         return len(self.data)
 
+    @lru_cache(maxsize=1)
     def num_examples(self):
-        """Returns total number of entries available. Each episode has at least
-        one entry, but might have many more.
+        """Returns total number of entries available.
+
+        Each episode has at least one entry, but might have many more.
         """
         return sum(len(episode) for episode in self.data)
 

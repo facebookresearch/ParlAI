@@ -240,6 +240,7 @@ class KvmemnnAgent(Agent):
             print("[ creating KvmemnnAgent ]")
             # this is not a shared instance of this class, so do full init
             self.threadindex = -1
+            torch.set_num_threads(1)
 
             if ((opt['dict_file'] is None and opt.get('model_file')) or
                 os.path.isfile(opt['model_file'] + '.dict')):
