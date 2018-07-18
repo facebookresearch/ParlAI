@@ -179,6 +179,8 @@ class Seq2seqAgent(Agent):
         self.use_person_tokens = opt.get('person_tokens', False)
         self.batch_idx = shared and shared.get('batchindex') or 0
         self.rank = opt['rank_candidates']
+        self.beam_size = opt.get('beam_size', 1)
+        self.topk = opt.get('topk', 1)
         states = {}
 
         # check for cuda
@@ -234,10 +236,6 @@ class Seq2seqAgent(Agent):
             self.END_IDX = self.dict[self.dict.end_token]
             # get index of null token from dictionary (probably 0)
             self.NULL_IDX = self.dict[self.dict.null_token]
-
-            # search
-            self.beam_size = opt.get('beam_size', 1)
-            self.topk = opt.get('topk', 1)
 
             if not hasattr(self, 'model_class'):
                 # this allows child classes to override this but inherit init

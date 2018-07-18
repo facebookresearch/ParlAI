@@ -43,9 +43,10 @@ All worlds are initialized with the following parameters:
 
 import copy
 import importlib
-import math
 import random
 import time
+
+from functools import lru_cache
 
 try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore
@@ -846,6 +847,7 @@ class HogwildWorld(World):
     def getID(self):
         return self.inner_world.getID()
 
+    @lru_cache(maxsize=1)
     def num_examples(self):
         return self.inner_world.num_examples()
 
