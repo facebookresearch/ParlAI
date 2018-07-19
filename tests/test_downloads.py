@@ -288,6 +288,18 @@ class TestData(unittest.TestCase):
 
         shutil.rmtree(self.TMP_PATH)
 
+    def test_qangaroo(self):
+        from parlai.core.params import ParlaiParser
+        from parlai.tasks.qangaroo.agents import DefaultTeacher
+
+        opt = ParlaiParser().parse_args(args=self.args)
+        opt['datatype'] = 'train'
+        teacher = DefaultTeacher(opt)
+        reply = teacher.act()
+        check(opt, reply)
+
+        shutil.rmtree(self.TMP_PATH)
+
     def test_simplequestions(self):
         from parlai.core.params import ParlaiParser
         from parlai.tasks.simplequestions.agents import DefaultTeacher
