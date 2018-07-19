@@ -40,7 +40,7 @@ class DefaultTeacher(FixedDialogTeacher):
             'text': '\n'.join(item['supports']) + '\n' + item['query'],
             'query': item['query'],
             'label_candidates': item['candidates'],
-            'label': item['answer'],
+            'label': [item['answer']],
             'supports': item['supports'],
             'episode_done': True,
         }
