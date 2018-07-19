@@ -152,6 +152,8 @@ Teachers already in the ParlAI system use a series of subclasses, each with
 additional functionality (and fewer methods to implement). These follow the path
 ``Agent`` => ``Teacher`` => ``FixedDialogTeacher`` => ``DialogTeacher`` => ``ParlAIDialogTeacher``.
 
+(Note there is also a FbDialogTeacher, but this is deprecated -- although some datasets in ParlAI still currently use it.)
+
 The simplest method available for creating a teacher is to use the
 ``ParlAIDialogTeacher`` class, which makes the process very simple if the text
 data is already formatted in the ParlAI Dialog format.
@@ -184,6 +186,7 @@ The methods for a teacher to implement for each class are as follows:
 :class DialogTeacher: ``__init__()``, ``setup_data()``
 
 :class ParlAIDialogTeacher: ``__init__()``
+
 
 
 ParlAIDialogTeacher

@@ -1151,6 +1151,8 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         if not shared:
+            self.episodes = []
+            self.num_exs = 0
             if opt.get('parlaidialogteacher_datafile') is not None:
                 self._setup_data(opt.get('parlaidialogteacher_datafile'))
         else:
