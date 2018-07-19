@@ -29,8 +29,8 @@ Here's an example dataset with a single episode with 2 examples:
 
 ::
 
-	text:hello how are you today?	label:i'm great thanks! what are you doing?
-	text:i've just been biking.	label:oh nice, i haven't got on a bike in years!	episode_done:True
+	text:hello how are you today?	labels:i'm great thanks! what are you doing?
+	text:i've just been biking.	labels:oh nice, i haven't got on a bike in years!	episode_done:True
 
 Suppose that data is in the file /tmp/data.txt
 
@@ -54,7 +54,10 @@ We could look at that data using the usual display data script:
 	EPOCH DONE
 	[ loaded 1 episodes with a total of 2 examples ]
 
-The text file data format is called ParlAI format, and is described in the `core/teachers.py file <https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/teachers.py#L1098>`_.
+The text file data format is called ParlAI Dialog format, and is described 
+in the :doc:`teachers documentation <teachers>` (parlai.core.teachers.ParlAIDialogTeacher)
+and 
+in the `core/teachers.py file <https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/teachers.py#L1098>`_.
 Essentially, there is one training example every line, and each field in a 
 ParlAI message is tab separated with the name of the field, followed by a colon.
 E.g. the usual fields like 'text', 'labels', 'label_candidates' etc. can all
@@ -147,14 +150,14 @@ It is there that we will define our teacher.
 
 Teachers already in the ParlAI system use a series of subclasses, each with
 additional functionality (and fewer methods to implement). These follow the path
-``Agent`` => ``Teacher`` => ``FixedDialogTeacher`` => ``DialogTeacher`` => ``FbDialogTeacher``.
+``Agent`` => ``Teacher`` => ``FixedDialogTeacher`` => ``DialogTeacher`` => ``ParlAIDialogTeacher``.
 
 The simplest method available for creating a teacher is to use the
-``FbDialogTeacher`` class, which makes the process very simple if the text
-data is already formatted in the Facebook Dialog format.
-(In fact, even if your text data is not in the Facebook Dialog format, it might
-be simpler to parse it into this format and use the ``FbDialogTeacher``.)
-This is shown in the section `FbDialogTeacher`_.
+``ParlAIDialogTeacher`` class, which makes the process very simple if the text
+data is already formatted in the ParlAI Dialog format.
+(In fact, even if your text data is not in the ParlAI Dialog format, it might
+be simpler to parse it into this format and use the ``ParlAIDialogTeacher``.)
+This is shown in the section `ParlAIDialogTeacher`_.
 
 If the data is not in this format, one can still use the ``DialogTeacher``
 which automates much of the work in setting up a dialog task,
@@ -180,19 +183,19 @@ The methods for a teacher to implement for each class are as follows:
 
 :class DialogTeacher: ``__init__()``, ``setup_data()``
 
-:class FbDialogTeacher: ``__init__()``
+:class ParlAIDialogTeacher: ``__init__()``
 
 
-FbDialogTeacher
-~~~~~~~~~~~~~~~
+ParlAIDialogTeacher
+~~~~~~~~~~~~~~~~~~~
 
 For this class, the user must implement at least an ``__init__()`` function, and
 often only that.
 
-In this section we will illustrate the process of using the ``FbDialogTeacher``
-class by adding the MTurk WikiMovies question-answering task.
-This task has data in textual form and has been formatted to follow the Facebook Dialog format.
-It is thus very simple to implement it using ``FbDialogTeacher``.
+In this section we will illustrate the process of using the ``ParlAIDialogTeacher``
+class by adding the Twitter dataset.
+This task has data in textual form and has been formatted to follow the ParlAI Dialog format.
+It is thus very simple to implement it using ``ParlAIDialogTeacher``.
 More information on this class and the dialog format can be found in the :doc:`teachers documentation <teachers>`.
 
 In this task, the agent is presented with questions about movies that are answerable from Wikipedia.
@@ -200,28 +203,25 @@ A sample dialog is demonstrated below.
 
 ::
 
-    [mturkwikimovies]: Which directors collaborated for the film Flushed Away?
-    [labels: David Bowers, Sam Fell]
-    [cands: David Rose|Ismail Kadare|Alexis Díaz de Villegas|emily blunt|Glory| ...and 75537 more]
-       [Agent]: David Bowers, Sam Fell
+	[twitter]: burton is a fave of mine,even his average films are better than most directors.
+	[labels: keeping my fingers crossed that he still has another ed wood in him before he retires.]
+	- - - - - - - - - - - - - - - - - - - - -
+	~~
+	[twitter]: i saw someone say that we should use glass straws..
+	[labels: glass or paper straws - preferably no 'straw' waste. ban !]
 
-Every task requires a ``DefaultTeacher``. Since we are subclassing ``FbDialogTeacher``,
+Every task requires a ``DefaultTeacher``. Since we are subclassing ``ParlAIDialogTeacher``,
 we only have to initialize the class and set a few option parameters, as shown below.
 
 .. code-block:: python
 
-    class DefaultTeacher(FbDialogTeacher):
+    class DefaultTeacher(ParlAIDialogTeacher):
         def __init__(self, opt, shared=None):
+            super().__init__(opt, shared)
             opt = copy.deepcopy(opt)
 
             # get datafile
             opt['datafile'] = _path(opt, '')
-
-            # get file with candidate answers
-            opt['cands_datafile'] = os.path.join(opt['datapath'], 'WikiMovies',
-                                                 'movieqa', 'knowledge_source',
-                                                 'entities.txt')
-            super().__init__(opt, shared)
 
 We can notice there was a call to a ``_path()`` method, which returns the path to the correct datafile.
 The path to the file is then stored in the options dictionary under the ``datafile`` key.
@@ -235,17 +235,14 @@ It then sets up the paths for the built data.
     from .build import build
 
     def _path(opt, filtered):
-        # ensure data is built
+        # build the data if it does not exist
         build(opt)
 
         # set up path to data (specific to each dataset)
         dt = opt['datatype'].split(':')[0]
-        if dt == 'valid':
-            dt = 'dev'
-        return os.path.join(opt['datapath'], 'MTurkWikiMovies', 'mturkwikimovies',
-                            'qa-{type}.txt'.format(type=dt))
+        return os.path.join(opt['datapath'], 'Twitter', dt + '.txt')
 
-And this is all that needs to be done to create a teacher for our task using ``FbDialogTeacher``.
+And this is all that needs to be done to create a teacher for our task using ``ParlAIDialogTeacher``.
 
 To access this data, we can now use the ``display_data.py`` file in the ``examples`` directory:
 
@@ -263,7 +260,7 @@ disk, processing images, and more is taken care of for them.
 
 In this section we will demonstrate the process of using the ``DialogTeacher``
 class by adding a simple question-answering task based on the MNIST dataset.
-This task depends on visual data and so does not fit the basic ``FbDialogTeacher``
+This task depends on visual data and so does not fit the basic ``ParlAIDialogTeacher``
 class described above. Still, using ``DialogTeacher`` makes it easy to
 implement dialog tasks such as this one.
 
