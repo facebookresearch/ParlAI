@@ -18,6 +18,8 @@
     ``FbDialogTeacher(DialogTeacher)``
      Teacher class that provides access to data in the Facebook Dialog format.
      See the class description for more details.
+     ** NOTE: ** We plan to deprecate this method soon in favor of ParlAIDialogTeacher,
+     however several existing tasks are currently still using it.
 
     ``ParlAIDialogTeacher(DialogTeacher)``
      Teacher class that provides access to data in the ParlAI Dialog format.
@@ -1149,6 +1151,8 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         if not shared:
+            self.episodes = []
+            self.num_exs = 0
             if opt.get('parlaidialogteacher_datafile') is not None:
                 self._setup_data(opt.get('parlaidialogteacher_datafile'))
         else:
