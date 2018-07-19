@@ -37,7 +37,7 @@ class DefaultTeacher(FixedDialogTeacher):
         item = self.examples[episode_idx]
         action = {
             'id': 'qangaroo',
-            'text': '\n'.join(item['supports']),
+            'text': '\n'.join(item['supports']) + '\n' + item['query'],
             'query': item['query'],
             'label_candidates': item['candidates'],
             'label': item['answer'],
