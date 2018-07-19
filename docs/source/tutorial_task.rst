@@ -17,7 +17,7 @@ All setups are handled in pretty much the same way, with the same API, but there
 
 
 Getting a New Dataset Into ParlAI: *the simplest way*
-=====================================================
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Let's look at the easiest way of getting a new dataset into ParlAI first.
 
@@ -65,7 +65,7 @@ be used, or you can add your own fields too if you have a special use for them.
 
 
 Creating a New Task: *the more complete way*
-============================================
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 Of course after your first hacking around you may want to actually check this code in so that you can share it with others!
