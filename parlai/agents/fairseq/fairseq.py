@@ -352,6 +352,10 @@ class FairseqAgent(TorchAgent):
         self.reset_metrics()
 
     def batchify(self, *args, **kwargs):
+        """Override parent batchify to set sorting to true.
+
+        Sorting inputs is needed for torch.nn.utils.rnn.pack_padded_sequence.
+        """
         kwargs['sort'] = True
         return super().batchify(*args, **kwargs)
 

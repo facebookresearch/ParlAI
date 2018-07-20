@@ -102,14 +102,21 @@ class TorchAgent(Agent):
         self.history_replies = opt['history_replies']
 
     def share(self):
+        """Share fields from parent as well as useful objects in this class.
+
+        Subclasses will likely want to share their model as well.
+        """
         shared = super().share()
         shared['opt'] = self.opt
         shared['dict'] = self.dict
         return shared
 
     def vectorize(self, obs, add_start=True, add_end=True, truncate=None):
-        """
-        Converts 'text' and 'label'/'eval_label' field to vectors.
+        """Make vectors out of observation fields and store in the observation.
+
+        In particular, the 'text' and 'labels'/'eval_labels' fields are
+        processed and a new field is added to the observation with the suffix
+        '_vec'.
 
         :param obs: single observation from observe function
         :param add_start: default True, adds the start token to each label
@@ -145,15 +152,20 @@ class TorchAgent(Agent):
         return obs
 
     def batchify(self, obs_batch, sort=False, is_valid=lambda obs: 'text_vec' in obs):
-        """Creates a batch of valid observations from an unchecked batch, where
-        a valid observation is one that passes the lambda provided to the function.
-        Assumes each observation has been vectorized by vectorize function.
+        """Create a batch of valid observations from an unchecked batch.
 
-        Returns a namedtuple Batch. See original definition for in-depth
+        A valid observation is one that passes the lambda provided to the
+        function, which defaults to checking if the preprocessed 'text_vec'
+        field is present which would have been set by this agent's 'vectorize'
+        function.
+
+        Returns a namedtuple Batch. See original definition above for in-depth
         explanation of each field.
 
         :param obs_batch: list of vectorized observations
-        :param sort:      default False, orders the observations by length of vector
+        :param sort:      default False, orders the observations by length of
+                          vector. set to true when using
+                          torch.nn.utils.rnn.pack_padded_sequence.
         :param is_valid:  default function that checks if 'text_vec' is in the
                           observation, determines if an observation is valid
         """
@@ -217,9 +229,10 @@ class TorchAgent(Agent):
                     candidate_preds=None):
         """Match sub-batch of predictions to the original batch indices.
 
-        Batches may be only partially filled (e.g. when completing the remainder
+        Batches may be only partially filled (i.e when completing the remainder
         at the end of the validation or test set), or we may want to sort by
-        e.g. the length of the input sequences if using pack_padded_sequence.
+        e.g the length of the input sequences if using pack_padded_sequence.
+
         This matches rows back with their original row in the batch for
         calculating metrics like accuracy.
 
@@ -243,6 +256,8 @@ class TorchAgent(Agent):
                                 useStartEndIndices=False,
                                 splitSentences=False):
         """Keeps track of dialog history, up to a truncation length.
+
+        NOTE: this function is subject to change soon as it will be updated.
 
         :param observation: a single observation that will be added to existing
                             dialog history
@@ -321,8 +336,6 @@ class TorchAgent(Agent):
                 states['optimizer'] = self.optimizer.state_dict()
 
             if states:  # anything found to save?
-                # also store the options with the file for good measure
-                states['opt'] = self.opt
                 with open(path, 'wb') as write:
                     torch.save(states, write)
 
@@ -355,6 +368,10 @@ class TorchAgent(Agent):
         self.episode_done = True
 
     def observe(self, observation):
+        """Process incoming message in preparation for producing a response.
+
+        This includes remembering the past history of the conversation.
+        """
         observation = copy.deepcopy(observation)
         if not self.episode_done:
             # if the last example wasn't the end of an episode, then we need to
@@ -366,18 +383,30 @@ class TorchAgent(Agent):
         return observation
 
     def act(self):
-        """Calls batch_act with the singleton batch."""
+        """Call batch_act with the singleton batch."""
         return self.batch_act([self.observation])[0]
 
     def batch_act(self, observations):
+        """Process a batch of observations (batchsize list of message dicts).
+
+        These observations have been preprocessed by the observe method.
+
+        Subclasses can override this for special functionality, but if the
+        default behaviors are fine then just override the ``train_step`` and
+        ``eval_step`` methods instead. The former is called when labels are
+        present in the observations batch; otherwise, the latter is called.
+        """
         batch_size = len(observations)
-        # initialize a table of replies with this agent's id
+        # initialize a list of replies with this agent's id
         batch_reply = [{'id': self.getID()} for _ in range(batch_size)]
 
+        # check if there are any labels available, if so we will train on them
         is_training = any(['labels' in obs for obs in observations])
 
+        # convert the observations into vectors
         vec_obs = [self.vectorize(obs) for obs in observations]
 
+        # create a batch from the vectors
         batch = self.batchify(vec_obs)
 
         if batch.text_vec is None:
@@ -386,6 +415,7 @@ class TorchAgent(Agent):
         if is_training:
             output = self.train_step(batch.text_vec, batch.label_vec,
                                      batch.candidates)
+            output = self.train_step(batch)
         else:
             output = self.eval_step(batch.text_vec, batch.label_vec,
                                     batch.candidates)
@@ -402,6 +432,10 @@ class TorchAgent(Agent):
                          candidate_preds=candidate_preds)
 
         return batch_reply
+
+    def train_step(self, batch):
+        xs = batch.text_vec
+        pass
 
     def train_step(self, xs, ys=None, cands=None, *args, **kwargs):
         raise NotImplementedError('Abstract class: user must implement train_step')
