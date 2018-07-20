@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from examples.train_model import TrainLoop, setup_args
+from parlai.scripts.train_model import TrainLoop, setup_args
 
 import ast
 import unittest
@@ -21,6 +21,9 @@ class TestTrainModel(unittest.TestCase):
 
             def write(self, s):
                 self.data.append(s)
+
+            def flush(self):
+                pass
 
             def __str__(self):
                 return "".join(self.data)
@@ -40,11 +43,13 @@ class TestTrainModel(unittest.TestCase):
                 model='memnn',
                 task='tasks.repeat:RepeatTeacher:10',
                 dict_file='/tmp/repeat',
-                batchsize='1',
-                validation_every_n_secs='5',
-                validation_patience='2',
-                embedding_size='8',
-                no_cuda=True
+                batchsize=1,
+                numthreads=4,
+                validation_every_n_epochs=10,
+                validation_patience=5,
+                embedding_size=8,
+                no_cuda=True,
+                validation_share_agent=True,
             )
             opt = parser.parse_args()
             TrainLoop(opt).train()
@@ -70,8 +75,8 @@ class TestTrainModel(unittest.TestCase):
         for line in list_output:
             if "test:{" in line:
                 score = ast.literal_eval(line.split("test:", 1)[1])
-                self.assertTrue(score['accuracy'] == 1,
-                                "Accuracy did not reach 1, was " + str(score['accuracy']))
+                self.assertTrue(score['accuracy'] > 0.5,
+                                "Accuracy not convincing enough, was " + str(score['accuracy']))
 
 if __name__ == '__main__':
     unittest.main()

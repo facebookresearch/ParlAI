@@ -1,0 +1,482 @@
+<!--
+Copyright (c) 2017-present, Facebook, Inc.
+All rights reserved.
+This source code is licensed under the BSD-style license found in the
+LICENSE file in the root directory of this source tree. An additional grant
+of patent rights can be found in the PATENTS file in the same directory.
+-->
+{% extends "core.html" %}
+
+{% block left_pane %}
+	<div id="left-pane" class="col-xs-6 col-md-6" style="height:{{frame_height}}px; background-color: #fff; padding:0px;overflow:scroll">
+        <div style="position: relative;" id="image">
+          <canvas id="streetview" width="100" height="100" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+          <canvas id="navigation" width="100" height="100" style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+        </div>
+        <div id="walkingman" style="display: none">
+						<iframe src="https://giphy.com/embed/EB3xi65AZFc2c" width="480" height="360" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+            <h3 style="text-align:center;">You're walking to the next intersection...</h3>
+        </div>
+        <h2 id="endofworld" style="display: none; margin-top: 250px; text-align:center;">You can't go that way!</h2>
+	</div>
+{% endblock %}
+
+{% block right_pane %}
+<div id="right-pane" style="min-height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+    <div id="right-top-pane" style="width: 100%; height: 540px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
+        <div id="message_thread" style="width: 100%">
+        </div>
+        <div id="waiting-for-partner" class="row" style="margin-left: 0; margin-right: 0; display: none">
+            <div class="alert alert-warning" role="alert" style="float: left; display:table; background-color: #fff">
+                <div id="hourglass" style="margin-top: -1px; margin-right: 5px; display: inline; float: left;">
+                    <?xml version="1.0" encoding="utf-8"?><svg width='25px' height='25px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-hourglass"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><g><path fill="none" stroke="#007282" stroke-width="5" stroke-miterlimit="10" d="M58.4,51.7c-0.9-0.9-1.4-2-1.4-2.3s0.5-0.4,1.4-1.4 C70.8,43.8,79.8,30.5,80,15.5H70H30H20c0.2,15,9.2,28.1,21.6,32.3c0.9,0.9,1.4,1.2,1.4,1.5s-0.5,1.6-1.4,2.5 C29.2,56.1,20.2,69.5,20,85.5h10h40h10C79.8,69.5,70.8,55.9,58.4,51.7z" class="glass"></path><clipPath id="uil-hourglass-clip1"><rect x="15" y="20" width="70" height="25" class="clip"><animate attributeName="height" from="25" to="0" dur="1.5s" repeatCount="indefinite" values="25;0;0" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="20" to="45" dur="1.5s" repeatCount="indefinite" values="20;45;45" keyTimes="0;0.5;1"></animate></rect></clipPath><clipPath id="uil-hourglass-clip2"><rect x="15" y="55" width="70" height="25" class="clip"><animate attributeName="height" from="0" to="25" dur="1.5s" repeatCount="indefinite" values="0;25;25" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="80" to="55" dur="1.5s" repeatCount="indefinite" values="80;55;55" keyTimes="0;0.5;1"></animate></rect></clipPath><path d="M29,23c3.1,11.4,11.3,19.5,21,19.5S67.9,34.4,71,23H29z" clip-path="url(#uil-hourglass-clip1)" fill="#ffab00" class="sand"></path><path d="M71.6,78c-3-11.6-11.5-20-21.5-20s-18.5,8.4-21.5,20H71.6z" clip-path="url(#uil-hourglass-clip2)" fill="#ffab00" class="sand"></path><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="180 50 50" repeatCount="indefinite" dur="1.5s" values="0 50 50;0 50 50;180 50 50" keyTimes="0;0.7;1"></animateTransform></g></svg>
+                </div>
+                <span style="font-size: 16px">Waiting for a partner...</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="right-bottom-pane" style="width: 100%; background-color: #eee">
+        <div id="response-type-idle" class="response-type-module" style="display:none">
+        </div>
+        <div id="response-type-text-input" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <div style="height: 50px; width: 100%; display: block; float: left; ">
+                <input id="id_text_input" type="text" style="width: 80%; height: 100%; float: left; font-size: 16px" class="form-control" value="" placeholder="Please enter here...">
+                <button class="btn btn-primary" style="width: 80px; height: 100%; font-size: 16px; float: left; margin-left: 5px; padding: 0px;" id="id_send_msg_button">Send</button>
+            </div>
+        </div>
+         <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <span id="inactive" style="font-size: 14pt;margin-right: 15px"></span>
+            <button id="done-button" type="button" class="btn btn-primary btn-lg">
+                <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block additional_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/86/three.min.js"></script>
+<script type="text/javascript">
+	var loc = [0, 0, 0];
+	var orientations = ['N', 'E', 'S', 'W'];
+	var show_navigation = true;
+	var boundaries;
+	var neighborhood;
+
+	var steps = {};
+    steps['N'] = [0, 1];
+    steps['E'] = [1, 0];
+    steps['S'] = [0, -1];
+    steps['W'] = [-1, 0];
+
+    var camera, scene, renderer;
+    var mesh;
+    var lon = 0, lat = 20, phi = 0, theta = 0;
+    var target_lon = 0;
+
+    var loader = new THREE.TextureLoader();
+    loader.crossOrigin = '';
+    function init() {
+        var container;
+
+        container = document.getElementById( 'container' );
+        var left_pane = document.getElementById('left-pane');
+
+        camera = new THREE.PerspectiveCamera( 90, left_pane.clientWidth / left_pane.clientHeight, 1, 1100 );
+        camera.target = new THREE.Vector3( 0, 0, 0 );
+
+        scene = new THREE.Scene();
+
+        var geometry = new THREE.SphereGeometry( 500, 60, 40 );
+        geometry.applyMatrix( new THREE.Matrix4().makeScale( -1, 1, 1 ) );
+
+        var material = new THREE.MeshBasicMaterial();
+        mesh = new THREE.Mesh( geometry, material );
+        scene.add(mesh);
+
+        renderer = new THREE.WebGLRenderer({canvas: document.getElementById('streetview')});
+        renderer.setSize( left_pane.clientWidth, left_pane.clientHeight );
+
+        var nav_ctx = document.getElementById('navigation').getContext("2d");
+        nav_ctx.canvas.width = left_pane.clientWidth;
+        nav_ctx.canvas.height = left_pane.clientHeight;
+
+        window.addEventListener( 'resize', onWindowResize, false );
+    }
+
+
+    function show(callback) {
+        var key = loc[0].toString() + '_' + loc[1].toString() + '.jpg';
+				loader.load('https://s3.amazonaws.com/parlai-mturk/talkthewalk_pics/' + neighborhood + '-anon/' + key, function(texture){
+            mesh.material.map = texture;
+            mesh.material.needsUpdate = true;
+            render();
+            callback();
+        }, null, null);
+    }
+
+    function onWindowResize() {
+        var left_pane = document.getElementById('left-pane');
+        camera.aspect = left_pane.clientWidth / left_pane.clientHeight;
+        camera.updateProjectionMatrix();
+
+        var nav_ctx = document.getElementById('navigation').getContext("2d");
+        nav_ctx.canvas.width = left_pane.clientWidth;
+        nav_ctx.canvas.height = left_pane.clientHeight;
+
+        renderer.setSize(left_pane.clientWidth, left_pane.clientHeight);
+    }
+
+    function render() {
+        lat = Math.max( - 85, Math.min( 85, lat ) );
+        phi = THREE.Math.degToRad( 90 - lat );
+        theta = THREE.Math.degToRad( lon );
+
+        // lat-lon to xyz
+        camera.target.x = 500 * Math.sin( phi ) * Math.cos( theta );
+        camera.target.y = 500 * Math.cos( phi );
+        camera.target.z = 500 * Math.sin( phi ) * Math.sin( theta );
+
+        camera.lookAt( camera.target );
+
+        renderer.render( scene, camera );
+    }
+
+
+    function animate_right() {
+        if (lon >= target_lon) {
+            show_navigation = true;
+            return;
+        }
+
+        lon += 1;
+
+        render();
+
+        requestAnimationFrame( animate_right );
+    }
+
+    function animate_left() {
+        if (lon <= target_lon) {
+            show_navigation = true;
+            return;
+        }
+
+        lon -= 1;
+
+        render();
+
+        requestAnimationFrame( animate_left );
+
+    }
+
+	function cache_images(loc) {
+	    // Cache other orientations at current location
+        for (var i =0; i < orientations.length; i++) {
+            var  o = orientations[i];
+            var new_loc_x = loc[0] + steps[o][0];
+            var new_loc_y = loc[1] + steps[o][1];
+            if (new_loc_x >= boundaries[0] && new_loc_x <= boundaries[2] && new_loc_y >= boundaries[1] && new_loc_y <= boundaries[3]) {
+                var key = new_loc_x.toString() + '_' + new_loc_y.toString() + '.jpg';
+                loader.load('https://s3.amazonaws.com/parlai-mturk/talkthewalk_pics/' + neighborhood + '-anon/' + key, function() {});
+            }
+        }
+
+	}
+
+	function draw_arrows(left_color, right_color, forward_color) {
+	    var context = document.getElementById('navigation').getContext("2d");
+
+        var h = context.canvas.height;
+        var w = context.canvas.width;
+        context.clearRect(0, 0, w, h);
+
+	    // RIGHT ARROW
+        context.beginPath();
+        context.moveTo(w-50, h/2 - 50);
+        context.arcTo(w-20, h/2, w-50, h/2 + 50, 20);
+        context.lineTo(w-50, h/2 + 50);
+        context.lineWidth = 8;
+        context.strokeStyle = right_color;
+        context.stroke();
+
+        // LEFT ARROW
+        context.beginPath();
+        context.moveTo(50, h/2 - 50);
+        context.arcTo(20, h/2, 50, h/2 + 50, 20);
+        context.lineTo(50, h/2 + 50);
+        context.lineWidth = 8;
+        context.strokeStyle = left_color;
+        context.stroke();
+
+        // FORWARD ARROW
+        context.beginPath();
+        context.moveTo(w/2 - 50, 50);
+        context.arcTo(w/2, 20, w/2 + 50, 50, 20);
+        context.lineTo(w/2 + 50, 50);
+
+        context.lineWidth = 8;
+        context.strokeStyle = forward_color;
+        context.stroke();
+
+//        draw_compass();
+    }
+
+    function draw_compass() {
+        var context = document.getElementById('navigation').getContext("2d");
+        var h = context.canvas.height;
+        var w = context.canvas.width;
+
+        context.font = '14pt times';
+        context.fillText('N', w - 65, 25);
+        context.fillText('S', w - 65, 108);
+        context.fillText('E', w - 25, 65);
+        context.fillText('W', w - 108, 65);
+
+        context.beginPath();
+        context.lineWidth = 3;
+        context.strokeStyle = '#000';
+
+        switch(loc[2]) {
+            case 0:
+                context.moveTo(w - 60, 60);
+                context.lineTo(w - 60, 30);
+                context.moveTo(w - 56, 34);
+                context.lineTo(w - 60, 30);
+                context.moveTo(w - 64, 34);
+                context.lineTo(w - 60, 30);
+                context.stroke();
+                break;
+            case 1:
+                context.moveTo(w - 60, 60);
+                context.lineTo(w - 30, 60);
+                context.moveTo(w - 34, 64);
+                context.lineTo(w - 30, 60);
+                context.moveTo(w - 34, 56);
+                context.lineTo(w - 30, 60);
+                context.stroke();
+                break;
+            case 2:
+                context.moveTo(w - 60, 60);
+                context.lineTo(w - 60, 90);
+                context.moveTo(w - 56, 86);
+                context.lineTo(w - 60, 90);
+                context.moveTo(w - 64, 86);
+                context.lineTo(w - 60, 90);
+                context.stroke();
+                break;
+            case 3:
+                context.moveTo(w - 60, 60);
+                context.lineTo(w - 90, 60);
+                context.moveTo(w - 86, 56);
+                context.lineTo(w - 90, 60);
+                context.moveTo(w - 86, 64);
+                context.lineTo(w - 90, 60);
+                context.stroke();
+                break;
+        }
+    }
+
+
+    function handle_new_message(new_message_id, message) {
+        var agent_id = message.id;
+        if (displayed_messages.indexOf(new_message_id) !== -1) {
+          // This message has already been seen and put up into the chat
+          return;
+        }
+
+        displayed_messages.push(new_message_id);
+				if (agent_id === 'ACTION') {
+					if (message['text'] == 'ACTION:TURNLEFT') {
+						turn_left();
+					}
+					else if (message['text'] == 'ACTION:TURNRIGHT') {
+						turn_right();
+					}
+					else if (message['text'] == 'ACTION:FORWARD') {
+						forward();
+					}
+				}
+        if (agent_id == 'WORLD_LOCATION') {
+            init();
+            loc = message['text']['location'];
+            lon = loc[2]*90 + 180;
+            boundaries = message['text']['boundaries'];
+            neighborhood = message['text']['neighborhood'];
+
+            show(onWindowResize);
+            draw_arrows('white', 'white', 'white');
+            cache_images(loc);
+        } else if (agent_id === 'WORLD_TIMEOUT') {
+            update_UI_for_response_type('inactive');
+            $('#inactive').text('You\'ve timed out. Please return the HIT.');
+        } else if (agent_id === 'WORLD_PARTNER_TIMEOUT') {
+            task_done = true;
+            update_UI_for_response_type('done');
+            $('#inactive').text('Your partner timed out.');
+            $("div#waiting-for-message").css("display", "none");
+        } else if (agent_id === 'WORLD_SUCCESS') {
+            update_UI_for_response_type('done');
+            $('#inactive').text('Congratulations! You have been successfully guided to the target location.');
+            $('#inactive').css('color', '#fff');
+            $('#right-bottom-pane').css('background-color', '#4cd964');
+        } else if (agent_id === 'WORLD_FAIL') {
+            update_UI_for_response_type('done');
+            $('#inactive').text('Unfortunately, you haven\'t been guided to the target location.');
+            $('#inactive').css('color', '#fff');
+            $('#right-bottom-pane').css('background-color', '#ff3b30');
+        } else if (agent_id === 'Guide' && !message['episode_done']) {
+						if (message['text'] !== '') {
+							$('div#message_thread').append(`
+	                <div class="row" style="margin-left: 0; margin-right: 0">
+	                    <div class="alert alert-warning" role="alert" style="float: right; display:table">
+	                        <span style="font-size: 16px"><b>` + agent_id + `</b>: ` + message['text'] + `</span>
+	                    </div>
+	                </div>
+	            `);
+						}
+            show_navigation = true;
+            draw_arrows('white', 'white', 'white');
+
+        } else if (!agent_id.startsWith('WORLD') && message['text'] && !message['text'].startsWith('ACTION:')) {
+            $('div#message_thread').append(`
+            <div class="row" style="margin-left: 0; margin-right: 0">
+                <div class="alert alert-info" role="alert" style="float: left; display:table">
+                    <span style="font-size: 16px"><b>` + agent_id + `</b>: ` + message['text'] + `</span>
+                </div>
+            </div>
+            `);
+        }
+
+        $("div#message_thread").css("display", "");
+        scroll_conversation_to_bottom();
+    }
+
+    $('#navigation').click(function (e) {
+        if(show_navigation) {
+            var clickedX = e.pageX - this.offsetLeft;
+            var clickedY = e.pageY - this.offsetTop;
+
+            var w = this.width;
+            var h = this.height;
+
+            if (clickedX >= 20 && clickedX <= 50 && clickedY >= h / 2 - 50 && clickedY < h / 2 + 50) {
+                // Go left
+                show_navigation = false;
+                turn_left();
+            } else if (clickedX >= w - 50 && clickedX <= w - 20 && clickedY >= h / 2 - 50 && clickedY < h / 2 + 50) {
+                // Go right
+                show_navigation = false;
+                turn_right();
+            } else if (clickedX >= w / 2 - 50 && clickedX <= w / 2 + 50 && clickedY >= 20 && clickedY < 50) {
+                show_navigation = false;
+                forward();
+            }
+        }
+    });
+
+	function turn_left() {
+	    target_lon = lon - 90;
+	    loc[2] = ((loc[2] == 0) ? 3 : loc[2] - 1);
+	    animate_left();
+	    draw_arrows('white', 'white', 'white');
+	    send_packet(
+            TYPE_MESSAGE,
+            {text: 'ACTION:TURNLEFT',
+             id: cur_agent_id,
+             episode_done: false},
+            true,
+            true,
+            null);
+
+
+    }
+
+    function turn_right() {
+	    target_lon = lon + 90;
+	    loc[2] = (loc[2]+1) % 4;
+	    animate_right();
+	    draw_arrows('white', 'white', 'white');
+        send_packet(
+            TYPE_MESSAGE,
+            {text: 'ACTION:TURNRIGHT',
+             id: cur_agent_id,
+             episode_done: false},
+            true,
+            true,
+            null);
+
+    }
+
+    function forward() {
+	    send_packet(
+            TYPE_MESSAGE,
+            {text: 'ACTION:FORWARD',
+             id: cur_agent_id,
+             episode_done: false},
+            true,
+            true,
+            null);
+        var step = steps[orientations[loc[2]]];
+        var prev_loc = [loc[0], loc[1], loc[2]];
+        loc[0] += step[0];
+        loc[1] += step[1];
+        if (loc[0] > boundaries[2] || loc[0] < boundaries[0] || loc[1] < boundaries[1] || loc[1] > boundaries[3]) {
+            loc[0] = Math.max(Math.min(loc[0], boundaries[2]), boundaries[0]);
+            loc[1] = Math.max(Math.min(loc[1], boundaries[3]), boundaries[1]);
+            $('#endofworld').show();
+            $('#streetview').fadeOut(500).delay(1500).fadeIn(500);
+            show_navigation = true;
+            return;
+        }
+
+        if ((Math.floor(prev_loc[0]/2) !== Math.floor(loc[0]/2)) || (Math.floor(prev_loc[1]/2) !== Math.floor(loc[1]/2))) {
+            // walking to next intersection
+            $('#endofworld').hide();
+            $('#walkingman').show();
+            $('#streetview').fadeOut(500, function(){show(function() {$('#streetview').fadeIn(500); show_navigation = true;});});
+        } else {
+            $('#endofworld').hide();
+            $('#walkingman').hide();
+            $('#streetview').fadeOut(500, function(){show(function() {$('#streetview').fadeIn(500); show_navigation = true;});});
+        }
+
+        cache_images(loc);
+    }
+
+	$('#navigation').mousemove(function (e) {
+	    if (show_navigation) {
+            var X = e.pageX - this.offsetLeft;
+            var Y = e.pageY - this.offsetTop;
+
+            var w = this.width;
+            var h = this.height;
+
+            // Note: arrow needs to be drawn after image, otherwise it's not visible
+            if (X >= 20 && X <= 50 && Y >= h / 2 - 50 && Y < h / 2 + 50) {
+                $('#navigation').css('cursor', 'pointer');
+                draw_arrows('red', 'white', 'white');
+            } else if (X >= w - 50 && X <= w - 20 && Y >= h / 2 - 50 && Y < h / 2 + 50) {
+                $('#navigation').css('cursor', 'pointer');
+                draw_arrows('white', 'red', 'white');
+            } else if (X >= w / 2 - 50 && X <= w / 2 + 50 && Y >= 20 && Y < 50) {
+                $('#navigation').css('cursor', 'pointer');
+                draw_arrows('white', 'white', 'red');
+            } else {
+                $('#navigation').css('cursor', 'default');
+                draw_arrows('white', 'white', 'white');
+            }
+        }
+    });
+	$(window).resize(function() {
+		$("div#right-top-pane").height($("div#left-pane").height() - $("div#right-bottom-pane").outerHeight() - 80);
+	});
+
+	function after_send_packet() {
+        wait_for_worker_input();
+    }
+
+
+</script>
+{% endblock %}

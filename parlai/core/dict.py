@@ -141,9 +141,6 @@ class DictionaryAgent(Agent):
                 '--bpe-num-symbols', default=30000, type=int,
                 help='Number of BPE symbols. Recommended between 30000 and 40000')
             dictionary.add_argument(
-                '--bpe-codecs-file',
-                help='Filename for the BPE codecs. Defaults to dictfile.codecs.')
-            dictionary.add_argument(
                 '--bpe-debug', action='store_true',
                 help='Leave BPE tokens untouched in output. Useful for debugging.')
         except argparse.ArgumentError:
@@ -181,26 +178,19 @@ class DictionaryAgent(Agent):
             self.ind2tok = {}
 
             if self.null_token:
-                self.tok2ind[self.null_token] = 0
-                self.ind2tok[0] = self.null_token
+                self.add_token(self.null_token)
 
             if self.start_token:
                 # set special start of sentence word token
-                index = len(self.tok2ind)
-                self.tok2ind[self.start_token] = index
-                self.ind2tok[index] = self.start_token
+                self.add_token(self.start_token)
 
             if self.end_token:
                 # set special end of sentence word token
-                index = len(self.tok2ind)
-                self.tok2ind[self.end_token] = index
-                self.ind2tok[index] = self.end_token
+                self.add_token(self.end_token)
 
             if self.unk_token:
                 # set special unknown word token
-                index = len(self.tok2ind)
-                self.tok2ind[self.unk_token] = index
-                self.ind2tok[index] = self.unk_token
+                self.add_token(self.unk_token)
 
             if opt.get('dict_file') and os.path.isfile(opt['dict_file']):
                 # load pre-existing dictionary
@@ -234,17 +224,14 @@ class DictionaryAgent(Agent):
                                   'at spacy.io')
             self.NLP = spacy.load('en')
         elif self.tokenizer == 'bpe':
-            if not opt.get('bpe_codecs_file'):
-                if not opt.get('dict_file'):
-                    raise RuntimeError('--bpe-codecs-file or --dict-file is mandatory.')
-                opt['bpe_codecs_file'] = opt.get('dict_file') + '.codecs'
+            if not opt.get('dict_file'):
+                raise RuntimeError('--dict-file is mandatory.')
             self.bpehelper = _BPEHelper(
-                opt.get('bpe_codecs_file'),
+                opt.get('dict_file') + '.codecs',
                 num_symbols=opt.get('bpe_num_symbols'),
             )
 
         if not shared:
-
             if self.null_token:
                 # fix count for null token to one billion and three
                 self.freq[self.null_token] = 1000000003
@@ -263,6 +250,12 @@ class DictionaryAgent(Agent):
 
             if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
+
+    def add_token(self, word):
+        if word not in self.tok2ind:
+            index = len(self.tok2ind)
+            self.tok2ind[word] = index
+            self.ind2tok[index] = word
 
     def __contains__(self, key):
         """If key is an int, returns whether the key is in the indices.
@@ -298,10 +291,7 @@ class DictionaryAgent(Agent):
         if self.lower:
             key = key.lower()
         self.freq[key] = int(value)
-        if key not in self.tok2ind:
-            index = len(self.tok2ind)
-            self.tok2ind[key] = index
-            self.ind2tok[index] = key
+        self.add_token(key)
 
     def keys(self):
         return self.tok2ind.keys()
@@ -417,11 +407,8 @@ class DictionaryAgent(Agent):
     def add_to_dict(self, tokens):
         """ Builds dictionary from the list of provided tokens."""
         for token in tokens:
+            self.add_token(token)
             self.freq[token] += 1
-            if token not in self.tok2ind:
-                index = len(self.tok2ind)
-                self.tok2ind[token] = index
-                self.ind2tok[index] = token
 
     def remove_tail(self, min_freq):
         to_remove = []
@@ -456,10 +443,7 @@ class DictionaryAgent(Agent):
                 token = unescape(split[0])
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
-                if token not in self.tok2ind:
-                    index = len(self.tok2ind)
-                    self.tok2ind[token] = index
-                    self.ind2tok[index] = token
+                self.add_token(token)
         print('[ num words =  %d ]' % len(self))
 
     def save(self, filename=None, append=False, sort=True):
@@ -488,13 +472,17 @@ class DictionaryAgent(Agent):
         with open(filename + '.opt', 'wb') as handle:
             pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def sort(self):
+    def sort(self, trim=True):
         """Sorts the dictionary, so that the elements with the lowest index have
         the highest counts. This reindexes the dictionary according to the
         sorted frequencies, breaking ties alphabetically by token.
+
+        :param bool trim: If True, truncate the dictionary based on minfreq and
+            maxtokens.
         """
         # sort first by count, then alphabetically
-        self.remove_tail(self.minfreq)
+        if trim:
+            self.remove_tail(self.minfreq)
         sorted_pairs = sorted(self.freq.items(), key=lambda x: (-x[1], x[0]))
         new_tok2ind = {}
         new_ind2tok = {}
@@ -503,7 +491,8 @@ class DictionaryAgent(Agent):
             new_ind2tok[i] = tok
         self.tok2ind = new_tok2ind
         self.ind2tok = new_ind2tok
-        self.resize_to_max(self.maxtokens)
+        if trim:
+            self.resize_to_max(self.maxtokens)
         return sorted_pairs
 
     def parse(self, txt_or_vec, vec_type=list):
