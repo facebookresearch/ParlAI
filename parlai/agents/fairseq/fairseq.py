@@ -360,7 +360,11 @@ class FairseqAgent(TorchAgent):
         return super().batchify(*args, **kwargs)
 
     def train_step(self, batch):
-        """Process batch of inputs and targets and train on them."""
+        """Process batch of inputs and targets and train on them.
+
+        :param batch: parlai.core.torch_agent.Batch, contains tensorized
+                      version of observations.
+        """
         self.is_training = True
         samples = self._make_sample(batch.text_vec, batch.label_vec)
         self.model.train()
@@ -371,6 +375,9 @@ class FairseqAgent(TorchAgent):
 
         If the batch includes labels, calculate validation metrics as well.
         If --skip-generation is not set, return a prediction for each input.
+
+        :param batch: parlai.core.torch_agent.Batch, contains tensorized
+                      version of observations.
         """
         self.is_training = False
         samples = self._make_sample(batch.text_vec, batch.label_vec)
@@ -410,6 +417,7 @@ class FairseqAgent(TorchAgent):
         return responses
 
     def report(self):
+        """Return metrics calculated by the model."""
         # if we haven't initialized yet, just return a dummy object
         if not hasattr(self, "trainer"):
             return {}
@@ -437,31 +445,32 @@ class FairseqAgent(TorchAgent):
         return m
 
     def reset_metrics(self):
+        """Reset metrics calculated by the model back to zero."""
         if not hasattr(self, "trainer"):
-            # We haven't initialized the trainer yet, so we don't have any metrics
+            # We haven't set up the trainer yet, so we don't have any metrics
             return
         # We need to reset everything
         for k in self.trainer.meters:
             self.trainer.meters[k].reset()
 
     def receive_metrics(self, metrics_dict):
-        """Used to update lr scheduler."""
+        """Update lr scheduler with validation loss."""
         self.trainer.lr_step(-1, metrics_dict["valid_loss"])
 
     # Helper functions
     def _seq_length(self, xs):
-        """Computes length of the sequence (non-padded size)"""
+        """Compute length of the sequence (non-padded size)."""
         return xs.ne(self.dict.pad_index).long().sum(dim=-1)
 
     def _right_shifted_ys(self, ys):
-        """Replaces first token with EOS and shifts the remaining tokens right one."""
+        """Replace first token with EOS and shift remaining tokens right 1."""
         result = torch.LongTensor(ys.size())
         result[:, 0] = self.dict.eos_index
         result[:, 1:] = ys[:, :-1]
         return result
 
     def _make_sample(self, xs, ys):
-        """Generates a sample object that Fairseq expects."""
+        """Generate a sample object that Fairseq expects."""
         # add extra info to samples
         # TODO: should the right/left padding thing be in torch agent?
         repadded = convert_padding_direction(xs, self.dict.pad(), right_to_left=True)

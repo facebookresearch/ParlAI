@@ -195,8 +195,8 @@ class ExampleSeq2seqAgent(TorchAgent):
     def train_step(self, batch):
         """Train model to produce ys given xs.
 
-        :params batch: parlai.core.torch_agent.Batch, contains tensorized
-                       version of observations.
+        :param batch: parlai.core.torch_agent.Batch, contains tensorized
+                      version of observations.
 
         Return estimated responses, with teacher forcing on the input sequence
         (list of strings of length batchsize).
@@ -231,8 +231,8 @@ class ExampleSeq2seqAgent(TorchAgent):
     def eval_step(self, batch):
         """Generate a response to the input tokens.
 
-        :params batch: parlai.core.torch_agent.Batch, contains tensorized
-                       version of observations.
+        :param batch: parlai.core.torch_agent.Batch, contains tensorized
+                      version of observations.
 
         Return predicted responses (list of strings of length batchsize).
         """
