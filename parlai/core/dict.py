@@ -467,7 +467,6 @@ class DictionaryAgent(Agent):
         If ``sort`` (default ``True``), then first sort the dictionary before saving.
         """
         filename = self.opt['dict_file'] if filename is None else filename
-        print('Dictionary: saving dictionary to {}'.format(filename))
 
         if self.tokenizer == 'bpe':
             self.bpehelper.finalize(self.freq, num_symbols=self.maxtokens,
@@ -476,6 +475,8 @@ class DictionaryAgent(Agent):
             self.sort(trim=False)
         elif sort:
             self.sort(trim=True)
+
+        print('Dictionary: saving dictionary to {}'.format(filename))
 
         make_dir(os.path.dirname(filename))
         with open(filename, 'a' if append else 'w') as write:
@@ -646,6 +647,8 @@ class _BPEHelper(object):
         if hasattr(self, 'bpe'):
             # we already finalized the codecs
             return False
+
+        print('[ building bpe codecs and saving to {} ]'.format(self.codes))
 
         dictionary = (f'{k} {v}' for k, v in frequencies.items())
 
