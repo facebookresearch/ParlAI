@@ -269,15 +269,34 @@ class MultiTaskTeacher(Teacher):
 
 
 def name_to_agent_class(name):
+    """Convert agent name to class.
+
+    This adds "Agent" to the end of the name and uppercases the first letter
+    and the first letter appearing after each underscore (underscores are
+    removed).
+
+    :param name: name of agent, e.g. local_human
+
+    Returns class of agent, e.g. LocalHumanAgent.
+    """
     words = name.split('_')
     class_name = ''
     for w in words:
-        class_name += ( w[0].upper() + w[1:])
+        class_name += (w[0].upper() + w[1:])
     class_name += 'Agent'
     return class_name
 
 
 def load_agent_module(opt):
+    """Load agent options and module from file if opt file exists.
+
+    Checks to see if file exists opt['model_file'] + ".opt"; if so, load up the
+    options from the file and use that to create an agent, loading the model
+    type from that file and overriding any options specified in that file when
+    instantiating the agent.
+
+    If that file does not exist, return None.
+    """
     model_file = opt['model_file']
     optfile = model_file + '.opt'
     if os.path.isfile(optfile):
@@ -306,23 +325,50 @@ def load_agent_module(opt):
 
 
 def get_agent_module(dir_name):
+    """Return the module for an agent specified by `--model`.
+
+    Can be formatted in several different ways:
+    - full: -m parlai.agents.seq2seq.seq2seq:Seq2seqAgent
+    - shorthand: -m seq2seq, which will check both paths
+        parlai.agents.seq2seq.seq2seq:Seq2seqAgent and
+        parlai.agents.seq2seq.agents:Seq2seqAgent
+    - half-shorthand: -m seq2seq/variant, which will check the path
+        parlai.agents.seq2seq.variant:VariantAgent
+
+    The base path to search when using shorthand formats can be changed from
+    "parlai" to "parlai_internal" by prepending "internal:" to the path, e.g.
+    "internal:seq2seq".
+
+    :param dir_name: path to model class in one of the above formats.
+    """
     repo = 'parlai'
     if dir_name.startswith('internal:'):
         # To switch to local repo, useful for non-public projects
         # (make a directory called 'parlai_internal' with your private agents)
+        # this will follow the same paths but look in parlai_internal instead
         repo = 'parlai_internal'
         dir_name = dir_name[9:]
     if ':' in dir_name:
+        # e.g. -m "parlai.agents.seq2seq.seq2seq:Seq2seqAgent"
         s = dir_name.split(':')
         module_name = s[0]
         class_name = s[1]
     elif '/' in dir_name:
+        # e.g. -m my_agent/special_variant
+        # will check parlai.agents.my_agent.special_variant:SpecialVariantAgent
         sp = dir_name.split('/')
         module_name = "%s.agents.%s.%s" % (repo, sp[0], sp[1])
         class_name = name_to_agent_class(sp[1])
     else:
-        module_name = "%s.agents.%s.%s" % (repo, dir_name, dir_name)
+        # e.g. -m seq2seq
+        # will check parlai.agents.seq2seq.agents for Seq2seqAgent first
+        # then check parlai.agents.seq2seq.seq2seq for Seq2seqAgent second
         class_name = name_to_agent_class(dir_name)
+        try:
+            module_name = "%s.agents.%s.agents" % (repo, dir_name)
+            importlib.import_module(module_name)  # check if it's there
+        except ImportError:
+            module_name = "%s.agents.%s.%s" % (repo, dir_name, dir_name)
     my_module = importlib.import_module(module_name)
     model_class = getattr(my_module, class_name)
     return model_class
@@ -352,15 +398,15 @@ def create_agent(opt, requireModelExists=False):
         opt_parser = parser.parse_args("", print_args=False)
         for k, v in opt_parser.items():
             if k not in opt:
-                opt[k] = opt_parser[k]
+                opt[k] = v
 
     if opt.get('model_file'):
         opt['model_file'] = modelzoo_path(opt.get('datapath'), opt['model_file'])
         if requireModelExists and not os.path.isfile(opt['model_file']):
             raise RuntimeError('WARNING: Model file does not exist, check to make '
                                'sure it is correct: {}'.format(opt['model_file']))
-        # Attempt to load the model from the model file first (this way we do not even
-        # have to specify the model name as a parameter.
+        # Attempt to load the model from the model file first (this way we do
+        # not even have to specify the model name as a parameter)
         model = load_agent_module(opt)
         if model is not None:
             return model
@@ -377,23 +423,55 @@ def create_agent(opt, requireModelExists=False):
     else:
         raise RuntimeError('Need to set `model` argument to use create_agent.')
 
+
 # Helper functions to create agent/agents given shared parameters
 # returned from agent.share(). Useful for parallelism, sharing params, etc.
 def create_agent_from_shared(shared_agent):
-    opt = copy.deepcopy(shared_agent['opt'])
+    """Instantiate an agent from the default `shared` params.
+
+    :param shared_agent: should include an `opt` dictionary and agent `class`,
+        along with whatever other parameters the agent needs to instantiate.
+    """
+    opt = copy.deepcopy(shared_agent['opt'])  # TODO: is this slow sometimes?
     a = shared_agent['class'](opt, shared_agent)
     return a
 
+
 def create_agents_from_shared(shared):
-    # create agents based on shared data.
+    """Create agents based on shared data.
+
+    :param shared: `list` of `dict` objects created by calling e.g.
+        [a.share() for a in agents].
+
+    Returns a list of instantiated agents.
+    """
     shared_agents = []
     for shared_agent in shared:
         agent = create_agent_from_shared(shared_agent)
         shared_agents.append(agent)
     return shared_agents
 
+
 def get_task_module(taskname):
-    # get the module of the task agent
+    """Get the module of the task agent specified by `--task`.
+
+    Can be formatted in several different ways:
+    - full: -t parlai.tasks.babi.agents:DefaultTeacher
+    - shorthand: -t babi, which will check
+        parlai.tasks.babi.agents:DefaultTeacher
+    - shorthand specific: -t babi:task10k, which will check
+        parlai.tasks.babi.agents:Task10kTeacher
+
+    The base path to search when using shorthand formats can be changed from
+    "parlai" to "parlai_internal" by prepending "internal:" to the path, e.g.
+    "internal:babi".
+
+    Options can be sent to the teacher by adding an additional colon,
+    for example "-t babi:task10k:1" directs the babi Task10kTeacher to use
+    task number 1.
+
+    :param taskname: path to task class in one of the above formats.
+    """
     sp = taskname.strip()
     repo = 'parlai'
     if sp.startswith('internal:'):
@@ -418,7 +496,7 @@ def get_task_module(taskname):
             words = teacher.split('_')
             teacher_name = ''
             for w in words:
-                teacher_name += ( w[0].upper() + w[1:])
+                teacher_name += (w[0].upper() + w[1:])
             teacher = teacher_name + "Teacher"
     else:
         teacher = "DefaultTeacher"
@@ -426,8 +504,9 @@ def get_task_module(taskname):
     teacher_class = getattr(my_module, teacher)
     return teacher_class
 
+
 def create_task_agent_from_taskname(opt):
-    """Creates task agent(s) assuming the input ``task_dir:teacher_class``.
+    """Create task agent(s) assuming the input ``task_dir:teacher_class``.
 
     e.g. def_string is a shorthand path like ``babi:Task1k:1`` or ``#babi``
     or a complete path like ``parlai.tasks.babi.agents:Task1kTeacher:1``,
@@ -455,7 +534,8 @@ def create_task_agent_from_taskname(opt):
 
 
 def _create_task_agents(opt):
-    """Creates task agent(s) for the given task name.
+    """Create task agent(s) for the given task name.
+
     It does this by calling the create_agent function in agents.py of the
     given task.
     If create_agents function does not exist, it just looks for
