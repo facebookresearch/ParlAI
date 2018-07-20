@@ -112,7 +112,7 @@ class TestTorchAgent(unittest.TestCase):
 
     def test_map_unmap(self):
         try:
-            from parlai.core.torch_agent import TorchAgent
+            from parlai.core.torch_agent import TorchAgent, Output
         except ImportError as e:
             if 'pytorch' in e.msg:
                 print('Skipping TestTorchAgent.test_map_unmap, no pytorch.')
@@ -178,10 +178,11 @@ class TestTorchAgent(unittest.TestCase):
 
         batch_reply = [{} for i in range(6)]
         predictions = ["Oil on a canvas.", "Oil on a canvas."]
+        output = Output(predictions, None)
         expected_unmapped = batch_reply.copy()
         expected_unmapped[0]["text"] = "Oil on a canvas."
         expected_unmapped[3]["text"] = "Oil on a canvas."
-        self.assertTrue(agent.match_batch(batch_reply, batch.valid_indices, predictions) == expected_unmapped,
+        self.assertTrue(agent.match_batch(batch_reply, batch.valid_indices, output) == expected_unmapped,
                         "Unmapped predictions do not match expected results.")
 
     def test_maintain_dialog_history(self):
