@@ -40,16 +40,13 @@ def _path(opt, version):
 
     if dt == 'train':
         annotation_suffix = 'train{}'.format(version)
-        img_suffix = os.path.join('train{}'.format(version),
-                                  'COCO_train{}_'.format(version))
+        img_suffix = os.path.join('train{}'.format(version))
     elif dt == 'valid':
         annotation_suffix = 'val{}'.format(version)
-        img_suffix = os.path.join('val{}'.format(version),
-                                  'COCO_val{}_'.format(version))
+        img_suffix = os.path.join('val{}'.format(version))
     elif dt == 'test':
         annotation_suffix = 'None'
-        img_suffix = os.path.join('test{}'.format(version),
-                                  'COCO_test{}_'.format(version))
+        img_suffix = os.path.join('test{}'.format(version))
     else:
         raise RuntimeError('Not valid datatype.')
 
@@ -70,7 +67,8 @@ def _path(opt, version):
 
 
 class DefaultDataset(Dataset):
-    """A Pytorch Dataset utilizing streaming"""
+    """A Pytorch Dataset utilizing streaming."""
+
     def __init__(self, opt, version='2014'):
         self.opt = opt
         self.use_hdf5 = opt.get('use_hdf5', False)
@@ -144,27 +142,27 @@ class DefaultDataset(Dataset):
         # find the image IDs in annotations or test image info
         if not self.datatype.startswith('test'):
             for anno in self.annotation['annotations']:
-                self.image_paths.add(self.image_path + '%012d.jpg' % (anno['image_id']))
+                self.image_paths.add(os.path.join(self.image_path, '%012d.jpg' % (anno['image_id'])))
         else:
             for info in self.test_info['images']:
-                self.image_paths.add(self.image_path + '%012d.jpg' % (info['id']))
+                self.image_paths.add(os.path.join(self.image_path, '%012d.jpg' % (info['id'])))
 
 
     def _setup_image_data(self):
         '''hdf5 image dataset'''
         extract_feats(self.opt)
         im = self.opt.get('image_mode')
-        hdf5_path = self.image_path + 'mode_{}_noatt.hdf5'.format(im)
+        hdf5_path = os.path.join(self.image_path, 'mode_{}_noatt.hdf5'.format(im))
         hdf5_file = self.h5py.File(hdf5_path, 'r')
         self.image_dataset = hdf5_file['images']
 
-        image_id_to_idx_path = self.image_path + 'mode_{}_id_to_idx.txt'.format(im)
+        image_id_to_idx_path = os.path.join(self.image_path, 'mode_{}_id_to_idx.txt'.format(im))
         with open(image_id_to_idx_path, 'r') as f:
             self.image_id_to_idx = json.load(f)
 
     def get_image(self, image_id):
         if not self.use_hdf5:
-            im_path = self.image_path + '%012d.jpg' % (image_id)
+            im_path = os.path.join(self.image_path, '%012d.jpg' % (image_id))
             return self.image_loader.load(im_path)
         else:
             img_idx = self.image_id_to_idx[str(image_id)]
@@ -234,7 +232,7 @@ class DefaultTeacher(FixedDialogTeacher):
         return self.num_examples()
 
     def submit_load_request(self, image_id):
-        img_path = self.image_path + '%012d.jpg' % (image_id)
+        img_path = os.path.join(self.image_path, '%012d.jpg' % (image_id))
         self.data_loader.request_load(self.receive_data, self.image_loader.load, (img_path,))
 
     def get(self, episode_idx, entry_idx=0):
