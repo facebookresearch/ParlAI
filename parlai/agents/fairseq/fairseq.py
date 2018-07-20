@@ -415,6 +415,8 @@ class FairseqAgent(TorchAgent):
         :param batch: parlai.core.torch_agent.Batch, contains tensorized
                       version of observations.
         """
+        if batch.text_vec is None:
+            return
         self.is_training = True
         samples = self._make_sample(batch.text_vec, batch.label_vec)
         self.model.train()
@@ -429,6 +431,8 @@ class FairseqAgent(TorchAgent):
         :param batch: parlai.core.torch_agent.Batch, contains tensorized
                       version of observations.
         """
+        if batch.text_vec is None:
+            return
         self.is_training = False
         samples = self._make_sample(batch.text_vec, batch.label_vec)
         self.model.eval()

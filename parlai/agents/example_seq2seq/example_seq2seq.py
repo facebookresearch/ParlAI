@@ -202,6 +202,8 @@ class ExampleSeq2seqAgent(TorchAgent):
         (list of strings of length batchsize).
         """
         xs, ys = batch.text_vec, batch.label_vec
+        if xs is None:
+            return
         bsz = xs.size(0)
         starts = self.START.expand(bsz, 1)  # expand to batch size
         loss = 0
@@ -237,6 +239,8 @@ class ExampleSeq2seqAgent(TorchAgent):
         Return predicted responses (list of strings of length batchsize).
         """
         xs = batch.text_vec
+        if xs is None:
+            return
         bsz = xs.size(0)
         starts = self.START.expand(bsz, 1)  # expand to batch size
         # just predict
