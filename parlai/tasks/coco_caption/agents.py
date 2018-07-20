@@ -40,13 +40,19 @@ def _path(opt, version):
 
     if dt == 'train':
         annotation_suffix = 'train{}'.format(version)
-        img_suffix = os.path.join('train{}'.format(version))
+        img_suffix = os.path.join(
+                  'train{}'.format(version),
+                  'COCO_train{}_'.format(version) if version == '2014' else '')
     elif dt == 'valid':
         annotation_suffix = 'val{}'.format(version)
-        img_suffix = os.path.join('val{}'.format(version))
+        img_suffix = os.path.join(
+                  'val{}'.format(version),
+                  'COCO_val{}_'.format(version) if version == '2014' else '')
     elif dt == 'test':
         annotation_suffix = 'None'
-        img_suffix = os.path.join('test{}'.format(version))
+        img_suffix = os.path.join(
+                  'test{}'.format(version),
+                  'COCO_test{}_'.format(version) if version == '2014' else '')
     else:
         raise RuntimeError('Not valid datatype.')
 
@@ -142,10 +148,10 @@ class DefaultDataset(Dataset):
         # find the image IDs in annotations or test image info
         if not self.datatype.startswith('test'):
             for anno in self.annotation['annotations']:
-                self.image_paths.add(os.path.join(self.image_path, '%012d.jpg' % (anno['image_id'])))
+                self.image_paths.add(self.image_path + '%012d.jpg' % (anno['image_id']))
         else:
             for info in self.test_info['images']:
-                self.image_paths.add(os.path.join(self.image_path, '%012d.jpg' % (info['id'])))
+                self.image_paths.add(self.image_path + '%012d.jpg' % (info['id']))
 
 
     def _setup_image_data(self):
@@ -232,7 +238,7 @@ class DefaultTeacher(FixedDialogTeacher):
         return self.num_examples()
 
     def submit_load_request(self, image_id):
-        img_path = os.path.join(self.image_path, '%012d.jpg' % (image_id))
+        img_path = self.image_path + '%012d.jpg' % (image_id)
         self.data_loader.request_load(self.receive_data, self.image_loader.load, (img_path,))
 
     def get(self, episode_idx, entry_idx=0):
