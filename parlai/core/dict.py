@@ -25,22 +25,34 @@ except ImportError:
 
 RETOK = re.compile(r'\w+|[^\w\s]|\n', re.UNICODE)
 
+
 def escape(s):
-    """Replace potential special characters with escaped version.
-    For example, newline => \\n and tab => \\t
+    r"""Replace potential special characters with escaped version.
+
+    For example, \n => \\n and \t => \\t
+
+    :param s: string to escape
     """
     return s.replace('\n', '\\n').replace('\t', '\\t').replace('\r', '\\r')
 
 
 def unescape(s):
-    """Revert escaped characters back to their special version.
-    For example, \\n => newline and \\t => tab
+    r"""Revert escaped characters back to their special version.
+
+    For example, \\n => \n and \\t => \t
+
+    :param s: string to unescape
     """
     return s.replace('\\n', '\n').replace('\\t', '\t').replace('\\r', '\r')
 
 
 def find_ngrams(token_dict, text, n):
-    """Breaks text into ngrams that appear in ``token_dict``."""
+    """Break text into ngrams that appear in ``token_dict``.
+
+    :param token_dict: ``dict`` to check for ngrams
+    :param text: ``str`` to look for ngrams in
+    :param n: ``int`` max size of ngrams
+    """
     # base case
     if n <= 1:
         return text
@@ -68,6 +80,7 @@ def find_ngrams(token_dict, text, n):
     saved_tokens.extend(find_ngrams(token_dict, remainder, sub_n))
     return saved_tokens
 
+
 class DictionaryAgent(Agent):
     """Builds and/or loads a dictionary.
 
@@ -90,61 +103,58 @@ class DictionaryAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        try:
-            dictionary = argparser.add_argument_group('Dictionary Arguments')
-            dictionary.add_argument(
-                '--dict-file',
-                help='if set, the dictionary will automatically save to this path'
-                     ' during shutdown')
-            dictionary.add_argument(
-                '--dict-initpath',
-                help='path to a saved dictionary to load tokens / counts from to '
-                     'seed the dictionary with initial tokens and/or frequencies')
-            dictionary.add_argument(
-                '--dict-language', default=DictionaryAgent.default_lang,
-                help='sets language for the punkt sentence tokenizer')
-            dictionary.add_argument(
-                '--dict-max-ngram-size', type=int,
-                default=DictionaryAgent.default_maxngram,
-                help='looks for ngrams of up to this size. this is ignored when '
-                     'building the dictionary. note: this takes approximate '
-                     'runtime of len(sentence)^max_ngram_size')
-            dictionary.add_argument(
-                '--dict-minfreq', default=DictionaryAgent.default_minfreq,
-                type=int,
-                help='minimum frequency of words to include them in sorted dict')
-            dictionary.add_argument(
-                '--dict-maxtokens', default=DictionaryAgent.default_maxtokens,
-                type=int,
-                help='max number of tokens to include in dictionary or bpe codecs.')
-            dictionary.add_argument(
-               '--dict-nulltoken', default=DictionaryAgent.default_null,
-               help='empty token, can be used for padding or just empty values')
-            dictionary.add_argument(
-              '--dict-starttoken', default=DictionaryAgent.default_start,
-              help='token for starting sentence generation, if needed')
-            dictionary.add_argument(
-               '--dict-endtoken', default=DictionaryAgent.default_end,
-               help='token for end of sentence markers, if needed')
-            dictionary.add_argument(
-                '--dict-unktoken', default=DictionaryAgent.default_unk,
-                help='token to return for unavailable words')
-            dictionary.add_argument(
-                '-tok', '--dict-tokenizer', default=DictionaryAgent.default_tok,
-                help='Which tokenizer to use. Defaults to "split", which splits '
-                     'on whitespace as well as recognizing basic punctuation. '
-                     'Other options include nltk and spacy.')
-            dictionary.add_argument(
-                '--dict-lower', default=DictionaryAgent.default_lower, type='bool',
-                help='Whether or not to lowercase all text seen.')
-            dictionary.add_argument(
-                '--bpe-debug', action='store_true',
-                help='Leave BPE tokens untouched in output. Useful for debugging.')
-        except argparse.ArgumentError:
-            # already added
-            pass
+        """Add commandline arguments related to the dictionary."""
+        dictionary = argparser.add_argument_group('Dictionary Arguments')
+        dictionary.add_argument(
+            '--dict-file',
+            help='if set, the dictionary will automatically save to this path '
+                 'during shutdown')
+        dictionary.add_argument(
+            '--dict-initpath',
+            help='path to a saved dictionary to load tokens / counts from to '
+                 'seed the dictionary with initial tokens and/or frequencies')
+        dictionary.add_argument(
+            '--dict-language', default=DictionaryAgent.default_lang,
+            help='sets language for the punkt sentence tokenizer')
+        dictionary.add_argument(
+            '--dict-max-ngram-size', type=int,
+            default=DictionaryAgent.default_maxngram,
+            help='looks for ngrams of up to this size. this is ignored when '
+                 'building the dictionary. note: this takes approximate '
+                 'runtime of len(sentence)^max_ngram_size')
+        dictionary.add_argument(
+            '--dict-minfreq', default=DictionaryAgent.default_minfreq,
+            type=int,
+            help='minimum frequency of words to include them in sorted '
+                 'dict or minimum frequency of bpe codecs')
+        dictionary.add_argument(
+            '--dict-maxtokens', default=DictionaryAgent.default_maxtokens,
+            type=int,
+            help='max number of tokens to include in dictionary or bpe codecs')
+        dictionary.add_argument(
+           '--dict-nulltoken', default=DictionaryAgent.default_null,
+           help='empty token, can be used for padding or just empty values')
+        dictionary.add_argument(
+          '--dict-starttoken', default=DictionaryAgent.default_start,
+          help='token for starting sentence generation, if needed')
+        dictionary.add_argument(
+           '--dict-endtoken', default=DictionaryAgent.default_end,
+           help='token for end of sentence markers, if needed')
+        dictionary.add_argument(
+            '--dict-unktoken', default=DictionaryAgent.default_unk,
+            help='token to return for unavailable words')
+        dictionary.add_argument(
+            '-tok', '--dict-tokenizer', default=DictionaryAgent.default_tok,
+            help='Which tokenizer to use. Defaults to "split", which splits '
+                 'on whitespace as well as recognizing basic punctuation. '
+                 'Other options include nltk and spacy.')
+        dictionary.add_argument(
+            '--dict-lower', default=DictionaryAgent.default_lower, type='bool',
+            help='Whether or not to lowercase all text seen.')
+        dictionary.add_argument(
+            '--bpe-debug', action='store_true',
+            help='Leave BPE tokens untouched in output. Useful for debugging.')
         return dictionary
-
 
     def __init__(self, opt, shared=None):
         # initialize fields
@@ -201,7 +211,7 @@ class DictionaryAgent(Agent):
             try:
                 import nltk
             except ImportError:
-                raise ImportError('Please install nltk (e.g. pip install nltk).')
+                raise ImportError('Please install nltk (pip install nltk)')
             # nltk-specific setup
             st_path = 'tokenizers/punkt/{0}.pickle'.format(opt['dict_language'])
             try:
@@ -376,18 +386,18 @@ class DictionaryAgent(Agent):
         return word_tokens
 
     def bpe_tokenize(self, text):
-        """Returns a sequence of BPE-tokens from the text."""
+        """Return a sequence of BPE-tokens from the text."""
         return self.bpehelper.tokenize(text)
 
     def add_to_dict(self, tokens):
-        """ Builds dictionary from the list of provided tokens."""
+        """Build dictionary from the list of provided tokens."""
         self.built = False
         for token in tokens:
             self.add_token(token)
             self.freq[token] += 1
 
     def remove_tail(self, min_freq):
-        """Removes elements below the frequency cutoff from the dictionary."""
+        """Remove elements below the frequency cutoff from the dictionary."""
         to_remove = []
         for token, freq in self.freq.items():
             if freq < min_freq:
@@ -399,8 +409,8 @@ class DictionaryAgent(Agent):
             idx = self.tok2ind.pop(token)
             del self.ind2tok[idx]
 
-    def remove_non_bpe(self):
-        """Sets the dictionary vocab to the bpe vocab, merging counts."""
+    def _remove_non_bpe(self):
+        """Set the dictionary vocab to the bpe vocab, merging counts."""
         to_remove = []
         to_add = []
         for token, freq in self.freq.items():
@@ -418,7 +428,7 @@ class DictionaryAgent(Agent):
             self.freq[token] += freq
 
     def resize_to_max(self, maxtokens):
-        # defaults to -1, only trim dict if >= 0
+        """Trims the dictionary to the maximum number of tokens."""
         if maxtokens >= 0 and len(self.tok2ind) > maxtokens:
             for k in range(maxtokens, len(self.ind2tok)):
                 v = self.ind2tok[k]
@@ -428,6 +438,7 @@ class DictionaryAgent(Agent):
 
     def load(self, filename):
         """Load pre-existing dictionary in 'token[<TAB>count]' format.
+
         Initialize counts from other dictionary, or 0 if they aren't included.
         """
         print('Dictionary: loading dictionary from {}'.format(
@@ -440,11 +451,9 @@ class DictionaryAgent(Agent):
                 token = unescape(split[0])
                 if lower_special and token.startswith('__') and token == token.upper():
                     token = token.lower()
-                    print(token)
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
                 self.add_token(token)
-        # note that bpe will print its own size, it's different
         print('[ num words =  %d ]' % len(self))
 
     def save(self, filename=None, append=False, sort=True):
@@ -461,8 +470,7 @@ class DictionaryAgent(Agent):
         print('Dictionary: saving dictionary to {}'.format(filename))
 
         if self.tokenizer == 'bpe':
-            self.bpehelper.finalize((f'{k} {v}' for k, v in self.freq.items()),
-                                    num_symbols=self.maxtokens,
+            self.bpehelper.finalize(self.freq, num_symbols=self.maxtokens,
                                     minfreq=self.minfreq)
             self.remove_non_bpe()
             self.sort(trim=False)
@@ -626,17 +634,20 @@ class _BPEHelper(object):
         else:
             return tokens
 
-    def finalize(self, dictionary, num_symbols=30000, minfreq=2):
+    def finalize(self, frequencies, num_symbols=30000, minfreq=2):
         """Build the codecs.
 
-        :param: iterable of '{token} {count}' pairs, e.g. generated by summing
-            over this class's pre-build tokenizer
+        :param: dictionary of (token: frequency) pairs
         :param num_symbols: Number of BPE symbols. Recommend 30000-40000.
             If <= 0, default 30000 will be used.
         :param minfreq: Minimum frequency of a token before forced BPE
             decomposition. If <= 0 will use subword-nmt default of 2.
         """
-        self.built = True
+        if hasattr(self, 'bpe'):
+            # we already finalized the codecs
+            return False
+
+        dictionary = (f'{k} {v}' for k, v in frequencies.items())
 
         if num_symbols <= 0:
             num_symbols = 30000
