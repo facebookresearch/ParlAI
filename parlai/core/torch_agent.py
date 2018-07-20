@@ -445,15 +445,19 @@ class TorchAgent(Agent):
 
 
 class Beam(object):
-    def __init__(self, beam_size, min_length=3, padding_token=0, bos_token=1, eos_token=2, min_n_best=3, cuda='cpu'):
-        """
-        Generic beam class. It keeps information about beam_size hypothesis.
+    """Generic beam class. It keeps information about beam_size hypothesis."""
+
+    def __init__(self, beam_size, min_length=3, padding_token=0, bos_token=1,
+                 eos_token=2, min_n_best=3, cuda='cpu'):
+        """Instantiate Beam object.
+
         :param beam_size: number of hypothesis in the beam
         :param min_length: minimum length of the predicted sequence
         :param padding_token: Set to 0 as usual in ParlAI
         :param bos_token: Set to 1 as usual in ParlAI
         :param eos_token: Set to 2 as usual in ParlAI
-        :param min_n_best: Beam will not be done unless this amount of finished hypothesis (with EOS) is done
+        :param min_n_best: Beam will not be done unless this amount of finished
+                           hypothesis (with EOS) is done
         :param cuda: What device to use for computations
         """
         self.beam_size = beam_size
