@@ -19,7 +19,7 @@ from fairseq import options
 from fairseq.tasks.fairseq_task import FairseqTask
 from fairseq.utils import convert_padding_direction
 
-from parlai.core.torch_agent import TorchAgent
+from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.build_data import modelzoo_path
 from parlai.core.utils import round_sigfigs
 
@@ -359,17 +359,23 @@ class FairseqAgent(TorchAgent):
         kwargs['sort'] = True
         return super().batchify(*args, **kwargs)
 
-    def train_step(self, xs, ys, *args, **kwargs):
+    def train_step(self, batch):
+        """Process batch of inputs and targets and train on them."""
         self.is_training = True
-        samples = self._make_sample(xs, ys)
+        samples = self._make_sample(batch.text_vec, batch.label_vec)
         self.model.train()
         self.trainer.train_step(samples)
 
-    def eval_step(self, xs, ys, cands=None, *args, **kwargs):
+    def eval_step(self, batch):
+        """Process batch of inputs.
+
+        If the batch includes labels, calculate validation metrics as well.
+        If --skip-generation is not set, return a prediction for each input.
+        """
         self.is_training = False
-        samples = self._make_sample(xs, ys)
+        samples = self._make_sample(batch.text_vec, batch.label_vec)
         self.model.eval()
-        if ys is not None:
+        if batch.label_vec is not None:
             # Interactive mode won't have a gold label
             self.trainer.valid_step(samples)
         # Grade each of the candidate sequences
@@ -377,7 +383,7 @@ class FairseqAgent(TorchAgent):
 
         if not self.args.skip_generation:
             # Next generate freely to create our response
-            return self._generate(samples)
+            return Output(self._generate(samples), None)
 
     def _generate(self, samples):
         src_tokens = samples["net_input"]["src_tokens"]

@@ -19,29 +19,49 @@ import copy
 import math
 from operator import attrgetter
 
-Batch = namedtuple("Batch", [
+Batch = namedtuple('Batch', [
     # bsz x seqlen tensor containing the parsed text data
-    "text_vec",
+    'text_vec',
+    # list of length bsz containing the lengths of the text in same order as
+    # text_vec; necessary for pack_padded_sequence
+    'text_lengths',
     # bsz x seqlen tensor containing the parsed label (one per batch row)
-    "label_vec",
+    'label_vec',
+    # list of length bsz containing the lengths of the labels in same order as
+    # label_vec
+    'label_lens',
     # list of length bsz containing the selected label for each batch row (some
     # datasets have multiple labels per input example)
-    "labels",
+    'labels',
     # list of length bsz containing the original indices of each example in the
     # batch. we use these to map predictions back to their proper row, since
     # e.g. we may sort examples by their length or some examples may be
     # invalid.
-    "valid_indices",
+    'valid_indices',
     # list of lists of tensors. outer list has size bsz, inner lists vary in
     # size based on the number of candidates for each row in the batch.
-    "candidates",
+    'candidates',
+])
+
+Output = namedtuple('Output', [
+    # list of strings of length bsz containing the predictions of the model
+    'predictions',
+    # list of lists of length bsz containing the predictions of the model.
+    # each sub-list is an ordered ranking of strings of variable length.
+    'candidate_predictions',
 ])
 
 
 class TorchAgent(Agent):
-    """A provided base agent for any model that wants to use Torch. Exists to
-    make it easier to implement a new agent. Not necessary, but reduces
-    duplicated code.
+    """A provided base agent for any model that wants to use Torch.
+
+    Exists to make it easier to implement a new agent.
+    Not necessary, but reduces duplicated code.
+
+    Many methods are intended to be either used as is when the default is
+    acceptable, or to be overriden and called with super(), with the extra
+    functionality added to the initial result. See the method comment for
+    recommended behavior.
 
     This agent serves as a common framework for all ParlAI models which want
     to use PyTorch.
@@ -49,10 +69,15 @@ class TorchAgent(Agent):
 
     @staticmethod
     def dictionary_class():
+        """Return the dictionary class that this agent expects to use.
+
+        Can be overriden if a more complex dictionary is required.
+        """
         return DictionaryAgent
 
     @staticmethod
     def add_cmdline_args(argparser):
+        """Add the default commandline args we expect most agents to want."""
         agent = argparser.add_argument_group('TorchAgent Arguments')
         agent.add_argument(
             '-tr', '--truncate', default=-1, type=int,
@@ -69,16 +94,18 @@ class TorchAgent(Agent):
             help='disable GPUs even if available. otherwise, will use GPUs if '
                  'available on the device.')
         agent.add_argument(
-            '--gpu', type=int, default=-1, help='which GPU device to use')
+            '-gpu', '--gpu', type=int, default=-1,
+            help='which GPU device to use')
 
     def __init__(self, opt, shared=None):
+        """Initialize agent."""
         super().__init__(opt, shared)
 
         if not shared:
             # Need to set up the model from scratch
             self.dict = TorchAgent.dictionary_class()(opt)
         else:
-            # ... copy initialized data from shared table
+            # copy initialized data from shared table
             self.opt = shared['opt']
             self.dict = shared['dict']
 
@@ -118,6 +145,10 @@ class TorchAgent(Agent):
         processed and a new field is added to the observation with the suffix
         '_vec'.
 
+        If you want to use additional fields on your subclass, you can override
+        this function, call super().vectorize(...) to process the text and
+        labels, and then process the other fields in your subclass.
+
         :param obs: single observation from observe function
         :param add_start: default True, adds the start token to each label
         :param add_end: default True, adds the end token to each label
@@ -151,7 +182,8 @@ class TorchAgent(Agent):
             obs[label_type + '_choice'] = label
         return obs
 
-    def batchify(self, obs_batch, sort=False, is_valid=lambda obs: 'text_vec' in obs):
+    def batchify(self, obs_batch, sort=False,
+                 is_valid=lambda obs: 'text_vec' in obs):
         """Create a batch of valid observations from an unchecked batch.
 
         A valid observation is one that passes the lambda provided to the
@@ -162,6 +194,13 @@ class TorchAgent(Agent):
         Returns a namedtuple Batch. See original definition above for in-depth
         explanation of each field.
 
+        If you want to include additonal fields in the batch, you can subclass
+        this function and return your own "Batch" namedtuple: copy the Batch
+        namedtuple at the top of this class, and then add whatever additional
+        fields that you want to be able to access. You can then call
+        super().batchify(...) to set up the original fields and then set up the
+        additional fields in your subclass and return that batch instead.
+
         :param obs_batch: list of vectorized observations
         :param sort:      default False, orders the observations by length of
                           vector. set to true when using
@@ -170,12 +209,12 @@ class TorchAgent(Agent):
                           observation, determines if an observation is valid
         """
         if len(obs_batch) == 0:
-            return Batch(None, None, None, None, None, None)
+            return Batch(None, None, None, None, None, None, None, None)
 
         valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
 
         if len(valid_obs) == 0:
-            return Batch(None, None, None, None, None, None)
+            return Batch(None, None, None, None, None, None, None, None)
 
         valid_inds, exs = zip(*valid_obs)
 
@@ -204,8 +243,7 @@ class TorchAgent(Agent):
         some_labels_avail = eval_labels_avail or labels_avail
 
         # set up the target tensors
-        ys = None
-        labels = None
+        ys, y_lens, labels = None, None, None
         if some_labels_avail:
             field = 'labels' if labels_avail else 'eval_labels'
 
@@ -223,10 +261,9 @@ class TorchAgent(Agent):
 
         cands = None
         # TODO: return candidates
-        return Batch(xs, ys, labels, valid_inds, cands)
+        return Batch(xs, x_lens, ys, y_lens, labels, valid_inds, cands)
 
-    def match_batch(self, batch_reply, valid_inds, predictions=None,
-                    candidate_preds=None):
+    def match_batch(self, batch_reply, valid_inds, output=None):
         """Match sub-batch of predictions to the original batch indices.
 
         Batches may be only partially filled (i.e when completing the remainder
@@ -236,19 +273,29 @@ class TorchAgent(Agent):
         This matches rows back with their original row in the batch for
         calculating metrics like accuracy.
 
+        If output is None (model choosing not to provide any predictions), we
+        will just return the batch of replies.
+
+        Otherwise, output should be a namedtuple, which can provide predictions
+        and/or candidate_predictions. If you would like to map additional
+        fields into the batch_reply, you can override this method as well as
+        providing a namedtuple with additional fields.
+
         :param batch_reply: full-batchsize list of message dictionaries to put
             responses into
-        :param predictions: sub-batchsize list of text outputs from model. may
-            be None (default) if model chooses to not answer.
         :param valid_inds: original indices of the predictions
-        :param candidate_preds: sub-batchsize list of lists of text outputs
-            ranked by the model. may be None (default) if model isn't ranking.
+        :param output: namedtuple which contains sub-batchsize list of text
+            outputs from model. may be None (default) if model chooses not to
+            answer. this method will check for ``predictions`` and
+            ``candidate_predictions`` fields.
         """
-        if predictions is not None:
-            for i, response in zip(valid_inds, predictions):
+        if output is None:
+            return batch_reply
+        if output.predictions is not None:
+            for i, response in zip(valid_inds, output.predictions):
                 batch_reply[i]['text'] = response
-        if candidate_preds is not None:
-            for i, cands in zip(valid_inds, candidate_preds):
+        if output.candidate_predictions is not None:
+            for i, cands in zip(valid_inds, output.candidate_predictions):
                 batch_reply[i]['text_candidates'] = cands
         return batch_reply
 
@@ -270,7 +317,6 @@ class TorchAgent(Agent):
                                observation dialog is one sentence or needs to
                                be split
         """
-
         def parse(txt, splitSentences):
             if splitSentences:
                 vec = [self.dict.txt2vec(t) for t in txt.split('\n')]
@@ -341,7 +387,8 @@ class TorchAgent(Agent):
 
                 # save opt file
                 with open(path + ".opt", 'wb') as handle:
-                    pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                    pickle.dump(self.opt, handle,
+                                protocol=pickle.HIGHEST_PROTOCOL)
 
     def load(self, path):
         """Return opt and model states.
@@ -409,38 +456,24 @@ class TorchAgent(Agent):
         # create a batch from the vectors
         batch = self.batchify(vec_obs)
 
-        if batch.text_vec is None:
-            return batch_reply
-
         if is_training:
-            output = self.train_step(batch.text_vec, batch.label_vec,
-                                     batch.candidates)
             output = self.train_step(batch)
         else:
-            output = self.eval_step(batch.text_vec, batch.label_vec,
-                                    batch.candidates)
+            output = self.eval_step(batch)
 
-        if isinstance(output, tuple):
-            predictions = output[0]
-            candidate_preds = output[1]
-        else:
-            predictions = output
-            candidate_preds = None
+        if output is None:
+            return batch_reply
 
-        self.match_batch(batch_reply, batch.valid_indices,
-                         predictions=predictions,
-                         candidate_preds=candidate_preds)
+        self.match_batch(batch_reply, batch.valid_indices, output)
 
         return batch_reply
 
     def train_step(self, batch):
-        xs = batch.text_vec
-        pass
-
-    def train_step(self, xs, ys=None, cands=None, *args, **kwargs):
+        """Process one batch with training labels."""
         raise NotImplementedError('Abstract class: user must implement train_step')
 
-    def eval_step(self, xs, ys=None, cands=None, *args, **kwargs):
+    def eval_step(self, batch):
+        """Process one batch but do not train on it."""
         raise NotImplementedError('Abstract class: user must implement eval_step')
 
 
@@ -466,13 +499,17 @@ class Beam(object):
         self.bos = bos_token
         self.pad = padding_token
         self.device = cuda
+        # recent score for each hypo in the beam
         self.scores = torch.Tensor(self.beam_size).float().zero_().to(
-            self.device)  # recent score for each hypo in the beam
-        self.all_scores = [torch.Tensor([0.0] * beam_size).to(self.device)]  # self.scores values per each time step
-        self.bookkeep = []  # backtracking id to hypothesis at previous time step
-        self.outputs = [
-            torch.Tensor(self.beam_size).long().fill_(padding_token).to(self.device)]  # output tokens at each time step
-        self.finished = []  # keeps tuples (score, time_step, hyp_id)
+            self.device)
+        # self.scores values per each time step
+        self.all_scores = [torch.Tensor([0.0] * beam_size).to(self.device)]
+        # backtracking id to hypothesis at previous time step
+        self.bookkeep = []
+        # output tokens at each time step
+        self.outputs = [torch.Tensor(self.beam_size).long().fill_(padding_token).to(self.device)]
+        # keeps tuples (score, time_step, hyp_id)
+        self.finished = []
         self.HypothesisTail = namedtuple('HypothesisTail', ['timestep', 'hypid', 'score', 'tokenid'])
         self.eos_top = False
         self.eos_top_ts = None
@@ -488,16 +525,19 @@ class Beam(object):
     def advance(self, softmax_probs):
         voc_size = softmax_probs.size(-1)
         if len(self.bookkeep) == 0:
-            #  the first step
-            beam_scores = softmax_probs[
-                0]  # we take only the first hypo into account since all hypos are the same initially
+            # the first step we take only the first hypo into account since all
+            # hypos are the same initially
+            beam_scores = softmax_probs[0]
         else:
-            #  we need to sum up hypo scores and current softmax scores before topk
-            beam_scores = softmax_probs + self.scores.unsqueeze(1).expand_as(softmax_probs)  # [beam_size, voc_size]
+            # we need to sum up hypo scores and current softmax scores before topk
+            # [beam_size, voc_size]
+            beam_scores = softmax_probs + self.scores.unsqueeze(1).expand_as(softmax_probs)
             for i in range(self.outputs[-1].size(0)):
-                #  if previous output hypo token had eos - we penalize those word probs to never be chosen
+                #  if previous output hypo token had eos
+                # we penalize those word probs to never be chosen
                 if self.outputs[-1][i] == self.eos:
-                    beam_scores[i] = -1e20  # beam_scores[i] is voc_size array for i-th hypo
+                    # beam_scores[i] is voc_size array for i-th hypo
+                    beam_scores[i] = -1e20
 
         flatten_beam_scores = beam_scores.view(-1)  # [beam_size * voc_size]
         with torch.no_grad():

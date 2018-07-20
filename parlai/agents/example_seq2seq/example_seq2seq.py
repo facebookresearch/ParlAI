@@ -7,7 +7,7 @@
 http://parl.ai/static/docs/tutorial_seq2seq.html
 """
 
-from parlai.core.torch_agent import TorchAgent
+from parlai.core.torch_agent import TorchAgent, Output
 
 import torch
 from torch import optim
@@ -166,14 +166,10 @@ class ExampleSeq2seqAgent(TorchAgent):
             optimizer.step()
 
     def share(self):
-        """Share internal states between parent and child instances."""
+        """Share internal states."""
         shared = super().share()
-
-        if self.opt.get('numthreads', 1) > 1:
-            # we're doing hogwild so share the model too
-            shared['encoder'] = self.encoder
-            shared['decoder'] = self.decoder
-
+        shared['encoder'] = self.encoder
+        shared['decoder'] = self.decoder
         return shared
 
     def v2t(self, vector):
@@ -193,19 +189,19 @@ class ExampleSeq2seqAgent(TorchAgent):
             return self.dict.vec2txt(output_tokens)
         elif vector.dim() == 2:
             return [self.v2t(vector[i]) for i in range(vector.size(0))]
-        raise RuntimeError('Improper input to v2t with dimensions {}'.format(vector.size()))
+        raise RuntimeError('Improper input to v2t with dimensions {}'.format(
+            vector.size()))
 
-    def train_step(self, xs, ys, *args, **kwargs):
+    def train_step(self, batch):
         """Train model to produce ys given xs.
 
-        :params xs: (batchsize x seqlen) tensor of token indices to respond to
-        :params ys: (batchsize x seqlen) tensor of token indices to learn from
-        :param args: ignore any other args
-        :param kwargs: ignore any other kwargs
+        :params batch: parlai.core.torch_agent.Batch, contains tensorized
+                       version of observations.
 
         Return estimated responses, with teacher forcing on the input sequence
         (list of strings of length batchsize).
         """
+        xs, ys = batch.text_vec, batch.label_vec
         bsz = xs.size(0)
         starts = self.START.expand(bsz, 1)  # expand to batch size
         loss = 0
@@ -230,17 +226,17 @@ class ExampleSeq2seqAgent(TorchAgent):
         self.update_params()
 
         _max_score, predictions = decoder_output.max(2)
-        return self.v2t(predictions)
+        return Output(self.v2t(predictions), None)
 
-    def eval_step(self, xs, *args, **kwargs):
+    def eval_step(self, batch):
         """Generate a response to the input tokens.
 
-        :params xs: (batchsize x seqlen) tensor of token indices to respond to
-        :param args: ignore any other args
-        :param kwargs: ignore any other kwargs
+        :params batch: parlai.core.torch_agent.Batch, contains tensorized
+                       version of observations.
 
         Return predicted responses (list of strings of length batchsize).
         """
+        xs = batch.text_vec
         bsz = xs.size(0)
         starts = self.START.expand(bsz, 1)  # expand to batch size
         # just predict
@@ -275,4 +271,4 @@ class ExampleSeq2seqAgent(TorchAgent):
                 break
         predictions = torch.cat(predictions, 1)
 
-        return self.v2t(predictions)
+        return Output(self.v2t(predictions), None)
