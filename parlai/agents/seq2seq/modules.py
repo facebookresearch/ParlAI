@@ -198,7 +198,7 @@ class Seq2seq(nn.Module):
                 repeated_hidden = []
 
                 if isinstance(hidden, tuple):
-                    for i in range(hidden[0].size(0)):
+                    for i in range(len(hidden)):
                         repeated_hidden.append(hidden[i].unsqueeze(2).repeat(1, 1, beam_size, 1))
                     hidden = self.unbeamize_hidden(tuple(repeated_hidden), beam_size, bsz)
                 else:  # GRU
