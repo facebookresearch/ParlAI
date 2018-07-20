@@ -88,7 +88,6 @@ class TestTorchAgent(unittest.TestCase):
 
         # eval_labels
         obs_vec = agent.vectorize(observation)
-        print(obs_vec)
         self.assertTrue('eval_labels_vec' in obs_vec,
                         "Field \'eval_labels_vec\' missing from vectorized observation")
         self.assertTrue(obs_vec['eval_labels_vec'].numpy().tolist() ==
