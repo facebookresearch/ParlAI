@@ -14,7 +14,7 @@ def build_fb_format():
 
 
 def build(opt):
-    version = 'v6.0'
+    version = 'v5.0'
     dpath = os.path.join(opt['datapath'], 'ConvAI2')
 
     if not build_data.built(dpath, version):
