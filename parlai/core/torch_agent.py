@@ -15,41 +15,54 @@ except ImportError as e:
 from collections import deque, namedtuple
 import pickle
 import random
-import copy
 import math
 from operator import attrgetter
 
-Batch = namedtuple('Batch', [
-    # bsz x seqlen tensor containing the parsed text data
-    'text_vec',
-    # list of length bsz containing the lengths of the text in same order as
-    # text_vec; necessary for pack_padded_sequence
-    'text_lengths',
-    # bsz x seqlen tensor containing the parsed label (one per batch row)
-    'label_vec',
-    # list of length bsz containing the lengths of the labels in same order as
-    # label_vec
-    'label_lens',
-    # list of length bsz containing the selected label for each batch row (some
-    # datasets have multiple labels per input example)
-    'labels',
-    # list of length bsz containing the original indices of each example in the
-    # batch. we use these to map predictions back to their proper row, since
-    # e.g. we may sort examples by their length or some examples may be
-    # invalid.
-    'valid_indices',
-    # list of lists of tensors. outer list has size bsz, inner lists vary in
-    # size based on the number of candidates for each row in the batch.
-    'candidates',
-])
+"""
+Batch is a namedtuple containing data being sent to an agent.
 
-Output = namedtuple('Output', [
-    # list of strings of length bsz containing the predictions of the model
-    'predictions',
-    # list of lists of length bsz containing the predictions of the model.
-    # each sub-list is an ordered ranking of strings of variable length.
-    'candidate_predictions',
-])
+This is the input type of the train_step and eval_step functions.
+Agents can override the batchify function to return an extended namedtuple
+with additional fields if they would like, though we recommend calling the
+parent function to set up these fields as a base.
+
+:field text_vec:      bsz x seqlen tensor containing the parsed text data.
+:field text_lens:     list of length bsz containing the lengths of the text in
+                      same order as text_vec; necessary for
+                      pack_padded_sequence.
+:field label_vec:     bsz x seqlen tensor containing the parsed label (one per
+                      batch row).
+:field label_lens:    list of length bsz containing the lengths of the labels
+                      in same order as label_vec.
+:field labels:        list of length bsz containing the selected label for each
+                      batch row (some datasets have multiple labels per input
+                      example).
+:field valid_indices: list of length bsz containing the original indices of
+                      each example in the batch. we use these to map
+                      predictions back to their proper row, since e.g. we may
+                      sort examples by their length or some examples may be
+                      invalid.
+:field candidates:    list of lists of tensors. outer list has size bsz, inner
+                      lists vary in size based on the number of candidates for
+                      each row in the batch.
+"""
+Batch = namedtuple('Batch', ['text_vec', 'text_lengths', 'label_vec',
+                             'label_lens', 'labels', 'valid_indices',
+                             'candidates'])
+
+"""
+Output is a namedtuple containing agent predictions.
+
+This is the expected return type of the train_step and eval_step functions,
+though agents can choose to return None if they do not want to answer.
+
+:field text: list of strings of length bsz containing the predictions of the
+             model
+:field text_candidates: list of lists of length bsz containing ranked
+                        predictions of the model. each sub-list is an ordered
+                        ranking of strings, of variable length.
+"""
+Output = namedtuple('Output', ['text', 'text_candidates'])
 
 
 class TorchAgent(Agent):
@@ -291,11 +304,11 @@ class TorchAgent(Agent):
         """
         if output is None:
             return batch_reply
-        if output.predictions is not None:
-            for i, response in zip(valid_inds, output.predictions):
+        if output.text is not None:
+            for i, response in zip(valid_inds, output.text):
                 batch_reply[i]['text'] = response
-        if output.candidate_predictions is not None:
-            for i, cands in zip(valid_inds, output.candidate_predictions):
+        if output.text_candidates is not None:
+            for i, cands in zip(valid_inds, output.text_candidates):
                 batch_reply[i]['text_candidates'] = cands
         return batch_reply
 
@@ -419,7 +432,6 @@ class TorchAgent(Agent):
 
         This includes remembering the past history of the conversation.
         """
-        observation = copy.deepcopy(observation)
         if not self.episode_done:
             # if the last example wasn't the end of an episode, then we need to
             # recall what was said in that example
