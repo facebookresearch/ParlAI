@@ -8,8 +8,10 @@
 import parlai.core.build_data as build_data
 import os
 
+
 def build_fb_format():
     pass
+
 
 def build(opt):
     version = 'v5.0'
@@ -23,7 +25,7 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'convai2.tar.gz'
+        fname = 'convai2_fix_723.tgz'
         url = 'http://parl.ai/downloads/convai2/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
