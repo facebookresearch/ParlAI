@@ -116,6 +116,7 @@ class MTurkManager():
         self.is_test = is_test
         self.is_unique = False
         self._init_logs()
+        self.is_shutdown = False
 
     # Helpers and internal manager methods #
 
@@ -156,7 +157,7 @@ class MTurkManager():
                     # otherwise only need to check an hour for safety
                     compare_time = 24 * 60 * 60 if init_load else 60 * 60
                     if time.time() - existing_times['last_reset'] < \
-                            24 * 60 * 60 and not force:
+                            compare_time and not force:
                         return  # do nothing if it's been less than a day
                     reset_workers = list(existing_times.keys())
                     reset_workers.remove('last_reset')
@@ -428,6 +429,7 @@ class MTurkManager():
             self._on_socket_dead,
             self.task_group_id,
             socket_dead_timeout=timeout_seconds,
+            server_death_callback=self.shutdown,
         )
 
     def _on_alive(self, pkt):
@@ -887,6 +889,8 @@ class MTurkManager():
                                    'Local: Setting up WebSocket...',
                                    not self.is_test)
         self._setup_socket(timeout_seconds=timeout_seconds)
+        shared_utils.print_and_log(logging.INFO, 'WebSocket set up!',
+                                   should_print=True)
 
     def start_new_run(self):
         """Clear state to prepare for a new run"""
@@ -1060,14 +1064,28 @@ class MTurkManager():
                 break
             time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)
 
-    def shutdown(self):
+    def _wait_for_task_length(self):
+        '''Wait for the full task duration to ensure anyone who sees the task
+        has it expired, and ensures that all tasks are properly expired
+        '''
+        start_time = time.time()
+        min_wait = self.opt['assignment_duration_in_seconds']
+        while time.time() - start_time < min_wait:
+            self.expire_all_unassigned_hits()
+            time.sleep(60)
+
+    def shutdown(self, force=False):
         """Handle any mturk client shutdown cleanup."""
         # Ensure all threads are cleaned and state and HITs are handled
+        if self.is_shutdown and not force:
+            return
+        self.is_shutdown = True
         try:
             self.expire_all_unassigned_hits()
             self._expire_onboarding_pool()
             self._expire_worker_pool()
-            self.socket_manager.close_all_channels()
+            self._wait_for_task_length()
+            self.socket_manager.shutdown()
             for assignment_id in self.assignment_to_onboard_thread:
                 self.assignment_to_onboard_thread[assignment_id].join()
         except BaseException:
@@ -1328,6 +1346,8 @@ class MTurkManager():
 
         qualifications = self.get_qualification_list(qualifications)
 
+        self.opt['assignment_duration_in_seconds'] = self.opt.get(
+            'assignment_duration_in_seconds', 30 * 60)
         hit_type_id = mturk_utils.create_hit_type(
             hit_title=self.opt['hit_title'],
             hit_description='{} (ID: {})'.format(self.opt['hit_description'],
@@ -1526,7 +1546,6 @@ class MTurkManager():
                 ''.format(worker_id, qual_name, repr(e)),
                 should_print=True
             )
-
 
     def create_qualification(self, qualification_name, description,
                              can_exist=True):
