@@ -722,7 +722,7 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
         obs = self.observation
         obs['eval_labels'] = [' '.join(partial_out)]
         batch = self.vectorize([obs])
-        if self.prev_enc is not None and batch[0].shape[1] != self.prev_enc[0].shape[1]:
+        if len(partial_out) == 0:
             self.prev_enc = None  # reset prev_enc
 
         self.model.eval()
