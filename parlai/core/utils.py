@@ -662,7 +662,7 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
         if msg.get('reward', 0) != 0:
             lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
         for key in msg:
-            if key not in ['episode_done', 'id', 'image', 'text', 'labels', 'label_candidates', 'text_candidates', 'reward'] and key not in ignore_fields:
+            if key not in ['episode_done', 'id', 'image', 'text', 'labels', 'eval_labels', 'label_candidates', 'text_candidates', 'reward'] and key not in ignore_fields:
                 line = '[' + key + ']: ' + clip_text(str(msg.get(key)), max_len)
                 lines.append(space + line)
         if type(msg.get('image')) == str:
