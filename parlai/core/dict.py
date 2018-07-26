@@ -100,6 +100,7 @@ class DictionaryAgent(Agent):
     default_unk = '__unk__'
     default_tok = 're'
     default_lower = False
+    default_textfields = 'text,labels'
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -154,6 +155,11 @@ class DictionaryAgent(Agent):
         dictionary.add_argument(
             '--bpe-debug', action='store_true',
             help='Leave BPE tokens untouched in output. Useful for debugging.')
+        dictionary.add_argument(
+            '--dict-textfields', default=DictionaryAgent.default_textfields,
+            help='Observation fields which dictionary learns vocabulary from. '
+                 'Tasks with additional fields may add to this list to handle '
+                 'any extra vocabulary.')
         return dictionary
 
     def __init__(self, opt, shared=None):
@@ -168,6 +174,7 @@ class DictionaryAgent(Agent):
         self.tokenizer = opt.get('dict_tokenizer', DictionaryAgent.default_tok)
         self.lower = opt.get('dict_lower', DictionaryAgent.default_lower)
         self.maxtokens = opt.get('dict_maxtokens', DictionaryAgent.default_maxtokens)
+        self.textfields = opt.get('dict_textfields', DictionaryAgent.default_textfields).split(",")
 
         try:
             self.tokenizer_fun = getattr(self, self.tokenizer + '_tokenize')
@@ -558,12 +565,17 @@ class DictionaryAgent(Agent):
         """Add any words passed in the 'text' field of the observation to this
         dictionary.
         """
-        for source in ([self.observation.get('text')],
-                        self.observation.get('labels')):
-            if source:
-                for text in source:
-                    if text:
-                        self.add_to_dict(self.tokenize(text))
+        for textfield in self.textfields:
+            source = self.observation.get(textfield)
+            if source is None:
+                continue
+            # fields may be singleton strings or lists of strings.
+            # wrap the singleton strings in a list to iterate over them
+            if type(source) is str:
+                source = [source]
+            for text in source:
+                if text:
+                    self.add_to_dict(self.tokenize(text))
         return {'id': 'Dictionary'}
 
     def share(self):
