@@ -556,7 +556,7 @@ class DictionaryAgent(Agent):
     def act(self):
         """Add words in the last observation to the dictionary.
 
-        This checks any fields in the message present in the dict-fields
+        This checks any fields in the message present in the --dict-textfields
         argument (e.g. "text,labels").
         """
         for source in ([self.observation.get('text')],
