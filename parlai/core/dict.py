@@ -565,7 +565,6 @@ class DictionaryAgent(Agent):
                 for text in source:
                     if text:
                         self.add_to_dict(self.tokenize(text))
-
         return {'id': 'Dictionary'}
 
     def share(self):
