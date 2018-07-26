@@ -116,7 +116,7 @@ class TorchAgent(Agent):
 
         if not shared:
             # Need to set up the model from scratch
-            self.dict = TorchAgent.dictionary_class()(opt)
+            self.dict = self.dictionary_class()(opt)
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']
