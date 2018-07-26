@@ -30,11 +30,7 @@ class RandomCandidateAgent(Agent):
             reply['text_candidates'] = label_candidates
             reply['text'] = label_candidates[0]
         else:
-            # reply with the right answer
-            labels = obs.get('labels', obs.get('eval_labels', None))
-            if labels:
-                reply['text'] = labels[random.randrange(len(labels))]
-            else:
-                reply['text'] = "I don't know."
+            # reply with I don't know.
+            reply['text'] = "I don't know."
 
         return reply
