@@ -19,7 +19,7 @@ from fairseq import options
 from fairseq.tasks.fairseq_task import FairseqTask
 from fairseq.utils import convert_padding_direction
 
-from parlai.core.torch_agent import TorchAgent
+from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.build_data import modelzoo_path
 from parlai.core.utils import round_sigfigs
 
@@ -401,45 +401,50 @@ class FairseqAgent(TorchAgent):
         super().reset()
         self.reset_metrics()
 
-    def batch_act(self, observations):
-        bsz = len(observations)
-        # initialize a table of replies with this agent's id
-        batch_reply = [{"id": self.getID()} for _ in range(bsz)]
+    def batchify(self, *args, **kwargs):
+        """Override parent batchify to set sorting to true.
 
-        # torchagent boilerplate
-        self.is_training = any(["labels" in obs for obs in observations])
-        vec_obs = [self.vectorize(obs) for obs in observations]
-        xs, _, ys, _, valid_inds = self.map_valid(vec_obs)
-        if xs is None:
-            return batch_reply
+        Sorting inputs is needed for torch.nn.utils.rnn.pack_padded_sequence.
+        """
+        kwargs['sort'] = True
+        return super().batchify(*args, **kwargs)
 
-        # here begins fairseq specific stuff
-        samples = self._make_sample(xs, ys)
+    def train_step(self, batch):
+        """Process batch of inputs and targets and train on them.
 
-        if self.is_training:
-            self.model.train()
-            self.trainer.train_step(samples)
-        else:
-            # grade the evaluation label
-            self.model.eval()
-            if ys is not None:
-                # Interactive mode won't have a gold label
-                self.trainer.valid_step(samples)
+        :param batch: parlai.core.torch_agent.Batch, contains tensorized
+                      version of observations.
+        """
+        if batch.text_vec is None:
+            return
+        self.is_training = True
+        samples = self._make_sample(batch.text_vec, batch.label_vec)
+        self.model.train()
+        self.trainer.train_step(samples)
 
-            # Grade each of the candidate sequences
-            # TODO: grade everything in observations[i]['label_candidates']
+    def eval_step(self, batch):
+        """Process batch of inputs.
 
+        If the batch includes labels, calculate validation metrics as well.
+        If --skip-generation is not set, return a prediction for each input.
+
+        :param batch: parlai.core.torch_agent.Batch, contains tensorized
+                      version of observations.
+        """
+        if batch.text_vec is None:
+            return
+        self.is_training = False
+        samples = self._make_sample(batch.text_vec, batch.label_vec)
+        self.model.eval()
+        if batch.label_vec is not None:
+            # Interactive mode won't have a gold label
+            self.trainer.valid_step(samples)
+        # Grade each of the candidate sequences
+        # TODO: grade everything in observations[i]['label_candidates']
+
+        if not self.args.skip_generation:
             # Next generate freely to create our response
-            if self.args.skip_generation:
-                # skip the generation step
-                for i in valid_inds:
-                    batch_reply[i]["text"] = ""
-            else:
-                # actually do the generation
-                for i, response in zip(valid_inds, self._generate(samples)):
-                    batch_reply[i]["text"] = response
-
-        return batch_reply
+            return Output(self._generate(samples), None)
 
     def _generate(self, samples):
         src_tokens = samples["net_input"]["src_tokens"]
@@ -466,6 +471,7 @@ class FairseqAgent(TorchAgent):
         return responses
 
     def report(self):
+        """Return metrics calculated by the model."""
         # if we haven't initialized yet, just return a dummy object
         if not hasattr(self, "trainer"):
             return {}
@@ -493,31 +499,32 @@ class FairseqAgent(TorchAgent):
         return m
 
     def reset_metrics(self):
+        """Reset metrics calculated by the model back to zero."""
         if not hasattr(self, "trainer"):
-            # We haven't initialized the trainer yet, so we don't have any metrics
+            # We haven't set up the trainer yet, so we don't have any metrics
             return
         # We need to reset everything
         for k in self.trainer.meters:
             self.trainer.meters[k].reset()
 
     def receive_metrics(self, metrics_dict):
-        """Used to update lr scheduler."""
+        """Update lr scheduler with validation loss."""
         self.trainer.lr_step(-1, metrics_dict["valid_loss"])
 
     # Helper functions
     def _seq_length(self, xs):
-        """Computes length of the sequence (non-padded size)"""
+        """Compute length of the sequence (non-padded size)."""
         return xs.ne(self.dict.pad_index).long().sum(dim=-1)
 
     def _right_shifted_ys(self, ys):
-        """Replaces first token with EOS and shifts the remaining tokens right one."""
+        """Replace first token with EOS and shift remaining tokens right 1."""
         result = torch.LongTensor(ys.size())
         result[:, 0] = self.dict.eos_index
         result[:, 1:] = ys[:, :-1]
         return result
 
     def _make_sample(self, xs, ys):
-        """Generates a sample object that Fairseq expects."""
+        """Generate a sample object that Fairseq expects."""
         # add extra info to samples
         # TODO: should the right/left padding thing be in torch agent?
         repadded = convert_padding_direction(xs, self.dict.pad(), right_to_left=True)
