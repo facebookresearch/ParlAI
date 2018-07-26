@@ -660,9 +660,9 @@ class _BPEHelper(object):
             # we already finalized the codecs
             return False
 
-        print('Dictionary: saving bpe codecs to {}'.format(self.codes))
+        print('Dictionary: saving bpe codecs to {}'.format(self.codecs))
 
-        dictionary = (f'{k} {v}' for k, v in frequencies.items())
+        dictionary = ("{} {}".format(k, v) for k, v in frequencies.items())
 
         if num_symbols <= 0:
             num_symbols = 30000
