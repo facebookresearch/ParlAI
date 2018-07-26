@@ -99,7 +99,6 @@ class DictionaryAgent(Agent):
     default_unk = '__unk__'
     default_tok = 're'
     default_lower = False
-    default_fields = 'text,labels'
 
     @staticmethod
     def add_cmdline_args(argparser):
