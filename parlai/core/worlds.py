@@ -43,9 +43,10 @@ All worlds are initialized with the following parameters:
 
 import copy
 import importlib
-import math
 import random
 import time
+
+from functools import lru_cache
 
 try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore
@@ -278,6 +279,7 @@ class DialogPartnerWorld(World):
                 metrics.update(time_metrics)
             return metrics
 
+    @lru_cache(maxsize=1)
     def num_examples(self):
         if hasattr(self.agents[0], 'num_examples'):
             return self.agents[0].num_examples()
@@ -846,6 +848,7 @@ class HogwildWorld(World):
     def getID(self):
         return self.inner_world.getID()
 
+    @lru_cache(maxsize=1)
     def num_examples(self):
         return self.inner_world.num_examples()
 

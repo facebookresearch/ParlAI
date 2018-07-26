@@ -48,14 +48,14 @@ def create_fb_format(data, dpath):
         if len(x) < 1 or len(y) < 1:
             use = False
         if use:
-            s = '1 ' + x + '\t' + y
+            s = 'text:' + x + '\tlabels:' + y + '\tepisode_done:True'
             fout.write('{} \n'.format(s))
     fw1.close()
     fw2.close()
     fw3.close()
 
 def build(opt):
-    version = 'v1.0'
+    version = 'v1.1'
     dpath = os.path.join(opt['datapath'], 'Twitter')
 
     if not build_data.built(dpath, version):

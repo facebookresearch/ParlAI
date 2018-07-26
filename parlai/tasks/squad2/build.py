@@ -9,15 +9,11 @@ import parlai.core.build_data as build_data
 import os
 
 
-def build_fb_format():
-    pass
-
-
 def build(opt):
-    version = 'v5.0'
-    dpath = os.path.join(opt['datapath'], 'ConvAI2')
+    dpath = os.path.join(opt['datapath'], 'SQuAD2')
+    version = None
 
-    if not build_data.built(dpath, version):
+    if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files.
@@ -25,10 +21,11 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'convai2_fix_723.tgz'
-        url = 'http://parl.ai/downloads/convai2/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        fname1 = 'train-v2.0.json'
+        fname2 = 'dev-v2.0.json'
+        url = 'https://rajpurkar.github.io/SQuAD-explorer/dataset/'
+        build_data.download(url + fname1, dpath, fname1)
+        build_data.download(url + fname2, dpath, fname2)
 
         # Mark the data as built.
-        build_data.mark_done(dpath, version)
+        build_data.mark_done(dpath, version_string=version)

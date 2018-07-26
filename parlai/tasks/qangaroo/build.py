@@ -3,21 +3,18 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
+#
 # Download and build the data if it does not exist.
 
 import parlai.core.build_data as build_data
 import os
 
 
-def build_fb_format():
-    pass
-
-
 def build(opt):
-    version = 'v5.0'
-    dpath = os.path.join(opt['datapath'], 'ConvAI2')
+    dpath = os.path.join(opt['datapath'], 'qangaroo')
+    version = 'v1.1'
 
-    if not build_data.built(dpath, version):
+    if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files.
@@ -25,10 +22,13 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'convai2_fix_723.tgz'
-        url = 'http://parl.ai/downloads/convai2/' + fname
-        build_data.download(url, dpath, fname)
+        fname = 'qangaroo.zip'
+        g_ID = "1ytVZ4AhubFDOEL7o7XrIRIyhU8g9wvKA"
+
+        print("downloading ...")
+        build_data.download_from_google_drive(
+            g_ID, os.path.join(dpath, fname))
         build_data.untar(dpath, fname)
 
         # Mark the data as built.
-        build_data.mark_done(dpath, version)
+        build_data.mark_done(dpath, version_string=version)
