@@ -8,7 +8,6 @@
 from .agents import Agent
 from .build_data import make_dir
 from collections import defaultdict
-import argparse
 import codecs
 import copy
 import numpy as np
@@ -100,6 +99,7 @@ class DictionaryAgent(Agent):
     default_unk = '__unk__'
     default_tok = 're'
     default_lower = False
+    default_fields = 'text,labels'
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -157,7 +157,7 @@ class DictionaryAgent(Agent):
         return dictionary
 
     def __init__(self, opt, shared=None):
-        # initialize fields
+        """Initialize DictionaryAgent."""
         self.opt = copy.deepcopy(opt)
         self.minfreq = opt.get('dict_minfreq', DictionaryAgent.default_minfreq)
         self.null_token = opt.get('dict_nulltoken', DictionaryAgent.default_null)
@@ -555,8 +555,10 @@ class DictionaryAgent(Agent):
         return text
 
     def act(self):
-        """Add any words passed in the 'text' field of the observation to this
-        dictionary.
+        """Add words in the last observation to the dictionary.
+
+        This checks any fields in the message present in the dict-fields
+        argument (e.g. "text,labels").
         """
         for source in ([self.observation.get('text')],
                         self.observation.get('labels')):
@@ -564,15 +566,15 @@ class DictionaryAgent(Agent):
                 for text in source:
                     if text:
                         self.add_to_dict(self.tokenize(text))
+
         return {'id': 'Dictionary'}
 
     def share(self):
-        shared = {}
+        """Share internal dicts."""
+        shared = super().share()
         shared['freq'] = self.freq
         shared['tok2ind'] = self.tok2ind
         shared['ind2tok'] = self.ind2tok
-        shared['opt'] = self.opt
-        shared['class'] = type(self)
         return shared
 
     def shutdown(self):
@@ -581,12 +583,13 @@ class DictionaryAgent(Agent):
             self.save(self.save_path)
 
     def __str__(self):
+        """Return string representation of frequencies in dictionary."""
         return str(self.freq)
 
 
 class _BPEHelper(object):
-    """
-    Helper class for performing BPE subword tokenization.
+    """Helper class for performing BPE subword tokenization.
+
     For technical details, please refer to https://arxiv.org/abs/1508.07909.
     This class just wraps around the official subword-nmt repository.
 
@@ -596,8 +599,8 @@ class _BPEHelper(object):
     """
 
     def __init__(self, codecs_filename):
-        """
-        Initialize the BPE module.
+        """Initialize the BPE module.
+
         If `codecs_filename` already exists, loads the pretrained codecs.
         If it does not, codecs will be saved there after a call to `finalize()`.
 
@@ -620,8 +623,8 @@ class _BPEHelper(object):
             self.bpe = apply_bpe.BPE(codecs_file)
 
     def tokenize(self, text):
-        """
-        Tokenizes the text with bpe if codecs are already finalized.
+        """Tokenize the text with bpe if codecs are already finalized.
+
         Otherwise, returns the regularly split tokens that will train the bpe.
 
         :param text: str. Raw text to tokenize.
