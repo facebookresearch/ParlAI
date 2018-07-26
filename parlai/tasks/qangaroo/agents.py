@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.teachers import DialogTeacher, FixedDialogTeacher
+from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 
 import json
@@ -16,8 +16,11 @@ class DefaultTeacher(FixedDialogTeacher):
         super().__init__(opt, shared)
         # Build the data if it doesn't exist.
         build(opt)
-        datapath = self._path(opt)
-        self._setup_data(datapath)
+        if not shared:
+            datapath = self._path(opt)
+            self._setup_data(datapath)
+        else:
+            self.examples = shared['examples']
         self.id = 'qangaroo'
         self.reset()
 
@@ -31,7 +34,13 @@ class DefaultTeacher(FixedDialogTeacher):
         return len(self.examples)
 
     def num_episodes(self):
+        # same as num_examples since only one exchange per episode
         return self.num_examples()
+
+    def share(self):
+        shared = super().share()
+        shared['examples'] = self.examples
+        return shared
 
     def get(self, episode_idx, entry_idx=None):
         item = self.examples[episode_idx]
