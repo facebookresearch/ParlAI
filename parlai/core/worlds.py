@@ -416,14 +416,14 @@ class MultiWorld(World):
     """
 
     def __init__(self, opt, agents=None, shared=None, default_world=None):
+        if opt.get('batch_sort'):
+            print('WARNING: batch_sort disabled for multitasking')
         opt['batch_sort'] = False
-        print('WARNING: batch_sort disabled for multitasking')
         super().__init__(opt)
         self.worlds = []
         for index, k in enumerate(opt['task'].split(',')):
             k = k.strip()
             if k:
-                print("[creating world: " + k + "]")
                 opt_singletask = copy.deepcopy(opt)
                 opt_singletask['task'] = k
                 if shared:
