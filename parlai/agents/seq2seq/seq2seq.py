@@ -295,7 +295,7 @@ class Seq2seqAgent(Agent):
             if states:
                 # set loaded states if applicable
                 self.model.load_state_dict(states['model'])
-                    
+
             if self.use_cuda:
                 self.model.cuda()
 
@@ -385,8 +385,6 @@ class Seq2seqAgent(Agent):
 
     def v2t(self, vec):
         """Convert token indices to string of tokens."""
-        if isinstance(vec, Variable):
-            vec = vec.data
         new_vec = []
         for i in vec:
             if i == self.END_IDX:
@@ -686,7 +684,7 @@ class mydefaultdict(defaultdict):
     """
     def get(self, key, default=None):
         # override default from "get" (like "__getitem__" already is)
-        return super().get(key, self.default_factory())
+        return super().get(key, default or self.default_factory())
 
 
 class PerplexityEvaluatorAgent(Seq2seqAgent):
@@ -718,16 +716,19 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
         obs = self.observation
         obs['eval_labels'] = [' '.join(partial_out)]
         batch = self.vectorize([obs])
-        if self.prev_enc is not None and batch[0].shape[1] != self.prev_enc[0].shape[1]:
-            self.prev_enc = None  # reset prev_enc
+        if len(partial_out) == 0:
+            # reset prev_enc, this is a new input
+            self.prev_enc = None
 
         self.model.eval()
-        self.model.longest_label = 1  # no need to predict farther ahead
+        # no need to predict farther ahead
+        # if you pass in any ys, this will be ignored
+        self.model.longest_label = 1
         out = self.model(
-            batch[0], # xs
+            batch[0],  # xs
             ys=(batch[1] if len(partial_out) > 0 else None),
             prev_enc=self.prev_enc)
-        scores, self.prev_enc = out[1], out[-1]
+        scores, self.prev_enc = out[1], out[4]
         # scores is bsz x seqlen x num_words, so select probs of current index
         probs = F.softmax(scores.select(1, -1), dim=1).squeeze()
         dist = mydefaultdict(lambda: 1e-7)  # default probability for any token
