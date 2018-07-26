@@ -279,6 +279,7 @@ class DialogPartnerWorld(World):
                 metrics.update(time_metrics)
             return metrics
 
+    @lru_cache(maxsize=1)
     def num_examples(self):
         if hasattr(self.agents[0], 'num_examples'):
             return self.agents[0].num_examples()
