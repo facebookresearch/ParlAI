@@ -30,7 +30,6 @@ class AssignState():
     STATUS_NONE = 'none'
     STATUS_ONBOARDING = 'onboarding'
     STATUS_WAITING = 'waiting'
-    STATUS_ASSIGNED = 'assigned'
     STATUS_IN_TASK = 'in task'
     STATUS_DONE = 'done'
     STATUS_DISCONNECT = 'disconnect'
@@ -145,6 +144,7 @@ class MTurkAgent(Agent):
         self.message_request_time = None
         self.recieved_packets = {}
         self.creation_time = time.time()
+        self.alived = False # Used for restoring state after refresh
 
         self.msg_queue = Queue()
 
@@ -157,6 +157,12 @@ class MTurkAgent(Agent):
         '''Get the status of this agent on its task'''
         # TODO retrieve from db if not set
         return self.state.status
+
+    def submitted_hit(self):
+        return self.get_status() in [
+            AssignState.STATUS_DONE,
+            AssignState.STATUS_PARTNER_DISCONNECT
+        ]
 
     def is_final(self):
         '''Determine if this agent is in a final state'''
@@ -329,24 +335,6 @@ class MTurkAgent(Agent):
                     if (current_time - start_time) > timeout:
                         return self.prepare_timeout()
                 time.sleep(shared_utils.THREAD_SHORT_SLEEP)
-
-    def change_conversation(self, conversation_id, agent_id, change_callback):
-        """Handle changing a conversation for an agent, takes a callback for
-        when the command is acknowledged
-        """
-        self.id = agent_id
-        self.conversation_id = conversation_id
-        data = {
-            'text': data_model.COMMAND_CHANGE_CONVERSATION,
-            'conversation_id': conversation_id,
-            'agent_id': agent_id
-        }
-        self.manager.send_command(
-            self.worker_id,
-            self.assignment_id,
-            data,
-            ack_func=change_callback
-        )
 
     def episode_done(self):
         """Return whether or not this agent believes the conversation to

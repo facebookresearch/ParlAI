@@ -4,11 +4,30 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.mturk.core.agents import MTurkAgent
-import parlai.mturk.core.data_model as data_model
+import logging
 import os
+import pickle
+import time
+
+from botocore.exceptions import ClientError
+
+from parlai.mturk.core.agents import MTurkAgent, AssignState
+import parlai.mturk.core.data_model as data_model
+import parlai.mturk.core.mturk_utils as mturk_utils
+import parlai.mturk.core.shared_utils as shared_utils
+
+
+# Time to persist a disconnect before forgetting about it. Combined with the
+# above this will block workers that disconnect at least 10 times in a day
+DISCONNECT_PERSIST_LENGTH = 60 * 60 * 24
+
+# Max number of conversation disconnects before a turker should be blocked
+MAX_DISCONNECTS = 10
+
+DISCONNECT_FILE_NAME = 'disconnects.pickle'
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
+
 
 class WorkerState():
     """Class for holding state information about an mturk worker"""
@@ -39,7 +58,7 @@ class WorkerState():
 
     def has_assignment(self, assign_id):
         """Returns true if this worker has an assignment for the given id"""
-        return assign_id in agents
+        return assign_id in self.agents
 
     def completed_assignments(self):
         """Returns the number of assignments this worker has completed"""
@@ -48,6 +67,7 @@ class WorkerState():
             if agent.get_status() == AssignState.STATUS_DONE:
                 complete_count += 1
         return complete_count
+
 
 class WorkerManager():
     """Class used to keep track of workers state, as well as processing
@@ -62,12 +82,55 @@ class WorkerManager():
         self.assignment_to_worker_id = {}
         self.hit_id_to_agent = {}
         self.time_blocked_workers = []
-        self._load_disconnects()
+        self.load_disconnects()
+        self.is_sandbox = mturk_manager.is_sandbox
 
     def _create_agent(self, hit_id, assignment_id, worker_id):
         """Initialize an agent and return it"""
         return MTurkAgent(
             self.opt, self.mturk_manager, hit_id, assignment_id, worker_id)
+
+    def _get_worker(self, worker_id):
+        """A safe way to get a worker by worker_id"""
+        if worker_id in self.mturk_workers:
+            return self.mturk_workers[worker_id]
+        return None
+
+    def _get_agent(self, worker_id, assignment_id):
+        """A safe way to get an agent by worker and assignment_id"""
+        worker = self._get_worker(worker_id)
+        if worker is not None:
+            if assignment_id in worker.agents:
+                return worker.agents[assignment_id]
+        return None
+
+    def route_packet(self, pkt):
+        """Put an incoming message onto the correct agent's message queue and
+        add it to the proper message thread as long as the agent is active
+        """
+        worker_id = pkt.sender_id
+        assignment_id = pkt.assignment_id
+        agent = self._get_agent(worker_id, assignment_id)
+        if agent is not None and not agent.is_final():
+            shared_utils.print_and_log(
+                logging.INFO,
+                'Manager received: {}'.format(pkt),
+                should_print=self.opt['verbose']
+            )
+            # Push the message to the message thread to send on a reconnect
+            agent.append_packet(pkt.data)
+
+            # Clear the send message command, as a message was recieved
+            agent.set_last_command(None)
+            agent.put_data(pkt.id, pkt.data)
+
+    def map_over_agents(self, map_function, filter_func=None):
+        """Take an action over all the agents we have access to, filters if
+        a filter_func is given"""
+        for worker in self.mturk_workers.values():
+            for agent in worker.agents.values():
+                if filter is None or filter_func(agent):
+                    map_function(agent)
 
     def get_agent_for_assignment(self, assignment_id):
         """Returns agent for the assignment, none if no agent assigned"""
@@ -121,6 +184,23 @@ class WorkerManager():
         with open(file_path, 'wb') as f:
             pickle.dump(self.disconnects, f, pickle.HIGHEST_PROTOCOL)
 
+    def handle_worker_disconnect(self, worker_id, assignment_id,
+                                 partner_callback):
+        agent = self._get_agent(worker_id, assignment_id)
+        if agent is not None:
+            # Disconnect in conversation is not workable
+            agent.set_status(AssignState.STATUS_DISCONNECT)
+            # in conversation, inform others about disconnect
+            conversation_id = agent.conversation_id
+            if conversation_id in self.conv_to_agent:
+                if agent in self.conv_to_agent[conversation_id]:
+                    for other_agent in self.conv_to_agent[conversation_id]:
+                        if agent.assignment_id != other_agent.assignment_id:
+                            partner_callback(other_agent)
+                if len(self.mturk_manager.mturk_agent_ids) > 1:
+                    # The user disconnected from inside a conversation with
+                    # another turker, record this as bad behavoir
+                    self.handle_bad_disconnect(worker_id)
 
     def handle_bad_disconnect(self, worker_id):
         """Update the number of bad disconnects for the given worker, block
@@ -169,6 +249,7 @@ class WorkerManager():
         self.assignment_to_worker_id[assign_id] = worker_id
         agent = self._create_agent(hit_id, assign_id, worker_id)
         self.hit_id_to_agent[hit_id] = agent
+        curr_worker_state = self.mturk_workers[worker_id]
         curr_worker_state.add_agent(assign_id, agent)
 
     def get_complete_hits(self):
@@ -178,6 +259,77 @@ class WorkerManager():
             if agent.hit_is_complete:
                 hit_ids.append(hit_id)
         return hit_ids
+
+    def get_agent_work_status(self, assignment_id):
+        """Get the current status of an assignment's work"""
+        client = mturk_utils.get_mturk_client(self.is_sandbox)
+        try:
+            response = client.get_assignment(AssignmentId=assignment_id)
+            status = response['Assignment']['AssignmentStatus']
+            worker_id = self.assignment_to_worker_id[assignment_id]
+            agent = self._get_agent(worker_id, assignment_id)
+            if agent is not None and status == MTurkAgent.ASSIGNMENT_DONE:
+                agent.hit_is_complete = True
+            return status
+        except ClientError as e:
+            # If the assignment isn't done, asking for the assignment will fail
+            not_done_message = ('This operation can be called with a status '
+                                'of: Reviewable,Approved,Rejected')
+            if not_done_message in e.response['Error']['Message']:
+                return MTurkAgent.ASSIGNMENT_NOT_DONE
+
+    def _log_missing_agent(self, worker_id, assignment_id):
+        """Logs when an agent was expected to exist, yet for some reason it
+        didn't. If these happen often there is a problem"""
+        shared_utils.print_and_log(
+            logging.WARN,
+            'Expected to have an agent for {}_{}, yet none was found'.format(
+                worker_id,
+                assignment_id
+            )
+        )
+
+    def _get_agent_from_pkt(self, pkt):
+        """Get sender, assignment, and conv ids from a packet"""
+        worker_id = pkt.sender_id
+        assignment_id = pkt.assignment_id
+        agent = self._get_agent(worker_id, assignment_id)
+        if agent is None:
+            self._log_missing_agent(worker_id, assignment_id)
+        return agent
+
+    def _change_worker_to_conv(self, pkt):
+        """Update a worker to a new conversation given a packet from the
+        conversation to be switched to
+        """
+        agent = self._get_agent_from_pkt(pkt)
+        if agent is not None:
+            self._assign_agent_to_conversation(agent, agent.conversation_id)
+
+    def _assign_agent_to_conversation(self, agent, conv_id):
+        """Register an agent object with a conversation id, update status"""
+        agent.conversation_id = conv_id
+        if conv_id not in self.conv_to_agent:
+            self.conv_to_agent[conv_id] = []
+        self.conv_to_agent[conv_id].append(agent)
+
+    def change_agent_conversation(self, agent, conversation_id, new_agent_id):
+        """Handle changing a conversation for an agent, takes a callback for
+        when the command is acknowledged
+        """
+        agent.id = new_agent_id
+        agent.conversation_id = conversation_id
+        data = {
+            'text': data_model.COMMAND_CHANGE_CONVERSATION,
+            'conversation_id': conversation_id,
+            'agent_id': new_agent_id
+        }
+        self.mturk_manager.send_command(
+            agent.worker_id,
+            agent.assignment_id,
+            data,
+            ack_func=self._change_worker_to_conv
+        )
 
     def shutdown(self):
         """Handles cleaning up and storing state related to workers"""

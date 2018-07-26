@@ -13,11 +13,9 @@ import time
 import uuid
 import errno
 
-from botocore.exceptions import ClientError
-
-from parlai.mturk.core.agents import MTurkAgent, AssignState
+from parlai.mturk.core.agents import AssignState
 from parlai.mturk.core.socket_manager import Packet, SocketManager
-from parlai.mturk.core.worker_manager import WorkerManager, WorkerState
+from parlai.mturk.core.worker_manager import WorkerManager
 import parlai.mturk.core.data_model as data_model
 import parlai.mturk.core.mturk_utils as mturk_utils
 import parlai.mturk.core.server_utils as server_utils
@@ -29,18 +27,10 @@ WORLD_START_TIMEOUT = 11
 # Multiplier to apply when creating hits to ensure worker availibility
 HIT_MULT = 1.5
 
-# Max number of conversation disconnects before a turker should be blocked
-MAX_DISCONNECTS = 30
-
-# Time to persist a disconnect before forgetting about it. Combined with the
-# above this will block workers that disconnect at least 30 times in a day
-DISCONNECT_PERSIST_LENGTH = 60 * 60 * 24
-
 # 6 minute timeout to ensure only one thread updates the time logs.
 # Those update once daily in a 3 minute window
 RESET_TIME_LOG_TIMEOUT = 360
 
-DISCONNECT_FILE_NAME = 'disconnects.pickle'
 TIME_LOGS_FILE_NAME = 'working_time.pickle'
 TIME_LOGS_FILE_LOCK = 'working_time.lock'
 
@@ -122,7 +112,7 @@ class MTurkManager():
 
     def _init_state(self):
         """Initialize everything in the worker, task, and thread states"""
-        # TODO handle pooling in own class
+        # TODO handle pooling in own class, note this is an agent_pool
         self.worker_pool = []
 
         # TODO move some state to DB
@@ -136,13 +126,6 @@ class MTurkManager():
         self._reset_time_logs(init_load=True)
         self.qualifications = None
         self.time_limit_checked = time.time()
-
-
-        # TODO move to worker manager
-        self.mturk_workers = {}
-        self.conv_to_agent = {}
-        self.assignment_to_worker_id = {}
-        self.time_blocked_workers = []
 
     def _init_logs(self):
         """Initialize logging settings from the opt"""
@@ -162,7 +145,7 @@ class MTurkManager():
                     # otherwise only need to check an hour for safety
                     compare_time = 24 * 60 * 60 if init_load else 60 * 60
                     if time.time() - existing_times['last_reset'] < \
-                            24 * 60 * 60 and not force:
+                            compare_time and not force:
                         return  # do nothing if it's been less than a day
                     reset_workers = list(existing_times.keys())
                     reset_workers.remove('last_reset')
@@ -198,35 +181,6 @@ class MTurkManager():
         if total_work_time > int(self.opt.get('max_time')):
             self.worker_manager.time_block_worker(worker_id)
 
-    def _get_agent_from_pkt(self, pkt):
-        """Get sender, assignment, and conv ids from a packet"""
-        worker_id = pkt.sender_id
-        assignment_id = pkt.assignment_id
-        agent = self._get_agent(worker_id, assignment_id)
-        if agent is None:
-            self._log_missing_agent(worker_id, assignment_id)
-        return agent
-
-    def _change_worker_to_conv(self, pkt):
-        """Update a worker to a new conversation given a packet from the
-        conversation to be switched to
-        """
-        agent = self._get_agent_from_pkt(pkt)
-        if agent is not None:
-            self._assign_agent_to_conversation(agent, agent.conversation_id)
-
-    def _set_worker_status_to_onboard(self, pkt):
-        """Changes assignment status to onboarding based on the packet"""
-        agent = self._get_agent_from_pkt(pkt)
-        if agent is not None:
-            agent.set_status(AssignState.STATUS_ONBOARDING)
-
-    def _set_worker_status_to_waiting(self, pkt):
-        """Changes assignment status to waiting based on the packet"""
-        agent = self._get_agent_from_pkt(pkt)
-        if agent is not None:
-            agent.set_status(AssignState.STATUS_WAITING)
-
     def _move_workers_to_waiting(self, workers):
         """Put all workers into waiting worlds, expire them if no longer
         accepting workers. If the worker is already final, clean it
@@ -242,21 +196,23 @@ class MTurkManager():
             conversation_id = 'w_{}'.format(uuid.uuid4())
             if self.accepting_workers:
                 # Move the worker into a waiting world
-                worker.change_conversation(
+                self.worker_manager.change_agent_conversation(
+                    agent=worker,
                     conversation_id=conversation_id,
-                    agent_id='waiting',
-                    change_callback=self._set_worker_status_to_waiting
+                    new_agent_id='waiting',
                 )
             else:
                 self.force_expire_hit(worker_id, assignment_id)
 
     def _expire_onboarding_pool(self):
         """Expire any worker that is in an onboarding thread"""
-        for worker_id in self.mturk_workers:
-            for assign_id in self.mturk_workers[worker_id].agents:
-                agent = self.mturk_workers[worker_id].agents[assign_id]
-                if (agent.get_status() == AssignState.STATUS_ONBOARDING):
-                    self.force_expire_hit(worker_id, assign_id)
+        def expire_func(agent):
+            self.force_expire_hit(agent.worker_id, agent.assignment_id)
+
+        def is_onboard(agent):
+            return agent.get_status() == AssignState.STATUS_ONBOARDING
+
+        self.worker_manager.map_over_agents(expire_func, is_onboard)
 
     def _expire_worker_pool(self):
         """Expire all workers in the worker pool"""
@@ -282,39 +238,29 @@ class MTurkManager():
                 unique_worker_ids.append(w.worker_id)
         return unique_workers
 
+    def _add_agent_to_pool(self, agent):
+        """Add a single agent to the pool"""
+        if agent not in self.worker_pool:
+            # Add the worker to pool
+            with self.worker_pool_change_condition:
+                shared_utils.print_and_log(
+                    logging.DEBUG,
+                    "Adding worker {} to pool.".format(agent.worker_id)
+                )
+                self.worker_pool.append(agent)
+
     def _handle_worker_disconnect(self, worker_id, assignment_id):
         """Mark a worker as disconnected and send a message to all agents in
         his conversation that a partner has disconnected.
         """
-        agent = self._get_agent(worker_id, assignment_id)
-        if agent is None:
-            self._log_missing_agent(worker_id, assignment_id)
-        else:
-            # Disconnect in conversation is not workable
-            agent.set_status(AssignState.STATUS_DISCONNECT)
-            # in conversation, inform others about disconnect
-            conversation_id = agent.conversation_id
-            if conversation_id in self.conv_to_agent:
-                if agent in self.conv_to_agent[conversation_id]:
-                    for other_agent in self.conv_to_agent[conversation_id]:
-                        if agent.assignment_id != other_agent.assignment_id:
-                            self._handle_partner_disconnect(
-                                other_agent.worker_id,
-                                other_agent.assignment_id
-                            )
-                if len(self.mturk_agent_ids) > 1:
-                    # The user disconnected from inside a conversation with
-                    # another turker, record this as bad behavoir
-                    self.worker_manager.handle_bad_disconnect(worker_id)
+        self.worker_manager.handle_worker_disconnect(
+            worker_id, assignment_id, self._handle_partner_disconnect)
 
-    def _handle_partner_disconnect(self, worker_id, assignment_id):
-        """Send a message to a worker notifying them that a partner has
+    def _handle_partner_disconnect(self, agent):
+        """Send a message to an agent notifying them that a partner has
         disconnected and we marked the HIT as complete for them
         """
-        agent = self._get_agent(worker_id, assignment_id)
-        if agent is None:
-            self._log_missing_agent(worker_id, assignment_id)
-        elif not agent.is_final():
+        if agent is not None and not agent.is_final():
             # Update the assignment state
             agent.some_agent_disconnected = True
             agent_messages = [m for m in agent.get_messages()
@@ -326,29 +272,36 @@ class MTurkManager():
 
             # Create and send the command
             data = agent.get_inactive_command_data()
-            self.send_command(worker_id, assignment_id, data)
+            self.send_command(agent.worker_id, agent.assignment_id, data)
 
     def _restore_worker_state(self, worker_id, assignment_id):
         """Send a command to restore the state of an agent who reconnected"""
-        agent = self._get_agent(worker_id, assignment_id)
-        if agent is None:
-            self._log_missing_agent(worker_id, assignment_id)
-        else:
-            def _push_worker_state(msg):
-                if len(agent.get_messages()) != 0:
-                    data = {
-                        'text': data_model.COMMAND_RESTORE_STATE,
-                        'messages': agent.get_messages(),
-                        'last_command': agent.get_last_command(),
-                    }
-                    self.send_command(worker_id, assignment_id, data)
+        agent = self.worker_manager._get_agent(worker_id, assignment_id)
 
+        if agent is not None:
+            agent.alived = False
             # Return an agent to their conversation, then restore the state
-            agent.change_conversation(
+            self.worker_manager.change_agent_conversation(
+                agent=agent,
                 conversation_id=agent.conversation_id,
-                agent_id=agent.id,
-                change_callback=_push_worker_state
+                new_agent_id=agent.id,
             )
+
+            def send_state_data():
+                while not agent.alived and not agent.hit_is_expired:
+                    time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+
+                data = {
+                    'text': data_model.COMMAND_RESTORE_STATE,
+                    'messages': agent.get_messages(),
+                    'last_command': agent.get_last_command(),
+                }
+                self.send_command(worker_id, assignment_id, data)
+
+            state_thread = threading.Thread(target=send_state_data)
+            state_thread.daemon = True
+            state_thread.start()
+
 
     def _setup_socket(self, timeout_seconds=None):
         """Set up a socket_manager with defined callbacks"""
@@ -424,20 +377,34 @@ class MTurkManager():
             self.worker_manager.assign_task_to_worker(
                 hit_id, assign_id, worker_id
             )
-            agent = self._get_agent(worker_id, assign_id)
+            agent = self.worker_manager._get_agent(worker_id, assign_id)
             self._onboard_new_worker(agent)
 
         else:
             # Reconnecting worker
-            agent = self._get_agent(worker_id, assign_id)
+            agent = self.worker_manager._get_agent(worker_id, assign_id)
             agent.log_reconnect()
+            agent.alived = True
             if agent.get_status() == AssignState.STATUS_NONE:
+                # See if assigned an onboarding world, update state if so
+                if self.is_onboarding_world(conversation_id):
+                    agent.set_status(AssignState.STATUS_ONBOARDING)
+                    return
+                if self.is_waiting_world(conversation_id):
+                    agent.set_status(AssignState.STATUS_WAITING)
+                    self._add_agent_to_pool(agent)
+                    return
                 # Reconnecting before even being given a world. Kill the hit
                 # so that on a reconnect they can get a new one assigned and
                 # the resources of the first one are cleaned.
                 self.force_expire_hit(worker_id, assign_id)
                 return
             elif agent.get_status() == AssignState.STATUS_ONBOARDING:
+                # See if moved to a waiting world, update state if so
+                if self.is_waiting_world(conversation_id):
+                    agent.set_status(AssignState.STATUS_WAITING)
+                    self._add_agent_to_pool(agent)
+                    return
                 # Reconnecting to the onboarding world should either restore
                 # state or expire (if workers are no longer being accepted
                 # for this task)
@@ -446,28 +413,22 @@ class MTurkManager():
                 elif not conversation_id:
                     self._restore_worker_state(worker_id, assign_id)
             elif agent.get_status() == AssignState.STATUS_WAITING:
+                if self.is_task_world(conversation_id):
+                    agent.set_status(AssignState.STATUS_IN_TASK)
+                    agent.clear_messages()
+                    return
                 # Reconnecting in waiting is either the first reconnect after
                 # being told to wait or a waiting reconnect. Restore state if
                 # no information is held, and add to the pool if not already in
                 # the pool
                 if not conversation_id:
                     self._restore_worker_state(worker_id, assign_id)
-                if agent not in self.worker_pool:
-                    # Add the worker to pool
-                    with self.worker_pool_change_condition:
-                        shared_utils.print_and_log(
-                            logging.DEBUG,
-                            "Adding worker {} to pool.".format(agent.worker_id)
-                        )
-                        self.worker_pool.append(agent)
+                self._add_agent_to_pool(agent)
             elif agent.get_status() == AssignState.STATUS_IN_TASK:
                 # Reconnecting to the onboarding world or to a task world
                 # should resend the messages already in the conversation
                 if not conversation_id:
                     self._restore_worker_state(worker_id, assign_id)
-            elif agent.get_status() == AssignState.STATUS_ASSIGNED:
-                # Connect after a switch to a task world, mark the switch
-                agent.set_status(AssignState.STATUS_IN_TASK)
                 agent.clear_messages()
             elif (agent.get_status() == AssignState.STATUS_DISCONNECT or
                   agent.get_status() == AssignState.STATUS_DONE or
@@ -489,11 +450,11 @@ class MTurkManager():
         if mturk_event_type == SNS_ASSIGN_RETURNED:
             agent.hit_is_returned = True
             # Treat as a socket_dead event
-            self._on_socket_dead(worker_id, assignment_id)
+            self._on_socket_dead(agent.worker_id, assignment_id)
         elif mturk_event_type == SNS_ASSIGN_ABANDONDED:
             agent.set_hit_is_abandoned()
             # Treat as a socket_dead event
-            self._on_socket_dead(worker_id, assignment_id)
+            self._on_socket_dead(agent.worker_id, assignment_id)
         elif mturk_event_type == SNS_ASSIGN_SUBMITTED:
             # Socket dead already called, just mark as complete
             agent.hit_is_complete = True
@@ -502,26 +463,10 @@ class MTurkManager():
         """Put an incoming message onto the correct agent's message queue and
         add it to the proper message thread as long as the agent is active
         """
-        worker_id = pkt.sender_id
         if pkt.sender_id == AMAZON_SNS_NAME:
             self._handle_mturk_message(pkt)
             return
-        assignment_id = pkt.assignment_id
-        agent = self._get_agent(worker_id, assignment_id)
-        if agent is None:
-            self._log_missing_agent(worker_id, assignment_id)
-        elif not agent.is_final():
-            shared_utils.print_and_log(
-                logging.INFO,
-                'Manager received: {}'.format(pkt),
-                should_print=self.opt['verbose']
-            )
-            # Push the message to the message thread to send on a reconnect
-            agent.append_packet(pkt.data)
-
-            # Clear the send message command, as a message was recieved
-            agent.set_last_command(None)
-            agent.put_data(pkt.id, pkt.data)
+        self.worker_manager.route_packet(pkt)
 
     def _on_socket_dead(self, worker_id, assignment_id):
         """Handle a disconnect event, update state as required and notifying
@@ -530,7 +475,7 @@ class MTurkManager():
         returns False if the socket death should be ignored and the socket
         should stay open and not be considered disconnected
         """
-        agent = self._get_agent(worker_id, assignment_id)
+        agent = self.worker_manager._get_agent(worker_id, assignment_id)
         if agent is None:
             # This worker never registered, so we don't do anything
             return
@@ -567,11 +512,6 @@ class MTurkManager():
             # It's okay if a complete assignment socket dies, but wait for the
             # world to clean up the resource
             return
-        elif agent.get_status() == AssignState.STATUS_ASSIGNED:
-            # mark the agent in the assigned state as disconnected, the task
-            # spawn thread is responsible for cleanup
-            agent.set_status(AssignState.STATUS_DISCONNECT)
-            agent.disconnected = True
 
         self.socket_manager.close_channel(agent.get_connection_id())
 
@@ -587,10 +527,10 @@ class MTurkManager():
             """Onboarding wrapper to set state to onboarding properly"""
             if self.onboard_function:
                 conversation_id = 'o_'+str(uuid.uuid4())
-                mturk_agent.change_conversation(
+                self.worker_state.change_agent_conversation(
+                    agent=mturk_agent,
                     conversation_id=conversation_id,
-                    agent_id='onboarding',
-                    change_callback=self._set_worker_status_to_onboard
+                    new_agent_id='onboarding',
                 )
                 # Wait for turker to be in onboarding status
                 mturk_agent.wait_for_status(AssignState.STATUS_ONBOARDING)
@@ -612,17 +552,6 @@ class MTurkManager():
 
             self.assignment_to_onboard_thread[assignment_id] = onboard_thread
 
-    def _assign_agent_to_conversation(self, agent, conv_id):
-        """Register an agent object with a conversation id, update status"""
-        if agent.get_status() != AssignState.STATUS_IN_TASK:
-            # Avoid on a second ack if alive already came through
-            agent.set_status(AssignState.STATUS_ASSIGNED)
-
-        agent.conversation_id = conv_id
-        if conv_id not in self.conv_to_agent:
-            self.conv_to_agent[conv_id] = []
-        self.conv_to_agent[conv_id].append(agent)
-
     def _no_workers_incomplete(self, agents):
         """Return True if all the given agents completed their task"""
         for agent in agents:
@@ -631,40 +560,24 @@ class MTurkManager():
                 return False
         return True
 
-    def _get_worker(self, worker_id):
-        """A safe way to get a worker by worker_id"""
-        if worker_id in self.mturk_workers:
-            return self.mturk_workers[worker_id]
-        return None
-
-    def _get_agent(self, worker_id, assignment_id):
-        """A safe way to get an agent by worker and assignment_id"""
-        worker = self._get_worker(worker_id)
-        if worker is not None:
-            if assignment_id in worker.agents:
-                return worker.agents[assignment_id]
-        return None
-
-    def _log_missing_agent(self, worker_id, assignment_id):
-        """Logs when an agent was expected to exist, yet for some reason it
-        didn't. If these happen often there is a problem"""
-        shared_utils.print_and_log(
-            logging.WARN,
-            'Expected to have an agent for {}_{}, yet none was found'.format(
-                worker_id,
-                assignment_id
-            )
-        )
-
     def _check_time_limit(self):
         if time.time() - self.time_limit_checked < RESET_TIME_LOG_TIMEOUT:
             return
-        if int(time.time()) % (60*60*24) > 180:
-            # sync the time resets to ONCE DAILY in a 3 minute window
+        if int(time.time()) % (60*60*24) > 600:
+            # sync the time resets to ONCE DAILY in a 10 minute window
             return
         self.time_limit_checked = time.time()
         self._reset_time_logs()
         self.worker_manager.un_time_block_workers()
+
+    def is_onboarding_world(self, conversation_id):
+        return conversation_id is not None and conversation_id.startswith('o_')
+
+    def is_waiting_world(self, conversation_id):
+        return conversation_id is not None and conversation_id.startswith('w_')
+
+    def is_task_world(self, conversation_id):
+        return conversation_id is not None and conversation_id.startswith('t_')
 
     # Manager Lifecycle Functions #
 
@@ -777,7 +690,8 @@ class MTurkManager():
         self.task_files_to_copy.append(
             os.path.join(task_directory_path, 'html', 'cover_page.html'))
         try:
-            for file_name in os.listdir(os.path.join(task_directory_path, 'html')):
+            for file_name in os.listdir(os.path.join(
+                    task_directory_path, 'html')):
                 self.task_files_to_copy.append(os.path.join(
                     task_directory_path, 'html', file_name
                 ))
@@ -922,10 +836,8 @@ class MTurkManager():
                 self.completed_conversations += 1
             if self.opt['max_connections'] > 0:  # If using a conv cap
                 if self.accepting_workers:  # if still looking for new workers
-                    for w in workers:
-                        if w.get_status() in [
-                                AssignState.STATUS_DONE,
-                                AssignState.STATUS_PARTNER_DISCONNECT]:
+                    for worker in workers:
+                        if worker.submitted_hit():
                             self.create_additional_hits(1)
 
         while True:
@@ -948,10 +860,10 @@ class MTurkManager():
                     # versions of the task that require fewer agents
                     workers = [w for w in workers if w.id is not None]
                     for w in workers:
-                        w.change_conversation(
+                        self.worker_manager.change_agent_conversation(
+                            agent=w,
                             conversation_id=new_conversation_id,
-                            agent_id=w.id,
-                            change_callback=self._change_worker_to_conv
+                            new_agent_id=w.id,
                         )
                         # Remove selected workers from the pool
                         self.worker_pool.remove(w)
@@ -1011,7 +923,7 @@ class MTurkManager():
         to reflect that the HIT is now expired
         """
         # Expire in the state
-        agent = self._get_agent(worker_id, assign_id)
+        agent = self.worker_manager._get_agent(worker_id, assign_id)
         if agent is not None:
             if not agent.is_final():
                 agent.set_status(AssignState.STATUS_EXPIRED)
@@ -1054,7 +966,7 @@ class MTurkManager():
         if 'message_id' not in data:
             data['message_id'] = str(uuid.uuid4())
         conversation_id = None
-        agent = self._get_agent(receiver_id, assignment_id)
+        agent = self.worker_manager._get_agent(receiver_id, assignment_id)
         if agent is not None:
             conversation_id = agent.conversation_id
         event_id = shared_utils.generate_event_id(receiver_id)
@@ -1100,7 +1012,7 @@ class MTurkManager():
             ack_func=ack_func
         )
 
-        agent = self._get_agent(receiver_id, assignment_id)
+        agent = self.worker_manager._get_agent(receiver_id, assignment_id)
         if (data['text'] != data_model.COMMAND_CHANGE_CONVERSATION and
                 data['text'] != data_model.COMMAND_RESTORE_STATE and
                 agent is not None):
@@ -1130,22 +1042,7 @@ class MTurkManager():
     # Amazon MTurk Server Functions #
 
     def get_agent_work_status(self, assignment_id):
-        """Get the current status of an assignment's work"""
-        client = mturk_utils.get_mturk_client(self.is_sandbox)
-        try:
-            response = client.get_assignment(AssignmentId=assignment_id)
-            status = response['Assignment']['AssignmentStatus']
-            worker_id = self.assignment_to_worker_id[assignment_id]
-            agent = self._get_agent(worker_id, assignment_id)
-            if agent is not None and status == MTurkAgent.ASSIGNMENT_DONE:
-                agent.hit_is_complete = True
-            return status
-        except ClientError as e:
-            # If the assignment isn't done, asking for the assignment will fail
-            not_done_message = ('This operation can be called with a status '
-                                'of: Reviewable,Approved,Rejected')
-            if not_done_message in e.response['Error']['Message']:
-                return MTurkAgent.ASSIGNMENT_NOT_DONE
+        return self.worker_manager.get_agent_work_status(assignment_id)
 
     def get_qualification_list(self, qualifications=None):
         if self.qualifications is not None:
@@ -1334,6 +1231,7 @@ class MTurkManager():
         """Move through the whole hit_id list and attempt to expire the
         HITs, though this only immediately expires those that aren't assigned.
         """
+        # TODO note and mark assigned hits as ones to be expired later
         shared_utils.print_and_log(logging.INFO,
                                    'Expiring all unassigned HITs...',
                                    should_print=not self.is_test)
@@ -1450,7 +1348,6 @@ class MTurkManager():
                 ''.format(worker_id, qual_name, repr(e)),
                 should_print=True
             )
-
 
     def create_qualification(self, qualification_name, description,
                              can_exist=True):
