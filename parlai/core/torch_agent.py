@@ -214,11 +214,11 @@ class TorchAgent(Agent):
         super().batchify(...) to set up the original fields and then set up the
         additional fields in your subclass and return that batch instead.
 
-        :param obs_batch: list of vectorized observations
-        :param sort:      default False, orders the observations by length of
-                          vector. set to true when using
+        :param obs_batch: List of vectorized observations
+        :param sort:      Default False, orders the observations by length of
+                          vector. Set to true when using
                           torch.nn.utils.rnn.pack_padded_sequence.
-        :param is_valid:  default function that checks if 'text_vec' is in the
+        :param is_valid:  Function that checks if 'text_vec' is in the
                           observation, determines if an observation is valid
         """
         if len(obs_batch) == 0:
@@ -289,18 +289,19 @@ class TorchAgent(Agent):
         If output is None (model choosing not to provide any predictions), we
         will just return the batch of replies.
 
-        Otherwise, output should be a namedtuple, which can provide predictions
-        and/or candidate_predictions. If you would like to map additional
+        Otherwise, output should be a parlai.core.torch_agent.Output object.
+        This is a namedtuple, which can provide text predictions and/or
+        text_candidates predictions. If you would like to map additional
         fields into the batch_reply, you can override this method as well as
-        providing a namedtuple with additional fields.
+        providing your own namedtuple with additional fields.
 
-        :param batch_reply: full-batchsize list of message dictionaries to put
-            responses into
-        :param valid_inds: original indices of the predictions
-        :param output: namedtuple which contains sub-batchsize list of text
-            outputs from model. may be None (default) if model chooses not to
-            answer. this method will check for ``predictions`` and
-            ``candidate_predictions`` fields.
+        :param batch_reply: Full-batchsize list of message dictionaries to put
+            responses into.
+        :param valid_inds: Original indices of the predictions.
+        :param output: Output namedtuple which contains sub-batchsize list of
+            text outputs from model. May be None (default) if model chooses not
+            to answer. This method will check for ``text`` and
+            ``text_candidates`` fields.
         """
         if output is None:
             return batch_reply
