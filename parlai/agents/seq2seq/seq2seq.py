@@ -731,7 +731,7 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
             batch[0],  # xs
             ys=(batch[1] if len(partial_out) > 0 else None),
             prev_enc=self.prev_enc)
-        scores, self.prev_enc = out[1], out[4]
+        scores, self.prev_enc = out[1], None  # TODO: put something other than None in self.prev_enc
         # scores is bsz x seqlen x num_words, so select probs of current index
         probs = F.softmax(scores.select(1, -1), dim=1).squeeze()
         dist = mydefaultdict(lambda: 1e-7)  # default probability for any token
