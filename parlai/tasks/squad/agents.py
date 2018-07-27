@@ -405,7 +405,6 @@ class FulldocSentenceLabelsTeacher(FulldocTeacher):
         entry = {'episode_done': episode['episode_done']}
         context = ' '.join(episode['text'].split('\n')[:-1]).replace('\xa0', ' ')
         question = episode['text'].split('\n')[-1]
-        entry['text'] = question
         label_field = 'labels' if 'labels' in episode else 'eval_labels'
         answers = []
         for answer in episode[label_field]:
@@ -415,12 +414,15 @@ class FulldocSentenceLabelsTeacher(FulldocTeacher):
             answers.append(new_answer)
         sentences = self.sent_tok.tokenize(context)
         entry[label_field] = []
+        label_starts = []
         for sentence in sentences:
             for answer in answers:
                 if answer in sentence and sentence not in entry[label_field]:
                     entry[label_field].append(sentence)
+                    label_starts.append(context.index(sentence))
 
-
+        entry['text'] = context + '\n' + question
+        entry['answer_starts'] = label_starts
         entry['label_candidates'] = sentences
 
         if entry[label_field] == []:
