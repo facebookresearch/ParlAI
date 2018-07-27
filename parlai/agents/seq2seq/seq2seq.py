@@ -701,6 +701,7 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.prev_enc = None
+        self.last_xs = None
 
     def next_word_probability(self, partial_out):
         """Return probability distribution over next words given an input and
@@ -721,7 +722,7 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
         batch = self.vectorize([obs])
 
         xs, ys = batch[0], batch[1]
-        if self.prev_enc is not None and (
+        if self.prev_enc is not None and self.last_xs is not None and (
                 xs.shape[1] != self.last_xs.shape[1] or
                 (xs == self.last_xs).sum().item() != xs.shape[1]):
             # reset prev_enc, this is a new input
