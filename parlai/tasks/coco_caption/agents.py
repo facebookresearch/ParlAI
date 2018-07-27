@@ -75,7 +75,7 @@ def _path(opt, version):
 class DefaultDataset(Dataset):
     """A Pytorch Dataset utilizing streaming."""
 
-    def __init__(self, opt, version='2014'):
+    def __init__(self, opt, version='2017'):
         self.opt = opt
         self.use_hdf5 = opt.get('use_hdf5', False)
         self.datatype = self.opt.get('datatype')
@@ -102,7 +102,7 @@ class DefaultDataset(Dataset):
         else:
             image_id = self.test_info['images'][index]['id']
         ep = {
-            'text': self.dict_agent.txt2vec(QUESTION),
+            'text': QUESTION,
             'image': self.get_image(image_id),
             'episode_done': True,
         }
@@ -168,7 +168,7 @@ class DefaultDataset(Dataset):
 
     def get_image(self, image_id):
         if not self.use_hdf5:
-            im_path = os.path.join(self.image_path, '%012d.jpg' % (image_id))
+            im_path = self.image_path + '%012d.jpg' % (image_id)
             return self.image_loader.load(im_path)
         else:
             img_idx = self.image_id_to_idx[str(image_id)]
@@ -243,7 +243,7 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         action = {
-            'text': "",
+            'text': "Please leave a Caption",
             'episode_done': True
         }
 
