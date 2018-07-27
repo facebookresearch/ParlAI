@@ -313,6 +313,7 @@ class SentenceIndexEditTeacher(SentenceIndexTeacher):
             'id': 'squad',
             'text': context + '\n' + question,
             'labels': labels,
+            'label_candidates': edited_sentences,
             'episode_done': True,
             'answer_starts': label_starts
         }
