@@ -93,7 +93,7 @@ class MTurkManager():
         self.mturk_agent_ids = mturk_agent_ids
         self.task_files_to_copy = None
         self.is_sandbox = opt['is_sandbox']
-        self.worker_pool_change_condition = threading.Condition()
+        self.agent_pool_change_condition = threading.Condition()
         self.onboard_function = None
         self.num_conversations = opt['num_conversations']
         self.required_hits = math.ceil(
@@ -113,7 +113,7 @@ class MTurkManager():
     def _init_state(self):
         """Initialize everything in the worker, task, and thread states"""
         # TODO handle pooling in own class, note this is an agent_pool
-        self.worker_pool = []
+        self.agent_pool = []
 
         # TODO move some state to DB
         self.hit_id_list = []
@@ -159,9 +159,9 @@ class MTurkManager():
                 pickle.dump(time_logs, time_log_file,
                             pickle.HIGHEST_PROTOCOL)
 
-    def _log_working_time(self, mturk_worker):
-        additional_time = time.time() - mturk_worker.creation_time
-        worker_id = mturk_worker.worker_id
+    def _log_working_time(self, mturk_agent):
+        additional_time = time.time() - mturk_agent.creation_time
+        worker_id = mturk_agent.worker_id
         file_path = os.path.join(parent_dir, TIME_LOGS_FILE_NAME)
         file_lock = os.path.join(parent_dir, TIME_LOGS_FILE_LOCK)
         with LockFile(file_lock) as _lock_file:
@@ -181,23 +181,23 @@ class MTurkManager():
         if total_work_time > int(self.opt.get('max_time')):
             self.worker_manager.time_block_worker(worker_id)
 
-    def _move_workers_to_waiting(self, workers):
-        """Put all workers into waiting worlds, expire them if no longer
-        accepting workers. If the worker is already final, clean it
+    def _move_agents_to_waiting(self, agents):
+        """Put all agents into waiting worlds, expire them if no longer
+        accepting agents. If the agent is already final, clean it
         """
-        for worker in workers:
-            worker_id = worker.worker_id
-            assignment_id = worker.assignment_id
-            if worker.is_final():
-                worker.reduce_state()
-                self.socket_manager.close_channel(worker.get_connection_id())
+        for agent in agents:
+            worker_id = agent.worker_id
+            assignment_id = agent.assignment_id
+            if agent.is_final():
+                agent.reduce_state()
+                self.socket_manager.close_channel(agent.get_connection_id())
                 continue
 
             conversation_id = 'w_{}'.format(uuid.uuid4())
             if self.accepting_workers:
                 # Move the worker into a waiting world
                 self.worker_manager.change_agent_conversation(
-                    agent=worker,
+                    agent=agent,
                     conversation_id=conversation_id,
                     new_agent_id='waiting',
                 )
@@ -205,7 +205,7 @@ class MTurkManager():
                 self.force_expire_hit(worker_id, assignment_id)
 
     def _expire_onboarding_pool(self):
-        """Expire any worker that is in an onboarding thread"""
+        """Expire any agent that is in an onboarding thread"""
         def expire_func(agent):
             self.force_expire_hit(agent.worker_id, agent.assignment_id)
 
@@ -214,9 +214,9 @@ class MTurkManager():
 
         self.worker_manager.map_over_agents(expire_func, is_onboard)
 
-    def _expire_worker_pool(self):
+    def _expire_agent_pool(self):
         """Expire all workers in the worker pool"""
-        for agent in self.worker_pool:
+        for agent in self.agent_pool:
             self.force_expire_hit(agent.worker_id, agent.assignment_id)
 
     def _get_unique_pool(self, eligibility_function):
@@ -224,36 +224,36 @@ class MTurkManager():
         only listed a maximum of one time. In sandbox this is overridden for
         testing purposes, and the same worker can be returned more than once
         """
-        pool = [w for w in self.worker_pool if not w.hit_is_returned]
+        pool = [a for a in self.agent_pool if not a.hit_is_returned]
         if eligibility_function['multiple'] is True:
-            workers = eligibility_function['func'](pool)
+            agents = eligibility_function['func'](pool)
         else:
-            workers = [w for w in pool if eligibility_function['func'](w)]
+            agents = [a for a in pool if eligibility_function['func'](a)]
 
-        unique_workers = []
+        unique_agents = []
         unique_worker_ids = []
-        for w in workers:
-            if (self.is_sandbox) or (w.worker_id not in unique_worker_ids):
-                unique_workers.append(w)
-                unique_worker_ids.append(w.worker_id)
-        return unique_workers
+        for agent in agents:
+            if (self.is_sandbox) or (agent.worker_id not in unique_worker_ids):
+                unique_agents.append(agent)
+                unique_worker_ids.append(agent.worker_id)
+        return unique_agents
 
     def _add_agent_to_pool(self, agent):
         """Add a single agent to the pool"""
-        if agent not in self.worker_pool:
-            # Add the worker to pool
-            with self.worker_pool_change_condition:
+        if agent not in self.agent_pool:
+            # Add the agent to pool
+            with self.agent_pool_change_condition:
                 shared_utils.print_and_log(
                     logging.DEBUG,
                     "Adding worker {} to pool.".format(agent.worker_id)
                 )
-                self.worker_pool.append(agent)
+                self.agent_pool.append(agent)
 
-    def _handle_worker_disconnect(self, worker_id, assignment_id):
+    def _handle_agent_disconnect(self, worker_id, assignment_id):
         """Mark a worker as disconnected and send a message to all agents in
         his conversation that a partner has disconnected.
         """
-        self.worker_manager.handle_worker_disconnect(
+        self.worker_manager.handle_agent_disconnect(
             worker_id, assignment_id, self._handle_partner_disconnect)
 
     def _handle_partner_disconnect(self, agent):
@@ -274,7 +274,7 @@ class MTurkManager():
             data = agent.get_inactive_command_data()
             self.send_command(agent.worker_id, agent.assignment_id, data)
 
-    def _restore_worker_state(self, worker_id, assignment_id):
+    def _restore_agent_state(self, worker_id, assignment_id):
         """Send a command to restore the state of an agent who reconnected"""
         agent = self.worker_manager._get_agent(worker_id, assignment_id)
 
@@ -301,7 +301,6 @@ class MTurkManager():
             state_thread = threading.Thread(target=send_state_data)
             state_thread.daemon = True
             state_thread.start()
-
 
     def _setup_socket(self, timeout_seconds=None):
         """Set up a socket_manager with defined callbacks"""
@@ -378,7 +377,7 @@ class MTurkManager():
                 hit_id, assign_id, worker_id
             )
             agent = self.worker_manager._get_agent(worker_id, assign_id)
-            self._onboard_new_worker(agent)
+            self._onboard_new_agent(agent)
 
         else:
             # Reconnecting worker
@@ -411,7 +410,7 @@ class MTurkManager():
                 if not self.accepting_workers:
                     self.force_expire_hit(worker_id, assign_id)
                 elif not conversation_id:
-                    self._restore_worker_state(worker_id, assign_id)
+                    self._restore_agent_state(worker_id, assign_id)
             elif agent.get_status() == AssignState.STATUS_WAITING:
                 if self.is_task_world(conversation_id):
                     agent.set_status(AssignState.STATUS_IN_TASK)
@@ -422,13 +421,13 @@ class MTurkManager():
                 # no information is held, and add to the pool if not already in
                 # the pool
                 if not conversation_id:
-                    self._restore_worker_state(worker_id, assign_id)
+                    self._restore_agent_state(worker_id, assign_id)
                 self._add_agent_to_pool(agent)
             elif agent.get_status() == AssignState.STATUS_IN_TASK:
                 # Reconnecting to the onboarding world or to a task world
                 # should resend the messages already in the conversation
                 if not conversation_id:
-                    self._restore_worker_state(worker_id, assign_id)
+                    self._restore_agent_state(worker_id, assign_id)
                 agent.clear_messages()
             elif (agent.get_status() == AssignState.STATUS_DISCONNECT or
                   agent.get_status() == AssignState.STATUS_DONE or
@@ -500,13 +499,13 @@ class MTurkManager():
             agent.disconnected = True
         elif agent.get_status() == AssignState.STATUS_WAITING:
             # agent is in pool, remove from pool and delete
-            if agent in self.worker_pool:
-                with self.worker_pool_change_condition:
-                    self.worker_pool.remove(agent)
+            if agent in self.agent_pool:
+                with self.agent_pool_change_condition:
+                    self.agent_pool.remove(agent)
             agent.set_status(AssignState.STATUS_DISCONNECT)
             agent.reduce_state()
         elif agent.get_status() == AssignState.STATUS_IN_TASK:
-            self._handle_worker_disconnect(worker_id, assignment_id)
+            self._handle_agent_disconnect(worker_id, assignment_id)
             agent.disconnected = True
         elif agent.get_status() == AssignState.STATUS_DONE:
             # It's okay if a complete assignment socket dies, but wait for the
@@ -515,7 +514,7 @@ class MTurkManager():
 
         self.socket_manager.close_channel(agent.get_connection_id())
 
-    def _onboard_new_worker(self, mturk_agent):
+    def _onboard_new_agent(self, mturk_agent):
         """Handle creating an onboarding thread and moving an agent through
         the onboarding process, updating the state properly along the way
         """
@@ -527,7 +526,7 @@ class MTurkManager():
             """Onboarding wrapper to set state to onboarding properly"""
             if self.onboard_function:
                 conversation_id = 'o_'+str(uuid.uuid4())
-                self.worker_state.change_agent_conversation(
+                self.worker_manager.change_agent_conversation(
                     agent=mturk_agent,
                     conversation_id=conversation_id,
                     new_agent_id='onboarding',
@@ -538,7 +537,7 @@ class MTurkManager():
                 self.onboard_function(mturk_agent)
 
             # once onboarding is done, move into a waiting world
-            self._move_workers_to_waiting([mturk_agent])
+            self._move_agents_to_waiting([mturk_agent])
 
         if assignment_id not in self.assignment_to_onboard_thread:
             # Start the onboarding thread and run it
@@ -552,7 +551,7 @@ class MTurkManager():
 
             self.assignment_to_onboard_thread[assignment_id] = onboard_thread
 
-    def _no_workers_incomplete(self, agents):
+    def _no_agents_incomplete(self, agents):
         """Return True if all the given agents completed their task"""
         for agent in agents:
             if agent.is_final() and agent.get_status() != \
@@ -786,27 +785,27 @@ class MTurkManager():
             if 'multiple' not in eligibility_function:
                 eligibility_function['multiple'] = False
 
-        def _task_function(opt, workers, conversation_id):
-            """Wait for workers to join the world, then run task function"""
+        def _task_function(opt, agents, conversation_id):
+            """Wait for agents to join the world, then run task function"""
             shared_utils.print_and_log(
                 logging.INFO,
                 'Starting task {}...'.format(conversation_id)
             )
             shared_utils.print_and_log(
                 logging.DEBUG,
-                'Waiting for all workers to join the conversation...'
+                'Waiting for all agents to join the conversation...'
             )
             start_time = time.time()
             while True:
                 all_joined = True
-                for worker in workers:
-                    # check the status of an individual worker assignment
-                    if worker.get_status() != AssignState.STATUS_IN_TASK:
+                for agent in agents:
+                    # check the status of an individual agent assignment
+                    if agent.get_status() != AssignState.STATUS_IN_TASK:
                         all_joined = False
                 if all_joined:
                     break
                 if time.time() - start_time > WORLD_START_TIMEOUT:
-                    # We waited but not all workers rejoined, throw workers
+                    # We waited but not all agents rejoined, throw agents
                     # back into the waiting pool. Stragglers will disconnect
                     # from there
                     shared_utils.print_and_log(
@@ -815,63 +814,63 @@ class MTurkManager():
                             conversation_id
                         )
                     )
-                    self._move_workers_to_waiting(workers)
+                    self._move_agents_to_waiting(agents)
                     return
                 time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
             shared_utils.print_and_log(
                 logging.INFO,
-                'All workers joined the conversation {}!'.format(
+                'All agents joined the conversation {}!'.format(
                     conversation_id
                 )
             )
             self.started_conversations += 1
-            task_function(mturk_manager=self, opt=opt, workers=workers)
+            task_function(mturk_manager=self, opt=opt, workers=agents)
             # Delete extra state data that is now unneeded
-            for worker in workers:
-                worker.clear_messages()
+            for agent in agents:
+                agent.clear_messages()
 
             # Count if it's a completed conversation
-            if self._no_workers_incomplete(workers):
+            if self._no_agents_incomplete(agents):
                 self.completed_conversations += 1
             if self.opt['max_connections'] > 0:  # If using a conv cap
-                if self.accepting_workers:  # if still looking for new workers
-                    for worker in workers:
-                        if worker.submitted_hit():
+                if self.accepting_workers:  # if still looking for new agents
+                    for agent in agents:
+                        if agent.submitted_hit():
                             self.create_additional_hits(1)
 
         while True:
             if self.has_time_limit:
                 self._check_time_limit()
             # Loop forever starting task worlds until desired convos are had
-            with self.worker_pool_change_condition:
-                valid_workers = self._get_unique_pool(eligibility_function)
-                needed_workers = len(self.mturk_agent_ids)
-                if len(valid_workers) >= needed_workers:
-                    # enough workers in pool to start new conversation
+            with self.agent_pool_change_condition:
+                valid_agents = self._get_unique_pool(eligibility_function)
+                needed_agents = len(self.mturk_agent_ids)
+                if len(valid_agents) >= needed_agents:
+                    # enough agents in pool to start new conversation
                     self.conversation_index += 1
                     new_conversation_id = \
                         't_{}'.format(self.conversation_index)
 
-                    # Add the required number of valid workers to the conv
-                    workers = [w for w in valid_workers[:needed_workers]]
-                    assign_role_function(workers)
-                    # Allow task creator to filter out workers and run
+                    # Add the required number of valid agents to the conv
+                    agents = [a for a in valid_agents[:needed_agents]]
+                    assign_role_function(agents)
+                    # Allow task creator to filter out agents and run
                     # versions of the task that require fewer agents
-                    workers = [w for w in workers if w.id is not None]
-                    for w in workers:
+                    agents = [a for a in agents if a.id is not None]
+                    for agent in agents:
                         self.worker_manager.change_agent_conversation(
-                            agent=w,
+                            agent=agent,
                             conversation_id=new_conversation_id,
-                            new_agent_id=w.id,
+                            new_agent_id=agent.id,
                         )
-                        # Remove selected workers from the pool
-                        self.worker_pool.remove(w)
+                        # Remove selected agents from the pool
+                        self.agent_pool.remove(agent)
 
                     # Start a new thread for this task world
                     task_thread = threading.Thread(
                         target=_task_function,
-                        args=(self.opt, workers, new_conversation_id),
+                        args=(self.opt, agents, new_conversation_id),
                         name='task-{}'.format(new_conversation_id)
                     )
                     task_thread.daemon = True
@@ -886,7 +885,7 @@ class MTurkManager():
                 self.accepting_workers = False
                 self.expire_all_unassigned_hits()
                 self._expire_onboarding_pool()
-                self._expire_worker_pool()
+                self._expire_agent_pool()
                 # Wait for all conversations to finish, then break from
                 # the while loop
                 for thread in self.task_threads:
@@ -900,7 +899,7 @@ class MTurkManager():
         try:
             self.expire_all_unassigned_hits()
             self._expire_onboarding_pool()
-            self._expire_worker_pool()
+            self._expire_agent_pool()
             self.socket_manager.close_all_channels()
             for assignment_id in self.assignment_to_onboard_thread:
                 self.assignment_to_onboard_thread[assignment_id].join()
@@ -953,7 +952,7 @@ class MTurkManager():
         self.force_expire_hit(worker_id, assign_id, text)
 
         # Send the disconnect event to all workers in the convo
-        self._handle_worker_disconnect(worker_id, assign_id)
+        self._handle_agent_disconnect(worker_id, assign_id)
 
     def send_message(self, receiver_id, assignment_id, data,
                      blocking=True, ack_func=None):
@@ -1022,17 +1021,17 @@ class MTurkManager():
         self.socket_manager.queue_packet(packet)
 
     def mark_workers_done(self, workers):
-        """Mark a group of workers as done to keep state consistent"""
-        for worker in workers:
+        """Mark a group of agents as done to keep state consistent"""
+        for agent in workers:
             if self.is_unique:
                 self.give_worker_qualification(
-                    worker.worker_id,
+                    agent.worker_id,
                     self.unique_qual_name,
                 )
-            if not worker.is_final():
-                worker.set_status(AssignState.STATUS_DONE)
+            if not agent.is_final():
+                agent.set_status(AssignState.STATUS_DONE)
             if self.has_time_limit:
-                self._log_working_time(worker)
+                self._log_working_time(agent)
 
     def free_workers(self, workers):
         """End completed worker threads"""

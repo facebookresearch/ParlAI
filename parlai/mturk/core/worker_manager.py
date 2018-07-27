@@ -184,8 +184,8 @@ class WorkerManager():
         with open(file_path, 'wb') as f:
             pickle.dump(self.disconnects, f, pickle.HIGHEST_PROTOCOL)
 
-    def handle_worker_disconnect(self, worker_id, assignment_id,
-                                 partner_callback):
+    def handle_agent_disconnect(self, worker_id, assignment_id,
+                                partner_callback):
         agent = self._get_agent(worker_id, assignment_id)
         if agent is not None:
             # Disconnect in conversation is not workable
