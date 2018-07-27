@@ -298,8 +298,8 @@ class WorkerManager():
             self._log_missing_agent(worker_id, assignment_id)
         return agent
 
-    def _change_worker_to_conv(self, pkt):
-        """Update a worker to a new conversation given a packet from the
+    def _change_agent_to_conv(self, pkt):
+        """Update an agent to a new conversation given a packet from the
         conversation to be switched to
         """
         agent = self._get_agent_from_pkt(pkt)
@@ -328,7 +328,7 @@ class WorkerManager():
             agent.worker_id,
             agent.assignment_id,
             data,
-            ack_func=self._change_worker_to_conv
+            ack_func=self._change_agent_to_conv
         )
 
     def shutdown(self):
