@@ -116,7 +116,7 @@ class DefaultTeacher(DialogTeacher):
                     yield (context + '\n' + question, answers), True
 
 
-class OpenSquadTeacher(DialogTeacher):
+class OpensquadTeacher(DialogTeacher):
     """This version of SQuAD inherits from the core Dialog Teacher, which just
     requires it to define an iterator over its data `setup_data` in order to
     inherit basic metrics, a default `act` function.
@@ -201,7 +201,7 @@ class FulldocTeacher(ParlAIDialogTeacher):
         self.reset()
 
 
-class SentenceIndexTeacher(IndexTeacher):
+class SentenceTeacher(IndexTeacher):
     """Index teacher where the labels are the sentences the contain the true
     answer.
     """
@@ -269,7 +269,7 @@ class SentenceIndexTeacher(IndexTeacher):
         return action
 
 
-class SentenceIndexEditTeacher(SentenceIndexTeacher):
+class SentenceeditTeacher(SentenceIndexTeacher):
     """Index teacher where the labels are the sentences the contain the true
     answer.
 
@@ -320,7 +320,7 @@ class SentenceIndexEditTeacher(SentenceIndexTeacher):
         return action
 
 
-class SentenceLabelsTeacher(IndexTeacher):
+class SentencelabelsTeacher(IndexTeacher):
     """Teacher which contains the question as the text, the sentences as the
     label candidates, and the label as the sentence containing the answer.
 
@@ -380,7 +380,7 @@ class SentenceLabelsTeacher(IndexTeacher):
         return action
 
 
-class FulldocSentenceLabelsTeacher(FulldocTeacher):
+class FulldocsentenceTeacher(FulldocTeacher):
     """Teacher which contains the question as the text, the sentences as the
     label candidates, and the label as the sentence containing the answer.
 
