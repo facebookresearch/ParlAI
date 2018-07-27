@@ -192,6 +192,11 @@ class ExampleSeq2seqAgent(TorchAgent):
         raise RuntimeError('Improper input to v2t with dimensions {}'.format(
             vector.size()))
 
+    def vectorize(self, *args, **kwargs):
+        """Call vectorize without adding start tokens to labels."""
+        kwargs['add_start'] = False
+        return super().vectorize(*args, **kwargs)
+
     def train_step(self, batch):
         """Train model to produce ys given xs.
 
@@ -274,5 +279,4 @@ class ExampleSeq2seqAgent(TorchAgent):
                 # no need to generate any more
                 break
         predictions = torch.cat(predictions, 1)
-
         return Output(self.v2t(predictions), None)
