@@ -157,17 +157,42 @@ class TorchAgent(Agent):
         return shared
 
     def _vectorize_text(self, text, use_cuda=False, add_start=False,
-                        add_end=False, truncate=None):
-        dq = deque(maxlen=truncate)
-        if add_start:
-            dq.append(self.START_IDX)
-        dq += self.dict.txt2vec(text)
-        if add_end:
-            dq.append(self.END_IDX)
-        vec = torch.LongTensor(dq)
+                        add_end=False, truncate=None, truncate_left=True):
+        """Return vector from text.
+
+        :param text:          String to vectorize.
+        :param use_cuda:      Convert tensor to cuda tensor.
+        :param add_start:     Add the start token to the front of the tensor.
+        :param add_end:       Add the end token to the end of the tensor.
+        :param truncate:      Truncate to this many tokens >= 0, or None.
+        :param truncate_left: Truncate from the left side (keep the rightmost
+                              tokens). You probably want this True for inputs,
+                              False for targets.
+        """
+        vec = self.dict.txt2vec(text)
+        if truncate is None or len(vec) + add_start + add_end < truncate:
+            # simple: no truncation
+            if add_start:
+                vec.insert(0, self.START_IDX)
+            if add_end:
+                vec.append(self.END_IDX)
+        elif truncate_left:
+            # don't check add_start, we know are truncating it
+            if add_end:
+                # add the end token first
+                vec.append(self.END_IDX)
+            vec = vec[len(vec) - truncate:]
+        else:
+            # truncate from the right side
+            # don't check add_end, we know we are truncating it
+            vec = vec[:truncate - add_start]
+            if add_start:
+                # always keep the start token if it's there
+                vec.insert(0, self.START_IDX)
+        tensor = torch.LongTensor(vec)
         if use_cuda:
-            vec = vec.cuda()
-        return vec
+            tensor = tensor.cuda()
+        return tensor
 
     def vectorize(self, obs, add_start=True, add_end=True, truncate=None):
         """Make vectors out of observation fields and store in the observation.
@@ -180,9 +205,13 @@ class TorchAgent(Agent):
         this function, call super().vectorize(...) to process the text and
         labels, and then process the other fields in your subclass.
 
-        :param obs: single observation from observe function
-        :param add_start: default True, adds the start token to each label
-        :param add_end: default True, adds the end token to each label
+        :param obs: Single observation from observe function.
+        :param add_start: default True, adds the start token to each labelself.
+        :param add_end: default True, adds the end token to each label.
+        :param truncate: default None, if set truncates all vectors to the
+                         specified length. Note that this truncates to the
+                         rightmost for inputs and the leftmost for labels and,
+                         when applicable, candidates.
         """
         if 'text' in obs:
             # convert 'text' into tensor of dictionary indices
@@ -202,14 +231,15 @@ class TorchAgent(Agent):
             # pick one label if there are multiple
             label = random.choice(obs[label_type])
             vec_label = self._vectorize_text(label, self.use_cuda, add_start,
-                                             add_end, truncate)
+                                             add_end, truncate, False)
+            # print(label, vec_label, truncate)
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
         if self.rank_candidates and 'label_candidates' in obs:
             obs['label_candidates_vecs'] = [
                 self._vectorize_text(c, self.use_cuda, add_start, add_end,
-                                     truncate)
+                                     truncate, False)
                 for c in obs['label_candidates']]
 
         return obs
@@ -356,9 +386,7 @@ class TorchAgent(Agent):
         allow_reply = True
 
         if 'dialog' not in self.history:
-            self.history['dialog'] = deque(
-                maxlen=self.truncate if self.truncate >= 0 else None
-            )
+            self.history['dialog'] = deque(maxlen=self.truncate)
             self.history['episode_done'] = False
             self.history['labels'] = []
 
