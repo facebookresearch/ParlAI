@@ -7,6 +7,8 @@ import torch
 import unicodedata
 from collections import Counter
 
+from parlai.core.build_data import modelzoo_path
+
 
 # ------------------------------------------------------------------------------
 # Data/model utilities.
@@ -21,7 +23,8 @@ def load_embeddings(opt, word_dict):
     """Initialize embeddings from file of pretrained vectors."""
     embeddings = torch.Tensor(len(word_dict), opt['embedding_dim'])
     embeddings.normal_(0, 1)
-
+    opt['embedding_file'] = modelzoo_path(opt.get('datapath'),
+                                          opt['embedding_file'])
     # Fill in embeddings
     if not opt.get('embedding_file'):
         raise RuntimeError('Tried to load embeddings with no embedding file.')
