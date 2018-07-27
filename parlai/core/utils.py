@@ -522,7 +522,7 @@ class PaddingUtils(object):
                         y.append(c)
                 answers[valid_inds[i]] = y
             elif answers is not None:
-                answers[valid_inds[i]] = output_tokens
+                answers[valid_inds[i]] = curr_pred
 
             if random.random() > (1 - report_freq):
                 # log sometimes
