@@ -269,7 +269,7 @@ class SentenceTeacher(IndexTeacher):
         return action
 
 
-class SentenceeditTeacher(SentenceIndexTeacher):
+class SentenceeditTeacher(SentenceTeacher):
     """Index teacher where the labels are the sentences the contain the true
     answer.
 
