@@ -1035,8 +1035,8 @@ class MTurkManager():
 
     def free_workers(self, workers):
         """End completed worker threads"""
-        for worker in workers:
-            self.socket_manager.close_channel(worker.get_connection_id())
+        for agent in workers:
+            self.socket_manager.close_channel(agent.get_connection_id())
 
     # Amazon MTurk Server Functions #
 
