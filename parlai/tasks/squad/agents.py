@@ -116,7 +116,7 @@ class DefaultTeacher(DialogTeacher):
                     yield (context + '\n' + question, answers), True
 
 
-class OpenSquadTeacher(DialogTeacher):
+class OpensquadTeacher(DialogTeacher):
     """This version of SQuAD inherits from the core Dialog Teacher, which just
     requires it to define an iterator over its data `setup_data` in order to
     inherit basic metrics, a default `act` function.
@@ -201,7 +201,7 @@ class FulldocTeacher(ParlAIDialogTeacher):
         self.reset()
 
 
-class SentenceIndexTeacher(IndexTeacher):
+class SentenceTeacher(IndexTeacher):
     """Index teacher where the labels are the sentences the contain the true
     answer.
     """
@@ -269,7 +269,7 @@ class SentenceIndexTeacher(IndexTeacher):
         return action
 
 
-class SentenceIndexEditTeacher(SentenceIndexTeacher):
+class SentenceeditTeacher(SentenceTeacher):
     """Index teacher where the labels are the sentences the contain the true
     answer.
 
@@ -313,13 +313,14 @@ class SentenceIndexEditTeacher(SentenceIndexTeacher):
             'id': 'squad',
             'text': context + '\n' + question,
             'labels': labels,
+            'label_candidates': edited_sentences,
             'episode_done': True,
             'answer_starts': label_starts
         }
         return action
 
 
-class SentenceLabelsTeacher(IndexTeacher):
+class SentencelabelsTeacher(IndexTeacher):
     """Teacher which contains the question as the text, the sentences as the
     label candidates, and the label as the sentence containing the answer.
 
@@ -377,3 +378,55 @@ class SentenceLabelsTeacher(IndexTeacher):
         }
 
         return action
+
+
+class FulldocsentenceTeacher(FulldocTeacher):
+    """Teacher which contains the question as the text, the sentences as the
+    label candidates, and the label as the sentence containing the answer.
+
+    Some punctuation may be removed for tokenization purposes.
+    """
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+
+        try:
+            import nltk
+        except ImportError:
+            raise ImportError('Please install nltk (e.g. pip install nltk).')
+        # nltk-specific setup
+        st_path = 'tokenizers/punkt/{0}.pickle'.format('english')
+        try:
+            self.sent_tok = nltk.data.load(st_path)
+        except LookupError:
+            nltk.download('punkt')
+            self.sent_tok = nltk.data.load(st_path)
+
+    def get(self, episode_idx, entry_idx=None):
+        episode = self.episodes[episode_idx][entry_idx]
+        entry = {'episode_done': episode['episode_done']}
+        context = ' '.join(episode['text'].split('\n')[:-1]).replace('\xa0', ' ')
+        question = episode['text'].split('\n')[-1]
+        label_field = 'labels' if 'labels' in episode else 'eval_labels'
+        answers = []
+        for answer in episode[label_field]:
+            new_answer = answer.replace(
+                '.', '').replace('?', '').replace('!', '')
+            context = context.replace(answer, new_answer)
+            answers.append(new_answer)
+        sentences = self.sent_tok.tokenize(context)
+        entry[label_field] = []
+        label_starts = []
+        for sentence in sentences:
+            for answer in answers:
+                if answer in sentence and sentence not in entry[label_field]:
+                    entry[label_field].append(sentence)
+                    label_starts.append(context.index(sentence))
+
+        entry['text'] = context + '\n' + question
+        entry['answer_starts'] = label_starts
+        entry['label_candidates'] = sentences
+
+        if entry[label_field] == []:
+            entry = {'episode_done': episode['episode_done']}
+
+        return entry

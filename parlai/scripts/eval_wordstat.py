@@ -177,6 +177,12 @@ def eval_wordstat(opt, print_parser=None):
             with open(opt['dump_predictions_path']+'_unique', 'w') as f:
                 f.writelines(['{}\n'.format(i) for i in unique_list])
 
+    stat_str = 'total_words: {}, '.format(word_statistics['word_cnt']) + ', '.join(
+        ['<{}:{} ({:.{prec}f}%)'.format(b, word_statistics['freqs_cnt'].get(b, 0), (word_statistics['freqs_cnt'].get(b, 0) / word_statistics['word_cnt']) * 100, prec=2)
+         for b in bins])
+    print("Word statistics: {}, avg_word_length: {:.{prec}f}, avg_char_length: {:.{prec}f}".format(
+        stat_str, numpy.array(word_statistics['mean_wlength']).mean(), numpy.array(word_statistics['mean_clength']).mean(), prec=2))
+
     report = world.report()
     print(report)
     return report
