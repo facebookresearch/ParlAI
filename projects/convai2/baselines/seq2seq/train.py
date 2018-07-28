@@ -18,7 +18,7 @@ if __name__ == '__main__':
         model='seq2seq',
         model_file='/tmp/convai2_self_seq2seq_model',
         dict_lower=True,
-        dict_include_valid=True,
+        dict_include_valid=False,
         dict_maxexs=-1,
         datatype='train',
         batchsize=64,
