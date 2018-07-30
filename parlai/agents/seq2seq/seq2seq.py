@@ -666,7 +666,7 @@ class Seq2seqAgent(Agent):
     def shutdown(self):
         """Save the state of the model when shutdown."""
         path = self.opt.get('model_file', None)
-        if path is not None:
+        if path is not None and hasattr(self, 'optimizer'):
             self.save(path + '.shutdown_state')
         super().shutdown()
 
@@ -737,7 +737,7 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
             xs,
             ys=(ys if len(partial_out) > 0 else None),
             prev_enc=self.prev_enc)
-        scores, self.prev_enc = out[1], None  # TODO: put something other than None in self.prev_enc
+        scores, self.prev_enc = out[1], out[4]
         # scores is bsz x seqlen x num_words, so select probs of current index
         probs = F.softmax(scores.select(1, -1), dim=1).squeeze()
         dist = mydefaultdict(lambda: 1e-7)  # default probability for any token
