@@ -21,6 +21,7 @@ RETURN_MESSAGE = '[RETURNED]'  # the Turker returned the HIT
 # TODO move time management into another class, this way we can handle it
 # relative to heartbeats. This will come with more thorough testing.
 
+
 class AssignState():
     """Class for holding state information about an assignment currently
     claimed by an agent

@@ -87,6 +87,7 @@ class MTurkManager():
             self.opt['allowed_conversations'] = 1
         self.server_url = None
         self.topic_arn = None
+        self.server_task_name = None
         self.port = 443
         self.task_group_id = None
         self.run_id = None
@@ -906,13 +907,15 @@ class MTurkManager():
         except BaseException:
             pass
         finally:
-            server_utils.delete_server(self.server_task_name,
-                                       self.opt['local'])
+            if self.server_task_name is not None:
+                server_utils.delete_server(self.server_task_name,
+                                           self.opt['local'])
             if self.topic_arn is not None:
                 mturk_utils.delete_sns_topic(self.topic_arn)
             if self.opt['unique_worker']:
                 mturk_utils.delete_qualification(self.unique_qual_id,
                                                  self.is_sandbox)
+
             self.worker_manager.shutdown()
 
     # MTurk Agent Interaction Functions #

@@ -22,7 +22,7 @@ import parlai.mturk.core.shared_utils as shared_utils
 DISCONNECT_PERSIST_LENGTH = 60 * 60 * 24
 
 # Max number of conversation disconnects before a turker should be blocked
-MAX_DISCONNECTS = 10
+MAX_DISCONNECTS = 5
 
 DISCONNECT_FILE_NAME = 'disconnects.pickle'
 
@@ -49,9 +49,11 @@ class WorkerState():
                 count += 1
         return count
 
-    def add_agent(self, assign_id, mturk_agent):
+    def add_agent(self, mturk_agent):
         """Add an assignment to this worker state with the given assign_it"""
-        self.agents[assign_id] = mturk_agent
+        assert mturk_agent.worker_id == self.worker_id, \
+            "Can't add agent that does not match state's worker_id"
+        self.agents[mturk_agent.assignment_id] = mturk_agent
 
     def get_agent_for_assignment(self, assignment_id):
         return self.agents.get(assignment_id, None)
@@ -105,8 +107,8 @@ class WorkerManager():
         return None
 
     def route_packet(self, pkt):
-        """Put an incoming message onto the correct agent's message queue and
-        add it to the proper message thread as long as the agent is active
+        """Put an incoming message into the queue for the agent specified in
+        the packet, as they have sent a message from the web client.
         """
         worker_id = pkt.sender_id
         assignment_id = pkt.assignment_id
@@ -186,6 +188,9 @@ class WorkerManager():
 
     def handle_agent_disconnect(self, worker_id, assignment_id,
                                 partner_callback):
+        '''Handles a disconnect by the given worker, calls partner_callback
+        on all of the conversation partners of that worker
+        '''
         agent = self._get_agent(worker_id, assignment_id)
         if agent is not None:
             # Disconnect in conversation is not workable
@@ -193,11 +198,12 @@ class WorkerManager():
             # in conversation, inform others about disconnect
             conversation_id = agent.conversation_id
             if conversation_id in self.conv_to_agent:
-                if agent in self.conv_to_agent[conversation_id]:
-                    for other_agent in self.conv_to_agent[conversation_id]:
+                conv_participants = self.conv_to_agent[conversation_id]
+                if agent in conv_participants:
+                    for other_agent in conv_participants:
                         if agent.assignment_id != other_agent.assignment_id:
                             partner_callback(other_agent)
-                if len(self.mturk_manager.mturk_agent_ids) > 1:
+                if len(conv_participants) > 1:
                     # The user disconnected from inside a conversation with
                     # another turker, record this as bad behavoir
                     self.handle_bad_disconnect(worker_id)
@@ -220,7 +226,7 @@ class WorkerManager():
                         'ensure a better experience for other '
                         'workers who don\'t disconnect.'
                     )
-                    self.block_worker(worker_id, text)
+                    self.mturk_manager.block_worker(worker_id, text)
                     shared_utils.print_and_log(
                         logging.INFO,
                         'Worker {} blocked - too many disconnects'.format(
@@ -229,8 +235,8 @@ class WorkerManager():
                         True
                     )
                 elif self.opt['disconnect_qualification'] is not None:
-                    self.soft_block_worker(worker_id,
-                                           'disconnect_qualification')
+                    self.mturk_manager.soft_block_worker(
+                        worker_id, 'disconnect_qualification')
                     shared_utils.print_and_log(
                         logging.INFO,
                         'Worker {} soft blocked - too many disconnects'.format(
@@ -250,7 +256,7 @@ class WorkerManager():
         agent = self._create_agent(hit_id, assign_id, worker_id)
         self.hit_id_to_agent[hit_id] = agent
         curr_worker_state = self.mturk_workers[worker_id]
-        curr_worker_state.add_agent(assign_id, agent)
+        curr_worker_state.add_agent(agent)
 
     def get_complete_hits(self):
         """Returns the list of all currently completed HITs"""
@@ -290,7 +296,7 @@ class WorkerManager():
         )
 
     def _get_agent_from_pkt(self, pkt):
-        """Get sender, assignment, and conv ids from a packet"""
+        """Get the agent object corresponding to this packet's sender"""
         worker_id = pkt.sender_id
         assignment_id = pkt.assignment_id
         agent = self._get_agent(worker_id, assignment_id)
