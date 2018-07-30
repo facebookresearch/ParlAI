@@ -381,7 +381,15 @@ class FixedDialogTeacher(Teacher):
 
         # remember correct answer if available (for padding, None)
         for i, ex in enumerate(batch):
-            self.lastYs[i] = ex.get('labels', ex.get('eval_labels'))
+            if 'labels' in ex:
+                labels = ex['labels']
+                self.lastYs[i] = labels
+                if not self.datatype.startswith('train') or 'evalmode' in self.datatype:
+                    del ex['labels']
+                    if not self.opt.get('hide_labels', False):
+                        ex['eval_labels'] = labels
+            else:
+                self.lastYs[i] = ex.get('eval_labels', None)
 
         return batch
 
@@ -398,7 +406,7 @@ class FixedDialogTeacher(Teacher):
         # remember correct answer if available
         self.lastY = action.get('labels', None)
         if ((not self.datatype.startswith('train') or 'evalmode' in self.datatype)
-            and 'labels' in action):
+                and 'labels' in action):
             # move labels to eval field so not used for training
             # but this way the model can use the labels for perplexity or loss
             labels = action.pop('labels')
