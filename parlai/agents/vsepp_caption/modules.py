@@ -20,7 +20,7 @@ class VSEpp(nn.Module):
     here: <https://github.com/fartashf/vsepp>
     """
 
-    def __init__(self, opt, dict, use_cuda):
+    def __init__(self, opt, dict):
         super().__init__()
         self.opt = opt
         self.dict = dict
@@ -31,11 +31,7 @@ class VSEpp(nn.Module):
         self.txt_enc = EncoderText(vocab_size=len(self.dict.tok2ind),
                                    word_dim=opt['word_dim'],
                                    embed_size=opt['embed_size'],
-                                   num_layers=opt['num_layers'],
-                                   use_cuda=use_cuda)
-        if use_cuda:
-            self.img_enc.cuda()
-            self.txt_enc.cuda()
+                                   num_layers=opt['num_layers'])
 
     def forward(self, images, captions, lengths):
         img_emb = self.img_enc(images) if images is not None else None
@@ -180,11 +176,9 @@ class EncoderImage(nn.Module):
 
 
 class EncoderText(nn.Module):
-    def __init__(self, vocab_size, word_dim, embed_size, num_layers,
-                 use_cuda):
+    def __init__(self, vocab_size, word_dim, embed_size, num_layers):
         super().__init__()
         self.embed_size = embed_size
-        self.use_cuda = use_cuda
         # word embedding
         self.embed = nn.Embedding(vocab_size, word_dim)
         # caption embedding
@@ -206,8 +200,6 @@ class EncoderText(nn.Module):
         padded = pad_packed_sequence(out, batch_first=True)
         I = lengths.view(-1, 1, 1)
         I = I.expand(x.size(0), 1, self.embed_size) - 1
-        if self.use_cuda:
-            I = I.cuda()
         out = torch.gather(padded[0], 1, I).squeeze(1)
         # normalization in the joint embedding space
         out = l2norm(out)

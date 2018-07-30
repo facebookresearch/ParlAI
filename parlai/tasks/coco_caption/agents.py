@@ -134,24 +134,23 @@ class DefaultDataset(Dataset):
         if not self.datatype.startswith('test'):
             anno = self.annotation['annotations'][index]
             ep['labels'] = [anno['caption']]
-            ep['valid'] = True
-            if self.datatype.startswith('eval'):
+            if self.datatype.startswith('train'):
+                candidates = random.Random(index).choices(self.cands, k=150)
+            else:
                 # Can only randomly select from validation set
-                candidate_labels = random.choices(self.val_cands, k=150)
-            else:
-                candidate_labels = random.choices(self.cands, k=150)
+                candidates = random.Random(index).choices(self.val_cands, k=150)
 
-            if anno['caption'] not in candidate_labels:
-                candidate_labels.pop(0)
+            if anno['caption'] not in candidates:
+                candidates.pop(0)
             else:
-                candidate_labels.remove(anno['caption'])
+                candidates.remove(anno['caption'])
 
-            candidate_labels.insert(0, anno['caption'])
+            candidate_labels = [anno['caption']]
+            candidate_labels += candidates
 
             ep['label_candidates'] = candidate_labels
         else:
             ep['label_candidates'] = random.choices(self.cands, k=150)
-            ep['valid'] = True
 
         ep['use_hdf5'] = self.use_hdf5
         return (index, ep)
@@ -293,19 +292,19 @@ class DefaultTeacher(FixedDialogTeacher):
             anno = self.annotation['annotations'][episode_idx]
             action['labels'] = [anno['caption']]
             action['image_id'] = anno['image_id']
-            if self.datatype.startswith('eval'):
+            if self.datatype.startswith('train'):
+                candidates = random.Random(episode_idx).choices(self.cands, k=150)
+            else:
                 # Can only randomly select from validation set
-                candidate_labels = random.choices(self.val_cands, k=150)
+                candidates = random.Random(episode_idx).choices(self.val_cands, k=150)
+
+            if anno['caption'] not in candidates:
+                candidates.pop(0)
             else:
-                candidate_labels = random.choices(self.cands, k=150)
+                candidates.remove(anno['caption'])
 
-            if anno['caption'] not in candidate_labels:
-                candidate_labels.pop(0)
-            else:
-                candidate_labels.remove(anno['caption'])
-
-            candidate_labels.insert(0, anno['caption'])
-
+            candidate_labels = [anno['caption']]
+            candidate_labels += candidates
             action['label_candidates'] = candidate_labels
         else:
             action['label_candidates'] = random.choices(self.cands, k=150)
