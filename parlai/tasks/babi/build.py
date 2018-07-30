@@ -23,7 +23,7 @@ def build(opt):
 
         # Download the data.
         fname = 'babi.tar.gz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/babi/' + fname
+        url = 'http://parl.ai/downloads/babi/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 

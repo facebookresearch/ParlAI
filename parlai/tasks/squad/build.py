@@ -41,7 +41,7 @@ def build(opt):
 
             # Download the data.
             fname = 'squad_fulldocs.tgz'
-            url = 'https://s3.amazonaws.com/fair-data/parlai/squad-fulldocs/' + fname
+            url = 'http://parl.ai/downloads/squad-fulldocs/' + fname
             build_data.download(url, dpath, fname)
             build_data.untar(dpath, fname)
 

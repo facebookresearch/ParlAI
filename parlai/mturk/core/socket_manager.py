@@ -166,7 +166,7 @@ class SocketManager():
 
     def __init__(self, server_url, port, alive_callback, message_callback,
                  socket_dead_callback, task_group_id,
-                 socket_dead_timeout=None):
+                 socket_dead_timeout=None, server_death_callback=None):
         """
         server_url:           url at which the server is to be run
         port:                 port for the socket to operate on
@@ -185,6 +185,7 @@ class SocketManager():
         self.alive_callback = alive_callback
         self.message_callback = message_callback
         self.socket_dead_callback = socket_dead_callback
+        self.server_death_callback = server_death_callback
         if socket_dead_timeout is not None:
             self.missed_pongs = socket_dead_timeout / self.HEARTBEAT_RATE
         else:
@@ -204,6 +205,7 @@ class SocketManager():
         self.pongs_without_heartbeat = {}
         self.packet_map = {}
         self.alive = False
+        self.is_shutdown = False
 
         # setup the socket
         self._setup_socket()
@@ -312,6 +314,32 @@ class SocketManager():
                 t = time.time() + self.ACK_TIME[packet.type]
                 self._safe_put(connection_id, (t, packet))
 
+    def _spawn_reaper_thread(self):
+        def _reaper_thread(*args):
+            start_time = time.time()
+            wait_time = self.DEF_MISSED_PONGS * self.HEARTBEAT_RATE
+            while time.time() - start_time < wait_time:
+                if self.is_shutdown:
+                    return
+                if self.alive:
+                    return
+                time.sleep(0.3)
+            if self.server_death_callback is not None:
+                shared_utils.print_and_log(
+                    logging.WARN,
+                    'Server has disconnected and could not reconnect. '
+                    'Assuming the worst and calling the death callback. '
+                    '(Usually shutdown)',
+                    should_print=True,
+                )
+                self.server_death_callback()
+        reaper_thread = threading.Thread(
+            target=_reaper_thread,
+            name='socket-reaper-{}'.format(self.task_group_id)
+        )
+        reaper_thread.daemon = True
+        reaper_thread.start()
+
     def _setup_socket(self):
         """Create socket handlers and registers the socket"""
         def on_socket_open(*args):
@@ -343,13 +371,16 @@ class SocketManager():
 
         def on_disconnect(*args):
             """Disconnect event is a no-op for us, as the server reconnects
-            automatically on a retry"""
+            automatically on a retry. Just in case the server is actually
+            dead we set up a thread to reap the whole task.
+            """
             shared_utils.print_and_log(
                 logging.INFO,
                 'World server disconnected: {}'.format(args)
             )
             self.alive = False
             self._ensure_closed()
+            self._spawn_reaper_thread()
 
         def on_message(*args):
             """Incoming message handler for ACKs, ALIVEs, HEARTBEATs,
@@ -578,3 +609,8 @@ class SocketManager():
                     connection_id
                 )
             )
+
+    def shutdown(self):
+        '''marks the socket manager as closing, shuts down all channels'''
+        self.is_shutdown = False
+        self.close_all_channels()

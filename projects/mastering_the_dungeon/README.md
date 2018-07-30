@@ -26,7 +26,7 @@ mkdir data
 Then we can download the data
 ```
 cd data
-wget https://s3.amazonaws.com/fair-data/parlai/mastering_the_dungeon/mastering_the_dungeon.tgz
+wget http://parl.ai/downloads/mastering_the_dungeon/mastering_the_dungeon.tgz
 tar -xvzf mastering_the_dungeon.tgz
 ```
 

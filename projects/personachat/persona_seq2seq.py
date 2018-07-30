@@ -1196,12 +1196,12 @@ class PersonachatSeqseqAgentSplit(Agent):
             self.id = 'Seq2Seq'
             # we use START markers to start our output
             self.START = self.dict.start_token
-            self.START_TENSOR = torch.LongTensor(self.dict.parse(self.START))
+            self.START_TENSOR = torch.LongTensor([self.dict[self.START]])
             # we use END markers to end our output
             self.END = self.dict.end_token
-            self.END_TENSOR = torch.LongTensor(self.dict.parse(self.END))
+            self.END_TENSOR = torch.LongTensor([self.dict[self.END]])
             # get index of null token from dictionary (probably 0)
-            self.NULL_IDX = self.dict.txt2vec(self.dict.null_token)[0]
+            self.NULL_IDX = self.dict[self.dict.null_token]
 
             # reorder dictionary tokens
             self.dict.ind2tok[1] = '__END__'
@@ -1944,13 +1944,12 @@ class PersonachatSeqseqAgentSplit(Agent):
             for b in range(batchsize):
                 if not done[b]:
                     # only add more tokens for examples that aren't done yet
-                    token = self.v2t([(preds + 1).data[b]])
-                    if token == self.END:
-                        # if we produced END, we're done
+                    pred_idx = (preds + 1)[b].item()
+                    if pred_idx == self.dict[self.END]:
                         done[b] = True
                         total_done += 1
-                    else:
-                        output_lines[b].append(token)
+                    elif pred_idx != self.dict[self.START]:
+                        output_lines[b].append(self.dict[pred_idx])
 
         if random.random() < 1 and not self.interactive_mode:
             # sometimes output a prediction for debugging

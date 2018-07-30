@@ -17,7 +17,7 @@ if __name__ == '__main__':
         task='convai2:self',
         model='projects.personachat.persona_seq2seq:PersonachatSeqseqAgentSplit',
         model_file='/tmp/profilememconvai2',
-        dict_lower=True,
+        dict_lower=False,
         dict_include_valid=True,
         dict_maxexs=-1,
         datatype='train',
@@ -39,5 +39,6 @@ if __name__ == '__main__':
         validation_metric_mode='max',
         validation_patience=10,
         log_every_n_secs=10,
+        dict_tokenizer='split',
     )
     TrainLoop(parser.parse_args()).train()

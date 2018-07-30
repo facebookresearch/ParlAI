@@ -21,7 +21,7 @@ def build(opt):
 
         # Download the data.
         fname = 'cbt.tar.gz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/cbt/' + fname
+        url = 'http://parl.ai/downloads/cbt/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 

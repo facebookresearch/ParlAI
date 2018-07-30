@@ -53,7 +53,7 @@ def build(opt):
 
         # Download the data.
         fname = 'mctest.tar.gz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/mctest/' + fname
+        url = 'http://parl.ai/downloads/mctest/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 

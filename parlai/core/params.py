@@ -218,6 +218,10 @@ class ParlaiParser(argparse.ArgumentParser):
             help='Qualification to use to share the maximum time requirement '
                  'with other runs from other machines.'
         )
+        mturk.add_argument(
+            '--heroku-team', dest='heroku_team', default=None,
+            help='Specify Heroku team name to use for launching Dynos.'
+        )
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)
@@ -302,8 +306,8 @@ class ParlaiParser(argparse.ArgumentParser):
         batch.add_argument(
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
-        batch.add_argument('-bsrt', '--batch-sort', default=True, type='bool',
-                           help='If enabled (default True), create batches by '
+        batch.add_argument('-bsrt', '--batch-sort', default=False, type='bool',
+                           help='If enabled (default %(default)s), create batches by '
                                 'flattening all episodes to have exactly one '
                                 'utterance exchange and then sorting all the '
                                 'examples according to their length. This '

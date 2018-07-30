@@ -107,37 +107,36 @@ class DrqaAgent(Agent):
     def __init__(self, opt, shared=None):
         if opt.get('numthreads', 1) > 1:
             raise RuntimeError("numthreads > 1 not supported for this model.")
+        super().__init__(opt, shared)
 
-        # Load dict.
-        if not shared:
-            word_dict = DrqaAgent.dictionary_class()(opt)
         # All agents keep track of the episode (for multiple questions)
         self.episode_done = True
 
-        # Only create an empty dummy class when sharing
+        self.opt['cuda'] = not self.opt['no_cuda'] and torch.cuda.is_available()
+
         if shared is not None:
-            self.is_shared = True
-            return
+            # model has already been set up
+            self.word_dict = shared['word_dict']
+            self.model = shared['model']
+            self.feature_dict = shared['feature_dict']
+        else:
+            # set up model
+            self.word_dict = DrqaAgent.dictionary_class()(opt)
+            if self.opt.get('model_file') and os.path.isfile(opt['model_file']):
+                self._init_from_saved(opt['model_file'])
+            else:
+                if self.opt.get('init_model'):
+                    self._init_from_saved(opt['init_model'])
+                else:
+                    self._init_from_scratch()
+            if self.opt['cuda']:
+                print('[ Using CUDA (GPU %d) ]' % opt['gpu'])
+                torch.cuda.set_device(opt['gpu'])
+                self.model.cuda()
 
         # Set up params/logging/dicts
-        self.is_shared = False
         self.id = self.__class__.__name__
-        self.word_dict = word_dict
-        self.opt = copy.deepcopy(opt)
         config.set_defaults(self.opt)
-
-        if self.opt.get('model_file') and os.path.isfile(opt['model_file']):
-            self._init_from_saved(opt['model_file'])
-        else:
-            if self.opt.get('init_model'):
-                self._init_from_saved(opt['init_model'])
-            else:
-                self._init_from_scratch()
-        self.opt['cuda'] = not self.opt['no_cuda'] and torch.cuda.is_available()
-        if self.opt['cuda']:
-            print('[ Using CUDA (GPU %d) ]' % opt['gpu'])
-            torch.cuda.set_device(opt['gpu'])
-            self.model.cuda()
         self.n_examples = 0
 
     def _init_from_scratch(self):
@@ -162,6 +161,13 @@ class DrqaAgent(Agent):
         self.model = DocReaderModel(self.opt, self.word_dict,
                                     self.feature_dict, self.state_dict)
 
+    def share(self):
+        shared = super().share()
+        shared['word_dict'] = self.word_dict
+        shared['model'] = self.model
+        shared['feature_dict'] = self.feature_dict
+        return shared
+
     def observe(self, observation):
         # shallow copy observation (deep copy can be expensive)
         observation = observation.copy()
@@ -175,9 +181,6 @@ class DrqaAgent(Agent):
 
     def act(self):
         """Update or predict on a single example (batchsize = 1)."""
-        if self.is_shared:
-            raise RuntimeError("Parallel act is not supported.")
-
         reply = {'id': self.getID()}
 
         ex = self._build_ex(self.observation)
@@ -204,9 +207,6 @@ class DrqaAgent(Agent):
         """Update or predict on a batch of examples.
         More efficient than act().
         """
-        if self.is_shared:
-            raise RuntimeError("Parallel act is not supported.")
-
         batchsize = len(observations)
         batch_reply = [{'id': self.getID()} for _ in range(batchsize)]
 
@@ -286,10 +286,10 @@ class DrqaAgent(Agent):
             raise RuntimeError('Invalid input. Is task a QA task?')
 
         paragraphs, question = fields[:-1], fields[-1]
-        
+
         if len(fields) > 2 and self.opt.get('subsample_docs', 0) > 0 and 'labels' in ex:
             paragraphs = self. _subsample_doc(paragraphs, ex['labels'], self.opt.get('subsample_docs', 0))
-        
+
         document = ' '.join(paragraphs)
         inputs['document'], doc_spans = self.word_dict.span_tokenize(document)
         inputs['question'] = self.word_dict.tokenize(question)
@@ -360,5 +360,5 @@ class DrqaAgent(Agent):
         if pi < len(paras) - 1:
             for i in range(min(subsample, len(paras) - 1 - pi)):
                 ind = random.randint(pi + 1, len(paras) - 1)
-                new_paras.append(paras[ind])                         
+                new_paras.append(paras[ind])
         return new_paras

@@ -5,23 +5,78 @@
   LICENSE file in the root directory of this source tree. An additional grant
   of patent rights can be found in the PATENTS file in the same directory.
 
-Creating a New Task
-===================
-**Authors**: Alexander Holden Miller, Filipe de Avila Belbute Peres
+Tasks and Datasets in ParlAI
+============================
+**Authors**: Alexander Holden Miller, Filipe de Avila Belbute Peres, Jason Weston
 
-Adding new tasks to ParlAI is a simple process.
-In this tutorial we will go over the different ways a new task can be created.
+ParlAI can support fixed dialogue data for supervised learning (which we call a dataset) or even dynamic tasks involving an environment, agents and possibly rewards (we refer to the general case  as a task).
+
+In this tutorial we will go over the different ways a new task (or dataset) can be created.
+
+All setups are handled in pretty much the same way, with the same API, but there are less steps of course to make a basic dataset.
+
+
+Getting a New Dataset Into ParlAI: *the simplest way*
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Let's look at the easiest way of getting a new dataset into ParlAI first.
+
+If you have a dialogue, QA or other text-only dataset that you can put
+in a text file in the format we will now describe, you can just load it directly from
+there, with no extra code!
+
+Here's an example dataset with a single episode with 2 examples:
+
+::
+
+	text:hello how are you today?	labels:i'm great thanks! what are you doing?
+	text:i've just been biking.	labels:oh nice, i haven't got on a bike in years!	episode_done:True
+
+Suppose that data is in the file /tmp/data.txt
+
+We could look at that data using the usual display data script:
+
+::
+
+	python parlai/scripts/display_data.py -t fromfile:parlaiformat --fromfile_datapath /tmp/data.txt
+	<.. snip ..>
+	[creating task(s): fromfile:parlaiformat]
+	[loading parlAI text data:/tmp/data.txt]
+	[/tmp/data.txt]: hello how are you today?
+	[labels: i'm great thanks! what are you doing?]
+	   [RepeatLabelAgent]: i'm great thanks! what are you doing?
+	~~
+	[/tmp/data.txt]: i've just been biking.
+	[labels: oh nice, i haven't got on a bike in years!]
+	   [RepeatLabelAgent]: oh nice, i haven't got on a bike in years!
+	- - - - - - - - - - - - - - - - - - - - -
+	~~
+	EPOCH DONE
+	[ loaded 1 episodes with a total of 2 examples ]
+
+The text file data format is called ParlAI Dialog format, and is described 
+in the :doc:`teachers documentation <teachers>` (parlai.core.teachers.ParlAIDialogTeacher)
+and 
+in the `core/teachers.py file <https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/teachers.py#L1098>`_.
+Essentially, there is one training example every line, and each field in a 
+ParlAI message is tab separated with the name of the field, followed by a colon.
+E.g. the usual fields like 'text', 'labels', 'label_candidates' etc. can all
+be used, or you can add your own fields too if you have a special use for them.
+
+
+Creating a New Task: *the more complete way*
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Of course after your first hacking around you may want to actually check this code in so that you can share it with others!
 
 Tasks code is located in the ``parlai/tasks`` directory.
+
 You will need to create a directory for your new task there.
 
-The code for the tasks in this tutorial can also be found in this directory.
+If your data is in the ParlAI format, you effectively only need a tiny bit of boilerplate to load it, see e.g. the code for the `fromfile task agent we just used <https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/fromfile>`_.
 
-
-Summary
-^^^^^^^
-
-In brief, to add your own task you need to:
+But right now, let's go through all the steps. You will need to:
 
 0. Add an ``__init__.py`` file to make sure imports work correctly.
 1. Implement ``build.py`` to download and build any needed data (see `Part 1: Building the Data`_).
@@ -74,7 +129,7 @@ true from now on. Below is an example of setting up the MNIST dataset.
 
             # download the data.
             fname = 'mnist.tar.gz'
-            url = 'https://s3.amazonaws.com/fair-data/parlai/mnist/' + fname # dataset URL
+            url = 'http://parl.ai/downloads/mnist/' + fname # dataset URL
             build_data.download(url, dpath, fname)
 
             # uncompress it
@@ -95,14 +150,16 @@ It is there that we will define our teacher.
 
 Teachers already in the ParlAI system use a series of subclasses, each with
 additional functionality (and fewer methods to implement). These follow the path
-``Agent`` => ``Teacher`` => ``FixedDialogTeacher`` => ``DialogTeacher`` => ``FbDialogTeacher``.
+``Agent`` => ``Teacher`` => ``FixedDialogTeacher`` => ``DialogTeacher`` => ``ParlAIDialogTeacher``.
+
+(Note there is also a FbDialogTeacher, but this is deprecated -- although some datasets in ParlAI still currently use it.)
 
 The simplest method available for creating a teacher is to use the
-``FbDialogTeacher`` class, which makes the process very simple if the text
-data is already formatted in the Facebook Dialog format.
-(In fact, even if your text data is not in the Facebook Dialog format, it might
-be simpler to parse it into this format and use the ``FbDialogTeacher``.)
-This is shown in the section `FbDialogTeacher`_.
+``ParlAIDialogTeacher`` class, which makes the process very simple if the text
+data is already formatted in the ParlAI Dialog format.
+(In fact, even if your text data is not in the ParlAI Dialog format, it might
+be simpler to parse it into this format and use the ``ParlAIDialogTeacher``.)
+This is shown in the section `ParlAIDialogTeacher`_.
 
 If the data is not in this format, one can still use the ``DialogTeacher``
 which automates much of the work in setting up a dialog task,
@@ -128,19 +185,20 @@ The methods for a teacher to implement for each class are as follows:
 
 :class DialogTeacher: ``__init__()``, ``setup_data()``
 
-:class FbDialogTeacher: ``__init__()``
+:class ParlAIDialogTeacher: ``__init__()``
 
 
-FbDialogTeacher
-~~~~~~~~~~~~~~~
+
+ParlAIDialogTeacher
+~~~~~~~~~~~~~~~~~~~
 
 For this class, the user must implement at least an ``__init__()`` function, and
 often only that.
 
-In this section we will illustrate the process of using the ``FbDialogTeacher``
-class by adding the MTurk WikiMovies question-answering task.
-This task has data in textual form and has been formatted to follow the Facebook Dialog format.
-It is thus very simple to implement it using ``FbDialogTeacher``.
+In this section we will illustrate the process of using the ``ParlAIDialogTeacher``
+class by adding the Twitter dataset.
+This task has data in textual form and has been formatted to follow the ParlAI Dialog format.
+It is thus very simple to implement it using ``ParlAIDialogTeacher``.
 More information on this class and the dialog format can be found in the :doc:`teachers documentation <teachers>`.
 
 In this task, the agent is presented with questions about movies that are answerable from Wikipedia.
@@ -148,28 +206,25 @@ A sample dialog is demonstrated below.
 
 ::
 
-    [mturkwikimovies]: Which directors collaborated for the film Flushed Away?
-    [labels: David Bowers, Sam Fell]
-    [cands: David Rose|Ismail Kadare|Alexis Díaz de Villegas|emily blunt|Glory| ...and 75537 more]
-       [Agent]: David Bowers, Sam Fell
+	[twitter]: burton is a fave of mine,even his average films are better than most directors.
+	[labels: keeping my fingers crossed that he still has another ed wood in him before he retires.]
+	- - - - - - - - - - - - - - - - - - - - -
+	~~
+	[twitter]: i saw someone say that we should use glass straws..
+	[labels: glass or paper straws - preferably no 'straw' waste. ban !]
 
-Every task requires a ``DefaultTeacher``. Since we are subclassing ``FbDialogTeacher``,
+Every task requires a ``DefaultTeacher``. Since we are subclassing ``ParlAIDialogTeacher``,
 we only have to initialize the class and set a few option parameters, as shown below.
 
 .. code-block:: python
 
-    class DefaultTeacher(FbDialogTeacher):
+    class DefaultTeacher(ParlAIDialogTeacher):
         def __init__(self, opt, shared=None):
+            super().__init__(opt, shared)
             opt = copy.deepcopy(opt)
 
             # get datafile
             opt['datafile'] = _path(opt, '')
-
-            # get file with candidate answers
-            opt['cands_datafile'] = os.path.join(opt['datapath'], 'WikiMovies',
-                                                 'movieqa', 'knowledge_source',
-                                                 'entities.txt')
-            super().__init__(opt, shared)
 
 We can notice there was a call to a ``_path()`` method, which returns the path to the correct datafile.
 The path to the file is then stored in the options dictionary under the ``datafile`` key.
@@ -183,23 +238,20 @@ It then sets up the paths for the built data.
     from .build import build
 
     def _path(opt, filtered):
-        # ensure data is built
+        # build the data if it does not exist
         build(opt)
 
         # set up path to data (specific to each dataset)
         dt = opt['datatype'].split(':')[0]
-        if dt == 'valid':
-            dt = 'dev'
-        return os.path.join(opt['datapath'], 'MTurkWikiMovies', 'mturkwikimovies',
-                            'qa-{type}.txt'.format(type=dt))
+        return os.path.join(opt['datapath'], 'Twitter', dt + '.txt')
 
-And this is all that needs to be done to create a teacher for our task using ``FbDialogTeacher``.
+And this is all that needs to be done to create a teacher for our task using ``ParlAIDialogTeacher``.
 
 To access this data, we can now use the ``display_data.py`` file in the ``examples`` directory:
 
 .. code-block:: bash
 
-    python examples/display_data.py -t mturkwikimovies
+    python examples/display_data.py -t twitter
 
 
 DialogTeacher
@@ -211,7 +263,7 @@ disk, processing images, and more is taken care of for them.
 
 In this section we will demonstrate the process of using the ``DialogTeacher``
 class by adding a simple question-answering task based on the MNIST dataset.
-This task depends on visual data and so does not fit the basic ``FbDialogTeacher``
+This task depends on visual data and so does not fit the basic ``ParlAIDialogTeacher``
 class described above. Still, using ``DialogTeacher`` makes it easy to
 implement dialog tasks such as this one.
 

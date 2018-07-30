@@ -31,6 +31,7 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
 from parlai.core.metrics import normalize_answer
+from parlai.core.logs import TensorboardLogger
 from collections import Counter
 
 import copy
@@ -54,6 +55,7 @@ def setup_args(parser=None):
     parser.add_argument('-cun', '--compute-unique', type=bool, default=True,
                         help='Compute % of unique responses from the model')
     parser.set_defaults(datatype='valid', model='repeat_label')
+    TensorboardLogger.add_cmdline_args(parser)
     return parser
 
 
@@ -103,6 +105,8 @@ def eval_wordstat(opt, print_parser=None):
         print('[ Using model bundled dictionary ]')
         dictionary = agent.dict
 
+    batch_size = opt['batchsize']
+
     if print_parser:
         # Show arguments after loading model
         print_parser.opt = agent.opt
@@ -113,35 +117,46 @@ def eval_wordstat(opt, print_parser=None):
     log_time = TimeLogger()
 
     cnt = 0
-    mean_wlength = []
-    mean_clength = []
-    freqs_cnt = Counter()
-    word_cnt = 0
+    word_statistics = {'mean_wlength': [], 'mean_clength': [], 'freqs_cnt': Counter(), 'word_cnt': 0, 'pred_list': [], 'pure_pred_list': [], 'context_list': []}
     bins = [int(i) for i in opt['freq_bins'].split(',')]
-    pred_list = []
+    
+    def process_prediction(prediction, word_statistics):
+        word_statistics['pred_list'].append(normalize_answer(prediction))
+        freqs, _cnt, wlength, clength = get_word_stats(prediction, dictionary, bins=bins)
+        word_statistics['word_cnt'] += _cnt
+        word_statistics['mean_wlength'].append(wlength)
+        word_statistics['mean_clength'].append(clength)
+        word_statistics['freqs_cnt'] += Counter(freqs)
+        return word_statistics
 
     while not world.epoch_done():
-        cnt += 1
         world.parley()
-        prediction = world.acts[-1]['text']
-        pred_list.append(normalize_answer(prediction))
-        freqs, _cnt, wlength, clength = get_word_stats(prediction, dictionary, bins=bins)
-        word_cnt += _cnt
+        if batch_size == 1:
+            cnt += 1
+            prediction = world.acts[-1]['text']
+            word_statistics['context_list'].append(world.acts[0]['text'])
+            word_statistics['pure_pred_list'].append(prediction)
+            word_statistics = process_prediction(prediction, word_statistics)
+        else:
+            for w in world.worlds:
+                try:
+                    prediction = w.acts[-1]['text']
+                    word_statistics['context_list'].append(w.acts[0]['text'])
+                    word_statistics['pure_pred_list'].append(prediction)
+                except:
+                    continue
+                cnt += 1
+                word_statistics = process_prediction(prediction, word_statistics)
 
-        mean_wlength.append(wlength)
-        mean_clength.append(clength)
-
-        freqs_cnt += Counter(freqs)
-
-        if log_time.time() > log_every_n_secs or (opt['num_examples'] > 0 and cnt >= opt['num_examples']) or world.epoch_done():
+        if log_time.time() > log_every_n_secs:
             report = world.report()
             text, report = log_time.log(report['exs'], world.num_examples(), report)
             print(text)
-            stat_str = 'total_words: {}, '.format(word_cnt) + ', '.join(
-                ['<{}:{} ({:.{prec}f}%)'.format(b, freqs_cnt.get(b, 0), (freqs_cnt.get(b, 0) / word_cnt) * 100, prec=2)
+            stat_str = 'total_words: {}, '.format(word_statistics['word_cnt']) + ', '.join(
+                ['<{}:{} ({:.{prec}f}%)'.format(b, word_statistics['freqs_cnt'].get(b, 0), (word_statistics['freqs_cnt'].get(b, 0) / word_statistics['word_cnt']) * 100, prec=2)
                  for b in bins])
             print("Word statistics: {}, avg_word_length: {:.{prec}f}, avg_char_length: {:.{prec}f}".format(
-                stat_str, numpy.array(mean_wlength).mean(), numpy.array(mean_clength).mean(), prec=2))
+                stat_str, numpy.array(word_statistics['mean_wlength']).mean(), numpy.array(word_statistics['mean_clength']).mean(), prec=2))
         if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
             break
     if world.epoch_done():
@@ -149,18 +164,24 @@ def eval_wordstat(opt, print_parser=None):
 
     if opt['compute_unique'] is True:
         unique_list = []
-        cntr = Counter(pred_list)
+        cntr = Counter(word_statistics['pred_list'])
         for k,v in cntr.items():
             if v == 1:
                 unique_list.append(k)
-        print("Unique responses: {:.{prec}f}%".format(len(unique_list) / len(pred_list) * 100, prec=2))
+        print("Unique responses: {:.{prec}f}%".format(len(unique_list) / len(word_statistics['pred_list']) * 100, prec=2))
 
     if opt['dump_predictions_path'] is not None:
         with open(opt['dump_predictions_path'], 'w') as f:
-            f.writelines(['{}\n'.format(i) for i in pred_list])
+            f.writelines(['CONTEXT: {}\nPREDICTION:{}\n\n'.format(c,p) for c,p in zip(word_statistics['context_list'],word_statistics['pure_pred_list'])])
         if opt['compute_unique'] is True:
             with open(opt['dump_predictions_path']+'_unique', 'w') as f:
                 f.writelines(['{}\n'.format(i) for i in unique_list])
+
+    stat_str = 'total_words: {}, '.format(word_statistics['word_cnt']) + ', '.join(
+        ['<{}:{} ({:.{prec}f}%)'.format(b, word_statistics['freqs_cnt'].get(b, 0), (word_statistics['freqs_cnt'].get(b, 0) / word_statistics['word_cnt']) * 100, prec=2)
+         for b in bins])
+    print("Word statistics: {}, avg_word_length: {:.{prec}f}, avg_char_length: {:.{prec}f}".format(
+        stat_str, numpy.array(word_statistics['mean_wlength']).mean(), numpy.array(word_statistics['mean_clength']).mean(), prec=2))
 
     report = world.report()
     print(report)

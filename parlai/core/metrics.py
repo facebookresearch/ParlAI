@@ -85,7 +85,8 @@ def _bleu(guess, answers):
     # works with strings, which is better suited for this module.
     return nltkbleu.sentence_bleu(
         [normalize_answer(a).split(" ") for a in answers],
-        normalize_answer(guess).split(" ")
+        normalize_answer(guess).split(" "),
+        smoothing_function=nltkbleu.SmoothingFunction(epsilon=1e-12).method1,
     )
 
 

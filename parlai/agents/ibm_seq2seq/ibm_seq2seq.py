@@ -17,7 +17,6 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import maintain_dialog_history, PaddingUtils, round_sigfigs
 
 import torch
-from torch.autograd import Variable
 from torch import optim
 import torch.nn as nn
 
@@ -132,14 +131,12 @@ class IbmSeq2seqAgent(Agent):
             if 'model' in shared:
                 # model is shared during hogwild
                 self.model = shared['model']
-                self.states = shared['states']
         else:
             # this is not a shared instance of this class, so do full init
             # answers contains a batch_size list of the last answer produced
             self.answers = [None] * opt['batchsize']
 
             if self.use_cuda:
-                print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
             # check first for 'init_model' for loading model from file
@@ -200,25 +197,22 @@ class IbmSeq2seqAgent(Agent):
             if self.use_cuda:
                 self.model.cuda()
 
-        if hasattr(self, 'model'):
+        # set up criteria
+        self.criterion = nn.NLLLoss(ignore_index=self.NULL_IDX,
+                                    size_average=False)
+        if self.use_cuda:
+            self.criterion.cuda()
+
+        if 'train' in opt.get('datatype', ''):
             # if model was built, do more setup
             self.clip = opt['gradient_clip']
 
             # set up tensors once
             self.START = torch.LongTensor([self.START_IDX])
-            self.xs = torch.LongTensor(1, 1)
-            self.ys = torch.LongTensor(1, 1)
-
-            # set up criteria
-            self.criterion = nn.NLLLoss(ignore_index=self.NULL_IDX,
-                                        size_average=False)
 
             if self.use_cuda:
                 # push to cuda
                 self.START = self.START.cuda()
-                self.xs = self.xs.cuda()
-                self.ys = self.ys.cuda()
-                self.criterion.cuda()
 
             # set up optimizer
             lr = opt['learningrate']
@@ -266,8 +260,6 @@ class IbmSeq2seqAgent(Agent):
 
     def v2t(self, vec):
         """Convert token indices to string of tokens."""
-        if isinstance(vec, Variable):
-            vec = vec.data
         new_vec = []
         for i in vec:
             if i == self.END_IDX:
@@ -315,10 +307,9 @@ class IbmSeq2seqAgent(Agent):
         shared['START_IDX'] = self.START_IDX
         shared['END_IDX'] = self.END_IDX
         shared['NULL_IDX'] = self.NULL_IDX
+        shared['model'] = self.model
         if self.opt.get('numthreads', 1) > 1:
-            shared['model'] = self.model
             self.model.share_memory()
-            shared['states'] = self.states
         return shared
 
     def observe(self, observation):
@@ -351,7 +342,7 @@ class IbmSeq2seqAgent(Agent):
         loss_dict = None, None
 
         x_lens = [x for x in torch.sum((xs > 0).int(), dim=1).data]
-        start = Variable(self.START, requires_grad=False)
+        start = self.START.detach()
         starts = start.expand(len(xs), 1)
 
         if is_training:
@@ -362,8 +353,8 @@ class IbmSeq2seqAgent(Agent):
             scores = torch.cat(out)
             loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
             # save loss to metrics
-            target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
-            self.metrics['loss'] += loss.double().data[0]
+            target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
+            self.metrics['loss'] += loss.double().item()
             self.metrics['num_tokens'] += target_tokens
             # average loss per token
             loss /= target_tokens
@@ -379,8 +370,8 @@ class IbmSeq2seqAgent(Agent):
                 out, hid, result = self.model(xs, x_lens, y_in, teacher_forcing_ratio=False)
                 scores = torch.cat(out)
                 loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
-                target_tokens = ys.ne(self.NULL_IDX).long().sum().data[0]
-                self.metrics['loss'] += loss.double().data[0]
+                target_tokens = ys.ne(self.NULL_IDX).long().sum().item()
+                self.metrics['loss'] += loss.double().item()
                 self.metrics['num_tokens'] += target_tokens
 
         predictions = torch.cat(result['sequence'], 1)
@@ -395,20 +386,13 @@ class IbmSeq2seqAgent(Agent):
         if xs is None:
             return None, None, None, None, None, None, None
         xs = torch.LongTensor(xs)
-        ys = torch.LongTensor(ys)
+
         if self.use_cuda:
-            # copy to gpu
-            self.xs.resize_(xs.size())
-            self.xs.copy_(xs)
-            xs = Variable(self.xs)
-            if ys is not None:
-                self.ys.resize_(ys.size())
-                self.ys.copy_(ys)
-                ys = Variable(self.ys)
-        else:
-            xs = Variable(xs)
-            if ys is not None:
-                ys = Variable(ys)
+            xs = xs.cuda()
+        if ys is not None:
+            ys = torch.LongTensor(ys)
+            if self.use_cuda:
+                ys = ys.cuda()
 
         return xs, ys, labels, valid_inds, is_training
 

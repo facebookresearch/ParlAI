@@ -18,6 +18,8 @@
     ``FbDialogTeacher(DialogTeacher)``
      Teacher class that provides access to data in the Facebook Dialog format.
      See the class description for more details.
+     ** NOTE: ** We plan to deprecate this method soon in favor of ParlAIDialogTeacher,
+     however several existing tasks are currently still using it.
 
     ``ParlAIDialogTeacher(DialogTeacher)``
      Teacher class that provides access to data in the ParlAI Dialog format.
@@ -33,6 +35,8 @@ dialog data and utilized by ``DialogTeacher``
 from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
 from .utils import AttrDict, flatten, sort_data, make_batches, no_lock, str_to_msg
+
+from functools import lru_cache
 
 import concurrent.futures
 import multiprocessing
@@ -332,6 +336,7 @@ class FixedDialogTeacher(Teacher):
             return len(self.sorted_data)
         raise RuntimeError('"num_episodes" must be overriden by children.')
 
+    @lru_cache(maxsize=1)
     def num_examples(self):
         """Get the total number of examples in this dataset."""
         if self.use_batch_act:
@@ -376,7 +381,15 @@ class FixedDialogTeacher(Teacher):
 
         # remember correct answer if available (for padding, None)
         for i, ex in enumerate(batch):
-            self.lastYs[i] = ex.get('labels', ex.get('eval_labels'))
+            if 'labels' in ex:
+                labels = ex['labels']
+                self.lastYs[i] = labels
+                if not self.datatype.startswith('train') or 'evalmode' in self.datatype:
+                    del ex['labels']
+                    if not self.opt.get('hide_labels', False):
+                        ex['eval_labels'] = labels
+            else:
+                self.lastYs[i] = ex.get('eval_labels', None)
 
         return batch
 
@@ -393,7 +406,7 @@ class FixedDialogTeacher(Teacher):
         # remember correct answer if available
         self.lastY = action.get('labels', None)
         if ((not self.datatype.startswith('train') or 'evalmode' in self.datatype)
-            and 'labels' in action):
+                and 'labels' in action):
             # move labels to eval field so not used for training
             # but this way the model can use the labels for perplexity or loss
             labels = action.pop('labels')
@@ -470,6 +483,7 @@ class DialogTeacher(FixedDialogTeacher):
         except AttributeError:
             return super().num_episodes()
 
+    @lru_cache(maxsize=1)
     def num_examples(self):
         try:
             return self.data.num_examples()
@@ -625,9 +639,11 @@ class DialogData(object):
         """Return number of episodes in the dataset."""
         return len(self.data)
 
+    @lru_cache(maxsize=1)
     def num_examples(self):
-        """Returns total number of entries available. Each episode has at least
-        one entry, but might have many more.
+        """Returns total number of entries available.
+
+        Each episode has at least one entry, but might have many more.
         """
         return sum(len(episode) for episode in self.data)
 
@@ -1142,10 +1158,21 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        if shared is None and opt.get('parlaidialogteacher_datafile') is not None:
-            self._setup_data(opt.get('parlaidialogteacher_datafile'))
+        if not shared:
+            self.episodes = []
+            self.num_exs = 0
+            if opt.get('parlaidialogteacher_datafile') is not None:
+                self._setup_data(opt.get('parlaidialogteacher_datafile'))
+        else:
+            self.episodes = shared['episodes']
+            self.num_exs = sum(len(e) for e in self.episodes)
         self.id = opt.get('parlaidialogteacher_datafile', 'teacher')
         self.reset()
+
+    def share(self):
+        shared = super().share()
+        shared['episodes'] = self.episodes
+        return shared
 
     def num_examples(self):
         return self.num_exs

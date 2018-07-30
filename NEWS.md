@@ -1,5 +1,7 @@
 <h2>News</h2>
 
+2018-07-17: Added [Qangaroo](http://qangaroo.cs.ucl.ac.uk/) (a.k.a. WikiHop and MedHop), two reading comprehension datasets with multiple hops, and [SQuAD 2](https://rajpurkar.github.io/SQuAD-explorer/).
+
 2018-05-22: Two new tasks added: [COCO Image Captioning](http://cocodataset.org/#captions-2015) and [Flickr30k Entities](http://web.engr.illinois.edu/~bplumme2/Flickr30kEntities/)
 
 2018-04-13: [NIPS ConvAI2 competition!](http://convai.io/) Train Dialogue Agents to chat about personal interests and get to know their dialogue partner -- using the PersonaChat dataset as a training source, with data and baseline code in ParlAI. Competition starts now! Ends September 1st.
