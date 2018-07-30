@@ -144,9 +144,18 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
 
     # Create or attach to the server
     try:
-        subprocess.check_output(shlex.split(
-            '{} create {}'.format(heroku_executable_path, heroku_app_name)
-        ))
+        if os.getenv('HEROKU_TEAM') is not None:
+            subprocess.check_output(shlex.split(
+                '{} create {} --team {}'.format(
+                    heroku_executable_path,
+                    heroku_app_name,
+                    os.getenv('HEROKU_TEAM')
+                )
+            ))
+        else:
+            subprocess.check_output(shlex.split(
+                '{} create {}'.format(heroku_executable_path, heroku_app_name)
+            ))
     except subprocess.CalledProcessError:  # User has too many apps
         sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
         raise SystemExit(
