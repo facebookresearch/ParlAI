@@ -53,6 +53,28 @@ class AssignState():
         self.messages = []
         self.last_command = None
 
+    def append_packet(self, packet):
+        self.messages.append(packet)
+
+    def set_last_command(self, command):
+        self.last_command = command
+
+    def get_last_command(self):
+        return self.last_command
+
+    def get_messages(self):
+        return self.messages
+
+    def set_status(self, status):
+        '''Set the status of this agent on the task'''
+        # TODO log to db
+        self.status = status
+
+    def get_status(self):
+        '''Get the status of this agent on its task'''
+        # TODO retrieve from db if not set
+        return self.status
+
     def is_final(self):
         """Return True if the assignment is in a final status that
         can no longer be acted on.
@@ -151,13 +173,11 @@ class MTurkAgent(Agent):
 
     def set_status(self, status):
         '''Set the status of this agent on the task'''
-        # TODO log to db
-        self.state.status = status
+        self.state.set_status(status)
 
     def get_status(self):
         '''Get the status of this agent on its task'''
-        # TODO retrieve from db if not set
-        return self.state.status
+        return self.state.get_status()
 
     def submitted_hit(self):
         return self.get_status() in [
@@ -171,15 +191,15 @@ class MTurkAgent(Agent):
 
     def append_packet(self, packet):
         '''Add a received packet to the state'''
-        self.state.messages.append(packet)
+        self.state.append_packet(packet)
 
     def set_last_command(self, command):
         '''Changes the last command recorded as sent to the agent'''
-        self.state.last_command = command
+        self.state.set_last_command(command)
 
     def get_last_command(self, command):
         '''Returns the last command to be sent to this agent'''
-        return self.state.last_command
+        return self.state.get_last_command()
 
     def clear_messages(self):
         '''Clears the message history for this agent'''
@@ -187,7 +207,7 @@ class MTurkAgent(Agent):
 
     def get_messages(self):
         '''Returns all the messages stored in the state'''
-        return self.state.messages
+        return self.state.get_messages()
 
     def get_connection_id(self):
         """Returns an appropriate connection_id for this agent"""
@@ -199,7 +219,7 @@ class MTurkAgent(Agent):
             logging.DEBUG,
             'Agent ({})_({}) reconnected to {} with status {}'.format(
                 self.worker_id, self.assignment_id,
-                self.conversation_id, self.state.status
+                self.conversation_id, self.get_status()
             )
         )
 
@@ -218,7 +238,7 @@ class MTurkAgent(Agent):
         to the desired state
         """
         while True:
-            if self.state.status == desired_status:
+            if self.get_status() == desired_status:
                 break
             time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
