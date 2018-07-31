@@ -1010,7 +1010,7 @@ class MTurkManager():
         # Push outgoing message to the message thread to be able to resend
         # on a reconnect event
         if agent is not None:
-            agent.append_packet(packet.data)
+            agent.append_message(packet.data)
         self.socket_manager.queue_packet(packet)
         return data['message_id']
 

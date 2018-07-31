@@ -120,7 +120,7 @@ class WorkerManager():
                 should_print=self.opt['verbose']
             )
             # Push the message to the message thread to send on a reconnect
-            agent.append_packet(pkt.data)
+            agent.append_message(pkt.data)
 
             # Clear the send message command, as a message was recieved
             agent.set_last_command(None)
@@ -330,6 +330,7 @@ class WorkerManager():
             'conversation_id': conversation_id,
             'agent_id': new_agent_id
         }
+        agent.flush_msg_queue()
         self.mturk_manager.send_command(
             agent.worker_id,
             agent.assignment_id,
