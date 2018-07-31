@@ -232,7 +232,6 @@ class TorchAgent(Agent):
             label = random.choice(obs[label_type])
             vec_label = self._vectorize_text(label, self.use_cuda, add_start,
                                              add_end, truncate, False)
-
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
@@ -290,11 +289,9 @@ class TorchAgent(Agent):
             x_text = [x_text[k] for k in ind_sorted]
             x_lens = [x_lens[k] for k in ind_sorted]
 
-
         xs = torch.LongTensor(len(exs), max(x_lens)).fill_(self.NULL_IDX)
         if self.use_cuda:
             xs = xs.cuda()
-
         for i, ex in enumerate(x_text):
             xs[i, :ex.shape[0]] = ex
 
