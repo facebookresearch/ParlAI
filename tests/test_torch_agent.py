@@ -33,8 +33,7 @@ class TestTorchAgent(unittest.TestCase):
 
     def test_vectorize(self):
         """
-        Goal of this test is to make sure that the vectorize function is
-        actually adding a new field.
+        Make sure that the vectorize function is actually adding a new field.
         """
         try:
             from parlai.core.torch_agent import TorchAgent
@@ -43,11 +42,11 @@ class TestTorchAgent(unittest.TestCase):
                 print('Skipping TestTorchAgent.test_vectorize, no pytorch.')
                 return
 
-        opt = {}
-        opt['no_cuda'] = True
-        opt['truncate'] = 10000
-        opt['history_dialog'] = 10
-        opt['history_replies'] = 'label_else_model'
+        from parlai.core.params import ParlaiParser
+        parser = ParlaiParser()
+        TorchAgent.add_cmdline_args(parser)
+        parser.set_params(no_cuda=True)
+        opt = parser.parse_args(print_args=False)
         mdict = MockDict()
 
         shared = {'opt': opt, 'dict': mdict}
@@ -94,12 +93,12 @@ class TestTorchAgent(unittest.TestCase):
                         [mdict.START_IDX, 7, 8, 9, mdict.END_IDX],
                         "Vectorized label is incorrect.")
         # truncate
-        obs_vec = agent.vectorize(observation, truncate=3)
+        obs_vec = agent.vectorize(observation, truncate=2)
         self.assertTrue('eval_labels_vec' in obs_vec,
                         "Field \'eval_labels_vec\' missing from vectorized observation")
         self.assertTrue(obs_vec['eval_labels_vec'].numpy().tolist() ==
-                        [8, 9, mdict.END_IDX],
-                        "Vectorized label is incorrect.")
+                        [mdict.START_IDX, 7],
+                        "Vectorized label is incorrect: " + str(obs_vec['eval_labels_vec']))
 
         # truncate
         obs_vec = agent.vectorize(observation, truncate=10)
@@ -127,11 +126,11 @@ class TestTorchAgent(unittest.TestCase):
         observations.append({})
         observations.append({})
 
-        opt = {}
-        opt['no_cuda'] = True
-        opt['truncate'] = 10000
-        opt['history_dialog'] = 10
-        opt['history_replies'] = 'label_else_model'
+        from parlai.core.params import ParlaiParser
+        parser = ParlaiParser()
+        TorchAgent.add_cmdline_args(parser)
+        parser.set_params(no_cuda=True)
+        opt = parser.parse_args(print_args=False)
         mdict = MockDict()
 
         shared = {'opt': opt, 'dict': mdict}
@@ -192,11 +191,11 @@ class TestTorchAgent(unittest.TestCase):
                 print('Skipping TestTorchAgent.test_maintain_dialog_history, no pytorch.')
                 return
 
-        opt = {}
-        opt['no_cuda'] = True
-        opt['truncate'] = 5
-        opt['history_dialog'] = 10
-        opt['history_replies'] = 'label_else_model'
+        from parlai.core.params import ParlaiParser
+        parser = ParlaiParser()
+        TorchAgent.add_cmdline_args(parser)
+        parser.set_params(no_cuda=True, truncate=5)
+        opt = parser.parse_args(print_args=False)
         mdict = MockDict()
 
         shared = {'opt': opt, 'dict': mdict}
@@ -219,6 +218,7 @@ class TestTorchAgent(unittest.TestCase):
                         "Failed saving labels.")
 
         observation['text_vec'] = agent.maintain_dialog_history(observation)
+        print(agent.history['dialog'])
         self.assertTrue(list(agent.history['dialog']) == [8, 9, 7, 8, 9],
                         "Failed adding vectorized text to dialog.")
 
