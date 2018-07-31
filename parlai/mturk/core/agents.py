@@ -157,6 +157,10 @@ class MTurkAgent(Agent):
     ASSIGNMENT_APPROVED = 'Approved'
     ASSIGNMENT_REJECTED = 'Rejected'
 
+    MTURK_DISCONNECT_MESSAGE = MTURK_DISCONNECT_MESSAGE
+    TIMEOUT_MESSAGE = TIMEOUT_MESSAGE
+    RETURN_MESSAGE = RETURN_MESSAGE
+
     def __init__(self, opt, mturk_manager, hit_id, assignment_id, worker_id):
         super().__init__(opt)
 
@@ -274,10 +278,17 @@ class MTurkAgent(Agent):
         while not self.msg_queue.empty():
             self.msg_queue.get()
 
+    def reduce_state(self):
+        """Cleans up resources related to maintaining complete state"""
+        self.flush_msg_queue()
+        self.msg_queue = None
+        self.state.clear_messages()
+        self.recieved_packets = None
+
     def get_new_act_message(self):
         """Get a new act message if one exists, return None otherwise"""
         # Check if Turker sends a message
-        if not self.msg_queue.empty():
+        while not self.msg_queue.empty():
             msg = self.msg_queue.get()
             if msg['id'] == self.id:
                 return msg
@@ -562,12 +573,6 @@ class MTurkAgent(Agent):
         )
         self.mturk_manager.free_workers([self])
         return True
-
-    def reduce_state(self):
-        """Cleans up resources related to maintaining complete state"""
-        self.msg_queue = None
-        self.state.clear_messages()
-        self.recieved_packets = None
 
     def shutdown(self, timeout=None, direct_submit=False):
         """Shuts down a hit when it is completed"""
