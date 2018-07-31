@@ -47,7 +47,7 @@ parent function to set up these fields as a base.
                       each row in the batch.
 """
 Batch = namedtuple('Batch', ['text_vec', 'text_lengths', 'label_vec',
-                             'label_lens', 'labels', 'valid_indices',
+                             'label_lengths', 'labels', 'valid_indices',
                              'candidates'])
 
 """
@@ -181,30 +181,6 @@ class TorchAgent(Agent):
             label_type = 'eval_labels'
 
         if label_type is not None:
-        #     new_labels = []
-        #     for label in obs[label_type]:
-        #         vec_label = self.dict.txt2vec(label)
-        #         if addStartIdx:
-        #             vec_label.insert(0, self.START_IDX)
-        #         if addEndIdx:
-        #             vec_label.append(self.END_IDX)
-        #         new_label = torch.LongTensor(vec_label)
-        #         if self.use_cuda:
-        #             new_label = new_label.cuda()
-        #         new_labels.append(new_label)
-        #     obs[label_type + "_vec"] = new_labels
-        #
-        # if 'label_candidates' in obs:
-        #     candidate_labels_vec = []
-        #     for label in obs['label_candidates']:
-        #         vec_label = self.dict.txt2vec(label)
-        #         if addEndIdx:
-        #             vec_label.append(self.END_IDX)
-        #         new_label = torch.LongTensor(vec_label)
-        #         if self.use_cuda:
-        #             new_label = new_label.cuda()
-        #         candidate_labels_vec.append(new_label)
-        #     obs['label_candidates_vec'] = candidate_labels_vec
             label = random.choice(obs[label_type])
             vec_label = deque(maxlen=truncate)
             if add_start:
@@ -260,10 +236,11 @@ class TorchAgent(Agent):
 
         if sort:
             ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
-
             exs = [exs[k] for k in ind_sorted]
             valid_inds = [valid_inds[k] for k in ind_sorted]
             x_text = [x_text[k] for k in ind_sorted]
+            x_lens = [x_lens[k] for k in ind_sorted]
+
 
         padded_xs = torch.LongTensor(len(exs),
                                      max(x_lens)).fill_(self.NULL_IDX)

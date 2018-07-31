@@ -49,9 +49,9 @@ class VSEpp(nn.Module):
         return optimizer
 
 
-def cosine_sim(im, s):
+def dot_sim(im, s):
     """
-    Cosine similarity between all the image and sentence pairs
+    Dot product similarity between all the image and sentence pairs
     """
     return im.mm(s.t())
 
@@ -73,7 +73,7 @@ class ContrastiveLoss(nn.Module):
         super().__init__()
         self.use_cuda = use_cuda
         self.margin = margin
-        self.sim = cosine_sim
+        self.sim = dot_sim
         self.max_violation = max_violation
 
     def forward(self, im, caps, offset=0):
@@ -147,9 +147,8 @@ class EncoderImage(nn.Module):
 
         if arch.startswith('alexnet') or arch.startswith('vgg'):
             model.features = nn.DataParallel(model.features)
-            model.cuda()
         else:
-            model = nn.DataParallel(model).cuda()
+            model = nn.DataParallel(model)
 
         return model
 

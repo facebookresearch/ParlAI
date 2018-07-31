@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.torch_agent import TorchAgent
+from parlai.core.torch_agent import TorchAgent, Output
 from .modules import VSEpp, ContrastiveLoss
 from parlai.core.utils import round_sigfigs
 
@@ -60,6 +60,7 @@ class VseppCaptionAgent(TorchAgent):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.id = 'VSEppImageCaption'
+        self.mode = None
         if not shared:
             self.image_size = opt['image_size']
             self.crop_size = opt['image_cropsize']
@@ -72,7 +73,7 @@ class VseppCaptionAgent(TorchAgent):
                 transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
             ])
-            self.model = VSEpp(opt, self.dict, self.use_cuda)
+            self.model = VSEpp(opt, self.dict)
             self.metrics = {'loss': 0.0, 'r@': []}
 
             self.optimizer = self.model.get_optim()
@@ -108,7 +109,6 @@ class VseppCaptionAgent(TorchAgent):
 
     def reset(self):
         self.observation = None
-        self.episode_done = False
         if hasattr(self, "metrics"):
             self.reset_metrics()
 
@@ -121,10 +121,9 @@ class VseppCaptionAgent(TorchAgent):
         # shallow copy observation (deep copy can be expensive)
         observation = observation.copy()
         self.observation = observation
-        self.episode_done = observation['episode_done']
         return observation
 
-    def candidate_helper(self, candidate_vecs, candidates, is_testing):
+    def candidate_helper(self, candidate_vecs, is_testing):
         """
         Prepares a list of candidate lists into a format ready for the model
         as pack_padded_sequence requires each candidate must be in descending
@@ -139,11 +138,10 @@ class VseppCaptionAgent(TorchAgent):
         ind_sorted = sorted(range(len(cand_lens)), key=lambda k: -cand_lens[k])
         truth_idx = ind_sorted.index(0) if not is_testing else None
         cand_vecs = [candidate_vecs[k] for k in ind_sorted]
-        cands = [candidates[k] for k in ind_sorted]
         cand_lens = [cand_lens[k] for k in ind_sorted]
         cand_lens = torch.LongTensor(cand_lens)
 
-        padded_cands = torch.LongTensor(len(cands),
+        padded_cands = torch.LongTensor(candidate_vecs.shape[1],
                                         max(cand_lens)).fill_(self.NULL_IDX)
         if self.use_cuda:
             cand_lens = cand_lens.cuda()
@@ -152,104 +150,106 @@ class VseppCaptionAgent(TorchAgent):
         for i, cand in enumerate(cand_vecs):
             padded_cands[i, :cand.shape[0]] = cand
 
-        return (padded_cands, cands, cand_lens, truth_idx)
+        return (padded_cands, cand_lens, truth_idx)
 
     def batch_act(self, observations):
         batch_size = len(observations)
         # initialize a table of replies with this agent's id
         batch_reply = [{'id': self.getID()} for _ in range(batch_size)]
 
-        is_training = any(['labels' in obs for obs in observations])
-        is_testing = not (is_training or any(['eval_labels' in obs
-                          for obs in observations]))
+        if any(['labels' in obs for obs in observations]):
+            self.mode = 'train'
+        elif any(['eval_labels' in obs for obs in observations]):
+            self.mode = 'valid'
+        else:
+            self.mode = 'test'
 
         vec_obs = [self.vectorize(obs)
                    for obs in observations]
 
         # shift the labels into the text field so they're ordered
         # by length
-        for item in observations:
-            if is_training:
+        for item in vec_obs:
+            if self.mode == 'train':
                 if 'labels' in item:
                     item['text'] = item['labels'][0]
-                    item['text_vec'] = item['labels_vec'][0]
-            else:
+                    item['text_vec'] = item['labels_vec']
+            elif self.mode == 'valid':
                 if 'eval_labels' in item:
                     item['text'] = item['eval_labels'][0]
-                    item['text_vec'] = item['eval_labels_vec'][0]
+                    item['text_vec'] = item['eval_labels_vec']
 
-        xs, x_lens, _, labels, valid_inds = self.map_valid(vec_obs)
+        batch = self.batchify(vec_obs, sort=True)
 
         images = torch.stack([self.transform(observations[idx]['image'])
-                              for idx in valid_inds])
+                              for idx in batch.valid_indices])
         if self.use_cuda:
             images = images.cuda(async=True)
 
-        # Need 2 different flows for training and for eval/test
-        if is_training:
-            loss, top1, ranks = self.predict(images, xs, x_lens, cands=None,
-                                             is_training=is_training)
-            if loss is not None:
-                batch_reply[0]['metrics'] = {'loss': loss.item()}
-            predictions = []
-            if random.random() < 0.25:
-                print(top1)
-            for score_idx in top1:
-                predictions.append(labels[score_idx])
+        if self.mode == 'train':
+            output = self.train_step(batch, images)
         else:
-            # Need to collate then sort the captions by length
-            cands = [self.candidate_helper(vec_obs[idx]['label_candidates_vec'],
-                                           vec_obs[idx]['label_candidates'],
-                                           is_testing)
-                     for idx in valid_inds]
-            _, top1, ranks = self.predict(images, None, None, cands,
-                                          is_training)
-            predictions = []
-            for i, score_idx in enumerate(top1):
-                predictions.append(cands[i][1][score_idx])
+            output = self.eval_step(batch, images)
 
-        unmap_ranks = self.unmap_valid(ranks, valid_inds, batch_size)
-        unmap_pred = self.unmap_valid(predictions, valid_inds, batch_size)
-
-        for i, (rep, pred) in enumerate(zip(batch_reply, unmap_pred)):
-            if pred is not None:
-                rep['text'] = pred
-                if not is_testing:
-                    rep['truth_rank'] = unmap_ranks[i]
+        self.match_batch(batch_reply, batch.valid_indices, output)
+        # unmap_ranks = self.unmap_valid(ranks, batch.valid_indices, batch_size)
+        # unmap_pred = self.unmap_valid(predictions, batch.valid_indices, batch_size)
+        #
+        # for i, (rep, pred) in enumerate(zip(batch_reply, unmap_pred)):
+        #     if pred is not None:
+        #         rep['text'] = pred
+        #         if not is_testing:
+        #             rep['truth_rank'] = unmap_ranks[i]
 
         return batch_reply
 
-    def predict(self, xs, ys=None, y_lens=None, cands=None, is_training=False):
-        loss = None
-        if is_training:
-            self.model.train()
-            self.optimizer.zero_grad()
-            img_embs, cap_embs = self.model(xs, ys, y_lens)
-            loss, ranks, top1 = self.criterion(img_embs, cap_embs)
-            self.metrics['loss'] += loss.item()
-            self.metrics['r@'] += ranks
-            loss.backward()
-            self.optimizer.step()
-        else:
-            self.model.eval()
-            # Obtain the image embeddings
-            img_embs, _ = self.model(xs, None, None)
-            ranks = []
-            top1 = []
-            # Each image has their own caption candidates, so we need to
-            # iteratively create the embeddings and rank
-            for i, (cap, _, lens, truth_idx) in enumerate(cands):
-                _, embs = self.model(None, cap, lens)
-                # Hack to pass through the truth label's index to compute the
-                # rank and top metrics
-                offset = truth_idx if truth_idx is not None else 0
-                _, rank, top = self.criterion(img_embs[i, :].unsqueeze(0),
-                                              embs, offset)
-                ranks += rank
-                top1.append(top[0])
-            self.metrics['r@'] += ranks
+    def train_step(self, batch, images):
+        text_lengths = torch.LongTensor(batch.text_lengths)
+        if self.use_cuda:
+            text_lengths = text_lengths.cuda()
 
-        return loss, top1, ranks
+        self.model.train()
+        self.optimizer.zero_grad()
+        img_embs, cap_embs = self.model(images, batch.text_vec, text_lengths)
+        loss, ranks, top1 = self.criterion(img_embs, cap_embs)
+        self.metrics['loss'] += loss.item()
+        self.metrics['r@'] += ranks
+        loss.backward()
+        self.optimizer.step()
+        # if loss is not None:
+        #     batch_reply[0]['metrics'] = {'loss': loss.item()}
+        predictions = []
+        # if random.random() < 0.25:
+        #     print(top1)
+        for score_idx in top1:
+            predictions.append(batch.labels[score_idx])
+        return Output(predictions, None)
+
+    def eval_step(self, batch, images):
+        # Need to collate then sort the captions by length
+        cands = [self.candidate_helper(label_cands_vec, self.mode=='test')
+                 for label_cands_vec in batch.cands]
+        self.model.eval()
+        # Obtain the image embeddings
+        img_embs, _ = self.model(images, None, None)
+        ranks = []
+        top1 = []
+        # Each image has their own caption candidates, so we need to
+        # iteratively create the embeddings and rank
+        for i, (cap, lens, truth_idx) in enumerate(cands):
+            _, embs = self.model(None, cap, lens)
+            # Hack to pass through the truth label's index to compute the
+            # rank and top metrics
+            offset = truth_idx if truth_idx is not None else 0
+            _, rank, top = self.criterion(img_embs[i, :].unsqueeze(0),
+                                          embs, offset)
+            ranks += rank
+            top1.append(top[0])
+        self.metrics['r@'] += ranks
+        predictions = []
+        for i, score_idx in enumerate(top1):
+            predictions.append(cands[i][1][score_idx])
+        return Output(predictions, None)
 
     def report(self):
         m = {}
@@ -263,15 +263,15 @@ class VseppCaptionAgent(TorchAgent):
             m[k] = round_sigfigs(v, 4)
         return m
 
-    def share(self):
-        """Share internal states between parent and child instances."""
-        shared = super().share()
-        shared['metrics'] = self.metrics
-        shared['model'] = self.model
-        shared['states'] = {  # only need to pass optimizer states
-            'optimizer': self.optimizer.state_dict()
-        }
-        return shared
+    # def share(self):
+    #     """Share internal states between parent and child instances."""
+    #     shared = super().share()
+    #     shared['metrics'] = self.metrics
+    #     shared['model'] = self.model
+    #     shared['states'] = {  # only need to pass optimizer states
+    #         'optimizer': self.optimizer.state_dict()
+    #     }
+    #     return shared
 
     def act(self):
         return self.batch_act([self.observation])[0]
