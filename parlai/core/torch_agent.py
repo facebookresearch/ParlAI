@@ -232,7 +232,7 @@ class TorchAgent(Agent):
             label = random.choice(obs[label_type])
             vec_label = self._vectorize_text(label, self.use_cuda, add_start,
                                              add_end, truncate, False)
-            # print(label, vec_label, truncate)
+            
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
