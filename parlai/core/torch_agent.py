@@ -294,10 +294,9 @@ class TorchAgent(Agent):
         xs = torch.LongTensor(len(exs), max(x_lens)).fill_(self.NULL_IDX)
         if self.use_cuda:
             xs = xs.cuda()
-        # Handle cases when nothing is passed thru the text field
-        if max(x_lens) > 0:
-            for i, ex in enumerate(x_text):
-                xs[i, :ex.shape[0]] = ex
+
+        for i, ex in enumerate(x_text):
+            xs[i, :ex.shape[0]] = ex
 
         eval_labels_avail = any('eval_labels_vec' in ex for ex in exs)
         labels_avail = any('labels_vec' in ex for ex in exs)

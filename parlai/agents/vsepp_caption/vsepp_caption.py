@@ -13,7 +13,6 @@ import torchvision.transforms as transforms
 
 import os
 import numpy as np
-import random
 
 
 class VseppCaptionAgent(TorchAgent):
@@ -123,7 +122,7 @@ class VseppCaptionAgent(TorchAgent):
         self.observation = observation
         return observation
 
-    def candidate_helper(self, candidate_vecs, is_testing):
+    def candidate_helper(self, candidate_vecs, candidate_labels, is_testing):
         """
         Prepares a list of candidate lists into a format ready for the model
         as pack_padded_sequence requires each candidate must be in descending
@@ -137,11 +136,12 @@ class VseppCaptionAgent(TorchAgent):
         cand_lens = [c.shape[0] for c in candidate_vecs]
         ind_sorted = sorted(range(len(cand_lens)), key=lambda k: -cand_lens[k])
         truth_idx = ind_sorted.index(0) if not is_testing else None
+        cands = [candidate_labels[k] for k in ind_sorted]
         cand_vecs = [candidate_vecs[k] for k in ind_sorted]
         cand_lens = [cand_lens[k] for k in ind_sorted]
         cand_lens = torch.LongTensor(cand_lens)
 
-        padded_cands = torch.LongTensor(candidate_vecs.shape[1],
+        padded_cands = torch.LongTensor(len(candidate_vecs),
                                         max(cand_lens)).fill_(self.NULL_IDX)
         if self.use_cuda:
             cand_lens = cand_lens.cuda()
@@ -150,7 +150,7 @@ class VseppCaptionAgent(TorchAgent):
         for i, cand in enumerate(cand_vecs):
             padded_cands[i, :cand.shape[0]] = cand
 
-        return (padded_cands, cand_lens, truth_idx)
+        return (padded_cands, cands, cand_lens, truth_idx)
 
     def batch_act(self, observations):
         batch_size = len(observations)
@@ -189,17 +189,10 @@ class VseppCaptionAgent(TorchAgent):
         if self.mode == 'train':
             output = self.train_step(batch, images)
         else:
-            output = self.eval_step(batch, images)
+            candidate_labels = [ex['label_candidates'] for ex in vec_obs]
+            output = self.eval_step(batch, images, candidate_labels)
 
         self.match_batch(batch_reply, batch.valid_indices, output)
-        # unmap_ranks = self.unmap_valid(ranks, batch.valid_indices, batch_size)
-        # unmap_pred = self.unmap_valid(predictions, batch.valid_indices, batch_size)
-        #
-        # for i, (rep, pred) in enumerate(zip(batch_reply, unmap_pred)):
-        #     if pred is not None:
-        #         rep['text'] = pred
-        #         if not is_testing:
-        #             rep['truth_rank'] = unmap_ranks[i]
 
         return batch_reply
 
@@ -216,19 +209,15 @@ class VseppCaptionAgent(TorchAgent):
         self.metrics['r@'] += ranks
         loss.backward()
         self.optimizer.step()
-        # if loss is not None:
-        #     batch_reply[0]['metrics'] = {'loss': loss.item()}
         predictions = []
-        # if random.random() < 0.25:
-        #     print(top1)
         for score_idx in top1:
             predictions.append(batch.labels[score_idx])
         return Output(predictions, None)
 
-    def eval_step(self, batch, images):
+    def eval_step(self, batch, images, candidate_labels):
         # Need to collate then sort the captions by length
-        cands = [self.candidate_helper(label_cands_vec, self.mode=='test')
-                 for label_cands_vec in batch.cands]
+        cands = [self.candidate_helper(label_cands_vec, candidate_labels[idx], self.mode=='test')
+                 for label_cands_vec, idx in zip(batch.candidates, batch.valid_indices)]
         self.model.eval()
         # Obtain the image embeddings
         img_embs, _ = self.model(images, None, None)
@@ -236,7 +225,7 @@ class VseppCaptionAgent(TorchAgent):
         top1 = []
         # Each image has their own caption candidates, so we need to
         # iteratively create the embeddings and rank
-        for i, (cap, lens, truth_idx) in enumerate(cands):
+        for i, (cap, _, lens, truth_idx) in enumerate(cands):
             _, embs = self.model(None, cap, lens)
             # Hack to pass through the truth label's index to compute the
             # rank and top metrics
@@ -262,16 +251,6 @@ class VseppCaptionAgent(TorchAgent):
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)
         return m
-
-    # def share(self):
-    #     """Share internal states between parent and child instances."""
-    #     shared = super().share()
-    #     shared['metrics'] = self.metrics
-    #     shared['model'] = self.model
-    #     shared['states'] = {  # only need to pass optimizer states
-    #         'optimizer': self.optimizer.state_dict()
-    #     }
-    #     return shared
 
     def act(self):
         return self.batch_act([self.observation])[0]
