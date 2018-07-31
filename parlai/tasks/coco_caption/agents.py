@@ -102,6 +102,7 @@ class DefaultDataset(Dataset):
 
     def __init__(self, opt, version='2014'):
         self.opt = opt
+        self.no_intro = opt.get('no_intro')
         self.use_hdf5 = opt.get('use_hdf5', False)
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
@@ -119,6 +120,13 @@ class DefaultDataset(Dataset):
             self._setup_image_data()
         self.dict_agent = DictionaryAgent(opt)
 
+    @staticmethod
+    def add_cmdline_args(argparser):
+        agent = argparser.add_argument_group('Comment Battle arguments')
+        agent.add_argument('--no_intro', type="bool",
+                           default=True,
+                           help='Include an intro question with each image for readability.')
+
     def __getitem__(self, index):
         index %= self.num_episodes()
         image_id = None
@@ -128,10 +136,12 @@ class DefaultDataset(Dataset):
         else:
             image_id = self.test_info['images'][index]['id']
         ep = {
-            'text': '',
+            'text': QUESTION,
             'image': self.get_image(image_id),
             'episode_done': True,
         }
+        if self.no_intro:
+            ep.pop('text')
         if self.opt.get('extract_image', False):
             ep['image_id'] = image_id
             return ep
@@ -247,7 +257,7 @@ class DefaultTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None, version='2017'):
         super().__init__(opt, shared)
         self.image_mode = opt.get('image_mode', 'none')
-
+        self.no_intro = opt.get('no_intro')
         if shared:
             # another instance was set up already, just reference its data
             if 'annotation' in shared:
@@ -264,6 +274,13 @@ class DefaultTeacher(FixedDialogTeacher):
             self.image_loader = ImageLoader(opt)
 
         self.reset()
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        agent = argparser.add_argument_group('Comment Battle arguments')
+        agent.add_argument('--no_intro', type="bool",
+                           default=True,
+                           help='Include an intro question with each image for readability.')
 
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
@@ -287,9 +304,12 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         action = {
-            'text': "",
+            'text': QUESTION,
             'episode_done': True
         }
+
+        if self.no_intro:
+            action.pop('text')
 
         if not self.datatype.startswith('test'):
             # test set annotations are not available for this dataset
