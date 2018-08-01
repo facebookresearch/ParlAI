@@ -84,8 +84,6 @@ class VseppCaptionAgent(TorchAgent):
                 # load model parameters if available
                 print('[ Loading existing model params from {} ]'.format(load_model))
                 states = self.load(opt['model_file'])
-
-
             self.criterion = ContrastiveLoss(self.use_cuda)
 
             if self.use_cuda:
@@ -169,7 +167,7 @@ class VseppCaptionAgent(TorchAgent):
 
         # shift the labels into the text field so they're ordered
         # by length
-        for item in vec_obs:
+        for item in observations:
             if self.mode == 'train':
                 if 'labels' in item:
                     item['text'] = item['labels'][0]

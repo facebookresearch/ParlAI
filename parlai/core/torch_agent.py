@@ -27,12 +27,12 @@ with additional fields if they would like, though we recommend calling the
 parent function to set up these fields as a base.
 
 :field text_vec:      bsz x seqlen tensor containing the parsed text data.
-:field text_lens:     list of length bsz containing the lengths of the text in
+:field text_lengths:  list of length bsz containing the lengths of the text in
                       same order as text_vec; necessary for
                       pack_padded_sequence.
 :field label_vec:     bsz x seqlen tensor containing the parsed label (one per
                       batch row).
-:field label_lens:    list of length bsz containing the lengths of the labels
+:field label_lengths: list of length bsz containing the lengths of the labels
                       in same order as label_vec.
 :field labels:        list of length bsz containing the selected label for each
                       batch row (some datasets have multiple labels per input
