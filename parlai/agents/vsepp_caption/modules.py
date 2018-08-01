@@ -1,8 +1,6 @@
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# This file is covered under the Apache 2.0 License listed here
+# <https://github.com/fartashf/vsepp/blob/master/LICENSE> as it is a
+# Derivative Work of the repo.
 
 import torch
 from torch import optim
@@ -16,8 +14,10 @@ import numpy as np
 
 class VSEpp(nn.Module):
     """
-    Implementation of Visual Semantic Embedding++ model borrowed heavily from
-    here: <https://github.com/fartashf/vsepp>
+    Model based on:
+    - VSE++: Improving Visual-Semantic Embeddings with Hard Negatives
+      `(Faghri et al. 2017) <arxiv.org/abs/1707.05612>`
+    Original Implementation found here: <https://github.com/fartashf/vsepp>
     """
 
     def __init__(self, opt, dict):
