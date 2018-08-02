@@ -174,7 +174,7 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def share(self):
         shared = super().share()
-        shared['caption'] = self.caption
+        shared['data'] = self.data
         shared['image_loader'] = self.image_loader
         return shared
 
