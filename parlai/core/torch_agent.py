@@ -26,31 +26,34 @@ Agents can override the batchify function to return an extended namedtuple
 with additional fields if they would like, though we recommend calling the
 parent function to set up these fields as a base.
 
-:field text_vec:      bsz x seqlen tensor containing the parsed text data.
-:field text_lens:     list of length bsz containing the lengths of the text in
-                      same order as text_vec; necessary for
-                      pack_padded_sequence.
-:field label_vec:     bsz x seqlen tensor containing the parsed label (one per
-                      batch row).
-:field label_lens:    list of length bsz containing the lengths of the labels
-                      in same order as label_vec.
-:field labels:        list of length bsz containing the selected label for each
-                      batch row (some datasets have multiple labels per input
-                      example).
-:field valid_indices: list of length bsz containing the original indices of
-                      each example in the batch. we use these to map
-                      predictions back to their proper row, since e.g. we may
-                      sort examples by their length or some examples may be
-                      invalid.
-:field candidates:    list of lists of tensors. outer list has size bsz, inner
-                      lists vary in size based on the number of candidates for
-                      each row in the batch.
-:field image          list of image features in the format specified by the
-                      --image-mode arg.
+:field text_vec:       bsz x seqlen tensor containing the parsed text data.
+:field text_lengths:   list of length bsz containing the lengths of the text in
+                       same order as text_vec; necessary for
+                       pack_padded_sequence.
+:field label_vec:      bsz x seqlen tensor containing the parsed label (one per
+                       batch row).
+:field label_lengths:  list of length bsz containing the lengths of the labels
+                       in same order as label_vec.
+:field labels:         list of length bsz containing the selected label for
+                       each batch row (some datasets have multiple labels per
+                       input example).
+:field valid_indices:  list of length bsz containing the original indices of
+                       each example in the batch. we use these to map
+                       predictions back to their proper row, since e.g. we may
+                       sort examples by their length or some examples may be
+                       invalid.
+:field candidates:     list of lists of text. outer list has size bsz, inner
+                       lists vary in size based on the number of candidates for
+                       each row in the batch.
+:field candidate_vecs: list of lists of tensors. outer list has size bsz, inner
+                       lists vary in size based on the number of candidates for
+                       each row in the batch.
+:field image           list of image features in the format specified by the
+                       --image-mode arg.
 """
 Batch = namedtuple('Batch', ['text_vec', 'text_lengths', 'label_vec',
-                             'label_lens', 'labels', 'valid_indices',
-                             'candidates', 'image'])
+                             'label_lengths', 'labels', 'valid_indices',
+                             'candidates', 'candidate_vecs', 'image'])
 
 """
 Output is a namedtuple containing agent predictions.
@@ -273,12 +276,14 @@ class TorchAgent(Agent):
                           observation, determines if an observation is valid
         """
         if len(obs_batch) == 0:
-            return Batch(None, None, None, None, None, None, None, None, None)
+            return Batch(None, None, None, None, None, None, None, None, None,
+                         None)
 
         valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
 
         if len(valid_obs) == 0:
-            return Batch(None, None, None, None, None, None, None, None, None)
+            return Batch(None, None, None, None, None, None, None, None, None,
+                         None)
 
         valid_inds, exs = zip(*valid_obs)
 
@@ -289,7 +294,8 @@ class TorchAgent(Agent):
             x_lens = [ex.shape[0] for ex in x_text]
 
             if sort:
-                ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
+                ind_sorted = sorted(range(len(x_lens)),
+                                    key=lambda k: -x_lens[k])
                 exs = [exs[k] for k in ind_sorted]
                 valid_inds = [valid_inds[k] for k in ind_sorted]
                 x_text = [x_text[k] for k in ind_sorted]
@@ -320,16 +326,18 @@ class TorchAgent(Agent):
                     ys[i, :y.shape[0]] = y
 
         # LABEL_CANDIDATES
-        cands = None
+        cands, cand_vecs = None, None
         if any('label_candidates_vecs' in ex for ex in exs):
-            cands = [ex.get('label_candidates_vecs', []) for ex in exs]
+            cands = [ex.get('label_candidates', []) for ex in exs]
+            cand_vecs = [ex.get('label_candidates_vecs', []) for ex in exs]
 
         # IMAGE
         imgs = None
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
 
-        return Batch(xs, x_lens, ys, y_lens, labels, valid_inds, cands, imgs)
+        return Batch(xs, x_lens, ys, y_lens, labels, valid_inds, cands,
+                     cand_vecs, imgs)
 
     def match_batch(self, batch_reply, valid_inds, output=None):
         """Match sub-batch of predictions to the original batch indices.
