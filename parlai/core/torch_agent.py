@@ -26,29 +26,34 @@ Agents can override the batchify function to return an extended namedtuple
 with additional fields if they would like, though we recommend calling the
 parent function to set up these fields as a base.
 
-:field text_vec:      bsz x seqlen tensor containing the parsed text data.
-:field text_lens:     list of length bsz containing the lengths of the text in
-                      same order as text_vec; necessary for
-                      pack_padded_sequence.
-:field label_vec:     bsz x seqlen tensor containing the parsed label (one per
-                      batch row).
-:field label_lens:    list of length bsz containing the lengths of the labels
-                      in same order as label_vec.
-:field labels:        list of length bsz containing the selected label for each
-                      batch row (some datasets have multiple labels per input
-                      example).
-:field valid_indices: list of length bsz containing the original indices of
-                      each example in the batch. we use these to map
-                      predictions back to their proper row, since e.g. we may
-                      sort examples by their length or some examples may be
-                      invalid.
-:field candidates:    list of lists of tensors. outer list has size bsz, inner
-                      lists vary in size based on the number of candidates for
-                      each row in the batch.
+:field text_vec:       bsz x seqlen tensor containing the parsed text data.
+:field text_lengths:   list of length bsz containing the lengths of the text in
+                       same order as text_vec; necessary for
+                       pack_padded_sequence.
+:field label_vec:      bsz x seqlen tensor containing the parsed label (one per
+                       batch row).
+:field label_lengths:  list of length bsz containing the lengths of the labels
+                       in same order as label_vec.
+:field labels:         list of length bsz containing the selected label for
+                       each batch row (some datasets have multiple labels per
+                       input example).
+:field valid_indices:  list of length bsz containing the original indices of
+                       each example in the batch. we use these to map
+                       predictions back to their proper row, since e.g. we may
+                       sort examples by their length or some examples may be
+                       invalid.
+:field candidates:     list of lists of text. outer list has size bsz, inner
+                       lists vary in size based on the number of candidates for
+                       each row in the batch.
+:field candidate_vecs: list of lists of tensors. outer list has size bsz, inner
+                       lists vary in size based on the number of candidates for
+                       each row in the batch.
+:field image           list of image features in the format specified by the
+                       --image-mode arg.
 """
 Batch = namedtuple('Batch', ['text_vec', 'text_lengths', 'label_vec',
-                             'label_lens', 'labels', 'valid_indices',
-                             'candidates'])
+                             'label_lengths', 'labels', 'valid_indices',
+                             'candidates', 'candidate_vecs', 'image'])
 
 """
 Output is a namedtuple containing agent predictions.
@@ -232,7 +237,7 @@ class TorchAgent(Agent):
             label = random.choice(obs[label_type])
             vec_label = self._vectorize_text(label, self.use_cuda, add_start,
                                              add_end, truncate, False)
-            
+
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
@@ -245,7 +250,7 @@ class TorchAgent(Agent):
         return obs
 
     def batchify(self, obs_batch, sort=False,
-                 is_valid=lambda obs: 'text_vec' in obs):
+                 is_valid=lambda obs: 'text_vec' in obs or 'image' in obs):
         """Create a batch of valid observations from an unchecked batch.
 
         A valid observation is one that passes the lambda provided to the
@@ -265,42 +270,50 @@ class TorchAgent(Agent):
 
         :param obs_batch: List of vectorized observations
         :param sort:      Default False, orders the observations by length of
-                          vector. Set to true when using
+                          vectors. Set to true when using
                           torch.nn.utils.rnn.pack_padded_sequence.
+                          Uses the text vectors if available, otherwise uses
+                          the label vectors if available.
         :param is_valid:  Function that checks if 'text_vec' is in the
                           observation, determines if an observation is valid
         """
         if len(obs_batch) == 0:
-            return Batch(None, None, None, None, None, None, None, None)
+            return Batch(None, None, None, None, None, None, None, None, None,
+                         None)
 
         valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
 
         if len(valid_obs) == 0:
-            return Batch(None, None, None, None, None, None, None, None)
+            return Batch(None, None, None, None, None, None, None, None, None,
+                         None)
 
         valid_inds, exs = zip(*valid_obs)
 
-        x_text = [ex['text_vec'] for ex in exs]
-        x_lens = [ex.shape[0] for ex in x_text]
+        # TEXT
+        xs, x_lens = None, None
+        if any('text_vec' in ex for ex in exs):
+            x_text = [ex['text_vec'] for ex in exs]
+            x_lens = [ex.shape[0] for ex in x_text]
 
-        if sort:
-            ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
+            if sort:
+                sort = False  # now we won't sort on labels
+                ind_sorted = sorted(range(len(x_lens)),
+                                    key=lambda k: -x_lens[k])
+                exs = [exs[k] for k in ind_sorted]
+                valid_inds = [valid_inds[k] for k in ind_sorted]
+                x_text = [x_text[k] for k in ind_sorted]
 
-            exs = [exs[k] for k in ind_sorted]
-            valid_inds = [valid_inds[k] for k in ind_sorted]
-            x_text = [x_text[k] for k in ind_sorted]
+            xs = torch.LongTensor(len(exs), max(x_lens)).fill_(self.NULL_IDX)
+            if self.use_cuda:
+                xs = xs.cuda()
+            for i, ex in enumerate(x_text):
+                xs[i, :ex.shape[0]] = ex
 
-        xs = torch.LongTensor(len(exs), max(x_lens)).fill_(self.NULL_IDX)
-        if self.use_cuda:
-            xs = xs.cuda()
-        for i, ex in enumerate(x_text):
-            xs[i, :ex.shape[0]] = ex
-
+        # LABELS
         eval_labels_avail = any('eval_labels_vec' in ex for ex in exs)
         labels_avail = any('labels_vec' in ex for ex in exs)
         some_labels_avail = eval_labels_avail or labels_avail
 
-        # set up the target tensors
         ys, y_lens, labels = None, None, None
         if some_labels_avail:
             field = 'labels' if labels_avail else 'eval_labels'
@@ -308,6 +321,16 @@ class TorchAgent(Agent):
             label_vecs = [ex[field + '_vec'] for i, ex in enumerate(exs)]
             labels = [ex[field + '_choice'] for i, ex in enumerate(exs)]
             y_lens = [y.shape[0] for y in label_vecs]
+
+            if sort and xs is None:
+                # always sort on xs if we have them, not ys
+                ind_sorted = sorted(range(len(y_lens)),
+                                    key=lambda k: -y_lens[k])
+                exs = [exs[k] for k in ind_sorted]
+                valid_inds = [valid_inds[k] for k in ind_sorted]
+                label_vecs = [label_vecs[k] for k in ind_sorted]
+                labels = [label_vecs[k] for k in ind_sorted]
+
             ys = torch.LongTensor(len(exs), max(y_lens)).fill_(self.NULL_IDX)
             if self.use_cuda:
                 ys = ys.cuda()
@@ -315,11 +338,19 @@ class TorchAgent(Agent):
                 if y.shape[0] != 0:
                     ys[i, :y.shape[0]] = y
 
-        cands = None
+        # LABEL_CANDIDATES
+        cands, cand_vecs = None, None
         if any('label_candidates_vecs' in ex for ex in exs):
-            cands = [ex.get('label_candidates_vecs', []) for ex in exs]
+            cands = [ex.get('label_candidates', []) for ex in exs]
+            cand_vecs = [ex.get('label_candidates_vecs', []) for ex in exs]
 
-        return Batch(xs, x_lens, ys, y_lens, labels, valid_inds, cands)
+        # IMAGE
+        imgs = None
+        if any('image' in ex for ex in exs):
+            imgs = [ex.get('image', None) for ex in exs]
+
+        return Batch(xs, x_lens, ys, y_lens, labels, valid_inds, cands,
+                     cand_vecs, imgs)
 
     def match_batch(self, batch_reply, valid_inds, output=None):
         """Match sub-batch of predictions to the original batch indices.
