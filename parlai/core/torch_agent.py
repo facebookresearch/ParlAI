@@ -303,6 +303,7 @@ class TorchAgent(Agent):
                 exs = [exs[k] for k in ind_sorted]
                 valid_inds = [valid_inds[k] for k in ind_sorted]
                 x_text = [x_text[k] for k in ind_sorted]
+                x_lens = [x_lens[k] for k in ind_sorted]
 
             xs = torch.LongTensor(len(exs), max(x_lens)).fill_(self.NULL_IDX)
             if self.use_cuda:
@@ -330,7 +331,8 @@ class TorchAgent(Agent):
                 exs = [exs[k] for k in ind_sorted]
                 valid_inds = [valid_inds[k] for k in ind_sorted]
                 label_vecs = [label_vecs[k] for k in ind_sorted]
-                labels = [label_vecs[k] for k in ind_sorted]
+                labels = [labels[k] for k in ind_sorted]
+                y_lens = [y_lens[k] for k in ind_sorted]
 
             ys = torch.LongTensor(len(exs), max(y_lens)).fill_(self.NULL_IDX)
             if self.use_cuda:

@@ -27,28 +27,35 @@ import random
 QUESTION = "Describe the above picture in a sentence."
 
 
-def load_candidates(datapath, version):
-    suffix = 'captions_{}{}.json'
+def load_candidates(datapath, datatype, version):
+    if not datatype.startswith('train'):
+        suffix = 'captions_{}{}.json'
+        suffix_val = suffix.format('val', version)
 
-    suffix_val = suffix.format('val', version)
-    suffix_train = suffix.format('train', version)
+        val_path = os.path.join(datapath,
+                                'COCO_{}_Caption'.format(version),
+                                'annotations',
+                                suffix_val)
+        val = json.load(open(val_path))['annotations']
+        val_caps = [x['caption'] for x in val]
+        if datatype.startswith('test'):
+            suffix_train = suffix.format('train', version)
+            train_path = os.path.join(datapath,
+                                      'COCO_{}_Caption'.format(version),
+                                      'annotations',
+                                      suffix_train)
 
-    val_path = os.path.join(datapath,
-                            'COCO_{}_Caption'.format(version),
-                            'annotations',
-                            suffix_val)
-    train_path = os.path.join(datapath,
-                              'COCO_{}_Caption'.format(version),
-                              'annotations',
-                              suffix_train)
+            train = json.load(open(train_path))['annotations']
 
-    val = json.load(open(val_path))['annotations']
-    train = json.load(open(train_path))['annotations']
+            train_caps = [x['caption'] for x in train]
+            test_caps = train_caps + val_caps
+            return test_caps
+        else:
+            return val_caps
+    else:
+        return None
 
-    val_caps = [x['caption'] for x in val]
-    train_caps = [x['caption'] for x in train]
 
-    return train_caps + val_caps, val_caps
 
 
 def _path(opt, version):
@@ -102,14 +109,15 @@ class DefaultDataset(Dataset):
 
     def __init__(self, opt, version='2014'):
         self.opt = opt
-        self.no_intro = opt.get('no_intro')
+        self.use_intro = opt.get('use_intro')
+        self.num_cands = opt.get('num_cands')
         self.use_hdf5 = opt.get('use_hdf5', False)
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
         self.num_epochs = self.opt.get('num_epochs', 0)
         self.image_loader = ImageLoader(opt)
         test_info_path, annotation_path, self.image_path = _path(opt, version)
-        self.cands, self.val_cands = load_candidates(opt['datapath'], version)
+        self.cands = load_candidates(opt['datapath'], self.datatype, version)
         self._setup_data(test_info_path, annotation_path, opt.get('unittest', False))
         if self.use_hdf5:
             try:
@@ -123,9 +131,15 @@ class DefaultDataset(Dataset):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('Comment Battle arguments')
-        agent.add_argument('--no_intro', type="bool",
-                           default=True,
-                           help='Include an intro question with each image for readability.')
+        agent.add_argument('--use_intro', type="bool",
+                           default=False,
+                           help='Include an intro question with each image \
+                                for readability (e.g. for coco_caption, \
+                                Describe the above picture in a sentence.)')
+        agent.add_argument('--num_cands', type=int,
+                           default=150,
+                           help='Number of candidates to use during \
+                                evaluation, setting to -1 uses all.')
 
     def __getitem__(self, index):
         index %= self.num_episodes()
@@ -136,12 +150,11 @@ class DefaultDataset(Dataset):
         else:
             image_id = self.test_info['images'][index]['id']
         ep = {
-            'text': QUESTION,
             'image': self.get_image(image_id),
             'episode_done': True,
         }
-        if self.no_intro:
-            ep.pop('text')
+        if self.use_intro:
+            action['text'] = QUESTION
         if self.opt.get('extract_image', False):
             ep['image_id'] = image_id
             return ep
@@ -149,9 +162,12 @@ class DefaultDataset(Dataset):
             anno = self.annotation['annotations'][index]
             ep['labels'] = [anno['caption']]
             if not self.datatype.startswith('train'):
-                # Can only randomly select from validation set
-                candidates = random.Random(index).choices(self.val_cands, k=150)
-
+                if self.num_cands == -1:
+                    candidates = self.cands
+                else:
+                    # Can only randomly select from validation set
+                    candidates = random.Random(index).choices(self.cands,
+                                                              k=self.num_cands)
                 if anno['caption'] not in candidates:
                     candidates.pop(0)
                 else:
@@ -162,7 +178,14 @@ class DefaultDataset(Dataset):
 
                 ep['label_candidates'] = candidate_labels
         else:
-            ep['label_candidates'] = random.choices(self.cands, k=150)
+            # TESTING
+            if self.num_cands == -1:
+                candidates = self.cands
+            else:
+                # Can select from train+test set
+                candidates = random.Random(index).choices(self.cands,
+                                                          k=self.num_cands)
+            ep['label_candidates'] = candidates
 
         ep['use_hdf5'] = self.use_hdf5
         return (index, ep)
@@ -255,7 +278,8 @@ class DefaultTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None, version='2017'):
         super().__init__(opt, shared)
         self.image_mode = opt.get('image_mode', 'none')
-        self.no_intro = opt.get('no_intro')
+        self.use_intro = opt['use_intro']
+        self.num_cands = opt['num_cands']
         if shared:
             # another instance was set up already, just reference its data
             if 'annotation' in shared:
@@ -263,11 +287,10 @@ class DefaultTeacher(FixedDialogTeacher):
             self.image_loader = shared['image_loader']
             self.image_path = shared['image_path']
             self.cands = shared['cands']
-            self.val_cands = shared['val_cands']
         else:
             # need to set up data from scratch
             test_info_path, annotation_path, self.image_path = _path(opt, version)
-            self.cands, self.val_cands = load_candidates(opt['datapath'], version)
+            self.cands = load_candidates(opt['datapath'], opt['datatype'], version)
             self._setup_data(test_info_path, annotation_path)
             self.image_loader = ImageLoader(opt)
 
@@ -276,10 +299,15 @@ class DefaultTeacher(FixedDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('Comment Battle arguments')
-        agent.add_argument('--no_intro', type="bool",
-                           default=True,
-                           help='Include an intro question with each image for readability.')
-
+        agent.add_argument('--use_intro', type="bool",
+                           default=False,
+                           help='Include an intro question with each image \
+                                for readability (e.g. for coco_caption, \
+                                Describe the above picture in a sentence.)')
+        agent.add_argument('--num_cands', type=int,
+                           default=150,
+                           help='Number of candidates to use during \
+                                evaluation, setting to -1 uses all.')
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
         self.example = None  # set up caching fields
@@ -302,15 +330,11 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         action = {
-<<<<<<< HEAD
-            'text': QUESTION,
-=======
->>>>>>> master
             'episode_done': True
         }
 
-        if self.no_intro:
-            action.pop('text')
+        if self.use_intro:
+            action['text'] = QUESTION
 
         if not self.datatype.startswith('test'):
             # test set annotations are not available for this dataset
@@ -318,9 +342,12 @@ class DefaultTeacher(FixedDialogTeacher):
             action['labels'] = [anno['caption']]
             action['image_id'] = anno['image_id']
             if not self.datatype.startswith('train'):
-                # Can only randomly select from validation set
-                candidates = random.Random(episode_idx).choices(self.val_cands, k=150)
-
+                if self.num_cands == -1:
+                    candidates = self.cands
+                else:
+                    # Can only randomly select from validation set
+                    candidates = random.Random(
+                        episode_idx).choices(self.cands, k=self.num_cands)
                 if anno['caption'] not in candidates:
                     candidates.pop(0)
                 else:
@@ -330,7 +357,13 @@ class DefaultTeacher(FixedDialogTeacher):
                 candidate_labels += candidates
                 action['label_candidates'] = candidate_labels
         else:
-            action['label_candidates'] = random.choices(self.cands, k=150)
+            if self.num_cands == -1:
+                candidates = self.cands
+            else:
+                # Can only randomly select from validation set
+                candidates = random.Random(
+                    episode_idx).choices(self.cands, k=self.num_cands)
+            action['label_candidates'] = candidates
             action['image_id'] = self.test_info['images'][episode_idx]['id']
 
         return action
@@ -366,7 +399,6 @@ class DefaultTeacher(FixedDialogTeacher):
         shared['image_loader'] = self.image_loader
         shared['image_path'] = self.image_path
         shared['cands'] = self.cands
-        shared['val_cands'] = self.val_cands
         return shared
 
     def _setup_data(self, test_info_path, annotation_path):

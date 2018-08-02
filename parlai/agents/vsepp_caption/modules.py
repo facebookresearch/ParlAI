@@ -194,12 +194,8 @@ class EncoderText(nn.Module):
         x = self.embed(x)
         packed = pack_padded_sequence(x, lengths, batch_first=True)
         # Forward propagate RNN
-        out, _ = self.rnn(packed)
-        # Reshape *final* output to (batch_size, hidden_size)
-        padded = pad_packed_sequence(out, batch_first=True)
-        I = lengths.view(-1, 1, 1)
-        I = I.expand(x.size(0), 1, self.embed_size) - 1
-        out = torch.gather(padded[0], 1, I).squeeze(1)
+        _, out = self.rnn(packed)
+        out = out.squeeze()
         # normalization in the joint embedding space
         out = l2norm(out)
 
