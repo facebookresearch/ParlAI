@@ -35,7 +35,7 @@ class Packet():
     TYPE_PONG = 'pong'
 
     def __init__(self, id, type, sender_id, receiver_id, assignment_id, data,
-                 conversation_id=None, requires_ack=True, blocking=True,
+                 conversation_id=None, requires_ack=None, blocking=None,
                  ack_func=None):
         """
         Create a packet to be used for holding information before it is
@@ -49,10 +49,12 @@ class Packet():
         conversation_id:  Packet metadata - what conversation this belongs to
         requires_ack:     Whether or not this packet needs to be acknowledged,
                            determines if retry logic will be used until ack is
-                           recieved.
+                           recieved. Default for messages and alives is True,
+                           default for the rest is false.
         blocking:         Whether or not this packet requires blocking to
                            remain in order amongst other packets in the queue.
-                           Default is True
+                           Default is for messages and alives is True, default
+                           for the rest is false.
         ack_func:         Function to call upon successful ack of a packet
                            Default calls no function on ack
         """
@@ -63,11 +65,11 @@ class Packet():
         self.assignment_id = assignment_id
         self.data = data
         self.conversation_id = conversation_id
-        self.requires_ack = requires_ack
-        self.blocking = blocking
+        important = self.type in [self.TYPE_ALIVE, self.TYPE_MESSAGE]
+        self.requires_ack = important if requires_ack is None else requires_ack
+        self.blocking = important if blocking is None else blocking
         self.ack_func = ack_func
         self.status = self.STATUS_INIT
-        self.time = None
 
     @staticmethod
     def from_dict(packet):
@@ -129,6 +131,8 @@ class Packet():
         """
         packet = Packet.from_dict(self.as_dict())
         packet.id = shared_utils.generate_event_id(self.receiver_id)
+        packet.blocking = self.blocking
+        packet.requires_ack = self.requires_ack
         return packet
 
     def __repr__(self):
@@ -163,6 +167,7 @@ class SocketManager():
     # Default pongs without heartbeat before socket considered dead
     DEF_MISSED_PONGS = 10
     HEARTBEAT_RATE = 2
+    DEF_DEAD_TIME = 20
 
     def __init__(self, server_url, port, alive_callback, message_callback,
                  socket_dead_callback, task_group_id,
@@ -200,7 +205,7 @@ class SocketManager():
         self.queues = {}
         self.threads = {}
         self.run = {}
-        self.last_sent_heartbeat = {}  # time of last heartbeat sent
+        self.last_sent_heartbeat_time = {}  # time of last heartbeat sent
         self.last_received_heartbeat = {}  # actual last received heartbeat
         self.pongs_without_heartbeat = {}
         self.packet_map = {}
@@ -216,8 +221,8 @@ class SocketManager():
 
     def _safe_send(self, data, force=False):
         if not self.alive and not force:
-            # Try to wait a second to send a packet
-            timeout = 1
+            # Try to wait a half second to send a packet
+            timeout = 0.5
             while timeout > 0 and not self.alive:
                 time.sleep(0.1)
                 timeout -= 0.1
@@ -234,6 +239,8 @@ class SocketManager():
     def _ensure_closed(self):
         try:
             self.ws.close()
+            if self.ws.sock is not None:
+                self.ws.sock.close()
         except websocket.WebSocketConnectionClosedException:
             pass
 
@@ -247,9 +254,11 @@ class SocketManager():
 
     def _send_needed_heartbeat(self, connection_id):
         """Sends a heartbeat to a connection if needed"""
+        if connection_id not in self.last_received_heartbeat:
+            return
         if self.last_received_heartbeat[connection_id] is None:
             return
-        if (time.time() - self.last_sent_heartbeat[connection_id]
+        if (time.time() - self.last_sent_heartbeat_time[connection_id]
                 < self.HEARTBEAT_RATE):
             return
         packet = self.last_received_heartbeat[connection_id]
@@ -257,7 +266,7 @@ class SocketManager():
             'type': data_model.SOCKET_ROUTE_PACKET_STRING,
             'content': packet.new_copy().swap_sender().set_data('').as_dict()
         }))
-        self.last_sent_heartbeat[connection_id] = time.time()
+        self.last_sent_heartbeat_time[connection_id] = time.time()
 
     def _send_ack(self, packet):
         """Sends an ack to a given packet"""
@@ -352,14 +361,15 @@ class SocketManager():
         def on_error(ws, error):
             try:
                 if error.errno == errno.ECONNREFUSED:
-                    self._ensure_closed()
                     self.use_socket = False
+                    self._ensure_closed()
                     raise Exception("Socket refused connection, cancelling")
                 else:
                     shared_utils.print_and_log(
                         logging.WARN,
                         'Socket logged error: {}'.format(error),
                     )
+                    self._ensure_closed()
             except BaseException:
                 if type(error) is websocket.WebSocketConnectionClosedException:
                     return  # Connection closed is noop
@@ -380,7 +390,8 @@ class SocketManager():
             )
             self.alive = False
             self._ensure_closed()
-            self._spawn_reaper_thread()
+            if not self.is_shutdown:
+                self._spawn_reaper_thread()
 
         def on_message(*args):
             """Incoming message handler for ACKs, ALIVEs, HEARTBEATs,
@@ -440,8 +451,13 @@ class SocketManager():
             url_base_name = self.server_url.split('https://')[1]
             while self.keep_running:
                 try:
-                    sock_addr = "ws://{}/".format(
-                        url_base_name)
+                    sock_addr = "ws://{}:{}/".format(
+                        url_base_name, self.port)
+                    if self.ws is not None and self.ws.sock is not None:
+                        # Gross check to see if we're about to leave a socket
+                        # open b/c websocket leaks some connections.
+                        if self.ws.sock.connected:
+                            self._ensure_closed()
                     self.ws = websocket.WebSocketApp(
                         sock_addr,
                         on_message=on_message,
@@ -450,6 +466,7 @@ class SocketManager():
                     )
                     self.ws.on_open = on_socket_open
                     self.ws.run_forever(ping_interval=1, ping_timeout=0.9)
+                    self.ws.close()
                 except Exception as e:
                     shared_utils.print_and_log(
                         logging.WARN,
@@ -465,12 +482,17 @@ class SocketManager():
         self.listen_thread.daemon = True
         self.listen_thread.start()
         time.sleep(1.2)
+        start_time = time.time()
         while not self.alive:
+            if time.time() - start_time > self.DEF_DEAD_TIME:
+                self.server_death_callback()
+                raise ConnectionRefusedError(  # noqa F821 we only support py3
+                    'Was not able to establish a connection with the server')
             try:
                 self._send_world_alive()
             except Exception:
                 pass
-            time.sleep(0.8)
+            time.sleep(self.HEARTBEAT_RATE / 2)
 
     def open_channel(self, worker_id, assignment_id):
         """Opens a channel for a worker on a given assignment, doesn't re-open
@@ -493,7 +515,7 @@ class SocketManager():
                 logging.DEBUG,
                 'Channel ({}) opened'.format(connection_id)
             )
-            self.last_sent_heartbeat[connection_id] = 0
+            self.last_sent_heartbeat_time[connection_id] = 0
             self.pongs_without_heartbeat[connection_id] = 0
             self.last_received_heartbeat[connection_id] = None
             while self.run[connection_id]:
@@ -560,7 +582,7 @@ class SocketManager():
             del self.threads[connection_id]
 
     def close_all_channels(self):
-        """Closes a channel by clearing the list of channels"""
+        """Closes all channels by clearing the list of channels"""
         shared_utils.print_and_log(logging.DEBUG, 'Closing all channels')
         connection_ids = list(self.queues.keys())
         for connection_id in connection_ids:
@@ -570,7 +592,9 @@ class SocketManager():
         return connection_id in self.queues
 
     def queue_packet(self, packet):
-        """Queues sending a packet to its intended owner"""
+        """Queues sending a packet to its intended owner, returns True if
+        queued successfully and False if there is no such worker (anymore)
+        """
         connection_id = packet.get_receiver_connection_id()
         if not self.socket_is_open(connection_id):
             # Warn if there is no socket to send through for the expected recip
@@ -579,7 +603,7 @@ class SocketManager():
                 'Can not send packet to worker_id {}: packet queue not found. '
                 'Message: {}'.format(connection_id, packet.data)
             )
-            return
+            return False
         shared_utils.print_and_log(
             logging.DEBUG,
             'Put packet ({}) in queue ({})'.format(packet.id, connection_id)
@@ -588,6 +612,7 @@ class SocketManager():
         self.packet_map[packet.id] = packet
         item = (time.time(), packet)
         self._safe_put(connection_id, item)
+        return True
 
     def get_status(self, packet_id):
         """Returns the status of a particular packet by id"""
@@ -612,5 +637,7 @@ class SocketManager():
 
     def shutdown(self):
         '''marks the socket manager as closing, shuts down all channels'''
-        self.is_shutdown = False
+        self.is_shutdown = True
         self.close_all_channels()
+        self.keep_running = False
+        self._ensure_closed()
