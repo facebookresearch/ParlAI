@@ -158,7 +158,6 @@ class DefaultTeacher(FixedDialogTeacher):
             if self.image_mode != 'none' and 'image_id' in self.example:
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
-                # image = image[0, :, 0, 0]
                 self.example['image'] = image
             ready = (self.example, self.imageEpochDone)
         # get the next base example: super().next_example() calls self.get()
