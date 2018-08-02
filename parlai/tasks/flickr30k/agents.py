@@ -26,105 +26,67 @@ QUESTION = "Describe the above picture in a sentence."
 def _path(opt):
     build(opt)
 
-    caption_path = os.path.join(opt['datapath'], 'Flickr30k',
-                                'results_20130124.token')
+    data_path = os.path.join(opt['datapath'], 'Flickr30k',
+                             'dataset.json')
     image_path = os.path.join(opt['datapath'], 'Flickr30k', 'flickr30k_images')
 
-    return caption_path, image_path
+    return data_path, image_path
 
 
 class FlickrDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
     def __init__(self, opt, shared=None):
         self.opt = opt
-        self.use_hdf5 = opt.get('use_hdf5', False)
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
         self.num_epochs = self.opt.get('num_epochs', 0)
         self.image_loader = ImageLoader(opt)
-        caption_path, self.image_path = _path(opt)
-        self._setup_data(caption_path, opt.get('unittest', False))
-        if self.use_hdf5:
-            try:
-                import h5py
-                self.h5py = h5py
-            except ImportError:
-                raise ImportError('Need to install h5py - `pip install h5py`')
-            self._setup_image_data()
+        data_path, self.image_path = _path(opt)
+        self._setup_data(data_path, opt.get('unittest', False))
         self.dict_agent = DictionaryAgent(opt)
 
     def __getitem__(self, index):
         index %= self.num_episodes()
-        cap = self.caption[index]
+        cap = self.data[index]
+        image_id = int(cap['filename'].replace('.jpg', ''))
         ep = {
-            'text': self.dict_agent.txt2vec(QUESTION),
-            'image': self.get_image(cap['image_id']),
+            'text': QUESTION,
+            'image': self.get_image(image_id),
             'episode_done': True,
         }
         if self.opt.get('extract_image', False):
-            ep['image_id'] = cap['image_id']
+            ep['image_id'] = image_id
             return ep
 
-        ep['labels'] = cap['captions']
+        ep['labels'] = [s['raw'] for s in cap['sentences']]
         ep['valid'] = True
-        ep['use_hdf5'] = self.use_hdf5
+        if 'train' not in self.datatype:
+            ep['label_candidates'] = self.cands
         return (index, ep)
 
     def __len__(self):
-        num_epochs = self.num_epochs if self.num_epochs > 0 else 100
-        num_iters = num_epochs if self.training else 1
-        return int(num_iters * self.num_episodes())
+        return self.num_episodes()
 
-    def _load_lens(self):
-        with open(self.length_datafile) as length:
-            lengths = json.load(length)
-            self.num_eps = lengths['num_eps']
-            self.num_exs = lengths['num_exs']
-
-    def _setup_data(self, caption_path, unittest):
-        with open(caption_path) as data_file:
-            self.caption = []
-            prev_img_id = None
-            for line in data_file:
-                img_id = line.split('#')[0][:-4]
-                caption = line.split('\t')[1]
-                if img_id != prev_img_id:
-                    prev_img_id = img_id
-                    to_add = {}
-                    to_add['image_id'] = int(img_id)
-                    to_add['captions'] = [caption]
-                    self.caption.append(to_add)
-                else:
-                    self.caption[-1]['captions'].append(caption)
+    def _setup_data(self, data_path, unittest):
+        with open(data_path) as data_file:
+            raw_data = json.load(data_file)['images']
+            if 'train' in self.datatype:
+                self.data = [d for d in raw_data if d['split'] == 'train']
+            elif 'valid' in self.datatype:
+                self.data = [d for d in raw_data if d['split'] == 'val']
+                self.cands = [l for d in self.data for l in [s['raw'] for s in d['sentences']]]
+            else:
+                self.data = [d for d in raw_data if d['split'] == 'test']
+                self.cands = [l for d in self.data for l in [s['raw'] for s in d['sentences']]]
         if unittest:
             self.caption = self.caption[:10]
-        self.image_paths = set()
-        for cap in self.caption:
-            self.image_paths.add(os.path.join(self.image_path,
-                                              '%d.jpg' % (cap['image_id'])))
-
-    def _setup_image_data(self):
-        '''hdf5 image dataset'''
-        extract_feats(self.opt)
-        im = self.opt.get('image_mode')
-        hdf5_path = self.image_path + 'mode_{}_noatt.hdf5'.format(im)
-        hdf5_file = self.h5py.File(hdf5_path, 'r')
-        self.image_dataset = hdf5_file['images']
-
-        image_id_to_idx_path = self.image_path + 'mode_{}_id_to_idx.txt'.format(im)
-        with open(image_id_to_idx_path, 'r') as f:
-            self.image_id_to_idx = json.load(f)
 
     def get_image(self, image_id):
-        if not self.use_hdf5:
-            im_path = os.path.join(self.image_path, '%d.jpg' % (image_id))
-            return self.image_loader.load(im_path)
-        else:
-            img_idx = self.image_id_to_idx[str(image_id)]
-            return torch.Tensor(self.image_dataset[img_idx])
+        im_path = os.path.join(self.image_path, '%d.jpg' % (image_id))
+        return self.image_loader.load(im_path)
 
     def num_episodes(self):
-        return len(self.caption)
+        return len(self.data)
 
     def num_examples(self):
         return self.num_episodes()
@@ -144,16 +106,15 @@ class DefaultTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.image_mode = opt.get('image_mode', 'none')
+        data_path, self.image_path = _path(opt)
 
         if shared:
             # another instance was set up already, just reference its data
-            self.caption = shared['caption']
+            self.data = shared['data']
             self.image_loader = shared['image_loader']
-            self.image_path = shared['image_path']
         else:
             # need to set up data from scratch
-            caption_path, self.image_path = _path(opt)
-            self._setup_data(caption_path)
+            self._setup_data(data_path)
             self.image_loader = ImageLoader(opt)
 
         self.reset()
@@ -164,7 +125,7 @@ class DefaultTeacher(FixedDialogTeacher):
         self.imageEpochDone = False
 
     def num_examples(self):
-        return len(self.caption)
+        return len(self.data)
 
     def num_episodes(self):
         return self.num_examples()
@@ -176,15 +137,15 @@ class DefaultTeacher(FixedDialogTeacher):
                                       (img_path,))
 
     def get(self, episode_idx, entry_idx=0):
-        cap = self.caption[episode_idx]
-
+        ep = self.data[episode_idx]
         action = {
             'text': "",
-            'image_id': cap['image_id'],
+            'image_id': int(ep['filename'].replace('.jpg', '')),
             'episode_done': True,
-            'labels': cap['captions']
+            'labels': [s['raw'] for s in ep['sentences']]
         }
-
+        if 'train' not in self.datatype:
+            action['label_candidates'] = self.cands
         return action
 
     def next_example(self):
@@ -197,6 +158,7 @@ class DefaultTeacher(FixedDialogTeacher):
             if self.image_mode != 'none' and 'image_id' in self.example:
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
+                # image = image[0, :, 0, 0]
                 self.example['image'] = image
             ready = (self.example, self.imageEpochDone)
         # get the next base example: super().next_example() calls self.get()
@@ -215,22 +177,17 @@ class DefaultTeacher(FixedDialogTeacher):
         shared = super().share()
         shared['caption'] = self.caption
         shared['image_loader'] = self.image_loader
-        shared['image_path'] = self.image_path
         return shared
 
-    def _setup_data(self, caption_path):
-        print('loading: ' + caption_path)
-        with open(caption_path) as data_file:
-            self.caption = []
-            prev_img_id = None
-            for line in data_file:
-                img_id = line.split('#')[0][:-4]
-                caption = line.split('\t')[1]
-                if img_id != prev_img_id:
-                    prev_img_id = img_id
-                    to_add = {}
-                    to_add['image_id'] = int(img_id)
-                    to_add['captions'] = [caption]
-                    self.caption.append(to_add)
-                else:
-                    self.caption[-1]['captions'].append(caption)
+    def _setup_data(self, data_path):
+        print('loading: ' + data_path)
+        with open(data_path) as data_file:
+            raw_data = json.load(data_file)['images']
+            if 'train' in self.datatype:
+                self.data = [d for d in raw_data if d['split'] == 'train']
+            elif 'valid' in self.datatype:
+                self.data = [d for d in raw_data if d['split'] == 'val']
+                self.cands = [l for d in self.data for l in [s['raw'] for s in d['sentences']]]
+            else:
+                self.data = [d for d in raw_data if d['split'] == 'test']
+                self.cands = [l for d in self.data for l in [s['raw'] for s in d['sentences']]]
