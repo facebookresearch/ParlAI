@@ -302,7 +302,10 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         action = {
+<<<<<<< HEAD
             'text': QUESTION,
+=======
+>>>>>>> master
             'episode_done': True
         }
 
