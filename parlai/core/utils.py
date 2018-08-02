@@ -43,6 +43,8 @@ def maintain_dialog_history(history, observation, reply='',
         if useReplies == 'model' or (useReplies == 'label_else_model' and
                                      len(history['labels']) == 0):
             if reply:
+                if useStartEndIndices:
+                    reply = dict.start_token + ' ' + reply
                 history['dialog'].extend(parse(reply, splitSentences))
         elif len(history['labels']) > 0:
             r = history['labels'][0]
