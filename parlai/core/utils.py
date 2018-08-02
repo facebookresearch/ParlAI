@@ -471,8 +471,8 @@ class PaddingUtils(object):
             # parse each label and append END
             if dq:
                 parsed_y = [deque(maxlen=truncate) for _ in labels]
-                for dq, y in zip(parsed_y, labels):
-                    dq.extendleft(reversed(dictionary.txt2vec(y)))
+                for deq, y in zip(parsed_y, labels):
+                    deq.extendleft(reversed(dictionary.txt2vec(y)))
             else:
                 parsed_y = [dictionary.txt2vec(label) for label in labels]
             if end_idx is not None:
