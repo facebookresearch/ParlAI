@@ -270,8 +270,10 @@ class TorchAgent(Agent):
 
         :param obs_batch: List of vectorized observations
         :param sort:      Default False, orders the observations by length of
-                          text vector. Set to true when using
+                          vectors. Set to true when using
                           torch.nn.utils.rnn.pack_padded_sequence.
+                          Uses the text vectors if available, otherwise uses
+                          the label vectors if available.
         :param is_valid:  Function that checks if 'text_vec' is in the
                           observation, determines if an observation is valid
         """
@@ -294,6 +296,7 @@ class TorchAgent(Agent):
             x_lens = [ex.shape[0] for ex in x_text]
 
             if sort:
+                sort = False  # now we won't sort on labels
                 ind_sorted = sorted(range(len(x_lens)),
                                     key=lambda k: -x_lens[k])
                 exs = [exs[k] for k in ind_sorted]
@@ -318,6 +321,16 @@ class TorchAgent(Agent):
             label_vecs = [ex[field + '_vec'] for i, ex in enumerate(exs)]
             labels = [ex[field + '_choice'] for i, ex in enumerate(exs)]
             y_lens = [y.shape[0] for y in label_vecs]
+
+            if sort and xs is None:
+                # always sort on xs if we have them, not ys
+                ind_sorted = sorted(range(len(y_lens)),
+                                    key=lambda k: -y_lens[k])
+                exs = [exs[k] for k in ind_sorted]
+                valid_inds = [valid_inds[k] for k in ind_sorted]
+                label_vecs = [label_vecs[k] for k in ind_sorted]
+                labels = [label_vecs[k] for k in ind_sorted]
+
             ys = torch.LongTensor(len(exs), max(y_lens)).fill_(self.NULL_IDX)
             if self.use_cuda:
                 ys = ys.cuda()
