@@ -195,7 +195,7 @@ class EncoderText(nn.Module):
         packed = pack_padded_sequence(x, lengths, batch_first=True)
         # Forward propagate RNN
         _, out = self.rnn(packed)
-        out = out.squeeze()
+        out = out.squeeze(0)
         # normalization in the joint embedding space
         out = l2norm(out)
 
