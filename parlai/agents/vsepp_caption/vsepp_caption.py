@@ -150,58 +150,22 @@ class VseppCaptionAgent(TorchAgent):
 
         return (padded_cands, cands, cand_lens, truth_idx)
 
-    def batch_act(self, observations):
-        batch_size = len(observations)
-        # initialize a table of replies with this agent's id
-        batch_reply = [{'id': self.getID()} for _ in range(batch_size)]
+    def batchify(self, *args, **kwargs):
+        kwargs['sort'] = True
+        return super().batchify(*args, **kwargs)
 
-        if any(['labels' in obs for obs in observations]):
-            self.mode = 'train'
-        elif any(['eval_labels' in obs for obs in observations]):
-            self.mode = 'valid'
-        else:
-            self.mode = 'test'
-
-        vec_obs = [self.vectorize(obs)
-                   for obs in observations]
-
-        # shift the labels into the text field so they're ordered
-        # by length
-        for item in observations:
-            if self.mode == 'train':
-                if 'labels' in item:
-                    item['text'] = item['labels'][0]
-                    item['text_vec'] = item['labels_vec']
-            elif self.mode == 'valid':
-                if 'eval_labels' in item:
-                    item['text'] = item['eval_labels'][0]
-                    item['text_vec'] = item['eval_labels_vec']
-
-        batch = self.batchify(vec_obs, sort=True)
-
-        images = torch.stack([self.transform(observations[idx]['image'])
-                              for idx in batch.valid_indices])
+    def train_step(self, batch):
+        images = torch.stack([self.transform(img) for img in batch.image])
         if self.use_cuda:
             images = images.cuda(async=True)
 
-        if self.mode == 'train':
-            output = self.train_step(batch, images)
-        else:
-            candidate_labels = [ex['label_candidates'] for ex in vec_obs]
-            output = self.eval_step(batch, images, candidate_labels)
-
-        self.match_batch(batch_reply, batch.valid_indices, output)
-
-        return batch_reply
-
-    def train_step(self, batch, images):
-        text_lengths = torch.LongTensor(batch.text_lengths)
+        text_lengths = torch.LongTensor(batch.label_lengths)
         if self.use_cuda:
             text_lengths = text_lengths.cuda()
 
         self.model.train()
         self.optimizer.zero_grad()
-        img_embs, cap_embs = self.model(images, batch.text_vec, text_lengths)
+        img_embs, cap_embs = self.model(images, batch.label_vec, text_lengths)
         loss, ranks, top1 = self.criterion(img_embs, cap_embs)
         self.metrics['loss'] += loss.item()
         self.metrics['r@'] += ranks
@@ -212,10 +176,14 @@ class VseppCaptionAgent(TorchAgent):
             predictions.append(batch.labels[score_idx])
         return Output(predictions, None)
 
-    def eval_step(self, batch, images, candidate_labels):
+    def eval_step(self, batch):
+        images = torch.stack([self.transform(img) for img in batch.image])
+        if self.use_cuda:
+            images = images.cuda(async=True)
+
         # Need to collate then sort the captions by length
-        cands = [self.candidate_helper(label_cands_vec, candidate_labels[idx], self.mode=='test')
-                 for label_cands_vec, idx in zip(batch.candidates, batch.valid_indices)]
+        cands = [self.candidate_helper(label_cands_vec, batch.candidates[idx], self.mode=='test')
+                 for label_cands_vec, idx in zip(batch.candidate_vecs, batch.valid_indices)]
         self.model.eval()
         # Obtain the image embeddings
         img_embs, _ = self.model(images, None, None)
@@ -249,6 +217,3 @@ class VseppCaptionAgent(TorchAgent):
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)
         return m
-
-    def act(self):
-        return self.batch_act([self.observation])[0]
