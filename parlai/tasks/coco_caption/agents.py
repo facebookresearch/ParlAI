@@ -154,7 +154,7 @@ class DefaultDataset(Dataset):
             'episode_done': True,
         }
         if self.use_intro:
-            action['text'] = QUESTION
+            ep['text'] = QUESTION
         if self.opt.get('extract_image', False):
             ep['image_id'] = image_id
             return ep
