@@ -99,7 +99,15 @@ class DefaultTeacher(DialogTeacher):
         opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD',
                                        suffix + '-v1.1.json')
         self.id = 'squad'
+        self.random = opt['random']
         super().__init__(opt, shared)
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        agent = argparser.add_argument_group('SQuAD arguments')
+        agent.add_argument('--random', type="bool",
+                           default=True,
+                           help='if the teacher should shuffle examples')
 
     def setup_data(self, path):
         print('loading: ' + path)
