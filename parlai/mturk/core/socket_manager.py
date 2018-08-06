@@ -232,6 +232,13 @@ class SocketManager():
         except BrokenPipeError:  # noqa F821 we don't support p2
             # The channel died mid-send, wait for it to come back up
             return False
+        except Exception as e:
+            shared_utils.print_and_log(
+                logging.WARN,
+                'Unexpected socket error occured: {}'.format(repr(e)),
+                should_print=True
+            )
+            return False
         return True
 
     def _ensure_closed(self):
