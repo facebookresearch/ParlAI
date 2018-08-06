@@ -229,6 +229,9 @@ class SocketManager():
         except websocket.WebSocketConnectionClosedException:
             # The channel died mid-send, wait for it to come back up
             return False
+        except BrokenPipeError:  # noqa F821 we don't support p2
+            # The channel died mid-send, wait for it to come back up
+            return False
         return True
 
     def _ensure_closed(self):
