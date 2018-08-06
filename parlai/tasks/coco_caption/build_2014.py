@@ -54,9 +54,6 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # download the data.
-
-        # fname1 = 'annotations_trainval2014.zip'
-        # fname2 = 'image_info_test2014.zip'
         fname = 'dataset_coco.tgz'
         # dataset URL
         url = 'http://parl.ai/downloads/coco_caption/'

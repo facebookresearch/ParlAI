@@ -24,15 +24,14 @@ import random
 """
     Agents for MSCOCO Image Captioning Task
 
-    There are two versions of the task - one comprising MSCOCO 2014 splits,
-    and one comprising MSCOCO 2017 splits
+    There are two versions of the task - one comprising MSCOCO 2014 splits
+    (from the 2015 task competition), and one comprising MSCOCO 2017 splits
 
     For the 2014 splits, we use the train, val, and test split of Karpathy et.
     al, "Deep visual-semantic alignments for generating image descriptions"
     (splits from here: https://cs.stanford.edu/people/karpathy/deepimagesent/).
-    This split has ~80k train images, 5k validation images, and 5k test images.
+    This split has ~82k train images, 5k validation images, and 5k test images.
     The val and test images are taken from the original validation set of ~40k.
-
 
     For 2017, we use the splits from the official MSCOCO Image Captioning 2017
     task.
@@ -130,14 +129,12 @@ class DefaultDataset(Dataset):
     def __init__(self, opt, version='2014'):
         self.opt = opt
         self.version = version
-        self.use_intro = opt.get('use_intro')
-        self.num_cands = opt.get('num_cands')
+        self.use_intro = opt.get('use_intro', False)
+        self.num_cands = opt.get('num_cands', -1)
         self.datatype = self.opt.get('datatype')
-        self.training = self.datatype.startswith('train')
         self.include_rest_val = opt.get('include_rest_val', True)
         self.image_loader = ImageLoader(opt)
         test_info_path, annotation_path, self.image_path = _path(opt, version)
-        self.cands = load_candidates(opt['datapath'], self.datatype, version)
         self._setup_data(test_info_path, annotation_path, opt)
 
     @staticmethod
@@ -270,16 +267,15 @@ class DefaultTeacher(FixedDialogTeacher):
         self.use_intro = opt.get('use_intro', False)
         self.num_cands = opt.get('num_cands', -1)
         self.include_rest_val = opt.get('include_rest_val', False)
+        test_info_path, annotation_path, self.image_path = _path(opt, version)
         if shared:
             # another instance was set up already, just reference its data
             if 'annotation' in shared:
                 self.annotation = shared['annotation']
             self.image_loader = shared['image_loader']
-            self.image_path = shared['image_path']
             self.cands = shared['cands']
         else:
             # need to set up data from scratch
-            test_info_path, annotation_path, self.image_path = _path(opt, version)
             self._setup_data(test_info_path, annotation_path, opt)
             self.image_loader = ImageLoader(opt)
 
@@ -299,8 +295,7 @@ class DefaultTeacher(FixedDialogTeacher):
                                 evaluation, setting to -1 uses all.')
         agent.add_argument('--include_rest_val', type='bool',
                            default=False,
-                           help='Include unused validation images in training \
-                                evaluation, setting to -1 uses all.')
+                           help='Include unused validation images in training')
 
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
@@ -403,7 +398,6 @@ class DefaultTeacher(FixedDialogTeacher):
         if hasattr(self, 'annotation'):
             shared['annotation'] = self.annotation
         shared['image_loader'] = self.image_loader
-        shared['image_path'] = self.image_path
         shared['cands'] = self.cands
         return shared
 
