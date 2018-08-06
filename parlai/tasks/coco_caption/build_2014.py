@@ -41,7 +41,7 @@ def buildImage(opt):
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'COCO_2014_Caption')
-    version = None
+    version = '1.0'
 
     # check if data had been previously built
     if not build_data.built(dpath, version_string=version):
@@ -55,17 +55,16 @@ def build(opt):
 
         # download the data.
 
-        fname1 = 'annotations_trainval2014.zip'
-        fname2 = 'image_info_test2014.zip'
+        # fname1 = 'annotations_trainval2014.zip'
+        # fname2 = 'image_info_test2014.zip'
+        fname = 'dataset_coco.tgz'
         # dataset URL
-        url = 'http://images.cocodataset.org/annotations/'
+        url = 'http://parl.ai/downloads/coco_caption/'
 
-        build_data.download(url + fname1, dpath, fname1)
-        build_data.download(url + fname2, dpath, fname2)
+        build_data.download(url + fname, dpath, fname)
 
         # uncompress it
-        build_data.untar(dpath, fname1)
-        build_data.untar(dpath, fname2)
+        build_data.untar(dpath, fname)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)
