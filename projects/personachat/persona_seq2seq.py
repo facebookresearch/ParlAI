@@ -1215,7 +1215,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                 self.dict.tok2ind['__UNK__'] = 2
                 self.dict.ind2tok[3] = '__START__'
                 self.dict.tok2ind['__START__'] = 3
-            elif lower:
+            else:
                 # reorder dictionary tokens
                 self.dict.ind2tok[1] = '__end__'
                 self.dict.tok2ind['__end__'] = 1
