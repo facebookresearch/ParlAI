@@ -5,42 +5,195 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 import unittest
+from functools import lru_cache
+from parlai.core.agents import Agent
+from parlai.core.torch_agent import TorchAgent, Batch, Output
 
 
-class MockDict(object):
-    null_token = '__NULL__'
+class MockDict(Agent):
+    """Mock Dictionary Agent which just implements indexing and txt2vec."""
+
+    null_token = '__null__'
     NULL_IDX = 0
-    start_token = '__START__'
-    START_IDX = 1
-    end_token = '__END__'
-    END_IDX = 2
+    start_token = '__start__'
+    START_IDX = 1001
+    end_token = '__end__'
+    END_IDX = 1002
+    p1_token = '__p1__'
+    P1_IDX = 2001
+    p2_token = '__p2__'
+    P2_IDX = 2002
+
+    def __init__(self, opt, shared=None):
+        """Initialize idx for incremental indexing."""
+        self.idx = 0
 
     def __getitem__(self, key):
+        """Return index of special token or return the token."""
         if key == self.null_token:
             return self.NULL_IDX
         elif key == self.start_token:
             return self.START_IDX
         elif key == self.end_token:
             return self.END_IDX
-        return key
+        elif key == self.p1_token:
+            return self.P1_IDX
+        elif key == self.p2_token:
+            return self.P2_IDX
+        else:
+            self.idx += 1
+            return self.idx
 
     def txt2vec(self, txt):
-        return [7, 8, 9]
+        """Return index of special tokens or range from 1 for each token."""
+        self.idx = 0
+        return [self[tok] for tok in txt.split()]
 
+
+class TorchAgent(TorchAgent):
+    """Use MockDict instead of regular DictionaryAgent."""
+
+    @staticmethod
+    def dictionary_class():
+        """Replace normal dictionary class with mock one."""
+        return MockDict
+
+
+@lru_cache(maxsize=32)
+def get_agent(**kwargs):
+    """Return opt-initialized agent.
+
+    :param kwargs: any kwargs you want to set using parser.set_params(**kwargs)
+    """
+    if 'no_cuda' not in kwargs:
+        kwargs['no_cuda'] = True
+    from parlai.core.params import ParlaiParser
+    parser = ParlaiParser()
+    TorchAgent.add_cmdline_args(parser)
+    parser.set_params(**kwargs)
+    opt = parser.parse_args(print_args=False)
+    return TorchAgent(opt)
 
 class TestTorchAgent(unittest.TestCase):
     """Basic tests on the util functions in TorchAgent."""
 
+    def test_mock(self):
+        """Just make sure we can instantiate a mock agent."""
+        agent = get_agent()
+        self.assertTrue(isinstance(agent.dict, MockDict))
+
+    def test_share(self):
+        """Make sure share works and shares dictionary."""
+        agent = get_agent()
+        shared = agent.share()
+        self.assertTrue('dict' in shared)
+
+    def test__vectorize_text(self):
+        """Test _vectorize_text and its different options."""
+        agent = get_agent()
+        text = 'hello there john'
+
+        # test add_start and add_end
+        vec = agent._vectorize_text(text, add_start=False, add_end=False)
+        self.assertEqual(len(vec), 3)
+        self.assertEqual(vec.tolist(), [1, 2, 3])
+        vec = agent._vectorize_text(text, add_start=True, add_end=False)
+        self.assertEqual(len(vec), 4)
+        self.assertEqual(vec.tolist(), [MockDict.START_IDX, 1, 2, 3])
+        vec = agent._vectorize_text(text, add_start=False, add_end=True)
+        self.assertEqual(len(vec), 4)
+        self.assertEqual(vec.tolist(), [1, 2, 3, MockDict.END_IDX])
+        vec = agent._vectorize_text(text, add_start=True, add_end=True)
+        self.assertEqual(len(vec), 5)
+        self.assertEqual(vec.tolist(), [MockDict.START_IDX, 1, 2, 3,
+                                        MockDict.END_IDX])
+
+        # now do it again with truncation=3
+        vec = agent._vectorize_text(text, add_start=False, add_end=False,
+                                    truncate=3)
+        self.assertEqual(len(vec), 3)
+        self.assertEqual(vec.tolist(), [1, 2, 3])
+        vec = agent._vectorize_text(text, add_start=True, add_end=False,
+                                    truncate=3)
+        self.assertEqual(len(vec), 3)
+        self.assertEqual(vec.tolist(), [1, 2, 3])
+        vec = agent._vectorize_text(text, add_start=False, add_end=True,
+                                    truncate=3)
+        self.assertEqual(len(vec), 3)
+        self.assertEqual(vec.tolist(), [2, 3, MockDict.END_IDX])
+        vec = agent._vectorize_text(text, add_start=True, add_end=True,
+                                    truncate=3)
+        self.assertEqual(len(vec), 3)
+        self.assertEqual(vec.tolist(), [2, 3, MockDict.END_IDX])
+
+        # now do it again with truncation=2
+        vec = agent._vectorize_text(text, add_start=False, add_end=False,
+                                    truncate=2)
+        self.assertEqual(len(vec), 2)
+        self.assertEqual(vec.tolist(), [2, 3])
+        vec = agent._vectorize_text(text, add_start=True, add_end=False,
+                                    truncate=2)
+        self.assertEqual(len(vec), 2)
+        self.assertEqual(vec.tolist(), [2, 3])
+        vec = agent._vectorize_text(text, add_start=False, add_end=True,
+                                    truncate=2)
+        self.assertEqual(len(vec), 2)
+        self.assertEqual(vec.tolist(), [3, MockDict.END_IDX])
+        vec = agent._vectorize_text(text, add_start=True, add_end=True,
+                                    truncate=2)
+        self.assertEqual(len(vec), 2)
+        self.assertEqual(vec.tolist(), [3, MockDict.END_IDX])
+
+        # now do it again with truncation=2, don't truncate_left
+        vec = agent._vectorize_text(text, add_start=False, add_end=False,
+                                    truncate=2, truncate_left=False)
+        self.assertEqual(len(vec), 2)
+        self.assertEqual(vec.tolist(), [1, 2])
+        vec = agent._vectorize_text(text, add_start=True, add_end=False,
+                                    truncate=2, truncate_left=False)
+        self.assertEqual(len(vec), 2)
+        self.assertEqual(vec.tolist(), [MockDict.START_IDX, 1])
+        vec = agent._vectorize_text(text, add_start=False, add_end=True,
+                                    truncate=2, truncate_left=False)
+        self.assertEqual(len(vec), 2)
+        self.assertEqual(vec.tolist(), [1, 2])
+        vec = agent._vectorize_text(text, add_start=True, add_end=True,
+                                    truncate=2, truncate_left=False)
+        self.assertEqual(len(vec), 2)
+        self.assertEqual(vec.tolist(), [MockDict.START_IDX, 1])
+
+        # now do it again with truncation=3, don't truncate_left
+        vec = agent._vectorize_text(text, add_start=False, add_end=False,
+                                    truncate=3, truncate_left=False)
+        self.assertEqual(len(vec), 3)
+        self.assertEqual(vec.tolist(), [1, 2, 3])
+        vec = agent._vectorize_text(text, add_start=True, add_end=False,
+                                    truncate=3, truncate_left=False)
+        self.assertEqual(len(vec), 3)
+        self.assertEqual(vec.tolist(), [MockDict.START_IDX, 1, 2])
+        vec = agent._vectorize_text(text, add_start=False, add_end=True,
+                                    truncate=3, truncate_left=False)
+        self.assertEqual(len(vec), 3)
+        self.assertEqual(vec.tolist(), [1, 2, 3])
+        vec = agent._vectorize_text(text, add_start=True, add_end=True,
+                                    truncate=3, truncate_left=False)
+        self.assertEqual(len(vec), 3)
+        self.assertEqual(vec.tolist(), [MockDict.START_IDX, 1, 2])
+
+    def test__check_truncate(self):
+        """Make sure we are truncating when needed."""
+        agent = get_agent()
+        inp = torch.LongTensor([1, 2, 3])
+        self.assertEqual(agent._check_truncate(inp, None).tolist(), [1, 2, 3])
+        self.assertEqual(agent._check_truncate(inp, 3).tolist(), [1, 2, 3])
+        self.assertEqual(agent._check_truncate(inp, 2).tolist(), [1, 2])
+        self.assertEqual(agent._check_truncate(inp, 1).tolist(), [1])
+        self.assertEqual(agent._check_truncate(inp, 0).tolist(), [])
+
     def test_vectorize(self):
         """
-        Make sure that the vectorize function is actually adding a new field.
         """
-        try:
-            from parlai.core.torch_agent import TorchAgent
-        except ImportError as e:
-            if 'pytorch' in e.msg:
-                print('Skipping TestTorchAgent.test_vectorize, no pytorch.')
-                return
+        return
 
         from parlai.core.params import ParlaiParser
         parser = ParlaiParser()
@@ -109,6 +262,7 @@ class TestTorchAgent(unittest.TestCase):
                         "Vectorized label is incorrect.")
 
     def test_map_unmap(self):
+        return
         try:
             from parlai.core.torch_agent import TorchAgent, Output
         except ImportError as e:
@@ -184,6 +338,7 @@ class TestTorchAgent(unittest.TestCase):
                         "Unmapped predictions do not match expected results.")
 
     def test_maintain_dialog_history(self):
+        return
         try:
             from parlai.core.torch_agent import TorchAgent
         except ImportError as e:
@@ -224,4 +379,8 @@ class TestTorchAgent(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    try:
+        import torch
+        unittest.main()
+    except ImportError as e:
+        print('Skipping TestTorchAgent, no pytorch.')

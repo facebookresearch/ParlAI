@@ -60,6 +60,7 @@ Batch = namedtuple('Batch', ['text_vec', 'text_lengths', 'label_vec',
                              'label_lengths', 'labels', 'valid_indices',
                              'candidates', 'candidate_vecs', 'image',
                              'memory_vecs'])
+Batch.__new__.__defaults__ = (None,) * len(Batch._fields)
 
 """
 Output is a namedtuple containing agent predictions.
@@ -74,6 +75,7 @@ though agents can choose to return None if they do not want to answer.
                         ranking of strings, of variable length.
 """
 Output = namedtuple('Output', ['text', 'text_candidates'])
+Output.__new__.__defaults__ = (None,) * len(Output._fields)
 
 
 class TorchAgent(Agent):
@@ -186,7 +188,6 @@ class TorchAgent(Agent):
         """Return vector from text.
 
         :param text:          String to vectorize.
-        :param use_cuda:      Convert tensor to cuda tensor.
         :param add_start:     Add the start token to the front of the tensor.
         :param add_end:       Add the end token to the end of the tensor.
         :param truncate:      Truncate to this many tokens >= 0, or None.
@@ -221,10 +222,10 @@ class TorchAgent(Agent):
         """Check that vector is truncated correctly."""
         if truncate is None:
             return vec
-        if vec.size(1) <= truncate:
+        if vec.size(0) <= truncate:
             return vec
         else:
-            return vec.narrow(1, 0, truncate)
+            return vec[:truncate]
 
     def vectorize(self, obs, add_start=True, add_end=True, truncate=None,
                   split_lines=False):
@@ -332,14 +333,12 @@ class TorchAgent(Agent):
                           observation, determines if an observation is valid
         """
         if len(obs_batch) == 0:
-            return Batch(None, None, None, None, None, None, None, None, None,
-                         None, None)
+            return Batch()
 
         valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
 
         if len(valid_obs) == 0:
-            return Batch(None, None, None, None, None, None, None, None, None,
-                         None, None)
+            return Batch()
 
         valid_inds, exs = zip(*valid_obs)
 
