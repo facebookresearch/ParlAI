@@ -1203,13 +1203,26 @@ class PersonachatSeqseqAgentSplit(Agent):
             # get index of null token from dictionary (probably 0)
             self.NULL_IDX = self.dict[self.dict.null_token]
 
-            # reorder dictionary tokens
-            self.dict.ind2tok[1] = '__END__'
-            self.dict.tok2ind['__END__'] = 1
-            self.dict.ind2tok[2] = '__UNK__'
-            self.dict.tok2ind['__UNK__'] = 2
-            self.dict.ind2tok[3] = '__START__'
-            self.dict.tok2ind['__START__'] = 3
+            lower = False
+            if self.dict.tok2ind.get('__end__'):
+                lower = True
+
+            if not lower:
+                # reorder dictionary tokens
+                self.dict.ind2tok[1] = '__END__'
+                self.dict.tok2ind['__END__'] = 1
+                self.dict.ind2tok[2] = '__UNK__'
+                self.dict.tok2ind['__UNK__'] = 2
+                self.dict.ind2tok[3] = '__START__'
+                self.dict.tok2ind['__START__'] = 3
+            elif lower:
+                # reorder dictionary tokens
+                self.dict.ind2tok[1] = '__end__'
+                self.dict.tok2ind['__end__'] = 1
+                self.dict.ind2tok[2] = '__unk__'
+                self.dict.tok2ind['__unk__'] = 2
+                self.dict.ind2tok[3] = '__start__'
+                self.dict.tok2ind['__start__'] = 3
 
             # store important params directly
             hsz = opt['hiddensize']
@@ -1586,7 +1599,6 @@ class PersonachatSeqseqAgentSplit(Agent):
                 self.persona_given = ''
             text_split = observation['text'].split('\n')
             if self.usepersona:
-                self.persona_given = ''
                 for t in text_split:
                     if 'persona' in t:
                         t = t.replace('your persona: ', '').replace('their persona: ', '')
