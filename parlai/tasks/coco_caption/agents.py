@@ -273,7 +273,8 @@ class DefaultTeacher(FixedDialogTeacher):
             if 'annotation' in shared:
                 self.annotation = shared['annotation']
             self.image_loader = shared['image_loader']
-            self.cands = shared['cands']
+            if 'cands' in shared:
+                self.cands = shared['cands']
         else:
             # need to set up data from scratch
             self._setup_data(test_info_path, annotation_path, opt)
@@ -322,6 +323,7 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         action = {
+            'text': '',
             'episode_done': True
         }
 
@@ -398,7 +400,8 @@ class DefaultTeacher(FixedDialogTeacher):
         if hasattr(self, 'annotation'):
             shared['annotation'] = self.annotation
         shared['image_loader'] = self.image_loader
-        shared['cands'] = self.cands
+        if hasattr(self, 'cands'):
+            shared['cands'] = self.cands
         return shared
 
     def _setup_data(self, test_info_path, annotation_path, opt):
