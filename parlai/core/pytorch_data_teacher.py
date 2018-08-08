@@ -17,6 +17,7 @@ import random
 from functools import wraps
 import importlib
 import copy
+from functools import lru_cache
 try:
     import torch
 except Exception as e:
@@ -341,7 +342,6 @@ class StreamDataset(Dataset):
 
     def __getitem__(self, index):
         while True:
-            index %= self.num_episodes()
             idx, ep = next(self.data_gen)
             if idx == index:
                 return (index, ep)
@@ -390,7 +390,6 @@ class ParlAIDataset(Dataset):
         self._load_lens()
 
     def __getitem__(self, index):
-        index %= self.num_episodes()
         return index, self.data[index]
 
     def __len__(self):
@@ -418,9 +417,11 @@ class ParlAIDataset(Dataset):
 class ParlAIConcatDataset(ConcatDataset):
     """Override to set num_eps and num_exs"""
 
+    @lru_cache(maxsize=1)
     def num_episodes(self):
         return sum(d.num_episodes() for d in self.datasets)
 
+    @lru_cache(maxsize=1)
     def num_examples(self):
         return sum(d.num_examples() for d in self.datasets)
 

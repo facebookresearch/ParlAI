@@ -75,7 +75,7 @@ def build_data(opt):
     datafile = None
     if opt.get('pytorch_datafile'):
         datafile = opt.get('pytorch_datafile')
-    elif hasattr(teacher, 'datafile') and teacher.datafile not in ['', None]:
+    elif hasattr(teacher, 'datafile') and teacher.datafile:
         datafile = teacher.datafile
     else:
         dpath = os.path.join(opt.get('datapath', '~'), ordered_opt['task'], dt)
