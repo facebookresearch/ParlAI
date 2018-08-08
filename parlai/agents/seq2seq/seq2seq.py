@@ -666,7 +666,7 @@ class Seq2seqAgent(Agent):
     def shutdown(self):
         """Save the state of the model when shutdown."""
         path = self.opt.get('model_file', None)
-        if path is not None:
+        if path is not None and hasattr(self, 'optimizer'):
             self.save(path + '.shutdown_state')
         super().shutdown()
 
@@ -701,6 +701,7 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.prev_enc = None
+        self.last_xs = None
 
     def next_word_probability(self, partial_out):
         """Return probability distribution over next words given an input and
@@ -719,19 +720,24 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
         obs = self.observation
         obs['eval_labels'] = [' '.join(partial_out)]
         batch = self.vectorize([obs])
-        if len(partial_out) == 0:
+
+        xs, ys = batch[0], batch[1]
+        if self.prev_enc is not None and self.last_xs is not None and (
+                xs.shape[1] != self.last_xs.shape[1] or
+                (xs == self.last_xs).sum().item() != xs.shape[1]):
             # reset prev_enc, this is a new input
             self.prev_enc = None
+        self.last_xs = xs
 
         self.model.eval()
         # no need to predict farther ahead
         # if you pass in any ys, this will be ignored
         self.model.longest_label = 1
         out = self.model(
-            batch[0],  # xs
-            ys=(batch[1] if len(partial_out) > 0 else None),
+            xs,
+            ys=(ys if len(partial_out) > 0 else None),
             prev_enc=self.prev_enc)
-        scores, self.prev_enc = out[1], None  # TODO: put something other than None in self.prev_enc
+        scores, self.prev_enc = out[1], out[4]
         # scores is bsz x seqlen x num_words, so select probs of current index
         probs = F.softmax(scores.select(1, -1), dim=1).squeeze()
         dist = mydefaultdict(lambda: 1e-7)  # default probability for any token

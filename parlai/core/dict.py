@@ -5,10 +5,10 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 """Contains code for parsing and building a dictionary from text."""
 
+from parlai.core.build_data import modelzoo_path
 from .agents import Agent
 from .build_data import make_dir
 from collections import defaultdict
-import argparse
 import codecs
 import copy
 import numpy as np
@@ -211,6 +211,8 @@ class DictionaryAgent(Agent):
                 self.load(opt['dict_file'])
             elif opt.get('dict_initpath'):
                 # load seed dictionary
+                opt['dict_initpath'] = modelzoo_path(opt.get('datapath'),
+                                                     opt['dict_initpath'])
                 self.load(opt['dict_initpath'])
 
         # initialize tokenizers
@@ -559,6 +561,7 @@ class DictionaryAgent(Agent):
             # It's also possible that we get a BPE encoding on the end of the word
             if text.endswith('@@'):
                 text = text[:-2]
+            text = text.replace('__newln__', '\n')
         return text
 
     def act(self):

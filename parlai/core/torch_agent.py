@@ -26,29 +26,35 @@ Agents can override the batchify function to return an extended namedtuple
 with additional fields if they would like, though we recommend calling the
 parent function to set up these fields as a base.
 
-:field text_vec:      bsz x seqlen tensor containing the parsed text data.
-:field text_lens:     list of length bsz containing the lengths of the text in
-                      same order as text_vec; necessary for
-                      pack_padded_sequence.
-:field label_vec:     bsz x seqlen tensor containing the parsed label (one per
-                      batch row).
-:field label_lens:    list of length bsz containing the lengths of the labels
-                      in same order as label_vec.
-:field labels:        list of length bsz containing the selected label for each
-                      batch row (some datasets have multiple labels per input
-                      example).
-:field valid_indices: list of length bsz containing the original indices of
-                      each example in the batch. we use these to map
-                      predictions back to their proper row, since e.g. we may
-                      sort examples by their length or some examples may be
-                      invalid.
-:field candidates:    list of lists of tensors. outer list has size bsz, inner
-                      lists vary in size based on the number of candidates for
-                      each row in the batch.
+:field text_vec:       bsz x seqlen tensor containing the parsed text data.
+:field text_lengths:   list of length bsz containing the lengths of the text in
+                       same order as text_vec; necessary for
+                       pack_padded_sequence.
+:field label_vec:      bsz x seqlen tensor containing the parsed label (one per
+                       batch row).
+:field label_lengths:  list of length bsz containing the lengths of the labels
+                       in same order as label_vec.
+:field labels:         list of length bsz containing the selected label for
+                       each batch row (some datasets have multiple labels per
+                       input example).
+:field valid_indices:  list of length bsz containing the original indices of
+                       each example in the batch. we use these to map
+                       predictions back to their proper row, since e.g. we may
+                       sort examples by their length or some examples may be
+                       invalid.
+:field candidates:     list of lists of text. outer list has size bsz, inner
+                       lists vary in size based on the number of candidates for
+                       each row in the batch.
+:field candidate_vecs: list of lists of tensors. outer list has size bsz, inner
+                       lists vary in size based on the number of candidates for
+                       each row in the batch.
+:field image           list of image features in the format specified by the
+                       --image-mode arg.
 """
 Batch = namedtuple('Batch', ['text_vec', 'text_lengths', 'label_vec',
-                             'label_lens', 'labels', 'valid_indices',
-                             'candidates'])
+                             'label_lengths', 'labels', 'valid_indices',
+                             'candidates', 'candidate_vecs', 'image'])
+
 
 """
 Output is a namedtuple containing agent predictions.
@@ -93,13 +99,17 @@ class TorchAgent(Agent):
         """Add the default commandline args we expect most agents to want."""
         agent = argparser.add_argument_group('TorchAgent Arguments')
         agent.add_argument(
+            '-rc', '--rank-candidates', type='bool', default=False,
+            help='Whether the model should parse candidates for ranking.'
+        )
+        agent.add_argument(
             '-tr', '--truncate', default=-1, type=int,
             help='Truncate input lengths to increase speed / use less memory.')
         agent.add_argument(
             '-histd', '--history-dialog', default=-1, type=int,
             help='Number of past dialog utterances to remember.')
         agent.add_argument(
-            '-histr', '--history-replies', default='label_else_model', type=str,
+            '-histr', '--history-replies', default='label_else_model',
             choices=['none', 'model', 'label', 'label_else_model'],
             help='Keep replies in the history, or not.')
         agent.add_argument(
@@ -137,9 +147,10 @@ class TorchAgent(Agent):
         self.START_IDX = self.dict[self.dict.start_token]
 
         self.history = {}
-        self.truncate = opt['truncate']
+        self.truncate = opt['truncate'] if opt['truncate'] >= 0 else None
         self.history_dialog = opt['history_dialog']
         self.history_replies = opt['history_replies']
+        self.rank_candidates = opt['rank_candidates']
 
     def share(self):
         """Share fields from parent as well as useful objects in this class.
@@ -150,6 +161,44 @@ class TorchAgent(Agent):
         shared['opt'] = self.opt
         shared['dict'] = self.dict
         return shared
+
+    def _vectorize_text(self, text, use_cuda=False, add_start=False,
+                        add_end=False, truncate=None, truncate_left=True):
+        """Return vector from text.
+
+        :param text:          String to vectorize.
+        :param use_cuda:      Convert tensor to cuda tensor.
+        :param add_start:     Add the start token to the front of the tensor.
+        :param add_end:       Add the end token to the end of the tensor.
+        :param truncate:      Truncate to this many tokens >= 0, or None.
+        :param truncate_left: Truncate from the left side (keep the rightmost
+                              tokens). You probably want this True for inputs,
+                              False for targets.
+        """
+        vec = self.dict.txt2vec(text)
+        if truncate is None or len(vec) + add_start + add_end < truncate:
+            # simple: no truncation
+            if add_start:
+                vec.insert(0, self.START_IDX)
+            if add_end:
+                vec.append(self.END_IDX)
+        elif truncate_left:
+            # don't check add_start, we know are truncating it
+            if add_end:
+                # add the end token first
+                vec.append(self.END_IDX)
+            vec = vec[len(vec) - truncate:]
+        else:
+            # truncate from the right side
+            # don't check add_end, we know we are truncating it
+            vec = vec[:truncate - add_start]
+            if add_start:
+                # always keep the start token if it's there
+                vec.insert(0, self.START_IDX)
+        tensor = torch.LongTensor(vec)
+        if use_cuda:
+            tensor = tensor.cuda()
+        return tensor
 
     def vectorize(self, obs, add_start=True, add_end=True, truncate=None):
         """Make vectors out of observation fields and store in the observation.
@@ -162,41 +211,47 @@ class TorchAgent(Agent):
         this function, call super().vectorize(...) to process the text and
         labels, and then process the other fields in your subclass.
 
-        :param obs: single observation from observe function
-        :param add_start: default True, adds the start token to each label
-        :param add_end: default True, adds the end token to each label
+        :param obs: Single observation from observe function.
+        :param add_start: default True, adds the start token to each labelself.
+        :param add_end: default True, adds the end token to each label.
+        :param truncate: default None, if set truncates all vectors to the
+                         specified length. Note that this truncates to the
+                         rightmost for inputs and the leftmost for labels and,
+                         when applicable, candidates.
         """
-        if 'text' not in obs:
-            return obs
-        # convert 'text' into tensor of dictionary indices
-        vec_text = deque(self.dict.txt2vec(obs['text']), maxlen=truncate)
-        obs['text_vec'] = torch.LongTensor(vec_text)
-        if self.use_cuda:
-            obs['text_vec'] = obs['text_vec'].cuda()
+        if 'text' in obs:
+            # convert 'text' into tensor of dictionary indices
+            # we don't add start and end to the input
+            obs['text_vec'] = self._vectorize_text(obs['text'], self.use_cuda,
+                                                   truncate=truncate)
 
-        label_type = None
+        # convert 'labels' or 'eval_labels' into vectors
         if 'labels' in obs:
             label_type = 'labels'
         elif 'eval_labels' in obs:
             label_type = 'eval_labels'
+        else:
+            label_type = None
 
         if label_type is not None:
+            # pick one label if there are multiple
             label = random.choice(obs[label_type])
-            vec_label = deque(maxlen=truncate)
-            if add_start:
-                vec_label.append(self.START_IDX)
-            vec_label += self.dict.txt2vec(label)
-            if add_end:
-                vec_label.append(self.END_IDX)
-            new_label = torch.LongTensor(vec_label)
-            if self.use_cuda:
-                new_label = new_label.cuda()
-            obs[label_type + '_vec'] = new_label
+            vec_label = self._vectorize_text(label, self.use_cuda, add_start,
+                                             add_end, truncate, False)
+
+            obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
+
+        if self.rank_candidates and 'label_candidates' in obs:
+            obs['label_candidates_vecs'] = [
+                self._vectorize_text(c, self.use_cuda, add_start, add_end,
+                                     truncate, False)
+                for c in obs['label_candidates']]
+
         return obs
 
     def batchify(self, obs_batch, sort=False,
-                 is_valid=lambda obs: 'text_vec' in obs):
+                 is_valid=lambda obs: 'text_vec' in obs or 'image' in obs):
         """Create a batch of valid observations from an unchecked batch.
 
         A valid observation is one that passes the lambda provided to the
@@ -216,46 +271,51 @@ class TorchAgent(Agent):
 
         :param obs_batch: List of vectorized observations
         :param sort:      Default False, orders the observations by length of
-                          vector. Set to true when using
+                          vectors. Set to true when using
                           torch.nn.utils.rnn.pack_padded_sequence.
+                          Uses the text vectors if available, otherwise uses
+                          the label vectors if available.
         :param is_valid:  Function that checks if 'text_vec' is in the
                           observation, determines if an observation is valid
         """
         if len(obs_batch) == 0:
-            return Batch(None, None, None, None, None, None, None, None)
+            return Batch(None, None, None, None, None, None, None, None, None,
+                         None)
 
         valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
 
         if len(valid_obs) == 0:
-            return Batch(None, None, None, None, None, None, None, None)
+            return Batch(None, None, None, None, None, None, None, None, None,
+                         None)
 
         valid_inds, exs = zip(*valid_obs)
 
-        x_text = [ex['text_vec'] for ex in exs]
-        x_lens = [ex.shape[0] for ex in x_text]
+        # TEXT
+        xs, x_lens = None, None
+        if any('text_vec' in ex for ex in exs):
+            x_text = [ex['text_vec'] for ex in exs]
+            x_lens = [ex.shape[0] for ex in x_text]
 
-        if sort:
-            ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
+            if sort:
+                sort = False  # now we won't sort on labels
+                ind_sorted = sorted(range(len(x_lens)),
+                                    key=lambda k: -x_lens[k])
+                exs = [exs[k] for k in ind_sorted]
+                valid_inds = [valid_inds[k] for k in ind_sorted]
+                x_text = [x_text[k] for k in ind_sorted]
+                x_lens = [x_lens[k] for k in ind_sorted]
 
-            exs = [exs[k] for k in ind_sorted]
-            valid_inds = [valid_inds[k] for k in ind_sorted]
-            x_text = [x_text[k] for k in ind_sorted]
+            xs = torch.LongTensor(len(exs), max(x_lens)).fill_(self.NULL_IDX)
+            if self.use_cuda:
+                xs = xs.cuda()
+            for i, ex in enumerate(x_text):
+                xs[i, :ex.shape[0]] = ex
 
-        padded_xs = torch.LongTensor(len(exs),
-                                     max(x_lens)).fill_(self.NULL_IDX)
-        if self.use_cuda:
-            padded_xs = padded_xs.cuda()
-
-        for i, ex in enumerate(x_text):
-            padded_xs[i, :ex.shape[0]] = ex
-
-        xs = padded_xs
-
-        eval_labels_avail = any(['eval_labels_vec' in ex for ex in exs])
-        labels_avail = any(['labels_vec' in ex for ex in exs])
+        # LABELS
+        eval_labels_avail = any('eval_labels_vec' in ex for ex in exs)
+        labels_avail = any('labels_vec' in ex for ex in exs)
         some_labels_avail = eval_labels_avail or labels_avail
 
-        # set up the target tensors
         ys, y_lens, labels = None, None, None
         if some_labels_avail:
             field = 'labels' if labels_avail else 'eval_labels'
@@ -263,18 +323,37 @@ class TorchAgent(Agent):
             label_vecs = [ex[field + '_vec'] for i, ex in enumerate(exs)]
             labels = [ex[field + '_choice'] for i, ex in enumerate(exs)]
             y_lens = [y.shape[0] for y in label_vecs]
-            padded_ys = torch.LongTensor(len(exs),
-                                         max(y_lens)).fill_(self.NULL_IDX)
+
+            if sort and xs is None:
+                # always sort on xs if we have them, not ys
+                ind_sorted = sorted(range(len(y_lens)),
+                                    key=lambda k: -y_lens[k])
+                exs = [exs[k] for k in ind_sorted]
+                valid_inds = [valid_inds[k] for k in ind_sorted]
+                label_vecs = [label_vecs[k] for k in ind_sorted]
+                labels = [labels[k] for k in ind_sorted]
+                y_lens = [y_lens[k] for k in ind_sorted]
+
+            ys = torch.LongTensor(len(exs), max(y_lens)).fill_(self.NULL_IDX)
             if self.use_cuda:
-                padded_ys = padded_ys.cuda()
+                ys = ys.cuda()
             for i, y in enumerate(label_vecs):
                 if y.shape[0] != 0:
-                    padded_ys[i, :y.shape[0]] = y
-            ys = padded_ys
+                    ys[i, :y.shape[0]] = y
 
-        cands = None
-        # TODO: return candidates
-        return Batch(xs, x_lens, ys, y_lens, labels, valid_inds, cands)
+        # LABEL_CANDIDATES
+        cands, cand_vecs = None, None
+        if any('label_candidates_vecs' in ex for ex in exs):
+            cands = [ex.get('label_candidates', []) for ex in exs]
+            cand_vecs = [ex.get('label_candidates_vecs', []) for ex in exs]
+
+        # IMAGE
+        imgs = None
+        if any('image' in ex for ex in exs):
+            imgs = [ex.get('image', None) for ex in exs]
+
+        return Batch(xs, x_lens, ys, y_lens, labels, valid_inds, cands,
+                     cand_vecs, imgs)
 
     def match_batch(self, batch_reply, valid_inds, output=None):
         """Match sub-batch of predictions to the original batch indices.
@@ -341,9 +420,7 @@ class TorchAgent(Agent):
         allow_reply = True
 
         if 'dialog' not in self.history:
-            self.history['dialog'] = deque(
-                maxlen=self.truncate if self.truncate >= 0 else None
-            )
+            self.history['dialog'] = deque(maxlen=self.truncate)
             self.history['episode_done'] = False
             self.history['labels'] = []
 
@@ -464,7 +541,8 @@ class TorchAgent(Agent):
         is_training = any(['labels' in obs for obs in observations])
 
         # convert the observations into vectors
-        vec_obs = [self.vectorize(obs) for obs in observations]
+        vec_obs = [self.vectorize(obs, truncate=self.truncate)
+                   for obs in observations]
 
         # create a batch from the vectors
         batch = self.batchify(vec_obs)

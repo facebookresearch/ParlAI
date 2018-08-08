@@ -11,7 +11,7 @@ import os
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'Flickr30k')
-    version = None
+    version = '1.0'
 
     if not build_data.built(dpath, version_string=version):
         print('[building image data: ' + dpath + ']')
@@ -21,7 +21,7 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the image data.
-        fname = 'flickr30k_images.tar.gz'
+        fname = 'flickr30k.tgz'
 
         url = 'http://parl.ai/downloads/flickr30k/'
 

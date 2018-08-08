@@ -96,7 +96,6 @@ def rank_candidates(query_rep, cands, length_penalty, dictionary=None):
         res = []
         for i in range(min(100, len(score))):
             res.append(cands[r[i]])
-        print(score[r[0]])
         return res
 
 
@@ -106,8 +105,12 @@ class IrBaselineAgent(Agent):
     def add_cmdline_args(parser):
         DictionaryAgent.add_cmdline_args(parser)
         parser.add_argument(
-            '-lp', '--length_penalty', default=0.5,
+            '-lp', '--length_penalty', type=float, default=0.5,
             help='length penalty for responses')
+        parser.add_argument(
+            '-hsz', '--history_size', type=int, default=1,
+            help='number of utterances from the dialogue history to take use as the query')
+
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
@@ -115,10 +118,22 @@ class IrBaselineAgent(Agent):
         self.length_penalty = float(opt['length_penalty'])
         self.dictionary = DictionaryAgent(opt)
         self.opt = opt
+        self.history = []
+        self.episodeDone = True
 
+    def reset(self):
+        self.observation = None
+        self.history = []
+        self.episodeDone = True
+        
     def observe(self, obs):
         self.observation = obs
         self.dictionary.observe(obs)
+        if self.episodeDone:
+            self.history = []
+        if 'text' in obs:
+            self.history.append(obs.get('text', ''))
+        self.episodeDone = obs.get('episode_done', False)
         return obs
 
     def act(self):
@@ -128,10 +143,14 @@ class IrBaselineAgent(Agent):
         obs = self.observation
         reply = {}
         reply['id'] = self.getID()
-
+        
         # Rank candidates
         if 'label_candidates' in obs and len(obs['label_candidates']) > 0:
-            rep = self.build_query_representation(obs['text'])
+            # text = obs['text']
+            text = ' '.join(
+                self.history[max(0, len(self.history) -
+                                 self.opt.get('history_size', 1)):len(self.history)])
+            rep = self.build_query_representation(text)
             reply['text_candidates'] = (
                 rank_candidates(rep, obs['label_candidates'],
                                 self.length_penalty, self.dictionary))

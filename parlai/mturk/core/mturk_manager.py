@@ -875,9 +875,14 @@ class MTurkManager():
         task_name = '{}-{}'.format(str(uuid.uuid4())[:8], self.opt['task'])
         self.server_task_name = \
             ''.join(e for e in task_name.lower() if e.isalnum() or e == '-')
+        if 'heroku_team' in self.opt:
+            heroku_team = self.opt['heroku_team']
+        else:
+            heroku_team = None
         self.server_url = server_utils.setup_server(self.server_task_name,
                                                     self.task_files_to_copy,
-                                                    self.opt['local'])
+                                                    self.opt['local'],
+                                                    heroku_team)
         shared_utils.print_and_log(logging.INFO, self.server_url)
 
         shared_utils.print_and_log(logging.INFO, "MTurk server setup done.\n",

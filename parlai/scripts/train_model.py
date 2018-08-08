@@ -59,7 +59,7 @@ def setup_args(parser=None):
                        help='Saves the model to model_file.checkpoint after '
                             'every validation (default %(default)s).')
     train.add_argument('-veps', '--validation-every-n-epochs',
-                       type=int, default=-1,
+                       type=float, default=-1,
                        help='Validate every n epochs. Whenever the the best '
                             'validation metric is found, saves the model to '
                             'the model_file path if set.')
