@@ -166,9 +166,11 @@ class TorchAgent(Agent):
         self.random = random.Random(42)  # fixed random seed
         # which row in the batch this instance is
         self.batch_idx = shared and shared.get('batchindex') or 0
+        # can remember as few as zero utterances if desired
         self.histsz = opt['history_size'] if opt['history_size'] >= 0 else None
         # stores up to hist_utt past observations within current dialog
         self.history = deque(maxlen=self.histsz)
+        # truncate == 0 might give funny behavior
         self.truncate = opt['truncate'] if opt['truncate'] >= 0 else None
         self.rank_candidates = opt['rank_candidates']
 
@@ -222,7 +224,7 @@ class TorchAgent(Agent):
         """Check that vector is truncated correctly."""
         if truncate is None:
             return vec
-        if vec.size(0) <= truncate:
+        if len(vec) <= truncate:
             return vec
         else:
             return vec[:truncate]
@@ -251,8 +253,11 @@ class TorchAgent(Agent):
                             splitting on newlines.
         """
         if 'text_vec' in obs:
-            # check truncation of pre-computed vector
+            # check truncation of pre-computed vectors
             obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate)
+            if split_lines and 'memory_vecs' in obs:
+                obs['memory_vecs'] = [self._check_truncate(m, truncate)
+                                      for m in obs['memory_vecs']]
         elif 'text' in obs:
             # convert 'text' into tensor of dictionary indices
             # we don't add start and end to the input

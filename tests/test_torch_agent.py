@@ -16,7 +16,7 @@ class MockDict(Agent):
     null_token = '__null__'
     NULL_IDX = 0
     start_token = '__start__'
-    START_IDX = 1001
+    BEG_IDX = 1001
     end_token = '__end__'
     END_IDX = 1002
     p1_token = '__p1__'
@@ -33,7 +33,7 @@ class MockDict(Agent):
         if key == self.null_token:
             return self.NULL_IDX
         elif key == self.start_token:
-            return self.START_IDX
+            return self.BEG_IDX
         elif key == self.end_token:
             return self.END_IDX
         elif key == self.p1_token:
@@ -91,7 +91,7 @@ class TestTorchAgent(unittest.TestCase):
     def test__vectorize_text(self):
         """Test _vectorize_text and its different options."""
         agent = get_agent()
-        text = 'hello there john'
+        text = "I'm sorry, Dave"
 
         # test add_start and add_end
         vec = agent._vectorize_text(text, add_start=False, add_end=False)
@@ -99,13 +99,13 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(vec.tolist(), [1, 2, 3])
         vec = agent._vectorize_text(text, add_start=True, add_end=False)
         self.assertEqual(len(vec), 4)
-        self.assertEqual(vec.tolist(), [MockDict.START_IDX, 1, 2, 3])
+        self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1, 2, 3])
         vec = agent._vectorize_text(text, add_start=False, add_end=True)
         self.assertEqual(len(vec), 4)
         self.assertEqual(vec.tolist(), [1, 2, 3, MockDict.END_IDX])
         vec = agent._vectorize_text(text, add_start=True, add_end=True)
         self.assertEqual(len(vec), 5)
-        self.assertEqual(vec.tolist(), [MockDict.START_IDX, 1, 2, 3,
+        self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1, 2, 3,
                                         MockDict.END_IDX])
 
         # now do it again with truncation=3
@@ -152,7 +152,7 @@ class TestTorchAgent(unittest.TestCase):
         vec = agent._vectorize_text(text, add_start=True, add_end=False,
                                     truncate=2, truncate_left=False)
         self.assertEqual(len(vec), 2)
-        self.assertEqual(vec.tolist(), [MockDict.START_IDX, 1])
+        self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1])
         vec = agent._vectorize_text(text, add_start=False, add_end=True,
                                     truncate=2, truncate_left=False)
         self.assertEqual(len(vec), 2)
@@ -160,7 +160,7 @@ class TestTorchAgent(unittest.TestCase):
         vec = agent._vectorize_text(text, add_start=True, add_end=True,
                                     truncate=2, truncate_left=False)
         self.assertEqual(len(vec), 2)
-        self.assertEqual(vec.tolist(), [MockDict.START_IDX, 1])
+        self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1])
 
         # now do it again with truncation=3, don't truncate_left
         vec = agent._vectorize_text(text, add_start=False, add_end=False,
@@ -170,7 +170,7 @@ class TestTorchAgent(unittest.TestCase):
         vec = agent._vectorize_text(text, add_start=True, add_end=False,
                                     truncate=3, truncate_left=False)
         self.assertEqual(len(vec), 3)
-        self.assertEqual(vec.tolist(), [MockDict.START_IDX, 1, 2])
+        self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1, 2])
         vec = agent._vectorize_text(text, add_start=False, add_end=True,
                                     truncate=3, truncate_left=False)
         self.assertEqual(len(vec), 3)
@@ -178,88 +178,115 @@ class TestTorchAgent(unittest.TestCase):
         vec = agent._vectorize_text(text, add_start=True, add_end=True,
                                     truncate=3, truncate_left=False)
         self.assertEqual(len(vec), 3)
-        self.assertEqual(vec.tolist(), [MockDict.START_IDX, 1, 2])
+        self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1, 2])
 
     def test__check_truncate(self):
         """Make sure we are truncating when needed."""
         agent = get_agent()
         inp = torch.LongTensor([1, 2, 3])
         self.assertEqual(agent._check_truncate(inp, None).tolist(), [1, 2, 3])
+        self.assertEqual(agent._check_truncate(inp, 4).tolist(), [1, 2, 3])
         self.assertEqual(agent._check_truncate(inp, 3).tolist(), [1, 2, 3])
         self.assertEqual(agent._check_truncate(inp, 2).tolist(), [1, 2])
         self.assertEqual(agent._check_truncate(inp, 1).tolist(), [1])
         self.assertEqual(agent._check_truncate(inp, 0).tolist(), [])
 
     def test_vectorize(self):
+        """Test the vectorization of observations.
+
+        Make sure they do not recompute results, and respect the different
+        param options.
         """
-        """
-        return
+        agent = get_agent()
+        obs_labs = {'text': 'No. Try not.', 'labels': ['Do.', 'Do not.']}
+        obs_elabs = {'text': 'No. Try not.', 'eval_labels': ['Do.', 'Do not.']}
 
-        from parlai.core.params import ParlaiParser
-        parser = ParlaiParser()
-        TorchAgent.add_cmdline_args(parser)
-        parser.set_params(no_cuda=True)
-        opt = parser.parse_args(print_args=False)
-        mdict = MockDict()
+        for obs in (obs_labs, obs_elabs):
+            lab_key = 'labels' if 'labels' in obs else 'eval_labels'
+            lab_vec = lab_key + '_vec'
+            lab_chc = lab_key + '_choice'
 
-        shared = {'opt': opt, 'dict': mdict}
-        agent = TorchAgent(opt, shared)
-        observation = {}
-        observation["text"] = "What does the dog do?"
-        observation["labels"] = ["The dog jumps over the cat."]
+            inp = obs.copy()
+            # test add_start=True, add_end=True
+            out = agent.vectorize(inp, add_start=True, add_end=True)
+            self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
+            # note that label could be either label above
+            self.assertEqual(out[lab_vec][0].item(), MockDict.BEG_IDX)
+            self.assertEqual(out[lab_vec][1].item(), 1)
+            self.assertEqual(out[lab_vec][-1].item(), MockDict.END_IDX)
+            self.assertEqual(out[lab_chc][:2], 'Do')
 
-        # add start and end
-        obs_vec = agent.vectorize(observation, add_start=True, add_end=True)
-        self.assertTrue('text_vec' in obs_vec,
-                        "Field 'text_vec' missing from vectorized observation")
-        self.assertTrue(obs_vec['text_vec'].numpy().tolist() == [7, 8, 9],
-                        "Vectorized text is incorrect.")
-        self.assertTrue('labels_vec' in obs_vec,
-                        "Field 'labels_vec' missing from vectorized observation")
-        self.assertTrue(obs_vec['labels_vec'].numpy().tolist() ==
-                        [mdict.START_IDX, 7, 8, 9, mdict.END_IDX],
-                        "Vectorized label is incorrect.")
-        # no start, add end
-        obs_vec = agent.vectorize(observation, add_start=False, add_end=True)
-        self.assertTrue(obs_vec['labels_vec'].numpy().tolist() ==
-                        [7, 8, 9, mdict.END_IDX],
-                        "Vectorized label is incorrect.")
-        # add start, no end
-        obs_vec = agent.vectorize(observation, add_start=True, add_end=False)
-        self.assertTrue(obs_vec['labels_vec'].numpy().tolist() ==
-                        [mdict.START_IDX, 7, 8, 9],
-                        "Vectorized label is incorrect.")
-        # no start, no end
-        obs_vec = agent.vectorize(observation, add_start=False, add_end=False)
-        self.assertTrue(obs_vec['labels_vec'].numpy().tolist() == [7, 8, 9],
-                        "Vectorized label is incorrect.")
+            # test add_start=True, add_end=False
+            inp = obs.copy()
+            out = agent.vectorize(inp, add_start=True, add_end=False)
+            self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
+            # note that label could be either label above
+            self.assertEqual(out[lab_vec][0].item(), MockDict.BEG_IDX)
+            self.assertNotEqual(out[lab_vec][-1].item(), MockDict.END_IDX)
+            self.assertEqual(out[lab_chc][:2], 'Do')
 
-        observation = {}
-        observation["text"] = "What does the dog do?"
-        observation["eval_labels"] = ["The dog jumps over the cat."]
+            # test add_start=False, add_end=True
+            inp = obs.copy()
+            out = agent.vectorize(inp, add_start=False, add_end=True)
+            self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
+            # note that label could be either label above
+            self.assertNotEqual(out[lab_vec][0].item(), MockDict.BEG_IDX)
+            self.assertEqual(out[lab_vec][-1].item(), MockDict.END_IDX)
+            self.assertEqual(out[lab_chc][:2], 'Do')
 
-        # eval_labels
-        obs_vec = agent.vectorize(observation)
-        self.assertTrue('eval_labels_vec' in obs_vec,
-                        "Field \'eval_labels_vec\' missing from vectorized observation")
-        self.assertTrue(obs_vec['eval_labels_vec'].numpy().tolist() ==
-                        [mdict.START_IDX, 7, 8, 9, mdict.END_IDX],
-                        "Vectorized label is incorrect.")
-        # truncate
-        obs_vec = agent.vectorize(observation, truncate=2)
-        self.assertTrue('eval_labels_vec' in obs_vec,
-                        "Field \'eval_labels_vec\' missing from vectorized observation")
-        self.assertTrue(obs_vec['eval_labels_vec'].numpy().tolist() ==
-                        [mdict.START_IDX, 7],
-                        "Vectorized label is incorrect: " + str(obs_vec['eval_labels_vec']))
+            # test add_start=False, add_end=False
+            inp = obs.copy()
+            out = agent.vectorize(inp, add_start=False, add_end=False)
+            self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
+            # note that label could be either label above
+            self.assertNotEqual(out[lab_vec][0].item(), MockDict.BEG_IDX)
+            self.assertNotEqual(out[lab_vec][-1].item(), MockDict.END_IDX)
+            self.assertEqual(out[lab_chc][:2], 'Do')
 
-        # truncate
-        obs_vec = agent.vectorize(observation, truncate=10)
-        self.assertTrue('eval_labels_vec' in obs_vec,
-                        "Field \'eval_labels_vec\' missing from vectorized observation")
-        self.assertTrue(obs_vec['eval_labels_vec'].numpy().tolist() ==
-                        [mdict.START_IDX, 7, 8, 9, mdict.END_IDX],
-                        "Vectorized label is incorrect.")
+            # test caching of tensors
+            out_again = agent.vectorize(out)
+            # should have cached result from before
+            self.assertIs(out['text_vec'], out_again['text_vec'])
+            self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
+            # next: should truncate cached result
+            prev_vec = out['text_vec']
+            out_again = agent.vectorize(out, truncate=1)
+            self.assertIsNot(prev_vec, out_again['text_vec'])
+            self.assertEqual(out['text_vec'].tolist(), [1])
+
+        # test split_lines
+        obs = {
+            'text': 'Hello.\nMy name is Inogo Montoya.\n'
+                    'You killed my father.\nPrepare to die.',
+        }
+        out = agent.vectorize(obs, split_lines=True)
+        self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])  # last line
+        self.assertEqual([m.tolist() for m in out['memory_vecs']],
+                         [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4]])
+        # check cache
+        out_again = agent.vectorize(obs, split_lines=True)
+        self.assertIs(out['text_vec'], out_again['text_vec'])
+        self.assertIs(out['memory_vecs'], out_again['memory_vecs'])
+        self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
+        self.assertEqual([m.tolist() for m in out['memory_vecs']],
+                         [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4]])
+        # next: should truncate cached result
+        prev_vec = out['text_vec']
+        prev_mem = out['memory_vecs']
+        out_again = agent.vectorize(out, truncate=1, split_lines=True)
+        self.assertIsNot(prev_vec, out_again['text_vec'])
+        self.assertEqual(out['text_vec'].tolist(), [1])
+        self.assertIsNot(prev_mem, out_again['memory_vecs'])
+        for i in range(len(prev_mem)):
+            if len(prev_mem[i]) > 1:
+                # if truncated, different tensor
+                self.assertIsNot(prev_mem[i], out_again['memory_vecs'][i])
+            else:
+                # otherwise should still be the same one
+                self.assertIs(prev_mem[i], out_again['memory_vecs'][i])
+        self.assertEqual([m.tolist() for m in out['memory_vecs']],
+                         [[1], [1], [1]])
+
 
     def test_map_unmap(self):
         return
@@ -299,8 +326,8 @@ class TestTorchAgent(unittest.TestCase):
                         "Incorrectly vectorized text field of obs_batch.")
         self.assertTrue(batch.label_vec is not None, "Missing 'label_vec' field.")
         self.assertTrue(batch.label_vec.numpy().tolist() ==
-                        [[mdict.START_IDX, 7, 8, 9, mdict.END_IDX],
-                         [mdict.START_IDX, 7, 8, 9, mdict.END_IDX]],
+                        [[mdict.BEG_IDX, 7, 8, 9, mdict.END_IDX],
+                         [mdict.BEG_IDX, 7, 8, 9, mdict.END_IDX]],
                         "Incorrectly vectorized text field of obs_batch.")
         self.assertTrue(batch.labels == ["Paint on a canvas.", "Paint on a canvas."],
                         "Doesn't return correct labels: " + str(batch.labels))
@@ -324,8 +351,8 @@ class TestTorchAgent(unittest.TestCase):
 
         self.assertTrue(batch.label_vec is not None, "Missing \'eval_label_vec\' field.")
         self.assertTrue(batch.label_vec.numpy().tolist() ==
-                        [[mdict.START_IDX, 7, 8, 9, mdict.END_IDX],
-                         [mdict.START_IDX, 7, 8, 9, mdict.END_IDX]],
+                        [[mdict.BEG_IDX, 7, 8, 9, mdict.END_IDX],
+                         [mdict.BEG_IDX, 7, 8, 9, mdict.END_IDX]],
                         "Incorrectly vectorized text field of obs_batch.")
 
         batch_reply = [{} for i in range(6)]
