@@ -360,6 +360,7 @@ class TorchAgent(Agent):
                 exs = [exs[k] for k in ind_sorted]
                 valid_inds = [valid_inds[k] for k in ind_sorted]
                 x_text = [x_text[k] for k in ind_sorted]
+                x_lens = [x_lens[k] for k in ind_sorted]
 
             xs = torch.LongTensor(len(exs), max(x_lens)).fill_(self.NULL_IDX)
             for i, ex in enumerate(x_text):
@@ -388,7 +389,8 @@ class TorchAgent(Agent):
                 exs = [exs[k] for k in ind_sorted]
                 valid_inds = [valid_inds[k] for k in ind_sorted]
                 label_vecs = [label_vecs[k] for k in ind_sorted]
-                labels = [label_vecs[k] for k in ind_sorted]
+                labels = [labels[k] for k in ind_sorted]
+                y_lens = [y_lens[k] for k in ind_sorted]
 
             ys = torch.LongTensor(len(exs), max(y_lens)).fill_(self.NULL_IDX)
             for i, y in enumerate(label_vecs):
@@ -515,8 +517,9 @@ class TorchAgent(Agent):
         :param use_label: default true, use the label when available instead of
                           the model's generated response.
         """
-        if use_label and self.observation is not None:
-            # first look for the true label
+        if (use_label and self.observation is not None and
+                not self.observation.get('episode_done', True)):
+            # first look for the true label, if we aren't on a new episode
             label_key = ('labels' if 'labels' in self.observation else
                          'eval_labels' if 'eval_labels' in self.observation
                          else None)
@@ -609,12 +612,8 @@ class TorchAgent(Agent):
         # check if there are any labels available, if so we will train on them
         is_training = any(['labels' in obs for obs in observations])
 
-        # convert the observations into vectors
-        vec_obs = [self.vectorize(obs, truncate=self.truncate)
-                   for obs in observations]
-
         # create a batch from the vectors
-        batch = self.batchify(vec_obs)
+        batch = self.batchify(observations)
 
         if is_training:
             output = self.train_step(batch)

@@ -5,9 +5,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 import unittest
-from functools import lru_cache
 from parlai.core.agents import Agent
-from parlai.core.torch_agent import TorchAgent, Batch, Output
+from parlai.core.torch_agent import TorchAgent, Output
 
 
 class MockDict(Agent):
@@ -58,8 +57,15 @@ class TorchAgent(TorchAgent):
         """Replace normal dictionary class with mock one."""
         return MockDict
 
+    def train_step(self, batch):
+        """Return confirmation of training."""
+        return Output([f'Training {i}!' for i in range(len(batch.text_vec))])
 
-@lru_cache(maxsize=32)
+    def eval_step(self, batch):
+        """Return confirmation of evaluation."""
+        return Output([f'Evaluating {i}!' for i in range(len(batch.text_vec))])
+
+
 def get_agent(**kwargs):
     """Return opt-initialized agent.
 
@@ -287,122 +293,436 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual([m.tolist() for m in out['memory_vecs']],
                          [[1], [1], [1]])
 
+    def test_batchify(self):
+        """Make sure the batchify function sets up the right fields."""
+        agent = get_agent(rank_candidates=True)
+        obs_labs = [
+            {'text': 'It\'s only a flesh wound.',
+             'labels': ['Yield!']},
+            {'text': 'The needs of the many outweigh...',
+             'labels': ['The needs of the few.']},
+            {'text': 'Hello there.',
+             'labels': ['General Kenobi.']},
+        ]
+        obs_elabs = [
+            {'text': 'It\'s only a flesh wound.',
+             'eval_labels': ['Yield!']},
+            {'text': 'The needs of the many outweigh...',
+             'eval_labels': ['The needs of the few.']},
+            {'text': 'Hello there.',
+             'eval_labels': ['General Kenobi.']},
+        ]
+        for obs_batch in (obs_labs, obs_elabs):
+            lab_key = 'labels' if 'labels' in obs_batch[0] else 'eval_labels'
 
-    def test_map_unmap(self):
-        return
-        try:
-            from parlai.core.torch_agent import TorchAgent, Output
-        except ImportError as e:
-            if 'pytorch' in e.msg:
-                print('Skipping TestTorchAgent.test_map_unmap, no pytorch.')
-                return
+            # nothing has been vectorized yet so should be empty
+            batch = agent.batchify(obs_batch)
+            self.assertIsNone(batch.text_vec)
+            self.assertIsNone(batch.text_lengths)
+            self.assertIsNone(batch.label_vec)
+            self.assertIsNone(batch.label_lengths)
+            self.assertIsNone(batch.labels)
+            self.assertIsNone(batch.valid_indices)
+            self.assertIsNone(batch.candidates)
+            self.assertIsNone(batch.candidate_vecs)
+            self.assertIsNone(batch.image)
+            self.assertIsNone(batch.memory_vecs)
 
-        observations = []
-        observations.append({"text": "What is a painting?",
-                             "labels": ["Paint on a canvas."]})
-        observations.append({})
-        observations.append({})
-        observations.append({"text": "What is a painting?",
-                             "labels": ["Paint on a canvas."]})
-        observations.append({})
-        observations.append({})
+            obs_vecs = [agent.vectorize(o, add_start=False, add_end=False)
+                        for o in obs_batch]
 
-        from parlai.core.params import ParlaiParser
-        parser = ParlaiParser()
-        TorchAgent.add_cmdline_args(parser)
-        parser.set_params(no_cuda=True)
-        opt = parser.parse_args(print_args=False)
-        mdict = MockDict()
+            # is_valid should map to nothing
+            batch = agent.batchify(obs_batch, is_valid=lambda x: False)
+            self.assertIsNone(batch.text_vec)
+            self.assertIsNone(batch.text_lengths)
+            self.assertIsNone(batch.label_vec)
+            self.assertIsNone(batch.label_lengths)
+            self.assertIsNone(batch.labels)
+            self.assertIsNone(batch.valid_indices)
+            self.assertIsNone(batch.candidates)
+            self.assertIsNone(batch.candidate_vecs)
+            self.assertIsNone(batch.image)
+            self.assertIsNone(batch.memory_vecs)
 
-        shared = {'opt': opt, 'dict': mdict}
-        agent = TorchAgent(opt, shared)
+            batch = agent.batchify(obs_vecs)
+            # which fields were filled vs should be empty?
+            self.assertIsNotNone(batch.text_vec)
+            self.assertIsNotNone(batch.text_lengths)
+            self.assertIsNotNone(batch.label_vec)
+            self.assertIsNotNone(batch.label_lengths)
+            self.assertIsNotNone(batch.labels)
+            self.assertIsNotNone(batch.valid_indices)
+            self.assertIsNone(batch.candidates)
+            self.assertIsNone(batch.candidate_vecs)
+            self.assertIsNone(batch.image)
+            self.assertIsNone(batch.memory_vecs)
 
-        vec_observations = [agent.vectorize(obs) for obs in observations]
+            # contents of certain fields:
+            self.assertEqual(batch.text_vec.tolist(),
+                             [[1, 2, 3, 4, 5, 0],
+                              [1, 2, 3, 4, 5, 6],
+                              [1, 2, 0, 0, 0, 0]])
+            self.assertEqual(batch.text_lengths, [5, 6, 2])
+            self.assertEqual(batch.label_vec.tolist(),
+                             [[1, 0, 0, 0, 0],
+                              [1, 2, 3, 4, 5],
+                              [1, 2, 0, 0, 0]])
+            self.assertEqual(batch.label_lengths, [1, 5, 2])
+            self.assertEqual(batch.labels, [o[lab_key][0] for o in obs_batch])
+            self.assertEqual(list(batch.valid_indices), [0, 1, 2])
 
-        batch = agent.batchify(vec_observations)
+            # now sort the batch, make sure fields are in sorted order
+            batch = agent.batchify(obs_vecs, sort=True)
+            self.assertEqual(batch.text_vec.tolist(),
+                             [[1, 2, 3, 4, 5, 6],
+                              [1, 2, 3, 4, 5, 0],
+                              [1, 2, 0, 0, 0, 0]])
+            self.assertEqual(batch.text_lengths, [6, 5, 2])
+            self.assertEqual(batch.label_vec.tolist(),
+                             [[1, 2, 3, 4, 5],
+                              [1, 0, 0, 0, 0],
+                              [1, 2, 0, 0, 0]])
+            self.assertEqual(batch.label_lengths, [5, 1, 2])
+            labs = [o[lab_key][0] for o in obs_batch]
+            self.assertEqual(batch.labels, [labs[i] for i in [1, 0, 2]])
+            self.assertEqual(list(batch.valid_indices), [1, 0, 2])
 
-        self.assertTrue(batch.text_vec is not None, "Missing 'text_vecs' field.")
-        self.assertTrue(batch.text_vec.numpy().tolist() == [[7, 8, 9], [7, 8, 9]],
-                        "Incorrectly vectorized text field of obs_batch.")
-        self.assertTrue(batch.label_vec is not None, "Missing 'label_vec' field.")
-        self.assertTrue(batch.label_vec.numpy().tolist() ==
-                        [[mdict.BEG_IDX, 7, 8, 9, mdict.END_IDX],
-                         [mdict.BEG_IDX, 7, 8, 9, mdict.END_IDX]],
-                        "Incorrectly vectorized text field of obs_batch.")
-        self.assertTrue(batch.labels == ["Paint on a canvas.", "Paint on a canvas."],
-                        "Doesn't return correct labels: " + str(batch.labels))
-        true_i = [0, 3]
-        self.assertTrue(all(batch.valid_indices[i] == true_i[i] for i in range(2)),
-                        "Returns incorrect indices of valid observations.")
+            # now sort just on ys
+            new_vecs = [vecs.copy() for vecs in obs_vecs]
+            for vec in new_vecs:
+                vec.pop('text')
+                vec.pop('text_vec')
+            batch = agent.batchify(new_vecs, sort=True,
+                                   is_valid=(lambda obs: 'labels_vec' in obs or
+                                             'eval_labels_vec' in obs))
+            self.assertIsNone(batch.text_vec)
+            self.assertIsNone(batch.text_lengths)
+            self.assertIsNotNone(batch.label_vec)
+            self.assertIsNotNone(batch.label_lengths)
+            self.assertEqual(batch.label_vec.tolist(),
+                             [[1, 2, 3, 4, 5],
+                              [1, 2, 0, 0, 0],
+                              [1, 0, 0, 0, 0]])
+            self.assertEqual(batch.label_lengths, [5, 2, 1])
+            labs = [o[lab_key][0] for o in new_vecs]
+            self.assertEqual(batch.labels, [labs[i] for i in [1, 2, 0]])
+            self.assertEqual(list(batch.valid_indices), [1, 2, 0])
 
-        observations = []
-        observations.append({"text": "What is a painting?",
-                             "eval_labels": ["Paint on a canvas."]})
-        observations.append({})
-        observations.append({})
-        observations.append({"text": "What is a painting?",
-                             "eval_labels": ["Paint on a canvas."]})
-        observations.append({})
-        observations.append({})
+            # test lambda
+            batch = agent.batchify(obs_vecs, is_valid=(
+                lambda obs: 'text_vec' in obs and len(obs['text_vec']) < 3))
+            self.assertEqual(batch.text_vec.tolist(), [[1, 2]])
+            self.assertEqual(batch.text_lengths, [2])
+            self.assertEqual(batch.label_vec.tolist(), [[1, 2]])
+            self.assertEqual(batch.label_lengths, [2])
+            self.assertEqual(batch.labels, obs_batch[2][lab_key])
+            self.assertEqual(list(batch.valid_indices), [2])
 
-        vec_observations = [agent.vectorize(obs) for obs in observations]
+        obs_cands = [
+            agent.vectorize({'label_candidates': ['A', 'B', 'C']}),
+            agent.vectorize({'label_candidates': ['1', '2', '5', '3', 'Sir']}),
+            agent.vectorize({'label_candidates': ['Do', 'Re', 'Mi']}),
+            agent.vectorize({'label_candidates': ['Fa', 'So', 'La', 'Ti']}),
+        ]
+        batch = agent.batchify(
+            obs_cands, is_valid=lambda obs: 'label_candidates_vecs' in obs)
+        self.assertTrue(agent.rank_candidates, 'Agent not set up to rank.')
+        self.assertIsNone(batch.text_vec)
+        self.assertIsNone(batch.text_lengths)
+        self.assertIsNone(batch.label_vec)
+        self.assertIsNone(batch.label_lengths)
+        self.assertIsNone(batch.labels)
+        self.assertIsNotNone(batch.valid_indices)
+        self.assertIsNotNone(batch.candidates)
+        self.assertIsNotNone(batch.candidate_vecs)
+        self.assertEqual(list(batch.valid_indices), [0, 1, 2, 3])
+        self.assertEqual(batch.candidates,
+                         [o['label_candidates'] for o in obs_cands])
+        self.assertEqual(len(batch.candidate_vecs), len(obs_cands))
+        for i, cs in enumerate(batch.candidate_vecs):
+            self.assertEqual(len(cs), len(obs_cands[i]['label_candidates']))
 
-        batch = agent.batchify(vec_observations)
+    def test_match_batch(self):
+        """Make sure predictions are correctly aligned when available."""
+        agent = get_agent()
 
-        self.assertTrue(batch.label_vec is not None, "Missing \'eval_label_vec\' field.")
-        self.assertTrue(batch.label_vec.numpy().tolist() ==
-                        [[mdict.BEG_IDX, 7, 8, 9, mdict.END_IDX],
-                         [mdict.BEG_IDX, 7, 8, 9, mdict.END_IDX]],
-                        "Incorrectly vectorized text field of obs_batch.")
+        # first try empty outputs
+        reply = agent.match_batch([{}, {}, {}], [0, 1, 2], Output())
+        self.assertEqual([{}, {}, {}], reply)
+        reply = agent.match_batch([{}, {}, {}], [0, 1, 2], None)
+        self.assertEqual([{}, {}, {}], reply)
 
-        batch_reply = [{} for i in range(6)]
-        predictions = ["Oil on a canvas.", "Oil on a canvas."]
-        output = Output(predictions, None)
-        expected_unmapped = batch_reply.copy()
-        expected_unmapped[0]["text"] = "Oil on a canvas."
-        expected_unmapped[3]["text"] = "Oil on a canvas."
-        self.assertTrue(agent.match_batch(batch_reply, batch.valid_indices, output) == expected_unmapped,
-                        "Unmapped predictions do not match expected results.")
+        # try text in order
+        reply = agent.match_batch([{}, {}, {}], [0, 1, 2],
+                                  Output(['E.T.', 'Phone', 'Home']))
+        self.assertEqual(
+            [{'text': 'E.T.'}, {'text': 'Phone'}, {'text': 'Home'}], reply)
 
-    def test_maintain_dialog_history(self):
-        return
-        try:
-            from parlai.core.torch_agent import TorchAgent
-        except ImportError as e:
-            if 'pytorch' in e.msg:
-                print('Skipping TestTorchAgent.test_maintain_dialog_history, no pytorch.')
-                return
+        # try text out of order
+        reply = agent.match_batch([{}, {}, {}], [2, 0, 1],
+                                  Output(['Home', 'E.T.', 'Phone']))
+        self.assertEqual(
+            [{'text': 'E.T.'}, {'text': 'Phone'}, {'text': 'Home'}], reply)
 
-        from parlai.core.params import ParlaiParser
-        parser = ParlaiParser()
-        TorchAgent.add_cmdline_args(parser)
-        parser.set_params(no_cuda=True, truncate=5)
-        opt = parser.parse_args(print_args=False)
-        mdict = MockDict()
+        # try text_candidates in order
+        reply = agent.match_batch([{}, {}], [0, 1],
+                                  Output(None, [['More human than human.',
+                                                 'Less human than human'],
+                                                ['Just walk into Mordor',
+                                                 'Just QWOP into Mordor.']]))
+        self.assertEqual(reply[0]['text_candidates'],
+                         ['More human than human.', 'Less human than human'])
+        self.assertEqual(reply[1]['text_candidates'],
+                         ['Just walk into Mordor', 'Just QWOP into Mordor.'])
+        # try text_candidates out of order
+        reply = agent.match_batch([{}, {}], [1, 0],
+                                  Output(None, [['More human than human.',
+                                                 'Less human than human'],
+                                                ['Just walk into Mordor',
+                                                 'Just QWOP into Mordor.']]))
+        self.assertEqual(reply[0]['text_candidates'],
+                         ['Just walk into Mordor', 'Just QWOP into Mordor.'])
+        self.assertEqual(reply[1]['text_candidates'],
+                         ['More human than human.', 'Less human than human'])
 
-        shared = {'opt': opt, 'dict': mdict}
-        agent = TorchAgent(opt, shared)
+        # try both text and text_candidates in order
+        reply = agent.match_batch(
+            [{}, {}], [0, 1],
+            Output(['You shall be avenged...', 'Man creates dinosaurs...'],
+                   [['By Grabthar’s hammer.', 'By the suns of Worvan.'],
+                    ['Dinosaurs eat man.', 'Woman inherits the earth.']]))
+        self.assertEqual(reply[0]['text'], 'You shall be avenged...')
+        self.assertEqual(reply[0]['text_candidates'],
+                         ['By Grabthar’s hammer.', 'By the suns of Worvan.'])
+        self.assertEqual(reply[1]['text'], 'Man creates dinosaurs...')
+        self.assertEqual(reply[1]['text_candidates'],
+                         ['Dinosaurs eat man.', 'Woman inherits the earth.'])
 
-        observation = {"text": "What is a painting?",
-                       "labels": ["Paint on a canvas."],
-                       "episode_done": False}
+        # try both text and text_candidates out of order
+        reply = agent.match_batch(
+            [{}, {}], [1, 0],
+            Output(['You shall be avenged...', 'Man creates dinosaurs...'],
+                   [['By Grabthar’s hammer.', 'By the suns of Worvan.'],
+                    ['Dinosaurs eat man.', 'Woman inherits the earth.']]))
+        self.assertEqual(reply[0]['text'], 'Man creates dinosaurs...')
+        self.assertEqual(reply[0]['text_candidates'],
+                         ['Dinosaurs eat man.', 'Woman inherits the earth.'])
+        self.assertEqual(reply[1]['text'], 'You shall be avenged...')
+        self.assertEqual(reply[1]['text_candidates'],
+                         ['By Grabthar’s hammer.', 'By the suns of Worvan.'])
 
-        agent.maintain_dialog_history(observation)
+    def test__add_person_tokens(self):
+        """Make sure person tokens are added to the write place in text."""
+        agent = get_agent()
+        text = (
+            "I've seen things you people wouldn't believe.\n"
+            "Attack ships on fire off the shoulder of Orion.\n"
+            "I watched C-beams glitter in the dark near the Tannhauser gate.\n"
+            "All those moments will be lost in time, like tears in rain.")
+        prefix = 'PRE '
+        out = agent._add_person_tokens(text, prefix, add_after_newln=False)
+        self.assertEqual(out, prefix + text)
+        out = agent._add_person_tokens(text, prefix, add_after_newln=True)
+        idx = text.rfind('\n') + 1
+        self.assertEqual(out, text[:idx] + prefix + text[idx:])
 
-        self.assertTrue('dialog' in agent.history, "Failed initializing self.history.")
-        self.assertTrue('episode_done' in agent.history, "Failed initializing self.history.")
-        self.assertTrue('labels' in agent.history, "Failed initializing self.history.")
-        self.assertTrue(list(agent.history['dialog']) == [7, 8, 9],
-                        "Failed adding vectorized text to dialog.")
-        self.assertTrue(not agent.history['episode_done'],
-                        "Failed to properly store episode_done field.")
-        self.assertTrue(agent.history['labels'] == observation['labels'],
-                        "Failed saving labels.")
+    def test_get_dialog_history(self):
+        """Test different dialog history settings."""
+        # try with unlimited history
+        agent = get_agent(history_size=-1)
+        obs = {'text': 'I am Groot.', 'labels': ['I am Groot?'],
+               'episode_done': False}
 
-        observation['text_vec'] = agent.maintain_dialog_history(observation)
-        print(agent.history['dialog'])
-        self.assertTrue(list(agent.history['dialog']) == [8, 9, 7, 8, 9],
-                        "Failed adding vectorized text to dialog.")
+        # first exchange
+        out = agent.get_dialog_history(obs.copy())
+        self.assertEqual(out['text'], 'I am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+        self.assertTrue('text_vec' in out, 'Text should be vectorized.')
+
+        # second exchange, no reply
+        out = agent.get_dialog_history(obs.copy())
+        self.assertEqual(out['text'], 'I am Groot.\nI am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+        # include reply and set episode_done to clear history after this one
+        end_obs = obs.copy()
+        end_obs['episode_done'] = True
+        out = agent.get_dialog_history(end_obs, reply='I am Groot?')
+        self.assertEqual(out['text'],
+                         'I am Groot.\nI am Groot.\nI am Groot?\nI am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+        # because of episode_done, should be same as first exchange
+        out = agent.get_dialog_history(obs.copy())
+        self.assertEqual(out['text'], 'I am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+        # now try with history size = 1
+        agent = get_agent(history_size=1)
+
+        # first exchange
+        out = agent.get_dialog_history(obs.copy())
+        self.assertEqual(out['text'], 'I am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+        # second exchange should change nothing
+        out = agent.get_dialog_history(obs.copy())
+        self.assertEqual(out['text'], 'I am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+        # third exchange with reply should change nothing
+        out = agent.get_dialog_history(obs.copy())
+        self.assertEqual(out['text'], 'I am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+        # now try with history size = 2
+        agent = get_agent(history_size=2)
+
+        # first exchange
+        out = agent.get_dialog_history(obs.copy())
+        self.assertEqual(out['text'], 'I am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+        # second exchange with reply should contain reply
+        out = agent.get_dialog_history(obs.copy(), reply='I am Groot?')
+        self.assertEqual(out['text'], 'I am Groot?\nI am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+        # third exchange without reply should have two inputs
+        out = agent.get_dialog_history(obs.copy())
+        self.assertEqual(out['text'], 'I am Groot.\nI am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+        # now try with history size = 3
+        agent = get_agent(history_size=3)
+
+        # first exchange
+        out = agent.get_dialog_history(obs.copy())
+        self.assertEqual(out['text'], 'I am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+        # second exchange with reply should contain reply and input
+        out = agent.get_dialog_history(obs.copy(), reply='I am Groot?')
+        self.assertEqual(out['text'], 'I am Groot.\nI am Groot?\nI am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+        # now test add_person_tokens
+        agent.reset()  # clear out old history
+        out = agent.get_dialog_history(obs.copy(), add_person_tokens=True)
+        self.assertEqual(out['text'], f'{agent.P1_TOKEN} I am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')  # no change
+
+        # second exchange, history should still contain the tokens
+        out = agent.get_dialog_history(obs.copy(), reply='I am Groot?',
+                                       add_person_tokens=True)
+        self.assertEqual(out['text'],
+                         f'{agent.P1_TOKEN} I am Groot.\n'
+                         f'{agent.P2_TOKEN} I am Groot?\n'
+                         f'{agent.P1_TOKEN} I am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+        # now add add_p1_after_newln
+        agent.reset()  # clear out old history
+        ctx_obs = obs.copy()  # context then utterance in this text field
+        ctx_obs['text'] = 'Groot is Groot.\nI am Groot.'
+        out = agent.get_dialog_history(ctx_obs.copy(), add_person_tokens=True,
+                                       add_p1_after_newln=True)
+        self.assertEqual(out['text'],
+                         f'Groot is Groot.\n{agent.P1_TOKEN} I am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')  # no change
+
+        # second exchange, history should still contain context text
+        out = agent.get_dialog_history(obs.copy(), reply='I am Groot?',
+                                       add_person_tokens=True,
+                                       add_p1_after_newln=True)
+        self.assertEqual(out['text'],
+                         'Groot is Groot.\n'
+                         f'{agent.P1_TOKEN} I am Groot.\n'
+                         f'{agent.P2_TOKEN} I am Groot?\n'
+                         f'{agent.P1_TOKEN} I am Groot.')
+        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+    def test_last_reply(self):
+        """Make sure last reply returns expected values."""
+        agent = get_agent()
+        # nothing to retrieve
+        self.assertIsNone(agent.last_reply())
+        # set agent's generated replies
+        agent.replies = {
+            'batch_reply': [{'text': 'It\'s okay! I\'m a leaf on the wind.'}]
+        }
+        # now agent should remember what it said
+        self.assertEqual(agent.last_reply(),
+                         'It\'s okay! I\'m a leaf on the wind.')
+        # now set true observation
+        agent.observation = {
+            'text': 'Will that work?',
+            'labels': ['I\'m a leaf on the wind. Watch how I soar.'],
+            'episode_done': False,
+        }
+        # now agent should remember true label
+        self.assertEqual(agent.last_reply(),
+                         'I\'m a leaf on the wind. Watch how I soar.')
+        # but not if we tell it not to
+        self.assertEqual(agent.last_reply(use_label=False),
+                         'It\'s okay! I\'m a leaf on the wind.')
+
+    def test_observe(self):
+        """Make sure agent stores and returns observation."""
+        agent = get_agent()
+        obs = {
+            'text': 'I\'ll be back.',
+            'labels': ['I\'m back.'],
+            'episode_done': True
+        }
+        out = agent.observe(obs.copy())
+        self.assertIsNotNone(out)
+        self.assertIsNotNone(agent.observation)
+        self.assertEqual(out['text'], 'I\'ll be back.')
+        # episode was done so shouldn't remember history
+        out = agent.observe(obs.copy())
+        self.assertEqual(out['text'], 'I\'ll be back.')
+
+        # now try with episode not done
+        obs['episode_done'] = False
+        out = agent.observe(obs.copy())
+        self.assertIsNotNone(out)
+        self.assertIsNotNone(agent.observation)
+        self.assertEqual(out['text'], 'I\'ll be back.')
+        # should remember history
+        out = agent.observe(obs.copy())
+        self.assertEqual(out['text'],
+                         'I\'ll be back.\nI\'m back.\nI\'ll be back.')
+
+    def test_batch_act(self):
+        """Make sure batch act calls the right step."""
+        agent = get_agent()
+
+        obs_labs = [
+            {'text': 'It\'s only a flesh wound.',
+             'labels': ['Yield!']},
+            {'text': 'The needs of the many outweigh...',
+             'labels': ['The needs of the few.']},
+            {'text': 'Hello there.',
+             'labels': ['General Kenobi.']},
+        ]
+        obs_labs = [agent.vectorize(o) for o in obs_labs]
+        reply = agent.batch_act(obs_labs)
+        for i in range(len(obs_labs)):
+            self.assertEqual(reply[i]['text'], f'Training {i}!')
+
+        obs_elabs = [
+            {'text': 'It\'s only a flesh wound.',
+             'eval_labels': ['Yield!']},
+            {'text': 'The needs of the many outweigh...',
+             'eval_labels': ['The needs of the few.']},
+            {'text': 'Hello there.',
+             'eval_labels': ['General Kenobi.']},
+        ]
+        obs_elabs = [agent.vectorize(o) for o in obs_elabs]
+        reply = agent.batch_act(obs_elabs)
+        for i in range(len(obs_elabs)):
+            self.assertEqual(reply[i]['text'], f'Evaluating {i}!')
 
 
 if __name__ == '__main__':
