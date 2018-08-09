@@ -158,8 +158,8 @@ class TorchAgent(Agent):
             torch.cuda.device(opt['gpu'])
 
         # now set up any fields that all instances may need
+        self.EMPTY = torch.Tensor([])
         self.NULL_IDX = self.dict[self.dict.null_token]
-        self.NULL = torch.Tensor([self.NULL_IDX])
         self.END_IDX = self.dict[self.dict.end_token]
         self.START_IDX = self.dict[self.dict.start_token]
 
@@ -350,7 +350,7 @@ class TorchAgent(Agent):
         # TEXT
         xs, x_lens = None, None
         if any('text_vec' in ex for ex in exs):
-            x_text = [ex.get('text_vec', self.NULL) for ex in exs]
+            x_text = [ex.get('text_vec', self.EMPTY) for ex in exs]
             x_lens = [x.shape[0] for x in x_text]
 
             if sort:
@@ -377,7 +377,7 @@ class TorchAgent(Agent):
         if some_labels_avail:
             field = 'labels' if labels_avail else 'eval_labels'
 
-            label_vecs = [ex.get(field + '_vec', self.NULL) for ex in exs]
+            label_vecs = [ex.get(field + '_vec', self.EMPTY) for ex in exs]
             labels = [ex.get(field + '_choice') for ex in exs]
             y_lens = [y.shape[0] for y in label_vecs]
 
