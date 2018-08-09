@@ -524,7 +524,7 @@ class ParlaiParser(argparse.ArgumentParser):
             }
             namespace = argparse.Namespace(**group_dict)
             count = 0
-            for key in namespace.__dict__:
+            for key in sorted(namespace.__dict__):
                 if key in values:
                     if count == 0:
                         print('[ ' + group.title + ': ] ')
