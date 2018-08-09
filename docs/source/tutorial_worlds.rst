@@ -367,7 +367,7 @@ datasets with millions of text examples, or datasets with thousands of images.
     b) ``__len__(self)``. returns the length of the dataset.
 
 2. ``ParlAIDataset`` - when ``stream`` is not in the ``--datatype``, ParlAI defaults
-to this ``Dataset``, which provides random access into the dataset. It's ``__getitem__``
+to this ``Dataset``, which provides random access into the dataset. Its ``__getitem__``
 and ``__len__`` methods are functionally the same as the ``StreamDataset``.
 
 3. ``default_collate`` - this function simply returns a list of ``(index, ep)``
@@ -520,7 +520,7 @@ way to the standard ParlAI multitasking. There are three simple ways of doing th
 write ``-pyt <task1>,<task2>,...`` on the command line. For example, you could
 run the following command to multitask on SQuAD and bAbI::
 
-  python examples/train_model.py -pyt squad,babi:task1:1 ...
+  python examples/train_model.py -pyt squad,babi:task1k:1 ...
 
 2. If you only have ``Datasets`` written for the specified tasks, simply write
 ``-pytd <dataset1>,<dataset2>,..`` on the command line. For example, you could
