@@ -377,9 +377,8 @@ class TorchAgent(Agent):
         if some_labels_avail:
             field = 'labels' if labels_avail else 'eval_labels'
 
-            label_vecs = [ex.get(field + '_vec', self.NULL)
-                          for i, ex in enumerate(exs)]
-            labels = [ex.get(field + '_choice') for i, ex in enumerate(exs)]
+            label_vecs = [ex.get(field + '_vec', self.NULL) for ex in exs]
+            labels = [ex.get(field + '_choice') for ex in exs]
             y_lens = [y.shape[0] for y in label_vecs]
 
             if sort and xs is None:
@@ -415,8 +414,10 @@ class TorchAgent(Agent):
         if any('memory_vecs' in ex for ex in exs):
             mems = [ex.get('memory_vecs', None) for ex in exs]
 
-        return Batch(xs, x_lens, ys, y_lens, labels, valid_inds, cands,
-                     cand_vecs, imgs, mems)
+        return Batch(text_vec=xs, text_lengths=x_lens, label_vec=ys,
+                     label_lengths=y_lens, labels=labels,
+                     valid_indices=valid_inds, candidates=cands,
+                     candidate_vecs=cand_vecs, image=imgs, memory_vecs=mems)
 
     def match_batch(self, batch_reply, valid_inds, output=None):
         """Match sub-batch of predictions to the original batch indices.
