@@ -314,10 +314,12 @@ class TorchAgent(Agent):
     def _padded_tensor(self, items):
         """Create a right-padded matrix from an uneven list of lists.
 
-        :param list[list[int]] items: List of items
-        :param bool sort: If True, orders by the length
-        :rtype: (Tensor[int64], list[int])
-        :return: (padded, lengths)
+        Matrix will be cuda'd automatically if this torch agent uses cuda.
+
+        :param list[iter[int]] items: List of items
+        :param bool sort:             If True, orders by the length
+        :return:                      (padded, lengths) tuple
+        :rtype:                       (Tensor[int64], list[int])
         """
         n = len(items)
         lens = [len(item) for item in items]
@@ -332,18 +334,17 @@ class TorchAgent(Agent):
     def _argsort(self, keys, *lists, descending=False):
         """Reorder each list in lists by the (descending) sorted order of keys.
 
-        :param iter keys: sort indices
-        :param list[list] lists: lists to reordered by keys's order
-        :param bool descending: Use descending order if true
-        :return list[list]]: The reordered items
+        :param iter keys:        Keys to order by
+        :param list[list] lists: Lists to reordered by keys's order.
+                                 Correctly handles lists and 1-D tensors.
+        :param bool descending:  Use descending order if true
+        :return:                 The reordered items
         """
         ind_sorted = sorted(range(len(keys)), key=lambda k: keys[k])
         if descending:
             ind_sorted = list(reversed(ind_sorted))
         output = []
         for lst in lists:
-            if isinstance(lst, set):
-                lst = list(lst)
             if isinstance(lst, torch.Tensor):
                 output.append(lst[ind_sorted])
             else:
