@@ -112,6 +112,8 @@ class DefaultTeacher(FixedDialogTeacher):
             # another instance was set up already, just reference its data
             self.data = shared['data']
             self.image_loader = shared['image_loader']
+            if 'cands' in shared:
+                self.cands = shared['cands']
         else:
             # need to set up data from scratch
             self._setup_data(data_path)
@@ -176,6 +178,8 @@ class DefaultTeacher(FixedDialogTeacher):
         shared = super().share()
         shared['data'] = self.data
         shared['image_loader'] = self.image_loader
+        if hasattr(self, 'cands'):
+            shared['cands'] = self.cands
         return shared
 
     def _setup_data(self, data_path):
