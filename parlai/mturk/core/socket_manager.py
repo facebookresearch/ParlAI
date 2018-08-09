@@ -211,6 +211,8 @@ class SocketManager():
         self.packet_map = {}
         self.alive = False
         self.is_shutdown = False
+        self.send_lock = threading.Condition()
+        self.packet_map_lock = threading.Condition()
 
         # setup the socket
         self._setup_socket()
@@ -220,21 +222,32 @@ class SocketManager():
         return '[World_{}]'.format(self.task_group_id)
 
     def _safe_send(self, data, force=False):
-        if not self.alive and not force:
-            # Try to wait a half second to send a packet
-            timeout = 0.5
-            while timeout > 0 and not self.alive:
-                time.sleep(0.1)
-                timeout -= 0.1
-            if not self.alive:
-                # don't try to send a packet if we're still dead
+        with self.send_lock:
+            if not self.alive and not force:
+                # Try to wait a half second to send a packet
+                timeout = 0.5
+                while timeout > 0 and not self.alive:
+                    time.sleep(0.1)
+                    timeout -= 0.1
+                if not self.alive:
+                    # don't try to send a packet if we're still dead
+                    return False
+            try:
+                self.ws.send(data)
+            except websocket.WebSocketConnectionClosedException:
+                # The channel died mid-send, wait for it to come back up
                 return False
-        try:
-            self.ws.send(data)
-        except websocket.WebSocketConnectionClosedException:
-            # The channel died mid-send, wait for it to come back up
-            return False
-        return True
+            except BrokenPipeError:  # noqa F821 we don't support p2
+                # The channel died mid-send, wait for it to come back up
+                return False
+            except Exception as e:
+                shared_utils.print_and_log(
+                    logging.WARN,
+                    'Unexpected socket error occured: {}'.format(repr(e)),
+                    should_print=True
+                )
+                return False
+            return True
 
     def _ensure_closed(self):
         try:
@@ -407,23 +420,24 @@ class SocketManager():
             packet_type = packet.type
             connection_id = packet.get_sender_connection_id()
             if packet_type == Packet.TYPE_ACK:
-                if packet_id not in self.packet_map:
-                    # Don't do anything when acking a packet we don't have
-                    return
-                # Acknowledgements should mark a packet as acknowledged
-                shared_utils.print_and_log(
-                    logging.DEBUG,
-                    'On new ack: {}'.format(args)
-                )
-                self.packet_map[packet_id].status = Packet.STATUS_ACK
-                # If the packet sender wanted to do something on acknowledge
-                if self.packet_map[packet_id].ack_func:
-                    self.packet_map[packet_id].ack_func(packet)
-                # clear the stored packet data for memory reasons
-                try:
-                    self.packet_map[packet_id].data = None
-                except Exception:
-                    pass  # state already reduced, perhaps by ack_func
+                with self.packet_map_lock:
+                    if packet_id not in self.packet_map:
+                        # Don't do anything when acking a packet we don't have
+                        return
+                    # Acknowledgements should mark a packet as acknowledged
+                    shared_utils.print_and_log(
+                        logging.DEBUG,
+                        'On new ack: {}'.format(args)
+                    )
+                    self.packet_map[packet_id].status = Packet.STATUS_ACK
+                    # If the packet sender wanted to do something on ack
+                    if self.packet_map[packet_id].ack_func:
+                        self.packet_map[packet_id].ack_func(packet)
+                    # clear the stored packet data for memory reasons
+                    try:
+                        self.packet_map[packet_id].data = None
+                    except Exception:
+                        pass  # state already reduced, perhaps by ack_func
             elif packet_type == Packet.TYPE_HEARTBEAT:
                 # Heartbeats update the last heartbeat, clears pongs w/o beat
                 self.last_received_heartbeat[connection_id] = packet
@@ -431,21 +445,23 @@ class SocketManager():
             elif packet_type == Packet.TYPE_PONG:
                 # Message in response from the router, ensuring we're connected
                 # to it. Redundant but useful for metering from web client.
-                pong_connection_id = packet.get_receiver_connection_id()
-                if self.last_received_heartbeat[pong_connection_id] is not None:
-                    self.pongs_without_heartbeat[pong_connection_id] += 1
+                pong_conn_id = packet.get_receiver_connection_id()
+                if self.last_received_heartbeat[pong_conn_id] is not None:
+                    self.pongs_without_heartbeat[pong_conn_id] += 1
             else:
                 # Remaining packet types need to be acknowledged
                 shared_utils.print_and_log(
                     logging.DEBUG,
                     'On new message: {}'.format(args)
                 )
-                self._send_ack(packet)
                 # Call the appropriate callback
                 if packet_type == Packet.TYPE_ALIVE:
                     self.alive_callback(packet)
                 elif packet_type == Packet.TYPE_MESSAGE:
                     self.message_callback(packet)
+
+                # acknowledge the packet was recieved and processed
+                self._send_ack(packet)
 
         def run_socket(*args):
             url_base_name = self.server_url.split('https://')[1]
@@ -465,7 +481,7 @@ class SocketManager():
                         on_close=on_disconnect,
                     )
                     self.ws.on_open = on_socket_open
-                    self.ws.run_forever(ping_interval=1, ping_timeout=0.9)
+                    self.ws.run_forever()
                     self.ws.close()
                 except Exception as e:
                     shared_utils.print_and_log(
@@ -572,11 +588,13 @@ class SocketManager():
         self.run[connection_id] = False
         if connection_id in self.queues:
             # Clean up packets
-            packet_ids = list(self.packet_map.keys())
-            for packet_id in packet_ids:
-                if connection_id == \
-                       self.packet_map[packet_id].get_receiver_connection_id():
-                    del self.packet_map[packet_id]
+            with self.packet_map_lock:
+                packet_ids = list(self.packet_map.keys())
+                for packet_id in packet_ids:
+                    packet_conn_id = \
+                        self.packet_map[packet_id].get_receiver_connection_id()
+                    if connection_id == packet_conn_id:
+                        del self.packet_map[packet_id]
             # Clean up other resources
             del self.queues[connection_id]
             del self.threads[connection_id]
@@ -609,16 +627,18 @@ class SocketManager():
             'Put packet ({}) in queue ({})'.format(packet.id, connection_id)
         )
         # Get the current time to put packet into the priority queue
-        self.packet_map[packet.id] = packet
+        with self.packet_map_lock:
+            self.packet_map[packet.id] = packet
         item = (time.time(), packet)
         self._safe_put(connection_id, item)
         return True
 
     def get_status(self, packet_id):
         """Returns the status of a particular packet by id"""
-        if packet_id not in self.packet_map:
-            return Packet.STATUS_NONE
-        return self.packet_map[packet_id].status
+        with self.packet_map_lock:
+            if packet_id not in self.packet_map:
+                return Packet.STATUS_NONE
+            return self.packet_map[packet_id].status
 
     def _safe_put(self, connection_id, item):
         """Ensures that a queue exists before putting an item into it, logs

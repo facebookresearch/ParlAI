@@ -113,7 +113,7 @@ class WorkerManager():
         worker_id = pkt.sender_id
         assignment_id = pkt.assignment_id
         agent = self._get_agent(worker_id, assignment_id)
-        if agent is not None and not agent.is_final():
+        if agent is not None:
             shared_utils.print_and_log(
                 logging.INFO,
                 'Manager received: {}'.format(pkt),
