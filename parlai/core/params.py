@@ -218,6 +218,10 @@ class ParlaiParser(argparse.ArgumentParser):
             help='Qualification to use to share the maximum time requirement '
                  'with other runs from other machines.'
         )
+        mturk.add_argument(
+            '--heroku-team', dest='heroku_team', default=None,
+            help='Specify Heroku team name to use for launching Dynos.'
+        )
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)
@@ -520,7 +524,7 @@ class ParlaiParser(argparse.ArgumentParser):
             }
             namespace = argparse.Namespace(**group_dict)
             count = 0
-            for key in namespace.__dict__:
+            for key in sorted(namespace.__dict__):
                 if key in values:
                     if count == 0:
                         print('[ ' + group.title + ': ] ')

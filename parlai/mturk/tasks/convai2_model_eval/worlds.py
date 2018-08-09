@@ -445,13 +445,17 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             if self.turn_idx == 1:
                 acts[idx]['text'] = self.model_persona_text + '\n' + \
                     acts[idx]['text']
-            print(acts[idx])
-            acts[idx]['eval_labels'] = ['__NULL__']
+
             self.model_agent.observe(acts[idx])
 
         # Model_agent turn
         idx = 1
         act = self.model_agent.act()
+
+        # NOTE: model agent may or may not need to observe itself here,
+        # depending on how your model handles this
+        self.model_agent.observe(act)
+
         acts.append({'text': act['text']})
 
         for (sb_0, sb_1) in [
@@ -615,20 +619,6 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             return True
         else:
             return False
-
-    def review_work(self):
-        global review_agent
-
-        def review_agent(ag):
-            if hasattr(ag, 'not_approve'):
-                pass
-            else:
-                ag.approve_work()
-
-        Parallel(
-            n_jobs=len(self.agents),
-            backend='threading'
-        )(delayed(review_agent)(agent) for agent in self.agents)
 
     def shutdown(self):
         global shutdown_agent

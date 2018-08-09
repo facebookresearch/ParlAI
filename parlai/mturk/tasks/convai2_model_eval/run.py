@@ -121,7 +121,6 @@ def main():
             world.save_data()
 
             world.shutdown()
-            world.review_work()
 
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,

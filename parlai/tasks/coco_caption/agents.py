@@ -20,10 +20,55 @@ from parlai.core.dict import DictionaryAgent
 
 import os
 import json
+import random
+"""
+    Agents for MSCOCO Image Captioning Task
 
+    There are two versions of the task - one comprising MSCOCO 2014 splits
+    (from the 2015 task competition), and one comprising MSCOCO 2017 splits
+
+    For the 2014 splits, we use the train, val, and test split of Karpathy et.
+    al, "Deep visual-semantic alignments for generating image descriptions"
+    (splits from here: https://cs.stanford.edu/people/karpathy/deepimagesent/).
+    This split has ~82k train images, 5k validation images, and 5k test images.
+    The val and test images are taken from the original validation set of ~40k.
+
+    For 2017, we use the splits from the official MSCOCO Image Captioning 2017
+    task.
+
+"""
 # There is no real dialog in this task, so for the purposes of display_data, we
 # include a generic question that applies to all images.
 QUESTION = "Describe the above picture in a sentence."
+
+
+def load_candidates(datapath, datatype, version):
+    if not datatype.startswith('train'):
+        suffix = 'captions_{}{}.json'
+        suffix_val = suffix.format('val', version)
+
+        val_path = os.path.join(datapath,
+                                'COCO_{}_Caption'.format(version),
+                                'annotations',
+                                suffix_val)
+        val = json.load(open(val_path))['annotations']
+        val_caps = [x['caption'] for x in val]
+        if datatype.startswith('test'):
+            suffix_train = suffix.format('train', version)
+            train_path = os.path.join(datapath,
+                                      'COCO_{}_Caption'.format(version),
+                                      'annotations',
+                                      suffix_train)
+
+            train = json.load(open(train_path))['annotations']
+
+            train_caps = [x['caption'] for x in train]
+            test_caps = train_caps + val_caps
+            return test_caps
+        else:
+            return val_caps
+    else:
+        return None
 
 
 def _path(opt, version):
@@ -43,7 +88,7 @@ def _path(opt, version):
         img_suffix = os.path.join(
                   'train{}'.format(version),
                   'COCO_train{}_'.format(version) if version == '2014' else '')
-    elif dt == 'valid':
+    elif dt == 'valid' or (dt == 'test' and version == '2014'):
         annotation_suffix = 'val{}'.format(version)
         img_suffix = os.path.join(
                   'val{}'.format(version),
@@ -56,15 +101,21 @@ def _path(opt, version):
     else:
         raise RuntimeError('Not valid datatype.')
 
-    test_info_path = os.path.join(opt['datapath'],
-                                  'COCO_{}_Caption'.format(version),
-                                  'annotations',
-                                  'image_info_test{}.json'.format(version))
+    if version == '2017':
+        test_info_path = os.path.join(opt['datapath'],
+                                      'COCO_2017_Caption',
+                                      'annotations',
+                                      'image_info_test2017.json')
 
-    annotation_path = os.path.join(opt['datapath'],
-                                   'COCO_{}_Caption'.format(version),
-                                   'annotations',
-                                   'captions_' + annotation_suffix + '.json')
+        annotation_path = os.path.join(opt['datapath'],
+                                       'COCO_2017_Caption',
+                                       'annotations',
+                                       'captions_' + annotation_suffix + '.json')
+    else:
+        test_info_path = None
+        annotation_path = os.path.join(opt['datapath'],
+                                       'COCO_2014_Caption',
+                                       'dataset_coco.json')
 
     image_path = os.path.join(opt['datapath'], 'COCO-IMG-{}'.format(version),
                               img_suffix)
@@ -77,51 +128,61 @@ class DefaultDataset(Dataset):
 
     def __init__(self, opt, version='2017'):
         self.opt = opt
-        self.use_hdf5 = opt.get('use_hdf5', False)
+        self.version = version
+        self.use_intro = opt.get('use_intro', False)
+        self.num_cands = opt.get('num_cands', -1)
         self.datatype = self.opt.get('datatype')
-        self.training = self.datatype.startswith('train')
-        self.num_epochs = self.opt.get('num_epochs', 0)
+        self.include_rest_val = opt.get('include_rest_val', True)
         self.image_loader = ImageLoader(opt)
         test_info_path, annotation_path, self.image_path = _path(opt, version)
-        self._setup_data(test_info_path, annotation_path, opt.get('unittest', False))
-        if self.use_hdf5:
-            try:
-                import h5py
-                self.h5py = h5py
-            except ImportError:
-                raise ImportError('Need to install h5py - `pip install h5py`')
-            self._setup_image_data()
-        self.dict_agent = DictionaryAgent(opt)
+        self._setup_data(test_info_path, annotation_path, opt)
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        DefaultTeacher.add_cmdline_args(argparser)
 
     def __getitem__(self, index):
-        index %= self.num_episodes()
-        image_id = None
-        if not self.datatype.startswith('test'):
-            anno = self.annotation['annotations'][index]
-            image_id = anno['image_id']
-        else:
-            image_id = self.test_info['images'][index]['id']
         ep = {
-            'text': QUESTION,
-            'image': self.get_image(image_id),
-            'episode_done': True,
+            'episode_done': True
         }
-        if self.opt.get('extract_image', False):
-            ep['image_id'] = image_id
-            return ep
-        if not self.datatype.startswith('test'):
-            anno = self.annotation['annotations'][index]
+        if self.use_intro:
+            ep['text'] = QUESTION
+
+        anno = self.annotation[index] if hasattr(self, 'annotation') else self.test_info['images'][index]
+
+        if self.version == '2014':
+            ep['labels'] = [s['raw'] for s in anno['sentences']]
+            ep['image_id'] = anno['cocoid']
+            ep['split'] = anno['split']
+        elif not self.datatype.startswith('test'):
+            ep['image_id'] = anno['image_id']
             ep['labels'] = [anno['caption']]
-            ep['valid'] = True
         else:
-            ep['valid'] = True
-        ep['use_hdf5'] = self.use_hdf5
+            ep['image_id'] = anno['id']
+
+        ep['image']: self.get_image(ep['image_id'], anno.get('split', None))
+
+        if self.opt.get('extract_image', False):
+            return ep
+
+        # Add Label Cands
+        if not self.datatype.startswith('train'):
+            if self.num_cands == -1:
+                ep['label_candidates'] = self.cands
+            else:
+                candidates = random.Random(index).choices(self.cands,
+                                                          k=self.num_cands)
+                label = random.choice(ep.get('labels', ['']))
+                if not (label == '' or label in candidates):
+                    candidates.pop(0)
+                    candidates.append(label)
+                    random.shuffle(candidates)
+                ep['label_candidates'] = candidates
+
         return (index, ep)
 
     def __len__(self):
-        num_epochs = self.num_epochs if self.num_epochs > 0 else 100
-        num_iters = num_epochs if self.training else 1
-        return int(num_iters * self.num_episodes())
+        return self.num_episodes()
 
     def _load_lens(self):
         with open(self.length_datafile) as length:
@@ -129,55 +190,50 @@ class DefaultDataset(Dataset):
             self.num_eps = lengths['num_eps']
             self.num_exs = lengths['num_exs']
 
-    def _setup_data(self, test_info_path, annotation_path, unittest):
-        if not self.datatype.startswith('test'):
+    def _setup_data(self, test_info_path, annotation_path, opt):
+        if self.version == '2014':
             with open(annotation_path) as data_file:
-                self.annotation = json.load(data_file)
+                raw_data = json.load(data_file)['images']
+            if 'train' in self.datatype:
+                self.annotation = [d for d in raw_data if d['split'] == 'train']
+                if self.include_rest_val:
+                    self.annotation += [d for d in raw_data if d['split'] == 'restval']
+            elif 'valid' in self.datatype:
+                self.annotation = [d for d in raw_data if d['split'] == 'val']
+                self.cands = [l for d in self.annotation for l in [s['raw'] for s in d['sentences']]]
+            else:
+                self.annotation = [d for d in raw_data if d['split'] == 'test']
+                self.cands = [l for d in self.annotation for l in [s['raw'] for s in d['sentences']]]
         else:
-            with open(test_info_path) as data_file:
-                self.test_info = json.load(data_file)
-
-        if unittest:
             if not self.datatype.startswith('test'):
-                self.annotation['annotations'] = self.annotation['annotations'][:10]
+                print('loading: ' + annotation_path)
+                with open(annotation_path) as data_file:
+                    self.annotation = json.load(data_file)['annotations']
+            else:
+                print('loading: ' + test_info_path)
+                with open(test_info_path) as data_file:
+                    self.test_info = json.load(data_file)
+            if not self.datatype.startswith('train'):
+                self.cands = load_candidates(opt['datapath'],
+                                             opt['datatype'],
+                                             self.version)
+        if opt.get('unittest', False):
+            if not self.datatype.startswith('test'):
+                self.annotation = self.annotation[:10]
             else:
                 self.test_info['images'] = self.test_info['images'][:10]
 
-        self.image_paths = set()
-        # Depending on whether we are using the train/val/test set, we need to
-        # find the image IDs in annotations or test image info
-        if not self.datatype.startswith('test'):
-            for anno in self.annotation['annotations']:
-                self.image_paths.add(self.image_path + '%012d.jpg' % (anno['image_id']))
-        else:
-            for info in self.test_info['images']:
-                self.image_paths.add(self.image_path + '%012d.jpg' % (info['id']))
-
-
-    def _setup_image_data(self):
-        '''hdf5 image dataset'''
-        extract_feats(self.opt)
-        im = self.opt.get('image_mode')
-        hdf5_path = os.path.join(self.image_path, 'mode_{}_noatt.hdf5'.format(im))
-        hdf5_file = self.h5py.File(hdf5_path, 'r')
-        self.image_dataset = hdf5_file['images']
-
-        image_id_to_idx_path = os.path.join(self.image_path, 'mode_{}_id_to_idx.txt'.format(im))
-        with open(image_id_to_idx_path, 'r') as f:
-            self.image_id_to_idx = json.load(f)
-
-    def get_image(self, image_id):
-        if not self.use_hdf5:
-            im_path = self.image_path + '%012d.jpg' % (image_id)
-            return self.image_loader.load(im_path)
-        else:
-            img_idx = self.image_id_to_idx[str(image_id)]
-            return torch.Tensor(self.image_dataset[img_idx])
+    def get_image(self, image_id, split):
+        im_path = self.image_path.replace('train', 'val') if split == 'restval' else self.image_path
+        im_path = os.path.join(im_path, '%012d.jpg' % (image_id))
+        return self.image_loader.load(im_path)
 
     def num_examples(self):
-        if not self.datatype.startswith('test'):
-            return len(self.annotation['annotations'])
+        if self.version == '2014' or not self.datatype.startswith('test'):
+            return len(self.annotation)
         else:
+            # For 2017, we only have annotations for the train and val sets,
+            # so for the test set we need to determine how many images we have.
             return len(self.test_info['images'])
 
     def num_episodes(self):
@@ -205,21 +261,41 @@ class DefaultTeacher(FixedDialogTeacher):
     """
     def __init__(self, opt, shared=None, version='2017'):
         super().__init__(opt, shared)
+        self.version = version
         self.image_mode = opt.get('image_mode', 'none')
-
+        self.use_intro = opt.get('use_intro', False)
+        self.num_cands = opt.get('num_cands', -1)
+        self.include_rest_val = opt.get('include_rest_val', False)
+        test_info_path, annotation_path, self.image_path = _path(opt, version)
         if shared:
             # another instance was set up already, just reference its data
             if 'annotation' in shared:
                 self.annotation = shared['annotation']
             self.image_loader = shared['image_loader']
-            self.image_path = shared['image_path']
+            if 'cands' in shared:
+                self.cands = shared['cands']
         else:
             # need to set up data from scratch
-            test_info_path, annotation_path, self.image_path = _path(opt, version)
-            self._setup_data(test_info_path, annotation_path)
+            self._setup_data(test_info_path, annotation_path, opt)
             self.image_loader = ImageLoader(opt)
 
         self.reset()
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        agent = argparser.add_argument_group('Comment Battle arguments')
+        agent.add_argument('--use_intro', type='bool',
+                           default=False,
+                           help='Include an intro question with each image \
+                                for readability (e.g. for coco_caption, \
+                                Describe the above picture in a sentence.)')
+        agent.add_argument('--num_cands', type=int,
+                           default=150,
+                           help='Number of candidates to use during \
+                                evaluation, setting to -1 uses all.')
+        agent.add_argument('--include_rest_val', type='bool',
+                           default=False,
+                           help='Include unused validation images in training')
 
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
@@ -227,33 +303,68 @@ class DefaultTeacher(FixedDialogTeacher):
         self.imageEpochDone = False
 
     def num_examples(self):
-        # We only have annotations for the train and val sets, so for the test
-        # set we need to determine how many images we have.
-        if not self.datatype.startswith('test'):
-            return len(self.annotation['annotations'])
+        if self.version == '2014' or not self.datatype.startswith('test'):
+            return len(self.annotation)
         else:
+            # For 2017, we only have annotations for the train and val sets,
+            # so for the test set we need to determine how many images we have.
             return len(self.test_info['images'])
 
     def num_episodes(self):
         return self.num_examples()
 
-    def submit_load_request(self, image_id):
-        img_path = self.image_path + '%012d.jpg' % (image_id)
-        self.data_loader.request_load(self.receive_data, self.image_loader.load, (img_path,))
+    def submit_load_request(self, image_id, split=None):
+        img_path = self.image_path.replace('train', 'val') if split == 'restval' else self.image_path
+        img_path += '%012d.jpg' % (image_id)
+        self.data_loader.request_load(self.receive_data,
+                                      self.image_loader.load,
+                                      (img_path,))
 
     def get(self, episode_idx, entry_idx=0):
         action = {
-            'text': "Please leave a Caption",
             'episode_done': True
         }
 
-        if not self.datatype.startswith('test'):
-            # test set annotations are not available for this dataset
-            anno = self.annotation['annotations'][episode_idx]
-            action['labels'] = [anno['caption']]
-            action['image_id'] = anno['image_id']
+        if self.use_intro:
+            action['text'] = QUESTION
+
+        if self.version == '2014':
+            ep = self.annotation[episode_idx]
+            action['labels'] = [s['raw'] for s in ep['sentences']]
+            action['image_id'] = ep['cocoid']
+            action['split'] = ep['split']
+            if not self.datatype.startswith('train'):
+                action['label_candidates'] = self.cands
         else:
-            action['image_id'] = self.test_info['images'][episode_idx]['id']
+            if not self.datatype.startswith('test'):
+                # test set annotations are not available for this dataset
+                anno = self.annotation[episode_idx]
+                action['labels'] = [anno['caption']]
+                action['image_id'] = anno['image_id']
+                if not self.datatype.startswith('train'):
+                    if self.num_cands == -1:
+                        candidates = self.cands
+                    else:
+                        # Can only randomly select from validation set
+                        candidates = random.Random(
+                            episode_idx).choices(self.cands, k=self.num_cands)
+                    if anno['caption'] not in candidates:
+                        candidates.pop(0)
+                    else:
+                        candidates.remove(anno['caption'])
+
+                    candidate_labels = [anno['caption']]
+                    candidate_labels += candidates
+                    action['label_candidates'] = candidate_labels
+            else:
+                if self.num_cands == -1:
+                    candidates = self.cands
+                else:
+                    # Can only randomly select from validation set
+                    candidates = random.Random(
+                        episode_idx).choices(self.cands, k=self.num_cands)
+                action['label_candidates'] = candidates
+                action['image_id'] = self.test_info['images'][episode_idx]['id']
 
         return action
 
@@ -274,7 +385,8 @@ class DefaultTeacher(FixedDialogTeacher):
         if self.image_mode != 'none' and 'image_id' in self.example:
             # load the next image in the background
             image_id = self.example['image_id']
-            self.submit_load_request(image_id)
+            split = self.example.get('split', None)
+            self.submit_load_request(image_id, split)
         # Try to return the previously cached example
         if ready is None:
             return self.next_example()
@@ -286,18 +398,37 @@ class DefaultTeacher(FixedDialogTeacher):
         if hasattr(self, 'annotation'):
             shared['annotation'] = self.annotation
         shared['image_loader'] = self.image_loader
-        shared['image_path'] = self.image_path
+        if hasattr(self, 'cands'):
+            shared['cands'] = self.cands
         return shared
 
-    def _setup_data(self, test_info_path, annotation_path):
-        if not self.datatype.startswith('test'):
-            print('loading: ' + annotation_path)
+    def _setup_data(self, test_info_path, annotation_path, opt):
+        if self.version == '2014':
             with open(annotation_path) as data_file:
-                self.annotation = json.load(data_file)
+                raw_data = json.load(data_file)['images']
+            if 'train' in self.datatype:
+                self.annotation = [d for d in raw_data if d['split'] == 'train']
+                if self.include_rest_val:
+                    self.annotation += [d for d in raw_data if d['split'] == 'restval']
+            elif 'valid' in self.datatype:
+                self.annotation = [d for d in raw_data if d['split'] == 'val']
+                self.cands = [l for d in self.annotation for l in [s['raw'] for s in d['sentences']]]
+            else:
+                self.annotation = [d for d in raw_data if d['split'] == 'test']
+                self.cands = [l for d in self.annotation for l in [s['raw'] for s in d['sentences']]]
         else:
-            print('loading: ' + test_info_path)
-            with open(test_info_path) as data_file:
-                self.test_info = json.load(data_file)
+            if not self.datatype.startswith('test'):
+                print('loading: ' + annotation_path)
+                with open(annotation_path) as data_file:
+                    self.annotation = json.load(data_file)['annotations']
+            else:
+                print('loading: ' + test_info_path)
+                with open(test_info_path) as data_file:
+                    self.test_info = json.load(data_file)
+            if not self.datatype.startswith('train'):
+                self.cands = load_candidates(opt['datapath'],
+                                             opt['datatype'],
+                                             self.version)
 
 
 class V2014Teacher(DefaultTeacher):

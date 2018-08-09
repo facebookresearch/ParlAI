@@ -202,7 +202,7 @@ class FulldocTeacher(ParlAIDialogTeacher):
 
 
 class SentenceTeacher(IndexTeacher):
-    """Index teacher where the labels are the sentences the contain the true
+    """Teacher where the label(s) are the sentences that contain the true
     answer.
     """
     def __init__(self, opt, shared=None):
@@ -270,11 +270,13 @@ class SentenceTeacher(IndexTeacher):
 
 
 class SentenceeditTeacher(SentenceTeacher):
-    """Index teacher where the labels are the sentences the contain the true
+    """Teacher where the label(s) are the sentences that contain the true
     answer.
 
     Some punctuation may be removed from the context and the answer for
     tokenization purposes.
+    
+    Label_candidates are the other sentences in the paragraph.
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -321,7 +323,7 @@ class SentenceeditTeacher(SentenceTeacher):
 
 
 class SentencelabelsTeacher(IndexTeacher):
-    """Teacher which contains the question as the text, the sentences as the
+    """Teacher which contains the paragraph + question as the text, the sentences as the
     label candidates, and the label as the sentence containing the answer.
 
     Some punctuation may be removed for tokenization purposes.
