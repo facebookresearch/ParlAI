@@ -481,7 +481,9 @@ class SocketManager():
                         on_close=on_disconnect,
                     )
                     self.ws.on_open = on_socket_open
-                    self.ws.run_forever()
+                    self.ws.run_forever(
+                        ping_interval=8*self.HEARTBEAT_RATE,
+                        ping_timeout=8*self.HEARTBEAT_RATE*0.9)
                     self.ws.close()
                 except Exception as e:
                     shared_utils.print_and_log(
