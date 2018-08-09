@@ -283,7 +283,7 @@ class DefaultTeacher(FixedDialogTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Comment Battle arguments')
+        agent = argparser.add_argument_group('COCO Caption arguments')
         agent.add_argument('--use_intro', type='bool',
                            default=False,
                            help='Include an intro question with each image \
