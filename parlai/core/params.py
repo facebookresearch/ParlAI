@@ -138,6 +138,9 @@ class ParlaiParser(argparse.ArgumentParser):
             action='store_true',
             help='enforce that no worker can work on your task twice')
         mturk.add_argument(
+            '--max-hits-per-worker', dest='max_hits_per_worker', default=0, type=int,
+            help='Max number of hits each worker can perform during current group run')
+        mturk.add_argument(
             '--unique-qual-name', dest='unique_qual_name',
             default=None, type=str,
             help='qualification name to use for uniqueness between HITs')

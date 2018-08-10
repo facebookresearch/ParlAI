@@ -115,6 +115,8 @@ class MTurkManager():
         self.socket_manager = None
         self.is_test = is_test
         self.is_unique = False
+        self.max_hits_per_worker = 0
+        self.worker_hits_counter = {}
         self._init_logs()
         self.is_shutdown = False
 
@@ -838,6 +840,7 @@ class MTurkManager():
                                    should_print=True)
         self.is_unique = self.opt['unique_worker'] or \
             (self.opt['unique_qual_name'] is not None)
+        self.max_hits_per_worker = self.opt.get('max_hits_per_worker', 0)
         mturk_utils.create_hit_config(
             task_description=self.opt['task_description'],
             unique_worker=self.is_unique,
@@ -1219,6 +1222,17 @@ class MTurkManager():
                     worker.worker_id,
                     self.unique_qual_name,
                 )
+            if self.max_hits_per_worker > 0:
+                if worker.worker_id in self.worker_hits_counter:
+                    self.worker_hits_counter[worker.worker_id] += 1
+                else:
+                    self.worker_hits_counter[worker.worker_id] = 1
+                if self.worker_hits_counter[worker.worker_id] >= self.max_hits_per_worker:
+                    self.give_worker_qualification(
+                        worker.worker_id,
+                        self.unique_qual_name,
+                    )
+
             if not worker.state.is_final():
                 worker.state.status = AssignState.STATUS_DONE
             if self.has_time_limit:
@@ -1324,7 +1338,7 @@ class MTurkManager():
                 'RequiredToPreview': True
             })
 
-        if self.is_unique:
+        if self.is_unique or self.max_hits_per_worker > 0:
             self.unique_qual_name = self.opt.get('unique_qual_name')
             if self.unique_qual_name is None:
                 self.unique_qual_name = self.task_group_id + '_max_submissions'
