@@ -61,8 +61,8 @@ def main():
 
     # ADD MODEL ARGS HERE (KVMEMNN ADDED AS AN EXAMPLE)
     argparser.set_defaults(
-        model_file='/checkpoint/kulikov/local-runs/ranking-withpt/model',
-        model='parlai_internal.agents.filibooster.filibooster:FiliboosterAgent',
+        model_file='',
+        model='',
     )
 
     opt = argparser.parse_args()
