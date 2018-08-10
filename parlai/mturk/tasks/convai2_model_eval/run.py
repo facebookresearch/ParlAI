@@ -75,7 +75,6 @@ def main():
     print('=== Actual bot opt === :\n {}'.format('\n'.join(["[{}] : {}".format(k,v) for k,v in bot.opt.items()])))
     folder_name = 'master_{}_YOURCOMMENT__'.format(opt['only_masters']) + '__'.join(['{}_{}'.format(k,v) for k,v in opt['override'].items()])
 
-    #opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
     opt['task'] = 'convai2:self'
     if 'data_path' not in opt:
         opt['data_path'] = os.getcwd() + '/data/' + folder_name
@@ -102,7 +101,7 @@ def main():
         mturk_manager.create_hits(qualifications=agent_qualifications)
 
         if not opt['is_sandbox']:
-            # ADD BLOCKED WORKERS HERE, This is Soft blocking!
+            # ADD BLOCKED WORKERS HERE, This is Soft blocking! blocking qual *must be* specified 
             blocked_worker_list = []
             for w in blocked_worker_list:
                 print('Soft Blocking {}\n'.format(w))
