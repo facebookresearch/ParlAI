@@ -9,8 +9,6 @@ from parlai.mturk.core.mturk_manager import MTurkManager
 from worlds import \
     Convai2EvalWorld, PersonaProfileWorld, PersonasGenerator
 from task_config import task_config
-import random
-import torch
 import time
 
 import os
@@ -57,7 +55,7 @@ def main():
     argparser.add_argument('--auto-approve-delay', type=int,
                            default=3600*24*1, help='how long to wait for  \
                            auto approval')
-    argparser.add_argument('--only-masters', type='bool', default=True, help='Set to true to use only master turks for this test eval')
+    argparser.add_argument('--only-masters', type='bool', default=False, help='Set to true to use only master turks for this test eval')
 
     # ADD MODEL ARGS HERE (KVMEMNN ADDED AS AN EXAMPLE)
     argparser.set_defaults(

@@ -301,7 +301,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
 
             if acts[idx]['episode_done']:
                 print("Finished chat")
-                self.check_timeout(acts[idx])
+                self.check_disconnects(acts[idx])
                 for ag in self.agents:
                     if ag != agent and ag.some_agent_disconnected:
                         control_msg['text'] = UNEXPECTED_DISCONNECTION_MSG
@@ -607,7 +607,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             self.range_turn[1]
         ) + 1
 
-    def check_timeout(self, act):
+    def check_disconnects(self, act):
         if act['text'] == '[TIMEOUT]' or act['text'] == '[RETURNED]' or act['text'] == '[DISCONNECT]':
             control_msg = {'episode_done': True}
             control_msg['id'] = 'SYSTEM'
