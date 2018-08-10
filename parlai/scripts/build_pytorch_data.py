@@ -72,7 +72,15 @@ def build_data(opt):
     teacher = world_data.agents[0]
     agent = world_data.agents[1]
 
-    datafile = teacher.datafile if hasattr(teacher, 'datafile') else opt.get('pytorch_datafile')
+    datafile = None
+    if opt.get('pytorch_datafile'):
+        datafile = opt.get('pytorch_datafile')
+    elif hasattr(teacher, 'datafile') and teacher.datafile:
+        datafile = teacher.datafile
+    else:
+        dpath = os.path.join(opt.get('datapath', '~'), ordered_opt['task'], dt)
+        os.makedirs(dpath, exist_ok=True)
+        datafile = os.path.join(dpath, 'pytorch_data')
     if not datafile:
         raise Exception('Tried to build data but either `pytorch-teacher-task` does not '
                         'have a datafile or `--pytorch-datafile` is not set')

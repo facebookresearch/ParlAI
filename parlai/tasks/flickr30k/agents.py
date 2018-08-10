@@ -46,7 +46,6 @@ class FlickrDataset(Dataset):
         self.dict_agent = DictionaryAgent(opt)
 
     def __getitem__(self, index):
-        index %= self.num_episodes()
         cap = self.data[index]
         image_id = int(cap['filename'].replace('.jpg', ''))
         ep = {
@@ -106,6 +105,7 @@ class DefaultTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.image_mode = opt.get('image_mode', 'none')
+        self.use_intro = opt.get('use_intro', False)
         data_path, self.image_path = _path(opt)
 
         if shared:
@@ -120,6 +120,15 @@ class DefaultTeacher(FixedDialogTeacher):
             self.image_loader = ImageLoader(opt)
 
         self.reset()
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        agent = argparser.add_argument_group('Flickr30k arguments')
+        agent.add_argument('--use_intro', type='bool',
+                           default=False,
+                           help='Include an intro question with each image \
+                                for readability (e.g. for coco_caption, \
+                                Describe the above picture in a sentence.)')
 
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
@@ -141,11 +150,12 @@ class DefaultTeacher(FixedDialogTeacher):
     def get(self, episode_idx, entry_idx=0):
         ep = self.data[episode_idx]
         action = {
-            'text': "",
             'image_id': int(ep['filename'].replace('.jpg', '')),
             'episode_done': True,
             'labels': [s['raw'] for s in ep['sentences']]
         }
+        if self.use_intro:
+            action['text'] = QUESTION
         if 'train' not in self.datatype:
             action['label_candidates'] = self.cands
         return action

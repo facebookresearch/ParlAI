@@ -17,11 +17,12 @@ import random
 from functools import wraps
 import importlib
 import copy
+from functools import lru_cache
 try:
     import torch
 except Exception as e:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
-from torch.utils.data import Dataset, DataLoader, sampler
+from torch.utils.data import ConcatDataset, Dataset, DataLoader, sampler
 from torch.multiprocessing import Lock, Value
 import ctypes
 from threading import Thread, Condition, RLock
@@ -201,23 +202,98 @@ def batch_cache(function):
     return wrapper
 
 
+# Get Datasets from the options
+def get_dataset_classes(opt):
+    """ To use a custom dataset (as opposed to the StreamDataset or ParlAIDataset),
+        you can subclass the pytorch Dataset class and specify its
+        location on the command line.
+
+        For example, the VQA v1 task provides a custom dataset, which can
+        be specified on the command line as follows:
+        ``-pytd vqa_v1:VQADataset``
+
+        Note that if the dataset is named ``DefaultDataset``, then you do
+        not need to specify its name following the colon; e.g., it
+        would just be:
+        ``-pytd vqa_v1``
+    """
+    default_dataset = StreamDataset if 'stream' in opt.get('datatype') else ParlAIDataset
+    dataset_name = opt.get('pytorch_teacher_dataset')
+    task_name = opt.get('pytorch_teacher_task')
+    datasets = []
+    if task_name is not None:
+        datasets += [(default_dataset, default_collate, task) for task in task_name.split(',')]
+    if not dataset_name:
+        return datasets
+    sps = [d.strip() for d in dataset_name.split(',')]
+    for sp in sps:
+        full_task_name = sp
+        repo = 'parlai'
+        if sp.startswith('internal:'):
+            # To switch to local repo, useful for non-public projects
+            # (make a directory called 'parlai_internal' with your private agents)
+            repo = 'parlai_internal'
+            sp = sp[9:]
+        sp = sp.split(':')
+        if '.' in sp[0]:
+            module_name = sp[0]
+        else:
+            dataset = sp[0].lower()
+            module_name = '{}.tasks.{}.agents'.format(repo, dataset)
+        if len(sp) > 1:
+            sp[1] = sp[1][0].upper() + sp[1][1:]
+            dataset = sp[1]
+            if '.' not in sp[0] and 'Dataset' not in dataset:
+                # Reformat from underscore to CamelCase and append "Dataset" to
+                # class name by default if a complete path is not given.
+                words = dataset.split('_')
+                teacher_name = ''
+                for w in words:
+                    teacher_name += (w[0].upper() + w[1:])
+                dataset = teacher_name + 'Dataset'
+        else:
+            dataset = 'DefaultDataset'
+        my_module = importlib.import_module(module_name)
+        dataset_class = getattr(my_module, dataset)
+
+        collate = default_collate
+        if hasattr(dataset_class, 'collate'):
+            collate = dataset_class.collate
+        elif opt.get('model', False):
+            agent_class = get_agent_module(opt.get('model'))
+            if hasattr(agent_class, 'collate'):
+                collate = agent_class.collate
+        datasets.append((dataset_class, collate, full_task_name))
+    return datasets
+
+
 class LoaderProcess(Thread):
     """A background process that submits jobs to the DataLoader
        to load examples into cache
     """
     def __init__(self, opt):
         super().__init__(daemon=True)
-        self.dataset = opt['dataset_class'](opt)
+        dataset_classes = get_dataset_classes(opt)
+        if len(dataset_classes) > 1:
+            datasets = []
+            for class_name, collate_fn, task_name in dataset_classes:
+                opt['pytorch_teacher_task'] = task_name
+                opt['task'] = task_name
+                datasets.append(class_name(opt))
+                self.collate = collate_fn
+            self.dataset = ParlAIConcatDataset(datasets)
+        else:
+            class_name, self.collate, task_name = dataset_classes[0]
+            self.dataset = class_name(opt)
         self.bsz = opt.get('batchsize', 1)
         self.num_workers = opt.get('num_workers', 4)
-        collate_fn = opt.get('collate_fn', default_collate)
         self.dataloader = DataLoader(
             self.dataset,
             batch_size=self.bsz,
             shuffle=False,
             sampler=sampler.SequentialSampler(self.dataset),
             num_workers=self.num_workers,
-            collate_fn=collate_fn,
+            collate_fn=self.collate,
             pin_memory=False,
             drop_last=False,
             )
@@ -261,21 +337,17 @@ class StreamDataset(Dataset):
         self.datafile = build_data(self.opt)
         self.data_gen = self._data_generator(self.datafile)
         self.length_datafile = self.datafile + ".length"
-        self.num_epochs = self.opt.get('num_epochs', 0)
         self.training = self.datatype.startswith('train')
         self._load_lens()
 
     def __getitem__(self, index):
         while True:
-            index %= self.num_episodes()
             idx, ep = next(self.data_gen)
             if idx == index:
                 return (index, ep)
 
     def __len__(self):
-        num_epochs = self.num_epochs if self.num_epochs > 0 else 1000
-        num_iters = num_epochs if self.training else 1
-        return int(num_iters * self.num_episodes())
+        return self.num_episodes()
 
     def _load_lens(self):
         with open(self.length_datafile) as length:
@@ -306,6 +378,54 @@ class StreamDataset(Dataset):
         return self.num_exs
 
 
+class ParlAIDataset(Dataset):
+    """A Pytorch Dataset, for random sampling"""
+    def __init__(self, opt):
+        self.opt = opt
+        self.datatype = opt.get('datatype')
+        self.datafile = build_data(self.opt)
+        self._setup_data()
+        self.length_datafile = self.datafile + ".length"
+        self.training = self.datatype.startswith('train')
+        self._load_lens()
+
+    def __getitem__(self, index):
+        return index, self.data[index]
+
+    def __len__(self):
+        return self.num_episodes()
+
+    def _load_lens(self):
+        with open(self.length_datafile) as length:
+            lengths = json.load(length)
+            self.num_eps = lengths['num_eps']
+            self.num_exs = lengths['num_exs']
+
+    def _setup_data(self):
+        self.data = []
+        with open(self.datafile) as f:
+            for line in f:
+                self.data.append(json.loads(line))
+
+    def num_episodes(self):
+        return self.num_eps
+
+    def num_examples(self):
+        return self.num_exs
+
+
+class ParlAIConcatDataset(ConcatDataset):
+    """Override to set num_eps and num_exs"""
+
+    @lru_cache(maxsize=1)
+    def num_episodes(self):
+        return sum(d.num_episodes() for d in self.datasets)
+
+    @lru_cache(maxsize=1)
+    def num_examples(self):
+        return sum(d.num_examples() for d in self.datasets)
+
+
 class PytorchDataTeacher(FixedDialogTeacher):
 
     def __init__(self, opt, shared=None):
@@ -315,23 +435,33 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.num_workers = opt['numworkers']
         self.batch_cache_type = opt.get('batch_sort_cache')
         # One can specify a collate function to use for preparing a batch
-        self.opt = copy.deepcopy(opt)
+        self.opt = opt.copy()
         self.is_shared = shared is not None
-        dataset_class, self.collate_fn = self.get_dataset_class(opt)
-        opt['dataset_class'] = dataset_class
-        opt['collate_fn'] = self.collate_fn
+        dataset_classes = self.get_dataset_class(opt)
 
         if not shared:
-            self.dataset = dataset_class(opt)
-            if self.datatype == 'train' and not isinstance(self.dataset, StreamDataset):
-                data_sampler = sampler.RandomSampler(self.dataset)
+            if len(dataset_classes) > 1:
+                datasets = []
+                for class_name, collate_fn, task_name in dataset_classes:
+                    opt['pytorch_teacher_task'] = task_name
+                    opt['task'] = task_name
+                    datasets.append(class_name(opt))
+                    self.collate_fn = collate_fn
+                self.dataset = ParlAIConcatDataset(datasets)
             else:
+                class_name, self.collate_fn, task_name = dataset_classes[0]
+                self.dataset = class_name(opt)
+            self.streaming = 'stream' in self.datatype
+            if self.streaming:
                 data_sampler = sampler.SequentialSampler(self.dataset)
-            pin_memory = not isinstance(self.dataset, StreamDataset)
+                pin_memory = False
+            else:
+                data_sampler = sampler.RandomSampler(self.dataset)
+                pin_memory = True
+
             self.pytorch_dataloader = DataLoader(
                 self.dataset,
                 batch_size=self.bsz,
-                shuffle=False,
                 sampler=data_sampler,
                 num_workers=self.num_workers,
                 collate_fn=self.collate_fn,
@@ -353,59 +483,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.reset()
 
     def get_dataset_class(self, opt):
-        """ To use a custom dataset (as opposed to the StreamDataset above),
-            you can subclass the pytorch Dataset class and specify its
-            location on the command line.
-
-            For example, the VQA v1 task provides a custom dataset, which can
-            be specified on the command line as follows:
-            ``-pytd vqa_v1:VQADataset``
-
-            Note that if the dataset is named ``DefaultDataset``, then you do
-            not need to specify its name following the colon; e.g., it
-            would just be:
-            ``-pytd vqa_v1``
-        """
-        dataset_name = opt.get('pytorch_teacher_dataset')
-        if not dataset_name:
-            return StreamDataset, default_collate
-        sp = dataset_name.strip()
-        repo = 'parlai'
-        if sp.startswith('internal:'):
-            # To switch to local repo, useful for non-public projects
-            # (make a directory called 'parlai_internal' with your private agents)
-            repo = 'parlai_internal'
-            sp = sp[9:]
-        sp = sp.split(':')
-        if '.' in sp[0]:
-            module_name = sp[0]
-        else:
-            dataset = sp[0].lower()
-            module_name = '{}.tasks.{}.agents'.format(repo, dataset)
-        if len(sp) > 1:
-            sp[1] = sp[1][0].upper() + sp[1][1:]
-            dataset = sp[1]
-            if '.' not in sp[0] and 'Dataset' not in dataset:
-                # Reformat from underscore to CamelCase and append "Dataset" to
-                # class name by default if a complete path is not given.
-                words = dataset.split('_')
-                teacher_name = ''
-                for w in words:
-                    teacher_name += (w[0].upper() + w[1:])
-                dataset = teacher_name + 'Dataset'
-        else:
-            dataset = 'DefaultDataset'
-        my_module = importlib.import_module(module_name)
-        dataset_class = getattr(my_module, dataset)
-
-        collate = default_collate
-        if hasattr(dataset_class, 'collate'):
-            collate = dataset_class.collate
-        elif opt.get('model', False):
-            agent_class = get_agent_module(opt.get('model'))
-            if hasattr(agent_class, 'collate'):
-                collate = agent_class.collate
-        return dataset_class, collate
+        return get_dataset_classes(opt)
 
     def reset(self):
         """Reset the dialog so that it is at the start of the epoch,
@@ -415,7 +493,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.reset_data()
 
     def reset_data(self):
-        if not self.training and not self.is_shared:
+        if not self.is_shared:
             self.data = enumerate(self.pytorch_dataloader)
         self.lastY = None
         self.epochDone = False
@@ -462,7 +540,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
     @batch_cache
     def get_next_batch(self):
         # employs a cache to see if there is a batch of equal size ready
-        return next(self.data)
+        batch = next(self.data)
+        return batch
 
     def next_batch(self):
         if self.epochDone:

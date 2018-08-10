@@ -126,7 +126,7 @@ def _path(opt, version):
 class DefaultDataset(Dataset):
     """A Pytorch Dataset utilizing streaming."""
 
-    def __init__(self, opt, version='2014'):
+    def __init__(self, opt, version='2017'):
         self.opt = opt
         self.version = version
         self.use_intro = opt.get('use_intro', False)
@@ -143,7 +143,6 @@ class DefaultDataset(Dataset):
 
     def __getitem__(self, index):
         ep = {
-            'text': '',
             'episode_done': True
         }
         if self.use_intro:
@@ -284,7 +283,7 @@ class DefaultTeacher(FixedDialogTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Comment Battle arguments')
+        agent = argparser.add_argument_group('COCO Caption arguments')
         agent.add_argument('--use_intro', type='bool',
                            default=False,
                            help='Include an intro question with each image \
@@ -323,7 +322,6 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         action = {
-            'text': '',
             'episode_done': True
         }
 

@@ -325,7 +325,7 @@ class ParlaiParser(argparse.ArgumentParser):
                                 'batches of data in multi-example episodes.')
         pytorch = self.add_argument_group('PytorchData Arguments')
         pytorch.add_argument(
-            '--pytorch-datafile', type=str, default='',
+            '--pytorch-datafile', type=str, default=None,
             help='datafile for pytorch data loader')
         pytorch.add_argument(
             '-nw', '--numworkers', type=int, default=4,
