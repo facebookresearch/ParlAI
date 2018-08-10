@@ -70,6 +70,12 @@ class MTurkManager():
     between a world and the MTurk server.
     """
 
+    STATE_CREATED = 0
+    STATE_SERVER_ALIVE = 1
+    STATE_INIT_RUN = 2
+    STATE_HITS_MADE = 3
+    STATE_ACCEPTING_WORKERS = 4
+
     def __init__(self, opt, mturk_agent_ids, is_test=False):
         """Create an MTurkManager using the given setup opts and a list of
         agent_ids that will participate in each conversation
@@ -109,6 +115,7 @@ class MTurkManager():
         self.is_unique = False
         self._init_logs()
         self.is_shutdown = False
+        self.task_state = self.STATE_CREATED
 
     # Helpers and internal manager methods #
 
@@ -128,6 +135,7 @@ class MTurkManager():
         self._reset_time_logs(init_load=True)
         self.qualifications = None
         self.time_limit_checked = time.time()
+        self.task_state = self.STATE_INIT_RUN
 
     def _init_logs(self):
         """Initialize logging settings from the opt"""
@@ -306,6 +314,8 @@ class MTurkManager():
 
     def _setup_socket(self, timeout_seconds=None):
         """Set up a socket_manager with defined callbacks"""
+        assert self.task_state > self.STATE_INIT_RUN, \
+            'socket cannot be set up until run is started'
         socket_server_url = self.server_url
         if (self.opt['local']):  # skip some hops for local stuff
             socket_server_url = "https://localhost"
@@ -363,6 +373,7 @@ class MTurkManager():
             # Ensure we are still accepting workers
             if not self.accepting_workers:
                 self.force_expire_hit(worker_id, assign_id)
+                return
 
             # Ensure worker has not exceeded concurrent convo cap
             convs = worker_state.active_conversation_count()
@@ -374,6 +385,7 @@ class MTurkManager():
                             allowed_convs
                         ))
                 self.force_expire_hit(worker_id, assign_id, text)
+                return
 
             # Initialize a new agent for this worker
             self.worker_manager.assign_task_to_worker(
@@ -381,7 +393,6 @@ class MTurkManager():
             )
             agent = self.worker_manager._get_agent(worker_id, assign_id)
             self._onboard_new_agent(agent)
-
         else:
             # Reconnecting worker
             agent = self.worker_manager._get_agent(worker_id, assign_id)
@@ -431,7 +442,6 @@ class MTurkManager():
                 # should resend the messages already in the conversation
                 if not conversation_id:
                     self._restore_agent_state(worker_id, assign_id)
-                agent.clear_messages()
             elif (agent.get_status() == AssignState.STATUS_DISCONNECT or
                   agent.get_status() == AssignState.STATUS_DONE or
                   agent.get_status() == AssignState.STATUS_EXPIRED or
@@ -462,8 +472,8 @@ class MTurkManager():
             agent.hit_is_complete = True
 
     def _on_new_message(self, pkt):
-        """Put an incoming message onto the correct agent's message queue and
-        add it to the proper message thread as long as the agent is active
+        """Handle incoming messages from Amazon's SNS queue. All other packets
+        should be handled by the worker_manager
         """
         if pkt.sender_id == AMAZON_SNS_NAME:
             self._handle_mturk_message(pkt)
@@ -902,9 +912,11 @@ class MTurkManager():
         '''Wait for the full task duration to ensure anyone who sees the task
         has it expired, and ensures that all tasks are properly expired
         '''
+
         start_time = time.time()
         min_wait = self.opt['assignment_duration_in_seconds']
-        while time.time() - start_time < min_wait:
+        while time.time() - start_time < min_wait and \
+                len(self.hit_id_list) > 0:
             self.expire_all_unassigned_hits()
             time.sleep(self.opt['assignment_duration_in_seconds']/60)
 

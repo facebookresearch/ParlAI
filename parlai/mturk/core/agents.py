@@ -128,8 +128,8 @@ class AssignState():
         elif self.status == self.STATUS_PARTNER_DISCONNECT_EARLY:
             command = data_model.COMMAND_INACTIVE_HIT
             text = ('One of your partners disconnected in the middle of the '
-                    'HIT. We won\'t penalize you for their disconnect, but you '
-                    'did not complete enough of the task to submit the HIT. '
+                    'HIT. We won\'t penalize you for their disconnect, but you'
+                    ' did not complete enough of the task to submit the HIT. '
                     'Please return this HIT and accept a new one if you would '
                     'like to try again.')
         elif self.status == self.STATUS_RETURNED:
@@ -181,7 +181,7 @@ class MTurkAgent(Agent):
         self.message_request_time = None
         self.recieved_packets = {}
         self.creation_time = time.time()
-        self.alived = False  # Used for restoring state after refresh
+        self.alived = True  # Used for restoring state after refresh
 
         self.msg_queue = Queue()
 
@@ -501,7 +501,7 @@ class MTurkAgent(Agent):
             return False
 
     def set_hit_is_abandoned(self):
-        """Update local state to abandoned and expire the hit through MTurk"""
+        """Update local state to abandoned and mark the HIT as expired"""
         if not self.hit_is_abandoned:
             self.hit_is_abandoned = True
             self.mturk_manager.force_expire_hit(

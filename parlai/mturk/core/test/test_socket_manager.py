@@ -1,22 +1,15 @@
 import unittest
-import os
 import time
 import uuid
 from unittest import mock
 from parlai.mturk.core.socket_manager import Packet, SocketManager
 from parlai.mturk.core.agents import AssignState
 
-import parlai.mturk.core.worker_manager as WorkerManagerFile
 import parlai.mturk.core.data_model as data_model
 import parlai.mturk.core.shared_utils as shared_utils
 import threading
 from websocket_server import WebsocketServer
 import json
-
-parent_dir = os.path.dirname(os.path.abspath(__file__))
-WorkerManagerFile.DISCONNECT_FILE_NAME = 'disconnect-test.pickle'
-WorkerManagerFile.MAX_DISCONNECTS = 1
-WorkerManagerFile.parent_dir = os.path.dirname(os.path.abspath(__file__))
 
 TEST_WORKER_ID_1 = 'TEST_WORKER_ID_1'
 TEST_ASSIGNMENT_ID_1 = 'TEST_ASSIGNMENT_ID_1'
