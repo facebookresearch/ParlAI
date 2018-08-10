@@ -55,13 +55,13 @@ def main():
     argparser.add_argument('--auto-approve-delay', type=int,
                            default=3600*24*1, help='how long to wait for  \
                            auto approval')
-    argparser.add_argument('--only-masters', type='bool', default=False, help='Set to true to use only master turks for this test eval')
+    argparser.add_argument('--only-masters', type='bool', default=False, help='Set to True to use only master turks for this test eval, default is %(default)s')
 
     # ADD MODEL ARGS HERE (KVMEMNN ADDED AS AN EXAMPLE)
-    argparser.set_defaults(
-        model_file='',
-        model='',
-    )
+    # argparser.set_defaults(
+    #     model_file='',
+    #     model='',
+    # )
 
     opt = argparser.parse_args()
 
@@ -73,6 +73,7 @@ def main():
     print('=== Actual bot opt === :\n {}'.format('\n'.join(["[{}] : {}".format(k,v) for k,v in bot.opt.items()])))
     folder_name = 'master_{}_YOURCOMMENT__'.format(opt['only_masters']) + '__'.join(['{}_{}'.format(k,v) for k,v in opt['override'].items()])
 
+    #  this is mturk task, not convai2 task from ParlAI
     opt['task'] = 'convai2:self'
     if 'data_path' not in opt:
         opt['data_path'] = os.getcwd() + '/data/' + folder_name
