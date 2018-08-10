@@ -212,7 +212,6 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         ) + 1
         self.model_name = opt.get('model_name')
         self.dialog = []
-        self.reranked_cands = []
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.chat_done = False
         self.n_personas = []
@@ -459,8 +458,6 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         # self.model_agent.observe(act)
 
         acts.append({'text': act['text']})
-        if 'reranked_samples' in act:
-            acts[-1]['reranked_samples'] = act['reranked_samples']
 
         for (sb_0, sb_1) in [
             (' .', '.'),
@@ -476,8 +473,6 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             acts[0]['message_id'][-1] != '0' else \
             acts[0]['message_id'][:-1] + '1'
         self.dialog.append((idx, acts[idx]['text']))
-        if 'reranked_samples' in acts[idx]:
-            self.reranked_cands.append((idx, acts[idx]['reranked_samples']))
         time.sleep(len(acts[idx]['text'].split(' ')) * 0.5)
         agent.observe(acts[idx])
 
@@ -557,7 +552,6 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                      'consistent_score': self.consistent_score,
                      'consistent_reason': self.consistent_reason,
                      'persona_picked': self.persona_picked,
-                     'reranked_cands': self.reranked_cands,
                      'n_personas': self.n_personas}, open(filename, 'wb'))
 
     def is_exact_match(self, act, ag, tolerance=0):
