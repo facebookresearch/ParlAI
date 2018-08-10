@@ -57,7 +57,7 @@ def main():
                            auto approval')
     argparser.add_argument('--only-masters', type='bool', default=False, help='Set to True to use only master turks for this test eval, default is %(default)s')
 
-    # ADD MODEL ARGS HERE (KVMEMNN ADDED AS AN EXAMPLE)
+    # ADD MODEL ARGS HERE
     # argparser.set_defaults(
     #     model_file='',
     #     model='',
