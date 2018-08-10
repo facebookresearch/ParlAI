@@ -9,8 +9,23 @@ from parlai.mturk.core.mturk_manager import MTurkManager
 from worlds import \
     Convai2EvalWorld, PersonaProfileWorld, PersonasGenerator
 from task_config import task_config
+import random
+import torch
+import time
 
 import os
+
+MASTER_QUALIF = {
+    'QualificationTypeId': 'PUT HERE YOUR QUALTYPEID',
+    'Comparator': 'Exists',
+    'RequiredToPreview': True
+}
+
+MASTER_QUALIF_SDBOX = {
+    'QualificationTypeId': 'PUT HERE YOUR QUALTYPEID',
+    'Comparator': 'Exists',
+    'RequiredToPreview': True
+    }
 
 
 def main():
@@ -23,7 +38,7 @@ def main():
     argparser.add_mturk_args()
     argparser.add_argument('-mt', '--max-turns', default=10, type=int,
                            help='maximal number of chat turns')
-    argparser.add_argument('--max-resp-time', default=180,
+    argparser.add_argument('--max-resp-time', default=240,
                            type=int,
                            help='time limit for entering a dialog message')
     argparser.add_argument('--max-persona-time', type=int,
@@ -42,26 +57,28 @@ def main():
     argparser.add_argument('--auto-approve-delay', type=int,
                            default=3600*24*1, help='how long to wait for  \
                            auto approval')
+    argparser.add_argument('--only-masters', type='bool', default=True, help='Set to true to use only master turks for this test eval')
 
     # ADD MODEL ARGS HERE (KVMEMNN ADDED AS AN EXAMPLE)
     argparser.set_defaults(
-        model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
-        model_file='models:convai2/kvmemnn/model',
+        model_file='/checkpoint/kulikov/local-runs/ranking-withpt/model',
+        model='parlai_internal.agents.filibooster.filibooster:FiliboosterAgent',
     )
+
     opt = argparser.parse_args()
 
     # add additional model args
-    opt['no_cuda'] = True
-    opt['override'] = {'interactive_mode': True}
-    opt['interactive_mode'] = True
-    opt['model_name'] = 'kvmemnn_convai2'
+    opt['override'] = {'no_cuda': True, 'interactive_mode': True, 'tensorboard_log': False }
 
     bot = create_agent(opt)
     shared_bot_params = bot.share()
+    print('=== Actual bot opt === :\n {}'.format('\n'.join(["[{}] : {}".format(k,v) for k,v in bot.opt.items()])))
+    folder_name = 'master_{}_YOURCOMMENT__'.format(opt['only_masters']) + '__'.join(['{}_{}'.format(k,v) for k,v in opt['override'].items()])
 
-    opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
+    #opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
+    opt['task'] = 'convai2:self'
     if 'data_path' not in opt:
-        opt['data_path'] = os.getcwd() + '/data/' + opt['task']
+        opt['data_path'] = os.getcwd() + '/data/' + folder_name
     opt.update(task_config)
 
     mturk_agent_ids = ['PERSON_1']
@@ -76,16 +93,21 @@ def main():
 
     try:
         mturk_manager.start_new_run()
-        mturk_manager.create_hits()
+        agent_qualifications = []
+        if opt['only_masters'] is True:
+            if opt['is_sandbox']:
+                agent_qualifications.append(MASTER_QUALIF_SDBOX)
+            else:
+                agent_qualifications.append(MASTER_QUALIF)
+        mturk_manager.create_hits(qualifications=agent_qualifications)
 
         if not opt['is_sandbox']:
-            # ADD BLOCKED WORKERS HERE
+            # ADD BLOCKED WORKERS HERE, This is Soft blocking!
             blocked_worker_list = []
             for w in blocked_worker_list:
-                mturk_manager.block_worker(
-                    w,
-                    'We found that you have unexpected behaviors in our \
-                     previous HITs. For more questions please email us.')
+                print('Soft Blocking {}\n'.format(w))
+                mturk_manager.soft_block_worker(w)
+                time.sleep(0.1)  # do the sleep to prevent amazon query drop
 
         def run_onboard(worker):
             worker.persona_generator = persona_generator

@@ -203,6 +203,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                  world_tag='',
                  agent_timeout_shutdown=120):
         self.turn_idx = 0
+        self.hit_id = None
         self.range_turn = range_turn
         self.max_turn = max_turn
         self.n_turn = np.random.randint(
@@ -211,6 +212,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         ) + 1
         self.model_name = opt.get('model_name')
         self.dialog = []
+        self.reranked_cands = []
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.chat_done = False
         self.n_personas = []
@@ -453,10 +455,12 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         act = self.model_agent.act()
 
         # NOTE: model agent may or may not need to observe itself here,
-        # depending on how your model handles this
-        self.model_agent.observe(act)
+        # depending on how your model handles this, uncomment for that
+        # self.model_agent.observe(act)
 
         acts.append({'text': act['text']})
+        if 'reranked_samples' in act:
+            acts[-1]['reranked_samples'] = act['reranked_samples']
 
         for (sb_0, sb_1) in [
             (' .', '.'),
@@ -472,6 +476,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             acts[0]['message_id'][-1] != '0' else \
             acts[0]['message_id'][:-1] + '1'
         self.dialog.append((idx, acts[idx]['text']))
+        if 'reranked_samples' in acts[idx]:
+            self.reranked_cands.append((idx, acts[idx]['reranked_samples']))
         time.sleep(len(acts[idx]['text'].split(' ')) * 0.5)
         agent.observe(acts[idx])
 
@@ -540,6 +546,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         pickle.dump({'personas': self.personas,
                      'dialog': self.dialog,
                      'workers': [ag.worker_id for ag in self.agents],
+                     'hit_id': [ag.hit_id for ag in self.agents],
+                     'assignment_id': [ag.assignment_id for ag in self.agents],
                      'bad_workers': bad_workers,
                      'n_turn': self.n_turn,
                      'fluency_score': self.fluency_score,
@@ -549,6 +557,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                      'consistent_score': self.consistent_score,
                      'consistent_reason': self.consistent_reason,
                      'persona_picked': self.persona_picked,
+                     'reranked_cands': self.reranked_cands,
                      'n_personas': self.n_personas}, open(filename, 'wb'))
 
     def is_exact_match(self, act, ag, tolerance=0):
@@ -605,7 +614,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         ) + 1
 
     def check_timeout(self, act):
-        if act['text'] == '[TIMEOUT]' and act['episode_done']:
+        if act['text'] == '[TIMEOUT]' or act['text'] == '[RETURNED]' or act['text'] == '[DISCONNECT]':
             control_msg = {'episode_done': True}
             control_msg['id'] = 'SYSTEM'
             control_msg['text'] = self.get_instruction(
