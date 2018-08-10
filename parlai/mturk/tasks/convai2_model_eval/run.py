@@ -57,10 +57,10 @@ def main():
                            auto approval')
     argparser.add_argument('--only-masters', type='bool', default=False, help='Set to True to use only master turks for this test eval, default is %(default)s')
 
-    # ADD MODEL ARGS HERE
+    # ADD MODEL ARGS HERE, UNCOMMENT TO USE KVMEMNET MODEL AS AN EXAMPLE
     # argparser.set_defaults(
-    #     model_file='',
-    #     model='',
+    # model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
+    # model_file='models:convai2/kvmemnn/model',
     # )
 
     opt = argparser.parse_args()
