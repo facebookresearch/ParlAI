@@ -203,6 +203,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                  world_tag='',
                  agent_timeout_shutdown=120):
         self.turn_idx = 0
+        self.hit_id = None
         self.range_turn = range_turn
         self.max_turn = max_turn
         self.n_turn = np.random.randint(
@@ -300,7 +301,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
 
             if acts[idx]['episode_done']:
                 print("Finished chat")
-                self.check_timeout(acts[idx])
+                self.check_disconnects(acts[idx])
                 for ag in self.agents:
                     if ag != agent and ag.some_agent_disconnected:
                         control_msg['text'] = UNEXPECTED_DISCONNECTION_MSG
@@ -453,8 +454,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         act = self.model_agent.act()
 
         # NOTE: model agent may or may not need to observe itself here,
-        # depending on how your model handles this
-        self.model_agent.observe(act)
+        # depending on how your model handles this, uncomment for that
+        # self.model_agent.observe(act)
 
         acts.append({'text': act['text']})
 
@@ -540,6 +541,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         pickle.dump({'personas': self.personas,
                      'dialog': self.dialog,
                      'workers': [ag.worker_id for ag in self.agents],
+                     'hit_id': [ag.hit_id for ag in self.agents],
+                     'assignment_id': [ag.assignment_id for ag in self.agents],
                      'bad_workers': bad_workers,
                      'n_turn': self.n_turn,
                      'fluency_score': self.fluency_score,
@@ -604,8 +607,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             self.range_turn[1]
         ) + 1
 
-    def check_timeout(self, act):
-        if act['text'] == '[TIMEOUT]' and act['episode_done']:
+    def check_disconnects(self, act):
+        if act['text'] == '[TIMEOUT]' or act['text'] == '[RETURNED]' or act['text'] == '[DISCONNECT]':
             control_msg = {'episode_done': True}
             control_msg['id'] = 'SYSTEM'
             control_msg['text'] = self.get_instruction(
