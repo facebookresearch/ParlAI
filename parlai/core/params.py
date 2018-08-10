@@ -342,6 +342,9 @@ class ParlaiParser(argparse.ArgumentParser):
         pytorch.add_argument(
             '--batch-length-range', type=int, default=5,
             help='degree of variation of size allowed in batch')
+        pytorch.add_argument(
+            '--shuffle', type='bool', default=False,
+            help='Whether to shuffle the data')
         self.add_parlai_data_path(parlai)
 
     def add_model_args(self):
