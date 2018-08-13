@@ -477,15 +477,20 @@ class FairseqAgent(TorchAgent):
             # we can support variable number of candidates
             for i in range(bsz):
                 cands = batch.candidate_vecs[i]
+                if not cands:
+                    reranked_cands.append(None)
+                    best_cands.append(None)
+                    continue
                 ncand = len(cands)
                 # repeat the input many times
                 xs = batch.text_vec[i].unsqueeze(0).expand(ncand, -1)
                 # and appropriately pack the outputs
                 ys, _ = self._padded_tensor(cands)
                 s = self._make_sample(xs, ys)
-                # perform the actual grading
+                # perform the actual grading, extract the scores
                 scored = list(self.scorer.score_batched_itr([s], cuda=self.use_cuda))
                 scores = [s[3][0]['score'].item() for s in scored]
+                # intentional hanging comma here; argsort returns a list
                 ranked, = self._argsort(scores, batch.candidates[i], descending=True)
                 reranked_cands.append(ranked)
                 # best candidate is the highest scoring of the items
@@ -578,7 +583,7 @@ class FairseqAgent(TorchAgent):
         # TODO: should the right/left padding thing be in torch agent?
         repadded = convert_padding_direction(xs, self.dict.pad(), right_to_left=True)
         sample = {}
-        sample["id"] = torch.range(0, len(xs) - 1)
+        sample["id"] = torch.arange(len(xs) - 1)
         sample["net_input"] = {
             "src_tokens": repadded,
             "src_lengths": self._seq_length(xs),

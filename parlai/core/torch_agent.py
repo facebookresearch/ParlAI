@@ -416,7 +416,7 @@ class TorchAgent(Agent):
             y_lens = [y.shape[0] for y in label_vecs]
 
             if sort and xs is None:
-                ys, y_lens = self._padded_tensor(labels)
+                ys, y_lens = self._padded_tensor(label_vecs)
                 exs, valid_inds, label_vecs, labels, y_lens = self._argsort(
                     y_lens, exs, valid_inds, label_vecs, labels, y_lens,
                     descending=True
