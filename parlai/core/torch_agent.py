@@ -519,8 +519,10 @@ class TorchAgent(Agent):
         :param use_label: default true, use the label when available instead of
                           the model's generated response.
         """
-        if (use_label and self.observation is not None and
-                not self.observation.get('episode_done', True)):
+        if not self.observation or self.observation.get('episode_done', True):
+            return None
+
+        if use_label:
             # first look for the true label, if we aren't on a new episode
             label_key = ('labels' if 'labels' in self.observation else
                          'eval_labels' if 'eval_labels' in self.observation

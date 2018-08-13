@@ -651,7 +651,11 @@ class TestTorchAgent(unittest.TestCase):
         agent.replies = {
             'batch_reply': [{'text': 'It\'s okay! I\'m a leaf on the wind.'}]
         }
+        # If the observation was previously an episode end, we shouldn't have any
+        # older reply
+        self.assertEqual(agent.last_reply(), None)
         # now agent should remember what it said
+        agent.observation = { 'episode_done': False }
         self.assertEqual(agent.last_reply(),
                          'It\'s okay! I\'m a leaf on the wind.')
         # now set true observation
