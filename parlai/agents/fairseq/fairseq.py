@@ -484,6 +484,8 @@ class FairseqAgent(TorchAgent):
                 ncand = len(cands)
                 # repeat the input many times
                 xs = batch.text_vec[i].unsqueeze(0).expand(ncand, -1)
+                # some models crash if there's leading padding on every example
+                xs = xs[:,:batch.text_lengths[i]]
                 # and appropriately pack the outputs
                 ys, _ = self._padded_tensor(cands)
                 s = self._make_sample(xs, ys)
