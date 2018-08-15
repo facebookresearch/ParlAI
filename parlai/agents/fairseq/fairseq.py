@@ -43,6 +43,11 @@ NON_OVERRIDABLE_ARGS = {
 }
 
 
+def _is_nonempty_observation(obs):
+    """Check if an observation has no tokens in it."""
+    return len(obs.get('text_vec', [])) > 0
+
+
 def _fairseq_opt_wrapper(opt, skip_pretrained_embedding_loading=False):
     """
     Marshalls from a dict to a argparse.Namespace object for API compatibility.
@@ -410,13 +415,14 @@ class FairseqAgent(TorchAgent):
         super().reset()
         self.reset_metrics()
 
-    def batchify(self, *args, **kwargs):
-        """Override parent batchify to set sorting to true.
-
-        Sorting inputs is needed for torch.nn.utils.rnn.pack_padded_sequence.
+    def batchify(self, obs_batch):
         """
-        kwargs['sort'] = True
-        return super().batchify(*args, **kwargs)
+        Override parent batchify to set requirements for fairseq.
+
+        Fairseq depends on sorted batch inputs for a call to rnn.pad_packed_sequence.
+        Fairseq models cannot handle zero length sentences
+        """
+        return super().batchify(obs_batch, sort=True, is_valid=_is_nonempty_observation)
 
     def train_step(self, batch):
         """Process batch of inputs and targets and train on them.
