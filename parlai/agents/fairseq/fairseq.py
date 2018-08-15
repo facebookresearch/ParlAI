@@ -487,7 +487,7 @@ class FairseqAgent(TorchAgent):
                 # repeat the input many times
                 xs = batch.text_vec[i].unsqueeze(0).expand(ncand, -1)
                 # some models crash if there's leading padding on every example
-                xs = xs[:,:batch.text_lengths[i]]
+                xs = xs[:, :batch.text_lengths[i]]
                 # and appropriately pack the outputs
                 ys, _ = self._padded_tensor(cands)
                 s = self._make_sample(xs, ys)
@@ -501,7 +501,7 @@ class FairseqAgent(TorchAgent):
         # Next generate freely to create our response
         if not self.args.skip_generation:
             generated_output = self._generate(samples)
-        elif reranked_candidates:
+        elif reranked_cands:
             # we're skiping generation, but we're also grading candidates
             # so output the highest ranked candidate
             # In the case of zero candidates, we don't have something to rank,
@@ -514,7 +514,6 @@ class FairseqAgent(TorchAgent):
             pass
 
         return Output(generated_output, reranked_cands)
-
 
     def _generate(self, samples):
         src_tokens = samples["net_input"]["src_tokens"]
