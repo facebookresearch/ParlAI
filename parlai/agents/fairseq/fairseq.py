@@ -468,10 +468,13 @@ class FairseqAgent(TorchAgent):
             # Interactive mode won't have a gold label
             self.trainer.valid_step(samples)
 
+        # Output placeholders
+        reranked_cands = None
+        generated_output = None
+
         # Grade each of the candidate sequences
         if batch.candidate_vecs is not None:
             bsz = len(batch.text_vec)
-            best_cands = []
             reranked_cands = []
             # score the candidates for each item in the batch separately, so that
             # we can support variable number of candidates
@@ -479,7 +482,6 @@ class FairseqAgent(TorchAgent):
                 cands = batch.candidate_vecs[i]
                 if not cands:
                     reranked_cands.append(None)
-                    best_cands.append(None)
                     continue
                 ncand = len(cands)
                 # repeat the input many times
@@ -495,12 +497,24 @@ class FairseqAgent(TorchAgent):
                 # intentional hanging comma here; argsort returns a list
                 ranked, = self._argsort(scores, batch.candidates[i], descending=True)
                 reranked_cands.append(ranked)
-                # best candidate is the highest scoring of the items
-                best_cands.append(ranked[0])
-            return Output(best_cands, reranked_cands)
-        elif not self.args.skip_generation:
-            # Next generate freely to create our response
-            return Output(self._generate(samples), None)
+
+        # Next generate freely to create our response
+        if not self.args.skip_generation:
+            generated_output = self._generate(samples)
+        elif reranked_candidates:
+            # we're skiping generation, but we're also grading candidates
+            # so output the highest ranked candidate
+            # In the case of zero candidates, we don't have something to rank,
+            # so we may need to pass on that None
+            generated_output = [
+                ranked and ranked[0] or None for ranked in reranked_cands
+            ]
+        else:
+            # no output at all
+            pass
+
+        return Output(generated_output, reranked_cands)
+
 
     def _generate(self, samples):
         src_tokens = samples["net_input"]["src_tokens"]
