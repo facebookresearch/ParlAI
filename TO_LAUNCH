@@ -1,0 +1,1 @@
+rm /tmp/test*  ;python examples/train_model.py -t unittest -m seq2seq -mf /tmp/test -vtim 10 -att dot --no-cuda -mom 0.9 -esz 16 -nl 1 -hs 64 -bs 32
