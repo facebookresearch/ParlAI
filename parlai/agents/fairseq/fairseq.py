@@ -416,8 +416,12 @@ class FairseqAgent(TorchAgent):
         self.reset_metrics()
 
     def batchify(self, obs_batch):
-        # Fairseq depends on sorted batch inputs for a call to rnn.pad_packed_sequence.
-        # Fairseq models cannot handle zero length sentences
+        """
+        Override parent batchify to set requirements for fairseq.
+
+        Fairseq depends on sorted batch inputs for a call to rnn.pad_packed_sequence.
+        Fairseq models cannot handle zero length sentences
+        """
         return super().batchify(obs_batch, sort=True, is_valid=_is_nonempty_observation)
 
     def train_step(self, batch):
