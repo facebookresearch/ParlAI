@@ -411,4 +411,11 @@ task_list = [
         "tags": ["All", "Visual"],
         "description": "COCO annotations derived from the 2015 COCO Caption Competition. Link to dataset: http://cocodataset.org/#download",
     },
+    {
+        "id": "ConvAI2_wild_evaluation",
+        "display_name": "ConvAI2_wild_evaluation",
+        "task": "convai2_wild_evaluation",
+        "tags": ["All",  "ChitChat" ],
+        "description": "Dataset collected during the wild evaluation of ConvaAI2 participants bots (http://lnsigo.mipt.ru/export/datasets/convai/convai2_wild_evaluation_0.2.tgz). 60% train, 20% valid and 20% test is chosen at random from the whole dataset."
+    },
 ]
