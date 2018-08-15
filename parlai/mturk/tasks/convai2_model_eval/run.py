@@ -98,7 +98,7 @@ def main():
     try:
         mturk_manager.start_new_run()
         agent_qualifications = []
-        if opt['only_masters'] is True:
+        if opt['only_masters']:
             if opt['is_sandbox']:
                 agent_qualifications.append(MASTER_QUALIF_SDBOX)
             else:
@@ -106,7 +106,7 @@ def main():
         mturk_manager.create_hits(qualifications=agent_qualifications)
 
         if not opt['is_sandbox']:
-            # ADD SOFT - BLOCKED WORKERS HERE
+            # ADD SOFT-BLOCKED WORKERS HERE
             # NOTE: blocking qual *must be* specified
             blocked_worker_list = []
             for w in blocked_worker_list:
