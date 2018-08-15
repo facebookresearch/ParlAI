@@ -458,7 +458,7 @@ class DictionaryAgent(Agent):
             for line in read:
                 split = line.strip().split('\t')
                 token = unescape(split[0])
-                if lower_special and token.startswith('__') and token == token.upper():
+                if lower_special and token in {'__UNK__', '__NULL__', '__END__', '__START__'}:
                     token = token.lower()
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
