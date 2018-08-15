@@ -15,6 +15,7 @@ import numpy as np
 import os
 import pickle
 import re
+from functools import lru_cache
 
 try:
     from subword_nmt import learn_bpe, apply_bpe
@@ -532,6 +533,7 @@ class DictionaryAgent(Agent):
         else:
             return self.vec2txt(txt_or_vec)
 
+    @lru_cache(int(2 ** 20), typed=True)
     def txt2vec(self, text, vec_type=list):
         """Converts a string to a vector (list of ints).
 
