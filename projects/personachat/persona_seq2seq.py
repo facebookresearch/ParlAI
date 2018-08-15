@@ -1203,26 +1203,13 @@ class PersonachatSeqseqAgentSplit(Agent):
             # get index of null token from dictionary (probably 0)
             self.NULL_IDX = self.dict[self.dict.null_token]
 
-            lower = False
-            if self.dict.tok2ind.get('__end__'):
-                lower = True
-
-            if not lower:
-                # reorder dictionary tokens
-                self.dict.ind2tok[1] = '__END__'
-                self.dict.tok2ind['__END__'] = 1
-                self.dict.ind2tok[2] = '__UNK__'
-                self.dict.tok2ind['__UNK__'] = 2
-                self.dict.ind2tok[3] = '__START__'
-                self.dict.tok2ind['__START__'] = 3
-            else:
-                # reorder dictionary tokens
-                self.dict.ind2tok[1] = '__end__'
-                self.dict.tok2ind['__end__'] = 1
-                self.dict.ind2tok[2] = '__unk__'
-                self.dict.tok2ind['__unk__'] = 2
-                self.dict.ind2tok[3] = '__start__'
-                self.dict.tok2ind['__start__'] = 3
+            # reorder dictionary tokens
+            self.dict.ind2tok[1] = self.dict.end_token
+            self.dict.tok2ind[self.dict.end_token] = 1
+            self.dict.ind2tok[2] = self.dict.unk_token
+            self.dict.tok2ind[self.dict.unk_token] = 2
+            self.dict.ind2tok[3] = self.dict.start_token
+            self.dict.tok2ind[self.dict.start_token] = 3
 
             # store important params directly
             hsz = opt['hiddensize']
@@ -1553,7 +1540,10 @@ class PersonachatSeqseqAgentSplit(Agent):
         return shared
 
     def f_word(self, Glove, word, ifvector=True):
-        stop_words = STOP_WORDS + ['__END__', '__NULL__', '__START__', '__UNK__']
+        stop_words = STOP_WORDS + [
+            self.dict.start_token, self.dict.unk_token, self.dict.end_token,
+            self.dict.null_token,
+        ]
         w = word
         if w in stop_words:
             return 0.
@@ -1566,7 +1556,10 @@ class PersonachatSeqseqAgentSplit(Agent):
         return value
 
     def f_word_2(self, Glove, word, usetop=True, th=500):
-        stop_words = ['__END__', '__NULL__', '__START__', '__UNK__']
+        stop_words = [
+            self.dict.start_token, self.dict.unk_token, self.dict.end_token,
+            self.dict.null_token,
+        ]
         w = word
         if w in stop_words:
             return 0.
