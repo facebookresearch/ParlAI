@@ -1599,6 +1599,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                 self.persona_given = ''
             text_split = observation['text'].split('\n')
             if self.usepersona:
+                self.persona_given = ''
                 for t in text_split:
                     if 'persona' in t:
                         t = t.replace('your persona: ', '').replace('their persona: ', '')
