@@ -21,6 +21,7 @@ def make_parlai_format(data: list, dpath: str):
     assert valid_p > 0
     assert test_p > 0
 
+    random.seed()
     random.shuffle(data)
     data_len = len(data)
 
