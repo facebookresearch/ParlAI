@@ -59,7 +59,7 @@ class TestAssignState(unittest.TestCase):
         argparser = ParlaiParser(False, False)
         argparser.add_parlai_data_path()
         argparser.add_mturk_args()
-        self.opt = argparser.parse_args()
+        self.opt = argparser.parse_args(print_args=False)
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 6
         mturk_agent_ids = ['mturk_agent_1']
@@ -147,7 +147,7 @@ class TestMTurkAgent(unittest.TestCase):
         argparser = ParlaiParser(False, False)
         argparser.add_parlai_data_path()
         argparser.add_mturk_args()
-        self.opt = argparser.parse_args()
+        self.opt = argparser.parse_args(print_args=False)
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 6
         mturk_agent_ids = ['mturk_agent_1']
@@ -180,7 +180,7 @@ class TestMTurkAgent(unittest.TestCase):
         self.assertFalse(self.turk_agent.hit_is_returned)
         self.assertFalse(self.turk_agent.hit_is_complete)
         self.assertFalse(self.turk_agent.disconnected)
-        self.assertFalse(self.turk_agent.alived)
+        self.assertTrue(self.turk_agent.alived)
 
     def test_state_wrappers(self):
         '''Test the mturk agent wrappers around its state'''
@@ -281,7 +281,7 @@ class TestMTurkAgent(unittest.TestCase):
 
         for i in range(100):
             self.turk_agent.put_data(str(i), ACT_1)
-        self.assertEqual(len(self.turk_agent.msg_queue), 100)
+        self.assertEqual(self.turk_agent.msg_queue.qsize(), 100)
         self.turk_agent.flush_msg_queue()
         self.assertTrue(self.turk_agent.msg_queue.empty())
 
@@ -292,11 +292,11 @@ class TestMTurkAgent(unittest.TestCase):
         self.turk_agent.disconnected = True
         disconnect_message = self.turk_agent.get_new_act_message()
         self.turk_agent.disconnected = False
-        self.assertIsEqual(disconnect_message['text'],
-                           self.turk_agent.MTURK_DISCONNECT_MESSAGE)
+        self.assertEqual(disconnect_message['text'],
+                         self.turk_agent.MTURK_DISCONNECT_MESSAGE)
         self.turk_agent.hit_is_returned = True
         return_message = self.turk_agent.get_new_act_message()
-        self.assertIsEqual(
+        self.assertEqual(
             return_message['text'], self.turk_agent.RETURN_MESSAGE)
         self.turk_agent.hit_is_returned = False
 
@@ -344,4 +344,4 @@ class TestMTurkAgent(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(buffer=True)
