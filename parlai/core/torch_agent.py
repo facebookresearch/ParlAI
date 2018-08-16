@@ -483,7 +483,7 @@ class TorchAgent(Agent):
                                    before the actual utterance (e.g. squad,
                                    babi, personachat).
 
-        :return: vectorized observation with text replaced with full dialog
+        :return: observation with text replaced with full dialog
         """
         obs = observation
 
@@ -507,7 +507,7 @@ class TorchAgent(Agent):
         if obs.get('episode_done', True):
             # end of this episode, clear the history
             self.history.clear()
-        return self.vectorize(obs, truncate=self.truncate)
+        return obs
 
     def last_reply(self, use_label=True):
         """Retrieve the last reply from the model.
@@ -520,6 +520,7 @@ class TorchAgent(Agent):
         :param use_label: default true, use the label when available instead of
                           the model's generated response.
         """
+        # if the last observation was the end, then we shouldn't use it as history
         if not self.observation or self.observation.get('episode_done', True):
             return None
 
@@ -546,7 +547,7 @@ class TorchAgent(Agent):
         """
         reply = self.last_reply()
         self.observation = self.get_dialog_history(observation, reply=reply)
-        return self.observation
+        return self.vectorize(self.observation, truncate=self.truncate)
 
     def save(self, path=None):
         """Save model parameters to path (or default to model_file arg).
