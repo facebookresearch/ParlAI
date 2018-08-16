@@ -14,16 +14,16 @@ import time
 import os
 
 MASTER_QUALIF = {
-    'QualificationTypeId': 'PUT HERE YOUR QUALTYPEID',
+    'QualificationTypeId': '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH',
     'Comparator': 'Exists',
     'RequiredToPreview': True
 }
 
 MASTER_QUALIF_SDBOX = {
-    'QualificationTypeId': 'PUT HERE YOUR QUALTYPEID',
+    'QualificationTypeId': '2ARFPLSP75KLA8M8DH1HTEQVJT3SY6',
     'Comparator': 'Exists',
     'RequiredToPreview': True
-    }
+}
 
 
 def main():
@@ -55,18 +55,24 @@ def main():
     argparser.add_argument('--auto-approve-delay', type=int,
                            default=3600*24*1, help='how long to wait for  \
                            auto approval')
-    argparser.add_argument('--only-masters', type='bool', default=False, help='Set to True to use only master turks for this test eval, default is %(default)s')
+    argparser.add_argument('--only-masters', type='bool', default=False,
+                           help='Set to True to use only master turks for this' +
+                                ' test eval, default is %(default)s')
 
-    # ADD MODEL ARGS HERE, UNCOMMENT TO USE KVMEMNET MODEL AS AN EXAMPLE
+    # ADD MODEL ARGS HERE, UNCOMMENT TO USE KVMEMNN MODEL AS AN EXAMPLE
     # argparser.set_defaults(
-    # model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
-    # model_file='models:convai2/kvmemnn/model',
+    #     model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
+    #     model_file='models:convai2/kvmemnn/model',
     # )
 
     opt = argparser.parse_args()
 
     # add additional model args
-    opt['override'] = {'no_cuda': True, 'interactive_mode': True, 'tensorboard_log': False }
+    opt['override'] = {
+        'no_cuda': True,
+        'interactive_mode': True,
+        'tensorboard_log': False
+    }
 
     bot = create_agent(opt)
     shared_bot_params = bot.share()
@@ -92,7 +98,7 @@ def main():
     try:
         mturk_manager.start_new_run()
         agent_qualifications = []
-        if opt['only_masters'] is True:
+        if opt['only_masters']:
             if opt['is_sandbox']:
                 agent_qualifications.append(MASTER_QUALIF_SDBOX)
             else:
@@ -100,7 +106,8 @@ def main():
         mturk_manager.create_hits(qualifications=agent_qualifications)
 
         if not opt['is_sandbox']:
-            # ADD BLOCKED WORKERS HERE, This is Soft blocking! blocking qual *must be* specified 
+            # ADD SOFT-BLOCKED WORKERS HERE
+            # NOTE: blocking qual *must be* specified
             blocked_worker_list = []
             for w in blocked_worker_list:
                 print('Soft Blocking {}\n'.format(w))
