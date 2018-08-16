@@ -6,6 +6,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
+from parlai.core.utils import set_namedtuple_defaults
 
 try:
     import torch
@@ -60,7 +61,7 @@ Batch = namedtuple('Batch', ['text_vec', 'text_lengths', 'label_vec',
                              'label_lengths', 'labels', 'valid_indices',
                              'candidates', 'candidate_vecs', 'image',
                              'memory_vecs'])
-Batch.__new__.__defaults__ = (None,) * len(Batch._fields)
+set_namedtuple_defaults(Batch, default=None)
 
 
 """
@@ -76,7 +77,7 @@ though agents can choose to return None if they do not want to answer.
                         ranking of strings, of variable length.
 """
 Output = namedtuple('Output', ['text', 'text_candidates'])
-Output.__new__.__defaults__ = (None,) * len(Output._fields)
+set_namedtuple_defaults(Output, default=None)
 
 
 class TorchAgent(Agent):

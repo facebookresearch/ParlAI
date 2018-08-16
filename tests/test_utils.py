@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.utils import Timer, round_sigfigs
+from parlai.core.utils import Timer, round_sigfigs, set_namedtuple_defaults
 import time
 import unittest
 
@@ -65,6 +65,27 @@ class TestUtils(unittest.TestCase):
         assert turtle.time() > 0
         assert turtle.time() < rabbit.time()
 
+    def test_setnamedtupledefaults(self):
+        from collections import namedtuple
+        NT = namedtuple("NT", ("a", "b", "c"))
 
-if __name__ == '__main__':
-    unittest.main()
+        # Shouldn't be able to construct a namedtuple without providing info
+        try:
+            NT()
+            assert False, "Shouldn't be able to construct namedtuple"
+        except TypeError:
+            pass
+
+        # Test setting default value
+        set_namedtuple_defaults(NT)
+        nt = NT()
+        assert nt.a is None
+        assert nt.b is None
+        assert nt.c is None
+
+        # Test setting it with something else
+        set_namedtuple_defaults(NT, default=1)
+        nt = NT()
+        assert nt.a is 1
+        assert nt.b is 1
+        assert nt.c is 1
