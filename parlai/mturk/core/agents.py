@@ -366,6 +366,7 @@ class MTurkAgent(Agent):
             return msg
         else:
             self.request_message()
+            self.message_request_time = time.time()
 
             # Timeout in seconds, after which the HIT is expired automatically
             if timeout:
@@ -374,6 +375,7 @@ class MTurkAgent(Agent):
             # Wait for agent's new message
             while True:
                 msg = self.get_new_act_message()
+                self.message_request_time = None
                 if msg is not None:
                     return msg
 
@@ -381,6 +383,7 @@ class MTurkAgent(Agent):
                 if timeout:
                     current_time = time.time()
                     if (current_time - start_time) > timeout:
+                        self.message_request_time = None
                         return self.prepare_timeout()
                 time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 

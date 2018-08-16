@@ -70,22 +70,23 @@ class MTurkManager():
     between a world and the MTurk server.
     """
 
-    STATE_CREATED = 0
-    STATE_SERVER_ALIVE = 1
-    STATE_INIT_RUN = 2
-    STATE_HITS_MADE = 3
-    STATE_ACCEPTING_WORKERS = 4
+    STATE_CREATED = 0             # object created
+    STATE_SERVER_ALIVE = 1        # heroku server running
+    STATE_INIT_RUN = 2            # run initialized
+    STATE_ACCEPTING_WORKERS = 3   # Socket ready to recieve workers
+    STATE_HITS_MADE = 4           # hits created
 
     def __init__(self, opt, mturk_agent_ids, is_test=False):
         """Create an MTurkManager using the given setup opts and a list of
         agent_ids that will participate in each conversation
         """
-        try:
-            import parlai_internal.mturk.configs as local_configs
-            opt = local_configs.apply_default_opts(opt)
-        except Exception:
-            # not all users will be drawing configs from internal settings
-            pass
+        if not is_test:
+            try:
+                import parlai_internal.mturk.configs as local_configs
+                opt = local_configs.apply_default_opts(opt)
+            except Exception:
+                # not all users will be drawing configs from internal settings
+                pass
 
         self.opt = opt
         if self.opt['unique_worker'] or \
@@ -134,6 +135,7 @@ class MTurkManager():
         self.accepting_workers = True
         self._reset_time_logs(init_load=True)
         self.qualifications = None
+        self.unique_qual_name = None
         self.time_limit_checked = time.time()
         self.task_state = self.STATE_INIT_RUN
 
@@ -159,7 +161,9 @@ class MTurkManager():
                         return  # do nothing if it's been less than a day
                     reset_workers = list(existing_times.keys())
                     reset_workers.remove('last_reset')
-                    self.worker_manager.un_time_block_workers(reset_workers)
+                    if len(reset_workers) != 0:
+                        self.worker_manager.un_time_block_workers(
+                            reset_workers)
 
                 # Reset the time logs
                 os.remove(file_path)
@@ -226,8 +230,9 @@ class MTurkManager():
 
     def _expire_agent_pool(self):
         """Expire all workers in the worker pool"""
-        for agent in self.agent_pool:
+        for agent in self.agent_pool.copy():
             self.force_expire_hit(agent.worker_id, agent.assignment_id)
+            self._remove_from_agent_pool(agent)
 
     def _get_unique_pool(self, eligibility_function):
         """Return a filtered version of the worker pool where each worker is
@@ -253,11 +258,19 @@ class MTurkManager():
         if agent not in self.agent_pool:
             # Add the agent to pool
             with self.agent_pool_change_condition:
-                shared_utils.print_and_log(
-                    logging.DEBUG,
-                    "Adding worker {} to pool.".format(agent.worker_id)
-                )
-                self.agent_pool.append(agent)
+                if agent not in self.agent_pool:
+                    shared_utils.print_and_log(
+                        logging.DEBUG,
+                        "Adding worker {} to pool.".format(agent.worker_id)
+                    )
+                    self.agent_pool.append(agent)
+
+    def _remove_from_agent_pool(self, agent):
+        '''Remove an agent from the pool. should be called under the
+        agent_pool_change_condition being set.
+        '''
+        assert agent in self.agent_pool, 'agent not in pool'
+        self.agent_pool.remove(agent)
 
     def _handle_agent_disconnect(self, worker_id, assignment_id):
         """Mark a worker as disconnected and send a message to all agents in
@@ -290,12 +303,6 @@ class MTurkManager():
 
         if agent is not None:
             agent.alived = False
-            # Return an agent to their conversation, then restore the state
-            self.worker_manager.change_agent_conversation(
-                agent=agent,
-                conversation_id=agent.conversation_id,
-                new_agent_id=agent.id,
-            )
 
             def send_state_data():
                 while not agent.alived and not agent.hit_is_expired:
@@ -308,9 +315,19 @@ class MTurkManager():
                 }
                 self.send_command(worker_id, assignment_id, data)
 
+                if agent.message_request_time is not None:
+                    agent.request_message()
+
             state_thread = threading.Thread(target=send_state_data)
             state_thread.daemon = True
             state_thread.start()
+
+            # Return an agent to their conversation, then restore the state
+            self.worker_manager.change_agent_conversation(
+                agent=agent,
+                conversation_id=agent.conversation_id,
+                new_agent_id=agent.id,
+            )
 
     def _setup_socket(self, timeout_seconds=None):
         """Set up a socket_manager with defined callbacks"""
@@ -509,14 +526,16 @@ class MTurkManager():
             # Agent never made it to task pool, the onboarding thread will die
             # and delete the agent if we mark it as a disconnect
             agent.set_status(AssignState.STATUS_DISCONNECT)
+            agent.reduce_state()
             agent.disconnected = True
         elif agent.get_status() == AssignState.STATUS_WAITING:
             # agent is in pool, remove from pool and delete
             if agent in self.agent_pool:
                 with self.agent_pool_change_condition:
-                    self.agent_pool.remove(agent)
+                    self._remove_from_agent_pool(agent)
             agent.set_status(AssignState.STATUS_DISCONNECT)
             agent.reduce_state()
+            agent.disconnected = True
         elif agent.get_status() == AssignState.STATUS_IN_TASK:
             self._handle_agent_disconnect(worker_id, assignment_id)
             agent.disconnected = True
@@ -530,6 +549,8 @@ class MTurkManager():
     def _onboard_new_agent(self, mturk_agent):
         """Handle creating an onboarding thread and moving an agent through
         the onboarding process, updating the state properly along the way
+
+        Returns True if a thread is launched, False if the call is ignored.
         """
         # get state variable in question
         worker_id = mturk_agent.worker_id
@@ -552,22 +573,30 @@ class MTurkManager():
             # once onboarding is done, move into a waiting world
             self._move_agents_to_waiting([mturk_agent])
 
-        if assignment_id not in self.assignment_to_onboard_thread:
-            # Start the onboarding thread and run it
-            onboard_thread = threading.Thread(
-                target=_onboard_function,
-                args=(mturk_agent,),
-                name='onboard-{}-{}'.format(worker_id, assignment_id)
-            )
-            onboard_thread.daemon = True
-            onboard_thread.start()
+        if assignment_id in self.assignment_to_onboard_thread:
+            if self.assignment_to_onboard_thread[assignment_id].isAlive():
+                return False
+            agent = self.worker_manager.get_agent_for_assignment(assignment_id)
+            # Only start an onboarding world if the worker never got a world
+            if agent.get_status() != AssignState.STATUS_NONE:
+                return False
 
-            self.assignment_to_onboard_thread[assignment_id] = onboard_thread
+        # Start the onboarding thread and run it
+        onboard_thread = threading.Thread(
+            target=_onboard_function,
+            args=(mturk_agent,),
+            name='onboard-{}-{}'.format(worker_id, assignment_id)
+        )
+        onboard_thread.daemon = True
+        onboard_thread.start()
+
+        self.assignment_to_onboard_thread[assignment_id] = onboard_thread
+        return True
 
     def _no_agents_incomplete(self, agents):
         """Return True if all the given agents completed their task"""
         for agent in agents:
-            if agent.is_final() and agent.get_status() != \
+            if not agent.is_final() or agent.get_status() != \
                     AssignState.STATUS_DONE:
                 return False
         return True
@@ -575,8 +604,8 @@ class MTurkManager():
     def _check_time_limit(self):
         if time.time() - self.time_limit_checked < RESET_TIME_LOG_TIMEOUT:
             return
-        if int(time.time()) % (60*60*24) > 600:
-            # sync the time resets to ONCE DAILY in a 10 minute window
+        if int(time.time()) % (60*60*24) > (60*30):
+            # sync the time resets to ONCE DAILY in a 30 minute window
             return
         self.time_limit_checked = time.time()
         self._reset_time_logs()
@@ -595,6 +624,7 @@ class MTurkManager():
 
     def setup_server(self, task_directory_path=None):
         """Prepare the MTurk server for the new HIT we would like to submit"""
+        assert self.task_state >= self.STATE_CREATED
         fin_word = 'start'
         if self.opt['count_complete']:
             fin_word = 'finish'
@@ -728,18 +758,13 @@ class MTurkManager():
 
         shared_utils.print_and_log(logging.INFO, "MTurk server setup done.\n",
                                    should_print=True)
-
-    def ready_to_accept_workers(self, timeout_seconds=None):
-        """Set up socket to start communicating to workers"""
-        shared_utils.print_and_log(logging.INFO,
-                                   'Local: Setting up WebSocket...',
-                                   not self.is_test)
-        self._setup_socket(timeout_seconds=timeout_seconds)
-        shared_utils.print_and_log(logging.INFO, 'WebSocket set up!',
-                                   should_print=True)
+        self.task_state = self.STATE_SERVER_ALIVE
 
     def start_new_run(self):
         """Clear state to prepare for a new run"""
+        assert self.task_state >= self.STATE_SERVER_ALIVE, \
+            'Cannot start a run before having a running server using ' \
+            '`mturk_manager.setup_server()` first.'
         self.run_id = str(int(time.time()))
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
         self._init_state()
@@ -757,6 +782,23 @@ class MTurkManager():
                 'perhaps you tried to register to localhost?',
                 should_print=True
             )
+        self.task_state = self.STATE_INIT_RUN
+
+    def ready_to_accept_workers(self, timeout_seconds=None):
+        """Set up socket to start communicating to workers"""
+        assert self.task_state >= self.STATE_INIT_RUN, \
+            'Cannot be ready to accept workers before starting a run with ' \
+            '`mturk_manager.start_new_run()` first.'
+        shared_utils.print_and_log(logging.INFO,
+                                   'Local: Setting up WebSocket...',
+                                   not self.is_test)
+        self._setup_socket(timeout_seconds=timeout_seconds)
+        shared_utils.print_and_log(logging.INFO, 'WebSocket set up!',
+                                   should_print=True)
+        # Just in case create_hits was called first. To be removed when that
+        # workflow is no longer supported
+        if self.STATE_ACCEPTING_WORKERS > self.task_state:
+            self.task_state = self.STATE_ACCEPTING_WORKERS
 
     def set_onboard_function(self, onboard_function):
         self.onboard_function = onboard_function
@@ -767,6 +809,9 @@ class MTurkManager():
         in the pool to start an instance of the task. Continue doing this
         until the desired number of conversations is had.
         """
+        assert self.task_state >= self.STATE_HITS_MADE, \
+            'Must have launched HITs with `mturk_manager.create_hits`' \
+            ' to start the task'
         if callable(eligibility_function):
             # Convert legacy eligibility_functions to the new format
             eligibility_function = {
@@ -880,7 +925,7 @@ class MTurkManager():
                             new_agent_id=agent.id,
                         )
                         # Remove selected agents from the pool
-                        self.agent_pool.remove(agent)
+                        self._remove_from_agent_pool(agent)
 
                     # Start a new thread for this task world
                     task_thread = threading.Thread(
@@ -896,7 +941,7 @@ class MTurkManager():
             compare_count = self.started_conversations
             if (self.opt['count_complete']):
                 compare_count = self.completed_conversations
-            if compare_count == self.num_conversations:
+            if compare_count >= self.num_conversations:
                 self.accepting_workers = False
                 self.expire_all_unassigned_hits()
                 self._expire_onboarding_pool()
@@ -908,7 +953,7 @@ class MTurkManager():
                 break
             time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)
 
-    def _wait_for_task_length(self):
+    def _wait_for_task_expirations(self):
         '''Wait for the full task duration to ensure anyone who sees the task
         has it expired, and ensures that all tasks are properly expired
         '''
@@ -918,7 +963,9 @@ class MTurkManager():
         while time.time() - start_time < min_wait and \
                 len(self.hit_id_list) > 0:
             self.expire_all_unassigned_hits()
-            time.sleep(self.opt['assignment_duration_in_seconds']/60)
+            time.sleep(
+                max(self.opt['assignment_duration_in_seconds'] / 60, 0.1)
+            )
 
     def shutdown(self, force=False):
         """Handle any mturk client shutdown cleanup."""
@@ -930,8 +977,7 @@ class MTurkManager():
             self.expire_all_unassigned_hits()
             self._expire_onboarding_pool()
             self._expire_agent_pool()
-            self._wait_for_task_length()
-            self.socket_manager.shutdown()
+            self._wait_for_task_expirations()
             for assignment_id in self.assignment_to_onboard_thread:
                 self.assignment_to_onboard_thread[assignment_id].join()
         except BaseException:
@@ -942,11 +988,13 @@ class MTurkManager():
                                            self.opt['local'])
             if self.topic_arn is not None:
                 mturk_utils.delete_sns_topic(self.topic_arn)
-            if self.opt['unique_worker']:
+            if self.opt['unique_worker'] and not self.opt['unique_qual_name']:
                 mturk_utils.delete_qualification(self.unique_qual_id,
                                                  self.is_sandbox)
-
-            self.worker_manager.shutdown()
+            if self.socket_manager is not None:
+                self.socket_manager.shutdown()
+            if self.worker_manager is not None:
+                self.worker_manager.shutdown()
 
     # MTurk Agent Interaction Functions #
 
@@ -957,20 +1005,27 @@ class MTurkManager():
         # Expire in the state
         agent = self.worker_manager._get_agent(worker_id, assign_id)
         if agent is not None:
-            if not agent.is_final():
-                agent.set_status(AssignState.STATUS_EXPIRED)
-                agent.hit_is_expired = True
+            if agent.is_final():
+                return
+            agent.set_status(AssignState.STATUS_EXPIRED)
+            agent.hit_is_expired = True
 
         if ack_func is None:
-            def ack_func(*args):
+            def use_ack_func(*args):
                 self.socket_manager.close_channel(
                     '{}_{}'.format(worker_id, assign_id))
+        else:
+            def use_ack_func(*args):
+                ack_func(*args)
+                self.socket_manager.close_channel(
+                    '{}_{}'.format(worker_id, assign_id))
+
         # Send the expiration command
         if text is None:
             text = ('This HIT is expired, please return and take a new '
                     'one if you\'d want to work on this task.')
         data = {'text': data_model.COMMAND_EXPIRE_HIT, 'inactive_text': text}
-        self.send_command(worker_id, assign_id, data, ack_func=ack_func)
+        self.send_command(worker_id, assign_id, data, ack_func=use_ack_func)
 
     def handle_turker_timeout(self, worker_id, assign_id):
         """To be used by the MTurk agent when the worker doesn't send a message
@@ -1057,6 +1112,8 @@ class MTurkManager():
         """Mark a group of agents as done to keep state consistent"""
         for agent in workers:
             if self.is_unique:
+                assert self.unique_qual_name is not None, \
+                    'Unique qual name must not be none to use is_unique'
                 self.give_worker_qualification(
                     agent.worker_id,
                     self.unique_qual_name,
@@ -1078,12 +1135,12 @@ class MTurkManager():
 
     def get_qualification_list(self, qualifications=None):
         if self.qualifications is not None:
-            return self.qualifications
+            return self.qualifications.copy()
 
         if qualifications is None:
             qualifications = []
 
-        if not self.is_sandbox:
+        if not self.is_sandbox and not self.is_test:
             try:
                 import parlai_internal.mturk.configs as local_configs
                 qualifications = \
@@ -1107,7 +1164,7 @@ class MTurkManager():
             qualifications.append({
                 'QualificationTypeId': block_qual_id,
                 'Comparator': 'DoesNotExist',
-                'RequiredToPreview': True
+                'ActionsGuarded': 'DiscoverPreviewAndAccept'
             })
 
         # Add the soft block qualification if it has been specified
@@ -1126,7 +1183,7 @@ class MTurkManager():
             qualifications.append({
                 'QualificationTypeId': block_qual_id,
                 'Comparator': 'DoesNotExist',
-                'RequiredToPreview': True
+                'ActionsGuarded': 'DiscoverPreviewAndAccept'
             })
 
         if self.has_time_limit:
@@ -1148,7 +1205,7 @@ class MTurkManager():
             qualifications.append({
                 'QualificationTypeId': block_qual_id,
                 'Comparator': 'DoesNotExist',
-                'RequiredToPreview': True
+                'ActionsGuarded': 'DiscoverPreviewAndAccept'
             })
 
         if self.is_unique:
@@ -1163,11 +1220,11 @@ class MTurkManager():
             qualifications.append({
                 'QualificationTypeId': self.unique_qual_id,
                 'Comparator': 'DoesNotExist',
-                'RequiredToPreview': True
+                'ActionsGuarded': 'DiscoverPreviewAndAccept'
             })
 
         self.qualifications = qualifications
-        return qualifications
+        return qualifications.copy()
 
     def create_additional_hits(self, num_hits, qualifications=None):
         """Handle creation for a specific number of hits/assignments
@@ -1221,6 +1278,15 @@ class MTurkManager():
         """Create hits based on the managers current config, return hit url"""
         shared_utils.print_and_log(logging.INFO, 'Creating HITs...', True)
 
+        if self.task_state < self.STATE_ACCEPTING_WORKERS:
+            shared_utils.print_and_log(
+                logging.WARN,
+                'You should be calling `ready_to_accept_workers` before '
+                '`create_hits` to ensure that the socket is connected before'
+                'hits are added. This will be enforced in future versions.',
+                True
+            )
+
         if self.opt['max_connections'] == 0:
             mturk_page_url = self.create_additional_hits(
                 num_hits=self.required_hits,
@@ -1241,6 +1307,7 @@ class MTurkManager():
             ' your laptop or put your computer into sleep or standby mode.)\n',
             should_print=True
         )
+        self.task_state = self.STATE_HITS_MADE
         return mturk_page_url
 
     def get_hit(self, hit_id):
@@ -1323,7 +1390,7 @@ class MTurkManager():
         """Soft block a worker by giving the worker the block qualification"""
         qual_name = self.opt.get(qual, None)
         assert qual_name is not None, ('No qualification {} has been specified'
-                                       ''.format(qual))
+                                       'in opt'.format(qual))
         self.give_worker_qualification(worker_id, qual_name)
 
     def un_soft_block_worker(self, worker_id, qual='block_qualification'):
@@ -1331,7 +1398,7 @@ class MTurkManager():
             from the worker"""
         qual_name = self.opt.get(qual, None)
         assert qual_name is not None, ('No qualification {} has been specified'
-                                       ''.format(qual))
+                                       'in opt'.format(qual))
         self.remove_worker_qualification(worker_id, qual_name)
 
     def give_worker_qualification(self, worker_id, qual_name, qual_value=None):
@@ -1391,7 +1458,7 @@ class MTurkManager():
         if not can_exist:
             qual_id = mturk_utils.find_qualification(qualification_name,
                                                      self.is_sandbox)
-            if qual_id is not None:
+            if qual_id is not None and not can_exist:
                 shared_utils.print_and_log(
                     logging.WARN,
                     'Could not create qualification {}, as it existed'
