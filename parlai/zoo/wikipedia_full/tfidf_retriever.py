@@ -7,7 +7,6 @@
 """
 
 from parlai.core.build_data import download_models
-import copy
 
 
 def download(datapath):

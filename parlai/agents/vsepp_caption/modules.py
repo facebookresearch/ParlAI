@@ -7,8 +7,6 @@ from torch import optim
 import torch.nn as nn
 import torchvision.models as models
 
-from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
-
 import numpy as np
 
 

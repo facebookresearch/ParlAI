@@ -9,11 +9,9 @@ from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import maintain_dialog_history, PaddingUtils, round_sigfigs
 from parlai.core.thread_utils import SharedTable
-from parlai.core.torch_agent import TorchAgent
 from .modules import Seq2seq
 
 import torch
-from torch.autograd import Variable
 from torch import optim
 import torch.nn as nn
 import torch.nn.functional as F

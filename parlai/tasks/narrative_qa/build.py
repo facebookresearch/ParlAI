@@ -10,9 +10,7 @@ import os
 import subprocess
 import shutil
 import csv
-import stat
 import time
-import gzip
 
 
 NARRATIVE_QA_DOWNLOAD_URL = 'https://github.com/deepmind/narrativeqa/archive/master.zip'

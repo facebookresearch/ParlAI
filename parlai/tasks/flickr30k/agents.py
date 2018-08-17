@@ -6,10 +6,9 @@
 
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
-from parlai.scripts.extract_image_feature import extract_feats
 from .build import build
 try:
-    import torch
+    import torch  # noqa: F401
 except Exception as e:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset

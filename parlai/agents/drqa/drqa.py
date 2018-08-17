@@ -26,7 +26,6 @@ except ImportError:
 import bisect
 import os
 import numpy as np
-import copy
 import pickle
 import random
 

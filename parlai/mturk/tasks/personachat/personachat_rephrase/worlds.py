@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.mturk.core.worlds import MTurkOnboardWorld
-from parlai.core.worlds import validate, MultiAgentDialogWorld
+from parlai.core.worlds import validate
 from parlai.mturk.tasks.personachat.personachat_chat.extract_and_save_personas import main as main_extract
 from joblib import Parallel, delayed
 import numpy as np

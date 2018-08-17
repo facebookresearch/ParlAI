@@ -5,7 +5,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 import argparse
-import os
 import sys
 
 import parlai.mturk.core.mturk_utils as mturk_utils

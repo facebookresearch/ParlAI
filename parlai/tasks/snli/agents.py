@@ -10,7 +10,6 @@ from .build import build
 
 import os
 import copy
-import json
 
 
 SNLI = 'SNLI'

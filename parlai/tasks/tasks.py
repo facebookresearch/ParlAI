@@ -8,9 +8,6 @@ The actual task list and definitions are in the file task_list.py
 """
 from .task_list import task_list
 from collections import defaultdict
-import copy
-import json
-import os
 
 
 def _preprocess(name):

@@ -9,7 +9,6 @@ from worlds import \
     PersonaChatWorld, PersonaProfileWorld, PersonasGenerator
 from task_config import task_config
 
-import torch
 import os
 
 

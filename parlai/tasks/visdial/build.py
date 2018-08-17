@@ -9,8 +9,6 @@ import parlai.core.build_data as build_data
 import os
 import json
 
-from parlai.tasks.vqa_v1.build import buildImage
-
 
 def build(opt):
     version = 'v0.9'

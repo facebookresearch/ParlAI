@@ -8,16 +8,11 @@
 Adapted from Adam Fisch's work at github.com/facebookresearch/DrQA/
 """
 
-import argparse
 import sqlite3
-import json
 import os
 import logging
-import importlib.util
 
-from multiprocessing import Pool as ProcessPool
 from tqdm import tqdm
-from . import utils
 
 from collections import deque
 import random

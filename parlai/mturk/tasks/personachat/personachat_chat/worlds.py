@@ -3,10 +3,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-from parlai.core.agents import create_agent
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
-from parlai.core.agents import create_agent
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from joblib import Parallel, delayed
 from extract_and_save_personas import main as main_extract
@@ -15,7 +13,6 @@ import time
 import os
 import pickle
 import random
-import math
 
 ONBOARD_MSG = '\nWelcome! Below is your persona \
         (you can find it on the left side of the chat)\n \
