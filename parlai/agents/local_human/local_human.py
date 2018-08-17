@@ -19,13 +19,13 @@ class LocalHumanAgent(Agent):
         agent.add_argument('-fixedCands', '--local-human-candidates-file',
                            default=None, type=str,
                            help='File of label_candidates to send to other agent')
-    
+
     def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.id = 'localHuman'
         self.episodeDone = False
         self.fixedCands_txt = load_cands(self.opt.get('local_human_candidates_file'))
-            
+
     def observe(self, msg):
         print(display_messages([msg],
                                ignore_fields=self.opt.get('display_ignore_fields', ''),
