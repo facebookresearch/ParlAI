@@ -34,7 +34,7 @@ class TestTrainModel(unittest.TestCase):
         try:
             sys.stdout = output
             try:
-                import torch
+                import torch  # noqa: F401
             except ImportError:
                 print('Cannot import torch, skipping test_train_model')
                 return
@@ -77,6 +77,7 @@ class TestTrainModel(unittest.TestCase):
                 score = ast.literal_eval(line.split("test:", 1)[1])
                 self.assertTrue(score['accuracy'] > 0.5,
                                 "Accuracy not convincing enough, was " + str(score['accuracy']))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -4,7 +4,6 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from examples.eval_model import eval_model, setup_args
-from parlai.core.params import ParlaiParser
 
 import ast
 import unittest
@@ -58,6 +57,7 @@ class TestEvalModel(unittest.TestCase):
             # accuracy should be one
             self.assertTrue(score['accuracy'] == 1,
                             "accuracy != 1")
+
 
 if __name__ == '__main__':
     unittest.main()

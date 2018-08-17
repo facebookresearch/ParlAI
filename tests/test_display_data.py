@@ -48,5 +48,6 @@ class TestDisplayData(unittest.TestCase):
                         "Babi task did not print")
         self.assertTrue("~~" in str_output, "Example output did not complete")
 
+
 if __name__ == '__main__':
     unittest.main()
