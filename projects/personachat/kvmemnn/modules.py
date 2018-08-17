@@ -7,10 +7,7 @@
 import math
 import torch
 import torch.nn as nn
-from torch.nn.parameter import Parameter
-from torch.autograd import Variable,Function
-from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
-import torch.nn.functional as F
+from torch.autograd import Variable
 
 class Kvmemnn(nn.Module):
     def __init__(self, opt, num_features, dict):

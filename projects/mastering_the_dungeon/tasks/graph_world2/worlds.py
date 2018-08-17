@@ -5,7 +5,7 @@
 ## LICENSE file in the root directory of this source tree. An additional grant
 ## of patent rights can be found in the PATENTS file in the same directory.
 ##
-from parlai.core.worlds import World, ExecutableWorld, validate
+from parlai.core.worlds import ExecutableWorld
 from projects.mastering_the_dungeon.tasks.graph_world2.graph import construct_graph
 
 class GraphWorld2(ExecutableWorld):
