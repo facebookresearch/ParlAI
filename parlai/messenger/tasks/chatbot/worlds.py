@@ -16,7 +16,7 @@ class MessengerBotChatTaskWorld(World):
     def __init__(self, opt, agent, bot):
         self.agent = agent
         self.episodeDone = False
-        self.model = bot 
+        self.model = bot
 
     @staticmethod
     def run(messenger_manager, opt, agents, task_id):
