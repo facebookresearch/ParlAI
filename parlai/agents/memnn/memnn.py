@@ -399,7 +399,7 @@ def to_tensors(sentences, dictionary):
 
 
 def build_cands(exs, dict):
-    dict_list = list(dict.tok2ind.keys())[1:] # skip NULL
+    dict_list = list(dict.tok2ind.keys())[1:]  # skip NULL
     cands = []
     for ex in exs:
         if 'label_candidates' in ex:
