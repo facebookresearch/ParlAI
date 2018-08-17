@@ -99,7 +99,6 @@ class TaskTeacher(FbDialogTeacher):
             x = ''
 
             y = None
-            cands = None
 
             reward = 0
             dialog_index = 0
@@ -157,9 +156,6 @@ class TaskTeacher(FbDialogTeacher):
                     read_feedback = True
                     # split labels
                     y = split[1].split('|')
-                    if len(split) > 3:
-                        # split label_candidates
-                        cands = split[3].split('|')
 
                 if read_feedback and not split[1]:
                     split[0] = x

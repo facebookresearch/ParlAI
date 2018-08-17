@@ -473,7 +473,6 @@ class Graph(object):
             self.send_msg(agent_id, 'It is not a container.\n')
             return False
         self.add_contained_in(obj_id, receiver_id)
-        agent_desc = self.node_to_desc(agent_id, use_the=True).capitalize()
         receiver_desc = self.node_to_desc(receiver_id, use_the=True)
         self.send_msg(agent_id, "You put " + self.display_node_list([obj_id])
                       + " in " + receiver_desc + '.\n')

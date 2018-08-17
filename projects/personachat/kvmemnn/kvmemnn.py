@@ -394,7 +394,6 @@ class KvmemnnAgent(Agent):
         else:
             maxn = 0
             for i in range(100):
-                index =  random.randint(0, self.model.lt.weight.size(0)-1)
                 n = self.model.lt.weight[5].norm(2)[0].item()
                 if n > maxn:
                     maxn = n
@@ -484,7 +483,6 @@ class KvmemnnAgent(Agent):
             return [{}]
         is_training = ys is not None
         if is_training: #
-            text_cand_inds, loss_dict = None, None
             negs = self.get_negs(xs, ys)
             if len(negs) > 0:
                 self.model.train()
@@ -560,8 +558,6 @@ class KvmemnnAgent(Agent):
                 origxe = xe
                 origpred = pred
                 val,ind=pred.sort(descending=True)
-                origind = ind
-                ypredorig = self.fixedCands_txt[ind[0].item()] # match
                 ypred = cands_txt2[0][ind[0].item()] # reply to match
                 if self.opt.get('kvmemnn_debug', False):
                     print("twohop-range:", self.opt.get('twohop_range', 100))
@@ -620,7 +616,6 @@ class KvmemnnAgent(Agent):
                         self.cands_done.append(ypred)
                     else:
                         ypred = self.fixedCands_txt[ind[0].item()] # match
-                        ypred2 = cands_txt2[0][ind[0].item()] # reply to match
                         self.cands_done.append(ind[0].item())
                         #print("   [2nd hop nextut: " + ypred2 + "]")
                     tc = [ypred]
@@ -672,9 +667,6 @@ class KvmemnnAgent(Agent):
         except ValueError:
             # zero examples to process in this batch, so zip failed to unpack
             return None, None, None, None
-
-        # set up the input tensors
-        bsz = len(exs)
 
         # `x` text is already tokenized and truncated
         # sort by length so we can use pack_padded
