@@ -35,6 +35,7 @@ from parlai.core.worlds import DialogPartnerWorld, create_task
 
 import random
 
+
 def main():
     random.seed(42)
 
@@ -55,12 +56,12 @@ def main():
         agents = [local, remote] if not opt['remote_host'] else [remote, local]
         world = DialogPartnerWorld(opt, agents)
 
-
     # Talk to the remote agent
     with world:
         while True:
             world.parley()
             print(world.display())
+
 
 if __name__ == '__main__':
     main()
