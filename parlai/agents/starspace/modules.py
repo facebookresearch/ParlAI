@@ -30,7 +30,6 @@ class Starspace(nn.Module):
             self.lins = opt['lins']
 
     def forward(self, xs, ys=None, cands=None):
-        scores = None
         xs_enc = []
         ys_enc = []
         xs_emb = self.encoder(xs)

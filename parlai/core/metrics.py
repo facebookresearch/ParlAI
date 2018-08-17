@@ -198,8 +198,6 @@ class Metrics(object):
         if text_cands is None:
             return
         else:
-            text = observation.get('text', None)
-
             # Now loop through text candidates, assuming they are sorted.
             # If any of them is a label then score a point.
             # maintain hits@1, 5, 10, 50, 100,  etc.

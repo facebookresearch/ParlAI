@@ -181,6 +181,5 @@ class IrBaselineAgent(Agent):
                 if w not in stopwords:
                     rw[w] = 1
             used[w] = True
-        norm = len(used)
         rep['norm'] = math.sqrt(len(words))
         return rep

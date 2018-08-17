@@ -167,7 +167,6 @@ def parse_time_str(time_value_str):
 
 
 def extract_data_from_xml(xml_object):
-    max_time_difference = 1
     previous_end_time = -1000
     conversation = []
     for sentence_node in xml_object.getroot():

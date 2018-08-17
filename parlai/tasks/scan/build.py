@@ -45,7 +45,6 @@ def build(opt):
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 
-        ext = os.path.join('dailymail', 'questions')
         create_fb_format(dpath, 'train', os.path.join(dpath, 'tasks_train_simple.txt'))
         create_fb_format(dpath, 'valid', os.path.join(dpath, 'tasks_train_simple.txt'))
         create_fb_format(dpath, 'test', os.path.join(dpath, 'tasks_test_simple.txt'))

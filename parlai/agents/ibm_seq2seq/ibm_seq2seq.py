@@ -336,9 +336,6 @@ class IbmSeq2seqAgent(Agent):
         Update the model using the targets if available, otherwise rank
         candidates as well if they are available and param is set.
         """
-        # import pdb; pdb.set_trace()
-        loss_dict = None, None
-
         x_lens = [x for x in torch.sum((xs > 0).int(), dim=1).data]
         start = self.START.detach()
         starts = start.expand(len(xs), 1)

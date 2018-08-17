@@ -826,7 +826,6 @@ class Beam(object):
         # get top nbest hyp
         top_hyp_idx_n_best = []
         n_best_colors = ['aquamarine', 'chocolate1', 'deepskyblue', 'green2', 'tan']
-        end_color = 'yellow'
         sorted_finished = self.get_rescored_finished(n_best=n_best)
         for hyptail in sorted_finished:
             top_hyp_idx_n_best.append(self.get_hyp_from_finished(
