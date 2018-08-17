@@ -10,6 +10,7 @@ from .build import build
 import copy
 import os
 
+
 def _path(opt, filtered):
     # Build the data if it doesn't exist.
     build(opt)
@@ -24,6 +25,7 @@ class DefaultTeacher(FbDialogTeacher):
         opt['datafile'] = _path(opt, '')
         opt['cands_datafile'] = opt['datafile']
         super().__init__(opt, shared)
+
 
 class DoubleTeacher(DefaultTeacher):
     """This version creates text-label pairs from the perspective of both

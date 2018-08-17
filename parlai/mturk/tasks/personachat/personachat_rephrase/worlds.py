@@ -13,6 +13,7 @@ import os
 import pickle
 import random
 
+
 class PersonasGenerator(object):
     def __init__(self, opt):
         self.personas_idx_stack_path = os.path.join(opt['extract_personas_path'],

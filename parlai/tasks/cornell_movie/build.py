@@ -9,6 +9,7 @@ import parlai.core.build_data as build_data
 import codecs
 import os
 
+
 def create_fb_format(lines_file, convo_file, outpath):
     print('[building fbformat]')
     with open(os.path.join(outpath, 'train.txt'), 'w') as ftrain, \

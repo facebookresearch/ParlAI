@@ -20,6 +20,7 @@ def _regularize(sent):
     sent = ' '.join(sent.split())
     return sent
 
+
 def create_fb_format(inpath, outpath):
     print('[building fbformat]')
     with open(os.path.join(outpath, 'train.txt'), 'w') as ftrain, \

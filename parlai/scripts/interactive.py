@@ -20,6 +20,7 @@ from parlai.agents.local_human.local_human import LocalHumanAgent
 
 import random
 
+
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True)

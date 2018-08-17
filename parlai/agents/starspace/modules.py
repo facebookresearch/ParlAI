@@ -8,6 +8,7 @@ import math
 import torch
 import torch.nn as nn
 
+
 class Starspace(nn.Module):
     def __init__(self, opt, num_features, dict):
         super().__init__()
@@ -44,6 +45,7 @@ class Starspace(nn.Module):
             c_emb = self.encoder2(c)
             ys_enc.append(c_emb)
         return torch.cat(xs_enc), torch.cat(ys_enc)
+
 
 class Encoder(nn.Module):
     def __init__(self, shared_lt, dict):

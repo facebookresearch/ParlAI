@@ -14,14 +14,17 @@ except ImportError:
 import parlai.core.build_data as build_data
 import os
 
+
 def replace_emoji(x):
     if x in UNICODE_EMOJI.keys():
         return ' ' + UNICODE_EMOJI[x].replace(':', '@') + ' '
     else:
         return x
 
+
 def split_punctuation(x):
     return x.replace('.', ' . ').replace('. . .', '...').replace(',', ' , ').replace(';', ' ; ').replace(':', ' : ').replace('!', ' ! ').replace('?', ' ? ').replace('"', ' " ').replace('(',' ( ').replace(')', ' ) ')
+
 
 def create_fb_format(data, dpath):
     fw1 = open(os.path.join(dpath, 'train.txt'), 'w')
@@ -53,6 +56,7 @@ def create_fb_format(data, dpath):
     fw1.close()
     fw2.close()
     fw3.close()
+
 
 def build(opt):
     version = 'v1.1'

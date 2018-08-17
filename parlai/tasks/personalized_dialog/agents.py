@@ -18,6 +18,7 @@ tasks[3] = 'personalized-dialog-task3-options'
 tasks[4] = 'personalized-dialog-task4-info'
 tasks[5] = 'personalized-dialog-task5-full-dialogs'
 
+
 def _path(exsz, task, opt):
     # Build the data if it doesn't exist.
     build(opt)

@@ -32,6 +32,7 @@ from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 import math
 import os
 
+
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True)
@@ -95,6 +96,7 @@ def setup_args(parser=None):
     parser = setup_dict_args(parser)
     return parser
 
+
 def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None):
     """Eval on validation/test data.
     - Agent is the agent to use for the evaluation.
@@ -142,6 +144,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
         f.close()
 
     return valid_report, valid_world
+
 
 def save_best_valid(model_file, best_valid):
     f = open(model_file + '.best_valid', 'w')

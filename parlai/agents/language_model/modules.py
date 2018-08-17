@@ -9,6 +9,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 
+
 class RNNModel(nn.Module):
     """Container module with an encoder, a recurrent module, and a decoder."""
 

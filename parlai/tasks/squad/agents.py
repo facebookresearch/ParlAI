@@ -11,6 +11,7 @@ import copy
 import json
 import os
 
+
 def get_sentence_tokenizer():
     """
     Loads the nltk sentence tokenizer

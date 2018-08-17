@@ -6,6 +6,7 @@
 import os
 from parlai.core.build_data import modelzoo_path
 
+
 def add_cmdline_args(parser):
     # Runtime environment
     agent = parser.add_argument_group('DrQA Arguments')
@@ -79,6 +80,7 @@ def add_cmdline_args(parser):
     agent.add_argument('--use_time', type=int, default=0,
                         help='Time features marking how recent word was said')
 
+
 def set_defaults(opt):
     # Embeddings options
     opt['embedding_file'] = modelzoo_path(
@@ -106,6 +108,7 @@ def set_defaults(opt):
         if not opt.get('embedding_file') and not opt.get('init_model'):
             print('Setting fix_embeddings to False as embeddings are random.')
             opt['fix_embeddings'] = False
+
 
 def override_args(opt, override_opt):
     # Major model args are reset to the values in override_opt.

@@ -220,6 +220,7 @@ class TimeLogger():
         text = str(int(self.tot_time)) + "s elapsed: " + str(log)
         return text, log
 
+
 class AttrDict(dict):
     """Helper class to have a dict-like object with dot access.
 
@@ -354,6 +355,8 @@ class NoLock(object):
 
 
 single_nolock = NoLock()
+
+
 def no_lock():
     """Builds a nolock for other classes to use for no-op locking."""
     return single_nolock
@@ -642,6 +645,7 @@ class OffensiveLanguageDetector(object):
 
         return None
 
+
 def clip_text(text, max_len):
     if len(text) > max_len:
         begin_text = ' '.join(
@@ -655,6 +659,7 @@ def clip_text(text, max_len):
         else:
             text = begin_text + ' ...'
     return text
+
 
 def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
     """Returns a string describing the set of messages provided

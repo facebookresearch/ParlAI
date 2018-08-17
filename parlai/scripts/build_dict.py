@@ -13,6 +13,7 @@ import copy
 import os
 import sys
 
+
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True)
@@ -30,6 +31,7 @@ def setup_args(parser=None):
     else:
         DictionaryAgent.add_cmdline_args(parser)
     return parser
+
 
 def build_dict(opt, skip_if_built=False):
     if isinstance(opt, ParlaiParser):

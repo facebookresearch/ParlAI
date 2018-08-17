@@ -61,6 +61,7 @@ def class2str(value):
     s = ':'.join(s.rsplit('.', 1))  # replace last period with ':'
     return s
 
+
 def fix_underscores(args):
     """Converts underscores to hyphens in args.
 

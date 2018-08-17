@@ -10,6 +10,7 @@ import sys
 
 import parlai.mturk.core.mturk_utils as mturk_utils
 
+
 def main():
     """This script should be used after some error occurs that leaves HITs live
     while the ParlAI MTurk server down. This will search through live HITs and

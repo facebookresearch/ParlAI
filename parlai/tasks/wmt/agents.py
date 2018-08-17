@@ -28,5 +28,6 @@ class EnDeTeacher(FbDialogTeacher):
         opt['datafile'] = _path(self.task_name, opt,  opt['datatype'])
         super().__init__(opt, shared)
 
+
 class DefaultTeacher(EnDeTeacher):
     pass

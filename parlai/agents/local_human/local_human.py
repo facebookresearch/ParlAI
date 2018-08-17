@@ -10,6 +10,7 @@
 from parlai.core.agents import Agent
 from parlai.core.utils import display_messages, load_cands
 
+
 class LocalHumanAgent(Agent):
 
     def add_cmdline_args(argparser):
