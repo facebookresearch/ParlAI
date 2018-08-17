@@ -28,7 +28,7 @@ def create_fb_format(lines_file, convo_file, outpath):
             for line in f:
                 l = line.split(' ')
                 convo = ' '.join(l[6:]).strip('\n').strip('[').strip(']')
-                c = convo.replace("'",'').replace(' ','').split(',')
+                c = convo.replace("'", '').replace(' ', '').split(',')
 
                 # forward conversation
                 s = ''

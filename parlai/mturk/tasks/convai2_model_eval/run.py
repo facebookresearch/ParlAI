@@ -76,8 +76,8 @@ def main():
 
     bot = create_agent(opt)
     shared_bot_params = bot.share()
-    print('=== Actual bot opt === :\n {}'.format('\n'.join(["[{}] : {}".format(k,v) for k,v in bot.opt.items()])))
-    folder_name = 'master_{}_YOURCOMMENT__'.format(opt['only_masters']) + '__'.join(['{}_{}'.format(k,v) for k,v in opt['override'].items()])
+    print('=== Actual bot opt === :\n {}'.format('\n'.join(["[{}] : {}".format(k, v) for k, v in bot.opt.items()])))
+    folder_name = 'master_{}_YOURCOMMENT__'.format(opt['only_masters']) + '__'.join(['{}_{}'.format(k, v) for k, v in opt['override'].items()])
 
     #  this is mturk task, not convai2 task from ParlAI
     opt['task'] = 'convai2:self'
