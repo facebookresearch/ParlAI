@@ -212,7 +212,7 @@ class TimeLogger():
             log['%done'] = done / total
             if log["%done"] > 0:
                 log['time_left'] = str(int(self.tot_time / log['%done'] - self.tot_time)) + 's'
-            z = '%.2f' % ( 100*log['%done'])
+            z = '%.2f' % (100*log['%done'])
             log['%done'] = str(z) + '%'
         for k, v in report.items():
             if k not in log:
