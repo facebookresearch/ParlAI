@@ -119,7 +119,7 @@ def eval_wordstat(opt, print_parser=None):
     cnt = 0
     word_statistics = {'mean_wlength': [], 'mean_clength': [], 'freqs_cnt': Counter(), 'word_cnt': 0, 'pred_list': [], 'pure_pred_list': [], 'context_list': []}
     bins = [int(i) for i in opt['freq_bins'].split(',')]
-    
+
     def process_prediction(prediction, word_statistics):
         word_statistics['pred_list'].append(normalize_answer(prediction))
         freqs, _cnt, wlength, clength = get_word_stats(prediction, dictionary, bins=bins)

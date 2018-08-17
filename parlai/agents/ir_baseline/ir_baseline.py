@@ -125,7 +125,7 @@ class IrBaselineAgent(Agent):
         self.observation = None
         self.history = []
         self.episodeDone = True
-        
+
     def observe(self, obs):
         self.observation = obs
         self.dictionary.observe(obs)
@@ -143,7 +143,7 @@ class IrBaselineAgent(Agent):
         obs = self.observation
         reply = {}
         reply['id'] = self.getID()
-        
+
         # Rank candidates
         if 'label_candidates' in obs and len(obs['label_candidates']) > 0:
             # text = obs['text']

@@ -44,7 +44,7 @@ def interactive(opt):
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
-    
+
     # Show some example dialogs:
     while True:
         world.parley()
