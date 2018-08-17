@@ -11,6 +11,23 @@ import copy
 import json
 import os
 
+def get_sentence_tokenizer():
+    """
+    Loads the nltk sentence tokenizer
+    """
+    try:
+        import nltk
+    except ImportError:
+        raise ImportError('Please install nltk (e.g. pip install nltk).')
+    # nltk-specific setup
+    st_path = 'tokenizers/punkt/{0}.pickle'.format('english')
+    try:
+        sent_tok = nltk.data.load(st_path)
+    except LookupError:
+        nltk.download('punkt')
+        sent_tok = nltk.data.load(st_path)
+    return sent_tok
+
 
 class IndexTeacher(FixedDialogTeacher):
     """Hand-written SQuAD teacher, which loads the json squad data and
@@ -207,18 +224,7 @@ class SentenceTeacher(IndexTeacher):
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-
-        try:
-            import nltk
-        except ImportError:
-            raise ImportError('Please install nltk (e.g. pip install nltk).')
-        # nltk-specific setup
-        st_path = 'tokenizers/punkt/{0}.pickle'.format('english')
-        try:
-            self.sent_tok = nltk.data.load(st_path)
-        except LookupError:
-            nltk.download('punkt')
-            self.sent_tok = nltk.data.load(st_path)
+        self.sent_tok = get_sentence_tokenizer()
 
     def get(self, episode_idx, entry_idx=None):
         article_idx, paragraph_idx, qa_idx = self.examples[episode_idx]
@@ -330,18 +336,7 @@ class SentencelabelsTeacher(IndexTeacher):
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-
-        try:
-            import nltk
-        except ImportError:
-            raise ImportError('Please install nltk (e.g. pip install nltk).')
-        # nltk-specific setup
-        st_path = 'tokenizers/punkt/{0}.pickle'.format('english')
-        try:
-            self.sent_tok = nltk.data.load(st_path)
-        except LookupError:
-            nltk.download('punkt')
-            self.sent_tok = nltk.data.load(st_path)
+        self.sent_tok = get_sentence_tokenizer()
 
     def get(self, episode_idx, entry_idx=None):
         article_idx, paragraph_idx, qa_idx = self.examples[episode_idx]
@@ -390,18 +385,7 @@ class FulldocsentenceTeacher(FulldocTeacher):
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-
-        try:
-            import nltk
-        except ImportError:
-            raise ImportError('Please install nltk (e.g. pip install nltk).')
-        # nltk-specific setup
-        st_path = 'tokenizers/punkt/{0}.pickle'.format('english')
-        try:
-            self.sent_tok = nltk.data.load(st_path)
-        except LookupError:
-            nltk.download('punkt')
-            self.sent_tok = nltk.data.load(st_path)
+        self.sent_tok = get_sentence_tokenizer()
 
     def get(self, episode_idx, entry_idx=None):
         episode = self.episodes[episode_idx][entry_idx]
