@@ -10,7 +10,7 @@ import os
 import random
 import time
 
-DISPLAY_MESSAGE_DEFAULT_IGNORE = {
+DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'episode_done',
     'id',
     'image',
@@ -679,7 +679,7 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
         if msg.get('reward', 0) != 0:
             lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
         for key in msg:
-            if key not in DISPLAY_MESSAGE_DEFAULT_IGNORE and key not in ignore_fields:
+            if key not in DISPLAY_MESSAGE_DEFAULT_FIELDS and key not in ignore_fields:
                 line = '[' + key + ']: ' + clip_text(str(msg.get(key)), max_len)
                 lines.append(space + line)
         if type(msg.get('image')) == str:
