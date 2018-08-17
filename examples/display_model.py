@@ -18,6 +18,7 @@ from parlai.core.worlds import create_task
 
 import random
 
+
 def main():
     random.seed(42)
 
@@ -40,6 +41,7 @@ def main():
             if world.epoch_done():
                 print("EPOCH DONE")
                 break
+
 
 if __name__ == '__main__':
     main()
