@@ -33,7 +33,6 @@ class DefaultTeacher(DialogTeacher):
     # all possile answers for the questions
     cands = labels = ['true', 'false']
 
-
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
         data_path, self.images_path = _path(opt)

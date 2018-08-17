@@ -275,7 +275,6 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                      'bad_workers': bad_workers,
                      'n_turn': self.n_turn}, open(filename, 'wb'))
 
-
     def is_exact_match(self, act, ag, tolerance=0):
         if act['episode_done'] == True:
            return False

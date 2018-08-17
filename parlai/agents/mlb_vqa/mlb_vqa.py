@@ -176,7 +176,6 @@ class VqaDictionaryAgent(Agent):
         q_list = list(filter(lambda x: len(x) > 0, q_list))
         return q_list
 
-
     def split_tokenize(self, s):
         return (s.lower().replace('.', ' . ').replace('. . .', '...')
                 .replace(',', ' , ').replace(';', ' ; ').replace(':', ' : ')

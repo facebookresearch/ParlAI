@@ -115,7 +115,6 @@ class NegotiationTeacher(Teacher):
             self.episode_idx = (self.episode_idx + self.step_size) % len(self.episodes)
             return self._start_dialogue()
 
-
     def _split_dialogue(self, words, separator=EOS_TOKEN):
         sentences = []
         start = 0

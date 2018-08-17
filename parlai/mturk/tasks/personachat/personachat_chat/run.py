@@ -64,7 +64,6 @@ def main():
     persona_generator = PersonasGenerator(opt)
     mturk_manager.setup_server(task_directory_path=directory_path)
 
-
     try:
         mturk_manager.start_new_run()
         mturk_manager.create_hits()

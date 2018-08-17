@@ -407,7 +407,6 @@ class ParlaiParser(argparse.ArgumentParser):
             # already added
             pass
 
-
     def add_extra_args(self, args=None):
         """Add more args depending on how known args are set."""
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
@@ -437,7 +436,6 @@ class ParlaiParser(argparse.ArgumentParser):
             raise RuntimeError('Please file an issue on github that argparse '
                                'got an attribute error when parsing.')
 
-
     def parse_known_args(self, args=None, namespace=None, nohelp=False):
         """Custom parse known args to ignore help flag."""
         if args is None:
@@ -449,7 +447,6 @@ class ParlaiParser(argparse.ArgumentParser):
             # ignore help
             args = [a for a in args if a != '-h' and a != '--help']
         return super().parse_known_args(args, namespace)
-
 
     def parse_args(self, args=None, namespace=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the
