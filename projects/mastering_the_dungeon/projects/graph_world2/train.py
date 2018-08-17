@@ -63,7 +63,7 @@ def validate(opt, agent):
     return stats
 
 def get_metrics(actions, gt_actions):
-    tp, fp, fn, tn = 0, 0, 0, 0
+    tp, fp, fn = 0, 0, 0
     action_set, gt_action_set = set(actions), set(gt_actions)
     for action in action_set:
         if action in gt_action_set:
