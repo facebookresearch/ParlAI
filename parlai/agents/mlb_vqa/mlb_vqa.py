@@ -169,9 +169,9 @@ class VqaDictionaryAgent(Agent):
     def tokenize_mcb(self, s):
         t_str = s.lower()
         for i in [r'\?', r'\!', r'\'', r'\"', r'\$', r'\:', r'\@', r'\(', r'\)', r'\,', r'\.', r'\;']:
-            t_str = re.sub( i, '', t_str)
+            t_str = re.sub(i, '', t_str)
         for i in [r'\-', r'\/']:
-            t_str = re.sub( i, ' ', t_str)
+            t_str = re.sub(i, ' ', t_str)
         q_list = re.sub(r'\?', '', t_str.lower()).split(' ')
         q_list = list(filter(lambda x: len(x) > 0, q_list))
         return q_list

@@ -33,7 +33,7 @@ class RNNModel(nn.Module):
             try:
                 nonlinearity = {'RNN_TANH': 'tanh', 'RNN_RELU': 'relu'}[rnn_type]
             except KeyError:
-                raise ValueError( """An invalid option for `--model` was supplied,
+                raise ValueError("""An invalid option for `--model` was supplied,
                                  options are ['LSTM', 'GRU', 'RNN_TANH' or 'RNN_RELU']""")
             self.rnn = nn.RNN(ninp, nhid, nlayers, nonlinearity=nonlinearity, dropout=dropout)
         self.decoder = nn.Linear(nhid, ntoken)

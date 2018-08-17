@@ -12,7 +12,7 @@ from parlai.core.build_data import download_models
 
 
 def download(datapath):
-    opt  = { 'datapath': datapath }
+    opt  = {'datapath': datapath}
     fnames = ['drqa_docs.tgz']
     opt['model_type'] = 'tfidf_retriever' # for builder
     download_models(opt, fnames, 'wikipedia_2016-12-21', use_model_type=True)

@@ -14,7 +14,7 @@ import glob
 
 def _path(opt):
     build(opt)
-    print('opt is', opt['datatype'] )
+    print('opt is', opt['datatype'])
     dt = opt['datatype'].split(':')[0]
 
     if dt == 'valid':

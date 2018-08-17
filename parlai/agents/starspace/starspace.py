@@ -285,7 +285,7 @@ class StarspaceAgent(Agent):
                     cands = self.fixedCands
                     cands_txt = self.fixedCands_txt
                 else:
-                    return [{ 'text': 'I dunno.'}]
+                    return [{'text': 'I dunno.'}]
                 # test set prediction uses fixed candidates
                 if self.fixedX is None:
                     xe, ye = self.model(xs, ys, self.fixedCands)
@@ -307,7 +307,7 @@ class StarspaceAgent(Agent):
             tc = []
             for i in range(min(100, ind.size(0))):
                 tc.append(cands_txt[0][ind.data[i]])
-            ret = [{'text': ypred, 'text_candidates': tc }]
+            ret = [{'text': ypred, 'text_candidates': tc}]
             return ret
         return [{'id': self.getID()}]
 

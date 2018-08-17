@@ -71,7 +71,7 @@ def detect(opt, printargs=None, print_parser=None):
             cnt += 1
         if log_time.time() > log_every_n_secs:
             report = world.report()
-            log = { 'offenses': cnt }
+            log = {'offenses': cnt}
             text, log = log_time.log(report['exs'], world.num_examples(), log)
             print(text)
 

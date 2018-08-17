@@ -49,14 +49,15 @@ class MaxPriorityQueue(Sequence):
         return repr([v for _, v in sorted(self.lst)])
 
 
-stopwords = { 'i', 'a', 'an', 'are', 'about', 'as', 'at', 'be', 'by',
-              'for', 'from', 'how', 'in', 'is', 'it', 'of', 'on', 'or',
-              'that', 'the', 'this', 'to', 'was', 'what', 'when', 'where',
-              '--', '?', '.', "''", "''", "``", ',', 'do', 'see', 'want',
-              'people', 'and', "n't", "me", 'too', 'own', 'their', '*',
-              "'s", 'not', 'than', 'other', 'you', 'your', 'know', 'just',
-              'but', 'does', 'really', 'have', 'into', 'more', 'also',
-              'has', 'any', 'why', 'will'}
+stopwords = {
+    'i', 'a', 'an', 'are', 'about', 'as', 'at', 'be', 'by', 'for', 'from',
+    'how', 'in', 'is', 'it', 'of', 'on', 'or', 'that', 'the', 'this', 'to',
+    'was', 'what', 'when', 'where', '--', '?', '.', "''", "''", "``", ',',
+    'do', 'see', 'want', 'people', 'and', "n't", "me", 'too', 'own', 'their',
+    '*', "'s", 'not', 'than', 'other', 'you', 'your', 'know', 'just', 'but',
+    'does', 'really', 'have', 'into', 'more', 'also', 'has', 'any', 'why',
+    'will'
+}
 
 
 def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
