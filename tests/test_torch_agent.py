@@ -80,6 +80,7 @@ def get_agent(**kwargs):
     opt = parser.parse_args(print_args=False)
     return TorchAgent(opt)
 
+
 class TestTorchAgent(unittest.TestCase):
     """Basic tests on the util functions in TorchAgent."""
 
@@ -655,7 +656,7 @@ class TestTorchAgent(unittest.TestCase):
         # older reply
         self.assertEqual(agent.last_reply(), None)
         # now agent should remember what it said
-        agent.observation = { 'episode_done': False }
+        agent.observation = {'episode_done': False}
         self.assertEqual(agent.last_reply(),
                          'It\'s okay! I\'m a leaf on the wind.')
         # now set true observation

@@ -10,6 +10,7 @@ from parlai.core.teachers import DialogTeacher
 
 import copy
 
+
 class RepeatTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
