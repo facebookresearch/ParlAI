@@ -5,11 +5,11 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 try:
-    import regex
-    import scipy
-    import sklearn
-    import unicodedata
-    import pexpect
+    import regex  # noqa: F401
+    import scipy  # noqa: F401
+    import sklearn  # noqa: F401
+    import unicodedata  # noqa: F401
+    import pexpect  # noqa: F401
 except ImportError:
     raise ImportError('Please `pip install regex scipy sklearn pexpect`'
                       ' to use the tfidf_retriever agent.')

@@ -12,7 +12,7 @@ such that each episode is one example for a model.
 One can set the `--context-len` flag to specify how many past utterances
 are used in a flattened episode.
 """
-from parlai.core.agents import create_agent, create_task_agent_from_taskname
+from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
 from parlai.core.utils import ProgressLogger

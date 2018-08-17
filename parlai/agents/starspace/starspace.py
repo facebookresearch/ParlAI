@@ -9,22 +9,18 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import round_sigfigs, maintain_dialog_history, load_cands
-from parlai.core.thread_utils import SharedTable
+from parlai.core.utils import maintain_dialog_history, load_cands
 
 from .modules import Starspace
 
 import torch
-import torch.autograd as autograd
 from torch import optim
 import torch.nn as nn
-import time
 from collections import deque
 
 import copy
 import os
 import random
-import math
 import pickle
 
 

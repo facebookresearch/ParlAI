@@ -8,7 +8,6 @@
 # setting up a new task.
 
 from parlai.core.teachers import FbDialogTeacher, ParlAIDialogTeacher
-from parlai.core.utils import str_to_msg
 
 import copy
 

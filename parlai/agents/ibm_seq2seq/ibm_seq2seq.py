@@ -24,7 +24,6 @@ from collections import deque
 
 import os
 import math
-import random
 
 
 class IbmSeq2seqAgent(Agent):

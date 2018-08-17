@@ -33,9 +33,7 @@ def next_word_probability(self, partial_out):
     ['hello'] => {'world': 1.0}
 """
 
-from parlai.core.agents import Agent, create_agent, create_agents_from_shared
-from parlai.core.build_data import download_models
-from parlai.core.dict import DictionaryAgent
+from parlai.core.agents import create_agent, create_agents_from_shared
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer, round_sigfigs, no_lock
 from parlai.core.thread_utils import SharedTable

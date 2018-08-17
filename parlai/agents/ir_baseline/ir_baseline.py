@@ -16,12 +16,10 @@
 # depending on whether you train on the train set first, or not.
 
 import math
-import random
 from collections.abc import Sequence
 import heapq
 
 from parlai.core.agents import Agent
-from parlai.core.params import ParlaiParser
 from parlai.core.dict import DictionaryAgent
 
 

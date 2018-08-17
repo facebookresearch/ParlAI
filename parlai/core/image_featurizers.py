@@ -77,7 +77,6 @@ class ImageLoader():
             self.torch = torch
         except ImportError:
             raise ImportError('Need to install Pytorch: go to pytorch.org')
-        from torch.autograd import Variable
         import torchvision
         import torchvision.transforms as transforms
         import torch.nn as nn
