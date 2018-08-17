@@ -7,13 +7,11 @@
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import round_sigfigs #, maintain_dialog_history
-from parlai.core.thread_utils import SharedTable
 
 from .modules import Kvmemnn
 
 import torch
 from torch.autograd import Variable
-import torch.autograd as autograd
 from torch import optim
 import torch.nn as nn
 import time
@@ -22,7 +20,6 @@ from collections import deque
 import copy
 import os
 import random
-import math
 import pickle
 
 def maintain_dialog_history(history, observation, reply='',

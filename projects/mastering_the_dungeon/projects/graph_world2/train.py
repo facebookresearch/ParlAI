@@ -9,20 +9,16 @@
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
 from projects.mastering_the_dungeon.agents.graph_world2.agents import ObjectChecklistDataAgent, ObjectChecklistModelAgent, Seq2SeqDataAgent, Seq2SeqModelAgent
-from projects.mastering_the_dungeon.agents.graph_world2.models import ObjectChecklistModel, Seq2SeqModel
+from projects.mastering_the_dungeon.agents.graph_world2.models import Seq2SeqModel
 from copy import deepcopy
 import os
 import sys
-from collections import defaultdict as dd
 import torch
 from projects.mastering_the_dungeon.tasks.graph_world2.graph import Graph
 import statistics
-import numpy as np
 import pickle
-from os.path import join
 import time
 import traceback
-from copy import copy
 import scipy.stats as ss
 from torch.autograd import Variable
 import random

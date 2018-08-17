@@ -9,7 +9,6 @@
 import random
 import numpy as np
 from copy import deepcopy
-from collections import defaultdict as dd
 from collections import Counter
 import parlai.core.build_data as build_data
 import torch

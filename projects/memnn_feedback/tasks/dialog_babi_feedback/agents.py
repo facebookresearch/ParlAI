@@ -13,10 +13,8 @@
 # for more details: https://arxiv.org/abs/1604.06045 and https://arxiv.org/abs/1605.07683
 
 from parlai.core.teachers import FbDialogTeacher
-from parlai.core.agents import MultiTaskTeacher
 from .build import build
 
-import copy
 import os
 
 tasks = {}

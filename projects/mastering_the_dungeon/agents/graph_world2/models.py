@@ -144,8 +144,6 @@ class ObjectChecklistModel(nn.Module):
         """
         check_mapping: [y_dim, y_dim], float, binary
         """
-
-        from .agents import ObjectChecklistDataAgent as DataAgent
         graphs = deepcopy(graphs)
         opt = self.opt
         batch_size, seq_out, seq_in = x.size(0), opt['max_seq_out'], x.size(1)
