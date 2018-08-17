@@ -4,8 +4,8 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """TFIDF retriever for Wikipedia (for use with e.g. DrQA+SQuAD).
-access from model zoo with: 
-  --model-file "models:wikipedia_2016-12-21/tfidf_retriever/drqa_docs"    
+access from model zoo with:
+  --model-file "models:wikipedia_2016-12-21/tfidf_retriever/drqa_docs"
 """
 
 from parlai.core.build_data import download_models

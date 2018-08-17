@@ -31,7 +31,7 @@ class PersonasGenerator(object):
         self.completed_personas = []
         # mark which ones are done
         self.done_personas = []
-        # list of recently popped personas 
+        # list of recently popped personas
         self.recently_popped = []
 
         for f_name in os.listdir(self.personas_path):
