@@ -475,7 +475,6 @@ class PaddingUtils(object):
                         for x in parsed_x]
         xs = parsed_x
 
-
         # set up the target tensors
         ys = None
         labels = None

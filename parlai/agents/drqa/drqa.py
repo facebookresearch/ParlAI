@@ -199,7 +199,6 @@ class DrqaAgent(Agent):
             reply['text_candidates'] = [prediction[0]]
             reply['candidate_scores'] = [score[0]]
 
-
         reply['metrics'] = {'train_loss': self.model.train_loss.avg}
         return reply
 

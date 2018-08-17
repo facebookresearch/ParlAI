@@ -114,7 +114,6 @@ class ImageLoader():
         if self.use_cuda:
             self.netCNN.cuda()
 
-
     def image_mode_switcher(self):
         switcher = {
             'resnet152': ['resnet152', -1],

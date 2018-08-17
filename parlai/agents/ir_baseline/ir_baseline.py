@@ -114,7 +114,6 @@ class IrBaselineAgent(Agent):
             '-hsz', '--history_size', type=int, default=1,
             help='number of utterances from the dialogue history to take use as the query')
 
-
     def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.id = 'IRBaselineAgent'

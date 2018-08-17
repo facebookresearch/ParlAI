@@ -471,7 +471,6 @@ class Seq2seqAgent(Agent):
         # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
 
-
         if not obs.get('preprocessed', False) or 'text2vec' not in obs:
             obs['text2vec'] = maintain_dialog_history(
                 self.history, obs,

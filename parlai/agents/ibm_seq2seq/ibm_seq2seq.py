@@ -189,7 +189,6 @@ class IbmSeq2seqAgent(Agent):
                 use_attention=opt['attention'])
             self.model = Seq2seq(encoder, decoder)
 
-
             if self.states:
                 # set loaded states if applicable
                 self.model.load_state_dict(self.states['model'])

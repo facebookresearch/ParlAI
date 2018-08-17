@@ -709,7 +709,6 @@ class HogwildProcess(Process):
     Each ``HogwildProcess`` contain its own unique ``World``.
     """
 
-
     def __init__(self, tid, opt, shared, sync):
         self.numthreads = opt['numthreads']
         opt = copy.deepcopy(opt)
@@ -789,7 +788,6 @@ class HogwildWorld(World):
       once the processing is complete).
     """
 
-
     def __init__(self, opt, world):
         super().__init__(opt)
         self.inner_world = world
@@ -822,7 +820,6 @@ class HogwildWorld(World):
             # this makes sure that no threads get examples before all are set up
             # otherwise they might reset one another after processing some exs
             self.sync['threads_sem'].acquire()
-
 
     def display(self):
         self.shutdown()
@@ -885,7 +882,6 @@ class HogwildWorld(World):
             # release reset semaphore only if threads had reached epoch_done
             for _ in self.threads:
                 self.sync['reset_sem'].release()
-
 
     def reset_metrics(self):
         self.inner_world.reset_metrics()

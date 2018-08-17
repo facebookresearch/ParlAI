@@ -51,7 +51,6 @@ class Fbformat2Teacher(FbDialogTeacher):
         super().__init__(opt, shared)
         
 
-        
 class ParlaiformatTeacher(ParlAIDialogTeacher):
     """This module provides access to data in the ParlAI Text Dialog format.
     See core/teachers.py for more info about the format.

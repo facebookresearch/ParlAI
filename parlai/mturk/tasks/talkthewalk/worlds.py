@@ -123,7 +123,6 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         self.send_location(self.agents[0])
         self.send_map(self.agents[1])
 
-
     def init_world(self):
         """Initializes a new world for the dialog"""
         # first sample neighborhood
