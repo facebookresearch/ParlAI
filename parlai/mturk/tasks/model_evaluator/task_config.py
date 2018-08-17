@@ -43,5 +43,3 @@ True its an opinion as is my comment . I 'd say quantum of solace was meh , blan
 ------------------- Task Done ------------------- <br><br>
 If you are ready, please click "Accept HIT" to start this task.
 \'\'\''''
-
-

@@ -282,4 +282,3 @@ $("button#id_send_deal_button").on('click', function () {
 
 </script>
 '''
-
