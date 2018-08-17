@@ -140,7 +140,7 @@ def build_data(opt):
             context.clear()
 
     with open(pytorch_datafile + '.length', 'w') as pytorch_data_len:
-        pytorch_data_len.write(json.dumps({'num_eps':num_eps, 'num_exs':num_exs}))
+        pytorch_data_len.write(json.dumps({'num_eps': num_eps, 'num_exs': num_exs}))
 
     print('[ pytorch data built. ]')
     return pytorch_datafile

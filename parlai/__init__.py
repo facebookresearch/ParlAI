@@ -5,5 +5,5 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 import sys
 
-if sys.version_info < (3,0):
+if sys.version_info < (3, 0):
     raise RuntimeError('ParlAI requires Python 3.')

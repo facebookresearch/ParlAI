@@ -234,7 +234,7 @@ class StarspaceAgent(Agent):
         score = torch.Tensor(W.size(0))
         for i in range(W.size(0)):
             score[i] = torch.nn.functional.cosine_similarity(q, W[i], dim=0).data[0]
-        val,ind=score.sort(descending=True)
+        val, ind=score.sort(descending=True)
         for i in range(20):
             print(str(ind[i]) + " [" + str(val[i]) + "]: " + self.v2t(torch.Tensor([ind[i]])))
 
@@ -274,9 +274,9 @@ class StarspaceAgent(Agent):
                 loss = self.criterion(xe, ye, y)
                 loss.backward()
                 self.optimizer.step()
-                pred = nn.CosineSimilarity().forward(xe,ye)
+                pred = nn.CosineSimilarity().forward(xe, ye)
                 metrics = self.compute_metrics(loss.item(), pred.data.squeeze())
-                return [{'metrics':metrics}]
+                return [{'metrics': metrics}]
         else:
             self.model.eval()
             if cands is None or cands[0] is None:
@@ -285,7 +285,7 @@ class StarspaceAgent(Agent):
                     cands = self.fixedCands
                     cands_txt = self.fixedCands_txt
                 else:
-                    return [{ 'text':'I dunno.'}]
+                    return [{ 'text': 'I dunno.'}]
                 # test set prediction uses fixed candidates
                 if self.fixedX is None:
                     xe, ye = self.model(xs, ys, self.fixedCands)
@@ -298,10 +298,10 @@ class StarspaceAgent(Agent):
             else:
                 # test set prediction uses candidates
                 xe, ye = self.model(xs, ys, cands[0])
-            pred = nn.CosineSimilarity().forward(xe,ye)
+            pred = nn.CosineSimilarity().forward(xe, ye)
             # This is somewhat costly which we could avoid if we do not evalute ranking.
             # i.e. by only doing: val,ind = pred.max(0)
-            val,ind=pred.sort(descending=True)
+            val, ind=pred.sort(descending=True)
             # predict the highest scoring candidate, and return it.
             ypred = cands_txt[0][ind.data[0]]
             tc = []

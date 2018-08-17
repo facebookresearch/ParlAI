@@ -22,7 +22,7 @@ def load_dictionary(download_dir):
         os.system('wget {} -P {}'.format(urls['dictionary'], download_dir))
     with open(path_dico, 'r') as handle:
         dico_list = handle.readlines()
-    dico = {word.strip():idx for idx,word in enumerate(dico_list)}
+    dico = {word.strip(): idx for idx, word in enumerate(dico_list)}
     return dico
 
 
@@ -59,7 +59,7 @@ def make_emb_state_dict(dictionary, parameters, vocab):
             params = unknown_params
             nb_unknown += 1
         weight[id_weight] = torch.from_numpy(params)
-    state_dict = OrderedDict({'weight':weight})
+    state_dict = OrderedDict({'weight': weight})
     if nb_unknown > 0:
         print('Warning: {}/{} words are not in dictionary, thus set UNK'
               .format(nb_unknown, len(dictionary)))

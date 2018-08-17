@@ -165,14 +165,14 @@ def eval_wordstat(opt, print_parser=None):
     if opt['compute_unique'] is True:
         unique_list = []
         cntr = Counter(word_statistics['pred_list'])
-        for k,v in cntr.items():
+        for k, v in cntr.items():
             if v == 1:
                 unique_list.append(k)
         print("Unique responses: {:.{prec}f}%".format(len(unique_list) / len(word_statistics['pred_list']) * 100, prec=2))
 
     if opt['dump_predictions_path'] is not None:
         with open(opt['dump_predictions_path'], 'w') as f:
-            f.writelines(['CONTEXT: {}\nPREDICTION:{}\n\n'.format(c,p) for c,p in zip(word_statistics['context_list'],word_statistics['pure_pred_list'])])
+            f.writelines(['CONTEXT: {}\nPREDICTION:{}\n\n'.format(c, p) for c, p in zip(word_statistics['context_list'], word_statistics['pure_pred_list'])])
         if opt['compute_unique'] is True:
             with open(opt['dump_predictions_path']+'_unique', 'w') as f:
                 f.writelines(['{}\n'.format(i) for i in unique_list])

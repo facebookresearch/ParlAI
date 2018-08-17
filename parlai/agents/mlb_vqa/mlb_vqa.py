@@ -168,11 +168,11 @@ class VqaDictionaryAgent(Agent):
 
     def tokenize_mcb(self, s):
         t_str = s.lower()
-        for i in [r'\?',r'\!',r'\'',r'\"',r'\$',r'\:',r'\@',r'\(',r'\)',r'\,',r'\.',r'\;']:
+        for i in [r'\?', r'\!', r'\'', r'\"', r'\$', r'\:', r'\@', r'\(', r'\)', r'\,', r'\.', r'\;']:
             t_str = re.sub( i, '', t_str)
-        for i in [r'\-',r'\/']:
+        for i in [r'\-', r'\/']:
             t_str = re.sub( i, ' ', t_str)
-        q_list = re.sub(r'\?','',t_str.lower()).split(' ')
+        q_list = re.sub(r'\?', '', t_str.lower()).split(' ')
         q_list = list(filter(lambda x: len(x) > 0, q_list))
         return q_list
 
@@ -273,11 +273,11 @@ class VqaDictionaryAgent(Agent):
         If ``sort`` (default ``True``), then first sort the dictionary before
         saving.
         """
-        cw = sorted([(count,w) for w,count in self.ansfreq.items()], reverse=True)
+        cw = sorted([(count, w) for w, count in self.ansfreq.items()], reverse=True)
         final_exs = cw[:self.opt.get('nans', 2000)]
-        final_list = dict([(w,c) for c,w in final_exs])
+        final_list = dict([(w, c) for c, w in final_exs])
         self.ansfreq = defaultdict(int)
-        for ans,ques in self.ans2ques.items():
+        for ans, ques in self.ans2ques.items():
             if ans in final_list:
                 for que in ques:
                     self.add_to_ques_dict(que)
