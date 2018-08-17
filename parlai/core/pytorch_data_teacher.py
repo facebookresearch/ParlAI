@@ -580,5 +580,6 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.lastY = action.get('labels', action.get('eval_labels', None))
         return action
 
+
 class DefaultTeacher(PytorchDataTeacher):
     pass

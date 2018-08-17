@@ -8,6 +8,7 @@
 import parlai.core.build_data as build_data
 import os
 
+
 def create_fb_format(outpath, dtype, inpath):
     print('building fbformat:' + dtype)
     with open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
@@ -25,6 +26,7 @@ def create_fb_format(outpath, dtype, inpath):
                     y= xy[1].rstrip(' ').lstrip(' ')
                     s = '1 ' + x + '\t' + y
                     fout.write(s + '\n\n')
+
 
 def build(opt):
     version = 'v1.0'

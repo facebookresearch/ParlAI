@@ -24,8 +24,10 @@ import collections
 import torch
 from collections import deque
 
+
 def setup_args():
     return ParlaiParser(True, True)
+
 
 def make_serializable(obj):
     new_obj = {}

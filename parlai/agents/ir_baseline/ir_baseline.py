@@ -24,6 +24,7 @@ from parlai.core.agents import Agent
 from parlai.core.params import ParlaiParser
 from parlai.core.dict import DictionaryAgent
 
+
 class MaxPriorityQueue(Sequence):
     def __init__(self, max_size):
         self.capacity = max_size
@@ -59,6 +60,7 @@ stopwords = { 'i', 'a', 'an', 'are', 'about', 'as', 'at', 'be', 'by',
               'but', 'does', 'really', 'have', 'into', 'more', 'also',
               'has', 'any', 'why', 'will'}
 
+
 def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
     if text == "":
         return 0
@@ -78,6 +80,7 @@ def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
     norm = math.sqrt(len(used))
     score = score / math.pow(norm * query_rep['norm'], length_penalty)
     return score
+
 
 def rank_candidates(query_rep, cands, length_penalty, dictionary=None):
     """ Rank candidates given representation of query """

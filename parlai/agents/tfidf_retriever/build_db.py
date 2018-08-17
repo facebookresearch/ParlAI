@@ -34,6 +34,7 @@ logger.addHandler(console)
 # Store corpus.
 # ------------------------------------------------------------------------------
 
+
 def store_contents(opt, task, save_path, context_length=-1, include_labels=True):
     """Preprocess and store a corpus of documents in sqlite.
 

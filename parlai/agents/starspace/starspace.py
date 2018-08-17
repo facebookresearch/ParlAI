@@ -27,6 +27,7 @@ import random
 import math
 import pickle
 
+
 class StarspaceAgent(Agent):
     """Simple implementation of the starspace algorithm: https://arxiv.org/abs/1709.03856
     """

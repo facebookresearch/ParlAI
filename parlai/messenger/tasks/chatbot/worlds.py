@@ -8,6 +8,7 @@
 
 from parlai.core.worlds import World
 
+
 class MessengerBotChatTaskWorld(World):
     """Example one person world that talks to a provided agent (bot)."""
 

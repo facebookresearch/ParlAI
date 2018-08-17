@@ -8,6 +8,7 @@
 import parlai.core.build_data as build_data
 import os
 
+
 def build(opt):
     version = 'v1.0'
     dpath = os.path.join(opt['datapath'], 'Persona-Chat')

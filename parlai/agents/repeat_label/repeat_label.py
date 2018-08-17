@@ -21,6 +21,7 @@ import random
 
 from parlai.core.agents import Agent
 
+
 class RepeatLabelAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):

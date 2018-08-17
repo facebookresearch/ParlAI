@@ -952,6 +952,7 @@ def create_task_world(opt, user_agents, default_world=None):
         opt, user_agents, default_world=default_world)
     return world_class(opt, task_agents + user_agents)
 
+
 def create_task(opt, user_agents, default_world=None):
     """Creates a world + task_agents (aka a task)
     assuming ``opt['task']="task_dir:teacher_class:options"``

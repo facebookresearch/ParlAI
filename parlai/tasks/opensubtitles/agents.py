@@ -144,6 +144,7 @@ class V2018NoHistoryTask10kTeacher(Task10kTeacher):
         super(V2018NoHistoryTask10kTeacher, self).__init__(
             opt, shared, '2018', False)
 
+
 # Defaults to full teacher (all possible examples)
 class DefaultTeacher(V2018Teacher):
     pass

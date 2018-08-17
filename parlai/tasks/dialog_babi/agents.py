@@ -19,6 +19,7 @@ tasks[4] = 'dialog-babi-task4-phone-address'
 tasks[5] = 'dialog-babi-task5-full-dialogs'
 tasks[6] = 'dialog-babi-task6-dstc2'
 
+
 def _path(task, opt):
     # Build the data if it doesn't exist.
     build(opt)

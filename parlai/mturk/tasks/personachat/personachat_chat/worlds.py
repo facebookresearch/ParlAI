@@ -26,6 +26,7 @@ TIMEOUT_MSG = '<b> The other person has timed out. \
         </b>'
 WAITING_MSG = 'Please wait while we match you with another worker...'
 
+
 class PersonasGenerator(object):
     def __init__(self, opt):
         self.personas_idx_stack_path = os.path.join(opt['extract_personas_path'],

@@ -12,6 +12,7 @@ from parlai.core.utils import str_to_msg
 
 import copy
 
+
 class FbformatTeacher(FbDialogTeacher):
     """This task simply loads the specified file: useful for quick tests without
     setting up a new task.
@@ -72,6 +73,7 @@ class ParlaiformatTeacher(ParlAIDialogTeacher):
         self.id = datafile
         self.reset()
 
+
 class Parlaiformat2Teacher(ParlAIDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
@@ -89,6 +91,7 @@ class Parlaiformat2Teacher(ParlAIDialogTeacher):
             self._setup_data(datafile)
         self.id = datafile
         self.reset()
+
 
 class DefaultTeacher(FbformatTeacher):
     def __init__(self, opt, shared=None):

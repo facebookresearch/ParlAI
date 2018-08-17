@@ -10,6 +10,7 @@ from task_config import task_config
 
 import os
 
+
 def main():
     """This task consists of one agent, model or MTurk worker, talking to an
     MTurk worker to negotiate a deal.

@@ -12,6 +12,7 @@ import copy
 import json
 import os
 
+
 def _path(opt):
     build(opt)
 
@@ -124,6 +125,7 @@ class VerifiedTeacher(MultiTaskTeacher):
         opt = copy.deepcopy(opt)
         opt['task'] = 'triviaqa:VerifiedWikipedia,triviaqa:VerifiedWeb'
         super().__init__(opt, shared)
+
 
 class DefaultTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
