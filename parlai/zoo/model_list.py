@@ -13,21 +13,21 @@ model_list = [
     {
         "id": "wikipedia_2016-12-21_retriever",
         "path": "models:wikipedia_2016-12-21/tfidf_retriever/drqa_docs",
-        "agent":  "tfidf_retriever",
+        "agent": "tfidf_retriever",
         "task": "wikipedia_2016-12-21",
         "description": "retrieval over Wikipedia dump, used for DrQA on the open squad dataset. This is the dump from the original paper, used for replicating results."
     },
     {
         "id": "wikipedia_full_retriever",
         "path": "models:wikipedia_full/tfidf_retriever/model",
-        "agent":  "tfidf_retriever",
+        "agent": "tfidf_retriever",
         "task": "wikipedia_full",
         "description": "retrieval over Wikipedia dump, used for DrQA on the open squad dataset"
     },
     {
         "id": "drqa_squad_reader",
         "path": "models:drqa/squad/model",
-        "agent":  "drqa",
+        "agent": "drqa",
         "task": "squad",
         "description": "drqa reader trained on SQuAD"
     },

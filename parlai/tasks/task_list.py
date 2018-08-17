@@ -12,14 +12,14 @@ task_list = [
         "id": "AQuA",
         "display_name": "AQuA",
         "task": "aqua",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "Dataset containing algebraic word problems with rationales for their answers. From Ling et. al. 2017, Link: https://arxiv.org/pdf/1705.04146.pdf"
     },
     {
         "id": "bAbI-1k",
         "display_name": "bAbI 1k",
         "task": "babi:All1k",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "20 synthetic tasks that each test a unique aspect of text and reasoning, and hence test different capabilities of learning models. From Weston et al. '16. Link: http://arxiv.org/abs/1502.05698",
         "notes": "You can access just one of the bAbI tasks with e.g. 'babi:Task1k:3' for task 3."
     },
@@ -27,7 +27,7 @@ task_list = [
         "id": "bAbI-10k",
         "display_name": "bAbI 10k",
         "task": "babi:All10k",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "20 synthetic tasks that each test a unique aspect of text and reasoning, and hence test different capabilities of learning models. From Weston et al. '16. Link: http://arxiv.org/abs/1502.05698",
         "notes": "You can access just one of the bAbI tasks with e.g. 'babi:Task10k:3' for task 3."
     },
@@ -35,49 +35,49 @@ task_list = [
         "id": "BookTest",
         "display_name": "BookTest",
         "task": "booktest",
-        "tags": ["All",  "Cloze"],
+        "tags": ["All", "Cloze"],
         "description": "Sentence completion given a few sentences as context from a book. A larger version of CBT. From Bajgar et al., 16. Link: https://arxiv.org/abs/1610.00956"
     },
     {
         "id": "CBT",
         "display_name": "Children's Book Test (CBT)",
         "task": "cbt",
-        "tags": ["All",  "Cloze"],
+        "tags": ["All", "Cloze"],
         "description": "Sentence completion given a few sentences as context from a children's book. From Hill et al., '16. Link: https://arxiv.org/abs/1511.02301"
     },
     {
         "id": "COPA",
         "display_name": "Choice of Plausible Alternatives",
         "task": "copa",
-        "tags": ["All",  "Reasoning"],
+        "tags": ["All", "Reasoning"],
         "description": "The Choice Of Plausible Alternatives (COPA) evaluation provides researchers with a tool for assessing progress in open-domain commonsense causal reasoning. COPA consists of 1000 questions, split equally into development and test sets of 500 questions each. See http://people.ict.usc.edu/~gordon/copa.html for more information"
     },
     {
         "id": "CornellMovie",
         "display_name": "Cornell Movie",
         "task": "cornell_movie",
-        "tags": ["All",  "ChitChat"],
+        "tags": ["All", "ChitChat"],
         "description": "Fictional conversations extracted from raw movie scripts. Danescu-Niculescu-Mizil & Lee, '11. Link: https://arxiv.org/abs/1106.3077"
     },
     {
         "id": "DBLL-bAbI",
         "display_name": "Dialog Based Language Learning: bAbI Task",
         "task": "dbll_babi",
-        "tags": ["All",  "Goal"],
+        "tags": ["All", "Goal"],
         "description": "Short dialogs based on the bAbI tasks, but in the form of a question from a teacher, the answer from the student, and finally a comment on the answer from the teacher. The aim is to find learning models that use the comments to improve. From Weston '16. Link: https://arxiv.org/abs/1604.06045. Tasks can be accessed with a format like: 'python examples/display_data.py -t dbll_babi:task:2_p0.5' which specifies task 2, and policy with 0.5 answers correct, see the paper for more details of the tasks."
     },
     {
         "id": "DBLL-Movie",
         "display_name": "Dialog Based Language Learning: WikiMovies Task",
         "task": "dbll_movie",
-        "tags": ["All",  "Goal"],
+        "tags": ["All", "Goal"],
         "description": "Short dialogs based on WikiMovies, but in the form of a question from a teacher, the answer from the student, and finally a comment on the answer from the teacher. The aim is to find learning models that use the comments to improve. From Weston '16. Link: https://arxiv.org/abs/1604.06045"
     },
     {
         "id": "dialog-bAbI",
         "display_name": "Dialog bAbI",
         "task": "dialog_babi",
-        "tags": ["All",  "Goal"],
+        "tags": ["All", "Goal"],
         "description": "Simulated dialogs of restaurant booking, from Bordes et al. '16. Link: https://arxiv.org/abs/1605.07683"
     },
     {
@@ -112,56 +112,56 @@ task_list = [
         "id": "MCTest",
         "display_name": "MCTest",
         "task": "mctest",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "Questions about short children's stories, from Richardson et al. '13. Link: https://www.microsoft.com/en-us/research/publication/mctest-challenge-dataset-open-domain-machine-comprehension-text/"
     },
     {
         "id": "MovieDD-QA",
         "display_name": "Movie Dialog QA",
         "task": "moviedialog:Task:1",
-        "tags": ["All",  "QA", "MovieDD"],
+        "tags": ["All", "QA", "MovieDD"],
         "description": "Closed-domain QA dataset asking templated questions about movies, answerable from Wikipedia, similar to WikiMovies. From Dodge et al. '15. Link: https://arxiv.org/abs/1511.06931"
     },
     {
         "id": "MovieDD-QARecs",
         "display_name": "Movie Dialog QA Recommendations",
         "task": "moviedialog:Task:3",
-        "tags": ["All",  "Goal", "MovieDD"],
+        "tags": ["All", "Goal", "MovieDD"],
         "description": "Dialogs discussing questions about movies as well as recommendations. From Dodge et al. '15. Link: https://arxiv.org/abs/1511.06931"
     },
     {
         "id": "MovieDD-Recs",
         "display_name": "Movie Dialog Recommendations",
         "task": "moviedialog:Task:2",
-        "tags": ["All",  "QA", "MovieDD"],
+        "tags": ["All", "QA", "MovieDD"],
         "description": "Questions asking for movie recommendations. From Dodge et al. '15. Link: https://arxiv.org/abs/1511.06931"
     },
     {
         "id": "MovieDD-Reddit",
         "display_name": "Movie Dialog Reddit",
         "task": "moviedialog:Task:4",
-        "tags": ["All",  "ChitChat", "MovieDD"],
+        "tags": ["All", "ChitChat", "MovieDD"],
         "description": "Dialogs discussing Movies from Reddit (the Movies SubReddit). From Dodge et al. '15. Link: https://arxiv.org/abs/1511.06931"
     },
     {
         "id": "MTurkWikiMovies",
         "display_name": "MTurk WikiMovies",
         "task": "mturkwikimovies",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "Closed-domain QA dataset asking MTurk-derived questions about movies, answerable from Wikipedia. From Li et al. '16. Link: https://arxiv.org/abs/1611.09823"
     },
     {
         "id": "MultiNLI",
         "display_name": "MultiNLI",
         "task": "multinli",
-        "tags": ["All",  "Entailment"],
+        "tags": ["All", "Entailment"],
         "description": "A dataset designed for use in the development and evaluation of machine learning models for sentence understanding. Each example contains a premise and hypothesis. Model has to predict whether premise and hypothesis entail, contradict or are neutral to each other. From Williams et al. '17. Link: https://arxiv.org/abs/1704.05426"
     },
     {
         "id": "NarrativeQA",
         "display_name": "NarrativeQA",
         "task": "narrative_qa",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "A dataset and set of tasks in which the reader must answer questions about stories by reading entire books or movie scripts. From Kočiský et. al. '17. Link: https://arxiv.org/abs/1712.07040'",
         "notes": "You can access summaries only task for NarrativeQA by using task 'narrative_qa:summaries'. By default, only stories are provided."
     },
@@ -169,105 +169,105 @@ task_list = [
         "id": "OpenSubtitles",
         "display_name": "Open Subtitles",
         "task": "opensubtitles",
-        "tags": ["All",  "ChitChat"],
+        "tags": ["All", "ChitChat"],
         "description": "Dataset of dialogs from movie scripts. Version 2018: http://opus.lingfil.uu.se/OpenSubtitles2018.php, version 2009: http://opus.lingfil.uu.se/OpenSubtitles.php. A variant of the dataset used in Vinyals & Le '15, https://arxiv.org/abs/1506.05869."
     },
     {
         "id": "personalized-dialog-full",
         "display_name": "Personalized Dialog Full Set",
         "task": "personalized_dialog:AllFull",
-        "tags": ["All",  "Goal", "Personalization"],
+        "tags": ["All", "Goal", "Personalization"],
         "description": "Simulated dataset of restaurant booking focused on personalization based on user profiles. From Joshi et al. '17. Link: https://arxiv.org/abs/1706.07503"
     },
     {
         "id": "personalized-dialog-small",
         "display_name": "Personalized Dialog Small Set",
         "task": "personalized_dialog:AllSmall",
-        "tags": ["All",  "Goal", "Personalization"],
+        "tags": ["All", "Goal", "Personalization"],
         "description": "Simulated dataset of restaurant booking focused on personalization based on user profiles. From Joshi et al. '17. Link: https://arxiv.org/abs/1706.07503"
     },
     {
         "id": "QACNN",
         "display_name": "QA CNN",
         "task": "qacnn",
-        "tags": ["All",  "Cloze"],
+        "tags": ["All", "Cloze"],
         "description": "Cloze dataset based on a missing (anonymized) entity phrase from a CNN article, Hermann et al. '15. Link: https://arxiv.org/abs/1506.03340"
     },
     {
         "id": "QADailyMail",
         "display_name": "QA Daily Mail",
         "task": "qadailymail",
-        "tags": ["All",  "Cloze"],
+        "tags": ["All", "Cloze"],
         "description": "Cloze dataset based on a missing (anonymized) entity phrase from a Daily Mail article, Hermann et al. '15. Link: https://arxiv.org/abs/1506.03340"
     },
     {
         "id": "SimpleQuestions",
         "display_name": "Simple Questions",
         "task": "simplequestions",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "Open-domain QA dataset based on Freebase triples from Bordes et al. '15. Link: https://arxiv.org/abs/1506.02075"
     },
     {
         "id": "SNLI",
         "display_name": "The Stanford Natural Language Inference (SNLI) Corpus",
         "task": "snli",
-        "tags": ["All",  "Entailment"],
+        "tags": ["All", "Entailment"],
         "description": "The SNLI corpus (version 1.0) is a collection of 570k human-written English sentence pairs manually labeled for balanced classification with the labels entailment, contradiction, and neutral, supporting the task of natural language inference (NLI), also known as recognizing textual entailment (RTE). See https://nlp.stanford.edu/projects/snli/"
     },
     {
         "id": "SQuAD2",
         "display_name": "SQuAD2",
         "task": "squad2",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "Open-domain QA dataset answerable from a given paragraph from Wikipedia, from Rajpurkar & Jia et al. '18. Link: http://arxiv.org/abs/1806.03822"
     },
     {
         "id": "SQuAD",
         "display_name": "SQuAD",
         "task": "squad",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "Open-domain QA dataset answerable from a given paragraph from Wikipedia, from Rajpurkar et al. '16. Link: https://arxiv.org/abs/1606.05250"
     },
     {
         "id": "TriviaQA",
         "display_name": "TriviaQA",
         "task": "triviaqa",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "Open-domain QA dataset with question-answer-evidence triples, from Joshi et al. '17. Link: https://arxiv.org/abs/1705.03551"
     },
     {
         "id": "TaskNTalk",
         "display_name": "Task N' Talk",
         "task": "taskntalk",
-        "tags": ["All",  "Goal"],
+        "tags": ["All", "Goal"],
         "description": "Dataset of synthetic shapes described by attributes, for agents to play a cooperative QA game, from Kottur et al. '17. Link: https://arxiv.org/abs/1706.08502"
     },
     {
         "id": "Ubuntu",
         "display_name": "Ubuntu",
         "task": "ubuntu",
-        "tags": ["All",  "ChitChat"],
+        "tags": ["All", "ChitChat"],
         "description": "Dialogs between an Ubuntu user and an expert trying to fix issue, from Lowe et al. '15. Link: https://arxiv.org/abs/1506.08909"
     },
     {
         "id": "WebQuestions",
         "display_name": "Web Questions",
         "task": "webquestions",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "Open-domain QA dataset from Web queries from Berant et al. '13. Link: http://www.aclweb.org/anthology/D13-1160"
     },
     {
         "id": "WikiMovies",
         "display_name": "WikiMovies",
         "task": "wikimovies",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "Closed-domain QA dataset asking templated questions about movies, answerable from Wikipedia. From Miller et al. '16. Link: https://arxiv.org/abs/1606.03126"
     },
     {
         "id": "WikiQA",
         "display_name": "WikiQA",
         "task": "wikiqa",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "Open domain QA from Wikipedia dataset from Yang et al. '15. Link: https://www.microsoft.com/en-us/research/publication/wikiqa-a-challenge-dataset-for-open-domain-question-answering/"
     },
     {
@@ -302,28 +302,28 @@ task_list = [
         "id": "InsuranceQA",
         "display_name": "InsuranceQA",
         "task": "insuranceqa",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "Task which requires agents to identify high quality answers composed by professionals with deep domain knowledge. From Feng et al. '15. Link: https://arxiv.org/abs/1508.01585"
     },
     {
         "id": "MS_MARCO",
         "display_name": "MS_MARCO",
         "task": "ms_marco",
-        "tags": ["All",  "QA"],
+        "tags": ["All", "QA"],
         "description": "A large scale Machine Reading Comprehension Dataset with questions sampled from real anonymized user queries and contexts from web documents. From Nguyen et al. '16. Link: https://arxiv.org/abs/1611.09268"
     },
     {
         "id": "CLEVR",
         "display_name": "CLEVR",
         "task": "clevr",
-        "tags": ["All",  "Visual"],
+        "tags": ["All", "Visual"],
         "description": "A visual reasoning dataset that tests abilities such as attribute identification, counting, comparison, spatial relationships, and logical operations. From Johnson et al. '16. Link: https://arxiv.org/abs/1612.06890"
     },
     {
         "id": "nlvr",
         "display_name": "nlvr",
         "task": "nlvr",
-        "tags": ["All",  "Visual"],
+        "tags": ["All", "Visual"],
         "description": "Cornell Natural Language Visual Reasoning (NLVR) is a language grounding dataset based on  pairs of natural language statements grounded in synthetic images. From Suhr et al. '17. Link: http://lic.nlp.cornell.edu/nlvr/"
     },
     {
@@ -386,7 +386,7 @@ task_list = [
         "id": "Twitter",
         "display_name": "Twitter",
         "task": "twitter",
-        "tags": ["All",  "ChitChat"],
+        "tags": ["All", "ChitChat"],
         "description": "Twitter data from: https://github.com/Marsan-Ma/chat_corpus/. No train/valid/test split was provided so 10k for valid and 10k for test was chosen at random."
     },
     {

@@ -11,8 +11,8 @@ from collections import OrderedDict
 
 urls = {}
 urls['dictionary'] = 'http://www.cs.toronto.edu/~rkiros/models/dictionary.txt'
-urls['utable']     = 'http://www.cs.toronto.edu/~rkiros/models/utable.npy'
-urls['uni_skip']   = 'http://www.cs.toronto.edu/~rkiros/models/uni_skip.npz'
+urls['utable'] = 'http://www.cs.toronto.edu/~rkiros/models/utable.npy'
+urls['uni_skip'] = 'http://www.cs.toronto.edu/~rkiros/models/uni_skip.npz'
 
 
 def load_dictionary(download_dir):
@@ -68,14 +68,14 @@ def make_emb_state_dict(dictionary, parameters, vocab):
 
 def make_gru_state_dict(p):
     s = OrderedDict()
-    s['bias_ih_l0']   = torch.zeros(7200)
-    s['bias_hh_l0']   = torch.zeros(7200)  # must stay equal to 0
+    s['bias_ih_l0'] = torch.zeros(7200)
+    s['bias_hh_l0'] = torch.zeros(7200)  # must stay equal to 0
     s['weight_ih_l0'] = torch.zeros(7200, 620)
     s['weight_hh_l0'] = torch.zeros(7200, 2400)
     s['weight_ih_l0'][:4800] = torch.from_numpy(p['encoder_W']).t()
     s['weight_ih_l0'][4800:] = torch.from_numpy(p['encoder_Wx']).t()
-    s['bias_ih_l0'][:4800]   = torch.from_numpy(p['encoder_b'])
-    s['bias_ih_l0'][4800:]   = torch.from_numpy(p['encoder_bx'])
+    s['bias_ih_l0'][:4800] = torch.from_numpy(p['encoder_b'])
+    s['bias_ih_l0'][4800:] = torch.from_numpy(p['encoder_bx'])
     s['weight_hh_l0'][:4800] = torch.from_numpy(p['encoder_U']).t()
     s['weight_hh_l0'][4800:] = torch.from_numpy(p['encoder_Ux']).t()
     return s
