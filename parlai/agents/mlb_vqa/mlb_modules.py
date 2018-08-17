@@ -7,7 +7,14 @@ import torch.nn.functional as F
 import torch
 
 from .gru import BayesianGRU
-from .loadstates import *
+from .loadstates import (
+    load_dictionary,
+    load_emb_params,
+    make_emb_state_dict,
+    load_rnn_params,
+    make_bayesian_state_dict,
+    make_gru_state_dict,
+)
 
 
 class Mlb(nn.Module):

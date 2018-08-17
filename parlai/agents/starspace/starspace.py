@@ -257,7 +257,6 @@ class StarspaceAgent(Agent):
         """
         is_training = ys is not None
         if is_training: #
-            text_cand_inds, loss_dict = None, None
             negs = self.get_negs(xs, ys)
             if is_training and len(negs) > 0:
                 self.model.train()
@@ -324,9 +323,6 @@ class StarspaceAgent(Agent):
         except ValueError:
             # zero examples to process in this batch, so zip failed to unpack
             return None, None, None, None
-
-        # set up the input tensors
-        bsz = len(exs)
 
         # `x` text is already tokenized and truncated
         # sort by length so we can use pack_padded

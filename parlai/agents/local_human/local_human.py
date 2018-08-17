@@ -32,7 +32,6 @@ class LocalHumanAgent(Agent):
                                prettify=self.opt.get('display_prettify', False)))
 
     def act(self):
-        obs = self.observation
         reply = {}
         reply['id'] = self.getID()
         reply_text = input("Enter Your Message: ")

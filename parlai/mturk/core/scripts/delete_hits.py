@@ -47,7 +47,6 @@ def main():
     verbose = opt.verbose
     task_group_ids = []
     group_to_hit = {}
-    hits = []
     processed = 0
     found = 0
     spinner_vals = ['-', '\\', '|', '/']
