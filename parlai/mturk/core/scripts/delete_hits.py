@@ -96,7 +96,7 @@ def main():
                         group_to_hit[group_id][hit['HITId']] = hit['HITStatus']
                         found += 1
                 except IndexError:
-                    pass # This wasn't the right HIT
+                    pass  # This wasn't the right HIT
 
             sys.stdout.write(
                 '\r{} HITs processed, {} active hits'

@@ -35,19 +35,19 @@ from threading import Thread, Condition, RLock
         bucket_complete: if there are no more episodes left to consider in
             the bucket
 '''
-length_to_eps = {}                                # Maps episode length to list
-                                                  # of episodes
-batches = []                                      # List of batches if popping
-                                                  # batches
-load_complete = Value(ctypes.c_bool, False)       # If all episodes have been
-                                                  # loaded into memory
-batches_lock = Lock()                             # Lock to access batches
-cache_lock = Lock()                               # Lock to access length_to_eps
-fill_cache_lock = RLock()                         # Lock for condition variables
-add_to_cache_cv = Condition(lock=fill_cache_lock) # Condition notifying Loader
-                                                  # to add to cache
-cache_filled_cv = Condition(lock=fill_cache_lock) # Condition notifying teacher
-                                                  # that cache has episodes
+length_to_eps = {}                                 # Maps episode length to list
+                                                   # of episodes
+batches = []                                       # List of batches if popping
+                                                   # batches
+load_complete = Value(ctypes.c_bool, False)        # If all episodes have been
+                                                   # loaded into memory
+batches_lock = Lock()                              # Lock to access batches
+cache_lock = Lock()                                # Lock to access length_to_eps
+fill_cache_lock = RLock()                          # Lock for condition variables
+add_to_cache_cv = Condition(lock=fill_cache_lock)  # Condition notifying Loader
+                                                   # to add to cache
+cache_filled_cv = Condition(lock=fill_cache_lock)  # Condition notifying teacher
+                                                   # that cache has episodes
 
 
 def batch_cache(function):

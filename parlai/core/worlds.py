@@ -747,7 +747,7 @@ class HogwildProcess(Process):
                             # make sure reset sem is clean
                             for _ in range(self.numthreads):
                                 self.sync['reset_sem'].acquire(block=False)
-                        world.reset() # keep lock for this!
+                        world.reset()  # keep lock for this!
 
                 while self.sync['epoch_done_ctr'].value < 0:
                     # only move forward once other threads have finished reset
@@ -811,7 +811,7 @@ class HogwildWorld(World):
         self.threads = []
         for i in range(self.numthreads):
             self.threads.append(HogwildProcess(i, opt, world.share(), self.sync))
-            time.sleep(0.05) # delay can help prevent deadlock in thread launches
+            time.sleep(0.05)  # delay can help prevent deadlock in thread launches
         for t in self.threads:
             t.start()
 

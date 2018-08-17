@@ -131,7 +131,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
         self.world_tag = world_tag
 
         # below are timeout protocols
-        self.max_resp_time = max_resp_time # in secs
+        self.max_resp_time = max_resp_time  # in secs
         self.agent_timeout_shutdown = agent_timeout_shutdown
         super().__init__(opt, agents, shared)
 

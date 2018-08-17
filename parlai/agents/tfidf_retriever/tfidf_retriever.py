@@ -216,7 +216,7 @@ class TfidfRetrieverAgent(Agent):
             doc_ids, doc_scores = self.ranker.closest_docs(obs['text'],
                                                            self.opt.get('retriever_num_retrieved', 5))
 
-            if False and obs.get('label_candidates'): #TODO: Alex (doesn't work)
+            if False and obs.get('label_candidates'):  # TODO: Alex (doesn't work)
                 # these are better selection than stored facts
                 # rank these options instead
                 cands = obs['label_candidates']

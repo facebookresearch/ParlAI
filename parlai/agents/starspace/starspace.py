@@ -256,7 +256,7 @@ class StarspaceAgent(Agent):
         candidates as well if they are available and param is set.
         """
         is_training = ys is not None
-        if is_training: #
+        if is_training:
             negs = self.get_negs(xs, ys)
             if is_training and len(negs) > 0:
                 self.model.train()
