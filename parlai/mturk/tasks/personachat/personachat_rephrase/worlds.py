@@ -204,7 +204,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                     if pp in ['', ' ', '  ', '   ']:
                         per_subseq.remove(pp)
                 n_word_match += sum([(paa in text) for paa in per_subseq])
-            if n_word_match >0:
+            if n_word_match > 0:
                 control_msg['text'] = 'We found that you <b><span style="color:red">trivially copied character descriptions</span></b>. Please rephrase your message again.'
                 ag.observe(validate(control_msg))
                 return True
@@ -227,7 +227,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                 if r_w in per_parse:
                     per_parse.remove(r_w)
             n_word_match += sum([word in text for word in per_parse])
-            if n_word_match/(len(per_parse)+1) >tolerance:
+            if n_word_match/(len(per_parse)+1) > tolerance:
                 control_msg['text'] = 'We found that you <b><span style="color:red">trivially copied character descriptions</span></b>. Please rephrase your message again.'
                 ag.observe(validate(control_msg))
                 return True
