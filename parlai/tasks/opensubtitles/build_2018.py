@@ -205,10 +205,8 @@ def extract_data_from_xml(xml_object):
         end_time = end_time or previous_end_time
         # add to the conversation
         # flush and start new conversation
-        if (
-            sentence is not None
-            and start_time - previous_end_time <= MAX_TIME_DIFFERENCE_S
-        ):
+        if (sentence is not None and
+                start_time - previous_end_time <= MAX_TIME_DIFFERENCE_S):
             conversation.append(sentence)
         else:
             if len(conversation) > 1:

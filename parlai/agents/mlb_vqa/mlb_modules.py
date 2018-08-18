@@ -151,7 +151,7 @@ class MlbNoAtt(Mlb):
                         training=self.training)
         x_q = self.linear_q(x_q)
         x_q = getattr(F, self.opt['activation_q'])(x_q)
-        # hadamard product
+        # hadamard product
         x_mm = torch.mul(x_q, x_v)
         return x_mm
 
@@ -167,7 +167,7 @@ class MlbAtt(Mlb):
                                   self.opt['num_glimpses'],
                                   1, 1)
         if self.opt['original_att']:
-            self.linear_v_fusion = nn.Linear(self.opt['dim_v'] * \
+            self.linear_v_fusion = nn.Linear(self.opt['dim_v'] *
                                              self.opt['num_glimpses'],
                                              self.opt['dim_h'])
             self.linear_q_fusion = nn.Linear(self.opt['dim_q'],
