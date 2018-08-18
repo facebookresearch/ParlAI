@@ -404,11 +404,12 @@ class FixedDialogTeacher(Teacher):
         action['id'] = self.getID()
 
         # remember correct answer if available
-        self.lastY = action.get('labels', None)
+        self.lastY = action.get('labels', action.get('eval_labels', None))
         if ((not self.datatype.startswith('train') or 'evalmode' in self.datatype)
                 and 'labels' in action):
             # move labels to eval field so not used for training
             # but this way the model can use the labels for perplexity or loss
+            action = action.copy()
             labels = action.pop('labels')
             if not self.opt.get('hide_labels', False):
                 action['eval_labels'] = labels
