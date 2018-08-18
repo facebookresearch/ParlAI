@@ -37,7 +37,7 @@ def create_fb_format(lines_file, convo_file, outpath):
                     index += 1
                     s += str(index) + ' ' + lines[c[i]]
                     if len(c) > i + 1:
-                        s += '\t' + lines[c[i+1]]
+                        s += '\t' + lines[c[i + 1]]
                     s += '\n'
 
                 cnt = cnt + 1

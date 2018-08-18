@@ -212,7 +212,7 @@ class TimeLogger():
             log['%done'] = done / total
             if log["%done"] > 0:
                 log['time_left'] = str(int(self.tot_time / log['%done'] - self.tot_time)) + 's'
-            z = '%.2f' % (100*log['%done'])
+            z = '%.2f' % (100 * log['%done'])
             log['%done'] = str(z) + '%'
         for k, v in report.items():
             if k not in log:
@@ -807,7 +807,7 @@ def str_to_msg(txt, ignore_fields=''):
     for t in txt.split('\t'):
         ind = t.find(':')
         key = t[:ind]
-        value = t[ind+1:]
+        value = t[ind + 1:]
         if key not in ignore_fields.split(','):
             msg[key] = convert(key, value)
     msg['episode_done'] = msg.get('episode_done', False)

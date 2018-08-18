@@ -19,7 +19,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.max_persona_time = opt['max_persona_time']
         self.range_persona = [int(s) for s in opt['range_persona'].split(',')]
-        self.n_persona = np.random.randint(self.range_persona[0], self.range_persona[1]+1)
+        self.n_persona = np.random.randint(self.range_persona[0], self.range_persona[1] + 1)
         self.episodeDone = False
         self.persona = []
         self.persone_done = False
@@ -30,7 +30,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
         self.mturk_agent.observe({
             'id': 'SYSTEM',
             'text': 'Please create your character by entering <b><span style="color:blue">{} sentences</span></b> below in the input-box. \n \
-                     You have <b><span style="color:blue">{} mins</span></b> to finish the persona creation.'.format(self.n_persona, int(self.max_persona_time/60))})
+                     You have <b><span style="color:blue">{} mins</span></b> to finish the persona creation.'.format(self.n_persona, int(self.max_persona_time / 60))})
         while not self.persona_done:
             act = self.mturk_agent.act(timeout=self.max_persona_time)
             # Check timeout
@@ -70,7 +70,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
 
             if not self.persona_done:
                 control_msg = {'id': 'SYSTEM',
-                               'text': 'Please enter at least *{}* more sentence(s) to finish. '.format(str(self.n_persona-len(self.persona)))}
+                               'text': 'Please enter at least *{}* more sentence(s) to finish. '.format(str(self.n_persona - len(self.persona)))}
                 self.mturk_agent.observe(validate(control_msg))
 
     def save_data(self):

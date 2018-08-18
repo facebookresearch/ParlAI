@@ -123,7 +123,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                 'id': 'SYSTEM',
                 'text': "Please rephrase the sentence below so that it sticks to the same person's characteristics: \n\n \
                         <b><span style='color:blue'>{}</span></b> \
-                        \n\n There are {} sentences left to be rephrased.".format(self.persona[self.num_done], len(self.persona)-len(self.rephrased_persona)-1)
+                        \n\n There are {} sentences left to be rephrased.".format(self.persona[self.num_done], len(self.persona) - len(self.rephrased_persona) - 1)
             })
             while not persona_done:
                 act = self.mturk_agent.act(timeout=self.max_response_time)
@@ -199,7 +199,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                 for r_w in regular_words:
                     if r_w in per_parse:
                         per_parse.remove(r_w)
-                per_subseq = [' '.join(per_parse[i:i+len(per_parse)-tolerance]) for i in range(tolerance+1)]
+                per_subseq = [' '.join(per_parse[i:i + len(per_parse) - tolerance]) for i in range(tolerance + 1)]
                 for pp in per_subseq:
                     if pp in ['', ' ', '  ', '   ']:
                         per_subseq.remove(pp)
@@ -227,7 +227,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                 if r_w in per_parse:
                     per_parse.remove(r_w)
             n_word_match += sum([word in text for word in per_parse])
-            if n_word_match/(len(per_parse)+1) > tolerance:
+            if n_word_match / (len(per_parse) + 1) > tolerance:
                 control_msg['text'] = 'We found that you <b><span style="color:red">trivially copied character descriptions</span></b>. Please rephrase your message again.'
                 ag.observe(validate(control_msg))
                 return True

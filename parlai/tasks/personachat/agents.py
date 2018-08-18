@@ -32,7 +32,7 @@ def _path(opt, persona):
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0] + '_' + persona
-    return os.path.join(opt['datapath'], 'Persona-Chat', 'personachat' , dt + '.txt')
+    return os.path.join(opt['datapath'], 'Persona-Chat', 'personachat', dt + '.txt')
 
 
 class NoneTeacher(FbDialogTeacher):

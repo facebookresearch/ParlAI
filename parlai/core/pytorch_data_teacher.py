@@ -481,7 +481,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
             self.lastYs = shared['lastYs']
             self.data = shared['data']
 
-        self.num_batches = math.ceil(self.dataset.num_episodes()/self.bsz)
+        self.num_batches = math.ceil(self.dataset.num_episodes() / self.bsz)
         self.reset()
 
     def get_dataset_class(self, opt):

@@ -47,7 +47,7 @@ def build(opt):
         num_valid = 1000
         total = len(train_data['data']['dialogs'])
         step = total // (num_valid - 1)
-        for i in range(total-1, 0, -step)[:num_valid]:
+        for i in range(total - 1, 0, -step)[:num_valid]:
             valid_data['data']['dialogs'].append(train_data['data']['dialogs'][i])
             del train_data['data']['dialogs'][i]
 

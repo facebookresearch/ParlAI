@@ -28,12 +28,12 @@ def extract_and_save(opt):
             if opt.get('persona_type') == 'both':
                 persona_1 = [p for p in persona_text if 'your persona:' in p]
                 persona_2 = [p for p in persona_text if 'partner\'s persona:' in p]
-                persona_1 = [p[p.find(':')+1:] for p in persona_1]
-                persona_2 = [p[p.find(':')+1:] for p in persona_2]
+                persona_1 = [p[p.find(':') + 1:] for p in persona_1]
+                persona_2 = [p[p.find(':') + 1:] for p in persona_2]
                 personas += [persona_1, persona_2]
             else:
                 persona = [p for p in persona_text if 'persona:' in p]
-                persona = [p[p.find(':')+1:] for p in persona]
+                persona = [p[p.find(':') + 1:] for p in persona]
                 personas.append(persona)
             new_episode = act.get('episode_done')
         else:

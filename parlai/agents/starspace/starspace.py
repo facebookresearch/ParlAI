@@ -201,7 +201,7 @@ class StarspaceAgent(Agent):
     def same(self, y1, y2):
         if len(y1.squeeze(0)) != len(y2.squeeze(0)):
             return False
-        if abs((y1.squeeze(0)-y2.squeeze(0)).sum().data.sum()) > 0.00001:
+        if abs((y1.squeeze(0) - y2.squeeze(0)).sum().data.sum()) > 0.00001:
             return False
         return True
 
@@ -212,7 +212,7 @@ class StarspaceAgent(Agent):
             return negs
         k = self.opt['neg_samples']
         for i in range(1, k * 3):
-            index =  random.randint(0, cache_sz)
+            index = random.randint(0, cache_sz)
             neg = self.ys_cache[index]
             if not self.same(ys, neg):
                 negs.append(neg)
@@ -402,7 +402,7 @@ class StarspaceAgent(Agent):
         return self.batch_act([self.observation])[0]
 
     def shutdown(self):
-        #"""Save the state of the model when shutdown."""
+        # """Save the state of the model when shutdown."""
         super().shutdown()
 
     def save(self, path=None):

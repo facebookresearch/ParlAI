@@ -265,7 +265,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
             filename = os.path.join(data_path, '{}_{}_{}.pkl'.format(time.strftime("%Y%m%d-%H%M%S"), np.random.randint(0, 1000), self.task_type))
         else:
             filename = os.path.join(data_path, '{}_{}_{}_incomplete.pkl'.format(time.strftime("%Y%m%d-%H%M%S"), np.random.randint(0, 1000), self.task_type))
-        print(self.world_tag+': Data successfully saved at {}.'.format(filename))
+        print(self.world_tag + ': Data successfully saved at {}.'.format(filename))
         pickle.dump({'personas': self.personas,
                      'dialog': self.dialog,
                      'workers': [ag.worker_id for ag in self.agents],
@@ -288,7 +288,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                 for r_w in regular_words:
                     if r_w in per_parse:
                         per_parse.remove(r_w)
-                per_subseq = [' '.join(per_parse[i:i+len(per_parse)-tolerance]) for i in range(tolerance+1)]
+                per_subseq = [' '.join(per_parse[i:i + len(per_parse) - tolerance]) for i in range(tolerance + 1)]
                 for pp in per_subseq:
                     if pp in ['', ' ', '  ', '   ']:
                         per_subseq.remove(pp)

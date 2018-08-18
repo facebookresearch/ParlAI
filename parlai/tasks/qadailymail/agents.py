@@ -15,7 +15,7 @@ def _path(opt):
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0]
-    return os.path.join(opt['datapath'], 'QADailyMail' , dt + '.txt')
+    return os.path.join(opt['datapath'], 'QADailyMail', dt + '.txt')
 
 
 class DefaultTeacher(FbDialogTeacher):

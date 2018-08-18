@@ -174,7 +174,7 @@ def eval_wordstat(opt, print_parser=None):
         with open(opt['dump_predictions_path'], 'w') as f:
             f.writelines(['CONTEXT: {}\nPREDICTION:{}\n\n'.format(c, p) for c, p in zip(word_statistics['context_list'], word_statistics['pure_pred_list'])])
         if opt['compute_unique'] is True:
-            with open(opt['dump_predictions_path']+'_unique', 'w') as f:
+            with open(opt['dump_predictions_path'] + '_unique', 'w') as f:
                 f.writelines(['{}\n'.format(i) for i in unique_list])
 
     stat_str = 'total_words: {}, '.format(word_statistics['word_cnt']) + ', '.join(

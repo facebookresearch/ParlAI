@@ -108,7 +108,7 @@ class Embed(nn.Embedding):
             for j, length in enumerate(row):
                 length = length.item()
                 if length > 0:
-                    input[i, j, :length] = indices[offset:offset+length]
+                    input[i, j, :length] = indices[offset:offset + length]
                 offset += length
 
         for i, row in enumerate(lengths_mat):
@@ -133,9 +133,9 @@ class Embed(nn.Embedding):
     @lru_cache(maxsize=32)
     def position_matrix(J, d):
         m = torch.Tensor(J, d)
-        for k in range(1, d+1):
-            for j in range(1, J+1):
-                m[j-1, k-1] = (1 - j/J) - (k/d) * (1 - 2 * j/J)
+        for k in range(1, d + 1):
+            for j in range(1, J + 1):
+                m[j - 1, k - 1] = (1 - j / J) - (k / d) * (1 - 2 * j / J)
         return m
 
     @staticmethod

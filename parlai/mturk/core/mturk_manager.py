@@ -110,7 +110,7 @@ class MTurkManager():
             self.num_conversations * len(self.mturk_agent_ids) * HIT_MULT
         )
         self.minimum_messages = opt.get('min_messages', 0)
-        self.auto_approve_delay = opt.get('auto_approve_delay', 4*7*24*3600)
+        self.auto_approve_delay = opt.get('auto_approve_delay', 4 * 7 * 24 * 3600)
         self.has_time_limit = opt.get('max_time', 0) > 0
         self.socket_manager = None
         self.is_test = is_test
@@ -661,7 +661,7 @@ class MTurkManager():
         def _onboard_function(mturk_agent):
             """Onboarding wrapper to set state to onboarding properly"""
             if self.onboard_function:
-                conversation_id = 'o_'+str(uuid.uuid4())
+                conversation_id = 'o_' + str(uuid.uuid4())
                 mturk_agent.change_conversation(
                     conversation_id=conversation_id,
                     agent_id='onboarding',
@@ -741,7 +741,7 @@ class MTurkManager():
     def _check_time_limit(self):
         if time.time() - self.time_limit_checked < RESET_TIME_LOG_TIMEOUT:
             return
-        if int(time.time()) % (60*60*24) > 180:
+        if int(time.time()) % (60 * 60 * 24) > 180:
             # sync the time resets to ONCE DAILY in a 3 minute window
             return
         self.time_limit_checked = time.time()

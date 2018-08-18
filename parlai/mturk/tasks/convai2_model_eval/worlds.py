@@ -432,7 +432,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                         if 'text' in acts[idx] and \
                                 acts[idx]['text'] in ['1', '2']:
                             self.persona_picked[idx] = \
-                                cand_text[int(acts[idx]['text'])-1][0]
+                                cand_text[int(acts[idx]['text']) - 1][0]
 
                     # reached the end of the chat
                     self.chat_done = True
@@ -570,8 +570,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                 for r_w in regular_words:
                     if r_w in per_parse:
                         per_parse.remove(r_w)
-                per_subseq = [' '.join(per_parse[i:i+len(per_parse) -
-                                       tolerance]) for i in range(tolerance+1)]
+                per_subseq = [' '.join(per_parse[i:i + len(per_parse) -
+                                       tolerance]) for i in range(tolerance + 1)]
                 for pp in per_subseq:
                     if pp in ['', ' ', '  ', '   ']:
                         per_subseq.remove(pp)

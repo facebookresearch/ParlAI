@@ -83,7 +83,7 @@ def setup_heroku_server(task_name, task_files_to_copy=None, heroku_team=None):
     ))
 
     # Delete old server files
-    sh.rm(shlex.split('-rf '+heroku_server_directory_path))
+    sh.rm(shlex.split('-rf ' + heroku_server_directory_path))
 
     # Copy over a clean copy into the server directory
     shutil.copytree(server_source_directory_path, heroku_server_directory_path)
@@ -119,7 +119,7 @@ def setup_heroku_server(task_name, task_files_to_copy=None, heroku_team=None):
     while not heroku_user_identifier:
         try:
             subprocess.check_output(
-                shlex.split(heroku_executable_path+' auth:token')
+                shlex.split(heroku_executable_path + ' auth:token')
             )
             heroku_user_identifier = (
                 netrc.netrc(os.path.join(os.path.expanduser("~"), '.netrc'))

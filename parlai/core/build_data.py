@@ -149,8 +149,8 @@ def cat(file1, file2, outfile, deleteFiles=True):
     with open(outfile, 'wb') as wfd:
         for f in [file1, file2]:
             with open(f, 'rb') as fd:
-                shutil.copyfileobj(fd, wfd, 1024*1024*10)
-                #10MB per writing chunk to avoid reading big file into memory.
+                shutil.copyfileobj(fd, wfd, 1024 * 1024 * 10)
+                # 10MB per writing chunk to avoid reading big file into memory.
     if deleteFiles:
         os.remove(file1)
         os.remove(file2)
