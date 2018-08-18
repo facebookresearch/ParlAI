@@ -32,9 +32,9 @@ def create_fb_format(data, dpath):
     fw3 = open(os.path.join(dpath, 'test.txt'), 'w')
     for i in range(0, len(data) - 1, 2):
         fout = fw1
-        if (i%500) == 0:
+        if (i % 500) == 0:
             fout = fw2
-        elif (i%500) == 2:
+        elif (i % 500) == 2:
             fout = fw3
         use = True
         x = data[i].rstrip(' ').lstrip(' ').replace('\t', ' ')
@@ -79,7 +79,7 @@ def build(opt):
         file1 = os.path.join(dpath, fname1)
         file2 = os.path.join(dpath, fname2)
         file3 = "twitter_en_big.txt.gz"
-        outzipfile= os.path.join(dpath, file3)
+        outzipfile = os.path.join(dpath, file3)
         build_data.cat(file1, file2, outzipfile)
 
         import gzip

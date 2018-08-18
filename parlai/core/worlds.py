@@ -257,7 +257,7 @@ class DialogPartnerWorld(World):
 
     def report(self, compute_time=False):
         def show(metric):
-            if 'all' in self.show_metrics or metric in self.show_metrics or metric=='exs':
+            if 'all' in self.show_metrics or metric in self.show_metrics or metric == 'exs':
                 return True
             return False
         show_metrics = self.opt.get('metrics', "all")

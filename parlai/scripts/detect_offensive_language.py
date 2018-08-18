@@ -63,7 +63,7 @@ def detect(opt, printargs=None, print_parser=None):
             labels = a.get('labels', a.get('eval_labels', ''))
             for l in labels:
                 if bad.contains_offensive_language(l):
-                    offensive= True
+                    offensive = True
 
         if offensive:
             if opt['display_examples']:

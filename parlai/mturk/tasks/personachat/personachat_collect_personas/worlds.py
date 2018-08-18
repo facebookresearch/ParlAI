@@ -38,10 +38,10 @@ class PersonaProfileWorld(MTurkOnboardWorld):
                 self.episodeDone = True
                 return
 
-            candidate_persona = list(filter(lambda x: x !='', act['text'].split('.'.strip())))
+            candidate_persona = list(filter(lambda x: x != '', act['text'].split('.'.strip())))
             for cand in candidate_persona:
                 # Check if persona is too long
-                if len(cand.split(' '))>16:
+                if len(cand.split(' ')) > 16:
                     control_msg = {'id': 'SYSTEM',
                                    'text': '\n A sentence you entered is too long:\n \
                                           <b><span style="color:blue">' + cand + '</span></b>\n \
@@ -49,7 +49,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
                     self.mturk_agent.observe(validate(control_msg))
                     candidate_persona.remove(cand)
                 # Check if persona is too short
-                if len(cand.split(' '))<3:
+                if len(cand.split(' ')) < 3:
                     control_msg = {'id': 'SYSTEM',
                                    'text': '\n A sentence you entered is too short:\n \
                                           <b><span style="color:blue">' + cand + '</span></b>\n \

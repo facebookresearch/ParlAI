@@ -224,7 +224,7 @@ def eval_ppl(opt, build_dict=None, dict_file=None):
     final_report = world.report()
     print('{}s elapsed: {}'.format(int(tot_time), final_report))
     print("============================")
-    print("FINAL PPL: " +str(final_report['ppl']))
+    print("FINAL PPL: " + str(final_report['ppl']))
     if final_report.get('ppl', 0) == float('inf'):
         print('Note: you got inf perplexity. Consider adding (or raising) the '
               'minimum probability you assign to each possible word. If you '

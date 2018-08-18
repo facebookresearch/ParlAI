@@ -234,7 +234,7 @@ class StarspaceAgent(Agent):
         score = torch.Tensor(W.size(0))
         for i in range(W.size(0)):
             score[i] = torch.nn.functional.cosine_similarity(q, W[i], dim=0).data[0]
-        val, ind=score.sort(descending=True)
+        val, ind = score.sort(descending=True)
         for i in range(20):
             print(str(ind[i]) + " [" + str(val[i]) + "]: " + self.v2t(torch.Tensor([ind[i]])))
 
@@ -270,7 +270,7 @@ class StarspaceAgent(Agent):
                         print("neg: " + self.v2t(c.squeeze()))
                     print("---")
                 y = -torch.ones(xe.size(0))
-                y[0]= 1
+                y[0] = 1
                 loss = self.criterion(xe, ye, y)
                 loss.backward()
                 self.optimizer.step()
@@ -301,7 +301,7 @@ class StarspaceAgent(Agent):
             pred = nn.CosineSimilarity().forward(xe, ye)
             # This is somewhat costly which we could avoid if we do not evalute ranking.
             # i.e. by only doing: val,ind = pred.max(0)
-            val, ind=pred.sort(descending=True)
+            val, ind = pred.sort(descending=True)
             # predict the highest scoring candidate, and return it.
             ypred = cands_txt[0][ind.data[0]]
             tc = []

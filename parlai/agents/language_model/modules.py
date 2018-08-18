@@ -15,7 +15,7 @@ class RNNModel(nn.Module):
 
     def __init__(self, opt, ntoken):
         super(RNNModel, self).__init__()
-        self.opt =opt
+        self.opt = opt
 
         # set hyperparameters from opt
         rnn_type = opt['rnn_class']
