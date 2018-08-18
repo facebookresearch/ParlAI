@@ -52,7 +52,7 @@ class Mlb(nn.Module):
         batch_size = x.size(0)
         mask = x.new().resize_as_(x).fill_(0)
         for i in range(batch_size):
-            mask[i][lengths[i]-1].fill_(1)
+            mask[i][lengths[i] - 1].fill_(1)
         x = x.mul(mask)
         x = x.sum(1).view(batch_size, self.opt['dim_q'])
         return x
@@ -241,7 +241,7 @@ class MlbAtt(Mlb):
         list_att = []
         for x_att in list_att_split:
             x_att = x_att.contiguous()
-            x_att = x_att.view(batch_size, width*height)
+            x_att = x_att.view(batch_size, width * height)
             x_att = F.softmax(x_att)
             list_att.append(x_att)
 

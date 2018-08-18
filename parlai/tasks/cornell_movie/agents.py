@@ -57,7 +57,7 @@ class DoubleTeacher(DefaultTeacher):
                 new_list.append(('', [entries[0][0]]))
 
                 # add all ( y_t => x_(t+1) ) pairs
-                new_list.extend([(entries[i][1][0], [entries[i+1][0]])
+                new_list.extend([(entries[i][1][0], [entries[i + 1][0]])
                                  for i in range(len(entries) - 1)])
                 if len(entries[-1]) > 1 and entries[-1][1]:
                     # add y_n => '', if last y avail

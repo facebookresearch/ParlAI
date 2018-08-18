@@ -91,7 +91,7 @@ def _bleu(guess, answers):
 
 
 def aggregate_metrics(reporters):
-    #reporters is a list of teachers or worlds
+    # reporters is a list of teachers or worlds
     m = {}
     m['tasks'] = {}
     sums = {'accuracy': 0, 'f1': 0, 'loss': 0, 'ppl': 0}

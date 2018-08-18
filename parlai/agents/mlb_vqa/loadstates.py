@@ -28,7 +28,7 @@ def load_dictionary(download_dir):
 
 def load_emb_params(download_dir):
     table_name = 'utable'
-    path_params = os.path.join(download_dir, table_name+'.npy')
+    path_params = os.path.join(download_dir, table_name + '.npy')
     if not os.path.exists(path_params):
         os.system('mkdir -p ' + download_dir)
         os.system('wget {} -P {}'.format(urls[table_name], download_dir))
@@ -38,7 +38,7 @@ def load_emb_params(download_dir):
 
 def load_rnn_params(download_dir):
     skip_name = 'uni_skip'
-    path_params = os.path.join(download_dir, skip_name+'.npz')
+    path_params = os.path.join(download_dir, skip_name + '.npz')
     if not os.path.exists(path_params):
         os.system('mkdir -p ' + download_dir)
         os.system('wget {} -P {}'.format(urls[skip_name], download_dir))
@@ -55,7 +55,7 @@ def make_emb_state_dict(dictionary, parameters, vocab):
             id_params = dictionary[word]
             params = parameters[id_params]
         else:
-            #print('Warning: word `{}` not in dictionary'.format(word))
+            # print('Warning: word `{}` not in dictionary'.format(word))
             params = unknown_params
             nb_unknown += 1
         weight[id_weight] = torch.from_numpy(params)

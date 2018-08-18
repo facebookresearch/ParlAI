@@ -41,7 +41,7 @@ class FullTeacher(HalfTeacher):
     """This version of opensubtitles creates all possible dialog examples."""
     def setup_data(self, path):
         def rebuild(entries):
-            return [(entries[i][1][0], [entries[i+1][0]]) for i in range(len(entries) - 1)]
+            return [(entries[i][1][0], [entries[i + 1][0]]) for i in range(len(entries) - 1)]
 
         # this shows conversations in both directions
         alternate = []

@@ -20,7 +20,7 @@ def pad(tensor, length, dim=0):
         return torch.cat(
             [tensor, tensor.new(*tensor.size()[:dim],
                                 length - tensor.size(dim),
-                                *tensor.size()[dim+1:]).zero_()],
+                                *tensor.size()[dim + 1:]).zero_()],
             dim=dim)
     else:
         return tensor
@@ -188,7 +188,7 @@ class Seq2seq(nn.Module):
                 enc_out = enc_out.unsqueeze(1).repeat(1, beam_size, 1, 1)
                 # create batch size num of beams
                 data_device = enc_out.device
-                beams = [Beam(beam_size, 3, 0, 1, 2, min_n_best=beam_size/2, cuda=data_device) for _ in range(bsz)]
+                beams = [Beam(beam_size, 3, 0, 1, 2, min_n_best=beam_size / 2, cuda=data_device) for _ in range(bsz)]
                 # init the input with start token
                 xs = starts
                 # repeat tensors to support batched beam

@@ -60,7 +60,7 @@ def create_fb_format(inpath, outpath):
                                 i1 = line.find('<w id="')
                                 if i1 >= 0:
                                     line = line[i1:]
-                                    word = line[line.find('>')+1:line.find('</w')]
+                                    word = line[line.find('>') + 1:line.find('</w')]
                                     words.append(' ')
                                     words.append(word.replace('\t', ' '))
                     handle = ftrain

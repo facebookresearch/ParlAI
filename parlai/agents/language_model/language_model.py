@@ -296,7 +296,7 @@ class LanguageModelAgent(Agent):
         """Save observation for act.
         If multiple observations are from the same episode, concatenate them.
         """
-        #shallow copy observation (deep copy can be expensive)
+        # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
         seq_len = self.opt['seq_len']
         is_training = True
@@ -373,7 +373,7 @@ class LanguageModelAgent(Agent):
         loss += self.criterion(output_flat, targets.select(1, 0).view(-1)).data
 
         for i in range(1, targets.size(1)):
-            output, hidden = self.model(targets.select(1, i-1).view(1, bsz), self.hidden, no_pack=True)
+            output, hidden = self.model(targets.select(1, i - 1).view(1, bsz), self.hidden, no_pack=True)
             self.hidden = self.repackage_hidden(hidden)
             output_flat = output.view(-1, len(self.dict))
             loss += self.criterion(output_flat, targets.select(1, i).view(-1)).data
@@ -481,7 +481,7 @@ class LanguageModelAgent(Agent):
                 data_list = []
                 targets_list = []
                 # total is the number of batches
-                total = len(self.next_batch)//self.batchsize
+                total = len(self.next_batch) // self.batchsize
                 for _ in range(total):
                     batch = self.next_batch[:self.batchsize]
                     self.next_batch = self.next_batch[self.batchsize:]
