@@ -83,7 +83,7 @@ def maintain_dialog_history(history, observation, reply='',
     return history['dialog']
 
 
-def load_cands(path, lines_have_ids = False, cands_are_replies = False):
+def load_cands(path, lines_have_ids=False, cands_are_replies=False):
     """Load global fixed set of candidate labels that the teacher provides
     every example (the true labels for a specific example are also added to
     this set, so that it's possible to get the right answer).
