@@ -190,8 +190,8 @@ class QuestionerAgent(CooperativeGameAgent):
         group = argparser.add_argument_group('Questioner Agent Arguments')
         group.add_argument('--q-in-vocab', default=13, type=int,
                            help='Input vocabulary for questioner. Usually includes total '
-                               'distinct words spoken by answerer, questioner itself, '
-                               'and words by which the goal is described.')
+                                'distinct words spoken by answerer, questioner itself, '
+                                'and words by which the goal is described.')
         group.add_argument('--q-embed-size', default=20, type=int,
                            help='Size of word embeddings for questioner')
         group.add_argument('--q-state-size', default=100, type=int,
@@ -245,8 +245,8 @@ class AnswererAgent(CooperativeGameAgent):
         group = argparser.add_argument_group('Questioner Agent Arguments')
         group.add_argument('--a-in-vocab', default=13, type=int,
                            help='Input vocabulary for questioner. Usually includes total '
-                                 'distinct words spoken by answerer, questioner itself, '
-                                 'and words by which the goal is described.')
+                                'distinct words spoken by answerer, questioner itself, '
+                                'and words by which the goal is described.')
         group.add_argument('--a-embed-size', default=20, type=int,
                            help='Size of word embeddings for questioner')
         group.add_argument('--a-state-size', default=100, type=int,

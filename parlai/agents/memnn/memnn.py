@@ -71,7 +71,7 @@ class MemnnAgent(Agent):
             self.decoder = None
             if opt['output'] == 'generate' or opt['output'] == 'g':
                 self.decoder = Decoder(opt['embedding_size'], opt['embedding_size'],
-                                        opt['rnn_layers'], opt, self.dict)
+                                       opt['rnn_layers'], opt, self.dict)
             elif opt['output'] != 'rank' and opt['output'] != 'r':
                 raise NotImplementedError('Output type not supported.')
 
@@ -233,7 +233,7 @@ class MemnnAgent(Agent):
         # return [' '] * len(self.answers)
         _, inds = scores.sort(descending=True, dim=1)
         return [[cands[i][j] for j in r if j < len(cands[i])]
-                    for i, r in enumerate(inds)]
+                for i, r in enumerate(inds)]
 
     def decode(self, output_embeddings, ys=None):
         batchsize = output_embeddings.size(0)
