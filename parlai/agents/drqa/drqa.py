@@ -57,8 +57,8 @@ class SimpleDictionaryAgent(DictionaryAgent):
         super().__init__(*args, **kwargs)
 
         # Index words in embedding file
-        if (self.opt['pretrained_words'] and self.opt.get('embedding_file')
-                and not self.opt.get('trained', False)):
+        if (self.opt['pretrained_words'] and self.opt.get('embedding_file') and
+                not self.opt.get('trained', False)):
             print('[ Indexing words with embeddings... ]')
             self.embedding_words = set()
             self.opt['embedding_file'] = modelzoo_path(
@@ -148,8 +148,7 @@ class DrqaAgent(Agent):
 
     def _init_from_saved(self, fname):
         print('[ Loading model %s ]' % fname)
-        saved_params = torch.load(fname,
-            map_location=lambda storage, loc: storage)
+        saved_params = torch.load(fname, map_location=lambda storage, loc: storage)
         if 'word_dict' in saved_params:
             # for compatibility with old saves
             self.word_dict.copy_dict(saved_params['word_dict'])

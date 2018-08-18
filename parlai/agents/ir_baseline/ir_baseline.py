@@ -64,9 +64,9 @@ def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
     if text == "":
         return 0
     if not dictionary:
-       words = text.lower().split(' ')
+        words = text.lower().split(' ')
     else:
-       words = [w for w in dictionary.tokenize(text.lower())]
+        words = [w for w in dictionary.tokenize(text.lower())]
     score = 0
     rw = query_rep['words']
     used = {}
