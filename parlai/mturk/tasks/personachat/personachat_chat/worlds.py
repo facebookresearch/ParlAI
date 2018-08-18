@@ -274,7 +274,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
 
     def is_exact_match(self, act, ag, tolerance=0):
         if act['episode_done'] == True:
-           return False
+            return False
 
         control_msg = {'episode_done': False}
         control_msg['id'] = 'SYSTEM'

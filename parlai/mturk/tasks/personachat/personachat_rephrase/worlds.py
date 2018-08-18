@@ -134,9 +134,9 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                    self.is_close_match(act, self.mturk_agent, self.persona[self.num_done]):
                     pass
                 else:
-                   self.rephrased_persona.append(act['text'])
-                   self.num_done += 1
-                   persona_done = True
+                    self.rephrased_persona.append(act['text'])
+                    self.num_done += 1
+                    persona_done = True
             return
         else:
             self.mturk_agent.observe({
@@ -185,7 +185,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
 
     def is_exact_match(self, act, ag, persona_data, tolerance=0):
         if act['episode_done'] == True:
-           return False
+            return False
 
         control_msg = {'episode_done': False}
         control_msg['id'] = 'SYSTEM'
@@ -213,7 +213,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
 
     def is_close_match(self, act, ag, persona_data, tolerance=0.7):
         if act['episode_done'] == True:
-           return False
+            return False
 
         control_msg = {'episode_done': False}
         control_msg['id'] = 'SYSTEM'
