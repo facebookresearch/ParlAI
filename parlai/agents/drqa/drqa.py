@@ -77,8 +77,7 @@ class SimpleDictionaryAgent(DictionaryAgent):
         Only adds words contained in self.embedding_words, if not None.
         """
         for token in tokens:
-            if (self.embedding_words is not None and
-                token not in self.embedding_words):
+            if (self.embedding_words is not None and token not in self.embedding_words):
                 continue
             self.freq[token] += 1
             if token not in self.tok2ind:

@@ -248,8 +248,8 @@ class PersonaChatWorld(MultiAgentDialogWorld):
         convo_finished = True
         bad_workers = []
         for ag in self.agents:
-            if (ag.hit_is_abandoned or ag.hit_is_returned or \
-                ag.disconnected or ag.hit_is_expired):
+            if (ag.hit_is_abandoned or ag.hit_is_returned or
+                    ag.disconnected or ag.hit_is_expired):
                 bad_workers.append(ag.worker_id)
                 convo_finished = False
         if not convo_finished or self.dialog == []:

@@ -30,8 +30,7 @@ class WebTeacher(DialogTeacher):
                 self.suffix = 'dev'
 
         qa_dir, self.evidence_dir = _path(opt)
-        opt['datafile'] = os.path.join(qa_dir, self.prefix + 'web-' +
-                                               self.suffix + '.json')
+        opt['datafile'] = os.path.join(qa_dir, self.prefix + 'web-' + self.suffix + '.json')
         self.id = 'triviaqa'
         super().__init__(opt, shared)
 
@@ -78,8 +77,9 @@ class WikipediaTeacher(DialogTeacher):
                 self.suffix = 'dev'
 
         qa_dir, self.evidence_dir = _path(opt)
-        opt['datafile'] = os.path.join(qa_dir, self.prefix + 'wikipedia-' +
-                                               self.suffix + '.json')
+        opt['datafile'] = os.path.join(
+            qa_dir,self.prefix + 'wikipedia-' + self.suffix + '.json'
+        )
 
         self.id = 'triviaqa'
         super().__init__(opt, shared)

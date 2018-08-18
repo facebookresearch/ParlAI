@@ -800,7 +800,7 @@ class Beam(object):
             # we change output because we want outputs to have this eos to pass assert in L102, it is ok since empty self.finished means junk prediction anyway
             self.outputs[-1][0] = self.eos
             hyptail = self.HypothesisTail(timestep=len(self.outputs) - 1, hypid=0, score=self.all_scores[-1][0],
-                                              tokenid=self.outputs[-1][0])
+                                          tokenid=self.outputs[-1][0])
 
             self.finished.append(hyptail)
 

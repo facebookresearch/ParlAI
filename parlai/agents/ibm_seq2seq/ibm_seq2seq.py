@@ -10,7 +10,7 @@ try:
     from seq2seq.models.DecoderRNN import DecoderRNN
 except ImportError:
     raise ImportError('Please install IBM\'s seq2seq package at '
-                              'https://github.com/IBM/pytorch-seq2seq')
+                      'https://github.com/IBM/pytorch-seq2seq')
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
