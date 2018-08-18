@@ -30,9 +30,11 @@ def _path(exsz, task, opt):
         suffix = 'tst'
     elif dt == 'valid':
         suffix = 'dev'
-    return os.path.join(opt['datapath'], 'personalized-dialog', 'personalized-dialog-dataset',
+    return os.path.join(
+        opt['datapath'], 'personalized-dialog', 'personalized-dialog-dataset',
         '{exsz}'.format(exsz=exsz),
-        '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix))
+        '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix)
+    )
 
 
 # The knowledge base of facts that can be used to answer questions.

@@ -53,8 +53,8 @@ def main():
     argparser.add_argument('-rt', '--range-turn', default='5,6',
                            help='sample range of number of turns')
     argparser.add_argument('--auto-approve-delay', type=int,
-                           default=3600*24*1, help='how long to wait for  \
-                           auto approval')
+                           default=3600 * 24 * 1,
+                           help='how long to wait for auto approval')
     argparser.add_argument('--only-masters', type='bool', default=False,
                            help='Set to True to use only master turks for this' +
                                 ' test eval, default is %(default)s')

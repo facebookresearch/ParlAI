@@ -336,6 +336,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
 
     def review_work(self):
         global review_agent
+
         def review_agent(ag):
             if hasattr(ag, 'not_approve'):
                 pass

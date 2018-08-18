@@ -87,6 +87,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
 
     def shutdown(self):
         global shutdown_agent
+
         def shutdown_agent(mturk_agent):
             mturk_agent.shutdown()
         Parallel(
