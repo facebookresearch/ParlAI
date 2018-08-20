@@ -669,6 +669,24 @@ def clip_text(text, max_len):
     return text
 
 
+def _ellipse(lst, max_display=5, sep='|'):
+    """
+    Like join, but possibly inserts an ellipsis.
+
+    :param lst: The list to join on
+    :param int max_display: the number of items to display for ellipsing.
+        If -1, shows all items
+    :param string sep: the delimiter to join on
+    """
+    # copy the list (or force it to a list if it's a set)
+    choices = list(lst)
+    # insert the ellipsis if necessary
+    if max_display > 0 and len(choices) > max_display:
+        ellipsis = '...and {} more'.format(len(choices) - max_display)
+        choices = choices[:max_display] + [ellipsis]
+    return sep.join(choices)
+
+
 def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
     """Returns a string describing the set of messages provided
     If prettify is true, candidates are displayed using prettytable.
@@ -701,79 +719,13 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
             text = clip_text(msg['text'], max_len)
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + text)
-        if msg.get('labels') and 'labels' not in ignore_fields:
-            lines.append(space + ('[labels: {}]'.format(
-                        '|'.join(msg['labels']))))
-        if msg.get('eval_labels') and 'eval_labels' not in ignore_fields:
-            lines.append(space + ('[eval_labels: {}]'.format(
-                        '|'.join(msg['eval_labels']))))
+        for field in {'labels', 'eval_labels', 'label_candidates', 'text_candidates'}:
+            if msg.get(field) and field not in ignore_fields:
+                lines.append('{}[{}: {}]'.format(space, field, _ellipse(msg[field])))
 
-        if msg.get('label_candidates') and 'label_candidates' not in ignore_fields:
-            cand_len = len(msg['label_candidates'])
-            if cand_len <= 10:
-                lines.append(space + ('[label_candidates: {}]'.format(
-                        '|'.join(msg['label_candidates']))))
-            else:
-                # select five label_candidates from the candidate set,
-                # can't slice in because it's a set
-                cand_iter = iter(msg['label_candidates'])
-                display_cands = (next(cand_iter) for _ in range(5))
-                # print those cands plus how many cands remain
-                lines.append(space + ('[label_candidates: {}{}]'.format(
-                        '|'.join(display_cands),
-                        '| ...and {} more'.format(cand_len - 5)
-                        )))
-        if msg.get('text_candidates') and 'text_candidates' not in ignore_fields:
-            if prettify:
-                cand_len = len(msg['text_candidates'])
-                cands = [c for c in msg['text_candidates'] if c is not None]
-                try:
-                    import prettytable
-                except ImportError:
-                    raise ImportError('Please install prettytable to \
-                    display text candidates: `pip install prettytable`')
-                scores = None
-                if msg.get('candidate_scores') is not None:
-                    table = prettytable.PrettyTable(['Score', 'Text'])
-                    scores = msg.get('candidate_scores')
-                else:
-                    table = prettytable.PrettyTable(['Text'])
-                table.align = 'l'
-                table.hrules = 1
-                display_cands = []
-                num_cands = 0
-                for cand in cands:
-                    cand_max_length = 250 if scores is None else 100
-                    if len(cand) > cand_max_length:
-                        # Show beginning and end
-                        split = [cand[:cand_max_length], cand[cand_max_length:]]
-                        cand = split[0] + '\n\n. . .\n\n' + split[1][-(min(50, len(split[1]))):]
-                    if scores is not None:
-                        table.add_row([scores[num_cands], cand])
-                    else:
-                        table.add_row([cand])
-                    num_cands += 1
-                    if num_cands > 5:
-                        break
-
-                lines.append(space + table.get_string())
-            else:
-                cand_len = len(msg['text_candidates'])
-                if cand_len <= 10:
-                    lines.append(space + ('[text_candidates: {}]'.format(
-                            '|'.join(msg['text_candidates']))))
-                else:
-                    # select five label_candidates from the candidate set,
-                    # can't slice in because it's a set
-                    cand_iter = iter(msg['text_candidates'])
-                    display_cands = (next(cand_iter) for _ in range(5))
-                    # print those cands plus how many cands remain
-                    lines.append(space + ('[text_candidates: {}{}]'.format(
-                            '|'.join(display_cands),
-                            '| ...and {} more'.format(cand_len - 5)
-                            )))
     if episode_done:
         lines.append('- - - - - - - - - - - - - - - - - - - - -')
+
     return '\n'.join(lines)
 
 
