@@ -133,14 +133,14 @@ class DictionaryAgent(Agent):
             type=int,
             help='max number of tokens to include in dictionary or bpe codecs')
         dictionary.add_argument(
-           '--dict-nulltoken', default=DictionaryAgent.default_null,
-           help='empty token, can be used for padding or just empty values')
+            '--dict-nulltoken', default=DictionaryAgent.default_null,
+            help='empty token, can be used for padding or just empty values')
         dictionary.add_argument(
-          '--dict-starttoken', default=DictionaryAgent.default_start,
-          help='token for starting sentence generation, if needed')
+            '--dict-starttoken', default=DictionaryAgent.default_start,
+            help='token for starting sentence generation, if needed')
         dictionary.add_argument(
-           '--dict-endtoken', default=DictionaryAgent.default_end,
-           help='token for end of sentence markers, if needed')
+            '--dict-endtoken', default=DictionaryAgent.default_end,
+            help='token for end of sentence markers, if needed')
         dictionary.add_argument(
             '--dict-unktoken', default=DictionaryAgent.default_unk,
             help='token to return for unavailable words')

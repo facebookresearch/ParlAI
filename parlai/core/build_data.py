@@ -70,7 +70,7 @@ def download(url, path, fname, redownload=False):
         with requests.Session() as session:
             try:
                 header = {'Range': 'bytes=%d-' % resume_pos,
-                        'Accept-Encoding': 'identity'} if resume else {}
+                          'Accept-Encoding': 'identity'} if resume else {}
                 response = session.get(url, stream=True, timeout=5, headers=header)
 
                 # negative reply could be 'none' or just missing
