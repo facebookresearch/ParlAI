@@ -50,6 +50,7 @@ class TestTrainModel(unittest.TestCase):
                 embedding_size=8,
                 no_cuda=True,
                 validation_share_agent=True,
+                num_episodes=10,
             )
             opt = parser.parse_args()
             TrainLoop(opt).train()
