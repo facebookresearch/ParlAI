@@ -30,7 +30,7 @@ driver.maximize_window()
 # login to your MTurk sandbox account
 print("Please log into your MTurk sandbox account within 10 minutes...")
 driver.get("https://workersandbox.mturk.com/mturk/beginsignin")
-while not "Sign Out" in driver.page_source:
+while "Sign Out" not in driver.page_source:
     time.sleep(1)
 print("Successfully logged into your MTurk sandbox account.")
 
@@ -39,7 +39,7 @@ driver.get(HIT_page_url)
 
 total_hits_done = 0
 
-while not "There are no HITs in this group available to you at the moment." in driver.page_source:
+while "There are no HITs in this group available to you at the moment." not in driver.page_source:
     # Click "Accept" button
     wait = WebDriverWait(driver, 30)
     accept_button = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '''#cookieDependentFunctionality > input[type="image"]''')))
