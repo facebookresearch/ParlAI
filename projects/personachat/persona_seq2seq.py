@@ -2313,7 +2313,6 @@ class PersonachatSeqseqAgentSplit(Agent):
                 curr['text_candidates'] = [curr_cands[idx] for idx in order
                                            if idx < len(curr_cands)]
                 
-
         return batch_reply
 
     def act(self):
