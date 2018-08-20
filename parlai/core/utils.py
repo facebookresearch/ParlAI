@@ -856,3 +856,19 @@ def msg_to_str(msg, ignore_fields=''):
         if f not in default_fields and f not in ignore_fields:
             txt += add_field(f, msg[f])
     return txt.rstrip('\t')
+
+
+def set_namedtuple_defaults(namedtuple, default=None):
+    """
+    Set *all* of the fields for a given nametuple to a singular value.
+    Modifies the tuple in place, but returns it anyway.
+
+    More info:
+    https://stackoverflow.com/a/18348004
+
+    :param namedtuple: A constructed collections.namedtuple
+    :param default: The default value to set.
+    :return: the modified namedtuple
+    """
+    namedtuple.__new__.__defaults__ = (default,) * len(namedtuple._fields)
+    return namedtuple
