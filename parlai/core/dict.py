@@ -533,7 +533,6 @@ class DictionaryAgent(Agent):
         else:
             return self.vec2txt(txt_or_vec)
 
-    @lru_cache(int(2 ** 20), typed=True)
     def txt2vec(self, text, vec_type=list):
         """Converts a string to a vector (list of ints).
 
