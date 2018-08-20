@@ -39,7 +39,7 @@ class TensorboardLogger(Shared):
         except ImportError:
             raise ImportError(
                 'Please `pip install tensorboardX` for logs with TB.')
-        if opt['tensorboard_tag'] == None:
+        if opt['tensorboard_tag'] is None:
             tensorboard_tag = opt['starttime']
         else:
             tensorboard_tag = opt['starttime'] + '__'.join([
@@ -52,7 +52,7 @@ class TensorboardLogger(Shared):
             os.makedirs(tbpath)
         self.writer = SummaryWriter(
             log_dir='{}/{}'.format(tbpath, tensorboard_tag))
-        if opt['tensorboard_metrics'] == None:
+        if opt['tensorboard_metrics'] is None:
             self.tbmetrics = ['ppl', 'loss']
         else:
             self.tbmetrics = opt['tensorboard_metrics'].split(',')

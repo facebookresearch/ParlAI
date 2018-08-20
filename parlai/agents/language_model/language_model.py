@@ -521,13 +521,13 @@ class LanguageModelAgent(Agent):
         batch_reply = [{'id': self.getID()} for _ in range(len(observations))]
         if any(['labels' in obs for obs in observations]):
             # if we are starting a new training epoch, reinitialize hidden
-            if self.is_training == False:
+            if not self.is_training:
                 self.hidden = self.model.init_hidden(self.batchsize)
             self.is_training = True
             data_list, targets_list, _c, _v, y_lens = self.vectorize(observations, self.opt['seq_len'], self.is_training)
         else:
             # if we just finished training, reinitialize hidden
-            if self.is_training == True:
+            if self.is_training:
                 self.hidden = self.model.init_hidden(self.batchsize)
                 self.is_training = False
             data_list, targets_list, labels, valid_inds, y_lens = self.vectorize(observations, self.opt['seq_len'], self.is_training)

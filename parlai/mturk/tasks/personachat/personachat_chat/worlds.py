@@ -186,7 +186,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                 while self.is_exact_match(acts[idx], agent):
                     acts[idx] = agent.act()
 
-            if acts[idx]['episode_done'] == True:
+            if acts[idx]['episode_done']:
                 self.chat_done = True
                 for ag in self.agents:
                     # if agent disconnected
@@ -273,7 +273,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                      'n_turn': self.n_turn}, open(filename, 'wb'))
 
     def is_exact_match(self, act, ag, tolerance=0):
-        if act['episode_done'] == True:
+        if act['episode_done']:
             return False
 
         control_msg = {'episode_done': False}
@@ -301,7 +301,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                 return False
 
     def is_msg_tooshortlong(self, act, ag, th_min=5, th_max=17):
-        if act['episode_done'] == True:
+        if act['episode_done']:
             return False
 
         control_msg = {'episode_done': False}
@@ -322,7 +322,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
         self.n_turn = np.random.randint(self.range_turn[0], self.range_turn[1]) + 1
 
     def check_timeout(self, act):
-        if act['text'] == '[TIMEOUT]' and act['episode_done'] == True:
+        if act['text'] == '[TIMEOUT]' and act['episode_done']:
             control_msg = {'episode_done': True}
             control_msg['id'] = 'SYSTEM'
             control_msg['text'] = self.get_instruction(agent_id=act['id'], tag='timeout')
