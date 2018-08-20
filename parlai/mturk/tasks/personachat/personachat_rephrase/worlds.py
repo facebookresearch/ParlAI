@@ -127,7 +127,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
             })
             while not persona_done:
                 act = self.mturk_agent.act(timeout=self.max_response_time)
-                if act['episode_done'] == True:
+                if act['episode_done']:
                     self.episodeDone = True
                     return
                 if self.is_msg_tooshortlong(act, self.mturk_agent) or \
@@ -184,7 +184,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
         )(delayed(shutdown_agent)(agent) for agent in [self.mturk_agent])
 
     def is_exact_match(self, act, ag, persona_data, tolerance=0):
-        if act['episode_done'] == True:
+        if act['episode_done']:
             return False
 
         control_msg = {'episode_done': False}
@@ -212,7 +212,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                 return False
 
     def is_close_match(self, act, ag, persona_data, tolerance=0.7):
-        if act['episode_done'] == True:
+        if act['episode_done']:
             return False
 
         control_msg = {'episode_done': False}
@@ -235,7 +235,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                 return False
 
     def is_msg_tooshortlong(self, act, ag, th_min=3, th_max=17):
-        if act['episode_done'] == True:
+        if act['episode_done']:
             return False
 
         control_msg = {'episode_done': False}

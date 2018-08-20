@@ -552,7 +552,7 @@ class DialogData(object):
             self.image_loader = ImageLoader(opt)
             self.data = []
             self._load(data_loader, opt['datafile'])
-            self.cands = None if cands == None else set(sys.intern(c) for c in cands)
+            self.cands = None if cands is None else set(sys.intern(c) for c in cands)
         self.addedCands = []
         self.copied_cands = False
 

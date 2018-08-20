@@ -34,7 +34,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
         while not self.persona_done:
             act = self.mturk_agent.act(timeout=self.max_persona_time)
             # Check timeout
-            if act['episode_done'] == True:
+            if act['episode_done']:
                 self.episodeDone = True
                 return
 
