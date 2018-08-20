@@ -34,6 +34,7 @@ def built(path, version_string=None):
     else:
         return os.path.isfile(os.path.join(path, '.built'))
 
+
 def mark_done(path, version_string=None):
     """Marks the path as done by adding a '.built' file with the current
     timestamp plus a version description string if specified.
@@ -42,6 +43,7 @@ def mark_done(path, version_string=None):
         write.write(str(datetime.datetime.today()))
         if version_string:
             write.write('\n' + version_string)
+
 
 def download(url, path, fname, redownload=False):
     """Downloads file using `requests`. If ``redownload`` is set to false, then
@@ -131,6 +133,7 @@ def remove_dir(path):
     """Removes the given directory, if it exists."""
     shutil.rmtree(path, ignore_errors=True)
 
+
 def untar(path, fname, deleteTar=True):
     """Unpacks the given archive file to the same directory, then (by default)
     deletes the archive file.
@@ -141,15 +144,17 @@ def untar(path, fname, deleteTar=True):
     if deleteTar:
         os.remove(fullpath)
 
+
 def cat(file1, file2, outfile, deleteFiles=True):
     with open(outfile, 'wb') as wfd:
         for f in [file1, file2]:
-            with open(f,'rb') as fd:
-                shutil.copyfileobj(fd, wfd, 1024*1024*10)
-                #10MB per writing chunk to avoid reading big file into memory.
+            with open(f, 'rb') as fd:
+                shutil.copyfileobj(fd, wfd, 1024 * 1024 * 10)
+                # 10MB per writing chunk to avoid reading big file into memory.
     if deleteFiles:
         os.remove(file1)
         os.remove(file2)
+
 
 def _get_confirm_token(response):
     for key, value in response.cookies.items():
@@ -177,6 +182,7 @@ def download_from_google_drive(gd_id, destination):
                 if chunk:  # filter out keep-alive new chunks
                     f.write(chunk)
         response.close()
+
 
 def download_models(opt, fnames, model_folder, version='v1.0', path='aws', use_model_type=False):
     """Download models into the ParlAI model zoo from a url.
@@ -214,6 +220,7 @@ def download_models(opt, fnames, model_folder, version='v1.0', path='aws', use_m
                 untar(dpath, fname)
         # Mark the data as built.
         mark_done(dpath, version)
+
 
 def modelzoo_path(datapath, path):
     """If path starts with 'models', then we remap it to the model zoo path

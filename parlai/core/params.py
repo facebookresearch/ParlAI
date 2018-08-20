@@ -61,6 +61,7 @@ def class2str(value):
     s = ':'.join(s.rsplit('.', 1))  # replace last period with ':'
     return s
 
+
 def fix_underscores(args):
     """Converts underscores to hyphens in args.
 
@@ -406,7 +407,6 @@ class ParlaiParser(argparse.ArgumentParser):
             # already added
             pass
 
-
     def add_extra_args(self, args=None):
         """Add more args depending on how known args are set."""
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
@@ -436,7 +436,6 @@ class ParlaiParser(argparse.ArgumentParser):
             raise RuntimeError('Please file an issue on github that argparse '
                                'got an attribute error when parsing.')
 
-
     def parse_known_args(self, args=None, namespace=None, nohelp=False):
         """Custom parse known args to ignore help flag."""
         if args is None:
@@ -448,7 +447,6 @@ class ParlaiParser(argparse.ArgumentParser):
             # ignore help
             args = [a for a in args if a != '-h' and a != '--help']
         return super().parse_known_args(args, namespace)
-
 
     def parse_args(self, args=None, namespace=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the
@@ -503,7 +501,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 elif self.cli_args[i] in store_false:
                     self.overridable[option_strings_dict[self.cli_args[i]]] = \
                         False
-                elif i < len(self.cli_args) - 1 and self.cli_args[i+1][:1] != '-':
+                elif i < len(self.cli_args) - 1 and self.cli_args[i + 1][:1] != '-':
                     key = option_strings_dict[self.cli_args[i]]
                     self.overridable[key] = self.opt[key]
         self.opt['override'] = self.overridable

@@ -20,6 +20,7 @@ def _regularize(sent):
     sent = ' '.join(sent.split())
     return sent
 
+
 def create_fb_format(inpath, outpath):
     print('[building fbformat]')
     with open(os.path.join(outpath, 'train.txt'), 'w') as ftrain, \
@@ -59,7 +60,7 @@ def create_fb_format(inpath, outpath):
                                 i1 = line.find('<w id="')
                                 if i1 >= 0:
                                     line = line[i1:]
-                                    word = line[line.find('>')+1:line.find('</w')]
+                                    word = line[line.find('>') + 1:line.find('</w')]
                                     words.append(' ')
                                     words.append(word.replace('\t', ' '))
                     handle = ftrain

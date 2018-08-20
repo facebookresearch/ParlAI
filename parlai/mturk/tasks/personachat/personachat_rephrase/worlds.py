@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.mturk.core.worlds import MTurkOnboardWorld
-from parlai.core.worlds import validate, MultiAgentDialogWorld
+from parlai.core.worlds import validate
 from parlai.mturk.tasks.personachat.personachat_chat.extract_and_save_personas import main as main_extract
 from joblib import Parallel, delayed
 import numpy as np
@@ -12,6 +12,7 @@ import time
 import os
 import pickle
 import random
+
 
 class PersonasGenerator(object):
     def __init__(self, opt):
@@ -31,7 +32,7 @@ class PersonasGenerator(object):
         self.completed_personas = []
         # mark which ones are done
         self.done_personas = []
-        # list of recently popped personas 
+        # list of recently popped personas
         self.recently_popped = []
 
         for f_name in os.listdir(self.personas_path):
@@ -122,7 +123,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                 'id': 'SYSTEM',
                 'text': "Please rephrase the sentence below so that it sticks to the same person's characteristics: \n\n \
                         <b><span style='color:blue'>{}</span></b> \
-                        \n\n There are {} sentences left to be rephrased.".format(self.persona[self.num_done], len(self.persona)-len(self.rephrased_persona)-1)
+                        \n\n There are {} sentences left to be rephrased.".format(self.persona[self.num_done], len(self.persona) - len(self.rephrased_persona) - 1)
             })
             while not persona_done:
                 act = self.mturk_agent.act(timeout=self.max_response_time)
@@ -133,9 +134,9 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                    self.is_close_match(act, self.mturk_agent, self.persona[self.num_done]):
                     pass
                 else:
-                   self.rephrased_persona.append(act['text'])
-                   self.num_done += 1
-                   persona_done = True
+                    self.rephrased_persona.append(act['text'])
+                    self.num_done += 1
+                    persona_done = True
             return
         else:
             self.mturk_agent.observe({
@@ -184,7 +185,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
 
     def is_exact_match(self, act, ag, persona_data, tolerance=0):
         if act['episode_done'] == True:
-           return False
+            return False
 
         control_msg = {'episode_done': False}
         control_msg['id'] = 'SYSTEM'
@@ -198,12 +199,12 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                 for r_w in regular_words:
                     if r_w in per_parse:
                         per_parse.remove(r_w)
-                per_subseq = [' '.join(per_parse[i:i+len(per_parse)-tolerance]) for i in range(tolerance+1)]
+                per_subseq = [' '.join(per_parse[i:i + len(per_parse) - tolerance]) for i in range(tolerance + 1)]
                 for pp in per_subseq:
                     if pp in ['', ' ', '  ', '   ']:
                         per_subseq.remove(pp)
                 n_word_match += sum([(paa in text) for paa in per_subseq])
-            if n_word_match >0:
+            if n_word_match > 0:
                 control_msg['text'] = 'We found that you <b><span style="color:red">trivially copied character descriptions</span></b>. Please rephrase your message again.'
                 ag.observe(validate(control_msg))
                 return True
@@ -212,7 +213,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
 
     def is_close_match(self, act, ag, persona_data, tolerance=0.7):
         if act['episode_done'] == True:
-           return False
+            return False
 
         control_msg = {'episode_done': False}
         control_msg['id'] = 'SYSTEM'
@@ -226,7 +227,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                 if r_w in per_parse:
                     per_parse.remove(r_w)
             n_word_match += sum([word in text for word in per_parse])
-            if n_word_match/(len(per_parse)+1) >tolerance:
+            if n_word_match / (len(per_parse) + 1) > tolerance:
                 control_msg['text'] = 'We found that you <b><span style="color:red">trivially copied character descriptions</span></b>. Please rephrase your message again.'
                 ag.observe(validate(control_msg))
                 return True

@@ -17,7 +17,7 @@ class TestTfidfRetriever(unittest.TestCase):
 
     def test_sparse_tfidf_retriever(self):
         try:
-            from parlai.agents.tfidf_retriever.tfidf_retriever import TfidfRetrieverAgent
+            from parlai.agents.tfidf_retriever.tfidf_retriever import TfidfRetrieverAgent  # noqa: F401
         except ImportError as e:
             if 'pip install' in e.msg or 'pytorch' in e.msg:
                 print('Skipping TestTfidfRetriever, missing optional pip packages or pytorch.')
@@ -54,7 +54,9 @@ class TestTfidfRetriever(unittest.TestCase):
 
             ANS = 'The one true label.'
             new_example = {
-                'text': 'A bunch of new words that are not in the other task, which the model should be able to use to identify this label.',
+                'text': 'A bunch of new words that are not in the other task, '
+                        'which the model should be able to use to identify '
+                        'this label.',
                 'labels': [ANS],
                 'episode_done': True
             }

@@ -154,5 +154,6 @@ class SplitTeacher(Teacher):
                 train_test_images.add(line.strip())
         self.ques = [questions[k] for k in sorted(questions.keys()) if questions[k]['img_file'] in train_test_images]
 
+
 class DefaultTeacher(SplitTeacher):
     pass

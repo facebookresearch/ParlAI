@@ -25,9 +25,15 @@ class TestInit(unittest.TestCase):
             not_in_a = b - a
             error_msg = ''
             if len(not_in_b) > 0:
-                error_msg += '\nThe following tasks are in the task list but do not have directories in parlai/tasks/: ' + str(not_in_b)
+                error_msg += (
+                    '\nThe following tasks are in the task list but do not '
+                    'have directories in parlai/tasks/: ' + str(not_in_b)
+                )
             if len(not_in_a) > 0:
-                error_msg += '\nThe following tasks are in parlai/tasks/ but do not match anything in parlai/tasks/task_list.py: ' + str(not_in_a)
+                error_msg += (
+                    '\nThe following tasks are in parlai/tasks/ but do not '
+                    'match anything in parlai/tasks/task_list.py: ' + str(not_in_a)
+                )
             raise RuntimeError(error_msg)
 
 

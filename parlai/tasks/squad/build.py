@@ -29,7 +29,7 @@ def build(opt):
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
-        
+
     if 'fulldoc' in opt['task']:
         dpath += '-fulldoc'
         if not build_data.built(dpath, version_string=version):

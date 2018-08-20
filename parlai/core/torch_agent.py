@@ -800,7 +800,7 @@ class Beam(object):
             # we change output because we want outputs to have this eos to pass assert in L102, it is ok since empty self.finished means junk prediction anyway
             self.outputs[-1][0] = self.eos
             hyptail = self.HypothesisTail(timestep=len(self.outputs) - 1, hypid=0, score=self.all_scores[-1][0],
-                                              tokenid=self.outputs[-1][0])
+                                          tokenid=self.outputs[-1][0])
 
             self.finished.append(hyptail)
 
@@ -826,7 +826,6 @@ class Beam(object):
         # get top nbest hyp
         top_hyp_idx_n_best = []
         n_best_colors = ['aquamarine', 'chocolate1', 'deepskyblue', 'green2', 'tan']
-        end_color = 'yellow'
         sorted_finished = self.get_rescored_finished(n_best=n_best)
         for hyptail in sorted_finished:
             top_hyp_idx_n_best.append(self.get_hyp_from_finished(

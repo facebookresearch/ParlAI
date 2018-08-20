@@ -119,7 +119,7 @@ def eval_wordstat(opt, print_parser=None):
     cnt = 0
     word_statistics = {'mean_wlength': [], 'mean_clength': [], 'freqs_cnt': Counter(), 'word_cnt': 0, 'pred_list': [], 'pure_pred_list': [], 'context_list': []}
     bins = [int(i) for i in opt['freq_bins'].split(',')]
-    
+
     def process_prediction(prediction, word_statistics):
         word_statistics['pred_list'].append(normalize_answer(prediction))
         freqs, _cnt, wlength, clength = get_word_stats(prediction, dictionary, bins=bins)
@@ -165,16 +165,16 @@ def eval_wordstat(opt, print_parser=None):
     if opt['compute_unique'] is True:
         unique_list = []
         cntr = Counter(word_statistics['pred_list'])
-        for k,v in cntr.items():
+        for k, v in cntr.items():
             if v == 1:
                 unique_list.append(k)
         print("Unique responses: {:.{prec}f}%".format(len(unique_list) / len(word_statistics['pred_list']) * 100, prec=2))
 
     if opt['dump_predictions_path'] is not None:
         with open(opt['dump_predictions_path'], 'w') as f:
-            f.writelines(['CONTEXT: {}\nPREDICTION:{}\n\n'.format(c,p) for c,p in zip(word_statistics['context_list'],word_statistics['pure_pred_list'])])
+            f.writelines(['CONTEXT: {}\nPREDICTION:{}\n\n'.format(c, p) for c, p in zip(word_statistics['context_list'], word_statistics['pure_pred_list'])])
         if opt['compute_unique'] is True:
-            with open(opt['dump_predictions_path']+'_unique', 'w') as f:
+            with open(opt['dump_predictions_path'] + '_unique', 'w') as f:
                 f.writelines(['{}\n'.format(i) for i in unique_list])
 
     stat_str = 'total_words: {}, '.format(word_statistics['word_cnt']) + ', '.join(

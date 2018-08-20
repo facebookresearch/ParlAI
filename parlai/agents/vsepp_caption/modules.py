@@ -4,10 +4,9 @@
 
 import torch
 from torch import optim
+from torch.utils.rnn import pack_padded_sequence
 import torch.nn as nn
 import torchvision.models as models
-
-from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
 import numpy as np
 
@@ -102,7 +101,7 @@ class ContrastiveLoss(nn.Module):
         top1 = sorted_ranks[:, 0]
         ranks = []
         for idx in range(im.shape[0]):
-            ranks.append(np.where(sorted_ranks[idx, :]==(idx + offset))[0][0])
+            ranks.append(np.where(sorted_ranks[idx, :] == (idx + offset))[0][0])
 
         # keep the maximum violating negative for each query
         if self.max_violation:

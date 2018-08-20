@@ -13,6 +13,7 @@ import copy
 import os
 import sys
 
+
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True)
@@ -30,6 +31,7 @@ def setup_args(parser=None):
     else:
         DictionaryAgent.add_cmdline_args(parser)
     return parser
+
 
 def build_dict(opt, skip_if_built=False):
     if isinstance(opt, ParlaiParser):
@@ -93,7 +95,7 @@ def build_dict(opt, skip_if_built=False):
             world_dict.parley()
             if log_time.time() > log_every_n_secs:
                 sys.stdout.write('\r')
-                text, _log = log_time.log(cnt, max(opt.get('dict_maxexs',0),
+                text, _log = log_time.log(cnt, max(opt.get('dict_maxexs', 0),
                                                    world_dict.num_examples()))
                 sys.stdout.write(text)
                 sys.stdout.flush()

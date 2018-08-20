@@ -20,7 +20,7 @@ def pad(tensor, length, dim=0):
         return torch.cat(
             [tensor, tensor.new(*tensor.size()[:dim],
                                 length - tensor.size(dim),
-                                *tensor.size()[dim+1:]).zero_()],
+                                *tensor.size()[dim + 1:]).zero_()],
             dim=dim)
     else:
         return tensor
@@ -188,7 +188,7 @@ class Seq2seq(nn.Module):
                 enc_out = enc_out.unsqueeze(1).repeat(1, beam_size, 1, 1)
                 # create batch size num of beams
                 data_device = enc_out.device
-                beams = [Beam(beam_size, 3, 0, 1, 2, min_n_best=beam_size/2, cuda=data_device) for _ in range(bsz)]
+                beams = [Beam(beam_size, 3, 0, 1, 2, min_n_best=beam_size / 2, cuda=data_device) for _ in range(bsz)]
                 # init the input with start token
                 xs = starts
                 # repeat tensors to support batched beam
@@ -226,14 +226,14 @@ class Seq2seq(nn.Module):
 
                 for b in beams:
                     b.check_finished()
-                beam_pred = [ b.get_pretty_hypothesis(b.get_top_hyp()[0])[1:] for b in beams ]
+                beam_pred = [b.get_pretty_hypothesis(b.get_top_hyp()[0])[1:] for b in beams]
                 # these beam scores are rescored with length penalty!
                 beam_scores = torch.stack([b.get_top_hyp()[1] for b in beams])
                 pad_length = max([t.size(0) for t in beam_pred])
                 beam_pred = torch.stack([pad(t, length=pad_length, dim=0) for t in beam_pred], dim=0)
 
                 #  prepare n best list for each beam
-                n_best_beam_tails = [ b.get_rescored_finished(n_best=len(b.finished)) for b in beams ]
+                n_best_beam_tails = [b.get_rescored_finished(n_best=len(b.finished)) for b in beams]
                 nbest_beam_scores = []
                 nbest_beam_preds = []
                 for i, beamtails in enumerate(n_best_beam_tails):
@@ -406,7 +406,7 @@ class Decoder(nn.Module):
             _max_score, idx = scores.narrow(2, 1, scores.size(2) - 1).max(2)
         elif topk > 1:
             max_score, idx = torch.topk(F.softmax(scores.narrow(2, 1, scores.size(2) - 1), 2), topk, dim=2, sorted=False)
-            probs = F.softmax( scores.narrow(2, 1, scores.size(2) - 1).gather(2, idx), 2 ).squeeze(1)
+            probs = F.softmax(scores.narrow(2, 1, scores.size(2) - 1).gather(2, idx), 2).squeeze(1)
             dist = torch.distributions.categorical.Categorical(probs)
             samples = dist.sample()
             idx = idx.gather(-1, samples.unsqueeze(1).unsqueeze(-1)).squeeze(-1)

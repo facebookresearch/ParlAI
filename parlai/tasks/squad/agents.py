@@ -11,6 +11,7 @@ import copy
 import json
 import os
 
+
 def get_sentence_tokenizer():
     """
     Loads the nltk sentence tokenizer
@@ -281,7 +282,7 @@ class SentenceeditTeacher(SentenceTeacher):
 
     Some punctuation may be removed from the context and the answer for
     tokenization purposes.
-    
+
     Label_candidates are the other sentences in the paragraph.
     """
     def __init__(self, opt, shared=None):

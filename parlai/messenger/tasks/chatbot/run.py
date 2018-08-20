@@ -10,8 +10,6 @@ from parlai.messenger.core.messenger_manager import MessengerManager
 from parlai.messenger.core.worlds import SimpleMessengerOverworld as \
     MessengerOverworld
 from parlai.core.agents import create_agent, create_agent_from_shared
-import os
-import importlib
 
 
 def main():

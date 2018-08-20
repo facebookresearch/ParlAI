@@ -296,7 +296,7 @@ class LanguageModelAgent(Agent):
         """Save observation for act.
         If multiple observations are from the same episode, concatenate them.
         """
-        #shallow copy observation (deep copy can be expensive)
+        # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
         seq_len = self.opt['seq_len']
         is_training = True
@@ -364,19 +364,19 @@ class LanguageModelAgent(Agent):
             return loss
 
         # feed in inputs without end token
-        output, hidden = self.model(data.transpose(0,1), hidden)
+        output, hidden = self.model(data.transpose(0, 1), hidden)
         self.hidden = self.repackage_hidden(hidden)
         # feed in end tokens
-        output, hidden = self.model(Variable(self.ends[:bsz].view(1,bsz)), self.hidden)
+        output, hidden = self.model(Variable(self.ends[:bsz].view(1, bsz)), self.hidden)
         self.hidden = self.repackage_hidden(hidden)
         output_flat = output.view(-1, len(self.dict))
-        loss += self.criterion(output_flat, targets.select(1,0).view(-1)).data
+        loss += self.criterion(output_flat, targets.select(1, 0).view(-1)).data
 
         for i in range(1, targets.size(1)):
-            output, hidden = self.model(targets.select(1,i-1).view(1, bsz), self.hidden, no_pack=True)
+            output, hidden = self.model(targets.select(1, i - 1).view(1, bsz), self.hidden, no_pack=True)
             self.hidden = self.repackage_hidden(hidden)
             output_flat = output.view(-1, len(self.dict))
-            loss += self.criterion(output_flat, targets.select(1,i).view(-1)).data
+            loss += self.criterion(output_flat, targets.select(1, i).view(-1)).data
 
         return loss
 
@@ -395,10 +395,10 @@ class LanguageModelAgent(Agent):
         while total_done < bsz and i <= self.opt['truncate_pred']:
             if i == 0:
                 # feed in input without end tokens
-                output, hidden = self.model(data.transpose(0,1), hidden)
+                output, hidden = self.model(data.transpose(0, 1), hidden)
                 hidden = self.repackage_hidden(hidden)
                 # feed in end tokens
-                output, hidden = self.model(Variable(self.ends[:bsz].view(1,bsz)), hidden)
+                output, hidden = self.model(Variable(self.ends[:bsz].view(1, bsz)), hidden)
             else:
                 output, hidden = self.model(Variable(word_idx.view(1, bsz)), hidden, no_pack=True)
             hidden = self.repackage_hidden(hidden)
@@ -433,7 +433,7 @@ class LanguageModelAgent(Agent):
             token_list.append(word_idx.view(bsz, 1))
             i += 1
 
-        return torch.cat(token_list,1)
+        return torch.cat(token_list, 1)
 
     def predict(self, data, hidden, targets=None, is_training=True, y_lens=None):
         """Produce a prediction from our model."""
@@ -481,7 +481,7 @@ class LanguageModelAgent(Agent):
                 data_list = []
                 targets_list = []
                 # total is the number of batches
-                total = len(self.next_batch)//self.batchsize
+                total = len(self.next_batch) // self.batchsize
                 for _ in range(total):
                     batch = self.next_batch[:self.batchsize]
                     self.next_batch = self.next_batch[self.batchsize:]

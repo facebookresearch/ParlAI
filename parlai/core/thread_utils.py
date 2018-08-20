@@ -10,6 +10,7 @@ from collections.abc import MutableMapping
 import ctypes
 import sys
 
+
 class SharedTable(MutableMapping):
     """Provides a simple shared-memory table of integers, floats, or strings.
     Use this class as follows:

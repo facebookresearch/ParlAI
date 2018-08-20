@@ -83,7 +83,7 @@ def maintain_dialog_history(history, observation, reply='',
     return history['dialog']
 
 
-def load_cands(path, lines_have_ids = False, cands_are_replies = False):
+def load_cands(path, lines_have_ids=False, cands_are_replies=False):
     """Load global fixed set of candidate labels that the teacher provides
     every example (the true labels for a specific example are also added to
     this set, so that it's possible to get the right answer).
@@ -212,13 +212,14 @@ class TimeLogger():
             log['%done'] = done / total
             if log["%done"] > 0:
                 log['time_left'] = str(int(self.tot_time / log['%done'] - self.tot_time)) + 's'
-            z = '%.2f' % ( 100*log['%done'])
+            z = '%.2f' % (100 * log['%done'])
             log['%done'] = str(z) + '%'
         for k, v in report.items():
             if k not in log:
                 log[k] = v
         text = str(int(self.tot_time)) + "s elapsed: " + str(log)
         return text, log
+
 
 class AttrDict(dict):
     """Helper class to have a dict-like object with dot access.
@@ -349,11 +350,14 @@ class NoLock(object):
     """Empty `lock`. Does nothing when you enter or exit."""
     def __enter__(self):
         return self
+
     def __exit__(self, exc_type, exc_value, exc_traceback):
         pass
 
 
 single_nolock = NoLock()
+
+
 def no_lock():
     """Builds a nolock for other classes to use for no-op locking."""
     return single_nolock
@@ -471,7 +475,6 @@ class PaddingUtils(object):
                         x + [null_idx] * (max_x_len - len(x))
                         for x in parsed_x]
         xs = parsed_x
-
 
         # set up the target tensors
         ys = None
@@ -642,6 +645,7 @@ class OffensiveLanguageDetector(object):
 
         return None
 
+
 def clip_text(text, max_len):
     if len(text) > max_len:
         begin_text = ' '.join(
@@ -655,6 +659,7 @@ def clip_text(text, max_len):
         else:
             text = begin_text + ' ...'
     return text
+
 
 def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
     """Returns a string describing the set of messages provided
@@ -803,7 +808,7 @@ def str_to_msg(txt, ignore_fields=''):
     for t in txt.split('\t'):
         ind = t.find(':')
         key = t[:ind]
-        value = t[ind+1:]
+        value = t[ind + 1:]
         if key not in ignore_fields.split(','):
             msg[key] = convert(key, value)
     msg['episode_done'] = msg.get('episode_done', False)

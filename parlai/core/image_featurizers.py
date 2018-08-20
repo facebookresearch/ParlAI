@@ -77,7 +77,6 @@ class ImageLoader():
             self.torch = torch
         except ImportError:
             raise ImportError('Need to install Pytorch: go to pytorch.org')
-        from torch.autograd import Variable
         import torchvision
         import torchvision.transforms as transforms
         import torch.nn as nn
@@ -113,7 +112,6 @@ class ImageLoader():
         ])
         if self.use_cuda:
             self.netCNN.cuda()
-
 
     def image_mode_switcher(self):
         switcher = {
@@ -171,9 +169,9 @@ class ImageLoader():
         elif '.zip' in path:
             # assume format path/to/file.zip/image_name.jpg
             is_zip = True
-            sep = path.index('.zip')+4
+            sep = path.index('.zip') + 4
             zipname = path[:sep]
-            file_name = path[sep+1:]
+            file_name = path[sep + 1:]
             path = ZipFile(zipname, 'r').open(file_name)
             task = opt['task'] if opt['task'] != 'pytorch_teacher' else opt['image_load_task']
             prepath = os.path.join(opt['datapath'], task)

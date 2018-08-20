@@ -10,5 +10,4 @@ import torchtext.vocab as vocab
 
 
 def download(datapath):
-    embs = vocab.FastText(language='en',
-                          cache=datapath + '/models/fasttext_vectors')
+    vocab.FastText(language='en', cache=datapath + '/models/fasttext_vectors')

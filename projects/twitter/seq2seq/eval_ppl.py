@@ -5,7 +5,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 """Evaluate pre-trained model trained for ppl metric."""
 
-from parlai.core.build_data import download_models
 from parlai.scripts.eval_ppl import eval_ppl, setup_args
 from projects.twitter.constants import DICT_FILE_30K
 

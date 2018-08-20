@@ -3,10 +3,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-from parlai.core.agents import create_agent
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
-from parlai.core.agents import create_agent
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from joblib import Parallel, delayed
 from extract_and_save_personas import main as main_extract
@@ -15,7 +13,6 @@ import time
 import os
 import pickle
 import random
-import math
 
 ONBOARD_MSG = '\nWelcome! Below is your persona \
         (you can find it on the left side of the chat)\n \
@@ -25,6 +22,7 @@ TIMEOUT_MSG = '<b> The other person has timed out. \
         Please click the "Done with this HIT" button below to finish this HIT.\
         </b>'
 WAITING_MSG = 'Please wait while we match you with another worker...'
+
 
 class PersonasGenerator(object):
     def __init__(self, opt):
@@ -133,7 +131,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
         self.world_tag = world_tag
 
         # below are timeout protocols
-        self.max_resp_time = max_resp_time # in secs
+        self.max_resp_time = max_resp_time  # in secs
         self.agent_timeout_shutdown = agent_timeout_shutdown
         super().__init__(opt, agents, shared)
 
@@ -250,8 +248,8 @@ class PersonaChatWorld(MultiAgentDialogWorld):
         convo_finished = True
         bad_workers = []
         for ag in self.agents:
-            if (ag.hit_is_abandoned or ag.hit_is_returned or \
-                ag.disconnected or ag.hit_is_expired):
+            if (ag.hit_is_abandoned or ag.hit_is_returned or
+                    ag.disconnected or ag.hit_is_expired):
                 bad_workers.append(ag.worker_id)
                 convo_finished = False
         if not convo_finished or self.dialog == []:
@@ -267,17 +265,16 @@ class PersonaChatWorld(MultiAgentDialogWorld):
             filename = os.path.join(data_path, '{}_{}_{}.pkl'.format(time.strftime("%Y%m%d-%H%M%S"), np.random.randint(0, 1000), self.task_type))
         else:
             filename = os.path.join(data_path, '{}_{}_{}_incomplete.pkl'.format(time.strftime("%Y%m%d-%H%M%S"), np.random.randint(0, 1000), self.task_type))
-        print(self.world_tag+': Data successfully saved at {}.'.format(filename))
+        print(self.world_tag + ': Data successfully saved at {}.'.format(filename))
         pickle.dump({'personas': self.personas,
                      'dialog': self.dialog,
                      'workers': [ag.worker_id for ag in self.agents],
                      'bad_workers': bad_workers,
                      'n_turn': self.n_turn}, open(filename, 'wb'))
 
-
     def is_exact_match(self, act, ag, tolerance=0):
         if act['episode_done'] == True:
-           return False
+            return False
 
         control_msg = {'episode_done': False}
         control_msg['id'] = 'SYSTEM'
@@ -291,12 +288,12 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                 for r_w in regular_words:
                     if r_w in per_parse:
                         per_parse.remove(r_w)
-                per_subseq = [' '.join(per_parse[i:i+len(per_parse)-tolerance]) for i in range(tolerance+1)]
+                per_subseq = [' '.join(per_parse[i:i + len(per_parse) - tolerance]) for i in range(tolerance + 1)]
                 for pp in per_subseq:
                     if pp in ['', ' ', '  ', '   ']:
                         per_subseq.remove(pp)
                 n_word_match += sum([(paa in text) for paa in per_subseq])
-            if n_word_match >0:
+            if n_word_match > 0:
                 control_msg['text'] = 'We found that you <b><span style="color:red">trivially copied character descriptions</span></b>. Please rephrase your message again.'
                 ag.observe(validate(control_msg))
                 return True
@@ -339,6 +336,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
 
     def review_work(self):
         global review_agent
+
         def review_agent(ag):
             if hasattr(ag, 'not_approve'):
                 pass

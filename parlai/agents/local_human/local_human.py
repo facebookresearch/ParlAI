@@ -10,6 +10,7 @@
 from parlai.core.agents import Agent
 from parlai.core.utils import display_messages, load_cands
 
+
 class LocalHumanAgent(Agent):
 
     def add_cmdline_args(argparser):
@@ -18,20 +19,19 @@ class LocalHumanAgent(Agent):
         agent.add_argument('-fixedCands', '--local-human-candidates-file',
                            default=None, type=str,
                            help='File of label_candidates to send to other agent')
-    
+
     def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.id = 'localHuman'
         self.episodeDone = False
         self.fixedCands_txt = load_cands(self.opt.get('local_human_candidates_file'))
-            
+
     def observe(self, msg):
         print(display_messages([msg],
                                ignore_fields=self.opt.get('display_ignore_fields', ''),
                                prettify=self.opt.get('display_prettify', False)))
 
     def act(self):
-        obs = self.observation
         reply = {}
         reply['id'] = self.getID()
         reply_text = input("Enter Your Message: ")

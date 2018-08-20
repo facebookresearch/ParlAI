@@ -55,7 +55,6 @@ class TestSharedTable(unittest.TestCase):
         except KeyError:
             pass
 
-
     def test_iter_keys(self):
         st = SharedTable({'key': 0, 'ctr': 0.0, 'val': False, 'other': 1})
         assert len(st) == 4

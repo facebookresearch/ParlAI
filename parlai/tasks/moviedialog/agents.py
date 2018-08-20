@@ -17,6 +17,7 @@ tasks[2] = os.path.join('task2_recs', 'task2_recs_')
 tasks[3] = os.path.join('task3_qarecs', 'task3_qarecs_')
 tasks[4] = os.path.join('task4_reddit', 'task4_reddit', 'task4_reddit_')
 
+
 def _path(task, opt):
     # Build the data if it doesn't exist.
     build(opt)

@@ -276,7 +276,7 @@ def remove_worker_qualification(worker_id, qualification_id,
 def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward,
                     assignment_duration_in_seconds, is_sandbox,
                     qualifications=None,
-                    auto_approve_delay=7*24*3600,  # default 1 week
+                    auto_approve_delay=7 * 24 * 3600,  # default 1 week
                     ):
     """Create a HIT type to be used to generate HITs of the requested params"""
     client = get_mturk_client(is_sandbox)

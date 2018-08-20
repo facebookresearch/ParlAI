@@ -16,10 +16,9 @@ import math
 import random
 from functools import wraps
 import importlib
-import copy
 from functools import lru_cache
 try:
-    import torch
+    import torch  # noqa: F401
 except Exception as e:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import ConcatDataset, Dataset, DataLoader, sampler
@@ -36,19 +35,19 @@ from threading import Thread, Condition, RLock
         bucket_complete: if there are no more episodes left to consider in
             the bucket
 '''
-length_to_eps = {}                                # Maps episode length to list
-                                                  # of episodes
-batches = []                                      # List of batches if popping
-                                                  # batches
-load_complete = Value(ctypes.c_bool, False)       # If all episodes have been
-                                                  # loaded into memory
-batches_lock = Lock()                             # Lock to access batches
-cache_lock = Lock()                               # Lock to access length_to_eps
-fill_cache_lock = RLock()                         # Lock for condition variables
-add_to_cache_cv = Condition(lock=fill_cache_lock) # Condition notifying Loader
-                                                  # to add to cache
-cache_filled_cv = Condition(lock=fill_cache_lock) # Condition notifying teacher
-                                                  # that cache has episodes
+length_to_eps = {}                                 # Maps episode length to list
+                                                   # of episodes
+batches = []                                       # List of batches if popping
+                                                   # batches
+load_complete = Value(ctypes.c_bool, False)        # If all episodes have been
+                                                   # loaded into memory
+batches_lock = Lock()                              # Lock to access batches
+cache_lock = Lock()                                # Lock to access length_to_eps
+fill_cache_lock = RLock()                          # Lock for condition variables
+add_to_cache_cv = Condition(lock=fill_cache_lock)  # Condition notifying Loader
+                                                   # to add to cache
+cache_filled_cv = Condition(lock=fill_cache_lock)  # Condition notifying teacher
+                                                   # that cache has episodes
 
 
 def batch_cache(function):
@@ -482,7 +481,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
             self.lastYs = shared['lastYs']
             self.data = shared['data']
 
-        self.num_batches = math.ceil(self.dataset.num_episodes()/self.bsz)
+        self.num_batches = math.ceil(self.dataset.num_episodes() / self.bsz)
         self.reset()
 
     def get_dataset_class(self, opt):
@@ -579,6 +578,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
         action = super().act()
         self.lastY = action.get('labels', action.get('eval_labels', None))
         return action
+
 
 class DefaultTeacher(PytorchDataTeacher):
     pass

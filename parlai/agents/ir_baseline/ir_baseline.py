@@ -16,13 +16,12 @@
 # depending on whether you train on the train set first, or not.
 
 import math
-import random
 from collections.abc import Sequence
 import heapq
 
 from parlai.core.agents import Agent
-from parlai.core.params import ParlaiParser
 from parlai.core.dict import DictionaryAgent
+
 
 class MaxPriorityQueue(Sequence):
     def __init__(self, max_size):
@@ -50,22 +49,24 @@ class MaxPriorityQueue(Sequence):
         return repr([v for _, v in sorted(self.lst)])
 
 
-stopwords = { 'i', 'a', 'an', 'are', 'about', 'as', 'at', 'be', 'by',
-              'for', 'from', 'how', 'in', 'is', 'it', 'of', 'on', 'or',
-              'that', 'the', 'this', 'to', 'was', 'what', 'when', 'where',
-              '--', '?', '.', "''", "''", "``", ',', 'do', 'see', 'want',
-              'people', 'and', "n't", "me", 'too', 'own', 'their', '*',
-              "'s", 'not', 'than', 'other', 'you', 'your', 'know', 'just',
-              'but', 'does', 'really', 'have', 'into', 'more', 'also',
-              'has', 'any', 'why', 'will'}
+stopwords = {
+    'i', 'a', 'an', 'are', 'about', 'as', 'at', 'be', 'by', 'for', 'from',
+    'how', 'in', 'is', 'it', 'of', 'on', 'or', 'that', 'the', 'this', 'to',
+    'was', 'what', 'when', 'where', '--', '?', '.', "''", "''", "``", ',',
+    'do', 'see', 'want', 'people', 'and', "n't", "me", 'too', 'own', 'their',
+    '*', "'s", 'not', 'than', 'other', 'you', 'your', 'know', 'just', 'but',
+    'does', 'really', 'have', 'into', 'more', 'also', 'has', 'any', 'why',
+    'will'
+}
+
 
 def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
     if text == "":
         return 0
     if not dictionary:
-       words = text.lower().split(' ')
+        words = text.lower().split(' ')
     else:
-       words = [w for w in dictionary.tokenize(text.lower())]
+        words = [w for w in dictionary.tokenize(text.lower())]
     score = 0
     rw = query_rep['words']
     used = {}
@@ -78,6 +79,7 @@ def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
     norm = math.sqrt(len(used))
     score = score / math.pow(norm * query_rep['norm'], length_penalty)
     return score
+
 
 def rank_candidates(query_rep, cands, length_penalty, dictionary=None):
     """ Rank candidates given representation of query """
@@ -111,7 +113,6 @@ class IrBaselineAgent(Agent):
             '-hsz', '--history_size', type=int, default=1,
             help='number of utterances from the dialogue history to take use as the query')
 
-
     def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.id = 'IRBaselineAgent'
@@ -125,7 +126,7 @@ class IrBaselineAgent(Agent):
         self.observation = None
         self.history = []
         self.episodeDone = True
-        
+
     def observe(self, obs):
         self.observation = obs
         self.dictionary.observe(obs)
@@ -143,7 +144,7 @@ class IrBaselineAgent(Agent):
         obs = self.observation
         reply = {}
         reply['id'] = self.getID()
-        
+
         # Rank candidates
         if 'label_candidates' in obs and len(obs['label_candidates']) > 0:
             # text = obs['text']
@@ -181,6 +182,5 @@ class IrBaselineAgent(Agent):
                 if w not in stopwords:
                     rw[w] = 1
             used[w] = True
-        norm = len(used)
         rep['norm'] = math.sqrt(len(words))
         return rep

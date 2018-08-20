@@ -8,14 +8,14 @@ Script for auto-completing HITs. Please change the test flow according to your t
 """
 try:
     from selenium import webdriver
-    import chromedriver_installer
+    import chromedriver_installer  # noqa: F401
 except ImportError:
     raise SystemExit("Please make sure your computer has Chrome installed, and then install selenium and chromedriver by running: pip install selenium chromedriver_installer")
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException  # noqa: F401
 import sys
 import time
 import random
@@ -45,14 +45,14 @@ while not "There are no HITs in this group available to you at the moment." in d
     accept_button = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '''#cookieDependentFunctionality > input[type="image"]''')))
     time.sleep(random.uniform(2, 10))
     print("Clicking on Accept button...")
-    accept_button.send_keys("\n")        
-     
+    accept_button.send_keys("\n")
+
     # Wait for main page to show up
     iframe = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CSS_SELECTOR, "body > form > iframe")))
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     driver.switch_to.frame(iframe)
     input_box = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#id_text_input")))
-    
+
     # Send message
     time.sleep(random.uniform(2, 10))
     input_box.send_keys("text to send")

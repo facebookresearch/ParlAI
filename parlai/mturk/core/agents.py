@@ -22,6 +22,7 @@ RETURN_MESSAGE = '[RETURNED]'  # the Turker returned the HIT
 # TODO move time management into another class, this way we can handle it
 # relative to heartbeats. This will come with more thorough testing.
 
+
 class MTurkAgent(Agent):
     """Base class for an MTurkAgent that can act in a ParlAI world"""
 

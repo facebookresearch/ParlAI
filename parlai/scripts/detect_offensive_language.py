@@ -12,10 +12,10 @@ For example:
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.utils import OffensiveLanguageDetector, TimeLogger
 
 import random
+
 
 def setup_args(parser=None):
     if parser is None:
@@ -63,7 +63,7 @@ def detect(opt, printargs=None, print_parser=None):
             labels = a.get('labels', a.get('eval_labels', ''))
             for l in labels:
                 if bad.contains_offensive_language(l):
-                    offensive= True
+                    offensive = True
 
         if offensive:
             if opt['display_examples']:
@@ -71,7 +71,7 @@ def detect(opt, printargs=None, print_parser=None):
             cnt += 1
         if log_time.time() > log_every_n_secs:
             report = world.report()
-            log = { 'offenses': cnt }
+            log = {'offenses': cnt}
             text, log = log_time.log(report['exs'], world.num_examples(), log)
             print(text)
 

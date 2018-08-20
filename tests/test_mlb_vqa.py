@@ -18,7 +18,7 @@ class TestTrainModel(unittest.TestCase):
         f = io.StringIO()
         with redirect_stdout(f):
             try:
-                import torch
+                import torch  # noqa: F401
             except ImportError:
                 print('Cannot import torch, skipping test_train_model')
                 return
@@ -53,6 +53,7 @@ class TestTrainModel(unittest.TestCase):
                         "Did not reach evaluation step")
         self.assertTrue("test:{'exs': 0}" in str_output,
                         "Did not complete evaluation")
+
 
 if __name__ == '__main__':
     unittest.main()

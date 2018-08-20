@@ -35,5 +35,3 @@ In this task, you are going to chat with two other people.<br><br>
 
 If you are ready, please click "Accept HIT" to start this task.
 \'\'\''''
-
-
