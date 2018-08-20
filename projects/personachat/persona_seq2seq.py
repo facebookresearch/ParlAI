@@ -2312,18 +2312,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                 curr = batch_reply[batch_idx]
                 curr['text_candidates'] = [curr_cands[idx] for idx in order
                                            if idx < len(curr_cands)]
-
-        # To future reader: please note that this entire block of code
-        # below doesn't actually do anything: it never touches the batch_reply.
-        # I suspect this is a mistake. I've added a lint suppresser here, but
-        # we probably want to revisit this
-        if eval_labels:
-            for ind in valid_inds:
-                cands_origin = [observations[ind]['text']] + [observations[ind]['eval_labels'][0]] + observations[ind]['persona'].split('.')
-                cands = [[w for w in self.dict.tokenize(s.lower())] for s in cands_origin]
-                pred_origin = batch_reply[ind]['text'].lower()
-                pred = [w for w in self.dict.tokenize(pred_origin)]  # noqa: F841
-
+                
         return batch_reply
 
     def act(self):
