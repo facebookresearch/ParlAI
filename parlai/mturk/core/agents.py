@@ -253,7 +253,9 @@ class MTurkAgent(Agent):
         """
         while True:
             if self.get_status() == desired_status:
-                break
+                return True
+            if self.is_final():
+                return False
             time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
     def is_in_task(self):
@@ -515,7 +517,8 @@ class MTurkAgent(Agent):
         # Timeout in seconds, after which the HIT will be expired automatically
         if timeout:
             if timeout < 0:
-                # Negative timeout is for testing
+                # Negative timeout is for testing, wait for packet to send
+                time.sleep(0.3)
                 self.mturk_manager.free_workers([self])
                 return True
             start_time = time.time()

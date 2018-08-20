@@ -295,7 +295,13 @@ class MTurkManager():
 
             # Create and send the command
             data = agent.get_inactive_command_data()
-            self.send_command(agent.worker_id, agent.assignment_id, data)
+
+            def disconnect_agent(*args):
+                self.socket_manager.close_channel(
+                    agent.get_connection_id())
+
+            self.send_command(agent.worker_id, agent.assignment_id, data,
+                              ack_func=disconnect_agent)
 
     def _restore_agent_state(self, worker_id, assignment_id):
         """Send a command to restore the state of an agent who reconnected"""
@@ -331,7 +337,7 @@ class MTurkManager():
 
     def _setup_socket(self, timeout_seconds=None):
         """Set up a socket_manager with defined callbacks"""
-        assert self.task_state > self.STATE_INIT_RUN, \
+        assert self.task_state >= self.STATE_INIT_RUN, \
             'socket cannot be set up until run is started'
         socket_server_url = self.server_url
         if (self.opt['local']):  # skip some hops for local stuff
@@ -455,6 +461,10 @@ class MTurkManager():
                     self._restore_agent_state(worker_id, assign_id)
                 self._add_agent_to_pool(agent)
             elif agent.get_status() == AssignState.STATUS_IN_TASK:
+                if self.is_waiting_world(conversation_id):
+                    agent.set_status(AssignState.STATUS_WAITING)
+                    self._add_agent_to_pool(agent)
+                    return
                 # Reconnecting to the onboarding world or to a task world
                 # should resend the messages already in the conversation
                 if not conversation_id:
@@ -467,7 +477,13 @@ class MTurkManager():
                 # inform the connecting user in all of these cases that the
                 # task is no longer workable, use appropriate message
                 data = agent.get_inactive_command_data()
-                self.send_command(worker_id, assign_id, data)
+
+                def disconnect_agent(*args):
+                    self.socket_manager.close_channel(
+                        agent.get_connection_id())
+
+                self.send_command(worker_id, assign_id, data,
+                                  ack_func=disconnect_agent)
 
     def _handle_mturk_message(self, pkt):
         assignment_id = pkt.assignment_id
@@ -566,7 +582,10 @@ class MTurkManager():
                     new_agent_id='onboarding',
                 )
                 # Wait for turker to be in onboarding status
-                mturk_agent.wait_for_status(AssignState.STATUS_ONBOARDING)
+                did_arrive = \
+                    mturk_agent.wait_for_status(AssignState.STATUS_ONBOARDING)
+                if not did_arrive:
+                    return
                 # call onboarding function
                 self.onboard_function(mturk_agent)
 
@@ -899,7 +918,7 @@ class MTurkManager():
                         if agent.submitted_hit():
                             self.create_additional_hits(1)
 
-        while True:
+        while not self.is_shutdown:
             if self.has_time_limit:
                 self._check_time_limit()
             # Loop forever starting task worlds until desired convos are had
