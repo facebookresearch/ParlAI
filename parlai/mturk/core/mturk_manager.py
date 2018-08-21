@@ -114,6 +114,7 @@ class MTurkManager():
         self.worker_manager = WorkerManager(self, opt)
         self.is_test = is_test
         self.is_unique = False
+        self.max_hits_per_worker = opt.get('max_hits_per_worker', 0)
         self._init_logs()
         self.is_shutdown = False
         self.task_state = self.STATE_CREATED
@@ -384,7 +385,10 @@ class MTurkManager():
         if not worker_state.has_assignment(assign_id):
             # New connection for the worker. First ensure that this connection
             # isn't violating our uniqueness constraints
-            if self.is_unique and worker_state.completed_assignments() > 0:
+            completed_assignments = worker_state.completed_assignments()
+            max_hits = self.max_hits_per_worker
+            if ((self.is_unique and completed_assignments > 0) or
+                    (max_hits != 0 and completed_assignments > max_hits)):
                 text = (
                     'You have already participated in this HIT the maximum '
                     'number of times. This HIT is now expired. '
@@ -1139,6 +1143,17 @@ class MTurkManager():
                 )
             if not agent.is_final():
                 agent.set_status(AssignState.STATUS_DONE)
+            if self.max_hits_per_worker > 0:
+                worker_state = self.worker_manager._get_worker(agent.worker_id)
+                completed_assignments = worker_state.completed_assignments()
+                assert self.unique_qual_name is not None, 'Unique qual name ' \
+                    'must not be none to use max_hits_per_worker'
+                if completed_assignments >= self.max_hits_per_worker:
+                    self.give_worker_qualification(
+                        agent.worker_id,
+                        self.unique_qual_name,
+                    )
+
             if self.has_time_limit:
                 self._log_working_time(agent)
 
@@ -1227,7 +1242,7 @@ class MTurkManager():
                 'ActionsGuarded': 'DiscoverPreviewAndAccept'
             })
 
-        if self.is_unique:
+        if self.is_unique or self.max_hits_per_worker > 0:
             self.unique_qual_name = self.opt.get('unique_qual_name')
             if self.unique_qual_name is None:
                 self.unique_qual_name = self.task_group_id + '_max_submissions'
