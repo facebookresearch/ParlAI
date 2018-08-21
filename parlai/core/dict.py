@@ -640,7 +640,7 @@ def _list_cache_safety(fn):
     # define the wrapper
     def wrapped(*args, **kwargs):
         # call the fn and copy the list
-        return list(fn(*args, **kwargs))
+        return fn(*args, **kwargs).copy()
 
     # be kind about passing along lru_cache's stuff
     setattr(wrapped, 'cache_clear', fn.cache_clear)
