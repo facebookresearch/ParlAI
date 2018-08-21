@@ -35,24 +35,27 @@ from threading import Thread, Condition, RLock
         bucket_complete: if there are no more episodes left to consider in
             the bucket
 '''
-length_to_eps = {}                                 # Maps episode length to list
-                                                   # of episodes
-batches = []                                       # List of batches if popping
-                                                   # batches
-load_complete = Value(ctypes.c_bool, False)        # If all episodes have been
-                                                   # loaded into memory
-batches_lock = Lock()                              # Lock to access batches
-cache_lock = Lock()                                # Lock to access length_to_eps
-fill_cache_lock = RLock()                          # Lock for condition variables
-add_to_cache_cv = Condition(lock=fill_cache_lock)  # Condition notifying Loader
-                                                   # to add to cache
-cache_filled_cv = Condition(lock=fill_cache_lock)  # Condition notifying teacher
-                                                   # that cache has episodes
+# Maps episode length to list of episodes
+length_to_eps = {}
+# List of batches if popping batches
+batches = []
+# If all episodes have been loaded into memory
+load_complete = Value(ctypes.c_bool, False)
+# Lock to access batches
+batches_lock = Lock()
+# Lock to access length_to_eps
+cache_lock = Lock()
+# Lock for condition variables
+fill_cache_lock = RLock()
+# Condition notifying Loader to add to cache
+add_to_cache_cv = Condition(lock=fill_cache_lock)
+# Condition notifying teacher that cache has episodes
+cache_filled_cv = Condition(lock=fill_cache_lock)
 
 
 def batch_cache(function):
-    max_cache_size = 10000                   # Max unseen eps
-    min_cache_size = 1000                    # Min unseen eps
+    max_cache_size = 10000  # Max unseen eps
+    min_cache_size = 1000  # Min unseen eps
 
     def get_cache_size():
         '''Returns number of available episodes '''
@@ -160,7 +163,8 @@ def batch_cache(function):
             while True:
                 with cache_filled_cv:
                     while (not load_complete.value and
-                        (get_cache_size() <= min_cache_size or len(get_available_buckets(bsz)) == 0)):
+                            (get_cache_size() <= min_cache_size or
+                                len(get_available_buckets(bsz)) == 0)):
                         add_to_cache_cv.notify()
                         cache_filled_cv.wait()
                         available_buckets = get_available_buckets(bsz)
@@ -295,7 +299,7 @@ class LoaderProcess(Thread):
             collate_fn=self.collate,
             pin_memory=False,
             drop_last=False,
-            )
+        )
         self.datatype = opt.get('datatype')
         self.data = enumerate(self.dataloader)
         self.batch_cache_type = opt.get('batch_sort_cache')
@@ -469,7 +473,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 collate_fn=self.collate_fn,
                 pin_memory=pin_memory,
                 drop_last=False,
-                )
+            )
             self.lastYs = [None] * self.bsz
             if self.batch_cache_type != 'none':
                 self.loader_process = LoaderProcess(opt)
@@ -534,8 +538,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 self.episode[self.entry_idx] = self.episode[self.entry_idx][1]
             ex = self.episode[self.entry_idx]
             self.episode_done = ex['episode_done']
-            if (self.episode_done
-                    and self.episode_idx + self.bsz >= self.num_episodes()):
+            if (self.episode_done and
+                    self.episode_idx + self.bsz >= self.num_episodes()):
                 epoch_done = True
         return ex, epoch_done
 
