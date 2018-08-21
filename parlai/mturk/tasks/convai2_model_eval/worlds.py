@@ -203,6 +203,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                  world_tag='',
                  agent_timeout_shutdown=120):
         self.turn_idx = 0
+        self.hit_id = None
         self.range_turn = range_turn
         self.max_turn = max_turn
         self.n_turn = np.random.randint(
@@ -300,7 +301,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
 
             if acts[idx]['episode_done']:
                 print("Finished chat")
-                self.check_timeout(acts[idx])
+                self.check_disconnects(acts[idx])
                 for ag in self.agents:
                     if ag != agent and ag.some_agent_disconnected:
                         control_msg['text'] = UNEXPECTED_DISCONNECTION_MSG
@@ -431,7 +432,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                         if 'text' in acts[idx] and \
                                 acts[idx]['text'] in ['1', '2']:
                             self.persona_picked[idx] = \
-                                cand_text[int(acts[idx]['text'])-1][0]
+                                cand_text[int(acts[idx]['text']) - 1][0]
 
                     # reached the end of the chat
                     self.chat_done = True
@@ -445,13 +446,17 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             if self.turn_idx == 1:
                 acts[idx]['text'] = self.model_persona_text + '\n' + \
                     acts[idx]['text']
-            print(acts[idx])
-            acts[idx]['eval_labels'] = ['__NULL__']
+
             self.model_agent.observe(acts[idx])
 
         # Model_agent turn
         idx = 1
         act = self.model_agent.act()
+
+        # NOTE: model agent may or may not need to observe itself here,
+        # depending on how your model handles this, uncomment for that
+        # self.model_agent.observe(act)
+
         acts.append({'text': act['text']})
 
         for (sb_0, sb_1) in [
@@ -536,6 +541,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         pickle.dump({'personas': self.personas,
                      'dialog': self.dialog,
                      'workers': [ag.worker_id for ag in self.agents],
+                     'hit_id': [ag.hit_id for ag in self.agents],
+                     'assignment_id': [ag.assignment_id for ag in self.agents],
                      'bad_workers': bad_workers,
                      'n_turn': self.n_turn,
                      'fluency_score': self.fluency_score,
@@ -563,8 +570,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                 for r_w in regular_words:
                     if r_w in per_parse:
                         per_parse.remove(r_w)
-                per_subseq = [' '.join(per_parse[i:i+len(per_parse) -
-                                       tolerance]) for i in range(tolerance+1)]
+                per_subseq = [' '.join(per_parse[i:i + len(per_parse) -
+                                       tolerance]) for i in range(tolerance + 1)]
                 for pp in per_subseq:
                     if pp in ['', ' ', '  ', '   ']:
                         per_subseq.remove(pp)
@@ -600,8 +607,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             self.range_turn[1]
         ) + 1
 
-    def check_timeout(self, act):
-        if act['text'] == '[TIMEOUT]' and act['episode_done']:
+    def check_disconnects(self, act):
+        if act['text'] == '[TIMEOUT]' or act['text'] == '[RETURNED]' or act['text'] == '[DISCONNECT]':
             control_msg = {'episode_done': True}
             control_msg['id'] = 'SYSTEM'
             control_msg['text'] = self.get_instruction(
@@ -615,20 +622,6 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             return True
         else:
             return False
-
-    def review_work(self):
-        global review_agent
-
-        def review_agent(ag):
-            if hasattr(ag, 'not_approve'):
-                pass
-            else:
-                ag.approve_work()
-
-        Parallel(
-            n_jobs=len(self.agents),
-            backend='threading'
-        )(delayed(review_agent)(agent) for agent in self.agents)
 
     def shutdown(self):
         global shutdown_agent

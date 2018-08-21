@@ -12,7 +12,7 @@ from functools import lru_cache
 
 
 class MemNN(nn.Module):
-    def __init__(self, opt, num_features):
+    def __init__(self, opt, num_features, use_cuda=False):
         super().__init__()
         self.opt = opt
 
@@ -37,9 +37,10 @@ class MemNN(nn.Module):
 
         self.score = DotScore()
 
-        if opt['cuda']:
+        if use_cuda:
             self.score.cuda()
             self.memory_hop.cuda()
+        self.use_cuda = use_cuda
 
     def time_feature(self, t):
         return self.time_features[min(t, self.num_time_features - 1)]
@@ -73,7 +74,7 @@ class MemNN(nn.Module):
         query_embeddings = self.query_embedder(query_lengths, queries)
         attention_mask = memory_lengths.data.ne(0).detach()
 
-        if self.opt['cuda']:
+        if self.use_cuda:
             in_memory_embeddings = in_memory_embeddings.cuda()
             out_memory_embeddings = out_memory_embeddings.cuda()
             query_embeddings = query_embeddings.cuda()
@@ -107,7 +108,7 @@ class Embed(nn.Embedding):
             for j, length in enumerate(row):
                 length = length.item()
                 if length > 0:
-                    input[i, j, :length] = indices[offset:offset+length]
+                    input[i, j, :length] = indices[offset:offset + length]
                 offset += length
 
         for i, row in enumerate(lengths_mat):
@@ -132,9 +133,9 @@ class Embed(nn.Embedding):
     @lru_cache(maxsize=32)
     def position_matrix(J, d):
         m = torch.Tensor(J, d)
-        for k in range(1, d+1):
-            for j in range(1, J+1):
-                m[j-1, k-1] = (1 - j/J) - (k/d) * (1 - 2 * j/J)
+        for k in range(1, d + 1):
+            for j in range(1, J + 1):
+                m[j - 1, k - 1] = (1 - j / J) - (k / d) * (1 - 2 * j / J)
         return m
 
     @staticmethod
@@ -182,6 +183,7 @@ class Decoder(nn.Module):
         if dropout:
             scores = self.dropout(scores)
         _, idx = scores.max(1)
+        idx.unsqueeze_(1)
         return idx, scores
 
     def forward(self, input, state):

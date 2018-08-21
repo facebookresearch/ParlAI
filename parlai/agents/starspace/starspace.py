@@ -9,23 +9,20 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import round_sigfigs, maintain_dialog_history, load_cands
-from parlai.core.thread_utils import SharedTable
+from parlai.core.utils import maintain_dialog_history, load_cands
 
 from .modules import Starspace
 
 import torch
-import torch.autograd as autograd
 from torch import optim
 import torch.nn as nn
-import time
 from collections import deque
 
 import copy
 import os
 import random
-import math
 import pickle
+
 
 class StarspaceAgent(Agent):
     """Simple implementation of the starspace algorithm: https://arxiv.org/abs/1709.03856
@@ -204,7 +201,7 @@ class StarspaceAgent(Agent):
     def same(self, y1, y2):
         if len(y1.squeeze(0)) != len(y2.squeeze(0)):
             return False
-        if abs((y1.squeeze(0)-y2.squeeze(0)).sum().data.sum()) > 0.00001:
+        if abs((y1.squeeze(0) - y2.squeeze(0)).sum().data.sum()) > 0.00001:
             return False
         return True
 
@@ -215,7 +212,7 @@ class StarspaceAgent(Agent):
             return negs
         k = self.opt['neg_samples']
         for i in range(1, k * 3):
-            index =  random.randint(0, cache_sz)
+            index = random.randint(0, cache_sz)
             neg = self.ys_cache[index]
             if not self.same(ys, neg):
                 negs.append(neg)
@@ -237,7 +234,7 @@ class StarspaceAgent(Agent):
         score = torch.Tensor(W.size(0))
         for i in range(W.size(0)):
             score[i] = torch.nn.functional.cosine_similarity(q, W[i], dim=0).data[0]
-        val,ind=score.sort(descending=True)
+        val, ind = score.sort(descending=True)
         for i in range(20):
             print(str(ind[i]) + " [" + str(val[i]) + "]: " + self.v2t(torch.Tensor([ind[i]])))
 
@@ -259,8 +256,7 @@ class StarspaceAgent(Agent):
         candidates as well if they are available and param is set.
         """
         is_training = ys is not None
-        if is_training: #
-            text_cand_inds, loss_dict = None, None
+        if is_training:
             negs = self.get_negs(xs, ys)
             if is_training and len(negs) > 0:
                 self.model.train()
@@ -274,13 +270,13 @@ class StarspaceAgent(Agent):
                         print("neg: " + self.v2t(c.squeeze()))
                     print("---")
                 y = -torch.ones(xe.size(0))
-                y[0]= 1
+                y[0] = 1
                 loss = self.criterion(xe, ye, y)
                 loss.backward()
                 self.optimizer.step()
-                pred = nn.CosineSimilarity().forward(xe,ye)
+                pred = nn.CosineSimilarity().forward(xe, ye)
                 metrics = self.compute_metrics(loss.item(), pred.data.squeeze())
-                return [{'metrics':metrics}]
+                return [{'metrics': metrics}]
         else:
             self.model.eval()
             if cands is None or cands[0] is None:
@@ -289,7 +285,7 @@ class StarspaceAgent(Agent):
                     cands = self.fixedCands
                     cands_txt = self.fixedCands_txt
                 else:
-                    return [{ 'text':'I dunno.'}]
+                    return [{'text': 'I dunno.'}]
                 # test set prediction uses fixed candidates
                 if self.fixedX is None:
                     xe, ye = self.model(xs, ys, self.fixedCands)
@@ -302,16 +298,16 @@ class StarspaceAgent(Agent):
             else:
                 # test set prediction uses candidates
                 xe, ye = self.model(xs, ys, cands[0])
-            pred = nn.CosineSimilarity().forward(xe,ye)
+            pred = nn.CosineSimilarity().forward(xe, ye)
             # This is somewhat costly which we could avoid if we do not evalute ranking.
             # i.e. by only doing: val,ind = pred.max(0)
-            val,ind=pred.sort(descending=True)
+            val, ind = pred.sort(descending=True)
             # predict the highest scoring candidate, and return it.
             ypred = cands_txt[0][ind.data[0]]
             tc = []
             for i in range(min(100, ind.size(0))):
                 tc.append(cands_txt[0][ind.data[i]])
-            ret = [{'text': ypred, 'text_candidates': tc }]
+            ret = [{'text': ypred, 'text_candidates': tc}]
             return ret
         return [{'id': self.getID()}]
 
@@ -327,9 +323,6 @@ class StarspaceAgent(Agent):
         except ValueError:
             # zero examples to process in this batch, so zip failed to unpack
             return None, None, None, None
-
-        # set up the input tensors
-        bsz = len(exs)
 
         # `x` text is already tokenized and truncated
         # sort by length so we can use pack_padded
@@ -409,7 +402,7 @@ class StarspaceAgent(Agent):
         return self.batch_act([self.observation])[0]
 
     def shutdown(self):
-        #"""Save the state of the model when shutdown."""
+        # """Save the state of the model when shutdown."""
         super().shutdown()
 
     def save(self, path=None):

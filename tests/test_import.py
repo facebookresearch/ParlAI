@@ -33,5 +33,6 @@ class TestImport(unittest.TestCase):
         from parlai.core.teachers import FbDialogTeacher
         assert FbDialogTeacher
 
+
 if __name__ == '__main__':
     unittest.main()

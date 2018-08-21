@@ -10,6 +10,21 @@ import os
 import random
 import time
 
+DISPLAY_MESSAGE_DEFAULT_FIELDS = {
+    'episode_done',
+    'id',
+    'image',
+    'text',
+    'labels',
+    'eval_labels',
+    'label_candidates',
+    'text_candidates',
+    'reward',
+    'eval_labels_vec',
+    'text_vec',
+    'label_candidates_vecs'
+}
+
 
 def maintain_dialog_history(history, observation, reply='',
                             historyLength=1, useReplies='label_else_model',
@@ -43,6 +58,8 @@ def maintain_dialog_history(history, observation, reply='',
         if useReplies == 'model' or (useReplies == 'label_else_model' and
                                      len(history['labels']) == 0):
             if reply:
+                if useStartEndIndices:
+                    reply = dict.start_token + ' ' + reply
                 history['dialog'].extend(parse(reply, splitSentences))
         elif len(history['labels']) > 0:
             r = history['labels'][0]
@@ -66,7 +83,7 @@ def maintain_dialog_history(history, observation, reply='',
     return history['dialog']
 
 
-def load_cands(path, lines_have_ids = False, cands_are_replies = False):
+def load_cands(path, lines_have_ids=False, cands_are_replies=False):
     """Load global fixed set of candidate labels that the teacher provides
     every example (the true labels for a specific example are also added to
     this set, so that it's possible to get the right answer).
@@ -195,13 +212,14 @@ class TimeLogger():
             log['%done'] = done / total
             if log["%done"] > 0:
                 log['time_left'] = str(int(self.tot_time / log['%done'] - self.tot_time)) + 's'
-            z = '%.2f' % ( 100*log['%done'])
+            z = '%.2f' % (100 * log['%done'])
             log['%done'] = str(z) + '%'
         for k, v in report.items():
             if k not in log:
                 log[k] = v
         text = str(int(self.tot_time)) + "s elapsed: " + str(log)
         return text, log
+
 
 class AttrDict(dict):
     """Helper class to have a dict-like object with dot access.
@@ -332,11 +350,14 @@ class NoLock(object):
     """Empty `lock`. Does nothing when you enter or exit."""
     def __enter__(self):
         return self
+
     def __exit__(self, exc_type, exc_value, exc_traceback):
         pass
 
 
 single_nolock = NoLock()
+
+
 def no_lock():
     """Builds a nolock for other classes to use for no-op locking."""
     return single_nolock
@@ -455,7 +476,6 @@ class PaddingUtils(object):
                         for x in parsed_x]
         xs = parsed_x
 
-
         # set up the target tensors
         ys = None
         labels = None
@@ -469,8 +489,8 @@ class PaddingUtils(object):
             # parse each label and append END
             if dq:
                 parsed_y = [deque(maxlen=truncate) for _ in labels]
-                for dq, y in zip(parsed_y, labels):
-                    dq.extendleft(reversed(dictionary.txt2vec(y)))
+                for deq, y in zip(parsed_y, labels):
+                    deq.extendleft(reversed(dictionary.txt2vec(y)))
             else:
                 parsed_y = [dictionary.txt2vec(label) for label in labels]
             if end_idx is not None:
@@ -522,7 +542,7 @@ class PaddingUtils(object):
                         y.append(c)
                 answers[valid_inds[i]] = y
             elif answers is not None:
-                answers[valid_inds[i]] = output_tokens
+                answers[valid_inds[i]] = curr_pred
 
             if random.random() > (1 - report_freq):
                 # log sometimes
@@ -561,7 +581,7 @@ class OffensiveLanguageDetector(object):
 
                 # Download the data.
                 fname = 'OffensiveLanguage.txt'
-                url = 'https://s3.amazonaws.com/fair-data/parlai/offensive_language/' + fname
+                url = 'http://parl.ai/downloads/offensive_language/' + fname
                 build_data.download(url, dpath, fname)
 
                 # Mark the data as built.
@@ -626,6 +646,21 @@ class OffensiveLanguageDetector(object):
         return None
 
 
+def clip_text(text, max_len):
+    if len(text) > max_len:
+        begin_text = ' '.join(
+            text[:math.floor(0.8 * max_len)].split(' ')[:-1]
+        )
+        end_text = ' '.join(
+            text[(len(text) - math.floor(0.2 * max_len)):].split(' ')[1:]
+        )
+        if len(end_text) > 0:
+            text = begin_text + ' ...\n' + end_text
+        else:
+            text = begin_text + ' ...'
+    return text
+
+
 def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
     """Returns a string describing the set of messages provided
     If prettify is true, candidates are displayed using prettytable.
@@ -635,7 +670,9 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
     episode_done = False
     ignore_fields = ignore_fields.split(',')
     for index, msg in enumerate(msgs):
-        if msg is None:
+        if msg is None or (index == 1 and 'agent_reply' in ignore_fields):
+            # We only display the first agent (typically the teacher) if we
+            # are ignoring the agent reply.
             continue
         if msg.get('episode_done'):
             episode_done = True
@@ -646,21 +683,14 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
         # Only display rewards !=0 as they are confusing in non-RL tasks.
         if msg.get('reward', 0) != 0:
             lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
+        for key in msg:
+            if key not in DISPLAY_MESSAGE_DEFAULT_FIELDS and key not in ignore_fields:
+                line = '[' + key + ']: ' + clip_text(str(msg.get(key)), max_len)
+                lines.append(space + line)
         if type(msg.get('image')) == str:
             lines.append(msg['image'])
         if msg.get('text', ''):
-            text = msg['text']
-            if len(text) > max_len:
-                begin_text = ' '.join(
-                    text[:math.floor(0.8 * max_len)].split(' ')[:-1]
-                )
-                end_text = ' '.join(
-                    text[(len(text) - math.floor(0.2 * max_len)):].split(' ')[1:]
-                )
-                if len(end_text) > 0:
-                    text = begin_text + ' ...\n' + end_text
-                else:
-                    text = begin_text + ' ...'
+            text = clip_text(msg['text'], max_len)
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + text)
         if msg.get('labels') and 'labels' not in ignore_fields:
@@ -778,7 +808,7 @@ def str_to_msg(txt, ignore_fields=''):
     for t in txt.split('\t'):
         ind = t.find(':')
         key = t[:ind]
-        value = t[ind+1:]
+        value = t[ind + 1:]
         if key not in ignore_fields.split(','):
             msg[key] = convert(key, value)
     msg['episode_done'] = msg.get('episode_done', False)
@@ -826,3 +856,19 @@ def msg_to_str(msg, ignore_fields=''):
         if f not in default_fields and f not in ignore_fields:
             txt += add_field(f, msg[f])
     return txt.rstrip('\t')
+
+
+def set_namedtuple_defaults(namedtuple, default=None):
+    """
+    Set *all* of the fields for a given nametuple to a singular value.
+    Modifies the tuple in place, but returns it anyway.
+
+    More info:
+    https://stackoverflow.com/a/18348004
+
+    :param namedtuple: A constructed collections.namedtuple
+    :param default: The default value to set.
+    :return: the modified namedtuple
+    """
+    namedtuple.__new__.__defaults__ = (default,) * len(namedtuple._fields)
+    return namedtuple

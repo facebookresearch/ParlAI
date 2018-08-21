@@ -43,14 +43,15 @@ All worlds are initialized with the following parameters:
 
 import copy
 import importlib
-import math
 import random
 import time
+
+from functools import lru_cache
 
 try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore
 except ImportError:
-    from multiprocessing import Process, Value, Condition, Semaphore
+    from multiprocessing import Process, Value, Semaphore, Condition  # noqa: F401
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
 from parlai.core.metrics import aggregate_metrics, compute_time_metrics
 from parlai.core.utils import Timer, display_messages
@@ -256,7 +257,7 @@ class DialogPartnerWorld(World):
 
     def report(self, compute_time=False):
         def show(metric):
-            if 'all' in self.show_metrics or metric in self.show_metrics or metric=='exs':
+            if 'all' in self.show_metrics or metric in self.show_metrics or metric == 'exs':
                 return True
             return False
         show_metrics = self.opt.get('metrics', "all")
@@ -278,6 +279,7 @@ class DialogPartnerWorld(World):
                 metrics.update(time_metrics)
             return metrics
 
+    @lru_cache(maxsize=1)
     def num_examples(self):
         if hasattr(self.agents[0], 'num_examples'):
             return self.agents[0].num_examples()
@@ -414,14 +416,14 @@ class MultiWorld(World):
     """
 
     def __init__(self, opt, agents=None, shared=None, default_world=None):
+        if opt.get('batch_sort'):
+            print('WARNING: batch_sort disabled for multitasking')
         opt['batch_sort'] = False
-        print('WARNING: batch_sort disabled for multitasking')
         super().__init__(opt)
         self.worlds = []
         for index, k in enumerate(opt['task'].split(',')):
             k = k.strip()
             if k:
-                print("[creating world: " + k + "]")
                 opt_singletask = copy.deepcopy(opt)
                 opt_singletask['task'] = k
                 if shared:
@@ -707,7 +709,6 @@ class HogwildProcess(Process):
     Each ``HogwildProcess`` contain its own unique ``World``.
     """
 
-
     def __init__(self, tid, opt, shared, sync):
         self.numthreads = opt['numthreads']
         opt = copy.deepcopy(opt)
@@ -746,7 +747,7 @@ class HogwildProcess(Process):
                             # make sure reset sem is clean
                             for _ in range(self.numthreads):
                                 self.sync['reset_sem'].acquire(block=False)
-                        world.reset() # keep lock for this!
+                        world.reset()  # keep lock for this!
 
                 while self.sync['epoch_done_ctr'].value < 0:
                     # only move forward once other threads have finished reset
@@ -787,7 +788,6 @@ class HogwildWorld(World):
       once the processing is complete).
     """
 
-
     def __init__(self, opt, world):
         super().__init__(opt)
         self.inner_world = world
@@ -811,7 +811,7 @@ class HogwildWorld(World):
         self.threads = []
         for i in range(self.numthreads):
             self.threads.append(HogwildProcess(i, opt, world.share(), self.sync))
-            time.sleep(0.05) # delay can help prevent deadlock in thread launches
+            time.sleep(0.05)  # delay can help prevent deadlock in thread launches
         for t in self.threads:
             t.start()
 
@@ -820,7 +820,6 @@ class HogwildWorld(World):
             # this makes sure that no threads get examples before all are set up
             # otherwise they might reset one another after processing some exs
             self.sync['threads_sem'].acquire()
-
 
     def display(self):
         self.shutdown()
@@ -846,6 +845,7 @@ class HogwildWorld(World):
     def getID(self):
         return self.inner_world.getID()
 
+    @lru_cache(maxsize=1)
     def num_examples(self):
         return self.inner_world.num_examples()
 
@@ -882,7 +882,6 @@ class HogwildWorld(World):
             # release reset semaphore only if threads had reached epoch_done
             for _ in self.threads:
                 self.sync['reset_sem'].release()
-
 
     def reset_metrics(self):
         self.inner_world.reset_metrics()
@@ -948,6 +947,7 @@ def create_task_world(opt, user_agents, default_world=None):
     world_class, task_agents = _get_task_world(
         opt, user_agents, default_world=default_world)
     return world_class(opt, task_agents + user_agents)
+
 
 def create_task(opt, user_agents, default_world=None):
     """Creates a world + task_agents (aka a task)

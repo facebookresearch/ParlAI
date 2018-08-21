@@ -7,7 +7,6 @@
 from parlai.scripts.train_model import TrainLoop, run_eval, setup_args
 from parlai.scripts.eval_model import eval_model
 
-import ast
 import unittest
 import sys
 
@@ -57,11 +56,15 @@ class TestHogwild(unittest.TestCase):
                     self.assertEqual(report_valid['exs'], NUM_EXS)
                     self.assertEqual(report_test['exs'], NUM_EXS)
 
-                    report_full, _world = run_eval(tl.agent, tl.opt, 'valid',
-                        max_exs=-1, valid_world=tl.valid_world)
+                    report_full, _world = run_eval(
+                        tl.agent, tl.opt, 'valid',
+                        max_exs=-1, valid_world=tl.valid_world
+                    )
                     self.assertEqual(report_full['exs'], NUM_EXS)
-                    report_part, _world = run_eval(tl.agent, tl.opt, 'valid',
-                        max_exs=NUM_EXS / 5, valid_world=tl.valid_world)
+                    report_part, _world = run_eval(
+                        tl.agent, tl.opt, 'valid',
+                        max_exs=NUM_EXS / 5, valid_world=tl.valid_world
+                    )
                     self.assertTrue(report_part['exs'] < NUM_EXS)
         finally:
             # restore sys.stdout
@@ -93,6 +96,7 @@ class TestHogwild(unittest.TestCase):
         finally:
             # restore sys.stdout
             sys.stdout = old_out
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -65,7 +65,7 @@ class ConvAIWorld(World):
         # The maximum number of open dialogs. Use -1 for unlimited number of open dialogs
         self.bot_capacity = opt['bot_capacity']
         # RouterBot url with current bot id
-        self.bot_url = self.router_bot_url + '/' + self.bot_id
+        self.bot_url = self.router_bot_url + self.bot_id
 
     def _get_updates(self):
         """Make HTTP request to Router Bot for new messages

@@ -85,12 +85,13 @@ def _bleu(guess, answers):
     # works with strings, which is better suited for this module.
     return nltkbleu.sentence_bleu(
         [normalize_answer(a).split(" ") for a in answers],
-        normalize_answer(guess).split(" ")
+        normalize_answer(guess).split(" "),
+        smoothing_function=nltkbleu.SmoothingFunction(epsilon=1e-12).method1,
     )
 
 
 def aggregate_metrics(reporters):
-    #reporters is a list of teachers or worlds
+    # reporters is a list of teachers or worlds
     m = {}
     m['tasks'] = {}
     sums = {'accuracy': 0, 'f1': 0, 'loss': 0, 'ppl': 0}
@@ -197,8 +198,6 @@ class Metrics(object):
         if text_cands is None:
             return
         else:
-            text = observation.get('text', None)
-
             # Now loop through text candidates, assuming they are sorted.
             # If any of them is a label then score a point.
             # maintain hits@1, 5, 10, 50, 100,  etc.

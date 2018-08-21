@@ -8,6 +8,7 @@
 import parlai.core.build_data as build_data
 import os
 
+
 def build(opt):
     version = 'v1.0'
     dpath = os.path.join(opt['datapath'], 'Persona-Chat')
@@ -21,7 +22,7 @@ def build(opt):
 
         # Download the data.
         fname = 'personachat.tgz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/personachat/' + fname
+        url = 'http://parl.ai/downloads/personachat/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 

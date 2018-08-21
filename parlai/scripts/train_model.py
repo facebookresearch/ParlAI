@@ -23,7 +23,7 @@ TODO List:
 - More logging (e.g. to files), make things prettier.
 """
 
-from parlai.core.agents import create_agent
+from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer
@@ -31,6 +31,7 @@ from parlai.core.logs import TensorboardLogger
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 import math
 import os
+
 
 def setup_args(parser=None):
     if parser is None:
@@ -59,7 +60,7 @@ def setup_args(parser=None):
                        help='Saves the model to model_file.checkpoint after '
                             'every validation (default %(default)s).')
     train.add_argument('-veps', '--validation-every-n-epochs',
-                       type=int, default=-1,
+                       type=float, default=-1,
                        help='Validate every n epochs. Whenever the the best '
                             'validation metric is found, saves the model to '
                             'the model_file path if set.')
@@ -87,9 +88,14 @@ def setup_args(parser=None):
     train.add_argument('-lfc', '--load-from-checkpoint',
                        type='bool', default=False,
                        help='load model from checkpoint if available')
+    train.add_argument('-vshare', '--validation-share-agent', default=False,
+                       help='use a shared copy of the agent for validation. '
+                            'this will eventually default to True, but '
+                            'currently defaults to False.')
     TensorboardLogger.add_cmdline_args(parser)
     parser = setup_dict_args(parser)
     return parser
+
 
 def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None):
     """Eval on validation/test data.
@@ -103,12 +109,17 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
     print('[ running eval: ' + datatype + ' ]')
     if 'stream' in opt['datatype']:
         datatype += ':stream'
-    opt['datatype'] = datatype
-    if opt.get('evaltask'):
-        opt['task'] = opt['evaltask']
 
     if valid_world is None:
-        valid_world = create_task(opt, agent)
+        opt = opt.copy()
+        opt['datatype'] = datatype
+        if opt.get('evaltask'):
+            opt['task'] = opt['evaltask']
+        if opt.get('validation_share_agent', False):
+            valid_agent = create_agent_from_shared(agent.share())
+        else:
+            valid_agent = agent
+        valid_world = create_task(opt, valid_agent)
     valid_world.reset()
     cnt = 0
     while not valid_world.epoch_done():
@@ -133,6 +144,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
         f.close()
 
     return valid_report, valid_world
+
 
 def save_best_valid(model_file, best_valid):
     f = open(model_file + '.best_valid', 'w')
@@ -255,19 +267,18 @@ class TrainLoop():
 
         # time elapsed
         logs.append('time:{}s'.format(math.floor(self.train_time.time())))
-        logs.append('total_exs:{}'.format(self.world.get_total_exs()))
+        total_exs = self.world.get_total_exs()
+        logs.append('total_exs:{}'.format(total_exs))
 
         exs_per_ep = self.world.num_examples()
         if exs_per_ep:
-            logs.append('total_eps:{}'.format(
-                round(self.world.get_total_exs() / exs_per_ep, 2)))
+            logs.append('epochs:{}'.format(
+                round(total_exs / exs_per_ep, 2)))
 
         if 'time_left' in train_report:
             logs.append('time_left:{}s'.format(
                          math.floor(train_report.pop('time_left', ""))))
-        if 'num_epochs' in train_report:
-            logs.append('num_epochs:{}'.format(
-                         train_report.pop('num_epochs', '')))
+
         log = '[ {} ] {}'.format(' '.join(logs), train_report)
         print(log)
         self.log_time.reset()

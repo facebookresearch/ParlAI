@@ -20,6 +20,7 @@ from parlai.agents.local_human.local_human import LocalHumanAgent
 
 import random
 
+
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True)
@@ -27,7 +28,7 @@ def setup_args(parser=None):
     parser.add_argument('--display-prettify', type='bool', default=False,
                         help='Set to use a prettytable when displaying '
                              'examples with text candidates')
-    parser.add_argument('--display-ignore-fields',type=str,
+    parser.add_argument('--display-ignore-fields', type=str,
                         default='label_candidates,text_candidates',
                         help='Do not display these fields')
     LocalHumanAgent.add_cmdline_args(parser)
@@ -43,7 +44,7 @@ def interactive(opt):
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
-    
+
     # Show some example dialogs:
     while True:
         world.parley()

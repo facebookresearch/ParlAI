@@ -4,19 +4,12 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.agents import create_agent, create_agents_from_shared
 from parlai.core.build_data import download_models
 from projects.convai2.build_dict import build_dict
 from projects.convai2.eval_ppl import setup_args, eval_ppl
-from parlai.core.dict import DictionaryAgent
-from parlai.core.params import ParlaiParser
-from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import Timer, round_sigfigs, no_lock
-from parlai.core.worlds import World, create_task
 from torch.autograd import Variable
 from parlai.agents.language_model.language_model import LanguageModelAgent
 import torch.nn.functional as F
-import math
 
 
 class LanguageModelEntry(LanguageModelAgent):

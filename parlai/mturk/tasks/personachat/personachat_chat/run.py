@@ -9,7 +9,6 @@ from worlds import \
     PersonaChatWorld, PersonaProfileWorld, PersonasGenerator
 from task_config import task_config
 
-import torch
 import os
 
 
@@ -63,7 +62,6 @@ def main():
 
     persona_generator = PersonasGenerator(opt)
     mturk_manager.setup_server(task_directory_path=directory_path)
-
 
     try:
         mturk_manager.start_new_run()

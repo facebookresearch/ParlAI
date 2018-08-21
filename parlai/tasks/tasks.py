@@ -8,12 +8,11 @@ The actual task list and definitions are in the file task_list.py
 """
 from .task_list import task_list
 from collections import defaultdict
-import copy
-import json
-import os
+
 
 def _preprocess(name):
     return name.lower().replace('-', '')
+
 
 def _build(task_list):
     tasks = {}
@@ -29,6 +28,7 @@ def _build(task_list):
                                    ' is the same as a task name')
             tags[tag].append(t)
     return tasks, tags
+
 
 def _id_to_task_data(t_id):
     t_id = _preprocess(t_id)

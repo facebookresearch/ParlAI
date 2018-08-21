@@ -23,11 +23,21 @@ from parlai.core.agents import Agent
 
 
 class RepeatLabelAgent(Agent):
+    @staticmethod
+    def add_cmdline_args(argparser):
+        group = argparser.add_argument_group('RepeatLabel Arguments')
+        group.add_argument('--return_one_random_answer', type='bool', default=True,
+                           help='return one answer from the set of labels')
+        group.add_argument('--cant_answer_percent', type=float, default=0,
+                           help='set value in range[0,1] to set chance of replying with special message')
+        group.add_argument('--cant_answer_message', type=str, default="I don't know.",
+                           help='Message sent when the model cannot answer')
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
-        self.returnOneRandomAnswer = opt.get('returnOneRandomAnswer', True)
-        self.cantAnswerPercent = opt.get('cantAnswerPercent', 0)
+        self.returnOneRandomAnswer = opt.get('return_one_random_answer', True)
+        self.cantAnswerPercent = opt.get('cant_answer_percent', 0)
+        self.cantAnswerMessage = opt.get('cant_answer_message', "I don't know.")
         self.id = 'RepeatLabelAgent'
 
     def act(self):
@@ -46,8 +56,8 @@ class RepeatLabelAgent(Agent):
             else:
                 # Some 'self.cantAnswerPercent' percentage of the time
                 # the agent does not answer.
-                reply['text'] = "I don't know."
+                reply['text'] = self.cantAnswerMessage
         else:
-            reply['text'] = "I don't know."
+            reply['text'] = self.cantAnswerMessage
 
         return reply

@@ -9,8 +9,6 @@ Tensorboard:
     If you use tensorboard logging, all event folders will be stored in PARLAI_DATA/tensorboard folder. In order to
     open it with TB, launch tensorboard as : tensorboard --logdir <PARLAI_DATA/tensorboard> --port 8888.
 """
-import datetime
-from parlai.core.params import ParlaiParser
 import os
 
 
@@ -25,8 +23,8 @@ class TensorboardLogger(Shared):
     @staticmethod
     def add_cmdline_args(argparser):
         logger = argparser.add_argument_group('Tensorboard Arguments')
-        logger.add_argument('-tblog', '--tensorboard-log', type=bool, default=False,
-                            help="Tensorboard logging of metrics")
+        logger.add_argument('-tblog', '--tensorboard-log', type='bool', default=False,
+                            help="Tensorboard logging of metrics, default is %(default)s")
         logger.add_argument('-tbtag', '--tensorboard-tag', type=str, default=None,
                             help='Specify all opt keys which you want to be presented in in TB name')
         logger.add_argument('-tbmetrics', '--tensorboard-metrics', type=str, default=None,

@@ -877,8 +877,6 @@ class Seq2seqAgent(Agent):
 
         if self.opt['datatype'] in ['valid', 'test'] and self.opt['personachat_interact']:
             print('MODEL:' + ' '.join(predictions[0]))
-            symbol_words = ['_s{}_'.format(i) for i in range(20)]
-
             print('TRUE :' + observations[0]['eval_labels'][0])
 
         for i in range(len(predictions)):
@@ -1196,20 +1194,20 @@ class PersonachatSeqseqAgentSplit(Agent):
             self.id = 'Seq2Seq'
             # we use START markers to start our output
             self.START = self.dict.start_token
-            self.START_TENSOR = torch.LongTensor(self.dict.parse(self.START))
+            self.START_TENSOR = torch.LongTensor([self.dict[self.START]])
             # we use END markers to end our output
             self.END = self.dict.end_token
-            self.END_TENSOR = torch.LongTensor(self.dict.parse(self.END))
+            self.END_TENSOR = torch.LongTensor([self.dict[self.END]])
             # get index of null token from dictionary (probably 0)
-            self.NULL_IDX = self.dict.txt2vec(self.dict.null_token)[0]
+            self.NULL_IDX = self.dict[self.dict.null_token]
 
             # reorder dictionary tokens
-            self.dict.ind2tok[1] = '__END__'
-            self.dict.tok2ind['__END__'] = 1
-            self.dict.ind2tok[2] = '__UNK__'
-            self.dict.tok2ind['__UNK__'] = 2
-            self.dict.ind2tok[3] = '__START__'
-            self.dict.tok2ind['__START__'] = 3
+            self.dict.ind2tok[1] = self.dict.end_token
+            self.dict.tok2ind[self.dict.end_token] = 1
+            self.dict.ind2tok[2] = self.dict.unk_token
+            self.dict.tok2ind[self.dict.unk_token] = 2
+            self.dict.ind2tok[3] = self.dict.start_token
+            self.dict.tok2ind[self.dict.start_token] = 3
 
             # store important params directly
             hsz = opt['hiddensize']
@@ -1540,7 +1538,10 @@ class PersonachatSeqseqAgentSplit(Agent):
         return shared
 
     def f_word(self, Glove, word, ifvector=True):
-        stop_words = STOP_WORDS + ['__END__', '__NULL__', '__START__', '__UNK__']
+        stop_words = STOP_WORDS + [
+            self.dict.start_token, self.dict.unk_token, self.dict.end_token,
+            self.dict.null_token,
+        ]
         w = word
         if w in stop_words:
             return 0.
@@ -1553,7 +1554,10 @@ class PersonachatSeqseqAgentSplit(Agent):
         return value
 
     def f_word_2(self, Glove, word, usetop=True, th=500):
-        stop_words = ['__END__', '__NULL__', '__START__', '__UNK__']
+        stop_words = [
+            self.dict.start_token, self.dict.unk_token, self.dict.end_token,
+            self.dict.null_token,
+        ]
         w = word
         if w in stop_words:
             return 0.
@@ -1627,7 +1631,6 @@ class PersonachatSeqseqAgentSplit(Agent):
             xes = xes * f_xes
             xes = xes.sum(dim=2)
 
-            ys_size = ys.size()
             yes = self.lt_meta(ys)
             f_yes = self.lt_reweight_meta(ys)
             f_yes_norm = f_yes.sum(1).unsqueeze(1)
@@ -1672,7 +1675,6 @@ class PersonachatSeqseqAgentSplit(Agent):
             return xes, None, guide_indices
 
         batchsize = len(xs)
-        x_lens = [x for x in torch.sum((xs>0).int(), dim=1).data]
 
         # first encode context
         xes = self.lt(xs)
@@ -1705,7 +1707,6 @@ class PersonachatSeqseqAgentSplit(Agent):
     def _encode(self, xs, is_training=False):
         """Call encoder and return output and hidden states."""
         batchsize = len(xs)
-        x_lens = [x for x in torch.sum((xs>0).int(), dim=1).data]
 
         # first encode context
         if self.embshareonly_pm_dec:
@@ -1944,13 +1945,12 @@ class PersonachatSeqseqAgentSplit(Agent):
             for b in range(batchsize):
                 if not done[b]:
                     # only add more tokens for examples that aren't done yet
-                    token = self.v2t([(preds + 1).data[b]])
-                    if token == self.END:
-                        # if we produced END, we're done
+                    pred_idx = (preds + 1)[b].item()
+                    if pred_idx == self.dict[self.END]:
                         done[b] = True
                         total_done += 1
-                    else:
-                        output_lines[b].append(token)
+                    elif pred_idx != self.dict[self.START]:
+                        output_lines[b].append(self.dict[pred_idx])
 
         if random.random() < 1 and not self.interactive_mode:
             # sometimes output a prediction for debugging
@@ -2280,14 +2280,11 @@ class PersonachatSeqseqAgentSplit(Agent):
             # no valid examples, just return the empty responses we set up
             return batch_reply
 
-        x_lens = [x for x in torch.sum((xs>0).int(), dim=1).data]
-
         # produce predictions either way, but use the targets if available
         predictions, text_cand_inds = self.predict(xs, xs_persona, ys, cands, zs)
 
         if self.opt['datatype'] in ['valid', 'test'] and self.opt['personachat_interact']:
             print('MODEL:' + ' '.join(predictions[0]))
-            symbol_words = ['_s{}_'.format(i) for i in range(20)]
             f1_best = 0
             msg_best = ''
             for msg in self.teacher.data_dialogs['train']['messages']:
@@ -2315,13 +2312,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                 curr = batch_reply[batch_idx]
                 curr['text_candidates'] = [curr_cands[idx] for idx in order
                                            if idx < len(curr_cands)]
-        if eval_labels:
-            for ind in valid_inds:
-                cands_origin = [observations[ind]['text']] + [observations[ind]['eval_labels'][0]] + observations[ind]['persona'].split('.')
-                cands = [[w for w in self.dict.tokenize(s.lower())] for s in cands_origin]
-                pred_origin = batch_reply[ind]['text'].lower()
-                pred = [w for w in self.dict.tokenize(pred_origin)]
-
+                
         return batch_reply
 
     def act(self):

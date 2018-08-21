@@ -1,0 +1,29 @@
+<!--
+Copyright (c) 2017-present, Facebook, Inc.
+All rights reserved.
+This source code is licensed under the BSD-style license found in the
+LICENSE file in the root directory of this source tree. An additional grant
+of patent rights can be found in the PATENTS file in the same directory.
+-->
+{% extends "core.html" %}
+
+{% block main_pane %}
+<div id="main-pane" class="col-xs-12" style="height: {{frame_height}}px; background-color: #dff0d8; padding-top: 10px; padding-left: 20px; padding-right: 20px; padding-bottom: 60px; height: 650px; overflow:scroll;">
+    <h3>Navigating New York City</h3>
+    <hr style="border-top: 1px solid #555; margin: 0px;" />
+    <div id="task-description" style="font-size: 16px;">
+        <p>You'll be playing the role of a Tourist or a Guide, navigating New York City. Bonus of <b>40c</b> upon successful completion. </p>
+    </div>
+    <div class="row" style="margin-top: 15px">
+        <div class="col-xs-6 col-md-6">
+            <b>Streetview interface</b>
+            <img class="img-responsive" src="https://s3-us-west-2.amazonaws.com/guess-what/streetview.png" style="max-height:450px" />
+        </div>
+        <div class="col-xs-6 col-md-6">
+            <b>Map</b>
+            <img class="img-responsive" src="https://s3-us-west-2.amazonaws.com/guess-what/map.png" style="max-height:450px" />
+        </div>
+    </div>
+</div>
+
+{% endblock %}

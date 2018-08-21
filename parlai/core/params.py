@@ -61,6 +61,7 @@ def class2str(value):
     s = ':'.join(s.rsplit('.', 1))  # replace last period with ':'
     return s
 
+
 def fix_underscores(args):
     """Converts underscores to hyphens in args.
 
@@ -137,6 +138,9 @@ class ParlaiParser(argparse.ArgumentParser):
             '--unique', dest='unique_worker', default=False,
             action='store_true',
             help='enforce that no worker can work on your task twice')
+        mturk.add_argument(
+            '--max-hits-per-worker', dest='max_hits_per_worker', default=0, type=int,
+            help='Max number of hits each worker can perform during current group run')
         mturk.add_argument(
             '--unique-qual-name', dest='unique_qual_name',
             default=None, type=str,
@@ -217,6 +221,10 @@ class ParlaiParser(argparse.ArgumentParser):
             '--max-time-qual', dest='max_time_qual', default=None,
             help='Qualification to use to share the maximum time requirement '
                  'with other runs from other machines.'
+        )
+        mturk.add_argument(
+            '--heroku-team', dest='heroku_team', default=None,
+            help='Specify Heroku team name to use for launching Dynos.'
         )
 
         mturk.set_defaults(is_sandbox=True)
@@ -302,8 +310,8 @@ class ParlaiParser(argparse.ArgumentParser):
         batch.add_argument(
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
-        batch.add_argument('-bsrt', '--batch-sort', default=True, type='bool',
-                           help='If enabled (default True), create batches by '
+        batch.add_argument('-bsrt', '--batch-sort', default=False, type='bool',
+                           help='If enabled (default %(default)s), create batches by '
                                 'flattening all episodes to have exactly one '
                                 'utterance exchange and then sorting all the '
                                 'examples according to their length. This '
@@ -321,7 +329,7 @@ class ParlaiParser(argparse.ArgumentParser):
                                 'batches of data in multi-example episodes.')
         pytorch = self.add_argument_group('PytorchData Arguments')
         pytorch.add_argument(
-            '--pytorch-datafile', type=str, default='',
+            '--pytorch-datafile', type=str, default=None,
             help='datafile for pytorch data loader')
         pytorch.add_argument(
             '-nw', '--numworkers', type=int, default=4,
@@ -338,6 +346,9 @@ class ParlaiParser(argparse.ArgumentParser):
         pytorch.add_argument(
             '--batch-length-range', type=int, default=5,
             help='degree of variation of size allowed in batch')
+        pytorch.add_argument(
+            '--shuffle', type='bool', default=False,
+            help='Whether to shuffle the data')
         self.add_parlai_data_path(parlai)
 
     def add_model_args(self):
@@ -396,7 +407,6 @@ class ParlaiParser(argparse.ArgumentParser):
             # already added
             pass
 
-
     def add_extra_args(self, args=None):
         """Add more args depending on how known args are set."""
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
@@ -426,7 +436,6 @@ class ParlaiParser(argparse.ArgumentParser):
             raise RuntimeError('Please file an issue on github that argparse '
                                'got an attribute error when parsing.')
 
-
     def parse_known_args(self, args=None, namespace=None, nohelp=False):
         """Custom parse known args to ignore help flag."""
         if args is None:
@@ -438,7 +447,6 @@ class ParlaiParser(argparse.ArgumentParser):
             # ignore help
             args = [a for a in args if a != '-h' and a != '--help']
         return super().parse_known_args(args, namespace)
-
 
     def parse_args(self, args=None, namespace=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the
@@ -493,7 +501,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 elif self.cli_args[i] in store_false:
                     self.overridable[option_strings_dict[self.cli_args[i]]] = \
                         False
-                elif i < len(self.cli_args) - 1 and self.cli_args[i+1][:1] != '-':
+                elif i < len(self.cli_args) - 1 and self.cli_args[i + 1][:1] != '-':
                     key = option_strings_dict[self.cli_args[i]]
                     self.overridable[key] = self.opt[key]
         self.opt['override'] = self.overridable
@@ -520,7 +528,7 @@ class ParlaiParser(argparse.ArgumentParser):
             }
             namespace = argparse.Namespace(**group_dict)
             count = 0
-            for key in namespace.__dict__:
+            for key in sorted(namespace.__dict__):
                 if key in values:
                     if count == 0:
                         print('[ ' + group.title + ': ] ')

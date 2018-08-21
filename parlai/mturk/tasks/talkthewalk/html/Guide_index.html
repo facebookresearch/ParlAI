@@ -1,0 +1,749 @@
+<!--
+Copyright (c) 2017-present, Facebook, Inc.
+All rights reserved.
+This source code is licensed under the BSD-style license found in the
+LICENSE file in the root directory of this source tree. An additional grant
+of patent rights can be found in the PATENTS file in the same directory.
+-->
+{% extends "core.html" %}
+
+{% block html_head %}
+<head>
+<title>Navigating New York City</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+</head>
+{% endblock %}
+
+{% block left_pane %}
+	<div id="left-pane" class="col-xs-6 col-md-6 vertical-center" style="height: {{frame_height}}px; background-color: #ffffff; padding: 15px; overflow:scroll;">
+			<div class="col-md-8">
+			<canvas id="map" style="display:block; position:absolute;left: 20; top: 20; z-index: 0; margin: 0px auto; font-family: FontAwesome"></canvas>
+			<canvas id="map_overlay" style="display:block; position:absolute;left: 20; top: 20; z-index: 1;margin: 0px auto; font-family: FontAwesome"></canvas>
+			</div>
+			<div id='legend_for_map' class="col-md-4">
+			</div>
+	</div>
+{% endblock %}
+
+{% block right_pane %}
+<div id="right-pane" style="min-height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+    <div id="right-top-pane" style="width: 100%; height: 570px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
+        <div id="message_thread" style="width: 100%">
+        </div>
+		<div id="waiting-for-partner" class="row" style="margin-left: 0; margin-right: 0; display: none">
+            <div class="alert alert-warning" role="alert" style="float: left; display:table; background-color: #fff">
+                <div id="hourglass" style="margin-top: -1px; margin-right: 5px; display: inline; float: left;">
+                    <?xml version="1.0" encoding="utf-8"?><svg width='25px' height='25px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-hourglass"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><g><path fill="none" stroke="#007282" stroke-width="5" stroke-miterlimit="10" d="M58.4,51.7c-0.9-0.9-1.4-2-1.4-2.3s0.5-0.4,1.4-1.4 C70.8,43.8,79.8,30.5,80,15.5H70H30H20c0.2,15,9.2,28.1,21.6,32.3c0.9,0.9,1.4,1.2,1.4,1.5s-0.5,1.6-1.4,2.5 C29.2,56.1,20.2,69.5,20,85.5h10h40h10C79.8,69.5,70.8,55.9,58.4,51.7z" class="glass"></path><clipPath id="uil-hourglass-clip1"><rect x="15" y="20" width="70" height="25" class="clip"><animate attributeName="height" from="25" to="0" dur="1.5s" repeatCount="indefinite" values="25;0;0" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="20" to="45" dur="1.5s" repeatCount="indefinite" values="20;45;45" keyTimes="0;0.5;1"></animate></rect></clipPath><clipPath id="uil-hourglass-clip2"><rect x="15" y="55" width="70" height="25" class="clip"><animate attributeName="height" from="0" to="25" dur="1.5s" repeatCount="indefinite" values="0;25;25" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="80" to="55" dur="1.5s" repeatCount="indefinite" values="80;55;55" keyTimes="0;0.5;1"></animate></rect></clipPath><path d="M29,23c3.1,11.4,11.3,19.5,21,19.5S67.9,34.4,71,23H29z" clip-path="url(#uil-hourglass-clip1)" fill="#ffab00" class="sand"></path><path d="M71.6,78c-3-11.6-11.5-20-21.5-20s-18.5,8.4-21.5,20H71.6z" clip-path="url(#uil-hourglass-clip2)" fill="#ffab00" class="sand"></path><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="180 50 50" repeatCount="indefinite" dur="1.5s" values="0 50 50;0 50 50;180 50 50" keyTimes="0;0.7;1"></animateTransform></g></svg>
+                </div>
+                <span style="font-size: 16px">Waiting for a partner...</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="right-bottom-pane" style="width: 100%; background-color: #eee">
+        <div id="response-type-idle" class="response-type-module" style="display:none"></div>
+        <div id="response-type-text-input" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <div style="height: 50px; width: 100%; display: block; float: left; ">
+				<input id="id_text_input" type="text" style="height: 100%; width: 70%; float: left; font-size: 16px" class="form-control" value="" placeholder="Please enter here...">
+				<button class="btn btn-primary" style="width: 85px; height: 100%; font-size: 16px; margin-left: 5px; padding: 0px;" id="id_send_msg_button">Send</button>
+				<button class="btn btn-success" style="width: 85px; height: 100%; font-size: 16px; margin-left: 5px; padding: 0px;" id="id_done_button" disabled>Arrived!</button>
+			</div>
+        </div>
+         <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <span id="inactive" style="font-size: 14pt;margin-right: 15px"></span>
+            <button id="done-button" type="button" class="btn btn-primary btn-lg">
+                <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block additional_scripts %}
+<script type="text/javascript">
+//SIMPLE HEAT
+function simpleheat(canvas) {
+    if (!(this instanceof simpleheat)) return new simpleheat(canvas);
+
+    this._canvas = canvas = typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
+
+    this._ctx = canvas.getContext('2d');
+    this._width = canvas.width;
+    this._height = canvas.height;
+
+    this._max = 1;
+    this._data = [];
+}
+
+simpleheat.prototype = {
+
+    defaultRadius: 25,
+
+    defaultGradient: {
+        0.4: 'blue',
+        0.6: 'cyan',
+        0.7: 'lime',
+        0.8: 'yellow',
+        1.0: 'red'
+    },
+
+    data: function (data) {
+        this._data = data;
+        return this;
+    },
+
+    max: function (max) {
+        this._max = max;
+        return this;
+    },
+
+    add: function (point) {
+        this._data.push(point);
+        return this;
+    },
+
+    clear: function () {
+        this._data = [];
+        return this;
+    },
+
+    radius: function (r, blur) {
+        blur = blur === undefined ? 15 : blur;
+
+        // create a grayscale blurred circle image that we'll use for drawing points
+        var circle = this._circle = this._createCanvas(),
+            ctx = circle.getContext('2d'),
+            r2 = this._r = r + blur;
+
+        circle.width = circle.height = r2 * 2;
+
+        ctx.shadowOffsetX = ctx.shadowOffsetY = r2 * 2;
+        ctx.shadowBlur = blur;
+        ctx.shadowColor = 'black';
+
+        ctx.beginPath();
+        ctx.arc(-r2, -r2, r, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.fill();
+
+        return this;
+    },
+
+    resize: function () {
+        this._width = this._canvas.width;
+        this._height = this._canvas.height;
+    },
+
+    gradient: function (grad) {
+        // create a 256x1 gradient that we'll use to turn a grayscale heatmap into a colored one
+        var canvas = this._createCanvas(),
+            ctx = canvas.getContext('2d'),
+            gradient = ctx.createLinearGradient(0, 0, 0, 256);
+
+        canvas.width = 1;
+        canvas.height = 256;
+
+        for (var i in grad) {
+            gradient.addColorStop(+i, grad[i]);
+        }
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 1, 256);
+
+        this._grad = ctx.getImageData(0, 0, 1, 256).data;
+
+        return this;
+    },
+
+    draw: function (minOpacity) {
+        if (!this._circle) this.radius(this.defaultRadius);
+        if (!this._grad) this.gradient(this.defaultGradient);
+
+        var ctx = this._ctx;
+
+        ctx.clearRect(0, 0, this._width, this._height);
+
+        // draw a grayscale heatmap by putting a blurred circle at each data point
+        for (var i = 0, len = this._data.length, p; i < len; i++) {
+            p = this._data[i];
+            ctx.globalAlpha = Math.min(Math.max(p[2] / this._max, minOpacity === undefined ? 0.05 : minOpacity), 1);
+            ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
+        }
+
+        // colorize the heatmap, using opacity value of each pixel to get the right color from our gradient
+        var colored = ctx.getImageData(0, 0, this._width, this._height);
+        this._colorize(colored.data, this._grad);
+        ctx.putImageData(colored, 0, 0);
+
+        return this;
+    },
+
+    _colorize: function (pixels, gradient) {
+        for (var i = 0, len = pixels.length, j; i < len; i += 4) {
+            j = pixels[i + 3] * 4; // get gradient color from opacity value
+
+            if (j) {
+                pixels[i] = gradient[j];
+                pixels[i + 1] = gradient[j + 1];
+                pixels[i + 2] = gradient[j + 2];
+            }
+        }
+    },
+
+    _createCanvas: function () {
+        if (typeof document !== 'undefined') {
+            return document.createElement('canvas');
+        } else {
+            // create a new canvas instance in node.js
+            // the canvas class needs to have a default constructor without any parameter
+            return new this._canvas.constructor();
+        }
+    }
+};
+    function handle_new_message(new_message_id, message) {
+        var agent_id = message.id;
+        if (displayed_messages.indexOf(new_message_id) !== -1) {
+          // This message has already been seen and put up into the chat
+          return;
+        }
+
+        displayed_messages.push(new_message_id);
+				if (message['show_grid'] == true) {
+						var attn_grid = message['attn_grid'];
+						var attn_grid_sz = message['attn_grid_size'];
+						draw_gradient(attn_grid, attn_grid_sz);
+				}
+				if (agent_id === 'WORLD_MAP') {
+            landmarks = message['text']['landmarks'];
+            target = message['text']['target'];
+            boundaries = message['text']['boundaries'];
+            count_landmarks(landmarks);
+            draw_grid(true);
+        }
+				else if (agent_id === 'WORLD_TIMEOUT') {
+            update_UI_for_response_type('inactive');
+            $('#inactive').text('You\'ve timed out. Please return the HIT.');
+        } else if (agent_id === 'WORLD_PARTNER_TIMEOUT') {
+            task_done = true;
+            update_UI_for_response_type('done');
+            $('#inactive').text('Your partner timed out.');
+            $("div#waiting-for-message").css("display", "none");
+        } else if (agent_id === 'WORLD_SUCCESS') {
+            update_UI_for_response_type('done');
+            $('#inactive').text('Congratulations! You successfully guided the Tourist to the target location. ');
+            $('#inactive').css('color', '#fff');
+            $('#right-bottom-pane').css('background-color', '#4cd964');
+        } else if (agent_id === 'WORLD_FAIL') {
+            update_UI_for_response_type('done');
+            $('#inactive').text('Unfortunately, you didn\'t guide the Tourist to the target location.');
+            $('#inactive').css('color', '#fff');
+            $('#right-bottom-pane').css('background-color', '#ff3b30');
+            draw_target2(message['text'], '#ff3b30');
+        } else if (agent_id === 'Tourist' && !message['text'].startsWith('ACTION:')) {
+            $('div#message_thread').append(`
+                <div class="row" style="margin-left: 0; margin-right: 0">
+                    <div class="alert alert-warning" role="alert" style="float: left; display:table">
+                        <span style="font-size: 16px"><b>` + agent_id + `</b>: ` + message['text'] + `</span>
+                    </div>
+                </div>
+            `);
+        } else if (!agent_id.startsWith('WORLD') && !message['text'].startsWith('ACTION:') && !message['episode_done']) {
+            $('div#message_thread').append(`
+                <div class="row" style="margin-left: 0; margin-right: 0">
+                    <div class="alert alert-info" role="alert" style="float: right; display:table">
+                        <span style="font-size: 16px"><b>` + agent_id + `</b>: ` + message['text'] + `</span>
+                    </div>
+                </div>
+            `);
+            if (displayed_messages.length > 3) {
+                $("button#id_done_button").removeClass("disabled");
+                $("button#id_done_button").prop("disabled", false);
+            }
+//            $("div#waiting-for-message").show();
+        }
+
+        $("div#message_thread").css("display", "");
+        scroll_conversation_to_bottom();
+
+    }
+
+
+		function draw_gradient(attention_grid, grid_sz) {
+
+			var max_w = Math.ceil((boundaries[2] - boundaries[0])/2);
+			var max_h = Math.ceil((boundaries[3] - boundaries[1])/2);
+			var cw = (max_w)*block_size + p;
+			var ch = (max_h)*block_size + p;
+			var canvas = $('#map_overlay').attr({width: cw, height: ch, marginLeft:(-1*cw)/2, marginRight: (-1*cw)/2, marginTop: (-1*ch)/2, marginBottom: (-1*ch)/2});
+			var ctx = canvas.get(0).getContext("2d");
+			var cube_width = cw/grid_sz;
+			var cube_height = cw/grid_sz;
+			ctx.clearRect(0, 0, cw, ch);
+			for (var i = 0; i < grid_sz; i++) {
+				for (var j = 0; j < grid_sz; j++) {
+					var fill = Math.min(.60 - attention_grid[i][j], .60);
+					ctx.fillStyle = `rgba(0,0,0,${fill})`;
+					ctx.fillRect((i) * cube_width, (grid_sz-j) * cube_height, cube_width, cube_height);
+				}
+			}
+		}
+
+    function draw_target2(t, color='#4cd964') {
+        var grid_h = Math.floor((boundaries[3] - boundaries[1])/2);
+        var ctx = document.getElementById('map').getContext("2d");
+		var x = Math.floor((t[0] - boundaries[0])/2);
+		var y = grid_h - Math.floor((t[1] - boundaries[1])/2);
+
+		console.log(x);
+		console.log(y);
+
+		var cur_x = (x+0.5)*block_size;
+		var cur_y = (y+0.5)*block_size;
+		cur_x = (t[0] % 2 === 1) ? cur_x + p : cur_x;
+		cur_y = (t[1] % 2 === 0) ? cur_y + p : cur_y;
+
+        ctx.beginPath();
+		ctx.moveTo(cur_x - 8, cur_y + 8);
+		ctx.lineTo(cur_x + 8, cur_y - 8);
+
+		ctx.moveTo(cur_x - 8, cur_y - 8);
+		ctx.lineTo(cur_x + 8, cur_y + 8);
+
+		ctx.strokeStyle = color;
+		ctx.lineWidth = 3;
+		ctx.stroke();
+    }
+
+    var landmarks;
+	var target;
+	var boundaries;
+
+    var landmark_coordinates = [];
+
+	var block_size = 110;
+
+	//padding around grid
+	var p = 20;
+
+	var orientations = ['N', 'E', 'S', 'W'];
+	var steps = {};
+	steps['N'] = [0, 1];
+    steps['E'] = [1, 0];
+    steps['S'] = [0, -1];
+    steps['W'] = [-1, 0];
+
+
+    function draw_target(t, color='#4cd964') {
+        var grid_h = Math.floor((boundaries[3] - boundaries[1])/2);
+		var ctx = document.getElementById('map').getContext("2d");
+		var x = Math.floor((t[0] - boundaries[0])/2);
+		var y = Math.floor((t[1] - boundaries[1])/2);
+		console.log(x);
+		console.log(y);
+
+		var cur_x = (x+0.5)*block_size;
+		var cur_y = (y+0.5)*block_size;
+		cur_x = (t[0] % 2 === 1) ? cur_x + p : cur_x;
+		cur_y = (t[1] % 2 === 1) ? cur_y + p : cur_y;
+
+		ctx.beginPath();
+		ctx.arc(cur_x, cur_y, 5, 2 * Math.PI, false);
+		ctx.fillStyle = color;
+		ctx.fill();
+
+		ctx.beginPath();
+		var step = steps[orientations[t[2]]];
+		ctx.moveTo(cur_x, cur_y);
+		ctx.lineTo(cur_x + step[0]* 15, cur_y + step[1]*15);
+
+		if (step[0] !== 0) {
+		    ctx.moveTo(cur_x + step[0]* 10, cur_y - 5);
+			ctx.lineTo(cur_x + step[0]* 15, cur_y);
+
+			ctx.moveTo(cur_x + step[0]* 10, cur_y + 5);
+			ctx.lineTo(cur_x + step[0]* 15, cur_y);
+		} else {
+		    ctx.moveTo(cur_x - 5, cur_y + step[1]*10);
+			ctx.lineTo(cur_x, cur_y + step[1]*15);
+
+			ctx.moveTo(cur_x + 5, cur_y + step[1]*10);
+			ctx.lineTo(cur_x, cur_y + step[1]*15);
+		}
+
+		ctx.strokeStyle = color;
+		ctx.lineWidth = 2;
+		ctx.stroke();
+
+	}
+
+    function draw_grid(show_leg) {
+        var max_w = Math.ceil((boundaries[2] - boundaries[0])/2);
+        var max_h = Math.ceil((boundaries[3] - boundaries[1])/2);
+        var cw = (max_w)*block_size + p;
+        var ch = (max_h)*block_size + p;
+
+        var canvas = $('#map').attr({width: cw, height: ch, marginLeft:(-1*cw)/2, marginRight: (-1*cw)/2, marginTop: (-1*ch)/2, marginBottom: (-1*ch)/2});
+
+        var context = canvas.get(0).getContext("2d");
+
+        for (var i=0; i < max_w; i+=1) {
+            var cur_w = (i+0.5)*block_size;
+            context.moveTo(cur_w, 0);
+            context.lineTo(cur_w, (max_h)*block_size+p);
+
+            context.moveTo(cur_w+20, 0);
+            context.lineTo(cur_w+20, (max_h)*block_size+p);
+        }
+
+        for (var j=0; j < max_h; j+=1) {
+            var cur_h = (j+0.5)*block_size;
+            context.moveTo(0, cur_h);
+            context.lineTo((max_w)*block_size+p, cur_h);
+
+            context.moveTo(0, cur_h + p);
+            context.lineTo((max_w)*block_size+p, cur_h + p);
+        }
+
+        // Label axes with coordinates
+        context.strokeStyle = "black";
+        context.lineWidth=1;
+        context.stroke();
+        context.font = "20px Georgia";
+
+        context.font='16px FontAwesome';
+				if (show_leg == true) {
+					setTimeout(draw_icons, 1500); // give fontAwesome time to load
+				}
+				else {
+					draw_icons();
+				}
+				//
+
+				draw_target2(target);
+        if (show_leg == true) {
+					show_legend();
+				}
+    }
+
+    function draw_icons() {
+        // show landmarks
+        var symbols = {};
+        symbols['Restaurant'] = '\uf0f5';
+        symbols['Coffee Shop'] = '\uf0f4';
+        symbols['Shop'] = '\uf291';
+        symbols['Playfield'] = '\uf0c8';
+        symbols['Bank'] = '\uf19c';
+        symbols['Hotel'] = '\uf236';
+        symbols['Theater'] = '\uf03d';
+        symbols['Bar'] = '\uf0fc';
+        symbols['Subway'] = '\uf239';
+
+        var colors = {};
+        colors['Restaurant'] = '#FF9500';
+        colors['Coffee Shop'] = '#FFCC00';
+        colors['Shop'] = '#5AC8FA';
+        colors['Playfield'] = '#474747';
+        colors['Bank'] = '#007aff';
+        colors['Hotel'] = '#5856d6';
+        colors['Theater'] = '#ff2d55';
+        colors['Bar'] = '#48C9B0';
+        colors['Subway'] = '#474747';
+
+        var context = $('#map').get(0).getContext("2d");
+
+        var grid_h = Math.floor((boundaries[3]-boundaries[1])/2);
+        for(var i=0; i < landmarks.length; i++) {
+            var x = landmarks[i].x;
+            var y = landmarks[i].y;
+            var direction = landmarks[i].orientation;
+            var offset = get_offset(x, y, direction);
+            x -= boundaries[0]/2;
+            y -= boundaries[1]/2;
+            y = grid_h - y;
+
+            var x = (x+0.5)*block_size + offset[0];
+            var y = (y+0.5)*block_size + offset[1];
+            context.fillStyle = colors[landmarks[i].type];
+            context.fillText(symbols[landmarks[i].type], x, y);
+            landmark_coordinates.push({'x': x, 'y': y, 'name': landmarks[i].name});
+        }
+    }
+
+    function show_legend() {
+			$('#legend_for_map').html(
+				`<ul class='list-group'>
+					<li width="220px" height="25px" class='list-group-item'><i style="color: #FF9500" class="fa fa-cutlery" aria-hidden="true"> Restaurant</i></li>
+					<li width="220px" height="25px" class='list-group-item'><i style="color: #5AC8FA" class="fa fa-shopping-basket" aria-hidden="true"> Shop</i></li>
+					<li width="220px" height="25px" class='list-group-item'><i style="color: #FFCC00" class="fa fa-coffee" aria-hidden="true"> Coffee shop</i></li>
+					<li width="220px" height="25px" class='list-group-item'><i style="color: #007aff" class="fa fa-university" aria-hidden="true"> Bank</i></li>
+					<li width="220px" height="25px" class='list-group-item'><i style="color: #474747" class="fa fa-square" aria-hidden="true"> Playfield</i></li>
+					<li width="220px" height="25px" class='list-group-item'><i style="color: #5856d6" class="fa fa-bed" aria-hidden="true"> Hotel</i></li>
+					<li width="220px" height="25px" class='list-group-item'><i style="color: #ff2d55" class="fa fa-camera" aria-hidden="true"> Theater</i></li>
+					<li width="220px" height="25px" class='list-group-item'><i style="color: #48C9B0" class="fa fa-beer" aria-hidden="true"> Bar</i></li>
+					<li width="220px" height="25px" class='list-group-item'><i style="color: #474747" class="fa fa-subway" aria-hidden="true"> Subway</i></li>
+				</ul>`
+			);
+		// Old way of showing the legend; leaving here for design purposes
+		// 	<tr>
+		// 		<td width="220px" height="25px"><i style="color: #FF9500" class="fa fa-cutlery" aria-hidden="true"> Restaurant</i></td>
+		// 		<td width="220px" height="25px"><i style="color: #5AC8FA" class="fa fa-shopping-basket" aria-hidden="true"> Shop</i></td>
+		// 		<td width="220px" height="25px"><i style="color: #FFCC00" class="fa fa-coffee" aria-hidden="true"> Coffee shop</i></td>
+		// 	</tr>
+		// 	<tr>
+		// 		<td width="220px" height="25px"><i style="color: #007aff" class="fa fa-university" aria-hidden="true"> Bank</i></td>
+		// 		<td width="220px" height="25px"><i style="color: #474747" class="fa fa-square" aria-hidden="true"> Playfield</i></td>
+		// 		<td width="220px" height="25px"><i style="color: #5856d6" class="fa fa-bed" aria-hidden="true"> Hotel</i></td>
+		// 	</tr>
+		// 	<tr>
+		// 		<td width="220px" height="25px"><i style="color: #ff2d55" class="fa fa-camera" aria-hidden="true"> Theater</i></td>
+		// 		<td width="220px" height="25px"><i style="color: #48C9B0" class="fa fa-beer" aria-hidden="true"> Bar</i></td>
+		// 		<td width="220px" height="25px"><i style="color: #474747" class="fa fa-subway" aria-hidden="true"> Subway</i></td>
+		// 	</tr>
+		// 	<tr>
+		// 		<td width="220px" height="25px"><i style="color: #4cd964" class="fa fa-times" aria-hidden="true"> Target location</i></td>
+		// 	</tr>
+		// </table>`).insertAfter('#map');
+	}
+
+    var count_dict = {};
+    var total_count_dict = {};
+
+    function count_landmarks(landmarks) {
+        for (var i=0; i < landmarks.length; i++) {
+            var x = landmarks[i].x;
+            var y = landmarks[i].y;
+            var direction = landmarks[i].orientation;
+            var key = x.toString() + y.toString() + direction;
+
+            var occ = 0;
+            if (key in total_count_dict) {
+                occ = total_count_dict[key];
+            }
+            total_count_dict[key] = occ + 1;
+        }
+	}
+
+    function get_offset(x, y, direction) {
+        /*
+        This function calculates the offset for each landmark symbol with respect to the intersection coordinates.
+        The offset depends on how many other landmarks there are with same coordinates and direction.
+         */
+        var key = x.toString() + y.toString() + direction;
+
+        var occ = 0;
+		if (key in count_dict) {
+			occ = count_dict[key];
+		}
+		count_dict[key] = occ + 1;
+
+        if (direction == 'NW') {
+            switch (total_count_dict[key]){
+				case 1:
+					return [-20, -5];
+					break;
+				case 2:
+					switch(count_dict[key]) {
+						case 1:
+						    return [-40, -5];
+						case 2:
+						    return [-20, -25];
+					}
+					break;
+				case 3:
+					switch(count_dict[key]) {
+						case 1:
+						    return [-20, -5];
+						case 2:
+						    return [-40, -5];
+						case 3:
+						    return [-20, -25];
+					}
+					break;
+				case 4:
+					switch(count_dict[key]) {
+						case 1:
+						    return [-20, -5];
+						case 2:
+						    return [-40, -5];
+						case 3:
+						    return [-20, -25];
+						case 4:
+						    return [-40, -25];
+					}
+					break;
+			}
+        } else if (direction == 'SW') {
+            switch (total_count_dict[key]){
+				case 1:
+					return [-20, 40];
+					break;
+				case 2:
+					switch(count_dict[key]) {
+						case 1:
+						    return [-40, 40];
+						case 2:
+						    return [-20, 60];
+					}
+					break;
+				case 3:
+					switch(count_dict[key]) {
+						case 1:
+						    return [-40, 40];
+						case 2:
+						    return [-20, 60];
+						case 3:
+						    return [-20, 40];
+					}
+					break;
+				case 4:
+					switch(count_dict[key]) {
+						case 1:
+						    return [-40, 40];
+						case 2:
+						    return [-20, 60];
+						case 3:
+						    return [-20, 40];
+						case 4:
+						    return [-40, 60];
+					}
+					break;
+			}
+        } else if (direction == 'NE') {
+            switch (total_count_dict[key]){
+				case 1:
+					return [25, -5];
+					break;
+				case 2:
+					switch(count_dict[key]) {
+						case 1:
+						    return [45, -5];
+						case 2:
+						    return [25, -25];
+					}
+					break;
+				case 3:
+					switch(count_dict[key]) {
+						case 1:
+						    return [25, -5];
+						case 2:
+						    return [45, -5];
+						case 3:
+						    return [25, -25];
+					}
+					break;
+				case 4:
+					switch(count_dict[key]) {
+						case 1:
+						    return [25, -5];
+						case 2:
+						    return [45, -5];
+						case 3:
+						    return [25, -25];
+						case 4:
+						    return [45, -25];
+					}
+					break;
+			}
+        } else if (direction == 'SE') {
+            switch (total_count_dict[key]){
+				case 1:
+					return [25, 40];
+					break;
+				case 2:
+					switch(count_dict[key]) {
+						case 1:
+						    return [45, 40];
+						case 2:
+						    return [25, 60];
+					}
+					break;
+				case 3:
+					switch(count_dict[key]) {
+						case 1:
+						    return [45, 40];
+						case 2:
+						    return [25, 60];
+						case 3:
+						    return [25, 40];
+					}
+					break;
+				case 4:
+					switch(count_dict[key]) {
+						case 1:
+						    return [45, 40];
+						case 2:
+						    return [25, 60];
+						case 3:
+						    return [25, 40];
+						case 4:
+						    return [45, 60];
+					}
+					break;
+			}
+        }
+        return [0, 0]
+    }
+
+    function AwesomeFontOnload(callback,failAfterMS){
+        var c=document.createElement("canvas");
+        var cctx=c.getContext("2d");
+        var ccw,cch;
+        var fontsize=36;
+        var testCharacter='\uF047';
+        ccw=c.width=fontsize*1.5;
+        cch=c.height=fontsize*1.5;
+        cctx.font=fontsize+'px fontawesome';
+        cctx.textAlign='center';
+        cctx.textBaseline='middle';
+        var startCount=pixcount();
+        var t1=performance.now();
+        var failtime=t1+failAfterMS;
+        //
+        requestAnimationFrame(fontOnload);
+        //
+        function fontOnload(time){
+            var currentCount=pixcount();
+            if(time>failtime){
+                alert('Can\'t load map icons. Try refreshing your page.');
+            }else if(currentCount==startCount){
+                requestAnimationFrame(fontOnload);
+            }else{
+                callback();
+            }
+        }
+        //
+        function pixcount(){
+            cctx.clearRect(0,0,ccw,cch);
+            cctx.fillText(testCharacter,ccw/2,cch/2);
+            var data=cctx.getImageData(0,0,ccw,cch).data;
+            var count=0;
+            for(var i=3;i<data.length;i+=4){
+                if(data[i]>10){count++;}
+            }
+            return(count);
+        }
+    }
+
+    $("button#id_done_button").on('click', function () {
+        send_packet(
+            TYPE_MESSAGE,
+            {text: 'EVALUATE_LOCATION',
+             id: cur_agent_id,
+             episode_done: false},
+            true,
+            true,
+            null);
+    });
+
+
+    $(window).resize(function() {
+		$("input#id_text_input").width($("div#right-bottom-pane").width() - 320);
+		$("div#right-top-pane").height($("div#left-pane").height() - $("div#right-bottom-pane").outerHeight() - 50);
+	});
+
+    function after_send_packet() {
+        wait_for_worker_input();
+    }
+
+</script>
+{% endblock %}

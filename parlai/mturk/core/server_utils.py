@@ -31,7 +31,7 @@ heroku_url = \
     'https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli'
 
 
-def setup_heroku_server(task_name, task_files_to_copy=None):
+def setup_heroku_server(task_name, task_files_to_copy=None, heroku_team=None):
     print("Heroku: Collecting files...")
     # Install Heroku CLI
     os_name = None
@@ -83,7 +83,7 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
     ))
 
     # Delete old server files
-    sh.rm(shlex.split('-rf '+heroku_server_directory_path))
+    sh.rm(shlex.split('-rf ' + heroku_server_directory_path))
 
     # Copy over a clean copy into the server directory
     shutil.copytree(server_source_directory_path, heroku_server_directory_path)
@@ -119,7 +119,7 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
     while not heroku_user_identifier:
         try:
             subprocess.check_output(
-                shlex.split(heroku_executable_path+' auth:token')
+                shlex.split(heroku_executable_path + ' auth:token')
             )
             heroku_user_identifier = (
                 netrc.netrc(os.path.join(os.path.expanduser("~"), '.netrc'))
@@ -144,9 +144,18 @@ def setup_heroku_server(task_name, task_files_to_copy=None):
 
     # Create or attach to the server
     try:
-        subprocess.check_output(shlex.split(
-            '{} create {}'.format(heroku_executable_path, heroku_app_name)
-        ))
+        if heroku_team is not None:
+            subprocess.check_output(shlex.split(
+                '{} create {} --team {}'.format(
+                    heroku_executable_path,
+                    heroku_app_name,
+                    heroku_team
+                )
+            ))
+        else:
+            subprocess.check_output(shlex.split(
+                '{} create {}'.format(heroku_executable_path, heroku_app_name)
+            ))
     except subprocess.CalledProcessError:  # User has too many apps
         sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
         raise SystemExit(
@@ -286,7 +295,7 @@ def delete_local_server(task_name):
     sh.rm(shlex.split('-rf {}'.format(local_server_directory_path)))
 
 
-def setup_server(task_name, task_files_to_copy, local=False):
+def setup_server(task_name, task_files_to_copy, local=False, heroku_team=None):
     if local:
         return setup_local_server(
             task_name,
@@ -294,7 +303,8 @@ def setup_server(task_name, task_files_to_copy, local=False):
         )
     return setup_heroku_server(
         task_name,
-        task_files_to_copy=task_files_to_copy
+        task_files_to_copy=task_files_to_copy,
+        heroku_team=heroku_team
     )
 
 

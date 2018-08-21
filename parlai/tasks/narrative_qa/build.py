@@ -10,9 +10,7 @@ import os
 import subprocess
 import shutil
 import csv
-import stat
 import time
-import gzip
 
 
 NARRATIVE_QA_DOWNLOAD_URL = 'https://github.com/deepmind/narrativeqa/archive/master.zip'
@@ -76,8 +74,7 @@ def move_files(base_path, sets=['train', 'valid', 'test']):
 # Returns false unless the story was already downloaded and
 # has appropriate size
 def try_downloading(directory, row):
-    document_id, kind, story_url, story_size = row['document_id'], \
-        row['kind'], row['story_url'], row['story_file_size']
+    document_id, kind, story_url = row['document_id'], row['kind'], row['story_url']
     story_path = os.path.join(directory, document_id + '.content')
 
     actual_story_size = 0

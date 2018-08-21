@@ -84,7 +84,6 @@ class MTurkDealNoDealDialogWorld(MTurkTaskWorld):
                     # Action is not selection but episode ended due to disconnection or timeout or returned hit
                     self.episodeDone = True
 
-
     def episode_done(self):
         return self.episodeDone
 

@@ -8,6 +8,7 @@
 import parlai.core.build_data as build_data
 import os
 
+
 def create_fb_format(outpath, dtype, inpath, inpath2):
     print('building fbformat:' + dtype)
     fout = open(os.path.join(outpath, dtype + '.txt'), 'w')
@@ -40,6 +41,7 @@ def create_fb_format(outpath, dtype, inpath, inpath2):
             fout.write(s + '\n')
     fout.close()
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MCTest')
     version = None
@@ -53,7 +55,7 @@ def build(opt):
 
         # Download the data.
         fname = 'mctest.tar.gz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/mctest/' + fname
+        url = 'http://parl.ai/downloads/mctest/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 

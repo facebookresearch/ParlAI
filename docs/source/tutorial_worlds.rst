@@ -354,41 +354,42 @@ Pytorch Dataloading in ParlAI
 Implementation
 ++++++++++++++
 The `PytorchDataTeacher <https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/pytorch_data_teacher.py>`_
-provides an implementation of both the ``dataset`` and ``collate_fn`` as specified above.
+provides two default ``Datasets`` and a default ``collate_fn`` as specified above.
 
-1. ``StreamDataset`` - this is the default ``dataset`` that we provide to the
-``DataLoader``. The dataset is meant for streaming data - that is, data that
+1. ``StreamDataset`` - this is the ``Dataset`` that we provide to the
+``DataLoader`` when ``--datatype`` is set to ``[train|valid|test]:stream``.
+The dataset is meant for streaming data - that is, data that
 does not need to (or cannot) be loaded into memory before starting training, e.g.
 datasets with millions of text examples, or datasets with thousands of images.
 
     a) ``__getitem__(self, idx)`` returns ``(index, ep)``, where ``index`` is the
         ``idx`` argument, and ``ep`` is the episode at that index in the dataset.
-    b) ``__len__(self)``. returns the length of the dataset, multiplied by the
-        number of iterations that we will go through the dataset. For non-training (i.e. validation
-        and testing), the number of iterations is set to 1; otherwise, it is set to
-        the number of epochs specified, or 1000 if the number of epochs is not
-        specified.
+    b) ``__len__(self)``. returns the length of the dataset.
 
-2. ``default_collate`` - this function simply returns a list of ``(index, ep)``
+2. ``ParlAIDataset`` - when ``stream`` is not in the ``--datatype``, ParlAI defaults
+to this ``Dataset``, which provides random access into the dataset. Its ``__getitem__``
+and ``__len__`` methods are functionally the same as the ``StreamDataset``.
+
+3. ``default_collate`` - this function simply returns a list of ``(index, ep)``
 pairs as they are returned from the ``__getitem__`` function above.
 
 How to Use
 ++++++++++
 The ``PytorchDataTeacher`` can be used with any dataset/task currently provided
 on the ParlAI platform. There are two ways you can utilize the ``PytorchDataTeacher``
-for your specific task. One involves using the ``StreamDataset`` that we have
+for your specific task. One involves using the ``ParlAIDataset`` or ``StreamDataset`` that we have
 provided; the other involves writing your own dataset. Each will be covered
 step by step below. The important thing to know is that in the first case you **only**
 need to write a teacher; in the second case, you **only** need to write a ``Dataset``.
 
 
-PyTorch StreamDataset
-*********************
+PyTorch ParlAIDataset/StreamDataset
+***********************************
 1. Ensure that there is an appropriate teacher that already exists, which
 can read the data saved on disk and produce an action/observation dict for any
 agent.
 
-2. Build the data such that it can be used by the ``StreamDataset``. There
+2. Build the data such that it can be used by the ``ParlAIDataset`` or ``StreamDataset``. There
 are two ways of doing this:
 
   a) Run the following command::
@@ -401,7 +402,7 @@ are two ways of doing this:
           are using with the ``PytorchDataTeacher``
 
       2) ``--datatype`` - This is one of ``train, valid, test``, depending on
-            what data you would like to use
+            what data you would like to use.
 
       3) ``--pytorch-datafile`` - **(Optional)** This is the path to the file that has the data
           you would like to be loading. **(Recommended)** Alternatively, in
@@ -411,7 +412,9 @@ are two ways of doing this:
 
   c) **(Recommended)** Simply run ``examples/train_model.py`` with the same
      arguments listed above; this will build the data first before running
-     the training loop.
+     the training loop. **(Important)** If you'd like to use the ``StreamDataset``,
+     specify e.g. ``-dt train:stream``, otherwise the teacher will default
+     to ``ParlAIDataset``
 
 3. (*Preprocessing*) Sometimes, the preprocessing for the agent takes a considerable
 amount of time in itself, and you want the data to simply be loaded preprocessed.
@@ -507,3 +510,27 @@ this simply controls the method used for returning batches from a cache (either 
 a batch; e.g., by how many characters each example in a cache will, at most, deviate.
 A ``--batch-length-range`` of 5 would mean that each example in the batch
 would differ by no more than 5 characters (in a text-based dataset).
+
+PytorchDataTeacher Multitask Training
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The ``PytorchDataTeacher`` can be used with mutltitask training in a very similar
+way to the standard ParlAI multitasking. There are three simple ways of doing this.
+
+1. If you do not have any ``Datasets`` written for the specified tasks, simply
+write ``-pyt <task1>,<task2>,...`` on the command line. For example, you could
+run the following command to multitask on SQuAD and bAbI::
+
+  python examples/train_model.py -pyt squad,babi:task1k:1 ...
+
+2. If you only have ``Datasets`` written for the specified tasks, simply write
+``-pytd <dataset1>,<dataset2>,..`` on the command line. For example, you could
+run the following command to multitask on COCO Captioning and Flickr30k::
+
+  python examples/train_model.py -pytd coco_caption,flickr30k ...
+
+3. If you have a mix of ``Datasets`` and regular teachers, you can specify
+the ``Datasets`` after the ``-pytd`` flag and the regular teachers after the
+``-pyt`` flag. For example, if you wanted to multitask train on SQuAD and
+Flickr30k, you could run the following command::
+
+  python examples/train_model.py -pytd flickr30k -pyt squad

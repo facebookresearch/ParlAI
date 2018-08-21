@@ -65,7 +65,7 @@ class FullTeacher(DialogTeacher):
             download=self.opt['download_path'],
             wikifile=dpath + '/' + fname,
             output=dpath + '/' + 'wiki_extracted'
-            )
+        )
 
         return instructions
 

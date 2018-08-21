@@ -29,8 +29,7 @@ task_config['hit_keywords'] = 'chat,dialog,text,game'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-task_config['task_description'] = \
-'''
+task_config['task_description'] = '''
 In this task, you will be asked to create a character (persona) description using <b><span style="color:blue">5 sentences</span></b>. An example would be:
 <br>
 <br>

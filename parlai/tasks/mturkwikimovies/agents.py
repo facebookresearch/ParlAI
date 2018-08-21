@@ -10,6 +10,7 @@ from .build import build
 import copy
 import os
 
+
 def _path(opt, filtered):
     # Build the data if it doesn't exist. It depends on wikimovies.
     build(opt)

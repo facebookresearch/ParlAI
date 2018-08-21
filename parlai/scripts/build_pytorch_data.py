@@ -12,7 +12,7 @@ such that each episode is one example for a model.
 One can set the `--context-len` flag to specify how many past utterances
 are used in a flattened episode.
 """
-from parlai.core.agents import create_agent, create_task_agent_from_taskname
+from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
 from parlai.core.utils import ProgressLogger
@@ -24,8 +24,10 @@ import collections
 import torch
 from collections import deque
 
+
 def setup_args():
     return ParlaiParser(True, True)
+
 
 def make_serializable(obj):
     new_obj = {}
@@ -72,7 +74,15 @@ def build_data(opt):
     teacher = world_data.agents[0]
     agent = world_data.agents[1]
 
-    datafile = teacher.datafile if hasattr(teacher, 'datafile') else opt.get('pytorch_datafile')
+    datafile = None
+    if opt.get('pytorch_datafile'):
+        datafile = opt.get('pytorch_datafile')
+    elif hasattr(teacher, 'datafile') and teacher.datafile:
+        datafile = teacher.datafile
+    else:
+        dpath = os.path.join(opt.get('datapath', '~'), ordered_opt['task'], dt)
+        os.makedirs(dpath, exist_ok=True)
+        datafile = os.path.join(dpath, 'pytorch_data')
     if not datafile:
         raise Exception('Tried to build data but either `pytorch-teacher-task` does not '
                         'have a datafile or `--pytorch-datafile` is not set')
@@ -130,7 +140,7 @@ def build_data(opt):
             context.clear()
 
     with open(pytorch_datafile + '.length', 'w') as pytorch_data_len:
-        pytorch_data_len.write(json.dumps({'num_eps':num_eps, 'num_exs':num_exs}))
+        pytorch_data_len.write(json.dumps({'num_eps': num_eps, 'num_exs': num_exs}))
 
     print('[ pytorch data built. ]')
     return pytorch_datafile

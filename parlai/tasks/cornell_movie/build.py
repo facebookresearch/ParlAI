@@ -9,6 +9,7 @@ import parlai.core.build_data as build_data
 import codecs
 import os
 
+
 def create_fb_format(lines_file, convo_file, outpath):
     print('[building fbformat]')
     with open(os.path.join(outpath, 'train.txt'), 'w') as ftrain, \
@@ -27,7 +28,7 @@ def create_fb_format(lines_file, convo_file, outpath):
             for line in f:
                 l = line.split(' ')
                 convo = ' '.join(l[6:]).strip('\n').strip('[').strip(']')
-                c = convo.replace("'",'').replace(' ','').split(',')
+                c = convo.replace("'", '').replace(' ', '').split(',')
 
                 # forward conversation
                 s = ''
@@ -36,7 +37,7 @@ def create_fb_format(lines_file, convo_file, outpath):
                     index += 1
                     s += str(index) + ' ' + lines[c[i]]
                     if len(c) > i + 1:
-                        s += '\t' + lines[c[i+1]]
+                        s += '\t' + lines[c[i + 1]]
                     s += '\n'
 
                 cnt = cnt + 1
@@ -61,7 +62,7 @@ def build(opt):
 
         # Download the data.
         fname = 'cornell_movie_dialogs_corpus.tgz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/cornell_movie/' + fname
+        url = 'http://parl.ai/downloads/cornell_movie/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 

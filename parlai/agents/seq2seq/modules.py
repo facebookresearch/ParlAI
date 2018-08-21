@@ -20,7 +20,7 @@ def pad(tensor, length, dim=0):
         return torch.cat(
             [tensor, tensor.new(*tensor.size()[:dim],
                                 length - tensor.size(dim),
-                                *tensor.size()[dim+1:]).zero_()],
+                                *tensor.size()[dim + 1:]).zero_()],
             dim=dim)
     else:
         return tensor
@@ -51,7 +51,8 @@ class Seq2seq(nn.Module):
             attn_type=opt['attention'], attn_length=opt['attention_length'],
             attn_time=opt.get('attention_time'),
             bidir_input=opt['bidirectional'],
-            numsoftmax=opt.get('numsoftmax', 1))
+            numsoftmax=opt.get('numsoftmax', 1),
+            softmax_layer_bias=opt.get('softmax_layer_bias', False))
 
         shared_lt = (self.decoder.lt
                      if opt['lookuptable'] in ['enc_dec', 'all'] else None)
@@ -101,7 +102,7 @@ class Seq2seq(nn.Module):
         return enc_out.view(batch_size * beam_size, -1, hidden_size)
 
     def forward(self, xs, ys=None, cands=None, valid_cands=None, prev_enc=None,
-                rank_during_training=False, beam_size=1):
+                rank_during_training=False, beam_size=1, topk=1):
         """Get output predictions from the model.
 
         Arguments:
@@ -165,7 +166,7 @@ class Seq2seq(nn.Module):
 
                 for _ in range(self.longest_label):
                     # generate at most longest_label tokens
-                    preds, score, hidden = self.decoder(xs, hidden, enc_out, attn_mask)
+                    preds, score, hidden = self.decoder(xs, hidden, enc_out, attn_mask, topk)
                     scores.append(score)
                     xs = preds
                     predictions.append(preds)
@@ -187,7 +188,7 @@ class Seq2seq(nn.Module):
                 enc_out = enc_out.unsqueeze(1).repeat(1, beam_size, 1, 1)
                 # create batch size num of beams
                 data_device = enc_out.device
-                beams = [Beam(beam_size, 3, 0, 1, 2, min_n_best=beam_size/2, cuda=data_device) for _ in range(bsz)]
+                beams = [Beam(beam_size, 3, 0, 1, 2, min_n_best=beam_size / 2, cuda=data_device) for _ in range(bsz)]
                 # init the input with start token
                 xs = starts
                 # repeat tensors to support batched beam
@@ -197,7 +198,7 @@ class Seq2seq(nn.Module):
                 repeated_hidden = []
 
                 if isinstance(hidden, tuple):
-                    for i in range(hidden[0].size(0)):
+                    for i in range(len(hidden)):
                         repeated_hidden.append(hidden[i].unsqueeze(2).repeat(1, 1, beam_size, 1))
                     hidden = self.unbeamize_hidden(tuple(repeated_hidden), beam_size, bsz)
                 else:  # GRU
@@ -225,14 +226,14 @@ class Seq2seq(nn.Module):
 
                 for b in beams:
                     b.check_finished()
-                beam_pred = [ b.get_pretty_hypothesis(b.get_top_hyp()[0])[1:] for b in beams ]
+                beam_pred = [b.get_pretty_hypothesis(b.get_top_hyp()[0])[1:] for b in beams]
                 # these beam scores are rescored with length penalty!
                 beam_scores = torch.stack([b.get_top_hyp()[1] for b in beams])
                 pad_length = max([t.size(0) for t in beam_pred])
                 beam_pred = torch.stack([pad(t, length=pad_length, dim=0) for t in beam_pred], dim=0)
 
                 #  prepare n best list for each beam
-                n_best_beam_tails = [ b.get_rescored_finished(n_best=len(b.finished)) for b in beams ]
+                n_best_beam_tails = [b.get_rescored_finished(n_best=len(b.finished)) for b in beams]
                 nbest_beam_scores = []
                 nbest_beam_preds = []
                 for i, beamtails in enumerate(n_best_beam_tails):
@@ -324,7 +325,7 @@ class Decoder(nn.Module):
                  emb_size=128, hidden_size=128, num_layers=2, dropout=0.1,
                  bidir_input=False, share_output=True,
                  attn_type='none', attn_length=-1, attn_time='pre',
-                 sparse=False, numsoftmax=1):
+                 sparse=False, numsoftmax=1, softmax_layer_bias=False):
         super().__init__()
 
         if padding_idx != 0:
@@ -351,7 +352,7 @@ class Decoder(nn.Module):
             self.o2e = lambda x: x
         # embedding to scores, use custom linear to possibly share weights
         shared_weight = self.lt.weight if share_output else None
-        self.e2s = Linear(emb_size, num_features, bias=False,
+        self.e2s = Linear(emb_size, num_features, bias=softmax_layer_bias,
                           shared_weight=shared_weight)
         self.shared = shared_weight is not None
 
@@ -371,7 +372,7 @@ class Decoder(nn.Module):
             self.latent = nn.Linear(hidden_size, numsoftmax * emb_size)
             self.activation = nn.Tanh()
 
-    def forward(self, xs, hidden, encoder_output, attn_mask=None):
+    def forward(self, xs, hidden, encoder_output, attn_mask=None, topk=1):
         xes = self.dropout(self.lt(xs))
         if self.attn_time == 'pre':
             xes = self.attention(xes, hidden, encoder_output, attn_mask)
@@ -400,7 +401,15 @@ class Decoder(nn.Module):
             scores = self.e2s(e)
 
         # select top scoring index, excluding the padding symbol (at idx zero)
-        _max_score, idx = scores.narrow(2, 1, scores.size(2) - 1).max(2)
+        # we can do topk sampling from renoramlized softmax here, default topk=1 is greedy
+        if topk == 1:
+            _max_score, idx = scores.narrow(2, 1, scores.size(2) - 1).max(2)
+        elif topk > 1:
+            max_score, idx = torch.topk(F.softmax(scores.narrow(2, 1, scores.size(2) - 1), 2), topk, dim=2, sorted=False)
+            probs = F.softmax(scores.narrow(2, 1, scores.size(2) - 1).gather(2, idx), 2).squeeze(1)
+            dist = torch.distributions.categorical.Categorical(probs)
+            samples = dist.sample()
+            idx = idx.gather(-1, samples.unsqueeze(1).unsqueeze(-1)).squeeze(-1)
         preds = idx.add_(1)
 
         return preds, scores, new_hidden

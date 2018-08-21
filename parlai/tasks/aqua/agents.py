@@ -57,6 +57,7 @@ def setup_data(path):
             rationale = [question[AQUA_RATIONALE_KEY]]
             yield (RATIONALE_QUESTION_TEXT, rationale, None, rationale), False
 
+
 class DefaultTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)

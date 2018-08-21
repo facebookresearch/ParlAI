@@ -26,7 +26,6 @@ except ImportError:
 import bisect
 import os
 import numpy as np
-import copy
 import pickle
 import random
 
@@ -58,8 +57,8 @@ class SimpleDictionaryAgent(DictionaryAgent):
         super().__init__(*args, **kwargs)
 
         # Index words in embedding file
-        if (self.opt['pretrained_words'] and self.opt.get('embedding_file')
-                and not self.opt.get('trained', False)):
+        if (self.opt['pretrained_words'] and self.opt.get('embedding_file') and
+                not self.opt.get('trained', False)):
             print('[ Indexing words with embeddings... ]')
             self.embedding_words = set()
             self.opt['embedding_file'] = modelzoo_path(
@@ -78,8 +77,7 @@ class SimpleDictionaryAgent(DictionaryAgent):
         Only adds words contained in self.embedding_words, if not None.
         """
         for token in tokens:
-            if (self.embedding_words is not None and
-                token not in self.embedding_words):
+            if (self.embedding_words is not None and token not in self.embedding_words):
                 continue
             self.freq[token] += 1
             if token not in self.tok2ind:
@@ -107,37 +105,36 @@ class DrqaAgent(Agent):
     def __init__(self, opt, shared=None):
         if opt.get('numthreads', 1) > 1:
             raise RuntimeError("numthreads > 1 not supported for this model.")
+        super().__init__(opt, shared)
 
-        # Load dict.
-        if not shared:
-            word_dict = DrqaAgent.dictionary_class()(opt)
         # All agents keep track of the episode (for multiple questions)
         self.episode_done = True
 
-        # Only create an empty dummy class when sharing
+        self.opt['cuda'] = not self.opt['no_cuda'] and torch.cuda.is_available()
+
         if shared is not None:
-            self.is_shared = True
-            return
+            # model has already been set up
+            self.word_dict = shared['word_dict']
+            self.model = shared['model']
+            self.feature_dict = shared['feature_dict']
+        else:
+            # set up model
+            self.word_dict = DrqaAgent.dictionary_class()(opt)
+            if self.opt.get('model_file') and os.path.isfile(opt['model_file']):
+                self._init_from_saved(opt['model_file'])
+            else:
+                if self.opt.get('init_model'):
+                    self._init_from_saved(opt['init_model'])
+                else:
+                    self._init_from_scratch()
+            if self.opt['cuda']:
+                print('[ Using CUDA (GPU %d) ]' % opt['gpu'])
+                torch.cuda.set_device(opt['gpu'])
+                self.model.cuda()
 
         # Set up params/logging/dicts
-        self.is_shared = False
         self.id = self.__class__.__name__
-        self.word_dict = word_dict
-        self.opt = copy.deepcopy(opt)
         config.set_defaults(self.opt)
-
-        if self.opt.get('model_file') and os.path.isfile(opt['model_file']):
-            self._init_from_saved(opt['model_file'])
-        else:
-            if self.opt.get('init_model'):
-                self._init_from_saved(opt['init_model'])
-            else:
-                self._init_from_scratch()
-        self.opt['cuda'] = not self.opt['no_cuda'] and torch.cuda.is_available()
-        if self.opt['cuda']:
-            print('[ Using CUDA (GPU %d) ]' % opt['gpu'])
-            torch.cuda.set_device(opt['gpu'])
-            self.model.cuda()
         self.n_examples = 0
 
     def _init_from_scratch(self):
@@ -151,8 +148,7 @@ class DrqaAgent(Agent):
 
     def _init_from_saved(self, fname):
         print('[ Loading model %s ]' % fname)
-        saved_params = torch.load(fname,
-            map_location=lambda storage, loc: storage)
+        saved_params = torch.load(fname, map_location=lambda storage, loc: storage)
         if 'word_dict' in saved_params:
             # for compatibility with old saves
             self.word_dict.copy_dict(saved_params['word_dict'])
@@ -161,6 +157,13 @@ class DrqaAgent(Agent):
         config.override_args(self.opt, saved_params['config'])
         self.model = DocReaderModel(self.opt, self.word_dict,
                                     self.feature_dict, self.state_dict)
+
+    def share(self):
+        shared = super().share()
+        shared['word_dict'] = self.word_dict
+        shared['model'] = self.model
+        shared['feature_dict'] = self.feature_dict
+        return shared
 
     def observe(self, observation):
         # shallow copy observation (deep copy can be expensive)
@@ -175,9 +178,6 @@ class DrqaAgent(Agent):
 
     def act(self):
         """Update or predict on a single example (batchsize = 1)."""
-        if self.is_shared:
-            raise RuntimeError("Parallel act is not supported.")
-
         reply = {'id': self.getID()}
 
         ex = self._build_ex(self.observation)
@@ -196,7 +196,6 @@ class DrqaAgent(Agent):
             reply['text_candidates'] = [prediction[0]]
             reply['candidate_scores'] = [score[0]]
 
-
         reply['metrics'] = {'train_loss': self.model.train_loss.avg}
         return reply
 
@@ -204,9 +203,6 @@ class DrqaAgent(Agent):
         """Update or predict on a batch of examples.
         More efficient than act().
         """
-        if self.is_shared:
-            raise RuntimeError("Parallel act is not supported.")
-
         batchsize = len(observations)
         batch_reply = [{'id': self.getID()} for _ in range(batchsize)]
 
@@ -286,10 +282,10 @@ class DrqaAgent(Agent):
             raise RuntimeError('Invalid input. Is task a QA task?')
 
         paragraphs, question = fields[:-1], fields[-1]
-        
+
         if len(fields) > 2 and self.opt.get('subsample_docs', 0) > 0 and 'labels' in ex:
             paragraphs = self. _subsample_doc(paragraphs, ex['labels'], self.opt.get('subsample_docs', 0))
-        
+
         document = ' '.join(paragraphs)
         inputs['document'], doc_spans = self.word_dict.span_tokenize(document)
         inputs['question'] = self.word_dict.tokenize(question)
@@ -360,5 +356,5 @@ class DrqaAgent(Agent):
         if pi < len(paras) - 1:
             for i in range(min(subsample, len(paras) - 1 - pi)):
                 ind = random.randint(pi + 1, len(paras) - 1)
-                new_paras.append(paras[ind])                         
+                new_paras.append(paras[ind])
         return new_paras

@@ -12,6 +12,7 @@ import copy
 import json
 import os
 
+
 def _path(opt):
     build(opt)
 
@@ -29,8 +30,7 @@ class WebTeacher(DialogTeacher):
                 self.suffix = 'dev'
 
         qa_dir, self.evidence_dir = _path(opt)
-        opt['datafile'] = os.path.join(qa_dir, self.prefix + 'web-' +
-                                               self.suffix + '.json')
+        opt['datafile'] = os.path.join(qa_dir, self.prefix + 'web-' + self.suffix + '.json')
         self.id = 'triviaqa'
         super().__init__(opt, shared)
 
@@ -77,8 +77,9 @@ class WikipediaTeacher(DialogTeacher):
                 self.suffix = 'dev'
 
         qa_dir, self.evidence_dir = _path(opt)
-        opt['datafile'] = os.path.join(qa_dir, self.prefix + 'wikipedia-' +
-                                               self.suffix + '.json')
+        opt['datafile'] = os.path.join(
+            qa_dir, self.prefix + 'wikipedia-' + self.suffix + '.json'
+        )
 
         self.id = 'triviaqa'
         super().__init__(opt, shared)
@@ -124,6 +125,7 @@ class VerifiedTeacher(MultiTaskTeacher):
         opt = copy.deepcopy(opt)
         opt['task'] = 'triviaqa:VerifiedWikipedia,triviaqa:VerifiedWeb'
         super().__init__(opt, shared)
+
 
 class DefaultTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):

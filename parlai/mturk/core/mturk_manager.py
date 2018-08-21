@@ -108,7 +108,8 @@ class MTurkManager():
             self.num_conversations * len(self.mturk_agent_ids) * HIT_MULT
         )
         self.minimum_messages = opt.get('min_messages', 0)
-        self.auto_approve_delay = opt.get('auto_approve_delay', 4*7*24*3600)
+        self.auto_approve_delay = \
+            opt.get('auto_approve_delay', 4 * 7 * 24 * 3600)
         self.has_time_limit = opt.get('max_time', 0) > 0
         self.socket_manager = None
         self.worker_manager = WorkerManager(self, opt)
@@ -736,6 +737,7 @@ class MTurkManager():
                                    should_print=True)
         self.is_unique = self.opt['unique_worker'] or \
             (self.opt['unique_qual_name'] is not None)
+        self.max_hits_per_worker = self.opt.get('max_hits_per_worker', 0)
         mturk_utils.create_hit_config(
             task_description=self.opt['task_description'],
             unique_worker=self.is_unique,
@@ -774,9 +776,14 @@ class MTurkManager():
         task_name = '{}-{}'.format(str(uuid.uuid4())[:8], self.opt['task'])
         self.server_task_name = \
             ''.join(e for e in task_name.lower() if e.isalnum() or e == '-')
+        if 'heroku_team' in self.opt:
+            heroku_team = self.opt['heroku_team']
+        else:
+            heroku_team = None
         self.server_url = server_utils.setup_server(self.server_task_name,
                                                     self.task_files_to_copy,
-                                                    self.opt['local'])
+                                                    self.opt['local'],
+                                                    heroku_team)
         shared_utils.print_and_log(logging.INFO, self.server_url)
 
         shared_utils.print_and_log(logging.INFO, "MTurk server setup done.\n",
@@ -980,7 +987,6 @@ class MTurkManager():
         '''Wait for the full task duration to ensure anyone who sees the task
         has it expired, and ensures that all tasks are properly expired
         '''
-
         start_time = time.time()
         min_wait = self.opt['assignment_duration_in_seconds']
         while time.time() - start_time < min_wait and \
@@ -1153,7 +1159,6 @@ class MTurkManager():
                         agent.worker_id,
                         self.unique_qual_name,
                     )
-
             if self.has_time_limit:
                 self._log_working_time(agent)
 

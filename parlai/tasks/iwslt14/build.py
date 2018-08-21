@@ -23,7 +23,7 @@ def build(opt):
 
         # Download the data.
         fname = 'iwslt14.tgz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/iwslt14/' + fname
+        url = 'http://parl.ai/downloads/iwslt14/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 
