@@ -639,8 +639,11 @@ def _list_cache_safety(fn):
 
     # define the wrapper
     def wrapped(*args, **kwargs):
-        # call the fn and copy the list
-        return fn(*args, **kwargs).copy()
+        # call the fn and copy if it's a mutable list
+        retval = fn(*args, **kwargs)
+        if isinstance(retval, list):
+            retval = retval.copy()
+        return retval
 
     # be kind about passing along lru_cache's stuff
     setattr(wrapped, 'cache_clear', fn.cache_clear)
