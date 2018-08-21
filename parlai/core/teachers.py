@@ -159,8 +159,8 @@ class FixedDialogTeacher(Teacher):
         self.batchindex = opt.get('batchindex', 0)
 
         dt = opt.get('datatype', '').split(':')
-        self.use_batch_act = (opt.get('batch_sort', False) and self.bsz > 1
-                              and 'stream' not in dt)
+        self.use_batch_act = (opt.get('batch_sort', False) and self.bsz > 1 and
+                              'stream' not in dt)
 
         if self.use_batch_act:
             if shared:
@@ -300,8 +300,8 @@ class FixedDialogTeacher(Teacher):
         ex = self.get(self.episode_idx, self.entry_idx)
         self.episode_done = ex.get('episode_done', False)
 
-        if (not self.random and self.episode_done
-                and self.episode_idx + self.opt.get("batchsize", 1) >= self.num_episodes()):
+        if (not self.random and self.episode_done and
+                self.episode_idx + self.opt.get("batchsize", 1) >= self.num_episodes()):
             epoch_done = True
         else:
             epoch_done = False
@@ -405,8 +405,8 @@ class FixedDialogTeacher(Teacher):
 
         # remember correct answer if available
         self.lastY = action.get('labels', action.get('eval_labels', None))
-        if ((not self.datatype.startswith('train') or 'evalmode' in self.datatype)
-                and 'labels' in action):
+        if ((not self.datatype.startswith('train') or 'evalmode' in self.datatype) and
+                'labels' in action):
             # move labels to eval field so not used for training
             # but this way the model can use the labels for perplexity or loss
             action = action.copy()
@@ -691,8 +691,8 @@ class DialogData(object):
                         if img is not None:
                             table['image'] = img
 
-        if (table.get('labels', None) is not None
-                and self.cands is not None):
+        if (table.get('labels', None) is not None and
+                self.cands is not None):
             if self.addedCands:
                 # remove elements in addedCands
                 self.cands.difference_update(self.addedCands)

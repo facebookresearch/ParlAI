@@ -74,7 +74,7 @@ class ImageLoader():
         try:
             import torch
             self.use_cuda = (
-                not opt.get('no_cuda', False) and torch.cuda.is_available())
+                not opt.get('no_cuda', False) and torch.cuda.is_available()
             )
             self.torch = torch
         except ImportError:

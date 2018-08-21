@@ -596,7 +596,8 @@ class BatchWorld(World):
                 # not from each other).
                 observation = w.observe(agents[index], validate(batch_actions[i]))
             else:
-                if index == index_acting: return None  # don't observe yourself talking
+                if index == index_acting:
+                    return None  # don't observe yourself talking
                 observation = validate(batch_actions[i])
             observation = agents[index].observe(observation)
             if observation is None:
@@ -907,7 +908,9 @@ class HogwildWorld(World):
         self.inner_world.shutdown()
 
 
-### Functions for creating tasks/worlds given options.
+################################################################################
+# Functions for creating tasks/worlds given options.
+################################################################################
 
 def _get_task_world(opt, user_agents, default_world=None):
     task_agents = _create_task_agents(opt)
