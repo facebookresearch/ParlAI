@@ -837,7 +837,6 @@
     }
 
     if (pongs_without_heartbeat == REFRESH_SOCKET_MISSING_PONGS) {
-      // Treat a connection attempt as a pong.
       pongs_without_heartbeat += 1;
       try {
         socket.close();

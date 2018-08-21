@@ -57,14 +57,12 @@ class AssignState():
         """Appends a message to the list of messages, ensures that it is
         not a duplicate message.
         """
-        assert message['type'] == data_model.MESSAGE_TYPE_MESSAGE
         if message['message_id'] in self.message_ids:
             return
         self.message_ids.append(message['message_id'])
         self.messages.append(message)
 
     def set_last_command(self, command):
-        assert command['type'] == data_model.MESSAGE_TYPE_COMMAND
         self.last_command = command
 
     def get_last_command(self):

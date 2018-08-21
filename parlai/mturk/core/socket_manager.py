@@ -465,10 +465,13 @@ class SocketManager():
 
         def run_socket(*args):
             url_base_name = self.server_url.split('https://')[1]
+            protocol = "wss"
+            if url_base_name in ['localhost', '127.0.0.1']:
+                protocol = "ws"
             while self.keep_running:
                 try:
-                    sock_addr = "ws://{}:{}/".format(
-                        url_base_name, self.port)
+                    sock_addr = "{}://{}:{}/".format(
+                        protocol, url_base_name, self.port)
                     if self.ws is not None and self.ws.sock is not None:
                         # Gross check to see if we're about to leave a socket
                         # open b/c websocket leaks some connections.
@@ -545,31 +548,38 @@ class SocketManager():
                             self.missed_pongs):
                         self.run[connection_id] = False
                         self.socket_dead_callback(worker_id, assignment_id)
-
+                        break
                     # Make sure the queue still exists
                     if connection_id not in self.queues:
                         self.run[connection_id] = False
                         break
-
-                    # Get first item in the queue, check if we can send it yet
-                    item = self.queues[connection_id].get(block=False)
-                    t = item[0]
-                    if time.time() < t:
-                        # Put the item back into the queue,
-                        # it's not time to pop yet
-                        self._safe_put(connection_id, item)
-                    else:
-                        # Try to send the packet
-                        packet = item[1]
-                        if not packet:
-                            # This packet was deleted out from under us
-                            continue
-                        if packet.status is not Packet.STATUS_ACK:
-                            # either need to send initial packet
-                            # or resend not-acked packet
-                            self._send_packet(packet, connection_id, t)
-                except Empty:
-                    pass
+                    try:
+                        # Get first item in the queue, check if can send it yet
+                        item = self.queues[connection_id].get(block=False)
+                        t = item[0]
+                        if time.time() < t:
+                            # Put the item back into the queue,
+                            # it's not time to pop yet
+                            self._safe_put(connection_id, item)
+                        else:
+                            # Try to send the packet
+                            packet = item[1]
+                            if not packet:
+                                # This packet was deleted out from under us
+                                continue
+                            if packet.status is not Packet.STATUS_ACK:
+                                # either need to send initial packet
+                                # or resend not-acked packet
+                                self._send_packet(packet, connection_id, t)
+                    except Empty:
+                        pass
+                except BaseException as e:
+                    shared_utils.print_and_log(
+                        logging.WARN,
+                        'Unexpected error occurred in socket handling thread: '
+                        '{}'.format(repr(e)),
+                        should_print=True,
+                    )
                 finally:
                     time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)
 

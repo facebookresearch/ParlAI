@@ -103,13 +103,6 @@ class TestAssignState(unittest.TestCase):
         self.agent_state1.set_last_command(COMMAND_1)
         self.assertEqual(self.agent_state1.get_last_command(), COMMAND_1)
 
-        # Ensure checking for correct use of observing commands and messages
-        with self.assertRaises(AssertionError):
-            self.agent_state1.append_message(COMMAND_1)
-
-        with self.assertRaises(AssertionError):
-            self.agent_state1.set_last_command(MESSAGE_1)
-
         # Ensure clearing messages acts as intended and doesn't clear agent2
         self.agent_state1.clear_messages()
         self.assertEqual(len(self.agent_state1.messages), 0)
