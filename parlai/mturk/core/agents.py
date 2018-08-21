@@ -40,9 +40,7 @@ class AssignState():
     STATUS_RETURNED = 'returned'
 
     def __init__(self, status=None):
-        """Create an AssignState with the given assignment_id.
-        status is optional
-        """
+        """Create an AssignState to track the state of an agent's assignment"""
         if status is None:
             status = self.STATUS_NONE
         self.status = status
@@ -56,9 +54,9 @@ class AssignState():
         self.last_command = None
 
     def append_message(self, message):
-        '''Appends a message to the list of messages, ensures that it is
+        """Appends a message to the list of messages, ensures that it is
         not a duplicate message.
-        '''
+        """
         assert message['type'] == data_model.MESSAGE_TYPE_MESSAGE
         if message['message_id'] in self.message_ids:
             return
@@ -76,12 +74,12 @@ class AssignState():
         return self.messages
 
     def set_status(self, status):
-        '''Set the status of this agent on the task'''
+        """Set the status of this agent on the task"""
         # TODO log to db
         self.status = status
 
     def get_status(self):
-        '''Get the status of this agent on its task'''
+        """Get the status of this agent on its task"""
         # TODO retrieve from db if not set
         return self.status
 
@@ -186,11 +184,11 @@ class MTurkAgent(Agent):
         self.msg_queue = Queue()
 
     def set_status(self, status):
-        '''Set the status of this agent on the task'''
+        """Set the status of this agent on the task"""
         self.state.set_status(status)
 
     def get_status(self):
-        '''Get the status of this agent on its task'''
+        """Get the status of this agent on its task"""
         return self.state.get_status()
 
     def submitted_hit(self):
@@ -200,27 +198,27 @@ class MTurkAgent(Agent):
         ]
 
     def is_final(self):
-        '''Determine if this agent is in a final state'''
+        """Determine if this agent is in a final state"""
         return self.state.is_final()
 
     def append_message(self, message):
-        '''Add a received message to the state'''
+        """Add a received message to the state"""
         self.state.append_message(message)
 
     def set_last_command(self, command):
-        '''Changes the last command recorded as sent to the agent'''
+        """Changes the last command recorded as sent to the agent"""
         self.state.set_last_command(command)
 
     def get_last_command(self):
-        '''Returns the last command to be sent to this agent'''
+        """Returns the last command to be sent to this agent"""
         return self.state.get_last_command()
 
     def clear_messages(self):
-        '''Clears the message history for this agent'''
+        """Clears the message history for this agent"""
         self.state.clear_messages()
 
     def get_messages(self):
-        '''Returns all the messages stored in the state'''
+        """Returns all the messages stored in the state"""
         return self.state.get_messages()
 
     def get_connection_id(self):
@@ -276,7 +274,7 @@ class MTurkAgent(Agent):
             self.msg_queue.put(data)
 
     def flush_msg_queue(self):
-        '''Clear all messages in the message queue'''
+        """Clear all messages in the message queue"""
         while not self.msg_queue.empty():
             self.msg_queue.get()
 
@@ -512,6 +510,22 @@ class MTurkAgent(Agent):
             self.mturk_manager.force_expire_hit(
                 self.worker_id, self.assignment_id)
 
+    def wait_completion_timeout(self, iterations):
+        """Suspends the thread waiting for hit completion for some number of
+        iterations on the THREAD_MTURK_POLLING_SLEEP time"""
+
+        # Determine number of sleep iterations for the amount of time
+        # we want to wait before syncing with MTurk. Start with 10 seconds
+        # of waiting
+        iters = (shared_utils.THREAD_MTURK_POLLING_SLEEP /
+                 shared_utils.THREAD_MEDIUM_SLEEP)
+        i = 0
+        # Wait for the desired number of MTURK_POLLING_SLEEP iterations
+        while not self.hit_is_complete and i < iters * iterations:
+            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+            i += 1
+        return
+
     def wait_for_hit_completion(self, timeout=None):
         """Waits for a hit to be marked as complete"""
         # Timeout in seconds, after which the HIT will be expired automatically
@@ -522,12 +536,8 @@ class MTurkAgent(Agent):
                 self.mturk_manager.free_workers([self])
                 return True
             start_time = time.time()
-        iters = (shared_utils.THREAD_MTURK_POLLING_SLEEP /
-                 shared_utils.THREAD_SHORT_SLEEP)
-        i = 0
-        while not self.hit_is_complete and i < iters:
-            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
-            i += 1
+        wait_periods = 1
+        self.wait_completion_timeout(wait_periods)
         sync_attempts = 0
         while (
             not self.hit_is_complete and
@@ -537,10 +547,10 @@ class MTurkAgent(Agent):
             if sync_attempts < 8:
                 # Scaling on how frequently to poll, doubles time waited on
                 # every failure
-                iters *= 2
+                wait_periods *= 2
                 sync_attempts += 1
             else:
-                # Okay we've waited for almost 2 hours the HIT isn't still up
+                # Okay we've waited for 45 mins and the HIT still isn't up
                 self.disconnected = True
             # Check if the Turker already returned/disconnected
             if self.hit_is_returned or self.disconnected:
@@ -566,10 +576,7 @@ class MTurkAgent(Agent):
                     self.worker_id, self.assignment_id, self.conversation_id
                 )
             )
-            i = 0
-            while not self.hit_is_complete and i < iters:
-                time.sleep(shared_utils.THREAD_SHORT_SLEEP)
-                i += 1
+            self.wait_completion_timeout(wait_periods)
 
         shared_utils.print_and_log(
             logging.INFO,

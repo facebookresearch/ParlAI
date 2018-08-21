@@ -235,6 +235,8 @@ class MockSocket():
         self.fake_workers = []
         self.launch_socket()
         self.handlers = {}
+        while self.ws is None:
+            time.sleep(0.05)
 
     def send(self, packet):
         self.ws.send_message_to_all(packet)

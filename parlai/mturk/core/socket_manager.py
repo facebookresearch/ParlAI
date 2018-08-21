@@ -658,7 +658,7 @@ class SocketManager():
             )
 
     def shutdown(self):
-        '''marks the socket manager as closing, shuts down all channels'''
+        """marks the socket manager as closing, shuts down all channels"""
         self.is_shutdown = True
         self.close_all_channels()
         self.keep_running = False

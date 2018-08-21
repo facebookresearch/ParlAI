@@ -94,16 +94,13 @@ class WorkerManager():
 
     def _get_worker(self, worker_id):
         """A safe way to get a worker by worker_id"""
-        if worker_id in self.mturk_workers:
-            return self.mturk_workers[worker_id]
-        return None
+        return self.mturk_workers.get(worker_id, None)
 
     def _get_agent(self, worker_id, assignment_id):
         """A safe way to get an agent by worker and assignment_id"""
         worker = self._get_worker(worker_id)
         if worker is not None:
-            if assignment_id in worker.agents:
-                return worker.agents[assignment_id]
+            return worker.agents.get(assignment_id, None)
         return None
 
     def route_packet(self, pkt):
@@ -131,7 +128,7 @@ class WorkerManager():
         a filter_func is given"""
         for worker in self.mturk_workers.values():
             for agent in worker.agents.values():
-                if filter is None or filter_func(agent):
+                if filter_func is None or filter_func(agent):
                     map_function(agent)
 
     def get_agent_for_assignment(self, assignment_id):
@@ -188,9 +185,9 @@ class WorkerManager():
 
     def handle_agent_disconnect(self, worker_id, assignment_id,
                                 partner_callback):
-        '''Handles a disconnect by the given worker, calls partner_callback
+        """Handles a disconnect by the given worker, calls partner_callback
         on all of the conversation partners of that worker
-        '''
+        """
         agent = self._get_agent(worker_id, assignment_id)
         if agent is not None:
             # Disconnect in conversation is not workable
@@ -205,7 +202,7 @@ class WorkerManager():
                             partner_callback(other_agent)
                 if len(conv_participants) > 1:
                     # The user disconnected from inside a conversation with
-                    # another turker, record this as bad behavoir
+                    # another turker, record this as bad behavior
                     self.handle_bad_disconnect(worker_id)
 
     def handle_bad_disconnect(self, worker_id):
@@ -282,6 +279,15 @@ class WorkerManager():
             not_done_message = ('This operation can be called with a status '
                                 'of: Reviewable,Approved,Rejected')
             if not_done_message in e.response['Error']['Message']:
+                return MTurkAgent.ASSIGNMENT_NOT_DONE
+            else:
+                shared_utils.print_and_log(
+                    logging.WARN,
+                    'Unanticipated error in `get_agent_work_status`: ' +
+                    e.response['Error']['Message'],
+                    should_print=True
+                )
+                # Assume not done if status check seems to be faulty.
                 return MTurkAgent.ASSIGNMENT_NOT_DONE
 
     def _log_missing_agent(self, worker_id, assignment_id):

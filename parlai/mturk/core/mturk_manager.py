@@ -234,7 +234,8 @@ class MTurkManager():
         """Expire all workers in the worker pool"""
         for agent in self.agent_pool.copy():
             self.force_expire_hit(agent.worker_id, agent.assignment_id)
-            self._remove_from_agent_pool(agent)
+            with self.agent_pool_change_condition:
+                self._remove_from_agent_pool(agent)
 
     def _get_unique_pool(self, eligibility_function):
         """Return a filtered version of the worker pool where each worker is
@@ -268,9 +269,9 @@ class MTurkManager():
                     self.agent_pool.append(agent)
 
     def _remove_from_agent_pool(self, agent):
-        '''Remove an agent from the pool. should be called under the
+        """Remove an agent from the pool. should be called under the
         agent_pool_change_condition being set.
-        '''
+        """
         assert agent in self.agent_pool, 'agent not in pool'
         self.agent_pool.remove(agent)
 
@@ -984,9 +985,9 @@ class MTurkManager():
             time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)
 
     def _wait_for_task_expirations(self):
-        '''Wait for the full task duration to ensure anyone who sees the task
+        """Wait for the full task duration to ensure anyone who sees the task
         has it expired, and ensures that all tasks are properly expired
-        '''
+        """
         start_time = time.time()
         min_wait = self.opt['assignment_duration_in_seconds']
         while time.time() - start_time < min_wait and \
@@ -1497,7 +1498,7 @@ class MTurkManager():
         if not can_exist:
             qual_id = mturk_utils.find_qualification(qualification_name,
                                                      self.is_sandbox)
-            if qual_id is not None and not can_exist:
+            if qual_id is not None:
                 shared_utils.print_and_log(
                     logging.WARN,
                     'Could not create qualification {}, as it existed'

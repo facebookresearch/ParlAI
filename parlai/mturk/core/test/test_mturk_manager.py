@@ -5,7 +5,7 @@ import json
 import threading
 import pickle
 from unittest import mock
-from parlai.mturk.core.worker_manager import WorkerManager, WorkerState
+from parlai.mturk.core.worker_manager import WorkerManager
 from parlai.mturk.core.agents import MTurkAgent, AssignState
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.core.socket_manager import SocketManager, Packet
@@ -55,6 +55,8 @@ class MockSocket():
         self.fake_workers = []
         self.launch_socket()
         self.handlers = {}
+        while self.ws is None:
+            time.sleep(0.05)
 
     def send(self, packet):
         self.ws.send_message_to_all(packet)
@@ -251,13 +253,15 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
             self.agent_3.worker_id, self.agent_3.assignment_id)
 
     def test_socket_setup(self):
-        '''Basic socket setup should fail when not in correct state'''
+        '''Basic socket setup should fail when not in correct state,
+        but succeed otherwise
+        '''
+        self.mturk_manager.task_state = self.mturk_manager.STATE_CREATED
         with self.assertRaises(AssertionError):
             self.mturk_manager._setup_socket()
         self.mturk_manager.task_group_id = 'TEST_GROUP_ID'
         self.mturk_manager.server_url = 'https://127.0.0.1'
-        self.mturk_manager.task_state = \
-            self.mturk_manager.STATE_ACCEPTING_WORKERS
+        self.mturk_manager.task_state = self.mturk_manager.STATE_INIT_RUN
         self.mturk_manager._setup_socket()
         self.assertIsInstance(self.mturk_manager.socket_manager, SocketManager)
 
