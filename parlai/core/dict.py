@@ -15,7 +15,7 @@ import numpy as np
 import os
 import pickle
 import re
-from functools import lru_cache
+import functools
 
 try:
     from subword_nmt import learn_bpe, apply_bpe
@@ -225,7 +225,10 @@ class DictionaryAgent(Agent):
 
         if opt.get('dict_cachesize', 0):
             # Equivalent to using the @lru_cache decorator at runtime
-            self.txt2vec = lru_cache(opt['dict_cachesize'], typed=True)(self.txt2vec)
+            cs = opt['dict_cachesize']
+            self.txt2vec = functools.lru_cache(cs, True)(self.txt2vec)
+            # Ensure future in-place modifications are safe. See doc string.
+            self.txt2vec = _list_cache_safety(self.txt2vec)
 
         # initialize tokenizers
         if self.tokenizer == 'nltk':
@@ -617,6 +620,32 @@ class DictionaryAgent(Agent):
 
     def __str__(self):
         return str(self.freq)
+
+
+def _list_cache_safety(fn):
+    """Ensure all returned lists from a function are unique.
+
+    This is useful when a function which returns lists is wrapped in a chaching
+    mechanism. If this is done naively, users may modify the list in-place,
+    causing poisoning to the cache. This method ensures safety against this
+    behavior by calling the cache, and then making a copy of the returned list.
+
+    :param fn: a function wrapped in a @lru_cache decorator
+    :return: a safe wrapper
+    """
+    # Make sure this is what we expect
+    if not isinstance(fn, functools._lru_cache_wrapper):
+        raise TypeError("Can only wrap lru_cache")
+
+    # define the wrapper
+    def wrapped(*args, **kwargs):
+        # call the fn and copy the list
+        return list(fn(*args, **kwargs))
+
+    # be kind about passing along lru_cache's stuff
+    setattr(wrapped, 'cache_clear', fn.cache_clear)
+    setattr(wrapped, 'cache_info', fn.cache_info)
+    return wrapped
 
 
 class _BPEHelper(object):

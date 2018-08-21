@@ -19,8 +19,6 @@ import random
 import math
 from operator import attrgetter
 
-from functools import lru_cache
-
 """
 Batch is a namedtuple containing data being sent to an agent.
 
@@ -205,14 +203,14 @@ class TorchAgent(Agent):
         if truncate is None or len(vec) + add_start + add_end < truncate:
             # simple: no truncation
             if add_start:
-                vec = [self.START_IDX] + vec
+                vec.insert(0, self.START_IDX)
             if add_end:
-                vec = vec + [self.END_IDX]
+                vec.append(self.END_IDX)
         elif truncate_left:
             # don't check add_start, we know are truncating it
             if add_end:
                 # add the end token first
-                vec = vec + [self.END_IDX]
+                vec.append(self.END_IDX)
             vec = vec[len(vec) - truncate:]
         else:
             # truncate from the right side
@@ -220,7 +218,7 @@ class TorchAgent(Agent):
             vec = vec[:truncate - add_start]
             if add_start:
                 # always keep the start token if it's there
-                vec = [self.START_IDX] + vec
+                vec.insert(0, self.START_IDX)
         tensor = torch.LongTensor(vec)
         return tensor
 
