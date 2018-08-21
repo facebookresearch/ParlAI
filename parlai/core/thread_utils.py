@@ -135,13 +135,12 @@ class SharedTable(MutableMapping):
 
     def __str__(self):
         """Returns simple dict representation of the mapping."""
-        return '{{{}}}'.format(
-            ', '.join(
-                ['{k}: {v}'.format(k=key, v=self.arrays[typ][idx])
-                for key, (idx, typ) in self.idx.items()] +
-                ['{k}: {v}'.format(k=k, v=v) for k, v in self.tensors.items()]
-            )
-        )
+        lhs = [
+            '{k}: {v}'.format(k=key, v=self.arrays[typ][idx])
+            for key, (idx, typ) in self.idx.items()
+        ]
+        rhs = ['{k}: {v}'.format(k=k, v=v) for k, v in self.tensors.items()]
+        return '{{{}}}'.format(', '.join(lhs + rhs))
 
     def __repr__(self):
         """Returns the object type and memory location with the mapping."""
