@@ -5,6 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.dict import DictionaryAgent
+from parlai.core.utils import argsort, padded_tensor
 
 try:
     from fairseq import models, optim, criterions
@@ -489,13 +490,13 @@ class FairseqAgent(TorchAgent):
                 # some models crash if there's leading padding on every example
                 xs = xs[:, :batch.text_lengths[i]]
                 # and appropriately pack the outputs
-                ys, _ = self._padded_tensor(cands)
+                ys, _ = padded_tensor(cands, self.NULL_IDX, self.use_cuda)
                 s = self._make_sample(xs, ys)
                 # perform the actual grading, extract the scores
                 scored = list(self.scorer.score_batched_itr([s], cuda=self.use_cuda))
                 scores = [s[3][0]['score'].item() for s in scored]
                 # intentional hanging comma here; argsort returns a list
-                ranked, = self._argsort(scores, batch.candidates[i], descending=True)
+                ranked, = argsort(scores, batch.candidates[i], descending=True)
                 reranked_cands.append(ranked)
 
         # Next generate freely to create our response
