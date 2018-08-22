@@ -16,6 +16,7 @@ from parlai.core.dict import DictionaryAgent
 
 import os
 import json
+import random
 
 # There is no real dialog in this task, so for the purposes of display_data, we
 # include a generic question that applies to all images.
@@ -105,6 +106,7 @@ class DefaultTeacher(FixedDialogTeacher):
         super().__init__(opt, shared)
         self.image_mode = opt.get('image_mode', 'none')
         self.use_intro = opt.get('use_intro', False)
+        self.num_cands = opt.get('num_cands', -1)
         data_path, self.image_path = _path(opt)
 
         if shared:
@@ -128,6 +130,10 @@ class DefaultTeacher(FixedDialogTeacher):
                            help='Include an intro question with each image \
                                 for readability (e.g. for coco_caption, \
                                 Describe the above picture in a sentence.)')
+        agent.add_argument('--num_cands', type=int,
+                           default=-1,
+                           help='Number of candidates to use during \
+                                evaluation, setting to -1 uses all.')
 
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
@@ -156,7 +162,13 @@ class DefaultTeacher(FixedDialogTeacher):
         if self.use_intro:
             action['text'] = QUESTION
         if 'train' not in self.datatype:
-            action['label_candidates'] = self.cands
+            if self.num_cands == -1:
+                candidates = self.cands
+            else:
+                # Can only randomly select from validation set
+                candidates = random.Random(
+                    episode_idx).choices(self.cands, k=self.num_cands)
+            action['label_candidates'] = candidates
         return action
 
     def next_example(self):
