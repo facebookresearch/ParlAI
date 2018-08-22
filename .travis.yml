@@ -15,7 +15,7 @@ before_script:
     - time flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 script:
     - bash tests/check_copyright.sh
-    - flake8 --select=F --max-line-length=127 parlai projects tests
+    - ./tests/lint_changed.sh
     - python tests/test_import.py
     - python tests/test_init.py
     - python tests/test_tasklist.py
