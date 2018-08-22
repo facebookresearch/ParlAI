@@ -169,8 +169,7 @@ class DefaultTeacher(FixedDialogTeacher):
                 random.shuffle(cands)
                 action['label_candidates'] = cands
             else:
-                candidates = self.cands
-            action['label_candidates'] = candidates
+                action['label_candidates'] = self.cands
         return action
 
     def next_example(self):
