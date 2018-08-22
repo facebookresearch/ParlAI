@@ -162,12 +162,14 @@ class DefaultTeacher(FixedDialogTeacher):
         if self.use_intro:
             action['text'] = QUESTION
         if 'train' not in self.datatype:
-            if self.num_cands == -1:
-                candidates = self.cands
+            if self.num_cands > 0:
+                labels = action['labels']
+                cands_to_sample = [c for c in self.cands if c not in labels]
+                cands = random.Random(episode_idx).sample(cands_to_sample, self.num_cands) + labels
+                random.shuffle(cands)
+                action['label_candidates'] = cands
             else:
-                # Can only randomly select from validation set
-                candidates = random.Random(
-                    episode_idx).choices(self.cands, k=self.num_cands)
+                candidates = self.cands
             action['label_candidates'] = candidates
         return action
 
