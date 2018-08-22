@@ -20,7 +20,7 @@ NUM_TRAIN = 1000
 NUM_TEST = 100
 
 
-class UnitTestTeacher(DialogTeacher):
+class CandidateTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         self.opt = opt
         opt['datafile'] = opt['datatype'].split(':')[0]
@@ -57,17 +57,23 @@ class UnitTestTeacher(DialogTeacher):
         # make sure the corpus is actually text strings
         self.corpus = [' '.join(x) for x in self.corpus]
 
-        for text in self.corpus:
-            yield (text, [text]), True
+        for i, text in enumerate(self.corpus):
+            cands = []
+            for j in range(NUM_CANDIDATES):
+                offset = (i + j) % len(self.corpus)
+                cands.append(self.corpus[offset])
+            yield (text, [text], 0, cands), True
 
 
-class RepeatTeacher(UnitTestTeacher):
-    pass
+class NocandidateTeacher(CandidateTeacher):
+    """
+    Strips the candidates so the model can't see any options
+    """
+    def setup_data(self, fold):
+        raw = super().setup_data(fold)
+        for (t, a, r, c), e in raw:
+            yield (t, a), e
 
 
-class CandidateTeacher(RepeatTeacher):
-    pass
-
-
-class DefaultTeacher(UnitTestTeacher):
+class DefaultTeacher(CandidateTeacher):
     pass
