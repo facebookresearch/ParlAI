@@ -332,7 +332,14 @@ class DefaultTeacher(FixedDialogTeacher):
             action['image_id'] = ep['cocoid']
             action['split'] = ep['split']
             if not self.datatype.startswith('train'):
-                action['label_candidates'] = self.cands
+                if self.num_cands > 0:
+                    labels = action['labels']
+                    cands_to_sample = [c for c in self.cands if c not in labels]
+                    cands = random.Random(episode_idx).sample(cands_to_sample, self.num_cands) + labels
+                    random.shuffle(cands)
+                    action['label_candidates'] = cands
+                else:
+                    action['label_candidates'] = self.cands
         else:
             if not self.datatype.startswith('test'):
                 # test set annotations are not available for this dataset
