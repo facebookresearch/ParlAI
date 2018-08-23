@@ -20,7 +20,7 @@ MTurkManagerFile.parent_dir = os.path.dirname(os.path.abspath(__file__))
 MTurkManagerFile.input = mock.MagicMock()
 
 # Lets ignore the logging part
-MTurkManagerFile.shared_utils.print_and_log = mock.MagicMock()
+# MTurkManagerFile.shared_utils.print_and_log = mock.MagicMock()
 
 TEST_WORKER_ID_1 = 'TEST_WORKER_ID_1'
 TEST_WORKER_ID_2 = 'TEST_WORKER_ID_2'

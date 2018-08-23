@@ -9,10 +9,10 @@ set -e
 CHANGES=$(git diff --name-only HEAD~1)
 if echo "$CHANGES" | grep -q "parlai/mturk/"; then
   pip install boto3 joblib websocket-client sh websocket_server
+  python3 parlai/mturk/core/test/test_full_system.py
   python3 parlai/mturk/core/test/test_mturk_agent.py
   python3 parlai/mturk/core/test/test_worker_manager.py
   python3 parlai/mturk/core/test/test_socket_manager.py
   python3 parlai/mturk/core/test/test_mturk_manager.py
-  python3 parlai/mturk/core/test/test_full_system.py
 fi
 exit 0
