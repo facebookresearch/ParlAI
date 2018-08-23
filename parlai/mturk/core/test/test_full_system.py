@@ -119,6 +119,7 @@ class MockSocket():
 
     def launch_socket(self):
         def on_message(client, server, message):
+            print(client, server, message)
             if self.closed:
                 raise Exception('Socket is already closed...')
             if message == '':
@@ -913,4 +914,4 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main(buffer=True)
+    unittest.main() # buffer=True)
