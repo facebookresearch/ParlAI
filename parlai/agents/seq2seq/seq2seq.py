@@ -350,6 +350,7 @@ class Seq2seqAgent(TorchAgent):
         if num_tok > 0:
             if self.metrics['correct_tokens'] > 0:
                 m['token_acc'] = self.metrics['correct_tokens'] / num_tok
+                m['correct_tokens'] = self.metrics['correct_tokens']
             m['loss'] = self.metrics['loss'] / num_tok
             m['num_tokens'] = num_tok
             try:
@@ -560,9 +561,11 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
         """
         obs = self.observation
         obs['eval_labels'] = [' '.join(partial_out)]
-        batch = self.vectorize([obs])
+        # revectorize label vec
+        obs = self.vectorize(obs, truncate=self.truncate, nocache=True)
+        batch = self.batchify([obs])
 
-        xs, ys = batch[0], batch[1]
+        xs, ys = batch.text_vec, batch.label_vec
         if self.prev_enc is not None and self.last_xs is not None and (
                 xs.shape[1] != self.last_xs.shape[1] or
                 (xs == self.last_xs).sum().item() != xs.shape[1]):
