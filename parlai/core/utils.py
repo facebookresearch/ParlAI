@@ -10,6 +10,14 @@ import os
 import random
 import time
 
+# some of the utility methods are helpful for Torch
+try:
+    import torch
+    __TORCH_AVAILABLE = True
+except ImportError:
+    __TORCH_AVAILABLE = False
+
+
 DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'episode_done',
     'id',
@@ -872,3 +880,70 @@ def set_namedtuple_defaults(namedtuple, default=None):
     """
     namedtuple.__new__.__defaults__ = (default,) * len(namedtuple._fields)
     return namedtuple
+
+
+def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
+    """Create a right-padded matrix from an uneven list of lists.
+
+    Returns (padded, lengths), where padded is the padded matrix, and lengths
+    is a list containing the lengths of each row.
+
+    Matrix is right-padded (filled to the right) by default, but can be
+    left padded if the flag is set to True.
+
+    Matrix can also be placed on cuda automatically.
+
+    :param list[iter[int]] items: List of items
+    :param bool sort: If True, orders by the length
+    :param int pad_idx: the value to use for padding
+    :param bool use_cuda: if true, places `padded` on GPU
+    :param bool left_padded:
+
+    :return: (padded, lengths) tuple
+    :rtype: (Tensor[int64], list[int])
+    """
+    # hard fail if we don't have torch
+    if not __TORCH_AVAILABLE:
+        raise ImportError(
+            "Cannot use padded_tensor without torch; go to http://pytorch.org"
+        )
+
+    # number of items
+    n = len(items)
+    # length of each item
+    lens = [len(item) for item in items]
+    # max in time dimension
+    t = max(lens)
+    output = torch.LongTensor(n, t).fill_(pad_idx)
+    for i in range(len(items)):
+        if left_padded:
+            # place at end
+            output[i, t - lens[i]:] = torch.LongTensor(items[i])
+        else:
+            # place at beginning
+            output[i, :lens[i]] = torch.LongTensor(items[i])
+    if use_cuda:
+        output = output.cuda()
+    return output, lens
+
+
+def argsort(keys, *lists, descending=False):
+    """Reorder each list in lists by the (descending) sorted order of keys.
+
+    :param iter keys: Keys to order by
+    :param list[list] lists: Lists to reordered by keys's order.
+                             Correctly handles lists and 1-D tensors.
+    :param bool descending: Use descending order if true
+    :return: The reordered items
+    """
+    ind_sorted = sorted(range(len(keys)), key=lambda k: keys[k])
+    if descending:
+        ind_sorted = list(reversed(ind_sorted))
+    output = []
+    for lst in lists:
+        # watch out in case we don't have torch installed
+        if __TORCH_AVAILABLE and isinstance(lst, torch.Tensor):
+            output.append(lst[ind_sorted])
+        else:
+            output.append([lst[i] for i in ind_sorted])
+    return output

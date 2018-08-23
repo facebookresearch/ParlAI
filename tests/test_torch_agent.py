@@ -520,12 +520,12 @@ class TestTorchAgent(unittest.TestCase):
             "Attack ships on fire off the shoulder of Orion.\n"
             "I watched C-beams glitter in the dark near the Tannhauser gate.\n"
             "All those moments will be lost in time, like tears in rain.")
-        prefix = 'PRE '
+        prefix = 'PRE'
         out = agent._add_person_tokens(text, prefix, add_after_newln=False)
-        self.assertEqual(out, prefix + text)
+        self.assertEqual(out, prefix + ' ' + text)
         out = agent._add_person_tokens(text, prefix, add_after_newln=True)
         idx = text.rfind('\n') + 1
-        self.assertEqual(out, text[:idx] + prefix + text[idx:])
+        self.assertEqual(out, text[:idx] + prefix + ' ' + text[idx:])
 
     def test_get_dialog_history(self):
         """Test different dialog history settings."""

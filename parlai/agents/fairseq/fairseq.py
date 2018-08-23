@@ -5,6 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.dict import DictionaryAgent
+from parlai.core.utils import argsort, padded_tensor
 
 try:
     from fairseq import models, optim, criterions
@@ -15,6 +16,7 @@ except ImportError:
     )
 from fairseq import trainer, fp16_trainer
 from fairseq.sequence_generator import SequenceGenerator
+from fairseq.sequence_scorer import SequenceScorer
 from fairseq import options
 from fairseq.tasks.fairseq_task import FairseqTask
 from fairseq.utils import convert_padding_direction
@@ -319,7 +321,7 @@ class FairseqAgent(TorchAgent):
             # actually construct the model and generator
             self.model = self.build_model()
 
-            # Construct the generator
+            # Construct the generator and scorer
             self.generator = SequenceGenerator(
                 [self.model],
                 tgt_dict=self.dict,
@@ -332,6 +334,8 @@ class FairseqAgent(TorchAgent):
                 sampling_topk=self.args.sampling_topk,
                 sampling_temperature=self.args.sampling_temperature,
             )
+            self.scorer = SequenceScorer([self.model], self.dict)
+
             # set up the grader and the trainer
             self.criterion = criterions.build_criterion(self.args, self.task)
 
@@ -464,12 +468,53 @@ class FairseqAgent(TorchAgent):
         if batch.label_vec is not None:
             # Interactive mode won't have a gold label
             self.trainer.valid_step(samples)
-        # Grade each of the candidate sequences
-        # TODO: grade everything in observations[i]['label_candidates']
 
+        # Output placeholders
+        reranked_cands = None
+        generated_output = None
+
+        # Grade each of the candidate sequences
+        if batch.candidate_vecs is not None:
+            bsz = len(batch.text_vec)
+            reranked_cands = []
+            # score the candidates for each item in the batch separately, so that
+            # we can support variable number of candidates
+            for i in range(bsz):
+                cands = batch.candidate_vecs[i]
+                if not cands:
+                    reranked_cands.append(None)
+                    continue
+                ncand = len(cands)
+                # repeat the input many times
+                xs = batch.text_vec[i].unsqueeze(0).expand(ncand, -1)
+                # some models crash if there's leading padding on every example
+                xs = xs[:, :batch.text_lengths[i]]
+                # and appropriately pack the outputs
+                ys, _ = padded_tensor(cands, self.NULL_IDX, self.use_cuda)
+                s = self._make_sample(xs, ys)
+                # perform the actual grading, extract the scores
+                scored = list(self.scorer.score_batched_itr([s], cuda=self.use_cuda))
+                scores = [s[3][0]['score'].item() for s in scored]
+                # intentional hanging comma here; argsort returns a list
+                ranked, = argsort(scores, batch.candidates[i], descending=True)
+                reranked_cands.append(ranked)
+
+        # Next generate freely to create our response
         if not self.args.skip_generation:
-            # Next generate freely to create our response
-            return Output(self._generate(samples), None)
+            generated_output = self._generate(samples)
+        elif reranked_cands:
+            # we're skiping generation, but we're also grading candidates
+            # so output the highest ranked candidate
+            # In the case of zero candidates, we don't have something to rank,
+            # so we may need to pass on that None
+            generated_output = [
+                ranked and ranked[0] or None for ranked in reranked_cands
+            ]
+        else:
+            # no output at all
+            pass
+
+        return Output(generated_output, reranked_cands)
 
     def _generate(self, samples):
         src_tokens = samples["net_input"]["src_tokens"]
@@ -554,6 +599,7 @@ class FairseqAgent(TorchAgent):
         # TODO: should the right/left padding thing be in torch agent?
         repadded = convert_padding_direction(xs, self.dict.pad(), right_to_left=True)
         sample = {}
+        sample["id"] = torch.arange(len(xs) - 1)
         sample["net_input"] = {
             "src_tokens": repadded,
             "src_lengths": self._seq_length(xs),
