@@ -1005,7 +1005,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         self.assertIsNone(incoming_hb)
         self.assertIsNone(message_packet)
         self.assertIsNone(self.message_packet)
-        self.assertIsNotNone(self.alive_packet)
+        self.assertEqualBy(lambda: self.alive_packet, False, 2)
         self.assertEqual(self.alive_packet.id, alive_id)
         self.assertEqual(acked_packet.id, alive_id, 'Alive was not acked')
         acked_packet = None
@@ -1021,7 +1021,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         test_message_text_1 = 'test_message_text_1'
         msg_id = self.agent1.send_message(test_message_text_1)
         self.assertEqualBy(lambda: self.message_packet is None, False, 2)
-        self.assertIsNotNone(acked_packet)
+        self.assertEqualBy(lambda: acked_packet is None, False, 2)
         self.assertEqual(self.message_packet.id, acked_packet.id)
         self.assertEqual(self.message_packet.id, msg_id)
         self.assertEqual(self.message_packet.data['text'], test_message_text_1)
@@ -1080,7 +1080,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         self.assertIsNone(incoming_hb)
         self.assertIsNone(message_packet)
         self.assertIsNone(self.message_packet)
-        self.assertIsNotNone(self.alive_packet)
+        self.assertEqualBy(lambda: self.alive_packet is None, False, 2)
         self.assertEqual(self.alive_packet.id, alive_id)
         self.assertEqual(acked_packet.id, alive_id, 'Alive was not acked')
         acked_packet = None
@@ -1169,7 +1169,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         test_message_text_1 = 'test_message_text_1'
         msg_id = self.agent1.send_message(test_message_text_1)
         self.assertEqualBy(lambda: self.message_packet is None, False, 2)
-        self.assertIsNotNone(acked_packet)
+        self.assertEqualBy(lambda: acked_packet is None, False, 2)
         self.assertEqual(self.message_packet.id, acked_packet.id)
         self.assertEqual(self.message_packet.id, msg_id)
         self.assertEqual(self.message_packet.data['text'], test_message_text_1)
