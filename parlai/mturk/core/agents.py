@@ -530,7 +530,7 @@ class MTurkAgent(Agent):
         if timeout:
             if timeout < 0:
                 # Negative timeout is for testing, wait for packet to send
-                time.sleep(0.3)
+                time.sleep(1)
                 self.mturk_manager.free_workers([self])
                 return True
             start_time = time.time()

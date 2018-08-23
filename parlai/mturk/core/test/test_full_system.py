@@ -428,7 +428,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
         assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
             agent_1.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
@@ -436,13 +436,13 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_1.worker_id] = True
         assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 1)
+            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Alive second agent
         agent_2 = self.agent_2
         self.alive_agent(agent_2)
         assert_equal_by(
-            lambda: agent_2.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
         agent_2_object = manager.worker_manager.get_agent_for_assignment(
             agent_2.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_2.worker_id])
@@ -450,22 +450,22 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_2.worker_id] = True
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_WAITING, 1)
+            agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Assert agents move to task
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 1)
+            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
         assert_equal_by(
-            lambda: agent_2.worker_id in self.worlds_agents, True, 1)
+            lambda: agent_2.worker_id in self.worlds_agents, True, 2)
         self.assertIn(agent_1.worker_id, self.worlds_agents)
 
         # Complete agents
         self.worlds_agents[agent_1.worker_id] = True
         self.worlds_agents[agent_2.worker_id] = True
         assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_DONE, 1)
+            agent_1_object.get_status, AssignState.STATUS_DONE, 2)
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_DONE, 1)
+            agent_2_object.get_status, AssignState.STATUS_DONE, 2)
 
         # Assert conversation is complete for manager and agents
         assert_equal_by(lambda: manager.completed_conversations, 1, 2)
@@ -490,7 +490,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
         assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
             agent_1.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
@@ -498,13 +498,13 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_1.worker_id] = True
         assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 1)
+            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Alive second agent
         agent_2 = self.agent_2
         self.alive_agent(agent_2)
         assert_equal_by(
-            lambda: agent_2.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
         agent_2_object = manager.worker_manager.get_agent_for_assignment(
             agent_2.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_2.worker_id])
@@ -512,13 +512,13 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_2.worker_id] = True
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_WAITING, 1)
+            agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Assert agents move to task
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 1)
+            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
         assert_equal_by(
-            lambda: agent_2.worker_id in self.worlds_agents, True, 1)
+            lambda: agent_2.worker_id in self.worlds_agents, True, 2)
         self.assertIn(agent_1.worker_id, self.worlds_agents)
 
         # Disconnect agent
@@ -557,7 +557,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
         assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
             agent_1.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
@@ -585,7 +585,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
         assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
             agent_1.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
@@ -593,13 +593,13 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_1.worker_id] = True
         assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 1)
+            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Alive second agent
         agent_2 = self.agent_2
         self.alive_agent(agent_2)
         assert_equal_by(
-            lambda: agent_2.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
         agent_2_object = manager.worker_manager.get_agent_for_assignment(
             agent_2.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_2.worker_id])
@@ -607,13 +607,13 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_2.worker_id] = True
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_WAITING, 1)
+            agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Assert agents move to task
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 1)
+            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
         assert_equal_by(
-            lambda: agent_2.worker_id in self.worlds_agents, True, 1)
+            lambda: agent_2.worker_id in self.worlds_agents, True, 2)
         self.assertIn(agent_1.worker_id, self.worlds_agents)
 
         # Simulate reconnect
@@ -634,9 +634,9 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         self.worlds_agents[agent_1.worker_id] = True
         self.worlds_agents[agent_2.worker_id] = True
         assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_DONE, 1)
+            agent_1_object.get_status, AssignState.STATUS_DONE, 2)
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_DONE, 1)
+            agent_2_object.get_status, AssignState.STATUS_DONE, 2)
 
         # Assert conversation is complete for manager and agents
         assert_equal_by(lambda: manager.completed_conversations, 1, 2)
@@ -665,7 +665,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
         assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
             agent_1.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
@@ -673,13 +673,13 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_1.worker_id] = True
         assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 1)
+            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Alive second agent
         agent_2 = self.agent_2
         self.alive_agent(agent_2)
         assert_equal_by(
-            lambda: agent_2.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
         agent_2_object = manager.worker_manager.get_agent_for_assignment(
             agent_2.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_2.worker_id])
@@ -687,22 +687,22 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_2.worker_id] = True
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_WAITING, 1)
+            agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Assert agents move to task
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 1)
+            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
         assert_equal_by(
-            lambda: agent_2.worker_id in self.worlds_agents, True, 1)
+            lambda: agent_2.worker_id in self.worlds_agents, True, 2)
         self.assertIn(agent_1.worker_id, self.worlds_agents)
 
         # Complete agents
         self.worlds_agents[agent_1.worker_id] = True
         self.worlds_agents[agent_2.worker_id] = True
         assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_DONE, 1)
+            agent_1_object.get_status, AssignState.STATUS_DONE, 2)
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_DONE, 1)
+            agent_2_object.get_status, AssignState.STATUS_DONE, 2)
 
         # Assert conversation is complete for manager and agents
         assert_equal_by(lambda: manager.completed_conversations, 1, 2)
@@ -732,7 +732,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent_1_2 = self.agent_1_2
         self.alive_agent(agent_1_2)
         assert_equal_by(
-            lambda: agent_1_2.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_1_2.worker_id in self.onboarding_agents, True, 2)
         agent_1_2_object = manager.worker_manager.get_agent_for_assignment(
             agent_1_2.assignment_id)
 
@@ -757,7 +757,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
         assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
             agent_1.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
@@ -765,13 +765,13 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_1.worker_id] = True
         assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 1)
+            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Alive second agent
         agent_2 = self.agent_2
         self.alive_agent(agent_2)
         assert_equal_by(
-            lambda: agent_2.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
         agent_2_object = manager.worker_manager.get_agent_for_assignment(
             agent_2.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_2.worker_id])
@@ -779,20 +779,20 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_2.worker_id] = True
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_WAITING, 1)
+            agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Assert agents move to task
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 1)
+            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
         assert_equal_by(
-            lambda: agent_2.worker_id in self.worlds_agents, True, 1)
+            lambda: agent_2.worker_id in self.worlds_agents, True, 2)
         self.assertIn(agent_1.worker_id, self.worlds_agents)
 
         # Attempt to start a new conversation with duplicate worker 1
         agent_1_2 = self.agent_1_2
         self.alive_agent(agent_1_2)
         assert_equal_by(
-            lambda: agent_1_2.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_1_2.worker_id in self.onboarding_agents, True, 2)
         agent_1_2_object = manager.worker_manager.get_agent_for_assignment(
             agent_1_2.assignment_id)
 
@@ -813,9 +813,9 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         self.worlds_agents[agent_1.worker_id] = True
         self.worlds_agents[agent_2.worker_id] = True
         assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_DONE, 1)
+            agent_1_object.get_status, AssignState.STATUS_DONE, 2)
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_DONE, 1)
+            agent_2_object.get_status, AssignState.STATUS_DONE, 2)
 
         # Assert conversation is complete for manager and agents
         assert_equal_by(lambda: len(
@@ -843,7 +843,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
             agent_1.assignment_id)
         assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 1)
+            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         manager._expire_agent_pool()
 
@@ -864,7 +864,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
         assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
             agent_1.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
@@ -872,7 +872,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_1.worker_id] = True
         assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 1)
+            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Make agent_1 no longer respond to change_conversation_requests
         def replace_on_msg(packet):
@@ -884,7 +884,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent_2 = self.agent_2
         self.alive_agent(agent_2)
         assert_equal_by(
-            lambda: agent_2.worker_id in self.onboarding_agents, True, 1)
+            lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
         agent_2_object = manager.worker_manager.get_agent_for_assignment(
             agent_2.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_2.worker_id])
@@ -892,11 +892,11 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_2.worker_id] = True
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_WAITING, 1)
+            agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Assert agents attempt to move to task, but then move back to waiting
         assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 1)
+            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
         assert_equal_by(
             agent_2_object.get_status, AssignState.STATUS_WAITING, 3)
         agent_1.always_beat = False
