@@ -116,7 +116,7 @@ class TestUtils(unittest.TestCase):
         ]
         assert argsort(keys, items, items2, descending=True) == [items, items2]
 
-        assert torch.all(argsort(torch_keys, torch_keys)[0] == torch.arange(1, 6))
+        assert np.all(argsort(torch_keys, torch_keys)[0].numpy() == np.arange(1, 6))
 
 
 if __name__ == '__main__':
