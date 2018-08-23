@@ -470,7 +470,6 @@ class Seq2seqAgent(TorchAgent):
         preds, cand_preds = out[0], out[2]
 
         if batch.label_vec is not None:
-            import pdb; pdb.set_trace()
             # calculate loss on targets
             out = self.model(batch.text_vec, batch.label_vec)
             f_preds, scores = out[0], out[1]
