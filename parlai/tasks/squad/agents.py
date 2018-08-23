@@ -241,6 +241,7 @@ class SentenceTeacher(IndexTeacher):
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
+        self.sent_tok = get_sentence_tokenizer()
         self.include_context = opt.get('include_context', False)
 
     @staticmethod
