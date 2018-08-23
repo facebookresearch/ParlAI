@@ -1038,9 +1038,10 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         self.assertEqual(message_packet.id, manager_message_id)
         self.assertEqual(message_packet.data, test_message_text_2)
         self.assertIn(manager_message_id, self.socket_manager.packet_map)
-        self.assertEqual(
-            self.socket_manager.packet_map[manager_message_id].status,
+        self.assertEqualBy(
+            lambda: self.socket_manager.packet_map[manager_message_id].status,
             Packet.STATUS_ACK,
+            3,
         )
 
         # Test agent disconnect
@@ -1118,7 +1119,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         self.assertEqualBy(
             lambda: self.socket_manager.packet_map[manager_message_id].status,
             Packet.STATUS_ACK,
-            1,
+            3,
         )
 
     def test_one_agent_disconnect_other_alive(self):
