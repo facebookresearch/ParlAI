@@ -13,6 +13,8 @@ try:
 except ImportError as e:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 
+
+from torch import optim
 from collections import deque, namedtuple
 import pickle
 import random
@@ -95,6 +97,14 @@ class TorchAgent(Agent):
     to use PyTorch.
     """
 
+    """Utility mapping of simple names to optimizers.
+
+    For example:
+    'adagrad': optim.Adagrad, 'adam': optim.Adad, 'sgd': optim.SGD
+    """
+    OPTIM_OPTS = {k.lower(): v for k, v in optim.__dict__.items()
+                  if not k.startswith('__') and k[0].isupper()}
+
     P1_TOKEN = '__p1__'
     P2_TOKEN = '__p2__'
 
@@ -110,6 +120,10 @@ class TorchAgent(Agent):
     def add_cmdline_args(argparser):
         """Add the default commandline args we expect most agents to want."""
         agent = argparser.add_argument_group('TorchAgent Arguments')
+        agent.add_argument(
+            '-opt', '--optimizer', default='sgd',
+            help='Choose between pytorch optimizers. Any member of torch.optim'
+                 'should be valid.')
         agent.add_argument(
             '-rc', '--rank-candidates', type='bool', default=False,
             help='Whether the model should parse candidates for ranking.')
@@ -135,6 +149,7 @@ class TorchAgent(Agent):
     def __init__(self, opt, shared=None):
         """Initialize agent."""
         super().__init__(opt, shared)
+        opt = self.opt
 
         if not shared:
             # intitialize any important structures from scratch
@@ -152,6 +167,12 @@ class TorchAgent(Agent):
         if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
 
+        if opt['optimizer'] not in self.OPTIM_OPTS:
+            # make sure valid optimizer arg
+            raise RuntimeError('Invalid optimizer: {} not in [{}]'.format(
+                               opt['optimizer'],
+                               ', '.join(self.OPTIM_OPTS.keys())))
+
         # check for cuda
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
         if self.use_cuda:
@@ -160,10 +181,11 @@ class TorchAgent(Agent):
             torch.cuda.device(opt['gpu'])
 
         # now set up any fields that all instances may need
+        self.id = 'TorchAgent'  # child can override
         self.EMPTY = torch.Tensor([])
         self.NULL_IDX = self.dict[self.dict.null_token]
-        self.END_IDX = self.dict[self.dict.end_token]
         self.START_IDX = self.dict[self.dict.start_token]
+        self.END_IDX = self.dict[self.dict.end_token]
 
         self.random = random.Random(42)  # fixed random seed
         # which row in the batch this instance is
@@ -175,6 +197,7 @@ class TorchAgent(Agent):
         # truncate == 0 might give funny behavior
         self.truncate = opt['truncate'] if opt['truncate'] >= 0 else None
         self.rank_candidates = opt['rank_candidates']
+        self.add_person_tokens = opt.get('person_tokens', False)
 
     def share(self):
         """Share fields from parent as well as useful objects in this class.
@@ -305,6 +328,7 @@ class TorchAgent(Agent):
                 for i, c in enumerate(vecs):
                     vecs[i] = self._check_truncate(c, truncate)
         elif self.rank_candidates and 'label_candidates' in obs:
+            obs['label_candidates'] = list(obs['label_candidates'])
             obs['label_candidates_vecs'] = [
                 self._vectorize_text(c, add_start, add_end, truncate, False)
                 for c in obs['label_candidates']]
@@ -534,7 +558,8 @@ class TorchAgent(Agent):
         This includes remembering the past history of the conversation.
         """
         reply = self.last_reply()
-        self.observation = self.get_dialog_history(observation, reply=reply)
+        self.observation = self.get_dialog_history(
+            observation, reply=reply, add_person_tokens=self.add_person_tokens)
         return self.vectorize(self.observation, truncate=self.truncate)
 
     def save(self, path=None):
@@ -577,6 +602,7 @@ class TorchAgent(Agent):
         self.observation = None
         self.history.clear()
         self.replies.clear()
+        self.reset_metrics()
 
     def act(self):
         """Call batch_act with the singleton batch."""

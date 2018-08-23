@@ -471,14 +471,6 @@ class ParlaiParser(argparse.ArgumentParser):
         if self.opt.get('datapath'):
             os.environ['PARLAI_DATAPATH'] = self.opt['datapath']
 
-        # map filenames that start with 'models:' to point to the model zoo dir
-        if self.opt.get('model_file') is not None:
-            self.opt['model_file'] = modelzoo_path(self.opt.get('datapath'),
-                                                   self.opt['model_file'])
-        if self.opt.get('dict_file') is not None:
-            self.opt['dict_file'] = modelzoo_path(self.opt.get('datapath'),
-                                                  self.opt['dict_file'])
-
         # set all arguments specified in commandline as overridable
         option_strings_dict = {}
         store_true = []
@@ -505,6 +497,22 @@ class ParlaiParser(argparse.ArgumentParser):
                     key = option_strings_dict[self.cli_args[i]]
                     self.overridable[key] = self.opt[key]
         self.opt['override'] = self.overridable
+
+        # map filenames that start with 'models:' to point to the model zoo dir
+        if self.opt.get('model_file') is not None:
+            self.opt['model_file'] = modelzoo_path(self.opt.get('datapath'),
+                                                   self.opt['model_file'])
+        if self.opt['override'].get('model_file') is not None:
+            # also check override
+            self.opt['override']['model_file'] = modelzoo_path(
+                self.opt.get('datapath'), self.opt['override']['model_file'])
+        if self.opt.get('dict_file') is not None:
+            self.opt['dict_file'] = modelzoo_path(self.opt.get('datapath'),
+                                                  self.opt['dict_file'])
+        if self.opt['override'].get('dict_file') is not None:
+            # also check override
+            self.opt['override']['dict_file'] = modelzoo_path(
+                self.opt.get('datapath'), self.opt['override']['dict_file'])
 
         # add start time of an experiment
         self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')
