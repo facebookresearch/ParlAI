@@ -285,31 +285,6 @@ class Seq2seqAgent(TorchAgent):
 
         self.reset()
 
-    def override_opt(self, new_opt):
-        """Set overridable opts from loaded opt file.
-
-        Print out each added key and each overriden key.
-        Only override args specific to the model.
-        """
-        model_args = {'hiddensize', 'embeddingsize', 'numlayers', 'optimizer',
-                      'encoder', 'decoder', 'lookuptable', 'attention',
-                      'attention_length', 'rnn_class'}
-        for k, v in new_opt.items():
-            if k not in model_args:
-                # skip non-model args
-                continue
-            if k not in self.opt:
-                print('[ Adding new option: | {k}: {v} | ]'.format(k=k, v=v))
-            elif self.opt[k] != v:
-                print('[ Overriding option: | {k}: {old} => {v} | ]'.format(
-                      k=k, old=self.opt[k], v=v))
-            self.opt[k] = v
-        if 'dict_file' in new_opt and not self.opt.get('dict_file'):
-            print('[ No dictionary path detected, trying to load previous '
-                  'path {} ]'.format(new_opt['dict_file']))
-            self.opt['dict_file'] = new_opt['dict_file']
-        return self.opt
-
     def _v2t(self, vec):
         """Convert token indices to string of tokens."""
         new_vec = []
@@ -560,12 +535,8 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
         {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
         """
         obs = self.observation
-        obs['eval_labels'] = [' '.join(partial_out)]
-        # revectorize label vec
-        obs = self.vectorize(obs, truncate=self.truncate, nocache=True)
-        batch = self.batchify([obs])
-
-        xs, ys = batch.text_vec, batch.label_vec
+        xs = obs['text_vec'].unsqueeze(0)
+        ys = self._vectorize_text(' '.join(partial_out), False, True, self.truncate).unsqueeze(0)
         if self.prev_enc is not None and self.last_xs is not None and (
                 xs.shape[1] != self.last_xs.shape[1] or
                 (xs == self.last_xs).sum().item() != xs.shape[1]):
