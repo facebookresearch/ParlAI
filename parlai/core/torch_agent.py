@@ -255,7 +255,7 @@ class TorchAgent(Agent):
             return vec[:truncate]
 
     def vectorize(self, obs, add_start=True, add_end=True, truncate=None,
-                  split_lines=False):
+                  split_lines=False, nocache=False):
         """Make vectors out of observation fields and store in the observation.
 
         In particular, the 'text' and 'labels'/'eval_labels' fields are
@@ -276,8 +276,9 @@ class TorchAgent(Agent):
         :param split_lines: If set, returns list of vectors instead of a single
                             vector for input text, one for each substring after
                             splitting on newlines.
+        :param nocache:     default False, recalculates vecs even if present
         """
-        if 'text_vec' in obs:
+        if 'text_vec' in obs and not nocache:
             # check truncation of pre-computed vectors
             obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate)
             if split_lines and 'memory_vecs' in obs:
@@ -308,7 +309,7 @@ class TorchAgent(Agent):
 
         if label_type is None:
             pass
-        elif label_type + '_vec' in obs:
+        elif label_type + '_vec' in obs and not nocache:
             # check truncation of pre-computed vector
             obs[label_type + '_vec'] = self._check_truncate(
                 obs[label_type + '_vec'], truncate)
@@ -321,7 +322,7 @@ class TorchAgent(Agent):
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
-        if 'label_candidates_vecs' in obs:
+        if 'label_candidates_vecs' in obs and not nocache:
             if truncate is not None:
                 # check truncation of pre-computed vectors
                 vecs = obs['label_candidates_vecs']
@@ -515,7 +516,8 @@ class TorchAgent(Agent):
             # add text to history
             self.history.append(obs['text'])
 
-        obs['text'] = '\n'.join(self.history)
+        if len(self.history) > 0:
+            obs['text'] = '\n'.join(self.history)
         if obs.get('episode_done', True):
             # end of this episode, clear the history
             self.history.clear()
@@ -632,15 +634,6 @@ class TorchAgent(Agent):
             output = self.train_step(batch)
         else:
             output = self.eval_step(batch)
-
-        if output is None:
-            raise RuntimeError()
-        elif output.text is None:
-            raise RuntimeError()
-        elif len(output.text) != batch_size:
-            import pdb; pdb.set_trace()
-        elif sum(len(t) > 0 for t in output.text) != batch_size:
-            import pdb; pdb.set_trace()
 
         if output is None:
             self.replies['batch_reply'] = None
