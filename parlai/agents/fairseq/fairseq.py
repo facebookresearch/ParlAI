@@ -317,8 +317,9 @@ class FairseqAgent(TorchAgent):
             self.task = _ParlaiTask(self.dict)
 
             # actually construct the model and generator
-            model_class = models.ARCH_MODEL_REGISTRY[self.args.arch]
-            self.model = model_class.build_model(self.args, self.task)
+            self.model = self.build_model()
+
+            # Construct the generator
             self.generator = SequenceGenerator(
                 [self.model],
                 tgt_dict=self.dict,
@@ -376,6 +377,15 @@ class FairseqAgent(TorchAgent):
                 raise ValueError(
                     '{} cannot be overridden when --model-file is specified'.format(k)
                 )
+
+    def build_model(self):
+        """
+        Construct the actual Fairseq model. Default implementation is to use
+        Fairseq's arch builder, but this method may be overridden to build custom
+        models.
+        """
+        model_class = models.ARCH_MODEL_REGISTRY[self.args.arch]
+        return model_class.build_model(self.args, self.task)
 
     def share(self):
         shared = super().share()
