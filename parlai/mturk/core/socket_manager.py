@@ -295,6 +295,8 @@ class SocketManager():
         """Sends a packet, blocks if the packet is blocking"""
         # Send the packet
         pkt = packet.as_dict()
+        if pkt['data'] is None:
+            return # This packet was _just_ acked.
         shared_utils.print_and_log(
             logging.DEBUG,
             'Send packet: {}'.format(packet)
