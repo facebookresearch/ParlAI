@@ -27,6 +27,7 @@ script:
     - python tests/test_hogwild.py
     - python tests/test_train_model.py
     - python tests/test_tfidf_retriever.py
+    - ./tests/run_mturk_tests_if_needed.sh
 notifications:
     on_success: change
     on_failure: always
