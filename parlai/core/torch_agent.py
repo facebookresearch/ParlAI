@@ -583,13 +583,6 @@ class TorchAgent(Agent):
             self.optimizer.load_state_dict(states['optimizer'])
         return states
 
-    def shutdown(self):
-        """Save the state of the model when shutdown."""
-        path = self.opt.get('model_file', None)
-        if path is not None:
-            self.save(path + '.shutdown_state')
-        super().shutdown()
-
     def reset(self):
         """Clear internal states."""
         self.observation = None
