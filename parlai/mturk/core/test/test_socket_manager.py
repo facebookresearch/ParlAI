@@ -1005,7 +1005,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         self.assertIsNone(incoming_hb)
         self.assertIsNone(message_packet)
         self.assertIsNone(self.message_packet)
-        self.assertEqualBy(lambda: self.alive_packet, False, 2)
+        self.assertEqualBy(lambda: self.alive_packet is None, False, 2)
         self.assertEqual(self.alive_packet.id, alive_id)
         self.assertEqual(acked_packet.id, alive_id, 'Alive was not acked')
         acked_packet = None
