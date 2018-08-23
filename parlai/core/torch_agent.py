@@ -634,6 +634,15 @@ class TorchAgent(Agent):
             output = self.eval_step(batch)
 
         if output is None:
+            raise RuntimeError()
+        elif output.text is None:
+            raise RuntimeError()
+        elif len(output.text) != batch_size:
+            import pdb; pdb.set_trace()
+        elif sum(len(t) > 0 for t in output.text) != batch_size:
+            import pdb; pdb.set_trace()
+
+        if output is None:
             self.replies['batch_reply'] = None
             return batch_reply
 

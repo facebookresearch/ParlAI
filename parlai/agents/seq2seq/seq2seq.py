@@ -351,6 +351,7 @@ class Seq2seqAgent(TorchAgent):
             if self.metrics['correct_tokens'] > 0:
                 m['token_acc'] = self.metrics['correct_tokens'] / num_tok
             m['loss'] = self.metrics['loss'] / num_tok
+            m['num_tokens'] = num_tok
             try:
                 m['ppl'] = math.exp(m['loss'])
             except OverflowError:
