@@ -601,6 +601,19 @@ class SocketManager():
         )
         self.run[connection_id] = False
         if connection_id in self.queues:
+            while not self.queues[connection_id].empty():  # Empty the queue
+                try:
+                    item = self.queues[connection_id].get(block=False)
+                    t = item[0]
+                    packet = item[1]
+                    if not packet:
+                        continue
+                    packet.requires_ack = False
+                    packet.blocking = False
+                    if packet.status is not Packet.STATUS_ACK:
+                        self._send_packet(packet, connection_id, t)
+                except Empty:
+                    break
             # Clean up packets
             with self.packet_map_lock:
                 packet_ids = list(self.packet_map.keys())
