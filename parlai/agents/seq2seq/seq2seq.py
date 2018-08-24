@@ -5,13 +5,11 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.torch_agent import TorchAgent, Output
-from parlai.core.build_data import modelzoo_path
 from parlai.core.utils import padded_tensor, round_sigfigs
 from parlai.core.thread_utils import SharedTable
 from .modules import Seq2seq
 
 import torch
-from torch import optim
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -93,24 +91,9 @@ class Seq2seqAgent(TorchAgent):
                                 'Dec_out shares decoder embedding and output '
                                 'weights. '
                                 'All shares all three weights.')
-        agent.add_argument('-mom', '--momentum', default=-1, type=float,
-                           help='if applicable, momentum value for optimizer. '
-                                'if > 0, sgd uses nesterov momentum.')
-        agent.add_argument('-emb', '--embedding-type', default='random',
-                           choices=['random', 'glove', 'glove-fixed',
-                                    'fasttext', 'fasttext-fixed',
-                                    'glove-twitter'],
-                           help='Choose between different strategies '
-                                'for word embeddings. Default is random, '
-                                'but can also preinitialize from Glove or '
-                                'Fasttext.'
-                                'Preinitialized embeddings can also be fixed '
-                                'so they are not updated during training.')
         agent.add_argument('-soft', '--numsoftmax', default=1, type=int,
                            help='default 1, if greater then uses mixture of '
                                 'softmax (see arxiv.org/abs/1711.03953).')
-        agent.add_argument('-rf', '--report-freq', type=float, default=0.001,
-                           help='Report frequency of prediction during eval.')
         agent.add_argument('--beam-size', type=int, default=1,
                            help='Beam size, if 1 then greedy search')
         agent.add_argument('--beam-log-freq', type=float, default=0.0,
@@ -182,7 +165,8 @@ class Seq2seqAgent(TorchAgent):
             self.criterion.cuda()
 
         if 'train' in opt.get('datatype', ''):
-            self._init_optim(self.model, states=states)
+            self._init_optim(self.model, optim_states=states.get('optimizer'),
+                             saved_optim_type=states.get('optimizer_type'))
 
         self.reset()
 
@@ -207,7 +191,7 @@ class Seq2seqAgent(TorchAgent):
             if opt['lookuptable'] in ['unique', 'dec_out']:
                 # also set encoder lt, since it's not shared
                 self._copy_embeddings(self.model.encoder.lt.weight,
-                                      opt['embedding_type'])
+                                      opt['embedding_type'], log=False)
 
         if states:
             # set loaded states if applicable
@@ -216,48 +200,12 @@ class Seq2seqAgent(TorchAgent):
         if self.use_cuda:
             self.model.cuda()
 
-    def _init_optim(self, model, states=None):
-        opt = self.opt
-        # we only set up optimizers when training
-        self.clip = opt.get('gradient_clip', -1)
-
-        # set up optimizer
-        lr = opt['learningrate']
-        optim_class = self.OPTIM_OPTS[opt['optimizer']]
-        kwargs = {'lr': lr}
-        if opt.get('momentum') > 0 and opt['optimizer'] in ['sgd', 'rmsprop']:
-            kwargs['momentum'] = opt['momentum']
-            if opt['optimizer'] == 'sgd':
-                kwargs['nesterov'] = True
-        if opt['optimizer'] == 'adam':
-            # amsgrad paper: https://openreview.net/forum?id=ryQu7f-RZ
-            kwargs['amsgrad'] = True
-
         if opt['embedding_type'].endswith('fixed'):
             print('Seq2seq: fixing embedding weights.')
-            model.decoder.lt.weight.requires_grad = False
-            model.encoder.lt.weight.requires_grad = False
+            self.model.decoder.lt.weight.requires_grad = False
+            self.model.encoder.lt.weight.requires_grad = False
             if opt['lookuptable'] in ['dec_out', 'all']:
-                model.decoder.e2s.weight.requires_grad = False
-        self.optimizer = optim_class([p for p in model.parameters()
-                                      if p.requires_grad], **kwargs)
-        if states.get('optimizer'):
-            if states['optimizer_type'] != opt['optimizer']:
-                print('WARNING: not loading optim state since optim class '
-                      'changed.')
-            else:
-                try:
-                    self.optimizer.load_state_dict(states['optimizer'])
-                except ValueError:
-                    print('WARNING: not loading optim state since model '
-                          'params changed.')
-                if self.use_cuda:
-                    for state in self.optimizer.state.values():
-                        for k, v in state.items():
-                            if isinstance(v, torch.Tensor):
-                                state[k] = v.cuda()
-        self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-            self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
+                self.model.decoder.e2s.weight.requires_grad = False
 
     def _v2t(self, vec):
         """Convert token indices to string of tokens."""
@@ -338,29 +286,12 @@ class Seq2seqAgent(TorchAgent):
         kwargs['sort'] = True  # need sorted for pack_padded
         return super().batchify(*args, **kwargs)
 
-    def _init_cuda_buffer(self, batchsize):
-        if self.use_cuda and not hasattr(self, 'buffer_initialized'):
-            try:
-                print('preinitializing pytorch cuda buffer')
-                bsz = self.opt.get('batchsize', batchsize)
-                maxlen = self.truncate or 180
-                dummy = torch.ones(bsz, maxlen).long().cuda()
-                sc = self.model(dummy, dummy)[1]
-                loss = self.criterion(sc.view(-1, sc.size(-1)), dummy.view(-1))
-                loss.backward()
-                self.buffer_initialized = True
-            except RuntimeError as e:
-                if 'out of memory' in str(e):
-                    m = ('CUDA OOM: Lower batch size (-bs) from {} or lower max'
-                         ' sequence length (-tr) from {}'.format(bsz, maxlen))
-                    raise RuntimeError(m)
-                else:
-                    raise e
-
     def train_step(self, batch):
         """Train on a single batch of examples."""
         batchsize = batch.text_vec.size(0)
-        self._init_cuda_buffer(batchsize)  # helps with memory usage
+        # helps with memory usage
+        self._init_cuda_buffer(self.model, self.criterion, batchsize,
+                               self.truncate or 180)
         self.model.train()
         self.zero_grad()
         preds = None
