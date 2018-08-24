@@ -38,6 +38,11 @@ class Seq2seqAgent(TorchAgent):
       `(Luong et al. 2015) <arxiv.org/abs/1508.04025>`_
     """
 
+    # version 1 split from version 0 on Aug 24, 2018
+    # to use version 0, use --model legacy:seq2seq:0
+    # legacy agent code is located in parlai/legacy_agents
+    VERSION = 1
+
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
@@ -106,9 +111,18 @@ class Seq2seqAgent(TorchAgent):
         agent.add_argument('--softmax-layer-bias', type='bool', default=False,
                            help='Put True if you want to include the bias in '
                                 'decoder.e2s layer')
+        agent.add_argument('--seq2seq_version', default=Seq2seqAgent.VERSION)
         TorchAgent.add_cmdline_args(argparser)
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
+
+    @staticmethod
+    def model_version():
+        """Current version of this model, counting up from 0.
+
+        Models are not backwards-compatible with older versions.
+        """
+        return 1
 
     def __init__(self, opt, shared=None):
         """Set up model."""
@@ -392,6 +406,8 @@ class Seq2seqAgent(TorchAgent):
 
             # save opt file
             with open(path + ".opt", 'wb') as handle:
+                # save version string
+                self.opt['seq2seq_version'] = Seq2seqAgent.VERSION
                 pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def load(self, path):
