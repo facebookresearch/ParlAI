@@ -206,13 +206,20 @@ class DictionaryAgent(Agent):
                 # set special unknown word token
                 self.add_token(self.unk_token)
 
-            if opt.get('dict_file') and os.path.isfile(opt['dict_file']):
-                # load pre-existing dictionary
-                self.load(opt['dict_file'])
-            elif opt.get('dict_initpath'):
+            loaded = False
+            if opt.get('dict_file'):
+                opt['dict_file'] = modelzoo_path(opt.get('datapath'),
+                                                 opt['dict_file'])
+                if os.path.isfile(opt['dict_file']):
+                    # load pre-existing dictionary
+                    self.load(opt['dict_file'])
+                    loaded = True
+
+            if not loaded and opt.get('dict_initpath'):
                 # load seed dictionary
                 opt['dict_initpath'] = modelzoo_path(opt.get('datapath'),
                                                      opt['dict_initpath'])
+                # don't check isfile first, should fail if file not found
                 self.load(opt['dict_initpath'])
 
         # initialize tokenizers
