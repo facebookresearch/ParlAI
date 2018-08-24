@@ -113,18 +113,19 @@ class Seq2seqAgent(TorchAgent):
     def __init__(self, opt, shared=None):
         """Set up model."""
         init_model = None
-        if not shared:  # only do this for original instance
+        if not shared:  # only do this on first setup
             # first check load path in case we need to override paths
-
-            # check first for 'init_model' for loading model from file
             if opt.get('init_model') and os.path.isfile(opt['init_model']):
+                # check first for 'init_model' for loading model from file
                 init_model = opt['init_model']
-            # next check for 'model_file', this would override init_model
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
+                # next check for 'model_file', this would override init_model
                 init_model = opt['model_file']
 
             if init_model is not None:
-                if os.path.isfile(init_model + '.dict') or opt['dict_file'] is None:
+                # if we are loading a model, should load its dict too
+                if (os.path.isfile(init_model + '.dict')
+                        or opt['dict_file'] is None):
                     opt['dict_file'] = init_model + '.dict'
         super().__init__(opt, shared)
         opt = self.opt
@@ -148,7 +149,8 @@ class Seq2seqAgent(TorchAgent):
             # this is not a shared instance of this class, so do full init
             if init_model is not None:
                 # load model parameters if available
-                print('[ Loading existing model params from {} ]'.format(init_model))
+                print('[ Loading existing model params from {} ]'
+                      ''.format(init_model))
                 states = self.load(init_model)
 
             self._init_model(states=states)
