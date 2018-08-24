@@ -222,12 +222,22 @@ class TorchAgent(Agent):
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
 
-    def _init_optim(self, model, optim_states=None, saved_optim_type=None):
+    def _init_optim(self, params, optim_states=None, saved_optim_type=None):
+        """Initialize optimizer with model parameters.
+
+        :param params:       parameters from the model, for example:
+                             [p for p in model.parameters() if p.requires_grad]
+        :param optim_states: optional argument providing states of optimizer
+                             to load
+        :saved_optim_type:   type of optimizer being loaded, if changed will
+                             skip loading optimizer states
+        """
         opt = self.opt
         # we only set up optimizers when training
         self.clip = opt.get('gradient_clip', -1)
 
         # set up optimizer args
+        # TODO: move optimizer params to command line args
         lr = opt['learningrate']
         kwargs = {'lr': lr}
         if opt.get('momentum') > 0 and opt['optimizer'] in ['sgd', 'rmsprop']:
@@ -239,8 +249,7 @@ class TorchAgent(Agent):
             kwargs['amsgrad'] = True
 
         optim_class = self.OPTIM_OPTS[opt['optimizer']]
-        self.optimizer = optim_class([p for p in model.parameters()
-                                      if p.requires_grad], **kwargs)
+        self.optimizer = optim_class(params, **kwargs)
         if optim_states:
             if saved_optim_type != opt['optimizer']:
                 print('WARNING: not loading optim state since optim class '
@@ -256,6 +265,7 @@ class TorchAgent(Agent):
                         for k, v in state.items():
                             if isinstance(v, torch.Tensor):
                                 state[k] = v.cuda()
+        # TODO: Move scheduler params to command line args
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
             self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
 
