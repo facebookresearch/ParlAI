@@ -9,7 +9,7 @@ from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import maintain_dialog_history, PaddingUtils, round_sigfigs
 from parlai.core.thread_utils import SharedTable
-from .modules import Seq2seq
+from .modules_v0 import Seq2seq
 
 import torch
 from torch import optim
