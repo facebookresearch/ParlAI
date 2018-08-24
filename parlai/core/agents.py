@@ -373,7 +373,7 @@ def get_agent_module(dir_name):
                                ''.format(dir_name))
         model_name = s[1]  # seq2seq
         module_name = 'parlai.legacy_agents.{m}.{m}_v{v}'.format(
-            m=model_name, v=s[1])
+            m=model_name, v=s[2])
         class_name = name_to_agent_class(model_name)
     elif ':' in dir_name:
         # e.g. -m "parlai.agents.seq2seq.seq2seq:Seq2seqAgent"
