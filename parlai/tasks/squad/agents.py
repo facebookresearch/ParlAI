@@ -337,7 +337,7 @@ class FulldocsentenceTeacher(FulldocTeacher):
         episode = self.episodes[episode_idx][entry_idx]
         context = ' '.join(
             episode['text'].split('\n')[:-1]
-        ).replace('\xa0', ' ')
+        ).replace('\xa0', ' ')  # get rid of non breaking space characters
         question = episode['text'].split('\n')[-1]
         label_field = 'labels' if 'labels' in episode else 'eval_labels'
         answers = []
