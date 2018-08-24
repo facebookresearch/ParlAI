@@ -14,6 +14,7 @@ before_script:
     # exit-zero treats all errors as warnings.  The GitHub editor is 127 chars wide
     - time flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 script:
+    - bash tests/check_copyright.sh
     - flake8 --select=F --max-line-length=127 parlai projects tests
     - python tests/test_import.py
     - python tests/test_init.py
