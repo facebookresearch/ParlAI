@@ -5,6 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.agents import Agent
+from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import set_namedtuple_defaults, argsort, padded_tensor
 
@@ -123,7 +124,7 @@ class TorchAgent(Agent):
         agent.add_argument(
             '-opt', '--optimizer', default='sgd',
             help='Choose between pytorch optimizers. Any member of torch.optim'
-                 'should be valid.')
+                 ' should be valid.')
         agent.add_argument(
             '-rc', '--rank-candidates', type='bool', default=False,
             help='Whether the model should parse candidates for ranking.')
@@ -212,6 +213,64 @@ class TorchAgent(Agent):
         self.truncate = opt['truncate'] if opt['truncate'] >= 0 else None
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
+
+    def _get_embtype(self, emb_type):
+        # set up preinitialized embeddings
+        try:
+            import torchtext.vocab as vocab
+        except ImportError as ex:
+            print('Please install torch text with `pip install torchtext`')
+            raise ex
+        pretrained_dim = 300
+        if emb_type.startswith('glove'):
+            if 'twitter' in emb_type:
+                init = 'glove-twitter'
+                name = 'twitter.27B'
+                pretrained_dim = 200
+            else:
+                init = 'glove'
+                name = '840B'
+            embs = vocab.GloVe(
+                name=name, dim=pretrained_dim,
+                cache=modelzoo_path(self.opt.get('datapath'),
+                                    'models:glove_vectors'))
+        elif emb_type.startswith('fasttext'):
+            init = 'fasttext'
+            embs = vocab.FastText(
+                language='en',
+                cache=modelzoo_path(self.opt.get('datapath'),
+                                    'models:fasttext_vectors'))
+        else:
+            raise RuntimeError('embedding type {} not implemented. check arg, '
+                               'submit PR to this function, or override it.'
+                               ''.format(emb_type))
+        return embs, init
+
+    def _project_emb(self, vec, target_dim):
+        import pdb; pdb.set_trace
+        if vec != target_dim:
+            rp = torch.Tensor(target_dim,
+                              opt['embeddingsize']).normal_()
+            t = lambda x: torch.mm(x.unsqueeze(0), rp)
+        else:
+            t = lambda x: x
+
+    def _copy_embeddings(self, weight, emb_type):
+        """Copy embeddings from the pretrained embeddings to the lookuptable.
+
+        :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
+        :param emb_type: pretrained embedding type
+        """
+        embs, name = self._get_embtype(emb_type)
+        cnt = 0
+        for w, i in self.dict.tok2ind.items():
+            if w in embs.stoi:
+                vec = self._project_emb(embs.vectors[embs.stoi[w]])
+                weight.data[i] = vec
+                cnt += 1
+
+        print('Initialized embeddings for {} tokens ({}%) from {}.'
+              ''.format(cnt, name))
 
     def share(self):
         """Share fields from parent as well as useful objects in this class.
