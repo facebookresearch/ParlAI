@@ -748,6 +748,8 @@ class TorchAgent(Agent):
 
                 # save opt file
                 with open(path + ".opt", 'wb') as handle:
+                    if hasattr(self, 'model_version'):
+                        self.opt['model_version'] = self.model_version()
                     pickle.dump(self.opt, handle,
                                 protocol=pickle.HIGHEST_PROTOCOL)
 
