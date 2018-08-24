@@ -347,17 +347,18 @@ class FulldocsentenceTeacher(FulldocTeacher):
             context = context.replace(answer, new_answer)
             answers.append(new_answer)
         sentences = self.sent_tok.tokenize(context)
-        action[label_field] = []
+        labels = []
         label_starts = []
         for sentence in sentences:
             for answer in answers:
-                if answer in sentence and sentence not in action[label_field]:
-                    action[label_field].append(sentence)
+                if answer in sentence and sentence not in labels:
+                    labels.append(sentence)
                     label_starts.append(context.index(sentence))
 
         action = {
             'context': context,
             'text': question,
+            label_field: labels,
             'answer_starts': label_starts,
             'label_candidates': sentences,
             'episode_done': episode['episode_done']
