@@ -673,7 +673,8 @@ class TorchAgent(Agent):
         if 'text' in obs:
             if add_person_tokens:
                 # add person1 token to text
-                obs['text'] = self._add_person_tokens(obs['text'], self.P1_TOKEN,
+                obs['text'] = self._add_person_tokens(obs['text'],
+                                                      self.P1_TOKEN,
                                                       add_p1_after_newln)
             # add text to history
             self.history.append(obs['text'])
@@ -696,7 +697,8 @@ class TorchAgent(Agent):
         :param use_label: default true, use the label when available instead of
                           the model's generated response.
         """
-        # if the last observation was the end, then we shouldn't use it as history
+        # if the last observation was the end of an episode,
+        # then we shouldn't use it as history
         if not self.observation or self.observation.get('episode_done', True):
             return None
 
@@ -827,11 +829,13 @@ class TorchAgent(Agent):
 
     def train_step(self, batch):
         """Process one batch with training labels."""
-        raise NotImplementedError('Abstract class: user must implement train_step')
+        raise NotImplementedError(
+            'Abstract class: user must implement train_step')
 
     def eval_step(self, batch):
         """Process one batch but do not train on it."""
-        raise NotImplementedError('Abstract class: user must implement eval_step')
+        raise NotImplementedError(
+            'Abstract class: user must implement eval_step')
 
 
 class Beam(object):
