@@ -6,7 +6,7 @@
 
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.build_data import modelzoo_path
-from parlai.core.utils import argsort, padded_tensor, round_sigfigs
+from parlai.core.utils import padded_tensor, round_sigfigs
 from parlai.core.thread_utils import SharedTable
 from .modules import Seq2seq
 
@@ -15,7 +15,7 @@ from torch import optim
 import torch.nn as nn
 import torch.nn.functional as F
 
-from collections import deque, defaultdict
+from collections import defaultdict
 
 import os
 import math
@@ -168,68 +168,7 @@ class Seq2seqAgent(TorchAgent):
                 print('[ Loading existing model params from {} ]'.format(init_model))
                 states = self.load(init_model)
 
-            if not hasattr(self, 'model_class'):
-                # this allows child classes to override this but inherit init
-                self.model_class = Seq2seq
-            self.model = self.model_class(
-                opt, len(self.dict), padding_idx=self.NULL_IDX,
-                start_idx=self.START_IDX, end_idx=self.END_IDX,
-                longest_label=states.get('longest_label', 1))
-
-            if opt.get('dict_tokenizer') == 'bpe' and opt['embedding_type'] != 'random':
-                print('skipping preinitialization of embeddings for bpe')
-            elif not states and opt['embedding_type'] != 'random':
-                # set up preinitialized embeddings
-                try:
-                    import torchtext.vocab as vocab
-                except ImportError as ex:
-                    print('Please install torch text with `pip install torchtext`')
-                    raise ex
-                pretrained_dim = 300
-                if opt['embedding_type'].startswith('glove'):
-                    if 'twitter' in opt['embedding_type']:
-                        init = 'glove-twitter'
-                        name = 'twitter.27B'
-                        pretrained_dim = 200
-                    else:
-                        init = 'glove'
-                        name = '840B'
-                    embs = vocab.GloVe(name=name, dim=pretrained_dim,
-                        cache=modelzoo_path(self.opt.get('datapath'),
-                                            'models:glove_vectors')
-                    )
-                elif opt['embedding_type'].startswith('fasttext'):
-                    init = 'fasttext'
-                    embs = vocab.FastText(language='en',
-                        cache=modelzoo_path(self.opt.get('datapath'),
-                                            'models:fasttext_vectors')
-                    )
-                else:
-                    raise RuntimeError('embedding type not implemented')
-
-                if opt['embeddingsize'] != pretrained_dim:
-                    rp = torch.Tensor(pretrained_dim, opt['embeddingsize']).normal_()
-                    t = lambda x: torch.mm(x.unsqueeze(0), rp)
-                else:
-                    t = lambda x: x
-                cnt = 0
-                for w, i in self.dict.tok2ind.items():
-                    if w in embs.stoi:
-                        vec = t(embs.vectors[embs.stoi[w]])
-                        self.model.decoder.lt.weight.data[i] = vec
-                        cnt += 1
-                        if opt['lookuptable'] in ['unique', 'dec_out']:
-                            # also set encoder lt, since it's not shared
-                            self.model.encoder.lt.weight.data[i] = vec
-                print('Seq2seq: initialized embeddings for {} tokens from {}.'
-                      ''.format(cnt, init))
-
-            if states:
-                # set loaded states if applicable
-                self.model.load_state_dict(states['model'])
-
-            if self.use_cuda:
-                self.model.cuda()
+            self._init_model(states=states)
 
         # set up criteria
         if opt.get('numsoftmax', 1) > 1:
@@ -243,47 +182,82 @@ class Seq2seqAgent(TorchAgent):
             self.criterion.cuda()
 
         if 'train' in opt.get('datatype', ''):
-            # we only set up optimizers when training
-            self.clip = opt.get('gradient_clip', -1)
-
-            # set up optimizer
-            lr = opt['learningrate']
-            optim_class = Seq2seqAgent.OPTIM_OPTS[opt['optimizer']]
-            kwargs = {'lr': lr}
-            if opt.get('momentum') > 0 and opt['optimizer'] in ['sgd', 'rmsprop']:
-                kwargs['momentum'] = opt['momentum']
-                if opt['optimizer'] == 'sgd':
-                    kwargs['nesterov'] = True
-            if opt['optimizer'] == 'adam':
-                # amsgrad paper: https://openreview.net/forum?id=ryQu7f-RZ
-                kwargs['amsgrad'] = True
-
-            if opt['embedding_type'].endswith('fixed'):
-                print('Seq2seq: fixing embedding weights.')
-                self.model.decoder.lt.weight.requires_grad = False
-                self.model.encoder.lt.weight.requires_grad = False
-                if opt['lookuptable'] in ['dec_out', 'all']:
-                    self.model.decoder.e2s.weight.requires_grad = False
-            self.optimizer = optim_class([p for p in self.model.parameters() if p.requires_grad], **kwargs)
-            if states.get('optimizer'):
-                if states['optimizer_type'] != opt['optimizer']:
-                    print('WARNING: not loading optim state since optim class '
-                          'changed.')
-                else:
-                    try:
-                        self.optimizer.load_state_dict(states['optimizer'])
-                    except ValueError:
-                        print('WARNING: not loading optim state since model '
-                              'params changed.')
-                    if self.use_cuda:
-                        for state in self.optimizer.state.values():
-                            for k, v in state.items():
-                                if isinstance(v, torch.Tensor):
-                                    state[k] = v.cuda()
-            self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-                self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
+            self._init_optim(self.model, states=states)
 
         self.reset()
+
+    def _init_model(self, states=None):
+        opt = self.opt
+
+        if not hasattr(self, 'model_class'):
+            # this allows child classes to override this but inherit init
+            self.model_class = Seq2seq
+        self.model = self.model_class(
+            opt, len(self.dict), padding_idx=self.NULL_IDX,
+            start_idx=self.START_IDX, end_idx=self.END_IDX,
+            longest_label=states.get('longest_label', 1))
+
+        if (opt.get('dict_tokenizer') == 'bpe'
+                and opt['embedding_type'] != 'random'):
+            print('skipping preinitialization of embeddings for bpe')
+        elif not states and opt['embedding_type'] != 'random':
+            # `not states`: only set up embeddings if not loading model
+            self._copy_embeddings(self.model.decoder.lt.weight,
+                                  opt['embedding_type'])
+            if opt['lookuptable'] in ['unique', 'dec_out']:
+                # also set encoder lt, since it's not shared
+                self._copy_embeddings(self.model.encoder.lt.weight,
+                                      opt['embedding_type'])
+
+        if states:
+            # set loaded states if applicable
+            self.model.load_state_dict(states['model'])
+
+        if self.use_cuda:
+            self.model.cuda()
+
+    def _init_optim(self, model, states=None):
+        opt = self.opt
+        # we only set up optimizers when training
+        self.clip = opt.get('gradient_clip', -1)
+
+        # set up optimizer
+        lr = opt['learningrate']
+        optim_class = self.OPTIM_OPTS[opt['optimizer']]
+        kwargs = {'lr': lr}
+        if opt.get('momentum') > 0 and opt['optimizer'] in ['sgd', 'rmsprop']:
+            kwargs['momentum'] = opt['momentum']
+            if opt['optimizer'] == 'sgd':
+                kwargs['nesterov'] = True
+        if opt['optimizer'] == 'adam':
+            # amsgrad paper: https://openreview.net/forum?id=ryQu7f-RZ
+            kwargs['amsgrad'] = True
+
+        if opt['embedding_type'].endswith('fixed'):
+            print('Seq2seq: fixing embedding weights.')
+            model.decoder.lt.weight.requires_grad = False
+            model.encoder.lt.weight.requires_grad = False
+            if opt['lookuptable'] in ['dec_out', 'all']:
+                model.decoder.e2s.weight.requires_grad = False
+        self.optimizer = optim_class([p for p in model.parameters()
+                                      if p.requires_grad], **kwargs)
+        if states.get('optimizer'):
+            if states['optimizer_type'] != opt['optimizer']:
+                print('WARNING: not loading optim state since optim class '
+                      'changed.')
+            else:
+                try:
+                    self.optimizer.load_state_dict(states['optimizer'])
+                except ValueError:
+                    print('WARNING: not loading optim state since model '
+                          'params changed.')
+                if self.use_cuda:
+                    for state in self.optimizer.state.values():
+                        for k, v in state.items():
+                            if isinstance(v, torch.Tensor):
+                                state[k] = v.cuda()
+        self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+            self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
 
     def _v2t(self, vec):
         """Convert token indices to string of tokens."""
@@ -325,9 +299,7 @@ class Seq2seqAgent(TorchAgent):
         if num_tok > 0:
             if self.metrics['correct_tokens'] > 0:
                 m['token_acc'] = self.metrics['correct_tokens'] / num_tok
-                m['correct_tokens'] = self.metrics['correct_tokens']
             m['loss'] = self.metrics['loss'] / num_tok
-            m['num_tokens'] = num_tok
             try:
                 m['ppl'] = math.exp(m['loss'])
             except OverflowError:
