@@ -914,14 +914,24 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
     lens = [len(item) for item in items]
     # max in time dimension
     t = max(lens)
-    output = torch.LongTensor(n, t).fill_(pad_idx)
-    for i in range(len(items)):
+
+    if isinstance(items[0], torch.Tensor):
+        # keep type of input tensors, they may already be cuda ones
+        output = items[0].new(n, t)
+    else:
+        output = torch.LongTensor(n, t)
+    output.fill_(pad_idx)
+
+    for i, item in enumerate(items):
+        if not isinstance(item, torch.Tensor):
+            item = torch.LongTensor(item)
         if left_padded:
             # place at end
-            output[i, t - lens[i]:] = torch.LongTensor(items[i])
+            output[i, t - lens[i]:] = item
         else:
             # place at beginning
-            output[i, :lens[i]] = torch.LongTensor(items[i])
+            output[i, :lens[i]] = item
+
     if use_cuda:
         output = output.cuda()
     return output, lens
