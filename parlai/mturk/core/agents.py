@@ -273,6 +273,8 @@ class MTurkAgent(Agent):
 
     def flush_msg_queue(self):
         """Clear all messages in the message queue"""
+        if self.msg_queue is None:
+            return
         while not self.msg_queue.empty():
             self.msg_queue.get()
 
@@ -285,12 +287,6 @@ class MTurkAgent(Agent):
 
     def get_new_act_message(self):
         """Get a new act message if one exists, return None otherwise"""
-        # Check if Turker sends a message
-        while not self.msg_queue.empty():
-            msg = self.msg_queue.get()
-            if msg['id'] == self.id:
-                return msg
-
         # See if any agent has disconnected
         if self.disconnected or self.some_agent_disconnected:
             msg = {
@@ -308,6 +304,13 @@ class MTurkAgent(Agent):
                 'episode_done': True
             }
             return msg
+
+        if self.msg_queue is not None:
+            # Check if Turker sends a message
+            while not self.msg_queue.empty():
+                msg = self.msg_queue.get()
+                if msg['id'] == self.id:
+                    return msg
 
         # There are no messages to be sent
         return None
