@@ -35,7 +35,7 @@ class Packet():
     TYPE_PONG = 'pong'
 
     def __init__(self, id, type, sender_id, receiver_id, assignment_id, data,
-                 conversation_id=None, requires_ack=True, blocking=True,
+                 conversation_id=None, requires_ack=None, blocking=None,
                  ack_func=None):
         """
         Create a packet to be used for holding information before it is
@@ -49,10 +49,12 @@ class Packet():
         conversation_id:  Packet metadata - what conversation this belongs to
         requires_ack:     Whether or not this packet needs to be acknowledged,
                            determines if retry logic will be used until ack is
-                           recieved.
+                           recieved. Default for messages and alives is True,
+                           default for the rest is false.
         blocking:         Whether or not this packet requires blocking to
                            remain in order amongst other packets in the queue.
-                           Default is True
+                           Default is for messages and alives is True, default
+                           for the rest is false.
         ack_func:         Function to call upon successful ack of a packet
                            Default calls no function on ack
         """
@@ -63,11 +65,11 @@ class Packet():
         self.assignment_id = assignment_id
         self.data = data
         self.conversation_id = conversation_id
-        self.requires_ack = requires_ack
-        self.blocking = blocking
+        important = self.type in [self.TYPE_ALIVE, self.TYPE_MESSAGE]
+        self.requires_ack = important if requires_ack is None else requires_ack
+        self.blocking = important if blocking is None else blocking
         self.ack_func = ack_func
         self.status = self.STATUS_INIT
-        self.time = None
 
     @staticmethod
     def from_dict(packet):
@@ -129,6 +131,8 @@ class Packet():
         """
         packet = Packet.from_dict(self.as_dict())
         packet.id = shared_utils.generate_event_id(self.receiver_id)
+        packet.blocking = self.blocking
+        packet.requires_ack = self.requires_ack
         return packet
 
     def __repr__(self):
@@ -163,6 +167,7 @@ class SocketManager():
     # Default pongs without heartbeat before socket considered dead
     DEF_MISSED_PONGS = 10
     HEARTBEAT_RATE = 2
+    DEF_DEAD_TIME = 20
 
     def __init__(self, server_url, port, alive_callback, message_callback,
                  socket_dead_callback, task_group_id,
@@ -200,12 +205,14 @@ class SocketManager():
         self.queues = {}
         self.threads = {}
         self.run = {}
-        self.last_sent_heartbeat = {}  # time of last heartbeat sent
+        self.last_sent_heartbeat_time = {}  # time of last heartbeat sent
         self.last_received_heartbeat = {}  # actual last received heartbeat
         self.pongs_without_heartbeat = {}
         self.packet_map = {}
         self.alive = False
         self.is_shutdown = False
+        self.send_lock = threading.Condition()
+        self.packet_map_lock = threading.Condition()
 
         # setup the socket
         self._setup_socket()
@@ -215,35 +222,38 @@ class SocketManager():
         return '[World_{}]'.format(self.task_group_id)
 
     def _safe_send(self, data, force=False):
-        if not self.alive and not force:
-            # Try to wait a second to send a packet
-            timeout = 1
-            while timeout > 0 and not self.alive:
-                time.sleep(0.1)
-                timeout -= 0.1
-            if not self.alive:
-                # don't try to send a packet if we're still dead
+        with self.send_lock:
+            if not self.alive and not force:
+                # Try to wait a half second to send a packet
+                timeout = 0.5
+                while timeout > 0 and not self.alive:
+                    time.sleep(0.1)
+                    timeout -= 0.1
+                if not self.alive:
+                    # don't try to send a packet if we're still dead
+                    return False
+            try:
+                self.ws.send(data)
+            except websocket.WebSocketConnectionClosedException:
+                # The channel died mid-send, wait for it to come back up
                 return False
-        try:
-            self.ws.send(data)
-        except websocket.WebSocketConnectionClosedException:
-            # The channel died mid-send, wait for it to come back up
-            return False
-        except BrokenPipeError:  # noqa F821 we don't support p2
-            # The channel died mid-send, wait for it to come back up
-            return False
-        except Exception as e:
-            shared_utils.print_and_log(
-                logging.WARN,
-                'Unexpected socket error occured: {}'.format(repr(e)),
-                should_print=True
-            )
-            return False
-        return True
+            except BrokenPipeError:  # noqa F821 we don't support p2
+                # The channel died mid-send, wait for it to come back up
+                return False
+            except Exception as e:
+                shared_utils.print_and_log(
+                    logging.WARN,
+                    'Unexpected socket error occured: {}'.format(repr(e)),
+                    should_print=True
+                )
+                return False
+            return True
 
     def _ensure_closed(self):
         try:
             self.ws.close()
+            if self.ws.sock is not None:
+                self.ws.sock.close()
         except websocket.WebSocketConnectionClosedException:
             pass
 
@@ -257,9 +267,11 @@ class SocketManager():
 
     def _send_needed_heartbeat(self, connection_id):
         """Sends a heartbeat to a connection if needed"""
+        if connection_id not in self.last_received_heartbeat:
+            return
         if self.last_received_heartbeat[connection_id] is None:
             return
-        if (time.time() - self.last_sent_heartbeat[connection_id]
+        if (time.time() - self.last_sent_heartbeat_time[connection_id]
                 < self.HEARTBEAT_RATE):
             return
         packet = self.last_received_heartbeat[connection_id]
@@ -267,7 +279,7 @@ class SocketManager():
             'type': data_model.SOCKET_ROUTE_PACKET_STRING,
             'content': packet.new_copy().swap_sender().set_data('').as_dict()
         }))
-        self.last_sent_heartbeat[connection_id] = time.time()
+        self.last_sent_heartbeat_time[connection_id] = time.time()
 
     def _send_ack(self, packet):
         """Sends an ack to a given packet"""
@@ -283,6 +295,8 @@ class SocketManager():
         """Sends a packet, blocks if the packet is blocking"""
         # Send the packet
         pkt = packet.as_dict()
+        if pkt['data'] is None:
+            return  # This packet was _just_ acked.
         shared_utils.print_and_log(
             logging.DEBUG,
             'Send packet: {}'.format(packet)
@@ -362,14 +376,15 @@ class SocketManager():
         def on_error(ws, error):
             try:
                 if error.errno == errno.ECONNREFUSED:
-                    self._ensure_closed()
                     self.use_socket = False
+                    self._ensure_closed()
                     raise Exception("Socket refused connection, cancelling")
                 else:
                     shared_utils.print_and_log(
                         logging.WARN,
                         'Socket logged error: {}'.format(error),
                     )
+                    self._ensure_closed()
             except BaseException:
                 if type(error) is websocket.WebSocketConnectionClosedException:
                     return  # Connection closed is noop
@@ -390,7 +405,8 @@ class SocketManager():
             )
             self.alive = False
             self._ensure_closed()
-            self._spawn_reaper_thread()
+            if not self.is_shutdown:
+                self._spawn_reaper_thread()
 
         def on_message(*args):
             """Incoming message handler for ACKs, ALIVEs, HEARTBEATs,
@@ -406,23 +422,24 @@ class SocketManager():
             packet_type = packet.type
             connection_id = packet.get_sender_connection_id()
             if packet_type == Packet.TYPE_ACK:
-                if packet_id not in self.packet_map:
-                    # Don't do anything when acking a packet we don't have
-                    return
-                # Acknowledgements should mark a packet as acknowledged
-                shared_utils.print_and_log(
-                    logging.DEBUG,
-                    'On new ack: {}'.format(args)
-                )
-                self.packet_map[packet_id].status = Packet.STATUS_ACK
-                # If the packet sender wanted to do something on acknowledge
-                if self.packet_map[packet_id].ack_func:
-                    self.packet_map[packet_id].ack_func(packet)
-                # clear the stored packet data for memory reasons
-                try:
-                    self.packet_map[packet_id].data = None
-                except Exception:
-                    pass  # state already reduced, perhaps by ack_func
+                with self.packet_map_lock:
+                    if packet_id not in self.packet_map:
+                        # Don't do anything when acking a packet we don't have
+                        return
+                    # Acknowledgements should mark a packet as acknowledged
+                    shared_utils.print_and_log(
+                        logging.DEBUG,
+                        'On new ack: {}'.format(args)
+                    )
+                    self.packet_map[packet_id].status = Packet.STATUS_ACK
+                    # If the packet sender wanted to do something on ack
+                    if self.packet_map[packet_id].ack_func:
+                        self.packet_map[packet_id].ack_func(packet)
+                    # clear the stored packet data for memory reasons
+                    try:
+                        self.packet_map[packet_id].data = None
+                    except Exception:
+                        pass  # state already reduced, perhaps by ack_func
             elif packet_type == Packet.TYPE_HEARTBEAT:
                 # Heartbeats update the last heartbeat, clears pongs w/o beat
                 self.last_received_heartbeat[connection_id] = packet
@@ -430,28 +447,38 @@ class SocketManager():
             elif packet_type == Packet.TYPE_PONG:
                 # Message in response from the router, ensuring we're connected
                 # to it. Redundant but useful for metering from web client.
-                pong_connection_id = packet.get_receiver_connection_id()
-                if self.last_received_heartbeat[pong_connection_id] is not None:
-                    self.pongs_without_heartbeat[pong_connection_id] += 1
+                pong_conn_id = packet.get_receiver_connection_id()
+                if self.last_received_heartbeat[pong_conn_id] is not None:
+                    self.pongs_without_heartbeat[pong_conn_id] += 1
             else:
                 # Remaining packet types need to be acknowledged
                 shared_utils.print_and_log(
                     logging.DEBUG,
                     'On new message: {}'.format(args)
                 )
-                self._send_ack(packet)
                 # Call the appropriate callback
                 if packet_type == Packet.TYPE_ALIVE:
                     self.alive_callback(packet)
                 elif packet_type == Packet.TYPE_MESSAGE:
                     self.message_callback(packet)
 
+                # acknowledge the packet was recieved and processed
+                self._send_ack(packet)
+
         def run_socket(*args):
             url_base_name = self.server_url.split('https://')[1]
+            protocol = "wss"
+            if url_base_name in ['localhost', '127.0.0.1']:
+                protocol = "ws"
             while self.keep_running:
                 try:
-                    sock_addr = "ws://{}/".format(
-                        url_base_name)
+                    sock_addr = "{}://{}:{}/".format(
+                        protocol, url_base_name, self.port)
+                    if self.ws is not None and self.ws.sock is not None:
+                        # Gross check to see if we're about to leave a socket
+                        # open b/c websocket leaks some connections.
+                        if self.ws.sock.connected:
+                            self._ensure_closed()
                     self.ws = websocket.WebSocketApp(
                         sock_addr,
                         on_message=on_message,
@@ -459,7 +486,10 @@ class SocketManager():
                         on_close=on_disconnect,
                     )
                     self.ws.on_open = on_socket_open
-                    self.ws.run_forever(ping_interval=1, ping_timeout=0.9)
+                    self.ws.run_forever(
+                        ping_interval=8*self.HEARTBEAT_RATE,
+                        ping_timeout=8*self.HEARTBEAT_RATE*0.9)
+                    self.ws.close()
                 except Exception as e:
                     shared_utils.print_and_log(
                         logging.WARN,
@@ -475,12 +505,17 @@ class SocketManager():
         self.listen_thread.daemon = True
         self.listen_thread.start()
         time.sleep(1.2)
+        start_time = time.time()
         while not self.alive:
+            if time.time() - start_time > self.DEF_DEAD_TIME:
+                self.server_death_callback()
+                raise ConnectionRefusedError(  # noqa F821 we only support py3
+                    'Was not able to establish a connection with the server')
             try:
                 self._send_world_alive()
             except Exception:
                 pass
-            time.sleep(0.8)
+            time.sleep(self.HEARTBEAT_RATE / 2)
 
     def open_channel(self, worker_id, assignment_id):
         """Opens a channel for a worker on a given assignment, doesn't re-open
@@ -503,7 +538,7 @@ class SocketManager():
                 logging.DEBUG,
                 'Channel ({}) opened'.format(connection_id)
             )
-            self.last_sent_heartbeat[connection_id] = 0
+            self.last_sent_heartbeat_time[connection_id] = 0
             self.pongs_without_heartbeat[connection_id] = 0
             self.last_received_heartbeat[connection_id] = None
             while self.run[connection_id]:
@@ -515,31 +550,38 @@ class SocketManager():
                             self.missed_pongs):
                         self.run[connection_id] = False
                         self.socket_dead_callback(worker_id, assignment_id)
-
+                        break
                     # Make sure the queue still exists
                     if connection_id not in self.queues:
                         self.run[connection_id] = False
                         break
-
-                    # Get first item in the queue, check if we can send it yet
-                    item = self.queues[connection_id].get(block=False)
-                    t = item[0]
-                    if time.time() < t:
-                        # Put the item back into the queue,
-                        # it's not time to pop yet
-                        self._safe_put(connection_id, item)
-                    else:
-                        # Try to send the packet
-                        packet = item[1]
-                        if not packet:
-                            # This packet was deleted out from under us
-                            continue
-                        if packet.status is not Packet.STATUS_ACK:
-                            # either need to send initial packet
-                            # or resend not-acked packet
-                            self._send_packet(packet, connection_id, t)
-                except Empty:
-                    pass
+                    try:
+                        # Get first item in the queue, check if can send it yet
+                        item = self.queues[connection_id].get(block=False)
+                        t = item[0]
+                        if time.time() < t:
+                            # Put the item back into the queue,
+                            # it's not time to pop yet
+                            self._safe_put(connection_id, item)
+                        else:
+                            # Try to send the packet
+                            packet = item[1]
+                            if not packet:
+                                # This packet was deleted out from under us
+                                continue
+                            if packet.status is not Packet.STATUS_ACK:
+                                # either need to send initial packet
+                                # or resend not-acked packet
+                                self._send_packet(packet, connection_id, t)
+                    except Empty:
+                        pass
+                except BaseException as e:
+                    shared_utils.print_and_log(
+                        logging.WARN,
+                        'Unexpected error occurred in socket handling thread: '
+                        '{}'.format(repr(e)),
+                        should_print=True,
+                    )
                 finally:
                     time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)
 
@@ -559,18 +601,33 @@ class SocketManager():
         )
         self.run[connection_id] = False
         if connection_id in self.queues:
+            while not self.queues[connection_id].empty():  # Empty the queue
+                try:
+                    item = self.queues[connection_id].get(block=False)
+                    t = item[0]
+                    packet = item[1]
+                    if not packet:
+                        continue
+                    packet.requires_ack = False
+                    packet.blocking = False
+                    if packet.status is not Packet.STATUS_ACK:
+                        self._send_packet(packet, connection_id, t)
+                except Empty:
+                    break
             # Clean up packets
-            packet_ids = list(self.packet_map.keys())
-            for packet_id in packet_ids:
-                if connection_id == \
-                       self.packet_map[packet_id].get_receiver_connection_id():
-                    del self.packet_map[packet_id]
+            with self.packet_map_lock:
+                packet_ids = list(self.packet_map.keys())
+                for packet_id in packet_ids:
+                    packet_conn_id = \
+                        self.packet_map[packet_id].get_receiver_connection_id()
+                    if connection_id == packet_conn_id:
+                        del self.packet_map[packet_id]
             # Clean up other resources
             del self.queues[connection_id]
             del self.threads[connection_id]
 
     def close_all_channels(self):
-        """Closes a channel by clearing the list of channels"""
+        """Closes all channels by clearing the list of channels"""
         shared_utils.print_and_log(logging.DEBUG, 'Closing all channels')
         connection_ids = list(self.queues.keys())
         for connection_id in connection_ids:
@@ -580,7 +637,9 @@ class SocketManager():
         return connection_id in self.queues
 
     def queue_packet(self, packet):
-        """Queues sending a packet to its intended owner"""
+        """Queues sending a packet to its intended owner, returns True if
+        queued successfully and False if there is no such worker (anymore)
+        """
         connection_id = packet.get_receiver_connection_id()
         if not self.socket_is_open(connection_id):
             # Warn if there is no socket to send through for the expected recip
@@ -589,21 +648,24 @@ class SocketManager():
                 'Can not send packet to worker_id {}: packet queue not found. '
                 'Message: {}'.format(connection_id, packet.data)
             )
-            return
+            return False
         shared_utils.print_and_log(
             logging.DEBUG,
             'Put packet ({}) in queue ({})'.format(packet.id, connection_id)
         )
         # Get the current time to put packet into the priority queue
-        self.packet_map[packet.id] = packet
+        with self.packet_map_lock:
+            self.packet_map[packet.id] = packet
         item = (time.time(), packet)
         self._safe_put(connection_id, item)
+        return True
 
     def get_status(self, packet_id):
         """Returns the status of a particular packet by id"""
-        if packet_id not in self.packet_map:
-            return Packet.STATUS_NONE
-        return self.packet_map[packet_id].status
+        with self.packet_map_lock:
+            if packet_id not in self.packet_map:
+                return Packet.STATUS_NONE
+            return self.packet_map[packet_id].status
 
     def _safe_put(self, connection_id, item):
         """Ensures that a queue exists before putting an item into it, logs
@@ -621,6 +683,8 @@ class SocketManager():
             )
 
     def shutdown(self):
-        '''marks the socket manager as closing, shuts down all channels'''
-        self.is_shutdown = False
+        """marks the socket manager as closing, shuts down all channels"""
+        self.is_shutdown = True
         self.close_all_channels()
+        self.keep_running = False
+        self._ensure_closed()
