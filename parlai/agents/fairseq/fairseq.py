@@ -485,7 +485,7 @@ class FairseqAgent(TorchAgent):
         if batch.text_vec is None:
             return
         self.is_training = True
-        samples = self._make_sample(batch.text_vec, batch.label_vec)
+        samples = self._make_sample(batch)
         self.model.train()
         metrics = self.trainer.train_step(samples)
         self._update_metrics(metrics, samples)
@@ -502,7 +502,7 @@ class FairseqAgent(TorchAgent):
         if batch.text_vec is None:
             return
         self.is_training = False
-        samples = self._make_sample(batch.text_vec, batch.label_vec)
+        samples = self._make_sample(batch)
         self.model.eval()
         if batch.label_vec is not None:
             # Interactive mode won't have a gold label
@@ -515,6 +515,7 @@ class FairseqAgent(TorchAgent):
 
         # Grade each of the candidate sequences
         if batch.candidate_vecs is not None:
+            raise NotImplementedError("Not fixed with new make_Sample")
             bsz = len(batch.text_vec)
             reranked_cands = []
             # score the candidates for each item in the batch separately, so that
@@ -632,10 +633,11 @@ class FairseqAgent(TorchAgent):
         result[:, 1:] = ys[:, :-1]
         return result
 
-    def _make_sample(self, xs, ys):
+    def _make_sample(self, batch):
         """Generate a sample object that Fairseq expects."""
         # add extra info to samples
-        # TODO: should the right/left padding thing be in torch agent?
+        xs = batch.text_vec
+        ys = batch.label_vec
         repadded = convert_padding_direction(xs, self.dict.pad(), right_to_left=True)
         sample = {}
         sample["id"] = torch.arange(len(xs) - 1)
