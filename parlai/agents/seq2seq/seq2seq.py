@@ -407,7 +407,7 @@ class Seq2seqAgent(TorchAgent):
             # save opt file
             with open(path + ".opt", 'wb') as handle:
                 # save version string
-                self.opt['seq2seq_version'] = Seq2seqAgent.VERSION
+                self.opt['model_version'] = Seq2seqAgent.VERSION
                 pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def load(self, path):
