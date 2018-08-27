@@ -101,7 +101,7 @@ class Seq2seq(nn.Module):
         hidden_size = enc_out.size(-1)
         return enc_out.view(batch_size * beam_size, -1, hidden_size)
 
-    def forward(self, xs, ys=None, cands=None, valid_cands=None, prev_enc=None,
+    def forward(self, xs, ys=None, cands=None, cand_indices=None, prev_enc=None,
                 rank_during_training=False, beam_size=1, topk=1):
         """Get output predictions from the model.
 
@@ -109,7 +109,7 @@ class Seq2seq(nn.Module):
         xs -- input to the encoder
         ys -- expected output from the decoder
         cands -- set of candidates to rank, if applicable
-        valid_cands -- indices to match candidates with their appropriate xs
+        cand_indices -- indices to match candidates with their appropriate xs
         prev_enc -- if you know you'll pass in the same xs multiple times and
             the model is in eval mode, you can pass in the encoder output from
             the last forward pass to skip recalcuating the same encoder output
@@ -140,9 +140,9 @@ class Seq2seq(nn.Module):
             decode_params = (start, hidden, enc_out, attn_mask)
             if self.training:
                 if rank_during_training:
-                    cand_preds, cand_scores = self.ranker.forward(cands, valid_cands, decode_params=decode_params)
+                    cand_preds, cand_scores = self.ranker.forward(cands, cand_indices, decode_params=decode_params)
             else:
-                cand_preds, cand_scores = self.ranker.forward(cands, valid_cands, decode_params=decode_params)
+                cand_preds, cand_scores = self.ranker.forward(cands, cand_indices, decode_params=decode_params)
 
         if ys is not None:
             y_in = ys.narrow(1, 0, ys.size(1) - 1)
@@ -435,7 +435,8 @@ class Ranker(object):
                 cell = cell.index_select(1, cand_indices)
                 hidden = (hid, cell)
             enc_out = enc_out.index_select(0, cand_indices)
-            attn_mask = attn_mask.index_select(0, cand_indices)
+            if attn_mask is not None:
+                attn_mask = attn_mask.index_select(0, cand_indices)
 
         cand_scores = []
 
