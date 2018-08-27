@@ -1305,12 +1305,13 @@ class MTurkManager():
             )
 
         for _i in range(num_hits):
-            mturk_page_url, hit_id = mturk_utils.create_hit_with_hit_type(
-                page_url=mturk_chat_url,
-                hit_type_id=hit_type_id,
-                num_assignments=1,
-                is_sandbox=self.is_sandbox
-            )
+            mturk_page_url, hit_id, mturk_response = \
+                mturk_utils.create_hit_with_hit_type(
+                    page_url=mturk_chat_url,
+                    hit_type_id=hit_type_id,
+                    num_assignments=1,
+                    is_sandbox=self.is_sandbox
+                )
             self.hit_id_list.append(hit_id)
         return mturk_page_url
 
