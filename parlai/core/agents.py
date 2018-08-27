@@ -326,9 +326,9 @@ def load_agent_module(opt):
                     'It looks like you are trying to load an older version of '
                     'the selected model. Change your model argument to use '
                     'the old version from parlai/legacy_agents: for example, '
-                    '`--model legacy:model_name:{}` or '
-                    '`-m parlai.legacy_agents.model.model_v0:ModelAgent`'
-                    ''.format(curr_version))
+                    '`--model legacy:model_name:{v}` or '
+                    '`-m parlai.legacy_agents.model.model_v{v}:ModelAgent`'
+                    ''.format(v=curr_version))
         return model_class(new_opt)
     else:
         return None
