@@ -197,12 +197,6 @@ class TorchAgent(Agent):
         if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
 
-        if opt['optimizer'] not in self.OPTIM_OPTS:
-            # make sure valid optimizer arg
-            raise RuntimeError('Invalid optimizer: {} not in [{}]'.format(
-                               opt['optimizer'],
-                               ', '.join(self.OPTIM_OPTS.keys())))
-
         # check for cuda
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
         if self.use_cuda:
