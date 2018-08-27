@@ -101,7 +101,8 @@ def build_dict(opt, skip_if_built=False):
                 sys.stdout.flush()
 
     dictionary.save(opt['dict_file'], sort=True)
-    print('[ dictionary built with {} tokens ]'.format(len(dictionary)))
+    print('[ dictionary built with {} tokens in {}s ]'.format(
+        len(dictionary), round(log_time.total_time(), 2)))
     return dictionary
 
 
