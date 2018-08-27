@@ -314,7 +314,7 @@ class TorchAgent(Agent):
                                ''.format(emb_type))
         return embs, init
 
-    def _project_emb(self, vec, target_dim, method='random'):
+    def _project_vec(self, vec, target_dim, method='random'):
         """If needed, project vector to target dimensionality.
 
         Projection methods implemented are the following:
@@ -352,7 +352,7 @@ class TorchAgent(Agent):
         cnt = 0
         for w, i in self.dict.tok2ind.items():
             if w in embs.stoi:
-                vec = self._project_emb(embs.vectors[embs.stoi[w]],
+                vec = self._project_vec(embs.vectors[embs.stoi[w]],
                                         weight.size(1))
                 weight.data[i] = vec
                 cnt += 1
