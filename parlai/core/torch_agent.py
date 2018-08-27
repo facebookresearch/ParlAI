@@ -117,8 +117,8 @@ class TorchAgent(Agent):
         """
         return DictionaryAgent
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(cls, argparser):
         """Add the default commandline args we expect most agents to want."""
         agent = argparser.add_argument_group('TorchAgent Arguments')
         # pretrained embedding arguments
@@ -132,7 +132,6 @@ class TorchAgent(Agent):
                  'be fixed so they are not updated during training.')
         agent.add_argument(
             '-embp', '--embedding-projection', default='random',
-            choices=['random'],
             help='If pretrained embeddings have a different dimensionality '
                  'than your embedding size, strategy for projecting to the '
                  'correct size. If the dimensions are the same, this is '
@@ -140,6 +139,7 @@ class TorchAgent(Agent):
         # optimizer arguments
         agent.add_argument(
             '-opt', '--optimizer', default='sgd',
+            choices=cls.OPTIM_OPTS,
             help='Choose between pytorch optimizers. Any member of torch.optim'
                  ' should be valid.')
         agent.add_argument(
