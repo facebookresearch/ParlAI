@@ -219,7 +219,8 @@ class TimeLogger():
         if total > 0:
             log['%done'] = done / total
             if log["%done"] > 0:
-                log['time_left'] = str(int(self.tot_time / log['%done'] - self.tot_time)) + 's'
+                time_left = self.tot_time / log['%done'] - self.tot_time
+                log['time_left'] = str(int(time_left)) + 's'
             z = '%.2f' % (100 * log['%done'])
             log['%done'] = str(z) + '%'
         for k, v in report.items():
@@ -423,7 +424,9 @@ class PaddingUtils(object):
     Class that contains functions that help with padding input and target tensors.
     """
     @classmethod
-    def pad_text(cls, observations, dictionary, end_idx=None, null_idx=0, dq=False, eval_labels=True, truncate=None):
+    def pad_text(cls, observations, dictionary,
+                 end_idx=None, null_idx=0, dq=False, eval_labels=True,
+                 truncate=None):
         """We check that examples are valid, pad with zeros, and sort by length
            so that we can use the pack_padded function. The list valid_inds
            keeps track of which indices are valid and the order in which we sort
@@ -521,7 +524,9 @@ class PaddingUtils(object):
         return xs, ys, labels, valid_inds, end_idxs, y_lens
 
     @classmethod
-    def map_predictions(cls, predictions, valid_inds, batch_reply, observations, dictionary, end_idx, report_freq=0.1, labels=None, answers=None, ys=None):
+    def map_predictions(cls, predictions, valid_inds, batch_reply,
+                        observations, dictionary, end_idx, report_freq=0.1,
+                        labels=None, answers=None, ys=None):
         """Predictions are mapped back to appropriate indices in the batch_reply
            using valid_inds.
            report_freq -- how often we report predictions
@@ -575,7 +580,9 @@ class OffensiveLanguageDetector(object):
         def _path():
             # Build the data if it doesn't exist.
             build()
-            return os.path.join(self.datapath, 'OffensiveLanguage', 'OffensiveLanguage.txt')
+            return os.path.join(
+                self.datapath, 'OffensiveLanguage', 'OffensiveLanguage.txt'
+            )
 
         def build():
             version = 'v1.0'
