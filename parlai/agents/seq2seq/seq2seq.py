@@ -116,7 +116,7 @@ class Seq2seqAgent(TorchAgent):
 
     @staticmethod
     def model_version():
-        """Current version of this model, counting up from 0.
+        """Return current version of this model, counting up from 0.
 
         Models are not backwards-compatible with older versions.
         """
@@ -420,10 +420,16 @@ class Seq2seqAgent(TorchAgent):
 
 
 class mydefaultdict(defaultdict):
-    """Custom defaultdict which overrides defaults requested by the get
-    function with the default factory.
+    """Get function also uses default_factory for this defaultdict.
+
+    This makes dict.get() behave like dict[] if a default is not provided.
     """
+
     def get(self, key, default=None):
+        """Return value at key or default if key is not in dict.
+
+        If a default is not provided, return the default factory value.
+        """
         # override default from "get" (like "__getitem__" already is)
         return super().get(key, default or self.default_factory())
 
@@ -437,27 +443,33 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
     """
 
     def __init__(self, opt, shared=None):
+        """Initialize evaluator."""
         super().__init__(opt, shared)
         self.prev_enc = None
         self.last_xs = None
 
     def next_word_probability(self, partial_out):
-        """Return probability distribution over next words given an input and
-        partial true output. This is used to calculate the per-word perplexity.
+        """Return probability distribution over next words.
+
+        This probability is based on both nn input and partial true output.
+        This is used to calculate the per-word perplexity.
 
         Arguments:
         observation -- input observation dict
         partial_out -- list of previous "true" words
 
-        Returns a dict, where each key is a word and each value is a probability
-        score for that word. Unset keys assume a probability of zero.
+        Returns a dict, where each key is a word and each value is a
+        probability score for that word.
+        Unset keys will use a probability of 1e-7.
 
         e.g.
         {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
         """
         obs = self.observation
         xs = obs['text_vec'].unsqueeze(0)
-        ys = self._vectorize_text(' '.join(partial_out), False, True, self.truncate).unsqueeze(0)
+        ys = self._vectorize_text(
+            ' '.join(partial_out), False, True, self.truncate
+        ).unsqueeze(0)
         if self.prev_enc is not None and self.last_xs is not None and (
                 xs.shape[1] != self.last_xs.shape[1] or
                 (xs == self.last_xs).sum().item() != xs.shape[1]):
@@ -466,14 +478,12 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
         self.last_xs = xs
 
         self.model.eval()
-        # no need to predict farther ahead
-        # if you pass in any ys, this will be ignored
-        self.model.longest_label = 1
         out = self.model(
             xs,
             ys=(ys if len(partial_out) > 0 else None),
-            prev_enc=self.prev_enc)
-        scores, self.prev_enc = out[1], out[4]
+            prev_enc=self.prev_enc,
+            maxlen=1)
+        scores, self.prev_enc = out[0], out[2]
         # scores is bsz x seqlen x num_words, so select probs of current index
         probs = F.softmax(scores.select(1, -1), dim=1).squeeze()
         dist = mydefaultdict(lambda: 1e-7)  # default probability for any token
