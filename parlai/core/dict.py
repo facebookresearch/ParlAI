@@ -170,11 +170,15 @@ class DictionaryAgent(Agent):
         self.end_token = opt.get('dict_endtoken', DictionaryAgent.default_end)
         self.unk_token = opt.get('dict_unktoken', DictionaryAgent.default_unk)
         self.start_token = opt.get('dict_starttoken', DictionaryAgent.default_start)
-        self.max_ngram_size = opt.get('dict_max_ngram_size', DictionaryAgent.default_maxngram)
+        self.max_ngram_size = opt.get(
+            'dict_max_ngram_size', DictionaryAgent.default_maxngram
+        )
         self.tokenizer = opt.get('dict_tokenizer', DictionaryAgent.default_tok)
         self.lower = opt.get('dict_lower', DictionaryAgent.default_lower)
         self.maxtokens = opt.get('dict_maxtokens', DictionaryAgent.default_maxtokens)
-        self.textfields = opt.get('dict_textfields', DictionaryAgent.default_textfields).split(",")
+        self.textfields = opt.get(
+            'dict_textfields', DictionaryAgent.default_textfields
+        ).split(",")
 
         try:
             self.tokenizer_fun = getattr(self, self.tokenizer + '_tokenize')
@@ -325,7 +329,13 @@ class DictionaryAgent(Agent):
             setattr(self, k, v)
 
     def max_freq(self):
-        return max(self.freq[k] for k in self.freq.keys() if k not in [self.null_token, self.end_token, self.start_token, self.unk_token])
+        return max(
+            self.freq[k]
+            for k in self.freq.keys()
+            if k not in [
+                self.null_token, self.end_token, self.start_token, self.unk_token
+            ]
+        )
 
     def freqs(self):
         return self.freq
@@ -461,11 +471,12 @@ class DictionaryAgent(Agent):
               filename))
 
         lower_special = self.null_token == self.null_token.lower()
+        SPECIAL_TOKENS = {'__UNK__', '__NULL__', '__END__', '__START__'}
         with codecs.open(filename, 'r', encoding='utf-8', errors='ignore') as read:
             for line in read:
                 split = line.strip().split('\t')
                 token = unescape(split[0])
-                if lower_special and token in {'__UNK__', '__NULL__', '__END__', '__START__'}:
+                if lower_special and token in SPECIAL_TOKENS:
                     token = token.lower()
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
