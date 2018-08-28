@@ -125,7 +125,7 @@ class Seq2seq(nn.Module):
             # TODO: do we need to do this? actually shouldn't need to since we
             # don't do input feeding
             for i in range(seqlen):
-                xi = xs.select(1, i)
+                xi = xs.select(1, i).unsqueeze(1)
                 output, hidden = self.decoder(xi, hidden, attn_params)
                 score = self.output(output)
                 scores.append(score)
@@ -404,14 +404,14 @@ class RNNDecoder(nn.Module):
 
         if self.attn_time == 'pre':
             # modify input vectors with attention
-            xes = self.attention(xes, hidden, attn_params)
+            xes, _attw = self.attention(xes, hidden, attn_params)
 
         # feed tokens into rnn
         output, new_hidden = self.rnn(xes, hidden)
 
         if self.attn_time == 'post':
             # modify output vectors with attention
-            output = self.attention(output, new_hidden, attn_params)
+            output, _attw = self.attention(output, new_hidden, attn_params)
 
         return output, new_hidden
 
@@ -617,7 +617,7 @@ class AttentionLayer(nn.Module):
             # calculate activation scores, apply mask if needed
             if attn_mask is not None:
                 # remove activation from NULL symbols
-                import pdb; pdb.set_trace()  # is this the best operation?
+                # TODO: is this the best operation?
                 attn_w_premask -= (1 - attn_mask) * 1e20
             attn_weights = F.softmax(attn_w_premask, dim=1)
 
@@ -627,8 +627,5 @@ class AttentionLayer(nn.Module):
         merged = torch.cat((xes.squeeze(1), attn_applied.squeeze(1)), 1)
         # combine them with a linear layer and tanh activation
         output = F.tanh(self.attn_combine(merged).unsqueeze(1))
-        print('make sure last_hidden == xes')
-        import pdb; pdb.set_trace()
-        # TODO: remove tanh?
 
         return output, attn_weights
