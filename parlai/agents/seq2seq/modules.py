@@ -92,15 +92,18 @@ class Seq2seq(nn.Module):
             numsoftmax=numsoftmax, shared_weight=shared_weight)
 
     def _encode(self, xs, prev_enc=None):
+        """Encode the input or return cached encoder state."""
         if prev_enc is not None:
             return prev_enc
         else:
             return self.encoder(xs)
 
     def _starts(self, bsz):
+        """Return bsz start tokens."""
         return self.START.detach().expand(bsz, 1)
 
     def _decode_forced(self, ys, encoder_states):
+        """Decode with teacher forcing."""
         bsz = ys.size(0)
         seqlen = ys.size(1)
 
@@ -127,9 +130,11 @@ class Seq2seq(nn.Module):
                 score = self.output(output)
                 scores.append(score)
 
+        scores = torch.cat(scores, 1)
         return scores
 
     def _decode(self, encoder_states, maxlen):
+        """Decode maxlen tokens."""
         hidden = encoder_states[0]
         attn_params = (encoder_states[1], encoder_states[2])
         bsz = encoder_states[1].size(0)
@@ -144,9 +149,11 @@ class Seq2seq(nn.Module):
             scores.append(score)
             xs = score.max(1)[1]  # next input is current predicted output
 
+        scores = torch.cat(scores, 1)
         return scores
 
     def _align_inds(self, encoder_states, cand_inds):
+        """Select the encoder states relevant to valid candidates."""
         hidden, enc_out, attn_mask = encoder_states
 
         # LSTM or GRU/RNN hidden state?
@@ -173,6 +180,7 @@ class Seq2seq(nn.Module):
         return hidden, enc_out, attn_mask
 
     def _extract_cur(self, encoder_states, index, num_cands):
+        """Extract encoder states at current index and expand them."""
         hidden, enc_out, attn_mask = encoder_states
         if isinstance(hidden, torch.Tensor):
             nl = hidden.size(0)
@@ -187,6 +195,7 @@ class Seq2seq(nn.Module):
                        hidden[1].select(1, index).unsqueeze(1)
                        .expand(nl, num_cands, hsz).contiguous())
 
+        cur_enc, cur_mask = None, None
         if self.attn_type != 'none':
             cur_enc = (enc_out[index].unsqueeze(0)
                        .expand(num_cands, enc_out.size(1), hsz))
@@ -212,9 +221,9 @@ class Seq2seq(nn.Module):
 
             # select just the one hidden state
             cur_enc_states = self._extract_cur(
-                encoder_states, num_cands, batch_idx)
+                encoder_states, batch_idx, num_cands)
 
-            score = self.decode_forced(curr_cs, cur_enc_states)
+            score = self._decode_forced(curr_cs, cur_enc_states)
             true_score = F.log_softmax(score, dim=2).gather(
                 2, curr_cs.unsqueeze(2))
             nonzero = curr_cs.ne(0).float()
@@ -269,7 +278,6 @@ class Seq2seq(nn.Module):
         else:
             scores = self._decode(encoder_states, maxlen or self.longest_label)
 
-        scores = torch.cat(scores, 1)
         return scores, cand_scores, encoder_states
 
 
