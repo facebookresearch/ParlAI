@@ -360,9 +360,9 @@ class TestTorchAgent(unittest.TestCase):
 
             # contents of certain fields:
             self.assertEqual(batch.text_vec.tolist(),
-                             [[1, 2, 3, 4, 5, 0],
+                             [[0, 1, 2, 3, 4, 5],
                               [1, 2, 3, 4, 5, 6],
-                              [1, 2, 0, 0, 0, 0]])
+                              [0, 0, 0, 0, 1, 2]])
             self.assertEqual(batch.text_lengths, [5, 6, 2])
             self.assertEqual(batch.label_vec.tolist(),
                              [[1, 0, 0, 0, 0],
@@ -376,8 +376,8 @@ class TestTorchAgent(unittest.TestCase):
             batch = agent.batchify(obs_vecs, sort=True)
             self.assertEqual(batch.text_vec.tolist(),
                              [[1, 2, 3, 4, 5, 6],
-                              [1, 2, 3, 4, 5, 0],
-                              [1, 2, 0, 0, 0, 0]])
+                              [0, 1, 2, 3, 4, 5],
+                              [0, 0, 0, 0, 1, 2]])
             self.assertEqual(batch.text_lengths, [6, 5, 2])
             self.assertEqual(batch.label_vec.tolist(),
                              [[1, 2, 3, 4, 5],
