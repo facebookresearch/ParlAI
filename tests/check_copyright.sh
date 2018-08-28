@@ -18,7 +18,7 @@ EXTENSIONS='.*\.\(rst\|py\|sh\|js\)$'
 CR[0]="Copyright (c) 2017-present, Facebook, Inc."
 CR[1]="All rights reserved."
 CR[2]="This source code is licensed under the BSD-style license found in the"
-cr[3]="LICENSE file in the root directory of this source tree. An additional grant"
+CR[3]="LICENSE file in the root directory of this source tree. An additional grant"
 CR[4]="of patent rights can be found in the PATENTS file in the same directory."
 
 CR_LEN=${#CR[*]}  # number elements in the message
@@ -55,6 +55,11 @@ do
     # check each line of the copyright is in the file
     for i in $(seq 0 $[CR_LEN - 1])
     do
+        if [[ "$fn" =~ "mlb_vqa" ]] && [[ $i < 2 ]]
+        then
+            # special case for VQA
+            continue
+        fi
         msg="${CR[$i]}"
         head -n "$LINE_LIMIT" "$fn" | grep "$msg" -Fq
         # if we didn't find anything, warn:
