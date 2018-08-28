@@ -97,7 +97,8 @@ def download(url, path, fname, redownload=False):
                     break
             except requests.exceptions.ConnectionError:
                 retry -= 1
-                print(''.join([' '] * 60), end='\r')  # TODO Better way to clean progress bar?
+                # TODO Better way to clean progress bar?
+                print(''.join([' '] * 60), end='\r')
                 if retry >= 0:
                     print('Connection error, retrying. (%d retries left)' % retry)
                     time.sleep(exp_backoff[retry])
@@ -184,7 +185,8 @@ def download_from_google_drive(gd_id, destination):
         response.close()
 
 
-def download_models(opt, fnames, model_folder, version='v1.0', path='aws', use_model_type=False):
+def download_models(opt, fnames, model_folder, version='v1.0', path='aws',
+                    use_model_type=False):
     """Download models into the ParlAI model zoo from a url.
        fnames -- list of filenames to download
        model_folder -- models will be downloaded into models/model_folder/model_type
@@ -209,10 +211,11 @@ def download_models(opt, fnames, model_folder, version='v1.0', path='aws', use_m
         # Download the data.
         for fname in fnames:
             if path == 'aws':
+                url = 'http://parl.ai/downloads/_models/'
+                url += model_folder + '/'
                 if use_model_type:
-                    url = 'http://parl.ai/downloads/_models/' + os.path.join(model_folder, model_type, fname)
-                else:
-                    url = 'http://parl.ai/downloads/_models/' + os.path.join(model_folder, fname)
+                    url += model_type + '/'
+                url += fname
             else:
                 url = path + '/' + fname
             download(url, dpath, fname)
