@@ -19,7 +19,9 @@ class PersonaProfileWorld(MTurkOnboardWorld):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.max_persona_time = opt['max_persona_time']
         self.range_persona = [int(s) for s in opt['range_persona'].split(',')]
-        self.n_persona = np.random.randint(self.range_persona[0], self.range_persona[1] + 1)
+        self.n_persona = np.random.randint(
+            self.range_persona[0], self.range_persona[1] + 1
+        )
         self.episodeDone = False
         self.persona = []
         self.persone_done = False
@@ -29,8 +31,14 @@ class PersonaProfileWorld(MTurkOnboardWorld):
         # Persona creation instructions
         self.mturk_agent.observe({
             'id': 'SYSTEM',
-            'text': 'Please create your character by entering <b><span style="color:blue">{} sentences</span></b> below in the input-box. \n \
-                     You have <b><span style="color:blue">{} mins</span></b> to finish the persona creation.'.format(self.n_persona, int(self.max_persona_time / 60))})
+            'text': (
+                'Please create your character by entering'
+                '<b><span style="color:blue">{} sentences</span></b> below in'
+                'the input-box. \nYou have <b><span style="color:blue">{} '
+                'mins</span></b> to finish the persona creation.'
+                .format(self.n_persona, int(self.max_persona_time / 60))
+            )
+        })
         while not self.persona_done:
             act = self.mturk_agent.act(timeout=self.max_persona_time)
             # Check timeout
@@ -38,22 +46,39 @@ class PersonaProfileWorld(MTurkOnboardWorld):
                 self.episodeDone = True
                 return
 
-            candidate_persona = list(filter(lambda x: x != '', act['text'].split('.'.strip())))
+            candidate_persona = [
+                x
+                for x in act['text'].split('.'.strip())  # sic.
+                if x != ''
+            ]
+
             for cand in candidate_persona:
                 # Check if persona is too long
                 if len(cand.split(' ')) > 16:
-                    control_msg = {'id': 'SYSTEM',
-                                   'text': '\n A sentence you entered is too long:\n \
-                                          <b><span style="color:blue">' + cand + '</span></b>\n \
-                                          Please resend a sentence <b><span style="color:blue">less than 15 words</span></b>.'}
+                    control_msg = {
+                        'id': 'SYSTEM',
+                        'text': (
+                            '\n A sentence you entered is too long:\n \
+                            <b><span style="color:blue">' + cand +
+                            '</span></b>\nPlease resend a sentence '
+                            '<b><span style="color:blue">less than 15 '
+                            'words</span></b>.'
+                        )
+                    }
                     self.mturk_agent.observe(validate(control_msg))
                     candidate_persona.remove(cand)
                 # Check if persona is too short
                 if len(cand.split(' ')) < 3:
-                    control_msg = {'id': 'SYSTEM',
-                                   'text': '\n A sentence you entered is too short:\n \
-                                          <b><span style="color:blue">' + cand + '</span></b>\n \
-                                          Please resend a sentence <b><span style="color:blue">more than 3 words</span></b>.'}
+                    control_msg = {
+                        'id': 'SYSTEM',
+                        'text': (
+                            '\n A sentence you entered is too short:\n'
+                            '<b><span style="color:blue">' + cand +
+                            '</span></b>\n Please resend a sentence '
+                            '<b><span style="color:blue">more than 3 '
+                            'words</span></b>.'
+                        )
+                    }
                     self.mturk_agent.observe(validate(control_msg))
                     candidate_persona.remove(cand)
 
@@ -61,23 +86,41 @@ class PersonaProfileWorld(MTurkOnboardWorld):
 
             if len(self.persona) >= self.n_persona:
                 self.persona_done = True
-                control_msg = {'id': 'SYSTEM',
-                               'text': 'Thank you for creating the character! \n \
-                                        <b><span style="color:blue">Please click "Done with this HIT" below to submit the HIT.</span></b>',
-                               'exceed_min_turns': True}
+                control_msg = {
+                    'id': 'SYSTEM',
+                    'text': (
+                        'Thank you for creating the character! \n '
+                        '<b><span style="color:blue">Please click '
+                        '"Done with this HIT" below to submit the HIT.'
+                        '</span></b>'
+                    ),
+                    'exceed_min_turns': True
+                }
                 self.mturk_agent.observe(validate(control_msg))
                 self.episodeDone = True
 
             if not self.persona_done:
-                control_msg = {'id': 'SYSTEM',
-                               'text': 'Please enter at least *{}* more sentence(s) to finish. '.format(str(self.n_persona - len(self.persona)))}
+                control_msg = {
+                    'id': 'SYSTEM',
+                    'text': (
+                        'Please enter at least *{}* more sentence(s) to finish. '
+                        .format(str(self.n_persona - len(self.persona)))
+                    )
+                }
                 self.mturk_agent.observe(validate(control_msg))
 
     def save_data(self):
         data_path = self.opt['data_path'] + '/personas'
         if not os.path.exists(data_path):
             os.makedirs(data_path)
-        filename = os.path.join(data_path, 'persona_{}_{}_{}.pkl'.format(time.strftime("%Y%m%d-%H%M%S"), self.mturk_agent.worker_id, self.task_type))
+        filename = os.path.join(
+            data_path,
+            'persona_{}_{}_{}.pkl'.format(
+                time.strftime("%Y%m%d-%H%M%S"),
+                self.mturk_agent.worker_id,
+                self.task_type
+            )
+        )
         print('Profile successfully saved at {}.'.format(filename))
         pickle.dump({'hit_id': self.mturk_agent.hit_id,
                      'assignment_id': self.mturk_agent.assignment_id,
