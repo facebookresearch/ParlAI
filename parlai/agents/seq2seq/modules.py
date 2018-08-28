@@ -5,6 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 import math
+
 import torch
 import torch.nn as nn
 from torch.nn.parameter import Parameter
@@ -35,7 +36,7 @@ def opt_to_kwargs(opt):
     """Get kwargs for seq2seq from opt."""
     kwargs = {}
     for k in ['numlayers', 'dropout', 'bidirectional', 'rnn_class',
-              'lookuptable', 'decoder', 'numsoftmax', 'rank_candidates',
+              'lookuptable', 'decoder', 'numsoftmax',
               'attention', 'attention_length', 'attention_time']:
         if k in opt:
             kwargs[k] = opt[k]
@@ -50,7 +51,7 @@ class Seq2seq(nn.Module):
     def __init__(
         self, num_features, embeddingsize, hiddensize, numlayers=2, dropout=0,
         bidirectional=False, rnn_class='lstm', lookuptable='unique',
-        decoder='same', numsoftmax=1, rank_candidates=False,
+        decoder='same', numsoftmax=1,
         attention='none', attention_length=48, attention_time='post',
         padding_idx=0, start_idx=1, longest_label=1,
     ):
@@ -67,42 +68,35 @@ class Seq2seq(nn.Module):
 
         rnn_class = Seq2seq.RNN_OPTS[rnn_class]
         self.decoder = RNNDecoder(
-            num_features, padding_idx=self.NULL_IDX, rnn_class=rnn_class,
-            embeddingsize=embeddingsize, hiddensize=hiddensize,
+            num_features, embeddingsize, hiddensize,
+            padding_idx=self.NULL_IDX, rnn_class=rnn_class,
             numlayers=numlayers, dropout=dropout,
-            share_output=lookuptable in ['dec_out', 'all'],
             attn_type=attention, attn_length=attention_length,
             attn_time=attention_time,
             bidir_input=bidirectional,
             numsoftmax=numsoftmax)
 
         shared_lt = (self.decoder.lt
-                     if lookuptable in ['enc_dec', 'all'] else None)
+                     if lookuptable in ('enc_dec', 'all') else None)
         shared_rnn = self.decoder.rnn if decoder == 'shared' else None
         self.encoder = RNNEncoder(
-            num_features, padding_idx=self.NULL_IDX, rnn_class=rnn_class,
-            embeddingsize=embeddingsize, hiddensize=hiddensize,
+            num_features, embeddingsize, hiddensize,
+            padding_idx=self.NULL_IDX, rnn_class=rnn_class,
             num_layers=numlayers, dropout=dropout,
             bidirectional=bidirectional,
             shared_lt=shared_lt, shared_rnn=shared_rnn)
 
-        if rank_candidates:
-            self.ranker = Ranker(
-                self.decoder,
-                self.START,
-                padding_idx=self.NULL_IDX,
-                attn_type=attention)
+        shared_weight = (self.decoder.lt
+                         if lookuptable in ('dec_out', 'all') else None)
+        self.output = OutputLayer(
+            num_features, embeddingsize, hiddensize, numsoftmax=numsoftmax,
+            shared_weight=shared_weight)
 
     def _encode(self, xs, prev_enc=None):
         if prev_enc is not None:
             return prev_enc
         else:
             return self.encoder(xs)
-
-    def _rank(self, cand_params, encoder_states):
-        if cand_params is not None:
-            return self.ranker.forward(cand_params, encoder_states)
-        return None
 
     def _starts(self, bsz):
         return self.START.detach().expand(bsz, 1)
@@ -149,9 +143,89 @@ class Seq2seq(nn.Module):
             output, hidden = self.decoder(xs, hidden, attn_params)
             score = self.output(output)
             scores.append(score)
-            xs = scores.max(1)[0]  # next input is current predicted output
+            xs = score.max(1)[0]  # next input is current predicted output
 
         return scores
+
+    def _align_inds(self, encoder_states, cand_inds):
+        hidden, enc_out, attn_mask = encoder_states
+
+        # LSTM or GRU/RNN hidden state?
+        if isinstance(hidden, torch.Tensor):
+            hid, cell = hidden
+        else:
+            hid, cell = hidden, None
+
+        if len(cand_inds) != hid.size(1):
+            # if the number of candidates is mismatched from the number of
+            # hidden states, we throw out the hidden states we won't rank with
+            cand_indices = hidden.new(cand_inds)
+            hid = hid.index_select(1, cand_indices)
+            if cell is None:
+                hidden = hid
+            else:
+                cell = cell.index_select(1, cand_indices)
+                hidden = (hid, cell)
+
+            if self.attn_type != 'none':
+                enc_out = enc_out.index_select(0, cand_indices)
+                attn_mask = attn_mask.index_select(0, cand_indices)
+
+        return hidden, enc_out, attn_mask
+
+    def _extract_cur(self, encoder_states, index, num_cands):
+        hidden, enc_out, attn_mask = encoder_states
+        if isinstance(hidden, torch.Tensor):
+            nl = hidden.size(0)
+            hsz = hidden.size(-1)
+            cur_hid = (hidden.select(1, index).unsqueeze(1)
+                       .expand(nl, num_cands, hsz))
+        else:
+            nl = hidden[0].size(0)
+            hsz = hidden[0].size(-1)
+            cur_hid = (hidden[0].select(1, index).unsqueeze(1)
+                       .expand(nl, num_cands, hsz).contiguous(),
+                       hidden[1].select(1, index).unsqueeze(1)
+                       .expand(nl, num_cands, hsz).contiguous())
+
+        if self.attn_type != 'none':
+            cur_enc = (enc_out[index].unsqueeze(0)
+                       .expand(num_cands, enc_out.size(1), hsz))
+            cur_mask = (attn_mask[index].unsqueeze(0)
+                        .expand(num_cands, attn_mask.size(-1)))
+        return cur_hid, cur_enc, cur_mask
+
+    def _rank(self, cand_params, encoder_states):
+        """Rank each cand by the average log-probability of the sequence."""
+        if cand_params is None:
+            return None
+
+        cands, cand_inds = cand_params
+        encoder_states = self._align_inds(encoder_states, cand_inds)
+
+        cand_scores = []
+        for batch_idx in range(len(cands)):
+            # we do one set of candidates at a time
+            curr_cs = cands[batch_idx]
+            num_cands = curr_cs.size(0)
+
+            # select just the one hidden state
+            cur_enc_states = self._extract_cur(
+                encoder_states, num_cands, batch_idx)
+
+            score = self.decode_forced(curr_cs, cur_enc_states)
+            true_score = F.log_softmax(score, dim=2).gather(
+                2, curr_cs.unsqueeze(2))
+            nonzero = curr_cs.ne(0).float()
+            scores = (true_score.squeeze(2) * nonzero).sum(1)
+            seqlens = nonzero.sum(1)
+            scores /= seqlens
+            cand_scores.append(scores)
+
+        max_len = max(len(c) for c in cand_scores)
+        cand_scores = torch.cat(
+            [pad(c, max_len).unsqueeze(0) for c in cand_scores], 0)
+        return cand_scores
 
     def forward(self, xs, ys=None, cand_params=None, prev_enc=None,
                 maxlen=None):
@@ -194,17 +268,15 @@ class Seq2seq(nn.Module):
         else:
             scores = self._decode(encoder_states, maxlen or self.longest_label)
 
-        if isinstance(scores, list):
-            scores = torch.cat(scores, 1)
-
+        scores = torch.cat(scores, 1)
         return scores, cand_scores, encoder_states
 
 
 class RNNEncoder(nn.Module):
     """RNN Encoder."""
 
-    def __init__(self, num_features, padding_idx=0, rnn_class='lstm',
-                 embeddingsize=128, hiddensize=128, num_layers=2, dropout=0.1,
+    def __init__(self, num_features, embeddingsize, hiddensize,
+                 padding_idx=0, rnn_class='lstm', num_layers=2, dropout=0.1,
                  bidirectional=False, shared_lt=None, shared_rnn=None,
                  sparse=False):
         """Initialize recurrent encoder."""
@@ -276,10 +348,11 @@ class RNNDecoder(nn.Module):
     Can be used as a standalone language model or paired with an encoder.
     """
 
-    def __init__(self, num_features, padding_idx=0, rnn_class='lstm',
-                 embeddingsize=128, hiddensize=128, num_layers=2, dropout=0.1,
+    def __init__(self, num_features, embeddingsize, hiddensize,
+                 padding_idx=0, rnn_class='lstm', num_layers=2, dropout=0.1,
                  bidir_input=False, attn_type='none', attn_time='pre',
                  attn_length=-1, sparse=False):
+        """Initialize recurrent decoder."""
         super().__init__()
         self.dropout = nn.Dropout(p=dropout)
         self.layers = num_layers
@@ -338,18 +411,20 @@ class RNNDecoder(nn.Module):
 class OutputLayer(nn.Module):
     """Takes in final states and returns distribution over candidates."""
 
-    def __init__(self, num_features, hiddensize, embeddingsize, numsoftmax=1,
+    def __init__(self, num_features, embeddingsize, hiddensize, numsoftmax=1,
                  shared_weight=None):
         """Initialize output layer.
 
         :param num_features:  number of candidates to rank
-        :param hiddensize:   (last) dimension of the input vectors
-        :param embeddingsize:      (last) dimension of the candidate vectors
+        :param hiddensize:    (last) dimension of the input vectors
+        :param embeddingsize: (last) dimension of the candidate vectors
         :param num_softmax:   (default 1) number of softmaxes to calculate.
                               see arxiv.org/abs/1711.03953 for more info.
                               increasing this slows down computation but can
                               add more expressivity to the embeddings.
-        :param shared_weight: (num_features x esz) vector of
+        :param shared_weight: (num_features x esz) vector of weights to use as
+                              the final linear layer's weight matrix. default
+                              None starts with a new linear layer.
         """
         # embedding to scores
         if shared_weight is None:
@@ -420,93 +495,6 @@ class OutputLayer(nn.Module):
             scores = self.e2s(e)
 
         return scores
-
-
-class Ranker(object):
-    """Basic ranker which uses average log-prob of sequences for ranking."""
-
-    def __init__(self, decoder, start_token, padding_idx=0, attn_type='none'):
-        """Intialize ranker."""
-        super().__init__()
-        self.decoder = decoder
-        self.START = start_token
-        self.NULL_IDX = padding_idx
-        self.attn_type = attn_type
-
-    def _starts(self, bsz):
-        return self.START.detach().expand(bsz, 1)
-
-    def forward(self, cand_params, encoder_states):
-        cands, cand_inds = cand_params
-        hidden, enc_out, attn_mask = encoder_states
-
-        hid, cell = (hidden, None) if isinstance(hidden, torch.Tensor) else hidden
-        if len(cand_inds) != hid.size(1):
-            cand_indices = self.START.detach().new(cand_inds)
-            hid = hid.index_select(1, cand_indices)
-            if cell is None:
-                hidden = hid
-            else:
-                cell = cell.index_select(1, cand_indices)
-                hidden = (hid, cell)
-            enc_out = enc_out.index_select(0, cand_indices)
-            if attn_mask is not None:
-                attn_mask = attn_mask.index_select(0, cand_indices)
-
-        cand_scores = []
-
-        for i in range(len(cands)):
-            curr_cs = cands[i]
-
-            n_cs = curr_cs.size(0)
-            starts = self._starts(n_cs).unsqueeze(1)
-            scores = 0
-            seqlens = 0
-            # select just the one hidden state
-            if isinstance(hidden, torch.Tensor):
-                nl = hidden.size(0)
-                hsz = hidden.size(-1)
-                cur_hid = hidden.select(1, i).unsqueeze(1).expand(nl, n_cs, hsz)
-            else:
-                nl = hidden[0].size(0)
-                hsz = hidden[0].size(-1)
-                cur_hid = (hidden[0].select(1, i).unsqueeze(1).expand(nl, n_cs, hsz).contiguous(),
-                           hidden[1].select(1, i).unsqueeze(1).expand(nl, n_cs, hsz).contiguous())
-
-            cur_enc, cur_mask = None, None
-            if attn_mask is not None:
-                cur_mask = attn_mask[i].unsqueeze(0).expand(n_cs, attn_mask.size(-1))
-                cur_enc = enc_out[i].unsqueeze(0).expand(n_cs, enc_out.size(1), hsz)
-            # this is pretty much copied from the training forward above
-            if curr_cs.size(1) > 1:
-                c_in = curr_cs.narrow(1, 0, curr_cs.size(1) - 1)
-                xs = torch.cat([starts, c_in], 1)
-            else:
-                xs, c_in = starts, curr_cs
-            if self.attn_type == 'none':
-                preds, score, cur_hid = self.decoder(xs, cur_hid, cur_enc, cur_mask)
-                true_score = F.log_softmax(score, dim=2).gather(
-                    2, curr_cs.unsqueeze(2))
-                nonzero = curr_cs.ne(0).float()
-                scores = (true_score.squeeze(2) * nonzero).sum(1)
-                seqlens = nonzero.sum(1)
-            else:
-                for i in range(curr_cs.size(1)):
-                    xi = xs.select(1, i)
-                    ci = curr_cs.select(1, i)
-                    preds, score, cur_hid = self.decoder(xi, cur_hid, cur_enc, cur_mask)
-                    true_score = F.log_softmax(score, dim=2).gather(
-                        2, ci.unsqueeze(1).unsqueeze(2))
-                    nonzero = ci.ne(0).float()
-                    scores += true_score.squeeze(2).squeeze(1) * nonzero
-                    seqlens += nonzero
-
-            scores /= seqlens  # **len_penalty?
-            cand_scores.append(scores)
-
-        max_len = max(len(c) for c in cand_scores)
-        cand_scores = torch.cat([pad(c, max_len).unsqueeze(0) for c in cand_scores], 0)
-        return cand_scores
 
 
 class AttentionLayer(nn.Module):
