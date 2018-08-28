@@ -125,7 +125,8 @@ class TorchAgent(Agent):
         agent.add_argument(
             '-emb', '--embedding-type', default='random',
             choices=['random', 'glove', 'glove-fixed', 'glove-twitter-fixed',
-                     'fasttext', 'fasttext-fixed'],
+                     'fasttext', 'fasttext-fixed', 'fasttext_cc',
+                     'fasttext_cc-fixed'],
             help='Choose between different strategies for initializing word '
                  'embeddings. Default is random, but can also preinitialize '
                  'from Glove or Fasttext. Preinitialized embeddings can also '
@@ -296,6 +297,12 @@ class TorchAgent(Agent):
                 name=name, dim=pretrained_dim,
                 cache=modelzoo_path(self.opt.get('datapath'),
                                     'models:glove_vectors'))
+        elif emb_type.startswith('fasttext_cc'):
+            init = 'fasttext_cc'
+            embs = vocab.FastText(
+                language='en',
+                cache=modelzoo_path(self.opt.get('datapath'),
+                                    'models:fasttext_cc_vectors'))
         elif emb_type.startswith('fasttext'):
             init = 'fasttext'
             embs = vocab.FastText(
