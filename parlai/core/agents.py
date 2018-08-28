@@ -11,8 +11,8 @@
     returns a dict in response.
 
     ``Teacher(Agent)``
-    also implements the ``report()`` method for returning metrics. All ParlAI tasks implement
-    the ``Teacher`` class.
+    also implements the ``report()`` method for returning metrics. All ParlAI
+    tasks implement the ``Teacher`` class.
 
     ``MultiTaskTeacher(Teacher)``
     creates a set of teachers based on a task string passed to the ``Teacher``,
@@ -537,9 +537,12 @@ def create_task_agent_from_taskname(opt):
     e.g. def_string is a shorthand path like ``babi:Task1k:1`` or ``#babi``
     or a complete path like ``parlai.tasks.babi.agents:Task1kTeacher:1``,
     which essentially performs ``from parlai.tasks.babi import Task1kTeacher``
-    with the parameter ``1`` in ``opt['task']`` to be used by the class ``Task1kTeacher``.
+    with the parameter ``1`` in ``opt['task']`` to be used by the class
+    ``Task1kTeacher``.
     """
-    if not (opt.get('task') or opt.get('pytorch_teacher_task') or opt.get('pytorch_teacher_dataset')):
+    if not (opt.get('task') or
+            opt.get('pytorch_teacher_task') or
+            opt.get('pytorch_teacher_dataset')):
         raise RuntimeError('No task specified. Please select a task with ' +
                            '--task {task_name}.')
     if not opt.get('task'):
