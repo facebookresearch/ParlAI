@@ -14,7 +14,6 @@ LINE_LIMIT=20
 # filenames to check
 EXTENSIONS='.*\.\(rst\|py\|sh\|js\)$'
 # don't check these files
-EXCLUDE_PATHS='^\(parlai_internal\|docs/build\)'
 
 CR[0]="Copyright (c) 2017-present, Facebook, Inc."
 CR[1]="All rights reserved."
@@ -26,7 +25,7 @@ CR_LEN=${#CR[*]}  # number elements in the message
 
 EXIT_CODE=0
 
-FILES="$(find . -type f -iregex "$EXTENSIONS" -printf '%P\n' | grep -v "$EXCLUDE_PATHS")"
+FILES="$(git ls-files | grep "$EXTENSIONS")"
 
 # for each code file
 for fn in $FILES
@@ -36,6 +35,11 @@ do
     then
         continue
     fi
+
+    # skip items we don't own the copyright for
+    grep -q 'Moscow Institute of Physics and Technology.' $fn && continue
+    grep -q 'https://github.com/fartashf/vsepp' $fn && continue
+
     # check each line of the copyright is in the file
     for i in $(seq 0 $[CR_LEN - 1])
     do
