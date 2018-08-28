@@ -202,12 +202,18 @@ class World(object):
         self.total_parleys += 1
         if self.max_exs is None:
             if ('num_epochs' in self.opt and self.opt['num_epochs'] > 0):
-                self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+                if self.num_examples:
+                    self.max_exs = self.num_examples() * self.opt['num_epochs']
+                else:
+                    self.max_exs = -1
             else:
                 self.max_exs = -1
         # when we know the size of the data
         if self.max_exs > 0 or self.num_examples():
-            self.total_epochs = self.total_parleys * self.opt.get('batchsize', 1) / self.num_examples()
+            self.total_epochs = (
+                self.total_parleys * self.opt.get('batchsize', 1) /
+                self.num_examples()
+            )
         # when we do not know the size of the data
         else:
             if self.epoch_done():
@@ -257,7 +263,9 @@ class DialogPartnerWorld(World):
 
     def report(self, compute_time=False):
         def show(metric):
-            if 'all' in self.show_metrics or metric in self.show_metrics or metric == 'exs':
+            if ('all' in self.show_metrics or
+                    metric in self.show_metrics or
+                    metric == 'exs'):
                 return True
             return False
         show_metrics = self.opt.get('metrics', "all")
@@ -609,7 +617,8 @@ class BatchWorld(World):
         # Given batch observation, do update for agents[index].
         # Call update on agent
         a = self.world.get_agents()[agent_idx]
-        if hasattr(a, 'batch_act') and not (hasattr(a, 'use_batch_act') and not a.use_batch_act):
+        if (hasattr(a, 'batch_act') and
+                not (hasattr(a, 'use_batch_act') and not a.use_batch_act)):
             batch_actions = a.batch_act(batch_observation)
             # Store the actions locally in each world.
             for i, w in enumerate(self.worlds):
@@ -755,7 +764,8 @@ class HogwildProcess(Process):
                     time.sleep(0.1)
 
                 # process an example or wait for reset
-                if not world.epoch_done() or self.opt.get('datatype').startswith('train', False):
+                if (not world.epoch_done() or
+                        self.opt.get('datatype').startswith('train', False)):
                     # do one example if any available
                     world.parley()
                     with self.sync['total_parleys'].get_lock():
@@ -765,9 +775,12 @@ class HogwildProcess(Process):
                     with self.sync['epoch_done_ctr'].get_lock():
                         # increment the number of finished threads
                         self.sync['epoch_done_ctr'].value += 1
-                    self.sync['threads_sem'].release()  # send control back to main thread
-                    self.sync['queued_sem'].release()  # we didn't process anything
-                    self.sync['reset_sem'].acquire()  # wait for reset signal
+                    # send control back to main thread
+                    self.sync['threads_sem'].release()
+                    # we didn't process anything
+                    self.sync['queued_sem'].release()
+                    # wait for reset signal
+                    self.sync['reset_sem'].acquire()
 
 
 class HogwildWorld(World):
@@ -860,11 +873,18 @@ class HogwildWorld(World):
         """Return total amount of epochs on which the world has trained."""
         if self.max_exs is None:
             if ('num_epochs' in self.opt and self.opt['num_epochs'] > 0):
-                self.max_exs = self.num_examples() * self.opt['num_epochs'] if self.num_examples() else -1
+                if self.num_examples():
+                    self.max_exs = self.num_examples() * self.opt['num_epochs']
+                else:
+                    self.max_exs = -1
             else:
                 self.max_exs = -1
         if self.max_exs > 0:
-            return self.sync['total_parleys'].value * self.opt.get('batchsize', 1) / self.num_examples()
+            return (
+                self.sync['total_parleys'].value *
+                self.opt.get('batchsize', 1) /
+                self.num_examples()
+            )
         else:
             return self.total_epochs
 
@@ -959,7 +979,9 @@ def create_task(opt, user_agents, default_world=None):
     see ``parlai/tasks/tasks.py`` and see ``parlai/tasks/task_list.py``
     for list of tasks.
     """
-    if not (opt.get('task') or opt.get('pytorch_teacher_task') or opt.get('pytorch_teacher_dataset')):
+    if not (opt.get('task') or
+            opt.get('pytorch_teacher_task') or
+            opt.get('pytorch_teacher_dataset')):
         raise RuntimeError('No task specified. Please select a task with ' +
                            '--task {task_name}.')
     if not opt.get('task'):
