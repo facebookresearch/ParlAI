@@ -7,7 +7,6 @@
 
 import os
 import json
-import random
 
 import parlai.core.build_data as build_data
 
@@ -21,8 +20,6 @@ def make_parlai_format(data: list, dpath: str):
     assert valid_p > 0
     assert test_p > 0
 
-    random.seed()
-    random.shuffle(data)
     data_len = len(data)
 
     first_valid = int(data_len * train_p)
