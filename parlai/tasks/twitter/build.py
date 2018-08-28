@@ -23,7 +23,19 @@ def replace_emoji(x):
 
 
 def split_punctuation(x):
-    return x.replace('.', ' . ').replace('. . .', '...').replace(',', ' , ').replace(';', ' ; ').replace(':', ' : ').replace('!', ' ! ').replace('?', ' ? ').replace('"', ' " ').replace('(', ' ( ').replace(')', ' ) ')
+    return (
+        x
+        .replace('.', ' . ')
+        .replace('. . .', '...')
+        .replace(',', ' , ')
+        .replace(';', ' ; ')
+        .replace(':', ' : ')
+        .replace('!', ' ! ')
+        .replace('?', ' ? ')
+        .replace('"', ' " ')
+        .replace('(', ' ( ')
+        .replace(')', ' ) ')
+    )
 
 
 def create_fb_format(data, dpath):

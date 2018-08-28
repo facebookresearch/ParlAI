@@ -249,7 +249,7 @@ class SentenceTeacher(IndexTeacher):
         agent = argparser.add_argument_group(
             'SQuAD Sentence Teacher Arguments'
         )
-        agent.add_argument('--include-context',  type='bool', default=False,
+        agent.add_argument('--include-context', type='bool', default=False,
                            help='include context within text instead of as a '
                            'separate field')
 
@@ -328,7 +328,7 @@ class FulldocsentenceTeacher(FulldocTeacher):
         agent = argparser.add_argument_group(
             'SQuAD Fulldoc Sentence Teacher Arguments'
         )
-        agent.add_argument('--include-context',  type='bool', default=False,
+        agent.add_argument('--include-context', type='bool', default=False,
                            help='include context within text instead of as a '
                            'separate field')
 
