@@ -326,6 +326,9 @@ class TorchAgent(Agent):
                 # random projection
                 if not hasattr(self, 'proj_rp'):
                     self.proj_rp = torch.Tensor(pre_dim, target_dim).normal_()
+                    # rescale so we're not destroying norms too much
+                    # http://scikit-learn.org/stable/modules/random_projection.html#gaussian-random-projection
+                    self.proj_rp /= target_dim
                 return torch.mm(vec.unsqueeze(0), self.proj_rp)
             else:
                 # TODO: PCA
