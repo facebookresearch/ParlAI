@@ -13,6 +13,17 @@ from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 import torch.nn.functional as F
 
 
+def opt_to_kwargs(opt):
+    """Get kwargs for seq2seq from opt."""
+    kwargs = {}
+    for k in ['numlayers', 'dropout', 'bidirectional', 'rnn_class',
+              'lookuptable', 'decoder', 'numsoftmax',
+              'attention', 'attention_length', 'attention_time']:
+        if k in opt:
+            kwargs[k] = opt[k]
+    return kwargs
+
+
 def pad(tensor, length, dim=0):
     """Pad tensor to a specific length.
 
@@ -30,17 +41,6 @@ def pad(tensor, length, dim=0):
             dim=dim)
     else:
         return tensor
-
-
-def opt_to_kwargs(opt):
-    """Get kwargs for seq2seq from opt."""
-    kwargs = {}
-    for k in ['numlayers', 'dropout', 'bidirectional', 'rnn_class',
-              'lookuptable', 'decoder', 'numsoftmax',
-              'attention', 'attention_length', 'attention_time']:
-        if k in opt:
-            kwargs[k] = opt[k]
-    return kwargs
 
 
 class Seq2seq(nn.Module):
@@ -73,8 +73,7 @@ class Seq2seq(nn.Module):
             numlayers=numlayers, dropout=dropout,
             attn_type=attention, attn_length=attention_length,
             attn_time=attention_time,
-            bidir_input=bidirectional,
-            numsoftmax=numsoftmax)
+            bidir_input=bidirectional)
 
         shared_lt = (self.decoder.lt
                      if lookuptable in ('enc_dec', 'all') else None)
@@ -82,15 +81,15 @@ class Seq2seq(nn.Module):
         self.encoder = RNNEncoder(
             num_features, embeddingsize, hiddensize,
             padding_idx=self.NULL_IDX, rnn_class=rnn_class,
-            num_layers=numlayers, dropout=dropout,
+            numlayers=numlayers, dropout=dropout,
             bidirectional=bidirectional,
             shared_lt=shared_lt, shared_rnn=shared_rnn)
 
         shared_weight = (self.decoder.lt
                          if lookuptable in ('dec_out', 'all') else None)
         self.output = OutputLayer(
-            num_features, embeddingsize, hiddensize, numsoftmax=numsoftmax,
-            shared_weight=shared_weight)
+            num_features, embeddingsize, hiddensize, dropout=dropout,
+            numsoftmax=numsoftmax, shared_weight=shared_weight)
 
     def _encode(self, xs, prev_enc=None):
         if prev_enc is not None:
@@ -133,7 +132,7 @@ class Seq2seq(nn.Module):
     def _decode(self, encoder_states, maxlen):
         hidden = encoder_states[0]
         attn_params = (encoder_states[1], encoder_states[2])
-        bsz = hidden.size(0)
+        bsz = encoder_states[1].size(0)
 
         xs = self._starts(bsz)  # input start token
 
@@ -143,7 +142,7 @@ class Seq2seq(nn.Module):
             output, hidden = self.decoder(xs, hidden, attn_params)
             score = self.output(output)
             scores.append(score)
-            xs = score.max(1)[0]  # next input is current predicted output
+            xs = score.max(1)[1]  # next input is current predicted output
 
         return scores
 
@@ -152,9 +151,9 @@ class Seq2seq(nn.Module):
 
         # LSTM or GRU/RNN hidden state?
         if isinstance(hidden, torch.Tensor):
-            hid, cell = hidden
-        else:
             hid, cell = hidden, None
+        else:
+            hid, cell = hidden
 
         if len(cand_inds) != hid.size(1):
             # if the number of candidates is mismatched from the number of
@@ -201,6 +200,8 @@ class Seq2seq(nn.Module):
             return None
 
         cands, cand_inds = cand_params
+        if cands is None:
+            return None
         encoder_states = self._align_inds(encoder_states, cand_inds)
 
         cand_scores = []
@@ -257,7 +258,7 @@ class Seq2seq(nn.Module):
             # we'll never produce longer ones than that during prediction
             self.longest_label = max(self.longest_label, ys.size(1))
 
-        encoder_states = self.encode(xs, prev_enc)
+        encoder_states = self._encode(xs, prev_enc)
 
         # rank candidates if they are available
         cand_scores = self._rank(cand_params, encoder_states)
@@ -276,14 +277,14 @@ class RNNEncoder(nn.Module):
     """RNN Encoder."""
 
     def __init__(self, num_features, embeddingsize, hiddensize,
-                 padding_idx=0, rnn_class='lstm', num_layers=2, dropout=0.1,
+                 padding_idx=0, rnn_class='lstm', numlayers=2, dropout=0.1,
                  bidirectional=False, shared_lt=None, shared_rnn=None,
                  sparse=False):
         """Initialize recurrent encoder."""
         super().__init__()
 
         self.dropout = nn.Dropout(p=dropout)
-        self.layers = num_layers
+        self.layers = numlayers
         self.dirs = 2 if bidirectional else 1
         self.hsz = hiddensize
 
@@ -295,8 +296,8 @@ class RNNEncoder(nn.Module):
             self.lt = shared_lt
 
         if shared_rnn is None:
-            self.rnn = rnn_class(embeddingsize, hiddensize, num_layers,
-                                 dropout=dropout if num_layers > 1 else 0,
+            self.rnn = rnn_class(embeddingsize, hiddensize, numlayers,
+                                 dropout=dropout if numlayers > 1 else 0,
                                  batch_first=True, bidirectional=bidirectional)
         elif bidirectional:
             raise RuntimeError('Cannot share decoder with bidir encoder.')
@@ -320,7 +321,6 @@ class RNNEncoder(nn.Module):
         attn_mask = xs.ne(0).float()
         try:
             x_lens = torch.sum(attn_mask.int(), dim=1)
-            import pdb; pdb.set_trace()
             xes = pack_padded_sequence(xes, x_lens, batch_first=True)
             packed = True
         except ValueError:
@@ -339,7 +339,7 @@ class RNNEncoder(nn.Module):
             else:
                 hidden = hidden.view(-1, self.dirs, bsz, self.hsz).sum(1)
 
-        return encoder_output, hidden, attn_mask
+        return hidden, encoder_output, attn_mask
 
 
 class RNNDecoder(nn.Module):
@@ -349,20 +349,20 @@ class RNNDecoder(nn.Module):
     """
 
     def __init__(self, num_features, embeddingsize, hiddensize,
-                 padding_idx=0, rnn_class='lstm', num_layers=2, dropout=0.1,
+                 padding_idx=0, rnn_class='lstm', numlayers=2, dropout=0.1,
                  bidir_input=False, attn_type='none', attn_time='pre',
                  attn_length=-1, sparse=False):
         """Initialize recurrent decoder."""
         super().__init__()
         self.dropout = nn.Dropout(p=dropout)
-        self.layers = num_layers
+        self.layers = numlayers
         self.hsz = hiddensize
         self.esz = embeddingsize
 
         self.lt = nn.Embedding(num_features, embeddingsize,
                                padding_idx=padding_idx, sparse=sparse)
-        self.rnn = rnn_class(embeddingsize, hiddensize, num_layers,
-                             dropout=dropout if num_layers > 1 else 0,
+        self.rnn = rnn_class(embeddingsize, hiddensize, numlayers,
+                             dropout=dropout if numlayers > 1 else 0,
                              batch_first=True)
 
         self.attn_type = attn_type
@@ -389,7 +389,7 @@ class RNNDecoder(nn.Module):
                             (bsz, seq_len, num_directions * hiddensize).
                             hidden state will be same dimensions as input
                             hidden state. for an RNN, this is a tensor of sizes
-                            (bsz, num_layers * num_directions, hiddensize).
+                            (bsz, numlayers * num_directions, hiddensize).
         """
         # sequence indices => sequence embeddings
         xes = self.dropout(self.lt(xs))
@@ -411,14 +411,14 @@ class RNNDecoder(nn.Module):
 class OutputLayer(nn.Module):
     """Takes in final states and returns distribution over candidates."""
 
-    def __init__(self, num_features, embeddingsize, hiddensize, numsoftmax=1,
-                 shared_weight=None):
+    def __init__(self, num_features, embeddingsize, hiddensize, dropout=0,
+                 numsoftmax=1, shared_weight=None):
         """Initialize output layer.
 
         :param num_features:  number of candidates to rank
         :param hiddensize:    (last) dimension of the input vectors
         :param embeddingsize: (last) dimension of the candidate vectors
-        :param num_softmax:   (default 1) number of softmaxes to calculate.
+        :param numsoftmax:   (default 1) number of softmaxes to calculate.
                               see arxiv.org/abs/1711.03953 for more info.
                               increasing this slows down computation but can
                               add more expressivity to the embeddings.
@@ -426,6 +426,9 @@ class OutputLayer(nn.Module):
                               the final linear layer's weight matrix. default
                               None starts with a new linear layer.
         """
+        super().__init__()
+        self.dropout = nn.Dropout(p=dropout)
+
         # embedding to scores
         if shared_weight is None:
             # just a regular linear layer
@@ -472,14 +475,14 @@ class OutputLayer(nn.Module):
             seqlen = input.size(1) if input.dim() > 1 else 1
 
             # first compute different softmax scores based on input vec
-            # hsz => num_softmax * esz
+            # hsz => numsoftmax * esz
             latent = self.latent(input)
             active = self.dropout(self.activation(latent))
             # esz => num_features
             logit = self.e2s(active.view(-1, self.esz))
 
             # calculate priors: distribution over which softmax scores to use
-            # hsz => num_softmax
+            # hsz => numsoftmax
             prior_logit = self.prior(input).view(-1, self.numsoftmax)
             # softmax over numsoftmax's
             prior = self.softmax(prior_logit)

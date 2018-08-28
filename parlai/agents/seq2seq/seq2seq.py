@@ -7,7 +7,7 @@
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.utils import padded_tensor, round_sigfigs
 from parlai.core.thread_utils import SharedTable
-from .modules import Seq2seq
+from .modules import Seq2seq, opt_to_kwargs
 
 import torch
 import torch.nn as nn
@@ -187,15 +187,15 @@ class Seq2seqAgent(TorchAgent):
         self.reset()
 
     def _init_model(self, states=None):
+        """Initialize model, override to change model setup."""
         opt = self.opt
 
-        if not hasattr(self, 'model_class'):
-            # this allows child classes to override this but inherit init
-            self.model_class = Seq2seq
-        self.model = self.model_class(
-            opt, len(self.dict), padding_idx=self.NULL_IDX,
-            start_idx=self.START_IDX, end_idx=self.END_IDX,
-            longest_label=states.get('longest_label', 1))
+        kwargs = opt_to_kwargs(opt)
+        self.model = Seq2seq(
+            len(self.dict), opt['embeddingsize'], opt['hiddensize'],
+            padding_idx=self.NULL_IDX, start_idx=self.START_IDX,
+            longest_label=states.get('longest_label', 1),
+            **kwargs)
 
         if (opt.get('dict_tokenizer') == 'bpe'
                 and opt['embedding_type'] != 'random'):
@@ -222,6 +222,8 @@ class Seq2seqAgent(TorchAgent):
             self.model.encoder.lt.weight.requires_grad = False
             if opt['lookuptable'] in ['dec_out', 'all']:
                 self.model.decoder.e2s.weight.requires_grad = False
+
+        return self.model
 
     def _v2t(self, vec):
         """Convert token indices to string of tokens."""
@@ -310,12 +312,12 @@ class Seq2seqAgent(TorchAgent):
                                self.truncate or 180)
         self.model.train()
         self.zero_grad()
-        preds = None
         try:
             out = self.model(batch.text_vec, batch.label_vec)
 
             # generated response
-            preds, scores = out[0], out[1]
+            scores = out[0]
+            preds = scores.max(2)[1]
 
             score_view = scores.view(-1, scores.size(-1))
             loss = self.criterion(score_view, batch.label_vec.view(-1))
@@ -359,16 +361,15 @@ class Seq2seqAgent(TorchAgent):
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
         self.model.eval()
-        cands, cand_inds = self._build_cands(batch)
-        out = self.model(batch.text_vec, ys=None,
-                         cands=cands, cand_indices=cand_inds,
-                         beam_size=self.beam_size, topk=self.topk)
-        preds, cand_preds = out[0], out[2]
+        cand_params = self._build_cands(batch)
+        out = self.model(batch.text_vec, ys=None, cand_params=cand_params)
+        scores, cand_scores = out[0], out[1]
 
         if batch.label_vec is not None:
             # calculate loss on targets
             out = self.model(batch.text_vec, batch.label_vec)
-            f_preds, scores = out[0], out[1]
+            scores = out[0]
+            f_preds = scores.max(2)[1]  # forced preds
             score_view = scores.view(-1, scores.size(-1))
             loss = self.criterion(score_view, batch.label_vec.view(-1))
             # save loss to metrics
@@ -380,12 +381,13 @@ class Seq2seqAgent(TorchAgent):
             self.metrics['num_tokens'] += target_tokens
 
         cand_choices = None
-        if cand_preds is not None:
+        if cand_scores is not None:
+            cand_preds = cand_scores.sort(1, True)[1]
             # now select the text of the cands based on their scores
-            cand_choices = self._pick_cands(cand_preds, cand_inds,
+            cand_choices = self._pick_cands(cand_preds, cand_params[1],
                                             batch.candidates)
 
-        text = [self._v2t(p) for p in preds]
+        text = [self._v2t(p) for p in scores.max(2)[1].cpu()]
         return Output(text, cand_choices)
 
     def save(self, path=None):

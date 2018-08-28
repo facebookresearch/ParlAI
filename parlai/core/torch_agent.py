@@ -775,7 +775,7 @@ class TorchAgent(Agent):
             try:
                 print('preinitializing pytorch cuda buffer')
                 dummy = torch.ones(batchsize, maxlen).long().cuda()
-                sc = model(dummy, dummy)[1]
+                sc = model(dummy, dummy)[0]
                 loss = criterion(sc.view(-1, sc.size(-1)), dummy.view(-1))
                 loss.backward()
                 self.buffer_initialized = True
