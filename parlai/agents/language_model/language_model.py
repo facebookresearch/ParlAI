@@ -312,7 +312,11 @@ class LanguageModelAgent(Agent):
                 self.next_observe += vec
             if 'labels' in obs:
                 if self.use_person_tokens:
-                    labels = ['PERSON2 ' + label for label in obs['labels'] if label != '']
+                    labels = [
+                        'PERSON2 ' + label
+                        for label in obs['labels']
+                        if label != ''
+                    ]
                     obs['labels'] = tuple(labels)
                 vec = self.parse(obs['labels'][0])
                 vec.append(self.END_IDX)
@@ -339,7 +343,11 @@ class LanguageModelAgent(Agent):
                     obs['text'] = 'PERSON1 ' + obs['text']
             if 'eval_labels' in obs:
                 if self.use_person_tokens:
-                    eval_labels = ['PERSON2 ' + label for label in obs['eval_labels'] if label != '']
+                    eval_labels = [
+                        'PERSON2 ' + label
+                        for label in obs['eval_labels']
+                        if label != ''
+                    ]
                     obs['eval_labels'] = tuple(eval_labels)
             self.observation = obs
             return obs
@@ -373,7 +381,11 @@ class LanguageModelAgent(Agent):
         loss += self.criterion(output_flat, targets.select(1, 0).view(-1)).data
 
         for i in range(1, targets.size(1)):
-            output, hidden = self.model(targets.select(1, i - 1).view(1, bsz), self.hidden, no_pack=True)
+            output, hidden = self.model(
+                targets.select(1, i - 1).view(1, bsz),
+                self.hidden,
+                no_pack=True
+            )
             self.hidden = self.repackage_hidden(hidden)
             output_flat = output.view(-1, len(self.dict))
             loss += self.criterion(output_flat, targets.select(1, i).view(-1)).data
@@ -398,9 +410,13 @@ class LanguageModelAgent(Agent):
                 output, hidden = self.model(data.transpose(0, 1), hidden)
                 hidden = self.repackage_hidden(hidden)
                 # feed in end tokens
-                output, hidden = self.model(Variable(self.ends[:bsz].view(1, bsz)), hidden)
+                output, hidden = self.model(
+                    Variable(self.ends[:bsz].view(1, bsz)), hidden
+                )
             else:
-                output, hidden = self.model(Variable(word_idx.view(1, bsz)), hidden, no_pack=True)
+                output, hidden = self.model(
+                    Variable(word_idx.view(1, bsz)), hidden, no_pack=True
+                )
             hidden = self.repackage_hidden(hidden)
             word_weights = output.squeeze().data.exp()
             if bsz > 1:
@@ -524,13 +540,17 @@ class LanguageModelAgent(Agent):
             if not self.is_training:
                 self.hidden = self.model.init_hidden(self.batchsize)
             self.is_training = True
-            data_list, targets_list, _c, _v, y_lens = self.vectorize(observations, self.opt['seq_len'], self.is_training)
+            data_list, targets_list, _c, _v, y_lens = self.vectorize(
+                observations, self.opt['seq_len'], self.is_training
+            )
         else:
             # if we just finished training, reinitialize hidden
             if self.is_training:
                 self.hidden = self.model.init_hidden(self.batchsize)
                 self.is_training = False
-            data_list, targets_list, labels, valid_inds, y_lens = self.vectorize(observations, self.opt['seq_len'], self.is_training)
+            data_list, targets_list, labels, valid_inds, y_lens = self.vectorize(
+                observations, self.opt['seq_len'], self.is_training
+            )
 
         if data_list is None:
             # not enough data to batch act yet, return empty responses
@@ -538,12 +558,16 @@ class LanguageModelAgent(Agent):
 
         batch_reply = []
         # during evaluation, len(data_list) is always 1
-        # during training, len(dat_list) >= 0: vectorize returns a list containing all batches available at the time it is called
+        # during training, len(dat_list) >= 0: vectorize returns a list
+        #     containing all batches available at the time it is called
         for i in range(len(data_list)):
             temp_dicts = [{'id': self.getID()} for _ in range(len(observations))]
             # ignore case when we do not return any valid indices
             if data_list[i] is not None:
-                output, hidden, predictions = self.predict(data_list[i], self.hidden, targets_list[i], self.is_training, y_lens)
+                output, hidden, predictions = self.predict(
+                    data_list[i], self.hidden, targets_list[i],
+                    self.is_training, y_lens
+                )
                 self.hidden = self.repackage_hidden(hidden)
 
                 if predictions is not None:
