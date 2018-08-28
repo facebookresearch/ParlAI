@@ -13,7 +13,6 @@ One can set the `--context-len` flag to specify how many past utterances
 are used in a flattened episode.
 """
 from parlai.core.agents import create_agent
-from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
 from parlai.core.utils import ProgressLogger
 import copy
@@ -26,6 +25,7 @@ from collections import deque
 
 
 def setup_args():
+    from parlai.core.params import ParlaiParser
     return ParlaiParser(True, True)
 
 

@@ -45,6 +45,10 @@ class FlickrDataset(Dataset):
         self._setup_data(data_path, opt.get('unittest', False))
         self.dict_agent = DictionaryAgent(opt)
 
+    @staticmethod
+    def add_cmdline_args(argparser):
+        DefaultTeacher.add_cmdline_args(argparser)
+
     def __getitem__(self, index):
         cap = self.data[index]
         image_id = int(cap['filename'].replace('.jpg', ''))
