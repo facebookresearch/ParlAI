@@ -7,7 +7,7 @@
 load them, agents & tasks associated (e.g. they were trained using) and a
 description. Using the path you should be able to download and use the model
 automatically, e.g.:
- python examples/interactive.lua --model-file\
+ python examples/interactive.py --model-file\
     "models:wikipedia_2016-12-21/tfidf_retriever/drqa_docs"
 """
 
