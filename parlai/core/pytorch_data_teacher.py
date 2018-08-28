@@ -59,14 +59,24 @@ def batch_cache(function):
 
     def get_cache_size():
         '''Returns number of available episodes '''
-        return sum(len(v['ep_list']) - v['current_idx']for k, v in length_to_eps.items())
+        return sum(
+            len(v['ep_list']) - v['current_idx']for k, v in length_to_eps.items()
+        )
 
     def get_available_buckets(bsz):
         '''Returns buckets where there are enough episodes for a batch'''
         if load_complete.value:
-            return {k: v for k, v in length_to_eps.items() if not v['bucket_complete'] or len(v['ep_list']) - v['current_idx'] > 0}
+            return {
+                k: v
+                for k, v in length_to_eps.items()
+                if not v['bucket_complete'] or len(v['ep_list']) - v['current_idx'] > 0
+            }
         else:
-            return {k: v for k, v in length_to_eps.items() if len(v['ep_list']) - v['current_idx'] >= bsz}
+            return {
+                k: v
+                for k, v in length_to_eps.items()
+                if len(v['ep_list']) - v['current_idx'] >= bsz
+            }
 
     def reset():
         '''Resets the indices into the buckets'''
@@ -116,7 +126,10 @@ def batch_cache(function):
     def put_in_cache(ep_idx, episode, caller):
         '''Put episode `ep_idx` into cache'''
         length = episode['text'].count(' ')
-        lengths = [length] + flatten([[length + i, length + (i * -1)] for i in range(1, caller.batch_length_range)])
+        lengths = [length] + flatten([
+            [length + i, length + (i * -1)]
+            for i in range(1, caller.batch_length_range)
+        ])
         lengths = [max(i, 1) for i in lengths]
         in_cache = False
         for l in lengths:
@@ -147,7 +160,8 @@ def batch_cache(function):
         # If Loader, put episodes in cache
         if isinstance(caller, LoaderProcess):
             with add_to_cache_cv:
-                while get_cache_size() >= max_cache_size and len(get_available_buckets(bsz)) > 0:
+                while (get_cache_size() >= max_cache_size and
+                        len(get_available_buckets(bsz)) > 0):
                     cache_filled_cv.notify_all()
                     add_to_cache_cv.wait()
             idx_and_batch = function(*args)
@@ -185,7 +199,9 @@ def batch_cache(function):
                                 length_to_eps[length]['ep_list'] = ep_list[bsz:]
                             else:
                                 batch = ep_list[current_idx: current_idx + bsz]
-                                length_to_eps[length]['current_idx'] = (current_idx + bsz)
+                                length_to_eps[length]['current_idx'] = (
+                                    current_idx + bsz
+                                )
                         elif load_complete.value and num_eps > 0:
                             if batch_cache_type == 'pop':
                                 batch = ep_list
@@ -220,12 +236,18 @@ def get_dataset_classes(opt):
         would just be:
         ``-pytd vqa_v1``
     """
-    default_dataset = StreamDataset if 'stream' in opt.get('datatype') else ParlAIDataset
+    if 'stream' in opt.get('datatype'):
+        default_dataset = StreamDataset
+    else:
+        default_dataset = ParlAIDataset
     dataset_name = opt.get('pytorch_teacher_dataset')
     task_name = opt.get('pytorch_teacher_task')
     datasets = []
     if task_name is not None:
-        datasets += [(default_dataset, default_collate, task) for task in task_name.split(',')]
+        datasets += [
+            (default_dataset, default_collate, task)
+            for task in task_name.split(',')
+        ]
     if not dataset_name:
         return datasets
     sps = [d.strip() for d in dataset_name.split(',')]
