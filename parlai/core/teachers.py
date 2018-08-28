@@ -25,13 +25,11 @@
      Teacher class that provides access to data in the ParlAI Dialog format.
      See the class description for more details.
 
-This module also includes ``DataLoader``, a threadpool data loader for ``FixedDialogTeacher``,
-and ``DialogData``/``StreamDialogData``, data structures for accessing textual
-dialog data and utilized by ``DialogTeacher``
-
-
-
+This module also includes ``DataLoader``, a threadpool data loader for
+``FixedDialogTeacher``, and ``DialogData``/``StreamDialogData``, data
+structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
+
 from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
 from .utils import AttrDict, flatten, sort_data, make_batches, no_lock, str_to_msg
@@ -60,7 +58,8 @@ class DataLoader(Thread):
 
     :param receive_fn: a receive function (for receiving the data)
     :param load_fn: a load function (for loading the data)
-    :param args: arguments for the load function. args can be either a dictionary of arguments for a function, or a list of positional arguments
+    :param args: arguments for the load function. args can be either a
+        dictionary of arguments for a function, or a list of positional arguments
     """
     def __init__(self, opt):
         Thread.__init__(self, daemon=True)
@@ -71,7 +70,8 @@ class DataLoader(Thread):
         self.request_queue.put((receive_fn, load_fn, args))
 
     def run(self):
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_workers) as executor:
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers=self.num_workers)
+        with executor:
             while True:
                 receive_fn, load_fn, args = self.request_queue.get()
                 if type(args) == dict:
@@ -377,7 +377,9 @@ class FixedDialogTeacher(Teacher):
         batch = self.next_batch()
         # pad batch
         if len(batch) < self.bsz:
-            batch += [{'episode_done': True, 'id': self.getID()}] * (self.bsz - len(batch))
+            batch += [
+                {'episode_done': True, 'id': self.getID()}
+            ] * (self.bsz - len(batch))
 
         # remember correct answer if available (for padding, None)
         for i, ex in enumerate(batch):
@@ -594,7 +596,9 @@ class DialogData(object):
                         # make sure iterable over labels, not single string
                         new_entry.append(tuple(sys.intern(e) for e in entry[1]))
                     else:
-                        raise TypeError('Must provide iterable over labels, not a single string.')
+                        raise TypeError(
+                            'Must provide iterable over labels, not a single string.'
+                        )
                     if len(entry) > 2:
                         # process reward if available
                         if entry[2] is not None:
@@ -610,13 +614,17 @@ class DialogData(object):
                                 # don't store them again
                                 new_entry.append(
                                     sys.intern('same as last time'))
-                            elif hasattr(entry[3], '__iter__') and type(entry[3]) is not str:
+                            elif (hasattr(entry[3], '__iter__') and
+                                    type(entry[3]) is not str):
                                 # make sure iterable over candidates, not single string
                                 last_cands = entry[3]
                                 new_entry.append(tuple(
                                     sys.intern(e) for e in entry[3]))
                             else:
-                                raise TypeError('Must provide iterable over label candidates, not a single string.')
+                                raise TypeError(
+                                    'Must provide iterable over label candidates, '
+                                    'not a single string.'
+                                )
                             if len(entry) > 4 and entry[4] is not None:
                                 new_entry.append(sys.intern(entry[4]))
 
@@ -1119,8 +1127,14 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
 
     ::
 
-        text:Sam went to the kitchen.\nPat gave Sam the milk.\nWhere is the milk?<TAB>labels:kitchen<TAB>reward:1<TAB>label_candidates:hallway|kitchen|bathroom
-        text:Sam went to the hallway.\nPat went to the bathroom.\nWhere is the milk?<TAB>labels:hallway<TAB>reward:1<TAB>label_candidateshallway|kitchen|bathroom<TAB>episode_done:True
+        text:Sam went to the kitchen. <NEWL>
+        Pat gave Sam the milk. <NEWL>
+        Where is the milk? <TAB> labels:kitchen <TAB> reward:1
+        <TAB> label_candidates:hallway|kitchen|bathroom
+        text:Sam went to the hallway. <NEWL>
+        Pat went to the bathroom. <NEWL>
+        Where is the milk? <TAB> labels:hallway <TAB> reward:1
+        <TAB> label_candidateshallway|kitchen|bathroom <TAB> episode_done:True
 
     Lines 1-2 represent a single episode, with a different example on each line.
     The lines contain a query and a label for getting the question
