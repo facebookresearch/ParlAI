@@ -12,8 +12,5 @@
 CHANGED_FILES="$(git diff --name-only origin/master HEAD | grep '\.py$' | tr '\n' ' ')"
 if [ "$CHANGED_FILES" != "" ]
 then
-    echo "Linting: $CHANGED_FILES"
     exec flake8 $CHANGED_FILES
-else
-    echo "No python files changed :)" >&2
 fi
