@@ -43,8 +43,8 @@ class Seq2seqAgent(TorchAgent):
     # legacy agent code is located in parlai/legacy_agents
     VERSION = 1
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument('--init-model', type=str, default=None,
@@ -66,7 +66,8 @@ class Seq2seqAgent(TorchAgent):
                            help='whether to encode the context with a '
                                 'bidirectional rnn')
         agent.add_argument('-att', '--attention', default='none',
-                           choices=['none', 'concat', 'general', 'dot', 'local'],
+                           choices=['none', 'concat', 'general', 'dot',
+                                    'local'],
                            help='Choices: none, concat, general, local. '
                                 'If set local, also set attention-length. '
                                 '(see arxiv.org/abs/1508.04025)')
@@ -108,9 +109,6 @@ class Seq2seqAgent(TorchAgent):
                            help='Top k sampling from renormalized softmax in '
                                 'test/valid time, default 1 means simple '
                                 'greedy max output')
-        agent.add_argument('--softmax-layer-bias', type='bool', default=False,
-                           help='Put True if you want to include the bias in '
-                                'decoder.e2s layer')
         agent.add_argument('--seq2seq_version', default=Seq2seqAgent.VERSION)
         TorchAgent.add_cmdline_args(argparser)
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
