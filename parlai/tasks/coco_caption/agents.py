@@ -265,6 +265,8 @@ class DefaultTeacher(FixedDialogTeacher):
         self.num_cands = opt.get('num_cands', -1)
         self.include_rest_val = opt.get('include_rest_val', False)
         test_info_path, annotation_path, self.image_path = _path(opt, version)
+        self.test_split = opt['test_split']
+
         if shared:
             # another instance was set up already, just reference its data
             if 'annotation' in shared:
@@ -276,7 +278,6 @@ class DefaultTeacher(FixedDialogTeacher):
             # need to set up data from scratch
             self._setup_data(test_info_path, annotation_path, opt)
             self.image_loader = ImageLoader(opt)
-
         self.reset()
 
     @staticmethod
@@ -294,6 +295,10 @@ class DefaultTeacher(FixedDialogTeacher):
         agent.add_argument('--include_rest_val', type='bool',
                            default=False,
                            help='Include unused validation images in training')
+        agent.add_argument('--test-split', type=int, default=-1,
+                           choices=[-1, 0, 1, 2, 3, 4],
+                           help='Which 1k image split of dataset to use for candidates'
+                           'if -1, use all 5k test images')
 
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
@@ -420,6 +425,8 @@ class DefaultTeacher(FixedDialogTeacher):
                 self.cands = [l for d in self.annotation for l in [s['raw'] for s in d['sentences']]]
             else:
                 self.annotation = [d for d in raw_data if d['split'] == 'test']
+                if self.test_split != -1:
+                        self.annotation = self.annotation[self.test_split*1000:(self.test_split+1)*1000]
                 self.cands = [l for d in self.annotation for l in [s['raw'] for s in d['sentences']]]
         else:
             if not self.datatype.startswith('test'):

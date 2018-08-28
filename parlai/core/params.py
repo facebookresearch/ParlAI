@@ -16,6 +16,7 @@ import datetime
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.build_data import modelzoo_path
+from parlai.core.pytorch_data_teacher import get_dataset_classes
 
 
 def get_model_name(opt):
@@ -395,6 +396,17 @@ class ParlaiParser(argparse.ArgumentParser):
                 # already added
                 pass
 
+    def add_pyt_dataset_args(self, opt):
+        """Add arguments specific to specified pytorch dataset"""
+        dataset_classes = get_dataset_classes(opt)
+        for dataset, _, _ in dataset_classes:
+            try:
+                if hasattr(dataset, 'add_cmdline_args'):
+                    dataset.add_cmdline_args(self)
+            except argparse.ArgumentError:
+                # already added
+                pass
+
     def add_image_args(self, image_mode):
         """Add additional arguments for handling images."""
         try:
@@ -423,6 +435,16 @@ class ParlaiParser(argparse.ArgumentParser):
         evaltask = parsed.get('evaltask', None)
         if evaltask is not None:
             self.add_task_args(evaltask)
+
+        # find pytorch teacher task if specified, add its specific arguments
+        pytorch_teacher_task = parsed.get('pytorch_teacher_task', None)
+        if pytorch_teacher_task is not None:
+            self.add_task_args(pytorch_teacher_task)
+
+        # find pytorch dataset if specified, add its specific arguments
+        pytorch_teacher_dataset = parsed.get('pytorch_teacher_dataset', None)
+        if pytorch_teacher_dataset is not None:
+            self.add_pyt_dataset_args(parsed)
 
         # find which model specified if any, and add its specific arguments
         model = get_model_name(parsed)
