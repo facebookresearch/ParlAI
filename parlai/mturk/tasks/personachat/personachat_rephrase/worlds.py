@@ -5,7 +5,9 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.core.worlds import validate
-from parlai.mturk.tasks.personachat.personachat_chat.extract_and_save_personas import main as main_extract
+from parlai.mturk.tasks.personachat.personachat_chat.extract_and_save_personas import (
+    main as main_extract
+)
 from joblib import Parallel, delayed
 import numpy as np
 import time
@@ -20,7 +22,8 @@ class PersonasGenerator(object):
                                                     './personas_idx_stack.pkl')
 
         self.personas_path = '{}/personas-{}'.format(
-                             opt['extract_personas_path'], opt['persona_type'] + 'Original')
+            opt['extract_personas_path'], opt['persona_type'] + 'Original'
+        )
 
         if not os.path.exists(self.personas_path):
             opt['personas_path'] = self.personas_path
@@ -113,7 +116,8 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
         if not self.shown_persona:
             self.mturk_agent.observe({
                 'id': 'SYSTEM',
-                'text': 'You will be asked to rephrase the following persona:\n\n ' + '\n'.join(self.persona)
+                'text': 'You will be asked to rephrase the following persona:\n\n ' +
+                        '\n'.join(self.persona)
             })
             self.shown_persona = True
 
@@ -121,17 +125,22 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
             persona_done = False
             self.mturk_agent.observe({
                 'id': 'SYSTEM',
-                'text': "Please rephrase the sentence below so that it sticks to the same person's characteristics: \n\n \
-                        <b><span style='color:blue'>{}</span></b> \
-                        \n\n There are {} sentences left to be rephrased.".format(self.persona[self.num_done], len(self.persona) - len(self.rephrased_persona) - 1)
+                'text': "Please rephrase the sentence below so that it sticks to the "
+                        "same person's characteristics: \n\n"
+                        "<b><span style='color:blue'>{}</span></b>"
+                        "\n\n There are {} sentences left to be rephrased.".format(
+                            self.persona[self.num_done],
+                            len(self.persona) - len(self.rephrased_persona) - 1
+                        )
             })
             while not persona_done:
                 act = self.mturk_agent.act(timeout=self.max_response_time)
                 if act['episode_done']:
                     self.episodeDone = True
                     return
-                if self.is_msg_tooshortlong(act, self.mturk_agent) or \
-                   self.is_close_match(act, self.mturk_agent, self.persona[self.num_done]):
+                if (self.is_msg_tooshortlong(act, self.mturk_agent) or
+                        self.is_close_match(act, self.mturk_agent,
+                                            self.persona[self.num_done])):
                     pass
                 else:
                     self.rephrased_persona.append(act['text'])
@@ -141,8 +150,9 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
         else:
             self.mturk_agent.observe({
                 'id': 'SYSTEM',
-                'text': 'Thank you for rephrasing the character! \n \
-                        <b><span style="color:blue">Please click "Done with this HIT" below to submit the HIT.</span></b>'
+                'text': 'Thank you for rephrasing the character! \n '
+                        '<b><span style="color:blue">Please click "Done '
+                        'with this HIT" below to submit the HIT.</span></b>'
             })
             self.episodeDone = True
             return
@@ -154,7 +164,14 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
         if len(self.rephrased_persona) == len(self.persona):
             self.completed = True
             self.personas_generator.add_done_persona(self.persona_idx)
-            filename = os.path.join(data_path, 'persona_{}_{}_{}.pkl'.format(time.strftime("%Y%m%d-%H%M%S"), self.mturk_agent.worker_id, self.task_type))
+            filename = os.path.join(
+                data_path,
+                'persona_{}_{}_{}.pkl'.format(
+                    time.strftime("%Y%m%d-%H%M%S"),
+                    self.mturk_agent.worker_id,
+                    self.task_type
+                )
+            )
             print('Profile successfully saved at {}.'.format(filename))
             pickle.dump({'hit_id': self.mturk_agent.hit_id,
                          'assignment_id': self.mturk_agent.assignment_id,
@@ -165,7 +182,14 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
         else:
             self.personas_generator.push_persona(self.persona_idx)
             print("Incomplete persona:", self.persona_idx)
-            filename = os.path.join(data_path, 'incomplete_persona_{}_{}_{}.pkl'.format(time.strftime("%Y%m%d-%H%M%S"), self.mturk_agent.worker_id, self.task_type))
+            filename = os.path.join(
+                data_path,
+                'incomplete_persona_{}_{}_{}.pkl'.format(
+                    time.strftime("%Y%m%d-%H%M%S"),
+                    self.mturk_agent.worker_id,
+                    self.task_type
+                )
+            )
             print('Profile successfully saved at {}.'.format(filename))
             pickle.dump({'hit_id': self.mturk_agent.hit_id,
                          'assignment_id': self.mturk_agent.assignment_id,
@@ -176,6 +200,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
 
     def shutdown(self):
         global shutdown_agent
+
         def shutdown_agent(mturk_agent):
             mturk_agent.shutdown()
         Parallel(
@@ -199,13 +224,20 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                 for r_w in regular_words:
                     if r_w in per_parse:
                         per_parse.remove(r_w)
-                per_subseq = [' '.join(per_parse[i:i + len(per_parse) - tolerance]) for i in range(tolerance + 1)]
+                per_subseq = [
+                    ' '.join(per_parse[i:i + len(per_parse) - tolerance])
+                    for i in range(tolerance + 1)
+                ]
                 for pp in per_subseq:
                     if pp in ['', ' ', '  ', '   ']:
                         per_subseq.remove(pp)
                 n_word_match += sum([(paa in text) for paa in per_subseq])
             if n_word_match > 0:
-                control_msg['text'] = 'We found that you <b><span style="color:red">trivially copied character descriptions</span></b>. Please rephrase your message again.'
+                control_msg['text'] = (
+                    'We found that you <b><span style="color:red">trivially '
+                    'copied character descriptions</span></b>. Please '
+                    'rephrase your message again.'
+                )
                 ag.observe(validate(control_msg))
                 return True
             else:
@@ -228,7 +260,11 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                     per_parse.remove(r_w)
             n_word_match += sum([word in text for word in per_parse])
             if n_word_match / (len(per_parse) + 1) > tolerance:
-                control_msg['text'] = 'We found that you <b><span style="color:red">trivially copied character descriptions</span></b>. Please rephrase your message again.'
+                control_msg['text'] = (
+                    'We found that you <b><span style="color:red">'
+                    'trivially copied character descriptions</span></b>. '
+                    'Please rephrase your message again.'
+                )
                 ag.observe(validate(control_msg))
                 return True
             else:
@@ -243,11 +279,17 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
 
         msg_len = len(act['text'].split(' '))
         if msg_len < th_min:
-            control_msg['text'] = 'Your message is too short, please make it more than <b><span style="color:red">5 words</span></b>.'
+            control_msg['text'] = (
+                'Your message is too short, please make it more than '
+                '<b><span style="color:red">5 words</span></b>.'
+            )
             ag.observe(validate(control_msg))
             return True
         if msg_len > th_max:
-            control_msg['text'] = 'Your message is too long, please make it less than <b><span style="color:red">15 words</span></b>.'
+            control_msg['text'] = (
+                'Your message is too long, please make it less than '
+                '<b><span style="color:red">15 words</span></b>.'
+            )
             ag.observe(validate(control_msg))
             return True
         return False

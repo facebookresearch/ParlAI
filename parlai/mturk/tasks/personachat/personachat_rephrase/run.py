@@ -59,7 +59,11 @@ def main():
             # ADD BLOCKED WORKERS HERE
             blocked_worker_list = []
             for w in blocked_worker_list:
-                mturk_manager.block_worker(w, 'We found that you have unexpected behaviors in our previous HITs. For more questions please email us.')
+                mturk_manager.block_worker(
+                    w,
+                    'We found that you have unexpected behaviors in our '
+                    'previous HITs. For more questions please email us.'
+                )
 
         def run_onboard(worker):
             pass
