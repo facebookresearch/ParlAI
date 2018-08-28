@@ -25,11 +25,23 @@ CR_LEN=${#CR[*]}  # number elements in the message
 
 EXIT_CODE=0
 
-FILES="$(git ls-files | grep "$EXTENSIONS")"
+if [ "$1" == "all" ]
+then
+    # force a check on every file
+    FILES="$(git ls-files | grep "$EXTENSIONS")"
+else
+    FILES="$(git diff --name-only origin/master | grep "$EXTENSIONS")"
+fi
 
 # for each code file
 for fn in $FILES
 do
+    # skip files that don't exist in this repo (happens if we're behind master)
+    if [ ! -f "$fn" ]
+    then
+        continue
+    fi
+
     # skip empty files
     if [[ "$(wc -l $fn | cut -f1 -d ' ')" == "0" ]]
     then
@@ -44,7 +56,7 @@ do
     for i in $(seq 0 $[CR_LEN - 1])
     do
         msg="${CR[$i]}"
-        head -n "$LINE_LIMIT" "$fn" | grep "$msg" -Fc > /dev/null
+        head -n "$LINE_LIMIT" "$fn" | grep "$msg" -Fq
         # if we didn't find anything, warn:
         if [ "$?" != "0" ]
         then
