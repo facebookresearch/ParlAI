@@ -175,7 +175,10 @@ class ImageLoader():
             zipname = path[:sep]
             file_name = path[sep + 1:]
             path = ZipFile(zipname, 'r').open(file_name)
-            task = opt['task'] if opt['task'] != 'pytorch_teacher' else opt['image_load_task']
+            if opt['task'] != 'pytorch_teacher':
+                task = opt['task']
+            else:
+                task = opt['image_load_task']
             prepath = os.path.join(opt['datapath'], task)
             imagefn = ''.join(zipname.strip('.zip').split('/')[-2:]) + path.name
         if mode == 'raw':
