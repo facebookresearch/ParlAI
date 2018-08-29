@@ -125,7 +125,8 @@ class TorchAgent(Agent):
         agent.add_argument(
             '-emb', '--embedding-type', default='random',
             choices=['random', 'glove', 'glove-fixed', 'glove-twitter-fixed',
-                     'fasttext', 'fasttext-fixed'],
+                     'fasttext', 'fasttext-fixed', 'fasttext_cc',
+                     'fasttext_cc-fixed'],
             help='Choose between different strategies for initializing word '
                  'embeddings. Default is random, but can also preinitialize '
                  'from Glove or Fasttext. Preinitialized embeddings can also '
@@ -143,7 +144,7 @@ class TorchAgent(Agent):
             help='Choose between pytorch optimizers. Any member of torch.optim'
                  ' should be valid.')
         agent.add_argument(
-            '-mom', '--momentum', default=-1, type=float,
+            '-mom', '--momentum', default=0, type=float,
             help='if applicable, momentum value for optimizer.')
         # preprocessing arguments
         agent.add_argument(
@@ -296,6 +297,12 @@ class TorchAgent(Agent):
                 name=name, dim=pretrained_dim,
                 cache=modelzoo_path(self.opt.get('datapath'),
                                     'models:glove_vectors'))
+        elif emb_type.startswith('fasttext_cc'):
+            init = 'fasttext_cc'
+            embs = vocab.FastText(
+                language='en',
+                cache=modelzoo_path(self.opt.get('datapath'),
+                                    'models:fasttext_cc_vectors'))
         elif emb_type.startswith('fasttext'):
             init = 'fasttext'
             embs = vocab.FastText(
@@ -326,6 +333,9 @@ class TorchAgent(Agent):
                 # random projection
                 if not hasattr(self, 'proj_rp'):
                     self.proj_rp = torch.Tensor(pre_dim, target_dim).normal_()
+                    # rescale so we're not destroying norms too much
+                    # http://scikit-learn.org/stable/modules/random_projection.html#gaussian-random-projection
+                    self.proj_rp /= target_dim
                 return torch.mm(vec.unsqueeze(0), self.proj_rp)
             else:
                 # TODO: PCA
@@ -533,14 +543,14 @@ class TorchAgent(Agent):
         xs, x_lens = None, None
         if any('text_vec' in ex for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
-            xs, x_lens = padded_tensor(_xs)
+            xs, x_lens = padded_tensor(
+                _xs, self.NULL_IDX, self.use_cuda, left_padded=True
+            )
             if sort:
                 sort = False  # now we won't sort on labels
                 xs, x_lens, valid_inds, exs = argsort(
                     x_lens, xs, x_lens, valid_inds, exs, descending=True
                 )
-            if self.use_cuda:
-                xs = xs.cuda()
 
         # LABELS
         labels_avail = any('labels_vec' in ex for ex in exs)
@@ -555,19 +565,12 @@ class TorchAgent(Agent):
             labels = [ex.get(field + '_choice') for ex in exs]
             y_lens = [y.shape[0] for y in label_vecs]
 
+            ys, y_lens = padded_tensor(label_vecs, self.NULL_IDX, self.use_cuda, False)
             if sort and xs is None:
-                ys, y_lens = padded_tensor(label_vecs)
-                exs, valid_inds, label_vecs, labels, y_lens = argsort(
-                    y_lens, exs, valid_inds, label_vecs, labels, y_lens,
+                ys, valid_inds, label_vecs, labels, y_lens = argsort(
+                    y_lens, ys, valid_inds, label_vecs, labels, y_lens,
                     descending=True
                 )
-
-            ys = torch.LongTensor(len(exs), max(y_lens)).fill_(self.NULL_IDX)
-            for i, y in enumerate(label_vecs):
-                if y.shape[0] != 0:
-                    ys[i, :y.shape[0]] = y
-            if self.use_cuda:
-                ys = ys.cuda()
 
         # LABEL_CANDIDATES
         cands, cand_vecs = None, None

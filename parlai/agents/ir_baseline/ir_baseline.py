@@ -7,9 +7,12 @@
 # Simple IR baselines.
 # We plan to implement the following variants:
 # Given an input message, either:
-# (i) find the most similar message in the (training) dataset and output the response from that exchange; or
+# (i) find the most similar message in the (training) dataset and output the
+#   response from that exchange; or
 # (ii) find the most similar response to the input directly.
-# (iii) if label_candidates are provided, simply ranks them according to their similarity to the input message.
+# (iii) if label_candidates are provided, simply ranks them according to their
+#   similarity to the input message.
+#
 # Currently only (iii) is used.
 #
 # Additonally, TFIDF is either used (requires building a dictionary) or not,
@@ -111,7 +114,8 @@ class IrBaselineAgent(Agent):
             help='length penalty for responses')
         parser.add_argument(
             '-hsz', '--history_size', type=int, default=1,
-            help='number of utterances from the dialogue history to take use as the query')
+            help='number of utterances from the dialogue history to take use '
+                 'as the query')
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)

@@ -17,7 +17,7 @@ def main():
     argparser.add_messenger_args()
     opt = argparser.parse_args()
     print(opt)
-    if opt['model'] == None and opt['model_file'] == None:
+    if opt['model'] is None and opt['model_file'] is None:
         print("Model must be specified")
         return
     bot = create_agent(opt)

@@ -19,7 +19,6 @@ from fairseq.sequence_generator import SequenceGenerator
 from fairseq.sequence_scorer import SequenceScorer
 from fairseq import options
 from fairseq.tasks.fairseq_task import FairseqTask
-from fairseq.utils import convert_padding_direction
 
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.build_data import modelzoo_path
@@ -214,7 +213,7 @@ class FairseqAgent(TorchAgent):
         agent.add_argument(
             '--fp16',
             default=False,
-            type=bool,
+            type='bool',
             help='Use fp16 training'
         )
         agent.add_argument(
@@ -351,6 +350,7 @@ class FairseqAgent(TorchAgent):
                 self.trainer = trainer.Trainer(
                     self.args, self.task, self.model, self.criterion
                 )
+            self.trainer._build_optimizer()
 
             # if the model already existed, let's preload it and the trainer
             if model_file_exists:
@@ -597,11 +597,10 @@ class FairseqAgent(TorchAgent):
         """Generate a sample object that Fairseq expects."""
         # add extra info to samples
         # TODO: should the right/left padding thing be in torch agent?
-        repadded = convert_padding_direction(xs, self.dict.pad(), right_to_left=True)
         sample = {}
         sample["id"] = torch.arange(len(xs) - 1)
         sample["net_input"] = {
-            "src_tokens": repadded,
+            "src_tokens": xs,
             "src_lengths": self._seq_length(xs),
         }
         if ys is not None:
