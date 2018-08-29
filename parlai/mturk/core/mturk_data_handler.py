@@ -334,8 +334,6 @@ class MTurkDataHandler():
         c = conn.cursor()
         c.execute("SELECT * FROM workers WHERE worker_id = ?;", (worker_id, ))
         results = c.fetchone()
-        if results is None:
-            return None
         return results
 
     def get_assignment_data(self, assignment_id):
@@ -344,8 +342,6 @@ class MTurkDataHandler():
         c.execute("SELECT * FROM assignments WHERE assignment_id = ?;",
                   (assignment_id, ))
         results = c.fetchone()
-        if results is None:
-            return None
         return results
 
     def get_worker_assignment_pairing(self, worker_id, assignment_id):
@@ -354,8 +350,6 @@ class MTurkDataHandler():
         c.execute("""SELECT * FROM pairings WHERE worker_id = ?
                      AND assignment_id = ?;""", (worker_id, assignment_id, ))
         results = c.fetchone()
-        if results is None:
-            return None
         return results
 
     def get_run_data(self, task_group_id):
@@ -366,8 +360,6 @@ class MTurkDataHandler():
         c = conn.cursor()
         c.execute("SELECT * FROM runs WHERE run_id = ?;", (task_group_id, ))
         results = c.fetchone()
-        if results is None:
-            return None
         return results
 
     def get_hit_data(self, hit_id):
@@ -376,8 +368,6 @@ class MTurkDataHandler():
         c = conn.cursor()
         c.execute("SELECT * FROM hits WHERE hit_id = ?;", (hit_id, ))
         results = c.fetchone()
-        if results is None:
-            return None
         return results
 
     def get_pairings_for_assignment(self, assignment_id):
@@ -386,8 +376,6 @@ class MTurkDataHandler():
         c.execute("SELECT * FROM pairings WHERE assignment_id = ?;",
                   (assignment_id, ))
         results = c.fetchall()
-        if results is None:
-            return None
         return results
 
     def get_pairings_for_conversation(self, conversation_id,

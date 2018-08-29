@@ -250,10 +250,14 @@ class SocketManager():
             return True
 
     def _ensure_closed(self):
+        self.alive = False
+        if self.ws is None:
+            return
         try:
             self.ws.close()
         except websocket.WebSocketConnectionClosedException:
             pass
+        self.ws = None
 
     def _send_world_alive(self):
         """Registers world with the passthrough server"""
@@ -402,7 +406,6 @@ class SocketManager():
                 logging.INFO,
                 'World server disconnected: {}'.format(args)
             )
-            self.alive = False
             self._ensure_closed()
             if not self.is_shutdown:
                 self._spawn_reaper_thread()
@@ -481,9 +484,9 @@ class SocketManager():
                     )
                     self.ws.on_open = on_socket_open
                     self.ws.run_forever(
-                        ping_interval=8*self.HEARTBEAT_RATE,
-                        ping_timeout=8*self.HEARTBEAT_RATE*0.9)
-                    self.ws.close()
+                        ping_interval=8 * self.HEARTBEAT_RATE,
+                        ping_timeout=8 * self.HEARTBEAT_RATE * 0.9)
+                    self._ensure_closed()
                 except Exception as e:
                     shared_utils.print_and_log(
                         logging.WARN,
