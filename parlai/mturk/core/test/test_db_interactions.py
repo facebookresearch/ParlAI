@@ -270,7 +270,7 @@ class TestDataHandler(unittest.TestCase):
 
         # Ensure get_pairings_for_assignment works
         pair_4 = db_logger.get_pairings_for_assignment(assignment_id_2)[0]
-        self.assertDictEqual(pair_2, pair_4)
+        self.assertEqual(pair_2, pair_4)
         self.assertListEqual(
             [], db_logger.get_pairings_for_assignment('fake_id'))
 
@@ -279,19 +279,19 @@ class TestDataHandler(unittest.TestCase):
             [], db_logger.get_all_assignments_for_worker('fake_id'))
         self.assertListEqual(
             [], db_logger.get_all_pairings_for_worker('fake_id'))
-        self.assertDictEqual(
+        self.assertEqual(
             db_logger.get_all_assignments_for_worker(worker_id_1)[0],
             assignment_1_data)
         self.assertEqual(
             len(db_logger.get_all_assignments_for_worker(worker_id_2)), 2)
-        self.assertDictEqual(
+        self.assertEqual(
             db_logger.get_all_pairings_for_worker(worker_id_1)[0],
             pair_1)
         self.assertEqual(
             len(db_logger.get_all_pairings_for_worker(worker_id_2)), 2)
 
         # test task_restricted gets
-        self.assertDictEqual(
+        self.assertEqual(
             db_logger.get_all_task_assignments_for_worker(worker_id_1)[0],
             assignment_1_data)
         self.assertEqual(
@@ -299,7 +299,7 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(
             len(db_logger.get_all_task_assignments_for_worker(
                 worker_id_1, 'fake_id')), 0)
-        self.assertDictEqual(
+        self.assertEqual(
             db_logger.get_all_task_pairings_for_worker(worker_id_1)[0],
             pair_1)
         self.assertEqual(
@@ -334,16 +334,16 @@ class TestDataHandler(unittest.TestCase):
             worker_id_2, assignment_id_2)
         pair_3 = db_logger.get_worker_assignment_pairing(
             worker_id_2, assignment_id_3)
-        self.assertDictEqual(pairs_1[0], pair_1)
-        self.assertDictEqual(pairs_1[1], pair_2)
-        self.assertDictEqual(pairs_2[0], pair_3)
+        self.assertEqual(pairs_1[0], pair_1)
+        self.assertEqual(pairs_1[1], pair_2)
+        self.assertEqual(pairs_2[0], pair_3)
         self.assertEqual(len(pairs_3), 0)
 
         # Do some final processing on assignments
         db_logger.log_complete_assignment(
             worker_id_1, assignment_id_1, time.time(),
             AssignState.STATUS_PARTNER_DISCONNECT)
-        db_logger.log_abandon_assignment(
+        db_logger.log_disconnect_assignment(
             worker_id_2, assignment_id_2, time.time(),
             AssignState.STATUS_DISCONNECT)
         db_logger.log_complete_assignment(worker_id_2, assignment_id_3,
@@ -354,17 +354,17 @@ class TestDataHandler(unittest.TestCase):
         assignment_2_data = db_logger.get_assignment_data(assignment_id_2)
         assignment_3_data = db_logger.get_assignment_data(assignment_id_3)
         self.assertEqual(assignment_1_data['assignment_id'], assignment_id_1)
-        self.assertEqual(assignment_1_data['status'], 'Reviewable')
+        self.assertEqual(assignment_1_data['status'], 'Completed')
         self.assertIsNotNone(assignment_1_data['approve_time'])
         self.assertEqual(assignment_1_data['worker_id'], worker_id_1)
         self.assertEqual(assignment_1_data['hit_id'], HIT1['HIT']['HITId'])
         self.assertEqual(assignment_2_data['assignment_id'], assignment_id_2)
-        self.assertEqual(assignment_2_data['status'], 'Reviewable')
+        self.assertEqual(assignment_2_data['status'], 'Completed')
         self.assertIsNotNone(assignment_2_data['approve_time'])
         self.assertEqual(assignment_2_data['worker_id'], worker_id_2)
         self.assertEqual(assignment_2_data['hit_id'], HIT2['HIT']['HITId'])
         self.assertEqual(assignment_3_data['assignment_id'], assignment_id_3)
-        self.assertEqual(assignment_3_data['status'], 'Reviewable')
+        self.assertEqual(assignment_3_data['status'], 'Completed')
         self.assertIsNotNone(assignment_3_data['approve_time'])
         self.assertEqual(assignment_3_data['worker_id'], worker_id_2)
         self.assertEqual(assignment_3_data['hit_id'], HIT3['HIT']['HITId'])
@@ -443,6 +443,29 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(run_data['completed'], 2)
         self.assertEqual(run_data['maximum'], hits_created)
         self.assertEqual(run_data['failed'], 1)
+
+        # Test "submitting" and abandoning hits
+        db_logger.log_submit_assignment(worker_id_1, assignment_id_1)
+        db_logger.log_abandon_assignment(worker_id_2, assignment_id_2)
+        db_logger.log_submit_assignment(worker_id_2, assignment_id_3)
+        assignment_1_data = db_logger.get_assignment_data(assignment_id_1)
+        assignment_2_data = db_logger.get_assignment_data(assignment_id_2)
+        assignment_3_data = db_logger.get_assignment_data(assignment_id_3)
+        self.assertEqual(assignment_1_data['assignment_id'], assignment_id_1)
+        self.assertEqual(assignment_1_data['status'], 'Reviewable')
+        self.assertIsNotNone(assignment_1_data['approve_time'])
+        self.assertEqual(assignment_1_data['worker_id'], worker_id_1)
+        self.assertEqual(assignment_1_data['hit_id'], HIT1['HIT']['HITId'])
+        self.assertEqual(assignment_2_data['assignment_id'], assignment_id_2)
+        self.assertEqual(assignment_2_data['status'], 'Abandoned')
+        self.assertIsNotNone(assignment_2_data['approve_time'])
+        self.assertEqual(assignment_2_data['worker_id'], worker_id_2)
+        self.assertEqual(assignment_2_data['hit_id'], HIT2['HIT']['HITId'])
+        self.assertEqual(assignment_3_data['assignment_id'], assignment_id_3)
+        self.assertEqual(assignment_3_data['status'], 'Reviewable')
+        self.assertIsNotNone(assignment_3_data['approve_time'])
+        self.assertEqual(assignment_3_data['worker_id'], worker_id_2)
+        self.assertEqual(assignment_3_data['hit_id'], HIT3['HIT']['HITId'])
 
         # Test approving and rejecting
         amount_use = 3

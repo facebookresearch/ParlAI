@@ -17,7 +17,7 @@ parent_dir = os.path.dirname(os.path.abspath(__file__))
 # Run data table:
 CREATE_RUN_DATA_SQL_TABLE = (
     """CREATE TABLE IF NOT EXISTS runs (
-        id string PRIMARY KEY,
+        run_id string PRIMARY KEY,
         created integer NOT NULL,
         maximum integer NOT NULL,
         completed integer NOT NULL,
@@ -28,7 +28,7 @@ CREATE_RUN_DATA_SQL_TABLE = (
 # Worker data table:
 CREATE_WORKER_DATA_SQL_TABLE = (
     """CREATE TABLE IF NOT EXISTS workers (
-        id string PRIMARY KEY,
+        worker_id string PRIMARY KEY,
         accepted integer NOT NULL,
         disconnected integer NOT NULL,
         completed integer NOT NULL,
@@ -40,27 +40,27 @@ CREATE_WORKER_DATA_SQL_TABLE = (
 # HIT data table:
 CREATE_HIT_DATA_SQL_TABLE = (
     """CREATE TABLE IF NOT EXISTS hits (
-        id string PRIMARY KEY,
+        hit_id string PRIMARY KEY,
         expiration integer NOT NULL,
         hit_status string,
         assignments_pending int,
         assignments_available int,
         assignments_complete int,
         run_id string,
-        FOREIGN KEY (run_id) REFERENCES runs (id)
+        FOREIGN KEY (run_id) REFERENCES runs (run_id)
     );
     """)
 
 # Assignment data table: (as one HIT can technically have multiple assignments)
 CREATE_ASSIGN_DATA_SQL_TABLE = (
     """CREATE TABLE IF NOT EXISTS assignments (
-        id string PRIMARY KEY,
+        assignment_id string PRIMARY KEY,
         status string,
         approve_time int,
         worker_id string,
         hit_id string,
-        FOREIGN KEY (worker_id) REFERENCES workers (id),
-        FOREIGN KEY (hit_id) REFERENCES hits (id)
+        FOREIGN KEY (worker_id) REFERENCES workers (worker_id),
+        FOREIGN KEY (hit_id) REFERENCES hits (hit_id)
     );
     """)
 
@@ -79,9 +79,9 @@ CREATE_PAIRING_DATA_SQL_TABLE = (
         worker_id string,
         assignment_id string,
         run_id string,
-        FOREIGN KEY (worker_id) REFERENCES workers (id),
-        FOREIGN KEY (assignment_id) REFERENCES assignments (id),
-        FOREIGN KEY (run_id) REFERENCES runs (id)
+        FOREIGN KEY (worker_id) REFERENCES workers (worker_id),
+        FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id),
+        FOREIGN KEY (run_id) REFERENCES runs (run_id)
     );
     """)
 
@@ -100,6 +100,7 @@ class MTurkDataHandler():
         if self.conn is None:
             try:
                 conn = sqlite3.connect(self.db_path)
+                conn.row_factory = sqlite3.Row
                 self.conn = conn
             except sqlite3.Error as e:
                 shared_utils.print_and_log(
@@ -109,30 +110,11 @@ class MTurkDataHandler():
                 raise e
         return self.conn
 
-    def _format_pairing(self, pairing_result):
-        return {
-            'status': pairing_result[0],
-            'onboarding_start': pairing_result[1],
-            'onboarding_end': pairing_result[2],
-            'task_start': pairing_result[3],
-            'task_end': pairing_result[4],
-            'conversation_id': pairing_result[5],
-            'bonus_amount': pairing_result[6],
-            'bonus_text': pairing_result[7],
-            'bonus_paid': pairing_result[8],
-            'worker_id': pairing_result[9],
-            'assignment_id': pairing_result[10],
-            'run_id': pairing_result[11],
-        }
-
-    def _format_assignment(self, assign_result):
-        return {
-            'assignment_id': assign_result[0],
-            'status': assign_result[1],
-            'approve_time': assign_result[2],
-            'worker_id': assign_result[3],
-            'hit_id': assign_result[4],
-        }
+    def _force_task_group_id(self, task_group_id):
+        if task_group_id is None:
+            task_group_id = self.task_group_id
+        assert task_group_id is not None, 'Default task_group_id not set'
+        return task_group_id
 
     def create_default_tables(self):
         conn = self._get_connection()
@@ -145,9 +127,7 @@ class MTurkDataHandler():
         conn.commit()
 
     def log_new_run(self, target_hits, task_group_id=None):
-        if task_group_id is None:
-            task_group_id = self.task_group_id
-        assert task_group_id is not None, 'Default task_group_id not set'
+        task_group_id = self._force_task_group_id(task_group_id)
         conn = self._get_connection()
         c = conn.cursor()
         c.execute('INSERT INTO runs VALUES (?,?,?,?,?);',
@@ -155,10 +135,8 @@ class MTurkDataHandler():
         conn.commit()
 
     def log_hit_status(self, mturk_hit_creation_response, task_group_id=None):
-        '''Create or update an entry in the hit sattus table'''
-        if task_group_id is None:
-            task_group_id = self.task_group_id
-        assert task_group_id is not None, 'Default task_group_id not set'
+        '''Create or update an entry in the hit status table'''
+        task_group_id = self._force_task_group_id(task_group_id)
 
         hit_details = mturk_hit_creation_response['HIT']
         id = hit_details['HITId']
@@ -169,10 +147,11 @@ class MTurkDataHandler():
         assignments_complete = hit_details['NumberOfAssignmentsCompleted']
         conn = self._get_connection()
         c = conn.cursor()
-        c.execute('SELECT COUNT(*) FROM hits WHERE id = ?;', (id, ))
+        c.execute('SELECT COUNT(*) FROM hits WHERE hit_id = ?;', (id, ))
         is_new_hit = c.fetchone()[0] == 0
         if is_new_hit:
-            c.execute('UPDATE runs SET created = created + 1 WHERE id = ?;',
+            c.execute('''UPDATE runs SET created = created + 1
+                         WHERE run_id = ?;''',
                       (task_group_id, ))
 
         c.execute('REPLACE INTO hits VALUES (?,?,?,?,?,?,?);',
@@ -182,15 +161,14 @@ class MTurkDataHandler():
 
     def log_worker_accept_assignment(self, worker_id, assignment_id, hit_id,
                                      task_group_id=None):
-        if task_group_id is None:
-            task_group_id = self.task_group_id
-        assert task_group_id is not None, 'Default task_group_id not set'
+        task_group_id = self._force_task_group_id(task_group_id)
 
         conn = self._get_connection()
         c = conn.cursor()
 
         # Ensure worker exists, mark the accepted assignment
-        c.execute('SELECT COUNT(*) FROM workers WHERE id = ?;', (worker_id, ))
+        c.execute('SELECT COUNT(*) FROM workers WHERE worker_id = ?;',
+                  (worker_id, ))
         has_worker = c.fetchone()[0] > 0
         if not has_worker:
             # Must instert a new worker into the database
@@ -198,12 +176,11 @@ class MTurkDataHandler():
                       (worker_id, 1, 0, 0, 0, 0))
         else:
             # Increment number of assignments the worker has accepted
-            c.execute(
-                'UPDATE workers SET accepted = accepted + 1 WHERE id = ?;',
-                (worker_id, )
-            )
+            c.execute('''UPDATE workers SET accepted = accepted + 1
+                         WHERE worker_id = ?;''',
+                      (worker_id, ))
 
-        # Ensure the assignment exsits, mark the current worker
+        # Ensure the assignment exists, mark the current worker
         c.execute('REPLACE INTO assignments VALUES (?,?,?,?,?)',
                   (assignment_id, 'Accepted', None, worker_id, hit_id))
 
@@ -217,19 +194,18 @@ class MTurkDataHandler():
     def log_complete_assignment(self, worker_id, assignment_id, approve_time,
                                 complete_type, task_group_id=None):
         '''Note that an assignment was completed'''
-        if task_group_id is None:
-            task_group_id = self.task_group_id
-        assert task_group_id is not None, 'Default task_group_id not set'
+        task_group_id = self._force_task_group_id(task_group_id)
 
         conn = self._get_connection()
         c = conn.cursor()
         # Update assign data to reviewable
         c.execute('''UPDATE assignments SET status = ?, approve_time = ?
-                     WHERE id = ?;''',
-                  ('Reviewable', approve_time, assignment_id))
+                     WHERE assignment_id = ?;''',
+                  ('Completed', approve_time, assignment_id))
 
         # Increment worker completed
-        c.execute('UPDATE workers SET completed = completed + 1 WHERE id = ?;',
+        c.execute('''UPDATE workers SET completed = completed + 1
+                     WHERE worker_id = ?;''',
                   (worker_id, ))
 
         # update the payment data status
@@ -238,38 +214,55 @@ class MTurkDataHandler():
                   (complete_type, time.time(), worker_id, assignment_id))
 
         # Update run data to have another completed
-        c.execute('UPDATE runs SET completed = completed + 1 WHERE id = ?;',
+        c.execute('''UPDATE runs SET completed = completed + 1
+                     WHERE run_id = ?;''',
                   (task_group_id, ))
         conn.commit()
 
-    def log_abandon_assignment(self, worker_id, assignment_id, approve_time,
-                               disconnect_type, task_group_id=None):
-        '''Note that an assignment was completed'''
-        if task_group_id is None:
-            task_group_id = self.task_group_id
-        assert task_group_id is not None, 'Default task_group_id not set'
+    def log_disconnect_assignment(self, worker_id, assignment_id, approve_time,
+                                  disconnect_type, task_group_id=None):
+        '''Note that an assignment was disconnected from'''
+        task_group_id = self._force_task_group_id(task_group_id)
 
         conn = self._get_connection()
         c = conn.cursor()
 
         # Update assign data to reviewable
         c.execute('''UPDATE assignments SET status = ?, approve_time = ?
-                     WHERE id = ?;''',
-                  ('Reviewable', approve_time, assignment_id))
+                     WHERE assignment_id = ?;''',
+                  ('Completed', approve_time, assignment_id))
 
         # Increment worker completed
         c.execute('''UPDATE workers SET disconnected = disconnected + 1
-                     WHERE id = ?;''',
+                     WHERE worker_id = ?;''',
                   (worker_id, ))
 
-        # update the payment data status
+        # update the pairing status
         c.execute('''UPDATE pairings SET status = ?, task_end = ?
                      WHERE worker_id = ? AND assignment_id = ?;''',
                   (disconnect_type, time.time(), worker_id, assignment_id))
 
         # Update run data to have another completed
-        c.execute('UPDATE runs SET failed = failed + 1 WHERE id = ?;',
+        c.execute('UPDATE runs SET failed = failed + 1 WHERE run_id = ?;',
                   (task_group_id, ))
+        conn.commit()
+
+    def log_submit_assignment(self, worker_id, assignment_id):
+        '''To be called whenever a worker hits the "submit hit" button'''
+        conn = self._get_connection()
+        c = conn.cursor()
+        # update the assignment status to reviewable
+        c.execute('UPDATE assignments SET status = ? WHERE assignment_id = ?;',
+                  ('Reviewable', assignment_id))
+        conn.commit()
+
+    def log_abandon_assignment(self, worker_id, assignment_id):
+        '''To be called whenever a returns a hit'''
+        conn = self._get_connection()
+        c = conn.cursor()
+        # update the assignment status to reviewable
+        c.execute('UPDATE assignments SET status = ? WHERE assignment_id = ?;',
+                  ('Abandoned', assignment_id))
         conn.commit()
 
     def log_start_onboard(self, worker_id, assignment_id):
@@ -319,47 +312,41 @@ class MTurkDataHandler():
     def log_approve_assignment(self, worker_id, assignment_id):
         conn = self._get_connection()
         c = conn.cursor()
-        c.execute('UPDATE assignments SET status = ? WHERE id = ?;',
+        c.execute('UPDATE assignments SET status = ? WHERE assignment_id = ?;',
                   ('Approved', assignment_id))
         c.execute('''UPDATE workers SET approved = approved + 1
-                     WHERE id = ?;''',
+                     WHERE worker_id = ?;''',
                   (worker_id, ))
         conn.commit()
 
     def log_reject_assignment(self, worker_id, assignment_id):
         conn = self._get_connection()
         c = conn.cursor()
-        c.execute('UPDATE assignments SET status = ? WHERE id = ?;',
+        c.execute('UPDATE assignments SET status = ? WHERE assignment_id = ?;',
                   ('Rejected', assignment_id))
         c.execute('''UPDATE workers SET rejected = rejected + 1
-                     WHERE id = ?;''',
+                     WHERE worker_id = ?;''',
                   (worker_id, ))
         conn.commit()
 
     def get_worker_data(self, worker_id):
         conn = self._get_connection()
         c = conn.cursor()
-        c.execute("SELECT * FROM workers WHERE id = ?;", (worker_id, ))
+        c.execute("SELECT * FROM workers WHERE worker_id = ?;", (worker_id, ))
         results = c.fetchone()
         if results is None:
             return None
-        return {
-            'worker_id': results[0],
-            'accepted': results[1],
-            'disconnected': results[2],
-            'completed': results[3],
-            'approved': results[4],
-            'rejected': results[5],
-        }
+        return results
 
     def get_assignment_data(self, assignment_id):
         conn = self._get_connection()
         c = conn.cursor()
-        c.execute("SELECT * FROM assignments WHERE id = ?;", (assignment_id, ))
+        c.execute("SELECT * FROM assignments WHERE assignment_id = ?;",
+                  (assignment_id, ))
         results = c.fetchone()
         if results is None:
             return None
-        return self._format_assignment(results)
+        return results
 
     def get_worker_assignment_pairing(self, worker_id, assignment_id):
         conn = self._get_connection()
@@ -369,7 +356,7 @@ class MTurkDataHandler():
         results = c.fetchone()
         if results is None:
             return None
-        return self._format_pairing(results)
+        return results
 
     def get_run_data(self, task_group_id):
         '''get the run data for the given task_group_id, return None if not
@@ -377,35 +364,21 @@ class MTurkDataHandler():
         '''
         conn = self._get_connection()
         c = conn.cursor()
-        c.execute("SELECT * FROM runs WHERE id = ?;", (task_group_id, ))
+        c.execute("SELECT * FROM runs WHERE run_id = ?;", (task_group_id, ))
         results = c.fetchone()
         if results is None:
             return None
-        return {
-            'run_id': results[0],
-            'created': results[1],
-            'maximum': results[2],
-            'completed': results[3],
-            'failed': results[4],
-        }
+        return results
 
     def get_hit_data(self, hit_id):
         '''get the hit data for the given hit_id, return None if not'''
         conn = self._get_connection()
         c = conn.cursor()
-        c.execute("SELECT * FROM hits WHERE id = ?;", (hit_id, ))
+        c.execute("SELECT * FROM hits WHERE hit_id = ?;", (hit_id, ))
         results = c.fetchone()
         if results is None:
             return None
-        return {
-            'hit_id': results[0],
-            'expiration': results[1],
-            'hit_status': results[2],
-            'assignments_pending': results[3],
-            'assignments_available': results[4],
-            'assignments_complete': results[5],
-            'run_id': results[6],
-        }
+        return results
 
     def get_pairings_for_assignment(self, assignment_id):
         conn = self._get_connection()
@@ -415,20 +388,18 @@ class MTurkDataHandler():
         results = c.fetchall()
         if results is None:
             return None
-        return [self._format_pairing(result) for result in results]
+        return results
 
     def get_pairings_for_conversation(self, conversation_id,
                                       task_group_id=None):
-        if task_group_id is None:
-            task_group_id = self.task_group_id
-        assert task_group_id is not None, 'Default task_group_id not set'
+        task_group_id = self._force_task_group_id(task_group_id)
 
         conn = self._get_connection()
         c = conn.cursor()
         c.execute("""SELECT * FROM pairings WHERE conversation_id = ?
                      AND run_id = ?;""", (conversation_id, task_group_id))
         results = c.fetchall()
-        return [self._format_pairing(result) for result in results]
+        return results
 
     def get_all_assignments_for_worker(self, worker_id):
         conn = self._get_connection()
@@ -436,39 +407,35 @@ class MTurkDataHandler():
         c.execute("SELECT * FROM assignments WHERE worker_id = ?;",
                   (worker_id, ))
         results = c.fetchall()
-        return [self._format_assignment(result) for result in results]
+        return results
 
     def get_all_pairings_for_worker(self, worker_id):
         conn = self._get_connection()
         c = conn.cursor()
         c.execute("SELECT * FROM pairings WHERE worker_id = ?;", (worker_id, ))
         results = c.fetchall()
-        return [self._format_pairing(result) for result in results]
+        return results
 
     def get_all_task_assignments_for_worker(self, worker_id,
                                             task_group_id=None):
-        if task_group_id is None:
-            task_group_id = self.task_group_id
-        assert task_group_id is not None, 'Default task_group_id not set'
+        task_group_id = self._force_task_group_id(task_group_id)
         conn = self._get_connection()
         c = conn.cursor()
-        c.execute("""SELECT assignments.id, assignments.status,
+        c.execute("""SELECT assignments.assignment_id, assignments.status,
                      assignments.approve_time, assignments.worker_id,
                      assignments.hit_id
                      FROM assignments
-                     INNER JOIN hits on assignments.hit_id = hits.id
+                     INNER JOIN hits on assignments.hit_id = hits.hit_id
                      WHERE assignments.worker_id = ? AND hits.run_id = ?;""",
                   (worker_id, task_group_id))
         results = c.fetchall()
-        return [self._format_assignment(result) for result in results]
+        return results
 
     def get_all_task_pairings_for_worker(self, worker_id, task_group_id=None):
-        if task_group_id is None:
-            task_group_id = self.task_group_id
-        assert task_group_id is not None, 'Default task_group_id not set'
+        task_group_id = self._force_task_group_id(task_group_id)
         conn = self._get_connection()
         c = conn.cursor()
         c.execute("SELECT * FROM pairings WHERE worker_id = ? AND run_id = ?;",
                   (worker_id, task_group_id))
         results = c.fetchall()
-        return [self._format_pairing(result) for result in results]
+        return results

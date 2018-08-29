@@ -1409,7 +1409,7 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         mturk_utils.create_hit_type = mock.MagicMock(return_value=fake_hit)
         mturk_utils.subscribe_to_hits = mock.MagicMock()
         mturk_utils.create_hit_with_hit_type = mock.MagicMock(
-            return_value=('page_url', 'hit_id')
+            return_value=('page_url', 'hit_id', 'test_hit_response')
         )
         manager.server_url = 'test_url'
         manager.task_group_id = 'task_group_id'
