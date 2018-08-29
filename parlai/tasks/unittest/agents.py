@@ -8,40 +8,67 @@ They are useful as unit tests for the basic models.
 The corpora are all randomly, but deterministically generated
 """
 
-from parlai.core.agents import Teacher
-from parlai.core.teachers import FixedDialogTeacher, DialogTeacher
+from parlai.core.teachers import DialogTeacher
 import random
 import itertools
 
+# default parameters
 VOCAB_SIZE = 10
-EX_SIZE = 5
+EXAMPLE_SIZE = 5
 NUM_CANDIDATES = 20
 NUM_TRAIN = 1000
 NUM_TEST = 100
 
 
 class CandidateTeacher(DialogTeacher):
-    def __init__(self, opt, shared=None):
+    """
+    Candidate teacher produces several candidates, one of which is a repeat
+    of the input. A good ranker should easily identify the correct response.
+    """
+    def __init__(self, opt, shared=None,
+                 vocab_size=VOCAB_SIZE,
+                 example_size=EXAMPLE_SIZE,
+                 num_candidates=NUM_CANDIDATES,
+                 num_train=NUM_TRAIN,
+                 num_test=NUM_TEST):
+        """
+        :param int vocab_size: size of the vocabulary
+        :param int example_size: length of each example
+        :param int num_candidates: number of label_candidates generated
+        :param int num_train: size of the training set
+        :param int num_test: size of the valid/test sets
+        """
         self.opt = opt
         opt['datafile'] = opt['datatype'].split(':')[0]
-        self.words = list(map(str, range(VOCAB_SIZE)))
+
+        self.vocab_size = vocab_size
+        self.example_size = example_size
+        self.num_candidates = num_candidates
+        self.num_train = num_train
+        self.num_test = num_test
+
+        # set up the vocabulary
+        self.words = list(map(str, range(self.vocab_size)))
+
         super().__init__(opt, shared)
 
     def setup_data(self, fold):
         # N words appearing in a random order
         self.rng = random.Random(42)
-        full_corpus = [list(x) for x in itertools.permutations(self.words, EX_SIZE)]
+        full_corpus = [
+            list(x) for x in itertools.permutations(self.words, self.example_size)
+        ]
         self.rng.shuffle(full_corpus)
 
         it = iter(full_corpus)
-        self.train = list(itertools.islice(it, NUM_TRAIN))
-        self.val = list(itertools.islice(it, NUM_TEST))
-        self.test = list(itertools.islice(it, NUM_TEST))
+        self.train = list(itertools.islice(it, self.num_train))
+        self.val = list(itertools.islice(it, self.num_test))
+        self.test = list(itertools.islice(it, self.num_test))
 
         # check we have enough data
-        assert (len(self.train) == NUM_TRAIN)
-        assert (len(self.val) == NUM_TEST)
-        assert (len(self.test) == NUM_TEST)
+        assert (len(self.train) == self.num_train)
+        assert (len(self.val) == self.num_test)
+        assert (len(self.test) == self.num_test)
 
         # check every word appear in the training set
         assert len(set(itertools.chain(*self.train)) - set(self.words)) == 0
@@ -67,7 +94,8 @@ class CandidateTeacher(DialogTeacher):
 
 class NocandidateTeacher(CandidateTeacher):
     """
-    Strips the candidates so the model can't see any options
+    Strips the candidates so the model can't see any options. Good for testing
+    simple generative models.
     """
     def setup_data(self, fold):
         raw = super().setup_data(fold)
