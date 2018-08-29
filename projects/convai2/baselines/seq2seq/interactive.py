@@ -14,10 +14,11 @@ from parlai.scripts.interactive import interactive
 if __name__ == '__main__':
     parser = ParlaiParser(add_model_args=True)
     parser.set_params(
-        model='seq2seq',
+        model='legacy:seq2seq:0',
         model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
         dict_file='models:convai2/seq2seq/convai2_self_seq2seq_model.dict',
         dict_lower=True,
+        batchsize=1,
     )
     opt = parser.parse_args()
     if opt.get('model_file', '').startswith(modelzoo_path(opt.get('datapath'), "models:convai2")):

@@ -14,7 +14,7 @@ from projects.convai2.eval_hits import setup_args, eval_hits
 if __name__ == '__main__':
     parser = setup_args()
     parser.set_params(
-        model='seq2seq',
+        model='legacy:seq2seq:0',
         model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
         dict_file='models:convai2/seq2seq/convai2_self_seq2seq_model.dict',
         dict_lower=True,

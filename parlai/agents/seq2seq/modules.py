@@ -643,5 +643,5 @@ class AttentionLayer(nn.Module):
 
         attn_applied = torch.bmm(attn_weights.unsqueeze(1), enc_out)
         merged = torch.cat((xes.squeeze(1), attn_applied.squeeze(1)), 1)
-        output = F.tanh(self.attn_combine(merged).unsqueeze(1))
+        output = torch.tanh(self.attn_combine(merged).unsqueeze(1))
         return output
