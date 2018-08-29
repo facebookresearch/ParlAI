@@ -475,8 +475,6 @@ class SocketManager():
                 try:
                     sock_addr = "{}://{}:{}/".format(
                         protocol, url_base_name, self.port)
-                    if self.ws is not None and self.ws.sock is not None:
-                        self._ensure_closed()
                     self.ws = websocket.WebSocketApp(
                         sock_addr,
                         on_message=on_message,
