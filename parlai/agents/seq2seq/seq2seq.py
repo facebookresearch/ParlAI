@@ -133,8 +133,8 @@ class Seq2seqAgent(TorchAgent):
 
             if init_model is not None:
                 # if we are loading a model, should load its dict too
-                if (os.path.isfile(init_model + '.dict')
-                        or opt['dict_file'] is None):
+                if (os.path.isfile(init_model + '.dict') or
+                        opt['dict_file'] is None):
                     opt['dict_file'] = init_model + '.dict'
         super().__init__(opt, shared)
         opt = self.opt
@@ -194,8 +194,8 @@ class Seq2seqAgent(TorchAgent):
             longest_label=states.get('longest_label', 1),
             **kwargs)
 
-        if (opt.get('dict_tokenizer') == 'bpe'
-                and opt['embedding_type'] != 'random'):
+        if (opt.get('dict_tokenizer') == 'bpe' and
+                opt['embedding_type'] != 'random'):
             print('skipping preinitialization of embeddings for bpe')
         elif not states and opt['embedding_type'] != 'random':
             # `not states`: only set up embeddings if not loading model
