@@ -183,24 +183,20 @@ class Seq2seq(nn.Module):
         """Extract encoder states at current index and expand them."""
         enc_out, hidden, attn_mask = encoder_states
         if isinstance(hidden, torch.Tensor):
-            nl = hidden.size(0)
-            hsz = hidden.size(-1)
             cur_hid = (hidden.select(1, index).unsqueeze(1)
-                       .expand(nl, num_cands, hsz))
+                       .expand(-1, num_cands, -1))
         else:
-            nl = hidden[0].size(0)
-            hsz = hidden[0].size(-1)
             cur_hid = (hidden[0].select(1, index).unsqueeze(1)
-                       .expand(nl, num_cands, hsz).contiguous(),
+                       .expand(-1, num_cands, -1).contiguous(),
                        hidden[1].select(1, index).unsqueeze(1)
-                       .expand(nl, num_cands, hsz).contiguous())
+                       .expand(-1, num_cands, -1).contiguous())
 
         cur_enc, cur_mask = None, None
         if self.attn_type != 'none':
             cur_enc = (enc_out[index].unsqueeze(0)
-                       .expand(num_cands, enc_out.size(1), -1))
+                       .expand(num_cands, -1, -1))
             cur_mask = (attn_mask[index].unsqueeze(0)
-                        .expand(num_cands, attn_mask.size(-1)))
+                        .expand(num_cands, -1))
         return cur_enc, cur_hid, cur_mask
 
     def _rank(self, cand_params, encoder_states):
