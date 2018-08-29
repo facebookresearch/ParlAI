@@ -15,7 +15,7 @@ from projects.convai2.build_dict import build_dict, DICT_FILE
 if __name__ == '__main__':
     parser = setup_args()
     parser.set_params(
-        model='seq2seq',
+        model='legacy:seq2seq:0',
         task='convai2:self',
         external_dict=DICT_FILE,
         model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
@@ -25,7 +25,8 @@ if __name__ == '__main__':
         numthreads=1,
     )
     opt = parser.parse_args(print_args=False)
-    if opt.get('model_file', '').find('convai2/seq2seq/convai2_self_seq2seq_model') != -1:
+    if (opt.get('model_file', '')
+            .find('convai2/seq2seq/convai2_self_seq2seq_model') != -1):
         opt['model_type'] = 'seq2seq'
         fnames = ['convai2_self_seq2seq_model.tgz',
                   'convai2_self_seq2seq_model.dict',
