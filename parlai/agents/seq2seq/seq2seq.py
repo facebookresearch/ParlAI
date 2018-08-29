@@ -483,7 +483,7 @@ class Seq2seqAgent(Agent):
         self.answers[self.batch_idx] = None
         return obs
 
-    def predict(self, xs, ys=None, cands=None, valid_cands=None, is_training=False):
+    def predict(self, xs, ys=None, cands=None, cand_indices=None, is_training=False):
         """Produce a prediction from our model.
 
         Update the model using the targets if available, otherwise rank
@@ -523,7 +523,7 @@ class Seq2seqAgent(Agent):
             self.update_params()
         else:
             self.model.eval()
-            out = self.model(xs, ys=None, cands=cands, valid_cands=valid_cands, beam_size=self.beam_size, topk=self.topk)
+            out = self.model(xs, ys=None, cands=cands, cand_indices=cand_indices, beam_size=self.beam_size, topk=self.topk)
             predictions, cand_preds = out[0], out[2]
 
             if ys is not None:
