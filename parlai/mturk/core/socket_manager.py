@@ -252,8 +252,6 @@ class SocketManager():
     def _ensure_closed(self):
         try:
             self.ws.close()
-            if self.ws.sock is not None:
-                self.ws.sock.close()
         except websocket.WebSocketConnectionClosedException:
             pass
 
@@ -271,8 +269,8 @@ class SocketManager():
             return
         if self.last_received_heartbeat[connection_id] is None:
             return
-        if (time.time() - self.last_sent_heartbeat_time[connection_id]
-                < self.HEARTBEAT_RATE):
+        if (time.time() - self.last_sent_heartbeat_time[connection_id] <
+                self.HEARTBEAT_RATE):
             return
         packet = self.last_received_heartbeat[connection_id]
         self._safe_send(json.dumps({
