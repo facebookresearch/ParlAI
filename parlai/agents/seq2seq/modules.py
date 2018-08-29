@@ -147,7 +147,7 @@ class Seq2seq(nn.Module):
             output, hidden = self.decoder(xs, hidden, attn_params)
             score = self.output(output)
             scores.append(score)
-            xs = score.max(1)[1]  # next input is current predicted output
+            xs = score.max(2)[1]  # next input is current predicted output
 
         scores = torch.cat(scores, 1)
         return scores
