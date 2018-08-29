@@ -4,11 +4,10 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.agents import Agent
-from parlai.core.build_data import modelzoo_path
-from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import maintain_dialog_history, PaddingUtils, round_sigfigs
-from parlai.core.thread_utils import SharedTable
+from .utils_v0 import modelzoo_path
+from .dict_v0 import DictionaryAgent
+from .utils_v0 import maintain_dialog_history, PaddingUtils, round_sigfigs
+from .utils_v0 import SharedTable
 from .modules_v0 import Seq2seq
 
 import torch
@@ -18,9 +17,69 @@ import torch.nn.functional as F
 
 from collections import deque, defaultdict
 
+import copy
 import os
 import math
 import pickle
+
+
+class Agent(object):
+    """Base class for all other agents."""
+
+    def __init__(self, opt, shared=None):
+        if not hasattr(self, 'id'):
+            self.id = 'agent'
+        if not hasattr(self, 'opt'):
+            self.opt = copy.deepcopy(opt)
+        self.observation = None
+
+    def observe(self, observation):
+        """Receive an observation/action dict."""
+        self.observation = observation
+        return observation
+
+    def act(self):
+        """Return an observation/action dict based upon given observation."""
+        if hasattr(self, 'observation') and self.observation is not None:
+            print('agent received observation:')
+            print(self.observation)
+
+        t = {}
+        t['text'] = 'hello, teacher!'
+        print('agent sending message:')
+        print(t)
+        return t
+
+    def getID(self):
+        return self.id
+
+    def epoch_done(self):
+        return False
+
+    def reset(self):
+        self.observation = None
+
+    def reset_metrics(self):
+        pass
+
+    def save(self, path=None):
+        """If applicable, save any parameters needed to recreate this agent from
+        loaded parameters.
+        """
+        pass
+
+    def share(self):
+        """If applicable, share any parameters needed to create a shared version
+        of this agent.
+        """
+        shared = {}
+        shared['class'] = type(self)
+        shared['opt'] = self.opt
+        return shared
+
+    def shutdown(self):
+        """Perform any final cleanup if needed."""
+        pass
 
 
 class Seq2seqAgent(Agent):
