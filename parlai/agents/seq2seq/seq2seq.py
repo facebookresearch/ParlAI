@@ -7,7 +7,7 @@
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.utils import padded_tensor, round_sigfigs
 from parlai.core.thread_utils import SharedTable
-from .modules import Seq2seq
+from .modules import Seq2seq, opt_to_kwargs
 
 import torch
 import torch.nn as nn
@@ -38,17 +38,12 @@ class Seq2seqAgent(TorchAgent):
       `(Luong et al. 2015) <arxiv.org/abs/1508.04025>`_
     """
 
-    # version 1 split from version 0 on Aug 24, 2018
-    # to use version 0, use --model legacy:seq2seq:0
-    # legacy agent code is located in parlai/legacy_agents
-    VERSION = 1
-
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument('--init-model', type=str, default=None,
-                           help='load dict/features/weights/opts from this file')
+                           help='load dict/model/opts from this path')
         agent.add_argument('-hs', '--hiddensize', type=int, default=128,
                            help='size of the hidden layers')
         agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
@@ -66,7 +61,8 @@ class Seq2seqAgent(TorchAgent):
                            help='whether to encode the context with a '
                                 'bidirectional rnn')
         agent.add_argument('-att', '--attention', default='none',
-                           choices=['none', 'concat', 'general', 'dot', 'local'],
+                           choices=['none', 'concat', 'general', 'dot',
+                                    'local'],
                            help='Choices: none, concat, general, local. '
                                 'If set local, also set attention-length. '
                                 '(see arxiv.org/abs/1508.04025)')
@@ -108,19 +104,18 @@ class Seq2seqAgent(TorchAgent):
                            help='Top k sampling from renormalized softmax in '
                                 'test/valid time, default 1 means simple '
                                 'greedy max output')
-        agent.add_argument('--softmax-layer-bias', type='bool', default=False,
-                           help='Put True if you want to include the bias in '
-                                'decoder.e2s layer')
-        agent.add_argument('--seq2seq_version', default=Seq2seqAgent.VERSION)
         TorchAgent.add_cmdline_args(argparser)
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
     @staticmethod
     def model_version():
-        """Current version of this model, counting up from 0.
+        """Return current version of this model, counting up from 0.
 
         Models are not backwards-compatible with older versions.
+        Version 1 split from version 0 on Aug 29, 2018.
+        To use version 0, use --model legacy:seq2seq:0
+        (legacy agent code is located in parlai/legacy_agents).
         """
         return 1
 
@@ -138,8 +133,8 @@ class Seq2seqAgent(TorchAgent):
 
             if init_model is not None:
                 # if we are loading a model, should load its dict too
-                if (os.path.isfile(init_model + '.dict')
-                        or opt['dict_file'] is None):
+                if (os.path.isfile(init_model + '.dict') or
+                        opt['dict_file'] is None):
                     opt['dict_file'] = init_model + '.dict'
         super().__init__(opt, shared)
         opt = self.opt
@@ -189,18 +184,18 @@ class Seq2seqAgent(TorchAgent):
         self.reset()
 
     def _init_model(self, states=None):
+        """Initialize model, override to change model setup."""
         opt = self.opt
 
-        if not hasattr(self, 'model_class'):
-            # this allows child classes to override this but inherit init
-            self.model_class = Seq2seq
-        self.model = self.model_class(
-            opt, len(self.dict), padding_idx=self.NULL_IDX,
-            start_idx=self.START_IDX, end_idx=self.END_IDX,
-            longest_label=states.get('longest_label', 1))
+        kwargs = opt_to_kwargs(opt)
+        self.model = Seq2seq(
+            len(self.dict), opt['embeddingsize'], opt['hiddensize'],
+            padding_idx=self.NULL_IDX, start_idx=self.START_IDX,
+            longest_label=states.get('longest_label', 1),
+            **kwargs)
 
-        if (opt.get('dict_tokenizer') == 'bpe'
-                and opt['embedding_type'] != 'random'):
+        if (opt.get('dict_tokenizer') == 'bpe' and
+                opt['embedding_type'] != 'random'):
             print('skipping preinitialization of embeddings for bpe')
         elif not states and opt['embedding_type'] != 'random':
             # `not states`: only set up embeddings if not loading model
@@ -224,6 +219,8 @@ class Seq2seqAgent(TorchAgent):
             self.model.encoder.lt.weight.requires_grad = False
             if opt['lookuptable'] in ['dec_out', 'all']:
                 self.model.decoder.e2s.weight.requires_grad = False
+
+        return self.model
 
     def _v2t(self, vec):
         """Convert token indices to string of tokens."""
@@ -304,6 +301,26 @@ class Seq2seqAgent(TorchAgent):
         kwargs['sort'] = True  # need sorted for pack_padded
         return super().batchify(*args, **kwargs)
 
+    def _init_cuda_buffer(self, model, criterion, batchsize, maxlen):
+        """Pre-initialize CUDA buffer by doing fake forward pass."""
+        if self.use_cuda and not hasattr(self, 'buffer_initialized'):
+            try:
+                print('preinitializing pytorch cuda buffer')
+                dummy = torch.ones(batchsize, maxlen).long().cuda()
+                out = model(dummy, dummy)
+                sc = out[0]  # scores
+                loss = criterion(sc.view(-1, sc.size(-1)), dummy.view(-1))
+                loss.backward()
+                self.buffer_initialized = True
+            except RuntimeError as e:
+                if 'out of memory' in str(e):
+                    m = ('CUDA OOM: Lower batch size (-bs) from {} or lower '
+                         ' max sequence length (-tr) from {}'
+                         ''.format(batchsize, maxlen))
+                    raise RuntimeError(m)
+                else:
+                    raise e
+
     def train_step(self, batch):
         """Train on a single batch of examples."""
         batchsize = batch.text_vec.size(0)
@@ -312,12 +329,12 @@ class Seq2seqAgent(TorchAgent):
                                self.truncate or 180)
         self.model.train()
         self.zero_grad()
-        preds = None
         try:
             out = self.model(batch.text_vec, batch.label_vec)
 
             # generated response
-            preds, scores = out[0], out[1]
+            scores = out[0]
+            _, preds = scores.max(2)
 
             score_view = scores.view(-1, scores.size(-1))
             loss = self.criterion(score_view, batch.label_vec.view(-1))
@@ -361,17 +378,17 @@ class Seq2seqAgent(TorchAgent):
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
         self.model.eval()
-        cands, cand_inds = self._build_cands(batch)
-        out = self.model(batch.text_vec, ys=None,
-                         cands=cands, cand_indices=cand_inds,
-                         beam_size=self.beam_size, topk=self.topk)
-        preds, cand_preds = out[0], out[2]
+        cand_params = self._build_cands(batch)
+        out = self.model(batch.text_vec, ys=None, cand_params=cand_params)
+        scores, cand_scores = out[0], out[1]
+        _, preds = scores.max(2)
 
         if batch.label_vec is not None:
-            # calculate loss on targets
+            # calculate loss on targets with teacher forcing
             out = self.model(batch.text_vec, batch.label_vec)
-            f_preds, scores = out[0], out[1]
-            score_view = scores.view(-1, scores.size(-1))
+            f_scores = out[0]  # forced scores
+            _, f_preds = f_scores.max(2)  # forced preds
+            score_view = f_scores.view(-1, f_scores.size(-1))
             loss = self.criterion(score_view, batch.label_vec.view(-1))
             # save loss to metrics
             notnull = batch.label_vec.ne(self.NULL_IDX)
@@ -382,12 +399,13 @@ class Seq2seqAgent(TorchAgent):
             self.metrics['num_tokens'] += target_tokens
 
         cand_choices = None
-        if cand_preds is not None:
+        if cand_scores is not None:
+            cand_preds = cand_scores.sort(1, True)[1]
             # now select the text of the cands based on their scores
-            cand_choices = self._pick_cands(cand_preds, cand_inds,
+            cand_choices = self._pick_cands(cand_preds, cand_params[1],
                                             batch.candidates)
 
-        text = [self._v2t(p) for p in preds]
+        text = [self._v2t(p) for p in preds.cpu()]
         return Output(text, cand_choices)
 
     def save(self, path=None):
@@ -407,7 +425,7 @@ class Seq2seqAgent(TorchAgent):
             # save opt file
             with open(path + ".opt", 'wb') as handle:
                 # save version string
-                self.opt['model_version'] = Seq2seqAgent.VERSION
+                self.opt['model_version'] = self.model_version()
                 pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def load(self, path):
@@ -422,10 +440,16 @@ class Seq2seqAgent(TorchAgent):
 
 
 class mydefaultdict(defaultdict):
-    """Custom defaultdict which overrides defaults requested by the get
-    function with the default factory.
+    """Get function also uses default_factory for this defaultdict.
+
+    This makes dict.get() behave like dict[] if a default is not provided.
     """
+
     def get(self, key, default=None):
+        """Return value at key or default if key is not in dict.
+
+        If a default is not provided, return the default factory value.
+        """
         # override default from "get" (like "__getitem__" already is)
         return super().get(key, default or self.default_factory())
 
@@ -439,27 +463,33 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
     """
 
     def __init__(self, opt, shared=None):
+        """Initialize evaluator."""
         super().__init__(opt, shared)
         self.prev_enc = None
         self.last_xs = None
 
     def next_word_probability(self, partial_out):
-        """Return probability distribution over next words given an input and
-        partial true output. This is used to calculate the per-word perplexity.
+        """Return probability distribution over next words.
+
+        This probability is based on both nn input and partial true output.
+        This is used to calculate the per-word perplexity.
 
         Arguments:
         observation -- input observation dict
         partial_out -- list of previous "true" words
 
-        Returns a dict, where each key is a word and each value is a probability
-        score for that word. Unset keys assume a probability of zero.
+        Returns a dict, where each key is a word and each value is a
+        probability score for that word.
+        Unset keys will use a probability of 1e-7.
 
         e.g.
         {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
         """
         obs = self.observation
         xs = obs['text_vec'].unsqueeze(0)
-        ys = self._vectorize_text(' '.join(partial_out), False, True, self.truncate).unsqueeze(0)
+        ys = self._vectorize_text(
+            ' '.join(partial_out), False, True, self.truncate
+        ).unsqueeze(0)
         if self.prev_enc is not None and self.last_xs is not None and (
                 xs.shape[1] != self.last_xs.shape[1] or
                 (xs == self.last_xs).sum().item() != xs.shape[1]):
@@ -468,14 +498,12 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
         self.last_xs = xs
 
         self.model.eval()
-        # no need to predict farther ahead
-        # if you pass in any ys, this will be ignored
-        self.model.longest_label = 1
         out = self.model(
             xs,
             ys=(ys if len(partial_out) > 0 else None),
-            prev_enc=self.prev_enc)
-        scores, self.prev_enc = out[1], out[4]
+            prev_enc=self.prev_enc,
+            maxlen=1)
+        scores, self.prev_enc = out[0], out[2]
         # scores is bsz x seqlen x num_words, so select probs of current index
         probs = F.softmax(scores.select(1, -1), dim=1).squeeze()
         dist = mydefaultdict(lambda: 1e-7)  # default probability for any token
