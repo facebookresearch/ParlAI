@@ -1,3 +1,4 @@
+# Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
@@ -72,8 +73,9 @@ class ImageLoader():
         """
         try:
             import torch
-            self.use_cuda = (not opt.get('no_cuda', False)
-                             and torch.cuda.is_available())
+            self.use_cuda = (
+                not opt.get('no_cuda', False) and torch.cuda.is_available()
+            )
             self.torch = torch
         except ImportError:
             raise ImportError('Need to install Pytorch: go to pytorch.org')
@@ -173,7 +175,10 @@ class ImageLoader():
             zipname = path[:sep]
             file_name = path[sep + 1:]
             path = ZipFile(zipname, 'r').open(file_name)
-            task = opt['task'] if opt['task'] != 'pytorch_teacher' else opt['image_load_task']
+            if opt['task'] != 'pytorch_teacher':
+                task = opt['task']
+            else:
+                task = opt['image_load_task']
             prepath = os.path.join(opt['datapath'], task)
             imagefn = ''.join(zipname.strip('.zip').split('/')[-2:]) + path.name
         if mode == 'raw':

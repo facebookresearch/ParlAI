@@ -12,9 +12,11 @@ candidate is the selected label).
 
 Options:
 
-    ``returnOneRandomAnswer`` -- default ``True``, set to ``False`` to instead reply with all labels joined by commas.
+    ``returnOneRandomAnswer`` -- default ``True``, set to ``False`` to instead
+    reply with all labels joined by commas.
 
-    ``cantAnswerPercent`` -- default ``0``, set value in range[0,1] to set chance of replying with "I don't know."
+    ``cantAnswerPercent`` -- default ``0``, set value in range[0,1] to set
+    chance of replying with "I don't know."
 """
 
 import random
@@ -29,7 +31,8 @@ class RepeatLabelAgent(Agent):
         group.add_argument('--return_one_random_answer', type='bool', default=True,
                            help='return one answer from the set of labels')
         group.add_argument('--cant_answer_percent', type=float, default=0,
-                           help='set value in range[0,1] to set chance of replying with special message')
+                           help='set value in range[0,1] to set chance of '
+                                'replying with special message')
         group.add_argument('--cant_answer_message', type=str, default="I don't know.",
                            help='Message sent when the model cannot answer')
 
