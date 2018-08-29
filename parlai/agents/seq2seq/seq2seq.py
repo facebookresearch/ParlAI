@@ -48,7 +48,7 @@ class Seq2seqAgent(TorchAgent):
         """Add command-line arguments specifically for this agent."""
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument('--init-model', type=str, default=None,
-                           help='load dict/features/weights/opts from this file')
+                           help='load dict/model/opts from this path')
         agent.add_argument('-hs', '--hiddensize', type=int, default=128,
                            help='size of the hidden layers')
         agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
