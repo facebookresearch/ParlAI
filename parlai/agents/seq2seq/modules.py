@@ -198,7 +198,7 @@ class Seq2seq(nn.Module):
         cur_enc, cur_mask = None, None
         if self.attn_type != 'none':
             cur_enc = (enc_out[index].unsqueeze(0)
-                       .expand(num_cands, enc_out.size(1), hsz))
+                       .expand(num_cands, enc_out.size(1), -1))
             cur_mask = (attn_mask[index].unsqueeze(0)
                         .expand(num_cands, attn_mask.size(-1)))
         return cur_enc, cur_hid, cur_mask
