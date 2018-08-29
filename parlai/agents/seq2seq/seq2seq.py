@@ -38,7 +38,7 @@ class Seq2seqAgent(TorchAgent):
       `(Luong et al. 2015) <arxiv.org/abs/1508.04025>`_
     """
 
-    # version 1 split from version 0 on Aug 24, 2018
+    # version 1 split from version 0 on Aug 29, 2018
     # to use version 0, use --model legacy:seq2seq:0
     # legacy agent code is located in parlai/legacy_agents
     VERSION = 1
