@@ -660,7 +660,7 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         # Advance the worker to simulate a connection, assert onboarding goes
         self.agent_1.set_status(AssignState.STATUS_ONBOARDING)
         assert_equal_by(
-            onboard_threads[self.agent_1.assignment_id].isAlive, False, 0.3)
+            onboard_threads[self.agent_1.assignment_id].isAlive, False, 0.6)
         manager.onboard_function.assert_called_with(self.agent_1)
         manager._move_agents_to_waiting.assert_called_once()
 
@@ -1069,7 +1069,7 @@ class TestMTurkManagerLifecycleFunctions(unittest.TestCase):
         self.assertTrue(task_thread.isAlive())
         manager.started_conversations = 10
         manager.completed_conversations = 10
-        assert_equal_by(task_thread.isAlive, False, 0.3)
+        assert_equal_by(task_thread.isAlive, False, 0.6)
         manager.expire_all_unassigned_hits.assert_called_once()
         manager._expire_onboarding_pool.assert_called_once()
         manager._expire_agent_pool.assert_called_once()
@@ -1536,7 +1536,7 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         )
         agent.alived = True
         assert_equal_by(
-            lambda: len(agent.request_message.call_args_list), 1, 0.3)
+            lambda: len(agent.request_message.call_args_list), 1, 0.6)
         manager.send_command.assert_called_once()
         args = manager.send_command.call_args[0]
         worker_id, assignment_id, data = args[0], args[1], args[2]
