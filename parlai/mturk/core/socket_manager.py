@@ -311,7 +311,8 @@ class SocketManager():
             self._safe_put(connection_id, (send_time, packet))
             return
 
-        packet.status = Packet.STATUS_SENT
+        if packet.status != Packet.STATUS_ACK:
+            packet.status = Packet.STATUS_SENT
 
         # Handles acks and blocking
         if packet.requires_ack:
@@ -475,10 +476,7 @@ class SocketManager():
                     sock_addr = "{}://{}:{}/".format(
                         protocol, url_base_name, self.port)
                     if self.ws is not None and self.ws.sock is not None:
-                        # Gross check to see if we're about to leave a socket
-                        # open b/c websocket leaks some connections.
-                        if self.ws.sock.connected:
-                            self._ensure_closed()
+                        self._ensure_closed()
                     self.ws = websocket.WebSocketApp(
                         sock_addr,
                         on_message=on_message,

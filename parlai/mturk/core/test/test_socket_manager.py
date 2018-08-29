@@ -467,7 +467,8 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
         start_time = time.time()
         while val_func() != val:
             assert time.time() - start_time < max_time, \
-                "Value was not attained in specified time"
+                "Value was not attained in specified time, was {} rather " \
+                "than {}".format(val_func(), val)
             time.sleep(0.1)
 
     def test_init_and_socket_shutdown(self):
@@ -1057,6 +1058,9 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         self.assertGreater(hb_count, 1)
 
     def test_failed_ack_resend(self):
+        '''Ensures when a message from the manager is dropped, it gets
+        retried until it works as long as there hasn't been a disconnect
+        '''
         acked_packet = None
         incoming_hb = None
         message_packet = None
