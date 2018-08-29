@@ -543,9 +543,7 @@ class TorchAgent(Agent):
         xs, x_lens = None, None
         if any('text_vec' in ex for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
-            xs, x_lens = padded_tensor(
-                _xs, self.NULL_IDX, self.use_cuda, left_padded=True
-            )
+            xs, x_lens = padded_tensor(_xs, self.NULL_IDX, self.use_cuda)
             if sort:
                 sort = False  # now we won't sort on labels
                 xs, x_lens, valid_inds, exs = argsort(
@@ -565,7 +563,7 @@ class TorchAgent(Agent):
             labels = [ex.get(field + '_choice') for ex in exs]
             y_lens = [y.shape[0] for y in label_vecs]
 
-            ys, y_lens = padded_tensor(label_vecs, self.NULL_IDX, self.use_cuda, False)
+            ys, y_lens = padded_tensor(label_vecs, self.NULL_IDX, self.use_cuda)
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(
                     y_lens, ys, valid_inds, label_vecs, labels, y_lens,
@@ -772,25 +770,6 @@ class TorchAgent(Agent):
         """Call batch_act with the singleton batch."""
         return self.batch_act([self.observation])[0]
 
-    def _init_cuda_buffer(self, model, criterion, batchsize, maxlen):
-        """Pre-initialize CUDA buffer by doing fake forward pass."""
-        if self.use_cuda and not hasattr(self, 'buffer_initialized'):
-            try:
-                print('preinitializing pytorch cuda buffer')
-                dummy = torch.ones(batchsize, maxlen).long().cuda()
-                sc = model(dummy, dummy)[1]
-                loss = criterion(sc.view(-1, sc.size(-1)), dummy.view(-1))
-                loss.backward()
-                self.buffer_initialized = True
-            except RuntimeError as e:
-                if 'out of memory' in str(e):
-                    m = ('CUDA OOM: Lower batch size (-bs) from {} or lower '
-                         ' max sequence length (-tr) from {}'
-                         ''.format(batchsize, maxlen))
-                    raise RuntimeError(m)
-                else:
-                    raise e
-
     def batch_act(self, observations):
         """Process a batch of observations (batchsize list of message dicts).
 
@@ -866,10 +845,12 @@ class Beam(object):
         # backtracking id to hypothesis at previous time step
         self.bookkeep = []
         # output tokens at each time step
-        self.outputs = [torch.Tensor(self.beam_size).long().fill_(padding_token).to(self.device)]
+        self.outputs = [torch.Tensor(self.beam_size).long()
+                        .fill_(padding_token).to(self.device)]
         # keeps tuples (score, time_step, hyp_id)
         self.finished = []
-        self.HypothesisTail = namedtuple('HypothesisTail', ['timestep', 'hypid', 'score', 'tokenid'])
+        self.HypothesisTail = namedtuple(
+            'HypothesisTail', ['timestep', 'hypid', 'score', 'tokenid'])
         self.eos_top = False
         self.eos_top_ts = None
         self.n_best_counter = 0
@@ -888,9 +869,10 @@ class Beam(object):
             # hypos are the same initially
             beam_scores = softmax_probs[0]
         else:
-            # we need to sum up hypo scores and current softmax scores before topk
+            # we need to sum up hypo scores and curr softmax scores before topk
             # [beam_size, voc_size]
-            beam_scores = softmax_probs + self.scores.unsqueeze(1).expand_as(softmax_probs)
+            beam_scores = (softmax_probs +
+                           self.scores.unsqueeze(1).expand_as(softmax_probs))
             for i in range(self.outputs[-1].size(0)):
                 #  if previous output hypo token had eos
                 # we penalize those word probs to never be chosen
@@ -900,12 +882,15 @@ class Beam(object):
 
         flatten_beam_scores = beam_scores.view(-1)  # [beam_size * voc_size]
         with torch.no_grad():
-            best_scores, best_idxs = torch.topk(flatten_beam_scores, self.beam_size, dim=-1)
+            best_scores, best_idxs = torch.topk(
+                flatten_beam_scores, self.beam_size, dim=-1)
 
         self.scores = best_scores
         self.all_scores.append(self.scores)
-        hyp_ids = best_idxs / voc_size  # get the backtracking hypothesis id as a multiple of full voc_sizes
-        tok_ids = best_idxs % voc_size  # get the actual word id from residual of the same division
+        # get the backtracking hypothesis id as a multiple of full voc_sizes
+        hyp_ids = best_idxs / voc_size
+        # get the actual word id from residual of the same division
+        tok_ids = best_idxs % voc_size
 
         self.outputs.append(tok_ids)
         self.bookkeep.append(hyp_ids)
@@ -914,7 +899,9 @@ class Beam(object):
         for hypid in range(self.beam_size):
             if self.outputs[-1][hypid] == self.eos:
                 #  this is finished hypo, adding to finished
-                eostail = self.HypothesisTail(timestep=len(self.outputs) - 1, hypid=hypid, score=self.scores[hypid],
+                eostail = self.HypothesisTail(timestep=len(self.outputs) - 1,
+                                              hypid=hypid,
+                                              score=self.scores[hypid],
                                               tokenid=self.eos)
                 self.finished.append(eostail)
                 self.n_best_counter += 1
@@ -928,27 +915,30 @@ class Beam(object):
         return self.eos_top and self.n_best_counter >= self.min_n_best
 
     def get_top_hyp(self):
-        """
-        Helper function to get single best hypothesis
+        """Get single best hypothesis.
+
         :return: hypothesis sequence and the final score
         """
         top_hypothesis_tail = self.get_rescored_finished(n_best=1)[0]
-        return self.get_hyp_from_finished(top_hypothesis_tail), top_hypothesis_tail.score
+        return (self.get_hyp_from_finished(top_hypothesis_tail),
+                top_hypothesis_tail.score)
 
     def get_hyp_from_finished(self, hypothesis_tail):
-        """
-        Extract hypothesis ending with EOS at timestep with hyp_id
+        """Extract hypothesis ending with EOS at timestep with hyp_id.
+
         :param timestep: timestep with range up to len(self.outputs)-1
         :param hyp_id: id with range up to beam_size-1
         :return: hypothesis sequence
         """
-        assert self.outputs[hypothesis_tail.timestep][hypothesis_tail.hypid] == self.eos
+        assert (self.outputs[hypothesis_tail.timestep]
+                [hypothesis_tail.hypid] == self.eos)
         assert hypothesis_tail.tokenid == self.eos
         hyp_idx = []
         endback = hypothesis_tail.hypid
         for i in range(hypothesis_tail.timestep, -1, -1):
-            hyp_idx.append(self.HypothesisTail(timestep=i, hypid=endback, score=self.all_scores[i][endback],
-                                               tokenid=self.outputs[i][endback]))
+            hyp_idx.append(self.HypothesisTail(
+                timestep=i, hypid=endback, score=self.all_scores[i][endback],
+                tokenid=self.outputs[i][endback]))
             endback = self.bookkeep[i - 1][endback]
 
         return hyp_idx
@@ -971,12 +961,15 @@ class Beam(object):
         rescored_finished = []
         for finished_item in self.finished:
             current_length = finished_item.timestep + 1
-            length_penalty = math.pow((1 + current_length) / 6, 0.65)  # this is from Google NMT paper
-            rescored_finished.append(self.HypothesisTail(timestep=finished_item.timestep, hypid=finished_item.hypid,
-                                                         score=finished_item.score / length_penalty,
-                                                         tokenid=finished_item.tokenid))
+            # these weights are from Google NMT paper
+            length_penalty = math.pow((1 + current_length) / 6, 0.65)
+            rescored_finished.append(self.HypothesisTail(
+                timestep=finished_item.timestep, hypid=finished_item.hypid,
+                score=finished_item.score / length_penalty,
+                tokenid=finished_item.tokenid))
 
-        srted = sorted(rescored_finished, key=attrgetter('score'), reverse=True)
+        srted = sorted(rescored_finished, key=attrgetter('score'),
+                       reverse=True)
 
         if n_best is not None:
             srted = srted[:n_best]
@@ -984,26 +977,30 @@ class Beam(object):
         return srted
 
     def check_finished(self):
-        """
-        this function checks if self.finished is empty and adds hyptail
-        in that case (this will be suboptimal hypothesis since
-        the model did not get any EOS)
-        :return: None
+        """Checks if self.finished is empty and add hyptail in that case.
+
+        This will be suboptimal hypothesis since the model did not get any EOS
+
+        :returns: None
         """
         if len(self.finished) == 0:
-            # we change output because we want outputs to have this eos to pass assert in L102, it is ok since empty self.finished means junk prediction anyway
+            # we change output because we want outputs to have eos
+            # to pass assert in L102, it is ok since empty self.finished
+            # means junk prediction anyway
             self.outputs[-1][0] = self.eos
-            hyptail = self.HypothesisTail(timestep=len(self.outputs) - 1, hypid=0, score=self.all_scores[-1][0],
+            hyptail = self.HypothesisTail(timestep=len(self.outputs) - 1,
+                                          hypid=0,
+                                          score=self.all_scores[-1][0],
                                           tokenid=self.outputs[-1][0])
 
             self.finished.append(hyptail)
 
     def get_beam_dot(self, dictionary=None, n_best=None):
-        """
-        Creates pydot graph representation of the beam
+        """Creates pydot graph representation of the beam.
+
         :param outputs: self.outputs from the beam
         :param dictionary: tok 2 word dict to save words in the tree nodes
-        :return: pydot graph
+        :returns: pydot graph
         """
         try:
             import pydot
@@ -1019,18 +1016,22 @@ class Beam(object):
 
         # get top nbest hyp
         top_hyp_idx_n_best = []
-        n_best_colors = ['aquamarine', 'chocolate1', 'deepskyblue', 'green2', 'tan']
+        n_best_colors = ['aquamarine', 'chocolate1', 'deepskyblue',
+                         'green2', 'tan']
         sorted_finished = self.get_rescored_finished(n_best=n_best)
         for hyptail in sorted_finished:
+            # do not include EOS since it has rescored score not from original
+            # self.all_scores, we color EOS with black
             top_hyp_idx_n_best.append(self.get_hyp_from_finished(
-                hyptail))  # do not include EOS since it has rescored score not from original self.all_scores, we color EOS with black
+                hyptail))
 
         # create nodes
         for tstep, lis in enumerate(outputs):
             for hypid, token in enumerate(lis):
                 if tstep == 0:
                     hypid = 0  # collapse all __NULL__ nodes
-                node_tail = self.HypothesisTail(timestep=tstep, hypid=hypid, score=all_scores[tstep][hypid],
+                node_tail = self.HypothesisTail(timestep=tstep, hypid=hypid,
+                                                score=all_scores[tstep][hypid],
                                                 tokenid=token)
                 color = 'white'
                 rank = None
@@ -1040,20 +1041,30 @@ class Beam(object):
                             color = n_best_colors[i]
                         rank = i
                         break
-                label = "<{}".format(
-                    dictionary.vec2txt([token]) if dictionary is not None else token) + " : " + "{:.{prec}f}>".format(
-                    all_scores[tstep][hypid], prec=3)
-                graph.add_node(pydot.Node(node_tail.__repr__(), label=label, fillcolor=color, style='filled',
-                                          xlabel='{}'.format(rank) if rank is not None else ''))
+                label = (
+                    "<{}".format(dictionary.vec2txt([token])
+                                 if dictionary is not None else token) +
+                    " : " +
+                    "{:.{prec}f}>".format(all_scores[tstep][hypid], prec=3))
+
+                graph.add_node(pydot.Node(
+                    node_tail.__repr__(), label=label, fillcolor=color,
+                    style='filled',
+                    xlabel='{}'.format(rank) if rank is not None else ''))
+
         # create edges
         for revtstep, lis in reversed(list(enumerate(bookkeep))):
             for i, prev_id in enumerate(lis):
-                from_node = graph.get_node('"{}"'.format(
-                    self.HypothesisTail(timestep=revtstep, hypid=prev_id, score=all_scores[revtstep][prev_id],
-                                        tokenid=outputs[revtstep][prev_id]).__repr__()))[0]
-                to_node = graph.get_node('"{}"'.format(
-                    self.HypothesisTail(timestep=revtstep + 1, hypid=i, score=all_scores[revtstep + 1][i],
-                                        tokenid=outputs[revtstep + 1][i]).__repr__()))[0]
+                from_node = graph.get_node(
+                    '"{}"'.format(self.HypothesisTail(
+                        timestep=revtstep, hypid=prev_id,
+                        score=all_scores[revtstep][prev_id],
+                        tokenid=outputs[revtstep][prev_id]).__repr__()))[0]
+                to_node = graph.get_node(
+                    '"{}"'.format(self.HypothesisTail(
+                        timestep=revtstep + 1, hypid=i,
+                        score=all_scores[revtstep + 1][i],
+                        tokenid=outputs[revtstep + 1][i]).__repr__()))[0]
                 newedge = pydot.Edge(from_node.get_name(), to_node.get_name())
                 graph.add_edge(newedge)
 
