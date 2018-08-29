@@ -929,8 +929,8 @@ class Beam(object):
         :param hyp_id: id with range up to beam_size-1
         :return: hypothesis sequence
         """
-        assert (self.outputs[hypothesis_tail.timestep][hypothesis_tail.hypid]
-                == self.eos)
+        assert (self.outputs[hypothesis_tail.timestep]
+                [hypothesis_tail.hypid] == self.eos)
         assert hypothesis_tail.tokenid == self.eos
         hyp_idx = []
         endback = hypothesis_tail.hypid
