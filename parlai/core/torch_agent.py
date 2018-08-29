@@ -769,25 +769,6 @@ class TorchAgent(Agent):
         """Call batch_act with the singleton batch."""
         return self.batch_act([self.observation])[0]
 
-    def _init_cuda_buffer(self, model, criterion, batchsize, maxlen):
-        """Pre-initialize CUDA buffer by doing fake forward pass."""
-        if self.use_cuda and not hasattr(self, 'buffer_initialized'):
-            try:
-                print('preinitializing pytorch cuda buffer')
-                dummy = torch.ones(batchsize, maxlen).long().cuda()
-                sc = model(dummy, dummy)[0]
-                loss = criterion(sc.view(-1, sc.size(-1)), dummy.view(-1))
-                loss.backward()
-                self.buffer_initialized = True
-            except RuntimeError as e:
-                if 'out of memory' in str(e):
-                    m = ('CUDA OOM: Lower batch size (-bs) from {} or lower '
-                         ' max sequence length (-tr) from {}'
-                         ''.format(batchsize, maxlen))
-                    raise RuntimeError(m)
-                else:
-                    raise e
-
     def batch_act(self, observations):
         """Process a batch of observations (batchsize list of message dicts).
 

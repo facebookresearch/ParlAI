@@ -24,7 +24,7 @@ def opt_to_kwargs(opt):
     return kwargs
 
 
-def pad(tensor, length, dim=0):
+def pad(tensor, length, dim=0, pad=0):
     """Pad tensor to a specific length.
 
     :param tensor: vector to pad
@@ -37,7 +37,7 @@ def pad(tensor, length, dim=0):
         return torch.cat(
             [tensor, tensor.new(*tensor.size()[:dim],
                                 length - tensor.size(dim),
-                                *tensor.size()[dim + 1:]).zero_()],
+                                *tensor.size()[dim + 1:]).fill_(pad)],
             dim=dim)
     else:
         return tensor
@@ -107,8 +107,8 @@ class Seq2seq(nn.Module):
         bsz = ys.size(0)
         seqlen = ys.size(1)
 
-        hidden = encoder_states[0]
-        attn_params = (encoder_states[1], encoder_states[2])
+        hidden = encoder_states[1]
+        attn_params = (encoder_states[0], encoder_states[2])
 
         # input to model is START + each target except the last
         y_in = ys.narrow(1, 0, seqlen - 1)
@@ -135,9 +135,9 @@ class Seq2seq(nn.Module):
 
     def _decode(self, encoder_states, maxlen):
         """Decode maxlen tokens."""
-        hidden = encoder_states[0]
-        attn_params = (encoder_states[1], encoder_states[2])
-        bsz = encoder_states[1].size(0)
+        hidden = encoder_states[1]
+        attn_params = (encoder_states[0], encoder_states[2])
+        bsz = encoder_states[0].size(0)
 
         xs = self._starts(bsz)  # input start token
 
@@ -154,7 +154,7 @@ class Seq2seq(nn.Module):
 
     def _align_inds(self, encoder_states, cand_inds):
         """Select the encoder states relevant to valid candidates."""
-        hidden, enc_out, attn_mask = encoder_states
+        enc_out, hidden, attn_mask = encoder_states
 
         # LSTM or GRU/RNN hidden state?
         if isinstance(hidden, torch.Tensor):
@@ -177,11 +177,11 @@ class Seq2seq(nn.Module):
                 enc_out = enc_out.index_select(0, cand_indices)
                 attn_mask = attn_mask.index_select(0, cand_indices)
 
-        return hidden, enc_out, attn_mask
+        return enc_out, hidden, attn_mask
 
     def _extract_cur(self, encoder_states, index, num_cands):
         """Extract encoder states at current index and expand them."""
-        hidden, enc_out, attn_mask = encoder_states
+        enc_out, hidden, attn_mask = encoder_states
         if isinstance(hidden, torch.Tensor):
             nl = hidden.size(0)
             hsz = hidden.size(-1)
@@ -201,7 +201,7 @@ class Seq2seq(nn.Module):
                        .expand(num_cands, enc_out.size(1), hsz))
             cur_mask = (attn_mask[index].unsqueeze(0)
                         .expand(num_cands, attn_mask.size(-1)))
-        return cur_hid, cur_enc, cur_mask
+        return cur_enc, cur_hid, cur_mask
 
     def _rank(self, cand_params, encoder_states):
         """Rank each cand by the average log-probability of the sequence."""
@@ -234,7 +234,8 @@ class Seq2seq(nn.Module):
 
         max_len = max(len(c) for c in cand_scores)
         cand_scores = torch.cat(
-            [pad(c, max_len).unsqueeze(0) for c in cand_scores], 0)
+            [pad(c, max_len, pad=self.NULL_IDX).unsqueeze(0)
+             for c in cand_scores], 0)
         return cand_scores
 
     def forward(self, xs, ys=None, cand_params=None, prev_enc=None,
@@ -259,7 +260,7 @@ class Seq2seq(nn.Module):
                 (bsz x seqlen x num_features)
             candidate scores are the score the model assigned to each candidate
                 (bsz x num_cands)
-            encoder states are the (hidden, output, attn_mask) states from the
+            encoder states are the (output, hidden, attn_mask) states from the
                 encoder. feed this back in to skip encoding on the next call.
         """
         if ys is not None:
@@ -326,7 +327,7 @@ class RNNEncoder(nn.Module):
 
         # embed input tokens
         xes = self.dropout(self.lt(xs))
-        attn_mask = xs.ne(0).float()
+        attn_mask = xs.ne(0)
         try:
             x_lens = torch.sum(attn_mask.int(), dim=1)
             xes = pack_padded_sequence(xes, x_lens, batch_first=True)
@@ -347,7 +348,7 @@ class RNNEncoder(nn.Module):
             else:
                 hidden = hidden.view(-1, self.dirs, bsz, self.hsz).sum(1)
 
-        return hidden, encoder_output, attn_mask
+        return encoder_output, hidden, attn_mask
 
 
 class RNNDecoder(nn.Module):
@@ -568,7 +569,7 @@ class AttentionLayer(nn.Module):
         """
         if self.attention == 'none':
             # do nothing, no attention
-            return xes
+            return xes, None
 
         if type(hidden) == tuple:
             # for lstms use the "hidden" state not the cell state
@@ -617,8 +618,7 @@ class AttentionLayer(nn.Module):
             # calculate activation scores, apply mask if needed
             if attn_mask is not None:
                 # remove activation from NULL symbols
-                # TODO: is this the best operation?
-                attn_w_premask -= (1 - attn_mask) * 1e20
+                attn_w_premask.masked_fill_((1 - attn_mask), -1e20)
             attn_weights = F.softmax(attn_w_premask, dim=1)
 
         # apply the attention weights to the encoder states

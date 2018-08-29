@@ -38,11 +38,6 @@ class Seq2seqAgent(TorchAgent):
       `(Luong et al. 2015) <arxiv.org/abs/1508.04025>`_
     """
 
-    # version 1 split from version 0 on Aug 29, 2018
-    # to use version 0, use --model legacy:seq2seq:0
-    # legacy agent code is located in parlai/legacy_agents
-    VERSION = 1
-
     @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
@@ -109,7 +104,6 @@ class Seq2seqAgent(TorchAgent):
                            help='Top k sampling from renormalized softmax in '
                                 'test/valid time, default 1 means simple '
                                 'greedy max output')
-        agent.add_argument('--seq2seq_version', default=Seq2seqAgent.VERSION)
         TorchAgent.add_cmdline_args(argparser)
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
@@ -119,6 +113,9 @@ class Seq2seqAgent(TorchAgent):
         """Return current version of this model, counting up from 0.
 
         Models are not backwards-compatible with older versions.
+        Version 1 split from version 0 on Aug 29, 2018.
+        To use version 0, use --model legacy:seq2seq:0
+        (legacy agent code is located in parlai/legacy_agents).
         """
         return 1
 
@@ -304,6 +301,26 @@ class Seq2seqAgent(TorchAgent):
         kwargs['sort'] = True  # need sorted for pack_padded
         return super().batchify(*args, **kwargs)
 
+    def _init_cuda_buffer(self, model, criterion, batchsize, maxlen):
+        """Pre-initialize CUDA buffer by doing fake forward pass."""
+        if self.use_cuda and not hasattr(self, 'buffer_initialized'):
+            try:
+                print('preinitializing pytorch cuda buffer')
+                dummy = torch.ones(batchsize, maxlen).long().cuda()
+                out = model(dummy, dummy)
+                sc = out[0]  # scores
+                loss = criterion(sc.view(-1, sc.size(-1)), dummy.view(-1))
+                loss.backward()
+                self.buffer_initialized = True
+            except RuntimeError as e:
+                if 'out of memory' in str(e):
+                    m = ('CUDA OOM: Lower batch size (-bs) from {} or lower '
+                         ' max sequence length (-tr) from {}'
+                         ''.format(batchsize, maxlen))
+                    raise RuntimeError(m)
+                else:
+                    raise e
+
     def train_step(self, batch):
         """Train on a single batch of examples."""
         batchsize = batch.text_vec.size(0)
@@ -317,7 +334,7 @@ class Seq2seqAgent(TorchAgent):
 
             # generated response
             scores = out[0]
-            preds = scores.max(2)[1]
+            _, preds = scores.max(2)
 
             score_view = scores.view(-1, scores.size(-1))
             loss = self.criterion(score_view, batch.label_vec.view(-1))
@@ -364,13 +381,14 @@ class Seq2seqAgent(TorchAgent):
         cand_params = self._build_cands(batch)
         out = self.model(batch.text_vec, ys=None, cand_params=cand_params)
         scores, cand_scores = out[0], out[1]
+        _, preds = scores.max(2)
 
         if batch.label_vec is not None:
-            # calculate loss on targets
+            # calculate loss on targets with teacher forcing
             out = self.model(batch.text_vec, batch.label_vec)
-            scores = out[0]
-            f_preds = scores.max(2)[1]  # forced preds
-            score_view = scores.view(-1, scores.size(-1))
+            f_scores = out[0]  # forced scores
+            _, f_preds = f_scores.max(2)  # forced preds
+            score_view = f_scores.view(-1, f_scores.size(-1))
             loss = self.criterion(score_view, batch.label_vec.view(-1))
             # save loss to metrics
             notnull = batch.label_vec.ne(self.NULL_IDX)
@@ -387,7 +405,7 @@ class Seq2seqAgent(TorchAgent):
             cand_choices = self._pick_cands(cand_preds, cand_params[1],
                                             batch.candidates)
 
-        text = [self._v2t(p) for p in scores.max(2)[1].cpu()]
+        text = [self._v2t(p) for p in preds.cpu()]
         return Output(text, cand_choices)
 
     def save(self, path=None):
@@ -407,7 +425,7 @@ class Seq2seqAgent(TorchAgent):
             # save opt file
             with open(path + ".opt", 'wb') as handle:
                 # save version string
-                self.opt['model_version'] = Seq2seqAgent.VERSION
+                self.opt['model_version'] = self.model_version()
                 pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def load(self, path):
