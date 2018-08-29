@@ -103,6 +103,8 @@ def _fairseq_opt_wrapper(opt, skip_pretrained_embedding_loading=False):
             setattr(args, k, None)
         else:
             # otherwise we may need to modelzoo adjust the path for fairseq
+            import warnings
+            warnings.warn("We recommend using --embedding-type instead")
             setattr(args, k, modelzoo_path(opt.get("datapath"), getattr(args, k)))
 
     # Here we hardcode a few options that we currently do not support
@@ -390,7 +392,12 @@ class FairseqAgent(TorchAgent):
         models.
         """
         model_class = models.ARCH_MODEL_REGISTRY[self.args.arch]
-        return model_class.build_model(self.args, self.task)
+        model = model_class.build_model(self.args, self.task)
+        if self.args.embedding_type != 'random':
+            self._copy_embeddings(
+                model.encoder.embed_tokens.weight, self.args.embedding_type
+            )
+        return model
 
     def share(self):
         shared = super().share()
