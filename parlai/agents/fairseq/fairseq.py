@@ -213,7 +213,7 @@ class FairseqAgent(TorchAgent):
         agent.add_argument(
             '--fp16',
             default=False,
-            type=bool,
+            type='bool',
             help='Use fp16 training'
         )
         agent.add_argument(
@@ -350,6 +350,7 @@ class FairseqAgent(TorchAgent):
                 self.trainer = trainer.Trainer(
                     self.args, self.task, self.model, self.criterion
                 )
+            self.trainer._build_optimizer()
 
             # if the model already existed, let's preload it and the trainer
             if model_file_exists:
