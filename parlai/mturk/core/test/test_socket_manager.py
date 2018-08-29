@@ -59,8 +59,8 @@ statuses = active_statuses + complete_statuses
 TASK_GROUP_ID_1 = 'TASK_GROUP_ID_1'
 
 SocketManager.DEF_MISSED_PONGS = 1
-SocketManager.HEARTBEAT_RATE = 0.4
-SocketManager.DEF_DEAD_TIME = 0.4
+SocketManager.HEARTBEAT_RATE = 0.6
+SocketManager.DEF_DEAD_TIME = 0.6
 SocketManager.ACK_TIME = {Packet.TYPE_ALIVE: 0.4,
                           Packet.TYPE_MESSAGE: 0.2}
 
@@ -1008,11 +1008,11 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
 
         # Assert alive is registered
         alive_id = self.agent1.send_alive()
-        self.assertEqualBy(lambda: acked_packet is None, False, 4)
+        self.assertEqualBy(lambda: acked_packet is None, False, 8)
         self.assertIsNone(incoming_hb)
         self.assertIsNone(message_packet)
         self.assertIsNone(self.message_packet)
-        self.assertEqualBy(lambda: self.alive_packet is None, False, 4)
+        self.assertEqualBy(lambda: self.alive_packet is None, False, 8)
         self.assertEqual(self.alive_packet.id, alive_id)
         self.assertEqual(acked_packet.id, alive_id, 'Alive was not acked')
         acked_packet = None
@@ -1020,15 +1020,15 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         # assert sending heartbeats actually works, and that heartbeats don't
         # get acked
         self.agent1.send_heartbeat()
-        self.assertEqualBy(lambda: incoming_hb is None, False, 4)
+        self.assertEqualBy(lambda: incoming_hb is None, False, 8)
         self.assertIsNone(acked_packet)
         self.assertGreater(hb_count, 0)
 
         # Test message send from agent
         test_message_text_1 = 'test_message_text_1'
         msg_id = self.agent1.send_message(test_message_text_1)
-        self.assertEqualBy(lambda: self.message_packet is None, False, 4)
-        self.assertEqualBy(lambda: acked_packet is None, False, 4)
+        self.assertEqualBy(lambda: self.message_packet is None, False, 8)
+        self.assertEqualBy(lambda: acked_packet is None, False, 8)
         self.assertEqual(self.message_packet.id, acked_packet.id)
         self.assertEqual(self.message_packet.id, msg_id)
         self.assertEqual(self.message_packet.data['text'], test_message_text_1)
@@ -1041,7 +1041,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
             self.socket_manager.get_my_sender_id(), TEST_WORKER_ID_1,
             TEST_ASSIGNMENT_ID_1, test_message_text_2, 't2')
         self.socket_manager.queue_packet(message_send_packet)
-        self.assertEqualBy(lambda: message_packet is None, False, 4)
+        self.assertEqualBy(lambda: message_packet is None, False, 8)
         self.assertEqual(message_packet.id, manager_message_id)
         self.assertEqual(message_packet.data, test_message_text_2)
         self.assertIn(manager_message_id, self.socket_manager.packet_map)
@@ -1053,7 +1053,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
 
         # Test agent disconnect
         self.agent1.always_beat = False
-        self.assertEqualBy(lambda: self.dead_worker_id, TEST_WORKER_ID_1, 4)
+        self.assertEqualBy(lambda: self.dead_worker_id, TEST_WORKER_ID_1, 8)
         self.assertEqual(self.dead_assignment_id, TEST_ASSIGNMENT_ID_1)
         self.assertGreater(hb_count, 1)
 
@@ -1087,11 +1087,11 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
 
         # Assert alive is registered
         alive_id = self.agent1.send_alive()
-        self.assertEqualBy(lambda: acked_packet is None, False, 4)
+        self.assertEqualBy(lambda: acked_packet is None, False, 8)
         self.assertIsNone(incoming_hb)
         self.assertIsNone(message_packet)
         self.assertIsNone(self.message_packet)
-        self.assertEqualBy(lambda: self.alive_packet is None, False, 4)
+        self.assertEqualBy(lambda: self.alive_packet is None, False, 8)
         self.assertEqual(self.alive_packet.id, alive_id)
         self.assertEqual(acked_packet.id, alive_id, 'Alive was not acked')
         acked_packet = None
@@ -1099,7 +1099,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         # assert sending heartbeats actually works, and that heartbeats don't
         # get acked
         self.agent1.send_heartbeat()
-        self.assertEqualBy(lambda: incoming_hb is None, False, 4)
+        self.assertEqualBy(lambda: incoming_hb is None, False, 8)
         self.assertIsNone(acked_packet)
         self.assertGreater(hb_count, 0)
 
@@ -1112,7 +1112,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
             self.socket_manager.get_my_sender_id(), TEST_WORKER_ID_1,
             TEST_ASSIGNMENT_ID_1, test_message_text_2, 't2')
         self.socket_manager.queue_packet(message_send_packet)
-        self.assertEqualBy(lambda: message_packet is None, False, 4)
+        self.assertEqualBy(lambda: message_packet is None, False, 8)
         self.assertEqual(message_packet.id, manager_message_id)
         self.assertEqual(message_packet.data, test_message_text_2)
         self.assertIn(manager_message_id, self.socket_manager.packet_map)
@@ -1122,7 +1122,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         )
         message_packet = None
         self.agent1.send_acks = True
-        self.assertEqualBy(lambda: message_packet is None, False, 4)
+        self.assertEqualBy(lambda: message_packet is None, False, 8)
         self.assertEqual(message_packet.id, manager_message_id)
         self.assertEqual(message_packet.data, test_message_text_2)
         self.assertIn(manager_message_id, self.socket_manager.packet_map)
@@ -1161,7 +1161,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         # Assert alive is registered
         self.agent1.send_alive()
         self.agent2.send_alive()
-        self.assertEqualBy(lambda: acked_packet is None, False, 4)
+        self.assertEqualBy(lambda: acked_packet is None, False, 8)
         self.assertIsNone(incoming_hb)
         self.assertIsNone(message_packet)
 
@@ -1171,7 +1171,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
 
         # Kill second agent
         self.agent2.always_beat = False
-        self.assertEqualBy(lambda: self.dead_worker_id, TEST_WORKER_ID_2, 4)
+        self.assertEqualBy(lambda: self.dead_worker_id, TEST_WORKER_ID_2, 8)
         self.assertEqual(self.dead_assignment_id, TEST_ASSIGNMENT_ID_2)
 
         # Run rest of tests
@@ -1179,8 +1179,8 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         # Test message send from agent
         test_message_text_1 = 'test_message_text_1'
         msg_id = self.agent1.send_message(test_message_text_1)
-        self.assertEqualBy(lambda: self.message_packet is None, False, 4)
-        self.assertEqualBy(lambda: acked_packet is None, False, 4)
+        self.assertEqualBy(lambda: self.message_packet is None, False, 8)
+        self.assertEqualBy(lambda: acked_packet is None, False, 8)
         self.assertEqual(self.message_packet.id, acked_packet.id)
         self.assertEqual(self.message_packet.id, msg_id)
         self.assertEqual(self.message_packet.data['text'], test_message_text_1)
@@ -1193,7 +1193,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
             self.socket_manager.get_my_sender_id(), TEST_WORKER_ID_1,
             TEST_ASSIGNMENT_ID_1, test_message_text_2, 't2')
         self.socket_manager.queue_packet(message_send_packet)
-        self.assertEqualBy(lambda: message_packet is None, False, 4)
+        self.assertEqualBy(lambda: message_packet is None, False, 8)
         self.assertEqual(message_packet.id, manager_message_id)
         self.assertEqual(message_packet.data, test_message_text_2)
         self.assertIn(manager_message_id, self.socket_manager.packet_map)
@@ -1205,7 +1205,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
 
         # Test agent disconnect
         self.agent1.always_beat = False
-        self.assertEqualBy(lambda: self.dead_worker_id, TEST_WORKER_ID_1, 4)
+        self.assertEqualBy(lambda: self.dead_worker_id, TEST_WORKER_ID_1, 8)
         self.assertEqual(self.dead_assignment_id, TEST_ASSIGNMENT_ID_1)
 
 
