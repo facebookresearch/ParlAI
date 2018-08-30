@@ -138,7 +138,7 @@ class MockSocket():
                 pong = packet_dict['content'].copy()
                 pong['type'] = 'pong'
                 self.ws.send_message(client, json.dumps({
-                    'type':  data_model.SOCKET_ROUTE_PACKET_STRING,
+                    'type': data_model.SOCKET_ROUTE_PACKET_STRING,
                     'content': pong,
                 }))
             if 'receiver_id' in packet_dict['content']:
@@ -205,7 +205,7 @@ class MockAgent(object):
     def register_to_socket(self, ws):
         handler = self.make_packet_handler()
         self.ws = ws
-        self.ws.handlers[self.worker_id+self.assignment_id] = handler
+        self.ws.handlers[self.worker_id + self.assignment_id] = handler
 
     def on_msg(self, packet):
         self.message_packet.append(packet)
@@ -250,13 +250,13 @@ class MockAgent(object):
 
     def build_and_send_packet(self, packet_type, data):
         msg = {
-          'id': str(uuid.uuid4()),
-          'type': packet_type,
-          'sender_id': self.worker_id,
-          'assignment_id': self.assignment_id,
-          'conversation_id': self.conversation_id,
-          'receiver_id': '[World_' + self.task_group_id + ']',
-          'data': data
+            'id': str(uuid.uuid4()),
+            'type': packet_type,
+            'sender_id': self.worker_id,
+            'assignment_id': self.assignment_id,
+            'conversation_id': self.conversation_id,
+            'receiver_id': '[World_' + self.task_group_id + ']',
+            'data': data
         }
 
         event_name = data_model.SOCKET_ROUTE_PACKET_STRING
@@ -312,7 +312,7 @@ class MockAgent(object):
             assert time.time() - last_time < 10, \
                 'Timed out wating for server to acknowledge {} alive'.format(
                     self.worker_id
-                )
+            )
 
 
 class TestMTurkManagerWorkflows(unittest.TestCase):
@@ -344,7 +344,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             return_value=HIT_TYPE_ID)
         self.mturk_utils.subscribe_to_hits = mock.MagicMock()
         self.mturk_utils.create_hit_with_hit_type = mock.MagicMock(
-            return_value=(MTURK_PAGE_URL, FAKE_HIT_ID))
+            return_value=(MTURK_PAGE_URL, FAKE_HIT_ID, 'MTURK_HIT_DATA'))
         self.mturk_utils.get_mturk_client = mock.MagicMock(
             return_value=mock.MagicMock())
 
@@ -402,6 +402,8 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
     def tearDown(self):
         self.agent_1.always_beat = False
         self.agent_2.always_beat = False
+        for key in self.worlds_agents.keys():
+            self.worlds_agents[key] = True
         self.mturk_manager.shutdown()
         self.fake_socket.close()
         self.task_thread.join()

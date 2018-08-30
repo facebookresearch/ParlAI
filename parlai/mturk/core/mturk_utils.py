@@ -357,7 +357,7 @@ def create_hit_with_hit_type(page_url, hit_type_id, num_assignments,
         url_target,
         hit_type_id
     )
-    return hit_link, hit_id
+    return hit_link, hit_id, response
 
 
 def expire_hit(is_sandbox, hit_id):

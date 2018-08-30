@@ -192,7 +192,7 @@ class SocketManager():
         self.socket_dead_callback = socket_dead_callback
         self.server_death_callback = server_death_callback
         if socket_dead_timeout is not None:
-            self.missed_pongs = socket_dead_timeout / self.HEARTBEAT_RATE
+            self.missed_pongs = 1 + socket_dead_timeout / self.HEARTBEAT_RATE
         else:
             self.missed_pongs = self.DEF_MISSED_PONGS
         self.task_group_id = task_group_id
@@ -222,40 +222,42 @@ class SocketManager():
         return '[World_{}]'.format(self.task_group_id)
 
     def _safe_send(self, data, force=False):
-        with self.send_lock:
-            if not self.alive and not force:
-                # Try to wait a half second to send a packet
-                timeout = 0.5
-                while timeout > 0 and not self.alive:
-                    time.sleep(0.1)
-                    timeout -= 0.1
-                if not self.alive:
-                    # don't try to send a packet if we're still dead
-                    return False
-            try:
+        if not self.alive and not force:
+            # Try to wait a half second to send a packet
+            timeout = 0.5
+            while timeout > 0 and not self.alive:
+                time.sleep(0.1)
+                timeout -= 0.1
+            if not self.alive:
+                # don't try to send a packet if we're still dead
+                return False
+        try:
+            with self.send_lock:
                 self.ws.send(data)
-            except websocket.WebSocketConnectionClosedException:
-                # The channel died mid-send, wait for it to come back up
-                return False
-            except BrokenPipeError:  # noqa F821 we don't support p2
-                # The channel died mid-send, wait for it to come back up
-                return False
-            except Exception as e:
-                shared_utils.print_and_log(
-                    logging.WARN,
-                    'Unexpected socket error occured: {}'.format(repr(e)),
-                    should_print=True
-                )
-                return False
-            return True
+        except websocket.WebSocketConnectionClosedException:
+            # The channel died mid-send, wait for it to come back up
+            return False
+        except BrokenPipeError:  # noqa F821 we don't support p2
+            # The channel died mid-send, wait for it to come back up
+            return False
+        except Exception as e:
+            shared_utils.print_and_log(
+                logging.WARN,
+                'Unexpected socket error occured: {}'.format(repr(e)),
+                should_print=True
+            )
+            return False
+        return True
 
     def _ensure_closed(self):
+        self.alive = False
+        if self.ws is None:
+            return
         try:
             self.ws.close()
-            if self.ws.sock is not None:
-                self.ws.sock.close()
         except websocket.WebSocketConnectionClosedException:
             pass
+        self.ws = None
 
     def _send_world_alive(self):
         """Registers world with the passthrough server"""
@@ -271,8 +273,8 @@ class SocketManager():
             return
         if self.last_received_heartbeat[connection_id] is None:
             return
-        if (time.time() - self.last_sent_heartbeat_time[connection_id]
-                < self.HEARTBEAT_RATE):
+        if (time.time() - self.last_sent_heartbeat_time[connection_id] <
+                self.HEARTBEAT_RATE):
             return
         packet = self.last_received_heartbeat[connection_id]
         self._safe_send(json.dumps({
@@ -311,7 +313,8 @@ class SocketManager():
             self._safe_put(connection_id, (send_time, packet))
             return
 
-        packet.status = Packet.STATUS_SENT
+        if packet.status != Packet.STATUS_ACK:
+            packet.status = Packet.STATUS_SENT
 
         # Handles acks and blocking
         if packet.requires_ack:
@@ -403,7 +406,6 @@ class SocketManager():
                 logging.INFO,
                 'World server disconnected: {}'.format(args)
             )
-            self.alive = False
             self._ensure_closed()
             if not self.is_shutdown:
                 self._spawn_reaper_thread()
@@ -474,11 +476,6 @@ class SocketManager():
                 try:
                     sock_addr = "{}://{}:{}/".format(
                         protocol, url_base_name, self.port)
-                    if self.ws is not None and self.ws.sock is not None:
-                        # Gross check to see if we're about to leave a socket
-                        # open b/c websocket leaks some connections.
-                        if self.ws.sock.connected:
-                            self._ensure_closed()
                     self.ws = websocket.WebSocketApp(
                         sock_addr,
                         on_message=on_message,
@@ -487,9 +484,9 @@ class SocketManager():
                     )
                     self.ws.on_open = on_socket_open
                     self.ws.run_forever(
-                        ping_interval=8*self.HEARTBEAT_RATE,
-                        ping_timeout=8*self.HEARTBEAT_RATE*0.9)
-                    self.ws.close()
+                        ping_interval=8 * self.HEARTBEAT_RATE,
+                        ping_timeout=8 * self.HEARTBEAT_RATE * 0.9)
+                    self._ensure_closed()
                 except Exception as e:
                     shared_utils.print_and_log(
                         logging.WARN,
@@ -583,7 +580,9 @@ class SocketManager():
                         should_print=True,
                     )
                 finally:
-                    time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)
+                    if connection_id in self.queues and \
+                            self.queues[connection_id].empty():
+                        time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
         # Setup and run the channel sending thread
         self.threads[connection_id] = threading.Thread(

@@ -581,7 +581,7 @@ class MTurkManager():
         def _onboard_function(mturk_agent):
             """Onboarding wrapper to set state to onboarding properly"""
             if self.onboard_function:
-                conversation_id = 'o_'+str(uuid.uuid4())
+                conversation_id = 'o_' + str(uuid.uuid4())
                 self.worker_manager.change_agent_conversation(
                     agent=mturk_agent,
                     conversation_id=conversation_id,
@@ -629,7 +629,7 @@ class MTurkManager():
     def _check_time_limit(self):
         if time.time() - self.time_limit_checked < RESET_TIME_LOG_TIMEOUT:
             return
-        if int(time.time()) % (60*60*24) > (60*30):
+        if int(time.time()) % (60 * 60 * 24) > (60 * 30):
             # sync the time resets to ONCE DAILY in a 30 minute window
             return
         self.time_limit_checked = time.time()
@@ -1305,12 +1305,13 @@ class MTurkManager():
             )
 
         for _i in range(num_hits):
-            mturk_page_url, hit_id = mturk_utils.create_hit_with_hit_type(
-                page_url=mturk_chat_url,
-                hit_type_id=hit_type_id,
-                num_assignments=1,
-                is_sandbox=self.is_sandbox
-            )
+            mturk_page_url, hit_id, mturk_response = \
+                mturk_utils.create_hit_with_hit_type(
+                    page_url=mturk_chat_url,
+                    hit_type_id=hit_type_id,
+                    num_assignments=1,
+                    is_sandbox=self.is_sandbox
+                )
             self.hit_id_list.append(hit_id)
         return mturk_page_url
 
