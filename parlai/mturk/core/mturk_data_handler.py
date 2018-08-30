@@ -114,6 +114,7 @@ class MTurkDataHandler():
         return self.conn
 
     def _force_task_group_id(self, task_group_id):
+        '''Throw an error if a task group id is neither provided nor stored'''
         if task_group_id is None:
             task_group_id = self.task_group_id
         assert task_group_id is not None, 'Default task_group_id not set'
