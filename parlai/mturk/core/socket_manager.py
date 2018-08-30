@@ -192,7 +192,7 @@ class SocketManager():
         self.socket_dead_callback = socket_dead_callback
         self.server_death_callback = server_death_callback
         if socket_dead_timeout is not None:
-            self.missed_pongs = socket_dead_timeout / self.HEARTBEAT_RATE
+            self.missed_pongs = 1 + socket_dead_timeout / self.HEARTBEAT_RATE
         else:
             self.missed_pongs = self.DEF_MISSED_PONGS
         self.task_group_id = task_group_id

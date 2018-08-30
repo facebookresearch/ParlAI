@@ -363,13 +363,13 @@ class MockAgent(object):
 
     def build_and_send_packet(self, packet_type, data):
         msg = {
-          'id': str(uuid.uuid4()),
-          'type': packet_type,
-          'sender_id': self.worker_id,
-          'assignment_id': self.assignment_id,
-          'conversation_id': self.conversation_id,
-          'receiver_id': '[World_' + self.task_group_id + ']',
-          'data': data
+            'id': str(uuid.uuid4()),
+            'type': packet_type,
+            'sender_id': self.worker_id,
+            'assignment_id': self.assignment_id,
+            'conversation_id': self.conversation_id,
+            'receiver_id': '[World_' + self.task_group_id + ']',
+            'data': data
         }
 
         event_name = data_model.SOCKET_ROUTE_PACKET_STRING
@@ -425,7 +425,7 @@ class MockAgent(object):
             assert time.time() - last_time < 10, \
                 'Timed out wating for server to acknowledge {} alive'.format(
                     self.worker_id
-                )
+            )
 
 
 class TestSocketManagerSetupAndFunctions(unittest.TestCase):
@@ -500,9 +500,9 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
         self.assertTrue(socket_manager.alive)
         self.fake_socket.close()
         self.assertEqualBy(lambda: socket_manager.alive, False,
-                           8*socket_manager.HEARTBEAT_RATE)
+                           8 * socket_manager.HEARTBEAT_RATE)
         self.assertEqualBy(lambda: server_death_called, True,
-                           4*socket_manager.HEARTBEAT_RATE)
+                           4 * socket_manager.HEARTBEAT_RATE)
         self.assertFalse(nop_called)
         socket_manager.shutdown()
 
@@ -535,11 +535,11 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
         self.assertTrue(socket_manager.alive)
         self.fake_socket.close()
         self.assertEqualBy(lambda: socket_manager.alive, False,
-                           8*socket_manager.HEARTBEAT_RATE)
+                           8 * socket_manager.HEARTBEAT_RATE)
         self.assertFalse(socket_manager.alive)
         self.fake_socket = MockSocket()
         self.assertEqualBy(lambda: socket_manager.alive, True,
-                           4*socket_manager.HEARTBEAT_RATE)
+                           4 * socket_manager.HEARTBEAT_RATE)
         self.assertFalse(nop_called)
         self.assertFalse(server_death_called)
         socket_manager.shutdown()
@@ -975,7 +975,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
 
         self.socket_manager = SocketManager(
             'https://127.0.0.1', 3030, self.on_alive, self.on_message,
-            self.on_worker_death, TASK_GROUP_ID_1, 0.3, self.on_server_death)
+            self.on_worker_death, TASK_GROUP_ID_1, 1, self.on_server_death)
 
     def tearDown(self):
         self.socket_manager.shutdown()
@@ -1210,4 +1210,4 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main(buffer=True)
+    unittest.main()#buffer=True)
