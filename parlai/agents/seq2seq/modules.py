@@ -463,7 +463,7 @@ class OutputLayer(nn.Module):
     def reset_parameters(self):
         """Reset bias param."""
         if hasattr(self, 'bias'):
-            stdv = 1. / math.sqrt(self.bias.size(1))
+            stdv = 1. / math.sqrt(self.bias.size(0))
             self.bias.data.uniform_(-stdv, stdv)
 
     def forward(self, input):
