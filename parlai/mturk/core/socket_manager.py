@@ -276,6 +276,7 @@ class SocketManager():
         if (time.time() - self.last_sent_heartbeat_time[connection_id] <
                 self.HEARTBEAT_RATE):
             return
+        print('sending heartbeat', time.time(), connection_id)
         packet = self.last_received_heartbeat[connection_id]
         self._safe_send(json.dumps({
             'type': data_model.SOCKET_ROUTE_PACKET_STRING,
@@ -541,7 +542,6 @@ class SocketManager():
             while self.run[connection_id]:
                 try:
                     # Send a heartbeat if needed
-                    print('sending heartbeat')
                     self._send_needed_heartbeat(connection_id)
                     # Check if client is still alive
                     if (self.pongs_without_heartbeat[connection_id] >
