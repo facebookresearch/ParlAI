@@ -580,7 +580,8 @@ class SocketManager():
                         should_print=True,
                     )
                 finally:
-                    if not self.queues[connection_id].empty():
+                    if connection_id in self.queues and \
+                            self.queues[connection_id].empty():
                         time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
         # Setup and run the channel sending thread
