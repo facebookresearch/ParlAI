@@ -344,7 +344,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             return_value=HIT_TYPE_ID)
         self.mturk_utils.subscribe_to_hits = mock.MagicMock()
         self.mturk_utils.create_hit_with_hit_type = mock.MagicMock(
-            return_value=(MTURK_PAGE_URL, FAKE_HIT_ID))
+            return_value=(MTURK_PAGE_URL, FAKE_HIT_ID, 'MTURK_HIT_DATA'))
         self.mturk_utils.get_mturk_client = mock.MagicMock(
             return_value=mock.MagicMock())
 
