@@ -222,32 +222,32 @@ class SocketManager():
         return '[World_{}]'.format(self.task_group_id)
 
     def _safe_send(self, data, force=False):
-        with self.send_lock:
-            if not self.alive and not force:
-                # Try to wait a half second to send a packet
-                timeout = 0.5
-                while timeout > 0 and not self.alive:
-                    time.sleep(0.1)
-                    timeout -= 0.1
-                if not self.alive:
-                    # don't try to send a packet if we're still dead
-                    return False
-            try:
+        if not self.alive and not force:
+            # Try to wait a half second to send a packet
+            timeout = 0.5
+            while timeout > 0 and not self.alive:
+                time.sleep(0.1)
+                timeout -= 0.1
+            if not self.alive:
+                # don't try to send a packet if we're still dead
+                return False
+        try:
+            with self.send_lock:
                 self.ws.send(data)
-            except websocket.WebSocketConnectionClosedException:
-                # The channel died mid-send, wait for it to come back up
-                return False
-            except BrokenPipeError:  # noqa F821 we don't support p2
-                # The channel died mid-send, wait for it to come back up
-                return False
-            except Exception as e:
-                shared_utils.print_and_log(
-                    logging.WARN,
-                    'Unexpected socket error occured: {}'.format(repr(e)),
-                    should_print=True
-                )
-                return False
-            return True
+        except websocket.WebSocketConnectionClosedException:
+            # The channel died mid-send, wait for it to come back up
+            return False
+        except BrokenPipeError:  # noqa F821 we don't support p2
+            # The channel died mid-send, wait for it to come back up
+            return False
+        except Exception as e:
+            shared_utils.print_and_log(
+                logging.WARN,
+                'Unexpected socket error occured: {}'.format(repr(e)),
+                should_print=True
+            )
+            return False
+        return True
 
     def _ensure_closed(self):
         self.alive = False
@@ -580,7 +580,8 @@ class SocketManager():
                         should_print=True,
                     )
                 finally:
-                    time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)
+                    if not self.queues[connection_id].empty():
+                        time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
         # Setup and run the channel sending thread
         self.threads[connection_id] = threading.Thread(
