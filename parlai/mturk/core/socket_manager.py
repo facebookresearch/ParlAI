@@ -548,9 +548,11 @@ class SocketManager():
                             self.missed_pongs):
                         self.run[connection_id] = False
                         self.socket_dead_callback(worker_id, assignment_id)
+                        print('death by pongs - killed')
                         break
                     # Make sure the queue still exists
                     if connection_id not in self.queues:
+                        print('connection killed')
                         self.run[connection_id] = False
                         break
                     try:
