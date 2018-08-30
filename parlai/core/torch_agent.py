@@ -846,7 +846,7 @@ class Beam(object):
         self.bookkeep = []
         # output tokens at each time step
         self.outputs = [torch.Tensor(self.beam_size).long()
-                        .fill_(padding_token).to(self.device)]
+                        .fill_(self.bos).to(self.device)]
         # keeps tuples (score, time_step, hyp_id)
         self.finished = []
         self.HypothesisTail = namedtuple(
@@ -864,6 +864,11 @@ class Beam(object):
 
     def advance(self, softmax_probs):
         voc_size = softmax_probs.size(-1)
+        current_length = len(self.all_scores) - 1
+        if current_length < self.min_length:
+            # penalize all eos probs to make it decode longer
+            for hyp_id in range(softmax_probs.size(0)):
+                softmax_probs[hyp_id][self.eos] = -1e20
         if len(self.bookkeep) == 0:
             # the first step we take only the first hypo into account since all
             # hypos are the same initially
@@ -942,8 +947,9 @@ class Beam(object):
             endback = self.bookkeep[i - 1][endback]
 
         return hyp_idx
-
-    def get_pretty_hypothesis(self, list_of_hypotails):
+    
+    @staticmethod
+    def get_pretty_hypothesis(list_of_hypotails):
         hypothesis = []
         for i in list_of_hypotails:
             hypothesis.append(i.tokenid)
