@@ -97,6 +97,9 @@ class MTurkDataHandler():
         self.create_default_tables()
 
     def _get_connection(self):
+        '''Returns a singular database connection to be shared amongst all
+        calls
+        '''
         if self.conn is None:
             try:
                 conn = sqlite3.connect(self.db_path)
