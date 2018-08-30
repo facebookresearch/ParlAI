@@ -58,7 +58,7 @@ statuses = active_statuses + complete_statuses
 
 TASK_GROUP_ID_1 = 'TASK_GROUP_ID_1'
 
-SocketManager.DEF_MISSED_PONGS = 1
+SocketManager.DEF_MISSED_PONGS = 3
 SocketManager.HEARTBEAT_RATE = 0.6
 SocketManager.DEF_DEAD_TIME = 0.6
 SocketManager.ACK_TIME = {Packet.TYPE_ALIVE: 0.4,
@@ -630,7 +630,7 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
 
         self.socket_manager = SocketManager(
             'https://127.0.0.1', 3030, self.on_alive, self.on_message,
-            self.on_worker_death, TASK_GROUP_ID_1, 0.3, self.on_server_death)
+            self.on_worker_death, TASK_GROUP_ID_1, 1, self.on_server_death)
 
     def tearDown(self):
         self.socket_manager.shutdown()
@@ -646,7 +646,7 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
                          self.on_worker_death)
         self.assertEqual(self.socket_manager.task_group_id, TASK_GROUP_ID_1)
         self.assertEqual(self.socket_manager.missed_pongs,
-                         0.3 / SocketManager.HEARTBEAT_RATE)
+                         1 / SocketManager.HEARTBEAT_RATE)
         self.assertIsNotNone(self.socket_manager.ws)
         self.assertTrue(self.socket_manager.keep_running)
         self.assertIsNotNone(self.socket_manager.listen_thread)
