@@ -541,6 +541,7 @@ class SocketManager():
             while self.run[connection_id]:
                 try:
                     # Send a heartbeat if needed
+                    print('sending heartbeat')
                     self._send_needed_heartbeat(connection_id)
                     # Check if client is still alive
                     if (self.pongs_without_heartbeat[connection_id] >
@@ -556,13 +557,16 @@ class SocketManager():
                         # Get first item in the queue, check if can send it yet
                         item = self.queues[connection_id].get(block=False)
                         t = item[0]
+                        print('got', item, t)
                         if time.time() < t:
                             # Put the item back into the queue,
                             # it's not time to pop yet
+                            print('putting back')
                             self._safe_put(connection_id, item)
                         else:
                             # Try to send the packet
                             packet = item[1]
+                            print('Wanting to send', packet)
                             if not packet:
                                 # This packet was deleted out from under us
                                 continue
