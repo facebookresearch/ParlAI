@@ -271,7 +271,7 @@ class MockSocket():
                 pong = packet_dict['content'].copy()
                 pong['type'] = 'pong'
                 self.ws.send_message(client, json.dumps({
-                    'type':  data_model.SOCKET_ROUTE_PACKET_STRING,
+                    'type': data_model.SOCKET_ROUTE_PACKET_STRING,
                     'content': pong,
                 }))
             if 'receiver_id' in packet_dict['content']:

@@ -91,7 +91,7 @@ class MockSocket():
                 pong = packet_dict['content'].copy()
                 pong['type'] = 'pong'
                 self.ws.send_message(client, json.dumps({
-                    'type':  data_model.SOCKET_ROUTE_PACKET_STRING,
+                    'type': data_model.SOCKET_ROUTE_PACKET_STRING,
                     'content': pong,
                 }))
             if 'receiver_id' in packet_dict['content']:
@@ -915,23 +915,23 @@ class TestMTurkManagerTimeHandling(unittest.TestCase):
 
         # Try to induce a check, ensure it doesn't fire because too recent
         MTurkManagerFile.time.time = \
-            mock.MagicMock(return_value=(60*60*24*1000))
+            mock.MagicMock(return_value=(60 * 60 * 24 * 1000))
         manager._check_time_limit()
         manager.worker_manager.un_time_block_workers.assert_not_called()
 
         # Try to induce a check, ensure it doesn't fire because outside of 30
         # minute window
         MTurkManagerFile.time.time = mock.MagicMock(
-            return_value=(60*60*24*1000) + (60*40))
+            return_value=(60 * 60 * 24 * 1000) + (60 * 40))
         manager.time_limit_checked = 0
         manager._check_time_limit()
         manager.worker_manager.un_time_block_workers.assert_not_called()
 
         # Induce a check
         MTurkManagerFile.time.time = \
-            mock.MagicMock(return_value=(60*60*24*1000))
+            mock.MagicMock(return_value=(60 * 60 * 24 * 1000))
         manager._check_time_limit()
-        self.assertEqual(manager.time_limit_checked, (60*60*24*1000))
+        self.assertEqual(manager.time_limit_checked, (60 * 60 * 24 * 1000))
 
     def test_add_to_work_time_file_and_block(self):
         manager = self.mturk_manager

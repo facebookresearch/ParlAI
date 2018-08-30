@@ -7,16 +7,13 @@
 import unittest
 import os
 import time
-import threading
 import uuid
 from datetime import datetime
-from unittest import mock
 
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
 from parlai.mturk.core.agents import AssignState
 
 import parlai.mturk.core.mturk_data_handler as DataHandlerFile
-import parlai.mturk.core.data_model as data_model
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 DataHandlerFile.parent_dir = os.path.dirname(os.path.abspath(__file__))
@@ -563,7 +560,6 @@ class TestDataHandler(unittest.TestCase):
         self.assertTrue(pair_1['bonus_paid'])
         self.assertFalse(pair_2['bonus_paid'])
         self.assertFalse(pair_3['bonus_paid'])
-
 
 
 if __name__ == '__main__':
