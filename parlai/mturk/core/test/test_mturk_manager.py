@@ -155,7 +155,7 @@ class InitTestMTurkManager(unittest.TestCase):
         self.assertEqual(manager.mturk_agent_ids,
                          self.mturk_agent_ids)
         self.assertEqual(manager.is_sandbox, opt['is_sandbox'])
-        self.assertEqual(manager.num_conversations,  opt['num_conversations'])
+        self.assertEqual(manager.num_conversations, opt['num_conversations'])
         self.assertEqual(manager.is_sandbox, opt['is_sandbox'])
 
         self.assertGreaterEqual(
@@ -166,7 +166,7 @@ class InitTestMTurkManager(unittest.TestCase):
 
         self.assertEqual(manager.minimum_messages, opt.get('min_messages', 0))
         self.assertEqual(manager.auto_approve_delay,
-                         opt.get('auto_approve_delay', 4*7*24*3600))
+                         opt.get('auto_approve_delay', 4 * 7 * 24 * 3600))
         self.assertEqual(manager.has_time_limit,
                          opt.get('max_time', 0) > 0)
         self.assertIsInstance(manager.worker_manager, WorkerManager)
@@ -1557,4 +1557,4 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main(buffer=True)
+    unittest.main(verbosity=2)

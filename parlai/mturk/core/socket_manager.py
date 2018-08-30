@@ -276,7 +276,6 @@ class SocketManager():
         if (time.time() - self.last_sent_heartbeat_time[connection_id] <
                 self.HEARTBEAT_RATE):
             return
-        print('sending heartbeat', time.time(), connection_id)
         packet = self.last_received_heartbeat[connection_id]
         self._safe_send(json.dumps({
             'type': data_model.SOCKET_ROUTE_PACKET_STRING,
@@ -548,28 +547,22 @@ class SocketManager():
                             self.missed_pongs):
                         self.run[connection_id] = False
                         self.socket_dead_callback(worker_id, assignment_id)
-                        print(self.pongs_without_heartbeat, self.missed_pongs)
-                        print('death by pongs - killed')
                         break
                     # Make sure the queue still exists
                     if connection_id not in self.queues:
-                        print('connection killed')
                         self.run[connection_id] = False
                         break
                     try:
                         # Get first item in the queue, check if can send it yet
                         item = self.queues[connection_id].get(block=False)
                         t = item[0]
-                        print('got', item, t)
                         if time.time() < t:
                             # Put the item back into the queue,
                             # it's not time to pop yet
-                            print('putting back')
                             self._safe_put(connection_id, item)
                         else:
                             # Try to send the packet
                             packet = item[1]
-                            print('Wanting to send', packet)
                             if not packet:
                                 # This packet was deleted out from under us
                                 continue
