@@ -646,7 +646,7 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
                          self.on_worker_death)
         self.assertEqual(self.socket_manager.task_group_id, TASK_GROUP_ID_1)
         self.assertEqual(self.socket_manager.missed_pongs,
-                         1 / SocketManager.HEARTBEAT_RATE)
+                         1 + (1 / SocketManager.HEARTBEAT_RATE))
         self.assertIsNotNone(self.socket_manager.ws)
         self.assertTrue(self.socket_manager.keep_running)
         self.assertIsNotNone(self.socket_manager.listen_thread)
