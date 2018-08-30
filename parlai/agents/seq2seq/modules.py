@@ -474,7 +474,7 @@ class OutputLayer(nn.Module):
             self.e2s = nn.Linear(embeddingsize, num_features, bias=True)
         else:
             # use shared weights and a bias layer instead
-            self.weight = shared_weight
+            self.weight = shared_weight.weight  # shared_weight is nn.Embedding
             self.bias = Parameter(torch.Tensor(num_features))
             self.reset_parameters()
             self.e2s = lambda x: F.linear(x, self.weight, self.bias)
