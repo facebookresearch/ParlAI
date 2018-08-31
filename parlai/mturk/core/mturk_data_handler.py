@@ -32,6 +32,7 @@ CREATE_WORKER_DATA_SQL_TABLE = (
         worker_id string PRIMARY KEY,
         accepted integer NOT NULL,
         disconnected integer NOT NULL,
+        expired integer NOT NULL,
         completed integer NOT NULL,
         approved integer NOT NULL,
         rejected integer NOT NULL
@@ -77,6 +78,7 @@ CREATE_PAIRING_DATA_SQL_TABLE = (
         bonus_amount int,
         bonus_text string,
         bonus_paid boolean,
+        notes string,
         worker_id string,
         assignment_id string,
         run_id string,
@@ -182,8 +184,8 @@ class MTurkDataHandler():
             has_worker = c.fetchone()[0] > 0
             if not has_worker:
                 # Must instert a new worker into the database
-                c.execute('INSERT INTO workers VALUES (?,?,?,?,?,?);',
-                          (worker_id, 1, 0, 0, 0, 0))
+                c.execute('INSERT INTO workers VALUES (?,?,?,?,?,?,?);',
+                          (worker_id, 1, 0, 0, 0, 0, 0))
             else:
                 # Increment number of assignments the worker has accepted
                 c.execute('''UPDATE workers SET accepted = accepted + 1
@@ -196,9 +198,11 @@ class MTurkDataHandler():
 
             # Create tracking for this specific pairing, as the assignment
             # may be reassigned
-            c.execute('INSERT INTO pairings VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+            c.execute('''INSERT INTO pairings
+                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''',
                       (AssignState.STATUS_NONE, None, None, None, None, None,
-                       0, '', False, worker_id, assignment_id, task_group_id))
+                       0, '', False, '', worker_id, assignment_id,
+                       task_group_id))
             conn.commit()
 
     def log_complete_assignment(self, worker_id, assignment_id, approve_time,
@@ -257,19 +261,48 @@ class MTurkDataHandler():
                       (task_group_id, ))
             conn.commit()
 
+    def log_expire_assignment(self, worker_id, assignment_id,
+                              task_group_id=None):
+        '''Note that an assignment was expired by us'''
+        task_group_id = self._force_task_group_id(task_group_id)
+        with self.table_access_condition:
+            conn = self._get_connection()
+            c = conn.cursor()
+
+            # Update assign data to expired
+            c.execute('''UPDATE assignments SET status = ?
+                         WHERE assignment_id = ?;''',
+                      ('Expired', assignment_id))
+
+            # Increment worker completed
+            c.execute('''UPDATE workers SET expired = expired + 1
+                         WHERE worker_id = ?;''',
+                      (worker_id, ))
+
+            # update the pairing status
+            c.execute('''UPDATE pairings SET status = ?, task_end = ?
+                         WHERE worker_id = ? AND assignment_id = ?;''',
+                      (AssignState.STATUS_EXPIRED, time.time(), worker_id,
+                       assignment_id))
+
+            # Update run data to have another completed
+            c.execute('UPDATE runs SET failed = failed + 1 WHERE run_id = ?;',
+                      (task_group_id, ))
+            conn.commit()
+
     def log_submit_assignment(self, worker_id, assignment_id):
         '''To be called whenever a worker hits the "submit hit" button'''
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
             # update the assignment status to reviewable
-            c.execute(''''UPDATE assignments SET status = ?
-                          WHERE assignment_id = ?;''',
+            c.execute('''UPDATE assignments SET status = ?
+                         WHERE assignment_id = ?;''',
                       ('Reviewable', assignment_id))
             conn.commit()
 
     def log_abandon_assignment(self, worker_id, assignment_id):
-        '''To be called whenever a returns a hit'''
+        '''To be called whenever a worker returns a hit'''
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -328,28 +361,50 @@ class MTurkDataHandler():
                       (True, worker_id, assignment_id))
             conn.commit()
 
-    def log_approve_assignment(self, worker_id, assignment_id):
+    def log_approve_assignment(self, assignment_id):
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
             c.execute('''UPDATE assignments SET status = ?
                          WHERE assignment_id = ?;''',
                       ('Approved', assignment_id))
+            c.execute('SELECT * FROM assignments WHERE assignment_id = ?;',
+                      (assignment_id, ))
+            assignment = c.fetchone()
+            if assignment is None:
+                return
+            worker_id = assignment['worker_id']
             c.execute('''UPDATE workers SET approved = approved + 1
                          WHERE worker_id = ?;''',
                       (worker_id, ))
             conn.commit()
 
-    def log_reject_assignment(self, worker_id, assignment_id):
+    def log_reject_assignment(self, assignment_id):
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
             c.execute('''UPDATE assignments SET status = ?
                          WHERE assignment_id = ?;''',
                       ('Rejected', assignment_id))
+            c.execute('SELECT * FROM assignments WHERE assignment_id = ?;',
+                      (assignment_id, ))
+            assignment = c.fetchone()
+            if assignment is None:
+                return
+            worker_id = assignment['worker_id']
             c.execute('''UPDATE workers SET rejected = rejected + 1
                          WHERE worker_id = ?;''',
                       (worker_id, ))
+            conn.commit()
+
+    def log_worker_note(self, worker_id, assignment_id, note):
+        note += '\n'
+        with self.table_access_condition:
+            conn = self._get_connection()
+            c = conn.cursor()
+            c.execute('''UPDATE pairings SET notes = CONCAT(notes, ?)
+                         WHERE worker_id = ? AND assignment_id = ?;''',
+                      (note, worker_id, assignment_id))
             conn.commit()
 
     def get_worker_data(self, worker_id):

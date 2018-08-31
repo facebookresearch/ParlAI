@@ -16,6 +16,7 @@ import errno
 from parlai.mturk.core.agents import AssignState
 from parlai.mturk.core.socket_manager import Packet, SocketManager
 from parlai.mturk.core.worker_manager import WorkerManager
+from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
 import parlai.mturk.core.data_model as data_model
 import parlai.mturk.core.mturk_utils as mturk_utils
 import parlai.mturk.core.server_utils as server_utils
@@ -76,7 +77,7 @@ class MTurkManager():
     STATE_ACCEPTING_WORKERS = 3   # Socket ready to recieve workers
     STATE_HITS_MADE = 4           # hits created
 
-    def __init__(self, opt, mturk_agent_ids, is_test=False):
+    def __init__(self, opt, mturk_agent_ids, is_test=False, use_db=False):
         """Create an MTurkManager using the given setup opts and a list of
         agent_ids that will participate in each conversation
         """
@@ -116,8 +117,10 @@ class MTurkManager():
         self.is_test = is_test
         self.is_unique = False
         self.max_hits_per_worker = opt.get('max_hits_per_worker', 0)
-        self._init_logs()
+        self._init_logging_config()
         self.is_shutdown = False
+        self.use_db = use_db # TODO enable always DB integration is complete
+        self.db_logger = None
         self.task_state = self.STATE_CREATED
 
     # Helpers and internal manager methods #
@@ -140,8 +143,11 @@ class MTurkManager():
         self.unique_qual_name = None
         self.time_limit_checked = time.time()
         self.task_state = self.STATE_INIT_RUN
+        if self.use_db:
+            db_filename = 'pmt_sbdata.db' if self.is_sandbox else 'pmt_data.db'
+            self.db_logger = MTurkDataHandler(self.task_group_id, db_filename)
 
-    def _init_logs(self):
+    def _init_logging_config(self):
         """Initialize logging settings from the opt"""
         shared_utils.set_is_debug(self.opt['is_debug'])
         shared_utils.set_log_level(self.opt['log_level'])
@@ -384,6 +390,12 @@ class MTurkManager():
         # Get a state for this worker, create if non existing
         worker_state = self.worker_manager.worker_alive(worker_id)
 
+        if self.db_logger is not None:
+            self.db_logger.log_worker_note(
+                worker_id, assign_id,
+                'Reconnected with conversation_id {} at {}'.format(
+                    conversation_id, time.time()))
+
         if not worker_state.has_assignment(assign_id):
             # New connection for the worker. First ensure that this connection
             # isn't violating our uniqueness constraints
@@ -420,6 +432,9 @@ class MTurkManager():
             self.worker_manager.assign_task_to_worker(
                 hit_id, assign_id, worker_id
             )
+            if self.db_logger is not None:
+                self.db_logger.log_worker_accept_assignment(
+                    worker_id, assign_id, hit_id)
             agent = self.worker_manager._get_agent(worker_id, assign_id)
             self._onboard_new_agent(agent)
         else:
@@ -813,6 +828,8 @@ class MTurkManager():
                 'perhaps you tried to register to localhost?',
                 should_print=True
             )
+        if self.db_logger is not None:
+            self.db_logger.log_new_run(self.required_hits)
         self.task_state = self.STATE_INIT_RUN
 
     def ready_to_accept_workers(self, timeout_seconds=None):
@@ -1312,6 +1329,8 @@ class MTurkManager():
                     num_assignments=1,
                     is_sandbox=self.is_sandbox
                 )
+            if self.db_logger is not None:
+                self.db_logger.log_hit_status(mturk_response)
             self.hit_id_list.append(hit_id)
         return mturk_page_url
 
@@ -1387,6 +1406,8 @@ class MTurkManager():
         """approve work for a given assignment through the mturk client"""
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         client.approve_assignment(AssignmentId=assignment_id)
+        if self.db_logger is not None:
+            self.db_logger.log_approve_assignment(assignment_id)
         shared_utils.print_and_log(
             logging.INFO,
             'Assignment {} approved.'
@@ -1400,6 +1421,8 @@ class MTurkManager():
             AssignmentId=assignment_id,
             RequesterFeedback=reason
         )
+        if self.db_logger is not None:
+            self.db_logger.log_reject_assignment(assignment_id)
         shared_utils.print_and_log(
             logging.INFO,
             'Assignment {} rejected for reason {}.'
