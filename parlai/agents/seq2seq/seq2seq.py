@@ -50,12 +50,8 @@ class Seq2seqAgent(TorchAgent):
                            help='size of the token embeddings')
         agent.add_argument('-nl', '--numlayers', type=int, default=2,
                            help='number of hidden layers')
-        agent.add_argument('-lr', '--learningrate', type=float, default=1,
-                           help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
                            help='dropout rate')
-        agent.add_argument('-clip', '--gradient-clip', type=float, default=0.1,
-                           help='gradient clipping using l2 norm')
         agent.add_argument('-bi', '--bidirectional', type='bool',
                            default=False,
                            help='whether to encode the context with a '
@@ -141,11 +137,6 @@ class Seq2seqAgent(TorchAgent):
 
         # all instances may need some params
         self.id = 'Seq2Seq'
-        self.metrics = {'loss': 0.0, 'num_tokens': 0, 'correct_tokens': 0,
-                        'total_skipped_batches': 0}
-        self.report_freq = opt.get('report_freq', 0.001)
-        self.beam_size = opt.get('beam_size', 1)
-        self.topk = opt.get('topk', 1)
         states = {}
 
         if shared:
@@ -153,8 +144,9 @@ class Seq2seqAgent(TorchAgent):
             self.model = shared['model']
             self.metrics = shared['metrics']
             states = shared.get('states', {})
-
         else:
+            self.metrics = {'loss': 0.0, 'num_tokens': 0, 'correct_tokens': 0,
+                            'total_skipped_batches': 0}
             # this is not a shared instance of this class, so do full init
             if init_model is not None:
                 # load model parameters if available
@@ -400,7 +392,7 @@ class Seq2seqAgent(TorchAgent):
 
         cand_choices = None
         if cand_scores is not None:
-            cand_preds = cand_scores.sort(1, True)[1]
+            cand_preds = cand_scores.sort(1, descending=True)[1]
             # now select the text of the cands based on their scores
             cand_choices = self._pick_cands(cand_preds, cand_params[1],
                                             batch.candidates)
@@ -432,11 +424,6 @@ class Seq2seqAgent(TorchAgent):
         """Return opt and model states."""
         states = torch.load(path, map_location=lambda cpu, _: cpu)
         return states
-
-    def receive_metrics(self, metrics_dict):
-        """Use the metrics to decide when to adjust LR schedule."""
-        if 'loss' in metrics_dict:
-            self.scheduler.step(metrics_dict['loss'])
 
 
 class mydefaultdict(defaultdict):

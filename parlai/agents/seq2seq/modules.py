@@ -85,7 +85,7 @@ class Seq2seq(nn.Module):
             bidirectional=bidirectional,
             shared_lt=shared_lt, shared_rnn=shared_rnn)
 
-        shared_weight = (self.decoder.lt
+        shared_weight = (self.decoder.lt.weight
                          if lookuptable in ('dec_out', 'all') else None)
         self.output = OutputLayer(
             num_features, embeddingsize, hiddensize, dropout=dropout,
