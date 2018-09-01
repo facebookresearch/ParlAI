@@ -315,7 +315,8 @@ class Seq2seqAgent(TorchAgent):
                 'optimizer_type': self.opt['optimizer'],
             }
         shared['metrics'] = self.metrics  # do after numthreads check
-        shared['beam_dot_dir'] = self.beam_dot_dir
+        if self.beam_dot_log is True:
+            shared['beam_dot_dir'] = self.beam_dot_dir
         return shared
 
     def vectorize(self, *args, **kwargs):
