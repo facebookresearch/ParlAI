@@ -177,11 +177,14 @@ class MemnnAgent(TorchAgent):
         kwargs['add_start'] = False
         kwargs['add_end'] = False
         kwargs['split_lines'] = True
+        obs = args[0]
+        if 'labels' in obs and 'label_candidates' in obs:
+            # we aren't going to rank them, don't waste time
+            del obs['label_candidates']
         return super().vectorize(*args, **kwargs)
 
     def get_dialog_history(self, *args, **kwargs):
         kwargs['add_p1_after_newln'] = True
-        kwargs['reply'] = None
         return super().get_dialog_history(*args, **kwargs)
 
     def _build_mems(self, mems):
@@ -193,6 +196,9 @@ class MemnnAgent(TorchAgent):
         for i, mem in enumerate(mems):
             for j, m in enumerate(mem):
                 padded[i, j, :len(m)] = m
+
+        # if self.use_cuda:
+        #     padded = padded.cuda()
 
         return padded
 

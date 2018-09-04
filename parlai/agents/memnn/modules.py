@@ -13,7 +13,7 @@ from functools import lru_cache
 def opt_to_kwargs(opt):
     """Get kwargs for seq2seq from opt."""
     kwargs = {}
-    for k in ['mem_size', 'time_features', 'position_encoding', 'hops'
+    for k in ['mem_size', 'time_features', 'position_encoding', 'hops',
               'dropout']:
         if k in opt:
             kwargs[k] = opt[k]
