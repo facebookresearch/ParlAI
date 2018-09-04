@@ -9,7 +9,7 @@ from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_tensor
 
 import torch
-from torch.nn import CrossEntropyLoss
+from torch import nn
 
 import os
 
@@ -82,7 +82,7 @@ class MemnnAgent(TorchAgent):
             self.metrics = shared['metrics']
             self.decoder = shared['decoder']
         else:
-            self.metrics = {'loss': 0.0, 'num_cands': 0, 'rank': 0}
+            self.metrics = {'loss': 0.0, 'batches': 0, 'rank': 0}
 
             # initialize model from scratch
             self._init_model()
@@ -91,19 +91,20 @@ class MemnnAgent(TorchAgent):
                 self.load(init_model)
 
         # set up criteria
-        self.rank_loss = CrossEntropyLoss()  # TODO: rank loss option?
-        self.gen_loss = CrossEntropyLoss(ignore_index=self.NULL_IDX)
+        self.rank_loss = nn.CrossEntropyLoss()  # TODO: rank loss option?
+        # self.rank_loss = nn.MultiMarginLoss(margin=1)
+        # self.gen_loss = nnCrossEntropyLoss(ignore_index=self.NULL_IDX)
         if self.use_cuda:
             self.rank_loss.cuda()
-            self.gen_loss.cuda()
+            # self.gen_loss.cuda()
 
         if 'train' in self.opt.get('datatype', ''):
             # set up optimizer
             optim_params = [p for p in self.model.parameters() if
                             p.requires_grad]
-            if self.decoder is not None:
-                optim_params.extend([p for p in self.decoder.parameters() if
-                                     p.requires_grad])
+            # if self.decoder is not None:
+            #     optim_params.extend([p for p in self.decoder.parameters() if
+            #                          p.requires_grad])
             self._init_optim(optim_params)
 
     def _init_model(self):
@@ -151,7 +152,7 @@ class MemnnAgent(TorchAgent):
         """Reset metrics for reporting loss and perplexity."""
         super().reset_metrics()
         self.metrics['loss'] = 0.0
-        self.metrics['num_cands'] = 0
+        self.metrics['batches'] = 0
         self.metrics['rank'] = 0
 
     def report(self):
@@ -161,12 +162,12 @@ class MemnnAgent(TorchAgent):
         differ from a truly independent measurement.
         """
         m = {}
-        num_cands = self.metrics['num_cands']
-        if num_cands > 0:
+        batches = self.metrics['batches']
+        if batches > 0:
             if self.metrics['loss'] > 0:
                 m['loss'] = self.metrics['loss']
             if self.metrics['rank'] > 0:
-                m['mean_rank'] = self.metrics['rank'] / num_cands
+                m['mean_rank'] = self.metrics['rank'] / batches
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)
@@ -177,6 +178,11 @@ class MemnnAgent(TorchAgent):
         kwargs['add_end'] = False
         kwargs['split_lines'] = True
         return super().vectorize(*args, **kwargs)
+
+    def get_dialog_history(self, *args, **kwargs):
+        kwargs['add_p1_after_newln'] = True
+        kwargs['reply'] = None
+        return super().get_dialog_history(*args, **kwargs)
 
     def _build_mems(self, mems):
         bsz = len(mems)
@@ -206,12 +212,16 @@ class MemnnAgent(TorchAgent):
         loss = self.rank_loss(scores, label_inds)
 
         self.metrics['loss'] += loss.item()
-        self.metrics['num_cands'] += batchsize
+        self.metrics['batches'] += batchsize
         _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
-            self.metrics['rank'] += (ranks[b] == label_inds[b]).nonzero().item()
+            self.metrics['rank'] += 1 + (ranks[b] == label_inds[b]).nonzero().item()
         loss.backward()
         self.update_params()
+
+        # get predictions but not full rankings--too slow to get hits@1 score
+        preds = [self.dict[cands[row[0]].item()] for row in ranks]
+        return Output(preds)
 
     def _build_cands(self, batch):
         if not batch.candidates:
@@ -227,8 +237,7 @@ class MemnnAgent(TorchAgent):
         if batch.text_vec is None:
             return
         batchsize = batch.text_vec.size(0)
-        self.model.train()
-        self.optimizer.zero_grad()
+        self.model.eval()
 
         mems = self._build_mems(batch.memory_vecs)
         cands, cand_inds = self._build_cands(batch)
@@ -236,10 +245,10 @@ class MemnnAgent(TorchAgent):
         # label_inds = batch.label_vec.new(range(batch.label_vec.size(0)))
         # loss = self.rank_loss(scores, label_inds)
         # self.metrics['loss'] += loss
-        self.metrics['num_cands'] += batchsize
+        self.metrics['batches'] += batchsize
         _, ranks = scores.sort(1, descending=True)
         # for b in range(batchsize):
-        #     self.metrics['rank'] += (ranks[b] == b).nonzero().item()
+        #     self.metrics['rank'] += 1 + (ranks[b] == b).nonzero().item()
 
         preds, cand_preds = None, None
         if batch.candidates:

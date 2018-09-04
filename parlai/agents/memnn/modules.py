@@ -67,6 +67,11 @@ class MemNN(nn.Module):
             self.memory_hop.cuda()
         self.use_cuda = use_cuda
 
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        pass
+
     def _score(self, output, cands):
         if isinstance(cands, torch.Tensor):
             return torch.matmul(output, cands.t())
@@ -78,9 +83,9 @@ class MemNN(nn.Module):
     def forward(self, xs, mems, cands=None):
         """One forward step.
 
-        :param xs:       (bsz x seqlen) LongTensor queries to the model
-        :param mems:     (bsz x num_mems x seqlen) LongTensor memories
-        :param cands:
+        :param xs:    (bsz x seqlen) LongTensor queries to the model
+        :param mems:  (bsz x num_mems x seqlen) LongTensor memories
+        :param cands: yuck variety of input formats
 
         :returns: scores
             scores contains the model's predicted scores.
@@ -88,13 +93,15 @@ class MemNN(nn.Module):
                 otherwise, these scores are over the candidates provided.
                 (bsz x num_cands)
         """
+        query_embs = self.query_lt(xs)
         in_memory_embs = self.in_memory_lt(mems).transpose(1, 2)
         out_memory_embs = self.out_memory_lt(mems)
-        states = self.query_lt(xs)
 
-        for i in range(self.hops):
+        states = query_embs
+        for _ in range(self.hops):
             states = self.memory_hop(states, in_memory_embs, out_memory_embs)
 
+        # TODO: make less messy, too many types of candidate inputs
         if cands is not None:
             if isinstance(cands, torch.Tensor):
                 cand_embs = self.answer_embedder(cands)
@@ -113,24 +120,26 @@ class Embed(nn.Embedding):
     Applies Position Encoding if enabled and currently applies BOW sum.
     """
 
-    def __init__(self, *args, position_encoding=False, reduction='sum',
+    def __init__(self, *args, position_encoding=False, reduction='mean',
                  **kwargs):
         """Initialize custom Embedding layer.
 
         :param position_encoding: apply positional encoding transformation
                                   on input sequences
-        :param reduction:         reduction strategy to sequences, default 'sum'
+        :param reduction:         reduction strategy to sequences, default 'mean'
         """
         self.position_encoding = position_encoding
         self.reduction = reduction
         super().__init__(*args, **kwargs)
 
-    def _reduce(self, embs):
+    def _reduce(self, embs, input):
         # last dimension is embedding, do operation over dim before that
         if self.reduction == 'sum':
             return embs.sum(-2)
         elif self.reduction == 'mean':
-            return embs.mean(-2)
+            sum = embs.sum(-2)
+            lens = input.ne(0).sum(-1).unsqueeze(-1).float()
+            return sum / lens
         else:
             raise RuntimeError(
                 'reduction method {} not supported'.format(self.reduction))
@@ -153,7 +162,7 @@ class Embed(nn.Embedding):
                 raise RuntimeError(
                     'Input dim {} not supported with position encoding yet'
                     ''.format(input.dim()))
-        return self._reduce(embs)
+        return self._reduce(embs, input)
 
     @staticmethod
     @lru_cache(maxsize=128)
@@ -206,8 +215,8 @@ class Hop(nn.Module):
         :returns: (bsz x esz) output state
         """
         # rotate query embeddings
-        query_embs = self.rotate(query_embs)
         attn = torch.bmm(query_embs.unsqueeze(1), in_mem_embs).squeeze(1)
         probs = self.softmax(attn)
         memory_output = torch.bmm(probs.unsqueeze(1), out_mem_embs).squeeze(1)
-        return memory_output + query_embs
+        output = memory_output + self.rotate(query_embs)
+        return output

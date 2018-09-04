@@ -447,6 +447,7 @@ class OutputLayer(nn.Module):
 
         self.numsoftmax = numsoftmax
         if numsoftmax > 1:
+            self.esz = embeddingsize
             self.softmax = nn.Softmax(dim=1)
             self.prior = nn.Linear(hiddensize, numsoftmax, bias=False)
             self.latent = nn.Linear(hiddensize, numsoftmax * embeddingsize)

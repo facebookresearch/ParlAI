@@ -321,6 +321,7 @@ class Seq2seqAgent(TorchAgent):
                                self.truncate or 180)
         self.model.train()
         self.zero_grad()
+
         try:
             out = self.model(batch.text_vec, batch.label_vec)
 
@@ -369,6 +370,8 @@ class Seq2seqAgent(TorchAgent):
 
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
+        if batch.text_vec is None:
+            return
         self.model.eval()
         cand_params = self._build_cands(batch)
         out = self.model(batch.text_vec, ys=None, cand_params=cand_params)
