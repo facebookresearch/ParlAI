@@ -57,9 +57,12 @@ class MemNN(nn.Module):
 
         self.dropout = nn.Dropout(dropout)
         self.query_lt = embedding()
-        self.in_memory_lt = embedding()
+        # self.in_memory_lt = embedding()
+        # self.out_memory_lt = embedding()
+        self.in_memory_lt = self.query_lt
         self.out_memory_lt = embedding()
-        self.answer_embedder = embedding(use_extra_feats=False)
+        self.answer_embedder = self.out_memory_lt
+        # self.answer_embedder = embedding(use_extra_feats=False)
         self.memory_hop = Hop(embedding_size)
 
         if use_cuda:
