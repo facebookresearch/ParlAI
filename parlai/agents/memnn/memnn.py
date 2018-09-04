@@ -32,10 +32,10 @@ class MemnnAgent(TorchAgent):
             '-hops', '--hops', type=int, default=3,
             help='number of memory hops')
         arg_group.add_argument(
-            '--mem-size', type=int, default=32,
+            '--memsize', type=int, default=32,
             help='size of memory')
         arg_group.add_argument(
-            '--time-features', type='bool', default=True,
+            '-mtf', '--time-features', type='bool', default=True,
             help='use time features for memory embeddings')
         arg_group.add_argument(
             '--position-encoding', type='bool', default=False,
@@ -74,7 +74,11 @@ class MemnnAgent(TorchAgent):
 
         # all instances may need some params
         self.id = 'MemNN'
-        self.mem_size = opt['mem_size']
+        self.memsize = opt['memsize']
+        self.use_time_features = opt['time_features']
+
+        self.model_cuda = self.use_cuda
+        self.use_cuda = False  # override parent
 
         if shared:
             # set up shared properties
@@ -83,6 +87,10 @@ class MemnnAgent(TorchAgent):
             self.decoder = shared['decoder']
         else:
             self.metrics = {'loss': 0.0, 'batches': 0, 'rank': 0}
+
+            if opt['time_features']:
+                for i in range(self.memsize):
+                    self.dict[self._time_feature(i)] = 100000000 + i
 
             # initialize model from scratch
             self._init_model()
@@ -111,7 +119,7 @@ class MemnnAgent(TorchAgent):
         opt = self.opt
         kwargs = opt_to_kwargs(opt)
         self.model = MemNN(
-            len(self.dict), opt['embedding_size'], use_cuda=self.use_cuda,
+            len(self.dict), opt['embedding_size'], use_cuda=self.model_cuda,
             padding_idx=self.NULL_IDX,
             **kwargs)
 
@@ -122,9 +130,12 @@ class MemnnAgent(TorchAgent):
         # elif opt['output'] != 'rank' and opt['output'] != 'r':
         #     raise NotImplementedError('Output type not supported.')
 
-        if self.use_cuda and self.decoder is not None:
-            # don't call cuda on self.model, it is split cuda and cpu
-            self.decoder.cuda()
+        # if self.use_cuda and self.decoder is not None:
+        #     # don't call cuda on self.model, it is split cuda and cpu
+        #     self.decoder.cuda()
+
+    def _time_feature(self, i):
+        return '__TF{}__'.format(i)
 
     def share(self):
         shared = super().share()
@@ -156,11 +167,7 @@ class MemnnAgent(TorchAgent):
         self.metrics['rank'] = 0
 
     def report(self):
-        """Report loss and perplexity from model's perspective.
-
-        Note that this includes predicting __END__ and __UNK__ tokens and may
-        differ from a truly independent measurement.
-        """
+        """Report loss and mean_rank from model's perspective."""
         m = {}
         batches = self.metrics['batches']
         if batches > 0:
@@ -184,18 +191,27 @@ class MemnnAgent(TorchAgent):
         return super().vectorize(*args, **kwargs)
 
     def get_dialog_history(self, *args, **kwargs):
-        kwargs['add_p1_after_newln'] = True
+        kwargs['add_p1_after_newln'] = True  # will only happen if -pt True
         return super().get_dialog_history(*args, **kwargs)
 
     def _build_mems(self, mems):
         bsz = len(mems)
         num_mems = max(len(mem) for mem in mems)
+        if num_mems > self.memsize:
+            raise RuntimeError('TODO: truncate max mem size')
+
         seqlen = max(len(m) for mem in mems for m in mem)
+        if self.use_time_features:
+            seqlen += 1
         padded = torch.LongTensor(bsz, num_mems, seqlen).fill_(0)
 
         for i, mem in enumerate(mems):
             for j, m in enumerate(mem):
                 padded[i, j, :len(m)] = m
+
+        if self.use_time_features:
+            for i in range(num_mems):
+                padded[:, i, -1] = self.dict[self._time_feature(i)]
 
         # if self.use_cuda:
         #     padded = padded.cuda()

@@ -66,14 +66,8 @@ class MemNN(nn.Module):
         self.memory_hop = Hop(embedding_size)
 
         if use_cuda:
-            self.score.cuda()
             self.memory_hop.cuda()
         self.use_cuda = use_cuda
-
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        pass
 
     def _score(self, output, cands):
         if isinstance(cands, torch.Tensor):
@@ -101,20 +95,25 @@ class MemNN(nn.Module):
         out_memory_embs = self.out_memory_lt(mems)
 
         states = query_embs
+
+        if self.use_cuda:
+            states = states.cuda()
+            in_memory_embs = in_memory_embs.cuda()
+            out_memory_embs = out_memory_embs.cuda()
         for _ in range(self.hops):
             states = self.memory_hop(states, in_memory_embs, out_memory_embs)
 
         # TODO: make less messy, too many types of candidate inputs
         if cands is not None:
             if isinstance(cands, torch.Tensor):
-                cand_embs = self.answer_embedder(cands)
+                cand_embs = self.answer_embedder(cands).cuda()
             else:
                 cand_embs = [self.answer_embedder(cs) for cs in cands]
         else:
             cand_embs = self.answer_embedder.weight
 
         scores = self._score(states, cand_embs)
-        return scores
+        return scores.cpu()
 
 
 class Embed(nn.Embedding):
@@ -221,5 +220,5 @@ class Hop(nn.Module):
         attn = torch.bmm(query_embs.unsqueeze(1), in_mem_embs).squeeze(1)
         probs = self.softmax(attn)
         memory_output = torch.bmm(probs.unsqueeze(1), out_mem_embs).squeeze(1)
-        output = memory_output + self.rotate(query_embs)
-        return output
+        output = memory_output + query_embs
+        return self.rotate(output)
