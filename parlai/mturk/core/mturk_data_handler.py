@@ -95,7 +95,7 @@ class MTurkDataHandler():
     """
     def __init__(self, task_group_id=None, file_name='pmt_data.db'):
         self.db_path = os.path.join(parent_dir, file_name)
-        self.conn = None
+        self.conn = {}
         self.task_group_id = task_group_id
         self.table_access_condition = threading.Condition()
         self.create_default_tables()
@@ -104,18 +104,19 @@ class MTurkDataHandler():
         '''Returns a singular database connection to be shared amongst all
         calls
         '''
-        if self.conn is None:
+        curr_thread = threading.get_ident()
+        if curr_thread not in self.conn or self.conn[curr_thread] is None:
             try:
                 conn = sqlite3.connect(self.db_path)
                 conn.row_factory = sqlite3.Row
-                self.conn = conn
+                self.conn[curr_thread] = conn
             except sqlite3.Error as e:
                 shared_utils.print_and_log(
                     logging.ERROR,
                     "Could not get db connection, failing: {}".format(repr(e)),
                     should_print=True)
                 raise e
-        return self.conn
+        return self.conn[curr_thread]
 
     def _force_task_group_id(self, task_group_id):
         '''Throw an error if a task group id is neither provided nor stored'''
@@ -212,7 +213,7 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            # Update assign data to reviewable
+            # Update assign data to completed
             c.execute('''UPDATE assignments SET status = ?, approve_time = ?
                          WHERE assignment_id = ?;''',
                       ('Completed', approve_time, assignment_id))
@@ -241,10 +242,10 @@ class MTurkDataHandler():
             conn = self._get_connection()
             c = conn.cursor()
 
-            # Update assign data to reviewable
+            # Update assign data to completed for this task (we can't track)
             c.execute('''UPDATE assignments SET status = ?, approve_time = ?
                          WHERE assignment_id = ?;''',
-                      ('Completed', approve_time, assignment_id))
+                      ('Completed', assignment_id))
 
             # Increment worker completed
             c.execute('''UPDATE workers SET disconnected = disconnected + 1
@@ -400,12 +401,15 @@ class MTurkDataHandler():
     def log_worker_note(self, worker_id, assignment_id, note):
         note += '\n'
         with self.table_access_condition:
-            conn = self._get_connection()
-            c = conn.cursor()
-            c.execute('''UPDATE pairings SET notes = CONCAT(notes, ?)
-                         WHERE worker_id = ? AND assignment_id = ?;''',
-                      (note, worker_id, assignment_id))
-            conn.commit()
+            try:
+                conn = self._get_connection()
+                c = conn.cursor()
+                c.execute('''UPDATE pairings SET notes = notes || ?
+                             WHERE worker_id = ? AND assignment_id = ?;''',
+                          (note, worker_id, assignment_id))
+                conn.commit()
+            except Exception as e:
+                print(repr(e))
 
     def get_worker_data(self, worker_id):
         with self.table_access_condition:

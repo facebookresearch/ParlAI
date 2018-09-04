@@ -198,25 +198,27 @@ class MTurkAgent(Agent):
             elif status == AssignState.STATUS_DONE:
                 self.db_logger.log_complete_assignment(
                     self.worker_id, self.assignment_id,
-                    time.time() + self.mturk_manager.opt['auto_approve_delay'],
+                    time.time() + self.mturk_manager.auto_approve_delay,
                     status)
             elif status == AssignState.STATUS_PARTNER_DISCONNECT:
                 self.db_logger.log_complete_assignment(
                     self.worker_id, self.assignment_id,
-                    time.time() + self.mturk_manager.opt['auto_approve_delay'],
+                    time.time() + self.mturk_manager.auto_approve_delay,
                     status)
             elif status == AssignState.STATUS_PARTNER_DISCONNECT_EARLY:
                 self.db_logger.log_complete_assignment(
                     self.worker_id, self.assignment_id,
-                    time.time() + self.mturk_manager.opt['auto_approve_delay'],
+                    time.time() + self.mturk_manager.auto_approve_delay,
                     status)
             elif status == AssignState.STATUS_DISCONNECT:
                 self.db_logger.log_disconnect_assignment(
-                    self.worker_id, self.assignment_id)
+                    self.worker_id, self.assignment_id,
+                    time.time() + self.mturk_manager.auto_approve_delay,
+                    status)
             elif status == AssignState.STATUS_EXPIRED:
                 self.db_logger.log_complete_assignment(
                     self.worker_id, self.assignment_id,
-                    time.time() + self.mturk_manager.opt['auto_approve_delay'],
+                    time.time() + self.mturk_manager.auto_approve_delay,
                     status)
             elif status == AssignState.STATUS_RETURNED:
                 self.db_logger.log_abandon_assignment(
@@ -641,7 +643,7 @@ class MTurkAgent(Agent):
                 {'text': command_to_send},
             )
             did_complete = self.wait_for_hit_completion(timeout=timeout)
-            if self.did_complete and self.db_logger is not None:
+            if did_complete and self.db_logger is not None:
                 self.db_logger.log_submit_assignment(
                     self.worker_id, self.assignment_id)
             return did_complete

@@ -119,7 +119,7 @@ class MTurkManager():
         self.max_hits_per_worker = opt.get('max_hits_per_worker', 0)
         self._init_logging_config()
         self.is_shutdown = False
-        self.use_db = use_db # TODO enable always DB integration is complete
+        self.use_db = use_db  # TODO enable always DB integration is complete
         self.db_logger = None
         self.task_state = self.STATE_CREATED
 
@@ -131,7 +131,7 @@ class MTurkManager():
         self.agent_pool = []
 
         # TODO move some state to DB
-        self.hit_id_list = []
+        self.hit_id_list = []  # list of outstanding incomplete hits
         self.assignment_to_onboard_thread = {}
         self.conversation_index = 0
         self.started_conversations = 0
@@ -143,6 +143,7 @@ class MTurkManager():
         self.unique_qual_name = None
         self.time_limit_checked = time.time()
         self.task_state = self.STATE_INIT_RUN
+        self.last_hit_check = time.time()
         if self.use_db:
             db_filename = 'pmt_sbdata.db' if self.is_sandbox else 'pmt_data.db'
             self.db_logger = MTurkDataHandler(self.task_group_id, db_filename)
@@ -151,6 +152,23 @@ class MTurkManager():
         """Initialize logging settings from the opt"""
         shared_utils.set_is_debug(self.opt['is_debug'])
         shared_utils.set_log_level(self.opt['log_level'])
+
+    def _maintain_hit_status(self):
+        def update_status():
+            while len(self.hit_id_list) > 0:
+                cur_time = time.time()
+                if cur_time - self.last_hit_check > 10:
+                    self.last_hit_check = cur_time
+                    for hit_id in self.hit_id_list.copy():
+                        hit = self.get_hit(hit_id)
+                        hit_data = hit['HIT']
+                        if hit_data['HITStatus'] in \
+                                ['Reviewable', 'Reviewing', 'Disposed']:
+                            self.hit_id_list.remove(hit_id)
+                time.sleep(10)
+
+        hit_status_thread = threading.Thread(target=update_status, daemon=True)
+        hit_status_thread.start()
 
     def _reset_time_logs(self, init_load=False, force=False):
         # Uses a weak lock file to try to prevent clobbering between threads
@@ -950,6 +968,8 @@ class MTurkManager():
         while not self.is_shutdown:
             if self.has_time_limit:
                 self._check_time_limit()
+            if self.db_logger is not None:
+                self._maintain_hit_status()
             # Loop forever starting task worlds until desired convos are had
             with self.agent_pool_change_condition:
                 valid_agents = self._get_unique_pool(eligibility_function)
@@ -1373,7 +1393,13 @@ class MTurkManager():
     def get_hit(self, hit_id):
         """Get hit from mturk by hit_id"""
         client = mturk_utils.get_mturk_client(self.is_sandbox)
-        return client.get_hit(HITId=hit_id)
+        hit = client.get_hit(HITId=hit_id)
+        if self.db_logger is not None:
+            try:
+                self.db_logger.log_hit_status(hit)
+            except Exception:
+                pass
+        return hit
 
     def get_assignment(self, assignment_id):
         """Gets assignment from mturk by assignment_id. Only works if the
