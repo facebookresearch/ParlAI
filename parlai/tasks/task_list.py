@@ -411,4 +411,13 @@ task_list = [
         "tags": ["All", "Visual"],
         "description": "COCO annotations derived from the 2015 COCO Caption Competition. Link to dataset: http://cocodataset.org/#download",
     },
+    {
+        "id": "unittests",
+        "display_name": "Unit Tests",
+        "task": "unittests",
+        "tags": ["All"],
+        "description": (
+            "Artificial tasks just for ensuring models train.",
+        ),
+    },
 ]
