@@ -13,7 +13,9 @@ import threading
 import parlai.mturk.core.shared_utils as shared_utils
 from parlai.mturk.core.agents import AssignState
 
-parent_dir = os.path.dirname(os.path.abspath(__file__))
+data_dir = os.path.dirname(os.path.abspath(__file__)) + '/run_data'
+if not os.path.exists(data_dir):
+    os.makedirs(data_dir)
 
 # Run data table:
 CREATE_RUN_DATA_SQL_TABLE = (
@@ -94,7 +96,7 @@ class MTurkDataHandler():
     observation across processes and for controlled restarts
     """
     def __init__(self, task_group_id=None, file_name='pmt_data.db'):
-        self.db_path = os.path.join(parent_dir, file_name)
+        self.db_path = os.path.join(data_dir, file_name)
         self.conn = {}
         self.task_group_id = task_group_id
         self.table_access_condition = threading.Condition()
@@ -245,7 +247,7 @@ class MTurkDataHandler():
             # Update assign data to completed for this task (we can't track)
             c.execute('''UPDATE assignments SET status = ?, approve_time = ?
                          WHERE assignment_id = ?;''',
-                      ('Completed', assignment_id))
+                      ('Completed', approve_time, assignment_id))
 
             # Increment worker completed
             c.execute('''UPDATE workers SET disconnected = disconnected + 1
