@@ -13,7 +13,8 @@ python examples/train_model.py -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/mod
 
 ..or..
 
-python examples/train_model.py -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
+python examples/train_model.py -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32
+-lr 0.5 -hs 128
 
 ..or..
 
@@ -158,7 +159,8 @@ class TrainLoop():
             print('[ Deprecated Warning: TrainLoop should be passed opt not Parser ]')
             opt = opt.parse_args()
         # Possibly load from checkpoint
-        if opt['load_from_checkpoint'] and opt.get('model_file') and os.path.isfile(opt['model_file'] + '.checkpoint'):
+        if opt['load_from_checkpoint'] and opt.get('model_file') and os.path.isfile(
+                opt['model_file'] + '.checkpoint'):
             opt['init_model'] = opt['model_file'] + '.checkpoint'
         # Possibly build a dictionary (not all models do this).
         if opt['dict_build_first'] and 'dict_file' in opt:
@@ -175,12 +177,20 @@ class TrainLoop():
         self.save_time = Timer()
         print('[ training... ]')
         self.parleys = 0
-        self.max_num_epochs = opt['num_epochs'] if opt['num_epochs'] > 0 else float('inf')
-        self.max_train_time = opt['max_train_time'] if opt['max_train_time'] > 0 else float('inf')
-        self.log_every_n_secs = opt['log_every_n_secs'] if opt['log_every_n_secs'] > 0 else float('inf')
-        self.val_every_n_secs = opt['validation_every_n_secs'] if opt['validation_every_n_secs'] > 0 else float('inf')
-        self.save_every_n_secs = opt['save_every_n_secs'] if opt['save_every_n_secs'] > 0 else float('inf')
-        self.val_every_n_epochs = opt['validation_every_n_epochs'] if opt['validation_every_n_epochs'] > 0 else float('inf')
+        self.max_num_epochs = opt['num_epochs'] if opt['num_epochs'] > 0 else float(
+            'inf')
+        self.max_train_time = opt['max_train_time'] if opt['max_train_time'] > 0 \
+            else float('inf')
+        self.log_every_n_secs = opt['log_every_n_secs'] if opt['log_every_n_secs'] > 0 \
+            else float('inf')
+        self.val_every_n_secs = \
+            opt['validation_every_n_secs'] if opt['validation_every_n_secs'] > 0 \
+            else float('inf')
+        self.save_every_n_secs = opt['save_every_n_secs'] if opt['save_every_n_secs'] \
+            > 0 else float('inf')
+        self.val_every_n_epochs = \
+            opt['validation_every_n_epochs'] if opt['validation_every_n_epochs'] > 0 \
+            else float('inf')
         self.last_valid_epoch = 0
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
         self.best_valid = None
@@ -205,10 +215,12 @@ class TrainLoop():
 
         # logging
         if opt['tensorboard_log'] is True:
-            self.writer.add_metrics('valid', int(math.floor(self.train_time.time())), valid_report)
+            self.writer.add_metrics('valid', int(
+                math.floor(self.train_time.time())), valid_report)
         # saving
         if opt.get('model_file') and opt.get('save_after_valid'):
-            print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
+            print("[ saving model checkpoint: " +
+                  opt['model_file'] + ".checkpoint ]")
             self.agent.save(opt['model_file'] + '.checkpoint')
 
         # send valid metrics to agent if the agent wants them
@@ -227,31 +239,35 @@ class TrainLoop():
             new_valid = valid_report[opt['validation_metric']]
 
         # check if this is the best validation so far
-        if self.best_valid is None or self.valid_optim * new_valid > self.valid_optim * self.best_valid:
+        if (self.best_valid is None or
+                self.valid_optim * new_valid > self.valid_optim * self.best_valid):
             print('[ new best {}: {}{} ]'.format(
                 opt['validation_metric'], new_valid,
                 ' (previous best was {})'.format(self.best_valid)
-                    if self.best_valid is not None else ''))
+                if self.best_valid is not None else ''))
             self.best_valid = new_valid
             self.impatience = 0
             if opt.get('model_file'):
                 print("[ saving best valid model: " + opt['model_file'] + " ]")
                 self.agent.save(opt['model_file'])
-                print("[ saving best valid metric: " + opt['model_file'] + ".best_valid ]")
+                print("[ saving best valid metric: " +
+                      opt['model_file'] + ".best_valid ]")
                 save_best_valid(opt['model_file'], self.best_valid)
                 self.saved = True
-            if opt['validation_metric'] == 'accuracy' and self.best_valid >= opt['validation_cutoff']:
+            if (opt['validation_metric'] == 'accuracy' and
+                    self.best_valid >= opt['validation_cutoff']):
                 print('[ task solved! stopping. ]')
                 return True
         else:
             self.impatience += 1
             print('[ did not beat best {}: {} impatience: {} ]'.format(
-                    opt['validation_metric'], round(self.best_valid, 4),
-                    self.impatience))
+                opt['validation_metric'], round(self.best_valid, 4),
+                self.impatience))
         self.validate_time.reset()
 
         # check if we are out of patience
-        if opt['validation_patience'] > 0 and self.impatience >= opt['validation_patience']:
+        if (opt['validation_patience'] > 0 and
+                self.impatience >= opt['validation_patience']):
             print('[ ran out of patience! stopping training. ]')
             return True
         return False
@@ -277,14 +293,14 @@ class TrainLoop():
 
         if 'time_left' in train_report:
             logs.append('time_left:{}s'.format(
-                         math.floor(train_report.pop('time_left', ""))))
+                math.floor(train_report.pop('time_left', ""))))
 
         log = '[ {} ] {}'.format(' '.join(logs), train_report)
         print(log)
         self.log_time.reset()
 
         if opt['tensorboard_log'] is True:
-            self.writer.add_metrics('train', int(logs[1].split(":")[1]), train_report)
+            self.writer.add_metrics('train', total_exs, train_report)
 
     def train(self):
         opt = self.opt
@@ -302,7 +318,8 @@ class TrainLoop():
                         self.max_num_epochs, self.train_time.time()))
                     break
                 if self.train_time.time() > self.max_train_time:
-                    print('[ max_train_time elapsed:{}s ]'.format(self.train_time.time()))
+                    print('[ max_train_time elapsed:{}s ]'.format(
+                        self.train_time.time()))
                     break
                 if self.log_time.time() > self.log_every_n_secs:
                     self.log()
@@ -310,13 +327,16 @@ class TrainLoop():
                     stop_training = self.validate()
                     if stop_training:
                         break
-                if world.get_total_epochs() - self.last_valid_epoch >= self.val_every_n_epochs:
+                if (world.get_total_epochs() - self.last_valid_epoch >=
+                        self.val_every_n_epochs):
                     stop_training = self.validate()
                     self.last_valid_epoch = world.get_total_epochs()
                     if stop_training:
                         break
-                if self.save_time.time() > self.save_every_n_secs and opt.get('model_file'):
-                    print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
+                if (self.save_time.time() > self.save_every_n_secs and
+                        opt.get('model_file')):
+                    print("[ saving model checkpoint: " +
+                          opt['model_file'] + ".checkpoint ]")
                     self.agent.save(opt['model_file'] + '.checkpoint')
                     self.save_time.reset()
 
