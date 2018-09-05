@@ -330,9 +330,11 @@ def load_agent_module(opt):
                      'example: `-m legacy:{m}:{v}` or '
                      '`--model parlai.agents.legacy_agents.{m}.{m}_v{v}:{c}`')
                 if '.' not in model:
+                    # give specific error message if it's easy
                     raise RuntimeError(m.format(m=model, v=curr_version,
                                                 c=model_class.__name__))
                 else:
+                    # otherwise generic one
                     raise RuntimeError(m.format(m='modelname', v=curr_version,
                                                 c='ModelAgent'))
         return model_class(new_opt)
