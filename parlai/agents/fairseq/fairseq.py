@@ -231,7 +231,7 @@ class FairseqAgent(TorchAgent):
         agent.add_argument(
             '--skip-generation',
             default=False,
-            type=bool,
+            type='bool',
             metavar='BOOL',
             help='Skips test time beam search. Much faster if you only need PPL',
         )
