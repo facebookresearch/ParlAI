@@ -64,20 +64,14 @@ class MemNN(nn.Module):
         self.memory_hop = Hop(embedding_size)
 
     def _score(self, output, cands):
-        try:
-            if cands.dim() == 2:
-                return torch.matmul(output, cands.t())
-            elif cands.dim() == 3:
-                return torch.bmm(output.unsqueeze(1),
-                                 cands.transpose(1, 2)).squeeze(1)
-            else:
-                raise RuntimeError('Unexpected candidate dimensions {}'
-                                   ''.format(cands.dim()))
-        except AttributeError:
-            # cands is a list?
-            return torch.cat([
-                torch.matmul(output[i], cands[i].t()).unsqueeze(0)
-                for i in range(len(cands))], dim=0)
+        if cands.dim() == 2:
+            return torch.matmul(output, cands.t())
+        elif cands.dim() == 3:
+            return torch.bmm(output.unsqueeze(1),
+                             cands.transpose(1, 2)).squeeze(1)
+        else:
+            raise RuntimeError('Unexpected candidate dimensions {}'
+                               ''.format(cands.dim()))
 
     def forward(self, xs, mems, cands=None):
         """One forward step.
@@ -101,13 +95,11 @@ class MemNN(nn.Module):
         for _ in range(self.hops):
             states = self.memory_hop(states, in_memory_embs, out_memory_embs)
 
-        # TODO: make less messy, too many types of candidate inputs
         if cands is not None:
-            if isinstance(cands, torch.Tensor):
-                cand_embs = self.answer_embedder(cands)
-            else:
-                cand_embs = [self.answer_embedder(cs) for cs in cands]
+            # embed candidates
+            cand_embs = self.answer_embedder(cands)
         else:
+            # rank all possible tokens
             cand_embs = self.answer_embedder.weight
 
         scores = self._score(states, cand_embs)

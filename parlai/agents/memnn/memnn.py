@@ -11,6 +11,7 @@ from parlai.core.utils import round_sigfigs, padded_3d
 import torch
 from torch import nn
 
+from functools import lru_cache
 import os
 
 from .modules import MemNN, opt_to_kwargs
@@ -77,14 +78,10 @@ class MemnnAgent(TorchAgent):
         self.memsize = opt['memsize']
         self.use_time_features = opt['time_features']
 
-        # self.model_cuda = self.use_cuda
-        # self.use_cuda = False  # override parent
-
         if shared:
             # set up shared properties
             self.model = shared['model']
             self.metrics = shared['metrics']
-            self.decoder = shared['decoder']
         else:
             self.metrics = {'loss': 0.0, 'batches': 0, 'rank': 0}
 
@@ -100,55 +97,38 @@ class MemnnAgent(TorchAgent):
 
         # set up criteria
         self.rank_loss = nn.CrossEntropyLoss()  # TODO: rank loss option?
-        # self.rank_loss = nn.MultiMarginLoss(margin=1)
-        # self.gen_loss = nnCrossEntropyLoss(ignore_index=self.NULL_IDX)
+
         if self.use_cuda:
-            self.rank_loss.cuda()
             self.model.cuda()
-            # self.gen_loss.cuda()
+            self.rank_loss.cuda()
 
         if 'train' in self.opt.get('datatype', ''):
             # set up optimizer
             optim_params = [p for p in self.model.parameters() if
                             p.requires_grad]
-            # if self.decoder is not None:
-            #     optim_params.extend([p for p in self.decoder.parameters() if
-            #                          p.requires_grad])
             self._init_optim(optim_params)
 
     def _init_model(self):
+        """Initialize MemNN model."""
         opt = self.opt
         kwargs = opt_to_kwargs(opt)
-        self.model = MemNN(
-            len(self.dict), opt['embedding_size'],
-            padding_idx=self.NULL_IDX,
-            **kwargs)
+        self.model = MemNN(len(self.dict), opt['embedding_size'],
+                           padding_idx=self.NULL_IDX, **kwargs)
 
-        self.decoder = None
-        # if opt['output'] == 'generate':
-        #     self.decoder = Decoder(opt['embedding_size'], opt['embedding_size'],
-        #                            opt['rnn_layers'], opt, self.dict)
-        # elif opt['output'] != 'rank' and opt['output'] != 'r':
-        #     raise NotImplementedError('Output type not supported.')
-
-        # if self.use_cuda and self.decoder is not None:
-        #     # don't call cuda on self.model, it is split cuda and cpu
-        #     self.decoder.cuda()
-
+    @lru_cache(maxsize=None)  # bounded by opt['memsize'], cache string concats
     def _time_feature(self, i):
+        """Return time feature token at specified index."""
         return '__TF{}__'.format(i)
 
     def share(self):
+        """Share model parameters."""
         shared = super().share()
         shared['model'] = self.model
-        shared['decoder'] = self.decoder
         if self.opt.get('numthreads', 1) > 1 and isinstance(self.metrics, dict):
             torch.set_num_threads(1)
             # move metrics and model to shared memory
             self.metrics = SharedTable(self.metrics)
             self.model.share_memory()
-            if self.decoder is not None:
-                self.decoder.share_memory()
         shared['metrics'] = self.metrics
         return shared
 
@@ -156,9 +136,6 @@ class MemnnAgent(TorchAgent):
         """Do optim step and clip gradients if needed."""
         if self.clip > 0:
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
-            if self.decoder is not None:
-                torch.nn.utils.clip_grad_norm_(
-                    self.decoder.parameters(), self.clip)
         self.optimizer.step()
 
     def reset_metrics(self):
@@ -185,12 +162,11 @@ class MemnnAgent(TorchAgent):
     def vectorize(self, *args, **kwargs):
         """Override options in vectorize from parent."""
         kwargs['add_start'] = False
-        # kwargs['add_end'] = False
-        kwargs['add_end'] = True  # TODO NO
+        kwargs['add_end'] = False
         kwargs['split_lines'] = True
         obs = args[0]
         if 'labels' in obs and 'label_candidates' in obs:
-            # we aren't going to rank them, don't waste time
+            # we aren't going to rank during training, don't waste time
             del obs['label_candidates']
         return super().vectorize(*args, **kwargs)
 
@@ -199,24 +175,66 @@ class MemnnAgent(TorchAgent):
         kwargs['add_p1_after_newln'] = True  # will only happen if -pt True
         return super().get_dialog_history(*args, **kwargs)
 
+    def _build_train_cands(self, labels):
+        """Build candidates from batch labels.
+
+        For labels of a single token, we use torch.unique to return only the
+        unique tokens.
+        For labels sequences of length greater than one, we keep them all in
+        order to not waste too much time calculating uniqueness.
+
+        :param labels: (bsz x seqlen) LongTensor.
+
+        :return: tuple of tensors (cands, indices)
+            cands is (num_cands <= bsz x seqlen) candidates
+            indices is (bsz) index in cands of each original label
+        """
+        if labels.size(1) == 1:
+            # use unique if input is 1D
+            cands, label_inds = labels.unique(return_inverse=True)
+            cands.unsqueeze_(1)
+            label_inds.squeeze_(1)
+            return cands, label_inds
+        else:
+            return labels, labels.new(range(labels.size(0)))
+
     def _build_mems(self, mems):
+        """Build memory tensors.
+
+        During building, will add time features to the memories if enabled.
+
+        :param: list of length batchsize containing inner lists of 1D tensors
+                containing the individual memories for each row in the batch.
+
+        :returns: 3d padded tensor of memories (bsz x num_mems x seqlen)
+        """
         bsz = len(mems)
         num_mems = max(len(mem) for mem in mems)
         if num_mems > self.memsize:
-            raise RuntimeError('TODO: truncate max mem size')
+            # truncate to memsize most recent memories
+            num_mems = self.memsize
+            mems = [mem[-self.memsize:] for mem in mems]
 
         seqlen = max(len(m) for mem in mems for m in mem)
         if self.use_time_features:
-            seqlen += 1
+            seqlen += 1  # add time token to each sequence
         padded = torch.LongTensor(bsz, num_mems, seqlen).fill_(0)
 
         for i, mem in enumerate(mems):
+            # tf_offset = len(mem) - 1
             for j, m in enumerate(mem):
                 padded[i, j, :len(m)] = m
+                # if self.use_time_features:
+                #     padded[i, j, -1] = self.dict[self._time_feature(tf_offset - j)]
 
+        # NOTE: currently below we are adding tf's to every memory,
+        # including emtpy ones. above commented-out code adds only to filled
+        # ones but is significantly slower to run.
         if self.use_time_features:
+            nm = num_mems - 1
             for i in range(num_mems):
-                padded[:, i, -1] = self.dict[self._time_feature(i)]
+                # put lowest time feature in most recent memory
+                padded[:, nm - i, -1] = self.dict[self._time_feature(i)]
 
         if self.use_cuda:
             padded = padded.cuda()
@@ -224,6 +242,7 @@ class MemnnAgent(TorchAgent):
         return padded
 
     def train_step(self, batch):
+        """Train on a single batch of examples."""
         if batch.text_vec is None:
             return
         batchsize = batch.text_vec.size(0)
@@ -231,9 +250,7 @@ class MemnnAgent(TorchAgent):
         self.optimizer.zero_grad()
         mems = self._build_mems(batch.memory_vecs)
 
-        cands, label_inds = batch.label_vec.unique(return_inverse=True)
-        cands.unsqueeze_(1)
-        label_inds.squeeze_(1)
+        cands, label_inds = self._build_train_cands(batch.label_vec)
 
         scores = self.model(batch.text_vec, mems, cands)
         loss = self.rank_loss(scores, label_inds)
@@ -242,15 +259,17 @@ class MemnnAgent(TorchAgent):
         self.metrics['batches'] += batchsize
         _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
-            self.metrics['rank'] += 1 + (ranks[b] == label_inds[b]).nonzero().item()
+            rank = (ranks[b] == label_inds[b]).nonzero().item()
+            self.metrics['rank'] += 1 + rank
         loss.backward()
         self.update_params()
 
         # get predictions but not full rankings--too slow to get hits@1 score
-        preds = [self.dict[cands[row[0]].item()] for row in ranks]
+        preds = [self._v2t(cands[row[0]]) for row in ranks]
         return Output(preds)
 
-    def _build_cands(self, batch):
+    def _build_label_cands(self, batch):
+        """Convert batch.candidate_vecs to 3D padded vector."""
         if not batch.candidates:
             return None, None
         cand_inds = [i for i in range(len(batch.candidates))
@@ -260,26 +279,28 @@ class MemnnAgent(TorchAgent):
         return cands, cand_inds
 
     def eval_step(self, batch):
+        """Evaluate a single batch of examples."""
         if batch.text_vec is None:
             return
         batchsize = batch.text_vec.size(0)
         self.model.eval()
 
         mems = self._build_mems(batch.memory_vecs)
-        cands, cand_inds = self._build_cands(batch)
+        cands, cand_inds = self._build_label_cands(batch)
         scores = self.model(batch.text_vec, mems, cands)
 
         self.metrics['batches'] += batchsize
         _, ranks = scores.sort(1, descending=True)
 
         # calculate loss and mean rank
-        if batch.label_vec is not None:
+        if batch.label_vec is not None and cands is not None:
             label_inds = []
             for b in range(batchsize):
-                label_ind = (cands[b] == batch.label_vec[b]).squeeze(1).nonzero()
+                label_ind = (cands[b] == batch.label_vec[b]).all(1).nonzero()
                 li = label_ind.item()
                 label_inds.append(label_ind)
-                self.metrics['rank'] += 1 + (ranks[b] == li).nonzero().item()
+                rank = (ranks[b] == li).nonzero().item()
+                self.metrics['rank'] += 1 + rank
 
             label_inds = torch.cat(label_inds, dim=0).squeeze(1)
             loss = self.rank_loss(scores, label_inds)
@@ -296,109 +317,3 @@ class MemnnAgent(TorchAgent):
             preds = [row[0] for row in cand_preds]
 
         return Output(preds, cand_preds)
-
-    def score(self, cands, output_embeddings):
-        last_cand = None
-        max_len = max([len(c) for c in cands])
-        scores = output_embeddings.data.new(len(cands), max_len)
-        for i, cand_list in enumerate(cands):
-            if last_cand != cand_list:
-                candidate_lengths, candidate_indices = to_tensors(cand_list, self.dict)
-                candidate_embeddings = self.model.answer_embedder(candidate_lengths, candidate_indices)
-                if self.use_cuda:
-                    candidate_embeddings = candidate_embeddings.cuda()
-                last_cand = cand_list
-            scores[i, :len(cand_list)] = self.model.score.one_to_many(output_embeddings[i].unsqueeze(0), candidate_embeddings).squeeze(0)
-        return scores
-
-    def ranked_predictions(self, cands, scores):
-        # return [' '] * len(self.answers)
-        _, inds = scores.sort(descending=True, dim=1)
-        return [[cands[i][j] for j in r if j < len(cands[i])]
-                for i, r in enumerate(inds)]
-
-    def decode(self, output_embeddings, ys=None):
-        batchsize = output_embeddings.size(0)
-        hn = output_embeddings.unsqueeze(0).expand(self.opt['rnn_layers'], batchsize, output_embeddings.size(1))
-        x = self.model.answer_embedder(torch.LongTensor([1]), self.START_TENSOR)
-        xes = x.unsqueeze(1).expand(x.size(0), batchsize, x.size(1))
-
-        loss = 0
-        output_lines = [[] for _ in range(batchsize)]
-        done = [False for _ in range(batchsize)]
-        total_done = 0
-        idx = 0
-        while(total_done < batchsize) and idx < self.longest_label:
-            # keep producing tokens until we hit END or max length for each ex
-            if self.use_cuda:
-                xes = xes.cuda()
-                hn = hn.contiguous()
-            preds, scores = self.decoder(xes, hn)
-            if ys is not None:
-                y = ys[0][:, idx]
-                temp_y = y.cuda() if self.use_cuda else y
-                loss += self.gen_loss(scores, temp_y)
-            else:
-                y = preds
-            # use the true token as the next input for better training
-            xes = self.model.answer_embedder(torch.LongTensor(preds.numel()).fill_(1), y).unsqueeze(0)
-
-            for b in range(batchsize):
-                if not done[b]:
-                    token = self.dict.vec2txt(preds[b])
-                    if token == self.END:
-                        done[b] = True
-                        total_done += 1
-                    else:
-                        output_lines[b].append(token)
-            idx += 1
-        return output_lines, loss
-
-
-    def save(self, path=None):
-        path = self.opt.get('model_file', None) if path is None else path
-
-        if path:
-            checkpoint = {}
-            checkpoint['memnn'] = self.model.state_dict()
-            checkpoint['memnn_optim'] = self.optimizers['memnn'].state_dict()
-            if self.decoder is not None:
-                checkpoint['decoder'] = self.decoder.state_dict()
-                checkpoint['decoder_optim'] = self.optimizers['decoder'].state_dict()
-                checkpoint['longest_label'] = self.longest_label
-            with open(path, 'wb') as write:
-                torch.save(checkpoint, write)
-
-    def load(self, path):
-        checkpoint = torch.load(path, map_location=lambda cpu, _: cpu)
-        self.model.load_state_dict(checkpoint['memnn'])
-        self.optimizers['memnn'].load_state_dict(checkpoint['memnn_optim'])
-        if self.decoder is not None:
-            self.decoder.load_state_dict(checkpoint['decoder'])
-            self.optimizers['decoder'].load_state_dict(checkpoint['decoder_optim'])
-            self.longest_label = checkpoint['longest_label']
-
-
-def to_tensors(sentences, dictionary):
-    lengths = []
-    indices = []
-    for sentence in sentences:
-        tokens = dictionary.txt2vec(sentence)
-        lengths.append(len(tokens))
-        indices.extend(tokens)
-    lengths = torch.LongTensor(lengths)
-    indices = torch.LongTensor(indices)
-    return lengths, indices
-
-
-def build_cands(exs, dict):
-    dict_list = list(dict.tok2ind.keys())[1:]  # skip NULL
-    cands = []
-    for ex in exs:
-        if 'label_candidates' in ex:
-            cands.append(ex['label_candidates'])
-        else:
-            cands.append(dict_list)
-            if 'labels' in ex:
-                cands[-1] += [l for l in ex['labels'] if l not in dict.tok2ind]
-    return cands
