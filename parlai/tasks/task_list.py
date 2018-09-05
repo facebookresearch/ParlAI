@@ -675,4 +675,13 @@ task_list = [
             "Link to dataset: http://cocodataset.org/#download"
         ),
     },
+    {
+        "id": "unittests",
+        "display_name": "Unit Tests",
+        "task": "unittests",
+        "tags": ["All"],
+        "description": (
+            "Artificial tasks just for ensuring models train.",
+        ),
+    },
 ]
