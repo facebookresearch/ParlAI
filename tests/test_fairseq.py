@@ -13,55 +13,71 @@ import shutil
 
 from parlai.scripts.train_model import TrainLoop, setup_args
 
+BATCH_SIZE = 64
+NUM_EPOCHS = 3
+LR = 1e-2
+
+
+def _mock_train(**args):
+    outdir = tempfile.mkdtemp()
+    parser = setup_args()
+    parser.set_defaults(
+        model_file=os.path.join(outdir, "model"),
+        **args,
+    )
+    stdout = io.StringIO()
+    with contextlib.redirect_stdout(stdout):
+        tl = TrainLoop(parser.parse_args())
+        valid, test = tl.train()
+
+    shutil.rmtree(outdir)
+    return stdout.getvalue(), valid, test
+
 
 class TestFairseq(unittest.TestCase):
     """Checks that fairseq can learn some very basic tasks."""
 
     def test_labelcands(self):
-        outdir = tempfile.mkdtemp()
-        parser = setup_args()
-        parser.set_defaults(
-            model_file=os.path.join(outdir, "model"),
+        stdout, valid, test = _mock_train(
             task='unittest:CandidateTeacher',
             model='fairseq',
             arch='lstm_wiseman_iwslt_de_en',
-            lr=3e-4,
-            batchsize=16,
-            num_epochs=10,
+            lr=LR,
+            batchsize=BATCH_SIZE,
+            num_epochs=NUM_EPOCHS,
             rank_candidates=True,
             skip_generation=True,
         )
 
-        with contextlib.redirect_stdout(io.StringIO()):
-            tl = TrainLoop(parser)
-            valid, test = tl.train()
-
-            shutil.rmtree(outdir)
-
-            assert valid['hits@1'] > 0.95, "valid hits@1 = %f" % (valid['hits@1'])
-            assert test['hits@1'] > 0.95, "test hits@1 = %f" % (test['hits@1'])
+        self.assertTrue(
+            valid['hits@1'] > 0.95,
+            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout)
+        )
+        self.assertTrue(
+            test['hits@1'] > 0.95,
+            "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout)
+        )
 
     def test_generation(self):
-        outdir = tempfile.mkdtemp()
-        parser = setup_args()
-        parser.set_defaults(
-            model_file=os.path.join(outdir, "model"),
+        stdout, valid, test = _mock_train(
             task='unittest:NocandidateTeacher',
             model='fairseq',
             arch='lstm_wiseman_iwslt_de_en',
-            lr=3e-4,
-            batchsize=16,
-            num_epochs=10,
+            lr=LR,
+            batchsize=BATCH_SIZE,
+            num_epochs=NUM_EPOCHS,
             rank_candidates=False,
             skip_generation=False,
         )
 
-        with contextlib.redirect_stdout(io.StringIO()):
-            tl = TrainLoop(parser)
-            valid, test = tl.train()
-            shutil.rmtree(outdir)
-            assert valid['ppl'] < 1.2, "valid ppl = %f" % (valid['ppl'])
-            assert test['ppl'] < 1.2, "test ppl = %f" % (test['ppl'])
+        self.assertTrue(
+            valid['ppl'] < 1.2,
+            "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+        )
+        self.assertTrue(
+            test['ppl'] < 1.2,
+            "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+        )
 
 
 if __name__ == '__main__':

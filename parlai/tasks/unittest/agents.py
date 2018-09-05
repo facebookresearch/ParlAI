@@ -18,10 +18,10 @@ import random
 import itertools
 
 # default parameters
-VOCAB_SIZE = 10
-EXAMPLE_SIZE = 5
-NUM_CANDIDATES = 20
-NUM_TRAIN = 1000
+VOCAB_SIZE = 7
+EXAMPLE_SIZE = 4
+NUM_CANDIDATES = 10
+NUM_TRAIN = 500
 NUM_TEST = 100
 
 
@@ -45,6 +45,7 @@ class CandidateTeacher(DialogTeacher):
         """
         self.opt = opt
         opt['datafile'] = opt['datatype'].split(':')[0]
+        self.datafile = opt['datafile']
 
         self.vocab_size = vocab_size
         self.example_size = example_size
@@ -56,6 +57,15 @@ class CandidateTeacher(DialogTeacher):
         self.words = list(map(str, range(self.vocab_size)))
 
         super().__init__(opt, shared)
+
+    def num_examples(self):
+        if self.datafile == 'train':
+            return self.num_train
+        else:
+            return self.num_test
+
+    def num_episodes(self):
+        return self.num_examples()
 
     def setup_data(self, fold):
         # N words appearing in a random order
@@ -71,9 +81,9 @@ class CandidateTeacher(DialogTeacher):
         self.test = list(itertools.islice(it, self.num_test))
 
         # check we have enough data
-        assert (len(self.train) == self.num_train)
-        assert (len(self.val) == self.num_test)
-        assert (len(self.test) == self.num_test)
+        assert (len(self.train) == self.num_train), len(self.train)
+        assert (len(self.val) == self.num_test), len(self.val)
+        assert (len(self.test) == self.num_test), len(self.test)
 
         # check every word appear in the training set
         assert len(set(itertools.chain(*self.train)) - set(self.words)) == 0
