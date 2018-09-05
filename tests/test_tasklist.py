@@ -19,7 +19,11 @@ class TestInit(unittest.TestCase):
         a = set((t['task'].split(':')[0] for t in task_list))
 
         task_dir = os.path.join(opt['parlai_home'], 'parlai', 'tasks')
-        b = set((t for t in os.listdir(task_dir) if '.' not in t and t != '__pycache__' and t != 'fromfile'))
+        b = set(
+            t
+            for t in os.listdir(task_dir)
+            if '.' not in t and t != '__pycache__' and t != 'fromfile'
+        )
         if a != b:
             not_in_b = a - b
             not_in_a = b - a
@@ -35,6 +39,19 @@ class TestInit(unittest.TestCase):
                     'match anything in parlai/tasks/task_list.py: ' + str(not_in_a)
                 )
             raise RuntimeError(error_msg)
+
+    def test_types(self):
+        from parlai.tasks.task_list import task_list
+        for task in task_list:
+            name = task['id']
+            for key, value in task.items():
+                if key == 'tags':
+                    assert type(value) is list, \
+                        "Task {} tags is not a list".format(name)
+                    assert len(value) > 0, "Task {} must have some tags".format(name)
+                else:
+                    assert type(value) is str, \
+                        "Task {} key {} must be a string".format(name, key)
 
 
 if __name__ == '__main__':
