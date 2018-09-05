@@ -26,7 +26,7 @@ class MemNN(nn.Module):
     def __init__(
         self, num_features, embedding_size, hops=1,
         mem_size=32, time_features=False, position_encoding=False,
-        dropout=0, padding_idx=0, use_cuda=False,
+        dropout=0, padding_idx=0,
     ):
         """Initialize memnn model.
 
@@ -56,23 +56,25 @@ class MemNN(nn.Module):
                              padding_idx=padding_idx)
 
         self.dropout = nn.Dropout(dropout)
+        # TODO: support more weight tying
         self.query_lt = embedding()
-        # self.in_memory_lt = embedding()
-        # self.out_memory_lt = embedding()
-        self.in_memory_lt = self.query_lt
+        self.in_memory_lt = embedding()
         self.out_memory_lt = embedding()
-        self.answer_embedder = self.out_memory_lt
-        # self.answer_embedder = embedding(use_extra_feats=False)
+        self.answer_embedder = embedding()
         self.memory_hop = Hop(embedding_size)
 
-        if use_cuda:
-            self.memory_hop.cuda()
-        self.use_cuda = use_cuda
-
     def _score(self, output, cands):
-        if isinstance(cands, torch.Tensor):
-            return torch.matmul(output, cands.t())
-        else:
+        try:
+            if cands.dim() == 2:
+                return torch.matmul(output, cands.t())
+            elif cands.dim() == 3:
+                return torch.bmm(output.unsqueeze(1),
+                                 cands.transpose(1, 2)).squeeze(1)
+            else:
+                raise RuntimeError('Unexpected candidate dimensions {}'
+                                   ''.format(cands.dim()))
+        except AttributeError:
+            # cands is a list?
             return torch.cat([
                 torch.matmul(output[i], cands[i].t()).unsqueeze(0)
                 for i in range(len(cands))], dim=0)
@@ -96,24 +98,20 @@ class MemNN(nn.Module):
 
         states = query_embs
 
-        if self.use_cuda:
-            states = states.cuda()
-            in_memory_embs = in_memory_embs.cuda()
-            out_memory_embs = out_memory_embs.cuda()
         for _ in range(self.hops):
             states = self.memory_hop(states, in_memory_embs, out_memory_embs)
 
         # TODO: make less messy, too many types of candidate inputs
         if cands is not None:
             if isinstance(cands, torch.Tensor):
-                cand_embs = self.answer_embedder(cands).cuda()
+                cand_embs = self.answer_embedder(cands)
             else:
                 cand_embs = [self.answer_embedder(cs) for cs in cands]
         else:
             cand_embs = self.answer_embedder.weight
 
         scores = self._score(states, cand_embs)
-        return scores.cpu()
+        return scores
 
 
 class Embed(nn.Embedding):
@@ -139,6 +137,7 @@ class Embed(nn.Embedding):
         if self.reduction == 'sum':
             return embs.sum(-2)
         elif self.reduction == 'mean':
+            # this is more fair than mean(-2) since mean includes null tokens
             sum = embs.sum(-2)
             lens = input.ne(0).sum(-1).unsqueeze(-1).float()
             return sum / lens

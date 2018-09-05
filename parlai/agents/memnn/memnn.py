@@ -6,7 +6,7 @@
 
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import round_sigfigs, padded_tensor
+from parlai.core.utils import round_sigfigs, padded_3d
 
 import torch
 from torch import nn
@@ -77,8 +77,8 @@ class MemnnAgent(TorchAgent):
         self.memsize = opt['memsize']
         self.use_time_features = opt['time_features']
 
-        self.model_cuda = self.use_cuda
-        self.use_cuda = False  # override parent
+        # self.model_cuda = self.use_cuda
+        # self.use_cuda = False  # override parent
 
         if shared:
             # set up shared properties
@@ -104,6 +104,7 @@ class MemnnAgent(TorchAgent):
         # self.gen_loss = nnCrossEntropyLoss(ignore_index=self.NULL_IDX)
         if self.use_cuda:
             self.rank_loss.cuda()
+            self.model.cuda()
             # self.gen_loss.cuda()
 
         if 'train' in self.opt.get('datatype', ''):
@@ -119,7 +120,7 @@ class MemnnAgent(TorchAgent):
         opt = self.opt
         kwargs = opt_to_kwargs(opt)
         self.model = MemNN(
-            len(self.dict), opt['embedding_size'], use_cuda=self.model_cuda,
+            len(self.dict), opt['embedding_size'],
             padding_idx=self.NULL_IDX,
             **kwargs)
 
@@ -152,6 +153,7 @@ class MemnnAgent(TorchAgent):
         return shared
 
     def update_params(self):
+        """Do optim step and clip gradients if needed."""
         if self.clip > 0:
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
             if self.decoder is not None:
@@ -181,8 +183,10 @@ class MemnnAgent(TorchAgent):
         return m
 
     def vectorize(self, *args, **kwargs):
+        """Override options in vectorize from parent."""
         kwargs['add_start'] = False
-        kwargs['add_end'] = False
+        # kwargs['add_end'] = False
+        kwargs['add_end'] = True  # TODO NO
         kwargs['split_lines'] = True
         obs = args[0]
         if 'labels' in obs and 'label_candidates' in obs:
@@ -191,6 +195,7 @@ class MemnnAgent(TorchAgent):
         return super().vectorize(*args, **kwargs)
 
     def get_dialog_history(self, *args, **kwargs):
+        """Override options in get_dialog_history from parent."""
         kwargs['add_p1_after_newln'] = True  # will only happen if -pt True
         return super().get_dialog_history(*args, **kwargs)
 
@@ -213,8 +218,8 @@ class MemnnAgent(TorchAgent):
             for i in range(num_mems):
                 padded[:, i, -1] = self.dict[self._time_feature(i)]
 
-        # if self.use_cuda:
-        #     padded = padded.cuda()
+        if self.use_cuda:
+            padded = padded.cuda()
 
         return padded
 
@@ -250,9 +255,8 @@ class MemnnAgent(TorchAgent):
             return None, None
         cand_inds = [i for i in range(len(batch.candidates))
                      if batch.candidates[i]]
-        cands = [batch.candidate_vecs[i] for i in cand_inds]
-        for i, c in enumerate(cands):
-            cands[i] = padded_tensor(c, use_cuda=self.use_cuda)[0]
+        cands = padded_3d(batch.candidate_vecs, pad_idx=self.NULL_IDX,
+                          use_cuda=self.use_cuda)
         return cands, cand_inds
 
     def eval_step(self, batch):
@@ -264,13 +268,22 @@ class MemnnAgent(TorchAgent):
         mems = self._build_mems(batch.memory_vecs)
         cands, cand_inds = self._build_cands(batch)
         scores = self.model(batch.text_vec, mems, cands)
-        # label_inds = batch.label_vec.new(range(batch.label_vec.size(0)))
-        # loss = self.rank_loss(scores, label_inds)
-        # self.metrics['loss'] += loss
+
         self.metrics['batches'] += batchsize
         _, ranks = scores.sort(1, descending=True)
-        # for b in range(batchsize):
-        #     self.metrics['rank'] += 1 + (ranks[b] == b).nonzero().item()
+
+        # calculate loss and mean rank
+        if batch.label_vec is not None:
+            label_inds = []
+            for b in range(batchsize):
+                label_ind = (cands[b] == batch.label_vec[b]).squeeze(1).nonzero()
+                li = label_ind.item()
+                label_inds.append(label_ind)
+                self.metrics['rank'] += 1 + (ranks[b] == li).nonzero().item()
+
+            label_inds = torch.cat(label_inds, dim=0).squeeze(1)
+            loss = self.rank_loss(scores, label_inds)
+            self.metrics['loss'] += loss.item()
 
         preds, cand_preds = None, None
         if batch.candidates:

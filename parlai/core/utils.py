@@ -896,6 +896,33 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
     return output, lens
 
 
+def padded_3d(tensors, pad_idx=0, use_cuda=0):
+    """Make 3D padded tensor for list of lists of 1D tensors or lists.
+
+    :param tensors:  list of lists of 1D tensors (or lists)
+    :param pad_idx:  padding to fill tensor with
+    :param use_cuda: whether to call cuda() before returning
+
+    :returns: 3D tensor with the maximum dimensions of the inputs
+    """
+    a = len(tensors)
+    b = max(len(row) for row in tensors)
+    c = max(len(item) for row in tensors for item in row)
+
+    output = torch.LongTensor(a, b, c).fill_(pad_idx)
+
+    for i, row in enumerate(tensors):
+        for j, item in enumerate(row):
+            if not isinstance(item, torch.Tensor):
+                item = torch.LongTensor(item)
+            output[i, j, :len(item)] = item
+
+    if use_cuda:
+        output = output.cuda()
+
+    return output
+
+
 def argsort(keys, *lists, descending=False):
     """Reorder each list in lists by the (descending) sorted order of keys.
 
