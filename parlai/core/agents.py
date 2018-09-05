@@ -318,16 +318,25 @@ def load_agent_module(opt):
                 new_opt[k] = v
         new_opt['model_file'] = model_file
         model_class = get_agent_module(new_opt['model'])
+
+        # check for model version
         if hasattr(model_class, 'model_version'):
             curr_version = new_opt.get('model_version', 0)
             if curr_version != model_class.model_version():
-                raise RuntimeError(
-                    'It looks like you are trying to load an older version of '
-                    'the selected model. Change your model argument to use '
-                    'the old version from parlai/legacy_agents: for example, '
-                    '`--model legacy:model_name:{v}` or '
-                    '`-m parlai.legacy_agents.model.model_v{v}:ModelAgent`'
-                    ''.format(v=curr_version))
+                model = new_opt['model']
+                m = ('It looks like you are trying to load an older version of'
+                     ' the selected model. Change your model argument to use '
+                     'the old version from parlai/agents/legacy_agents: for '
+                     'example: `-m legacy:{m}:{v}` or '
+                     '`--model parlai.agents.legacy_agents.{m}.{m}_v{v}:{c}`')
+                if '.' not in model:
+                    # give specific error message if it's easy
+                    raise RuntimeError(m.format(m=model, v=curr_version,
+                                                c=model_class.__name__))
+                else:
+                    # otherwise generic one
+                    raise RuntimeError(m.format(m='modelname', v=curr_version,
+                                                c='ModelAgent'))
         return model_class(new_opt)
     else:
         return None
@@ -344,7 +353,7 @@ def get_agent_module(dir_name):
     - half-shorthand: -m seq2seq/variant, which will check the path
         parlai.agents.seq2seq.variant:VariantAgent
     - legacy models: -m legacy:seq2seq:0, which will look for the deprecated
-        model at parlai.legacy_agents.seq2seq.seq2seq_v0:Seq2seqAgent
+        model at parlai.agents.legacy_agents.seq2seq.seq2seq_v0:Seq2seqAgent
 
     The base path to search when using shorthand formats can be changed from
     "parlai" to "parlai_internal" by prepending "internal:" to the path, e.g.
@@ -371,7 +380,7 @@ def get_agent_module(dir_name):
                                'legacy:model:version; you used {}'
                                ''.format(dir_name))
         model_name = s[1]  # seq2seq
-        module_name = 'parlai.legacy_agents.{m}.{m}_v{v}'.format(
+        module_name = 'parlai.agents.legacy_agents.{m}.{m}_v{v}'.format(
             m=model_name, v=s[2])
         class_name = name_to_agent_class(model_name)
     elif ':' in dir_name:

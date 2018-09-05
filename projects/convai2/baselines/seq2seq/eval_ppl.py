@@ -13,7 +13,7 @@ from projects.convai2.eval_ppl import setup_args, eval_ppl
 if __name__ == '__main__':
     parser = setup_args()
     parser.set_params(
-        model='parlai.legacy_agents.seq2seq.seq2seq_v0:PerplexityEvaluatorAgent',
+        model='parlai.agents.legacy_agents.seq2seq.seq2seq_v0:PerplexityEvaluatorAgent',
         model_file='models:convai2/seq2seq/convai2_self_seq2seq_model',
         dict_file='models:convai2/seq2seq/convai2_self_seq2seq_model.dict',
         dict_lower=True,
