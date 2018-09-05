@@ -557,11 +557,13 @@ class FairseqAgent(TorchAgent):
         return Output(generated_output, reranked_cands)
 
     def _generate(self, samples):
-        src_tokens = samples["net_input"]["src_tokens"]
-        src_lengths = samples["net_input"]["src_lengths"]
-        gens = self.generator.generate(src_tokens, src_lengths, maxlen=64)
+        no_prev_token = {
+            k: v for k, v in samples['net_input'].items() if k != 'prev_output_tokens'
+        }
+        gens = self.generator.generate(**no_prev_token, maxlen=64)
+        bsz = samples['net_input']['src_tokens'].size(0)
         responses = []
-        for i in range(len(src_tokens)):
+        for i in range(bsz):
             beams = gens[i]
             selected = max(beams, key=lambda x: x["score"])
             tokens = selected["tokens"]
