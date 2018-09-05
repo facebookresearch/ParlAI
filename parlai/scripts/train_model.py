@@ -284,7 +284,7 @@ class TrainLoop():
         self.log_time.reset()
 
         if opt['tensorboard_log'] is True:
-            self.writer.add_metrics('train', int(logs[1].split(":")[1]), train_report)
+            self.writer.add_metrics('train', total_exs, train_report)
 
     def train(self):
         opt = self.opt
