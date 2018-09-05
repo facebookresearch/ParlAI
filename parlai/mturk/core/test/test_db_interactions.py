@@ -15,8 +15,8 @@ from parlai.mturk.core.agents import AssignState
 
 import parlai.mturk.core.mturk_data_handler as DataHandlerFile
 
-parent_dir = os.path.dirname(os.path.abspath(__file__))
-DataHandlerFile.parent_dir = os.path.dirname(os.path.abspath(__file__))
+data_dir = os.path.dirname(os.path.abspath(__file__))
+DataHandlerFile.data_dir = data_dir
 
 
 class TestDataHandler(unittest.TestCase):
@@ -25,12 +25,12 @@ class TestDataHandler(unittest.TestCase):
     DB_NAME = 'test_db.db'
 
     def setUp(self):
-        if os.path.exists(os.path.join(parent_dir, self.DB_NAME)):
-            os.remove(os.path.join(parent_dir, self.DB_NAME))
+        if os.path.exists(os.path.join(data_dir, self.DB_NAME)):
+            os.remove(os.path.join(data_dir, self.DB_NAME))
 
     def tearDown(self):
-        if os.path.exists(os.path.join(parent_dir, self.DB_NAME)):
-            os.remove(os.path.join(parent_dir, self.DB_NAME))
+        if os.path.exists(os.path.join(data_dir, self.DB_NAME)):
+            os.remove(os.path.join(data_dir, self.DB_NAME))
 
     def create_hit(self):
         return {
