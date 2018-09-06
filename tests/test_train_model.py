@@ -44,7 +44,7 @@ class TestTrainModel(unittest.TestCase):
                 task='tasks.repeat:RepeatTeacher:10',
                 dict_file='/tmp/repeat',
                 batchsize=1,
-                numthreads=4,
+                numthreads=1,
                 validation_every_n_epochs=10,
                 validation_patience=5,
                 embedding_size=8,

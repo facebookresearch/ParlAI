@@ -246,16 +246,27 @@ class MemnnAgent(TorchAgent):
 
         :returns: 3d padded tensor of memories (bsz x num_mems x seqlen)
         """
+        if mems is None:
+            return None
         bsz = len(mems)
+        if bsz == 0:
+            return None
+
         num_mems = max(len(mem) for mem in mems)
-        if num_mems > self.memsize:
+        if num_mems == 0:
+            return None
+        elif num_mems > self.memsize:
             # truncate to memsize most recent memories
             num_mems = self.memsize
             mems = [mem[-self.memsize:] for mem in mems]
 
-        seqlen = max(len(m) for mem in mems for m in mem)
-        if self.use_time_features:
-            seqlen += 1  # add time token to each sequence
+        try:
+            seqlen = max(len(m) for mem in mems for m in mem)
+            if self.use_time_features:
+                seqlen += 1  # add time token to each sequence
+        except ValueError:
+            return None
+
         padded = torch.LongTensor(bsz, num_mems, seqlen).fill_(0)
 
         for i, mem in enumerate(mems):
@@ -305,7 +316,6 @@ class MemnnAgent(TorchAgent):
 
         # get predictions but not full rankings--too slow to get hits@1 score
         preds = [self._v2t(cands[row[0]]) for row in ranks]
-        # import pdb; pdb.set_trace()
         return Output(preds)
 
     def _build_label_cands(self, batch):
@@ -347,7 +357,7 @@ class MemnnAgent(TorchAgent):
             self.metrics['loss'] += loss.item()
 
         preds, cand_preds = None, None
-        if batch.candidates:
+        if batch.candidates and False:
             cand_preds = [[batch.candidates[b][i.item()] for i in row]
                           for b, row in enumerate(ranks)]
             preds = [row[0] for row in cand_preds]

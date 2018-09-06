@@ -86,14 +86,13 @@ class MemNN(nn.Module):
                 otherwise, these scores are over the candidates provided.
                 (bsz x num_cands)
         """
-        query_embs = self.query_lt(xs)
-        in_memory_embs = self.in_memory_lt(mems).transpose(1, 2)
-        out_memory_embs = self.out_memory_lt(mems)
+        states = self.query_lt(xs)
+        if mems is not None:
+            in_memory_embs = self.in_memory_lt(mems).transpose(1, 2)
+            out_memory_embs = self.out_memory_lt(mems)
 
-        states = query_embs
-
-        for _ in range(self.hops):
-            states = self.memory_hop(states, in_memory_embs, out_memory_embs)
+            for _ in range(self.hops):
+                states = self.memory_hop(states, in_memory_embs, out_memory_embs)
 
         if cands is not None:
             # embed candidates
