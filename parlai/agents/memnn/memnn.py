@@ -6,7 +6,7 @@
 
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import round_sigfigs, padded_3d
+from parlai.core.utils import round_sigfigs, padded_3d, padded_tensor
 
 import torch
 from torch import nn
@@ -18,7 +18,14 @@ from .modules import MemNN, opt_to_kwargs
 
 
 class MemnnAgent(TorchAgent):
-    """Memory Network agent."""
+    """Memory Network agent.
+
+    Tips:
+    - time features are necessary when memory order matters
+    - multiple hops allow multiple steps of reasoning, but also seem to make it
+        easier to learn to read the memories if you have at least two hops
+    - 'adam' seems to work very poorly compared to 'sgd' for hogwild training
+    """
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -36,17 +43,11 @@ class MemnnAgent(TorchAgent):
             '--memsize', type=int, default=32,
             help='size of memory')
         arg_group.add_argument(
-            '-mtf', '--time-features', type='bool', default=True,
+            '-tf', '--time-features', type='bool', default=True,
             help='use time features for memory embeddings')
         arg_group.add_argument(
             '--position-encoding', type='bool', default=False,
             help='use position encoding instead of bag of words embedding')
-        arg_group.add_argument(
-            '--output', type=str, default='rank', choices=('rank', 'generate'),
-            help='type of output (rank|generate)')
-        arg_group.add_argument(
-            '--rnn-layers', type=int, default=2,
-            help='number of hidden layers in RNN decoder for generative output')
         arg_group.add_argument(
             '--dropout', type=float, default=0.1,
             help='dropout probability for RNN decoder training')
@@ -118,7 +119,7 @@ class MemnnAgent(TorchAgent):
     @lru_cache(maxsize=None)  # bounded by opt['memsize'], cache string concats
     def _time_feature(self, i):
         """Return time feature token at specified index."""
-        return '__TF{}__'.format(i)
+        return '__tf{}__'.format(i)
 
     def share(self):
         """Share model parameters."""
@@ -164,10 +165,6 @@ class MemnnAgent(TorchAgent):
         kwargs['add_start'] = False
         kwargs['add_end'] = False
         kwargs['split_lines'] = True
-        obs = args[0]
-        if 'labels' in obs and 'label_candidates' in obs:
-            # we aren't going to rank during training, don't waste time
-            del obs['label_candidates']
         return super().vectorize(*args, **kwargs)
 
     def get_dialog_history(self, *args, **kwargs):
@@ -175,27 +172,68 @@ class MemnnAgent(TorchAgent):
         kwargs['add_p1_after_newln'] = True  # will only happen if -pt True
         return super().get_dialog_history(*args, **kwargs)
 
-    def _build_train_cands(self, labels):
+    def _warn_once(self, flag, msg):
+        if not hasattr(self, flag):
+            setattr(self, flag, True)
+            print(msg)
+
+    def _build_train_cands(self, labels, label_cands=None):
         """Build candidates from batch labels.
 
-        For labels of a single token, we use torch.unique to return only the
-        unique tokens.
-        For labels sequences of length greater than one, we keep them all in
-        order to not waste too much time calculating uniqueness.
+        When the batchsize is 1, first we look for label_cands to be filled
+        (from batch.candidate_vecs). If available, we'll use those candidates.
+        Otherwise, we'll rank each token in the dictionary except NULL.
 
-        :param labels: (bsz x seqlen) LongTensor.
+        For batches of labels of a single token, we use torch.unique to return
+        only the unique tokens.
+        For batches of label sequences of length greater than one, we keep them
+        all so as not to waste too much time calculating uniqueness.
+
+        :param labels:      (bsz x seqlen) LongTensor.
+        :param label_cands: default None. if bsz is 1 and label_cands is not
+                            None, will use label_cands for training.
 
         :return: tuple of tensors (cands, indices)
             cands is (num_cands <= bsz x seqlen) candidates
             indices is (bsz) index in cands of each original label
         """
-        if labels.size(1) == 1:
+        assert labels.dim() == 2
+        if labels.size(0) == 1:
+            # we can't rank the batch of labels, see if there are label_cands
+            label = labels[0]  # there's just one
+            if label_cands is not None:
+                self._warn_once(
+                    'ranking_labelcands',
+                    '[ Training using label_candidates fields as cands. ]')
+                label_cands, _ = padded_tensor(label_cands[0],
+                                               use_cuda=self.use_cuda)
+                label_index = (label_cands == label).all(1).nonzero()
+                return label_cands, label_index.squeeze(1)
+            else:
+                self._warn_once(
+                    'ranking_dict',
+                    '[ Training using dictionary of tokens as cands. ]')
+                dict_size = len(self.dict)
+                full_dict = labels.new(range(1, dict_size))
+                # pick random token from label
+                if len(label) > 1:
+                    token = self.random.choice(label)
+                else:
+                    token = label[0] - 1
+                return full_dict.unsqueeze_(1), token.unsqueeze(0)
+        elif labels.size(1) == 1:
+            self._warn_once(
+                'ranking_unique',
+                '[ Training using unique labels in batch as cands. ]')
             # use unique if input is 1D
             cands, label_inds = labels.unique(return_inverse=True)
             cands.unsqueeze_(1)
             label_inds.squeeze_(1)
             return cands, label_inds
         else:
+            self._warn_once(
+                'ranking_batch',
+                '[ Training using other labels in batch as cands. ]')
             return labels, labels.new(range(labels.size(0)))
 
     def _build_mems(self, mems):
@@ -250,7 +288,8 @@ class MemnnAgent(TorchAgent):
         self.optimizer.zero_grad()
         mems = self._build_mems(batch.memory_vecs)
 
-        cands, label_inds = self._build_train_cands(batch.label_vec)
+        cands, label_inds = self._build_train_cands(batch.label_vec,
+                                                    batch.candidate_vecs)
 
         scores = self.model(batch.text_vec, mems, cands)
         loss = self.rank_loss(scores, label_inds)
@@ -266,6 +305,7 @@ class MemnnAgent(TorchAgent):
 
         # get predictions but not full rankings--too slow to get hits@1 score
         preds = [self._v2t(cands[row[0]]) for row in ranks]
+        # import pdb; pdb.set_trace()
         return Output(preds)
 
     def _build_label_cands(self, batch):
