@@ -198,6 +198,12 @@ class TorchAgent(Agent):
         if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
 
+        # initialize buffers for calls to vectorize()
+        # note that the second dimension is just a guess, and the tensor will
+        # be resized if necessary
+        self.xs_buffer = torch.LongTensor(opt['batchsize'], opt.get('truncate') or 64)
+        self.ys_buffer = torch.LongTensor(opt['batchsize'], opt.get('truncate') or 64)
+
         # check for cuda
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
         if self.use_cuda:
@@ -210,6 +216,9 @@ class TorchAgent(Agent):
             # It's up to the user of TorchAgent to handle multiple GPU issues.
             # A typical approach would be to employ nn.DataParallel
             # (https://pytorch.org/docs/0.4.1/nn.html?highlight=dataparallel#torch.nn.DataParallel)
+            # also convert our buffers over:
+            self.xs_buffer = self.xs_buffer.cuda()
+            self.ys_buffer = self.ys_buffer.cuda()
 
         # now set up any fields that all instances may need
         self.id = 'TorchAgent'  # child can override
@@ -543,7 +552,9 @@ class TorchAgent(Agent):
         xs, x_lens = None, None
         if any('text_vec' in ex for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
-            xs, x_lens = padded_tensor(_xs, self.NULL_IDX, self.use_cuda)
+            xs, x_lens = padded_tensor(
+                _xs, self.NULL_IDX, self.use_cuda, output=self.xs_buffer
+            )
             if sort:
                 sort = False  # now we won't sort on labels
                 xs, x_lens, valid_inds, exs = argsort(
@@ -563,7 +574,9 @@ class TorchAgent(Agent):
             labels = [ex.get(field + '_choice') for ex in exs]
             y_lens = [y.shape[0] for y in label_vecs]
 
-            ys, y_lens = padded_tensor(label_vecs, self.NULL_IDX, self.use_cuda)
+            ys, y_lens = padded_tensor(
+                label_vecs, self.NULL_IDX, self.use_cuda, output=self.ys_buffer
+            )
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(
                     y_lens, ys, valid_inds, label_vecs, labels, y_lens,

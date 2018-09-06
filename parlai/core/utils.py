@@ -841,7 +841,7 @@ def set_namedtuple_defaults(namedtuple, default=None):
     return namedtuple
 
 
-def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
+def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False, output=None):
     """Create a right-padded matrix from an uneven list of lists.
 
     Returns (padded, lengths), where padded is the padded matrix, and lengths
@@ -856,7 +856,8 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
     :param bool sort: If True, orders by the length
     :param int pad_idx: the value to use for padding
     :param bool use_cuda: if true, places `padded` on GPU
-    :param bool left_padded:
+    :param bool left_padded: use left padding instead of right padding
+    :param Tensor output: if not None, uses the preallocated tensor
 
     :return: (padded, lengths) tuple
     :rtype: (Tensor[int64], list[int])
@@ -874,11 +875,16 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
     # max in time dimension
     t = max(lens)
 
-    if isinstance(items[0], torch.Tensor):
+    if output is not None:
+        output = output.resize_(n, t)
+        assert not isinstance(items[0], torch.Tensor) or items[0].dtype is output.dtype
+    elif isinstance(items[0], torch.Tensor):
         # keep type of input tensors, they may already be cuda ones
         output = items[0].new(n, t)
     else:
         output = torch.LongTensor(n, t)
+
+    # clear the buffer
     output.fill_(pad_idx)
 
     for i, item in enumerate(items):
