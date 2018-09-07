@@ -70,6 +70,15 @@ class WorkerState():
                 complete_count += 1
         return complete_count
 
+    def disconnected_assignments(self):
+        """Returns the number of assignments this worker has completed"""
+        disconnect_count = 0
+        for agent in self.agents.values():
+            if agent.get_status() in [AssignState.STATUS_DISCONNECT,
+                                      AssignState.STATUS_RETURNED]:
+                disconnect_count += 1
+        return disconnect_count
+
 
 class WorkerManager():
     """Class used to keep track of workers state, as well as processing
@@ -86,6 +95,18 @@ class WorkerManager():
         self.time_blocked_workers = []
         self.load_disconnects()
         self.is_sandbox = mturk_manager.is_sandbox
+
+    def get_worker_data_package(self):
+        workers = []
+        for mturk_worker in self.mturk_workers.values():
+            worker = {
+                'id': mturk_worker.worker_id,
+                'accepted': len(mturk_worker.agents),
+                'completed': mturk_worker.completed_assignments(),
+                'disconnected': mturk_worker.disconnected_assignments(),
+            }
+            workers.append(worker)
+        return workers
 
     def _create_agent(self, hit_id, assignment_id, worker_id):
         """Initialize an agent and return it"""
