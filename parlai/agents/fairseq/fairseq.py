@@ -560,7 +560,7 @@ class FairseqAgent(TorchAgent):
         no_prev_token = {
             k: v for k, v in samples['net_input'].items() if k != 'prev_output_tokens'
         }
-        gens = self.generator.generate(**no_prev_token, maxlen=64)
+        gens = self.generator.generate(no_prev_token, maxlen=64)
         bsz = samples['net_input']['src_tokens'].size(0)
         responses = []
         for i in range(bsz):
