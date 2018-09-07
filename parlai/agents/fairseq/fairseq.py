@@ -20,6 +20,7 @@ from fairseq.sequence_scorer import SequenceScorer
 from fairseq import options
 from fairseq.tasks.fairseq_task import FairseqTask
 from fairseq.utils import convert_padding_direction
+from fairseq.meters import AverageMeter
 
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.build_data import modelzoo_path
@@ -30,6 +31,7 @@ import torch
 import os
 import numpy as np
 import pickle
+from collections import defaultdict
 
 
 # If a model file is loaded, these arguments may NOT be overridden in the
@@ -103,6 +105,8 @@ def _fairseq_opt_wrapper(opt, skip_pretrained_embedding_loading=False):
             setattr(args, k, None)
         else:
             # otherwise we may need to modelzoo adjust the path for fairseq
+            import warnings
+            warnings.warn("We recommend using --embedding-type instead")
             setattr(args, k, modelzoo_path(opt.get("datapath"), getattr(args, k)))
 
     # Here we hardcode a few options that we currently do not support
@@ -229,7 +233,7 @@ class FairseqAgent(TorchAgent):
         agent.add_argument(
             '--skip-generation',
             default=False,
-            type=bool,
+            type='bool',
             metavar='BOOL',
             help='Skips test time beam search. Much faster if you only need PPL',
         )
@@ -320,6 +324,9 @@ class FairseqAgent(TorchAgent):
             # We need a placeholder task for fairseq
             self.task = _ParlaiTask(self.dict)
 
+            # meters for keeping track of loss, ppl, etc.
+            self.meters = defaultdict(AverageMeter)
+
             # actually construct the model and generator
             self.model = self.build_model()
 
@@ -370,6 +377,7 @@ class FairseqAgent(TorchAgent):
             self.generator = shared['generator']
             self.dict = shared['dict']
             self.args = shared['args']
+            self.meters = shared['meters']
 
         # Start things off clean
         self.reset()
@@ -392,7 +400,12 @@ class FairseqAgent(TorchAgent):
         models.
         """
         model_class = models.ARCH_MODEL_REGISTRY[self.args.arch]
-        return model_class.build_model(self.args, self.task)
+        model = model_class.build_model(self.args, self.task)
+        if self.args.embedding_type != 'random':
+            self._copy_embeddings(
+                model.encoder.embed_tokens.weight, self.args.embedding_type
+            )
+        return model
 
     def share(self):
         shared = super().share()
@@ -401,6 +414,7 @@ class FairseqAgent(TorchAgent):
         shared['generator'] = self.generator
         shared['dict'] = self.dict
         shared['args'] = self.args
+        shared['meters'] = self.meters
         return shared
 
     def save(self, path):
@@ -441,6 +455,25 @@ class FairseqAgent(TorchAgent):
         """
         return super().batchify(obs_batch, sort=True, is_valid=_is_nonempty_observation)
 
+    def _update_metrics(self, metrics, sample):
+        bsz = len(sample['target'])
+        ntok = sample['ntokens']
+        ssize = metrics['sample_size']
+
+        for k, v in metrics.items():
+            if k in {'ntokens', 'nsentences', 'sample_size'}:
+                # don't need these
+                continue
+            elif k == "nll_loss":
+                # nll loss is always normalized by ntokens
+                self.meters[k].update(v, ntok)
+            elif k == "loss":
+                # loss is explicitly normalized by passed up sample size
+                self.meters[k].update(v, ssize)
+            else:
+                # assume everything else it's averaged over bsz
+                self.meters[k].update(v, bsz)
+
     def train_step(self, batch):
         """Process batch of inputs and targets and train on them.
 
@@ -452,7 +485,8 @@ class FairseqAgent(TorchAgent):
         self.is_training = True
         samples = self._make_sample(batch.text_vec, batch.label_vec)
         self.model.train()
-        self.trainer.train_step(samples)
+        metrics = self.trainer.train_step(samples)
+        self._update_metrics(metrics, samples)
 
     def eval_step(self, batch):
         """Process batch of inputs.
@@ -470,7 +504,8 @@ class FairseqAgent(TorchAgent):
         self.model.eval()
         if batch.label_vec is not None:
             # Interactive mode won't have a gold label
-            self.trainer.valid_step(samples)
+            metrics = self.trainer.valid_step(samples)
+            self._update_metrics(metrics, samples)
 
         # Output placeholders
         reranked_cands = None
@@ -549,27 +584,24 @@ class FairseqAgent(TorchAgent):
         if not hasattr(self, "trainer"):
             return {}
 
-        # These are the metrics we'll pass up the way, and their new names
-        train_metrics = {"train_loss", "ups", "wps", "gnorm", "clip"}
-        valid_metrics = {"valid_loss"}
+        output = {k: v.avg for k, v in self.meters.items()}
 
-        metrics = train_metrics if self.is_training else valid_metrics
+        if "nll_loss" in self.meters:
+            # special case, we used sentence averaging so ppl comes from nll_loss
+            output["ppl"] = np.exp2(self.meters["nll_loss"].avg)
+        else:
+            # normal case, just use loss
+            output["ppl"] = np.exp2(self.meters["loss"].avg)
 
-        m = {k: self.trainer.meters[k].avg for k in metrics}
+        # Fairseq trainer metrics we'll pass up the way
+        trainer_metrics = {"ups", "wps", "gnorm", "clip"}
+        if self.is_training:
+            for k in trainer_metrics:
+                output[k] = self.trainer.meters[k].avg
 
-        # additionally output perplexity. note that fairseq models use base 2
-        # in cross_entropy:
-        # github.com/pytorch/fairseq/blob/master/fairseq/criterions/cross_entropy.py#L55
-        if "train_loss" in m:
-            m["train_ppl"] = np.exp2(m["train_loss"])
-        if "valid_loss" in m:
-            m["ppl"] = np.exp2(m["valid_loss"])
-
-        for k, v in m.items():
-            # clean up: rounds to sigfigs and converts tensors to floats
-            m[k] = round_sigfigs(v, 4)
-
-        return m
+        # for display purposes
+        output = {k: round_sigfigs(v, 4) for k, v in output.items()}
+        return output
 
     def reset_metrics(self):
         """Reset metrics calculated by the model back to zero."""
@@ -577,12 +609,14 @@ class FairseqAgent(TorchAgent):
             # We haven't set up the trainer yet, so we don't have any metrics
             return
         # We need to reset everything
+        self.meters.clear()
         for k in self.trainer.meters:
             self.trainer.meters[k].reset()
 
     def receive_metrics(self, metrics_dict):
         """Update lr scheduler with validation loss."""
-        self.trainer.lr_step(-1, metrics_dict["valid_loss"])
+        # TODO: this should be smarter
+        self.trainer.lr_step(-1, metrics_dict["loss"])
 
     # Helper functions
     def _seq_length(self, xs):
