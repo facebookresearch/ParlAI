@@ -947,7 +947,7 @@ class Beam(object):
             endback = self.bookkeep[i - 1][endback]
 
         return hyp_idx
-    
+
     @staticmethod
     def get_pretty_hypothesis(list_of_hypotails):
         hypothesis = []
