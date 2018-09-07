@@ -156,14 +156,6 @@ class Seq2seqAgent(TorchAgent):
         self.beam_min_length = opt.get('beam_min_length', 3)
         self.topk = opt.get('topk', 1)
 
-        self.search = dict()
-        if self.beam_size > 1:
-            self.search['mode'] = 'beam'
-        elif self.topk > 1:
-            self.search['mode'] = 'topk'
-        else:
-            self.search['mode'] = 'greedy'
-
         states = {}
 
         if shared:
@@ -521,12 +513,12 @@ class Seq2seqAgent(TorchAgent):
         self.model.eval()
         cand_scores = None
         cand_params = self._build_cands(batch)
-        if self.search['mode'] == 'greedy':
+        if self.beam_size == 1:
             out = self.model(batch.text_vec, ys=None, cand_params=cand_params)
             scores, cand_scores = out[0], out[1]
             _, preds = scores.max(2)
             preds = preds.cpu()
-        elif self.search['mode'] == 'beam':
+        elif self.beam_size > 1:
             out = Seq2seqAgent.beam_search(self.model, batch, self.beam_size, 
                     start=self.START_IDX, end=self.END_IDX, pad=self.NULL_IDX, 
                     min_length=self.beam_min_length, min_n_best=self.beam_min_n_best)
@@ -540,8 +532,6 @@ class Seq2seqAgent(TorchAgent):
                             '-').replace('__null__', '')
                     dot_graph.write_png(os.path.join(
                         self.beam_dot_dir, "{}.png".format(image_name)))
-        elif self.search['mode'] == 'topk':
-            raise NotImplementedError
 
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
