@@ -46,11 +46,8 @@ class MemnnAgent(TorchAgent):
             '-tf', '--time-features', type='bool', default=True,
             help='use time features for memory embeddings')
         arg_group.add_argument(
-            '--position-encoding', type='bool', default=False,
+            '-pe', '--position-encoding', type='bool', default=False,
             help='use position encoding instead of bag of words embedding')
-        arg_group.add_argument(
-            '--dropout', type=float, default=0.1,
-            help='dropout probability for RNN decoder training')
         TorchAgent.add_cmdline_args(argparser)
         MemnnAgent.dictionary_class().add_cmdline_args(argparser)
         return arg_group
@@ -59,7 +56,7 @@ class MemnnAgent(TorchAgent):
     def model_version():
         """Return current version of this model, counting up from 0.
 
-        Models are not backwards-compatible with older versions.
+        Models may not be backwards-compatible with older versions.
         Version 1 split from version 0 on Sep 7, 2018.
         To use version 0, use --model legacy:memnn:0
         (legacy agent code is located in parlai/agents/legacy_agents).

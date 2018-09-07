@@ -13,8 +13,7 @@ from functools import lru_cache
 def opt_to_kwargs(opt):
     """Get kwargs for seq2seq from opt."""
     kwargs = {}
-    for k in ['mem_size', 'time_features', 'position_encoding', 'hops',
-              'dropout']:
+    for k in ['mem_size', 'time_features', 'position_encoding', 'hops']:
         if k in opt:
             kwargs[k] = opt[k]
     return kwargs
@@ -55,8 +54,10 @@ class MemNN(nn.Module):
                              position_encoding=position_encoding,
                              padding_idx=padding_idx)
 
-        self.dropout = nn.Dropout(dropout)
-        # TODO: support more weight tying
+        # TODO: add token dropout?
+        # TODO: add dropout
+        # self.dropout = nn.Dropout(dropout)
+        # TODO: support more weight tying options?
         self.query_lt = embedding()
         self.in_memory_lt = embedding()
         self.out_memory_lt = embedding()
@@ -86,13 +87,14 @@ class MemNN(nn.Module):
                 otherwise, these scores are over the candidates provided.
                 (bsz x num_cands)
         """
-        states = self.query_lt(xs)
+        state = self.query_lt(xs)
         if mems is not None:
+            # no memories available, `nomemnn` mode just uses query/ans embs
             in_memory_embs = self.in_memory_lt(mems).transpose(1, 2)
             out_memory_embs = self.out_memory_lt(mems)
 
             for _ in range(self.hops):
-                states = self.memory_hop(states, in_memory_embs, out_memory_embs)
+                state = self.memory_hop(state, in_memory_embs, out_memory_embs)
 
         if cands is not None:
             # embed candidates
@@ -101,7 +103,7 @@ class MemNN(nn.Module):
             # rank all possible tokens
             cand_embs = self.answer_embedder.weight
 
-        scores = self._score(states, cand_embs)
+        scores = self._score(state, cand_embs)
         return scores
 
 
@@ -147,18 +149,19 @@ class Embed(nn.Embedding):
         if self.position_encoding:
             if embs.dim() == 3:
                 num_mems, seqlen, embdim = embs.size()
-                pe = self.position_matrix(seqlen, embdim)
+                pe = self.position_matrix(seqlen, embdim, embs.is_cuda)
                 for i in range(num_mems):
                     embs[i] *= pe
             else:
-                raise RuntimeError(
-                    'Input dim {} not supported with position encoding yet'
-                    ''.format(input.dim()))
+                bsz, num_mems, seqlen, embdim = embs.size()
+                pe = self.position_matrix(seqlen, embdim, embs.is_cuda)
+                for i in range(num_mems):
+                    embs[:, i] *= pe
         return self._reduce(embs, input)
 
     @staticmethod
     @lru_cache(maxsize=128)
-    def position_matrix(J, d):
+    def position_matrix(J, d, use_cuda):
         """Build matrix of position encoding coeffiencents.
 
         See https://papers.nips.cc/paper/5846-end-to-end-memory-networks,
@@ -173,6 +176,8 @@ class Embed(nn.Embedding):
         for k in range(1, d + 1):
             for j in range(1, J + 1):
                 m[j - 1, k - 1] = (1 - j / J) - (k / d) * (1 - 2 * j / J)
+        if use_cuda:
+            m = m.cuda()
         return m
 
 
@@ -210,5 +215,5 @@ class Hop(nn.Module):
         attn = torch.bmm(query_embs.unsqueeze(1), in_mem_embs).squeeze(1)
         probs = self.softmax(attn)
         memory_output = torch.bmm(probs.unsqueeze(1), out_mem_embs).squeeze(1)
-        output = memory_output + query_embs
-        return self.rotate(output)
+        output = memory_output + self.rotate(query_embs)
+        return output
