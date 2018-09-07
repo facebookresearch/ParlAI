@@ -200,6 +200,8 @@ class FairseqAgent(TorchAgent):
         "adam_betas": "(0.9,0.98)",
         "optimizer": "adam",
         "clip_norm": 0.1,
+        "lr": 3e-4,
+        "arch": "transformer_iwslt_de_en",
     }
 
     metrics = {}
