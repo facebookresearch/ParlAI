@@ -16,7 +16,7 @@ except ImportError:
         "Please run \"pip install -U 'git+https://github.com/pytorch/"
         "fairseq.git@v0.5.0#egg=fairseq'\""
     )
-from fairseq import trainer, fp16_trainer
+from fairseq import trainer
 from fairseq.sequence_generator import SequenceGenerator
 from fairseq.sequence_scorer import SequenceScorer
 from fairseq import options
@@ -350,18 +350,13 @@ class FairseqAgent(TorchAgent):
             # set up the grader and the trainer
             self.criterion = criterions.build_criterion(self.args, self.task)
 
-            if getattr(self.args, 'fp16', None):
-                self.trainer = fp16_trainer.FP16Trainer(
-                    self.args, self.task, self.model, self.criterion
-                )
-            else:
-                # TODO: we might choose to add a --no-fp16 opt in the future to
-                # explicitly disable fp16 instead
-                if torch.cuda.get_device_capability(0)[0] >= 7:
-                    print("Heads up: using --fp16 could be a lot faster!")
-                self.trainer = trainer.Trainer(
-                    self.args, self.task, self.model, self.criterion
-                )
+            # TODO: we might choose to add a --no-fp16 opt in the future to
+            # explicitly disable fp16 instead
+            if not self.args.fp16 and torch.cuda.get_device_capability(0)[0] >= 7:
+                print("Heads up: using --fp16 could be a lot faster!")
+            self.trainer = trainer.Trainer(
+                self.args, self.task, self.model, self.criterion, None,
+            )
             self.trainer._build_optimizer()
 
             # if the model already existed, let's preload it and the trainer
@@ -458,6 +453,10 @@ class FairseqAgent(TorchAgent):
         return super().batchify(obs_batch, sort=True, is_valid=_is_nonempty_observation)
 
     def _update_metrics(self, metrics, sample):
+        if metrics is None:
+            # probably got an overflow in fp16 mode. don't count this sample
+            return
+
         bsz = len(sample['target'])
         ntok = sample['ntokens']
         ssize = metrics['sample_size']
@@ -485,10 +484,10 @@ class FairseqAgent(TorchAgent):
         if batch.text_vec is None:
             return
         self.is_training = True
-        samples = self._make_sample(batch)
+        sample = self._make_sample(batch)
         self.model.train()
-        metrics = self.trainer.train_step(samples)
-        self._update_metrics(metrics, samples)
+        metrics = self.trainer.train_step([sample])
+        self._update_metrics(metrics, sample)
 
     def eval_step(self, batch):
         """Process batch of inputs.
