@@ -10,7 +10,7 @@ from parlai.core.utils import argsort, padded_tensor
 try:
     from fairseq import models, optim, criterions
 except ImportError:
-    raise RuntimeError(
+    raise ImportError(
         "Please run \"pip install -U 'git+https://github.com/pytorch/"
         "fairseq.git@v0.5.0#egg=fairseq'\""
     )

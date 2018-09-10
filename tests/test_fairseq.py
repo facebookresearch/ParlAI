@@ -13,8 +13,15 @@ import shutil
 
 from parlai.scripts.train_model import TrainLoop, setup_args
 
+SKIP_TESTS = False
+try:
+    import fairseq  # noqa: F401
+except ImportError:
+    SKIP_TESTS = True
+
+
 BATCH_SIZE = 64
-NUM_EPOCHS = 3
+NUM_EPOCHS = 5
 LR = 1e-2
 
 
@@ -27,7 +34,7 @@ def _mock_train(**args):
     )
     stdout = io.StringIO()
     with contextlib.redirect_stdout(stdout):
-        tl = TrainLoop(parser.parse_args())
+        tl = TrainLoop(parser.parse_args(print_args=False))
         valid, test = tl.train()
 
     shutil.rmtree(outdir)
@@ -37,9 +44,10 @@ def _mock_train(**args):
 class TestFairseq(unittest.TestCase):
     """Checks that fairseq can learn some very basic tasks."""
 
+    @unittest.skipIf(SKIP_TESTS, "Fairseq not installed")
     def test_labelcands(self):
         stdout, valid, test = _mock_train(
-            task='unittest:CandidateTeacher',
+            task='integration_tests:CandidateTeacher',
             model='fairseq',
             arch='lstm_wiseman_iwslt_de_en',
             lr=LR,
@@ -58,9 +66,10 @@ class TestFairseq(unittest.TestCase):
             "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout)
         )
 
+    @unittest.skipIf(SKIP_TESTS, "Fairseq not installed")
     def test_generation(self):
         stdout, valid, test = _mock_train(
-            task='unittest:NocandidateTeacher',
+            task='integration_tests:NocandidateTeacher',
             model='fairseq',
             arch='lstm_wiseman_iwslt_de_en',
             lr=LR,
