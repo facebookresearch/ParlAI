@@ -7,6 +7,7 @@
 import unittest
 from parlai.core.agents import Agent
 from parlai.core.torch_agent import TorchAgent, Output
+import torch
 
 
 class MockDict(Agent):
