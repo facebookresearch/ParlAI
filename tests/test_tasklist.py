@@ -14,7 +14,7 @@ class TestInit(unittest.TestCase):
     def test_tasklist(self):
         from parlai.tasks.task_list import task_list
         from parlai.core.params import ParlaiParser
-        opt = ParlaiParser().parse_args()
+        opt = ParlaiParser().parse_args(print_args=False)
 
         a = set((t['task'].split(':')[0] for t in task_list))
 
