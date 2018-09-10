@@ -371,11 +371,15 @@ class TorchAgent(Agent):
                   ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
 
     def _add_input_dropout(self, batch):
-        unk_tok_textvec = torch.Tensor(size=batch.text_vec.size()).fill_(self.dict[self.dict.unk_token]).to(batch.text_vec.device).long()
-        probs = torch.Tensor(size=batch.text_vec.size()).uniform_(0, 1).to(batch.text_vec.device)
+        unk_tok_textvec = torch.Tensor(
+            size=batch.text_vec.size()).fill_(
+                self.dict[self.dict.unk_token]).to(batch.text_vec.device).long()
+        probs = torch.Tensor(
+            size=batch.text_vec.size()).uniform_(0, 1).to(batch.text_vec.device)
         for i in range(batch.text_vec.size(0)):
             probs[i][batch.text_lengths[i]:] = 0
-        dropped_input = torch.where(probs > (1-self.input_dropout), unk_tok_textvec, batch.text_vec)
+        dropped_input = torch.where(
+            probs > (1 - self.input_dropout), unk_tok_textvec, batch.text_vec)
         return dropped_input
 
     def share(self):
