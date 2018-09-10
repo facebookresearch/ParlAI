@@ -17,7 +17,8 @@ task_config['hit_title'] = 'Play a character and chat!'
 On the Amazon Mechanical Turk web site, the HIT description appears in the expanded
 view of search results, and in the HIT and assignment screens.
 """
-task_config['hit_description'] = 'You will chat to another user while adopting a specific persona and then evaluate that user.'
+task_config['hit_description'] = 'You will chat to another user while adopting a \
+        specific persona and then evaluate that user.'
 
 
 """One or more words or phrases that describe the HIT, separated by commas.
@@ -30,17 +31,22 @@ task_config['hit_keywords'] = 'chat,dialog'
 and on the left side of the chat page. Supports HTML formatting.
 """
 task_config['task_description'] = \
-"""
+    """
 <br>
 <b><h4>Task Description</h4></b>
 <br>
-(You can keep accepting new HITs after you finish your current one, so keep working on it if you like the task!)
+(You can keep accepting new HITs after you finish your current one, so keep working \
+        on it if you like the task!)
 <br>
-<b>In this task you will chitchat with another user playing the part of a given character.</b>
-For example, your given character could be: <br><br> I am a vegetarian. I like swimming. My father used to work for Ford. My favorite band is Maroon5. I got a new job last month, which is about advertising design.
+<b>In this task you will chitchat with another user playing the part of a given \
+        character.</b>
+For example, your given character could be: <br><br> I am a vegetarian. I like \
+        swimming. My father used to work for Ford. My favorite band is Maroon5.\
+        I got a new job last month, which is about advertising design.
 <br>
 <br>
-Chat with the other user naturally and <b><span style="color:blue">try to get to know each other, i.e.
+Chat with the other user naturally and <b><span style="color:blue">try to get to \
+        know each other, i.e.
 both ask questions and answer questions of your chat partner
 at the same time sticking to your own characters<span style="color:blue"></b>.
 <br>
@@ -49,17 +55,20 @@ at the same time sticking to your own characters<span style="color:blue"></b>.
 <b>Send short messages, <span style="color:red">max 20 words</span>.</b>
 <b>Do not trivially copy the character descriptions into the message.</b>
 <br>
-<b> - If the partner answers poorly, change topic.</b> Do not linger on that during the dialog. Instead, mention that in the reason during the evaluation part.
+<b> - If the partner answers poorly, change topic.</b> Do not linger on that during \
+        the dialog. Instead, mention that in the reason during the evaluation part.
 <br>
 After a given number of turns, you will be asked to <b>briefly</b> rate your partner.
 <br>
 There is a <b>4 min</b> time limit for each turn.
 <br>
-You can do <b>max 5 hits</b> per each group of this task. You can get a bonus if your scores will be meaningful and dialogues will be interesting to follow.
+You can do <b>max 5 hits</b> per each group of this task. You can get a bonus if your \
+        scores will be meaningful and dialogues will be interesting to follow.
 <br>
 - Do not reference the task or MTurk itself during the conversation.
 <br>
-<b><span style="color:red">- No racism, sexism or otherwise offensive comments, or the submission will be rejected and we will report to Amazon.</b></span>
+<b><span style="color:red">- No racism, sexism or otherwise offensive comments, or \
+        the submission will be rejected and we will report to Amazon.</b></span>
 <br>
 <br>
 Note: the user you are chatting with may be a human or a bot.

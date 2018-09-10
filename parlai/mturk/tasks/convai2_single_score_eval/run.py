@@ -6,13 +6,10 @@
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.mturk.core.mturk_manager import MTurkManager
-from worlds import \
-    Convai2GeneralEval
-from parlai.mturk.tasks.convai2_model_eval.worlds import PersonaProfileWorld, PersonasGenerator
+from worlds import Convai2GeneralEval
+from parlai.mturk.tasks.convai2_model_eval.worlds import PersonaProfileWorld, \
+    PersonasGenerator
 from task_config import task_config
-import random
-#from black_list import bad_workers_list
-import time
 import gc
 import datetime
 import config
@@ -34,7 +31,7 @@ MASTER_QUALIF_SDBOX = {
     'Comparator': 'Exists',
     # 'LocaleValues': [{'Country': 'US'}],
     'RequiredToPreview': True
-    }
+}
 
 
 def main():
@@ -65,19 +62,21 @@ def main():
     argparser.add_argument('-rt', '--range-turn', default='5,6',
                            help='sample range of number of turns')
     argparser.add_argument('--auto-approve-delay', type=int,
-                           default=3600*24*1, help='how long to wait for  \
-                           auto approval')
-    argparser.add_argument('--only-masters', type='bool', default=True, help='Set to true to use only master turks for this test eval')
-    argparser.add_argument('--model-config', type=str, required=True, help='Filename for file containing dict with model opt')
-    argparser.add_argument('--mturk-log', type=str, default='logs/{}.log'.format(start_time))
-    
+                           default=3600 * 24 * 1,
+                           help='how long to wait for auto approval')
+    argparser.add_argument('--only-masters', type='bool', default=True,
+                           help='Set to true to use only master turks for '
+                                'this test eval')
+    argparser.add_argument('--model-config', type=str, required=True,
+                           help='Filename for file containing dict with model opt')
+    argparser.add_argument('--mturk-log', type=str,
+                           default='logs/{}.log'.format(start_time))
 
     def inject_override(opt, override_dict):
         opt['override'] = override_dict
         opt['model'] = override_dict['model']
         opt['model_file'] = override_dict['model_file']
         opt['log_level'] = 50
-
 
     def get_logger(opt):
         logger = logging.getLogger()
@@ -98,7 +97,6 @@ def main():
 
         return logger
 
-
     start_opt = argparser.parse_args()
 
     inject_override(start_opt, getattr(config, start_opt['model_config']))
@@ -107,10 +105,11 @@ def main():
     shared_bot_params = bot.share()
 
     get_logger(bot.opt)
-    
+
     folder_name = '{}-{}'.format(start_opt['model_config'], start_time)
 
-    start_opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
+    start_opt['task'] = os.path.basename(
+        os.path.dirname(os.path.abspath(__file__)))
     if 'data_path' not in start_opt:
         start_opt['data_path'] = os.getcwd() + '/data/' + folder_name
     start_opt.update(task_config)
@@ -136,7 +135,7 @@ def main():
                 agent_qualifications.append(MASTER_QUALIF)
         mturk_manager.create_hits(qualifications=agent_qualifications)
 
-        #if not opt['is_sandbox']:
+        # if not opt['is_sandbox']:
         #    # ADD BLOCKED WORKERS HERE
         #    blocked_worker_list = bad_workers_list
         #    #blocked_worker_list = []
@@ -167,7 +166,8 @@ def main():
             world = Convai2GeneralEval(
                 opt=start_opt,
                 agents=[agents],
-                range_turn=[int(s) for s in start_opt['range_turn'].split(',')],
+                range_turn=[int(s)
+                            for s in start_opt['range_turn'].split(',')],
                 max_turn=start_opt['max_turns'],
                 max_resp_time=start_opt['max_resp_time'],
                 model_agent_opt=shared_bot_params,

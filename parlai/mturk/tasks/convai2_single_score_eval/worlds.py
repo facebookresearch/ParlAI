@@ -4,18 +4,13 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.agents import create_agent_from_shared
-from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
-from parlai.mturk.tasks.personachat.personachat_chat.extract_and_save_personas \
-    import main as main_extract
 from parlai.core.worlds import validate, MultiAgentDialogWorld
-from parlai.mturk.tasks.convai2_model_eval.worlds import PersonasGenerator, PersonaProfileWorld
 from joblib import Parallel, delayed
 import numpy as np
 import time
 import os
 import pickle
-import random
 import gc
 import logging
 
@@ -65,12 +60,17 @@ COPIED_CHARACTER_MSG = 'We found that you <b><span style="color:red">trivially \
 GMARK_MSG = 'Now the conversation is completed! \n Please evaluate the \
         conversation by <b>clicking a button with score from [1, 2, 3, 4, 5]</b> \
         below, <span style="color:blue">this score should reflect how you liked \
-        this conversation (1 means you did not like it at all, and 5 means it was an engaging conversation).'
-GOOD_ROUND_MSG = 'Now please select every interaction pair which you consider as a <span style="color:blue"><b>good</b></span>, <b>natural</b> pair of messages. \
+        this conversation (1 means you did not like it at all, and 5 means it was  \
+        an engaging conversation).'
+GOOD_ROUND_MSG = 'Now please select every interaction pair which you consider as a <sp\
+        an style="color:blue"><b>good</b></span>, <b>natural</b> pair of messages. \
         Do not compare them between each other, try to use your life experience now.'
 
-BAD_ROUND_MSG = 'Now please select every interaction pair which is <span style="color:blue"><b>bad</b></span>, some examples of bad partner response are:\
-        <b>not</b> answering <b>your</b> question, answering <b>different</b> question, <b>random</b> content, <b>contradicts</b> previous statements etc.'
+BAD_ROUND_MSG = 'Now please select every interaction pair which is <span style="col\
+        or:blue"><b>bad</b></span>, some examples of bad partner response are: <b>n\
+        ot</b> answering <b>your</b> question, answering <b>different</b> question,\
+        <b>random</b> content, <b>contradicts</b> previous statements etc.'
+
 
 class Convai2GeneralEval(MultiAgentDialogWorld):
     def __init__(self, opt, agents=None, shared=None,
@@ -121,7 +121,6 @@ class Convai2GeneralEval(MultiAgentDialogWorld):
         ])
         logging.info('bot persona: {}'.format(self.model_persona_text))
 
-
     def parley(self):
         self.turn_idx += 1
 
@@ -139,8 +138,8 @@ class Convai2GeneralEval(MultiAgentDialogWorld):
                                     '{}\n</span></b>'.format(s.strip())
                 control_msg['persona_text'] = persona_text
                 control_msg['text'] = self.get_instruction(
-                                            tag='start',
-                                            agent_id=agent.id)
+                    tag='start',
+                    agent_id=agent.id)
                 agent.observe(validate(control_msg))
                 if idx == 0:
                     time.sleep(3)
@@ -168,7 +167,7 @@ class Convai2GeneralEval(MultiAgentDialogWorld):
                 _text = ''
                 for s in agent.model_persona[1]['persona']:
                     _text += '<b><span style="color:blue">' + s.strip() + \
-                            '</span></b><br>'
+                        '</span></b><br>'
                 control_msg['text'] = 'The model persona is: \n' + _text
                 agent.observe(control_msg)
                 return
@@ -206,9 +205,10 @@ class Convai2GeneralEval(MultiAgentDialogWorld):
                         control_msg['text'] = GOOD_ROUND_MSG
                         control_msg['good_rounds'] = True
                         control_msg['rounds'] = '</ROUND>'.join([
-                            '\n'.join([self.dialog[i][1], self.dialog[i + 1][1]])
+                            '\n'.join(
+                                [self.dialog[i][1], self.dialog[i + 1][1]])
                             for i in range(0, len(self.dialog), 2)
-                            ])
+                        ])
                         agent.observe(validate(control_msg))
                         acts[idx] = agent.act(timeout=self.max_resp_time)
                         if 'text' in acts[idx]:
@@ -219,9 +219,10 @@ class Convai2GeneralEval(MultiAgentDialogWorld):
                         control_msg['text'] = BAD_ROUND_MSG
                         control_msg['bad_rounds'] = True
                         control_msg['rounds'] = '</ROUND>'.join([
-                            '\n'.join([self.dialog[i][1], self.dialog[i + 1][1]])
+                            '\n'.join(
+                                [self.dialog[i][1], self.dialog[i + 1][1]])
                             for i in range(0, len(self.dialog), 2)
-                            ])
+                        ])
                         agent.observe(validate(control_msg))
                         acts[idx] = agent.act(timeout=self.max_resp_time)
                         if 'text' in acts[idx]:
@@ -265,7 +266,6 @@ class Convai2GeneralEval(MultiAgentDialogWorld):
         if 'reranked_samples' in acts[idx]:
             self.reranked_cands.append((idx, acts[idx]['reranked_samples']))
         agent.observe(acts[idx])
-
 
     def episode_done(self):
         return self.chat_done
@@ -357,8 +357,8 @@ class Convai2GeneralEval(MultiAgentDialogWorld):
                 for r_w in regular_words:
                     if r_w in per_parse:
                         per_parse.remove(r_w)
-                per_subseq = [' '.join(per_parse[i:i+len(per_parse) -
-                                       tolerance]) for i in range(tolerance+1)]
+                per_subseq = [' '.join(per_parse[i:i + len(per_parse) - tolerance])
+                              for i in range(tolerance + 1)]
                 for pp in per_subseq:
                     if pp in ['', ' ', '  ', '   ']:
                         per_subseq.remove(pp)
@@ -395,7 +395,8 @@ class Convai2GeneralEval(MultiAgentDialogWorld):
         ) + 1
 
     def check_timeout(self, act):
-        if act['text'] == '[TIMEOUT]' or act['text'] == '[RETURNED]' or act['text'] == '[DISCONNECT]':
+        if ((act['text'] == '[TIMEOUT]') or
+                (act['text'] == '[RETURNED]') or (act['text'] == '[DISCONNECT]')):
             control_msg = {'episode_done': True}
             control_msg['id'] = 'SYSTEM'
             control_msg['text'] = self.get_instruction(
