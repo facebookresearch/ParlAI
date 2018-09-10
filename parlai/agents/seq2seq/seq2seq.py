@@ -400,7 +400,7 @@ class Seq2seqAgent(TorchAgent):
     def greedy_search(self, batch):
         cand_params = self._build_cands(batch)
         out = self.model(batch.text_vec, ys=None, cand_params=cand_params)
-        return out
+        return out, cand_params
 
     @staticmethod
     def beam_search(model, batch, beam_size, start=1, end=2,
@@ -514,12 +514,10 @@ class Seq2seqAgent(TorchAgent):
         """Evaluate a single batch of examples."""
         self.model.eval()
         cand_scores = None
-        cand_params = self._build_cands(batch)
         if self.beam_size == 1:
-            out = self.model(batch.text_vec, ys=None, cand_params=cand_params)
+            out, cand_params = self.greedy_search(batch)
             scores, cand_scores = out[0], out[1]
             _, preds = scores.max(2)
-            preds = preds.cpu()
         elif self.beam_size > 1:
             out = Seq2seqAgent.beam_search(
                 self.model,
