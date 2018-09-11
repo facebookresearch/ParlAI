@@ -247,6 +247,7 @@ class FairseqAgent(TorchAgent):
         # Check subargs for generation, optimizers, criterions, archs, etc
         options.add_generation_args(argparser)
         options.add_optimization_args(argparser)
+        options.add_checkpoint_args(argparser)
 
         # restore any user set defaults that fairseq possibly overrode
         argparser.set_defaults(**old_defaults)
