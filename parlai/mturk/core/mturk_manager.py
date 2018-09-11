@@ -13,7 +13,6 @@ import time
 import uuid
 import errno
 import requests
-import json
 
 from parlai.mturk.core.agents import AssignState
 from parlai.mturk.core.socket_manager import Packet, SocketManager
