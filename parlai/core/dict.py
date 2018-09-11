@@ -15,6 +15,7 @@ import numpy as np
 import os
 import pickle
 import re
+import functools
 
 try:
     from subword_nmt import learn_bpe, apply_bpe
@@ -101,6 +102,7 @@ class DictionaryAgent(Agent):
     default_tok = 're'
     default_lower = False
     default_textfields = 'text,labels'
+    default_cachesize = int(2 ** 20) # slightly faster if a power of 2
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -160,6 +162,12 @@ class DictionaryAgent(Agent):
             help='Observation fields which dictionary learns vocabulary from. '
                  'Tasks with additional fields may add to this list to handle '
                  'any extra vocabulary.')
+        dictionary.add_argument(
+            '--dict-cachesize', default=DictionaryAgent.default_cachesize, type=int,
+            help='Cache size for converting strings to tensors. Using this may '
+                 'massively improve throughput if buffer is large, but you may need '
+                 'lots of ram. Works best if a power of 2.')
+
         return dictionary
 
     def __init__(self, opt, shared=None):
@@ -226,6 +234,13 @@ class DictionaryAgent(Agent):
                 # don't check isfile first, should fail if file not found
                 self.load(opt['dict_initpath'])
 
+        if opt.get('dict_cachesize', 0):
+            # Equivalent to using the @lru_cache decorator at runtime
+            cs = opt['dict_cachesize']
+            self.txt2vec = functools.lru_cache(cs, True)(self.txt2vec)
+            # Ensure future in-place modifications are safe. See doc string.
+            self.txt2vec = _list_cache_safety(self.txt2vec)
+
         # initialize tokenizers
         if self.tokenizer == 'nltk':
             try:
@@ -280,6 +295,15 @@ class DictionaryAgent(Agent):
             index = len(self.tok2ind)
             self.tok2ind[word] = index
             self.ind2tok[index] = word
+            # since we have a new token, txt2vec could theoretically change
+            self._clear_cache()
+
+    def _clear_cache(self):
+        """Clear the vectorizer cache if there is one.
+
+        Call this if you ever touch the list of tokens."""
+        if hasattr(self.txt2vec, 'cache_clear'):
+            self.txt2vec.cache_clear()
 
     def __contains__(self, key):
         """If key is an int, returns whether the key is in the indices.
@@ -422,6 +446,12 @@ class DictionaryAgent(Agent):
             self.add_token(token)
             self.freq[token] += 1
 
+    def remove_token(self, token):
+        del self.freq[token]
+        idx = self.tok2ind.pop(token)
+        del self.ind2tok[idx]
+        self._clear_cache()
+
     def remove_tail(self, min_freq):
         """Remove elements below the frequency cutoff from the dictionary."""
         to_remove = []
@@ -431,9 +461,7 @@ class DictionaryAgent(Agent):
                 to_remove.append(token)
 
         for token in to_remove:
-            del self.freq[token]
-            idx = self.tok2ind.pop(token)
-            del self.ind2tok[idx]
+            self.remove_token(token)
 
     def _remove_non_bpe(self):
         """Set the dictionary vocab to the bpe vocab, merging counts."""
@@ -446,9 +474,7 @@ class DictionaryAgent(Agent):
                     to_add.append((t, freq))
                 to_remove.append(token)
         for token in to_remove:
-            del self.freq[token]
-            idx = self.tok2ind.pop(token)
-            del self.ind2tok[idx]
+            self.remove_token(token)
         for token, freq in to_add:
             self.add_token(token)
             self.freq[token] += freq
@@ -457,10 +483,7 @@ class DictionaryAgent(Agent):
         """Trims the dictionary to the maximum number of tokens."""
         if maxtokens >= 0 and len(self.tok2ind) > maxtokens:
             for k in range(maxtokens, len(self.ind2tok)):
-                v = self.ind2tok[k]
-                del self.ind2tok[k]
-                del self.tok2ind[v]
-                del self.freq[v]
+                self.remove_token(self.ind2tok[k])
 
     def load(self, filename):
         """Load pre-existing dictionary in 'token[<TAB>count]' format.
@@ -617,6 +640,35 @@ class DictionaryAgent(Agent):
     def __str__(self):
         """Return string representation of frequencies in dictionary."""
         return str(self.freq)
+
+
+def _list_cache_safety(fn):
+    """Ensure all returned lists from a function are unique.
+
+    This is useful when a function which returns lists is wrapped in a chaching
+    mechanism. If this is done naively, users may modify the list in-place,
+    causing poisoning to the cache. This method ensures safety against this
+    behavior by calling the cache, and then making a copy of the returned list.
+
+    :param fn: a function wrapped in a @lru_cache decorator
+    :return: a safe wrapper
+    """
+    # Make sure this is what we expect
+    if not isinstance(fn, functools._lru_cache_wrapper):
+        raise TypeError("Can only wrap lru_cache")
+
+    # define the wrapper
+    def wrapped(*args, **kwargs):
+        # call the fn and copy if it's a mutable list
+        retval = fn(*args, **kwargs)
+        if isinstance(retval, list):
+            retval = retval.copy()
+        return retval
+
+    # be kind about passing along lru_cache's stuff
+    setattr(wrapped, 'cache_clear', fn.cache_clear)
+    setattr(wrapped, 'cache_info', fn.cache_info)
+    return wrapped
 
 
 class _BPEHelper(object):
