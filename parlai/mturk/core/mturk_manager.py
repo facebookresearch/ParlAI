@@ -198,9 +198,9 @@ class MTurkManager():
             return permissions['allowed']
 
     def _upload_worker_data(self):
-        '''Uploads worker data acceptance and completion rates to the parlai
+        """Uploads worker data acceptance and completion rates to the parlai
         server
-        '''
+        """
         worker_data = self.worker_manager.get_worker_data_package()
         data = {'worker_data': worker_data}
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
