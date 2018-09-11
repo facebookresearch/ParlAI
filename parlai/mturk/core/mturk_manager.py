@@ -43,8 +43,9 @@ SNS_ASSIGN_RETURNED = 'AssignmentReturned'
 
 PARLAI_MTURK_NOTICE_URL = 'http://www.parl.ai/mturk/mturk_notice/'
 PARLAI_MTURK_UPLOAD_URL = 'http://www.parl.ai/mturk/mturk_stats/'
+PARLAI_CRED_DIR = os.path.expanduser('~/.parlai')
 PARLAI_MTURK_LOG_PERMISSION_FILE = \
-    os.path.expanduser('~/.parlai/mturk_log_permission.pickle')
+    os.path.join(PARLAI_CRED_DIR, 'mturk_log_permission.pickle')
 TWO_WEEKS = 60 * 60 * 24 * 7 * 2
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
@@ -163,6 +164,8 @@ class MTurkManager():
     def _logging_permission_check(self):
         if self.is_test:
             return False
+        if not os.path.exists(PARLAI_CRED_DIR):
+            os.makedirs(PARLAI_CRED_DIR)
         if os.path.exists(PARLAI_MTURK_LOG_PERMISSION_FILE):
             with open(PARLAI_MTURK_LOG_PERMISSION_FILE, 'rb') as perm_file:
                 permissions = pickle.load(perm_file)
