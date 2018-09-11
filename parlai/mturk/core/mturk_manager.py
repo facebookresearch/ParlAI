@@ -12,6 +12,7 @@ import threading
 import time
 import uuid
 import errno
+import requests
 
 from parlai.mturk.core.agents import AssignState
 from parlai.mturk.core.socket_manager import Packet, SocketManager
@@ -40,6 +41,11 @@ SNS_ASSIGN_ABANDONDED = 'AssignmentAbandoned'
 SNS_ASSIGN_SUBMITTED = 'AssignmentSubmitted'
 SNS_ASSIGN_RETURNED = 'AssignmentReturned'
 
+PARLAI_MTURK_NOTICE_URL = 'http://www.parl.ai/mturk/mturk_notice/'
+PARLAI_MTURK_UPLOAD_URL = 'http://www.parl.ai/mturk/mturk_stats/'
+PARLAI_MTURK_LOG_PERMISSION_FILE = \
+    os.path.expanduser('~/.parlai/mturk_log_permission.pickle')
+TWO_WEEKS = 60 * 60 * 24 * 7 * 2
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -121,6 +127,7 @@ class MTurkManager():
         self.is_shutdown = False
         self.use_db = use_db  # TODO enable always DB integration is complete
         self.db_logger = None
+        self.logging_permitted = False
         self.task_state = self.STATE_CREATED
 
     # Helpers and internal manager methods #
@@ -152,6 +159,51 @@ class MTurkManager():
         """Initialize logging settings from the opt"""
         shared_utils.set_is_debug(self.opt['is_debug'])
         shared_utils.set_log_level(self.opt['log_level'])
+
+    def _logging_permission_check(self):
+        if self.is_test:
+            return False
+        if os.path.exists(PARLAI_MTURK_LOG_PERMISSION_FILE):
+            with open(PARLAI_MTURK_LOG_PERMISSION_FILE, 'rb') as perm_file:
+                permissions = pickle.load(perm_file)
+                if permissions['allowed'] is True:
+                    return True
+                elif time.time() - permissions['asked_time'] < TWO_WEEKS:
+                    return False
+            # Snooze expired
+            os.remove(PARLAI_MTURK_LOG_PERMISSION_FILE)
+        print(
+            'Would you like to help improve ParlAI-MTurk by providing some '
+            'metrics? We would like to record acceptance, completion, and '
+            'disconnect rates by worker. These metrics let us track the '
+            'health of the platform. If you accept we\'ll collect this data '
+            'on all of your future runs. We\'d ask before collecting anything '
+            'else, but currently we have no plans to. You can decline to '
+            'snooze this request for 2 weeks.')
+        selected = ''
+        while selected not in ['y', 'Y', 'n', 'N']:
+            selected = input('Share worker rates? (y/n): ')
+            if selected not in ['y', 'Y', 'n', 'N']:
+                print('Must type one of (Y/y/N/n)')
+        if selected in ['y', 'Y']:
+            print('Thanks for helping us make the platform better!')
+        permissions = {
+            'allowed': selected in ['y', 'Y'],
+            'asked_time': time.time()
+        }
+
+        with open(PARLAI_MTURK_LOG_PERMISSION_FILE, 'wb+') as perm_file:
+            pickle.dump(permissions, perm_file)
+            return permissions['allowed']
+
+    def _upload_worker_data(self):
+        """Uploads worker data acceptance and completion rates to the parlai
+        server
+        """
+        worker_data = self.worker_manager.get_worker_data_package()
+        data = {'worker_data': worker_data}
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        requests.post(PARLAI_MTURK_UPLOAD_URL, json=data, headers=headers)
 
     def _maintain_hit_status(self):
         def update_status():
@@ -767,6 +819,23 @@ class MTurkManager():
             if (check != confirm_string and ('$' + check) != confirm_string):
                 raise SystemExit('Cancelling')
 
+        # Check to see if there are any additional notices on the parlai site
+        if not self.is_test:
+            shared_utils.print_and_log(
+                logging.INFO,
+                'Querying the parlai website for possible notices...',
+                should_print=True)
+            endpoint = 'sandbox' if self.is_sandbox else 'live'
+            resp = requests.post(PARLAI_MTURK_NOTICE_URL + endpoint)
+            warnings = resp.json()
+            for warn in warnings:
+                print('Notice: ' + warn)
+                accept = input('Continue? (Y/n): ')
+                if accept == 'n':
+                    raise SystemExit('Additional notice was rejected.')
+
+        self.logging_permitted = self._logging_permission_check()
+
         shared_utils.print_and_log(logging.INFO, 'Setting up MTurk server...',
                                    should_print=True)
         self.is_unique = self.opt['unique_worker'] or \
@@ -1060,6 +1129,9 @@ class MTurkManager():
                                                  self.is_sandbox)
             if self.socket_manager is not None:
                 self.socket_manager.shutdown()
+            if self.logging_permitted and not self.is_sandbox and \
+                    not self.is_test:
+                self._upload_worker_data()
             if self.worker_manager is not None:
                 self.worker_manager.shutdown()
 
