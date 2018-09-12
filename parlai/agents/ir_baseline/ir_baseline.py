@@ -103,14 +103,16 @@ class IrBaselineAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(parser):
-        DictionaryAgent.add_cmdline_args(parser)
+        parser = parser.add_argument_group('IrBaseline Arguments')
         parser.add_argument(
             '-lp', '--length_penalty', type=float, default=0.5,
             help='length penalty for responses')
         parser.add_argument(
             '-hsz', '--history_size', type=int, default=1,
             help='number of utterances from the dialogue history to take use as the query')
-
+        parser.add_argument(
+            '--label_candidates_file', type=str, default=None,
+            help='file of candidate responses to choose from')
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
@@ -120,7 +122,10 @@ class IrBaselineAgent(Agent):
         self.opt = opt
         self.history = []
         self.episodeDone = True
-
+        if opt.get('label_candidates_file'):
+            f = open(opt.get('label_candidates_file'))
+            self.label_candidates = f.read().split('\n')
+            
     def reset(self):
         self.observation = None
         self.history = []
@@ -139,20 +144,24 @@ class IrBaselineAgent(Agent):
     def act(self):
         if self.opt.get('datatype', '').startswith('train'):
             self.dictionary.act()
-
+        
         obs = self.observation
         reply = {}
         reply['id'] = self.getID()
         
         # Rank candidates
+        cands = None
         if 'label_candidates' in obs and len(obs['label_candidates']) > 0:
-            # text = obs['text']
+            cands = obs['label_candidates']
+        if hasattr(self, 'label_candidates'):
+            cands = self.label_candidates
+        if cands:
             text = ' '.join(
                 self.history[max(0, len(self.history) -
                                  self.opt.get('history_size', 1)):len(self.history)])
             rep = self.build_query_representation(text)
             reply['text_candidates'] = (
-                rank_candidates(rep, obs['label_candidates'],
+                rank_candidates(rep, cands,
                                 self.length_penalty, self.dictionary))
             reply['text'] = reply['text_candidates'][0]
         else:
