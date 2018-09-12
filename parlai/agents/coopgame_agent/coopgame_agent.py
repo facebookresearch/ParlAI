@@ -1,6 +1,9 @@
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
+
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from .modules import ImgNet, ListenNet, StateNet, SpeakNet, PredictNet
@@ -189,9 +192,9 @@ class QuestionerAgent(CooperativeGameAgent):
         DictionaryAgent.add_cmdline_args(argparser)
         group = argparser.add_argument_group('Questioner Agent Arguments')
         group.add_argument('--q-in-vocab', default=13, type=int,
-                               help='Input vocabulary for questioner. Usually includes total '
-                                    'distinct words spoken by answerer, questioner itself, '
-                                    'and words by which the goal is described.')
+                           help='Input vocabulary for questioner. Usually includes total '
+                                'distinct words spoken by answerer, questioner itself, '
+                                'and words by which the goal is described.')
         group.add_argument('--q-embed-size', default=20, type=int,
                            help='Size of word embeddings for questioner')
         group.add_argument('--q-state-size', default=100, type=int,
@@ -245,8 +248,8 @@ class AnswererAgent(CooperativeGameAgent):
         group = argparser.add_argument_group('Questioner Agent Arguments')
         group.add_argument('--a-in-vocab', default=13, type=int,
                            help='Input vocabulary for questioner. Usually includes total '
-                                 'distinct words spoken by answerer, questioner itself, '
-                                 'and words by which the goal is described.')
+                                'distinct words spoken by answerer, questioner itself, '
+                                'and words by which the goal is described.')
         group.add_argument('--a-embed-size', default=20, type=int,
                            help='Size of word embeddings for questioner')
         group.add_argument('--a-state-size', default=100, type=int,

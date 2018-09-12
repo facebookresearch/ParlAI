@@ -7,6 +7,7 @@
 import argparse
 import parlai.mturk.core.mturk_utils as mturk_utils
 
+
 def main():
     """This script should be used to compensate workers that have not recieved
     proper payment for the completion of tasks due to issues on our end.
@@ -59,6 +60,7 @@ def main():
             Reason=reason
         )
         print(resp)
+
 
 if __name__ == '__main__':
     main()

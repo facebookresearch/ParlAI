@@ -41,6 +41,7 @@ ParlAI is a one-stop-shop for dialog research.
 
    observations
    agents
+   torch_agent
    build_data
    dict
    metrics

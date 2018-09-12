@@ -45,7 +45,7 @@ class DefaultTeacher(DialogTeacher):
                     ('You have the following friends:\n' +
                     '\n'.join(', '.join('{}={}'.format(k, v)
                                         for k, v in person.items())
-                                        for person in ex['scenario']['kbs'][int(curr_agent)]) +
+                              for person in ex['scenario']['kbs'][int(curr_agent)]) +
                     '\nTry to find out which friend the other person has in common.')
                 ]
                 curr = ''

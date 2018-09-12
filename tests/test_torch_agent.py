@@ -6,7 +6,13 @@
 
 import unittest
 from parlai.core.agents import Agent
-from parlai.core.torch_agent import TorchAgent, Output
+
+SKIP_TESTS = False
+try:
+    from parlai.core.torch_agent import TorchAgent, Output
+    import torch
+except ImportError:
+    SKIP_TESTS = True
 
 
 class MockDict(Agent):
@@ -80,6 +86,7 @@ def get_agent(**kwargs):
     opt = parser.parse_args(print_args=False)
     return TorchAgent(opt)
 
+
 class TestTorchAgent(unittest.TestCase):
     """Basic tests on the util functions in TorchAgent."""
 
@@ -94,6 +101,7 @@ class TestTorchAgent(unittest.TestCase):
         shared = agent.share()
         self.assertTrue('dict' in shared)
 
+    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test__vectorize_text(self):
         """Test _vectorize_text and its different options."""
         agent = get_agent()
@@ -186,6 +194,7 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(len(vec), 3)
         self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1, 2])
 
+    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test__check_truncate(self):
         """Make sure we are truncating when needed."""
         agent = get_agent()
@@ -197,6 +206,7 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(agent._check_truncate(inp, 1).tolist(), [1])
         self.assertEqual(agent._check_truncate(inp, 0).tolist(), [])
 
+    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_vectorize(self):
         """Test the vectorization of observations.
 
@@ -293,6 +303,7 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual([m.tolist() for m in out['memory_vecs']],
                          [[1], [1], [1]])
 
+    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batchify(self):
         """Make sure the batchify function sets up the right fields."""
         agent = get_agent(rank_candidates=True)
@@ -442,6 +453,7 @@ class TestTorchAgent(unittest.TestCase):
         for i, cs in enumerate(batch.candidate_vecs):
             self.assertEqual(len(cs), len(obs_cands[i]['label_candidates']))
 
+    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_match_batch(self):
         """Make sure predictions are correctly aligned when available."""
         agent = get_agent()
@@ -519,12 +531,12 @@ class TestTorchAgent(unittest.TestCase):
             "Attack ships on fire off the shoulder of Orion.\n"
             "I watched C-beams glitter in the dark near the Tannhauser gate.\n"
             "All those moments will be lost in time, like tears in rain.")
-        prefix = 'PRE '
+        prefix = 'PRE'
         out = agent._add_person_tokens(text, prefix, add_after_newln=False)
-        self.assertEqual(out, prefix + text)
+        self.assertEqual(out, prefix + ' ' + text)
         out = agent._add_person_tokens(text, prefix, add_after_newln=True)
         idx = text.rfind('\n') + 1
-        self.assertEqual(out, text[:idx] + prefix + text[idx:])
+        self.assertEqual(out, text[:idx] + prefix + ' ' + text[idx:])
 
     def test_get_dialog_history(self):
         """Test different dialog history settings."""
@@ -537,7 +549,6 @@ class TestTorchAgent(unittest.TestCase):
         out = agent.get_dialog_history(obs.copy())
         self.assertEqual(out['text'], 'I am Groot.')
         self.assertEqual(out['labels'][0], 'I am Groot?')
-        self.assertTrue('text_vec' in out, 'Text should be vectorized.')
 
         # second exchange, no reply
         out = agent.get_dialog_history(obs.copy())
@@ -655,7 +666,7 @@ class TestTorchAgent(unittest.TestCase):
         # older reply
         self.assertEqual(agent.last_reply(), None)
         # now agent should remember what it said
-        agent.observation = { 'episode_done': False }
+        agent.observation = {'episode_done': False}
         self.assertEqual(agent.last_reply(),
                          'It\'s okay! I\'m a leaf on the wind.')
         # now set true observation
@@ -671,6 +682,7 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(agent.last_reply(use_label=False),
                          'It\'s okay! I\'m a leaf on the wind.')
 
+    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_observe(self):
         """Make sure agent stores and returns observation."""
         agent = get_agent()
@@ -686,6 +698,7 @@ class TestTorchAgent(unittest.TestCase):
         # episode was done so shouldn't remember history
         out = agent.observe(obs.copy())
         self.assertEqual(out['text'], 'I\'ll be back.')
+        self.assertTrue('text_vec' in out, 'Text should be vectorized.')
 
         # now try with episode not done
         obs['episode_done'] = False
@@ -698,6 +711,7 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(out['text'],
                          'I\'ll be back.\nI\'m back.\nI\'ll be back.')
 
+    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batch_act(self):
         """Make sure batch act calls the right step."""
         agent = get_agent()
@@ -730,8 +744,4 @@ class TestTorchAgent(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    try:
-        import torch
-        unittest.main()
-    except ImportError as e:
-        print('Skipping TestTorchAgent, no pytorch.')
+    unittest.main()

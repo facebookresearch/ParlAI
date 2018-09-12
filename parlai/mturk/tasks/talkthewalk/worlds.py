@@ -123,7 +123,6 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         self.send_location(self.agents[0])
         self.send_map(self.agents[1])
 
-
     def init_world(self):
         """Initializes a new world for the dialog"""
         # first sample neighborhood
@@ -131,8 +130,8 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         self.neighborhood = self.neighborhoods[neighborhood_ind]
 
         # Sample 2x2 grid in neighborhood
-        self.min_x = random.randint(0, self.boundaries[self.neighborhood][0])*2
-        self.min_y = random.randint(0, self.boundaries[self.neighborhood][1])*2
+        self.min_x = random.randint(0, self.boundaries[self.neighborhood][0]) * 2
+        self.min_y = random.randint(0, self.boundaries[self.neighborhood][1]) * 2
         self.max_x = self.min_x + 3
         self.max_y = self.min_y + 3
 
@@ -151,10 +150,10 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         with open(map_f) as f:
             data = json.load(f)
             for landmark in data:
-                if (landmark['x']*2 >= self.min_x
-                   and landmark['x']*2 <= self.max_x
-                   and landmark['y']*2 >= self.min_y
-                   and landmark['y']*2 <= self.max_y):
+                if (landmark['x'] * 2 >= self.min_x
+                   and landmark['x'] * 2 <= self.max_x
+                   and landmark['y'] * 2 >= self.min_y
+                   and landmark['y'] * 2 <= self.max_y):
                     self.landmarks.append(landmark)
 
         self.send_location(self.agents[0])
@@ -272,7 +271,7 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
                             if last_grid[i][j] > max_prob:
                                 max_i_j = (i, j)
                                 max_prob = last_grid[i][j]
-                    if max_i_j != (location[0]-min_x, location[1]-min_y):
+                    if max_i_j != (location[0] - min_x, location[1] - min_y):
                         return False, -1
                     high_prob = any(any(k >= 0.50 for k in j)
                                     for j in last_grid)
@@ -360,8 +359,8 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
     def neighbor_coords(self, cell, max_size):
         x, y = cell
         X = Y = max_size
-        return [(x2, y2) for x2 in range(x-1, x+2)
-                for y2 in range(y-1, y+2)
+        return [(x2, y2) for x2 in range(x - 1, x + 2)
+                for y2 in range(y - 1, y + 2)
                 if (-1 < x < X and
                 -1 < y < Y and
                 (x != x2 or y != y2) and
@@ -369,21 +368,21 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
                 (0 <= y2 < Y))]
 
     def fill_initial(self, new_g, old_g, size):
-        for i in (0, size-1):
+        for i in (0, size - 1):
             for j in (range(size)):
                 new_g[i, j] = 0
-        for j in (0, size-1):
+        for j in (0, size - 1):
             for i in range(size):
                 new_g[i, j] = 0
         for i in range(1, size, 2):
             for j in range(1, size, 2):
-                new_g[i, j] = old_g[(i-1)//2, (j-1)//2]
-        for i in range(1, size-1, 2):
-            for j in range(2, size-1, 2):
-                new_g[i, j] = (new_g[i, j-1] + new_g[i, j+1])/2
-        for i in range(2, size-1, 2):
-            for j in range(1, size-1, 2):
-                new_g[i, j] = (new_g[i-1, j] + new_g[i+1, j])/2
+                new_g[i, j] = old_g[(i - 1) // 2, (j - 1) // 2]
+        for i in range(1, size - 1, 2):
+            for j in range(2, size - 1, 2):
+                new_g[i, j] = (new_g[i, j - 1] + new_g[i, j + 1]) / 2
+        for i in range(2, size - 1, 2):
+            for j in range(1, size - 1, 2):
+                new_g[i, j] = (new_g[i - 1, j] + new_g[i + 1, j]) / 2
         return new_g
 
     def fill_neighbors(self, grid, size):
@@ -392,7 +391,7 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
                 if grid[i, j] == -1:
                     neighbors = self.neighbor_coords((i, j), size)
                     neighbor_sum = sum((grid[k, l] for k, l in neighbors))
-                    grid[i, j] = neighbor_sum/len(neighbors)
+                    grid[i, j] = neighbor_sum / len(neighbors)
         return grid
 
     def parley(self):
@@ -456,8 +455,8 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
                                'target location. You have {} attempt(s) left, '
                                'and you\'ll now receive a bonus of {}c upon '
                                'completion.'.format(
-                                              str(3-self.num_evaluations),
-                                              str(40 - self.num_evaluations*15)
+                                              str(3 - self.num_evaluations),
+                                              str(40 - self.num_evaluations * 15)
                                              )}
                 for agent in self.agents:
                     agent.observe(msg)

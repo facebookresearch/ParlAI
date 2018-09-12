@@ -34,7 +34,7 @@ class DocReaderModel(object):
         if state_dict:
             new_state = set(self.network.state_dict().keys())
             for k in list(state_dict['network'].keys()):
-                if not k in new_state:
+                if k not in new_state:
                     del state_dict['network'][k]
             self.network.load_state_dict(state_dict['network'])
 

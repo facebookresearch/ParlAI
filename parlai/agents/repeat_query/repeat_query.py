@@ -7,8 +7,6 @@
 Useful as a baseline for metrics like F1.
 """
 
-import random
-
 from parlai.core.agents import Agent
 
 

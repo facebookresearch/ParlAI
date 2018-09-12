@@ -16,10 +16,9 @@ import math
 import random
 from functools import wraps
 import importlib
-import copy
 from functools import lru_cache
 try:
-    import torch
+    import torch  # noqa: F401
 except Exception as e:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import ConcatDataset, Dataset, DataLoader, sampler
@@ -36,35 +35,48 @@ from threading import Thread, Condition, RLock
         bucket_complete: if there are no more episodes left to consider in
             the bucket
 '''
-length_to_eps = {}                                # Maps episode length to list
-                                                  # of episodes
-batches = []                                      # List of batches if popping
-                                                  # batches
-load_complete = Value(ctypes.c_bool, False)       # If all episodes have been
-                                                  # loaded into memory
-batches_lock = Lock()                             # Lock to access batches
-cache_lock = Lock()                               # Lock to access length_to_eps
-fill_cache_lock = RLock()                         # Lock for condition variables
-add_to_cache_cv = Condition(lock=fill_cache_lock) # Condition notifying Loader
-                                                  # to add to cache
-cache_filled_cv = Condition(lock=fill_cache_lock) # Condition notifying teacher
-                                                  # that cache has episodes
+# Maps episode length to list of episodes
+length_to_eps = {}
+# List of batches if popping batches
+batches = []
+# If all episodes have been loaded into memory
+load_complete = Value(ctypes.c_bool, False)
+# Lock to access batches
+batches_lock = Lock()
+# Lock to access length_to_eps
+cache_lock = Lock()
+# Lock for condition variables
+fill_cache_lock = RLock()
+# Condition notifying Loader to add to cache
+add_to_cache_cv = Condition(lock=fill_cache_lock)
+# Condition notifying teacher that cache has episodes
+cache_filled_cv = Condition(lock=fill_cache_lock)
 
 
 def batch_cache(function):
-    max_cache_size = 10000                   # Max unseen eps
-    min_cache_size = 1000                    # Min unseen eps
+    max_cache_size = 10000  # Max unseen eps
+    min_cache_size = 1000  # Min unseen eps
 
     def get_cache_size():
         '''Returns number of available episodes '''
-        return sum(len(v['ep_list']) - v['current_idx']for k, v in length_to_eps.items())
+        return sum(
+            len(v['ep_list']) - v['current_idx']for k, v in length_to_eps.items()
+        )
 
     def get_available_buckets(bsz):
         '''Returns buckets where there are enough episodes for a batch'''
         if load_complete.value:
-            return {k: v for k, v in length_to_eps.items() if not v['bucket_complete'] or len(v['ep_list']) - v['current_idx'] > 0}
+            return {
+                k: v
+                for k, v in length_to_eps.items()
+                if not v['bucket_complete'] or len(v['ep_list']) - v['current_idx'] > 0
+            }
         else:
-            return {k: v for k, v in length_to_eps.items() if len(v['ep_list']) - v['current_idx'] >= bsz}
+            return {
+                k: v
+                for k, v in length_to_eps.items()
+                if len(v['ep_list']) - v['current_idx'] >= bsz
+            }
 
     def reset():
         '''Resets the indices into the buckets'''
@@ -114,7 +126,10 @@ def batch_cache(function):
     def put_in_cache(ep_idx, episode, caller):
         '''Put episode `ep_idx` into cache'''
         length = episode['text'].count(' ')
-        lengths = [length] + flatten([[length + i, length + (i * -1)] for i in range(1, caller.batch_length_range)])
+        lengths = [length] + flatten([
+            [length + i, length + (i * -1)]
+            for i in range(1, caller.batch_length_range)
+        ])
         lengths = [max(i, 1) for i in lengths]
         in_cache = False
         for l in lengths:
@@ -145,7 +160,8 @@ def batch_cache(function):
         # If Loader, put episodes in cache
         if isinstance(caller, LoaderProcess):
             with add_to_cache_cv:
-                while get_cache_size() >= max_cache_size and len(get_available_buckets(bsz)) > 0:
+                while (get_cache_size() >= max_cache_size and
+                        len(get_available_buckets(bsz)) > 0):
                     cache_filled_cv.notify_all()
                     add_to_cache_cv.wait()
             idx_and_batch = function(*args)
@@ -161,7 +177,8 @@ def batch_cache(function):
             while True:
                 with cache_filled_cv:
                     while (not load_complete.value and
-                        (get_cache_size() <= min_cache_size or len(get_available_buckets(bsz)) == 0)):
+                            (get_cache_size() <= min_cache_size or
+                                len(get_available_buckets(bsz)) == 0)):
                         add_to_cache_cv.notify()
                         cache_filled_cv.wait()
                         available_buckets = get_available_buckets(bsz)
@@ -182,7 +199,9 @@ def batch_cache(function):
                                 length_to_eps[length]['ep_list'] = ep_list[bsz:]
                             else:
                                 batch = ep_list[current_idx: current_idx + bsz]
-                                length_to_eps[length]['current_idx'] = (current_idx + bsz)
+                                length_to_eps[length]['current_idx'] = (
+                                    current_idx + bsz
+                                )
                         elif load_complete.value and num_eps > 0:
                             if batch_cache_type == 'pop':
                                 batch = ep_list
@@ -217,12 +236,18 @@ def get_dataset_classes(opt):
         would just be:
         ``-pytd vqa_v1``
     """
-    default_dataset = StreamDataset if 'stream' in opt.get('datatype') else ParlAIDataset
+    if 'stream' in opt.get('datatype'):
+        default_dataset = StreamDataset
+    else:
+        default_dataset = ParlAIDataset
     dataset_name = opt.get('pytorch_teacher_dataset')
     task_name = opt.get('pytorch_teacher_task')
     datasets = []
     if task_name is not None:
-        datasets += [(default_dataset, default_collate, task) for task in task_name.split(',')]
+        datasets += [
+            (default_dataset, default_collate, task)
+            for task in task_name.split(',')
+        ]
     if not dataset_name:
         return datasets
     sps = [d.strip() for d in dataset_name.split(',')]
@@ -296,7 +321,7 @@ class LoaderProcess(Thread):
             collate_fn=self.collate,
             pin_memory=False,
             drop_last=False,
-            )
+        )
         self.datatype = opt.get('datatype')
         self.data = enumerate(self.dataloader)
         self.batch_cache_type = opt.get('batch_sort_cache')
@@ -470,7 +495,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 collate_fn=self.collate_fn,
                 pin_memory=pin_memory,
                 drop_last=False,
-                )
+            )
             self.lastYs = [None] * self.bsz
             if self.batch_cache_type != 'none':
                 self.loader_process = LoaderProcess(opt)
@@ -482,7 +507,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
             self.lastYs = shared['lastYs']
             self.data = shared['data']
 
-        self.num_batches = math.ceil(self.dataset.num_episodes()/self.bsz)
+        self.num_batches = math.ceil(self.dataset.num_episodes() / self.bsz)
         self.reset()
 
     def get_dataset_class(self, opt):
@@ -535,8 +560,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 self.episode[self.entry_idx] = self.episode[self.entry_idx][1]
             ex = self.episode[self.entry_idx]
             self.episode_done = ex['episode_done']
-            if (self.episode_done
-                    and self.episode_idx + self.bsz >= self.num_episodes()):
+            if (self.episode_done and
+                    self.episode_idx + self.bsz >= self.num_episodes()):
                 epoch_done = True
         return ex, epoch_done
 
@@ -579,6 +604,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
         action = super().act()
         self.lastY = action.get('labels', action.get('eval_labels', None))
         return action
+
 
 class DefaultTeacher(PytorchDataTeacher):
     pass

@@ -21,6 +21,7 @@ def sanitize(obs):
             obs[k] = list(v)
     return obs
 
+
 class RemoteAgentAgent(Agent):
     """Agent which connects over ZMQ to a paired agent. The other agent is
     launched using the command line options set via `add_cmdline_args`."""

@@ -480,7 +480,6 @@ def overall_run_data_breakdown(opt, seq2seq=False):
             final_ret[k + '_std'] = _get_std(v)
         return final_ret
 
-    start, end = 0, M
     file_index = 0
     my_valid_data = [all_valid_data[0]+all_rest_data[0], all_valid_data[-1]+all_rest_data[-1]]
     my_valid_names = ['MTD', 'BASELINE']
@@ -501,7 +500,6 @@ def overall_run_data_breakdown(opt, seq2seq=False):
             file_index += M
 
 def overall_add_val(opt, seq2seq=False, constrain_=True):
-    VERSIONS = [13, 14, 15, 'BASELINE_2']
     NAMES = ['MTD LIMIT', 'MTD', 'MTD NO MODEL FEEDBACK', 'BASELINE']
 
     def get_scores_and_std(perfs):

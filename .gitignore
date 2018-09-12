@@ -118,6 +118,7 @@ tmp/
 *.pickle
 # Heroku things
 heroku-cli-*
+*.db
 
 # IntelliJ IDEA
 .idea

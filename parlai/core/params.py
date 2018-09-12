@@ -16,6 +16,7 @@ import datetime
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.build_data import modelzoo_path
+from parlai.core.pytorch_data_teacher import get_dataset_classes
 
 
 def get_model_name(opt):
@@ -60,6 +61,7 @@ def class2str(value):
     s = s[s.find('\'') + 1:s.rfind('\'')]  # pull out import path
     s = ':'.join(s.rsplit('.', 1))  # replace last period with ':'
     return s
+
 
 def fix_underscores(args):
     """Converts underscores to hyphens in args.
@@ -394,6 +396,17 @@ class ParlaiParser(argparse.ArgumentParser):
                 # already added
                 pass
 
+    def add_pyt_dataset_args(self, opt):
+        """Add arguments specific to specified pytorch dataset"""
+        dataset_classes = get_dataset_classes(opt)
+        for dataset, _, _ in dataset_classes:
+            try:
+                if hasattr(dataset, 'add_cmdline_args'):
+                    dataset.add_cmdline_args(self)
+            except argparse.ArgumentError:
+                # already added
+                pass
+
     def add_image_args(self, image_mode):
         """Add additional arguments for handling images."""
         try:
@@ -405,7 +418,6 @@ class ParlaiParser(argparse.ArgumentParser):
         except argparse.ArgumentError:
             # already added
             pass
-
 
     def add_extra_args(self, args=None):
         """Add more args depending on how known args are set."""
@@ -424,6 +436,16 @@ class ParlaiParser(argparse.ArgumentParser):
         if evaltask is not None:
             self.add_task_args(evaltask)
 
+        # find pytorch teacher task if specified, add its specific arguments
+        pytorch_teacher_task = parsed.get('pytorch_teacher_task', None)
+        if pytorch_teacher_task is not None:
+            self.add_task_args(pytorch_teacher_task)
+
+        # find pytorch dataset if specified, add its specific arguments
+        pytorch_teacher_dataset = parsed.get('pytorch_teacher_dataset', None)
+        if pytorch_teacher_dataset is not None:
+            self.add_pyt_dataset_args(parsed)
+
         # find which model specified if any, and add its specific arguments
         model = get_model_name(parsed)
         if model is not None:
@@ -436,7 +458,6 @@ class ParlaiParser(argparse.ArgumentParser):
             raise RuntimeError('Please file an issue on github that argparse '
                                'got an attribute error when parsing.')
 
-
     def parse_known_args(self, args=None, namespace=None, nohelp=False):
         """Custom parse known args to ignore help flag."""
         if args is None:
@@ -448,7 +469,6 @@ class ParlaiParser(argparse.ArgumentParser):
             # ignore help
             args = [a for a in args if a != '-h' and a != '--help']
         return super().parse_known_args(args, namespace)
-
 
     def parse_args(self, args=None, namespace=None, print_args=True):
         """Parses the provided arguments and returns a dictionary of the
@@ -473,14 +493,6 @@ class ParlaiParser(argparse.ArgumentParser):
         if self.opt.get('datapath'):
             os.environ['PARLAI_DATAPATH'] = self.opt['datapath']
 
-        # map filenames that start with 'models:' to point to the model zoo dir
-        if self.opt.get('model_file') is not None:
-            self.opt['model_file'] = modelzoo_path(self.opt.get('datapath'),
-                                                   self.opt['model_file'])
-        if self.opt.get('dict_file') is not None:
-            self.opt['dict_file'] = modelzoo_path(self.opt.get('datapath'),
-                                                  self.opt['dict_file'])
-
         # set all arguments specified in commandline as overridable
         option_strings_dict = {}
         store_true = []
@@ -503,10 +515,26 @@ class ParlaiParser(argparse.ArgumentParser):
                 elif self.cli_args[i] in store_false:
                     self.overridable[option_strings_dict[self.cli_args[i]]] = \
                         False
-                elif i < len(self.cli_args) - 1 and self.cli_args[i+1][:1] != '-':
+                elif i < len(self.cli_args) - 1 and self.cli_args[i + 1][:1] != '-':
                     key = option_strings_dict[self.cli_args[i]]
                     self.overridable[key] = self.opt[key]
         self.opt['override'] = self.overridable
+
+        # map filenames that start with 'models:' to point to the model zoo dir
+        if self.opt.get('model_file') is not None:
+            self.opt['model_file'] = modelzoo_path(self.opt.get('datapath'),
+                                                   self.opt['model_file'])
+        if self.opt['override'].get('model_file') is not None:
+            # also check override
+            self.opt['override']['model_file'] = modelzoo_path(
+                self.opt.get('datapath'), self.opt['override']['model_file'])
+        if self.opt.get('dict_file') is not None:
+            self.opt['dict_file'] = modelzoo_path(self.opt.get('datapath'),
+                                                  self.opt['dict_file'])
+        if self.opt['override'].get('dict_file') is not None:
+            # also check override
+            self.opt['override']['dict_file'] = modelzoo_path(
+                self.opt.get('datapath'), self.opt['override']['dict_file'])
 
         # add start time of an experiment
         self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')

@@ -133,14 +133,14 @@ class DictionaryAgent(Agent):
             type=int,
             help='max number of tokens to include in dictionary or bpe codecs')
         dictionary.add_argument(
-           '--dict-nulltoken', default=DictionaryAgent.default_null,
-           help='empty token, can be used for padding or just empty values')
+            '--dict-nulltoken', default=DictionaryAgent.default_null,
+            help='empty token, can be used for padding or just empty values')
         dictionary.add_argument(
-          '--dict-starttoken', default=DictionaryAgent.default_start,
-          help='token for starting sentence generation, if needed')
+            '--dict-starttoken', default=DictionaryAgent.default_start,
+            help='token for starting sentence generation, if needed')
         dictionary.add_argument(
-           '--dict-endtoken', default=DictionaryAgent.default_end,
-           help='token for end of sentence markers, if needed')
+            '--dict-endtoken', default=DictionaryAgent.default_end,
+            help='token for end of sentence markers, if needed')
         dictionary.add_argument(
             '--dict-unktoken', default=DictionaryAgent.default_unk,
             help='token to return for unavailable words')
@@ -163,18 +163,22 @@ class DictionaryAgent(Agent):
         return dictionary
 
     def __init__(self, opt, shared=None):
-        # initialize fields
+        """Initialize DictionaryAgent."""
         self.opt = copy.deepcopy(opt)
         self.minfreq = opt.get('dict_minfreq', DictionaryAgent.default_minfreq)
         self.null_token = opt.get('dict_nulltoken', DictionaryAgent.default_null)
         self.end_token = opt.get('dict_endtoken', DictionaryAgent.default_end)
         self.unk_token = opt.get('dict_unktoken', DictionaryAgent.default_unk)
         self.start_token = opt.get('dict_starttoken', DictionaryAgent.default_start)
-        self.max_ngram_size = opt.get('dict_max_ngram_size', DictionaryAgent.default_maxngram)
+        self.max_ngram_size = opt.get(
+            'dict_max_ngram_size', DictionaryAgent.default_maxngram
+        )
         self.tokenizer = opt.get('dict_tokenizer', DictionaryAgent.default_tok)
         self.lower = opt.get('dict_lower', DictionaryAgent.default_lower)
         self.maxtokens = opt.get('dict_maxtokens', DictionaryAgent.default_maxtokens)
-        self.textfields = opt.get('dict_textfields', DictionaryAgent.default_textfields).split(",")
+        self.textfields = opt.get(
+            'dict_textfields', DictionaryAgent.default_textfields
+        ).split(",")
 
         try:
             self.tokenizer_fun = getattr(self, self.tokenizer + '_tokenize')
@@ -206,13 +210,20 @@ class DictionaryAgent(Agent):
                 # set special unknown word token
                 self.add_token(self.unk_token)
 
-            if opt.get('dict_file') and os.path.isfile(opt['dict_file']):
-                # load pre-existing dictionary
-                self.load(opt['dict_file'])
-            elif opt.get('dict_initpath'):
+            loaded = False
+            if opt.get('dict_file'):
+                opt['dict_file'] = modelzoo_path(opt.get('datapath'),
+                                                 opt['dict_file'])
+                if os.path.isfile(opt['dict_file']):
+                    # load pre-existing dictionary
+                    self.load(opt['dict_file'])
+                    loaded = True
+
+            if not loaded and opt.get('dict_initpath'):
                 # load seed dictionary
                 opt['dict_initpath'] = modelzoo_path(opt.get('datapath'),
                                                      opt['dict_initpath'])
+                # don't check isfile first, should fail if file not found
                 self.load(opt['dict_initpath'])
 
         # initialize tokenizers
@@ -318,7 +329,13 @@ class DictionaryAgent(Agent):
             setattr(self, k, v)
 
     def max_freq(self):
-        return max(self.freq[k] for k in self.freq.keys() if k not in [self.null_token, self.end_token, self.start_token, self.unk_token])
+        return max(
+            self.freq[k]
+            for k in self.freq.keys()
+            if k not in [
+                self.null_token, self.end_token, self.start_token, self.unk_token
+            ]
+        )
 
     def freqs(self):
         return self.freq
@@ -454,11 +471,12 @@ class DictionaryAgent(Agent):
               filename))
 
         lower_special = self.null_token == self.null_token.lower()
+        SPECIAL_TOKENS = {'__UNK__', '__NULL__', '__END__', '__START__'}
         with codecs.open(filename, 'r', encoding='utf-8', errors='ignore') as read:
             for line in read:
                 split = line.strip().split('\t')
                 token = unescape(split[0])
-                if lower_special and token in {'__UNK__', '__NULL__', '__END__', '__START__'}:
+                if lower_special and token in SPECIAL_TOKENS:
                     token = token.lower()
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
@@ -565,8 +583,10 @@ class DictionaryAgent(Agent):
         return text
 
     def act(self):
-        """Add any words passed in the 'text' field of the observation to this
-        dictionary.
+        """Add words in the last observation to the dictionary.
+
+        This checks any fields in the message present in the --dict-textfields
+        argument (e.g. "text,labels").
         """
         for textfield in self.textfields:
             source = self.observation.get(textfield)
@@ -582,12 +602,11 @@ class DictionaryAgent(Agent):
         return {'id': 'Dictionary'}
 
     def share(self):
-        shared = {}
+        """Share internal dicts."""
+        shared = super().share()
         shared['freq'] = self.freq
         shared['tok2ind'] = self.tok2ind
         shared['ind2tok'] = self.ind2tok
-        shared['opt'] = self.opt
-        shared['class'] = type(self)
         return shared
 
     def shutdown(self):
@@ -596,12 +615,13 @@ class DictionaryAgent(Agent):
             self.save(self.save_path)
 
     def __str__(self):
+        """Return string representation of frequencies in dictionary."""
         return str(self.freq)
 
 
 class _BPEHelper(object):
-    """
-    Helper class for performing BPE subword tokenization.
+    """Helper class for performing BPE subword tokenization.
+
     For technical details, please refer to https://arxiv.org/abs/1508.07909.
     This class just wraps around the official subword-nmt repository.
 
@@ -611,8 +631,8 @@ class _BPEHelper(object):
     """
 
     def __init__(self, codecs_filename):
-        """
-        Initialize the BPE module.
+        """Initialize the BPE module.
+
         If `codecs_filename` already exists, loads the pretrained codecs.
         If it does not, codecs will be saved there after a call to `finalize()`.
 
@@ -635,8 +655,8 @@ class _BPEHelper(object):
             self.bpe = apply_bpe.BPE(codecs_file)
 
     def tokenize(self, text):
-        """
-        Tokenizes the text with bpe if codecs are already finalized.
+        """Tokenize the text with bpe if codecs are already finalized.
+
         Otherwise, returns the regularly split tokens that will train the bpe.
 
         :param text: str. Raw text to tokenize.

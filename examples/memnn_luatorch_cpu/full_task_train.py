@@ -104,13 +104,14 @@ def main():
             if report_valid['accuracy'] > 0.95:
                 break
 
-        #show some example dialogs after training:
+        # show some example dialogs after training:
         world_valid = create_task(valid_opt, agent)
         for _k in range(3):
             world_valid.parley()
             print(world_valid.display())
 
     print('finished in {} s'.format(round(time.time() - start, 2)))
+
 
 if __name__ == '__main__':
     main()

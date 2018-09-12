@@ -30,8 +30,7 @@ task_config['hit_keywords'] = 'chat,dialog'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-task_config['task_description'] = \
-'''
+task_config['task_description'] = '''
 <div id="preview">
 You will have a conversation with another user to agree how to divide some objects between you. Negotiate hard to
 get a deal worth as many points as possible<br><br>
@@ -282,4 +281,3 @@ $("button#id_send_deal_button").on('click', function () {
 
 </script>
 '''
-

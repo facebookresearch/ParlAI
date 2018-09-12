@@ -1,4 +1,4 @@
-# Copyright 2004-present Facebook. All Rights Reserved.
+# Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
@@ -17,6 +17,7 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 
 import random
+
 
 def main():
     random.seed(42)
@@ -40,6 +41,7 @@ def main():
             if world.epoch_done():
                 print("EPOCH DONE")
                 break
+
 
 if __name__ == '__main__':
     main()

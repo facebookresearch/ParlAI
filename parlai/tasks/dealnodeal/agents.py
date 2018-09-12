@@ -115,7 +115,6 @@ class NegotiationTeacher(Teacher):
             self.episode_idx = (self.episode_idx + self.step_size) % len(self.episodes)
             return self._start_dialogue()
 
-
     def _split_dialogue(self, words, separator=EOS_TOKEN):
         sentences = []
         start = 0
@@ -150,8 +149,14 @@ class NegotiationTeacher(Teacher):
             action = self._continue_dialogue(skip_teacher=True)
             action['text'] = welcome
 
-        action['items'] = { "book_cnt" : book_cnt , "book_val" : book_val, "hat_cnt" : hat_cnt, "hat_val" : hat_val,
-            "ball_cnt" : ball_cnt, "ball_val" : ball_val}
+        action['items'] = {
+            "book_cnt": book_cnt,
+            "book_val": book_val,
+            "hat_cnt": hat_cnt,
+            "hat_val": hat_val,
+            "ball_cnt": ball_cnt,
+            "ball_val": ball_val
+        }
 
         return action
 

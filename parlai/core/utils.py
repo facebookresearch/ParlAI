@@ -10,6 +10,14 @@ import os
 import random
 import time
 
+# some of the utility methods are helpful for Torch
+try:
+    import torch
+    __TORCH_AVAILABLE = True
+except ImportError:
+    __TORCH_AVAILABLE = False
+
+
 DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'episode_done',
     'id',
@@ -83,7 +91,7 @@ def maintain_dialog_history(history, observation, reply='',
     return history['dialog']
 
 
-def load_cands(path, lines_have_ids = False, cands_are_replies = False):
+def load_cands(path, lines_have_ids=False, cands_are_replies=False):
     """Load global fixed set of candidate labels that the teacher provides
     every example (the true labels for a specific example are also added to
     this set, so that it's possible to get the right answer).
@@ -211,14 +219,16 @@ class TimeLogger():
         if total > 0:
             log['%done'] = done / total
             if log["%done"] > 0:
-                log['time_left'] = str(int(self.tot_time / log['%done'] - self.tot_time)) + 's'
-            z = '%.2f' % ( 100*log['%done'])
+                time_left = self.tot_time / log['%done'] - self.tot_time
+                log['time_left'] = str(int(time_left)) + 's'
+            z = '%.2f' % (100 * log['%done'])
             log['%done'] = str(z) + '%'
         for k, v in report.items():
             if k not in log:
                 log[k] = v
         text = str(int(self.tot_time)) + "s elapsed: " + str(log)
         return text, log
+
 
 class AttrDict(dict):
     """Helper class to have a dict-like object with dot access.
@@ -349,11 +359,14 @@ class NoLock(object):
     """Empty `lock`. Does nothing when you enter or exit."""
     def __enter__(self):
         return self
+
     def __exit__(self, exc_type, exc_value, exc_traceback):
         pass
 
 
 single_nolock = NoLock()
+
+
 def no_lock():
     """Builds a nolock for other classes to use for no-op locking."""
     return single_nolock
@@ -411,7 +424,9 @@ class PaddingUtils(object):
     Class that contains functions that help with padding input and target tensors.
     """
     @classmethod
-    def pad_text(cls, observations, dictionary, end_idx=None, null_idx=0, dq=False, eval_labels=True, truncate=None):
+    def pad_text(cls, observations, dictionary,
+                 end_idx=None, null_idx=0, dq=False, eval_labels=True,
+                 truncate=None):
         """We check that examples are valid, pad with zeros, and sort by length
            so that we can use the pack_padded function. The list valid_inds
            keeps track of which indices are valid and the order in which we sort
@@ -472,7 +487,6 @@ class PaddingUtils(object):
                         for x in parsed_x]
         xs = parsed_x
 
-
         # set up the target tensors
         ys = None
         labels = None
@@ -510,7 +524,9 @@ class PaddingUtils(object):
         return xs, ys, labels, valid_inds, end_idxs, y_lens
 
     @classmethod
-    def map_predictions(cls, predictions, valid_inds, batch_reply, observations, dictionary, end_idx, report_freq=0.1, labels=None, answers=None, ys=None):
+    def map_predictions(cls, predictions, valid_inds, batch_reply,
+                        observations, dictionary, end_idx, report_freq=0.1,
+                        labels=None, answers=None, ys=None):
         """Predictions are mapped back to appropriate indices in the batch_reply
            using valid_inds.
            report_freq -- how often we report predictions
@@ -564,7 +580,9 @@ class OffensiveLanguageDetector(object):
         def _path():
             # Build the data if it doesn't exist.
             build()
-            return os.path.join(self.datapath, 'OffensiveLanguage', 'OffensiveLanguage.txt')
+            return os.path.join(
+                self.datapath, 'OffensiveLanguage', 'OffensiveLanguage.txt'
+            )
 
         def build():
             version = 'v1.0'
@@ -642,6 +660,7 @@ class OffensiveLanguageDetector(object):
 
         return None
 
+
 def clip_text(text, max_len):
     if len(text) > max_len:
         begin_text = ' '.join(
@@ -655,6 +674,25 @@ def clip_text(text, max_len):
         else:
             text = begin_text + ' ...'
     return text
+
+
+def _ellipse(lst, max_display=5, sep='|'):
+    """
+    Like join, but possibly inserts an ellipsis.
+
+    :param lst: The list to join on
+    :param int max_display: the number of items to display for ellipsing.
+        If -1, shows all items
+    :param string sep: the delimiter to join on
+    """
+    # copy the list (or force it to a list if it's a set)
+    choices = list(lst)
+    # insert the ellipsis if necessary
+    if max_display > 0 and len(choices) > max_display:
+        ellipsis = '...and {} more'.format(len(choices) - max_display)
+        choices = choices[:max_display] + [ellipsis]
+    return sep.join(choices)
+
 
 def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
     """Returns a string describing the set of messages provided
@@ -688,79 +726,13 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
             text = clip_text(msg['text'], max_len)
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + text)
-        if msg.get('labels') and 'labels' not in ignore_fields:
-            lines.append(space + ('[labels: {}]'.format(
-                        '|'.join(msg['labels']))))
-        if msg.get('eval_labels') and 'eval_labels' not in ignore_fields:
-            lines.append(space + ('[eval_labels: {}]'.format(
-                        '|'.join(msg['eval_labels']))))
+        for field in {'labels', 'eval_labels', 'label_candidates', 'text_candidates'}:
+            if msg.get(field) and field not in ignore_fields:
+                lines.append('{}[{}: {}]'.format(space, field, _ellipse(msg[field])))
 
-        if msg.get('label_candidates') and 'label_candidates' not in ignore_fields:
-            cand_len = len(msg['label_candidates'])
-            if cand_len <= 10:
-                lines.append(space + ('[label_candidates: {}]'.format(
-                        '|'.join(msg['label_candidates']))))
-            else:
-                # select five label_candidates from the candidate set,
-                # can't slice in because it's a set
-                cand_iter = iter(msg['label_candidates'])
-                display_cands = (next(cand_iter) for _ in range(5))
-                # print those cands plus how many cands remain
-                lines.append(space + ('[label_candidates: {}{}]'.format(
-                        '|'.join(display_cands),
-                        '| ...and {} more'.format(cand_len - 5)
-                        )))
-        if msg.get('text_candidates') and 'text_candidates' not in ignore_fields:
-            if prettify:
-                cand_len = len(msg['text_candidates'])
-                cands = [c for c in msg['text_candidates'] if c is not None]
-                try:
-                    import prettytable
-                except ImportError:
-                    raise ImportError('Please install prettytable to \
-                    display text candidates: `pip install prettytable`')
-                scores = None
-                if msg.get('candidate_scores') is not None:
-                    table = prettytable.PrettyTable(['Score', 'Text'])
-                    scores = msg.get('candidate_scores')
-                else:
-                    table = prettytable.PrettyTable(['Text'])
-                table.align = 'l'
-                table.hrules = 1
-                display_cands = []
-                num_cands = 0
-                for cand in cands:
-                    cand_max_length = 250 if scores is None else 100
-                    if len(cand) > cand_max_length:
-                        # Show beginning and end
-                        split = [cand[:cand_max_length], cand[cand_max_length:]]
-                        cand = split[0] + '\n\n. . .\n\n' + split[1][-(min(50, len(split[1]))):]
-                    if scores is not None:
-                        table.add_row([scores[num_cands], cand])
-                    else:
-                        table.add_row([cand])
-                    num_cands += 1
-                    if num_cands > 5:
-                        break
-
-                lines.append(space + table.get_string())
-            else:
-                cand_len = len(msg['text_candidates'])
-                if cand_len <= 10:
-                    lines.append(space + ('[text_candidates: {}]'.format(
-                            '|'.join(msg['text_candidates']))))
-                else:
-                    # select five label_candidates from the candidate set,
-                    # can't slice in because it's a set
-                    cand_iter = iter(msg['text_candidates'])
-                    display_cands = (next(cand_iter) for _ in range(5))
-                    # print those cands plus how many cands remain
-                    lines.append(space + ('[text_candidates: {}{}]'.format(
-                            '|'.join(display_cands),
-                            '| ...and {} more'.format(cand_len - 5)
-                            )))
     if episode_done:
         lines.append('- - - - - - - - - - - - - - - - - - - - -')
+
     return '\n'.join(lines)
 
 
@@ -803,7 +775,7 @@ def str_to_msg(txt, ignore_fields=''):
     for t in txt.split('\t'):
         ind = t.find(':')
         key = t[:ind]
-        value = t[ind+1:]
+        value = t[ind + 1:]
         if key not in ignore_fields.split(','):
             msg[key] = convert(key, value)
     msg['episode_done'] = msg.get('episode_done', False)
@@ -851,3 +823,96 @@ def msg_to_str(msg, ignore_fields=''):
         if f not in default_fields and f not in ignore_fields:
             txt += add_field(f, msg[f])
     return txt.rstrip('\t')
+
+
+def set_namedtuple_defaults(namedtuple, default=None):
+    """
+    Set *all* of the fields for a given nametuple to a singular value.
+    Modifies the tuple in place, but returns it anyway.
+
+    More info:
+    https://stackoverflow.com/a/18348004
+
+    :param namedtuple: A constructed collections.namedtuple
+    :param default: The default value to set.
+    :return: the modified namedtuple
+    """
+    namedtuple.__new__.__defaults__ = (default,) * len(namedtuple._fields)
+    return namedtuple
+
+
+def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
+    """Create a right-padded matrix from an uneven list of lists.
+
+    Returns (padded, lengths), where padded is the padded matrix, and lengths
+    is a list containing the lengths of each row.
+
+    Matrix is right-padded (filled to the right) by default, but can be
+    left padded if the flag is set to True.
+
+    Matrix can also be placed on cuda automatically.
+
+    :param list[iter[int]] items: List of items
+    :param bool sort: If True, orders by the length
+    :param int pad_idx: the value to use for padding
+    :param bool use_cuda: if true, places `padded` on GPU
+    :param bool left_padded:
+
+    :return: (padded, lengths) tuple
+    :rtype: (Tensor[int64], list[int])
+    """
+    # hard fail if we don't have torch
+    if not __TORCH_AVAILABLE:
+        raise ImportError(
+            "Cannot use padded_tensor without torch; go to http://pytorch.org"
+        )
+
+    # number of items
+    n = len(items)
+    # length of each item
+    lens = [len(item) for item in items]
+    # max in time dimension
+    t = max(lens)
+
+    if isinstance(items[0], torch.Tensor):
+        # keep type of input tensors, they may already be cuda ones
+        output = items[0].new(n, t)
+    else:
+        output = torch.LongTensor(n, t)
+    output.fill_(pad_idx)
+
+    for i, item in enumerate(items):
+        if not isinstance(item, torch.Tensor):
+            item = torch.LongTensor(item)
+        if left_padded:
+            # place at end
+            output[i, t - lens[i]:] = item
+        else:
+            # place at beginning
+            output[i, :lens[i]] = item
+
+    if use_cuda:
+        output = output.cuda()
+    return output, lens
+
+
+def argsort(keys, *lists, descending=False):
+    """Reorder each list in lists by the (descending) sorted order of keys.
+
+    :param iter keys: Keys to order by
+    :param list[list] lists: Lists to reordered by keys's order.
+                             Correctly handles lists and 1-D tensors.
+    :param bool descending: Use descending order if true
+    :return: The reordered items
+    """
+    ind_sorted = sorted(range(len(keys)), key=lambda k: keys[k])
+    if descending:
+        ind_sorted = list(reversed(ind_sorted))
+    output = []
+    for lst in lists:
+        # watch out in case we don't have torch installed
+        if __TORCH_AVAILABLE and isinstance(lst, torch.Tensor):
+            output.append(lst[ind_sorted])
+        else:
+            output.append([lst[i] for i in ind_sorted])
+    return output

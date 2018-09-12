@@ -33,9 +33,7 @@ def next_word_probability(self, partial_out):
     ['hello'] => {'world': 1.0}
 """
 
-from parlai.core.agents import Agent, create_agent, create_agents_from_shared
-from parlai.core.build_data import download_models
-from parlai.core.dict import DictionaryAgent
+from parlai.core.agents import create_agent, create_agents_from_shared
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer, round_sigfigs, no_lock
 from parlai.core.thread_utils import SharedTable
@@ -226,7 +224,7 @@ def eval_ppl(opt, build_dict=None, dict_file=None):
     final_report = world.report()
     print('{}s elapsed: {}'.format(int(tot_time), final_report))
     print("============================")
-    print("FINAL PPL: " +str(final_report['ppl']))
+    print("FINAL PPL: " + str(final_report['ppl']))
     if final_report.get('ppl', 0) == float('inf'):
         print('Note: you got inf perplexity. Consider adding (or raising) the '
               'minimum probability you assign to each possible word. If you '

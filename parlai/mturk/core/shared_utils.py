@@ -21,7 +21,7 @@ log_level = logging.ERROR
 
 if logging_enabled:
     logging.basicConfig(
-        filename=str(time.time())+'.log',
+        filename=str(time.time()) + '.log',
         filemode='w',
         format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
         datefmt='%H:%M:%S',

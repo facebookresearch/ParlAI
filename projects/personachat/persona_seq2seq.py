@@ -877,8 +877,6 @@ class Seq2seqAgent(Agent):
 
         if self.opt['datatype'] in ['valid', 'test'] and self.opt['personachat_interact']:
             print('MODEL:' + ' '.join(predictions[0]))
-            symbol_words = ['_s{}_'.format(i) for i in range(20)]
-
             print('TRUE :' + observations[0]['eval_labels'][0])
 
         for i in range(len(predictions)):
@@ -1633,7 +1631,6 @@ class PersonachatSeqseqAgentSplit(Agent):
             xes = xes * f_xes
             xes = xes.sum(dim=2)
 
-            ys_size = ys.size()
             yes = self.lt_meta(ys)
             f_yes = self.lt_reweight_meta(ys)
             f_yes_norm = f_yes.sum(1).unsqueeze(1)
@@ -1678,7 +1675,6 @@ class PersonachatSeqseqAgentSplit(Agent):
             return xes, None, guide_indices
 
         batchsize = len(xs)
-        x_lens = [x for x in torch.sum((xs>0).int(), dim=1).data]
 
         # first encode context
         xes = self.lt(xs)
@@ -1711,7 +1707,6 @@ class PersonachatSeqseqAgentSplit(Agent):
     def _encode(self, xs, is_training=False):
         """Call encoder and return output and hidden states."""
         batchsize = len(xs)
-        x_lens = [x for x in torch.sum((xs>0).int(), dim=1).data]
 
         # first encode context
         if self.embshareonly_pm_dec:
@@ -2285,14 +2280,11 @@ class PersonachatSeqseqAgentSplit(Agent):
             # no valid examples, just return the empty responses we set up
             return batch_reply
 
-        x_lens = [x for x in torch.sum((xs>0).int(), dim=1).data]
-
         # produce predictions either way, but use the targets if available
         predictions, text_cand_inds = self.predict(xs, xs_persona, ys, cands, zs)
 
         if self.opt['datatype'] in ['valid', 'test'] and self.opt['personachat_interact']:
             print('MODEL:' + ' '.join(predictions[0]))
-            symbol_words = ['_s{}_'.format(i) for i in range(20)]
             f1_best = 0
             msg_best = ''
             for msg in self.teacher.data_dialogs['train']['messages']:
@@ -2320,13 +2312,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                 curr = batch_reply[batch_idx]
                 curr['text_candidates'] = [curr_cands[idx] for idx in order
                                            if idx < len(curr_cands)]
-        if eval_labels:
-            for ind in valid_inds:
-                cands_origin = [observations[ind]['text']] + [observations[ind]['eval_labels'][0]] + observations[ind]['persona'].split('.')
-                cands = [[w for w in self.dict.tokenize(s.lower())] for s in cands_origin]
-                pred_origin = batch_reply[ind]['text'].lower()
-                pred = [w for w in self.dict.tokenize(pred_origin)]
-
+                
         return batch_reply
 
     def act(self):

@@ -18,6 +18,7 @@ tasks[3] = 'personalized-dialog-task3-options'
 tasks[4] = 'personalized-dialog-task4-info'
 tasks[5] = 'personalized-dialog-task5-full-dialogs'
 
+
 def _path(exsz, task, opt):
     # Build the data if it doesn't exist.
     build(opt)
@@ -29,9 +30,11 @@ def _path(exsz, task, opt):
         suffix = 'tst'
     elif dt == 'valid':
         suffix = 'dev'
-    return os.path.join(opt['datapath'], 'personalized-dialog', 'personalized-dialog-dataset',
-        '{exsz}'.format(exsz=exsz), 
-        '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix))
+    return os.path.join(
+        opt['datapath'], 'personalized-dialog', 'personalized-dialog-dataset',
+        '{exsz}'.format(exsz=exsz),
+        '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix)
+    )
 
 
 # The knowledge base of facts that can be used to answer questions.

@@ -74,7 +74,7 @@ def create_text_message(text, quick_replies=None):
         )
     for i in range(len(tokens)):
         if tokens[i] == '[*SPLIT*]':
-            if ' '.join(tokens[cutoff:i-1]).strip() != '':
+            if ' '.join(tokens[cutoff:i - 1]).strip() != '':
                 splits.append(_message(' '.join(tokens[cutoff:i]), None))
                 cutoff = i + 1
                 curr_length = 0
@@ -195,7 +195,7 @@ class MessageSender():
         result = response.json()
         if 'error' in result:
             if result['error']['code'] == 1200:
-                #temporary error please retry
+                # temporary error please retry
                 response = requests.post(
                     api_address,
                     params=self.auth_args,
@@ -234,7 +234,7 @@ class MessageSender():
             result = response.json()
             if 'error' in result:
                 if result['error']['code'] == 1200:
-                    #temporary error please retry
+                    # temporary error please retry
                     response = requests.post(
                         api_address,
                         params=self.auth_args,
