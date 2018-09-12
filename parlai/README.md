@@ -2,7 +2,7 @@ ParlAI is set up into several main directories:
 
 - **core**: contains the primary code for the framework
 - **agents**: contains agents which can interact with the different tasks (e.g. machine learning models)
-- **examples**: contains a few basic examples of different loops (building dictionary, train/eval, displaying data)
+- **scripts**: contains examples of different loops (building dictionary, train/eval, displaying data)
 - **tasks**: contains code for the different tasks available from within ParlAI
 - **mturk**: contains code for setting up Mechanical Turk, as well as sample MTurk tasks
 - **messenger**: contains code for interfacing with Facebook Messenger
