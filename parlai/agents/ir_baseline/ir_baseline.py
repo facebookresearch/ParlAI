@@ -76,7 +76,10 @@ def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
                 print("match: " + w)
         used[w] = True
     norm = math.sqrt(len(used))
-    score = score / math.pow(norm * query_rep['norm'], length_penalty)
+    norm = math.pow(norm * query_rep['norm'], length_penalty)
+    if norm < 1:
+        norm = 1
+    score = score / norm
     return score
 
 def rank_candidates(query_rep, cands, length_penalty, dictionary=None):
