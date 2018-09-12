@@ -6,10 +6,10 @@
 
 # Check 3rd-party dependencies
 try:
-    import boto3
-    import botocore
-    import joblib
-    import websocket
-    import sh
+    import boto3  # noqa: F401
+    import botocore  # noqa: F401
+    import joblib  # noqa: F401
+    import websocket  # noqa: F401
+    import sh  # noqa: F401
 except ImportError:
     raise SystemExit("Please install 3rd-party dependencies by running: pip install boto3 joblib websocket-client sh")

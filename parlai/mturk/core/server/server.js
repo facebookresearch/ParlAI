@@ -50,13 +50,10 @@ function _send_message(connection_id, event_name, event_data) {
   // Server does not have information about this worker. Should wait for this
   // worker's agent_alive event instead.
   if (!socket) {
-    console.log('Socket for ' + connection_id +
-      ' doesn\'t exist! Skipping message.')
     return;
   }
 
   if (socket.readyState == 3) {
-    console.log('Socket for ' + connection_id + ' is already closed.')
     return;
   }
 
@@ -69,15 +66,11 @@ function _send_message(connection_id, event_name, event_data) {
     if (error === undefined) {
       return;
     }
-    console.log('Ran into error trying to send, retrying');
     setTimeout(function () {
       socket.send(JSON.stringify(packet), function ack2(error2) {
         if (error2 === undefined) {
           return;
         }
-        console.log("Repeat send of packet failed");
-        console.log(packet);
-        console.log(error2);
       });
     }, 500);
   });
@@ -105,9 +98,6 @@ function _get_from_conn_id(data) {
 }
 
 function handle_route(data) {
-  if (data.type != 'heartbeat') {
-    console.log('route packet', data);
-  }
   var out_connection_id = _get_to_conn_id(data);
 
   _send_message(out_connection_id, 'new packet', data);
@@ -128,13 +118,11 @@ function handle_alive(socket, data) {
   var out_connection_id = _get_to_conn_id(data);
   connection_id_to_socket[in_connection_id] = socket;
   room_id_to_connection_id[socket.id] = in_connection_id;
-  console.log('connection_id ' + in_connection_id + ' registered');
 
   // Send alive packets to the world, but not from the world
   if (!(sender_id && sender_id.startsWith('[World'))) {
     _send_message(out_connection_id, 'new packet', data);
   } else {
-    console.log("sending success");
     socket.send(JSON.stringify(
       {'type': 'conn_success', 'content': 'Socket is open!'}
     ));
@@ -157,10 +145,9 @@ wss.on('connection', function (socket) {
 
   // handles routing a packet to the desired recipient
   socket.on('message', function (data) {
-    data = JSON.parse(data)
     try {
+      data = JSON.parse(data)
       if (data['type'] == 'agent alive') {
-        console.log('handling alive')
         handle_alive(socket, data['content']);
       } else if (data['type'] == 'route packet') {
         handle_route(data['content']);
@@ -171,7 +158,6 @@ wss.on('connection', function (socket) {
     } catch(error) {
       console.log("Transient error on message");
       console.log(error);
-      console.log(data);
     }
   });
 });
@@ -209,7 +195,6 @@ app.post('/sns_posts', async function (req, res, next) {
       var message_id = content['MessageId'];
       var sender_id = 'AmazonMTurk';
       var message = JSON.parse(content['Message']);
-      console.log(message);
       var event_type = message['Events'][0]['EventType'];
       var assignment_id = message['Events'][0]['AssignmentId'];
       var data = {

@@ -5,11 +5,11 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 try:
-    import regex
-    import scipy
-    import sklearn
-    import unicodedata
-    import pexpect
+    import regex  # noqa: F401
+    import scipy  # noqa: F401
+    import sklearn  # noqa: F401
+    import unicodedata  # noqa: F401
+    import pexpect  # noqa: F401
 except ImportError:
     raise ImportError('Please `pip install regex scipy sklearn pexpect`'
                       ' to use the tfidf_retriever agent.')
@@ -69,7 +69,7 @@ class TfidfRetrieverAgent(Agent):
             help='How many docs to retrieve.')
         parser.add_argument(
             '--retriever-mode', choices=['keys', 'values'], default='values',
-             help='Whether to retrieve the stored key or the stored value.'
+            help='Whether to retrieve the stored key or the stored value.'
         )
         parser.add_argument(
             '--remove-title', type='bool', default=False,
@@ -216,7 +216,7 @@ class TfidfRetrieverAgent(Agent):
             doc_ids, doc_scores = self.ranker.closest_docs(obs['text'],
                                                            self.opt.get('retriever_num_retrieved', 5))
 
-            if False and obs.get('label_candidates'): #TODO: Alex (doesn't work)
+            if False and obs.get('label_candidates'):  # TODO: Alex (doesn't work)
                 # these are better selection than stored facts
                 # rank these options instead
                 cands = obs['label_candidates']

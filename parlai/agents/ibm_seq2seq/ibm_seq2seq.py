@@ -10,7 +10,7 @@ try:
     from seq2seq.models.DecoderRNN import DecoderRNN
 except ImportError:
     raise ImportError('Please install IBM\'s seq2seq package at '
-                              'https://github.com/IBM/pytorch-seq2seq')
+                      'https://github.com/IBM/pytorch-seq2seq')
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -24,7 +24,6 @@ from collections import deque
 
 import os
 import math
-import random
 
 
 class IbmSeq2seqAgent(Agent):
@@ -189,7 +188,6 @@ class IbmSeq2seqAgent(Agent):
                 use_attention=opt['attention'])
             self.model = Seq2seq(encoder, decoder)
 
-
             if self.states:
                 # set loaded states if applicable
                 self.model.load_state_dict(self.states['model'])
@@ -338,9 +336,6 @@ class IbmSeq2seqAgent(Agent):
         Update the model using the targets if available, otherwise rank
         candidates as well if they are available and param is set.
         """
-        # import pdb; pdb.set_trace()
-        loss_dict = None, None
-
         x_lens = [x for x in torch.sum((xs > 0).int(), dim=1).data]
         start = self.START.detach()
         starts = start.expand(len(xs), 1)

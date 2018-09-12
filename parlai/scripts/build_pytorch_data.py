@@ -12,8 +12,7 @@ such that each episode is one example for a model.
 One can set the `--context-len` flag to specify how many past utterances
 are used in a flattened episode.
 """
-from parlai.core.agents import create_agent, create_task_agent_from_taskname
-from parlai.core.params import ParlaiParser
+from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.utils import ProgressLogger
 import copy
@@ -24,8 +23,11 @@ import collections
 import torch
 from collections import deque
 
+
 def setup_args():
+    from parlai.core.params import ParlaiParser
     return ParlaiParser(True, True)
+
 
 def make_serializable(obj):
     new_obj = {}
@@ -138,7 +140,7 @@ def build_data(opt):
             context.clear()
 
     with open(pytorch_datafile + '.length', 'w') as pytorch_data_len:
-        pytorch_data_len.write(json.dumps({'num_eps':num_eps, 'num_exs':num_exs}))
+        pytorch_data_len.write(json.dumps({'num_eps': num_eps, 'num_exs': num_exs}))
 
     print('[ pytorch data built. ]')
     return pytorch_datafile

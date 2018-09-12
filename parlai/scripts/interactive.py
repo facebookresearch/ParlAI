@@ -20,6 +20,7 @@ from parlai.agents.local_human.local_human import LocalHumanAgent
 
 import random
 
+
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True)
@@ -27,14 +28,19 @@ def setup_args(parser=None):
     parser.add_argument('--display-prettify', type='bool', default=False,
                         help='Set to use a prettytable when displaying '
                              'examples with text candidates')
-    parser.add_argument('--display-ignore-fields',type=str,
+    parser.add_argument('--display-ignore-fields', type=str,
                         default='label_candidates,text_candidates',
                         help='Do not display these fields')
     LocalHumanAgent.add_cmdline_args(parser)
     return parser
 
 
-def interactive(opt):
+def interactive(opt, print_parser=None):
+    if print_parser is not None:
+        if print_parser is True and isinstance(opt, ParlaiParser):
+            print_parser = opt
+        elif print_parser is False:
+            print_parser = None
     if isinstance(opt, ParlaiParser):
         print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
         opt = opt.parse_args()
@@ -43,7 +49,12 @@ def interactive(opt):
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
-    
+
+    if print_parser:
+        # Show arguments after loading model
+        print_parser.opt = agent.opt
+        print_parser.print_args()
+
     # Show some example dialogs:
     while True:
         world.parley()
@@ -57,4 +68,5 @@ def interactive(opt):
 
 if __name__ == '__main__':
     random.seed(42)
-    interactive(setup_args().parse_args())
+    parser = setup_args()
+    interactive(parser.parse_args(print_args=False), print_parser=parser)

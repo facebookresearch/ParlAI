@@ -46,5 +46,3 @@ It's baked in coal- or wood-fired brick ovens.<br><br>
 ------------------- Task Done ------------------- <br><br>
 If you are ready, please click "Accept HIT" to start this task.
 \'\'\''''
-
-

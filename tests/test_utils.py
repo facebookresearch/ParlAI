@@ -4,13 +4,18 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.utils import Timer, round_sigfigs
+from parlai.core.utils import Timer
+from parlai.core.utils import round_sigfigs
+from parlai.core.utils import set_namedtuple_defaults
+from parlai.core.utils import padded_tensor
+from parlai.core.utils import argsort
 import time
 import unittest
+import torch
+import numpy as np
 
 
 class TestUtils(unittest.TestCase):
-
     def test_round_sigfigs(self):
         x = 0
         y = 0
@@ -64,6 +69,54 @@ class TestUtils(unittest.TestCase):
         time.sleep(1e-6)
         assert turtle.time() > 0
         assert turtle.time() < rabbit.time()
+
+    def test_setnamedtupledefaults(self):
+        from collections import namedtuple
+        NT = namedtuple("NT", ("a", "b", "c"))
+
+        # Shouldn't be able to construct a namedtuple without providing info
+        try:
+            NT()
+            assert False, "Shouldn't be able to construct namedtuple"
+        except TypeError:
+            pass
+
+        # Test setting default value
+        set_namedtuple_defaults(NT)
+        nt = NT()
+        assert nt.a is None
+        assert nt.b is None
+        assert nt.c is None
+
+        # Test setting it with something else
+        set_namedtuple_defaults(NT, default=1)
+        nt = NT()
+        assert nt.a is 1
+        assert nt.b is 1
+        assert nt.c is 1
+
+    def test_padded_tensor(self):
+        # list of lists
+        lol = [[1, 2], [3, 4, 5]]
+        output, lens = padded_tensor(lol)
+        assert np.all(output.numpy() == np.array([[1, 2, 0], [3, 4, 5]]))
+        assert lens == [2, 3]
+        output, _ = padded_tensor(lol, left_padded=True)
+        assert np.all(output.numpy() == np.array([[0, 1, 2], [3, 4, 5]]))
+        output, _ = padded_tensor(lol, pad_idx=99)
+        assert np.all(output.numpy() == np.array([[1, 2, 99], [3, 4, 5]]))
+
+    def test_argsort(self):
+        keys = [5, 4, 3, 2, 1]
+        items = ["five", "four", "three", "two", "one"]
+        items2 = ["e", "d", "c", "b", "a"]
+        torch_keys = torch.LongTensor(keys)
+        assert argsort(keys, items, items2) == [
+            list(reversed(items)), list(reversed(items2))
+        ]
+        assert argsort(keys, items, items2, descending=True) == [items, items2]
+
+        assert np.all(argsort(torch_keys, torch_keys)[0].numpy() == np.arange(1, 6))
 
 
 if __name__ == '__main__':

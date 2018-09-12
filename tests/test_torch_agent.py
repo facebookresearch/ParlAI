@@ -80,6 +80,7 @@ def get_agent(**kwargs):
     opt = parser.parse_args(print_args=False)
     return TorchAgent(opt)
 
+
 class TestTorchAgent(unittest.TestCase):
     """Basic tests on the util functions in TorchAgent."""
 
@@ -519,12 +520,12 @@ class TestTorchAgent(unittest.TestCase):
             "Attack ships on fire off the shoulder of Orion.\n"
             "I watched C-beams glitter in the dark near the Tannhauser gate.\n"
             "All those moments will be lost in time, like tears in rain.")
-        prefix = 'PRE '
+        prefix = 'PRE'
         out = agent._add_person_tokens(text, prefix, add_after_newln=False)
-        self.assertEqual(out, prefix + text)
+        self.assertEqual(out, prefix + ' ' + text)
         out = agent._add_person_tokens(text, prefix, add_after_newln=True)
         idx = text.rfind('\n') + 1
-        self.assertEqual(out, text[:idx] + prefix + text[idx:])
+        self.assertEqual(out, text[:idx] + prefix + ' ' + text[idx:])
 
     def test_get_dialog_history(self):
         """Test different dialog history settings."""
@@ -537,7 +538,6 @@ class TestTorchAgent(unittest.TestCase):
         out = agent.get_dialog_history(obs.copy())
         self.assertEqual(out['text'], 'I am Groot.')
         self.assertEqual(out['labels'][0], 'I am Groot?')
-        self.assertTrue('text_vec' in out, 'Text should be vectorized.')
 
         # second exchange, no reply
         out = agent.get_dialog_history(obs.copy())
@@ -655,7 +655,7 @@ class TestTorchAgent(unittest.TestCase):
         # older reply
         self.assertEqual(agent.last_reply(), None)
         # now agent should remember what it said
-        agent.observation = { 'episode_done': False }
+        agent.observation = {'episode_done': False}
         self.assertEqual(agent.last_reply(),
                          'It\'s okay! I\'m a leaf on the wind.')
         # now set true observation
@@ -686,6 +686,7 @@ class TestTorchAgent(unittest.TestCase):
         # episode was done so shouldn't remember history
         out = agent.observe(obs.copy())
         self.assertEqual(out['text'], 'I\'ll be back.')
+        self.assertTrue('text_vec' in out, 'Text should be vectorized.')
 
         # now try with episode not done
         obs['episode_done'] = False

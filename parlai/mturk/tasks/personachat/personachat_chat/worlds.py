@@ -3,10 +3,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-from parlai.core.agents import create_agent
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
-from parlai.core.agents import create_agent
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from joblib import Parallel, delayed
 from extract_and_save_personas import main as main_extract
@@ -15,7 +13,6 @@ import time
 import os
 import pickle
 import random
-import math
 
 ONBOARD_MSG = '\nWelcome! Below is your persona \
         (you can find it on the left side of the chat)\n \
@@ -26,15 +23,16 @@ TIMEOUT_MSG = '<b> The other person has timed out. \
         </b>'
 WAITING_MSG = 'Please wait while we match you with another worker...'
 
+
 class PersonasGenerator(object):
     def __init__(self, opt):
         self.personas_idx_stack_path = os.path.join(opt['extract_personas_path'],
                                                     './personas_idx_stack.pkl')
 
         self.personas_path = '{}/personas-{}'.format(
-                             opt['extract_personas_path'],
-                             opt['persona_type'] +
-                                'Revised' if opt['revised'] else 'Original')
+            opt['extract_personas_path'],
+            opt['persona_type'] + 'Revised' if opt['revised'] else 'Original'
+        )
 
         if not os.path.exists(self.personas_path):
             opt['personas_path'] = self.personas_path
@@ -133,12 +131,15 @@ class PersonaChatWorld(MultiAgentDialogWorld):
         self.world_tag = world_tag
 
         # below are timeout protocols
-        self.max_resp_time = max_resp_time # in secs
+        self.max_resp_time = max_resp_time  # in secs
         self.agent_timeout_shutdown = agent_timeout_shutdown
         super().__init__(opt, agents, shared)
 
         # get personas
-        self.personas = [(ag.persona_data if hasattr(ag, 'persona_data') else None) for ag in self.agents]
+        self.personas = [
+            (ag.persona_data if hasattr(ag, 'persona_data') else None)
+            for ag in self.agents
+        ]
 
     def parley(self):
         self.turn_idx += 1
@@ -157,8 +158,9 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                                     '{}\n</span></b>'.format(s.strip())
                 control_msg['persona_text'] = persona_text
                 control_msg['text'] = self.get_instruction(
-                                            tag='start',
-                                            agent_id=agent.id)
+                    tag='start',
+                    agent_id=agent.id
+                )
                 agent.observe(validate(control_msg))
                 if idx == 0:
                     time.sleep(3)
@@ -182,19 +184,23 @@ class PersonaChatWorld(MultiAgentDialogWorld):
 
             if self.turn_idx > 1:
                 # only check if message is too short on first message
-                while self.is_msg_tooshortlong(acts[idx], agent) or self.is_exact_match(acts[idx], agent):
+                while (self.is_msg_tooshortlong(acts[idx], agent) or
+                        self.is_exact_match(acts[idx], agent)):
                     acts[idx] = agent.act()
             else:
                 while self.is_exact_match(acts[idx], agent):
                     acts[idx] = agent.act()
 
-            if acts[idx]['episode_done'] == True:
+            if acts[idx]['episode_done']:
                 self.chat_done = True
                 for ag in self.agents:
                     # if agent disconnected
                     if ag != agent and ag.some_agent_disconnected:
-                        control_msg['text'] = 'The other worker unexpectedly diconnected. \
-                            Please click "Done with this HIT" button below to finish this HIT.'
+                        control_msg['text'] = (
+                            'The other worker unexpectedly diconnected. '
+                            'Please click "Done with this HIT" button below to '
+                            'finish this HIT.'
+                        )
                         control_msg['episode_done'] = True
                         ag.observe(validate(control_msg))
                         return
@@ -202,7 +208,11 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                 if self.turn_idx > self.n_turn:
                     for ag in self.agents:
                         ag.observe(validate(acts[idx]))
-                        control_msg['text'] = 'One of you ended the chat. Thanks for your time! Please click "Done with this HIT" button below to finish this HIT.'
+                        control_msg['text'] = (
+                            'One of you ended the chat. Thanks for your time! '
+                            'Please click "Done with this HIT" button below '
+                            'to finish this HIT.'
+                        )
                         control_msg['episode_done'] = True
                         ag.observe(validate(control_msg))
                 return
@@ -215,6 +225,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
 
     def shutdown(self):
         global shutdown_agent
+
         def shutdown_agent(mturk_agent):
             mturk_agent.shutdown()
         Parallel(
@@ -227,57 +238,89 @@ class PersonaChatWorld(MultiAgentDialogWorld):
 
     def get_instruction(self, agent_id=None, tag='first'):
         if tag == 'start':
-            return '\nSuccessfully matched. Now let\'s get to know each other through the chat! \n\
-                    You need to finish at least <b>' + str(self.n_turn) + ' chat turns</b>, \
-                    after that you can click the "Done" button to end the chat. \n \
-                    <b>You can track your character description on the left.</b> \
-		    \n <span style="color:blue"><b>Please try to speak to the other person as if you are the character assigned.</b></span> \n \
-                    <span style="color:blue"><b>Do not trivially copy the character descriptions into the message.</b></span>'
+            return (
+                '\nSuccessfully matched. Now let\'s get to know each other'
+                'through the chat! \nYou need to finish at least <b>' +
+                str(self.n_turn) +
+                ' chat turns</b>, after that you can click the "Done" button '
+                'to end the chat. \n'
+                '<b>You can track your character description on the left.</b> '
+                '\n <span style="color:blue"><b>Please try to speak to the '
+                'other person as if you are the character assigned.</b></span>'
+                '\n \ <span style="color:blue"><b>Do not trivially copy the '
+                'character descriptions into the message.</b></span>'
+            )
 
         if tag == 'chat_not_done':
-            return 'Sorry, we need at least <b>' + str(self.n_turn + 1 - self.turn_idx) + ' more turn(s)</b> to finish. ' + \
-                   'Please send a new message:'
+            return (
+                'Sorry, we need at least <b>' +
+                str(self.n_turn + 1 - self.turn_idx) +
+                ' more turn(s)</b> to finish. '
+                'Please send a new message:'
+            )
 
         if tag == 'timeout':
-            return '<b>{}</b> is timeout. \
-                    Please click the "Done with this HIT" button below to exit this HIT. No rejections.'.format(agent_id)
+            return (
+                '<b>{}</b> is timeout. Please click the "Done with this HIT" '
+                'button below to exit this HIT. No rejections.'
+                .format(agent_id)
+            )
 
         if tag == 'exceed_min_turns':
-            return '\n {} chat turns finished! \n Keep chatting or you can click the "Done" button to end the chat if it\'s your turn.'.format(self.n_turn)
+            return (
+                '\n {} chat turns finished! \n Keep chatting or you can click '
+                'the "Done" button to end the chat if it\'s your turn.'
+                .format(self.n_turn)
+            )
 
     def save_data(self):
         # save persona_idx_stack
         convo_finished = True
         bad_workers = []
         for ag in self.agents:
-            if (ag.hit_is_abandoned or ag.hit_is_returned or \
-                ag.disconnected or ag.hit_is_expired):
+            if (ag.hit_is_abandoned or ag.hit_is_returned or
+                    ag.disconnected or ag.hit_is_expired):
                 bad_workers.append(ag.worker_id)
                 convo_finished = False
         if not convo_finished or self.dialog == []:
             for ag in self.agents:
                 ag.not_approve = True
                 ag.persona_generator.push_persona(ag.persona_idx)
-                print ("\n******* Push persona {} back to stack. *******\n".format(ag.persona_idx))
+                print(
+                    "\n******* Push persona {} back to stack. *******\n"
+                    .format(ag.persona_idx)
+                )
 
         data_path = self.opt['extract_personas_path']
         if not os.path.exists(data_path):
             os.makedirs(data_path)
         if convo_finished:
-            filename = os.path.join(data_path, '{}_{}_{}.pkl'.format(time.strftime("%Y%m%d-%H%M%S"), np.random.randint(0, 1000), self.task_type))
+            filename = os.path.join(
+                data_path,
+                '{}_{}_{}.pkl'.format(
+                    time.strftime("%Y%m%d-%H%M%S"),
+                    np.random.randint(0, 1000), self.task_type
+                )
+            )
         else:
-            filename = os.path.join(data_path, '{}_{}_{}_incomplete.pkl'.format(time.strftime("%Y%m%d-%H%M%S"), np.random.randint(0, 1000), self.task_type))
-        print(self.world_tag+': Data successfully saved at {}.'.format(filename))
+            filename = os.path.join(
+                data_path,
+                '{}_{}_{}_incomplete.pkl'.format(
+                    time.strftime("%Y%m%d-%H%M%S"),
+                    np.random.randint(0, 1000),
+                    self.task_type
+                )
+            )
+        print(self.world_tag + ': Data successfully saved at {}.'.format(filename))
         pickle.dump({'personas': self.personas,
                      'dialog': self.dialog,
                      'workers': [ag.worker_id for ag in self.agents],
                      'bad_workers': bad_workers,
                      'n_turn': self.n_turn}, open(filename, 'wb'))
 
-
     def is_exact_match(self, act, ag, tolerance=0):
-        if act['episode_done'] == True:
-           return False
+        if act['episode_done']:
+            return False
 
         control_msg = {'episode_done': False}
         control_msg['id'] = 'SYSTEM'
@@ -291,20 +334,27 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                 for r_w in regular_words:
                     if r_w in per_parse:
                         per_parse.remove(r_w)
-                per_subseq = [' '.join(per_parse[i:i+len(per_parse)-tolerance]) for i in range(tolerance+1)]
+                per_subseq = [
+                    ' '.join(per_parse[i:i + len(per_parse) - tolerance])
+                    for i in range(tolerance + 1)
+                ]
                 for pp in per_subseq:
                     if pp in ['', ' ', '  ', '   ']:
                         per_subseq.remove(pp)
                 n_word_match += sum([(paa in text) for paa in per_subseq])
-            if n_word_match >0:
-                control_msg['text'] = 'We found that you <b><span style="color:red">trivially copied character descriptions</span></b>. Please rephrase your message again.'
+            if n_word_match > 0:
+                control_msg['text'] = (
+                    'We found that you <b><span style="color:red">trivially '
+                    'copied character descriptions</span></b>. Please '
+                    'rephrase your message again.'
+                )
                 ag.observe(validate(control_msg))
                 return True
             else:
                 return False
 
     def is_msg_tooshortlong(self, act, ag, th_min=5, th_max=17):
-        if act['episode_done'] == True:
+        if act['episode_done']:
             return False
 
         control_msg = {'episode_done': False}
@@ -312,11 +362,17 @@ class PersonaChatWorld(MultiAgentDialogWorld):
 
         msg_len = len(act['text'].split(' '))
         if msg_len < th_min:
-            control_msg['text'] = 'Your message is too short, please make it more than <b><span style="color:red">5 words</span></b>.'
+            control_msg['text'] = (
+                'Your message is too short, please make it more than '
+                '<b><span style="color:red">5 words</span></b>.'
+            )
             ag.observe(validate(control_msg))
             return True
         if msg_len > th_max:
-            control_msg['text'] = 'Your message is too long, please make it less than <b><span style="color:red">15 words</span></b>.'
+            control_msg['text'] = (
+                'Your message is too long, please make it less than '
+                '<b><span style="color:red">15 words</span></b>.'
+            )
             ag.observe(validate(control_msg))
             return True
         return False
@@ -325,10 +381,13 @@ class PersonaChatWorld(MultiAgentDialogWorld):
         self.n_turn = np.random.randint(self.range_turn[0], self.range_turn[1]) + 1
 
     def check_timeout(self, act):
-        if act['text'] == '[TIMEOUT]' and act['episode_done'] == True:
+        if act['text'] == '[TIMEOUT]' and act['episode_done']:
             control_msg = {'episode_done': True}
             control_msg['id'] = 'SYSTEM'
-            control_msg['text'] = self.get_instruction(agent_id=act['id'], tag='timeout')
+            control_msg['text'] = self.get_instruction(
+                agent_id=act['id'],
+                tag='timeout'
+            )
             for ag in self.agents:
                 if ag.id != act['id']:
                     ag.observe(validate(control_msg))
@@ -339,9 +398,12 @@ class PersonaChatWorld(MultiAgentDialogWorld):
 
     def review_work(self):
         global review_agent
+
         def review_agent(ag):
             if hasattr(ag, 'not_approve'):
                 pass
             else:
                 ag.approve_work()
-        Parallel(n_jobs=len(self.agents), backend='threading')(delayed(review_agent)(agent) for agent in self.agents)
+        Parallel(n_jobs=len(self.agents), backend='threading')(
+            delayed(review_agent)(agent) for agent in self.agents
+        )

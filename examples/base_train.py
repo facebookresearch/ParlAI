@@ -21,6 +21,7 @@ from parlai.core.agents import Agent
 from parlai.core.worlds import create_task
 import time
 
+
 def main():
     # Get command line arguments
     parser = ParlaiParser()
@@ -56,6 +57,7 @@ def main():
         print(world_valid.report())
 
     print('finished in {} s'.format(round(time.time() - start, 2)))
+
 
 if __name__ == '__main__':
     main()

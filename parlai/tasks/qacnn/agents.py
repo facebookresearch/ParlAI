@@ -10,6 +10,7 @@ from .build import build
 import copy
 import os
 
+
 def _path(opt):
     # Build the data if it doesn't exist.
     build(opt)

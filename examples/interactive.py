@@ -21,4 +21,4 @@ if __name__ == '__main__':
     random.seed(42)
     parser = setup_args()
     opt = parser.parse_args()
-    interactive(opt)
+    interactive(opt, print_parser=parser)

@@ -9,6 +9,7 @@
 set -e # stop if any tests fail
 for test in $(ls); do
     if [ ${test: -3} == ".py" ] && [ $test != "test_downloads.py" ] && [ $test != "test_mlb_vqa.py" ]; then
+        echo "Running $test"
         python3 $test;
     fi
 done

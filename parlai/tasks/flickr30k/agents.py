@@ -6,10 +6,9 @@
 
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
-from parlai.scripts.extract_image_feature import extract_feats
 from .build import build
 try:
-    import torch
+    import torch  # noqa: F401
 except Exception as e:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset
@@ -17,6 +16,7 @@ from parlai.core.dict import DictionaryAgent
 
 import os
 import json
+import random
 
 # There is no real dialog in this task, so for the purposes of display_data, we
 # include a generic question that applies to all images.
@@ -44,6 +44,10 @@ class FlickrDataset(Dataset):
         data_path, self.image_path = _path(opt)
         self._setup_data(data_path, opt.get('unittest', False))
         self.dict_agent = DictionaryAgent(opt)
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        DefaultTeacher.add_cmdline_args(argparser)
 
     def __getitem__(self, index):
         cap = self.data[index]
@@ -106,6 +110,7 @@ class DefaultTeacher(FixedDialogTeacher):
         super().__init__(opt, shared)
         self.image_mode = opt.get('image_mode', 'none')
         self.use_intro = opt.get('use_intro', False)
+        self.num_cands = opt.get('num_cands', -1)
         data_path, self.image_path = _path(opt)
 
         if shared:
@@ -129,6 +134,10 @@ class DefaultTeacher(FixedDialogTeacher):
                            help='Include an intro question with each image \
                                 for readability (e.g. for coco_caption, \
                                 Describe the above picture in a sentence.)')
+        agent.add_argument('--num_cands', type=int,
+                           default=-1,
+                           help='Number of candidates to use during \
+                                evaluation, setting to -1 uses all.')
 
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
@@ -157,7 +166,14 @@ class DefaultTeacher(FixedDialogTeacher):
         if self.use_intro:
             action['text'] = QUESTION
         if 'train' not in self.datatype:
-            action['label_candidates'] = self.cands
+            if self.num_cands > 0:
+                labels = action['labels']
+                cands_to_sample = [c for c in self.cands if c not in labels]
+                cands = random.Random(episode_idx).sample(cands_to_sample, self.num_cands) + labels
+                random.shuffle(cands)
+                action['label_candidates'] = cands
+            else:
+                action['label_candidates'] = self.cands
         return action
 
     def next_example(self):

@@ -1,3 +1,5 @@
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
@@ -153,6 +155,7 @@ class SplitTeacher(Teacher):
             for line in imageset:
                 train_test_images.add(line.strip())
         self.ques = [questions[k] for k in sorted(questions.keys()) if questions[k]['img_file'] in train_test_images]
+
 
 class DefaultTeacher(SplitTeacher):
     pass

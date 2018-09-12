@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-# Copyright 2017-present, Facebook, Inc.
+# Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
-#
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
+
 """Various retriever utilities."""
 
 import regex
@@ -32,6 +33,7 @@ def save_sparse_csr(filename, matrix, metadata=None):
     }
     np.savez(filename, **data)
 
+
 def save_sparse_tensor(filename, matrix, metadata=None):
     data = {
         'indices': matrix._indices(),
@@ -47,6 +49,7 @@ def load_sparse_csr(filename):
     matrix = sp.csr_matrix((loader['data'], loader['indices'],
                             loader['indptr']), shape=loader['shape'])
     return matrix, loader['metadata'].item(0) if 'metadata' in loader else None
+
 
 def load_sparse_tensor(filename):
     loader = torch.load(filename)

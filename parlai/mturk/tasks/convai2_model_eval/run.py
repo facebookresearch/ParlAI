@@ -53,8 +53,8 @@ def main():
     argparser.add_argument('-rt', '--range-turn', default='5,6',
                            help='sample range of number of turns')
     argparser.add_argument('--auto-approve-delay', type=int,
-                           default=3600*24*1, help='how long to wait for  \
-                           auto approval')
+                           default=3600 * 24 * 1,
+                           help='how long to wait for auto approval')
     argparser.add_argument('--only-masters', type='bool', default=False,
                            help='Set to True to use only master turks for this' +
                                 ' test eval, default is %(default)s')
@@ -76,8 +76,8 @@ def main():
 
     bot = create_agent(opt)
     shared_bot_params = bot.share()
-    print('=== Actual bot opt === :\n {}'.format('\n'.join(["[{}] : {}".format(k,v) for k,v in bot.opt.items()])))
-    folder_name = 'master_{}_YOURCOMMENT__'.format(opt['only_masters']) + '__'.join(['{}_{}'.format(k,v) for k,v in opt['override'].items()])
+    print('=== Actual bot opt === :\n {}'.format('\n'.join(["[{}] : {}".format(k, v) for k, v in bot.opt.items()])))
+    folder_name = 'master_{}_YOURCOMMENT__'.format(opt['only_masters']) + '__'.join(['{}_{}'.format(k, v) for k, v in opt['override'].items()])
 
     #  this is mturk task, not convai2 task from ParlAI
     opt['task'] = 'convai2:self'

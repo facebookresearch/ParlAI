@@ -1,8 +1,9 @@
-# Copyright 2004-present Facebook. All Rights Reserved.
+# Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
+
 """Simple loop which sets up a remote connection. The paired agent can run this
 same loop but with the '--remote-host' flag set. For example...
 
@@ -35,6 +36,7 @@ from parlai.core.worlds import DialogPartnerWorld, create_task
 
 import random
 
+
 def main():
     random.seed(42)
 
@@ -55,12 +57,12 @@ def main():
         agents = [local, remote] if not opt['remote_host'] else [remote, local]
         world = DialogPartnerWorld(opt, agents)
 
-
     # Talk to the remote agent
     with world:
         while True:
             world.parley()
             print(world.display())
+
 
 if __name__ == '__main__':
     main()

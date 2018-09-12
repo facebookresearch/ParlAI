@@ -182,7 +182,7 @@ class VseppCaptionAgent(TorchAgent):
             images = images.cuda(async=True)
 
         # Need to collate then sort the captions by length
-        cands = [self.candidate_helper(label_cands_vec, label_cands, self.mode=='test')
+        cands = [self.candidate_helper(label_cands_vec, label_cands, self.mode == 'test')
                  for label_cands_vec, label_cands in zip(batch.candidate_vecs, batch.candidates)]
         self.model.eval()
         # Obtain the image embeddings
