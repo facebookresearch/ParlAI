@@ -77,7 +77,7 @@ class Seq2seq(nn.Module):
             attn_time=attention_time,
             bidir_input=bidirectional)
 
-        shared_lt = (self.decoder.lt
+        shared_lt = (self.decoder.lt  # share embeddings between rnns
                      if lookuptable in ('enc_dec', 'all') else None)
         shared_rnn = self.decoder.rnn if decoder == 'shared' else None
         self.encoder = RNNEncoder(
@@ -88,7 +88,7 @@ class Seq2seq(nn.Module):
             shared_lt=shared_lt, shared_rnn=shared_rnn,
             unknown_idx=unknown_idx, input_dropout=input_dropout)
 
-        shared_weight = (self.decoder.lt.weight
+        shared_weight = (self.decoder.lt.weight  # use embeddings for projection
                          if lookuptable in ('dec_out', 'all') else None)
         self.output = OutputLayer(
             num_features, embeddingsize, hiddensize, dropout=dropout,
