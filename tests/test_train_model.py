@@ -44,7 +44,7 @@ class TestTrainModel(unittest.TestCase):
                 task='tasks.repeat:RepeatTeacher:10',
                 dict_file='/tmp/repeat',
                 batchsize=1,
-                numthreads=4,
+                numthreads=1,
                 validation_every_n_epochs=10,
                 validation_patience=5,
                 embedding_size=8,
@@ -76,8 +76,10 @@ class TestTrainModel(unittest.TestCase):
         for line in list_output:
             if "test:{" in line:
                 score = ast.literal_eval(line.split("test:", 1)[1])
-                self.assertTrue(score['accuracy'] > 0.5,
-                                "Accuracy not convincing enough, was " + str(score['accuracy']))
+                self.assertTrue(
+                    score['accuracy'] > 0.5,
+                    'Accuracy not convincing enough, was {}'
+                    ''.format(score['accuracy']))
 
 
 if __name__ == '__main__':

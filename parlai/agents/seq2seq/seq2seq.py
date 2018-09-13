@@ -51,12 +51,8 @@ class Seq2seqAgent(TorchAgent):
                            help='size of the token embeddings')
         agent.add_argument('-nl', '--numlayers', type=int, default=2,
                            help='number of hidden layers')
-        agent.add_argument('-lr', '--learningrate', type=float, default=1,
-                           help='learning rate')
         agent.add_argument('-dr', '--dropout', type=float, default=0.1,
                            help='dropout rate')
-        agent.add_argument('-clip', '--gradient-clip', type=float, default=0.1,
-                           help='gradient clipping using l2 norm')
         agent.add_argument('-bi', '--bidirectional', type='bool',
                            default=False,
                            help='whether to encode the context with a '
@@ -121,10 +117,10 @@ class Seq2seqAgent(TorchAgent):
     def model_version():
         """Return current version of this model, counting up from 0.
 
-        Models are not backwards-compatible with older versions.
+        Models may not be backwards-compatible with older versions.
         Version 1 split from version 0 on Aug 29, 2018.
         To use version 0, use --model legacy:seq2seq:0
-        (legacy agent code is located in parlai/legacy_agents).
+        (legacy agent code is located in parlai/agents/legacy_agents).
         """
         return 1
 
@@ -150,14 +146,6 @@ class Seq2seqAgent(TorchAgent):
 
         # all instances may need some params
         self.id = 'Seq2Seq'
-        self.metrics = {'loss': 0.0, 'num_tokens': 0, 'correct_tokens': 0,
-                        'total_skipped_batches': 0}
-        self.beam_dot_log = opt.get('beam_dot_log', False)
-        self.beam_size = opt.get('beam_size', 1)
-        self.beam_min_n_best = opt.get('beam_min_n_best', 3)
-        self.beam_min_length = opt.get('beam_min_length', 3)
-        self.topk = opt.get('topk', 1)
-
         states = {}
 
         if shared:
@@ -165,10 +153,9 @@ class Seq2seqAgent(TorchAgent):
             self.model = shared['model']
             self.metrics = shared['metrics']
             states = shared.get('states', {})
-            if self.beam_dot_log is True:
-                self.beam_dot_dir = shared['beam_dot_dir']
-
         else:
+            self.metrics = {'loss': 0.0, 'num_tokens': 0, 'correct_tokens': 0,
+                            'total_skipped_batches': 0}
             # this is not a shared instance of this class, so do full init
             if self.beam_dot_log:
                 self.beam_dot_dir = tempfile.mkdtemp(
@@ -355,6 +342,7 @@ class Seq2seqAgent(TorchAgent):
                                self.truncate or 180)
         self.model.train()
         self.zero_grad()
+
         try:
             out = self.model(batch.text_vec, batch.label_vec)
 
@@ -516,6 +504,8 @@ class Seq2seqAgent(TorchAgent):
 
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
+        if batch.text_vec is None:
+            return
         self.model.eval()
         cand_scores = None
         if self.beam_size == 1:
@@ -561,7 +551,7 @@ class Seq2seqAgent(TorchAgent):
 
         cand_choices = None
         if cand_scores is not None:
-            cand_preds = cand_scores.sort(1, True)[1]
+            cand_preds = cand_scores.sort(1, descending=True)[1]
             # now select the text of the cands based on their scores
             cand_choices = self._pick_cands(cand_preds, cand_params[1],
                                             batch.candidates)
@@ -593,11 +583,6 @@ class Seq2seqAgent(TorchAgent):
         """Return opt and model states."""
         states = torch.load(path, map_location=lambda cpu, _: cpu)
         return states
-
-    def receive_metrics(self, metrics_dict):
-        """Use the metrics to decide when to adjust LR schedule."""
-        if 'loss' in metrics_dict:
-            self.scheduler.step(metrics_dict['loss'])
 
 
 class mydefaultdict(defaultdict):

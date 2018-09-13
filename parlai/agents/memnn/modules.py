@@ -6,194 +6,214 @@
 
 import torch
 import torch.nn as nn
-from torch.nn.functional import softmax
 
 from functools import lru_cache
 
 
+def opt_to_kwargs(opt):
+    """Get kwargs for seq2seq from opt."""
+    kwargs = {}
+    for k in ['mem_size', 'time_features', 'position_encoding', 'hops']:
+        if k in opt:
+            kwargs[k] = opt[k]
+    return kwargs
+
+
 class MemNN(nn.Module):
-    def __init__(self, opt, num_features, use_cuda=False):
+    """Memory Network module."""
+
+    def __init__(
+        self, num_features, embedding_size, hops=1,
+        mem_size=32, time_features=False, position_encoding=False,
+        dropout=0, padding_idx=0,
+    ):
+        """Initialize memnn model.
+
+        See cmdline args in MemnnAgent for description of arguments.
+        """
         super().__init__()
-        self.opt = opt
 
-        # Prepare features
-        self.num_time_features = opt['mem_size']
-        self.extra_features_slots = 0
-        if opt['time_features']:
-            self.time_features = torch.LongTensor(range(num_features,
-                num_features + self.num_time_features))
-            num_features += self.num_time_features
-            self.extra_features_slots += 1
+        # prepare features
+        self.hops = hops
 
-        def embedding():
-            return Embed(num_features, opt['embedding_size'],
-                position_encoding=opt['position_encoding'], padding_idx=0)
+        # time features: we learn an embedding for each memory slot
+        self.extra_features = 0
+        if time_features:
+            self.extra_features += mem_size
+            self.time_features = torch.LongTensor(
+                range(num_features, num_features + mem_size))
 
-        self.query_embedder = embedding()
+        def embedding(use_extra_feats=True):
+            if use_extra_feats:
+                return Embed(num_features + self.extra_features,
+                             embedding_size,
+                             position_encoding=position_encoding,
+                             padding_idx=padding_idx)
+            else:
+                return Embed(num_features, embedding_size,
+                             position_encoding=position_encoding,
+                             padding_idx=padding_idx)
+
+        # TODO: add token dropout?
+        # TODO: add dropout
+        # self.dropout = nn.Dropout(dropout)
+        # TODO: support more weight tying options?
+        self.query_lt = embedding()
+        self.in_memory_lt = embedding()
+        self.out_memory_lt = embedding()
         self.answer_embedder = embedding()
-        self.in_memory_embedder = embedding()
-        self.out_memory_embedder = embedding()
-        self.memory_hop = Hop(opt['embedding_size'])
+        self.memory_hop = Hop(embedding_size)
 
-        self.score = DotScore()
+    def _score(self, output, cands):
+        if cands.dim() == 2:
+            return torch.matmul(output, cands.t())
+        elif cands.dim() == 3:
+            return torch.bmm(output.unsqueeze(1),
+                             cands.transpose(1, 2)).squeeze(1)
+        else:
+            raise RuntimeError('Unexpected candidate dimensions {}'
+                               ''.format(cands.dim()))
 
-        if use_cuda:
-            self.score.cuda()
-            self.memory_hop.cuda()
-        self.use_cuda = use_cuda
+    def forward(self, xs, mems, cands=None):
+        """One forward step.
 
-    def time_feature(self, t):
-        return self.time_features[min(t, self.num_time_features - 1)]
+        :param xs:    (bsz x seqlen) LongTensor queries to the model
+        :param mems:  (bsz x num_mems x seqlen) LongTensor memories
+        :param cands: yuck variety of input formats
 
-    def update_memories_with_extra_features_(self, memory_lengths, memories):
-        memory_lengths = memory_lengths.data
-        memories = memories.data
-        if self.extra_features_slots > 0:
-            num_nonempty_memories = int(memory_lengths.ne(0).long().sum())
-            updated_memories = memories.new(memories.numel() + num_nonempty_memories * self.extra_features_slots)
-            src_offset = 0
-            dst_offset = 0
-            for i in range(memory_lengths.size(0)):
-                for j in range(self.opt['mem_size']):
-                    length = memory_lengths[i, j]
-                    if length > 0:
-                        if self.opt['time_features']:
-                            updated_memories[dst_offset] = self.time_feature(j)
-                            dst_offset += 1
-                        updated_memories[dst_offset:dst_offset + length] = memories[src_offset:src_offset + length]
-                        src_offset += length
-                        dst_offset += length
-            memory_lengths += memory_lengths.ne(0).long() * self.extra_features_slots
-            memories.set_(updated_memories)
+        :returns: scores
+            scores contains the model's predicted scores.
+                if cand_params is None, the candidates are the vocabulary;
+                otherwise, these scores are over the candidates provided.
+                (bsz x num_cands)
+        """
+        state = self.query_lt(xs)
+        if mems is not None:
+            # no memories available, `nomemnn` mode just uses query/ans embs
+            in_memory_embs = self.in_memory_lt(mems).transpose(1, 2)
+            out_memory_embs = self.out_memory_lt(mems)
 
-    def forward(self, memories, queries, memory_lengths, query_lengths):
-        self.update_memories_with_extra_features_(memory_lengths, memories)
+            for _ in range(self.hops):
+                state = self.memory_hop(state, in_memory_embs, out_memory_embs)
 
-        in_memory_embeddings = self.in_memory_embedder(memory_lengths, memories)
-        out_memory_embeddings = self.out_memory_embedder(memory_lengths, memories)
-        query_embeddings = self.query_embedder(query_lengths, queries)
-        attention_mask = memory_lengths.data.ne(0).detach()
+        if cands is not None:
+            # embed candidates
+            cand_embs = self.answer_embedder(cands)
+        else:
+            # rank all possible tokens
+            cand_embs = self.answer_embedder.weight
 
-        if self.use_cuda:
-            in_memory_embeddings = in_memory_embeddings.cuda()
-            out_memory_embeddings = out_memory_embeddings.cuda()
-            query_embeddings = query_embeddings.cuda()
-            attention_mask = attention_mask.cuda()
-
-        for _ in range(self.opt['hops']):
-            query_embeddings = self.memory_hop(query_embeddings,
-                    in_memory_embeddings, out_memory_embeddings, attention_mask)
-        return query_embeddings
+        scores = self._score(state, cand_embs)
+        return scores
 
 
 class Embed(nn.Embedding):
-    def __init__(self, *args, position_encoding=False, **kwargs):
+    """Embed sequences for MemNN model.
+
+    Applies Position Encoding if enabled and currently applies BOW sum.
+    """
+
+    def __init__(self, *args, position_encoding=False, reduction='mean',
+                 **kwargs):
+        """Initialize custom Embedding layer.
+
+        :param position_encoding: apply positional encoding transformation
+                                  on input sequences
+        :param reduction:         reduction strategy to sequences, default 'mean'
+        """
         self.position_encoding = position_encoding
+        self.reduction = reduction
         super().__init__(*args, **kwargs)
 
-    def forward(self, lengths, indices):
-        lengths_mat = lengths.data
-        if lengths.dim() == 1 or lengths.size(1) == 1:
-            lengths_mat = lengths_mat.unsqueeze(0)
+    def _reduce(self, embs, input):
+        # last dimension is embedding, do operation over dim before that
+        if self.reduction == 'sum':
+            return embs.sum(-2)
+        elif self.reduction == 'mean':
+            # this is more fair than mean(-2) since mean includes null tokens
+            sum = embs.sum(-2)
+            lens = input.ne(0).sum(-1).unsqueeze(-1).float()
+            return sum / lens
+        else:
+            raise RuntimeError(
+                'reduction method {} not supported'.format(self.reduction))
 
-        if lengths_mat.dim() == 1:
-            raise RuntimeError(lengths.shape)
+    def forward(self, input):
+        """Return BOW embedding with PE reweighting if enabled.
 
-        input = torch.LongTensor(lengths_mat.size(0), lengths_mat.size(1), torch.max(lengths_mat))
-        pad = self.padding_idx if self.padding_idx is not None else 0
-        input.fill_(pad)
-        emb_list = []
-        offset = 0
-        for i, row in enumerate(lengths_mat):
-            for j, length in enumerate(row):
-                length = length.item()
-                if length > 0:
-                    input[i, j, :length] = indices[offset:offset + length]
-                offset += length
+        :param input: (bsz x seqlen) LongTensor
 
-        for i, row in enumerate(lengths_mat):
-            emb = super().forward(input[i, :, :])
-            if self.position_encoding:
-                emb = emb * self.position_tensor(row, emb)
-            emb = torch.sum(emb, dim=1).squeeze(1)
-            for j, length in enumerate(row):
-                length = length.item()
-                if length > 0:
-                    emb[j] /= length
-            emb_list.append(emb)
-        embs = torch.stack(emb_list)
-
-        if lengths.dim() == 1:
-            embs = embs.squeeze(0)
-        elif lengths.size(1) == 1:
-            embs = embs.squeeze().unsqueeze(1)
-        return embs
+        :returns: (bsz x esz) FloatTensor
+        """
+        embs = super().forward(input)
+        if self.position_encoding:
+            if embs.dim() == 3:
+                num_mems, seqlen, embdim = embs.size()
+                pe = self.position_matrix(seqlen, embdim, embs.is_cuda)
+                for i in range(num_mems):
+                    embs[i] *= pe
+            else:
+                bsz, num_mems, seqlen, embdim = embs.size()
+                pe = self.position_matrix(seqlen, embdim, embs.is_cuda)
+                for i in range(num_mems):
+                    embs[:, i] *= pe
+        return self._reduce(embs, input)
 
     @staticmethod
-    @lru_cache(maxsize=32)
-    def position_matrix(J, d):
+    @lru_cache(maxsize=128)
+    def position_matrix(J, d, use_cuda):
+        """Build matrix of position encoding coeffiencents.
+
+        See https://papers.nips.cc/paper/5846-end-to-end-memory-networks,
+        section 4.1 Model Details: Sentence Representation.
+
+        :param J: number of words in the sequence
+        :param d: dimension of the embedding
+
+        :returns: Position Encoding matrix
+        """
         m = torch.Tensor(J, d)
         for k in range(1, d + 1):
             for j in range(1, J + 1):
                 m[j - 1, k - 1] = (1 - j / J) - (k / d) * (1 - 2 * j / J)
+        if use_cuda:
+            m = m.cuda()
         return m
-
-    @staticmethod
-    def position_tensor(sentence_lengths, embeddings):
-        t = torch.zeros(embeddings.size())
-        embedding_dim = embeddings.size()[-1]
-        for i, length in enumerate(sentence_lengths):
-            if length > 0:
-                t[i, :length, :] = Embed.position_matrix(length, embedding_dim)
-        return t
 
 
 class Hop(nn.Module):
-    def __init__(self, embedding_size):
-        super(Hop, self).__init__()
-        self.embedding_size = embedding_size
-        self.linear = nn.Linear(embedding_size, embedding_size, bias=False)
+    """Memory Network hop outputs attention-weighted sum of memory embeddings.
 
-    def forward(self, query_embeddings, in_memory_embeddings, out_memory_embeddings, attention_mask=None):
-        attention = torch.bmm(in_memory_embeddings, query_embeddings.unsqueeze(2)).squeeze(2)
-        if attention_mask is not None:
-            # exclude masked elements from the softmax
-            attention = attention_mask.float() * attention + (1 - attention_mask.float()) * -1e20
-        probs = softmax(attention, dim=1).unsqueeze(1)
-        memory_output = torch.bmm(probs, out_memory_embeddings).squeeze(1)
-        query_embeddings = self.linear(query_embeddings)
-        output = memory_output + query_embeddings
-        return output
+    0) rotate the query embeddings
+    1) compute the dot product between the input vector and each memory vector
+    2) compute a softmax over the memory scores
+    3) compute the weighted sum of the memory embeddings using the probabilities
+    4) add the query embedding to the memory output and return the result
+    """
 
-
-class Decoder(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, opt, dictionary):
+    def __init__(self, embedding_size, rotate=True):
+        """Initialize linear rotation."""
         super().__init__()
-        self.dict = dictionary
-        self.h2o = nn.Linear(hidden_size, len(dictionary))
-        self.dropout = nn.Dropout(opt['dropout'])
-        self.rnn = nn.GRU(input_size, hidden_size, num_layers)
+        if rotate:
+            self.rotate = nn.Linear(embedding_size, embedding_size, bias=False)
+        else:
+            self.rotate = lambda x: x
+        self.softmax = nn.Softmax(dim=1)
 
-    def hidden_to_idx(self, hidden, dropout=False):
-        """Converts hidden state vectors into indices into the dictionary."""
-        if hidden.size(0) > 1:
-            raise RuntimeError('Bad dimensions of tensor:', hidden)
-        hidden = hidden.squeeze(0)
-        scores = self.h2o(hidden)
-        if dropout:
-            scores = self.dropout(scores)
-        _, idx = scores.max(1)
-        idx.unsqueeze_(1)
-        return idx, scores
+    def forward(self, query_embs, in_mem_embs, out_mem_embs):
+        """Compute MemNN Hop step.
 
-    def forward(self, input, state):
-        output, state = self.rnn(input, state)
-        return self.hidden_to_idx(output, dropout=self.training)
+        :param query_embs:   (bsz x esz) embedding of queries
+        :param in_mem_embs:  bsz list of (num_mems x esz) embedding of memories
+                             for activation
+        :param out_mem_embs: bsz list of (num_mems x esz) embedding of memories
+                             for outputs
 
-
-class DotScore(nn.Module):
-    def one_to_one(self, query_embeddings, answer_embeddings, reply_embeddings=None):
-        return (query_embeddings * answer_embeddings).sum(dim=1).squeeze(1)
-
-    def one_to_many(self, query_embeddings, answer_embeddings, reply_embeddings=None):
-        return query_embeddings.mm(answer_embeddings.t())
+        :returns: (bsz x esz) output state
+        """
+        # rotate query embeddings
+        attn = torch.bmm(query_embs.unsqueeze(1), in_mem_embs).squeeze(1)
+        probs = self.softmax(attn)
+        memory_output = torch.bmm(probs.unsqueeze(1), out_mem_embs).squeeze(1)
+        output = memory_output + self.rotate(query_embs)
+        return output

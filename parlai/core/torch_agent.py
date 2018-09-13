@@ -139,10 +139,15 @@ class TorchAgent(Agent):
                  'ignored unless you append "-force" to your choice.')
         # optimizer arguments
         agent.add_argument(
-            '-opt', '--optimizer', default='sgd',
-            choices=cls.OPTIM_OPTS,
+            '-opt', '--optimizer', default='sgd', choices=cls.OPTIM_OPTS,
             help='Choose between pytorch optimizers. Any member of torch.optim'
                  ' should be valid.')
+        agent.add_argument(
+            '-lr', '--learningrate', type=float, default=1,
+            help='learning rate')
+        agent.add_argument(
+            '-clip', '--gradient-clip', type=float, default=0.1,
+            help='gradient clipping using l2 norm')
         agent.add_argument(
             '-mom', '--momentum', default=0, type=float,
             help='if applicable, momentum value for optimizer.')
@@ -213,7 +218,7 @@ class TorchAgent(Agent):
 
         # now set up any fields that all instances may need
         self.id = 'TorchAgent'  # child can override
-        self.EMPTY = torch.Tensor([])
+        self.EMPTY = torch.LongTensor([])
         self.NULL_IDX = self.dict[self.dict.null_token]
         self.START_IDX = self.dict[self.dict.start_token]
         self.END_IDX = self.dict[self.dict.end_token]
@@ -276,6 +281,17 @@ class TorchAgent(Agent):
         # TODO: Move scheduler params to command line args
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
             self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
+
+    def receive_metrics(self, metrics_dict):
+        """Use the metrics to decide when to adjust LR schedule.
+
+        This uses the loss as the validation metric if present, if not this
+        function does nothing. Note that the model must be reporting loss for
+        this to work.
+        Override this to override the behavior.
+        """
+        if 'loss' in metrics_dict:
+            self.scheduler.step(metrics_dict['loss'])
 
     def _get_embtype(self, emb_type):
         # set up preinitialized embeddings
@@ -375,6 +391,17 @@ class TorchAgent(Agent):
         shared['dict'] = self.dict
         shared['replies'] = self.replies
         return shared
+
+    def _v2t(self, vec):
+        """Convert token indices to string of tokens."""
+        new_vec = []
+        if hasattr(vec, 'cpu'):
+            vec = vec.cpu()
+        for i in vec:
+            if i == self.END_IDX:
+                break
+            new_vec.append(i)
+        return self.dict.vec2txt(new_vec)
 
     def _vectorize_text(self, text, add_start=False, add_end=False,
                         truncate=None, truncate_left=True):
@@ -755,7 +782,7 @@ class TorchAgent(Agent):
         states = torch.load(path, map_location=lambda cpu, _: cpu)
         if 'model' in states:
             self.model.load_state_dict(states['model'])
-        if 'optimizer' in states:
+        if 'optimizer' in states and hasattr(self, 'optimizer'):
             self.optimizer.load_state_dict(states['optimizer'])
         return states
 

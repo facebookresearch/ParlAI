@@ -88,7 +88,7 @@ class Seq2seq(nn.Module):
             shared_lt=shared_lt, shared_rnn=shared_rnn,
             unknown_idx=unknown_idx, input_dropout=input_dropout)
 
-        shared_weight = (self.decoder.lt
+        shared_weight = (self.decoder.lt.weight
                          if lookuptable in ('dec_out', 'all') else None)
         self.output = OutputLayer(
             num_features, embeddingsize, hiddensize, dropout=dropout,
@@ -481,6 +481,7 @@ class OutputLayer(nn.Module):
 
         self.numsoftmax = numsoftmax
         if numsoftmax > 1:
+            self.esz = embeddingsize
             self.softmax = nn.Softmax(dim=1)
             self.prior = nn.Linear(hiddensize, numsoftmax, bias=False)
             self.latent = nn.Linear(hiddensize, numsoftmax * embeddingsize)
