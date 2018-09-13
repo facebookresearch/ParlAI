@@ -3,20 +3,22 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-#
-# Simple IR baselines.
-# We plan to implement the following variants:
-# Given an input message, either:
-# (i) find the most similar message in the (training) dataset and output the
-#   response from that exchange; or
-# (ii) find the most similar response to the input directly.
-# (iii) if label_candidates are provided, simply ranks them according to their
-#   similarity to the input message.
-#
-# Currently only (iii) is used.
-#
-# Additonally, TFIDF is either used (requires building a dictionary) or not,
-# depending on whether you train on the train set first, or not.
+"""
+Simple IR baselines.
+
+We plan to implement the following variants:
+Given an input message, either:
+(i) find the most similar message in the (training) dataset and output the
+  response from that exchange; or
+(ii) find the most similar response to the input directly.
+(iii) if label_candidates are provided, simply ranks them according to their
+  similarity to the input message.
+
+Currently only (iii) is used.
+
+Additonally, TFIDF is either used (requires building a dictionary) or not,
+depending on whether you train on the train set first, or not.
+"""
 
 import math
 from collections.abc import Sequence
@@ -27,11 +29,26 @@ from parlai.core.dict import DictionaryAgent
 
 
 class MaxPriorityQueue(Sequence):
+    """Fixed-size priority queue keeping the max_size largest items."""
+
     def __init__(self, max_size):
+        """Initialize priority queue.
+
+        :param max_size: maximum capacity of priority queue.
+        """
         self.capacity = max_size
         self.lst = []
 
     def add(self, item, priority=None):
+        """Add element to the queue, with a separate priority if desired.
+
+        Element will not be added if the queue is at capacity and the element
+        has lower priority than the lowest currently in the queue.
+
+        :param item: item to add to queue.
+        :param priority: priority to use for item. if None (default), will use
+                         the item itself to calculate its own priority.
+        """
         if priority is None:
             priority = item
         if len(self.lst) < self.capacity:
@@ -40,15 +57,24 @@ class MaxPriorityQueue(Sequence):
             heapq.heapreplace(self.lst, (priority, item))
 
     def __getitem__(self, key):
+        """Get item at specified index.
+
+        :param key: integer index into priority queue, 0 <= index < max_size.
+
+        :returns: item stored at the specified index.
+        """
         return sorted(self.lst)[key][1]
 
     def __len__(self):
+        """Return length of priority queue."""
         return len(self.lst)
 
     def __str__(self):
+        """Return str representation of the priority queue in list form."""
         return str([v for _, v in sorted(self.lst)])
 
     def __repr__(self):
+        """Return repr representation of the priority queue in list form."""
         return repr([v for _, v in sorted(self.lst)])
 
 
@@ -64,6 +90,16 @@ stopwords = {
 
 
 def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
+    """Calculate the score match between the query representation the text.
+
+    :param query_rep: base query representation to match text again.
+    :param text: string to comapre against query_rep for matching tokens
+    :param length_penalty: scores are divided by the norm taken to this power
+    :dictionary: optional dictionary to use to tokenize text
+    :debug: flag to enable printing every match
+
+    :returns: float score of match
+    """
     if text == "":
         return 0
     if not dictionary:
@@ -80,12 +116,22 @@ def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
                 print("match: " + w)
         used[w] = True
     norm = math.sqrt(len(used))
-    score = score / math.pow(norm * query_rep['norm'], length_penalty)
+    norm = math.pow(norm * query_rep['norm'], length_penalty)
+    if norm > 1:
+        score /= norm
     return score
 
 
 def rank_candidates(query_rep, cands, length_penalty, dictionary=None):
-    """ Rank candidates given representation of query """
+    """Rank candidates given representation of query.
+
+    :param query_rep: base query representation to match text again.
+    :param cands: strings to compare against query_rep for matching tokens
+    :param length_penalty: scores are divided by the norm taken to this power
+    :dictionary: optional dictionary to use to tokenize text
+
+    :returns: ordered list of candidate strings in score-ranked order
+    """
     if True:
         mpq = MaxPriorityQueue(100)
         for c in cands:
@@ -105,10 +151,12 @@ def rank_candidates(query_rep, cands, length_penalty, dictionary=None):
 
 
 class IrBaselineAgent(Agent):
+    """Information Retrieval baseline."""
 
     @staticmethod
     def add_cmdline_args(parser):
-        DictionaryAgent.add_cmdline_args(parser)
+        """Add command line args specific to this agent."""
+        parser = parser.add_argument_group('IrBaseline Arguments')
         parser.add_argument(
             '-lp', '--length_penalty', type=float, default=0.5,
             help='length penalty for responses')
@@ -116,8 +164,12 @@ class IrBaselineAgent(Agent):
             '-hsz', '--history_size', type=int, default=1,
             help='number of utterances from the dialogue history to take use '
                  'as the query')
+        parser.add_argument(
+            '--label_candidates_file', type=str, default=None,
+            help='file of candidate responses to choose from')
 
     def __init__(self, opt, shared=None):
+        """Initialize agent."""
         super().__init__(opt)
         self.id = 'IRBaselineAgent'
         self.length_penalty = float(opt['length_penalty'])
@@ -125,13 +177,18 @@ class IrBaselineAgent(Agent):
         self.opt = opt
         self.history = []
         self.episodeDone = True
+        if opt.get('label_candidates_file'):
+            f = open(opt.get('label_candidates_file'))
+            self.label_candidates = f.read().split('\n')
 
     def reset(self):
+        """Reset agent properties."""
         self.observation = None
         self.history = []
         self.episodeDone = True
 
     def observe(self, obs):
+        """Store and remember incoming observation message dict."""
         self.observation = obs
         self.dictionary.observe(obs)
         if self.episodeDone:
@@ -142,6 +199,7 @@ class IrBaselineAgent(Agent):
         return obs
 
     def act(self):
+        """Generate a response to the previously seen observation(s)."""
         if self.opt.get('datatype', '').startswith('train'):
             self.dictionary.act()
 
@@ -150,14 +208,19 @@ class IrBaselineAgent(Agent):
         reply['id'] = self.getID()
 
         # Rank candidates
+        cands = None
         if 'label_candidates' in obs and len(obs['label_candidates']) > 0:
-            # text = obs['text']
-            text = ' '.join(
-                self.history[max(0, len(self.history) -
-                                 self.opt.get('history_size', 1)):len(self.history)])
+            cands = obs['label_candidates']
+        if hasattr(self, 'label_candidates'):
+            # override label candidates with candidate file if set
+            cands = self.label_candidates
+        if cands:
+            hist_sz = self.opt.get('history_size', 1)
+            left_idx = max(0, len(self.history) - hist_sz)
+            text = ' '.join(self.history[left_idx:len(self.history)])
             rep = self.build_query_representation(text)
             reply['text_candidates'] = (
-                rank_candidates(rep, obs['label_candidates'],
+                rank_candidates(rep, cands,
                                 self.length_penalty, self.dictionary))
             reply['text'] = reply['text_candidates'][0]
         else:
@@ -165,15 +228,23 @@ class IrBaselineAgent(Agent):
         return reply
 
     def save(self, fname=None):
+        """Save dictionary tokenizer if available."""
         fname = self.opt.get('model_file', None) if fname is None else fname
         if fname:
             self.dictionary.save(fname + '.dict')
 
     def load(self, fname):
+        """Load internal dictionary."""
         self.dictionary.load(fname + '.dict')
 
     def build_query_representation(self, query):
-        """ Build representation of query, e.g. words or n-grams """
+        """Build representation of query, e.g. words or n-grams.
+
+        :param query: string to represent.
+
+        :returns: dictionary containing 'words' dictionary (token => frequency)
+                  and 'norm' float (square root of the number of tokens)
+        """
         rep = {}
         rep['words'] = {}
         words = [w for w in self.dictionary.tokenize(query.lower())]

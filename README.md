@@ -320,7 +320,7 @@ Please see [the Facebook Messenger tutorial](http://parl.ai/static/docs/tutorial
 If you have any questions, bug reports or feature requests, please don't hesitate to post on our [Github Issues page](https://github.com/facebookresearch/ParlAI/issues).
 
 ## The Team
-ParlAI is currently maintained by Emily Dinan, Alexander H. Miller, Kurt Shuster, Jack Urbanek and Jason Weston.
+ParlAI is currently maintained by Emily Dinan, Alexander H. Miller, Stephen Roller, Kurt Shuster, Jack Urbanek and Jason Weston.
 A non-exhaustive list of other major contributors includes:
 Will Feng, Adam Fisch, Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra,
 Filipe de Avila Belbute Peres and Chao Pan.

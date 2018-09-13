@@ -162,6 +162,7 @@ class MTurkAgent(Agent):
 
         self.conversation_id = None
         self.mturk_manager = mturk_manager
+        self.db_logger = mturk_manager.db_logger
         self.id = None
         self.state = AssignState()
         self.assignment_id = assignment_id
@@ -182,11 +183,50 @@ class MTurkAgent(Agent):
         self.msg_queue = Queue()
 
     def set_status(self, status):
-        """Set the status of this agent on the task"""
+        """Set the status of this agent on the task, update db"""
         self.state.set_status(status)
+        if self.db_logger is not None:
+            if status == AssignState.STATUS_ONBOARDING:
+                self.db_logger.log_start_onboard(
+                    self.worker_id, self.assignment_id)
+            elif status == AssignState.STATUS_WAITING:
+                self.db_logger.log_finish_onboard(
+                    self.worker_id, self.assignment_id)
+            elif status == AssignState.STATUS_IN_TASK:
+                self.db_logger.log_start_task(
+                    self.worker_id, self.assignment_id, self.conversation_id)
+            elif status == AssignState.STATUS_DONE:
+                self.db_logger.log_complete_assignment(
+                    self.worker_id, self.assignment_id,
+                    time.time() + self.mturk_manager.auto_approve_delay,
+                    status)
+            elif status == AssignState.STATUS_PARTNER_DISCONNECT:
+                self.db_logger.log_complete_assignment(
+                    self.worker_id, self.assignment_id,
+                    time.time() + self.mturk_manager.auto_approve_delay,
+                    status)
+            elif status == AssignState.STATUS_PARTNER_DISCONNECT_EARLY:
+                self.db_logger.log_complete_assignment(
+                    self.worker_id, self.assignment_id,
+                    time.time() + self.mturk_manager.auto_approve_delay,
+                    status)
+            elif status == AssignState.STATUS_DISCONNECT:
+                self.db_logger.log_disconnect_assignment(
+                    self.worker_id, self.assignment_id,
+                    time.time() + self.mturk_manager.auto_approve_delay,
+                    status)
+            elif status == AssignState.STATUS_EXPIRED:
+                self.db_logger.log_complete_assignment(
+                    self.worker_id, self.assignment_id,
+                    time.time() + self.mturk_manager.auto_approve_delay,
+                    status)
+            elif status == AssignState.STATUS_RETURNED:
+                self.db_logger.log_abandon_assignment(
+                    self.worker_id, self.assignment_id)
 
     def get_status(self):
         """Get the status of this agent on its task"""
+
         return self.state.get_status()
 
     def submitted_hit(self):
@@ -602,4 +642,8 @@ class MTurkAgent(Agent):
                 self.assignment_id,
                 {'text': command_to_send},
             )
-            return self.wait_for_hit_completion(timeout=timeout)
+            did_complete = self.wait_for_hit_completion(timeout=timeout)
+            if did_complete and self.db_logger is not None:
+                self.db_logger.log_submit_assignment(
+                    self.worker_id, self.assignment_id)
+            return did_complete

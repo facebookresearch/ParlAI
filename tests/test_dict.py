@@ -36,7 +36,7 @@ class TestDictionary(unittest.TestCase):
 
         argparser = ParlaiParser()
         DictionaryAgent.add_cmdline_args(argparser)
-        opt = argparser.parse_args()
+        opt = argparser.parse_args(print_args=False)
         dictionary = DictionaryAgent(opt)
         num_builtin = len(dictionary)
 

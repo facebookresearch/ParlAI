@@ -41,6 +41,8 @@ def setup_args(parser=None):
     train.add_argument('-et', '--evaltask',
                        help=('task to use for valid/test (defaults to the '
                              'one used for training if not set)'))
+    train.add_argument('--eval-batchsize', type=int,
+                       help='Eval time batch size (defaults to same as -bs)')
     train.add_argument('--display-examples', type='bool', default=False)
     train.add_argument('-eps', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time',
@@ -116,6 +118,9 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
         opt['datatype'] = datatype
         if opt.get('evaltask'):
             opt['task'] = opt['evaltask']
+        if opt.get('eval_batchsize'):
+            # override eval time batchsize
+            opt['batchsize'] = opt['eval_batchsize']
         if opt.get('validation_share_agent', False):
             valid_agent = create_agent_from_shared(agent.share())
         else:

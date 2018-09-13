@@ -15,8 +15,8 @@ from parlai.mturk.core.agents import AssignState
 
 import parlai.mturk.core.mturk_data_handler as DataHandlerFile
 
-parent_dir = os.path.dirname(os.path.abspath(__file__))
-DataHandlerFile.parent_dir = os.path.dirname(os.path.abspath(__file__))
+data_dir = os.path.dirname(os.path.abspath(__file__))
+DataHandlerFile.data_dir = data_dir
 
 
 class TestDataHandler(unittest.TestCase):
@@ -25,12 +25,12 @@ class TestDataHandler(unittest.TestCase):
     DB_NAME = 'test_db.db'
 
     def setUp(self):
-        if os.path.exists(os.path.join(parent_dir, self.DB_NAME)):
-            os.remove(os.path.join(parent_dir, self.DB_NAME))
+        if os.path.exists(os.path.join(data_dir, self.DB_NAME)):
+            os.remove(os.path.join(data_dir, self.DB_NAME))
 
     def tearDown(self):
-        if os.path.exists(os.path.join(parent_dir, self.DB_NAME)):
-            os.remove(os.path.join(parent_dir, self.DB_NAME))
+        if os.path.exists(os.path.join(data_dir, self.DB_NAME)):
+            os.remove(os.path.join(data_dir, self.DB_NAME))
 
     def create_hit(self):
         return {
@@ -444,7 +444,7 @@ class TestDataHandler(unittest.TestCase):
         # Test "submitting" and abandoning hits
         db_logger.log_submit_assignment(worker_id_1, assignment_id_1)
         db_logger.log_abandon_assignment(worker_id_2, assignment_id_2)
-        db_logger.log_submit_assignment(worker_id_2, assignment_id_3)
+        db_logger.log_expire_assignment(worker_id_2, assignment_id_3)
         assignment_1_data = db_logger.get_assignment_data(assignment_id_1)
         assignment_2_data = db_logger.get_assignment_data(assignment_id_2)
         assignment_3_data = db_logger.get_assignment_data(assignment_id_3)
@@ -459,7 +459,7 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(assignment_2_data['worker_id'], worker_id_2)
         self.assertEqual(assignment_2_data['hit_id'], HIT2['HIT']['HITId'])
         self.assertEqual(assignment_3_data['assignment_id'], assignment_id_3)
-        self.assertEqual(assignment_3_data['status'], 'Reviewable')
+        self.assertEqual(assignment_3_data['status'], 'Expired')
         self.assertIsNotNone(assignment_3_data['approve_time'])
         self.assertEqual(assignment_3_data['worker_id'], worker_id_2)
         self.assertEqual(assignment_3_data['hit_id'], HIT3['HIT']['HITId'])
@@ -472,43 +472,38 @@ class TestDataHandler(unittest.TestCase):
         db_logger.log_award_amount(worker_id_2, assignment_id_2, amount_use,
                                    reason_use)
         db_logger.log_bonus_paid(worker_id_1, assignment_id_1)
-        db_logger.log_approve_assignment(worker_id_1, assignment_id_1)
-        db_logger.log_approve_assignment(worker_id_2, assignment_id_2)
-        db_logger.log_reject_assignment(worker_id_2, assignment_id_3)
+        db_logger.log_approve_assignment(assignment_id_1)
+        db_logger.log_reject_assignment(assignment_id_2)
 
         # Ensure state is valid again
         assignment_1_data = db_logger.get_assignment_data(assignment_id_1)
         assignment_2_data = db_logger.get_assignment_data(assignment_id_2)
-        assignment_3_data = db_logger.get_assignment_data(assignment_id_3)
         self.assertEqual(assignment_1_data['assignment_id'], assignment_id_1)
         self.assertEqual(assignment_1_data['status'], 'Approved')
         self.assertIsNotNone(assignment_1_data['approve_time'])
         self.assertEqual(assignment_1_data['worker_id'], worker_id_1)
         self.assertEqual(assignment_1_data['hit_id'], HIT1['HIT']['HITId'])
         self.assertEqual(assignment_2_data['assignment_id'], assignment_id_2)
-        self.assertEqual(assignment_2_data['status'], 'Approved')
+        self.assertEqual(assignment_2_data['status'], 'Rejected')
         self.assertIsNotNone(assignment_2_data['approve_time'])
         self.assertEqual(assignment_2_data['worker_id'], worker_id_2)
         self.assertEqual(assignment_2_data['hit_id'], HIT2['HIT']['HITId'])
-        self.assertEqual(assignment_3_data['assignment_id'], assignment_id_3)
-        self.assertEqual(assignment_3_data['status'], 'Rejected')
-        self.assertIsNotNone(assignment_3_data['approve_time'])
-        self.assertEqual(assignment_3_data['worker_id'], worker_id_2)
-        self.assertEqual(assignment_3_data['hit_id'], HIT3['HIT']['HITId'])
 
         worker_1_data = db_logger.get_worker_data(worker_id_1)
         worker_2_data = db_logger.get_worker_data(worker_id_2)
         self.assertEqual(worker_1_data['worker_id'], worker_id_1)
         self.assertEqual(worker_1_data['accepted'], 1)
         self.assertEqual(worker_1_data['disconnected'], 0)
+        self.assertEqual(worker_1_data['expired'], 0)
         self.assertEqual(worker_1_data['completed'], 1)
         self.assertEqual(worker_1_data['approved'], 1)
         self.assertEqual(worker_1_data['rejected'], 0)
         self.assertEqual(worker_2_data['worker_id'], worker_id_2)
         self.assertEqual(worker_2_data['accepted'], 2)
         self.assertEqual(worker_2_data['disconnected'], 1)
+        self.assertEqual(worker_2_data['expired'], 1)
         self.assertEqual(worker_2_data['completed'], 1)
-        self.assertEqual(worker_2_data['approved'], 1)
+        self.assertEqual(worker_2_data['approved'], 0)
         self.assertEqual(worker_2_data['rejected'], 1)
 
         pair_1 = db_logger.get_worker_assignment_pairing(
@@ -520,7 +515,7 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(pair_1['status'],
                          AssignState.STATUS_PARTNER_DISCONNECT)
         self.assertEqual(pair_2['status'], AssignState.STATUS_DISCONNECT)
-        self.assertEqual(pair_3['status'], AssignState.STATUS_DONE)
+        self.assertEqual(pair_3['status'], AssignState.STATUS_EXPIRED)
         self.assertEqual(pair_1['worker_id'], worker_id_1)
         self.assertEqual(pair_2['worker_id'], worker_id_2)
         self.assertEqual(pair_3['worker_id'], worker_id_2)
