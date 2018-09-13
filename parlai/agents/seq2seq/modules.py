@@ -313,7 +313,7 @@ class RNNEncoder(nn.Module):
     def __init__(self, num_features, embeddingsize, hiddensize,
                  padding_idx=0, rnn_class='lstm', numlayers=2, dropout=0.1,
                  bidirectional=False, shared_lt=None, shared_rnn=None,
-                 input_dropout=0, unknown_idx=4, sparse=False):
+                 input_dropout=0, unknown_idx=None, sparse=False):
         """Initialize recurrent encoder."""
         super().__init__()
 
@@ -322,6 +322,8 @@ class RNNEncoder(nn.Module):
         self.dirs = 2 if bidirectional else 1
         self.hsz = hiddensize
 
+        if input_dropout > 0 and unknown_idx is None:
+            raise RuntimeError('input_dropout > 0 but unknown_idx not set')
         self.input_dropout = UnknownDropout(unknown_idx, input_dropout)
 
         if shared_lt is None:
