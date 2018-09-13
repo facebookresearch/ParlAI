@@ -27,6 +27,7 @@ def main():
     # Get command line arguments
     parser = ParlaiParser(True, True, 'Display model predictions.')
     parser.add_argument('-n', '--num-examples', default=10)
+    parser.add_argument('--display-ignore-fields', type=str, default='')
     # by default we want to display info about the validation set
     parser.set_defaults(datatype='valid')
     opt = parser.parse_args()
