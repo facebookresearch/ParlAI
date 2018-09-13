@@ -472,17 +472,14 @@ class OutputLayer(nn.Module):
                               score at this index. if set to -1 (default),
                               this is disabled. if >= 0, subtracts one from
                               num_features and always outputs -1e20 at this
-                              index.
+                              index. only used when shared_weight is not None.
+                              setting this param helps protect gradient from
+                              entering shared embedding matrices.
         """
         super().__init__()
         self.dropout = nn.Dropout(p=dropout)
 
-        self.padding_idx = padding_idx
-        if padding_idx == 0:
-            num_features -= 1
-        elif padding_idx > 0:
-            raise RuntimeError('nonzero pad_idx {} not yet implemented'
-                               ''.format(padding_idx))
+        self.padding_idx = padding_idx if shared_weight is not None else -1
 
         # embedding to scores
         if shared_weight is None:
@@ -491,11 +488,11 @@ class OutputLayer(nn.Module):
         else:
             # use shared weights and a bias layer instead
             if padding_idx == 0:
-                shared_weight = shared_weight.narrow(0, 1, num_features)
+                shared_weight = shared_weight.narrow(0, 1, num_features - 1)
             elif padding_idx > 0:
                 raise RuntimeError('nonzero pad_idx not yet implemented')
             self.weight = Parameter(shared_weight)
-            self.bias = Parameter(torch.Tensor(num_features))
+            self.bias = Parameter(torch.Tensor(num_features - 1))
             self.reset_parameters()
             self.e2s = lambda x: F.linear(x, self.weight, self.bias)
 
