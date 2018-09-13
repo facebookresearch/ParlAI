@@ -14,7 +14,6 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
 
-import random
 
 def setup_args(parser=None):
     if parser is None:
@@ -25,15 +24,17 @@ def setup_args(parser=None):
     parser.set_defaults(datatype='train:ordered')
     return parser
 
+
 def report(world, counts, log_time):
     report = world.report()
     log = {'missing_text': counts['missing_text'],
            'missing_labels': counts['missing_labels'],
            'missing_label_candidates': counts['missing_label_candidates'],
            'empty_label_candidates': counts['empty_label_candidates'],
-    }
+           }
     text, log = log_time.log(report['exs'], world.num_examples(), log)
     print(text)
+
 
 def verify(opt, printargs=None, print_parser=None):
     # create repeat label agent and assign it to the specified task
@@ -50,7 +51,7 @@ def verify(opt, printargs=None, print_parser=None):
     counts['missing_labels'] = 0
     counts['missing_label_candidates'] = 0
     counts['empty_label_candidates'] = 0
-    
+
     # Show some example dialogs.
     while not world.epoch_done():
         world.parley()
@@ -59,7 +60,7 @@ def verify(opt, printargs=None, print_parser=None):
         if 'text' not in act:
             print("warning: missing text field")
             counts['missing_text'] += 1
-            
+
         if 'labels' not in act and 'eval_labels' not in act:
             print("warning: missing labels/eval_labels field")
             counts['missing_labels'] += 1
@@ -71,19 +72,20 @@ def verify(opt, printargs=None, print_parser=None):
                     if c == '':
                         print("warning: empty string label_candidate")
                         counts['empty_label_candidates'] += 1
-                
+
         if log_time.time() > log_every_n_secs:
             print(report(world, counts, log_time))
-            
+
     try:
         # print dataset size if available
         print('[ loaded {} episodes with a total of {} examples ]'.format(
             world.num_episodes(), world.num_examples()
         ))
-    except:
+    except Exception:
         pass
     report(world, counts, log_time)
-    
+
+
 if __name__ == '__main__':
     parser = setup_args()
     verify(parser.parse_args(print_args=False), print_parser=parser)
