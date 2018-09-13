@@ -110,6 +110,9 @@ class Seq2seqAgent(TorchAgent):
                            help='Top k sampling from renormalized softmax in '
                                 'test/valid time, default 1 means simple '
                                 'greedy max output')
+        agent.add_argument('-idr', '--input-dropout', type=float, default=0.0,
+                           help='Each token from the input will be masked with'
+                                ' __unk__ token with this probability.')
         TorchAgent.add_cmdline_args(argparser)
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
@@ -211,6 +214,7 @@ class Seq2seqAgent(TorchAgent):
         self.model = Seq2seq(
             len(self.dict), opt['embeddingsize'], opt['hiddensize'],
             padding_idx=self.NULL_IDX, start_idx=self.START_IDX,
+            unknown_idx=self.dict[self.dict.unk_token],
             longest_label=states.get('longest_label', 1),
             **kwargs)
 

@@ -18,7 +18,8 @@ def opt_to_kwargs(opt):
     kwargs = {}
     for k in ['numlayers', 'dropout', 'bidirectional', 'rnn_class',
               'lookuptable', 'decoder', 'numsoftmax',
-              'attention', 'attention_length', 'attention_time']:
+              'attention', 'attention_length', 'attention_time',
+              'input_dropout']:
         if k in opt:
             kwargs[k] = opt[k]
     return kwargs
@@ -53,7 +54,8 @@ class Seq2seq(nn.Module):
         bidirectional=False, rnn_class='lstm', lookuptable='unique',
         decoder='same', numsoftmax=1,
         attention='none', attention_length=48, attention_time='post',
-        padding_idx=0, start_idx=1, longest_label=1,
+        padding_idx=0, start_idx=1, unknown_idx=3, input_dropout=0,
+        longest_label=1,
     ):
         """Initialize seq2seq model.
 
@@ -83,7 +85,8 @@ class Seq2seq(nn.Module):
             padding_idx=self.NULL_IDX, rnn_class=rnn_class,
             numlayers=numlayers, dropout=dropout,
             bidirectional=bidirectional,
-            shared_lt=shared_lt, shared_rnn=shared_rnn)
+            shared_lt=shared_lt, shared_rnn=shared_rnn,
+            unknown_idx=unknown_idx, input_dropout=input_dropout)
 
         shared_weight = (self.decoder.lt
                          if lookuptable in ('dec_out', 'all') else None)
@@ -278,13 +281,39 @@ class Seq2seq(nn.Module):
         return scores, cand_scores, encoder_states
 
 
+class UnknownDropout(nn.Module):
+    """With set frequency, replaces tokens with unknown token.
+
+    This layer can be used right before an embedding layer to make the model
+    more robust to unknown words at test time.
+    """
+
+    def __init__(self, unknown_idx, probability):
+        """Initialize layer.
+
+        :param unknown_idx: index of unknown token, replace tokens with this
+        :param probability: during training, replaces tokens with unknown token
+                            at this rate.
+        """
+        super().__init__()
+        self.unknown_idx = unknown_idx
+        self.prob = probability
+
+    def forward(self, input):
+        """If training and dropout rate > 0, masks input with unknown token."""
+        if self.training and self.prob > 0:
+            mask = input.new(input.size()).float().uniform_(0, 1) < self.prob
+            input.masked_fill_(mask, self.unknown_idx)
+        return input
+
+
 class RNNEncoder(nn.Module):
     """RNN Encoder."""
 
     def __init__(self, num_features, embeddingsize, hiddensize,
                  padding_idx=0, rnn_class='lstm', numlayers=2, dropout=0.1,
                  bidirectional=False, shared_lt=None, shared_rnn=None,
-                 sparse=False):
+                 input_dropout=0, unknown_idx=None, sparse=False):
         """Initialize recurrent encoder."""
         super().__init__()
 
@@ -292,6 +321,10 @@ class RNNEncoder(nn.Module):
         self.layers = numlayers
         self.dirs = 2 if bidirectional else 1
         self.hsz = hiddensize
+
+        if input_dropout > 0 and unknown_idx is None:
+            raise RuntimeError('input_dropout > 0 but unknown_idx not set')
+        self.input_dropout = UnknownDropout(unknown_idx, input_dropout)
 
         if shared_lt is None:
             self.lt = nn.Embedding(num_features, embeddingsize,
@@ -322,6 +355,7 @@ class RNNEncoder(nn.Module):
         bsz = len(xs)
 
         # embed input tokens
+        xs = self.input_dropout(xs)
         xes = self.dropout(self.lt(xs))
         attn_mask = xs.ne(0)
         try:
