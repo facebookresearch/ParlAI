@@ -488,11 +488,12 @@ class OutputLayer(nn.Module):
         else:
             # use shared weights and a bias layer instead
             if padding_idx == 0:
-                shared_weight = shared_weight.narrow(0, 1, num_features - 1)
+                num_features -= 1  # don't include padding
+                shared_weight = shared_weight.narrow(0, 1, num_features)
             elif padding_idx > 0:
                 raise RuntimeError('nonzero pad_idx not yet implemented')
             self.weight = Parameter(shared_weight)
-            self.bias = Parameter(torch.Tensor(num_features - 1))
+            self.bias = Parameter(torch.Tensor(num_features))
             self.reset_parameters()
             self.e2s = lambda x: F.linear(x, self.weight, self.bias)
 
