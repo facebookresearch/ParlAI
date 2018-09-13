@@ -3,11 +3,24 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
+"""General utility code for building PyTorch-based agents in ParlAI.
+
+Contains the following main utilities:
+- TorchAgent class which serves as a useful parent class for other model agents
+- Batch namedtuple which is the input type of the main abstract methods of
+  the TorchAgent class
+- Output namedtuple which is the expected output type of the main abstract
+  methods of the TorchAgent class
+- Beam class which provides some generic beam functionality for classes to use
+
+See below for documentation on each specific tool.
+"""
 
 from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import set_namedtuple_defaults, argsort, padded_tensor
+from parlai.core.utils import (set_namedtuple_defaults, argsort, padded_tensor,
+                               NEAR_INF)
 
 try:
     import torch
@@ -884,18 +897,21 @@ class Beam(object):
         self.min_n_best = min_n_best
 
     def get_output_from_current_step(self):
+        """Get the outputput at the current step."""
         return self.outputs[-1]
 
     def get_backtrack_from_current_step(self):
+        """Get the backtrack at the current step."""
         return self.bookkeep[-1]
 
     def advance(self, softmax_probs):
+        """Advance the beam one step."""
         voc_size = softmax_probs.size(-1)
         current_length = len(self.all_scores) - 1
         if current_length < self.min_length:
             # penalize all eos probs to make it decode longer
             for hyp_id in range(softmax_probs.size(0)):
-                softmax_probs[hyp_id][self.eos] = -1e20
+                softmax_probs[hyp_id][self.eos] = -NEAR_INF
         if len(self.bookkeep) == 0:
             # the first step we take only the first hypo into account since all
             # hypos are the same initially
@@ -910,7 +926,7 @@ class Beam(object):
                 # we penalize those word probs to never be chosen
                 if self.outputs[-1][i] == self.eos:
                     # beam_scores[i] is voc_size array for i-th hypo
-                    beam_scores[i] = -1e20
+                    beam_scores[i] = -NEAR_INF
 
         flatten_beam_scores = beam_scores.view(-1)  # [beam_size * voc_size]
         with torch.no_grad():
@@ -944,6 +960,7 @@ class Beam(object):
                 self.eos_top_ts = len(self.outputs) - 1
 
     def done(self):
+        """Return whether beam search is complete."""
         return self.eos_top and self.n_best_counter >= self.min_n_best
 
     def get_top_hyp(self):
@@ -977,6 +994,7 @@ class Beam(object):
 
     @staticmethod
     def get_pretty_hypothesis(list_of_hypotails):
+        """Return prettier version of the hypotheses."""
         hypothesis = []
         for i in list_of_hypotails:
             hypothesis.append(i.tokenid)
@@ -986,7 +1004,7 @@ class Beam(object):
         return hypothesis
 
     def get_rescored_finished(self, n_best=None):
-        """
+        """Return finished hypotheses in rescored order.
 
         :param n_best: how many n best hypothesis to return
         :return: list with hypothesis
@@ -1010,7 +1028,7 @@ class Beam(object):
         return srted
 
     def check_finished(self):
-        """Checks if self.finished is empty and add hyptail in that case.
+        """Check if self.finished is empty and add hyptail in that case.
 
         This will be suboptimal hypothesis since the model did not get any EOS
 
@@ -1029,7 +1047,7 @@ class Beam(object):
             self.finished.append(hyptail)
 
     def get_beam_dot(self, dictionary=None, n_best=None):
-        """Creates pydot graph representation of the beam.
+        """Create pydot graph representation of the beam.
 
         :param outputs: self.outputs from the beam
         :param dictionary: tok 2 word dict to save words in the tree nodes
