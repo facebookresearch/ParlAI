@@ -475,8 +475,11 @@ class OutputLayer(nn.Module):
         self.dropout = nn.Dropout(p=dropout)
 
         self.padding_idx = padding_idx
-        if padding_idx >= 0:
+        if padding_idx == 0:
             num_features -= 1
+        elif padding_idx > 0:
+            raise RuntimeError('nonzero pad_idx {} not yet implemented'
+                               ''.format(padding_idx))
 
         # embedding to scores
         if shared_weight is None:
@@ -554,8 +557,6 @@ class OutputLayer(nn.Module):
         if self.padding_idx == 0:
             pad_score = scores.new(scores.size(0), scores.size(1), 1).fill_(-1e20)
             scores = torch.cat([pad_score, scores], dim=-1)
-        elif self.padding_idx > 0:
-            raise RuntimeError('nonzero pad_idx not yet implemented')
 
         return scores
 
