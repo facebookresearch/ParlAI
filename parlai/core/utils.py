@@ -17,6 +17,8 @@ try:
 except ImportError:
     __TORCH_AVAILABLE = False
 
+NEAR_INF = 1e20
+
 
 DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'episode_done',

@@ -12,6 +12,8 @@ from torch.nn.parameter import Parameter
 from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 import torch.nn.functional as F
 
+from parlai.core.utils import NEAR_INF
+
 
 def opt_to_kwargs(opt):
     """Get kwargs for seq2seq from opt."""
@@ -555,7 +557,9 @@ class OutputLayer(nn.Module):
             scores = self.e2s(e)
 
         if self.padding_idx == 0:
-            pad_score = scores.new(scores.size(0), scores.size(1), 1).fill_(-1e20)
+            pad_score = scores.new(scores.size(0),
+                                   scores.size(1),
+                                   1).fill_(-NEAR_INF)
             scores = torch.cat([pad_score, scores], dim=-1)
 
         return scores
@@ -670,7 +674,7 @@ class AttentionLayer(nn.Module):
             # calculate activation scores, apply mask if needed
             if attn_mask is not None:
                 # remove activation from NULL symbols
-                attn_w_premask.masked_fill_((1 - attn_mask), -1e20)
+                attn_w_premask.masked_fill_((1 - attn_mask), -NEAR_INF)
             attn_weights = F.softmax(attn_w_premask, dim=1)
 
         # apply the attention weights to the encoder states

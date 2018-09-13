@@ -7,7 +7,8 @@
 from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import set_namedtuple_defaults, argsort, padded_tensor
+from parlai.core.utils import (set_namedtuple_defaults, argsort, padded_tensor,
+                               NEAR_INF)
 
 try:
     import torch
@@ -895,7 +896,7 @@ class Beam(object):
         if current_length < self.min_length:
             # penalize all eos probs to make it decode longer
             for hyp_id in range(softmax_probs.size(0)):
-                softmax_probs[hyp_id][self.eos] = -1e20
+                softmax_probs[hyp_id][self.eos] = -NEAR_INF
         if len(self.bookkeep) == 0:
             # the first step we take only the first hypo into account since all
             # hypos are the same initially
@@ -910,7 +911,7 @@ class Beam(object):
                 # we penalize those word probs to never be chosen
                 if self.outputs[-1][i] == self.eos:
                     # beam_scores[i] is voc_size array for i-th hypo
-                    beam_scores[i] = -1e20
+                    beam_scores[i] = -NEAR_INF
 
         flatten_beam_scores = beam_scores.view(-1)  # [beam_size * voc_size]
         with torch.no_grad():
