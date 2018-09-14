@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Copyright (c) 2017-present, Moscow Institute of Physics and Technology.
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
