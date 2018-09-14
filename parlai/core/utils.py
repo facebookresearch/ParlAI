@@ -674,11 +674,22 @@ class OffensiveLanguageDetector(object):
         # store a token trie: e.g.
         # {'2': {'girls': {'1': {'cup': {'__END__': True}}}}
         self.END = '__END__'
-        self.offensive_trie = {}
         self.max_len = 1
+        self.offensive_trie = {}
+        self.word_prefixes = ['de', 'de-', 'dis', 'dis-', 'ex', 'ex-', 'mis',
+                              'mis-', 'pre', 'pre-', 'non', 'non-', 'semi',
+                              'semi-', 'sub', 'sub-', 'un', 'un-']
+        self.word_suffixes = ['a', 'able', 'as', 'dom', 'ed', 'er', 'ers',
+                              'es', 'est', 'ful', 'fy', 'ies', 'ify', 'in',
+                              'ing', 'ish', 'less', 'ly', 's', 'y']
+
         with open(self.datafile, 'r') as f:
             for p in f.read().splitlines():
-                self.add_phrase(p)
+                mod_ps = [p]
+                mod_ps += [pref + p for pref in self.word_prefixes]
+                mod_ps += [p + suff for suff in self.word_suffixes]
+                for mod_p in mod_ps:
+                    self.add_phrase(mod_p)
 
     def add_phrase(self, phrase):
         """Add a single phrase to the filter."""
