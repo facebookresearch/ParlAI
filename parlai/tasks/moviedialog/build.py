@@ -38,7 +38,9 @@ def build(opt):
             for f in files:
                 if f.endswith('txt'):
                     read_fn = os.path.join(root, f)
-                    write_fn = os.path.join(root, f[:-4] + '_pipeless.txt')
+                    head = 'task4_reddit_'
+                    tail = f[len(head):]
+                    write_fn = os.path.join(root, head + 'pipeless_' + tail)
                     with open(read_fn) as read, open(write_fn, 'w') as write:
                         for line in read:
                             write.write(line.replace('|', ' __PIPE__ ') + '\n')
