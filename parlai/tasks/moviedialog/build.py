@@ -11,7 +11,7 @@ import os
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MovieDialog')
-    version = '2'
+    version = '3'
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
