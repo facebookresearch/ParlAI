@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # This file is covered under the Apache 2.0 License listed here
 # <https://github.com/fartashf/vsepp/blob/master/LICENSE> as it is a
 # Derivative Work of the repo.
