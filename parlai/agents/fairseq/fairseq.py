@@ -21,7 +21,7 @@ from fairseq.sequence_generator import SequenceGenerator
 from fairseq.sequence_scorer import SequenceScorer
 from fairseq import options
 from fairseq.tasks.fairseq_task import FairseqTask
-from fairseq.utils import convert_padding_direction
+from fairseq.utils import convert_padding_direction, load_model_state
 from fairseq.meters import AverageMeter
 
 from parlai.core.torch_agent import TorchAgent, Output
@@ -355,10 +355,13 @@ class FairseqAgent(TorchAgent):
             # explicitly disable fp16 instead
             if not self.args.fp16 and torch.cuda.get_device_capability(0)[0] >= 7:
                 print("Heads up: using --fp16 could be a lot faster!")
-            self.trainer = trainer.Trainer(
-                self.args, self.task, self.model, self.criterion, None,
-            )
-            self.trainer._build_optimizer()
+            if self.use_cuda:
+                self.trainer = trainer.Trainer(
+                    self.args, self.task, self.model, self.criterion, None,
+                )
+                self.trainer._build_optimizer()
+            else:
+                self.trainer = None
 
             # if the model already existed, let's preload it and the trainer
             if model_file_exists:
@@ -429,8 +432,11 @@ class FairseqAgent(TorchAgent):
 
     def load(self, path):
         """Load using fairseq's checkpointing."""
-        old_options = self.trainer.load_checkpoint(path)
-        self._check_opts_unchanged(old_options, self.opt)
+        if self.trainer:
+            old_options = self.trainer.load_checkpoint(path)
+            self._check_opts_unchanged(old_options, self.opt)
+        else:
+            load_model_state(path, self.model)
 
     def shutdown(self):
         if not hasattr(self, 'trainer'):
@@ -504,7 +510,7 @@ class FairseqAgent(TorchAgent):
         self.is_training = False
         samples = self._make_sample(batch)
         self.model.eval()
-        if batch.label_vec is not None:
+        if batch.label_vec is not None and self.trainer is not None:
             # Interactive mode won't have a gold label
             metrics = self.trainer.valid_step(samples)
             self._update_metrics(metrics, samples)
@@ -614,8 +620,9 @@ class FairseqAgent(TorchAgent):
             return
         # We need to reset everything
         self.meters.clear()
-        for k in self.trainer.meters:
-            self.trainer.meters[k].reset()
+        if self.trainer:
+            for k in self.trainer.meters:
+                self.trainer.meters[k].reset()
 
     def receive_metrics(self, metrics_dict):
         """Update lr scheduler with validation loss."""
