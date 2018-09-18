@@ -891,7 +891,8 @@ class MTurkManager():
         self.server_url = server_utils.setup_server(self.server_task_name,
                                                     self.task_files_to_copy,
                                                     self.opt['local'],
-                                                    heroku_team)
+                                                    heroku_team,
+                                                    self.opt['hobby'])
         shared_utils.print_and_log(logging.INFO, self.server_url)
 
         shared_utils.print_and_log(logging.INFO, "MTurk server setup done.\n",

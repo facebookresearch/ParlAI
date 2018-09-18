@@ -216,6 +216,10 @@ class ParlaiParser(argparse.ArgumentParser):
                  ' a heroku server.'
         )
         mturk.add_argument(
+            '--hobby', dest='hobby', default=False, action='store_true',
+            help='Run the heroku server on the hobby tier.'
+        )
+        mturk.add_argument(
             '--max-time', dest='max_time', default=0, type=int,
             help='Maximum number of seconds per day that a worker is allowed '
                  'to work on this assignment'
