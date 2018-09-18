@@ -831,7 +831,14 @@ class MTurkManager():
                 'Querying the parlai website for possible notices...',
                 should_print=True)
             endpoint = 'sandbox' if self.is_sandbox else 'live'
-            resp = requests.post(PARLAI_MTURK_NOTICE_URL + endpoint)
+            notice_url = PARLAI_MTURK_NOTICE_URL + endpoint
+            try:
+                import parlai_internal.mturk.configs as local_configs
+                notice_url = local_configs.get_true_url(notice_url)
+            except Exception:
+                # not all users will be drawing configs from internal settings
+                pass
+            resp = requests.post(notice_url)
             warnings = resp.json()
             for warn in warnings:
                 print('Notice: ' + warn)
