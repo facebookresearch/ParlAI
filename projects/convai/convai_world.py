@@ -184,8 +184,8 @@ class ConvAIWorld(World):
         while True:
             time.sleep(self.router_bot_pull_delay)
             msgs = self._get_updates()
-            if len(msgs) > 0:
-                for msg in msgs:
+            if len(msgs["result"]) > 0:
+                for msg in msgs["result"]:
                     print('\nProceed message: %s' % msg)
                     text = self._get_message_text(msg)
                     chatID = self._get_chat_id(msg)
