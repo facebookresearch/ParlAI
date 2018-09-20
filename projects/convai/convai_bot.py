@@ -37,7 +37,8 @@ class ConvAISampleAgent(Agent):
                 'Nice!',
                 'Hi',
                 'Hello',
-                'This is not very interesting. Let\'s change the subject of the conversation and talk about cats.',
+                'This is not very interesting. Let\'s change the subject of the '
+                'conversation and talk about cats.',
                 '/end'])
 
     def act(self):
@@ -48,14 +49,14 @@ class ConvAISampleAgent(Agent):
         }
         print('\t' + display_messages([reply]))
         return reply
-    
-    
+
+
 def setup_args():
     parser = ParlaiParser(True, True)
     ConvAIWorld.add_cmdline_args(parser)
     return parser
-    
-    
+
+
 def run_convai_bot(opt):
     agent = create_agent(opt)
     world = ConvAIWorld(opt, [agent])
@@ -65,7 +66,7 @@ def run_convai_bot(opt):
         except Exception as e:
             print('Exception: {}'.format(e))
 
-            
+
 def main():
     parser = setup_args()
     parser.set_params(model='projects.convai.convai_bot:ConvAISampleAgent')
