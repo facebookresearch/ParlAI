@@ -176,8 +176,8 @@ class ConvAIWorld(World):
 
     def pull_new_messages(self):
         """Requests the server for new messages and processes every message.
-        If a message starts with '/start' string then a new chat will be created new 
-        chat and the message will be added to stack.
+        If a message starts with '/start' string then a new chat will be created and
+        the message will be added to stack.
         If a message has the same chat id as already existing chat then it will be 
         added to message stack for this chat.
         Any other messages will be ignored.
@@ -207,7 +207,7 @@ class ConvAIWorld(World):
                             self._init_chat(chatID)
                             text = self._strip_start_message(text)
                             self.messages.append((chatID, text))
-                            print('New world and agents for chat #%s created.' 
+                            print('New world and agents for chat #%s are created.' 
                                   % chatID)
                         else:
                             print('Cannot start new chat #%s due to bot capacity'
