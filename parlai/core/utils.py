@@ -682,9 +682,9 @@ class OffensiveLanguageDetector(object):
                               'mis-', 'pre', 'pre-', 'non', 'non-', 'semi',
                               'semi-', 'sub', 'sub-', 'un', 'un-']
         self.word_suffixes = ['a', 'able', 'as', 'dom', 'ed', 'er', 'ers',
-                              'es', 'est', 'ful', 'fy', 'ies', 'ify', 'in',
-                              'ing', 'ish', 'less', 'ly', 's', 'y']
-        self.white_list = ['butter', 'spicy', 'spice', 'spiced', 'spices',
+                              'ery', 'es', 'est', 'ful', 'fy', 'ies', 'ify',
+                              'in', 'ing', 'ish', 'less', 'ly', 's', 'y']
+        self.white_list = ['butter', 'buttery', 'spicy', 'spiced', 'spices',
                            'spicier', 'spicing', 'twinkies']
 
         with open(self.datafile, 'r') as f:
