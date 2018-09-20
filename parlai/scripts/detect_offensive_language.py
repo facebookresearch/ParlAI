@@ -71,7 +71,7 @@ def detect(opt, printargs=None, print_parser=None):
         if len(words) > 0 and opt['display_examples']:
             print(world.display())
             print("[Offensive words detected:]", ', '.join(words))
-            print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+            print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
         cnt += len(words)
         if log_time.time() > log_every_n_secs:
             report = world.report()
