@@ -960,6 +960,9 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
     # max in time dimension
     t = max(lens)
 
+    # if input tensors are empty, we should expand to nulls
+    t = max(t, 1)
+
     if isinstance(items[0], torch.Tensor):
         # keep type of input tensors, they may already be cuda ones
         output = items[0].new(n, t)
@@ -967,15 +970,19 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
         output = torch.LongTensor(n, t)
     output.fill_(pad_idx)
 
-    for i, item in enumerate(items):
+    for (i, item), length in zip(enumerate(items), lens):
+        if length == 0:
+            # skip empty items
+            continue
         if not isinstance(item, torch.Tensor):
+            # put non-tensors into a tensor
             item = torch.LongTensor(item)
         if left_padded:
             # place at end
-            output[i, t - lens[i]:] = item
+            output[i, t - length:] = item
         else:
             # place at beginning
-            output[i, :lens[i]] = item
+            output[i, :length] = item
 
     if use_cuda:
         output = output.cuda()
@@ -995,10 +1002,15 @@ def padded_3d(tensors, pad_idx=0, use_cuda=0):
     b = max(len(row) for row in tensors)
     c = max(len(item) for row in tensors for item in row)
 
+    # pad empty tensors
+    c = max(c, 1)
+
     output = torch.LongTensor(a, b, c).fill_(pad_idx)
 
     for i, row in enumerate(tensors):
         for j, item in enumerate(row):
+            if len(item) == 0:
+                continue
             if not isinstance(item, torch.Tensor):
                 item = torch.LongTensor(item)
             output[i, j, :len(item)] = item
