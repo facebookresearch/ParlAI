@@ -115,7 +115,7 @@ class ConvAIWorld(World):
 
     @staticmethod
     def _is_begin_of_conversation(message):
-        return message.startswith('/start ')
+        return message.startswith('/start')
 
     @staticmethod
     def _is_end_of_conversation(message):
