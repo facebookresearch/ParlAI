@@ -684,6 +684,8 @@ class OffensiveLanguageDetector(object):
         self.word_suffixes = ['a', 'able', 'as', 'dom', 'ed', 'er', 'ers',
                               'es', 'est', 'ful', 'fy', 'ies', 'ify', 'in',
                               'ing', 'ish', 'less', 'ly', 's', 'y']
+        self.white_list = ['butter', 'spicy', 'spice', 'spiced', 'spices',
+                           'spicier', 'spicing', 'twinkies']
 
         with open(self.datafile, 'r') as f:
             for p in f.read().splitlines():
@@ -691,7 +693,8 @@ class OffensiveLanguageDetector(object):
                 mod_ps += [pref + p for pref in self.word_prefixes]
                 mod_ps += [p + suff for suff in self.word_suffixes]
                 for mod_p in mod_ps:
-                    self.add_phrase(mod_p)
+                    if mod_p not in self.white_list:
+                        self.add_phrase(mod_p)
 
     def add_phrase(self, phrase):
         """Add a single phrase to the filter."""

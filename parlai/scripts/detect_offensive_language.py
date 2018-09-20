@@ -58,19 +58,21 @@ def detect(opt, printargs=None, print_parser=None):
     cnt = 0
     while not world.epoch_done():
         world.parley()
-        offensive = False
+        words = []
         for a in world.acts:
-            if bad.contains_offensive_language(a.get('text', '')):
-                offensive = True
+            offensive = bad.contains_offensive_language(a.get('text', ''))
+            if offensive:
+                words.append(offensive)
             labels = a.get('labels', a.get('eval_labels', ''))
             for l in labels:
-                if bad.contains_offensive_language(l):
-                    offensive = True
-
-        if offensive:
-            if opt['display_examples']:
-                print(world.display() + "\n~~")
-            cnt += 1
+                offensive = bad.contains_offensive_language(l)
+                if offensive:
+                    words.append(offensive)
+        if len(words) > 0 and opt['display_examples']:
+            print(world.display())
+            print("[Offensive words detected:]", ', '.join(words))
+            print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+        cnt += len(words)
         if log_time.time() > log_every_n_secs:
             report = world.report()
             log = {'offenses': cnt}
