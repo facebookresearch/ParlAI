@@ -9,7 +9,8 @@
 checks them for offensive language.
 
 For example:
-`python parlai/scripts/detect_offensive_language.py -t "convai_chitchat" --display-examples True -dt train:ordered`
+`python parlai/scripts/detect_offensive_language.py -t "convai_chitchat"
+--display-examples True -dt train:ordered`
 """
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
