@@ -8,7 +8,7 @@
 
 from parlai.projects.convai.convai_world import ConvAIWorld
 from parlai.core.params import ParlaiParser
-from parlai.core.agents import Agent
+from parlai.core.agents import Agent, create_agent
 from parlai.core.utils import display_messages
 
 import random
@@ -37,7 +37,8 @@ class ConvAISampleAgent(Agent):
                 'Nice!',
                 'Hi',
                 'Hello',
-                'This is not very interesting. Let\'s change the subject of the conversation and talk about cats.',
+                'This is not very interesting. Let\'s change the subject of the '
+                'conversation and talk about cats.',
                 '/end'])
 
     def act(self):
@@ -50,19 +51,28 @@ class ConvAISampleAgent(Agent):
         return reply
 
 
-def main():
+def setup_args():
     parser = ParlaiParser(True, True)
     ConvAIWorld.add_cmdline_args(parser)
-    opt = parser.parse_args()
+    return parser
 
-    agent = ConvAISampleAgent(opt)
+
+def run_convai_bot(opt):
+    agent = create_agent(opt)
     world = ConvAIWorld(opt, [agent])
-
     while True:
         try:
             world.parley()
         except Exception as e:
             print('Exception: {}'.format(e))
+
+
+def main():
+    parser = setup_args()
+    parser.set_params(model='projects.convai.convai_bot:ConvAISampleAgent')
+    opt = parser.parse_args()
+    print('Run ConvAI bot in inifinite loop...')
+    run_convai_bot(opt)
 
 
 if __name__ == '__main__':
