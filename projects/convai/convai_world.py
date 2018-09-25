@@ -31,13 +31,15 @@ class ConvAIWorld(World):
         convai.add_argument('-bi', '--bot-id', required=True,
                             help='Id of local bot used to communicate with RouterBot')
         convai.add_argument('-bc', '--bot-capacity', type=int, default=-1,
-                            help='The maximum number of open dialogs. Use -1 ' +
+                            help='The maximum number of open dialogs. Use -1 '
                                  'for unlimited number of open dialogs')
         convai.add_argument('-rbu', '--router-bot-url', required=True,
                             help='Url of RouterBot')
-        convai.add_argument('-rbpd', '--router-bot-pull-delay', type=int,
-                            default=1,
+        convai.add_argument('-rbpd', '--router-bot-pull-delay', type=int, default=1,
                             help='Delay before new request to RouterBot: minimum 1 sec')
+        convai.add_argument('-m', '--max-pull-delay', type=int, default=600,
+                            help='Maximum delay for new requests if case of server '
+                                 'unavailability')
 
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, shared)
@@ -62,6 +64,12 @@ class ConvAIWorld(World):
         self.router_bot_pull_delay = opt['router_bot_pull_delay']
         if self.router_bot_pull_delay < 1:
             self.router_bot_pull_delay = 1
+        # Minimal pull delay is equal to initial value of router_bot_pull_delay 
+        self.minimum_pull_delay = self.router_bot_pull_delay
+        # Maximum delay couldn't be smaller than minimum_pull_delay
+        self.maximum_pull_delay = opt['maximum_pull_delay']
+        if self.maximum_pull_delay < self.minimum_pull_delay:
+            self.maximum_pull_delay = self.minimum_pull_delay
         # Id of local bot used to communicate with RouterBot
         self.bot_id = opt['bot_id']
         # The maximum number of open dialogs. 
@@ -72,13 +80,24 @@ class ConvAIWorld(World):
 
     def _get_updates(self):
         """Make HTTP request to Router Bot for new messages
+           Expecting server response to be like {'ok': True, "result": [...]}
         :return: list of new messages received since last request
         """
         res = requests.get(self.bot_url + '/getUpdates')
         if res.status_code != 200:
             print(res.text)
-            res.raise_for_status()
+            self._increase_delay()
+            return {'ok': False, "result": []}
+        elif self.router_bot_pull_delay > self.minimum_pull_delay:
+            self.router_bot_pull_delay = self.minimum_pull_delay
         return res.json()
+
+    def _increase_delay(self):
+        if self.router_bot_pull_delay < self.maximum_pull_delay:
+            self.router_bot_pull_delay *= 2
+            if self.router_bot_pull_delay > self.maximum_pull_delay:
+                self.router_bot_pull_delay = self.maximum_pull_delay
+            print('Warning! Increasing pull delay to %d', self.router_bot_pull_delay)
 
     def _send_message(self, observation, chatID):
         """Make HTTP request to Router Bot to post new message
