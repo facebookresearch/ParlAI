@@ -970,7 +970,7 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
         output = torch.LongTensor(n, t)
     output.fill_(pad_idx)
 
-    for (i, item), length in zip(enumerate(items), lens):
+    for i, (item, length) in enumerate(zip(items, lens)):
         if length == 0:
             # skip empty items
             continue
