@@ -44,7 +44,7 @@ class TensorboardLogger(Shared):
                  'from report dict.'
         )
         logger.add_argument(
-            '-tgcomment', '--tensorboard-comment', type=str, default='',
+            '-tbcomment', '--tensorboard-comment', type=str, default='',
             help='Add any line here to distinguish your TB event file, optional'
         )
 
