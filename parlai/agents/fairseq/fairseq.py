@@ -11,10 +11,19 @@ from parlai.core.utils import argsort, padded_tensor
 
 try:
     from fairseq import models, optim, criterions
+    # this is a hack around versioning check because fairseq doesn't
+    # announce version numbers yet
+    # fairseq 0.5.0 has fp16_trainer, 0.6.0 does not
+    try:
+        from fairseq import fp16_trainer
+    except ImportError:
+        pass
+    else:
+        raise ImportError
 except ImportError:
     raise ImportError(
         "Please run \"pip install -U 'git+https://github.com/pytorch/"
-        "fairseq.git@v0.5.0#egg=fairseq'\""
+        "fairseq.git@v0.6.0#egg=fairseq'\""
     )
 from fairseq import trainer
 from fairseq.sequence_generator import SequenceGenerator
