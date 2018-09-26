@@ -18,7 +18,11 @@ def add_cmdline_args(parser):
 
     # Basics
     agent.add_argument('--embedding_file', type=str, default=None,
-                       help='File of space separated embeddings: w e1 ... ed')
+                       help='[deprecated: use embedding_type] '
+                            'file of space separated embeddings: w e1 ... ed')
+    agent.add_argument('--embedding_type', type=str, default='random',
+                       choices=['fasttext', 'fasttext_cc', 'random', 'glove'],
+                       help='embeddings from model zoo')
     agent.add_argument('--init_model', type=str, default=None,
                        help='Load dict/features/weights/opts from this file')
     agent.add_argument('--log_file', type=str, default=None)
@@ -86,9 +90,20 @@ def add_cmdline_args(parser):
 
 def set_defaults(opt):
     # Embeddings options
-    opt['embedding_file'] = modelzoo_path(
-        opt.get('datapath'), opt['embedding_file'])
-    if opt.get('embedding_file'):
+    if (opt.get('embedding_file') is not None and
+            opt.get('embedding_type') == 'random'):
+        # backwards compatibility for older models
+        vec_zoo = ['fasttext_cc_vectors', 'fasttext_vectors', 'glove_vectors']
+        for vec in vec_zoo:
+            if vec in opt.get('embedding_file'):
+                opt['embedding_type'] = vec
+                break
+    if opt.get('embedding_type') != 'random':
+        opt['embedding_file'] = modelzoo_path(
+            opt.get('datapath'), 'models:' + opt['embedding_type'])
+    elif opt.get('embedding_file'):
+        # backwards compatibility for specifying embedding file from place
+        # other than model zoo
         if not os.path.isfile(opt['embedding_file']):
             raise IOError('No such file: %s' % opt['embedding_file'])
         with open(opt['embedding_file']) as f:
