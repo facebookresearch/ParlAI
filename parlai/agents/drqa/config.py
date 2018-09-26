@@ -99,8 +99,13 @@ def set_defaults(opt):
                 opt['embedding_type'] = vec
                 break
     if opt.get('embedding_type') != 'random':
+        old = opt.get('embedding_file')
         opt['embedding_file'] = modelzoo_path(
             opt.get('datapath'), 'models:' + opt['embedding_type'])
+        if old is not None:
+            print("[ warning: overriding opt['embedding_file'] to {} "
+                  "(previously: {})]".format(opt['embedding_file'],
+                                             old))
     elif opt.get('embedding_file'):
         # backwards compatibility for specifying embedding file from place
         # other than model zoo
