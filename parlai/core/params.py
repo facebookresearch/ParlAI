@@ -291,11 +291,22 @@ class ParlaiParser(argparse.ArgumentParser):
                  'defaults to {parlai_dir}/downloads')
         parlai.add_argument(
             '-dt', '--datatype', default='train',
-            choices=['train', 'train:stream', 'train:ordered',
-                     'train:ordered:stream', 'train:stream:ordered',
-                     'train:evalmode', 'train:evalmode:stream', 'train:evalmode:ordered',
-                     'train:evalmode:ordered:stream', 'train:evalmode:stream:ordered',
-                     'valid', 'valid:stream', 'test', 'test:stream'],
+            choices=[
+                'train',
+                'train:stream',
+                'train:ordered',
+                'train:ordered:stream',
+                'train:stream:ordered',
+                'train:evalmode',
+                'train:evalmode:stream',
+                'train:evalmode:ordered',
+                'train:evalmode:ordered:stream',
+                'train:evalmode:stream:ordered',
+                'valid',
+                'valid:stream',
+                'test',
+                'test:stream'
+            ],
             help='choose from: train, train:ordered, valid, test. to stream '
                  'data add ":stream" to any option (e.g., train:stream). '
                  'by default: train is random with replacement, '
@@ -584,5 +595,10 @@ class ParlaiParser(argparse.ArgumentParser):
     def add_argument_group(self, *args, **kwargs):
         """Override to make arg groups also convert underscores to hyphens."""
         arg_group = super().add_argument_group(*args, **kwargs)
-        arg_group.add_argument = self.add_argument  # override _ => -
+        original_add_arg = arg_group.add_argument
+
+        def ag_add_argument(*args, **kwargs):
+            return original_add_arg(*fix_underscores(args), **kwargs)
+
+        arg_group.add_argument = ag_add_argument  # override _ => -
         return arg_group
