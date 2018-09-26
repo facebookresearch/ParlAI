@@ -120,6 +120,7 @@ def set_defaults(opt):
             print('Setting fix_embeddings to False as embeddings are random.')
             opt['fix_embeddings'] = False
 
+
 def override_args(opt, override_opt):
     # Major model args are reset to the values in override_opt.
     # Non-architecture args (like dropout) are kept.
