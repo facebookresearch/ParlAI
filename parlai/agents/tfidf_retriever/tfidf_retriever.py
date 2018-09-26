@@ -13,7 +13,7 @@ try:
     import unicodedata  # noqa: F401
     import pexpect  # noqa: F401
 except ImportError:
-    raise ImportError('Please `pip install regex scipy sklearn pexpect`'
+    raise ImportError('Please `pip install regex scipy scikit-learn pexpect`'
                       ' to use the tfidf_retriever agent.')
 
 from parlai.core.agents import Agent
