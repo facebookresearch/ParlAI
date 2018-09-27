@@ -54,7 +54,9 @@ def load_sparse_csr(filename):
 
 def load_sparse_tensor(filename):
     loader = torch.load(filename)
-    matrix = torch.sparse.FloatTensor(loader['indices'], loader['values'], loader['size'])
+    matrix = torch.sparse.FloatTensor(
+        loader['indices'], loader['values'], loader['size']
+    )
     return matrix, loader['metadata'] if 'metadata' in loader else None
 
 
