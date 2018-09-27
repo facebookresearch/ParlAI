@@ -202,14 +202,6 @@ class _ParlaiTask(FairseqTask):
 class FairseqAgent(TorchAgent):
     """Generic wrapper around fairseq for use in ParlAI"""
 
-    DEFAULT_OPTIONS = {
-        "adam_betas": "(0.9,0.98)",
-        "optimizer": "adam",
-        "clip_norm": 0.1,
-        "lr": 3e-4,
-        "arch": "transformer_iwslt_de_en",
-    }
-
     metrics = {}
 
     @classmethod
@@ -217,6 +209,18 @@ class FairseqAgent(TorchAgent):
         """Add command-line arguments specifically for this agent."""
         # first we need to add the general torch agent operations
         TorchAgent.add_cmdline_args(argparser)
+        # Dictionary construction stuff. Using the subclass in case we end up
+        # needing any fairseq specific things
+        cls.dictionary_class().add_cmdline_args(argparser)
+
+        # let's store any defaults that were overridden
+        old_defaults = argparser._defaults
+        if 'clip_norm' not in old_defaults:
+            # fairseq has a few awful defaults
+            old_defaults['clip_norm'] = 1.0
+        if 'optimizer' not in old_defaults:
+            old_defaults['optimizer'] = 'adam'
+            old_defaults['adam_betas'] = '(0.9,0.98)'
 
         agent = argparser.add_argument_group('Fairseq Arguments')
         agent.add_argument(
@@ -240,16 +244,12 @@ class FairseqAgent(TorchAgent):
             help='Skips test time beam search. Much faster if you only need PPL',
         )
 
-        # Dictionary construction stuff. Using the subclass in case we end up
-        # needing any fairseq specific things
-        cls.dictionary_class().add_cmdline_args(argparser)
-
         # Check subargs for generation, optimizers, criterions, archs, etc
         options.add_generation_args(argparser)
         options.add_optimization_args(argparser)
 
-        # make sure we set defaults according to the model before parsing
-        argparser.set_defaults(**cls.DEFAULT_OPTIONS)
+        # restore any user set defaults that fairseq possibly overrode
+        argparser.set_defaults(**old_defaults)
         known_args = argparser.parse_known_args(nohelp=True)[0]
 
         if hasattr(known_args, "optimizer"):
@@ -275,8 +275,8 @@ class FairseqAgent(TorchAgent):
                 a.default = None
                 break
 
-        # make sure we set defaults according to parlai model before parsing
-        argparser.set_defaults(**cls.DEFAULT_OPTIONS)
+        # once again restore any user-set defaults
+        argparser.set_defaults(**old_defaults)
         known_args = argparser.parse_known_args(nohelp=True)[0]
 
         if hasattr(known_args, "arch") and known_args.arch is not None:
@@ -292,8 +292,8 @@ class FairseqAgent(TorchAgent):
             )
             criterions.CRITERION_REGISTRY[known_args.criterion].add_args(crit_group)
 
-        # As one final check, let's make sure we set defaults correctly
-        argparser.set_defaults(**cls.DEFAULT_OPTIONS)
+        # one last time, restore any user set defaults
+        argparser.set_defaults(**old_defaults)
 
     @staticmethod
     def dictionary_class():
