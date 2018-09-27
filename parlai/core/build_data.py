@@ -124,7 +124,9 @@ def download(url, path, fname, redownload=False):
 
 def make_dir(path):
     """Makes the directory and any nonexistent parent directories."""
-    os.makedirs(path, exist_ok=True)
+    # the current working directory is a fine path
+    if path != '':
+        os.makedirs(path, exist_ok=True)
 
 
 def move(path1, path2):
