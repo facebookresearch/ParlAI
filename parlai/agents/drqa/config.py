@@ -18,7 +18,7 @@ def add_cmdline_args(parser):
 
     # Basics
     agent.add_argument('--embedding_file', type=str, default=None,
-                       help='File of space separated embeddings: w e1 ... ed')
+                       help='file of space separated embeddings: w e1 ... ed')
     agent.add_argument('--init_model', type=str, default=None,
                        help='Load dict/features/weights/opts from this file')
     agent.add_argument('--log_file', type=str, default=None)
@@ -85,30 +85,38 @@ def add_cmdline_args(parser):
 
 
 def set_defaults(opt):
-    # Embeddings options
-    opt['embedding_file'] = modelzoo_path(
-        opt.get('datapath'), opt['embedding_file'])
-    if opt.get('embedding_file'):
-        if not os.path.isfile(opt['embedding_file']):
-            raise IOError('No such file: %s' % opt['embedding_file'])
-        with open(opt['embedding_file']) as f:
-            dim = len(f.readline().strip().split(' ')) - 1
-            if dim == 1:
-                # first line was a dud
+    init_model = None
+    # check first for 'init_model' for loading model from file
+    if opt.get('init_model') and os.path.isfile(opt['init_model']):
+        init_model = opt['init_model']
+    # next check for 'model_file', this would override init_model
+    if opt.get('model_file') and os.path.isfile(opt['model_file']):
+        init_model = opt['model_file']
+
+    if init_model is None:
+        # Embeddings options
+        opt['embedding_file'] = modelzoo_path(
+            opt.get('datapath'), opt['embedding_file'])
+        if opt.get('embedding_file'):
+            if not os.path.isfile(opt['embedding_file']):
+                raise IOError('No such file: %s' % opt['embedding_file'])
+            with open(opt['embedding_file']) as f:
                 dim = len(f.readline().strip().split(' ')) - 1
-        opt['embedding_dim'] = dim
-    elif not opt.get('embedding_dim'):
-        raise RuntimeError(('Either embedding_file or embedding_dim '
-                            'needs to be specified.'))
+                if dim == 1:
+                    # first line was a dud
+                    dim = len(f.readline().strip().split(' ')) - 1
+            opt['embedding_dim'] = dim
+        elif not opt.get('embedding_dim'):
+            raise RuntimeError(('Either embedding_file or embedding_dim '
+                                'needs to be specified.'))
 
-    # Make sure tune_partial and fix_embeddings are consistent
-    if opt['tune_partial'] > 0 and opt['fix_embeddings']:
-        print('Setting fix_embeddings to False as tune_partial > 0.')
-        opt['fix_embeddings'] = False
+        # Make sure tune_partial and fix_embeddings are consistent
+        if opt['tune_partial'] > 0 and opt['fix_embeddings']:
+            print('Setting fix_embeddings to False as tune_partial > 0.')
+            opt['fix_embeddings'] = False
 
-    # Make sure fix_embeddings and embedding_file are consistent
-    if opt['fix_embeddings']:
-        if not opt.get('embedding_file') and not opt.get('init_model'):
+        # Make sure fix_embeddings and embedding_file are consistent
+        if opt['fix_embeddings'] and not opt.get('embedding_file'):
             print('Setting fix_embeddings to False as embeddings are random.')
             opt['fix_embeddings'] = False
 
