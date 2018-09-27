@@ -485,7 +485,7 @@ class FairseqAgent(TorchAgent):
         if batch.text_vec is None:
             return
         self.is_training = True
-        samples = self._make_sample(batch.text_vec, batch.label_vec)
+        samples = self._make_sample(batch)
         self.model.train()
         metrics = self.trainer.train_step(samples)
         self._update_metrics(metrics, samples)
@@ -502,7 +502,7 @@ class FairseqAgent(TorchAgent):
         if batch.text_vec is None:
             return
         self.is_training = False
-        samples = self._make_sample(batch.text_vec, batch.label_vec)
+        samples = self._make_sample(batch)
         self.model.eval()
         if batch.label_vec is not None:
             # Interactive mode won't have a gold label
@@ -531,7 +531,7 @@ class FairseqAgent(TorchAgent):
                 xs = xs[:, :batch.text_lengths[i]]
                 # and appropriately pack the outputs
                 ys, _ = padded_tensor(cands, self.NULL_IDX, self.use_cuda)
-                s = self._make_sample(xs, ys)
+                s = self._make_sample(xs=xs, ys=ys)
                 # perform the actual grading, extract the scores
                 scored = list(self.scorer.score_batched_itr([s], cuda=self.use_cuda))
                 scores = [s[3][0]['score'].item() for s in scored]
@@ -632,10 +632,17 @@ class FairseqAgent(TorchAgent):
         result[:, 1:] = ys[:, :-1]
         return result
 
-    def _make_sample(self, xs, ys):
+    def _make_sample(self, batch=None, xs=None, ys=None):
         """Generate a sample object that Fairseq expects."""
         # add extra info to samples
-        # TODO: should the right/left padding thing be in torch agent?
+        if batch is None and xs is None:
+            raise ValueError("Must supply either batch or xs")
+        if batch is None and ys is None:
+            raise ValueError("Must supply either batch or ys")
+        if xs is None:
+            xs = batch.text_vec
+        if ys is None:
+            ys = batch.label_vec
         repadded = convert_padding_direction(xs, self.dict.pad(), right_to_left=True)
         sample = {}
         sample["id"] = torch.arange(len(xs) - 1)
