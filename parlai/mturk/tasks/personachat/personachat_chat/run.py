@@ -49,7 +49,9 @@ def main():
     opt['task'] = os.path.basename(directory_path)
 
     if not opt.get('personas_path'):
-        opt['personas_path'] = argparser.parlai_home + '/parlai/mturk/personachat_chat/data'
+        opt['personas_path'] = (
+            argparser.parlai_home + '/parlai/mturk/personachat_chat/data'
+        )
 
     opt.update(task_config)
 
@@ -72,7 +74,11 @@ def main():
         if not opt['is_sandbox']:
             blocked_worker_list = []
             for w in blocked_worker_list:
-                mturk_manager.block_worker(w, 'We found that you have unexpected behaviors in our previous HITs. For more questions please email us.')
+                mturk_manager.block_worker(
+                    w,
+                    'We found that you have unexpected behaviors in our previous '
+                    'HITs. For more questions please email us.'
+                )
 
         def run_onboard(worker):
             worker.persona_generator = persona_generator

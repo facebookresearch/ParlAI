@@ -30,6 +30,8 @@ class DefaultTeacher(FbDialogTeacher):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt)
         if 'stream' not in opt['datatype']:
-            print('Dataset might not fit in memory. If this is the case, use' +
-                ' streaming by setting "-dt ' + opt['datatype'] + ':stream".')
+            print(
+                'Dataset might not fit in memory. If this is the case, use' +
+                ' streaming by setting "-dt ' + opt['datatype'] + ':stream".'
+            )
         super().__init__(opt, shared)

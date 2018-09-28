@@ -30,8 +30,9 @@ def setup_args(parser=None):
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('--metrics', type=str, default="all",
-                        help="list of metrics to show/compute, e.g. ppl,f1,accuracy,hits@1."
-                        "If 'all' is specified [default] all are shown.")
+                        help="list of metrics to show/compute, e.g. "
+                             "ppl,f1,accuracy,hits@1."
+                             "If 'all' is specified [default] all are shown.")
     TensorboardLogger.add_cmdline_args(parser)
     parser.set_defaults(datatype='valid')
     return parser

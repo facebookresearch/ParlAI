@@ -60,5 +60,6 @@ def ids_to_tasks(ids):
                            '--task {task_name}.')
     return ','.join((_id_to_task(i) for i in ids.split(',') if len(i) > 0))
 
+
 # Build the task list from the json file.
 tasks, tags = _build(task_list)

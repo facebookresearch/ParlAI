@@ -35,20 +35,27 @@ class RNNModel(nn.Module):
             try:
                 nonlinearity = {'RNN_TANH': 'tanh', 'RNN_RELU': 'relu'}[rnn_type]
             except KeyError:
-                raise ValueError("""An invalid option for `--model` was supplied,
-                                 options are ['LSTM', 'GRU', 'RNN_TANH' or 'RNN_RELU']""")
-            self.rnn = nn.RNN(ninp, nhid, nlayers, nonlinearity=nonlinearity, dropout=dropout)
+                raise ValueError(
+                    "An invalid option for `--model` was supplied, options are "
+                    "['LSTM', 'GRU', 'RNN_TANH' or 'RNN_RELU']"
+                )
+            self.rnn = nn.RNN(
+                ninp, nhid, nlayers, nonlinearity=nonlinearity, dropout=dropout
+            )
         self.decoder = nn.Linear(nhid, ntoken)
 
         # Optionally tie weights as in:
         # "Using the Output Embedding to Improve Language Models" (Press & Wolf 2016)
         # https://arxiv.org/abs/1608.05859
         # and
-        # "Tying Word Vectors and Word Classifiers: A Loss Framework for Language Modeling" (Inan et al. 2016)
+        # "Tying Word Vectors and Word Classifiers: A Loss Framework for
+        #   Language Modeling" (Inan et al. 2016)
         # https://arxiv.org/abs/1611.01462
         if tie_weights:
             if nhid != ninp:
-                raise ValueError('When using the tied flag, nhid must be equal to emsize')
+                raise ValueError(
+                    'When using the tied flag, nhid must be equal to emsize'
+                )
             self.decoder.weight = self.encoder.weight
 
         # initialize the weights of the model
@@ -73,7 +80,9 @@ class RNNModel(nn.Module):
         else:
             output, hidden = self.rnn(emb, hidden)
         output = self.drop(output)
-        decoded = self.decoder(output.view(output.size(0) * output.size(1), output.size(2)))
+        decoded = self.decoder(
+            output.view(output.size(0) * output.size(1), output.size(2))
+        )
         return decoded.view(output.size(0), output.size(1), decoded.size(1)), hidden
 
     def init_hidden(self, bsz):

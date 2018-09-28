@@ -31,12 +31,18 @@ def setup_args(parser=None):
         parser = ParlaiParser(True, True)
     parser = train_args(parser)
     profile = parser.add_argument_group('Profiler Arguments')
-    profile.add_argument('--torch', type='bool', default=False,
-        help='If true, use the torch profiler. Otherwise use cProfile.')
-    profile.add_argument('--torch-cuda', type='bool', default=False,
-        help='If true, use the torch cuda profiler. Otherwise use cProfile.')
-    profile.add_argument('--debug', type='bool', default=False,
-        help='If true, enter debugger at end of run.')
+    profile.add_argument(
+        '--torch', type='bool', default=False,
+        help='If true, use the torch profiler. Otherwise use cProfile.'
+    )
+    profile.add_argument(
+        '--torch-cuda', type='bool', default=False,
+        help='If true, use the torch cuda profiler. Otherwise use cProfile.'
+    )
+    profile.add_argument(
+        '--debug', type='bool', default=False,
+        help='If true, enter debugger at end of run.'
+    )
     return parser
 
 

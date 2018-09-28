@@ -70,8 +70,10 @@ class NegotiationTeacher(Teacher):
         # 1 example for every expected learner text response (YOU), and 1
         # example for the expected learner final negotiation output values
         num_exs = 0
-        dialogues = [self._split_dialogue(get_tag(episode.strip().split(), DIALOGUE_TAG))
-                     for episode in self.episodes]
+        dialogues = [
+            self._split_dialogue(get_tag(episode.strip().split(), DIALOGUE_TAG))
+            for episode in self.episodes
+        ]
         num_exs = sum(len([d for d in dialogue if YOU_TOKEN in d]) + 1
                       for dialogue in dialogues)
         return num_exs

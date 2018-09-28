@@ -19,9 +19,15 @@ import os
 def _path(opt):
     build(opt)
 
-    questions_path = os.path.join(opt['datapath'], 'FVQA', 'new_dataset_release', 'all_qs_dict_release.json')
-    trainset_path = os.path.join(opt['datapath'], 'FVQA', 'Name_Lists')
-    image_path = os.path.join(opt['datapath'], 'FVQA', 'new_dataset_release', 'images', '')
+    questions_path = os.path.join(
+        opt['datapath'], 'FVQA', 'new_dataset_release', 'all_qs_dict_release.json'
+    )
+    trainset_path = os.path.join(
+        opt['datapath'], 'FVQA', 'Name_Lists'
+    )
+    image_path = os.path.join(
+        opt['datapath'], 'FVQA', 'new_dataset_release', 'images', ''
+    )
 
     return questions_path, trainset_path, image_path
 
@@ -112,7 +118,10 @@ class SplitTeacher(Teacher):
             action = {'text': 'Which fact supports this answer?', 'episode_done': True}
             if self.datatype.startswith('train'):
                 action['labels'] = self.lastY[1]
-            if self.datatype != 'train' and self.episode_idx + self.step_size >= self.num_episodes():
+            if (
+                self.datatype != 'train' and
+                self.episode_idx + self.step_size >= self.num_episodes()
+            ):
                 self.epochDone = True
             return action
 
@@ -153,10 +162,15 @@ class SplitTeacher(Teacher):
         with open(questions_path) as questions_file:
             questions = json.load(questions_file)
         train_test_images = set()
-        with open(os.path.join(trainset_path, '{}_list_{}.txt'.format(datatype, task_num))) as imageset:
+        fn = os.path.join(trainset_path, '{}_list_{}.txt'.format(datatype, task_num))
+        with open(fn) as imageset:
             for line in imageset:
                 train_test_images.add(line.strip())
-        self.ques = [questions[k] for k in sorted(questions.keys()) if questions[k]['img_file'] in train_test_images]
+        self.ques = [
+            questions[k]
+            for k in sorted(questions.keys())
+            if questions[k]['img_file'] in train_test_images
+        ]
 
 
 class DefaultTeacher(SplitTeacher):

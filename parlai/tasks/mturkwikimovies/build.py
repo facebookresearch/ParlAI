@@ -28,8 +28,7 @@ def build(opt):
 
         # Download the data.
         fname = 'mturkwikimovies.tar.gz'
-        url = ('http://parl.ai/downloads/mturkwikimovies/'
-               + fname)
+        url = ('http://parl.ai/downloads/mturkwikimovies/' + fname)
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 

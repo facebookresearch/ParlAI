@@ -222,7 +222,10 @@ class IbmSeq2seqAgent(Agent):
                 kwargs['momentum'] = 0.95
                 kwargs['nesterov'] = True
 
-            self.optimizer = optim_class([p for p in self.model.parameters() if p.requires_grad], **kwargs)
+            self.optimizer = optim_class(
+                [p for p in self.model.parameters() if p.requires_grad],
+                **kwargs
+            )
             if self.states:
                 if self.states['optimizer_type'] != opt['optimizer']:
                     print('WARNING: not loading optim state since optim class '
@@ -364,7 +367,9 @@ class IbmSeq2seqAgent(Agent):
             if ys is not None:
                 # calculate loss on targets
                 y_in = torch.cat([starts, ys], 1)
-                out, hid, result = self.model(xs, x_lens, y_in, teacher_forcing_ratio=False)
+                out, hid, result = self.model(
+                    xs, x_lens, y_in, teacher_forcing_ratio=False
+                )
                 scores = torch.cat(out)
                 loss = self.criterion(scores.view(-1, scores.size(-1)), ys.view(-1))
                 target_tokens = ys.ne(self.NULL_IDX).long().sum().item()

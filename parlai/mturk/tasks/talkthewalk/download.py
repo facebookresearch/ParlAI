@@ -33,6 +33,7 @@ def build(opt):
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
 
+
 if __name__ == '__main__':
     parser = ParlaiParser()
     build(parser.parse_args())

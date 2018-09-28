@@ -79,10 +79,14 @@ class FlickrDataset(Dataset):
                 self.data = [d for d in raw_data if d['split'] == 'train']
             elif 'valid' in self.datatype:
                 self.data = [d for d in raw_data if d['split'] == 'val']
-                self.cands = [l for d in self.data for l in [s['raw'] for s in d['sentences']]]
+                self.cands = [
+                    l for d in self.data for l in [s['raw'] for s in d['sentences']]
+                ]
             else:
                 self.data = [d for d in raw_data if d['split'] == 'test']
-                self.cands = [l for d in self.data for l in [s['raw'] for s in d['sentences']]]
+                self.cands = [
+                    l for d in self.data for l in [s['raw'] for s in d['sentences']]
+                ]
         if unittest:
             self.caption = self.caption[:10]
 
@@ -171,7 +175,10 @@ class DefaultTeacher(FixedDialogTeacher):
             if self.num_cands > 0:
                 labels = action['labels']
                 cands_to_sample = [c for c in self.cands if c not in labels]
-                cands = random.Random(episode_idx).sample(cands_to_sample, self.num_cands) + labels
+                cands = (
+                    random.Random(episode_idx).sample(cands_to_sample, self.num_cands) +
+                    labels
+                )
                 random.shuffle(cands)
                 action['label_candidates'] = cands
             else:
@@ -218,7 +225,11 @@ class DefaultTeacher(FixedDialogTeacher):
                 self.data = [d for d in raw_data if d['split'] == 'train']
             elif 'valid' in self.datatype:
                 self.data = [d for d in raw_data if d['split'] == 'val']
-                self.cands = [l for d in self.data for l in [s['raw'] for s in d['sentences']]]
+                self.cands = [
+                    l for d in self.data for l in [s['raw'] for s in d['sentences']]
+                ]
             else:
                 self.data = [d for d in raw_data if d['split'] == 'test']
-                self.cands = [l for d in self.data for l in [s['raw'] for s in d['sentences']]]
+                self.cands = [
+                    l for d in self.data for l in [s['raw'] for s in d['sentences']]
+                ]

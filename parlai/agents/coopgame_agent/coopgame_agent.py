@@ -49,9 +49,10 @@ class CooperativeGameAgent(Agent):
         group = argparser.add_argument_group('Cooperative Game Agent Arguments')
         group.add_argument('--optimizer', default='adam',
                            choices=CooperativeGameAgent.OPTIM_OPTS.keys(),
-                           help='Choose between pytorch optimizers. Any member of torch.optim '
-                                'is valid and will be used with default params except learning '
-                                'rate (as specified by -lr).')
+                           help='Choose between pytorch optimizers. Any member of '
+                                'torch.optim is valid and will be used with '
+                                'default params except learning rate (as specified '
+                                'by -lr).')
         group.add_argument('--learning-rate', default=1e-2, type=float,
                            help='Initial learning rate')
         group.add_argument('--no-cuda', action='store_true', default=False,
@@ -194,9 +195,10 @@ class QuestionerAgent(CooperativeGameAgent):
         DictionaryAgent.add_cmdline_args(argparser)
         group = argparser.add_argument_group('Questioner Agent Arguments')
         group.add_argument('--q-in-vocab', default=13, type=int,
-                           help='Input vocabulary for questioner. Usually includes total '
-                                'distinct words spoken by answerer, questioner itself, '
-                                'and words by which the goal is described.')
+                           help='Input vocabulary for questioner. Usually includes '
+                                'total distinct words spoken by answerer, '
+                                'questioner itself, and words by which the '
+                                'goal is described.')
         group.add_argument('--q-embed-size', default=20, type=int,
                            help='Size of word embeddings for questioner')
         group.add_argument('--q-state-size', default=100, type=int,
@@ -215,7 +217,9 @@ class QuestionerAgent(CooperativeGameAgent):
         opt['out_vocab_size'] = opt['q_out_vocab']
 
         # add a module for prediction (override self.modules later)
-        self.predict_net = PredictNet(opt['embed_size'], opt['state_size'], opt['num_pred'])
+        self.predict_net = PredictNet(
+            opt['embed_size'], opt['state_size'], opt['num_pred']
+        )
         super().__init__(opt, shared)
         self.id = 'QuestionerAgent'
 
@@ -249,9 +253,9 @@ class AnswererAgent(CooperativeGameAgent):
         DictionaryAgent.add_cmdline_args(argparser)
         group = argparser.add_argument_group('Questioner Agent Arguments')
         group.add_argument('--a-in-vocab', default=13, type=int,
-                           help='Input vocabulary for questioner. Usually includes total '
-                                'distinct words spoken by answerer, questioner itself, '
-                                'and words by which the goal is described.')
+                           help='Input vocabulary for questioner. Usually includes '
+                                'total distinct words spoken by answerer, questioner '
+                                'itself, and words by which the goal is described.')
         group.add_argument('--a-embed-size', default=20, type=int,
                            help='Size of word embeddings for questioner')
         group.add_argument('--a-state-size', default=100, type=int,
@@ -261,7 +265,8 @@ class AnswererAgent(CooperativeGameAgent):
         group.add_argument('--a-img-feat-size', default=12, type=int,
                            help='Size of output to be predicted (for goal).')
         group.add_argument('--a-memoryless', default=False, action='store_true',
-                           help='Whether to remember previous questions/answers encountered.')
+                           help='Whether to remember previous questions/answers '
+                                'encountered.')
         super().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
@@ -272,7 +277,8 @@ class AnswererAgent(CooperativeGameAgent):
         opt['out_vocab_size'] = opt['a_out_vocab']
 
         # add a module for grounding visual content
-        # opt['a_img_input_size'] should be specified through custom arg or subclass, if needed
+        # opt['a_img_input_size'] should be specified through custom arg or
+        # subclass, if needed
         self.img_net = ImgNet(opt['a_img_feat_size'], opt.get('a_img_input_size', None))
         super().__init__(opt, shared)
         self.id = 'AnswererAgent'

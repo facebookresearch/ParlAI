@@ -168,7 +168,8 @@ class VqaDictionaryAgent(Agent):
 
     def tokenize_mcb(self, s):
         t_str = s.lower()
-        for i in [r'\?', r'\!', r'\'', r'\"', r'\$', r'\:', r'\@', r'\(', r'\)', r'\,', r'\.', r'\;']:
+        for i in [r'\?', r'\!', r'\'', r'\"', r'\$', r'\:', r'\@', r'\(',
+                  r'\)', r'\,', r'\.', r'\;']:
             t_str = re.sub(i, '', t_str)
         for i in [r'\-', r'\/']:
             t_str = re.sub(i, ' ', t_str)
@@ -186,7 +187,8 @@ class VqaDictionaryAgent(Agent):
         """Add any words passed in the 'text' field of the observation to this
         dictionary.
         """
-        for text in self.observation.get('mc_label', self.observation.get('labels', [])):
+        mc_label = self.observation.get('mc_label', self.observation.get('labels', []))
+        for text in mc_label:
             self.ansfreq[text] += 1
             self.ans2ques[text].append(self.tokenize_mcb(self.observation.get('text')))
         return {'id': 'Dictionary'}
@@ -197,7 +199,10 @@ class VqaDictionaryAgent(Agent):
         for ex in examples:
             words = self.tokenize_mcb(ex['text'])
             if training:
-                words_unk = [w if self.freq.get(w, 0) > minwcount else self.unk_token for w in words]
+                words_unk = [
+                    w if self.freq.get(w, 0) > minwcount else self.unk_token
+                    for w in words
+                ]
             else:
                 words_unk = [w if w in self.tok2ind else self.unk_token for w in words]
             ex['question_wids'] = [self.tok2ind[self.null_token]] * maxlength
@@ -209,7 +214,8 @@ class VqaDictionaryAgent(Agent):
     def encode_answer(self, examples):
         for ex in examples:
             if self.opt.get('samplingans', True):
-                ans_count = Counter(ex.get('labels', ex.get('eval_labels'))).most_common()
+                labels = ex.get('labels', ex.get('eval_labels'))
+                ans_count = Counter(labels).most_common()
                 valid_ans = []
                 valid_count = []
                 for ans in ans_count:
@@ -480,7 +486,9 @@ class MlbVqaAgent(Agent):
             ep_dones.append(ex['episode_done'])
 
         data = {
-            'input_v': MlbVqaAgent.static_vis_noatt(input_v, use_att, use_hdf5=use_hdf5),
+            'input_v': MlbVqaAgent.static_vis_noatt(
+                input_v, use_att, use_hdf5=use_hdf5
+            ),
             'input_q': input_q,
             'valid_inds': valid_inds,
             'batchsize': batchsize,
@@ -492,10 +500,14 @@ class MlbVqaAgent(Agent):
             data['answer'] = answer
         return [
             data
-        ] + [{
+        ] + [
+            {
                 'labels': ex_label,
                 'episode_done': ep_done,
-                'preprocessed': True} for ex_label, ep_done in zip(labels[1:], ep_dones[1:])]
+                'preprocessed': True
+            }
+            for ex_label, ep_done in zip(labels[1:], ep_dones[1:])
+        ]
 
     def process_obs(self, observations):
         if any('text' not in ex for ex in observations):
