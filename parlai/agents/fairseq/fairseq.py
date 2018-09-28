@@ -15,7 +15,7 @@ try:
     # announce version numbers yet
     # fairseq 0.5.0 has fp16_trainer, 0.6.0 does not
     try:
-        from fairseq import fp16_trainer
+        from fairseq import fp16_trainer  # noqa: F401
     except ImportError:
         pass
     else:
