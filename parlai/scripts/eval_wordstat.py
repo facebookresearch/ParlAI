@@ -55,7 +55,7 @@ def setup_args(parser=None):
     parser.add_argument('-dup', '--dump-predictions-path', type=str, default=None,
                         help='Dump predictions into file')
     parser.add_argument('-cun', '--compute-unique', type=bool, default=True,
-                        help='Compute % of unique responses from the model')
+                        help='Compute %% of unique responses from the model')
     parser.set_defaults(datatype='valid', model='repeat_label')
     TensorboardLogger.add_cmdline_args(parser)
     return parser
