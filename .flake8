@@ -1,5 +1,5 @@
 [flake8]
-exclude = legacy_agents,task_config.py
+exclude = .git,__pycache__,parlai_internal,legacy_agents,task_config.py
 ignore =
     C
     E741
