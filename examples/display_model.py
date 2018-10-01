@@ -12,7 +12,7 @@ For example:
 `python examples/display_model.py -t babi:task1k:1 -m "repeat_label"`
 or:
 `python examples/display_model.py -t "#MovieDD-Reddit" -m "ir_baseline" -mp "-lp 0.5" -dt test`
-"""
+"""  # noqa: E501
 
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent

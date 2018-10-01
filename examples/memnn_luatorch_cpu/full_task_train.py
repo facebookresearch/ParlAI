@@ -85,7 +85,8 @@ def main():
 
     valid_opt = copy.deepcopy(opt)
     valid_opt['datatype'] = 'valid'
-    valid_opt['numthreads'] = 1  # switch to 1 thread, the memnn code will handle it better
+    # switch to 1 thread, the memnn code will handle it better
+    valid_opt['numthreads'] = 1
     world_valid = create_task(valid_opt, agent)
 
     start = time.time()
