@@ -25,8 +25,8 @@ def get_scripts():
             yield os.path.join(pathname, fn)
 
 
-def cleanup_docstring(docstr):
-    return docstr.replace('`', '``')
+def escape_output(str):
+    return str.replace('`', '``')
 
 
 def main():
@@ -45,16 +45,24 @@ def main():
         fout.write('\n')
         fout.write('-' * len(script_name))
         fout.write('\n')
-        # docstring for module
-        fout.write(cleanup_docstring(module.__doc__))
-        fout.write('\n\n')
-        # literal block
-        # fout.write('usage:\n')
-        # fout.write('^^^^^^\n\n\n')
-        fout.write('::\n\n')
+
+        # docs from the module
+        fout.write('Information\n')
+        fout.write('^^^^^^^^^^^\n\n\n')
+        fout.write('.. automodule:: parlai.scripts.{}\n'.format(script_name))
+        fout.write('   :members:\n')
+        fout.write('   :exclude-members: __dict__,__weakref__,setup_args\n')
+        fout.write('\n')
+        fout.write('CLI help\n')
+        fout.write('^^^^^^^^\n\n\n')
+
+        # output the --help
+        fout.write('::\n\n')  # literal block
         capture = io.StringIO()
-        module.setup_args().print_help(capture)
-        fout.write(indent(cleanup_docstring(capture.getvalue())))
+        parser = module.setup_args()
+        parser.prog = 'python -m parlai.scripts.{}'.format(script_name)
+        parser.print_help(capture)
+        fout.write(indent(escape_output(capture.getvalue())))
         fout.write('\n\n')
 
 
