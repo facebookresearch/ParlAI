@@ -8,7 +8,8 @@
 
 import os
 import parlai.scripts
-import subprocess
+import io
+import importlib
 
 
 def indent(rawstr, indentstr='    '):
@@ -24,21 +25,36 @@ def get_scripts():
             yield os.path.join(pathname, fn)
 
 
+def cleanup_docstring(docstr):
+    return docstr.replace('`', '``')
+
+
 def main():
     fout = open('cli_usage.inc', 'w')
 
     for script_path in get_scripts():
         script_name = os.path.basename(script_path).replace(".py", "")
-        captured = subprocess.run(
-            ['python3', script_path, '--help'],
-            stdout=subprocess.PIPE
-        )
+        try:
+            module = importlib.import_module("parlai.scripts." + script_name)
+        except ModuleNotFoundError:
+            continue
+        if not hasattr(module, 'setup_args'):
+            continue
+        # header
         fout.write(script_name)
         fout.write('\n')
         fout.write('-' * len(script_name))
         fout.write('\n')
+        # docstring for module
+        fout.write(cleanup_docstring(module.__doc__))
+        fout.write('\n\n')
+        # literal block
+        # fout.write('usage:\n')
+        # fout.write('^^^^^^\n\n\n')
         fout.write('::\n\n')
-        fout.write(indent(captured.stdout.decode('utf-8')))
+        capture = io.StringIO()
+        module.setup_args().print_help(capture)
+        fout.write(indent(cleanup_docstring(capture.getvalue())))
         fout.write('\n\n')
 
 
