@@ -73,6 +73,7 @@ instance/
 # Sphinx documentation
 docs/_build/
 docs/source/task_list.inc
+docs/source/zoo_list.inc
 
 # PyBuilder
 target/
