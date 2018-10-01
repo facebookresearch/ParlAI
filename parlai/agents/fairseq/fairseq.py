@@ -11,17 +11,26 @@ from parlai.core.utils import argsort, padded_tensor
 
 try:
     from fairseq import models, optim, criterions
+    # this is a hack around versioning check because fairseq doesn't
+    # announce version numbers yet
+    # fairseq 0.5.0 has fp16_trainer, 0.6.0 does not
+    try:
+        from fairseq import fp16_trainer  # noqa: F401
+    except ImportError:
+        pass
+    else:
+        raise ImportError
 except ImportError:
     raise ImportError(
         "Please run \"pip install -U 'git+https://github.com/pytorch/"
-        "fairseq.git@v0.5.0#egg=fairseq'\""
+        "fairseq.git@v0.6.0#egg=fairseq'\""
     )
-from fairseq import trainer, fp16_trainer
+from fairseq import trainer
 from fairseq.sequence_generator import SequenceGenerator
 from fairseq.sequence_scorer import SequenceScorer
 from fairseq import options
 from fairseq.tasks.fairseq_task import FairseqTask
-from fairseq.utils import convert_padding_direction
+from fairseq.utils import convert_padding_direction, load_model_state
 from fairseq.meters import AverageMeter
 
 from parlai.core.torch_agent import TorchAgent, Output
@@ -247,6 +256,7 @@ class FairseqAgent(TorchAgent):
         # Check subargs for generation, optimizers, criterions, archs, etc
         options.add_generation_args(argparser)
         options.add_optimization_args(argparser)
+        options.add_checkpoint_args(argparser)
 
         # restore any user set defaults that fairseq possibly overrode
         argparser.set_defaults(**old_defaults)
@@ -350,19 +360,17 @@ class FairseqAgent(TorchAgent):
             # set up the grader and the trainer
             self.criterion = criterions.build_criterion(self.args, self.task)
 
-            if getattr(self.args, 'fp16', None):
-                self.trainer = fp16_trainer.FP16Trainer(
-                    self.args, self.task, self.model, self.criterion
-                )
-            else:
-                # TODO: we might choose to add a --no-fp16 opt in the future to
-                # explicitly disable fp16 instead
-                if torch.cuda.get_device_capability(0)[0] >= 7:
-                    print("Heads up: using --fp16 could be a lot faster!")
+            # TODO: we might choose to add a --no-fp16 opt in the future to
+            # explicitly disable fp16 instead
+            if not self.args.fp16 and torch.cuda.get_device_capability(0)[0] >= 7:
+                print("Heads up: using --fp16 could be a lot faster!")
+            if self.use_cuda:
                 self.trainer = trainer.Trainer(
-                    self.args, self.task, self.model, self.criterion
+                    self.args, self.task, self.model, self.criterion, None,
                 )
-            self.trainer._build_optimizer()
+                self.trainer._build_optimizer()
+            else:
+                self.trainer = None
 
             # if the model already existed, let's preload it and the trainer
             if model_file_exists:
@@ -433,8 +441,11 @@ class FairseqAgent(TorchAgent):
 
     def load(self, path):
         """Load using fairseq's checkpointing."""
-        old_options = self.trainer.load_checkpoint(path)
-        self._check_opts_unchanged(old_options, self.opt)
+        if self.trainer:
+            old_options = self.trainer.load_checkpoint(path)
+            self._check_opts_unchanged(old_options, self.opt)
+        else:
+            load_model_state(path, self.model)
 
     def shutdown(self):
         if not hasattr(self, 'trainer'):
@@ -458,6 +469,10 @@ class FairseqAgent(TorchAgent):
         return super().batchify(obs_batch, sort=True, is_valid=_is_nonempty_observation)
 
     def _update_metrics(self, metrics, sample):
+        if metrics is None:
+            # probably got an overflow in fp16 mode. don't count this sample
+            return
+
         bsz = len(sample['target'])
         ntok = sample['ntokens']
         ssize = metrics['sample_size']
@@ -485,10 +500,10 @@ class FairseqAgent(TorchAgent):
         if batch.text_vec is None:
             return
         self.is_training = True
-        samples = self._make_sample(batch)
+        sample = self._make_sample(batch)
         self.model.train()
-        metrics = self.trainer.train_step(samples)
-        self._update_metrics(metrics, samples)
+        metrics = self.trainer.train_step([sample])
+        self._update_metrics(metrics, sample)
 
     def eval_step(self, batch):
         """Process batch of inputs.
@@ -504,7 +519,7 @@ class FairseqAgent(TorchAgent):
         self.is_training = False
         samples = self._make_sample(batch)
         self.model.eval()
-        if batch.label_vec is not None:
+        if batch.label_vec is not None and self.trainer is not None:
             # Interactive mode won't have a gold label
             metrics = self.trainer.valid_step(samples)
             self._update_metrics(metrics, samples)
@@ -557,11 +572,13 @@ class FairseqAgent(TorchAgent):
         return Output(generated_output, reranked_cands)
 
     def _generate(self, samples):
-        src_tokens = samples["net_input"]["src_tokens"]
-        src_lengths = samples["net_input"]["src_lengths"]
-        gens = self.generator.generate(src_tokens, src_lengths, maxlen=64)
+        no_prev_token = {
+            k: v for k, v in samples['net_input'].items() if k != 'prev_output_tokens'
+        }
+        gens = self.generator.generate(no_prev_token, maxlen=64)
+        bsz = samples['net_input']['src_tokens'].size(0)
         responses = []
-        for i in range(len(src_tokens)):
+        for i in range(bsz):
             beams = gens[i]
             selected = max(beams, key=lambda x: x["score"])
             tokens = selected["tokens"]
@@ -612,8 +629,9 @@ class FairseqAgent(TorchAgent):
             return
         # We need to reset everything
         self.meters.clear()
-        for k in self.trainer.meters:
-            self.trainer.meters[k].reset()
+        if self.trainer:
+            for k in self.trainer.meters:
+                self.trainer.meters[k].reset()
 
     def receive_metrics(self, metrics_dict):
         """Update lr scheduler with validation loss."""
