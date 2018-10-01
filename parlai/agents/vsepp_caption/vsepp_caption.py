@@ -159,7 +159,7 @@ class VseppCaptionAgent(TorchAgent):
     def train_step(self, batch):
         images = torch.stack([self.transform(img) for img in batch.image])
         if self.use_cuda:
-            images = images.cuda(async=True)
+            images = images.cuda(non_blocking=True)
 
         text_lengths = torch.LongTensor(batch.label_lengths)
         if self.use_cuda:
@@ -181,7 +181,7 @@ class VseppCaptionAgent(TorchAgent):
     def eval_step(self, batch):
         images = torch.stack([self.transform(img) for img in batch.image])
         if self.use_cuda:
-            images = images.cuda(async=True)
+            images = images.cuda(non_blocking=True)
 
         # Need to collate then sort the captions by length
         cands = [self.candidate_helper(label_cands_vec, label_cands, self.mode == 'test')

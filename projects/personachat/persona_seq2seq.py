@@ -2219,7 +2219,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                 if self.use_cuda:
                     # copy to gpu
                     self.zs.resize_(zs.size())
-                    self.zs.copy_(zs, async=True)
+                    self.zs.copy_(zs, non_blocking=True)
                     zs = Variable(self.zs)
                 else:
                     zs = Variable(zs)
