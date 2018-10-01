@@ -73,9 +73,10 @@ class MessengerAgent(Agent):
             print('Msg: {} could not be extracted to text format'.format(
                 message['message']))
             return
-        text = message['message']['text']
+        text = message['message'].get('text')
         if text is None:
             text = message['message']['payload']
+        img_attempt = True if 'image' in message['message'] else False
         if mid not in self.acted_packets:
             self.acted_packets[mid] = {
                 'mid': mid,
@@ -86,7 +87,8 @@ class MessengerAgent(Agent):
                 'episode_done': False,
                 'text': text,
                 'id': self.disp_id,
-                'sticker_sender': message.get('sticker_sender', None)
+                'sticker_sender': message.get('sticker_sender', None),
+                'img_attempt': img_attempt,
             }
             self.msg_queue.put(action)
 
@@ -131,8 +133,22 @@ class MessengerAgent(Agent):
 
         # Get a new message, if it's not None reset the timeout
         msg = self.get_new_act_message()
-        if msg is not None and self.message_request_time is not None:
-            self.message_request_time = None
+        if msg is not None:
+            if msg.get('img_attempt'):
+                # Let agent know that they cannot send images if they
+                # attempted to send one
+                msg = None
+                act = {'id': 'SYSTEM',
+                       'text': 'Only text messages are supported at this time. '
+                               'Please try with a text-only message.',
+                       'episode_done': True}
+                self.observe(act)
+            elif not msg.get('text'):
+                # Do not allow agent to send empty strings
+                msg = None
+
+            if msg is not None and self.message_request_time is not None:
+                self.message_request_time = None
         return msg
 
     def act_blocking(self, timeout=None):
