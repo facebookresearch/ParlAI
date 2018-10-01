@@ -901,6 +901,7 @@ class Beam(object):
 
     @staticmethod
     def find_ngrams(input_list, n):
+        """Get list of ngrams with context length n-1"""
         return list(zip(*[input_list[i:] for i in range(n)]))
 
     def get_output_from_current_step(self):
@@ -941,7 +942,7 @@ class Beam(object):
                     counted_ngrams = Counter(current_ngrams)
                     if any(v > 1 for k, v in counted_ngrams.items()):
                         # block this hypothesis hard
-                        beam_scores[i] = -1e20
+                        beam_scores[i] = -NEAR_INF
 
                 #  if previous output hypo token had eos
                 # we penalize those word probs to never be chosen
