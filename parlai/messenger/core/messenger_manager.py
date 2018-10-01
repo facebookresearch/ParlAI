@@ -215,6 +215,10 @@ class MessengerManager():
 
     def _handle_webhook_event(self, event):
         if 'message' in event:
+            if (('image_url' in event and event['image_url'] is not None) or
+                    ('attachment_url' in event and event['attachment_url'] is
+                        not None)):
+                event['message']['image'] = True
             self._on_new_message(event)
         elif 'delivery' in event:
             self.confirm_message_delivery(event)
