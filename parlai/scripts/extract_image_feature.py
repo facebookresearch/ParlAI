@@ -29,7 +29,7 @@ from parlai.core.utils import ProgressLogger
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, False)
+        parser = ParlaiParser(True, False, 'Load/extract image features')
     arg_group = parser.add_argument_group('Image Extraction')
     arg_group.add_argument('--dataset', type=str, default=None,
                            help='Pytorch Dataset; if specified, will save \
