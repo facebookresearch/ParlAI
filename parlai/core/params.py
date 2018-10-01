@@ -91,14 +91,19 @@ class ParlaiParser(argparse.ArgumentParser):
     For example, see ``parlai.core.dict.DictionaryAgent.add_cmdline_args``.
     """
 
-    def __init__(self, add_parlai_args=True, add_model_args=False):
+    def __init__(
+        self,
+        add_parlai_args=True,
+        add_model_args=False,
+        description='ParlAI parser',
+    ):
         """Initializes the ParlAI argparser.
         - add_parlai_args (default True) initializes the default arguments for
         ParlAI package, including the data download paths and task arguments.
         - add_model_args (default False) initializes the default arguments for
         loading models, including initializing arguments from that model.
         """
-        super().__init__(description='ParlAI parser.', allow_abbrev=False,
+        super().__init__(description=description, allow_abbrev=False,
                          conflict_handler='resolve')
         self.register('type', 'bool', str2bool)
         self.register('type', 'class', str2class)

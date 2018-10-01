@@ -28,7 +28,7 @@ from collections import deque
 
 def setup_args():
     from parlai.core.params import ParlaiParser
-    return ParlaiParser(True, True)
+    return ParlaiParser(True, True, 'Builds a pytorch data file.')
 
 
 def make_serializable(obj):

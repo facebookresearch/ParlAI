@@ -25,7 +25,7 @@ import random
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True)
+        parser = ParlaiParser(True, True, 'Interactive chat with a model')
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('--display-prettify', type='bool', default=False,
                         help='Set to use a prettytable when displaying '
