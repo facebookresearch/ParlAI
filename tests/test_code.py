@@ -66,6 +66,11 @@ class TestInit(unittest.TestCase):
         for folder in utils.git_ls_dirs('parlai'):
             if os.path.basename(folder) == 'html':
                 continue
+            self.assertIn(
+                '__init__.py',
+                os.listdir(folder),
+                '{} does not contain __init__.py'.format(folder)
+            )
 
 
 if __name__ == '__main__':

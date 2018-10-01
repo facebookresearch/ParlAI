@@ -13,8 +13,11 @@ import os
 _git = git.Git()
 
 
-def git_ls_files(root=None):
-    return _git.ls_files(root).split('\n')
+def git_ls_files(root=None, skip_nonexisting=True):
+    filenames = _git.ls_files(root).split('\n')
+    if skip_nonexisting:
+        filenames = [fn for fn in filenames if os.path.exists(fn)]
+    return filenames
 
 
 def git_ls_dirs(root=None):
