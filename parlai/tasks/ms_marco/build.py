@@ -38,10 +38,15 @@ def create_fb_format(outpath, dtype, inpath):
         dic = json.loads(line)
         lq = dic["query"]
         if dtype != "test":
-            ans = "|".join([d["passage_text"] for d in dic["passages"] if d["is_selected"] == 1])
-            cands = "|".join([d["passage_text"] for d in dic["passages"] if d["is_selected"] == 0])
+            ans = "|".join([
+                d["passage_text"] for d in dic["passages"] if d["is_selected"] == 1
+            ])
+            cands = "|".join([
+                d["passage_text"] for d in dic["passages"] if d["is_selected"] == 0]
+            )
             cands = ans + "|" + cands
-            if ans == "": continue  # if no true label, skip for now
+            if ans == "":
+                continue  # if no true label, skip for now
         else:  # ground truth for test data is not available yet
             ans = ""
             cands = "|".join([d["passage_text"] for d in dic["passages"]])

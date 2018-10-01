@@ -74,7 +74,9 @@ class PerplexityWorld(World):
         super().__init__(opt)
         if shared:
             # Create agents based on shared data.
-            self.task, self.agent, self.dict = create_agents_from_shared(shared['agents'])
+            self.task, self.agent, self.dict = create_agents_from_shared(
+                shared['agents']
+            )
             self.metrics = shared['metrics']
         else:
             if len(agents) != 3:
@@ -165,8 +167,14 @@ class PerplexityWorld(World):
             if m['exs'] > 0:
                 # m['num_unk'] = self.metrics['num_unk']
                 # m['num_tokens'] = self.metrics['num_tokens']
-                m['loss'] = round_sigfigs(self.metrics['loss'] / self.metrics['num_tokens'], 3)
-                m['ppl'] = round_sigfigs(math.exp(self.metrics['loss'] / self.metrics['num_tokens']), 4)
+                m['loss'] = round_sigfigs(
+                    self.metrics['loss'] / self.metrics['num_tokens'],
+                    3
+                )
+                m['ppl'] = round_sigfigs(
+                    math.exp(self.metrics['loss'] / self.metrics['num_tokens']),
+                    4
+                )
         return m
 
 
@@ -196,7 +204,9 @@ def eval_ppl(opt, build_dict=None, dict_file=None):
         dict_agent = build_dict()
     else:
         dict_opt = copy.deepcopy(opt)
-        dict_opt['model'] = dict_opt.get('dictionary_class', 'parlai.core.dict:DictionaryAgent')
+        dict_opt['model'] = dict_opt.get(
+            'dictionary_class', 'parlai.core.dict:DictionaryAgent'
+        )
         dict_opt['model_file'] = dict_file
         if 'override' in dict_opt:
             del dict_opt['override']

@@ -21,11 +21,12 @@ def setup_args(parser=None):
         parser = ParlaiParser(True, True)
     dict_loop = parser.add_argument_group('Dictionary Loop Arguments')
     dict_loop.add_argument('--dict-maxexs', default=-1, type=int,
-        help='max number of examples to build dict on')
+                           help='max number of examples to build dict on')
     dict_loop.add_argument('--dict-include-valid', default=False, type='bool',
-        help='Include validation set in dictionary building for task.')
+                           help='Include validation set in dictionary building '
+                                'for task.')
     dict_loop.add_argument('--dict-include-test', default=False, type='bool',
-        help='Include test set in dictionary building for task.')
+                           help='Include test set in dictionary building for task.')
     dict_loop.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     partial, _ = parser.parse_known_args(nohelp=True)
     if vars(partial).get('dict_class'):

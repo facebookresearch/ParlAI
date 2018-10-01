@@ -1,5 +1,7 @@
 [flake8]
+exclude = .git,__pycache__,parlai_internal,legacy_agents,task_config.py
 ignore =
     C
+    E741
 
 max-line-length=88

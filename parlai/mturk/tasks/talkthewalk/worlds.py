@@ -152,10 +152,12 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         with open(map_f) as f:
             data = json.load(f)
             for landmark in data:
-                if (landmark['x'] * 2 >= self.min_x
-                   and landmark['x'] * 2 <= self.max_x
-                   and landmark['y'] * 2 >= self.min_y
-                   and landmark['y'] * 2 <= self.max_y):
+                if (
+                    landmark['x'] * 2 >= self.min_x and
+                    landmark['x'] * 2 <= self.max_x and
+                    landmark['y'] * 2 >= self.min_y and
+                    landmark['y'] * 2 <= self.max_y
+                ):
                     self.landmarks.append(landmark)
 
         self.send_location(self.agents[0])
@@ -439,8 +441,8 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
 
     def evaluate_location(self):
         self.num_evaluations += 1
-        success = (self.location[0] == self.target_location[0]
-                   and self.location[1] == self.target_location[1])
+        success = (self.location[0] == self.target_location[0] and
+                   self.location[1] == self.target_location[1])
         if success:
             print("SUCCESS!!")
             self.status = 'success'
@@ -452,14 +454,16 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         else:
             self.status = 'failed'
             if self.num_evaluations < 3:
-                msg = {'id': 'Noah',
-                       'text': 'Unfortunately, the Tourist is not at the '
-                               'target location. You have {} attempt(s) left, '
-                               'and you\'ll now receive a bonus of {}c upon '
-                               'completion.'.format(
-                                              str(3 - self.num_evaluations),
-                                              str(40 - self.num_evaluations * 15)
-                                             )}
+                msg = {
+                    'id': 'Noah',
+                    'text': 'Unfortunately, the Tourist is not at the '
+                            'target location. You have {} attempt(s) left, '
+                            'and you\'ll now receive a bonus of {}c upon '
+                            'completion.'.format(
+                                str(3 - self.num_evaluations),
+                                str(40 - self.num_evaluations * 15)
+                            ),
+                }
                 for agent in self.agents:
                     agent.observe(msg)
                 return False
@@ -472,7 +476,9 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
 
     def shutdown(self):
         self.total_time = time.time() - self.start_time
-        Parallel(n_jobs=len(self.agents), backend='threading')(delayed(_agent_shutdown)(agent, timeout=90) for agent in self.agents)
+        Parallel(
+            n_jobs=len(self.agents), backend='threading'
+        )(delayed(_agent_shutdown)(agent, timeout=90) for agent in self.agents)
 
     def review_work(self):
         for agent in self.agents:

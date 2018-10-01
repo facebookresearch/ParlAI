@@ -53,7 +53,7 @@ def display_data(opt):
         print('[ loaded {} episodes with a total of {} examples ]'.format(
             world.num_episodes(), world.num_examples()
         ))
-    except:
+    except Exception:
         pass
 
 

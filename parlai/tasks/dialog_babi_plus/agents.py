@@ -28,8 +28,9 @@ def _path(task, opt):
         suffix = 'tst'
     elif dt == 'valid':
         suffix = 'dev'
-    datafile = os.path.join(prefix,
-                            '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix))
+    datafile = os.path.join(
+        prefix, '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix)
+    )
 
     cands_datafile = os.path.join(prefix, 'dialog-babi-candidates.txt')
 

@@ -106,10 +106,12 @@ class PersonasGenerator(object):
         self.personas_idx_stack_path = os.path.join(os.getcwd(),
                                                     './personas_idx_stack.pkl')
 
-        self.personas_path = '{}/data/personas-{}'.format(
-                             os.getcwd(),
-                             opt['persona_type'] +
-                                'Revised' if opt['revised'] else 'Original')
+        self.personas_path = (
+            '{}/data/personas-{}'.format(
+                os.getcwd(),
+                opt['persona_type'] + 'Revised' if opt['revised'] else 'Original'
+            )
+        )
         if not os.path.exists(self.personas_path):
             opt['personas_path'] = self.personas_path
             main_extract(opt)
@@ -264,8 +266,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                                     '{}\n</span></b>'.format(s.strip())
                 control_msg['persona_text'] = persona_text
                 control_msg['text'] = self.get_instruction(
-                                            tag='start',
-                                            agent_id=agent.id)
+                    tag='start', agent_id=agent.id
+                )
                 agent.observe(validate(control_msg))
                 if idx == 0:
                     time.sleep(3)
@@ -292,8 +294,10 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             if acts[idx]['text'] == 'PERSONA':
                 _text = ''
                 for s in agent.model_persona[1]['persona']:
-                    _text += '<b><span style="color:blue">' + s.strip() + \
-                            '</span></b><br>'
+                    _text += (
+                        '<b><span style="color:blue">' + s.strip() +
+                        '</span></b><br>'
+                    )
                 control_msg['text'] = 'The model persona is: \n' + _text
                 agent.observe(control_msg)
                 return
@@ -610,7 +614,11 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         ) + 1
 
     def check_disconnects(self, act):
-        if act['text'] == '[TIMEOUT]' or act['text'] == '[RETURNED]' or act['text'] == '[DISCONNECT]':
+        if (
+            act['text'] == '[TIMEOUT]' or
+            act['text'] == '[RETURNED]' or
+            act['text'] == '[DISCONNECT]'
+        ):
             control_msg = {'episode_done': True}
             control_msg['id'] = 'SYSTEM'
             control_msg['text'] = self.get_instruction(

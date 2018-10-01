@@ -99,5 +99,6 @@ def main():
         mturk_manager.expire_all_unassigned_hits()
         mturk_manager.shutdown()
 
+
 if __name__ == '__main__':
     main()

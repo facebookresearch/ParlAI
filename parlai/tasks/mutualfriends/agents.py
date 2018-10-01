@@ -44,18 +44,25 @@ class DefaultTeacher(DialogTeacher):
                 # TODO: add reverse conversation as well
                 curr_agent = ex['events'][0]['agent']
                 conversation = [
-                    ('You have the following friends:\n' +
-                    '\n'.join(', '.join('{}={}'.format(k, v)
-                                        for k, v in person.items())
-                              for person in ex['scenario']['kbs'][int(curr_agent)]) +
-                    '\nTry to find out which friend the other person has in common.')
+                    (
+                        'You have the following friends:\n' +
+                        '\n'.join(
+                            ', '.join('{}={}'.format(k, v) for k, v in person.items())
+                            for person in ex['scenario']['kbs'][int(curr_agent)]
+                        ) +
+                        '\nTry to find out which friend the other person has in common.'
+                    )
                 ]
                 curr = ''
                 idx = 0
                 while idx < len(ex['events']):
                     msg = ex['events'][idx]['data']
                     if type(msg) == dict:
-                        msg = 'SELECT({})'.format(', '.join('{}={}'.format(k, v) for k, v in msg.items()))
+                        msg = 'SELECT({})'.format(
+                            ', '.join(
+                                '{}={}'.format(k, v) for k, v in msg.items()
+                            )
+                        )
                     next_agent = ex['events'][idx]['agent']
                     if curr_agent == next_agent:
                         curr += '\n' + msg
@@ -70,6 +77,9 @@ class DefaultTeacher(DialogTeacher):
                     if i + 1 < len(conversation) - 1:
                         yield (conversation[i], [conversation[i + 1]]), i == 0
                     elif i + 1 == len(conversation) - 1:
-                        yield (conversation[i], [conversation[i + 1]], ex['outcome']), False
+                        yield (
+                            (conversation[i], [conversation[i + 1]], ex['outcome']),
+                            False
+                        )
                     else:
                         yield (conversation[i], None, ex['outcome']), False

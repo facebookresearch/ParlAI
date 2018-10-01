@@ -49,7 +49,7 @@ def build_data(opt):
     if not opt.get('model', False):
         opt['model'] = 'repeat_label'
     agent = create_agent(opt)
-    #If build teacher not specified, we are simply looking for the file
+    # If build teacher not specified, we are simply looking for the file
     if not opt.get('pytorch_teacher_task', None):
         df = opt.get('pytorch_datafile')
         # check if the user set a datafile
@@ -57,7 +57,9 @@ def build_data(opt):
             raise Exception('Tried to find data but `--pytorch-datafile` is not set')
         # check if the user provided the already built file
         if 'pytorch' not in df:
-            df += '.pytorch' + (agent.getID() if opt.get('pytorch_preprocess', True) else '')
+            df += '.pytorch' + (
+                agent.getID() if opt.get('pytorch_preprocess', True) else ''
+            )
         if not os.path.isfile(df):
             raise Exception('Tried to find data but it is not built, please'
                             'specify `--pytorch-teacher-task`')
@@ -86,8 +88,10 @@ def build_data(opt):
         os.makedirs(dpath, exist_ok=True)
         datafile = os.path.join(dpath, 'pytorch_data')
     if not datafile:
-        raise Exception('Tried to build data but either `pytorch-teacher-task` does not '
-                        'have a datafile or `--pytorch-datafile` is not set')
+        raise Exception(
+            'Tried to build data but either `pytorch-teacher-task` does not '
+            'have a datafile or `--pytorch-datafile` is not set'
+        )
 
     if isinstance(datafile, collections.Sequence) and not type(datafile) == str:
         datafile = datafile[0] + "".join(["_".join(d.split("/")) for d in datafile[1:]])
@@ -99,7 +103,11 @@ def build_data(opt):
         # Data already built
         print("[ pytorch data already built. ]")
         return pytorch_datafile
-    print('----------\n[ setting up pytorch data, saving to {}. ]\n----------'.format(pytorch_datafile))
+    print(
+        '----------\n[ setting up pytorch data, saving to {}. ]\n----------'.format(
+            pytorch_datafile
+        )
+    )
 
     num_eps = 0
     num_exs = 0
@@ -118,7 +126,7 @@ def build_data(opt):
                 current.append(action)
                 episode_done = action.get('episode_done', False)
 
-            #build separate episodes
+            # build separate episodes
             for ex in current:
                 context.append(ex.get('text', ''))
                 if len(context) > 1:
@@ -127,7 +135,7 @@ def build_data(opt):
                 labels = ex.get('labels', ex.get('eval_labels', None))
                 if labels is not None and include_labels:
                     context.append(random.choice(labels))
-                #generate observation from new example
+                # generate observation from new example
                 if preprocess:
                     ex = agent.observe(ex)
                     ex.pop('label_candidates', '')
@@ -136,7 +144,7 @@ def build_data(opt):
                 num_exs += 1
                 logger.log(num_exs, total_exs)
                 pytorch_data.write(json.dumps(make_serializable(ex)) + "\n")
-            #reset
+            # reset
             episode_done = False
             current.clear()
             context.clear()

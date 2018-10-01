@@ -23,8 +23,10 @@ def _path(opt):
         raise RuntimeError('Not valid datatype.')
 
     prefix = os.path.join(opt['datapath'], 'CLEVR', 'CLEVR_v1.0')
-    questions_path = os.path.join(prefix, 'questions',
-                                'CLEVR_' + dt + '_questions.json')
+    questions_path = os.path.join(
+        prefix, 'questions',
+        'CLEVR_' + dt + '_questions.json'
+    )
     images_path = os.path.join(prefix, 'images', dt)
 
     return questions_path, images_path

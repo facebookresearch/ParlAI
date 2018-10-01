@@ -139,10 +139,10 @@ def clean_text(words):
     words = normalize_whitespaces(sentence).split()
 
     if (
-        len(words) > 0
-        and any(map(lambda k: re.search(r'\w', k) is not None, words))
-        and len(words) >= MIN_WORD_LENGTH
-        and len(words) <= MAX_WORD_LENGTH
+        len(words) > 0 and
+        any(map(lambda k: re.search(r'\w', k) is not None, words)) and
+        len(words) >= MIN_WORD_LENGTH and
+        len(words) <= MAX_WORD_LENGTH
     ):
         return ' '.join(words)
     else:
@@ -151,11 +151,11 @@ def clean_text(words):
 
 def parse_time_str(time_value_str):
     if not(
-        time_value_str is not None
-        and len(time_value_str) == 12
-        and time_value_str[2] == ':'
-        and time_value_str[5] == ':'
-        and time_value_str[8] == ','
+        time_value_str is not None and
+        len(time_value_str) == 12 and
+        time_value_str[2] == ':' and
+        time_value_str[5] == ':' and
+        time_value_str[8] == ','
     ):
         return None
     try:
@@ -164,7 +164,7 @@ def parse_time_str(time_value_str):
             int(time_value_str[3:5]) * 60 +
             int(time_value_str[6:8])
         )
-    except:
+    except ValueError:
         return None
 
 
@@ -261,7 +261,7 @@ class DataProcessor(object):
                 # TODO: We possibly can log these errors,
                 # but I'm not sure how it would intervene with the PrograssLogger
                 pass
-            except:
+            except Exception:
                 print(
                     'Unexpected error for file %s:\n%s' % (filepath, sys.exc_info()[0]),
                     file=sys.stderr,
@@ -337,7 +337,9 @@ def build(datapath, use_history):
 
         if len(glob.glob(untar_path + '/*/*/*.xml.gz')) != NUM_SUBTITLES_FILES:
             # Download the data.
-            url = ('http://opus.lingfil.uu.se/download.php?f=OpenSubtitles2018/en.tar.gz')
+            url = (
+                'http://opus.lingfil.uu.se/download.php?f=OpenSubtitles2018/en.tar.gz'
+            )
             build_data.download(url, dpath, 'OpenSubtitles2018.tar.gz')
             build_data.untar(dpath, 'OpenSubtitles2018.tar.gz')
 
