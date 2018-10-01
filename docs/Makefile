@@ -28,4 +28,5 @@ clean:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	cd "${SOURCEDIR}"; python generate_task_list.py
+	cd "${SOURCEDIR}"; python generate_zoo_list.py
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
