@@ -31,7 +31,7 @@ except ImportError as e:
 
 
 from torch import optim
-from collections import deque, namedtuple
+from collections import deque, namedtuple, Counter
 import pickle
 import random
 import math
@@ -861,7 +861,7 @@ class Beam(object):
     """Generic beam class. It keeps information about beam_size hypothesis."""
 
     def __init__(self, beam_size, min_length=3, padding_token=0, bos_token=1,
-                 eos_token=2, min_n_best=3, cuda='cpu'):
+                 eos_token=2, min_n_best=3, cuda='cpu', block_ngram=0):
         """Instantiate Beam object.
 
         :param beam_size: number of hypothesis in the beam
@@ -897,6 +897,11 @@ class Beam(object):
         self.eos_top_ts = None
         self.n_best_counter = 0
         self.min_n_best = min_n_best
+        self.block_ngram = block_ngram
+
+    @staticmethod
+    def find_ngrams(input_list, n):
+        return list(zip(*[input_list[i:] for i in range(n)]))
 
     def get_output_from_current_step(self):
         """Get the outputput at the current step."""
@@ -924,6 +929,20 @@ class Beam(object):
             beam_scores = (softmax_probs +
                            self.scores.unsqueeze(1).expand_as(softmax_probs))
             for i in range(self.outputs[-1].size(0)):
+                current_hypo = [ii.tokenid.item() for ii in
+                                self.get_partial_hyp_from_tail(
+                                len(self.outputs) - 1, i)][::-1][1:]
+                if self.block_ngram > 0:
+                    current_ngrams = []
+                    for ng in range(self.block_ngram):
+                        ngrams = Beam.find_ngrams(current_hypo, ng)
+                        if len(ngrams) > 0:
+                            current_ngrams.extend(ngrams)
+                    counted_ngrams = Counter(current_ngrams)
+                    if any(v > 1 for k, v in counted_ngrams.items()):
+                        # block this hypothesis hard
+                        beam_scores[i] = -1e20
+
                 #  if previous output hypo token had eos
                 # we penalize those word probs to never be chosen
                 if self.outputs[-1][i] == self.eos:
@@ -1004,6 +1023,24 @@ class Beam(object):
         hypothesis = torch.stack(list(reversed(hypothesis)))
 
         return hypothesis
+
+    def get_partial_hyp_from_tail(self, ts, hypid):
+        hypothesis_tail = self.HypothesisTail(
+            timestep=ts,
+            hypid=torch.Tensor([hypid]).long(),
+            score=self.all_scores[ts][hypid],
+            tokenid=self.outputs[ts][hypid])
+        hyp_idx = []
+        endback = hypothesis_tail.hypid
+        for i in range(hypothesis_tail.timestep, -1, -1):
+            hyp_idx.append(self.HypothesisTail(
+                timestep=i,
+                hypid=endback,
+                score=self.all_scores[i][endback],
+                tokenid=self.outputs[i][endback]))
+            endback = self.bookkeep[i - 1][endback]
+
+        return hyp_idx
 
     def get_rescored_finished(self, n_best=None):
         """Return finished hypotheses in rescored order.
