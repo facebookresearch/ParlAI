@@ -367,7 +367,7 @@ class MemnnAgent(TorchAgent):
             self.metrics['loss'] += loss.item()
 
         preds, cand_preds = None, None
-        if batch.candidates and False:
+        if batch.candidates:
             cand_preds = [[batch.candidates[b][i.item()] for i in row]
                           for b, row in enumerate(ranks)]
             preds = [row[0] for row in cand_preds]
