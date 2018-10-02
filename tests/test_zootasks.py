@@ -65,7 +65,6 @@ class TestZooAndTasks(unittest.TestCase):
         if errors:
             self.assertTrue(False, "\n".join(errors))
 
-
     def _check_types(self, thing_list, listname):
         for thing in thing_list:
             name = thing['id']
