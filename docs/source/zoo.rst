@@ -11,9 +11,6 @@ Model Zoo
 This is a list of pretrained ParlAI models. Some are meant to be used as components in
 larger systems, while others may be used by themselves.
 
-.. include:: zoo_list.inc
-
-
 Pretrained Embeddings
 ---------------------
 
@@ -29,3 +26,4 @@ Example invocation:
 
 ``python -m parlai.scripts.train_model -t convai2 -m seq2seq -emb-type models:fasttext_cc``
 
+.. include:: zoo_list.inc

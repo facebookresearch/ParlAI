@@ -14,7 +14,7 @@ for model in model_list:
     name = model['id'].replace('_', ' ').title()
     fout.write(name)
     fout.write('\n')
-    fout.write('^' * len(name))
+    fout.write('-' * len(name))
     fout.write('\n\n')
 
     fout.write(model['description'])
