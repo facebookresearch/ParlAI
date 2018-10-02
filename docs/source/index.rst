@@ -36,6 +36,12 @@ ParlAI is a one-stop-shop for dialog research.
    tasks
 
 .. toctree::
+   :maxdepth: 2
+   :caption: Scripts
+
+   cli_usage
+
+.. toctree::
    :maxdepth: 1
    :caption: Model Zoo
 
