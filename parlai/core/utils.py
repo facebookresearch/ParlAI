@@ -806,7 +806,10 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
             lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
         for key in msg:
             if key not in DISPLAY_MESSAGE_DEFAULT_FIELDS and key not in ignore_fields:
-                line = '[' + key + ']: ' + clip_text(str(msg.get(key)), max_len)
+                if type(msg[key]) is list:
+                    line = '[' + key + ']:\n  ' + _ellipse(msg[key], sep='\n  ')
+                else:
+                    line = '[' + key + ']: ' + clip_text(str(msg.get(key)), max_len)
                 lines.append(space + line)
         if type(msg.get('image')) == str:
             lines.append(msg['image'])
