@@ -5,25 +5,13 @@ python:
 install:
     - pip install flake8
     - python setup.py develop
-    - pip install regex scipy sklearn pexpect  # tfidf-retriever dependencies
+    - pip install gitpython  # needed for some tests
+    - pip install regex scipy scikit-learn pexpect  # tfidf-retriever dependencies
     # install pytorch non-cuda version
     - pip install http://download.pytorch.org/whl/cpu/torch-0.4.0-cp36-cp36m-linux_x86_64.whl
 script:
-    - bash tests/check_copyright.sh
     - ./tests/lint_changed.sh
-    - python tests/test_import.py
-    - python tests/test_init.py
-    - python tests/test_tasklist.py
-    - python tests/test_dict.py
-    - python tests/test_display_data.py
-    - python tests/test_utils.py
-    - python tests/test_threadutils.py
-    - python tests/test_torch_agent.py
-    - python tests/test_eval_model.py
-    - python tests/test_hogwild.py
-    - python tests/test_train_model.py
-    - python tests/test_tfidf_retriever.py
-    - ./tests/run_mturk_tests_if_needed.sh
+    - python setup.py test -s tests.suites.travis -q
 notifications:
     on_success: change
     on_failure: always

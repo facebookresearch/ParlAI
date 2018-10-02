@@ -10,9 +10,9 @@ We actively welcome your pull requests.
 1. Fork the repo and create your branch from `master`.
 2. If you've added code that should be tested, add tests.
 3. If you've changed APIs, update the documentation.
-4. Ensure the test suite passes (you can skip test\_data.py but should include a
-    passing test for your tasks if you add any).
-5. Make sure your code lints.
+4. Ensure the test suite passes. Run `python setup.py test`. If you've added a new
+   dataset, you should run add a tests for it in `tests/data`.
+5. Make sure your code lints (`bash tests/lint_changed.sh`)
 6. If you haven't already, complete the Contributor License Agreement ("CLA").
 
 ## Contributor License Agreement ("CLA")
