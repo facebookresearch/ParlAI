@@ -8,52 +8,81 @@
 
 import os
 import unittest
+import utils
 
 
-class TestInit(unittest.TestCase):
+class TestZooAndTasks(unittest.TestCase):
     """Make sure the package is alive."""
+
+    def test_zoolist_types(self):
+        from parlai.zoo.model_list import model_list
+        self._check_types(model_list, 'Zoo')
+
+    def test_tasklist_types(self):
+        from parlai.tasks.task_list import task_list
+        self._check_types(task_list, 'Task')
 
     def test_tasklist(self):
         from parlai.tasks.task_list import task_list
-        from parlai.core.params import ParlaiParser
-        opt = ParlaiParser().parse_args(print_args=False)
-
-        a = set((t['task'].split(':')[0] for t in task_list))
-
-        task_dir = os.path.join(opt['parlai_home'], 'parlai', 'tasks')
-        b = set(
-            t
-            for t in os.listdir(task_dir)
-            if '.' not in t and t != '__pycache__' and t != 'fromfile'
+        self._check_directory(
+            "task_list", task_list, "parlai/tasks", "task",
+            ignore=['fromfile'],
         )
-        if a != b:
-            not_in_b = a - b
-            not_in_a = b - a
-            error_msg = ''
-            if len(not_in_b) > 0:
-                error_msg += (
-                    '\nThe following tasks are in the task list but do not '
-                    'have directories in parlai/tasks/: ' + str(not_in_b)
-                )
-            if len(not_in_a) > 0:
-                error_msg += (
-                    '\nThe following tasks are in parlai/tasks/ but do not '
-                    'match anything in parlai/tasks/task_list.py: ' + str(not_in_a)
-                )
-            raise RuntimeError(error_msg)
 
-    def test_types(self):
-        from parlai.tasks.task_list import task_list
-        for task in task_list:
-            name = task['id']
-            for key, value in task.items():
+    def test_zoolist(self):
+        from parlai.zoo.model_list import model_list
+        self._check_directory("model_list", model_list, "parlai/zoo", "task")
+
+    def _check_directory(self, listname, thing_list, thing_dir, thing_key, ignore=[]):
+        dirs = utils.git_ls_dirs()
+        # get only directories directly in the thing directory
+        dirs = [d for d in dirs if os.path.dirname(d) == thing_dir]
+        # just the folder names
+        dirs = [os.path.basename(d) for d in dirs]
+        # skip the whitelist
+        dirs = [d for d in dirs if d not in ignore]
+        # make it a set
+        dirs = set(dirs)
+
+        # and the list of thing names
+        thing_names = {thing[thing_key].split(':')[0] for thing in thing_list}
+
+        errors = []
+        # items with a directory but not a listing
+        for name in dirs - thing_names:
+            errors.append(
+                "Directory {}/{} exists, but isn't in {}".format(
+                    thing_dir, name, listname
+                )
+            )
+        for name in thing_names - dirs:
+            errors.append(
+                "{} exists in {}, but {}/{} isn't a directory".format(
+                    name, listname, thing_dir, name
+                )
+            )
+
+        if errors:
+            self.assertTrue(False, "\n".join(errors))
+
+
+    def _check_types(self, thing_list, listname):
+        for thing in thing_list:
+            name = thing['id']
+            for key, value in thing.items():
                 if key == 'tags':
-                    assert type(value) is list, \
-                        "Task {} tags is not a list".format(name)
-                    assert len(value) > 0, "Task {} must have some tags".format(name)
+                    self.assertIsInstance(
+                        value, list,
+                        "{} {} tags is not a list".format(listname, name)
+                    )
+                    self.assertIsNot(
+                        value, [], "{} {} must have some tags".format(listname, name)
+                    )
                 else:
-                    assert type(value) is str, \
-                        "Task {} key {} must be a string".format(name, key)
+                    self.assertIsInstance(
+                        value, str,
+                        "{} {}:{} must be string".format(listname, name, key)
+                    )
 
 
 if __name__ == '__main__':
