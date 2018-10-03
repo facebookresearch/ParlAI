@@ -8,5 +8,5 @@ If label candidates are available for the task, it chooses one randomly as a res
 
 Evaluate on bAbi by choosing a random candidate.
 ```bash
-python examples/eval_model.py -m random_candidate -t bAbi
+python examples/eval_model.py -m random_candidate -t babi
 ```
