@@ -1,6 +1,6 @@
 # Repeat Label
 
-This is an agent which simply repeats the label for debugging purposes.
+This is an agent which simply repeats the label for debugging purposes or as a baseline.
 
 ## Basic Examples
 
