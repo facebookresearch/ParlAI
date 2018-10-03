@@ -15,7 +15,6 @@ if __name__ == '__main__':
         model='retriever_reader',
         retriever_model_file='models:wikipedia_full/tfidf_retriever/model',
         reader_model_file='models:drqa/squad/model',
-        # split_paragraphs=False,
     )
     opt = parser.parse_args(print_args=False)
     eval_model(opt, print_parser=parser)

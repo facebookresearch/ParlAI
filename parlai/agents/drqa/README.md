@@ -20,8 +20,3 @@ Evaluate a pre-trained model on SQuAD.
 ```bash
 python projects/drqa/eval_pretrained.py
 ```
-
-Evaluate a pre-trained model on Open SQuAD.
-```bash
-python projects/drqa/eval_opensquad.py
-```
