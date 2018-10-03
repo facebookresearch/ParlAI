@@ -1,6 +1,6 @@
 # IR Baseline
 
-This agent is a simple information retrieval baseline. IR baselines.
+This agent is a simple information retrieval baseline.
 If `label_candidates` are provided in the task, it simply ranks them according to their similarity to the input message. To use TF-IDF similarity, you must build a dictionary and "train" on the train set first. See the examples below for clarification.
 
 
