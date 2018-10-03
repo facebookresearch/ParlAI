@@ -10,9 +10,12 @@
 the image features.
 
 For example, to extract the image feature of COCO images:
-`python examples/extract_image_feature.py -t vqa_v1 -im resnet152`.
 
-For more options, check `parlai.core.image_featurizers`
+.. code-block:: shell
+
+  python examples/extract_image_feature.py -t vqa_v1 -im resnet152
+
+For more options, check ``parlai.core.image_featurizers``
 """
 import importlib
 import h5py

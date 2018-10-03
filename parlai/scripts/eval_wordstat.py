@@ -13,6 +13,7 @@ statistic for any agent given the agent object (with corr. dict) and a
 sequence.
 
 Example:
+
 .. code-block:: shell
 
   eval_wordstat.py -mf data/model -t convai2:self --freq-bins 10,100,1000
