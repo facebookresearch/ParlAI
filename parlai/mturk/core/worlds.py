@@ -13,37 +13,43 @@ class MTurkOnboardWorld(World):
     """Generic world for onboarding a Turker and collecting
     information from them."""
     def __init__(self, opt, mturk_agent):
+        '''Init should set up resources for running the onboarding world'''
         self.mturk_agent = mturk_agent
         self.episodeDone = False
 
     def parley(self):
+        '''A parley should represent one turn of your onboarding task'''
         self.episodeDone = True
 
     def episode_done(self):
         return self.episodeDone
 
     def shutdown(self):
+        '''Clear up resources needed for this world'''
         pass
 
 
 class MTurkTaskWorld(World):
     """Generic world for MTurk tasks."""
     def __init__(self, opt, mturk_agent):
+        '''Init should set up resources for running the task world'''
         self.mturk_agent = mturk_agent
         self.episodeDone = False
 
     def parley(self):
+        '''A parley should represent one turn of your task'''
         self.episodeDone = True
 
     def episode_done(self):
+        '''A ParlAI-MTurk task ends and allows workers to be marked complete
+        when the world is finished.
+        '''
         return self.episodeDone
 
-    def report(self):
-        pass
-
     def shutdown(self):
-        self.mturk_agent.shutdown()
         """
+        Should be used to free the world's resources and shut down the agents
+
         Use the following code if there are multiple MTurk agents:
 
         global shutdown_agent
@@ -54,9 +60,13 @@ class MTurkTaskWorld(World):
             backend='threading'
         )(delayed(shutdown_agent)(agent) for agent in self.mturk_agents)
         """
+        self.mturk_agent.shutdown()
 
     def review_work(self):
-        """Programmatically approve/reject the turker's work.
+        """Programmatically approve/reject the turker's work. Doing this now
+        (if possible) means that you don't need to do the work of reviewing
+        later on.
+
         For example:
         .. code-block:: python
             if self.turker_response == '0':
@@ -73,4 +83,10 @@ class MTurkTaskWorld(World):
         # self.mturk_agent.reject_work()
         # self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
         # self.mturk_agent.block_worker() # Block this worker from future HITs
+        pass
+
+    def save_data(self):
+        '''This function should take the contents of whatever was collected
+        during this task that needs to be stored for review and write it
+        to disk'''
         pass
