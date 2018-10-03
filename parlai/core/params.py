@@ -362,7 +362,14 @@ class ParlaiParser(argparse.ArgumentParser):
             help='Whether the agent should preprocess the data while building'
                  'the pytorch data')
         pytorch.add_argument(
-            '--batch-sort-cache', type=str,
+            '-pybsrt', '--pytorch-teacher-batch-sort',
+            type='bool', default=False,
+            help='Whether to construct batches of similarly sized episodes'
+            'when using the PytorchDataTeacher (either via specifying `-pyt`'
+            'or `-pytd`'
+        )
+        pytorch.add_argument(
+            '--batch-sort-cache-type', type=str,
             choices=['pop', 'index', 'none'], default='none',
             help='Whether to have batches of similarly sized episodes, and how'
             'to build up the cache')

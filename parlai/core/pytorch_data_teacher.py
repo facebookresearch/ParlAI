@@ -155,9 +155,10 @@ def batch_cache(function):
     @wraps(function)
     def wrapper(*args):
         caller = args[0]
+        batch_sort = caller.batch_sort
         batch_cache_type = caller.batch_cache_type
         bsz = caller.bsz
-        if batch_cache_type == 'none' or not caller.datatype.startswith('train'):
+        if not batch_sort or not caller.datatype.startswith('train'):
             return function(*args)
         # If Loader, put episodes in cache
         if isinstance(caller, LoaderProcess):
@@ -326,6 +327,7 @@ class LoaderProcess(Thread):
         )
         self.datatype = opt.get('datatype')
         self.data = enumerate(self.dataloader)
+        self.batch_sort = opt.get('pytorch_teacher_batch_sort')
         self.batch_cache_type = opt.get('batch_sort_cache')
         self.batch_length_range = opt.get('batch_length_range')
 
@@ -460,6 +462,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
         super().__init__(opt, shared)
         self.use_batch_act = self.bsz > 1
         self.num_workers = opt['numworkers']
+        self.batch_sort = opt.get('pytorch_teacher_batch_sort')
         self.batch_cache_type = opt.get('batch_sort_cache')
         # One can specify a collate function to use for preparing a batch
         self.opt = opt.copy()
@@ -499,7 +502,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 drop_last=False,
             )
             self.lastYs = [None] * self.bsz
-            if self.batch_cache_type != 'none':
+            if self.batch_sort:
                 self.loader_process = LoaderProcess(opt)
                 self.loader_process.start()
             self.data = enumerate(self.pytorch_dataloader)
