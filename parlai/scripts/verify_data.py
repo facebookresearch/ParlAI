@@ -9,7 +9,10 @@
 or empty label candidates.
 
 For example:
-`python parlai/scripts/verify_data.py -t convai2 -dt train:ordered`
+
+.. code-block:: shell
+
+  python parlai/scripts/verify_data.py -t convai2 -dt train:ordered
 """
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent

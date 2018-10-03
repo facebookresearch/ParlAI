@@ -8,12 +8,13 @@
 """General utility code for building PyTorch-based agents in ParlAI.
 
 Contains the following main utilities:
-- TorchAgent class which serves as a useful parent class for other model agents
-- Batch namedtuple which is the input type of the main abstract methods of
+
+* TorchAgent class which serves as a useful parent class for other model agents
+* Batch namedtuple which is the input type of the main abstract methods of
   the TorchAgent class
-- Output namedtuple which is the expected output type of the main abstract
+* Output namedtuple which is the expected output type of the main abstract
   methods of the TorchAgent class
-- Beam class which provides some generic beam functionality for classes to use
+* Beam class which provides some generic beam functionality for classes to use
 
 See below for documentation on each specific tool.
 """
