@@ -26,7 +26,7 @@ def get_scripts():
 
 
 def escape_output(str):
-    return str.replace('`', '``')
+    return str
 
 
 def main():
@@ -50,14 +50,15 @@ def main():
         fout.write('Information\n')
         fout.write('^^^^^^^^^^^\n\n\n')
         fout.write('.. automodule:: parlai.scripts.{}\n'.format(script_name))
-        fout.write('   :members:\n')
-        fout.write('   :exclude-members: __dict__,__weakref__,setup_args\n')
+
+        # fout.write('   :members:\n')
+        # fout.write('   :exclude-members: __dict__,__weakref__,setup_args\n')
         fout.write('\n')
         fout.write('CLI help\n')
         fout.write('^^^^^^^^\n\n\n')
 
         # output the --help
-        fout.write('::\n\n')  # literal block
+        fout.write('.. code-block:: text\n\n')  # literal block
         capture = io.StringIO()
         parser = module.setup_args()
         parser.prog = 'python -m parlai.scripts.{}'.format(script_name)

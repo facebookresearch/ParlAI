@@ -7,21 +7,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 """Train a model using parlai's standard training loop.
 
-After training, computes validation and test error.
-
-Example invocations:
-Run with, e.g.:
-
-python examples/train_model.py -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
-
-..or..
-
-python examples/train_model.py -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
-
-..or..
-
-python examples/train_model.py -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
-"""  # noqa: E501
+For documentation, see parlai.scripts.train_model.
+"""
 
 from parlai.scripts.train_model import TrainLoop, setup_args
 
