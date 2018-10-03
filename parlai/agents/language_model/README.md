@@ -1,6 +1,6 @@
 # Language Model
 
-The *language model* is an agent which trains an RNN on a language modeling task.
+The **language model** is an agent which trains an RNN on a language modeling task.
 It is adapted from the language model featured in Pytorch's examples repo
 [here](https://github.com/pytorch/examples/tree/master/word_language_model).
 
