@@ -586,4 +586,4 @@ You can try this model now with a command like the following:
     python examples/train_model.py -t babi:task10k:1 --dict-file /tmp/dict_babi:task10k:1 -bs 32 -vtim 30 -vcut 0.95 -m example_seq2seq
 
     # batchsize 1, numthreads 40, no cuda, lower learning rate
-    python examples/train_model.py -t babi:task10k:1 --dict-file /tmp/dict_babi:task10k:1 -bs 32 -vtim 30 -vcut 0.95 -m example_seq2seq --no-cuda -lr 0.01
+    python examples/train_model.py -t babi:task10k:1 --dict-file /tmp/dict_babi:task10k:1 -bs 1 -nt 40 -vtim 30 -vcut 0.95 -m example_seq2seq --no-cuda -lr 0.01
