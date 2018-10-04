@@ -8,7 +8,8 @@
 """Basic example which iterates through the tasks specified and runs the given
 model on them.
 
-Examples:
+Examples
+--------
 
 .. code-block:: shell
 

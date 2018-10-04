@@ -12,18 +12,22 @@ One can also use the function defined here in other places in order to get such
 statistic for any agent given the agent object (with corr. dict) and a
 sequence.
 
-Example:
 
-.. code-block:: shell
+Additionally provides function get_word_stats can be used in other parts of
+runtime code since it depends only on the agent object. For example:
 
-  eval_wordstat.py -mf data/model -t convai2:self --freq-bins 10,100,1000
-
-Also function get_word_stats can be used in other parts of runtime code since
-it depends only on the agent object. For example:
 ::
 
   from parlai.scripts.eval_wordstat import get_word_stats
   reqs, cnt = get_word_stats(predictions.tolist(), self.dict)
+
+
+Examples
+--------
+
+.. code-block:: shell
+
+  eval_wordstat.py -mf data/model -t convai2:self --freq-bins 10,100,1000
 
 """
 

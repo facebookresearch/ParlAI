@@ -10,7 +10,8 @@ and test error.
 
 The user must provide a model (with ``--model``) and a task (with ``--task``).
 
-Examples:
+Examples
+--------
 
 .. code-block:: shell
 

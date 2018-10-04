@@ -8,7 +8,8 @@
 """Verify data doesn't have basic mistakes, like empty text fields
 or empty label candidates.
 
-For example:
+Examples
+--------
 
 .. code-block:: shell
 

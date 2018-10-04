@@ -9,13 +9,17 @@
 """Basic example which iterates through the tasks specified and load/extract
 the image features.
 
-For example, to extract the image feature of COCO images:
+For more options, check ``parlai.core.image_featurizers``
+
+Examples
+--------
+
+To extract the image feature of COCO images:
 
 .. code-block:: shell
 
   python examples/extract_image_feature.py -t vqa_v1 -im resnet152
 
-For more options, check ``parlai.core.image_featurizers``
 """
 import importlib
 import h5py

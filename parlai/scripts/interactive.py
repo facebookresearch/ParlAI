@@ -7,7 +7,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 """Basic example which allows local human keyboard input to talk to a trained model.
 
-For example:
+Examples
+--------
 
 .. code-block:: shell
 

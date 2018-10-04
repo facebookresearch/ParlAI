@@ -8,7 +8,8 @@
 """Basic example which iterates through the tasks specified and
 checks them for offensive language.
 
-For example:
+Examples
+--------
 
 .. code-block:: shell
 
