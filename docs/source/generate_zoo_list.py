@@ -20,9 +20,10 @@ for model in model_list:
     fout.write(model['description'])
     fout.write('\n\n')
 
-    fout.write('Example invocation:\n')
+    fout.write('Example invocation:\n\n')
     fout.write(
-        '``python -m parlai.scripts.eval_model -a {} -t {} -mf {}``\n'
+        '.. code-block:: shell\n\n'
+        '  python -m parlai.scripts.eval_model --model {} --task {} -mf {}\n\n'
         .format(
             model['agent'],
             model['task'],

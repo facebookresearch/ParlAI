@@ -24,6 +24,8 @@ Some models support using Pretrained Embeddings, via `torchtext
 
 Example invocation:
 
-``python -m parlai.scripts.train_model -t convai2 -m seq2seq -emb-type models:fasttext_cc``
+.. code-block:: shell
+
+  python -m parlai.scripts.train_model -t convai2 -m seq2seq -emb fasttext_cc
 
 .. include:: zoo_list.inc

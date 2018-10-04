@@ -15,7 +15,14 @@ automatically, e.g.:
 
 model_list = [
     {
-        "id": "wikipedia_2016-12-21_retriever",
+        "id": "drqa",
+        "path": "models:drqa/squad/model",
+        "agent": "drqa",
+        "task": "squad",
+        "description": "drqa reader trained on SQuAD"
+    },
+    {
+        "id": "wikipedia_2016-12-21",
         "path": "models:wikipedia_2016-12-21/tfidf_retriever/drqa_docs",
         "agent": "tfidf_retriever",
         "task": "wikipedia_2016-12-21",
@@ -26,7 +33,7 @@ model_list = [
         )
     },
     {
-        "id": "wikipedia_full_retriever",
+        "id": "wikipedia_full",
         "path": "models:wikipedia_full/tfidf_retriever/model",
         "agent": "tfidf_retriever",
         "task": "wikipedia_full",
@@ -36,10 +43,12 @@ model_list = [
         )
     },
     {
-        "id": "drqa_squad_reader",
-        "path": "models:drqa/squad/model",
-        "agent": "drqa",
-        "task": "squad",
-        "description": "drqa reader trained on SQuAD"
-    },
+        "id": "twitter",
+        "path": "models:twitter/seq2seq/twitter_seq2seq_model",
+        "agent": "legacy:seq2seq:0",
+        "task": "twitter",
+        "description": (
+            "Generic conversational model trained on the twitter task"
+        ),
+    }
 ]
