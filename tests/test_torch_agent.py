@@ -272,6 +272,39 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNot(prev_vec, out_again['text_vec'])
             self.assertEqual(out['text_vec'].tolist(), [1])
 
+        # test split_lines
+        obs = {
+            'text': 'Hello.\nMy name is Inogo Montoya.\n'
+                    'You killed my father.\nPrepare to die.',
+        }
+        out = agent.vectorize(obs, split_lines=True)
+        self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])  # last line
+        self.assertEqual([m.tolist() for m in out['memory_vecs']],
+                         [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4]])
+        # check cache
+        out_again = agent.vectorize(obs, split_lines=True)
+        self.assertIs(out['text_vec'], out_again['text_vec'])
+        self.assertIs(out['memory_vecs'], out_again['memory_vecs'])
+        self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
+        self.assertEqual([m.tolist() for m in out['memory_vecs']],
+                         [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4]])
+        # next: should truncate cached result
+        prev_vec = out['text_vec']
+        prev_mem = out['memory_vecs']
+        out_again = agent.vectorize(out, truncate=1, split_lines=True)
+        self.assertIsNot(prev_vec, out_again['text_vec'])
+        self.assertEqual(out['text_vec'].tolist(), [1])
+        self.assertIsNot(prev_mem, out_again['memory_vecs'])
+        for i in range(len(prev_mem)):
+            if len(prev_mem[i]) > 1:
+                # if truncated, different tensor
+                self.assertIsNot(prev_mem[i], out_again['memory_vecs'][i])
+            else:
+                # otherwise should still be the same one
+                self.assertIs(prev_mem[i], out_again['memory_vecs'][i])
+        self.assertEqual([m.tolist() for m in out['memory_vecs']],
+                         [[1], [1], [1]])
+
     @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batchify(self):
         """Make sure the batchify function sets up the right fields."""
@@ -306,6 +339,7 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNone(batch.candidates)
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
+            self.assertIsNone(batch.memory_vecs)
 
             obs_vecs = [agent.vectorize(o, add_start=False, add_end=False)
                         for o in obs_batch]
@@ -321,6 +355,7 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNone(batch.candidates)
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
+            self.assertIsNone(batch.memory_vecs)
 
             batch = agent.batchify(obs_vecs)
             # which fields were filled vs should be empty?
@@ -333,6 +368,7 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNone(batch.candidates)
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
+            self.assertIsNone(batch.memory_vecs)
 
             # contents of certain fields:
             self.assertEqual(batch.text_vec.tolist(),
