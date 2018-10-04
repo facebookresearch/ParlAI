@@ -539,7 +539,7 @@ class TorchAgent(Agent):
         return obs
 
     def vectorize(self, obs, add_start=True, add_end=True, truncate=None,
-                  split_lines=True):
+                  split_lines=False):
         """Make vectors out of observation fields and store in the observation.
 
         In particular, the 'text' and 'labels'/'eval_labels' fields are
