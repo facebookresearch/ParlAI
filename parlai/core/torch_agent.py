@@ -193,7 +193,7 @@ class TorchAgent(Agent):
             help='Suggest model should employ multiple GPUs. Not all models '
                  'respect this flag.')
         gpugroup.add_argument(
-            '--no-cuda', type='bool', default=False,
+            '--no-cuda', default=False, action='store_true', dest='no_cuda',
             help='disable GPUs even if available. otherwise, will use GPUs if '
                  'available on the device.')
 
