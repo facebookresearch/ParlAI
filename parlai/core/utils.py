@@ -777,7 +777,7 @@ def _ellipse(lst, max_display=5, sep='|'):
     if max_display > 0 and len(choices) > max_display:
         ellipsis = '...and {} more'.format(len(choices) - max_display)
         choices = choices[:max_display] + [ellipsis]
-    return sep.join(choices)
+    return sep.join(str(c) for c in choices)
 
 
 def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
