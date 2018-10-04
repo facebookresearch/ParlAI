@@ -23,6 +23,7 @@ from parlai.core.worlds import create_task
 
 import random
 
+
 def setup_args():
     parser = ParlaiParser(True, True, 'Display model predictions.')
     parser.add_argument('-n', '--num-examples', default=10)
@@ -30,6 +31,7 @@ def setup_args():
     # by default we want to display info about the validation set
     parser.set_defaults(datatype='valid')
     return parser
+
 
 def display_model(opt):
     random.seed(42)

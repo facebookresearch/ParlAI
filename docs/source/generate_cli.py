@@ -47,8 +47,6 @@ def main():
         fout.write('\n')
 
         # docs from the module
-        #fout.write('Information\n')
-        #fout.write('^^^^^^^^^^^\n\n\n')
         fout.write('.. automodule:: parlai.scripts.{}\n'.format(script_name))
 
         # fout.write('   :members:\n')
