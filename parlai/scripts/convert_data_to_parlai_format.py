@@ -18,10 +18,9 @@ Examples
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
-from parlai.core.utils import msg_to_str
+from parlai.core.utils import msg_to_str, TimeLogger
 import random
 import tempfile
-from tqdm import tqdm
 
 
 def dump_data(opt):
@@ -40,11 +39,12 @@ def dump_data(opt):
         num_examples = world.num_examples()
     else:
         num_examples = opt['num_examples']
+    log_timer = TimeLogger()
 
     print('[ starting to convert.. ]')
     print('[ saving output to {} ]'.format(outfile))
     fw = open(outfile, 'w')
-    for _ in tqdm(range(num_examples)):
+    for _ in range(num_examples):
         world.parley()
         world.acts[0]['labels'] = world.acts[0].get(
             'labels', world.acts[0].pop('eval_labels', None))
@@ -52,6 +52,10 @@ def dump_data(opt):
         fw.write(txt + '\n')
         if world.acts[0].get('episode_done', False):
             fw.write('\n')
+
+        if log_timer.time() > opt['log_every_n_secs']:
+            text, _log = log_timer.log(world.total_parleys, world.num_examples())
+            print(text)
 
         if world.epoch_done():
             print('EPOCH DONE')
@@ -72,6 +76,7 @@ def main():
     parser.add_argument('-if', '--ignore-fields', default='id', type=str,
                         help='Ignore these fields from the message (returned\
                                 with .act() )')
+    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.set_defaults(datatype='train:stream')
     opt = parser.parse_args()
     dump_data(opt)
