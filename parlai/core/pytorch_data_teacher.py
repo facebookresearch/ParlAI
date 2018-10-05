@@ -11,11 +11,14 @@
 
 """
 from .teachers import FixedDialogTeacher
+from parlai.core.utils import ProgressLogger
 from parlai.scripts.build_pytorch_data import build_data
 from .agents import get_agent_module
 import json
 import math
+import pickle
 import random
+import os
 from functools import wraps
 import importlib
 from functools import lru_cache
@@ -358,14 +361,30 @@ def default_collate(batch):
     return new_batch
 
 
+# For deserializing lists into Tensors
+def deserialize(obj):
+    new_obj = {}
+    for key, val in obj.items():
+        if type(val) is dict:
+            if val.get('deserialized_tensor', False):
+                val_type = (torch.LongTensor if 'long' in val['type']
+                            else torch.Tensor)
+                new_obj[key] = val_type(val['value'])
+                continue
+        new_obj[key] = val
+    del obj
+    return new_obj
+
+
 class StreamDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
     def __init__(self, opt):
         self.opt = opt
         self.datatype = opt.get('datatype')
-        self.datafile = build_data(self.opt)
-        self.data_gen = self._data_generator(self.datafile)
-        self.length_datafile = self.datafile + ".length"
+        self.datapath = build_data(self.opt)
+        self.data_gen = self._data_generator()
+        self.length_datafile = os.path.join(self.datapath, 'data_length')
+        self.datafile = os.path.join(self.datapath, 'data')
         self.training = self.datatype.startswith('train')
         self._load_lens()
 
@@ -384,16 +403,16 @@ class StreamDataset(Dataset):
             self.num_eps = lengths['num_eps']
             self.num_exs = lengths['num_exs']
 
-    def _data_generator(self, datafile):
+    def _data_generator(self):
         while True:
-            for idx, episode in self._read_episode(self.datafile):
+            for idx, episode in self._read_episode():
                 yield idx, episode
 
-    def _read_episode(self, datafile):
-        read = open(datafile)
+    def _read_episode(self):
+        read = open(self.datafile)
         episode = []
         for idx, line in enumerate(read):
-            example = json.loads(line)
+            example = deserialize(json.loads(line))
             episode.append(example)
             if example['episode_done']:
                 yield idx, episode
@@ -412,11 +431,12 @@ class ParlAIDataset(Dataset):
     def __init__(self, opt):
         self.opt = opt
         self.datatype = opt.get('datatype')
-        self.datafile = build_data(self.opt)
-        self._setup_data()
-        self.length_datafile = self.datafile + ".length"
+        self.datapath = build_data(self.opt)
+        self.length_datafile = os.path.join(self.datapath, 'data_length')
+        self.datafile = os.path.join(self.datapath, 'data')
         self.training = self.datatype.startswith('train')
         self._load_lens()
+        self._setup_data()
 
     def __getitem__(self, index):
         return index, self.data[index]
@@ -431,10 +451,11 @@ class ParlAIDataset(Dataset):
             self.num_exs = lengths['num_exs']
 
     def _setup_data(self):
+        print('----------\n[ loading pytorch data ]\n----------')
         self.data = []
         with open(self.datafile) as f:
             for line in f:
-                self.data.append(json.loads(line))
+                self.data.append(deserialize(json.loads(line)))
 
     def num_episodes(self):
         return self.num_eps

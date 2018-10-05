@@ -352,8 +352,8 @@ class ParlaiParser(argparse.ArgumentParser):
                                 'batches of data in multi-example episodes.')
         pytorch = self.add_argument_group('PytorchData Arguments')
         pytorch.add_argument(
-            '--pytorch-datafile', type=str, default=None,
-            help='datafile for pytorch data loader')
+            '--pytorch-datapath', type=str, default=None,
+            help='datapath for pytorch data loader')
         pytorch.add_argument(
             '-nw', '--numworkers', type=int, default=4,
             help='how many workers the Pytorch dataloader should use')
@@ -370,7 +370,7 @@ class ParlaiParser(argparse.ArgumentParser):
         )
         pytorch.add_argument(
             '--batch-sort-cache-type', type=str,
-            choices=['pop', 'index', 'none'], default='none',
+            choices=['pop', 'index', 'none'], default='pop',
             help='Whether to have batches of similarly sized episodes, and how'
             'to build up the cache')
         pytorch.add_argument(
