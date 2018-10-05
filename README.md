@@ -107,7 +107,7 @@ ParlAI currently requires Python3.
 Dependencies of the core modules are listed in requirement.txt.
 
 Several models included (in parlai/agents) have additional requirements.
-DrQA requires installing [PyTorch](http://pytorch.org/), and the MemNN model requires installing [Lua Torch](http://torch.ch/docs/getting-started.html). See their respective websites for installation instructions.
+DrQA requires installing [PyTorch](http://pytorch.org/). See their respective websites for installation instructions.
 
 ## Installing ParlAI
 
@@ -222,24 +222,25 @@ The core library contains the following files:
 
 The agents directory contains agents that have been approved into the ParlAI framework for shared use.
 We encourage you to contribute new ones!
-Currently available within [this directory](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents):
+Some agents currently available within [this directory](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents):
 
 - **drqa**: an attentive [LSTM model DrQA](https://arxiv.org/abs/1704.00051) implemented in PyTorch that has competitive results on the SQuAD dataset amongst others.
 - **fairseq**: [an attentive sequence to sequence model using convolutions](https://arxiv.org/abs/1705.03122)
-- **seq2seq** a generic seq2seq model with various options
-- **ibm_seq2seq** IBM sequence to sequence model
-- **memnn**: code for an end-to-end memory network in Lua Torch
+- **seq2seq**: a generic seq2seq model with various options
+- **ibm_seq2seq**: IBM sequence to sequence model
+- **language_model**: an RNN language model
+- **memnn**: code for an end-to-end memory network
 - **mlb_vqa**: a visual question answering model based on [this paper](https://arxiv.org/abs/1610.04325)
 - **starspace**: a simple supervised embedding approach which is a strong baseline based on [this paper](https://arxiv.org/abs/1709.03856).
 - **tfidf_retriever** a simple retrieval based model, also useful as a first step for retrieving information as input to another model.
 - **ir_baseline**: simple information retrieval baseline that scores candidate responses with [TFIDF-weighted](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) matching
 - **repeat_label**: basic class for merely repeating all data sent to it (e.g. for piping to a file, debugging)
-- **remote_agent**: basic class for any agent connecting over ZMQ (memnn_luatorch_cpu uses this)
+- **remote_agent**: basic class for any agent connecting over ZMQ
 - **local_human**: takes input from the keyboard as the act() function of the agent, so a human can act in the environment
 
 See the [directory](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents) for the complete list.
 
-	
+
 
 ### Examples
 

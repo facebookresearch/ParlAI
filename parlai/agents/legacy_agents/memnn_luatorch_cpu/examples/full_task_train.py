@@ -41,8 +41,8 @@ def main():
                                'please install torch from http://torch.ch ' +
                                'or manually set --remote-cmd for this example.')
         sys.argv.append('--remote-cmd')
-        sys.argv.append('luajit {}/parlai/agents/'.format(parlai_home) +
-                        'memnn_luatorch_cpu/memnn_zmq_parsed.lua')
+        sys.argv.append('luajit {}/parlai/legacy_agents/agents/'.format(
+            parlai_home) + 'memnn_luatorch_cpu/memnn_zmq_parsed.lua')
     if '--remote-args' not in sys.argv:
         sys.argv.append('--remote-args')
         sys.argv.append('{}/examples/'.format(parlai_home) +
