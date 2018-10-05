@@ -363,17 +363,12 @@ def default_collate(batch):
 
 # For deserializing lists into Tensors
 def deserialize(obj):
-    new_obj = {}
-    for key, val in obj.items():
-        if type(val) is dict:
-            if val.get('deserialized_tensor', False):
-                val_type = (torch.LongTensor if 'long' in val['type']
-                            else torch.Tensor)
-                new_obj[key] = val_type(val['value'])
-                continue
-        new_obj[key] = val
-    del obj
-    return new_obj
+    for key in obj:
+        if type(obj[key]) is dict and obj[key].get('deserialized_tensor', False):
+            val_type = (torch.LongTensor if 'long' in obj[key]['type']
+                        else torch.Tensor)
+            obj[key] = val_type(obj[key]['value'])
+    return obj
 
 
 class StreamDataset(Dataset):
