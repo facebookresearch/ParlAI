@@ -10,7 +10,13 @@ Used for verification of data loading and iteration.
 
 For example, to make sure that bAbI task 1 (1k exs) loads one can run and to
 see a few of them:
-`python display_data.py -t babi:task1k:1`
+
+Examples
+--------
+
+.. code-block:: shell
+
+  python display_data.py -t babi:task1k:1
 """
 
 from parlai.core.params import ParlaiParser

@@ -8,9 +8,7 @@
 """Basic example which iterates through the tasks specified and prints them out.
 Used for verification of data loading and iteration.
 
-For example, to make sure that bAbI task 1 (1k exs) loads one can run and to
-see a few of them:
-`python examples/display_data.py -t babi:task1k:1`
+For more documentation, see parlai.scripts.display_data.
 """
 
 from parlai.scripts.display_data import display_data, setup_args

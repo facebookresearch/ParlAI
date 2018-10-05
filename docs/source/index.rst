@@ -59,6 +59,7 @@ ParlAI is a one-stop-shop for dialog research.
    metrics
    params
    teachers
+   utils
    thread_utils
    worlds
 

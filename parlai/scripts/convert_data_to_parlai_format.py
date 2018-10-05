@@ -6,8 +6,13 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """Convert a dataset into the ParlAI text format.
-E.g.:
-`python convert_data_to_parlai_format.py -t babi:task1k:1 --outfile /tmp/dump `
+
+Examples
+--------
+
+.. code-block:: shell
+
+  python convert_data_to_parlai_format.py -t babi:task1k:1 --outfile /tmp/dump
 """
 
 from parlai.core.params import ParlaiParser

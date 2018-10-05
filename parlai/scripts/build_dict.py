@@ -5,7 +5,19 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""Generates a dictionary file from the training data."""
+"""
+Generates a dictionary file from the training data.
+
+Examples
+--------
+
+.. code-block:: shell
+
+  # learn the vocabulary from one task, then train on another task.
+  python -m parlai.scripts.build_dict -t convai2 --dict-file premade.dict
+  python -m parlai.scripts.train_model -t squad --dict-file premade.dict -m seq2seq
+
+"""
 
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser, str2class
