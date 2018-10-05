@@ -8,7 +8,8 @@
 """The standard way to train a model. After training, also computes validation
 and test error.
 
-The user must provide a model (with ``--model``) and a task (with ``--task``).
+The user must provide a model (with ``--model``) and a task (with ``--task`` or
+``--pytorch-teacher-task``).
 
 Examples
 --------

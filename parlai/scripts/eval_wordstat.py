@@ -13,8 +13,8 @@ statistic for any agent given the agent object (with corr. dict) and a
 sequence.
 
 
-Additionally provides function get_word_stats can be used in other parts of
-runtime code since it depends only on the agent object. For example:
+Additionally provides function get_word_stats that can be used in other parts
+of runtime code since it depends only on the agent object. For example:
 
 ::
 

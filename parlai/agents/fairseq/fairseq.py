@@ -7,7 +7,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 """
-ParlAI had limited support for using models from
+ParlAI has limited support for using models from
 `Fairseq <https://github.com/pytorch/fairseq>`_. Fairseq often supports more
 experimental seq2seq architectures with fast fp16 training.
 

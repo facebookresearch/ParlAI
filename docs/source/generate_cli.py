@@ -25,10 +25,6 @@ def get_scripts():
             yield os.path.join(pathname, fn)
 
 
-def escape_output(str):
-    return str
-
-
 def main():
     fout = open('cli_usage.inc', 'w')
 
@@ -61,7 +57,7 @@ def main():
         parser = module.setup_args()
         parser.prog = 'python -m parlai.scripts.{}'.format(script_name)
         parser.print_help(capture)
-        fout.write(indent(escape_output(capture.getvalue())))
+        fout.write(indent(capture.getvalue()))
         fout.write('\n\n')
 
 
