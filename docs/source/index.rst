@@ -67,8 +67,9 @@ ParlAI is a one-stop-shop for dialog research.
   :maxdepth: 1
   :caption: Reference Models
 
-  remote_agent
   repeat_label
+  unigram_agent
+  remote_agent
   coopgame_agent
 
 
