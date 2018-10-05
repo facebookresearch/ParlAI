@@ -6,7 +6,7 @@
 
 import torch
 from torch import optim
-from torch.utils.rnn import pack_padded_sequence
+from torch.nn.utils.rnn import pack_padded_sequence
 import torch.nn as nn
 import torchvision.models as models
 
