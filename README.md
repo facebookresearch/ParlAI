@@ -106,8 +106,7 @@ ParlAI currently requires Python3.
 
 Dependencies of the core modules are listed in requirement.txt.
 
-Several models included (in parlai/agents) have additional requirements.
-DrQA requires installing [PyTorch](http://pytorch.org/). See their respective websites for installation instructions.
+Some models included (in parlai/agents) have additional requirements.
 
 ## Installing ParlAI
 
