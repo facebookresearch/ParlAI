@@ -30,7 +30,7 @@ def dump_data(opt):
     ignorefields = opt.get('ignore_fields', '')
     if opt['outfile'] is None:
         outfile = tempfile.mkstemp(
-            prefix='convert_data_to_parlai_output',
+            prefix='{}_{}_'.format(opt['task'], opt['datatype']),
             suffix='.txt')[1]
     else:
         outfile = opt['outfile']
