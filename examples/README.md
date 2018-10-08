@@ -7,7 +7,6 @@ This directory contains a few particular examples of basic loops.
 - display_model.py: _shows the predictions of a provided model on a particular task provided on the command-line_
 - eval_model.py: _uses the named agent to compute evaluation metrics data for a particular task provided on the command-line_
 - build_dict.py: _build a dictionary from a particular task provided on the command-line using core.dict.DictionaryAgent_
-- memnn_luatorch_cpu: _shows a few examples of training an end-to-end memory network on a few datasets_
 
 ## Running These Examples
 
