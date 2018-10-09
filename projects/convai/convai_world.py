@@ -156,7 +156,7 @@ class ConvAIWorld(World):
 
     @staticmethod
     def _strip_start_message(message):
-        return message.replace('/start', '')
+        return message.replace('/start', 'Your persona:')
 
     def _init_chat(self, chatID):
         """Create new chat for new dialog.
