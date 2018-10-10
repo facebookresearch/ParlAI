@@ -134,7 +134,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
         if cnt == 0 and opt['display_examples']:
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
-        cnt += opt['batchsize']
+        cnt += valid_world.opt['batchsize']
         if max_exs > 0 and cnt > max_exs + opt.get('numthreads', 1):
             # note this max_exs is approximate--some batches won't always be
             # full depending on the structure of the data
