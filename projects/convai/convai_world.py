@@ -156,7 +156,9 @@ class ConvAIWorld(World):
 
     @staticmethod
     def _strip_start_message(message):
-        return message.replace('/start', 'your persona:')
+        lines = message.split('\n')[1:]
+        lines = ['your persona: ' + line for line in lines]
+        return '\n'.join(lines)
 
     def _init_chat(self, chatID):
         """Create new chat for new dialog.
