@@ -64,7 +64,7 @@ class ConvAIWorld(World):
         self.router_bot_pull_delay = opt['router_bot_pull_delay']
         if self.router_bot_pull_delay < 1:
             self.router_bot_pull_delay = 1
-        # Minimal pull delay is equal to initial value of router_bot_pull_delay 
+        # Minimal pull delay is equal to initial value of router_bot_pull_delay
         self.minimum_pull_delay = self.router_bot_pull_delay
         # Maximum delay couldn't be smaller than minimum_pull_delay
         self.maximum_pull_delay = opt['maximum_pull_delay']
@@ -72,7 +72,7 @@ class ConvAIWorld(World):
             self.maximum_pull_delay = self.minimum_pull_delay
         # Id of local bot used to communicate with RouterBot
         self.bot_id = opt['bot_id']
-        # The maximum number of open dialogs. 
+        # The maximum number of open dialogs.
         # Use -1 for unlimited number of open dialogs
         self.bot_capacity = opt['bot_capacity']
         # RouterBot url with current bot id
@@ -128,7 +128,7 @@ class ConvAIWorld(World):
             'Content-Type': 'application/json'
         }
 
-        res = requests.post(self.bot_url + '/sendMessage', 
+        res = requests.post(self.bot_url + '/sendMessage',
                             json=message, headers=headers)
         if res.status_code != 200:
             print(res.text)
@@ -156,7 +156,9 @@ class ConvAIWorld(World):
 
     @staticmethod
     def _strip_start_message(message):
-        return message.replace('/start', '')
+        lines = message.split('\n')[1:]
+        lines = ['your persona: ' + line for line in lines]
+        return '\n'.join(lines)
 
     def _init_chat(self, chatID):
         """Create new chat for new dialog.
@@ -197,10 +199,10 @@ class ConvAIWorld(World):
         """Requests the server for new messages and processes every message.
         If a message starts with '/start' string then a new chat will be created and
         the message will be added to stack.
-        If a message has the same chat id as already existing chat then it will be 
+        If a message has the same chat id as already existing chat then it will be
         added to message stack for this chat.
         Any other messages will be ignored.
-        If after processing all messages message stack is still empty then new request 
+        If after processing all messages message stack is still empty then new request
         to server will be performed.
         :return: None
         """
@@ -215,7 +217,7 @@ class ConvAIWorld(World):
                     chatID = self._get_chat_id(msg)
 
                     if self.chats.get(chatID, None) is not None:
-                        print('Message was recognized as part of chat #%s' 
+                        print('Message was recognized as part of chat #%s'
                               % chatID)
                         self.messages.append((chatID, text))
                     elif self._is_begin_of_conversation(text):
@@ -226,7 +228,7 @@ class ConvAIWorld(World):
                             self._init_chat(chatID)
                             text = self._strip_start_message(text)
                             self.messages.append((chatID, text))
-                            print('New world and agents for chat #%s are created.' 
+                            print('New world and agents for chat #%s are created.'
                                   % chatID)
                         else:
                             print('Cannot start new chat #%s due to bot capacity'
