@@ -863,7 +863,13 @@ def str_to_msg(txt, ignore_fields=''):
         return None
 
     msg = {}
-    for t in txt.split('\t'):
+    if '\t' in txt:  # should be tabs
+        split = txt.split('\t')
+    elif '    ' in txt:  # kindness: accept four-space if no tabs
+        split = txt.split('    ')
+    else:  # only one entry
+        split = (txt,)
+    for t in split:
         ind = t.find(':')
         key = t[:ind]
         value = t[ind + 1:]
