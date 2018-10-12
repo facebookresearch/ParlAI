@@ -67,7 +67,7 @@ class ConvAIWorld(World):
         # Minimal pull delay is equal to initial value of router_bot_pull_delay
         self.minimum_pull_delay = self.router_bot_pull_delay
         # Maximum delay couldn't be smaller than minimum_pull_delay
-        self.maximum_pull_delay = opt['maximum_pull_delay']
+        self.maximum_pull_delay = opt['max_pull_delay']
         if self.maximum_pull_delay < self.minimum_pull_delay:
             self.maximum_pull_delay = self.minimum_pull_delay
         # Id of local bot used to communicate with RouterBot
