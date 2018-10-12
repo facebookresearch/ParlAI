@@ -865,7 +865,7 @@ def str_to_msg(txt, ignore_fields=''):
     msg = {}
     if '\t' in txt:  # should be tabs
         split = txt.split('\t')
-    elif '    ' in txt:  # kindness: accept four-space if no tabs
+    elif '    ' in txt:  # accept four-space if no tabs, likely accidental
         split = txt.split('    ')
     else:  # only one entry
         split = (txt,)
