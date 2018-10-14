@@ -140,7 +140,7 @@ class ConvAIWorld(World):
 
     @staticmethod
     def _is_end_of_conversation(message):
-        return message == '/end'
+        return message.startswith('/end')
 
     @staticmethod
     def _is_skip_response(message):
