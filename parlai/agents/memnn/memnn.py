@@ -100,6 +100,13 @@ class MemnnAgent(TorchRankerAgent):
         kwargs['add_p1_after_newln'] = True  # will only happen if -pt True
         return super().get_dialog_history(*args, **kwargs)
 
+    def vectorize(self, *args, **kwargs):
+        """Override options in vectorize from parent."""
+        kwargs['add_start'] = False
+        kwargs['add_end'] = False
+        kwargs['split_lines'] = True
+        return super().vectorize(*args, **kwargs)
+
     def _build_mems(self, mems):
         """Build memory tensors.
 

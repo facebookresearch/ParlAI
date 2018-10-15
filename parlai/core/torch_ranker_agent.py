@@ -8,6 +8,7 @@
 
 import os
 from functools import lru_cache
+import warnings
 
 import torch
 from torch import nn
@@ -22,17 +23,17 @@ class TorchRankerAgent(TorchAgent):
         TorchAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('TorchRankerAgent')
         agent.add_argument(
-            '-tc', '--train_candidates', type=str, default='batch',
-            choices=['batch', 'inline', 'fixed', 'dict'],
-            help='the source of candidates during training')
+            '-tc', '--train-candidates', type=str, default='batch',
+            choices=['batch', 'inline', 'fixed', 'vocab'],
+            help='The source of candidates during training')
         agent.add_argument(
-            '-ec', '--eval_candidates', type=str, default='batch',
-            choices=['batch', 'inline', 'fixed', 'dict'],
-            help='the source of candidates during training')
+            '-ec', '--eval-candidates', type=str, default='batch',
+            choices=['batch', 'inline', 'fixed', 'vocab'],
+            help='The source of candidates during training')
         agent.add_argument(
             '-cands', '--fixed-candidates-path', type=str,
-            help='a text file of fixed candidates to use for all examples, '
-                'one candidate per line')
+            help='A text file of fixed candidates to use for all examples, one '
+                'candidate per line')
 
     def __init__(self, opt, shared):
         if shared:
@@ -48,7 +49,7 @@ class TorchRankerAgent(TorchAgent):
 
             super().__init__(opt, shared)
 
-            print(f'Building model of type {self.id}')
+            print('Building model of type {}'.format(self.id))
             self.build_model()
             if model_file:
                 print('Loading existing model parameters from ' + model_file)
@@ -137,32 +138,29 @@ class TorchRankerAgent(TorchAgent):
         :param mode: 'train' or 'eval'
 
         :return: tuple of tensors (label_inds, cands, cand_vecs)
-            label_inds: A [bsz] LongTensor of the indices of the labelf or each
-                example in the tensor of candidates
+            label_inds: A [bsz] LongTensor of the indices of the labelf or each example
+                in the tensor of candidates
             cands: A [num_cands] list of (text) candidates
-            cand_vecs: A padded [num_cands, seqlen] LongTensor of vectorized
-                candidates
+            cand_vecs: A padded [num_cands, seqlen] LongTensor of vectorized candidates
 
         Possible sources of candidates:
             * batch: the set of all labels in this batch
-                Use all labels in the batch as the candidate set (with all but
-                the example's label being treated as negatives). If labels
-                are single tokens, filter to unique labels. (Ideally, we would
-                always filter to unique labels, but we abstain for the sake of
-                speed.)
+                Use all labels in the batch as the candidate set (with all but the
+                example's label being treated as negatives). If labels are single
+                tokens, filter to unique labels. (Ideally, we would always filter to
+                unique labels, but we abstain for the sake of speed.)
             * inline: batch_size lists, one list per example
-                If each example comes with a list of possible candidates, use
-                those.
+                If each example comes with a list of possible candidates, use those.
             * fixed: one global candidate list, provide in a file from the user
-                If self.fixed_candidates is not None, use a set of fixed
-                candidates for all examples.
+                If self.fixed_candidates is not None, use a set of fixed candidates for
+                all examples.
                 Note: this setting is not recommended for training unless the
                 universe of possible candidates is very small.
             * vocab: the set of all tokens in the vocabulary
 
-        TODO: Consider allowing examples in a batch to have different candidate
-        sets (requires changes to MemNN module). Currently, all examples in a
-        batch must have the same candidate set.
+        TODO: Consider allowing examples in a batch to have different candidate sets
+        (requires changes to MemNN module). Currently, all examples in a batch must
+        have the same candidate set.
         """
         label_vecs = batch.label_vec # [bsz] list of lists of LongTensors
         batchsize = batch.text_vec.shape[0]
@@ -173,15 +171,15 @@ class TorchRankerAgent(TorchAgent):
 
         if source == 'batch':
             self._warn_once(
-                f'{mode}_batch_candidates',
-                f'[ Executing {mode} mode with batch labels as set of '
-                    'candidates. ]')
+                flag=(mode + '_batch_candidates'),
+                msg=('[ Executing {} mode with batch labels as set of candidates. ]'
+                    ''.format(mode)))
             if batchsize == 1:
                 self._warn_once(
-                    f'{mode}_batchsize_1',
-                    f"[ Warning: using candidate source 'batch' and observed a "
-                    "batch of size 1. This may be due to uneven batch sizes at "
-                    "the end of an epoch. ]")
+                    flag=(mode + '_batchsize_1'),
+                    msg=("[ Warning: using candidate source 'batch' and observed a "
+                    "batch of size 1. This may be due to uneven batch sizes at the end "
+                    "of an epoch. ]"))
             if label_vecs is None:
                 raise ValueError("If using candidate source 'batch', then "
                     "batch.label_vec can not be None.")
@@ -199,9 +197,10 @@ class TorchRankerAgent(TorchAgent):
         elif source == 'inline':
             # WARNING: this is currently the slowest of the options
             self._warn_once(
-                f'{mode}_batch_candidates',
-                f'[ Executing {mode} mode with provided inline set of candidates '
-                    '(assumed to be identical for all candidates in a batch). ]')
+                flag=(mode + '_batch_candidates'),
+                msg=('[ Executing {} mode with provided inline set of candidates '
+                    '(assumed to be identical for all candidates in a batch). ]'
+                    ''.format(mode)))
             if batch.candidate_vecs is None:
                 raise ValueError("If using candidate source 'inline', then "
                     "bath.candidate_vecs can not be None.")
@@ -217,22 +216,15 @@ class TorchRankerAgent(TorchAgent):
                 label_inds = label_vecs.new_empty(batchsize)
                 # Warning: This computation is O(batchsize x num_candidates x seqlen)
                 for i, label_vec in enumerate(label_vecs):
-                    # Option 1: matrix multiplies
                     label_vec_pad = label_vec.new_zeros(cand_vecs.size(1))
                     label_vec_pad[0:label_vec.size(0)] = label_vec
                     label_inds[i] = (cand_vecs == label_vec_pad).all(1).nonzero()[0]
-                    # Option 2: nested for loop
-                    # for j, cand_vec in enumerate(cand_vecs):
-                    #     if (label_vec == cand_vec[:label_vec.size(0)]).all():
-                    #         if ((label_vec.shape == cand_vec.shape) or (cand_vec[label_vec.size(0)] == 0)):
-                    #             label_inds[i] = j
-                    #             break
 
         elif source == 'fixed':
             self._warn_once(
-                f'{mode}_batch_candidates',
-                    f'[ Executing {mode} mode with a common set of fixed '
-                        'candidates. ]')
+                flag=(mode + '_batch_candidates'),
+                msg=('[ Executing {} mode with a common set of fixed candidates. ]'
+                    ''.format(mode)))
             if self.fixed_candidates is None:
                 raise ValueError("If using candidate source 'fixed', then "
                     "you must provide the path to a file of candidates with "
@@ -296,13 +288,6 @@ class TorchRankerAgent(TorchAgent):
             m[k] = round_sigfigs(v, 4)
         return m
 
-    def vectorize(self, *args, **kwargs):
-        """Override options in vectorize from parent."""
-        kwargs['add_start'] = False
-        kwargs['add_end'] = False
-        kwargs['split_lines'] = True
-        return super().vectorize(*args, **kwargs)
-
     def _get_model_file(self, opt):
         model_file = None
 
@@ -329,8 +314,8 @@ class TorchRankerAgent(TorchAgent):
             self.fixed_candidates_vec = shared['fixed_candidates_vec']
         else:
             if self.opt['fixed_candidates_path']:
-                print(f"Vectorizing fixed candidates set from "
-                    f"{self.opt['fixed_candidates_path']}")
+                print("Vectorizing fixed candidates set from {}".format(
+                    self.opt['fixed_candidates_path']))
                 with open(self.opt['fixed_candidates_path'], 'r') as f:
                     self.fixed_candidates = [line.strip() for line in
                         f.readlines()]
@@ -344,8 +329,9 @@ class TorchRankerAgent(TorchAgent):
                 self.fixed_candidates_vec = None
 
     def _warn_once(self, flag, msg):
-        if not hasattr(self, flag):
-            setattr(self, flag, True)
-            print(msg)
+        warn_flag = '__warned_' + flag
+        if not hasattr(self, warn_flag):
+            setattr(self, warn_flag, True)
+            warnings.warn(msg)
 
 
