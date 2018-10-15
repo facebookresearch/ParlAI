@@ -19,7 +19,7 @@ from .modules import MemNN, opt_to_kwargs
 
 class MemnnAgent(TorchRankerAgent):
     """Memory Network agent.
-    
+
     Tips:
     - time features are necessary when memory order matters
     - multiple hops allow multiple steps of reasoning, but also seem to make it
@@ -55,7 +55,7 @@ class MemnnAgent(TorchRankerAgent):
     @staticmethod
     def model_version():
         """Return current version of this model, counting up from 0.
-        
+
         Models may not be backwards-compatible with older versions.
         Version 1 split from version 0 on Sep 7, 2018.
         To use version 0, use --model legacy:memnn:0
@@ -65,7 +65,7 @@ class MemnnAgent(TorchRankerAgent):
         return 2
 
     def __init__(self, opt, shared=None):
-        
+
         # all instances may need some params
         self.id = 'MemNN'
         self.memsize = opt['memsize']
@@ -87,7 +87,7 @@ class MemnnAgent(TorchRankerAgent):
 
     def score_candidates(self, batch, cand_vecs):
         mems = self._build_mems(batch.memory_vecs)
-        scores = self.model(batch.text_vec, mems, cand_vecs)        
+        scores = self.model(batch.text_vec, mems, cand_vecs)
         return scores
 
     @lru_cache(maxsize=None)  # bounded by opt['memsize'], cache string concats
@@ -104,10 +104,10 @@ class MemnnAgent(TorchRankerAgent):
         """Build memory tensors.
 
         During building, will add time features to the memories if enabled.
-        
+
         :param: list of length batchsize containing inner lists of 1D tensors
                 containing the individual memories for each row in the batch.
-        
+
         :returns: 3d padded tensor of memories (bsz x num_mems x seqlen)
         """
         if mems is None:

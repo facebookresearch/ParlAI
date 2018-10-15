@@ -33,7 +33,7 @@ class TorchRankerAgent(TorchAgent):
             '-cands', '--fixed-candidates-path', type=str,
             help='a text file of fixed candidates to use for all examples, '
                 'one candidate per line')
-    
+
     def __init__(self, opt, shared):
         if shared:
             super().__init__(opt, shared)
@@ -45,7 +45,7 @@ class TorchRankerAgent(TorchAgent):
             model_file = self._get_model_file(opt)
             self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0}
             opt['rank_candidates'] = True
-            
+
             super().__init__(opt, shared)
 
             print(f'Building model of type {self.id}')
@@ -78,11 +78,11 @@ class TorchRankerAgent(TorchAgent):
         """Train on a single batch of examples."""
         if batch.text_vec is None:
             return
-        batchsize = batch.text_vec.size(0)  
+        batchsize = batch.text_vec.size(0)
         self.model.train()
         self.optimizer.zero_grad()
 
-        cands, cand_vecs, label_inds = self._build_candidates(batch, 
+        cands, cand_vecs, label_inds = self._build_candidates(batch,
             source=self.opt['train_candidates'], mode='train')
         scores = self.score_candidates(batch, cand_vecs)
         loss = self.rank_loss(scores, label_inds)
@@ -110,7 +110,7 @@ class TorchRankerAgent(TorchAgent):
         batchsize = batch.text_vec.size(0)
         self.model.eval()
 
-        cands, cand_vecs, label_inds = self._build_candidates(batch, 
+        cands, cand_vecs, label_inds = self._build_candidates(batch,
             source=self.opt['eval_candidates'], mode='eval')
 
         scores = self.score_candidates(batch, cand_vecs)
@@ -139,8 +139,8 @@ class TorchRankerAgent(TorchAgent):
         :return: tuple of tensors (label_inds, cands, cand_vecs)
             label_inds: A [bsz] LongTensor of the indices of the labelf or each
                 example in the tensor of candidates
-            cands: A [num_cands] list of (text) candidates 
-            cand_vecs: A padded [num_cands, seqlen] LongTensor of vectorized 
+            cands: A [num_cands] list of (text) candidates
+            cand_vecs: A padded [num_cands, seqlen] LongTensor of vectorized
                 candidates
 
         Possible sources of candidates:
@@ -154,14 +154,14 @@ class TorchRankerAgent(TorchAgent):
                 If each example comes with a list of possible candidates, use
                 those.
             * fixed: one global candidate list, provide in a file from the user
-                If self.fixed_candidates is not None, use a set of fixed 
+                If self.fixed_candidates is not None, use a set of fixed
                 candidates for all examples.
                 Note: this setting is not recommended for training unless the
                 universe of possible candidates is very small.
             * vocab: the set of all tokens in the vocabulary
-        
+
         TODO: Consider allowing examples in a batch to have different candidate
-        sets (requires changes to MemNN module). Currently, all examples in a 
+        sets (requires changes to MemNN module). Currently, all examples in a
         batch must have the same candidate set.
         """
         label_vecs = batch.label_vec # [bsz] list of lists of LongTensors
@@ -195,7 +195,7 @@ class TorchRankerAgent(TorchAgent):
                 cands = batch.labels
                 cand_vecs = label_vecs
                 label_inds = label_vecs.new(range(batchsize))
-                
+
         elif source == 'inline':
             # WARNING: this is currently the slowest of the options
             self._warn_once(
@@ -211,7 +211,7 @@ class TorchRankerAgent(TorchAgent):
                     "candidate set.")
 
             cands = batch.candidates[0]
-            cand_vecs, _ = padded_tensor(batch.candidate_vecs[0], 
+            cand_vecs, _ = padded_tensor(batch.candidate_vecs[0],
                 use_cuda=self.use_cuda)
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty(batchsize)
@@ -321,7 +321,7 @@ class TorchRankerAgent(TorchAgent):
                     opt['dict_file'] is None):
                 opt['dict_file'] = model_file + '.dict'
 
-        return model_file  
+        return model_file
 
     def _set_fixed_candidates(self, shared):
         if shared:
@@ -332,12 +332,12 @@ class TorchRankerAgent(TorchAgent):
                 print(f"Vectorizing fixed candidates set from "
                     f"{self.opt['fixed_candidates_path']}")
                 with open(self.opt['fixed_candidates_path'], 'r') as f:
-                    self.fixed_candidates = [line.strip() for line in 
+                    self.fixed_candidates = [line.strip() for line in
                         f.readlines()]
                 vectorize_func = self._vectorize_text
-                candidate_vecs = [vectorize_func(cand) for cand in 
+                candidate_vecs = [vectorize_func(cand) for cand in
                     self.fixed_candidates]
-                self.fixed_candidates_vec, _ = padded_tensor(candidate_vecs, 
+                self.fixed_candidates_vec, _ = padded_tensor(candidate_vecs,
                     use_cuda=self.use_cuda)
             else:
                 self.fixed_candidates = None
