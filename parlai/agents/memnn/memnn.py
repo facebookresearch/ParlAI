@@ -65,24 +65,23 @@ class MemnnAgent(TorchRankerAgent):
         return 2
 
     def __init__(self, opt, shared=None):
-
         # all instances may need some params
+        super().__init__(opt, shared)
+
         self.id = 'MemNN'
         self.memsize = opt['memsize']
         self.use_time_features = opt['time_features']
-
-        super().__init__(opt, shared)
 
         if not shared:
             if opt['time_features']:
                 for i in range(self.memsize):
                     self.dict[self._time_feature(i)] = 100000000 + i
 
+
     def build_model(self):
         """Build MemNN model."""
-        opt = self.opt
-        kwargs = opt_to_kwargs(opt)
-        self.model = MemNN(len(self.dict), opt['embedding_size'],
+        kwargs = opt_to_kwargs(self.opt)
+        self.model = MemNN(len(self.dict), self.opt['embedding_size'],
                            padding_idx=self.NULL_IDX, **kwargs)
 
     def score_candidates(self, batch, cand_vecs):

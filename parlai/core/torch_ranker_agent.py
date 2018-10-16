@@ -8,6 +8,7 @@
 
 import os
 from functools import lru_cache
+from tqdm import tqdm
 import warnings
 
 import torch
@@ -31,9 +32,15 @@ class TorchRankerAgent(TorchAgent):
             choices=['batch', 'inline', 'fixed', 'vocab'],
             help='The source of candidates during training')
         agent.add_argument(
-            '-cands', '--fixed-candidates-path', type=str,
+            '-cands', '--fixed-candidates-path', type=str, default='',
             help='A text file of fixed candidates to use for all examples, one '
                 'candidate per line')
+        agent.add_argument(
+            '-candvecs', '--fixed-candidate-vecs-path', type=str, default='',
+            help='A torch file containing vectorized fixed candidates to use for all '
+                'examples. If a file already exists at -fixed-candidate-vecs-path, '
+                'those vectors will be loaded. If not, they will be computed and '
+                'written to that path')
 
     def __init__(self, opt, shared):
         if shared:
@@ -56,7 +63,7 @@ class TorchRankerAgent(TorchAgent):
                 self.load(model_file)
 
         self.rank_loss = nn.CrossEntropyLoss(reduction='sum')
-        self._set_fixed_candidates(shared)
+        self.set_fixed_candidates(shared)
 
         if self.use_cuda:
             self.model.cuda()
@@ -98,10 +105,9 @@ class TorchRankerAgent(TorchAgent):
         loss.backward()
         self.update_params()
 
-        # get predictions but not full rankings--too slow to get hits@1 score
-        preds = [cands[row[0]] for row in ranks]
-
-        return Output(preds)
+        cand_preds = [[cands[i] for i in row] for row in ranks]
+        preds = [row[0] for row in cand_preds]
+        return Output(preds, cand_preds)
 
     @torch.no_grad()
     def eval_step(self, batch):
@@ -156,17 +162,16 @@ class TorchRankerAgent(TorchAgent):
                 all examples.
                 Note: this setting is not recommended for training unless the
                 universe of possible candidates is very small.
-            * vocab: the set of all tokens in the vocabulary
 
-        TODO: Consider allowing examples in a batch to have different candidate sets
-        (requires changes to MemNN module). Currently, all examples in a batch must
-        have the same candidate set.
+        NOTE: Currently, all examples in a batch must have the same candidate set.
         """
         label_vecs = batch.label_vec # [bsz] list of lists of LongTensors
         batchsize = batch.text_vec.shape[0]
 
         if label_vecs is not None:
             assert label_vecs.dim() == 2
+            if self.use_cuda:
+                label_vecs.cuda()
         label_inds = None
 
         if source == 'batch':
@@ -195,7 +200,6 @@ class TorchRankerAgent(TorchAgent):
                 label_inds = label_vecs.new(range(batchsize))
 
         elif source == 'inline':
-            # WARNING: this is currently the slowest of the options
             self._warn_once(
                 flag=(mode + '_batch_candidates'),
                 msg=('[ Executing {} mode with provided inline set of candidates '
@@ -214,7 +218,6 @@ class TorchRankerAgent(TorchAgent):
                 use_cuda=self.use_cuda)
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty(batchsize)
-                # Warning: This computation is O(batchsize x num_candidates x seqlen)
                 for i, label_vec in enumerate(label_vecs):
                     label_vec_pad = label_vec.new_zeros(cand_vecs.size(1))
                     label_vec_pad[0:label_vec.size(0)] = label_vec
@@ -231,15 +234,11 @@ class TorchRankerAgent(TorchAgent):
                     "the flag --fixed-candidates-path")
 
             cands = self.fixed_candidates
-            cand_vecs = self.fixed_candidates_vec
+            cand_vecs = self.fixed_candidate_vecs
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
-                # Warning: This computation is O(batchsize x num_candidates)
                 for i, label in enumerate(label_vecs):
                     label_inds[i] = (cand_vecs == label).all(1).nonzero()
-
-        elif source == 'vocab':
-            raise NotImplementedError
 
         return (cands, cand_vecs, label_inds)
 
@@ -253,10 +252,8 @@ class TorchRankerAgent(TorchAgent):
             self.metrics = SharedTable(self.metrics)
             self.model.share_memory()
         shared['metrics'] = self.metrics
-
-        # TODO: Consider moving shared candidates to shared memory?
         shared['fixed_candidates'] = self.fixed_candidates
-        shared['fixed_candidates_vec'] = self.fixed_candidates_vec
+        shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
         return shared
 
     def update_params(self):
@@ -278,11 +275,9 @@ class TorchRankerAgent(TorchAgent):
         examples = self.metrics['examples']
         if examples > 0:
             m['examples'] = examples
-            if self.metrics['loss'] > 0:
-                m['loss'] = self.metrics['loss']
-                m['mean_loss'] = self.metrics['loss'] / examples
-            if self.metrics['rank'] > 0:
-                m['mean_rank'] = self.metrics['rank'] / examples
+            m['loss'] = self.metrics['loss']
+            m['mean_loss'] = self.metrics['loss'] / examples
+            m['mean_rank'] = self.metrics['rank'] / examples
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             m[k] = round_sigfigs(v, 4)
@@ -308,30 +303,79 @@ class TorchRankerAgent(TorchAgent):
 
         return model_file
 
-    def _set_fixed_candidates(self, shared):
+    def set_fixed_candidates(self, shared):
+        """Load a set of fixed candidates and their vectors (or vectorize them here)
+
+        Note: TorchRankerAgent by default converts candidates to vectors by vectorizing
+        in the common sense (i.e., replacing each token with its index in the
+        dictionary). If a child model wants to actually perform encoding, it can
+        overwrite the vectorize_fixed_candidates() method to produce encoded vectors
+        instead of just vectorized ones.
+        """
         if shared:
             self.fixed_candidates = shared['fixed_candidates']
-            self.fixed_candidates_vec = shared['fixed_candidates_vec']
+            self.fixed_candidate_vecs = shared['fixed_candidate_vecs']
         else:
-            if self.opt['fixed_candidates_path']:
-                print("Vectorizing fixed candidates set from {}".format(
-                    self.opt['fixed_candidates_path']))
-                with open(self.opt['fixed_candidates_path'], 'r') as f:
-                    self.fixed_candidates = [line.strip() for line in
-                        f.readlines()]
-                vectorize_func = self._vectorize_text
-                candidate_vecs = [vectorize_func(cand) for cand in
-                    self.fixed_candidates]
-                self.fixed_candidates_vec, _ = padded_tensor(candidate_vecs,
-                    use_cuda=self.use_cuda)
+            opt = self.opt
+            if opt['fixed_candidates_path']:
+                print("[ Loading fixed candidate set text from {} ]".format(
+                    opt['fixed_candidates_path']))
+                with open(opt['fixed_candidates_path'], 'r') as f:
+                    self.fixed_candidates = [line.strip() for line in f.readlines()]
+
+                if (opt['fixed_candidate_vecs_path'] and
+                    os.path.isfile(opt['fixed_candidate_vecs_path'])):
+                    print("[ Loading fixed candidate set vectors from {} ]".format(
+                        opt['fixed_candidate_vecs_path']))
+                    self.fixed_candidate_vecs = torch.load(
+                        opt['fixed_candidate_vecs_path'])
+                else:
+                    cands = self.fixed_candidates
+                    cand_batches = [cands[i:i + 512] for i in range(0, len(cands), 512)]
+                    print("[ Vectorizing fixed candidates set from {} ({} batch(es) of "
+                        "512) ]".format(opt['fixed_candidates_path'],
+                            len(cand_batches)))
+                    cand_vecs = []
+                    for batch in tqdm(cand_batches):
+                        cand_vecs.extend(self.vectorize_fixed_candidates(batch))
+                    self.fixed_candidate_vecs = self._cat_and_pad(cand_vecs,
+                        self.NULL_IDX)
+                    if opt['fixed_candidate_vecs_path']:
+                        print("[ Saving fixed candidate set vectors to {} ]".format(
+                            opt['fixed_candidate_vecs_path']))
+                        torch.save(self.fixed_candidate_vecs,
+                            opt['fixed_candidate_vecs_path'])
             else:
                 self.fixed_candidates = None
-                self.fixed_candidates_vec = None
+                self.fixed_candidate_vecs = None
+
+            if self.use_cuda:
+                self.fixed_candidate_vecs = self.fixed_candidate_vecs.cuda()
+
+    def vectorize_fixed_candidates(self, cands_batch):
+        return [self._vectorize_text(cand, truncate=self.opt.get('truncate'),
+            truncate_left=False) for cand in cands_batch]
+
+    @staticmethod
+    def _cat_and_pad(tensor_list, padding_value):
+        """Concatenate a list of 1D Long Tensor, fills the empty values
+        with a padding value.
+        """
+        max_len = max([len(t) for t in tensor_list])
+        response = torch.LongTensor(len(tensor_list), max_len).fill_(padding_value)
+        for i, tensor in enumerate(tensor_list):
+            response[i, 0:len(tensor)] = tensor
+        return response
 
     def _warn_once(self, flag, msg):
+        """
+        Args:
+            flag: The name of the flag
+            msg: The message to display
+        """
         warn_flag = '__warned_' + flag
         if not hasattr(self, warn_flag):
             setattr(self, warn_flag, True)
-            warnings.warn(msg)
+            print(msg)
 
 
