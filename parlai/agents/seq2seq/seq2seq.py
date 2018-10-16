@@ -146,7 +146,9 @@ class Seq2seqAgent(TorchAgent):
 
         # all instances may need some params
         self.id = 'Seq2Seq'
+        self.multigpu = opt.get('multigpu') and self.use_cuda
         states = {}
+
         self.beam_dot_log = opt.get('beam_dot_log', False)
         self.beam_size = opt.get('beam_size', 1)
         self.beam_min_n_best = opt.get('beam_min_n_best', 3)
@@ -226,15 +228,17 @@ class Seq2seqAgent(TorchAgent):
             # set loaded states if applicable
             self.model.load_state_dict(states['model'])
 
-        if self.use_cuda:
-            self.model.cuda()
-
         if opt['embedding_type'].endswith('fixed'):
             print('Seq2seq: fixing embedding weights.')
             self.model.decoder.lt.weight.requires_grad = False
             self.model.encoder.lt.weight.requires_grad = False
             if opt['lookuptable'] in ['dec_out', 'all']:
                 self.model.decoder.e2s.weight.requires_grad = False
+
+        if self.use_cuda:
+            self.model.cuda()
+            if self.multigpu:
+                self.model = torch.nn.DataParallel(self.model)
 
         return self.model
 
@@ -342,6 +346,8 @@ class Seq2seqAgent(TorchAgent):
     def train_step(self, batch):
         """Train on a single batch of examples."""
         batchsize = batch.text_vec.size(0)
+        if self.multigpu and batchsize // 2 != 0:
+            import pdb; pdb.set_trace()
         # helps with memory usage
         self._init_cuda_buffer(self.model, self.criterion, batchsize,
                                self.truncate or 180)
@@ -349,7 +355,8 @@ class Seq2seqAgent(TorchAgent):
         self.zero_grad()
 
         try:
-            out = self.model(batch.text_vec, batch.label_vec)
+            seq_len = None if not self.multigpu else batch.text_vec.size(1)
+            out = self.model(batch.text_vec, batch.label_vec, seq_len=seq_len)
 
             # generated response
             scores = out[0]
@@ -396,12 +403,15 @@ class Seq2seqAgent(TorchAgent):
 
     def greedy_search(self, batch):
         cand_params = self._build_cands(batch)
-        out = self.model(batch.text_vec, ys=None, cand_params=cand_params)
+        seq_len = None if not self.multigpu else batch.text_vec.size(1)
+        out = self.model(batch.text_vec, ys=None, cand_params=cand_params,
+                         seq_len=seq_len)
         return out, cand_params
 
     @staticmethod
     def beam_search(model, batch, beam_size, start=1, end=2,
-                    pad=0, min_length=3, min_n_best=5, max_ts=40, block_ngram=0):
+                    pad=0, min_length=3, min_n_best=5, max_ts=40, block_ngram=0,
+                    multigpu=False):
         """ Beam search given the model and Batch
         This function uses model with the following reqs:
         - model.encoder takes input returns tuple (enc_out, enc_hidden, attn_mask)
@@ -426,7 +436,10 @@ class Seq2seqAgent(TorchAgent):
         beams : list of Beam instances defined in Beam class, can be used for any
                 following postprocessing, e.g. dot logging.
         """
-        encoder_states = model.encoder(batch.text_vec)
+        if not multigpu:
+            encoder_states = model.encoder(batch.text_vec)
+        else:
+            encoder_states = model.module.encoder(batch.text_vec)
         enc_out = encoder_states[0]
         enc_hidden = encoder_states[1]
         attn_mask = encoder_states[2]
@@ -466,9 +479,14 @@ class Seq2seqAgent(TorchAgent):
         for ts in range(max_ts):
             if all((b.done() for b in beams)):
                 break
-            output, hidden = model.decoder(
-                decoder_input, hidden, (enc_out, attn_mask))
-            score = model.output(output)
+            if not multigpu:
+                output, hidden = model.decoder(
+                    decoder_input, hidden, (enc_out, attn_mask))
+                score = model.output(output)
+            else:
+                output, hidden = model.module.decoder(
+                    decoder_input, hidden, (enc_out, attn_mask))
+                score = model.module.output(output)
             # score contains softmax scores for batch_size * beam_size samples
             score = score.view(batch_size, beam_size, -1)
             score = F.log_softmax(score, dim=-1)
@@ -512,10 +530,24 @@ class Seq2seqAgent(TorchAgent):
         """Evaluate a single batch of examples."""
         if batch.text_vec is None:
             return
+        needs_truncation = self.multigpu and batch.text_vec.size(0) % 2 != 0
+        if needs_truncation:
+            # for multigpu, we need to split evenly across gpus
+            pad_tensor = torch.zeros(1, batch.text_vec.size(1)).long().cuda()
+            text_vec = torch.cat([batch.text_vec, pad_tensor], 0)
+            batch = batch._replace(text_vec=text_vec)
         self.model.eval()
         cand_scores = None
         if self.beam_size == 1:
             out, cand_params = self.greedy_search(batch)
+            if needs_truncation:
+                new_out_0 = out[0][:-1]
+                new_out_2 = []
+                for vec in out[2]:
+                    new_vec = vec[:-1]
+                    new_out_2.append(new_vec)
+                new_out_2 = tuple(new_out_2)
+                out = (new_out_0, out[1], new_out_2)
             scores, cand_scores = out[0], out[1]
             _, preds = scores.max(2)
         elif self.beam_size > 1:
@@ -528,8 +560,13 @@ class Seq2seqAgent(TorchAgent):
                 pad=self.NULL_IDX,
                 min_length=self.beam_min_length,
                 min_n_best=self.beam_min_n_best,
-                block_ngram=self.beam_block_ngram)
+                block_ngram=self.beam_block_ngram,
+                multigpu=self.multigpu)
             beam_preds_scores, _, beams = out
+            if needs_truncation:
+                beam_preds_scores = beam_preds_scores[:-1]
+                new_beams = [beam[:-1] for beam in beams]
+                beams = tuple(new_beams)
             preds, scores = [p[0] for p in beam_preds_scores], [
                 p[1] for p in beam_preds_scores]
             if self.beam_dot_log is True:
@@ -543,7 +580,8 @@ class Seq2seqAgent(TorchAgent):
 
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
-            out = self.model(batch.text_vec, batch.label_vec)
+            seq_len = None if not self.multigpu else batch.text_vec.size(1)
+            out = self.model(batch.text_vec, batch.label_vec, seq_len=seq_len)
             f_scores = out[0]  # forced scores
             _, f_preds = f_scores.max(2)  # forced preds
             score_view = f_scores.view(-1, f_scores.size(-1))
@@ -573,7 +611,10 @@ class Seq2seqAgent(TorchAgent):
         if path and hasattr(self, 'model'):
             model = {}
             model['model'] = self.model.state_dict()
-            model['longest_label'] = self.model.longest_label
+            if self.multigpu:
+                model['longest_label'] = self.model.module.longest_label
+            else:
+                model['longest_label'] = self.model.longest_label
             model['optimizer'] = self.optimizer.state_dict()
             model['optimizer_type'] = self.opt['optimizer']
 
@@ -589,6 +630,19 @@ class Seq2seqAgent(TorchAgent):
     def load(self, path):
         """Return opt and model states."""
         states = torch.load(path, map_location=lambda cpu, _: cpu)
+
+        # check opt file for multigpu
+        with open(path + ".opt", 'rb') as handle:
+            saved_opt = pickle.load(handle)
+        if saved_opt.get('multigpu'):
+            # create new OrderedDict that does not contain `module.`
+            from collections import OrderedDict
+            new_state_dict = OrderedDict()
+            for k, v in states['model'].items():
+                name = k[7:]  # remove `module.`
+                new_state_dict[name] = v
+            states['model'] = new_state_dict
+
         return states
 
 

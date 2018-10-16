@@ -244,7 +244,7 @@ class Seq2seq(nn.Module):
         return cand_scores
 
     def forward(self, xs, ys=None, cand_params=None, prev_enc=None,
-                maxlen=None):
+                maxlen=None, seq_len=None):
         """Get output predictions from the model.
 
         :param xs:          (bsz x seqlen) LongTensor input to the encoder
@@ -283,6 +283,18 @@ class Seq2seq(nn.Module):
             scores = self._decode_forced(ys, encoder_states)
         else:
             scores = self._decode(encoder_states, maxlen or self.longest_label)
+
+        if seq_len is not None:
+            # when using multi-gpu, we need to make sure output of
+            # encoder is correct size for gathering
+            if encoder_states[0].size(1) < seq_len:
+                out_pad_tensor = torch.zeros(
+                    encoder_states[0].size(0),
+                    seq_len - encoder_states[0].size(1),
+                    encoder_states[0].size(2)
+                ).cuda()
+                new_out = torch.cat([encoder_states[0], out_pad_tensor], 1)
+                encoder_states = (new_out, encoder_states[1], encoder_states[2])
 
         return scores, cand_scores, encoder_states
 
