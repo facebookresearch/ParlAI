@@ -29,10 +29,15 @@ Here's an example dataset with a single episode with 2 examples:
 
 ::
 
-	text:hello how are you today?\tlabels:i'm great thanks! what are you doing?
-	text:i've just been biking.\tlabels:oh nice, i haven't got on a bike in years!\tepisode_done:True
+	text:hello how are you today?	labels:i'm great thanks! what are you doing?
+	text:i've just been biking.	labels:oh nice, i haven't got on a bike in years!	episode_done:True
 
 Suppose that data is in the file /tmp/data.txt
+
+.. note::
+
+	There are tabs between each field above which are rendered in the browser as four spaces.
+	Be sure to change them to tabs for the command below to work.
 
 We could look at that data using the usual display data script:
 
