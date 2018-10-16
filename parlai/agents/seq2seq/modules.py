@@ -246,8 +246,9 @@ class Seq2seq(nn.Module):
         :param xs:          (bsz x seqlen) LongTensor input to the encoder
         :param ys:          expected output from the decoder. used for teacher
                             forcing to calculate loss.
-        :param cand_params: set of candidates to rank, and indices to match
-                            candidates with their appropriate xs.
+        :param cands:       set of candidates to rank
+        :param cand_inds:   set of indices to match candidates with their
+                            appropriate xs.
         :param prev_enc:    if you know you'll pass in the same xs multiple
                             times, you can pass in the encoder output from the
                             last forward pass to skip recalcuating the same
@@ -255,6 +256,10 @@ class Seq2seq(nn.Module):
         :param maxlen:      max number of tokens to decode. if not set, will
                             use the length of the longest label this model
                             has seen. ignored when ys is not None.
+        :param seq_len      this is the sequence length of the input (xs), i.e.
+                            xs.size(1). we use this to recover the proper
+                            output sizes in the case when we distribute over
+                            multiple gpus
 
         :returns: scores, candidate scores, and encoder states
             scores contains the model's predicted token scores.
@@ -281,8 +286,9 @@ class Seq2seq(nn.Module):
             scores = self._decode(encoder_states, maxlen or self.longest_label)
 
         if seq_len is not None:
-            # when using multi-gpu, we need to make sure output of
-            # encoder is correct size for gathering
+            # when using multiple gpus, we need to make sure output of
+            # encoder is correct size for gathering; we recover this with
+            # the parameter seq_len
             if encoder_states[0].size(1) < seq_len:
                 out_pad_tensor = torch.zeros(
                     encoder_states[0].size(0),

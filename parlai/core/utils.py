@@ -950,6 +950,7 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
     :param int pad_idx: the value to use for padding
     :param bool use_cuda: if true, places `padded` on GPU
     :param bool left_padded:
+    :param int max_len: if None, the max length is the maximum item length
 
     :returns: (padded, lengths) tuple
     :rtype: (Tensor[int64], list[int])

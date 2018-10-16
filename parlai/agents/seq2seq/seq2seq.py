@@ -239,6 +239,10 @@ class Seq2seqAgent(TorchAgent):
             self.model.cuda()
             if self.multigpu:
                 self.model = torch.nn.DataParallel(self.model)
+                self.model.encoder = self.model.module.encoder
+                self.model.decoder = self.model.module.decoder
+                self.model.longest_label = self.model.module.longest_label
+                self.model.output = self.model.module.output
 
         return self.model
 
@@ -437,6 +441,7 @@ class Seq2seqAgent(TorchAgent):
         min_length : minimum length of the decoded sequence
         min_n_best : minimum number of completed hypothesis generated from each beam
         max_ts: the maximum length of the decoded sequence
+        multigpu: (boolean) using multigpu or not
 
         Return:
         beam_preds_scores : list of tuples (prediction, score) for each sample in Batch
@@ -445,10 +450,7 @@ class Seq2seqAgent(TorchAgent):
         beams : list of Beam instances defined in Beam class, can be used for any
                 following postprocessing, e.g. dot logging.
         """
-        if not multigpu:
-            encoder_states = model.encoder(batch.text_vec)
-        else:
-            encoder_states = model.module.encoder(batch.text_vec)
+        encoder_states = model.encoder(batch.text_vec)
         enc_out = encoder_states[0]
         enc_hidden = encoder_states[1]
         attn_mask = encoder_states[2]
@@ -488,14 +490,9 @@ class Seq2seqAgent(TorchAgent):
         for ts in range(max_ts):
             if all((b.done() for b in beams)):
                 break
-            if not multigpu:
-                output, hidden = model.decoder(
-                    decoder_input, hidden, (enc_out, attn_mask))
-                score = model.output(output)
-            else:
-                output, hidden = model.module.decoder(
-                    decoder_input, hidden, (enc_out, attn_mask))
-                score = model.module.output(output)
+            output, hidden = model.decoder(
+                decoder_input, hidden, (enc_out, attn_mask))
+            score = model.output(output)
             # score contains softmax scores for batch_size * beam_size samples
             score = score.view(batch_size, beam_size, -1)
             score = F.log_softmax(score, dim=-1)
@@ -653,10 +650,7 @@ class Seq2seqAgent(TorchAgent):
         if path and hasattr(self, 'model'):
             model = {}
             model['model'] = self.model.state_dict()
-            if self.multigpu:
-                model['longest_label'] = self.model.module.longest_label
-            else:
-                model['longest_label'] = self.model.longest_label
+            model['longest_label'] = self.model.longest_label
             model['optimizer'] = self.optimizer.state_dict()
             model['optimizer_type'] = self.opt['optimizer']
 
