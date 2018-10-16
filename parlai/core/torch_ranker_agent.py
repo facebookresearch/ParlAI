@@ -7,7 +7,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 import os
-from tqdm import tqdm
 
 import torch
 from torch import nn
@@ -353,7 +352,7 @@ class TorchRankerAgent(TorchAgent):
                           "512) ]".format(opt['fixed_candidates_path'],
                                           len(cand_batches)))
                     cand_vecs = []
-                    for batch in tqdm(cand_batches):
+                    for batch in cand_batches:
                         cand_vecs.extend(self.vectorize_fixed_candidates(batch))
                     self.fixed_candidate_vecs = self._cat_and_pad(cand_vecs,
                                                                   self.NULL_IDX)
