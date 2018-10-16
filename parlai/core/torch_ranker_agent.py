@@ -176,8 +176,6 @@ class TorchRankerAgent(TorchAgent):
                 all examples.
                 Note: this setting is not recommended for training unless the
                 universe of possible candidates is very small.
-
-        NOTE: Currently, all examples in a batch must have the same candidate set.
         """
         label_vecs = batch.label_vec  # [bsz] list of lists of LongTensors
         label_inds = None
