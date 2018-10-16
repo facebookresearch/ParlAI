@@ -208,12 +208,8 @@ class Seq2seq(nn.Module):
                         .expand(num_cands, -1))
         return cur_enc, cur_hid, cur_mask
 
-    def _rank(self, cand_params, encoder_states):
+    def _rank(self, cands, cand_inds, encoder_states):
         """Rank each cand by the average log-probability of the sequence."""
-        if cand_params is None:
-            return None
-
-        cands, cand_inds = cand_params
         if cands is None:
             return None
         encoder_states = self._align_inds(encoder_states, cand_inds)
@@ -243,7 +239,7 @@ class Seq2seq(nn.Module):
              for c in cand_scores], 0)
         return cand_scores
 
-    def forward(self, xs, ys=None, cand_params=None, prev_enc=None,
+    def forward(self, xs, ys=None, cands=None, cand_inds=None, prev_enc=None,
                 maxlen=None, seq_len=None):
         """Get output predictions from the model.
 
@@ -276,7 +272,7 @@ class Seq2seq(nn.Module):
         encoder_states = self._encode(xs, prev_enc)
 
         # rank candidates if they are available
-        cand_scores = self._rank(cand_params, encoder_states)
+        cand_scores = self._rank(cands, cand_inds, encoder_states)
 
         if ys is not None:
             # use teacher forcing
