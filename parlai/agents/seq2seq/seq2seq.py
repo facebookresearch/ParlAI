@@ -526,28 +526,39 @@ class Seq2seqAgent(TorchAgent):
 
         return beam_preds_scores, n_best_beam_preds_scores, beams
 
+    def extend_input(self, batch):
+        pad_tensor = torch.zeros(1, batch.text_vec.size(1)).long().cuda()
+        text_vec = torch.cat([batch.text_vec, pad_tensor], 0)
+        batch = batch._replace(text_vec=text_vec)
+        if batch.label_vec is not None:
+            pad_tensor = torch.zeros(
+                1,
+                batch.label_vec.size(1)
+            ).long().cuda()
+            label_vec = torch.cat([batch.label_vec, pad_tensor], 0)
+            batch = batch._replace(label_vec=label_vec)
+        return batch
+
+    def truncate_output(self, out):
+        new_out_0 = out[0][:-1]
+        new_out_2 = [vec[:-1] for vec in out[2]]
+        return tuple([new_out_0, out[1], new_out_2])
+
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
         if batch.text_vec is None:
             return
+        orig_batch = batch  # save for evaluation
         needs_truncation = self.multigpu and batch.text_vec.size(0) % 2 != 0
         if needs_truncation:
             # for multigpu, we need to split evenly across gpus
-            pad_tensor = torch.zeros(1, batch.text_vec.size(1)).long().cuda()
-            text_vec = torch.cat([batch.text_vec, pad_tensor], 0)
-            batch = batch._replace(text_vec=text_vec)
+            batch = self.extend_input(batch)
         self.model.eval()
         cand_scores = None
         if self.beam_size == 1:
             out, cand_params = self.greedy_search(batch)
             if needs_truncation:
-                new_out_0 = out[0][:-1]
-                new_out_2 = []
-                for vec in out[2]:
-                    new_vec = vec[:-1]
-                    new_out_2.append(new_vec)
-                new_out_2 = tuple(new_out_2)
-                out = (new_out_0, out[1], new_out_2)
+                out = self.truncate_output(out)
             scores, cand_scores = out[0], out[1]
             _, preds = scores.max(2)
         elif self.beam_size > 1:
@@ -562,11 +573,9 @@ class Seq2seqAgent(TorchAgent):
                 min_n_best=self.beam_min_n_best,
                 block_ngram=self.beam_block_ngram,
                 multigpu=self.multigpu)
-            beam_preds_scores, _, beams = out
             if needs_truncation:
-                beam_preds_scores = beam_preds_scores[:-1]
-                new_beams = [beam[:-1] for beam in beams]
-                beams = tuple(new_beams)
+                out = self.truncate_output(out)
+            beam_preds_scores, _, beams = out
             preds, scores = [p[0] for p in beam_preds_scores], [
                 p[1] for p in beam_preds_scores]
             if self.beam_dot_log is True:
@@ -582,14 +591,16 @@ class Seq2seqAgent(TorchAgent):
             # calculate loss on targets with teacher forcing
             seq_len = None if not self.multigpu else batch.text_vec.size(1)
             out = self.model(batch.text_vec, batch.label_vec, seq_len=seq_len)
+            if needs_truncation:
+                out = self.truncate_output(out)
             f_scores = out[0]  # forced scores
             _, f_preds = f_scores.max(2)  # forced preds
             score_view = f_scores.view(-1, f_scores.size(-1))
-            loss = self.criterion(score_view, batch.label_vec.view(-1))
+            loss = self.criterion(score_view, orig_batch.label_vec.view(-1))
             # save loss to metrics
-            notnull = batch.label_vec.ne(self.NULL_IDX)
+            notnull = orig_batch.label_vec.ne(self.NULL_IDX)
             target_tokens = notnull.long().sum().item()
-            correct = ((batch.label_vec == f_preds) * notnull).sum().item()
+            correct = ((orig_batch.label_vec == f_preds) * notnull).sum().item()
             self.metrics['correct_tokens'] += correct
             self.metrics['loss'] += loss.item()
             self.metrics['num_tokens'] += target_tokens
@@ -599,7 +610,7 @@ class Seq2seqAgent(TorchAgent):
             cand_preds = cand_scores.sort(1, descending=True)[1]
             # now select the text of the cands based on their scores
             cand_choices = self._pick_cands(cand_preds, cand_params[1],
-                                            batch.candidates)
+                                            orig_batch.candidates)
 
         text = [self._v2t(p) for p in preds]
         return Output(text, cand_choices)
