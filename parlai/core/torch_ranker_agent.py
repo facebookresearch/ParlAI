@@ -105,8 +105,14 @@ class TorchRankerAgent(TorchAgent):
         loss.backward()
         self.update_params()
 
-        cand_preds = [[cands[i] for i in row] for row in ranks]
-        preds = [row[0] for row in cand_preds]
+        cand_preds = []
+        for i, ordering in enumerate(ranks):
+            if cand_vecs.dim() == 2:
+                cand_list = cands
+            elif cand_vecs.dim() == 3:
+                cand_list = cands[i]
+            cand_preds.append([cand_list[rank] for rank in ordering])
+        preds = [cand_preds[i][0] for i in range(batchsize)]
         return Output(preds, cand_preds)
 
     @torch.no_grad()
@@ -131,8 +137,14 @@ class TorchRankerAgent(TorchAgent):
                 rank = (ranks[b] == label_inds[b]).nonzero().item()
                 self.metrics['rank'] += 1 + rank
 
-        cand_preds = [[cands[i] for i in row] for row in ranks]
-        preds = [row[0] for row in cand_preds]
+        cand_preds = []
+        for i, ordering in enumerate(ranks):
+            if cand_vecs.dim() == 2:
+                cand_list = cands
+            elif cand_vecs.dim() == 3:
+                cand_list = cands[i]
+            cand_preds.append([cand_list[rank] for rank in ordering])
+        preds = [cand_preds[i][0] for i in range(batchsize)]
         return Output(preds, cand_preds)
 
     def _build_candidates(self, batch, source, mode):
@@ -140,14 +152,16 @@ class TorchRankerAgent(TorchAgent):
 
         :param batch: a Batch object (defined in torch_agent.py)
         :param source: the source from which candidates should be built, one of
-            ['batch', 'inline', 'fixed', 'vocab']
+            ['batch', 'inline', 'fixed']
         :param mode: 'train' or 'eval'
 
         :return: tuple of tensors (label_inds, cands, cand_vecs)
-            label_inds: A [bsz] LongTensor of the indices of the labelf or each example
-                in the tensor of candidates
+            label_inds: A [bsz] LongTensor of the indices of the labels for each
+                example from its respective candidate set
             cands: A [num_cands] list of (text) candidates
+                OR a [batchsize] list of such lists if source=='inline'
             cand_vecs: A padded [num_cands, seqlen] LongTensor of vectorized candidates
+                OR a [batchsize, num_cands, seqlen] LongTensor if source=='inline'
 
         Possible sources of candidates:
             * batch: the set of all labels in this batch
@@ -155,8 +169,11 @@ class TorchRankerAgent(TorchAgent):
                 example's label being treated as negatives). If labels are single
                 tokens, filter to unique labels. (Ideally, we would always filter to
                 unique labels, but we abstain for the sake of speed.)
+                Note: with this setting, the candidate set is identical for all
+                examplesin a batch.
             * inline: batch_size lists, one list per example
                 If each example comes with a list of possible candidates, use those.
+                Note: With this setting, each example will have its own candidate set.
             * fixed: one global candidate list, provide in a file from the user
                 If self.fixed_candidates is not None, use a set of fixed candidates for
                 all examples.
@@ -166,13 +183,11 @@ class TorchRankerAgent(TorchAgent):
         NOTE: Currently, all examples in a batch must have the same candidate set.
         """
         label_vecs = batch.label_vec # [bsz] list of lists of LongTensors
+        label_inds = None
         batchsize = batch.text_vec.shape[0]
 
         if label_vecs is not None:
             assert label_vecs.dim() == 2
-            if self.use_cuda:
-                label_vecs.cuda()
-        label_inds = None
 
         if source == 'batch':
             self._warn_once(
@@ -202,26 +217,27 @@ class TorchRankerAgent(TorchAgent):
         elif source == 'inline':
             self._warn_once(
                 flag=(mode + '_batch_candidates'),
-                msg=('[ Executing {} mode with provided inline set of candidates '
-                    '(assumed to be identical for all candidates in a batch). ]'
+                msg=('[ Executing {} mode with provided inline set of candidates ]'
                     ''.format(mode)))
             if batch.candidate_vecs is None:
                 raise ValueError("If using candidate source 'inline', then "
                     "bath.candidate_vecs can not be None.")
-            if batchsize > 1 and (
-                torch.any(batch.candidate_vecs[0] != batch.candidate_vecs[1])):
-                raise ValueError("All examples in a batch must have the same "
-                    "candidate set.")
 
-            cands = batch.candidates[0]
-            cand_vecs, _ = padded_tensor(batch.candidate_vecs[0],
-                use_cuda=self.use_cuda)
+            cands = batch.candidates
+            # batch.candidate_vecs is a [batchsize] list of [num_cand] lists of
+            # [seq_len] LongTensors
+            max_len = max(len(t) for t_list in batch.candidate_vecs for t in t_list)
+            cand_tensor_list = [self._cat_and_pad(cand_list, max_len=max_len,
+                use_cuda=self.use_cuda) for cand_list in batch.candidate_vecs]
+            # cand_tensor_list is a [batchsize] list of [num_cand, seq_len] LongTensors
+            cand_vecs = torch.stack(cand_tensor_list, 0)
+            # cands is a [batchsize, cand_len, seq_len] LongTensor
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty(batchsize)
                 for i, label_vec in enumerate(label_vecs):
-                    label_vec_pad = label_vec.new_zeros(cand_vecs.size(1))
+                    label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
                     label_vec_pad[0:label_vec.size(0)] = label_vec
-                    label_inds[i] = (cand_vecs == label_vec_pad).all(1).nonzero()[0]
+                    label_inds[i] = (cand_vecs[i] == label_vec_pad).all(1).nonzero()[0]
 
         elif source == 'fixed':
             self._warn_once(
@@ -345,26 +361,32 @@ class TorchRankerAgent(TorchAgent):
                             opt['fixed_candidate_vecs_path']))
                         torch.save(self.fixed_candidate_vecs,
                             opt['fixed_candidate_vecs_path'])
+
+                if self.use_cuda:
+                    self.fixed_candidate_vecs = self.fixed_candidate_vecs.cuda()
             else:
                 self.fixed_candidates = None
                 self.fixed_candidate_vecs = None
 
-            if self.use_cuda:
-                self.fixed_candidate_vecs = self.fixed_candidate_vecs.cuda()
-
     def vectorize_fixed_candidates(self, cands_batch):
-        return [self._vectorize_text(cand, truncate=self.opt.get('truncate'),
-            truncate_left=False) for cand in cands_batch]
+        return [self._vectorize_text(cand, truncate=self.truncate, truncate_left=False)
+            for cand in cands_batch]
 
-    @staticmethod
-    def _cat_and_pad(tensor_list, padding_value):
-        """Concatenate a list of 1D Long Tensor, fills the empty values
-        with a padding value.
+    def _cat_and_pad(self, tensor_list, max_len=None, use_cuda=False):
+        """Concatenate a list of 1D LongTensors and pad it
+
+        Args:
+            tensor_list: a list of 1D LongTensors
+            max_len: the length to which to pad; if None, the maximum length of the 1D
+                tensors will be used
         """
-        max_len = max([len(t) for t in tensor_list])
-        response = torch.LongTensor(len(tensor_list), max_len).fill_(padding_value)
+        if not max_len:
+            max_len = max([len(t) for t in tensor_list])
+        response = torch.LongTensor(len(tensor_list), max_len).fill_(self.NULL_IDX)
         for i, tensor in enumerate(tensor_list):
             response[i, 0:len(tensor)] = tensor
+        if use_cuda:
+            response = response.cuda()
         return response
 
     def _warn_once(self, flag, msg):
