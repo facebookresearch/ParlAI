@@ -7,16 +7,15 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 import os
-from functools import lru_cache
 from tqdm import tqdm
-import warnings
 
 import torch
 from torch import nn
 
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import round_sigfigs, padded_tensor
+from parlai.core.utils import round_sigfigs
+
 
 class TorchRankerAgent(TorchAgent):
     @staticmethod
@@ -34,13 +33,13 @@ class TorchRankerAgent(TorchAgent):
         agent.add_argument(
             '-cands', '--fixed-candidates-path', type=str, default='',
             help='A text file of fixed candidates to use for all examples, one '
-                'candidate per line')
+                 'candidate per line')
         agent.add_argument(
             '-candvecs', '--fixed-candidate-vecs-path', type=str, default='',
             help='A torch file containing vectorized fixed candidates to use for all '
-                'examples. If a file already exists at -fixed-candidate-vecs-path, '
-                'those vectors will be loaded. If not, they will be computed and '
-                'written to that path')
+                 'examples. If a file already exists at -fixed-candidate-vecs-path, '
+                 'those vectors will be loaded. If not, they will be computed and '
+                 'written to that path')
 
     def __init__(self, opt, shared):
         if shared:
@@ -90,8 +89,8 @@ class TorchRankerAgent(TorchAgent):
         self.model.train()
         self.optimizer.zero_grad()
 
-        cands, cand_vecs, label_inds = self._build_candidates(batch,
-            source=self.opt['train_candidates'], mode='train')
+        cands, cand_vecs, label_inds = self._build_candidates(
+            batch, source=self.opt['train_candidates'], mode='train')
         scores = self.score_candidates(batch, cand_vecs)
         loss = self.rank_loss(scores, label_inds)
 
@@ -122,8 +121,8 @@ class TorchRankerAgent(TorchAgent):
         batchsize = batch.text_vec.size(0)
         self.model.eval()
 
-        cands, cand_vecs, label_inds = self._build_candidates(batch,
-            source=self.opt['eval_candidates'], mode='eval')
+        cands, cand_vecs, label_inds = self._build_candidates(
+            batch, source=self.opt['eval_candidates'], mode='eval')
 
         scores = self.score_candidates(batch, cand_vecs)
         _, ranks = scores.sort(1, descending=True)
@@ -181,7 +180,7 @@ class TorchRankerAgent(TorchAgent):
 
         NOTE: Currently, all examples in a batch must have the same candidate set.
         """
-        label_vecs = batch.label_vec # [bsz] list of lists of LongTensors
+        label_vecs = batch.label_vec  # [bsz] list of lists of LongTensors
         label_inds = None
         batchsize = batch.text_vec.shape[0]
 
@@ -192,16 +191,17 @@ class TorchRankerAgent(TorchAgent):
             self._warn_once(
                 flag=(mode + '_batch_candidates'),
                 msg=('[ Executing {} mode with batch labels as set of candidates. ]'
-                    ''.format(mode)))
+                     ''.format(mode)))
             if batchsize == 1:
                 self._warn_once(
                     flag=(mode + '_batchsize_1'),
                     msg=("[ Warning: using candidate source 'batch' and observed a "
-                    "batch of size 1. This may be due to uneven batch sizes at the end "
-                    "of an epoch. ]"))
+                         "batch of size 1. This may be due to uneven batch sizes at "
+                         "the end of an epoch. ]"))
             if label_vecs is None:
-                raise ValueError("If using candidate source 'batch', then "
-                    "batch.label_vec can not be None.")
+                raise ValueError(
+                    "If using candidate source 'batch', then batch.label_vec cannot be "
+                    "None.")
 
             # Labels are single tokens, enforce uniqueness
             if label_vecs.size(1) == 1:
@@ -217,17 +217,19 @@ class TorchRankerAgent(TorchAgent):
             self._warn_once(
                 flag=(mode + '_batch_candidates'),
                 msg=('[ Executing {} mode with provided inline set of candidates ]'
-                    ''.format(mode)))
+                     ''.format(mode)))
             if batch.candidate_vecs is None:
-                raise ValueError("If using candidate source 'inline', then "
-                    "bath.candidate_vecs can not be None.")
+                raise ValueError(
+                    "If using candidate source 'inline', then bath.candidate_vecs "
+                    "cannot be None.")
 
             cands = batch.candidates
             # batch.candidate_vecs is a [batchsize] list of [num_cand] lists of
             # [seq_len] LongTensors
             max_len = max(len(t) for t_list in batch.candidate_vecs for t in t_list)
-            cand_tensor_list = [self._cat_and_pad(cand_list, max_len=max_len,
-                use_cuda=self.use_cuda) for cand_list in batch.candidate_vecs]
+            cand_tensor_list = [
+                self._cat_and_pad(cand_list, max_len=max_len, use_cuda=self.use_cuda)
+                for cand_list in batch.candidate_vecs]
             # cand_tensor_list is a [batchsize] list of [num_cand, seq_len] LongTensors
             cand_vecs = torch.stack(cand_tensor_list, 0)
             # cands is a [batchsize, cand_len, seq_len] LongTensor
@@ -242,11 +244,11 @@ class TorchRankerAgent(TorchAgent):
             self._warn_once(
                 flag=(mode + '_batch_candidates'),
                 msg=('[ Executing {} mode with a common set of fixed candidates. ]'
-                    ''.format(mode)))
+                     ''.format(mode)))
             if self.fixed_candidates is None:
-                raise ValueError("If using candidate source 'fixed', then "
-                    "you must provide the path to a file of candidates with "
-                    "the flag --fixed-candidates-path")
+                raise ValueError(
+                    "If using candidate source 'fixed', then you must provide the path "
+                    "to a file of candidates with the flag --fixed-candidates-path")
 
             cands = self.fixed_candidates
             cand_vecs = self.fixed_candidate_vecs
@@ -339,7 +341,7 @@ class TorchRankerAgent(TorchAgent):
                     self.fixed_candidates = [line.strip() for line in f.readlines()]
 
                 if (opt['fixed_candidate_vecs_path'] and
-                    os.path.isfile(opt['fixed_candidate_vecs_path'])):
+                        os.path.isfile(opt['fixed_candidate_vecs_path'])):
                     print("[ Loading fixed candidate set vectors from {} ]".format(
                         opt['fixed_candidate_vecs_path']))
                     self.fixed_candidate_vecs = torch.load(
@@ -348,18 +350,18 @@ class TorchRankerAgent(TorchAgent):
                     cands = self.fixed_candidates
                     cand_batches = [cands[i:i + 512] for i in range(0, len(cands), 512)]
                     print("[ Vectorizing fixed candidates set from {} ({} batch(es) of "
-                        "512) ]".format(opt['fixed_candidates_path'],
-                            len(cand_batches)))
+                          "512) ]".format(opt['fixed_candidates_path'],
+                                          len(cand_batches)))
                     cand_vecs = []
                     for batch in tqdm(cand_batches):
                         cand_vecs.extend(self.vectorize_fixed_candidates(batch))
                     self.fixed_candidate_vecs = self._cat_and_pad(cand_vecs,
-                        self.NULL_IDX)
+                                                                  self.NULL_IDX)
                     if opt['fixed_candidate_vecs_path']:
                         print("[ Saving fixed candidate set vectors to {} ]".format(
                             opt['fixed_candidate_vecs_path']))
                         torch.save(self.fixed_candidate_vecs,
-                            opt['fixed_candidate_vecs_path'])
+                                   opt['fixed_candidate_vecs_path'])
 
                 if self.use_cuda:
                     self.fixed_candidate_vecs = self.fixed_candidate_vecs.cuda()
@@ -369,7 +371,7 @@ class TorchRankerAgent(TorchAgent):
 
     def vectorize_fixed_candidates(self, cands_batch):
         return [self._vectorize_text(cand, truncate=self.truncate, truncate_left=False)
-            for cand in cands_batch]
+                for cand in cands_batch]
 
     def _cat_and_pad(self, tensor_list, max_len=None, use_cuda=False):
         """Concatenate a list of 1D LongTensors and pad it
@@ -398,5 +400,3 @@ class TorchRankerAgent(TorchAgent):
         if not hasattr(self, warn_flag):
             setattr(self, warn_flag, True)
             print(msg)
-
-

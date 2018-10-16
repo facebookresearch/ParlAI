@@ -6,11 +6,9 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-import os
 from functools import lru_cache
 
 import torch
-from torch import nn
 
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 
@@ -76,7 +74,6 @@ class MemnnAgent(TorchRankerAgent):
             if opt['time_features']:
                 for i in range(self.memsize):
                     self.dict[self._time_feature(i)] = 100000000 + i
-
 
     def build_model(self):
         """Build MemNN model."""
