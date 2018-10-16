@@ -115,7 +115,6 @@ class TorchRankerAgent(TorchAgent):
         preds = [cand_preds[i][0] for i in range(batchsize)]
         return Output(preds, cand_preds)
 
-    @torch.no_grad()
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
         if batch.text_vec is None:
