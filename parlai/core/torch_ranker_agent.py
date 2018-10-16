@@ -60,7 +60,7 @@ class TorchRankerAgent(TorchAgent):
                 print('Loading existing model parameters from ' + model_file)
                 self.load(model_file)
 
-        self.rank_loss = nn.CrossEntropyLoss(reduction='sum')
+        self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
         self.set_fixed_candidates(shared)
 
         if self.use_cuda:
@@ -349,7 +349,7 @@ class TorchRankerAgent(TorchAgent):
                     cands = self.fixed_candidates
                     cand_batches = [cands[i:i + 512] for i in range(0, len(cands), 512)]
                     print("[ Vectorizing fixed candidates set from {} ({} batch(es) of "
-                          "512) ]".format(opt['fixed_candidates_path'],
+                          "up to 512) ]".format(opt['fixed_candidates_path'],
                                           len(cand_batches)))
                     cand_vecs = []
                     for batch in cand_batches:
