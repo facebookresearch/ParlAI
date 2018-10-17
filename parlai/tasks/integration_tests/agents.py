@@ -107,6 +107,23 @@ class CandidateTeacher(DialogTeacher):
                 cands.append(self.corpus[offset])
             yield (text, [text], 0, cands), True
 
+class MultiturnCandidateTeacher(CandidateTeacher):
+    """Splits inputs/targets by spaces into multiple turns.
+
+    Good for testing models that use the dialog history.
+    """
+    def setup_data(self, fold):
+        raw = super().setup_data(fold)
+        for (t, a, r, cs), _e in raw:
+            split_t = t.split(' ')
+            split_a = a[0].split(' ')
+            split_cs = [c.split(' ') for c in cs]
+            for i in range(len(split_t)):
+                yield (
+                    (split_t[i], [' '.join(split_a[:i + 1])], r,
+                     [' '.join(c[:i + 1]) for c in split_cs]),
+                    i == 0
+                )
 
 class NocandidateTeacher(CandidateTeacher):
     """
@@ -115,7 +132,7 @@ class NocandidateTeacher(CandidateTeacher):
     """
     def setup_data(self, fold):
         raw = super().setup_data(fold)
-        for (t, a, r, c), e in raw:
+        for (t, a, _r, _c), e in raw:
             yield (t, a), e
 
 

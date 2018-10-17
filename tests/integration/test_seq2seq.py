@@ -16,7 +16,7 @@ import shutil
 from parlai.scripts.train_model import TrainLoop, setup_args
 
 BATCH_SIZE = 16
-NUM_EPOCHS = 6
+NUM_EPOCHS = 10
 LR = 1
 
 
@@ -46,10 +46,39 @@ class TestSeq2Seq(unittest.TestCase):
             lr=LR,
             batchsize=BATCH_SIZE,
             num_epochs=NUM_EPOCHS,
+            numthreads=1,
             no_cuda=True,
-            embeddingsize=32,
-            hiddensize=32,
-            attention='dot',
+            embeddingsize=16,
+            hiddensize=16,
+            rnn_class='gru',
+            attention='general',
+            gradient_clip=1.0,
+            dropout=0.0,
+            lookuptable='all',
+        )
+
+        self.assertTrue(
+            valid['ppl'] < 1.2,
+            "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+        )
+        self.assertTrue(
+            test['ppl'] < 1.2,
+            "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+        )
+
+    def test_generation_multithreaded(self):
+        stdout, valid, test = _mock_train(
+            task='integration_tests:NocandidateTeacher',
+            model='seq2seq',
+            lr=LR,
+            batchsize=BATCH_SIZE,
+            num_epochs=NUM_EPOCHS,
+            numthreads=2,
+            no_cuda=True,
+            embeddingsize=16,
+            hiddensize=16,
+            rnn_class='gru',
+            attention='general',
             gradient_clip=1.0,
             dropout=0.0,
             lookuptable='all',
