@@ -41,20 +41,17 @@ class TorchRankerAgent(TorchAgent):
                  'written to that path')
 
     def __init__(self, opt, shared):
+        # Must call _get_model_file() first so that paths are updated if necessary
+        # (e.g., a .dict file)
+        model_file, opt = self._get_model_file(opt)
+        opt['rank_candidates'] = True
+        super().__init__(opt, shared)
+
         if shared:
-            super().__init__(opt, shared)
             self.model = shared['model']
             self.metrics = shared['metrics']
         else:
-            # Must call _get_model_file first so that paths are updated if
-            # necessary (e.g., .dict file)
-            model_file = self._get_model_file(opt)
             self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0}
-            opt['rank_candidates'] = True
-
-            super().__init__(opt, shared)
-
-            print('Building model of type {}'.format(self.id))
             self.build_model()
             if model_file:
                 print('Loading existing model parameters from ' + model_file)
@@ -105,7 +102,7 @@ class TorchRankerAgent(TorchAgent):
         self.update_params()
 
         # Get predictions but not full rankings for the sake of speed
-        preds = [self._v2t(cands[row[0]]) for row in ranks]
+        preds = [cands[row[0]] for row in ranks]
         return Output(preds)
 
     def eval_step(self, batch):
@@ -217,7 +214,7 @@ class TorchRankerAgent(TorchAgent):
                     "cannot be None.")
 
             cands = batch.candidates
-            cand_vecs = padded_3d(batch.candidate_vecs)
+            cand_vecs = padded_3d(batch.candidate_vecs, use_cuda=self.use_cuda)
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty(batchsize)
                 for i, label_vec in enumerate(label_vecs):
@@ -303,7 +300,7 @@ class TorchRankerAgent(TorchAgent):
                     opt['dict_file'] is None):
                 opt['dict_file'] = model_file + '.dict'
 
-        return model_file
+        return model_file, opt
 
     def set_fixed_candidates(self, shared):
         """Load a set of fixed candidates and their vectors (or vectorize them here)
@@ -339,7 +336,7 @@ class TorchRankerAgent(TorchAgent):
                     cand_batches = [cands[i:i + 512] for i in range(0, len(cands), 512)]
                     print("[ Vectorizing fixed candidates set from {} ({} batch(es) of "
                           "up to 512) ]".format(opt['fixed_candidates_path'],
-                                          len(cand_batches)))
+                                                len(cand_batches)))
                     cand_vecs = []
                     for batch in cand_batches:
                         cand_vecs.extend(self.vectorize_fixed_candidates(batch))
