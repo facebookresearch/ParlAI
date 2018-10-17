@@ -68,7 +68,7 @@ class TorchRankerAgent(TorchAgent):
             self.rank_loss.cuda()
 
         optim_params = [p for p in self.model.parameters() if p.requires_grad]
-        self._init_optim(optim_params)
+        self.init_optim(optim_params)
 
     def score_candidates(self, batch, cand_vecs):
         """Given a batch and candidate set, return scores (for ranking)"""
