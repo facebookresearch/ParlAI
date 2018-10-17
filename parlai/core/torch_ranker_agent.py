@@ -30,11 +30,11 @@ class TorchRankerAgent(TorchAgent):
             choices=['batch', 'inline', 'fixed', 'vocab'],
             help='The source of candidates during training')
         agent.add_argument(
-            '-cands', '--fixed-candidates-path', type=str, default='',
+            '-cands', '--fixed-candidates-path', type=str,
             help='A text file of fixed candidates to use for all examples, one '
                  'candidate per line')
         agent.add_argument(
-            '-candvecs', '--fixed-candidate-vecs-path', type=str, default='',
+            '-candvecs', '--fixed-candidate-vecs-path', type=str,
             help='A torch file containing vectorized fixed candidates to use for all '
                  'examples. If a file already exists at -fixed-candidate-vecs-path, '
                  'those vectors will be loaded. If not, they will be computed and '
@@ -217,7 +217,7 @@ class TorchRankerAgent(TorchAgent):
                      ''.format(mode)))
             if batch.candidate_vecs is None:
                 raise ValueError(
-                    "If using candidate source 'inline', then bath.candidate_vecs "
+                    "If using candidate source 'inline', then batch.candidate_vecs "
                     "cannot be None.")
 
             cands = batch.candidates
