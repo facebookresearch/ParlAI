@@ -13,7 +13,7 @@ from torch import nn
 
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import round_sigfigs
+from parlai.core.utils import round_sigfigs, padded_3d
 
 
 class TorchRankerAgent(TorchAgent):
@@ -221,15 +221,7 @@ class TorchRankerAgent(TorchAgent):
                     "cannot be None.")
 
             cands = batch.candidates
-            # batch.candidate_vecs is a [batchsize] list of [num_cand] lists of
-            # [seq_len] LongTensors
-            max_len = max(len(t) for t_list in batch.candidate_vecs for t in t_list)
-            cand_tensor_list = [
-                self._cat_and_pad(cand_list, max_len=max_len, use_cuda=self.use_cuda)
-                for cand_list in batch.candidate_vecs]
-            # cand_tensor_list is a [batchsize] list of [num_cand, seq_len] LongTensors
-            cand_vecs = torch.stack(cand_tensor_list, 0)
-            # cands is a [batchsize, cand_len, seq_len] LongTensor
+            cand_vecs = padded_3d(batch.candidate_vecs)
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty(batchsize)
                 for i, label_vec in enumerate(label_vecs):
@@ -320,6 +312,9 @@ class TorchRankerAgent(TorchAgent):
     def set_fixed_candidates(self, shared):
         """Load a set of fixed candidates and their vectors (or vectorize them here)
 
+        self.fixed_candidates will contain a [num_cands] list of strings
+        self.fixed_candidate_vecs will contain a [num_cands, seq_len] LongTensor
+
         Note: TorchRankerAgent by default converts candidates to vectors by vectorizing
         in the common sense (i.e., replacing each token with its index in the
         dictionary). If a child model wants to actually perform encoding, it can
@@ -352,8 +347,7 @@ class TorchRankerAgent(TorchAgent):
                     cand_vecs = []
                     for batch in cand_batches:
                         cand_vecs.extend(self.vectorize_fixed_candidates(batch))
-                    self.fixed_candidate_vecs = self._cat_and_pad(cand_vecs,
-                                                                  self.NULL_IDX)
+                    self.fixed_candidate_vecs = padded_3d([cand_vecs]).squeeze(0)
                     if opt['fixed_candidate_vecs_path']:
                         print("[ Saving fixed candidate set vectors to {} ]".format(
                             opt['fixed_candidate_vecs_path']))
@@ -367,25 +361,17 @@ class TorchRankerAgent(TorchAgent):
                 self.fixed_candidate_vecs = None
 
     def vectorize_fixed_candidates(self, cands_batch):
-        return [self._vectorize_text(cand, truncate=self.truncate, truncate_left=False)
-                for cand in cands_batch]
-
-    def _cat_and_pad(self, tensor_list, max_len=None, use_cuda=False):
-        """Concatenate a list of 1D LongTensors and pad it
+        """Convert a batch of candidates from text to vectors
 
         Args:
-            tensor_list: a list of 1D LongTensors
-            max_len: the length to which to pad; if None, the maximum length of the 1D
-                tensors will be used
+            cands_batch: a [batchsize] list of candiadates (strings)
+
+        By default, candidates are simply vectorized (tokens replaced by token ids).
+        A child class may choose to overwrite this method to perform vecotrization as
+        well as encoding if so desired.
         """
-        if not max_len:
-            max_len = max([len(t) for t in tensor_list])
-        response = torch.LongTensor(len(tensor_list), max_len).fill_(self.NULL_IDX)
-        for i, tensor in enumerate(tensor_list):
-            response[i, 0:len(tensor)] = tensor
-        if use_cuda:
-            response = response.cuda()
-        return response
+        return [self._vectorize_text(cand, truncate=self.truncate, truncate_left=False)
+                for cand in cands_batch]
 
     def _warn_once(self, flag, msg):
         """
