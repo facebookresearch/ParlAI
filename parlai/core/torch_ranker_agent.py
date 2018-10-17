@@ -93,6 +93,7 @@ class TorchRankerAgent(TorchAgent):
         scores = self.score_candidates(batch, cand_vecs)
         loss = self.rank_loss(scores, label_inds)
 
+        # Update metrics
         self.metrics['loss'] += loss.item()
         self.metrics['examples'] += batchsize
         _, ranks = scores.sort(1, descending=True)
@@ -103,15 +104,9 @@ class TorchRankerAgent(TorchAgent):
         loss.backward()
         self.update_params()
 
-        cand_preds = []
-        for i, ordering in enumerate(ranks):
-            if cand_vecs.dim() == 2:
-                cand_list = cands
-            elif cand_vecs.dim() == 3:
-                cand_list = cands[i]
-            cand_preds.append([cand_list[rank] for rank in ordering])
-        preds = [cand_preds[i][0] for i in range(batchsize)]
-        return Output(preds, cand_preds)
+        # Get predictions but not full rankings for the sake of speed
+        preds = [self._v2t(cands[row[0]]) for row in ranks]
+        return Output(preds)
 
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
@@ -126,6 +121,7 @@ class TorchRankerAgent(TorchAgent):
         scores = self.score_candidates(batch, cand_vecs)
         _, ranks = scores.sort(1, descending=True)
 
+        # Update metrics
         if label_inds is not None:
             loss = self.rank_loss(scores, label_inds)
             self.metrics['loss'] += loss.item()
@@ -271,8 +267,8 @@ class TorchRankerAgent(TorchAgent):
     def reset_metrics(self):
         """Reset metrics."""
         super().reset_metrics()
-        self.metrics['loss'] = 0.0
         self.metrics['examples'] = 0
+        self.metrics['loss'] = 0.0
         self.metrics['rank'] = 0
 
     def report(self):
