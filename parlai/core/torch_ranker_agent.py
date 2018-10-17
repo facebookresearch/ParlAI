@@ -58,7 +58,10 @@ class TorchRankerAgent(TorchAgent):
                 self.load(model_file)
 
         self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
+
+        # Vectorize and save fixed/vocab candidates once upfront if applicable
         self.set_fixed_candidates(shared)
+        self.set_vocab_candidates(shared)
 
         if self.use_cuda:
             self.model.cuda()
@@ -164,11 +167,13 @@ class TorchRankerAgent(TorchAgent):
             * inline: batch_size lists, one list per example
                 If each example comes with a list of possible candidates, use those.
                 Note: With this setting, each example will have its own candidate set.
-            * fixed: one global candidate list, provide in a file from the user
+            * fixed: one global candidate list, provided in a file from the user
                 If self.fixed_candidates is not None, use a set of fixed candidates for
                 all examples.
                 Note: this setting is not recommended for training unless the
                 universe of possible candidates is very small.
+            * vocab: one global candidate list, extracted from the vocabulary with the
+                exception of self.NULL_IDX.
         """
         label_vecs = batch.label_vec  # [bsz] list of lists of LongTensors
         label_inds = None
@@ -196,16 +201,18 @@ class TorchRankerAgent(TorchAgent):
             # Labels are single tokens, enforce uniqueness
             if label_vecs.size(1) == 1:
                 cand_vecs, label_inds = label_vecs.unique(return_inverse=True)
+                cand_vecs = cand_vecs.unsqueeze(1)
+                label_inds = label_inds.squeeze(1)
                 cands = [batch.labels[ind] for ind in label_inds]
             # To save computation, treat all label_vecs as unique
             else:
                 cands = batch.labels
                 cand_vecs = label_vecs
-                label_inds = label_vecs.new(range(batchsize))
+                label_inds = label_vecs.new_tensor(range(batchsize))
 
         elif source == 'inline':
             self._warn_once(
-                flag=(mode + '_batch_candidates'),
+                flag=(mode + '_inline_candidates'),
                 msg=('[ Executing {} mode with provided inline set of candidates ]'
                      ''.format(mode)))
             if batch.candidate_vecs is None:
@@ -216,7 +223,7 @@ class TorchRankerAgent(TorchAgent):
             cands = batch.candidates
             cand_vecs = padded_3d(batch.candidate_vecs, use_cuda=self.use_cuda)
             if label_vecs is not None:
-                label_inds = label_vecs.new_empty(batchsize)
+                label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
                     label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
                     label_vec_pad[0:label_vec.size(0)] = label_vec
@@ -224,7 +231,7 @@ class TorchRankerAgent(TorchAgent):
 
         elif source == 'fixed':
             self._warn_once(
-                flag=(mode + '_batch_candidates'),
+                flag=(mode + '_fixed_candidates'),
                 msg=('[ Executing {} mode with a common set of fixed candidates. ]'
                      ''.format(mode)))
             if self.fixed_candidates is None:
@@ -234,6 +241,18 @@ class TorchRankerAgent(TorchAgent):
 
             cands = self.fixed_candidates
             cand_vecs = self.fixed_candidate_vecs
+            if label_vecs is not None:
+                label_inds = label_vecs.new_empty((batchsize))
+                for i, label in enumerate(label_vecs):
+                    label_inds[i] = (cand_vecs == label).all(1).nonzero()
+
+        elif source == 'vocab':
+            self._warn_once(
+                flag=(mode + '_vocab_candidates'),
+                msg=('[ Executing {} mode with tokens from vocabulary as candidates. ]'
+                     ''.format(mode)))
+            cands = self.vocab_candidates
+            cand_vecs = self.vocab_candidate_vecs
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label in enumerate(label_vecs):
@@ -253,6 +272,8 @@ class TorchRankerAgent(TorchAgent):
         shared['metrics'] = self.metrics
         shared['fixed_candidates'] = self.fixed_candidates
         shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
+        shared['vocab_candidates'] = self.vocab_candidates
+        shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
         return shared
 
     def update_params(self):
@@ -302,6 +323,32 @@ class TorchRankerAgent(TorchAgent):
 
         return model_file, opt
 
+    def set_vocab_candidates(self, shared):
+        """Load the tokens from the vocab as candidates
+
+        self.vocab_candidates will contain a [num_cands] list of strings
+        self.vocab_candidate_vecs will contain a [num_cands, 1] LongTensor
+        """
+        if shared:
+            self.vocab_candidates = shared['vocab_candidates']
+            self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
+        else:
+            if 'vocab' in (self.opt['train_candidates'], self.opt['eval_candidates']):
+                cands = []
+                vecs = []
+                for ind in range(1, len(self.dict)):
+                    cands.append(self.dict.ind2tok[ind])
+                    vecs.append(ind)
+                self.vocab_candidates = cands
+                self.vocab_candidate_vecs = torch.LongTensor(vecs).unsqueeze(1)
+                print("[ Loaded fixed candidate set (n = {}) from vocabulary ]"
+                      "".format(len(self.vocab_candidates)))
+                if self.use_cuda:
+                    self.vocab_candidate_vecs = self.vocab_candidate_vecs.cuda()
+            else:
+                self.vocab_candidates = None
+                self.vocab_candidate_vecs = None
+
     def set_fixed_candidates(self, shared):
         """Load a set of fixed candidates and their vectors (or vectorize them here)
 
@@ -319,9 +366,10 @@ class TorchRankerAgent(TorchAgent):
             self.fixed_candidate_vecs = shared['fixed_candidate_vecs']
         else:
             opt = self.opt
-            if opt['fixed_candidates_path']:
-                print("[ Loading fixed candidate set text from {} ]".format(
-                    opt['fixed_candidates_path']))
+            if ('fixed' in (opt['train_candidates'], opt['eval_candidates']) and
+                    opt['fixed_candidates_path']):
+                print("[ Loading fixed candidate set from {} ]".format(
+                      opt['fixed_candidates_path']))
                 with open(opt['fixed_candidates_path'], 'r') as f:
                     self.fixed_candidates = [line.strip() for line in f.readlines()]
 
