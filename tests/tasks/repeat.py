@@ -24,3 +24,9 @@ class RepeatTeacher(DialogTeacher):
     def setup_data(self, unused_path):
         for i in range(self.data_length):
             yield ((str(i), [str(i)]), True)
+
+    def num_examples(self):
+        return self.data_length
+
+    def num_episodes(self):
+        return self.data_length
