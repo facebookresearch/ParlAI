@@ -45,6 +45,7 @@ class TestTrainModel(unittest.TestCase):
                 model='memnn',
                 task='tasks.repeat:RepeatTeacher:10',
                 dict_file='/tmp/repeat',
+                candidates='vocab',
                 batchsize=1,
                 numthreads=1,
                 validation_every_n_epochs=10,
