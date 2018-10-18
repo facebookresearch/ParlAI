@@ -32,7 +32,7 @@ class TorchRankerAgent(TorchAgent):
             help='The source of candidates during evaluation (defaults to the same'
                  'value as --candidates if no flag is given)')
         agent.add_argument(
-            '-cands', '--fixed-candidates-path', type=str,
+            '-fcp', '--fixed-candidates-path', type=str,
             help='A text file of fixed candidates to use for all examples, one '
                  'candidate per line')
         agent.add_argument(
