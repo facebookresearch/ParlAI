@@ -21,7 +21,9 @@ class LocalHumanAgent(Agent):
         agent.add_argument('-fixedCands', '--local-human-candidates-file',
                            default=None, type=str,
                            help='File of label_candidates to send to other agent')
-
+        agent.add_argument('--single_turn', type='bool', default=False,
+                           help='If on, assumes single turn episodes.')
+    
     def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.id = 'localHuman'
@@ -38,6 +40,8 @@ class LocalHumanAgent(Agent):
         reply['id'] = self.getID()
         reply_text = input("Enter Your Message: ")
         reply_text = reply_text.replace('\\n', '\n')
+        if self.opt.get('single_turn', False):
+            reply_text += '[DONE]'
         reply['episode_done'] = False
         reply['label_candidates'] = self.fixedCands_txt
         if '[DONE]' in reply_text:
