@@ -39,7 +39,7 @@ class TorchRankerAgent(TorchAgent):
             '--fixed-candidate-vecs', type=str, default='reuse',
             help="One of 'reuse', 'replace', or a path to a file with vectors "
                  "corresponding to the candidates at --fixed-candidates-path. "
-                 "The default path is a /path/to/model-file.<cands_name>.vec, where "
+                 "The default path is a /path/to/model-file.<cands_name>, where "
                  "<cands_name> is the name of the file (not the full path) passed by "
                  "the flag --fixed-candidates-path. By default, this file is created "
                  "once and reused. To replace it, use the 'replace' option.")
@@ -394,7 +394,7 @@ class TorchRankerAgent(TorchAgent):
                     model_name = os.path.splitext(model_file)[0]
                     cands_name = os.path.splitext(os.path.basename(cand_path))[0]
                     vecs_path = os.path.join(
-                        model_dir, '.'.join([model_name, cands_name, 'vec']))
+                        model_dir, '.'.join([model_name, cands_name]))
                     if setting == 'reuse' and os.path.isfile(vecs_path):
                         vecs = self.load_candidate_vecs(vecs_path)
                     else:  # setting == 'replace' OR generating for the first time
