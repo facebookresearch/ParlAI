@@ -423,8 +423,7 @@ class Seq2seqAgent(TorchAgent):
 
     @staticmethod
     def beam_search(model, batch, beam_size, start=1, end=2,
-                    pad=0, min_length=3, min_n_best=5, max_ts=40, block_ngram=0,
-                    multigpu=False):
+                    pad=0, min_length=3, min_n_best=5, max_ts=40, block_ngram=0):
         """ Beam search given the model and Batch
         This function uses model with the following reqs:
         - model.encoder takes input returns tuple (enc_out, enc_hidden, attn_mask)
@@ -441,7 +440,6 @@ class Seq2seqAgent(TorchAgent):
         min_length : minimum length of the decoded sequence
         min_n_best : minimum number of completed hypothesis generated from each beam
         max_ts: the maximum length of the decoded sequence
-        multigpu: (boolean) using multigpu or not
 
         Return:
         beam_preds_scores : list of tuples (prediction, score) for each sample in Batch
@@ -599,8 +597,7 @@ class Seq2seqAgent(TorchAgent):
                 pad=self.NULL_IDX,
                 min_length=self.beam_min_length,
                 min_n_best=self.beam_min_n_best,
-                block_ngram=self.beam_block_ngram,
-                multigpu=self.multigpu)
+                block_ngram=self.beam_block_ngram)
             if needs_truncation:
                 out = self.truncate_output(out)
             beam_preds_scores, _, beams = out
