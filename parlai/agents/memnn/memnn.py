@@ -44,7 +44,7 @@ class MemnnAgent(TorchAgent):
         arg_group.add_argument(
             '--memsize', type=int, default=32,
             help='size of memory, set to 0 for "nomemnn" model which just '
-                 'embeds query and ')
+                 'embeds query and candidates and picks most similar candidate')
         arg_group.add_argument(
             '-tf', '--time-features', type='bool', default=True,
             help='use time features for memory embeddings')

@@ -36,7 +36,7 @@ def _mock_train(**args):
     return stdout.getvalue(), valid, test
 
 
-class TestSeq2Seq(unittest.TestCase):
+class TestMemnn(unittest.TestCase):
     """Checks that seq2seq can learn some very basic tasks."""
 
     def test_labelcands_nomemnn(self):
