@@ -234,7 +234,7 @@ class TorchRankerAgent(TorchAgent):
                 for i, label_vec in enumerate(label_vecs):
                     label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
                     label_vec_pad[0:label_vec.size(0)] = label_vec
-                    label_inds[i] = (cand_vecs[i] == label_vec_pad).all(1).nonzero()[0]
+                    label_inds[i] = self._find_match(cand_vecs[i], label_vec_pad)
 
         elif source == 'fixed':
             self._warn_once(
@@ -250,8 +250,8 @@ class TorchRankerAgent(TorchAgent):
             cand_vecs = self.fixed_candidate_vecs
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
-                for i, label in enumerate(label_vecs):
-                    label_inds[i] = (cand_vecs == label).all(1).nonzero()
+                for i, label_vec in enumerate(label_vecs):
+                    label_inds[i] = self._find_match(cand_vecs, label_vec)
 
         elif source == 'vocab':
             self._warn_once(
@@ -262,10 +262,14 @@ class TorchRankerAgent(TorchAgent):
             cand_vecs = self.vocab_candidate_vecs
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
-                for i, label in enumerate(label_vecs):
-                    label_inds[i] = (cand_vecs == label).all(1).nonzero()
+                for i, label_vec in enumerate(label_vecs):
+                    label_inds[i] = self._find_match(cand_vecs, label_vec)
 
         return (cands, cand_vecs, label_inds)
+
+    @staticmethod
+    def _find_match(cand_vecs, label_vec):
+        return ((cand_vecs == label_vec).sum(1) == cand_vecs.size(1)).nonzero()[0]
 
     def share(self):
         """Share model parameters."""
