@@ -8,6 +8,7 @@
 #
 # Simple implementation of the starspace algorithm, slightly adapted for dialogue.
 # See: https://arxiv.org/abs/1709.03856
+# TODO: move this over to TorchRankerAgent when it is ready.
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -50,6 +51,15 @@ class StarspaceAgent(Agent):
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
         agent = argparser.add_argument_group('StarSpace Arguments')
+        agent.add_argument(
+            '-emb', '--embedding-type', default='random',
+            choices=['random', 'glove', 'glove-fixed', 'glove-twitter-fixed',
+                     'fasttext', 'fasttext-fixed', 'fasttext_cc',
+                     'fasttext_cc-fixed'],
+            help='Choose between different strategies for initializing word '
+                 'embeddings. Default is random, but can also preinitialize '
+                 'from Glove or Fasttext. Preinitialized embeddings can also '
+                 'be fixed so they are not updated during training.')
         agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
                            help='size of the token embeddings')
         agent.add_argument('-enorm', '--embeddingnorm', type=float, default=10,
@@ -62,8 +72,6 @@ class StarspaceAgent(Agent):
                            help='learning rate')
         agent.add_argument('-margin', '--margin', type=float, default=0.1,
                            help='margin')
-        #agent.add_argument('--input_dropout', default=0, type=float,
-        #                   help='Fraction of input tokens to dropout in training.')
         agent.add_argument('-opt', '--optimizer', default='sgd',
                            choices=StarspaceAgent.OPTIM_OPTS.keys(),
                            help='Choose between pytorch optimizers. '
@@ -142,13 +150,16 @@ class StarspaceAgent(Agent):
             self.fixedCands = fcs
             print("[loaded candidates]")
 
-    def _init_embeddings(self, emb_type='fasttext_cc', log=True):
+    def _init_embeddings(self, log=True):
         """Copy embeddings from the pretrained embeddings to the lookuptable.
 
         :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
         :param emb_type: pretrained embedding type
         """
         weight = self.model.lt.weight
+        emb_type = self.opt.get('embedding_type', 'random')
+        if emb_type == 'random':
+            return
         embs = TorchAgent._get_embtype(self, emb_type)
         cnt = 0
         for w, i in self.dict.tok2ind.items():
