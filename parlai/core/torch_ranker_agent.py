@@ -111,7 +111,10 @@ class TorchRankerAgent(TorchAgent):
         self.update_params()
 
         # Get predictions but not full rankings for the sake of speed
-        preds = [cands[row[0]] for row in ranks]
+        if cand_vecs.dim() == 2:
+            preds = [cands[ordering[0]] for ordering in ranks]
+        elif cand_vecs.dim() == 3:
+            preds = [cands[i][ordering[0]] for i, ordering in enumerate(ranks)]
         return Output(preds)
 
     def eval_step(self, batch):
