@@ -132,8 +132,9 @@ class StarspaceAgent(Agent):
             self.model = Starspace(opt, len(self.dict), self.dict)
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 self.load(opt['model_file'])
+            else:
+                self._init_embeddings()                
             self.model.share_memory()
-            self._init_embeddings()
             
         # set up modules
         self.criterion = torch.nn.CosineEmbeddingLoss(
@@ -160,12 +161,13 @@ class StarspaceAgent(Agent):
         emb_type = self.opt.get('embedding_type', 'random')
         if emb_type == 'random':
             return
-        embs = TorchAgent._get_embtype(self, emb_type)
+        embs, name = TorchAgent._get_embtype(self, emb_type)
         cnt = 0
         for w, i in self.dict.tok2ind.items():
             if w in embs.stoi:
-                vec = TorchAgent._project_vec(embs.vectors[embs.stoi[w]],
-                                        weight.size(1))
+                vec = TorchAgent._project_vec(self,
+                                              embs.vectors[embs.stoi[w]],
+                                              weight.size(1))
                 weight.data[i] = vec
                 cnt += 1
         if log:
