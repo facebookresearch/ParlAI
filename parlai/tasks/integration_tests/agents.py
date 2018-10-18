@@ -107,6 +107,7 @@ class CandidateTeacher(DialogTeacher):
                 cands.append(self.corpus[offset])
             yield (text, [text], 0, cands), True
 
+
 class MultiturnCandidateTeacher(CandidateTeacher):
     """Splits inputs/targets by spaces into multiple turns.
 
@@ -124,6 +125,7 @@ class MultiturnCandidateTeacher(CandidateTeacher):
                      [' '.join(c[:i + 1]) for c in split_cs]),
                     i == 0
                 )
+
 
 class NocandidateTeacher(CandidateTeacher):
     """
