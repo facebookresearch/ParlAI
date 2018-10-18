@@ -165,11 +165,11 @@ class TorchRankerAgent(TorchAgent):
         Possible sources of candidates:
             * batch: the set of all labels in this batch
                 Use all labels in the batch as the candidate set (with all but the
-                example's label being treated as negatives). If labels are single
-                tokens, filter to unique labels. (Ideally, we would always filter to
-                unique labels, but we abstain for the sake of speed.)
+                example's label being treated as negatives).
                 Note: with this setting, the candidate set is identical for all
-                examplesin a batch.
+                examples in a batch. This option may be undesirable if it is possible
+                for duplicate labels to occur in a batch, since the second instance of
+                the correct label will be treated as a negative.
             * inline: batch_size lists, one list per example
                 If each example comes with a list of possible candidates, use those.
                 Note: With this setting, each example will have its own candidate set.
@@ -204,17 +204,9 @@ class TorchRankerAgent(TorchAgent):
                     "If using candidate source 'batch', then batch.label_vec cannot be "
                     "None.")
 
-            # Labels are single tokens, enforce uniqueness
-            if label_vecs.size(1) == 1:
-                cand_vecs, label_inds = label_vecs.unique(return_inverse=True)
-                cand_vecs = cand_vecs.unsqueeze(1)
-                label_inds = label_inds.squeeze(1)
-                cands = [batch.labels[ind] for ind in label_inds]
-            # To save computation, treat all label_vecs as unique
-            else:
-                cands = batch.labels
-                cand_vecs = label_vecs
-                label_inds = label_vecs.new_tensor(range(batchsize))
+            cands = batch.labels
+            cand_vecs = label_vecs
+            label_inds = label_vecs.new_tensor(range(batchsize))
 
         elif source == 'inline':
             self._warn_once(
