@@ -12,7 +12,7 @@
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import maintain_dialog_history, load_cands
-
+from parlai.core.torch_agent import TorchAgent
 from .modules import Starspace
 
 import torch
@@ -125,7 +125,7 @@ class StarspaceAgent(Agent):
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 self.load(opt['model_file'])
             self.model.share_memory()
-            self._copy_embeddings(self.model.lt.weight, )
+            self._init_embeddings()
             
         # set up modules
         self.criterion = torch.nn.CosineEmbeddingLoss(
@@ -142,25 +142,18 @@ class StarspaceAgent(Agent):
             self.fixedCands = fcs
             print("[loaded candidates]")
 
-
-
-    def _copy_embeddings(self, weight, emb_type='fasttext_cc', log=True):
+    def _init_embeddings(self, emb_type='fasttext_cc', log=True):
         """Copy embeddings from the pretrained embeddings to the lookuptable.
 
         :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
         :param emb_type: pretrained embedding type
         """
-        import torchtext.vocab as vocab
-        from parlai.core.build_data import modelzoo_path
-        name = 'fasttext'
-        embs = vocab.FastText(
-            language='en',
-            cache=modelzoo_path(self.opt.get('datapath'),
-                                'models:fasttext_cc_vectors'))
+        weight = self.model.lt.weight
+        embs = TorchAgent._get_embtype(self, emb_type)
         cnt = 0
         for w, i in self.dict.tok2ind.items():
             if w in embs.stoi:
-                vec = self._project_vec(embs.vectors[embs.stoi[w]],
+                vec = TorchAgent._project_vec(embs.vectors[embs.stoi[w]],
                                         weight.size(1))
                 weight.data[i] = vec
                 cnt += 1
@@ -168,37 +161,6 @@ class StarspaceAgent(Agent):
             print('Initialized embeddings for {} tokens ({}%) from {}.'
                   ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
 
-    def _project_vec(self, vec, target_dim, method='random'):
-        """If needed, project vector to target dimensionality.
-
-        Projection methods implemented are the following:
-
-        random - random gaussian matrix multiplication of input vector
-
-        :param vec:        one-dimensional vector
-        :param target_dim: dimension of returned vector
-        :param method:     projection method. will be used even if the dim is
-                           not changing if method ends in "-force".
-        """
-        pre_dim = vec.size(0)
-        if pre_dim != target_dim or method.endswith('force'):
-            if method.startswith('random'):
-                # random projection
-                if not hasattr(self, 'proj_rp'):
-                    self.proj_rp = torch.Tensor(pre_dim, target_dim).normal_()
-                    # rescale so we're not destroying norms too much
-                    # http://scikit-learn.org/stable/modules/random_projection.html#gaussian-random-projection
-                    self.proj_rp /= target_dim
-                return torch.mm(vec.unsqueeze(0), self.proj_rp)
-            else:
-                # TODO: PCA
-                # TODO: PCA + RP
-                # TODO: copy
-                raise RuntimeError('Projection method not implemented: {}'
-                                   ''.format(method))
-        else:
-            return vec
-            
     def reset(self):
         """Reset observation and episode_done."""
         self.observation = None
@@ -322,7 +284,6 @@ class StarspaceAgent(Agent):
         Update the model using the targets if available, otherwise rank
         candidates as well if they are available and param is set.
         """
-        #import pdb; pdb.set_trace()
         is_training = ys is not None
         if is_training:
             negs = self.get_negs(xs, ys)
