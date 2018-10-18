@@ -22,19 +22,21 @@ class TorchRankerAgent(TorchAgent):
         TorchAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('TorchRankerAgent')
         agent.add_argument(
-            '-tc', '--train-candidates', type=str, default='batch',
+            '-cands', '--candidates', type=str, default='inline',
             choices=['batch', 'inline', 'fixed', 'vocab'],
-            help='The source of candidates during training')
+            help='The source of candidates during training '
+                 '(see TorchRankerAgent._build_candidates() for details).')
         agent.add_argument(
-            '-ec', '--eval-candidates', type=str, default='batch',
+            '-ecands', '--eval-candidates', type=str,
             choices=['batch', 'inline', 'fixed', 'vocab'],
-            help='The source of candidates during training')
+            help='The source of candidates during evaluation (defaults to the same'
+                 'value as --candidates if no flag is given)')
         agent.add_argument(
             '-cands', '--fixed-candidates-path', type=str,
             help='A text file of fixed candidates to use for all examples, one '
                  'candidate per line')
         agent.add_argument(
-            '-candvecs', '--fixed-candidate-vecs', type=str, default='reuse',
+            '--fixed-candidate-vecs', type=str, default='reuse',
             help="One of 'reuse', 'replace', or a path to a file with vectors "
                  "corresponding to the candidates at --fixed-candidates-path. "
                  "By default, a candidate vector file is generated with the same path "
@@ -47,6 +49,8 @@ class TorchRankerAgent(TorchAgent):
         # (e.g., a .dict file)
         model_file, opt = self._get_model_file(opt)
         opt['rank_candidates'] = True
+        if opt['eval_candidates'] is None:
+            opt['eval_candidates'] = opt['candidates']
         super().__init__(opt, shared)
 
         if shared:
@@ -91,7 +95,7 @@ class TorchRankerAgent(TorchAgent):
         self.optimizer.zero_grad()
 
         cands, cand_vecs, label_inds = self._build_candidates(
-            batch, source=self.opt['train_candidates'], mode='train')
+            batch, source=self.opt['candidates'], mode='train')
         scores = self.score_candidates(batch, cand_vecs)
         loss = self.rank_loss(scores, label_inds)
 
@@ -220,7 +224,7 @@ class TorchRankerAgent(TorchAgent):
             if batch.candidate_vecs is None:
                 raise ValueError(
                     "If using candidate source 'inline', then batch.candidate_vecs "
-                    "cannot be None.")
+                    "cannot be None. Consider using --candidates='batch' or 'fixed'.")
 
             cands = batch.candidates
             cand_vecs = padded_3d(batch.candidate_vecs, use_cuda=self.use_cuda)
@@ -234,8 +238,8 @@ class TorchRankerAgent(TorchAgent):
         elif source == 'fixed':
             self._warn_once(
                 flag=(mode + '_fixed_candidates'),
-                msg=('[ Executing {} mode with a common set of fixed candidates. ]'
-                     ''.format(mode)))
+                msg=("[ Executing {} mode with a common set of fixed candidates "
+                     "(n = {}). ]".format(mode, len(self.fixed_candidates))))
             if self.fixed_candidates is None:
                 raise ValueError(
                     "If using candidate source 'fixed', then you must provide the path "
@@ -335,7 +339,7 @@ class TorchRankerAgent(TorchAgent):
             self.vocab_candidates = shared['vocab_candidates']
             self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
         else:
-            if 'vocab' in (self.opt['train_candidates'], self.opt['eval_candidates']):
+            if 'vocab' in (self.opt['candidates'], self.opt['eval_candidates']):
                 cands = []
                 vecs = []
                 for ind in range(1, len(self.dict)):
@@ -372,7 +376,7 @@ class TorchRankerAgent(TorchAgent):
         else:
             opt = self.opt
             cand_path = opt['fixed_candidates_path']
-            if ('fixed' in (opt['train_candidates'], opt['eval_candidates']) and
+            if ('fixed' in (opt['candidates'], opt['eval_candidates']) and
                     cand_path):
 
                 # Load candidates
@@ -423,11 +427,11 @@ class TorchRankerAgent(TorchAgent):
     def vectorize_fixed_candidates(self, cands_batch):
         """Convert a batch of candidates from text to vectors
 
-        Args:
-            cands_batch: a [batchsize] list of candiadates (strings)
+        :param cands_batch: a [batchsize] list of candidates (strings)
+        :returns: a [num_cands] list of candidate vectors
 
         By default, candidates are simply vectorized (tokens replaced by token ids).
-        A child class may choose to overwrite this method to perform vecotrization as
+        A child class may choose to overwrite this method to perform vectorization as
         well as encoding if so desired.
         """
         return [self._vectorize_text(cand, truncate=self.truncate, truncate_left=False)
@@ -435,9 +439,8 @@ class TorchRankerAgent(TorchAgent):
 
     def _warn_once(self, flag, msg):
         """
-        Args:
-            flag: The name of the flag
-            msg: The message to display
+        :param flag: The name of the flag
+        :param msg: The message to display
         """
         warn_flag = '__warned_' + flag
         if not hasattr(self, warn_flag):
