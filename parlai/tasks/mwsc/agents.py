@@ -10,7 +10,9 @@
 
 from parlai.core.teachers import DialogTeacher
 from .build import build
-import os, re, copy
+import os
+import re
+import copy
 
 
 class MWSCTeacher(DialogTeacher):

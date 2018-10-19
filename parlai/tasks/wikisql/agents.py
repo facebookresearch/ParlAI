@@ -45,7 +45,6 @@ class WikiSQLTeacher(DialogTeacher):
 
         table_file_path = os.path.join(input_path, 'data', 'train.tables.jsonl')
         qa_file_path = os.path.join(input_path, 'data', 'train.jsonl')
-        data = []
         with open(table_file_path) as table_file:
             table_data = [json.loads(jline) for jline in table_file]
             table_data = {table['id']: table for table in table_data}

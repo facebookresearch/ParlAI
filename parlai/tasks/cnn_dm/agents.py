@@ -36,7 +36,8 @@ class CNNDMTeacher(DialogTeacher):
     def setup_data(self, input_path):
 
         print('loading: ' + input_path)
-        paths = [os.path.join(input_path, 'cnn', 'stories'), os.path.join(input_path, 'dailymail', 'stories')]
+        paths = [os.path.join(input_path, 'cnn', 'stories'),
+                 os.path.join(input_path, 'dailymail', 'stories')]
 
         def extract_data_and_labels(text):
             text_sections = text.split('@highlight')
