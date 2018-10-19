@@ -10,7 +10,8 @@
 
 from parlai.core.teachers import DialogTeacher
 from .build import build
-import os, copy
+import os
+import copy
 
 
 class QAZRETeacher(DialogTeacher):

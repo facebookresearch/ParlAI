@@ -9,9 +9,11 @@
 # Download and build the data if it does not exist.
 
 import parlai.core.build_data as build_data
-import os, importlib
+import os
+import importlib
 
-decanlp_tasks = ['squad', 'iwslt14', 'cnn_dm', 'multinli', 'sst', 'qasrl', 'qazre', 'woz', 'wikisql', 'mwsc']
+decanlp_tasks = ['squad', 'iwslt14', 'cnn_dm', 'multinli',
+                 'sst', 'qasrl', 'qazre', 'woz', 'wikisql', 'mwsc']
 
 
 def build(opt):
@@ -20,7 +22,8 @@ def build(opt):
 
     if not build_data.built(dpath, version_string=version):
         print('Building DecaNLP Tasks...')
-        build_tasks = [importlib.__import__('parlai.tasks.{}.build'.format(task), fromlist=['build'])
+        build_tasks = [importlib.__import__('parlai.tasks.{}.build'.format(task),
+                                            fromlist=['build'])
                        for task in decanlp_tasks]
         for task in build_tasks:
             task.build(opt)

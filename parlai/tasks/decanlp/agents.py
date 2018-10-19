@@ -10,65 +10,56 @@
 
 from parlai.core.teachers import DialogTeacher
 from .build import build
-
 import parlai.tasks.squad.agents as squad
-
-
-class SquadTeacher(squad.DefaultTeacher): pass
-
-
 import parlai.tasks.iwslt14.agents as iwslt14
-
-
-class Iwslt14Teacher(iwslt14.DefaultTeacher): pass
-
-
 import parlai.tasks.cnn_dm.agents as cnn_dm
-
-
-class Cnn_DmTeacher(cnn_dm.DefaultTeacher): pass
-
-
 import parlai.tasks.multinli.agents as multinli
-
-
-class MultinliTeacher(multinli.DefaultTeacher): pass
-
-
 import parlai.tasks.sst.agents as sst
-
-
-class SstTeacher(sst.DefaultTeacher): pass
-
-
 import parlai.tasks.qasrl.agents as qasrl
-
-
-class QasrlTeacher(qasrl.DefaultTeacher): pass
-
-
 import parlai.tasks.qazre.agents as qazre
-
-
-class QazreTeacher(qazre.DefaultTeacher): pass
-
-
 import parlai.tasks.woz.agents as woz
-
-
-class WozTeacher(woz.DefaultTeacher): pass
-
-
 import parlai.tasks.wikisql.agents as wikisql
-
-
-class WikisqlTeacher(wikisql.DefaultTeacher): pass
-
-
 import parlai.tasks.mwsc.agents as mwsc
 
 
-class MwscTeacher(mwsc.DefaultTeacher): pass
+class SquadTeacher(squad.DefaultTeacher):
+    pass
+
+
+class Iwslt14Teacher(iwslt14.DefaultTeacher):
+    pass
+
+
+class Cnn_DmTeacher(cnn_dm.DefaultTeacher):
+    pass
+
+
+class MultinliTeacher(multinli.DefaultTeacher):
+    pass
+
+
+class SstTeacher(sst.DefaultTeacher):
+    pass
+
+
+class QasrlTeacher(qasrl.DefaultTeacher):
+    pass
+
+
+class QazreTeacher(qazre.DefaultTeacher):
+    pass
+
+
+class WozTeacher(woz.DefaultTeacher):
+    pass
+
+
+class WikisqlTeacher(wikisql.DefaultTeacher):
+    pass
+
+
+class MwscTeacher(mwsc.DefaultTeacher):
+    pass
 
 
 class DecaNLPTeacher(DialogTeacher):
@@ -96,7 +87,8 @@ class DecaNLPTeacher(DialogTeacher):
 
         opt['datafile'] = self._path(opt)
 
-        self.task_setup_data = [self.task_teachers[i].setup_data(self.data_paths[i]) for i in range(10)]
+        self.task_setup_data = [self.task_teachers[i].setup_data(self.data_paths[i])
+                                for i in range(10)]
 
         super().__init__(opt, shared)
 

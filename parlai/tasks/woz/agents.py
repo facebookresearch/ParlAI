@@ -10,7 +10,9 @@
 
 from parlai.core.teachers import DialogTeacher
 from .build import build
-import os, json, copy
+import os
+import json
+import copy
 
 
 class WoZTeacher(DialogTeacher):

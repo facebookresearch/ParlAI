@@ -25,7 +25,8 @@ def build(opt):
 
         # Download the data.
         fname = 'schema.txt'
-        url = 'https://raw.githubusercontent.com/salesforce/decanlp/d594b2bf127e13d0e61151b6a2af3bf63612f380/local_data/' + fname
+        url = 'https://raw.githubusercontent.com/salesforce/decanlp/' \
+              'd594b2bf127e13d0e61151b6a2af3bf63612f380/local_data/' + fname
         build_data.download(url, dpath, fname)
 
         # Mark the data as built.

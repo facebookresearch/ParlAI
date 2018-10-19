@@ -10,7 +10,9 @@
 
 from parlai.core.teachers import DialogTeacher
 from .build import build
-import os, json, copy
+import os
+import json
+import copy
 
 
 class WikiSQLTeacher(DialogTeacher):
@@ -19,7 +21,8 @@ class WikiSQLTeacher(DialogTeacher):
 
         self.agg_ops = ['', 'MAX', 'MIN', 'COUNT', 'SUM', 'AVG']
         self.cond_ops = ['=', '>', '<', 'OP']
-        self.syms = ['SELECT', 'WHERE', 'AND', 'COL', 'TABLE', 'CAPTION', 'PAGE', 'SECTION', 'OP', 'COND', 'QUESTION',
+        self.syms = ['SELECT', 'WHERE', 'AND', 'COL', 'TABLE', 'CAPTION', 'PAGE',
+                     'SECTION', 'OP', 'COND', 'QUESTION',
                      'AGG',
                      'AGGOPS', 'CONDOPS']
 
@@ -59,7 +62,8 @@ class WikiSQLTeacher(DialogTeacher):
             )
             if query['conds']:
                 sql_query += ' WHERE ' + ' AND '.join(
-                    ['{} {} {}'.format(header[i], self.cond_ops[o], v) for i, o, v in query['conds']])
+                    ['{} {} {}'.format(header[i], self.cond_ops[o], v) for i, o, v in
+                     query['conds']])
             return sql_query
 
         def table_into_context(table):
@@ -69,7 +73,8 @@ class WikiSQLTeacher(DialogTeacher):
             elif len(header) == 1:
                 return 'The table has column {}'.format(header[0])
             else:
-                return 'The table has column names {} and {}.'.format(', '.join(header[:-1]), header[-1])
+                return 'The table has column names {} and {}.'.format(
+                    ', '.join(header[:-1]), header[-1])
 
         for line in qa_data:
             id = line["table_id"]

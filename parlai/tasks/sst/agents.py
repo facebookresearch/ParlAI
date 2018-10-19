@@ -31,9 +31,11 @@ class SSTTeacher(DialogTeacher):
 
     def _path(self, opt):
         build(opt)
-        labels_path = os.path.join(opt['datapath'], 'SST', 'stanfordSentimentTreebank', 'sentiment_labels.txt')
+        labels_path = os.path.join(opt['datapath'], 'SST', 'stanfordSentimentTreebank',
+                                   'sentiment_labels.txt')
         print(labels_path)
-        data_path = os.path.join(opt['datapath'], 'SST', 'stanfordSentimentTreebank', 'dictionary.txt')
+        data_path = os.path.join(opt['datapath'], 'SST', 'stanfordSentimentTreebank',
+                                 'dictionary.txt')
         return labels_path, data_path
 
     def setup_data(self, path):
@@ -48,12 +50,14 @@ class SSTTeacher(DialogTeacher):
             return False
 
         with open(path) as data_file:
-            self.contexts = sorted([data.split("|") for data in data_file.read().split("\n")[1:-1]],
-                                   key=lambda x: int(x[1]))
+            self.contexts = sorted(
+                [data.split("|") for data in data_file.read().split("\n")[1:-1]],
+                key=lambda x: int(x[1]))
             self.contexts = [x[0] for x in self.contexts]
 
         with open(self.label_path) as labels_file:
-            self.labels = [to_binary_label(label.split("|")[1]) for label in labels_file.read().split("\n")[1:-1]]
+            self.labels = [to_binary_label(label.split("|")[1]) for label in
+                           labels_file.read().split("\n")[1:-1]]
 
         new_episode = True
 
@@ -66,7 +70,8 @@ class SSTTeacher(DialogTeacher):
             if self.labels[i]:
                 new_episode = self.c % 3 == 2
                 self.c += 1
-                yield (self.contexts[i] + '\n' + self.question, [self.labels[i]], None, None), new_episode
+                yield (self.contexts[i] + '\n' + self.question, [self.labels[i]], None,
+                       None), new_episode
 
     def label_candidates(self):
         return self.SST_LABELS

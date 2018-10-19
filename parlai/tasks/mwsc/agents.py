@@ -41,7 +41,8 @@ class MWSCTeacher(DialogTeacher):
             if len(output) == 1:
                 return output * 2
             else:
-                return [''.join(output[:1] + output[2:]), ''.join(output[:2] + output[3:])]
+                return [''.join(output[:1] + output[2:]),
+                        ''.join(output[:2] + output[3:])]
 
         for qa in data:
 
@@ -50,7 +51,8 @@ class MWSCTeacher(DialogTeacher):
             question = parse_square_bracket(question)
             answer = answer.split('/')
             for i in range(2):
-                yield (context[i] + '\n' + question[i], [answer[i]], None, None), new_episode
+                yield (context[i] + '\n' + question[i],
+                       [answer[i]], None, None), new_episode
 
 
 class DefaultTeacher(MWSCTeacher):
