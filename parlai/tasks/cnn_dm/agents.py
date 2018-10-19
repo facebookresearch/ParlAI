@@ -13,9 +13,6 @@ from parlai.core.teachers import DialogTeacher
 from .build import build
 import os, copy
 
-
-
-
 class CNNDMTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         # store datatype
