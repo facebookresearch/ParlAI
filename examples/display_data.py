@@ -21,5 +21,4 @@ if __name__ == '__main__':
     # Get command line arguments
     parser = setup_args()
     opt = parser.parse_args()
-    print(opt)
     display_data(opt)
