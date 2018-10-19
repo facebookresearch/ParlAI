@@ -1119,7 +1119,6 @@ class FbDialogTeacher(DialogTeacher):
 class ParlAIDialogTeacher(FixedDialogTeacher):
     """This module provides access to data in the ParlAI Text Dialog format.
 
-
     Subclasses ``FixedDialogTeacher`` for functionality and provides an
     implementation of ``setup_data()`` which iterates over datasets in the
     "ParlAI text" format. If your data is in the format below, use this class to
@@ -1173,6 +1172,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
     but for other datasets it may be helpful to add additional examples in the
     reverse direction ("Oh cool!" is a response to "Oh me too!" above).
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         if not shared:
@@ -1214,3 +1214,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
                     if msg.get('episode_done', False):
                         self.episodes.append(eps)
                         eps = []
+        if len(eps) > 0:
+            # add last episode
+            eps[-1]['episode_done'] = True
+            self.episodes.append(eps)

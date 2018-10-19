@@ -8,11 +8,12 @@
 #
 # Simple implementation of the starspace algorithm, slightly adapted for dialogue.
 # See: https://arxiv.org/abs/1709.03856
+# TODO: move this over to TorchRankerAgent when it is ready.
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import maintain_dialog_history, load_cands
-
+from parlai.core.torch_agent import TorchAgent
 from .modules import Starspace
 
 import torch
@@ -50,13 +51,22 @@ class StarspaceAgent(Agent):
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
         agent = argparser.add_argument_group('StarSpace Arguments')
+        agent.add_argument(
+            '-emb', '--embedding-type', default='random',
+            choices=['random', 'glove', 'glove-fixed', 'glove-twitter-fixed',
+                     'fasttext', 'fasttext-fixed', 'fasttext_cc',
+                     'fasttext_cc-fixed'],
+            help='Choose between different strategies for initializing word '
+                 'embeddings. Default is random, but can also preinitialize '
+                 'from Glove or Fasttext. Preinitialized embeddings can also '
+                 'be fixed so they are not updated during training.')
         agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
                            help='size of the token embeddings')
         agent.add_argument('-enorm', '--embeddingnorm', type=float, default=10,
                            help='max norm of word embeddings')
         agent.add_argument('-shareEmb', '--share-embeddings', type='bool', default=True,
                            help='whether LHS and RHS share embeddings')
-        agent.add_argument('--lins', default=1, type=int,
+        agent.add_argument('--lins', default=0, type=int,
                            help='If set to 1, add a linear layer between lhs and rhs.')
         agent.add_argument('-lr', '--learningrate', type=float, default=0.1,
                            help='learning rate')
@@ -122,8 +132,10 @@ class StarspaceAgent(Agent):
             self.model = Starspace(opt, len(self.dict), self.dict)
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 self.load(opt['model_file'])
+            else:
+                self._init_embeddings()                
             self.model.share_memory()
-
+            
         # set up modules
         self.criterion = torch.nn.CosineEmbeddingLoss(
             margin=opt['margin'], size_average=False
@@ -138,6 +150,29 @@ class StarspaceAgent(Agent):
                 fcs.append(torch.LongTensor(self.parse(c)).unsqueeze(0))
             self.fixedCands = fcs
             print("[loaded candidates]")
+
+    def _init_embeddings(self, log=True):
+        """Copy embeddings from the pretrained embeddings to the lookuptable.
+
+        :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
+        :param emb_type: pretrained embedding type
+        """
+        weight = self.model.lt.weight
+        emb_type = self.opt.get('embedding_type', 'random')
+        if emb_type == 'random':
+            return
+        embs, name = TorchAgent._get_embtype(self, emb_type)
+        cnt = 0
+        for w, i in self.dict.tok2ind.items():
+            if w in embs.stoi:
+                vec = TorchAgent._project_vec(self,
+                                              embs.vectors[embs.stoi[w]],
+                                              weight.size(1))
+                weight.data[i] = vec
+                cnt += 1
+        if log:
+            print('Initialized embeddings for {} tokens ({}%) from {}.'
+                  ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
 
     def reset(self):
         """Reset observation and episode_done."""
@@ -289,8 +324,8 @@ class StarspaceAgent(Agent):
             if cands is None or cands[0] is None:
                 # cannot predict without candidates.
                 if self.fixedCands:
-                    cands = self.fixedCands
-                    cands_txt = self.fixedCands_txt
+                    cands = [self.fixedCands]
+                    cands_txt = [self.fixedCands_txt]
                 else:
                     return [{'text': 'I dunno.'}]
                 # test set prediction uses fixed candidates
@@ -368,7 +403,7 @@ class StarspaceAgent(Agent):
         if ys is None:
             # only build candidates in eval mode.
             for o in observations:
-                if 'label_candidates' in o:
+                if o.get('label_candidates', False):
                     cs = []
                     ct = []
                     for c in o['label_candidates']:

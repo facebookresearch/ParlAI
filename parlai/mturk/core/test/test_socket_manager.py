@@ -755,37 +755,20 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self._send_packet_in_background(self.MESSAGE_SEND_PACKET_1, send_time)
         self.assertEqual(self.MESSAGE_SEND_PACKET_1.status, Packet.STATUS_SENT)
         self.socket_manager._safe_send.assert_called_once()
-        self.socket_manager._safe_put.assert_not_called()
 
-        # Allow it to time out
-        self.assertFalse(self.sent)
-        time.sleep(0.5)
+        connection_id = self.MESSAGE_SEND_PACKET_1.get_receiver_connection_id()
+        self.socket_manager._safe_put.assert_called_once_with(
+            connection_id, (send_time, self.MESSAGE_SEND_PACKET_1))
         self.assertTrue(self.sent)
-        self.assertEqual(self.MESSAGE_SEND_PACKET_1.status, Packet.STATUS_INIT)
-        self.socket_manager._safe_put.assert_called_once()
-        call_args = self.socket_manager._safe_put.call_args[0]
-        connection_id = call_args[0]
-        queue_item = call_args[1]
-        self.assertEqual(
-            connection_id,
-            self.MESSAGE_SEND_PACKET_1.get_receiver_connection_id())
-        self.assertEqual(queue_item[0], send_time)
-        self.assertEqual(queue_item[1], self.MESSAGE_SEND_PACKET_1)
+
         self.socket_manager._safe_send.reset_mock()
         self.socket_manager._safe_put.reset_mock()
 
         # Send it again - end outcome should be a call to send only
         # with sent set
-        self.sent = False
-        self.assertEqual(self.MESSAGE_SEND_PACKET_1.status, Packet.STATUS_INIT)
-        self._send_packet_in_background(self.MESSAGE_SEND_PACKET_1, send_time)
-        self.assertEqual(self.MESSAGE_SEND_PACKET_1.status, Packet.STATUS_SENT)
-        self.socket_manager._safe_send.assert_called_once()
-        self.socket_manager._safe_put.assert_not_called()
-        self.assertFalse(self.sent)
         self.MESSAGE_SEND_PACKET_1.status = Packet.STATUS_ACK
-        time.sleep(0.1)
-        self.assertTrue(self.sent)
+        self._send_packet_in_background(self.MESSAGE_SEND_PACKET_1, send_time)
+        self.socket_manager._safe_send.assert_not_called()
         self.socket_manager._safe_put.assert_not_called()
 
     def test_non_blocking_ack_packet_send(self):
@@ -856,8 +839,7 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         time.sleep(0.1)
         connection_id = use_packet.get_receiver_connection_id()
         self.assertTrue(self.socket_manager.run[connection_id])
-        socket_thread = self.socket_manager.threads[connection_id]
-        self.assertTrue(socket_thread.isAlive())
+
         self.assertIsNotNone(self.socket_manager.queues[connection_id])
         self.assertEqual(
             self.socket_manager.last_sent_heartbeat_time[connection_id], 0)
@@ -895,7 +877,6 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.assertNotIn(connection_id, self.socket_manager.queues)
         self.assertNotIn(connection_id, self.socket_manager.threads)
         self.assertNotIn(use_packet.id, self.socket_manager.packet_map)
-        self.assertFalse(socket_thread.isAlive())
 
         # Assert that opening multiple threads and closing them is possible
         self.socket_manager.open_channel(worker_id, assignment_id)

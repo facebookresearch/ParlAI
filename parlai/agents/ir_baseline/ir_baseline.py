@@ -211,7 +211,7 @@ class IrBaselineAgent(Agent):
 
         # Rank candidates
         cands = None
-        if 'label_candidates' in obs and len(obs['label_candidates']) > 0:
+        if obs.get('label_candidates', False) and len(obs['label_candidates']) > 0:
             cands = obs['label_candidates']
         if hasattr(self, 'label_candidates'):
             # override label candidates with candidate file if set
