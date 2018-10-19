@@ -24,7 +24,6 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-
         cnn_fname = 'cnn_stories.tgz'
         cnn_gd_id = '0BwmD_VLjROrfTHk4NFg2SndKcjQ'
         build_data.download_from_google_drive(cnn_gd_id, os.path.join(dpath, cnn_fname))
@@ -32,11 +31,8 @@ def build(opt):
 
         dm_fname = 'dm_stories.tgz'
         dm_gd_id = '0BwmD_VLjROrfM1BxdkxVaTY2bWs'
-        build_data.download_from_google_drive(dm_gd_id, os.path.join(dpath,  dm_fname))
+        build_data.download_from_google_drive(dm_gd_id, os.path.join(dpath, dm_fname))
         build_data.untar(dpath, dm_fname)
-
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
-
-

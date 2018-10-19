@@ -11,7 +11,9 @@
 
 from parlai.core.teachers import DialogTeacher
 from .build import build
-import os, copy
+import os
+import copy
+
 
 class CNNDMTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
@@ -31,7 +33,7 @@ class CNNDMTeacher(DialogTeacher):
 
         return os.path.join(opt['datapath'], 'CNN_DM')
 
-    def setup_data (self, input_path):
+    def setup_data(self, input_path):
 
         print('loading: ' + input_path)
         paths = [os.path.join(input_path, 'cnn', 'stories'), os.path.join(input_path, 'dailymail', 'stories')]
@@ -46,11 +48,11 @@ class CNNDMTeacher(DialogTeacher):
         for path in paths:
             for file in os.listdir(path):
                 if file.endswith('.story'):
-                    with open(os.path.join(path,file)) as file_data:
+                    with open(os.path.join(path, file)) as file_data:
                         data, label = extract_data_and_labels(file_data.read())
 
                     yield (data + '\n' + self.question, label, None, None), new_episode
 
+
 class DefaultTeacher(CNNDMTeacher):
     pass
-

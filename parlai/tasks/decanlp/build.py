@@ -13,6 +13,7 @@ import os, importlib
 
 decanlp_tasks = ['squad', 'iwslt14', 'cnn_dm', 'multinli', 'sst', 'qasrl', 'qazre', 'woz', 'wikisql', 'mwsc']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'decanlp')
     version = 'None'

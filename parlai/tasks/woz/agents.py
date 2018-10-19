@@ -12,6 +12,7 @@ from parlai.core.teachers import DialogTeacher
 from .build import build
 import os, json, copy
 
+
 class WoZTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         # store datatype
@@ -26,8 +27,7 @@ class WoZTeacher(DialogTeacher):
 
         super().__init__(opt, shared)
 
-
-    def setup_data (self, input_path):
+    def setup_data(self, input_path):
 
         print('loading: ' + input_path)
         file_path = os.path.join(input_path, 'woz_train_en.json')
@@ -47,4 +47,3 @@ class WoZTeacher(DialogTeacher):
 
 class DefaultTeacher(WoZTeacher):
     pass
-

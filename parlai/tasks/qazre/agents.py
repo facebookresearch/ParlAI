@@ -12,6 +12,7 @@ from parlai.core.teachers import DialogTeacher
 from .build import build
 import os, copy
 
+
 class QAZRETeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         # store datatype
@@ -26,8 +27,7 @@ class QAZRETeacher(DialogTeacher):
         self.opt = copy.deepcopy(opt)
         super().__init__(opt, shared)
 
-
-    def setup_data (self, input_path):
+    def setup_data(self, input_path):
 
         print('loading: ' + input_path)
 
@@ -43,13 +43,13 @@ class QAZRETeacher(DialogTeacher):
 
         for fname in os.listdir(input_path):
             if fname[:5] == 'train':
-                with open(os.path.join(input_path,fname)) as file:
+                with open(os.path.join(input_path, fname)) as file:
                     file_data = file.read().split('\n')[:-1]
                 for line in file_data:
                     question, answer = extract_qa(line)
 
                     yield (question, answer, None, None), new_episode
 
+
 class DefaultTeacher(QAZRETeacher):
     pass
-

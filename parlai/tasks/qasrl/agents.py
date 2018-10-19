@@ -12,6 +12,7 @@ from parlai.core.teachers import DialogTeacher
 from .build import build
 import os, copy
 
+
 class QASRLTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         # store datatype
@@ -26,8 +27,7 @@ class QASRLTeacher(DialogTeacher):
 
         super().__init__(opt, shared)
 
-
-    def setup_data (self, input_path):
+    def setup_data(self, input_path):
 
         print('loading: ' + input_path)
         file_path = os.path.join(input_path, 'wiki1.train.qa')
@@ -37,11 +37,12 @@ class QASRLTeacher(DialogTeacher):
         def convert_to_qa(input_data):
             lines = input_data.split('\n')
             context = lines[1]
-            predicate_count =  int(lines[0].split('\t')[-1])
+            predicate_count = int(lines[0].split('\t')[-1])
             unparsed_qa = lines[2:]
+
             def parse_qa(qa_line):
                 qa_split = qa_line.split('\t?\t')
-                question = context + '\n' + qa_split[0].replace('\t_', '').replace('\t',' ')+ '?'
+                question = context + '\n' + qa_split[0].replace('\t_', '').replace('\t', ' ') + '?'
                 answers = qa_split[1].split(' ### ')
                 return [question, answers]
 
@@ -55,10 +56,8 @@ class QASRLTeacher(DialogTeacher):
                     counter += 1
             return qa_pairs
 
-
-
         with open(file_path) as file:
-            #split the data by sentences
+            # split the data by sentences
             file_data = file.read().split('\n\n')[:-1]
         for data in file_data:
             for qa in convert_to_qa(data):
@@ -67,7 +66,5 @@ class QASRLTeacher(DialogTeacher):
                 yield (question, answers, None, None), new_episode
 
 
-
 class DefaultTeacher(QASRLTeacher):
     pass
-
