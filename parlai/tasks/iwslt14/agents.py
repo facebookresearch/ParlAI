@@ -35,6 +35,9 @@ class DefaultTeacher(DialogTeacher):
             task_name = task.split(':')[1]
         source, target = task_name.split('_')
         opt['datafile'] = _path(opt, source, target)
+
+        self.opt = copy.deepcopy(opt)
+
         super().__init__(opt, shared)
 
     def setup_data(self, path):

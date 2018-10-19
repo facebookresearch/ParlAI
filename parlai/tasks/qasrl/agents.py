@@ -1,8 +1,6 @@
 from parlai.core.teachers import DialogTeacher
 from .build import build
-import os
-import pdb
-
+import os, copy
 
 
 
@@ -12,10 +10,11 @@ class QASRLTeacher(DialogTeacher):
         self.dt = opt['datatype'].split(':')[0]
 
         # store identifier for the teacher in the dialog
-        self.id = 'qa-srl'
+        self.id = 'qasrl'
 
         build(opt)
         opt['datafile'] = os.path.join(opt['datapath'], 'QA-SRL')
+        self.opt = copy.deepcopy(opt)
 
         super().__init__(opt, shared)
 

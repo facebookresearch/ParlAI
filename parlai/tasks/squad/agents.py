@@ -118,6 +118,7 @@ class DefaultTeacher(DialogTeacher):
             suffix = 'dev'
         opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD',
                                        suffix + '-v1.1.json')
+        self.opt = copy.deepcopy(opt)
         self.id = 'squad'
         super().__init__(opt, shared)
 

@@ -693,4 +693,60 @@ task_list = [
         "tags": ["All",  "ChitChat" ],
         "description": "Dataset collected during the wild evaluation of ConvaAI2 participants bots (http://convai.io). 60% train, 20% valid and 20% test is chosen at random from the whole dataset."
     },
+    {
+        "id": "sst",
+        "display name": "SST Sentiment Analysis",
+        "task": "sst",
+        "tags": ["All"],
+        "description": ""
+    },
+    {
+        "id": "cnn-dm",
+        "display name": "CNN/DM Summarisation",
+        "task": "cnn-dm",
+        "tags": ["All"],
+        "description": ""
+    },
+    {
+        "id": "qasrl",
+        "display name": "QA-SRL Semantic Role Labelling",
+        "task": "qasrl",
+        "tags": ["All"],
+        "description": ""
+    },
+    {
+        "id": "qazre",
+        "display name": "QA-ZRE Relation Extraction",
+        "task": "qazre",
+        "tags": ["All"],
+        "description": ""
+    },
+    {
+        "id": "woz",
+        "display name": "WOZ restuarant reservation (Goal-Oriented Dialogue)",
+        "task": "woz",
+        "tags": ["All"],
+        "description": ""
+    },
+    {
+        "id": "wikisql",
+        "display name": "WikiSQL semantic parsing task",
+        "task": "qasrl",
+        "tags": ["All"],
+        "description": ""
+    },
+    {
+        "id": "mwsc",
+        "display name": "MWSC pronound resolution",
+        "task": "mwsc",
+        "tags": ["All"],
+        "description": ""
+    },
+    {
+        "id": "decanlp",
+        "display name": "DecaNLP: The Natural Language Decathlon",
+        "task": "decanlp",
+        "tags": ["All"],
+        "description": ""
+    },
 ]
