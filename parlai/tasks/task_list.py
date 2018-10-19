@@ -731,7 +731,7 @@ task_list = [
     {
         "id": "wikisql",
         "display name": "WikiSQL semantic parsing task",
-        "task": "qasrl",
+        "task": "wikisql",
         "tags": ["All"],
         "description": ""
     },
