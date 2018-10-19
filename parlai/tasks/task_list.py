@@ -701,9 +701,9 @@ task_list = [
         "description": ""
     },
     {
-        "id": "cnn-dm",
+        "id": "cnn_dm",
         "display name": "CNN/DM Summarisation",
-        "task": "cnn-dm",
+        "task": "cnn_dm",
         "tags": ["All"],
         "description": ""
     },

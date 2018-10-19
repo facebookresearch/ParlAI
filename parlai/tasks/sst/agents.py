@@ -33,7 +33,7 @@ class SSTTeacher(DialogTeacher):
             sentiment_val = float(label)
             if sentiment_val <= 0.333:
                 return self.SST_LABELS[0]
-            elif sentiment_val>0.6666:
+            elif sentiment_val>0.666:
                 return self.SST_LABELS[1]
             return False
         with open(path) as data_file:
