@@ -43,6 +43,7 @@ from parlai.core.build_data import modelzoo_path
 from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
+import json
 import pickle
 import random
 import os
@@ -302,8 +303,14 @@ def load_agent_module(opt):
     model_file = opt['model_file']
     optfile = model_file + '.opt'
     if os.path.isfile(optfile):
-        with open(optfile, 'rb') as handle:
-            new_opt = pickle.load(handle)
+        try:
+            # try json first
+            with open(optfile, 'r') as handle:
+                new_opt = json.load(handle)
+        except UnicodeDecodeError:
+            # oops it's pickled
+            with open(optfile, 'rb') as handle:
+                new_opt = pickle.load(handle)
         if 'batchindex' in new_opt:
             # This saved variable can cause trouble if we switch to BS=1 at test time
             del new_opt['batchindex']
@@ -423,7 +430,7 @@ def create_agent(opt, requireModelExists=False):
     the model from that location instead. This avoids having to specify all the other
     options necessary to set up the model including its name as they are all loaded from
     the options file if it exists (the file opt['model_file'] + '.opt' must exist and
-    contain a pickled dict containing the model's options).
+    contain a pickled or json dict containing the model's options).
     """
     if opt.get('datapath', None) is None:
         # add datapath, it is missing

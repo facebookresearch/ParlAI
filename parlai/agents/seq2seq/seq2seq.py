@@ -19,7 +19,7 @@ from collections import defaultdict
 
 import os
 import math
-import pickle
+import json
 import tempfile
 
 
@@ -582,10 +582,10 @@ class Seq2seqAgent(TorchAgent):
                 torch.save(model, write)
 
             # save opt file
-            with open(path + ".opt", 'wb') as handle:
+            with open(path + '.opt', 'w') as handle:
                 # save version string
                 self.opt['model_version'] = self.model_version()
-                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                json.dump(self.opt, handle)
 
     def load(self, path):
         """Return opt and model states."""

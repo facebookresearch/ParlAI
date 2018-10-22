@@ -17,7 +17,7 @@ outputted.
 This also makes a nice reference for a simpla, minimalist agent.e
 """
 
-import pickle
+import json
 import re
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -114,8 +114,8 @@ class UnigramAgent(Agent):
         with open(path, 'w') as f:
             f.write(self.get_prediction() + '\n')
 
-        with open(path + '.opt', 'wb') as f:
-            pickle.dump(self.opt, f)
+        with open(path + '.opt', 'w') as f:
+            json.dump(self.opt, f)
 
     def load(self, path):
         """

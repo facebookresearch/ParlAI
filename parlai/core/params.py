@@ -13,6 +13,7 @@ import argparse
 import importlib
 import os
 import pickle
+import json
 import sys as _sys
 import datetime
 from parlai.core.agents import get_agent_module, get_task_module
@@ -29,9 +30,16 @@ def get_model_name(opt):
         if model_file is not None:
             optfile = model_file + '.opt'
             if os.path.isfile(optfile):
-                with open(optfile, 'rb') as handle:
-                    new_opt = pickle.load(handle)
-                    model = new_opt.get('model', None)
+                try:
+                    # try json first
+                    with open(optfile, 'r') as handle:
+                        new_opt = json.load(handle)
+                        model = new_opt.get('model', None)
+                except UnicodeDecodeError:
+                    # oops it's pickled
+                    with open(optfile, 'rb') as handle:
+                        new_opt = pickle.load(handle)
+                        model = new_opt.get('model', None)
     return model
 
 
