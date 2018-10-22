@@ -72,6 +72,8 @@ class StarspaceAgent(Agent):
                            help='learning rate')
         agent.add_argument('-margin', '--margin', type=float, default=0.1,
                            help='margin')
+        agent.add_argument('--input_dropout', type=float, default=0,
+                           help='fraction of input to dropout during training')
         agent.add_argument('-opt', '--optimizer', default='sgd',
                            choices=StarspaceAgent.OPTIM_OPTS.keys(),
                            help='Choose between pytorch optimizers. '
@@ -291,6 +293,17 @@ class StarspaceAgent(Agent):
         metrics['loss'] = loss
         return metrics
 
+    def input_dropout(self, xs, ys, negs):
+        def dropout(x, rate):
+            import pdb; pdb.set_trace()
+        rate = self.opt.get('input_dropout')
+        xs2 = dropout(xs, rate)
+        ys2 = dropout(xs, rate)
+        negs2 = []
+        for n in negs:
+            negs2.append(dropout(n rate))
+        return xs2, ys2, negs2
+    
     def predict(self, xs, ys=None, cands=None, cands_txt=None, obs=None):
         """Produce a prediction from our model.
 
@@ -303,6 +316,9 @@ class StarspaceAgent(Agent):
             if is_training and len(negs) > 0:
                 self.model.train()
                 self.optimizer.zero_grad()
+                import pdb; pdb.set_trace()
+                if self.opt.get('input_dropout') > 0:
+                    xe, ye, negs = self.input_dropout(xe, ye, negs)
                 xe, ye = self.model(xs, ys, negs)
                 if self.debugMode:
                     # print example
