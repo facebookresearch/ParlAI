@@ -295,13 +295,21 @@ class StarspaceAgent(Agent):
 
     def input_dropout(self, xs, ys, negs):
         def dropout(x, rate):
-            import pdb; pdb.set_trace()
+            xd = []
+            for i in x[0]:
+                if random.uniform(0, 1) > rate:
+                    xd.append(i)
+            if len(xd) == 0:
+                # pick one random thing to put in xd
+                xd.append(x[0][random.randint(0, x.size(1)-1)])
+            return torch.LongTensor(xd).unsqueeze(0)
         rate = self.opt.get('input_dropout')
         xs2 = dropout(xs, rate)
-        ys2 = dropout(xs, rate)
+        ys2 = dropout(ys, rate)
         negs2 = []
         for n in negs:
-            negs2.append(dropout(n rate))
+            negs2.append(dropout(n, rate))
+        #import pdb; pdb.set_trace()
         return xs2, ys2, negs2
     
     def predict(self, xs, ys=None, cands=None, cands_txt=None, obs=None):
@@ -316,9 +324,8 @@ class StarspaceAgent(Agent):
             if is_training and len(negs) > 0:
                 self.model.train()
                 self.optimizer.zero_grad()
-                import pdb; pdb.set_trace()
-                if self.opt.get('input_dropout') > 0:
-                    xe, ye, negs = self.input_dropout(xe, ye, negs)
+                if self.opt.get('input_dropout', 0) > 0:
+                    xs, ys, negs = self.input_dropout(xs, ys, negs)
                 xe, ye = self.model(xs, ys, negs)
                 if self.debugMode:
                     # print example
