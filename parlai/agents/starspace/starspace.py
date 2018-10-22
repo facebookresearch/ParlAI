@@ -309,7 +309,6 @@ class StarspaceAgent(Agent):
         negs2 = []
         for n in negs:
             negs2.append(dropout(n, rate))
-        #import pdb; pdb.set_trace()
         return xs2, ys2, negs2
     
     def predict(self, xs, ys=None, cands=None, cands_txt=None, obs=None):
