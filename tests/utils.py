@@ -27,8 +27,9 @@ def git_ls_dirs(root=None):
     return list(dirs)
 
 
-def git_changed_files(root=None, skip_nonexisting=True):
-    filenames = _git.diff('--name-only', 'origin/master').split('\n')
+def git_changed_files(skip_nonexisting=True):
+    fork_point = _git.merge_base('--fork-point', 'origin/master').strip()
+    filenames = _git.diff('--name-only', fork_point).split('\n')
     if skip_nonexisting:
         filenames = [fn for fn in filenames if os.path.exists(fn)]
     return filenames
@@ -36,4 +37,4 @@ def git_changed_files(root=None, skip_nonexisting=True):
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(git_ls_dirs('parlai'))
+    pprint(git_changed_files('parlai'))
