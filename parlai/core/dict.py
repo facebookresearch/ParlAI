@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 
 # Copyright (c) 2017-present, Facebook, Inc.
@@ -115,13 +114,16 @@ class DictionaryAgent(Agent):
                  'not set and model_file is set.')
         dictionary.add_argument(
             '--dict-initpath',
+            hidden=True,
             help='path to a saved dictionary to load tokens / counts from to '
                  'seed the dictionary with initial tokens and/or frequencies')
         dictionary.add_argument(
             '--dict-language', default=DictionaryAgent.default_lang,
+            hidden=True,
             help='sets language for the punkt sentence tokenizer')
         dictionary.add_argument(
             '--dict-max-ngram-size', type=int,
+            hidden=True,
             default=DictionaryAgent.default_maxngram,
             help='looks for ngrams of up to this size. this is ignored when '
                  'building the dictionary. note: this takes approximate '
@@ -137,15 +139,19 @@ class DictionaryAgent(Agent):
             help='max number of tokens to include in dictionary or bpe codecs')
         dictionary.add_argument(
             '--dict-nulltoken', default=DictionaryAgent.default_null,
+            hidden=True,
             help='empty token, can be used for padding or just empty values')
         dictionary.add_argument(
             '--dict-starttoken', default=DictionaryAgent.default_start,
+            hidden=True,
             help='token for starting sentence generation, if needed')
         dictionary.add_argument(
             '--dict-endtoken', default=DictionaryAgent.default_end,
+            hidden=True,
             help='token for end of sentence markers, if needed')
         dictionary.add_argument(
             '--dict-unktoken', default=DictionaryAgent.default_unk,
+            hidden=True,
             help='token to return for unavailable words')
         dictionary.add_argument(
             '-tok', '--dict-tokenizer', default=DictionaryAgent.default_tok,
@@ -157,9 +163,11 @@ class DictionaryAgent(Agent):
             help='Whether or not to lowercase all text seen.')
         dictionary.add_argument(
             '--bpe-debug', action='store_true',
+            hidden=True,
             help='Leave BPE tokens untouched in output. Useful for debugging.')
         dictionary.add_argument(
             '--dict-textfields', default=DictionaryAgent.default_textfields,
+            hidden=True,
             help='Observation fields which dictionary learns vocabulary from. '
                  'Tasks with additional fields may add to this list to handle '
                  'any extra vocabulary.')

@@ -45,6 +45,7 @@ class TensorboardLogger(Shared):
         )
         logger.add_argument(
             '-tbcomment', '--tensorboard-comment', type=str, default='',
+            hidden=True,
             help='Add any line here to distinguish your TB event file, optional'
         )
 
