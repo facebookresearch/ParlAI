@@ -34,6 +34,11 @@ Here's an example dataset with a single episode with 2 examples:
 
 Suppose that data is in the file /tmp/data.txt
 
+.. note::
+
+	There are tabs between each field above which are rendered in the browser as four spaces.
+	Be sure to change them to tabs for the command below to work.
+
 We could look at that data using the usual display data script:
 
 ::
@@ -54,11 +59,11 @@ We could look at that data using the usual display data script:
 	EPOCH DONE
 	[ loaded 1 episodes with a total of 2 examples ]
 
-The text file data format is called ParlAI Dialog format, and is described 
+The text file data format is called ParlAI Dialog format, and is described
 in the :doc:`teachers documentation <teachers>` (parlai.core.teachers.ParlAIDialogTeacher)
-and 
+and
 in the `core/teachers.py file <https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/teachers.py#L1098>`_.
-Essentially, there is one training example every line, and each field in a 
+Essentially, there is one training example every line, and each field in a
 ParlAI message is tab separated with the name of the field, followed by a colon.
 E.g. the usual fields like 'text', 'labels', 'label_candidates' etc. can all
 be used, or you can add your own fields too if you have a special use for them.
