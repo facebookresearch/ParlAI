@@ -119,7 +119,6 @@ For example, you could change the vectorizer to return numpy arrays instead of T
 
 Conclusion
 ----------
-This is the end to the quick-start guide.
 
 To see more details about ParlAI's general structure, how tasks and models are set up,
 or how to use Mechanical Turk, Messenger, Tensorboard, and more--check out the other tutorials.
