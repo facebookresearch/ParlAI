@@ -40,6 +40,7 @@ class TestSeq2Seq(unittest.TestCase):
     """Checks that seq2seq can learn some very basic tasks."""
 
     def test_generation(self):
+        """This test uses a single-turn sequence repitition task."""
         stdout, valid, test = _mock_train(
             task='integration_tests:NocandidateTeacher',
             model='seq2seq',
@@ -66,13 +67,14 @@ class TestSeq2Seq(unittest.TestCase):
             "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
 
-    def test_generation_multithreaded(self):
+    def test_generation_multi(self):
+        """This test uses a multi-turn task and multithreading."""
         stdout, valid, test = _mock_train(
-            task='integration_tests:NocandidateTeacher',
+            task='integration_tests:MultiturnNocandidateTeacher',
             model='seq2seq',
             lr=LR,
             batchsize=BATCH_SIZE,
-            num_epochs=NUM_EPOCHS,
+            num_epochs=NUM_EPOCHS * 2,
             numthreads=2,
             no_cuda=True,
             embeddingsize=16,
