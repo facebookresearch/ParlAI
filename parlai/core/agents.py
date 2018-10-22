@@ -527,7 +527,7 @@ def get_task_module(taskname):
     else:
         task = sp[0].lower()
         module_name = "%s.tasks.%s.agents" % (repo, task)
-    if len(sp) > 1:
+    if len(sp) > 1 and '=' not in sp[1]:
         sp[1] = sp[1][0].upper() + sp[1][1:]
         teacher = sp[1]
         if '.' not in sp[0] and 'Teacher' not in teacher:
@@ -544,7 +544,21 @@ def get_task_module(taskname):
     teacher_class = getattr(my_module, teacher)
     return teacher_class
 
-
+def add_task_flags_to_agent_opt(agent, opt, flags):
+    """Allows to insert task flags in the task name itself, they are
+    put inside the opt before the task is created.
+    """
+    fl = flags.split(':')
+    task = []
+    for f in fl:
+        if '=' in f:
+            one_flag = f.split('=')
+            opt[one_flag[0]] = one_flag[1]
+        else:
+            task.append(f)
+    opt['task'] = ':'.join(task)
+            
+            
 def create_task_agent_from_taskname(opt):
     """Create task agent(s) assuming the input ``task_dir:teacher_class``.
 
@@ -564,6 +578,7 @@ def create_task_agent_from_taskname(opt):
     if ',' not in opt['task']:
         # Single task
         teacher_class = get_task_module(opt['task'])
+        add_task_flags_to_agent_opt(teacher_class, opt, opt['task'])
         task_agents = teacher_class(opt)
         if type(task_agents) != list:
             task_agents = [task_agents]
