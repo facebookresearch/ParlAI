@@ -343,6 +343,9 @@ class ParlaiParser(argparse.ArgumentParser):
                                 'batches of data in multi-example episodes.')
         self.add_parlai_data_path(parlai)
 
+        self.add_pytorch_datateacher_args()
+
+    def add_pytorch_datateacher_args(self):
         pytorch = self.add_argument_group('PytorchData Arguments')
         pytorch.add_argument(
             '-pyt', '--pytorch-teacher-task',
@@ -354,32 +357,31 @@ class ParlaiParser(argparse.ArgumentParser):
             help='Specify to use the PytorchDataTeacher for multiprocessed '
                  'data loading with a pytorch Dataset, e.g. "vqa_1" or "flickr30k"'
         )
-
         known_args = self.parse_known_args(nohelp=True)[0]
-        if (known_args.pytorch_teacher_dataset is not None or
-                known_args.pytorch_teacher_task is not None):
-            self.add_pytorch_datateacher_args(pytorch)
+        if (known_args.pytorch_teacher_dataset is None and
+                known_args.pytorch_teacher_task is None):
+            # don't do the rest of the group args if we don't specify these
+            return
 
-    def add_pytorch_datateacher_args(self, parser):
-        parser.add_argument(
+        pytorch.add_argument(
             '--pytorch-datafile', type=str, default=None,
             help='datafile for pytorch data loader')
-        parser.add_argument(
+        pytorch.add_argument(
             '-nw', '--numworkers', type=int, default=4,
             help='how many workers the Pytorch dataloader should use')
-        parser.add_argument(
+        pytorch.add_argument(
             '--pytorch-preprocess', type='bool', default=False,
             help='Whether the agent should preprocess the data while building'
                  'the pytorch data')
-        parser.add_argument(
+        pytorch.add_argument(
             '--batch-sort-cache', type=str,
             choices=['pop', 'index', 'none'], default='none',
             help='Whether to have batches of similarly sized episodes, and how'
             'to build up the cache')
-        parser.add_argument(
+        pytorch.add_argument(
             '--batch-length-range', type=int, default=5,
             help='degree of variation of size allowed in batch')
-        parser.add_argument(
+        pytorch.add_argument(
             '--shuffle', type='bool', default=False,
             help='Whether to shuffle the data')
 
