@@ -73,7 +73,7 @@ class StarspaceAgent(Agent):
         agent.add_argument('-margin', '--margin', type=float, default=0.1,
                            help='margin')
         agent.add_argument('--input_dropout', type=float, default=0,
-                           help='fraction of input to dropout during training')
+                           help='fraction of input/output features to dropout during training')
         agent.add_argument('-opt', '--optimizer', default='sgd',
                            choices=StarspaceAgent.OPTIM_OPTS.keys(),
                            help='Choose between pytorch optimizers. '
