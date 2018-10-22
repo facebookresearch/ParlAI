@@ -251,7 +251,7 @@ class MTurkDataHandler():
                          WHERE assignment_id = ?;''',
                       ('Completed', approve_time, assignment_id))
 
-            # Increment worker completed
+            # Increment worker disconnected
             c.execute('''UPDATE workers SET disconnected = disconnected + 1
                          WHERE worker_id = ?;''',
                       (worker_id, ))
@@ -315,6 +315,10 @@ class MTurkDataHandler():
             c.execute('''UPDATE assignments SET status = ?
                          WHERE assignment_id = ?;''',
                       ('Abandoned', assignment_id))
+            # Increment worker completed
+            c.execute('''UPDATE workers SET disconnected = disconnected + 1
+                         WHERE worker_id = ?;''',
+                      (worker_id, ))
             conn.commit()
 
     def log_start_onboard(self, worker_id, assignment_id):
@@ -415,6 +419,16 @@ class MTurkDataHandler():
             except Exception as e:
                 print(repr(e))
 
+    def get_all_worker_data(self, start=0, count=30):
+        '''get all the worker data for all worker_ids.'''
+        with self.table_access_condition:
+            conn = self._get_connection()
+            c = conn.cursor()
+            c.execute('SELECT * FROM workers LIMIT ?,?;',
+                      (start, start + count))
+            results = c.fetchall()
+            return results
+
     def get_worker_data(self, worker_id):
         with self.table_access_condition:
             conn = self._get_connection()
@@ -422,6 +436,19 @@ class MTurkDataHandler():
             c.execute('SELECT * FROM workers WHERE worker_id = ?;',
                       (worker_id, ))
             results = c.fetchone()
+            return results
+
+    def get_assignments_for_run(self, task_group_id):
+        with self.table_access_condition:
+            conn = self._get_connection()
+            c = conn.cursor()
+            c.execute('''SELECT assignments.* FROM assignments
+                         WHERE assignments.hit_id IN (
+                           SELECT hits.hit_id FROM hits
+                           WHERE hits.run_id = ?
+                         );''',
+                      (task_group_id, ))
+            results = c.fetchall()
             return results
 
     def get_assignment_data(self, assignment_id):
@@ -443,6 +470,16 @@ class MTurkDataHandler():
             results = c.fetchone()
             return results
 
+    def get_all_run_data(self, start=0, count=30):
+        '''get all the run data for all task_group_ids.'''
+        with self.table_access_condition:
+            conn = self._get_connection()
+            c = conn.cursor()
+            c.execute('SELECT * FROM runs LIMIT ?,?;',
+                      (start, start + count))
+            results = c.fetchall()
+            return results
+
     def get_run_data(self, task_group_id):
         '''get the run data for the given task_group_id, return None if not
         found.
@@ -453,6 +490,15 @@ class MTurkDataHandler():
             c.execute('SELECT * FROM runs WHERE run_id = ?;',
                       (task_group_id, ))
             results = c.fetchone()
+            return results
+
+    def get_hits_for_run(self, run_id):
+        '''Get the full list of HITs for the given run_id'''
+        with self.table_access_condition:
+            conn = self._get_connection()
+            c = conn.cursor()
+            c.execute("SELECT * FROM hits WHERE run_id = ?;", (run_id, ))
+            results = c.fetchall()
             return results
 
     def get_hit_data(self, hit_id):
