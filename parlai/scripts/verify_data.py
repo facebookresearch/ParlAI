@@ -39,7 +39,7 @@ def report(world, counts, log_time):
            'empty_label_candidates': counts['empty_label_candidates'],
            }
     text, log = log_time.log(report['exs'], world.num_examples(), log)
-    print(text)
+    return text, log
 
 
 def verify(opt, printargs=None, print_parser=None):
@@ -80,7 +80,9 @@ def verify(opt, printargs=None, print_parser=None):
                         counts['empty_label_candidates'] += 1
 
         if log_time.time() > log_every_n_secs:
-            print(report(world, counts, log_time))
+            text, log = report(world, counts, log_time)
+            if print_parser:
+                print(text)
 
     try:
         # print dataset size if available
@@ -89,9 +91,11 @@ def verify(opt, printargs=None, print_parser=None):
         ))
     except Exception:
         pass
-    report(world, counts, log_time)
+    return report(world, counts, log_time)
 
 
 if __name__ == '__main__':
     parser = setup_args()
-    verify(parser.parse_args(print_args=False), print_parser=parser)
+    report_text, report_log = \
+        verify(parser.parse_args(print_args=False), print_parser=parser)
+    print(report_text)
