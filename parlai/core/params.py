@@ -371,14 +371,16 @@ class ParlaiParser(argparse.ArgumentParser):
         pytorch.add_argument(
             '--batch-sort-cache-type', type=str,
             choices=['pop', 'index', 'none'], default='pop',
-            help='Whether to have batches of similarly sized episodes, and how'
-            'to build up the cache')
+            help='how to build up the batch cache')
         pytorch.add_argument(
             '--batch-length-range', type=int, default=5,
             help='degree of variation of size allowed in batch')
         pytorch.add_argument(
             '--shuffle', type='bool', default=False,
             help='Whether to shuffle the data')
+        pytorch.add_argument(
+            '--batch-sort-field', type=str, default='text',
+            help='What field to use when determining the length of an episode')
         self.add_parlai_data_path(parlai)
 
     def add_model_args(self):

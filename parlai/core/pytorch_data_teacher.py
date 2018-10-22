@@ -17,6 +17,7 @@ from .agents import get_agent_module
 import json
 import math
 import pickle
+import collections
 import random
 import os
 from functools import wraps
@@ -128,9 +129,20 @@ def batch_cache(function):
         '''Helper function for flattening a list'''
         return [item for sublist in l for item in sublist]
 
+    def ep_length(val):
+        '''Determines the length of an episode, given the specified value'''
+        if isinstance(val, (int, bytes, bool)):
+            return 1
+        if isinstance(val, str):
+            return len(val.split(' '))
+        if isinstance(val, (collections.Mapping,
+                            collections.Sequence,
+                            torch.Tensor)):
+            return len(val)
+
     def put_in_cache(ep_idx, episode, caller):
         '''Put episode `ep_idx` into cache'''
-        length = episode['text'].count(' ')
+        length = ep_length(episode[caller.batch_sort_field])
         lengths = [length] + flatten([
             [length + i, length + (i * -1)]
             for i in range(1, caller.batch_length_range)
@@ -333,6 +345,7 @@ class LoaderProcess(Thread):
         self.batch_sort = opt.get('pytorch_teacher_batch_sort')
         self.batch_cache_type = opt.get('batch_sort_cache')
         self.batch_length_range = opt.get('batch_length_range')
+        self.batch_sort_field = opt.get('batch_sort_field')
 
     def run(self):
         while True:
@@ -368,7 +381,7 @@ def deserialize(obj):
             val_type = (torch.LongTensor if 'long' in obj[key]['type']
                         else torch.Tensor)
             obj[key] = val_type(obj[key]['value'])
-    return obj
+
 
 
 class StreamDataset(Dataset):
@@ -407,9 +420,10 @@ class StreamDataset(Dataset):
         read = open(self.datafile)
         episode = []
         for idx, line in enumerate(read):
-            example = deserialize(json.loads(line))
+            example = json.loads(line)
             episode.append(example)
             if example['episode_done']:
+                map(deserialize, episode)
                 yield idx, episode
                 episode = []
         read.close()
@@ -450,7 +464,9 @@ class ParlAIDataset(Dataset):
         self.data = []
         with open(self.datafile) as f:
             for line in f:
-                self.data.append(deserialize(json.loads(line)))
+                ex = json.loads(line)
+                deserialize(ex)
+                self.data.append(ex)
 
     def num_episodes(self):
         return self.num_eps
@@ -480,6 +496,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.num_workers = opt['numworkers']
         self.batch_sort = opt.get('pytorch_teacher_batch_sort')
         self.batch_cache_type = opt.get('batch_sort_cache')
+        self.batch_sort_field = opt.get('batch_sort_field')
         # One can specify a collate function to use for preparing a batch
         self.opt = opt.copy()
         self.is_shared = shared is not None
