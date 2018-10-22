@@ -146,7 +146,8 @@ class Seq2seqAgent(TorchAgent):
 
         # all instances may need some params
         self.id = 'Seq2Seq'
-        self.multigpu = opt.get('multigpu') and self.use_cuda
+        self.multigpu = (opt.get('multigpu') and self.use_cuda and
+                         (opt.get('batchsize') > 1))
         states = {}
 
         self.beam_dot_log = opt.get('beam_dot_log', False)
@@ -392,10 +393,8 @@ class Seq2seqAgent(TorchAgent):
     def _build_cands(self, batch):
         if not batch.candidates:
             return None, None
-        cand_inds = torch.LongTensor([i for i in range(len(batch.candidates))
-                                      if batch.candidates[i]])
-        if self.use_cuda:
-            cand_inds = cand_inds.cuda()
+        cand_inds = [i for i in range(len(batch.candidates))
+                     if batch.candidates[i]]
         cands = [batch.candidate_vecs[i] for i in cand_inds]
         max_cands_len = max(
             [max([cand.size(0) for cand in cands_i]) for cands_i in cands]
@@ -418,7 +417,7 @@ class Seq2seqAgent(TorchAgent):
         cand_params = self._build_cands(batch)
         seq_len = None if not self.multigpu else batch.text_vec.size(1)
         out = self.model(batch.text_vec, ys=None, cands=cand_params[0],
-                         cand_inds=cand_params[1], seq_len=seq_len)
+                         seq_len=seq_len)
         return out, cand_params
 
     @staticmethod
@@ -634,7 +633,7 @@ class Seq2seqAgent(TorchAgent):
         if cand_scores is not None:
             cand_preds = cand_scores.sort(1, descending=True)[1]
             # now select the text of the cands based on their scores
-            cand_choices = self._pick_cands(cand_preds, cand_params[1].tolist(),
+            cand_choices = self._pick_cands(cand_preds, cand_params[1],
                                             orig_batch.candidates)
 
         text = [self._v2t(p) for p in preds]

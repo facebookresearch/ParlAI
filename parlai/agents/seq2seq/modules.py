@@ -174,7 +174,7 @@ class Seq2seq(nn.Module):
         if len(cand_inds) != hid.size(1):
             # if the number of candidates is mismatched from the number of
             # hidden states, we throw out the hidden states we won't rank with
-            cand_indices = hidden.new(cand_inds)
+            cand_indices = hid.new(cand_inds)
             hid = hid.index_select(1, cand_indices)
             if cell is None:
                 hidden = hid
@@ -239,16 +239,14 @@ class Seq2seq(nn.Module):
              for c in cand_scores], 0)
         return cand_scores
 
-    def forward(self, xs, ys=None, cands=None, cand_inds=None, prev_enc=None,
-                maxlen=None, seq_len=None):
+    def forward(self, xs, ys=None, cands=None, prev_enc=None, maxlen=None,
+                seq_len=None):
         """Get output predictions from the model.
 
         :param xs:          (bsz x seqlen) LongTensor input to the encoder
         :param ys:          expected output from the decoder. used for teacher
                             forcing to calculate loss.
         :param cands:       set of candidates to rank
-        :param cand_inds:   set of indices to match candidates with their
-                            appropriate xs.
         :param prev_enc:    if you know you'll pass in the same xs multiple
                             times, you can pass in the encoder output from the
                             last forward pass to skip recalcuating the same
@@ -277,7 +275,10 @@ class Seq2seq(nn.Module):
         encoder_states = self._encode(xs, prev_enc)
 
         # rank candidates if they are available
-        cand_scores = self._rank(cands, cand_inds, encoder_states)
+        cand_scores = None
+        if cands is not None:
+            cand_inds = [i for i in range(cands.size(0))]
+            cand_scores = self._rank(cands, cand_inds, encoder_states)
 
         if ys is not None:
             # use teacher forcing
