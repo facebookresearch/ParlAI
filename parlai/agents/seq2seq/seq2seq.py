@@ -583,7 +583,8 @@ class Seq2seqAgent(TorchAgent):
             out, cand_params = self.greedy_search(batch)
             if needs_truncation:
                 out = self.truncate_output(out)
-                cand_params = (cand_params[0][:-1], cand_params[1][:-1])
+                if cand_params[0] is not None:
+                    cand_params = (cand_params[0][:-1], cand_params[1][:-1])
             scores, cand_scores = out[0], out[1]
             _, preds = scores.max(2)
         elif self.beam_size > 1:
@@ -671,8 +672,9 @@ class Seq2seqAgent(TorchAgent):
             from collections import OrderedDict
             new_state_dict = OrderedDict()
             for k, v in states['model'].items():
-                name = k[7:]  # remove `module.`
-                new_state_dict[name] = v
+                if k.startswith('module'):
+                    name = k[7:]  # remove `module.`
+                    new_state_dict[name] = v
             states['model'] = new_state_dict
 
         return states
