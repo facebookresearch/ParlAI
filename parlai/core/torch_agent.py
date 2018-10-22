@@ -198,6 +198,8 @@ class TorchAgent(Agent):
             help='disable GPUs even if available. otherwise, will use GPUs if '
                  'available on the device.')
 
+        cls.dictionary_class().add_cmdline_args(argparser)
+
     def __init__(self, opt, shared=None):
         """Initialize agent."""
         super().__init__(opt, shared)
