@@ -192,7 +192,7 @@ class Seq2seqAgent(TorchAgent):
             self.criterion.cuda()
 
         if 'train' in opt.get('datatype', ''):
-            self._init_optim(
+            self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
                 optim_states=states.get('optimizer'),
                 saved_optim_type=states.get('optimizer_type'))

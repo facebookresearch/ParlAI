@@ -253,7 +253,7 @@ class TorchAgent(Agent):
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
 
-    def _init_optim(self, params, optim_states=None, saved_optim_type=None):
+    def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """Initialize optimizer with model parameters.
 
         :param params:       parameters from the model, for example:
