@@ -3,6 +3,7 @@ cache: pip
 python:
     - 3.6
 install:
+    - pip install --upgrade pip
     - pip install flake8
     - python setup.py develop
     - pip install gitpython  # needed for some tests
