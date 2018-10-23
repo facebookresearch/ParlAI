@@ -14,7 +14,6 @@ Contains the following main utilities:
   the TorchAgent class
 * Output namedtuple which is the expected output type of the main abstract
   methods of the TorchAgent class
-* Beam class which provides some generic beam functionality for classes to use
 
 See below for documentation on each specific tool.
 """
@@ -22,8 +21,7 @@ See below for documentation on each specific tool.
 from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import (set_namedtuple_defaults, argsort, padded_tensor,
-                               NEAR_INF)
+from parlai.core.utils import set_namedtuple_defaults, argsort, padded_tensor
 
 try:
     import torch
@@ -35,8 +33,6 @@ from torch import optim
 from collections import deque, namedtuple, Counter
 import json
 import random
-import math
-from operator import attrgetter
 
 """
 Batch is a namedtuple containing data being sent to an agent.
