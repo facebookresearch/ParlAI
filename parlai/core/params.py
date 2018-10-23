@@ -334,7 +334,10 @@ class ParlaiParser(argparse.ArgumentParser):
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
         batch.add_argument('-bsrt', '--batch-sort', default=False, type='bool',
-                           help='If enabled (default %(default)s), create batches by '
+                           help='**NOTE: This is deprecated, if you would like '
+                                'to make use of batch sort functionality, please'
+                                'use -pybsrt with the PytorchDataTeacher**.'
+                                'If enabled (default %(default)s), create batches by '
                                 'flattening all episodes to have exactly one '
                                 'utterance exchange and then sorting all the '
                                 'examples according to their length. This '
@@ -342,12 +345,18 @@ class ParlaiParser(argparse.ArgumentParser):
                                 'present after examples have been parsed, '
                                 'speeding up training.')
         batch.add_argument('-clen', '--context-length', default=-1, type=int,
-                           help='Number of past utterances to remember when '
+                           help='**NOTE: This is deprecated, if you would like '
+                                'to make use of batch sort functionality, please'
+                                'use -pybsrt with the PytorchDataTeacher**.'
+                                'Number of past utterances to remember when '
                                 'building flattened batches of data in multi-'
                                 'example episodes.')
         batch.add_argument('-incl', '--include-labels',
                            default=True, type='bool',
-                           help='Specifies whether or not to include labels '
+                           help='**NOTE: This is deprecated, if you would like '
+                                'to make use of batch sort functionality, please'
+                                'use -pybsrt with the PytorchDataTeacher**.'
+                                'Specifies whether or not to include labels '
                                 'as past utterances when building flattened '
                                 'batches of data in multi-example episodes.')
         pytorch = self.add_argument_group('PytorchData Arguments')
@@ -381,6 +390,18 @@ class ParlaiParser(argparse.ArgumentParser):
         pytorch.add_argument(
             '--batch-sort-field', type=str, default='text',
             help='What field to use when determining the length of an episode')
+        pytorch.add_argument('-pyclen', '--pytorch-context-length', default=-1,
+                             type=int,
+                             help='Number of past utterances to remember when '
+                                  'building flattened batches of data in multi-'
+                                  'example episodes.'
+                                  '(For use with PytorchDataTeacher)')
+        pytorch.add_argument('-pyincl', '--pytorch-include-labels',
+                             default=True, type='bool',
+                             help='Specifies whether or not to include labels '
+                                  'as past utterances when building flattened '
+                                  'batches of data in multi-example episodes.'
+                                  '(For use with PytorchDataTeacher)')
         self.add_parlai_data_path(parlai)
 
     def add_model_args(self):

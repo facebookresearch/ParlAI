@@ -311,7 +311,13 @@ def round_sigfigs(x, sigfigs=4):
 
 
 def flatten(teacher, context_length=-1, include_labels=True):
-    """Return a flattened version of a teacher's data.
+    """
+    ******************************************************************
+    DEPRECATED: If you would like to make use of batch sorting, please
+    use the PytorchDataTeacher
+    ******************************************************************
+
+    Return a flattened version of a teacher's data.
 
     All episodes will have length 1 but contain the desired amount of context.
 
@@ -362,7 +368,12 @@ def flatten(teacher, context_length=-1, include_labels=True):
 
 
 def sort_data(data, key='text_label', method='spaces'):
-    """Given a list of data, sort it according to the method and key.
+    """
+    ******************************************************************
+    DEPRECATED: If you would like to make use of batch sorting, please
+    use the PytorchDataTeacher
+    ******************************************************************
+    Given a list of data, sort it according to the method and key.
 
     Currently the only supported method is counting the number of spaces.
     This appeared to be reliable enough and much faster than tokenizing.
@@ -397,7 +408,14 @@ def sort_data(data, key='text_label', method='spaces'):
 
 
 def make_batches(data, bsz):
-    """Return a list of lists of size bsz given a list of examples."""
+    """
+    ******************************************************************
+    DEPRECATED: If you would like to make use of batch sorting, please
+    use the PytorchDataTeacher
+    ******************************************************************
+
+    Return a list of lists of size bsz given a list of examples.
+    """
     return [data[i:i + bsz] for i in range(0, len(data), bsz)]
 
 

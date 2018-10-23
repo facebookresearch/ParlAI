@@ -101,8 +101,8 @@ def build_data(opt):
     num_exs = 0
     current = []
     episode_done = False
-    include_labels = opt.get('include_labels', True)
-    context_length = opt.get('context_length', -1)
+    include_labels = opt.get('pytorch_include_labels', True)
+    context_length = opt.get('pytorch_context_length', -1)
     context = deque(maxlen=context_length if context_length > 0 else None)
     logger = ProgressLogger(should_humanize=False, throttle=0.1)
     total_exs = world_data.num_examples()

@@ -88,6 +88,15 @@ class TfidfRetrieverAgent(Agent):
                   defaults to true for DBs built using ParlAI; for the DrQA \
                   wiki dump, it is necessary to set this to False to \
                   index into the DB appropriately')
+        parser.add_argument('--tfidf-context-length', default=-1, type=int,
+                            help='Number of past utterances to remember when '
+                                 'building flattened batches of data in multi-'
+                                 'example episodes.')
+        parser.add_argument('--tfidf-include-labels',
+                            default=True, type='bool',
+                            help='Specifies whether or not to include labels '
+                                 'as past utterances when building flattened '
+                                 'batches of data in multi-example episodes.')
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -126,9 +135,9 @@ class TfidfRetrieverAgent(Agent):
         self.cands_hash = {}  # cache for candidates
         self.triples_to_add = []  # in case we want to add more entries
 
-        clen = opt.get('context_length', -1)
+        clen = opt.get('tfidf_context_length', -1)
         self.context_length = clen if clen >= 0 else None
-        self.include_labels = opt.get('include_labels', True)
+        self.include_labels = opt.get('tfidf_include_labels', True)
         self.reset()
 
     def reset(self):
