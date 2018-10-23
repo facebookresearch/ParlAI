@@ -278,6 +278,10 @@ class ParlaiParser(argparse.ArgumentParser):
         default_downloads_path = os.path.join(self.parlai_home, 'downloads')
         parlai = self.add_argument_group('Main ParlAI Arguments')
         parlai.add_argument(
+            '-v', '--show-advanced-args', action='store_true',
+            help='Show hidden command line options (advanced users only)'
+        )
+        parlai.add_argument(
             '-t', '--task',
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
         parlai.add_argument(
@@ -292,6 +296,7 @@ class ParlaiParser(argparse.ArgumentParser):
         )
         parlai.add_argument(
             '--download-path', default=default_downloads_path,
+            hidden=True,
             help='path for non-data dependencies to store any needed files.'
                  'defaults to {parlai_dir}/downloads')
         parlai.add_argument(
@@ -327,6 +332,7 @@ class ParlaiParser(argparse.ArgumentParser):
                  ' e.g. in vqa')
         parlai.add_argument(
             '--hide-labels', default=False, type='bool',
+            hidden=True,
             help='default (False) moves labels in valid and test sets to the '
                  'eval_labels field. If True, they are hidden completely.')
         batch = self.add_argument_group('Batching Arguments')
@@ -388,6 +394,7 @@ class ParlaiParser(argparse.ArgumentParser):
             help='model file name for loading and saving models')
         model_args.add_argument(
             '--dict-class',
+            hidden=True,
             help='the class of the dictionary agent uses')
 
     def add_model_subargs(self, model):
@@ -593,9 +600,28 @@ class ParlaiParser(argparse.ArgumentParser):
         for k, v in kwargs.items():
             self.overridable[k] = v
 
+    @property
+    def show_advanced_args(self):
+        if hasattr(self, '_show_advanced_args'):
+            return self._show_advanced_args
+        known_args, _ = self.parse_known_args(nohelp=True)
+        self._show_advanced_args = known_args.show_advanced_args
+        return known_args.show_advanced_args
+
+    def _handle_hidden_args(self, kwargs):
+        if 'hidden' in kwargs:
+            flag = kwargs['hidden']
+            del kwargs['hidden']
+            if flag and not self.show_advanced_args:
+                kwargs['help'] = argparse.SUPPRESS
+        return kwargs
+
     def add_argument(self, *args, **kwargs):
         """Override to convert underscores to hyphens for consistency."""
-        return super().add_argument(*fix_underscores(args), **kwargs)
+        return super().add_argument(
+            *fix_underscores(args),
+            **self._handle_hidden_args(kwargs)
+        )
 
     def add_argument_group(self, *args, **kwargs):
         """Override to make arg groups also convert underscores to hyphens."""
@@ -603,7 +629,10 @@ class ParlaiParser(argparse.ArgumentParser):
         original_add_arg = arg_group.add_argument
 
         def ag_add_argument(*args, **kwargs):
-            return original_add_arg(*fix_underscores(args), **kwargs)
+            return original_add_arg(
+                *fix_underscores(args),
+                **self._handle_hidden_args(kwargs)
+            )
 
         arg_group.add_argument = ag_add_argument  # override _ => -
         return arg_group

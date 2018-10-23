@@ -43,6 +43,7 @@ def setup_args(parser=None):
                        help=('task to use for valid/test (defaults to the '
                              'one used for training if not set)'))
     train.add_argument('--eval-batchsize', type=int,
+                       hidden=True,
                        help='Eval time batch size (defaults to same as -bs)')
     train.add_argument('--display-examples', type='bool', default=False)
     train.add_argument('-eps', '--num-epochs', type=float, default=-1)
@@ -70,6 +71,7 @@ def setup_args(parser=None):
                             'the model_file path if set.')
     train.add_argument('-vme', '--validation-max-exs',
                        type=int, default=-1,
+                       hidden=True,
                        help='max examples to use during validation (default '
                             '-1 uses all)')
     train.add_argument('-vp', '--validation-patience',
@@ -84,15 +86,19 @@ def setup_args(parser=None):
                        help='how to optimize validation metric (max or min)')
     train.add_argument('-vcut', '--validation-cutoff',
                        type=float, default=1.0,
+                       hidden=True,
                        help='value at which training will stop if exceeded by '
                             'training metric')
     train.add_argument('-dbf', '--dict-build-first',
+                       hidden=True,
                        type='bool', default=True,
                        help='build dictionary first before training agent')
     train.add_argument('-lfc', '--load-from-checkpoint',
                        type='bool', default=False,
+                       hidden=True,
                        help='load model from checkpoint if available')
     train.add_argument('-vshare', '--validation-share-agent', default=False,
+                       hidden=True,
                        help='use a shared copy of the agent for validation. '
                             'this will eventually default to True, but '
                             'currently defaults to False.')
