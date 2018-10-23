@@ -32,7 +32,7 @@ class DefaultTeacher(DialogTeacher):
             # default to de_en
             task_name = 'de_en'
         else:
-            task_name = task.split(':')[1]
+            task_name = task.split(':')
         source, target = task_name.split('_')
         opt['datafile'] = _path(opt, source, target)
 
