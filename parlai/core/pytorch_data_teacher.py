@@ -11,12 +11,10 @@
 
 """
 from .teachers import FixedDialogTeacher
-from parlai.core.utils import ProgressLogger
 from parlai.scripts.build_pytorch_data import build_data
 from .agents import get_agent_module
 import json
 import math
-import pickle
 import collections
 import random
 import os
