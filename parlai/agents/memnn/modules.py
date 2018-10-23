@@ -81,7 +81,8 @@ class MemNN(nn.Module):
 
         :param xs:    (bsz x seqlen) LongTensor queries to the model
         :param mems:  (bsz x num_mems x seqlen) LongTensor memories
-        :param cands: yuck variety of input formats
+        :param cands: (num_cands x seqlen) or (bsz x num_cands x seqlen)
+                      LongTensor with candidates to rank
 
         :returns: scores
             scores contains the model's predicted scores.

@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 
 # Copyright (c) 2017-present, Facebook, Inc.
@@ -109,9 +110,9 @@ class DictionaryAgent(Agent):
         """Add commandline arguments related to the dictionary."""
         dictionary = argparser.add_argument_group('Dictionary Arguments')
         dictionary.add_argument(
-            '--dict-file',
-            help='if set, the dictionary will automatically save to this path '
-                 'during shutdown')
+            '-df', '--dict-file',
+            help='path to dictionary file. defaults to [model_file].dict if '
+                 'not set and model_file is set.')
         dictionary.add_argument(
             '--dict-initpath',
             help='path to a saved dictionary to load tokens / counts from to '

@@ -251,6 +251,12 @@ class FairseqAgent(TorchAgent):
             help='Use fp16 training'
         )
         agent.add_argument(
+            '--fp16-init-scale',
+            default=2**7,
+            type=int,
+            help='default FP16 loss scale'
+        )
+        agent.add_argument(
             '--seed',
             default=1,
             type=int,

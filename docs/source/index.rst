@@ -21,6 +21,7 @@ ParlAI is a one-stop-shop for dialog research.
    :maxdepth: 1
    :caption: Tutorials
 
+   tutorial_quick
    tutorial_basic
    tutorial_task
    tutorial_worlds

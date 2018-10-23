@@ -39,7 +39,8 @@ class MemnnAgent(TorchRankerAgent):
             help='number of memory hops')
         arg_group.add_argument(
             '--memsize', type=int, default=32,
-            help='size of memory')
+            help='size of memory, set to 0 for "nomemnn" model which just '
+                 'embeds query and candidates and picks most similar candidate')
         arg_group.add_argument(
             '-tf', '--time-features', type='bool', default=True,
             help='use time features for memory embeddings')
@@ -68,6 +69,8 @@ class MemnnAgent(TorchRankerAgent):
 
         self.id = 'MemNN'
         self.memsize = opt['memsize']
+        if self.memsize < 0:
+            self.memsize = 0
         self.use_time_features = opt['time_features']
 
         if not shared:
@@ -120,7 +123,7 @@ class MemnnAgent(TorchRankerAgent):
             return None
 
         num_mems = max(len(mem) for mem in mems)
-        if num_mems == 0:
+        if num_mems == 0 or self.memsize <= 0:
             return None
         elif num_mems > self.memsize:
             # truncate to memsize most recent memories

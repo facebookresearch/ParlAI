@@ -204,6 +204,7 @@ class SocketManager():
 
         # initialize the state
         self.listen_thread = None
+        self.send_thread = None
         self.queues = {}
         self.threads = {}
         self.run = {}
@@ -215,6 +216,7 @@ class SocketManager():
         self.is_shutdown = False
         self.send_lock = threading.Condition()
         self.packet_map_lock = threading.Condition()
+        self.worker_assign_ids = {} # mapping from connection id to pair
 
         # setup the socket
         self._setup_socket()
@@ -299,7 +301,7 @@ class SocketManager():
         """Sends a packet, blocks if the packet is blocking"""
         # Send the packet
         pkt = packet.as_dict()
-        if pkt['data'] is None:
+        if pkt['data'] is None or packet.status == Packet.STATUS_ACK:
             return  # This packet was _just_ acked.
         shared_utils.print_and_log(
             logging.DEBUG,
@@ -321,23 +323,9 @@ class SocketManager():
         # Handles acks and blocking
         if packet.requires_ack:
             if packet.blocking:
-                # blocking till ack is received or timeout
-                start_t = time.time()
-                while True:
-                    if packet.status == Packet.STATUS_ACK:
-                        # Clear the data to save memory as we no longer need it
-                        packet.data = None
-                        break
-                    if packet.status == Packet.STATUS_FAIL:
-                        # Failed packets shouldn't be re-queued as they errored
-                        break
-                    if time.time() - start_t > self.ACK_TIME[packet.type]:
-                        # didn't receive ACK, resend packet keep old queue time
-                        # to ensure this packet is processed first
-                        packet.status = Packet.STATUS_INIT
-                        self._safe_put(connection_id, (send_time, packet))
-                        break
-                    time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+                # Put the packet right back into its place to prevent sending
+                # other packets
+                self._safe_put(connection_id, (send_time, packet))
             else:
                 # non-blocking ack: add ack-check to queue
                 t = time.time() + self.ACK_TIME[packet.type]
@@ -499,7 +487,7 @@ class SocketManager():
         # Start listening thread
         self.listen_thread = threading.Thread(
             target=run_socket,
-            name='Main-Socket-Thread'
+            name='Main-Socket-Recv-Thread'
         )
         self.listen_thread.daemon = True
         self.listen_thread.start()
@@ -516,31 +504,21 @@ class SocketManager():
                 pass
             time.sleep(self.HEARTBEAT_RATE / 2)
 
-    def open_channel(self, worker_id, assignment_id):
-        """Opens a channel for a worker on a given assignment, doesn't re-open
-        if the channel is already open. Handles creation of the thread that
-        monitors that channel"""
-        connection_id = '{}_{}'.format(worker_id, assignment_id)
-        if connection_id in self.queues and self.run[connection_id]:
-            shared_utils.print_and_log(
-                logging.DEBUG,
-                'Channel ({}) already open'.format(connection_id)
-            )
-            return
-        self.run[connection_id] = True
-        self.queues[connection_id] = PriorityQueue()
+        # Start sending thread
+        self.send_thread = threading.Thread(
+            target=self.channel_thread,
+            name='Main-Socket-Send-Thread'
+        )
+        self.send_thread.daemon = True
+        self.send_thread.start()
 
-        def channel_thread():
-            """Handler thread for monitoring a single channel"""
-            # while the thread is still alive
-            shared_utils.print_and_log(
-                logging.DEBUG,
-                'Channel ({}) opened'.format(connection_id)
-            )
-            self.last_sent_heartbeat_time[connection_id] = 0
-            self.pongs_without_heartbeat[connection_id] = 0
-            self.last_received_heartbeat[connection_id] = None
-            while self.run[connection_id]:
+    def channel_thread(self):
+        """Handler thread for monitoring all channels"""
+        # while the thread is still alive
+        while not self.is_shutdown:
+            for connection_id in self.run.copy():
+                if not self.run[connection_id]:
+                    continue
                 try:
                     # Send a heartbeat if needed
                     self._send_needed_heartbeat(connection_id)
@@ -548,8 +526,15 @@ class SocketManager():
                     if (self.pongs_without_heartbeat[connection_id] >
                             self.missed_pongs):
                         self.run[connection_id] = False
-                        self.socket_dead_callback(worker_id, assignment_id)
-                        break
+                        # Setup and run the channel sending thread
+                        self.threads[connection_id] = threading.Thread(
+                            target=self.socket_dead_callback,
+                            name='Socket-dead-{}'.format(connection_id),
+                            args=self.worker_assign_ids[connection_id]
+                        )
+                        self.threads[connection_id].daemon = True
+                        self.threads[connection_id].start()
+
                     # Make sure the queue still exists
                     if connection_id not in self.queues:
                         self.run[connection_id] = False
@@ -581,18 +566,25 @@ class SocketManager():
                         '{}'.format(repr(e)),
                         should_print=True,
                     )
-                finally:
-                    if connection_id in self.queues and \
-                            self.queues[connection_id].empty():
-                        time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
-        # Setup and run the channel sending thread
-        self.threads[connection_id] = threading.Thread(
-            target=channel_thread,
-            name='Socket-Queue-{}'.format(connection_id)
-        )
-        self.threads[connection_id].daemon = True
-        self.threads[connection_id].start()
+    def open_channel(self, worker_id, assignment_id):
+        """Opens a channel for a worker on a given assignment, doesn't re-open
+        if the channel is already open. Handles creation of the thread that
+        monitors that channel"""
+        connection_id = '{}_{}'.format(worker_id, assignment_id)
+        if connection_id in self.queues and self.run[connection_id]:
+            shared_utils.print_and_log(
+                logging.DEBUG,
+                'Channel ({}) already open'.format(connection_id)
+            )
+            return
+        self.run[connection_id] = True
+        self.queues[connection_id] = PriorityQueue()
+        self.last_sent_heartbeat_time[connection_id] = 0
+        self.pongs_without_heartbeat[connection_id] = 0
+        self.last_received_heartbeat[connection_id] = None
+        self.worker_assign_ids[connection_id] = (worker_id, assignment_id)
 
     def close_channel(self, connection_id):
         """Closes a channel by connection_id"""
@@ -625,7 +617,6 @@ class SocketManager():
                         del self.packet_map[packet_id]
             # Clean up other resources
             del self.queues[connection_id]
-            del self.threads[connection_id]
 
     def close_all_channels(self):
         """Closes all channels by clearing the list of channels"""
