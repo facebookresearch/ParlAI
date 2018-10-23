@@ -43,7 +43,8 @@ class MemnnAgent(TorchAgent):
             help='number of memory hops')
         arg_group.add_argument(
             '--memsize', type=int, default=32,
-            help='size of memory')
+            help='size of memory, set to 0 for "nomemnn" model which just '
+                 'embeds query and candidates and picks most similar candidate')
         arg_group.add_argument(
             '-tf', '--time-features', type='bool', default=True,
             help='use time features for memory embeddings')
@@ -87,6 +88,8 @@ class MemnnAgent(TorchAgent):
         # all instances may need some params
         self.id = 'MemNN'
         self.memsize = opt['memsize']
+        if self.memsize < 0:
+            self.memsize = 0
         self.use_time_features = opt['time_features']
 
         if shared:
@@ -183,6 +186,7 @@ class MemnnAgent(TorchAgent):
         return super().get_dialog_history(*args, **kwargs)
 
     def _warn_once(self, flag, msg):
+        flag = '_warning_' + flag
         if not hasattr(self, flag):
             setattr(self, flag, True)
             print(msg)
@@ -217,8 +221,17 @@ class MemnnAgent(TorchAgent):
                     '[ Training using label_candidates fields as cands. ]')
                 label_cands, _ = padded_tensor(label_cands[0],
                                                use_cuda=self.use_cuda)
-                label_index = (label_cands == label).all(1).nonzero()
-                return label_cands, label_index.squeeze(1)
+
+                if label_cands.size(1) == 1:
+                    # use unique if cands are 1D
+                    label_cands = label_cands.unique(return_inverse=False)
+                    label_cands.unsqueeze_(1)
+                label_inds = (label_cands == label).all(1).nonzero()
+                if label_inds.size(0) > 1:
+                    label_inds = self.random.choice(label_inds)
+                else:
+                    label_inds.squeeze_(1)
+                return label_cands, label_inds
             else:
                 self._warn_once(
                     'ranking_dict',
@@ -263,7 +276,7 @@ class MemnnAgent(TorchAgent):
             return None
 
         num_mems = max(len(mem) for mem in mems)
-        if num_mems == 0:
+        if num_mems == 0 or self.memsize <= 0:
             return None
         elif num_mems > self.memsize:
             # truncate to memsize most recent memories
@@ -355,16 +368,29 @@ class MemnnAgent(TorchAgent):
         # calculate loss and mean rank
         if batch.label_vec is not None and cands is not None:
             label_inds = []
+            noproblems = True
             for b in range(batchsize):
                 label_ind = (cands[b] == batch.label_vec[b]).all(1).nonzero()
-                li = label_ind.item()
+                if label_ind.size(0) == 0:
+                    li = label_ind.item()
+                else:
+                    # don't calculate loss
+                    self._warn_once(
+                        'eval_loss',
+                        '[ WARNING: duplicate multitoken candidates detected. '
+                        'This batch\'s loss and mean_rank calculation will be '
+                        'skipped, skewing their totals. hits@k, accuracy, and '
+                        'f1 will be unaffected so use those instead.')
+                    noproblems = False
+                    continue
                 label_inds.append(label_ind)
                 rank = (ranks[b] == li).nonzero().item()
                 self.metrics['rank'] += 1 + rank
 
-            label_inds = torch.cat(label_inds, dim=0).squeeze(1)
-            loss = self.rank_loss(scores, label_inds)
-            self.metrics['loss'] += loss.item()
+            if noproblems:
+                label_inds = torch.cat(label_inds, dim=0).squeeze(1)
+                loss = self.rank_loss(scores, label_inds)
+                self.metrics['loss'] += loss.item()
 
         preds, cand_preds = None, None
         if batch.candidates:

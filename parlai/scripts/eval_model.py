@@ -5,14 +5,19 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
+
 """Basic example which iterates through the tasks specified and
 evaluates the given model on them.
 
-For example:
-`python eval_model.py -t "babi:Task1k:2" -m "repeat_label"`
-or
-`python eval_model.py -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"`
+Examples
+--------
+
+.. code-block:: shell
+
+  python eval_model.py -t "babi:Task1k:2" -m "repeat_label"
+  python eval_model.py -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"
 """
+
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.logs import TensorboardLogger
@@ -41,10 +46,10 @@ def setup_args(parser=None):
 def eval_model(opt, printargs=None, print_parser=None):
     """Evaluates a model.
 
-    Arguments:
-    opt -- tells the evaluation function how to run
-    print_parser -- if provided, prints the options that are set within the
+    :param opt: tells the evaluation function how to run
+    :param bool print_parser: if provided, prints the options that are set within the
         model after loading the model
+    :return: the final result of calling report()
     """
     if printargs is not None:
         print('[ Deprecated Warning: eval_model no longer uses `printargs` ]')

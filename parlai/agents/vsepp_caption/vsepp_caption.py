@@ -115,13 +115,6 @@ class VseppCaptionAgent(TorchAgent):
         self.metrics['loss'] = 0.0
         self.metrics['r@'] = []
 
-    def observe(self, observation):
-        """Save observation for act."""
-        # shallow copy observation (deep copy can be expensive)
-        observation = observation.copy()
-        self.observation = observation
-        return observation
-
     def candidate_helper(self, candidate_vecs, candidate_labels, is_testing):
         """
         Prepares a list of candidate lists into a format ready for the model

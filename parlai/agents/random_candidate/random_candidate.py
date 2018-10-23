@@ -5,7 +5,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""Simple agent which chooses a random labelself.
+"""Simple agent which chooses a random label.
 
 Chooses from the label candidates if they are available.
 If candidates are not available, it repeats the label.
@@ -57,6 +57,7 @@ class RandomCandidateAgent(Agent):
             # override label candidates with candidate file if set
             label_candidates = self.label_candidates
         if label_candidates:
+            label_candidates = list(label_candidates)
             random.shuffle(label_candidates)
             reply['text_candidates'] = label_candidates
             reply['text'] = label_candidates[0]

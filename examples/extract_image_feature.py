@@ -9,10 +9,7 @@
 """Basic example which iterates through the tasks specified and load/extract
 the image features.
 
-For example, to extract the image feature of COCO images:
-`python examples/extract_image_feature.py -t vqa_v1 -im resnet152`.
-
-For more options, check `parlai.core.image_featurizers`
+For more documentation, use parlai.scripts.extract_image_feature.
 """
 from parlai.scripts.extract_image_feature import setup_args, extract_feats
 

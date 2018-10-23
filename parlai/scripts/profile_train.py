@@ -7,9 +7,16 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 """Run the python or pytorch profiler and prints the results.
 
-For example, to make sure that bAbI task 1 (1k exs) loads one can run and to
+
+Examples
+--------
+
+To make sure that bAbI task 1 (1k exs) loads one can run and to
 see a few of them:
-`python examples/profile.py -t babi:task1k:1 -m seq2seq -e 0.1 --dict-file /tmp/dict`'
+
+.. code-block:: shell
+
+  python examples/profile.py -t babi:task1k:1 -m seq2seq -e 0.1 --dict-file /tmp/dict
 """
 
 from parlai.core.params import ParlaiParser

@@ -8,10 +8,7 @@
 """Basic example which iterates through the tasks specified and
 evaluates the given model on them.
 
-For example:
-`python examples/eval_model.py -t "babi:Task1k:2" -m "repeat_label"`
-or
-`python examples/eval_model.py -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"`
+For more documentation, see parlai.scripts.eval_model.
 """
 from parlai.scripts.eval_model import setup_args, eval_model
 

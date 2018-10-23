@@ -363,7 +363,7 @@ class DictionaryAgent(Agent):
     @staticmethod
     def re_tokenize(text):
         """Find boundaries between word characters, newlines, and non-word
-        non-whitespace tokens (r'[\w\n]+ | [^\w\s] | \n').
+        non-whitespace tokens ``(r'[\\w\\n]+ | [^\\w\\s] | \\n')``.
 
         This splits along whitespace and punctuation and keeps the newline as
         a token in the returned list.

@@ -29,8 +29,9 @@ class Seq2seqAgent(TorchAgent):
     This model supports encoding the input and decoding the output via one of
     several flavors of RNN. It then uses a linear layer (whose weights can
     be shared with the embedding layer) to convert RNN output states into
-    output tokens. This model currently uses greedy decoding, selecting the
-    highest probability token at each time step.
+    output tokens. This model supports greedy decoding, selecting the
+    highest probability token at each time step, as well as beam
+    search.
 
     For more information, see the following papers:
     - Neural Machine Translation by Jointly Learning to Align and Translate

@@ -5,26 +5,25 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""Train a model.
+"""The standard way to train a model. After training, also computes validation
+and test error.
 
-After training, computes validation and test error.
+The user must provide a model (with ``--model``) and a task (with ``--task`` or
+``--pytorch-teacher-task``).
 
-Run with, e.g.:
+Examples
+--------
 
-python examples/train_model.py -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
+.. code-block:: shell
 
-..or..
+  python -m parlai.scripts.train -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
+  python -m parlai.scripts.train -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
+  python -m parlai.scripts.train -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
 
-python examples/train_model.py -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32
--lr 0.5 -hs 128
+"""  # noqa: E501
 
-..or..
-
-python examples/train_model.py -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
-
-TODO List:
-- More logging (e.g. to files), make things prettier.
-"""
+# TODO List:
+# * More logging (e.g. to files), make things prettier.
 
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.worlds import create_task
@@ -135,7 +134,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
         if cnt == 0 and opt['display_examples']:
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
-        cnt += opt['batchsize']
+        cnt += valid_world.opt['batchsize']
         if max_exs > 0 and cnt > max_exs + opt.get('numthreads', 1):
             # note this max_exs is approximate--some batches won't always be
             # full depending on the structure of the data

@@ -345,23 +345,25 @@ def load_agent_module(opt):
 
 
 def get_agent_module(dir_name):
-    """Return the module for an agent specified by `--model`.
+    """Return the module for an agent specified by ``--model``.
 
     Can be formatted in several different ways:
-    - full: -m parlai.agents.seq2seq.seq2seq:Seq2seqAgent
-    - shorthand: -m seq2seq, which will check both paths
-        parlai.agents.seq2seq.seq2seq:Seq2seqAgent and
-        parlai.agents.seq2seq.agents:Seq2seqAgent
-    - half-shorthand: -m seq2seq/variant, which will check the path
-        parlai.agents.seq2seq.variant:VariantAgent
-    - legacy models: -m legacy:seq2seq:0, which will look for the deprecated
-        model at parlai.agents.legacy_agents.seq2seq.seq2seq_v0:Seq2seqAgent
+
+    * full: `-m parlai.agents.seq2seq.seq2seq:Seq2seqAgent`
+    * shorthand: -m seq2seq, which will check both paths
+      ``parlai.agents.seq2seq.seq2seq:Seq2seqAgent`` and
+      ``parlai.agents.seq2seq.agents:Seq2seqAgent``
+    * half-shorthand: ``-m seq2seq/variant``, which will check the path
+      `parlai.agents.seq2seq.variant:VariantAgent`
+    * legacy models: ``-m legacy:seq2seq:0``, which will look for the deprecated
+      model at ``parlai.agents.legacy_agents.seq2seq.seq2seq_v0:Seq2seqAgent``
 
     The base path to search when using shorthand formats can be changed from
     "parlai" to "parlai_internal" by prepending "internal:" to the path, e.g.
     "internal:seq2seq".
+
     To use legacy agent versions, you can prepend "legacy:" to model arguments,
-    e.g. "legacy:seq2seq:0" will translate to legacy_agents/seq2seq/seq2seq_v0.
+    e.g. "legacy:seq2seq:0" will translate to ``legacy_agents/seq2seq/seq2seq_v0``.
 
     :param dir_name: path to model class in one of the above formats.
     """
@@ -493,18 +495,19 @@ def get_task_module(taskname):
     """Get the module of the task agent specified by `--task`.
 
     Can be formatted in several different ways:
-    - full: -t parlai.tasks.babi.agents:DefaultTeacher
-    - shorthand: -t babi, which will check
-        parlai.tasks.babi.agents:DefaultTeacher
-    - shorthand specific: -t babi:task10k, which will check
-        parlai.tasks.babi.agents:Task10kTeacher
+
+    * full: ``-t parlai.tasks.babi.agents:DefaultTeacher``
+    * shorthand: ``-t babi``, which will check
+        ``parlai.tasks.babi.agents:DefaultTeacher``
+    * shorthand specific: ``-t babi:task10k``, which will check
+        ``parlai.tasks.babi.agents:Task10kTeacher``
 
     The base path to search when using shorthand formats can be changed from
     "parlai" to "parlai_internal" by prepending "internal:" to the path, e.g.
     "internal:babi".
 
     Options can be sent to the teacher by adding an additional colon,
-    for example "-t babi:task10k:1" directs the babi Task10kTeacher to use
+    for example ``-t babi:task10k:1`` directs the babi Task10kTeacher to use
     task number 1.
 
     :param taskname: path to task class in one of the above formats.

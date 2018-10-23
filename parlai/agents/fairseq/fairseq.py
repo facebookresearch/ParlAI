@@ -6,6 +6,18 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+"""
+ParlAI has limited support for using models from
+`Fairseq <https://github.com/pytorch/fairseq>`_. Fairseq often supports more
+experimental seq2seq architectures with fast fp16 training.
+
+Fairseq models can be used for many default tasks by combining a
+``--arch`` flag. For example:
+
+`python -m parlai.scripts.train -t convai2 -m fairseq -a transformer`
+"""
+
+
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import argsort, padded_tensor
 
@@ -237,6 +249,12 @@ class FairseqAgent(TorchAgent):
             default=False,
             type='bool',
             help='Use fp16 training'
+        )
+        agent.add_argument(
+            '--fp16-init-scale',
+            default=2**7,
+            type=int,
+            help='default FP16 loss scale'
         )
         agent.add_argument(
             '--seed',
