@@ -281,16 +281,6 @@ class ParlaiParser(argparse.ArgumentParser):
             '-t', '--task',
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
         parlai.add_argument(
-            '-pyt', '--pytorch-teacher-task',
-            help='Specify to use the PytorchDataTeacher for multiprocessed '
-                 'data loading with a standard ParlAI task, e.g. "babi:Task1k"'
-        )
-        parlai.add_argument(
-            '-pytd', '--pytorch-teacher-dataset',
-            help='Specify to use the PytorchDataTeacher for multiprocessed '
-                 'data loading with a pytorch Dataset, e.g. "vqa_1" or "flickr30k"'
-        )
-        parlai.add_argument(
             '--download-path', default=default_downloads_path,
             help='path for non-data dependencies to store any needed files.'
                  'defaults to {parlai_dir}/downloads')
@@ -359,10 +349,25 @@ class ParlaiParser(argparse.ArgumentParser):
                                 'Specifies whether or not to include labels '
                                 'as past utterances when building flattened '
                                 'batches of data in multi-example episodes.')
+
+        self.add_parlai_data_path(parlai)
+
+        self.add_pytorch_datateacher_args()
+
+    def add_pytorch_datateacher_args(self):
         pytorch = self.add_argument_group('PytorchData Arguments')
         pytorch.add_argument(
+            '-pyt', '--pytorch-teacher-task',
+            help='Specify to use the PytorchDataTeacher for multiprocessed '
+                 'data loading with a standard ParlAI task, e.g. "babi:Task1k"')
+        pytorch.add_argument(
+            '-pytd', '--pytorch-teacher-dataset',
+            help='Specify to use the PytorchDataTeacher for multiprocessed '
+                 'data loading with a pytorch Dataset, e.g. "vqa_1" or "flickr30k"')
+        pytorch.add_argument(
             '--pytorch-datapath', type=str, default=None,
-            help='datapath for pytorch data loader')
+            help='datapath for pytorch data loader (note: only specify if '
+                 'the data does not reside in the normal ParlAI datapath)')
         pytorch.add_argument(
             '-nw', '--numworkers', type=int, default=4,
             help='how many workers the Pytorch dataloader should use')
@@ -375,8 +380,7 @@ class ParlaiParser(argparse.ArgumentParser):
             type='bool', default=False,
             help='Whether to construct batches of similarly sized episodes'
             'when using the PytorchDataTeacher (either via specifying `-pyt`'
-            'or `-pytd`'
-        )
+            'or `-pytd`')
         pytorch.add_argument(
             '--batch-sort-cache-type', type=str,
             choices=['pop', 'index', 'none'], default='pop',
@@ -402,7 +406,6 @@ class ParlaiParser(argparse.ArgumentParser):
                                   'as past utterances when building flattened '
                                   'batches of data in multi-example episodes.'
                                   '(For use with PytorchDataTeacher)')
-        self.add_parlai_data_path(parlai)
 
     def add_model_args(self):
         """Add arguments related to models such as model files."""

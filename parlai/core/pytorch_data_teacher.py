@@ -407,10 +407,10 @@ def process(ex_or_batch):
         Process examples/batches, i.e. deserialize if necessary
     """
     if type(ex_or_batch) is list:
-        if all([ep.get('pytorch_preprocess') for ep in ex_or_batch]):
+        if all([ep.get('preprocessed') for ep in ex_or_batch]):
             ex_or_batch = [deserialize(ep) for ep in ex_or_batch]
     else:
-        if ex_or_batch.get('pytorch_preprocess'):
+        if ex_or_batch.get('preprocessed'):
             ex_or_batch = deserialize(ex_or_batch)
     return ex_or_batch
 
@@ -479,7 +479,6 @@ class ParlAIDataset(Dataset):
         self.length_datafile = os.path.join(self.datapath, 'data_length')
         self.datafile = os.path.join(self.datapath, 'data')
         self.training = self.datatype.startswith('train')
-        self.pytorch_preprocess = opt.get('pytorch_preprocess')
         self._load_lens()
         self._setup_data()
 
@@ -500,9 +499,7 @@ class ParlAIDataset(Dataset):
         self.data = []
         with open(self.datafile) as f:
             for line in f:
-                ex = json.loads(line)
-                ex['pytorch_preprocess'] = self.pytorch_preprocess
-                self.data.append(ex)
+                self.data.append(json.loads(line))
 
     def num_episodes(self):
         return self.num_eps
@@ -563,8 +560,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 pin_memory = False
             else:
                 data_sampler = sampler.RandomSampler(self.dataset)
-                # pin_memory = True
-                pin_memory = False
+                pin_memory = True
 
             self.pytorch_dataloader = DataLoader(
                 self.dataset,

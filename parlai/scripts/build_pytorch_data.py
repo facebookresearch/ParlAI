@@ -53,10 +53,10 @@ def build_data(opt):
     agent = create_agent(opt)
     # If build teacher not specified, we are simply looking for the file
     if not opt.get('pytorch_teacher_task', None):
-        df = opt.get('pytorch_datafile')
+        df = opt.get('pytorch_datapath')
         # check if the user set a datafile
         if not df:
-            raise Exception('Tried to find data but `--pytorch-datafile` is not set')
+            raise Exception('Tried to find data but `--pytorch-datapath` is not set')
         # check if the user provided the already built file
         if 'pytorch' not in df:
             df += '.pytorch' + (
@@ -86,7 +86,6 @@ def build_data(opt):
     preprocess = opt.get('pytorch_preprocess', True)
     if preprocess:
         datapath += '_{}_preprocess'.format(agent.getID().replace(':', '_'))
-    # if os.path.isfile(pytorch_datafile):
     if os.path.isdir(datapath):
         # Data already built
         print("[ pytorch data already built, at {}. ]".format(datapath))
@@ -136,8 +135,6 @@ def build_data(opt):
             episode_done = False
             current.clear()
             context.clear()
-
-
 
     with open(os.path.join(datapath, 'data_length'), 'w') as pytorch_data_len:
         pytorch_data_len.write(json.dumps({'num_eps': num_eps,

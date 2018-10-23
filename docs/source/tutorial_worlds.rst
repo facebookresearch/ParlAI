@@ -501,8 +501,7 @@ can be provided without sorting.
 To use the batch sorting method, just specify the following command line
 argument:
 
-1. ``-pybsrt`` - set this parameter to ``true`` to enable batch sorting;
-this simply controls the method used for returning batches from a cache (either is fine)
+1. ``-pybsrt`` - set this parameter to ``true`` to enable batch sorting
 
 Additional arguments that may be of interest to you:
 
