@@ -51,6 +51,9 @@ class MockDict(Agent):
             self.idx += 1
             return self.idx
 
+    def add_cmdline_args(self, *args, **kwargs):
+        pass
+
     def txt2vec(self, txt):
         """Return index of special tokens or range from 1 for each token."""
         self.idx = 0
