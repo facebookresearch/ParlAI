@@ -278,7 +278,7 @@ class ParlaiParser(argparse.ArgumentParser):
         default_downloads_path = os.path.join(self.parlai_home, 'downloads')
         parlai = self.add_argument_group('Main ParlAI Arguments')
         parlai.add_argument(
-            '--show-advanced-args', action='store_true',
+            '-v', '--show-advanced-args', action='store_true',
             help='Show hidden command line options (advanced users only)'
         )
         parlai.add_argument(
