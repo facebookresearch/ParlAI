@@ -40,11 +40,10 @@ def make_serializable(obj):
             new_obj[key] = dict(val)
         elif isinstance(val, collections.Sequence):
             new_obj[key] = list(val)
-        elif isinstance(val, torch.Tensor):
+        elif torch.is_tensor(val):
             new_obj[key] = {'value': val.tolist(),
                             'deserialized_tensor': True,
-                            'type': 'long' if isinstance(val, torch.LongTensor)
-                                    else 'float'}
+                            'type': str(val.dtype)}
     return new_obj
 
 

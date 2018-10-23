@@ -33,14 +33,16 @@ import ctypes
 from threading import Thread, Condition, RLock
 
 
-'''
+"""
+    BATCH SORT CACHE
+
     Maps episode length to dictionary with following keys:
         current_idx: which episode in the list are we at (if simply indexing
             into list)
         ep_list: list of episodes of the length of the key
         bucket_complete: if there are no more episodes left to consider in
             the bucket
-'''
+"""
 # Maps episode length to list of episodes
 length_to_eps = {}
 # List of batches if popping batches
@@ -138,6 +140,9 @@ def batch_cache(function):
         if isinstance(val, (collections.Mapping,
                             collections.Sequence,
                             torch.Tensor)):
+            if (isinstance(val, collections.Mapping) and
+                    val.get('deserialized_tensor', False)):
+                return len(val['value'])
             return len(val)
 
     def put_in_cache(ep_idx, episode, caller):
@@ -361,8 +366,18 @@ class LoaderProcess(Thread):
             return None
 
 
-# Default collate function (for how to prepare a batch)
+"""
+    Collating, deserializing, processing batches
+"""
+TORCH_DTYPES = [torch.float32, torch.float64, torch.float16, torch.uint8,
+                torch.int8, torch.int16, torch.int32, torch.int64]
+STR_TO_TORCH_DTYPE = {str(d): d for d in TORCH_DTYPES}
+
+
 def default_collate(batch):
+    """
+        Default collate function, used for ParlAIDataset and StreamDataset
+    """
     new_batch = []
     for b in batch:
         idx = b[0]
@@ -374,14 +389,35 @@ def default_collate(batch):
     return new_batch
 
 
-# For deserializing lists into Tensors
 def deserialize(obj):
+    """
+        Deserializes lists into Tensors
+    """
     for key in obj:
         if type(obj[key]) is dict and obj[key].get('deserialized_tensor', False):
-            val_type = (torch.LongTensor if 'long' in obj[key]['type']
-                        else torch.Tensor)
-            obj[key] = val_type(obj[key]['value'])
+            dtype = STR_TO_TORCH_DTYPE[obj[key]['type']]
+            val = obj[key]['value']
+            del obj[key]
+            obj[key] = torch.as_tensor(val, dtype=dtype)
+    return obj
 
+
+def process(ex_or_batch):
+    """
+        Process examples/batches, i.e. deserialize if necessary
+    """
+    if type(ex_or_batch) is list:
+        if all([ep.get('pytorch_preprocess') for ep in ex_or_batch]):
+            ex_or_batch = [deserialize(ep) for ep in ex_or_batch]
+    else:
+        if ex_or_batch.get('pytorch_preprocess'):
+            ex_or_batch = deserialize(ex_or_batch)
+    return ex_or_batch
+
+
+"""
+    ParlAI Implementations of Pytorch Datasets
+"""
 
 
 class StreamDataset(Dataset):
@@ -423,7 +459,6 @@ class StreamDataset(Dataset):
             example = json.loads(line)
             episode.append(example)
             if example['episode_done']:
-                map(deserialize, episode)
                 yield idx, episode
                 episode = []
         read.close()
@@ -444,6 +479,7 @@ class ParlAIDataset(Dataset):
         self.length_datafile = os.path.join(self.datapath, 'data_length')
         self.datafile = os.path.join(self.datapath, 'data')
         self.training = self.datatype.startswith('train')
+        self.pytorch_preprocess = opt.get('pytorch_preprocess')
         self._load_lens()
         self._setup_data()
 
@@ -465,7 +501,7 @@ class ParlAIDataset(Dataset):
         with open(self.datafile) as f:
             for line in f:
                 ex = json.loads(line)
-                deserialize(ex)
+                ex['pytorch_preprocess'] = self.pytorch_preprocess
                 self.data.append(ex)
 
     def num_episodes(self):
@@ -488,7 +524,11 @@ class ParlAIConcatDataset(ConcatDataset):
 
 
 class PytorchDataTeacher(FixedDialogTeacher):
-
+    """
+        A teacher that loads data using Pytorch Datasets. For details on how
+        to use, please follow the tutorial here:
+        http://parl.ai/static/docs/tutorial_worlds.html#multiprocessed-pytorch-dataloader
+    """
     def __init__(self, opt, shared=None):
         opt['batch_sort'] = False
         super().__init__(opt, shared)
@@ -523,7 +563,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 pin_memory = False
             else:
                 data_sampler = sampler.RandomSampler(self.dataset)
-                pin_memory = True
+                # pin_memory = True
+                pin_memory = False
 
             self.pytorch_dataloader = DataLoader(
                 self.dataset,
@@ -584,7 +625,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 self.reset_data()
         if self.episode_done:
             try:
-                self.episode_idx, self.episode = next(self.data)
+                self.episode_idx, episode = next(self.data)
+                self.episode = process(episode)
                 self.entry_idx = 0
                 epoch_done = False
             except StopIteration:
@@ -620,6 +662,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
             self.batch_idx, batch = self.get_next_batch()
             if self.collate_fn == default_collate:
                 batch = [b[1] for b in batch]
+            batch = process(batch)
             epoch_done = False
         except StopIteration:
             batch = [{'episode_done': True, 'id': self.getID()}] * self.bsz
