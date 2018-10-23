@@ -600,24 +600,52 @@ class ParlaiParser(argparse.ArgumentParser):
         for k, v in kwargs.items():
             self.overridable[k] = v
 
-    @property
-    def show_advanced_args(self):
+    def should_show_advanced_args(self):
         if hasattr(self, '_show_advanced_args'):
             return self._show_advanced_args
         known_args, _ = self.parse_known_args(nohelp=True)
+        # note that this overrides this very method!
         self._show_advanced_args = known_args.show_advanced_args
         return known_args.show_advanced_args
 
+    _gates = {}
+
+    def _check_gatekeeper(self, name):
+        if name in self._gates:
+            self._gates[name]
+        known_args, _ = self.parse_known_args(nohelp=True)
+        self._gates[name] = bool(getattr(known_args, name, None))
+        return self._gates[name]
+
     def _handle_hidden_args(self, kwargs):
-        if 'hidden' in kwargs:
+        if 'gatekeeper' in kwargs:
+            gatekeeper = kwargs['gatekeeper']
+            del kwargs['gatekeeper']
+            if (not self.should_show_advanced_args() and
+                    not self._check_gatekeeper(gatekeeper)):
+                kwargs['help'] = argparse.SUPPRESS
+
+        elif 'hidden' in kwargs:
             flag = kwargs['hidden']
             del kwargs['hidden']
-            if flag and not self.show_advanced_args:
+            if flag and not self.should_show_advanced_args():
                 kwargs['help'] = argparse.SUPPRESS
         return kwargs
 
     def add_argument(self, *args, **kwargs):
-        """Override to convert underscores to hyphens for consistency."""
+        """Add an argument to the parser.
+
+        Observes the same interace as argparser.add_argument, but with a few
+        special additions:
+
+        :param bool hidden: Marks this as an "advanced" option that is hidden
+            by default.
+        :param string gatekeeper: Marks this as an option that depends on on
+            a "gatekeeper" flag. Gatekeepers must be non-null and non-False in order
+            for this option to show. If user specifies advanced options, this
+            option always shows.
+
+        Override to convert underscores to hyphens for consistency."""
         return super().add_argument(
             *fix_underscores(args),
             **self._handle_hidden_args(kwargs)

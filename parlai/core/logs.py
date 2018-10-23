@@ -36,16 +36,18 @@ class TensorboardLogger(Shared):
         )
         logger.add_argument(
             '-tbtag', '--tensorboard-tag', type=str, default=None,
+            gatekeeper='tensorboard_log',
             help='Specify all opt keys which you want to be presented in in TB name'
         )
         logger.add_argument(
             '-tbmetrics', '--tensorboard-metrics', type=str, default=None,
+            gatekeeper='tensorboard_log',
             help='Specify metrics which you want to track, it will be extracted '
                  'from report dict.'
         )
         logger.add_argument(
             '-tbcomment', '--tensorboard-comment', type=str, default='',
-            hidden=True,
+            gatekeeper='tensorboard_log',
             help='Add any line here to distinguish your TB event file, optional'
         )
 
