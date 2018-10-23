@@ -317,10 +317,6 @@ class ParlaiParser(argparse.ArgumentParser):
                  'by default: train is random with replacement, '
                  'valid is ordered, test is ordered.')
         parlai.add_argument(
-            '-im', '--image-mode', default='raw', type=str,
-            help='image preprocessor to use. default is "raw". set to "none" '
-                 'to skip image loading.')
-        parlai.add_argument(
             '-nt', '--numthreads', default=1, type=int,
             help='number of threads. If batchsize set to 1, used for hogwild; '
                  'otherwise, used for number of threads in threadpool loading,'
@@ -429,26 +425,25 @@ class ParlaiParser(argparse.ArgumentParser):
                 # already added
                 pass
 
-    def add_image_args(self, image_mode):
+    def add_image_args(self):
         """Add additional arguments for handling images."""
-        try:
-            parlai = self.add_argument_group('ParlAI Image Preprocessing Arguments')
+        parlai = self.add_argument_group('Image Preprocessing Arguments')
+        parlai.add_argument(
+            '-im', '--image-mode', type=str, default='none',
+            help='Image preprocessor to use. Default skips image processing. '
+                 'Other options include raw, ascii, resnet152_spatial.')
+        known_args, _ = self.parse_known_args(nohelp=True)
+        if known_args.image_mode is not None and known_args.image_mode != 'none':
             parlai.add_argument('--image-size', type=int, default=256,
                                 help='resizing dimension for images')
             parlai.add_argument('--image-cropsize', type=int, default=224,
                                 help='crop dimension for images')
-        except argparse.ArgumentError:
-            # already added
-            pass
 
     def add_extra_args(self, args=None):
         """Add more args depending on how known args are set."""
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
 
-        # find which image mode specified if any, and add additional arguments
-        image_mode = parsed.get('image_mode', None)
-        if image_mode is not None and image_mode != 'none':
-            self.add_image_args(image_mode)
+        self.add_image_args()
 
         # find which task specified if any, and add its specific arguments
         task = parsed.get('task', None)
