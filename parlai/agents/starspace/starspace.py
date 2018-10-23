@@ -24,7 +24,7 @@ from collections import deque
 import copy
 import os
 import random
-import pickle
+import json
 
 
 class StarspaceAgent(Agent):
@@ -135,9 +135,9 @@ class StarspaceAgent(Agent):
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 self.load(opt['model_file'])
             else:
-                self._init_embeddings()                
+                self._init_embeddings()
             self.model.share_memory()
-            
+
         # set up modules
         self.criterion = torch.nn.CosineEmbeddingLoss(
             margin=opt['margin'], size_average=False
@@ -479,8 +479,8 @@ class StarspaceAgent(Agent):
             data['opt'] = self.opt
             with open(path, 'wb') as handle:
                 torch.save(data, handle)
-            with open(path + ".opt", 'wb') as handle:
-                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            with open(path + '.opt', 'w') as handle:
+                json.dump(self.opt, handle)
 
     def load(self, path):
         """Return opt and model states."""

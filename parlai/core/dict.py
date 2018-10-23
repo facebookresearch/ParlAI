@@ -15,7 +15,7 @@ import codecs
 import copy
 import numpy as np
 import os
-import pickle
+import json
 import re
 
 try:
@@ -524,8 +524,8 @@ class DictionaryAgent(Agent):
                 write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
 
         # save opt file
-        with open(filename + '.opt', 'wb') as handle:
-            pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        with open(filename + '.opt', 'w') as handle:
+            json.dump(self.opt, handle)
 
     def sort(self, trim=True):
         """Sorts the dictionary, so that the elements with the lowest index have

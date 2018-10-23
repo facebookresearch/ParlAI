@@ -28,7 +28,7 @@ except ImportError:
 import bisect
 import os
 import numpy as np
-import pickle
+import json
 import random
 
 from parlai.core.agents import Agent
@@ -260,8 +260,8 @@ class DrqaAgent(Agent):
             self.opt['trained'] = True
             self.model.save(fname)
             # save opt file
-            with open(fname + ".opt", 'wb') as handle:
-                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            with open(fname + '.opt', 'w') as handle:
+                json.dump(self.opt, handle)
 
     # --------------------------------------------------------------------------
     # Helper functions.
