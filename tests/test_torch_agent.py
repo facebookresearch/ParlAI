@@ -31,6 +31,10 @@ class MockDict(Agent):
     p2_token = '__p2__'
     P2_IDX = 2002
 
+    @staticmethod
+    def add_cmdline_args():
+        pass
+
     def __init__(self, opt, shared=None):
         """Initialize idx for incremental indexing."""
         self.idx = 0
