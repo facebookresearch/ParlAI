@@ -15,7 +15,7 @@ import utils
 import os
 import re
 
-FILENAME_EXTENSIONS = r'.*\.(rst|py|sh|js)$'
+FILENAME_EXTENSIONS = r'.*\.(rst|py|sh|js|css)$'
 WHITELIST_PHRASES = [
     'Moscow Institute of Physics and Technology.',
     'https://github.com/fartashf/vsepp'

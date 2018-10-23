@@ -22,7 +22,7 @@ class FbformatTeacher(FbDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('FromFile Task Arguments')
-        agent.add_argument('--fromfile-datapath', type=str,
+        agent.add_argument('-dp', '--fromfile-datapath', type=str,
                            help="Data file")
 
     def __init__(self, opt, shared=None):
@@ -41,13 +41,13 @@ class Fbformat2Teacher(FbDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('FromFile Task Arguments')
-        agent.add_argument('--fromfile-datapath2', type=str,
+        agent.add_argument('-dp', '--fromfile-datapath2', type=str,
                            help="Data file")
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         if not opt.get('fromfile_datapath2'):
-            raise RuntimeError('fromfile_datapath2 not specified')
+            raise RuntimeError('-dp', 'fromfile_datapath2 not specified')
         opt['datafile'] = opt['fromfile_datapath2']
         super().__init__(opt, shared)
 
@@ -59,7 +59,7 @@ class ParlaiformatTeacher(ParlAIDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('FromFile Task Arguments')
-        agent.add_argument('--fromfile-datapath', type=str,
+        agent.add_argument('-dp', '--fromfile-datapath', type=str,
                            help="Data file")
 
     def __init__(self, opt, shared=None):
@@ -93,6 +93,6 @@ class Parlaiformat2Teacher(ParlAIDialogTeacher):
         self.reset()
 
 
-class DefaultTeacher(FbformatTeacher):
+class DefaultTeacher(ParlaiformatTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)

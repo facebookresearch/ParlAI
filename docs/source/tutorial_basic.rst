@@ -21,25 +21,6 @@ Its goal is to provide researchers:
 You can also see the `README <https://github.com/facebookresearch/ParlAI/blob/master/README.md>`_ for more basic info on ParlAI, or continue reading this document.
 
 
-Install
--------
-Follow the step by step guide on how to download and install ParlAI.
-
-1. Clone ParlAI Repository:
-
-.. code-block:: bash
-
-    git clone https://github.com/facebookresearch/ParlAI.git ~/ParlAI
-
-2. Install ParlAI:
-
-.. code-block:: bash
-
-    cd ~/ParlAI; python setup.py develop
-
-3. Several models have additional requirements, such as `PyTorch <http://pytorch.org/>`_.
-
-
 Getting Started
 ---------------
 
@@ -229,7 +210,7 @@ Now that we have our our agent, we'll set up the display loop.
 
 And that's it! The world.display() automatically cycles through each of the
 world's agents and displays their last action.  NOTE, if you want to get at and
-look at the data from here rather than calling 
+look at the data from here rather than calling
 world.display() you could access world.acts directly:
 
 .. code-block:: python
@@ -271,7 +252,7 @@ Tasks are specified in the following format:
   in the 'parlai/core/task_list.py' file.
 
 
-These flags are used across ParlAI, here are some examples of using them for 
+These flags are used across ParlAI, here are some examples of using them for
 displaying data with the existing script
 `display_data <https://github.com/facebookresearch/ParlAI/blob/master/parlai/scripts/display_data.py>`_:
 
@@ -284,7 +265,7 @@ displaying data with the existing script
    python examples/display_data.py -t babi:task1k:1,squad -n 100
 
 
-The `--task` flag (`-t`  for short) specifies the task and `--datatype` (`-dt`) specifies 
+The `--task` flag (`-t`  for short) specifies the task and `--datatype` (`-dt`) specifies
 train, valid or test. Note that `train:stream` or `valid:stream` can be specified
 to denote that you want the data to stream online if possible, rather than loading into memory,
 and `train:ordered` can be specified, otherwise data from the train set comes in a random order by
@@ -333,7 +314,7 @@ we'll set up a better agent which learns from the training data.
 Training and Evaluating Existing Agents
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For now, we'll look at the main calls for evaluating and 
+For now, we'll look at the main calls for evaluating and
 training an agent that is already coded.
 We can use the scripts
 `train_model <https://github.com/facebookresearch/ParlAI/blob/master/parlai/scripts/train_model.py>`_
@@ -366,7 +347,7 @@ The main flags are:
 
 1) `-m` (`-model`) which sets the agent type that will be trained.
 The agents available in parlAI `are here <https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents>`_.
-See `this tutorial <tutorial_task.html>`_ for making your own agents. 
+See `this tutorial <tutorial_task.html>`_ for making your own agents.
 
 2) `-mf` (`--modelfile`) points to the file name of where to save your model.
 
@@ -377,7 +358,7 @@ Of course every model has various parameters and hyperparameters to set in gener
 
 **Model Zoo**
 
-A new feature in ParlAI is that it also now maintains a *model zoo* of existing model files of agents that have been trained on tasks. See `here for details <https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py>`_. 
+A new feature in ParlAI is that it also now maintains a *model zoo* of existing model files of agents that have been trained on tasks. See `here for details <https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py>`_.
 
 The set of agents and models in the model zoo in ParlAI is continually growing from contributors.
 
@@ -385,11 +366,11 @@ The set of agents and models in the model zoo in ParlAI is continually growing f
 Tasks
 ^^^^^
 
-The set of tasks in ParlAI can be found in the task list in the `code here <https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/task_list.py>`_ or in this `documentation 
+The set of tasks in ParlAI can be found in the task list in the `code here <https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/task_list.py>`_ or in this `documentation
 here <tasks.html>`_. See `this tutorial <tutorial_task.html>`_ for making your own tasks.
 
 ParlAI downloads the data required for a requested task automatically (using the build.py code in the task)
-and will put it in your `--datapath`, which is configurable, but by default will be in 
+and will put it in your `--datapath`, which is configurable, but by default will be in
 ParlAI/data (but you can point this e.g. to another disk with more memory).
 It only downloads the tasks you request.
 

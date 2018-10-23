@@ -691,9 +691,11 @@ task_list = [
         "display_name": "ConvAI2_wild_evaluation",
         "task": "convai2_wild_evaluation",
         "tags": ["All", "ChitChat"],
-        "description": ("Dataset collected during the wild evaluation of ConvaAI2"
-                        " participants bots (http://convai.io). 60% train, 20% valid"
-                        " and 20% test is chosen at random from the whole dataset.")
+        "description": (
+            "Dataset collected during the wild evaluation of ConvaAI2 participants "
+            "bots (http://convai.io). 60% train, 20% valid and 20% test is chosen at "
+            "random from the whole dataset."
+        ),
     },
     {
         "id": "sst",
