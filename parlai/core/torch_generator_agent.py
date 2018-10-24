@@ -8,6 +8,10 @@
 
 
 """
+**BETA**: This module is in Beta. Feedback is most welcome, and the API is highly
+likely to change.
+
+
 Generic Pytorch-based Generator agent. Implements quite a bit of boilerplate,
 including Beam search.
 
@@ -351,23 +355,25 @@ class TorchGeneratorAgent(TorchAgent):
         - model.decoder takes decoder params and returns decoder outputs after attn
         - model.output takes decoder outputs and returns distr over dictionary
 
-        Function arguments:
-        model : nn.Module, here defined in modules.py
-        batch : Batch structure with input and labels
-        beam_size : Size of each beam during the search
-        start : start of sequence token
-        end : end of sequence token
-        pad : padding token
-        min_length : minimum length of the decoded sequence
-        min_n_best : minimum number of completed hypothesis generated from each beam
-        max_ts: the maximum length of the decoded sequence
+        :param nn.Module model: Implements the above interface
+        :param Batch batch: Batch structure with input and labels
+        :param int beam_size: Size of each beam during the search
+        :param int start: start of sequence token
+        :param int end: end of sequence token
+        :param int pad: padding token
+        :param int min_length: minimum length of the decoded sequence
+        :param int min_n_best: minimum number of completed hypothesis generated from each
+            beam
+        :param int max_ts: the maximum length of the decoded sequence
 
-        Return:
-        beam_preds_scores : list of tuples (prediction, score) for each sample in Batch
-        n_best_preds_scores : list of n_best list of tuples (prediction, score) for
-                              each sample from Batch
-        beams : list of Beam instances defined in Beam class, can be used for any
-                following postprocessing, e.g. dot logging.
+        :return: tuple (beam_pred_scores, n_best_pred_scores, beams)
+
+            - beam_preds_scores: list of (prediction, score) pairs for each sample in
+              Batch
+            - n_best_preds_scores: list of n_best list of tuples (prediction, score)
+              for each sample from Batch
+            - beams :list of Beam instances defined in Beam class, can be used for any
+              following postprocessing, e.g. dot logging.
         """
         encoder_states = model.encoder(batch.text_vec)
         enc_out = encoder_states[0]
