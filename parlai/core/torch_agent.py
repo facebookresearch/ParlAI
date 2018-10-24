@@ -230,9 +230,11 @@ class TorchAgent(Agent):
 
         # check for cuda
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
+        self.multigpu = False
         if self.use_cuda:
             if opt['multigpu'] and opt['gpu'] != -1:
                 raise ValueError("Can't use --multigpu and --gpu together.")
+            self.multigpu = opt.get('multigpu') and opt.get('batchsize') > 1
             if not shared:
                 print('[ Using CUDA ]')
             if not shared and opt['gpu'] != -1:

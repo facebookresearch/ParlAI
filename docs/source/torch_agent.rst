@@ -10,3 +10,15 @@ core.torch_agent
 .. automodule:: parlai.core.torch_agent
   :members:
   :exclude-members: __dict__,__weakref__
+
+
+core.torch_ranker_agent
+===================================
+.. automodule:: parlai.core.torch_ranker_agent
+  :members:
+
+
+core.torch_generator_agent
+===================================
+.. automodule:: parlai.core.torch_generator_agent
+  :members:

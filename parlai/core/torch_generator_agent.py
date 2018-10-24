@@ -20,15 +20,19 @@ Contains the following utilities:
 TODO: Docs.
 """
 
+import os
 import math
+import tempfile
 from collections import defaultdict, Counter, namedtuple
 from operator import attrgetter
 
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 
-from parlai.core.torch_agent import TorchAgent
-from parlai.core.utils import NEAR_INF
+from parlai.core.torch_agent import TorchAgent, Output
+from parlai.core.utils import NEAR_INF, padded_tensor, round_sigfigs
+from parlai.core.thread_utils import SharedTable
 
 
 class TorchGeneratorAgent(TorchAgent):
@@ -57,16 +61,292 @@ class TorchGeneratorAgent(TorchAgent):
         super(TorchGeneratorAgent, cls).add_cmdline_args(argparser)
         return agent
 
+    def __init__(self, opt, shared=None):
+        init_model = None
+        if not shared:  # only do this on first setup
+            # first check load path in case we need to override paths
+            if opt.get('init_model') and os.path.isfile(opt['init_model']):
+                # check first for 'init_model' for loading model from file
+                init_model = opt['init_model']
+            if opt.get('model_file') and os.path.isfile(opt['model_file']):
+                # next check for 'model_file', this would override init_model
+                init_model = opt['model_file']
+
+            if init_model is not None:
+                # if we are loading a model, should load its dict too
+                if (os.path.isfile(init_model + '.dict') or
+                        opt['dict_file'] is None):
+                    opt['dict_file'] = init_model + '.dict'
+        super().__init__(opt, shared)
+
+        self.beam_dot_log = opt.get('beam_dot_log', False)
+        self.beam_size = opt.get('beam_size', 1)
+        self.beam_min_n_best = opt.get('beam_min_n_best', 3)
+        self.beam_min_length = opt.get('beam_min_length', 3)
+        self.beam_block_ngram = opt.get('beam_block_ngram', 0)
+
+        if shared:
+            # set up shared properties
+            self.model = shared['model']
+            self.metrics = shared['metrics']
+            states = shared.get('states', {})
+        else:
+            self.metrics = {
+                'loss': 0.0,
+                'num_tokens': 0,
+                'correct_tokens': 0,
+                'total_skipped_batches': 0
+            }
+            # this is not a shared instance of this class, so do full init
+            if self.beam_dot_log:
+                self.beam_dot_dir = tempfile.mkdtemp(
+                    prefix='{}-beamdot-beamsize-{}-'.format(
+                        os.path.basename(
+                            opt.get('model_file')),
+                        self.beam_size))
+                print(
+                    '[ Saving dot beam logs in {} ]'.format(
+                        self.beam_dot_dir))
+            if init_model is not None:
+                # load model parameters if available
+                print('[ Loading existing model params from {} ]'
+                      ''.format(init_model))
+                states = self.load(init_model)
+            else:
+                states = {}
+
+            self.build_criterion()
+            self.build_model(states=states)
+
+            if 'train' in opt.get('datatype', ''):
+                self.init_optim(
+                    [p for p in self.model.parameters() if p.requires_grad],
+                    optim_states=states.get('optimizer'),
+                    saved_optim_type=states.get('optimizer_type'))
+
+        self.reset()
+
+    def _v2t(self, vec):
+        """Convert token indices to string of tokens."""
+        new_vec = []
+        if hasattr(vec, 'cpu'):
+            vec = vec.cpu()
+        for i in vec:
+            if i == self.END_IDX:
+                break
+            elif i != self.START_IDX:
+                new_vec.append(i)
+        return self.dict.vec2txt(new_vec)
+
+    def build_criterion(self):
+        self.criterion = nn.CrossEntropyLoss(
+            ignore_index=self.NULL_IDX, reduction='sum'
+        )
+        if self.use_cuda:
+            self.criterion.cuda()
+
+    def _init_cuda_buffer(self, model, criterion, batchsize, maxlen):
+        """Pre-initialize CUDA buffer by doing fake forward pass."""
+        if self.use_cuda and not hasattr(self, 'buffer_initialized'):
+            try:
+                print('preinitializing pytorch cuda buffer')
+                dummy = torch.ones(batchsize, maxlen).long().cuda()
+                out = model(dummy, dummy)
+                sc = out[0]  # scores
+                loss = criterion(sc.view(-1, sc.size(-1)), dummy.view(-1))
+                loss.backward()
+                self.buffer_initialized = True
+            except RuntimeError as e:
+                if 'out of memory' in str(e):
+                    m = ('CUDA OOM: Lower batch size (-bs) from {} or lower '
+                         ' max sequence length (-tr) from {}'
+                         ''.format(batchsize, maxlen))
+                    raise RuntimeError(m)
+                else:
+                    raise e
+
+    def zero_grad(self):
+        """Zero out optimizer."""
+        self.optimizer.zero_grad()
+
+    def update_params(self):
+        """Do one optimization step."""
+        if self.clip > 0:
+            torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
+        self.optimizer.step()
+
+    def reset_metrics(self):
+        """Reset metrics for reporting loss and perplexity."""
+        super().reset_metrics()
+        self.metrics['loss'] = 0.0
+        self.metrics['num_tokens'] = 0
+        self.metrics['correct_tokens'] = 0
+
+    def share(self):
+        """Share internal states between parent and child instances."""
+        shared = super().share()
+        shared['model'] = self.model
+        if self.opt.get('numthreads', 1) > 1:
+            # we're doing hogwild so share the model too
+            if isinstance(self.metrics, dict):
+                # move metrics and model to shared memory
+                self.metrics = SharedTable(self.metrics)
+                self.model.share_memory()
+            shared['states'] = {  # don't share optimizer states
+                'optimizer_type': self.opt['optimizer'],
+            }
+        shared['metrics'] = self.metrics  # do after numthreads check
+        if self.beam_dot_log is True:
+            shared['beam_dot_dir'] = self.beam_dot_dir
+        return shared
+
+    def report(self):
+        """Report loss and perplexity from model's perspective.
+
+        Note that this includes predicting __END__ and __UNK__ tokens and may
+        differ from a truly independent measurement.
+        """
+        m = {}
+        num_tok = self.metrics['num_tokens']
+        if num_tok > 0:
+            if self.metrics['correct_tokens'] > 0:
+                m['token_acc'] = self.metrics['correct_tokens'] / num_tok
+            m['loss'] = self.metrics['loss'] / num_tok
+            try:
+                m['ppl'] = math.exp(m['loss'])
+            except OverflowError:
+                m['ppl'] = float('inf')
+        if self.metrics['total_skipped_batches'] > 0:
+            m['total_skipped_batches'] = self.metrics['total_skipped_batches']
+        for k, v in m.items():
+            # clean up: rounds to sigfigs and converts tensors to floats
+            m[k] = round_sigfigs(v, 4)
+        return m
+
+    def train_step(self, batch):
+        """Train on a single batch of examples."""
+        batchsize = batch.text_vec.size(0)
+        # helps with memory usage
+        self._init_cuda_buffer(self.model, self.criterion, batchsize,
+                               self.truncate or 180)
+        self.model.train()
+        self.zero_grad()
+
+        try:
+            out = self.model(batch.text_vec, batch.label_vec)
+
+            # generated response
+            scores = out[0]
+            _, preds = scores.max(2)
+
+            score_view = scores.view(-1, scores.size(-1))
+            loss = self.criterion(score_view, batch.label_vec.view(-1))
+            # save loss to metrics
+            notnull = batch.label_vec.ne(self.NULL_IDX)
+            target_tokens = notnull.long().sum().item()
+            correct = ((batch.label_vec == preds) * notnull).sum().item()
+            self.metrics['correct_tokens'] += correct
+            self.metrics['loss'] += loss.item()
+            self.metrics['num_tokens'] += target_tokens
+            loss /= target_tokens  # average loss per token
+            loss.backward()
+            self.update_params()
+        except RuntimeError as e:
+            # catch out of memory exceptions during fwd/bck (skip batch)
+            if 'out of memory' in str(e):
+                print('| WARNING: ran out of memory, skipping batch. '
+                      'if this happens frequently, decrease batchsize or '
+                      'truncate the inputs to the model.')
+                self.metrics['total_skipped_batches'] += 1
+            else:
+                raise e
+
+    def _build_cands(self, batch):
+        if not batch.candidates:
+            return None, None
+        cand_inds = [i for i in range(len(batch.candidates))
+                     if batch.candidates[i]]
+        cands = [batch.candidate_vecs[i] for i in cand_inds]
+        for i, c in enumerate(cands):
+            cands[i] = padded_tensor(c, use_cuda=self.use_cuda)[0]
+        return cands, cand_inds
+
+    def _pick_cands(self, cand_preds, cand_inds, cands):
+        cand_replies = [None] * len(cands)
+        for idx, order in enumerate(cand_preds):
+            batch_idx = cand_inds[idx]
+            cand_replies[batch_idx] = [cands[batch_idx][i] for i in order]
+        return cand_replies
+
+    def eval_step(self, batch):
+        """Evaluate a single batch of examples."""
+        if batch.text_vec is None:
+            return
+        self.model.eval()
+        cand_scores = None
+        if self.beam_size == 1:
+            out, cand_params = self.greedy_search(batch)
+            scores, cand_scores = out[0], out[1]
+            _, preds = scores.max(2)
+        elif self.beam_size > 1:
+            out = self.beam_search(
+                self.model,
+                batch,
+                self.beam_size,
+                start=self.START_IDX,
+                end=self.END_IDX,
+                pad=self.NULL_IDX,
+                min_length=self.beam_min_length,
+                min_n_best=self.beam_min_n_best,
+                block_ngram=self.beam_block_ngram)
+            beam_preds_scores, _, beams = out
+            preds, scores = [p[0] for p in beam_preds_scores], [
+                p[1] for p in beam_preds_scores]
+            if self.beam_dot_log is True:
+                for i, b in enumerate(beams):
+                    dot_graph = b.get_beam_dot(dictionary=self.dict, n_best=3)
+                    image_name = self._v2t(batch.text_vec[i, -20:]).replace(
+                        ' ',
+                        '-').replace('__null__', '')
+                    dot_graph.write_png(os.path.join(
+                        self.beam_dot_dir, "{}.png".format(image_name)))
+
+        if batch.label_vec is not None:
+            # calculate loss on targets with teacher forcing
+            out = self.model(batch.text_vec, batch.label_vec)
+            f_scores = out[0]  # forced scores
+            _, f_preds = f_scores.max(2)  # forced preds
+            score_view = f_scores.view(-1, f_scores.size(-1))
+            loss = self.criterion(score_view, batch.label_vec.view(-1))
+            # save loss to metrics
+            notnull = batch.label_vec.ne(self.NULL_IDX)
+            target_tokens = notnull.long().sum().item()
+            correct = ((batch.label_vec == f_preds) * notnull).sum().item()
+            self.metrics['correct_tokens'] += correct
+            self.metrics['loss'] += loss.item()
+            self.metrics['num_tokens'] += target_tokens
+
+        cand_choices = None
+        if cand_scores is not None:
+            cand_preds = cand_scores.sort(1, descending=True)[1]
+            # now select the text of the cands based on their scores
+            cand_choices = self._pick_cands(cand_preds, cand_params[1],
+                                            batch.candidates)
+
+        text = [self._v2t(p) for p in preds]
+        return Output(text, cand_choices)
+
     def greedy_search(self, batch):
         cand_params = self._build_cands(batch)
         out = self.model(batch.text_vec, ys=None, cand_params=cand_params)
         return out, cand_params
 
-    @staticmethod
-    def beam_search(model, batch, beam_size, start=1, end=2,
+    def beam_search(self, model, batch, beam_size, start=1, end=2,
                     pad=0, min_length=3, min_n_best=5, max_ts=40, block_ngram=0):
         """ Beam search given the model and Batch
+
         This function uses model with the following reqs:
+
         - model.encoder takes input returns tuple (enc_out, enc_hidden, attn_mask)
         - model.decoder takes decoder params and returns decoder outputs after attn
         - model.output takes decoder outputs and returns distr over dictionary
