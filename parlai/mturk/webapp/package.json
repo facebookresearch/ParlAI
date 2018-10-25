@@ -16,7 +16,8 @@
     "popper.js": "^1.14.4",
     "react": "^16.5.2",
     "react-bootstrap": "^0.32.4",
-    "react-dom": "^16.5.2"
+    "react-dom": "^16.5.2",
+    "react-table": "^6.8.6"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",

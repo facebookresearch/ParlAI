@@ -519,6 +519,15 @@ class MTurkDataHandler():
             results = c.fetchall()
             return results
 
+    def get_pairings_for_run(self, task_group_id):
+        with self.table_access_condition:
+            conn = self._get_connection()
+            c = conn.cursor()
+            c.execute("""SELECT * FROM pairings
+                         WHERE run_id = ?;""", (task_group_id, ))
+            results = c.fetchall()
+            return results
+
     def get_pairings_for_conversation(self, conversation_id,
                                       task_group_id=None):
         task_group_id = self._force_task_group_id(task_group_id)

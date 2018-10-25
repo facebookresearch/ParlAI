@@ -233,6 +233,23 @@ class TaskListHandler(BaseHandler):
         self.write(json.dumps(processed_results))
 
 
+def merge_assignments_with_pairings(assignments, pairings, log_id):
+    processed_assignments = {}
+    for res in assignments:
+        assign_dict = row_to_dict(res)
+        processed_assignments[assign_dict['assignment_id']] = assign_dict
+    for res in pairings:
+        pairing_dict = row_to_dict(res)
+        assign_id = pairing_dict['assignment_id']
+        if assign_id not in processed_assignments:
+            print('assignment {} missing from assign table for {}'
+                  ''.format(assign_id, log_id))
+        pairing_dict['world_status'] = pairing_dict['status']
+        del pairing_dict['status']
+        processed_assignments[assign_id].update(pairing_dict)
+    return list(processed_assignments.values())
+
+
 class RunHandler(BaseHandler):
     def initialize(self, app):
         self.state = app.state
@@ -247,9 +264,9 @@ class RunHandler(BaseHandler):
         for res in hits:
             processed_hits.append(row_to_dict(res))
         assignments = self.data_handler.get_assignments_for_run(task_target)
-        processed_assignments = []
-        for res in assignments:
-            processed_assignments.append(row_to_dict(res))
+        pairings = self.data_handler.get_pairings_for_run(task_target)
+        processed_assignments = merge_assignments_with_pairings(
+            assignments, pairings, 'task {}'.format(task_target))
         run_details = row_to_dict(self.data_handler.get_run_data(task_target))
         data = {
             'run_details': run_details,
@@ -269,16 +286,8 @@ class WorkerListHandler(BaseHandler):
         self.data_handler = app.data_handler
 
     def get(self):
-
-        # self.render(
-        #     'index.html',
-        #     user=getpass.getuser(),
-        #     items=items,
-        #     active_item=active
-        # )
         results = self.data_handler.get_all_worker_data()
         processed_results = []
-        print(results)
         for res in results:
             processed_results.append(dict(zip(res.keys(), res)))
 
@@ -294,21 +303,20 @@ class WorkerHandler(BaseHandler):
         self.data_handler = app.data_handler
 
     def get(self, worker_target):
+        assignments = self.data_handler.get_all_assignments_for_worker(
+            worker_target)
+        pairings = self.data_handler.get_all_pairings_for_worker(
+            worker_target)
+        processed_assignments = merge_assignments_with_pairings(
+            assignments, pairings, 'task {}'.format(worker_target))
+        worker_details = row_to_dict(
+            self.data_handler.get_worker_data(worker_target))
+        data = {
+            'worker_details': worker_details,
+            'assignments': processed_assignments,
+        }
 
-        # self.render(
-        #     'index.html',
-        #     user=getpass.getuser(),
-        #     items=items,
-        #     active_item=active
-        # )
-        print(worker_target)
-        results = self.data_handler.get_all_pairings_for_worker(worker_target)
-        processed_results = []
-        for res in results:
-            processed_results.append(dict(zip(res.keys(), res)))
-
-        self.write(json.dumps(processed_results))
-
+        self.write(json.dumps(data))
 
 class ErrorHandler(BaseHandler):
     def get(self, text):
