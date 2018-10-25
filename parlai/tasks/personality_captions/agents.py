@@ -69,7 +69,7 @@ class DefaultDataset(Dataset):
 
     def __getitem__(self, index):
         data = self.data[index]
-        image = self.get_image(data['image_num'])
+        image = self.get_image(data['image_hash'])
 
         ep = {
             'text': data['personality'],
