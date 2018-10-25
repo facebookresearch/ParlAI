@@ -16,6 +16,7 @@ from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 import torch.nn.functional as F
 
 from parlai.core.utils import NEAR_INF
+from parlai.core.torch_generator_agent import TorchGeneratorModel
 
 
 def opt_to_kwargs(opt):
@@ -30,7 +31,7 @@ def opt_to_kwargs(opt):
     return kwargs
 
 
-def pad(tensor, length, dim=0, pad=0):
+def _pad_to_length(tensor, length, dim=0, pad=0):
     """Pad tensor to a specific length.
 
     :param tensor: vector to pad
@@ -49,7 +50,7 @@ def pad(tensor, length, dim=0, pad=0):
         return tensor
 
 
-class Seq2seq(nn.Module):
+class Seq2seq(TorchGeneratorModel):
     """Sequence to sequence parent module."""
 
     RNN_OPTS = {'rnn': nn.RNN, 'gru': nn.GRU, 'lstm': nn.LSTM}
@@ -66,12 +67,14 @@ class Seq2seq(nn.Module):
 
         See cmdline args in Seq2seqAgent for description of arguments.
         """
-        super().__init__()
+        super().__init__(
+            padding_idx=padding_idx,
+            start_idx=start_idx,
+            unknown_idx=unknown_idx,
+            input_dropout=input_dropout,
+            longest_label=longest_label,
+        )
         self.attn_type = attention
-
-        self.NULL_IDX = padding_idx
-        self.register_buffer('START', torch.LongTensor([start_idx]))
-        self.longest_label = longest_label
 
         rnn_class = Seq2seq.RNN_OPTS[rnn_class]
         self.decoder = RNNDecoder(
@@ -107,12 +110,17 @@ class Seq2seq(nn.Module):
         else:
             return self.encoder(xs)
 
-    def _starts(self, bsz):
-        """Return bsz start tokens."""
-        return self.START.detach().expand(bsz, 1)
-
     def _decode_forced(self, ys, encoder_states):
-        """Decode with teacher forcing."""
+        """Decode with correct sequence (i.e. maximum likelihood). Useful
+        for training, or ranking fixed candidates.
+
+        :param Tensor[int](bsz x time): the prediction targets. Contains both
+            the start and end tokens.
+        :param encoder_states: Output of the encoder. Model specific types.
+
+        :return: loss scores of each sample
+        :rtype Tensor[float](bsz x 1):
+        """
         bsz = ys.size(0)
         seqlen = ys.size(1)
 
@@ -221,12 +229,10 @@ class Seq2seq(nn.Module):
             num_cands = curr_cs.size(0)
 
             # select just the one hidden state
-            cur_enc_states = self._extract_cur(
-                encoder_states, batch_idx, num_cands)
+            cur_enc_states = self._extract_cur(encoder_states, batch_idx, num_cands)
 
             score = self._decode_forced(curr_cs, cur_enc_states)
-            true_score = F.log_softmax(score, dim=2).gather(
-                2, curr_cs.unsqueeze(2))
+            true_score = F.log_softmax(score, dim=2).gather(2, curr_cs.unsqueeze(2))
             nonzero = curr_cs.ne(0).float()
             scores = (true_score.squeeze(2) * nonzero).sum(1)
             seqlens = nonzero.sum(1)
@@ -235,71 +241,9 @@ class Seq2seq(nn.Module):
 
         max_len = max(len(c) for c in cand_scores)
         cand_scores = torch.cat(
-            [pad(c, max_len, pad=self.NULL_IDX).unsqueeze(0)
+            [_pad_to_length(c, max_len, pad=self.NULL_IDX).unsqueeze(0)
              for c in cand_scores], 0)
         return cand_scores
-
-    def forward(self, xs, ys=None, cands=None, prev_enc=None, maxlen=None,
-                seq_len=None):
-        """Get output predictions from the model.
-
-        :param xs:          (bsz x seqlen) LongTensor input to the encoder
-        :param ys:          expected output from the decoder. used for teacher
-                            forcing to calculate loss.
-        :param cands:       set of candidates to rank
-        :param prev_enc:    if you know you'll pass in the same xs multiple
-                            times, you can pass in the encoder output from the
-                            last forward pass to skip recalcuating the same
-                            encoder output.
-        :param maxlen:      max number of tokens to decode. if not set, will
-                            use the length of the longest label this model
-                            has seen. ignored when ys is not None.
-        :param seq_len      this is the sequence length of the input (xs), i.e.
-                            xs.size(1). we use this to recover the proper
-                            output sizes in the case when we distribute over
-                            multiple gpus
-
-        :returns: scores, candidate scores, and encoder states
-            scores contains the model's predicted token scores.
-                (bsz x seqlen x num_features)
-            candidate scores are the score the model assigned to each candidate
-                (bsz x num_cands)
-            encoder states are the (output, hidden, attn_mask) states from the
-                encoder. feed this back in to skip encoding on the next call.
-        """
-        if ys is not None:
-            # keep track of longest label we've ever seen
-            # we'll never produce longer ones than that during prediction
-            self.longest_label = max(self.longest_label, ys.size(1))
-
-        encoder_states = self._encode(xs, prev_enc)
-
-        # rank candidates if they are available
-        cand_scores = None
-        if cands is not None:
-            cand_inds = [i for i in range(cands.size(0))]
-            cand_scores = self._rank(cands, cand_inds, encoder_states)
-
-        if ys is not None:
-            # use teacher forcing
-            scores = self._decode_forced(ys, encoder_states)
-        else:
-            scores = self._decode(encoder_states, maxlen or self.longest_label)
-
-        if seq_len is not None:
-            # when using multiple gpus, we need to make sure output of
-            # encoder is correct size for gathering; we recover this with
-            # the parameter seq_len
-            if encoder_states[0].size(1) < seq_len:
-                out_pad_tensor = torch.zeros(
-                    encoder_states[0].size(0),
-                    seq_len - encoder_states[0].size(1),
-                    encoder_states[0].size(2)
-                ).cuda()
-                new_out = torch.cat([encoder_states[0], out_pad_tensor], 1)
-                encoder_states = (new_out, encoder_states[1], encoder_states[2])
-
-        return scores, cand_scores, encoder_states
 
 
 class UnknownDropout(nn.Module):

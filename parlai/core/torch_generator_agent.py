@@ -39,6 +39,74 @@ from parlai.core.utils import NEAR_INF, padded_tensor, round_sigfigs
 from parlai.core.thread_utils import SharedTable
 
 
+class TorchGeneratorModel(nn.Module):
+    """
+    This Interface expects you to implement model with the following reqs:
+
+    :field model.encoder: takes input returns tuple (enc_out, enc_hidden, attn_mask)
+    :field model.decoder: takes decoder params and returns decoder outputs after attn
+    :field model.output: takes decoder outputs and returns distr over dictionary
+    """
+    def __init__(
+        self,
+        padding_idx=0,
+        start_idx=1,
+        unknown_idx=3,
+        input_dropout=0,
+        longest_label=1,
+    ):
+        super().__init__()
+        self.NULL_IDX = padding_idx
+        self.register_buffer('START', torch.LongTensor([start_idx]))
+        self.longest_label = longest_label
+
+    def _starts(self, bsz):
+        """Return bsz start tokens."""
+        return self.START.detach().expand(bsz, 1)
+
+    def forward(self, xs, ys=None, cand_params=None, prev_enc=None, maxlen=None):
+        """Get output predictions from the model.
+
+        :param LongTensor(bsz x seqlen) xs: input to the encoder
+        :param LongTensor(bsz x outlen) ys: Expected output from the decoder. Used
+            for teacher forcing to calculate loss.
+        :param cand_params: set of candidates to rank, and indices to match
+            candidates with their appropriate xs.
+        :param prev_enc: if you know you'll pass in the same xs multiple times,
+            you can pass in the encoder output from the last forward pass to skip
+            recalcuating the same encoder output.
+        :param maxlen: max number of tokens to decode. if not set, will use the
+            length of the longest label this model has seen. ignored when ys is not
+            None.
+
+        :return: (scores, candidate scores, encoder states) tuple
+
+            - scores contains the model's predicted token scores.
+              (bsz x seqlen x num_features)
+            - candidate scores are the score the model assigned to each candidate
+              (bsz x num_cands)
+            - encoder states are the (output, hidden, attn_mask) states from the
+              encoder. feed this back in to skip encoding on the next call.
+        """
+        if ys is not None:
+            # keep track of longest label we've ever seen
+            # we'll never produce longer ones than that during prediction
+            self.longest_label = max(self.longest_label, ys.size(1))
+
+        encoder_states = self._encode(xs, prev_enc)
+
+        # rank candidates if they are available
+        cand_scores = self._rank(cand_params, encoder_states)
+
+        if ys is not None:
+            # use teacher forcing
+            scores = self._decode_forced(ys, encoder_states)
+        else:
+            scores = self._decode(encoder_states, maxlen or self.longest_label)
+
+        return scores, cand_scores, encoder_states
+
+
 class TorchGeneratorAgent(TorchAgent):
     """Abstract Generator agent.
 
@@ -302,7 +370,8 @@ class TorchGeneratorAgent(TorchAgent):
                 pad=self.NULL_IDX,
                 min_length=self.beam_min_length,
                 min_n_best=self.beam_min_n_best,
-                block_ngram=self.beam_block_ngram)
+                block_ngram=self.beam_block_ngram
+            )
             beam_preds_scores, _, beams = out
             preds, scores = [p[0] for p in beam_preds_scores], [
                 p[1] for p in beam_preds_scores]
@@ -347,23 +416,21 @@ class TorchGeneratorAgent(TorchAgent):
 
     def beam_search(self, model, batch, beam_size, start=1, end=2,
                     pad=0, min_length=3, min_n_best=5, max_ts=40, block_ngram=0):
-        """ Beam search given the model and Batch
+        """Beam search given the model and Batch
 
-        This function uses model with the following reqs:
 
-        - model.encoder takes input returns tuple (enc_out, enc_hidden, attn_mask)
-        - model.decoder takes decoder params and returns decoder outputs after attn
-        - model.output takes decoder outputs and returns distr over dictionary
+        This function expects to be given a TorchGeneratorModel. Please refer to
+        that interface for information.
 
-        :param nn.Module model: Implements the above interface
+        :param TorchGeneratorModel model: Implements the above interface
         :param Batch batch: Batch structure with input and labels
         :param int beam_size: Size of each beam during the search
         :param int start: start of sequence token
         :param int end: end of sequence token
         :param int pad: padding token
         :param int min_length: minimum length of the decoded sequence
-        :param int min_n_best: minimum number of completed hypothesis generated from each
-            beam
+        :param int min_n_best: minimum number of completed hypothesis generated
+            from each beam
         :param int max_ts: the maximum length of the decoded sequence
 
         :return: tuple (beam_pred_scores, n_best_pred_scores, beams)
@@ -536,16 +603,14 @@ class PerplexityEvaluatorAgent(TorchGeneratorAgent):
         This probability is based on both nn input and partial true output.
         This is used to calculate the per-word perplexity.
 
-        Arguments:
-        observation -- input observation dict
-        partial_out -- list of previous "true" words
+        :param observation: input observation dict
+        :param partial_out: -- list of previous "true" words
 
-        Returns a dict, where each key is a word and each value is a
-        probability score for that word.
-        Unset keys will use a probability of 1e-7.
+        :return: a dict, where each key is a word and each value is a
+            probability score for that word.
+            Unset keys will use a probability of 1e-7.
 
-        e.g.
-        {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
+            e.g. {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
         """
         obs = self.observation
         xs = obs['text_vec'].unsqueeze(0)
