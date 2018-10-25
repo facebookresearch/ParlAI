@@ -183,7 +183,7 @@ class TrainLoop():
                 opt['model_file'] + '.checkpoint'):
             opt['init_model'] = opt['model_file'] + '.checkpoint'
         # Possibly build a dictionary (not all models do this).
-        if opt['dict_build_first'] and 'dict_file' in opt:
+        if opt['dict_build_first'] and opt.get('dict_file'):
             if opt['dict_file'] is None and opt.get('model_file'):
                 opt['dict_file'] = opt['model_file'] + '.dict'
             print("[ building dictionary first... ]")
