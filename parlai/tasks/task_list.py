@@ -690,8 +690,12 @@ task_list = [
         "id": "ConvAI2_wild_evaluation",
         "display_name": "ConvAI2_wild_evaluation",
         "task": "convai2_wild_evaluation",
-        "tags": ["All",  "ChitChat" ],
-        "description": "Dataset collected during the wild evaluation of ConvaAI2 participants bots (http://convai.io). 60% train, 20% valid and 20% test is chosen at random from the whole dataset."
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "Dataset collected during the wild evaluation of "
+            "ConvaAI2 participants bots (http://convai.io). 60% train, 20% "
+            "valid and 20% test is chosen at random from the whole dataset."
+        )
     },
     {
         "id": "Personality_Captions",
@@ -699,7 +703,8 @@ task_list = [
         "task": "personality_captions",
         "tags": ["All", "Visual"],
         "description": (
-            "200k images from the YFCC100m dataset (https://multimediacommons.wordpress.com/yfcc100m-core-dataset/), "
+            "200k images from the YFCC100m dataset "
+            "(https://multimediacommons.wordpress.com/yfcc100m-core-dataset/), "
             "with captions conditioned on one of 215 personalities. See "
             "https://arxiv.org for more information."
         ),
@@ -708,6 +713,5 @@ task_list = [
             "the `--yfcc-path` flag, as the image download script takes a "
             "very long time to run"
         )
-    }
-    ,
+    },
 ]

@@ -15,7 +15,6 @@
               }
 
 '''
-from .download_images import download_images
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from torch.utils.data import Dataset
