@@ -42,7 +42,7 @@ def setup_args(parser=None):
     train.add_argument('-et', '--evaltask',
                        help=('task to use for valid/test (defaults to the '
                              'one used for training if not set)'))
-    train.add_argument('--eval-batchsize', type=int,
+    train.add_argument('ebs', '--eval-batchsize', type=int,
                        hidden=True,
                        help='Eval time batch size (defaults to same as -bs)')
     train.add_argument('--display-examples', type='bool', default=False)
@@ -102,6 +102,14 @@ def setup_args(parser=None):
                        help='use a shared copy of the agent for validation. '
                             'this will eventually default to True, but '
                             'currently defaults to False.')
+    # HACK
+    train.add_argument('-maxtrain', '--max-train-size', type=int, default=0,
+                       help='if non-zero, only the first maxtrain examples from the '
+                            'dataset will be used if it is read by an instanc of '
+                            'ParlaiDialogTeacher')
+    train.add_argument('-trial', '--trial', type=int, default=0,
+                       help='the index of a repeated trial (has no effect on the code)')
+    # HACK
     TensorboardLogger.add_cmdline_args(parser)
     parser = setup_dict_args(parser)
     return parser
@@ -337,11 +345,13 @@ class TrainLoop():
                     self.log()
                 if self.validate_time.time() > self.val_every_n_secs:
                     stop_training = self.validate()
+                    self.log_time.reset()
                     if stop_training:
                         break
                 if (world.get_total_epochs() - self.last_valid_epoch >=
                         self.val_every_n_epochs):
                     stop_training = self.validate()
+                    self.log_time.reset()
                     self.last_valid_epoch = world.get_total_epochs()
                     if stop_training:
                         break
@@ -350,6 +360,7 @@ class TrainLoop():
                     print("[ saving model checkpoint: " +
                           opt['model_file'] + ".checkpoint ]")
                     self.agent.save(opt['model_file'] + '.checkpoint')
+                    self.log_time.reset()
                     self.save_time.reset()
 
         if not self.saved:
