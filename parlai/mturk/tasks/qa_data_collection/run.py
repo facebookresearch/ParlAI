@@ -46,7 +46,8 @@ def main():
     # of agents per world of 1 (based on the length of mturk_agent_ids)
     mturk_manager = MTurkManager(
         opt=opt,
-        mturk_agent_ids=[mturk_agent_id]
+        mturk_agent_ids=[mturk_agent_id],
+        use_db=True,
     )
     mturk_manager.setup_server()
 
@@ -58,6 +59,7 @@ def main():
         while not world.episode_done():
             world.parley()
         world.shutdown()
+        return world.prep_save_data([worker])
 
     # If we want to use the above onboard function, we can replace the below
     # with set_onboard_function(onboard_function=run_onboard)
@@ -111,7 +113,9 @@ def main():
             # shutdown and review the work
             world.shutdown()
             world.review_work()
-            world.save_data()
+
+            # Return the contents for saving
+            return world.prep_save_data(workers)
 
         # Begin the task, allowing mturk_manager to start running the task
         # world on any workers who connect

@@ -6,6 +6,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+import json
 import logging
 import os
 import sqlite3
@@ -15,9 +16,14 @@ import threading
 import parlai.mturk.core.shared_utils as shared_utils
 from parlai.mturk.core.agents import AssignState
 
+
+def ensure_dir_exists(check_dir):
+    if not os.path.exists(check_dir):
+        os.makedirs(check_dir)
+
+
 data_dir = os.path.dirname(os.path.abspath(__file__)) + '/run_data'
-if not os.path.exists(data_dir):
-    os.makedirs(data_dir)
+ensure_dir_exists(data_dir)
 
 # Run data table:
 CREATE_RUN_DATA_SQL_TABLE = (
@@ -79,6 +85,7 @@ CREATE_PAIRING_DATA_SQL_TABLE = (
         task_start int,
         task_end int,
         conversation_id string,
+        onboarding_id string,
         bonus_amount int,
         bonus_text string,
         bonus_paid boolean,
@@ -103,6 +110,28 @@ class MTurkDataHandler():
         self.task_group_id = task_group_id
         self.table_access_condition = threading.Condition()
         self.create_default_tables()
+
+    @staticmethod
+    def save_world_data(prepped_save_data, task_group_id,
+                        conversation_id, sandbox=False, onboarding=False):
+        target = 'sandbox' if sandbox else 'live'
+        target_dir = os.path.join(
+            data_dir, target, task_group_id, conversation_id)
+        ensure_dir_exists(target_dir)
+        if prepped_save_data['custom_data'] is not None:
+            target_dir_custom = os.path.join(target_dir, 'custom')
+            ensure_dir_exists(target_dir_custom)
+            custom_file = os.path.join(target_dir_custom, 'data.json')
+            with open(custom_file, 'w') as outfile:
+                json.dump(prepped_save_data['custom_data'], outfile)
+        worker_data = prepped_save_data['worker_data']
+        target_dir_workers = os.path.join(target_dir, 'workers')
+        ensure_dir_exists(target_dir_workers)
+        for worker_id, w_data in worker_data.items():
+            worker_file = os.path.join(
+                target_dir_workers, '{}.json'.format(worker_id))
+            with open(worker_file, 'w') as outfile:
+                json.dump(w_data, outfile)
 
     def _get_connection(self):
         '''Returns a singular database connection to be shared amongst all
@@ -138,6 +167,13 @@ class MTurkDataHandler():
             c.execute(CREATE_HIT_DATA_SQL_TABLE)
             c.execute(CREATE_ASSIGN_DATA_SQL_TABLE)
             c.execute(CREATE_PAIRING_DATA_SQL_TABLE)
+
+            # attempt to add onboarding id to pairings for those on older version
+            try:
+                c.execute('''ALTER TABLE pairings
+                             ADD COLUMN onboarding_id TEXT default null''')
+            except sqlite3.Error:
+                pass  # Table already has onboarding_id
             conn.commit()
 
     def log_new_run(self, target_hits, task_group_id=None):
@@ -204,9 +240,9 @@ class MTurkDataHandler():
             # Create tracking for this specific pairing, as the assignment
             # may be reassigned
             c.execute('''INSERT INTO pairings
-                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''',
+                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
                       (AssignState.STATUS_NONE, None, None, None, None, None,
-                       0, '', False, '', worker_id, assignment_id,
+                       None, 0, '', False, '', worker_id, assignment_id,
                        task_group_id))
             conn.commit()
 
@@ -317,14 +353,15 @@ class MTurkDataHandler():
                       ('Abandoned', assignment_id))
             conn.commit()
 
-    def log_start_onboard(self, worker_id, assignment_id):
+    def log_start_onboard(self, worker_id, assignment_id, conversation_id):
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute('''UPDATE pairings SET status = ?, onboarding_start = ?
+            c.execute('''UPDATE pairings SET status = ?, onboarding_start = ?,
+                         onboarding_id = ?
                          WHERE worker_id = ? AND assignment_id = ?;''',
-                      (AssignState.STATUS_ONBOARDING, time.time(), worker_id,
-                       assignment_id))
+                      (AssignState.STATUS_ONBOARDING, time.time(),
+                       conversation_id, worker_id, assignment_id))
             conn.commit()
 
     def log_finish_onboard(self, worker_id, assignment_id):

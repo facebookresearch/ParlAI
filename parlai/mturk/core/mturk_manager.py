@@ -685,7 +685,12 @@ class MTurkManager():
                 if not did_arrive:
                     return
                 # call onboarding function
-                self.onboard_function(mturk_agent)
+                save_data = self.onboard_function(mturk_agent)
+                if save_data is not None:
+                    MTurkDataHandler.save_world_data(
+                        save_data, self.task_group_id,
+                        conversation_id, onboarding=True,
+                        sandbox=self.is_sandbox)
 
             # once onboarding is done, move into a waiting world
             self._move_agents_to_waiting([mturk_agent])
@@ -1034,7 +1039,14 @@ class MTurkManager():
                 )
             )
             self.started_conversations += 1
-            task_function(mturk_manager=self, opt=opt, workers=agents)
+            save_data = \
+                task_function(mturk_manager=self, opt=opt, workers=agents)
+
+            if save_data is not None:
+                MTurkDataHandler.save_world_data(
+                    save_data, self.task_group_id, conversation_id,
+                    sandbox=self.is_sandbox)
+
             # Delete extra state data that is now unneeded
             for agent in agents:
                 agent.clear_messages()
@@ -1048,7 +1060,6 @@ class MTurkManager():
                         if agent.submitted_hit():
                             self.create_additional_hits(1)
 
-        last_thread_count = 0
         if self.db_logger is not None:
             self._maintain_hit_status()
         while not self.is_shutdown:

@@ -8,8 +8,33 @@
 
 from parlai.core.worlds import World
 
+class MTurkDataWorld(World):
+    def prep_save_data(self, workers):
+        '''This prepares data to be saved for later review, including
+        chats from individual worker perspectives.'''
+        custom_data = self.get_custom_task_data()
+        save_data = {
+            'custom_data': custom_data,
+            'worker_data': {}
+        }
 
-class MTurkOnboardWorld(World):
+        for agent in workers:
+            save_data['worker_data'][agent.worker_id] = {
+                'worker_id': agent.worker_id,
+                'assignment_id': agent.assignment_id,
+                'messages': agent.get_messages(),
+            }
+
+        return save_data
+
+    def get_custom_task_data(self):
+        '''This function should take the contents of whatever was collected
+        during this task that should be saved and return it in some format,
+        preferrably a dict containing acts'''
+        pass
+
+
+class MTurkOnboardWorld(MTurkDataWorld):
     """Generic world for onboarding a Turker and collecting
     information from them."""
     def __init__(self, opt, mturk_agent):
@@ -29,7 +54,7 @@ class MTurkOnboardWorld(World):
         pass
 
 
-class MTurkTaskWorld(World):
+class MTurkTaskWorld(MTurkDataWorld):
     """Generic world for MTurk tasks."""
     def __init__(self, opt, mturk_agent):
         '''Init should set up resources for running the task world'''
@@ -83,10 +108,4 @@ class MTurkTaskWorld(World):
         # self.mturk_agent.reject_work()
         # self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
         # self.mturk_agent.block_worker() # Block this worker from future HITs
-        pass
-
-    def save_data(self):
-        '''This function should take the contents of whatever was collected
-        during this task that needs to be stored for review and write it
-        to disk'''
         pass
