@@ -19,7 +19,7 @@ from collections import defaultdict
 
 import os
 import math
-import pickle
+import json
 import tempfile
 
 
@@ -29,8 +29,9 @@ class Seq2seqAgent(TorchAgent):
     This model supports encoding the input and decoding the output via one of
     several flavors of RNN. It then uses a linear layer (whose weights can
     be shared with the embedding layer) to convert RNN output states into
-    output tokens. This model currently uses greedy decoding, selecting the
-    highest probability token at each time step.
+    output tokens. This model supports greedy decoding, selecting the
+    highest probability token at each time step, as well as beam
+    search.
 
     For more information, see the following papers:
     - Neural Machine Translation by Jointly Learning to Align and Translate
@@ -191,7 +192,7 @@ class Seq2seqAgent(TorchAgent):
             self.criterion.cuda()
 
         if 'train' in opt.get('datatype', ''):
-            self._init_optim(
+            self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
                 optim_states=states.get('optimizer'),
                 saved_optim_type=states.get('optimizer_type'))
@@ -581,10 +582,10 @@ class Seq2seqAgent(TorchAgent):
                 torch.save(model, write)
 
             # save opt file
-            with open(path + ".opt", 'wb') as handle:
+            with open(path + '.opt', 'w') as handle:
                 # save version string
                 self.opt['model_version'] = self.model_version()
-                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                json.dump(self.opt, handle)
 
     def load(self, path):
         """Return opt and model states."""

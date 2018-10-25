@@ -692,10 +692,10 @@ task_list = [
         "task": "convai2_wild_evaluation",
         "tags": ["All", "ChitChat"],
         "description": (
-            "Dataset collected during the wild evaluation of "
-            "ConvaAI2 participants bots (http://convai.io). 60% train, 20% "
-            "valid and 20% test is chosen at random from the whole dataset."
-        )
+            "Dataset collected during the wild evaluation of ConvaAI2 participants "
+            "bots (http://convai.io). 60% train, 20% valid and 20% test is chosen at "
+            "random from the whole dataset."
+        ),
     },
     {
         "id": "Personality_Captions",
@@ -712,6 +712,6 @@ task_list = [
             "If you have already downloaded the images, please specify with "
             "the `--yfcc-path` flag, as the image download script takes a "
             "very long time to run"
-        )
+        ),
     },
 ]

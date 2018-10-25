@@ -18,7 +18,7 @@ import torch.nn as nn
 
 import os
 import math
-import pickle
+import json
 
 
 class LanguageModelAgent(Agent):
@@ -145,12 +145,8 @@ class LanguageModelAgent(Agent):
                 ))
                 # since .opt file does not exist, save one for future use
                 print("Saving opt file at:", init_model + ".opt")
-                with open(init_model + ".opt", 'wb') as handle:
-                    pickle.dump(
-                        new_opt,
-                        handle,
-                        protocol=pickle.HIGHEST_PROTOCOL
-                    )
+                with open(init_model + '.opt', 'w') as handle:
+                    json.dump(new_opt, handle)
                 opt = self.override_opt(new_opt)
 
             if ((init_model is not None and
@@ -606,8 +602,8 @@ class LanguageModelAgent(Agent):
             with open(path, 'wb') as write:
                 torch.save(model, write)
             # save opt file
-            with open(path + ".opt", 'wb') as handle:
-                pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            with open(path + '.opt', 'w') as handle:
+                json.dump(self.opt, handle)
 
     def shutdown(self):
         """Save the state of the model when shutdown."""

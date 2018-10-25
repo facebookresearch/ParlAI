@@ -17,7 +17,7 @@ if __name__ == '__main__':
         task='twitter',
         datatype='valid',
         metrics='ppl',
-        model='parlai.agents.seq2seq.seq2seq:PerplexityEvaluatorAgent',
+        model='parlai.agents.legacy_agents.seq2seq.seq2seq_v0:PerplexityEvaluatorAgent',
         model_file='models:twitter/seq2seq/twitter_seq2seq_model',
         dict_lower=True,
         batchsize=1,

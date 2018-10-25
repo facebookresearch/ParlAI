@@ -27,7 +27,7 @@ from collections import deque
 import math
 import random
 import os
-import pickle
+import json
 import sqlite3
 
 
@@ -165,8 +165,8 @@ class TfidfRetrieverAgent(Agent):
 
     def save(self, path=None):
         self.rebuild()
-        with open(self.opt['model_file'] + ".opt", 'wb') as handle:
-            pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        with open(self.opt['model_file'] + '.opt', 'w') as handle:
+            json.dump(self.opt, handle)
         with open(self.opt['model_file'], 'w') as f:
             f.write('\n')
 

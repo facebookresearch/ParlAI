@@ -15,8 +15,8 @@ import shutil
 
 from parlai.scripts.train_model import TrainLoop, setup_args
 
-BATCH_SIZE = 16
-NUM_EPOCHS = 10
+BATCH_SIZE = 1
+NUM_EPOCHS = 3
 LR = 1
 
 
@@ -36,63 +36,64 @@ def _mock_train(**args):
     return stdout.getvalue(), valid, test
 
 
-class TestSeq2Seq(unittest.TestCase):
+class TestMemnn(unittest.TestCase):
     """Checks that seq2seq can learn some very basic tasks."""
 
-    def test_generation(self):
-        """This test uses a single-turn sequence repitition task."""
+    def test_labelcands_nomemnn(self):
+        """This test uses a single-turn task, so doesn't test memories."""
+
         stdout, valid, test = _mock_train(
-            task='integration_tests:NocandidateTeacher',
-            model='seq2seq',
+            task='integration_tests:CandidateTeacher',
+            model='memnn',
             lr=LR,
             batchsize=BATCH_SIZE,
             num_epochs=NUM_EPOCHS,
             numthreads=1,
             no_cuda=True,
-            embeddingsize=16,
-            hiddensize=16,
-            rnn_class='gru',
-            attention='general',
+            embedding_size=32,
             gradient_clip=1.0,
-            dropout=0.0,
-            lookuptable='all',
+            hops=1,
+            position_encoding=True,
+            use_time_features=False,
+            memsize=0,
+            rank_candidates=True,
         )
 
         self.assertTrue(
-            valid['ppl'] < 1.2,
-            "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+            valid['hits@1'] > 0.95,
+            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout)
         )
         self.assertTrue(
-            test['ppl'] < 1.2,
-            "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+            test['hits@1'] > 0.95,
+            "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout)
         )
 
-    def test_generation_multi(self):
+    def test_labelcands_multi(self):
         """This test uses a multi-turn task and multithreading."""
         stdout, valid, test = _mock_train(
-            task='integration_tests:MultiturnNocandidateTeacher',
-            model='seq2seq',
+            task='integration_tests:MultiturnCandidateTeacher',
+            model='memnn',
             lr=LR,
             batchsize=BATCH_SIZE,
-            num_epochs=NUM_EPOCHS * 2,
-            numthreads=2,
+            num_epochs=NUM_EPOCHS * 3,
+            numthreads=4,
             no_cuda=True,
-            embeddingsize=16,
-            hiddensize=16,
-            rnn_class='gru',
-            attention='general',
+            embedding_size=32,
             gradient_clip=1.0,
-            dropout=0.0,
-            lookuptable='all',
+            hops=2,
+            position_encoding=False,
+            use_time_features=True,
+            memsize=5,
+            rank_candidates=True,
         )
 
         self.assertTrue(
-            valid['ppl'] < 1.2,
-            "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+            valid['hits@1'] > 0.95,
+            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout)
         )
         self.assertTrue(
-            test['ppl'] < 1.2,
-            "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+            test['hits@1'] > 0.95,
+            "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout)
         )
 
 

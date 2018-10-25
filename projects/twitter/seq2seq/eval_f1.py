@@ -17,7 +17,7 @@ if __name__ == '__main__':
         task='twitter',
         datatype='valid',
         metrics='f1',
-        model='seq2seq',
+        model='legacy:seq2seq:0',
         model_file='models:twitter/seq2seq/twitter_seq2seq_model',
         dict_lower=True,
         batchsize=32,
