@@ -43,6 +43,11 @@ class TorchRankerAgent(TorchAgent):
                  "<cands_name> is the name of the file (not the full path) passed by "
                  "the flag --fixed-candidates-path. By default, this file is created "
                  "once and reused. To replace it, use the 'replace' option.")
+        # TODO: Move this functionality (init, loading, etc.) up to TorchAgent since
+        # it has nothing to do with ranking models in particular
+        agent.add_argument(
+            '-im', '--init-model', type=str,
+            help="The path to a saved model of the appropriate type to initialize with")
 
     def __init__(self, opt, shared):
         # Must call _get_model_file() first so that paths are updated if necessary
@@ -318,7 +323,7 @@ class TorchRankerAgent(TorchAgent):
             model_file = opt['init_model']
 
         if opt.get('model_file') and os.path.isfile(opt['model_file']):
-            # next check for 'model_file', this would override init_model
+            # next check for existing 'model_file'; this would override init_model
             model_file = opt['model_file']
 
         if model_file is not None:
