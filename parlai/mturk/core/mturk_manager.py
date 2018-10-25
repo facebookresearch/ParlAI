@@ -99,8 +99,7 @@ class MTurkManager():
                 pass
 
         self.opt = opt
-        if self.opt['unique_worker'] or \
-                self.opt['unique_qual_name'] is not None:
+        if self.opt['unique_worker']:
             self.opt['allowed_conversations'] = 1
         self.server_url = None
         self.topic_arn = None
@@ -853,8 +852,7 @@ class MTurkManager():
 
         shared_utils.print_and_log(logging.INFO, 'Setting up MTurk server...',
                                    should_print=True)
-        self.is_unique = self.opt['unique_worker'] or \
-            (self.opt['unique_qual_name'] is not None)
+        self.is_unique = self.opt['unique_worker']
         self.max_hits_per_worker = self.opt.get('max_hits_per_worker', 0)
         mturk_utils.create_hit_config(
             task_description=self.opt['task_description'],
