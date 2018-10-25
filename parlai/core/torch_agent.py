@@ -528,13 +528,13 @@ class TorchAgent(Agent):
 
         Useful to override to change vectorization behavior"""
 
-        if 'label_candidates_vecs' in obs:
+        if obs.get('label_candidates_vecs'):
             if truncate is not None:
                 # check truncation of pre-computed vectors
                 vecs = obs['label_candidates_vecs']
                 for i, c in enumerate(vecs):
                     vecs[i] = self._check_truncate(c, truncate)
-        elif self.rank_candidates and 'label_candidates' in obs:
+        elif self.rank_candidates and obs.get('label_candidates'):
             obs['label_candidates'] = list(obs['label_candidates'])
             obs['label_candidates_vecs'] = [
                 self._vectorize_text(c, add_start, add_end, truncate, False)
