@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 '''
-    Images and Comments from CommentBattle MTurk dataset
+    Images and Comments from Personality-Captions dataset
 
     200k images + comments, with different personalities.
 
@@ -52,6 +52,8 @@ class DefaultDataset(Dataset):
         self.image_mode = opt.get('image_mode', 'none')
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
+        self.include_image = opt.get('include_image')
+        self.include_personality = opt.get('include_personality')
         data_path, personalities_data_path, self.image_path = _path(opt)
         self.image_loader = ImageLoader(opt)
         self._setup_data(data_path, personalities_data_path)
@@ -72,9 +74,9 @@ class DefaultDataset(Dataset):
         image = self.get_image(data['image_hash'])
 
         ep = {
-            'text': data['personality'],
+            'text': data['personality'] if self.include_personality else '',
             'episode_done': True,
-            'image': image,
+            'image': image if self.include_image else None,
         }
 
         if self.opt.get('extract_image', False):
@@ -108,7 +110,11 @@ class DefaultDataset(Dataset):
 
 class PersonalityCaptionsTeacher(FixedDialogTeacher):
     """
-        Returns comments and images
+        Provides the personality in the `text` field, and
+        the captions in the `labels` field
+
+        To specify your own path to the YFCC100m images, please use the
+        `--yfcc-path` command line argument.
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -128,15 +134,15 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Comment Battle arguments')
-        agent.add_argument('--include-persona', type='bool',
+        agent = argparser.add_argument_group('Personality-Captions arguments')
+        agent.add_argument('--include-personality', type='bool',
                            default=True,
-                           help='Whether to provide persona to agent')
+                           help='Whether to provide personality to agent')
         agent.add_argument('--include-image', type='bool',
                            default=True,
                            help='Whether to provide image to agent')
         agent.add_argument('--yfcc-path', type=str, default=None,
-                           help='Path to yfcc images (if not downloaded) '
+                           help='Path to yfcc images (if not downloaded '
                                 'via the provided download script)')
 
     def _setup_data(self, data_path, personalities_data_path):
@@ -164,13 +170,11 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         data = self.data[episode_idx]
-        image_features = None
 
         action = {
             'text': data['personality'] if self.include_personality else '',
             'image_id': data['image_hash'],
             'episode_done': True,
-            'image': image_features,
             'labels': [data['comment']],
         }
 
@@ -184,16 +188,19 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
         up the next example.
         """
         ready = None
+        load_image = self.image_mode != 'none' and self.include_image
         # pull up the currently queued example
         if self.example is not None:
-            if self.image_mode != 'none' and 'image_id' in self.example:
+            # if self.image_mode != 'none' and 'image_id' in self.example:
+            if load_image and 'image_id' in self.example:
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
             ready = (self.example, self.imageEpochDone)
         # get the next base example: super().next_example() calls self.get()
         self.example, self.imageEpochDone = super().next_example()
-        if self.image_mode != 'none' and 'image_id' in self.example:
+        # if self.image_mode != 'none' and 'image_id' in self.example:
+        if load_image and 'image_id' in self.example:
             # load the next image in the background
             image_id = self.example['image_id']
             self.submit_load_request(image_id)
