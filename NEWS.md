@@ -1,5 +1,5 @@
 <h2>News</h2>
-2018-10-25: Added [Personality-Captions](arxiv.com), a dataset for engaging image captioning via personality.
+2018-10-25: Added [Personality-Captions](arxiv.org), a dataset for engaging image captioning via personality.
 
 2018-08-29: Added new cleaner version of seq2seq model with new TorchAgent parent class, along with folder (parlai/legacy_agents) for deprecated model code
 
