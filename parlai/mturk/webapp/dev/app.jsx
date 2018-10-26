@@ -6,7 +6,7 @@ import 'react-table/react-table.css';
 import 'fetch';
 
 var AppURLStates = Object.freeze({
-  init:0, tasks:1, unsupported:2, runs:3, workers:4,
+  init:0, tasks:1, unsupported:2, runs:3, workers:4, assignments:5,
 });
 
 function convert_time(timestamp){
@@ -74,8 +74,8 @@ class SharedTable extends React.Component {
 
   render() {
     var used_cols = this.props.used_cols;
-    var row_formatter = \
-      used_cols.map(this.props.getColumnFormatter, this.props);
+    var row_formatter = (
+      used_cols.map(this.props.getColumnFormatter, this.props));
     return (
       <Panel id={this.props.title} defaultExpanded>
         <Panel.Heading>

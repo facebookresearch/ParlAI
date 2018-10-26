@@ -214,7 +214,10 @@ class TaskListHandler(BaseHandler):
         results = self.data_handler.get_all_run_data()
         processed_results = []
         for res in results:
-            processed_results.append(dict(zip(res.keys(), res)))
+            processed_results.append(row_to_dict(res))
+        for result in processed_results:
+            # TODO implemenent
+            result['run_status'] = 'unimplemented'
 
         self.write(json.dumps(processed_results))
 
@@ -315,26 +318,39 @@ class AssignmentHandler(BaseHandler):
         self.port = app.port
         self.data_handler = app.data_handler
 
-    def get_assignment_content(self, run_id, onboarding_id, conversation_id):
-        pass
-
     def get(self, assignment_target):
-        assignments = [self.data_handler.get_assignment_data(
-            assignment_target)]
-        pairings = self.data_handler.get_pairings_for_assignment(
-            assignment_target)
-        processed_assignments = merge_assignments_with_pairings(
-            assignments, pairings, 'assignment {}'.format(assignment_target))
-        assignment = processed_assignments[0]
-        assignment_content = self.get_assignment_content(
-            assignment['run_id'], assignment['onboarding_id'],
-            assignment['conversation_id'])
-        data = {
-            'assignment_details': processed_assignments[0],
-            'assignment_content': assignment_content,
-        }
+        try:
+            # Extract assignment
+            assignments = [self.data_handler.get_assignment_data(
+                assignment_target)]
+            pairings = self.data_handler.get_pairings_for_assignment(
+                assignment_target)
+            processed_assignments = merge_assignments_with_pairings(
+                assignments, pairings, 'assignment {}'.format(assignment_target))
+            assignment = processed_assignments[0]
 
-        self.write(json.dumps(data))
+            # Get assignment details to retrieve assignment content
+            print(assignments, pairings)
+            run_id = assignment['run_id']
+            onboarding_id = assignment['onboarding_id']
+            conversation_id = assignment['conversation_id']
+            worker_id = assignment['worker_id']
+            assignment_content = {
+                'onboarding': MTurkDataHandler.get_conversation_data(
+                    run_id, onboarding_id, worker_id, self.state['is_sandbox']),
+                'task': MTurkDataHandler.get_conversation_data(
+                    run_id, conversation_id, worker_id, self.state['is_sandbox']),
+            }
+
+            data = {
+                'assignment_details': assignment,
+                'assignment_content': assignment_content,
+            }
+
+            self.write(json.dumps(data))
+        except Exception as e:
+            print (e)
+            raise (e)
 
 
 class ErrorHandler(BaseHandler):
@@ -344,9 +360,9 @@ class ErrorHandler(BaseHandler):
 
 
 def start_server(port=DEFAULT_PORT, hostname=DEFAULT_HOSTNAME,
-                 db_file=DEFAULT_DB_FILE):
+                 db_file=DEFAULT_DB_FILE, is_sandbox=False):
     print("It's Alive!")
-    app = Application(port=port, db_file=db_file)
+    app = Application(port=port, db_file=db_file, is_sandbox=is_sandbox)
     app.listen(port, max_buffer_size=1024 ** 3)
     logging.info("Application Started")
 
@@ -367,7 +383,7 @@ def main():
     parser.add_argument('--hostname', metavar='hostname', type=str,
                         default=DEFAULT_HOSTNAME,
                         help='host to run the server on.')
-    parser.add_argument('--sandbox', metavar='sandbox', type=bool,
+    parser.add_argument('--sandbox', dest='sandbox',
                         action='store_true', default=False,
                         help='Run the server using sandbox data')
     parser.add_argument('--db_file', metavar='db_file', type=str,
