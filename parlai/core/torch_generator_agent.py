@@ -424,8 +424,7 @@ class TorchGeneratorAgent(TorchAgent):
     def _build_cands(self, batch):
         if not batch.candidates:
             return None, None
-        cand_inds = [i for i in range(len(batch.candidates))
-                     if batch.candidates[i]]
+        cand_inds = [i for i in range(len(batch.candidates)) if batch.candidates[i]]
         cands = [batch.candidate_vecs[i] for i in cand_inds]
         for i, c in enumerate(cands):
             cands[i] = padded_tensor(c, use_cuda=self.use_cuda)[0]
@@ -437,6 +436,16 @@ class TorchGeneratorAgent(TorchAgent):
             batch_idx = cand_inds[idx]
             cand_replies[batch_idx] = [cands[batch_idx][i] for i in order]
         return cand_replies
+
+    def _write_beam_dots(self, beams):
+        """Write the beam dot files to disk."""
+        for i, b in enumerate(beams):
+            dot_graph = b.get_beam_dot(dictionary=self.dict, n_best=3)
+            image_name = self._v2t(batch.text_vec[i, -20:])
+            image_name = image_name.replace(' ', '-').replace('__null__', '')
+            dot_graph.write_png(
+                os.path.join(self.beam_dot_dir, "{}.png".format(image_name))
+            )
 
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
@@ -461,16 +470,10 @@ class TorchGeneratorAgent(TorchAgent):
                 block_ngram=self.beam_block_ngram
             )
             beam_preds_scores, _, beams = out
-            preds, scores = [p[0] for p in beam_preds_scores], [
-                p[1] for p in beam_preds_scores]
+            preds, scores = zip(*beam_preds_scores)
+
             if self.beam_dot_log is True:
-                for i, b in enumerate(beams):
-                    dot_graph = b.get_beam_dot(dictionary=self.dict, n_best=3)
-                    image_name = self._v2t(batch.text_vec[i, -20:]).replace(
-                        ' ',
-                        '-').replace('__null__', '')
-                    dot_graph.write_png(os.path.join(
-                        self.beam_dot_dir, "{}.png".format(image_name)))
+                self._write_beam_dots(beams)
 
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
