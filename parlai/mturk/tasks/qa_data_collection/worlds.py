@@ -90,7 +90,8 @@ class QADataCollectionWorld(MTurkTaskWorld):
 
     def get_custom_task_data(self):
         # brings important data together for the task, to later be used for
-        # creating the dataset.
+        # creating the dataset. If data requires pickling, put it in a field
+        # called 'needs-pickle'.
         return {
             'context': self.context,
             'acts': [self.question, self.answer],
