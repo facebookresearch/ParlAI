@@ -147,7 +147,10 @@ class Seq2seqAgent(TorchAgent):
 
         # all instances may need some params
         self.id = 'Seq2Seq'
+        self.multigpu = (opt.get('multigpu') and self.use_cuda and
+                         (opt.get('batchsize') > 1))
         states = {}
+
         self.beam_dot_log = opt.get('beam_dot_log', False)
         self.beam_size = opt.get('beam_size', 1)
         self.beam_min_n_best = opt.get('beam_min_n_best', 3)
@@ -227,15 +230,21 @@ class Seq2seqAgent(TorchAgent):
             # set loaded states if applicable
             self.model.load_state_dict(states['model'])
 
-        if self.use_cuda:
-            self.model.cuda()
-
         if opt['embedding_type'].endswith('fixed'):
             print('Seq2seq: fixing embedding weights.')
             self.model.decoder.lt.weight.requires_grad = False
             self.model.encoder.lt.weight.requires_grad = False
             if opt['lookuptable'] in ['dec_out', 'all']:
                 self.model.decoder.e2s.weight.requires_grad = False
+
+        if self.use_cuda:
+            self.model.cuda()
+            if self.multigpu:
+                self.model = torch.nn.DataParallel(self.model)
+                self.model.encoder = self.model.module.encoder
+                self.model.decoder = self.model.module.decoder
+                self.model.longest_label = self.model.module.longest_label
+                self.model.output = self.model.module.output
 
         return self.model
 
@@ -343,6 +352,9 @@ class Seq2seqAgent(TorchAgent):
     def train_step(self, batch):
         """Train on a single batch of examples."""
         batchsize = batch.text_vec.size(0)
+        if self.multigpu and batchsize % 2 != 0:
+            # throw out one training example
+            batch = self.truncate_input(batch)
         # helps with memory usage
         self._init_cuda_buffer(self.model, self.criterion, batchsize,
                                self.truncate or 180)
@@ -350,7 +362,8 @@ class Seq2seqAgent(TorchAgent):
         self.zero_grad()
 
         try:
-            out = self.model(batch.text_vec, batch.label_vec)
+            seq_len = None if not self.multigpu else batch.text_vec.size(1)
+            out = self.model(batch.text_vec, batch.label_vec, seq_len=seq_len)
 
             # generated response
             scores = out[0]
@@ -384,8 +397,14 @@ class Seq2seqAgent(TorchAgent):
         cand_inds = [i for i in range(len(batch.candidates))
                      if batch.candidates[i]]
         cands = [batch.candidate_vecs[i] for i in cand_inds]
+        max_cands_len = max(
+            [max([cand.size(0) for cand in cands_i]) for cands_i in cands]
+        )
         for i, c in enumerate(cands):
-            cands[i] = padded_tensor(c, use_cuda=self.use_cuda)[0]
+            cands[i] = padded_tensor(c,
+                                     use_cuda=self.use_cuda,
+                                     max_len=max_cands_len)[0].unsqueeze(0)
+        cands = torch.cat(cands, 0)
         return cands, cand_inds
 
     def _pick_cands(self, cand_preds, cand_inds, cands):
@@ -397,7 +416,9 @@ class Seq2seqAgent(TorchAgent):
 
     def greedy_search(self, batch):
         cand_params = self._build_cands(batch)
-        out = self.model(batch.text_vec, ys=None, cand_params=cand_params)
+        seq_len = None if not self.multigpu else batch.text_vec.size(1)
+        out = self.model(batch.text_vec, ys=None, cands=cand_params[0],
+                         seq_len=seq_len)
         return out, cand_params
 
     @staticmethod
@@ -509,14 +530,62 @@ class Seq2seqAgent(TorchAgent):
 
         return beam_preds_scores, n_best_beam_preds_scores, beams
 
+    def extend_input(self, batch):
+        # add pad tensor to text vec
+        pad_tensor = torch.zeros(1, batch.text_vec.size(1)).long().cuda()
+        text_vec = torch.cat([batch.text_vec, pad_tensor], 0)
+        batch = batch._replace(text_vec=text_vec)
+        if batch.label_vec is not None:
+            # add pad tensor to label vec
+            pad_tensor = torch.zeros(
+                1,
+                batch.label_vec.size(1)
+            ).long().cuda()
+            label_vec = torch.cat([batch.label_vec, pad_tensor], 0)
+            batch = batch._replace(label_vec=label_vec)
+        if batch.candidates is not None:
+            # add dummy candidates list
+            dummy_list = [['None'] for _ in range(len(batch.candidates[0]))]
+            batch = batch._replace(candidates=batch.candidates + [dummy_list])
+            # add pad tensor to candidate_vecs
+            new_vecs = (batch.candidate_vecs +
+                        [[torch.zeros(1).long() for _ in
+                         range(len(batch.candidate_vecs[0]))]])
+            batch = batch._replace(candidate_vecs=new_vecs)
+        return batch
+
+    def truncate_input(self, batch):
+        # truncate batch for multigpu
+        text_vec = batch.text_vec[:-1]
+        batch = batch._replace(text_vec=text_vec)
+        if batch.label_vec is not None:
+            label_vec = batch.label_vec[:-1]
+            batch = batch._replace(label_vec=label_vec)
+        return batch
+
+    def truncate_output(self, out):
+        new_out_0 = out[0][:-1]
+        new_out_1 = None if out[1] is None else out[1][:-1]
+        new_out_2 = [vec[:-1] for vec in out[2]]
+        return tuple([new_out_0, new_out_1, new_out_2])
+
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
         if batch.text_vec is None:
             return
+        orig_batch = batch  # save for evaluation
+        needs_truncation = self.multigpu and batch.text_vec.size(0) % 2 != 0
+        if needs_truncation:
+            # for multigpu, we need to split evenly across gpus
+            batch = self.extend_input(batch)
         self.model.eval()
         cand_scores = None
         if self.beam_size == 1:
             out, cand_params = self.greedy_search(batch)
+            if needs_truncation:
+                out = self.truncate_output(out)
+                if cand_params[0] is not None:
+                    cand_params = (cand_params[0][:-1], cand_params[1][:-1])
             scores, cand_scores = out[0], out[1]
             _, preds = scores.max(2)
         elif self.beam_size > 1:
@@ -530,6 +599,8 @@ class Seq2seqAgent(TorchAgent):
                 min_length=self.beam_min_length,
                 min_n_best=self.beam_min_n_best,
                 block_ngram=self.beam_block_ngram)
+            if needs_truncation:
+                out = self.truncate_output(out)
             beam_preds_scores, _, beams = out
             preds, scores = [p[0] for p in beam_preds_scores], [
                 p[1] for p in beam_preds_scores]
@@ -544,15 +615,18 @@ class Seq2seqAgent(TorchAgent):
 
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
-            out = self.model(batch.text_vec, batch.label_vec)
+            seq_len = None if not self.multigpu else batch.text_vec.size(1)
+            out = self.model(batch.text_vec, batch.label_vec, seq_len=seq_len)
+            if needs_truncation:
+                out = self.truncate_output(out)
             f_scores = out[0]  # forced scores
             _, f_preds = f_scores.max(2)  # forced preds
             score_view = f_scores.view(-1, f_scores.size(-1))
-            loss = self.criterion(score_view, batch.label_vec.view(-1))
+            loss = self.criterion(score_view, orig_batch.label_vec.view(-1))
             # save loss to metrics
-            notnull = batch.label_vec.ne(self.NULL_IDX)
+            notnull = orig_batch.label_vec.ne(self.NULL_IDX)
             target_tokens = notnull.long().sum().item()
-            correct = ((batch.label_vec == f_preds) * notnull).sum().item()
+            correct = ((orig_batch.label_vec == f_preds) * notnull).sum().item()
             self.metrics['correct_tokens'] += correct
             self.metrics['loss'] += loss.item()
             self.metrics['num_tokens'] += target_tokens
@@ -562,7 +636,7 @@ class Seq2seqAgent(TorchAgent):
             cand_preds = cand_scores.sort(1, descending=True)[1]
             # now select the text of the cands based on their scores
             cand_choices = self._pick_cands(cand_preds, cand_params[1],
-                                            batch.candidates)
+                                            orig_batch.candidates)
 
         text = [self._v2t(p) for p in preds]
         return Output(text, cand_choices)
@@ -590,6 +664,20 @@ class Seq2seqAgent(TorchAgent):
     def load(self, path):
         """Return opt and model states."""
         states = torch.load(path, map_location=lambda cpu, _: cpu)
+
+        # check opt file for multigpu
+        with open(path + ".opt", 'r') as handle:
+            saved_opt = json.load(handle)
+        if saved_opt.get('multigpu'):
+            # create new OrderedDict that does not contain `module.`
+            from collections import OrderedDict
+            new_state_dict = OrderedDict()
+            for k, v in states['model'].items():
+                if k.startswith('module'):
+                    name = k[7:]  # remove `module.`
+                    new_state_dict[name] = v
+            states['model'] = new_state_dict
+
         return states
 
 
@@ -618,6 +706,10 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
 
     def __init__(self, opt, shared=None):
         """Initialize evaluator."""
+        if opt.get('multigpu'):
+            print('| WARNING: Multi-GPU is not supported for the Perplexity ' +
+                  'Evaluator Agent. Setting this option to False.')
+            opt['multigpu'] = False
         super().__init__(opt, shared)
         self.prev_enc = None
         self.last_xs = None

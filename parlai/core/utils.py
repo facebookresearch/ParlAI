@@ -933,7 +933,8 @@ def set_namedtuple_defaults(namedtuple, default=None):
     return namedtuple
 
 
-def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
+def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
+                  max_len=None):
     """Create a right-padded matrix from an uneven list of lists.
 
     Returns (padded, lengths), where padded is the padded matrix, and lengths
@@ -949,6 +950,7 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
     :param int pad_idx: the value to use for padding
     :param bool use_cuda: if true, places `padded` on GPU
     :param bool left_padded:
+    :param int max_len: if None, the max length is the maximum item length
 
     :returns: (padded, lengths) tuple
     :rtype: (Tensor[int64], list[int])
@@ -964,7 +966,7 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
     # length of each item
     lens = [len(item) for item in items]
     # max in time dimension
-    t = max(lens)
+    t = max(lens) if max_len is None else max_len
 
     # if input tensors are empty, we should expand to nulls
     t = max(t, 1)
