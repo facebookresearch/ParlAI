@@ -101,6 +101,8 @@ class MTurkManager():
         self.opt = opt
         if self.opt['unique_worker']:
             self.opt['allowed_conversations'] = 1
+        elif self.opt['max_hits_per_worker'] != 0 and self.opt['allowed_conversations'] == 0:
+            self.opt['allowed_conversations'] = self.opt['max_hits_per_worker']
         self.server_url = None
         self.topic_arn = None
         self.server_task_name = None
