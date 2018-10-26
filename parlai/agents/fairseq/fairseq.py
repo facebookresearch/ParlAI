@@ -53,7 +53,7 @@ import argparse
 import torch
 import os
 import numpy as np
-import pickle
+import json
 from collections import defaultdict
 
 
@@ -451,11 +451,11 @@ class FairseqAgent(TorchAgent):
             return
         self.trainer.save_checkpoint(path, {'opt': self.opt, 'epoch': 0})
         # Parlai expects options to also be saved
-        with open(path + ".opt", 'wb') as handle:
+        with open(path + '.opt', 'w') as handle:
             # overridden options shouldn't be stored, only the main ones
             if 'override' in self.opt:
                 del self.opt['override']
-            pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            json.dump(self.opt, handle)
 
     def load(self, path):
         """Load using fairseq's checkpointing."""

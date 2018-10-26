@@ -1135,7 +1135,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         text:Sam went to the hallway. <NEWL>
         Pat went to the bathroom. <NEWL>
         Where is the milk? <TAB> labels:hallway <TAB> reward:1
-        <TAB> label_candidateshallway|kitchen|bathroom <TAB> episode_done:True
+        <TAB> label_candidates:hallway|kitchen|bathroom <TAB> episode_done:True
 
     Lines 1-2 represent a single episode, with a different example on each line.
     The lines contain a query and a label for getting the question

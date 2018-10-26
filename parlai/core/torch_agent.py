@@ -33,7 +33,7 @@ except ImportError as e:
 
 from torch import optim
 from collections import deque, namedtuple, Counter
-import pickle
+import json
 import random
 import math
 from operator import attrgetter
@@ -198,6 +198,8 @@ class TorchAgent(Agent):
             help='disable GPUs even if available. otherwise, will use GPUs if '
                  'available on the device.')
 
+        cls.dictionary_class().add_cmdline_args(argparser)
+
     def __init__(self, opt, shared=None):
         """Initialize agent."""
         super().__init__(opt, shared)
@@ -251,7 +253,7 @@ class TorchAgent(Agent):
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
 
-    def _init_optim(self, params, optim_states=None, saved_optim_type=None):
+    def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """Initialize optimizer with model parameters.
 
         :param params:       parameters from the model, for example:
@@ -807,11 +809,10 @@ class TorchAgent(Agent):
                     torch.save(states, write)
 
                 # save opt file
-                with open(path + ".opt", 'wb') as handle:
+                with open(path + '.opt', 'w') as handle:
                     if hasattr(self, 'model_version'):
                         self.opt['model_version'] = self.model_version()
-                    pickle.dump(self.opt, handle,
-                                protocol=pickle.HIGHEST_PROTOCOL)
+                    json.dump(self.opt, handle)
 
     def load(self, path):
         """Return opt and model states.

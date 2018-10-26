@@ -3,12 +3,13 @@ cache: pip
 python:
     - 3.6
 install:
+    - pip install --upgrade pip
     - pip install flake8
     - python setup.py develop
     - pip install gitpython  # needed for some tests
     - pip install regex scipy scikit-learn pexpect  # tfidf-retriever dependencies
     # install pytorch non-cuda version
-    - pip install http://download.pytorch.org/whl/cpu/torch-0.4.0-cp36-cp36m-linux_x86_64.whl
+    - pip install torch torchvision --progress-bar off
 script:
     - ./tests/lint_changed.sh
     - python setup.py test -s tests.suites.travis -q
