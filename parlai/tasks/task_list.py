@@ -753,4 +753,21 @@ task_list = [
         "tags": ["All"],
         "description": ""
     },
+    {
+        "id": "Personality_Captions",
+        "display_name": "Personality_Captions",
+        "task": "personality_captions",
+        "tags": ["All", "Visual"],
+        "description": (
+            "200k images from the YFCC100m dataset "
+            "(https://multimediacommons.wordpress.com/yfcc100m-core-dataset/), "
+            "with captions conditioned on one of 215 alityalities. See "
+            "https://arxiv.org for more information."
+        ),
+        "notes": (
+            "If you have already downloaded the images, please specify with "
+            "the `--yfcc-path` flag, as the image download script takes a "
+            "very long time to run"
+        ),
+    },
 ]
