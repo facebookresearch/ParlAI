@@ -302,7 +302,7 @@ class TorchRankerAgent(TorchAgent):
 
     def report(self):
         """Report loss and mean_rank from model's perspective."""
-        m = {}
+        m = super().report()
         examples = self.metrics['examples']
         if examples > 0:
             m['examples'] = examples
@@ -311,7 +311,10 @@ class TorchRankerAgent(TorchAgent):
             m['mean_rank'] = self.metrics['rank'] / examples
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
-            m[k] = round_sigfigs(v, 4)
+            if isinstance(v, float):
+                m[k] = round_sigfigs(v, 4)
+            else:
+                m[k] = v
         return m
 
     def _get_model_file(self, opt):
