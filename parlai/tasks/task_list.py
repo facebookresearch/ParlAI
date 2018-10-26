@@ -737,8 +737,8 @@ task_list = [
         "task": "qazre",
         "tags": ["All"],
         "description": (
-            "Zero Shot relation extraction task implemented as part of the DecaNLP task"
-            "More info on the dataset can be found here:"
+            "Zero Shot relation extraction task implemented as part of the DecaNLP "
+            "task. More info on the dataset can be found here:"
             "http://nlp.cs.washington.edu/zeroshot/"
         )
     },
@@ -782,8 +782,8 @@ task_list = [
             "A collection of 10 tasks (SQuAD, IWSLT, CNN/DM, MNLI, SST, QA‑SRL,"
             "QA‑ZRE, WOZ, WikiSQL and MWSC) designed to challenge a model with a range "
             "of different tasks."
-            "See paper https://arxiv.org/abs/1806.08730 for more information and github "
-            "https://github.com/salesforce/decaNLP for data sources"
+            "See paper https://arxiv.org/abs/1806.08730 for more information and "
+            "github: https://github.com/salesforce/decaNLP for data sources"
         )
     },
     {
@@ -793,7 +793,7 @@ task_list = [
         "tags": ["All", "Visual"],
         "description": (
             "200k images from the YFCC100m dataset "
-            "(https://multimediacommons.wordpress.com/yfcc100m-core-dataset/), "
+            "(https://multimediacommons.wordpress.com/yfcc100m-core-dataset/),"
             "with captions conditioned on one of 215 alityalities. See "
             "https://arxiv.org for more information."
         ),
