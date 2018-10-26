@@ -39,6 +39,25 @@ from parlai.core.utils import NEAR_INF, padded_tensor, round_sigfigs
 from parlai.core.thread_utils import SharedTable
 
 
+def _pad_to_length(tensor, length, dim=0, pad=0):
+    """Pad tensor to a specific length.
+
+    :param tensor: vector to pad
+    :param length: new length
+    :param dim: (default 0) dimension to pad
+
+    :returns: padded tensor if the tensor is shorter than length
+    """
+    if tensor.size(dim) < length:
+        return torch.cat(
+            [tensor, tensor.new(*tensor.size()[:dim],
+                                length - tensor.size(dim),
+                                *tensor.size()[dim + 1:]).fill_(pad)],
+            dim=dim)
+    else:
+        return tensor
+
+
 class TorchGeneratorModel(nn.Module):
     """
     This Interface expects you to implement model with the following reqs:
@@ -63,6 +82,79 @@ class TorchGeneratorModel(nn.Module):
     def _starts(self, bsz):
         """Return bsz start tokens."""
         return self.START.detach().expand(bsz, 1)
+
+    def _encode(self, xs, prev_enc=None):
+        """Encode the input or return cached encoder state."""
+        if prev_enc is not None:
+            return prev_enc
+        else:
+            return self.encoder(xs)
+
+    def decode_forced(self, ys, encoder_states):
+        bsz = ys.size(0)
+        seqlen = ys.size(1)
+
+        inputs = ys.narrow(1, 0, seqlen - 1)
+        targets = ys.narrow(1, 1, seqlen - 1)
+        print(inputs)
+        print(targets)
+        import ipdb; ipdb.set_trace()
+
+    def reorder_encoder_states(self, encoder_states, indices):
+        """Reorder encoder states according to a new set of indices.
+
+        This is an abstract method, and must be implemented by the user.
+
+        Its purpose is to provide beam search with a model-agnostic interface for
+        beam search. For example, this method is used to sort hypotheses,
+        expand beams, etc.
+
+        For example, assume that encoder_states produces a bsz x 1 tensor of values
+
+        encoder_states = [[1 2 3 4 5]]
+
+        :param encoder_states: prior output of the encoder
+        :param indices: the indices to select over.
+
+        :return: The re-ordered encoder states. It should be of the same type as
+            encoder states, and it must be a valid input to the decoder.
+        """
+        raise NotImplementedError(
+            "reorder_encoder_states must be implemented by the model"
+        )
+
+    def rank(self, cand_params, encoder_states):
+        """Rank each cand by the average log-probability of the sequence."""
+        if cand_params is None:
+            return None
+
+        cands, cand_inds = cand_params
+        if cands is None:
+            return None
+        encoder_states = self.reorder_encoder_states(encoder_states, cand_inds)
+
+        cand_scores = []
+        for batch_idx in range(len(cands)):
+            # we do one set of candidates at a time
+            curr_cs = cands[batch_idx]
+            num_cands = curr_cs.size(0)
+
+            # select just the one hidden state
+            cur_enc_states = self._extract_cur(encoder_states, batch_idx, num_cands)
+
+            score = self.decode_forced(curr_cs, cur_enc_states)
+            true_score = F.log_softmax(score, dim=2).gather(2, curr_cs.unsqueeze(2))
+            nonzero = curr_cs.ne(0).float()
+            scores = (true_score.squeeze(2) * nonzero).sum(1)
+            seqlens = nonzero.sum(1)
+            scores /= seqlens
+            cand_scores.append(scores)
+
+        max_len = max(len(c) for c in cand_scores)
+        cand_scores = torch.cat(
+            [_pad_to_length(c, max_len, pad=self.NULL_IDX).unsqueeze(0)
+             for c in cand_scores], 0)
+        return cand_scores
 
     def forward(self, xs, ys=None, cand_params=None, prev_enc=None, maxlen=None):
         """Get output predictions from the model.
@@ -96,13 +188,13 @@ class TorchGeneratorModel(nn.Module):
         encoder_states = self._encode(xs, prev_enc)
 
         # rank candidates if they are available
-        cand_scores = self._rank(cand_params, encoder_states)
+        cand_scores = self.rank(cand_params, encoder_states)
 
         if ys is not None:
             # use teacher forcing
-            scores = self._decode_forced(ys, encoder_states)
+            scores = self.decode_forced(ys, encoder_states)
         else:
-            scores = self._decode(encoder_states, maxlen or self.longest_label)
+            scores = self.decode(encoder_states, maxlen or self.longest_label)
 
         return scores, cand_scores, encoder_states
 
@@ -219,6 +311,7 @@ class TorchGeneratorAgent(TorchAgent):
 
     def _init_cuda_buffer(self, model, criterion, batchsize, maxlen):
         """Pre-initialize CUDA buffer by doing fake forward pass."""
+        return
         if self.use_cuda and not hasattr(self, 'buffer_initialized'):
             try:
                 print('preinitializing pytorch cuda buffer')

@@ -31,25 +31,6 @@ def opt_to_kwargs(opt):
     return kwargs
 
 
-def _pad_to_length(tensor, length, dim=0, pad=0):
-    """Pad tensor to a specific length.
-
-    :param tensor: vector to pad
-    :param length: new length
-    :param dim: (default 0) dimension to pad
-
-    :returns: padded tensor if the tensor is shorter than length
-    """
-    if tensor.size(dim) < length:
-        return torch.cat(
-            [tensor, tensor.new(*tensor.size()[:dim],
-                                length - tensor.size(dim),
-                                *tensor.size()[dim + 1:]).fill_(pad)],
-            dim=dim)
-    else:
-        return tensor
-
-
 class Seq2seq(TorchGeneratorModel):
     """Sequence to sequence parent module."""
 
@@ -103,14 +84,7 @@ class Seq2seq(TorchGeneratorModel):
             numsoftmax=numsoftmax, shared_weight=shared_weight,
             padding_idx=padding_idx)
 
-    def _encode(self, xs, prev_enc=None):
-        """Encode the input or return cached encoder state."""
-        if prev_enc is not None:
-            return prev_enc
-        else:
-            return self.encoder(xs)
-
-    def _decode_forced(self, ys, encoder_states):
+    def decode_forced(self, ys, encoder_states):
         """Decode with correct sequence (i.e. maximum likelihood). Useful
         for training, or ranking fixed candidates.
 
@@ -150,7 +124,7 @@ class Seq2seq(TorchGeneratorModel):
         scores = torch.cat(scores, 1)
         return scores
 
-    def _decode(self, encoder_states, maxlen):
+    def decode(self, encoder_states, maxlen):
         """Decode maxlen tokens."""
         hidden = encoder_states[1]
         attn_params = (encoder_states[0], encoder_states[2])
@@ -169,8 +143,11 @@ class Seq2seq(TorchGeneratorModel):
         scores = torch.cat(scores, 1)
         return scores
 
-    def _align_inds(self, encoder_states, cand_inds):
-        """Select the encoder states relevant to valid candidates."""
+    def reorder_encoder_states(self, encoder_states, indices):
+        """Reorder encoder states according to a new set of indices."""
+        # TODO: check if indices is just [0, 1, 2, ...] and become an
+        # identify function
+
         enc_out, hidden, attn_mask = encoder_states
 
         # LSTM or GRU/RNN hidden state?
@@ -179,25 +156,28 @@ class Seq2seq(TorchGeneratorModel):
         else:
             hid, cell = hidden
 
-        if len(cand_inds) != hid.size(1):
-            # if the number of candidates is mismatched from the number of
-            # hidden states, we throw out the hidden states we won't rank with
-            cand_indices = hid.new(cand_inds)
-            hid = hid.index_select(1, cand_indices)
-            if cell is None:
-                hidden = hid
-            else:
-                cell = cell.index_select(1, cand_indices)
-                hidden = (hid, cell)
+        # cast indices to a tensor. index_select is okay with floats
+        indices = torch.LongTensor(indices).to(hidden.device)
 
-            if self.attn_type != 'none':
-                enc_out = enc_out.index_select(0, cand_indices)
-                attn_mask = attn_mask.index_select(0, cand_indices)
+        hid = hid.index_select(1, indices)
+        if cell is None:
+            hidden = hid
+        else:
+            cell = cell.index_select(1, indices)
+            hidden = (hid, cell)
+
+        if self.attn_type != 'none':
+            enc_out = enc_out.index_select(0, indices)
+            attn_mask = attn_mask.index_select(0, indices)
 
         return enc_out, hidden, attn_mask
 
     def _extract_cur(self, encoder_states, index, num_cands):
-        """Extract encoder states at current index and expand them."""
+        """
+        Extract and expand a single encoder state.
+
+        :param encoder_states: encoded
+        """
         enc_out, hidden, attn_mask = encoder_states
         if isinstance(hidden, torch.Tensor):
             cur_hid = (hidden.select(1, index).unsqueeze(1)
@@ -215,35 +195,6 @@ class Seq2seq(TorchGeneratorModel):
             cur_mask = (attn_mask[index].unsqueeze(0)
                         .expand(num_cands, -1))
         return cur_enc, cur_hid, cur_mask
-
-    def _rank(self, cands, cand_inds, encoder_states):
-        """Rank each cand by the average log-probability of the sequence."""
-        if cands is None:
-            return None
-        encoder_states = self._align_inds(encoder_states, cand_inds)
-
-        cand_scores = []
-        for batch_idx in range(len(cands)):
-            # we do one set of candidates at a time
-            curr_cs = cands[batch_idx]
-            num_cands = curr_cs.size(0)
-
-            # select just the one hidden state
-            cur_enc_states = self._extract_cur(encoder_states, batch_idx, num_cands)
-
-            score = self._decode_forced(curr_cs, cur_enc_states)
-            true_score = F.log_softmax(score, dim=2).gather(2, curr_cs.unsqueeze(2))
-            nonzero = curr_cs.ne(0).float()
-            scores = (true_score.squeeze(2) * nonzero).sum(1)
-            seqlens = nonzero.sum(1)
-            scores /= seqlens
-            cand_scores.append(scores)
-
-        max_len = max(len(c) for c in cand_scores)
-        cand_scores = torch.cat(
-            [_pad_to_length(c, max_len, pad=self.NULL_IDX).unsqueeze(0)
-             for c in cand_scores], 0)
-        return cand_scores
 
 
 class UnknownDropout(nn.Module):
