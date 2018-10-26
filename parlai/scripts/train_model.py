@@ -183,7 +183,7 @@ class TrainLoop():
                 opt['model_file'] + '.checkpoint'):
             opt['init_model'] = opt['model_file'] + '.checkpoint'
         # Possibly build a dictionary (not all models do this).
-        if opt['dict_build_first'] and opt.get('dict_file'):
+        if opt['dict_build_first'] and 'dict_file' in opt:
             if opt['dict_file'] is None and opt.get('model_file'):
                 opt['dict_file'] = opt['model_file'] + '.dict'
             print("[ building dictionary first... ]")
@@ -235,8 +235,9 @@ class TrainLoop():
 
         # logging
         if opt['tensorboard_log'] is True:
-            self.writer.add_metrics('valid', int(
-                math.floor(self.train_time.time())), valid_report)
+            total_exs = self.world.get_total_exs()
+            # NOTE: total_exs replaced by int(math.floor(self.train_time.time())))
+            self.writer.add_metrics('valid', total_exs, valid_report)
         # saving
         if opt.get('model_file') and opt.get('save_after_valid'):
             print("[ saving model checkpoint: " +
