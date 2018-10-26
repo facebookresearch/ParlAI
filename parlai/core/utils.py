@@ -1048,3 +1048,19 @@ def argsort(keys, *lists, descending=False):
         else:
             output.append([lst[i] for i in ind_sorted])
     return output
+
+
+def inverse_sqrt_decay(step, init_lr=1e-8, base_lr=1e-3, warmup_steps=0):
+    """Decay the LR based on the inverse square root of the step number.
+
+    This function is intended to serve as a lambda function for the LambdaLR class.
+
+    LambdaLR expects:
+    'A function which computes a multiplicative factor given an integer [step]'
+    """
+    if step <= warmup_steps:
+        # lr = init_lr + (base_lr - init_lr) * step / warmup_steps
+        return (init_lr + (base_lr - init_lr) * step / warmup_steps) / base_lr
+    else:
+        # lr = base_lr * math.sqrt(warmup_steps) / math.sqrt(step)
+        return math.sqrt(warmup_steps) / math.sqrt(step)

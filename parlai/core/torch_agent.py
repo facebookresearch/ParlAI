@@ -23,8 +23,7 @@ from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import (set_namedtuple_defaults, argsort, padded_tensor,
-                               NEAR_INF)
-
+                               NEAR_INF, round_sigfigs, inverse_sqrt_decay)
 try:
     import torch
 except ImportError as e:
@@ -33,6 +32,7 @@ except ImportError as e:
 
 from torch import optim
 from collections import deque, namedtuple, Counter
+import functools
 import json
 import random
 import math
@@ -162,6 +162,16 @@ class TorchAgent(Agent):
             '-lr', '--learningrate', type=float, default=1,
             help='learning rate')
         agent.add_argument(
+            '--scheduler', type=str, default='reduce_on_plateau',
+            choices=['reduce_on_plateau', 'inverse_decay'],
+            help='learning rate scheduler')
+        # TODO: move scheduler-specific flags elsewhere
+        agent.add_argument(
+            '--init-lr', type=float, default=1e-5)
+        agent.add_argument(
+            '--warmup-steps', type=int, default=100)
+        # TODO: end
+        agent.add_argument(
             '-clip', '--gradient-clip', type=float, default=0.1,
             help='gradient clipping using l2 norm')
         agent.add_argument(
@@ -252,6 +262,7 @@ class TorchAgent(Agent):
         self.truncate = opt['truncate'] if opt['truncate'] >= 0 else None
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
+        self.total_steps = -1
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """Initialize optimizer with model parameters.
@@ -297,8 +308,23 @@ class TorchAgent(Agent):
                             if isinstance(v, torch.Tensor):
                                 state[k] = v.cuda()
         # TODO: Move scheduler params to command line args
-        self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-            self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
+        if opt['scheduler'] == 'reduce_on_plateau':
+            self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+                self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
+        elif opt['scheduler'] == 'inverse_decay':
+            lr_lambda = functools.partial(
+                inverse_sqrt_decay, init_lr=opt['init_lr'],
+                base_lr=opt['learningrate'], warmup_steps=opt['warmup_steps'])
+            self.scheduler = optim.lr_scheduler.LambdaLR(self.optimizer, lr_lambda)
+        else:
+            raise ValueError("Unrecognized scheduler: {}".format(opt['scheduler']))
+
+    def report(self):
+        """Report status from model's perspective."""
+        report = {}
+        # TEMP
+        report['lr'] = [pg['lr'] for pg in self.optimizer.param_groups][0]
+        return report
 
     def receive_metrics(self, metrics_dict):
         """Use the metrics to decide when to adjust LR schedule.
@@ -308,8 +334,9 @@ class TorchAgent(Agent):
         this to work.
         Override this to override the behavior.
         """
-        if 'loss' in metrics_dict:
-            self.scheduler.step(metrics_dict['loss'])
+        if self.opt['scheduler'] == 'reduce_on_plateau':
+            if 'loss' in metrics_dict:
+                self.scheduler.step(metrics_dict['loss'])
 
     def _get_embtype(self, emb_type):
         # set up preinitialized embeddings
@@ -857,7 +884,13 @@ class TorchAgent(Agent):
         # create a batch from the vectors
         batch = self.batchify(observations)
 
+        # take a step
         if is_training:
+            # update lr if applicable (do before step to adjust for warmup)
+            self.total_steps += 1
+            if self.opt['scheduler'] == 'inverse_decay':
+                self.scheduler.step(self.total_steps)
+
             output = self.train_step(batch)
         else:
             output = self.eval_step(batch)
