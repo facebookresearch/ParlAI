@@ -43,7 +43,6 @@ def _path(opt):
                              MULTINLI_PREFIX + MULTINLI_VERSION,
                              MULTINLI_PREFIX + MULTINLI_VERSION +
                              '_' + suffix + '.jsonl')
-
     return data_path
 
 
