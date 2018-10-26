@@ -666,8 +666,8 @@ class Seq2seqAgent(TorchAgent):
         states = torch.load(path, map_location=lambda cpu, _: cpu)
 
         # check opt file for multigpu
-        with open(path + ".opt", 'rb') as handle:
-            saved_opt = pickle.load(handle)
+        with open(path + ".opt", 'r') as handle:
+            saved_opt = json.load(handle)
         if saved_opt.get('multigpu'):
             # create new OrderedDict that does not contain `module.`
             from collections import OrderedDict
