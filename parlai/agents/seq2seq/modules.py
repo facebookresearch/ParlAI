@@ -172,30 +172,6 @@ class Seq2seq(TorchGeneratorModel):
 
         return enc_out, hidden, attn_mask
 
-    def _extract_cur(self, encoder_states, index, num_cands):
-        """
-        Extract and expand a single encoder state.
-
-        :param encoder_states: encoded
-        """
-        enc_out, hidden, attn_mask = encoder_states
-        if isinstance(hidden, torch.Tensor):
-            cur_hid = (hidden.select(1, index).unsqueeze(1)
-                       .expand(-1, num_cands, -1))
-        else:
-            cur_hid = (hidden[0].select(1, index).unsqueeze(1)
-                       .expand(-1, num_cands, -1).contiguous(),
-                       hidden[1].select(1, index).unsqueeze(1)
-                       .expand(-1, num_cands, -1).contiguous())
-
-        cur_enc, cur_mask = None, None
-        if self.attn_type != 'none':
-            cur_enc = (enc_out[index].unsqueeze(0)
-                       .expand(num_cands, -1, -1))
-            cur_mask = (attn_mask[index].unsqueeze(0)
-                        .expand(num_cands, -1))
-        return cur_enc, cur_hid, cur_mask
-
 
 class UnknownDropout(nn.Module):
     """With set frequency, replaces tokens with unknown token.
