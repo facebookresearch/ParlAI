@@ -8,6 +8,7 @@
 
 from parlai.core.worlds import World
 
+
 class MTurkDataWorld(World):
     def prep_save_data(self, workers):
         '''This prepares data to be saved for later review, including
