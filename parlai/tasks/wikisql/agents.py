@@ -18,6 +18,7 @@ import copy
 class WikiSQLTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         # store datatype
+        self.dt = opt['datatype'].split(':')[0]
 
         self.agg_ops = ['', 'MAX', 'MIN', 'COUNT', 'SUM', 'AVG']
         self.cond_ops = ['=', '>', '<', 'OP']
@@ -26,7 +27,7 @@ class WikiSQLTeacher(DialogTeacher):
                      'AGG',
                      'AGGOPS', 'CONDOPS']
 
-        self.dt = opt['datatype'].split(':')[0]
+
 
         # store identifier for the teacher in the dialog
         self.id = 'wikisql'
@@ -43,8 +44,8 @@ class WikiSQLTeacher(DialogTeacher):
 
         new_episode = True
 
-        table_file_path = os.path.join(input_path, 'data', 'train.tables.jsonl')
-        qa_file_path = os.path.join(input_path, 'data', 'train.jsonl')
+        table_file_path = os.path.join(input_path, 'data', '{}.tables.jsonl'.format(self.dt))
+        qa_file_path = os.path.join(input_path, 'data', '{}.jsonl'.format(self.dt))
         with open(table_file_path) as table_file:
             table_data = [json.loads(jline) for jline in table_file]
             table_data = {table['id']: table for table in table_data}

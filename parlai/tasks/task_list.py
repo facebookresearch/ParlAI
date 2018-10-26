@@ -702,56 +702,89 @@ task_list = [
         "display name": "SST Sentiment Analysis",
         "task": "sst",
         "tags": ["All"],
-        "description": ""
+        "description": (
+            "Dataset containing sentiment trees of movie reviews. This is implemented:"
+            "as part of the DecaNLP task, and hence splits the trees to phrases and "
+            "binary labels (positive/negative)"
+            "https://nlp.stanford.edu/sentiment/index.html"
+        )
     },
     {
         "id": "cnn_dm",
         "display name": "CNN/DM Summarisation",
         "task": "cnn_dm",
         "tags": ["All"],
-        "description": ""
+        "description": (
+            "Dataset collected from CNN and the Daily Mail with summaries as labels, "
+            "Implemented as part of the DecaNLP task"
+            "Downloaded from https://cs.nyu.edu/~kcho/DMQA/"
+        )
+
     },
     {
         "id": "qasrl",
         "display name": "QA-SRL Semantic Role Labelling",
         "task": "qasrl",
         "tags": ["All"],
-        "description": ""
+        "description":(
+            "QA dataset implemented as part of the DecaNLP task. More info on the"
+            "dataset can be found here: https://dada.cs.washington.edu/qasrl/"
+        )
     },
     {
         "id": "qazre",
         "display name": "QA-ZRE Relation Extraction",
         "task": "qazre",
         "tags": ["All"],
-        "description": ""
+        "description": (
+            "Zero Shot relation extraction task implemented as part of the DecaNLP task"
+            "More info on the dataset can be found here:"
+            "http://nlp.cs.washington.edu/zeroshot/"
+        )
     },
     {
         "id": "woz",
         "display name": "WOZ restuarant reservation (Goal-Oriented Dialogue)",
         "task": "woz",
         "tags": ["All"],
-        "description": ""
+        "description": (
+            "Dataset containing dialogues dengotiating a resturant reservation"
+            "Implemented as part of the DecaNLP task and hence the current"
+            "implementation is focused on the change in the dialogue state"
+        )
     },
     {
         "id": "wikisql",
         "display name": "WikiSQL semantic parsing task",
         "task": "wikisql",
         "tags": ["All"],
-        "description": ""
+        "description":(
+            "Dataset for parsing sentences to SQL code, given a table. "
+            "Implemented as part of the DecaNLP task. More info can be found here:"
+            "https://github.com/salesforce/WikiSQL"
+        )
     },
     {
         "id": "mwsc",
-        "display name": "MWSC pronound resolution",
+        "display name": "MWSC pronoun resolution",
         "task": "mwsc",
         "tags": ["All"],
-        "description": ""
+        "description":
+            "Resolving possible ambiguous pronouns. Implemented as part of the DecaNLP"
+            "task, and can be found on the decaNLP github"
     },
     {
         "id": "decanlp",
         "display name": "DecaNLP: The Natural Language Decathlon",
         "task": "decanlp",
         "tags": ["All"],
-        "description": ""
+        "description": (
+            "A collection of 10 tasks (SQuAD, IWSLT, CNN/DM, MNLI, SST, QA‑SRL,"
+            "QA‑ZRE, WOZ, WikiSQL and MWSC) designed to challenge a model with a range "
+            "of different tasks."
+            "See paper https://arxiv.org/abs/1806.08730 for more information and github "
+            "https://github.com/salesforce/decaNLP for data sources"
+        )
     },
     {
         "id": "Personality_Captions",

@@ -18,7 +18,6 @@ class QAZRETeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         # store datatype
         self.dt = opt['datatype'].split(':')[0]
-
         # store identifier for the teacher in the dialog
         self.id = 'qazre'
 
@@ -43,7 +42,7 @@ class QAZRETeacher(DialogTeacher):
             return context + '\n' + anon_question.replace('XXX', deanon), answer
 
         for fname in os.listdir(input_path):
-            if fname[:5] == 'train':
+            if fname.startswith(self.dt):
                 with open(os.path.join(input_path, fname)) as file:
                     file_data = file.read().split('\n')[:-1]
                 for line in file_data:

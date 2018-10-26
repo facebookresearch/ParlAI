@@ -32,7 +32,7 @@ class WoZTeacher(DialogTeacher):
     def setup_data(self, input_path):
 
         print('loading: ' + input_path)
-        file_path = os.path.join(input_path, 'woz_train_en.json')
+        file_path = os.path.join(input_path, 'woz_{}_en.json'.format(self.dt))
 
         new_episode = True
 

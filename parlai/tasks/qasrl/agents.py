@@ -23,6 +23,7 @@ class QASRLTeacher(DialogTeacher):
         self.id = 'qasrl'
 
         build(opt)
+
         opt['datafile'] = os.path.join(opt['datapath'], 'QA-SRL')
         self.opt = copy.deepcopy(opt)
 
@@ -31,7 +32,7 @@ class QASRLTeacher(DialogTeacher):
     def setup_data(self, input_path):
 
         print('loading: ' + input_path)
-        file_path = os.path.join(input_path, 'wiki1.train.qa')
+        file_path = os.path.join(input_path, 'wiki1.{}.qa'.format(self.dt))
 
         new_episode = True
 
