@@ -22,6 +22,7 @@ class MTurkDataWorld(World):
         for agent in workers:
             save_data['worker_data'][agent.worker_id] = {
                 'worker_id': agent.worker_id,
+                'agent_id': agent.id,
                 'assignment_id': agent.assignment_id,
                 'messages': agent.get_messages(),
             }
