@@ -13,7 +13,6 @@ import os
 import copy
 import json
 
-
 MULTINLI = 'MultiNLI'
 MULTINLI_VERSION = '1.0'
 MULTINLI_PREFIX = 'multinli_'

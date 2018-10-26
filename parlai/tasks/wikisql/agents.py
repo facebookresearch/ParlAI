@@ -27,8 +27,6 @@ class WikiSQLTeacher(DialogTeacher):
                      'AGG',
                      'AGGOPS', 'CONDOPS']
 
-
-
         # store identifier for the teacher in the dialog
         self.id = 'wikisql'
 
@@ -44,7 +42,8 @@ class WikiSQLTeacher(DialogTeacher):
 
         new_episode = True
 
-        table_file_path = os.path.join(input_path, 'data', '{}.tables.jsonl'.format(self.dt))
+        table_file_path = os.path.join(input_path, 'data',
+                                       '{}.tables.jsonl'.format(self.dt))
         qa_file_path = os.path.join(input_path, 'data', '{}.jsonl'.format(self.dt))
         with open(table_file_path) as table_file:
             table_data = [json.loads(jline) for jline in table_file]
