@@ -52,6 +52,12 @@ class NavLink extends React.Component {
           {this.props.children}
         </a>
       );
+    } else if (this.props.type == 'assignment') {
+      return (
+        <a href={'/app/assignments/' + this.props.target}>
+          {this.props.children}
+        </a>
+      );
     } else {
       return (
         <span>{this.props.children}</span>
@@ -68,7 +74,8 @@ class SharedTable extends React.Component {
 
   render() {
     var used_cols = this.props.used_cols;
-    var row_formatter = used_cols.map(this.props.getColumnFormatter, this.props);
+    var row_formatter = \
+      used_cols.map(this.props.getColumnFormatter, this.props);
     return (
       <Panel id={this.props.title} defaultExpanded>
         <Panel.Heading>
@@ -543,6 +550,89 @@ class RunPanel extends React.Component {
   }
 }
 
+class AssignmentView extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    console.log(this.props.data);
+    return <span> Data logged in console. </span>;
+  }
+}
+
+class AssignmentPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {assignment_loading: true, items: null, error: false};
+  }
+
+  fetchRunData() {
+    fetch('/assignments/' + this.props.assignment_id)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            assignment_loading: false,
+            data: result
+          });
+        },
+        (error) => {
+          this.setState({
+            assignment_loading: false,
+            error: true
+          });
+        }
+      )
+  }
+
+  componentDidMount() {
+    this.setState({assignment_loading: true});
+    this.fetchRunData();
+  }
+
+  renderRunInfo() {
+    return (
+      <div>
+        <AssignmentTable
+          data={[this.state.data.assignment_details]}
+          title={'State info for this assignment'}/>
+        <AssignmentView
+          data={this.state.data.assignment_content}
+          title={'Assignment Content'}/>
+      </div>
+    )
+  }
+
+  render() {
+    var content;
+    if (this.state.assignment_loading) {
+      content = <span>Assignment details are currently loading...</span>;
+    } else if (this.state.error !== false) {
+      content = (
+        <span>
+          Assignment loading failed, perhaps Assignment doesn't exist?
+        </span>
+      );
+    } else {
+      content = this.renderAssignmentInfo();
+    }
+
+    return (
+      <Panel>
+        <Panel.Heading>
+          <Panel.Title componentClass="h3">
+            Assignment Details - Assignment: {this.props.assignment_id}
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Body>
+          {content}
+        </Panel.Body>
+      </Panel>
+    )
+  }
+}
+
 class WorkerPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -776,6 +866,14 @@ class MainApp extends React.Component {
     );
   }
 
+  renderAssignmentPage() {
+    return (
+      <div style={{width: '800px'}}>
+        <AssignmentPanel assignment_id={this.state.args[0]}/>
+      </div>
+    );
+  }
+
   renderRunPage() {
     return (
       <div style={{width: '800px'}}>
@@ -791,6 +889,8 @@ class MainApp extends React.Component {
       return this.renderTaskPage();
     } else if (this.state.url_state == AppURLStates.runs) {
       return this.renderRunPage();
+    } else if (this.state.url_state == AppURLStates.assignments) {
+      return this.renderAssignmentPage();
     } else if (this.state.url_state == AppURLStates.workers) {
       return this.renderWorkerPage();
     } else {

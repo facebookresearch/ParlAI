@@ -30,6 +30,7 @@ from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
 DEFAULT_PORT = 8095
 DEFAULT_HOSTNAME = "localhost"
 DEFAULT_DB_FILE = 'pmt_data.db'
+DEFAULT_SB_DB_FILE = 'pmt_sbdata.db'
 IS_DEBUG = True
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -65,8 +66,9 @@ tornado_settings = {
 
 
 class Application(tornado.web.Application):
-    def __init__(self, port=DEFAULT_PORT, db_file=DEFAULT_DB_FILE):
-        self.state = {}
+    def __init__(self, port=DEFAULT_PORT, db_file=DEFAULT_DB_FILE,
+                 is_sandbox=False):
+        self.state = {'is_sandbox': is_sandbox}
         self.subs = {}
         self.sources = {}
         self.port = port
@@ -80,6 +82,7 @@ class Application(tornado.web.Application):
             (r"/workers", WorkerListHandler, {'app': self}),
             (r"/runs/(.*)", RunHandler, {'app': self}),
             (r"/workers/(.*)", WorkerHandler, {'app': self}),
+            (r"/assignments/(.*)", AssignmentHandler, {'app': self}),
             (r"/error/(.*)", ErrorHandler, {'app': self}),
             (r"/socket", SocketHandler, {'app': self}),
             (r"/", RedirectHandler),
@@ -304,6 +307,36 @@ class WorkerHandler(BaseHandler):
         self.write(json.dumps(data))
 
 
+class AssignmentHandler(BaseHandler):
+    def initialize(self, app):
+        self.state = app.state
+        self.subs = app.subs
+        self.sources = app.sources
+        self.port = app.port
+        self.data_handler = app.data_handler
+
+    def get_assignment_content(self, run_id, onboarding_id, conversation_id):
+        pass
+
+    def get(self, assignment_target):
+        assignments = [self.data_handler.get_assignment_data(
+            assignment_target)]
+        pairings = self.data_handler.get_pairings_for_assignment(
+            assignment_target)
+        processed_assignments = merge_assignments_with_pairings(
+            assignments, pairings, 'assignment {}'.format(assignment_target))
+        assignment = processed_assignments[0]
+        assignment_content = self.get_assignment_content(
+            assignment['run_id'], assignment['onboarding_id'],
+            assignment['conversation_id'])
+        data = {
+            'assignment_details': processed_assignments[0],
+            'assignment_content': assignment_content,
+        }
+
+        self.write(json.dumps(data))
+
+
 class ErrorHandler(BaseHandler):
     def get(self, text):
         error_text = text or "test error"
@@ -328,24 +361,33 @@ def start_server(port=DEFAULT_PORT, hostname=DEFAULT_HOSTNAME,
 def main():
     parser = argparse.ArgumentParser(
         description='Start the ParlAI-MTurk task managing server.')
-    parser.add_argument('-port', metavar='port', type=int, default=DEFAULT_PORT,
+    parser.add_argument('--port', metavar='port', type=int,
+                        default=DEFAULT_PORT,
                         help='port to run the server on.')
-    parser.add_argument('-hostname', metavar='hostname', type=str,
+    parser.add_argument('--hostname', metavar='hostname', type=str,
                         default=DEFAULT_HOSTNAME,
                         help='host to run the server on.')
-    parser.add_argument('-db_file', metavar='db_file', type=str,
+    parser.add_argument('--sandbox', metavar='sandbox', type=bool,
+                        action='store_true', default=False,
+                        help='Run the server using sandbox data')
+    parser.add_argument('--db_file', metavar='db_file', type=str,
                         default=DEFAULT_DB_FILE,
                         help='name of database to use (in core/run_data)')
-    parser.add_argument('-logging_level', metavar='logger_level', default='INFO',
-                        help='logging level (default = INFO). Can take logging '
-                             'level name or int (example: 20)')
+    parser.add_argument('--logging_level', metavar='logger_level',
+                        default='INFO',
+                        help='logging level (default = INFO). Can take logging'
+                             ' level name or int (example: 20)')
     FLAGS = parser.parse_args()
+
+    if FLAGS.sandbox:
+        if FLAGS.db_file == DEFAULT_DB_FILE:
+            FLAGS.db_file = DEFAULT_SB_DB_FILE
 
     logging_level = logging._checkLevel(FLAGS.logging_level)
     logging.getLogger().setLevel(logging_level)
 
     start_server(port=FLAGS.port, hostname=FLAGS.hostname,
-                 db_file=FLAGS.db_file)
+                 db_file=FLAGS.db_file, is_sandbox=FLAGS.sandbox)
 
 
 if __name__ == "__main__":
