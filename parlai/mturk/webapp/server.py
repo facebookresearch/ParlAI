@@ -43,13 +43,9 @@ def get_rand_id():
     return str(hex(int(time.time() * 10000000))[2:])
 
 
-def ensure_dir_exists(path):
+def force_dir(path):
     """Make sure the parent dir exists for path so we can write a file."""
-    try:
-        os.makedirs(os.path.dirname(path))
-    except OSError as e1:
-        assert e1.errno == 17  # errno.EEXIST
-        pass
+    os.makedirs(os.path.dirname(path), exist_ok=True)
 
 
 def get_path(filename):
@@ -212,19 +208,6 @@ class TaskListHandler(BaseHandler):
         self.write(json.dumps({'t': 'testing!', 'req': req}))
 
     def get(self):
-        try:
-            req = tornado.escape.json_decode(
-                tornado.escape.to_basestring(self.request.body)
-            )
-        except Exception:
-            req = {}
-
-        # self.render(
-        #     'index.html',
-        #     user=getpass.getuser(),
-        #     items=items,
-        #     active_item=active
-        # )
         results = self.data_handler.get_all_run_data()
         processed_results = []
         for res in results:
@@ -268,6 +251,8 @@ class RunHandler(BaseHandler):
         processed_assignments = merge_assignments_with_pairings(
             assignments, pairings, 'task {}'.format(task_target))
         run_details = row_to_dict(self.data_handler.get_run_data(task_target))
+        # TODO implement run status determination
+        run_details['run_status'] = 'unimplemented'
         data = {
             'run_details': run_details,
             'assignments': processed_assignments,
@@ -289,7 +274,7 @@ class WorkerListHandler(BaseHandler):
         results = self.data_handler.get_all_worker_data()
         processed_results = []
         for res in results:
-            processed_results.append(dict(zip(res.keys(), res)))
+            processed_results.append(row_to_dict(res))
 
         self.write(json.dumps(processed_results))
 
@@ -317,6 +302,7 @@ class WorkerHandler(BaseHandler):
         }
 
         self.write(json.dumps(data))
+
 
 class ErrorHandler(BaseHandler):
     def get(self, text):
@@ -355,16 +341,7 @@ def main():
                              'level name or int (example: 20)')
     FLAGS = parser.parse_args()
 
-    try:
-        logging_level = int(FLAGS.logging_level)
-    except (ValueError,):
-        try:
-            logging_level = logging._checkLevel(FLAGS.logging_level)
-        except ValueError:
-            raise KeyError(
-                "Invalid logging level : {0}".format(FLAGS.logging_level)
-            )
-
+    logging_level = logging._checkLevel(FLAGS.logging_level)
     logging.getLogger().setLevel(logging_level)
 
     start_server(port=FLAGS.port, hostname=FLAGS.hostname,

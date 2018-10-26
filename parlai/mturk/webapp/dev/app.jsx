@@ -148,7 +148,7 @@ class TaskTable extends React.Component {
   getColumnValue(header_name, item) {
     switch(header_name) {
       case 'run_id': return item.run_id;
-      case 'run_status': return 'complete';
+      case 'run_status': return item.run_status;
       case 'created': return item.created;
       case 'maximum': return item.maximum;
       case 'completed': return item.completed;
