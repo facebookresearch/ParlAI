@@ -86,7 +86,6 @@ CREATE_PAIRING_DATA_SQL_TABLE = (
         task_start int,
         task_end int,
         conversation_id string,
-        onboarding_id string,
         bonus_amount int,
         bonus_text string,
         bonus_paid boolean,
@@ -94,6 +93,7 @@ CREATE_PAIRING_DATA_SQL_TABLE = (
         worker_id string,
         assignment_id string,
         run_id string,
+        onboarding_id string,
         FOREIGN KEY (worker_id) REFERENCES workers (worker_id),
         FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id),
         FOREIGN KEY (run_id) REFERENCES runs (run_id)
@@ -253,9 +253,9 @@ class MTurkDataHandler():
             # may be reassigned
             c.execute("""INSERT INTO pairings
                          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                      (AssignState.STATUS_NONE, None, None, None, None, None,
+                      (AssignState.STATUS_NONE, None, None, None, None,
                        None, 0, '', False, '', worker_id, assignment_id,
-                       task_group_id))
+                       task_group_id, None))
             conn.commit()
 
     def log_complete_assignment(self, worker_id, assignment_id, approve_time,
