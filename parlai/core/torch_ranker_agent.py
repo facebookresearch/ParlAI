@@ -43,6 +43,10 @@ class TorchRankerAgent(TorchAgent):
                  "<cands_name> is the name of the file (not the full path) passed by "
                  "the flag --fixed-candidates-path. By default, this file is created "
                  "once and reused. To replace it, use the 'replace' option.")
+        agent.add_argument(
+            '--encode-fixed-candidates', type=bool, default=False,
+            help="If True, encode fixed candidates in addition to vectorizing them.")
+
         # TODO: Move this functionality (init, loading, etc.) up to TorchAgent since
         # it has nothing to do with ranking models in particular
         agent.add_argument(
@@ -418,23 +422,14 @@ class TorchRankerAgent(TorchAgent):
                 self.fixed_candidates = None
                 self.fixed_candidate_vecs = None
 
-    def load_candidate_vecs(self, path):
-        print("[ Loading fixed candidate set vectors from {} ]".format(path))
-        return torch.load(path)
-
     def make_candidate_vecs(self, cands):
         cand_batches = [cands[i:i + 512] for i in range(0, len(cands), 512)]
-        print("[ Vectorizing fixed candidates set from ({} batch(es) of up to 512) ]"
+        print("[ Vectorizing fixed candidate set ({} batch(es) of up to 512) ]"
               "".format(len(cand_batches)))
         cand_vecs = []
         for batch in cand_batches:
             cand_vecs.extend(self.vectorize_fixed_candidates(batch))
-        return padded_3d([cand_vecs]).squeeze(0)
-
-    def save_candidate_vecs(self, vecs, path):
-        print("[ Saving fixed candidate set vectors to {} ]".format(path))
-        with open(path, 'wb') as f:
-            torch.save(vecs, f)
+        return padded_3d([cand_vecs], dtype=cand_vecs[0].dtype).squeeze(0)
 
     def vectorize_fixed_candidates(self, cands_batch):
         """Convert a batch of candidates from text to vectors
@@ -443,11 +438,41 @@ class TorchRankerAgent(TorchAgent):
         :returns: a [num_cands] list of candidate vectors
 
         By default, candidates are simply vectorized (tokens replaced by token ids).
-        A child class may choose to overwrite this method to perform vectorization as
-        well as encoding if so desired.
+        If --encode_fixed_candidates==True, the method encode_fixed_candidates()
+        implemented by a child class will be used to also encode the candidates using
+        a trained encoder.
         """
-        return [self._vectorize_text(cand, truncate=self.truncate, truncate_left=False)
-                for cand in cands_batch]
+        cand_vecs = [self._vectorize_text(cand, truncate=self.truncate, truncate_left=False)
+                     for cand in cands_batch]
+        if self.opt['encode_fixed_candidates']:
+            cand_vecs = self.encode_fixed_candidates(cand_vecs)
+        return cand_vecs
+
+    def encode_fixed_candidates(self, cand_vec_list):
+        """Convert vectorized candidates into encoded candidates
+
+        :param cands_vec_list: a [num_cands] list of vectorized candidates (LongTensors)
+        :returns: a [num_cands] list of encoded candidates (FloatTensors)
+
+        This method may be implemented by a child class to encode candidate vectors
+        when --encode_fixed_candidates==True.
+
+        Note:
+        - [num_cands] refers to the number of candidates in the batch being encoded.
+        - a list of candidates are passed in and out because all candidates will be
+            padded at the same time in make_candidate_vecs()
+        """
+        raise NotImplementedError(
+            "Abstract class: user must implement encode_fixed_candidates()")
+
+    def save_candidate_vecs(self, vecs, path):
+        print("[ Saving fixed candidate set vectors to {} ]".format(path))
+        with open(path, 'wb') as f:
+            torch.save(vecs, f)
+
+    def load_candidate_vecs(self, path):
+        print("[ Loading fixed candidate set vectors from {} ]".format(path))
+        return torch.load(path)
 
     def _warn_once(self, flag, msg):
         """
