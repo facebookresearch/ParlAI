@@ -319,38 +319,36 @@ class AssignmentHandler(BaseHandler):
         self.data_handler = app.data_handler
 
     def get(self, assignment_target):
-        try:
-            # Extract assignment
-            assignments = [self.data_handler.get_assignment_data(
-                assignment_target)]
-            pairings = self.data_handler.get_pairings_for_assignment(
-                assignment_target)
-            processed_assignments = merge_assignments_with_pairings(
-                assignments, pairings, 'assignment {}'.format(assignment_target))
-            assignment = processed_assignments[0]
+        # Extract assignment
+        assignments = [self.data_handler.get_assignment_data(
+            assignment_target)]
+        pairings = self.data_handler.get_pairings_for_assignment(
+            assignment_target)
+        processed_assignments = merge_assignments_with_pairings(
+            assignments, pairings, 'assignment {}'.format(assignment_target))
+        assignment = processed_assignments[0]
 
-            # Get assignment details to retrieve assignment content
-            print(assignments, pairings)
-            run_id = assignment['run_id']
-            onboarding_id = assignment['onboarding_id']
-            conversation_id = assignment['conversation_id']
-            worker_id = assignment['worker_id']
-            assignment_content = {
-                'onboarding': MTurkDataHandler.get_conversation_data(
-                    run_id, onboarding_id, worker_id, self.state['is_sandbox']),
-                'task': MTurkDataHandler.get_conversation_data(
-                    run_id, conversation_id, worker_id, self.state['is_sandbox']),
-            }
+        # Get assignment details to retrieve assignment content
+        run_id = assignment['run_id']
+        onboarding_id = assignment['onboarding_id']
+        conversation_id = assignment['conversation_id']
+        worker_id = assignment['worker_id']
 
-            data = {
-                'assignment_details': assignment,
-                'assignment_content': assignment_content,
-            }
+        onboard_data = None if onboarding_id is None else \
+            MTurkDataHandler.get_conversation_data(
+                run_id, onboarding_id, worker_id, self.state['is_sandbox']),
+        assignment_content = {
+            'onboarding': onboard_data,
+            'task': MTurkDataHandler.get_conversation_data(
+                run_id, conversation_id, worker_id, self.state['is_sandbox']),
+        }
 
-            self.write(json.dumps(data))
-        except Exception as e:
-            print (e)
-            raise (e)
+        data = {
+            'assignment_details': assignment,
+            'assignment_content': assignment_content,
+        }
+
+        self.write(json.dumps(data))
 
 
 class ErrorHandler(BaseHandler):

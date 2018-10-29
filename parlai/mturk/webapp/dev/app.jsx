@@ -591,7 +591,7 @@ class AssignmentPanel extends React.Component {
     this.fetchRunData();
   }
 
-  renderRunInfo() {
+  renderAssignmentInfo() {
     return (
       <div>
         <AssignmentTable
