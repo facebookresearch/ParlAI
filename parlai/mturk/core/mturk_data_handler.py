@@ -6,8 +6,10 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
+import json
 import logging
 import os
+import pickle
 import sqlite3
 import time
 import threading
@@ -15,9 +17,14 @@ import threading
 import parlai.mturk.core.shared_utils as shared_utils
 from parlai.mturk.core.agents import AssignState
 
+
+def force_dir(path):
+    """Make sure the parent dir exists for path so we can write a file."""
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
+
 data_dir = os.path.dirname(os.path.abspath(__file__)) + '/run_data'
-if not os.path.exists(data_dir):
-    os.makedirs(data_dir)
+os.makedirs(data_dir, exist_ok=True)
 
 # Run data table:
 CREATE_RUN_DATA_SQL_TABLE = (
@@ -86,6 +93,7 @@ CREATE_PAIRING_DATA_SQL_TABLE = (
         worker_id string,
         assignment_id string,
         run_id string,
+        onboarding_id string,
         FOREIGN KEY (worker_id) REFERENCES workers (worker_id),
         FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id),
         FOREIGN KEY (run_id) REFERENCES runs (run_id)
@@ -103,6 +111,34 @@ class MTurkDataHandler():
         self.task_group_id = task_group_id
         self.table_access_condition = threading.Condition()
         self.create_default_tables()
+
+    @staticmethod
+    def save_world_data(prepped_save_data, task_group_id,
+                        conversation_id, sandbox=False):
+        target = 'sandbox' if sandbox else 'live'
+        target_dir = os.path.join(
+            data_dir, target, task_group_id, conversation_id)
+        custom_data = prepped_save_data['custom_data']
+        if custom_data is not None:
+            target_dir_custom = os.path.join(target_dir, 'custom')
+            if custom_data.get('needs-pickle') is not None:
+                pickle_file = os.path.join(target_dir_custom, 'data.pickle')
+                force_dir(pickle_file)
+                with open(pickle_file, 'wb') as outfile:
+                    pickle.dump(custom_data['needs-pickle'], outfile)
+                del custom_data['needs-pickle']
+            custom_file = os.path.join(target_dir_custom, 'data.json')
+            force_dir(custom_file)
+            with open(custom_file, 'w') as outfile:
+                json.dump(custom_data, outfile)
+        worker_data = prepped_save_data['worker_data']
+        target_dir_workers = os.path.join(target_dir, 'workers')
+        for worker_id, w_data in worker_data.items():
+            worker_file = os.path.join(
+                target_dir_workers, '{}.json'.format(worker_id))
+            force_dir(worker_file)
+            with open(worker_file, 'w') as outfile:
+                json.dump(w_data, outfile)
 
     def _get_connection(self):
         """Returns a singular database connection to be shared amongst all
@@ -139,6 +175,13 @@ class MTurkDataHandler():
             c.execute(CREATE_HIT_DATA_SQL_TABLE)
             c.execute(CREATE_ASSIGN_DATA_SQL_TABLE)
             c.execute(CREATE_PAIRING_DATA_SQL_TABLE)
+
+            # attempt to add onboarding id to pairings for those on older version
+            try:
+                c.execute('''ALTER TABLE pairings
+                             ADD COLUMN onboarding_id TEXT default null''')
+            except sqlite3.Error:
+                pass  # Table already has onboarding_id
             conn.commit()
 
     def log_new_run(self, target_hits, task_group_id=None):
@@ -209,10 +252,10 @@ class MTurkDataHandler():
             # Create tracking for this specific pairing, as the assignment
             # may be reassigned
             c.execute("""INSERT INTO pairings
-                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                      (AssignState.STATUS_NONE, None, None, None, None, None,
-                       0, '', False, '', worker_id, assignment_id,
-                       task_group_id))
+                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                      (AssignState.STATUS_NONE, None, None, None, None,
+                       None, 0, '', False, '', worker_id, assignment_id,
+                       task_group_id, None))
             conn.commit()
 
     def log_complete_assignment(self, worker_id, assignment_id, approve_time,
@@ -326,15 +369,16 @@ class MTurkDataHandler():
                       (worker_id, ))
             conn.commit()
 
-    def log_start_onboard(self, worker_id, assignment_id):
+    def log_start_onboard(self, worker_id, assignment_id, conversation_id):
         """Update a pairing state to reflect onboarding status"""
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("""UPDATE pairings SET status = ?, onboarding_start = ?
-                         WHERE worker_id = ? AND assignment_id = ?;""",
-                      (AssignState.STATUS_ONBOARDING, time.time(), worker_id,
-                       assignment_id))
+            c.execute('''UPDATE pairings SET status = ?, onboarding_start = ?,
+                         onboarding_id = ?
+                         WHERE worker_id = ? AND assignment_id = ?;''',
+                      (AssignState.STATUS_ONBOARDING, time.time(),
+                       conversation_id, worker_id, assignment_id))
             conn.commit()
 
     def log_finish_onboard(self, worker_id, assignment_id):
