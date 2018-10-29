@@ -34,6 +34,72 @@ function resolveState(state_string) {
   return state;
 }
 
+class ChatMessage extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    var float_loc = 'left';
+    var alert_class = 'alert-warning';
+    if (this.props.is_self) {
+      float_loc = 'right';
+      alert_class = 'alert-info';
+    }
+    return (
+      <div className={"row"} style={{'marginLeft': '0', 'marginRight': '0'}}>
+        <div
+          className={"alert " + alert_class} role="alert"
+          style={{'float': float_loc, 'display': 'table'}}>
+          <span style={{'fontSize': '16px'}}>
+            <b>{this.props.agent_id}</b>: {this.props.message}
+          </span>
+        </div>
+      </div>
+    );
+  }
+}
+
+class ChatDisplay extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  makeMessages() {
+    var agent_id = this.props.agent_id;
+    var messages = this.props.messages;
+    return messages.map(
+      m => <ChatMessage
+        key={m.message_id}
+        is_self={m.id == agent_id}
+        agent_id={m.id}
+        message={m.text}
+        message_id={m.id}/>
+    );
+  }
+
+  render() {
+    var messages = this.makeMessages();
+    var display_text = this.props.is_onboarding ? 'Onboarding' : 'Task';
+    return (
+      <Panel id="message_display_div" defaultExpanded>
+        <Panel.Heading>
+          <Panel.Title componentClass="h3" toggle>
+            {display_text} Chat Window
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Collapse>
+          <Panel.Body style={{maxHeight: '600px', overflow: 'scroll'}}>
+            <div id="message_thread">
+              {messages}
+            </div>
+          </Panel.Body>
+        </Panel.Collapse>
+      </Panel>
+    );
+  }
+}
+
 class NavLink extends React.Component {
   constructor(props) {
     super(props);
@@ -555,9 +621,79 @@ class AssignmentView extends React.Component {
     super(props);
   }
 
+  getOnboardingChat() {
+    let onboard_data = this.props.data.onboarding;
+    if (onboard_data instanceof Array) {
+      return (
+        <Panel id="message_display_div">
+          <Panel.Heading>
+            <Panel.Title componentClass="h3" toggle>
+              Onboarding Chat Window
+            </Panel.Title>
+          </Panel.Heading>
+          <Panel.Collapse>
+            <Panel.Body>
+              This assignment didn't have any onboarding data.
+            </Panel.Body>
+          </Panel.Collapse>
+        </Panel>
+      );
+    } else {
+      return this.getTaskChat(onboard_data, true);
+    }
+  }
+
+  getTaskChat(task_data, is_onboarding) {
+    let error_message = null;
+    if (!task_data.had_data_dir) {
+      error_message = 'No run_data directory existed in parlai/mturk/core.';
+    } else if (!task_data.had_run_dir) {
+      error_message = "The directory for the assignment's specific run didn't"+
+        " exist in the run_data directory";
+    } else if (!task_data.had_conversation_dir) {
+      error_message = "The directory for the assignment's conversation didn't"+
+        " exist in the run's directory";
+    } else if (!task_data.had_worker_dir) {
+      error_message = "The directory for the assignment's workers didn't"+
+        " exist in the conversation's directory";
+    } else if (!task_data.had_worker_file) {
+      error_message = "The file for this assignment's worker didn't"+
+        " exist in the workers directory";
+    } else if (!task_data.data) {
+      error_message = "This assignment's chat data file couldn't be read";
+    }
+
+    if (error_message !== null) {
+      return (
+        <div>
+          The assignment's chat could not be rendered, reason below.
+          <br/>
+          {error_message}
+        </div>
+      );
+    } else {
+      let messages = task_data.data.messages;
+      let agent_id = task_data.data.agent_id;
+      return (
+        <ChatDisplay
+          messages={messages}
+          agent_id={agent_id}
+          is_onboarding={is_onboarding}/>
+      );
+    }
+  }
+
   render() {
     console.log(this.props.data);
-    return <span> Data logged in console. </span>;
+    var data = this.props.data;
+    var onboarding_chat_window = this.getOnboardingChat();
+    var task_chat_window = this.getTaskChat(this.props.data.task, false);
+    return (
+      <div>
+        {onboarding_chat_window}
+        {task_chat_window}
+      </div>
+    );
   }
 }
 
@@ -851,7 +987,7 @@ class MainApp extends React.Component {
 
   renderTaskPage() {
     return (
-      <div style={{width: '800px'}}>
+      <div style={{width: '900px'}}>
         <TaskListPanel/>
         <WorkerListPanel/>
       </div>
@@ -860,7 +996,7 @@ class MainApp extends React.Component {
 
   renderWorkerPage() {
     return (
-      <div style={{width: '800px'}}>
+      <div style={{width: '900px'}}>
         <WorkerPanel worker_id={this.state.args[0]}/>
       </div>
     );
@@ -868,7 +1004,7 @@ class MainApp extends React.Component {
 
   renderAssignmentPage() {
     return (
-      <div style={{width: '800px'}}>
+      <div style={{width: '900px'}}>
         <AssignmentPanel assignment_id={this.state.args[0]}/>
       </div>
     );
@@ -876,7 +1012,7 @@ class MainApp extends React.Component {
 
   renderRunPage() {
     return (
-      <div style={{width: '800px'}}>
+      <div style={{width: '900px'}}>
         <RunPanel run_id={this.state.args[0]}/>
       </div>
     );
