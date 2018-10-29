@@ -27,13 +27,11 @@ class SSTTeacher(DialogTeacher):
 
         super().__init__(opt, shared)
 
-        self.c = 0
 
     def _path(self, opt):
         build(opt)
         labels_path = os.path.join(opt['datapath'], 'SST', 'stanfordSentimentTreebank',
                                    'sentiment_labels.txt')
-        print(labels_path)
         data_path = os.path.join(opt['datapath'], 'SST', 'stanfordSentimentTreebank',
                                  'dictionary.txt')
         return labels_path, data_path
@@ -60,18 +58,17 @@ class SSTTeacher(DialogTeacher):
                            labels_file.read().split("\n")[1:-1]]
 
         new_episode = True
-
         # define standard question, since it doesn't change for this task
-        self.question = 'Is this sentence positive or negative?'
+
         # every episode consists of only one query in this task
+        self.question = 'Is this sentence positive or negative?'
 
         # define iterator over all queries
+
         for i in range(len(self.contexts)):
             if self.labels[i]:
-                new_episode = self.c % 3 == 2
-                self.c += 1
                 yield (self.contexts[i] + '\n' + self.question, [self.labels[i]], None,
-                       None), new_episode
+                           None), new_episode
 
     def label_candidates(self):
         return self.SST_LABELS
