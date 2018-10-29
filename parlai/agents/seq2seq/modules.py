@@ -85,16 +85,6 @@ class Seq2seq(TorchGeneratorModel):
             padding_idx=padding_idx)
 
     def decode_forced(self, ys, encoder_states):
-        """Decode with correct sequence (i.e. maximum likelihood). Useful
-        for training, or ranking fixed candidates.
-
-        :param Tensor[int](bsz x time): the prediction targets. Contains both
-            the start and end tokens.
-        :param encoder_states: Output of the encoder. Model specific types.
-
-        :return: loss scores of each sample
-        :rtype Tensor[float](bsz x 1):
-        """
         bsz = ys.size(0)
         seqlen = ys.size(1)
 
@@ -120,25 +110,6 @@ class Seq2seq(TorchGeneratorModel):
                 output, hidden = self.decoder(xi, hidden, attn_params)
                 score = self.output(output)
                 scores.append(score)
-
-        scores = torch.cat(scores, 1)
-        return scores
-
-    def decode(self, encoder_states, maxlen):
-        """Decode maxlen tokens."""
-        hidden = encoder_states[1]
-        attn_params = (encoder_states[0], encoder_states[2])
-        bsz = encoder_states[0].size(0)
-
-        xs = self._starts(bsz)  # input start token
-
-        scores = []
-        for _ in range(maxlen):
-            # generate at most longest_label tokens
-            output, hidden = self.decoder(xs, hidden, attn_params)
-            score = self.output(output)
-            scores.append(score)
-            xs = score.max(2)[1]  # next input is current predicted output
 
         scores = torch.cat(scores, 1)
         return scores
@@ -305,15 +276,14 @@ class RNNDecoder(nn.Module):
                                         attn_length=attn_length,
                                         attn_time=attn_time)
 
-    def forward(self, xs, hidden=None, attn_params=None):
+    def forward(self, xs, encoder_output):
         """Decode from input tokens.
 
-        :param xs:          (bsz x seqlen) LongTensor of input token indices
-        :param hidden:      hidden state to feed into decoder. default (None)
-                            initializes tensors using the RNN's defaults.
-        :param attn_params: (optional) tuple containing attention parameters,
-                            default AttentionLayer needs encoder_output states
-                            and attention mask (e.g. encoder_input.ne(0))
+        :param xs: (bsz x seqlen) LongTensor of input token indices
+        :param hidden: hidden state to feed into decoder. default (None)
+            initializes tensors using the RNN's defaults.
+        :param encoder_output: output from RNNEncoder. Tuple containing
+            (enc_out, enc_hidden, attn_mask) tuple.
 
         :returns:           output state(s), hidden state.
                             output state of the encoder. for an RNN, this is
@@ -324,6 +294,9 @@ class RNNDecoder(nn.Module):
         """
         # sequence indices => sequence embeddings
         xes = self.dropout(self.lt(xs))
+
+        enc_state, hidden, attn_mask = encoder_output
+        attn_params = (enc_state, attn_mask)
 
         if self.attn_time == 'pre':
             # modify input vectors with attention

@@ -83,15 +83,32 @@ class TorchGeneratorModel(nn.Module):
         """Return bsz start tokens."""
         return self.START.detach().expand(bsz, 1)
 
+    def decode(self, bsz, encoder_states, maxlen):
+        """Greedy search"""
+        xs = self._starts(bsz)
+        for _ in range(maxlen):
+            output = self.decoder(xs, encoder_states)
+            scores = output[:, -1, :]
+            _, preds = scores.max(dim=-1)
+            xs = torch.cat([xs, preds.unsqueeze(1)], dim=1)
+        return xs
+
     def decode_forced(self, ys, encoder_states):
+        """Decode with correct sequence (i.e. maximum likelihood). Useful
+        for training, or ranking fixed candidates.
+
+        :param Tensor[int](bsz x time): the prediction targets. Contains both
+            the start and end tokens.
+        :param encoder_states: Output of the encoder. Model specific types.
+
+        :return: loss scores of each sample
+        :rtype Tensor[float](bsz x 1):
+        """
         bsz = ys.size(0)
         seqlen = ys.size(1)
-
         inputs = ys.narrow(1, 0, seqlen - 1)
-        targets = ys.narrow(1, 1, seqlen - 1)
-        print(inputs)
-        print(targets)
-        import ipdb; ipdb.set_trace()
+        inputs = torch.cat([self._starts(bsz), inputs], 1)
+        return self.decoder(inputs, encoder_states)
 
     def reorder_encoder_states(self, encoder_states, indices):
         """Reorder encoder states according to a new set of indices.
@@ -102,12 +119,21 @@ class TorchGeneratorModel(nn.Module):
         beam search. For example, this method is used to sort hypotheses,
         expand beams, etc.
 
-        For example, assume that encoder_states produces a bsz x 1 tensor of values
+        For example, assume that encoder_states is an bsz x 1 tensor of values
 
-        encoder_states = [[1 2 3 4 5]]
+            indices = [0, 2, 2]
+            encoder_states = [[0.1]
+                              [0.2]
+                              [0.3]]
 
-        :param encoder_states: prior output of the encoder
-        :param indices: the indices to select over.
+        then the output will be
+
+            output = [[0.1]
+                      [0.3]
+                      [0.3]]
+
+        :param encoder_states: output from encoder. type is model specific.
+        :param list[int] indices: the indices to select over.
 
         :return: The re-ordered encoder states. It should be of the same type as
             encoder states, and it must be a valid input to the decoder.
@@ -116,49 +142,12 @@ class TorchGeneratorModel(nn.Module):
             "reorder_encoder_states must be implemented by the model"
         )
 
-    def rank(self, cand_params, encoder_states):
-        """Rank each cand by the average log-probability of the sequence."""
-        if cand_params is None:
-            return None
-
-        cands, cand_inds = cand_params
-        if cands is None:
-            return None
-        encoder_states = self.reorder_encoder_states(encoder_states, cand_inds)
-
-        cand_scores = []
-        for batch_idx in range(len(cands)):
-            # we do one set of candidates at a time
-            curr_cs = cands[batch_idx]
-            num_cands = curr_cs.size(0)
-
-            # select just the one hidden state
-            cand_indices = [batch_idx] * num_cands
-            cur_enc_states = self.reorder_encoder_states(encoder_states, cand_indices)
-
-            score = self.decode_forced(curr_cs, cur_enc_states)
-            true_score = F.log_softmax(score, dim=2).gather(2, curr_cs.unsqueeze(2))
-            nonzero = curr_cs.ne(0).float()
-            scores = (true_score.squeeze(2) * nonzero).sum(1)
-            seqlens = nonzero.sum(1)
-            scores /= seqlens
-            cand_scores.append(scores)
-
-        max_len = max(len(c) for c in cand_scores)
-        cand_scores = torch.cat([
-            _pad_to_length(c, max_len, pad=self.NULL_IDX).unsqueeze(0)
-            for c in cand_scores
-        ], 0)
-        return cand_scores
-
     def forward(self, xs, ys=None, cand_params=None, prev_enc=None, maxlen=None):
         """Get output predictions from the model.
 
         :param LongTensor(bsz x seqlen) xs: input to the encoder
         :param LongTensor(bsz x outlen) ys: Expected output from the decoder. Used
             for teacher forcing to calculate loss.
-        :param cand_params: set of candidates to rank, and indices to match
-            candidates with their appropriate xs.
         :param prev_enc: if you know you'll pass in the same xs multiple times,
             you can pass in the encoder output from the last forward pass to skip
             recalcuating the same encoder output.
@@ -183,16 +172,14 @@ class TorchGeneratorModel(nn.Module):
         # use cached encoding if available
         encoder_states = prev_enc if prev_enc is not None else self.encoder(xs)
 
-        # rank candidates if they are available
-        cand_scores = self.rank(cand_params, encoder_states)
-
         if ys is not None:
             # use teacher forcing
             scores = self.decode_forced(ys, encoder_states)
         else:
-            scores = self.decode(encoder_states, maxlen or self.longest_label)
+            bsz = xs.size(0)
+            scores = self.decode(bsz, encoder_states, maxlen or self.longest_label)
 
-        return scores, cand_scores, encoder_states
+        return scores, encoder_states
 
 
 class TorchGeneratorAgent(TorchAgent):
@@ -266,6 +253,10 @@ class TorchGeneratorAgent(TorchAgent):
                 print(
                     '[ Saving dot beam logs in {} ]'.format(
                         self.beam_dot_dir))
+
+            self.build_criterion()
+            self.build_model()
+
             if init_model is not None:
                 # load model parameters if available
                 print('[ Loading existing model params from {} ]'
@@ -273,9 +264,6 @@ class TorchGeneratorAgent(TorchAgent):
                 states = self.load(init_model)
             else:
                 states = {}
-
-            self.build_criterion()
-            self.build_model(states=states)
 
             if 'train' in opt.get('datatype', ''):
                 self.init_optim(
@@ -421,15 +409,6 @@ class TorchGeneratorAgent(TorchAgent):
             else:
                 raise e
 
-    def _build_cands(self, batch):
-        if not batch.candidates:
-            return None, None
-        cand_inds = [i for i in range(len(batch.candidates)) if batch.candidates[i]]
-        cands = [batch.candidate_vecs[i] for i in cand_inds]
-        for i, c in enumerate(cands):
-            cands[i] = padded_tensor(c, use_cuda=self.use_cuda)[0]
-        return cands, cand_inds
-
     def _pick_cands(self, cand_preds, cand_inds, cands):
         cand_replies = [None] * len(cands)
         for idx, order in enumerate(cand_preds):
@@ -437,11 +416,11 @@ class TorchGeneratorAgent(TorchAgent):
             cand_replies[batch_idx] = [cands[batch_idx][i] for i in order]
         return cand_replies
 
-    def _write_beam_dots(self, beams):
+    def _write_beam_dots(self, text_vecs, beams):
         """Write the beam dot files to disk."""
         for i, b in enumerate(beams):
             dot_graph = b.get_beam_dot(dictionary=self.dict, n_best=3)
-            image_name = self._v2t(batch.text_vec[i, -20:])
+            image_name = self._v2t(text_vecs[i, -20:])
             image_name = image_name.replace(' ', '-').replace('__null__', '')
             dot_graph.write_png(
                 os.path.join(self.beam_dot_dir, "{}.png".format(image_name))
@@ -451,13 +430,10 @@ class TorchGeneratorAgent(TorchAgent):
         """Evaluate a single batch of examples."""
         if batch.text_vec is None:
             return
+        bsz = batch.text_vec.size(0)
         self.model.eval()
         cand_scores = None
-        if self.beam_size == 1:
-            out, cand_params = self.greedy_search(batch)
-            scores, cand_scores = out[0], out[1]
-            _, preds = scores.max(2)
-        elif self.beam_size > 1:
+        if self.beam_size >= 1:
             out = self.beam_search(
                 self.model,
                 batch,
@@ -473,7 +449,7 @@ class TorchGeneratorAgent(TorchAgent):
             preds, scores = zip(*beam_preds_scores)
 
             if self.beam_dot_log is True:
-                self._write_beam_dots(beams)
+                self._write_beam_dots(batch.text_vec, beams)
 
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
@@ -491,19 +467,31 @@ class TorchGeneratorAgent(TorchAgent):
             self.metrics['num_tokens'] += target_tokens
 
         cand_choices = None
-        if cand_scores is not None:
-            cand_preds = cand_scores.sort(1, descending=True)[1]
-            # now select the text of the cands based on their scores
-            cand_choices = self._pick_cands(cand_preds, cand_params[1],
-                                            batch.candidates)
+        if self.rank_candidates:
+            # compute roughly ppl to rank candidates
+            cand_choices = []
+            encoder_states = self.model.encoder(batch.text_vec)
+            for i in range(bsz):
+                num_cands = len(batch.candidate_vecs[i])
+                enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
+                cands, _ = padded_tensor(
+                    batch.candidate_vecs[i], self.NULL_IDX, self.use_cuda
+                )
+                scores = self.model.decode_forced(cands, enc)
+                cand_losses = F.cross_entropy(
+                    scores.view(num_cands * cands.size(1), -1),
+                    cands.view(-1),
+                    reduction='none',
+                ).view(num_cands, cands.size(1))
+                # now cand_losses is cands x seqlen size, but we still need to
+                # check padding and such
+                mask = (cands != self.NULL_IDX).float()
+                cand_scores = (cand_losses * mask).sum(dim=1) / (mask.sum(dim=1) + 1e-9)
+                _, ordering = cand_scores.sort()
+                cand_choices.append([batch.candidates[i][o] for o in ordering])
 
         text = [self._v2t(p) for p in preds]
         return Output(text, cand_choices)
-
-    def greedy_search(self, batch):
-        cand_params = self._build_cands(batch)
-        out = self.model(batch.text_vec, ys=None, cand_params=cand_params)
-        return out, cand_params
 
     def beam_search(self, model, batch, beam_size, start=1, end=2,
                     pad=0, min_length=3, min_n_best=5, max_ts=40, block_ngram=0):
@@ -534,66 +522,40 @@ class TorchGeneratorAgent(TorchAgent):
               following postprocessing, e.g. dot logging.
         """
         encoder_states = model.encoder(batch.text_vec)
-        enc_out = encoder_states[0]
-        enc_hidden = encoder_states[1]
-        attn_mask = encoder_states[2]
-        current_device = encoder_states[0][0].device
+        dev = batch.text_vec.device
 
-        batch_size = len(batch.text_lengths)
-        beams = [Beam(beam_size, min_length=min_length, padding_token=pad,
-                      bos_token=start, eos_token=end, min_n_best=min_n_best,
-                      cuda=current_device,
-                      block_ngram=block_ngram) for i in range(batch_size)]
-        decoder_input = torch.Tensor([start]).detach().expand(
-            batch_size, 1).long().to(current_device)
-        # repeat encoder_outputs, hiddens, attn_mask
-        decoder_input = decoder_input.repeat(
-            1, beam_size).view(beam_size * batch_size, -1)
-        enc_out = enc_out.unsqueeze(1).repeat(1, beam_size, 1, 1).view(
-            batch_size * beam_size, -1, enc_out.size(-1))
-        attn_mask = encoder_states[2].repeat(
-            1, beam_size).view(attn_mask.size(0) * beam_size, -1)
-        repeated_hiddens = []
-        if isinstance(enc_hidden, tuple):  # LSTM
-            for i in range(len(enc_hidden)):
-                repeated_hiddens.append(
-                    enc_hidden[i].unsqueeze(2).repeat(1, 1, beam_size, 1))
-            num_layers = enc_hidden[0].size(0)
-            hidden_size = enc_hidden[0].size(-1)
-            enc_hidden = tuple([repeated_hiddens[i].view(
-                num_layers, batch_size *
-                beam_size, hidden_size) for i in range(len(repeated_hiddens))])
-        else:  # GRU
-            num_layers = enc_hidden.size(0)
-            hidden_size = enc_hidden.size(-1)
-            enc_hidden = enc_hidden.unsqueeze(2).repeat(1, 1, beam_size, 1).view(
-                num_layers, batch_size * beam_size, hidden_size)
+        bsz = len(batch.text_lengths)
+        beams = [
+            Beam(beam_size, min_length=min_length, padding_token=pad,
+                 bos_token=start, eos_token=end, min_n_best=min_n_best,
+                 cuda=dev, block_ngram=block_ngram)
+            for i in range(bsz)
+        ]
 
-        hidden = enc_hidden
+        # repeat encoder outputs and decoder inputs
+        decoder_input = torch.LongTensor([start]).expand(bsz * beam_size, 1).to(dev)
+
+        inds = torch.arange(bsz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
+        encoder_states = model.reorder_encoder_states(encoder_states, inds)
+
         for ts in range(max_ts):
+            # exit early if needed
             if all((b.done() for b in beams)):
                 break
-            output, hidden = model.decoder(
-                decoder_input, hidden, (enc_out, attn_mask))
-            score = model.output(output)
-            # score contains softmax scores for batch_size * beam_size samples
-            score = score.view(batch_size, beam_size, -1)
+
+            score = model.decoder(decoder_input, encoder_states)
+            # only need the final hidden state to make the word prediction
+            score = score[:, -1, :]
+            # score = model.output(output)
+            # score contains softmax scores for bsz * beam_size samples
+            score = score.view(bsz, beam_size, -1)
             score = F.log_softmax(score, dim=-1)
             for i, b in enumerate(beams):
                 b.advance(score[i])
-            decoder_input = torch.cat(
+            selection = torch.cat(
                 [b.get_output_from_current_step() for b in beams]).unsqueeze(-1)
-            permute_hidden_idx = torch.cat(
-                [beam_size * i +
-                    b.get_backtrack_from_current_step() for i, b in enumerate(beams)])
-            # permute decoder hiddens with respect to chosen hypothesis now
-            if isinstance(hidden, tuple):  # LSTM
-                for i in range(len(hidden)):
-                    hidden[i].data.copy_(hidden[i].data.index_select(
-                        dim=1, index=permute_hidden_idx))
-            else:  # GRU
-                hidden.data.copy_(hidden.data.index_select(
-                    dim=1, index=permute_hidden_idx))
+            decoder_input = torch.cat([decoder_input, selection], dim=-1)
+
         for b in beams:
             b.check_finished()
 
@@ -601,8 +563,7 @@ class TorchGeneratorAgent(TorchAgent):
         for pair in beam_preds_scores:
             pair[0] = Beam.get_pretty_hypothesis(pair[0])
 
-        n_best_beams = [b.get_rescored_finished(
-            n_best=min_n_best) for b in beams]
+        n_best_beams = [b.get_rescored_finished(n_best=min_n_best) for b in beams]
         n_best_beam_preds_scores = []
         for i, beamhyp in enumerate(n_best_beams):
             this_beam = []
@@ -721,7 +682,7 @@ class PerplexityEvaluatorAgent(TorchGeneratorAgent):
             ys=(ys if len(partial_out) > 0 else None),
             prev_enc=self.prev_enc,
             maxlen=1)
-        scores, self.prev_enc = out[0], out[2]
+        scores, self.prev_enc = out
         # scores is bsz x seqlen x num_words, so select probs of current index
         probs = F.softmax(scores.select(1, -1), dim=1).squeeze()
         dist = mydefaultdict(lambda: 1e-7)  # default probability for any token
