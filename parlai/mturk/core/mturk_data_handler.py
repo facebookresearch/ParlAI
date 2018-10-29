@@ -114,7 +114,7 @@ class MTurkDataHandler():
 
     @staticmethod
     def save_world_data(prepped_save_data, task_group_id,
-                        conversation_id, sandbox=False, onboarding=False):
+                        conversation_id, sandbox=False):
         target = 'sandbox' if sandbox else 'live'
         target_dir = os.path.join(
             data_dir, target, task_group_id, conversation_id)

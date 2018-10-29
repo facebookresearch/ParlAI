@@ -691,8 +691,7 @@ class MTurkManager():
                 if save_data is not None:
                     MTurkDataHandler.save_world_data(
                         save_data, self.task_group_id,
-                        conversation_id, onboarding=True,
-                        sandbox=self.is_sandbox)
+                        conversation_id, sandbox=self.is_sandbox)
 
             # once onboarding is done, move into a waiting world
             self._move_agents_to_waiting([mturk_agent])
