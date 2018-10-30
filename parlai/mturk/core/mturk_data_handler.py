@@ -33,7 +33,8 @@ CREATE_RUN_DATA_SQL_TABLE = (
         created integer NOT NULL,
         maximum integer NOT NULL,
         completed integer NOT NULL,
-        failed integer NOT NULL
+        failed integer NOT NULL,
+        taskname string
     );
     """)
 
@@ -94,6 +95,8 @@ CREATE_PAIRING_DATA_SQL_TABLE = (
         assignment_id string,
         run_id string,
         onboarding_id string,
+        extra_bonus_amount int,
+        extra_bonus_text string,
         FOREIGN KEY (worker_id) REFERENCES workers (worker_id),
         FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id),
         FOREIGN KEY (run_id) REFERENCES runs (run_id)
@@ -176,22 +179,33 @@ class MTurkDataHandler():
             c.execute(CREATE_ASSIGN_DATA_SQL_TABLE)
             c.execute(CREATE_PAIRING_DATA_SQL_TABLE)
 
-            # attempt to add onboarding id to pairings for those on older version
-            try:
-                c.execute('''ALTER TABLE pairings
-                             ADD COLUMN onboarding_id TEXT default null''')
-            except sqlite3.Error:
-                pass  # Table already has onboarding_id
+            # TODO move to versioning and migrations
+            # attempt to add new fields one by one to update old versions
+            updates = [
+                '''ALTER TABLE pairings
+                   ADD COLUMN onboarding_id TEXT default null''',
+                '''ALTER TABLE runs
+                   ADD COLUMN taskname TEXT default null''',
+                '''ALTER TABLE pairings
+                   ADD COLUMN extra_bonus_amount INT default 0''',
+                '''ALTER TABLE pairings
+                   ADD COLUMN extra_bonus_text TEXT default '';''',
+            ]
+            for update in updates:
+                try:
+                    c.execute(update)
+                except sqlite3.Error:
+                    pass
             conn.commit()
 
-    def log_new_run(self, target_hits, task_group_id=None):
+    def log_new_run(self, target_hits, taskname, task_group_id=None):
         """Add a new run to the runs table"""
         with self.table_access_condition:
             task_group_id = self._force_task_group_id(task_group_id)
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute('INSERT INTO runs VALUES (?,?,?,?,?);',
-                      (task_group_id, 0, target_hits, 0, 0))
+            c.execute('INSERT INTO runs VALUES (?,?,?,?,?,?);',
+                      (task_group_id, 0, target_hits, 0, 0, taskname))
             conn.commit()
 
     def log_hit_status(self, mturk_hit_creation_response, task_group_id=None):
@@ -252,10 +266,10 @@ class MTurkDataHandler():
             # Create tracking for this specific pairing, as the assignment
             # may be reassigned
             c.execute("""INSERT INTO pairings
-                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                       (AssignState.STATUS_NONE, None, None, None, None,
                        None, 0, '', False, '', worker_id, assignment_id,
-                       task_group_id, None))
+                       task_group_id, None, 0, ''))
             conn.commit()
 
     def log_complete_assignment(self, worker_id, assignment_id, approve_time,
@@ -405,13 +419,32 @@ class MTurkDataHandler():
             conn.commit()
 
     def log_award_amount(self, worker_id, assignment_id, amount, reason):
-        """Update a pairing state to add a bonus to be paid, appends reason"""
+        """Update a pairing state to add a task bonus to be paid,
+        appends reason. To be used for automatic evaluation bonuses
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
             reason = "${} for {}\n".format(amount, reason)
+            amount = int(amount * 100)
             c.execute("""UPDATE pairings SET bonus_amount = bonus_amount + ?,
                         bonus_text = bonus_text || ?
+                         WHERE worker_id = ? AND assignment_id = ?;""",
+                      (amount, reason, worker_id, assignment_id))
+            conn.commit()
+
+    def log_pay_extra_bonus(self, worker_id, assignment_id, amount, reason):
+        """Update a pairing state to add a bonus to be paid, appends reason.
+        To be used for extra bonuses awarded at the discretion of the requester
+        """
+        with self.table_access_condition:
+            conn = self._get_connection()
+            c = conn.cursor()
+            reason = "${} for {}\n".format(amount, reason)
+            amount = int(amount * 100)
+            c.execute("""UPDATE pairings
+                        SET extra_bonus_amount = extra_bonus_amount + ?,
+                        extra_bonus_text = extra_bonus_text || ?
                          WHERE worker_id = ? AND assignment_id = ?;""",
                       (amount, reason, worker_id, assignment_id))
             conn.commit()

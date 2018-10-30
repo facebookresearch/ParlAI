@@ -12,6 +12,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import argparse
+import importlib
 import inspect
 import json
 import logging
@@ -26,6 +27,7 @@ import tornado.escape
 
 
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
+from parlai.mturk.core.mturk_manager import MTurkManager
 
 DEFAULT_PORT = 8095
 DEFAULT_HOSTNAME = "localhost"
@@ -73,6 +75,8 @@ class Application(tornado.web.Application):
         self.sources = {}
         self.port = port
         self.data_handler = MTurkDataHandler(file_name=db_file)
+        self.mturk_manager = MTurkManager.make_taskless_instance(is_sandbox)
+        self.mturk_manager.db_logger = self.data_handler
 
         # TODO load some state from DB
 
@@ -83,6 +87,9 @@ class Application(tornado.web.Application):
             (r"/runs/(.*)", RunHandler, {'app': self}),
             (r"/workers/(.*)", WorkerHandler, {'app': self}),
             (r"/assignments/(.*)", AssignmentHandler, {'app': self}),
+            (r"/approve/(.*)", ApprovalHandler, {'app': self}),
+            (r"/reject/(.*)", RejectionHandler, {'app': self}),
+            (r"/reverse_rejection/(.*)", ReverseHandler, {'app': self}),
             (r"/error/(.*)", ErrorHandler, {'app': self}),
             (r"/socket", SocketHandler, {'app': self}),
             (r"/", RedirectHandler),
@@ -334,20 +341,80 @@ class AssignmentHandler(BaseHandler):
         conversation_id = assignment['conversation_id']
         worker_id = assignment['worker_id']
 
-        onboard_data = None if onboarding_id is None else \
-            MTurkDataHandler.get_conversation_data(
+        onboard_data = None
+        if onboarding_id is not None:
+            onboard_data = MTurkDataHandler.get_conversation_data(
                 run_id, onboarding_id, worker_id, self.state['is_sandbox']),
+
         assignment_content = {
             'onboarding': onboard_data,
             'task': MTurkDataHandler.get_conversation_data(
                 run_id, conversation_id, worker_id, self.state['is_sandbox']),
         }
 
+        # Get assignment instruction html
+        taskname = '_'.join(run_id.split('_')[:-1])
+        find_location = 'parlai.mturk.tasks.{}.task_config'.format(taskname)
+        find_location_internal = \
+            'parlai_internal.mturk.tasks.{}.task_config'.format(taskname)
+        try:
+            # Try to find the task config in public tasks
+            t = importlib.import_module(find_location)
+            task_instructions = t.task_config['task_description']
+        except ImportError:
+            try:
+                # Try to find the task in local tasks
+                t = importlib.import_module(find_location_internal)
+                task_instructions = t.task_config['task_description']
+            except ImportError:
+                task_instructions = None
+
         data = {
             'assignment_details': assignment,
             'assignment_content': assignment_content,
+            'assignment_instructions': task_instructions,
         }
 
+        self.write(json.dumps(data))
+
+
+class ApprovalHandler(BaseHandler):
+    def initialize(self, app):
+        self.mturk_manager = app.mturk_manager
+
+    def post(self, assignment_target):
+        self.mturk_manager.approve_work(assignment_target)
+        data = {
+            'status': True,
+        }
+        self.write(json.dumps(data))
+
+
+class ReverseHandler(BaseHandler):
+    def initialize(self, app):
+        self.mturk_manager = app.mturk_manager
+
+    def post(self, assignment_target):
+        self.mturk_manager.approve_work(assignment_target, True)
+        print('Assignment {} had rejection reversed'.format(assignment_target))
+        data = {
+            'status': True,
+        }
+        self.write(json.dumps(data))
+
+
+class RejectionHandler(BaseHandler):
+    def initialize(self, app):
+        self.mturk_manager = app.mturk_manager
+
+    def post(self, assignment_target):
+        data = tornado.escape.json_decode(self.request.body)
+        reason = data['reason']
+        self.mturk_manager.reject_work(assignment_target, reason)
+        print('Rejected {} for reason {}'.format(assignment_target, reason))
+        data = {
+            'status': True,
+        }
         self.write(json.dumps(data))
 
 
