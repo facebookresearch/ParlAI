@@ -70,7 +70,6 @@ class DefaultTeacher(DialogTeacher):
         data_path = _path(opt)
         opt['datafile'] = data_path
         self.id = 'MultiNLI'
-        self.opt = copy.deepcopy(opt)
         super().__init__(opt, shared)
 
     def setup_data(self, path):

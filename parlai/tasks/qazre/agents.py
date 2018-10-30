@@ -11,20 +11,22 @@
 from parlai.core.teachers import DialogTeacher
 from .build import build
 import os
-import copy
 
 
 class QAZRETeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         # store datatype
         self.dt = opt['datatype'].split(':')[0]
+
         # store identifier for the teacher in the dialog
         self.id = 'qazre'
 
+        # build the data
         build(opt)
 
+        # set the download path
         opt['datafile'] = os.path.join(opt['datapath'], 'QA-ZRE', 'relation_splits')
-        self.opt = copy.deepcopy(opt)
+
         super().__init__(opt, shared)
 
     def setup_data(self, input_path):
@@ -33,6 +35,7 @@ class QAZRETeacher(DialogTeacher):
 
         new_episode = True
 
+        # function to parse the episodes
         def extract_qa(qa_data):
             line_data = qa_data.split('\t')
             question_type, anon_question, deanon, context = line_data[:4]
@@ -41,6 +44,7 @@ class QAZRETeacher(DialogTeacher):
                 answer = ['No answer']
             return context + '\n' + anon_question.replace('XXX', deanon), answer
 
+        # parse and output the episodes
         for fname in os.listdir(input_path):
             if fname.startswith(self.dt):
                 with open(os.path.join(input_path, fname)) as file:

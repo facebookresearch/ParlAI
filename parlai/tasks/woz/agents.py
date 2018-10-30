@@ -12,7 +12,6 @@ from parlai.core.teachers import DialogTeacher
 from .build import build
 import os
 import json
-import copy
 
 
 class WoZTeacher(DialogTeacher):
@@ -25,7 +24,6 @@ class WoZTeacher(DialogTeacher):
 
         build(opt)
         opt['datafile'] = os.path.join(opt['datapath'], 'WoZ')
-        self.opt = copy.deepcopy(opt)
 
         super().__init__(opt, shared)
 

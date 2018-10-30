@@ -27,7 +27,6 @@ class SSTTeacher(DialogTeacher):
 
         super().__init__(opt, shared)
 
-
     def _path(self, opt):
         build(opt)
         labels_path = os.path.join(opt['datapath'], 'SST', 'stanfordSentimentTreebank',
@@ -68,7 +67,7 @@ class SSTTeacher(DialogTeacher):
         for i in range(len(self.contexts)):
             if self.labels[i]:
                 yield (self.contexts[i] + '\n' + self.question, [self.labels[i]], None,
-                           None), new_episode
+                       None), new_episode
 
     def label_candidates(self):
         return self.SST_LABELS

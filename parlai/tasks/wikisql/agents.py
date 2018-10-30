@@ -12,7 +12,6 @@ from parlai.core.teachers import DialogTeacher
 from .build import build
 import os
 import json
-import copy
 
 
 class WikiSQLTeacher(DialogTeacher):
@@ -32,7 +31,6 @@ class WikiSQLTeacher(DialogTeacher):
 
         build(opt)
         opt['datafile'] = os.path.join(opt['datapath'], 'WikiSQL')
-        self.opt = copy.deepcopy(opt)
 
         super().__init__(opt, shared)
 

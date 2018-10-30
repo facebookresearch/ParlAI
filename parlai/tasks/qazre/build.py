@@ -17,7 +17,9 @@ def build(opt):
     version = None
 
     if not build_data.built(dpath, version_string=version):
+
         print('[building data: ' + dpath + ']')
+
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
@@ -27,6 +29,8 @@ def build(opt):
         fname = 'relation_splits.tar.bz2'
         url = 'http://nlp.cs.washington.edu/zeroshot/' + fname
         build_data.download(url, dpath, fname)
+
+        # Unpack the data
         build_data.untar(dpath, fname)
 
         # Mark the data as built.

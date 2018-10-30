@@ -11,7 +11,6 @@
 from parlai.core.teachers import DialogTeacher
 from .build import build
 import os
-import copy
 
 
 class QASRLTeacher(DialogTeacher):
@@ -25,7 +24,6 @@ class QASRLTeacher(DialogTeacher):
         build(opt)
 
         opt['datafile'] = os.path.join(opt['datapath'], 'QA-SRL')
-        self.opt = copy.deepcopy(opt)
 
         super().__init__(opt, shared)
 
@@ -51,10 +49,10 @@ class QASRLTeacher(DialogTeacher):
 
             qa_pairs = []
             counter = 0
-            for i in range(predicate_count):
+            for _i in range(predicate_count):
                 question_count = int(unparsed_qa[counter].split('\t')[-1])
                 counter += 1
-                for j in range(question_count):
+                for _j in range(question_count):
                     qa_pairs.append(parse_qa(unparsed_qa[counter]))
                     counter += 1
             return qa_pairs

@@ -118,7 +118,6 @@ class DefaultTeacher(DialogTeacher):
             suffix = 'dev'
         opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD',
                                        suffix + '-v1.1.json')
-        self.opt = copy.deepcopy(opt)
         self.id = 'squad'
         super().__init__(opt, shared)
 
@@ -199,10 +198,8 @@ class TitleTeacher(DefaultTeacher):
                     question = qa['question']
                     answers = (a['text'] for a in qa['answers'])
                     context = paragraph['context']
-                    yield (
-                        '\n'.join([title, context, question]),
-                        answers
-                    ), True
+                    yield ('\n'.join([title, context, question]),
+                           answers), True
 
 
 class FulldocTeacher(ParlAIDialogTeacher):
@@ -242,6 +239,7 @@ class SentenceTeacher(IndexTeacher):
     Otherwise, the 'text' field contains <context>\n<question> and there is
     no separate context field.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.sent_tok = get_sentence_tokenizer()
@@ -254,7 +252,7 @@ class SentenceTeacher(IndexTeacher):
         )
         agent.add_argument('--include-context', type='bool', default=False,
                            help='include context within text instead of as a '
-                           'separate field')
+                                'separate field')
 
     def get(self, episode_idx, entry_idx=None):
         article_idx, paragraph_idx, qa_idx = self.examples[episode_idx]
@@ -321,6 +319,7 @@ class FulldocsentenceTeacher(FulldocTeacher):
     Otherwise, the 'text' field contains <context>\n<question> and there is
     no separate context field.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.sent_tok = get_sentence_tokenizer()
@@ -333,7 +332,7 @@ class FulldocsentenceTeacher(FulldocTeacher):
         )
         agent.add_argument('--include-context', type='bool', default=False,
                            help='include context within text instead of as a '
-                           'separate field')
+                                'separate field')
 
     def get(self, episode_idx, entry_idx=None):
         action = {}
