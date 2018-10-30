@@ -23,8 +23,7 @@ def _path(task, opt, dt):
 class EnDeTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        task = opt.get('task', 'wmt:en_de')
-        self.task_name = task.split(':')[1] if ':' in task else 'en_de'
+        self.task_name = 'en_de'
         dt = opt['datatype'].split(':')[0]
         opt['datafile'] = _path(self.task_name, opt, dt)
         super().__init__(opt, shared)
