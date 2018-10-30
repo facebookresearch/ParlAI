@@ -114,6 +114,8 @@ class Seq2seqAgent(TorchGeneratorAgent):
     def build_model(self, states=None):
         """Initialize model, override to change model setup."""
         opt = self.opt
+        if not states:
+            states = {}
 
         kwargs = opt_to_kwargs(opt)
         self.model = Seq2seq(

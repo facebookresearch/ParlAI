@@ -84,36 +84,6 @@ class Seq2seq(TorchGeneratorModel):
             numsoftmax=numsoftmax, shared_weight=shared_weight,
             padding_idx=padding_idx)
 
-    def decode_forced(self, ys, encoder_states):
-        bsz = ys.size(0)
-        seqlen = ys.size(1)
-
-        hidden = encoder_states[1]
-        attn_params = (encoder_states[0], encoder_states[2])
-
-        # input to model is START + each target except the last
-        y_in = ys.narrow(1, 0, seqlen - 1)
-        xs = torch.cat([self._starts(bsz), y_in], 1)
-
-        scores = []
-        if self.attn_type == 'none':
-            # do the whole thing in one go
-            output, hidden = self.decoder(xs, hidden, attn_params)
-            score = self.output(output)
-            scores.append(score)
-        else:
-            # need to feed in one token at a time so we can do attention
-            # TODO: do we need to do this? actually shouldn't need to since we
-            # don't do input feeding
-            for i in range(seqlen):
-                xi = xs.select(1, i).unsqueeze(1)
-                output, hidden = self.decoder(xi, hidden, attn_params)
-                score = self.output(output)
-                scores.append(score)
-
-        scores = torch.cat(scores, 1)
-        return scores
-
     def reorder_encoder_states(self, encoder_states, indices):
         """Reorder encoder states according to a new set of indices."""
         # TODO: check if indices is just [0, 1, 2, ...] and become an
@@ -128,7 +98,8 @@ class Seq2seq(TorchGeneratorModel):
             hid, cell = hidden
 
         # cast indices to a tensor. index_select is okay with floats
-        indices = torch.LongTensor(indices).to(hidden.device)
+        if not torch.is_tensor(indices):
+            indices = torch.LongTensor(indices).to(hid.device)
 
         hid = hid.index_select(1, indices)
         if cell is None:
@@ -293,6 +264,7 @@ class RNNDecoder(nn.Module):
                             (bsz, numlayers * num_directions, hiddensize).
         """
         # sequence indices => sequence embeddings
+        seqlen = xs.size(1)
         xes = self.dropout(self.lt(xs))
 
         enc_state, hidden, attn_mask = encoder_output
@@ -300,16 +272,28 @@ class RNNDecoder(nn.Module):
 
         if self.attn_time == 'pre':
             # modify input vectors with attention
-            xes, _attw = self.attention(xes, hidden, attn_params)
+            # attention module requires we do this one step at a time
+            new_xes = []
+            for i in range(seqlen):
+                nx, _ = self.attention(xes[:, i:i + 1], hidden, attn_params)
+                new_xes.append(nx)
+            xes = torch.cat(new_xes, 1).to(xes.device)
 
-        # feed tokens into rnn
-        output, new_hidden = self.rnn(xes, hidden)
+        if self.attn_time != 'post':
+            # no attn, we can just trust the rnn to run through
+            output, _ = self.rnn(xes, hidden)
+        else:
+            # uh oh, post attn, we need run through one at a time, and do the
+            # attention modifications
+            new_hidden = hidden
+            output = []
+            for i in range(seqlen):
+                o, new_hidden = self.rnn(xes[:, i, :].unsqueeze(1), new_hidden)
+                o, _ = self.attention(o, new_hidden, attn_params)
+                output.append(o)
+            output = torch.cat(output, dim=1).to(xes.device)
 
-        if self.attn_time == 'post':
-            # modify output vectors with attention
-            output, _attw = self.attention(output, new_hidden, attn_params)
-
-        return output, new_hidden
+        return output
 
 
 class OutputLayer(nn.Module):

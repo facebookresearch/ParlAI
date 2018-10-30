@@ -108,7 +108,7 @@ class TorchGeneratorModel(nn.Module):
         seqlen = ys.size(1)
         inputs = ys.narrow(1, 0, seqlen - 1)
         inputs = torch.cat([self._starts(bsz), inputs], 1)
-        return self.decoder(inputs, encoder_states)
+        return self.output(self.decoder(inputs, encoder_states))
 
     def reorder_encoder_states(self, encoder_states, indices):
         """Reorder encoder states according to a new set of indices.
@@ -477,7 +477,7 @@ class TorchGeneratorAgent(TorchAgent):
                 cands, _ = padded_tensor(
                     batch.candidate_vecs[i], self.NULL_IDX, self.use_cuda
                 )
-                scores = self.model.decode_forced(cands, enc)
+                scores = self.model.output(self.model.decode_forced(cands, enc))
                 cand_losses = F.cross_entropy(
                     scores.view(num_cands * cands.size(1), -1),
                     cands.view(-1),
@@ -546,7 +546,7 @@ class TorchGeneratorAgent(TorchAgent):
             score = model.decoder(decoder_input, encoder_states)
             # only need the final hidden state to make the word prediction
             score = score[:, -1, :]
-            # score = model.output(output)
+            score = model.output(score)
             # score contains softmax scores for bsz * beam_size samples
             score = score.view(bsz, beam_size, -1)
             score = F.log_softmax(score, dim=-1)
