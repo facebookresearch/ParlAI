@@ -613,8 +613,11 @@ class ParlaiParser(argparse.ArgumentParser):
         if hasattr(self, '_show_advanced_args'):
             return self._show_advanced_args
         known_args, _ = self.parse_known_args(nohelp=True)
-        self._show_advanced_args = known_args.show_advanced_args
-        return known_args.show_advanced_args
+        if hasattr(known_args, 'show_advanced_args'):
+            self._show_advanced_args = known_args.show_advanced_args
+        else:
+            self._show_advanced_args = True
+        return self._show_advanced_args
 
     def _handle_hidden_args(self, kwargs):
         if 'hidden' in kwargs:

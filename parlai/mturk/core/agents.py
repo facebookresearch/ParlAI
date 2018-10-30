@@ -190,7 +190,7 @@ class MTurkAgent(Agent):
         if self.db_logger is not None:
             if status == AssignState.STATUS_ONBOARDING:
                 self.db_logger.log_start_onboard(
-                    self.worker_id, self.assignment_id)
+                    self.worker_id, self.assignment_id, self.conversation_id)
             elif status == AssignState.STATUS_WAITING:
                 self.db_logger.log_finish_onboard(
                     self.worker_id, self.assignment_id)
@@ -324,7 +324,6 @@ class MTurkAgent(Agent):
         """Cleans up resources related to maintaining complete state"""
         self.flush_msg_queue()
         self.msg_queue = None
-        self.state.clear_messages()
         self.recieved_packets = None
 
     def get_new_act_message(self):

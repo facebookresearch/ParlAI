@@ -36,6 +36,9 @@ class QADataCollectionWorld(MTurkTaskWorld):
         self.mturk_agent = mturk_agent
         self.episodeDone = False
         self.turn_index = -1
+        self.context = None
+        self.question = None
+        self.answer = None
 
     def parley(self):
         # Each turn starts from the QA Collector agent
@@ -49,10 +52,10 @@ class QADataCollectionWorld(MTurkTaskWorld):
 
             # Get context from SQuAD teacher agent
             qa = self.task.act()
-            context = '\n'.join(qa['text'].split('\n')[:-1])
+            self.context = '\n'.join(qa['text'].split('\n')[:-1])
 
             # Wrap the context with a prompt telling the turker what to do next
-            ad['text'] = (context +
+            ad['text'] = (self.context +
                           '\n\nPlease provide a question given this context.')
 
             self.mturk_agent.observe(validate(ad))
@@ -85,6 +88,11 @@ class QADataCollectionWorld(MTurkTaskWorld):
         # Can review the work here to accept or reject it
         pass
 
-    def save_data(self):
-        # should save self.question and self.answer to a file
-        pass
+    def get_custom_task_data(self):
+        # brings important data together for the task, to later be used for
+        # creating the dataset. If data requires pickling, put it in a field
+        # called 'needs-pickle'.
+        return {
+            'context': self.context,
+            'acts': [self.question, self.answer],
+        }
