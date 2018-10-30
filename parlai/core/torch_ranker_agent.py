@@ -44,6 +44,10 @@ class TorchRankerAgent(TorchAgent):
                  "the flag --fixed-candidates-path. By default, this file is created "
                  "once and reused. To replace it, use the 'replace' option.")
         agent.add_argument(
+            '--interactive', type=bool, default=False,
+            help="Mark as true if you are in a setting where you are only doing "
+                 "evaluation, and always with the same fixed candidate set.")
+        agent.add_argument(
             '--encode-fixed-candidates', type=bool, default=False,
             help="If True, encode fixed candidates in addition to vectorizing them.")
 
@@ -156,7 +160,11 @@ class TorchRankerAgent(TorchAgent):
                 cand_list = cands[i]
             cand_preds.append([cand_list[rank] for rank in ordering])
         preds = [cand_preds[i][0] for i in range(batchsize)]
-        return Output(preds, cand_preds)
+
+        if self.opt['interactive']:
+            return Output(preds)
+        else:
+            return Output(preds, cand_preds)
 
     def _build_candidates(self, batch, source, mode):
         """Build a candidate set for this batch
