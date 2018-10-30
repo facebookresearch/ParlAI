@@ -141,6 +141,9 @@ class Seq2seqAgent(TorchGeneratorAgent):
             # set loaded states if applicable
             self.model.load_state_dict(states['model'])
 
+        if self.use_cuda:
+            self.model.cuda()
+
         if opt['embedding_type'].endswith('fixed'):
             print('Seq2seq: fixing embedding weights.')
             self.model.decoder.lt.weight.requires_grad = False
@@ -205,18 +208,8 @@ class Seq2seqAgent(TorchGeneratorAgent):
     def load(self, path):
         """Return opt and model states."""
         states = torch.load(path, map_location=lambda cpu, _: cpu)
-
-        # check opt file for multigpu
-        with open(path + ".opt", 'r') as handle:
-            saved_opt = json.load(handle)
-        if saved_opt.get('multigpu'):
-            # create new OrderedDict that does not contain `module.`
-            from collections import OrderedDict
-            new_state_dict = OrderedDict()
-            for k, v in states['model'].items():
-                if k.startswith('module'):
-                    name = k[7:]  # remove `module.`
-                    new_state_dict[name] = v
-            states['model'] = new_state_dict
-
+        # set loaded states if applicable
+        self.model.load_state_dict(states['model'])
+        if 'longest_label' in states:
+            self.model.longest_label = states['longest_label']
         return states
