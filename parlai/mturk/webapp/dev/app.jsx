@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {ToggleButtonGroup, ToggleButton, Button, FormControl,
-  ButtonGroup, ButtonToolbar, Panel, Table, Modal} from 'react-bootstrap';
+  ButtonGroup, ButtonToolbar, Panel, Table, Modal, InputGroup} from 'react-bootstrap';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import 'fetch';
@@ -672,22 +672,74 @@ class AssignmentInstructions extends React.Component {
 }
 
 class BlockModal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {reason: '', submitting: false};
+  }
+
+  submitBlock() {
+    this.setState({submitting: true});
+    postData('/block/' + this.props.worker_id,
+          {'reason': this.state.reason,
+           'assignment_id': this.props.assignment_id})
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            submitting: false,
+          });
+          this.props.onHide();
+          this.props.onAssignmentUpdate();
+        },
+        (error) => {
+          this.setState({
+            submitting: false,
+          });
+          console.log(error);
+          window.alert('Submitting block failed. Error logged to console');
+        }
+      )
+  }
+
   render() {
+    var block_reason_input = (
+      <span>
+        Why are you blocking this worker?
+        <FormControl
+          type="text"
+          componentClass="textarea"
+          value={this.state.reason}
+          placeholder="Enter reason"
+          onChange={(e) => this.setState({reason: e.target.value})}/>
+      </span>
+    );
+
+    var {onAssignmentUpdate, ...others} = this.props;
+
     return (
       <Modal
-        {...this.props}
-        bsSize="small"
-        aria-labelledby="contained-modal-title-block">
+        {...others}
+        aria-labelledby="block-worker-modal-title-block">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-block">
+          <Modal.Title id="block-worker-modal-title-block">
             Block Worker
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           Are you sure you want to block worker {this.props.worker_id}?
+          <br/>
+          {block_reason_input}
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.props.onHide}>Cancel</Button>
+          <ButtonToolbar>
+            <Button
+              bsStyle='primary'
+              onClick={() => this.submitBlock()}
+              disabled={this.state.submitting || this.state.reason == ''}>
+                Block
+              </Button>
+            <Button onClick={this.props.onHide}>Cancel</Button>
+          </ButtonToolbar>
         </Modal.Footer>
       </Modal>
     );
@@ -695,22 +747,109 @@ class BlockModal extends React.Component {
 }
 
 class BonusModal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = this.getClearState();
+  }
+
+  getClearState() {
+    return {reason: '', dollars: '', cents: '', submitting: false,
+      bonus_token: Math.random().toString(36).substr(2, 9)};
+  }
+
+  submitBonus() {
+    this.setState({submitting: true});
+    var cents = this.state.cents != '' ? this.state.cents : 0;
+    var dollars = this.state.dollars != '' ? this.state.dollars : 0;
+    var use_amount = dollars * 100 + cents;
+    postData('/bonus/' + this.props.worker_id,
+          {'reason': this.state.reason,
+           'bonus_cents': use_amount,
+           'assignment_id': this.props.assignment_id,
+           'bonus_token': this.state.bonus_token})
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState(this.getClearState());
+          this.props.onHide();
+          this.props.onAssignmentUpdate();
+        },
+        (error) => {
+          this.setState({
+            submitting: false,
+          });
+          console.log(error);
+          window.alert('Submitting bonus failed. Error logged to console');
+        }
+      )
+  }
+
+  updateDollars(amount) {
+    if (amount < 0 || (amount != '' && isNaN(amount))) {
+      return;
+    }
+    amount = amount == '' ? 0 : amount;
+    this.setState({dollars: +amount})
+  }
+
+  updateCents(amount) {
+    if (amount < 0 || amount > 99 || (amount != '' && isNaN(amount))) {
+      return;
+    }
+    amount = amount == '' ? 0 : amount;
+    this.setState({cents: +amount})
+  }
+
   render() {
+    var cents = this.state.cents;
+    var display_cents =  cents < 10 ? '0' + cents : cents;
+    var bonus_detail_form = (
+      <div>
+        How much do you want to bonus?
+        <InputGroup>
+          <InputGroup.Addon>$</InputGroup.Addon>
+          <FormControl
+            type="text"
+            value={this.state.dollars}
+            placeholder="0"
+            onChange={(e) => this.updateDollars(e.target.value)}/>
+          <InputGroup.Addon>.</InputGroup.Addon>
+          <FormControl
+            type="text"
+            value={display_cents}
+            placeholder="00"
+            onChange={(e) => this.updateCents(e.target.value)}/>
+        </InputGroup>
+        Why bonus?
+        <FormControl
+          type="textarea"
+          value={this.state.reason}
+          placeholder="Enter Reason"
+          onChange={(e) => this.setState({reason: e.target.value})}/>
+      </div>
+    );
+
+    var {onAssignmentUpdate, ...others} = this.props;
+
     return (
       <Modal
-        {...this.props}
-        bsSize="small"
-        aria-labelledby="contained-modal-title-block">
+        {...others}
+        aria-labelledby="bonus-modal-title-block">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-block">
+          <Modal.Title id="bonus-modal-title-block">
             Bonus Worker
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to block worker {this.props.worker_id} for assignment {this.props.assignment_id}?
+          Bonusing worker {this.props.worker_id} for assignment {this.props.assignment_id}.
+          <br/>
+          {bonus_detail_form}
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.props.onHide}>Cancel</Button>
+          <ButtonToolbar>
+            <Button bsStyle='primary' onClick={() => this.submitBonus()}>Bonus</Button>
+            <Button onClick={this.props.onHide}>Cancel</Button>
+          </ButtonToolbar>
         </Modal.Footer>
       </Modal>
     );
@@ -948,14 +1087,15 @@ class AssignmentReviewer extends React.Component {
         <BlockModal
           show={this.state.block_show}
           onHide={blockClose}
+          assignment_id={this.props.data.assignment_id}
           worker_id={this.props.data.worker_id}
-          onUpdate={this.props.onUpdate}/>
+          onAssignmentUpdate={this.props.onUpdate}/>
         <BonusModal
           show={this.state.bonus_show}
           onHide={bonusClose}
           worker_id={this.props.data.worker_id}
           assignment_id={this.props.data.assignment_id}
-          onUpdate={this.props.onUpdate}/>
+          onAssignmentUpdate={this.props.onUpdate}/>
       </ButtonToolbar>
     );
   }

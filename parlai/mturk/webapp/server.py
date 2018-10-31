@@ -90,6 +90,8 @@ class Application(tornado.web.Application):
             (r"/approve/(.*)", ApprovalHandler, {'app': self}),
             (r"/reject/(.*)", RejectionHandler, {'app': self}),
             (r"/reverse_rejection/(.*)", ReverseHandler, {'app': self}),
+            (r"/block/(.*)", BlockHandler, {'app': self}),
+            (r"/bonus/(.*)", BonusHandler, {'app': self}),
             (r"/error/(.*)", ErrorHandler, {'app': self}),
             (r"/socket", SocketHandler, {'app': self}),
             (r"/", RedirectHandler),
@@ -412,6 +414,47 @@ class RejectionHandler(BaseHandler):
         reason = data['reason']
         self.mturk_manager.reject_work(assignment_target, reason)
         print('Rejected {} for reason {}'.format(assignment_target, reason))
+        data = {
+            'status': True,
+        }
+        self.write(json.dumps(data))
+
+
+class BlockHandler(BaseHandler):
+    def initialize(self, app):
+        self.mturk_manager = app.mturk_manager
+
+    def post(self, worker_target):
+        data = tornado.escape.json_decode(self.request.body)
+        reason = data['reason']
+        #self.mturk_manager.block_worker(worker_target, reason)
+        print('Blocked {} for reason {}'.format(worker_target, reason))
+        data = {
+            'status': True,
+        }
+        self.write(json.dumps(data))
+
+
+class BonusHandler(BaseHandler):
+    def initialize(self, app):
+        self.mturk_manager = app.mturk_manager
+
+    def post(self, worker_target):
+        """Requests to /bonus/{worker_id} will give a bonus to that worker.
+        Requires a reason, assignment_id, a unique token (for idempotence),
+        and the bonus amount IN CENTS
+        """
+        data = tornado.escape.json_decode(self.request.body)
+        reason = data['reason']
+        assignment_id = data['assignment_id']
+        bonus_cents = data['bonus_cents']
+        token = data['bonus_token']
+
+        amount = bonus_cents / 100.0
+        self.mturk_manager.pay_bonus(
+            worker_target, amount, assignment_id, reason, token)
+        print('Bonused ${} to {} for reason {}'.format(
+            amount, worker_target, reason))
         data = {
             'status': True,
         }

@@ -1707,6 +1707,9 @@ class MTurkManager():
             Reason=reason,
             UniqueRequestToken=unique_request_token
         )
+        if self.db_logger is not None:
+            self.db_logger.log_pay_extra_bonus(
+                worker_id, assignment_id, bonus_amount, reason)
         shared_utils.print_and_log(
             logging.INFO,
             'Paid ${} bonus to WorkerId: {}'.format(
