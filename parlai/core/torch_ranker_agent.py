@@ -109,13 +109,15 @@ class TorchRankerAgent(TorchAgent):
 
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
+
         scores = self.score_candidates(batch, cand_vecs)
+        _, ranks = scores.sort(1, descending=True)
+
         loss = self.rank_loss(scores, label_inds)
 
         # Update metrics
         self.metrics['loss'] += loss.item()
         self.metrics['examples'] += batchsize
-        _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
