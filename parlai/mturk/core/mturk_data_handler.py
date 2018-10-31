@@ -757,4 +757,5 @@ class MTurkDataHandler():
         result['had_worker_file'] = True
         with open(target_filename, 'r') as target_file:
             result['data'] = json.load(target_file)
+        print(result)
         return result

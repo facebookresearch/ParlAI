@@ -346,7 +346,7 @@ class AssignmentHandler(BaseHandler):
         onboard_data = None
         if onboarding_id is not None:
             onboard_data = MTurkDataHandler.get_conversation_data(
-                run_id, onboarding_id, worker_id, self.state['is_sandbox']),
+                run_id, onboarding_id, worker_id, self.state['is_sandbox'])
 
         assignment_content = {
             'onboarding': onboard_data,
