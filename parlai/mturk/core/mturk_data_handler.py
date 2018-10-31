@@ -34,11 +34,13 @@ CREATE_RUN_DATA_SQL_TABLE = (
         maximum integer NOT NULL,
         completed integer NOT NULL,
         failed integer NOT NULL,
-        taskname string
+        taskname string,
+        launch_time int
     );
     """)
 
 # Worker data table:
+# TODO add block status
 CREATE_WORKER_DATA_SQL_TABLE = (
     """CREATE TABLE IF NOT EXISTS workers (
         worker_id string PRIMARY KEY,
@@ -186,6 +188,8 @@ class MTurkDataHandler():
                    ADD COLUMN onboarding_id TEXT default null''',
                 '''ALTER TABLE runs
                    ADD COLUMN taskname TEXT default null''',
+                '''ALTER TABLE runs
+                   ADD COLUMN launch_time int default 0''',
                 '''ALTER TABLE pairings
                    ADD COLUMN extra_bonus_amount INT default 0''',
                 '''ALTER TABLE pairings
@@ -204,8 +208,9 @@ class MTurkDataHandler():
             task_group_id = self._force_task_group_id(task_group_id)
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute('INSERT INTO runs VALUES (?,?,?,?,?,?);',
-                      (task_group_id, 0, target_hits, 0, 0, taskname))
+            c.execute('INSERT INTO runs VALUES (?,?,?,?,?,?,?);',
+                      (task_group_id, 0, target_hits, 0, 0,
+                       taskname, time.time()))
             conn.commit()
 
     def log_hit_status(self, mturk_hit_creation_response, task_group_id=None):
@@ -311,7 +316,7 @@ class MTurkDataHandler():
             # Update assign data to completed for this task (we can't track)
             c.execute("""UPDATE assignments SET status = ?, approve_time = ?
                          WHERE assignment_id = ?;""",
-                      ('Completed', approve_time, assignment_id))
+                      ('Disconnected', approve_time, assignment_id))
 
             # Increment worker disconnected
             c.execute("""UPDATE workers SET disconnected = disconnected + 1
@@ -465,22 +470,36 @@ class MTurkDataHandler():
         """Update assignment state to reflect approval, update worker state to
         increment number of accepted assignments
         """
-        # TODO approve rejected assignments, make idempotent
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("""UPDATE assignments SET status = ?
-                         WHERE assignment_id = ?;""",
-                      ('Approved', assignment_id))
+
             c.execute('SELECT * FROM assignments WHERE assignment_id = ?;',
                       (assignment_id, ))
             assignment = c.fetchone()
             if assignment is None:
                 return
+            status = assignment['status']
             worker_id = assignment['worker_id']
-            c.execute("""UPDATE workers SET approved = approved + 1
-                         WHERE worker_id = ?;""",
-                      (worker_id, ))
+            if status == 'Approved':
+                return  # assign already approved
+
+            # handle the approving part
+            c.execute("""UPDATE assignments SET status = ?
+                         WHERE assignment_id = ?;""",
+                      ('Approved', assignment_id))
+
+            # This was a rejection override
+            if status == 'Rejected':
+                c.execute("""UPDATE workers SET approved = approved + 1,
+                             rejected = rejected - 1
+                             WHERE worker_id = ?;""",
+                          (worker_id, ))
+            else:
+                c.execute("""UPDATE workers SET approved = approved + 1
+                             WHERE worker_id = ?;""",
+                          (worker_id, ))
+
             conn.commit()
 
     def log_reject_assignment(self, assignment_id):
@@ -491,17 +510,19 @@ class MTurkDataHandler():
             conn = self._get_connection()
             c = conn.cursor()
             c.execute("""UPDATE assignments SET status = ?
-                         WHERE assignment_id = ?;""",
-                      ('Rejected', assignment_id))
-            c.execute('SELECT * FROM assignments WHERE assignment_id = ?;',
-                      (assignment_id, ))
-            assignment = c.fetchone()
-            if assignment is None:
-                return
-            worker_id = assignment['worker_id']
-            c.execute("""UPDATE workers SET rejected = rejected + 1
-                         WHERE worker_id = ?;""",
-                      (worker_id, ))
+                         WHERE assignment_id = ? AND status != ?;""",
+                      ('Rejected', assignment_id, 'Rejected'))
+            # If this reject actually happened, update worker's rejections
+            if c.rowcount > 0:
+                c.execute('SELECT * FROM assignments WHERE assignment_id = ?;',
+                          (assignment_id, ))
+                assignment = c.fetchone()
+                if assignment is None:
+                    return
+                worker_id = assignment['worker_id']
+                c.execute("""UPDATE workers SET rejected = rejected + 1
+                             WHERE worker_id = ?;""",
+                          (worker_id, ))
             conn.commit()
 
     def log_worker_note(self, worker_id, assignment_id, note):

@@ -427,7 +427,7 @@ class BlockHandler(BaseHandler):
     def post(self, worker_target):
         data = tornado.escape.json_decode(self.request.body)
         reason = data['reason']
-        #self.mturk_manager.block_worker(worker_target, reason)
+        self.mturk_manager.block_worker(worker_target, reason)
         print('Blocked {} for reason {}'.format(worker_target, reason))
         data = {
             'status': True,
