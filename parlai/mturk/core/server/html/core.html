@@ -29,6 +29,7 @@
     <div id="right-top-pane" style="width: 100%; height: 570px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
         <div id="message_thread" style="width: 100%">
         </div>
+        <button id="connected-button" class="btn btn-lg" style="position: absolute; top: 5px; right: 10px; opacity: 1; font-size: 11px; color: white;" disabled>connected</button>
         <div id="waiting-for-message" class="row" style="margin-left: 0; margin-right: 0; display: none">
             <div class="alert alert-warning" role="alert" style="float: left; display:table; background-color: #fff">
                 <div id="hourglass" style="margin-top: -1px; margin-right: 5px; display: inline; float: left;">
@@ -132,6 +133,7 @@
   var displayed_messages = [];
   var setting_socket = false;
   var pongs_without_heartbeat = 0;
+  var heartbeats_without_pong = 0;
 
   var is_cover_page = ("{{is_cover_page}}" === 'true') ? true : false;
   var is_init_page = ("{{is_init_page}}" === 'true') ? true : false;
@@ -527,6 +529,11 @@
       // Messages incoming from the router, ensuring that we're at least
       // connected to it.
       pongs_without_heartbeat += 1;
+      heartbeats_without_pong = 0;
+      if (pongs_without_heartbeat >= 3) {
+        $("button#connected-button").text('reconnecting to server');
+        $("#connected-button").css('background', '#f0ad4e');
+      }
     } else if (msg.type === TYPE_ACK) {
       // Acks update messages so that we don't resend them
       log('received ack: ' + msg.id, 3);
@@ -591,6 +598,8 @@
       if (heartbeat_id == null) {
         heartbeat_id = window.setInterval(_heartbeat_thread, HEARTBEAT_TIME);
       }
+      $("button#connected-button").text('connected');
+      $("#connected-button").css('background', '#5cb85c');
     }
 
     socket.onerror = () => {
@@ -605,6 +614,8 @@
 
     socket.onclose = () => {
       log('Server closing.', 3);
+      $("button#connected-button").text('disconnected');
+      $("#connected-button").css('background', '#d9534f');
     }
   }
 
@@ -869,6 +880,12 @@
     };
 
     safe_packet_send({type: SOCKET_ROUTE_PACKET_STRING, content: hb});
+
+    heartbeats_without_pong += 1;
+    if (heartbeats_without_pong >= 3) {
+      $("button#connected-button").text('reconnecting to router');
+      $("#connected-button").css('background', '#f0ad4e');
+    }
   }
 
   /* =================== Initialization =================== */
