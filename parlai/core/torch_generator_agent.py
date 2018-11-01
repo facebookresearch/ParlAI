@@ -86,14 +86,14 @@ class TorchGeneratorModel(nn.Module):
         """Return bsz start tokens."""
         return self.START.detach().expand(bsz, 1)
 
-    def decode(self, bsz, encoder_states, maxlen):
+    def greedy_decode(self, bsz, encoder_states, maxlen):
         """Greedy search"""
         xs = self._starts(bsz)
+        incr_state = None
         for _ in range(maxlen):
-            output = self.decoder(xs, encoder_states)
-            scores = output[:, -1, :]
-            _, preds = scores.max(dim=-1)
-            xs = torch.cat([xs, preds.unsqueeze(1)], dim=1)
+            scores, incr_state = self.decoder(xs, encoder_states, incr_state)
+            _, preds = self.output(scores).max(dim=-1)
+            xs = torch.cat([xs, preds], dim=1)
         return xs
 
     def decode_forced(self, ys, encoder_states):
@@ -111,7 +111,8 @@ class TorchGeneratorModel(nn.Module):
         seqlen = ys.size(1)
         inputs = ys.narrow(1, 0, seqlen - 1)
         inputs = torch.cat([self._starts(bsz), inputs], 1)
-        return self.output(self.decoder(inputs, encoder_states))
+        latent, _ = self.decoder(inputs, encoder_states)
+        return self.output(latent)
 
     def reorder_encoder_states(self, encoder_states, indices):
         """Reorder encoder states according to a new set of indices.
@@ -180,7 +181,10 @@ class TorchGeneratorModel(nn.Module):
             scores = self.decode_forced(ys, encoder_states)
         else:
             bsz = xs.size(0)
-            scores = self.decode(bsz, encoder_states, maxlen or self.longest_label)
+            scores = self.greedy_decode(
+                bsz, encoder_states,
+                maxlen or self.longest_label
+            )
 
         return scores, encoder_states
 
@@ -451,7 +455,9 @@ class TorchGeneratorAgent(TorchAgent):
             out = self.model(batch.text_vec, batch.label_vec)
             scores = out[0]
             _, preds = scores.max(2)
-        else:
+        elif self.beam_size == 1:
+            preds, _ = self.model(batch.text_vec)
+        elif self.beam_size > 1:
             out = self.beam_search(
                 self.model,
                 batch,
@@ -555,13 +561,14 @@ class TorchGeneratorAgent(TorchAgent):
 
         inds = torch.arange(bsz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
         encoder_states = model.reorder_encoder_states(encoder_states, inds)
+        incr_state = None
 
         for ts in range(max_ts):
             # exit early if needed
             if all((b.done() for b in beams)):
                 break
 
-            score = model.decoder(decoder_input, encoder_states)
+            score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
             # only need the final hidden state to make the word prediction
             score = score[:, -1, :]
             score = model.output(score)

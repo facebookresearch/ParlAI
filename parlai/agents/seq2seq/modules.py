@@ -247,28 +247,41 @@ class RNNDecoder(nn.Module):
                                         attn_length=attn_length,
                                         attn_time=attn_time)
 
-    def forward(self, xs, encoder_output):
+    def forward(self, xs, encoder_output, incremental_state=None):
         """Decode from input tokens.
 
         :param xs: (bsz x seqlen) LongTensor of input token indices
-        :param hidden: hidden state to feed into decoder. default (None)
-            initializes tensors using the RNN's defaults.
         :param encoder_output: output from RNNEncoder. Tuple containing
             (enc_out, enc_hidden, attn_mask) tuple.
+        :param incremental_state: most recent hidden state to the decoder.
+            If None, the hidden state of the encoder is used as initial state,
+            and the full sequence is computed. If not None, computes only the
+            next forward in the sequence.
 
-        :returns:           output state(s), hidden state.
-                            output state of the encoder. for an RNN, this is
-                            (bsz, seq_len, num_directions * hiddensize).
-                            hidden state will be same dimensions as input
-                            hidden state. for an RNN, this is a tensor of sizes
-                            (bsz, numlayers * num_directions, hiddensize).
+        :returns: (output, hidden_state) pair from the RNN.
+
+            - output is a bsz x time x latentdim matrix. If incremental_state is
+                given, the time dimension will be 1. This value must be passed to
+                the model's OutputLayer for a final softmax.
+            - hidden_state depends on the choice of RNN
         """
+        enc_state, enc_hidden, attn_mask = encoder_output
+        attn_params = (enc_state, attn_mask)
+
+        if incremental_state is not None:
+            # we're doing it piece by piece, so we have a more important hidden
+            # seed, and we only need to compute for the final timestep
+            hidden = incremental_state
+            # only need the last timestep then
+            xs = xs[:, -1:]
+        else:
+            # starting fresh, or generating from scratch. Use the encoder hidden
+            # state as our start state
+            hidden = enc_hidden
+
         # sequence indices => sequence embeddings
         seqlen = xs.size(1)
         xes = self.dropout(self.lt(xs))
-
-        enc_state, hidden, attn_mask = encoder_output
-        attn_params = (enc_state, attn_mask)
 
         if self.attn_time == 'pre':
             # modify input vectors with attention
@@ -281,7 +294,7 @@ class RNNDecoder(nn.Module):
 
         if self.attn_time != 'post':
             # no attn, we can just trust the rnn to run through
-            output, _ = self.rnn(xes, hidden)
+            output, new_hidden = self.rnn(xes, hidden)
         else:
             # uh oh, post attn, we need run through one at a time, and do the
             # attention modifications
@@ -293,7 +306,7 @@ class RNNDecoder(nn.Module):
                 output.append(o)
             output = torch.cat(output, dim=1).to(xes.device)
 
-        return output
+        return output, new_hidden
 
 
 class OutputLayer(nn.Module):
