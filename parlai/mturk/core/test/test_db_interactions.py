@@ -80,7 +80,7 @@ class TestDataHandler(unittest.TestCase):
         db_logger = MTurkDataHandler('test2', file_name=self.DB_NAME)
 
         # Ensure a run logged can be retrieved
-        db_logger.log_new_run(hits_created, run_id)
+        db_logger.log_new_run(hits_created, 'testing', run_id)
         run_data = db_logger.get_run_data(run_id)
         self.assertEqual(run_data['run_id'], run_id)
         self.assertEqual(run_data['created'], 0)
@@ -95,7 +95,7 @@ class TestDataHandler(unittest.TestCase):
         run_id = 'Test_run_2'
         hits_created = 10
         db_logger = MTurkDataHandler(file_name=self.DB_NAME)
-        db_logger.log_new_run(hits_created, run_id)
+        db_logger.log_new_run(hits_created, 'testing', run_id)
         HIT1 = self.create_hit()
         HIT2 = self.create_hit()
         HIT3 = self.create_hit()
@@ -152,7 +152,7 @@ class TestDataHandler(unittest.TestCase):
         run_id = 'Test_run_3'
         hits_created = 10
         db_logger = MTurkDataHandler(run_id, file_name=self.DB_NAME)
-        db_logger.log_new_run(hits_created, run_id)
+        db_logger.log_new_run(hits_created, 'testing', run_id)
         HIT1 = self.create_hit()
         HIT2 = self.create_hit()
         HIT3 = self.create_hit()
@@ -310,9 +310,16 @@ class TestDataHandler(unittest.TestCase):
         conversation_id_1 = "CONV_ID_1"
         conversation_id_2 = "CONV_ID_2"
 
-        db_logger.log_start_onboard(worker_id_1, assignment_id_1)
-        db_logger.log_start_onboard(worker_id_2, assignment_id_2)
-        db_logger.log_start_onboard(worker_id_2, assignment_id_3)
+        onboarding_id_1 = 'onboard_1'
+        onboarding_id_2 = 'onboard_2'
+        onboarding_id_3 = 'onboard_3'
+
+        db_logger.log_start_onboard(
+            worker_id_1, assignment_id_1, onboarding_id_1)
+        db_logger.log_start_onboard(
+            worker_id_2, assignment_id_2, onboarding_id_2)
+        db_logger.log_start_onboard(
+            worker_id_2, assignment_id_3, onboarding_id_3)
         db_logger.log_finish_onboard(worker_id_1, assignment_id_1)
         db_logger.log_finish_onboard(worker_id_2, assignment_id_2)
         db_logger.log_finish_onboard(worker_id_2, assignment_id_3)
@@ -358,7 +365,7 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(assignment_1_data['worker_id'], worker_id_1)
         self.assertEqual(assignment_1_data['hit_id'], HIT1['HIT']['HITId'])
         self.assertEqual(assignment_2_data['assignment_id'], assignment_id_2)
-        self.assertEqual(assignment_2_data['status'], 'Completed')
+        self.assertEqual(assignment_2_data['status'], 'Disconnected')
         self.assertIsNotNone(assignment_2_data['approve_time'])
         self.assertEqual(assignment_2_data['worker_id'], worker_id_2)
         self.assertEqual(assignment_2_data['hit_id'], HIT2['HIT']['HITId'])
@@ -467,11 +474,13 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(assignment_3_data['hit_id'], HIT3['HIT']['HITId'])
 
         # Test approving and rejecting
-        amount_use = 3
+        test_dollars = 3
+        test_cents = 100 * test_dollars
         reason_use = 'Just because'
-        db_logger.log_award_amount(worker_id_1, assignment_id_1, amount_use,
+        out_reason = '${} for {}\n'.format(test_dollars, reason_use)
+        db_logger.log_award_amount(worker_id_1, assignment_id_1, test_dollars,
                                    reason_use)
-        db_logger.log_award_amount(worker_id_2, assignment_id_2, amount_use,
+        db_logger.log_award_amount(worker_id_2, assignment_id_2, test_dollars,
                                    reason_use)
         db_logger.log_bonus_paid(worker_id_1, assignment_id_1)
         db_logger.log_approve_assignment(assignment_id_1)
@@ -502,7 +511,7 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(worker_1_data['rejected'], 0)
         self.assertEqual(worker_2_data['worker_id'], worker_id_2)
         self.assertEqual(worker_2_data['accepted'], 2)
-        self.assertEqual(worker_2_data['disconnected'], 1)
+        self.assertEqual(worker_2_data['disconnected'], 2)
         self.assertEqual(worker_2_data['expired'], 1)
         self.assertEqual(worker_2_data['completed'], 1)
         self.assertEqual(worker_2_data['approved'], 0)
@@ -548,11 +557,11 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(pair_1['run_id'], run_id)
         self.assertEqual(pair_2['run_id'], run_id)
         self.assertEqual(pair_3['run_id'], run_id)
-        self.assertEqual(pair_1['bonus_amount'], amount_use)
-        self.assertEqual(pair_2['bonus_amount'], amount_use)
+        self.assertEqual(pair_1['bonus_amount'], test_cents)
+        self.assertEqual(pair_2['bonus_amount'], test_cents)
         self.assertEqual(pair_3['bonus_amount'], 0)
-        self.assertEqual(pair_1['bonus_text'], reason_use)
-        self.assertEqual(pair_2['bonus_text'], reason_use)
+        self.assertEqual(pair_1['bonus_text'], out_reason)
+        self.assertEqual(pair_2['bonus_text'], out_reason)
         self.assertEqual(pair_3['bonus_text'], '')
         self.assertTrue(pair_1['bonus_paid'])
         self.assertFalse(pair_2['bonus_paid'])

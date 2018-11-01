@@ -12,6 +12,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import argparse
+import importlib
 import inspect
 import json
 import logging
@@ -26,10 +27,12 @@ import tornado.escape
 
 
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
+from parlai.mturk.core.mturk_manager import MTurkManager
 
 DEFAULT_PORT = 8095
 DEFAULT_HOSTNAME = "localhost"
 DEFAULT_DB_FILE = 'pmt_data.db'
+DEFAULT_SB_DB_FILE = 'pmt_sbdata.db'
 IS_DEBUG = True
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -65,12 +68,15 @@ tornado_settings = {
 
 
 class Application(tornado.web.Application):
-    def __init__(self, port=DEFAULT_PORT, db_file=DEFAULT_DB_FILE):
-        self.state = {}
+    def __init__(self, port=DEFAULT_PORT, db_file=DEFAULT_DB_FILE,
+                 is_sandbox=False):
+        self.state = {'is_sandbox': is_sandbox}
         self.subs = {}
         self.sources = {}
         self.port = port
         self.data_handler = MTurkDataHandler(file_name=db_file)
+        self.mturk_manager = MTurkManager.make_taskless_instance(is_sandbox)
+        self.mturk_manager.db_logger = self.data_handler
 
         # TODO load some state from DB
 
@@ -80,6 +86,12 @@ class Application(tornado.web.Application):
             (r"/workers", WorkerListHandler, {'app': self}),
             (r"/runs/(.*)", RunHandler, {'app': self}),
             (r"/workers/(.*)", WorkerHandler, {'app': self}),
+            (r"/assignments/(.*)", AssignmentHandler, {'app': self}),
+            (r"/approve/(.*)", ApprovalHandler, {'app': self}),
+            (r"/reject/(.*)", RejectionHandler, {'app': self}),
+            (r"/reverse_rejection/(.*)", ReverseHandler, {'app': self}),
+            (r"/block/(.*)", BlockHandler, {'app': self}),
+            (r"/bonus/(.*)", BonusHandler, {'app': self}),
             (r"/error/(.*)", ErrorHandler, {'app': self}),
             (r"/socket", SocketHandler, {'app': self}),
             (r"/", RedirectHandler),
@@ -211,7 +223,10 @@ class TaskListHandler(BaseHandler):
         results = self.data_handler.get_all_run_data()
         processed_results = []
         for res in results:
-            processed_results.append(dict(zip(res.keys(), res)))
+            processed_results.append(row_to_dict(res))
+        for result in processed_results:
+            # TODO implemenent
+            result['run_status'] = 'unimplemented'
 
         self.write(json.dumps(processed_results))
 
@@ -304,6 +319,148 @@ class WorkerHandler(BaseHandler):
         self.write(json.dumps(data))
 
 
+class AssignmentHandler(BaseHandler):
+    def initialize(self, app):
+        self.state = app.state
+        self.subs = app.subs
+        self.sources = app.sources
+        self.port = app.port
+        self.data_handler = app.data_handler
+
+    def get(self, assignment_target):
+        # Extract assignment
+        assignments = [self.data_handler.get_assignment_data(
+            assignment_target)]
+        pairings = self.data_handler.get_pairings_for_assignment(
+            assignment_target)
+        processed_assignments = merge_assignments_with_pairings(
+            assignments, pairings, 'assignment {}'.format(assignment_target))
+        assignment = processed_assignments[0]
+
+        # Get assignment details to retrieve assignment content
+        run_id = assignment['run_id']
+        onboarding_id = assignment['onboarding_id']
+        conversation_id = assignment['conversation_id']
+        worker_id = assignment['worker_id']
+
+        onboard_data = None
+        if onboarding_id is not None:
+            onboard_data = MTurkDataHandler.get_conversation_data(
+                run_id, onboarding_id, worker_id, self.state['is_sandbox'])
+
+        assignment_content = {
+            'onboarding': onboard_data,
+            'task': MTurkDataHandler.get_conversation_data(
+                run_id, conversation_id, worker_id, self.state['is_sandbox']),
+        }
+
+        # Get assignment instruction html
+        taskname = '_'.join(run_id.split('_')[:-1])
+        find_location = 'parlai.mturk.tasks.{}.task_config'.format(taskname)
+        find_location_internal = \
+            'parlai_internal.mturk.tasks.{}.task_config'.format(taskname)
+        try:
+            # Try to find the task config in public tasks
+            t = importlib.import_module(find_location)
+            task_instructions = t.task_config['task_description']
+        except ImportError:
+            try:
+                # Try to find the task in local tasks
+                t = importlib.import_module(find_location_internal)
+                task_instructions = t.task_config['task_description']
+            except ImportError:
+                task_instructions = None
+
+        data = {
+            'assignment_details': assignment,
+            'assignment_content': assignment_content,
+            'assignment_instructions': task_instructions,
+        }
+
+        self.write(json.dumps(data))
+
+
+class ApprovalHandler(BaseHandler):
+    def initialize(self, app):
+        self.mturk_manager = app.mturk_manager
+
+    def post(self, assignment_target):
+        self.mturk_manager.approve_work(assignment_target)
+        data = {
+            'status': True,
+        }
+        self.write(json.dumps(data))
+
+
+class ReverseHandler(BaseHandler):
+    def initialize(self, app):
+        self.mturk_manager = app.mturk_manager
+
+    def post(self, assignment_target):
+        self.mturk_manager.approve_work(assignment_target, True)
+        print('Assignment {} had rejection reversed'.format(assignment_target))
+        data = {
+            'status': True,
+        }
+        self.write(json.dumps(data))
+
+
+class RejectionHandler(BaseHandler):
+    def initialize(self, app):
+        self.mturk_manager = app.mturk_manager
+
+    def post(self, assignment_target):
+        data = tornado.escape.json_decode(self.request.body)
+        reason = data['reason']
+        self.mturk_manager.reject_work(assignment_target, reason)
+        print('Rejected {} for reason {}'.format(assignment_target, reason))
+        data = {
+            'status': True,
+        }
+        self.write(json.dumps(data))
+
+
+class BlockHandler(BaseHandler):
+    def initialize(self, app):
+        self.mturk_manager = app.mturk_manager
+
+    def post(self, worker_target):
+        data = tornado.escape.json_decode(self.request.body)
+        reason = data['reason']
+        self.mturk_manager.block_worker(worker_target, reason)
+        print('Blocked {} for reason {}'.format(worker_target, reason))
+        data = {
+            'status': True,
+        }
+        self.write(json.dumps(data))
+
+
+class BonusHandler(BaseHandler):
+    def initialize(self, app):
+        self.mturk_manager = app.mturk_manager
+
+    def post(self, worker_target):
+        """Requests to /bonus/{worker_id} will give a bonus to that worker.
+        Requires a reason, assignment_id, a unique token (for idempotence),
+        and the bonus amount IN CENTS
+        """
+        data = tornado.escape.json_decode(self.request.body)
+        reason = data['reason']
+        assignment_id = data['assignment_id']
+        bonus_cents = data['bonus_cents']
+        token = data['bonus_token']
+
+        dollar_amount = bonus_cents / 100.0
+        self.mturk_manager.pay_bonus(
+            worker_target, dollar_amount, assignment_id, reason, token)
+        print('Bonused ${} to {} for reason {}'.format(
+            dollar_amount, worker_target, reason))
+        data = {
+            'status': True,
+        }
+        self.write(json.dumps(data))
+
+
 class ErrorHandler(BaseHandler):
     def get(self, text):
         error_text = text or "test error"
@@ -311,9 +468,9 @@ class ErrorHandler(BaseHandler):
 
 
 def start_server(port=DEFAULT_PORT, hostname=DEFAULT_HOSTNAME,
-                 db_file=DEFAULT_DB_FILE):
+                 db_file=DEFAULT_DB_FILE, is_sandbox=False):
     print("It's Alive!")
-    app = Application(port=port, db_file=db_file)
+    app = Application(port=port, db_file=db_file, is_sandbox=is_sandbox)
     app.listen(port, max_buffer_size=1024 ** 3)
     logging.info("Application Started")
 
@@ -328,24 +485,33 @@ def start_server(port=DEFAULT_PORT, hostname=DEFAULT_HOSTNAME,
 def main():
     parser = argparse.ArgumentParser(
         description='Start the ParlAI-MTurk task managing server.')
-    parser.add_argument('-port', metavar='port', type=int, default=DEFAULT_PORT,
+    parser.add_argument('--port', metavar='port', type=int,
+                        default=DEFAULT_PORT,
                         help='port to run the server on.')
-    parser.add_argument('-hostname', metavar='hostname', type=str,
+    parser.add_argument('--hostname', metavar='hostname', type=str,
                         default=DEFAULT_HOSTNAME,
                         help='host to run the server on.')
-    parser.add_argument('-db_file', metavar='db_file', type=str,
+    parser.add_argument('--sandbox', dest='sandbox',
+                        action='store_true', default=False,
+                        help='Run the server using sandbox data')
+    parser.add_argument('--db_file', metavar='db_file', type=str,
                         default=DEFAULT_DB_FILE,
                         help='name of database to use (in core/run_data)')
-    parser.add_argument('-logging_level', metavar='logger_level', default='INFO',
-                        help='logging level (default = INFO). Can take logging '
-                             'level name or int (example: 20)')
+    parser.add_argument('--logging_level', metavar='logger_level',
+                        default='INFO',
+                        help='logging level (default = INFO). Can take logging'
+                             ' level name or int (example: 20)')
     FLAGS = parser.parse_args()
+
+    if FLAGS.sandbox:
+        if FLAGS.db_file == DEFAULT_DB_FILE:
+            FLAGS.db_file = DEFAULT_SB_DB_FILE
 
     logging_level = logging._checkLevel(FLAGS.logging_level)
     logging.getLogger().setLevel(logging_level)
 
     start_server(port=FLAGS.port, hostname=FLAGS.hostname,
-                 db_file=FLAGS.db_file)
+                 db_file=FLAGS.db_file, is_sandbox=FLAGS.sandbox)
 
 
 if __name__ == "__main__":

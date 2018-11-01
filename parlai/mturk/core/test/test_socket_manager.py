@@ -241,10 +241,12 @@ class MockSocket():
         self.ws = None
         self.should_heartbeat = True
         self.fake_workers = []
+        self.port = None
         self.launch_socket()
         self.handlers = {}
         while self.ws is None:
             time.sleep(0.05)
+        time.sleep(1)
 
     def send(self, packet):
         self.ws.send_message_to_all(packet)
@@ -288,7 +290,13 @@ class MockSocket():
             self.disconnected = True
 
         def run_socket(*args):
-            self.ws = WebsocketServer(3030, host='127.0.0.1')
+            port = 3030
+            while self.port is None:
+                try:
+                    self.ws = WebsocketServer(port, host='127.0.0.1')
+                    self.port = port
+                except OSError:
+                    port += 1
             self.ws.set_fn_client_left(on_disconnect)
             self.ws.set_fn_new_client(on_connect)
             self.ws.set_fn_message_received(on_message)
@@ -451,7 +459,8 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
             nonlocal nop_called  # noqa 999 we don't support py2
             nop_called = True
 
-        socket_manager = SocketManager('https://127.0.0.1', 3030, nop, nop,
+        socket_manager = SocketManager('https://127.0.0.1',
+                                       self.fake_socket.port, nop, nop,
                                        nop, TASK_GROUP_ID_1, 0.3, nop)
         self.assertTrue(self.fake_socket.connected)
         self.assertFalse(nop_called)
@@ -490,7 +499,8 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
             nonlocal server_death_called
             server_death_called = True
 
-        socket_manager = SocketManager('https://127.0.0.1', 3030, nop, nop,
+        socket_manager = SocketManager('https://127.0.0.1',
+                                       self.fake_socket.port, nop, nop,
                                        nop, TASK_GROUP_ID_1, 0.4, server_death)
         self.assertTrue(self.fake_socket.connected)
         self.assertFalse(nop_called)
@@ -525,7 +535,8 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
             nonlocal server_death_called
             server_death_called = True
 
-        socket_manager = SocketManager('https://127.0.0.1', 3030, nop, nop,
+        socket_manager = SocketManager('https://127.0.0.1',
+                                       self.fake_socket.port, nop, nop,
                                        nop, TASK_GROUP_ID_1, 0.4, server_death)
         self.assertTrue(self.fake_socket.connected)
         self.assertFalse(nop_called)
@@ -565,7 +576,8 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
             server_death_called = True
 
         with self.assertRaises(ConnectionRefusedError):
-            socket_manager = SocketManager('https://127.0.0.1', 3030, nop, nop,
+            socket_manager = SocketManager('https://127.0.0.1',
+                                           self.fake_socket.port, nop, nop,
                                            nop, TASK_GROUP_ID_1, 0.4,
                                            server_death)
             self.assertIsNone(socket_manager)
@@ -631,8 +643,9 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.server_died = False
 
         self.socket_manager = SocketManager(
-            'https://127.0.0.1', 3030, self.on_alive, self.on_message,
-            self.on_worker_death, TASK_GROUP_ID_1, 1, self.on_server_death)
+            'https://127.0.0.1', self.fake_socket.port, self.on_alive,
+            self.on_message, self.on_worker_death, TASK_GROUP_ID_1, 1,
+            self.on_server_death)
 
     def tearDown(self):
         self.socket_manager.shutdown()
@@ -641,7 +654,7 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
     def test_init_state(self):
         '''Ensure all of the initial state of the socket_manager is ready'''
         self.assertEqual(self.socket_manager.server_url, 'https://127.0.0.1')
-        self.assertEqual(self.socket_manager.port, 3030)
+        self.assertEqual(self.socket_manager.port, self.fake_socket.port)
         self.assertEqual(self.socket_manager.alive_callback, self.on_alive)
         self.assertEqual(self.socket_manager.message_callback, self.on_message)
         self.assertEqual(self.socket_manager.socket_dead_callback,

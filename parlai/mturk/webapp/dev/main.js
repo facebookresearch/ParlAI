@@ -6,5 +6,4 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 import App from './app.jsx';
-import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
 import './css/style.css';
