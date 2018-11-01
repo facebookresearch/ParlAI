@@ -90,6 +90,8 @@ class Seq2seqAgent(TorchGeneratorAgent):
         agent.add_argument('-soft', '--numsoftmax', default=1, type=int,
                            help='default 1, if greater then uses mixture of '
                                 'softmax (see arxiv.org/abs/1711.03953).')
+        agent.add_argument('-idr', '--input-dropout', type=float, default=0.0,
+                           help='Probability of replacing tokens with UNK in training.')
 
         super(cls, Seq2seqAgent).add_cmdline_args(argparser)
         Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
