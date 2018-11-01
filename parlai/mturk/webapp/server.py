@@ -450,11 +450,11 @@ class BonusHandler(BaseHandler):
         bonus_cents = data['bonus_cents']
         token = data['bonus_token']
 
-        amount = bonus_cents / 100.0
+        dollar_amount = bonus_cents / 100.0
         self.mturk_manager.pay_bonus(
-            worker_target, amount, assignment_id, reason, token)
+            worker_target, dollar_amount, assignment_id, reason, token)
         print('Bonused ${} to {} for reason {}'.format(
-            amount, worker_target, reason))
+            dollar_amount, worker_target, reason))
         data = {
             'status': True,
         }

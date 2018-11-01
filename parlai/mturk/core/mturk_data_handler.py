@@ -431,11 +431,12 @@ class MTurkDataHandler():
             conn = self._get_connection()
             c = conn.cursor()
             reason = "${} for {}\n".format(amount, reason)
-            amount = int(amount * 100)
+            # Bonus amount is stored in a cents int in the SQL table
+            cent_amount = int(amount * 100)
             c.execute("""UPDATE pairings SET bonus_amount = bonus_amount + ?,
                         bonus_text = bonus_text || ?
                          WHERE worker_id = ? AND assignment_id = ?;""",
-                      (amount, reason, worker_id, assignment_id))
+                      (cent_amount, reason, worker_id, assignment_id))
             conn.commit()
 
     def log_pay_extra_bonus(self, worker_id, assignment_id, amount, reason):
@@ -446,12 +447,13 @@ class MTurkDataHandler():
             conn = self._get_connection()
             c = conn.cursor()
             reason = "${} for {}\n".format(amount, reason)
-            amount = int(amount * 100)
+            # Bonus amount is stored in a cents int in the SQL table
+            cent_amount = int(amount * 100)
             c.execute("""UPDATE pairings
                         SET extra_bonus_amount = extra_bonus_amount + ?,
                         extra_bonus_text = extra_bonus_text || ?
                          WHERE worker_id = ? AND assignment_id = ?;""",
-                      (amount, reason, worker_id, assignment_id))
+                      (cent_amount, reason, worker_id, assignment_id))
             conn.commit()
 
     def log_bonus_paid(self, worker_id, assignment_id):
