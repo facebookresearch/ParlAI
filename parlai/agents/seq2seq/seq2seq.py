@@ -110,8 +110,8 @@ class Seq2seqAgent(TorchGeneratorAgent):
 
     def __init__(self, opt, shared=None):
         """Set up model."""
-        self.id = 'Seq2Seq'
         super().__init__(opt, shared)
+        self.id = 'Seq2Seq'
 
     def build_model(self, states=None):
         """Initialize model, override to change model setup."""
