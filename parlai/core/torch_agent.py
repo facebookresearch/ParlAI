@@ -955,10 +955,10 @@ class Beam(object):
             beam_scores = (softmax_probs +
                            self.scores.unsqueeze(1).expand_as(softmax_probs))
             for i in range(self.outputs[-1].size(0)):
-                current_hypo = [ii.tokenid.item() for ii in
-                                self.get_partial_hyp_from_tail(
-                                len(self.outputs) - 1, i)][::-1][1:]
                 if self.block_ngram > 0:
+                    current_hypo = [ii.tokenid.item() for ii in
+                                    self.get_partial_hyp_from_tail(
+                                    len(self.outputs) - 1, i)][::-1][1:]
                     current_ngrams = []
                     for ng in range(self.block_ngram):
                         ngrams = Beam.find_ngrams(current_hypo, ng)

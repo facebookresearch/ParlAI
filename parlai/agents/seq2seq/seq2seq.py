@@ -495,7 +495,8 @@ class Seq2seqAgent(TorchAgent):
             score = score.view(batch_size, beam_size, -1)
             score = F.log_softmax(score, dim=-1)
             for i, b in enumerate(beams):
-                b.advance(score[i])
+                if not b.done():
+                    b.advance(score[i])
             decoder_input = torch.cat(
                 [b.get_output_from_current_step() for b in beams]).unsqueeze(-1)
             permute_hidden_idx = torch.cat(
