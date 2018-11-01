@@ -113,6 +113,7 @@ class MockSocket():
         self.handlers = {}
         while self.ws is None:
             time.sleep(0.05)
+        time.sleep(1)
 
     def send(self, packet):
         self.ws.send_message_to_all(packet)
