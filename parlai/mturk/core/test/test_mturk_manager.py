@@ -61,9 +61,9 @@ class MockSocket():
         self.ws = None
         self.should_heartbeat = True
         self.fake_workers = []
+        self.port = None
         self.launch_socket()
         self.handlers = {}
-        self.port = None
         while self.ws is None:
             time.sleep(0.05)
 
