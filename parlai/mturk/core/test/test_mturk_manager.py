@@ -63,6 +63,7 @@ class MockSocket():
         self.fake_workers = []
         self.launch_socket()
         self.handlers = {}
+        self.port = None
         while self.ws is None:
             time.sleep(0.05)
 
@@ -108,7 +109,13 @@ class MockSocket():
             self.disconnected = True
 
         def run_socket(*args):
-            self.ws = WebsocketServer(3030, host='127.0.0.1')
+            port = 3030
+            while self.port is None:
+                try:
+                    self.ws = WebsocketServer(port, host='127.0.0.1')
+                    self.port = port
+                except OSError:
+                    port += 1
             self.ws.set_fn_client_left(on_disconnect)
             self.ws.set_fn_new_client(on_connect)
             self.ws.set_fn_message_received(on_message)
@@ -209,7 +216,7 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
             is_test=True,
         )
         self.mturk_manager._init_state()
-        self.mturk_manager.port = 3030
+        self.mturk_manager.port = self.fake_socket.port
         self.agent_1 = MTurkAgent(self.opt, self.mturk_manager, TEST_HIT_ID_1,
                                   TEST_ASSIGNMENT_ID_1, TEST_WORKER_ID_1)
         self.agent_2 = MTurkAgent(self.opt, self.mturk_manager, TEST_HIT_ID_2,
@@ -1117,7 +1124,7 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
             is_test=True,
         )
         self.mturk_manager._init_state()
-        self.mturk_manager.port = 3030
+        self.mturk_manager.port = self.fake_socket.port
         self.mturk_manager._onboard_new_agent = mock.MagicMock()
         self.mturk_manager._wait_for_task_expirations = mock.MagicMock()
         self.mturk_manager.task_group_id = 'TEST_GROUP_ID'

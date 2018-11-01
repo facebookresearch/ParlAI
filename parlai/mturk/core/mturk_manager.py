@@ -499,8 +499,8 @@ class MTurkManager():
             # isn't violating our uniqueness constraints
             completed_assignments = worker_state.completed_assignments()
             max_hits = self.max_hits_per_worker
-            if ((self.is_unique and completed_assignments > 0) or
-                    (max_hits != 0 and completed_assignments > max_hits)):
+            if ((self.is_unique and completed_assignments > 0)
+                    or (max_hits != 0 and completed_assignments > max_hits)):
                 text = (
                     'You have already participated in this HIT the maximum '
                     'number of times. This HIT is now expired. '
@@ -588,11 +588,11 @@ class MTurkManager():
                 # should resend the messages already in the conversation
                 if not conversation_id:
                     self._restore_agent_state(worker_id, assign_id)
-            elif (agent.get_status() == AssignState.STATUS_DISCONNECT or
-                  agent.get_status() == AssignState.STATUS_DONE or
-                  agent.get_status() == AssignState.STATUS_EXPIRED or
-                  agent.get_status() == AssignState.STATUS_RETURNED or
-                  agent.get_status() == AssignState.STATUS_PARTNER_DISCONNECT):
+            elif (agent.get_status() == AssignState.STATUS_PARTNER_DISCONNECT
+                  or agent.get_status() == AssignState.STATUS_DONE
+                  or agent.get_status() == AssignState.STATUS_EXPIRED
+                  or agent.get_status() == AssignState.STATUS_RETURNED
+                  or agent.get_status() == AssignState.STATUS_DISCONNECT):
                 # inform the connecting user in all of these cases that the
                 # task is no longer workable, use appropriate message
                 data = agent.get_inactive_command_data()
@@ -827,8 +827,8 @@ class MTurkManager():
                 is_sandbox=self.opt['is_sandbox']):
             raise SystemExit('Insufficient funds')
 
-        if ((not self.opt['is_sandbox']) and
-                (total_cost > 100 or self.opt['reward'] > 1)):
+        if ((not self.opt['is_sandbox'])
+                and (total_cost > 100 or self.opt['reward'] > 1)):
             confirm_string = '$%.2f' % total_cost
             expected_cost = total_cost / HIT_MULT
             expected_string = '$%.2f' % expected_cost
@@ -1285,9 +1285,9 @@ class MTurkManager():
         )
 
         agent = self.worker_manager._get_agent(receiver_id, assignment_id)
-        if (data['text'] != data_model.COMMAND_CHANGE_CONVERSATION and
-                data['text'] != data_model.COMMAND_RESTORE_STATE and
-                agent is not None):
+        if (data['text'] != data_model.COMMAND_CHANGE_CONVERSATION
+                and data['text'] != data_model.COMMAND_RESTORE_STATE
+                and agent is not None):
             # Append last command, as it might be necessary to restore state
             agent.set_last_command(packet.data)
 
