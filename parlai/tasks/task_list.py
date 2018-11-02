@@ -706,7 +706,25 @@ task_list = [
             "200k images from the YFCC100m dataset "
             "(https://multimediacommons.wordpress.com/yfcc100m-core-dataset/), "
             "with captions conditioned on one of 215 personalities. See "
-            "https://arxiv.org for more information."
+            "https://arxiv.org/abs/1810.10665 for more information."
+        ),
+        "notes": (
+            "If you have already downloaded the images, please specify with "
+            "the `--yfcc-path` flag, as the image download script takes a "
+            "very long time to run"
+        ),
+    },
+    {
+        "id": "Image_Chat",
+        "display_name": "Image_Chat",
+        "task": "image_chat",
+        "tags": ["All", "Visual", "ChitChat"],
+        "description": (
+            "202k dialogues and 401k utterances over 202k images from "
+            "the YFCC100m dataset"
+            "(https://multimediacommons.wordpress.com/yfcc100m-core-dataset/)"
+            "using 215 possible personality traits"
+            "see https://klshuster.github.io/image_chat/ for more information."
         ),
         "notes": (
             "If you have already downloaded the images, please specify with "
