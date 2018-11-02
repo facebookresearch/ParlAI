@@ -18,6 +18,7 @@ import torch.nn.functional as F
 from parlai.core.utils import NEAR_INF
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 
+
 def _transpose_hidden_state(hidden_state):
     """
     Transpose the hidden state so that batch is the first dimension.

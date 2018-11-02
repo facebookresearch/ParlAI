@@ -352,7 +352,7 @@ def flatten(teacher, context_length=-1, include_labels=True):
             current.clear()
             context.clear()
         return data
-    except MemoryError as ex:
+    except MemoryError:
         raise MemoryError('Ran out of memory building flattened data batches. '
                           'Try using --context-length set to a small value to '
                           'limit the length of each flattened example, '

@@ -21,7 +21,7 @@ See below for documentation on each specific tool.
 from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import set_namedtuple_defaults, argsort, padded_tensor
+from parlai.core.utils import set_namedtuple_defaults, argsort, padded_tensor, NEAR_INF
 
 try:
     import torch
@@ -31,6 +31,8 @@ except ImportError:
 
 from torch import optim
 from collections import deque, namedtuple, Counter
+from operator import attrgetter
+import math
 import json
 import random
 
