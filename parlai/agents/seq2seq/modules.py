@@ -7,8 +7,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 """Module files as torch.nn.Module subclasses for Seq2seqAgent."""
 
-import math
-
 import torch
 import torch.nn as nn
 from torch.nn.parameter import Parameter
