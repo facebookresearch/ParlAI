@@ -923,6 +923,7 @@ class Beam(object):
         self.n_best_counter = 0
         self.min_n_best = min_n_best
         self.block_ngram = block_ngram
+        self.partial_hyps = [[self.bos] for i in range(beam_size)]
 
     @staticmethod
     def find_ngrams(input_list, n):
@@ -956,9 +957,7 @@ class Beam(object):
                            self.scores.unsqueeze(1).expand_as(softmax_probs))
             for i in range(self.outputs[-1].size(0)):
                 if self.block_ngram > 0:
-                    current_hypo = [ii.tokenid.item() for ii in
-                                    self.get_partial_hyp_from_tail(
-                                    len(self.outputs) - 1, i)][::-1][1:]
+                    current_hypo = self.partial_hyps[i][1:]
                     current_ngrams = []
                     for ng in range(self.block_ngram):
                         ngrams = Beam.find_ngrams(current_hypo, ng)
@@ -989,6 +988,7 @@ class Beam(object):
 
         self.outputs.append(tok_ids)
         self.bookkeep.append(hyp_ids)
+        self.partial_hyps = [self.partial_hyps[hyp_ids[i]] + [tok_ids[i].item()] for i in range(self.beam_size)]
 
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
