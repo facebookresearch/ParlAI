@@ -988,7 +988,8 @@ class Beam(object):
 
         self.outputs.append(tok_ids)
         self.bookkeep.append(hyp_ids)
-        self.partial_hyps = [self.partial_hyps[hyp_ids[i]] + [tok_ids[i].item()] for i in range(self.beam_size)]
+        self.partial_hyps = [self.partial_hyps[hyp_ids[i]] +
+                             [tok_ids[i].item()] for i in range(self.beam_size)]
 
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
