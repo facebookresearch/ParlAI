@@ -101,7 +101,8 @@ class MTurkManager():
         self.opt = opt
         if self.opt['unique_worker']:
             self.opt['allowed_conversations'] = 1
-        elif self.opt['max_hits_per_worker'] != 0 and self.opt['allowed_conversations'] == 0:
+        elif self.opt['max_hits_per_worker'] != 0 and \
+                self.opt['allowed_conversations'] == 0:
             self.opt['allowed_conversations'] = self.opt['max_hits_per_worker']
         self.server_url = None
         self.topic_arn = None
@@ -133,6 +134,24 @@ class MTurkManager():
         self.db_logger = None
         self.logging_permitted = False
         self.task_state = self.STATE_CREATED
+
+    @staticmethod
+    def make_taskless_instance(is_sandbox=False):
+        """Creates an instance without a task to be used for approving or
+        rejecting assignments, blocking workers, and managing qualifications
+        """
+        opt = {
+            'unique_worker': False,
+            'max_hits_per_worker': 0,
+            'num_conversations': 0,
+            'is_sandbox': is_sandbox,
+            'is_debug': False,
+            'log_level': 30,
+        }
+        manager = MTurkManager(opt, [])
+        manager.is_shutdown = True
+        mturk_utils.setup_aws_credentials()
+        return manager
 
     # Helpers and internal manager methods #
 
@@ -936,7 +955,7 @@ class MTurkManager():
                 should_print=True
             )
         if self.db_logger is not None:
-            self.db_logger.log_new_run(self.required_hits)
+            self.db_logger.log_new_run(self.required_hits, self.opt['task'])
         self.task_state = self.STATE_INIT_RUN
 
     def ready_to_accept_workers(self, timeout_seconds=None):
@@ -1527,10 +1546,11 @@ class MTurkManager():
                 # TODO get confirmation that the HIT is acutally expired
                 mturk_utils.expire_hit(self.is_sandbox, hit_id)
 
-    def approve_work(self, assignment_id):
+    def approve_work(self, assignment_id, override_rejection=False):
         """approve work for a given assignment through the mturk client"""
         client = mturk_utils.get_mturk_client(self.is_sandbox)
-        client.approve_assignment(AssignmentId=assignment_id)
+        client.approve_assignment(
+            AssignmentId=assignment_id, OverrideRejection=override_rejection)
         if self.db_logger is not None:
             self.db_logger.log_approve_assignment(assignment_id)
         shared_utils.print_and_log(
@@ -1688,6 +1708,9 @@ class MTurkManager():
             Reason=reason,
             UniqueRequestToken=unique_request_token
         )
+        if self.db_logger is not None:
+            self.db_logger.log_pay_extra_bonus(
+                worker_id, assignment_id, bonus_amount, reason)
         shared_utils.print_and_log(
             logging.INFO,
             'Paid ${} bonus to WorkerId: {}'.format(

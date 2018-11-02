@@ -274,7 +274,7 @@ class TestMTurkAgent(unittest.TestCase):
         self.assertTrue(self.turk_agent.recieved_packets[MESSAGE_ID_1])
         self.assertFalse(self.turk_agent.msg_queue.empty())
         returned_act = self.turk_agent.get_new_act_message()
-        self.assertEquals(returned_act, ACT_1)
+        self.assertEqual(returned_act, ACT_1)
 
         # Repeat act is ignored
         self.turk_agent.put_data(MESSAGE_ID_1, ACT_1)
@@ -319,7 +319,7 @@ class TestMTurkAgent(unittest.TestCase):
         self.turk_agent.put_data(MESSAGE_ID_1, ACT_1)
         returned_act = self.turk_agent.act(blocking=False)
         self.assertIsNone(self.turk_agent.message_request_time)
-        self.assertEquals(returned_act, ACT_1)
+        self.assertEqual(returned_act, ACT_1)
         self.mturk_manager.send_command.assert_called_once()
 
         # non-Blocking timeout check
@@ -331,7 +331,7 @@ class TestMTurkAgent(unittest.TestCase):
             returned_act = self.turk_agent.act(timeout=0.07, blocking=False)
         self.mturk_manager.send_command.assert_called_once()
         self.mturk_manager.handle_turker_timeout.assert_called_once()
-        self.assertEquals(
+        self.assertEqual(
             returned_act['text'], self.turk_agent.TIMEOUT_MESSAGE)
 
         # Blocking timeout check
@@ -340,7 +340,7 @@ class TestMTurkAgent(unittest.TestCase):
         returned_act = self.turk_agent.act(timeout=0.07)
         self.mturk_manager.send_command.assert_called_once()
         self.mturk_manager.handle_turker_timeout.assert_called_once()
-        self.assertEquals(
+        self.assertEqual(
             returned_act['text'], self.turk_agent.TIMEOUT_MESSAGE)
 
 
