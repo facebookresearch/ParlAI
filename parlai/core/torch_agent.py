@@ -185,7 +185,7 @@ class TorchAgent(Agent):
                  'the dictionary during initialization.')
         agent.add_argument(
             '--use-reply', default='label',
-            choices = ['label', 'model'],
+            choices=['label', 'model'],
             help='Which previous replies to use as history. If label, use '
             'gold dataset replies. If model, use model\'s own replies.')
         agent.add_argument(
@@ -796,7 +796,7 @@ class TorchAgent(Agent):
 
         This includes remembering the past history of the conversation.
         """
-        reply = self.last_reply(use_label=(self.opt['use_reply']=='label'))
+        reply = self.last_reply(use_label=(self.opt['use_reply'] == 'label'))
         self.observation = self.get_dialog_history(
             observation, reply=reply, add_person_tokens=self.add_person_tokens,
             add_p1_after_newln=self.opt['add_p1_after_newln'])
