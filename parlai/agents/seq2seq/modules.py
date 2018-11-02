@@ -94,7 +94,7 @@ class Seq2seq(TorchGeneratorModel):
             shared_lt=shared_lt, shared_rnn=shared_rnn,
             unknown_idx=unknown_idx, input_dropout=input_dropout)
 
-        shared_weight = (self.decoder.lt.weight  # use embeddings for projection
+        shared_weight = (self.decoder.lt  # use embeddings for projection
                          if lookuptable in ('dec_out', 'all') else None)
         self.output = OutputLayer(
             num_features, embeddingsize, hiddensize, dropout=dropout,
@@ -135,7 +135,14 @@ class Seq2seq(TorchGeneratorModel):
         return enc_out, hidden, attn_mask
 
     def reorder_decoder_incremental_state(self, incremental_state, inds):
-        return None
+        if torch.is_tensor(incremental_state):
+            # gru or vanilla rnn
+            return torch.index_select(incremental_state, 0, inds).contiguous()
+        elif isinstance(incremental_state, tuple):
+            return tuple(
+                self.reorder_decoder_incremental_state(x, inds)
+                for x in incremental_state
+            )
 
 
 class UnknownDropout(nn.Module):
@@ -225,20 +232,12 @@ class RNNEncoder(nn.Module):
 
         encoder_output, hidden = self.rnn(xes)
         if packed:
-            encoder_output, _ = pad_packed_sequence(encoder_output,
-                                                    batch_first=True)
-
-        if encoder_output.size(1) != xs.size(1):
-            # in case of multi-gpu settings, the split across GPUs may cause the
-            # a batch to have extra pad characters on its inputs. pad_packed_sequence
-            # produces a tensor only as long as non-pad characters. When we try to
-            # glue the parallel encodings later, we have to have encodings all of
-            # the same length, so we might have to check for some extra glue here.
-            extend = xs.size(1) - encoder_output.size(1)
-            encoder_output = torch.cat([
-                encoder_output,
-                encoder_output.new(bsz, extend, self.hsz).zero_()
-            ], dim=1)
+            # total_length to make sure we give the proper length in the case
+            # of multigpu settings.
+            # https://pytorch.org/docs/stable/notes/faq.html#pack-rnn-unpack-with-data-parallelism
+            encoder_output, _ = pad_packed_sequence(
+                encoder_output, batch_first=True, total_length=xs.size(1)
+            )
 
         if self.dirs > 1:
             # project to decoder dimension by taking sum of forward and back
@@ -316,6 +315,11 @@ class RNNDecoder(nn.Module):
             # state as our start state
             hidden = _transpose_hidden_state(enc_hidden)
 
+        if isinstance(hidden, tuple):
+            hidden = tuple(x.contiguous() for x in hidden)
+        else:
+            hidden = hidden.contiguous()
+
         # sequence indices => sequence embeddings
         seqlen = xs.size(1)
         xes = self.dropout(self.lt(xs))
@@ -344,6 +348,11 @@ class RNNDecoder(nn.Module):
             output = torch.cat(output, dim=1).to(xes.device)
 
         return output, _transpose_hidden_state(new_hidden)
+
+
+class IdentityLayer(nn.Module):
+    def forward(self, x):
+        return x
 
 
 class OutputLayer(nn.Module):
@@ -380,17 +389,11 @@ class OutputLayer(nn.Module):
         if shared_weight is None:
             # just a regular linear layer
             self.e2s = nn.Linear(embeddingsize, num_features, bias=True)
+            self.bias = self.e2s.bias
         else:
             # use shared weights and a bias layer instead
-            if padding_idx == 0:
-                num_features -= 1  # don't include padding
-                shared_weight = shared_weight.narrow(0, 1, num_features)
-            elif padding_idx > 0:
-                raise RuntimeError('nonzero pad_idx not yet implemented')
-            self.weight = Parameter(shared_weight)
-            self.bias = Parameter(torch.Tensor(num_features))
-            self.reset_parameters()
-            self.e2s = lambda x: F.linear(x, self.weight, self.bias)
+            self.e2s = shared_weight
+            self.bias = Parameter(torch.Tensor(num_features).zero_())
 
         self.numsoftmax = numsoftmax
         if numsoftmax > 1:
@@ -406,13 +409,7 @@ class OutputLayer(nn.Module):
                 self.o2e = nn.Linear(hiddensize, embeddingsize, bias=True)
             else:
                 # no need for any transformation here
-                self.o2e = lambda x: x
-
-    def reset_parameters(self):
-        """Reset bias param."""
-        if hasattr(self, 'bias'):
-            stdv = 1. / math.sqrt(self.bias.size(0))
-            self.bias.data.uniform_(-stdv, stdv)
+                self.o2e = IdentityLayer()
 
     def forward(self, input):
         """Compute scores from inputs.
@@ -432,7 +429,7 @@ class OutputLayer(nn.Module):
             latent = self.latent(input)
             active = self.dropout(self.activation(latent))
             # esz => num_features
-            logit = self.e2s(active.view(-1, self.esz))
+            logit = F.linear(active.view(-1, self.esz), self.e2s.weight, self.bias)
 
             # calculate priors: distribution over which softmax scores to use
             # hsz => numsoftmax
@@ -448,13 +445,10 @@ class OutputLayer(nn.Module):
             # hsz => esz, good time for dropout
             e = self.dropout(self.o2e(input))
             # esz => num_features
-            scores = self.e2s(e)
+            scores = F.linear(e, self.e2s.weight, self.bias)
 
         if self.padding_idx == 0:
-            pad_score = scores.new(scores.size(0),
-                                   scores.size(1),
-                                   1).fill_(-NEAR_INF)
-            scores = torch.cat([pad_score, scores], dim=-1)
+            scores[:, :, 0] = -NEAR_INF
 
         return scores
 
