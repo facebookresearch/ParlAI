@@ -137,9 +137,36 @@ class TorchGeneratorModel(nn.Module):
 
         :return: The re-ordered encoder states. It should be of the same type as
             encoder states, and it must be a valid input to the decoder.
+        :rtype: model specific
         """
         raise NotImplementedError(
             "reorder_encoder_states must be implemented by the model"
+        )
+
+    def reorder_decoder_incremental_state(self, incremental_state, inds):
+        """Reorder incremental state for the decoder.
+
+        Used to expand selected beams in beam_search. Unlike reorder_encoder_states,
+        implementing this method is optional. However, without incremental decoding,
+        decoding a single beam becomes O(n^2) instead of O(n), which can make
+        beam search impractically slow.
+
+        In order to fall back to non-incremental decoding, just return None from this
+        method.
+
+        :param incremental_state: second output of model.decoder
+        :type incremental_state: model specific
+        :param inds: indices to select and reorder over.
+        :type inds: LongTensor[n]
+
+        :return: The re-ordered decoder incremental states. It should be the same
+            type as incremental_state, and usable as an input to the decoder. This
+            method should return None if the model does not support incremental
+            decoding.
+        :rtype: model specific
+        """
+        raise NotImplementedError(
+            "reorder_decoder_incremental_state must be implemented by model"
         )
 
     def forward(self, xs, ys=None, cand_params=None, prev_enc=None, maxlen=None):
@@ -590,6 +617,13 @@ class TorchGeneratorAgent(TorchAgent):
             for i, b in enumerate(beams):
                 if not b.done():
                     b.advance(score[i])
+            incr_state_inds = torch.cat(
+                [beam_size * i +
+                    b.get_backtrack_from_current_step() for i, b in enumerate(beams)])
+            incr_state = model.reorder_decoder_incremental_state(
+                incr_state, incr_state_inds
+            )
+            decoder_input = torch.index_select(decoder_input, 0, incr_state_inds)
             selection = torch.cat(
                 [b.get_output_from_current_step() for b in beams]).unsqueeze(-1)
             decoder_input = torch.cat([decoder_input, selection], dim=-1)

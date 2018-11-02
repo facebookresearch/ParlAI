@@ -134,6 +134,9 @@ class Seq2seq(TorchGeneratorModel):
 
         return enc_out, hidden, attn_mask
 
+    def reorder_decoder_incremental_state(self, incremental_state, inds):
+        return None
+
 
 class UnknownDropout(nn.Module):
     """With set frequency, replaces tokens with unknown token.
@@ -300,7 +303,6 @@ class RNNDecoder(nn.Module):
         """
         enc_state, enc_hidden, attn_mask = encoder_output
         # in case of multi gpu, we need to transpose back out the hidden state
-        enc_hidden = _transpose_hidden_state(enc_hidden)
         attn_params = (enc_state, attn_mask)
 
         if incremental_state is not None:
@@ -312,7 +314,7 @@ class RNNDecoder(nn.Module):
         else:
             # starting fresh, or generating from scratch. Use the encoder hidden
             # state as our start state
-            hidden = enc_hidden
+            hidden = _transpose_hidden_state(enc_hidden)
 
         # sequence indices => sequence embeddings
         seqlen = xs.size(1)
