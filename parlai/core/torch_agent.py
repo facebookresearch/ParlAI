@@ -796,7 +796,8 @@ class TorchAgent(Agent):
 
         This includes remembering the past history of the conversation.
         """
-        reply = self.last_reply(use_label=(self.opt.get('use_reply', 'label') == 'label'))
+        reply = self.last_reply(
+            use_label=(self.opt.get('use_reply', 'label') == 'label'))
         self.observation = self.get_dialog_history(
             observation, reply=reply, add_person_tokens=self.add_person_tokens,
             add_p1_after_newln=self.opt.get('add_p1_after_newln', False))
