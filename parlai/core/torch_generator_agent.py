@@ -501,7 +501,7 @@ class TorchGeneratorAgent(TorchAgent):
                 cands, _ = padded_tensor(
                     batch.candidate_vecs[i], self.NULL_IDX, self.use_cuda
                 )
-                scores = self.model.output(self.model.decode_forced(cands, enc))
+                scores = self.model.decode_forced(cands, enc)
                 cand_losses = F.cross_entropy(
                     scores.view(num_cands * cands.size(1), -1),
                     cands.view(-1),
