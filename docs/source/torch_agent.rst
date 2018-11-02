@@ -5,20 +5,22 @@
   LICENSE file in the root directory of this source tree. An additional grant
   of patent rights can be found in the PATENTS file in the same directory.
 
-core.torch_agent
+Torch Agent
 ===================================
 .. automodule:: parlai.core.torch_agent
   :members:
   :exclude-members: __dict__,__weakref__
 
 
-core.torch_ranker_agent
+Torch Ranker Agent
 ===================================
 .. automodule:: parlai.core.torch_ranker_agent
   :members:
+  :exclude-members: __dict__,__weakref__
 
 
-core.torch_generator_agent
+Torch Generator Agent
 ===================================
 .. automodule:: parlai.core.torch_generator_agent
   :members:
+  :exclude-members: __dict__,__weakref__

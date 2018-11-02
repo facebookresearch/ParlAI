@@ -13,7 +13,7 @@ from torch import nn
 
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import round_sigfigs, padded_3d
+from parlai.core.utils import round_sigfigs, padded_3d, warn_once
 
 
 class TorchRankerAgent(TorchAgent):
@@ -192,16 +192,16 @@ class TorchRankerAgent(TorchAgent):
             assert label_vecs.dim() == 2
 
         if source == 'batch':
-            self._warn_once(
-                flag=(mode + '_batch_candidates'),
-                msg=('[ Executing {} mode with batch labels as set of candidates. ]'
-                     ''.format(mode)))
+            warn_once(
+                '[ Executing {} mode with batch labels as set of candidates. ]'
+                ''.format(mode)
+            )
             if batchsize == 1:
-                self._warn_once(
-                    flag=(mode + '_batchsize_1'),
-                    msg=("[ Warning: using candidate source 'batch' and observed a "
-                         "batch of size 1. This may be due to uneven batch sizes at "
-                         "the end of an epoch. ]"))
+                warn_once(
+                    "[ Warning: using candidate source 'batch' and observed a "
+                    "batch of size 1. This may be due to uneven batch sizes at "
+                    "the end of an epoch. ]"
+                )
             if label_vecs is None:
                 raise ValueError(
                     "If using candidate source 'batch', then batch.label_vec cannot be "
@@ -212,10 +212,10 @@ class TorchRankerAgent(TorchAgent):
             label_inds = label_vecs.new_tensor(range(batchsize))
 
         elif source == 'inline':
-            self._warn_once(
-                flag=(mode + '_inline_candidates'),
-                msg=('[ Executing {} mode with provided inline set of candidates ]'
-                     ''.format(mode)))
+            warn_once(
+                '[ Executing {} mode with provided inline set of candidates ]'
+                ''.format(mode)
+            )
             if batch.candidate_vecs is None:
                 raise ValueError(
                     "If using candidate source 'inline', then batch.candidate_vecs "
@@ -232,10 +232,10 @@ class TorchRankerAgent(TorchAgent):
                     label_inds[i] = self._find_match(cand_vecs[i], label_vec_pad)
 
         elif source == 'fixed':
-            self._warn_once(
-                flag=(mode + '_fixed_candidates'),
-                msg=("[ Executing {} mode with a common set of fixed candidates "
-                     "(n = {}). ]".format(mode, len(self.fixed_candidates))))
+            warn_once(
+                "[ Executing {} mode with a common set of fixed candidates "
+                "(n = {}). ]".format(mode, len(self.fixed_candidates))
+            )
             if self.fixed_candidates is None:
                 raise ValueError(
                     "If using candidate source 'fixed', then you must provide the path "
@@ -249,10 +249,10 @@ class TorchRankerAgent(TorchAgent):
                     label_inds[i] = self._find_match(cand_vecs, label_vec)
 
         elif source == 'vocab':
-            self._warn_once(
-                flag=(mode + '_vocab_candidates'),
-                msg=('[ Executing {} mode with tokens from vocabulary as candidates. ]'
-                     ''.format(mode)))
+            warn_once(
+                '[ Executing {} mode with tokens from vocabulary as candidates. ]'
+                ''.format(mode)
+            )
             cands = self.vocab_candidates
             cand_vecs = self.vocab_candidate_vecs
             if label_vecs is not None:
@@ -440,13 +440,3 @@ class TorchRankerAgent(TorchAgent):
         """
         return [self._vectorize_text(cand, truncate=self.truncate, truncate_left=False)
                 for cand in cands_batch]
-
-    def _warn_once(self, flag, msg):
-        """
-        :param flag: The name of the flag
-        :param msg: The message to display
-        """
-        warn_flag = '__warned_' + flag
-        if not hasattr(self, warn_flag):
-            setattr(self, warn_flag, True)
-            print(msg)

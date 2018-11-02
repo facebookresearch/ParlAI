@@ -12,6 +12,7 @@ import math
 import os
 import random
 import time
+import warnings
 
 # some of the utility methods are helpful for Torch
 try:
@@ -1050,3 +1051,19 @@ def argsort(keys, *lists, descending=False):
         else:
             output.append([lst[i] for i in ind_sorted])
     return output
+
+
+_seen_warnings = set()
+
+
+def warn_once(msg, warningtype=None):
+    """
+    Raise a warning, but only once.
+
+    :param str msg: Message to display
+    :param Warning warningtype: Type of warning, e.g. DeprecationWarning
+    """
+    global _seen_warnings
+    if msg not in _seen_warnings:
+        _seen_warnings.add(msg)
+        warnings.warn(msg, warningtype)

@@ -8,9 +8,8 @@
 
 
 """
-**BETA**: This module is in Beta. Feedback is most welcome, and the API is highly
-likely to change.
-
+**BETA**: This module is in beta. Feedback is most welcome, and the API may change
+underneath you.
 
 Generic Pytorch-based Generator agent. Implements quite a bit of boilerplate,
 including Beam search.
@@ -20,8 +19,6 @@ Contains the following utilities:
 * TorchGeneratorAgent class, which serves as a useful parent for generative torch
   agents.
 * Beam class which provides some generic beam functionality for classes to use
-
-TODO: Docs.
 """
 
 import os
@@ -35,11 +32,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.core.torch_agent import TorchAgent, Output
-from parlai.core.utils import NEAR_INF, padded_tensor, round_sigfigs
+from parlai.core.utils import NEAR_INF, padded_tensor, round_sigfigs, warn_once
 from parlai.core.thread_utils import SharedTable
-
-# warn the user if they run with --skip-generation, but only once
-_WARNING_SEEN = False
 
 
 class TorchGeneratorModel(nn.Module):
@@ -68,25 +62,38 @@ class TorchGeneratorModel(nn.Module):
         return self.START.detach().expand(bsz, 1)
 
     def greedy_decode(self, bsz, encoder_states, maxlen):
-        """Greedy search"""
+        """Greedy search
+
+        :param int bsz: Batch size. Because encoder_states is model-specific, it
+            cannot infer this automatically.
+        :param encoder_states: Output of the encoder model.
+        :type encoder_states: model specific
+        :param int maxlen: Maximum decoding length
+
+        :return: The decoded sequence
+        :rtype: LongTensor[bsz, maxlen]
+        """
         xs = self._starts(bsz)
         incr_state = None
         for _ in range(maxlen):
+            # todo, break early if all beams saw EOS
             scores, incr_state = self.decoder(xs, encoder_states, incr_state)
             _, preds = self.output(scores).max(dim=-1)
             xs = torch.cat([xs, preds], dim=1)
         return xs
 
     def decode_forced(self, ys, encoder_states):
-        """Decode with correct sequence (i.e. maximum likelihood). Useful
-        for training, or ranking fixed candidates.
+        """Decode with a fixed, true sequence, computing loss. Useful for
+        training, or ranking fixed candidates.
 
-        :param Tensor[int](bsz x time): the prediction targets. Contains both
+        :param ys: the prediction targets. Contains both
             the start and end tokens.
+        :type ys: LongTensor[bsz, time]
         :param encoder_states: Output of the encoder. Model specific types.
+        :type encoder_states: model specific
 
-        :return: loss scores of each sample
-        :rtype Tensor[float](bsz x 1):
+        :return: logits of the vocabulary distribution for all words in sequences
+        :rtype: FloatTensor[bsz, ys, vocab]
         """
         bsz = ys.size(0)
         seqlen = ys.size(1)
@@ -98,13 +105,15 @@ class TorchGeneratorModel(nn.Module):
     def reorder_encoder_states(self, encoder_states, indices):
         """Reorder encoder states according to a new set of indices.
 
-        This is an abstract method, and must be implemented by the user.
+        This is an abstract method, and *must* be implemented by the user.
 
         Its purpose is to provide beam search with a model-agnostic interface for
         beam search. For example, this method is used to sort hypotheses,
         expand beams, etc.
 
         For example, assume that encoder_states is an bsz x 1 tensor of values
+
+        .. code-block:: python
 
             indices = [0, 2, 2]
             encoder_states = [[0.1]
@@ -113,12 +122,18 @@ class TorchGeneratorModel(nn.Module):
 
         then the output will be
 
+        .. code-block:: python
+
             output = [[0.1]
                       [0.3]
                       [0.3]]
 
+
         :param encoder_states: output from encoder. type is model specific.
-        :param list[int] indices: the indices to select over.
+        :type encoder_states: model specific
+        :param indices: the indices to select over. The user must support
+            non-tensor inputs.
+        :type indices: list[int]
 
         :return: The re-ordered encoder states. It should be of the same type as
             encoder states, and it must be a valid input to the decoder.
@@ -130,9 +145,11 @@ class TorchGeneratorModel(nn.Module):
     def forward(self, xs, ys=None, cand_params=None, prev_enc=None, maxlen=None):
         """Get output predictions from the model.
 
-        :param LongTensor(bsz x seqlen) xs: input to the encoder
-        :param LongTensor(bsz x outlen) ys: Expected output from the decoder. Used
+        :param xs: input to the encoder
+        :type xs: LongTensor[bsz, seqlen]
+        :param ys: Expected output from the decoder. Used
             for teacher forcing to calculate loss.
+        :type ys: LongTensor[bsz, outlen]
         :param prev_enc: if you know you'll pass in the same xs multiple times,
             you can pass in the encoder output from the last forward pass to skip
             recalcuating the same encoder output.
@@ -140,14 +157,14 @@ class TorchGeneratorModel(nn.Module):
             length of the longest label this model has seen. ignored when ys is not
             None.
 
-        :return: (scores, candidate scores, encoder states) tuple
+        :return: (scores, candidate_scores, encoder_states) tuple
 
             - scores contains the model's predicted token scores.
-              (bsz x seqlen x num_features)
-            - candidate scores are the score the model assigned to each candidate
-              (bsz x num_cands)
-            - encoder states are the (output, hidden, attn_mask) states from the
-              encoder. feed this back in to skip encoding on the next call.
+              (FloatTensor[bsz, seqlen, num_features])
+            - candidate_scores are the score the model assigned to each candidate.
+              (FloatTensor[bsz, num_cands])
+            - encoder_states are the output of model.encoder. Model specific types.
+              Feed this back in to skip encoding on the next call.
         """
         if ys is not None:
             # keep track of longest label we've ever seen
@@ -171,9 +188,13 @@ class TorchGeneratorModel(nn.Module):
 
 
 class TorchGeneratorAgent(TorchAgent):
-    """Abstract Generator agent.
+    """Abstract Generator agent. Only meant to be extended.
 
-    TODO: write docs"""
+    TorchGeneratorAgent aims to handle much of the bookkeeping and
+    infrastructure work for any generative models, like seq2seq or transformer.
+    It  implements the train_step and eval_step. The only requirement is that
+    your model *must* implemented the interface TorchGeneratorModel interface.
+    """
     @classmethod
     def add_cmdline_args(cls, argparser):
         agent = argparser.add_argument_group('Torch Generator Agent')
@@ -275,7 +296,20 @@ class TorchGeneratorAgent(TorchAgent):
                 new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
+    def build_model(self):
+        """Construct the model. The model should be set to self.model, and support
+        the TorchGeneratorModel interface."""
+        raise NotImplementedError(
+            "AbstractClass: build_model must be implemented by the user."
+        )
+
     def build_criterion(self):
+        """Constructs the loss function. By default torch.nn.CrossEntropyLoss.
+        The criterion function should be set to self.criterion.
+
+        If overridden, this model should (1) handle calling cuda and (2)
+            produce a sum that can be used for a per-token loss.
+        """
         self.criterion = nn.CrossEntropyLoss(
             ignore_index=self.NULL_IDX, reduction='sum'
         )
@@ -425,14 +459,10 @@ class TorchGeneratorAgent(TorchAgent):
         cand_scores = None
 
         if self.skip_generation:
-            global _WARNING_SEEN
-            if not _WARNING_SEEN:
-                _WARNING_SEEN = True
-                import warnings
-                warnings.warn(
-                    "--skip-generation does not produce accurate metrics beyond ppl",
-                    RuntimeWarning
-                )
+            warn_once(
+                "--skip-generation does not produce accurate metrics beyond ppl",
+                RuntimeWarning
+            )
             out = self.model(batch.text_vec, batch.label_vec)
             scores = out[0]
             _, preds = scores.max(2)
@@ -472,6 +502,7 @@ class TorchGeneratorAgent(TorchAgent):
             self.metrics['num_tokens'] += target_tokens
 
         cand_choices = None
+        # TODO: abstract out the scoring here
         if self.rank_candidates:
             # compute roughly ppl to rank candidates
             cand_choices = []
@@ -584,7 +615,7 @@ class TorchGeneratorAgent(TorchAgent):
         return beam_preds_scores, n_best_beam_preds_scores, beams
 
 
-class mydefaultdict(defaultdict):
+class _mydefaultdict(defaultdict):
     """Get function also uses default_factory for this defaultdict.
 
     This makes dict.get() behave like dict[] if a default is not provided.
@@ -653,7 +684,7 @@ class PerplexityEvaluatorAgent(TorchGeneratorAgent):
         scores, self.prev_enc = out
         # scores is bsz x seqlen x num_words, so select probs of current index
         probs = F.softmax(scores.select(1, -1), dim=1).squeeze()
-        dist = mydefaultdict(lambda: 1e-7)  # default probability for any token
+        dist = _mydefaultdict(lambda: 1e-7)  # default probability for any token
         for i in range(len(probs)):
             dist[self.dict[i]] = probs[i].item()
         return dist

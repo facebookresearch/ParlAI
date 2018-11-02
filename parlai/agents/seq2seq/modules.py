@@ -102,9 +102,6 @@ class Seq2seq(TorchGeneratorModel):
 
     def reorder_encoder_states(self, encoder_states, indices):
         """Reorder encoder states according to a new set of indices."""
-        # TODO: check if indices is just [0, 1, 2, ...] and become an
-        # identify function
-
         enc_out, hidden, attn_mask = encoder_states
 
         # make sure we swap the hidden state around, apropos multigpu settings
@@ -116,8 +113,8 @@ class Seq2seq(TorchGeneratorModel):
         else:
             hid, cell = hidden
 
-        # cast indices to a tensor. index_select is okay with floats
         if not torch.is_tensor(indices):
+            # cast indices to a tensor if needed
             indices = torch.LongTensor(indices).to(hid.device)
 
         hid = hid.index_select(1, indices)
@@ -228,8 +225,11 @@ class RNNEncoder(nn.Module):
                                                     batch_first=True)
 
         if encoder_output.size(1) != xs.size(1):
-            # we had a short sequence due to a multigpu setting. this "batch" was
-            # overly packed! Such is, let's just compensate by extending it
+            # in case of multi-gpu settings, the split across GPUs may cause the
+            # a batch to have extra pad characters on its inputs. pad_packed_sequence
+            # produces a tensor only as long as non-pad characters. When we try to
+            # glue the parallel encodings later, we have to have encodings all of
+            # the same length, so we might have to check for some extra glue here.
             extend = xs.size(1) - encoder_output.size(1)
             encoder_output = torch.cat([
                 encoder_output,
