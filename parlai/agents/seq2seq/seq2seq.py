@@ -12,10 +12,7 @@ from .modules import Seq2seq, opt_to_kwargs
 import torch
 import torch.nn as nn
 
-import os
-import math
 import json
-import tempfile
 
 
 class Seq2seqAgent(TorchGeneratorAgent):
@@ -161,7 +158,9 @@ class Seq2seqAgent(TorchGeneratorAgent):
                 self.model.decoder = self.model.module.decoder
                 self.model.longest_label = self.model.module.longest_label
                 self.model.output = self.model.module.output
-                self.model.reorder_encoder_states = self.model.module.reorder_encoder_states
+                self.model.reorder_encoder_states = (
+                    self.model.module.reorder_encoder_states
+                )
 
         return self.model
 

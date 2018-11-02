@@ -42,25 +42,6 @@ from parlai.core.thread_utils import SharedTable
 _WARNING_SEEN = False
 
 
-def _pad_to_length(tensor, length, dim=0, pad=0):
-    """Pad tensor to a specific length.
-
-    :param tensor: vector to pad
-    :param length: new length
-    :param dim: (default 0) dimension to pad
-
-    :returns: padded tensor if the tensor is shorter than length
-    """
-    if tensor.size(dim) < length:
-        return torch.cat(
-            [tensor, tensor.new(*tensor.size()[:dim],
-                                length - tensor.size(dim),
-                                *tensor.size()[dim + 1:]).fill_(pad)],
-            dim=dim)
-    else:
-        return tensor
-
-
 class TorchGeneratorModel(nn.Module):
     """
     This Interface expects you to implement model with the following reqs:
@@ -601,45 +582,6 @@ class TorchGeneratorAgent(TorchAgent):
             n_best_beam_preds_scores.append(this_beam)
 
         return beam_preds_scores, n_best_beam_preds_scores, beams
-
-    def extend_input(self, batch):
-        # add pad tensor to text vec
-        pad_tensor = torch.zeros(1, batch.text_vec.size(1)).long().cuda()
-        text_vec = torch.cat([batch.text_vec, pad_tensor], 0)
-        batch = batch._replace(text_vec=text_vec)
-        if batch.label_vec is not None:
-            # add pad tensor to label vec
-            pad_tensor = torch.zeros(
-                1,
-                batch.label_vec.size(1)
-            ).long().cuda()
-            label_vec = torch.cat([batch.label_vec, pad_tensor], 0)
-            batch = batch._replace(label_vec=label_vec)
-        if batch.candidates is not None:
-            # add dummy candidates list
-            dummy_list = [['None'] for _ in range(len(batch.candidates[0]))]
-            batch = batch._replace(candidates=batch.candidates + [dummy_list])
-            # add pad tensor to candidate_vecs
-            new_vecs = (batch.candidate_vecs +
-                        [[torch.zeros(1).long() for _ in
-                         range(len(batch.candidate_vecs[0]))]])
-            batch = batch._replace(candidate_vecs=new_vecs)
-        return batch
-
-    def truncate_input(self, batch):
-        # truncate batch for multigpu
-        text_vec = batch.text_vec[:-1]
-        batch = batch._replace(text_vec=text_vec)
-        if batch.label_vec is not None:
-            label_vec = batch.label_vec[:-1]
-            batch = batch._replace(label_vec=label_vec)
-        return batch
-
-    def truncate_output(self, out):
-        new_out_0 = out[0][:-1]
-        new_out_1 = None if out[1] is None else out[1][:-1]
-        new_out_2 = [vec[:-1] for vec in out[2]]
-        return tuple([new_out_0, new_out_1, new_out_2])
 
 
 class mydefaultdict(defaultdict):
