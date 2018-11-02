@@ -7,6 +7,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 """Module files as torch.nn.Module subclasses for Seq2seqAgent."""
 
+import math
+
 import torch
 import torch.nn as nn
 from torch.nn.parameter import Parameter
@@ -391,7 +393,8 @@ class OutputLayer(nn.Module):
         else:
             # use shared weights and a bias layer instead
             self.e2s = shared_weight
-            self.bias = Parameter(torch.Tensor(num_features).zero_())
+            rng = 1. / math.sqrt(num_features)
+            self.bias = Parameter(torch.Tensor(num_features).uniform_(-rng, rng))
 
         self.numsoftmax = numsoftmax
         if numsoftmax > 1:
