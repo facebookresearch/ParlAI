@@ -576,7 +576,8 @@ class TorchGeneratorAgent(TorchAgent):
             score = score.view(bsz, beam_size, -1)
             score = F.log_softmax(score, dim=-1)
             for i, b in enumerate(beams):
-                b.advance(score[i])
+                if not b.done():
+                    b.advance(score[i])
             selection = torch.cat(
                 [b.get_output_from_current_step() for b in beams]).unsqueeze(-1)
             decoder_input = torch.cat([decoder_input, selection], dim=-1)
@@ -789,10 +790,10 @@ class Beam(object):
             beam_scores = (softmax_probs +
                            self.scores.unsqueeze(1).expand_as(softmax_probs))
             for i in range(self.outputs[-1].size(0)):
-                current_hypo = [ii.tokenid.item() for ii in
-                                self.get_partial_hyp_from_tail(
-                                len(self.outputs) - 1, i)][::-1][1:]
                 if self.block_ngram > 0:
+                    current_hypo = [ii.tokenid.item() for ii in
+                                    self.get_partial_hyp_from_tail(
+                                    len(self.outputs) - 1, i)][::-1][1:]
                     current_ngrams = []
                     for ng in range(self.block_ngram):
                         ngrams = Beam.find_ngrams(current_hypo, ng)

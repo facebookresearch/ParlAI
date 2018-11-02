@@ -18,6 +18,22 @@ import torch.nn.functional as F
 from parlai.core.utils import NEAR_INF
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 
+def _transpose_hidden_state(hidden_state):
+    """
+    Transpose the hidden state so that batch is the first dimension.
+
+    RNN modules produce (num_layers x batchsize x dim) hidden state, but
+    DataParallel expects batch size to be first. This helper is used to
+    ensure that we're always outputting batch-first, in case DataParallel
+    tries to stitch things back together.
+    """
+    if isinstance(hidden_state, tuple):
+        return tuple(map(_transpose_hidden_state, hidden_state))
+    elif torch.is_tensor(hidden_state):
+        return hidden_state.transpose(0, 1)
+    else:
+        raise ValueError("Don't know how to transpose {}".format(hidden_state))
+
 
 def opt_to_kwargs(opt):
     """Get kwargs for seq2seq from opt."""
@@ -91,6 +107,9 @@ class Seq2seq(TorchGeneratorModel):
 
         enc_out, hidden, attn_mask = encoder_states
 
+        # make sure we swap the hidden state around, apropos multigpu settings
+        hidden = _transpose_hidden_state(hidden)
+
         # LSTM or GRU/RNN hidden state?
         if isinstance(hidden, torch.Tensor):
             hid, cell = hidden, None
@@ -111,6 +130,9 @@ class Seq2seq(TorchGeneratorModel):
         if self.attn_type != 'none':
             enc_out = enc_out.index_select(0, indices)
             attn_mask = attn_mask.index_select(0, indices)
+
+        # and bring it back to multigpu friendliness
+        hidden = _transpose_hidden_state(hidden)
 
         return enc_out, hidden, attn_mask
 
@@ -204,6 +226,16 @@ class RNNEncoder(nn.Module):
         if packed:
             encoder_output, _ = pad_packed_sequence(encoder_output,
                                                     batch_first=True)
+
+        if encoder_output.size(1) != xs.size(1):
+            # we had a short sequence due to a multigpu setting. this "batch" was
+            # overly packed! Such is, let's just compensate by extending it
+            extend = xs.size(1) - encoder_output.size(1)
+            encoder_output = torch.cat([
+                encoder_output,
+                encoder_output.new(bsz, extend, self.hsz).zero_()
+            ], dim=1)
+
         if self.dirs > 1:
             # project to decoder dimension by taking sum of forward and back
             if isinstance(self.rnn, nn.LSTM):
@@ -212,7 +244,7 @@ class RNNEncoder(nn.Module):
             else:
                 hidden = hidden.view(-1, self.dirs, bsz, self.hsz).sum(1)
 
-        return encoder_output, hidden, attn_mask
+        return encoder_output, _transpose_hidden_state(hidden), attn_mask
 
 
 class RNNDecoder(nn.Module):
@@ -266,12 +298,14 @@ class RNNDecoder(nn.Module):
             - hidden_state depends on the choice of RNN
         """
         enc_state, enc_hidden, attn_mask = encoder_output
+        # in case of multi gpu, we need to transpose back out the hidden state
+        enc_hidden = _transpose_hidden_state(enc_hidden)
         attn_params = (enc_state, attn_mask)
 
         if incremental_state is not None:
             # we're doing it piece by piece, so we have a more important hidden
             # seed, and we only need to compute for the final timestep
-            hidden = incremental_state
+            hidden = _transpose_hidden_state(incremental_state)
             # only need the last timestep then
             xs = xs[:, -1:]
         else:
@@ -306,7 +340,7 @@ class RNNDecoder(nn.Module):
                 output.append(o)
             output = torch.cat(output, dim=1).to(xes.device)
 
-        return output, new_hidden
+        return output, _transpose_hidden_state(new_hidden)
 
 
 class OutputLayer(nn.Module):

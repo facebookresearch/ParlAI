@@ -161,6 +161,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
                 self.model.decoder = self.model.module.decoder
                 self.model.longest_label = self.model.module.longest_label
                 self.model.output = self.model.module.output
+                self.model.reorder_encoder_states = self.model.module.reorder_encoder_states
 
         return self.model
 
@@ -193,7 +194,10 @@ class Seq2seqAgent(TorchGeneratorAgent):
 
         if path and hasattr(self, 'model'):
             model = {}
-            model['model'] = self.model.state_dict()
+            if self.multigpu:
+                model['model'] = self.model.module.state_dict()
+            else:
+                model['model'] = self.model.state_dict()
             model['longest_label'] = self.model.longest_label
             model['optimizer'] = self.optimizer.state_dict()
             model['optimizer_type'] = self.opt['optimizer']
@@ -211,7 +215,10 @@ class Seq2seqAgent(TorchGeneratorAgent):
         """Return opt and model states."""
         states = torch.load(path, map_location=lambda cpu, _: cpu)
         # set loaded states if applicable
-        self.model.load_state_dict(states['model'])
+        if self.multigpu:
+            self.model.module.load_state_dict(states['model'])
+        else:
+            self.model.load_state_dict(states['model'])
         if 'longest_label' in states:
             self.model.longest_label = states['longest_label']
         return states
