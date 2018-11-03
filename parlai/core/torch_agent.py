@@ -28,7 +28,7 @@ from parlai.core.utils import (set_namedtuple_defaults, argsort, padded_tensor,
 try:
     import torch
 except ImportError as e:
-    raise ImportError('Need to install Pytorch: go to pytorch.org')
+    raise e('Need to install Pytorch: go to pytorch.org')
 
 
 from torch import optim
