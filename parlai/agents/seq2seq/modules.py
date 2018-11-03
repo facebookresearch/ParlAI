@@ -383,15 +383,16 @@ class OutputLayer(nn.Module):
         super().__init__()
         self.dropout = nn.Dropout(p=dropout)
 
-        self.padding_idx = padding_idx if shared_weight is not None else -1
+        self.padding_idx = padding_idx
 
         # embedding to scores
         if shared_weight is None:
             # just a regular linear layer
+            self.shared = False
             self.e2s = nn.Linear(embeddingsize, num_features, bias=True)
-            self.bias = self.e2s.bias
         else:
             # use shared weights and a bias layer instead
+            self.shared = True
             self.e2s = shared_weight
             rng = 1. / math.sqrt(num_features)
             self.bias = Parameter(torch.Tensor(num_features).uniform_(-rng, rng))
@@ -446,7 +447,10 @@ class OutputLayer(nn.Module):
             # hsz => esz, good time for dropout
             e = self.dropout(self.o2e(input))
             # esz => num_features
-            scores = F.linear(e, self.e2s.weight, self.bias)
+            if self.shared:
+                scores = F.linear(e, self.e2s.weight, self.bias)
+            else:
+                scores = self.e2s(e)
 
         if self.padding_idx == 0:
             scores[:, :, 0] = -NEAR_INF
