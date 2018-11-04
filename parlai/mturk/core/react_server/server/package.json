@@ -9,7 +9,6 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
   "engines": {
     "node": ">= 7.6.0"
   },
