@@ -765,6 +765,7 @@ class Beam(object):
         self.n_best_counter = 0
         self.min_n_best = min_n_best
         self.block_ngram = block_ngram
+        self.partial_hyps = [[self.bos] for i in range(beam_size)]
 
     @staticmethod
     def find_ngrams(input_list, n):
@@ -798,9 +799,7 @@ class Beam(object):
                            self.scores.unsqueeze(1).expand_as(softmax_probs))
             for i in range(self.outputs[-1].size(0)):
                 if self.block_ngram > 0:
-                    current_hypo = [ii.tokenid.item() for ii in
-                                    self.get_partial_hyp_from_tail(
-                                    len(self.outputs) - 1, i)][::-1][1:]
+                    current_hypo = self.partial_hyps[i][1:]
                     current_ngrams = []
                     for ng in range(self.block_ngram):
                         ngrams = Beam.find_ngrams(current_hypo, ng)
@@ -831,6 +830,8 @@ class Beam(object):
 
         self.outputs.append(tok_ids)
         self.bookkeep.append(hyp_ids)
+        self.partial_hyps = [self.partial_hyps[hyp_ids[i]] +
+                             [tok_ids[i].item()] for i in range(self.beam_size)]
 
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
@@ -891,24 +892,6 @@ class Beam(object):
         hypothesis = torch.stack(list(reversed(hypothesis)))
 
         return hypothesis
-
-    def get_partial_hyp_from_tail(self, ts, hypid):
-        hypothesis_tail = self.HypothesisTail(
-            timestep=ts,
-            hypid=torch.Tensor([hypid]).long(),
-            score=self.all_scores[ts][hypid],
-            tokenid=self.outputs[ts][hypid])
-        hyp_idx = []
-        endback = hypothesis_tail.hypid
-        for i in range(hypothesis_tail.timestep, -1, -1):
-            hyp_idx.append(self.HypothesisTail(
-                timestep=i,
-                hypid=endback,
-                score=self.all_scores[i][endback],
-                tokenid=self.outputs[i][endback]))
-            endback = self.bookkeep[i - 1][endback]
-
-        return hyp_idx
 
     def get_rescored_finished(self, n_best=None):
         """Return finished hypotheses in rescored order.
