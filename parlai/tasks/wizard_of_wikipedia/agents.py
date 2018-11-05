@@ -6,38 +6,17 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """
-    Dialogs from the Wizard of Wikipedia dataset
+    A dataset with conversations directly grounded with knowledge
+    retrieved from Wikipedia. Contains 201k utterances from 22k
+    dialogues spanning over 1300 diverse topics, split into train,
+    test, and valid sets. The test and valid sets are split
+    into two sets each: one with overlapping topics with the train
+    set, and one with unseen topics.
 
-    Each episode in the json file has the following fields:
-        'wizard_eval': <evaluation of wizard>,
-        'chosen_topic': <chosen_topic>,
-        'chosen_topic_passage': <chosen topic passage>,
-        'dialog': list of utterances structured as follows:
-                'text': <text>
-                'retrieved_topics': <list of retrieved passages>
-                'retrieved_passages': <what was shown to the turker>
-                'speaker': <Apprentice or Wizard>
-
-                if 'speaker' is 'Wizard', the following fields are also given:
-                    'checked_sentence': <sentence checked by wizard>
-                    'checked_passage': <passage in which sentence is found>
-
-    An example is given as the following:
-
-    obs = {
-        'wizard_eval': <evaluation of wizard>,
-        'chosen_topic': <chosen_topic>,
-        'chosen_topic_passage': <chosen topic passage>,
-        'mtdo': <whether the conversation had sufficient overlap>,
-        'text': <text>
-        'retrieved_topics': <topics retrieved for text>
-        'full_retrieved_passages': <full retrieved passages>
-        'retrieved_passages': <passages shown to turker>
-        'checked_sentence': <checked sentence if wizard, else None>
-        'checked_passage': <checked_passage if wizard, else None>
-    }
-
-    The 'passages' are lists of 1 entry dicts, mapping a topic to the sentences
+    To access the different valid/test splits (unseen/seen), specify
+    the corresponding split (`random_split` for seen, `topic_split`
+    for unseen) after the last colon in the task.
+    E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
 from parlai.core.teachers import FixedDialogTeacher
@@ -109,10 +88,27 @@ def _path(opt, split='random_split'):
 
 
 class WizardOfWikipediaTeacher(FixedDialogTeacher):
-    """Gives dialogs where the Wizard has good word overlap
+    """The default teacher; essentially reads the json file and outputs the
+       raw data.
 
-        Specify the valid/test split after the last colon in the task, e.g.
-        wizard_of_wikipedia:<teacher>:random_split
+       Actions have the following form:
+       {
+           'wizard_eval': <evaluation of wizard>,
+           'chosen_topic': <chosen_topic>,
+           'chosen_topic_passage': <chosen topic passage>,
+           'mtdo': <whether the conversation had sufficient overlap>,
+           'text': <text>
+           'retrieved_topics': <topics retrieved for text>
+           'full_retrieved_passages': <full retrieved passages>
+           'retrieved_passages': <passages shown to turker>
+           'checked_sentence': <checked sentence if wizard, else None>
+           'checked_passage': <checked_passage if wizard, else None>
+       }
+
+       The 'passages' are lists of 1 entry dicts, mapping a topic to the sentences
+
+       Specify the valid/test split after the last colon in the task, e.g.
+       wizard_of_wikipedia:<teacher>:random_split
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
