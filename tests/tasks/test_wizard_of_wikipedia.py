@@ -78,11 +78,6 @@ class TestWoW(unittest.TestCase):
     def run_display_test(self, kwargs):
         f = io.StringIO()
         with redirect_stdout(f):
-            try:
-                import torch  # noqa: F401
-            except ImportError:
-                print('Cannot import torch, skipping test_train_model')
-                return
             parser = setup_args()
             parser.set_defaults(**kwargs)
             opt = parser.parse_args()
@@ -97,6 +92,7 @@ class TestWoW(unittest.TestCase):
             ) in str_output,
             'Wizard of Wikipedia failed with following args: {}'.format(opt)
         )
+        world.shutdown()
 
 
 if __name__ == '__main__':

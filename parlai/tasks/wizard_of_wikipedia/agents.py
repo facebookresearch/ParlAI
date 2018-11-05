@@ -6,7 +6,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """
-    Dialogs from the Wizard of PerZOna Mturk task!
+    Dialogs from the Wizard of Wikipedia dataset
 
     Each episode in the json file has the following fields:
         'wizard_eval': <evaluation of wizard>,
@@ -37,8 +37,7 @@
         'checked_passage': <checked_passage if wizard, else None>
     }
 
-    The 'shown_passages' are lists of 1 entry dicts,
-    mapping a topic to the sentences
+    The 'passages' are lists of 1 entry dicts, mapping a topic to the sentences
 """
 
 from parlai.core.teachers import FixedDialogTeacher
@@ -113,16 +112,16 @@ class WizardOfWikipediaTeacher(FixedDialogTeacher):
     """Gives dialogs where the Wizard has good word overlap
 
         Specify the valid/test split after the last colon in the task, e.g.
-        wizard_of_perZOna:<teacher>:random_split
+        wizard_of_wikipedia:<teacher>:random_split
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.opt = opt
         task = opt.get('task',
-                       'wizard_of_perzona:WizardOfPerzona:random_split')
+                       'wizard_of_wikipedia:WizardOfWikipedia:random_split')
         split = task.split(':')
         split = split[2] if len(split) == 3 else 'random_split'
-        opt['task'] = 'wizard_of_perZOna'
+        opt['task'] = 'wizard_of_wikipedia'
         if shared and 'data' in shared:
             self.data = shared['data']
         else:
@@ -631,7 +630,7 @@ class DocReaderTeacher(WizardOfWikipediaTeacher):
         }
 
         if self.teacher_type == 'docs':
-            action['text'] = passage + '\n' + text
+            action['text'] = '{}\n{}'.format(passage, text)
         elif self.teacher_type == 'docs_sentence':
             action['text'] = text
             action['label_candidates'] = self.sent_tok.tokenize(passage)
@@ -658,28 +657,21 @@ class DocReaderTeacher(WizardOfWikipediaTeacher):
             # from last thing wizard said
             passages = data['dialog'][idx - 2]['retrieved_passages']
             passage = None
-            if dialog_entry['checked_passage'] != {}:
-                key = _first_val(dialog_entry['checked_passage'])
-                for p in passages:
-                    if key in p:
-                        passage = ' '.join(p[key])
-                        break
-            else:
-                raise RuntimeError('Something went wrong')
+            key = _first_val(dialog_entry['checked_passage'])
+            for p in passages:
+                if key in p:
+                    passage = ' '.join(p[key])
+                    break
             text = data['dialog'][idx - 2]['text']
         elif 'partner' in passage_key:
             # from last thing partner said
             passages = data['dialog'][idx - 1]['retrieved_passages']
             passage = None
-            if dialog_entry['checked_passage'] != {}:
-                key = _first_val(dialog_entry['checked_passage'])
-                for p in passages:
-                    if key in p:
-                        passage = ' '.join(p[key])
-                        break
-            else:
-                raise RuntimeError('Something went wrong')
-
+            key = _first_val(dialog_entry['checked_passage'])
+            for p in passages:
+                if key in p:
+                    passage = ' '.join(p[key])
+                    break
             text = data['dialog'][idx - 1]['text']
 
         return passage, text
