@@ -25,7 +25,7 @@ class TestNewTasks(unittest.TestCase):
         changed_files = git_changed_files()
         changed_task_files = []
         for file in changed_files:
-            if 'parlai/tasks' in file:
+            if 'parlai/tasks' in file and 'README' not in file:
                 changed_task_files.append(file)
 
         if not changed_task_files:
