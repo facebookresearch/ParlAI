@@ -1,12 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Button, Panel, Table} from 'react-bootstrap';
+import {ToggleButtonGroup, ToggleButton, Button, FormControl,
+  ButtonGroup, ButtonToolbar, Panel, Table, Modal, InputGroup} from 'react-bootstrap';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import 'fetch';
 
 var AppURLStates = Object.freeze({
-  init:0, tasks:1, unsupported:2, runs:3, workers:4,
+  init:0, tasks:1, unsupported:2, runs:3, workers:4, assignments:5,
 });
 
 function convert_time(timestamp){
@@ -34,6 +35,91 @@ function resolveState(state_string) {
   return state;
 }
 
+function postData(url = ``, data = {}) {
+  return fetch(url, {
+      method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "same-origin",
+      headers: {
+          "Content-Type": "application/json; charset=utf-8",
+      },
+      redirect: "follow",
+      referrer: "no-referrer",
+      body: JSON.stringify(data),
+  });
+}
+
+class ChatMessage extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    var float_loc = 'left';
+    var alert_class = 'alert-warning';
+    if (this.props.is_self) {
+      float_loc = 'right';
+      alert_class = 'alert-info';
+    }
+    return (
+      <div className={"row"} style={{'marginLeft': '0', 'marginRight': '0'}}>
+        <div
+          className={"alert " + alert_class} role="alert"
+          style={{'float': float_loc, 'display': 'table'}}>
+          <span style={{'fontSize': '16px'}}>
+            <b>{this.props.agent_id}</b>: {this.props.message}
+          </span>
+        </div>
+      </div>
+    );
+  }
+}
+
+class ChatDisplay extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  makeMessages() {
+    var agent_id = this.props.agent_id;
+    var messages = this.props.messages;
+    return messages.map(
+      m => <ChatMessage
+        key={m.message_id}
+        is_self={m.id == agent_id}
+        agent_id={m.id}
+        message={m.text}
+        message_id={m.id}/>
+    );
+  }
+
+  render() {
+    var messages = this.makeMessages();
+    var display_text = this.props.is_onboarding ? 'Onboarding' : 'Task';
+    return (
+      <Panel
+        id="message_display_div"
+        bsStyle="info"
+        style={{float: 'right', 'width': '58%'}}
+        defaultExpanded>
+        <Panel.Heading>
+          <Panel.Title componentClass="h3" toggle>
+            {display_text} Chat Window
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Collapse>
+          <Panel.Body style={{maxHeight: '600px', overflow: 'scroll'}}>
+            <div id="message_thread">
+              {messages}
+            </div>
+          </Panel.Body>
+        </Panel.Collapse>
+      </Panel>
+    );
+  }
+}
+
 class NavLink extends React.Component {
   constructor(props) {
     super(props);
@@ -49,6 +135,12 @@ class NavLink extends React.Component {
     } else if (this.props.type == 'worker') {
       return (
         <a href={'/app/workers/' + this.props.target}>
+          {this.props.children}
+        </a>
+      );
+    } else if (this.props.type == 'assignment') {
+      return (
+        <a href={'/app/assignments/' + this.props.target}>
           {this.props.children}
         </a>
       );
@@ -68,7 +160,8 @@ class SharedTable extends React.Component {
 
   render() {
     var used_cols = this.props.used_cols;
-    var row_formatter = used_cols.map(this.props.getColumnFormatter, this.props);
+    var row_formatter = (
+      used_cols.map(this.props.getColumnFormatter, this.props));
     return (
       <Panel id={this.props.title} defaultExpanded>
         <Panel.Heading>
@@ -543,6 +636,679 @@ class RunPanel extends React.Component {
   }
 }
 
+class AssignmentInstructions extends React.Component {
+  render() {
+    let instructions = this.props.data;
+    var content = null;
+    var bsStyle = null;
+    if (instructions === null) {
+      content = "No task details could be found for this assignment."
+      bsStyle = "default"
+    } else {
+      content = <div dangerouslySetInnerHTML={{__html: instructions}} />;
+      bsStyle = "info"
+    }
+
+    return (
+      <Panel
+        id="assignment_instruction_div"
+        bsStyle={bsStyle}
+        style={{float: 'left', 'width': '40%'}}>
+        <Panel.Heading>
+          <Panel.Title componentClass="h3" toggle>
+            Task Instructions
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Collapse>
+          <Panel.Body>
+            {content}
+          </Panel.Body>
+        </Panel.Collapse>
+      </Panel>
+    );
+  }
+}
+
+class BlockModal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {reason: '', submitting: false};
+  }
+
+  submitBlock() {
+    this.setState({submitting: true});
+    postData('/block/' + this.props.worker_id,
+          {'reason': this.state.reason,
+           'assignment_id': this.props.assignment_id})
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            submitting: false,
+          });
+          this.props.onHide();
+          this.props.onAssignmentUpdate();
+        },
+        (error) => {
+          this.setState({
+            submitting: false,
+          });
+          console.log(error);
+          window.alert('Submitting block failed. Error logged to console');
+        }
+      )
+  }
+
+  render() {
+    var block_reason_input = (
+      <span>
+        Why are you blocking this worker?
+        <FormControl
+          type="text"
+          componentClass="textarea"
+          value={this.state.reason}
+          placeholder="Enter reason"
+          onChange={(e) => this.setState({reason: e.target.value})}/>
+      </span>
+    );
+
+    var {onAssignmentUpdate, ...others} = this.props;
+
+    return (
+      <Modal
+        {...others}
+        aria-labelledby="block-worker-modal-title-block">
+        <Modal.Header closeButton>
+          <Modal.Title id="block-worker-modal-title-block">
+            Block Worker
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to block worker {this.props.worker_id}?
+          <br/>
+          {block_reason_input}
+        </Modal.Body>
+        <Modal.Footer>
+          <ButtonToolbar>
+            <Button
+              bsStyle='primary'
+              onClick={() => this.submitBlock()}
+              disabled={this.state.submitting || this.state.reason == ''}>
+                Block
+              </Button>
+            <Button onClick={this.props.onHide}>Cancel</Button>
+          </ButtonToolbar>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+}
+
+class BonusModal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = this.getClearState();
+  }
+
+  getClearState() {
+    return {reason: '', dollars: '', cents: '', submitting: false,
+      bonus_token: Math.random().toString(36).substr(2, 9)};
+  }
+
+  submitBonus() {
+    this.setState({submitting: true});
+    var cents = this.state.cents != '' ? this.state.cents : 0;
+    var dollars = this.state.dollars != '' ? this.state.dollars : 0;
+    var use_amount = dollars * 100 + cents;
+    postData('/bonus/' + this.props.worker_id,
+          {'reason': this.state.reason,
+           'bonus_cents': use_amount,
+           'assignment_id': this.props.assignment_id,
+           'bonus_token': this.state.bonus_token})
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState(this.getClearState());
+          this.props.onHide();
+          this.props.onAssignmentUpdate();
+        },
+        (error) => {
+          this.setState({
+            submitting: false,
+          });
+          console.log(error);
+          window.alert('Submitting bonus failed. Error logged to console');
+        }
+      )
+  }
+
+  updateDollars(amount) {
+    if (amount < 0 || (amount != '' && isNaN(amount))) {
+      return;
+    }
+    amount = amount == '' ? 0 : amount;
+    this.setState({dollars: +amount})
+  }
+
+  updateCents(amount) {
+    if (amount < 0 || amount > 99 || (amount != '' && isNaN(amount))) {
+      return;
+    }
+    amount = amount == '' ? 0 : amount;
+    this.setState({cents: +amount})
+  }
+
+  render() {
+    var cents = this.state.cents;
+    var display_cents =  cents < 10 ? '0' + cents : cents;
+    var bonus_detail_form = (
+      <div>
+        How much do you want to bonus?
+        <InputGroup>
+          <InputGroup.Addon>$</InputGroup.Addon>
+          <FormControl
+            type="text"
+            value={this.state.dollars}
+            placeholder="0"
+            onChange={(e) => this.updateDollars(e.target.value)}/>
+          <InputGroup.Addon>.</InputGroup.Addon>
+          <FormControl
+            type="text"
+            value={display_cents}
+            placeholder="00"
+            onChange={(e) => this.updateCents(e.target.value)}/>
+        </InputGroup>
+        Why bonus?
+        <FormControl
+          type="textarea"
+          value={this.state.reason}
+          placeholder="Enter Reason"
+          onChange={(e) => this.setState({reason: e.target.value})}/>
+      </div>
+    );
+
+    var {onAssignmentUpdate, ...others} = this.props;
+
+    return (
+      <Modal
+        {...others}
+        aria-labelledby="bonus-modal-title-block">
+        <Modal.Header closeButton>
+          <Modal.Title id="bonus-modal-title-block">
+            Bonus Worker
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Bonusing worker {this.props.worker_id} for assignment {this.props.assignment_id}.
+          <br/>
+          {bonus_detail_form}
+        </Modal.Body>
+        <Modal.Footer>
+          <ButtonToolbar>
+            <Button bsStyle='primary' onClick={() => this.submitBonus()}>Bonus</Button>
+            <Button onClick={this.props.onHide}>Cancel</Button>
+          </ButtonToolbar>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+}
+
+class ReviewButtonGroup extends React.Component {
+  // This component renders a group that can approve or reject a hit.
+  // It handles overriding rejections, as well as displaying accepted status
+  // (which cannot be reviewed)
+  constructor(props) {
+    super(props);
+    console.log(this.props)
+    this.handleChange = this.handleChange.bind(this);
+    this.state = {
+      value: this.getGivenStateVal(),
+      submitting: false,
+      reason: '',
+    };
+  }
+
+  getGivenStateVal() {
+    if (this.props.status == 'Approved') {
+      return 0;
+    } else if (this.props.status == 'Rejected') {
+      return 1;
+    }
+    return null;
+  }
+
+  handleChange(e) {
+    this.setState({value: e});
+  }
+
+  confirmReview() {
+    var endpoint = ['approve','reject'][this.state.value];
+    this.setState({submitting: true});
+    postData('/'+ endpoint + '/' + this.props.assignment_id,
+          {'reason': this.state.reason})
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            submitting: false,
+          });
+          this.props.onUpdate();
+        },
+        (error) => {
+          this.setState({
+            submitting: false,
+          });
+          console.log(error);
+          window.alert('Submitting review failed. Error logged to console');
+        }
+      )
+  }
+
+  reverseRejection() {
+    this.setState({submitting: true});
+    fetch('/reverse_rejection/' + this.props.assignment_id, {method: "POST"})
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            submitting: false,
+          });
+          this.props.onUpdate();
+        },
+        (error) => {
+          this.setState({
+            submitting: false,
+          });
+          console.log(error);
+          window.alert('Submitting review failed. Error logged to console');
+        }
+      )
+  }
+
+  render() {
+    var confirm_seg = null;
+    var picker = null;
+    if (this.getGivenStateVal() === null) {
+      var button_styles = ['default', 'default'];
+      var reject_reason_input = null;
+      if (this.state.value === null) {
+        confirm_seg = (
+          <ButtonGroup>
+            <Button disabled>
+              Confirm
+            </Button>
+          </ButtonGroup>
+        );
+      } else {
+        var confirm_disabled = this.state.submitting || (
+          this.state.value == 1 && this.state.reason == '');
+        confirm_seg = (
+          <ButtonGroup>
+            <Button
+              bsStyle='primary'
+              onClick={() => this.confirmReview()}
+              disabled={confirm_disabled}>
+              Confirm
+            </Button>
+          </ButtonGroup>
+        );
+        if (this.state.value == 0) {
+          button_styles[0] = 'success';
+        } else {
+          button_styles[1] = 'danger';
+          reject_reason_input = (
+            <span>
+              Why reject?
+              <FormControl
+                type="text"
+                value={this.state.reason}
+                placeholder="Enter text"
+                onChange={(e) => this.setState({reason: e.target.value})}/>
+            </span>
+          );
+        }
+      }
+      var picker = (
+        <ToggleButtonGroup
+          type="radio"
+          name="approval_status"
+          value={this.state.value}
+          onChange={this.handleChange}>
+          <ToggleButton
+            value={0}
+            bsStyle={button_styles[0]}>
+            Approve
+          </ToggleButton>
+          <ToggleButton
+            value={1}
+            bsStyle={button_styles[1]}>
+            Reject
+          </ToggleButton>
+        </ToggleButtonGroup>
+      );
+    } else if (this.getGivenStateVal() === 1) {
+      var button_styles = ['default', 'default'];
+      if (this.state.value === 1) {
+        confirm_seg = (
+          <ButtonGroup>
+            <Button disabled>
+              Confirm
+            </Button>
+          </ButtonGroup>
+        );
+        button_styles[1] = 'danger';
+      } else {
+        confirm_seg = (
+          <ButtonGroup>
+            <Button bsStyle='primary' onClick={() => this.reverseRejection()}>
+              Confirm Reverse Rejection
+            </Button>
+          </ButtonGroup>
+        );
+        button_styles[0] = 'success';
+      }
+      var picker = (
+        <ToggleButtonGroup
+          type="radio"
+          name="approval_status"
+          value={this.state.value}
+          onChange={this.handleChange}>
+          <ToggleButton
+            value={0}
+            bsStyle={button_styles[0]}>
+            Approve
+          </ToggleButton>
+          <ToggleButton
+            value={1}
+            bsStyle={button_styles[1]}>
+            Rejected
+          </ToggleButton>
+        </ToggleButtonGroup>
+      );
+    } else {
+      var picker = (
+        <ButtonGroup>
+          <Button bsStyle='success' disabled>
+            Approved
+          </Button>
+        </ButtonGroup>
+      );
+    }
+
+    return (
+      <div>
+        <ButtonToolbar>
+          {picker}
+          {confirm_seg}
+        </ButtonToolbar>
+        {reject_reason_input}
+      </div>
+    );
+  }
+}
+
+class AssignmentReviewer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      block_show: false,
+      bonus_show: false,
+    };
+  }
+
+  getReviewSet() {
+    return (
+      <ReviewButtonGroup
+        status={this.props.data.status}
+        onUpdate={this.props.onUpdate}
+        assignment_id={this.props.data.assignment_id}/>
+    );
+  }
+
+  getActionButtons() {
+    let blockClose = () => this.setState({ block_show: false });
+    let bonusClose = () => this.setState({ bonus_show: false });
+
+    return (
+      <ButtonToolbar>
+        <Button
+          bsStyle="success"
+          onClick={() => this.setState({ bonus_show: true })}>
+          Bonus
+        </Button>
+        <Button
+          bsStyle="danger"
+          onClick={() => this.setState({ block_show: true })}>
+          Block
+        </Button>
+        <BlockModal
+          show={this.state.block_show}
+          onHide={blockClose}
+          assignment_id={this.props.data.assignment_id}
+          worker_id={this.props.data.worker_id}
+          onAssignmentUpdate={this.props.onUpdate}/>
+        <BonusModal
+          show={this.state.bonus_show}
+          onHide={bonusClose}
+          worker_id={this.props.data.worker_id}
+          assignment_id={this.props.data.assignment_id}
+          onAssignmentUpdate={this.props.onUpdate}/>
+      </ButtonToolbar>
+    );
+  }
+
+  render() {
+    var panel_body;
+    if (this.props.data.world_status != 'done') {
+      panel_body = <span>Cannot review until the world is done.</span>;
+    } else {
+      var review_set = this.getReviewSet();
+      var action_buttons = this.getActionButtons();
+      panel_body = (
+        <Table>
+          <thead>
+            <tr>
+              <th>Review HIT</th>
+              <th>Additional Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{review_set}</td>
+              <td>{action_buttons}</td>
+            </tr>
+          </tbody>
+        </Table>
+      );
+    }
+    return (
+      <Panel
+        id="review_control_div"
+        bsStyle="success"
+        style={{clear: 'both'}}
+        defaultExpanded>
+        <Panel.Heading>
+          <Panel.Title componentClass="h3" toggle>
+            Assignment Actions
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Collapse>
+          <Panel.Body>
+            {panel_body}
+          </Panel.Body>
+        </Panel.Collapse>
+      </Panel>
+    );
+  }
+
+  // Set default props
+  static defaultProps = {
+    confirm: true,
+    data: null
+  }
+}
+
+class AssignmentView extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  getOnboardingChat() {
+    let onboard_data = this.props.data.onboarding;
+    if (onboard_data === null) {
+      return (
+        <Panel
+          id="message_display_div_onboarding"
+          style={{float: 'right', 'width': '58%'}}>
+          <Panel.Heading>
+            <Panel.Title componentClass="h3" toggle>
+              Onboarding Chat Window
+            </Panel.Title>
+          </Panel.Heading>
+          <Panel.Collapse>
+            <Panel.Body>
+              This assignment didn't have any onboarding data.
+            </Panel.Body>
+          </Panel.Collapse>
+        </Panel>
+      );
+    } else {
+      return this.getTaskChat(onboard_data, true);
+    }
+  }
+
+  getTaskChat(task_data, is_onboarding) {
+    let error_message = null;
+    if (!task_data.had_data_dir) {
+      error_message = 'No run_data directory existed in parlai/mturk/core.';
+    } else if (!task_data.had_run_dir) {
+      error_message = "The directory for the assignment's specific run didn't"+
+        " exist in the run_data directory";
+    } else if (!task_data.had_conversation_dir) {
+      error_message = "The directory for the assignment's conversation didn't"+
+        " exist in the run's directory";
+    } else if (!task_data.had_worker_dir) {
+      error_message = "The directory for the assignment's workers didn't"+
+        " exist in the conversation's directory";
+    } else if (!task_data.had_worker_file) {
+      error_message = "The file for this assignment's worker didn't"+
+        " exist in the workers directory";
+    } else if (!task_data.data) {
+      error_message = "This assignment's chat data file couldn't be read";
+    }
+
+    if (error_message !== null) {
+      return (
+        <div>
+          The assignment's chat could not be rendered, reason below.
+          <br/>
+          {error_message}
+        </div>
+      );
+    } else {
+      let messages = task_data.data.messages;
+      let agent_id = task_data.data.agent_id;
+      return (
+        <ChatDisplay
+          messages={messages}
+          agent_id={agent_id}
+          is_onboarding={is_onboarding}/>
+      );
+    }
+  }
+
+  render() {
+    console.log(this.props.data);
+    var data = this.props.data;
+    var onboarding_chat_window = this.getOnboardingChat();
+    var task_chat_window = this.getTaskChat(this.props.data.task, false);
+    return (
+      <div>
+        {onboarding_chat_window}
+        {task_chat_window}
+      </div>
+    );
+  }
+}
+
+class AssignmentPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {assignment_loading: true, items: null, error: false};
+  }
+
+  fetchRunData() {
+    fetch('/assignments/' + this.props.assignment_id)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            assignment_loading: false,
+            data: result
+          });
+        },
+        (error) => {
+          this.setState({
+            assignment_loading: false,
+            error: true
+          });
+        }
+      )
+  }
+
+  componentDidMount() {
+    this.setState({assignment_loading: true});
+    this.fetchRunData();
+  }
+
+  renderAssignmentInfo() {
+    return (
+      <div>
+        <AssignmentTable
+          data={[this.state.data.assignment_details]}
+          title={'State info for this assignment'}/>
+        <AssignmentInstructions
+          data={[this.state.data.assignment_instructions]}/>
+        <AssignmentView
+          data={this.state.data.assignment_content}
+          title={'Assignment Content'}/>
+        <AssignmentReviewer
+          data={this.state.data.assignment_details}
+          onUpdate={() => this.fetchRunData()}/>
+      </div>
+    )
+  }
+
+  render() {
+    var content;
+    if (this.state.assignment_loading) {
+      content = <span>Assignment details are currently loading...</span>;
+    } else if (this.state.error !== false) {
+      content = (
+        <span>
+          Assignment loading failed, perhaps Assignment doesn't exist?
+        </span>
+      );
+    } else {
+      content = this.renderAssignmentInfo();
+    }
+
+    return (
+      <Panel bsStyle="primary">
+        <Panel.Heading>
+          <Panel.Title componentClass="h3">
+            Assignment Details - Assignment: {this.props.assignment_id}
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Body>
+          {content}
+        </Panel.Body>
+      </Panel>
+    )
+  }
+}
+
 class WorkerPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -761,7 +1527,7 @@ class MainApp extends React.Component {
 
   renderTaskPage() {
     return (
-      <div style={{width: '800px'}}>
+      <div style={{width: '900px'}}>
         <TaskListPanel/>
         <WorkerListPanel/>
       </div>
@@ -770,15 +1536,23 @@ class MainApp extends React.Component {
 
   renderWorkerPage() {
     return (
-      <div style={{width: '800px'}}>
+      <div style={{width: '900px'}}>
         <WorkerPanel worker_id={this.state.args[0]}/>
+      </div>
+    );
+  }
+
+  renderAssignmentPage() {
+    return (
+      <div>
+        <AssignmentPanel assignment_id={this.state.args[0]}/>
       </div>
     );
   }
 
   renderRunPage() {
     return (
-      <div style={{width: '800px'}}>
+      <div style={{width: '900px'}}>
         <RunPanel run_id={this.state.args[0]}/>
       </div>
     );
@@ -791,6 +1565,8 @@ class MainApp extends React.Component {
       return this.renderTaskPage();
     } else if (this.state.url_state == AppURLStates.runs) {
       return this.renderRunPage();
+    } else if (this.state.url_state == AppURLStates.assignments) {
+      return this.renderAssignmentPage();
     } else if (this.state.url_state == AppURLStates.workers) {
       return this.renderWorkerPage();
     } else {

@@ -27,17 +27,18 @@ def setup_args(parser=None):
     # Get command line arguments
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.set_defaults(datatype='train:ordered')
+    parser.set_defaults(datatype='train:stream')
     return parser
 
 
 def report(world, counts, log_time):
     report = world.report()
-    log = {'missing_text': counts['missing_text'],
-           'missing_labels': counts['missing_labels'],
-           'missing_label_candidates': counts['missing_label_candidates'],
-           'empty_label_candidates': counts['empty_label_candidates'],
-           }
+    log = {
+        'missing_text': counts['missing_text'],
+        'missing_labels': counts['missing_labels'],
+        'missing_label_candidates': counts['missing_label_candidates'],
+        'empty_label_candidates': counts['empty_label_candidates'],
+    }
     text, log = log_time.log(report['exs'], world.num_examples(), log)
     return text, log
 

@@ -108,10 +108,12 @@ class MockSocket():
         self.ws = None
         self.should_heartbeat = True
         self.fake_workers = []
+        self.port = None
         self.launch_socket()
         self.handlers = {}
         while self.ws is None:
             time.sleep(0.05)
+        time.sleep(1)
 
     def send(self, packet):
         self.ws.send_message_to_all(packet)
@@ -157,7 +159,13 @@ class MockSocket():
             self.disconnected = True
 
         def run_socket(*args):
-            self.ws = WebsocketServer(3030, host='127.0.0.1')
+            port = 3030
+            while self.port is None:
+                try:
+                    self.ws = WebsocketServer(port, host='127.0.0.1')
+                    self.port = port
+                except OSError:
+                    port += 1
             self.ws.set_fn_client_left(on_disconnect)
             self.ws.set_fn_new_client(on_connect)
             self.ws.set_fn_message_received(on_message)
@@ -376,7 +384,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             mturk_agent_ids=self.mturk_agent_ids,
             is_test=True,
         )
-        self.mturk_manager.port = 3030
+        self.mturk_manager.port = self.fake_socket.port
         self.mturk_manager.setup_server()
         self.mturk_manager.start_new_run()
         self.mturk_manager.ready_to_accept_workers()

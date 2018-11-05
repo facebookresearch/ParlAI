@@ -14,7 +14,7 @@ conversationalist, but may get reasonable F1.
 UnigramAgent has one option, --num-words, which controls the unigrams
 outputted.
 
-This also makes a nice reference for a simpla, minimalist agent.e
+This also makes a nice reference for a simple, minimalist agent.
 """
 
 import json
