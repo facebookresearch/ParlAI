@@ -92,7 +92,6 @@ class TestWoW(unittest.TestCase):
             ) in str_output,
             'Wizard of Wikipedia failed with following args: {}'.format(opt)
         )
-        world.shutdown()
 
 
 if __name__ == '__main__':
