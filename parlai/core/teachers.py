@@ -1198,7 +1198,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         return len(self.episodes)
 
     def get(self, episode_idx, entry_idx=None):
-        return self.episodes[episode_idx][entry_idx]
+        return self.episodes[episode_idx][entry_idx].copy()
 
     def _setup_data(self, path):
         print("[loading parlAI text data:" + path + "]")
