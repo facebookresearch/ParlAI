@@ -160,6 +160,15 @@ function allDoneCallback() {
 class MTurkSubmitForm extends React.Component {
   /* Intentionally doesn't render anything, but prepares the form
   to submit data when the assignment is complete */
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      this.props.mturk_submit_url != nextProps.mturk_submit_url ||
+      this.props.assignment_id != nextProps.assignment_id ||
+      this.props.worker_id != nextProps.worker_id ||
+      this.props.hit_id != nextProps.hit_id
+    );
+  }
+
   render() {
     return (
       <form
@@ -181,7 +190,7 @@ class MTurkSubmitForm extends React.Component {
 }
 
 class IdleResponse extends React.Component {
-  render () {
+  render() {
     return (
       <div
         id="response-type-idle"
@@ -260,8 +269,9 @@ class TextResponse extends React.Component {
 
   handleKeyPress(e) {
     if (e.key === 'Enter') {
-      e.stopPropagation();
       this.tryMessageSend();
+      e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
     }
   }
 
@@ -290,7 +300,7 @@ class TextResponse extends React.Component {
         style={{width: '80%', height: '100%', float: 'left', 'fontSize': '16px'}}
         value={this.state.textval}
         placeholder="Please enter here..."
-        onKeyPress={() => this.handleKeyPress}
+        onKeyPress={(e) => this.handleKeyPress(e)}
         onChange={(e) => this.setState({textval: e.target.value})}
         disabled={!this.props.active}/>
     );
@@ -451,7 +461,7 @@ class WaitingMessage extends React.Component {
 
 class ChatPane extends React.Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.messages.length != prevProps.messages.length) {
+    if (this.props.message_count != prevProps.message_count) {
       $('div#right-top-pane').animate({
         scrollTop: $('div#right-top-pane').get(0).scrollHeight
       }, 500);
@@ -493,7 +503,7 @@ class RightPane extends React.Component {
 
     return (
       <div id="right-pane" style={right_pane}>
-        <ChatPane {...this.props} />
+        <ChatPane message_count={this.props.messages.length} {...this.props} />
         <ResponsePane {...this.props} />
       </div>
     );
@@ -560,6 +570,10 @@ class ResponsePane extends React.Component {
 }
 
 class BaseFrontend extends React.Component {
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log(this.props);
+  }
+
   render () {
     let content = null;
     if (this.props.is_cover_page) {
@@ -647,8 +661,6 @@ class MainApp extends React.Component {
   }
 
   safePacketSend(packet) {
-    console.log('sending');
-    console.log(packet);
     if (this.socket.readyState == 0) {
       return;
     } else if (this.socket.readyState > 1) {
@@ -680,9 +692,6 @@ class MainApp extends React.Component {
       );
     }
 
-    console.log('TASK DATA');
-    console.log(data);
-
     this.setState({
       task_description: task_description,
       frame_height: data['frame_height'] || 650,
@@ -713,7 +722,7 @@ class MainApp extends React.Component {
     let msg = JSON.parse(event.data)['content']
     if (msg.type === TYPE_HEARTBEAT) {
       // Heartbeats ensure we're not disconnected from the server
-      log('received heartbeat: ' + msg.id, 4);
+      log('received heartbeat: ' + msg.id, 5);
       this.setState({pongs_without_heartbeat: 0});
     } else if (msg.type === TYPE_PONG) {
       // Messages incoming from the router, ensuring that we're at least
@@ -764,7 +773,7 @@ class MainApp extends React.Component {
   // Handle incoming command messages
   handleCommand(msg) {
     let command = msg['text'];
-    log('Recieved command ' + command, 1);
+    log('Received command ' + command, 1);
     if (command === COMMAND_SEND_MESSAGE) {
       // Update UI to wait for the worker to submit a message
       this.setState({chat_state: 'text_input'});
@@ -797,7 +806,7 @@ class MainApp extends React.Component {
         this.handleNewMessage(messages[i]['message_id'], messages[i]);
       }
 
-      last_command = msg['last_command'];
+      let last_command = msg['last_command'];
       if (last_command) {
         this.handleCommand(last_command);
       }
@@ -1011,8 +1020,6 @@ class MainApp extends React.Component {
 
   // Thread sends heartbeats through the socket for as long we are connected
   heartbeatThread() {
-    console.log('heartbeat');
-    console.log(this.state.pongs_without_heartbeat + ':' + this.state.heartbeats_without_pong);
     if (this.state.socket_closed) {
       // No reason to keep a heartbeat if the socket is closed
       window.clearInterval(this.state.heartbeat_id);
@@ -1023,7 +1030,6 @@ class MainApp extends React.Component {
     if (this.state.pongs_without_heartbeat == REFRESH_SOCKET_MISSING_PONGS) {
       this.state.pongs_without_heartbeat += 1;
       try {
-        console.log('too many pongs without heartbeat, refreshing');
         this.socket.close();
       } catch(e) {/* Socket already terminated */}
       window.clearInterval(this.state.heartbeat_id);
@@ -1083,9 +1089,6 @@ class MainApp extends React.Component {
       require_ack: require_ack,
       blocking: blocking
     };
-
-    console.log('send');
-    console.log(msg);
 
     this.q.push(msg, time);
     this.state.packet_map[id] = msg;
