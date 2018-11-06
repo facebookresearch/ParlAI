@@ -58,7 +58,7 @@ class Seq2seq(TorchGeneratorModel):
         bidirectional=False, rnn_class='lstm', lookuptable='unique',
         decoder='same', numsoftmax=1,
         attention='none', attention_length=48, attention_time='post',
-        padding_idx=0, start_idx=1, unknown_idx=3, input_dropout=0,
+        padding_idx=0, start_idx=1, end_idx=2, unknown_idx=3, input_dropout=0,
         longest_label=1,
     ):
         """Initialize seq2seq model.
@@ -68,6 +68,7 @@ class Seq2seq(TorchGeneratorModel):
         super().__init__(
             padding_idx=padding_idx,
             start_idx=start_idx,
+            end_idx=end_idx,
             unknown_idx=unknown_idx,
             input_dropout=input_dropout,
             longest_label=longest_label,

@@ -120,7 +120,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
         self.model = Seq2seq(
             len(self.dict), opt['embeddingsize'], opt['hiddensize'],
             padding_idx=self.NULL_IDX, start_idx=self.START_IDX,
-            unknown_idx=self.dict[self.dict.unk_token],
+            end_idx=self.END_IDX, unknown_idx=self.dict[self.dict.unk_token],
             longest_label=states.get('longest_label', 1),
             **kwargs)
 

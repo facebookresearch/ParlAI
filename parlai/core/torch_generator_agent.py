@@ -48,12 +48,14 @@ class TorchGeneratorModel(nn.Module):
         self,
         padding_idx=0,
         start_idx=1,
+        end_idx=2,
         unknown_idx=3,
         input_dropout=0,
         longest_label=1,
     ):
         super().__init__()
         self.NULL_IDX = padding_idx
+        self.END_IDX = end_idx
         self.register_buffer('START', torch.LongTensor([start_idx]))
         self.longest_label = longest_label
 
@@ -75,11 +77,15 @@ class TorchGeneratorModel(nn.Module):
         """
         xs = self._starts(bsz)
         incr_state = None
-        for _ in range(maxlen):
+        for i in range(maxlen):
             # todo, break early if all beams saw EOS
             scores, incr_state = self.decoder(xs, encoder_states, incr_state)
             _, preds = self.output(scores).max(dim=-1)
             xs = torch.cat([xs, preds], dim=1)
+            # check if everyone has generated an end token
+            all_finished = ((xs == self.END_IDX).sum(dim=1) > 0).sum().item() == bsz
+            if all_finished:
+                break
         return xs
 
     def decode_forced(self, ys, encoder_states):
@@ -345,7 +351,6 @@ class TorchGeneratorAgent(TorchAgent):
 
     def _init_cuda_buffer(self, model, criterion, batchsize, maxlen):
         """Pre-initialize CUDA buffer by doing fake forward pass."""
-        return
         if self.use_cuda and not hasattr(self, 'buffer_initialized'):
             try:
                 print('preinitializing pytorch cuda buffer')
