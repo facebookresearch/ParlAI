@@ -219,34 +219,16 @@ app.post('/sns_posts', async function (req, res, next) {
 // Renders the chat page by setting up the template_context given the
 // sent params for the request
 app.get('/chat_index', async function (req, res) {
-  var template_context = {};
   var params = req.query;
+  var template_context = {
+    worker_id: params['workerId'],
+    hit_id: params['hitId'],
+    task_group_id: params['task_group_id'],
+    assignment_id: params['assignmentId'],
+    is_cover_page: params['assignmentId'] == 'ASSIGNMENT_ID_NOT_AVAILABLE'
+  };
 
-  var assignment_id = params['assignmentId']; // from mturk
-  var conversation_id = params['conversation_id'] || null;
-  var mturk_agent_id = params['mturk_agent_id'] || null;
-
-  if (assignment_id === 'ASSIGNMENT_ID_NOT_AVAILABLE') {
-    // Render the cover page
-    template_context['is_cover_page'] = true;
-    res.render('index.html', template_context);
-  } else {
-    if (!conversation_id && !mturk_agent_id) {
-      // if conversation info is not loaded yet, go to an init page
-      template_context['is_init_page'] = true;
-      res.render('index.html', template_context);
-    }
-    else {
-      // Set up template params
-      template_context['is_cover_page'] = false;
-      // TODO move this 650 to be in one location and one location only, it's
-      // a magic number in multiple places
-      template_context['frame_height'] = 650;
-      template_context['cur_agent_id'] = mturk_agent_id;
-      template_context['conversation_id'] = conversation_id;
-      res.render('index.html', template_context);
-    }
-  }
+  res.render('index.html', template_context);
 });
 
 // Returns the hit config
