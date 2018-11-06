@@ -744,6 +744,7 @@ task_list = [
             "test, and valid sets. The test and valid sets are split "
             "into two sets each: one with overlapping topics with the train "
             "set, and one with unseen topics."
+            "See https://arxiv.org/abs/1811.01241 for more information."
         ),
         "notes": (
             "To access the different valid/test splits (unseen/seen), specify "
