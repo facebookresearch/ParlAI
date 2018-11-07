@@ -96,6 +96,8 @@ class TorchRankerAgent(TorchAgent):
 
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
+        if cands is None:
+            return None
         scores = self.score_candidates(batch, cand_vecs)
         loss = self.rank_loss(scores, label_inds)
 
@@ -203,13 +205,19 @@ class TorchRankerAgent(TorchAgent):
                          "batch of size 1. This may be due to uneven batch sizes at "
                          "the end of an epoch. ]"))
             if label_vecs is None:
-                raise ValueError(
-                    "If using candidate source 'batch', then batch.label_vec cannot be "
-                    "None.")
-
-            cands = batch.labels
-            cand_vecs = label_vecs
-            label_inds = label_vecs.new_tensor(range(batchsize))
+                if mode == 'train':
+                    print("Using candidate source 'batch' but no labels in "
+                          "this batch, skipping it.")
+                    return None, None, None
+                elif mode == 'eval':
+                    # need cands during eval
+                    raise ValueError(
+                        "If using candidate source 'batch', then batch.label_vec "
+                        "cannot be None.")
+            else:
+                cands = batch.labels
+                cand_vecs = label_vecs
+                label_inds = label_vecs.new_tensor(range(batchsize))
 
         elif source == 'inline':
             self._warn_once(
