@@ -278,6 +278,7 @@ class TorchGeneratorAgent(TorchAgent):
         if shared:
             # set up shared properties
             self.model = shared['model']
+            self.criterion = shared['criterion']
             self.metrics = shared['metrics']
             states = shared.get('states', {})
         else:
@@ -309,11 +310,12 @@ class TorchGeneratorAgent(TorchAgent):
             else:
                 states = {}
 
-            if 'train' in opt.get('datatype', ''):
-                self.init_optim(
-                    [p for p in self.model.parameters() if p.requires_grad],
-                    optim_states=states.get('optimizer'),
-                    saved_optim_type=states.get('optimizer_type'))
+        if 'train' in opt.get('datatype', ''):
+            # do this regardless of share state, but don't
+            self.init_optim(
+                [p for p in self.model.parameters() if p.requires_grad],
+                optim_states=states.get('optimizer'),
+                saved_optim_type=states.get('optimizer_type'))
 
         self.reset()
 
@@ -390,6 +392,7 @@ class TorchGeneratorAgent(TorchAgent):
         """Share internal states between parent and child instances."""
         shared = super().share()
         shared['model'] = self.model
+        shared['criterion'] = self.criterion
         if self.opt.get('numthreads', 1) > 1:
             # we're doing hogwild so share the model too
             if isinstance(self.metrics, dict):
