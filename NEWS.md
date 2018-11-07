@@ -1,4 +1,6 @@
 <h2>News</h2>
+2018-11-05: Added [Wizard of Wikipedia](https://arxiv.org/abs/1811.01241), a dataset for knowledge-powered conversation.
+
 2018-11-02: Added [Image-Chat](https://klshuster.github.io/image_chat/), a dataset for engaging personality-conditioned dialogue grounded in images.
 
 2018-10-25: Added [Personality-Captions](https://arxiv.org/abs/1810.10665), a dataset for engaging image captioning via personality.
