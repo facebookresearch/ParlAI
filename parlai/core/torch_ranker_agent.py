@@ -96,6 +96,8 @@ class TorchRankerAgent(TorchAgent):
 
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
+        if cands is None:
+            return None
         scores = self.score_candidates(batch, cand_vecs)
         loss = self.rank_loss(scores, label_inds)
 
@@ -203,13 +205,18 @@ class TorchRankerAgent(TorchAgent):
                          "batch of size 1. This may be due to uneven batch sizes at "
                          "the end of an epoch. ]"))
             if label_vecs is None:
-                raise ValueError(
-                    "If using candidate source 'batch', then batch.label_vec cannot be "
-                    "None.")
-
-            cands = batch.labels
-            cand_vecs = label_vecs
-            label_inds = label_vecs.new_tensor(range(batchsize))
+                if mode == 'train':
+                    print("Using candidate source 'batch' but no labels in "
+                          "this batch, skipping it.")
+                    return None, None, None
+                elif mode == 'eval':
+                    print("Using candidate source 'batch' but no labels in "
+                          "this batch, reverting to 'vocab'.")
+                    source = 'vocab'
+            else:
+                cands = batch.labels
+                cand_vecs = label_vecs
+                label_inds = label_vecs.new_tensor(range(batchsize))
 
         elif source == 'inline':
             self._warn_once(
@@ -217,19 +224,24 @@ class TorchRankerAgent(TorchAgent):
                 msg=('[ Executing {} mode with provided inline set of candidates ]'
                      ''.format(mode)))
             if batch.candidate_vecs is None:
-                raise ValueError(
-                    "If using candidate source 'inline', then batch.candidate_vecs "
-                    "cannot be None. If your task does not have inline candidates, "
-                    "consider using one of --candidates={'batch','fixed','vocab'}.")
-
-            cands = batch.candidates
-            cand_vecs = padded_3d(batch.candidate_vecs, use_cuda=self.use_cuda)
-            if label_vecs is not None:
-                label_inds = label_vecs.new_empty((batchsize))
-                for i, label_vec in enumerate(label_vecs):
-                    label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
-                    label_vec_pad[0:label_vec.size(0)] = label_vec
-                    label_inds[i] = self._find_match(cand_vecs[i], label_vec_pad)
+                if mode == 'train':
+                    raise ValueError(
+                        "If using candidate source 'inline', then batch.candidate_vecs "
+                        "cannot be None. If your task does not have inline candidates, "
+                        "consider using one of --candidates={'batch','fixed','vocab'}.")
+                elif mode == 'eval':
+                    print("Using candidate source 'inline' but no candidate_vecs "
+                          "in this batch. Reverting to 'vocab'.")
+                    source = 'vocab'
+            else:
+                cands = batch.candidates
+                cand_vecs = padded_3d(batch.candidate_vecs, use_cuda=self.use_cuda)
+                if label_vecs is not None:
+                    label_inds = label_vecs.new_empty((batchsize))
+                    for i, label_vec in enumerate(label_vecs):
+                        label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
+                        label_vec_pad[0:label_vec.size(0)] = label_vec
+                        label_inds[i] = self._find_match(cand_vecs[i], label_vec_pad)
 
         elif source == 'fixed':
             self._warn_once(
@@ -248,7 +260,7 @@ class TorchRankerAgent(TorchAgent):
                 for i, label_vec in enumerate(label_vecs):
                     label_inds[i] = self._find_match(cand_vecs, label_vec)
 
-        elif source == 'vocab':
+        if source == 'vocab':
             self._warn_once(
                 flag=(mode + '_vocab_candidates'),
                 msg=('[ Executing {} mode with tokens from vocabulary as candidates. ]'
