@@ -52,6 +52,10 @@ def interactive(opt, print_parser=None):
         opt = opt.parse_args()
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
 
+    if opt.get('eval_candidates', '') in ['inline', 'batch']:
+        print('[ Warning: using candidate type unavailable during interactive.'
+              ' Consider switching to "-ecands vocab" or "-ecands fixed". ]')
+
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
