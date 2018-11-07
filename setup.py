@@ -6,7 +6,6 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-
 from setuptools import setup, find_packages
 import sys
 
@@ -21,6 +20,14 @@ with open('LICENSE') as f:
 
 with open('requirements.txt') as f:
     reqs = f.read()
+
+if __name__ == '__main__' and sys.argv[1] == 'test':
+    # for unit tests when cuda torch is installed, need to switch start method
+    import torch
+    if torch.cuda.is_available():
+        raise RuntimeError(
+            'Torch can have issues running tests with CUDA available.'
+            'Please run tests again with CUDA_VISIBLE_DEVICES=""')
 
 setup(
     name='parlai',
