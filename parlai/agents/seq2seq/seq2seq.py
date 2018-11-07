@@ -186,10 +186,10 @@ class Seq2seqAgent(TorchAgent):
         # set up criteria
         if opt.get('numsoftmax', 1) > 1:
             self.criterion = nn.NLLLoss(
-                ignore_index=self.NULL_IDX, reduction='sum')
+                ignore_index=self.NULL_IDX, size_average=False)
         else:
             self.criterion = nn.CrossEntropyLoss(
-                ignore_index=self.NULL_IDX, reduction='sum')
+                ignore_index=self.NULL_IDX, size_average=False)
 
         if self.use_cuda:
             self.criterion.cuda()
