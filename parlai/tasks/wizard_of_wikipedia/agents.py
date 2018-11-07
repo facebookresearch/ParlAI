@@ -314,7 +314,7 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
         return action
 
 
-class BasicDialogTeacher(WizardOfWikipediaTeacher):
+class BasicdialogTeacher(WizardOfWikipediaTeacher):
     """Teacher that only contains the basic dialog between the wizard and
     the Apprentice
     """
@@ -440,7 +440,7 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
 ####################################################
 
 
-class DocReaderTeacher(WizardOfWikipediaTeacher):
+class DocreaderTeacher(WizardOfWikipediaTeacher):
     """
     Teacher for training a doc reader. One can specify the format of the
     action via the `--teacher-type` flag.

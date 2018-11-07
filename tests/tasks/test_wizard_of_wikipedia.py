@@ -30,8 +30,8 @@ class TestWoW(unittest.TestCase):
         main_task = 'wizard_of_wikipedia'
         variants = ['WizardOfWikipediaTeacher',
                     'WizardDialogKnowledgeTeacher',
-                    'BasicDialogTeacher',
-                    'DocReaderTeacher',
+                    'BasicdialogTeacher',
+                    'DocreaderTeacher',
                     'GeneratorTeacher']
         variant_args = {
             'WizardOfWikipediaTeacher': {},
@@ -40,10 +40,10 @@ class TestWoW(unittest.TestCase):
                 'include_knowledge': [False, True],
                 'include_checked_sentence': [False, True]
             },
-            'BasicDialogTeacher': {
+            'BasicdialogTeacher': {
                 'wizard_dialog': [False, True]
             },
-            'DocReaderTeacher': {
+            'DocreaderTeacher': {
                 'teacher_type': ['docs', 'docs_sentence', 'more_docs',
                                  'more_docs_sentence', 'span']
             },
