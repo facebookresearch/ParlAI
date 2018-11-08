@@ -51,6 +51,11 @@ class TorchRankerAgent(TorchAgent):
                  "ignored when candidate set is 'fixed' or 'vocab', as these already "
                  "include all candidates")
         agent.add_argument(
+            '--prev-response-filter', type='bool', default=True,
+            help="If True and --interactive=True, do not allow the model to output its "
+                 "previous response. This is a hackier solution than using "
+                 "--prev-response-negatives, but MUCH faster/simpler")
+        agent.add_argument(
             '--interactive', type='bool', default=False,
             help="Mark as true if you are in a setting where you are only doing "
                  "evaluation, and always with the same fixed candidate set.")
@@ -75,10 +80,15 @@ class TorchRankerAgent(TorchAgent):
 
         if opt['prev_response_negatives']:
             if opt['candidates'] in ['fixed', 'vocab']:
-                print("Option prev-response-negatives=True is incompatible with "
-                      "--candidates=['fixed','vocab']. Overriding it to False.")
+                print("[ Option --prev-response-negatives=True is incompatible with "
+                      "--candidates=['fixed','vocab']. Overriding it to False. ]")
                 opt['prev_response_negatives'] = False
             self.prev_responses = None
+        if opt['prev_response_filter']:
+            if not opt['interactive']:
+                print("[ Option --prev-response-filter=True can only be used when "
+                      "--interactive=True ]")
+            self.prev_response = None
 
         if shared:
             self.model = shared['model']
@@ -176,6 +186,14 @@ class TorchRankerAgent(TorchAgent):
                 cand_list = cands[i]
             cand_preds.append([cand_list[rank] for rank in ordering])
         preds = [cand_preds[i][0] for i in range(batchsize)]
+
+        if self.opt['prev_response_filter']:
+            assert(self.opt['interactive'])
+            # Compare current prediction to previous (replacing if necessary)
+            if self.prev_response and (preds[0] == self.prev_response):
+                preds[0] = cand_preds[0][1]
+            # Save current prediction for next turn
+            self.prev_response = preds[0]
 
         if self.opt['interactive']:
             return Output(preds)
@@ -506,11 +524,6 @@ class TorchRankerAgent(TorchAgent):
 
     def _add_prev_responses(self, batch, cands, cand_vecs, label_inds, source):
         assert(source not in ['fixed', 'vocab'])
-
-        # Extract prev_responses for metadialog-formatted examples
-        msg = "WARNING: This code is specific to metadialog-formatted examples"
-        self._warn_once("prev_resp_metadialog", msg)
-
         self._extract_prev_responses(batch)
 
         # Add prev_responses as negatives
@@ -529,7 +542,11 @@ class TorchRankerAgent(TorchAgent):
         return cands, cand_vecs
 
     def _extract_prev_responses(self, batch):
-        # TODO: calculate this once elsewhere
+        # Extract prev_responses for metadialog-formatted examples
+        msg = "WARNING: This code is specific to metadialog-formatted examples"
+        self._warn_once("prev_resp_metadialog", msg)
+
+        # TODO: Pull out p1/p2 once elsewhere, not every time
         p1 = self.dict.txt2vec('__p1__')[0]
         p2 = self.dict.txt2vec('__p2__')[0]
         self.prev_responses = []
