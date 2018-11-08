@@ -63,7 +63,7 @@ class TorchGeneratorModel(nn.Module):
         """Return bsz start tokens."""
         return self.START.detach().expand(bsz, 1)
 
-    def greedy_decode(self, bsz, encoder_states, maxlen):
+    def decode_greedy(self, encoder_states, bsz, maxlen):
         """Greedy search
 
         :param int bsz: Batch size. Because encoder_states is model-specific, it
@@ -72,23 +72,27 @@ class TorchGeneratorModel(nn.Module):
         :type encoder_states: model specific
         :param int maxlen: Maximum decoding length
 
-        :return: The decoded sequence
-        :rtype: LongTensor[bsz, maxlen]
+        :return: pair (logits, choices) of the greedy decode
+        :rtype: (FloatTensor[bsz, maxlen, vocab], LongTensor[bsz, maxlen])
         """
         xs = self._starts(bsz)
         incr_state = None
+        logits = []
         for i in range(maxlen):
             # todo, break early if all beams saw EOS
             scores, incr_state = self.decoder(xs, encoder_states, incr_state)
-            _, preds = self.output(scores).max(dim=-1)
+            scores = self.output(scores)
+            _, preds = scores.max(dim=-1)
+            logits.append(scores)
             xs = torch.cat([xs, preds], dim=1)
             # check if everyone has generated an end token
             all_finished = ((xs == self.END_IDX).sum(dim=1) > 0).sum().item() == bsz
             if all_finished:
                 break
-        return xs
+        logits = torch.cat(logits, 1)
+        return logits, xs
 
-    def decode_forced(self, ys, encoder_states):
+    def decode_forced(self, encoder_states, ys):
         """Decode with a fixed, true sequence, computing loss. Useful for
         training, or ranking fixed candidates.
 
@@ -98,15 +102,17 @@ class TorchGeneratorModel(nn.Module):
         :param encoder_states: Output of the encoder. Model specific types.
         :type encoder_states: model specific
 
-        :return: logits of the vocabulary distribution for all words in sequences
-        :rtype: FloatTensor[bsz, ys, vocab]
+        :return: pair (logits, choices) containing the logits and MLE predictions
+        :rtype: (FloatTensor[bsz, ys, vocab], LongTensor[bsz, ys])
         """
         bsz = ys.size(0)
         seqlen = ys.size(1)
         inputs = ys.narrow(1, 0, seqlen - 1)
         inputs = torch.cat([self._starts(bsz), inputs], 1)
         latent, _ = self.decoder(inputs, encoder_states)
-        return self.output(latent)
+        logits = self.output(latent)
+        _, preds = logits.max(dim=2)
+        return logits, preds
 
     def reorder_encoder_states(self, encoder_states, indices):
         """Reorder encoder states according to a new set of indices.
@@ -133,7 +139,6 @@ class TorchGeneratorModel(nn.Module):
             output = [[0.1]
                       [0.3]
                       [0.3]]
-
 
         :param encoder_states: output from encoder. type is model specific.
         :type encoder_states: model specific
@@ -200,6 +205,7 @@ class TorchGeneratorModel(nn.Module):
               Feed this back in to skip encoding on the next call.
         """
         if ys is not None:
+            # TODO: get rid of longest_label
             # keep track of longest label we've ever seen
             # we'll never produce longer ones than that during prediction
             self.longest_label = max(self.longest_label, ys.size(1))
@@ -209,15 +215,16 @@ class TorchGeneratorModel(nn.Module):
 
         if ys is not None:
             # use teacher forcing
-            scores = self.decode_forced(ys, encoder_states)
+            scores, preds = self.decode_forced(encoder_states, ys)
         else:
             bsz = xs.size(0)
-            scores = self.greedy_decode(
-                bsz, encoder_states,
+            scores, preds = self.decode_greedy(
+                encoder_states,
+                bsz,
                 maxlen or self.longest_label
             )
 
-        return scores, encoder_states
+        return scores, preds, encoder_states
 
 
 class TorchGeneratorAgent(TorchAgent):
@@ -356,10 +363,10 @@ class TorchGeneratorAgent(TorchAgent):
         if self.use_cuda and not hasattr(self, 'buffer_initialized'):
             try:
                 print('preinitializing pytorch cuda buffer')
-                dummy = torch.ones(batchsize, maxlen).long().cuda()
-                out = model(dummy, dummy)
-                sc = out[0]  # scores
-                loss = criterion(sc.view(-1, sc.size(-1)), dummy.view(-1))
+                dummy_xs = torch.ones(batchsize, maxlen).long().cuda()
+                dummy_ys = torch.ones(batchsize, 2)
+                scores, _, _ = model(dummy_xs, dummy_ys)
+                loss = criterion(scores.view(-1, scores.size(-1)), dummy_ys.view(-1))
                 loss.backward()
                 self.buffer_initialized = True
             except RuntimeError as e:
@@ -440,12 +447,7 @@ class TorchGeneratorAgent(TorchAgent):
         self.zero_grad()
 
         try:
-            out = self.model(batch.text_vec, batch.label_vec)
-
-            # generated response
-            scores = out[0]
-            _, preds = scores.max(2)
-
+            scores, preds, _ = self.model(batch.text_vec, batch.label_vec)
             score_view = scores.view(-1, scores.size(-1))
             loss = self.criterion(score_view, batch.label_vec.view(-1))
             # save loss to metrics
@@ -498,11 +500,10 @@ class TorchGeneratorAgent(TorchAgent):
                 "--skip-generation does not produce accurate metrics beyond ppl",
                 RuntimeWarning
             )
-            out = self.model(batch.text_vec, batch.label_vec)
-            scores = out[0]
-            _, preds = scores.max(2)
+            logits, preds, _ = self.model(batch.text_vec, batch.label_vec)
         elif self.beam_size == 1:
-            preds, _ = self.model(batch.text_vec)
+            # greedy decode
+            logits, preds, _ = self.model(batch.text_vec)
         elif self.beam_size > 1:
             out = self.beam_search(
                 self.model,
@@ -523,9 +524,7 @@ class TorchGeneratorAgent(TorchAgent):
 
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
-            out = self.model(batch.text_vec, batch.label_vec)
-            f_scores = out[0]  # forced scores
-            _, f_preds = f_scores.max(2)  # forced preds
+            f_scores, f_preds, _ = self.model(batch.text_vec, batch.label_vec)
             score_view = f_scores.view(-1, f_scores.size(-1))
             loss = self.criterion(score_view, batch.label_vec.view(-1))
             # save loss to metrics
@@ -548,7 +547,7 @@ class TorchGeneratorAgent(TorchAgent):
                 cands, _ = padded_tensor(
                     batch.candidate_vecs[i], self.NULL_IDX, self.use_cuda
                 )
-                scores = self.model.decode_forced(cands, enc)
+                scores, _ = self.model.decode_forced(enc, cands)
                 cand_losses = F.cross_entropy(
                     scores.view(num_cands * cands.size(1), -1),
                     cands.view(-1),
