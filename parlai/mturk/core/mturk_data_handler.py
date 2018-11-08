@@ -545,7 +545,7 @@ class MTurkDataHandler():
             except Exception as e:
                 print(repr(e))
 
-    def get_all_worker_data(self, start=0, count=30):
+    def get_all_worker_data(self, start=0, count=100):
         """get all the worker data for all worker_ids."""
         with self.table_access_condition:
             conn = self._get_connection()
@@ -600,7 +600,7 @@ class MTurkDataHandler():
             results = c.fetchone()
             return results
 
-    def get_all_run_data(self, start=0, count=30):
+    def get_all_run_data(self, start=0, count=100):
         """get all the run data for all task_group_ids."""
         with self.table_access_condition:
             conn = self._get_connection()
