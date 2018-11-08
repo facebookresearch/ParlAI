@@ -220,7 +220,8 @@ class TorchRankerAgent(TorchAgent):
                 raise ValueError(
                     "If using candidate source 'inline', then batch.candidate_vecs "
                     "cannot be None. If your task does not have inline candidates, "
-                    "consider using one of --candidates={'batch','fixed','vocab'}.")
+                    "consider using one of --{m}={{'batch','fixed','vocab'}}."
+                    "".format(m='candidates' if mode == 'train' else 'eval-candidates'))
 
             cands = batch.candidates
             cand_vecs = padded_3d(batch.candidate_vecs, use_cuda=self.use_cuda)
