@@ -364,7 +364,7 @@ class TorchGeneratorAgent(TorchAgent):
             try:
                 print('preinitializing pytorch cuda buffer')
                 dummy_xs = torch.ones(batchsize, maxlen).long().cuda()
-                dummy_ys = torch.ones(batchsize, 2)
+                dummy_ys = torch.ones(batchsize, 2).long().cuda()
                 scores, _, _ = model(dummy_xs, dummy_ys)
                 loss = criterion(scores.view(-1, scores.size(-1)), dummy_ys.view(-1))
                 loss.backward()
