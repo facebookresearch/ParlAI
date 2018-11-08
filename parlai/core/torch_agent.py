@@ -732,7 +732,8 @@ class TorchAgent(Agent):
             return token + ' ' + text
 
     def get_dialog_history(self, observation, reply=None,
-                           add_person_tokens=False, add_p1_after_newln=False):
+                           add_person_tokens=False, add_p1_after_newln=False,
+                           delimiter='\n'):
         """Retrieve dialog history and add current observations to it.
 
         :param observation:        current observation
@@ -769,7 +770,7 @@ class TorchAgent(Agent):
             self.history.append(obs['text'])
 
         if len(self.history) > 0:
-            obs['text'] = '\n'.join(self.history)
+            obs['text'] = delimiter.join(self.history)
         if obs.get('episode_done', True):
             # end of this episode, clear the history
             self.history.clear()
