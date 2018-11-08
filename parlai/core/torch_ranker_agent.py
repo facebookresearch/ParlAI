@@ -44,11 +44,18 @@ class TorchRankerAgent(TorchAgent):
                  "the flag --fixed-candidates-path. By default, this file is created "
                  "once and reused. To replace it, use the 'replace' option.")
         agent.add_argument(
-            '--interactive', type=bool, default=False,
+            '--prev-response-negatives', type='bool', default=False,
+            help="If True, during training add the previous agent response as a "
+                 "negative candidate for the current response (as a way to "
+                 "organically teach the model to not repeat itself). This option is "
+                 "ignored when candidate set is 'fixed' or 'vocab', as these already "
+                 "include all candidates")
+        agent.add_argument(
+            '--interactive', type='bool', default=False,
             help="Mark as true if you are in a setting where you are only doing "
                  "evaluation, and always with the same fixed candidate set.")
         agent.add_argument(
-            '--encode-fixed-candidates', type=bool, default=False,
+            '--encode-fixed-candidates', type='bool', default=False,
             help="If True, encode fixed candidates in addition to vectorizing them.")
 
         # TODO: Move this functionality (init, loading, etc.) up to TorchAgent since
@@ -65,6 +72,13 @@ class TorchRankerAgent(TorchAgent):
         if opt['eval_candidates'] is None:
             opt['eval_candidates'] = opt['candidates']
         super().__init__(opt, shared)
+
+        if opt['prev_response_negatives']:
+            if opt['candidates'] in ['fixed', 'vocab']:
+                print("Option prev-response-negatives=True is incompatible with "
+                      "--candidates=['fixed','vocab']. Overriding it to False.")
+                opt['prev_response_negatives'] = False
+            self.prev_responses = None
 
         if shared:
             self.model = shared['model']
@@ -173,16 +187,18 @@ class TorchRankerAgent(TorchAgent):
 
         :param batch: a Batch object (defined in torch_agent.py)
         :param source: the source from which candidates should be built, one of
-            ['batch', 'inline', 'fixed']
+            ['batch', 'inline', 'fixed', 'vocab']
         :param mode: 'train' or 'eval'
 
         :return: tuple of tensors (label_inds, cands, cand_vecs)
             label_inds: A [bsz] LongTensor of the indices of the labels for each
                 example from its respective candidate set
             cands: A [num_cands] list of (text) candidates
-                OR a [batchsize] list of such lists if source=='inline'
+                OR a [batchsize] list of such lists if source=='inline' or
+                --prev-response-negatives==True
             cand_vecs: A padded [num_cands, seqlen] LongTensor of vectorized candidates
-                OR a [batchsize, num_cands, seqlen] LongTensor if source=='inline'
+                OR a [batchsize, num_cands, seqlen] LongTensor if source=='inline' or
+                --prev-response-negatives==True
 
         Possible sources of candidates:
             * batch: the set of all labels in this batch
@@ -278,6 +294,10 @@ class TorchRankerAgent(TorchAgent):
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
                     label_inds[i] = self._find_match(cand_vecs, label_vec)
+
+        if self.opt['prev_response_negatives'] and mode == 'train':
+            cands, cand_vecs = self._add_prev_responses(
+                batch, cands, cand_vecs, label_inds, source)
 
         return (cands, cand_vecs, label_inds)
 
@@ -483,6 +503,46 @@ class TorchRankerAgent(TorchAgent):
     def load_candidate_vecs(self, path):
         print("[ Loading fixed candidate set vectors from {} ]".format(path))
         return torch.load(path)
+
+    def _add_prev_responses(self, batch, cands, cand_vecs, label_inds, source):
+        assert(source not in ['fixed', 'vocab'])
+
+        # Extract prev_responses for metadialog-formatted examples
+        msg = "WARNING: This code is specific to metadialog-formatted examples"
+        self._warn_once("prev_resp_metadialog", msg)
+
+        self._extract_prev_responses(batch)
+
+        # Add prev_responses as negatives
+        prev_cands = self.prev_responses
+        prev_cand_vecs = [torch.Tensor(self.dict.txt2vec(cand)) for cand in prev_cands]
+        if source == 'batch':
+            # Change from one set of shared candidates to separate set per example
+            cands = [cands + [prev_cand] for prev_cand in prev_cands]
+            list_of_lists_of_cand_vecs = [[vec for vec in cand_vecs] + [prev_cand_vec]
+                                       for prev_cand_vec in prev_cand_vecs]
+            cand_vecs = padded_3d(list_of_lists_of_cand_vecs, use_cuda=self.use_cuda,
+                                  dtype=cand_vecs[0].dtype)
+        elif source == 'inline':
+            raise NotImplementedError
+
+        return cands, cand_vecs
+
+    def _extract_prev_responses(self, batch):
+        # TODO: calculate this once elsewhere
+        p1 = self.dict.txt2vec('__p1__')[0]
+        p2 = self.dict.txt2vec('__p2__')[0]
+        self.prev_responses = []
+        # Do naively for now with a for loop
+        for text_vec in batch.text_vec:
+            p1s = (text_vec == p1).nonzero()
+            p2s = (text_vec == p2).nonzero()
+            if len(p1s) and len(p2s):
+                response_vec = text_vec[p2s[-1] + 1 : p1s[-1]]
+            else:
+                response_vec = [self.NULL_IDX]  # TODO: pull in actual N
+            response = self.dict.vec2txt(response_vec)
+            self.prev_responses.append(response)
 
     def _warn_once(self, flag, msg):
         """
