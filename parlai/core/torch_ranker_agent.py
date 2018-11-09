@@ -495,32 +495,12 @@ class TorchRankerAgent(TorchAgent):
         :returns: a [num_cands] list of candidate vectors
 
         By default, candidates are simply vectorized (tokens replaced by token ids).
-        If --encode_fixed_candidates==True, the method encode_fixed_candidates()
-        implemented by a child class will be used to also encode the candidates using
-        a trained encoder.
+        To also encode candidates with a trained encoder, a child class may provide
+        override this method with its own.
         """
-        cand_vecs = [self._vectorize_text(cand, truncate=self.truncate, truncate_left=False)
-                     for cand in cands_batch]
-        if self.opt['encode_fixed_candidates']:
-            cand_vecs = self.encode_fixed_candidates(cand_vecs)
+        cand_vecs = [self._vectorize_text(cand, truncate=self.truncate,
+                     truncate_left=False) for cand in cands_batch]
         return cand_vecs
-
-    def encode_fixed_candidates(self, cand_vec_list):
-        """Convert vectorized candidates into encoded candidates
-
-        :param cands_vec_list: a [num_cands] list of vectorized candidates (LongTensors)
-        :returns: a [num_cands] list of encoded candidates (FloatTensors)
-
-        This method may be implemented by a child class to encode candidate vectors
-        when --encode_fixed_candidates==True.
-
-        Note:
-        - [num_cands] refers to the number of candidates in the batch being encoded.
-        - a list of candidates are passed in and out because all candidates will be
-            padded at the same time in make_candidate_vecs()
-        """
-        raise NotImplementedError(
-            "Abstract class: user must implement encode_fixed_candidates()")
 
     def save_candidate_vecs(self, vecs, path):
         print("[ Saving fixed candidate set vectors to {} ]".format(path))
