@@ -51,7 +51,7 @@ class TorchRankerAgent(TorchAgent):
                  "ignored when candidate set is 'fixed' or 'vocab', as these already "
                  "include all candidates")
         agent.add_argument(
-            '--prev-response-filter', type='bool', default=True,
+            '--prev-response-filter', type='bool', default=False,
             help="If True and --interactive=True, do not allow the model to output its "
                  "previous response. This is a hackier solution than using "
                  "--prev-response-negatives, but MUCH faster/simpler")
@@ -76,6 +76,13 @@ class TorchRankerAgent(TorchAgent):
         opt['rank_candidates'] = True
         if opt['eval_candidates'] is None:
             opt['eval_candidates'] = opt['candidates']
+
+        # METADIALOG SPECIFIC
+        if opt['interactive']:
+            print("[ Setting interactive mode defaults... ]")
+            opt['prev_response_filter'] = True
+            opt['person_tokens'] = True
+
         super().__init__(opt, shared)
 
         if shared:
