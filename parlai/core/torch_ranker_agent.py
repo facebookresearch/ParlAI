@@ -13,7 +13,7 @@ from torch import nn
 
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import round_sigfigs, padded_3d
+from parlai.core.utils import round_sigfigs, padded_3d, padded_tensor
 
 
 class TorchRankerAgent(TorchAgent):
@@ -78,33 +78,41 @@ class TorchRankerAgent(TorchAgent):
             opt['eval_candidates'] = opt['candidates']
         super().__init__(opt, shared)
 
-        if opt['prev_response_negatives']:
-            if opt['candidates'] in ['fixed', 'vocab']:
-                print("[ Option --prev-response-negatives=True is incompatible with "
-                      "--candidates=['fixed','vocab']. Overriding it to False. ]")
-                opt['prev_response_negatives'] = False
-            self.prev_responses = None
-        if opt['prev_response_filter']:
-            if not opt['interactive']:
-                print("[ Option --prev-response-filter=True can only be used when "
-                      "--interactive=True ]")
-            self.prev_response = None
-
         if shared:
+            self.warnings = shared['warnings']
             self.model = shared['model']
             self.metrics = shared['metrics']
+            self.fixed_candidates = shared['fixed_candidates']
+            self.fixed_candidate_vecs = shared['fixed_candidate_vecs']
+            self.vocab_candidates = shared['vocab_candidates']
+            self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
         else:
+            self.warnings = {}
             self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0}
             self.build_model()
             if model_file:
                 print('Loading existing model parameters from ' + model_file)
                 self.load(model_file)
+            # Vectorize and save fixed/vocab candidates once upfront if applicable
+            self.set_fixed_candidates(shared)
+            self.set_vocab_candidates(shared)
+
+        if opt['prev_response_negatives']:
+            if opt['candidates'] in ['fixed', 'vocab']:
+                msg = ("[ Option --prev-response-negatives=True is incompatible with "
+                       "--candidates=['fixed','vocab']. Overriding it to False. ]")
+                self._warn_once('prev_resp_neg_override', msg)
+                self.opt['prev_response_negatives'] = False
+            self.prev_responses = None
+        if opt['prev_response_filter']:
+            if not opt['interactive']:
+                msg = ("[ Option --prev-response-filter=True can only be used when "
+                       "--interactive=True. Overriding it to False. ]")
+                self._warn_once('prev_resp_filt_override', msg)
+                self.opt['prev_response_filter'] = False
+            self.prev_response = None
 
         self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
-
-        # Vectorize and save fixed/vocab candidates once upfront if applicable
-        self.set_fixed_candidates(shared)
-        self.set_vocab_candidates(shared)
 
         if self.use_cuda:
             self.model.cuda()
@@ -333,6 +341,7 @@ class TorchRankerAgent(TorchAgent):
             self.metrics = SharedTable(self.metrics)
             self.model.share_memory()
         shared['metrics'] = self.metrics
+        shared['warnings'] = self.warnings
         shared['fixed_candidates'] = self.fixed_candidates
         shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
         shared['vocab_candidates'] = self.vocab_candidates
@@ -530,12 +539,17 @@ class TorchRankerAgent(TorchAgent):
         prev_cands = self.prev_responses
         prev_cand_vecs = [torch.Tensor(self.dict.txt2vec(cand)) for cand in prev_cands]
         if source == 'batch':
-            # Change from one set of shared candidates to separate set per example
-            cands = [cands + [prev_cand] for prev_cand in prev_cands]
-            list_of_lists_of_cand_vecs = [[vec for vec in cand_vecs] + [prev_cand_vec]
-                                       for prev_cand_vec in prev_cand_vecs]
-            cand_vecs = padded_3d(list_of_lists_of_cand_vecs, use_cuda=self.use_cuda,
-                                  dtype=cand_vecs[0].dtype)
+            # Option 1: Change from one set of shared candidates to separate per example
+            # cands = [cands + [prev_cand] for prev_cand in prev_cands]
+            # list_of_lists_of_cand_vecs = [[vec for vec in cand_vecs] + [prev_cand_vec]
+            #                            for prev_cand_vec in prev_cand_vecs]
+            # cand_vecs = padded_3d(list_of_lists_of_cand_vecs, use_cuda=self.use_cuda,
+            #                       dtype=cand_vecs[0].dtype)
+
+            # Option 2: Just add all prev responses for the whole batch (doubles bs)
+            cands += prev_cands
+            cand_vecs, _ = padded_tensor([vec for vec in cand_vecs] + prev_cand_vecs,
+                                         use_cuda=self.use_cuda)
         elif source == 'inline':
             raise NotImplementedError
 
@@ -567,6 +581,6 @@ class TorchRankerAgent(TorchAgent):
         :param msg: The message to display
         """
         warn_flag = '__warned_' + flag
-        if not hasattr(self, warn_flag):
-            setattr(self, warn_flag, True)
+        if warn_flag not in self.warnings:
+            self.warnings[warn_flag] = True
             print(msg)
