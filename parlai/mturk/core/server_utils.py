@@ -271,14 +271,21 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
     # Copy over a clean copy into the server directory
     shutil.copytree(server_source_directory_path, heroku_server_development_path)
 
+    component_dep_dir = os.path.join(
+        heroku_server_development_path, 'dev', 'component_deps')
+
     # Move dev resource files to their correct places
-    for resource_type in ['css', 'components', 'component_deps']:
+    for resource_type in ['css', 'components']:
         target_resource_dir = os.path.join(
             heroku_server_development_path, 'dev', resource_type)
         for file_path in task_files_to_copy[resource_type]:
             try:
                 file_name = os.path.basename(file_path)
-                target_path = os.path.join(target_resource_dir, file_name)
+                if file_name == 'package.json':
+                    # special case for special packages
+                    target_path = os.path.join(component_dep_dir, file_name)
+                else:
+                    target_path = os.path.join(target_resource_dir, file_name)
                 shutil.copy2(file_path, target_path)
             except IsADirectoryError:  # noqa: F821 we don't support python2
                 dir_name = os.path.basename(os.path.normpath(file_path))

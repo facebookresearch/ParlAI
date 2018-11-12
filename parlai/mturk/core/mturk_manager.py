@@ -801,7 +801,6 @@ class MTurkManager():
                 'static': [],
                 'components': [],
                 'css': [],
-                'component_deps': [],
             }
         if not task_directory_path:
             task_directory_path = os.path.join(
