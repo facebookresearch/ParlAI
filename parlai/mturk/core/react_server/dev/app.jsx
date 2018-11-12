@@ -233,7 +233,9 @@ class DoneResponse extends React.Component {
       inactive_pane = (
         <span
           id="inactive"
-          style={{'fontSize': '14pt', 'marginRight': '15px'}} />
+          style={{'fontSize': '14pt', 'marginRight': '15px'}}>
+          {this.props.done_text}
+        </span>
       );
     }
     // TODO maybe move to CSS?
@@ -315,7 +317,6 @@ class TextResponse extends React.Component {
         disabled={!this.props.active}/>
     );
 
-    // TODO attach send message callback
     let submit_button = (
       <Button
         className="btn btn-primary"
@@ -553,6 +554,12 @@ class MainApp extends React.Component {
     };
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevState.agent_id != this.state.agent_id) {
+      setComponentsForAgentID(this.state.agent_id);
+    }
+  }
+
   handleIncomingHITData(data) {
     let task_description = data['task_description'];
     if (isMobile() && block_mobile) {
@@ -580,7 +587,6 @@ class MainApp extends React.Component {
     }
     this.socket_handler.handleQueueMessage(text, data, callback);
   }
-
 
   render() {
     let socket_handler = null;
@@ -638,18 +644,14 @@ class MainApp extends React.Component {
           context={this.state.context}
         />
         <MTurkSubmitForm
-          assignment_id={this.state.assignment_id}
-          hit_id={this.state.hit_id}
-          worker_id={this.state.worker_id}
+          assignment_id={this.props.assignment_id}
+          hit_id={this.props.hit_id}
+          worker_id={this.props.worker_id}
           mturk_submit_url={this.state.mturk_submit_url}/>
         {socket_handler}
       </div>
     );
   }
-}
-
-if (CustomComponents.MainApp !== undefined) {
-  MainApp = CustomComponents.MainApp;
 }
 
 var main_app = <MainApp/>;
