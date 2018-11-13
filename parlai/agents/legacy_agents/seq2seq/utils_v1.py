@@ -7,12 +7,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 """File for miscellaneous utility functions and constants."""
 
-from collections import deque
-import math
-import os
-import random
-import time
-
 # some of the utility methods are helpful for Torch
 try:
     import torch
