@@ -38,7 +38,7 @@ class TestTransformerRanker(unittest.TestCase):
     def test_repeater(self):
         stdout, valid, test = _mock_train(
             task='integration_tests:CandidateTeacher',
-            model='internal:transformer',
+            model='transformer/ranker',
             optimizer='adamax',
             learningrate=7e-3,
             batchsize=32,
@@ -66,7 +66,7 @@ class TestTransformerGenerator(unittest.TestCase):
     def test_ranking(self):
         stdout, valid, test = _mock_train(
             task='integration_tests:CandidateTeacher',
-            model='internal:transformer:generative_transformer',
+            model='transformer/generator',
             optimizer='adamax',
             learningrate=7e-3,
             batchsize=32,
@@ -90,7 +90,7 @@ class TestTransformerGenerator(unittest.TestCase):
     def test_generation(self):
         stdout, valid, test = _mock_train(
             task='integration_tests:NocandidateTeacher',
-            model='internal:transformer:generative_transformer',
+            model='transformer/generator',
             optimizer='adamax',
             learningrate=7e-3,
             batchsize=32,
