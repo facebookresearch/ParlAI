@@ -533,6 +533,7 @@ class MainApp extends React.Component {
       initialization_status = 'websockets_failure';
     }
 
+    // TODO move constants to props rather than state
     this.state = {
       task_description: null,
       mturk_submit_url: null,
@@ -644,9 +645,9 @@ class MainApp extends React.Component {
           context={this.state.context}
         />
         <MTurkSubmitForm
-          assignment_id={this.props.assignment_id}
-          hit_id={this.props.hit_id}
-          worker_id={this.props.worker_id}
+          assignment_id={this.state.assignment_id}
+          hit_id={this.state.hit_id}
+          worker_id={this.state.worker_id}
           mturk_submit_url={this.state.mturk_submit_url}/>
         {socket_handler}
       </div>

@@ -6,6 +6,8 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
+from joblib import Parallel, delayed
+import threading
 
 
 class AskerOnboardingWorld(MTurkOnboardWorld):
@@ -33,9 +35,10 @@ class AnswererOnboardingWorld(MTurkOnboardWorld):
         ad = {}
         ad['id'] = 'System'
         ad['text'] = (
-            "Welcome onboard! You'll be playing the role of the asker. You'll "
-            "be asked a question that should be answered with a number. Answer"
-            " with something that makes sense. Enter any number to continue."
+            "Welcome onboard! You'll be playing the role of the answerer. "
+            "You'll be asked a question that should be answered with a number. "
+            "Answer with something that makes sense. Enter any number to "
+            "continue."
         )
         self.mturk_agent.observe(ad)
         self.mturk_agent.act()
@@ -50,7 +53,7 @@ class EvaluatorOnboardingWorld(MTurkOnboardWorld):
         ad = {}
         ad['id'] = 'System'
         ad['text'] = (
-            "Welcome onboard! You'll be playing the role of the asker. You'll "
+            "Welcome onboard! You'll be playing the evaluator. You'll "
             "observe a series of three questions, and then you'll evaluate "
             "whether or not the exchange was accurate. Send an eval to begin."
         )
@@ -105,7 +108,10 @@ class MultiRoleAgentWorld(MTurkTaskWorld):
             }
             self.answerer.observe(ad)
             self.answerer.observe(question)
+            self.evaluator.observe(question)
             answer = self.answerer.act()
+            self.evaluator.observe(answer)
+            self.asker.observe(answer)
             self.questions.append(question)
             self.answers.append(answer)
             self.turns += 1
@@ -122,15 +128,26 @@ class MultiRoleAgentWorld(MTurkTaskWorld):
             }
             self.answerer.observe(ad)
             self.asker.observe(ad)
-            self.evaluator.act()
+            self.accepter = self.evaluator.act()
             self.episodeDone = True
 
     def episode_done(self):
         return self.episodeDone
 
     def shutdown(self):
-        self.task.shutdown()
-        self.mturk_agent.shutdown()
+        # Parallel shutdown of agents
+        def shutdown_agent(agent):
+            try:
+                agent.shutdown(timeout=None)
+            except Exception:
+                agent.shutdown()  # not MTurkAgent
+        threads = []
+        for agent in self.mturk_agents:
+            t = threading.Thread(target=shutdown_agent, args=(agent,))
+            t.start()
+            threads.append(t)
+        for t in threads:
+            t.join()
 
     def review_work(self):
         # Can review the work here to accept or reject it
@@ -141,5 +158,7 @@ class MultiRoleAgentWorld(MTurkTaskWorld):
         # creating the dataset. If data requires pickling, put it in a field
         # called 'needs-pickle'.
         return {
-            # custom data
+            'questions': self.questions,
+            'answers': self.answers,
+            'evaluation': self.accepted,
         }

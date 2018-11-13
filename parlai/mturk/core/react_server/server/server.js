@@ -146,7 +146,7 @@ wss.on('connection', function (socket) {
   // handles routing a packet to the desired recipient
   socket.on('message', function (data) {
     try {
-      data = JSON.parse(data)
+      data = JSON.parse(data);
       if (data['type'] == 'agent alive') {
         handle_alive(socket, data['content']);
       } else if (data['type'] == 'route packet') {

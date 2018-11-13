@@ -1,3 +1,6 @@
+import React from 'react';
+import {FormControl, Button} from 'react-bootstrap';
+
 // Create custom components
 class EvaluatorIdleResponse extends React.Component {
   render() {
@@ -190,11 +193,13 @@ var IdleResponseHolder = {
 var TextResponseHolder = {
   // default: leave blank to use original default when no ids match
   'Evaluator': EvaluationResponse,
-  'Answerer': NumericResponse
+  'Onboarding Evaluator': EvaluationResponse,
+  'Answerer': NumericResponse,
+  'Onboarding Answerer': NumericResponse
 }
 
 export default {
   // ComponentName: CustomReplacementComponentMap
-  TextResponse: TextResponseHolder,
-  IdleResponse: IdleResponseHolder
+  XTextResponse: TextResponseHolder,
+  XIdleResponse: IdleResponseHolder
 };

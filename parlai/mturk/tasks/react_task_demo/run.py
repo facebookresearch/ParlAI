@@ -60,7 +60,6 @@ def main():
             world = AnswererOnboardingWorld(opt=opt, mturk_agent=worker)
         else:
             world = EvaluatorOnboardingWorld(opt=opt, mturk_agent=worker)
-
         while not world.episode_done():
             world.parley()
         world.shutdown()

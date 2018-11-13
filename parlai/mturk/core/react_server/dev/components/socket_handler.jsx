@@ -571,9 +571,9 @@ class SocketHandler extends React.Component {
     var hb = {
       'id': uuidv4(),
       'receiver_id': '[World_' + TASK_GROUP_ID + ']',
-      'assignment_id': this.state.assignment_id,
-      'sender_id' : this.state.worker_id,
-      'conversation_id': this.state.conversation_id,
+      'assignment_id': this.props.assignment_id,
+      'sender_id' : this.props.worker_id,
+      'conversation_id': this.props.conversation_id,
       'type': TYPE_HEARTBEAT,
       'data': null
     };
@@ -583,10 +583,10 @@ class SocketHandler extends React.Component {
     this.setState({
       heartbeats_without_pong: this.state.heartbeats_without_pong + 1
     });
-    if (this.state.heartbeats_without_pong >= 3) {
-      this.props.onStatusChange('reconnecting_router');
-    } else if (this.state.heartbeats_without_pong >= 12) {
+    if (this.state.heartbeats_without_pong >= 12) {
       this.closeSocket();
+    } else if (this.state.heartbeats_without_pong >= 3) {
+      this.props.onStatusChange('reconnecting_router');
     }
   }
 
