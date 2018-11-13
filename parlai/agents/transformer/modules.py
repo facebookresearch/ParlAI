@@ -86,7 +86,7 @@ class TransformerMemNetModel(nn.Module):
             )
         else:
             self.cand_encoder = _build_encoder(
-                opt, dictionary, self.embeddings, reduction=True,
+                opt, dictionary, self.embeddings, self.pad_idx, reduction=True,
             )
 
         # build memory encoder
@@ -110,8 +110,7 @@ class TransformerMemNetModel(nn.Module):
         else:
             oldshape = None
 
-        word_mask = words != self.pad_idx
-        encoded = self.cand_encoder(words, word_mask)
+        encoded = self.cand_encoder(words)
 
         if oldshape is not None:
             encoded = encoded.reshape(oldshape[0], oldshape[1], -1)
@@ -119,17 +118,15 @@ class TransformerMemNetModel(nn.Module):
         return encoded
 
     def encode_context_memory(self, context_w, memories_w):
-        context_mask = context_w != self.pad_idx
         # [batch, d]
-        context_h = self.context_encoder(context_w, context_mask)
+        context_h = self.context_encoder(context_w)
 
         if memories_w is None:
             return [], context_h
 
         bsz = memories_w.size(0)
         memories_w = memories_w.view(-1, memories_w.size(-1))
-        mask = memories_w != self.pad_idx
-        memories_h = self.memory_transformer(memories_w, mask)
+        memories_h = self.memory_transformer(memories_w)
         memories_h = memories_h.view(bsz, -1, memories_h.size(-1))
 
         context_h = context_h.unsqueeze(1)
@@ -192,8 +189,8 @@ class TransformerResponseWrapper(nn.Module):
             nn.Linear(hdim, dim)
         )
 
-    def forward(self, input, mask):
-        return self.mlp(self.transformer(input, mask))
+    def forward(self, *args):
+        return self.mlp(self.transformer(*args))
 
 
 class TransformerEncoder(nn.Module):

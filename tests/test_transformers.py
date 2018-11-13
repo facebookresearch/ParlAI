@@ -25,7 +25,7 @@ def _mock_train(**args):
     )
     stdout = io.StringIO()
     with contextlib.redirect_stdout(stdout):
-        tl = TrainLoop(parser.parse_args(print_args=True))
+        tl = TrainLoop(parser.parse_args(print_args=False))
         valid, test = tl.train()
 
     shutil.rmtree(outdir)
@@ -48,6 +48,7 @@ class TestTransformerRanker(unittest.TestCase):
             n_heads=1,
             ffn_size=32,
             embedding_size=32,
+            scores_norm='dot',
         )
 
         self.assertTrue(
@@ -76,6 +77,7 @@ class TestTransformerGenerator(unittest.TestCase):
             n_heads=1,
             ffn_size=32,
             embedding_size=32,
+            rank_candidates=True,
         )
 
         self.assertTrue(
@@ -100,6 +102,7 @@ class TestTransformerGenerator(unittest.TestCase):
             n_heads=1,
             ffn_size=32,
             embedding_size=32,
+            beam_size=5,
         )
 
         self.assertTrue(
@@ -118,6 +121,7 @@ class TestTransformerGenerator(unittest.TestCase):
             test['bleu'] >= .95,
             "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
         )
+
 
 if __name__ == '__main__':
     unittest.main()
