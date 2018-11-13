@@ -12,7 +12,6 @@ from parlai.mturk.tasks.react_task_demo.worlds import \
 from parlai.mturk.core.mturk_manager import MTurkManager
 from task_config import task_config
 import os
-import importlib
 
 
 def main():

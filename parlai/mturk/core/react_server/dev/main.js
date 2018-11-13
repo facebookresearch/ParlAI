@@ -7,3 +7,4 @@
  */
 import './app.jsx';
 import './css/style.css';
+import './css/custom.css';
