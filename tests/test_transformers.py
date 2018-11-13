@@ -96,7 +96,7 @@ class TestTransformerGenerator(unittest.TestCase):
             optimizer='adamax',
             learningrate=7e-3,
             batchsize=32,
-            num_epochs=10,
+            num_epochs=15,
             no_cuda=True,
             n_layers=1,
             n_heads=1,
