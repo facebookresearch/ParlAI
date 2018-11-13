@@ -351,7 +351,7 @@ class RNNDecoder(nn.Module):
         return output, _transpose_hidden_state(new_hidden)
 
 
-class IdentityLayer(nn.Module):
+class Identity(nn.Module):
     def forward(self, x):
         return x
 
@@ -385,18 +385,20 @@ class OutputLayer(nn.Module):
         self.dropout = nn.Dropout(p=dropout)
 
         self.padding_idx = padding_idx
+        rng = 1. / math.sqrt(num_features)
+        self.bias = Parameter(torch.Tensor(num_features).uniform_(-rng, rng))
 
         # embedding to scores
         if shared_weight is None:
             # just a regular linear layer
             self.shared = False
-            self.e2s = nn.Linear(embeddingsize, num_features, bias=True)
+            self.weight = Parameter(
+                torch.Tensor(num_features, embeddingsize).normal_(0, 1)
+            )
         else:
             # use shared weights and a bias layer instead
             self.shared = True
-            self.e2s = shared_weight
-            rng = 1. / math.sqrt(num_features)
-            self.bias = Parameter(torch.Tensor(num_features).uniform_(-rng, rng))
+            self.weight = shared_weight.weight
 
         self.numsoftmax = numsoftmax
         if numsoftmax > 1:
@@ -412,7 +414,7 @@ class OutputLayer(nn.Module):
                 self.o2e = nn.Linear(hiddensize, embeddingsize, bias=True)
             else:
                 # no need for any transformation here
-                self.o2e = IdentityLayer()
+                self.o2e = Identity()
 
     def forward(self, input):
         """Compute scores from inputs.
@@ -432,7 +434,7 @@ class OutputLayer(nn.Module):
             latent = self.latent(input)
             active = self.dropout(self.activation(latent))
             # esz => num_features
-            logit = F.linear(active.view(-1, self.esz), self.e2s.weight, self.bias)
+            logit = F.linear(active.view(-1, self.esz), self.weight, self.bias)
 
             # calculate priors: distribution over which softmax scores to use
             # hsz => numsoftmax
@@ -448,13 +450,10 @@ class OutputLayer(nn.Module):
             # hsz => esz, good time for dropout
             e = self.dropout(self.o2e(input))
             # esz => num_features
-            if self.shared:
-                scores = F.linear(e, self.e2s.weight, self.bias)
-            else:
-                scores = self.e2s(e)
+            scores = F.linear(e, self.weight, self.bias)
 
-        if self.padding_idx == 0:
-            scores[:, :, 0] = -NEAR_INF
+        if self.padding_idx >= 0:
+            scores[:, :, self.padding_idx] = -NEAR_INF
 
         return scores
 
