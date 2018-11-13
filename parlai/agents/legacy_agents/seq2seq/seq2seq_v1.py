@@ -6,10 +6,10 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.torch_agent import TorchAgent, Output, Beam
-from parlai.core.utils import padded_tensor, round_sigfigs
-from parlai.core.thread_utils import SharedTable
-from .modules import Seq2seq, opt_to_kwargs
+from .torch_agent_v1 import TorchAgent, Output, Beam
+from .utils_v1 import padded_tensor
+from .utils_v0 import SharedTable, round_sigfigs
+from .modules_v1 import Seq2seq, opt_to_kwargs
 
 import torch
 import torch.nn as nn
@@ -120,12 +120,10 @@ class Seq2seqAgent(TorchAgent):
 
         Models may not be backwards-compatible with older versions.
         Version 1 split from version 0 on Aug 29, 2018.
-        Version 2 split from version 1 on Nov 13, 2018
         To use version 0, use --model legacy:seq2seq:0
-        To use version 1, use --model legacy:seq2seq:1
         (legacy agent code is located in parlai/agents/legacy_agents).
         """
-        return 2
+        return 1
 
     def __init__(self, opt, shared=None):
         """Set up model."""
