@@ -60,7 +60,7 @@ function _send_message(connection_id, event_name, event_data) {
   var packet = {
     type: event_name,
     content: event_data,
-  }
+  };
   // Send the message through
   socket.send(JSON.stringify(packet), function ack(error) {
     if (error === undefined) {
@@ -164,7 +164,7 @@ wss.on('connection', function (socket) {
 
 server.listen(PORT, function() {
   console.log('Listening on %d', server.address().port);
-})
+});
 
 // ======================= </Socket> =======================
 
@@ -241,6 +241,6 @@ app.get('/get_timestamp', function (req, res) {
   res.json({'timestamp': Date.now()}); // in milliseconds
 });
 
-app.use(express.static('static'))
+app.use(express.static('static'));
 
 // ======================= </Routing> =======================

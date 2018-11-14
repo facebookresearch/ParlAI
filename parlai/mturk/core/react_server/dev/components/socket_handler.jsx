@@ -324,7 +324,7 @@ class SocketHandler extends React.Component {
   **/
 
   parseSocketMessage(event) {
-    let msg = JSON.parse(event.data)['content']
+    let msg = JSON.parse(event.data)['content'];
     if (msg.type === TYPE_HEARTBEAT) {
       // Heartbeats ensure we're not disconnected from the server
       log('received heartbeat: ' + msg.id, 5);
@@ -474,6 +474,7 @@ class SocketHandler extends React.Component {
 
     let url = window.location;
     if (url.hostname == 'localhost') {
+      // Localhost can't always handle secure websockets, so we special case
       this.socket = new WebSocket('ws://' + url.hostname + ':' + url.port);
     } else {
       this.socket = new WebSocket('wss://' + url.hostname + ':' + url.port);
@@ -486,7 +487,7 @@ class SocketHandler extends React.Component {
 
     this.socket.onopen = () => {
       log('Server connected.', 2);
-      let setting_socket = false
+      let setting_socket = false;
       window.setTimeout(() => this.sendAlive(), 100);
       window.setTimeout(() => this.failInitialize(), 10000);
       let heartbeat_id = null;

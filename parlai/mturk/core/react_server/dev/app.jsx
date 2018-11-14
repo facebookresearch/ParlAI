@@ -71,6 +71,9 @@ class MessageList extends React.Component {
   makeMessages() {
     let agent_id = this.props.agent_id;
     let messages = this.props.messages;
+    // Handles rendering messages from both the user and anyone else
+    // on the thread - agent_ids for the sender of a message exist in
+    // the m.id field.
     return messages.map(
       m => <XChatMessage
         key={m.message_id}
