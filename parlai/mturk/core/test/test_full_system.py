@@ -334,6 +334,8 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         self.mturk_utils = MTurkManagerFile.mturk_utils
         self.server_utils.setup_server = \
             mock.MagicMock(return_value='https://127.0.0.1')
+        self.server_utils.setup_legacy_server = \
+            mock.MagicMock(return_value='https://127.0.0.1')
         self.server_utils.delete_server = mock.MagicMock()
         self.mturk_utils.setup_aws_credentials = mock.MagicMock()
         self.mturk_utils.calculate_mturk_cost = mock.MagicMock(return_value=1)

@@ -764,6 +764,68 @@ class MTurkManager():
 
     # Manager Lifecycle Functions #
 
+    def populate_legacy_task_files(self, task_directory_path):
+        # Poplulate files to copy over to the server
+        if not self.task_files_to_copy:
+            self.task_files_to_copy = []
+        if not task_directory_path:
+            task_directory_path = os.path.join(
+                self.opt['parlai_home'],
+                'parlai',
+                'mturk',
+                'tasks',
+                self.opt['task']
+            )
+        self.task_files_to_copy.append(
+            os.path.join(task_directory_path, 'html', 'cover_page.html'))
+        try:
+            for file_name in os.listdir(os.path.join(
+                    task_directory_path, 'html')):
+                self.task_files_to_copy.append(os.path.join(
+                    task_directory_path, 'html', file_name
+                ))
+        except FileNotFoundError:  # noqa F821 we don't support python2
+            # No html dir exists
+            pass
+        for mturk_agent_id in self.mturk_agent_ids + ['onboarding']:
+            self.task_files_to_copy.append(os.path.join(
+                task_directory_path,
+                'html',
+                '{}_index.html'.format(mturk_agent_id)
+            ))
+
+    def populate_task_files(self, task_directory_path):
+        # Poplulate files to copy over to the server
+        if not self.task_files_to_copy:
+            self.task_files_to_copy = {
+                'static': [],
+                'components': [],
+                'css': [],
+            }
+        if not task_directory_path:
+            task_directory_path = os.path.join(
+                self.opt['parlai_home'],
+                'parlai',
+                'mturk',
+                'tasks',
+                self.opt['task']
+            )
+        self.task_files_to_copy['static'].append(os.path.join(
+            task_directory_path, 'frontend', 'static', 'cover_page.html'))
+        try:
+            frontend_contents = os.listdir(
+                os.path.join(task_directory_path, 'frontend'))
+            for dir in frontend_contents:
+                if dir in self.task_files_to_copy:
+                    for file_name in os.listdir(os.path.join(
+                            task_directory_path, 'frontend', dir)):
+                        self.task_files_to_copy[dir].append(os.path.join(
+                            task_directory_path, 'frontend', dir, file_name
+                        ))
+        except FileNotFoundError:  # noqa F821 we don't support python2
+            # No frontend dir exists
+            pass
+
     def setup_server(self, task_directory_path=None):
         """Prepare the MTurk server for the new HIT we would like to submit"""
         assert self.task_state >= self.STATE_CREATED
@@ -884,34 +946,6 @@ class MTurkManager():
             unique_worker=self.is_unique,
             is_sandbox=self.opt['is_sandbox']
         )
-        # Poplulate files to copy over to the server
-        if not self.task_files_to_copy:
-            self.task_files_to_copy = []
-        if not task_directory_path:
-            task_directory_path = os.path.join(
-                self.opt['parlai_home'],
-                'parlai',
-                'mturk',
-                'tasks',
-                self.opt['task']
-            )
-        self.task_files_to_copy.append(
-            os.path.join(task_directory_path, 'html', 'cover_page.html'))
-        try:
-            for file_name in os.listdir(os.path.join(
-                    task_directory_path, 'html')):
-                self.task_files_to_copy.append(os.path.join(
-                    task_directory_path, 'html', file_name
-                ))
-        except FileNotFoundError:  # noqa F821 we don't support python2
-            # No html dir exists
-            pass
-        for mturk_agent_id in self.mturk_agent_ids + ['onboarding']:
-            self.task_files_to_copy.append(os.path.join(
-                task_directory_path,
-                'html',
-                '{}_index.html'.format(mturk_agent_id)
-            ))
 
         # Setup the server with a likely-unique app-name
         task_name = '{}-{}'.format(str(uuid.uuid4())[:8], self.opt['task'])
@@ -921,11 +955,18 @@ class MTurkManager():
             heroku_team = self.opt['heroku_team']
         else:
             heroku_team = None
-        self.server_url = server_utils.setup_server(self.server_task_name,
-                                                    self.task_files_to_copy,
-                                                    self.opt['local'],
-                                                    heroku_team,
-                                                    self.opt['hobby'])
+
+        if self.opt.get('frontend_version', 0) < 1:
+            self.populate_legacy_task_files(task_directory_path)
+            self.server_url = server_utils.setup_legacy_server(
+                self.server_task_name, self.task_files_to_copy,
+                self.opt['local'], heroku_team, self.opt['hobby'])
+        else:
+            self.populate_task_files(task_directory_path)
+            self.server_url = server_utils.setup_server(
+                self.server_task_name, self.task_files_to_copy,
+                self.opt['local'], heroku_team, self.opt['hobby'])
+
         shared_utils.print_and_log(logging.INFO, self.server_url)
 
         shared_utils.print_and_log(logging.INFO, "MTurk server setup done.\n",
