@@ -1001,6 +1001,8 @@ class TestMTurkManagerLifecycleFunctions(unittest.TestCase):
         mturk_page_url = 'https://test_mturk_page_url'
         MTurkManagerFile.server_utils.setup_server = \
             mock.MagicMock(return_value=server_url)
+        MTurkManagerFile.server_utils.setup_legacy_server = \
+            mock.MagicMock(return_value=server_url)
 
         # Currently in state created. Try steps that are too soon to work
         with self.assertRaises(AssertionError):
