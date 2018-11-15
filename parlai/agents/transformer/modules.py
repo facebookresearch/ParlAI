@@ -160,7 +160,7 @@ class TransformerMemNetModel(nn.Module):
         elif self.scores_norm == 'dim':
             scores /= self.opt['embedding_size']
         else:
-            raise ValueError
+            raise ValueError('Invalid --scores-norm')
 
         return scores
 
