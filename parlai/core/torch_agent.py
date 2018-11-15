@@ -225,7 +225,12 @@ class TorchAgent(Agent):
             # copy initialized data from shared table
             self.opt = shared['opt']
             self.dict = shared['dict']
-            self.replies = shared['replies']
+            if self.opt['batchsize'] == 1:
+                # if we're not using batching (e.g. mturk), then replies really need
+                # to stay separated
+                self.replies = {}
+            else:
+                self.replies = shared['replies']
 
         if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
