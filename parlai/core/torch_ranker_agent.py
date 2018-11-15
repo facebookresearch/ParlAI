@@ -44,7 +44,7 @@ class TorchRankerAgent(TorchAgent):
                  "the flag --fixed-candidates-path. By default, this file is created "
                  "once and reused. To replace it, use the 'replace' option.")
 
-    def __init__(self, opt, shared):
+    def __init__(self, opt, shared=None):
         # Must call _get_model_file() first so that paths are updated if necessary
         # (e.g., a .dict file)
         model_file, opt = self._get_model_file(opt)
