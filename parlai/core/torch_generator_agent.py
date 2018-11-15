@@ -81,6 +81,7 @@ class TorchGeneratorModel(nn.Module):
         for i in range(maxlen):
             # todo, break early if all beams saw EOS
             scores, incr_state = self.decoder(xs, encoder_states, incr_state)
+            scores = scores[:, -1:, :]
             scores = self.output(scores)
             _, preds = scores.max(dim=-1)
             logits.append(scores)

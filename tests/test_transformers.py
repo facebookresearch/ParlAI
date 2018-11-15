@@ -102,7 +102,6 @@ class TestTransformerGenerator(unittest.TestCase):
             n_heads=1,
             ffn_size=32,
             embedding_size=32,
-            beam_size=5,
         )
 
         self.assertTrue(
