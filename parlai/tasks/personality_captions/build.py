@@ -12,7 +12,7 @@ def build(opt):
     dpath = os.path.join(opt['datapath'], 'personality_captions')
     image_path = os.path.join(opt['datapath'], 'yfcc_images')
     fname = 'personality_captions.tgz'
-    version = '1.0'
+    version = '2.0'
     if not build_data.built(dpath, version):
         print('[building data: ' + dpath + ']')
         if build_data.built(dpath):
