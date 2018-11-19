@@ -234,6 +234,9 @@ class MultiTaskTeacher(Teacher):
         t = self.tasks[self.task_idx].act()
         if t['episode_done']:
             self.new_task = True
+        # TEMP
+        t['subtask'] = self.opt['task'].split(',')[self.task_idx]
+        # TEMP
         return t
 
     def epoch_done(self):
@@ -564,8 +567,8 @@ def add_task_flags_to_agent_opt(agent, opt, flags):
         else:
             task.append(f)
     opt['task'] = ':'.join(task)
-            
-            
+
+
 def create_task_agent_from_taskname(opt):
     """Create task agent(s) assuming the input ``task_dir:teacher_class``.
 
