@@ -102,14 +102,6 @@ def setup_args(parser=None):
                        help='use a shared copy of the agent for validation. '
                             'this will eventually default to True, but '
                             'currently defaults to False.')
-    # HACK
-    train.add_argument('-mt', '--max-train', type=int, default=0,
-                       help='if non-zero, only the first max-train examples from the '
-                            'dataset will be used if it is read by an instance of '
-                            'ParlaiDialogTeacher')
-    train.add_argument('-trial', '--trial', type=int, default=0,
-                       help='the index of a repeated trial (has no effect on the code)')
-    # HACK
     TensorboardLogger.add_cmdline_args(parser)
     parser = setup_dict_args(parser)
     return parser
