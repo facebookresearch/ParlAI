@@ -322,7 +322,8 @@ class TorchAgent(Agent):
     def report(self):
         """Report status from model's perspective."""
         report = {}
-        report['lr'] = self.scheduler.get_lr()[0]
+        # report['lr'] = self.scheduler.get_lr()[0] # only works for LambdaLR
+        report['lr'] = [pg['lr'] for pg in self.optimizer.param_groups][0]
         return report
 
     def receive_metrics(self, metrics_dict):
