@@ -52,6 +52,7 @@ class DefaultDataset(Dataset):
         self.training = self.datatype.startswith('train')
         self.include_image = opt.get('include_image')
         self.include_personality = opt.get('include_personality')
+        self.num_test_labels = opt.get('num_test_labels', 1)
         data_path, personalities_data_path, self.image_path = _path(opt)
         self.image_loader = ImageLoader(opt)
         self._setup_data(data_path, personalities_data_path)
@@ -80,10 +81,14 @@ class DefaultDataset(Dataset):
         if self.opt.get('extract_image', False):
             ep['image_id'] = data['image_hash']
             return ep
-        if not self.opt['datatype'].startswith('test'):
-            ep['labels'] = [data['comment']]
+        ep['labels'] = [data['comment']]
+        if self.num_test_labels == 5 and 'test' in self.datatype:
+            ep['labels'] += data['additional_comments']
         if not self.training:
-            ep['label_candidates'] = data['candidates']
+            if self.num_test_labels == 5 and 'test' in self.datatype:
+                ep['label_candidates'] = data['500_candidates']
+            else:
+                ep['label_candidates'] = data['candidates']
 
         return (index, ep)
 
@@ -185,7 +190,7 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
         if self.num_test_labels == 5 and 'test' in self.datatype:
             action['labels'] += data['additional_comments']
 
-        if "candidates" in data:
+        if 'candidates' in data:
             if self.num_test_labels == 5 and 'test' in self.datatype:
                 action['label_candidates'] = data['500_candidates']
             else:
