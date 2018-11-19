@@ -322,8 +322,7 @@ class TorchAgent(Agent):
     def report(self):
         """Report status from model's perspective."""
         report = {}
-        # TEMP
-        report['lr'] = [pg['lr'] for pg in self.optimizer.param_groups][0]
+        report['lr'] = self.scheduler.get_lr()[0]
         return report
 
     def receive_metrics(self, metrics_dict):
@@ -891,7 +890,6 @@ class TorchAgent(Agent):
             self.total_steps += 1
             if self.opt['scheduler'] == 'inverse_decay':
                 self.scheduler.step(self.total_steps)
-
             output = self.train_step(batch)
         else:
             output = self.eval_step(batch)
