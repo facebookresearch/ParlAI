@@ -8,7 +8,7 @@ from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.tasks.personality_captions.agents import PersonalityCaptionsTeacher
 from parlai.tasks.personality_captions.build import build as build_pc_data
 from worlds import \
-    MTurkCommentBattleWorld, RoleOnboardWorld, PersonalityGenerator, \
+    MTurkPersonalityCaptionsWorld, RoleOnboardWorld, PersonalityGenerator, \
     ImageGenerator, COMMENTER, PersonalityAndImageGenerator, TASK_TYPE_TO_CONFIG
 from task_configs.task_config_personality import task_config as config_personality
 from task_configs.task_config_caption import task_config as config_caption
@@ -95,7 +95,7 @@ def main():
         def run_conversation(mturk_manager, opt, workers):
             agents = workers[:]
             conv_idx = mturk_manager.conversation_index
-            world = MTurkCommentBattleWorld(
+            world = MTurkPersonalityCaptionsWorld(
                 opt,
                 agents=agents,
                 world_tag='conversation t_{}'.format(conv_idx),

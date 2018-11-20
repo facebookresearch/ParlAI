@@ -246,7 +246,7 @@ class RoleOnboardWorld(MTurkOnboardWorld):
             self.episodeDone = True
 
 
-class MTurkCommentBattleWorld(MultiAgentDialogWorld):
+class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
     """World an agent observes ten images, with ten different personalities,
         and writes engaging comments about them
     """
