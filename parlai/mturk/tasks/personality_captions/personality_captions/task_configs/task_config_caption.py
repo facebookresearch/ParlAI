@@ -30,19 +30,22 @@ task_config['hit_keywords'] = 'caption'
 and on the left side of the chat page. Supports HTML formatting.
 """
 task_config['task_description'] = \
-'''
+    '''
 <h2><b>Description</b></h2>
 In this task, you will be shown 5 images, and will write a caption about each image.
 <br>
 <br>
-<h4><b>STEP 1</b></h4> You will be shown an image, for which you will write a caption. Please make sure your caption has at least <b>three words</b>.
+<h4><b>STEP 1</b></h4> You will be shown an image, for which you will write a caption.
+Please make sure your caption has at least <b>three words</b>.
 <br>
 <br>
-E.g., if you are shown an image of a snow-covered tree in a park, you could write, "A tree in a park, covered with snow."
+E.g., if you are shown an image of a snow-covered tree in a park, you could write,
+"A tree in a park, covered with snow."
 <br>
 <br>
 <h4><b>REWARD/BONUS</b></h4>
-To complete this task, <b><span style="color:blue">you must caption ALL 5 images.</span></b>
+To complete this task, <b><span style="color:blue">you must caption ALL 5 images.
+</span></b>
 If you complete the task, you will receive $0.46.
 <br>
 <br>
@@ -54,13 +57,19 @@ Once the task has started, close window/timeout or return HIT will result in
 <br>
 <br>
 <h4><b>IMPORTANT NOTICE</b></h4>
-<span style="color:blue"><b>1. Be aware the caption you enter will be made public, so write as you would e.g. on a public social network like Twitter.</b></span>
+<span style="color:blue"><b>1. Be aware the caption you enter will be made public,
+so write as you would e.g. on a public social network like Twitter.</b></span>
 <br>
-2. Please do not reference the task or MTurk itself in the caption. Additionally, <b>please try not to use the text in the image when forming a caption</b>.
+2. Please do not reference the task or MTurk itself in the caption. Additionally,
+<b>please try not to use the text in the image when forming a caption</b>.
 <br>
-3. We will reject HITs that do not display any sense that you have looked at the image while forming the caption. That is, if the caption has nothing to do with the image, we will not accept it.
+3. We will reject HITs that do not display any sense that you have looked at the
+image while forming the caption. That is, if the caption has nothing to do with the
+image, we will not accept it.
 <br>
-4. Please do not write a caption that involves any level of discrimination, racism, sexism and offensive religious/politics comments, otherwise the submission will be rejected.
+4. Please do not write a caption that involves any level of discrimination, racism,
+sexism and offensive religious/politics comments, otherwise the submission
+will be rejected.
 <br>
 <br>
 <br>

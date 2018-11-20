@@ -10,9 +10,6 @@ from parlai.tasks.personality_captions.build import build as build_pc_data
 from worlds import \
     MTurkPersonalityCaptionsWorld, RoleOnboardWorld, PersonalityGenerator, \
     ImageGenerator, COMMENTER, PersonalityAndImageGenerator, TASK_TYPE_TO_CONFIG
-from task_configs.task_config_personality import task_config as config_personality
-from task_configs.task_config_caption import task_config as config_caption
-from task_configs.task_config_no_personality import task_config as config_no_personality
 import os
 
 
