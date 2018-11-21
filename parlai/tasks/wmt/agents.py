@@ -13,11 +13,9 @@ import copy
 import os
 
 
-def _path(task, opt, dt=''):
+def _path(task, opt, dt):
     # Build the data if it doesn't exist.
     build(opt)
-    if dt == '':
-        dt = opt['datatype'].split(':')[0]
     return os.path.join(opt['datapath'], 'wmt',
                         '{task}_{type}.txt'.format(task=task, type=dt))
 
@@ -25,9 +23,9 @@ def _path(task, opt, dt=''):
 class EnDeTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        task = opt.get('task', 'wmt:en_de')
-        self.task_name = task.split(':')[1] if ':' in task else 'en_de'
-        opt['datafile'] = _path(self.task_name, opt, opt['datatype'])
+        self.task_name = 'en_de'
+        dt = opt['datatype'].split(':')[0]
+        opt['datafile'] = _path(self.task_name, opt, dt)
         super().__init__(opt, shared)
 
 

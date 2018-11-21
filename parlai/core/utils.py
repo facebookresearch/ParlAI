@@ -12,6 +12,7 @@ import math
 import os
 import random
 import time
+import warnings
 
 # some of the utility methods are helpful for Torch
 try:
@@ -351,7 +352,7 @@ def flatten(teacher, context_length=-1, include_labels=True):
             current.clear()
             context.clear()
         return data
-    except MemoryError as ex:
+    except MemoryError:
         raise MemoryError('Ran out of memory building flattened data batches. '
                           'Try using --context-length set to a small value to '
                           'limit the length of each flattened example, '
@@ -933,7 +934,8 @@ def set_namedtuple_defaults(namedtuple, default=None):
     return namedtuple
 
 
-def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
+def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
+                  max_len=None):
     """Create a right-padded matrix from an uneven list of lists.
 
     Returns (padded, lengths), where padded is the padded matrix, and lengths
@@ -949,6 +951,7 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
     :param int pad_idx: the value to use for padding
     :param bool use_cuda: if true, places `padded` on GPU
     :param bool left_padded:
+    :param int max_len: if None, the max length is the maximum item length
 
     :returns: (padded, lengths) tuple
     :rtype: (Tensor[int64], list[int])
@@ -964,7 +967,7 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False):
     # length of each item
     lens = [len(item) for item in items]
     # max in time dimension
-    t = max(lens)
+    t = max(lens) if max_len is None else max_len
 
     # if input tensors are empty, we should expand to nulls
     t = max(t, 1)
@@ -1064,3 +1067,18 @@ def inverse_sqrt_decay(step, init_lr=1e-8, base_lr=1e-3, warmup_steps=0):
     else:
         # lr = base_lr * math.sqrt(warmup_steps) / math.sqrt(step)
         return math.sqrt(warmup_steps) / math.sqrt(step)
+
+
+_seen_warnings = set()
+
+def warn_once(msg, warningtype=None):
+    """
+    Raise a warning, but only once.
+
+    :param str msg: Message to display
+    :param Warning warningtype: Type of warning, e.g. DeprecationWarning
+    """
+    global _seen_warnings
+    if msg not in _seen_warnings:
+        _seen_warnings.add(msg)
+        warnings.warn(msg, warningtype)

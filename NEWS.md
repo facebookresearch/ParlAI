@@ -1,4 +1,10 @@
 <h2>News</h2>
+2018-11-05: Added [Wizard of Wikipedia](https://arxiv.org/abs/1811.01241), a dataset for knowledge-powered conversation.
+
+2018-11-02: Added [Image-Chat](https://klshuster.github.io/image_chat/), a dataset for engaging personality-conditioned dialogue grounded in images.
+
+2018-10-25: Added [Personality-Captions](https://arxiv.org/abs/1810.10665), a dataset for engaging image captioning via personality.
+
 2018-08-29: Added new cleaner version of seq2seq model with new TorchAgent parent class, along with folder (parlai/legacy_agents) for deprecated model code
 
 2018-07-17: Added [Qangaroo](http://qangaroo.cs.ucl.ac.uk/) (a.k.a. WikiHop and MedHop), two reading comprehension datasets with multiple hops, and [SQuAD 2](https://rajpurkar.github.io/SQuAD-explorer/).

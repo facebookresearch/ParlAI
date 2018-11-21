@@ -21,14 +21,22 @@ for model in model_list:
     fout.write('\n\n')
 
     fout.write('Example invocation:\n\n')
-    fout.write(
-        '.. code-block:: shell\n\n'
-        '  python -m parlai.scripts.eval_model --model {} --task {} -mf {}\n\n'
-        .format(
-            model['agent'],
-            model['task'],
-            model['path'],
+    if 'example' in model:
+        example = model['example']
+    else:
+        example = (
+            "python -m parlai.scripts.eval_model --model {} --task {} -mf {}"
+            .format(model['agent'], model['task'], model['path'])
         )
+    result = model['result'].strip().split("\n")
+    # strip leading whitespace from results
+    result = [r.strip() for r in result]
+    # make sure we indent for markdown though
+    result = ["   " + r for r in result]
+    result = "\n".join(result)
+    fout.write(
+        '.. code-block:: shell\n\n   {}\n   ...\n{}\n\n'
+        .format(example, result)
     )
     fout.write('\n')
 

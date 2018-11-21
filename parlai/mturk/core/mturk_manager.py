@@ -99,9 +99,11 @@ class MTurkManager():
                 pass
 
         self.opt = opt
-        if self.opt['unique_worker'] or \
-                self.opt['unique_qual_name'] is not None:
+        if self.opt['unique_worker']:
             self.opt['allowed_conversations'] = 1
+        elif self.opt['max_hits_per_worker'] != 0 and \
+                self.opt['allowed_conversations'] == 0:
+            self.opt['allowed_conversations'] = self.opt['max_hits_per_worker']
         self.server_url = None
         self.topic_arn = None
         self.server_task_name = None
@@ -132,6 +134,24 @@ class MTurkManager():
         self.db_logger = None
         self.logging_permitted = False
         self.task_state = self.STATE_CREATED
+
+    @staticmethod
+    def make_taskless_instance(is_sandbox=False):
+        """Creates an instance without a task to be used for approving or
+        rejecting assignments, blocking workers, and managing qualifications
+        """
+        opt = {
+            'unique_worker': False,
+            'max_hits_per_worker': 0,
+            'num_conversations': 0,
+            'is_sandbox': is_sandbox,
+            'is_debug': False,
+            'log_level': 30,
+        }
+        manager = MTurkManager(opt, [])
+        manager.is_shutdown = True
+        mturk_utils.setup_aws_credentials()
+        return manager
 
     # Helpers and internal manager methods #
 
@@ -686,7 +706,11 @@ class MTurkManager():
                 if not did_arrive:
                     return
                 # call onboarding function
-                self.onboard_function(mturk_agent)
+                save_data = self.onboard_function(mturk_agent)
+                if save_data is not None:
+                    MTurkDataHandler.save_world_data(
+                        save_data, self.task_group_id,
+                        conversation_id, sandbox=self.is_sandbox)
 
             # once onboarding is done, move into a waiting world
             self._move_agents_to_waiting([mturk_agent])
@@ -739,6 +763,68 @@ class MTurkManager():
         return conversation_id is not None and conversation_id.startswith('t_')
 
     # Manager Lifecycle Functions #
+
+    def populate_legacy_task_files(self, task_directory_path):
+        # Poplulate files to copy over to the server
+        if not self.task_files_to_copy:
+            self.task_files_to_copy = []
+        if not task_directory_path:
+            task_directory_path = os.path.join(
+                self.opt['parlai_home'],
+                'parlai',
+                'mturk',
+                'tasks',
+                self.opt['task']
+            )
+        self.task_files_to_copy.append(
+            os.path.join(task_directory_path, 'html', 'cover_page.html'))
+        try:
+            for file_name in os.listdir(os.path.join(
+                    task_directory_path, 'html')):
+                self.task_files_to_copy.append(os.path.join(
+                    task_directory_path, 'html', file_name
+                ))
+        except FileNotFoundError:  # noqa F821 we don't support python2
+            # No html dir exists
+            pass
+        for mturk_agent_id in self.mturk_agent_ids + ['onboarding']:
+            self.task_files_to_copy.append(os.path.join(
+                task_directory_path,
+                'html',
+                '{}_index.html'.format(mturk_agent_id)
+            ))
+
+    def populate_task_files(self, task_directory_path):
+        # Poplulate files to copy over to the server
+        if not self.task_files_to_copy:
+            self.task_files_to_copy = {
+                'static': [],
+                'components': [],
+                'css': [],
+            }
+        if not task_directory_path:
+            task_directory_path = os.path.join(
+                self.opt['parlai_home'],
+                'parlai',
+                'mturk',
+                'tasks',
+                self.opt['task']
+            )
+        self.task_files_to_copy['static'].append(os.path.join(
+            task_directory_path, 'frontend', 'static', 'cover_page.html'))
+        try:
+            frontend_contents = os.listdir(
+                os.path.join(task_directory_path, 'frontend'))
+            for dir in frontend_contents:
+                if dir in self.task_files_to_copy:
+                    for file_name in os.listdir(os.path.join(
+                            task_directory_path, 'frontend', dir)):
+                        self.task_files_to_copy[dir].append(os.path.join(
+                            task_directory_path, 'frontend', dir, file_name
+                        ))
+        except FileNotFoundError:  # noqa F821 we don't support python2
+            # No frontend dir exists
+            pass
 
     def setup_server(self, task_directory_path=None):
         """Prepare the MTurk server for the new HIT we would like to submit"""
@@ -853,42 +939,13 @@ class MTurkManager():
 
         shared_utils.print_and_log(logging.INFO, 'Setting up MTurk server...',
                                    should_print=True)
-        self.is_unique = self.opt['unique_worker'] or \
-            (self.opt['unique_qual_name'] is not None)
+        self.is_unique = self.opt['unique_worker']
         self.max_hits_per_worker = self.opt.get('max_hits_per_worker', 0)
         mturk_utils.create_hit_config(
             task_description=self.opt['task_description'],
             unique_worker=self.is_unique,
             is_sandbox=self.opt['is_sandbox']
         )
-        # Poplulate files to copy over to the server
-        if not self.task_files_to_copy:
-            self.task_files_to_copy = []
-        if not task_directory_path:
-            task_directory_path = os.path.join(
-                self.opt['parlai_home'],
-                'parlai',
-                'mturk',
-                'tasks',
-                self.opt['task']
-            )
-        self.task_files_to_copy.append(
-            os.path.join(task_directory_path, 'html', 'cover_page.html'))
-        try:
-            for file_name in os.listdir(os.path.join(
-                    task_directory_path, 'html')):
-                self.task_files_to_copy.append(os.path.join(
-                    task_directory_path, 'html', file_name
-                ))
-        except FileNotFoundError:  # noqa F821 we don't support python2
-            # No html dir exists
-            pass
-        for mturk_agent_id in self.mturk_agent_ids + ['onboarding']:
-            self.task_files_to_copy.append(os.path.join(
-                task_directory_path,
-                'html',
-                '{}_index.html'.format(mturk_agent_id)
-            ))
 
         # Setup the server with a likely-unique app-name
         task_name = '{}-{}'.format(str(uuid.uuid4())[:8], self.opt['task'])
@@ -898,11 +955,18 @@ class MTurkManager():
             heroku_team = self.opt['heroku_team']
         else:
             heroku_team = None
-        self.server_url = server_utils.setup_server(self.server_task_name,
-                                                    self.task_files_to_copy,
-                                                    self.opt['local'],
-                                                    heroku_team,
-                                                    self.opt['hobby'])
+
+        if self.opt.get('frontend_version', 0) < 1:
+            self.populate_legacy_task_files(task_directory_path)
+            self.server_url = server_utils.setup_legacy_server(
+                self.server_task_name, self.task_files_to_copy,
+                self.opt['local'], heroku_team, self.opt['hobby'])
+        else:
+            self.populate_task_files(task_directory_path)
+            self.server_url = server_utils.setup_server(
+                self.server_task_name, self.task_files_to_copy,
+                self.opt['local'], heroku_team, self.opt['hobby'])
+
         shared_utils.print_and_log(logging.INFO, self.server_url)
 
         shared_utils.print_and_log(logging.INFO, "MTurk server setup done.\n",
@@ -932,7 +996,7 @@ class MTurkManager():
                 should_print=True
             )
         if self.db_logger is not None:
-            self.db_logger.log_new_run(self.required_hits)
+            self.db_logger.log_new_run(self.required_hits, self.opt['task'])
         self.task_state = self.STATE_INIT_RUN
 
     def ready_to_accept_workers(self, timeout_seconds=None):
@@ -1036,7 +1100,14 @@ class MTurkManager():
                 )
             )
             self.started_conversations += 1
-            task_function(mturk_manager=self, opt=opt, workers=agents)
+            save_data = \
+                task_function(mturk_manager=self, opt=opt, workers=agents)
+
+            if save_data is not None:
+                MTurkDataHandler.save_world_data(
+                    save_data, self.task_group_id, conversation_id,
+                    sandbox=self.is_sandbox)
+
             # Delete extra state data that is now unneeded
             for agent in agents:
                 agent.clear_messages()
@@ -1050,7 +1121,6 @@ class MTurkManager():
                         if agent.submitted_hit():
                             self.create_additional_hits(1)
 
-        last_thread_count = 0
         if self.db_logger is not None:
             self._maintain_hit_status()
         while not self.is_shutdown:
@@ -1517,10 +1587,11 @@ class MTurkManager():
                 # TODO get confirmation that the HIT is acutally expired
                 mturk_utils.expire_hit(self.is_sandbox, hit_id)
 
-    def approve_work(self, assignment_id):
+    def approve_work(self, assignment_id, override_rejection=False):
         """approve work for a given assignment through the mturk client"""
         client = mturk_utils.get_mturk_client(self.is_sandbox)
-        client.approve_assignment(AssignmentId=assignment_id)
+        client.approve_assignment(
+            AssignmentId=assignment_id, OverrideRejection=override_rejection)
         if self.db_logger is not None:
             self.db_logger.log_approve_assignment(assignment_id)
         shared_utils.print_and_log(
@@ -1678,6 +1749,9 @@ class MTurkManager():
             Reason=reason,
             UniqueRequestToken=unique_request_token
         )
+        if self.db_logger is not None:
+            self.db_logger.log_pay_extra_bonus(
+                worker_id, assignment_id, bonus_amount, reason)
         shared_utils.print_and_log(
             logging.INFO,
             'Paid ${} bonus to WorkerId: {}'.format(

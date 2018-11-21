@@ -1,3 +1,4 @@
-include parlai/mturk/core/server/html/*
-include parlai/mturk/core/server/server.js
-include parlai/mturk/core/server/package.json
+include parlai/mturk/core/server_legacy/html/*
+include parlai/mturk/core/server_legacy/server.js
+include parlai/mturk/core/server_legacy/package.json
+include parlai/mturk/core/react_server/*

@@ -190,7 +190,7 @@ class MTurkAgent(Agent):
         if self.db_logger is not None:
             if status == AssignState.STATUS_ONBOARDING:
                 self.db_logger.log_start_onboard(
-                    self.worker_id, self.assignment_id)
+                    self.worker_id, self.assignment_id, self.conversation_id)
             elif status == AssignState.STATUS_WAITING:
                 self.db_logger.log_finish_onboard(
                     self.worker_id, self.assignment_id)
@@ -324,7 +324,6 @@ class MTurkAgent(Agent):
         """Cleans up resources related to maintaining complete state"""
         self.flush_msg_queue()
         self.msg_queue = None
-        self.state.clear_messages()
         self.recieved_packets = None
 
     def get_new_act_message(self):
@@ -649,3 +648,15 @@ class MTurkAgent(Agent):
                 self.db_logger.log_submit_assignment(
                     self.worker_id, self.assignment_id)
             return did_complete
+
+    def update_agent_id(self, agent_id):
+        """Workaround used to force an update to an agent_id on the front-end
+        to render the correct react components for onboarding and waiting
+        worlds. Only really used in special circumstances where different
+        agents need different onboarding worlds.
+        """
+        self.mturk_manager.worker_manager.change_agent_conversation(
+            agent=self,
+            conversation_id=self.conversation_id,
+            new_agent_id=agent_id,
+        )
