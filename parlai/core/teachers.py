@@ -34,7 +34,7 @@ structures for accessing textual dialog data and utilized by ``DialogTeacher``
 
 from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
-from .utils import AttrDict, flatten, sort_data, make_batches, no_lock, str_to_msg
+from .utils import AttrDict, flatten, sort_data, make_batches, no_lock, str_to_msg, warn_once
 
 from functools import lru_cache
 
@@ -161,8 +161,9 @@ class FixedDialogTeacher(Teacher):
         self.batchindex = opt.get('batchindex', 0)
 
         dt = opt.get('datatype', '').split(':')
-        self.use_batch_act = (opt.get('batch_sort', False) and self.bsz > 1 and
-                              'stream' not in dt)
+        # self.use_batch_act = (opt.get('batch_sort', False) and self.bsz > 1 and
+        #                       'stream' not in dt)
+        self.use_batch_act = self.bsz > 1 and 'stream' not in dt
 
         if self.use_batch_act:
             if shared:
@@ -179,9 +180,6 @@ class FixedDialogTeacher(Teacher):
                 ordered_opt['hide_labels'] = False
                 ordered_teacher = create_task_agent_from_taskname(ordered_opt)[0]
 
-                clen = opt.get('context_length', -1)
-                incl = opt.get('include_labels', True)
-
                 if ordered_teacher.num_examples() > 1000000:  # one million
                     print('WARNING: this dataset is large, and batch sorting '
                           'may use too much RAM or take too long to set up. '
@@ -190,9 +188,16 @@ class FixedDialogTeacher(Teacher):
                           'has episodes of multiple examples), or streaming '
                           'the data using a streamed data mode if supported.')
 
+                clen = opt.get('context_length', -1)
+                incl = opt.get('include_labels', True)
                 flatdata = flatten(ordered_teacher,
                                    context_length=clen, include_labels=incl)
-                self.sorted_data = sort_data(flatdata)
+                warn_once("Not sorting data anymore in DialogTeacher as of 11/22!")
+                # self.sorted_data = sort_data(flatdata)
+                self.sorted_data = flatdata
+                if opt.get('shuffle_examples', False):
+                    random.Random(42).shuffle(self.sorted_data)
+
                 self.batches = make_batches(self.sorted_data, self.bsz)
                 # one fixed-seed shuffle keeps determinism but makes sure that
                 # examples aren't presented in sorted order (bad for `-vme`)
