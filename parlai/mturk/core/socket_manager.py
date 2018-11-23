@@ -308,10 +308,25 @@ class SocketManager():
             'Send packet: {}'.format(packet)
         )
 
-        result = self._safe_send(json.dumps({
-            'type': data_model.SOCKET_ROUTE_PACKET_STRING,
-            'content': pkt,
-        }))
+        try:
+            full_packet = json.dumps({
+                'type': data_model.SOCKET_ROUTE_PACKET_STRING,
+                'content': pkt,
+            })
+        except TypeError:
+            import pprint
+            import traceback
+            import sys
+            type_, value_, traceback_ = sys.exc_info()
+            shared_utils.print_and_log(
+                logging.INFO,
+                '[connid: {}] Could not serialize packet:\n{}\n'.format(
+                    connection_id, pprint.pformat(pkt),
+                    '\n'.join(traceback.format_exception(type_, value_, traceback_)),
+                ),
+            )
+            raise
+        result = self._safe_send(full_packet)
         if not result:
             # The channel died mid-send, wait for it to come back up
             self._safe_put(connection_id, (send_time, packet))
