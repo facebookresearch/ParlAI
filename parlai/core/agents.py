@@ -234,9 +234,6 @@ class MultiTaskTeacher(Teacher):
         t = self.tasks[self.task_idx].act()
         if t['episode_done']:
             self.new_task = True
-        # TEMP
-        t['subtask'] = self.opt['task'].split(',')[self.task_idx]
-        # TEMP
         return t
 
     def epoch_done(self):

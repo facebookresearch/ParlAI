@@ -161,9 +161,8 @@ class FixedDialogTeacher(Teacher):
         self.batchindex = opt.get('batchindex', 0)
 
         dt = opt.get('datatype', '').split(':')
-        # self.use_batch_act = (opt.get('batch_sort', False) and self.bsz > 1 and
-        #                       'stream' not in dt)
-        self.use_batch_act = self.bsz > 1 and 'stream' not in dt
+        self.use_batch_act = (opt.get('batch_sort', False) and self.bsz > 1 and
+                              'stream' not in dt)
 
         if self.use_batch_act:
             if shared:
