@@ -15,8 +15,11 @@ import os
 
 
 def main():
-    """This task consists of one agent, model or MTurk worker, talking to an
-    MTurk worker to negotiate a deal.
+    """
+        Image Chat data collection task.
+
+        A worker is shown an image and part of a conversation, and is given a
+        personality with which the worker should continue the conversation.
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()

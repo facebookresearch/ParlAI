@@ -154,7 +154,7 @@ class ExampleGenerator(object):
 
 
 class RoleOnboardWorld(MTurkOnboardWorld):
-    '''A world that provides the appropriate instructions during onboarding'''
+    """A world that provides the appropriate instructions during onboarding"""
     def __init__(self, opt, mturk_agent):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.max_onboard_time = opt['max_onboard_time']
