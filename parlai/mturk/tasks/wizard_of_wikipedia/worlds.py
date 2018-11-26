@@ -110,8 +110,8 @@ class PersonasGenerator(object):
 
 
 class RoleOnboardWorld(MTurkOnboardWorld):
-    '''A world that provides
-       the appropriate instructions during onboarding'''
+    """A world that provides
+       the appropriate instructions during onboarding"""
     def __init__(self, opt, mturk_agent, role):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.max_onboard_time = opt['max_onboard_time']
@@ -475,7 +475,7 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
                     self.task_type))
-            self.good_wiz, self.wizard_worker = self.mtdo()
+            self.good_wiz, self.wizard_worker = self.check_wizard_quality()
         else:
             filename = os.path.join(
                 data_path,
@@ -495,15 +495,15 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
                      'assignment_ids': [ag.assignment_id for ag in self.agents],
                      'wizard_eval': self.wizard_eval,
                      'chosen_topic': self.chosen_topic,
-                     'mtdo': convo_finished and self.good_wiz,
-                     'mtdo_worker': self.wizard_worker if self.good_wiz else '',
-                     'mtdont_worker': self.wizard_worker if not self.good_wiz else ''},
+                     'wizard_good': convo_finished and self.good_wiz,
+                     'good_wizard_worker': self.wizard_worker if self.good_wiz else '',
+                     'bad_wizard_worker': self.wizard_worker if not self.good_wiz else ''},
                     open(filename, 'wb'))
         print('{}: Data successfully saved at {}.'.format(
             self.world_tag,
             filename))
 
-    def mtdo(self):
+    def check_wizard_quality(self):
         '''Determines whether to soft-block this turker or not
            Only called if the conversation finishes
            Returns True if the Wizard is good
@@ -513,16 +513,16 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
                                          self.dialog)))
         wizard_worker = [w for w in self.agents if w.id == WIZARD][0].worker_id
         data_path = self.opt['current_working_dir']
-        mtdont = os.path.join(data_path, 'mtdont.txt')
-        mtdo = os.path.join(data_path, 'mtdo.txt')
+        bad_wizards = os.path.join(data_path, 'bad_wizards.txt')
+        good_wizards = os.path.join(data_path, 'good_wizards.txt')
         if num_good_sents < self.opt['num_good_sentence_threshold']:
             if not self.opt['is_sandbox']:
-                with open(mtdont, 'a') as f:
+                with open(bad_wizards, 'a') as f:
                     f.write(wizard_worker + '\n')
             return False, wizard_worker
         else:
             if not self.opt['is_sandbox']:
-                with open(mtdo, 'a') as f:
+                with open(good_wizards, 'a') as f:
                     f.write(wizard_worker + '\n')
             return True, wizard_worker
 
@@ -551,10 +551,7 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
         global shutdown_agent
 
         def shutdown_agent(agent):
-            # try:
             agent.shutdown()
-            # except Exception:
-            #     agent.shutdown()  # not MTurkAgent
         Parallel(
             n_jobs=len(self.agents),
             backend='threading'

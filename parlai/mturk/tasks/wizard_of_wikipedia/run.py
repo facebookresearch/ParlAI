@@ -85,8 +85,18 @@ def setup_personas_with_wiki_links(opt):
 
 
 def main():
-    """This task consists of one agent, model or MTurk worker, talking to an
-    MTurk worker to negotiate a deal.
+    """
+        Wizard of Wikipedia Data Collection Task.
+
+        The task involves two people holding a conversation. One dialog partner
+        chooses a topic to discuss, and then dialog proceeds.
+
+        One partner is the Wizard, who has access to retrieved external
+        information conditioned on the last two utterances, as well as
+        information regarding the chosen topic.
+
+        The other partner is the Apprentice, who assumes the role of someone
+        eager to learn about the chosen topic.
     """
     argparser = ParlaiParser(False, False)
     DictionaryAgent.add_cmdline_args(argparser)
