@@ -80,7 +80,8 @@ class MessageList extends React.Component {
         is_self={m.id == agent_id}
         agent_id={m.id}
         message={m.text}
-        message_id={m.id}/>
+        context={m.context}
+        message_id={m.message_id}/>
     );
   }
 
@@ -157,6 +158,10 @@ class WaitingMessage extends React.Component {
     let message_style = {
       float: 'left', display: 'table', 'backgroundColor': '#fff'
     };
+    let text = 'Waiting for the next person to speak...'
+    if (this.props.world_state == 'waiting') {
+      text = 'Waiting to pair with a task...'
+    }
     return (
       <div
         id="waiting-for-message"
@@ -168,7 +173,7 @@ class WaitingMessage extends React.Component {
             style={message_style}>
             <Hourglass />
             <span style={{'fontSize': '16px'}}>
-              Waiting for the next person to speak...
+              {text}
             </span>
           </div>
       </div>
@@ -177,12 +182,25 @@ class WaitingMessage extends React.Component {
 }
 
 class ChatPane extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {chat_height: this.getChatHeight()}
+  }
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.message_count != prevProps.message_count) {
       $('div#right-top-pane').animate({
         scrollTop: $('div#right-top-pane').get(0).scrollHeight
       }, 500);
     }
+  }
+
+  getChatHeight() {
+    let entry_pane = $('div#right-bottom-pane').get(0);
+    let bottom_height = 90;
+    if (entry_pane !== undefined) {
+      bottom_height = entry_pane.scrollHeight;
+    }
+    return this.props.frame_height - bottom_height;
   }
 
   render () {
@@ -193,11 +211,17 @@ class ChatPane extends React.Component {
       'paddingBottom': '20px', 'overflowY': 'scroll'
     };
 
-    chat_style['height'] = (this.props.frame_height - 90) + 'px'
+    window.setTimeout(() => {
+      if (this.getChatHeight() != this.state.chat_height) {
+        this.setState({chat_height: this.getChatHeight()});
+      }
+    }, 10);
+
+    chat_style['height'] = (this.state.chat_height) + 'px'
 
     let wait_message = null;
     if (this.props.chat_state == 'waiting') {
-      wait_message = <XWaitingMessage />;
+      wait_message = <XWaitingMessage {...this.props}/>;
     }
 
     return (
@@ -434,9 +458,8 @@ class ContentLayout extends React.Component {
     return (
       <div className="row" id="ui-content">
         <XLeftPane
-          task_description={this.props.task_description}
           full={false}
-          frame_height={this.props.frame_height}
+          {...this.props}
         />
         <XRightPane {...this.props} />
       </div>
@@ -451,9 +474,8 @@ class BaseFrontend extends React.Component {
       content = (
         <div className="row" id="ui-content">
           <XLeftPane
-            task_description={this.props.task_description}
             full={true}
-            frame_height={this.props.frame_height}
+            {...this.props}
           />
         </div>
       );
@@ -616,12 +638,15 @@ class MainApp extends React.Component {
         onExpire={(expire_reason) => this.setState({
           chat_state: 'inactive', done_text: expire_reason
         })}
-        onConversationChange={(world_state, conversation_id, agent_id) =>
+        onConversationChange={(world_state, conversation_id, agent_id) => {
           this.setState({
             world_state: world_state, conversation_id: conversation_id,
             agent_id: agent_id
-          })
-        }
+          });
+          if (world_state == 'waiting') {
+            this.setState({'messages': [], 'chat_state': 'waiting'});
+          }
+        }}
         onSuccessfulSend={() => this.setState({
           chat_state: 'waiting', messages: this.state.messages
         })}
@@ -654,6 +679,7 @@ class MainApp extends React.Component {
           is_cover_page={this.state.is_cover_page}
           frame_height={this.state.frame_height}
           context={this.state.context}
+          world_state={this.state.world_state}
         />
         <MTurkSubmitForm
           assignment_id={this.state.assignment_id}

@@ -136,7 +136,8 @@ class SocketHandler extends React.Component {
       blocking_id: null,          // Packet id of a blocking message underway
       blocking_sent_time: null,   // Time blocking message was sent
       blocking_intend_send_time: null, // Time of blocking message priority
-      displayed_messages: []      // Message ids that are already displayed
+      displayed_messages: [],     // Message ids that are already displayed
+      message_request_time: null  // Last request for a message to find delay
     };
   }
 
@@ -267,8 +268,14 @@ class SocketHandler extends React.Component {
 
   // Required function - The BaseApp class will call this function to enqueue
   // packet sends that are requested by the frontend user (worker)
-  handleQueueMessage(text, data, callback) {
+  handleQueueMessage(text, data, callback, is_system=false) {
     let new_message_id = uuidv4();
+    let duration = null;
+    if (!is_system && this.state.message_request_time != null) {
+      let cur_time = (new Date()).getTime();
+      duration = cur_time - this.state.message_request_time;
+      this.setState({message_request_time: null});
+    }
     this.sendPacket(
       TYPE_MESSAGE,
       {
@@ -276,7 +283,8 @@ class SocketHandler extends React.Component {
         data: data,
         id: this.props.agent_id,
         message_id: new_message_id,
-        episode_done: false
+        episode_done: false,
+        duration: duration,
       },
       true,
       true,
@@ -375,6 +383,9 @@ class SocketHandler extends React.Component {
 
   // Handles an incoming message
   handleNewMessage(new_message_id, message) {
+    if (message.text === undefined) {
+      message.text = '';
+    }
     var agent_id = message.id;
     var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
     if (this.state.displayed_messages.indexOf(new_message_id) !== -1) {
@@ -397,6 +408,7 @@ class SocketHandler extends React.Component {
     if (command === COMMAND_SEND_MESSAGE) {
       // Update UI to wait for the worker to submit a message
       this.props.onRequestMessage();
+      this.setState({message_request_time: (new Date()).getTime()});
       log('Waiting for worker input', 4);
     } else if (command === COMMAND_SHOW_DONE_BUTTON) {
       // Update the UI to show the done button
@@ -417,6 +429,7 @@ class SocketHandler extends React.Component {
     } else if (command === COMMAND_INACTIVE_HIT) {
       // Disable the hit, show the correct message
       this.props.onExpire(msg['inactive_text']);
+      this.closeSocket();
     } else if (command === COMMAND_RESTORE_STATE) {
       // Restore the messages from inside the data, call the command if needed
       let messages = msg['messages'];
@@ -430,7 +443,6 @@ class SocketHandler extends React.Component {
       }
     } else if (command === COMMAND_CHANGE_CONVERSATION) {
       // change the conversation, refresh if needed
-      log('current conversation_id: ' + conversation_id, 3);
       let conversation_id = msg['conversation_id'];
       log('new conversation_id: ' + conversation_id, 3);
       let agent_id = msg['agent_id'];
