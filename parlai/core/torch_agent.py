@@ -881,7 +881,7 @@ class TorchAgent(Agent):
 
     def reset(self):
         """Clear internal states."""
-        self.observation = None
+        self.observation = {}
         self.history.clear()
         self.replies.clear()
         self.reset_metrics()
