@@ -312,7 +312,11 @@ def round_sigfigs(x, sigfigs=4):
 
 
 def flatten(teacher, context_length=-1, include_labels=True):
-    """Return a flattened version of a teacher's data.
+    """
+    DEPRECATED: If you would like to make use of batch sorting, please
+    use the PytorchDataTeacher instead
+
+    Return a flattened version of a teacher's data.
 
     All episodes will have length 1 but contain the desired amount of context.
 
@@ -322,6 +326,8 @@ def flatten(teacher, context_length=-1, include_labels=True):
     If include_labels is True, will include a random label in past utterances.
     Default is True.
     """
+    warnings.warn('flatten is deprecated. Please use PytorchDataTeacher.',
+                  DeprecationWarning)
     data = []
     current = []
     episode_done = False
@@ -363,7 +369,11 @@ def flatten(teacher, context_length=-1, include_labels=True):
 
 
 def sort_data(data, key='text_label', method='spaces'):
-    """Given a list of data, sort it according to the method and key.
+    """
+    DEPRECATED: If you would like to make use of batch sorting, please
+    use the PytorchDataTeacher instead.
+
+    Given a list of data, sort it according to the method and key.
 
     Currently the only supported method is counting the number of spaces.
     This appeared to be reliable enough and much faster than tokenizing.
@@ -378,6 +388,8 @@ def sort_data(data, key='text_label', method='spaces'):
     Breaking ties by sorting by label length gives a further improvement in
     speed but can reduce robustness with some optimization schemes.
     """
+    warnings.warn('sort_data is deprecated. Please use PytorchDataTeacher.',
+                  DeprecationWarning)
     # TODO: support different keys and different methods
     tpls = []
     for ex in data:
@@ -398,7 +410,14 @@ def sort_data(data, key='text_label', method='spaces'):
 
 
 def make_batches(data, bsz):
-    """Return a list of lists of size bsz given a list of examples."""
+    """
+    DEPRECATED: If you would like to make use of batch sorting, please
+    use the PytorchDataTeacher instead.
+
+    Return a list of lists of size bsz given a list of examples.
+    """
+    warnings.warn('make_batches is deprecated. Please use PytorchDataTeacher.',
+                  DeprecationWarning)
     return [data[i:i + bsz] for i in range(0, len(data), bsz)]
 
 
