@@ -325,6 +325,13 @@ class TorchGeneratorAgent(TorchAgent):
                 optim_states=states.get('optimizer'),
                 saved_optim_type=states.get('optimizer_type'))
 
+        if shared is None and opt.get('distributed_world_size'):
+            self.model = torch.nn.parallel.DistributedDataParallel(
+                self.model,
+                device_ids=[self.opt['gpu']],
+                broadcast_buffers=False,
+            )
+
         self.reset()
 
     def _v2t(self, vec):
@@ -356,7 +363,7 @@ class TorchGeneratorAgent(TorchAgent):
         self.criterion = nn.CrossEntropyLoss(
             ignore_index=self.NULL_IDX, reduction='sum'
         )
-        if self.use_cuda:
+        if self.use_cuda and self.opt.get('numthreads', 1) == 1:
             self.criterion.cuda()
 
     def _init_cuda_buffer(self, model, criterion, batchsize, maxlen):

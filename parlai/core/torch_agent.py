@@ -403,6 +403,10 @@ class TorchAgent(Agent):
         :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
         :param emb_type: pretrained embedding type
         """
+        if self.get('rank', 0) != 0:
+            # we're in distributed mode, copying embeddings in the workers
+            # slows things down considerably
+            return
         embs, name = self._get_embtype(emb_type)
         cnt = 0
         for w, i in self.dict.tok2ind.items():
