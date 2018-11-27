@@ -434,7 +434,7 @@ class StreamDataset(Dataset):
         self._load_lens()
 
     def __getitem__(self, index):
-        if self.ordered:
+        if self.ordered or not self.training:
             while True:
                 idx, ep = next(self.data_gen)
                 if idx == index:
@@ -570,7 +570,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
             else:
                 class_name, self.collate_fn, task_name = dataset_classes[0]
                 self.dataset = class_name(opt)
-            if self.ordered:
+            if self.ordered or not self.training:
                 data_sampler = sampler.SequentialSampler(self.dataset)
                 pin_memory = False
             else:
