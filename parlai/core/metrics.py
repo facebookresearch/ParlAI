@@ -305,13 +305,13 @@ class Metrics(object):
                     self.metrics['f1'] / max(1, self.metrics['f1_cnt']),
                     4
                 )
-                if self.flags['has_text_cands']:
-                    for k in self.eval_pr:
-                        m['hits@' + str(k)] = round_sigfigs(
-                            self.metrics['hits@' + str(k)] /
-                            max(1, self.metrics['hits@_cnt']),
-                            3
-                        )
+            if self.flags['has_text_cands']:
+                for k in self.eval_pr:
+                    m['hits@' + str(k)] = round_sigfigs(
+                        self.metrics['hits@' + str(k)] /
+                        max(1, self.metrics['hits@_cnt']),
+                        3
+                    )
             for k in self.metrics_list:
                 if self.metrics[k + '_cnt'] > 0 and k != 'correct' and k != 'f1':
                     m[k] = round_sigfigs(
