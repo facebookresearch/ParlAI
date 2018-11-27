@@ -323,8 +323,6 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
             except FileNotFoundError:  # noqa: F821
                 pass
 
-    input('breakpoint before compile')
-
     # Compile the frontend
     os.chdir(heroku_server_development_path)
 
