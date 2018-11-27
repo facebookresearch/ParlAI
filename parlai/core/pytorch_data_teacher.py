@@ -554,7 +554,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.opt = opt.copy()
         self.is_shared = shared is not None
         dataset_classes = self.get_dataset_class(opt)
-        self.ordered = 'ordered' in self.datatype or not opt.get('shuffle')
+        self.ordered = ('ordered' in self.datatype or
+                        ('stream' in self.datatype and not opt.get('shuffle')))
 
         if not shared:
             if len(dataset_classes) > 1:
