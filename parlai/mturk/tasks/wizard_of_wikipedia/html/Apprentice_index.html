@@ -1,0 +1,380 @@
+{% extends "core.html" %}
+
+{% block left_pane %}
+  <div id="left-pane" class="col-xs-4" style="height: {{frame_height}}px; background-color: #dff0d8;">
+    <h1>Chat to Learn!</h1>
+      <div id="left-top-pane" style="height: 40%; overflow:auto;">
+        <hr style="border-top: 1px solid #555" />
+          <span id="apprentice-task-description" style="font-size: 14px">
+          </span>
+      </div>
+      <div id="left-bottom-pane" style="height: 40%">
+        <hr style="border-top: 1px solid #555" />
+        <div id="relevant-topics" style="font-size: 14px; height: 90%; overflow: auto">
+        </div>
+        <button class="btn btn-primary" type="button" style='font-size: 16px; disabled: true; display: none' id="submit-chosen-topic-button">Pick Topic</button>
+      </div>
+  </div>
+{% endblock %}
+{% block right_pane %}
+<div id="right-pane" style="min-height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+    <div id="right-top-pane" style="width: 100%; height: 570px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
+        <div id="message_thread" style="width: 100%">
+        </div>
+        <div id="waiting-for-message" class="row" style="margin-left: 0; margin-right: 0; display: none">
+            <div class="alert alert-warning" role="alert" style="float: left; display:table; background-color: #fff">
+                <div id="hourglass" style="margin-top: -1px; margin-right: 5px; display: inline; float: left;">
+                    <?xml version="1.0" encoding="utf-8"?><svg width='25px' height='25px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-hourglass"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><g><path fill="none" stroke="#007282" stroke-width="5" stroke-miterlimit="10" d="M58.4,51.7c-0.9-0.9-1.4-2-1.4-2.3s0.5-0.4,1.4-1.4 C70.8,43.8,79.8,30.5,80,15.5H70H30H20c0.2,15,9.2,28.1,21.6,32.3c0.9,0.9,1.4,1.2,1.4,1.5s-0.5,1.6-1.4,2.5 C29.2,56.1,20.2,69.5,20,85.5h10h40h10C79.8,69.5,70.8,55.9,58.4,51.7z" class="glass"></path><clipPath id="uil-hourglass-clip1"><rect x="15" y="20" width="70" height="25" class="clip"><animate attributeName="height" from="25" to="0" dur="1.5s" repeatCount="indefinite" values="25;0;0" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="20" to="45" dur="1.5s" repeatCount="indefinite" values="20;45;45" keyTimes="0;0.5;1"></animate></rect></clipPath><clipPath id="uil-hourglass-clip2"><rect x="15" y="55" width="70" height="25" class="clip"><animate attributeName="height" from="0" to="25" dur="1.5s" repeatCount="indefinite" values="0;25;25" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="80" to="55" dur="1.5s" repeatCount="indefinite" values="80;55;55" keyTimes="0;0.5;1"></animate></rect></clipPath><path d="M29,23c3.1,11.4,11.3,19.5,21,19.5S67.9,34.4,71,23H29z" clip-path="url(#uil-hourglass-clip1)" fill="#ffab00" class="sand"></path><path d="M71.6,78c-3-11.6-11.5-20-21.5-20s-18.5,8.4-21.5,20H71.6z" clip-path="url(#uil-hourglass-clip2)" fill="#ffab00" class="sand"></path><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="180 50 50" repeatCount="indefinite" dur="1.5s" values="0 50 50;0 50 50;180 50 50" keyTimes="0;0.7;1"></animateTransform></g></svg>
+                </div>
+                <span style="font-size: 16px">Waiting for the next person to speak...</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="right-bottom-pane" style="width: 100%; background-color: #eee">
+        <div id="response-type-idle" class="response-type-module" style="display:none">
+        </div>
+        <div id="response-type-text-input" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <div style="height: 50px; width: 100%; display: block; float: left; ">
+                <input id="id_text_input" type="text" style="width: 70%; height: 100%; float: left; font-size: 16px" class="form-control" value="" placeholder="Please enter here...">
+                <button class="btn btn-success" style="width: 88px; height: 100%; font-size: 16px; float: left; margin-left: 15px; padding: 0px; disabled: true; display:none" id="id_done_button">Done</button>
+                <button class="btn btn-primary" style="width: 88px; height: 100%; font-size: 16px; float: left; margin-left: 15px; padding: 0px;" id="id_send_msg_button">Send</button>
+            </div>
+        </div>
+        <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <span id="inactive" style="font-size: 14pt;margin-right: 15px"></span>
+            <button id="done-button" type="button" class="btn btn-primary btn-lg">
+                <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block additional_scripts %}
+<script type="text/javascript">
+    var relevant_topics = [];
+    var chosen_topic = '';
+    var chosen_topic_id = '';
+    OFFENSIVE_WORDS = ['2g1c', '2 girls 1 cup', 'acrotomophilia',
+                       'alabama hot pocket', 'alaskan pipeline', 'anal',
+                       'anilingus', 'anus', 'apeshit', 'arsehole', 'ass',
+                       'asshole', 'assmunch', 'auto erotic', 'autoerotic',
+                       'babeland', 'baby batter', 'baby juice', 'ball gag',
+                       'ball gravy', 'ball kicking', 'ball licking', 'ball sack',
+                       'ball sucking', 'bangbros', 'bareback', 'barely legal',
+                       'barenaked', 'bastard', 'bastardo', 'bastinado', 'bbw',
+                       'bdsm', 'beaner', 'beaners', 'beaver cleaver',
+                       'beaver lips', 'bestiality', 'big black', 'big breasts',
+                       'big knockers', 'big tits', 'bimbos', 'birdlock', 'bitch',
+                       'bitches', 'black cock', 'blonde action',
+                       'blonde on blonde action', 'blowjob', 'blow job',
+                       'blow your load', 'blue waffle', 'blumpkin', 'bollocks',
+                       'bondage', 'boner', 'boob', 'boobs', 'booty call',
+                       'brown showers', 'brunette action', 'bukkake', 'bulldyke',
+                       'bullet vibe', 'bullshit', 'bung hole', 'bunghole',
+                       'busty', 'butt', 'buttcheeks', 'butthole', 'camel toe',
+                       'camgirl', 'camslut', 'camwhore', 'carpet muncher',
+                       'carpetmuncher', 'chocolate rosebuds', 'circlejerk',
+                       'cleveland steamer', 'clit', 'clitoris', 'clover clamps',
+                       'clusterfuck', 'cock', 'cocks', 'coprolagnia', 'coprophilia',
+                       'cornhole', 'coon', 'coons', 'creampie', 'cum', 'cumming',
+                       'cunnilingus', 'cunt', 'darkie', 'date rape', 'daterape',
+                       'deep throat', 'deepthroat', 'dendrophilia', 'dick',
+                       'dildo', 'dingleberry', 'dingleberries', 'dirty pillows',
+                       'dirty sanchez', 'doggie style', 'doggiestyle',
+                       'doggy style', 'doggystyle', 'dog style', 'dolcett',
+                       'domination', 'dominatrix', 'dommes', 'donkey punch',
+                       'double dong', 'double penetration', 'dp action',
+                       'dry hump', 'dvda', 'eat my ass', 'ecchi', 'ejaculation',
+                       'erotic', 'erotism', 'escort', 'eunuch', 'faggot',
+                       'fecal', 'felch', 'fellatio', 'feltch', 'female squirting',
+                       'femdom', 'figging', 'fingerbang', 'fingering', 'fisting',
+                       'foot fetish', 'footjob', 'frotting', 'fuck', 'fuck buttons',
+                       'fuckin', 'fucking', 'fucktards', 'fudge packer',
+                       'fudgepacker', 'futanari', 'gang bang', 'gay sex',
+                       'genitals', 'giant cock', 'girl on', 'girl on top',
+                       'girls gone wild', 'goatcx', 'goatse', 'god damn',
+                       'gokkun', 'golden shower', 'goodpoop', 'goo girl',
+                       'goregasm', 'grope', 'group sex', 'g-spot', 'guro',
+                       'hand job', 'handjob', 'hard core', 'hardcore', 'hentai',
+                       'homoerotic', 'honkey', 'hooker', 'hot carl', 'hot chick',
+                       'how to kill', 'how to murder', 'huge fat', 'humping',
+                       'incest', 'intercourse', 'jack off', 'jail bait',
+                       'jailbait', 'jelly donut', 'jerk off', 'jigaboo',
+                       'jiggaboo', 'jiggerboo', 'jizz', 'juggs', 'kike',
+                       'kinbaku', 'kinkster', 'kinky', 'knobbing',
+                       'leather restraint', 'leather straight jacket',
+                       'lemon party', 'lolita', 'lovemaking', 'make me come',
+                       'male squirting', 'masturbate', 'menage a trois', 'milf',
+                       'missionary position', 'motherfucker', 'mound of venus',
+                       'mr hands', 'muff diver', 'muffdiving', 'nambla',
+                       'nawashi', 'negro', 'neonazi', 'nigga', 'nigger',
+                       'nig nog', 'nimphomania', 'nipple', 'nipples',
+                       'nsfw images', 'nude', 'nudity', 'nympho',
+                       'nymphomania', 'octopussy', 'omorashi', 'one cup two girls',
+                       'one guy one jar', 'orgasm', 'orgy', 'paedophile',
+                       'paki', 'panties', 'panty', 'pedobear', 'pedophile',
+                       'pegging', 'penis', 'phone sex', 'piece of shit',
+                       'pissing', 'piss pig', 'pisspig', 'playboy',
+                       'pleasure chest', 'pole smoker', 'ponyplay', 'poof',
+                       'poon', 'poontang', 'punany', 'poop chute', 'poopchute',
+                       'porn', 'porno', 'pornography', 'prince albert piercing',
+                       'pthc', 'pubes', 'pussy', 'queaf', 'queef', 'quim',
+                       'raghead', 'raging boner', 'rape', 'raping', 'rapist',
+                       'rectum', 'reverse cowgirl', 'rimjob', 'rimming',
+                       'rosy palm', 'rosy palm and her 5 sisters',
+                       'rusty trombone', 'sadism', 'santorum', 'scat',
+                       'schlong', 'scissoring', 'semen', 'sex', 'sexo',
+                       'sexy', 'shaved beaver', 'shaved pussy', 'shemale',
+                       'shibari', 'shit', 'shitblimp', 'shitty', 'shota',
+                       'shrimping', 'skeet', 'slanteye', 'slut', 's&m', 'smut',
+                       'snatch', 'snowballing', 'sodomize', 'sodomy', 'spic',
+                       'splooge', 'splooge moose', 'spooge', 'spread legs',
+                       'spunk', 'strap on', 'strapon', 'strappado', 'strip club',
+                       'style doggy', 'suck', 'sucks', 'suicide girls',
+                       'sultry women', 'swastika', 'swinger', 'tainted love',
+                       'taste my', 'tea bagging', 'threesome', 'throating',
+                       'tied up', 'tight white', 'tit', 'tits', 'titties',
+                       'titty', 'tongue in a', 'topless', 'tosser', 'towelhead',
+                       'tranny', 'tribadism', 'tub girl', 'tubgirl', 'tushy',
+                       'twat', 'twink', 'twinkie', 'two girls one cup',
+                       'undressing', 'upskirt', 'urethra play', 'urophilia',
+                       'vagina', 'venus mound', 'vibrator', 'violet wand',
+                       'vorarephilia', 'voyeur', 'vulva', 'wank', 'wetback',
+                       'wet dream', 'white power', 'wrapping men',
+                       'wrinkled starfish', 'xx', 'xxx', 'yaoi',
+                       'yellow showers', 'yiffy', 'zoophilia'];
+
+
+    function handle_new_message(new_message_id, message) {
+      if(message.text === undefined) {
+        return;
+      }
+      var agent_id = message.id;
+      var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+      if (displayed_messages.indexOf(new_message_id) !== -1) {
+        // This message has already been seen and put up into the chat
+        log(new_message_id + ' was a repeat message', 1);
+        return;
+      }
+      log('New message, ' + new_message_id + ' from agent ' + agent_id, 1);
+      displayed_messages.push(new_message_id);
+      if ("relevant_topics" in message) {
+        $("button#submit-chosen-topic-button").show();
+        relevant_topics = message.relevant_topics;
+        handle_relevant_topics(message.relevant_topics);
+        $("button#id_send_msg_button").addClass("disabled");
+        $("button#id_send_msg_button").prop("disabled", true);
+      }
+      else{
+        $("button#submit-chosen-topic-button").prop("disabled", true);
+        $("button#submit-chosen-topic-button").prop("display", 'none');
+        $("button#id_send_msg_button").removeClass("disabled");
+        $("button#id_send_msg_button").prop("disabled", false);
+      }
+      if (message_text !== '') {
+        if (agent_id !== cur_agent_id) {
+          var display_id = agent_id == 'SYSTEM' ? agent_id : "Partner";
+          add_message_to_conversation(display_id, message_text, false);
+        } else {
+          var display_id = agent_id == 'SYSTEM' ? agent_id : "You";
+          add_message_to_conversation(display_id, message_text, true);
+        }
+      }
+      if ("description" in message) {
+        $("span#apprentice-task-description").html(message.description);
+      }
+      if ("exceed_min_turns" in message && message.exceed_min_turns) {
+        exceed_min_turns = true;
+        $("button#id_done_button").css("disabled", false);
+        $("button#id_done_button").css("display", "");
+        $("input#id_text_input").css("width", "40%");
+        $(window).resize(window_resize);
+      }
+      if ("wizard_eval" in message && message.wizard_eval) {
+        $("input#id_text_input").attr('type', 'number');
+        $("input#id_text_input").attr('min', '1');
+        $("input#id_text_input").attr('max', '5');
+        $("input#id_text_input").attr('placeholder',
+                                      'Please enter a number from 1 to 5...');
+        $("button#id_done_button").css("display", "none");
+        $("button#id_done_button").css("disabled", true);
+        $(window).resize(window_resize);
+      }
+    }
+
+    // Showing relevant Topics
+    function handle_relevant_topics(topics) {
+      var list = `<h4>Topics</h4><ul id='relevant-topics-list'>`;
+      for (var topic_idx = 0; topic_idx < topics.length; topic_idx++) {
+        var topic = topics[topic_idx];
+        var topic_check = `<div class=\'form-check\'>
+                            <input class="form-check-input topic-checkbox"
+                                   type="checkbox"
+                                   value="${topic_idx}"
+                                   id="${topic_idx}_topic">
+                            <span id="${topic_idx}_label">${topic}</span>
+                          </div>`;
+        var li = `<li id="${topic_idx}_li">${topic_check}</li>`;
+        list += li;
+      }
+      list += '</ul>';
+      $(`div#relevant-topics`).html(`${list}`);
+
+      //Disable Button if not checked
+      $(".topic-checkbox").change(function() {
+        var any_checked=false;
+        $(".topic-checkbox").each(function(index) {
+          any_checked = any_checked || $(this).is(':checked');
+        });
+        $("button#submit-chosen-topic-button").prop('disabled', !any_checked);
+      });
+
+      //Check one topic unchecks others
+      for (var topic_idx = 0; topic_idx < topics.length; topic_idx++) {
+        $(`input#${topic_idx}_topic`).change(function(t_id, rel_tops) {
+          if($(this).is(':checked')) {
+            chosen_topic = rel_tops[t_id];
+            $("input[type='checkbox']").each(function(index) {
+              if($(this).attr('id') != `${t_id}_topic`){
+                $(this).prop('checked', false);
+              }
+            });
+          }
+        }.bind($(`input#${topic_idx}_topic`), topic_idx, relevant_topics));
+      }
+    }
+
+    function split_tokenize(text) {
+      var res = text.toLowerCase().replace(/[.|. . .|,|;|:|!|\?|\(|\)]/g,
+          function (x) {
+            return ` ${x} `;
+      });
+      return res.split(' ');
+    }
+
+    // Ending the Chat
+    $("button#id_done_button").on('click', function () {
+        var text = "I am done with the chat and clicked the 'Done' button, thank you!";
+        if (!(text == '')) {
+            $("button#id_done_button").css("disabled", true);
+            new_message_id = uuidv4();
+            send_packet(
+                TYPE_MESSAGE,
+                {text: text,
+                 id: cur_agent_id,
+                 message_id: new_message_id,
+                 episode_done: true},
+                true,
+                true,
+                function(msg) {
+                    $("button#id_done_button").css("disabled", false);
+                    $("input#id_text_input").val("");
+                    $("div#response-type-text-input").css("display", "none");
+                    handle_new_message(new_message_id, msg.data);
+                }
+            );
+        }
+    });
+
+
+    // Submitting Chosen Topic
+    $("button#submit-chosen-topic-button").on('click', function () {
+      new_message_id = uuidv4();
+      chosen_topic = chosen_topic.substring(0, chosen_topic.lastIndexOf('(')-1);
+      send_packet(
+          TYPE_MESSAGE,
+          {text: chosen_topic,
+           id: cur_agent_id,
+           message_id: new_message_id,
+           episode_done: false},
+          true,
+          true,
+          function(msg) {
+            $("button#submit-chosen-topic-button").hide();
+            var topic_span = `<h4>Chosen Topic</h4><span style="color:blue;
+                                                    font-size: 20px">
+                                                    ${chosen_topic}</span>`;
+            $(`div#relevant-topics`).html(topic_span);
+            $("button#id_send_msg_button").removeClass("disabled");
+            $("button#id_send_msg_button").prop("disabled", false);
+            after_send_packet();
+          }
+        );
+    });
+
+    $("button#id_send_msg_button").off('click');
+    // Handle submitting a message
+    $("button#id_send_msg_button").on('click', function () {
+      var text = $("input#id_text_input").val();
+
+      //Check for turk words
+      var turk_words = ['Turker', 'turker', 'Turk', 'turk'];
+      var contains_turk = split_tokenize(text).filter(
+          word => turk_words.indexOf(word) !== -1);
+      if (contains_turk.length > 0) {
+        new_message_id =  uuidv4();
+        var msg = {id: "SYSTEM",
+                  text: "Please do not mention the mechanical turk task in the conversation."};
+        handle_new_message(new_message_id, msg);
+        $("div#waiting-for-message").css("display", "none");
+        return;
+      }
+      //check for offensive language
+      var offensive = split_tokenize(text).filter(
+          word => OFFENSIVE_WORDS.indexOf(word) !== -1);
+      if (offensive.length > 0) {
+        new_message_id =  uuidv4();
+        var msg = {id: "SYSTEM", text: `We have detected the following offensive language in your message: ${offensive.join(', ')}. Please edit and send again.`};
+        handle_new_message(new_message_id, msg);
+        $("div#waiting-for-message").css("display", "none");
+        return;
+      }
+      if (!(text == '')) {
+        // Disable the send button
+        $("button#id_send_msg_button").prop("disabled", true);
+        new_message_id = uuidv4();
+        // Send a packet
+        send_packet(
+          TYPE_MESSAGE,
+          {
+            text: text,
+            id: cur_agent_id,
+            message_id: new_message_id,
+            episode_done: false
+          },
+          true,
+          true,
+          function(msg) {
+            // On callback enable the button and clear the text field
+            $("button#id_send_msg_button").prop("disabled", false);
+            $("input#id_text_input").val("");
+            $("div#response-type-text-input").css("display", "none");
+            // push the message into the conversation
+            handle_new_message(new_message_id, msg.data);
+            after_send_packet();
+          }
+        );
+      }
+    });
+
+
+    // On window resize, ensure that the UI is properly displayed
+    function window_resize() {
+      log("The window was resized", 4);
+      // Set the text input width to match the bottom width minus space
+      // for the done button
+      $("input#id_text_input").width($("div#right-bottom-pane").width() - 210);
+      if(exceed_min_turns == true) {
+        $("input#id_text_input").width($("input#id_text_input").width() - 100);
+      }
+
+      // Set the chat window height to be the remainder after removing the
+      // height of the text pane
+      var left_height = $("div#left-pane").height();
+      var text_height = $("div#right-bottom-pane").outerHeight()
+      $("div#right-top-pane").height((left_height - text_height) - 20);
+    }
+</script>
+{% endblock %}

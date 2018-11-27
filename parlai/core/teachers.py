@@ -47,6 +47,7 @@ import random
 import sys
 import time
 import os
+import warnings
 
 
 class DataLoader(Thread):
@@ -371,6 +372,9 @@ class FixedDialogTeacher(Teacher):
 
     def batch_act(self, observations):
         """Returns an entire batch of examples instead of just one."""
+        warnings.warn('batch_act is deprecated. Please use PytorchDataTeacher '
+                      'for your batch sorting needs.',
+                      DeprecationWarning)
         # we ignore observations
         if not hasattr(self, 'epochDone'):
             # reset if haven't yet

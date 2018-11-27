@@ -40,8 +40,10 @@ def make_serializable(obj):
             new_obj[key] = dict(val)
         elif isinstance(val, collections.Sequence):
             new_obj[key] = list(val)
-        elif isinstance(val, torch.Tensor):
-            new_obj[key] = val.tolist()
+        elif torch.is_tensor(val):
+            new_obj[key] = {'value': val.tolist(),
+                            'deserialized_tensor': True,
+                            'type': str(val.dtype)}
     return new_obj
 
 
@@ -51,10 +53,10 @@ def build_data(opt):
     agent = create_agent(opt)
     # If build teacher not specified, we are simply looking for the file
     if not opt.get('pytorch_teacher_task', None):
-        df = opt.get('pytorch_datafile')
+        df = opt.get('pytorch_datapath')
         # check if the user set a datafile
         if not df:
-            raise Exception('Tried to find data but `--pytorch-datafile` is not set')
+            raise Exception('Tried to find data but `--pytorch-datapath` is not set')
         # check if the user provided the already built file
         if 'pytorch' not in df:
             df += '.pytorch' + (
@@ -77,49 +79,34 @@ def build_data(opt):
     world_data = create_task(ordered_opt, agent)
     teacher = world_data.agents[0]
     agent = world_data.agents[1]
-
-    datafile = None
-    if opt.get('pytorch_datafile'):
-        datafile = opt.get('pytorch_datafile')
-    elif hasattr(teacher, 'datafile') and teacher.datafile:
-        datafile = teacher.datafile
-    else:
-        dpath = os.path.join(opt.get('datapath', '~'), ordered_opt['task'], dt)
-        os.makedirs(dpath, exist_ok=True)
-        datafile = os.path.join(dpath, 'pytorch_data')
-    if not datafile:
-        raise Exception(
-            'Tried to build data but either `pytorch-teacher-task` does not '
-            'have a datafile or `--pytorch-datafile` is not set'
-        )
-
-    if isinstance(datafile, collections.Sequence) and not type(datafile) == str:
-        datafile = datafile[0] + "".join(["_".join(d.split("/")) for d in datafile[1:]])
-    pytorch_datafile = datafile + ".pytorch"
+    datapath = os.path.join(opt.get('datapath', '.'),
+                            '{}_pyt_data'.format(
+                                ordered_opt['task'].replace(':', '_')),
+                            dt)
     preprocess = opt.get('pytorch_preprocess', True)
     if preprocess:
-        pytorch_datafile += agent.getID()
-    if os.path.isfile(pytorch_datafile):
+        datapath += '_{}_preprocess'.format(agent.getID().replace(':', '_'))
+    if os.path.isdir(datapath):
         # Data already built
-        print("[ pytorch data already built. ]")
-        return pytorch_datafile
+        print("[ pytorch data already built, at {}. ]".format(datapath))
+        return datapath
     print(
-        '----------\n[ setting up pytorch data, saving to {}. ]\n----------'.format(
-            pytorch_datafile
+        '----------\n[ setting up pytorch data, saving to {}/ ]\n----------'.format(
+            datapath
         )
     )
-
+    os.makedirs(datapath, exist_ok=True)
     num_eps = 0
     num_exs = 0
     current = []
     episode_done = False
-    include_labels = opt.get('include_labels', True)
-    context_length = opt.get('context_length', -1)
+    include_labels = opt.get('pytorch_include_labels', True)
+    context_length = opt.get('pytorch_context_length', -1)
     context = deque(maxlen=context_length if context_length > 0 else None)
     logger = ProgressLogger(should_humanize=False, throttle=0.1)
     total_exs = world_data.num_examples()
     # pass examples to dictionary
-    with open(pytorch_datafile, 'w') as pytorch_data:
+    with open(os.path.join(datapath, 'data'), 'w') as pytorch_data:
         while num_exs < total_exs:
             while not episode_done:
                 action = teacher.act()
@@ -149,11 +136,12 @@ def build_data(opt):
             current.clear()
             context.clear()
 
-    with open(pytorch_datafile + '.length', 'w') as pytorch_data_len:
-        pytorch_data_len.write(json.dumps({'num_eps': num_eps, 'num_exs': num_exs}))
+    with open(os.path.join(datapath, 'data_length'), 'w') as pytorch_data_len:
+        pytorch_data_len.write(json.dumps({'num_eps': num_eps,
+                                           'num_exs': num_exs}))
 
     print('[ pytorch data built. ]')
-    return pytorch_datafile
+    return datapath
 
 
 if __name__ == '__main__':
