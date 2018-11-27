@@ -1,11 +1,12 @@
 {
-  "name": "parlai-mturk-task-compiler",
+  "name": "custom_built_frontend",
   "version": "1.0.0",
   "description": "",
   "main": "webpack.config.js",
   "scripts": {
-    "dev": "webpack --mode development -q"
+    "dev": "webpack --mode development"
   },
+  "main": "./dist/custom.jsx",
   "keywords": [],
   "author": "",
   "dependencies": {

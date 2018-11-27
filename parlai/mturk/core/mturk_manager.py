@@ -250,6 +250,8 @@ class MTurkManager():
 
     def _reset_time_logs(self, init_load=False, force=False):
         # Uses a weak lock file to try to prevent clobbering between threads
+        if self.is_sandbox:
+            return  # sandbox doesn't check logs
         file_path = os.path.join(parent_dir, TIME_LOGS_FILE_NAME)
         file_lock = os.path.join(parent_dir, TIME_LOGS_FILE_LOCK)
         with LockFile(file_lock) as _lock_file:
@@ -278,6 +280,8 @@ class MTurkManager():
                             pickle.HIGHEST_PROTOCOL)
 
     def _log_working_time(self, mturk_agent):
+        if self.is_sandbox:
+            return  # sandbox does not log working time
         additional_time = time.time() - mturk_agent.creation_time
         worker_id = mturk_agent.worker_id
         file_path = os.path.join(parent_dir, TIME_LOGS_FILE_NAME)
@@ -801,6 +805,7 @@ class MTurkManager():
                 'static': [],
                 'components': [],
                 'css': [],
+                'needs_build': None,
             }
         if not task_directory_path:
             task_directory_path = os.path.join(
@@ -815,6 +820,11 @@ class MTurkManager():
         try:
             frontend_contents = os.listdir(
                 os.path.join(task_directory_path, 'frontend'))
+            if 'package.json' in frontend_contents:
+                # We take a package file to mean that this component will
+                # need to be built separately before importing
+                self.task_files_to_copy['needs_build'] = \
+                    os.path.join(task_directory_path, 'frontend')
             for dir in frontend_contents:
                 if dir in self.task_files_to_copy:
                     for file_name in os.listdir(os.path.join(
