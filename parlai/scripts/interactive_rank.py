@@ -14,16 +14,20 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 """Does human evaluation on a task with label_candidates.
 
-Human can exit with ctrl + c and metrics will be computed.
+Human can exit with ctrl + c and metrics will be computed and displayed.
 
 Examples
 --------
 
 .. code-block:: shell
 
-  python examples/interactive_rank.py -t babi:task10k:1
+  python examples/interactive_rank.py -t babi:task10k:1 -dt valid
 
 When prompted, enter the index of the label_candidate you think is correct.
+Candidates are shuffled for each example.
+During datatype train, examples are randomly sampled with replacement; use
+train:ordered to not repeat examples.
+During datatype valid or test, examples are shown in order, not shuffled.
 """
 from parlai.core.metrics import Metrics
 from parlai.core.params import ParlaiParser
@@ -99,6 +103,7 @@ def interactive_rank(opt, print_parser=None):
     except KeyboardInterrupt:
         pass
 
+    print()
     print_metrics()
 
 
