@@ -40,7 +40,7 @@ class Transformer(Agent):
     Placeholder class, which just throws an error telling the user to specify
     whether they want the ranker or the generator.
     """
-    def __init__(self, opt, shared):
+    def __init__(self, opt, shared=None):
         raise RuntimeError(
             "`--model transformer` is not a valid choice. Please select either "
             "`--model transformer/ranker` or `--model transformer/generator"
