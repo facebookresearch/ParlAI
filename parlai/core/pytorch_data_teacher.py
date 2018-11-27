@@ -426,15 +426,31 @@ class StreamDataset(Dataset):
         self.datapath = build_data(self.opt)
         self.data_gen = self._data_generator()
         self.length_datafile = os.path.join(self.datapath, 'data_length')
+        self.char_index_file = os.path.join(self.datapath, 'char_index')
         self.datafile = os.path.join(self.datapath, 'data')
         self.training = self.datatype.startswith('train')
+        self.ordered = False
         self._load_lens()
 
     def __getitem__(self, index):
-        while True:
-            idx, ep = next(self.data_gen)
-            if idx == index:
-                return (index, ep)
+        if self.ordered:
+            while True:
+                idx, ep = next(self.data_gen)
+                if idx == index:
+                    return (index, ep)
+        else:
+            episode = []
+            current_idx = index
+            episode_done = False
+            with open(self.datafile) as f:
+                while not episode_done:
+                    ex_offset = self.char_index[current_idx]
+                    f.seek(ex_offset)
+                    example = json.loads(f.readline())
+                    episode.append(example)
+                    episode_done = example['episode_done']
+                    current_idx += 1
+            return (index, episode)
 
     def __len__(self):
         return self.num_episodes()
@@ -444,6 +460,8 @@ class StreamDataset(Dataset):
             lengths = json.load(length)
             self.num_eps = lengths['num_eps']
             self.num_exs = lengths['num_exs']
+        with open(self.char_index_file) as char:
+            self.char_index = json.load(char)
 
     def _data_generator(self):
         while True:
@@ -620,6 +638,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
         if self.episode_done:
             try:
                 self.episode_idx, episode = next(self.data)
+                if self.collate_fn == default_collate:
+                    episode = [ex[1] for ex in episode]
                 self.episode = process(episode)
                 self.entry_idx = 0
                 epoch_done = False
@@ -630,8 +650,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
             self.entry_idx += 1
 
         if not epoch_done:
-            if self.collate_fn == default_collate:
-                self.episode[self.entry_idx] = self.episode[self.entry_idx][1]
+            # if self.collate_fn == default_collate:
+            #     self.episode[self.entry_idx] = self.episode[self.entry_idx][1]
             ex = self.episode[self.entry_idx]
             self.episode_done = ex['episode_done']
             if (self.episode_done and
