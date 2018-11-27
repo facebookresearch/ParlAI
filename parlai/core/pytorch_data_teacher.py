@@ -429,7 +429,8 @@ class StreamDataset(Dataset):
         self.char_index_file = os.path.join(self.datapath, 'char_index')
         self.datafile = os.path.join(self.datapath, 'data')
         self.training = self.datatype.startswith('train')
-        self.ordered = 'ordered' in self.datatype or not opt.get('shuffle')
+        self.ordered = ('ordered' in self.datatype or
+                        ('stream' in self.datatype and not opt.get('shuffle')))
         self._load_lens()
 
     def __getitem__(self, index):
@@ -585,6 +586,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 pin_memory=pin_memory,
                 drop_last=False,
             )
+
             self.lastYs = [None] * self.bsz
             if self.batch_sort:
                 self.loader_process = LoaderProcess(opt)
