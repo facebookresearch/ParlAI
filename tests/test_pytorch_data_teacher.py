@@ -10,7 +10,7 @@ from parlai.core.agents import create_task_agent_from_taskname
 
 import unittest
 import io
-from torch.utils.data.sampler import RandomSampler, SequentialSampler
+from torch.utils.data.sampler import RandomSampler, SequentialSampler as Sequential
 from contextlib import redirect_stdout
 
 
@@ -46,7 +46,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
                             ('stream' in datatype and not opt.get('shuffle')) or
                             'train' not in datatype):
                         self.assertTrue(
-                            type(teacher.pytorch_dataloader.sampler) is SequentialSampler,
+                            type(teacher.pytorch_dataloader.sampler) is Sequential,
                             'PytorchDataTeacher failed with args: {}'.format(opt)
                         )
                     else:

@@ -23,7 +23,7 @@ import importlib
 from functools import lru_cache
 try:
     import torch  # noqa: F401
-except Exception as e:
+except Exception:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import ConcatDataset, Dataset, DataLoader, sampler
 from torch.multiprocessing import Lock, Value
