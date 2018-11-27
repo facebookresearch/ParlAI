@@ -647,8 +647,6 @@ class PytorchDataTeacher(FixedDialogTeacher):
             self.entry_idx += 1
 
         if not epoch_done:
-            # if self.collate_fn == default_collate:
-            #     self.episode[self.entry_idx] = self.episode[self.entry_idx][1]
             ex = self.episode[self.entry_idx]
             self.episode_done = ex['episode_done']
             if (self.episode_done and
