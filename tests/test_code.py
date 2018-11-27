@@ -15,7 +15,7 @@ import utils
 import os
 import re
 
-FILENAME_EXTENSIONS = r'.*\.(rst|py|sh|js)$'
+FILENAME_EXTENSIONS = r'.*\.(rst|py|sh|js|css)$'
 WHITELIST_PHRASES = [
     'Moscow Institute of Physics and Technology.',
     'https://github.com/fartashf/vsepp'
@@ -64,7 +64,7 @@ class TestInit(unittest.TestCase):
     """Make sure all python packages have init files."""
     def test_init_everywhere(self):
         for folder in utils.git_ls_dirs('parlai'):
-            if os.path.basename(folder) == 'html':
+            if 'mturk' in folder:
                 continue
             self.assertIn(
                 '__init__.py',

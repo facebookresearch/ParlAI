@@ -351,7 +351,7 @@ class TestWorkerManager(unittest.TestCase):
         self.assertEqual(good_agent.conversation_id, 't1')
         self.assertEqual(bad_agent.conversation_id, 't1')
         self.assertIn('t1', self.worker_manager.conv_to_agent)
-        self.assertEquals(len(self.worker_manager.conv_to_agent['t1']), 2)
+        self.assertEqual(len(self.worker_manager.conv_to_agent['t1']), 2)
         self.worker_manager.handle_bad_disconnect = mock.MagicMock()
 
         checked_worker = False

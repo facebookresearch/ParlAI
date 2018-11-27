@@ -8,7 +8,6 @@
 """
 This file provides interface to log any metrics in tensorboard, could be
 extended to any other tool like visdom
-
 Tensorboard:
     If you use tensorboard logging, all event folders will be stored in
         PARLAI_DATA/tensorboard folder. In order to
@@ -45,6 +44,7 @@ class TensorboardLogger(Shared):
         )
         logger.add_argument(
             '-tbcomment', '--tensorboard-comment', type=str, default='',
+            hidden=True,
             help='Add any line here to distinguish your TB event file, optional'
         )
 
@@ -55,13 +55,17 @@ class TensorboardLogger(Shared):
         except ImportError:
             raise ImportError(
                 'Please `pip install tensorboardX` for logs with TB.')
+
         if opt['tensorboard_tag'] is None:
             tensorboard_tag = opt['starttime']
         else:
             tensorboard_tag = opt['starttime'] + '__'.join([
                 i + '-' + str(opt[i])
                 for i in opt['tensorboard_tag'].split(',')
-            ]) + '__' + opt['tensorboard_comment']
+            ])
+        if opt['tensorboard_comment']:
+            tensorboard_tag += '__' + opt['tensorboard_comment']
+
         tbpath = os.path.join(os.path.dirname(opt['model_file']), 'tensorboard')
         print('[ Saving tensorboard logs here: {} ]'.format(tbpath))
         if not os.path.exists(tbpath):

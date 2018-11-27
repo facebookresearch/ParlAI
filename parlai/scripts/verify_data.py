@@ -27,19 +27,20 @@ def setup_args(parser=None):
     # Get command line arguments
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.set_defaults(datatype='train:ordered')
+    parser.set_defaults(datatype='train:stream')
     return parser
 
 
 def report(world, counts, log_time):
     report = world.report()
-    log = {'missing_text': counts['missing_text'],
-           'missing_labels': counts['missing_labels'],
-           'missing_label_candidates': counts['missing_label_candidates'],
-           'empty_label_candidates': counts['empty_label_candidates'],
-           }
+    log = {
+        'missing_text': counts['missing_text'],
+        'missing_labels': counts['missing_labels'],
+        'missing_label_candidates': counts['missing_label_candidates'],
+        'empty_label_candidates': counts['empty_label_candidates'],
+    }
     text, log = log_time.log(report['exs'], world.num_examples(), log)
-    print(text)
+    return text, log
 
 
 def verify(opt, printargs=None, print_parser=None):
@@ -80,7 +81,9 @@ def verify(opt, printargs=None, print_parser=None):
                         counts['empty_label_candidates'] += 1
 
         if log_time.time() > log_every_n_secs:
-            print(report(world, counts, log_time))
+            text, log = report(world, counts, log_time)
+            if print_parser:
+                print(text)
 
     try:
         # print dataset size if available
@@ -89,9 +92,11 @@ def verify(opt, printargs=None, print_parser=None):
         ))
     except Exception:
         pass
-    report(world, counts, log_time)
+    return report(world, counts, log_time)
 
 
 if __name__ == '__main__':
     parser = setup_args()
-    verify(parser.parse_args(print_args=False), print_parser=parser)
+    report_text, report_log = \
+        verify(parser.parse_args(print_args=False), print_parser=parser)
+    print(report_text)

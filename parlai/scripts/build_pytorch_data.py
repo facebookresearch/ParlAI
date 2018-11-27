@@ -142,7 +142,6 @@ def build_data(opt):
 
     with open(os.path.join(datapath, 'char_index'), 'w') as char_index:
         json.dump(idx_to_char, char_index)
-
     with open(os.path.join(datapath, 'data_length'), 'w') as pytorch_data_len:
         pytorch_data_len.write(json.dumps({'num_eps': num_eps,
                                            'num_exs': num_exs}))

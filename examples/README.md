@@ -24,7 +24,7 @@ python base_train.py -t babi:task1k:1
 
 Displays 100 random examples from multi-tasking on the bAbI task and the SQuAD dataset at the same time:
 ```bash
-python display_data.py -t babi:task1k:1,squad -n 100
+python display_data.py -t babi:task1k:1,squad -ne 100
 ```
 
 Evaluate on the bAbI test set with a human agent (using the local keyboard as input):

@@ -1139,7 +1139,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         text:Sam went to the hallway. <NEWL>
         Pat went to the bathroom. <NEWL>
         Where is the milk? <TAB> labels:hallway <TAB> reward:1
-        <TAB> label_candidateshallway|kitchen|bathroom <TAB> episode_done:True
+        <TAB> label_candidates:hallway|kitchen|bathroom <TAB> episode_done:True
 
     Lines 1-2 represent a single episode, with a different example on each line.
     The lines contain a query and a label for getting the question
@@ -1202,7 +1202,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         return len(self.episodes)
 
     def get(self, episode_idx, entry_idx=None):
-        return self.episodes[episode_idx][entry_idx]
+        return self.episodes[episode_idx][entry_idx].copy()
 
     def _setup_data(self, path):
         print("[loading parlAI text data:" + path + "]")

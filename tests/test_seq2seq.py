@@ -39,7 +39,31 @@ def _mock_train(**args):
 class TestSeq2Seq(unittest.TestCase):
     """Checks that seq2seq can learn some very basic tasks."""
 
+    def test_ranking(self):
+        stdout, valid, test = _mock_train(
+            task='integration_tests:CandidateTeacher',
+            model='seq2seq',
+            lr=LR,
+            batchsize=BATCH_SIZE,
+            num_epochs=NUM_EPOCHS,
+            numthreads=1,
+            no_cuda=True,
+            embeddingsize=16,
+            hiddensize=16,
+            rnn_class='gru',
+            attention='general',
+            gradient_clip=1.0,
+            dropout=0.0,
+            lookuptable='all',
+            rank_candidates=True,
+        )
+        self.assertTrue(
+            valid['hits@1'] >= 0.95,
+            "hits@1 = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+        )
+
     def test_generation(self):
+        """This test uses a single-turn sequence repitition task."""
         stdout, valid, test = _mock_train(
             task='integration_tests:NocandidateTeacher',
             model='seq2seq',
@@ -66,13 +90,16 @@ class TestSeq2Seq(unittest.TestCase):
             "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
 
-    def test_generation_multithreaded(self):
+
+class TestHogwildSeq2seq(unittest.TestCase):
+    def test_generation_multi(self):
+        """This test uses a multi-turn task and multithreading."""
         stdout, valid, test = _mock_train(
-            task='integration_tests:NocandidateTeacher',
+            task='integration_tests:MultiturnNocandidateTeacher',
             model='seq2seq',
             lr=LR,
             batchsize=BATCH_SIZE,
-            num_epochs=NUM_EPOCHS,
+            num_epochs=NUM_EPOCHS * 2,
             numthreads=2,
             no_cuda=True,
             embeddingsize=16,
