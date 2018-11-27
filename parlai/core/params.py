@@ -403,7 +403,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '--batch-length-range', type=int, default=5,
             help='degree of variation of size allowed in batch')
         pytorch.add_argument(
-            '--shuffle', type='bool', default=False,
+            '--shuffle', type='bool', default=True,
             help='Whether to shuffle the data')
         pytorch.add_argument(
             '--batch-sort-field', type=str, default='text',

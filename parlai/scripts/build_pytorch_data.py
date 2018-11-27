@@ -133,8 +133,8 @@ def build_data(opt):
                 num_exs += 1
                 logger.log(num_exs, total_exs)
                 ex_len = pytorch_data.write(json.dumps(make_serializable(ex)) + "\n")
-                cumulative_char_len += ex_len
                 idx_to_char.append(cumulative_char_len)
+                cumulative_char_len += ex_len
             # reset
             episode_done = False
             current.clear()
