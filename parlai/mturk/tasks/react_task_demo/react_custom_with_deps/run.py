@@ -6,7 +6,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.params import ParlaiParser
-from parlai.mturk.tasks.react_task_demo.worlds import \
+from parlai.mturk.tasks.react_task_demo.react_custom_with_deps.worlds import \
     AskerOnboardingWorld, AnswererOnboardingWorld, EvaluatorOnboardingWorld, \
     MultiRoleAgentWorld
 from parlai.mturk.core.mturk_manager import MTurkManager
@@ -15,9 +15,9 @@ import os
 
 
 def main():
-    '''Handles setting up and running a ParlAI-MTurk task by instantiating
+    """Handles setting up and running a ParlAI-MTurk task by instantiating
     an MTurk manager and configuring it for the qa_data_collection task
-    '''
+    """
     # Get relevant arguments
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
@@ -40,7 +40,8 @@ def main():
         mturk_agent_ids=mturk_agent_roles,
         use_db=True,
     )
-    mturk_manager.setup_server()
+    mturk_manager.setup_server(
+        task_directory_path=os.path.dirname(os.path.abspath(__file__)))
 
     role_index = 0
 

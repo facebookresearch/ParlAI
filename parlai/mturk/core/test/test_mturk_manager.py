@@ -911,6 +911,7 @@ class TestMTurkManagerTimeHandling(unittest.TestCase):
 
     def test_create_work_time_file(self):
         manager = self.mturk_manager
+        manager._should_use_time_logs = mock.MagicMock(return_value=True)
 
         file_path = os.path.join(parent_dir,
                                  MTurkManagerFile.TIME_LOGS_FILE_NAME)
@@ -954,6 +955,8 @@ class TestMTurkManagerTimeHandling(unittest.TestCase):
         manager.opt['max_time'] = 10000
         # Ensure a worker below the time limit isn't blocked
         MTurkManagerFile.time.time = mock.MagicMock(return_value=10000)
+        self.mturk_manager._should_use_time_logs = \
+            mock.MagicMock(return_value=True)
         manager._log_working_time(self.agent_1)
         manager.worker_manager.time_block_worker.assert_not_called()
 

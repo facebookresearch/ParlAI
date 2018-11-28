@@ -271,8 +271,40 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
     # Copy over a clean copy into the server directory
     shutil.copytree(server_source_directory_path, heroku_server_development_path)
 
-    component_dep_dir = os.path.join(
-        heroku_server_development_path, 'dev', 'component_deps')
+    # Check to see if we need to build
+    custom_component_dir = os.path.join(
+        heroku_server_development_path, 'dev',
+        'components', 'built_custom_components')
+    if task_files_to_copy['needs_build'] is not None:
+        # Build the directory, then pull the custom component out.
+        print('Build: Detected custom package.json, prepping build')
+        task_files_to_copy['components'] = []
+
+        frontend_dir = task_files_to_copy['needs_build']
+
+        sh.rm(shlex.split('-rf ' + custom_component_dir))
+        shutil.copytree(frontend_dir, custom_component_dir)
+
+        os.chdir(heroku_server_development_path)
+        packages_installed = subprocess.call(
+            ['npm', 'install', custom_component_dir])
+        if packages_installed != 0:
+            raise Exception('please make sure npm is installed, otherwise view'
+                            ' the above error for more info.')
+
+        os.chdir(custom_component_dir)
+
+        webpack_complete = subprocess.call(['npm', 'run', 'dev'])
+        if webpack_complete != 0:
+            raise Exception('Webpack appears to have failed to build your '
+                            'custom components. See the above for more info.')
+    else:
+        os.chdir(heroku_server_development_path)
+        packages_installed = subprocess.call(
+            ['npm', 'install', custom_component_dir])
+        if packages_installed != 0:
+            raise Exception('please make sure npm is installed, otherwise view'
+                            ' the above error for more info.')
 
     # Move dev resource files to their correct places
     for resource_type in ['css', 'components']:
@@ -281,17 +313,14 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
         for file_path in task_files_to_copy[resource_type]:
             try:
                 file_name = os.path.basename(file_path)
-                if file_name == 'package.json':
-                    # special case for special packages
-                    target_path = os.path.join(component_dep_dir, file_name)
-                else:
-                    target_path = os.path.join(target_resource_dir, file_name)
+                target_path = os.path.join(target_resource_dir, file_name)
+                print('copying {} to {}'.format(file_path, target_path))
                 shutil.copy2(file_path, target_path)
-            except IsADirectoryError:  # noqa: F821 we don't support python2
+            except IsADirectoryError:  # noqa: F821
                 dir_name = os.path.basename(os.path.normpath(file_path))
                 shutil.copytree(
                     file_path, os.path.join(target_resource_dir, dir_name))
-            except FileNotFoundError:  # noqa: F821 we don't support python2
+            except FileNotFoundError:  # noqa: F821
                 pass
 
     # Compile the frontend
