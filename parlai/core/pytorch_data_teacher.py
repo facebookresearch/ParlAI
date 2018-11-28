@@ -23,7 +23,7 @@ import importlib
 from functools import lru_cache
 try:
     import torch  # noqa: F401
-except Exception as e:
+except ImportError:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import ConcatDataset, Dataset, DataLoader, sampler
 from torch.multiprocessing import Lock, Value
@@ -426,15 +426,30 @@ class StreamDataset(Dataset):
         self.datapath = build_data(self.opt)
         self.data_gen = self._data_generator()
         self.length_datafile = os.path.join(self.datapath, 'data_length')
+        self.char_index_file = os.path.join(self.datapath, 'char_index')
         self.datafile = os.path.join(self.datapath, 'data')
         self.training = self.datatype.startswith('train')
+        self.ordered = ('ordered' in self.datatype or
+                        ('stream' in self.datatype and not opt.get('shuffle')))
         self._load_lens()
 
     def __getitem__(self, index):
-        while True:
-            idx, ep = next(self.data_gen)
-            if idx == index:
-                return (index, ep)
+        if self.ordered or not self.training:
+            while True:
+                idx, ep = next(self.data_gen)
+                if idx == index:
+                    return (index, ep)
+        else:
+            episode = []
+            episode_done = False
+            with open(self.datafile) as f:
+                ex_offset = self.char_index[index]
+                f.seek(ex_offset)
+                while not episode_done:
+                    example = json.loads(f.readline())
+                    episode.append(example)
+                    episode_done = example['episode_done']
+            return (index, episode)
 
     def __len__(self):
         return self.num_episodes()
@@ -444,6 +459,8 @@ class StreamDataset(Dataset):
             lengths = json.load(length)
             self.num_eps = lengths['num_eps']
             self.num_exs = lengths['num_exs']
+        with open(self.char_index_file) as char:
+            self.char_index = json.load(char)
 
     def _data_generator(self):
         while True:
@@ -536,24 +553,22 @@ class PytorchDataTeacher(FixedDialogTeacher):
         self.opt = opt.copy()
         self.is_shared = shared is not None
         dataset_classes = self.get_dataset_class(opt)
+        self.ordered = ('ordered' in self.datatype or
+                        ('stream' in self.datatype and not opt.get('shuffle')))
 
         if not shared:
-            streaming = False
             if len(dataset_classes) > 1:
                 datasets = []
                 for class_name, collate_fn, task_name in dataset_classes:
                     opt['pytorch_teacher_task'] = task_name
                     opt['task'] = task_name
                     datasets.append(class_name(opt))
-                    streaming = streaming or (class_name == StreamDataset)
                     self.collate_fn = collate_fn
                 self.dataset = ParlAIConcatDataset(datasets)
             else:
                 class_name, self.collate_fn, task_name = dataset_classes[0]
-                streaming = class_name == StreamDataset
                 self.dataset = class_name(opt)
-            self.streaming = 'stream' in self.datatype or streaming
-            if self.streaming or not opt.get('shuffle'):
+            if self.ordered or not self.training:
                 data_sampler = sampler.SequentialSampler(self.dataset)
                 pin_memory = False
             else:
@@ -569,6 +584,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 pin_memory=pin_memory,
                 drop_last=False,
             )
+
             self.lastYs = [None] * self.bsz
             if self.batch_sort:
                 self.loader_process = LoaderProcess(opt)
@@ -620,6 +636,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
         if self.episode_done:
             try:
                 self.episode_idx, episode = next(self.data)
+                if self.collate_fn == default_collate:
+                    episode = [ex[1] for ex in episode]
                 self.episode = process(episode)
                 self.entry_idx = 0
                 epoch_done = False
@@ -630,8 +648,6 @@ class PytorchDataTeacher(FixedDialogTeacher):
             self.entry_idx += 1
 
         if not epoch_done:
-            if self.collate_fn == default_collate:
-                self.episode[self.entry_idx] = self.episode[self.entry_idx][1]
             ex = self.episode[self.entry_idx]
             self.episode_done = ex['episode_done']
             if (self.episode_done and

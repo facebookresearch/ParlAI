@@ -105,6 +105,8 @@ def build_data(opt):
     context = deque(maxlen=context_length if context_length > 0 else None)
     logger = ProgressLogger(should_humanize=False, throttle=0.1)
     total_exs = world_data.num_examples()
+    idx_to_char = []
+    cumulative_char_len = 0
     # pass examples to dictionary
     with open(os.path.join(datapath, 'data'), 'w') as pytorch_data:
         while num_exs < total_exs:
@@ -130,12 +132,16 @@ def build_data(opt):
                 num_eps += 1
                 num_exs += 1
                 logger.log(num_exs, total_exs)
-                pytorch_data.write(json.dumps(make_serializable(ex)) + "\n")
+                ex_len = pytorch_data.write(json.dumps(make_serializable(ex)) + "\n")
+                idx_to_char.append(cumulative_char_len)
+                cumulative_char_len += ex_len
             # reset
             episode_done = False
             current.clear()
             context.clear()
 
+    with open(os.path.join(datapath, 'char_index'), 'w') as char_index:
+        json.dump(idx_to_char, char_index)
     with open(os.path.join(datapath, 'data_length'), 'w') as pytorch_data_len:
         pytorch_data_len.write(json.dumps({'num_eps': num_eps,
                                            'num_exs': num_exs}))
