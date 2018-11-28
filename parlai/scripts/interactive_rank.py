@@ -33,10 +33,6 @@ import random
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser()
-    # parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    # parser.add_argument('--display-prettify', type='bool', default=False,
-    #                     help='Set to use a prettytable when displaying '
-    #                          'examples with text candidates')
     parser.set_params(model='parlai.agents.local_human.local_human:LocalHumanAgent')
     return parser
 
