@@ -248,9 +248,14 @@ class MTurkManager():
             target=update_status, name='Hit-Status-Thread', daemon=True)
         hit_status_thread.start()
 
+    def _should_use_time_logs(self):
+        # Used to ensure time logs are properly tracked. Can be overridden for
+        # testing
+        return self.is_sandbox
+
     def _reset_time_logs(self, init_load=False, force=False):
         # Uses a weak lock file to try to prevent clobbering between threads
-        if self.is_sandbox:
+        if not self._should_use_time_logs():
             return  # sandbox doesn't check logs
         file_path = os.path.join(parent_dir, TIME_LOGS_FILE_NAME)
         file_lock = os.path.join(parent_dir, TIME_LOGS_FILE_LOCK)
@@ -280,7 +285,7 @@ class MTurkManager():
                             pickle.HIGHEST_PROTOCOL)
 
     def _log_working_time(self, mturk_agent):
-        if self.is_sandbox:
+        if not self._should_use_time_logs():
             return  # sandbox does not log working time
         additional_time = time.time() - mturk_agent.creation_time
         worker_id = mturk_agent.worker_id
