@@ -10,9 +10,9 @@ import threading
 
 
 class AskerOnboardingWorld(MTurkOnboardWorld):
-    '''Example onboarding world. Sends a message from the world to the
+    """Example onboarding world. Sends a message from the world to the
     worker and then exits as complete after the worker uses the interface
-    '''
+    """
     def parley(self):
         ad = {}
         ad['id'] = 'System'
@@ -27,9 +27,9 @@ class AskerOnboardingWorld(MTurkOnboardWorld):
 
 
 class AnswererOnboardingWorld(MTurkOnboardWorld):
-    '''Example onboarding world. Sends a message from the world to the
+    """Example onboarding world. Sends a message from the world to the
     worker and then exits as complete after the worker uses the interface
-    '''
+    """
     def parley(self):
         ad = {}
         ad['id'] = 'System'
@@ -45,9 +45,9 @@ class AnswererOnboardingWorld(MTurkOnboardWorld):
 
 
 class EvaluatorOnboardingWorld(MTurkOnboardWorld):
-    '''Example onboarding world. Sends a message from the world to the
+    """Example onboarding world. Sends a message from the world to the
     worker and then exits as complete after the worker uses the interface
-    '''
+    """
     def parley(self):
         ad = {}
         ad['id'] = 'System'
