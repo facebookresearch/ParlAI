@@ -23,7 +23,7 @@ import importlib
 from functools import lru_cache
 try:
     import torch  # noqa: F401
-except Exception:
+except ImportError:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import ConcatDataset, Dataset, DataLoader, sampler
 from torch.multiprocessing import Lock, Value
@@ -441,16 +441,14 @@ class StreamDataset(Dataset):
                     return (index, ep)
         else:
             episode = []
-            current_idx = index
             episode_done = False
             with open(self.datafile) as f:
+                ex_offset = self.char_index[index]
+                f.seek(ex_offset)
                 while not episode_done:
-                    ex_offset = self.char_index[current_idx]
-                    f.seek(ex_offset)
                     example = json.loads(f.readline())
                     episode.append(example)
                     episode_done = example['episode_done']
-                    current_idx += 1
             return (index, episode)
 
     def __len__(self):
