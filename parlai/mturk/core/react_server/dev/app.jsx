@@ -83,7 +83,7 @@ class MainApp extends React.Component {
       messages: [],
       agent_id: 'NewWorker',
       context: {},
-      volume: 1
+      volume: 1 // min volume is 0, max is 1, TODO pull from local-storage?
     };
   }
 
