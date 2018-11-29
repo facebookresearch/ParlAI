@@ -82,8 +82,15 @@ class MainApp extends React.Component {
       task_done: false,
       messages: [],
       agent_id: 'NewWorker',
-      context: {}
+      context: {},
+      volume: 1 // min volume is 0, max is 1, TODO pull from local-storage?
     };
+  }
+
+  playNotifSound() {
+    let audio = new Audio('./notif.mp3')
+    audio.volume = this.state.volume
+    audio.play();
   }
 
   handleIncomingHITData(data) {
@@ -154,6 +161,7 @@ class MainApp extends React.Component {
         messages={this.state.messages}
         task_done={this.state.task_done}
         ref={(m) => {this.socket_handler = m}}
+        playNotifSound={() => this.playNotifSound()}
       />;
     }
     return (
@@ -174,6 +182,8 @@ class MainApp extends React.Component {
           world_state={this.state.world_state}
           v_id={this.state.agent_id}
           allDoneCallback={() => allDoneCallback()}
+          volume={this.state.volume}
+          onVolumeChange={(v) => this.setState({volume: v})}
         />
         <MTurkSubmitForm
           assignment_id={this.state.assignment_id}

@@ -41,7 +41,7 @@ class NumericResponse extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.active) {
+    if (this.props.active && !prevProps.active) {
       $("input#id_text_input").focus();
     }
   }

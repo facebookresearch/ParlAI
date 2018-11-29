@@ -9,6 +9,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {FormControl, Button} from 'react-bootstrap';
+import Slider from 'rc-slider';
+
+import 'rc-slider/assets/index.css';
 
 var component_list = null; // Will fill this in at the bottom
 var CustomComponents = {};
@@ -77,8 +80,7 @@ class MessageList extends React.Component {
 class ConnectionIndicator extends React.Component {
   render () {
     let indicator_style = {
-      'position': 'absolute', 'top': '5px', 'right': '10px',
-      'opacity': '1', 'fontSize': '11px', 'color': 'white'
+      'opacity': '1', 'fontSize': '11px', 'color': 'white', float: 'right'
     };
     let text = '';
     switch (this.props.socket_status) {
@@ -110,6 +112,68 @@ class ConnectionIndicator extends React.Component {
         disabled={true} >
           {text}
       </button>
+    );
+  }
+}
+
+class VolumeControl extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {slider_shown: false}
+  }
+
+  render() {
+    let volume_control_style = {
+      'opacity': '1', 'fontSize': '11px', 'color': 'white', float: 'right',
+      marginRight: '10px'
+    };
+
+    let slider_style = {
+      height: 26, width: 150, 'marginRight': 14, float: 'left',
+    }
+
+    let content = null;
+    if (this.state.slider_shown) {
+      content = <div style={volume_control_style}>
+        <div style={slider_style}>
+          <Slider
+            onChange={(v) => this.props.onVolumeChange(v / 100)}
+            style={{marginTop: 10}}
+            defaultValue={this.props.volume * 100}
+          />
+        </div>
+        <Button onClick={() => this.setState({slider_shown: false})}>
+          <span style={{marginRight:5}} className="glyphicon glyphicon-remove"/>
+          Hide Volume
+        </Button>
+      </div>;
+    } else {
+      content = <div style={volume_control_style}>
+        <Button onClick={() => this.setState({slider_shown: true})}>
+          <span
+            className="glyphicon glyphicon glyphicon-volume-up"
+            style={{marginRight:5}}
+            aria-hidden="true" />
+          Volume
+        </Button>
+      </div>
+    }
+    return content;
+  }
+}
+
+class ChatNavbar extends React.Component {
+  render () {
+    let nav_style = {
+      position: 'absolute', backgroundColor: '#EEEEEE', borderColor: '#e7e7e7',
+      height: 46, top: 0, borderWidth: '0 0 1px', borderRadius: 0, right: 0,
+      left: 0, zIndez: 1030, padding: 5
+    }
+    return (
+      <div style={nav_style}>
+        <ConnectionIndicator {...this.props} />
+        <VolumeControl {...this.props} />
+      </div>
     );
   }
 }
@@ -189,8 +253,12 @@ class ChatPane extends React.Component {
     let XWaitingMessage = getCorrectComponent('XWaitingMessage', v_id);
 
     // TODO move to CSS
+    let top_pane_style = {
+      'width': '100%', position: 'relative',
+    };
+
     let chat_style = {
-      'width': '100%', 'paddingTop': '60px',
+      'width': '100%', height: '100%', 'paddingTop': '60px',
       'paddingLeft': '20px', 'paddingRight': '20px',
       'paddingBottom': '20px', 'overflowY': 'scroll'
     };
@@ -201,7 +269,7 @@ class ChatPane extends React.Component {
       }
     }, 10);
 
-    chat_style['height'] = (this.state.chat_height) + 'px'
+    top_pane_style['height'] = (this.state.chat_height) + 'px'
 
     let wait_message = null;
     if (this.props.chat_state == 'waiting') {
@@ -209,10 +277,12 @@ class ChatPane extends React.Component {
     }
 
     return (
-      <div id="right-top-pane" style={chat_style}>
-        <XMessageList {...this.props} />
-        <ConnectionIndicator {...this.props} />
-        {wait_message}
+      <div id="right-top-pane" style={top_pane_style}>
+        <ChatNavbar {...this.props} />
+        <div id="message-pane-segment" style={chat_style} >
+          <XMessageList {...this.props} />
+          {wait_message}
+        </div>
       </div>
     );
   }
@@ -289,7 +359,10 @@ class TextResponse extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.active) {
+    // Only change in the active status of this component should cause a
+    // focus event. Not having this would make the focus occur on every
+    // state update (including things like volume changes)
+    if (this.props.active && !prevProps.active) {
       $("input#id_text_input").focus();
     }
   }

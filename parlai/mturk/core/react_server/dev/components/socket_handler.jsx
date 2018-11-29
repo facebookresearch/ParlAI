@@ -408,6 +408,9 @@ class SocketHandler extends React.Component {
     if (command === COMMAND_SEND_MESSAGE) {
       // Update UI to wait for the worker to submit a message
       this.props.onRequestMessage();
+      if (this.state.message_request_time === null) {
+        this.props.playNotifSound();
+      }
       this.setState({message_request_time: (new Date()).getTime()});
       log('Waiting for worker input', 4);
     } else if (command === COMMAND_SHOW_DONE_BUTTON) {
@@ -425,6 +428,7 @@ class SocketHandler extends React.Component {
       // Expire the hit unless it has already been marked as done
       if (!this.props.task_done) {
         this.props.onExpire(msg['inactive_text']);
+        this.closeSocket();
       }
     } else if (command === COMMAND_INACTIVE_HIT) {
       // Disable the hit, show the correct message
