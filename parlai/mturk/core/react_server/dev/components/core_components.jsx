@@ -130,7 +130,7 @@ class VolumeControl extends React.Component {
     };
 
     let slider_style = {
-      height: 26, width: 150, 'marginRight': 8, float: 'right',
+      height: 26, width: 150, 'marginRight': 14, float: 'left',
     }
 
     let content = null;
@@ -144,15 +144,17 @@ class VolumeControl extends React.Component {
           />
         </div>
         <Button onClick={() => this.setState({slider_shown: false})}>
-          <span className="glyphicon glyphicon-remove" />
+          <span style={{marginRight:5}} className="glyphicon glyphicon-remove"/>
+          Hide Volume
         </Button>
       </div>;
     } else {
       content = <Button onClick={() => this.setState({slider_shown: true})}>
         <span
           className="glyphicon glyphicon glyphicon-volume-up"
+          style={{marginRight:5}}
           aria-hidden="true" />
-        close volume
+        Volume
       </Button>
     }
     return (
