@@ -341,6 +341,9 @@ class TextResponse extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
+    // Only change in the active status of this component should cause a
+    // focus event. Not having this would make the focus occur on every
+    // state update (including things like volume changes)
     if (this.props.active && !prevProps.active) {
       $("input#id_text_input").focus();
     }
