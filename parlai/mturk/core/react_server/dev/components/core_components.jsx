@@ -80,8 +80,7 @@ class MessageList extends React.Component {
 class ConnectionIndicator extends React.Component {
   render () {
     let indicator_style = {
-      'position': 'absolute', 'top': '5px', 'right': '10px',
-      'opacity': '1', 'fontSize': '11px', 'color': 'white'
+      'opacity': '1', 'fontSize': '11px', 'color': 'white', float: 'right'
     };
     let text = '';
     switch (this.props.socket_status) {
@@ -125,8 +124,8 @@ class VolumeControl extends React.Component {
 
   render() {
     let volume_control_style = {
-      'position': 'absolute', 'top': '6px', 'right': '105px',
-      'opacity': '1', 'fontSize': '11px', 'color': 'white',
+      'opacity': '1', 'fontSize': '11px', 'color': 'white', float: 'right',
+      marginRight: '10px'
     };
 
     let slider_style = {
@@ -135,7 +134,7 @@ class VolumeControl extends React.Component {
 
     let content = null;
     if (this.state.slider_shown) {
-      content = <div>
+      content = <div style={volume_control_style}>
         <div style={slider_style}>
           <Slider
             onChange={(v) => this.props.onVolumeChange(v / 100)}
@@ -149,19 +148,33 @@ class VolumeControl extends React.Component {
         </Button>
       </div>;
     } else {
-      content = <Button onClick={() => this.setState({slider_shown: true})}>
-        <span
-          className="glyphicon glyphicon glyphicon-volume-up"
-          style={{marginRight:5}}
-          aria-hidden="true" />
-        Volume
-      </Button>
+      content = <div style={volume_control_style}>
+        <Button onClick={() => this.setState({slider_shown: true})}>
+          <span
+            className="glyphicon glyphicon glyphicon-volume-up"
+            style={{marginRight:5}}
+            aria-hidden="true" />
+          Volume
+        </Button>
+      </div>
+    }
+    return content;
+  }
+}
+
+class ChatNavbar extends React.Component {
+  render () {
+    let nav_style = {
+      position: 'absolute', backgroundColor: '#EEEEEE', borderColor: '#e7e7e7',
+      height: 46, top: 0, borderWidth: '0 0 1px', borderRadius: 0, right: 0,
+      left: 0, zIndez: 1030, padding: 5
     }
     return (
-      <div style={volume_control_style}>
-        {content}
+      <div style={nav_style}>
+        <ConnectionIndicator {...this.props} />
+        <VolumeControl {...this.props} />
       </div>
-    )
+    );
   }
 }
 
@@ -240,8 +253,12 @@ class ChatPane extends React.Component {
     let XWaitingMessage = getCorrectComponent('XWaitingMessage', v_id);
 
     // TODO move to CSS
+    let top_pane_style = {
+      'width': '100%', position: 'relative',
+    };
+
     let chat_style = {
-      'width': '100%', 'paddingTop': '60px',
+      'width': '100%', height: '100%', 'paddingTop': '60px',
       'paddingLeft': '20px', 'paddingRight': '20px',
       'paddingBottom': '20px', 'overflowY': 'scroll'
     };
@@ -252,7 +269,7 @@ class ChatPane extends React.Component {
       }
     }, 10);
 
-    chat_style['height'] = (this.state.chat_height) + 'px'
+    top_pane_style['height'] = (this.state.chat_height) + 'px'
 
     let wait_message = null;
     if (this.props.chat_state == 'waiting') {
@@ -260,11 +277,12 @@ class ChatPane extends React.Component {
     }
 
     return (
-      <div id="right-top-pane" style={chat_style}>
-        <XMessageList {...this.props} />
-        <ConnectionIndicator {...this.props} />
-        <VolumeControl {...this.props} />
-        {wait_message}
+      <div id="right-top-pane" style={top_pane_style}>
+        <ChatNavbar {...this.props} />
+        <div id="message-pane-segment" style={chat_style} >
+          <XMessageList {...this.props} />
+          {wait_message}
+        </div>
       </div>
     );
   }
