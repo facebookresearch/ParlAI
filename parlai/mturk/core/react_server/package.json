@@ -13,6 +13,7 @@
     "fetch": "^1.1.0",
     "jquery": "^3.0.0",
     "popper.js": "^1.14.4",
+    "rc-slider": "^8.6.3",
     "react": "^16.5.2",
     "react-bootstrap": "^0.32.4",
     "react-dom": "^16.5.2",

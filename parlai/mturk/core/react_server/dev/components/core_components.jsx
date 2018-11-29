@@ -9,6 +9,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {FormControl, Button} from 'react-bootstrap';
+import Slider from 'rc-slider';
+
+import 'rc-slider/assets/index.css';
 
 var component_list = null; // Will fill this in at the bottom
 var CustomComponents = {};
@@ -114,6 +117,52 @@ class ConnectionIndicator extends React.Component {
   }
 }
 
+class VolumeControl extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {slider_shown: false}
+  }
+
+  render() {
+    let volume_control_style = {
+      'position': 'absolute', 'top': '6px', 'right': '105px',
+      'opacity': '1', 'fontSize': '11px', 'color': 'white',
+    };
+
+    let slider_style = {
+      height: 26, width: 150, 'marginRight': 8, float: 'right',
+    }
+
+    let content = null;
+    if (this.state.slider_shown) {
+      content = <div>
+        <div style={slider_style}>
+          <Slider
+            onChange={(v) => this.props.onVolumeChange(v / 100)}
+            style={{marginTop: 10}}
+            defaultValue={this.props.volume * 100}
+          />
+        </div>
+        <Button onClick={() => this.setState({slider_shown: false})}>
+          <span className="glyphicon glyphicon-remove" />
+        </Button>
+      </div>;
+    } else {
+      content = <Button onClick={() => this.setState({slider_shown: true})}>
+        <span
+          className="glyphicon glyphicon glyphicon-volume-up"
+          aria-hidden="true" />
+        close volume
+      </Button>
+    }
+    return (
+      <div style={volume_control_style}>
+        {content}
+      </div>
+    )
+  }
+}
+
 class Hourglass extends React.Component {
   render () {
     // TODO move to CSS document
@@ -212,6 +261,7 @@ class ChatPane extends React.Component {
       <div id="right-top-pane" style={chat_style}>
         <XMessageList {...this.props} />
         <ConnectionIndicator {...this.props} />
+        <VolumeControl {...this.props} />
         {wait_message}
       </div>
     );
@@ -289,7 +339,7 @@ class TextResponse extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.active) {
+    if (this.props.active && !prevProps.active) {
       $("input#id_text_input").focus();
     }
   }
