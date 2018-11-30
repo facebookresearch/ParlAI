@@ -537,7 +537,7 @@ class LeftPane extends React.Component {
       overflow: 'auto'
     };
     let XTaskDescription = getCorrectComponent('XTaskDescription', v_id);
-    let pane_size = this.props.is_cover_page ? 'col-xs-12' : 'col-xs-6';
+    let pane_size = this.props.is_cover_page ? 'col-xs-12' : 'col-xs-4';
     return (
       <div id="left-pane" className={pane_size} style={frame_style}>
           <XTaskDescription {...this.props} />
