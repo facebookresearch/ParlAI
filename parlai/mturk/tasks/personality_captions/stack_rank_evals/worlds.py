@@ -53,8 +53,11 @@ class ExampleGenerator(object):
             opt['compare_key_2'])
         self.examples_idx_stack_path = os.path.join(os.getcwd(), handle)
         build_pc(opt)
-        data_path = os.path.join(self.opt['datapath'],
-                                 'personality_captions/train.json')
+        if opt.get('eval_data_path') != '':
+            data_path = opt.get('eval_data_path')
+        else:
+            data_path = os.path.join(self.opt['datapath'],
+                                     'personality_captions/train.json')
         with open(data_path) as f:
             self.data = json.load(f)
 

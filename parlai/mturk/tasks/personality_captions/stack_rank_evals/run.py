@@ -13,10 +13,6 @@ from task_config import task_config
 import os
 
 
-# fill with dict keys of an example for each thing to compare
-key_choices = ['comment']
-
-
 def main():
     """
         Human Evaluation of various image captions/comments.
@@ -27,6 +23,21 @@ def main():
 
         In this example, we will just be comparing the original comment twice
         (this is just to demonstrate the task for future use).
+
+        To use your own data, please specify `--eval-data-path` to an
+        appropriate json file with a list of examples, where each example
+        has the following structure:
+            {
+                'image_hash': <hash of image>,
+                'personality': <personality, if applicable>,
+                '<compare_key_1>': <first option to compare>,
+                '<compare_key_2>': <second option to compare>,
+                .
+                .
+                .
+            }
+        Note that compare_key_1 and compare_key_2 can be any field, as long as they
+        map to a string comment/caption
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
@@ -42,13 +53,14 @@ def main():
                            to turker')
     argparser.add_argument('--data-path', type=str,
                            default='', help='where to save data')
+    argparser.add_argument('--eval-data-path', type=str, default='',
+                           help='where to load data to rank from. Leave '
+                                'blank to use Personality-Captions data')
     argparser.add_argument('-ck1', '--compare-key-1', type=str,
                            default='comment',
-                           choices=key_choices,
                            help='key of first option to compare')
     argparser.add_argument('-ck2', '--compare-key-2', type=str,
                            default='comment',
-                           choices=key_choices,
                            help='key of second option to compare')
     argparser.add_argument('--show-personality', default=True, type='bool',
                            help='whether to show the personality')
