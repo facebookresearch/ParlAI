@@ -12,8 +12,12 @@ var webpack = require('webpack');
 module.exports = {
   entry: './dev/main.js',
   output: {
-    path: __dirname,
-    filename: 'static/bundle.js',
+    path: __dirname + '/static/',
+    filename: '[name].bundle.js',
+    publicPath: __dirname + '/static/',
+  },
+  resolve: {
+    extensions: ['.js', '.jsx']
   },
   node: {
     net: 'empty',
@@ -25,7 +29,6 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
-        options: { presets: ["@babel/env"] }
       },
       {
         test: /\.css$/,

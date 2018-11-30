@@ -35,6 +35,16 @@ class ChatMessage extends React.Component {
       float_loc = 'right';
       alert_class = 'alert-info';
     }
+    let duration = null;
+    if (this.props.duration !== undefined) {
+      let duration_seconds = Math.floor(this.props.duration / 1000) % 60;
+      let duration_minutes = Math.floor(this.props.duration / 60000);
+      let min_text = duration_minutes > 0 ? duration_minutes + ' min' : '';
+      let sec_text = duration_seconds > 0 ? duration_seconds + ' sec' : '';
+      duration = <small>
+        <br /><i>Duration: </i>{min_text + ' ' + sec_text}
+      </small>;
+    }
     return (
       <div className={"row"} style={{'marginLeft': '0', 'marginRight': '0'}}>
         <div
@@ -43,6 +53,7 @@ class ChatMessage extends React.Component {
           <span style={{'fontSize': '16px'}}>
             <b>{this.props.agent_id}</b>: {this.props.message}
           </span>
+          {duration}
         </div>
       </div>
     );
@@ -64,7 +75,8 @@ class MessageList extends React.Component {
         agent_id={m.id}
         message={m.text}
         context={m.context}
-        message_id={m.message_id}/>
+        message_id={m.message_id}
+        duration={this.props.is_review ? m.duration : null}/>
     );
   }
 
@@ -496,8 +508,27 @@ class RightPane extends React.Component {
   }
 }
 
+class TaskDescription extends React.Component {
+  render () {
+    // TODO pull from templating variable
+    let header_text = "Live Chat";
+    let task_desc = this.props.task_description || 'Task Description Loading';
+    return (
+      <div>
+          <h1>{header_text}</h1>
+          <hr style={{'borderTop': '1px solid #555'}} />
+          <span
+            id="task-description" style={{'fontSize': '16px'}}
+            dangerouslySetInnerHTML={{__html: task_desc}}
+          />
+      </div>
+    );
+  }
+}
+
 class LeftPane extends React.Component {
   render () {
+    let v_id = this.props.v_id;
     let frame_height = this.props.frame_height;
     let frame_style = {
       height: frame_height + 'px',
@@ -505,18 +536,11 @@ class LeftPane extends React.Component {
       padding: '30px',
       overflow: 'auto'
     };
-    let pane_size = this.props.full ? 'col-xs-12' : 'col-xs-4';
-    // TODO pull from templating variable
-    let header_text = "Live Chat";
-    let task_desc = this.props.task_description || 'Task Description Loading';
+    let XTaskDescription = getCorrectComponent('XTaskDescription', v_id);
+    let pane_size = this.props.is_cover_page ? 'col-xs-12' : 'col-xs-4';
     return (
       <div id="left-pane" className={pane_size} style={frame_style}>
-          <h1>{header_text}</h1>
-          <hr style={{'borderTop': '1px solid #555'}} />
-          <span
-            id="task-description" style={{'fontSize': '16px'}}
-            dangerouslySetInnerHTML={{__html: task_desc}}
-          />
+          <XTaskDescription {...this.props} />
       </div>
     );
   }
@@ -530,7 +554,6 @@ class ContentLayout extends React.Component {
     return (
       <div className="row" id="ui-content">
         <XLeftPane
-          full={false}
           {...this.props}
         />
         <XRightPane {...this.props} />
@@ -550,7 +573,6 @@ class BaseFrontend extends React.Component {
       content = (
         <div className="row" id="ui-content">
           <XLeftPane
-            full={true}
             {...this.props}
           />
         </div>
@@ -596,7 +618,8 @@ component_list = {
   'XChatPane': ['ChatPane', ChatPane],
   'XWaitingMessage': ['WaitingMessage', WaitingMessage],
   'XMessageList': ['MessageList', MessageList],
-  'XChatMessage': ['ChatMessage', ChatMessage]
+  'XChatMessage': ['ChatMessage', ChatMessage],
+  'XTaskDescription': ['XTaskDescription', TaskDescription],
 };
 
 export {
@@ -604,6 +627,6 @@ export {
   ChatMessage, MessageList, ConnectionIndicator, Hourglass, WaitingMessage,
   ChatPane, IdleResponse, DoneButton, DoneResponse, TextResponse, ResponsePane,
   RightPane, LeftPane, ContentLayout, BaseFrontend,
-  // Functions to update current components
-  setCustomComponents
+  // Functions to update and get current components
+  setCustomComponents, getCorrectComponent
 };

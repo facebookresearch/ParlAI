@@ -2,9 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {ToggleButtonGroup, ToggleButton, Button, FormControl,
   ButtonGroup, ButtonToolbar, Panel, Table, Modal, InputGroup} from 'react-bootstrap';
+import {getCorrectComponent, setCustomComponents} from './task_components/core_components.jsx';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import 'fetch';
+
+// Init display components
+setCustomComponents({});
 
 var AppURLStates = Object.freeze({
   init:0, tasks:1, unsupported:2, runs:3, workers:4, assignments:5,
@@ -50,17 +54,42 @@ function postData(url = ``, data = {}) {
   });
 }
 
+// Custom message component shows context if it exists:
 class ChatMessage extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
-    var float_loc = 'left';
-    var alert_class = 'alert-warning';
+    if (this.props.agent_id == 'persona' || this.props.agent_id == 'setting') {
+      return (
+        <div className={"row"} style={{'marginLeft': '0', 'marginRight': '0'}}>
+          <div
+            className={"alert " + 'alert-info'} role="alert"
+            style={{'float': 'left', 'display': 'table'}}>
+            <span style={{'fontSize': '16px'}}>
+              <b>{this.props.agent_id}</b>: {this.props.context}
+              {context}
+            </span>
+          </div>
+        </div>
+      );
+    }
+    let float_loc = 'left';
+    let alert_class = 'alert-warning';
     if (this.props.is_self) {
       float_loc = 'right';
       alert_class = 'alert-info';
+    }
+    let context = null;
+    let duration = null;
+    if (this.props.context !== undefined && this.props.context.length > 0) {
+      context = <span><br /><b>Action: </b><i>{this.props.context}</i></span>;
+    }
+    if (this.props.duration !== undefined) {
+      let duration_seconds = Math.floor(this.props.duration / 1000) % 60;
+      let duration_minutes = Math.floor(this.props.duration / 60000);
+      let min_text = duration_minutes > 0 ? duration_minutes + ' min' : '';
+      let sec_text = duration_seconds > 0 ? duration_seconds + ' sec' : '';
+      duration = <small>
+        <br /><i>Duration: </i>{min_text + ' ' + sec_text}
+      </small>;
     }
     return (
       <div className={"row"} style={{'marginLeft': '0', 'marginRight': '0'}}>
@@ -69,6 +98,8 @@ class ChatMessage extends React.Component {
           style={{'float': float_loc, 'display': 'table'}}>
           <span style={{'fontSize': '16px'}}>
             <b>{this.props.agent_id}</b>: {this.props.message}
+            {context}
+            {duration}
           </span>
         </div>
       </div>
@@ -77,26 +108,9 @@ class ChatMessage extends React.Component {
 }
 
 class ChatDisplay extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  makeMessages() {
-    var agent_id = this.props.agent_id;
-    var messages = this.props.messages;
-    return messages.map(
-      m => <ChatMessage
-        key={m.message_id}
-        is_self={m.id == agent_id}
-        agent_id={m.id}
-        message={m.text}
-        message_id={m.id}/>
-    );
-  }
-
   render() {
-    var messages = this.makeMessages();
     var display_text = this.props.is_onboarding ? 'Onboarding' : 'Task';
+    let XMessageList = getCorrectComponent('XMessageList', this.props.agent_id);
     return (
       <Panel
         id="message_display_div"
@@ -110,9 +124,11 @@ class ChatDisplay extends React.Component {
         </Panel.Heading>
         <Panel.Collapse>
           <Panel.Body style={{maxHeight: '600px', overflow: 'scroll'}}>
-            <div id="message_thread">
-              {messages}
-            </div>
+            <XMessageList
+              v_id={this.props.agent_id}
+              messages={this.props.messages}
+              agent_id={this.props.agent_id}
+              is_review={true}/>
           </Panel.Body>
         </Panel.Collapse>
       </Panel>
@@ -150,7 +166,6 @@ class NavLink extends React.Component {
       )
     }
   }
-
 }
 
 class SharedTable extends React.Component {
@@ -645,7 +660,8 @@ class AssignmentInstructions extends React.Component {
       content = "No task details could be found for this assignment."
       bsStyle = "default"
     } else {
-      content = <div dangerouslySetInnerHTML={{__html: instructions}} />;
+      let XTaskDescription = getCorrectComponent('XTaskDescription', null);
+      content = <XTaskDescription task_description={instructions} />;
       bsStyle = "info"
     }
 
@@ -860,7 +876,6 @@ class ReviewButtonGroup extends React.Component {
   // (which cannot be reviewed)
   constructor(props) {
     super(props);
-    console.log(this.props)
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       value: this.getGivenStateVal(),
@@ -1152,6 +1167,13 @@ class AssignmentReviewer extends React.Component {
 class AssignmentView extends React.Component {
   constructor(props) {
     super(props);
+    let task_name = props.data.task_name;
+    import(
+      /* webpackMode: "eager" */
+      `./task_components/${task_name}/components/custom.jsx`
+    ).then((custom) => {
+      this.props.setCustomComponents(custom.default);
+    });
   }
 
   getOnboardingChat() {
@@ -1219,10 +1241,9 @@ class AssignmentView extends React.Component {
   }
 
   render() {
-    console.log(this.props.data);
-    var data = this.props.data;
-    var onboarding_chat_window = this.getOnboardingChat();
-    var task_chat_window = this.getTaskChat(this.props.data.task, false);
+    let data = this.props.data;
+    let onboarding_chat_window = this.getOnboardingChat();
+    let task_chat_window = this.getTaskChat(this.props.data.task, false);
     return (
       <div>
         {onboarding_chat_window}
@@ -1235,7 +1256,10 @@ class AssignmentView extends React.Component {
 class AssignmentPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {assignment_loading: true, items: null, error: false};
+    this.state = {
+      assignment_loading: true, items: null, error: false,
+      custom_components: {}
+    };
   }
 
   fetchRunData() {
@@ -1263,16 +1287,24 @@ class AssignmentPanel extends React.Component {
   }
 
   renderAssignmentInfo() {
+    // TODO move task instructions and context into separate panels for
+    // task and onboarding
     return (
       <div>
         <AssignmentTable
           data={[this.state.data.assignment_details]}
           title={'State info for this assignment'}/>
         <AssignmentInstructions
-          data={[this.state.data.assignment_instructions]}/>
+          data={[this.state.data.assignment_instructions]}
+          custom_components={this.state.custom_components}/>
         <AssignmentView
           data={this.state.data.assignment_content}
-          title={'Assignment Content'}/>
+          title={'Assignment Content'}
+          custom_components={this.state.custom_components}
+          setCustomComponents={(module) => {
+            setCustomComponents(module);
+            this.setState({custom_components: module});
+          }}/>
         <AssignmentReviewer
           data={this.state.data.assignment_details}
           onUpdate={() => this.fetchRunData()}/>

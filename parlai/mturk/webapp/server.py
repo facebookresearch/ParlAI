@@ -20,14 +20,27 @@ import os
 import time
 import traceback
 
+import sh
+import shlex
+import shutil
+import subprocess
+
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
 import tornado.escape
 
-
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
 from parlai.mturk.core.mturk_manager import MTurkManager
+from parlai import __path__ as parlai_path
+parlai_path = parlai_path[0]
+
+try:
+    from parlai_internal import __path__ as parlai_int_path
+    parlai_int_path = parlai_int_path[0]
+except Exception:
+    parlai_int_path = None
+
 
 DEFAULT_PORT = 8095
 DEFAULT_HOSTNAME = "localhost"
@@ -36,6 +49,8 @@ DEFAULT_SB_DB_FILE = 'pmt_sbdata.db'
 IS_DEBUG = True
 
 here = os.path.abspath(os.path.dirname(__file__))
+
+tasks = {}
 
 
 def row_to_dict(row):
@@ -352,24 +367,23 @@ class AssignmentHandler(BaseHandler):
             'onboarding': onboard_data,
             'task': MTurkDataHandler.get_conversation_data(
                 run_id, conversation_id, worker_id, self.state['is_sandbox']),
+            'task_name': '_'.join(run_id.split('_')[:-1]),
         }
 
-        # Get assignment instruction html
+        # Get assignment instruction html. This can be much improved
         taskname = '_'.join(run_id.split('_')[:-1])
-        find_location = 'parlai.mturk.tasks.{}.task_config'.format(taskname)
-        find_location_internal = \
-            'parlai_internal.mturk.tasks.{}.task_config'.format(taskname)
+        guess_loc = tasks[taskname].split('tasks/')[1]
+        guess_class = '.'.join(guess_loc.split('/'))
+        base_format = 'parlai.mturk.tasks.{}.task_config'
+        if 'parlai_internal' in guess_loc:
+            base_format = 'parlai_internal.mturk.tasks.{}.task_config'
+        find_location = base_format.format(guess_class)
         try:
-            # Try to find the task config in public tasks
+            # Try to find the task at specified location
             t = importlib.import_module(find_location)
             task_instructions = t.task_config['task_description']
         except ImportError:
-            try:
-                # Try to find the task in local tasks
-                t = importlib.import_module(find_location_internal)
-                task_instructions = t.task_config['task_description']
-            except ImportError:
-                task_instructions = None
+            task_instructions = None
 
         data = {
             'assignment_details': assignment,
@@ -482,6 +496,85 @@ def start_server(port=DEFAULT_PORT, hostname=DEFAULT_HOSTNAME,
     tornado.ioloop.IOLoop.current().start()
 
 
+def crawl_dir_for_tasks(search_dir):
+    found_dirs = {}  # taskname -> task directory
+    contents = os.listdir(search_dir)
+    for sub_dir in contents:
+        full_sub_dir = os.path.join(search_dir, sub_dir)
+        if os.path.exists(os.path.join(full_sub_dir, 'run.py')):
+            # assume this is a task
+            found_dirs[sub_dir] = full_sub_dir
+        if os.path.isdir(full_sub_dir):
+            found_dirs.update(crawl_dir_for_tasks(full_sub_dir))
+    return found_dirs
+
+def rebuild_source():
+    # TODO move task parsing to its own helper file
+    # Copy files to the correct locations,
+    if os.path.exists('dev/task_components'):
+        print('removing old build')
+        sh.rm(shlex.split('-rf {}'.format('dev/task_components')))
+    os.mkdir('dev/task_components')
+
+    copy_dirs = {}
+    parlai_task_dir = os.path.join(parlai_path, 'mturk', 'tasks')
+    tasks.update(crawl_dir_for_tasks(parlai_task_dir))
+
+    if parlai_int_path is not None:
+        parlai_internal_task_dir = \
+            os.path.join(parlai_int_path, 'mturk', 'tasks')
+        tasks.update(crawl_dir_for_tasks(parlai_internal_task_dir))
+
+    print (tasks)
+
+    for task, task_dir in tasks.items():
+        if os.path.exists(os.path.join(task_dir, 'frontend')):
+            copy_dirs[task] = os.path.join(task_dir, 'frontend')
+
+    print (copy_dirs)
+
+    for task, task_dir in copy_dirs.items():
+        was_built = False
+        if 'package.json' in os.listdir(task_dir):
+            # need to build this component first
+            os.chdir(task_dir)
+            packages_installed = subprocess.call(['npm', 'install'])
+            if packages_installed != 0:
+                raise Exception('please make sure npm is installed, otherwise '
+                                'view the above error for more info.')
+
+            webpack_complete = subprocess.call(['npm', 'run', 'dev'])
+            if webpack_complete != 0:
+                raise Exception('Webpack appears to have failed to build your '
+                                'frontend. See the above error for more '
+                                'information.')
+            was_built = True
+
+        os.chdir(here)
+        output_dir = os.path.join('dev/task_components', task)
+        shutil.copytree(task_dir, output_dir)
+        # need to move built custom.jsx back into components
+        if was_built:
+            shutil.copy2(os.path.join(output_dir, 'dist', 'custom.jsx'),
+                         os.path.join(output_dir, 'components', 'custom.jsx'))
+
+    # Grab up to date version of core components
+    shutil.copy2(os.path.join(parlai_path, 'mturk', 'core', 'react_server',
+                              'dev', 'components', 'core_components.jsx'),
+                 'dev/task_components')
+
+    # build the full react server
+    packages_installed = subprocess.call(['npm', 'install'])
+    if packages_installed != 0:
+        raise Exception('please make sure npm is installed, otherwise view '
+                        'the above error for more info.')
+
+    webpack_complete = subprocess.call(['npm', 'run', 'dev'])
+    if webpack_complete != 0:
+        raise Exception('Webpack appears to have failed to build your '
+                        'frontend. See the above error for more information.')
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Start the ParlAI-MTurk task managing server.')
@@ -509,6 +602,8 @@ def main():
 
     logging_level = logging._checkLevel(FLAGS.logging_level)
     logging.getLogger().setLevel(logging_level)
+
+    rebuild_source()
 
     start_server(port=FLAGS.port, hostname=FLAGS.hostname,
                  db_file=FLAGS.db_file, is_sandbox=FLAGS.sandbox)
