@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {ToggleButtonGroup, ToggleButton, Button, FormControl,
   ButtonGroup, ButtonToolbar, Panel, Table, Modal, InputGroup} from 'react-bootstrap';
-import {MessageList, setCustomComponents} from './task_components/core_components.jsx';
+import {getCorrectComponent, setCustomComponents} from './task_components/core_components.jsx';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import 'fetch';
@@ -107,7 +107,7 @@ class ChatMessage extends React.Component {
   }
 }
 
-class XMessageList extends React.Component {
+class MessageList extends React.Component {
   makeMessages() {
     let agent_id = this.props.agent_id;
     let messages = this.props.messages;
@@ -191,6 +191,7 @@ class ChatDisplay extends React.Component {
   render() {
     // var messages = this.makeMessages();
     var display_text = this.props.is_onboarding ? 'Onboarding' : 'Task';
+    let XMessageList = getCorrectComponent('XMessageList', this.props.agent_id);
     return (
       <Panel
         id="message_display_div"
@@ -204,10 +205,11 @@ class ChatDisplay extends React.Component {
         </Panel.Heading>
         <Panel.Collapse>
           <Panel.Body style={{maxHeight: '600px', overflow: 'scroll'}}>
-            <MessageList
+            <XMessageList
               v_id={this.props.agent_id}
               messages={this.props.messages}
-              agent_id={this.props.agent_id} />
+              agent_id={this.props.agent_id}
+              is_review={true}/>
           </Panel.Body>
         </Panel.Collapse>
       </Panel>
@@ -1253,7 +1255,6 @@ class AssignmentView extends React.Component {
       /* webpackMode: "eager" */
       `./task_components/${task_name}/components/custom.jsx`
     ).then((custom) => {
-      console.log(custom.default);
       setCustomComponents(custom.default);
       this.setState({loaded: true});
     });

@@ -35,6 +35,16 @@ class ChatMessage extends React.Component {
       float_loc = 'right';
       alert_class = 'alert-info';
     }
+    let duration = null;
+    if (this.props.duration !== undefined) {
+      let duration_seconds = Math.floor(this.props.duration / 1000) % 60;
+      let duration_minutes = Math.floor(this.props.duration / 60000);
+      let min_text = duration_minutes > 0 ? duration_minutes + ' min' : '';
+      let sec_text = duration_seconds > 0 ? duration_seconds + ' sec' : '';
+      duration = <small>
+        <br /><i>Duration: </i>{min_text + ' ' + sec_text}
+      </small>;
+    }
     return (
       <div className={"row"} style={{'marginLeft': '0', 'marginRight': '0'}}>
         <div
@@ -43,6 +53,7 @@ class ChatMessage extends React.Component {
           <span style={{'fontSize': '16px'}}>
             <b>{this.props.agent_id}</b>: {this.props.message}
           </span>
+          {duration}
         </div>
       </div>
     );
@@ -65,7 +76,8 @@ class MessageList extends React.Component {
         agent_id={m.id}
         message={m.text}
         context={m.context}
-        message_id={m.message_id}/>
+        message_id={m.message_id}
+        duration={this.props.is_review ? m.duration : null}/>
     );
   }
 
@@ -605,6 +617,6 @@ export {
   ChatMessage, MessageList, ConnectionIndicator, Hourglass, WaitingMessage,
   ChatPane, IdleResponse, DoneButton, DoneResponse, TextResponse, ResponsePane,
   RightPane, LeftPane, ContentLayout, BaseFrontend,
-  // Functions to update current components
-  setCustomComponents
+  // Functions to update and get current components
+  setCustomComponents, getCorrectComponent
 };
