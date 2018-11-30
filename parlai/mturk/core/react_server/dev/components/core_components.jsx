@@ -509,6 +509,24 @@ class RightPane extends React.Component {
   }
 }
 
+class TaskDescription extends React.Component {
+  render () {
+    // TODO pull from templating variable
+    let header_text = "Live Chat";
+    let task_desc = this.props.task_description || 'Task Description Loading';
+    return (
+      <div>
+          <h1>{header_text}</h1>
+          <hr style={{'borderTop': '1px solid #555'}} />
+          <span
+            id="task-description" style={{'fontSize': '16px'}}
+            dangerouslySetInnerHTML={{__html: task_desc}}
+          />
+      </div>
+    );
+  }
+}
+
 class LeftPane extends React.Component {
   render () {
     let frame_height = this.props.frame_height;
@@ -518,18 +536,11 @@ class LeftPane extends React.Component {
       padding: '30px',
       overflow: 'auto'
     };
-    let pane_size = this.props.full ? 'col-xs-12' : 'col-xs-4';
-    // TODO pull from templating variable
-    let header_text = "Live Chat";
-    let task_desc = this.props.task_description || 'Task Description Loading';
+    let XTaskDescription = getCorrectComponent('XTaskDescription', v_id);
+    let pane_size = this.props.full ? 'col-xs-12' : 'col-xs-6';
     return (
       <div id="left-pane" className={pane_size} style={frame_style}>
-          <h1>{header_text}</h1>
-          <hr style={{'borderTop': '1px solid #555'}} />
-          <span
-            id="task-description" style={{'fontSize': '16px'}}
-            dangerouslySetInnerHTML={{__html: task_desc}}
-          />
+          <XTaskDescription {...this.props} />
       </div>
     );
   }
@@ -543,7 +554,6 @@ class ContentLayout extends React.Component {
     return (
       <div className="row" id="ui-content">
         <XLeftPane
-          full={false}
           {...this.props}
         />
         <XRightPane {...this.props} />
@@ -563,7 +573,6 @@ class BaseFrontend extends React.Component {
       content = (
         <div className="row" id="ui-content">
           <XLeftPane
-            full={true}
             {...this.props}
           />
         </div>
@@ -609,7 +618,8 @@ component_list = {
   'XChatPane': ['ChatPane', ChatPane],
   'XWaitingMessage': ['WaitingMessage', WaitingMessage],
   'XMessageList': ['MessageList', MessageList],
-  'XChatMessage': ['ChatMessage', ChatMessage]
+  'XChatMessage': ['ChatMessage', ChatMessage],
+  'XTaskDescription': ['XTaskDescription', TaskDescription],
 };
 
 export {

@@ -107,89 +107,8 @@ class ChatMessage extends React.Component {
   }
 }
 
-class MessageList extends React.Component {
-  makeMessages() {
-    let agent_id = this.props.agent_id;
-    let messages = this.props.messages;
-
-    // Handles rendering messages from both the user and anyone else
-    // on the thread - agent_ids for the sender of a message exist in
-    // the m.id field.
-    return messages.map(
-      m => <ChatMessage
-        key={m.message_id}
-        is_self={m.id == agent_id}
-        agent_id={m.id}
-        message={m.text}
-        context={m.data ? m.data.action : m.context}
-        message_id={m.message_id}
-        duration={m.duration}
-      />
-    );
-  }
-
-  render () {
-    return (
-      <div id="message_thread" style={{'width': '100%'}}>
-        {this.makeMessages()}
-      </div>
-    );
-  }
-}
-
-// class ChatMessage extends React.Component {
-//   constructor(props) {
-//     super(props);
-//   }
-//
-//   render() {
-//     var float_loc = 'left';
-//     var alert_class = 'alert-warning';
-//     if (this.props.is_self) {
-//       float_loc = 'right';
-//       alert_class = 'alert-info';
-//     }
-//     return (
-//       <div className={"row"} style={{'marginLeft': '0', 'marginRight': '0'}}>
-//         <div
-//           className={"alert " + alert_class} role="alert"
-//           style={{'float': float_loc, 'display': 'table'}}>
-//           <span style={{'fontSize': '16px'}}>
-//             <b>{this.props.agent_id}</b>: {this.props.message}
-//           </span>
-//         </div>
-//       </div>
-//     );
-//   }
-// }
-//
 class ChatDisplay extends React.Component {
-  constructor(props) {
-    super(props);
-    /* agent_id : agent id of the viewer
-     * messages : full message list
-     * task_id : task_id to load custom components from
-     */
-
-  }
-
-  makeMessages() {
-    var agent_id = this.props.agent_id;
-    var messages = this.props.messages;
-    return messages.map(
-      m => <ChatMessage
-        key={m.message_id}
-        is_self={m.id == agent_id}
-        agent_id={m.id}
-        message={m.text}
-        message_id={m.id}
-        duration={m.duration}
-      />
-    );
-  }
-
   render() {
-    // var messages = this.makeMessages();
     var display_text = this.props.is_onboarding ? 'Onboarding' : 'Task';
     let XMessageList = getCorrectComponent('XMessageList', this.props.agent_id);
     return (
@@ -247,7 +166,6 @@ class NavLink extends React.Component {
       )
     }
   }
-
 }
 
 class SharedTable extends React.Component {
@@ -742,7 +660,9 @@ class AssignmentInstructions extends React.Component {
       content = "No task details could be found for this assignment."
       bsStyle = "default"
     } else {
-      content = <div dangerouslySetInnerHTML={{__html: instructions}} />;
+      let agent_id = this.props.data.task
+      let XTaskDescription = getCorrectComponent('XTaskDescription', null);
+      content = <XTaskDescription task_description={instructions} />;
       bsStyle = "info"
     }
 
@@ -1249,14 +1169,12 @@ class AssignmentReviewer extends React.Component {
 class AssignmentView extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {loaded: false}
     let task_name = props.data.task_name;
     import(
       /* webpackMode: "eager" */
       `./task_components/${task_name}/components/custom.jsx`
     ).then((custom) => {
-      setCustomComponents(custom.default);
-      this.setState({loaded: true});
+      this.props.setCustomComponents(custom.default);
     });
   }
 
@@ -1325,7 +1243,6 @@ class AssignmentView extends React.Component {
   }
 
   render() {
-    console.log(this.props.data);
     let data = this.props.data;
     let onboarding_chat_window = this.getOnboardingChat();
     let task_chat_window = this.getTaskChat(this.props.data.task, false);
@@ -1341,7 +1258,10 @@ class AssignmentView extends React.Component {
 class AssignmentPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {assignment_loading: true, items: null, error: false};
+    this.state = {
+      assignment_loading: true, items: null, error: false,
+      custom_components: {}
+    };
   }
 
   fetchRunData() {
@@ -1369,16 +1289,24 @@ class AssignmentPanel extends React.Component {
   }
 
   renderAssignmentInfo() {
+    // TODO move task instructions and context into separate panels for
+    // task and onboarding
     return (
       <div>
         <AssignmentTable
           data={[this.state.data.assignment_details]}
           title={'State info for this assignment'}/>
         <AssignmentInstructions
-          data={[this.state.data.assignment_instructions]}/>
+          data={[this.state.data.assignment_instructions]}
+          custom_components={this.state.custom_components}/>
         <AssignmentView
           data={this.state.data.assignment_content}
-          title={'Assignment Content'}/>
+          title={'Assignment Content'}
+          custom_components={this.state.custom_components}
+          setCustomComponents={(module) => {
+            setCustomComponents(module);
+            this.setState({custom_components: module});
+          }}/>
         <AssignmentReviewer
           data={this.state.data.assignment_details}
           onUpdate={() => this.fetchRunData()}/>
