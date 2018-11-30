@@ -370,22 +370,20 @@ class AssignmentHandler(BaseHandler):
             'task_name': '_'.join(run_id.split('_')[:-1]),
         }
 
-        # Get assignment instruction html
+        # Get assignment instruction html. This can be much improved
         taskname = '_'.join(run_id.split('_')[:-1])
-        find_location = 'parlai.mturk.tasks.{}.task_config'.format(taskname)
-        find_location_internal = \
-            'parlai_internal.mturk.tasks.{}.task_config'.format(taskname)
+        guess_loc = tasks[taskname].split('tasks/')[1]
+        guess_class = '.'.join(guess_loc.split('/'))
+        base_format = 'parlai.mturk.tasks.{}.task_config'
+        if 'parlai_internal' in guess_loc:
+            base_format = 'parlai_internal.mturk.tasks.{}.task_config'
+        find_location = base_format.format(guess_class)
         try:
-            # Try to find the task config in public tasks
+            # Try to find the task at specified location
             t = importlib.import_module(find_location)
             task_instructions = t.task_config['task_description']
         except ImportError:
-            try:
-                # Try to find the task in local tasks
-                t = importlib.import_module(find_location_internal)
-                task_instructions = t.task_config['task_description']
-            except ImportError:
-                task_instructions = None
+            task_instructions = None
 
         data = {
             'assignment_details': assignment,
@@ -509,7 +507,6 @@ def crawl_dir_for_tasks(search_dir):
         if os.path.isdir(full_sub_dir):
             found_dirs.update(crawl_dir_for_tasks(full_sub_dir))
     return found_dirs
-
 
 def rebuild_source():
     # TODO move task parsing to its own helper file

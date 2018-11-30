@@ -660,9 +660,10 @@ class AssignmentInstructions extends React.Component {
       content = "No task details could be found for this assignment."
       bsStyle = "default"
     } else {
-      let agent_id = this.props.data.task
+      console.log(instructions);
       let XTaskDescription = getCorrectComponent('XTaskDescription', null);
       content = <XTaskDescription task_description={instructions} />;
+      console.log(content);
       bsStyle = "info"
     }
 
@@ -877,7 +878,6 @@ class ReviewButtonGroup extends React.Component {
   // (which cannot be reviewed)
   constructor(props) {
     super(props);
-    console.log(this.props)
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       value: this.getGivenStateVal(),
