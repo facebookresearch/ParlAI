@@ -660,10 +660,8 @@ class AssignmentInstructions extends React.Component {
       content = "No task details could be found for this assignment."
       bsStyle = "default"
     } else {
-      console.log(instructions);
       let XTaskDescription = getCorrectComponent('XTaskDescription', null);
       content = <XTaskDescription task_description={instructions} />;
-      console.log(content);
       bsStyle = "info"
     }
 
