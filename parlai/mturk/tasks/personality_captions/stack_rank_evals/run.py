@@ -37,7 +37,22 @@ def main():
                 .
             }
         Note that compare_key_1 and compare_key_2 can be any field, as long as they
-        map to a string comment/caption
+        map to a string comment/caption.
+
+        Example Scenario:
+            Suppose you have the original Personality-Captions dataset, and
+            you would like to compare the outputs of your model called `model`.
+
+            Your data may look like the following:
+            [{
+                'image_hash': hashforimageofcat,
+                'personality': 'Sweet',
+                'comment': 'Look at the cute cat!', # Human Comment
+                'model_comment': 'That's a weird looking dog' # Model Comment
+            }, ...]
+
+            Thus, you would specify `-ck1 comment -ck2 model_comment` to evaluate
+            the outputs of the model vs. the human comments from Personality-Captions
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
