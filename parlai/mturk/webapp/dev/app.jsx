@@ -2,9 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {ToggleButtonGroup, ToggleButton, Button, FormControl,
   ButtonGroup, ButtonToolbar, Panel, Table, Modal, InputGroup} from 'react-bootstrap';
+import {MessageList, setCustomComponents} from './task_components/core_components.jsx';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import 'fetch';
+
+// Init display components
+setCustomComponents({});
 
 var AppURLStates = Object.freeze({
   init:0, tasks:1, unsupported:2, runs:3, workers:4, assignments:5,
@@ -50,17 +54,42 @@ function postData(url = ``, data = {}) {
   });
 }
 
+// Custom message component shows context if it exists:
 class ChatMessage extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
-    var float_loc = 'left';
-    var alert_class = 'alert-warning';
+    if (this.props.agent_id == 'persona' || this.props.agent_id == 'setting') {
+      return (
+        <div className={"row"} style={{'marginLeft': '0', 'marginRight': '0'}}>
+          <div
+            className={"alert " + 'alert-info'} role="alert"
+            style={{'float': 'left', 'display': 'table'}}>
+            <span style={{'fontSize': '16px'}}>
+              <b>{this.props.agent_id}</b>: {this.props.context}
+              {context}
+            </span>
+          </div>
+        </div>
+      );
+    }
+    let float_loc = 'left';
+    let alert_class = 'alert-warning';
     if (this.props.is_self) {
       float_loc = 'right';
       alert_class = 'alert-info';
+    }
+    let context = null;
+    let duration = null;
+    if (this.props.context !== undefined && this.props.context.length > 0) {
+      context = <span><br /><b>Action: </b><i>{this.props.context}</i></span>;
+    }
+    if (this.props.duration !== undefined) {
+      let duration_seconds = Math.floor(this.props.duration / 1000) % 60;
+      let duration_minutes = Math.floor(this.props.duration / 60000);
+      let min_text = duration_minutes > 0 ? duration_minutes + ' min' : '';
+      let sec_text = duration_seconds > 0 ? duration_seconds + ' sec' : '';
+      duration = <small>
+        <br /><i>Duration: </i>{min_text + ' ' + sec_text}
+      </small>;
     }
     return (
       <div className={"row"} style={{'marginLeft': '0', 'marginRight': '0'}}>
@@ -69,6 +98,8 @@ class ChatMessage extends React.Component {
           style={{'float': float_loc, 'display': 'table'}}>
           <span style={{'fontSize': '16px'}}>
             <b>{this.props.agent_id}</b>: {this.props.message}
+            {context}
+            {duration}
           </span>
         </div>
       </div>
@@ -76,9 +107,70 @@ class ChatMessage extends React.Component {
   }
 }
 
+class XMessageList extends React.Component {
+  makeMessages() {
+    let agent_id = this.props.agent_id;
+    let messages = this.props.messages;
+
+    // Handles rendering messages from both the user and anyone else
+    // on the thread - agent_ids for the sender of a message exist in
+    // the m.id field.
+    return messages.map(
+      m => <ChatMessage
+        key={m.message_id}
+        is_self={m.id == agent_id}
+        agent_id={m.id}
+        message={m.text}
+        context={m.data ? m.data.action : m.context}
+        message_id={m.message_id}
+        duration={m.duration}
+      />
+    );
+  }
+
+  render () {
+    return (
+      <div id="message_thread" style={{'width': '100%'}}>
+        {this.makeMessages()}
+      </div>
+    );
+  }
+}
+
+// class ChatMessage extends React.Component {
+//   constructor(props) {
+//     super(props);
+//   }
+//
+//   render() {
+//     var float_loc = 'left';
+//     var alert_class = 'alert-warning';
+//     if (this.props.is_self) {
+//       float_loc = 'right';
+//       alert_class = 'alert-info';
+//     }
+//     return (
+//       <div className={"row"} style={{'marginLeft': '0', 'marginRight': '0'}}>
+//         <div
+//           className={"alert " + alert_class} role="alert"
+//           style={{'float': float_loc, 'display': 'table'}}>
+//           <span style={{'fontSize': '16px'}}>
+//             <b>{this.props.agent_id}</b>: {this.props.message}
+//           </span>
+//         </div>
+//       </div>
+//     );
+//   }
+// }
+//
 class ChatDisplay extends React.Component {
   constructor(props) {
     super(props);
+    /* agent_id : agent id of the viewer
+     * messages : full message list
+     * task_id : task_id to load custom components from
+     */
+
   }
 
   makeMessages() {
@@ -90,12 +182,14 @@ class ChatDisplay extends React.Component {
         is_self={m.id == agent_id}
         agent_id={m.id}
         message={m.text}
-        message_id={m.id}/>
+        message_id={m.id}
+        duration={m.duration}
+      />
     );
   }
 
   render() {
-    var messages = this.makeMessages();
+    // var messages = this.makeMessages();
     var display_text = this.props.is_onboarding ? 'Onboarding' : 'Task';
     return (
       <Panel
@@ -110,9 +204,10 @@ class ChatDisplay extends React.Component {
         </Panel.Heading>
         <Panel.Collapse>
           <Panel.Body style={{maxHeight: '600px', overflow: 'scroll'}}>
-            <div id="message_thread">
-              {messages}
-            </div>
+            <MessageList
+              v_id={this.props.agent_id}
+              messages={this.props.messages}
+              agent_id={this.props.agent_id} />
           </Panel.Body>
         </Panel.Collapse>
       </Panel>
@@ -1152,6 +1247,16 @@ class AssignmentReviewer extends React.Component {
 class AssignmentView extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {loaded: false}
+    let task_name = props.data.task_name;
+    import(
+      /* webpackMode: "eager" */
+      `./task_components/${task_name}/components/custom.jsx`
+    ).then((custom) => {
+      console.log(custom.default);
+      setCustomComponents(custom.default);
+      this.setState({loaded: true});
+    });
   }
 
   getOnboardingChat() {
@@ -1220,9 +1325,9 @@ class AssignmentView extends React.Component {
 
   render() {
     console.log(this.props.data);
-    var data = this.props.data;
-    var onboarding_chat_window = this.getOnboardingChat();
-    var task_chat_window = this.getTaskChat(this.props.data.task, false);
+    let data = this.props.data;
+    let onboarding_chat_window = this.getOnboardingChat();
+    let task_chat_window = this.getTaskChat(this.props.data.task, false);
     return (
       <div>
         {onboarding_chat_window}

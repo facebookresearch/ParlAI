@@ -57,6 +57,7 @@ class MessageList extends React.Component {
     // on the thread - agent_ids for the sender of a message exist in
     // the m.id field.
     let XChatMessage = getCorrectComponent('XChatMessage', this.props.v_id);
+    console.log(XChatMessage);
     return messages.map(
       m => <XChatMessage
         key={m.message_id}

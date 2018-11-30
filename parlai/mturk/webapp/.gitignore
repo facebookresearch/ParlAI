@@ -1,1 +1,3 @@
 node_modules/
+static/bundle.js
+static/*.bundle.js
