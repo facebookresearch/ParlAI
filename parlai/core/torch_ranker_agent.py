@@ -389,9 +389,12 @@ class TorchRankerAgent(TorchAgent):
         model_file = None
 
         # first check load path in case we need to override paths
-        if opt.get('init_model') and os.path.isfile(opt['init_model']):
-            # check first for 'init_model' for loading model from file
-            model_file = opt['init_model']
+        if opt.get('init_model'):
+            if os.path.isfile(opt['init_model']):
+                # check first for 'init_model' for loading model from file
+                model_file = opt['init_model']
+            else:
+                raise Exception(f"Specified --init-model={opt['init_model']} could not be found.")
 
         if opt.get('model_file') and os.path.isfile(opt['model_file']):
             # next check for existing 'model_file'; this would override init_model
@@ -458,7 +461,7 @@ class TorchRankerAgent(TorchAgent):
                 # Load candidates
                 print("[ Loading fixed candidate set from {} ]".format(cand_path))
                 with open(cand_path, 'r') as f:
-                    cands = [line.strip() for line in f.readlines()]
+                    cands = list(set(line.strip() for line in f.readlines()))
 
                 # Load or create candidate vectors
                 if os.path.isfile(opt['fixed_candidate_vecs']):
