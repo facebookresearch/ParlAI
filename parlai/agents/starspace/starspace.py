@@ -126,7 +126,7 @@ class StarspaceAgent(Agent):
             print("[ creating StarspaceAgent ]")
             # this is not a shared instance of this class, so do full init
             if (opt.get('model_file') and (os.path.isfile(opt.get('model_file') + '.dict')
-                                           or (opt['dict_file'] is None)))
+                                           or (opt['dict_file'] is None))):
                 # set default dict-file if not set
                 opt['dict_file'] = opt['model_file'] + '.dict'
             # load dictionary and basic tokens & vectors
