@@ -1,0 +1,54 @@
+{% extends "core.html" %}
+
+<!--{#
+
+Note: you can override any code blocks in core.html in the following way:
+
+Example 1: Overriding left_pane to display custom image instead:
+
+{% block left_pane %}
+	<div id="left-pane" class="col-xs-4" style="height: {{frame_height}}px; background-color: #dff0d8; padding: 30px; overflow:scroll;">
+	    <h1>Live Chat</h1>
+	    <hr style="border-top: 1px solid #555" />
+	    <img src="your-custom-image.jpg" />
+	</div>
+{% endblock %}
+
+Example 2: Overriding handle_new_messages to only show messages from this agent
+
+{% block additional_scripts %}
+<script type="text/javascript">
+    function handle_new_messages(new_messages) {
+        for (var i = 0; i < new_messages.length; i++) {
+            var message = new_messages[i];
+            var agent_id = message['id'];
+            var message_id = parseInt(message['message_id']);
+            var message_text = message['text'].replace(/(?:\r\n|\r|\n)/g, '<br />');
+
+            if (!(message_id in messages_shown)) {
+                if (agent_id == cur_agent_id) {
+                    $('div#message_thread').append(`
+                        <div class="row" style="margin-left: 0; margin-right: 0">
+                            <div class="alert alert-info" role="alert" style="float: right; display:table">
+                                <span style="font-size: 16px"><b>`+agent_id+`</b>: `+message_text+`</span>
+                            </div>
+                        </div>
+                    `);
+                }
+                messages_shown[message_id] = true;
+            }
+        }
+        if (new_messages.length > 0) {
+            $("div#message_thread").css("display", "");
+            scroll_conversation_to_bottom();
+        }
+        if (received_message_from_other_agents && (!task_done) && new_messages[new_messages.length-1]['id'] === previous_agent_id) {
+            update_UI_for_response_type('text_input');
+            $("div#waiting-for-message").css("display", "none");
+            $("input#id_text_input").focus();
+        }
+    }
+</script>
+{% endblock %}
+
+#}-->

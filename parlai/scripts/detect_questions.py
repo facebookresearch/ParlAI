@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
+"""Basic example which iterates through the tasks specified and
+checks them for offensive language.
+
+Examples
+--------
+
+.. code-block:: shell
+
+  python -m parlai.scripts.detect_offensive_language -t "convai_chitchat" --display-examples True
+"""  # noqa: E501
+from parlai.core.params import ParlaiParser
+from parlai.core.agents import create_agent
+from parlai.core.worlds import create_task
+from parlai.core.utils import OffensiveLanguageDetector, TimeLogger
+
+import random
+
+
+def setup_args(parser=None):
+    if parser is None:
+        parser = ParlaiParser(True, True, 'Check task for offensive language')
+    # Get command line arguments
+    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser.add_argument('-d', '--display-examples', type='bool', default=False)
+    parser.set_defaults(datatype='train:ordered')
+    parser.set_defaults(model='repeat_label')
+    return parser
+
+
+def detect(opt, printargs=None, print_parser=None):
+    """Checks a task for offensive language.
+    """
+    if print_parser is not None:
+        if print_parser is True and isinstance(opt, ParlaiParser):
+            print_parser = opt
+        elif print_parser is False:
+            print_parser = None
+    random.seed(42)
+
+    # Create model and assign it to the specified task
+    agent = create_agent(opt, requireModelExists=True)
+    world = create_task(opt, agent)
+    bad = OffensiveLanguageDetector()
+
+    if print_parser:
+        # Show arguments after loading model
+        print_parser.opt = agent.opt
+        print_parser.print_args()
+    log_every_n_secs = opt.get('log_every_n_secs', -1)
+    if log_every_n_secs <= 0:
+        log_every_n_secs = float('inf')
+    log_time = TimeLogger()
+
+    # Show some example dialogs:
+    cnt = 0
+    while not world.epoch_done():
+        world.parley()
+        words = []
+        #a = world.acts[0]
+        txt = world.acts[0].get('text', '')
+        q = 0
+        if '?' in txt:
+            q = 1
+        if  txt[0:3] == 'why':
+            print(txt)
+            q = 1
+        if  txt[0:3] == 'how':
+            q = 1
+        if  txt[0:4] == 'what':
+            q = 1
+        if  txt[0:3] == 'who':
+            q = 1
+        if  txt[0:5] == 'where':
+            q = 1
+        if  txt[0:4] == 'when':
+            q = 1
+        q2 = 0
+        txt = world.acts[1].get('text', '')
+        if '?' in txt:
+            q2 = 1
+        if  txt[0:3] == 'why':
+            print(txt)
+            q2 = 1
+        if  txt[0:3] == 'how':
+            q2 = 1
+        if  txt[0:4] == 'what':
+            q2 = 1
+        if  txt[0:3] == 'who':
+            q2 = 1
+        if  txt[0:5] == 'where':
+            q2 = 1
+        if  txt[0:4] == 'when':
+            q2 = 1
+
+        # q==1:   0.39522485558494846
+        # q2==1: 0.1389083841710306
+        # q==0 &&  q2==0;  0.49342709064406415
+        
+        if q2 == 0 and q == 0:
+            words.append('?')
+            #print(atxt)
+            #labels = a.get('labels', a.get('eval_labels', ''))
+            #for l in labels:
+            #    offensive = bad.contains_offensive_language(l)
+            #    if offensive:
+            #        words.append(offensive)
+        if len(words) > 0 and opt['display_examples']:
+            #print(world.display())
+            print("[Offensive words detected:]", ', '.join(words))
+            print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+        cnt += len(words)
+        if log_time.time() > log_every_n_secs:
+            report = world.report()
+            log = {'offenses': cnt}
+            text, log = log_time.log(report['exs'], world.num_examples(), log)
+            print(text)
+
+    if world.epoch_done():
+        print("EPOCH DONE")
+    print(str(cnt) + " offensive messages found out of " +
+          str(world.num_examples()) + " messages.")
+    print(str(cnt/world.num_examples()))
+    return world.report()
+
+
+if __name__ == '__main__':
+    parser = setup_args()
+    detect(parser.parse_args(print_args=False), print_parser=parser)
