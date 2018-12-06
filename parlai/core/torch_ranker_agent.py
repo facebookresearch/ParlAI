@@ -466,7 +466,6 @@ class TorchRankerAgent(TorchAgent):
                 # Load or create candidate vectors
                 if os.path.isfile(opt['fixed_candidate_vecs']):
                     vecs_path = opt['fixed_candidate_vecs']
-                    vecs = self.load_candidate_vecs(vecs_path)
                 else:
                     setting = opt['fixed_candidate_vecs']
                     model_dir, model_file = os.path.split(self.opt['model_file'])
@@ -474,11 +473,12 @@ class TorchRankerAgent(TorchAgent):
                     cands_name = os.path.splitext(os.path.basename(cand_path))[0]
                     vecs_path = os.path.join(
                         model_dir, '.'.join([model_name, cands_name]))
-                    if setting == 'reuse' and os.path.isfile(vecs_path):
-                        vecs = self.load_candidate_vecs(vecs_path)
-                    else:  # setting == 'replace' OR generating for the first time
-                        vecs = self.make_candidate_vecs(cands)
-                        self.save_candidate_vecs(vecs, vecs_path)
+
+                if setting == 'reuse' and os.path.isfile(vecs_path):
+                    vecs = self.load_candidate_vecs(vecs_path)
+                else:  # setting == 'replace' OR generating for the first time
+                    vecs = self.make_candidate_vecs(cands)
+                    self.save_candidate_vecs(vecs, vecs_path)
 
                 self.fixed_candidates = cands
                 self.fixed_candidate_vecs = vecs
