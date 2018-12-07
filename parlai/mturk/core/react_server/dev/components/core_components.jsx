@@ -10,6 +10,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {FormControl, Button} from 'react-bootstrap';
 import Slider from 'rc-slider';
+import $ from 'jquery';
 
 import 'rc-slider/assets/index.css';
 
@@ -76,7 +77,7 @@ class MessageList extends React.Component {
         message={m.text}
         context={m.context}
         message_id={m.message_id}
-        duration={this.props.is_review ? m.duration : null}/>
+        duration={this.props.is_review ? m.duration : undefined}/>
     );
   }
 

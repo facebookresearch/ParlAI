@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {ToggleButtonGroup, ToggleButton, Button, FormControl,
-  ButtonGroup, ButtonToolbar, Panel, Table, Modal, InputGroup} from 'react-bootstrap';
-import {getCorrectComponent, setCustomComponents} from './task_components/core_components.jsx';
+  ButtonGroup, ButtonToolbar, Panel, Table, Modal, InputGroup,
+  Nav, NavItem} from 'react-bootstrap';
+import {BaseFrontend, getCorrectComponent, setCustomComponents} from './task_components/core_components.jsx';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import 'fetch';
@@ -11,7 +12,7 @@ import 'fetch';
 setCustomComponents({});
 
 var AppURLStates = Object.freeze({
-  init:0, tasks:1, unsupported:2, runs:3, workers:4, assignments:5,
+  init:0, home:1, unsupported:2, runs:3, workers:4, assignments:5, tasks: 6,
 });
 
 function convert_time(timestamp){
@@ -40,6 +41,7 @@ function resolveState(state_string) {
 }
 
 function postData(url = ``, data = {}) {
+  console.log('posting', data, url);
   return fetch(url, {
       method: "POST",
       mode: "cors",
@@ -1525,6 +1527,241 @@ class WorkerListPanel extends React.Component {
   }
 }
 
+class DemoTaskPanel extends React.Component {
+  _socket = null;
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      run_id: null,
+      task_loading: true,
+      error: false,
+      volume: 0,
+      worker_data: {},
+      workers: [],
+      active_worker: 0,
+      connected: false,
+    };
+  }
+
+  componentDidMount() {
+    this.startTask();
+    this.connectSocket();
+  }
+
+  _handleMessage(evt) {
+    let msg = JSON.parse(evt.data);
+    console.log(msg, msg.command, msg.command == 'sync');
+    if (msg.command == 'sync') {
+      this.handleNewData(msg);
+    }
+  }
+
+  connectSocket() {
+    if (this._socket) {
+      return;
+    }
+    var url = window.location;
+    var ws_protocol = null;
+    if (url.protocol == "https:") {
+      ws_protocol = 'wss';
+    } else {
+      ws_protocol = 'ws';
+    }
+
+    var socket = new WebSocket(ws_protocol + '://' + url.host + '/socket');
+
+    socket.onmessage = (evt) => this._handleMessage(evt);
+
+    socket.onopen = () => {
+      this.setState({connected: true});
+    };
+
+    socket.onerror = socket.onclose = () => {
+      this.setState({connected: false}, function () {
+        this._socket = null;
+      });
+    };
+
+    this._socket = socket;
+  }
+
+  startTask() {
+    this.setState({submitting: true});
+    postData('/run_task/' + this.props.task_id)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.handleNewData(result)
+          import(
+            /* webpackMode: "eager" */
+            `./task_components/${this.props.task_id}/components/custom.jsx`
+          ).then((custom) => {
+            setCustomComponents(custom.default);
+            if (result.task_config.frame_height === undefined) {
+              result.task_config.frame_height = 650;
+            }
+            this.setState({
+              task_loading: false, task_config: result.task_config});
+          });
+        },
+        (error) => {
+          this.setState({
+            task_loading: false,
+            error: error,
+          });
+          console.log(error);
+          window.alert('Starting demo task failed. Error logged to console');
+        }
+      );
+  }
+
+  handleNewData(result) {
+    let worker_names = result.data.map((w) => w.worker_id);
+    let curr_worker_data = this.state.worker_data;
+    result.data.map((w) => {
+      if (curr_worker_data[w.worker_id] === undefined) {
+        curr_worker_data[w.worker_id] = {
+          task_done: false,
+          done_text: null,
+          chat_state: 'waiting',
+          messages: [],
+          agent_id: null,
+          context: {},
+          world_state: null,
+          worker_id: w.worker_id,
+        };
+      }
+      let chat_state = 'waiting';
+      if (w.task_done) {
+        chat_state = 'done';
+      } else if (w.wants_message) {
+        chat_state = 'text_input';
+      }
+      curr_worker_data[w.worker_id].messages =
+        curr_worker_data[w.worker_id].messages.concat(w.new_messages);
+      curr_worker_data[w.worker_id].task_done = w.task_done;
+      curr_worker_data[w.worker_id].done_text = w.done_text;
+      curr_worker_data[w.worker_id].world_state = w.status;
+      curr_worker_data[w.worker_id].chat_state = chat_state;
+      curr_worker_data[w.worker_id].agent_id = w.agent_id;
+    });
+    this.setState({workers: worker_names, worker_data: curr_worker_data})
+  }
+
+  sendMessage(message, data, callback, worker) {
+    console.log(worker);
+    let msg = JSON.stringify(
+      {'text': message, 'data': data,
+       'sender': worker.worker_id, 'id': worker.agent_id});
+    this._socket.send(msg);
+    worker.messages.push({
+      id: worker.agent_id,
+      text: message,
+      data: data,
+      message_id: (new Date()).getTime(),
+      is_review: false,
+    });
+    worker.wants_message = false;
+    worker.chat_state = 'waiting';
+    this.setState({worker_data: this.state.worker_data});
+    callback();
+  }
+
+  renderSingleTaskPanel(worker_id) {
+    let worker = this.state.worker_data[worker_id];
+    let task_config = this.state.task_config;
+    return (
+      <div style={{height: task_config.frame_height}}>
+        <BaseFrontend
+          task_done={worker.task_done}
+          done_text={worker.done_text}
+          chat_state={worker.chat_state}
+          onMessageSend={(m, d, c) => this.sendMessage(m, d, c, worker)}
+          socket_status={'connected'}
+          messages={worker.messages}
+          agent_id={worker.agent_id}
+          task_description={task_config.task_description}
+          initialization_status={'done'}
+          is_cover_page={false}
+          frame_height={task_config.frame_height}
+          context={worker.context}
+          world_state={worker.world_state}
+          v_id={worker.agent_id}
+          allDoneCallback={() => console.log('all done called')}
+          volume={this.state.volume}
+          onVolumeChange={(v) => this.setState({volume: v})}
+        />
+      </div>
+    );
+  }
+
+  renderTaskPanel() {
+    let nav_items = this.state.workers.map((agent_id, idx) => {
+      return (
+        <NavItem
+          eventKey={idx}
+          key={agent_id + '-selector'}
+          title={'View as ' + agent_id}>
+          {agent_id}
+        </NavItem>
+      )
+    });
+    let task_panels = this.state.workers.map((agent_id, idx) => {
+      let display = null;
+      if (idx != this.state.active_worker) {
+        display = {display: 'none'}
+      }
+      return (
+        <div style={display} key={agent_id + '-task-display'}>
+          {this.renderSingleTaskPanel(this.state.workers[idx])}
+        </div>
+      )
+    });
+    // Active panel must be first in the array
+    let front_panel = task_panels.splice(this.state.active_worker, 1)
+    task_panels.unshift(front_panel);
+    return (
+      <div>
+        <Nav
+          bsStyle="tabs"
+          justified
+          activeKey={this.state.active_worker}
+          onSelect={key => this.setState({active_worker: key})}
+        >
+          {nav_items}
+        </Nav>
+        {task_panels}
+      </div>
+    );
+  }
+
+  render() {
+    var content;
+    if (this.state.task_loading) {
+      content = <span>Task data is currently loading...</span>;
+    } else if (this.state.error !== false) {
+      console.log(this.state.error)
+      content = <span>Task loading failed...</span>;
+    } else {
+      content = this.renderTaskPanel();
+    }
+
+    return (
+      <Panel>
+        <Panel.Heading>
+          <Panel.Title componentClass="h3">
+            Demo task for {this.props.task_id}
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Body>
+          {content}
+        </Panel.Body>
+      </Panel>
+    )
+  }
+}
+
 class MainApp extends React.Component {
   constructor(props) {
     super(props);
@@ -1537,7 +1774,7 @@ class MainApp extends React.Component {
         <span>Welcome to the ParlAI-Dashboard. Use the button to begin</span>
         <Button
           bsStyle="info"
-          href="/app/tasks">
+          href="/app/home">
             Click me
         </Button>
       </div>
@@ -1550,7 +1787,7 @@ class MainApp extends React.Component {
         <span>Oops something happened! use this button to return </span>
         <Button
           bsStyle="info"
-          href="/app/tasks">
+          href="/app/home">
             Click me
         </Button>
       </div>
@@ -1558,6 +1795,18 @@ class MainApp extends React.Component {
   }
 
   renderTaskPage() {
+    // View should show runs of this task and datasets related to it. Should
+    // also have a demo of the task at the bottom
+    let run_task_list = null;
+    return (
+      <div style={{width: '100%'}}>
+        {run_task_list}
+        <DemoTaskPanel task_id = {this.state.args[0]} />
+      </div>
+    )
+  }
+
+  renderHomePage() {
     return (
       <div style={{width: '900px'}}>
         <TaskListPanel/>
@@ -1593,14 +1842,16 @@ class MainApp extends React.Component {
   render() {
     if (this.state.url_state == AppURLStates.init) {
       return this.renderInitPage();
-    } else if (this.state.url_state == AppURLStates.tasks) {
-      return this.renderTaskPage();
+    } else if (this.state.url_state == AppURLStates.home) {
+      return this.renderHomePage();
     } else if (this.state.url_state == AppURLStates.runs) {
       return this.renderRunPage();
     } else if (this.state.url_state == AppURLStates.assignments) {
       return this.renderAssignmentPage();
     } else if (this.state.url_state == AppURLStates.workers) {
       return this.renderWorkerPage();
+    } else if (this.state.url_state == AppURLStates.tasks) {
+      return this.renderTaskPage();
     } else {
       return this.renderUnsupportedPage();
     }

@@ -10,7 +10,8 @@ from parlai.mturk.tasks.react_task_demo.react_custom_no_extra_deps.worlds \
     import AskerOnboardingWorld, AnswererOnboardingWorld, \
     EvaluatorOnboardingWorld, MultiRoleAgentWorld
 from parlai.mturk.core.mturk_manager import MTurkManager
-from task_config import task_config
+from parlai.mturk.tasks.react_task_demo.react_custom_no_extra_deps.task_config\
+    import task_config
 import os
 
 
@@ -30,6 +31,8 @@ def main():
     # append the contents of task_config.py to the configuration
     opt.update(task_config)
 
+    print(opt)
+
     # Select an agent_id that worker agents will be assigned in their world
     mturk_agent_roles = ['Asker', 'Answerer', 'Evaluator']
 
@@ -40,6 +43,7 @@ def main():
         mturk_agent_ids=mturk_agent_roles,
         use_db=True,
     )
+
     mturk_manager.setup_server(
         task_directory_path=os.path.dirname(os.path.abspath(__file__)))
 

@@ -18,12 +18,14 @@ import json
 import logging
 import os
 import time
+import threading
 import traceback
-
+import asyncio
 import sh
 import shlex
 import shutil
 import subprocess
+import uuid
 
 import tornado.ioloop
 import tornado.web
@@ -32,6 +34,7 @@ import tornado.escape
 
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
 from parlai.mturk.core.mturk_manager import MTurkManager
+from parlai.mturk.webapp.run_mocks.mock_turk_manager import MockTurkManager
 from parlai import __path__ as parlai_path
 parlai_path = parlai_path[0]
 
@@ -82,6 +85,12 @@ tornado_settings = {
 }
 
 
+class PacketWrap(object):
+    def __init__(self, data):
+        self.data = data
+        self.id = None
+
+
 class Application(tornado.web.Application):
     def __init__(self, port=DEFAULT_PORT, db_file=DEFAULT_DB_FILE,
                  is_sandbox=False):
@@ -98,6 +107,8 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/app/(.*)", AppHandler, {'app': self}),
             (r"/tasks", TaskListHandler, {'app': self}),
+            (r"/run_task/(.*)", TaskRunHandler, {'app': self}),
+            (r"/send_message/(.*)", SendMessageHandler, {'app': self}),
             (r"/workers", WorkerListHandler, {'app': self}),
             (r"/runs/(.*)", RunHandler, {'app': self}),
             (r"/workers/(.*)", WorkerHandler, {'app': self}),
@@ -108,7 +119,7 @@ class Application(tornado.web.Application):
             (r"/block/(.*)", BlockHandler, {'app': self}),
             (r"/bonus/(.*)", BonusHandler, {'app': self}),
             (r"/error/(.*)", ErrorHandler, {'app': self}),
-            (r"/socket", SocketHandler, {'app': self}),
+            (r"/socket", TaskSocketHandler, {'app': self}),
             (r"/", RedirectHandler),
         ]
         super(Application, self).__init__(handlers, **tornado_settings)
@@ -125,50 +136,6 @@ def send_to_sources(handler, msg):
     target_sources = handler.sources.values()
     for source in target_sources:
         source.write_message(json.dumps(msg))
-
-
-class SocketHandler(tornado.websocket.WebSocketHandler):
-    def initialize(self, app):
-        self.port = app.port
-        self.state = app.state
-        self.subs = app.subs
-        self.sources = app.sources
-
-    def check_origin(self, origin):
-        return True
-
-    def broadcast_default(self, target_subs=None):
-        # TODO create any default content that needs to go in msg
-        # if target_subs is None:
-        #     target_subs = self.subs.values()
-        # broadcast_msg(self, msg, target_subs)
-        pass
-
-    def open(self):
-        self.sid = get_rand_id()
-        if self not in list(self.subs.values()):
-            self.subs[self.sid] = self
-        logging.info(
-            'Opened new socket from ip: {}'.format(self.request.remote_ip))
-
-        self.write_message(
-            json.dumps({'command': 'register', 'data': self.sid}))
-        self.broadcast_default([self])
-
-    def on_message(self, message):
-        logging.info('from web client: {}'.format(message))
-        msg = tornado.escape.json_decode(tornado.escape.to_basestring(message))
-
-        cmd = msg.get('cmd')
-
-        # TODO flesh out with stubs as they develop
-        if cmd == 'todo':
-            # Do something
-            pass
-
-    def on_close(self):
-        if self in list(self.subs.values()):
-            self.subs.pop(self.sid, None)
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -481,6 +448,168 @@ class ErrorHandler(BaseHandler):
         raise Exception(error_text)
 
 
+class TaskSocketHandler(tornado.websocket.WebSocketHandler):
+    def initialize(self, app):
+        self.app = app
+        self.sources = app.sources
+
+    def check_origin(self, origin):
+        return True
+
+    def _run_socket(self):
+        time.sleep(2)
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        while self.alive and self.app.manager is not None:
+            self.write_message(json.dumps({
+                'data': [agent.get_update_packet()
+                         for agent in self.app.manager.agents],
+                'command': 'sync'
+            }))
+            time.sleep(0.2)
+
+    def open(self):
+        print('open')
+        self.sid = str(hex(int(time.time() * 10000000))[2:])
+        self.alive = True
+        if self not in list(self.sources.values()):
+            self.sources[self.sid] = self
+        logging.info('Opened task socket from ip: {}'.format(
+            self.request.remote_ip))
+
+        self.write_message(
+            json.dumps({'command': 'alive', 'data': 'socket_alive'}))
+
+        t = threading.Thread(target=self._run_socket)
+        t.start()
+
+    def on_message(self, message):
+        print(message)
+        logging.info('from frontend client: {}'.format(message))
+        msg = tornado.escape.json_decode(tornado.escape.to_basestring(message))
+        print(msg)
+        message = msg['text']
+        data = msg['data']
+        sender_id = msg['sender']
+        agent_id = msg['id']
+        act = {
+            'id': agent_id,
+            'data': data,
+            'text': message,
+            'message_id': str(uuid.uuid4()),
+        }
+        t = threading.Thread(
+            target=self.app.manager.on_new_message,
+            args=(sender_id, PacketWrap(act)),
+            daemon=True)
+        t.start()
+
+    def on_close(self):
+        self.alive = False
+        if self in list(self.sources.values()):
+            self.sources.pop(self.sid, None)
+
+
+class SendMessageHandler(BaseHandler):
+    """Handles sending a message from a user to the task world currently
+    running on this server.
+    """
+    def initialize(self, app):
+        self.app = app
+
+    def post(self, task_target):
+        """Sends data to the proper agent in the current manager if there is
+        one at the moment
+        """
+        try:
+            print('hit!')
+            post_data = tornado.escape.json_decode(self.request.body)
+            print(post_data)
+            import sys
+            sys.stdout.flush()
+            message = post_data['text']
+            data = post_data['data']
+            sender_id = post_data['sender']
+            agent_id = post_data['id']
+            act = {
+                'id': agent_id,
+                'data': data,
+                'text': message,
+                'message_id': str(uuid.uuid4()),
+            }
+            t = threading.Thread(
+                target=self.app.manager.on_new_message,
+                args=(sender_id, PacketWrap(act)),
+                daemon=True)
+            t.start()
+            data = {
+                'act': act,
+            }
+            self.write(json.dumps(data))
+        except Exception as e:
+            print(repr(e))
+            print(traceback.format_exc())
+
+
+class TaskRunHandler(BaseHandler):
+    def initialize(self, app):
+        self.app = app
+
+    def post(self, task_target):
+        """Requests to /run_task/{task_id} will launch a task locally
+        for the given task. It will die after 20 mins if it doesn't end
+        on its own.
+        """
+        taskname = task_target
+        guess_loc = tasks[taskname].split('tasks/')[1]
+        guess_class = '.'.join(guess_loc.split('/'))
+        base_format = 'parlai.mturk.tasks.{}.run'
+        if 'parlai_internal' in guess_loc:
+            base_format = 'parlai_internal.mturk.tasks.{}.run'
+        task_find_location = base_format.format(guess_class)
+        base_format = 'parlai.mturk.tasks.{}.task_config'
+        if 'parlai_internal' in guess_loc:
+            base_format = 'parlai_internal.mturk.tasks.{}.task_config'
+        config_find_location = base_format.format(guess_class)
+        try:
+            # Try to find the task at specified location
+            t = importlib.import_module(task_find_location)
+            conf = importlib.import_module(config_find_location)
+            print(t)
+            print(t.MTurkManager)
+            t.MTurkManager = MockTurkManager
+            MockTurkManager.current_manager = None
+            task_thread = threading.Thread(target=t.main, name='Demo-Thread')
+            task_thread.start()
+            while MockTurkManager.current_manager is None:
+                print('Waiting for task to start')
+                time.sleep(1)
+            time.sleep(1)
+            manager = MockTurkManager.current_manager
+            self.app.manager = manager
+            print(manager)
+            print(manager.id_to_agent)
+            for agent in manager.agents:
+                manager.worker_alive(
+                    agent.worker_id, agent.hit_id, agent.assignment_id)
+            data = {
+                'started': True,
+                'data': [agent.get_update_packet() for agent in manager.agents],
+                'task_config': conf.task_config,
+            }
+        except Exception as e:
+            data = {
+                'error': e,
+            }
+            print(repr(e))
+            print(traceback.format_exc())
+        print(data)
+        try:
+            self.write(json.dumps(data))
+        except Exception as e:
+            print(repr(e))
+            print(traceback.format_exc())
+
+
 def start_server(port=DEFAULT_PORT, hostname=DEFAULT_HOSTNAME,
                  db_file=DEFAULT_DB_FILE, is_sandbox=False):
     print("It's Alive!")
@@ -507,6 +636,7 @@ def crawl_dir_for_tasks(search_dir):
         if os.path.isdir(full_sub_dir):
             found_dirs.update(crawl_dir_for_tasks(full_sub_dir))
     return found_dirs
+
 
 def rebuild_source():
     # TODO move task parsing to its own helper file
