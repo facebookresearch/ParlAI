@@ -41,7 +41,6 @@ function resolveState(state_string) {
 }
 
 function postData(url = ``, data = {}) {
-  console.log('posting', data, url);
   return fetch(url, {
       method: "POST",
       mode: "cors",
@@ -1551,7 +1550,6 @@ class DemoTaskPanel extends React.Component {
 
   _handleMessage(evt) {
     let msg = JSON.parse(evt.data);
-    console.log(msg, msg.command, msg.command == 'sync');
     if (msg.command == 'sync') {
       this.handleNewData(msg);
     }
@@ -1650,7 +1648,6 @@ class DemoTaskPanel extends React.Component {
   }
 
   sendMessage(message, data, callback, worker) {
-    console.log(worker);
     let msg = JSON.stringify(
       {'text': message, 'data': data,
        'sender': worker.worker_id, 'id': worker.agent_id});

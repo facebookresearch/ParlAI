@@ -468,7 +468,6 @@ class TaskSocketHandler(tornado.websocket.WebSocketHandler):
             time.sleep(0.2)
 
     def open(self):
-        print('open')
         self.sid = str(hex(int(time.time() * 10000000))[2:])
         self.alive = True
         if self not in list(self.sources.values()):
@@ -483,10 +482,8 @@ class TaskSocketHandler(tornado.websocket.WebSocketHandler):
         t.start()
 
     def on_message(self, message):
-        print(message)
         logging.info('from frontend client: {}'.format(message))
         msg = tornado.escape.json_decode(tornado.escape.to_basestring(message))
-        print(msg)
         message = msg['text']
         data = msg['data']
         sender_id = msg['sender']
@@ -521,9 +518,7 @@ class SendMessageHandler(BaseHandler):
         one at the moment
         """
         try:
-            print('hit!')
             post_data = tornado.escape.json_decode(self.request.body)
-            print(post_data)
             import sys
             sys.stdout.flush()
             message = post_data['text']
@@ -559,35 +554,30 @@ class TaskRunHandler(BaseHandler):
         for the given task. It will die after 20 mins if it doesn't end
         on its own.
         """
-        taskname = task_target
-        guess_loc = tasks[taskname].split('tasks/')[1]
-        guess_class = '.'.join(guess_loc.split('/'))
-        base_format = 'parlai.mturk.tasks.{}.run'
-        if 'parlai_internal' in guess_loc:
-            base_format = 'parlai_internal.mturk.tasks.{}.run'
-        task_find_location = base_format.format(guess_class)
-        base_format = 'parlai.mturk.tasks.{}.task_config'
-        if 'parlai_internal' in guess_loc:
-            base_format = 'parlai_internal.mturk.tasks.{}.task_config'
-        config_find_location = base_format.format(guess_class)
         try:
+            taskname = task_target
+            guess_loc = tasks[taskname].split('tasks/')[1]
+            guess_class = '.'.join(guess_loc.split('/'))
+            base_format = 'parlai.mturk.tasks.{}.run'
+            if 'parlai_internal' in guess_loc:
+                base_format = 'parlai_internal.mturk.tasks.{}.run'
+            task_find_location = base_format.format(guess_class)
+            base_format = 'parlai.mturk.tasks.{}.task_config'
+            if 'parlai_internal' in guess_loc:
+                base_format = 'parlai_internal.mturk.tasks.{}.task_config'
+            config_find_location = base_format.format(guess_class)
             # Try to find the task at specified location
             t = importlib.import_module(task_find_location)
             conf = importlib.import_module(config_find_location)
-            print(t)
-            print(t.MTurkManager)
             t.MTurkManager = MockTurkManager
             MockTurkManager.current_manager = None
             task_thread = threading.Thread(target=t.main, name='Demo-Thread')
             task_thread.start()
             while MockTurkManager.current_manager is None:
-                print('Waiting for task to start')
                 time.sleep(1)
             time.sleep(1)
             manager = MockTurkManager.current_manager
             self.app.manager = manager
-            print(manager)
-            print(manager.id_to_agent)
             for agent in manager.agents:
                 manager.worker_alive(
                     agent.worker_id, agent.hit_id, agent.assignment_id)
@@ -596,18 +586,14 @@ class TaskRunHandler(BaseHandler):
                 'data': [agent.get_update_packet() for agent in manager.agents],
                 'task_config': conf.task_config,
             }
+            self.write(json.dumps(data))
         except Exception as e:
             data = {
                 'error': e,
             }
             print(repr(e))
             print(traceback.format_exc())
-        print(data)
-        try:
             self.write(json.dumps(data))
-        except Exception as e:
-            print(repr(e))
-            print(traceback.format_exc())
 
 
 def start_server(port=DEFAULT_PORT, hostname=DEFAULT_HOSTNAME,
@@ -655,13 +641,9 @@ def rebuild_source():
             os.path.join(parlai_int_path, 'mturk', 'tasks')
         tasks.update(crawl_dir_for_tasks(parlai_internal_task_dir))
 
-    print (tasks)
-
     for task, task_dir in tasks.items():
         if os.path.exists(os.path.join(task_dir, 'frontend')):
             copy_dirs[task] = os.path.join(task_dir, 'frontend')
-
-    print (copy_dirs)
 
     for task, task_dir in copy_dirs.items():
         was_built = False

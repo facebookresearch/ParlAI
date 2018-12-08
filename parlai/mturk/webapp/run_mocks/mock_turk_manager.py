@@ -123,6 +123,9 @@ class MockTurkManager():
             agent.conversation_id = 'in_task'
 
         task_function(mturk_manager=self, opt=self.opt, workers=agents)
+        for agent in agents:
+            agent.mock_status = AssignState.STATUS_DONE
+            agent.set_status(AssignState.STATUS_DONE)
 
     def shutdown(self, force=False):
         """No servers, nothing to clean up"""
@@ -181,12 +184,10 @@ class MockTurkManager():
             """Onboarding wrapper to set state to onboarding properly"""
             if self.onboard_function:
                 agent.id = 'Onboarding'
-                print('onboard running!')
                 self.onboard_function(agent)
 
             # once onboarding is done, move into a waiting world
             self.move_agents_to_waiting([agent])
-            print(agent, " was moved over!!")
 
         # Start the onboarding thread and run it
         onboard_thread = threading.Thread(
