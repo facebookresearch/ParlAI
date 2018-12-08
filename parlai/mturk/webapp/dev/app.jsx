@@ -7,6 +7,7 @@ import {BaseFrontend, getCorrectComponent, setCustomComponents} from './task_com
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import 'fetch';
+import $ from 'jquery';
 
 // Init display components
 setCustomComponents({});
@@ -1548,6 +1549,14 @@ class DemoTaskPanel extends React.Component {
     this.connectSocket();
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.active_worker != prevState.active_worker) {
+      $('div#message-pane-segment').animate({
+        scrollTop: $('div#message-pane-segment').get(0).scrollHeight
+      }, 500);
+    }
+  }
+
   _handleMessage(evt) {
     let msg = JSON.parse(evt.data);
     if (msg.command == 'sync') {
@@ -1585,6 +1594,8 @@ class DemoTaskPanel extends React.Component {
   }
 
   startTask() {
+    // Send a launch task request to the server, unpack the resulting
+    // task config and pull the custom frontend for the task.
     this.setState({submitting: true});
     postData('/run_task/' + this.props.task_id)
       .then(res => res.json())
@@ -1615,6 +1626,8 @@ class DemoTaskPanel extends React.Component {
   }
 
   handleNewData(result) {
+    // Unpack data from an array of the return value of
+    // MockTurkAgent.get_update_packet()
     let worker_names = result.data.map((w) => w.worker_id);
     let curr_worker_data = this.state.worker_data;
     result.data.map((w) => {
@@ -1636,13 +1649,16 @@ class DemoTaskPanel extends React.Component {
       } else if (w.wants_message) {
         chat_state = 'text_input';
       }
-      curr_worker_data[w.worker_id].messages =
-        curr_worker_data[w.worker_id].messages.concat(w.new_messages);
-      curr_worker_data[w.worker_id].task_done = w.task_done;
-      curr_worker_data[w.worker_id].done_text = w.done_text;
-      curr_worker_data[w.worker_id].world_state = w.status;
-      curr_worker_data[w.worker_id].chat_state = chat_state;
-      curr_worker_data[w.worker_id].agent_id = w.agent_id;
+      let curr_worker = curr_worker_data[w.worker_id];
+      curr_worker.messages = curr_worker.messages.concat(w.new_messages);
+      curr_worker.task_done = w.task_done;
+      curr_worker.done_text = w.done_text;
+      curr_worker.world_state = w.status;
+      curr_worker.chat_state = chat_state;
+      curr_worker.agent_id = w.agent_id;
+      if (w.all_messages.length > curr_worker.messages.length) {
+        curr_worker.messages = w.all_messages;
+      }
     });
     this.setState({workers: worker_names, worker_data: curr_worker_data})
   }
@@ -1715,7 +1731,7 @@ class DemoTaskPanel extends React.Component {
         </div>
       )
     });
-    // Active panel must be first in the array
+    // Active panel must be first in the array for jquery to target properly
     let front_panel = task_panels.splice(this.state.active_worker, 1)
     task_panels.unshift(front_panel);
     return (

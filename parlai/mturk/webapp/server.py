@@ -515,32 +515,39 @@ class TaskRunHandler(BaseHandler):
         on its own.
         """
         try:
-            taskname = task_target
-            guess_loc = tasks[taskname].split('tasks/')[1]
+            # Find the modules for the requested task
+            guess_loc = tasks[task_target].split('tasks/')[1]
             guess_class = '.'.join(guess_loc.split('/'))
             base_format = 'parlai.mturk.tasks.{}.run'
-            if 'parlai_internal' in tasks[taskname]:
+            if 'parlai_internal' in tasks[task_target]:
                 base_format = 'parlai_internal.mturk.tasks.{}.run'
             task_find_location = base_format.format(guess_class)
             base_format = 'parlai.mturk.tasks.{}.task_config'
-            if 'parlai_internal' in tasks[taskname]:
+            if 'parlai_internal' in tasks[task_target]:
                 base_format = 'parlai_internal.mturk.tasks.{}.task_config'
             config_find_location = base_format.format(guess_class)
-            # Try to find the task at specified location
+            # Load the run and task_config modules from the expected locations
             t = importlib.import_module(task_find_location)
             conf = importlib.import_module(config_find_location)
+            # Set the run file's MTurkManager module to be MockTurkManager
             t.MTurkManager = MockTurkManager
             MockTurkManager.current_manager = None
+
+            # Start a task thread, then wait for the task to be running
             task_thread = threading.Thread(target=t.main, name='Demo-Thread')
             task_thread.start()
             while MockTurkManager.current_manager is None:
                 time.sleep(1)
             time.sleep(1)
             manager = MockTurkManager.current_manager
+
+            # Register the current manager, then alive the agents
             self.app.manager = manager
             for agent in manager.agents:
                 manager.worker_alive(
                     agent.worker_id, agent.hit_id, agent.assignment_id)
+
+            # Tell frontend we're done, and give the initial packets.
             data = {
                 'started': True,
                 'data': [agent.get_update_packet() for agent in manager.agents],
