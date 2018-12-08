@@ -243,6 +243,7 @@ class ChatPane extends React.Component {
     super(props);
     this.state = {chat_height: this.getChatHeight()}
   }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.message_count != prevProps.message_count) {
       $('div#right-top-pane').animate({
