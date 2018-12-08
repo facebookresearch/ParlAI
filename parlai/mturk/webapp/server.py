@@ -559,11 +559,11 @@ class TaskRunHandler(BaseHandler):
             guess_loc = tasks[taskname].split('tasks/')[1]
             guess_class = '.'.join(guess_loc.split('/'))
             base_format = 'parlai.mturk.tasks.{}.run'
-            if 'parlai_internal' in guess_loc:
+            if 'parlai_internal' in tasks[taskname]:
                 base_format = 'parlai_internal.mturk.tasks.{}.run'
             task_find_location = base_format.format(guess_class)
             base_format = 'parlai.mturk.tasks.{}.task_config'
-            if 'parlai_internal' in guess_loc:
+            if 'parlai_internal' in tasks[taskname]:
                 base_format = 'parlai_internal.mturk.tasks.{}.task_config'
             config_find_location = base_format.format(guess_class)
             # Try to find the task at specified location
