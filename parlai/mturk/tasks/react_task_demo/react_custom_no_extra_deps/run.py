@@ -31,8 +31,6 @@ def main():
     # append the contents of task_config.py to the configuration
     opt.update(task_config)
 
-    print(opt)
-
     # Select an agent_id that worker agents will be assigned in their world
     mturk_agent_roles = ['Asker', 'Answerer', 'Evaluator']
 

@@ -108,7 +108,6 @@ class Application(tornado.web.Application):
             (r"/app/(.*)", AppHandler, {'app': self}),
             (r"/tasks", TaskListHandler, {'app': self}),
             (r"/run_task/(.*)", TaskRunHandler, {'app': self}),
-            (r"/send_message/(.*)", SendMessageHandler, {'app': self}),
             (r"/workers", WorkerListHandler, {'app': self}),
             (r"/runs/(.*)", RunHandler, {'app': self}),
             (r"/workers/(.*)", WorkerHandler, {'app': self}),
@@ -504,45 +503,6 @@ class TaskSocketHandler(tornado.websocket.WebSocketHandler):
         self.alive = False
         if self in list(self.sources.values()):
             self.sources.pop(self.sid, None)
-
-
-class SendMessageHandler(BaseHandler):
-    """Handles sending a message from a user to the task world currently
-    running on this server.
-    """
-    def initialize(self, app):
-        self.app = app
-
-    def post(self, task_target):
-        """Sends data to the proper agent in the current manager if there is
-        one at the moment
-        """
-        try:
-            post_data = tornado.escape.json_decode(self.request.body)
-            import sys
-            sys.stdout.flush()
-            message = post_data['text']
-            data = post_data['data']
-            sender_id = post_data['sender']
-            agent_id = post_data['id']
-            act = {
-                'id': agent_id,
-                'data': data,
-                'text': message,
-                'message_id': str(uuid.uuid4()),
-            }
-            t = threading.Thread(
-                target=self.app.manager.on_new_message,
-                args=(sender_id, PacketWrap(act)),
-                daemon=True)
-            t.start()
-            data = {
-                'act': act,
-            }
-            self.write(json.dumps(data))
-        except Exception as e:
-            print(repr(e))
-            print(traceback.format_exc())
 
 
 class TaskRunHandler(BaseHandler):
