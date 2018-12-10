@@ -1710,6 +1710,7 @@ class DemoTaskPanel extends React.Component {
       $('div#message-pane-segment').animate({
         scrollTop: $('div#message-pane-segment').get(0).scrollHeight
       }, 500);
+      $("input#id_text_input").focus();
     }
   }
 
