@@ -63,8 +63,10 @@ class MockTurkAgent(Agent):
         while len(self.unread_messages) > 0:
             pkt = self.unread_messages.pop(0)
             send_messages.append(pkt.data)
-        done_text = self.state.get_inactive_command_text()[0] if \
-            self.state.is_final() else None
+        done_text = None
+        if self.state.is_final() and \
+                self.get_status() != AssignState.STATUS_DONE:
+            done_text = self.state.get_inactive_command_text()[0]
         return {
             'new_messages': send_messages,
             'all_messages': self.state.get_messages(),
@@ -155,7 +157,6 @@ class MockTurkAgent(Agent):
     def put_data(self, id, data):
         """Put data into the message queue if it hasn't already been seen"""
         self.msg_queue.put(data)
-        print('data was queued!')
 
     def flush_msg_queue(self):
         """Clear all messages in the message queue"""

@@ -76,6 +76,27 @@ def get_path(filename):
     return os.path.join(cwd, filename)
 
 
+def get_mturk_task_module(task_name, target_module):
+    full_location = tasks[task_name]
+    guess_loc = full_location.split('tasks/')[1]
+    guess_class = '.'.join(guess_loc.split('/'))
+    task_module = target_module.format(guess_class)
+    base_format = 'parlai.mturk.tasks.{}'
+    if 'parlai_internal' in full_location:
+        base_format = 'parlai_internal.mturk.tasks.{}'
+    find_location = base_format.format(task_module)
+    # Try to find the task at specified location
+    return importlib.import_module(find_location)
+
+
+def get_run_module(task_name):
+    return get_mturk_task_module(task_name, '{}.run')
+
+
+def get_config_module(task_name):
+    return get_mturk_task_module(task_name, '{}.task_config')
+
+
 tornado_settings = {
     "autoescape": None,
     "debug": IS_DEBUG,
@@ -106,7 +127,8 @@ class Application(tornado.web.Application):
 
         handlers = [
             (r"/app/(.*)", AppHandler, {'app': self}),
-            (r"/tasks", TaskListHandler, {'app': self}),
+            (r"/run_list", RunListHandler, {'app': self}),
+            (r"/task_list", TaskListHandler, {'app': self}),
             (r"/run_task/(.*)", TaskRunHandler, {'app': self}),
             (r"/workers", WorkerListHandler, {'app': self}),
             (r"/runs/(.*)", RunHandler, {'app': self}),
@@ -183,10 +205,10 @@ class RedirectHandler(tornado.web.RequestHandler):
 
     def get(self):
         print('redirecting')
-        self.redirect('/app/tasks')
+        self.redirect('/app/home')
 
 
-class TaskListHandler(BaseHandler):
+class RunListHandler(BaseHandler):
     def initialize(self, app):
         self.state = app.state
         self.subs = app.subs
@@ -210,6 +232,39 @@ class TaskListHandler(BaseHandler):
             result['run_status'] = 'unimplemented'
 
         self.write(json.dumps(processed_results))
+
+
+class TaskListHandler(BaseHandler):
+    def initialize(self, app):
+        self.state = app.state
+        self.subs = app.subs
+        self.sources = app.sources
+        self.port = app.port
+        self.data_handler = app.data_handler
+
+    def get(self):
+        results = {t: {'task_name': t, 'dir': v} for t, v in tasks.items()}
+        for task_name, directory in tasks.items():
+            results[task_name]['internal'] = 'parlai_internal' in directory
+            results[task_name]['has_custom'] = False
+            results[task_name]['react_frontend'] = False
+            try:
+                config = get_config_module(task_name)
+                frontend_version = config.task_config.get('frontend_version')
+                if (frontend_version is not None and frontend_version >= 1):
+                    results[task_name]['react_frontend'] = True
+                if os.path.isfile(os.path.join(
+                        directory, 'frontend', 'components', 'custom.jsx')):
+                    results[task_name]['has_custom'] = True
+            except Exception as e:
+                print('Exception {} when loading task details for {}'.format(
+                    e, task_name
+                ))
+                pass
+            results[task_name]['active_runs'] = 'unimplemented'  # TODO
+            results[task_name]['all_runs'] = 'unimplemented'  # TODO
+
+        self.write(json.dumps(list(results.values())))
 
 
 def merge_assignments_with_pairings(assignments, pairings, log_id):
@@ -337,16 +392,10 @@ class AssignmentHandler(BaseHandler):
         }
 
         # Get assignment instruction html. This can be much improved
-        taskname = '_'.join(run_id.split('_')[:-1])
-        guess_loc = tasks[taskname].split('tasks/')[1]
-        guess_class = '.'.join(guess_loc.split('/'))
-        base_format = 'parlai.mturk.tasks.{}.task_config'
-        if 'parlai_internal' in guess_loc:
-            base_format = 'parlai_internal.mturk.tasks.{}.task_config'
-        find_location = base_format.format(guess_class)
+        task_name = '_'.join(run_id.split('_')[:-1])
         try:
             # Try to find the task at specified location
-            t = importlib.import_module(find_location)
+            t = get_config_module(task_name)
             task_instructions = t.task_config['task_description']
         except ImportError:
             task_instructions = None
@@ -459,12 +508,16 @@ class TaskSocketHandler(tornado.websocket.WebSocketHandler):
         time.sleep(2)
         asyncio.set_event_loop(asyncio.new_event_loop())
         while self.alive and self.app.manager is not None:
-            self.write_message(json.dumps({
-                'data': [agent.get_update_packet()
-                         for agent in self.app.manager.agents],
-                'command': 'sync'
-            }))
-            time.sleep(0.2)
+            try:
+                self.write_message(json.dumps({
+                    'data': [agent.get_update_packet()
+                             for agent in self.app.manager.agents],
+                    'command': 'sync'
+                }))
+                time.sleep(0.2)
+            except tornado.websocket.WebSocketClosedError:
+                self.alive = False
+                self.app.manager.timeout_all_agents()
 
     def open(self):
         self.sid = str(hex(int(time.time() * 10000000))[2:])
@@ -515,20 +568,9 @@ class TaskRunHandler(BaseHandler):
         on its own.
         """
         try:
-            # Find the modules for the requested task
-            guess_loc = tasks[task_target].split('tasks/')[1]
-            guess_class = '.'.join(guess_loc.split('/'))
-            base_format = 'parlai.mturk.tasks.{}.run'
-            if 'parlai_internal' in tasks[task_target]:
-                base_format = 'parlai_internal.mturk.tasks.{}.run'
-            task_find_location = base_format.format(guess_class)
-            base_format = 'parlai.mturk.tasks.{}.task_config'
-            if 'parlai_internal' in tasks[task_target]:
-                base_format = 'parlai_internal.mturk.tasks.{}.task_config'
-            config_find_location = base_format.format(guess_class)
             # Load the run and task_config modules from the expected locations
-            t = importlib.import_module(task_find_location)
-            conf = importlib.import_module(config_find_location)
+            t = get_run_module(task_target)
+            conf = get_config_module(task_target)
             # Set the run file's MTurkManager module to be MockTurkManager
             t.MTurkManager = MockTurkManager
             MockTurkManager.current_manager = None

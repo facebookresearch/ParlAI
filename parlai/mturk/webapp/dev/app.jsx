@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2017-present, Facebook, Inc.
+ * All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {ToggleButtonGroup, ToggleButton, Button, FormControl,
@@ -8,6 +16,8 @@ import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import 'fetch';
 import $ from 'jquery';
+
+// TODO split components into other files, this app is getting complex
 
 // Init display components
 setCustomComponents({});
@@ -162,6 +172,12 @@ class NavLink extends React.Component {
           {this.props.children}
         </a>
       );
+    } else if (this.props.type == 'task') {
+      return (
+        <a href={'/app/tasks/' + this.props.target}>
+          {this.props.children}
+        </a>
+      );
     } else {
       return (
         <span>{this.props.children}</span>
@@ -202,7 +218,7 @@ class SharedTable extends React.Component {
   }
 }
 
-class TaskTable extends React.Component {
+class RunTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {used_cols: [
@@ -263,6 +279,89 @@ class TaskTable extends React.Component {
       case 'maximum': return item.maximum;
       case 'completed': return item.completed;
       case 'failed': return item.failed;
+      default: return 'Invalid column ' + header_name;
+    }
+  }
+
+  render() {
+    return (
+      <SharedTable
+        getColumnFormatter={this.getColumnFormatter.bind(this)}
+        used_cols={this.state.used_cols}
+        data={this.props.data}
+        title={this.props.title}
+      />
+    );
+  }
+}
+
+class TaskTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {used_cols: [
+      'task_name', 'internal', 'react_frontend', 'has_custom', 'active_runs',
+      'all_runs', 'dir',
+    ]};
+  }
+
+  getColumnFormatter(row_name) {
+    return {
+      id: row_name,
+      Header: props => this.getHeaderValue(row_name),
+      accessor: item => this.getColumnValue(row_name, item),
+      Cell: props => this.getColumnCell(row_name, props),
+    };
+  }
+
+  getHeaderValue(header_name) {
+    switch(header_name) {
+      case 'task_name':
+        return <span>Task Name</span>;
+      case 'internal':
+        return <span>Internal</span>;
+      case 'react_frontend':
+        return <span>Demoable</span>;
+      case 'has_custom':
+        return <span>Custom Components</span>;
+      case 'active_runs':
+        return <span>Active Runs</span>;
+      case 'all_runs':
+        return <span>Total Runs</span>;
+      case 'dir':
+        return <span>Task Directory</span>;
+      default:
+        return <span>Invalid column {header_name}</span>;
+    }
+  }
+
+  getColumnCell(header_name, props) {
+    // TODO add table row/icon for `notes` that appear on hover
+    switch(header_name) {
+      case 'task_name':
+        return <NavLink type='task' target={props.row.task_name}>
+          {props.value}
+        </NavLink>;
+      case 'internal':
+      case 'react_frontend':
+      case 'has_custom':
+        return <span>{props.value ? 'Yes' : 'No'}</span>;
+      case 'active_runs':
+      case 'all_runs':
+      case 'dir':
+      default:
+        return <span>{props.value}</span>;
+    }
+  }
+
+  getColumnValue(header_name, item) {
+    switch(header_name) {
+      case 'task_name': return item.task_name;
+      case 'internal': return item.internal;
+      case 'react_frontend': return item.react_frontend;
+      case 'has_custom': return item.has_custom;
+      case 'active_runs': return item.active_runs;
+      case 'all_runs': return item.all_runs;
+      case 'dir': return item.dir;
       default: return 'Invalid column ' + header_name;
     }
   }
@@ -615,7 +714,7 @@ class RunPanel extends React.Component {
   renderRunInfo() {
     return (
       <div>
-        <TaskTable
+        <RunTable
           data={[this.state.data.run_details]}
           title={'Baseline info for this run'}/>
         <AssignmentTable
@@ -1411,6 +1510,62 @@ class WorkerPanel extends React.Component {
   }
 }
 
+class RunListPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {tasks_loading: true, items: null, error: false};
+  }
+
+  fetchRunData() {
+    fetch('/run_list')
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            tasks_loading: false,
+            items: result
+          });
+        },
+        (error) => {
+          this.setState({
+            tasks_loading: false,
+            error: error
+          });
+        }
+      )
+  }
+
+  componentDidMount() {
+    this.setState({tasks_loading: true});
+    this.fetchRunData();
+  }
+
+  render() {
+    var content;
+    if (this.state.tasks_loading) {
+      content = <span>Runs are currently loading...</span>;
+    } else if (this.state.error !== false) {
+      console.log(this.state.error)
+      content = <span>Runs loading failed...</span>;
+    } else {
+      content = <RunTable data={this.state.items} title={'Local Runs'}/>;
+    }
+
+    return (
+      <Panel>
+        <Panel.Heading>
+          <Panel.Title componentClass="h3">
+            Running Task List
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Body>
+          {content}
+        </Panel.Body>
+      </Panel>
+    )
+  }
+}
+
 class TaskListPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -1418,10 +1573,11 @@ class TaskListPanel extends React.Component {
   }
 
   fetchTaskData() {
-    fetch('/tasks')
+    fetch('/task_list')
       .then(res => res.json())
       .then(
         (result) => {
+          console.log(result)
           this.setState({
             tasks_loading: false,
             items: result
@@ -1449,14 +1605,14 @@ class TaskListPanel extends React.Component {
       console.log(this.state.error)
       content = <span>Tasks loading failed...</span>;
     } else {
-      content = <TaskTable data={this.state.items} title={'Local Runs'}/>;
+      content = <TaskTable data={this.state.items} title={'Discovered Tasks'}/>;
     }
 
     return (
       <Panel>
         <Panel.Heading>
           <Panel.Title componentClass="h3">
-            Running Tasks List
+            All Tasks List
           </Panel.Title>
         </Panel.Heading>
         <Panel.Body>
@@ -1601,18 +1757,28 @@ class DemoTaskPanel extends React.Component {
       .then(res => res.json())
       .then(
         (result) => {
-          this.handleNewData(result)
-          import(
-            /* webpackMode: "eager" */
-            `./task_components/${this.props.task_id}/components/custom.jsx`
-          ).then((custom) => {
-            setCustomComponents(custom.default);
+          this.handleNewData(result);
+          try {
+            import(
+              /* webpackMode: "eager" */
+              `./task_components/${this.props.task_id}/components/custom.jsx`
+            ).then((custom) => {
+              setCustomComponents(custom.default);
+              if (result.task_config.frame_height === undefined) {
+                result.task_config.frame_height = 650;
+              }
+              this.setState({
+                task_loading: false, task_config: result.task_config});
+            });
+          } catch (err) {
+            // Custom react module not found
             if (result.task_config.frame_height === undefined) {
               result.task_config.frame_height = 650;
             }
             this.setState({
               task_loading: false, task_config: result.task_config});
-          });
+          }
+
         },
         (error) => {
           this.setState({
@@ -1822,8 +1988,9 @@ class MainApp extends React.Component {
   renderHomePage() {
     return (
       <div style={{width: '900px'}}>
-        <TaskListPanel/>
+        <RunListPanel/>
         <WorkerListPanel/>
+        <TaskListPanel />
       </div>
     );
   }

@@ -126,10 +126,11 @@ class MockTurkManager():
         for agent in agents:
             agent.mock_status = AssignState.STATUS_DONE
             agent.set_status(AssignState.STATUS_DONE)
+            agent.task_done = True
 
     def shutdown(self, force=False):
         """No servers, nothing to clean up"""
-        pass
+        print('[mock] shutdown called')
 
     def move_agents_to_waiting(self, agents):
         """Mock moving to a waiting world"""
@@ -241,6 +242,11 @@ class MockTurkManager():
                      ack_func=None):
         """Commands aren't actually sent this way, as state updates are read"""
         return None
+
+    def timeout_all_agents(self):
+        """Set all agent statuses to disconnect to kill the world"""
+        for agent in self.agents:
+            agent.disconnected = True
 
     # BELOW ARE STUBS THAT EXIST TO HOPEFULLY MAKE RUN FILES NOT CRASH
     # NONE OF THEM DO ANYTHING (though some return success values)
