@@ -16,7 +16,6 @@ import pickle
 import random
 import base64
 import json
-import parlai.mturk.core.mturk_utils as mutils
 from io import BytesIO
 from PIL import Image
 
@@ -261,7 +260,6 @@ class MTurkImageChatStackRankWorld(MultiAgentDialogWorld):
             print("\n**Push image {} back to stack. **\n".format(
                     self.example_num))
         self.agent.example_generator.save_idx_stack()
-        mutils.setup_aws_credentials()
         data_path = self.opt['data_path']
         if not os.path.exists(data_path):
             os.makedirs(data_path)

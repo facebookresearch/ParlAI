@@ -10,7 +10,7 @@ task_config = {}
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,
 and everywhere the HIT is mentioned.
 """
-task_config['hit_title'] = 'Choose More Engaging Response to Comments on an Image'
+task_config['hit_title'] = 'Choose Most Engaging Response to a Comment on an Image'
 
 
 """A description includes detailed information about the kind of task the HIT contains.
