@@ -11,13 +11,10 @@ import time
 from queue import Queue
 
 from parlai.core.agents import Agent
+from parlai.mturk.core.agents import \
+    MTURK_DISCONNECT_MESSAGE, TIMEOUT_MESSAGE, RETURN_MESSAGE
 from parlai.mturk.core.agents import AssignState
 import parlai.mturk.core.shared_utils as shared_utils
-
-# Special act messages for failure states
-MTURK_DISCONNECT_MESSAGE = '[DISCONNECT]'  # Turker disconnected from conv
-TIMEOUT_MESSAGE = '[TIMEOUT]'  # the Turker did not respond but didn't return
-RETURN_MESSAGE = '[RETURNED]'  # the Turker returned the HIT
 
 
 class MockTurkAgent(Agent):
