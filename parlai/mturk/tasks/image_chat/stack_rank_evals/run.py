@@ -6,57 +6,69 @@
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
 from worlds import \
-    MTurkPersonalityCaptionsStackRankWorld, RoleOnboardWorld, \
-    ExampleGenerator, CHOOSER
-from parlai.tasks.personality_captions.agents import PersonalityCaptionsTeacher
-from task_config import task_config
+    MTurkImageChatStackRankWorld, CHOOSER, ExampleGenerator, RoleOnboardWorld
+from parlai.tasks.image_chat.agents import ImageChatTeacher
+from parlai.tasks.image_chat.build import build as build_ic
+from task_configs.task_config_first_response import task_config as config_first
+from task_configs.task_config_second_response import task_config as config_second
 import os
+
+round_choices = ['first_response', 'second_response']
 
 
 def main():
     """
-        Human Evaluation of various image captions/comments.
+        Human Evaluation of various responses to comments on images.
 
-        A turker is shown an image and two possible comments/captions, and
-        optionally the personality used to create these captions. Then, the
-        turker is asked to choose which caption they think is more engaging.
+        A turker is shown an image and some dialog history. Then, the
+        turker is asked to choose which response they think is more engaging.
 
-        In this example, we will just be comparing the original comment twice
-        (this is just to demonstrate the task for future use).
+        If no `--eval-data-path` is given, the data from the original
+        Image-Chat dataset is used.
 
-        To use your own data, please specify `--eval-data-path` to an
+        To use your own data, please specify `--eval-data-path`, a path to an
         appropriate json file with a list of examples, where each example
         has the following structure:
             {
                 'image_hash': <hash of image>,
-                'personality': <personality, if applicable>,
-                '<compare_key_1>': <first option to compare>,
+                'dialog': [(personality, text), ...] - list of personality, text tuples
+                'personality': <personality of responses to compare>
+                '<compare_key_1>': <first response to compare>,
                 '<compare_key_2>': <second option to compare>,
                 .
                 .
                 .
             }
         Note that compare_key_1 and compare_key_2 can be any field, as long as they
-        map to a string comment/caption.
+        map to a string response.
 
         Example Scenario:
-            Suppose you have the original Personality-Captions dataset, and
+            Suppose you have the original Image-Chat dataset, and
             you would like to compare the outputs of your model called `model`.
 
             Your data may look like the following:
             [{
                 'image_hash': hashforimageofcat,
+                'dialog': [
+                    ('Sweet', 'What a cute cat!'),
+                    ('Neutral', 'Just looks like a plain cat to me')
+                ]
                 'personality': 'Sweet',
-                'comment': 'Look at the cute cat!', # Human Comment
-                'model_comment': 'That's a weird looking dog' # Model Comment
+                'comment': 'It really is adorable if you look!', # Human Comment
+                'model_comment': 'You'll love it if you pet it!' # Model Comment
             }, ...]
 
             Thus, you would specify `-ck1 comment -ck2 model_comment` to evaluate
             the outputs of the model vs. the human comments from Personality-Captions
+
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
+    argparser.add_argument('-min_t', '--min_turns', default=3, type=int,
+                           help='minimum number of turns')
+    argparser.add_argument('-mt', '--max_turns', default=5, type=int,
+                           help='maximal number of chat turns')
     argparser.add_argument('-mx_rsp_time', '--max_resp_time', default=1800,
                            type=int,
                            help='time limit for entering a dialog message')
@@ -66,21 +78,28 @@ def main():
     argparser.add_argument('-ni', '--num_images', type=int,
                            default=10, help='number of images to show \
                            to turker')
+    argparser.add_argument('--auto-approve-delay', type=int,
+                           default=3600*24, help='how long to wait for  \
+                           auto approval')
     argparser.add_argument('--data-path', type=str,
                            default='', help='where to save data')
     argparser.add_argument('--eval-data-path', type=str, default='',
                            help='where to load data to rank from. Leave '
-                                'blank to use Personality-Captions data')
+                                'blank to use Image-Chat data')
     argparser.add_argument('-ck1', '--compare-key-1', type=str,
                            default='comment',
-                           help='key of first option to compare')
+                           help='key of first comparable')
     argparser.add_argument('-ck2', '--compare-key-2', type=str,
                            default='comment',
-                           help='key of second option to compare')
+                           help='key of first comparable')
+    argparser.add_argument('-rnd', '--dialog-round', type=str, default='first_response',
+                           choices=round_choices,
+                           help='which dialog round to show')
     argparser.add_argument('--show-personality', default=True, type='bool',
                            help='whether to show the personality')
-    PersonalityCaptionsTeacher.add_cmdline_args(argparser)
+    ImageChatTeacher.add_cmdline_args(argparser)
     opt = argparser.parse_args()
+    build_ic(opt)
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)
     if 'data_path' not in opt or opt['data_path'] == '':
@@ -88,8 +107,9 @@ def main():
     if opt.get('eval_data_path') == '':
         opt['eval_data_path'] = os.path.join(
             opt['datapath'],
-            'personality_captions/train.json')
-    opt.update(task_config)
+            'image_chat/test.json')
+    config = config_first if opt['dialog_round'] == 'first_response' else config_second
+    opt.update(config)
 
     mturk_agent_ids = [CHOOSER]
     mturk_manager = MTurkManager(
@@ -123,7 +143,7 @@ def main():
         def run_conversation(mturk_manager, opt, workers):
             agents = workers[:]
             conv_idx = mturk_manager.conversation_index
-            world = MTurkPersonalityCaptionsStackRankWorld(
+            world = MTurkImageChatStackRankWorld(
                 opt,
                 agents=agents,
                 world_tag='conversation t_{}'.format(conv_idx),

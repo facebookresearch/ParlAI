@@ -5,37 +5,35 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
-from parlai.tasks.personality_captions.build import build as build_pc
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from joblib import Parallel, delayed
-from task_config import task_config as config
+from task_configs.task_config_first_response import task_config as config_first
+from task_configs.task_config_second_response import task_config as config_second
 import numpy as np
 import time
 import os
 import pickle
 import random
-import json
 import base64
-from PIL import Image
+import json
 from io import BytesIO
+from PIL import Image
 
 CHOOSER = 'Chooser'
 ONBOARD_MSG = '\nWelcome! \
         When you are ready to begin, \
         click the "I am ready, continue" button below\n'
-PICK_BEST_MSG = '\nImage number {}! Please take a look at the image, and select \
-                 the comment you think is <b>more engaging \
-                 (interesting, captivating, attention-grabbing).</b>\
-                  Then, please explain why you chose that comment \
-                  in the chat box below.'
-PICK_WORST_MSG = 'Now, please pick the the comment you think is the <b>LEAST</b> \
-                  engaging.'
+PICK_BEST_MSG = '\nImage number {}! Please take a look at the image and the \
+                dialog history, and select \
+                the response you think is <b>more engaging (interesting, \
+                captivating, attention-grabbing).</b>\
+                Then, please explain why you chose that resposne in the chat box below.'
 TIMEOUT_MSG = '<b> The other person has timed out. \
         Please click the "Done with this HIT" button below to finish this HIT.\
         </b>'
 CHAT_ENDED_MSG = 'You are done with {} images. Thanks for your time! \nPlease \
-        click <span style="color:blue"><b>Done with this HIT</b> </span> \
-        button below to finish this HIT.'
+                  click <span style="color:blue"><b>Done with this HIT</b> \
+                  </span> button below to finish this HIT.'
 WAITING_MSG = 'Please wait...'
 
 
@@ -52,7 +50,6 @@ class ExampleGenerator(object):
             opt['compare_key_1'],
             opt['compare_key_2'])
         self.examples_idx_stack_path = os.path.join(os.getcwd(), handle)
-        build_pc(opt)
         data_path = opt.get('eval_data_path')
         with open(data_path) as f:
             self.data = json.load(f)
@@ -91,16 +88,18 @@ class RoleOnboardWorld(MTurkOnboardWorld):
     def __init__(self, opt, mturk_agent):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.max_onboard_time = opt['max_onboard_time']
+        self.opt = opt
         super().__init__(opt, mturk_agent)
 
     def parley(self):
         onboard_msg = {
             'id': 'SYSTEM',
             'text': ONBOARD_MSG}
-
-        onboard_msg['task_description'] = config['task_description']
+        if self.opt['dialog_round'] == 'first_response':
+            onboard_msg['task_description'] = config_first['task_description']
+        else:
+            onboard_msg['task_description'] = config_second['task_description']
         self.mturk_agent.observe(onboard_msg)
-
         act = self.mturk_agent.act(timeout=self.max_onboard_time)
 
         # timeout
@@ -116,9 +115,9 @@ class RoleOnboardWorld(MTurkOnboardWorld):
             self.episodeDone = True
 
 
-class MTurkPersonalityCaptionsStackRankWorld(MultiAgentDialogWorld):
-    """World where an agent observes 5 images and 2 comments about the images,
-       and chooses the more engaging comment
+class MTurkImageChatStackRankWorld(MultiAgentDialogWorld):
+    """World where an agent observes 5 images and 2 responses about the images,
+       and chooses the more engaging response
     """
     def __init__(self, opt, agents=None, shared=None, world_tag='NONE'):
         self.turn_idx = 0
@@ -130,10 +129,16 @@ class MTurkPersonalityCaptionsStackRankWorld(MultiAgentDialogWorld):
         self.agents = agents
         self.agent = agents[0]
         self.data = []
+        self.exact_match = False
         self.num_images = opt['num_images']
+        self.d_rnd = opt.get('dialog_round')
         self.ck1 = opt.get('compare_key_1')
         self.ck2 = opt.get('compare_key_2')
         self.show_personality = opt.get('show_personality')
+        self.dummy_eval = opt.get('eval_data_path') == os.path.join(
+            opt['datapath'],
+            'image_chat/test.json'
+        )
         if opt.get('yfcc_path'):
             self.image_path = opt['yfcc_path']
         else:
@@ -143,23 +148,24 @@ class MTurkPersonalityCaptionsStackRankWorld(MultiAgentDialogWorld):
         return self.chat_done
 
     def parley(self):
-        """CHOOSER is given an image and 2 comments/captions, and is asked
-           to choose more engaging comment.
+        """CHOOSER is given an image and 2 responses, and is asked
+           for more engaging response.
         """
         # Initial Message Value
         control_msg = {'episode_done': False}
         control_msg['id'] = 'SYSTEM'
 
         """We only have to worry about 1 agent"""
-        agent = self.agents[0]
+        agent = self.agent
 
         """First, we give CHOOSER the image
         """
         while self.turn_idx < self.num_images:
             print(self.world_tag + ' is at turn {}...'.format(self.turn_idx))
             # Send image to turker
+            config = config_first if self.d_rnd == 'first_response' else config_second
             control_msg['description'] = config['task_description']
-            self.example_num, example = self.agent.example_generator.pop_example()
+            self.example_num, example = agent.example_generator.pop_example()
             img = load_image(os.path.join(
                              self.image_path,
                              '{}.jpg'.format(example['image_hash'])))
@@ -168,15 +174,33 @@ class MTurkPersonalityCaptionsStackRankWorld(MultiAgentDialogWorld):
             encoded = str(base64.b64encode(buffered.getvalue()).decode('ascii'))
             control_msg['image'] = encoded
             """
-                Setup comments for ranking
+                Setup responses for ranking
             """
-            comments = [(ck, example[ck]) for ck in [self.ck1, self.ck2]]
-            random.shuffle(comments)
-            control_msg['comments'] = [c[1] for c in comments]
+            responses = []
+            if self.dummy_eval:
+                # getting the first and second responses from eval
+                responses = [
+                    ('comment', example['dialog'][1][1]),
+                    ('comment', example['dialog'][2][1])]
+                personality = example['dialog'][2][0]
+            else:
+                responses = [(ck, example[ck]) for ck in [self.ck1, self.ck2]]
+                personality = example.get('personality', '')
+
+            random.shuffle(responses)
+            control_msg['responses'] = [c[1] for c in responses]
+            d_hist = ''
+            if self.d_rnd == 'first_response':
+                d_hist = [example['dialog'][1][1]]
+            elif self.d_rnd == 'second_response':
+                d_hist = [example['dialog'][1][1],
+                          example['dialog'][2][1]]
+            control_msg['d_hist'] = d_hist
+            control_msg['d_rnd'] = self.d_rnd
             if self.show_personality:
                 control_msg['personality'] = '<b><span style="color:blue">' \
                                                '{}\n</span></b>'.format(
-                                              example['personality'].strip())
+                                              personality.strip())
 
             best_pick = None
             control_msg['text'] = PICK_BEST_MSG.format(self.turn_idx + 1)
@@ -191,11 +215,13 @@ class MTurkPersonalityCaptionsStackRankWorld(MultiAgentDialogWorld):
             try:
                 best_idx = int(act['chosen'])
                 reason = act['text']
-                best_pick = comments[best_idx]
+                best_pick = responses[best_idx]
             except Exception:
                 # Agent disconnected
                 break
-            example['choices'] = comments
+
+            example['rank_choices'] = responses
+            example['dialog_round_evaluated'] = self.d_rnd
             example['best_pick'] = best_pick
             example['reason'] = reason
             self.data.append(example)
@@ -233,7 +259,7 @@ class MTurkPersonalityCaptionsStackRankWorld(MultiAgentDialogWorld):
             ag.example_generator.push_example(self.example_num)
             print("\n**Push image {} back to stack. **\n".format(
                     self.example_num))
-        self.agents[0].example_generator.save_idx_stack()
+        self.agent.example_generator.save_idx_stack()
         data_path = self.opt['data_path']
         if not os.path.exists(data_path):
             os.makedirs(data_path)
@@ -252,9 +278,9 @@ class MTurkPersonalityCaptionsStackRankWorld(MultiAgentDialogWorld):
                     np.random.randint(0, 1000),
                     self.task_type))
         pickle.dump({'data': self.data,
-                     'worker': self.agents[0].worker_id,
-                     'hit_id': self.agents[0].hit_id,
-                     'assignment_id': self.agents[0].assignment_id
+                     'worker': self.agent.worker_id,
+                     'hit_id': self.agent.hit_id,
+                     'assignment_id': self.agent.assignment_id
                      }, open(filename, 'wb'))
         print('{}: Data successfully saved at {}.'.format(
             self.world_tag,
