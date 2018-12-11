@@ -36,6 +36,7 @@ class MockTurkManager():
         self.mturk_agent_ids = mturk_agent_ids
         self.has_run = False
         self.sandbox = True
+        self.db_logger = None
 
     # Required lifecycle functions below
     def setup_server(self, task_directory_path=None):

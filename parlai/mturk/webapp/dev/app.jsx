@@ -1824,6 +1824,10 @@ class DemoTaskPanel extends React.Component {
       curr_worker.chat_state = chat_state;
       curr_worker.agent_id = w.agent_id;
       if (w.all_messages.length > curr_worker.messages.length) {
+        // If somehow the messages got out of sync, just grab the full message
+        // list. This isn't great to do all the time (as then messages would
+        // need to wait to be recieved by the server before we could even
+        // display them. This also solves eventual 'refresh' issues)
         curr_worker.messages = w.all_messages;
       }
     });
