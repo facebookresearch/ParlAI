@@ -550,7 +550,7 @@ class TorchAgent(Agent):
                 vecs = obs['label_candidates_vecs']
                 for i, c in enumerate(vecs):
                     vecs[i] = self._check_truncate(c, truncate)
-        elif self.rank_candidates and 'label_candidates' in obs:
+        elif self.rank_candidates and obs.get('label_candidates'):
             obs['label_candidates'] = list(obs['label_candidates'])
             obs['label_candidates_vecs'] = [
                 self._vectorize_text(c, add_start, add_end, truncate, False)
